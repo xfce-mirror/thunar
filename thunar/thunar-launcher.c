@@ -30,6 +30,7 @@
 #endif
 
 #include <thunar/thunar-application.h>
+#include <thunar/thunar-browser.h>
 #include <thunar/thunar-chooser-dialog.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gio-extensions.h>
@@ -106,6 +107,7 @@ static void          thunar_launcher_widget_destroyed           (ThunarLauncher 
                                                                  GtkWidget                *widget);
 static gboolean      thunar_launcher_sendto_idle                (gpointer                  user_data);
 static void          thunar_launcher_sendto_idle_destroy        (gpointer                  user_data);
+static void          thunar_launcher_mount_data_free            (ThunarLauncherMountData  *data);
 
 
 
@@ -183,6 +185,13 @@ thunar_launcher_get_type (void)
         NULL,
       };
 
+      static const GInterfaceInfo browser_info =
+      {
+        NULL, 
+        NULL, 
+        NULL
+      };
+
       static const GInterfaceInfo component_info =
       {
         (GInterfaceInitFunc) thunar_launcher_component_init,
@@ -198,6 +207,7 @@ thunar_launcher_get_type (void)
       };
 
       type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarLauncher"), &info, 0);
+      g_type_add_interface_static (type, THUNAR_TYPE_BROWSER, &browser_info);
       g_type_add_interface_static (type, THUNAR_TYPE_NAVIGATOR, &navigator_info);
       g_type_add_interface_static (type, THUNAR_TYPE_COMPONENT, &component_info);
     }
@@ -1021,11 +1031,67 @@ thunar_launcher_update (ThunarLauncher *launcher)
 
 
 static void
+thunar_launcher_open_file (ThunarLauncher *launcher,
+                           ThunarFile     *file)
+{
+  GList files;
+
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+            
+  files.data = file;
+  files.next = NULL;
+  files.prev = NULL;
+
+  if (thunar_file_is_directory (file))
+    {
+      /* check if we're in a regular view (i.e. current_directory is set) */
+      if (G_LIKELY (launcher->current_directory != NULL))
+        {
+          /* we want to open one directory, so just emit "change-directory" here */
+          thunar_navigator_change_directory (THUNAR_NAVIGATOR (launcher), file);
+        }
+      else
+        {
+          /* open the selected directories in new windows */
+          thunar_launcher_open_windows (launcher, &files);
+        }
+    }
+  else
+    {
+      /* try to open all files using their default applications */
+      thunar_launcher_open_files (launcher, &files);
+    }
+}
+
+
+
+static void
+thunar_launcher_poke_file_finish (ThunarBrowser *browser,
+                                  ThunarFile    *file,
+                                  ThunarFile    *target_file,
+                                  GError        *error,
+                                  gpointer       ignored)
+{
+  if (error == NULL)
+    {
+      thunar_launcher_open_file (THUNAR_LAUNCHER (browser), target_file);
+    }
+  else
+    {
+      thunar_dialogs_show_error (THUNAR_LAUNCHER (browser)->widget, error,
+                                 _("Failed to open \"%s\""), 
+                                 thunar_file_get_display_name (file));
+    }
+}
+
+
+
+static void
 thunar_launcher_action_open (GtkAction      *action,
                              ThunarLauncher *launcher)
 {
   GAppInfo  *app_info;
-  GdkScreen *screen;
   gboolean   executable = TRUE;
   GList     *selected_paths;
   GList     *directories = NULL;
@@ -1034,9 +1100,6 @@ thunar_launcher_action_open (GtkAction      *action,
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
-
-  /* determine the screen on which to open the new windows */
-  screen = (launcher->widget != NULL) ? gtk_widget_get_screen (launcher->widget) : NULL;
 
   /* check if we have a mime handler associated with the action */
   app_info = g_object_get_qdata (G_OBJECT (action), thunar_launcher_handler_quark);
@@ -1047,22 +1110,19 @@ thunar_launcher_action_open (GtkAction      *action,
       thunar_launcher_open_paths (app_info, selected_paths, launcher);
       g_file_list_free (selected_paths);
     }
-  else if (g_list_length (launcher->selected_files) == 1 && thunar_file_is_directory (launcher->selected_files->data))
+  else if (g_list_length (launcher->selected_files) == 1)
     {
-      /* check if we're in a regular view (i.e. current_directory is set) */
-      if (G_LIKELY (launcher->current_directory != NULL))
-        {
-          /* we want to open one directory, so just emit "change-directory" here */
-          thunar_navigator_change_directory (THUNAR_NAVIGATOR (launcher), launcher->selected_files->data);
-        }
-      else
-        {
-          /* open the selected directories in new windows */
-          thunar_launcher_open_windows (launcher, launcher->selected_files);
-        }
+      thunar_browser_poke_file (THUNAR_BROWSER (launcher), 
+                                launcher->selected_files->data, launcher->widget,
+                                thunar_launcher_poke_file_finish, NULL);
     }
   else
     {
+      /* TODO: Multiple files need to be poked first, then resolved into
+       * directories and files and then the functions below can be called.
+       * However, if one file or directory cannot be poked, we need to 
+       * abort. */
+
       /* separate files and directories in the selected files list */
       for (lp = launcher->selected_files; lp != NULL; lp = lp->next)
         {

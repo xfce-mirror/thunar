@@ -1,5 +1,11 @@
 2009-06-19	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-launcher.c: Derive from ThunarBrowser and use the poke
+	  file function to resolve/mount/open the selected file, if there is
+	  only one selected. Still need to work on selections of more files.
+
+2009-06-19	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-path-entry.c: Unescape URIs before displaying them.
 	  This is to make sure we don't see things like "%20" in the location
 	  bar/dialog.
