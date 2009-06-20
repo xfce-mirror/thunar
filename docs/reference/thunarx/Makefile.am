@@ -52,7 +52,7 @@ INCLUDES =	 							\
 	$(GTK_CFLAGS)
 
 GTKDOC_LIBS =  								\
-	$(top_builddir)/thunarx/libthunarx-$(THUNAR_VERSION_API).la
+	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la
 
 include $(top_srcdir)/gtk-doc.make
 
