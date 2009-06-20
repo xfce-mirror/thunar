@@ -23,8 +23,6 @@
 
 #include <glib.h>
 
-#include <thunar-vfs/thunar-vfs.h>
-
 #include <thunarx/thunarx.h>
 
 #include <thunar/thunar-enum-types.h>

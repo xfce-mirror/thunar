@@ -33,8 +33,6 @@
 #include <gio/gdesktopappinfo.h>
 #endif
 
-#include <thunar-vfs/thunar-vfs.h>
-
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-dbus-client.h>
 #include <thunar/thunar-dbus-service.h>
@@ -231,9 +229,6 @@ main (int argc, char **argv)
     }
 #endif
 
-  /* initialize the ThunarVFS library */
-  thunar_vfs_init ();
-
   /* initialize the thunar stock items/icons */
   thunar_stock_init ();
 
@@ -261,7 +256,6 @@ main (int argc, char **argv)
 error0:
       g_fprintf (stderr, "Thunar: %s\n", error->message);
       g_object_unref (G_OBJECT (application));
-      thunar_vfs_shutdown ();
       g_error_free (error);
       return EXIT_FAILURE;
     }
@@ -304,9 +298,6 @@ error0:
 
   /* release the application reference */
   g_object_unref (G_OBJECT (application));
-
-  /* shutdown the VFS library */
-  thunar_vfs_shutdown ();
 
   return EXIT_SUCCESS;
 }

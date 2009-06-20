@@ -19,11 +19,7 @@ thunar_sendto_email_CFLAGS =						\
 	$(EXO_CFLAGS)							\
 	$(PLATFORM_CFLAGS)
 
-thunar_sendto_email_DEPENDENCIES =					\
-	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la
-
 thunar_sendto_email_LDADD =						\
-	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la \
 	$(EXO_LIBS)							\
 	$(PLATFORM_LDFLAGS)
 

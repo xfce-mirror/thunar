@@ -1,3 +1,18 @@
+2009-06-20	Jannis Pohlmann <jannis@xfce.org>
+
+	* Makefile.am, configure.in.in, plugins/, thunarx/, thunar/: 
+	  thunarx-1 is dead, long live thunarx-2. thunarx-2 introduces three
+	  new functions: thunarx_file_info_get_file_info() which returns the
+	  GFileInfo of a ThunarxFileInfo,
+	  thunarx_file_info_get_filesystem_info() which returns a GFileInfo
+	  with filesystem information for a ThunarxFileInfo and
+	  thunarx_file_info_get_location() which returns the GFile the
+	  ThunarxFileInfo refers to. thunarx-2 doesn't have
+	  thunarx_file_info_get_vfs_info() anymore. Port all plugins shipped
+	  with Thunar from thunarx-1 to thunarx-2. Especially thunar-uca and
+	  thunar-sendto-email need testing due to non-trivial changes. Don't
+	  link Thunar against ThunarVFS anymore - ALL REFERENCES ARE GONE!
+
 2009-06-19	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/thunar-file.c: Nothing really.

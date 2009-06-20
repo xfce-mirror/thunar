@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -53,9 +54,23 @@
 #include <unistd.h>
 #endif
 
+#include <glib.h>
 #include <glib/gstdio.h>
+#include <gio/gio.h>
 
-#include <thunar-vfs/thunar-vfs.h>
+#include <gtk/gtk.h>
+
+#include <exo/exo.h>
+
+
+
+typedef struct _TseData TseData;
+
+struct _TseData
+{
+  GFileInfo *info;
+  GFile     *file;
+};
 
 
 
@@ -129,28 +144,33 @@ tse_error (GError      *error,
 static gint
 tse_ask_compress (GList *infos)
 {
-  ThunarVfsFileSize total_size = 0;
-  ThunarVfsInfo    *info;
-  GtkWidget        *message;
-  GList            *lp;
-  gint              response = TSE_RESPONSE_PLAIN;
-  gint              n_archives = 0;
-  gint              n_infos = 0;
-  guint             n;
+  const gchar *content_type;
+  TseData     *tse_data;
+  GtkWidget   *message;
+  guint64      total_size = 0;
+  GList       *lp;
+  gint         response = TSE_RESPONSE_PLAIN;
+  gint         n_archives = 0;
+  gint         n_infos = 0;
+  guint        n;
 
   /* check the file infos */
   for (lp = infos; lp != NULL; lp = lp->next, ++n_infos)
     {
       /* need to compress if we have any directories */
-      info = (ThunarVfsInfo *) lp->data;
-      if (info->type == THUNAR_VFS_FILE_TYPE_DIRECTORY)
+      tse_data = (TseData *) lp->data;
+
+      if (g_file_info_get_file_type (tse_data->info) == G_FILE_TYPE_DIRECTORY)
         return TSE_RESPONSE_COMPRESS;
 
       /* check if the single file is already an archive */
       for (n = 0; n < G_N_ELEMENTS (TSE_MIME_TYPES); ++n)
         {
+          /* determine the content type */
+          content_type = g_file_info_get_content_type (tse_data->info);
+
           /* check if this mime type matches */
-          if (strcmp (thunar_vfs_mime_info_get_name (info->mime_info), TSE_MIME_TYPES[n]) == 0)
+          if (content_type != NULL && g_content_type_is_a (content_type, TSE_MIME_TYPES[n]))
             {
               /* yep, that's a match then */
               ++n_archives;
@@ -159,7 +179,7 @@ tse_ask_compress (GList *infos)
         }
 
       /* add file size to total */
-      total_size += info->size;
+      total_size += g_file_info_get_size (tse_data->info);
     }
 
   /* check if the total size is larger than 200KiB, or we have more than
@@ -171,9 +191,10 @@ tse_ask_compress (GList *infos)
       if (G_LIKELY (n_infos == 1))
         {
           /* ask the user whether to compress the file */
-          info = (ThunarVfsInfo *) infos->data;
+          tse_data = (TseData *) infos->data;
           message = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
-                                            _("Send \"%s\" as compressed archive?"), info->display_name);
+                                            _("Send \"%s\" as compressed archive?"), 
+                                            g_file_info_get_display_name (tse_data->info));
           gtk_dialog_add_button (GTK_DIALOG (message), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
           gtk_dialog_add_button (GTK_DIALOG (message), _("Send _directly"), TSE_RESPONSE_PLAIN);
           gtk_dialog_add_button (GTK_DIALOG (message), _("Send com_pressed"), TSE_RESPONSE_COMPRESS);
@@ -363,11 +384,13 @@ static gboolean
 tse_compress (GList  *infos,
               gchar **zipfile_return)
 {
-  ThunarVfsPath *parent;
-  ThunarVfsInfo *info;
+  TseData       *tse_data;
   gboolean       succeed = TRUE;
   GError        *error = NULL;
+  GFile         *parent;
+  GFile         *parent_parent;
   gchar        **argv;
+  gchar         *basename;
   gchar         *zipfile;
   gchar         *tmppath;
   gchar         *tmpdir;
@@ -391,8 +414,8 @@ tse_compress (GList  *infos,
   if (G_LIKELY (infos != NULL && infos->next == NULL))
     {
       /* determine the name for the ZIP file */
-      info = (ThunarVfsInfo *) infos->data;
-      path = g_strdup (info->display_name);
+      tse_data = (TseData *) infos->data;
+      path = g_strdup (g_file_info_get_display_name (tse_data->info));
       dot = strrchr (path, '.');
       if (G_LIKELY (dot != NULL))
         *dot = '\0';
@@ -402,18 +425,31 @@ tse_compress (GList  *infos,
   else
     {
       /* determine the name for the ZIP file */
-      info = (ThunarVfsInfo *) infos->data;
-      parent = thunar_vfs_path_get_parent (info->path);
-      if (!thunar_vfs_path_is_root (parent))
+      tse_data = (TseData *) infos->data;
+      parent = g_file_get_parent (tse_data->file);
+
+      /* we assume the parent exists because we only allow non-root 
+       * files as TseData in main () */
+      g_assert (parent != NULL);
+
+      parent_parent = g_file_get_parent (parent);
+
+      if (parent_parent != NULL)
         {
           /* use the parent directory's name */
-          zipfile = g_strconcat (tmpdir, G_DIR_SEPARATOR_S, thunar_vfs_path_get_name (parent), ".zip", NULL);
+          basename = g_file_get_basename (parent);
+          zipfile = g_strconcat (tmpdir, G_DIR_SEPARATOR_S, basename, ".zip", NULL);
+          g_free (basename);
+
+          g_object_unref (parent_parent);
         }
       else
         {
           /* use the first file's name */
-          zipfile = g_strconcat (tmpdir, G_DIR_SEPARATOR_S, info->display_name, ".zip", NULL);
+          zipfile = g_strconcat (tmpdir, G_DIR_SEPARATOR_S, g_file_info_get_display_name (tse_data->info), ".zip", NULL);
         }
+
+      g_object_unref (parent);
     }
 
   /* generate the argument list for the ZIP command */
@@ -425,24 +461,34 @@ tse_compress (GList  *infos,
   for (lp = infos, n = 4; lp != NULL && succeed; lp = lp->next, ++n)
     {
       /* create a symlink for the file to the tmp dir */
-      info = (ThunarVfsInfo *) lp->data;
-      path = thunar_vfs_path_dup_string (info->path);
-      tmppath = g_build_filename (tmpdir, thunar_vfs_path_get_name (info->path), NULL);
-      succeed = (symlink (path, tmppath) == 0);
-      if (G_UNLIKELY (!succeed))
+      tse_data = (TseData *) lp->data;
+      path = g_file_get_path (tse_data->file);
+
+      if (path == NULL)
         {
-          /* tell the user that we failed to create a symlink for this file */
-          error = g_error_new_literal (G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
-          tse_error (error, _("Failed to create symbolic link for \"%s\""), info->display_name);
+          error = g_error_new_literal (G_FILE_ERROR, g_file_error_from_errno (ENOTSUP), g_strerror (errno));
+          tse_error (error, _("Failed to create symbolic link for \"%s\""), g_file_info_get_display_name (tse_data->info));
           g_error_free (error);
         }
       else
         {
-          /* add the file to the ZIP command line */
-          argv[n] = g_path_get_basename (tmppath);
+          tmppath = g_build_filename (tmpdir, g_file_get_basename (tse_data->file), NULL);
+          succeed = (symlink (path, tmppath) == 0);
+          if (G_UNLIKELY (!succeed))
+            {
+              /* tell the user that we failed to create a symlink for this file */
+              error = g_error_new_literal (G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
+              tse_error (error, _("Failed to create symbolic link for \"%s\""), g_file_info_get_display_name (tse_data->info));
+              g_error_free (error);
+            }
+          else
+            {
+              /* add the file to the ZIP command line */
+              argv[n] = g_path_get_basename (tmppath);
+            }
+          g_free (tmppath);
+          g_free (path);
         }
-      g_free (tmppath);
-      g_free (path);
     }
 
   /* check if we succeed up to this point */
@@ -489,8 +535,10 @@ tse_compress (GList  *infos,
 int
 main (int argc, char **argv)
 {
-  ThunarVfsInfo *info;
-  ThunarVfsPath *path;
+  GFileInfo     *info;
+  TseData       *tse_data;
+  GFile         *file;
+  GFile         *parent;
   GString       *mailto;
   GError        *error = NULL;
   GList         *infos = NULL;
@@ -513,9 +561,6 @@ main (int argc, char **argv)
   /* initialize Gtk+ */
   gtk_init (&argc, &argv);
 
-  /* initialize the ThunarVFS library */
-  thunar_vfs_init ();
-
   /* set default icon for dialogs */
   gtk_window_set_default_icon_name ("internet-mail");
 
@@ -526,38 +571,49 @@ main (int argc, char **argv)
       return EXIT_FAILURE;
     }
 
-  /* determine the ThunarVfsInfos for the files */
+  /* determine the GFiles and GFileInfos (bundled as TseData) for the files */
   for (n = 1; n < argc; ++n)
     {
-      /* try to transform to a ThunarVfsPath */
-      path = thunar_vfs_path_new (argv[n], &error);
-      if (G_UNLIKELY (path == NULL))
-        {
-invalid_argument:
-          g_fprintf (stderr, "thunar-sendto-email: Invalid argument \"%s\": %s\n", argv[n], error->message);
-          thunar_vfs_info_list_free (infos);
-          g_error_free (error);
-          return EXIT_FAILURE;
-        }
+      /* try to transform to a GFile */
+      file = g_file_new_for_commandline_arg (argv[n]);
 
       /* verify that we're not trying to send root */
-      if (thunar_vfs_path_is_root (path))
+      parent = g_file_get_parent (file);
+      if (parent == NULL)
         {
           error = g_error_new_literal (G_FILE_ERROR, g_file_error_from_errno (EFBIG), g_strerror (EFBIG));
-          thunar_vfs_path_unref (path);
-          goto invalid_argument;
+          g_fprintf (stderr, "thunar-sendto-email: Invalid argument \"%s\": %s\n", argv[n], error->message);
+          g_error_free (error);
+          g_object_unref (file);
+          return EXIT_FAILURE;
+        }
+      else
+        {
+          g_object_unref (parent);
         }
 
       /* try to determine the info */
-      info = thunar_vfs_info_new_for_path (path, &error);
-      thunar_vfs_path_unref (path);
+      info = g_file_query_info (file, 
+                                G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME ","
+                                G_FILE_ATTRIBUTE_STANDARD_SIZE ","
+                                G_FILE_ATTRIBUTE_STANDARD_TYPE, 
+                                G_FILE_QUERY_INFO_NONE, NULL, &error);
 
       /* check if we failed */
       if (G_UNLIKELY (info == NULL))
-        goto invalid_argument;
+        {
+          g_fprintf (stderr, "thunar-sendto-email: Invalid argument \"%s\": %s\n", argv[n], error->message);
+          g_error_free (error);
+          g_object_unref (file);
+          return EXIT_FAILURE;
+        }
+
+      tse_data = g_slice_new0 (TseData);
+      tse_data->info = info;
+      tse_data->file = file;
 
       /* add to our list of infos */
-      infos = g_list_append (infos, info);
+      infos = g_list_append (infos, tse_data);
     }
 
   /* check whether to compress the files */
@@ -579,8 +635,8 @@ invalid_argument:
       attachments = g_new0 (gchar *, g_list_length (infos) + 1);
       for (lp = infos, n = 0; lp != NULL; lp = lp->next, ++n)
         {
-          info = (ThunarVfsInfo *) lp->data;
-          attachments[n] = thunar_vfs_path_dup_uri (info->path);
+          tse_data = (TseData *) lp->data;
+          attachments[n] = g_file_get_uri (tse_data->file);
         }
     }
 
@@ -606,10 +662,14 @@ invalid_argument:
     }
 
   /* cleanup */
-  thunar_vfs_info_list_free (infos);
-
-  /* shutdown the ThunarVFS library */
-  thunar_vfs_shutdown ();
+  for (lp = infos; lp != NULL; lp = lp->next)
+    {
+      tse_data = (TseData *) lp->data;
+      g_object_unref (tse_data->file);
+      g_object_unref (tse_data->info);
+      g_slice_free (TseData, tse_data);
+    }
+  g_list_free (infos);
 
   return EXIT_SUCCESS;
 }

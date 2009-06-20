@@ -35,11 +35,13 @@
 #include <locale.h>
 #endif
 
+#include <glib.h>
+#include <glib/gstdio.h>
+
 #include <thunar/thunar-file.h>
 #include <thunar/thunar-shortcuts-model.h>
 #include <thunar/thunar-private.h>
 
-#include <glib.h>
 
 
 #define THUNAR_SHORTCUT(obj) ((ThunarShortcut *) (obj))
@@ -1091,7 +1093,7 @@ thunar_shortcuts_model_save (ThunarShortcutsModel *model)
     {
       g_warning ("Failed to write `%s': %s",
                  bookmarks_path, g_strerror (errno));
-      unlink (tmp_path);
+      g_unlink (tmp_path);
     }
 
   /* cleanup */

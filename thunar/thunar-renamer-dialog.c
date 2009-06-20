@@ -627,7 +627,7 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
       gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
       gtk_widget_show (image);
 
-      /* TRANSLATORS: You can test this string by temporarily removing thunar-sbr.* from $libdir/thunarx-1/,
+      /* TRANSLATORS: You can test this string by temporarily removing thunar-sbr.* from $libdir/thunarx-2/,
        *              and opening the multi rename dialog by selecting multiple files and pressing F2.
        */
       label = gtk_label_new (_("No renamer modules were found on your system. Please check your\n"

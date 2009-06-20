@@ -4,7 +4,7 @@ INCLUDES =								\
 	-I$(top_srcdir)							\
 	-DG_LOG_DOMAIN=\"thunarx\"					\
 	-DTHUNARX_COMPILATION						\
-	-DTHUNARX_DIRECTORY=\"$(libdir)/thunarx-$(THUNAR_VERSION_API)\"	\
+	-DTHUNARX_DIRECTORY=\"$(libdir)/thunarx-$(THUNARX_VERSION_API)\"	\
 	$(PLATFORM_CPPFLAGS)
 
 libthunarx_built_sources =						\
@@ -25,15 +25,15 @@ libthunarx_headers =							\
 	thunarx-renamer-provider.h
 
 libthunarx_includedir =							\
-	$(includedir)/thunarx-$(THUNAR_VERSION_API)/thunarx
+	$(includedir)/thunarx-$(THUNARX_VERSION_API)/thunarx
 
 libthunarx_include_HEADERS =						\
 	$(libthunarx_headers)
 
 lib_LTLIBRARIES =							\
-	libthunarx-1.la
+	libthunarx-2.la
 
-libthunarx_1_la_SOURCES =						\
+libthunarx_2_la_SOURCES =						\
 	$(libthunarx_built_sources)					\
 	$(libthunarx_headers)						\
 	thunarx-config.c						\
@@ -51,25 +51,25 @@ libthunarx_1_la_SOURCES =						\
 	thunarx-renamer.c						\
 	thunarx-renamer-provider.c
 
-libthunarx_1_la_CFLAGS =						\
+libthunarx_2_la_CFLAGS =						\
 	$(GLIB_CFLAGS)							\
 	$(GIO_CFLAGS)							\
 	$(GTK_CFLAGS)							\
 	$(PLATFORM_CFLAGS)
 
-libthunarx_1_la_LDFLAGS =						\
+libthunarx_2_la_LDFLAGS =						\
 	-export-dynamic							\
 	-export-symbols-regex "^[^_].*"					\
-	-version-info $(THUNAR_VERINFO)					\
+	-version-info $(THUNARX_VERINFO)				\
 	$(PLATFORM_LDFLAGS)
 
-libthunarx_1_la_LIBADD =						\
+libthunarx_2_la_LIBADD =						\
 	$(GLIB_LIBS)							\
 	$(GIO_LIBS)							\
 	$(GTK_LIBS)
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = thunarx-1.pc
+pkgconfig_DATA = thunarx-2.pc
 
 EXTRA_DIST =								\
 	abicheck.sh							\

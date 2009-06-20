@@ -234,8 +234,7 @@ Thunar_LDFLAGS =							\
 
 Thunar_LDADD =								\
 	$(top_builddir)/tdb/libtdb.la					\
-	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la \
-	$(top_builddir)/thunarx/libthunarx-$(THUNAR_VERSION_API).la	\
+	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la	\
 	$(EXO_LIBS)							\
 	$(GTHREAD_LIBS)							\
 	$(GIO_LIBS)							\
@@ -244,8 +243,7 @@ Thunar_LDADD =								\
 
 Thunar_DEPENDENCIES =							\
 	$(top_builddir)/tdb/libtdb.la					\
-	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la \
-	$(top_builddir)/thunarx/libthunarx-$(THUNAR_VERSION_API).la
+	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la
 
 if HAVE_DBUS
 thunar_built_sources +=							\

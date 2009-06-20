@@ -51,7 +51,7 @@
 
 #include <gio/gio.h>
 
-#include <thunar-vfs/thunar-vfs.h>
+#include <thunarx/thunarx.h>
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-chooser-dialog.h>
@@ -63,21 +63,6 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-user.h>
 #include <thunar/thunar-util.h>
-
-
-
-/* File attribute namespaces being used */
-#define THUNAR_FILE_G_FILE_INFO_NAMESPACE \
-  "access::*," \
-  "mountable::*," \
-  "preview::*," \
-  "standard::*," \
-  "time::*," \
-  "thumbnail::*," \
-  "unix::*"
-
-#define THUNAR_FILE_G_FILE_INFO_FILESYSTEM_NAMESPACE \
-  "filesystem::*"
 
 
 
@@ -117,7 +102,9 @@ static gchar             *thunar_file_info_get_mime_type       (ThunarxFileInfo 
 static gboolean           thunar_file_info_has_mime_type       (ThunarxFileInfo        *file_info,
                                                                 const gchar            *mime_type);
 static gboolean           thunar_file_info_is_directory        (ThunarxFileInfo        *file_info);
-static ThunarVfsInfo     *thunar_file_info_get_vfs_info        (ThunarxFileInfo        *file_info);
+static GFileInfo         *thunar_file_info_get_file_info       (ThunarxFileInfo        *file_info);
+static GFileInfo         *thunar_file_info_get_filesystem_info (ThunarxFileInfo        *file_info);
+static GFile             *thunar_file_info_get_location        (ThunarxFileInfo        *file_info);
 static void               thunar_file_info_changed             (ThunarxFileInfo        *file_info);
 static gboolean           thunar_file_denies_access_permission (const ThunarFile       *file,
                                                                 ThunarFileMode          usr_permissions,
@@ -284,7 +271,9 @@ thunar_file_info_init (ThunarxFileInfoIface *iface)
   iface->get_mime_type = thunar_file_info_get_mime_type;
   iface->has_mime_type = thunar_file_info_has_mime_type;
   iface->is_directory = thunar_file_info_is_directory;
-  iface->get_vfs_info = thunar_file_info_get_vfs_info;
+  iface->get_file_info = thunar_file_info_get_file_info;
+  iface->get_filesystem_info = thunar_file_info_get_filesystem_info;
+  iface->get_location = thunar_file_info_get_location;
   iface->changed = thunar_file_info_changed;
 }
 
@@ -435,27 +424,37 @@ thunar_file_info_is_directory (ThunarxFileInfo *file_info)
 
 
 
-static ThunarVfsInfo *
-thunar_file_info_get_vfs_info (ThunarxFileInfo *file_info)
+static GFileInfo *
+thunar_file_info_get_file_info (ThunarxFileInfo *file_info)
 {
-  ThunarVfsInfo *info = NULL;
-  ThunarVfsPath *path;
-  gchar         *uri;
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file_info), NULL);
+  
+  if (THUNAR_FILE (file_info)->info != NULL)
+    return g_object_ref (THUNAR_FILE (file_info)->info);
+  else
+    return NULL;
+}
 
+
+
+static GFileInfo *
+thunar_file_info_get_filesystem_info (ThunarxFileInfo *file_info)
+{
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file_info), NULL);
 
-  uri = g_file_get_uri (THUNAR_FILE (file_info)->gfile);
-  path = thunar_vfs_path_new (uri, NULL);
+  if (THUNAR_FILE (file_info)->filesystem_info != NULL)
+    return g_object_ref (THUNAR_FILE (file_info)->filesystem_info);
+  else
+    return NULL;
+}
 
-  if (path != NULL)
-    {
-      info = thunar_vfs_info_new_for_path (path, NULL);
-      thunar_vfs_path_unref (path);
-    }
 
-  g_free (uri);
 
-  return info;
+static GFile *
+thunar_file_info_get_location (ThunarxFileInfo *file_info)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file_info), NULL);
+  return g_object_ref (THUNAR_FILE (file_info)->gfile);
 }
 
 
@@ -790,7 +789,7 @@ thunar_file_load (ThunarFile   *file,
 
   /* query a new file info */
   file->info = g_file_query_info (file->gfile,
-                                  THUNAR_FILE_G_FILE_INFO_NAMESPACE,
+                                  THUNARX_FILE_INFO_NAMESPACE,
                                   G_FILE_QUERY_INFO_NONE,
                                   cancellable, &err);
 
@@ -814,7 +813,7 @@ thunar_file_load (ThunarFile   *file,
 
   /* query a new filesystem info */
   file->filesystem_info = g_file_query_filesystem_info (file->gfile,
-                                                        THUNAR_FILE_G_FILE_INFO_FILESYSTEM_NAMESPACE,
+                                                        THUNARX_FILESYSTEM_INFO_NAMESPACE,
                                                         cancellable,
                                                         NULL);
 

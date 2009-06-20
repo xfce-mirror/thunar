@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2008 Stephan Arts <stephan@xfce.org>
  * Copyright (c) 2008-2009 Mike Massonnet <mmassonnet@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,9 +23,12 @@
 #include <config.h>
 #endif
 
-#include <thunar-vfs/thunar-vfs.h>
+#include <gio/gio.h>
+
 #include <gdk/gdkx.h>
 #include <X11/Xlib.h>
+
+#include <glib/gi18n.h>
 
 #include "twp-provider.h"
 
@@ -116,14 +120,12 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
                                GtkWidget           *window,
                                GList               *files)
 {
-    Atom xfce_selection_atom;
-    Atom nautilus_selection_atom;
-
-	ThunarVfsPathScheme scheme;
-	ThunarVfsInfo      *info;
-	GtkWidget          *action = NULL;
-	GList              *actions = NULL;
-    gchar               selection_name[100];
+	GtkWidget *action = NULL;
+  GFile     *location;
+	GList     *actions = NULL;
+  gchar      selection_name[100];
+  Atom       xfce_selection_atom;
+  Atom       nautilus_selection_atom;
 
     GdkScreen *gdk_screen = gdk_screen_get_default();
     gint xscreen = gdk_screen_get_number(gdk_screen);
@@ -133,14 +135,18 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
     /* we can only set a single wallpaper */
     if (files->next == NULL)
     {
-        /* check if the file is a local file */
-        info = thunarx_file_info_get_vfs_info (files->data);
-        scheme = thunar_vfs_path_get_scheme (info->path);
-        thunar_vfs_info_unref (info);
+        /* get the location of the file */
+        location = thunarx_file_info_get_location (files->data);
 
         /* unable to handle non-local files */
-        if (G_UNLIKELY (scheme != THUNAR_VFS_PATH_SCHEME_FILE))
+        if (G_UNLIKELY (!g_file_has_uri_scheme (location, "file")))
+          {
+            g_object_unref (location);
             return NULL;
+          }
+
+        /* release the location */
+        g_object_unref (location);
 
         if (!thunarx_file_info_is_directory (files->data))
         {

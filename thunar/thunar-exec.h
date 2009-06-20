@@ -19,8 +19,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef __THUNAR_VFS_EXEC_H__
-#define __THUNAR_VFS_EXEC_H__
+#ifndef __THUNAR_EXEC_H__
+#define __THUNAR_EXEC_H__
 
 #include <gdk/gdk.h>
 
@@ -51,4 +51,4 @@ gboolean thunar_exec_sync      (const gchar  *command_line,
 
 G_END_DECLS;
 
-#endif /* !__THUNAR_VFS_EXEC_H__ */
+#endif /* !__THUNAR_EXEC_H__ */

@@ -2,6 +2,7 @@
 /*-
  * Copyright (c) 2007 Nick Schermer <nick@xfce.org>
  * Copyright (c) 2007 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,7 +37,6 @@
 #include <exo/exo.h>
 
 #include <thunar-sbr/thunar-sbr-date-renamer.h>
-#include <thunar-vfs/thunar-vfs.h>
 
 #ifdef HAVE_EXIF
 #include <libexif/exif-data.h>
@@ -56,28 +56,28 @@ enum
 
 
 
-static void               thunar_sbr_date_renamer_class_init    (ThunarSbrDateRenamerClass  *klass);
-static void               thunar_sbr_date_renamer_init          (ThunarSbrDateRenamer       *date_renamer);
-static void               thunar_sbr_date_renamer_finalize      (GObject                    *object);
-static void               thunar_sbr_date_renamer_get_property  (GObject                    *object,
-                                                                 guint                       prop_id,
-                                                                 GValue                     *value,
-                                                                 GParamSpec                 *pspec);
-static void               thunar_sbr_date_renamer_set_property  (GObject                    *object,
-                                                                 guint                       prop_id,
-                                                                 const GValue               *value,
-                                                                 GParamSpec                 *pspec);
-static gchar             *thunar_sbr_get_time_string            (ThunarVfsFileTime           file_time,
-                                                                 const gchar                *custom_format);
+static void    thunar_sbr_date_renamer_class_init   (ThunarSbrDateRenamerClass *klass);
+static void    thunar_sbr_date_renamer_init         (ThunarSbrDateRenamer      *date_renamer);
+static void    thunar_sbr_date_renamer_finalize     (GObject                   *object);
+static void    thunar_sbr_date_renamer_get_property (GObject                   *object,
+                                                     guint                      prop_id,
+                                                     GValue                    *value,
+                                                     GParamSpec                *pspec);
+static void    thunar_sbr_date_renamer_set_property (GObject                   *object,
+                                                     guint                      prop_id,
+                                                     const GValue              *value,
+                                                     GParamSpec                *pspec);
+static gchar  *thunar_sbr_get_time_string           (guint64                    file_time,
+                                                     const gchar               *custom_format);
 #ifdef HAVE_EXIF
-static ThunarVfsFileTime  thunar_sbr_get_time_from_string       (const gchar                *string);
+static guint64 thunar_sbr_get_time_from_string      (const gchar               *string);
 #endif
-static ThunarVfsFileTime  thunar_sbr_get_time                   (ThunarxFileInfo            *file,
-                                                                 ThunarSbrDateMode           mode);
-static gchar             *thunar_sbr_date_renamer_process       (ThunarxRenamer             *renamer,
-                                                                 ThunarxFileInfo            *file,
-                                                                 const gchar                *text,
-                                                                 guint                       index);
+static guint64 thunar_sbr_get_time                  (ThunarxFileInfo           *file,
+                                                     ThunarSbrDateMode          mode);
+static gchar  *thunar_sbr_date_renamer_process      (ThunarxRenamer            *renamer,
+                                                     ThunarxFileInfo           *file,
+                                                     const gchar               *text,
+                                                     guint                      index);
 
 
 
@@ -362,16 +362,19 @@ thunar_sbr_date_renamer_set_property (GObject      *object,
 
 
 static gchar *
-thunar_sbr_get_time_string (ThunarVfsFileTime  file_time,
-                            const gchar       *format)
+thunar_sbr_get_time_string (guint64      file_time,
+                            const gchar *format)
 {
   struct tm *tm;
+  time_t     time;
   gchar     *converted;
   gchar      buffer[1024];
   gint       length;
 
+  time = (time_t) file_time;
+
   /* determine the local file time */
-  tm = localtime (&file_time);
+  tm = localtime (&time);
 
   /* conver the format to the current locale */
   converted = g_locale_from_utf8 (format, -1, NULL, NULL, NULL);
@@ -393,7 +396,7 @@ thunar_sbr_get_time_string (ThunarVfsFileTime  file_time,
 
 
 #ifdef HAVE_EXIF
-static ThunarVfsFileTime
+static guint64
 thunar_sbr_get_time_from_string (const gchar *string)
 {
   struct tm tm;
@@ -435,18 +438,18 @@ thunar_sbr_get_time_from_string (const gchar *string)
 
 
 
-static ThunarVfsFileTime
+static guint64
 thunar_sbr_get_time (ThunarxFileInfo   *file,
                      ThunarSbrDateMode  mode)
 {
 
-  ThunarVfsInfo     *vfs_info;
-  ThunarVfsFileTime  file_time = 0;
+  GFileInfo *file_info;
+  guint64    file_time = 0;
 #ifdef HAVE_EXIF
-  gchar             *uri, *filename;
-  ExifEntry         *exif_entry;
-  ExifData          *exif_data;
-  gchar              exif_buffer[128];
+  gchar     *uri, *filename;
+  ExifEntry *exif_entry;
+  ExifData  *exif_data;
+  gchar     exif_buffer[128];
 #endif
 
   switch (mode)
@@ -458,17 +461,23 @@ thunar_sbr_get_time (ThunarxFileInfo   *file,
 
     case THUNAR_SBR_DATE_MODE_ATIME:
     case THUNAR_SBR_DATE_MODE_MTIME:
-      /* get the vfs info */
-      vfs_info = thunarx_file_info_get_vfs_info (file);
+      /* get the file info */
+      file_info = thunarx_file_info_get_file_info (file);
 
       /* get the time from the info */
       if (mode == THUNAR_SBR_DATE_MODE_ATIME)
-        file_time = vfs_info->atime;
+        {
+          file_time = g_file_info_get_attribute_uint64 (file_info, 
+                                                        G_FILE_ATTRIBUTE_TIME_ACCESS);
+        }
       else
-        file_time = vfs_info->mtime;
+        {
+          file_time = g_file_info_get_attribute_uint64 (file_info,
+                                                        G_FILE_ATTRIBUTE_TIME_MODIFIED);
+        }
 
-      /* release the vfs info */
-      thunar_vfs_info_unref (vfs_info);
+      /* release the file info */
+      g_object_unref (file_info);
       break;
 
 #ifdef HAVE_EXIF
@@ -530,7 +539,7 @@ thunar_sbr_date_renamer_process (ThunarxRenamer  *renamer,
 {
   ThunarSbrDateRenamer *date_renamer = THUNAR_SBR_DATE_RENAMER (renamer);
   gchar                *string;
-  ThunarVfsFileTime     file_time;
+  guint64               file_time;
   const gchar          *s;
   GString              *result;
   guint                 text_length;
