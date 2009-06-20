@@ -113,49 +113,15 @@ AC_SYS_LARGEFILE()
 dnl **********************************
 dnl *** Check for standard headers ***
 dnl **********************************
-AC_CHECK_HEADERS([ctype.h dirent.h errno.h fcntl.h fnmatch.h fstab.h grp.h \
-                  limits.h locale.h math.h memory.h mntent.h paths.h pwd.h \
-                  regex.h sched.h setjmp.h signal.h stdarg.h stdlib.h \
-                  string.h syslog.h sys/xattr.h sys/extattr.h sys/cdio.h \
-                  sys/mman.h sys/mount.h sys/param.h sys/resource.h sys/stat.h \
-                  sys/statfs.h sys/statvfs.h sys/time.h sys/ucred.h sys/uio.h \
-                  sys/vfs.h sys/wait.h time.h wchar.h wctype.h])
+AC_CHECK_HEADERS([errno.h fcntl.h grp.h limits.h locale.h memory.h paths.h \
+                  pwd.h signal.h stdarg.h stdlib.h string.h sys/stat.h time.h])
 
 dnl ************************************
 dnl *** Check for standard functions ***
 dnl ************************************
 AC_FUNC_MMAP()
-AC_CHECK_FUNCS([attropen extattr_get_fd fgetxattr futimes getdents getfsspec \
-                getfsstat lchmod localeconv localtime_r mbrtowc mkdtemp mkfifo \
-                posix_madvise pread pwrite readdir_r sched_yield setgroupent \
-                setmntent setpassent setpriority statfs statvfs statvfs1 \
-                strcoll strlcpy strptime symlink syslog posix_fadvise])
-
-dnl ******************************************
-dnl *** Linux/glibc specified work-arounds ***
-dnl ******************************************
-AC_MSG_CHECKING([whether we need _BSD_SOURCE and _XOPEN_SOURCE])
-AC_TRY_LINK([#include <features.h>],
-[
-  if (__GLIBC_PREREQ (2, 0));
-],
-[
-  AC_DEFINE([_XOPEN_SOURCE], [600], [Required to unbreak glibc])
-  AC_DEFINE([_BSD_SOURCE], [1], [Required to unbreak glibc])
-  AC_MSG_RESULT([yes])
-],
-[
-  AC_MSG_RESULT([no])
-])
-
-dnl **************************************************************
-dnl *** Check for f_mntonname in statfs (trash implementation) ***
-dnl **************************************************************
-AC_CHECK_MEMBERS([struct statfs.f_mntonname],,,
-[
-#include <sys/param.h>
-#include <sys/mount.h>
-])
+AC_CHECK_FUNCS([localeconv mkdtemp setgroupent setpassent strcoll \
+                strlcpy strptime symlink])
 
 dnl ******************************
 dnl *** Check for i18n support ***
@@ -172,15 +138,6 @@ XDT_CHECK_PACKAGE([GTHREAD], [gthread-2.0], [2.16.0])
 XDT_CHECK_PACKAGE([GTK], [gtk+-2.0], [2.14.0])
 XDT_CHECK_PACKAGE([GDK_PIXBUF], [gdk-pixbuf-2.0], [2.14.0])
 XDT_CHECK_PACKAGE([LIBXFCE4UTIL], [libxfce4util-1.0], [4.6.0])
-
-dnl *********************************************
-dnl *** Check for libpng (with various names) ***
-dnl *********************************************
-XDT_CHECK_PACKAGE([LIBPNG], [libpng], [1.2.0], [],
-[
-  dnl # libpng.pc not found, try with libpng12.pc
-  XDT_CHECK_PACKAGE([LIBPNG], [libpng12], [1.2.0])
-])
 
 dnl ********************************************
 dnl *** Check for session management support ***
@@ -201,13 +158,6 @@ dnl **********************************
 XDT_CHECK_OPTIONAL_PACKAGE([DBUS], [dbus-glib-1],
                            [0.34], [dbus], [D-BUS support])
 
-dnl *******************************************************
-dnl *** Optional support for gconf (GNOME thumbnailers) ***
-dnl *******************************************************
-XDT_CHECK_OPTIONAL_PACKAGE([GCONF], [gconf-2.0],
-                           [2.4.0], [gnome-thumbnailers],
-                           [GNOME thumbnailer support])
-
 dnl *************************************************
 dnl *** Optional support for startup notification ***
 dnl *************************************************
@@ -215,42 +165,6 @@ XDT_CHECK_OPTIONAL_PACKAGE([LIBSTARTUP_NOTIFICATION],
                            [libstartup-notification-1.0],
                            [0.4], [startup-notification],
                            [startup notification library])
-
-dnl ******************************
-dnl *** Check for FreeType 2.x ***
-dnl ******************************
-FREETYPE_LIBS=""
-FREETYPE_CFLAGS=""
-AC_PATH_PROG([FREETYPE_CONFIG], [freetype-config], [no])
-if test x"$FREETYPE_CONFIG" != x"no"; then
-  AC_MSG_CHECKING([FREETYPE_CFLAGS])
-  FREETYPE_CFLAGS="`$FREETYPE_CONFIG --cflags`"
-  AC_MSG_RESULT([$FREETYPE_CFLAGS])
-
-  AC_MSG_CHECKING([FREETYPE_LIBS])
-  FREETYPE_LIBS="`$FREETYPE_CONFIG --libs`"
-  AC_MSG_RESULT([$FREETYPE_LIBS])
-fi
-AM_CONDITIONAL([HAVE_FREETYPE], [test x"$FREETYPE_CONFIG" != x"no"])
-AC_SUBST([FREETYPE_CFLAGS])
-AC_SUBST([FREETYPE_LIBS])
-
-dnl *************************
-dnl *** Check for libjpeg ***
-dnl *************************
-LIBJPEG_LIBS=""
-LIBJPEG_CFLAGS=""
-AC_CHECK_LIB([jpeg], [jpeg_start_decompress],
-[
-  AC_CHECK_HEADER([jpeglib.h],
-  [
-    LIBJPEG_LIBS="-ljpeg -lm"
-    AC_DEFINE([HAVE_LIBJPEG], [1], [Define to 1 if libjpeg is found])
-    AC_DEFINE([HAVE_JPEGLIB_H], [1], [Define to 1 if jpeglib.h is found])
-  ])
-], [-lm])
-AC_SUBST([LIBJPEG_CFLAGS])
-AC_SUBST([LIBJPEG_LIBS])
 
 dnl *************************
 dnl *** Check for gtk-doc ***
@@ -280,21 +194,6 @@ if test x"$enable_xml2po" = x"yes"; then
   fi
 fi
 AM_CONDITIONAL([ENABLE_XML2PO], [test x"$enable_xml2po" = x"yes"])
-
-dnl ******************************************
-dnl *** Check for operating system support ***
-dnl ******************************************
-BM_THUNAR_VFS_OS_IMPL()
-
-dnl ****************************************************
-dnl *** Check for file system monitor implementation ***
-dnl ****************************************************
-BM_THUNAR_VFS_MONITOR_IMPL()
-
-dnl ***********************************************
-dnl *** Check for volume manager implementation ***
-dnl ***********************************************
-BM_THUNAR_VFS_VOLUME_IMPL()
 
 dnl ***********************************
 dnl *** Check for debugging support ***
@@ -475,8 +374,6 @@ docs/manual/zh_TW/Thunar.xml
 docs/manual/zh_TW/images/Makefile
 docs/papers/Makefile
 docs/reference/Makefile
-docs/reference/thunar-vfs/Makefile
-docs/reference/thunar-vfs/version.xml
 docs/reference/thunarx/Makefile
 docs/reference/thunarx/version.xml
 examples/Makefile
@@ -501,9 +398,6 @@ tdb/tdbconfig.h
 tests/Makefile
 tests/data/Makefile
 thunar/Makefile
-thunar-vfs/Makefile
-thunar-vfs/thunar-vfs-1.pc
-thunar-vfs/thunar-vfs-config.h
 thunarx/Makefile
 thunarx/thunarx-2.pc
 thunarx/thunarx-config.h
@@ -515,7 +409,6 @@ dnl ***************************
 echo
 echo "Build Configuration:"
 echo
-echo "* Operating system support:  $ac_bm_thunar_vfs_os_impl"
 if test x"$DBUS_FOUND" = x"yes"; then
 echo "* D-BUS support:             yes"
 else
@@ -526,18 +419,11 @@ echo "* GIO UNIX features:         yes"
 else
 echo "* GIO UNIX features:         no"
 fi
-echo "* File System Monitor:       $ac_bm_thunar_vfs_monitor_impl"
-if test x"$GCONF_FOUND" = x"yes"; then
-echo "* GNOME Thumbnailers:        yes"
-else
-echo "* GNOME Thumbnailers:        no"
-fi
 if test x"$LIBSTARTUP_NOTIFICATION_FOUND" = x"yes"; then
 echo "* Startup Notification:      yes"
 else
 echo "* Startup Notification:      no"
 fi
-echo "* Volume Manager:            $ac_bm_thunar_vfs_volume_impl"
 echo "* Debug Support:             $enable_debug"
 echo
 echo "Additional Plugins:"

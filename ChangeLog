@@ -1,5 +1,12 @@
 2009-06-20	Jannis Pohlmann <jannis@xfce.org>
 
+	* Remove thunar-vfs. There might be some pieces left which will be
+	  cleaned up next. Update the list of functions and headers the
+	  configure script checks because a lot of them were only required for
+	  thunar-vfs.
+
+2009-06-20	Jannis Pohlmann <jannis@xfce.org>
+
 	* Makefile.am, configure.in.in, plugins/, thunarx/, thunar/: 
 	  thunarx-1 is dead, long live thunarx-2. thunarx-2 introduces three
 	  new functions: thunarx_file_info_get_file_info() which returns the

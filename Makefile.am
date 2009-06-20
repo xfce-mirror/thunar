@@ -7,7 +7,6 @@ SUBDIRS =								\
 	po-doc								\
 	tdb								\
 	thunarx								\
-	thunar-vfs							\
 	thunar								\
 	tests								\
 	docs								\
