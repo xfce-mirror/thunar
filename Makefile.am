@@ -8,7 +8,6 @@ SUBDIRS =								\
 	tdb								\
 	thunarx								\
 	thunar								\
-	tests								\
 	docs								\
 	examples							\
 	plugins
