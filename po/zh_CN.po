@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-01-11 00:20+0100\n"
-"PO-Revision-Date: 2009-06-15 14:45+0200\n"
+"PO-Revision-Date: 2009-06-29 14:09+0800\n"
 "Last-Translator: Hunt Xu <huntxu@live.cn>\n"
 "Language-Team: Chinese <xfce-i18n@xfce.org>\n"
 "MIME-Version: 1.0\n"
@@ -378,7 +378,7 @@ msgstr "无法确定 %s 的挂载点"
 #: ../thunar-vfs/thunar-vfs-volume-hal.c:875
 #, c-format
 msgid "Failed to connect to the HAL daemon: %s"
-msgstr "无法连接至 HAL 守护进程： %s"
+msgstr "无法连接至 HAL 守护进程: %s"
 
 #: ../thunar/main.c:54
 msgid "Open the bulk rename dialog"
@@ -417,13 +417,13 @@ msgstr "[文件...]"
 #: ../thunar/main.c:109
 #, c-format
 msgid "Thunar: Failed to open display: %s\n"
-msgstr "Thunar： 无法打开显示器：%s\n"
+msgstr "Thunar: 无法打开显示器: %s\n"
 
 #. yep, there's an error, so print it
 #: ../thunar/main.c:114
 #, c-format
 msgid "Thunar: %s\n"
-msgstr "Thunar： %s\n"
+msgstr "Thunar: %s\n"
 
 #: ../thunar/main.c:125
 msgid "The Thunar development team. All rights reserved."
@@ -680,7 +680,7 @@ msgstr "删除启动器(_R)"
 #: ../thunar/thunar-chooser-dialog.c:701
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
-msgstr "打开 <i>%s</i> 和其他 \"%s\" 类型的文件使用："
+msgstr "打开 <i>%s</i> 和其他 \"%s\" 类型的文件使用:"
 
 #: ../thunar/thunar-chooser-dialog.c:709
 #, c-format
@@ -855,7 +855,7 @@ msgstr "新建(_R)"
 
 #: ../thunar/thunar-create-dialog.c:178 ../thunar/thunar-dialogs.c:112
 msgid "Enter the new name:"
-msgstr "输入新名称："
+msgstr "输入新名称:"
 
 #. display an error message
 #: ../thunar/thunar-create-dialog.c:520
@@ -1251,14 +1251,14 @@ msgstr "无效链接"
 #, c-format
 msgid "%d item (%s), Free space: %s"
 msgid_plural "%d items (%s), Free space: %s"
-msgstr[0] "%d 项 (%s), 空闲空间： %s"
+msgstr[0] "%d 项 (%s)，空闲空间: %s"
 
 #. just the standard text
 #: ../thunar/thunar-list-model.c:2253
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
-msgstr[0] "%d 项，可用空间 %s"
+msgstr[0] "%d 项，可用空间: %s"
 
 #: ../thunar/thunar-list-model.c:2261
 #, c-format
@@ -1293,7 +1293,7 @@ msgstr "原始路径:"
 #: ../thunar/thunar-list-model.c:2309
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:151
 msgid "Image Size:"
-msgstr "图像大小："
+msgstr "图像大小:"
 
 #: ../thunar/thunar-list-model.c:2328
 #, c-format
@@ -1428,11 +1428,11 @@ msgstr "用户组:"
 
 #: ../thunar/thunar-permissions-chooser.c:341
 msgid "Others:"
-msgstr "其他："
+msgstr "其他:"
 
 #: ../thunar/thunar-permissions-chooser.c:364
 msgid "Program:"
-msgstr "程序："
+msgstr "程序:"
 
 #: ../thunar/thunar-permissions-chooser.c:370
 msgid "Allow this file to _run as a program"
@@ -1542,7 +1542,7 @@ msgstr "默认视图"
 
 #: ../thunar/thunar-preferences-dialog.c:266
 msgid "View _new folders using:"
-msgstr "用视图查看新文件夹(_N)："
+msgstr "用以下视图查看新文件夹(_N):"
 
 #: ../thunar/thunar-preferences-dialog.c:271
 #: ../thunar/thunar-preferences-dialog.c:302
@@ -1596,7 +1596,7 @@ msgstr "日期"
 #: ../thunar/thunar-preferences-dialog.c:337
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:223
 msgid "_Format:"
-msgstr "文本格式(_F)："
+msgstr "文本格式(_F):"
 
 #.
 #. Side Pane
@@ -1610,9 +1610,8 @@ msgid "Shortcuts Pane"
 msgstr "快捷栏"
 
 #: ../thunar/thunar-preferences-dialog.c:383
-#, fuzzy
 msgid "_Icon Size:"
-msgstr "图标大小(_I)："
+msgstr "图标大小(_I):"
 
 #: ../thunar/thunar-preferences-dialog.c:388
 #: ../thunar/thunar-preferences-dialog.c:433
@@ -1665,7 +1664,7 @@ msgstr "树状栏"
 
 #: ../thunar/thunar-preferences-dialog.c:428
 msgid "Icon _Size:"
-msgstr "图标大小(_S)："
+msgstr "图标大小(_S):"
 
 #: ../thunar/thunar-preferences-dialog.c:450
 msgid "Show Icon E_mblems"
@@ -1785,7 +1784,7 @@ msgid ""
 "and media (i.e. how cameras should be handled)."
 msgstr ""
 "<a href=\"volman-config:\">配置</a> 可移动媒体及驱动器的管理\n"
-"(例如：如何管理摄像头)"
+"(例如如何管理摄像头)"
 
 #. tell the user that we failed to come up with the thunar-volman configuration dialog
 #: ../thunar/thunar-preferences-dialog.c:717
@@ -2230,7 +2229,7 @@ msgstr "选择(_S)"
 
 #: ../thunar/thunar-standard-view.c:2112
 msgid "_Pattern:"
-msgstr "模式(_P)："
+msgstr "匹配模式(_P)"
 
 #. tell the user that the file name provided by the X Direct Save source is invalid
 #: ../thunar/thunar-standard-view.c:2549
@@ -2678,7 +2677,7 @@ msgstr "用户可视的重命名工具名称"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:158
 msgid "Description:"
-msgstr "描述："
+msgstr "描述:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:165
 msgid ""
@@ -2688,7 +2687,7 @@ msgstr "条目的一般名称，例如假设FireFox为\"网页浏览器\"。"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:181
 msgid "Command:"
-msgstr "命令："
+msgstr "命令:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:188
 msgid "The program to execute, possibly with arguments."
@@ -2696,7 +2695,7 @@ msgstr "程序正在执行，可能带有参数。"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:203
 msgid "URL:"
-msgstr "地址："
+msgstr "URL:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:210
 msgid "The URL to access."
@@ -2704,7 +2703,7 @@ msgstr "将访问的地址。"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:225
 msgid "Comment:"
-msgstr "注释："
+msgstr "注释:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:232
 msgid ""
@@ -2716,7 +2715,7 @@ msgstr ""
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:252
 msgid "Options:"
-msgstr "选项："
+msgstr "选项:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:258
 msgid "Use _startup notification"
@@ -2916,12 +2915,12 @@ msgstr "当前"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:138
 msgid "Date Picture Taken"
-msgstr "拍照日期："
+msgstr "拍照日期"
 
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:181
 #: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:260
 msgid "_Text:"
-msgstr "文本(_T)："
+msgstr "文本(_T):"
 
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:387
 msgid "Insert / Overwrite"
@@ -2929,15 +2928,15 @@ msgstr "插入/覆盖"
 
 #: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:186
 msgid "_Number Format:"
-msgstr "数字格式(_N)："
+msgstr "数字格式(_N):"
 
 #: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:216
 msgid "_Start With:"
-msgstr "开始于(_S)："
+msgstr "开始于(_S):"
 
 #: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:232
 msgid "Text _Format:"
-msgstr "文本格式(_F)："
+msgstr "文本格式(_F):"
 
 #: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:535
 msgid "Numbering"
@@ -2945,11 +2944,11 @@ msgstr "编号方式"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:177
 msgid "Remove _From Position:"
-msgstr "从此位置移除(_F)："
+msgstr "从此位置移除(_F):"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:212
 msgid "_To Position:"
-msgstr "到位置(_T)："
+msgstr "到位置(_T):"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:428
 msgid "Remove Characters"
@@ -2957,7 +2956,7 @@ msgstr "移除字符"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:209
 msgid "_Search For:"
-msgstr "查找(_S)："
+msgstr "查找(_S):"
 
 #. reset to default tooltip
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:217
@@ -2980,7 +2979,7 @@ msgstr ""
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:238
 msgid "Replace _With:"
-msgstr "替换为(_W)："
+msgstr "替换为(_W):"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:246
 msgid ""
@@ -3001,7 +3000,7 @@ msgstr "如果激活此选项，将使用大小写敏感的模式搜索。默认
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:620
 #, c-format
 msgid "Invalid regular expression, at character position %ld: %s"
-msgstr "无效的正则表达式，在字符 %ld： %s"
+msgstr "无效的正则表达式，在位置 %ld: %s"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:670
 msgid "Search & Replace"
@@ -3431,12 +3430,11 @@ msgstr "在新的 Thunar 窗口中打开指定的文件夹"
 #~ msgid_plural "Delete the selected files permanently"
 #~ msgstr[0] "永久删除所选择的文件"
 
-#, fuzzy
 #~ msgid "Failed to change permisions of \"%s\""
-#~ msgstr "无法更改 \"%s\" 的权限设定： %s"
+#~ msgstr "无法更改 \"%s\" 的权限设定: %s"
 
 #~ msgid "Failed to determine file info of \"%s\": %s"
-#~ msgstr "无法确定 \"%s\" 的文件信息：%s"
+#~ msgstr "无法确定 \"%s\" 的文件信息: %s"
 
 #~ msgid ""
 #~ "Failed to remove \"%s\".\n"
@@ -3457,16 +3455,16 @@ msgstr "在新的 Thunar 窗口中打开指定的文件夹"
 #~ "您想要跳过吗？"
 
 #~ msgid "Failed to stat file \"%s\": %s"
-#~ msgstr "无法 stat 文件 \"%s\"：%s"
+#~ msgstr "无法 stat 文件 \"%s\": %s"
 
 #~ msgid "Failed to create directory \"%s\": %s"
-#~ msgstr "无法创建目录 \"%s\"：%s"
+#~ msgstr "无法创建目录 \"%s\": %s"
 
 #~ msgid "Deleting directories..."
 #~ msgstr "删除目录中..."
 
 #~ msgid "Failed to remove directory \"%s\": %s"
-#~ msgstr "无法移除目录 \"%s\"：%s"
+#~ msgstr "无法移除目录 \"%s\": %s"
 
 #~ msgid "Cannot transfer the root directory"
 #~ msgstr "无法转移根目录"
