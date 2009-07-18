@@ -625,7 +625,7 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
     }
 
   /* run all collected applications */
-  g_hash_table_foreach (applications, (GHFunc) thunar_launcher_open_files, launcher);
+  g_hash_table_foreach (applications, (GHFunc) thunar_launcher_open_paths, launcher);
 
   /* drop the applications hash table */
   g_hash_table_destroy (applications);
@@ -1053,14 +1053,22 @@ thunar_launcher_open_file (ThunarLauncher *launcher,
         }
       else
         {
-          /* open the selected directories in new windows */
+          /* open the selected directory in a new window */
           thunar_launcher_open_windows (launcher, &files);
         }
     }
   else
     {
-      /* try to open all files using their default applications */
-      thunar_launcher_open_files (launcher, &files);
+      if (thunar_file_is_executable (file))
+        {
+          /* try to execute the file */
+          thunar_launcher_execute_files (launcher, &files);
+        }
+      else
+        {
+          /* try to open the file using its default application */
+          thunar_launcher_open_files (launcher, &files);
+        }
     }
 }
 

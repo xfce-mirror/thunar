@@ -1175,7 +1175,7 @@ thunar_file_launch (ThunarFile *file,
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
   _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), FALSE);
-
+  
   /* determine the screen for the parent */
   if (G_UNLIKELY (parent == NULL))
     screen = gdk_screen_get_default ();

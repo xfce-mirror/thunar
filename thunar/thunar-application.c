@@ -1139,7 +1139,8 @@ thunar_application_process_files (ThunarApplication *application)
   /* create a GTK+ mount operation */
   mount_operation = gtk_mount_operation_new (NULL);
   screen = g_object_get_qdata (G_OBJECT (file), thunar_application_screen_quark);
-  gtk_mount_operation_set_screen (GTK_MOUNT_OPERATION (mount_operation), screen);
+  if (screen != NULL)
+    gtk_mount_operation_set_screen (GTK_MOUNT_OPERATION (mount_operation), screen);
 
   /* determine the location of the file */
   location = thunar_file_get_file (file);
