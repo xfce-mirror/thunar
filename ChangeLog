@@ -1,5 +1,13 @@
 2009-07-18	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.c: Only return true from
+	  thunar_file_is_executable() if the file is either a desktop file or
+	  is an application/x-executable or application/x-shellscript. On
+	  Windows we use g_content_type_can_be_executable() directly instead
+	  of checking for these two content types. Patch by Nick.
+
+2009-07-18	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.{c,h}: Introduce new function
 	  thunar_file_same_filesystem() which uses
 	  G_FILE_ATTRIBUTE_ID_FILESYSTEM to check whether two files reside on

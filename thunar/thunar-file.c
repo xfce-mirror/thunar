@@ -2026,15 +2026,35 @@ thunar_file_is_ancestor (const ThunarFile *file,
 gboolean
 thunar_file_is_executable (const ThunarFile *file)
 {
-  gboolean can_execute;
+  gboolean     can_execute = FALSE;
+  const gchar *content_type;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
   if (file->info == NULL)
     return FALSE;
-  
-  can_execute = g_file_info_get_attribute_boolean (file->info, 
-                                                   G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE);
+
+  if (g_file_info_get_attribute_boolean (file->info, G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE))
+    {
+      /* get the content type of the file */
+      content_type = g_file_info_get_content_type (file->info);
+      if (G_LIKELY (content_type != NULL))
+        {
+#ifdef G_OS_WIN32
+          /* check for .exe, .bar or .com */
+          can_execute = g_content_type_can_be_executable (content_type);
+#else
+          /* check if the content type is save to execute, we don't use
+           * g_content_type_can_be_executable() for unix because it also returns
+           * true for "text/plain" and we don't want that */
+          if (g_content_type_is_a (content_type, "application/x-executable")
+              || g_content_type_is_a (content_type, "application/x-shellscript"))
+            {
+              can_execute = TRUE;
+            }
+#endif
+        }
+    }
 
   return can_execute || thunar_file_is_desktop_file (file);
 }
