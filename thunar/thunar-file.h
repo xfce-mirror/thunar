@@ -115,7 +115,6 @@ struct _ThunarFile
   GFileMonitor  *monitor;
   GFileInfo     *info;
   GFileInfo     *filesystem_info;
-  GMount        *mount;
   GFile         *gfile;
   gchar         *custom_icon_name;
   gchar         *display_name;
@@ -248,6 +247,9 @@ void              thunar_file_destroy              (ThunarFile             *file
 gint              thunar_file_compare_by_name      (const ThunarFile       *file_a,
                                                     const ThunarFile       *file_b,
                                                     gboolean                case_sensitive);
+
+gboolean          thunar_file_same_filesystem      (const ThunarFile       *file_a,
+                                                    const ThunarFile       *file_b);
 
 ThunarFile       *thunar_file_cache_lookup         (const GFile            *file);
 

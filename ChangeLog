@@ -1,5 +1,15 @@
 2009-07-18	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.{c,h}: Introduce new function
+	  thunar_file_same_filesystem() which uses
+	  G_FILE_ATTRIBUTE_ID_FILESYSTEM to check whether two files reside on
+	  the same device/filesystem. Use this to fix the copy/move decision
+	  in thunar_file_accepts_drop().
+	* thunarx/thunarx-file-info.h: Add the "id" namespace to
+	  THUNARX_FILE_INFO_NAMESPACE.
+
+2009-07-18	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-launcher.c: Make executing files work again. Note that
 	  this only works for one selected file right now. Poking/launching 
 	  multiple files/directories still have to be worked on anyway.

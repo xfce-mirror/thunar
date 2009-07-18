@@ -38,6 +38,7 @@ G_BEGIN_DECLS;
  **/
 #define THUNARX_FILE_INFO_NAMESPACE \
   "access::*," \
+  "id::*," \
   "mountable::*," \
   "preview::*," \
   "standard::*," \

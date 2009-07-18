@@ -329,10 +329,6 @@ thunar_file_finalize (GObject *object)
   if (file->filesystem_info != NULL)
     g_object_unref (file->filesystem_info);
 
-  /* release the mount */
-  if (file->mount != NULL)
-    g_object_unref (file->mount);
-
   /* free the custom icon name */
   g_free (file->custom_icon_name);
   
@@ -661,7 +657,6 @@ thunar_file_get (GFile   *gfile,
       file = g_object_new (THUNAR_TYPE_FILE, NULL);
       file->gfile = g_object_ref (gfile);
       file->info = NULL;
-      file->mount = NULL;
       file->filesystem_info = NULL;
       file->custom_icon_name = NULL;
       file->display_name = NULL;
@@ -767,13 +762,6 @@ thunar_file_load (ThunarFile   *file,
       file->filesystem_info = NULL;
     }
 
-  /* release the current mount */
-  if (file->mount != NULL)
-    {
-      g_object_unref (file->mount);
-      file->mount = NULL;
-    }
-
   /* free the custom icon name */
   g_free (file->custom_icon_name);
 
@@ -816,9 +804,6 @@ thunar_file_load (ThunarFile   *file,
                                                         THUNARX_FILESYSTEM_INFO_NAMESPACE,
                                                         cancellable,
                                                         NULL);
-
-  /* try to detect the corresponding mount */
-  file->mount = g_file_find_enclosing_mount (file->gfile, cancellable, NULL);
 
   /* determine the basename */
   file->basename = g_file_get_basename (file->gfile);
@@ -1431,7 +1416,7 @@ thunar_file_accepts_drop (ThunarFile     *file,
                * are on the same disk, and the source file is owned by the current user.
                */
               if (ofile == NULL 
-                  || (!g_mount_is_same_drive (ofile->mount, file->mount))
+                  || !thunar_file_same_filesystem (file, ofile)
                   || (ofile->info != NULL 
                       && g_file_info_get_attribute_uint32 (ofile->info, 
                                                            G_FILE_ATTRIBUTE_UNIX_UID) != effective_user_id))
@@ -3135,6 +3120,33 @@ thunar_file_compare_by_name (const ThunarFile *file_a,
     return (g_unichar_tolower (ac) > g_unichar_tolower (bc)) ? 1 : -1;
   else
     return (ac > bc) ? 1 : -1;
+}
+
+
+
+gboolean
+thunar_file_same_filesystem (const ThunarFile *file_a,
+                             const ThunarFile *file_b)
+{
+  const gchar *filesystem_id_a;
+  const gchar *filesystem_id_b;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file_a), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file_b), FALSE);
+
+  /* return false if we have no information about one of the files */
+  if (file_a->info == NULL || file_b->info == NULL)
+    return FALSE;
+
+  /* determine the filesystem IDs */
+  filesystem_id_a = g_file_info_get_attribute_string (file_a->info, 
+                                                      G_FILE_ATTRIBUTE_ID_FILESYSTEM);
+
+  filesystem_id_b = g_file_info_get_attribute_string (file_b->info, 
+                                                      G_FILE_ATTRIBUTE_ID_FILESYSTEM);
+
+  /* compare the filesystem IDs */
+  return exo_str_is_equal (filesystem_id_a, filesystem_id_b);
 }
 
 
