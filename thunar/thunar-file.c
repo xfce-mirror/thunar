@@ -407,7 +407,7 @@ thunar_file_info_has_mime_type (ThunarxFileInfo *file_info,
   if (THUNAR_FILE (file_info)->info == NULL)
     return FALSE;
 
-  return g_content_type_is_a (mime_type, g_file_info_get_content_type (THUNAR_FILE (file_info)->info));
+  return g_content_type_is_a (g_file_info_get_content_type (THUNAR_FILE (file_info)->info), mime_type);
 }
 
 
