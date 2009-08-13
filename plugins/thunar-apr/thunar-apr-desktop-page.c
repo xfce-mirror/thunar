@@ -140,7 +140,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
 
   /* allocate the shared tooltips */
   desktop_page->tooltips = gtk_tooltips_new ();
-  exo_gtk_object_ref_sink (GTK_OBJECT (desktop_page->tooltips));
+  g_object_ref_sink (G_OBJECT (desktop_page->tooltips));
 
   /* allocate shared bold Pango attributes */
   attr_list = pango_attr_list_new ();

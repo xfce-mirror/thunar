@@ -197,7 +197,7 @@ thunar_gtk_menu_run (GtkMenu            *menu,
   _thunar_return_if_fail (GTK_IS_MENU (menu));
 
   /* take over the floating reference on the menu */
-  exo_gtk_object_ref_sink (GTK_OBJECT (menu));
+  g_object_ref_sink (G_OBJECT (menu));
 
   /* place the menu on the same screen as the parent */
   if (G_UNLIKELY (parent != NULL && GDK_IS_SCREEN (parent)))

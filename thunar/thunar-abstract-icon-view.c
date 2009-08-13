@@ -792,11 +792,11 @@ thunar_abstract_icon_view_sort_column_changed (GtkTreeSortable        *sortable,
     {
       /* apply the new sort column */
       action = gtk_action_group_get_action (THUNAR_STANDARD_VIEW (abstract_icon_view)->action_group, "sort-by-name");
-      exo_gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), column);
+      gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), column);
 
       /* apply the new sort order */
       action = gtk_action_group_get_action (THUNAR_STANDARD_VIEW (abstract_icon_view)->action_group, "sort-ascending");
-      exo_gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), order);
+      gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), order);
     }
 }
 

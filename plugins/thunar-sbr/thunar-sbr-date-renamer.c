@@ -189,7 +189,7 @@ thunar_sbr_date_renamer_init (ThunarSbrDateRenamer *date_renamer)
 
   /* allocate tooltips for the renamer */
   date_renamer->tooltips = gtk_tooltips_new ();
-  exo_gtk_object_ref_sink (GTK_OBJECT (date_renamer->tooltips));
+  g_object_ref_sink (G_OBJECT (date_renamer->tooltips));
 
   vbox = gtk_vbox_new (FALSE, 6);
   gtk_box_pack_start (GTK_BOX (date_renamer), vbox, TRUE, TRUE, 0);

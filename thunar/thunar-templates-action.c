@@ -308,7 +308,7 @@ thunar_templates_action_fill_menu (ThunarTemplatesAction *templates_action,
         {
           /* allocate a new submenu for the directory */
           submenu = gtk_menu_new ();
-          exo_gtk_object_ref_sink (GTK_OBJECT (submenu));
+          g_object_ref_sink (G_OBJECT (submenu));
           gtk_menu_set_screen (GTK_MENU (submenu), gtk_widget_get_screen (menu));
 
           /* fill the submenu from the folder contents */
