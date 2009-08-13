@@ -641,7 +641,7 @@ thunar_folder_get_for_file (ThunarFile *file)
       folder = g_object_new (THUNAR_TYPE_FOLDER, "corresponding-file", file, NULL);
 
       /* drop the floating reference */
-      exo_gtk_object_ref_sink (GTK_OBJECT (folder));
+      g_object_ref_sink (G_OBJECT (folder));
 
       /* connect the folder to the file */
       g_object_set_qdata (G_OBJECT (file), thunar_folder_quark, folder);

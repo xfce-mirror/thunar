@@ -373,7 +373,7 @@ thunar_templates_action_files_ready (ThunarJob             *job,
         {
           /* allocate a new submenu for the directory */
           submenu = gtk_menu_new ();
-          exo_gtk_object_ref_sink (GTK_OBJECT (submenu));
+          g_object_ref_sink (G_OBJECT (submenu));
           gtk_menu_set_screen (GTK_MENU (submenu), gtk_widget_get_screen (menu));
 
           /* allocate a new menu item for the directory */

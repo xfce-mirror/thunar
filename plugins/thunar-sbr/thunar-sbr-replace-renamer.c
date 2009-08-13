@@ -198,7 +198,7 @@ thunar_sbr_replace_renamer_init (ThunarSbrReplaceRenamer *replace_renamer)
 
   /* allocate the shared tooltips */
   replace_renamer->tooltips = gtk_tooltips_new ();
-  exo_gtk_object_ref_sink (GTK_OBJECT (replace_renamer->tooltips));
+  g_object_ref_sink (G_OBJECT (replace_renamer->tooltips));
 
   table = gtk_table_new (2, 3, FALSE);
   gtk_table_set_row_spacings (GTK_TABLE (table), 6);

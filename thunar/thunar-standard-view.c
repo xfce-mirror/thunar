@@ -629,12 +629,12 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
 
   /* setup the icon renderer */
   standard_view->icon_renderer = thunar_icon_renderer_new ();
-  exo_gtk_object_ref_sink (GTK_OBJECT (standard_view->icon_renderer));
+  g_object_ref_sink (G_OBJECT (standard_view->icon_renderer));
   exo_binding_new (G_OBJECT (standard_view), "zoom-level", G_OBJECT (standard_view->icon_renderer), "size");
 
   /* setup the name renderer */
   standard_view->name_renderer = thunar_text_renderer_new ();
-  exo_gtk_object_ref_sink (GTK_OBJECT (standard_view->name_renderer));
+  g_object_ref_sink (G_OBJECT (standard_view->name_renderer));
   exo_binding_new (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (standard_view->name_renderer), "follow-prelit");
 
   /* be sure to update the selection whenever the folder changes */
