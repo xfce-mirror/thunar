@@ -241,7 +241,7 @@ AC_HELP_STRING([--with-volume-manager=@<:@auto/freebsd/hal/none@:>@], [The volum
 
   dnl # We need HAL >= 0.5.x and D-BUS >= 0.23 for the HAL volume manager
   if test x"$ac_bm_thunar_vfs_volume_impl" = x"hal"; then
-    XDT_CHECK_PACKAGE([EXO_HAL], [exo-hal-0.3], [0.3.1.13])
+    XDT_CHECK_PACKAGE([EXO_HAL], [exo-hal-1], [0.3.1.13])
     XDT_CHECK_PACKAGE([HAL], [hal-storage], [0.5.0])
     XDT_CHECK_PACKAGE([HAL_DBUS], [dbus-glib-1], [0.23])
   fi
