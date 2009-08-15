@@ -414,7 +414,7 @@ thunar_size_label_file_changed (ThunarFile      *file,
       if (G_LIKELY (size > 1024ul))
         {
           /* prepend the humanized size */
-          size_humanized = g_file_size_humanize (size);
+          size_humanized = g_format_size_for_display (size);
           text = g_strdup_printf ("%s (%s)", size_humanized, size_string);
           g_free (size_humanized);
           g_free (size_string);
@@ -498,7 +498,7 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
   n = file_count + directory_count + unreadable_directory_count;
 
   /* update the label */
-  size_string = g_file_size_humanize (total_size);
+  size_string = g_format_size_for_display (total_size);
   text = g_strdup_printf (ngettext ("%u item, totalling %s", "%u items, totalling %s", n), n, size_string);
   gtk_label_set_text (GTK_LABEL (size_label->label), text);
   g_free (size_string);

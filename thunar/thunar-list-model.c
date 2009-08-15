@@ -2247,7 +2247,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       if (G_LIKELY (file != NULL && thunar_file_get_free_space (file, &size)))
         {
           /* humanize the free space */
-          fspace_string = g_file_size_humanize (size);
+          fspace_string = g_format_size_for_display (size);
 
           /* check if we have atleast one file in this folder */
           if (G_LIKELY (store->nrows > 0))
@@ -2257,7 +2257,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
                 size_summary += thunar_file_get_size (row->data);
 
               /* humanize the size summary */
-              size_string = g_file_size_humanize (size_summary);
+              size_string = g_format_size_for_display (size_summary);
 
               /* generate a text which includes the size of all items in the folder */
               text = g_strdup_printf (ngettext ("%d item (%s), Free space: %s", "%d items (%s), Free space: %s", store->nrows),
@@ -2359,7 +2359,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
 
       if (size_summary > 0)
         {
-          size_string = g_file_size_humanize (size_summary);
+          size_string = g_format_size_for_display (size_summary);
           text = g_strdup_printf (ngettext ("%d item selected (%s)", "%d items selected (%s)", n), n, size_string);
           g_free (size_string);
         }

@@ -212,25 +212,6 @@ g_file_get_location (GFile *file)
 
 
 
-gchar *
-g_file_size_humanize (guint64 size)
-{
-  gchar *buffer;
-
-  if (G_UNLIKELY (size > 1024ul * 1024ul * 1024ul))
-    buffer = g_strdup_printf ("%0.1f GB", size / (1024.0 * 1024.0 * 1024.0));
-  else if (size > 1024ul * 1024ul)
-    buffer = g_strdup_printf ("%0.1f MB", size / (1024.0 * 1024.0));
-  else if (size > 1024ul)
-    buffer = g_strdup_printf ("%0.1f kB", size / 1024.0);
-  else
-    buffer = g_strdup_printf ("%lu B", (gulong) size);
-
-  return buffer;
-}
-
-
-
 GType
 g_file_list_get_type (void)
 {

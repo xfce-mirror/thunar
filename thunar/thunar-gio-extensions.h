@@ -44,8 +44,6 @@ gboolean  g_file_write_key_file            (GFile              *file,
 
 gchar    *g_file_get_location              (GFile              *file);
 
-gchar    *g_file_size_humanize             (guint64             size);
-
 /**
  * G_TYPE_FILE_LIST:
  *
