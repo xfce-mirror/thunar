@@ -693,7 +693,7 @@ thunar_vfs_thumb_factory_lookup_thumbnail (ThunarVfsThumbFactory *factory,
   if (thunar_vfs_path_to_uri (info->path, uri, sizeof (uri), NULL) >= 0)
     {
       /* determine the path to the thumbnail for the factory */
-      md5 = exo_str_get_md5_str (uri);
+      md5 = g_compute_checksum_for_string (G_CHECKSUM_MD5, uri, -1);
       path = g_strconcat (factory->base_path, md5, ".png", NULL);
       g_free (md5);
 
@@ -789,7 +789,7 @@ thunar_vfs_thumb_factory_has_failed_thumbnail (ThunarVfsThumbFactory *factory,
     return FALSE;
 
   /* determine the path to the thumbnail */
-  md5 = exo_str_get_md5_str (uri);
+  md5 = g_compute_checksum_for_string (G_CHECKSUM_MD5, uri, -1);
   g_snprintf (path, sizeof (path), "%s%s.png", factory->fail_path, md5);
   g_free (md5);
 
@@ -1027,7 +1027,7 @@ thunar_vfs_thumb_factory_store_thumbnail (ThunarVfsThumbFactory *factory,
   uri = thunar_vfs_path_dup_uri (info->path);
 
   /* determine the MD5 sum for the URI */
-  md5 = exo_str_get_md5_str (uri);
+  md5 = g_compute_checksum_for_string (G_CHECKSUM_MD5, uri, -1);
 
   /* try to open a temporary file to write the thumbnail to */
   tmp_path = g_strconcat (base_path, md5, ".png.XXXXXX", NULL);
@@ -1114,7 +1114,7 @@ thunar_vfs_thumbnail_for_path (const ThunarVfsPath *path,
   gchar *uri;
 
   uri = thunar_vfs_path_dup_uri (path);
-  md5 = exo_str_get_md5_str (uri);
+  md5 = g_compute_checksum_for_string (G_CHECKSUM_MD5, uri, -1);
   thumbnail = g_strconcat (xfce_get_homedir (),
                            G_DIR_SEPARATOR_S ".thumbnails" G_DIR_SEPARATOR_S,
                            (size == THUNAR_VFS_THUMB_SIZE_NORMAL) ? "normal" : "large",
