@@ -1609,7 +1609,7 @@ gchar *
 thunar_file_get_size_string (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return g_file_size_humanize (thunar_file_get_size (file));
+  return g_format_size_for_display (thunar_file_get_size (file));
 }
 
 
