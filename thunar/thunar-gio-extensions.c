@@ -476,3 +476,116 @@ g_mount_is_same_drive (GMount *mount,
 
   return same_drive;
 }
+
+
+
+#if !GLIB_CHECK_VERSION(2,18,0)
+GFileType *
+g_file_query_file_type (GFile              *file, 
+                        GFileQueryInfoFlags flags
+                        GCancellable       *cancellable)
+{
+  GFileInfo *info;
+  GFileType  file_type = G_FILE_TYPE_UNKNOWN;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), G_FILE_TYPE_UNKNOWN);
+
+  info = g_file_query_info (file, G_FILE_ATTRIBUTE_STANDARD_TYPE, flags, 
+                            cancellable, NULL);
+  if (info != NULL)
+    {
+      file_type = g_file_info_get_file_type (info);
+      g_object_unref (info);
+    }
+
+  return file_type;
+}
+
+
+
+GFileMonitor *
+g_file_monitor (GFile            *file,
+	              GFileMonitorFlags flags,
+		            GCancellable     *cancellable,
+		            GError          **error)
+{
+  GFileType file_type;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
+  _thunar_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), NULL);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  file_type = g_file_query_file_type (file, G_FILE_QUERY_INFO_NONE, cancelllable);
+
+  if (file_type == G_FILE_TYPE_DIRECTORY)
+    return g_file_monitor_directory (file, flags, cancellable, error);
+  else
+    return g_file_onitor_file (file, flags, cancellable, error);
+}
+
+
+
+/**
+ * Copied from http://git.gnome.org/cgit/glib/plain/gio/gfile.c
+ * Copyright (c) 2006-2007 Red Hat, Inc.
+ * Author: Alexander Larsson <alexl@redhat.com>
+ */
+gboolean
+g_file_make_directory_with_parents (GFile        *file,
+                                    GCancellable *cancellable,
+                                    GError      **error)
+{
+  gboolean result;
+  GFile *parent_file, *work_file;
+  GList *list = NULL, *l;
+  GError *my_error = NULL;
+
+  if (g_cancellable_set_error_if_cancelled (cancellable, error))
+    return FALSE;
+  
+  result = g_file_make_directory (file, cancellable, &my_error);
+  if (result || my_error->code != G_IO_ERROR_NOT_FOUND) 
+    {
+      if (my_error)
+        g_propagate_error (error, my_error);
+      return result;
+    }
+  
+  work_file = file;
+  
+  while (!result && my_error->code == G_IO_ERROR_NOT_FOUND) 
+    {
+      g_clear_error (&my_error);
+    
+      parent_file = g_file_get_parent (work_file);
+      if (parent_file == NULL)
+        break;
+      result = g_file_make_directory (parent_file, cancellable, &my_error);
+    
+      if (!result && my_error->code == G_IO_ERROR_NOT_FOUND)
+        list = g_list_prepend (list, parent_file);
+
+      work_file = parent_file;
+    }
+
+  for (l = list; result && l; l = l->next)
+    {
+      result = g_file_make_directory ((GFile *) l->data, cancellable, &my_error);
+    }
+  
+  /* Clean up */
+  while (list != NULL) 
+    {
+      g_object_unref ((GFile *) list->data);
+      list = g_list_remove (list, list->data);
+    }
+
+  if (!result) 
+    {
+      g_propagate_error (error, my_error);
+      return result;
+    }
+  
+  return g_file_make_directory (file, cancellable, error);
+}
+#endif /* !GLIB_CHECK_VERSION(2,18,0) */

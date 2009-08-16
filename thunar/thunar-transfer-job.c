@@ -25,6 +25,7 @@
 
 #include <gio/gio.h>
 
+#include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-io-scan-directory.h>
 #include <thunar/thunar-io-jobs-util.h>
 #include <thunar/thunar-job.h>

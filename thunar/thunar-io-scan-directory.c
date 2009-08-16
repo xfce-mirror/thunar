@@ -26,6 +26,7 @@
 
 #include <exo/exo.h>
 
+#include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-job.h>
 #include <thunar/thunar-private.h>
 
