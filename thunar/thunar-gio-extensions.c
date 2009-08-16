@@ -181,8 +181,12 @@ g_file_write_key_file (GFile        *file,
 
   /* try to replace the file contents with the key file data */
   if (!g_file_replace_contents (file, contents, length, NULL, FALSE, 
-                                G_FILE_CREATE_REPLACE_DESTINATION, NULL,
-                                cancellable, error))
+#if GLIB_CHECK_VERSION(2,20,0)
+                                G_FILE_CREATE_REPLACE_DESTINATION,
+#else
+                                G_FILE_CREATE_NONE,
+#endif
+                                NULL, cancellable, error))
     {
       g_free (contents);
       return FALSE;

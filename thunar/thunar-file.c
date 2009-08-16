@@ -2652,8 +2652,7 @@ thunar_file_get_preview_icon (const ThunarFile *file)
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (file->info != NULL, NULL);
 
-  return G_ICON (g_file_info_get_attribute_object (file->info,
-                                                   G_FILE_ATTRIBUTE_PREVIEW_ICON));
+  return G_ICON (g_file_info_get_attribute_object (file->info, "preview::icon"));
 }
 
 
