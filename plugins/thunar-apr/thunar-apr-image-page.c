@@ -32,8 +32,6 @@
 
 
 
-static void thunar_apr_image_page_class_init    (ThunarAprImagePageClass  *klass);
-static void thunar_apr_image_page_init          (ThunarAprImagePage       *image_page);
 static void thunar_apr_image_page_file_changed  (ThunarAprAbstractPage    *abstract_page,
                                                  ThunarxFileInfo          *file);
 

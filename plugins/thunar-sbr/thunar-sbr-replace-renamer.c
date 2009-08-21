@@ -51,8 +51,6 @@ enum
 
 
 
-static void   thunar_sbr_replace_renamer_class_init   (ThunarSbrReplaceRenamerClass *klass);
-static void   thunar_sbr_replace_renamer_init         (ThunarSbrReplaceRenamer      *replace_renamer);
 static void   thunar_sbr_replace_renamer_finalize     (GObject                      *object);
 static void   thunar_sbr_replace_renamer_get_property (GObject                      *object,
                                                        guint                         prop_id,
@@ -66,7 +64,7 @@ static void   thunar_sbr_replace_renamer_realize      (GtkWidget                
 static gchar *thunar_sbr_replace_renamer_process      (ThunarxRenamer               *renamer,
                                                        ThunarxFileInfo              *file,
                                                        const gchar                  *text,
-                                                       guint                         index);
+                                                       guint                         idx);
 #ifdef HAVE_PCRE
 static gchar *thunar_sbr_replace_renamer_pcre_exec    (ThunarSbrReplaceRenamer      *replace_renamer,
                                                        const gchar                  *text);
@@ -422,7 +420,7 @@ static gchar*
 thunar_sbr_replace_renamer_process (ThunarxRenamer  *renamer,
                                     ThunarxFileInfo *file,
                                     const gchar     *text,
-                                    guint            index)
+                                    guint            idx)
 {
   ThunarSbrReplaceRenamer *replace_renamer = THUNAR_SBR_REPLACE_RENAMER (renamer);
 
@@ -458,7 +456,7 @@ thunar_sbr_replace_renamer_pcre_exec (ThunarSbrReplaceRenamer *replace_renamer,
   GString     *result;
   gint         second;
   gint         first;
-  gint         index;
+  gint         idx;
   gint        *ovec;
   gint         olen;
   gint         rc;
@@ -532,11 +530,11 @@ thunar_sbr_replace_renamer_pcre_exec (ThunarSbrReplaceRenamer *replace_renamer,
           else if (g_ascii_isdigit (r[0]))
             {
               /* \<num> and $<num> is replaced with the <num>th subpattern */
-              index = (r[0] - '0');
-              if (G_LIKELY (index >= 0 && index < rc))
+              idx = (r[0] - '0');
+              if (G_LIKELY (idx >= 0 && idx < rc))
                 {
-                  first = ovec[2 * index];
-                  second = ovec[2 * index + 1];
+                  first = ovec[2 * idx];
+                  second = ovec[2 * idx + 1];
                 }
             }
           else if (r[-1] == r[0])

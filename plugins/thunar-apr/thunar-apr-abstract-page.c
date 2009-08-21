@@ -43,8 +43,6 @@ enum
 
 
 
-static void thunar_apr_abstract_page_class_init   (ThunarAprAbstractPageClass *klass);
-static void thunar_apr_abstract_page_init         (ThunarAprAbstractPage      *abstract_page);
 static void thunar_apr_abstract_page_dispose      (GObject                    *object);
 static void thunar_apr_abstract_page_get_property (GObject                    *object,
                                                    guint                       prop_id,

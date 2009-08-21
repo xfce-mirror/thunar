@@ -40,8 +40,6 @@ enum
 
 
 
-static void   thunar_sbr_remove_renamer_class_init    (ThunarSbrRemoveRenamerClass  *klass);
-static void   thunar_sbr_remove_renamer_init          (ThunarSbrRemoveRenamer       *remove_renamer);
 static void   thunar_sbr_remove_renamer_get_property  (GObject                      *object,
                                                        guint                         prop_id,
                                                        GValue                       *value,
@@ -54,7 +52,7 @@ static void   thunar_sbr_remove_renamer_realize       (GtkWidget                
 static gchar *thunar_sbr_remove_renamer_process       (ThunarxRenamer               *renamer,
                                                        ThunarxFileInfo              *file,
                                                        const gchar                  *text,
-                                                       guint                         index);
+                                                       guint                         idx);
 static void   thunar_sbr_remove_renamer_update        (ThunarSbrRemoveRenamer       *remove_renamer);
 
 
@@ -331,7 +329,7 @@ static gchar*
 thunar_sbr_remove_renamer_process (ThunarxRenamer  *renamer,
                                    ThunarxFileInfo *file,
                                    const gchar     *text,
-                                   guint            index)
+                                   guint            idx)
 {
   ThunarSbrRemoveRenamer *remove_renamer = THUNAR_SBR_REMOVE_RENAMER (renamer);
   const gchar            *start_pointer;

@@ -50,8 +50,6 @@ enum
 
 
 
-static void   thunar_sbr_number_renamer_class_init    (ThunarSbrNumberRenamerClass  *klass);
-static void   thunar_sbr_number_renamer_init          (ThunarSbrNumberRenamer       *number_renamer);
 static void   thunar_sbr_number_renamer_finalize      (GObject                      *object);
 static void   thunar_sbr_number_renamer_get_property  (GObject                      *object,
                                                        guint                         prop_id,
@@ -65,7 +63,7 @@ static void   thunar_sbr_number_renamer_realize       (GtkWidget                
 static gchar *thunar_sbr_number_renamer_process       (ThunarxRenamer               *renamer,
                                                        ThunarxFileInfo              *file,
                                                        const gchar                  *text,
-                                                       guint                         index);
+                                                       guint                         idx);
 static void   thunar_sbr_number_renamer_update        (ThunarSbrNumberRenamer       *number_renamer);
 
 
@@ -371,7 +369,7 @@ static gchar*
 thunar_sbr_number_renamer_process (ThunarxRenamer  *renamer,
                                    ThunarxFileInfo *file,
                                    const gchar     *text,
-                                   guint            index)
+                                   guint            idx)
 {
   ThunarSbrNumberRenamer *number_renamer = THUNAR_SBR_NUMBER_RENAMER (renamer);
   gboolean                invalid = TRUE;
@@ -404,26 +402,26 @@ thunar_sbr_number_renamer_process (ThunarxRenamer  *renamer,
   switch (number_renamer->mode)
     {
     case THUNAR_SBR_NUMBER_MODE_123:
-      number = g_strdup_printf ("%u", start + index);
+      number = g_strdup_printf ("%u", start + idx);
       break;
 
     case THUNAR_SBR_NUMBER_MODE_010203:
-      number = g_strdup_printf ("%02u", start + index);
+      number = g_strdup_printf ("%02u", start + idx);
       break;
 
     case THUNAR_SBR_NUMBER_MODE_001002003:
-      number = g_strdup_printf ("%03u", start + index);
+      number = g_strdup_printf ("%03u", start + idx);
       break;
 
     case THUNAR_SBR_NUMBER_MODE_000100020003:
-      number = g_strdup_printf ("%04u", start + index);
+      number = g_strdup_printf ("%04u", start + idx);
       break;
 
     case THUNAR_SBR_NUMBER_MODE_ABC:
       if (start >= 'a' && start <= 'z')
-        number = g_strdup_printf ("%c", (gchar) (MIN (start + index, 'z')));
+        number = g_strdup_printf ("%c", (gchar) (MIN (start + idx, 'z')));
       else if (start >= 'A' && start <= 'Z')
-        number = g_strdup_printf ("%c", (gchar) (MIN (start + index, 'Z')));
+        number = g_strdup_printf ("%c", (gchar) (MIN (start + idx, 'Z')));
       else
         g_assert_not_reached ();
       break;

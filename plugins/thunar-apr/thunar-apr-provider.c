@@ -35,9 +35,7 @@
 
 
 
-static void   thunar_apr_provider_class_init                  (ThunarAprProviderClass           *klass);
 static void   thunar_apr_provider_property_page_provider_init (ThunarxPropertyPageProviderIface *iface);
-static void   thunar_apr_provider_init                        (ThunarAprProvider                *apr_provider);
 static GList *thunar_apr_provider_get_pages                   (ThunarxPropertyPageProvider      *property_page_provider,
                                                                GList                            *files);
 

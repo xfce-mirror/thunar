@@ -56,8 +56,6 @@ enum
 
 
 
-static void    thunar_sbr_date_renamer_class_init   (ThunarSbrDateRenamerClass *klass);
-static void    thunar_sbr_date_renamer_init         (ThunarSbrDateRenamer      *date_renamer);
 static void    thunar_sbr_date_renamer_finalize     (GObject                   *object);
 static void    thunar_sbr_date_renamer_get_property (GObject                   *object,
                                                      guint                      prop_id,
@@ -77,7 +75,7 @@ static guint64 thunar_sbr_get_time                  (ThunarxFileInfo           *
 static gchar  *thunar_sbr_date_renamer_process      (ThunarxRenamer            *renamer,
                                                      ThunarxFileInfo           *file,
                                                      const gchar               *text,
-                                                     guint                      index);
+                                                     guint                      idx);
 
 
 
@@ -366,15 +364,15 @@ thunar_sbr_get_time_string (guint64      file_time,
                             const gchar *format)
 {
   struct tm *tm;
-  time_t     time;
+  time_t     _time;
   gchar     *converted;
   gchar      buffer[1024];
   gint       length;
 
-  time = (time_t) file_time;
+  _time = (time_t) file_time;
 
   /* determine the local file time */
-  tm = localtime (&time);
+  tm = localtime (&_time);
 
   /* conver the format to the current locale */
   converted = g_locale_from_utf8 (format, -1, NULL, NULL, NULL);
@@ -535,7 +533,7 @@ static gchar*
 thunar_sbr_date_renamer_process (ThunarxRenamer  *renamer,
                                  ThunarxFileInfo *file,
                                  const gchar     *text,
-                                 guint            index)
+                                 guint            idx)
 {
   ThunarSbrDateRenamer *date_renamer = THUNAR_SBR_DATE_RENAMER (renamer);
   gchar                *string;

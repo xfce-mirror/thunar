@@ -40,8 +40,6 @@ enum
 
 
 
-static void   thunar_sbr_insert_renamer_class_init    (ThunarSbrInsertRenamerClass  *klass);
-static void   thunar_sbr_insert_renamer_init          (ThunarSbrInsertRenamer       *insert_renamer);
 static void   thunar_sbr_insert_renamer_finalize      (GObject                      *object);
 static void   thunar_sbr_insert_renamer_get_property  (GObject                      *object,
                                                        guint                         prop_id,
@@ -54,7 +52,7 @@ static void   thunar_sbr_insert_renamer_set_property  (GObject                  
 static gchar *thunar_sbr_insert_renamer_process       (ThunarxRenamer               *renamer,
                                                        ThunarxFileInfo              *file,
                                                        const gchar                  *text,
-                                                       guint                         index);
+                                                       guint                         idx);
 
 
 
@@ -323,7 +321,7 @@ static gchar*
 thunar_sbr_insert_renamer_process (ThunarxRenamer  *renamer,
                                    ThunarxFileInfo *file,
                                    const gchar     *text,
-                                   guint            index)
+                                   guint            idx)
 {
   ThunarSbrInsertRenamer *insert_renamer = THUNAR_SBR_INSERT_RENAMER (renamer);
   const gchar            *t;

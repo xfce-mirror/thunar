@@ -32,6 +32,13 @@
 
 
 
+G_MODULE_EXPORT void thunar_extension_initialize (ThunarxProviderPlugin  *plugin);
+G_MODULE_EXPORT void thunar_extension_shutdown   (void);
+G_MODULE_EXPORT void thunar_extension_list_types (const GType           **types,
+                                                  gint                   *n_types);
+
+
+
 static GType type_list[1];
 
 

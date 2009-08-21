@@ -32,9 +32,7 @@
 
 
 
-static void   thunar_sbr_provider_class_init            (ThunarSbrProviderClass      *klass);
 static void   thunar_sbr_provider_renamer_provider_init (ThunarxRenamerProviderIface *iface);
-static void   thunar_sbr_provider_init                  (ThunarSbrProvider           *sbr_provider);
 static GList *thunar_sbr_provider_get_renamers          (ThunarxRenamerProvider      *renamer_provider);
 
 

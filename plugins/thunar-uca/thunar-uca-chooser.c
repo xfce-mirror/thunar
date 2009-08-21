@@ -32,8 +32,6 @@
 
 
 
-static void     thunar_uca_chooser_class_init         (ThunarUcaChooserClass  *klass);
-static void     thunar_uca_chooser_init               (ThunarUcaChooser       *uca_chooser);
 static void     thunar_uca_chooser_finalize           (GObject                *object);
 static gboolean thunar_uca_chooser_key_press_event    (GtkWidget              *widget,
                                                        GdkEventKey            *event);

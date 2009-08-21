@@ -86,9 +86,7 @@ typedef enum
 
 
 
-static void               thunar_uca_model_class_init       (ThunarUcaModelClass  *klass);
 static void               thunar_uca_model_tree_model_init  (GtkTreeModelIface    *iface);
-static void               thunar_uca_model_init             (ThunarUcaModel       *uca_model);
 static void               thunar_uca_model_finalize         (GObject              *object);
 static GtkTreeModelFlags  thunar_uca_model_get_flags        (GtkTreeModel         *tree_model);
 static gint               thunar_uca_model_get_n_columns    (GtkTreeModel         *tree_model);
@@ -369,17 +367,17 @@ thunar_uca_model_get_path (GtkTreeModel *tree_model,
                            GtkTreeIter  *iter)
 {
   ThunarUcaModel *uca_model = THUNAR_UCA_MODEL (tree_model);
-  gint            index;
+  gint            idx;
 
   g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), NULL);
   g_return_val_if_fail (iter->stamp == uca_model->stamp, NULL);
 
   /* determine the index of the iter */
-  index = g_list_position (uca_model->items, iter->user_data);
-  if (G_UNLIKELY (index < 0))
+  idx = g_list_position (uca_model->items, iter->user_data);
+  if (G_UNLIKELY (idx < 0))
     return NULL;
 
-  return gtk_tree_path_new_from_indices (index, -1);
+  return gtk_tree_path_new_from_indices (idx, -1);
 }
 
 

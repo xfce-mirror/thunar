@@ -35,8 +35,6 @@
 
 
 
-static void           thunar_uca_editor_class_init      (ThunarUcaEditorClass   *klass);
-static void           thunar_uca_editor_init            (ThunarUcaEditor        *uca_editor);
 static void           thunar_uca_editor_finalize        (GObject                *object);
 static const gchar   *thunar_uca_editor_get_icon_name   (const ThunarUcaEditor  *uca_editor);
 static void           thunar_uca_editor_set_icon_name   (ThunarUcaEditor        *uca_editor,

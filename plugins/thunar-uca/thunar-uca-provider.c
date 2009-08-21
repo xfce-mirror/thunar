@@ -34,10 +34,8 @@
 
 
 
-static void   thunar_uca_provider_class_init                (ThunarUcaProviderClass           *klass);
 static void   thunar_uca_provider_menu_provider_init        (ThunarxMenuProviderIface         *iface);
 static void   thunar_uca_provider_preferences_provider_init (ThunarxPreferencesProviderIface  *iface);
-static void   thunar_uca_provider_init                      (ThunarUcaProvider                *uca_provider);
 static void   thunar_uca_provider_finalize                  (GObject                          *object);
 static GList *thunar_uca_provider_get_actions               (ThunarxPreferencesProvider       *preferences_provider,
                                                              GtkWidget                        *window);

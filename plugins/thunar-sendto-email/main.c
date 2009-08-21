@@ -390,7 +390,7 @@ tse_compress (GList  *infos,
   GFile         *parent;
   GFile         *parent_parent;
   gchar        **argv;
-  gchar         *basename;
+  gchar         *base_name;
   gchar         *zipfile;
   gchar         *tmppath;
   gchar         *tmpdir;
@@ -437,9 +437,9 @@ tse_compress (GList  *infos,
       if (parent_parent != NULL)
         {
           /* use the parent directory's name */
-          basename = g_file_get_basename (parent);
-          zipfile = g_strconcat (tmpdir, G_DIR_SEPARATOR_S, basename, ".zip", NULL);
-          g_free (basename);
+          base_name = g_file_get_basename (parent);
+          zipfile = g_strconcat (tmpdir, G_DIR_SEPARATOR_S, base_name, ".zip", NULL);
+          g_free (base_name);
 
           g_object_unref (parent_parent);
         }

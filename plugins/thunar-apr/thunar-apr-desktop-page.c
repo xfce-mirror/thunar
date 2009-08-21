@@ -49,8 +49,6 @@
 
 
 
-static void     thunar_apr_desktop_page_class_init      (ThunarAprDesktopPageClass  *klass);
-static void     thunar_apr_desktop_page_init            (ThunarAprDesktopPage       *desktop_page);
 static void     thunar_apr_desktop_page_finalize        (GObject                    *object);
 static void     thunar_apr_desktop_page_file_changed    (ThunarAprAbstractPage      *abstract_page,
                                                          ThunarxFileInfo            *file);

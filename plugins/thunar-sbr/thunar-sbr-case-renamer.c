@@ -37,8 +37,6 @@ enum
 
 
 
-static void   thunar_sbr_case_renamer_class_init    (ThunarSbrCaseRenamerClass  *klass);
-static void   thunar_sbr_case_renamer_init          (ThunarSbrCaseRenamer       *case_renamer);
 static void   thunar_sbr_case_renamer_get_property  (GObject                    *object,
                                                      guint                       prop_id,
                                                      GValue                     *value,
@@ -50,7 +48,7 @@ static void   thunar_sbr_case_renamer_set_property  (GObject                    
 static gchar *thunar_sbr_case_renamer_process       (ThunarxRenamer             *renamer,
                                                      ThunarxFileInfo            *file,
                                                      const gchar                *text,
-                                                     guint                       index);
+                                                     guint                       idx);
 
 
 
@@ -227,7 +225,7 @@ static gchar*
 thunar_sbr_case_renamer_process (ThunarxRenamer  *renamer,
                                  ThunarxFileInfo *file,
                                  const gchar     *text,
-                                 guint            index)
+                                 guint            idx)
 {
   ThunarSbrCaseRenamer *case_renamer = THUNAR_SBR_CASE_RENAMER (renamer);
 
