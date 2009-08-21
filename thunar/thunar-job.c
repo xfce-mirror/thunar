@@ -589,7 +589,7 @@ thunar_job_processing_file (ThunarJob *job,
                             GList     *current_file)
 {
   GList *lp;
-  gchar *basename;
+  gchar *base_name;
   gchar *display_name;
   guint  n_processed;
   guint  n_total;
@@ -597,9 +597,9 @@ thunar_job_processing_file (ThunarJob *job,
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
   _thunar_return_if_fail (current_file != NULL);
 
-  basename = g_file_get_basename (current_file->data);
-  display_name = g_filename_display_name (basename);
-  g_free (basename);
+  base_name = g_file_get_basename (current_file->data);
+  display_name = g_filename_display_name (base_name);
+  g_free (base_name);
 
   exo_job_info_message (EXO_JOB (job), display_name);
   g_free (display_name);
