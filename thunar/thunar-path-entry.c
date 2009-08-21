@@ -810,6 +810,12 @@ thunar_path_entry_changed (GtkEditable *editable)
     {
       /* try to parse the URI text */
       file_path = g_file_new_for_uri (text);
+
+      /* use the same file if the text assumes we're in a directory */
+      if (g_str_has_suffix (text, "/"))
+        folder_path = g_object_ref (G_OBJECT (file_path));
+      else
+        folder_path = g_file_get_parent (file_path);
     }
   else if (thunar_path_entry_parse (path_entry, &folder_part, &file_part, NULL))
     {
@@ -831,9 +837,6 @@ thunar_path_entry_changed (GtkEditable *editable)
   current_folder = (folder_path != NULL) ? thunar_file_get (folder_path, NULL) : NULL;
   current_file = (file_path != NULL) ? thunar_file_get (file_path, NULL) : NULL;
 
-  /* TODO Fix bug with non-existent folders */
-  _thunar_assert (current_folder == NULL || thunar_file_is_directory (current_folder));
-
   /* determine the entry completion */
   completion = gtk_entry_get_completion (GTK_ENTRY (path_entry));
 
@@ -848,7 +851,10 @@ thunar_path_entry_changed (GtkEditable *editable)
         g_object_ref (G_OBJECT (current_folder));
 
       /* try to open the current-folder file as folder */
-      folder = (current_folder != NULL) ? thunar_folder_get_for_file (current_folder) : NULL;
+      if (current_folder != NULL && thunar_file_is_directory (current_folder))
+        folder = thunar_folder_get_for_file (current_folder);
+      else
+        folder = NULL;
 
       /* set the new folder for the completion model, but disconnect the model from the
        * completion first, because GtkEntryCompletion has become very slow recently when
