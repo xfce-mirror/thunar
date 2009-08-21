@@ -830,7 +830,7 @@ thunar_file_load (ThunarFile   *file,
       /* determine the custom icon name for .desktop files */
 
       /* query a key file for the .desktop file */
-      key_file = g_file_query_key_file (file->gfile, cancellable, NULL);
+      key_file = thunar_g_file_query_key_file (file->gfile, cancellable, NULL);
       if (key_file != NULL)
         {
           /* read the icon name from the .desktop file */
@@ -999,11 +999,11 @@ thunar_file_execute (ThunarFile *file,
   _thunar_return_val_if_fail (GDK_IS_SCREEN (screen), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  location = g_file_get_location (file->gfile);
+  location = thunar_g_file_get_location (file->gfile);
 
   if (thunar_file_is_desktop_file (file))
     {
-      key_file = g_file_query_key_file (file->gfile, NULL, &err);
+      key_file = thunar_g_file_query_key_file (file->gfile, NULL, &err);
 
       if (key_file == NULL)
         {
@@ -1097,14 +1097,14 @@ thunar_file_execute (ThunarFile *file,
         {
           /* use the directory of the first list item */
           parent = g_file_get_parent (file_list->data);
-          directory = (parent != NULL) ? g_file_get_location (parent) : NULL;
+          directory = (parent != NULL) ? thunar_g_file_get_location (parent) : NULL;
           g_object_unref (parent);
         }
       else
         {
           /* use the directory of the executable file */
           parent = g_file_get_parent (file->gfile);
-          directory = (parent != NULL) ? g_file_get_location (parent) : NULL;
+          directory = (parent != NULL) ? thunar_g_file_get_location (parent) : NULL;
           g_object_unref (parent);
         }
 
@@ -1389,7 +1389,7 @@ thunar_file_accepts_drop (ThunarFile     *file,
             }
 
           /* copy/move/link within the trash not possible */
-          if (G_UNLIKELY (g_file_is_trashed (lp->data) && thunar_file_is_trashed (file)))
+          if (G_UNLIKELY (thunar_g_file_is_trashed (lp->data) && thunar_file_is_trashed (file)))
             return 0;
         }
 
@@ -1406,7 +1406,7 @@ thunar_file_accepts_drop (ThunarFile     *file,
           for (lp = file_list, n = 0; lp != NULL && n < 100; lp = lp->next, ++n)
             {
               /* dropping from the trash always suggests move */
-              if (G_UNLIKELY (g_file_is_trashed (lp->data)))
+              if (G_UNLIKELY (thunar_g_file_is_trashed (lp->data)))
                 break;
 
               /* determine the cached version of the source file */
@@ -2150,7 +2150,7 @@ thunar_file_is_home (const ThunarFile *file)
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
-  home = g_file_new_for_home ();
+  home = thunar_g_file_new_for_home ();
   is_home = g_file_equal (file->gfile, home);
   g_object_unref (home);
 
@@ -2190,7 +2190,7 @@ gboolean
 thunar_file_is_trashed (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  return g_file_is_trashed (file->gfile);
+  return thunar_g_file_is_trashed (file->gfile);
 }
 
 
@@ -2537,7 +2537,7 @@ thunar_file_set_custom_icon (ThunarFile  *file,
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (custom_icon != NULL, FALSE);
 
-  key_file = g_file_query_key_file (file->gfile, NULL, error);
+  key_file = thunar_g_file_query_key_file (file->gfile, NULL, error);
 
   if (key_file == NULL)
     return FALSE;
@@ -2545,7 +2545,7 @@ thunar_file_set_custom_icon (ThunarFile  *file,
   g_key_file_set_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
                          G_KEY_FILE_DESKTOP_KEY_ICON, custom_icon);
 
-  if (g_file_write_key_file (file->gfile, key_file, NULL, error))
+  if (thunar_g_file_write_key_file (file->gfile, key_file, NULL, error))
     {
       /* tell everybody that we have changed */
       thunar_file_changed (file);
@@ -3295,19 +3295,19 @@ thunar_file_list_get_applications (GList *file_list)
 
 
 /**
- * thunar_file_list_to_g_file_list:
+ * thunar_file_list_to_thunar_g_file_list:
  * @file_list : a #GList of #ThunarFile<!---->s.
  *
  * Transforms the @file_list to a #GList of #GFile<!---->s for
  * the #ThunarFile<!---->s contained within @file_list.
  *
  * The caller is responsible to free the returned list using
- * g_file_list_free() when no longer needed.
+ * thunar_g_file_list_free() when no longer needed.
  *
  * Return value: the list of #GFile<!---->s for @file_list.
  **/
 GList*
-thunar_file_list_to_g_file_list (GList *file_list)
+thunar_file_list_to_thunar_g_file_list (GList *file_list)
 {
   GList *list = NULL;
   GList *lp;

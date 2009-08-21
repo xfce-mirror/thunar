@@ -342,7 +342,7 @@ thunar_location_button_finalize (GObject *object)
   ThunarLocationButton *location_button = THUNAR_LOCATION_BUTTON (object);
 
   /* release the drop path list (just in case the drag-leave wasn't fired before) */
-  g_file_list_free (location_button->drop_file_list);
+  thunar_g_file_list_free (location_button->drop_file_list);
 
   /* be sure to cancel any pending enter timeout */
   if (G_UNLIKELY (location_button->enter_timeout_id != 0))
@@ -664,7 +664,7 @@ thunar_location_button_drag_data_get (GtkWidget            *button,
     {
       /* transform the path into an uri list string */
       path_list.data = thunar_file_get_file (location_button->file); path_list.next = path_list.prev = NULL;
-      uri_string = g_file_list_to_string (&path_list);
+      uri_string = thunar_g_file_list_to_string (&path_list);
 
       /* set the uri list for the drag selection */
       gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) uri_string, strlen (uri_string));
@@ -695,7 +695,7 @@ thunar_location_button_drag_data_received (GtkWidget            *button,
     {
       /* extract the URI list from the selection data (if valid) */
       if (selection_data->format == 8 && selection_data->length > 0)
-        location_button->drop_file_list = g_file_list_new_from_string ((const gchar *) selection_data->data);
+        location_button->drop_file_list = thunar_g_file_list_new_from_string ((const gchar *) selection_data->data);
 
       /* reset the state */
       location_button->drop_data_ready = TRUE;
@@ -754,7 +754,7 @@ thunar_location_button_drag_leave (GtkWidget            *button,
   /* reset the "drop data ready" status and free the path list */
   if (G_LIKELY (location_button->drop_data_ready))
     {
-      g_file_list_free (location_button->drop_file_list);
+      thunar_g_file_list_free (location_button->drop_file_list);
       location_button->drop_data_ready = FALSE;
       location_button->drop_file_list = NULL;
     }

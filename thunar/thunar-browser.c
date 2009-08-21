@@ -517,7 +517,7 @@ thunar_browser_poke_volume (ThunarBrowser              *browser,
   _thunar_return_if_fail (THUNAR_IS_BROWSER (browser));
   _thunar_return_if_fail (G_IS_VOLUME (volume));
 
-  if (g_volume_is_mounted (volume))
+  if (thunar_g_volume_is_mounted (volume))
     {
       mount = g_volume_get_mount (volume);
       mount_point = g_mount_get_root (mount);

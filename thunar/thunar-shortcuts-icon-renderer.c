@@ -267,7 +267,7 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
               icon_area.height = gdk_pixbuf_get_height (icon);
             }
 
-          if (!g_volume_is_mounted (shortcuts_icon_renderer->volume))
+          if (!thunar_g_volume_is_mounted (shortcuts_icon_renderer->volume))
             {
               /* 50% translucent for unmounted volumes */
               temp = exo_gdk_pixbuf_lucent (icon, 50);

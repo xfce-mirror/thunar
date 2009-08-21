@@ -325,7 +325,7 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
         }
 
       /* determine the path list stored with the selection */
-      file_list = g_file_list_new_from_string (data);
+      file_list = thunar_g_file_list_new_from_string (data);
     }
 
   /* perform the action if possible */
@@ -337,7 +337,7 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
       else
         thunar_application_move_into (application, request->widget, file_list, request->target_file, request->new_files_closure);
       g_object_unref (G_OBJECT (application));
-      g_file_list_free (file_list);
+      thunar_g_file_list_free (file_list);
 
       /* clear the clipboard if it contained "cutted data"
        * (gtk_clipboard_clear takes care of not clearing
@@ -427,10 +427,10 @@ thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
   _thunar_return_if_fail (manager->clipboard == clipboard);
 
   /* determine the path list from the file list */
-  file_list = thunar_file_list_to_g_file_list (manager->files);
+  file_list = thunar_file_list_to_thunar_g_file_list (manager->files);
 
   /* determine the string representation of the path list */
-  string_list = g_file_list_to_string (file_list);
+  string_list = thunar_g_file_list_to_string (file_list);
 
   switch (target_info)
     {
@@ -449,7 +449,7 @@ thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
     }
 
   /* cleanup */
-  g_file_list_free (file_list);
+  thunar_g_file_list_free (file_list);
   g_free (string_list);
 }
 

@@ -760,7 +760,7 @@ thunar_location_entry_item_activated (GtkWidget           *item,
   if (G_UNLIKELY (volume != NULL))
     {
       /* check if the volume isn't already mounted */
-      if (G_LIKELY (!g_volume_is_mounted (volume)))
+      if (G_LIKELY (!thunar_g_volume_is_mounted (volume)))
         {
           mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
 

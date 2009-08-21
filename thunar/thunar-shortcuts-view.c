@@ -304,7 +304,7 @@ thunar_shortcuts_view_finalize (GObject *object)
   ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (object);
 
   /* release drop path list (if drag_leave wasn't called) */
-  g_file_list_free (view->drop_file_list);
+  thunar_g_file_list_free (view->drop_file_list);
 
   /* release the provider factory */
   g_object_unref (G_OBJECT (view->provider_factory));
@@ -441,7 +441,7 @@ thunar_shortcuts_view_drag_data_received (GtkWidget        *widget,
     {
       /* extract the URI list from the selection data (if valid) */
       if (info == TEXT_URI_LIST && selection_data->format == 8 && selection_data->length > 0)
-        view->drop_file_list = g_file_list_new_from_string ((const gchar *) selection_data->data);
+        view->drop_file_list = thunar_g_file_list_new_from_string ((const gchar *) selection_data->data);
 
       /* reset the state */
       view->drop_data_ready = TRUE;
@@ -687,7 +687,7 @@ thunar_shortcuts_view_drag_leave (GtkWidget      *widget,
   /* reset the "drop data ready" status and free the URI list */
   if (G_LIKELY (view->drop_data_ready))
     {
-      g_file_list_free (view->drop_file_list);
+      thunar_g_file_list_free (view->drop_file_list);
       view->drop_data_ready = FALSE;
       view->drop_file_list = NULL;
     }
@@ -808,13 +808,13 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
     {
       /* append the "Mount Volume" menu action */
       item = gtk_image_menu_item_new_with_mnemonic (_("_Mount Volume"));
-      gtk_widget_set_sensitive (item, !g_volume_is_mounted (volume));
+      gtk_widget_set_sensitive (item, !thunar_g_volume_is_mounted (volume));
       g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_mount), view);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
 
       /* check if the volume is ejectable */
-      if (g_volume_is_removable (volume))
+      if (thunar_g_volume_is_removable (volume))
         {
           /* append the "Eject Volume" menu action */
           item = gtk_image_menu_item_new_with_mnemonic (_("E_ject Volume"));

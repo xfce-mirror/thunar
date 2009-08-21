@@ -90,7 +90,7 @@ thunar_io_scan_directory (ThunarJob          *job,
     {
       /* create GFile for the child and prepend it to the file list */
       child_file = g_file_get_child (file, g_file_info_get_name (info));
-      files = g_file_list_prepend (files, child_file);
+      files = thunar_g_file_list_prepend (files, child_file);
 
       /* if the child is a directory and we need to recurse ... just do so */
       if (recursively && g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
@@ -116,13 +116,13 @@ thunar_io_scan_directory (ThunarJob          *job,
   if (G_UNLIKELY (err != NULL))
     {
       g_propagate_error (error, err);
-      g_file_list_free (files);
+      thunar_g_file_list_free (files);
       return NULL;
     }
   else if (exo_job_set_error_if_cancelled (EXO_JOB (job), &err))
     {
       g_propagate_error (error, err);
-      g_file_list_free (files);
+      thunar_g_file_list_free (files);
       return NULL;
     }
   

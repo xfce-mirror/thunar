@@ -756,7 +756,7 @@ thunar_path_entry_drag_data_get (GtkWidget        *widget,
     {
       /* transform the path for the current file into an uri string list */
       file_list.data = thunar_file_get_file (path_entry->current_file); file_list.next = file_list.prev = NULL;
-      uri_string = g_file_list_to_string (&file_list);
+      uri_string = thunar_g_file_list_to_string (&file_list);
 
       /* setup the uri list for the drag selection */
       gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) uri_string, strlen (uri_string));

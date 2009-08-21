@@ -102,7 +102,7 @@ thunar_trash_action_init (ThunarTrashAction *trash_action)
   GFile *trash_bin;
 
   /* try to connect to the trash bin */
-  trash_bin = g_file_new_for_trash ();
+  trash_bin = thunar_g_file_new_for_trash ();
   trash_action->trash_bin = thunar_file_get (trash_bin, NULL);
   g_object_unref (trash_bin);
 

@@ -608,7 +608,7 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
   applications = g_hash_table_new_full (g_direct_hash,
                                         (GEqualFunc) g_app_info_equal,
                                         (GDestroyNotify) g_object_unref,
-                                        (GDestroyNotify) g_file_list_free);
+                                        (GDestroyNotify) thunar_g_file_list_free);
 
   for (lp = files; lp != NULL; lp = lp->next)
     {
@@ -623,11 +623,11 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
           if (G_LIKELY (file_list != NULL))
             {
               /* take a copy of the list as the old one will be dropped by the insert */
-              file_list = g_file_list_copy (file_list);
+              file_list = thunar_g_file_list_copy (file_list);
             }
 
           /* append our new URI to the list */
-          file_list = g_file_list_append (file_list, thunar_file_get_file (lp->data));
+          file_list = thunar_g_file_list_append (file_list, thunar_file_get_file (lp->data));
 
           /* (re)insert the URI list for the application */
           g_hash_table_insert (applications, app_info, file_list);
@@ -1231,9 +1231,9 @@ thunar_launcher_action_open (GtkAction      *action,
   if (G_LIKELY (app_info != NULL))
     {
       /* try to open the selected files using the given application */
-      selected_paths = thunar_file_list_to_g_file_list (launcher->selected_files);
+      selected_paths = thunar_file_list_to_thunar_g_file_list (launcher->selected_files);
       thunar_launcher_open_paths (app_info, selected_paths, launcher);
-      g_file_list_free (selected_paths);
+      thunar_g_file_list_free (selected_paths);
     }
   else if (g_list_length (launcher->selected_files) == 1)
     {
@@ -1295,12 +1295,12 @@ thunar_launcher_action_sendto_desktop (GtkAction      *action,
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
   /* determine the source files */
-  files = thunar_file_list_to_g_file_list (launcher->selected_files);
+  files = thunar_file_list_to_thunar_g_file_list (launcher->selected_files);
   if (G_UNLIKELY (files == NULL))
     return;
 
   /* determine the file to the ~/Desktop folder */
-  desktop_file = g_file_new_for_desktop ();
+  desktop_file = thunar_g_file_new_for_desktop ();
 
   /* launch the link job */
   application = thunar_application_get ();
@@ -1309,7 +1309,7 @@ thunar_launcher_action_sendto_desktop (GtkAction      *action,
 
   /* cleanup */
   g_object_unref (desktop_file);
-  g_file_list_free (files);
+  thunar_g_file_list_free (files);
 }
 
 
@@ -1324,7 +1324,7 @@ thunar_launcher_mount_data_new (ThunarLauncher *launcher,
 
   data = _thunar_slice_new0 (ThunarLauncherMountData);
   data->launcher = g_object_ref (launcher);
-  data->files = g_file_list_copy (files);
+  data->files = thunar_g_file_list_copy (files);
 
   return data;
 }
@@ -1338,7 +1338,7 @@ thunar_launcher_mount_data_free (ThunarLauncherMountData *data)
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (data->launcher));
 
   g_object_unref (data->launcher);
-  g_file_list_free (data->files);
+  thunar_g_file_list_free (data->files);
   _thunar_slice_free (ThunarLauncherMountData, data);
 }
 
@@ -1382,7 +1382,7 @@ thunar_launcher_sendto_volume (ThunarLauncher *launcher,
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
   _thunar_return_if_fail (G_IS_VOLUME (volume));
 
-  if (!g_volume_is_mounted (volume))
+  if (!thunar_g_volume_is_mounted (volume))
     return;
   
   mount = g_volume_get_mount (volume);
@@ -1452,7 +1452,7 @@ thunar_launcher_action_sendto_volume (GtkAction      *action,
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
   /* determine the source paths */
-  files = thunar_file_list_to_g_file_list (launcher->selected_files);
+  files = thunar_file_list_to_thunar_g_file_list (launcher->selected_files);
   if (G_UNLIKELY (files == NULL))
     return;
 
@@ -1462,7 +1462,7 @@ thunar_launcher_action_sendto_volume (GtkAction      *action,
     return;
 
   /* make sure to mount the volume first, if it's not already mounted */
-  if (!g_volume_is_mounted (volume))
+  if (!thunar_g_volume_is_mounted (volume))
     {
       /* determine the toplevel window */
       window = gtk_widget_get_toplevel (launcher->widget);
@@ -1483,7 +1483,7 @@ thunar_launcher_action_sendto_volume (GtkAction      *action,
     }
 
   /* cleanup */
-  g_file_list_free (files);
+  thunar_g_file_list_free (files);
 }
 
 
@@ -1570,7 +1570,7 @@ thunar_launcher_sendto_idle (gpointer user_data)
         {
           /* skip non-removable or disc media (CD-ROMs aren't writable by Thunar) */
           /* TODO skip non-writable volumes like CD-ROMs here */
-          if (!g_volume_is_removable (lp->data))
+          if (!thunar_g_volume_is_removable (lp->data))
             {
               g_object_unref (lp->data);
               continue;

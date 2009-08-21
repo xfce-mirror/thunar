@@ -1362,7 +1362,7 @@ thunar_renamer_dialog_drag_data_received (GtkWidget           *tree_view,
         }
 
       /* determine the file list from the selection_data */
-      file_list = g_file_list_new_from_string ((const gchar *) selection_data->data);
+      file_list = thunar_g_file_list_new_from_string ((const gchar *) selection_data->data);
 
       /* add all paths to the model */
       for (lp = file_list; lp != NULL; lp = lp->next)

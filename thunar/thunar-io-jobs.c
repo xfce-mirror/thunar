@@ -55,7 +55,7 @@ _tij_collect_nofollow (ThunarJob *job,
                                                   TRUE, &err);
 
       /* prepend the new files to the existing list */
-      file_list = g_file_list_prepend (file_list, lp->data);
+      file_list = thunar_g_file_list_prepend (file_list, lp->data);
       file_list = g_list_concat (child_file_list, file_list);
     }
 
@@ -68,7 +68,7 @@ _tij_collect_nofollow (ThunarJob *job,
         g_propagate_error (error, err);
 
       /* release the collected files */
-      g_file_list_free (file_list);
+      thunar_g_file_list_free (file_list);
 
       return NULL;
     }
@@ -218,7 +218,7 @@ ThunarJob *
 thunar_io_jobs_create_files (GList *file_list)
 {
   return thunar_simple_job_launch (_thunar_io_jobs_create, 1,
-                                   G_TYPE_FILE_LIST, file_list);
+                                   THUNAR_TYPE_G_FILE_LIST, file_list);
 }
 
 
@@ -354,7 +354,7 @@ ThunarJob *
 thunar_io_jobs_make_directories (GList *file_list)
 {
   return thunar_simple_job_launch (_thunar_io_jobs_mkdir, 1,
-                                   G_TYPE_FILE_LIST, file_list);
+                                   THUNAR_TYPE_G_FILE_LIST, file_list);
 }
 
 
@@ -394,7 +394,7 @@ _thunar_io_jobs_unlink (ThunarJob   *job,
       else
         g_propagate_error (error, err);
 
-      g_file_list_free (file_list);
+      thunar_g_file_list_free (file_list);
       return FALSE;
     }
 
@@ -407,7 +407,7 @@ _thunar_io_jobs_unlink (ThunarJob   *job,
       g_assert (G_IS_FILE (lp->data));
 
       /* skip root folders which cannot be deleted anyway */
-      if (g_file_is_root (lp->data))
+      if (thunar_g_file_is_root (lp->data))
         continue;
 
 again:
@@ -457,7 +457,7 @@ again:
     }
 
   /* release the file list */
-  g_file_list_free (file_list);
+  thunar_g_file_list_free (file_list);
 
   if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
     return FALSE;
@@ -471,7 +471,7 @@ ThunarJob *
 thunar_io_jobs_unlink_files (GList *file_list)
 {
   return thunar_simple_job_launch (_thunar_io_jobs_unlink, 1,
-                                   G_TYPE_FILE_LIST, file_list);
+                                   THUNAR_TYPE_G_FILE_LIST, file_list);
 }
 
 
@@ -563,7 +563,7 @@ again:
           g_free (source_path);
 
           if (err == NULL)
-            new_files_list = g_file_list_prepend (new_files_list, sp->data);
+            new_files_list = thunar_g_file_list_prepend (new_files_list, sp->data);
           else
             {
               /* check if we have an error from which we can recover */
@@ -600,14 +600,14 @@ again:
 
   if (err != NULL)
     {
-      g_file_list_free (new_files_list);
+      thunar_g_file_list_free (new_files_list);
       g_propagate_error (error, err);
       return FALSE;
     }
   else
     {
       thunar_job_new_files (THUNAR_JOB (job), new_files_list);
-      g_file_list_free (new_files_list);
+      thunar_g_file_list_free (new_files_list);
       return TRUE;
     }
 }
@@ -623,8 +623,8 @@ thunar_io_jobs_link_files (GList *source_file_list,
   _thunar_return_val_if_fail (g_list_length (source_file_list) == g_list_length (target_file_list), NULL);
 
   return thunar_simple_job_launch (_thunar_io_jobs_link, 2,
-                                   G_TYPE_FILE_LIST, source_file_list,
-                                   G_TYPE_FILE_LIST, target_file_list);
+                                   THUNAR_TYPE_G_FILE_LIST, source_file_list,
+                                   THUNAR_TYPE_G_FILE_LIST, target_file_list);
 }
 
 
@@ -673,7 +673,7 @@ thunar_io_jobs_trash_files (GList *file_list)
   _thunar_return_val_if_fail (file_list != NULL, NULL);
 
   return thunar_simple_job_launch (_thunar_io_jobs_trash, 1,
-                                   G_TYPE_FILE_LIST, file_list);
+                                   THUNAR_TYPE_G_FILE_LIST, file_list);
 }
 
 
@@ -727,7 +727,7 @@ _thunar_io_jobs_chown (ThunarJob   *job,
   if (recursive)
     file_list = _tij_collect_nofollow (job, file_list, &err);
   else
-    file_list = g_file_list_copy (file_list);
+    file_list = thunar_g_file_list_copy (file_list);
 
   if (err != NULL)
     {
@@ -799,7 +799,7 @@ retry_chown:
     }
 
   /* release the file list */
-  g_file_list_free (file_list);
+  thunar_g_file_list_free (file_list);
 
   if (err != NULL)
     {
@@ -828,7 +828,7 @@ thunar_io_jobs_change_group (GFile    *file,
   file_list.prev = NULL;
   
   return thunar_simple_job_launch (_thunar_io_jobs_chown, 4,
-                                   G_TYPE_FILE_LIST, &file_list,
+                                   THUNAR_TYPE_G_FILE_LIST, &file_list,
                                    G_TYPE_INT, -1,
                                    G_TYPE_INT, (gint) gid,
                                    G_TYPE_BOOLEAN, recursive);
@@ -874,7 +874,7 @@ _thunar_io_jobs_chmod (ThunarJob   *job,
   if (recursive)
     file_list = _tij_collect_nofollow (job, file_list, &err);
   else
-    file_list = g_file_list_copy (file_list);
+    file_list = thunar_g_file_list_copy (file_list);
 
   if (err != NULL)
     {
@@ -952,7 +952,7 @@ retry_chown:
     }
 
   /* release the file list */
-  g_file_list_free (file_list);
+  thunar_g_file_list_free (file_list);
 
   if (err != NULL)
     {
@@ -985,7 +985,7 @@ thunar_io_jobs_change_mode (GFile         *file,
   file_list.prev = NULL;
   
   return thunar_simple_job_launch (_thunar_io_jobs_chmod, 6,
-                                   G_TYPE_FILE_LIST, &file_list,
+                                   THUNAR_TYPE_G_FILE_LIST, &file_list,
                                    THUNAR_TYPE_FILE_MODE, dir_mask,
                                    THUNAR_TYPE_FILE_MODE, dir_mode,
                                    THUNAR_TYPE_FILE_MODE, file_mask,
@@ -1039,7 +1039,7 @@ _thunar_io_jobs_ls (ThunarJob   *job,
     }
 
   /* free the GFile list */
-  g_file_list_free (path_list);
+  thunar_g_file_list_free (path_list);
 
   /* abort on errors or cancellation */
   if (err != NULL)

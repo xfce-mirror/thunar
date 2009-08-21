@@ -318,9 +318,9 @@ thunar_tree_model_init (ThunarTreeModel *model)
   ThunarTreeModelItem *item;
   ThunarFile          *file;
   GFile               *system_path_list[3] = { 
-    g_file_new_for_home (), 
-    g_file_new_for_trash (), 
-    g_file_new_for_root () 
+    thunar_g_file_new_for_home (), 
+    thunar_g_file_new_for_trash (), 
+    thunar_g_file_new_for_root () 
   };
   GList               *volumes;
   GList               *lp;
@@ -998,7 +998,7 @@ thunar_tree_model_volume_changed (GVolumeMonitor  *volume_monitor,
   if (G_LIKELY (lp != NULL))
     {
       /* check if we need to display the volume now */
-      if (g_volume_is_removable (volume) && g_volume_is_present (volume))
+      if (thunar_g_volume_is_removable (volume) && thunar_g_volume_is_present (volume))
         {
           /* remove the volume from the list of hidden volumes */
           model->hidden_volumes = g_list_delete_link (model->hidden_volumes, lp);
@@ -1040,7 +1040,7 @@ thunar_tree_model_volume_changed (GVolumeMonitor  *volume_monitor,
       _thunar_assert (item->volume == volume);
 
       /* check if we need to hide the volume now */
-      if (!g_volume_is_removable (volume) || !g_volume_is_present (volume))
+      if (!thunar_g_volume_is_removable (volume) || !thunar_g_volume_is_present (volume))
         {
           /* need to ref here, because the volumes_removed() handler will drop the reference */
           g_object_ref (volume);
@@ -1054,7 +1054,7 @@ thunar_tree_model_volume_changed (GVolumeMonitor  *volume_monitor,
       else
         {
           /* check if the volume is mounted and we don't have a file yet */
-          if (g_volume_is_mounted (volume) && item->file == NULL)
+          if (thunar_g_volume_is_mounted (volume) && item->file == NULL)
             {
               mount = g_volume_get_mount (volume);
 
@@ -1072,7 +1072,7 @@ thunar_tree_model_volume_changed (GVolumeMonitor  *volume_monitor,
                   g_object_unref (mount);
                 }
             }
-          else if (!g_volume_is_mounted (volume) && item->file != NULL)
+          else if (!thunar_g_volume_is_mounted (volume) && item->file != NULL)
             {
               /* reset the item for the node */
               thunar_tree_model_item_reset (item);
@@ -1227,7 +1227,7 @@ thunar_tree_model_item_new_with_volume (ThunarTreeModel *model,
   item->model = model;
 
   /* check if the volume is mounted */
-  if (g_volume_is_mounted (volume))
+  if (thunar_g_volume_is_mounted (volume))
     {
       mount = g_volume_get_mount (volume);
       
@@ -1519,7 +1519,7 @@ thunar_tree_model_item_load_idle (gpointer user_data)
   GDK_THREADS_ENTER ();
 
   /* check if we don't have a file yet and this is a mounted volume */
-  if (item->file == NULL && item->volume != NULL && g_volume_is_mounted (item->volume))
+  if (item->file == NULL && item->volume != NULL && thunar_g_volume_is_mounted (item->volume))
     {
       mount = g_volume_get_mount (item->volume);
 

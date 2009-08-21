@@ -367,7 +367,7 @@ thunar_application_collect_and_launch (ThunarApplication *application,
   for (lp = g_list_last (source_file_list); err == NULL && lp != NULL; lp = lp->prev)
     {
       /* verify that we're not trying to collect a root node */
-      if (G_UNLIKELY (g_file_is_root (lp->data)))
+      if (G_UNLIKELY (thunar_g_file_is_root (lp->data)))
         {
           /* tell the user that we cannot perform the requested operation */
           g_set_error (&err, G_FILE_ERROR, G_FILE_ERROR_INVAL, "%s", g_strerror (EINVAL));
@@ -379,7 +379,7 @@ thunar_application_collect_and_launch (ThunarApplication *application,
           g_free (basename);
 
           /* add to the target file list */
-          target_file_list = g_file_list_prepend (target_file_list, file);
+          target_file_list = thunar_g_file_list_prepend (target_file_list, file);
           g_object_unref (file);
         }
     }
@@ -401,7 +401,7 @@ thunar_application_collect_and_launch (ThunarApplication *application,
     }
 
   /* release the target path list */
-  g_file_list_free (target_file_list);
+  thunar_g_file_list_free (target_file_list);
 }
 
 
@@ -1392,7 +1392,7 @@ thunar_application_move_into (ThunarApplication *application,
   _thunar_return_if_fail (target_file != NULL);
   
   /* launch the appropriate operation depending on the target file */
-  if (g_file_is_trashed (target_file))
+  if (thunar_g_file_is_trashed (target_file))
     {
       thunar_application_trash (application, parent, source_file_list);
     }
@@ -1455,7 +1455,7 @@ thunar_application_unlink_files (ThunarApplication *application,
   for (lp = g_list_last (file_list); lp != NULL; lp = lp->prev, ++n_path_list)
     {
       /* prepend the path to the path list */
-      path_list = g_file_list_prepend (path_list, thunar_file_get_file (lp->data));
+      path_list = thunar_g_file_list_prepend (path_list, thunar_file_get_file (lp->data));
     }
 
   /* nothing to do if we don't have any paths */
@@ -1517,7 +1517,7 @@ thunar_application_unlink_files (ThunarApplication *application,
     }
 
   /* release the path list */
-  g_file_list_free (path_list);
+  thunar_g_file_list_free (path_list);
 }
 
 
@@ -1677,7 +1677,7 @@ thunar_application_empty_trash (ThunarApplication *application,
       /* fake a path list with only the trash root (the root
        * folder itself will never be unlinked, so this is safe)
        */
-      file_list.data = g_file_new_for_trash ();
+      file_list.data = thunar_g_file_new_for_trash ();
       file_list.next = NULL;
       file_list.prev = NULL;
 
@@ -1734,11 +1734,11 @@ thunar_application_restore_files (ThunarApplication *application,
           break;
         }
 
-      /* TODO we need to distinguish between URIs and paths here */
+      /* TODO we might have to distinguish between URIs and paths here */
       target_path = g_file_new_for_commandline_arg (original_uri);
 
-      source_path_list = g_file_list_append (source_path_list, thunar_file_get_file (lp->data));
-      target_path_list = g_file_list_append (target_path_list, target_path);
+      source_path_list = thunar_g_file_list_append (source_path_list, thunar_file_get_file (lp->data));
+      target_path_list = thunar_g_file_list_append (target_path_list, target_path);
 
       g_object_unref (target_path);
     }
@@ -1759,8 +1759,8 @@ thunar_application_restore_files (ThunarApplication *application,
     }
 
   /* free path lists */
-  g_file_list_free (source_path_list);
-  g_file_list_free (target_path_list);
+  thunar_g_file_list_free (source_path_list);
+  thunar_g_file_list_free (target_path_list);
 }
 
 

@@ -289,20 +289,20 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
   g_signal_connect (model->volume_monitor, "volume-removed", G_CALLBACK (thunar_shortcuts_model_volume_removed), model);
   g_signal_connect (model->volume_monitor, "volume-changed", G_CALLBACK (thunar_shortcuts_model_volume_changed), model);
 
-  home = g_file_new_for_home ();
+  home = thunar_g_file_new_for_home ();
 
   /* determine the system-defined paths */
   system_paths = g_list_append (system_paths, g_object_ref (home));
-  system_paths = g_list_append (system_paths, g_file_new_for_trash ());
+  system_paths = g_list_append (system_paths, thunar_g_file_new_for_trash ());
 
-  desktop = g_file_new_for_desktop ();
+  desktop = thunar_g_file_new_for_desktop ();
 
   if (!g_file_equal (desktop, home))
     system_paths = g_list_append (system_paths, desktop);
   else
     g_object_unref (desktop);
 
-  system_paths = g_list_append (system_paths, g_file_new_for_root ());
+  system_paths = g_list_append (system_paths, thunar_g_file_new_for_root ());
 
   /* will be used to append the shortcuts to the list */
   path = gtk_tree_path_new_from_indices (0, -1);
@@ -319,7 +319,7 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
           shortcut->type = THUNAR_SHORTCUT_SYSTEM_DEFINED;
           shortcut->file = file;
 
-          if (g_file_is_desktop (lp->data))
+          if (thunar_g_file_is_desktop (lp->data))
             {
               gchar *old_locale = NULL;
               gchar *locale = NULL;
@@ -361,7 +361,7 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
       volume = G_VOLUME (lp->data);
 
       /* we list only present, removable devices here */
-      if (g_volume_is_removable (volume) && g_volume_is_present (volume))
+      if (thunar_g_volume_is_removable (volume) && thunar_g_volume_is_present (volume))
         {
           /* generate the shortcut (w/o a file, else we might
            * prevent the volume from being unmounted)
@@ -845,7 +845,7 @@ thunar_shortcuts_model_load (ThunarShortcutsModel *model)
   FILE            *fp;
   gint             i;
 
-  home = g_file_new_for_home ();
+  home = thunar_g_file_new_for_home ();
 
   /* determine the path to the GTK+ bookmarks file */
   bookmarks_path = xfce_get_homefile (".gtk-bookmarks", NULL);
@@ -1192,7 +1192,7 @@ thunar_shortcuts_model_volume_changed (GVolumeMonitor       *volume_monitor,
   if (lp != NULL)
     {
       /* check if we need to display the volume now */
-      if (g_volume_is_removable (volume) && g_volume_is_present (volume))
+      if (thunar_g_volume_is_removable (volume) && thunar_g_volume_is_present (volume))
         {
           /* remove the volume from the list of hidden volumes */
           model->hidden_volumes = g_list_delete_link (model->hidden_volumes, lp);
@@ -1233,7 +1233,7 @@ thunar_shortcuts_model_volume_changed (GVolumeMonitor       *volume_monitor,
       _thunar_assert (shortcut->volume == volume);
 
       /* check if we need to hide the volume now */
-      if (!g_volume_is_removable (volume) || !g_volume_is_present (volume))
+      if (!thunar_g_volume_is_removable (volume) || !thunar_g_volume_is_present (volume))
         {
           /* move the volume to the hidden list */
           model->hidden_volumes = g_list_prepend (model->hidden_volumes, 

@@ -255,7 +255,7 @@ ThunarFile       *thunar_file_cache_lookup         (const GFile            *file
 
 
 GList            *thunar_file_list_get_applications  (GList *file_list);
-GList            *thunar_file_list_to_g_file_list    (GList *file_list);
+GList            *thunar_file_list_to_thunar_g_file_list    (GList *file_list);
 
 gboolean         thunar_file_is_desktop              (const ThunarFile *file);
 
@@ -267,7 +267,7 @@ gboolean         thunar_file_is_desktop              (const ThunarFile *file);
  *
  * Return value: %TRUE if @file is the root directory.
  **/
-#define thunar_file_is_root(file) (g_file_is_root (THUNAR_FILE ((file))->gfile))
+#define thunar_file_is_root(file) (thunar_g_file_is_root (THUNAR_FILE ((file))->gfile))
 
 /**
  * thunar_file_has_parent:

@@ -52,8 +52,8 @@ _thunar_misc_jobs_load_templates (ThunarJob   *job,
   menu = g_value_get_object (g_value_array_get_nth (param_values, 0));
   g_object_set_data (G_OBJECT (job), "menu", menu);
 
-  home_dir = g_file_new_for_home ();
-  templates_dir = g_file_new_for_user_special_dir (G_USER_DIRECTORY_TEMPLATES);
+  home_dir = thunar_g_file_new_for_home ();
+  templates_dir = thunar_g_file_new_for_user_special_dir (G_USER_DIRECTORY_TEMPLATES);
 
   if (G_LIKELY (!g_file_equal (templates_dir, home_dir)))
     {
@@ -72,7 +72,7 @@ _thunar_misc_jobs_load_templates (ThunarJob   *job,
         }
 
       /* free the GFile list */
-      g_file_list_free (paths);
+      thunar_g_file_list_free (paths);
     }
 
   g_object_unref (templates_dir);

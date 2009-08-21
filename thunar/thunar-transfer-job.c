@@ -138,7 +138,7 @@ thunar_transfer_job_finalize (GObject *object)
   g_list_foreach (job->source_node_list, (GFunc) thunar_transfer_node_free, NULL);
   g_list_free (job->source_node_list);
 
-  g_file_list_free (job->target_file_list);
+  thunar_g_file_list_free (job->target_file_list);
 
   (*G_OBJECT_CLASS (thunar_transfer_job_parent_class)->finalize) (object);
 }
@@ -223,7 +223,7 @@ thunar_transfer_job_collect_node (ThunarTransferJob  *job,
         }
       
       /* release the child files */
-      g_file_list_free (file_list);
+      thunar_g_file_list_free (file_list);
     }
 
   /* release file info */
@@ -568,7 +568,7 @@ retry_copy:
 
               /* add the real target file to the return list */
               if (G_LIKELY (target_file_list_return != NULL))
-                *target_file_list_return = g_file_list_prepend (*target_file_list_return, real_target_file);
+                *target_file_list_return = thunar_g_file_list_prepend (*target_file_list_return, real_target_file);
 
 retry_remove:
               /* try to remove the source directory if we are on copy+remove fallback for move */
@@ -669,7 +669,7 @@ thunar_transfer_job_execute (ExoJob  *job,
 
       /* check if we are moving a file out of the trash */
       if (transfer_job->type == THUNAR_TRANSFER_JOB_MOVE 
-          && g_file_is_trashed (node->source_file))
+          && thunar_g_file_is_trashed (node->source_file))
         {
           /* update progress information */
           exo_job_info_message (job, _("Trying to restore \"%s\""),
@@ -749,7 +749,7 @@ thunar_transfer_job_execute (ExoJob  *job,
                            NULL, NULL, &err))
             {
               /* add the target file to the new files list */
-              new_files_list = g_file_list_prepend (new_files_list, tp->data);
+              new_files_list = thunar_g_file_list_prepend (new_files_list, tp->data);
 
               /* release source and target files */
               thunar_transfer_node_free (node);
@@ -807,7 +807,7 @@ thunar_transfer_job_execute (ExoJob  *job,
   else
     {
       thunar_job_new_files (THUNAR_JOB (job), new_files_list);
-      g_file_list_free (new_files_list);
+      thunar_g_file_list_free (new_files_list);
       return TRUE;
     }
 }
@@ -864,7 +864,7 @@ thunar_transfer_job_new (GList                *source_node_list,
        sp = sp->next, tp = tp->next)
     {
       /* make sure we don't transfer root directories. this should be prevented in the GUI */
-      if (G_UNLIKELY (g_file_is_root (sp->data) || g_file_is_root (tp->data)))
+      if (G_UNLIKELY (thunar_g_file_is_root (sp->data) || thunar_g_file_is_root (tp->data)))
         continue;
 
       /* only process non-equal pairs unless we're copying */
@@ -876,7 +876,7 @@ thunar_transfer_job_new (GList                *source_node_list,
           job->source_node_list = g_list_append (job->source_node_list, node);
 
           /* append target file */
-          job->target_file_list = g_file_list_append (job->target_file_list, tp->data);
+          job->target_file_list = thunar_g_file_list_append (job->target_file_list, tp->data);
         }
     }
 

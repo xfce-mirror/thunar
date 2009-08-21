@@ -259,7 +259,7 @@ thunar_dbus_service_connect_trash_bin (ThunarDBusService *dbus_service,
   if (G_UNLIKELY (dbus_service->trash_bin == NULL))
     {
       /* try to connect to the trash bin */
-      trash_bin_path = g_file_new_for_trash ();
+      trash_bin_path = thunar_g_file_new_for_trash ();
       dbus_service->trash_bin = thunar_file_get (trash_bin_path, error);
       if (G_LIKELY (dbus_service->trash_bin != NULL))
         {
@@ -610,7 +610,7 @@ thunar_dbus_service_move_to_trash (ThunarDBusService *dbus_service,
               /* determine the path for the filename */
               /* TODO Not sure this will work as expected */
               file = g_file_new_for_commandline_arg (filename);
-              file_list = g_file_list_append (file_list, file);
+              file_list = thunar_g_file_list_append (file_list, file);
               g_object_unref (file);
             }
 
@@ -628,7 +628,7 @@ thunar_dbus_service_move_to_trash (ThunarDBusService *dbus_service,
         }
 
       /* cleanup */
-      g_file_list_free (file_list);
+      thunar_g_file_list_free (file_list);
       g_object_unref (screen);
     }
 

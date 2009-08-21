@@ -619,7 +619,7 @@ thunar_window_setup_user_dir_menu_entries (ThunarWindow *window)
   setlocale (LC_MESSAGES, locale);
   g_free (locale);
 
-  home_dir = g_file_new_for_home ();
+  home_dir = thunar_g_file_new_for_home ();
 
   for (i = 0; i < G_USER_N_DIRECTORIES; i++)
     {
@@ -1891,7 +1891,7 @@ thunar_window_action_open_home (GtkAction    *action,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* determine the path to the home directory */
-  home = g_file_new_for_home ();
+  home = thunar_g_file_new_for_home ();
 
   /* determine the file for the home directory */
   home_file = thunar_file_get (home, &error);
@@ -1929,7 +1929,7 @@ thunar_window_open_user_folder (GtkAction           *action,
 
   if (G_UNLIKELY (path == NULL))
     {
-      home_dir = g_file_new_for_home ();
+      home_dir = thunar_g_file_new_for_home ();
       user_dir = g_file_resolve_relative_path (home_dir, default_name);
       path = g_file_get_path (user_dir);
       g_object_unref (home_dir);
@@ -2148,7 +2148,7 @@ thunar_window_action_open_trash (GtkAction    *action,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* determine the path to the trash bin */
-  trash_bin = g_file_new_for_trash ();
+  trash_bin = thunar_g_file_new_for_trash ();
 
   /* determine the file for the trash bin */
   trash_bin_file = thunar_file_get (trash_bin, &error);
