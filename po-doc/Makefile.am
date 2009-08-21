@@ -54,6 +54,7 @@
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
 docdir = $(top_srcdir)/docs/manual
+langs=`cd $(srcdir) && ls *.po 2>/dev/null | sed 's/\(.*\)\.po/\1/'`
 
 if ENABLE_XML2PO
 all-local: $(PACKAGE).pot
@@ -63,14 +64,12 @@ $(PACKAGE).pot: $(docdir)/C/$(PACKAGE).xml.in
 
 update-po: Makefile $(PACKAGE).pot
 	@echo "*** Updating PO ***"
-	langs=`sed -e '/^#/d' $(srcdir)/LINGUAS`; \
 	for lang in $$langs; do \
 		$(XML2PO) -u $$lang.po $(docdir)/C/$(PACKAGE).xml.in; \
 	done
 
 update-xml: Makefile $(PACKAGE).pot
 	@echo "*** Updating XML ***"
-	langs=`sed -e '/^#/d' $(srcdir)/LINGUAS`; \
 	for lang in $$langs; do \
 		if test -n $(docdir)/$$lang; then \
 			mkdir -p $(docdir)/$$lang; \
