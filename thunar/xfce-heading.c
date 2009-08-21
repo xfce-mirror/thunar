@@ -53,8 +53,6 @@ enum
 
 
 
-static void         xfce_heading_class_init     (XfceHeadingClass *klass);
-static void         xfce_heading_init           (XfceHeading      *heading);
 static void         xfce_heading_finalize       (GObject          *object);
 static void         xfce_heading_get_property   (GObject          *object,
                                                  guint             prop_id,

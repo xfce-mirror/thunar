@@ -113,7 +113,7 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob *job,
   name_index = MIN (n-1, G_N_ELEMENTS (duplicate_names)-1);
   
   /* generate the display name for the nth copy/link of the source file */
-  if (name_index < G_N_ELEMENTS (duplicate_names)-1)
+  if (name_index < (gint) G_N_ELEMENTS (duplicate_names)-1)
     {
       display_name = g_strdup_printf (gettext (duplicate_names[name_index][type_index]),
                                       g_file_info_get_display_name (info));

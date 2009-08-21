@@ -46,8 +46,6 @@ enum
 
 
 
-static void xfce_titled_dialog_class_init     (XfceTitledDialogClass  *klass);
-static void xfce_titled_dialog_init           (XfceTitledDialog       *titled_dialog);
 static void xfce_titled_dialog_finalize       (GObject                *object);
 static void xfce_titled_dialog_get_property   (GObject                *object,
                                                guint                   prop_id,

@@ -1063,8 +1063,8 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
 }
 
 
-
-void
+#if 0 
+static void
 thunar_thumbnailer_unqueue (ThunarThumbnailer *thumbnailer,
                             gpointer           request)
 {
@@ -1094,3 +1094,4 @@ thunar_thumbnailer_unqueue (ThunarThumbnailer *thumbnailer,
   g_mutex_unlock (thumbnailer->lock);
 #endif
 }
+#endif

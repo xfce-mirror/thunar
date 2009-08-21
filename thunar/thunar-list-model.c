@@ -85,7 +85,7 @@ static void               thunar_list_model_set_property          (GObject      
 static GtkTreeModelFlags  thunar_list_model_get_flags             (GtkTreeModel           *model);
 static gint               thunar_list_model_get_n_columns         (GtkTreeModel           *model);
 static GType              thunar_list_model_get_column_type       (GtkTreeModel           *model,
-                                                                   gint                    index);
+                                                                   gint                    idx);
 static gboolean           thunar_list_model_get_iter              (GtkTreeModel           *model,
                                                                    GtkTreeIter            *iter,
                                                                    GtkTreePath            *path);
@@ -601,9 +601,9 @@ thunar_list_model_get_n_columns (GtkTreeModel *model)
 
 static GType
 thunar_list_model_get_column_type (GtkTreeModel *model,
-                                   gint          index)
+                                   gint          idx)
 {
-  switch (index)
+  switch (idx)
     {
     case THUNAR_COLUMN_DATE_ACCESSED:
       return G_TYPE_STRING;
@@ -674,14 +674,14 @@ thunar_list_model_get_path (GtkTreeModel *model,
                             GtkTreeIter  *iter)
 {
   ThunarListModel *store = THUNAR_LIST_MODEL (model);
-  gint             index = 0;
+  gint             idx = 0;
 
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
   _thunar_return_val_if_fail (iter->stamp == store->stamp, NULL);
 
-  index = g_slist_position (store->rows, iter->user_data);
-  if (G_LIKELY (index >= 0))
-    return gtk_tree_path_new_from_indices (index, -1);
+  idx = g_slist_position (store->rows, iter->user_data);
+  if (G_LIKELY (idx >= 0))
+    return gtk_tree_path_new_from_indices (idx, -1);
 
   return NULL;
 }
@@ -1026,7 +1026,7 @@ thunar_list_model_set_default_sort_func (GtkTreeSortable       *sortable,
                                          gpointer               data,
                                          GtkDestroyNotify       destroy)
 {
-  g_error ("ThunarListModel has sorting facilities built-in!");
+  g_critical ("ThunarListModel has sorting facilities built-in!");
 }
 
 
@@ -1038,7 +1038,7 @@ thunar_list_model_set_sort_func (GtkTreeSortable       *sortable,
                                  gpointer               data,
                                  GtkDestroyNotify       destroy)
 {
-  g_error ("ThunarListModel has sorting facilities built-in!");
+  g_critical ("ThunarListModel has sorting facilities built-in!");
 }
 
 
@@ -1298,7 +1298,7 @@ thunar_list_model_files_added (ThunarFolder    *folder,
   GSList      *prev = NULL;
   GSList      *row;
   gint        *indices;
-  gint         index = 0;
+  gint         idx = 0;
 
   /* we use a simple trick here to avoid allocating
    * GtkTreePath's again and again, by simply accessing
@@ -1330,7 +1330,7 @@ thunar_list_model_files_added (ThunarFolder    *folder,
           if (G_UNLIKELY (store->rows == NULL || thunar_list_model_cmp (store, file, store->rows->data) < 0))
             {
               prev        = NULL;
-              index       = 0;
+              idx       = 0;
               row->next   = store->rows;
               store->rows = row;
             }
@@ -1343,10 +1343,10 @@ thunar_list_model_files_added (ThunarFolder    *folder,
               if (G_UNLIKELY (prev == NULL || thunar_list_model_cmp (store, file, prev->data) < 0))
                 {
                   prev = store->rows;
-                  index = 1;
+                  idx = 1;
                 }
 
-              for (; prev->next != NULL; ++index, prev = prev->next)
+              for (; prev->next != NULL; ++idx, prev = prev->next)
                 if (thunar_list_model_cmp (store, file, prev->next->data) < 0)
                   break;
 
@@ -1360,7 +1360,7 @@ thunar_list_model_files_added (ThunarFolder    *folder,
           GTK_TREE_ITER_INIT (iter, store->stamp, row);
 
           /* tell the view about the new item */
-          indices[0] = index;
+          indices[0] = idx;
           gtk_tree_model_row_inserted (GTK_TREE_MODEL (store), path, &iter);
         }
     }
@@ -2137,14 +2137,14 @@ thunar_list_model_get_paths_for_files (ThunarListModel *store,
 {
   GSList *row;
   GList  *paths = NULL;
-  gint    index = 0;
+  gint    idx = 0;
 
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
 
   /* find the rows for the given files */
-  for (row = store->rows; row != NULL; ++index, row = row->next)
+  for (row = store->rows; row != NULL; ++idx, row = row->next)
     if (g_list_find (files, row->data) != NULL)
-      paths = g_list_prepend (paths, gtk_tree_path_new_from_indices (index, -1));
+      paths = g_list_prepend (paths, gtk_tree_path_new_from_indices (idx, -1));
 
   return paths;
 }
@@ -2174,7 +2174,7 @@ thunar_list_model_get_paths_for_pattern (ThunarListModel *store,
   GPatternSpec *pspec;
   GSList       *row;
   GList        *paths = NULL;
-  gint          index = 0;
+  gint          idx = 0;
 
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
   _thunar_return_val_if_fail (g_utf8_validate (pattern, -1, NULL), NULL);
@@ -2183,9 +2183,9 @@ thunar_list_model_get_paths_for_pattern (ThunarListModel *store,
   pspec = g_pattern_spec_new (pattern);
 
   /* find all rows that match the given pattern */
-  for (row = store->rows; row != NULL; ++index, row = row->next)
+  for (row = store->rows; row != NULL; ++idx, row = row->next)
     if (g_pattern_match_string (pspec, thunar_file_get_display_name (row->data)))
-      paths = g_list_prepend (paths, gtk_tree_path_new_from_indices (index, -1));
+      paths = g_list_prepend (paths, gtk_tree_path_new_from_indices (idx, -1));
 
   /* release the pattern */
   g_pattern_spec_free (pspec);

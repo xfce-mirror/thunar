@@ -88,8 +88,6 @@ enum
 
 
 
-static void     thunar_window_class_init                  (ThunarWindowClass      *klass);
-static void     thunar_window_init                        (ThunarWindow           *window);
 static void     thunar_window_dispose                     (GObject                *object);
 static void     thunar_window_finalize                    (GObject                *object);
 static void     thunar_window_get_property                (GObject                *object,
@@ -138,8 +136,6 @@ static void     thunar_window_action_shortcuts_changed    (GtkToggleAction      
 static void     thunar_window_action_tree_changed         (GtkToggleAction        *action,
                                                            ThunarWindow           *window);
 static void     thunar_window_action_statusbar_changed    (GtkToggleAction        *action,
-                                                           ThunarWindow           *window);
-static void     thunar_window_action_toolbar_changed      (GtkToggleAction        *action,
                                                            ThunarWindow           *window);
 static void     thunar_window_action_zoom_in              (GtkAction              *action,
                                                            ThunarWindow           *window);
@@ -558,7 +554,7 @@ view_type2index (GType type)
 
 
 static inline GType
-view_index2type (gint index)
+view_index2type (gint idx)
 {
   /* this necessary for platforms where sizeof(GType) != sizeof(gint),
    * see http://bugzilla.xfce.org/show_bug.cgi?id=2726 for details.
@@ -566,12 +562,12 @@ view_index2type (gint index)
   if (sizeof (GType) == sizeof (gint))
     {
       /* no need to map anything */
-      return (GType) index;
+      return (GType) idx;
     }
   else
     {
       /* map from indices to unique types */
-      switch (index)
+      switch (idx)
         {
         case 0:  return THUNAR_TYPE_COMPACT_VIEW;
         case 1:  return THUNAR_TYPE_DETAILS_VIEW;
@@ -1912,7 +1908,7 @@ thunar_window_action_open_home (GtkAction    *action,
   g_object_unref (home);
 }
 
-gboolean
+static gboolean
 thunar_window_open_user_folder (GtkAction           *action,
                                 ThunarWindow        *window,
                                 ThunarUserDirectory  thunar_user_dir,
@@ -2672,7 +2668,7 @@ thunar_window_set_zoom_level (ThunarWindow   *window,
                               ThunarZoomLevel zoom_level)
 {
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
-  _thunar_return_if_fail (zoom_level >= 0 && zoom_level < THUNAR_ZOOM_N_LEVELS);
+  _thunar_return_if_fail (zoom_level < THUNAR_ZOOM_N_LEVELS);
 
   /* check if we have a new zoom level */
   if (G_LIKELY (window->zoom_level != zoom_level))

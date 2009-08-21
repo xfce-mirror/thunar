@@ -40,6 +40,9 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 
 #include <glib.h>
 #include <gio/gio.h>
@@ -411,7 +414,9 @@ thunar_exec_on_screen (GdkScreen   *screen,
   SnDisplay         *sn_display = NULL;
   gint               sn_workspace;
 #endif
+#ifndef HAVE_UNISTD_H
   extern gchar     **environ;
+#endif
   gboolean           succeed;
   gchar             *display_name;
   gchar            **cenvp = envp;

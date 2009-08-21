@@ -93,7 +93,7 @@ static void     thunar_path_entry_drag_data_get                 (GtkWidget      
                                                                  GdkDragContext       *context,
                                                                  GtkSelectionData     *selection_data,
                                                                  guint                 info,
-                                                                 guint                 time);
+                                                                 guint                 timestamp);
 static void     thunar_path_entry_activate                      (GtkEntry             *entry);
 static void     thunar_path_entry_changed                       (GtkEditable          *editable);
 static void     thunar_path_entry_do_insert_text                (GtkEditable          *editable,
@@ -745,7 +745,7 @@ thunar_path_entry_drag_data_get (GtkWidget        *widget,
                                  GdkDragContext   *context,
                                  GtkSelectionData *selection_data,
                                  guint             info,
-                                 guint             time)
+                                 guint             timestamp)
 {
   ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
   GList            file_list;

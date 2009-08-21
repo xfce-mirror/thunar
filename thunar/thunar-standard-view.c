@@ -140,7 +140,7 @@ static gboolean             thunar_standard_view_get_visible_range          (Thu
                                                                              ThunarFile              **end_file);
 static void                 thunar_standard_view_scroll_to_file             (ThunarView               *view,
                                                                              ThunarFile               *file,
-                                                                             gboolean                  select,
+                                                                             gboolean                  select_file,
                                                                              gboolean                  use_align,
                                                                              gfloat                    row_align,
                                                                              gfloat                    col_align);
@@ -1435,7 +1435,7 @@ thunar_standard_view_get_visible_range (ThunarView  *view,
 static void
 thunar_standard_view_scroll_to_file (ThunarView *view,
                                      ThunarFile *file,
-                                     gboolean    select,
+                                     gboolean    select_file,
                                      gboolean    use_align,
                                      gfloat      row_align,
                                      gfloat      col_align)
@@ -1456,7 +1456,7 @@ thunar_standard_view_scroll_to_file (ThunarView *view,
     {
       /* remember a reference for the new file and settings */
       standard_view->priv->scroll_to_file = g_object_ref (G_OBJECT (file));
-      standard_view->priv->scroll_to_select = select;
+      standard_view->priv->scroll_to_select = select_file;
       standard_view->priv->scroll_to_use_align = use_align;
       standard_view->priv->scroll_to_row_align = row_align;
       standard_view->priv->scroll_to_col_align = col_align;
@@ -1476,7 +1476,7 @@ thunar_standard_view_scroll_to_file (ThunarView *view,
           (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->scroll_to_path) (standard_view, paths->data, use_align, row_align, col_align);
 
           /* check if we should also alter the selection */
-          if (G_UNLIKELY (select))
+          if (G_UNLIKELY (select_file))
             {
               /* select only the file in question */
               (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->unselect_all) (standard_view);
@@ -1528,7 +1528,7 @@ thunar_standard_view_get_dest_actions (ThunarStandardView *standard_view,
                                        GdkDragContext     *context,
                                        gint                x,
                                        gint                y,
-                                       guint               time,
+                                       guint               timestamp,
                                        ThunarFile        **file_return)
 {
   GdkDragAction actions = 0;
@@ -1575,7 +1575,7 @@ thunar_standard_view_get_dest_actions (ThunarStandardView *standard_view,
   (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->highlight_path) (standard_view, path);
 
   /* tell Gdk whether we can drop here */
-  gdk_drag_status (context, action, time);
+  gdk_drag_status (context, action, timestamp);
 
   /* clean up */
   if (G_LIKELY (file != NULL))

@@ -231,7 +231,7 @@ thunar_view_set_zoom_level (ThunarView     *view,
                             ThunarZoomLevel zoom_level)
 {
   _thunar_return_if_fail (THUNAR_IS_VIEW (view));
-  _thunar_return_if_fail (zoom_level >= 0 && zoom_level < THUNAR_ZOOM_N_LEVELS);
+  _thunar_return_if_fail (zoom_level < THUNAR_ZOOM_N_LEVELS);
   (*THUNAR_VIEW_GET_IFACE (view)->set_zoom_level) (view, zoom_level);
 }
 

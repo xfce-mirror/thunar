@@ -75,20 +75,20 @@ static void           thunar_shortcuts_view_drag_data_received           (GtkWid
                                                                           gint                      y,
                                                                           GtkSelectionData         *selection_data,
                                                                           guint                     info,
-                                                                          guint                     time);
+                                                                          guint                     timestamp);
 static gboolean       thunar_shortcuts_view_drag_drop                    (GtkWidget                *widget,
                                                                           GdkDragContext           *context,
                                                                           gint                      x,
                                                                           gint                      y,
-                                                                          guint                     time);
+                                                                          guint                     timestamp);
 static gboolean       thunar_shortcuts_view_drag_motion                  (GtkWidget                *widget,
                                                                           GdkDragContext           *context,
                                                                           gint                      x,
                                                                           gint                      y,
-                                                                          guint                     time);
+                                                                          guint                     timestamp);
 static void           thunar_shortcuts_view_drag_leave                   (GtkWidget                *widget,
                                                                           GdkDragContext           *context,
-                                                                          guint                     time);
+                                                                          guint                     timestamp);
 static gboolean       thunar_shortcuts_view_popup_menu                   (GtkWidget                *widget);
 static void           thunar_shortcuts_view_row_activated                (GtkTreeView              *tree_view,
                                                                           GtkTreePath              *path,
@@ -422,7 +422,7 @@ thunar_shortcuts_view_drag_data_received (GtkWidget        *widget,
                                           gint              y,
                                           GtkSelectionData *selection_data,
                                           guint             info,
-                                          guint             time)
+                                          guint             timestamp)
 {
   GtkTreeViewDropPosition position = GTK_TREE_VIEW_DROP_BEFORE;
   ThunarShortcutsView    *view = THUNAR_SHORTCUTS_VIEW (widget);
@@ -486,7 +486,7 @@ thunar_shortcuts_view_drag_data_received (GtkWidget        *widget,
                         {
                           /* ask the user what to do with the drop data */
                           if (G_UNLIKELY (action == GDK_ACTION_ASK))
-                            action = thunar_dnd_ask (widget, file, view->drop_file_list, time, actions);
+                            action = thunar_dnd_ask (widget, file, view->drop_file_list, timestamp, actions);
 
                           /* perform the requested action */
                           if (G_LIKELY (action != 0))
@@ -507,14 +507,14 @@ thunar_shortcuts_view_drag_data_received (GtkWidget        *widget,
         }
 
       /* disable the drop highlighting */
-      thunar_shortcuts_view_drag_leave (widget, context, time);
+      thunar_shortcuts_view_drag_leave (widget, context, timestamp);
 
       /* tell the peer that we handled the drop */
-      gtk_drag_finish (context, succeed, FALSE, time);
+      gtk_drag_finish (context, succeed, FALSE, timestamp);
     }
   else
     {
-      gdk_drag_status (context, 0, time);
+      gdk_drag_status (context, 0, timestamp);
     }
 }
 
@@ -525,7 +525,7 @@ thunar_shortcuts_view_drag_drop (GtkWidget      *widget,
                                  GdkDragContext *context,
                                  gint            x,
                                  gint            y,
-                                 guint           time)
+                                 guint           timestamp)
 {
   ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (widget);
   GtkTreeSelection    *selection;
@@ -547,7 +547,7 @@ thunar_shortcuts_view_drag_drop (GtkWidget      *widget,
       view->drop_occurred = TRUE;
 
       /* request the drag data from the source. */
-      gtk_drag_get_data (widget, context, target, time);
+      gtk_drag_get_data (widget, context, target, timestamp);
     }
   else if (target == gdk_atom_intern_static_string ("GTK_TREE_MODEL_ROW"))
     {
@@ -576,7 +576,7 @@ thunar_shortcuts_view_drag_drop (GtkWidget      *widget,
       gtk_tree_path_free (dst_path);
 
       /* finish the dnd operation */
-      gtk_drag_finish (context, TRUE, FALSE, time);
+      gtk_drag_finish (context, TRUE, FALSE, timestamp);
     }
   else
     {
@@ -594,7 +594,7 @@ thunar_shortcuts_view_drag_motion (GtkWidget      *widget,
                                    GdkDragContext *context,
                                    gint            x,
                                    gint            y,
-                                   guint           time)
+                                   guint           timestamp)
 {
   GtkTreeViewDropPosition position = GTK_TREE_VIEW_DROP_BEFORE;
   ThunarShortcutsView    *view = THUNAR_SHORTCUTS_VIEW (widget);
@@ -614,7 +614,7 @@ thunar_shortcuts_view_drag_motion (GtkWidget      *widget,
       if (G_UNLIKELY (!view->drop_data_ready))
         {
           /* request the drag data from the source */
-          gtk_drag_get_data (widget, context, target, time);
+          gtk_drag_get_data (widget, context, target, timestamp);
 
           /* gdk_drag_status() will be called by drag_data_received */
           return TRUE;
@@ -667,7 +667,7 @@ thunar_shortcuts_view_drag_motion (GtkWidget      *widget,
     }
 
   /* tell Gdk whether we can drop here */
-  gdk_drag_status (context, action, time);
+  gdk_drag_status (context, action, timestamp);
 
   return TRUE;
 }
@@ -677,7 +677,7 @@ thunar_shortcuts_view_drag_motion (GtkWidget      *widget,
 static void
 thunar_shortcuts_view_drag_leave (GtkWidget      *widget,
                                   GdkDragContext *context,
-                                  guint           time)
+                                  guint           timestamp)
 {
   ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (widget);
 
@@ -698,7 +698,7 @@ thunar_shortcuts_view_drag_leave (GtkWidget      *widget,
   gtk_widget_queue_draw (widget);
 
   /* call the parent's handler */
-  (*GTK_WIDGET_CLASS (thunar_shortcuts_view_parent_class)->drag_leave) (widget, context, time);
+  (*GTK_WIDGET_CLASS (thunar_shortcuts_view_parent_class)->drag_leave) (widget, context, timestamp);
 }
 
 

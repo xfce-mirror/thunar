@@ -115,6 +115,11 @@ static gboolean thunar_dbus_service_terminate                   (ThunarDBusServi
 
 
 
+/* include generate dbus infos */
+#include <thunar/thunar-dbus-service-infos.h>
+
+
+
 struct _ThunarDBusServiceClass
 {
   GObjectClass __parent__;
@@ -166,8 +171,7 @@ thunar_dbus_service_get_type (void)
 static void
 thunar_dbus_service_class_init (ThunarDBusServiceClass *klass)
 {
-  extern const DBusGObjectInfo dbus_glib_thunar_dbus_service_object_info;
-  GObjectClass                *gobject_class;
+  GObjectClass *gobject_class;
 
   /* determine the parent type class */
   thunar_dbus_service_parent_class = g_type_class_peek_parent (klass);
@@ -762,7 +766,3 @@ thunar_dbus_service_terminate (ThunarDBusService *dbus_service,
   /* we cannot fail */
   return TRUE;
 }
-
-
-
-#include <thunar/thunar-dbus-service-infos.h>

@@ -80,7 +80,7 @@ static void     thunar_renamer_dialog_response            (GtkDialog            
                                                            gint                      response);
 static void     thunar_renamer_dialog_context_menu        (ThunarRenamerDialog      *renamer_dialog,
                                                            guint                     button,
-                                                           guint32                   time);
+                                                           guint32                   timestamp);
 static void     thunar_renamer_dialog_help                (ThunarRenamerDialog      *renamer_dialog);
 static void     thunar_renamer_dialog_save                (ThunarRenamerDialog      *renamer_dialog);
 static void     thunar_renamer_dialog_action_add_files    (GtkAction                *action,
@@ -102,23 +102,23 @@ static void     thunar_renamer_dialog_drag_data_received  (GtkWidget            
                                                            gint                      y,
                                                            GtkSelectionData         *selection_data,
                                                            guint                     info,
-                                                           guint                     time,
+                                                           guint                     timestamp,
                                                            ThunarRenamerDialog      *renamer_dialog);
 static void     thunar_renamer_dialog_drag_leave          (GtkWidget                *tree_view,
                                                            GdkDragContext           *context,
-                                                           guint                     time,
+                                                           guint                     timestamp,
                                                            ThunarRenamerDialog      *renamer_dialog);
 static gboolean thunar_renamer_dialog_drag_motion         (GtkWidget                *tree_view,
                                                            GdkDragContext           *context,
                                                            gint                      x,
                                                            gint                      y,
-                                                           guint                     time,
+                                                           guint                     timestamp,
                                                            ThunarRenamerDialog      *renamer_dialog);
 static gboolean thunar_renamer_dialog_drag_drop           (GtkWidget                *tree_view,
                                                            GdkDragContext           *context,
                                                            gint                      x,
                                                            gint                      y,
-                                                           guint                     time,
+                                                           guint                     timestamp,
                                                            ThunarRenamerDialog      *renamer_dialog);
 static void     thunar_renamer_dialog_notify_page         (GtkNotebook              *notebook,
                                                            GParamSpec               *pspec,
@@ -865,7 +865,7 @@ thunar_renamer_dialog_response (GtkDialog *dialog,
 static void
 thunar_renamer_dialog_context_menu (ThunarRenamerDialog *renamer_dialog,
                                     guint                button,
-                                    guint32              time)
+                                    guint32              timestamp)
 {
   GtkActionGroup *renamer_actions = NULL;
   ThunarxRenamer *renamer;
@@ -921,7 +921,7 @@ thunar_renamer_dialog_context_menu (ThunarRenamerDialog *renamer_dialog,
 
   /* run the menu on the dialog's screen */
   menu = gtk_ui_manager_get_widget (renamer_dialog->ui_manager, "/file-context-menu");
-  thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (renamer_dialog), NULL, NULL, button, time);
+  thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (renamer_dialog), NULL, NULL, button, timestamp);
 
   /* remove the previously merge items from the UI manager */
   if (G_UNLIKELY (renamer_merge_id != 0))
@@ -1325,7 +1325,7 @@ thunar_renamer_dialog_drag_data_received (GtkWidget           *tree_view,
                                           gint                 y,
                                           GtkSelectionData    *selection_data,
                                           guint                info,
-                                          guint                time,
+                                          guint                timestamp,
                                           ThunarRenamerDialog *renamer_dialog)
 {
   ThunarFile              *file;
@@ -1387,7 +1387,7 @@ thunar_renamer_dialog_drag_data_received (GtkWidget           *tree_view,
         }
 
       /* finish the drag */
-      gtk_drag_finish (context, (file_list != NULL), FALSE, time);
+      gtk_drag_finish (context, (file_list != NULL), FALSE, timestamp);
 
       /* release the list */
       g_list_free (file_list);
@@ -1402,7 +1402,7 @@ thunar_renamer_dialog_drag_data_received (GtkWidget           *tree_view,
 static void
 thunar_renamer_dialog_drag_leave (GtkWidget           *tree_view,
                                   GdkDragContext      *context,
-                                  guint                time,
+                                  guint                timestamp,
                                   ThunarRenamerDialog *renamer_dialog)
 {
   _thunar_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
@@ -1426,7 +1426,7 @@ thunar_renamer_dialog_drag_motion (GtkWidget           *tree_view,
                                    GdkDragContext      *context,
                                    gint                 x,
                                    gint                 y,
-                                   guint                time,
+                                   guint                timestamp,
                                    ThunarRenamerDialog *renamer_dialog)
 {
   GdkAtom                  target;
@@ -1503,7 +1503,7 @@ thunar_renamer_dialog_drag_motion (GtkWidget           *tree_view,
     }
 
   /* we can handle the drop */
-  gdk_drag_status (context, action, time);
+  gdk_drag_status (context, action, timestamp);
   return TRUE;
 }
 
@@ -1514,7 +1514,7 @@ thunar_renamer_dialog_drag_drop (GtkWidget           *tree_view,
                                  GdkDragContext      *context,
                                  gint                 x,
                                  gint                 y,
-                                 guint                time,
+                                 guint                timestamp,
                                  ThunarRenamerDialog *renamer_dialog)
 {
   GdkAtom                  target;
@@ -1533,7 +1533,7 @@ thunar_renamer_dialog_drag_drop (GtkWidget           *tree_view,
   if (G_LIKELY (target == gdk_atom_intern_static_string ("text/uri-list")))
     {
       /* request the data, we call gtk_drag_finish() later */
-      gtk_drag_get_data (tree_view, context, target, time);
+      gtk_drag_get_data (tree_view, context, target, timestamp);
     }
   else if (target == gdk_atom_intern_static_string ("GTK_TREE_MODEL_ROW"))
     {
@@ -1560,7 +1560,7 @@ thunar_renamer_dialog_drag_drop (GtkWidget           *tree_view,
         }
 
       /* finish the dnd operation */
-      gtk_drag_finish (context, TRUE, FALSE, time);
+      gtk_drag_finish (context, TRUE, FALSE, timestamp);
     }
   else
     {
