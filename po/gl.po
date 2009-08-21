@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-01-11 00:20+0100\n"
-"PO-Revision-Date: 2009-04-14 22:21+0100\n"
+"PO-Revision-Date: 2009-05-04 00:22+0100\n"
 "Last-Translator: Leandro Regueiro <leandro.regueiro@gmail.com>\n"
 "Language-Team: Galician <proxecto@trasno.net>\n"
 "MIME-Version: 1.0\n"
@@ -239,9 +239,9 @@ msgid "Failed to move \"%s\" to \"%s\""
 msgstr "Fallo ó mover \"%s\" a \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-trash.c:946
-#, fuzzy, c-format
+#, c-format
 msgid "The URI \"%s\" does not refer to a valid resource in the trash"
-msgstr "A rota «%s» non apunta a ningún directorio"
+msgstr "O URI \"%s\" non apunta a ningún recurso válido no lixo"
 
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1123
 msgid "Trash"
@@ -253,7 +253,7 @@ msgstr "Lixo"
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1431
 #, c-format
 msgid "Cannot move or copy files within the trash"
-msgstr ""
+msgstr "Non se poden mover nin copiar ficheiros dentro do lixo"
 
 #. no "ask-replace" handler, fallback to "ask"
 #: ../thunar-vfs/thunar-vfs-job.c:401
@@ -598,18 +598,17 @@ msgid "_Empty Trash"
 msgstr "_Baleirar o lixo"
 
 #: ../thunar/thunar-application.c:1536
-#, fuzzy
 msgid "If you choose to empty the Trash, all items in it will be permanently lost. Please note that you can also delete them separately."
-msgstr "Se selecciona baleirar o lixo, todos os elementos aí contidos eliminaranse definitivamente. Teña en conta que tamén pode eliminalos por separado."
+msgstr "Se escolle baleirar o Lixo, tódolos seus elementos perderanse permanentemente. Teña en conta que tamén pode un a un."
 
 #: ../thunar/thunar-application.c:1553
 msgid "Emptying the Trash..."
 msgstr "Baleirando o Lixo..."
 
 #: ../thunar/thunar-application.c:1607
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to determine the original path for \"%s\""
-msgstr "Non se puido determina-la información do ficheiro para «%s»"
+msgstr "Non se puido determinar a ruta orixinal de \"%s\""
 
 #: ../thunar/thunar-application.c:1635
 #, c-format
@@ -674,7 +673,7 @@ msgstr "Usar unha instrucción personalizada para unha aplicación que non estea
 #. create the "Custom command" button
 #: ../thunar/thunar-chooser-dialog.c:314
 msgid "_Browse..."
-msgstr "_Procurar..."
+msgstr "_Buscar..."
 
 #. create the "Use as default for this kind of file" button
 #: ../thunar/thunar-chooser-dialog.c:320
@@ -962,9 +961,8 @@ msgid "N_o to all"
 msgstr "N_on a todo"
 
 #: ../thunar/thunar-dialogs.c:488
-#, fuzzy
 msgid "_Retry"
-msgstr "Tenta_r de novo"
+msgstr "_Reintentar"
 
 #: ../thunar/thunar-dialogs.c:493
 msgid "_Cancel"
@@ -985,7 +983,7 @@ msgstr "Substituír _todo"
 
 #: ../thunar/thunar-dialogs.c:581
 msgid "_Replace"
-msgstr "_Substituir"
+msgstr "_Substituír"
 
 #: ../thunar/thunar-dialogs.c:611
 #, c-format
@@ -994,7 +992,7 @@ msgstr "Este cartafol xa contén un ficheiro \"%s\"."
 
 #: ../thunar/thunar-dialogs.c:619
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
-msgstr "Desexa substituir o ficheiro existente"
+msgstr "Desexa substituír o ficheiro existente"
 
 #.
 #. Fourth box (size, volume, free space)
@@ -1274,11 +1272,10 @@ msgstr[0] "Escritorio (Crear ligazón)"
 msgstr[1] "Escritorio (Crear ligazóns)"
 
 #: ../thunar/thunar-launcher.c:1306
-#, fuzzy
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
-msgstr[0] "Crear unha ligazón simbólico para o ficheiro seleccionado"
-msgstr[1] "Crear unha ligazón simbólica para cada ficheiro seleccionado"
+msgstr[0] "Crear unha ligazón para o ficheiro seleccionado no escritorio"
+msgstr[1] "Crear ligazóns para os ficheiros seleccionados no escritorio"
 
 #: ../thunar/thunar-launcher.c:1343
 #: ../thunar/thunar-launcher.c:1381
@@ -1389,7 +1386,7 @@ msgstr "Espazamento"
 
 #: ../thunar/thunar-location-buttons.c:275
 msgid "The amount of space between the path buttons"
-msgstr "Espazo entre os botóns de dirección"
+msgstr "Espazo entre os botóns de localización"
 
 #: ../thunar/thunar-location-buttons.c:1271
 #, c-format
@@ -1449,7 +1446,7 @@ msgstr "Tamaño da icona"
 
 #: ../thunar/thunar-path-entry.c:260
 msgid "The icon size for the path entry"
-msgstr "O tamaño de icona da entrada de dirección"
+msgstr "O tamaño de icona da entrada de localización"
 
 #. 0000
 #: ../thunar/thunar-permissions-chooser.c:242
@@ -1591,7 +1588,7 @@ msgstr "Preferencias do xestor de ficheiros"
 #: ../thunar/thunar-preferences-dialog.c:244
 #, fuzzy
 msgid "Display"
-msgstr "Pantalla"
+msgstr "Mostrar"
 
 #: ../thunar/thunar-preferences-dialog.c:254
 msgid "Default View"
@@ -1810,12 +1807,16 @@ msgid ""
 "Install the \"thunar-volman\" package to use\n"
 "the volume management support in Thunar."
 msgstr ""
+"Instale o paquete \"thunar-volman\" para usar\n"
+"o soporte de xestión de volumes en Thunar."
 
 #: ../thunar/thunar-preferences-dialog.c:635
 msgid ""
 "Build thunar-vfs with HAL support to use\n"
 "the volume management support in Thunar."
 msgstr ""
+"Compile thunar-vfs con soporte para HAL para\n"
+"usar o soporte de xestión de volumes en Thunar."
 
 #. add check button to enable/disable auto mounting
 #: ../thunar/thunar-preferences-dialog.c:646
@@ -1831,9 +1832,8 @@ msgstr ""
 
 #. tell the user that we failed to come up with the thunar-volman configuration dialog
 #: ../thunar/thunar-preferences-dialog.c:717
-#, fuzzy
 msgid "Failed to display the volume management settings"
-msgstr "Non se puido conectar co daemon HAL: %s"
+msgstr "Non se puido mostrar a configuración da xestión de volumes"
 
 #: ../thunar/thunar-progress-dialog.c:398
 #, c-format
@@ -2061,7 +2061,7 @@ msgstr "Non se puido renomear «%s» a «%s»."
 
 #: ../thunar/thunar-renamer-progress.c:221
 msgid "You can either choose to skip this file and continue to rename the remaining files, or revert the previously renamed files to their previous names, or cancel the operation without reverting previous changes."
-msgstr "Pode escoller entre omitir este ficheiro e continuar a renomea-los ficheiros restantes, retorna-los ficheiros renomeados ós seus nomes anteriores, ou cancela-la operación sen desface-las modificacións xa realizadas."
+msgstr "Pode escoller entre omitir este ficheiro e continuar a renomear os ficheiros restantes, retorna-los ficheiros renomeados ós seus nomes anteriores, ou cancela-la operación sen desfacer as modificacións xa realizadas."
 
 #: ../thunar/thunar-renamer-progress.c:226
 msgid "_Revert Changes"
@@ -2092,11 +2092,10 @@ msgid "Desktop"
 msgstr "Escritorio"
 
 #: ../thunar/thunar-shortcuts-pane.c:413
-#, fuzzy
 msgid "Side Pane (Create Shortcut)"
 msgid_plural "Side Pane (Create Shortcuts)"
-msgstr[0] "O panel lateral é visible"
-msgstr[1] "Re_nomear atallo"
+msgstr[0] "Panel lateral (Crear atallo)"
+msgstr[1] "Panel lateral (Crear atallos)"
 
 #: ../thunar/thunar-shortcuts-pane.c:415
 msgid "Add the selected folder to the shortcuts side pane"
@@ -2367,9 +2366,8 @@ msgid "T_rash"
 msgstr "_Lixo"
 
 #: ../thunar/thunar-trash-action.c:175
-#, fuzzy
 msgid "Display the contents of the trash can"
-msgstr "<b>Mostrar o contido do portapapeis despois de:</b>"
+msgstr "Mostra o contido do contedor de lixo"
 
 #: ../thunar/thunar-tree-model.c:630
 msgid "Loading..."
@@ -2476,9 +2474,8 @@ msgid "_Side Pane"
 msgstr "Panel _lateral"
 
 #: ../thunar/thunar-window.c:296
-#, fuzzy
 msgid "Zoom I_n"
-msgstr "_Zoom"
+msgstr "Ampliar"
 
 #: ../thunar/thunar-window.c:296
 msgid "Show the contents in more detail"
@@ -2590,7 +2587,7 @@ msgstr "Troca a visibilidade dos ficheiros agochados na xanela actual"
 
 #: ../thunar/thunar-window.c:319
 msgid "_Pathbar Style"
-msgstr "Estilo da barra de _direccións"
+msgstr "Estilo da barra de _localización"
 
 #: ../thunar/thunar-window.c:319
 msgid "Modern approach with buttons that correspond to folders"
@@ -2602,7 +2599,7 @@ msgstr "Es_tilo da barra de ferramentas"
 
 #: ../thunar/thunar-window.c:320
 msgid "Traditional approach with location bar and navigation buttons"
-msgstr "Enfoque tradicional con barra de direccións e botóns de navegación"
+msgstr "Enfoque tradicional con barra de localización e botóns de navegación"
 
 #: ../thunar/thunar-window.c:321
 msgid "_Shortcuts"
@@ -2700,9 +2697,8 @@ msgstr "_Non amosar esta mensaxe de novo"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2162
-#, fuzzy
 msgid "Failed to display the contents of the trash can"
-msgstr "Non se puido conectar co daemon HAL: %s"
+msgstr "Non se puido mostrar o contido do contedor de lixo"
 
 #: ../thunar/thunar-window.c:2204
 msgid ""
@@ -2887,9 +2883,8 @@ msgid "Uppercase / Lowercase"
 msgstr "Maiúsculas / minúsculas"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:202
-#, fuzzy
 msgid "Insert _time:"
-msgstr "Inserir data e hora"
+msgstr "Inserir a _hora:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:231
 msgid "The format describes the date and time parts to insert into the file name. For example, %Y will be substituted with the year, %m with the month and %d with the day. See the documentation of the date utility for additional information."
@@ -2973,9 +2968,8 @@ msgid "Current"
 msgstr "Actual"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:138
-#, fuzzy
 msgid "Date Picture Taken"
-msgstr "O nome xa existe"
+msgstr "Data na que se tomou a imaxe"
 
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:181
 #: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:260
@@ -2992,7 +2986,7 @@ msgstr "Formato de _número:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:216
 msgid "_Start With:"
-msgstr "Come_zar con:"
+msgstr "Come_za con:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:232
 msgid "Text _Format:"
@@ -3010,7 +3004,7 @@ msgstr "Eliminar do proxecto"
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:212
 #, fuzzy
 msgid "_To Position:"
-msgstr "Posición: %0.4f"
+msgstr "Saltar á posición"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:428
 msgid "Remove Characters"
@@ -3018,13 +3012,13 @@ msgstr "Elimina_r caracteres"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:209
 msgid "_Search For:"
-msgstr "_Procurar por:"
+msgstr "_Buscar por:"
 
 #. reset to default tooltip
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:217
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:652
 msgid "Enter the text to search for in the file names."
-msgstr "Introduza o texto a procurar nos ficheiros nomeados."
+msgstr "Introduza o texto a buscar nos ficheiros nomeados."
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:229
 msgid "Regular _Expression"
@@ -3044,11 +3038,11 @@ msgstr "Introduza o texto que se debe usar coma substitución para o patrón ind
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:258
 msgid "C_ase Sensitive Search"
-msgstr "Procura sensíbel _a maiúsculas/minúsculas"
+msgstr "Busca sensible _a maiúsculas/minúsculas"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:260
 msgid "If you enable this option, the pattern will be searched in a case-sensitive manner. The default is to use a case-insensitive search."
-msgstr "Se habilita esta opción, procurarase o patrón diferenciando entre maiúsculas e minúsculas. De xeito predeterminado, non se fai distición."
+msgstr "Se habilita esta opción, buscarase o patrón diferenciando entre maiúsculas e minúsculas. De xeito predeterminado, non se fai distición."
 
 #. setup a tooltip with the error message
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:620
@@ -3058,7 +3052,7 @@ msgstr "Expresión regular non válida, na posición do carácter %ld: %s"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:670
 msgid "Search & Replace"
-msgstr "Procurar e substituír"
+msgstr "Buscar e substituír"
 
 #: ../plugins/thunar-sendto-email/main.c:176
 #, c-format
@@ -3104,16 +3098,16 @@ msgstr "Comprimindo os ficheiros..."
 #: ../plugins/thunar-sendto-email/main.c:299
 #, c-format
 msgid "ZIP command terminated with error %d"
-msgstr ""
+msgstr "O comando ZIP rematou co erro %d"
 
 #: ../plugins/thunar-sendto-email/main.c:385
 msgid "Failed to create temporary directory"
 msgstr "Fallo ó crear o directorio temporal"
 
 #: ../plugins/thunar-sendto-email/main.c:436
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create symbolic link for \"%s\""
-msgstr "Crear unha ligazón simbólica para cada elemento seleccionado"
+msgstr "Fallo ao crear unha ligazón simbólica para \"%s\""
 
 #. tell the user that we failed to compress the file(s)
 #: ../plugins/thunar-sendto-email/main.c:459
@@ -3125,16 +3119,12 @@ msgstr[1] "Fallo ó comprimir %d ficheiros"
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:600
-#, fuzzy
 msgid "Failed to compose new email"
-msgstr ""
-"Fallou ao abrir o cliente de correo para enviar a mensaxe a:\n"
-"%s"
+msgstr "Produciuse un erro ao escribir unha nova mensaxe de correo-e"
 
 #: ../plugins/thunar-sendto-email/thunar-sendto-email.desktop.in.in.h:1
-#, fuzzy
 msgid "Mail Recipient"
-msgstr "Correo do Evolution"
+msgstr "Destinatario"
 
 #. tell the user that we failed to connect to the trash
 #. display an error message to the user
@@ -3142,9 +3132,8 @@ msgstr "Correo do Evolution"
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:317
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:346
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:380
-#, fuzzy
 msgid "Failed to connect to the Trash"
-msgstr "%s: non se pode conectar á pantalla pai '%s'"
+msgstr "Non se puido conectar ao Lixo"
 
 #. tell the user whether the trash is full or empty
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:287
@@ -3161,7 +3150,7 @@ msgstr "Mostrar o colector de lixo"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.in.h:2
 msgid "Trash Applet"
-msgstr "Applet do lixo"
+msgstr "Miniaplicación do lixo"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:125
 msgid "Custom Actions"
@@ -3208,16 +3197,17 @@ msgid "Failed to save actions to disk."
 msgstr "Non se puideron garda-las acciones no disco."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:463
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Are you sure that you want to delete\n"
 "action \"%s\"?"
-msgstr "Está seguro de que quere eliminar tódolos puntos de parada?"
+msgstr ""
+"Está seguro de que desexa eliminar a\n"
+"acción \"%s\"?"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:464
-#, fuzzy
 msgid "If you delete a custom action, it is permanently lost."
-msgstr "Se elimina un ficheiro, será de forma permanente."
+msgstr "Se elimina unha acción personalizar, será de forma permanente."
 
 #.
 #. Basic
