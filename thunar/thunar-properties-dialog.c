@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -30,13 +31,20 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include <exo/exo.h>
+
 #include <thunar/thunar-abstract-dialog.h>
+#include <thunar/thunar-application.h>
 #include <thunar/thunar-chooser-button.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-emblem-chooser.h>
+#include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-factory.h>
+#include <thunar/thunar-image.h>
+#include <thunar/thunar-io-jobs.h>
+#include <thunar/thunar-job.h>
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-permissions-chooser.h>
@@ -87,8 +95,6 @@ static void     thunar_properties_dialog_icon_button_clicked  (GtkWidget        
                                                                ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_update               (ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_update_providers     (ThunarPropertiesDialog      *dialog);
-static gboolean thunar_properties_dialog_rename_idle          (gpointer                     user_data);
-static void     thunar_properties_dialog_rename_idle_destroy  (gpointer                     user_data);
 
 
 
@@ -109,7 +115,6 @@ struct _ThunarPropertiesDialog
 
   ThunarPreferences      *preferences;
 
-  ThunarVfsVolumeManager *volume_manager;
   ThunarFile             *file;
 
   GtkWidget              *notebook;
@@ -128,8 +133,6 @@ struct _ThunarPropertiesDialog
   GtkWidget              *volume_image;
   GtkWidget              *volume_label;
   GtkWidget              *permissions_chooser;
-
-  guint                   rename_idle_id;
 };
 
 
@@ -241,7 +244,6 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
                             G_CALLBACK (thunar_properties_dialog_reload), dialog);
 
   dialog->provider_factory = thunarx_provider_factory_get_default ();
-  dialog->volume_manager = thunar_vfs_volume_manager_get_default ();
 
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                           GTK_STOCK_HELP, GTK_RESPONSE_HELP,
@@ -276,7 +278,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_box_pack_start (GTK_BOX (box), dialog->icon_button, FALSE, TRUE, 0);
   gtk_widget_show (dialog->icon_button);
 
-  dialog->icon_image = gtk_image_new ();
+  dialog->icon_image = thunar_image_new ();
   gtk_box_pack_start (GTK_BOX (box), dialog->icon_image, FALSE, TRUE, 0);
   gtk_widget_show (dialog->icon_image);
 
@@ -543,22 +545,15 @@ thunar_properties_dialog_finalize (GObject *object)
   ThunarPropertiesDialog *dialog = THUNAR_PROPERTIES_DIALOG (object);
 
   /* disconnect from the preferences */
-  g_signal_handlers_disconnect_by_func (G_OBJECT (dialog->preferences), thunar_properties_dialog_reload, dialog);
-  g_object_unref (G_OBJECT (dialog->preferences));
+  g_signal_handlers_disconnect_by_func (dialog->preferences, thunar_properties_dialog_reload, dialog);
+  g_object_unref (dialog->preferences);
 
   /* release the provider property pages */
   g_list_foreach (dialog->provider_pages, (GFunc) g_object_unref, NULL);
   g_list_free (dialog->provider_pages);
 
   /* drop the reference on the provider factory */
-  g_object_unref (G_OBJECT (dialog->provider_factory));
-
-  /* drop the reference on the volume manager */
-  g_object_unref (G_OBJECT (dialog->volume_manager));
-
-  /* be sure to cancel any pending rename idle source */
-  if (G_UNLIKELY (dialog->rename_idle_id != 0))
-    g_source_remove (dialog->rename_idle_id);
+  g_object_unref (dialog->provider_factory);
 
   (*G_OBJECT_CLASS (thunar_properties_dialog_parent_class)->finalize) (object);
 }
@@ -651,13 +646,65 @@ thunar_properties_dialog_reload (ThunarPropertiesDialog *dialog)
 
 
 static void
+thunar_properties_dialog_rename_error (ExoJob                 *job,
+                                       GError                 *error,
+                                       ThunarPropertiesDialog *dialog)
+{
+  _thunar_return_if_fail (EXO_IS_JOB (job));
+  _thunar_return_if_fail (error != NULL);
+  _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
+
+  /* display an error message */
+  thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to rename \"%s\""),
+                             thunar_file_get_display_name (dialog->file));
+}
+
+
+
+static void
+thunar_properties_dialog_rename_finished (ExoJob                 *job,
+                                          ThunarPropertiesDialog *dialog)
+{
+  const gchar *new_name;
+
+  _thunar_return_if_fail (EXO_IS_JOB (job));
+  _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
+
+  /* determine the new display name */
+  new_name = thunar_file_get_display_name (dialog->file);
+
+  /* reset the entry widget to the new name */
+  gtk_entry_set_text (GTK_ENTRY (dialog->name_entry), new_name);
+
+  g_signal_handlers_disconnect_matched (job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, dialog);
+  g_object_unref (job);
+}
+
+
+
+static void
 thunar_properties_dialog_activate (GtkWidget              *entry,
                                    ThunarPropertiesDialog *dialog)
 {
-  if (G_LIKELY (dialog->rename_idle_id == 0))
+  const gchar *old_name;
+  ThunarJob   *job;
+  gchar       *new_name;
+
+  /* check if we still have a valid file and if the user is allowed to rename */
+  if (G_UNLIKELY (dialog->file == NULL || !GTK_WIDGET_SENSITIVE (dialog->name_entry)))
+    return;
+
+  /* determine new and old name */
+  new_name = gtk_editable_get_chars (GTK_EDITABLE (dialog->name_entry), 0, -1);
+  old_name = thunar_file_get_display_name (dialog->file);
+  if (g_utf8_collate (new_name, old_name) != 0)
     {
-      dialog->rename_idle_id = g_idle_add_full (G_PRIORITY_DEFAULT, thunar_properties_dialog_rename_idle,
-                                                dialog, thunar_properties_dialog_rename_idle_destroy);
+      job = thunar_io_jobs_rename_file (dialog->file, new_name);
+      if (job != NULL)
+        {
+          g_signal_connect (job, "error", G_CALLBACK (thunar_properties_dialog_rename_error), dialog);
+          g_signal_connect (job, "finished", G_CALLBACK (thunar_properties_dialog_rename_finished), dialog);
+        }
     }
 }
 
@@ -678,11 +725,11 @@ static void
 thunar_properties_dialog_icon_button_clicked (GtkWidget              *button,
                                               ThunarPropertiesDialog *dialog)
 {
-  const gchar *custom_icon;
-  GtkWidget   *chooser;
-  GError      *err = NULL;
-  gchar       *title;
-  gchar       *icon;
+  GtkWidget *chooser;
+  GError    *err = NULL;
+  gchar     *custom_icon;
+  gchar     *title;
+  gchar     *icon;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (GTK_IS_BUTTON (button));
@@ -705,6 +752,7 @@ thunar_properties_dialog_icon_button_clicked (GtkWidget              *button,
   custom_icon = thunar_file_get_custom_icon (dialog->file);
   if (G_LIKELY (custom_icon != NULL && *custom_icon != '\0'))
     exo_icon_chooser_dialog_set_icon (EXO_ICON_CHOOSER_DIALOG (chooser), custom_icon);
+  g_free (custom_icon);
 
   /* run the icon chooser dialog and make sure the dialog still has a file */
   if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT && dialog->file != NULL)
@@ -781,18 +829,20 @@ static void
 thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 {
   ThunarIconFactory *icon_factory;
-  ThunarVfsFileSize  size;
-  ThunarVfsMimeInfo *info;
   ThunarDateStyle    date_style;
-  ThunarVfsVolume   *volume;
   GtkIconTheme      *icon_theme;
-  const gchar       *icon_name;
+  const gchar       *content_type;
   const gchar       *name;
-  GdkPixbuf         *icon;
+  const gchar       *path;
+  GVolume           *volume;
+  guint64            size;
+  GIcon             *gicon;
   glong              offset;
+  gchar             *date;
   gchar             *display_name;
   gchar             *size_string;
   gchar             *str;
+  gchar             *volume_name;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (THUNAR_IS_FILE (dialog->file));
@@ -808,12 +858,8 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   gtk_window_set_title (GTK_WINDOW (dialog), str);
   g_free (str);
 
-  /* update the icon */
-  icon = thunar_icon_factory_load_file_icon (icon_factory, dialog->file, THUNAR_FILE_ICON_STATE_DEFAULT, 48);
-  gtk_image_set_from_pixbuf (GTK_IMAGE (dialog->icon_image), icon);
-  gtk_window_set_icon (GTK_WINDOW (dialog), icon);
-  if (G_LIKELY (icon != NULL))
-    g_object_unref (G_OBJECT (icon));
+  /* update the preview image */
+  thunar_image_set_file (THUNAR_IMAGE (dialog->icon_image), dialog->file);
 
   /* check if the icon may be changed (only for writable .desktop files) */
   g_object_ref (G_OBJECT (dialog->icon_image));
@@ -853,15 +899,15 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
         }
     }
 
-  /* update the mime type */
-  info = thunar_file_get_mime_info (dialog->file);
-  if (G_UNLIKELY (strcmp (thunar_vfs_mime_info_get_name (info), "inode/symlink") == 0))
+  /* update the content type */
+  content_type = thunar_file_get_content_type (dialog->file);
+  if (G_UNLIKELY (g_content_type_equals (content_type, "inode/symlink")))
     str = g_strdup (_("broken link"));
   else if (G_UNLIKELY (thunar_file_is_symlink (dialog->file)))
-    str = g_strdup_printf (_("link to %s"), thunar_vfs_mime_info_get_comment (info));
+    str = g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (dialog->file));
   else
-    str = g_strdup (thunar_vfs_mime_info_get_comment (info));
-  thunar_gtk_widget_set_tooltip (dialog->kind_ebox, "%s", thunar_vfs_mime_info_get_name (info));
+    str = g_content_type_get_description (content_type);
+  thunar_gtk_widget_set_tooltip (dialog->kind_ebox, "%s", str);
   gtk_label_set_text (GTK_LABEL (dialog->kind_label), str);
   g_free (str);
 
@@ -871,14 +917,13 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
                 NULL);
 
   /* update the link target */
-  str = thunar_file_is_symlink (dialog->file) ? thunar_file_read_link (dialog->file, NULL) : NULL;
-  if (G_UNLIKELY (str != NULL))
+  path = thunar_file_is_symlink (dialog->file) ? thunar_file_get_symlink_target (dialog->file) : NULL;
+  if (G_UNLIKELY (path != NULL))
     {
-      display_name = g_filename_display_name (str);
+      display_name = g_filename_display_name (path);
       gtk_label_set_text (GTK_LABEL (dialog->link_label), display_name);
       gtk_widget_show (dialog->link_label);
       g_free (display_name);
-      g_free (str);
     }
   else
     {
@@ -886,14 +931,13 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
     }
 
   /* update the original path */
-  str = thunar_file_get_original_path (dialog->file);
-  if (G_UNLIKELY (str != NULL))
+  path = thunar_file_get_original_path (dialog->file);
+  if (G_UNLIKELY (path != NULL))
     {
-      display_name = g_filename_display_name (str);
+      display_name = g_filename_display_name (path);
       gtk_label_set_text (GTK_LABEL (dialog->origin_label), display_name);
       gtk_widget_show (dialog->origin_label);
       g_free (display_name);
-      g_free (str);
     }
   else
     {
@@ -901,12 +945,12 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
     }
 
   /* update the deleted time */
-  str = thunar_file_get_deletion_date (dialog->file, date_style);
-  if (G_LIKELY (str != NULL))
+  date = thunar_file_get_deletion_date (dialog->file, date_style);
+  if (G_LIKELY (date != NULL))
     {
-      gtk_label_set_text (GTK_LABEL (dialog->deleted_label), str);
+      gtk_label_set_text (GTK_LABEL (dialog->deleted_label), date);
       gtk_widget_show (dialog->deleted_label);
-      g_free (str);
+      g_free (date);
     }
   else
     {
@@ -914,12 +958,12 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
     }
 
   /* update the modified time */
-  str = thunar_file_get_date_string (dialog->file, THUNAR_FILE_DATE_MODIFIED, date_style);
-  if (G_LIKELY (str != NULL))
+  date = thunar_file_get_date_string (dialog->file, THUNAR_FILE_DATE_MODIFIED, date_style);
+  if (G_LIKELY (date != NULL))
     {
-      gtk_label_set_text (GTK_LABEL (dialog->modified_label), str);
+      gtk_label_set_text (GTK_LABEL (dialog->modified_label), date);
       gtk_widget_show (dialog->modified_label);
-      g_free (str);
+      g_free (date);
     }
   else
     {
@@ -927,12 +971,12 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
     }
 
   /* update the accessed time */
-  str = thunar_file_get_date_string (dialog->file, THUNAR_FILE_DATE_ACCESSED, date_style);
-  if (G_LIKELY (str != NULL))
+  date = thunar_file_get_date_string (dialog->file, THUNAR_FILE_DATE_ACCESSED, date_style);
+  if (G_LIKELY (date != NULL))
     {
-      gtk_label_set_text (GTK_LABEL (dialog->accessed_label), str);
+      gtk_label_set_text (GTK_LABEL (dialog->accessed_label), date);
       gtk_widget_show (dialog->accessed_label);
-      g_free (str);
+      g_free (date);
     }
   else
     {
@@ -940,9 +984,10 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
     }
 
   /* update the free space (only for folders) */
-  if (thunar_file_is_directory (dialog->file) && thunar_file_get_free_space (dialog->file, &size))
+  if (thunar_file_is_directory (dialog->file) 
+      && thunar_file_get_free_space (dialog->file, &size))
     {
-      size_string = thunar_vfs_humanize_size (size, NULL, 0);
+      size_string = g_format_size_for_display (size);
       gtk_label_set_text (GTK_LABEL (dialog->freespace_label), size_string);
       gtk_widget_show (dialog->freespace_label);
       g_free (size_string);
@@ -953,18 +998,18 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
     }
 
   /* update the volume */
-  volume = thunar_file_is_local (dialog->file) ? thunar_file_get_volume (dialog->file, dialog->volume_manager) : NULL;
+  volume = thunar_file_get_volume (dialog->file);
   if (G_LIKELY (volume != NULL))
     {
-      icon_name = thunar_vfs_volume_lookup_icon_name (volume, icon_theme);
-      icon = thunar_icon_factory_load_icon (icon_factory, icon_name, 16, NULL, FALSE);
-      gtk_image_set_from_pixbuf (GTK_IMAGE (dialog->volume_image), icon);
-      if (G_LIKELY (icon != NULL))
-        g_object_unref (G_OBJECT (icon));
+      gicon = g_volume_get_icon (volume);
+      gtk_image_set_from_gicon (GTK_IMAGE (dialog->volume_image), gicon, GTK_ICON_SIZE_MENU);
+      if (G_LIKELY (gicon != NULL))
+        g_object_unref (gicon);
 
-      name = thunar_vfs_volume_get_name (volume);
-      gtk_label_set_text (GTK_LABEL (dialog->volume_label), name);
+      volume_name = g_volume_get_name (volume);
+      gtk_label_set_text (GTK_LABEL (dialog->volume_label), volume_name);
       gtk_widget_show (dialog->volume_label);
+      g_free (volume_name);
     }
   else
     {
@@ -973,55 +1018,6 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 
   /* cleanup */
   g_object_unref (G_OBJECT (icon_factory));
-}
-
-
-
-static gboolean
-thunar_properties_dialog_rename_idle (gpointer user_data)
-{
-  ThunarPropertiesDialog *dialog = THUNAR_PROPERTIES_DIALOG (user_data);
-  const gchar            *old_name;
-  GError                 *error = NULL;
-  gchar                  *new_name;
-
-  /* check if we still have a valid file and if the user is allowed to rename */
-  if (G_UNLIKELY (dialog->file == NULL || !GTK_WIDGET_SENSITIVE (dialog->name_entry)))
-    return FALSE;
-
-  GDK_THREADS_ENTER ();
-
-  /* determine new and old name */
-  new_name = gtk_editable_get_chars (GTK_EDITABLE (dialog->name_entry), 0, -1);
-  old_name = thunar_file_get_display_name (dialog->file);
-  if (g_utf8_collate (new_name, old_name) != 0)
-    {
-      /* try to rename the file to the new name */
-      if (!thunar_file_rename (dialog->file, new_name, &error))
-        {
-          /* reset the entry widget to the old name */
-          gtk_entry_set_text (GTK_ENTRY (dialog->name_entry), old_name);
-
-          /* display an error message */
-          thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to rename \"%s\""), old_name);
-
-          /* release the error */
-          g_error_free (error);
-        }
-    }
-  g_free (new_name);
-
-  GDK_THREADS_LEAVE ();
-
-  return FALSE;
-}
-
-
-
-static void
-thunar_properties_dialog_rename_idle_destroy (gpointer user_data)
-{
-  THUNAR_PROPERTIES_DIALOG (user_data)->rename_idle_id = 0;
 }
 
 

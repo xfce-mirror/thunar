@@ -7,7 +7,7 @@ INCLUDES =										\
 	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"		\
 	$(PLATFORM_CPPFLAGS)
 
-extensionsdir = $(libdir)/thunarx-1
+extensionsdir = $(libdir)/thunarx-$(THUNARX_VERSION_API)
 extensions_LTLIBRARIES =					\
 	thunar-wallpaper-plugin.la
 
@@ -19,13 +19,11 @@ thunar_wallpaper_plugin_la_SOURCES =		\
 thunar_wallpaper_plugin_la_CFLAGS =			\
 	$(PLATFORM_CFLAGS)						\
 	$(THUNARX_CFLAGS)						\
-	$(EXO_CFLAGS)							\
-	$(THUNAR_VFS_CFLAGS)
+	$(EXO_CFLAGS)
 
 thunar_wallpaper_plugin_la_LDFLAGS =		\
 	-avoid-version							\
 	-export-dynamic							\
 	-module									\
 	$(PLATFORM_LDFLAGS)						\
-	$(THUNARX_LDFLAGS)						\
-	$(THUNAR_VFS_LDFLAGS)
+	$(THUNARX_LDFLAGS)

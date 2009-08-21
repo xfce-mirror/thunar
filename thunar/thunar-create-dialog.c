@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -36,7 +37,7 @@ enum
 {
   PROP_0,
   PROP_FILENAME,
-  PROP_MIME_INFO,
+  PROP_CONTENT_TYPE,
 };
 
 
@@ -68,10 +69,10 @@ struct _ThunarCreateDialog
 {
   ThunarAbstractDialog __parent__;
 
-  GtkWidget         *image;
-  GtkWidget         *entry;
+  GtkWidget  *image;
+  GtkWidget  *entry;
 
-  ThunarVfsMimeInfo *mime_info;
+  gchar      *content_type;
 };
 
 
@@ -87,21 +88,13 @@ thunar_create_dialog_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarCreateDialogClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_create_dialog_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarCreateDialog),
-        0,
-        (GInstanceInitFunc) thunar_create_dialog_init,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_TYPE_ABSTRACT_DIALOG, I_("ThunarCreateDialog"), &info, 0);
+      type = g_type_register_static_simple (THUNAR_TYPE_ABSTRACT_DIALOG,
+                                            I_("ThunarCreateDialog"),
+                                            sizeof (ThunarCreateDialogClass),
+                                            (GClassInitFunc) thunar_create_dialog_class_init,
+                                            sizeof (ThunarCreateDialog),
+                                            (GInstanceInitFunc) thunar_create_dialog_init,
+                                            0);
     }
 
   return type;
@@ -133,19 +126,23 @@ thunar_create_dialog_class_init (ThunarCreateDialogClass *klass)
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_FILENAME,
-                                   g_param_spec_string ("filename", "filename", "filename",
+                                   g_param_spec_string ("filename", 
+                                                        "filename", 
+                                                        "filename",
                                                         NULL,
                                                         EXO_PARAM_READWRITE));
 
   /**
-   * ThunarCreateDialog::mime-info:
+   * ThunarCreateDialog::content-type:
    *
-   * The #ThunarVfsMimeInfo of the file to create.
+   * The content type of the file to create.
    **/
   g_object_class_install_property (gobject_class,
-                                   PROP_MIME_INFO,
-                                   g_param_spec_boxed ("mime-info", "mime-info", "mime-info",
-                                                       THUNAR_VFS_TYPE_MIME_INFO,
+                                   PROP_CONTENT_TYPE,
+                                   g_param_spec_string ("content-type", 
+                                                        "content-type", 
+                                                        "content-type",
+                                                       NULL,
                                                        EXO_PARAM_READWRITE));
 }
 
@@ -156,6 +153,8 @@ thunar_create_dialog_init (ThunarCreateDialog *dialog)
 {
   GtkWidget *label;
   GtkWidget *table;
+
+  dialog->content_type = NULL;
 
   /* configure the dialog itself */
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
@@ -193,8 +192,8 @@ thunar_create_dialog_dispose (GObject *object)
 {
   ThunarCreateDialog *dialog = THUNAR_CREATE_DIALOG (object);
 
-  /* release the mime info (if any) */
-  thunar_create_dialog_set_mime_info (dialog, NULL);
+  /* release the content type */
+  thunar_create_dialog_set_content_type (dialog, NULL);
 
   (*G_OBJECT_CLASS (thunar_create_dialog_parent_class)->dispose) (object);
 }
@@ -215,8 +214,8 @@ thunar_create_dialog_get_property (GObject    *object,
       g_value_set_string (value, thunar_create_dialog_get_filename (dialog));
       break;
 
-    case PROP_MIME_INFO:
-      g_value_set_boxed (value, thunar_create_dialog_get_mime_info (dialog));
+    case PROP_CONTENT_TYPE:
+      g_value_set_string (value, thunar_create_dialog_get_content_type (dialog));
       break;
 
     default:
@@ -241,8 +240,8 @@ thunar_create_dialog_set_property (GObject      *object,
       thunar_create_dialog_set_filename (dialog, g_value_get_string (value));
       break;
 
-    case PROP_MIME_INFO:
-      thunar_create_dialog_set_mime_info (dialog, g_value_get_boxed (value));
+    case PROP_CONTENT_TYPE:
+      thunar_create_dialog_set_content_type (dialog, g_value_get_string (value));
       break;
 
     default:
@@ -270,39 +269,21 @@ thunar_create_dialog_realize (GtkWidget *widget)
 static void
 thunar_create_dialog_update_image (ThunarCreateDialog *dialog)
 {
-  ThunarIconFactory *icon_factory;
-  GtkIconTheme      *icon_theme;
-  const gchar       *icon_name;
-  GdkPixbuf         *icon = NULL;
+  GIcon *icon = NULL;
 
-  /* check if we have a mime info */
-  if (G_LIKELY (dialog->mime_info != NULL))
-    {
-      /* determine the icon theme and factory for the current screen */
-      icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (dialog)));
-      icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
-
-      /* determine the icon name for the mime info */
-      icon_name = thunar_vfs_mime_info_lookup_icon_name (dialog->mime_info, icon_theme);
-
-      /* try to load the icon for the given name */
-      icon = thunar_icon_factory_load_icon (icon_factory, icon_name, 48, NULL, FALSE);
-
-      /* release the icon factory */
-      g_object_unref (G_OBJECT (icon_factory));
-    }
+  /* try to load the icon */
+  if (G_LIKELY (dialog->content_type != NULL))
+    icon = g_content_type_get_icon (dialog->content_type);
 
   /* setup the image */
   if (G_LIKELY (icon != NULL))
     {
-      gtk_image_set_from_pixbuf (GTK_IMAGE (dialog->image), icon);
-      g_object_unref (G_OBJECT (icon));
+      gtk_image_set_from_gicon (GTK_IMAGE (dialog->image), icon, GTK_ICON_SIZE_DIALOG);
+      g_object_unref (icon);
       gtk_widget_show (dialog->image);
     }
   else
-    {
-      gtk_widget_hide (dialog->image);
-    }
+    gtk_widget_hide (dialog->image);
 }
 
 
@@ -398,12 +379,12 @@ thunar_create_dialog_set_filename (ThunarCreateDialog *dialog,
 
       /* select the text prior to the dot */
       if (G_LIKELY (offset > 0))
-        gtk_entry_select_region (GTK_ENTRY (dialog->entry), 0, offset);
+        gtk_editable_select_region (GTK_EDITABLE (dialog->entry), 0, offset);
     }
   else
     {
       /* select the whole file name */
-      gtk_entry_select_region (GTK_ENTRY (dialog->entry), 0, -1);
+      gtk_editable_select_region (GTK_EDITABLE (dialog->entry), 0, -1);
     }
 
   /* notify listeners */
@@ -413,63 +394,57 @@ thunar_create_dialog_set_filename (ThunarCreateDialog *dialog,
 
 
 /**
- * thunar_create_dialog_get_mime_info:
+ * thunar_create_dialog_get_content_type:
  * @dialog : a #ThunarCreateDialog.
  *
- * Returns the current mime info for @dialog
- * or %NULL.
+ * Returns the current content type for @dialog or %NULL.
  *
- * Return value: the mime info for @dialog.
+ * Return value: the content type for @dialog.
  **/
-ThunarVfsMimeInfo*
-thunar_create_dialog_get_mime_info (const ThunarCreateDialog *dialog)
+const gchar *
+thunar_create_dialog_get_content_type (const ThunarCreateDialog *dialog)
 {
   _thunar_return_val_if_fail (THUNAR_IS_CREATE_DIALOG (dialog), NULL);
-  return dialog->mime_info;
+  return dialog->content_type;
 }
 
 
 
 /**
- * thunar_create_dialog_set_mime_info:
- * @dialog    : a #ThunarCreateDialog.
- * @mime_info : the new #ThunarVfsMimeInfo or %NULL.
+ * thunar_create_dialog_set_content_type:
+ * @dialog       : a #ThunarCreateDialog.
+ * @content_type : the new content type.
  * 
- * Set the mime info for @dialog to @mime_info.
+ * Set the content type for @dialog to @content_type.
  **/
 void
-thunar_create_dialog_set_mime_info (ThunarCreateDialog *dialog,
-                                    ThunarVfsMimeInfo  *mime_info)
+thunar_create_dialog_set_content_type (ThunarCreateDialog *dialog,
+                                       const gchar        *content_type)
 {
   _thunar_return_if_fail (THUNAR_IS_CREATE_DIALOG (dialog));
 
-  /* release the previous mime info */
-  if (G_UNLIKELY (dialog->mime_info != NULL))
-    thunar_vfs_mime_info_unref (dialog->mime_info);
+  /* release the previous content type */
+  g_free (dialog->content_type);
 
-  /* activate the new mime info */
-  dialog->mime_info = mime_info;
-
-  /* take a reference on the mime info */
-  if (G_LIKELY (mime_info != NULL))
-    thunar_vfs_mime_info_ref (mime_info);
+  /* set the new content type */
+  dialog->content_type = g_strdup (content_type);
 
   /* update the image if we're already realized */
   if (GTK_WIDGET_REALIZED (dialog))
     thunar_create_dialog_update_image (dialog);
 
   /* notify listeners */
-  g_object_notify (G_OBJECT (dialog), "mime-info");
+  g_object_notify (G_OBJECT (dialog), "content-type");
 }
 
 
 
 /**
  * thunar_show_create_dialog:
- * @parent    : the parent widget or %NULL.
- * @mime_info : the #ThunarVfsMimeInfo of the file or folder to create.
- * @filename  : the suggested filename or %NULL.
- * @title     : the dialog title.
+ * @parent       : the parent widget or %NULL.
+ * @content_type : the content type of the file or folder to create.
+ * @filename     : the suggested filename or %NULL.
+ * @title        : the dialog title.
  *
  * Constructs and display a #ThunarCreateDialog with the specified
  * parameters that asks the user to enter a name for a new file or
@@ -482,10 +457,10 @@ thunar_create_dialog_set_mime_info (ThunarCreateDialog *dialog,
  *               cancelled the dialog.
  **/
 gchar*
-thunar_show_create_dialog (GtkWidget         *parent,
-                           ThunarVfsMimeInfo *mime_info,
-                           const gchar       *filename,
-                           const gchar       *title)
+thunar_show_create_dialog (GtkWidget   *parent,
+                           const gchar *content_type,
+                           const gchar *filename,
+                           const gchar *title)
 {
   GtkWidget *dialog;
   GtkWidget *window;
@@ -501,7 +476,7 @@ thunar_show_create_dialog (GtkWidget         *parent,
   dialog = g_object_new (THUNAR_TYPE_CREATE_DIALOG,
                          "destroy-with-parent", TRUE,
                          "filename", filename,
-                         "mime-info", mime_info,
+                         "content-type", content_type,
                          "modal", TRUE,
                          "title", title,
                          NULL);

@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -33,6 +34,8 @@
 
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-icon-factory.h>
+#include <thunar/thunar-io-jobs.h>
+#include <thunar/thunar-job.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
@@ -47,11 +50,10 @@
  *
  * Displays the Thunar rename dialog for a single file rename.
  *
- * Return value: returns %TRUE if the file has been successfully renamed.
- *               Note that it also returns %FALSE if no rename was required
- *               and thus there is no need for visible updates.
+ * Return value: The #ThunarJob responsible for renaming the file or
+ *               %NULL if there was no renaming required.
  **/
-gboolean
+ThunarJob *
 thunar_dialogs_show_rename_file (GtkWindow *parent,
                                  ThunarFile *file)
 {
@@ -59,23 +61,19 @@ thunar_dialogs_show_rename_file (GtkWindow *parent,
   GtkIconTheme      *icon_theme;
   const gchar       *filename;
   const gchar       *text;
+  ThunarJob         *job = NULL;
   GtkWidget         *dialog;
   GtkWidget         *entry;
   GtkWidget         *label;
   GtkWidget         *image;
   GtkWidget         *table;
   GdkPixbuf         *icon;
-  GError            *error = NULL;
   glong              offset;
   gchar             *title;
   gint               response;
-  gboolean           succeed = FALSE;
 
   _thunar_return_val_if_fail (GTK_IS_WINDOW (parent), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-
-  /* take an extra reference on the file */
-  g_object_ref (G_OBJECT (file));
 
   /* get the filename of the file */
   filename = thunar_file_get_display_name (file);
@@ -137,7 +135,7 @@ thunar_dialogs_show_rename_file (GtkWindow *parent,
 
           /* select the text prior to the dot */
           if (G_LIKELY (offset > 0))
-            gtk_entry_select_region (GTK_ENTRY (entry), 0, offset);
+            gtk_editable_select_region (GTK_EDITABLE (entry), 0, offset);
         }
     }
 
@@ -155,27 +153,14 @@ thunar_dialogs_show_rename_file (GtkWindow *parent,
       if (G_LIKELY (!exo_str_is_equal (filename, text)))
         {
           /* try to rename the file */
-          if (!thunar_file_rename (file, text, &error))
-            {
-              /* display an error message */
-              thunar_dialogs_show_error (GTK_WIDGET (parent), error, _("Failed to rename \"%s\""), filename);
-
-              /* release the error */
-              g_error_free (error);
-            }
-          else
-            {
-              /* we've succeeded */
-              succeed = TRUE;
-            }
+          job = thunar_io_jobs_rename_file (file, text);
         }
     }
 
   /* cleanup */
-  g_object_unref (G_OBJECT (file));
   gtk_widget_destroy (dialog);
 
-  return succeed;
+  return job;
 }
 
 
@@ -240,11 +225,7 @@ thunar_dialogs_show_about (GtkWindow   *parent,
                          "documenters", documenters,
                          "license", XFCE_LICENSE_GPL,
                          "logo", logo,
-#if GTK_CHECK_VERSION(2,11,0)
                          "program-name", title,
-#else
-                         "name", title,
-#endif
                          "translator-credits", _("translator-credits"),
                          "version", PACKAGE_VERSION,
                          "website", "http://thunar.xfce.org/",
@@ -388,15 +369,15 @@ thunar_dialogs_show_help (gpointer     parent,
  * @question : the question text.
  * @choices  : possible responses.
  *
- * Utility function to display a question dialog for the ThunarVfsJob::ask
+ * Utility function to display a question dialog for the ThunarJob::ask
  * signal.
  *
- * Return value: the #ThunarVfsJobResponse.
+ * Return value: the #ThunarJobResponse.
  **/
-ThunarVfsJobResponse
-thunar_dialogs_show_job_ask (GtkWindow           *parent,
-                             const gchar         *question,
-                             ThunarVfsJobResponse choices)
+ThunarJobResponse
+thunar_dialogs_show_job_ask (GtkWindow        *parent,
+                             const gchar      *question,
+                             ThunarJobResponse choices)
 {
   const gchar *separator;
   const gchar *mnemonic;
@@ -407,8 +388,8 @@ thunar_dialogs_show_job_ask (GtkWindow           *parent,
   gint         response;
   gint         n, m;
 
-  _thunar_return_val_if_fail (parent == NULL || GTK_IS_WINDOW (parent), THUNAR_VFS_JOB_RESPONSE_CANCEL);
-  _thunar_return_val_if_fail (g_utf8_validate (question, -1, NULL), THUNAR_VFS_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (parent == NULL || GTK_IS_WINDOW (parent), THUNAR_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (g_utf8_validate (question, -1, NULL), THUNAR_JOB_RESPONSE_CANCEL);
 
   /* try to separate the question into primary and secondary parts */
   separator = strstr (question, ": ");
@@ -468,27 +449,27 @@ thunar_dialogs_show_job_ask (GtkWindow           *parent,
 
       switch (response)
         {
-        case THUNAR_VFS_JOB_RESPONSE_YES:
+        case THUNAR_JOB_RESPONSE_YES:
           mnemonic = _("_Yes");
           break;
 
-        case THUNAR_VFS_JOB_RESPONSE_YES_ALL:
+        case THUNAR_JOB_RESPONSE_YES_ALL:
           mnemonic = _("Yes to _all");
           break;
 
-        case THUNAR_VFS_JOB_RESPONSE_NO:
+        case THUNAR_JOB_RESPONSE_NO:
           mnemonic = _("_No");
           break;
 
-        case THUNAR_VFS_JOB_RESPONSE_NO_ALL:
+        case THUNAR_JOB_RESPONSE_NO_ALL:
           mnemonic = _("N_o to all");
           break;
 
-        case THUNAR_VFS_JOB_RESPONSE_RETRY:
+        case THUNAR_JOB_RESPONSE_RETRY:
           mnemonic = _("_Retry");
           break;
 
-        case THUNAR_VFS_JOB_RESPONSE_CANCEL:
+        case THUNAR_JOB_RESPONSE_CANCEL:
           response = GTK_RESPONSE_CANCEL;
           mnemonic = _("_Cancel");
           break;
@@ -512,7 +493,7 @@ thunar_dialogs_show_job_ask (GtkWindow           *parent,
 
   /* transform the result as required */
   if (G_UNLIKELY (response <= 0))
-    response = THUNAR_VFS_JOB_RESPONSE_CANCEL;
+    response = THUNAR_JOB_RESPONSE_CANCEL;
 
   /* cleanup */
   g_string_free (secondary, TRUE);
@@ -526,26 +507,24 @@ thunar_dialogs_show_job_ask (GtkWindow           *parent,
 /**
  * thunar_dialogs_show_job_ask_replace:
  * @parent   : the parent #GtkWindow or %NULL.
- * @src_info : the #ThunarVfsInfo of the source file.
- * @dst_info : the #ThunarVfsInfo of the destination file that
+ * @src_file : the #ThunarFile of the source file.
+ * @dst_file : the #ThunarFile of the destination file that
  *             may be replaced with the source file.
  *
  * Asks the user whether to replace the destination file with the
- * source file identified by @src_info.
+ * source file identified by @src_file.
  *
- * Return value: the selected #ThunarVfsJobResponse.
+ * Return value: the selected #ThunarJobResponse.
  **/
-ThunarVfsJobResponse
-thunar_dialogs_show_job_ask_replace (GtkWindow     *parent,
-                                     ThunarVfsInfo *src_info,
-                                     ThunarVfsInfo *dst_info)
+ThunarJobResponse
+thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
+                                     ThunarFile *src_file,
+                                     ThunarFile *dst_file)
 {
   ThunarIconFactory *icon_factory;
   ThunarPreferences *preferences;
   ThunarDateStyle    date_style;
   GtkIconTheme      *icon_theme;
-  ThunarFile        *src_file;
-  ThunarFile        *dst_file;
   GtkWidget         *dialog;
   GtkWidget         *table;
   GtkWidget         *image;
@@ -556,18 +535,14 @@ thunar_dialogs_show_job_ask_replace (GtkWindow     *parent,
   gchar             *text;
   gint               response;
 
-  _thunar_return_val_if_fail (parent == NULL || GTK_IS_WINDOW (parent), THUNAR_VFS_JOB_RESPONSE_CANCEL);
-  _thunar_return_val_if_fail (src_info != NULL, THUNAR_VFS_JOB_RESPONSE_CANCEL);
-  _thunar_return_val_if_fail (dst_info != NULL, THUNAR_VFS_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (parent == NULL || GTK_IS_WINDOW (parent), THUNAR_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (src_file), THUNAR_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (dst_file), THUNAR_JOB_RESPONSE_CANCEL);
 
   /* determine the style used to format dates */
   preferences = thunar_preferences_get ();
   g_object_get (G_OBJECT (preferences), "misc-date-style", &date_style, NULL);
   g_object_unref (G_OBJECT (preferences));
-
-  /* determine the files for the infos */
-  src_file = thunar_file_get_for_info (src_info);
-  dst_file = thunar_file_get_for_info (dst_info);
 
   /* setup the confirmation dialog */
   dialog = gtk_dialog_new_with_buttons (_("Confirm to replace files"),
@@ -576,17 +551,17 @@ thunar_dialogs_show_job_ask_replace (GtkWindow     *parent,
                                         | GTK_DIALOG_NO_SEPARATOR
                                         | GTK_DIALOG_DESTROY_WITH_PARENT,
                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                        _("_Skip"), THUNAR_VFS_JOB_RESPONSE_NO,
-                                        _("Replace _All"), THUNAR_VFS_JOB_RESPONSE_YES_ALL,
-                                        _("_Replace"), THUNAR_VFS_JOB_RESPONSE_YES,
+                                        _("_Skip"), THUNAR_JOB_RESPONSE_NO,
+                                        _("Replace _All"), THUNAR_JOB_RESPONSE_YES_ALL,
+                                        _("_Replace"), THUNAR_JOB_RESPONSE_YES,
                                         NULL);
   gtk_dialog_set_alternative_button_order (GTK_DIALOG (dialog),
-                                           THUNAR_VFS_JOB_RESPONSE_YES,
-                                           THUNAR_VFS_JOB_RESPONSE_YES_ALL,
-                                           THUNAR_VFS_JOB_RESPONSE_NO,
+                                           THUNAR_JOB_RESPONSE_YES,
+                                           THUNAR_JOB_RESPONSE_YES_ALL,
+                                           THUNAR_JOB_RESPONSE_NO,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
-  gtk_dialog_set_default_response (GTK_DIALOG (dialog), THUNAR_VFS_JOB_RESPONSE_YES);
+  gtk_dialog_set_default_response (GTK_DIALOG (dialog), THUNAR_JOB_RESPONSE_YES);
 
   /* determine the icon factory to use */
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (dialog));
@@ -608,7 +583,22 @@ thunar_dialogs_show_job_ask_replace (GtkWindow     *parent,
   gtk_table_attach (GTK_TABLE (table), image, 0, 1, 0, 1, GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
   gtk_widget_show (image);
 
-  text = g_strdup_printf (_("This folder already contains a file \"%s\"."), thunar_file_get_display_name (dst_file));
+  if (thunar_file_is_symlink (dst_file))
+    {
+      text = g_strdup_printf (_("This folder already contains a symbolic link \"%s\"."), 
+                              thunar_file_get_display_name (dst_file));
+    }
+  else if (thunar_file_is_directory (dst_file))
+    {
+      text = g_strdup_printf (_("This folder already contains a folder \"%s\"."),
+                              thunar_file_get_display_name (dst_file));
+    }
+  else
+    { 
+      text = g_strdup_printf (_("This folder already contains a file \"%s\"."), 
+                              thunar_file_get_display_name (dst_file));
+    }
+
   label = gtk_label_new (text);
   gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_big ());
@@ -616,7 +606,13 @@ thunar_dialogs_show_job_ask_replace (GtkWindow     *parent,
   gtk_widget_show (label);
   g_free (text);
 
-  text = g_strdup_printf (Q_("ReplaceDialogPart1|Do you want to replace the existing file"));
+  if (thunar_file_is_symlink (dst_file))
+    text = g_strdup_printf (Q_("ReplaceDialogPart1|Do you want to replace the link"));
+  else if (thunar_file_is_directory (dst_file))
+    text = g_strdup_printf (Q_("ReplaceDialogPart1|Do you want to replace the existing folder"));
+  else
+    text = g_strdup_printf (Q_("ReplaceDialogPart1|Do you want to replace the existing file"));
+
   label = gtk_label_new (text);
   gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
   gtk_table_attach (GTK_TABLE (table), label, 1, 3, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
@@ -641,7 +637,13 @@ thunar_dialogs_show_job_ask_replace (GtkWindow     *parent,
   g_free (date_string);
   g_free (text);
 
-  text = g_strdup_printf (Q_("ReplaceDialogPart2|with the following file?"));
+  if (thunar_file_is_symlink (src_file))
+    text = g_strdup_printf (Q_("ReplaceDialogPart2|with the following link?"));
+  else if (thunar_file_is_directory (src_file))
+    text = g_strdup_printf (Q_("ReplaceDialogPart2|with the following folder?"));
+  else
+    text = g_strdup_printf (Q_("ReplaceDialogPart2|with the following file?"));
+
   label = gtk_label_new (text);
   gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
   gtk_table_attach (GTK_TABLE (table), label, 1, 3, 3, 4, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
@@ -672,12 +674,10 @@ thunar_dialogs_show_job_ask_replace (GtkWindow     *parent,
 
   /* cleanup */
   g_object_unref (G_OBJECT (icon_factory));
-  g_object_unref (G_OBJECT (dst_file));
-  g_object_unref (G_OBJECT (src_file));
 
   /* translate GTK responses */
   if (G_UNLIKELY (response < 0))
-    response = THUNAR_VFS_JOB_RESPONSE_CANCEL;
+    response = THUNAR_JOB_RESPONSE_CANCEL;
 
   return response;
 }
@@ -687,10 +687,10 @@ thunar_dialogs_show_job_ask_replace (GtkWindow     *parent,
 /**
  * thunar_dialogs_show_job_error:
  * @parent : the parent #GtkWindow or %NULL.
- * @error  : the #GError provided by the #ThunarVfsJob.
+ * @error  : the #GError provided by the #ThunarJob.
  *
  * Utility function to display a message dialog for the
- * ThunarVfsJob::error signal.
+ * ThunarJob::error signal.
  **/
 void
 thunar_dialogs_show_job_error (GtkWindow *parent,

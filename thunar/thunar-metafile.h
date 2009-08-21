@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -20,7 +21,7 @@
 #ifndef __THUNAR_METAFILE_H__
 #define __THUNAR_METAFILE_H__
 
-#include <thunar-vfs/thunar-vfs.h>
+#include <gio/gio.h>
 
 G_BEGIN_DECLS;
 
@@ -49,12 +50,12 @@ GType           thunar_metafile_get_type    (void) G_GNUC_CONST;
 ThunarMetafile *thunar_metafile_get_default (void);
 
 const gchar    *thunar_metafile_fetch       (ThunarMetafile   *metafile,
-                                             ThunarVfsPath    *path,
+                                             GFile            *file,
                                              ThunarMetafileKey key,
                                              const gchar      *default_value);
 
 void            thunar_metafile_store       (ThunarMetafile   *metafile,
-                                             ThunarVfsPath    *path,
+                                             GFile            *file,
                                              ThunarMetafileKey key,
                                              const gchar      *value,
                                              const gchar      *default_value);

@@ -43,7 +43,7 @@ typedef gboolean (* ThunarTreeModelVisibleFunc) (ThunarTreeModel *model,
  * @THUNAR_TREE_MODEL_COLUMN_FILE   : the index of the file column.
  * @THUNAR_TREE_MODEL_COLUMN_NAME   : the index of the name column.
  * @THUNAR_TREE_MODEL_COLUMN_ATTR   : the index of the #PangoAttrList column.
- * @THUNAR_TREE_MODEL_COLUMN_VOLUME : the index of the #ThunarVfsVolume column.
+ * @THUNAR_TREE_MODEL_COLUMN_VOLUME : the index of the #GVolume column.
  *
  * Columns exported by the #ThunarTreeModel using the
  * #GtkTreeModel interface.

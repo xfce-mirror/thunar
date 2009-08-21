@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -27,6 +28,7 @@
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-create-dialog.h>
+#include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-location-button.h>
@@ -1317,12 +1319,10 @@ static void
 thunar_location_buttons_action_create_folder (GtkAction             *action,
                                               ThunarLocationButtons *buttons)
 {
-  ThunarVfsMimeDatabase *mime_database;
-  ThunarVfsMimeInfo     *mime_info;
-  ThunarApplication     *application;
-  ThunarFile            *directory;
-  GList                  path_list;
-  gchar                 *name;
+  ThunarApplication *application;
+  ThunarFile        *directory;
+  GList              path_list;
+  gchar             *name;
 
   _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
   _thunar_return_if_fail (GTK_IS_ACTION (action));
@@ -1332,16 +1332,15 @@ thunar_location_buttons_action_create_folder (GtkAction             *action,
   if (G_UNLIKELY (directory == NULL))
     return;
 
-  /* lookup "inode/directory" mime info */
-  mime_database = thunar_vfs_mime_database_get_default ();
-  mime_info = thunar_vfs_mime_database_get_info (mime_database, "inode/directory");
-
   /* ask the user to enter a name for the new folder */
-  name = thunar_show_create_dialog (GTK_WIDGET (buttons), mime_info, _("New Folder"), _("Create New Folder"));
+  name = thunar_show_create_dialog (GTK_WIDGET (buttons), 
+                                    "inode/directory", 
+                                    _("New Folder"), 
+                                    _("Create New Folder"));
   if (G_LIKELY (name != NULL))
     {
       /* fake the path list */
-      path_list.data = thunar_vfs_path_relative (thunar_file_get_path (directory), name);
+      path_list.data = g_file_resolve_relative_path (thunar_file_get_file (directory), name);
       path_list.next = path_list.prev = NULL;
 
       /* launch the operation */
@@ -1350,15 +1349,11 @@ thunar_location_buttons_action_create_folder (GtkAction             *action,
       g_object_unref (G_OBJECT (application));
 
       /* release the path */
-      thunar_vfs_path_unref (path_list.data);
+      g_object_unref (path_list.data);
 
       /* release the file name */
       g_free (name);
     }
-
-  /* cleanup */
-  g_object_unref (G_OBJECT (mime_database));
-  thunar_vfs_mime_info_unref (mime_info);
 }
 
 
@@ -1442,7 +1437,7 @@ thunar_location_buttons_action_open_in_new_window (GtkAction             *action
     {
       /* open a new window for the directory */
       application = thunar_application_get ();
-      thunar_application_open_window (application, directory, gtk_widget_get_screen (GTK_WIDGET (buttons)));
+      thunar_application_open_window (application, directory, gtk_widget_get_screen (GTK_WIDGET (buttons)), NULL);
       g_object_unref (G_OBJECT (application));
     }
 }
@@ -1465,7 +1460,7 @@ thunar_location_buttons_action_paste_into_folder (GtkAction             *action,
     {
       /* paste files from the clipboard to the folder represented by this button */
       clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (GTK_WIDGET (buttons)));
-      thunar_clipboard_manager_paste_files (clipboard, thunar_file_get_path (directory), GTK_WIDGET (buttons), NULL);
+      thunar_clipboard_manager_paste_files (clipboard, thunar_file_get_file (directory), GTK_WIDGET (buttons), NULL);
       g_object_unref (G_OBJECT (clipboard));
     }
 }

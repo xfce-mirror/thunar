@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -30,6 +31,7 @@
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-dnd.h>
+#include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-location-button.h>
 #include <thunar/thunar-pango-extensions.h>
@@ -140,7 +142,7 @@ struct _ThunarLocationButton
   gint                enter_timeout_id;
 
   /* drop support for the button */
-  GList              *drop_path_list;
+  GList              *drop_file_list;
   guint               drop_data_ready : 1;
   guint               drop_occurred : 1;
 
@@ -340,7 +342,7 @@ thunar_location_button_finalize (GObject *object)
   ThunarLocationButton *location_button = THUNAR_LOCATION_BUTTON (object);
 
   /* release the drop path list (just in case the drag-leave wasn't fired before) */
-  thunar_vfs_path_list_free (location_button->drop_path_list);
+  thunar_g_file_list_free (location_button->drop_file_list);
 
   /* be sure to cancel any pending enter timeout */
   if (G_UNLIKELY (location_button->enter_timeout_id != 0))
@@ -434,7 +436,7 @@ thunar_location_button_get_dest_actions (ThunarLocationButton *location_button,
   if (G_LIKELY (location_button->file != NULL))
     {
       /* determine the possible drop actions for the file (and the suggested action if any) */
-      actions = thunar_file_accepts_drop (location_button->file, location_button->drop_path_list, context, &action);
+      actions = thunar_file_accepts_drop (location_button->file, location_button->drop_file_list, context, &action);
     }
 
   /* tell Gdk whether we can drop here */
@@ -452,9 +454,7 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
   ThunarIconFactory *icon_factory;
   GtkIconTheme      *icon_theme;
   GtkSettings       *settings;
-#if GTK_CHECK_VERSION(2,8,0)
-  const gchar       *icon_name;
-#endif
+  gchar             *icon_name;
   GdkPixbuf         *icon;
   gint               height;
   gint               width;
@@ -467,18 +467,9 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
   /* determine the icon theme for the widget */
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (location_button)));
 
-  /* the label is hidden for the file system root */
-  if (thunar_file_is_local (file) && thunar_file_is_root (file))
-    {
-      /* hide the label widget */
-      gtk_widget_hide (location_button->label);
-    }
-  else
-    {
-      /* update and show the label widget */
-      gtk_label_set_text (GTK_LABEL (location_button->label), thunar_file_get_display_name (file));
-      gtk_widget_show (location_button->label);
-    }
+  /* update and show the label widget */
+  gtk_label_set_text (GTK_LABEL (location_button->label), thunar_file_get_display_name (file));
+  gtk_widget_show (location_button->label);
 
   /* the image is only visible for certain special paths */
   if (thunar_file_is_home (file) || thunar_file_is_desktop (file) || thunar_file_is_root (file))
@@ -506,13 +497,15 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
       gtk_widget_hide (location_button->image);
     }
 
-#if GTK_CHECK_VERSION(2,8,0)
   /* setup the DnD icon for the button */
   icon_name = thunar_file_get_custom_icon (file);
-  if (G_LIKELY (icon_name == NULL))
-    icon_name = thunar_file_get_icon_name (file, location_button->file_icon_state, icon_theme);
+  if (icon_name == NULL)
+    {
+      icon_name = thunar_file_get_icon_name (file, location_button->file_icon_state, 
+                                             icon_theme);
+    }
   gtk_drag_source_set_icon_name (GTK_BIN (location_button)->child, icon_name);
-#endif
+  g_free (icon_name);
 }
 
 
@@ -610,7 +603,7 @@ thunar_location_button_button_release_event (GtkWidget            *button,
         {
           /* open a new window for the folder */
           application = thunar_application_get ();
-          thunar_application_open_window (application, location_button->file, gtk_widget_get_screen (GTK_WIDGET (location_button)));
+          thunar_application_open_window (application, location_button->file, gtk_widget_get_screen (GTK_WIDGET (location_button)), NULL);
           g_object_unref (G_OBJECT (application));
         }
     }
@@ -670,8 +663,8 @@ thunar_location_button_drag_data_get (GtkWidget            *button,
   if (G_LIKELY (location_button->file != NULL))
     {
       /* transform the path into an uri list string */
-      path_list.data = thunar_file_get_path (location_button->file); path_list.next = path_list.prev = NULL;
-      uri_string = thunar_vfs_path_list_to_string (&path_list);
+      path_list.data = thunar_file_get_file (location_button->file); path_list.next = path_list.prev = NULL;
+      uri_string = thunar_g_file_list_to_string (&path_list);
 
       /* set the uri list for the drag selection */
       gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) uri_string, strlen (uri_string));
@@ -702,7 +695,7 @@ thunar_location_button_drag_data_received (GtkWidget            *button,
     {
       /* extract the URI list from the selection data (if valid) */
       if (selection_data->format == 8 && selection_data->length > 0)
-        location_button->drop_path_list = thunar_vfs_path_list_from_string ((const gchar *) selection_data->data, NULL);
+        location_button->drop_file_list = thunar_g_file_list_new_from_string ((const gchar *) selection_data->data);
 
       /* reset the state */
       location_button->drop_data_ready = TRUE;
@@ -720,12 +713,12 @@ thunar_location_button_drag_data_received (GtkWidget            *button,
         {
           /* as the user what to do with the drop data */
           action = (context->action == GDK_ACTION_ASK)
-                 ? thunar_dnd_ask (button, location_button->file, location_button->drop_path_list, time, actions)
+                 ? thunar_dnd_ask (button, location_button->file, location_button->drop_file_list, time, actions)
                  : context->action;
 
           /* perform the requested action */
           if (G_LIKELY (action != 0))
-            succeed = thunar_dnd_perform (button, location_button->file, location_button->drop_path_list, action, NULL);
+            succeed = thunar_dnd_perform (button, location_button->file, location_button->drop_file_list, action, NULL);
         }
 
       /* tell the peer that we handled the drop */
@@ -761,9 +754,9 @@ thunar_location_button_drag_leave (GtkWidget            *button,
   /* reset the "drop data ready" status and free the path list */
   if (G_LIKELY (location_button->drop_data_ready))
     {
-      thunar_vfs_path_list_free (location_button->drop_path_list);
+      thunar_g_file_list_free (location_button->drop_file_list);
       location_button->drop_data_ready = FALSE;
-      location_button->drop_path_list = NULL;
+      location_button->drop_file_list = NULL;
     }
 
   /* be sure to cancel any running enter timeout */

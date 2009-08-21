@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,7 +23,8 @@
 #include <config.h>
 #endif
 
-#include <thunar-vfs/thunar-vfs.h>
+#include <glib/gi18n.h>
+#include <gio/gio.h>
 
 #include <thunar-uca/thunar-uca-chooser.h>
 #include <thunar-uca/thunar-uca-context.h>
@@ -420,26 +422,29 @@ thunar_uca_provider_child_watch (GPid     pid,
                                  gpointer user_data)
 {
   ThunarUcaProvider *uca_provider = THUNAR_UCA_PROVIDER (user_data);
-  ThunarVfsMonitor  *monitor;
-  ThunarVfsPath     *path;
+  GFileMonitor      *monitor;
+  GError            *error = NULL;
+  GFile             *file;
 
   GDK_THREADS_ENTER ();
 
   /* verify that we still have a valid child_watch_path */
   if (G_LIKELY (uca_provider->child_watch_path != NULL))
     {
-      /* determine the corresponding ThunarVfsPath */
-      path = thunar_vfs_path_new (uca_provider->child_watch_path, NULL);
-      if (G_LIKELY (path != NULL))
-        {
-          /* schedule a changed notification on the path */
-          monitor = thunar_vfs_monitor_get_default ();
-          thunar_vfs_monitor_feed (monitor, THUNAR_VFS_MONITOR_EVENT_CHANGED, path);
-          g_object_unref (G_OBJECT (monitor));
+      /* determine the corresponding file */
+      file = g_file_new_for_path (uca_provider->child_watch_path);
 
-          /* release the ThunarVfsPath */
-          thunar_vfs_path_unref (path);
+      /* schedule a changed notification on the path */
+      monitor = g_file_monitor (file, G_FILE_MONITOR_NONE, NULL, &error);
+
+      if (monitor != NULL)
+        {
+          g_file_monitor_emit_event (monitor, file, file, G_FILE_MONITOR_EVENT_CHANGED);
+          g_object_unref (monitor);
         }
+
+      /* release the file */
+      g_object_unref (file);
     }
 
   /* need to cleanup */

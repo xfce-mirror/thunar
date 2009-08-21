@@ -208,8 +208,8 @@
 
       <para>
         Providers are <link linkend="ThunarxProviderPlugin"><type>ThunarxProviderPlugin</type></link>s loaded from shared libraries
-        installed in <filename role="directory">$libdir/thunarx-1/</filename>. The shared libraries are linked against the
-        <systemitem class="library">thunarx-1</systemitem> library.
+        installed in <filename role="directory">$libdir/thunarx-2/</filename>. The shared libraries are linked against the
+        <systemitem class="library">thunarx-2</systemitem> library.
       </para>
 
       <para>
@@ -317,13 +317,13 @@ thunar_extension_list_types (const GType **types,
           The following interactive shell session demonstrates how <literal>pkg-config</literal>
           is used (the actual output on your system will be different):
           <screen>
-$ pkg-config --cflags thunarx-1
--DXTHREADS -DXUSE_MTSAFE_API -I/opt/local/include/thunarx-1 -I/usr/local/include/atk-1.0 \
+$ pkg-config --cflags thunarx-2
+-DXTHREADS -DXUSE_MTSAFE_API -I/opt/local/include/thunarx-2 -I/usr/local/include/atk-1.0 \
 -I/usr/local/include/glib-2.0 -I/usr/local/lib/glib-2.0/include -I/usr/X11R6/include/gtk-2.0 \
 -I/usr/X11R6/lib/gtk-2.0/include -I/usr/X11R6/include -I/usr/X11R6/include/pango-1.0 \
 -I/usr/local/include/freetype2 -I/usr/local/include
-$ pkg-config --libs thunarx-1
--Wl,--rpath -Wl,/usr/local/lib -L/usr/local/lib -L/usr/X11R6/lib -L/opt/local/lib -lthunarx-1</screen>
+$ pkg-config --libs thunarx-2
+-Wl,--rpath -Wl,/usr/local/lib -L/usr/local/lib -L/usr/X11R6/lib -L/opt/local/lib -lthunarx-2</screen>
         </para>
 
         <para>
@@ -332,7 +332,7 @@ $ pkg-config --libs thunarx-1
           quotes</emphasis>), then its output will be substituted into the command line before
           execution. So to compile an extension, you would type the following:
           <screen>
-$ gcc -shared -fPIC -DPIC `pkg-config --cflags --libs thunarx-1` foo.c -o foo.so</screen>
+$ gcc -shared -fPIC -DPIC `pkg-config --cflags --libs thunarx-2` foo.c -o foo.so</screen>
         </para>
       </sect2>
 
@@ -344,16 +344,16 @@ $ gcc -shared -fPIC -DPIC `pkg-config --cflags --libs thunarx-1` foo.c -o foo.so
           you can use the following command (as mentioned above, the output will be different
           on your system):
           <screen>
-$ pkg-config --variable=extensionsdir thunarx-1
-/opt/local/lib/thunarx-1</screen>
+$ pkg-config --variable=extensionsdir thunarx-2
+/opt/local/lib/thunarx-2</screen>
         </para>
 
         <para>
           For example, to install the extension <filename>foo.so</filename> on your system,
           you would type the following:
           <screen>
-$ install -d `pkg-config --variable=extensionsdir thunarx-1`
-$ install -c -m 0755 foo.so `pkg-config --variable=extensionsdir thunarx-1`/foo.so</screen>
+$ install -d `pkg-config --variable=extensionsdir thunarx-2`
+$ install -c -m 0755 foo.so `pkg-config --variable=extensionsdir thunarx-2`/foo.so</screen>
         </para>
       </sect2>
     </sect1>

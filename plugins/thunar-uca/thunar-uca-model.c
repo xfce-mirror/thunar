@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -44,8 +45,13 @@
 #include <glib/gi18n-lib.h>
 #include <glib/gstdio.h>
 
+#include <gio/gio.h>
+
+#include <gtk/gtk.h>
+
+#include <libxfce4util/libxfce4util.h>
+
 #include <thunar-uca/thunar-uca-model.h>
-#include <thunar-vfs/thunar-vfs.h>
 
 
 
@@ -1021,17 +1027,16 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
     ThunarUcaTypes types;
   } ThunarUcaFile;
 
-  ThunarVfsMimeDatabase *mime_database;
-  ThunarUcaModelItem    *item;
-  ThunarUcaFile         *files;
-  ThunarVfsInfo         *info;
-  const gchar           *mime_type;
-  gboolean               matches;
-  GList                 *mime_infos;
-  GList                 *paths = NULL;
-  GList                 *lp, *mp;
-  gint                   n_files;
-  gint                   i, m, n;
+  ThunarUcaModelItem *item;
+  ThunarUcaFile      *files;
+  GFileInfo          *info;
+  GFile              *location;
+  const gchar        *mime_type;
+  gboolean            matches;
+  GList              *paths = NULL;
+  GList              *lp;
+  gint                n_files;
+  gint                i, m, n;
 
   g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), NULL);
 
@@ -1044,33 +1049,29 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
   files = g_new (ThunarUcaFile, n_files);
   for (lp = file_infos, n = 0; lp != NULL; lp = lp->next, ++n)
     {
-      info = thunarx_file_info_get_vfs_info (lp->data);
-      if (thunar_vfs_path_get_scheme (info->path) != THUNAR_VFS_PATH_SCHEME_FILE)
+      location = thunarx_file_info_get_location (lp->data);
+
+      if (!g_file_has_uri_scheme (location, "file"))
         {
           /* cannot handle non-local files */
-          thunar_vfs_info_unref (info);
+          g_object_unref (location);
           g_free (files);
           return NULL;
         }
-      mime_type = thunar_vfs_mime_info_get_name (info->mime_info);
-      files[n].name = thunar_vfs_path_get_name (info->path);
+
+      g_object_unref (location);
+
+      info = thunarx_file_info_get_file_info (lp->data);
+
+      mime_type = g_file_info_get_content_type (info);
+
+      files[n].name = g_file_info_get_name (info);
       files[n].types = types_from_mime_type (mime_type);
-      if (G_UNLIKELY (files[n].types == 0))
-        {
-          mime_database = thunar_vfs_mime_database_get_default ();
-          mime_infos = thunar_vfs_mime_database_get_infos_for_info (mime_database, info->mime_info);
-          for (mp = mime_infos; mp != NULL; mp = mp->next)
-            {
-              mime_type = thunar_vfs_mime_info_get_name (mp->data);
-              files[n].types |= types_from_mime_type (mime_type);
-              thunar_vfs_mime_info_unref (mp->data);
-            }
-          g_object_unref (G_OBJECT (mime_database));
-          g_list_free (mime_infos);
-        }
+
       if (G_UNLIKELY (files[n].types == 0))
         files[n].types = THUNAR_UCA_TYPE_OTHER_FILES;
-      thunar_vfs_info_unref (info);
+
+      g_object_unref (info);
     }
 
   /* lookup the matching items */

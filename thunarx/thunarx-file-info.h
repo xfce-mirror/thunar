@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,15 +26,32 @@
 #ifndef __THUNARX_FILE_INFO_H__
 #define __THUNARX_FILE_INFO_H__
 
+#include <gio/gio.h>
+
 #include <thunarx/thunarx-config.h>
 
 G_BEGIN_DECLS;
 
-/* Used to avoid a dependency of thunarx on thunar-vfs */
-#ifndef __THUNAR_VFS_INFO_DEFINED__
-#define __THUNAR_VFS_INFO_DEFINED__
-typedef struct _ThunarVfsInfo ThunarVfsInfo;
-#endif
+/**
+ * File information namespaces available in the #GFileInfo returned by 
+ * thunarx_file_info_get_file_info().
+ **/
+#define THUNARX_FILE_INFO_NAMESPACE \
+  "access::*," \
+  "id::*," \
+  "mountable::*," \
+  "preview::*," \
+  "standard::*," \
+  "time::*," \
+  "thumbnail::*," \
+  "unix::*"
+
+/**
+ * Filesystem information namespaces available in the #GFileInfo
+ * returned by thunarx_file_info_get_filesystem_info().
+ **/
+#define THUNARX_FILESYSTEM_INFO_NAMESPACE \
+  "filesystem::*"
 
 typedef struct _ThunarxFileInfoIface ThunarxFileInfoIface;
 typedef struct _ThunarxFileInfo      ThunarxFileInfo;
@@ -51,19 +69,21 @@ struct _ThunarxFileInfoIface
   /*< public >*/
 
   /* virtual methods */
-  gchar         *(*get_name)        (ThunarxFileInfo *file_info);
+  gchar     *(*get_name)            (ThunarxFileInfo *file_info);
 
-  gchar         *(*get_uri)         (ThunarxFileInfo *file_info);
-  gchar         *(*get_parent_uri)  (ThunarxFileInfo *file_info);
-  gchar         *(*get_uri_scheme)  (ThunarxFileInfo *file_info);
+  gchar     *(*get_uri)             (ThunarxFileInfo *file_info);
+  gchar     *(*get_parent_uri)      (ThunarxFileInfo *file_info);
+  gchar     *(*get_uri_scheme)      (ThunarxFileInfo *file_info);
 
-  gchar         *(*get_mime_type)   (ThunarxFileInfo *file_info);
-  gboolean       (*has_mime_type)   (ThunarxFileInfo *file_info,
+  gchar     *(*get_mime_type)       (ThunarxFileInfo *file_info);
+  gboolean   (*has_mime_type)       (ThunarxFileInfo *file_info,
                                      const gchar     *mime_type);
 
-  gboolean       (*is_directory)    (ThunarxFileInfo *file_info);
+  gboolean   (*is_directory)        (ThunarxFileInfo *file_info);
 
-  ThunarVfsInfo *(*get_vfs_info)    (ThunarxFileInfo *file_info);
+  GFileInfo *(*get_file_info)       (ThunarxFileInfo *file_info);
+  GFileInfo *(*get_filesystem_info) (ThunarxFileInfo *file_info);
+  GFile     *(*get_location)        (ThunarxFileInfo *file_info);
 
   /*< private >*/
   void (*reserved0) (void);
@@ -86,31 +106,33 @@ struct _ThunarxFileInfoIface
   void (*reserved9) (void);
 };
 
-GType          thunarx_file_info_get_type       (void) G_GNUC_CONST;
+GType      thunarx_file_info_get_type            (void) G_GNUC_CONST;
 
-gchar         *thunarx_file_info_get_name       (ThunarxFileInfo *file_info);
-gchar         *thunarx_file_info_get_uri        (ThunarxFileInfo *file_info);
-gchar         *thunarx_file_info_get_parent_uri (ThunarxFileInfo *file_info);
-gchar         *thunarx_file_info_get_uri_scheme (ThunarxFileInfo *file_info);
+gchar     *thunarx_file_info_get_name            (ThunarxFileInfo *file_info);
+gchar     *thunarx_file_info_get_uri             (ThunarxFileInfo *file_info);
+gchar     *thunarx_file_info_get_parent_uri      (ThunarxFileInfo *file_info);
+gchar     *thunarx_file_info_get_uri_scheme      (ThunarxFileInfo *file_info);
 
-gchar         *thunarx_file_info_get_mime_type  (ThunarxFileInfo *file_info);
-gboolean       thunarx_file_info_has_mime_type  (ThunarxFileInfo *file_info,
-                                                 const gchar     *mime_type);
+gchar     *thunarx_file_info_get_mime_type       (ThunarxFileInfo *file_info);
+gboolean   thunarx_file_info_has_mime_type       (ThunarxFileInfo *file_info,
+                                                  const gchar     *mime_type);
 
-gboolean       thunarx_file_info_is_directory   (ThunarxFileInfo *file_info);
+gboolean   thunarx_file_info_is_directory        (ThunarxFileInfo *file_info);
 
-ThunarVfsInfo *thunarx_file_info_get_vfs_info   (ThunarxFileInfo *file_info);
+GFileInfo *thunarx_file_info_get_file_info       (ThunarxFileInfo *file_info);
+GFileInfo *thunarx_file_info_get_filesystem_info (ThunarxFileInfo *file_info);
+GFile     *thunarx_file_info_get_location        (ThunarxFileInfo *file_info);
 
-void           thunarx_file_info_changed        (ThunarxFileInfo *file_info);
-void           thunarx_file_info_renamed        (ThunarxFileInfo *file_info);
+void       thunarx_file_info_changed             (ThunarxFileInfo *file_info);
+void       thunarx_file_info_renamed             (ThunarxFileInfo *file_info);
 
 
 #define THUNARX_TYPE_FILE_INFO_LIST (thunarx_file_info_list_get_type ())
 
-GType          thunarx_file_info_list_get_type  (void) G_GNUC_CONST;
+GType      thunarx_file_info_list_get_type       (void) G_GNUC_CONST;
 
-GList         *thunarx_file_info_list_copy      (GList           *file_infos);
-void           thunarx_file_info_list_free      (GList           *file_infos);
+GList     *thunarx_file_info_list_copy           (GList           *file_infos);
+void       thunarx_file_info_list_free           (GList           *file_infos);
 
 G_END_DECLS;
 

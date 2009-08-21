@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -108,7 +109,7 @@ struct _ThunarClipboardManager
 typedef struct
 {
   ThunarClipboardManager *manager;
-  ThunarVfsPath          *target_path;
+  GFile                  *target_file;
   GtkWidget              *widget;
   GClosure               *new_files_closure;
 } ThunarClipboardPasteRequest;
@@ -301,7 +302,7 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
   ThunarClipboardManager      *manager = THUNAR_CLIPBOARD_MANAGER (request->manager);
   ThunarApplication           *application;
   gboolean                     path_copy = TRUE;
-  GList                       *path_list = NULL;
+  GList                       *file_list = NULL;
   gchar                       *data;
 
   /* check whether the retrieval worked */
@@ -324,19 +325,19 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
         }
 
       /* determine the path list stored with the selection */
-      path_list = thunar_vfs_path_list_from_string (data, NULL);
+      file_list = thunar_g_file_list_new_from_string (data);
     }
 
   /* perform the action if possible */
-  if (G_LIKELY (path_list != NULL))
+  if (G_LIKELY (file_list != NULL))
     {
       application = thunar_application_get ();
       if (G_LIKELY (path_copy))
-        thunar_application_copy_into (application, request->widget, path_list, request->target_path, request->new_files_closure);
+        thunar_application_copy_into (application, request->widget, file_list, request->target_file, request->new_files_closure);
       else
-        thunar_application_move_into (application, request->widget, path_list, request->target_path, request->new_files_closure);
+        thunar_application_move_into (application, request->widget, file_list, request->target_file, request->new_files_closure);
       g_object_unref (G_OBJECT (application));
-      thunar_vfs_path_list_free (path_list);
+      thunar_g_file_list_free (file_list);
 
       /* clear the clipboard if it contained "cutted data"
        * (gtk_clipboard_clear takes care of not clearing
@@ -345,13 +346,9 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
       if (G_UNLIKELY (!path_copy))
         gtk_clipboard_clear (manager->clipboard);
 
-      /* check the contents of the clipboard again
-       * if either the Xserver or our GTK+ version
-       * doesn't support the XFixes extension.
-       */
-#if GTK_CHECK_VERSION(2,6,0)
+      /* check the contents of the clipboard again if either the Xserver or 
+       * our GTK+ version doesn't support the XFixes extension */
       if (!gdk_display_supports_selection_notification (gtk_clipboard_get_display (manager->clipboard)))
-#endif
         {
           thunar_clipboard_manager_owner_changed (manager->clipboard, NULL, manager);
         }
@@ -368,7 +365,7 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
   if (G_LIKELY (request->new_files_closure != NULL))
     g_closure_unref (request->new_files_closure);
   g_object_unref (G_OBJECT (request->manager));
-  thunar_vfs_path_unref (request->target_path);
+  g_object_unref (request->target_file);
   _thunar_slice_free (ThunarClipboardPasteRequest, request);
 }
 
@@ -405,11 +402,11 @@ thunar_clipboard_manager_targets_received (GtkClipboard     *clipboard,
     }
 
   /* notify listeners that we have a new clipboard state */
-  g_signal_emit (G_OBJECT (manager), manager_signals[CHANGED], 0);
+  g_signal_emit (manager, manager_signals[CHANGED], 0);
   g_object_notify (G_OBJECT (manager), "can-paste");
 
   /* drop the reference taken for the callback */
-  g_object_unref (G_OBJECT (manager));
+  g_object_unref (manager);
 }
 
 
@@ -421,7 +418,7 @@ thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
                                        gpointer          user_data)
 {
   ThunarClipboardManager *manager = THUNAR_CLIPBOARD_MANAGER (user_data);
-  GList                  *path_list = NULL;
+  GList                  *file_list = NULL;
   gchar                  *string_list;
   gchar                  *data;
 
@@ -430,10 +427,10 @@ thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
   _thunar_return_if_fail (manager->clipboard == clipboard);
 
   /* determine the path list from the file list */
-  path_list = thunar_file_list_to_path_list (manager->files);
+  file_list = thunar_file_list_to_thunar_g_file_list (manager->files);
 
   /* determine the string representation of the path list */
-  string_list = thunar_vfs_path_list_to_string (path_list);
+  string_list = thunar_g_file_list_to_string (file_list);
 
   switch (target_info)
     {
@@ -452,7 +449,7 @@ thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
     }
 
   /* cleanup */
-  thunar_vfs_path_list_free (path_list);
+  thunar_g_file_list_free (file_list);
   g_free (string_list);
 }
 
@@ -516,12 +513,8 @@ thunar_clipboard_manager_transfer_files (ThunarClipboardManager *manager,
                                 G_OBJECT (manager));
 
   /* Need to fake a "owner-change" event here if the Xserver doesn't support clipboard notification */
-#if GTK_CHECK_VERSION(2,6,0)
   if (!gdk_display_supports_selection_notification (gtk_clipboard_get_display (manager->clipboard)))
-#endif
-    {
-      thunar_clipboard_manager_owner_changed (manager->clipboard, NULL, manager);
-    }
+    thunar_clipboard_manager_owner_changed (manager->clipboard, NULL, manager);
 }
 
 
@@ -657,21 +650,21 @@ thunar_clipboard_manager_cut_files (ThunarClipboardManager *manager,
 /**
  * thunar_clipboard_manager_paste_files:
  * @manager           : a #ThunarClipboardManager.
- * @target_path       : the #ThunarVfsPath of the folder to which the contents on the clipboard
+ * @target_file       : the #GFile of the folder to which the contents on the clipboard
  *                      should be pasted.
  * @widget            : a #GtkWidget, on which to perform the paste or %NULL if no widget is
  *                      known.
  * @new_files_closure : a #GClosure to connect to the job's "new-files" signal,
  *                      which will be emitted when the job finishes with the
- *                      list of #ThunarVfsPath<!---->s created by the job, or
+ *                      list of #GFile<!---->s created by the job, or
  *                      %NULL if you're not interested in the signal.
  *
  * Pastes the contents from the clipboard associated with @manager to the directory
- * referenced by @target_path.
+ * referenced by @target_file.
  **/
 void
 thunar_clipboard_manager_paste_files (ThunarClipboardManager *manager,
-                                      ThunarVfsPath          *target_path,
+                                      GFile                  *target_file,
                                       GtkWidget              *widget,
                                       GClosure               *new_files_closure)
 {
@@ -683,7 +676,7 @@ thunar_clipboard_manager_paste_files (ThunarClipboardManager *manager,
   /* prepare the paste request */
   request = _thunar_slice_new0 (ThunarClipboardPasteRequest);
   request->manager = g_object_ref (G_OBJECT (manager));
-  request->target_path = thunar_vfs_path_ref (target_path);
+  request->target_file = g_object_ref (target_file);
   request->widget = widget;
 
   /* take a reference on the closure (if any) */

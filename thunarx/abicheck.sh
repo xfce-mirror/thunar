@@ -20,5 +20,5 @@
 #
 
 cpp -P -DALL_FILES ${srcdir:-.}/thunarx.symbols | sed -e '/^$/d' -e 's/ G_GNUC.*$//' -e 's/ PRIVATE//' | sort > expected-abi
-nm -D .libs/libthunarx-1.so | grep " T\|R " | cut -d ' ' -f 3 | grep -v '^_.*' | sort > actual-abi
+nm -D .libs/libthunarx-2.so | grep " T\|R " | cut -d ' ' -f 3 | grep -v '^_.*' | sort > actual-abi
 diff -u expected-abi actual-abi && rm expected-abi actual-abi

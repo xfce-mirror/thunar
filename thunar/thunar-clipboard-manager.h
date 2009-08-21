@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -48,7 +49,7 @@ void                    thunar_clipboard_manager_copy_files      (ThunarClipboar
 void                    thunar_clipboard_manager_cut_files       (ThunarClipboardManager *manager,
                                                                   GList                  *files);
 void                    thunar_clipboard_manager_paste_files     (ThunarClipboardManager *manager,
-                                                                  ThunarVfsPath          *target_path,
+                                                                  GFile                  *target_file,
                                                                   GtkWidget              *widget,
                                                                   GClosure               *new_files_closure);
 

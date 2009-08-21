@@ -105,9 +105,9 @@
     <!--
       Launch (uri : STRING, display : STRING) : VOID
 
-      uri     : either a file:-URI or an absolute path.
-      display : the screen on which to launch the file or ""
-                to use the default screen of the file manager.
+      uri        : either a file:-URI or an absolute path.
+      display    : the screen on which to launch the file or ""
+                   to use the default screen of the file manager.
     -->
     <method name="Launch">
       <arg direction="in" name="uri" type="s" />
@@ -219,7 +219,7 @@
     <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="thunar_dbus_service" />
 
     <!--
-      BulkRename (working-directory : STRING, filenames : ARRAY OF STRING, standalone : BOOLEAN, display : STRING) : VOID
+      BulkRename (working-directory : STRING, filenames : ARRAY OF STRING, standalone : BOOLEAN, display : STRING, startup-id : STRING) : VOID
 
       working-directory : the default directory for the "Add Files" dialog of the
                           bulk rename window. May also be the empty string, in
@@ -239,16 +239,19 @@
                           bunch of selected files will be renamed.
       display           : the screen on which to launch the filenames or ""
                           to use the default screen of the file manager.
+      startup-id        : the DESKTOP_STARTUP_ID environment variable for properly
+                           handling startup notification and focus stealing.
     -->
     <method name="BulkRename">
       <arg direction="in" name="working-directory" type="s" />
       <arg direction="in" name="filenames" type="as" />
       <arg direction="in" name="standalone" type="b" />
       <arg direction="in" name="display" type="s" />
+      <arg direction="in" name="startup-id" type="s" />
     </method>
 
     <!--
-      LaunchFiles (working-directory : STRING, filenames : ARRAY OF STRING, display : STRING) : VOID
+      LaunchFiles (working-directory : STRING, filenames : ARRAY OF STRING, display : STRING, startup-id : STRING) : VOID
 
       working-directory : the directory, relative to which filenames should
                           be interpreted.
@@ -257,11 +260,14 @@
                           to the working-directory.
       display           : the screen on which to launch the filenames or ""
                           to use the default screen of the file manager.
+      startup-id        : the DESKTOP_STARTUP_ID environment variable for properly
+                           handling startup notification and focus stealing.
     -->
     <method name="LaunchFiles">
       <arg direction="in" name="working-directory" type="s" />
       <arg direction="in" name="filenames" type="as" />
       <arg direction="in" name="display" type="s" />
+      <arg direction="in" name="startup-id" type="s" />
     </method>
 
     <!--

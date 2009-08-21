@@ -29,11 +29,15 @@
 #endif
 
 #include <glib/gstdio.h>
+#ifdef HAVE_GIO_UNIX
+#include <gio/gdesktopappinfo.h>
+#endif
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-dbus-client.h>
 #include <thunar/thunar-dbus-service.h>
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-session-client.h>
 #include <thunar/thunar-stock.h>
 
@@ -69,17 +73,49 @@ static GOptionEntry option_entries[] =
 
 
 
+static gboolean
+thunar_delayed_exit_check (gpointer user_data)
+{
+  ThunarApplication *application = user_data;
+
+  _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
+
+  /* call this function again later if the application is still processing the
+   * command line arguments */
+  if (thunar_application_is_processing (application))
+    return TRUE;
+
+  /* the application has processed all command line arguments. don't call
+   * this function again if it could load at least one of them */
+  if (thunar_application_has_windows (application))
+    {
+      return FALSE;
+    }
+  else
+    {
+      /* no command line arguments opened in Thunar, exit now */
+      gtk_main_quit ();
+
+      /* don't call this function again */
+      return FALSE;
+    }
+  
+}
+
+
+
 int
 main (int argc, char **argv)
 {
   ThunarSessionClient *session_client;
 #ifdef HAVE_DBUS
-  ThunarDBusService   *dbus_service;
+  ThunarDBusService   *dbus_service = NULL;
 #endif
   ThunarApplication   *application;
   GError              *error = NULL;
   gchar               *working_directory;
   gchar              **filenames = NULL;
+  const gchar         *startup_id;
 
   /* setup translation domain */
   xfce_textdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR, "UTF-8");
@@ -97,6 +133,9 @@ main (int argc, char **argv)
   /* initialize the GThread system */
   if (!g_thread_supported ())
     g_thread_init (NULL);
+    
+  /* get the startup notification id */
+  startup_id = g_getenv ("DESKTOP_STARTUP_ID");
 
   /* initialize Gtk+ */
   if (!gtk_init_with_args (&argc, &argv, _("[FILES...]"), option_entries, GETTEXT_PACKAGE, &error))
@@ -128,6 +167,11 @@ main (int argc, char **argv)
       g_print ("\n");
       return EXIT_SUCCESS;
     }
+
+#ifdef HAVE_GIO_UNIX
+  /* set desktop environment for app infos */
+  g_desktop_app_info_set_desktop_env ("XFCE");
+#endif
 
   /* register additional transformation functions */
   thunar_g_initialize_transformations ();
@@ -176,21 +220,15 @@ main (int argc, char **argv)
 
 #ifdef HAVE_DBUS
   /* check if we can reuse an existing instance */
-  if ((!opt_bulk_rename && filenames != NULL && thunar_dbus_client_launch_files (working_directory, filenames, NULL, NULL))
-      || (opt_bulk_rename && thunar_dbus_client_bulk_rename (working_directory, filenames, TRUE, NULL, NULL)))
+  if ((!opt_bulk_rename && filenames != NULL && thunar_dbus_client_launch_files (working_directory, filenames, NULL, startup_id, NULL))
+      || (opt_bulk_rename && thunar_dbus_client_bulk_rename (working_directory, filenames, TRUE, NULL, startup_id, NULL)))
     {
-      /* stop any running startup notification */
-      gdk_notify_startup_complete ();
-
       /* that worked, let's get outa here */
       g_free (working_directory);
       g_strfreev (filenames);
       return EXIT_SUCCESS;
     }
 #endif
-
-  /* initialize the ThunarVFS library */
-  thunar_vfs_init ();
 
   /* initialize the thunar stock items/icons */
   thunar_stock_init ();
@@ -210,16 +248,15 @@ main (int argc, char **argv)
   if (G_UNLIKELY (opt_bulk_rename))
     {
       /* try to open the bulk rename dialog */
-      if (!thunar_application_bulk_rename (application, working_directory, filenames, TRUE, NULL, &error))
+      if (!thunar_application_bulk_rename (application, working_directory, filenames, TRUE, NULL, startup_id, &error))
         goto error0;
     }
-  else if (filenames != NULL && !thunar_application_process_filenames (application, working_directory, filenames, NULL, &error))
+  else if (filenames != NULL && !thunar_application_process_filenames (application, working_directory, filenames, NULL, startup_id, &error))
     {
       /* we failed to process the filenames or the bulk rename failed */
 error0:
       g_fprintf (stderr, "Thunar: %s\n", error->message);
       g_object_unref (G_OBJECT (application));
-      thunar_vfs_shutdown ();
       g_error_free (error);
       return EXIT_FAILURE;
     }
@@ -231,31 +268,37 @@ error0:
   /* connect to the session manager */
   session_client = thunar_session_client_new (opt_sm_client_id);
 
-  /* do not enter the main loop, unless we have atleast one window or we are in daemon mode */
-  if (thunar_application_has_windows (application) || thunar_application_get_daemon (application))
+  /* check if the application should run as a daemon */
+  if (thunar_application_get_daemon (application))
     {
-      /* attach the D-BUS service */
 #ifdef HAVE_DBUS
+      /* attach the D-Bus service */
       dbus_service = g_object_new (THUNAR_TYPE_DBUS_SERVICE, NULL);
 #endif
-
-      /* enter the main loop */
-      gtk_main ();
-
-      /* detach the D-BUS service */
-#ifdef HAVE_DBUS
-      g_object_unref (G_OBJECT (dbus_service));
-#endif
     }
+  else
+    {
+      /* processing the command line arguments is done asynchronously. Thus, we
+       * schedule an idle source which repeatedly checks whether we are done
+       * processing. Once we're done, it'll make the application quit if there
+       * are no open windows */
+      g_idle_add_full (G_PRIORITY_LOW, thunar_delayed_exit_check, 
+                       g_object_ref (application), g_object_unref);
+    }
+
+  /* enter the main loop */
+  gtk_main ();
+
+#ifdef HAVE_DBUS
+  if (dbus_service != NULL)
+    g_object_unref (G_OBJECT (dbus_service));
+#endif
 
   /* disconnect from the session manager */
   g_object_unref (G_OBJECT (session_client));
 
   /* release the application reference */
   g_object_unref (G_OBJECT (application));
-
-  /* shutdown the VFS library */
-  thunar_vfs_shutdown ();
 
   return EXIT_SUCCESS;
 }

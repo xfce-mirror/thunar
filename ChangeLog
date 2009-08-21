@@ -1,3 +1,892 @@
+2009-07-22	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.c: Fix typo in thunar_file_info_has_mime_type()
+	  which caused a lot of problems. Patch by Nick.
+
+2009-07-18	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.c: Only return true from
+	  thunar_file_is_executable() if the file is either a desktop file or
+	  is an application/x-executable or application/x-shellscript. On
+	  Windows we use g_content_type_can_be_executable() directly instead
+	  of checking for these two content types. Patch by Nick.
+
+2009-07-18	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Introduce new function
+	  thunar_file_same_filesystem() which uses
+	  G_FILE_ATTRIBUTE_ID_FILESYSTEM to check whether two files reside on
+	  the same device/filesystem. Use this to fix the copy/move decision
+	  in thunar_file_accepts_drop().
+	* thunarx/thunarx-file-info.h: Add the "id" namespace to
+	  THUNARX_FILE_INFO_NAMESPACE.
+
+2009-07-18	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-launcher.c: Make executing files work again. Note that
+	  this only works for one selected file right now. Poking/launching 
+	  multiple files/directories still have to be worked on anyway.
+
+2009-06-20	Jannis Pohlmann <jannis@xfce.org>
+
+	* po/POTFILES.in: Add thunar-settings.desktop.in.
+
+2009-06-20	Jannis Pohlmann <jannis@xfce.org>
+
+	* po/POTFILES.in: Remove thunar-vfs source files, update those of
+	  Thunar itself.
+
+2009-06-20	Jannis Pohlmann <jannis@xfce.org>
+
+	* docs/reference/thunarx/Makefile.am: Use THUNARX_VERSION_API instead
+	  of THUNAR_VERSION_API.
+
+2009-06-20	Jannis Pohlmann <jannis@xfce.org>
+
+	* configure.in.in, Makefile.am, tests/: Remove test folder which only
+	  tests thunar-vfs anyway.
+	* docs/reference/thunar-vfs/, thunar-vfs/: Remove empty folders.
+
+2009-06-20	Jannis Pohlmann <jannis@xfce.org>
+
+	* configure.in.in: Add header and function checks required for tdb.
+
+2009-06-20	Jannis Pohlmann <jannis@xfce.org>
+
+	* Remove thunar-vfs. There might be some pieces left which will be
+	  cleaned up next. Update the list of functions and headers the
+	  configure script checks because a lot of them were only required for
+	  thunar-vfs.
+
+2009-06-20	Jannis Pohlmann <jannis@xfce.org>
+
+	* Makefile.am, configure.in.in, plugins/, thunarx/, thunar/: 
+	  thunarx-1 is dead, long live thunarx-2. thunarx-2 introduces three
+	  new functions: thunarx_file_info_get_file_info() which returns the
+	  GFileInfo of a ThunarxFileInfo,
+	  thunarx_file_info_get_filesystem_info() which returns a GFileInfo
+	  with filesystem information for a ThunarxFileInfo and
+	  thunarx_file_info_get_location() which returns the GFile the
+	  ThunarxFileInfo refers to. thunarx-2 doesn't have
+	  thunarx_file_info_get_vfs_info() anymore. Port all plugins shipped
+	  with Thunar from thunarx-1 to thunarx-2. Especially thunar-uca and
+	  thunar-sendto-email need testing due to non-trivial changes. Don't
+	  link Thunar against ThunarVFS anymore - ALL REFERENCES ARE GONE!
+
+2009-06-19	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.c: Nothing really.
+	* thunar/thunar-window.c: Derive from ThunarBrowser and use
+	  thunar_browser_poke_file() to resolve/mount files when the location
+	  dialog is activated.
+
+2009-06-19	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-list-model.c: Fix thunar_list_model_get_value() and
+	  thunar_list_model_get_statusbar_text() for files without content
+	  type. Use special statusbar texts for mountables and shortcuts.
+
+2009-06-19	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.c: Assume the file is read- and writable if it
+	  has no G_FILE_ATTRIBUTE_ACCESS_CAN_READ or
+	  G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE attribute. This usually is the 
+	  case with shortcuts and mountables. This change removes all those
+	  irritating emblems when browsing computer://, network:// and smb://.
+	  Only show the "drive-harddisk" icon for local root directories (this
+	  should only be the filesystem root, not media or anything).
+
+2009-06-19	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/Makefile.am: Add missing entries for thunar-browser.{c,h}.
+
+2009-06-19	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-launcher.c: Derive from ThunarBrowser and use the poke
+	  file function to resolve/mount/open the selected file, if there is
+	  only one selected. Still need to work on selections of more files.
+
+2009-06-19	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-path-entry.c: Unescape URIs before displaying them.
+	  This is to make sure we don't see things like "%20" in the location
+	  bar/dialog.
+
+2009-06-19	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-location-entry.c: Simplify the activate code by
+	  deriving from ThunarBrowser and using the poke functions to mount
+	  volumes or resolve files asynchronously and on demand.
+
+2009-06-19	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-shortcuts-view.c: Dramatically simplify the way
+	  directories and volumes are mounted and opened by deriving from
+	  ThunarBrowser and calling thunar_browser_poke_file() and
+	  thunar_browser_poke_volume() to resolve directories and volumes
+	  before opening them.
+
+2009-06-19	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-browser.{c,h}: Add a new interface with two
+	  convenience functions for browsing (possibly not yet mounted or
+	  resolved) volumes and files. thunar_browser_poke_file() can be used
+	  to asynchronously resolve shortcuts, mount mountables or enclosing
+	  volumes. When finished, the ThunarBrowserPokeFileFunc callback is
+	  called with the source and target file. thunar_browser_poke_volume()
+	  mounts volumes on demand and resolves the mount point and passes it
+	  to the ThunarBrowsePokeVolumeFunc callback. Both functions are
+	  possibly asynchronous.
+
+2009-06-19	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Add "mountable::*" namespace to the file
+	  info attributes we request from the GFileInfo. In
+	  thunar_file_load(), check for type G_FILE_TYPE_MOUNTABLE and set
+	  is_mounted to FALSE if its G_FILE_ATTRIBUTE_MOUNTABLE_CAN_MOUNT is
+	  TRUE. Add function thunar_file_get_target_location() which returns
+	  a GFile for the target location of a file of type
+	  G_FILE_TYPE_SHORTCUT or G_FILE_TYPE_MOUNTABLE and otherwise returns
+	  NULL. Don't assume all files have a content type - shortcuts and
+	  mountables don't. Work around this in thunar_file_is_desktop_file()
+	  and thunar_file_list_get_applications(). Check if we have a
+	  GFileInfo before querying the original path in
+	  thunar_file_get_original_path().
+
+2009-06-17	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.c: Use special icon names for root folders other
+	  than trash://: "disk-harddrive" for the local root and
+	  "folder-remote" for root folders on other machines.
+	* thunar/thunar-location-button.c: Show a label even for the local
+	  root, just to be more consistent.
+
+2009-06-17	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-shortcuts-view.c: Rework mounting and mounting + open.
+	  Also make opening items other than volumes work asynchronously. To
+	  do that, first check if the file to be opened is mounted already. If
+	  that's the case, open it directly. If not, mount the enclosing
+	  volume asynchronously and open the file in the mount callback. This
+	  works for opening in the same or a new window.
+
+2009-06-17	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-shortcuts-model.c: Minor code reorganization.
+
+2009-06-17	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-window.c: Split thunar_window_start_open_location()
+	  up into three functions and load unmounted files asynchronously.
+
+2009-06-17	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-location-entry.c: Check if files are mounted before
+	  mounting their volumes asynchronously. If they are, just open them
+	  directly. Rework the code a bit, add a new private method
+	  thunar_location_entry_open_or_launch().
+
+2009-06-17	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Add new boolean is_mounted member to
+	  ThunarFile. It is FALSE iff the GFileInfo of the file couldn't be
+	  loaded due to G_IO_ERROR_NO_MOUNTED. Return TRUE from
+	  thunar_file_load() only when the file info could be loaded or the
+	  file is not mounted yet. Use the path instead of the file:// URI for
+	  the display name of local files. Add new method
+	  thunar_file_is_mounted(). Add support for GFileIcons in
+	  thunar_file_get_icon_name() by returning the path to the icon
+	  filename if the file has a GFileIcon. Call thunar_file_reload()
+	  instead of thunar_file_destroy() on G_FILE_MONITOR_EVENT_DELETED and
+	  G_FILE_MONITOR_EVEN_PRE_UNMOUNT. The reload function will then
+	  destroy the file if it doesn't exist anymore. Not mounted files will
+	  not be destroyed though.
+
+2009-06-17	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-thumbnailer.c: Make all D-Bus related code only
+	  available when D-Bus is installed at compile time. 
+
+2009-06-17	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-shortcuts-view.c: Don't request context menu items
+	  from Thunarx for files which don't exist. Reported by Nick.
+
+2009-06-17	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.c: Refactor thunar_file_load() and
+	  thunar_file_get() a bit. For now, thunar_file_load() will always
+	  return successful, even if the GFileInfo cannot be loaded. This is
+	  because we want ThunarFiles for remote URIs that are not yet
+	  mounted. To compensate for that, there's a new method
+	  thunar_file_exists() which returns TRUE iff the ThunarFile exists.
+
+2009-06-17	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/main.c, thunar/thunar-application.{c,h}: 
+	  thunar_application_process_filenames() now works asynchronously
+	  because it might have to mount the enclosing volumes of one of the
+	  filenames first (which is only possible asynchronously). Add new
+	  method thunar_application_is_processing() which returns whether
+	  ThunarApplication is still busy processing filenames or not. In
+	  main(), always enter the main loop but schedule an idle source to
+	  repeatedly check whether ThunarApplication has finished processing
+	  the command line arguments. Once this is the case, exit if there are
+	  no open Thunar windows. All in all, this gives us about the same 
+	  behaviour main() had before, except that it the application might
+	  exit with a short delay. The result: Calling "thunar <remote URI>"
+	  from the shell works now!
+
+2009-06-16	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-location-entry.c: Split
+	  thunar_location_entry_activate() up into two functions,
+	  thunar_location_entry_activate() an
+	  thunar_location_entry_activate_finished(). Use
+	  g_file_mount_enclosing_volume() to make sure the volume is mounted
+	  before we switch to the new directory or launch the file. Remote
+	  machine browsing, here we come!
+
+2009-06-16	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.c: In thunar_file_reload(), always reload the
+	  file first, before checking if it still exists and needs to be
+	  destroyed.
+
+2009-06-16	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-path-entry.c: Display the local path only for native
+	  files. If there is no path, use the URI. Always use the URI for
+	  non-native files.
+
+2009-06-16	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-renamer-model.c: Remove the ThunarVfsInfo member of
+	  ThunarRenamerModelItem. Always invalidate and update the item/row
+	  when the ThunarFile changes (unless the model is frozen of course). 
+	  ThunarRenamerModel is now ThunarVFS-free.
+
+2009-06-16	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.c: Use S_ISCHR, S_ISSOCK, S_ISFIFO and S_ISBLK to
+	  generate the first character of mode strings for special/unknown
+	  file types because we don't have THUNAR_VFS_FILE_TYPE_SOCKET etc.
+	  anymore. There will be no replacements for THUNAR_VFS_FILE_TYPE_PORT
+	  and THUNAR_VFS_FILE_TYPE_DOOR for now.
+
+2009-06-16	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-icon-factory.c: Remove commented code.
+
+2009-06-15	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-thumbnailer.c: Don't queue files that are part of an 
+	  already queued thumbnailer request or a ready idle struct. This
+	  dramatically reduces the amount of D-Bus messages being sent.
+
+2009-06-15	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-icon-factory.c: Drop the ThunarVfsThumbFactory
+	  reference. Don't cache SVGs. The number of SVGs we need to load that
+	  are not ThunarFiles is relatively small, I don't think we need to
+	  cache them. ThunarThumbnailer takes care of the ThunarFiles that are 
+	  SVGs. Always try to load thumbnails for files, even though their
+	  thumbnail state is not ready. Don't use the loading icon. Together,
+	  this reduces flicker when switching folders. ThunarIconFactory is
+	  now ThunarVFS-free.
+
+2009-06-15	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Add new boolean method 
+	  thunar_file_is_thumbnail() which returns TRUE if, and only if
+	  a file resides in $HOME/.thumbnails/.
+
+2009-06-15	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-icon-factory.c: Rewrite the file icon loading process
+	  once again, this time based on the also rewritten ThunarThumbnailer.
+	  We first assume no thumbnail exists and use the default icon for the
+	  MIME type. At the same time we request a thumbnail. Once the
+	  thumbnailer has started processing the request, we change to a
+	  loading icon. Once thumbnailer has the thumbnail ready, we change
+	  to the thumbnail. If there's an error with the thumbnail, we
+	  fall back to the default icon. 
+	* thunar/thunar-image.c: Simplify this one. It now always requests the
+	  icon from the icon factory and uses ThunarFileMonitor to watch the
+	  file for changes. After each change it requests the icon from the
+	  factory again. It's probably a good idea to use the thumbnailer
+	  directly, so this will change in the future.
+	* thunar/thunar-list-model.c: Don't request thumbnails for the entire
+	  content of new folders. Instead, just let the icon renderers do
+	  their job. In the future, the model should at least unqueue all
+	  requests for the old folder when the folder changes.
+	* thunar/thunar-thumbnailer.{c,h}: Rewrite the class entirely. It does
+	  asynchronous D-Bus calls now and uses idle sources for updating the
+	  thumbnail state of the ThunarFiles for which it requests the
+	  thumbnails. It doesn't emit any signals anymore. In the future,
+	  there should be a method to cancel all requests made by a component
+	  for a certain base URI, so that we can cancel all pending requests 
+	  when leaving a folder.
+
+2009-06-14	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Emit a ThunarFileMonitor "file-changed"
+	  signal whenever the thumbnail state of a ThunarFile is changed. This
+	  helps all components in refreshing their file information and
+	  possibly update the file icon.
+
+2009-06-12	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/Makefile.am, thunar/thunar-thumbnailer-manager-dbus.xml: Add
+	  XML D-Bus information for the org.freedesktop.thumbnails.Manager
+	  interface.
+	* thunar/thunar-thumbnailer.{c,h}: Start implementing the client side
+	  of the org.freedesktop.thumbnails.Manager interface. Add new method
+	  thunar_thumbnailer_file_is_supported() which requests the supported
+	  content types from the thumbnailer manager on demand and checks if
+	  the content type of a ThunarFile is a subtype of any of these. Use
+	  this in thunar_thumbnailer_queue_files() and
+	  thunar_thumbnailer_queue_file() to filter out files which
+	  are not supported by the thumbnailer anyway. Make queue requests
+	  fail when there are no supported files in the request.
+
+2009-06-12	Jannis Pohlmann <jannis@xfce.org>
+
+	* Makefile.am, thunar/thunar-image.{c,h},
+	  thunar/thunar-thumbnailer-dbus.xml, thunar/thunar-thumbnailer.{c,h}:
+	  Add two new classes ThunarImage and ThunarThumbnailer. ThunarImage
+	  is a subclass of GtkImage which takes a ThunarFile and
+	  asynchronously loads a thumbnail for the file using the
+	  org.freedesktop.thumbnails.Thumbnailer D-Bus service.
+	  ThunarThumbnailer is essentially a proxy client for this service
+	  which adds a few convenience methods around the DBusGProxy API. It
+	  can be used by other classes to request thumbnails over D-Bus.
+	* thunar/thunar-file.{c,h}: Add a new method
+	  thunar_file_get_thumbnail_path(), which returns the thumbnail path
+	  for a ThunarFile. GFileInfo has something similar but unfortunately
+	  it's only set if the thumbnail exists, which means you have to
+	  reload the GFileInfo whenever a new thumbnail has been generated ...
+	  and unfortunately that requires a thunar_file_reload() which causes
+	  a lot of flicker. Another new method is
+	  thunar_file_get_preview_icon() which returns a preview GIcon that
+	  can act as a thumbnail replacement if there is any.
+	* thunar/thunar-folder.c: Make sure never to emit the "files-added"
+	  signal with an empty list.
+	* thunar/thunar-icon-factory.c: Use thunar_file_get_preview_icon() and
+	  thunar_file_get_thumbnail_path() to load ThunarFile icons. Drop the
+	  reference on ThunarThumbnailGenerator. Thumbnails are now requested
+	  by ThunarListModel and ThunarImage instead of the icon factory.
+	* thunar/thunar-list-model.c: Request thumbnails from
+	  ThunarThumbnailer whenever the "files-added" signal is emitted.
+	  Unqueue all pending requests when the folder changes or the list
+	  model is destroyed. Still missing: thumbnail requests after file 
+	  change events.
+	* thunar/thunar-marshal.list: Add another marshaller:
+	  VOID:UINT,POINTER,UINT,STRING.
+	* thunar/thunar-private.h: Remove ifdefs for GLib <= 2.14.
+	* thunar/thunar-properties-dialog.c: Use ThunarImage for the file
+	  icon instead of a regular GtkImage.
+	* thunar/thunar-thumbnail-generator.{c,h}: Remove the
+	  ThunarThumbnailerGenerator class. We no longer need it.
+
+2009-05-12	Jannis Pohlmann <jannis@xfce.org>
+
+	* configure.in.in: Depend on libexo-0.3.101svn-r29948 for
+	  exo_job_send_to_mainloop().
+	* thunar/thunar-dialogs.{c,h}, thunar/thunar-io-jobs.{c,h}, 
+	  thunar/thunar-dialogs.{c,h}, thunar/thunar-properties-dialog.c,
+	  thunar/thunar-standard-view.c, thunar/thunar-tree-view.c: Add new 
+	  simple job thunar_io_jobs_rename_file() which renames a ThunarFile 
+	  asynchronously. Make us of it in thunar_dialogs_show_rename_file()
+	  which now launches and returns the rename job instead of calling
+	  thunar_file_rename() directly. Update ThunarPropertiesDialog, 
+	  ThunarStandardView and ThunarTreeView to handle the error/finished
+	  signals and destroy the job when it's finished. 
+	* thunar/thunar-file.{c,h}: Add a GCancellable parameter and a boolean
+	  parameter called "called_from_job". The latter is used to disable
+	  the thunarx_file_info_renamed() and thunar_file_changed() calls. The
+	  rename job is responsible to call these in the mainloop of the
+	  application after the rename has succeeded. 
+	* thunar/thunar-simple-job.{c,h}: Add new function
+	  thunar_simple_job_get_param_values() which returns the GValueArray
+	  created from the parameters passed to thunar_simple_job_launch().
+
+2009-05-11	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/Makefile.am, thunar/thunar-exec.{c,h}: Import thunar_exec_*()
+	  functions from ThunarVFS. A part of that can probably be replaced
+	  with calls to libxfce4ui.
+	* thunar/thunar-dialogs.{c,h}: Rename left-out THUNAR_VFS_JOB_RESPONSE*
+	  defines to THUNAR_JOB_RESPONSE*. Remove thunar-vfs.h include.
+	* thunar/thunar-file.{c,h}: Remove the ThunarVfsInfo struct member of
+	  ThunarFile. In all function calls, make sure that we don't crash if
+	  we can't load the GFileInfo for the file. Cache the basename and 
+	  display name of the file in thunar_file_load(). If no GFileInfo is 
+	  available, try to guess them from the GFile. Use the new methods for
+	  querying a GKeyFile for a GFile to determine the custom icon name,
+	  if available. Cache that one, too. Remove thunar_file_get_for_info(),
+	  thunar_file_get_for_path(), rewrite  thunar_file_get_for_uri(),
+	  rewrite thunar_file_get_parent(), thunar_file_execute() (based on
+	  thunar_exec_*() functions), thunar_file_rename() (based on
+	  g_file_set_display_name()), replace/disable ThunarVfsFileType
+	  references in thunar_file_get_mode_string(), return TRUE from
+	  thunar_file_is_executable() for .desktop files, rewrite
+	  thunar_file_is_renamable(), thunar_file_get_custom_icon(),
+	  thunar_file_set_custom_icon(), thunar_file_reload(), remove
+	  thunar_file_cache_lookup_path(), thunar_file_list_to_path_list(),
+	  thunar_file_get_path() and thunar_file_get_mime_info(). Make
+	  thunar_file_get_info() return the GFileInfo. Rewrite 
+	  thunarx_file_info_get_vfs_info() which for now creates a new
+	  ThunarVfsInfo and returns it. Callers now have to release the 
+	  ThunarVfsInfo later. Add GMount member to ThunarFile.
+	* thunar/thunar-folder.c: Make sure to set the job to NULL after
+	  unref'ing it. Otherwise thunar_folder_get_loading() will always
+	  return TRUE and the watch cursor won't disappear.
+	* thunar/thunar-gio-extensions.{c,h}: Add new functions
+	  g_file_query_key_file() and g_file_write_key_file(). Also add
+	  g_file_get_location() which returns a path for local files and an
+	  URI for the rest, and g_mount_is_same_drive() which checks whether
+	  two GMounts belong to the same GDrive. 
+	* thunar/thunar-icon-factory.c, thunar/thunar-renamer-model.c,
+	  thunar/thunar-thumbnail-generator.{c,h}: Migrate to the new 
+	  thunarx_file_info_get_vfs_info() function.
+	* thunar/thunar-list-model.c: Make sure not to crash when trying to
+	  compare two ThunarFile of which at least one has no GFileInfo.
+	* thunar/thunar-metafile.{c,h}: Remove thunar-vfs.h include.
+	* thunar/thunar-progress-dialog.{c,h}: Use ThunarJob instead of ExoJob
+	  whenever it is appropriate. Remove thunar-vfs.h include.
+	* thunar/thunar-window.c: Rewrite
+	  thunar_window_current_directory_destroy() so that it simply searches
+	  for the first parent directory that still exists and falls back to
+	  $HOME otherwise.
+
+2009-05-07	Jannis Pohlmann <jannis@xfce.org>
+
+	* Makefile.am, thunar/thunar-misc-jobs.{c,h}: Add new file for
+	  miscellaneous jobs. Add new job
+	  thunar_misc_jobs_load_template_files() which recursively loads all
+	  template files/directories as ThunarFile objects from 
+	  G_USER_DIRECTORY_TEMPLATES. 
+	* thunar/thunar-gio-extensions.{c,h}: Add new method
+	  g_file_new_for_user_special_dir() which creates a GFile for a
+	  GUserDirectory and falls back to $HOME (so it's ignored later) if
+	  the special dir is not set.
+	* thunar/thunar-create-dialog.h, thunar/thunar-standard-view.c,
+	  thunar/thunar-templates-action.c: Migrate ThunarTemplatesAction away
+	  from ThunarVFS. Use ThunarFile instead of ThunarVfsInfo for the
+	  "create-template" signal. Load the templates menu using
+	  thunar_misc_jobs_load_template_files().
+
+2009-05-05	Jannis Pohlmann <jannis@xfce.org>
+
+	* configure.in.in: Depend on exo-0.3.101svn-r29926 for ExoJob.
+	* thunar/thunar-application.c, thunar/thunar-deep-count-job.{c,h},
+	  thunar/thunar-folder.c, thunar/thunar-io-jobs-util.c,
+	  thunar/thunar-io-jobs.c, thunar/thunar-io-scan-directory.{c,h},
+	  thunar/thunar-job.{c,h}, thunar/thunar-permissions-chooser.c,
+	  thunar/thunar-progress-dialog.{c,h}, thunar/thunar-simple-job.{c,h},
+	  thunar/thunar-size-label.c, thunar/thunar-transfer-job.c: Implement
+	  ThunarJob based on ExoJob. Update a lot of classes to use the
+	  equivalent ExoJob functions instead the ones from ThunarJob which
+	  have been removed.
+
+2009-05-01	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}, thnuar/thunar-standard-view.c,
+	  thunar/thunar-util.{c,h}: Do it right this time by using guint64 and
+	  GFileInfo instead of the ThunarVfsMimeInfo to determine the
+	  access/changed/modified time. Update
+	  thunar_util_humanize_file_time() to reflect this.
+	* thunar/thunar-standard-view.c: Rewrite tsv_reload_directory() 
+	  based on GFileMonitor.
+	* thunar/thunar-launcher.c: Use GVolumeMonitor/GVolume for the volume
+	  send-to actions. Another class free of ThunarVFS.
+
+2009-04-30	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/*.c: Remove all occurances of GLIB_CHECK_VERSION() and 
+	  GTK_CHECK_VERSION() because we depend on much more recent GLib/GTK+
+	  versions now anyway.
+	* thunar/thnuar-file.{c,h}, thunar/thunar-util.{c,h}: Actually, time_t
+	  instead of guint64 is the correct type to use (fixes the previous 
+	  commit).
+	* thunar/thunar-window.c: Implement thunar_window_directory_destroy()
+	  around g_file_find_enclosing_mount(). I'm not 100% happy with this
+	  implementation but it'll do for now. Open the home directory if the
+	  new directory cannot be determined.
+
+2009-04-30	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-util.{c,h}: Replace ThunarVfsFileTime with guint64.
+
+2009-04-30	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}, thunar/thunar-properties-dialog.c:
+	  Re-implement thunar_file_get_volume() around
+	  g_file_find_enclosing_mount(). Ideally this would be asynchronous
+	  but for now it'll stay the old way. Remove the
+	  ThunarVfsVolumeManager member from the properties dialog. We only
+	  need thunar_file_get_volume() here now.
+
+2009-04-30	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-application.c: Replace "hal-udi" with
+	  G_VOLUME_IDENTIFIER_KIND_HAL_UDI. 
+	* thunar/thunar-gio-extensions.c: Change g_volume_is_removable() so
+	  that it returns TRUE for almost all volumes. I feel that something is
+	  very wrong in GHalVolumeManager ...
+	* thunar/thunar-location-entry.c: Replace ThunarVfsVolume with
+	  GVolume. Mount+open launcher entry items asynchronously when
+	  activated.
+
+2009-04-29	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-tree-model.c, thunar/thunar-tree-view.c: Rewrite the
+	  volume management code based on GVolumeMonitor/GVolume. This code
+	  still has quite a few problems with trying to mount several times in
+	  a row and mount+open doesn't seem to work.
+
+2009-04-29	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-shortcuts-view.c: Avoid segfaults due to an invalid
+	  GtkTreeSelection being used in thunar_shortcuts_view_open_selection()
+	  and thunar_shortcuts_view_open_selection_in_new_window(). This can
+	  happen when the shortcuts view is essentially being destroyed but a
+	  reference to it is still being kept for the mount/unmount/eject
+	  handler. Increase the reference counter before passing the view to
+	  asynchronous mount/unmount/eject functions and release the reference
+	  in the handler.
+
+2009-04-29	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-shortcuts-model.c: In thunar_shortcuts_model_init()
+	  don't increase the reference counter on the volumes, otherwise we'd
+	  leak them here.
+
+2009-04-29	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-gio-extensions.{c,h}: Add new function
+	  g_volume_is_present() which checks whether the GDrive of a volume
+	  has media or not.
+	* thunar/thunar-shortcuts-icon-renderer.c: Use GVolume instead of 
+	  ThunarVfsVolume and create the icon by loading a GtkIconInfo based
+	  on the volume GIcon in thunar_shortcuts_renderer_render().
+	* thunar/thunar-shortcuts-model.{c,h}: Use GVolumeMonitor and
+	  GVolume/GMount instead of ThunarVfsVolumeManager/ThunarVfsVolume
+	  everywhere. 
+	* thunar/thunar-shortcuts-view.c: Rewrite the mount/eject/unmount code
+	  to use GVolume/GMount. Need to review this again to make sure it
+	  works.
+	* thunar/thunar-window.c: Re-implement the mount-pre-unmount signal
+	  handler by using GVolumeMonitor/GMount.
+
+2009-04-28	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-io-jobs.c, thunar/thunar-io-scan-directory.c: Improve
+	  error handling. Use thunar_file_list_free() instead of iterating over 
+	  the ThunarFile list manually. Make sure to release the
+	  GFileEnumerator in thunar_io_scan_directory(), otherwise unmounting
+	  volumes fails due to open file descriptors.
+	* thunar/thunar-job.c: Cancel jobs in thunar_job_finalize() before
+	  destroying the GCancellable.
+
+2009-04-28	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Make the ThunarFile cache somewhat 
+	  thread-safe.
+	* thunar/thunar-gio-extensions.{c,h}: Add new functions
+	  g_volume_is_removable() and g_volume_is_mounted().
+
+2009-04-27	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-io-jobs-util.{c,h}: Add missing files.
+
+2009-04-27	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-preferences-dialog.c: Always assume we have volume
+	  management. Remove the ThunarVfsVolumeManager reference here.
+
+2009-04-27	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-application.c: Use GVolumeMonitor instead of
+	  ThunarVfsVolumeManager. Connect to the "drive-connected", 
+	  "drive-disconnected" and "drive-eject-button" signals and determine
+	  the device UDIs using g_drive_get_identifier(). Rename
+	  thunar_application_volman_device_added(),
+	  thunar_application_volman_device_removed(),
+	  thunar_application_volman_device_eject() to
+	  thunar_application_drive_connected(),
+	  thunar_application_drive_disconnected() and
+	  thunar_application_drive_eject(). ThunarApplication is now
+	  ThunarVFS-free!
+	* thunar/thunar-io-scan-directory.c: Avoid segfault when cancelling the
+	  job and trying to free the error.
+
+2009-04-24	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-tree-view.c: Add missing include statement for
+	  thunar-job.h.
+
+2009-04-24	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-dialogs.c, thunar/thunar-progress-dialog.{c,h},
+	  thunar/thunar-standard-view.c thunar/thunar-tree-view.c: Remove
+	  all references to ThunarVfsJob/ThunarVfsJobResponse from comments and
+	  source code.
+	* thunar/thunar-io-jobs.c: Fix overwriting of a GError when cancelling
+	  the list_directory job.
+
+2009-04-24	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.c: Implement thunar_file_get_group(),
+	  thunar_file_get_user() and thunar_file_get_emblem_names() based on
+	  GFile/GFileInfo.
+	* thunar/thunar-folder.c, thunar/thunar-io-jobs.{c,h},
+	  thunar/thunar-job.{c,h}: Add new "files-ready" signal to ThunarJob
+	  which is emitted when a list of ThunarFiles is ready. Also add a new
+	  function called thunar_job_files_ready() which emits the signal.
+	  Implement a new job thunar_io_jobs_list_directory() as an equivalent
+	  to thunar_vfs_listdir(), using the new "files-ready" signal. Update
+	  ThunarJob to use "files-ready" instead of "infos-ready". For the
+	  first time in a while you can open the trash again without crashing
+	  Thunar.
+
+2009-04-24	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-folder.c: Add "corresponding-file" property for the
+	  ThunarFile member of ThunarFolder. Monitor folders using
+	  GFileMonitor instead of ThunarVfsMonitor.
+
+2009-04-24	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-enum-types.{c,h}, thunar/thunar-file.h: Move
+	  ThunarFileMode into the enum types file. Add THUNAR_TYPE_FILE_MODE
+	  macro and thunar_file_mode_get_type() function which registers a
+	  flags type for file modes.
+	* thunar/thunar-io-jobs.{c,h}: Add new jobs
+	  thunar_io_jobs_change_group() and thunar_io_jobs_change_mode().
+	* thunar/thunar-permissions-chooser.c: Migrate the permissions chooser
+	  to the new jobs.
+
+2009-04-24	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-application, thunar/thunar-io-jobs.{c,h},
+	  thunar/thunar-job.{c,h}, thunar/thunar-transfer-job.c: Re-implement
+	  thunar_application_restore_files() based on a new job called
+	  thunar_io_jobs_restore_files(). Modify ThunarTransferJob so that it
+	  checks whether the parent directory of the original path exists and
+	  otherwise tries to create it (with user interaction). Add new
+	  function thunar_job_ask_create() to ThunarJob. ThunarApplication is
+	  now almost ThunarVFS free.
+
+2009-04-23	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-dialogs.c: Use more fine-grained labels for files,
+	  directories and links in thunar_dialogs_show_job_ask_replace().
+
+2009-04-23	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-application.c, thunar/thunar-job.{c,h},
+	  thunar/thunar-io-jobs.c, thunar/thunar-transfer-job.c,
+	  thunar/thunar-standard-view.c, thunar/thunar-tree-view.c: Implement 
+	  and connect to the "new-files" signal again. Update
+	  ThunarStandardView and ThunarTreeView to use a GFile list for the
+	  new_files_closure.
+
+2009-04-23	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-application.{c,h}, thunar/thunar-dbus-service.c, 
+	  thunar/thunar-io-jobs.{c,h},: Add new job
+	  thunar_io_jobs_trash_files() and a new function
+	  thunar_application_trash() which are used in
+	  thunar_dbus_service_move_to_trash(), thunar_application_move_into()
+	  and thunar_application_unlink() to move files into the trash.
+	* thunar/thunar-standard-view.c: Use GFiles for the drag file list.
+
+2009-04-23	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-application.h: Fix thunar_appliation_link_into() 
+	  declaration and rename a few parameters.
+
+2009-04-23	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/Makefile.am, thunar/thunar-io-jobs-util.{c,h}: Add new files
+	  for I/O job utility functions. Right now there's only one new
+	  function called thunar_io_jobs_util_next_duplicate_file() which
+	  generates alternative "copy of X", "another copy of X", 
+	  "third copy of X" and "nth copy of X" #GFiles for an input #GFile.
+	  It also works for symbolic links.
+	* thunar/thunar-application.{c,h}, thunar/thunar-dnd.c, 
+	  thunar/thunar-io-jobs.{c,h}, thunar/thunar-launcher.c,
+	  thunar-standard-view.c: Add new
+	  job thunar_io_jobs_link_files() and use it in
+	  thunar_application_link_into(). Disable
+	  thunar_application_restore_files() for now so that we can replace
+	  thunar_application_collect_and_launch() and
+	  thunar_application_launch() with the implementations based on GIO.
+	  Enable creating links in thunar-dnd.c again. Update ThunarLauncher
+	  and ThunarStandardView to reflect the API changes in
+	  ThunarApplication.
+	* thunar/thunar-dialogs.c: In thunar_dialogs_show_job_ask_replace(), 
+	  use different labels for target symlinks than for normal files to 
+	  make clear that we're only replacing the symlinks, not the files 
+	  they point to.
+	* thunar/thunar-permissions-chooser.c: Make sure the array index
+	  is never out of bounds when iterating over the combos.
+	* thunar/thunar-transfer-job.{c,h}: Improve the copy/move algorithm so
+	  that it resembles the old behaviour, creates "copy of X" files when
+	  copying/linking files into the same directory, handles directory
+	  merges properly and is more readable.
+
+2009-04-23	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/Makefile.am, thunar/thunar-transfer-job.{c,h}: Implement
+	  ThunarTransferJob as an equivalent to ThunarVfsTransferJob. The code
+	  is very similar except that the error handling is a bit different
+	  and all basic operations (non-recursive copy/move) is done based on
+	  GFile and GFileInfo. Copying a file into the same directory
+	  currently does not work the way it did before (new file 'copy of
+	  "%s"' was created). This will be fixed soon.
+	* thunar/thunar-application.{c,h}: Add new function
+	  thunar_application_collect_and_launch_job() as an alternative to
+	  thunar_application_collect_and_launch() but based on GFile and
+	  JobLauncher. Implement thunar_application_move_into(),
+	  thunar_application_copy_into() and thunar_application_copy_to()
+	  based on ThunarTransferJob and GFile instead of ThunarVfsTransferJob.
+	* thunar/thunar-clipboard-manager.{c,h}, thunar/thunar-dialogs.{c,h}, 
+	  thunar/thunar-dnd.c, thunar/thunar-dbus-service.c, 
+	  thunar/thunar-launcher.c, thunar/thunar-location-button.c, 
+	  thunar/thunar-location-buttons.c, thunar/thunar-progress-dialog.c, 
+	  thunar/thunar-shortcuts-view.c, thunar/thunar-standard-view.c, 
+	  thunar/thunar-tree-view.c: Update to new API of 
+	  ThunarClipboardManager, ThunarApplication and ThunarJob. Replace 
+	  *a lot* of ThunarVFS references with code based on GIO.
+	* thunar/thunar-file.{c,h}: Re-implement thunar_file_accepts_drop() 
+	  based on a GFile input list. Add new function
+	  thunar_file_can_be_trashed().
+	* thunar/thunar-io-jobs.{c,h}: Add new jobs
+	  thunar_io_jobs_move_files() and thunar_io_jobs_copy_files().
+	* thunar/thunar-job.{c,h}: Add "ask-replace" signal and public
+	  function thunar_job_ask_replace(), mainly for ThunarTransferJob.
+	* thunar/thunar-marshal.list: Add new marshal function
+	  _thunar_marshal_FLAGS__OBJECT_OBJECT().
+	
+2009-04-22	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/Makefile.am, thunar/thunar-io-scan-directory.{c,h}: Port
+	  _thunar_vfs_info_scan_directory() to GIO and rename it to
+	  thunar_io_scan_directory(). 
+	* thunar/thunar-application.c, thunar/thunar-io-jobs.{c,h}: Implement
+	  thunar_io_jobs_unlink_files() as an equivalent to
+	  thunar_vfs_jobs_unlink_files(). Use it in unlink_stub() and modify
+	  thunar_application_unlink_files() and
+	  hunar_application_empty_trash() to use
+	  thunar_application_job_launch() and GFile lists.
+	* thunar/thunar-gio-extensions.{c,h}: Add g_file_list_prepend().
+	* thunar/thunar-job.c: Don't treat cancellation as an error for now.
+	* thunar/thunar-simple-job.c: Use g_clear_error() instead of
+	  g_error_free() in thunar_simple_job_execute().
+	
+2009-04-21	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-application.c, thunar/thunar-io-jobs.{c,h},
+	  thunar/thunar-location-buttons.c, thunar/thunar-standard-view.c,
+	  thunar/thunar-tree-view.c: Add new simple job
+	  thunar_io_jobs_make_directories(). Rename all I/O job functions from
+	  thunar_io_job_*() to thunar_io_jobs*(). Use the make directories job
+	  in thunar_application_mkdir() and modify mkdir_stub() according to
+	  this. Pass a GFile list to thunar_application_mkdir() in 
+	  ThunarLocationButtons, ThunarStandardView and ThunarTreeView.
+
+2009-04-21	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/Makefile.am, thunar/thunar-io-jobs.{c,h},
+	  thunar/thunar-simple.job.{c,h}: Add ThunarSimpleJob class which is
+	  equivalent to ThunarVfsSimpleJob. Add the first simple job by
+	  implementing thunar_io_job_create_files() as an equivalent to
+	  thunar_vfs_create_files(). The "new-files" signal is not implemented
+	  yet because it would break the new_files_closure.
+	* thunar/thunar-application.c: Add JobLauncher function pointer type
+	  as an equivalent to Launcher. Add thunar_application_launch_job() as
+	  an equivalent to thunar_application_launch() based on ThunarJob
+	  instead of ThunarVfsJob. Modify creat_stub() according to this. Use
+	  thunar_application_launch_job() in thunar_application_creat().
+	* thunar/thunar-job.{c,h}: Implement thunar_job_ask_skip().
+	* thunar/thunar-standard-view.c: Pass a GFile list instaed of a
+	  ThunarVfsPath list to thunar_application_creat().
+
+2009-04-21	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-enum-types.c: Remove vfs_ from
+	  thunar_vfs_job_response_get_type().
+	* thunar/thunar-gio-extensions.c: Include exo.h for the I_() macro.
+	* thunar/thunar-job.{c,h}: Add functions thunar_job_ask_overwrite(),
+	  thunar_job_info_message(), thunar_job_percent(),
+	  thunar_job_set_total_files() and thunar_job_processing_file(). Add
+	  signals "ask", "info-message" and "percent". 
+	* thunar/thunar-progress-dialog.{c,h}: Make ThunarProgressDialog work
+	  with both, ThunarVfsJob and ThunarJob by using a G_TYPE_OBJECT
+	  property and gpointer parameters.
+
+2009-04-21	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-deep-count-job.c: Improve the error handling code in
+	  thunar_deep_count_job_execute(). 
+	* thunar/thunar-gio-extensions.{c,h}: Add G_TYPE_FILE_LIST macro and
+	  g_file_list_get_type() for a boxed GFile list type. Fix
+	  g_file_list_copy() to actually return the list copy and not the
+	  original. Don't set the original to NULL before iterating over it.
+
+2009-04-20	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-window.c: Fix runtime error due to an NULL path being
+	  passed to g_file_new_for_path() in
+	  thunar_window_setup_user_dir_menu_entries().
+
+2009-04-20	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-chooser-dialog.c, thunar/thunar-deep-count-job.c,
+	  thunar/thunar-job.c, thunar/thunar-preferences.c,
+	  thunar/thunar-shortcuts-model.c, thunar/thunar-size-label.c: Fix
+	  compiler warnings and errors.
+
+2009-04-20	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/Makefile.am, thunar/thunar-deep-count-job.{c,h}: Add new class
+	  for computing the total size of a file/directory recursively while 
+	  also counting the total number of files and directories. This
+	  implementation is almost equivalent to ThunarVfsDeepCountJob except
+	  that it is an implementation of ThunarJob and uses GIOScheduler for
+	  the asynchronous operation.
+	* thunar/thunar-enum-types.h: Add missing public declaration of
+	  thunar_job_response_get_type().
+	* thunar/thunar-job.{c,h}: Add new functions
+	  thunar_job_get_cancellable() and thunar_job_set_error_if_cancelled().
+	  Make thunar_job_emit() public so that it can be used in subclasses.
+	  Don't try to emit signals in thunar_job_finished() and
+	  thunar_job_error() using GIOScheduler because they are only emitted
+	  in thunar_job_async_ready() which is called from the GUI thread.
+	* thunar/thunar-size-label.c: Drop all ThunarVFS references by
+	  replacing ThunarVfsDeepCountJob with ThunarDeepCountJob. Yay, it
+	  works!
+
+2009-04-20	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/Makefile.am, thunar/thunar-enum-types.{c,h},
+	  thunar/thunar-job.{c,h}, thunar/thunar-marshal.list: Add abstract 
+	  class ThunarJob which is going to be an equivalent to ThunarVfsJob. 
+	  The main difference is that ThunarJob uses GIOScheduler to handle 
+	  the asynchronous execution of the job instead of managing worker 
+	  threads on its own. It's not finished yet though. Add 
+	  ThunarJobResponse enum type and new marshal functions for job
+	  signals.
+
+2009-04-19	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-location-button.c: Use g_file_list_to_string() instead
+	  of thunar_vfs_path_list_to_string() in
+	  thunar_location_button_drag_data_get().
+
 2009-04-18  Stephan Arts <stephan@xfce.org>
 
 	* == Released 1.0.1 ==
@@ -10,6 +899,358 @@
 	  plugins/thunar-wallpaper/twp-provider.c(check_cli_tools):
 	  Don't pretend gconftool exists (if it exists it is just a symlink),
 	  instead look for gconftool-2 - Patch by Mike Massonnet
+
+2009-04-17	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-clipboard-manager.c: Remove GTK+ 2.6 check.
+	* thunar/thunar-dbus-service.c: Replace ThunarVfsPath with GFile in
+	  thunar_dbus_service_connect_trash_bin() and
+	  thunar_dbus_service_display_folder_and_select().
+
+2009-04-15	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-standard-view.c: Use GFile instead of ThunarVfsPath in
+	  thunar_standard_view_drag_drop(). 
+
+2009-04-15	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-preferences.c, thunar/thunar-sendto-model.c,
+	  thunar/thunar-shortcuts-model.c: Check whether the created file
+	  monitor is != NULL before connecting to its "changed" signal.
+
+2009-04-15	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-gio-extensions.c: Add new functions
+	  g_file_new_for_desktop() and g_file_is_desktop().
+	* thunar/thunar-shortcuts-model.c: Monitor ~/.gtk-bookmarks using
+	  GFileMOnitor instead of ThunarVfsMonitor. Replace all ThunarVfsPath
+	  references with equivalent code based on GFile.
+
+2009-04-14	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-preferences.c: Monitor thunarrc with GFileMonitor
+	  instead of ThunarVfsMonitor. All ThunarVFS references removed from
+	  the class.
+
+2009-04-13	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-sendto-model.c: Monitor sendto/ directories with
+	  GFileMonitor instead of ThunarVfsMonitor.
+
+2009-04-13	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-icon-factory.c: Replace ThunarVfsFileTime with
+	  guint64.
+	* thunar/thunar-path-entry.c, thunar/thunar-util.{c,h}: Replace
+	  thunar_vfs_expand_filename() with thunar_util_expand_filename().
+	* thunar/thunar-renamer-model.c: Use GFile instead of ThunarVfsPath in
+	  trm_same_directory(). 
+
+2009-04-13	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-permissions-chooser.c: Rename all occurances of
+	  ThunarVfsFileMode to ThunarFileMode.
+
+2009-04-13	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-renamer-dialog.c: Use a GFile instead of a
+	  ThunarVfsPath list in thunar_renamer_dialog_drag_data_received().
+
+2009-04-13	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-list-model.c: Remove all ThunarVFS references left.
+
+2009-04-13	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-chooser-dialog.c: Expand the recommended/other rows
+	  properly after initializing the ThunarChooserModel.
+
+2009-04-13	Jannis Pohlmann <jannis@xfce.org>
+
+	* configure.in.in: Bump exo dependency for the "gicon" property of
+	  ExoCellRendererIcon.
+	* thunar/main.c: Set the desktop environment for GDesktopAppInfo if
+	  gio-unix is available. 
+	* thunar/thunar-chooser-dialog.c, thunar-chooser-model.{c,h}: Replace 
+	  all ThunarVfsMime* references with code based on GAppInfo. Use the
+	  new "gicon" property of ExoCellRendererIcon. Only regression is that
+	  there is no way to check whether a GAppInfo was created by the user
+	  in GIO.
+
+2009-04-13	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-properties-dialog.c: Remove ThunarVfsMimeInfo and use
+	  a content type string in thunar_properties_dialog_update().
+
+2009-04-13	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-create-dialog.{c,h}: Replace the ThunarVfsMimeInfo 
+	  member/property of ThunarCreateDialog with a content type string
+	  member/property. Rename thunar_create_dialog_{get,set}_mime_info()
+	  to thunar_create_dialog_{get,set}_content_type().
+	* thunar/thunar-location-buttons.c, thunar/thunar-standard-view.c,
+	  thunar/thunar-tree-view.c: Update calls to
+	  thunar_show_create_dialog() to use a content type string rather than
+	  ThunarVfsMimeInfo.
+
+2009-04-12	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-chooser-button.c: Don't leak GAppInfos in
+	  thunar_chooser_button_pressed().
+
+2009-04-12	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-chooser-button.c: Migrate ThunarChooserButton from
+	  ThunarVFS to GIO, using GAppInfo instead if ThunarVfsMime* classes.
+
+2009-04-12	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Use GFileMonitor instead of 
+	  ThunarVfsMonitor for monitoring a ThunarFile. Rewrite 
+	  thunar_file_monitor(), remove thunar_file_watch_handle_quark and 
+	  thunar_file_watch_free(). Add GFileMonitor member to ThunarFile.
+	  Make thunar_file_info_get_name() use thunar_file_get_basename().
+	* thunar/thunar-gio-extensions.c: Don't escape URIs when appending
+	  them to the string in g_file_list_to_string(). This seems to break
+	  copy&paste.
+
+2009-04-12	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-application.c, thunar/thunar-file.{c,h},
+	  thunar/thunar-list-model.c, thunar/thunar-properties-dialog.c:
+	  Make thunar_file_get_original_path() and
+	  thunar_file_get_symlink_target() to return const strings. Update
+	  ThunarApplication, ThunarListModel and ThunarPropertiesDialog to
+	  reflect these changes. Implement thunar_file_is_trashed(),
+	  thunar_file_is_desktop_file() and thunar_file_get_display_name()
+	  based on GIO. Remove thunar_file_read_link().
+
+2009-04-12	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Re-implement thunar_file_is_local(),
+	  thunar_file_is_ancestor(), thunar_file_is_executable(),
+	  thunar_file_is_readable(), thunar_file_is_writable(),
+	  thunar_file_is_hidden(), thunar_file_is_home(), 
+	  thunar_file_is_regular() and thunar_file_dup_uri() based on GIO.
+
+2009-04-12	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Add GFileInfo filesystem info member to
+	  ThunarFile. Initialize it in thunar_file_load(), otherwise make sure
+	  it's set to NULL. Make thunar_file_get_default_handler(),
+	  thunar_file_get_kind(), thunar_file_get_mode(),
+	  thunar_file_get_free_space(), thunar_file_is_directory() real
+	  functions and make them use GFile/GFileInfo. 
+	* thunar/thunar-list-model.c, thunar/thunar-properties-dialog.c: Use
+	  guint64 instead of ThunarVfsFileSize. Use g_file_size_humanize()
+	  instead of thunar_vfs_humanize_size().
+
+2009-04-12	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-clipboard-manager.c: Use a GFile list and
+	  thunar_file_list_to_g_file_list() instead of the ThunarVFS
+	  equivalents in thunar_clipboard_manager_get_callback().
+
+2009-04-12	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Add new or re-implement the functions or
+	  macros thunar_file_get_content_type(), 
+	  thunar_file_get_symlink_target(), thunar_file_get_basename(), 
+	  thunar_file_is_symlink(), thunar_file_get_size() based on GIO.
+	* thunar/thunar-list-model.c: Re-implement
+	  thunar_list_model_get_value() based on the new/changed functions.
+	  Same goes for sort_by_file_name(), sort_by_mime_type(),
+	  sort_by_type() and thunar_list_model_get_statusbar_text() which are
+	  almost ThunarVFS-free now.
+
+2009-04-12	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-path-entry.c: Re-implement
+	  thunar_path_entry_drag_data_get(), thunar_path_entry_changed() and
+	  thunar_path_entry_set_current_file() with GFile. file:// URI
+	  completion doesn't work yet.
+
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.c, thunar/thunar-metafile.{c,h}: Migrate
+	  ThunarMetadata to GIO. Update ThunarFile to pass the GFile instead
+	  of ThunarVfsPath to thunar_metafile_fetch() and
+	  thunar_metafile_store().
+	* thunar/thunar-tree-model.c: Re-implement thunar_tree_model_init()
+	  based on GFile. Unfortunately this breaks the trash (again) and thus
+	  the whole tree view.
+
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-trash-action.c: Replace all ThunarVfsPath references
+	  with GFile.
+
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.c: Add assertion to thunar_file_load() to see for
+	  which files it fails rather than to see that in some random function
+	  later.
+	* thunar/thunar-window.c: Re-implement thunar_window_open_trash()
+	  based on GFile.
+
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.c: Fix segfault in thunar_file_get(). 
+	* thunar/thunar-window.c: Re-implement
+	  thunar_window_open_user_folder() based on GFile.
+
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Add new function thunar_file_get(GFile*).
+	  Internally this still uses thunar_file_load() and can thus block the
+	  UI. For the sake of a smoother transition, asynchronous loading will
+	  be implemented at a later stage.
+	* thunar/thunar-window.c: Re-implement thunar_window_open_home() based
+	  on thunar_file_get(). 
+
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.c: Tweak thunar_file_is_desktop() a little bit.
+	* thunar/thunar-window.c: Re-implement
+	  thunar_window_setup_user_dir_menu_entries() based on GFile. Remove
+	  the special code for GLib < 2.14. 
+
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Change thunar_file_get_custom_icon() to
+	  return a newly allocated string instead of a const one. Re-implement
+	  thunar_file_get_icon_name() based on GFileInfo and GThemedIcon. It
+	  now returns a string that has to be freed.
+	* thunar/thunar-icon-factory.c, thunar/thunar-location-button.c,
+	  thunar/thunar-properties-dialog.c: Avoid leaks by freeing the
+	  strings returned by thunar_file_get_custom_icon() and
+	  thunar_file_get_icon_name().
+	* thunar/thunar-launcher.c, thunar/thunar-sendto-model.c: Remove debug
+	  statements.
+
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
+	* configure.in.in, thunar/Makefile.am: Add optional dependency on 
+	  gio-unix-2.0.
+	* thunar/thunar-launcher.c, thunar/thunar-sendto-model.c: Load sendto
+	  handlers using GDesktopAppInfo (only supported on UNIX for whatever
+	  reason). Update ThunarLauncher to use GAppInfo for handlers
+	  retrieved from ThunarSendtoModel. Unfortunately, GIO doesn't support
+	  checking whether a GAppInfo supports more than one file argument.
+	  There's also no way to find out what MIME types a GAppInfo supports
+	  which forces us to drop a few nice sanity checks in
+	  thunar_sendto_model_get_matching().
+
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Add new macro
+	  thunar_file_get_default_handler() for querying the default GAppInfo
+	  to handle a ThunarFile. Use it in thunar_file_launch(). Fix pointer
+	  corruption issue thunar_file_reload(). Re-implement
+	  thunar_file_list_get_applications() based on GFileInfo/GAppInfo. Add
+	  new method thunar_file_list_to_g_file_list() as the GFile equivalent
+	  to thunar_file_list_to_path_list(). Add new macro 
+	  thunar_file_get_file() to get the GFile for a ThunarFile.
+	* thunar/thunar-gio-extensions.{c,h}: Add new function
+	  g_file_list_append() to append a GFile to a GFile list.
+	* thunar/thunar-launcher.c: Replace most occurances of
+	  ThunarVfsMimeHandler with GAppInfo based on the changes made to
+	  ThunarFile. This currently breaks ThunarSendtoModel which will be
+	  worked on next. 
+
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Re-implement thunar_file_get_size_string()
+	  based on GFileInfo and the new function g_file_size_humanize().
+	  Re-implement thunar_file_get_deletion_date(),
+	  thunar_file_get_original_path() as well. They currently fail because
+	  there are no GFileInfos for objects in the Thunar trash at the
+	  moment. Also rewrite thunar_file_is_desktop() and make sure to
+	  reload the GFileInfo in thunar_file_reload().
+	* thunar/thunar-gio-extensions.{c,h}: Add new method
+	  g_file_size_humanize() to create nice file size labels.
+
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Re-implement thunar_file_get_parent(), 
+	  thunar_file_launch(), thunar_file_is_root() and
+	  thunar_file_has_parent() based on GFile/GFileInfo/GAppInfo.
+	* thunar/thunar-gio-extensions.c: Fix problem in g_file_is_root().
+
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Replace all occurances of
+	  ThunarVfsFileMode with ThunarFileMode, which is the same, just moved
+	  from ThunarVFS into thunar-file.h. Re-implement
+	  thunar_file_info_get_name(), thunar_file_info_get_uri(),
+	  thunar_file_info_get_parent(), thunar_file_info_get_uri_scheme(),
+	  thunar_file_info_get_mime_type() and
+	  thunar_file_info_has_mime_type() based on GFile/GFileInfo.
+
+2009-04-10	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/Makefile.am, thunar/thunar-file.{c,h},
+	  thunar/thunar-list-model.c, thunar/thunar-permissions-chooser.c, 
+	  thunar/thunar-user.{c,h}: Move ThunarVfsUserManager, ThunarVfsUser
+	  and ThunarVfsGroup into Thunar, renaming them to ThunarUserManager,
+	  ThunarUser and ThunarGroup. Update the Thunar code to reflect this
+	  change.
+
+2009-04-10	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Use GFile in thunar_file_atexit_foreach().
+	  When finalizing, creating or loading a ThunarFile, check whether the
+	  GFileInfo is NULL before unref'ing it. Use the GFile member instead
+	  of the ThunarVfsPath in thunar_file_rename(). Tweak
+	  thunar_file_accepts_drop() so that it converts the ThunarVfsPath
+	  elements of the path list into GFile objects for everything. This
+	  will make the transition away from ThunarVfsPath easier later.
+	  Rewrite thunar_file_is_trashed() so that it uses
+	  g_file_is_trashed().
+	* thunar/thunar-gio-extensions.{c,h}: Add new function
+	  g_file_is_trashed() which checks whether a GFile resides in the
+	  trash.
+	* thunar/thunar-launcher.c, thunar/thunar-location-buttons.c,
+	  thunar/thunar-properties-dialog.c, thunar/thunar-shortcuts-view.c,
+	  thunar/thunar-standard-view.c, thunar/thunar-tree-model.c,
+	  thunar/thunar-tree-view.c, thunar/thunar-window.c: Include
+	  thunar-gio-extensions.h to compile with thunar_file_is_trashed().
+	
+2009-04-10	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-dnd.c, thunar/thunar-standard-view.c, 
+	  thunar/thunar-tree-view.c, thunar/thunar-window.c: Use 
+	  thunar_file_cache_lookup_path() instead of 
+	  thunar_file_cache_lookup().
+	* thunar/thunar-file.{c,h}: Add new function thunar_file_load() for
+	  loading the GFileInfo of a ThunarFile synchronously. Use it in
+	  thunar_file_get_for_info() to load GIO data for a ThunarFile in
+	  addition to ThunarVFS information. Use GFile for the keys of the
+	  file cache and change the function signature of
+	  thunar_file_cache_lookup(). Add thunar_file_cache_lookup_path() for
+	  a smoother transition.
+
+2009-04-10	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-gio-extensions.c: Remove unused variable in
+	  g_file_list_new_from_string().
+
+2009-04-10	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/Makefile.am, thunar/thunar-gio-extensions.{c,h}: Add a set of
+	  functions extending the GIO API, like g_file_new_for_home(),
+	  g_file_list_new_from_string(), g_file_list_to_string() and more.
+
+2009-04-10	Jannis Pohlmann <jannis@xfce.org>
+
+	* AUTHORS: Put my name in. Yeah, yeah ...
+	* configure.in.in, thunar/Makefile.am, thunarx/Makefile.am: Add
+	  dependency on GIO. Bump required GTK+/GLib version to 2.14/2.16.
+
+2009-04-09	Jannis Pohlmann <jannis@xfce.org>
+
+	* README: Add information about the purpose of this branch and
+	  the thesis.
 
 2009-04-08  Jannis Pohlmann <jannis@xfce.org>
 

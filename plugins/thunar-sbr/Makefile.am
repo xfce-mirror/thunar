@@ -8,7 +8,7 @@ INCLUDES =								\
 	-DG_LOG_DOMAIN=\"thunar-sbr\"					\
 	$(PLATFORM_CPPFLAGS)
 
-extensionsdir = $(libdir)/thunarx-$(THUNAR_VERSION_API)
+extensionsdir = $(libdir)/thunarx-$(THUNARX_VERSION_API)
 extensions_LTLIBRARIES =						\
 	thunar-sbr.la
 

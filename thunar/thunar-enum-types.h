@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2006-2007 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -233,6 +234,61 @@ typedef enum
 
 GType          thunar_zoom_level_get_type     (void) G_GNUC_CONST G_GNUC_INTERNAL;
 ThunarIconSize thunar_zoom_level_to_icon_size (ThunarZoomLevel zoom_level) G_GNUC_CONST G_GNUC_INTERNAL;
+
+
+#define THUNAR_TYPE_JOB_RESPONSE (thunar_job_response_get_type ())
+
+/**
+ * ThunarJobResponse:
+ * @THUNAR_JOB_RESPONSE_YES     :
+ * @THUNAR_JOB_RESPONSE_YES_ALL :
+ * @THUNAR_JOB_RESPONSE_NO      :
+ * @THUNAR_JOB_RESPONSE_NO_ALL  :
+ * @THUNAR_JOB_RESPONSE_CANCEL  :
+ * @THUNAR_JOB_RESPONSE_RETRY   :
+ *
+ * Possible responses for the ThunarJob::ask signal.
+ **/
+typedef enum /*< flags >*/
+{
+  THUNAR_JOB_RESPONSE_YES     = 1 << 0,
+  THUNAR_JOB_RESPONSE_YES_ALL = 1 << 1,
+  THUNAR_JOB_RESPONSE_NO      = 1 << 2,
+  THUNAR_JOB_RESPONSE_CANCEL  = 1 << 3,
+  THUNAR_JOB_RESPONSE_NO_ALL  = 1 << 4,
+  THUNAR_JOB_RESPONSE_RETRY   = 1 << 5,
+} ThunarJobResponse;
+
+GType thunar_job_response_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+
+
+#define THUNAR_TYPE_FILE_MODE (thunar_file_mode_get_type ())
+
+/**
+ * ThunarFileMode:
+ *
+ * Special flags and permissions of a filesystem entity.
+ **/
+typedef enum /*< flags >*/
+{
+  THUNAR_FILE_MODE_SUID       = 04000,
+  THUNAR_FILE_MODE_SGID       = 02000,
+  THUNAR_FILE_MODE_STICKY     = 01000,
+  THUNAR_FILE_MODE_USR_ALL    = 00700,
+  THUNAR_FILE_MODE_USR_READ   = 00400,
+  THUNAR_FILE_MODE_USR_WRITE  = 00200,
+  THUNAR_FILE_MODE_USR_EXEC   = 00100,
+  THUNAR_FILE_MODE_GRP_ALL    = 00070,
+  THUNAR_FILE_MODE_GRP_READ   = 00040,
+  THUNAR_FILE_MODE_GRP_WRITE  = 00020,
+  THUNAR_FILE_MODE_GRP_EXEC   = 00010,
+  THUNAR_FILE_MODE_OTH_ALL    = 00007,
+  THUNAR_FILE_MODE_OTH_READ   = 00004,
+  THUNAR_FILE_MODE_OTH_WRITE  = 00002,
+  THUNAR_FILE_MODE_OTH_EXEC   = 00001,
+} ThunarFileMode;
+
+GType thunar_file_mode_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
 
 G_END_DECLS;
 

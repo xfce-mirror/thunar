@@ -11,7 +11,7 @@ INCLUDES =								\
 	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"				\
 	$(PLATFORM_CPPFLAGS)
 
-extensionsdir = $(libdir)/thunarx-$(THUNAR_VERSION_API)
+extensionsdir = $(libdir)/thunarx-$(THUNARX_VERSION_API)
 extensions_LTLIBRARIES =						\
 	thunar-uca.la
 
@@ -32,6 +32,7 @@ thunar_uca_la_SOURCES =							\
 
 thunar_uca_la_CFLAGS =							\
 	$(EXO_CFLAGS)							\
+	$(LIBXFCE4UTIL_CFLAGS)						\
 	$(PLATFORM_CFLAGS)
 
 thunar_uca_la_LDFLAGS =							\

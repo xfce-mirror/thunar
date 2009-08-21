@@ -2,6 +2,7 @@
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2005      Jeff Franks <jcfranks@xfce.org>
+ * Copyright (c) 2009      Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -52,57 +53,66 @@ void               thunar_application_take_window       (ThunarApplication *appl
 
 GtkWidget         *thunar_application_open_window       (ThunarApplication *application,
                                                          ThunarFile        *directory,
-                                                         GdkScreen         *screen);
+                                                         GdkScreen         *screen,
+                                                         const gchar       *startup_id);
 
 gboolean           thunar_application_bulk_rename       (ThunarApplication *application,
                                                          const gchar       *working_directory,
                                                          gchar            **filenames,
                                                          gboolean           standalone,
                                                          GdkScreen         *screen,
+                                                         const gchar       *startup_id,
                                                          GError           **error);
 
 gboolean           thunar_application_process_filenames (ThunarApplication *application,
                                                          const gchar       *working_directory,
                                                          gchar            **filenames,
                                                          GdkScreen         *screen,
+                                                         const gchar       *startup_id,
                                                          GError           **error);
+
+gboolean           thunar_application_is_processing     (ThunarApplication *application);
 
 void               thunar_application_copy_to           (ThunarApplication *application,
                                                          gpointer           parent,
-                                                         GList             *source_path_list,
-                                                         GList             *target_path_list,
+                                                         GList             *source_file_list,
+                                                         GList             *target_file_list,
                                                          GClosure          *new_files_closure);
 
 void               thunar_application_copy_into         (ThunarApplication *application,
                                                          gpointer           parent,
-                                                         GList             *source_path_list,
-                                                         ThunarVfsPath     *target_path,
+                                                         GList             *source_file_list,
+                                                         GFile             *target_file,
                                                          GClosure          *new_files_closure);
 
 void               thunar_application_link_into         (ThunarApplication *application,
                                                          gpointer           parent,
-                                                         GList             *source_path_list,
-                                                         ThunarVfsPath     *target_path,
+                                                         GList             *source_file_list,
+                                                         GFile             *target_file,
                                                          GClosure          *new_files_closure);
 
 void               thunar_application_move_into         (ThunarApplication *application,
                                                          gpointer           parent,
-                                                         GList             *source_path_list,
-                                                         ThunarVfsPath     *target_path,
+                                                         GList             *source_file_list,
+                                                         GFile             *target_file,
                                                          GClosure          *new_files_closure);
 
 void               thunar_application_unlink_files      (ThunarApplication *application,
                                                          gpointer           parent,
                                                          GList             *file_list);
 
+void               thunar_application_trash             (ThunarApplication *application,
+                                                         gpointer           parent,
+                                                         GList             *file_list);
+
 void               thunar_application_creat             (ThunarApplication *application,
                                                          gpointer           parent,
-                                                         GList             *path_list,
+                                                         GList             *file_list,
                                                          GClosure          *new_files_closure);
 
 void               thunar_application_mkdir             (ThunarApplication *application,
                                                          gpointer           parent,
-                                                         GList             *path_list,
+                                                         GList             *file_list,
                                                          GClosure          *new_files_closure);
 
 void               thunar_application_empty_trash       (ThunarApplication *application,

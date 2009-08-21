@@ -65,10 +65,6 @@ ThunarIconFactory     *thunar_icon_factory_get_for_icon_theme (GtkIconTheme     
 
 GtkIconTheme          *thunar_icon_factory_get_icon_theme     (const ThunarIconFactory  *factory);
 
-#if 0
-ThunarVfsThumbFactory *thunar_icon_factory_get_thumb_factory  (const ThunarIconFactory  *factory);
-#endif
-
 GdkPixbuf             *thunar_icon_factory_load_icon          (ThunarIconFactory        *factory,
                                                                const gchar              *name,
                                                                gint                      size,

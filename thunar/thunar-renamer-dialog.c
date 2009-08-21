@@ -627,7 +627,7 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
       gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
       gtk_widget_show (image);
 
-      /* TRANSLATORS: You can test this string by temporarily removing thunar-sbr.* from $libdir/thunarx-1/,
+      /* TRANSLATORS: You can test this string by temporarily removing thunar-sbr.* from $libdir/thunarx-2/,
        *              and opening the multi rename dialog by selecting multiple files and pressing F2.
        */
       label = gtk_label_new (_("No renamer modules were found on your system. Please check your\n"
@@ -1329,7 +1329,7 @@ thunar_renamer_dialog_drag_data_received (GtkWidget           *tree_view,
                                           ThunarRenamerDialog *renamer_dialog)
 {
   ThunarFile              *file;
-  GList                   *path_list;
+  GList                   *file_list;
   GList                   *lp;
   GtkTreeModel            *model;
   GtkTreePath             *path;
@@ -1361,14 +1361,14 @@ thunar_renamer_dialog_drag_data_received (GtkWidget           *tree_view,
             position = -1;
         }
 
-      /* determine the path list from the selection_data */
-      path_list = thunar_vfs_path_list_from_string ((const gchar *) selection_data->data, NULL);
+      /* determine the file list from the selection_data */
+      file_list = thunar_g_file_list_new_from_string ((const gchar *) selection_data->data);
 
       /* add all paths to the model */
-      for (lp = path_list; lp != NULL; lp = lp->next)
+      for (lp = file_list; lp != NULL; lp = lp->next)
         {
           /* determine the file for the path */
-          file = thunar_file_get_for_path (lp->data, NULL);
+          file = thunar_file_get (lp->data, NULL);
           if (G_LIKELY (file != NULL))
             {
               /* insert the file in the model */
@@ -1379,18 +1379,18 @@ thunar_renamer_dialog_drag_data_received (GtkWidget           *tree_view,
                 position++;
 
               /* release the file */
-              g_object_unref (G_OBJECT (file));
+              g_object_unref (file);
             }
 
-          /* release the path */
-          thunar_vfs_path_unref (lp->data);
+          /* release the GFile */
+          g_object_unref (lp->data);
         }
 
       /* finish the drag */
-      gtk_drag_finish (context, (path_list != NULL), FALSE, time);
+      gtk_drag_finish (context, (file_list != NULL), FALSE, time);
 
       /* release the list */
-      g_list_free (path_list);
+      g_list_free (file_list);
     }
 
   /* stop the emission of the "drag-data-received" signal */
@@ -1861,15 +1861,17 @@ thunar_renamer_dialog_set_standalone (ThunarRenamerDialog *renamer_dialog,
  * @files             : the list of #ThunarFile<!---->s to rename.
  * @standalone        : whether the dialog should appear like a standalone
  *                      application instead of an integrated renamer dialog.
+ * @startup_id        : startup id to set on the window or %NULL.
  *
  * Convenience function to display a #ThunarRenamerDialog with
  * the given parameters.
  **/
 void
-thunar_show_renamer_dialog (gpointer    parent,
-                            ThunarFile *current_directory,
-                            GList      *files,
-                            gboolean    standalone)
+thunar_show_renamer_dialog (gpointer     parent,
+                            ThunarFile  *current_directory,
+                            GList       *files,
+                            gboolean     standalone,
+                            const gchar *startup_id)
 {
   ThunarApplication *application;
   GdkScreen         *screen;
@@ -1903,6 +1905,10 @@ thunar_show_renamer_dialog (gpointer    parent,
                          "screen", screen,
                          "standalone", standalone,
                          NULL);
+
+  /* set the dialogs startup id if available */
+  if (startup_id != NULL && *startup_id != '\0')
+    gtk_window_set_startup_id (GTK_WINDOW (dialog), startup_id);
 
   /* check if we have a toplevel window */
   if (G_LIKELY (window != NULL && GTK_WIDGET_TOPLEVEL (window)))

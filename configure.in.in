@@ -1,36 +1,45 @@
-dnl $Id$
-dnl
-dnl Copyright (c) 2004-2007
-dnl         The Thunar development team. All rights reserved.
-dnl
-dnl Written for Thunar by Benedikt Meurer <benny@xfce.org>.
-dnl
+# vi:set et ai sw=2 sts=2 ts=2: */
+#-
+# Copyright (c) 2004-2007 Benedikt Meurer <benny@xfce.org>
+# Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+#
+# This program is free software; you can redistribute it and/or 
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of 
+# the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public 
+# License along with this program; if not, write to the Free 
+# Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+# Boston, MA 02110-1301, USA.
 
 dnl ***************************
 dnl *** Version information ***
 dnl ***************************
-m4_define([thunar_verinfo], [5:1:3])
-m4_define([thunar_version_api], [1])
+m4_define([thunarx_verinfo], [0:0:0])
+m4_define([thunarx_version_api], [2])
 m4_define([thunar_version_major], [1])
 m4_define([thunar_version_minor], [0])
 m4_define([thunar_version_micro], [1])
 m4_define([thunar_version_nano], [])
-m4_define([thunar_version_build], [r@REVISION@])
-m4_define([thunar_version_tag], [])
-m4_define([thunar_version], [thunar_version_major().thunar_version_minor().thunar_version_micro()ifelse(thunar_version_nano(), [], [], [.thunar_version_nano()])ifelse(thunar_version_tag(), [svn], [thunar_version_tag()-thunar_version_build()], [thunar_version_tag()])])
+m4_define([thunar_version_build], [@REVISION@])
+m4_define([thunar_version_tag], [git])
+m4_define([thunar_version], [thunar_version_major().thunar_version_minor().thunar_version_micro()ifelse(thunar_version_nano(), [], [], [.thunar_version_nano()])ifelse(thunar_version_tag(), [git], [thunar_version_tag()-thunar_version_build()], [thunar_version_tag()])])
 
 dnl *******************************************
 dnl *** Debugging support for SVN snapshots ***
 dnl *******************************************
-m4_define([thunar_debug_default], [ifelse(thunar_version_tag(), [svn], [yes], [minimum])])
+m4_define([thunar_debug_default], [ifelse(thunar_version_tag(), [git], [yes], [minimum])])
 
 dnl ***************************
 dnl *** Initialize autoconf ***
 dnl ***************************
-AC_COPYRIGHT([Copyright (c) 2004-2009
-        The Thunar development team. All rights reserved.
-        
-Written for Thunar by Benedikt Meurer <benny@xfce.org>.])
+AC_COPYRIGHT([Copyright (c) 2004-2009 The Thunar development team. All rights reserved.])
 AC_INIT([Thunar], [thunar_version], [http://bugzilla.xfce.org/], [Thunar])
 AC_PREREQ([2.50])
 AC_CANONICAL_TARGET()
@@ -73,13 +82,13 @@ AC_PROG_LIBTOOL()
 dnl **************************************
 dnl *** Substitute version information ***
 dnl **************************************
-THUNAR_VERINFO=thunar_verinfo()
-THUNAR_VERSION_API=thunar_version_api()
+THUNARX_VERINFO=thunarx_verinfo()
+THUNARX_VERSION_API=thunarx_version_api()
 THUNAR_VERSION_MAJOR=thunar_version_major()
 THUNAR_VERSION_MINOR=thunar_version_minor()
 THUNAR_VERSION_MICRO=thunar_version_micro()
-AC_SUBST([THUNAR_VERINFO])
-AC_SUBST([THUNAR_VERSION_API])
+AC_SUBST([THUNARX_VERINFO])
+AC_SUBST([THUNARX_VERSION_API])
 AC_SUBST([THUNAR_VERSION_MAJOR])
 AC_SUBST([THUNAR_VERSION_MINOR])
 AC_SUBST([THUNAR_VERSION_MICRO])
@@ -107,49 +116,17 @@ AC_SYS_LARGEFILE()
 dnl **********************************
 dnl *** Check for standard headers ***
 dnl **********************************
-AC_CHECK_HEADERS([ctype.h dirent.h errno.h fcntl.h fnmatch.h fstab.h grp.h \
-                  limits.h locale.h math.h memory.h mntent.h paths.h pwd.h \
-                  regex.h sched.h setjmp.h signal.h stdarg.h stdlib.h \
-                  string.h syslog.h sys/xattr.h sys/extattr.h sys/cdio.h \
-                  sys/mman.h sys/mount.h sys/param.h sys/resource.h sys/stat.h \
-                  sys/statfs.h sys/statvfs.h sys/time.h sys/ucred.h sys/uio.h \
-                  sys/vfs.h sys/wait.h time.h wchar.h wctype.h])
+AC_CHECK_HEADERS([ctype.h errno.h fcntl.h grp.h limits.h locale.h memory.h \
+                  paths.h pwd.h sched.h signal.h stdarg.h stdlib.h string.h \
+                  sys/mman.h sys/stat.h sys/time.h sys/types.h sys/uio.h \
+                  sys/wait.h time.h])
 
 dnl ************************************
 dnl *** Check for standard functions ***
 dnl ************************************
 AC_FUNC_MMAP()
-AC_CHECK_FUNCS([attropen extattr_get_fd fgetxattr futimes getdents getfsspec \
-                getfsstat lchmod localeconv localtime_r mbrtowc mkdtemp mkfifo \
-                posix_madvise pread pwrite readdir_r sched_yield setgroupent \
-                setmntent setpassent setpriority statfs statvfs statvfs1 \
-                strcoll strlcpy strptime symlink syslog posix_fadvise])
-
-dnl ******************************************
-dnl *** Linux/glibc specified work-arounds ***
-dnl ******************************************
-AC_MSG_CHECKING([whether we need _BSD_SOURCE and _XOPEN_SOURCE])
-AC_TRY_LINK([#include <features.h>],
-[
-  if (__GLIBC_PREREQ (2, 0));
-],
-[
-  AC_DEFINE([_XOPEN_SOURCE], [600], [Required to unbreak glibc])
-  AC_DEFINE([_BSD_SOURCE], [1], [Required to unbreak glibc])
-  AC_MSG_RESULT([yes])
-],
-[
-  AC_MSG_RESULT([no])
-])
-
-dnl **************************************************************
-dnl *** Check for f_mntonname in statfs (trash implementation) ***
-dnl **************************************************************
-AC_CHECK_MEMBERS([struct statfs.f_mntonname],,,
-[
-#include <sys/param.h>
-#include <sys/mount.h>
-])
+AC_CHECK_FUNCS([localeconv mkdtemp pread pwrite sched_yield setgroupent \
+                setpassent strcoll strlcpy strptime symlink])
 
 dnl ******************************
 dnl *** Check for i18n support ***
@@ -159,21 +136,13 @@ XDT_I18N([@LINGUAS@])
 dnl ***********************************
 dnl *** Check for required packages ***
 dnl ***********************************
-XDT_CHECK_PACKAGE([EXO], [exo-1], [0.3.100])
-XDT_CHECK_PACKAGE([GLIB], [glib-2.0], [2.12.0])
-XDT_CHECK_PACKAGE([GTHREAD], [gthread-2.0], [2.12.0])
-XDT_CHECK_PACKAGE([GTK], [gtk+-2.0], [2.10.0])
-XDT_CHECK_PACKAGE([GDK_PIXBUF], [gdk-pixbuf-2.0], [2.10.0])
+XDT_CHECK_PACKAGE([EXO], [exo-1], [0.3.101])
+XDT_CHECK_PACKAGE([GLIB], [glib-2.0], [2.18.0])
+XDT_CHECK_PACKAGE([GIO], [gio-2.0], [2.18.0])
+XDT_CHECK_PACKAGE([GTHREAD], [gthread-2.0], [2.18.0])
+XDT_CHECK_PACKAGE([GTK], [gtk+-2.0], [2.14.0])
+XDT_CHECK_PACKAGE([GDK_PIXBUF], [gdk-pixbuf-2.0], [2.14.0])
 XDT_CHECK_PACKAGE([LIBXFCE4UTIL], [libxfce4util-1.0], [4.6.0])
-
-dnl *********************************************
-dnl *** Check for libpng (with various names) ***
-dnl *********************************************
-XDT_CHECK_PACKAGE([LIBPNG], [libpng], [1.2.0], [],
-[
-  dnl # libpng.pc not found, try with libpng12.pc
-  XDT_CHECK_PACKAGE([LIBPNG], [libpng12], [1.2.0])
-])
 
 dnl ********************************************
 dnl *** Check for session management support ***
@@ -181,17 +150,18 @@ dnl ********************************************
 XDT_CHECK_LIBSM()
 
 dnl **********************************
+dnl *** Optional GIO UNIX features ***
+dnl **********************************
+XDT_CHECK_OPTIONAL_PACKAGE([GIO_UNIX], [gio-unix-2.0],
+                           [2.18.0], [gio-unix], [GIO UNIX features])
+
+dnl *******************************************************
+dnl *** Optional support for gconf (GNOME thumbnailers) ***
+dnl **********************************
 dnl *** Optional support for D-BUS ***
 dnl **********************************
 XDT_CHECK_OPTIONAL_PACKAGE([DBUS], [dbus-glib-1],
                            [0.34], [dbus], [D-BUS support])
-
-dnl *******************************************************
-dnl *** Optional support for gconf (GNOME thumbnailers) ***
-dnl *******************************************************
-XDT_CHECK_OPTIONAL_PACKAGE([GCONF], [gconf-2.0],
-                           [2.4.0], [gnome-thumbnailers],
-                           [GNOME thumbnailer support])
 
 dnl *************************************************
 dnl *** Optional support for startup notification ***
@@ -200,42 +170,6 @@ XDT_CHECK_OPTIONAL_PACKAGE([LIBSTARTUP_NOTIFICATION],
                            [libstartup-notification-1.0],
                            [0.4], [startup-notification],
                            [startup notification library])
-
-dnl ******************************
-dnl *** Check for FreeType 2.x ***
-dnl ******************************
-FREETYPE_LIBS=""
-FREETYPE_CFLAGS=""
-AC_PATH_PROG([FREETYPE_CONFIG], [freetype-config], [no])
-if test x"$FREETYPE_CONFIG" != x"no"; then
-  AC_MSG_CHECKING([FREETYPE_CFLAGS])
-  FREETYPE_CFLAGS="`$FREETYPE_CONFIG --cflags`"
-  AC_MSG_RESULT([$FREETYPE_CFLAGS])
-
-  AC_MSG_CHECKING([FREETYPE_LIBS])
-  FREETYPE_LIBS="`$FREETYPE_CONFIG --libs`"
-  AC_MSG_RESULT([$FREETYPE_LIBS])
-fi
-AM_CONDITIONAL([HAVE_FREETYPE], [test x"$FREETYPE_CONFIG" != x"no"])
-AC_SUBST([FREETYPE_CFLAGS])
-AC_SUBST([FREETYPE_LIBS])
-
-dnl *************************
-dnl *** Check for libjpeg ***
-dnl *************************
-LIBJPEG_LIBS=""
-LIBJPEG_CFLAGS=""
-AC_CHECK_LIB([jpeg], [jpeg_start_decompress],
-[
-  AC_CHECK_HEADER([jpeglib.h],
-  [
-    LIBJPEG_LIBS="-ljpeg -lm"
-    AC_DEFINE([HAVE_LIBJPEG], [1], [Define to 1 if libjpeg is found])
-    AC_DEFINE([HAVE_JPEGLIB_H], [1], [Define to 1 if jpeglib.h is found])
-  ])
-], [-lm])
-AC_SUBST([LIBJPEG_CFLAGS])
-AC_SUBST([LIBJPEG_LIBS])
 
 dnl *************************
 dnl *** Check for gtk-doc ***
@@ -266,76 +200,62 @@ if test x"$enable_xml2po" = x"yes"; then
 fi
 AM_CONDITIONAL([ENABLE_XML2PO], [test x"$enable_xml2po" = x"yes"])
 
-dnl ******************************************
-dnl *** Check for operating system support ***
-dnl ******************************************
-BM_THUNAR_VFS_OS_IMPL()
-
-dnl ****************************************************
-dnl *** Check for file system monitor implementation ***
-dnl ****************************************************
-BM_THUNAR_VFS_MONITOR_IMPL()
-
-dnl ***********************************************
-dnl *** Check for volume manager implementation ***
-dnl ***********************************************
-BM_THUNAR_VFS_VOLUME_IMPL()
-
 dnl ***********************************
 dnl *** Check for debugging support ***
 dnl ***********************************
-AC_ARG_ENABLE([debug],
-AC_HELP_STRING([--enable-debug=@<:@no/minimum/yes/full@:>@], [Turn on debugging @<:@default=thunar_debug_default@:>@]),
-  [], [enable_debug=thunar_debug_default])
-AC_MSG_CHECKING([whether to enable debugging support])
-if test x"$enable_debug" = x"full" -o x"$enable_debug" = x"yes"; then
-  dnl Print the result
-  AC_MSG_RESULT([$enable_debug])
-
-  dnl Make sure we detect possible errors (if supported)
-  save_CFLAGS="$CFLAGS"
-  CFLAGS="$CFLAGS -Wall -Werror"
-  AC_MSG_CHECKING([whether $CC accepts -Wall -Werror])
-  AC_COMPILE_IFELSE(AC_LANG_SOURCE([int x;]), [
-    AC_MSG_RESULT([yes])
-    PLATFORM_CFLAGS="$PLATFORM_CFLAGS -Wall -Werror"
-  ], [
-    AC_MSG_RESULT([no])
-  ])
-  CFLAGS="$save_CFLAGS"
-
-  dnl Paranoia for --enable-debug=full
-  if test x"$enable_debug" = x"full"; then
-    dnl Enable extensive debugging
-    PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_ENABLE_DEBUG"
-
-    dnl Use -O0 -g3 if the compiler supports it
-    save_CFLAGS="$CFLAGS"
-    CFLAGS="$CFLAGS -O0 -g3"
-    AC_MSG_CHECKING([whether $CC accepts -O0 -g3])
-    AC_COMPILE_IFELSE(AC_LANG_SOURCE([int x;]), [
-      AC_MSG_RESULT([yes])
-      PLATFORM_CFLAGS="$PLATFORM_CFLAGS -O0 -g3"
-    ], [
-      AC_MSG_RESULT([no])
-    ])
-    CFLAGS="$save_CFLAGS"
-  fi
-else
-  dnl Print the result
-  AC_MSG_RESULT([$enable_debug])
-
-  dnl Disable debugging (release build)
-  PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DNDEBUG"
-
-  dnl Disable object cast checks
-  PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_DISABLE_CAST_CHECKS"
-
-  dnl Disable all checks for --enable-debug=no
-  if test x"$enable_debug" = x"no"; then
-    PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_DISABLE_ASSERT -DG_DISABLE_CHECKS"
-  fi
-fi
+XDT_FEATURE_DEBUG()
+#AC_ARG_ENABLE([debug],
+#AC_HELP_STRING([--enable-debug=@<:@no/minimum/yes/full@:>@], [Turn on debugging @<:@default=thunar_debug_default@:>@]),
+#  [], [enable_debug=thunar_debug_default])
+#AC_MSG_CHECKING([whether to enable debugging support])
+#if test x"$enable_debug" = x"full" -o x"$enable_debug" = x"yes"; then
+#  dnl Print the result
+#  AC_MSG_RESULT([$enable_debug])
+#
+#  dnl Make sure we detect possible errors (if supported)
+#  save_CFLAGS="$CFLAGS"
+#  CFLAGS="$CFLAGS -Wall -Werror"
+#  AC_MSG_CHECKING([whether $CC accepts -Wall -Werror])
+#  AC_COMPILE_IFELSE(AC_LANG_SOURCE([int x;]), [
+#    AC_MSG_RESULT([yes])
+#    PLATFORM_CFLAGS="$PLATFORM_CFLAGS -Wall -Werror"
+#  ], [
+#    AC_MSG_RESULT([no])
+#  ])
+#  CFLAGS="$save_CFLAGS"
+#
+#  dnl Paranoia for --enable-debug=full
+#  if test x"$enable_debug" = x"full"; then
+#    dnl Enable extensive debugging
+#    PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_ENABLE_DEBUG"
+#
+#    dnl Use -O0 -g3 if the compiler supports it
+#    save_CFLAGS="$CFLAGS"
+#    CFLAGS="$CFLAGS -O0 -g3"
+#    AC_MSG_CHECKING([whether $CC accepts -O0 -g3])
+#    AC_COMPILE_IFELSE(AC_LANG_SOURCE([int x;]), [
+#      AC_MSG_RESULT([yes])
+#      PLATFORM_CFLAGS="$PLATFORM_CFLAGS -O0 -g3"
+#    ], [
+#      AC_MSG_RESULT([no])
+#    ])
+#    CFLAGS="$save_CFLAGS"
+#  fi
+#else
+#  dnl Print the result
+#  AC_MSG_RESULT([$enable_debug])
+#
+#  dnl Disable debugging (release build)
+#  PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DNDEBUG"
+#
+#  dnl Disable object cast checks
+#  PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_DISABLE_CAST_CHECKS"
+#
+#  dnl Disable all checks for --enable-debug=no
+#  if test x"$enable_debug" = x"no"; then
+#    PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_DISABLE_ASSERT -DG_DISABLE_CHECKS"
+#  fi
+#fi
 
 dnl **************************************
 dnl *** Check for linker optimizations ***
@@ -460,8 +380,6 @@ docs/manual/zh_TW/Thunar.xml
 docs/manual/zh_TW/images/Makefile
 docs/papers/Makefile
 docs/reference/Makefile
-docs/reference/thunar-vfs/Makefile
-docs/reference/thunar-vfs/version.xml
 docs/reference/thunarx/Makefile
 docs/reference/thunarx/version.xml
 examples/Makefile
@@ -483,14 +401,9 @@ po/Makefile.in
 po-doc/Makefile
 tdb/Makefile
 tdb/tdbconfig.h
-tests/Makefile
-tests/data/Makefile
 thunar/Makefile
-thunar-vfs/Makefile
-thunar-vfs/thunar-vfs-1.pc
-thunar-vfs/thunar-vfs-config.h
 thunarx/Makefile
-thunarx/thunarx-1.pc
+thunarx/thunarx-2.pc
 thunarx/thunarx-config.h
 ])
 
@@ -500,24 +413,21 @@ dnl ***************************
 echo
 echo "Build Configuration:"
 echo
-echo "* Operating system support:  $ac_bm_thunar_vfs_os_impl"
 if test x"$DBUS_FOUND" = x"yes"; then
 echo "* D-BUS support:             yes"
 else
 echo "* D-BUS support:             no"
 fi
-echo "* File System Monitor:       $ac_bm_thunar_vfs_monitor_impl"
-if test x"$GCONF_FOUND" = x"yes"; then
-echo "* GNOME Thumbnailers:        yes"
+if test x"$GIO_UNIX_FOUND" = x"yes"; then
+echo "* GIO UNIX features:         yes"
 else
-echo "* GNOME Thumbnailers:        no"
+echo "* GIO UNIX features:         no"
 fi
 if test x"$LIBSTARTUP_NOTIFICATION_FOUND" = x"yes"; then
 echo "* Startup Notification:      yes"
 else
 echo "* Startup Notification:      no"
 fi
-echo "* Volume Manager:            $ac_bm_thunar_vfs_volume_impl"
 echo "* Debug Support:             $enable_debug"
 echo
 echo "Additional Plugins:"

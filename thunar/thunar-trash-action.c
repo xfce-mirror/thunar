@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -98,12 +99,12 @@ thunar_trash_action_class_init (ThunarTrashActionClass *klass)
 static void
 thunar_trash_action_init (ThunarTrashAction *trash_action)
 {
-  ThunarVfsPath *trash_bin_path;
+  GFile *trash_bin;
 
   /* try to connect to the trash bin */
-  trash_bin_path = thunar_vfs_path_get_for_trash ();
-  trash_action->trash_bin = thunar_file_get_for_path (trash_bin_path, NULL);
-  thunar_vfs_path_unref (trash_bin_path);
+  trash_bin = thunar_g_file_new_for_trash ();
+  trash_action->trash_bin = thunar_file_get (trash_bin, NULL);
+  g_object_unref (trash_bin);
 
   /* safety check for trash bin... */
   if (G_LIKELY (trash_action->trash_bin != NULL))

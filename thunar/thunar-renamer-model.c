@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -158,12 +159,11 @@ struct _ThunarRenamerModel
 
 struct _ThunarRenamerModelItem
 {
-  ThunarVfsInfo *info;
-  ThunarFile    *file;
-  gchar         *name;
-  guint          changed : 1;  /* if the file changed */
-  guint          conflict : 1; /* if the item conflicts with another item */
-  guint          dirty : 1;    /* if the item must be updated */
+  ThunarFile *file;
+  gchar      *name;
+  guint       changed : 1;  /* if the file changed */
+  guint       conflict : 1; /* if the item conflicts with another item */
+  guint       dirty : 1;    /* if the item must be updated */
 };
 
 
@@ -645,22 +645,16 @@ thunar_renamer_model_file_changed (ThunarRenamerModel *renamer_model,
       {
         /* check if the file changed on disk */
         item = THUNAR_RENAMER_MODEL_ITEM (lp->data);
-        if (!thunar_vfs_info_matches (item->info, thunar_file_get_info (file)))
+
+        /* check if we're frozen */
+        if (G_LIKELY (!renamer_model->frozen))
           {
-            /* connect to the new info */
-            thunar_vfs_info_unref (item->info);
-            item->info = thunar_vfs_info_ref (thunar_file_get_info (file));
+            /* the file changed */
+            THUNAR_RENAMER_MODEL_ITEM (lp->data)->changed = TRUE;
 
-            /* check if we're frozen */
-            if (G_LIKELY (!renamer_model->frozen))
-              {
-                /* the file changed */
-                THUNAR_RENAMER_MODEL_ITEM (lp->data)->changed = TRUE;
-
-                /* invalidate the item */
-                thunar_renamer_model_invalidate_item (renamer_model, lp->data);
-                break;
-              }
+            /* invalidate the item */
+            thunar_renamer_model_invalidate_item (renamer_model, lp->data);
+            break;
           }
 
         /* determine the iter for the item */
@@ -753,15 +747,15 @@ static gboolean
 trm_same_directory (ThunarFile *a,
                     ThunarFile *b)
 {
-  ThunarVfsPath *parent_a;
-  ThunarVfsPath *parent_b;
+  GFile *parent_a;
+  GFile *parent_b;
 
   /* determine the parent paths for both files */
-  parent_a = thunar_vfs_path_get_parent (thunar_file_get_path (a));
-  parent_b = thunar_vfs_path_get_parent (thunar_file_get_path (b));
+  parent_a = g_file_get_parent (thunar_file_get_file (a));
+  parent_b = g_file_get_parent (thunar_file_get_file (b));
 
   /* check if both files have the same parent */
-  return (parent_a != NULL && parent_b != NULL && thunar_vfs_path_equal (parent_a, parent_b));
+  return (parent_a != NULL && parent_b != NULL && g_file_equal (parent_a, parent_b));
 }
 
 
@@ -1004,7 +998,6 @@ thunar_renamer_model_item_new (ThunarFile *file)
   ThunarRenamerModelItem *item;
 
   item = _thunar_slice_new0 (ThunarRenamerModelItem);
-  item->info = thunar_vfs_info_ref (thunar_file_get_info (file));
   item->file = g_object_ref (G_OBJECT (file));
   item->dirty = TRUE;
 
@@ -1017,7 +1010,6 @@ static void
 thunar_renamer_model_item_free (ThunarRenamerModelItem *item)
 {
   g_object_unref (G_OBJECT (item->file));
-  thunar_vfs_info_unref (item->info);
   g_free (item->name);
   _thunar_slice_free (ThunarRenamerModelItem, item);
 }

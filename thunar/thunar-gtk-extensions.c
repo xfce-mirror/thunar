@@ -88,11 +88,7 @@ thunar_gtk_action_group_set_action_sensitive (GtkActionGroup *action_group,
   action = gtk_action_group_get_action (action_group, action_name);
 
   /* apply the sensitivity to the action */
-#if GTK_CHECK_VERSION(2,6,0)
   gtk_action_set_sensitive (action, sensitive);
-#else
-  g_object_set (G_OBJECT (action), "sensitive", sensitive, NULL);
-#endif
 }
 
 

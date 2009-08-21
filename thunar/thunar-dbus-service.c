@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -101,11 +102,13 @@ static gboolean thunar_dbus_service_bulk_rename                 (ThunarDBusServi
                                                                  gchar                 **filenames,
                                                                  gboolean                standalone,
                                                                  const gchar            *display,
+                                                                 const gchar            *startup_id,
                                                                  GError                **error);
 static gboolean thunar_dbus_service_launch_files                (ThunarDBusService      *dbus_service,
                                                                  const gchar            *working_directory,
                                                                  gchar                 **filenames,
                                                                  const gchar            *display,
+                                                                 const gchar            *startup_id,
                                                                  GError                **error);
 static gboolean thunar_dbus_service_terminate                   (ThunarDBusService      *dbus_service,
                                                                  GError                **error);
@@ -252,14 +255,14 @@ static gboolean
 thunar_dbus_service_connect_trash_bin (ThunarDBusService *dbus_service,
                                        GError           **error)
 {
-  ThunarVfsPath *trash_bin_path;
+  GFile *trash_bin_path;
 
   /* check if we're not already connected to the trash bin */
   if (G_UNLIKELY (dbus_service->trash_bin == NULL))
     {
       /* try to connect to the trash bin */
-      trash_bin_path = thunar_vfs_path_get_for_trash ();
-      dbus_service->trash_bin = thunar_file_get_for_path (trash_bin_path, error);
+      trash_bin_path = thunar_g_file_new_for_trash ();
+      dbus_service->trash_bin = thunar_file_get (trash_bin_path, error);
       if (G_LIKELY (dbus_service->trash_bin != NULL))
         {
           /* watch the trash bin for changes */
@@ -270,7 +273,7 @@ thunar_dbus_service_connect_trash_bin (ThunarDBusService *dbus_service,
                                     G_CALLBACK (thunar_dbus_service_trash_bin_changed),
                                     dbus_service);
         }
-      thunar_vfs_path_unref (trash_bin_path);
+      g_object_unref (trash_bin_path);
     }
 
   return (dbus_service->trash_bin != NULL);
@@ -360,7 +363,7 @@ thunar_dbus_service_display_folder (ThunarDBusService *dbus_service,
 
   /* popup a new window for the folder */
   application = thunar_application_get ();
-  thunar_application_open_window (application, file, screen);
+  thunar_application_open_window (application, file, screen, NULL);
   g_object_unref (G_OBJECT (application));
 
   /* cleanup */
@@ -380,11 +383,11 @@ thunar_dbus_service_display_folder_and_select (ThunarDBusService *dbus_service,
                                                GError           **error)
 {
   ThunarApplication *application;
-  ThunarVfsPath     *path;
   ThunarFile        *file;
   ThunarFile        *folder;
   GdkScreen         *screen;
   GtkWidget         *window;
+  GFile             *path;
 
   /* verify that filename is valid */
   if (G_UNLIKELY (filename == NULL || *filename == '\0' || strchr (filename, '/') != NULL))
@@ -399,31 +402,31 @@ thunar_dbus_service_display_folder_and_select (ThunarDBusService *dbus_service,
 
   /* popup a new window for the folder */
   application = thunar_application_get ();
-  window = thunar_application_open_window (application, folder, screen);
-  g_object_unref (G_OBJECT (application));
+  window = thunar_application_open_window (application, folder, screen, NULL);
+  g_object_unref (application);
 
   /* determine the path for the filename relative to the folder */
-  path = thunar_vfs_path_relative (thunar_file_get_path (folder), filename);
+  path = g_file_resolve_relative_path (thunar_file_get_file (folder), filename);
   if (G_LIKELY (path != NULL))
     {
       /* try to determine the file for the path */
-      file = thunar_file_get_for_path (path, NULL);
+      file = thunar_file_get (path, NULL);
       if (G_LIKELY (file != NULL))
         {
           /* tell the window to scroll to the given file and select it */
           thunar_window_scroll_to_file (THUNAR_WINDOW (window), file, TRUE, TRUE, 0.5f, 0.5f);
 
           /* release the file reference */
-          g_object_unref (G_OBJECT (file));
+          g_object_unref (file);
         }
 
       /* release the path */
-      thunar_vfs_path_unref (path);
+      g_object_unref (path);
     }
 
   /* cleanup */
-  g_object_unref (G_OBJECT (screen));
-  g_object_unref (G_OBJECT (folder));
+  g_object_unref (screen);
+  g_object_unref (folder);
 
   return TRUE;
 }
@@ -479,7 +482,7 @@ thunar_dbus_service_launch (ThunarDBusService *dbus_service,
   if (thunar_dbus_service_parse_uri_and_display (dbus_service, uri, display, &file, &screen, error))
     {
       /* try to launch the file on the given screen */
-      result = thunar_file_launch (file, screen, error);
+      result = thunar_file_launch (file, screen, NULL, error);
 
       /* cleanup */
       g_object_unref (G_OBJECT (screen));
@@ -508,7 +511,7 @@ thunar_dbus_service_display_preferences_dialog (ThunarDBusService *dbus_service,
   /* popup the preferences dialog... */
   dialog = thunar_preferences_dialog_new (NULL);
   gtk_window_set_screen (GTK_WINDOW (dialog), screen);
-  gtk_widget_show (dialog);
+  gtk_window_present (GTK_WINDOW (dialog));
 
   /* ...and let the application take care of it */
   application = thunar_application_get ();
@@ -541,7 +544,7 @@ thunar_dbus_service_display_trash (ThunarDBusService *dbus_service,
     {
       /* tell the application to display the trash bin */
       application = thunar_application_get ();
-      thunar_application_open_window (application, dbus_service->trash_bin, screen);
+      thunar_application_open_window (application, dbus_service->trash_bin, screen, NULL);
       g_object_unref (G_OBJECT (application));
 
       /* release the screen */
@@ -588,11 +591,10 @@ thunar_dbus_service_move_to_trash (ThunarDBusService *dbus_service,
                                    GError           **error)
 {
   ThunarApplication *application;
-  ThunarVfsPath     *target_path;
-  ThunarVfsPath     *path;
+  GFile             *file;
   GdkScreen         *screen;
   GError            *err = NULL;
-  GList             *path_list = NULL;
+  GList             *file_list = NULL;
   gchar             *filename;
   guint              n;
 
@@ -608,9 +610,10 @@ thunar_dbus_service_move_to_trash (ThunarDBusService *dbus_service,
           if (G_LIKELY (err == NULL))
             {
               /* determine the path for the filename */
-              path = thunar_vfs_path_new (filename, &err);
-              if (G_LIKELY (path != NULL))
-                path_list = g_list_append (path_list, path);
+              /* TODO Not sure this will work as expected */
+              file = g_file_new_for_commandline_arg (filename);
+              file_list = thunar_g_file_list_append (file_list, file);
+              g_object_unref (file);
             }
 
           /* cleanup */
@@ -622,15 +625,13 @@ thunar_dbus_service_move_to_trash (ThunarDBusService *dbus_service,
         {
           /* tell the application to move the specified files to the trash */
           application = thunar_application_get ();
-          target_path = thunar_vfs_path_get_for_trash ();
-          thunar_application_move_into (application, screen, path_list, target_path, NULL);
-          g_object_unref (G_OBJECT (application));
-          thunar_vfs_path_unref (target_path);
+          thunar_application_trash (application, screen, file_list);
+          g_object_unref (application);
         }
 
       /* cleanup */
-      thunar_vfs_path_list_free (path_list);
-      g_object_unref (G_OBJECT (screen));
+      thunar_g_file_list_free (file_list);
+      g_object_unref (screen);
     }
 
   /* check if we failed */
@@ -670,6 +671,7 @@ thunar_dbus_service_bulk_rename (ThunarDBusService *dbus_service,
                                  gchar            **filenames,
                                  gboolean           standalone,
                                  const gchar       *display,
+                                 const gchar       *startup_id,
                                  GError           **error)
 {
   ThunarApplication *application;
@@ -688,7 +690,7 @@ thunar_dbus_service_bulk_rename (ThunarDBusService *dbus_service,
     {
       /* tell the application to display the bulk rename dialog */
       application = thunar_application_get ();
-      result = thunar_application_bulk_rename (application, cwd, filenames, standalone, screen, error);
+      result = thunar_application_bulk_rename (application, cwd, filenames, standalone, screen, startup_id, error);
       g_object_unref (G_OBJECT (application));
 
       /* release the screen */
@@ -708,6 +710,7 @@ thunar_dbus_service_launch_files (ThunarDBusService *dbus_service,
                                   const gchar       *working_directory,
                                   gchar            **filenames,
                                   const gchar       *display,
+                                  const gchar       *startup_id,
                                   GError           **error)
 {
   ThunarApplication *application;
@@ -736,7 +739,7 @@ thunar_dbus_service_launch_files (ThunarDBusService *dbus_service,
     {
       /* let the application process the filenames */
       application = thunar_application_get ();
-      result = thunar_application_process_filenames (application, working_directory, filenames, screen, error);
+      result = thunar_application_process_filenames (application, working_directory, filenames, screen, startup_id, error);
       g_object_unref (G_OBJECT (application));
 
       /* release the screen */

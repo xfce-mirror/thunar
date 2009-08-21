@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>.
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -21,6 +22,9 @@
 #include <config.h>
 #endif
 
+#include <gio/gio.h>
+
+#include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-shortcuts-icon-renderer.h>
@@ -66,7 +70,7 @@ struct _ThunarShortcutsIconRenderer
 {
   ThunarIconRenderer __parent__;
 
-  ThunarVfsVolume   *volume;
+  GVolume           *volume;
 };
 
 
@@ -124,13 +128,13 @@ thunar_shortcuts_icon_renderer_class_init (ThunarShortcutsIconRendererClass *kla
   /**
    * ThunarShortcutsIconRenderer:volume:
    *
-   * The #ThunarVfsVolume for which to render an icon or %NULL to fallback
+   * The #GVolume for which to render an icon or %NULL to fallback
    * to the default icon renderering (see #ThunarIconRenderer).
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_VOLUME,
                                    g_param_spec_object ("volume", "volume", "volume",
-                                                        THUNAR_VFS_TYPE_VOLUME,
+                                                        G_TYPE_VOLUME,
                                                         EXO_PARAM_READWRITE));
 }
 
@@ -153,7 +157,7 @@ thunar_shortcuts_icon_renderer_finalize (GObject *object)
 
   /* release the volume (if any) */
   if (G_UNLIKELY (shortcuts_icon_renderer->volume != NULL))
-    g_object_unref (G_OBJECT (shortcuts_icon_renderer->volume));
+    g_object_unref (shortcuts_icon_renderer->volume);
 
   (*G_OBJECT_CLASS (thunar_shortcuts_icon_renderer_parent_class)->finalize) (object);
 }
@@ -194,8 +198,8 @@ thunar_shortcuts_icon_renderer_set_property (GObject      *object,
     {
     case PROP_VOLUME:
       if (G_UNLIKELY (shortcuts_icon_renderer->volume != NULL))
-        g_object_unref (G_OBJECT (shortcuts_icon_renderer->volume));
-      shortcuts_icon_renderer->volume = (gpointer) g_value_dup_object (value);
+        g_object_unref (shortcuts_icon_renderer->volume);
+      shortcuts_icon_renderer->volume = g_value_dup_object (value);
       break;
 
     default:
@@ -216,22 +220,32 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
                                        GtkCellRendererState flags)
 {
   ThunarShortcutsIconRenderer *shortcuts_icon_renderer = THUNAR_SHORTCUTS_ICON_RENDERER (renderer);
-  ThunarIconFactory           *icon_factory;
   GtkIconTheme                *icon_theme;
   GdkRectangle                 draw_area;
   GdkRectangle                 icon_area;
-  const gchar                 *icon_name;
-  GdkPixbuf                   *icon;
+  GtkIconInfo                 *icon_info;
+  GdkPixbuf                   *icon = NULL;
   GdkPixbuf                   *temp;
+  GIcon                       *gicon;
 
   /* check if we have a volume set */
   if (G_UNLIKELY (shortcuts_icon_renderer->volume != NULL))
     {
       /* load the volume icon */
       icon_theme = gtk_icon_theme_get_for_screen (gdk_drawable_get_screen (window));
-      icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
-      icon_name = thunar_vfs_volume_lookup_icon_name (shortcuts_icon_renderer->volume, icon_theme);
-      icon = thunar_icon_factory_load_icon (icon_factory, icon_name, THUNAR_ICON_RENDERER (renderer)->size, NULL, FALSE);
+
+      /* look up the volume icon info */
+      gicon = g_volume_get_icon (shortcuts_icon_renderer->volume);
+      icon_info = gtk_icon_theme_lookup_by_gicon (icon_theme, gicon, cell_area->width, 
+                                                  GTK_ICON_LOOKUP_USE_BUILTIN);
+      g_object_unref (gicon);
+
+      /* try to load the icon */
+      if (G_LIKELY (icon_info != NULL))
+        {
+          icon = gtk_icon_info_load_icon (icon_info, NULL);
+          gtk_icon_info_free (icon_info);
+        }
 
       /* render the icon (if any) */
       if (G_LIKELY (icon != NULL))
@@ -253,7 +267,7 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
               icon_area.height = gdk_pixbuf_get_height (icon);
             }
 
-          if (!thunar_vfs_volume_is_mounted (shortcuts_icon_renderer->volume))
+          if (!thunar_g_volume_is_mounted (shortcuts_icon_renderer->volume))
             {
               /* 50% translucent for unmounted volumes */
               temp = exo_gdk_pixbuf_lucent (icon, 50);
@@ -277,9 +291,6 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
           /* cleanup */
           g_object_unref (G_OBJECT (icon));
         }
-
-      /* cleanup */
-      g_object_unref (G_OBJECT (icon_factory));
     }
   else
     {

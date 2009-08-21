@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -31,11 +32,13 @@
 #include <gdk/gdkkeysyms.h>
 
 #include <thunar/thunar-application.h>
+#include <thunar/thunar-browser.h>
 #include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-compact-view.h>
 #include <thunar/thunar-details-view.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-shortcuts-pane.h>
+#include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-history.h>
@@ -58,6 +61,7 @@
 #include <thunar/thunar-window-ui.h>
 
 #include <glib.h>
+
 
 
 /* Property identifiers */
@@ -195,8 +199,8 @@ static void     thunar_window_menu_item_deselected        (GtkWidget            
 static void     thunar_window_notify_loading              (ThunarView             *view,
                                                            GParamSpec             *pspec,
                                                            ThunarWindow           *window);
-static void     thunar_window_volume_pre_unmount          (ThunarVfsVolumeManager *volume_manager,
-                                                           ThunarVfsVolume        *volume,
+static void     thunar_window_mount_pre_unmount           (GVolumeMonitor         *volume_monitor,
+                                                           GMount                 *mount,
                                                            ThunarWindow           *window);
 static gboolean thunar_window_merge_idle                  (gpointer                user_data);
 static void     thunar_window_merge_idle_destroy          (gpointer                user_data);
@@ -235,8 +239,8 @@ struct _ThunarWindow
   GtkActionGroup         *action_group;
   GtkUIManager           *ui_manager;
 
-  /* to be able to change folder on "volume-pre-unmount" if required */
-  ThunarVfsVolumeManager *volume_manager;
+  /* to be able to change folder on "mount-pre-unmount" if required */
+  GVolumeMonitor         *volume_monitor;
 
   /* closures for the menu_item_selected()/menu_item_deselected() callbacks */
   GClosure               *menu_item_selected_closure;
@@ -325,37 +329,12 @@ static const GtkToggleActionEntry toggle_action_entries[] =
 
 
 
-static GObjectClass *thunar_window_parent_class;
-static guint         window_signals[LAST_SIGNAL];
+static guint window_signals[LAST_SIGNAL];
 
 
 
-GType
-thunar_window_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarWindowClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_window_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarWindow),
-        0,
-        (GInstanceInitFunc) thunar_window_init,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_WINDOW, I_("ThunarWindow"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE_WITH_CODE (ThunarWindow, thunar_window, GTK_TYPE_WINDOW,
+                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_BROWSER, NULL));
 
 
 
@@ -365,9 +344,6 @@ thunar_window_class_init (ThunarWindowClass *klass)
   GtkWidgetClass *gtkwidget_class;
   GtkBindingSet  *binding_set;
   GObjectClass   *gobject_class;
-
-  /* determine the parent type class */
-  thunar_window_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_window_dispose;
@@ -610,28 +586,25 @@ view_index2type (gint index)
 static void
 thunar_window_setup_user_dir_menu_entries (ThunarWindow *window)
 {
-  gint i;
   static const gchar *callback_names[] = {
-    "open-desktop", "open-documents", "open-downloads", "open-music",
-    "open-pictures", "open-public", "open-templates", "open-videos"
+    "open-desktop", 
+    "open-documents", 
+    "open-downloads", 
+    "open-music",
+    "open-pictures", 
+    "open-public", 
+    "open-templates", 
+    "open-videos", 
+    NULL
   };
-
-#if !GLIB_CHECK_VERSION(2, 14, 0)
-
-  for (i = 0; i < G_N_ELEMENTS(callback_names); i++)
-    {
-      GtkAction *action = gtk_action_group_get_action (window->action_group,
-                                                       callback_names[i]);
-      gtk_action_set_visible (GTK_ACTION (action), FALSE);
-    }
-
-#else  /* GLIB_CHECK_VERSION(2, 14, 0) */
-
-  gchar *old_locale     = NULL;
-  gchar *locale         = NULL;
-  gchar *translation    = NULL;
-  /* gchar *dir_name       = NULL;  */  // see below
-  const gchar *home_dir = NULL;
+  GtkAction          *action;
+  GFile              *home_dir;
+  GFile              *dir;
+  gchar              *locale;
+  gchar              *old_locale;
+  const gchar        *path;
+  gchar              *translation;
+  gint                i;
 
   bindtextdomain (XDG_USER_DIRS_PACKAGE, PACKAGE_LOCALE_DIR);
 #ifdef HAVE_BIND_TEXTDOMAIN_CODESET
@@ -646,48 +619,37 @@ thunar_window_setup_user_dir_menu_entries (ThunarWindow *window)
   setlocale (LC_MESSAGES, locale);
   g_free (locale);
 
-  home_dir = xfce_get_homedir ();
+  home_dir = thunar_g_file_new_for_home ();
 
-  for (i = 0; i < THUNAR_USER_N_DIRECTORIES; i++)
+  for (i = 0; i < G_USER_N_DIRECTORIES; i++)
     {
-      gboolean visible  = FALSE;
-      GtkAction *action = gtk_action_group_get_action (window->action_group,
-                                                       callback_names[i]);
-      gchar *path       = g_strdup (g_get_user_special_dir (i));
+      action = gtk_action_group_get_action (window->action_group, callback_names[i]);
+      path = g_get_user_special_dir (i);
 
       /* special case: got NULL for the templates dir. Force it to ~/Templates */
-      if (G_UNLIKELY (path == NULL && i == THUNAR_USER_DIRECTORY_TEMPLATES))
-        path = g_build_path (home_dir, _thunar_user_directory_names[i], NULL);
+      if (G_UNLIKELY (path == NULL && i == G_USER_DIRECTORY_TEMPLATES))
+        dir = g_file_resolve_relative_path (home_dir, _thunar_user_directory_names[i]);
+      else if (path != NULL)
+        dir = g_file_new_for_path (path);
+      else
+        continue;
 
       /* xdg user dirs pointing to $HOME must be considered disabled */
-      if (G_LIKELY((path != NULL) && (!exo_str_is_equal (path, home_dir)))) {
-        ThunarVfsPath *vfs_path = thunar_vfs_path_new (path, NULL);
+      if (G_LIKELY (path != NULL && !g_file_equal (dir, home_dir)))
+        {
+          /* menu entry label translation */
+          translation = dgettext (XDG_USER_DIRS_PACKAGE, (gchar *) _thunar_user_directory_names[i]);
+          g_object_set (action, "label", translation, NULL);
+        }
+      else
+        gtk_action_set_visible (GTK_ACTION (action), FALSE);
 
-        if (G_LIKELY(vfs_path != NULL))
-          {
-            visible = TRUE;
-            thunar_vfs_path_unref (vfs_path);
-          }
-      }
-
-      gtk_action_set_visible (GTK_ACTION (action), visible);
-
-      /* if an entry is invisible don't waste time translating it */
-      if (G_UNLIKELY (visible == FALSE)) {
-        g_free (path);
-        continue;
-      }
-
-      /* menu entry label translation */
-      translation = dgettext (XDG_USER_DIRS_PACKAGE, (gchar *) _thunar_user_directory_names[i]);
-      g_object_set (action, "label", translation, NULL);
-
-      g_free (path);
+      g_object_unref (dir);
     }
 
-  setlocale (LC_MESSAGES, old_locale);
+  g_object_unref (home_dir);
 
-#endif /* GLIB_CHECK_VERSION(2,14,0) */
+  setlocale (LC_MESSAGES, old_locale);
 }
 
 
@@ -720,9 +682,9 @@ thunar_window_init (ThunarWindow *window)
   /* allocate the scroll_to_files mapping */
   window->scroll_to_files = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, g_object_unref);
 
-  /* connect to the volume manager */
-  window->volume_manager = thunar_vfs_volume_manager_get_default ();
-  g_signal_connect (G_OBJECT (window->volume_manager), "volume-pre-unmount", G_CALLBACK (thunar_window_volume_pre_unmount), window);
+  /* connect to the volume monitor */
+  window->volume_monitor = g_volume_monitor_get ();
+  g_signal_connect (window->volume_monitor, "mount-pre-unmount", G_CALLBACK (thunar_window_mount_pre_unmount), window);
 
   /* allocate a closure for the menu_item_selected() callback */
   window->menu_item_selected_closure = g_cclosure_new_object (G_CALLBACK (thunar_window_menu_item_selected), G_OBJECT (window));
@@ -968,24 +930,24 @@ thunar_window_finalize (GObject *object)
   g_closure_unref (window->menu_item_deselected_closure);
   g_closure_unref (window->menu_item_selected_closure);
 
-  /* disconnect from the volume manager */
-  g_signal_handlers_disconnect_matched (G_OBJECT (window->volume_manager), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
-  g_object_unref (G_OBJECT (window->volume_manager));
+  /* disconnect from the volume monitor */
+  g_signal_handlers_disconnect_matched (window->volume_monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
+  g_object_unref (window->volume_monitor);
 
   /* disconnect from the ui manager */
-  g_signal_handlers_disconnect_matched (G_OBJECT (window->ui_manager), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
-  g_object_unref (G_OBJECT (window->ui_manager));
+  g_signal_handlers_disconnect_matched (window->ui_manager, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
+  g_object_unref (window->ui_manager);
 
-  g_object_unref (G_OBJECT (window->action_group));
-  g_object_unref (G_OBJECT (window->icon_factory));
-  g_object_unref (G_OBJECT (window->launcher));
-  g_object_unref (G_OBJECT (window->history));
+  g_object_unref (window->action_group);
+  g_object_unref (window->icon_factory);
+  g_object_unref (window->launcher);
+  g_object_unref (window->history);
 
   /* release our reference on the provider factory */
-  g_object_unref (G_OBJECT (window->provider_factory));
+  g_object_unref (window->provider_factory);
 
   /* release the preferences reference */
-  g_object_unref (G_OBJECT (window->preferences));
+  g_object_unref (window->preferences);
 
   /* release the scroll_to_files hash table */
   g_hash_table_destroy (window->scroll_to_files);
@@ -1420,12 +1382,65 @@ thunar_window_merge_custom_preferences (ThunarWindow *window)
 
 
 static void
+thunar_window_open_or_launch (ThunarWindow *window,
+                              ThunarFile   *file)
+{
+  GError *error = NULL;
+
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  if (thunar_file_is_directory (file))
+    {
+      /* open the new directory */
+      thunar_window_set_current_directory (window, file);
+    }
+  else
+    {
+      /* try to launch the selected file */
+      if (!thunar_file_launch (file, window, NULL, &error))
+        {
+          thunar_dialogs_show_error (window, error, _("Failed to launch \"%s\""),
+                                     thunar_file_get_display_name (file));
+          g_error_free (error);
+        }
+    }
+}
+
+
+
+static void
+thunar_window_poke_file_finish (ThunarBrowser *browser,
+                                ThunarFile    *file,
+                                ThunarFile    *target_file,
+                                GError        *error,
+                                gpointer       ignored)
+{
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (browser));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  if (error == NULL)
+    {
+      thunar_window_open_or_launch (THUNAR_WINDOW (browser), target_file);
+    }
+  else
+    {
+      thunar_dialogs_show_error (GTK_WIDGET (browser), error, 
+                                 _("Failed to open \"%s\""),
+                                 thunar_file_get_display_name (file));
+    }
+}
+
+
+
+static void
 thunar_window_start_open_location (ThunarWindow *window,
                                    const gchar  *initial_text)
 {
   ThunarFile *selected_file;
   GtkWidget  *dialog;
-  GError     *error = NULL;
+  
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* bring up the "Open Location"-dialog if the window has no location bar or the location bar
    * in the window does not support text entry by the user.
@@ -1452,24 +1467,15 @@ thunar_window_start_open_location (ThunarWindow *window,
       /* run the dialog */
       if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
         {
+          /* be sure to hide the location dialog first */
+          gtk_widget_hide (dialog);
+
           /* check if we have a new directory or a file to launch */
           selected_file = thunar_location_dialog_get_selected_file (THUNAR_LOCATION_DIALOG (dialog));
-          if (thunar_file_is_directory (selected_file))
+          if (selected_file != NULL)
             {
-              /* open the new directory */
-              thunar_window_set_current_directory (window, selected_file);
-            }
-          else
-            {
-              /* be sure to hide the location dialog first */
-              gtk_widget_hide (dialog);
-
-              /* try to launch the selected file */
-              if (!thunar_file_launch (selected_file, GTK_WIDGET (window), &error))
-                {
-                  thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to launch \"%s\""), thunar_file_get_display_name (selected_file));
-                  g_error_free (error);
-                }
+              thunar_browser_poke_file (THUNAR_BROWSER (window), selected_file, window, 
+                                        thunar_window_poke_file_finish, NULL);
             }
         }
 
@@ -1491,7 +1497,7 @@ thunar_window_action_open_new_window (GtkAction    *action,
   /* popup a new window */
   application = thunar_application_get ();
   new_window = thunar_application_open_window (application, window->current_directory,
-                                               gtk_widget_get_screen (GTK_WIDGET (window)));
+                                               gtk_widget_get_screen (GTK_WIDGET (window)), NULL);
   g_object_unref (G_OBJECT (application));
 
   /* determine the first visible file in the current window */
@@ -1878,18 +1884,17 @@ static void
 thunar_window_action_open_home (GtkAction    *action,
                                 ThunarWindow *window)
 {
-  ThunarVfsPath *home_path;
+  GFile         *home;
   ThunarFile    *home_file;
   GError        *error = NULL;
 
-  _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* determine the path to the home directory */
-  home_path = thunar_vfs_path_get_for_home ();
+  home = thunar_g_file_new_for_home ();
 
   /* determine the file for the home directory */
-  home_file = thunar_file_get_for_path (home_path, &error);
+  home_file = thunar_file_get (home, &error);
   if (G_UNLIKELY (home_file == NULL))
     {
       /* display an error to the user */
@@ -1904,7 +1909,7 @@ thunar_window_action_open_home (GtkAction    *action,
     }
 
   /* release our reference on the home path */
-  thunar_vfs_path_unref (home_path);
+  g_object_unref (home);
 }
 
 gboolean
@@ -1914,29 +1919,33 @@ thunar_window_open_user_folder (GtkAction           *action,
                                 const gchar         *default_name)
 {
   ThunarFile *user_file = NULL;
-  GError     *error     = NULL;
-  gchar      *user_dir  = NULL;
-  gboolean    result    = FALSE;
+  gboolean    result = FALSE;
+  GError     *error = NULL;
+  GFile      *home_dir;
+  GFile      *user_dir;
+  gchar      *path = NULL;
 
-#if GLIB_CHECK_VERSION(2, 14, 0)
-  user_dir = g_strdup (g_get_user_special_dir (thunar_user_dir));
-#endif
+  path = g_strdup (g_get_user_special_dir (thunar_user_dir));
 
-  if (G_UNLIKELY (user_dir == NULL))
+  if (G_UNLIKELY (path == NULL))
     {
-      user_dir = g_build_filename (G_DIR_SEPARATOR_S, xfce_get_homedir (),
-                                   default_name, NULL);
+      home_dir = thunar_g_file_new_for_home ();
+      user_dir = g_file_resolve_relative_path (home_dir, default_name);
+      path = g_file_get_path (user_dir);
+      g_object_unref (home_dir);
     }
+  else
+    user_dir = g_file_new_for_path (path);
 
-  user_file = thunar_file_get_for_uri (user_dir, &error);
-  if (G_UNLIKELY (user_file == NULL && error->domain == G_FILE_ERROR && error->code == G_FILE_ERROR_EXIST))
+  user_file = thunar_file_get (user_dir, &error);
+  if (G_UNLIKELY (user_file == NULL && error->domain == G_FILE_ERROR && error->code == G_FILE_ERROR_NOENT))
     {
       g_error_free (error);
       error = NULL;
 
       /* try to create the folder */
-      if (G_LIKELY (xfce_mkdirhier (user_dir, 0755, &error)))
-        user_file = thunar_file_get_for_uri (user_dir, &error);
+      if (G_LIKELY (xfce_mkdirhier (path, 0755, &error)))
+        user_file = thunar_file_get (user_dir, &error);
     }
 
   if (G_LIKELY (user_file != NULL))
@@ -1956,7 +1965,8 @@ thunar_window_open_user_folder (GtkAction           *action,
         g_error_free (error);
     }
 
-  g_free (user_dir);
+  g_object_unref (user_dir);
+  g_free (path);
 
   return result;
 }
@@ -1965,84 +1975,72 @@ static void
 thunar_window_action_open_desktop (GtkAction     *action,
                                    ThunarWindow  *window)
 {
-#if GLIB_CHECK_VERSION(2, 14, 0)
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   thunar_window_open_user_folder (action, window,
                                   THUNAR_USER_DIRECTORY_DESKTOP,
                                   "Desktop");
-#endif
 }
 
 static void
 thunar_window_action_open_documents (GtkAction     *action,
                                      ThunarWindow  *window)
 {
-#if GLIB_CHECK_VERSION(2, 14, 0)
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   thunar_window_open_user_folder (action, window,
                                   THUNAR_USER_DIRECTORY_DOCUMENTS,
                                   "Documents");
-#endif
 }
 
 static void
 thunar_window_action_open_downloads (GtkAction     *action,
                                      ThunarWindow  *window)
 {
-#if GLIB_CHECK_VERSION(2, 14, 0)
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   thunar_window_open_user_folder (action, window,
                                   THUNAR_USER_DIRECTORY_DOWNLOAD,
                                   "Downloads");
-#endif
 }
 
 static void
 thunar_window_action_open_music (GtkAction     *action,
                                  ThunarWindow  *window)
 {
-#if GLIB_CHECK_VERSION(2, 14, 0)
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   thunar_window_open_user_folder (action, window,
                                   THUNAR_USER_DIRECTORY_MUSIC,
                                   "Music");
-#endif
 }
 
 static void
 thunar_window_action_open_pictures (GtkAction     *action,
                                     ThunarWindow  *window)
 {
-#if GLIB_CHECK_VERSION(2, 14, 0)
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   thunar_window_open_user_folder (action, window,
                                   THUNAR_USER_DIRECTORY_PICTURES,
                                   "Pictures");
-#endif
 }
 
 static void
 thunar_window_action_open_public (GtkAction     *action,
                                   ThunarWindow  *window)
 {
-#if GLIB_CHECK_VERSION(2, 14, 0)
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   thunar_window_open_user_folder (action, window,
                                   THUNAR_USER_DIRECTORY_PUBLIC_SHARE,
                                   "Public");
-#endif
 }
 
 static void
@@ -2129,14 +2127,12 @@ static void
 thunar_window_action_open_videos (GtkAction     *action,
                                   ThunarWindow  *window)
 {
-#if GLIB_CHECK_VERSION(2, 14, 0)
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   thunar_window_open_user_folder (action, window,
                                   THUNAR_USER_DIRECTORY_VIDEOS,
                                   "Videos");
-#endif
 }
 
 
@@ -2144,19 +2140,19 @@ static void
 thunar_window_action_open_trash (GtkAction    *action,
                                  ThunarWindow *window)
 {
-  ThunarVfsPath *trash_bin_path;
-  ThunarFile    *trash_bin;
-  GError        *error = NULL;
+  GFile      *trash_bin;
+  ThunarFile *trash_bin_file;
+  GError     *error = NULL;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* determine the path to the trash bin */
-  trash_bin_path = thunar_vfs_path_get_for_trash ();
+  trash_bin = thunar_g_file_new_for_trash ();
 
   /* determine the file for the trash bin */
-  trash_bin = thunar_file_get_for_path (trash_bin_path, &error);
-  if (G_UNLIKELY (trash_bin == NULL))
+  trash_bin_file = thunar_file_get (trash_bin, &error);
+  if (G_UNLIKELY (trash_bin_file == NULL))
     {
       /* display an error to the user */
       thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to display the contents of the trash can"));
@@ -2165,12 +2161,12 @@ thunar_window_action_open_trash (GtkAction    *action,
   else
     {
       /* open the trash folder */
-      thunar_window_set_current_directory (window, trash_bin);
+      thunar_window_set_current_directory (window, trash_bin_file);
       g_object_unref (G_OBJECT (trash_bin));
     }
 
   /* release our reference on the trash bin path */
-  thunar_vfs_path_unref (trash_bin_path);
+  g_object_unref (trash_bin);
 }
 
 
@@ -2254,41 +2250,65 @@ static void
 thunar_window_current_directory_destroy (ThunarFile   *current_directory,
                                          ThunarWindow *window)
 {
-  ThunarVfsPath *path;
-  ThunarVfsInfo *info;
-  ThunarFile    *file = NULL;
+  ThunarFile *new_directory = NULL;
+  GFile      *path;
+  GFile      *tmp;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_IS_FILE (current_directory));
   _thunar_return_if_fail (window->current_directory == current_directory);
 
   /* determine the path of the current directory */
-  path = thunar_file_get_path (current_directory);
+  path = g_object_ref (thunar_file_get_file (current_directory));
 
-  /* determine the first still present parent directory */
-  for (path = thunar_vfs_path_get_parent (path); file == NULL && path != NULL; path = thunar_vfs_path_get_parent (path))
+  /* try to find a parent directory that still exists */
+  while (new_directory == NULL)
     {
-      /* try to determine the info for the path */
-      info = thunar_vfs_info_new_for_path (path, NULL);
-      if (G_LIKELY (info != NULL))
+      /* check whether the current directory exists */
+      if (g_file_query_exists (path, NULL))
         {
-          /* check if we have a directory here */
-          if (info->type == THUNAR_VFS_FILE_TYPE_DIRECTORY)
-            file = thunar_file_get_for_info (info);
+          /* it does, try to load the file */
+          new_directory = thunar_file_get (path, NULL);
 
-          /* release the file info */
-          thunar_vfs_info_unref (info);
+          /* fall back to $HOME if loading the file failed */
+          if (new_directory == NULL)
+            break;
+        }
+      else
+        {
+          /* determine the parent of the directory */
+          tmp = g_file_get_parent (path);
+          
+          /* if there's no parent this means that we've found no parent
+           * that still exists at all. Fall back to $HOME then */
+          if (tmp == NULL)
+            break;
+
+          /* free the old directory */
+          g_object_unref (path);
+
+          /* check the parent next */
+          path = tmp;
         }
     }
 
+  /* make sure we don't leak */
+  if (path != NULL)
+    g_object_unref (path);
+
   /* check if we have a new folder */
-  if (G_LIKELY (file != NULL))
+  if (G_LIKELY (new_directory != NULL))
     {
       /* enter the new folder */
-      thunar_window_set_current_directory (window, file);
+      thunar_window_set_current_directory (window, new_directory);
 
       /* release the file reference */
-      g_object_unref (G_OBJECT (file));
+      g_object_unref (new_directory);
+    }
+  else
+    {
+      /* enter the home folder */
+      thunar_window_action_open_home (NULL, window);
     }
 }
 
@@ -2402,29 +2422,28 @@ thunar_window_notify_loading (ThunarView   *view,
 
 
 static void
-thunar_window_volume_pre_unmount (ThunarVfsVolumeManager *volume_manager,
-                                  ThunarVfsVolume        *volume,
-                                  ThunarWindow           *window)
+thunar_window_mount_pre_unmount (GVolumeMonitor *volume_monitor,
+                                 GMount         *mount,
+                                 ThunarWindow   *window)
 {
-  ThunarVfsPath *path;
-  ThunarFile    *file;
-  GtkAction     *action;
+  ThunarFile *file;
+  GtkAction  *action;
+  GFile      *mount_point;
 
-  _thunar_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (volume_manager));
-  _thunar_return_if_fail (THUNAR_VFS_IS_VOLUME (volume));
+  _thunar_return_if_fail (G_IS_VOLUME_MONITOR (volume_monitor));
+  _thunar_return_if_fail (window->volume_monitor == volume_monitor);
+  _thunar_return_if_fail (G_IS_MOUNT (mount));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* nothing to do if we don't have a current directory */
   if (G_UNLIKELY (window->current_directory == NULL))
     return;
 
-  /* determine the mount point for the volume */
-  path = thunar_vfs_volume_get_mount_point (volume);
-  if (G_UNLIKELY (path == NULL))
-    return;
+  /* try to get the ThunarFile for the mount point from the file cache */
+  mount_point = g_mount_get_root (mount);
+  file = thunar_file_cache_lookup (mount_point);
+  g_object_unref (mount_point);
 
-  /* check if a ThunarFile is known for the mount point */
-  file = thunar_file_cache_lookup (path);
   if (G_UNLIKELY (file == NULL))
     return;
 
@@ -2559,7 +2578,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
-
+  
   /* check if we already display the requested directory */
   if (G_UNLIKELY (window->current_directory == current_directory))
     return;

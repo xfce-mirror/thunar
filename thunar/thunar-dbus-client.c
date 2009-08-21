@@ -37,6 +37,8 @@
  * @standalone        : whether to run the bulk renamer in standalone mode.
  * @screen            : the #GdkScreen on which to display the dialog or %NULL to
  *                      use the default #GdkScreen.
+ * @startup_id        : startup id to properly finish startup notification and set
+ *                      the window timestamp or %NULL.
  * @error             : return location for errors or %NULL.
  *
  * Tries to invoke the BulkRename() method on a running Thunar instance, that is
@@ -53,6 +55,7 @@ thunar_dbus_client_bulk_rename (const gchar *working_directory,
                                 gchar      **filenames,
                                 gboolean     standalone,
                                 GdkScreen   *screen,
+                                const gchar *startup_id,
                                 GError     **error)
 {
   DBusConnection *connection;
@@ -85,6 +88,10 @@ thunar_dbus_client_bulk_rename (const gchar *working_directory,
   /* determine the display name for the screen */
   display_name = gdk_screen_make_display_name (screen);
 
+  /* dbus does not like null values */
+  if (startup_id == NULL)
+    startup_id = "";
+
   /* generate the BulkRename() method (disable activation!) */
   message = dbus_message_new_method_call ("org.xfce.Thunar", "/org/xfce/FileManager", "org.xfce.Thunar", "BulkRename");
   dbus_message_set_auto_start (message, FALSE);
@@ -93,6 +100,7 @@ thunar_dbus_client_bulk_rename (const gchar *working_directory,
                             DBUS_TYPE_ARRAY, DBUS_TYPE_STRING, &filenames, g_strv_length (filenames),
                             DBUS_TYPE_BOOLEAN, &standalone,
                             DBUS_TYPE_STRING, &display_name,
+                            DBUS_TYPE_STRING, &startup_id,
                             DBUS_TYPE_INVALID);
 
   /* release the display name */
@@ -133,6 +141,8 @@ thunar_dbus_client_bulk_rename (const gchar *working_directory,
  * @filenames         : the list of @filenames to launch.
  * @screen            : the #GdkScreen on which to launch the @filenames or %NULL
  *                      to use the default #GdkScreen.
+ * @startup_id        : startup id to properly finish startup notification and set
+ *                      the window timestamp or %NULL.
  * @error             : return location for errors or %NULL.
  *
  * Tries to invoke the LaunchFiles() method on a running Thunar instance, that is
@@ -149,6 +159,7 @@ gboolean
 thunar_dbus_client_launch_files (const gchar *working_directory,
                                  gchar      **filenames,
                                  GdkScreen   *screen,
+                                 const gchar *startup_id,
                                  GError     **error)
 {
   DBusConnection *connection;
@@ -181,6 +192,10 @@ thunar_dbus_client_launch_files (const gchar *working_directory,
   /* determine the display name for the screen */
   display_name = gdk_screen_make_display_name (screen);
 
+  /* dbus does not like null values */
+  if (startup_id == NULL)
+    startup_id = "";
+
   /* generate the LaunchFiles() method (disable activation!) */
   message = dbus_message_new_method_call ("org.xfce.Thunar", "/org/xfce/FileManager", "org.xfce.Thunar", "LaunchFiles");
   dbus_message_set_auto_start (message, FALSE);
@@ -188,6 +203,7 @@ thunar_dbus_client_launch_files (const gchar *working_directory,
                             DBUS_TYPE_STRING, &working_directory,
                             DBUS_TYPE_ARRAY, DBUS_TYPE_STRING, &filenames, g_strv_length (filenames),
                             DBUS_TYPE_STRING, &display_name,
+                            DBUS_TYPE_STRING, &startup_id,
                             DBUS_TYPE_INVALID);
 
   /* release the display name */

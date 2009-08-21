@@ -9,7 +9,7 @@ INCLUDES =								\
 	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"				\
 	$(PLATFORM_CPPFLAGS)
 
-extensionsdir = $(libdir)/thunarx-$(THUNAR_VERSION_API)
+extensionsdir = $(libdir)/thunarx-$(THUNARX_VERSION_API)
 extensions_LTLIBRARIES =						\
 	thunar-apr.la
 

@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -32,6 +33,7 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-size-label.h>
 #include <thunar/thunar-throbber.h>
+#include <thunar/thunar-deep-count-job.h>
 
 
 
@@ -60,12 +62,12 @@ static gboolean thunar_size_label_button_press_event    (GtkWidget            *e
                                                          ThunarSizeLabel      *size_label);
 static void     thunar_size_label_file_changed          (ThunarFile           *file,
                                                          ThunarSizeLabel      *size_label);
-static void     thunar_size_label_error                 (ThunarVfsJob         *job,
+static void     thunar_size_label_error                 (ExoJob               *job,
                                                          const GError         *error,
                                                          ThunarSizeLabel      *size_label);
-static void     thunar_size_label_finished              (ThunarVfsJob         *job,
+static void     thunar_size_label_finished              (ExoJob               *job,
                                                          ThunarSizeLabel      *size_label);
-static void     thunar_size_label_status_ready          (ThunarVfsJob         *job,
+static void     thunar_size_label_status_update         (ThunarDeepCountJob   *job,
                                                          guint64               total_size,
                                                          guint                 file_count,
                                                          guint                 directory_count,
@@ -83,16 +85,17 @@ struct _ThunarSizeLabelClass
 
 struct _ThunarSizeLabel
 {
-  GtkHBox       __parent__;
-  ThunarVfsJob *job;
+  GtkHBox             __parent__;
 
-  ThunarFile   *file;
+  ThunarDeepCountJob *job;
 
-  GtkWidget    *label;
-  GtkWidget    *throbber;
+  ThunarFile         *file;
+
+  GtkWidget          *label;
+  GtkWidget          *throbber;
 
   /* the throbber animation is started after a timeout */
-  gint          animate_timer_id;
+  gint                animate_timer_id;
 };
 
 
@@ -206,8 +209,8 @@ thunar_size_label_finalize (GObject *object)
   if (G_UNLIKELY (size_label->job != NULL))
     {
       g_signal_handlers_disconnect_matched (G_OBJECT (size_label->job), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, size_label);
-      thunar_vfs_job_cancel (THUNAR_VFS_JOB (size_label->job));
-      g_object_unref (G_OBJECT (size_label->job));
+      exo_job_cancel (EXO_JOB (size_label->job));
+      g_object_unref (size_label->job);
     }
 
   /* reset the file property */
@@ -284,9 +287,9 @@ thunar_size_label_button_press_event (GtkWidget       *ebox,
       /* cancel the pending job (if any) */
       if (G_UNLIKELY (size_label->job != NULL))
         {
-          g_signal_handlers_disconnect_matched (G_OBJECT (size_label->job), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, size_label);
-          thunar_vfs_job_cancel (THUNAR_VFS_JOB (size_label->job));
-          g_object_unref (G_OBJECT (size_label->job));
+          g_signal_handlers_disconnect_matched (size_label->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, size_label);
+          exo_job_cancel (EXO_JOB (size_label->job));
+          g_object_unref (size_label->job);
           size_label->job = NULL;
         }
 
@@ -307,7 +310,7 @@ thunar_size_label_button_press_event (GtkWidget       *ebox,
 
 
 static gchar*
-tsl_format_size_string (ThunarVfsFileSize size)
+tsl_format_size_string (guint64 size)
 {
   GString *result;
   gchar   *grouping;
@@ -356,11 +359,10 @@ static void
 thunar_size_label_file_changed (ThunarFile      *file,
                                 ThunarSizeLabel *size_label)
 {
-  ThunarVfsFileSize size;
-  GError           *error = NULL;
-  gchar            *size_humanized;
-  gchar            *size_string;
-  gchar            *text;
+  guint64 size;
+  gchar  *size_humanized;
+  gchar  *size_string;
+  gchar  *text;
 
   _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
   _thunar_return_if_fail (size_label->file == file);
@@ -373,9 +375,9 @@ thunar_size_label_file_changed (ThunarFile      *file,
   /* cancel the pending job (if any) */
   if (G_UNLIKELY (size_label->job != NULL))
     {
-      g_signal_handlers_disconnect_matched (G_OBJECT (size_label->job), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, size_label);
-      thunar_vfs_job_cancel (THUNAR_VFS_JOB (size_label->job));
-      g_object_unref (G_OBJECT (size_label->job));
+      g_signal_handlers_disconnect_matched (size_label->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, size_label);
+      exo_job_cancel (EXO_JOB (size_label->job));
+      g_object_unref (size_label->job);
       size_label->job = NULL;
     }
 
@@ -387,23 +389,16 @@ thunar_size_label_file_changed (ThunarFile      *file,
   if (thunar_file_is_directory (file))
     {
       /* schedule a new job to determine the total size of the directory (not following symlinks) */
-      size_label->job = thunar_vfs_deep_count (thunar_file_get_path (file), THUNAR_VFS_DEEP_COUNT_FLAGS_NONE, &error);
-      if (G_UNLIKELY (size_label->job == NULL))
-        {
-          /* display the error to the user */
-          gtk_label_set_text (GTK_LABEL (size_label->label), error->message);
-          g_error_free (error);
-        }
-      else
-        {
-          /* connect to the job */
-          g_signal_connect (G_OBJECT (size_label->job), "error", G_CALLBACK (thunar_size_label_error), size_label);
-          g_signal_connect (G_OBJECT (size_label->job), "finished", G_CALLBACK (thunar_size_label_finished), size_label);
-          g_signal_connect (G_OBJECT (size_label->job), "status-ready", G_CALLBACK (thunar_size_label_status_ready), size_label);
+      size_label->job = thunar_deep_count_job_new (thunar_file_get_file (file), G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS);
+      g_signal_connect (size_label->job, "error", G_CALLBACK (thunar_size_label_error), size_label);
+      g_signal_connect (size_label->job, "finished", G_CALLBACK (thunar_size_label_finished), size_label);
+      g_signal_connect (size_label->job, "status-update", G_CALLBACK (thunar_size_label_status_update), size_label);
 
-          /* tell the user that we started calculation */
-          gtk_label_set_text (GTK_LABEL (size_label->label), _("Calculating..."));
-        }
+      /* tell the user that we started calculation */
+      gtk_label_set_text (GTK_LABEL (size_label->label), _("Calculating..."));
+
+      /* launch the job */
+      exo_job_launch (EXO_JOB (size_label->job));
     }
   else
     {
@@ -419,7 +414,7 @@ thunar_size_label_file_changed (ThunarFile      *file,
       if (G_LIKELY (size > 1024ul))
         {
           /* prepend the humanized size */
-          size_humanized = thunar_vfs_humanize_size (size, NULL, 0);
+          size_humanized = g_format_size_for_display (size);
           text = g_strdup_printf ("%s (%s)", size_humanized, size_string);
           g_free (size_humanized);
           g_free (size_string);
@@ -437,13 +432,13 @@ thunar_size_label_file_changed (ThunarFile      *file,
 
 
 static void
-thunar_size_label_error (ThunarVfsJob    *job,
+thunar_size_label_error (ExoJob          *job,
                          const GError    *error,
                          ThunarSizeLabel *size_label)
 {
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
   _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
-  _thunar_return_if_fail (THUNAR_VFS_IS_JOB (job));
-  _thunar_return_if_fail (size_label->job == job);
+  _thunar_return_if_fail (size_label->job == THUNAR_DEEP_COUNT_JOB (job));
 
   /* setup the error text as label */
   gtk_label_set_text (GTK_LABEL (size_label->label), error->message);
@@ -452,12 +447,12 @@ thunar_size_label_error (ThunarVfsJob    *job,
 
 
 static void
-thunar_size_label_finished (ThunarVfsJob    *job,
+thunar_size_label_finished (ExoJob          *job,
                             ThunarSizeLabel *size_label)
 {
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
   _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
-  _thunar_return_if_fail (THUNAR_VFS_IS_JOB (job));
-  _thunar_return_if_fail (size_label->job == job);
+  _thunar_return_if_fail (size_label->job == THUNAR_DEEP_COUNT_JOB (job));
 
   /* be sure to cancel the animate timer */
   if (G_UNLIKELY (size_label->animate_timer_id >= 0))
@@ -468,27 +463,27 @@ thunar_size_label_finished (ThunarVfsJob    *job,
   gtk_widget_hide (size_label->throbber);
 
   /* disconnect from the job */
-  g_signal_handlers_disconnect_matched (G_OBJECT (size_label->job), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, size_label);
-  g_object_unref (G_OBJECT (size_label->job));
+  g_signal_handlers_disconnect_matched (size_label->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, size_label);
+  g_object_unref (size_label->job);
   size_label->job = NULL;
 }
 
 
 
 static void
-thunar_size_label_status_ready (ThunarVfsJob    *job,
-                                guint64          total_size,
-                                guint            file_count,
-                                guint            directory_count,
-                                guint            unreadable_directory_count,
-                                ThunarSizeLabel *size_label)
+thunar_size_label_status_update (ThunarDeepCountJob *job,
+                                 guint64             total_size,
+                                 guint               file_count,
+                                 guint               directory_count,
+                                 guint               unreadable_directory_count,
+                                 ThunarSizeLabel    *size_label)
 {
   gchar *size_string;
   gchar *text;
   guint  n;
 
+  _thunar_return_if_fail (THUNAR_IS_DEEP_COUNT_JOB (job));
   _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
-  _thunar_return_if_fail (THUNAR_VFS_IS_JOB (job));
   _thunar_return_if_fail (size_label->job == job);
 
   /* check if the animate timer is already running */
@@ -503,7 +498,7 @@ thunar_size_label_status_ready (ThunarVfsJob    *job,
   n = file_count + directory_count + unreadable_directory_count;
 
   /* update the label */
-  size_string = thunar_vfs_humanize_size (total_size, NULL, 0);
+  size_string = g_format_size_for_display (total_size);
   text = g_strdup_printf (ngettext ("%u item, totalling %s", "%u items, totalling %s", n), n, size_string);
   gtk_label_set_text (GTK_LABEL (size_label->label), text);
   g_free (size_string);

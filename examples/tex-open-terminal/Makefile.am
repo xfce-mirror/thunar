@@ -7,7 +7,7 @@ INCLUDES =								\
 	-DG_LOG_DOMAIN=\"TexOpenTerminal\"				\
 	$(PLATFORM_CPPFLAGS)
 
-extensionsdir = $(libdir)/thunarx-$(THUNAR_VERSION_API)
+extensionsdir = $(libdir)/thunarx-$(THUNARX_VERSION_API)
 extensions_LTLIBRARIES =						\
 	tex-open-terminal.la
 
@@ -21,10 +21,10 @@ tex_open_terminal_la_CFLAGS =						\
 	$(PLATFORM_CFLAGS)
 
 tex_open_terminal_la_DEPENDENCIES =					\
-	$(top_builddir)/thunarx/libthunarx-$(THUNAR_VERSION_API).la
+	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la
 
 tex_open_terminal_la_LIBADD =						\
-	$(top_builddir)/thunarx/libthunarx-$(THUNAR_VERSION_API).la	\
+	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la	\
 	$(GTK_LIBS)
 
 tex_open_terminal_la_LDFLAGS =						\

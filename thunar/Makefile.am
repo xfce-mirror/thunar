@@ -11,6 +11,7 @@ INCLUDES =								\
 	-DLIBEXECDIR=\"$(libexecdir)\"					\
 	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"				\
 	-DTHUNAR_VERSION_API=\"$(THUNAR_VERSION_API)\"			\
+	-DSN_API_NOT_YET_FROZEN						\
 	$(PLATFORM_CPPFLAGS)
 
 bin_SCRIPTS =								\
@@ -37,6 +38,8 @@ Thunar_SOURCES =							\
 	thunar-abstract-icon-view.h					\
 	thunar-application.c						\
 	thunar-application.h						\
+	thunar-browser.c						\
+	thunar-browser.h						\
 	thunar-chooser-button.c						\
 	thunar-chooser-button.h						\
 	thunar-chooser-dialog.c						\
@@ -57,6 +60,8 @@ Thunar_SOURCES =							\
 	thunar-create-dialog.h						\
 	thunar-debug.h							\
 	thunar-debug.c							\
+	thunar-deep-count-job.h						\
+	thunar-deep-count-job.c						\
 	thunar-details-view-ui.h					\
 	thunar-details-view.c						\
 	thunar-details-view.h						\
@@ -68,6 +73,8 @@ Thunar_SOURCES =							\
 	thunar-emblem-chooser.h						\
 	thunar-enum-types.c						\
 	thunar-enum-types.h						\
+	thunar-exec.c							\
+	thunar-exec.h							\
 	thunar-file.c							\
 	thunar-file.h							\
 	thunar-file-monitor.c						\
@@ -76,6 +83,8 @@ Thunar_SOURCES =							\
 	thunar-folder.h							\
 	thunar-gdk-extensions.c						\
 	thunar-gdk-extensions.h						\
+	thunar-gio-extensions.c						\
+	thunar-gio-extensions.h						\
 	thunar-gobject-extensions.c					\
 	thunar-gobject-extensions.h					\
 	thunar-gtk-extensions.c						\
@@ -92,6 +101,16 @@ Thunar_SOURCES =							\
 	thunar-icon-renderer.h						\
 	thunar-icon-view.c						\
 	thunar-icon-view.h						\
+	thunar-image.c							\
+	thunar-image.h							\
+	thunar-io-jobs.c						\
+	thunar-io-jobs.h						\
+	thunar-io-jobs-util.c						\
+	thunar-io-jobs-util.h						\
+	thunar-io-scan-directory.c					\
+	thunar-io-scan-directory.h					\
+	thunar-job.c							\
+	thunar-job.h							\
 	thunar-launcher.c						\
 	thunar-launcher.h						\
 	thunar-launcher-ui.h						\
@@ -110,6 +129,8 @@ Thunar_SOURCES =							\
 	thunar-location-entry.h						\
 	thunar-metafile.c						\
 	thunar-metafile.h						\
+	thunar-misc-jobs.c						\
+	thunar-misc-jobs.h						\
 	thunar-navigator.c						\
 	thunar-navigator.h						\
 	thunar-pango-extensions.c					\
@@ -151,6 +172,8 @@ Thunar_SOURCES =							\
 	thunar-shortcuts-view.h						\
 	thunar-side-pane.c						\
 	thunar-side-pane.h						\
+	thunar-simple-job.c						\
+	thunar-simple-job.h						\
 	thunar-size-label.c						\
 	thunar-size-label.h						\
 	thunar-standard-view.c						\
@@ -168,10 +191,12 @@ Thunar_SOURCES =							\
 	thunar-throbber.h						\
 	thunar-throbber-fallback.c					\
 	thunar-throbber-fallback.h					\
+	thunar-thumbnailer.c						\
+	thunar-thumbnailer.h						\
 	thunar-thumbnail-frame.c					\
 	thunar-thumbnail-frame.h					\
-	thunar-thumbnail-generator.c					\
-	thunar-thumbnail-generator.h					\
+	thunar-transfer-job.c						\
+	thunar-transfer-job.h						\
 	thunar-trash-action.c						\
 	thunar-trash-action.h						\
 	thunar-tree-model.c						\
@@ -180,6 +205,8 @@ Thunar_SOURCES =							\
 	thunar-tree-pane.h						\
 	thunar-tree-view.c						\
 	thunar-tree-view.h						\
+	thunar-user.c							\
+	thunar-user.h							\
 	thunar-util.c							\
 	thunar-util.h							\
 	thunar-view.c							\
@@ -195,7 +222,9 @@ Thunar_SOURCES =							\
 Thunar_CFLAGS =								\
 	$(EXO_CFLAGS)							\
 	$(GTHREAD_CFLAGS)						\
+	$(GIO_CFLAGS)							\
 	$(LIBSM_CFLAGS)							\
+	$(LIBSTARTUP_NOTIFICATION_CFLAGS)				\
 	$(PLATFORM_CFLAGS)
 
 Thunar_LDFLAGS =							\
@@ -205,26 +234,30 @@ Thunar_LDFLAGS =							\
 
 Thunar_LDADD =								\
 	$(top_builddir)/tdb/libtdb.la					\
-	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la \
-	$(top_builddir)/thunarx/libthunarx-$(THUNAR_VERSION_API).la	\
+	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la	\
 	$(EXO_LIBS)							\
 	$(GTHREAD_LIBS)							\
+	$(GIO_LIBS)							\
+	$(LIBSTARTUP_NOTIFICATION_LIBS)					\
 	$(LIBSM_LIBS)
 
 Thunar_DEPENDENCIES =							\
 	$(top_builddir)/tdb/libtdb.la					\
-	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la \
-	$(top_builddir)/thunarx/libthunarx-$(THUNAR_VERSION_API).la
+	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la
 
 if HAVE_DBUS
 thunar_built_sources +=							\
-	thunar-dbus-service-infos.h
+	thunar-dbus-service-infos.h					\
+	thunar-thumbnailer-proxy.h					\
+	thunar-thumbnailer-manager-proxy.h
 
 thunar_dbus_sources =							\
 	thunar-dbus-client.c						\
 	thunar-dbus-client.h						\
 	thunar-dbus-service.c						\
-	thunar-dbus-service.h
+	thunar-dbus-service.h						\
+	thunar-thumbnailer-proxy.h					\
+	thunar-thumbnailer-manager-proxy.h
 
 Thunar_CFLAGS +=							\
 	-DDBUS_API_SUBJECT_TO_CHANGE					\
@@ -232,6 +265,14 @@ Thunar_CFLAGS +=							\
 
 Thunar_LDADD +=								\
 	$(DBUS_LIBS)
+endif
+
+if HAVE_GIO_UNIX
+Thunar_CFLAGS +=							\
+	$(GIO_UNIX_CFLAGS)
+
+Thunar_LDADD +=								\
+	$(GIO_UNIX_LIBS)
 endif
 
 desktopdir = $(datadir)/applications
@@ -247,7 +288,7 @@ install-data-local:
 clean-local:
 	rm -f *.core core core.*
 
-DISTCLEANFILES =								\
+DISTCLEANFILES =							\
 	thunar-settings.desktop
 
 if MAINTAINER_MODE
@@ -285,6 +326,18 @@ BUILT_SOURCES =								\
 if HAVE_DBUS
 thunar-dbus-service-infos.h: $(srcdir)/thunar-dbus-service-infos.xml Makefile
 	dbus-binding-tool --prefix=thunar_dbus_service --mode=glib-server $(srcdir)/thunar-dbus-service-infos.xml > thunar-dbus-service-infos.h
+
+thunar-thumbnailer-proxy.h: $(srcdir)/thunar-thumbnailer-dbus.xml Makefile
+	dbus-binding-tool --mode=glib-client \
+		$(srcdir)/thunar-thumbnailer-dbus.xml > thunar-thumbnailer-proxy.h \
+	&& sed -i -e 's/org_freedesktop_thumbnails_Thumbnailer/thunar_thumbnailer_proxy/g' \
+		thunar-thumbnailer-proxy.h
+
+thunar-thumbnailer-manager-proxy.h: $(srcdir)/thunar-thumbnailer-manager-dbus.xml Makefile
+	dbus-binding-tool --mode=glib-client \
+		$(srcdir)/thunar-thumbnailer-manager-dbus.xml > thunar-thumbnailer-manager-proxy.h \
+	&& sed -i -e 's/org_freedesktop_thumbnails_Manager/thunar_thumbnailer_manager_proxy/g' \
+		thunar-thumbnailer-manager-proxy.h
 endif
 
 thunar-throbber-fallback.c: $(srcdir)/thunar-throbber-fallback.png Makefile
@@ -335,18 +388,18 @@ thunar-marshal.c: thunar-marshal.list Makefile
 	&& rm -f xgen-tmc
 endif
 
-EXTRA_DIST =									\
-	thunar-abstract-icon-view-ui.xml			\
-	thunar-dbus-service-infos.xml				\
+EXTRA_DIST =								\
+	thunar-abstract-icon-view-ui.xml				\
+	thunar-dbus-service-infos.xml					\
 	thunar-details-view-ui.xml					\
 	thunar-launcher-ui.xml						\
-	thunar-location-buttons-ui.xml				\
-	thunar-marshal.list							\
-	thunar-renamer-dialog-ui.xml				\
+	thunar-location-buttons-ui.xml					\
+	thunar-marshal.list						\
+	thunar-renamer-dialog-ui.xml					\
 	thunar-standard-view-ui.xml					\
 	thunar-thumbnail-frame.png					\
 	thunar-window-ui.xml						\
-	thunar-settings								\
+	thunar-settings							\
 	$(desktop_in_files)
 
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:
