@@ -115,6 +115,7 @@ main (int argc, char **argv)
   GError              *error = NULL;
   gchar               *working_directory;
   gchar              **filenames = NULL;
+  const gchar         *startup_id;
 
   /* setup translation domain */
   xfce_textdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR, "UTF-8");
@@ -132,6 +133,9 @@ main (int argc, char **argv)
   /* initialize the GThread system */
   if (!g_thread_supported ())
     g_thread_init (NULL);
+    
+  /* get the startup notification id */
+  startup_id = g_getenv ("DESKTOP_STARTUP_ID");
 
   /* initialize Gtk+ */
   if (!gtk_init_with_args (&argc, &argv, _("[FILES...]"), option_entries, GETTEXT_PACKAGE, &error))
@@ -216,12 +220,9 @@ main (int argc, char **argv)
 
 #ifdef HAVE_DBUS
   /* check if we can reuse an existing instance */
-  if ((!opt_bulk_rename && filenames != NULL && thunar_dbus_client_launch_files (working_directory, filenames, NULL, NULL))
-      || (opt_bulk_rename && thunar_dbus_client_bulk_rename (working_directory, filenames, TRUE, NULL, NULL)))
+  if ((!opt_bulk_rename && filenames != NULL && thunar_dbus_client_launch_files (working_directory, filenames, NULL, startup_id, NULL))
+      || (opt_bulk_rename && thunar_dbus_client_bulk_rename (working_directory, filenames, TRUE, NULL, startup_id, NULL)))
     {
-      /* stop any running startup notification */
-      gdk_notify_startup_complete ();
-
       /* that worked, let's get outa here */
       g_free (working_directory);
       g_strfreev (filenames);
@@ -247,10 +248,10 @@ main (int argc, char **argv)
   if (G_UNLIKELY (opt_bulk_rename))
     {
       /* try to open the bulk rename dialog */
-      if (!thunar_application_bulk_rename (application, working_directory, filenames, TRUE, NULL, &error))
+      if (!thunar_application_bulk_rename (application, working_directory, filenames, TRUE, NULL, startup_id, &error))
         goto error0;
     }
-  else if (filenames != NULL && !thunar_application_process_filenames (application, working_directory, filenames, NULL, &error))
+  else if (filenames != NULL && !thunar_application_process_filenames (application, working_directory, filenames, NULL, startup_id, &error))
     {
       /* we failed to process the filenames or the bulk rename failed */
 error0:

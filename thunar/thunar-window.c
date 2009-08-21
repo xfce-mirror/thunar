@@ -1398,7 +1398,7 @@ thunar_window_open_or_launch (ThunarWindow *window,
   else
     {
       /* try to launch the selected file */
-      if (!thunar_file_launch (file, window, &error))
+      if (!thunar_file_launch (file, window, NULL, &error))
         {
           thunar_dialogs_show_error (window, error, _("Failed to launch \"%s\""),
                                      thunar_file_get_display_name (file));
@@ -1497,7 +1497,7 @@ thunar_window_action_open_new_window (GtkAction    *action,
   /* popup a new window */
   application = thunar_application_get ();
   new_window = thunar_application_open_window (application, window->current_directory,
-                                               gtk_widget_get_screen (GTK_WIDGET (window)));
+                                               gtk_widget_get_screen (GTK_WIDGET (window)), NULL);
   g_object_unref (G_OBJECT (application));
 
   /* determine the first visible file in the current window */

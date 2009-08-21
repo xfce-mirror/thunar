@@ -53,19 +53,22 @@ void               thunar_application_take_window       (ThunarApplication *appl
 
 GtkWidget         *thunar_application_open_window       (ThunarApplication *application,
                                                          ThunarFile        *directory,
-                                                         GdkScreen         *screen);
+                                                         GdkScreen         *screen,
+                                                         const gchar       *startup_id);
 
 gboolean           thunar_application_bulk_rename       (ThunarApplication *application,
                                                          const gchar       *working_directory,
                                                          gchar            **filenames,
                                                          gboolean           standalone,
                                                          GdkScreen         *screen,
+                                                         const gchar       *startup_id,
                                                          GError           **error);
 
 gboolean           thunar_application_process_filenames (ThunarApplication *application,
                                                          const gchar       *working_directory,
                                                          gchar            **filenames,
                                                          GdkScreen         *screen,
+                                                         const gchar       *startup_id,
                                                          GError           **error);
 
 gboolean           thunar_application_is_processing     (ThunarApplication *application);

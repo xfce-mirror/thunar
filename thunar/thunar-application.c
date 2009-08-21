@@ -91,10 +91,6 @@ static void           thunar_application_launch                 (ThunarApplicati
                                                                  GList                  *source_path_list,
                                                                  GList                  *target_path_list,
                                                                  GClosure               *new_files_closure);
-static GtkWidget     *thunar_application_open_window_with_role  (ThunarApplication      *application,
-                                                                 const gchar            *role,
-                                                                 ThunarFile             *directory,
-                                                                 GdkScreen              *screen);
 static void           thunar_application_window_destroyed       (GtkWidget              *window,
                                                                  ThunarApplication      *application);
 static void           thunar_application_drive_connected        (GVolumeMonitor         *volume_monitor,
@@ -147,6 +143,7 @@ struct _ThunarApplication
 
 static GObjectClass *thunar_application_parent_class;
 static GQuark        thunar_application_screen_quark;
+static GQuark        thunar_application_startup_id_quark;
 
 
 
@@ -187,6 +184,8 @@ thunar_application_class_init (ThunarApplicationClass *klass)
   /* pre-allocate the required quarks */
   thunar_application_screen_quark = 
     g_quark_from_static_string ("thunar-application-screen");
+  thunar_application_startup_id_quark =
+    g_quark_from_static_string ("thunar-application-startup-id");
 
   /* determine the parent type class */
   thunar_application_parent_class = g_type_class_peek_parent (klass);
@@ -462,37 +461,6 @@ thunar_application_launch (ThunarApplication *application,
 
   /* drop our reference on the job */
   g_object_unref (job);
-}
-
-
-
-static GtkWidget*
-thunar_application_open_window_with_role (ThunarApplication *application,
-                                          const gchar       *role,
-                                          ThunarFile        *directory,
-                                          GdkScreen         *screen)
-{
-  GtkWidget *window;
-
-  if (G_UNLIKELY (screen == NULL))
-    screen = gdk_screen_get_default ();
-
-  /* allocate the window */
-  window = g_object_new (THUNAR_TYPE_WINDOW,
-                         "role", role,
-                         "screen", screen,
-                         NULL);
-
-  /* hook up the window */
-  thunar_application_take_window (application, GTK_WINDOW (window));
-
-  /* show the new window */
-  gtk_widget_show (window);
-
-  /* change the directory */
-  thunar_window_set_current_directory (THUNAR_WINDOW (window), directory);
-
-  return window;
 }
 
 
@@ -935,6 +903,8 @@ thunar_application_take_window (ThunarApplication *application,
  * @directory      : the directory to open.
  * @screen         : the #GdkScreen on which to open the window or %NULL
  *                   to open on the default screen.
+ * @startup_id     : startup id from startup notification passed along
+ *                   with dbus to make focus stealing work properly.
  *
  * Opens a new #ThunarWindow for @application, displaying the
  * given @directory.
@@ -944,7 +914,8 @@ thunar_application_take_window (ThunarApplication *application,
 GtkWidget*
 thunar_application_open_window (ThunarApplication *application,
                                 ThunarFile        *directory,
-                                GdkScreen         *screen)
+                                GdkScreen         *screen,
+                                const gchar       *startup_id)
 {
   GtkWidget *window;
   gchar     *role;
@@ -953,10 +924,33 @@ thunar_application_open_window (ThunarApplication *application,
   _thunar_return_val_if_fail (THUNAR_IS_FILE (directory), NULL);
   _thunar_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), NULL);
 
+  if (G_UNLIKELY (screen == NULL))
+    screen = gdk_screen_get_default ();
+
   /* generate a unique role for the new window (for session management) */
   role = g_strdup_printf ("Thunar-%u-%u", (guint) time (NULL), (guint) g_random_int ());
-  window = thunar_application_open_window_with_role (application, role, directory, screen);
+
+  /* allocate the window */
+  window = g_object_new (THUNAR_TYPE_WINDOW,
+                         "role", role,
+                         "screen", screen,
+                         NULL);
+
+  /* cleanup */
   g_free (role);
+
+  /* set the startup id */
+  if (startup_id != NULL)
+    gtk_window_set_startup_id (GTK_WINDOW (window), startup_id);
+
+  /* hook up the window */
+  thunar_application_take_window (application, GTK_WINDOW (window));
+
+  /* show the new window */
+  gtk_widget_show (window);
+
+  /* change the directory */
+  thunar_window_set_current_directory (THUNAR_WINDOW (window), directory);
 
   return window;
 }
@@ -975,6 +969,8 @@ thunar_application_open_window (ThunarApplication *application,
  *                      application.
  * @screen            : the #GdkScreen on which to rename the @filenames or %NULL
  *                      to use the default #GdkScreen.
+ * @startup_id        : startup notification id to properly finish startup notification
+ *                      and focus the window when focus stealing is enabled or %NULL.
  * @error             : return location for errors or %NULL.
  *
  * Tries to popup the bulk rename dialog.
@@ -987,6 +983,7 @@ thunar_application_bulk_rename (ThunarApplication *application,
                                 gchar            **filenames,
                                 gboolean           standalone,
                                 GdkScreen         *screen,
+                                const gchar       *startup_id,
                                 GError           **error)
 {
   ThunarFile *current_directory = NULL;
@@ -1038,7 +1035,7 @@ thunar_application_bulk_rename (ThunarApplication *application,
   if (G_LIKELY (filenames[n] == NULL))
     {
       /* popup the bulk rename dialog */
-      thunar_show_renamer_dialog (screen, current_directory, file_list, standalone);
+      thunar_show_renamer_dialog (screen, current_directory, file_list, standalone, startup_id);
 
       /* we succeed */
       result = TRUE;
@@ -1062,6 +1059,7 @@ thunar_application_process_files_finish (GObject      *object,
   ThunarFile        *file;
   GdkScreen         *screen;
   GError            *error = NULL;
+  const gchar       *startup_id;
 
   _thunar_return_if_fail (G_IS_FILE (object));
   _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
@@ -1086,12 +1084,19 @@ thunar_application_process_files_finish (GObject      *object,
   screen = g_object_get_qdata (G_OBJECT (file), thunar_application_screen_quark);
   g_object_set_qdata (G_OBJECT (file), thunar_application_screen_quark, NULL);
 
+  /* determine and the startup id of the file */
+  startup_id = g_object_get_qdata (G_OBJECT (file), thunar_application_startup_id_quark);
+
   /* check if mounting succeeded */
   if (error == NULL)
     {
       /* try to open the file or directory */
-      thunar_file_launch (file, screen, &error);
+      thunar_file_launch (file, screen, startup_id, &error);
     }
+
+  /* unset the startup id */
+  if (startup_id != NULL)
+    g_object_set_qdata (G_OBJECT (file), thunar_application_startup_id_quark, NULL);
 
   if (error != NULL)
     {
@@ -1165,6 +1170,8 @@ thunar_application_process_files (ThunarApplication *application)
  *                      @working_directory.
  * @screen            : the #GdkScreen on which to process the @filenames, or %NULL to
  *                      use the default screen.
+ * @startup_id        : startup id to finish startup notification and properly focus the
+ *                      window when focus stealing is enabled or %NULL.
  * @error             : return location for errors or %NULL.
  *
  * Tells @application to process the given @filenames and launch them appropriately.
@@ -1176,6 +1183,7 @@ thunar_application_process_filenames (ThunarApplication *application,
                                       const gchar       *working_directory,
                                       gchar            **filenames,
                                       GdkScreen         *screen,
+                                      const gchar       *startup_id,
                                       GError           **error)
 {
   ThunarFile *file;
@@ -1235,6 +1243,11 @@ thunar_application_process_filenames (ThunarApplication *application,
     {
       /* remember the screen to launch the file on */
       g_object_set_qdata (G_OBJECT (lp->data), thunar_application_screen_quark, screen);
+
+      /* remember the startup id to set on the window */
+      if (G_LIKELY (startup_id != NULL && *startup_id != '\0'))
+        g_object_set_qdata_full (G_OBJECT (lp->data), thunar_application_startup_id_quark, 
+                                 g_strdup (startup_id), (GDestroyNotify) g_free);
 
       /* append the file to the list of files we need to launch */
       application->files_to_launch = g_list_append (application->files_to_launch, 

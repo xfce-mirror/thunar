@@ -748,7 +748,7 @@ thunar_launcher_open_windows (ThunarLauncher *launcher,
 
       /* open all requested windows */
       for (lp = directories; lp != NULL; lp = lp->next)
-        thunar_application_open_window (application, lp->data, screen);
+        thunar_application_open_window (application, lp->data, screen, NULL);
 
       /* release the application object */
       g_object_unref (G_OBJECT (application));

@@ -1437,7 +1437,7 @@ thunar_location_buttons_action_open_in_new_window (GtkAction             *action
     {
       /* open a new window for the directory */
       application = thunar_application_get ();
-      thunar_application_open_window (application, directory, gtk_widget_get_screen (GTK_WIDGET (buttons)));
+      thunar_application_open_window (application, directory, gtk_widget_get_screen (GTK_WIDGET (buttons)), NULL);
       g_object_unref (G_OBJECT (application));
     }
 }

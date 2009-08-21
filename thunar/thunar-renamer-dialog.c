@@ -1861,15 +1861,17 @@ thunar_renamer_dialog_set_standalone (ThunarRenamerDialog *renamer_dialog,
  * @files             : the list of #ThunarFile<!---->s to rename.
  * @standalone        : whether the dialog should appear like a standalone
  *                      application instead of an integrated renamer dialog.
+ * @startup_id        : startup id to set on the window or %NULL.
  *
  * Convenience function to display a #ThunarRenamerDialog with
  * the given parameters.
  **/
 void
-thunar_show_renamer_dialog (gpointer    parent,
-                            ThunarFile *current_directory,
-                            GList      *files,
-                            gboolean    standalone)
+thunar_show_renamer_dialog (gpointer     parent,
+                            ThunarFile  *current_directory,
+                            GList       *files,
+                            gboolean     standalone,
+                            const gchar *startup_id)
 {
   ThunarApplication *application;
   GdkScreen         *screen;
@@ -1903,6 +1905,10 @@ thunar_show_renamer_dialog (gpointer    parent,
                          "screen", screen,
                          "standalone", standalone,
                          NULL);
+
+  /* set the dialogs startup id if available */
+  if (startup_id != NULL && *startup_id != '\0')
+    gtk_window_set_startup_id (GTK_WINDOW (dialog), startup_id);
 
   /* check if we have a toplevel window */
   if (G_LIKELY (window != NULL && GTK_WIDGET_TOPLEVEL (window)))

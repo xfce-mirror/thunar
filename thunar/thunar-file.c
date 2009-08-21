@@ -1128,11 +1128,12 @@ thunar_file_execute (ThunarFile *file,
 
 /**
  * thunar_file_launch:
- * @file   : a #ThunarFile instance.
- * @parent : a #GtkWidget or a #GdkScreen on which to launch the @file.
- *           May also be %NULL in which case the default #GdkScreen will
- *           be used.
- * @error  : return location for errors or %NULL.
+ * @file       : a #ThunarFile instance.
+ * @parent     : a #GtkWidget or a #GdkScreen on which to launch the @file.
+ *               May also be %NULL in which case the default #GdkScreen will
+ *               be used.
+ * @startup_id : startup id for the new window (send over for dbus) or %NULL.
+ * @error      : return location for errors or %NULL.
  *
  * If @file is an executable file, tries to execute it. Else if @file is
  * a directory, opens a new #ThunarWindow to display the directory. Else,
@@ -1147,9 +1148,10 @@ thunar_file_execute (ThunarFile *file,
  * Return value: %TRUE on success, else %FALSE.
  **/
 gboolean
-thunar_file_launch (ThunarFile *file,
-                    gpointer    parent,
-                    GError    **error)
+thunar_file_launch (ThunarFile  *file,
+                    gpointer     parent,
+                    const gchar *startup_id,
+                    GError     **error)
 {
   GdkAppLaunchContext *context;
   ThunarApplication   *application;
@@ -1174,7 +1176,7 @@ thunar_file_launch (ThunarFile *file,
   if (thunar_file_is_directory (file))
     {
       application = thunar_application_get ();
-      thunar_application_open_window (application, file, screen);
+      thunar_application_open_window (application, file, screen, startup_id);
       g_object_unref (G_OBJECT (application));
       return TRUE;
     }

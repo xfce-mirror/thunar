@@ -146,6 +146,7 @@ gboolean          thunar_file_execute              (ThunarFile             *file
 
 gboolean          thunar_file_launch               (ThunarFile             *file,
                                                     gpointer                parent,
+                                                    const gchar            *startup_id,
                                                     GError                **error);
 
 gboolean          thunar_file_rename               (ThunarFile             *file,

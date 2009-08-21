@@ -1222,7 +1222,7 @@ thunar_shortcuts_view_poke_file_finish (ThunarBrowser *browser,
           /* open a new window for the target folder */
           application = thunar_application_get ();
           thunar_application_open_window (application, target_file, 
-                                          gtk_widget_get_screen (GTK_WIDGET (browser)));
+                                          gtk_widget_get_screen (GTK_WIDGET (browser)), NULL);
           g_object_unref (application);
         }
       else

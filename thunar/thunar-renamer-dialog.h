@@ -51,7 +51,8 @@ void        thunar_renamer_dialog_set_standalone        (ThunarRenamerDialog *re
 void        thunar_show_renamer_dialog                  (gpointer             parent,
                                                          ThunarFile          *current_directory,
                                                          GList               *files,
-                                                         gboolean             standalone);
+                                                         gboolean             standalone,
+                                                         const gchar         *startup_id);
 
 G_END_DECLS;
 

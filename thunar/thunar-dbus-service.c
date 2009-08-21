@@ -102,11 +102,13 @@ static gboolean thunar_dbus_service_bulk_rename                 (ThunarDBusServi
                                                                  gchar                 **filenames,
                                                                  gboolean                standalone,
                                                                  const gchar            *display,
+                                                                 const gchar            *startup_id,
                                                                  GError                **error);
 static gboolean thunar_dbus_service_launch_files                (ThunarDBusService      *dbus_service,
                                                                  const gchar            *working_directory,
                                                                  gchar                 **filenames,
                                                                  const gchar            *display,
+                                                                 const gchar            *startup_id,
                                                                  GError                **error);
 static gboolean thunar_dbus_service_terminate                   (ThunarDBusService      *dbus_service,
                                                                  GError                **error);
@@ -361,7 +363,7 @@ thunar_dbus_service_display_folder (ThunarDBusService *dbus_service,
 
   /* popup a new window for the folder */
   application = thunar_application_get ();
-  thunar_application_open_window (application, file, screen);
+  thunar_application_open_window (application, file, screen, NULL);
   g_object_unref (G_OBJECT (application));
 
   /* cleanup */
@@ -400,7 +402,7 @@ thunar_dbus_service_display_folder_and_select (ThunarDBusService *dbus_service,
 
   /* popup a new window for the folder */
   application = thunar_application_get ();
-  window = thunar_application_open_window (application, folder, screen);
+  window = thunar_application_open_window (application, folder, screen, NULL);
   g_object_unref (application);
 
   /* determine the path for the filename relative to the folder */
@@ -480,7 +482,7 @@ thunar_dbus_service_launch (ThunarDBusService *dbus_service,
   if (thunar_dbus_service_parse_uri_and_display (dbus_service, uri, display, &file, &screen, error))
     {
       /* try to launch the file on the given screen */
-      result = thunar_file_launch (file, screen, error);
+      result = thunar_file_launch (file, screen, NULL, error);
 
       /* cleanup */
       g_object_unref (G_OBJECT (screen));
@@ -509,7 +511,7 @@ thunar_dbus_service_display_preferences_dialog (ThunarDBusService *dbus_service,
   /* popup the preferences dialog... */
   dialog = thunar_preferences_dialog_new (NULL);
   gtk_window_set_screen (GTK_WINDOW (dialog), screen);
-  gtk_widget_show (dialog);
+  gtk_window_present (GTK_WINDOW (dialog));
 
   /* ...and let the application take care of it */
   application = thunar_application_get ();
@@ -542,7 +544,7 @@ thunar_dbus_service_display_trash (ThunarDBusService *dbus_service,
     {
       /* tell the application to display the trash bin */
       application = thunar_application_get ();
-      thunar_application_open_window (application, dbus_service->trash_bin, screen);
+      thunar_application_open_window (application, dbus_service->trash_bin, screen, NULL);
       g_object_unref (G_OBJECT (application));
 
       /* release the screen */
@@ -669,6 +671,7 @@ thunar_dbus_service_bulk_rename (ThunarDBusService *dbus_service,
                                  gchar            **filenames,
                                  gboolean           standalone,
                                  const gchar       *display,
+                                 const gchar       *startup_id,
                                  GError           **error)
 {
   ThunarApplication *application;
@@ -687,7 +690,7 @@ thunar_dbus_service_bulk_rename (ThunarDBusService *dbus_service,
     {
       /* tell the application to display the bulk rename dialog */
       application = thunar_application_get ();
-      result = thunar_application_bulk_rename (application, cwd, filenames, standalone, screen, error);
+      result = thunar_application_bulk_rename (application, cwd, filenames, standalone, screen, startup_id, error);
       g_object_unref (G_OBJECT (application));
 
       /* release the screen */
@@ -707,6 +710,7 @@ thunar_dbus_service_launch_files (ThunarDBusService *dbus_service,
                                   const gchar       *working_directory,
                                   gchar            **filenames,
                                   const gchar       *display,
+                                  const gchar       *startup_id,
                                   GError           **error)
 {
   ThunarApplication *application;
@@ -735,7 +739,7 @@ thunar_dbus_service_launch_files (ThunarDBusService *dbus_service,
     {
       /* let the application process the filenames */
       application = thunar_application_get ();
-      result = thunar_application_process_filenames (application, working_directory, filenames, screen, error);
+      result = thunar_application_process_filenames (application, working_directory, filenames, screen, startup_id, error);
       g_object_unref (G_OBJECT (application));
 
       /* release the screen */
