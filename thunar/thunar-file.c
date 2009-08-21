@@ -126,7 +126,7 @@ G_LOCK_DEFINE_STATIC (file_cache_mutex);
 static ThunarUserManager *user_manager;
 static ThunarMetafile    *metafile;
 static GObjectClass      *thunar_file_parent_class;
-static GHashTable        *file_cache; /* TODO Make the cache thread safe! */
+static GHashTable        *file_cache;
 static guint32            effective_user_id;
 static GQuark             thunar_file_thumb_path_quark;
 static GQuark             thunar_file_watch_count_quark;
@@ -897,7 +897,6 @@ thunar_file_load (ThunarFile   *file,
     (file->flags & ~THUNAR_FILE_THUMB_STATE_MASK) | THUNAR_FILE_THUMB_STATE_UNKNOWN;
 
   /* determine thumbnail path */
-  /* TODO monitor the thumbnail path for changes */
   uri = g_file_get_uri (file->gfile);
   md5_hash = g_compute_checksum_for_string (G_CHECKSUM_MD5, uri, -1);
   basename = g_strdup_printf ("%s.png", md5_hash);
@@ -906,6 +905,8 @@ thunar_file_load (ThunarFile   *file,
   g_free (basename);
   g_free (md5_hash);
   g_free (uri);
+
+  /* TODO monitor the thumbnail file for changes */
 
   if (err != NULL)
     {
@@ -1550,9 +1551,9 @@ thunar_file_get_mode_string (const ThunarFile *file)
    * 'D' for doors. Do we still need those? */
   switch (kind)
     {
-    case G_FILE_TYPE_SYMBOLIC_LINK:       text[0] = 'l'; break;
-    case G_FILE_TYPE_REGULAR:             text[0] = '-'; break;
-    case G_FILE_TYPE_DIRECTORY:           text[0] = 'd'; break;
+    case G_FILE_TYPE_SYMBOLIC_LINK: text[0] = 'l'; break;
+    case G_FILE_TYPE_REGULAR:       text[0] = '-'; break;
+    case G_FILE_TYPE_DIRECTORY:     text[0] = 'd'; break;
     case G_FILE_TYPE_SPECIAL:
     case G_FILE_TYPE_UNKNOWN:
     default:
