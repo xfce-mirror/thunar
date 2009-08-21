@@ -149,7 +149,7 @@ static GdkDragAction        thunar_standard_view_get_dest_actions           (Thu
                                                                              GdkDragContext           *context,
                                                                              gint                      x,
                                                                              gint                      y,
-                                                                             guint                     time,
+                                                                             guint                     timestamp,
                                                                              ThunarFile              **file_return);
 static ThunarFile          *thunar_standard_view_get_drop_file              (ThunarStandardView       *standard_view,
                                                                              gint                      x,
@@ -211,7 +211,7 @@ static gboolean             thunar_standard_view_drag_drop                  (Gtk
                                                                              GdkDragContext           *context,
                                                                              gint                      x,
                                                                              gint                      y,
-                                                                             guint                     time,
+                                                                             guint                     timestamp,
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_drag_data_received         (GtkWidget                *view,
                                                                              GdkDragContext           *context,
@@ -219,17 +219,17 @@ static void                 thunar_standard_view_drag_data_received         (Gtk
                                                                              gint                      y,
                                                                              GtkSelectionData         *selection_data,
                                                                              guint                     info,
-                                                                             guint                     time,
+                                                                             guint                     timestamp,
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_drag_leave                 (GtkWidget                *view,
                                                                              GdkDragContext           *context,
-                                                                             guint                     time,
+                                                                             guint                     timestamp,
                                                                              ThunarStandardView       *standard_view);
 static gboolean             thunar_standard_view_drag_motion                (GtkWidget                *view,
                                                                              GdkDragContext           *context,
                                                                              gint                      x,
                                                                              gint                      y,
-                                                                             guint                     time,
+                                                                             guint                     timestamp,
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_drag_begin                 (GtkWidget                *view,
                                                                              GdkDragContext           *context,
@@ -238,7 +238,7 @@ static void                 thunar_standard_view_drag_data_get              (Gtk
                                                                              GdkDragContext           *context,
                                                                              GtkSelectionData         *selection_data,
                                                                              guint                     info,
-                                                                             guint                     time,
+                                                                             guint                     timestamp,
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_drag_data_delete           (GtkWidget                *view,
                                                                              GdkDragContext           *context,
@@ -2526,7 +2526,7 @@ thunar_standard_view_drag_drop (GtkWidget          *view,
                                 GdkDragContext     *context,
                                 gint                x,
                                 gint                y,
-                                guint               time,
+                                guint               timestamp,
                                 ThunarStandardView *standard_view)
 {
   ThunarFile *file = NULL;
@@ -2605,7 +2605,7 @@ thunar_standard_view_drag_drop (GtkWidget          *view,
   /* request the drag data from the source (initiates
    * saving in case of XdndDirectSave).
    */
-  gtk_drag_get_data (view, context, target, time);
+  gtk_drag_get_data (view, context, target, timestamp);
 
   /* we'll call gtk_drag_finish() later */
   return TRUE;
@@ -2644,7 +2644,7 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
                                          gint                y,
                                          GtkSelectionData   *selection_data,
                                          guint               info,
-                                         guint               time,
+                                         guint               timestamp,
                                          ThunarStandardView *standard_view)
 {
   GdkDragAction actions;
@@ -2782,12 +2782,12 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
       else if (G_LIKELY (info == TARGET_TEXT_URI_LIST))
         {
           /* determine the drop position */
-          actions = thunar_standard_view_get_dest_actions (standard_view, context, x, y, time, &file);
+          actions = thunar_standard_view_get_dest_actions (standard_view, context, x, y, timestamp, &file);
           if (G_LIKELY ((actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK)) != 0))
             {
               /* ask the user what to do with the drop data */
               action = (context->action == GDK_ACTION_ASK)
-                     ? thunar_dnd_ask (GTK_WIDGET (standard_view), file, standard_view->priv->drop_file_list, time, actions)
+                     ? thunar_dnd_ask (GTK_WIDGET (standard_view), file, standard_view->priv->drop_file_list, timestamp, actions)
                      : context->action;
 
               /* perform the requested action */
@@ -2804,10 +2804,10 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
         }
 
       /* tell the peer that we handled the drop */
-      gtk_drag_finish (context, succeed, FALSE, time);
+      gtk_drag_finish (context, succeed, FALSE, timestamp);
 
       /* disable the highlighting and release the drag data */
-      thunar_standard_view_drag_leave (view, context, time, standard_view);
+      thunar_standard_view_drag_leave (view, context, timestamp, standard_view);
     }
 }
 
@@ -2816,7 +2816,7 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
 static void
 thunar_standard_view_drag_leave (GtkWidget          *widget,
                                  GdkDragContext     *context,
-                                 guint               time,
+                                 guint               timestamp,
                                  ThunarStandardView *standard_view)
 {
   /* reset the drop-file for the icon renderer */
@@ -2852,7 +2852,7 @@ thunar_standard_view_drag_motion (GtkWidget          *view,
                                   GdkDragContext     *context,
                                   gint                x,
                                   gint                y,
-                                  guint               time,
+                                  guint               timestamp,
                                   ThunarStandardView *standard_view)
 {
   GdkDragAction action = 0;
@@ -2908,16 +2908,16 @@ thunar_standard_view_drag_motion (GtkWidget          *view,
       else
         {
           /* request the drag data from the source */
-          gtk_drag_get_data (view, context, target, time);
+          gtk_drag_get_data (view, context, target, timestamp);
         }
 
       /* tell Gdk whether we can drop here */
-      gdk_drag_status (context, action, time);
+      gdk_drag_status (context, action, timestamp);
     }
   else
     {
       /* check whether we can drop at (x,y) */
-      thunar_standard_view_get_dest_actions (standard_view, context, x, y, time, NULL);
+      thunar_standard_view_get_dest_actions (standard_view, context, x, y, timestamp, NULL);
     }
 
   /* start the drag autoscroll timer if not already running */
@@ -2972,7 +2972,7 @@ thunar_standard_view_drag_data_get (GtkWidget          *view,
                                     GdkDragContext     *context,
                                     GtkSelectionData   *selection_data,
                                     guint               info,
-                                    guint               time,
+                                    guint               timestamp,
                                     ThunarStandardView *standard_view)
 {
   gchar *uri_string;
@@ -3252,7 +3252,7 @@ thunar_standard_view_drag_timer_destroy (gpointer user_data)
  * @standard_view : a #ThunarStandardView instance.
  * @button        : the mouse button which triggered the context menu or %0 if
  *                  the event wasn't triggered by a pointer device.
- * @time          : the event time.
+ * @timestamp     : the event time.
  *
  * Invoked by derived classes (and only by derived classes!) whenever the user
  * requests to open a context menu, e.g. by right-clicking on a file/folder or by
@@ -3261,7 +3261,7 @@ thunar_standard_view_drag_timer_destroy (gpointer user_data)
 void
 thunar_standard_view_context_menu (ThunarStandardView *standard_view,
                                    guint               button,
-                                   guint32             time)
+                                   guint32             timestamp)
 {
   GtkWidget *menu;
   GList     *selected_items;
@@ -3279,7 +3279,7 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view,
 
   /* run the menu on the view's screen (figuring out whether to use the file or the folder context menu) */
   menu = gtk_ui_manager_get_widget (standard_view->ui_manager, (selected_items != NULL) ? "/file-context-menu" : "/folder-context-menu");
-  thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (standard_view), NULL, NULL, button, time);
+  thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (standard_view), NULL, NULL, button, timestamp);
 
   /* release the additional reference on the view */
   g_object_unref (G_OBJECT (standard_view));

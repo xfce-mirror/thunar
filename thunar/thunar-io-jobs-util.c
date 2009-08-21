@@ -25,6 +25,7 @@
 #include <gio/gio.h>
 
 #include <thunar/thunar-gio-extensions.h>
+#include <thunar/thunar-io-jobs-util.h>
 #include <thunar/thunar-job.h>
 #include <thunar/thunar-private.h>
 
@@ -72,7 +73,7 @@ GFile *
 thunar_io_jobs_util_next_duplicate_file (ThunarJob *job,
                                          GFile     *file,
                                          gboolean   copy,
-                                         gint       n,
+                                         guint      n,
                                          GError   **error)
 {
   GFileInfo *info;

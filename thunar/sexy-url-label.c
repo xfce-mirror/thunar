@@ -218,7 +218,7 @@ sexy_url_label_motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
 	GdkModifierType state;
 	gboolean found = FALSE;
 	GList *l;
-	int index, trailing;
+	int idx, trailing;
 	int x, y;
 	SexyUrlLabelLink *link = NULL;
 
@@ -234,13 +234,13 @@ sexy_url_label_motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
 	if (pango_layout_xy_to_index(layout,
 								 (x - priv->layout_x) * PANGO_SCALE,
 								 (y - priv->layout_y) * PANGO_SCALE,
-								 &index, &trailing))
+								 &idx, &trailing))
 	{
 		for (l = priv->links; l != NULL; l = l->next)
 		{
 			link = (SexyUrlLabelLink *)l->data;
 
-			if (index >= link->start && index <= link->end)
+			if (idx >= link->start && idx <= link->end)
 			{
 				found = TRUE;
 				break;

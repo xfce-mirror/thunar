@@ -527,7 +527,7 @@ thunarx_renamer_set_name (ThunarxRenamer *renamer,
  *            determined.
  * @text    : the part of the filename to which the
  *            @renamer should be applied.
- * @index   : the index of the file in the list, used
+ * @idx     : the index of the file in the list, used
  *            for renamers that work on numbering.
  *
  * Determines the replacement for @text (which is the relevant
@@ -543,12 +543,12 @@ gchar*
 thunarx_renamer_process (ThunarxRenamer  *renamer,
                          ThunarxFileInfo *file,
                          const gchar     *text,
-                         guint            index)
+                         guint            idx)
 {
   g_return_val_if_fail (THUNARX_IS_FILE_INFO (file), NULL);
   g_return_val_if_fail (THUNARX_IS_RENAMER (renamer), NULL);
   g_return_val_if_fail (g_utf8_validate (text, -1, NULL), NULL);
-  return (*THUNARX_RENAMER_GET_CLASS (renamer)->process) (renamer, file, text, index);
+  return (*THUNARX_RENAMER_GET_CLASS (renamer)->process) (renamer, file, text, idx);
 }
 
 

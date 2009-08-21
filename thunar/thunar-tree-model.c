@@ -1503,12 +1503,15 @@ thunar_tree_model_item_load_idle (gpointer user_data)
   GMount              *mount;
   GFile               *mount_point;
   GList               *files;
+#ifndef NDEBUG
+  GNode               *node;
+#endif
 
   _thunar_return_val_if_fail (item->folder == NULL, FALSE);
 
 #ifndef NDEBUG
       /* find the node in the tree */
-      GNode *node = g_node_find (item->model->root, G_POST_ORDER, G_TRAVERSE_ALL, item);
+      node = g_node_find (item->model->root, G_POST_ORDER, G_TRAVERSE_ALL, item);
 
       /* debug check to make sure the node is empty or contains a dummy node.
        * if this is not true, the node already contains sub folders which means

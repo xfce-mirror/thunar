@@ -474,7 +474,7 @@ thunar_column_editor_update_buttons (ThunarColumnEditor *column_editor)
   GtkTreeIter       iter;
   gboolean          mutable;
   gboolean          visible;
-  gint              index;
+  gint              idx;
 
   /* determine the selected row */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (column_editor->tree_view));
@@ -486,9 +486,9 @@ thunar_column_editor_update_buttons (ThunarColumnEditor *column_editor)
         return;
 
       /* update the "Move Up"/"Move Down" buttons */
-      index = gtk_tree_path_get_indices (path)[0];
-      gtk_widget_set_sensitive (column_editor->up_button, (index > 0));
-      gtk_widget_set_sensitive (column_editor->down_button, (index + 1 < gtk_tree_model_iter_n_children (model, NULL)));
+      idx = gtk_tree_path_get_indices (path)[0];
+      gtk_widget_set_sensitive (column_editor->up_button, (idx > 0));
+      gtk_widget_set_sensitive (column_editor->down_button, (idx + 1 < gtk_tree_model_iter_n_children (model, NULL)));
 
       /* update the "Show"/"Hide" buttons */
       gtk_tree_model_get (model, &iter, THUNAR_COLUMN_MODEL_COLUMN_MUTABLE, &mutable, THUNAR_COLUMN_MODEL_COLUMN_VISIBLE, &visible, -1);

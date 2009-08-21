@@ -569,7 +569,7 @@ thunar_chooser_dialog_selection_func (GtkTreeSelection *selection,
 static gboolean
 thunar_chooser_dialog_context_menu (ThunarChooserDialog *dialog,
                                     guint                button,
-                                    guint32              time)
+                                    guint32              timestamp)
 {
   GtkTreeSelection *selection;
   GtkTreeModel     *model;
@@ -607,7 +607,7 @@ thunar_chooser_dialog_context_menu (ThunarChooserDialog *dialog,
   gtk_widget_show (image);
 
   /* run the menu on the dialog's screen (takes over the floating of menu) */
-  thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (dialog), NULL, NULL, button, time);
+  thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (dialog), NULL, NULL, button, timestamp);
 
   /* clean up */
   g_object_unref (app_info);

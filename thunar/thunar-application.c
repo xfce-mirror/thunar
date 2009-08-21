@@ -356,7 +356,7 @@ thunar_application_collect_and_launch (ThunarApplication *application,
   GError *err = NULL;
   GList  *target_file_list = NULL;
   GList  *lp;
-  gchar  *basename;
+  gchar  *base_name;
 
   /* check if we have anything to operate on */
   if (G_UNLIKELY (source_file_list == NULL))
@@ -373,9 +373,9 @@ thunar_application_collect_and_launch (ThunarApplication *application,
         }
       else
         {
-          basename = g_file_get_basename (lp->data);
-          file = g_file_resolve_relative_path (target_file, basename);
-          g_free (basename);
+          base_name = g_file_get_basename (lp->data);
+          file = g_file_resolve_relative_path (target_file, base_name);
+          g_free (base_name);
 
           /* add to the target file list */
           target_file_list = thunar_g_file_list_prepend (target_file_list, file);

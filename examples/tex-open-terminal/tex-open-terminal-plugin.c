@@ -26,11 +26,19 @@
 
 
 
+G_MODULE_EXPORT void thunar_extension_initialize (ThunarxProviderPlugin *plugin);
+G_MODULE_EXPORT void thunar_extension_shutdown   (void);
+G_MODULE_EXPORT void thunar_extension_list_types (const GType         **types,
+                                                  gint                 *n_types);
+
+
+
+
 static GType type_list[1];
 
 
 
-G_MODULE_EXPORT void
+void
 thunar_extension_initialize (ThunarxProviderPlugin *plugin)
 {
   const gchar *mismatch;
@@ -54,7 +62,7 @@ thunar_extension_initialize (ThunarxProviderPlugin *plugin)
 
 
 
-G_MODULE_EXPORT void
+void
 thunar_extension_shutdown (void)
 {
   g_message ("Shutting down TexOpenTerminal extension");
@@ -62,7 +70,7 @@ thunar_extension_shutdown (void)
 
 
 
-G_MODULE_EXPORT void
+void
 thunar_extension_list_types (const GType **types,
                              gint         *n_types)
 {

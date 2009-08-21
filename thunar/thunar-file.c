@@ -739,7 +739,7 @@ thunar_file_load (ThunarFile   *file,
   GKeyFile *key_file;
   GError   *err = NULL;
   GFile    *thumbnail_dir;
-  gchar    *basename;
+  gchar    *base_name;
   gchar    *md5_hash;
   gchar    *thumbnail_dir_path;
   gchar    *uri = NULL;
@@ -899,10 +899,10 @@ thunar_file_load (ThunarFile   *file,
   /* determine thumbnail path */
   uri = g_file_get_uri (file->gfile);
   md5_hash = g_compute_checksum_for_string (G_CHECKSUM_MD5, uri, -1);
-  basename = g_strdup_printf ("%s.png", md5_hash);
+  base_name = g_strdup_printf ("%s.png", md5_hash);
   file->thumbnail_path = g_build_filename (xfce_get_homedir (), ".thumbnails", 
-                                           "normal", basename, NULL);
-  g_free (basename);
+                                           "normal", base_name, NULL);
+  g_free (base_name);
   g_free (md5_hash);
   g_free (uri);
 
@@ -2266,7 +2266,7 @@ thunar_file_get_deletion_date (const ThunarFile *file,
                                ThunarDateStyle   date_style)
 {
   const gchar *date;
-  time_t       time;
+  time_t       deletion_time;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (G_IS_FILE_INFO (file->info), NULL);
@@ -2276,10 +2276,10 @@ thunar_file_get_deletion_date (const ThunarFile *file,
     return NULL;
 
   /* try to parse the DeletionDate (RFC 3339 string) */
-  time = thunar_util_time_from_rfc3339 (date);
+  deletion_time = thunar_util_time_from_rfc3339 (date);
 
   /* humanize the time value */
-  return thunar_util_humanize_file_time (time, date_style);
+  return thunar_util_humanize_file_time (deletion_time, date_style);
 }
 
 

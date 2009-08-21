@@ -46,7 +46,7 @@ dnd_action_selected (GtkWidget     *item,
  * @widget    : the widget on which the drop was performed.
  * @folder    : the #ThunarFile to which the @path_list is being dropped.
  * @path_list : the #GFile<!---->s of the files being dropped to @file.
- * @time      : the time of the drop event.
+ * @timestamp : the time of the drop event.
  * @actions   : the list of actions supported for the drop.
  *
  * Pops up a menu that asks the user to choose one of the
@@ -64,7 +64,7 @@ GdkDragAction
 thunar_dnd_ask (GtkWidget    *widget,
                 ThunarFile   *folder,
                 GList        *path_list,
-                guint         time,
+                guint         timestamp,
                 GdkDragAction dnd_actions)
 {
   static const GdkDragAction dnd_action_items[] = { GDK_ACTION_COPY, GDK_ACTION_MOVE, GDK_ACTION_LINK };
@@ -175,7 +175,7 @@ thunar_dnd_ask (GtkWidget    *widget,
   gtk_widget_show (item);
 
   /* run the menu on the widget's screen (takes over the floating reference of menu) */
-  thunar_gtk_menu_run (GTK_MENU (menu), widget, NULL, NULL, 3, time);
+  thunar_gtk_menu_run (GTK_MENU (menu), widget, NULL, NULL, 3, timestamp);
 
   /* cleanup */
   g_object_unref (G_OBJECT (factory));

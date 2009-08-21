@@ -751,7 +751,7 @@ thunar_tree_view_drag_data_received (GtkWidget        *widget,
                                      gint              y,
                                      GtkSelectionData *selection_data,
                                      guint             info,
-                                     guint             time)
+                                     guint             timestamp)
 {
   ThunarTreeView *view = THUNAR_TREE_VIEW (widget);
   GdkDragAction   actions;
@@ -777,12 +777,12 @@ thunar_tree_view_drag_data_received (GtkWidget        *widget,
       view->drop_occurred = FALSE;
 
       /* determine the drop position */
-      actions = thunar_tree_view_get_dest_actions (view, context, x, y, time, &file);
+      actions = thunar_tree_view_get_dest_actions (view, context, x, y, timestamp, &file);
       if (G_LIKELY ((actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK)) != 0))
         {
           /* ask the user what to do with the drop data */
           action = (context->action == GDK_ACTION_ASK)
-                 ? thunar_dnd_ask (GTK_WIDGET (view), file, view->drop_file_list, time, actions)
+                 ? thunar_dnd_ask (GTK_WIDGET (view), file, view->drop_file_list, timestamp, actions)
                  : context->action;
 
           /* perform the requested action */
@@ -795,10 +795,10 @@ thunar_tree_view_drag_data_received (GtkWidget        *widget,
         g_object_unref (G_OBJECT (file));
 
       /* tell the peer that we handled the drop */
-      gtk_drag_finish (context, succeed, FALSE, time);
+      gtk_drag_finish (context, succeed, FALSE, timestamp);
 
       /* disable the highlighting and release the drag data */
-      thunar_tree_view_drag_leave (GTK_WIDGET (view), context, time);
+      thunar_tree_view_drag_leave (GTK_WIDGET (view), context, timestamp);
     }
 }
 
@@ -809,7 +809,7 @@ thunar_tree_view_drag_drop (GtkWidget      *widget,
                             GdkDragContext *context,
                             gint            x,
                             gint            y,
-                            guint           time)
+                            guint           timestamp)
 {
   ThunarTreeView *view = THUNAR_TREE_VIEW (widget);
   GdkAtom         target;
@@ -824,7 +824,7 @@ thunar_tree_view_drag_drop (GtkWidget      *widget,
       view->drop_occurred = TRUE;
 
       /* request the drag data from the source. */
-      gtk_drag_get_data (widget, context, target, time);
+      gtk_drag_get_data (widget, context, target, timestamp);
     }
   else
     {
@@ -842,7 +842,7 @@ thunar_tree_view_drag_motion (GtkWidget      *widget,
                               GdkDragContext *context,
                               gint            x,
                               gint            y,
-                              guint           time)
+                              guint           timestamp)
 {
   ThunarTreeView *view = THUNAR_TREE_VIEW (widget);
   GdkAtom         target;
@@ -865,15 +865,15 @@ thunar_tree_view_drag_motion (GtkWidget      *widget,
       g_object_set (G_OBJECT (view->icon_renderer), "drop-file", NULL, NULL);
 
       /* request the drag data from the source */
-      gtk_drag_get_data (widget, context, target, time);
+      gtk_drag_get_data (widget, context, target, timestamp);
 
       /* tell Gdk that we don't know whether we can drop */
-      gdk_drag_status (context, 0, time);
+      gdk_drag_status (context, 0, timestamp);
     }
   else
     {
       /* check if we can drop here */
-      thunar_tree_view_get_dest_actions (view, context, x, y, time, NULL);
+      thunar_tree_view_get_dest_actions (view, context, x, y, timestamp, NULL);
     }
 
   /* start the drag autoscroll timer if not already running */
@@ -892,7 +892,7 @@ thunar_tree_view_drag_motion (GtkWidget      *widget,
 static void
 thunar_tree_view_drag_leave (GtkWidget      *widget,
                              GdkDragContext *context,
-                             guint           time)
+                             guint           timestamp)
 {
   ThunarTreeView *view = THUNAR_TREE_VIEW (widget);
 
@@ -912,7 +912,7 @@ thunar_tree_view_drag_leave (GtkWidget      *widget,
     }
 
   /* call the parent's handler */
-  (*GTK_WIDGET_CLASS (thunar_tree_view_parent_class)->drag_leave) (widget, context, time);
+  (*GTK_WIDGET_CLASS (thunar_tree_view_parent_class)->drag_leave) (widget, context, timestamp);
 }
 
 
@@ -1335,7 +1335,7 @@ thunar_tree_view_get_dest_actions (ThunarTreeView *view,
                                    GdkDragContext *context,
                                    gint            x,
                                    gint            y,
-                                   guint           time,
+                                   guint           timestamp,
                                    ThunarFile    **file_return)
 {
   GdkDragAction actions = 0;
@@ -1386,7 +1386,7 @@ thunar_tree_view_get_dest_actions (ThunarTreeView *view,
   g_object_set (G_OBJECT (view->icon_renderer), "drop-file", file, NULL);
 
   /* tell Gdk whether we can drop here */
-  gdk_drag_status (context, action, time);
+  gdk_drag_status (context, action, timestamp);
 
   /* return the file if requested */
   if (G_LIKELY (file_return != NULL))

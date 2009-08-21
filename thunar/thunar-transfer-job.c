@@ -495,7 +495,7 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
   GFileInfo        *info;
   GError           *err = NULL;
   GFile            *real_target_file = NULL;
-  gchar            *basename;
+  gchar            *base_name;
 
   _thunar_return_if_fail (THUNAR_IS_TRANSFER_JOB (job));
   _thunar_return_if_fail (node != NULL && G_IS_FILE (node->source_file));
@@ -513,9 +513,9 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
       /* guess the target file for this node (unless already provided) */
       if (G_LIKELY (target_file == NULL))
         {
-          basename = g_file_get_basename (node->source_file);
-          target_file = g_file_get_child (target_parent_file, basename);
-          g_free (basename);
+          base_name = g_file_get_basename (node->source_file);
+          target_file = g_file_get_child (target_parent_file, base_name);
+          g_free (base_name);
         }
       else
         target_file = g_object_ref (target_file);
@@ -636,7 +636,7 @@ thunar_transfer_job_execute (ExoJob  *job,
   GList              *tnext;
   GList              *tp;
   GFile              *target_parent;
-  gchar              *basename;
+  gchar              *base_name;
   gchar              *parent_display_name;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), FALSE);
@@ -691,9 +691,9 @@ thunar_transfer_job_execute (ExoJob  *job,
           if (G_LIKELY (!parent_exists))
             {
               /* determine the display name of the parent */
-              basename = g_file_get_basename (target_parent);
-              parent_display_name = g_filename_display_name (basename);
-              g_free (basename);
+              base_name = g_file_get_basename (target_parent);
+              parent_display_name = g_filename_display_name (base_name);
+              g_free (base_name);
 
               /* ask the user whether he wants to create the parent folder because its gone */
               response = thunar_job_ask_create (THUNAR_JOB (job),

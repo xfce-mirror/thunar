@@ -176,7 +176,8 @@ thunar_dbus_service_class_init (ThunarDBusServiceClass *klass)
   gobject_class->finalize = thunar_dbus_service_finalize;
 
   /* install the D-BUS info for our class */
-  dbus_g_object_type_install_info (G_TYPE_FROM_CLASS (klass), &dbus_glib_thunar_dbus_service_object_info);
+  dbus_g_object_type_install_info (G_TYPE_FROM_CLASS (klass), 
+                                   &dbus_glib_thunar_dbus_service_object_info);
 
   /**
    * ThunarDBusService::trash-changed:

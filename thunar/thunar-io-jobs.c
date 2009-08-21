@@ -27,6 +27,7 @@
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-io-scan-directory.h>
+#include <thunar/thunar-io-jobs.h>
 #include <thunar/thunar-job.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-simple-job.h>
@@ -89,7 +90,7 @@ _thunar_io_jobs_create (ThunarJob   *job,
   GError            *err = NULL;
   GList             *file_list;
   GList             *lp;
-  gchar             *basename;
+  gchar             *base_name;
   gchar             *display_name;
   
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
@@ -150,9 +151,9 @@ again:
                 }
               else
                 {
-                  basename = g_file_get_basename (lp->data);
-                  display_name = g_filename_display_name (basename);
-                  g_free (basename);
+                  base_name = g_file_get_basename (lp->data);
+                  display_name = g_filename_display_name (base_name);
+                  g_free (base_name);
                 }
 
               /* ask the user whether he wants to overwrite the existing file */
@@ -174,9 +175,9 @@ again:
           else 
             {
               /* determine display name of the file */
-              basename = g_file_get_basename (lp->data);
-              display_name = g_filename_display_basename (basename);
-              g_free (basename);
+              base_name = g_file_get_basename (lp->data);
+              display_name = g_filename_display_basename (base_name);
+              g_free (base_name);
 
               /* ask the user whether to skip/retry this path (cancels the job if not) */
               response = thunar_job_ask_skip (THUNAR_JOB (job), 
@@ -233,7 +234,7 @@ _thunar_io_jobs_mkdir (ThunarJob   *job,
   GError           *err = NULL;
   GList            *file_list;
   GList            *lp;
-  gchar            *basename;
+  gchar            *base_name;
   gchar            *display_name;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
@@ -287,9 +288,9 @@ again:
                 }
               else
                 {
-                  basename = g_file_get_basename (lp->data);
-                  display_name = g_filename_display_name (basename);
-                  g_free (basename);
+                  base_name = g_file_get_basename (lp->data);
+                  display_name = g_filename_display_name (base_name);
+                  g_free (base_name);
                 }
 
               /* ask the user whether he wants to overwrite the existing file */
@@ -311,9 +312,9 @@ again:
           else
             {
               /* determine the display name of the file */
-              basename = g_file_get_basename (lp->data);
-              display_name = g_filename_display_basename (basename);
-              g_free (basename);
+              base_name = g_file_get_basename (lp->data);
+              display_name = g_filename_display_basename (base_name);
+              g_free (base_name);
 
               /* ask the user whether to skip/retry this path (cancels the job if not) */
               response = thunar_job_ask_skip (THUNAR_JOB (job), 
@@ -369,7 +370,7 @@ _thunar_io_jobs_unlink (ThunarJob   *job,
   GError           *err = NULL;
   GList            *file_list;
   GList            *lp;
-  gchar            *basename;
+  gchar            *base_name;
   gchar            *display_name;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
@@ -436,9 +437,9 @@ again:
             }
           else
             {
-              basename = g_file_get_basename (lp->data);
-              display_name = g_filename_display_name (basename);
-              g_free (basename);
+              base_name = g_file_get_basename (lp->data);
+              display_name = g_filename_display_name (base_name);
+              g_free (base_name);
             }
 
           /* ask the user whether he wants to skip this file */
@@ -524,7 +525,7 @@ _thunar_io_jobs_link (ThunarJob   *job,
   GList            *sp;
   GList            *target_file_list;
   GList            *tp;
-  gchar            *basename;
+  gchar            *base_name;
   gchar            *display_name;
   gchar            *source_path;
 
@@ -588,13 +589,13 @@ again:
         }
       else
         {
-          basename = g_file_get_basename (sp->data);
-          display_name = g_filename_display_name (basename);
+          base_name = g_file_get_basename (sp->data);
+          display_name = g_filename_display_name (base_name);
           g_set_error (&err, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
                        _("Could not create symbolic link to \"%s\" "
                          "because it is not a local file"), display_name);
           g_free (display_name);
-          g_free (basename);
+          g_free (base_name);
         }
     }
 
@@ -1090,7 +1091,7 @@ thunar_io_jobs_list_directory (GFile *directory)
 
 
 
-gboolean
+static gboolean
 _thunar_io_jobs_rename_notify (ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
@@ -1106,7 +1107,7 @@ _thunar_io_jobs_rename_notify (ThunarFile *file)
 
 
 
-gboolean
+static gboolean
 _thunar_io_jobs_rename (ThunarJob   *job,
                         GValueArray *param_values,
                         GError     **error)

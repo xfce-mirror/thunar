@@ -373,15 +373,21 @@ thunar-window-ui.h: Makefile $(srcdir)/thunar-window-ui.xml
 thunar-marshal.h: stamp-thunar-marshal.h
 	@true
 stamp-thunar-marshal.h: thunar-marshal.list Makefile
-	( cd $(srcdir) && glib-genmarshal \
+	cd $(srcdir) \
+	&& echo "#ifndef __THUNAR_MARSHAL_H__" > xgen-tmh \
+	&& echo "#define __THUNAR_MARSHAL_H__" >> xgen-tmh \
+	&& ( glib-genmarshal \
 		--prefix=_thunar_marshal \
 		--header thunar-marshal.list ) >> xgen-tmh \
+	&& echo "#endif /* !__THUNAR_MARSHAL_H__ */" >> xgen-tmh \
 	&& ( cmp -s xgen-tmh thunar-marshal.h || cp xgen-tmh thunar-marshal.h ) \
 	&& rm -f xgen-tmh \
 	&& echo timestamp > $(@F)
 
 thunar-marshal.c: thunar-marshal.list Makefile
-	( cd $(srcdir) && glib-genmarshal \
+	cd $(srcdir) \
+	&& echo "#include <thunar/thunar-marshal.h>" > xgen-tmc \
+	&& ( glib-genmarshal \
 		--prefix=_thunar_marshal \
 		--body thunar-marshal.list ) >> xgen-tmc \
 	&& cp xgen-tmc thunar-marshal.c \
