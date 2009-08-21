@@ -64,8 +64,6 @@ enum
 
 
 
-static void           thunar_application_class_init             (ThunarApplicationClass *klass);
-static void           thunar_application_init                   (ThunarApplication      *application);
 static void           thunar_application_finalize               (GObject                *object);
 static void           thunar_application_get_property           (GObject                *object,
                                                                  guint                   prop_id,
@@ -141,38 +139,12 @@ struct _ThunarApplication
 
 
 
-static GObjectClass *thunar_application_parent_class;
-static GQuark        thunar_application_screen_quark;
-static GQuark        thunar_application_startup_id_quark;
+static GQuark thunar_application_screen_quark;
+static GQuark thunar_application_startup_id_quark;
 
 
 
-GType
-thunar_application_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarApplicationClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_application_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarApplication),
-        0,
-        (GInstanceInitFunc) thunar_application_init,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarApplication"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarApplication, thunar_application, G_TYPE_OBJECT)
 
 
 
@@ -186,9 +158,6 @@ thunar_application_class_init (ThunarApplicationClass *klass)
     g_quark_from_static_string ("thunar-application-screen");
   thunar_application_startup_id_quark =
     g_quark_from_static_string ("thunar-application-startup-id");
-
-  /* determine the parent type class */
-  thunar_application_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_application_finalize;

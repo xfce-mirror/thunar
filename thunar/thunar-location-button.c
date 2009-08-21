@@ -58,8 +58,6 @@ enum
 
 
 
-static void           thunar_location_button_class_init             (ThunarLocationButtonClass  *klass);
-static void           thunar_location_button_init                   (ThunarLocationButton       *location_button);
 static void           thunar_location_button_finalize               (GObject                    *object);
 static void           thunar_location_button_get_property           (GObject                    *object,
                                                                      guint                       prop_id,
@@ -158,37 +156,11 @@ static const GtkTargetEntry drag_targets[] =
   { "text/uri-list", 0, 0 },
 };
 
-static GObjectClass *thunar_location_button_parent_class;
-static guint         location_button_signals[LAST_SIGNAL];
+static guint location_button_signals[LAST_SIGNAL];
 
 
 
-GType
-thunar_location_button_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarLocationButtonClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_location_button_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarLocationButton),
-        0,
-        (GInstanceInitFunc) thunar_location_button_init,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_ALIGNMENT, I_("ThunarLocationButton"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarLocationButton, thunar_location_button, GTK_TYPE_ALIGNMENT)
 
 
 
@@ -197,9 +169,6 @@ thunar_location_button_class_init (ThunarLocationButtonClass *klass)
 {
   GtkWidgetClass *gtkwidget_class;
   GObjectClass   *gobject_class;
-
-  /* determine the parent type class */
-  thunar_location_button_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_location_button_finalize;

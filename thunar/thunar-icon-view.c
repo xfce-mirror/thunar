@@ -35,8 +35,6 @@ enum
 
 
 
-static void         thunar_icon_view_class_init             (ThunarIconViewClass *klass);
-static void         thunar_icon_view_init                   (ThunarIconView      *icon_view);
 static void         thunar_icon_view_set_property           (GObject             *object,
                                                              guint                prop_id,
                                                              const GValue        *value,
@@ -58,36 +56,7 @@ struct _ThunarIconView
 
 
 
-static GObjectClass *thunar_icon_view_parent_class;
-
-
-
-GType
-thunar_icon_view_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarIconViewClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_icon_view_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarIconView),
-        0,
-        (GInstanceInitFunc) thunar_icon_view_init,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_TYPE_ABSTRACT_ICON_VIEW, I_("ThunarIconView"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarIconView, thunar_icon_view, THUNAR_TYPE_ABSTRACT_ICON_VIEW)
 
 
 
@@ -97,9 +66,6 @@ thunar_icon_view_class_init (ThunarIconViewClass *klass)
   ThunarStandardViewClass *thunarstandard_view_class;
   GtkWidgetClass          *gtkwidget_class;
   GObjectClass            *gobject_class;
-
-  /* determine the parent type class */
-  thunar_icon_view_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->set_property = thunar_icon_view_set_property;

@@ -90,7 +90,6 @@ enum
 
 
 
-static void               thunar_file_class_init               (ThunarFileClass        *klass);
 static void               thunar_file_info_init                (ThunarxFileInfoIface   *iface);
 static void               thunar_file_dispose                  (GObject                *object);
 static void               thunar_file_finalize                 (GObject                *object);
@@ -125,7 +124,6 @@ G_LOCK_DEFINE_STATIC (file_cache_mutex);
 
 static ThunarUserManager *user_manager;
 static ThunarMetafile    *metafile;
-static GObjectClass      *thunar_file_parent_class;
 static GHashTable        *file_cache;
 static guint32            effective_user_id;
 static GQuark             thunar_file_thumb_path_quark;
@@ -135,40 +133,8 @@ static guint              file_signals[LAST_SIGNAL];
 
 
 
-GType
-thunar_file_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarFileClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_file_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarFile),
-        0,
-        NULL,
-        NULL,
-      };
-
-      static const GInterfaceInfo file_info_info = 
-      {
-        (GInterfaceInitFunc) thunar_file_info_init,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarFile"), &info, 0);
-      g_type_add_interface_static (type, THUNARX_TYPE_FILE_INFO, &file_info_info);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE_WITH_CODE (ThunarFile, thunar_file, G_TYPE_OBJECT,
+    G_IMPLEMENT_INTERFACE (THUNARX_TYPE_FILE_INFO, thunar_file_info_init))
 
 
 
@@ -257,6 +223,13 @@ thunar_file_class_init (ThunarFileClass *klass)
                   NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
+}
+
+
+
+static void
+thunar_file_init (ThunarFile *file)
+{
 }
 
 

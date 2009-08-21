@@ -31,8 +31,6 @@
 
 
 
-static void thunar_column_editor_class_init         (ThunarColumnEditorClass  *klass);
-static void thunar_column_editor_init               (ThunarColumnEditor       *column_editor);
 static void thunar_column_editor_finalize           (GObject                  *object);
 static void thunar_column_editor_help_clicked       (GtkWidget                *button,
                                                      ThunarColumnEditor       *column_editor);
@@ -73,36 +71,7 @@ struct _ThunarColumnEditor
 
 
 
-static GObjectClass *thunar_column_editor_parent_class;
-
-
-
-GType
-thunar_column_editor_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarColumnEditorClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_column_editor_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarColumnEditor),
-        0,
-        (GInstanceInitFunc) thunar_column_editor_init,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_TYPE_ABSTRACT_DIALOG, I_("ThunarColumnEditor"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarColumnEditor, thunar_column_editor, THUNAR_TYPE_ABSTRACT_DIALOG)
 
 
 
@@ -110,9 +79,6 @@ static void
 thunar_column_editor_class_init (ThunarColumnEditorClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* determine the parent type class */
-  thunar_column_editor_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_column_editor_finalize;

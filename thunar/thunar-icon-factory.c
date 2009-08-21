@@ -64,8 +64,6 @@ typedef struct _ThunarIconKey ThunarIconKey;
 
 
 
-static void       thunar_icon_factory_class_init            (ThunarIconFactoryClass   *klass);
-static void       thunar_icon_factory_init                  (ThunarIconFactory        *factory);
 static void       thunar_icon_factory_dispose               (GObject                  *object);
 static void       thunar_icon_factory_finalize              (GObject                  *object);
 static void       thunar_icon_factory_get_property          (GObject                  *object,
@@ -134,40 +132,14 @@ struct _ThunarIconKey
 
 
 
-static GObjectClass *thunar_icon_factory_parent_class = NULL;
-static GQuark        thunar_icon_factory_quark = 0;
-static GQuark        thunar_icon_thumb_uri_quark = 0;
-static GQuark        thunar_icon_thumb_time_quark = 0;
-static GQuark        thunar_file_thumb_uri_quark = 0;
+static GQuark thunar_icon_factory_quark = 0;
+static GQuark thunar_icon_thumb_uri_quark = 0;
+static GQuark thunar_icon_thumb_time_quark = 0;
+static GQuark thunar_file_thumb_uri_quark = 0;
 
 
 
-GType
-thunar_icon_factory_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarIconFactoryClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_icon_factory_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarIconFactory),
-        0,
-        (GInstanceInitFunc) thunar_icon_factory_init,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarIconFactory"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarIconFactory, thunar_icon_factory, G_TYPE_OBJECT)
 
 
 
@@ -175,9 +147,6 @@ static void
 thunar_icon_factory_class_init (ThunarIconFactoryClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* determine the parent type class */
-  thunar_icon_factory_parent_class = g_type_class_peek_parent (klass);
 
   /* setup the thunar-icon-thumb-{path,time} quarks */
   thunar_icon_thumb_uri_quark = g_quark_from_static_string ("thunar-icon-thumb-path");

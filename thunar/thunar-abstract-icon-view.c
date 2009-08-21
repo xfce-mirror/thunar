@@ -35,8 +35,6 @@
 
 
 
-static void         thunar_abstract_icon_view_class_init            (ThunarAbstractIconViewClass  *klass);
-static void         thunar_abstract_icon_view_init                  (ThunarAbstractIconView       *abstract_icon_view);
 static void         thunar_abstract_icon_view_style_set             (GtkWidget                    *widget,
                                                                      GtkStyle                     *previous_style);
 static void         thunar_abstract_icon_view_connect_ui_manager    (ThunarStandardView           *standard_view,
@@ -133,36 +131,7 @@ static const GtkRadioActionEntry order_action_entries[] =
 
 
 
-static GObjectClass *thunar_abstract_icon_view_parent_class;
-
-
-
-GType
-thunar_abstract_icon_view_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarAbstractIconViewClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_abstract_icon_view_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarAbstractIconView),
-        0,
-        (GInstanceInitFunc) thunar_abstract_icon_view_init,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_TYPE_STANDARD_VIEW, I_("ThunarAbstractIconView"), &info, G_TYPE_FLAG_ABSTRACT);
-    }
-
-  return type;
-}
+G_DEFINE_ABSTRACT_TYPE (ThunarAbstractIconView, thunar_abstract_icon_view, THUNAR_TYPE_STANDARD_VIEW)
 
 
 
@@ -174,9 +143,6 @@ thunar_abstract_icon_view_class_init (ThunarAbstractIconViewClass *klass)
 
   /* add private data to the instance type */
   g_type_class_add_private (klass, sizeof (ThunarAbstractIconViewPrivate));
-
-  /* determine the parent type class */
-  thunar_abstract_icon_view_parent_class = g_type_class_peek_parent (klass);
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->style_set = thunar_abstract_icon_view_style_set;

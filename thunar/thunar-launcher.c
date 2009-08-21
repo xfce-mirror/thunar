@@ -61,10 +61,8 @@ enum
 
 
 
-static void                    thunar_launcher_class_init                 (ThunarLauncherClass      *klass);
 static void                    thunar_launcher_component_init             (ThunarComponentIface     *iface);
 static void                    thunar_launcher_navigator_init             (ThunarNavigatorIface     *iface);
-static void                    thunar_launcher_init                       (ThunarLauncher           *launcher);
 static void                    thunar_launcher_dispose                    (GObject                  *object);
 static void                    thunar_launcher_finalize                   (GObject                  *object);
 static void                    thunar_launcher_get_property               (GObject                  *object,
@@ -175,61 +173,14 @@ static const GtkActionEntry action_entries[] =
   { "sendto-desktop", THUNAR_STOCK_DESKTOP, "", NULL, NULL, G_CALLBACK (thunar_launcher_action_sendto_desktop), },
 };
 
-static GObjectClass *thunar_launcher_parent_class;
-static GQuark        thunar_launcher_handler_quark;
+static GQuark thunar_launcher_handler_quark;
 
 
 
-GType
-thunar_launcher_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarLauncherClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_launcher_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarLauncher),
-        0,
-        (GInstanceInitFunc) thunar_launcher_init,
-        NULL,
-      };
-
-      static const GInterfaceInfo browser_info =
-      {
-        NULL, 
-        NULL, 
-        NULL
-      };
-
-      static const GInterfaceInfo component_info =
-      {
-        (GInterfaceInitFunc) thunar_launcher_component_init,
-        NULL,
-        NULL,
-      };
-
-      static const GInterfaceInfo navigator_info =
-      {
-        (GInterfaceInitFunc) thunar_launcher_navigator_init,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarLauncher"), &info, 0);
-      g_type_add_interface_static (type, THUNAR_TYPE_BROWSER, &browser_info);
-      g_type_add_interface_static (type, THUNAR_TYPE_NAVIGATOR, &navigator_info);
-      g_type_add_interface_static (type, THUNAR_TYPE_COMPONENT, &component_info);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE_WITH_CODE (ThunarLauncher, thunar_launcher, G_TYPE_OBJECT,
+    G_IMPLEMENT_INTERFACE (THUNAR_TYPE_BROWSER, NULL)
+    G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR, thunar_launcher_navigator_init)
+    G_IMPLEMENT_INTERFACE (THUNAR_TYPE_COMPONENT, thunar_launcher_component_init))
 
 
 
@@ -240,9 +191,6 @@ thunar_launcher_class_init (ThunarLauncherClass *klass)
 
   /* determine the "thunar-launcher-handler" quark */
   thunar_launcher_handler_quark = g_quark_from_static_string ("thunar-launcher-handler");
-
-  /* determine the parent type class */
-  thunar_launcher_parent_class = g_type_class_peek_parent (klass);
   
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_launcher_dispose;

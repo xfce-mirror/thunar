@@ -54,8 +54,6 @@ enum
 
 
 
-static void              thunar_job_class_init          (ThunarJobClass     *klass);
-static void              thunar_job_init                (ThunarJob          *job);
 static void              thunar_job_finalize            (GObject            *object);
 static ThunarJobResponse thunar_job_real_ask            (ThunarJob          *job,
                                                          const gchar        *message,
@@ -76,29 +74,11 @@ struct _ThunarJobPrivate
 
 
 
-static ExoJobClass *thunar_job_parent_class;
-static guint        job_signals[LAST_SIGNAL];
+static guint job_signals[LAST_SIGNAL];
 
 
 
-GType
-thunar_job_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      type = g_type_register_static_simple (EXO_TYPE_JOB,
-                                            "ThunarJob",
-                                            sizeof (ThunarJobClass),
-                                            (GClassInitFunc) thunar_job_class_init,
-                                            sizeof (ThunarJob),
-                                            (GInstanceInitFunc) thunar_job_init,
-                                            G_TYPE_FLAG_ABSTRACT);
-    }
-
-  return type;
-}
+G_DEFINE_ABSTRACT_TYPE (ThunarJob, thunar_job, EXO_TYPE_JOB)
 
 
 

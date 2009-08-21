@@ -50,8 +50,6 @@ enum
 
 
 
-static void     thunar_folder_class_init                  (ThunarFolderClass      *klass);
-static void     thunar_folder_init                        (ThunarFolder           *folder);
 static void     thunar_folder_finalize                    (GObject                *object);
 static void     thunar_folder_get_property                (GObject                *object,
                                                            guint                   prop_id,
@@ -113,38 +111,12 @@ struct _ThunarFolder
 
 
 
-static GObjectClass *thunar_folder_parent_class;
-static guint         folder_signals[LAST_SIGNAL];
-static GQuark        thunar_folder_quark;
+static guint  folder_signals[LAST_SIGNAL];
+static GQuark thunar_folder_quark;
 
 
 
-GType
-thunar_folder_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarFolderClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_folder_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarFolder),
-        0,
-        (GInstanceInitFunc) thunar_folder_init,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_OBJECT, I_("ThunarFolder"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarFolder, thunar_folder, GTK_TYPE_OBJECT)
 
 
 
@@ -152,9 +124,6 @@ static void
 thunar_folder_class_init (ThunarFolderClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* determine the parent type class */
-  thunar_folder_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_folder_finalize;

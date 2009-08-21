@@ -36,10 +36,6 @@ enum
 
 
 
-static void thunar_file_monitor_class_init (ThunarFileMonitorClass *klass);
-
-
-
 struct _ThunarFileMonitorClass
 {
   GObjectClass __parent__;
@@ -57,32 +53,7 @@ static guint              file_monitor_signals[LAST_SIGNAL];
 
 
 
-GType
-thunar_file_monitor_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarFileMonitorClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_file_monitor_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarFileMonitor),
-        0,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarFileMonitor"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarFileMonitor, thunar_file_monitor, G_TYPE_OBJECT)
 
 
 
@@ -126,6 +97,13 @@ thunar_file_monitor_class_init (ThunarFileMonitorClass *klass)
                   0, NULL, NULL,
                   g_cclosure_marshal_VOID__OBJECT,
                   G_TYPE_NONE, 1, THUNAR_TYPE_FILE);
+}
+
+
+
+static void
+thunar_file_monitor_init (ThunarFileMonitor *monitor)
+{
 }
 
 

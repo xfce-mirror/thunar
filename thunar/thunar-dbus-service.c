@@ -46,8 +46,6 @@
 
 
 
-static void     thunar_dbus_service_class_init                  (ThunarDBusServiceClass *klass);
-static void     thunar_dbus_service_init                        (ThunarDBusService      *dbus_service);
 static void     thunar_dbus_service_finalize                    (GObject                *object);
 static gboolean thunar_dbus_service_connect_trash_bin           (ThunarDBusService      *dbus_service,
                                                                  GError                **error);
@@ -135,36 +133,7 @@ struct _ThunarDBusService
 
 
 
-static GObjectClass *thunar_dbus_service_parent_class;
-
-
-
-GType
-thunar_dbus_service_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarDBusServiceClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_dbus_service_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarDBusService),
-        0,
-        (GInstanceInitFunc) thunar_dbus_service_init,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarDBusService"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarDBusService, thunar_dbus_service, G_TYPE_OBJECT)
 
 
 
@@ -172,9 +141,6 @@ static void
 thunar_dbus_service_class_init (ThunarDBusServiceClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* determine the parent type class */
-  thunar_dbus_service_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_dbus_service_finalize;

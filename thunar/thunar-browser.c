@@ -62,7 +62,7 @@ thunar_browser_get_type (void)
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
       type = g_type_register_static_simple (G_TYPE_INTERFACE,
-                                            "ThunarBrowser",
+                                            I_("ThunarBrowser"),
                                             sizeof (ThunarBrowserIface),
                                             NULL,
                                             0,

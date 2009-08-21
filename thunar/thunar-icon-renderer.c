@@ -41,8 +41,6 @@ enum
 
 
 
-static void thunar_icon_renderer_class_init    (ThunarIconRendererClass *klass);
-static void thunar_icon_renderer_init          (ThunarIconRenderer      *icon_renderer);
 static void thunar_icon_renderer_finalize      (GObject                 *object);
 static void thunar_icon_renderer_get_property  (GObject                 *object,
                                                 guint                    prop_id,
@@ -69,36 +67,7 @@ static void thunar_icon_renderer_render        (GtkCellRenderer         *rendere
 
 
 
-static GObjectClass *thunar_icon_renderer_parent_class;
-
-
-
-GType
-thunar_icon_renderer_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarIconRendererClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_icon_renderer_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarIconRenderer),
-        0,
-        (GInstanceInitFunc) thunar_icon_renderer_init,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_CELL_RENDERER, I_("ThunarIconRenderer"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarIconRenderer, thunar_icon_renderer, GTK_TYPE_CELL_RENDERER)
 
 
 
@@ -107,9 +76,6 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
 {
   GtkCellRendererClass *gtkcell_renderer_class;
   GObjectClass         *gobject_class;
-
-  /* determine the parent type class */
-  thunar_icon_renderer_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_icon_renderer_finalize;

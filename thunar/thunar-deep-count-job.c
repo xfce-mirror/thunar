@@ -42,8 +42,6 @@ enum
 
 
 
-static void     thunar_deep_count_job_class_init (ThunarDeepCountJobClass *klass);
-static void     thunar_deep_count_job_init       (ThunarDeepCountJob      *job);
 static void     thunar_deep_count_job_finalize   (GObject                 *object);
 static gboolean thunar_deep_count_job_execute    (ExoJob                  *job,
                                                   GError                 **error);
@@ -81,29 +79,11 @@ struct _ThunarDeepCountJob
 
 
 
-static GObjectClass *thunar_deep_count_job_parent_class = NULL;
-static guint         deep_count_signals[LAST_SIGNAL];
+static guint deep_count_signals[LAST_SIGNAL];
 
 
 
-GType
-thunar_deep_count_job_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      type = g_type_register_static_simple (THUNAR_TYPE_JOB, 
-                                            "ThunarDeepCountJob",
-                                            sizeof (ThunarDeepCountJobClass),
-                                            (GClassInitFunc) thunar_deep_count_job_class_init,
-                                            sizeof (ThunarDeepCountJob),
-                                            (GInstanceInitFunc) thunar_deep_count_job_init,
-                                            0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarDeepCountJob, thunar_deep_count_job, THUNAR_TYPE_JOB)
 
 
 
@@ -112,9 +92,6 @@ thunar_deep_count_job_class_init (ThunarDeepCountJobClass *klass)
 {
   ExoJobClass  *job_class;
   GObjectClass *gobject_class;
-
-  /* Determine the parent type class */
-  thunar_deep_count_job_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_deep_count_job_finalize; 

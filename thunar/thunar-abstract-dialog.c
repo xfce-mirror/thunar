@@ -27,37 +27,11 @@
 
 
 
-static void thunar_abstract_dialog_class_init (ThunarAbstractDialogClass *klass);
 static void thunar_abstract_dialog_close      (GtkDialog                 *dialog);
 
 
 
-GType
-thunar_abstract_dialog_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarAbstractDialogClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_abstract_dialog_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarAbstractDialog),
-        0,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_DIALOG, I_("ThunarAbstractDialog"), &info, G_TYPE_FLAG_ABSTRACT);
-    }
-
-  return type;
-}
+G_DEFINE_ABSTRACT_TYPE (ThunarAbstractDialog, thunar_abstract_dialog, GTK_TYPE_DIALOG)
 
 
 
@@ -74,6 +48,13 @@ thunar_abstract_dialog_class_init (ThunarAbstractDialogClass *klass)
   binding_set = gtk_binding_set_by_class (klass);
   gtk_binding_entry_add_signal (binding_set, GDK_w, GDK_CONTROL_MASK, "close", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_W, GDK_CONTROL_MASK, "close", 0);
+}
+
+
+
+static void
+thunar_abstract_dialog_init (ThunarAbstractDialog *dialog)
+{
 }
 
 

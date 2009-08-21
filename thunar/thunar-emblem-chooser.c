@@ -43,8 +43,6 @@ enum
 
 
 
-static void       thunar_emblem_chooser_class_init      (ThunarEmblemChooserClass *klass);
-static void       thunar_emblem_chooser_init            (ThunarEmblemChooser      *chooser);
 static void       thunar_emblem_chooser_dispose         (GObject                  *object);
 static void       thunar_emblem_chooser_finalize        (GObject                  *object);
 static void       thunar_emblem_chooser_get_property    (GObject                  *object,
@@ -86,36 +84,7 @@ struct _ThunarEmblemChooser
 
 
 
-static GObjectClass *thunar_emblem_chooser_parent_class;
-
-
-
-GType
-thunar_emblem_chooser_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarEmblemChooserClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_emblem_chooser_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarEmblemChooser),
-        0,
-        (GInstanceInitFunc) thunar_emblem_chooser_init,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_SCROLLED_WINDOW, I_("ThunarEmblemChooser"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarEmblemChooser, thunar_emblem_chooser, GTK_TYPE_SCROLLED_WINDOW)
 
 
 
@@ -124,9 +93,6 @@ thunar_emblem_chooser_class_init (ThunarEmblemChooserClass *klass)
 {
   GtkWidgetClass *gtkwidget_class;
   GObjectClass   *gobject_class;
-
-  /* determine the parent type class */
-  thunar_emblem_chooser_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_emblem_chooser_dispose;

@@ -28,36 +28,7 @@
 
 
 
-static void thunar_location_dialog_init (ThunarLocationDialog *location_dialog);
-
-
-
-GType
-thunar_location_dialog_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarLocationDialogClass),
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        sizeof (ThunarLocationDialog),
-        0,
-        (GInstanceInitFunc) thunar_location_dialog_init,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_TYPE_ABSTRACT_DIALOG, I_("ThunarLocationDialog"), &info, 0);
-    }
-  
-  return type;
-}
+G_DEFINE_TYPE (ThunarLocationDialog, thunar_location_dialog, THUNAR_TYPE_ABSTRACT_DIALOG)
 
 
 
@@ -68,6 +39,13 @@ transform_object_to_boolean (const GValue *src_value,
 {
   g_value_set_boolean (dst_value, (g_value_get_object (src_value) != NULL));
   return TRUE;
+}
+
+
+
+static void
+thunar_location_dialog_class_init (ThunarLocationDialogClass *klass)
+{
 }
 
 

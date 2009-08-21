@@ -41,8 +41,6 @@ enum
 
 
 
-static void         thunar_details_view_class_init              (ThunarDetailsViewClass *klass);
-static void         thunar_details_view_init                    (ThunarDetailsView      *details_view);
 static void         thunar_details_view_finalize                (GObject                *object);
 static void         thunar_details_view_get_property            (GObject                *object,
                                                                  guint                   prop_id,
@@ -131,36 +129,9 @@ static const GtkActionEntry action_entries[] =
   { "setup-columns", NULL, N_ ("Configure _Columns..."), NULL, N_ ("Configure the columns in the detailed list view"), G_CALLBACK (thunar_details_view_action_setup_columns), },
 };
 
-static GObjectClass *thunar_details_view_parent_class;
 
 
-
-GType
-thunar_details_view_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarDetailsViewClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_details_view_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarDetailsView),
-        0,
-        (GInstanceInitFunc) thunar_details_view_init,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_TYPE_STANDARD_VIEW, I_("ThunarDetailsView"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarDetailsView, thunar_details_view, THUNAR_TYPE_STANDARD_VIEW)
 
 
 
@@ -170,9 +141,6 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
   ThunarStandardViewClass *thunarstandard_view_class;
   GtkWidgetClass          *gtkwidget_class;
   GObjectClass            *gobject_class;
-
-  /* determine the parent type class */
-  thunar_details_view_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_details_view_finalize;

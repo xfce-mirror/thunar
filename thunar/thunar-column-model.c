@@ -40,9 +40,7 @@ enum
 
 
 
-static void               thunar_column_model_class_init              (ThunarColumnModelClass *klass);
 static void               thunar_column_model_tree_model_init         (GtkTreeModelIface      *iface);
-static void               thunar_column_model_init                    (ThunarColumnModel      *column_model);
 static void               thunar_column_model_finalize                (GObject                *object);
 static GtkTreeModelFlags  thunar_column_model_get_flags               (GtkTreeModel           *tree_model);
 static gint               thunar_column_model_get_n_columns           (GtkTreeModel           *tree_model);
@@ -119,45 +117,12 @@ struct _ThunarColumnModel
 
 
 
-static GObjectClass *thunar_column_model_parent_class;
-static guint         column_model_signals[LAST_SIGNAL];
+static guint column_model_signals[LAST_SIGNAL];
 
 
 
-GType
-thunar_column_model_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarColumnModelClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_column_model_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarColumnModel),
-        0,
-        (GInstanceInitFunc) thunar_column_model_init,
-        NULL,
-      };
-
-      static const GInterfaceInfo tree_model_info =
-      {
-        (GInterfaceInitFunc) thunar_column_model_tree_model_init,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarColumnModel"), &info, 0);
-      g_type_add_interface_static (type, GTK_TYPE_TREE_MODEL, &tree_model_info);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE_WITH_CODE (ThunarColumnModel, thunar_column_model, G_TYPE_OBJECT,
+    G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL, thunar_column_model_tree_model_init))
 
 
 
@@ -165,9 +130,6 @@ static void
 thunar_column_model_class_init (ThunarColumnModelClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* determine the parent type class */
-  thunar_column_model_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_column_model_finalize;

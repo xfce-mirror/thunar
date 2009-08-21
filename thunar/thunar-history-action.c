@@ -26,7 +26,6 @@
 
 
 
-static void       thunar_history_action_class_init        (ThunarHistoryActionClass *klass);
 static GtkWidget *thunar_history_action_create_tool_item  (GtkAction                *action);
 static void       thunar_history_action_show_menu         (GtkWidget                *tool_item,
                                                            ThunarHistoryAction      *history_action);
@@ -45,32 +44,7 @@ struct _ThunarHistoryAction
 
 
 
-GType
-thunar_history_action_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarHistoryActionClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_history_action_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarHistoryAction),
-        0,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_ACTION, I_("ThunarHistoryAction"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarHistoryAction, thunar_history_action, GTK_TYPE_ACTION)
 
 
 
@@ -94,6 +68,13 @@ thunar_history_action_class_init (ThunarHistoryActionClass *klass)
                 G_SIGNAL_RUN_LAST, 0, NULL, NULL,
                 g_cclosure_marshal_VOID__OBJECT,
                 G_TYPE_NONE, 1, GTK_TYPE_MENU);
+}
+
+
+
+static void
+thunar_history_action_init (ThunarHistoryAction *actions_changed)
+{
 }
 
 

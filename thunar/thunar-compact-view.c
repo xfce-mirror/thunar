@@ -25,8 +25,6 @@
 
 
 
-static void         thunar_compact_view_class_init     (ThunarCompactViewClass  *klass);
-static void         thunar_compact_view_init           (ThunarCompactView       *compact_view);
 static AtkObject   *thunar_compact_view_get_accessible (GtkWidget               *widget);
 
 
@@ -43,36 +41,7 @@ struct _ThunarCompactView
 
 
 
-static GObjectClass *thunar_compact_view_parent_class;
-
-
-
-GType
-thunar_compact_view_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarCompactViewClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_compact_view_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarCompactView),
-        0,
-        (GInstanceInitFunc) thunar_compact_view_init,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_TYPE_ABSTRACT_ICON_VIEW, I_("ThunarCompactView"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarCompactView, thunar_compact_view, THUNAR_TYPE_ABSTRACT_ICON_VIEW)
 
 
 
@@ -81,9 +50,6 @@ thunar_compact_view_class_init (ThunarCompactViewClass *klass)
 {
   ThunarStandardViewClass *thunarstandard_view_class;
   GtkWidgetClass          *gtkwidget_class;
-
-  /* determine the parent type class */
-  thunar_compact_view_parent_class = g_type_class_peek_parent (klass);
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->get_accessible = thunar_compact_view_get_accessible;

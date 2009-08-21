@@ -42,8 +42,6 @@ enum
 
 
 
-static void thunar_create_dialog_class_init   (ThunarCreateDialogClass *klass);
-static void thunar_create_dialog_init         (ThunarCreateDialog      *dialog);
 static void thunar_create_dialog_dispose      (GObject                 *object);
 static void thunar_create_dialog_get_property (GObject                 *object,
                                                guint                    prop_id,
@@ -77,28 +75,7 @@ struct _ThunarCreateDialog
 
 
 
-static GObjectClass *thunar_create_dialog_parent_class;
-
-
-
-GType
-thunar_create_dialog_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      type = g_type_register_static_simple (THUNAR_TYPE_ABSTRACT_DIALOG,
-                                            I_("ThunarCreateDialog"),
-                                            sizeof (ThunarCreateDialogClass),
-                                            (GClassInitFunc) thunar_create_dialog_class_init,
-                                            sizeof (ThunarCreateDialog),
-                                            (GInstanceInitFunc) thunar_create_dialog_init,
-                                            0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarCreateDialog, thunar_create_dialog, THUNAR_TYPE_ABSTRACT_DIALOG)
 
 
 
@@ -107,9 +84,6 @@ thunar_create_dialog_class_init (ThunarCreateDialogClass *klass)
 {
   GtkWidgetClass *gtkwidget_class;
   GObjectClass   *gobject_class;
-
-  /* determine the parent type class */
-  thunar_create_dialog_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_create_dialog_dispose;
