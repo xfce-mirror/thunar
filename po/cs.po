@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-21 17:56+0200\n"
+"POT-Creation-Date: 2009-08-21 21:05+0200\n"
 "PO-Revision-Date: 2008-12-02 17:24+0100\n"
 "Last-Translator: Michal Várady <miko.vaji@gmail.com>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -503,19 +503,19 @@ msgstr "Zadejte nový název:"
 msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "Název souboru \"%s\" nelze zkonvertovat do místního kódování"
 
-#: ../thunar/thunar-dbus-service.c:395
+#: ../thunar/thunar-dbus-service.c:396
 #, c-format
 msgid "Invalid filename \"%s\""
 msgstr "Neplatný název souboru \"%s\""
 
 #. LaunchFiles() invoked without a valid working directory
-#: ../thunar/thunar-dbus-service.c:724
+#: ../thunar/thunar-dbus-service.c:725
 #, c-format
 msgid "The working directory must be an absolute path"
 msgstr "Pracovní adresář musí být uveden pomocí absolutní cesty"
 
 #. LaunchFiles() invoked with an empty filename list
-#: ../thunar/thunar-dbus-service.c:732
+#: ../thunar/thunar-dbus-service.c:733
 #, c-format
 msgid "Atleast one filename must be specified"
 msgstr "Musíte zadat alespoň jeden název souboru"
@@ -795,91 +795,91 @@ msgstr "Výpis adresáře ikonami"
 msgid "Icon view"
 msgstr "Ikony"
 
-#: ../thunar/thunar-io-jobs.c:160 ../thunar/thunar-io-jobs.c:297
+#: ../thunar/thunar-io-jobs.c:161 ../thunar/thunar-io-jobs.c:298
 #, c-format
 msgid "The file \"%s\" already exists"
 msgstr "Soubor \"%s\" již existuje"
 
-#: ../thunar/thunar-io-jobs.c:183
+#: ../thunar/thunar-io-jobs.c:184
 #, fuzzy, c-format
 msgid "Failed to create empty file \"%s\": %s"
 msgstr "Nepodařilo se vytvořit prázdný soubor \"%s\""
 
-#: ../thunar/thunar-io-jobs.c:320
+#: ../thunar/thunar-io-jobs.c:321
 #, c-format
 msgid "Failed to create directory \"%s\": %s"
 msgstr "Nezdařilo se vytvořit adresář \"%s\": %s"
 
 #. tell the user that we're preparing to unlink the files
-#: ../thunar/thunar-io-jobs.c:384
+#: ../thunar/thunar-io-jobs.c:385
 msgid "Preparing..."
 msgstr "Příprava..."
 
-#: ../thunar/thunar-io-jobs.c:446
+#: ../thunar/thunar-io-jobs.c:447
 #, fuzzy, c-format
 msgid "Could not delete file \"%s\": %s"
 msgstr "Nezdařilo se získat informace o stavu souboru \"%s\" příkazem stat: %s"
 
-#: ../thunar/thunar-io-jobs.c:594
+#: ../thunar/thunar-io-jobs.c:595
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
 msgstr ""
 
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:781
+#: ../thunar/thunar-io-jobs.c:782
 #, fuzzy, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "Nepodařilo se změnit vlastníka souboru \"%s\""
 
-#: ../thunar/thunar-io-jobs.c:782
+#: ../thunar/thunar-io-jobs.c:783
 #, fuzzy, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "Nepodařilo se změnit skupinu souboru \"%s\""
 
-#: ../thunar/thunar-io-jobs.c:938
+#: ../thunar/thunar-io-jobs.c:939
 #, fuzzy, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "Nepodařilo se nastavit oprávnění k souboru \"%s\""
 
 #. Copy/link name for n <= 3
-#: ../thunar/thunar-io-jobs-util.c:36
+#: ../thunar/thunar-io-jobs-util.c:37
 #, c-format
 msgid "copy of %s"
 msgstr "kopie %s"
 
-#: ../thunar/thunar-io-jobs-util.c:36 ../thunar/thunar-list-model.c:779
+#: ../thunar/thunar-io-jobs-util.c:37 ../thunar/thunar-list-model.c:779
 #: ../thunar/thunar-properties-dialog.c:907
 #, c-format
 msgid "link to %s"
 msgstr "odkaz na %s"
 
-#: ../thunar/thunar-io-jobs-util.c:37
+#: ../thunar/thunar-io-jobs-util.c:38
 #, c-format
 msgid "another copy of %s"
 msgstr "další kopie %s"
 
-#: ../thunar/thunar-io-jobs-util.c:37
+#: ../thunar/thunar-io-jobs-util.c:38
 #, c-format
 msgid "another link to %s"
 msgstr "další odkaz na %s"
 
-#: ../thunar/thunar-io-jobs-util.c:38
+#: ../thunar/thunar-io-jobs-util.c:39
 #, c-format
 msgid "third copy of %s"
 msgstr "třetí kopie %s"
 
-#: ../thunar/thunar-io-jobs-util.c:38
+#: ../thunar/thunar-io-jobs-util.c:39
 #, c-format
 msgid "third link to %s"
 msgstr "třetí odkaz na %s"
 
 #. Fallback copy/link name for n >= 4
-#: ../thunar/thunar-io-jobs-util.c:41
+#: ../thunar/thunar-io-jobs-util.c:42
 #, fuzzy, c-format
 msgid "%uth copy of %s"
 msgstr "%u. kopie %s"
 
-#: ../thunar/thunar-io-jobs-util.c:41
+#: ../thunar/thunar-io-jobs-util.c:42
 #, fuzzy, c-format
 msgid "%uth link to %s"
 msgstr "%u. odkaz na %s"

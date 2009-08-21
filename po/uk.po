@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-21 17:56+0200\n"
+"POT-Creation-Date: 2009-08-21 21:05+0200\n"
 "PO-Revision-Date: 2008-12-04 10:54+0200\n"
 "Last-Translator: Dmitry Nikitin <luckas_fb@mail.ru>\n"
 "Language-Team: Ukrainian <xfce4-dev@xfce.org>\n"
@@ -517,19 +517,19 @@ msgstr "Введіть нову назву:"
 msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "Не вдається перетворити назву файлу \"%s\" в локальне кодування"
 
-#: ../thunar/thunar-dbus-service.c:395
+#: ../thunar/thunar-dbus-service.c:396
 #, c-format
 msgid "Invalid filename \"%s\""
 msgstr "Неправильна назва файлу \"%s\""
 
 #. LaunchFiles() invoked without a valid working directory
-#: ../thunar/thunar-dbus-service.c:724
+#: ../thunar/thunar-dbus-service.c:725
 #, c-format
 msgid "The working directory must be an absolute path"
 msgstr "Робоча тека повинна мати абсолютний шлях"
 
 #. LaunchFiles() invoked with an empty filename list
-#: ../thunar/thunar-dbus-service.c:732
+#: ../thunar/thunar-dbus-service.c:733
 #, c-format
 msgid "Atleast one filename must be specified"
 msgstr "Потрібно вказати принаймні одну назву файлу"
@@ -813,91 +813,91 @@ msgstr "Перегляд тек у вигляді значків"
 msgid "Icon view"
 msgstr "Перегляд у вигляді значків"
 
-#: ../thunar/thunar-io-jobs.c:160 ../thunar/thunar-io-jobs.c:297
+#: ../thunar/thunar-io-jobs.c:161 ../thunar/thunar-io-jobs.c:298
 #, c-format
 msgid "The file \"%s\" already exists"
 msgstr "Файл \"%s\" вже існує"
 
-#: ../thunar/thunar-io-jobs.c:183
+#: ../thunar/thunar-io-jobs.c:184
 #, fuzzy, c-format
 msgid "Failed to create empty file \"%s\": %s"
 msgstr "Не вдається створити порожній файл \"%s\""
 
-#: ../thunar/thunar-io-jobs.c:320
+#: ../thunar/thunar-io-jobs.c:321
 #, fuzzy, c-format
 msgid "Failed to create directory \"%s\": %s"
 msgstr "Не вдається створити теку \"%s\""
 
 #. tell the user that we're preparing to unlink the files
-#: ../thunar/thunar-io-jobs.c:384
+#: ../thunar/thunar-io-jobs.c:385
 msgid "Preparing..."
 msgstr "Підготовка..."
 
-#: ../thunar/thunar-io-jobs.c:446
+#: ../thunar/thunar-io-jobs.c:447
 #, fuzzy, c-format
 msgid "Could not delete file \"%s\": %s"
 msgstr "Не вдається виконати файл \"%s\""
 
-#: ../thunar/thunar-io-jobs.c:594
+#: ../thunar/thunar-io-jobs.c:595
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
 msgstr ""
 
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:781
+#: ../thunar/thunar-io-jobs.c:782
 #, fuzzy, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "Не вдається змінити власника для файлу \"%s\""
 
-#: ../thunar/thunar-io-jobs.c:782
+#: ../thunar/thunar-io-jobs.c:783
 #, fuzzy, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "Не вдається змінити групу для файлу \"%s\""
 
-#: ../thunar/thunar-io-jobs.c:938
+#: ../thunar/thunar-io-jobs.c:939
 #, fuzzy, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "Не вдається змінити права доступу до \"%s\""
 
 #. Copy/link name for n <= 3
-#: ../thunar/thunar-io-jobs-util.c:36
+#: ../thunar/thunar-io-jobs-util.c:37
 #, c-format
 msgid "copy of %s"
 msgstr "копія %s"
 
-#: ../thunar/thunar-io-jobs-util.c:36 ../thunar/thunar-list-model.c:779
+#: ../thunar/thunar-io-jobs-util.c:37 ../thunar/thunar-list-model.c:779
 #: ../thunar/thunar-properties-dialog.c:907
 #, c-format
 msgid "link to %s"
 msgstr "посилання на %s"
 
-#: ../thunar/thunar-io-jobs-util.c:37
+#: ../thunar/thunar-io-jobs-util.c:38
 #, c-format
 msgid "another copy of %s"
 msgstr "інша копія %s"
 
-#: ../thunar/thunar-io-jobs-util.c:37
+#: ../thunar/thunar-io-jobs-util.c:38
 #, c-format
 msgid "another link to %s"
 msgstr "інше посилання на %s"
 
-#: ../thunar/thunar-io-jobs-util.c:38
+#: ../thunar/thunar-io-jobs-util.c:39
 #, c-format
 msgid "third copy of %s"
 msgstr "третя копія %s"
 
-#: ../thunar/thunar-io-jobs-util.c:38
+#: ../thunar/thunar-io-jobs-util.c:39
 #, c-format
 msgid "third link to %s"
 msgstr "третє посилання на %s"
 
 #. Fallback copy/link name for n >= 4
-#: ../thunar/thunar-io-jobs-util.c:41
+#: ../thunar/thunar-io-jobs-util.c:42
 #, fuzzy, c-format
 msgid "%uth copy of %s"
 msgstr "%u-а копія %s"
 
-#: ../thunar/thunar-io-jobs-util.c:41
+#: ../thunar/thunar-io-jobs-util.c:42
 #, fuzzy, c-format
 msgid "%uth link to %s"
 msgstr "%u-е посилання на %s"

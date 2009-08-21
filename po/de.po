@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-21 17:56+0200\n"
+"POT-Creation-Date: 2009-08-21 21:05+0200\n"
 "PO-Revision-Date: 2009-08-15 02:53+0200\n"
 "Last-Translator: Jannis Pohlmann <jannis@xfce.org>\n"
 "Language-Team: German <xfce-i18n@xfce.org>\n"
@@ -521,19 +521,19 @@ msgstr ""
 "Der Dateiname »%s« kann nicht in den Zeichensatz des Dateisystems umgewandelt "
 "werden"
 
-#: ../thunar/thunar-dbus-service.c:395
+#: ../thunar/thunar-dbus-service.c:396
 #, c-format
 msgid "Invalid filename \"%s\""
 msgstr "Ungültiger Dateiname »%s«"
 
 #. LaunchFiles() invoked without a valid working directory
-#: ../thunar/thunar-dbus-service.c:724
+#: ../thunar/thunar-dbus-service.c:725
 #, c-format
 msgid "The working directory must be an absolute path"
 msgstr "Das Arbeitsverzeichnis muss ein absoluter Pfad sein"
 
 #. LaunchFiles() invoked with an empty filename list
-#: ../thunar/thunar-dbus-service.c:732
+#: ../thunar/thunar-dbus-service.c:733
 #, c-format
 msgid "Atleast one filename must be specified"
 msgstr "Es muss mindestens ein Dateiname angegeben werden"
@@ -818,91 +818,91 @@ msgstr "Symbolbasierte Ordneransicht"
 msgid "Icon view"
 msgstr "Symbolansicht"
 
-#: ../thunar/thunar-io-jobs.c:160 ../thunar/thunar-io-jobs.c:297
+#: ../thunar/thunar-io-jobs.c:161 ../thunar/thunar-io-jobs.c:298
 #, c-format
 msgid "The file \"%s\" already exists"
 msgstr "Die Datei »%s« existiert bereits"
 
-#: ../thunar/thunar-io-jobs.c:183
+#: ../thunar/thunar-io-jobs.c:184
 #, fuzzy, c-format
 msgid "Failed to create empty file \"%s\": %s"
 msgstr "Die Datei »%s« konnte nicht erstellt werden"
 
-#: ../thunar/thunar-io-jobs.c:320
+#: ../thunar/thunar-io-jobs.c:321
 #, fuzzy, c-format
 msgid "Failed to create directory \"%s\": %s"
 msgstr "Konnte den Ordner »%s« nicht erstellen"
 
 #. tell the user that we're preparing to unlink the files
-#: ../thunar/thunar-io-jobs.c:384
+#: ../thunar/thunar-io-jobs.c:385
 msgid "Preparing..."
 msgstr "Vorbereitung..."
 
-#: ../thunar/thunar-io-jobs.c:446
+#: ../thunar/thunar-io-jobs.c:447
 #, fuzzy, c-format
 msgid "Could not delete file \"%s\": %s"
 msgstr "Konnte »%s« nicht umbenennen"
 
-#: ../thunar/thunar-io-jobs.c:594
+#: ../thunar/thunar-io-jobs.c:595
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
 msgstr ""
 
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:781
+#: ../thunar/thunar-io-jobs.c:782
 #, fuzzy, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "Der Besitzer von »%s« konnte nicht geändert werden"
 
-#: ../thunar/thunar-io-jobs.c:782
+#: ../thunar/thunar-io-jobs.c:783
 #, fuzzy, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "Die Gruppe von »%s« konnte nicht geändert werden"
 
-#: ../thunar/thunar-io-jobs.c:938
+#: ../thunar/thunar-io-jobs.c:939
 #, fuzzy, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "Die Berechtigungen von »%s« konnten nicht geändert werden"
 
 #. Copy/link name for n <= 3
-#: ../thunar/thunar-io-jobs-util.c:36
+#: ../thunar/thunar-io-jobs-util.c:37
 #, c-format
 msgid "copy of %s"
 msgstr "Kopie von »%s«"
 
-#: ../thunar/thunar-io-jobs-util.c:36 ../thunar/thunar-list-model.c:779
+#: ../thunar/thunar-io-jobs-util.c:37 ../thunar/thunar-list-model.c:779
 #: ../thunar/thunar-properties-dialog.c:907
 #, c-format
 msgid "link to %s"
 msgstr "Verknüpfung mit »%s«"
 
-#: ../thunar/thunar-io-jobs-util.c:37
+#: ../thunar/thunar-io-jobs-util.c:38
 #, c-format
 msgid "another copy of %s"
 msgstr "Weitere Kopie von »%s«"
 
-#: ../thunar/thunar-io-jobs-util.c:37
+#: ../thunar/thunar-io-jobs-util.c:38
 #, c-format
 msgid "another link to %s"
 msgstr "Weitere Verknüpfung mit »%s«"
 
-#: ../thunar/thunar-io-jobs-util.c:38
+#: ../thunar/thunar-io-jobs-util.c:39
 #, c-format
 msgid "third copy of %s"
 msgstr "Dritte Kopie von »%s«"
 
-#: ../thunar/thunar-io-jobs-util.c:38
+#: ../thunar/thunar-io-jobs-util.c:39
 #, c-format
 msgid "third link to %s"
 msgstr "Dritte Verknüpfung mit »%s«"
 
 #. Fallback copy/link name for n >= 4
-#: ../thunar/thunar-io-jobs-util.c:41
+#: ../thunar/thunar-io-jobs-util.c:42
 #, fuzzy, c-format
 msgid "%uth copy of %s"
 msgstr "%ute Kopie von »%s«"
 
-#: ../thunar/thunar-io-jobs-util.c:41
+#: ../thunar/thunar-io-jobs-util.c:42
 #, fuzzy, c-format
 msgid "%uth link to %s"
 msgstr "%ute Verknüpfung mit »%s«"
