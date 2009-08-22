@@ -956,7 +956,7 @@ thunar_renamer_model_item_new (ThunarFile *file)
 {
   ThunarRenamerModelItem *item;
 
-  item = _thunar_slice_new0 (ThunarRenamerModelItem);
+  item = g_slice_new0 (ThunarRenamerModelItem);
   item->file = g_object_ref (G_OBJECT (file));
   item->dirty = TRUE;
 
@@ -970,7 +970,7 @@ thunar_renamer_model_item_free (ThunarRenamerModelItem *item)
 {
   g_object_unref (G_OBJECT (item->file));
   g_free (item->name);
-  _thunar_slice_free (ThunarRenamerModelItem, item);
+  g_slice_free (ThunarRenamerModelItem, item);
 }
 
 

@@ -335,7 +335,7 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
     g_closure_unref (request->new_files_closure);
   g_object_unref (G_OBJECT (request->manager));
   g_object_unref (request->target_file);
-  _thunar_slice_free (ThunarClipboardPasteRequest, request);
+  g_slice_free (ThunarClipboardPasteRequest, request);
 }
 
 
@@ -643,7 +643,7 @@ thunar_clipboard_manager_paste_files (ThunarClipboardManager *manager,
   _thunar_return_if_fail (widget == NULL || GTK_IS_WIDGET (widget));
 
   /* prepare the paste request */
-  request = _thunar_slice_new0 (ThunarClipboardPasteRequest);
+  request = g_slice_new0 (ThunarClipboardPasteRequest);
   request->manager = g_object_ref (G_OBJECT (manager));
   request->target_file = g_object_ref (target_file);
   request->widget = widget;

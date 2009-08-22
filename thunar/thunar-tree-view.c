@@ -2405,7 +2405,7 @@ thunar_tree_view_mount_data_new (ThunarTreeView *view,
 {
   ThunarTreeViewMountData *data;
 
-  data = _thunar_slice_new0 (ThunarTreeViewMountData);
+  data = g_slice_new0 (ThunarTreeViewMountData);
   data->path = path == NULL ? NULL : gtk_tree_path_copy (path);
   data->view = g_object_ref (view);
   data->open_after_mounting = open_after_mounting;
@@ -2424,7 +2424,7 @@ thunar_tree_view_mount_data_free (ThunarTreeViewMountData *data)
   if (data->path != NULL)
     gtk_tree_path_free (data->path);
   g_object_unref (data->view);
-  _thunar_slice_free (ThunarTreeViewMountData, data);
+  g_slice_free (ThunarTreeViewMountData, data);
 }
 
 

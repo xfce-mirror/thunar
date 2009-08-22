@@ -1164,7 +1164,7 @@ thunar_tree_model_item_new_with_file (ThunarTreeModel *model,
 {
   ThunarTreeModelItem *item;
 
-  item = _thunar_slice_new0 (ThunarTreeModelItem);
+  item = g_slice_new0 (ThunarTreeModelItem);
   item->file = g_object_ref (G_OBJECT (file));
   item->model = model;
 
@@ -1181,7 +1181,7 @@ thunar_tree_model_item_new_with_volume (ThunarTreeModel *model,
   GMount              *mount;
   GFile               *mount_point;
 
-  item = _thunar_slice_new0 (ThunarTreeModelItem);
+  item = g_slice_new0 (ThunarTreeModelItem);
   item->volume = g_object_ref (G_OBJECT (volume));
   item->model = model;
 
@@ -1218,7 +1218,7 @@ thunar_tree_model_item_free (ThunarTreeModelItem *item)
   thunar_tree_model_item_reset (item);
 
   /* release the item */
-  _thunar_slice_free (ThunarTreeModelItem, item);
+  g_slice_free (ThunarTreeModelItem, item);
 }
 
 

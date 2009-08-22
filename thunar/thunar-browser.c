@@ -93,7 +93,7 @@ thunar_browser_poke_file_data_new (ThunarBrowser            *browser,
   _thunar_return_val_if_fail (THUNAR_IS_FILE (source), NULL);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
-  poke_data = _thunar_slice_new0 (PokeFileData);
+  poke_data = g_slice_new0 (PokeFileData);
   poke_data->browser = g_object_ref (browser);
   poke_data->source = g_object_ref (source);
   poke_data->file = g_object_ref (file);
@@ -117,7 +117,7 @@ thunar_browser_poke_file_data_free (PokeFileData *poke_data)
   g_object_unref (poke_data->source);
   g_object_unref (poke_data->file);
 
-  _thunar_slice_free (PokeFileData, poke_data);
+  g_slice_free (PokeFileData, poke_data);
 }
 
 
@@ -133,7 +133,7 @@ thunar_browser_poke_volume_data_new (ThunarBrowser              *browser,
   _thunar_return_val_if_fail (THUNAR_IS_BROWSER (browser), NULL);
   _thunar_return_val_if_fail (G_IS_VOLUME (volume), NULL);
 
-  poke_data = _thunar_slice_new0 (PokeVolumeData);
+  poke_data = g_slice_new0 (PokeVolumeData);
   poke_data->browser = g_object_ref (browser);
   poke_data->volume = g_object_ref (volume);
   poke_data->func = func;
@@ -154,7 +154,7 @@ thunar_browser_poke_volume_data_free (PokeVolumeData *poke_data)
   g_object_unref (poke_data->browser);
   g_object_unref (poke_data->volume);
 
-  _thunar_slice_free (PokeVolumeData, poke_data);
+  g_slice_free (PokeVolumeData, poke_data);
 }
 
 

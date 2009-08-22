@@ -305,7 +305,7 @@ tvsn_startup_timeout_destroy (gpointer data)
                           NULL, NULL);
 
   /* release the startup data */
-  _thunar_slice_free (TsnStartupData, startup_data);
+  g_slice_free (TsnStartupData, startup_data);
 }
 
 static void
@@ -484,7 +484,7 @@ thunar_exec_on_screen (GdkScreen   *screen,
       else
         {
           /* schedule a startup notification timeout */
-          startup_data = _thunar_slice_new (TsnStartupData);
+          startup_data = g_slice_new (TsnStartupData);
           startup_data->sn_launcher = sn_launcher;
           startup_data->timeout_id = g_timeout_add_full (G_PRIORITY_LOW, TSN_STARTUP_TIMEOUT, tvsn_startup_timeout,
                                                          startup_data, tvsn_startup_timeout_destroy);

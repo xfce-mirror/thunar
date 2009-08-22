@@ -477,7 +477,7 @@ thunar_thumbnailer_thumbnailer_error (DBusGProxy        *proxy,
   if (request != NULL)
     {
       /* allocate a new idle struct */
-      idle = _thunar_slice_new0 (ThunarThumbnailerIdle);
+      idle = g_slice_new0 (ThunarThumbnailerIdle);
       idle->type = THUNAR_THUMBNAILER_IDLE_ERROR;
       idle->thumbnailer = g_object_ref (thumbnailer);
 
@@ -536,7 +536,7 @@ thunar_thumbnailer_thumbnailer_ready (DBusGProxy        *proxy,
   if (uris != NULL)
     {
       /* allocate a new idle struct */
-      idle = _thunar_slice_new0 (ThunarThumbnailerIdle);
+      idle = g_slice_new0 (ThunarThumbnailerIdle);
       idle->type = THUNAR_THUMBNAILER_IDLE_READY;
       idle->thumbnailer = g_object_ref (thumbnailer);
 
@@ -574,7 +574,7 @@ thunar_thumbnailer_thumbnailer_started (DBusGProxy        *proxy,
   if (request != NULL)
     {
       /* allocate a new idle struct */
-      idle = _thunar_slice_new0 (ThunarThumbnailerIdle);
+      idle = g_slice_new0 (ThunarThumbnailerIdle);
       idle->type = THUNAR_THUMBNAILER_IDLE_STARTED;
       idle->thumbnailer = g_object_ref (thumbnailer);
 
@@ -665,7 +665,7 @@ thunar_thumbnailer_queue_async (ThunarThumbnailer *thumbnailer,
   request = thumbnailer->last_request;
 
   /* allocate a new call struct for the async D-Bus call */
-  thumbnailer_call = _thunar_slice_new0 (ThunarThumbnailerCall);
+  thumbnailer_call = g_slice_new0 (ThunarThumbnailerCall);
   thumbnailer_call->request = request;
   thumbnailer_call->thumbnailer = g_object_ref (thumbnailer);
 
@@ -902,7 +902,7 @@ thunar_thumbnailer_call_free (ThunarThumbnailerCall *call)
   g_object_unref (call->thumbnailer);
 
   /* free the struct */
-  _thunar_slice_free (ThunarThumbnailerCall, call);
+  g_slice_free (ThunarThumbnailerCall, call);
 }
 
 
@@ -925,7 +925,7 @@ thunar_thumbnailer_idle_free (gpointer data)
   g_object_unref (idle->thumbnailer);
 
   /* free the struct */
-  _thunar_slice_free (ThunarThumbnailerIdle, idle);
+  g_slice_free (ThunarThumbnailerIdle, idle);
 }
 #endif /* HAVE_DBUS */
 

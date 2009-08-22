@@ -66,7 +66,7 @@ thunar_renamer_pair_new (ThunarFile  *file,
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (g_utf8_validate (name, -1, NULL), NULL);
 
-  renamer_pair = _thunar_slice_new (ThunarRenamerPair);
+  renamer_pair = g_slice_new (ThunarRenamerPair);
   renamer_pair->file = g_object_ref (G_OBJECT (file));
   renamer_pair->name = g_strdup (name);
 
@@ -109,7 +109,7 @@ thunar_renamer_pair_free (ThunarRenamerPair *renamer_pair)
     {
       g_object_unref (G_OBJECT (renamer_pair->file));
       g_free (renamer_pair->name);
-      _thunar_slice_free (ThunarRenamerPair, renamer_pair);
+      g_slice_free (ThunarRenamerPair, renamer_pair);
     }
 }
 

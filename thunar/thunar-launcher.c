@@ -1270,7 +1270,7 @@ thunar_launcher_mount_data_new (ThunarLauncher *launcher,
 
   _thunar_return_val_if_fail (THUNAR_IS_LAUNCHER (launcher), NULL);
 
-  data = _thunar_slice_new0 (ThunarLauncherMountData);
+  data = g_slice_new0 (ThunarLauncherMountData);
   data->launcher = g_object_ref (launcher);
   data->files = thunar_g_file_list_copy (files);
 
@@ -1287,7 +1287,7 @@ thunar_launcher_mount_data_free (ThunarLauncherMountData *data)
 
   g_object_unref (data->launcher);
   thunar_g_file_list_free (data->files);
-  _thunar_slice_free (ThunarLauncherMountData, data);
+  g_slice_free (ThunarLauncherMountData, data);
 }
 
 
@@ -1297,7 +1297,7 @@ thunar_launcher_poke_data_new (GList *files)
 {
   ThunarLauncherPokeData *data;
 
-  data = _thunar_slice_new0 (ThunarLauncherPokeData);
+  data = g_slice_new0 (ThunarLauncherPokeData);
   data->files = thunar_file_list_copy (files);
   data->resolved_files = NULL;
 
@@ -1313,7 +1313,7 @@ thunar_launcher_poke_data_free (ThunarLauncherPokeData *data)
 
   thunar_file_list_free (data->files);
   thunar_file_list_free (data->resolved_files);
-  _thunar_slice_free (ThunarLauncherPokeData, data);
+  g_slice_free (ThunarLauncherPokeData, data);
 }
 
 

@@ -185,7 +185,7 @@ thunar_transfer_job_collect_node (ThunarTransferJob  *job,
       for (lp = file_list; err == NULL && lp != NULL; lp = lp->next)
         {
           /* allocate a new transfer node for the child */
-          child_node = _thunar_slice_new0 (ThunarTransferNode);
+          child_node = g_slice_new0 (ThunarTransferNode);
           child_node->source_file = g_object_ref (lp->data);
 
           /* hook the child node into the child list */
@@ -806,7 +806,7 @@ thunar_transfer_node_free (ThunarTransferNode *node)
       g_object_unref (node->source_file);
 
       /* release the resources of this node */
-      _thunar_slice_free (ThunarTransferNode, node);
+      g_slice_free (ThunarTransferNode, node);
 
       /* continue with the next node */
       node = next;
@@ -845,7 +845,7 @@ thunar_transfer_job_new (GList                *source_node_list,
       if (G_LIKELY (type != THUNAR_TRANSFER_JOB_MOVE || !g_file_equal (sp->data, tp->data)))
         {
           /* append transfer node for this source file */
-          node = _thunar_slice_new0 (ThunarTransferNode);
+          node = g_slice_new0 (ThunarTransferNode);
           node->source_file = g_object_ref (sp->data);
           job->source_node_list = g_list_append (job->source_node_list, node);
 

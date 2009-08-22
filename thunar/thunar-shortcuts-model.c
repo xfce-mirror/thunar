@@ -267,7 +267,7 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
       if (G_LIKELY (file != NULL))
         {
           /* create the shortcut */
-          shortcut = _thunar_slice_new0 (ThunarShortcut);
+          shortcut = g_slice_new0 (ThunarShortcut);
           shortcut->type = THUNAR_SHORTCUT_SYSTEM_DEFINED;
           shortcut->file = file;
 
@@ -318,7 +318,7 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
           /* generate the shortcut (w/o a file, else we might
            * prevent the volume from being unmounted)
            */
-          shortcut = _thunar_slice_new0 (ThunarShortcut);
+          shortcut = g_slice_new0 (ThunarShortcut);
           shortcut->type = THUNAR_SHORTCUT_REMOVABLE_MEDIA;
           shortcut->volume = volume;
 
@@ -336,7 +336,7 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
   g_list_free (volumes);
 
   /* prepend the row separator */
-  shortcut = _thunar_slice_new0 (ThunarShortcut);
+  shortcut = g_slice_new0 (ThunarShortcut);
   shortcut->type = THUNAR_SHORTCUT_SEPARATOR;
   thunar_shortcuts_model_add_shortcut (model, shortcut, path);
   gtk_tree_path_next (path);
@@ -839,7 +839,7 @@ thunar_shortcuts_model_load (ThunarShortcutsModel *model)
           if (G_UNLIKELY (thunar_file_is_directory (file)))
             {
               /* create the shortcut entry */
-              shortcut = _thunar_slice_new0 (ThunarShortcut);
+              shortcut = g_slice_new0 (ThunarShortcut);
               shortcut->type = THUNAR_SHORTCUT_USER_DEFINED;
               shortcut->file = file;
               shortcut->name = (*name != '\0') ? g_strdup (name) : NULL;
@@ -918,7 +918,7 @@ thunar_shortcuts_model_load (ThunarShortcutsModel *model)
             }
 
           /* create the shortcut entry */
-          shortcut = _thunar_slice_new0 (ThunarShortcut);
+          shortcut = g_slice_new0 (ThunarShortcut);
           shortcut->type = THUNAR_SHORTCUT_USER_DEFINED;
           shortcut->file = file;
           shortcut->name = g_strdup (dgettext (XDG_USER_DIRS_PACKAGE, 
@@ -1159,7 +1159,7 @@ thunar_shortcuts_model_volume_changed (GVolumeMonitor       *volume_monitor,
             }
 
           /* allocate a new shortcut */
-          shortcut = _thunar_slice_new0 (ThunarShortcut);
+          shortcut = g_slice_new0 (ThunarShortcut);
           shortcut->type = THUNAR_SHORTCUT_REMOVABLE_MEDIA;
           shortcut->volume = volume;
 
@@ -1293,7 +1293,7 @@ thunar_shortcut_free (ThunarShortcut       *shortcut,
   g_free (shortcut->name);
 
   /* release the shortcut itself */
-  _thunar_slice_free (ThunarShortcut, shortcut);
+  g_slice_free (ThunarShortcut, shortcut);
 }
 
 
@@ -1455,7 +1455,7 @@ thunar_shortcuts_model_add (ThunarShortcutsModel *model,
       return;
 
   /* create the new shortcut that will be inserted */
-  shortcut = _thunar_slice_new0 (ThunarShortcut);
+  shortcut = g_slice_new0 (ThunarShortcut);
   shortcut->type = THUNAR_SHORTCUT_USER_DEFINED;
   shortcut->file = g_object_ref (G_OBJECT (file));
 
