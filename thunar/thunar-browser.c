@@ -57,9 +57,10 @@ struct _PokeVolumeData
 GType
 thunar_browser_get_type (void)
 {
-  static GType type = G_TYPE_INVALID;
-  
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
+  static volatile gsize type__volatile = 0;
+  GType                 type;
+
+  if (g_once_init_enter (&type__volatile))
     {
       type = g_type_register_static_simple (G_TYPE_INTERFACE,
                                             I_("ThunarBrowser"),
@@ -70,9 +71,11 @@ thunar_browser_get_type (void)
                                             0);
 
       g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
+
+      g_once_init_leave (&type__volatile, type);
     }
 
-  return type;
+  return type__volatile;
 }
 
 

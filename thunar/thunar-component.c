@@ -35,28 +35,25 @@ static void thunar_component_class_init (gpointer klass);
 GType
 thunar_component_get_type (void)
 {
-  static GType type = G_TYPE_INVALID;
+  static volatile gsize type__volatile = 0;
+  GType                 type;
 
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
+  if (g_once_init_enter (&type__volatile))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarComponentIface),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_component_class_init,
-        NULL,
-        NULL,
-        0,
-        0,
-        NULL,
-      };
+      type = g_type_register_static_simple (G_TYPE_INTERFACE,
+                                            I_("ThunarComponent"),
+                                            sizeof (ThunarComponentIface),
+                                            (GClassInitFunc) thunar_component_class_init,
+                                            0,
+                                            NULL,
+                                            0);
 
-      type = g_type_register_static (G_TYPE_INTERFACE, I_("ThunarComponent"), &info, 0);
       g_type_interface_add_prerequisite (type, THUNAR_TYPE_NAVIGATOR);
+
+      g_once_init_leave (&type__volatile, type);
     }
 
-  return type;
+  return type__volatile;
 }
 
 
