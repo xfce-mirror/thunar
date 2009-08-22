@@ -143,7 +143,7 @@ thunar_size_label_init (ThunarSizeLabel *size_label)
   ebox = gtk_event_box_new ();
   gtk_event_box_set_visible_window (GTK_EVENT_BOX (ebox), FALSE);
   g_signal_connect (G_OBJECT (ebox), "button-press-event", G_CALLBACK (thunar_size_label_button_press_event), size_label);
-  thunar_gtk_widget_set_tooltip (ebox, _("Click here to stop calculating the total size of the folder."));
+  gtk_widget_set_tooltip_text (ebox, _("Click here to stop calculating the total size of the folder."));
   gtk_box_pack_start (GTK_BOX (size_label), ebox, FALSE, FALSE, 0);
   gtk_widget_show (ebox);
 

@@ -255,8 +255,8 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
 
   /* create the "Custom command" expand */
   dialog->custom_expander = gtk_expander_new_with_mnemonic (_("Use a _custom command:"));
-  thunar_gtk_widget_set_tooltip (dialog->custom_expander, _("Use a custom command for an application that is not "
-                                                            "available from the above application list."));
+  gtk_widget_set_tooltip_text (dialog->custom_expander, _("Use a custom command for an application that is not "
+                                                          "available from the above application list."));
   exo_binding_new_with_negation (G_OBJECT (dialog->custom_expander), "expanded", G_OBJECT (dialog->tree_view), "sensitive");
   g_signal_connect (G_OBJECT (dialog->custom_expander), "notify::expanded", G_CALLBACK (thunar_chooser_dialog_notify_expanded), dialog);
   gtk_box_pack_start (GTK_BOX (box), dialog->custom_expander, FALSE, FALSE, 0);

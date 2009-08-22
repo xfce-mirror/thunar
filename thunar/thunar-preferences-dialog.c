@@ -245,14 +245,14 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   button = gtk_check_button_new_with_mnemonic (_("Sort _folders before files"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-folders-first", G_OBJECT (button), "active");
-  thunar_gtk_widget_set_tooltip (button, _("Select this option to list folders before files when you sort a folder."));
+  gtk_widget_set_tooltip_text (button, _("Select this option to list folders before files when you sort a folder."));
   gtk_table_attach (GTK_TABLE (table), button, 0, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (button);
 
   button = gtk_check_button_new_with_mnemonic (_("_Show thumbnails"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-show-thumbnails", G_OBJECT (button), "active");
-  thunar_gtk_widget_set_tooltip (button, _("Select this option to display previewable files within a "
-                                           "folder as automatically generated thumbnail icons."));
+  gtk_widget_set_tooltip_text (button, _("Select this option to display previewable files within a "
+                                         "folder as automatically generated thumbnail icons."));
   gtk_table_attach (GTK_TABLE (table), button, 0, 2, 2, 3, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (button);
 
@@ -274,8 +274,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   button = gtk_check_button_new_with_mnemonic (_("_Text beside icons"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-text-beside-icons", G_OBJECT (button), "active");
-  thunar_gtk_widget_set_tooltip (button, _("Select this option to place the icon captions for items "
-                                           "beside the icon rather than below the icon."));
+  gtk_widget_set_tooltip_text (button, _("Select this option to place the icon captions for items "
+                                         "beside the icon rather than below the icon."));
   gtk_table_attach (GTK_TABLE (table), button, 0, 1, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (button);
 
@@ -359,8 +359,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   button = gtk_check_button_new_with_mnemonic (_("Show Icon _Emblems"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "shortcuts-icon-emblems", G_OBJECT (button), "active");
-  thunar_gtk_widget_set_tooltip (button, _("Select this option to display icon emblems in the shortcuts pane for all folders "
-                                           "for which emblems have been defined in the folders properties dialog."));
+  gtk_widget_set_tooltip_text (button, _("Select this option to display icon emblems in the shortcuts pane for all folders "
+                                         "for which emblems have been defined in the folders properties dialog."));
   gtk_table_attach (GTK_TABLE (table), button, 0, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (button);
 
@@ -401,8 +401,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   button = gtk_check_button_new_with_mnemonic (_("Show Icon E_mblems"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "tree-icon-emblems", G_OBJECT (button), "active");
-  thunar_gtk_widget_set_tooltip (button, _("Select this option to display icon emblems in the tree pane for all folders "
-                                           "for which emblems have been defined in the folders properties dialog."));
+  gtk_widget_set_tooltip_text (button, _("Select this option to display icon emblems in the tree pane for all folders "
+                                         "for which emblems have been defined in the folders properties dialog."));
   gtk_table_attach (GTK_TABLE (table), button, 0, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (button);
 
@@ -464,11 +464,11 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   range = gtk_hscale_new_with_range (0.0, 2000.0, 100.0);
   gtk_scale_set_draw_value (GTK_SCALE (range), FALSE);
-  thunar_gtk_widget_set_tooltip (range, _("When single-click activation is enabled, pausing the mouse pointer over an item "
-                                          "will automatically select that item after the chosen delay. You can disable this "
-                                          "behavior by moving the slider to the left-most position. This behavior may be "
-                                          "useful when single clicks activate items, and you want only to select the item "
-                                          "without activating it."));
+  gtk_widget_set_tooltip_text (range, _("When single-click activation is enabled, pausing the mouse pointer over an item "
+                                        "will automatically select that item after the chosen delay. You can disable this "
+                                        "behavior by moving the slider to the left-most position. This behavior may be "
+                                        "useful when single clicks activate items, and you want only to select the item "
+                                        "without activating it."));
   gtk_box_pack_start (GTK_BOX (ibox), range, FALSE, FALSE, 0);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), range);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), range);

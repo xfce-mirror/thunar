@@ -259,24 +259,18 @@ thunar_gtk_ui_manager_get_action_by_name (GtkUIManager *ui_manager,
  * @...    : additional arguments for @format.
  *
  * Sets the tooltip for the @widget to a string generated
- * from the @format and the additional arguments in @...<!--->,
- * utilizing the shared #GtkTooltips instance.
+ * from the @format and the additional arguments in @...<!--->.
  **/
 void
 thunar_gtk_widget_set_tooltip (GtkWidget   *widget,
                                const gchar *format,
                                ...)
 {
-  static GtkTooltips *tooltips = NULL;
-  va_list             var_args;
-  gchar              *tooltip;
+  va_list  var_args;
+  gchar   *tooltip;
 
   _thunar_return_if_fail (GTK_IS_WIDGET (widget));
   _thunar_return_if_fail (g_utf8_validate (format, -1, NULL));
-
-  /* allocate the shared tooltips on-demand */
-  if (G_UNLIKELY (tooltips == NULL))
-    tooltips = gtk_tooltips_new ();
 
   /* determine the tooltip */
   va_start (var_args, format);
@@ -284,7 +278,7 @@ thunar_gtk_widget_set_tooltip (GtkWidget   *widget,
   va_end (var_args);
 
   /* setup the tooltip for the widget */
-  gtk_tooltips_set_tip (tooltips, widget, tooltip, NULL);
+  gtk_widget_set_tooltip_text (widget, tooltip);
 
   /* release the tooltip */
   g_free (tooltip);

@@ -387,7 +387,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_widget_show (hbox);
 
   chooser->fixperm_button = gtk_button_new_with_mnemonic (_("Correct folder permissions..."));
-  thunar_gtk_widget_set_tooltip (chooser->fixperm_button, _("Click here to automatically fix the folder permissions."));
+  gtk_widget_set_tooltip_text (chooser->fixperm_button, _("Click here to automatically fix the folder permissions."));
   g_signal_connect_swapped (G_OBJECT (chooser->fixperm_button), "clicked", G_CALLBACK (thunar_permissions_chooser_fixperm_clicked), chooser);
   exo_binding_new (G_OBJECT (chooser->fixperm_button), "visible", G_OBJECT (hbox), "visible");
   gtk_box_pack_end (GTK_BOX (hbox), chooser->fixperm_button, FALSE, FALSE, 0);
@@ -403,7 +403,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_box_pack_start (GTK_BOX (hbox), chooser->job_progress, TRUE, TRUE, 0);
 
   button = gtk_button_new ();
-  thunar_gtk_widget_set_tooltip (button, _("Stop applying permissions recursively."));
+  gtk_widget_set_tooltip_text (button, _("Stop applying permissions recursively."));
   g_signal_connect_swapped (G_OBJECT (button), "clicked", G_CALLBACK (thunar_permissions_chooser_job_cancel), chooser);
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
@@ -554,8 +554,8 @@ thunar_permissions_chooser_ask_recursive (ThunarPermissionsChooser *chooser)
       gtk_widget_show (label);
 
       button = gtk_check_button_new_with_mnemonic (_("Do _not ask me again"));
-      thunar_gtk_widget_set_tooltip (button, _("If you select this option your choice will be remembered and you won't be asked "
-                                               "again. You can use the preferences dialog to alter your choice afterwards."));
+      gtk_widget_set_tooltip_text (button, _("If you select this option your choice will be remembered and you won't be asked "
+                                             "again. You can use the preferences dialog to alter your choice afterwards."));
       gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
       gtk_widget_show (button);
 
