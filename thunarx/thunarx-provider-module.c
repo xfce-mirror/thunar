@@ -40,7 +40,6 @@ enum
 
 
 
-static void     thunarx_provider_module_class_init    (ThunarxProviderModuleClass  *klass);
 static void     thunarx_provider_module_plugin_init   (ThunarxProviderPluginIface  *iface);
 static void     thunarx_provider_module_get_property  (GObject                     *object,
                                                        guint                        prop_id,
@@ -78,44 +77,8 @@ struct _ThunarxProviderModule
 
 
 
-static GObjectClass *thunarx_provider_module_parent_class;
-
-
-
-GType
-thunarx_provider_module_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarxProviderModuleClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunarx_provider_module_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarxProviderModule),
-        0,
-        NULL,
-        NULL,
-      };
-
-      static const GInterfaceInfo plugin_info =
-      {
-        (GInterfaceInitFunc) thunarx_provider_module_plugin_init,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_TYPE_MODULE, I_("ThunarxProviderModule"), &info, 0);
-      g_type_add_interface_static (type, THUNARX_TYPE_PROVIDER_PLUGIN, &plugin_info);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE_WITH_CODE (ThunarxProviderModule, thunarx_provider_module, G_TYPE_TYPE_MODULE,
+    G_IMPLEMENT_INTERFACE (THUNARX_TYPE_PROVIDER_PLUGIN, thunarx_provider_module_plugin_init))
 
 
 
@@ -124,9 +87,6 @@ thunarx_provider_module_class_init (ThunarxProviderModuleClass *klass)
 {
   GTypeModuleClass *gtype_module_class;
   GObjectClass     *gobject_class;
-
-  /* determine the parent class */
-  thunarx_provider_module_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->get_property = thunarx_provider_module_get_property;
@@ -141,6 +101,14 @@ thunarx_provider_module_class_init (ThunarxProviderModuleClass *klass)
                                     PROP_RESIDENT,
                                     "resident");
 }
+
+
+
+static void
+thunarx_provider_module_init (ThunarxProviderModule *module)
+{
+}
+
 
 
 

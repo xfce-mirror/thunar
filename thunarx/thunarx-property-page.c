@@ -44,8 +44,6 @@ enum
 
 
 
-static void thunarx_property_page_class_init    (ThunarxPropertyPageClass *klass);
-static void thunarx_property_page_init          (ThunarxPropertyPage      *property_page);
 static void thunarx_property_page_get_property  (GObject                  *object,
                                                  guint                     prop_id,
                                                  GValue                   *value,
@@ -69,36 +67,7 @@ struct _ThunarxPropertyPagePrivate
 
 
 
-static GObjectClass *thunarx_property_page_parent_class;
-
-
-
-GType
-thunarx_property_page_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarxPropertyPageClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunarx_property_page_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarxPropertyPage),
-        0,
-        (GInstanceInitFunc) thunarx_property_page_init,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_BIN, I_("ThunarxPropertyPage"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarxPropertyPage, thunarx_property_page, GTK_TYPE_BIN)
 
 
 
@@ -108,9 +77,6 @@ thunarx_property_page_class_init (ThunarxPropertyPageClass *klass)
   GtkObjectClass *gtkobject_class;
   GtkWidgetClass *gtkwidget_class;
   GObjectClass   *gobject_class;
-
-  /* determine the parent type class */
-  thunarx_property_page_parent_class = g_type_class_peek_parent (klass);
 
   /* add our private data to the class type */
   g_type_class_add_private (klass, sizeof (ThunarxPropertyPagePrivate));

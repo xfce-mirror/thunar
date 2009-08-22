@@ -51,8 +51,6 @@ enum
 
 
 
-static void     thunarx_renamer_class_init        (ThunarxRenamerClass    *klass);
-static void     thunarx_renamer_init              (ThunarxRenamer         *renamer);
 static void     thunarx_renamer_finalize          (GObject                *object);
 static GObject *thunarx_renamer_constructor       (GType                   type,
                                                    guint                   n_construct_properties,
@@ -87,37 +85,11 @@ struct _ThunarxRenamerPrivate
 
 
 
-static GObjectClass *thunarx_renamer_parent_class;
-static guint         renamer_signals[LAST_SIGNAL];
+static guint renamer_signals[LAST_SIGNAL];
 
 
 
-GType
-thunarx_renamer_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarxRenamerClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunarx_renamer_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarxRenamer),
-        0,
-        (GInstanceInitFunc) thunarx_renamer_init,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_VBOX, I_("ThunarxRenamer"), &info, G_TYPE_FLAG_ABSTRACT);
-    }
-
-  return type;
-}
+G_DEFINE_ABSTRACT_TYPE (ThunarxRenamer, thunarx_renamer, GTK_TYPE_VBOX)
 
 
 
@@ -125,9 +97,6 @@ static void
 thunarx_renamer_class_init (ThunarxRenamerClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* determine the parent type class */
-  thunarx_renamer_parent_class = g_type_class_peek_parent (klass);
 
   /* add private data */
   g_type_class_add_private (klass, sizeof (ThunarxRenamerPrivate));

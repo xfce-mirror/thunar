@@ -37,7 +37,6 @@
 
 
 
-static void     thunarx_provider_factory_class_init     (ThunarxProviderFactoryClass *klass);
 static void     thunarx_provider_factory_finalize       (GObject                     *object);
 static void     thunarx_provider_factory_add            (ThunarxProviderFactory      *factory,
                                                          ThunarxProviderModule       *module);
@@ -70,37 +69,11 @@ struct _ThunarxProviderFactory
 
 
 
-static GObjectClass *thunarx_provider_factory_parent_class;
-static GList        *thunarx_provider_modules = NULL;       /* list of active provider modules */
+static GList *thunarx_provider_modules = NULL; /* list of active provider modules */
 
 
 
-GType
-thunarx_provider_factory_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarxProviderFactoryClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunarx_provider_factory_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarxProviderFactory),
-        0,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarxProviderFactory"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarxProviderFactory, thunarx_provider_factory, G_TYPE_OBJECT)
 
 
 
@@ -109,11 +82,15 @@ thunarx_provider_factory_class_init (ThunarxProviderFactoryClass *klass)
 {
   GObjectClass *gobject_class;
 
-  /* determine the parent type class */
-  thunarx_provider_factory_parent_class = g_type_class_peek_parent (klass);
-
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunarx_provider_factory_finalize;
+}
+
+
+
+static void
+thunarx_provider_factory_init (ThunarxProviderFactory *factory)
+{
 }
 
 

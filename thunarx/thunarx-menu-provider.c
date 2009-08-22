@@ -31,30 +31,25 @@
 GType
 thunarx_menu_provider_get_type (void)
 {
-  static GType type = G_TYPE_INVALID;
+  static volatile gsize type__volatile = 0;
+  GType                 type;
 
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
+  if (g_once_init_enter (&type__volatile))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarxMenuProviderIface),
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        0,
-        0,
-        NULL,
-        NULL,
-      };
+      type = g_type_register_static_simple (G_TYPE_INTERFACE,
+                                            I_("ThunarxMenuProvider"),
+                                            sizeof (ThunarxMenuProviderIface),
+                                            NULL,
+                                            0,
+                                            NULL,
+                                            0);
 
-      /* register the menu provider interface */
-      type = g_type_register_static (G_TYPE_INTERFACE, I_("ThunarxMenuProvider"), &info, 0);
       g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
+
+      g_once_init_leave (&type__volatile, type);
     }
 
-  return type;
+  return type__volatile;
 }
 
 

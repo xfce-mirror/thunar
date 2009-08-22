@@ -46,30 +46,21 @@ static guint file_info_signals[LAST_SIGNAL];
 GType
 thunarx_file_info_get_type (void)
 {
-  static GType type = G_TYPE_INVALID;
+  static volatile gsize type__volatile = 0;
+  GType                 type;
 
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
+  if (g_once_init_enter (&type__volatile))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarxFileInfoIface),
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        0,
-        0,
-        NULL,
-        NULL,
-      };
+      type = g_type_register_static_simple (G_TYPE_INTERFACE,
+                                            I_("ThunarxFileInfo"),
+                                            sizeof (ThunarxFileInfoIface),
+                                            NULL,
+                                            0,
+                                            NULL,
+                                            0);
 
-      /* register the interface type */
-      type = g_type_register_static (G_TYPE_INTERFACE, I_("ThunarxFileInfo"), &info, 0);
-
-      /* implementations must inherit GObject */
       g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
-
+      
       /**
        * ThunarxFileInfo::changed:
        * @file_info : a #ThunarxFileInfo.
@@ -109,9 +100,11 @@ thunarx_file_info_get_type (void)
                       NULL, NULL,
                       g_cclosure_marshal_VOID__VOID,
                       G_TYPE_NONE, 0);
+
+      g_once_init_leave (&type__volatile, type);
     }
 
-  return type;
+  return type__volatile;
 }
 
 

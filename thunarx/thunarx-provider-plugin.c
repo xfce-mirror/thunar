@@ -37,29 +37,23 @@ static void thunarx_provider_plugin_class_init (gpointer klass);
 GType
 thunarx_provider_plugin_get_type (void)
 {
-  static GType type = G_TYPE_INVALID;
+  static volatile gsize type__volatile = 0;
+  GType                 type;
 
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
+  if (g_once_init_enter (&type__volatile))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarxProviderPluginIface),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunarx_provider_plugin_class_init,
-        NULL,
-        NULL,
-        0,
-        0,
-        NULL,
-        NULL,
-      };
+      type = g_type_register_static_simple (G_TYPE_INTERFACE,
+                                            I_("ThunarxProviderPlugin"),
+                                            sizeof (ThunarxProviderPluginIface),
+                                            (GClassInitFunc) thunarx_provider_plugin_class_init,
+                                            0,
+                                            NULL,
+                                            0);
 
-      /* register the provider plugin interface */
-      type = g_type_register_static (G_TYPE_INTERFACE, I_("ThunarxProviderPlugin"), &info, 0);
+      g_once_init_leave (&type__volatile, type);
     }
 
-  return type;
+  return type__volatile;
 }
 
 
