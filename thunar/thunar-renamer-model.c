@@ -63,9 +63,7 @@ typedef struct _ThunarRenamerModelItem ThunarRenamerModelItem;
 
 
 
-static void                    thunar_renamer_model_class_init          (ThunarRenamerModelClass *klass);
 static void                    thunar_renamer_model_tree_model_init     (GtkTreeModelIface       *iface);
-static void                    thunar_renamer_model_init                (ThunarRenamerModel      *renamer_model);
 static void                    thunar_renamer_model_finalize            (GObject                 *object);
 static void                    thunar_renamer_model_get_property        (GObject                 *object,
                                                                          guint                    prop_id,
@@ -168,44 +166,8 @@ struct _ThunarRenamerModelItem
 
 
 
-static GObjectClass *thunar_renamer_model_parent_class;
-
-
-
-GType
-thunar_renamer_model_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarRenamerModelClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_renamer_model_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarRenamerModel),
-        0,
-        (GInstanceInitFunc) thunar_renamer_model_init,
-        NULL,
-      };
-
-      static const GInterfaceInfo tree_model_info =
-      {
-        (GInterfaceInitFunc) thunar_renamer_model_tree_model_init,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarRenamerModel"), &info, 0);
-      g_type_add_interface_static (type, GTK_TYPE_TREE_MODEL, &tree_model_info);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE_WITH_CODE (ThunarRenamerModel, thunar_renamer_model, G_TYPE_OBJECT,
+    G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL, thunar_renamer_model_tree_model_init))
 
 
 
@@ -213,9 +175,6 @@ static void
 thunar_renamer_model_class_init (ThunarRenamerModelClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* determine the parent type class */
-  thunar_renamer_model_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_renamer_model_finalize;

@@ -38,11 +38,9 @@ enum
 
 
 
-static void          thunar_tree_pane_class_init            (ThunarTreePaneClass  *klass);
 static void          thunar_tree_pane_component_init        (ThunarComponentIface *iface);
 static void          thunar_tree_pane_navigator_init        (ThunarNavigatorIface *iface);
 static void          thunar_tree_pane_side_pane_init        (ThunarSidePaneIface  *iface);
-static void          thunar_tree_pane_init                  (ThunarTreePane       *tree_pane);
 static void          thunar_tree_pane_dispose               (GObject              *object);
 static void          thunar_tree_pane_get_property          (GObject              *object,
                                                              guint                 prop_id,
@@ -77,60 +75,10 @@ struct _ThunarTreePane
 
 
 
-static GObjectClass *thunar_tree_pane_parent_class;
-
-
-
-GType
-thunar_tree_pane_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarTreePaneClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_tree_pane_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarTreePane),
-        0,
-        (GInstanceInitFunc) thunar_tree_pane_init,
-        NULL,
-      };
-
-      static const GInterfaceInfo component_info =
-      {
-        (GInterfaceInitFunc) thunar_tree_pane_component_init,
-        NULL,
-        NULL,
-      };
-
-      static const GInterfaceInfo navigator_info =
-      {
-        (GInterfaceInitFunc) thunar_tree_pane_navigator_init,
-        NULL,
-        NULL,
-      };
-
-      static const GInterfaceInfo side_pane_info =
-      {
-        (GInterfaceInitFunc) thunar_tree_pane_side_pane_init,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_SCROLLED_WINDOW, I_("ThunarTreePane"), &info, 0);
-      g_type_add_interface_static (type, THUNAR_TYPE_NAVIGATOR, &navigator_info);
-      g_type_add_interface_static (type, THUNAR_TYPE_COMPONENT, &component_info);
-      g_type_add_interface_static (type, THUNAR_TYPE_SIDE_PANE, &side_pane_info);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE_WITH_CODE (ThunarTreePane, thunar_tree_pane, GTK_TYPE_SCROLLED_WINDOW,
+    G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR, thunar_tree_pane_navigator_init)
+    G_IMPLEMENT_INTERFACE (THUNAR_TYPE_COMPONENT, thunar_tree_pane_component_init)
+    G_IMPLEMENT_INTERFACE (THUNAR_TYPE_SIDE_PANE, thunar_tree_pane_side_pane_init))
 
 
 
@@ -138,9 +86,6 @@ static void
 thunar_tree_pane_class_init (ThunarTreePaneClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* determine the parent type class */
-  thunar_tree_pane_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_tree_pane_dispose;

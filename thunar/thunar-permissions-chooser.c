@@ -72,8 +72,6 @@ enum
 
 
 
-static void                 thunar_permissions_chooser_class_init       (ThunarPermissionsChooserClass  *klass);
-static void                 thunar_permissions_chooser_init             (ThunarPermissionsChooser       *chooser);
 static void                 thunar_permissions_chooser_finalize         (GObject                        *object);
 static void                 thunar_permissions_chooser_get_property     (GObject                        *object,
                                                                          guint                           prop_id,
@@ -151,36 +149,7 @@ struct _ThunarPermissionsChooser
 
 
 
-static GObjectClass *thunar_permissions_chooser_parent_class;
-
-
-
-GType
-thunar_permissions_chooser_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarPermissionsChooserClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_permissions_chooser_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarPermissionsChooser),
-        0,
-        (GInstanceInitFunc) thunar_permissions_chooser_init,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_VBOX, I_("ThunarPermissionsChooser"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarPermissionsChooser, thunar_permissions_chooser, GTK_TYPE_VBOX)
 
 
 
@@ -188,9 +157,6 @@ static void
 thunar_permissions_chooser_class_init (ThunarPermissionsChooserClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* determine the parent type class */
-  thunar_permissions_chooser_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_permissions_chooser_finalize;

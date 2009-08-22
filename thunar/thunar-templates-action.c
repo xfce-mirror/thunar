@@ -42,8 +42,6 @@ enum
 
 
 
-static void       thunar_templates_action_class_init        (ThunarTemplatesActionClass *klass);
-static void       thunar_templates_action_init              (ThunarTemplatesAction      *templates_action);
 static void       thunar_templates_action_finalize          (GObject                    *object);
 static GtkWidget *thunar_templates_action_create_menu_item  (GtkAction                  *action);
 static void       thunar_templates_action_menu_shown        (GtkWidget                  *menu,
@@ -69,29 +67,11 @@ struct _ThunarTemplatesAction
 
 
 
-static GObjectClass *thunar_templates_action_parent_class;
-static guint         templates_action_signals[LAST_SIGNAL];
+static guint templates_action_signals[LAST_SIGNAL];
 
 
 
-GType
-thunar_templates_action_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      type = g_type_register_static_simple (GTK_TYPE_ACTION,
-                                            I_("ThunarTemplatesAction"),
-                                            sizeof (ThunarTemplatesActionClass),
-                                            (GClassInitFunc) thunar_templates_action_class_init,
-                                            sizeof (ThunarTemplatesAction),
-                                            (GInstanceInitFunc) thunar_templates_action_init,
-                                            0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarTemplatesAction, thunar_templates_action, GTK_TYPE_ACTION)
 
 
 
@@ -100,9 +80,6 @@ thunar_templates_action_class_init (ThunarTemplatesActionClass *klass)
 {
   GtkActionClass *gtkaction_class;
   GObjectClass   *gobject_class;
-
-  /* determine the parent type class */
-  thunar_templates_action_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_templates_action_finalize;

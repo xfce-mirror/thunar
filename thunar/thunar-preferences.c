@@ -88,8 +88,6 @@ enum
 
 
 
-static void     thunar_preferences_class_init         (ThunarPreferencesClass *klass);
-static void     thunar_preferences_init               (ThunarPreferences      *preferences);
 static void     thunar_preferences_finalize           (GObject                *object);
 static void     thunar_preferences_get_property       (GObject                *object,
                                                        guint                   prop_id,
@@ -136,36 +134,7 @@ struct _ThunarPreferences
 
 
 
-static GObjectClass *thunar_preferences_parent_class;
-
-
-
-GType
-thunar_preferences_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarPreferencesClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_preferences_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarPreferences),
-        0,
-        (GInstanceInitFunc) thunar_preferences_init,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarPreferences"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarPreferences, thunar_preferences, G_TYPE_OBJECT)
 
 
 
@@ -173,9 +142,6 @@ static void
 thunar_preferences_class_init (ThunarPreferencesClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* determine the parent type class */
-  thunar_preferences_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_preferences_finalize;

@@ -41,7 +41,6 @@
 
 
 
-static void     thunar_simple_job_class_init (ThunarSimpleJobClass *klass);
 static void     thunar_simple_job_finalize   (GObject              *object);
 static gboolean thunar_simple_job_execute    (ExoJob               *job,
                                               GError              **error);
@@ -62,28 +61,7 @@ struct _ThunarSimpleJob
 
 
 
-static GObjectClass *thunar_simple_job_parent_class;
-
-
-
-GType
-thunar_simple_job_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      type = g_type_register_static_simple (THUNAR_TYPE_JOB, 
-                                            "ThunarSimpleJob",
-                                            sizeof (ThunarSimpleJobClass),
-                                            (GClassInitFunc) thunar_simple_job_class_init,
-                                            sizeof (ThunarSimpleJob),
-                                            NULL, 
-                                            0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarSimpleJob, thunar_simple_job, THUNAR_TYPE_JOB)
 
 
 
@@ -93,14 +71,18 @@ thunar_simple_job_class_init (ThunarSimpleJobClass *klass)
   GObjectClass *gobject_class;
   ExoJobClass  *exojob_class;
 
-  /* determine the parent type class */
-  thunar_simple_job_parent_class = g_type_class_peek_parent (klass);
-
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_simple_job_finalize;
 
   exojob_class = EXO_JOB_CLASS (klass);
   exojob_class->execute = thunar_simple_job_execute;
+}
+
+
+
+static void
+thunar_simple_job_init (ThunarSimpleJob *simple_job)
+{
 }
 
 

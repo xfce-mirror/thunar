@@ -67,10 +67,8 @@ typedef enum
 
 
 
-static void               thunar_shortcuts_model_class_init         (ThunarShortcutsModelClass *klass);
 static void               thunar_shortcuts_model_tree_model_init    (GtkTreeModelIface         *iface);
 static void               thunar_shortcuts_model_drag_source_init   (GtkTreeDragSourceIface    *iface);
-static void               thunar_shortcuts_model_init               (ThunarShortcutsModel      *model);
 static void               thunar_shortcuts_model_finalize           (GObject                   *object);
 static GtkTreeModelFlags  thunar_shortcuts_model_get_flags          (GtkTreeModel              *tree_model);
 static gint               thunar_shortcuts_model_get_n_columns      (GtkTreeModel              *tree_model);
@@ -173,52 +171,9 @@ struct _ThunarShortcut
 
 
 
-static GObjectClass *thunar_shortcuts_model_parent_class;
-
-
-
-GType
-thunar_shortcuts_model_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarShortcutsModelClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_shortcuts_model_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarShortcutsModel),
-        0,
-        (GInstanceInitFunc) thunar_shortcuts_model_init,
-        NULL,
-      };
-
-      static const GInterfaceInfo tree_model_info =
-      {
-        (GInterfaceInitFunc) thunar_shortcuts_model_tree_model_init,
-        NULL,
-        NULL,
-      };
-
-      static const GInterfaceInfo drag_source_info =
-      {
-        (GInterfaceInitFunc) thunar_shortcuts_model_drag_source_init,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarShortcutsModel"), &info, 0);
-      g_type_add_interface_static (type, GTK_TYPE_TREE_MODEL, &tree_model_info);
-      g_type_add_interface_static (type, GTK_TYPE_TREE_DRAG_SOURCE, &drag_source_info);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE_WITH_CODE (ThunarShortcutsModel, thunar_shortcuts_model, G_TYPE_OBJECT,
+    G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL, thunar_shortcuts_model_tree_model_init)
+    G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_DRAG_SOURCE, thunar_shortcuts_model_drag_source_init))
 
 
     
@@ -226,9 +181,6 @@ static void
 thunar_shortcuts_model_class_init (ThunarShortcutsModelClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* determine the parent type class */
-  thunar_shortcuts_model_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_shortcuts_model_finalize;

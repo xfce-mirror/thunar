@@ -29,8 +29,6 @@
 
 
 
-static void thunar_trash_action_class_init (ThunarTrashActionClass *klass);
-static void thunar_trash_action_init       (ThunarTrashAction      *trash_action);
 static void thunar_trash_action_finalize   (GObject                *object);
 static void thunar_trash_action_changed    (ThunarTrashAction      *trash_action,
                                             ThunarFile             *trash_bin);
@@ -49,36 +47,7 @@ struct _ThunarTrashAction
 
 
 
-static GObjectClass *thunar_trash_action_parent_class;
-
-
-
-GType
-thunar_trash_action_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarTrashActionClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_trash_action_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarTrashAction),
-        0,
-        (GInstanceInitFunc) thunar_trash_action_init,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_ACTION, I_("ThunarTrashAction"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarTrashAction, thunar_trash_action, GTK_TYPE_ACTION)
 
 
 
@@ -86,9 +55,6 @@ static void
 thunar_trash_action_class_init (ThunarTrashActionClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* determine the parent type class */
-  thunar_trash_action_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_trash_action_finalize;

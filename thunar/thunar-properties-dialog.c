@@ -71,8 +71,6 @@ enum
 
 
 
-static void     thunar_properties_dialog_class_init           (ThunarPropertiesDialogClass *klass);
-static void     thunar_properties_dialog_init                 (ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_dispose              (GObject                     *object);
 static void     thunar_properties_dialog_finalize             (GObject                     *object);
 static void     thunar_properties_dialog_get_property         (GObject                     *object,
@@ -137,36 +135,7 @@ struct _ThunarPropertiesDialog
 
 
 
-static GObjectClass *thunar_properties_dialog_parent_class;
-
-
-
-GType
-thunar_properties_dialog_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarPropertiesDialogClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_properties_dialog_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarPropertiesDialog),
-        0,
-        (GInstanceInitFunc) thunar_properties_dialog_init,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_TYPE_ABSTRACT_DIALOG, I_("ThunarPropertiesDialog"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarPropertiesDialog, thunar_properties_dialog, THUNAR_TYPE_ABSTRACT_DIALOG)
 
 
 
@@ -176,9 +145,6 @@ thunar_properties_dialog_class_init (ThunarPropertiesDialogClass *klass)
   GtkDialogClass *gtkdialog_class;
   GtkBindingSet  *binding_set;
   GObjectClass   *gobject_class;
-
-  /* determine the parent type class */
-  thunar_properties_dialog_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_properties_dialog_dispose;

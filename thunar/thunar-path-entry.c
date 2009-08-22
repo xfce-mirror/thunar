@@ -59,9 +59,7 @@ enum
 
 
 
-static void     thunar_path_entry_class_init                    (ThunarPathEntryClass *klass);
 static void     thunar_path_entry_editable_init                 (GtkEditableClass     *iface);
-static void     thunar_path_entry_init                          (ThunarPathEntry      *path_entry);
 static void     thunar_path_entry_finalize                      (GObject              *object);
 static void     thunar_path_entry_get_property                  (GObject              *object,  
                                                                  guint                 prop_id,
@@ -166,44 +164,11 @@ static const GtkTargetEntry drag_targets[] =
 
 
 static GtkEditableClass *thunar_path_entry_editable_parent_iface;
-static GObjectClass     *thunar_path_entry_parent_class;
 
 
 
-GType
-thunar_path_entry_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarPathEntryClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_path_entry_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarPathEntry),
-        0,
-        (GInstanceInitFunc) thunar_path_entry_init,
-        NULL,
-      };
-
-      static const GInterfaceInfo editable_info =
-      {
-        (GInterfaceInitFunc) thunar_path_entry_editable_init,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_ENTRY, I_("ThunarPathEntry"), &info, 0);
-      g_type_add_interface_static (type, GTK_TYPE_EDITABLE, &editable_info);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE_WITH_CODE (ThunarPathEntry, thunar_path_entry, GTK_TYPE_ENTRY,
+    G_IMPLEMENT_INTERFACE (GTK_TYPE_EDITABLE, thunar_path_entry_editable_init))
 
 
 
@@ -213,9 +178,6 @@ thunar_path_entry_class_init (ThunarPathEntryClass *klass)
   GtkWidgetClass *gtkwidget_class;
   GtkEntryClass  *gtkentry_class;
   GObjectClass   *gobject_class;
-
-  /* determine the parent type class */
-  thunar_path_entry_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_path_entry_finalize;

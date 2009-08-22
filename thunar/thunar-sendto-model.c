@@ -38,8 +38,6 @@
 
 
 
-static void thunar_sendto_model_class_init (ThunarSendtoModelClass *klass);
-static void thunar_sendto_model_init       (ThunarSendtoModel      *sendto_model);
 static void thunar_sendto_model_finalize   (GObject                *object);
 static void thunar_sendto_model_load       (ThunarSendtoModel      *sendto_model);
 static void thunar_sendto_model_event      (GFileMonitor           *monitor,
@@ -65,28 +63,7 @@ struct _ThunarSendtoModel
 
 
 
-static GObjectClass *thunar_sendto_model_parent_class;
-
-
-
-GType
-thunar_sendto_model_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      type = g_type_register_static_simple (G_TYPE_OBJECT,
-                                            I_("ThunarSendtoModel"),
-                                            sizeof (ThunarSendtoModelClass),
-                                            (GClassInitFunc) thunar_sendto_model_class_init,
-                                            sizeof (ThunarSendtoModel),
-                                            (GInstanceInitFunc) thunar_sendto_model_init,
-                                            0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarSendtoModel, thunar_sendto_model, G_TYPE_OBJECT)
 
 
 
@@ -94,9 +71,6 @@ static void
 thunar_sendto_model_class_init (ThunarSendtoModelClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* determine the parent type class */
-  thunar_sendto_model_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_sendto_model_finalize;

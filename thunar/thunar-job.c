@@ -102,9 +102,6 @@ thunar_job_class_init (ThunarJobClass *klass)
   /* add our private data for this class */
   g_type_class_add_private (klass, sizeof (ThunarJobPrivate));
 
-  /* determine the parent class */
-  thunar_job_parent_class = g_type_class_peek_parent (klass);
-
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_job_finalize;
 

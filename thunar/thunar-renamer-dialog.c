@@ -62,8 +62,6 @@ enum
 
 
 
-static void     thunar_renamer_dialog_class_init          (ThunarRenamerDialogClass *klass);
-static void     thunar_renamer_dialog_init                (ThunarRenamerDialog      *renamer_dialog);
 static void     thunar_renamer_dialog_dispose             (GObject                  *object);
 static void     thunar_renamer_dialog_finalize            (GObject                  *object);
 static void     thunar_renamer_dialog_get_property        (GObject                  *object,
@@ -200,36 +198,7 @@ static const GtkTargetEntry drag_targets[] = {
 
 
 
-static GObjectClass *thunar_renamer_dialog_parent_class;
-
-
-
-GType
-thunar_renamer_dialog_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarRenamerDialogClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_renamer_dialog_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarRenamerDialog),
-        0,
-        (GInstanceInitFunc) thunar_renamer_dialog_init,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_TYPE_ABSTRACT_DIALOG, I_("ThunarRenamerDialog"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarRenamerDialog, thunar_renamer_dialog, THUNAR_TYPE_ABSTRACT_DIALOG)
 
 
 
@@ -239,9 +208,6 @@ thunar_renamer_dialog_class_init (ThunarRenamerDialogClass *klass)
   GtkDialogClass *gtkdialog_class;
   GtkWidgetClass *gtkwidget_class;
   GObjectClass   *gobject_class;
-
-  /* determine the parent type class */
-  thunar_renamer_dialog_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_renamer_dialog_dispose;

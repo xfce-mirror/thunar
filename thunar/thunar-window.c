@@ -330,7 +330,7 @@ static guint window_signals[LAST_SIGNAL];
 
 
 G_DEFINE_TYPE_WITH_CODE (ThunarWindow, thunar_window, GTK_TYPE_WINDOW,
-                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_BROWSER, NULL));
+                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_BROWSER, NULL))
 
 
 

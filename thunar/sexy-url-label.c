@@ -102,7 +102,6 @@ static void sexy_url_label_clear_links(SexyUrlLabel *url_label);
 static void sexy_url_label_clear_urls(SexyUrlLabel *url_label);
 static void sexy_url_label_rescan_label(SexyUrlLabel *url_label);
 
-static GtkLabelClass *parent_class = NULL;
 static guint signals[LAST_SIGNAL] = {0};
 
 G_DEFINE_TYPE(SexyUrlLabel, sexy_url_label, GTK_TYPE_LABEL);
@@ -112,8 +111,6 @@ sexy_url_label_class_init(SexyUrlLabelClass *klass)
 {
 	GObjectClass   *object_class = G_OBJECT_CLASS(klass);
 	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS(klass);
-
-	parent_class = g_type_class_peek_parent(klass);
 
 	object_class->finalize = sexy_url_label_finalize;
 
@@ -205,8 +202,8 @@ sexy_url_label_finalize(GObject *obj)
 	sexy_url_label_clear_links(url_label);
 	sexy_url_label_clear_urls(url_label);
 
-	if (G_OBJECT_CLASS(parent_class)->finalize != NULL)
-		G_OBJECT_CLASS(parent_class)->finalize(obj);
+	if (G_OBJECT_CLASS(sexy_url_label_parent_class)->finalize != NULL)
+		G_OBJECT_CLASS(sexy_url_label_parent_class)->finalize(obj);
 }
 
 static gboolean
@@ -290,7 +287,7 @@ sexy_url_label_motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
 	if (priv->active_link != NULL)
 		event->state = 0;
 
-	GTK_WIDGET_CLASS(parent_class)->motion_notify_event(widget, event);
+	GTK_WIDGET_CLASS(sexy_url_label_parent_class)->motion_notify_event(widget, event);
 
 	return FALSE;
 }
@@ -301,8 +298,8 @@ sexy_url_label_leave_notify_event(GtkWidget *widget, GdkEventCrossing *event)
 	SexyUrlLabel *url_label = (SexyUrlLabel *)widget;
 	SexyUrlLabelPrivate *priv = SEXY_URL_LABEL_GET_PRIVATE(url_label);
 
-	if (GTK_WIDGET_CLASS(parent_class)->leave_notify_event != NULL)
-		GTK_WIDGET_CLASS(parent_class)->leave_notify_event(widget, event);
+	if (GTK_WIDGET_CLASS(sexy_url_label_parent_class)->leave_notify_event != NULL)
+		GTK_WIDGET_CLASS(sexy_url_label_parent_class)->leave_notify_event(widget, event);
 
 	if (event->mode == GDK_CROSSING_NORMAL)
 	{
@@ -321,7 +318,7 @@ sexy_url_label_button_press_event(GtkWidget *widget, GdkEventButton *event)
 
 	if (priv->active_link == NULL)
 	{
-		return GTK_WIDGET_CLASS(parent_class)->button_press_event(widget,
+		return GTK_WIDGET_CLASS(sexy_url_label_parent_class)->button_press_event(widget,
 																  event);
 	}
 
@@ -377,7 +374,7 @@ sexy_url_label_realize(GtkWidget *widget)
 	GdkWindowAttr attributes;
 	gint attributes_mask;
 
-	GTK_WIDGET_CLASS(parent_class)->realize(widget);
+	GTK_WIDGET_CLASS(sexy_url_label_parent_class)->realize(widget);
 
 	attributes.window_type = GDK_WINDOW_CHILD;
 	attributes.x = widget->allocation.x;
@@ -414,7 +411,7 @@ sexy_url_label_unrealize(GtkWidget *widget)
 		priv->event_window = NULL;
 	}
 
-	GTK_WIDGET_CLASS(parent_class)->unrealize(widget);
+	GTK_WIDGET_CLASS(sexy_url_label_parent_class)->unrealize(widget);
 }
 
 static void
@@ -423,7 +420,7 @@ sexy_url_label_map(GtkWidget *widget)
 	SexyUrlLabel *url_label = (SexyUrlLabel *)widget;
 	SexyUrlLabelPrivate *priv = SEXY_URL_LABEL_GET_PRIVATE(url_label);
 
-	GTK_WIDGET_CLASS(parent_class)->map(widget);
+	GTK_WIDGET_CLASS(sexy_url_label_parent_class)->map(widget);
 
 	if (priv->event_window != NULL)
 		gdk_window_show(priv->event_window);
@@ -438,7 +435,7 @@ sexy_url_label_unmap(GtkWidget *widget)
 	if (priv->event_window != NULL)
 		gdk_window_hide(priv->event_window);
 
-	GTK_WIDGET_CLASS(parent_class)->map(widget);
+	GTK_WIDGET_CLASS(sexy_url_label_parent_class)->map(widget);
 }
 
 static void
@@ -459,7 +456,7 @@ sexy_url_label_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
 	}
 #endif
 	update_wrap_width(url_label, allocation->width);
-	GTK_WIDGET_CLASS(parent_class)->size_allocate(widget, allocation);
+	GTK_WIDGET_CLASS(sexy_url_label_parent_class)->size_allocate(widget, allocation);
 	pango_layout_set_width(gtk_label_get_layout(GTK_LABEL(url_label)),
 						   allocation->width * PANGO_SCALE);
 

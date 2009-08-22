@@ -91,11 +91,9 @@ enum
 
 
 
-static void                 thunar_standard_view_class_init                 (ThunarStandardViewClass  *klass);
 static void                 thunar_standard_view_component_init             (ThunarComponentIface     *iface);
 static void                 thunar_standard_view_navigator_init             (ThunarNavigatorIface     *iface);
 static void                 thunar_standard_view_view_init                  (ThunarViewIface          *iface);
-static void                 thunar_standard_view_init                       (ThunarStandardView       *standard_view);
 static GObject             *thunar_standard_view_constructor                (GType                     type,
                                                                              guint                     n_construct_properties,
                                                                              GObjectConstructParam    *construct_properties);
@@ -367,61 +365,14 @@ static const GtkTargetEntry drop_targets[] =
 
 
 
-static guint         standard_view_signals[LAST_SIGNAL];
-static GObjectClass *thunar_standard_view_parent_class;
+static guint standard_view_signals[LAST_SIGNAL];
 
 
 
-GType
-thunar_standard_view_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarStandardViewClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_standard_view_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarStandardView),
-        0,
-        (GInstanceInitFunc) thunar_standard_view_init,
-        NULL,
-      };
-
-      static const GInterfaceInfo component_info =
-      {
-        (GInterfaceInitFunc) thunar_standard_view_component_init,
-        NULL,
-        NULL,
-      };
-
-      static const GInterfaceInfo navigator_info =
-      {
-        (GInterfaceInitFunc) thunar_standard_view_navigator_init,
-        NULL,
-        NULL,
-      };
-
-      static const GInterfaceInfo view_info =
-      {
-        (GInterfaceInitFunc) thunar_standard_view_view_init,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_SCROLLED_WINDOW, I_("ThunarStandardView"), &info, G_TYPE_FLAG_ABSTRACT);
-      g_type_add_interface_static (type, THUNAR_TYPE_NAVIGATOR, &navigator_info);
-      g_type_add_interface_static (type, THUNAR_TYPE_COMPONENT, &component_info);
-      g_type_add_interface_static (type, THUNAR_TYPE_VIEW, &view_info);
-    }
-
-  return type;
-}
+G_DEFINE_ABSTRACT_TYPE_WITH_CODE (ThunarStandardView, thunar_standard_view, GTK_TYPE_SCROLLED_WINDOW,
+    G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR, thunar_standard_view_navigator_init)
+    G_IMPLEMENT_INTERFACE (THUNAR_TYPE_COMPONENT, thunar_standard_view_component_init)
+    G_IMPLEMENT_INTERFACE (THUNAR_TYPE_VIEW, thunar_standard_view_view_init))
 
 
 
@@ -433,8 +384,6 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   GObjectClass   *gobject_class;
 
   g_type_class_add_private (klass, sizeof (ThunarStandardViewPrivate));
-
-  thunar_standard_view_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->constructor = thunar_standard_view_constructor;

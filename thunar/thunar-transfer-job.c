@@ -38,8 +38,6 @@ typedef struct _ThunarTransferNode ThunarTransferNode;
 
 
 
-static void     thunar_transfer_job_class_init   (ThunarTransferJobClass *klass);
-static void     thunar_transfer_job_init         (ThunarTransferJob      *job);
 static void     thunar_transfer_job_finalize     (GObject                *object);
 static gboolean thunar_transfer_job_execute      (ExoJob                 *job,
                                                   GError                **error);
@@ -74,28 +72,7 @@ struct _ThunarTransferNode
 
 
 
-static GObjectClass *thunar_transfer_job_parent_class = NULL;
-
-
-
-GType
-thunar_transfer_job_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      type = g_type_register_static_simple (THUNAR_TYPE_JOB, 
-                                            "ThunarTransferJob",
-                                            sizeof (ThunarTransferJobClass),
-                                            (GClassInitFunc) thunar_transfer_job_class_init,
-                                            sizeof (ThunarTransferJob),
-                                            (GInstanceInitFunc) thunar_transfer_job_init,
-                                            0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarTransferJob, thunar_transfer_job, THUNAR_TYPE_JOB)
 
 
 
@@ -104,9 +81,6 @@ thunar_transfer_job_class_init (ThunarTransferJobClass *klass)
 {
   GObjectClass *gobject_class;
   ExoJobClass  *exojob_class;
-
-  /* Determine the parent type class */
-  thunar_transfer_job_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_transfer_job_finalize; 

@@ -37,8 +37,6 @@ enum
 
 
 
-static void        thunar_statusbar_class_init            (ThunarStatusbarClass *klass);
-static void        thunar_statusbar_init                  (ThunarStatusbar      *statusbar);
 static void        thunar_statusbar_set_property          (GObject              *object,
                                                            guint                 prop_id,
                                                            const GValue         *value,
@@ -59,32 +57,7 @@ struct _ThunarStatusbar
 
 
 
-GType
-thunar_statusbar_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarStatusbarClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_statusbar_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarStatusbar),
-        0,
-        (GInstanceInitFunc) thunar_statusbar_init,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_STATUSBAR, I_("ThunarStatusbar"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarStatusbar, thunar_statusbar, GTK_TYPE_STATUSBAR)
 
 
 

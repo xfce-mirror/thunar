@@ -181,7 +181,7 @@ static guint view_signals[LAST_SIGNAL];
 
 
 G_DEFINE_TYPE_WITH_CODE (ThunarShortcutsView, thunar_shortcuts_view, GTK_TYPE_TREE_VIEW,
-                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_BROWSER, NULL));
+                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_BROWSER, NULL))
 
 
 

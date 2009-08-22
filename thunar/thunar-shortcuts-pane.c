@@ -43,11 +43,9 @@ enum
 
 
 
-static void          thunar_shortcuts_pane_class_init            (ThunarShortcutsPaneClass *klass);
 static void          thunar_shortcuts_pane_component_init        (ThunarComponentIface     *iface);
 static void          thunar_shortcuts_pane_navigator_init        (ThunarNavigatorIface     *iface);
 static void          thunar_shortcuts_pane_side_pane_init        (ThunarSidePaneIface      *iface);
-static void          thunar_shortcuts_pane_init                  (ThunarShortcutsPane      *shortcuts_pane);
 static void          thunar_shortcuts_pane_dispose               (GObject                  *object);
 static void          thunar_shortcuts_pane_finalize              (GObject                  *object);
 static void          thunar_shortcuts_pane_get_property          (GObject                  *object,
@@ -98,60 +96,12 @@ static const GtkActionEntry action_entries[] =
   { "sendto-shortcuts", THUNAR_STOCK_SHORTCUTS, "", NULL, NULL, G_CALLBACK (thunar_shortcuts_pane_action_shortcuts_add), },
 };
 
-static GObjectClass *thunar_shortcuts_pane_parent_class;
 
 
-
-GType
-thunar_shortcuts_pane_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarShortcutsPaneClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_shortcuts_pane_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarShortcutsPane),
-        0,
-        (GInstanceInitFunc) thunar_shortcuts_pane_init,
-        NULL,
-      };
-
-      static const GInterfaceInfo component_info =
-      {
-        (GInterfaceInitFunc) thunar_shortcuts_pane_component_init,
-        NULL,
-        NULL,
-      };
-
-      static const GInterfaceInfo navigator_info =
-      {
-        (GInterfaceInitFunc) thunar_shortcuts_pane_navigator_init,
-        NULL,
-        NULL,
-      };
-
-      static const GInterfaceInfo side_pane_info =
-      {
-        (GInterfaceInitFunc) thunar_shortcuts_pane_side_pane_init,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_SCROLLED_WINDOW, I_("ThunarShortcutsPane"), &info, 0);
-      g_type_add_interface_static (type, THUNAR_TYPE_NAVIGATOR, &navigator_info);
-      g_type_add_interface_static (type, THUNAR_TYPE_COMPONENT, &component_info);
-      g_type_add_interface_static (type, THUNAR_TYPE_SIDE_PANE, &side_pane_info);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE_WITH_CODE (ThunarShortcutsPane, thunar_shortcuts_pane, GTK_TYPE_SCROLLED_WINDOW,
+    G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR, thunar_shortcuts_pane_navigator_init)
+    G_IMPLEMENT_INTERFACE (THUNAR_TYPE_COMPONENT, thunar_shortcuts_pane_component_init)
+    G_IMPLEMENT_INTERFACE (THUNAR_TYPE_SIDE_PANE, thunar_shortcuts_pane_side_pane_init))
 
 
 
@@ -159,9 +109,6 @@ static void
 thunar_shortcuts_pane_class_init (ThunarShortcutsPaneClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* determine the parent type class */
-  thunar_shortcuts_pane_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_shortcuts_pane_dispose;

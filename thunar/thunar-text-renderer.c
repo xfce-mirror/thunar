@@ -55,8 +55,6 @@ enum
 
 
 
-static void             thunar_text_renderer_class_init                       (ThunarTextRendererClass *klass);
-static void             thunar_text_renderer_init                             (ThunarTextRenderer      *text_renderer);
 static void             thunar_text_renderer_finalize                         (GObject                 *object);
 static void             thunar_text_renderer_get_property                     (GObject                 *object,
                                                                                guint                    prop_id,
@@ -142,37 +140,11 @@ struct _ThunarTextRenderer
 
 
 
-static GObjectClass *thunar_text_renderer_parent_class;
-static guint         text_renderer_signals[LAST_SIGNAL];
+static guint text_renderer_signals[LAST_SIGNAL];
 
 
 
-GType
-thunar_text_renderer_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarTextRendererClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_text_renderer_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarTextRenderer),
-        0,
-        (GInstanceInitFunc) thunar_text_renderer_init,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_CELL_RENDERER, I_("ThunarTextRenderer"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarTextRenderer, thunar_text_renderer, GTK_TYPE_CELL_RENDERER)
 
 
 
@@ -181,9 +153,6 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
 {
   GtkCellRendererClass *gtkcell_renderer_class;
   GObjectClass         *gobject_class;
-
-  /* determine the parent type class */
-  thunar_text_renderer_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_text_renderer_finalize;

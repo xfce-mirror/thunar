@@ -39,8 +39,6 @@ enum
 
 
 
-static void     thunar_throbber_class_init    (ThunarThrobberClass  *klass);
-static void     thunar_throbber_init          (ThunarThrobber       *throbber);
 static void     thunar_throbber_dispose       (GObject              *object);
 static void     thunar_throbber_get_property  (GObject              *object,
                                                guint                 prop_id,
@@ -79,36 +77,7 @@ struct _ThunarThrobber
 
 
 
-static GObjectClass *thunar_throbber_parent_class;
-
-
-
-GType
-thunar_throbber_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarThrobberClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_throbber_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarThrobber),
-        0,
-        (GInstanceInitFunc) thunar_throbber_init,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_WIDGET, I_("ThunarThrobber"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarThrobber, thunar_throbber, GTK_TYPE_WIDGET)
 
 
 
@@ -118,9 +87,6 @@ thunar_throbber_class_init (ThunarThrobberClass *klass)
   GtkWidgetClass *gtkwidget_class;
   GObjectClass   *gobject_class;
   GdkPixbuf      *icon;
-
-  /* determine the parent type class */
-  thunar_throbber_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_throbber_dispose;

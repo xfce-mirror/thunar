@@ -60,7 +60,6 @@
 
 
 
-static void         thunar_group_class_init (ThunarGroupClass *klass);
 static void         thunar_group_finalize   (GObject          *object);
 static ThunarGroup *thunar_group_new        (guint32           id);
 
@@ -81,28 +80,7 @@ struct _ThunarGroup
 
 
 
-static GObjectClass *thunar_group_parent_class;
-
-
-
-GType
-thunar_group_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      type = g_type_register_static_simple (G_TYPE_OBJECT,
-                                            "ThunarGroup",
-                                            sizeof (ThunarGroupClass),
-                                            (GClassInitFunc) thunar_group_class_init,
-                                            sizeof (ThunarGroup),
-                                            NULL,
-                                            0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarGroup, thunar_group, G_TYPE_OBJECT)
 
 
 
@@ -111,11 +89,15 @@ thunar_group_class_init (ThunarGroupClass *klass)
 {
   GObjectClass *gobject_class;
 
-  /* determine the parent class */
-  thunar_group_parent_class = g_type_class_peek_parent (klass);
-
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_group_finalize;
+}
+
+
+
+static void
+thunar_group_init (ThunarGroup *group)
+{
 }
 
 
@@ -195,8 +177,6 @@ thunar_group_get_name (ThunarGroup *group)
 
 
 
-
-static void        thunar_user_class_init (ThunarUserClass *klass);
 static void        thunar_user_finalize   (GObject         *object);
 static void        thunar_user_load       (ThunarUser      *user);
 static ThunarUser *thunar_user_new        (guint32          id);
@@ -221,29 +201,11 @@ struct _ThunarUser
 
 
 
-static guint32       thunar_user_effective_uid;
-static GObjectClass *thunar_user_parent_class;
+static guint32 thunar_user_effective_uid;
 
 
 
-GType
-thunar_user_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      type = g_type_register_static_simple (G_TYPE_OBJECT,
-                                            "ThunarUser",
-                                            sizeof (ThunarUserClass),
-                                            (GClassInitFunc) thunar_user_class_init,
-                                            sizeof (ThunarUser),
-                                            NULL,
-                                            0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarUser, thunar_user, G_TYPE_OBJECT)
 
 
 
@@ -251,9 +213,6 @@ static void
 thunar_user_class_init (ThunarUserClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* determine the parent class */
-  thunar_user_parent_class = g_type_class_peek_parent (klass);
 
   /* determine the current process' effective user id, we do
    * this only once to avoid the syscall overhead on every
@@ -263,6 +222,13 @@ thunar_user_class_init (ThunarUserClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_user_finalize;
+}
+
+
+
+static void
+thunar_user_init (ThunarUser *user)
+{
 }
 
 
@@ -531,8 +497,6 @@ thunar_user_is_me (ThunarUser *user)
 
 
 
-static void     thunar_user_manager_class_init          (ThunarUserManagerClass *klass);
-static void     thunar_user_manager_init                (ThunarUserManager      *manager);
 static void     thunar_user_manager_finalize            (GObject                *object);
 static gboolean thunar_user_manager_flush_timer         (gpointer                user_data);
 static void     thunar_user_manager_flush_timer_destroy (gpointer                user_data);
@@ -556,28 +520,7 @@ struct _ThunarUserManager
 
 
 
-static GObjectClass *thunar_user_manager_parent_class;
-
-
-
-GType
-thunar_user_manager_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      type = g_type_register_static_simple (G_TYPE_OBJECT,
-                                            "ThunarUserManager",
-                                            sizeof (ThunarUserManagerClass),
-                                            (GClassInitFunc) thunar_user_manager_class_init,
-                                            sizeof (ThunarUserManager),
-                                            (GInstanceInitFunc) thunar_user_manager_init,
-                                            0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarUserManager, thunar_user_manager, G_TYPE_OBJECT)
 
 
 
@@ -585,9 +528,6 @@ static void
 thunar_user_manager_class_init (ThunarUserManagerClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* determine the parent type class */
-  thunar_user_manager_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_user_manager_finalize;

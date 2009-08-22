@@ -35,8 +35,6 @@ enum
 
 
 
-static void     thunar_renamer_progress_class_init        (ThunarRenamerProgressClass *klass);
-static void     thunar_renamer_progress_init              (ThunarRenamerProgress      *renamer_progress);
 static void     thunar_renamer_progress_finalize          (GObject                    *object);
 static void     thunar_renamer_progress_destroy           (GtkObject                  *object);
 static gboolean thunar_renamer_progress_next_idle         (gpointer                    user_data);
@@ -65,36 +63,7 @@ struct _ThunarRenamerProgress
 
 
 
-static GObjectClass *thunar_renamer_progress_parent_class;
-
-
-
-GType
-thunar_renamer_progress_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarRenamerProgressClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_renamer_progress_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarRenamerProgress),
-        0,
-        (GInstanceInitFunc) thunar_renamer_progress_init,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_ALIGNMENT, I_("ThunarRenamerProgress"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarRenamerProgress, thunar_renamer_progress, GTK_TYPE_ALIGNMENT)
 
 
 
@@ -103,9 +72,6 @@ thunar_renamer_progress_class_init (ThunarRenamerProgressClass *klass)
 {
   GtkObjectClass *gtkobject_class;
   GObjectClass   *gobject_class;
-
-  /* determine the parent type class */
-  thunar_renamer_progress_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_renamer_progress_finalize;

@@ -43,8 +43,6 @@
 
 
 
-static void     thunar_session_client_class_init          (ThunarSessionClientClass *klass);
-static void     thunar_session_client_init                (ThunarSessionClient      *session_client);
 static void     thunar_session_client_finalize            (GObject                  *object);
 #ifdef HAVE_LIBSM
 static gboolean thunar_session_client_connect             (ThunarSessionClient      *session_client,
@@ -84,36 +82,7 @@ struct _ThunarSessionClient
 
 
 
-static GObjectClass *thunar_session_client_parent_class;
-
-
-
-GType
-thunar_session_client_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarSessionClientClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_session_client_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarSessionClient),
-        0,
-        (GInstanceInitFunc) thunar_session_client_init,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarSessionClient"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarSessionClient, thunar_session_client, G_TYPE_OBJECT)
 
 
 
@@ -121,9 +90,6 @@ static void
 thunar_session_client_class_init (ThunarSessionClientClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* determine the parent type class */
-  thunar_session_client_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_session_client_finalize;

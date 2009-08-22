@@ -75,9 +75,7 @@ enum
 
 
 
-static void                     thunar_tree_view_class_init                   (ThunarTreeViewClass     *klass);
 static void                     thunar_tree_view_navigator_init               (ThunarNavigatorIface    *iface);
-static void                     thunar_tree_view_init                         (ThunarTreeView          *view);
 static void                     thunar_tree_view_finalize                     (GObject                 *object);
 static void                     thunar_tree_view_get_property                 (GObject                 *object,
                                                                                guint                    prop_id,
@@ -259,45 +257,12 @@ static const GtkTargetEntry drop_targets[] = {
 
 
 
-static GObjectClass *thunar_tree_view_parent_class;
-static guint         tree_view_signals[LAST_SIGNAL];
+static guint tree_view_signals[LAST_SIGNAL];
 
 
 
-GType
-thunar_tree_view_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarTreeViewClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_tree_view_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarTreeView),
-        0,
-        (GInstanceInitFunc) thunar_tree_view_init,
-        NULL,
-      };
-
-      static const GInterfaceInfo navigator_info =
-      {
-        (GInterfaceInitFunc) thunar_tree_view_navigator_init,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_TREE_VIEW, I_("ThunarTreeView"), &info, 0);
-      g_type_add_interface_static (type, THUNAR_TYPE_NAVIGATOR, &navigator_info);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE_WITH_CODE (ThunarTreeView, thunar_tree_view, GTK_TYPE_TREE_VIEW,
+    G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR, thunar_tree_view_navigator_init))
 
 
 
@@ -308,9 +273,6 @@ thunar_tree_view_class_init (ThunarTreeViewClass *klass)
   GtkWidgetClass   *gtkwidget_class;
   GtkBindingSet    *binding_set;
   GObjectClass     *gobject_class;
-
-  /* determine the parent type class */
-  thunar_tree_view_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_tree_view_finalize;

@@ -40,8 +40,6 @@ enum
 
 
 
-static void thunar_shortcuts_icon_renderer_class_init   (ThunarShortcutsIconRendererClass *klass);
-static void thunar_shortcuts_icon_renderer_init         (ThunarShortcutsIconRenderer      *shortcuts_icon_renderer);
 static void thunar_shortcuts_icon_renderer_finalize     (GObject                          *object);
 static void thunar_shortcuts_icon_renderer_get_property (GObject                          *object,
                                                          guint                             prop_id,
@@ -75,36 +73,7 @@ struct _ThunarShortcutsIconRenderer
 
 
 
-static GObjectClass *thunar_shortcuts_icon_renderer_parent_class;
-
-
-
-GType
-thunar_shortcuts_icon_renderer_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarShortcutsIconRendererClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_shortcuts_icon_renderer_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarShortcutsIconRenderer),
-        0,
-        (GInstanceInitFunc) thunar_shortcuts_icon_renderer_init,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_TYPE_ICON_RENDERER, I_("ThunarShortcutsIconRenderer"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarShortcutsIconRenderer, thunar_shortcuts_icon_renderer, THUNAR_TYPE_ICON_RENDERER)
 
 
 
@@ -113,9 +82,6 @@ thunar_shortcuts_icon_renderer_class_init (ThunarShortcutsIconRendererClass *kla
 {
   GtkCellRendererClass *gtkcell_renderer_class;
   GObjectClass         *gobject_class;
-
-  /* determine the parent type class */
-  thunar_shortcuts_icon_renderer_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_shortcuts_icon_renderer_finalize;

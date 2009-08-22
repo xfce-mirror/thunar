@@ -46,8 +46,6 @@ enum
 
 
 
-static void     thunar_size_label_class_init            (ThunarSizeLabelClass *klass);
-static void     thunar_size_label_init                  (ThunarSizeLabel      *size_label);
 static void     thunar_size_label_finalize              (GObject              *object);
 static void     thunar_size_label_get_property          (GObject              *object,
                                                          guint                 prop_id,
@@ -100,36 +98,7 @@ struct _ThunarSizeLabel
 
 
 
-static GObjectClass *thunar_size_label_parent_class;
-
-
-
-GType
-thunar_size_label_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarSizeLabelClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_size_label_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarSizeLabel),
-        0,
-        (GInstanceInitFunc) thunar_size_label_init,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_HBOX, I_("ThunarSizeLabel"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarSizeLabel, thunar_size_label, GTK_TYPE_HBOX)
 
 
 
@@ -137,9 +106,6 @@ static void
 thunar_size_label_class_init (ThunarSizeLabelClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* determine the parent type class */
-  thunar_size_label_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_size_label_finalize;

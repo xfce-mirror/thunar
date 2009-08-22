@@ -195,9 +195,6 @@ thunar_file_class_init (ThunarFileClass *klass)
   thunar_file_watch_count_quark = g_quark_from_static_string ("thunar-file-watch-count");
   thunar_file_emblem_names_quark = g_quark_from_static_string ("thunar-file-emblem-names");
 
-  /* determine the parent class */
-  thunar_file_parent_class = g_type_class_peek_parent (klass);
-
   /* grab a reference on the user manager */
   user_manager = thunar_user_manager_get_default ();
 
