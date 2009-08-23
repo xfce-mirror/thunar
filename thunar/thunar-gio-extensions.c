@@ -145,19 +145,20 @@ thunar_g_file_query_key_file (GFile              *file,
   key_file = g_key_file_new ();
 
   /* try to parse the key file from the contents of the file */
-  if (!g_key_file_load_from_data (key_file, contents, length, 
-                                  G_KEY_FILE_KEEP_COMMENTS 
-                                  | G_KEY_FILE_KEEP_TRANSLATIONS,
-                                  error))
+  if (G_LIKELY (length == 0
+      || g_key_file_load_from_data (key_file, contents, length,
+                                    G_KEY_FILE_KEEP_COMMENTS
+                                    | G_KEY_FILE_KEEP_TRANSLATIONS,
+                                    error)))
     {
       g_free (contents);
-      g_key_file_free (key_file);
-      return NULL;
+      return key_file;
     }
   else
     {
       g_free (contents);
-      return key_file;
+      g_key_file_free (key_file);
+      return NULL;
     }
 }
 
