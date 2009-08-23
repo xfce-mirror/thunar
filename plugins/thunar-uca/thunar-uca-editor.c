@@ -35,7 +35,6 @@
 
 
 
-static void           thunar_uca_editor_finalize        (GObject                *object);
 static const gchar   *thunar_uca_editor_get_icon_name   (const ThunarUcaEditor  *uca_editor);
 static void           thunar_uca_editor_set_icon_name   (ThunarUcaEditor        *uca_editor,
                                                          const gchar            *icon_name);
@@ -55,8 +54,6 @@ struct _ThunarUcaEditorClass
 struct _ThunarUcaEditor
 {
   GtkDialog __parent__;
-
-  GtkTooltips *tooltips;
 
   GtkWidget   *name_entry;
   GtkWidget   *description_entry;
@@ -81,10 +78,6 @@ THUNARX_DEFINE_TYPE (ThunarUcaEditor, thunar_uca_editor, GTK_TYPE_DIALOG);
 static void
 thunar_uca_editor_class_init (ThunarUcaEditorClass *klass)
 {
-  GObjectClass *gobject_class;
-
-  gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->finalize = thunar_uca_editor_finalize;
 }
 
 
@@ -117,11 +110,6 @@ thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
   gtk_window_set_destroy_with_parent (GTK_WINDOW (uca_editor), TRUE);
   gtk_window_set_resizable (GTK_WINDOW (uca_editor), FALSE);
 
-  /* allocate shared tooltips object */
-  uca_editor->tooltips = gtk_tooltips_new ();
-  g_object_ref (G_OBJECT (uca_editor->tooltips));
-  gtk_object_sink (GTK_OBJECT (uca_editor->tooltips));
-
   notebook = gtk_notebook_new ();
   gtk_container_set_border_width (GTK_CONTAINER (notebook), 6);
   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (uca_editor)->vbox), notebook, TRUE, TRUE, 0);
@@ -144,7 +132,7 @@ thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
   gtk_widget_show (label);
 
   uca_editor->name_entry = g_object_new (GTK_TYPE_ENTRY, "activates-default", TRUE, NULL);
-  gtk_tooltips_set_tip (uca_editor->tooltips, uca_editor->name_entry, _("The name of the action that will be displayed in the context menu."), NULL);
+  gtk_widget_set_tooltip_text (uca_editor->name_entry, _("The name of the action that will be displayed in the context menu."));
   gtk_table_attach (GTK_TABLE (table), uca_editor->name_entry, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), uca_editor->name_entry);
   gtk_widget_grab_focus (uca_editor->name_entry);
@@ -162,8 +150,8 @@ thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
   gtk_widget_show (label);
 
   uca_editor->description_entry = g_object_new (GTK_TYPE_ENTRY, "activates-default", TRUE, NULL);
-  gtk_tooltips_set_tip (uca_editor->tooltips, uca_editor->description_entry, _("The description of the action that will be displayed as tooltip "
-                                                                               "in the statusbar when selecting the item from the context menu."), NULL);
+  gtk_widget_set_tooltip_text (uca_editor->description_entry, _("The description of the action that will be displayed as tooltip "
+                                                                "in the statusbar when selecting the item from the context menu."));
   gtk_table_attach (GTK_TABLE (table), uca_editor->description_entry, 1, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), uca_editor->description_entry);
   gtk_widget_show (uca_editor->description_entry);
@@ -184,18 +172,18 @@ thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
   gtk_widget_show (hbox);
 
   uca_editor->command_entry = g_object_new (GTK_TYPE_ENTRY, "activates-default", TRUE, NULL);
-  gtk_tooltips_set_tip (uca_editor->tooltips, uca_editor->command_entry, _("The command (including the necessary parameters) to perform the action. "
-                                                                           "See the command parameter legend below for a list of supported parameter "
-                                                                           "variables, which will be substituted when launching the command. When "
-                                                                           "upper-case letters (e.g. %F, %D, %N) are used, the action will be applicable "
-                                                                           "even if more than one item is selected. Else the action will only be "
-                                                                           "applicable if exactly one item is selected."), NULL);
+  gtk_widget_set_tooltip_text (uca_editor->command_entry, _("The command (including the necessary parameters) to perform the action. "
+                                                            "See the command parameter legend below for a list of supported parameter "
+                                                            "variables, which will be substituted when launching the command. When "
+                                                            "upper-case letters (e.g. %F, %D, %N) are used, the action will be applicable "
+                                                            "even if more than one item is selected. Else the action will only be "
+                                                            "applicable if exactly one item is selected."));
   gtk_box_pack_start (GTK_BOX (hbox), uca_editor->command_entry, TRUE, TRUE, 0);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), uca_editor->command_entry);
   gtk_widget_show (uca_editor->command_entry);
 
   button = gtk_button_new ();
-  gtk_tooltips_set_tip (uca_editor->tooltips, button, _("Browse the file system to select an application to use for this action."), NULL);
+  gtk_widget_set_tooltip_text (button, _("Browse the file system to select an application to use for this action."));
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   g_signal_connect_swapped (G_OBJECT (button), "clicked", G_CALLBACK (thunar_uca_editor_command_clicked), uca_editor);
   gtk_widget_show (button);
@@ -220,8 +208,8 @@ thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
   gtk_widget_show (align);
 
   uca_editor->icon_button = gtk_button_new_with_label (_("No icon"));
-  gtk_tooltips_set_tip (uca_editor->tooltips, uca_editor->icon_button, _("Click this button to select an icon file that will be displayed "
-                                                                         "in the context menu in addition to the action name chosen above."), NULL);
+  gtk_widget_set_tooltip_text (uca_editor->icon_button, _("Click this button to select an icon file that will be displayed "
+                                                          "in the context menu in addition to the action name chosen above."));
   gtk_container_add (GTK_CONTAINER (align), uca_editor->icon_button);
   g_signal_connect_swapped (G_OBJECT (uca_editor->icon_button), "clicked", G_CALLBACK (thunar_uca_editor_icon_clicked), uca_editor);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), uca_editor->icon_button);
@@ -376,10 +364,10 @@ thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
   gtk_widget_show (label);
 
   uca_editor->patterns_entry = g_object_new (GTK_TYPE_ENTRY, "activates-default", TRUE, "text", "*", NULL);
-  gtk_tooltips_set_tip (uca_editor->tooltips, uca_editor->patterns_entry, _("Enter a list of patterns that will be used to determine "
-                                                                            "whether this action should be displayed for a selected "
-                                                                            "file. If you specify more than one pattern here, the list "
-                                                                            "items must be separated with semicolons (e.g. *.txt;*.doc)."), NULL);
+  gtk_widget_set_tooltip_text (uca_editor->patterns_entry, _("Enter a list of patterns that will be used to determine "
+                                                             "whether this action should be displayed for a selected "
+                                                             "file. If you specify more than one pattern here, the list "
+                                                             "items must be separated with semicolons (e.g. *.txt;*.doc)."));
   gtk_table_attach (GTK_TABLE (table), uca_editor->patterns_entry, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), uca_editor->patterns_entry);
   gtk_widget_show (uca_editor->patterns_entry);
@@ -458,19 +446,6 @@ thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
   gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.0f);
   gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
   gtk_widget_show (label);
-}
-
-
-
-static void
-thunar_uca_editor_finalize (GObject *object)
-{
-  ThunarUcaEditor *uca_editor = THUNAR_UCA_EDITOR (object);
-
-  /* release the tooltips */
-  g_object_unref (G_OBJECT (uca_editor->tooltips));
-
-  (*G_OBJECT_CLASS (thunar_uca_editor_parent_class)->finalize) (object);
 }
 
 

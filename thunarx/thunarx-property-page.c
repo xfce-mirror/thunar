@@ -382,10 +382,7 @@ thunarx_property_page_set_label_widget (ThunarxPropertyPage *property_page,
 
   /* connect to the new label widget */
   if (G_LIKELY (label_widget != NULL))
-    {
-      g_object_ref (G_OBJECT (label_widget));
-      gtk_object_sink (GTK_OBJECT (label_widget));
-    }
+    g_object_ref_sink (G_OBJECT (label_widget));
 
   /* notify listeners */
   g_object_freeze_notify (G_OBJECT (property_page));

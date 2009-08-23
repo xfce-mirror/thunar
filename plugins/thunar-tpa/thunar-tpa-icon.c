@@ -100,7 +100,6 @@ struct _ThunarTpaIcon
 
   gboolean full;
 
-  GtkTooltips *tooltips;
   GtkWidget   *button;
   GtkWidget   *image;
 
@@ -157,11 +156,6 @@ thunar_tpa_icon_init (ThunarTpaIcon *icon)
   GError          *err = NULL;
 
   gtk_alignment_set (GTK_ALIGNMENT (icon), 0.5f, 0.5f, 1.0f, 1.0f);
-
-  /* allocate the shared tooltips */
-  icon->tooltips = gtk_tooltips_new ();
-  g_object_ref (G_OBJECT (icon->tooltips));
-  gtk_object_sink (GTK_OBJECT (icon->tooltips));
 
   /* setup the button for the trash icon */
   icon->button = xfce_create_panel_button ();
@@ -226,9 +220,6 @@ thunar_tpa_icon_finalize (GObject *object)
       g_object_unref (G_OBJECT (icon->proxy));
     }
 
-  /* release the shared tooltips */
-  g_object_unref (G_OBJECT (icon->tooltips));
-
   (*G_OBJECT_CLASS (thunar_tpa_icon_parent_class)->finalize) (object);
 }
 
@@ -270,7 +261,7 @@ thunar_tpa_icon_error (ThunarTpaIcon *icon,
 
   /* tell the user that we failed to connect to the trash */
   tooltip = g_strdup_printf ("%s: %s.", _("Failed to connect to the Trash"), error->message);
-  gtk_tooltips_set_tip (icon->tooltips, icon->button, tooltip, NULL);
+  gtk_widget_set_tooltip_text (icon->button, tooltip);
   g_free (tooltip);
 
   /* setup an error icon */
@@ -284,7 +275,7 @@ thunar_tpa_icon_state (ThunarTpaIcon *icon,
                        gboolean       full)
 {
   /* tell the user whether the trash is full or empty */
-  gtk_tooltips_set_tip (icon->tooltips, icon->button, full ? _("Trash contains files") : _("Trash is empty"), NULL);
+  gtk_widget_set_tooltip_text (icon->button, full ? _("Trash contains files") : _("Trash is empty"));
 
   /* setup the appropriate icon */
   gtk_image_set_from_icon_name (GTK_IMAGE (icon->image), full ? "gnome-fs-trash-full" : "gnome-fs-trash-empty", GTK_ICON_SIZE_BUTTON);

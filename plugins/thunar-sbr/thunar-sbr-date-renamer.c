@@ -87,7 +87,6 @@ struct _ThunarSbrDateRenamerClass
 struct _ThunarSbrDateRenamer
 {
   ThunarxRenamer      __parent__;
-  GtkTooltips        *tooltips;
   ThunarSbrDateMode   mode;
   guint               offset;
   ThunarSbrOffsetMode offset_mode;
@@ -185,10 +184,6 @@ thunar_sbr_date_renamer_init (ThunarSbrDateRenamer *date_renamer)
   GtkAdjustment  *adjustment;
   guint           n;
 
-  /* allocate tooltips for the renamer */
-  date_renamer->tooltips = gtk_tooltips_new ();
-  g_object_ref_sink (G_OBJECT (date_renamer->tooltips));
-
   vbox = gtk_vbox_new (FALSE, 6);
   gtk_box_pack_start (GTK_BOX (date_renamer), vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
@@ -225,12 +220,12 @@ thunar_sbr_date_renamer_init (ThunarSbrDateRenamer *date_renamer)
   entry = gtk_entry_new ();
   exo_mutual_binding_new (G_OBJECT (entry), "text", G_OBJECT (date_renamer), "format");
   gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 0);
-  gtk_tooltips_set_tip (date_renamer->tooltips, entry,
-                        _("The format describes the date and time parts to insert "
-                          "into the file name. For example, %Y will be substituted "
-                          "with the year, %m with the month and %d with the day. "
-                          "See the documentation of the date utility for additional "
-                          "information."), NULL);
+  gtk_widget_set_tooltip_text (entry,
+                               _("The format describes the date and time parts to insert "
+                                "into the file name. For example, %Y will be substituted "
+                                "with the year, %m with the month and %d with the day. "
+                                "See the documentation of the date utility for additional "
+                                "information."));
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), entry);
   gtk_widget_show (entry);
 
@@ -279,9 +274,6 @@ static void
 thunar_sbr_date_renamer_finalize (GObject *object)
 {
   ThunarSbrDateRenamer *date_renamer = THUNAR_SBR_DATE_RENAMER (object);
-
-  /* release the tooltips */
-  g_object_unref (G_OBJECT (date_renamer->tooltips));
 
   /* release the format */
   g_free (date_renamer->format);

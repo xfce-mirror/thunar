@@ -81,7 +81,6 @@ struct _ThunarSbrReplaceRenamerClass
 struct _ThunarSbrReplaceRenamer
 {
   ThunarxRenamer __parent__;
-  GtkTooltips   *tooltips;
   GtkWidget     *pattern_entry;
   gboolean       case_sensitive;
   gboolean       regexp;
@@ -194,10 +193,6 @@ thunar_sbr_replace_renamer_init (ThunarSbrReplaceRenamer *replace_renamer)
     replace_renamer->regexp_supported = FALSE;
 #endif
 
-  /* allocate the shared tooltips */
-  replace_renamer->tooltips = gtk_tooltips_new ();
-  g_object_ref_sink (G_OBJECT (replace_renamer->tooltips));
-
   table = gtk_table_new (2, 3, FALSE);
   gtk_table_set_row_spacings (GTK_TABLE (table), 6);
   gtk_table_set_col_spacings (GTK_TABLE (table), 12);
@@ -212,7 +207,7 @@ thunar_sbr_replace_renamer_init (ThunarSbrReplaceRenamer *replace_renamer)
   replace_renamer->pattern_entry = gtk_entry_new ();
   gtk_entry_set_activates_default (GTK_ENTRY (replace_renamer->pattern_entry), TRUE);
   exo_mutual_binding_new (G_OBJECT (replace_renamer->pattern_entry), "text", G_OBJECT (replace_renamer), "pattern");
-  gtk_tooltips_set_tip (replace_renamer->tooltips, replace_renamer->pattern_entry, _("Enter the text to search for in the file names."), NULL);
+  gtk_widget_set_tooltip_text (replace_renamer->pattern_entry, _("Enter the text to search for in the file names."));
   gtk_table_attach (GTK_TABLE (table), replace_renamer->pattern_entry, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, 0, 0, 0);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), replace_renamer->pattern_entry);
   gtk_widget_show (replace_renamer->pattern_entry);
@@ -226,9 +221,9 @@ thunar_sbr_replace_renamer_init (ThunarSbrReplaceRenamer *replace_renamer)
 
   button = gtk_check_button_new_with_mnemonic (_("Regular _Expression"));
   exo_mutual_binding_new (G_OBJECT (button), "active", G_OBJECT (replace_renamer), "regexp");
-  gtk_tooltips_set_tip (replace_renamer->tooltips, button, _("If you enable this option, the pattern will be treated as a regular expression and "
-                                                             "matched using the Perl-compatible regular expressions (PCRE). Check the documentation "
-                                                             "for details about the regular expression syntax."), NULL);
+  gtk_widget_set_tooltip_text (button, _("If you enable this option, the pattern will be treated as a regular expression and "
+                                         "matched using the Perl-compatible regular expressions (PCRE). Check the documentation "
+                                         "for details about the regular expression syntax."));
   gtk_table_attach (GTK_TABLE (table), button, 2, 3, 0, 1, GTK_FILL, 0, 0, 0);
   gtk_widget_set_sensitive (button, replace_renamer->regexp_supported);
   gtk_widget_show (button);
@@ -241,7 +236,7 @@ thunar_sbr_replace_renamer_init (ThunarSbrReplaceRenamer *replace_renamer)
   entry = gtk_entry_new ();
   gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
   exo_mutual_binding_new (G_OBJECT (entry), "text", G_OBJECT (replace_renamer), "replacement");
-  gtk_tooltips_set_tip (replace_renamer->tooltips, entry, _("Enter the text that should be used as replacement for the pattern above."), NULL);
+  gtk_widget_set_tooltip_text (entry, _("Enter the text that should be used as replacement for the pattern above."));
   gtk_table_attach (GTK_TABLE (table), entry, 1, 2, 1, 2, GTK_EXPAND | GTK_FILL, 0, 0, 0);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), entry);
   gtk_widget_show (entry);
@@ -255,8 +250,8 @@ thunar_sbr_replace_renamer_init (ThunarSbrReplaceRenamer *replace_renamer)
 
   button = gtk_check_button_new_with_mnemonic (_("C_ase Sensitive Search"));
   exo_mutual_binding_new (G_OBJECT (button), "active", G_OBJECT (replace_renamer), "case-sensitive");
-  gtk_tooltips_set_tip (replace_renamer->tooltips, button, _("If you enable this option, the pattern will be searched in a case-sensitive manner. "
-                                                             "The default is to use a case-insensitive search."), NULL);
+  gtk_widget_set_tooltip_text (button, _("If you enable this option, the pattern will be searched in a case-sensitive manner. "
+                                         "The default is to use a case-insensitive search."));
   gtk_table_attach (GTK_TABLE (table), button, 2, 3, 1, 2, GTK_FILL, 0, 0, 0);
   gtk_widget_show (button);
 }
@@ -273,9 +268,6 @@ thunar_sbr_replace_renamer_finalize (GObject *object)
   if (G_UNLIKELY (replace_renamer->pcre_pattern != NULL))
     pcre_free (replace_renamer->pcre_pattern);
 #endif
-
-  /* release the tooltips */
-  g_object_unref (G_OBJECT (replace_renamer->tooltips));
 
   /* release the strings */
   g_free (replace_renamer->replacement);
@@ -616,7 +608,7 @@ thunar_sbr_replace_renamer_pcre_update (ThunarSbrReplaceRenamer *replace_renamer
 
           /* setup a tooltip with the error message */
           tooltip = g_strdup_printf (_("Invalid regular expression, at character position %ld: %s"), offset, message);
-          gtk_tooltips_set_tip (replace_renamer->tooltips, replace_renamer->pattern_entry, tooltip, NULL);
+          gtk_widget_set_tooltip_text (replace_renamer->pattern_entry, tooltip);
           g_free (tooltip);
         }
       g_free (message);
@@ -647,7 +639,7 @@ thunar_sbr_replace_renamer_pcre_update (ThunarSbrReplaceRenamer *replace_renamer
         }
 
       /* reset to default tooltip */
-      gtk_tooltips_set_tip (replace_renamer->tooltips, replace_renamer->pattern_entry, _("Enter the text to search for in the file names."), NULL);
+      gtk_widget_set_tooltip_text (replace_renamer->pattern_entry, _("Enter the text to search for in the file names."));
     }
 }
 #endif

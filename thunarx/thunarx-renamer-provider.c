@@ -99,10 +99,7 @@ thunarx_renamer_provider_get_renamers (ThunarxRenamerProvider *provider)
 
   /* ref&sink all returned renamers */
   for (lp = renamers; lp != NULL; lp = lp->next)
-    {
-      g_object_ref (G_OBJECT (lp->data));
-      gtk_object_sink (GTK_OBJECT (lp->data));
-    }
+    g_object_ref_sink (G_OBJECT (lp->data));
 
   /* take a reference for all renamers on the provider */
   thunarx_object_list_take_reference (renamers, provider);

@@ -75,8 +75,6 @@ struct _ThunarAprDesktopPageClass
 struct _ThunarAprDesktopPage
 {
   ThunarAprAbstractPage __parent__;
-  
-  GtkTooltips          *tooltips;
 
   GtkWidget            *description_entry;
   GtkWidget            *command_entry;
@@ -136,10 +134,6 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
 
   gtk_container_set_border_width (GTK_CONTAINER (desktop_page), 12);
 
-  /* allocate the shared tooltips */
-  desktop_page->tooltips = gtk_tooltips_new ();
-  g_object_ref_sink (G_OBJECT (desktop_page->tooltips));
-
   /* allocate shared bold Pango attributes */
   attr_list = pango_attr_list_new ();
   attribute = pango_attr_weight_new (PANGO_WEIGHT_BOLD);
@@ -160,8 +154,8 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (label);
 
   desktop_page->description_entry = gtk_entry_new ();
-  gtk_tooltips_set_tip (desktop_page->tooltips, desktop_page->description_entry, _("The generic name of the entry, for example \"Web Browser\" "
-                                                                                   "in case of Firefox."), NULL);
+  gtk_widget_set_tooltip_text (desktop_page->description_entry, _("The generic name of the entry, for example \"Web Browser\" "
+                                                                  "in case of Firefox."));
   g_signal_connect (G_OBJECT (desktop_page->description_entry), "activate", G_CALLBACK (thunar_apr_desktop_page_activated), desktop_page);
   g_signal_connect (G_OBJECT (desktop_page->description_entry), "focus-out-event", G_CALLBACK (thunar_apr_desktop_page_focus_out_event), desktop_page);
   gtk_table_attach (GTK_TABLE (table), desktop_page->description_entry, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
@@ -183,7 +177,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (label);
 
   desktop_page->command_entry = gtk_entry_new ();
-  gtk_tooltips_set_tip (desktop_page->tooltips, desktop_page->command_entry, _("The program to execute, possibly with arguments."), NULL);
+  gtk_widget_set_tooltip_text (desktop_page->command_entry, _("The program to execute, possibly with arguments."));
   g_signal_connect (G_OBJECT (desktop_page->command_entry), "activate", G_CALLBACK (thunar_apr_desktop_page_activated), desktop_page);
   g_signal_connect (G_OBJECT (desktop_page->command_entry), "focus-out-event", G_CALLBACK (thunar_apr_desktop_page_focus_out_event), desktop_page);
   gtk_table_attach (GTK_TABLE (table), desktop_page->command_entry, 1, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
@@ -205,7 +199,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (label);
 
   desktop_page->url_entry = gtk_entry_new ();
-  gtk_tooltips_set_tip (desktop_page->tooltips, desktop_page->url_entry, _("The URL to access."), NULL);
+  gtk_widget_set_tooltip_text (desktop_page->url_entry, _("The URL to access."));
   g_signal_connect (G_OBJECT (desktop_page->url_entry), "activate", G_CALLBACK (thunar_apr_desktop_page_activated), desktop_page);
   g_signal_connect (G_OBJECT (desktop_page->url_entry), "focus-out-event", G_CALLBACK (thunar_apr_desktop_page_focus_out_event), desktop_page);
   gtk_table_attach (GTK_TABLE (table), desktop_page->url_entry, 1, 2, 2, 3, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
@@ -227,9 +221,9 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (label);
 
   desktop_page->comment_entry = gtk_entry_new ();
-  gtk_tooltips_set_tip (desktop_page->tooltips, desktop_page->comment_entry, _("Tooltip for the entry, for example \"View sites on the Internet\" "
-                                                                               "in case of Firefox. Should not be redundant with the name or the "
-                                                                               "description."), NULL);
+  gtk_widget_set_tooltip_text (desktop_page->comment_entry, _("Tooltip for the entry, for example \"View sites on the Internet\" "
+                                                              "in case of Firefox. Should not be redundant with the name or the "
+                                                              "description."));
   g_signal_connect (G_OBJECT (desktop_page->comment_entry), "activate", G_CALLBACK (thunar_apr_desktop_page_activated), desktop_page);
   g_signal_connect (G_OBJECT (desktop_page->comment_entry), "focus-out-event", G_CALLBACK (thunar_apr_desktop_page_focus_out_event), desktop_page);
   gtk_table_attach (GTK_TABLE (table), desktop_page->comment_entry, 1, 2, 3, 4, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
@@ -254,15 +248,15 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (label);
 
   desktop_page->snotify_button = gtk_check_button_new_with_mnemonic (_("Use _startup notification"));
-  gtk_tooltips_set_tip (desktop_page->tooltips, desktop_page->snotify_button, _("Select this option to enable startup notification when the command "
-                                                                                "is run from the file manager or the menu. Not every application supports "
-                                                                                "startup notification."), NULL);
+  gtk_widget_set_tooltip_text (desktop_page->snotify_button, _("Select this option to enable startup notification when the command "
+                                                               "is run from the file manager or the menu. Not every application supports "
+                                                               "startup notification."));
   g_signal_connect (G_OBJECT (desktop_page->snotify_button), "toggled", G_CALLBACK (thunar_apr_desktop_page_toggled), desktop_page);
   gtk_table_attach (GTK_TABLE (table), desktop_page->snotify_button, 1, 2, 5, 6, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (desktop_page->snotify_button);
 
   desktop_page->terminal_button = gtk_check_button_new_with_mnemonic (_("Run in _terminal"));
-  gtk_tooltips_set_tip (desktop_page->tooltips, desktop_page->terminal_button, _("Select this option to run the command in a terminal window."), NULL);
+  gtk_widget_set_tooltip_text (desktop_page->terminal_button, _("Select this option to run the command in a terminal window."));
   g_signal_connect (G_OBJECT (desktop_page->terminal_button), "toggled", G_CALLBACK (thunar_apr_desktop_page_toggled), desktop_page);
   gtk_table_attach (GTK_TABLE (table), desktop_page->terminal_button, 1, 2, 6, 7, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (desktop_page->terminal_button);
@@ -290,9 +284,6 @@ static void
 thunar_apr_desktop_page_finalize (GObject *object)
 {
   ThunarAprDesktopPage *desktop_page = THUNAR_APR_DESKTOP_PAGE (object);
-
-  /* release the shared tooltips */
-  g_object_unref (G_OBJECT (desktop_page->tooltips));
 
   /* release the saved texts */
   g_free (desktop_page->description_text);
@@ -451,10 +442,10 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
       writable = (g_access (filename, W_OK) == 0);
 
       /* ...and update the editability of the entries */
-      gtk_entry_set_editable (GTK_ENTRY (desktop_page->description_entry), writable);
-      gtk_entry_set_editable (GTK_ENTRY (desktop_page->command_entry), writable);
-      gtk_entry_set_editable (GTK_ENTRY (desktop_page->url_entry), writable);
-      gtk_entry_set_editable (GTK_ENTRY (desktop_page->comment_entry), writable);
+      gtk_editable_set_editable (GTK_EDITABLE (desktop_page->description_entry), writable);
+      gtk_editable_set_editable (GTK_EDITABLE (desktop_page->command_entry), writable);
+      gtk_editable_set_editable (GTK_EDITABLE (desktop_page->url_entry), writable);
+      gtk_editable_set_editable (GTK_EDITABLE (desktop_page->comment_entry), writable);
       gtk_widget_set_sensitive (desktop_page->snotify_button, writable);
       gtk_widget_set_sensitive (desktop_page->terminal_button, writable);
 

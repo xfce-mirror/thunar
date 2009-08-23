@@ -33,9 +33,7 @@
 
 
 
-static void   tex_open_terminal_class_init         (TexOpenTerminalClass     *klass);
 static void   tex_open_terminal_menu_provider_init (ThunarxMenuProviderIface *iface);
-static void   tex_open_terminal_init               (TexOpenTerminal          *open_terminal);
 static GList *tex_open_terminal_get_file_actions   (ThunarxMenuProvider      *provider,
                                                     GtkWidget                *window,
                                                     GList                    *files);

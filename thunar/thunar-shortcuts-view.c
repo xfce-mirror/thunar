@@ -962,7 +962,7 @@ thunar_shortcuts_view_rename_activated (GtkWidget           *item,
     {
       /* determine the text renderer */
       column = gtk_tree_view_get_column (GTK_TREE_VIEW (view), 0);
-      renderers = gtk_tree_view_column_get_cell_renderers (column);
+      renderers = gtk_cell_layout_get_cells  (GTK_CELL_LAYOUT (column));
       renderer = g_list_nth_data (renderers, 1);
 
       /* make sure the text renderer is editable */

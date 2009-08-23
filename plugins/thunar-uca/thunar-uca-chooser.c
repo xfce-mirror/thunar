@@ -32,7 +32,6 @@
 
 
 
-static void     thunar_uca_chooser_finalize           (GObject                *object);
 static gboolean thunar_uca_chooser_key_press_event    (GtkWidget              *widget,
                                                        GdkEventKey            *event);
 static void     thunar_uca_chooser_response           (GtkDialog              *dialog,
@@ -65,8 +64,6 @@ struct _ThunarUcaChooser
 {
   GtkDialog __parent__;
 
-  GtkTooltips *tooltips;
-
   GtkWidget   *treeview;
   GtkWidget   *add_button;
   GtkWidget   *edit_button;
@@ -86,10 +83,6 @@ thunar_uca_chooser_class_init (ThunarUcaChooserClass *klass)
 {
   GtkDialogClass *gtkdialog_class;
   GtkWidgetClass *gtkwidget_class;
-  GObjectClass   *gobject_class;
-
-  gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->finalize = thunar_uca_chooser_finalize;
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->key_press_event = thunar_uca_chooser_key_press_event;
@@ -121,11 +114,6 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
   gtk_window_set_default_size (GTK_WINDOW (uca_chooser), 500, 350);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (uca_chooser), TRUE);
   gtk_window_set_title (GTK_WINDOW (uca_chooser), _("Custom Actions"));
-
-  /* allocate shared tooltips object */
-  uca_chooser->tooltips = gtk_tooltips_new ();
-  g_object_ref (G_OBJECT (uca_chooser->tooltips));
-  gtk_object_sink (GTK_OBJECT (uca_chooser->tooltips));
 
   hbox = gtk_hbox_new (FALSE, 3);
   gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
@@ -182,7 +170,7 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
   gtk_widget_show (vbox);
 
   uca_chooser->add_button = gtk_button_new ();
-  gtk_tooltips_set_tip (uca_chooser->tooltips, uca_chooser->add_button, _("Add a new custom action."), NULL);
+  gtk_widget_set_tooltip_text (uca_chooser->add_button, _("Add a new custom action."));
   gtk_box_pack_start (GTK_BOX (vbox), uca_chooser->add_button, FALSE, FALSE, 0);
   g_signal_connect_swapped (G_OBJECT (uca_chooser->add_button), "clicked", G_CALLBACK (thunar_uca_chooser_add_clicked), uca_chooser);
   gtk_widget_show (uca_chooser->add_button);
@@ -192,7 +180,7 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
   gtk_widget_show (image);
 
   uca_chooser->edit_button = gtk_button_new ();
-  gtk_tooltips_set_tip (uca_chooser->tooltips, uca_chooser->edit_button, _("Edit the currently selected action."), NULL);
+  gtk_widget_set_tooltip_text (uca_chooser->edit_button, _("Edit the currently selected action."));
   gtk_box_pack_start (GTK_BOX (vbox), uca_chooser->edit_button, FALSE, FALSE, 0);
   g_signal_connect_swapped (G_OBJECT (uca_chooser->edit_button), "clicked", G_CALLBACK (thunar_uca_chooser_edit_clicked), uca_chooser);
   gtk_widget_show (uca_chooser->edit_button);
@@ -202,7 +190,7 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
   gtk_widget_show (image);
 
   uca_chooser->delete_button = gtk_button_new ();
-  gtk_tooltips_set_tip (uca_chooser->tooltips, uca_chooser->delete_button, _("Delete the currently selected action."), NULL);
+  gtk_widget_set_tooltip_text (uca_chooser->delete_button, _("Delete the currently selected action."));
   gtk_box_pack_start (GTK_BOX (vbox), uca_chooser->delete_button, FALSE, FALSE, 0);
   g_signal_connect_swapped (G_OBJECT (uca_chooser->delete_button), "clicked", G_CALLBACK (thunar_uca_chooser_delete_clicked), uca_chooser);
   gtk_widget_show (uca_chooser->delete_button);
@@ -212,7 +200,7 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
   gtk_widget_show (image);
 
   uca_chooser->up_button = gtk_button_new ();
-  gtk_tooltips_set_tip (uca_chooser->tooltips, uca_chooser->up_button, _("Move the currently selected action up by one row."), NULL);
+  gtk_widget_set_tooltip_text (uca_chooser->up_button, _("Move the currently selected action up by one row."));
   gtk_box_pack_start (GTK_BOX (vbox), uca_chooser->up_button, FALSE, FALSE, 0);
   g_signal_connect_swapped (G_OBJECT (uca_chooser->up_button), "clicked", G_CALLBACK (thunar_uca_chooser_up_clicked), uca_chooser);
   gtk_widget_show (uca_chooser->up_button);
@@ -222,7 +210,7 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
   gtk_widget_show (image);
 
   uca_chooser->down_button = gtk_button_new ();
-  gtk_tooltips_set_tip (uca_chooser->tooltips, uca_chooser->down_button, _("Move the currently selected action down by one row."), NULL);
+  gtk_widget_set_tooltip_text (uca_chooser->down_button, _("Move the currently selected action down by one row."));
   gtk_box_pack_start (GTK_BOX (vbox), uca_chooser->down_button, FALSE, FALSE, 0);
   g_signal_connect_swapped (G_OBJECT (uca_chooser->down_button), "clicked", G_CALLBACK (thunar_uca_chooser_down_clicked), uca_chooser);
   gtk_widget_show (uca_chooser->down_button);
@@ -236,19 +224,6 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
   gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
   g_signal_connect_swapped (G_OBJECT (selection), "changed", G_CALLBACK (thunar_uca_chooser_selection_changed), uca_chooser);
   thunar_uca_chooser_selection_changed (uca_chooser, selection);
-}
-
-
-
-static void
-thunar_uca_chooser_finalize (GObject *object)
-{
-  ThunarUcaChooser *uca_chooser = THUNAR_UCA_CHOOSER (object);
-
-  /* release the tooltips */
-  g_object_unref (G_OBJECT (uca_chooser->tooltips));
-
-  (*G_OBJECT_CLASS (thunar_uca_chooser_parent_class)->finalize) (object);
 }
 
 

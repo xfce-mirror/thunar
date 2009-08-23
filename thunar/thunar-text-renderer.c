@@ -740,7 +740,7 @@ thunar_text_renderer_grab_focus (GtkWidget          *entry,
 
       /* select the text prior to the dot */
       if (G_LIKELY (offset > 0))
-        gtk_entry_select_region (GTK_ENTRY (entry), 0, offset);
+        gtk_editable_select_region (GTK_EDITABLE (entry), 0, offset);
     }
 
   /* disconnect the grab-focus handler, so we change the selection only once */

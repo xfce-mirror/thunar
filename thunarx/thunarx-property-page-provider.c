@@ -94,8 +94,7 @@ thunarx_property_page_provider_get_type (void)
  * The caller is responsible to free the returned list of pages using
  * something like this when no longer needed:
  * <informalexample><programlisting>
- * g_list_foreach (list, (GFunc) g_object_ref, NULL);
- * g_list_foreach (list, (GFunc) gtk_object_sink, NULL);
+ * g_list_foreach (list, (GFunc) g_object_ref_sink, NULL);
  * g_list_foreach (list, (GFunc) g_object_unref, NULL);
  * g_list_free (list);
  * </programlisting></informalexample>

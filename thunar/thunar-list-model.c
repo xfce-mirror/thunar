@@ -124,12 +124,12 @@ static void               thunar_list_model_set_sort_column_id    (GtkTreeSortab
 static void               thunar_list_model_set_default_sort_func (GtkTreeSortable        *sortable,
                                                                    GtkTreeIterCompareFunc  func,
                                                                    gpointer                data,
-                                                                   GtkDestroyNotify        destroy);
+                                                                   GDestroyNotify          destroy);
 static void               thunar_list_model_set_sort_func         (GtkTreeSortable        *sortable,
                                                                    gint                    sort_column_id,
                                                                    GtkTreeIterCompareFunc  func,
                                                                    gpointer                data,
-                                                                   GtkDestroyNotify        destroy);
+                                                                   GDestroyNotify          destroy);
 static gboolean           thunar_list_model_has_default_sort_func (GtkTreeSortable        *sortable);
 static gint               thunar_list_model_cmp                   (ThunarListModel        *store,
                                                                    ThunarFile             *a,
@@ -972,7 +972,7 @@ static void
 thunar_list_model_set_default_sort_func (GtkTreeSortable       *sortable,
                                          GtkTreeIterCompareFunc func,
                                          gpointer               data,
-                                         GtkDestroyNotify       destroy)
+                                         GDestroyNotify         destroy)
 {
   g_critical ("ThunarListModel has sorting facilities built-in!");
 }
@@ -984,7 +984,7 @@ thunar_list_model_set_sort_func (GtkTreeSortable       *sortable,
                                  gint                   sort_column_id,
                                  GtkTreeIterCompareFunc func,
                                  gpointer               data,
-                                 GtkDestroyNotify       destroy)
+                                 GDestroyNotify         destroy)
 {
   g_critical ("ThunarListModel has sorting facilities built-in!");
 }
