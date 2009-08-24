@@ -1026,7 +1026,7 @@ _thunar_io_jobs_ls (ThunarJob   *job,
 
   /* collect directory contents (non-recursively) */
   path_list = thunar_io_scan_directory (job, directory, 
-                                        G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, 
+                                        G_FILE_QUERY_INFO_NONE, 
                                         FALSE, &err);
 
   /* turn the GFile list into a ThunarFile list */
