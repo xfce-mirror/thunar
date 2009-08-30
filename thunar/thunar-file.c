@@ -712,7 +712,7 @@ thunar_file_load (ThunarFile   *file,
   gchar    *base_name;
   gchar    *md5_hash;
   gchar    *thumbnail_dir_path;
-  gchar    *uri = NULL;
+  gchar    *uri = NULL, *p;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -808,13 +808,19 @@ thunar_file_load (ThunarFile   *file,
                                                           G_KEY_FILE_DESKTOP_GROUP,
                                                           G_KEY_FILE_DESKTOP_KEY_ICON,
                                                           NULL);
-          
-          if (file->custom_icon_name != NULL && *file->custom_icon_name != '\0')
+
+          if (G_UNLIKELY (exo_str_is_empty (file->custom_icon_name)))
+            {
+              /* make sure we set null if the string is empty else
+               * thunar_icon_factory_lookup_icon() will assert */
+              g_free (file->custom_icon_name);
+              file->custom_icon_name = NULL;
+            }
+          else
             {
               /* drop any suffix (e.g. '.png') from themed icons */
               if (!g_path_is_absolute (file->custom_icon_name))
                 {
-                  gchar *p;
                   p = strrchr (file->custom_icon_name, '.');
                   if (p != NULL)
                     *p = '\0';
