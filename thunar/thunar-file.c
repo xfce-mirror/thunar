@@ -711,8 +711,9 @@ thunar_file_load (ThunarFile   *file,
   GFile    *thumbnail_dir;
   gchar    *base_name;
   gchar    *md5_hash;
+  gchar    *p;
   gchar    *thumbnail_dir_path;
-  gchar    *uri = NULL, *p;
+  gchar    *uri = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -811,8 +812,8 @@ thunar_file_load (ThunarFile   *file,
 
           if (G_UNLIKELY (exo_str_is_empty (file->custom_icon_name)))
             {
-              /* make sure we set null if the string is empty else
-               * thunar_icon_factory_lookup_icon() will assert */
+              /* make sure we set null if the string is empty else the assertion in 
+               * thunar_icon_factory_lookup_icon() will fail */
               g_free (file->custom_icon_name);
               file->custom_icon_name = NULL;
             }
