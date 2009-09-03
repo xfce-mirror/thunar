@@ -1438,6 +1438,11 @@ thunar_application_unlink_files (ThunarApplication *application,
     {
       /* prepend the path to the path list */
       path_list = thunar_g_file_list_prepend (path_list, thunar_file_get_file (lp->data));
+
+      /* permanently delete if at least one of the file is not a local 
+       * file (e.g. resides in the trash) */
+      if (!thunar_file_is_local (lp->data))
+        permanently = TRUE;
     }
 
   /* nothing to do if we don't have any paths */
