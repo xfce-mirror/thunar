@@ -109,6 +109,7 @@ static void     thunar_window_unrealize                   (GtkWidget            
 static gboolean thunar_window_configure_event             (GtkWidget              *widget,
                                                            GdkEventConfigure      *event);
 static void     thunar_window_merge_custom_preferences    (ThunarWindow           *window);
+static void     thunar_window_merge_go_actions            (ThunarWindow           *window);
 static void     thunar_window_install_location_bar        (ThunarWindow           *window,
                                                            GType                   type);
 static void     thunar_window_install_sidepane            (ThunarWindow           *window,
@@ -166,7 +167,11 @@ static void     thunar_window_action_open_templates       (GtkAction            
                                                            ThunarWindow           *window);
 static void     thunar_window_action_open_videos          (GtkAction              *action,
                                                            ThunarWindow           *window);
+static void     thunar_window_action_open_file_system     (GtkAction              *action,
+                                                           ThunarWindow           *window);
 static void     thunar_window_action_open_trash           (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_open_network         (GtkAction              *action,
                                                            ThunarWindow           *window);
 static void     thunar_window_action_open_location        (GtkAction              *action,
                                                            ThunarWindow           *window);
@@ -224,7 +229,10 @@ struct _ThunarWindow
 
   /* support for custom preferences actions */
   ThunarxProviderFactory *provider_factory;
-  gint                    custom_preferences_merge_id;
+  guint                   custom_preferences_merge_id;
+
+  /* UI manager merge ID for go menu actions */
+  guint                   go_items_actions_merge_id;
 
   ThunarClipboardManager *clipboard;
 
@@ -300,6 +308,7 @@ static GtkActionEntry action_entries[] =
   { "open-parent", GTK_STOCK_GO_UP, N_ ("Open _Parent"), "<alt>Up", N_ ("Open the parent folder"), G_CALLBACK (thunar_window_action_go_up), },
   { "open-home", THUNAR_STOCK_HOME, N_ ("_Home"), "<alt>Home", N_ ("Go to the home folder"), G_CALLBACK (thunar_window_action_open_home), },
   { "open-desktop", THUNAR_STOCK_DESKTOP, "Desktop", NULL, N_ ("Go to the desktop folder"), G_CALLBACK (thunar_window_action_open_desktop), },
+  { "open-file-system", GTK_STOCK_HARDDISK, N_ ("File System"), NULL, N_ ("Brwose the file system"), G_CALLBACK (thunar_window_action_open_file_system), },
   { "open-documents", THUNAR_STOCK_DOCUMENTS, "Documents", NULL, N_ ("Go to the documents folder"), G_CALLBACK (thunar_window_action_open_documents), },
   { "open-downloads", THUNAR_STOCK_DOWNLOADS, "Download", NULL, N_ ("Go to the downloads folder"), G_CALLBACK (thunar_window_action_open_downloads), },
   { "open-music", THUNAR_STOCK_MUSIC, "Music", NULL, N_ ("Go to the music folder"), G_CALLBACK (thunar_window_action_open_music), },
@@ -716,12 +725,6 @@ thunar_window_init (ThunarWindow *window)
   /* rename the user dir menu entries and hide the unexisting ones */
   thunar_window_setup_user_dir_menu_entries (window);
 
-  /* setup the "open-trash" action */
-  action = thunar_trash_action_new ();
-  g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_window_action_open_trash), window);
-  gtk_action_group_add_action (window->action_group, action);
-  g_object_unref (G_OBJECT (action));
-
   /*
    * add view options
    */
@@ -907,6 +910,13 @@ thunar_window_dispose (GObject *object)
     {
       gtk_ui_manager_remove_ui (window->ui_manager, window->custom_preferences_merge_id);
       window->custom_preferences_merge_id = 0;
+    }
+
+  /* un-merge the go menu actions */
+  if (G_LIKELY (window->go_items_actions_merge_id != 0))
+    {
+      gtk_ui_manager_remove_ui (window->ui_manager, window->go_items_actions_merge_id);
+      window->go_items_actions_merge_id = 0;
     }
 
   /* disconnect from the current-directory */
@@ -1372,6 +1382,72 @@ thunar_window_merge_custom_preferences (ThunarWindow *window)
 
       /* release the provider list */
       g_list_free (providers);
+    }
+}
+
+
+
+void
+thunar_window_merge_go_actions (ThunarWindow *window)
+{
+  GtkAction *action;
+
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (window->go_items_actions_merge_id == 0);
+
+  /* allocate a new merge id from the UI manager */
+  window->go_items_actions_merge_id = gtk_ui_manager_new_merge_id (window->ui_manager);
+
+  /* setup the "open-trash" action */
+  if (thunar_g_vfs_is_uri_scheme_supported ("trash"))
+    {
+      /* add the trash action to the action group */
+      action = thunar_trash_action_new ();
+      g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_window_action_open_trash), window);
+      gtk_action_group_add_action (window->action_group, action);
+
+      /* add the action to the UI manager */
+      gtk_ui_manager_add_ui (window->ui_manager,
+                             window->go_items_actions_merge_id,
+                             "/main-menu/go-menu/placeholder-go-items-actions",
+                             gtk_action_get_name (GTK_ACTION (action)),
+                             gtk_action_get_name (GTK_ACTION (action)),
+                             GTK_UI_MANAGER_MENUITEM, FALSE);
+
+      g_object_unref (action);
+    }
+
+  /* add the file system action to the UI manager */
+  {
+    action = gtk_action_group_get_action (window->action_group, "open-file-system");
+    gtk_ui_manager_add_ui (window->ui_manager,
+                           window->go_items_actions_merge_id,
+                           "/main-menu/go-menu/placeholder-go-items-actions",
+                           gtk_action_get_name (GTK_ACTION (action)),
+                           gtk_action_get_name (GTK_ACTION (action)),
+                           GTK_UI_MANAGER_MENUITEM, FALSE);
+  }
+
+  /* setup the "open-network" action */
+  if (thunar_g_vfs_is_uri_scheme_supported ("network"))
+    {
+      /* create the network action */
+      action = gtk_action_new ("open-network", _("Network"), _("Browse the network"), 
+                               GTK_STOCK_NETWORK);
+      g_signal_connect (action, "activate", G_CALLBACK (thunar_window_action_open_network), window);
+
+      /* add the network action to the action group */
+      gtk_action_group_add_action (window->action_group, action);
+
+      /* add the action to the UI manager */
+      gtk_ui_manager_add_ui (window->ui_manager,
+                             window->go_items_actions_merge_id,
+                             "/main-menu/go-menu/placeholder-go-items-actions",
+                             gtk_action_get_name (GTK_ACTION (action)),
+                             gtk_action_get_name (GTK_ACTION (action)),
+                             GTK_UI_MANAGER_MENUITEM, FALSE);
+
+      g_object_unref (action);
     }
 }
 
@@ -1908,6 +1984,8 @@ thunar_window_action_open_home (GtkAction    *action,
   g_object_unref (home);
 }
 
+
+
 static gboolean
 thunar_window_open_user_folder (GtkAction           *action,
                                 ThunarWindow        *window,
@@ -1967,6 +2045,8 @@ thunar_window_open_user_folder (GtkAction           *action,
   return result;
 }
 
+
+
 static void
 thunar_window_action_open_desktop (GtkAction     *action,
                                    ThunarWindow  *window)
@@ -1978,6 +2058,8 @@ thunar_window_action_open_desktop (GtkAction     *action,
                                   THUNAR_USER_DIRECTORY_DESKTOP,
                                   "Desktop");
 }
+
+
 
 static void
 thunar_window_action_open_documents (GtkAction     *action,
@@ -1991,6 +2073,8 @@ thunar_window_action_open_documents (GtkAction     *action,
                                   "Documents");
 }
 
+
+
 static void
 thunar_window_action_open_downloads (GtkAction     *action,
                                      ThunarWindow  *window)
@@ -2002,6 +2086,8 @@ thunar_window_action_open_downloads (GtkAction     *action,
                                   THUNAR_USER_DIRECTORY_DOWNLOAD,
                                   "Downloads");
 }
+
+
 
 static void
 thunar_window_action_open_music (GtkAction     *action,
@@ -2015,6 +2101,8 @@ thunar_window_action_open_music (GtkAction     *action,
                                   "Music");
 }
 
+
+
 static void
 thunar_window_action_open_pictures (GtkAction     *action,
                                     ThunarWindow  *window)
@@ -2027,6 +2115,8 @@ thunar_window_action_open_pictures (GtkAction     *action,
                                   "Pictures");
 }
 
+
+
 static void
 thunar_window_action_open_public (GtkAction     *action,
                                   ThunarWindow  *window)
@@ -2038,6 +2128,8 @@ thunar_window_action_open_public (GtkAction     *action,
                                   THUNAR_USER_DIRECTORY_PUBLIC_SHARE,
                                   "Public");
 }
+
+
 
 static void
 thunar_window_action_open_templates (GtkAction    *action,
@@ -2119,6 +2211,7 @@ thunar_window_action_open_templates (GtkAction    *action,
 }
 
 
+
 static void
 thunar_window_action_open_videos (GtkAction     *action,
                                   ThunarWindow  *window)
@@ -2130,6 +2223,41 @@ thunar_window_action_open_videos (GtkAction     *action,
                                   THUNAR_USER_DIRECTORY_VIDEOS,
                                   "Videos");
 }
+
+
+
+static void
+thunar_window_action_open_file_system (GtkAction    *action,
+                                       ThunarWindow *window)
+{
+  GFile         *root;
+  ThunarFile    *root_file;
+  GError        *error = NULL;
+
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* determine the path to the root directory */
+  root = thunar_g_file_new_for_root ();
+
+  /* determine the file for the root directory */
+  root_file = thunar_file_get (root, &error);
+  if (G_UNLIKELY (root_file == NULL))
+    {
+      /* display an error to the user */
+      thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to open the file system root folder"));
+      g_error_free (error);
+    }
+  else
+    {
+      /* open the root folder */
+      thunar_window_set_current_directory (window, root_file);
+      g_object_unref (G_OBJECT (root_file));
+    }
+
+  /* release our reference on the home path */
+  g_object_unref (root);
+}
+
 
 
 static void
@@ -2158,11 +2286,46 @@ thunar_window_action_open_trash (GtkAction    *action,
     {
       /* open the trash folder */
       thunar_window_set_current_directory (window, trash_bin_file);
-      g_object_unref (G_OBJECT (trash_bin));
+      g_object_unref (G_OBJECT (trash_bin_file));
     }
 
   /* release our reference on the trash bin path */
   g_object_unref (trash_bin);
+}
+
+
+
+static void
+thunar_window_action_open_network (GtkAction    *action,
+                                   ThunarWindow *window)
+{
+  ThunarFile *network_file;
+  GError     *error = NULL;
+  GFile      *network;
+
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* determine the network root location */
+  network = g_file_new_for_uri ("network://");
+
+  /* determine the file for this location */
+  network_file = thunar_file_get (network, &error);
+  if (G_UNLIKELY (network_file == NULL))
+    {
+      /* display an error to the user */
+      thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to browse the network"));
+      g_error_free (error);
+    }
+  else
+    {
+      /* open the network root location */
+      thunar_window_set_current_directory (window, network_file);
+      g_object_unref (G_OBJECT (network_file));
+    }
+
+  /* release our reference on the location itself */
+  g_object_unref (network);
 }
 
 
@@ -2463,6 +2626,7 @@ thunar_window_merge_idle (gpointer user_data)
   /* merge custom preferences from the providers */
   GDK_THREADS_ENTER ();
   thunar_window_merge_custom_preferences (window);
+  thunar_window_merge_go_actions (window);
   GDK_THREADS_LEAVE ();
 
   return FALSE;
