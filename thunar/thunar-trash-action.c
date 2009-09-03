@@ -29,9 +29,10 @@
 
 
 
-static void thunar_trash_action_finalize   (GObject                *object);
-static void thunar_trash_action_changed    (ThunarTrashAction      *trash_action,
-                                            ThunarFile             *trash_bin);
+static void thunar_trash_action_constructed (GObject                *object);
+static void thunar_trash_action_finalize    (GObject                *object);
+static void thunar_trash_action_changed     (ThunarTrashAction      *trash_action,
+                                             ThunarFile             *trash_bin);
 
 
 struct _ThunarTrashActionClass
@@ -57,6 +58,7 @@ thunar_trash_action_class_init (ThunarTrashActionClass *klass)
   GObjectClass *gobject_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->constructed = thunar_trash_action_constructed;
   gobject_class->finalize = thunar_trash_action_finalize;
 }
 
@@ -91,6 +93,22 @@ thunar_trash_action_init (ThunarTrashAction *trash_action)
 
 
 static void
+thunar_trash_action_constructed (GObject *object)
+{
+  ThunarTrashAction *trash_action = THUNAR_TRASH_ACTION (object);
+  const gchar       *label;
+  
+  if (trash_action->trash_bin != NULL)
+    label = thunar_file_get_display_name (trash_action->trash_bin);
+  else
+    label = _("T_rash");
+
+  g_object_set (trash_action, "label", label, NULL);
+}
+
+
+
+static void
 thunar_trash_action_finalize (GObject *object)
 {
   ThunarTrashAction *trash_action = THUNAR_TRASH_ACTION (object);
@@ -120,7 +138,10 @@ thunar_trash_action_changed (ThunarTrashAction *trash_action,
   _thunar_return_if_fail (THUNAR_IS_FILE (trash_bin));
 
   /* adjust the stock icon appropriately */
-  g_object_set (G_OBJECT (trash_action), "stock-id", (thunar_file_get_size (trash_bin) > 0) ? THUNAR_STOCK_TRASH_FULL : THUNAR_STOCK_TRASH_EMPTY, NULL);
+  if (thunar_file_get_item_count (trash_bin) > 0) 
+    g_object_set (G_OBJECT (trash_action), "stock-id", THUNAR_STOCK_TRASH_FULL, NULL);
+  else
+    g_object_set (G_OBJECT (trash_action), "stock-id", THUNAR_STOCK_TRASH_EMPTY, NULL);
 }
 
 
@@ -138,7 +159,6 @@ thunar_trash_action_new (void)
 {
   return g_object_new (THUNAR_TYPE_TRASH_ACTION,
                        "name", "open-trash",
-                       "label", _("T_rash"),
                        "tooltip", _("Display the contents of the trash can"),
                        "stock-id", THUNAR_STOCK_TRASH_FULL,
                        NULL);
