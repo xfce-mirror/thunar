@@ -1861,7 +1861,10 @@ thunar_file_get_mode (const ThunarFile *file)
   if (file->info == NULL)
     return 0;
 
-  return g_file_info_get_attribute_uint32 (file->info, G_FILE_ATTRIBUTE_UNIX_MODE);
+  if (g_file_info_has_attribute (file->info, G_FILE_ATTRIBUTE_UNIX_MODE))
+    return g_file_info_get_attribute_uint32 (file->info, G_FILE_ATTRIBUTE_UNIX_MODE);
+  else
+    return 0777;
 }
 
 
