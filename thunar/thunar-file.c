@@ -850,7 +850,10 @@ thunar_file_load (ThunarFile   *file,
   /* determine the display name */
   if (file->info != NULL)
     {
-      file->display_name = g_strdup (g_file_info_get_display_name (file->info));
+      if (g_strcmp0 (g_file_info_get_display_name (file->info), "/") == 0)
+        file->display_name = g_strdup (_("File System"));
+      else
+        file->display_name = g_strdup (g_file_info_get_display_name (file->info));
     }
   else
     {
