@@ -276,11 +276,9 @@ thunar_tree_model_init (ThunarTreeModel *model)
 {
   ThunarTreeModelItem *item;
   ThunarFile          *file;
-  GFile               *system_path_list[3] = { 
-    thunar_g_file_new_for_home (), 
-    thunar_g_file_new_for_trash (), 
-    thunar_g_file_new_for_root () 
-  };
+  GFile               *desktop;
+  GFile               *home;
+  GList               *system_paths = NULL;
   GList               *volumes;
   GList               *lp;
   GNode               *node;
@@ -311,16 +309,37 @@ thunar_tree_model_init (ThunarTreeModel *model)
   g_signal_connect (model->volume_monitor, "volume-removed", G_CALLBACK (thunar_tree_model_volume_removed), model);
   g_signal_connect (model->volume_monitor, "volume-changed", G_CALLBACK (thunar_tree_model_volume_changed), model);
 
+  /* add the home folder to the system paths */
+  home = thunar_g_file_new_for_home ();
+  system_paths = g_list_append (system_paths, g_object_ref (home));
+
+  /* append the user's desktop folder */
+  desktop = thunar_g_file_new_for_desktop ();
+  if (!g_file_equal (desktop, home))
+    system_paths = g_list_append (system_paths, desktop);
+  else
+    g_object_unref (desktop);
+
+  /* append the trash icon if the trash is supported */
+  if (thunar_g_vfs_is_uri_scheme_supported ("trash"))
+    system_paths = g_list_append (system_paths, thunar_g_file_new_for_trash ());
+
+  /* append the root file system */
+  system_paths = g_list_append (system_paths, thunar_g_file_new_for_root ());
+
+  /* append the network icon if browsing the network is supported */
+  if (thunar_g_vfs_is_uri_scheme_supported ("network"))
+    system_paths = g_list_append (system_paths, g_file_new_for_uri ("network://"));
+
   /* append the system defined nodes ('Home', 'Trash', 'File System') */
-  for (n = 0; n < G_N_ELEMENTS (system_path_list); ++n)
+  for (lp = system_paths; lp != NULL; lp = lp->next)
     {
       /* determine the file for the path */
-      file = thunar_file_get (system_path_list[n], NULL);
+      file = thunar_file_get (lp->data, NULL);
       if (G_LIKELY (file != NULL))
         {
-          /* watch the trash bin for changes */
-          if (thunar_file_is_trashed (file) && thunar_file_is_root (file))
-            thunar_file_watch (file);
+          /* watch the file for changes */
+          thunar_file_watch (file);
 
           /* create and append the new node */
           item = thunar_tree_model_item_new_with_file (model, file);
@@ -332,8 +351,11 @@ thunar_tree_model_init (ThunarTreeModel *model)
         }
 
       /* release the system defined path */
-      g_object_unref (system_path_list[n]);
+      g_object_unref (lp->data);
     }
+
+  g_list_free (system_paths);
+  g_object_unref (home);
 
   /* setup the initial volumes */
   volumes = g_volume_monitor_get_volumes (model->volume_monitor);
@@ -1249,9 +1271,8 @@ thunar_tree_model_item_reset (ThunarTreeModelItem *item)
   /* disconnect from the file */
   if (G_LIKELY (item->file != NULL))
     {
-      /* unwatch the trash bin */
-      if (thunar_file_is_trashed (item->file) && thunar_file_is_root (item->file))
-        thunar_file_unwatch (item->file);
+      /* unwatch the file */
+      thunar_file_unwatch (item->file);
 
       /* release and reset the file */
       g_object_unref (G_OBJECT (item->file));

@@ -241,20 +241,27 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
   g_signal_connect (model->volume_monitor, "volume-removed", G_CALLBACK (thunar_shortcuts_model_volume_removed), model);
   g_signal_connect (model->volume_monitor, "volume-changed", G_CALLBACK (thunar_shortcuts_model_volume_changed), model);
 
+  /* add the home folder to the system paths */
   home = thunar_g_file_new_for_home ();
-
-  /* determine the system-defined paths */
   system_paths = g_list_append (system_paths, g_object_ref (home));
-  system_paths = g_list_append (system_paths, thunar_g_file_new_for_trash ());
 
+  /* append the user's desktop folder */
   desktop = thunar_g_file_new_for_desktop ();
-
   if (!g_file_equal (desktop, home))
     system_paths = g_list_append (system_paths, desktop);
   else
     g_object_unref (desktop);
 
+  /* append the trash icon if the trash is supported */
+  if (thunar_g_vfs_is_uri_scheme_supported ("trash"))
+    system_paths = g_list_append (system_paths, thunar_g_file_new_for_trash ());
+
+  /* append the root file system */
   system_paths = g_list_append (system_paths, thunar_g_file_new_for_root ());
+
+  /* append the network icon if browsing the network is supported */
+  if (thunar_g_vfs_is_uri_scheme_supported ("network"))
+    system_paths = g_list_append (system_paths, g_file_new_for_uri ("network://"));
 
   /* will be used to append the shortcuts to the list */
   path = gtk_tree_path_new_from_indices (0, -1);
