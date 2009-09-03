@@ -690,7 +690,7 @@ thunar_io_jobs_restore_files (GList *source_file_list,
   _thunar_return_val_if_fail (g_list_length (source_file_list) == g_list_length (target_file_list), NULL);
 
   job = thunar_transfer_job_new (source_file_list, target_file_list, 
-                        THUNAR_TRANSFER_JOB_MOVE);
+                                 THUNAR_TRANSFER_JOB_MOVE);
 
   return THUNAR_JOB (exo_job_launch (EXO_JOB (job)));
 }

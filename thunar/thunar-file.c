@@ -2280,8 +2280,8 @@ thunar_file_get_original_path (const ThunarFile *file)
   if (file->info == NULL)
     return NULL;
 
-  if (g_file_info_has_attribute (file->info, "trash::orig-file"))
-    return g_file_info_get_attribute_string (file->info, "trash::orig-file");
+  if (g_file_info_has_attribute (file->info, "trash::orig-path"))
+    return g_file_info_get_attribute_byte_string (file->info, "trash::orig-path");
   else
     return NULL;
 }

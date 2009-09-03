@@ -44,6 +44,7 @@ G_BEGIN_DECLS;
   "standard::*," \
   "time::*," \
   "thumbnail::*," \
+  "trash::*," \
   "unix::*"
 
 /**
