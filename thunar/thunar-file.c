@@ -2280,10 +2280,31 @@ thunar_file_get_original_path (const ThunarFile *file)
   if (file->info == NULL)
     return NULL;
 
-  if (g_file_info_has_attribute (file->info, "trash::orig-path"))
-    return g_file_info_get_attribute_byte_string (file->info, "trash::orig-path");
-  else
+  g_file_info_get_attribute_byte_string (file->info, "trash::orig-path");
+}
+
+
+
+/**
+ * thunar_file_get_item_count:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the number of items in the trash, if @file refers to the
+ * trash root directory. Otherwise returns 0.
+ *
+ * Return value: number of files in the trash if @file is the trash 
+ *               root dir, 0 otherwise.
+ **/
+const gchar *
+thunar_file_get_item_count (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+
+  if (file->info == NULL)
     return NULL;
+
+  return g_file_info_get_attribute_uint32 (file->info, 
+                                           G_FILE_ATTRIBUTE_TRASH_ITEM_COUNT);
 }
 
 

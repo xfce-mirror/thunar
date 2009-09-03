@@ -1102,7 +1102,7 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
     {
       /* append the "Empty Trash" menu action */
       item = gtk_image_menu_item_new_with_mnemonic (_("_Empty Trash"));
-      gtk_widget_set_sensitive (item, (thunar_file_get_size (file) > 0));
+      gtk_widget_set_sensitive (item, (thunar_file_get_item_count (file) > 0));
       g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_empty_trash), view);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
