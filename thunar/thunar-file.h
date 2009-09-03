@@ -204,7 +204,7 @@ const gchar      *thunar_file_get_display_name     (const ThunarFile       *file
 gchar            *thunar_file_get_deletion_date    (const ThunarFile       *file,
                                                     ThunarDateStyle         date_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 const gchar      *thunar_file_get_original_path    (const ThunarFile       *file);
-guint64           thunar_file_get_trash_item_count (const ThunarFile       *file);
+guint32           thunar_file_get_trash_item_count (const ThunarFile       *file);
 
 gboolean          thunar_file_is_chmodable         (const ThunarFile       *file);
 gboolean          thunar_file_is_renameable        (const ThunarFile       *file);

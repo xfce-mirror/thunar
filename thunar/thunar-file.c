@@ -1864,7 +1864,7 @@ thunar_file_get_mode (const ThunarFile *file)
   if (g_file_info_has_attribute (file->info, G_FILE_ATTRIBUTE_UNIX_MODE))
     return g_file_info_get_attribute_uint32 (file->info, G_FILE_ATTRIBUTE_UNIX_MODE);
   else
-    return 0777;
+    return thunar_file_is_directory (file) ? 0777 : 0666;
 }
 
 
@@ -2298,13 +2298,13 @@ thunar_file_get_original_path (const ThunarFile *file)
  * Return value: number of files in the trash if @file is the trash 
  *               root dir, 0 otherwise.
  **/
-const gchar *
+guint32
 thunar_file_get_item_count (const ThunarFile *file)
 {
-  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), 0);
 
   if (file->info == NULL)
-    return NULL;
+    return 0;
 
   return g_file_info_get_attribute_uint32 (file->info, 
                                            G_FILE_ATTRIBUTE_TRASH_ITEM_COUNT);
