@@ -218,6 +218,28 @@ thunar_g_file_get_location (GFile *file)
 
 
 
+gboolean
+thunar_g_vfs_is_uri_scheme_supported (const gchar *scheme)
+{
+  const gchar * const *supported_schemes;
+  gboolean             supported = FALSE;
+  guint                n;
+  GVfs                *gvfs;
+
+  _thunar_return_val_if_fail (scheme != NULL && *scheme != '\0', FALSE);
+
+  gvfs = g_vfs_get_default ();
+  supported_schemes = g_vfs_get_supported_uri_schemes (gvfs);
+
+  for (n = 0; !supported && supported_schemes[n] != NULL; ++n) 
+    if (g_strcmp0 (supported_schemes[n], scheme) == 0)
+      supported = TRUE;
+
+  return supported;
+}
+
+
+
 GType
 thunar_g_file_list_get_type (void)
 {

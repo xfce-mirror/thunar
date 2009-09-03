@@ -45,6 +45,8 @@ gboolean  thunar_g_file_write_key_file           (GFile          *file,
 
 gchar    *thunar_g_file_get_location             (GFile          *file);
 
+gboolean  thunar_g_vfs_is_uri_scheme_supported   (const gchar    *scheme);
+
 /**
  * THUNAR_TYPE_G_FILE_LIST:
  *
