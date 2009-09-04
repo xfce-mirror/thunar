@@ -257,8 +257,8 @@ thunar_location_button_class_init (ThunarLocationButtonClass *klass)
 static void
 thunar_location_button_init (ThunarLocationButton *location_button)
 {
-  GtkWidget *button;
   GtkWidget *align;
+  GtkWidget *button;
   GtkWidget *hbox;
 
   /* create the toggle button */
@@ -423,8 +423,8 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
   ThunarIconFactory *icon_factory;
   GtkIconTheme      *icon_theme;
   GtkSettings       *settings;
-  gchar             *icon_name;
   GdkPixbuf         *icon;
+  gchar             *icon_name;
   gint               height;
   gint               width;
   gint               size;
@@ -436,9 +436,18 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
   /* determine the icon theme for the widget */
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (location_button)));
 
-  /* update and show the label widget */
-  gtk_label_set_text (GTK_LABEL (location_button->label), thunar_file_get_display_name (file));
-  gtk_widget_show (location_button->label);
+  /* update and show the label widget (hide for the local root folder) */
+  if (thunar_file_is_local (file) && thunar_file_is_root (file)) 
+    {
+      /* hide the alignment in which the label would otherwise show up */
+      gtk_widget_hide (gtk_widget_get_parent (location_button->label));
+    }
+  else
+    {
+      /* set label to the file's display name and show the alignment (and thereby the label) */
+      gtk_label_set_text (GTK_LABEL (location_button->label), thunar_file_get_display_name (file));
+      gtk_widget_show (gtk_widget_get_parent (location_button->label));
+    }
 
   /* the image is only visible for certain special paths */
   if (thunar_file_is_home (file) || thunar_file_is_desktop (file) || thunar_file_is_root (file))
