@@ -1050,9 +1050,13 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
   /* check if resolving/mounting failed */
   if (error != NULL)
     {
-      /* tell the user that we were unable to launch the file specified */
-      thunar_dialogs_show_error (screen, error, _("Failed to open \"%s\""), 
-                                 thunar_file_get_display_name (file));
+      /* don't display cancel errors */
+      if (error->domain != G_IO_ERROR || error->code != G_IO_ERROR_CANCELLED)
+        {
+          /* tell the user that we were unable to launch the file specified */
+          thunar_dialogs_show_error (screen, error, _("Failed to open \"%s\""), 
+                                     thunar_file_get_display_name (file));
+        }
 
       /* stop processing files */
       thunar_file_list_free (application->files_to_launch);
