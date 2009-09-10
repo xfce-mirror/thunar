@@ -282,7 +282,6 @@ thunar_tree_model_init (ThunarTreeModel *model)
   GList               *volumes;
   GList               *lp;
   GNode               *node;
-  guint                n;
 
   /* generate a unique stamp if we're in debug mode */
 #ifndef NDEBUG
