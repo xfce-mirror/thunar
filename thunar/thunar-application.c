@@ -37,6 +37,7 @@
 #endif
 
 #include <thunar/thunar-application.h>
+#include <thunar/thunar-browser.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gdk-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
@@ -144,7 +145,8 @@ static GQuark thunar_application_startup_id_quark;
 
 
 
-G_DEFINE_TYPE (ThunarApplication, thunar_application, G_TYPE_OBJECT)
+G_DEFINE_TYPE_EXTENDED (ThunarApplication, thunar_application, G_TYPE_OBJECT, 0,
+                        G_IMPLEMENT_INTERFACE (THUNAR_TYPE_BROWSER, NULL))
 
 
 
@@ -1020,34 +1022,19 @@ thunar_application_bulk_rename (ThunarApplication *application,
 
 
 static void
-thunar_application_process_files_finish (GObject      *object,
-                                         GAsyncResult *result,
-                                         gpointer      user_data)
+thunar_application_process_files_finish (ThunarBrowser *browser,
+                                         ThunarFile    *file,
+                                         ThunarFile    *target_file,
+                                         GError        *error,
+                                         gpointer       unused)
 { 
-  ThunarApplication *application = THUNAR_APPLICATION (user_data);
-  ThunarFile        *file;
+  ThunarApplication *application = THUNAR_APPLICATION (browser);
   GdkScreen         *screen;
-  GError            *error = NULL;
   const gchar       *startup_id;
 
-  _thunar_return_if_fail (G_IS_FILE (object));
-  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
+  _thunar_return_if_fail (THUNAR_IS_BROWSER (browser));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
-  _thunar_return_if_fail (application->files_to_launch != NULL);
-  _thunar_return_if_fail (THUNAR_IS_FILE (application->files_to_launch->data));
-
-  /* finish mounting the volume */
-  if (!g_file_mount_enclosing_volume_finish (G_FILE (object), result, &error))
-    {
-      /* ignore already mounted and not supported errors */
-      if (error->domain == G_IO_ERROR && error->code == G_IO_ERROR_ALREADY_MOUNTED)
-        g_clear_error (&error);
-      else if (error->domain == G_IO_ERROR && error->code == G_IO_ERROR_NOT_SUPPORTED)
-        g_clear_error (&error);
-    }
-
-  /* get the current file */
-  file = THUNAR_FILE (application->files_to_launch->data);
 
   /* determine and reset the screen of the file */
   screen = g_object_get_qdata (G_OBJECT (file), thunar_application_screen_quark);
@@ -1056,17 +1043,11 @@ thunar_application_process_files_finish (GObject      *object,
   /* determine and the startup id of the file */
   startup_id = g_object_get_qdata (G_OBJECT (file), thunar_application_startup_id_quark);
 
-  /* check if mounting succeeded */
-  if (error == NULL)
-    {
-      /* try to open the file or directory */
-      thunar_file_launch (file, screen, startup_id, &error);
-    }
-
   /* unset the startup id */
   if (startup_id != NULL)
     g_object_set_qdata (G_OBJECT (file), thunar_application_startup_id_quark, NULL);
 
+  /* check if resolving/mounting failed */
   if (error != NULL)
     {
       /* tell the user that we were unable to launch the file specified */
@@ -1079,15 +1060,22 @@ thunar_application_process_files_finish (GObject      *object,
     }
   else
     {
+      /* try to open the file or directory */
+      thunar_file_launch (target_file, screen, startup_id, &error);
+
+      /* remove the file from the list */
+      application->files_to_launch = g_list_delete_link (application->files_to_launch,
+                                                         application->files_to_launch);
+
       /* release the file */
       g_object_unref (file);
 
-      /* remove the file item from the list */
-      application->files_to_launch = g_list_delete_link (application->files_to_launch, 
-                                                         application->files_to_launch);
-
-      /* continue processing the next file */
-      thunar_application_process_files (application);
+      /* check if we have more files to process */
+      if (application->files_to_launch != NULL)
+        {
+          /* continue processing the next file */
+          thunar_application_process_files (application);
+        }
     }
 }
 
@@ -1096,10 +1084,8 @@ thunar_application_process_files_finish (GObject      *object,
 static void
 thunar_application_process_files (ThunarApplication *application)
 {
-  GMountOperation *mount_operation;
-  ThunarFile      *file;
-  GdkScreen       *screen;
-  GFile           *location;
+  ThunarFile *file;
+  GdkScreen  *screen;
 
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
   
@@ -1107,24 +1093,16 @@ thunar_application_process_files (ThunarApplication *application)
   if (application->files_to_launch == NULL)
     return;
 
-  /* get the next file */
+  /* take the next file from the queue */
   file = THUNAR_FILE (application->files_to_launch->data);
 
-  /* create a GTK+ mount operation */
-  mount_operation = gtk_mount_operation_new (NULL);
+  /* retrieve the screen we need to launch the file on */
   screen = g_object_get_qdata (G_OBJECT (file), thunar_application_screen_quark);
-  if (screen != NULL)
-    gtk_mount_operation_set_screen (GTK_MOUNT_OPERATION (mount_operation), screen);
 
-  /* determine the location of the file */
-  location = thunar_file_get_file (file);
-
-  /* try to mount the enclosing volume asynchronously. Thunar will launch files
-   * that are accessible in the mount callback */
-  g_file_mount_enclosing_volume (location, G_MOUNT_MOUNT_NONE,
-                                 mount_operation, NULL,
-                                 thunar_application_process_files_finish,
-                                 application);
+  /* resolve the file and/or mount its enclosing volume 
+   * before handling it in the callback */
+  thunar_browser_poke_file (THUNAR_BROWSER (application), file, screen,
+                            thunar_application_process_files_finish, NULL);
 }
 
 
