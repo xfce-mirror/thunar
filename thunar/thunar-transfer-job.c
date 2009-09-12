@@ -61,6 +61,8 @@ struct _ThunarTransferJob
   guint64               total_size;
   guint64               total_progress;
   guint64               file_progress;
+
+  gdouble               previous_percentage;
 };
 
 struct _ThunarTransferNode
@@ -100,6 +102,7 @@ thunar_transfer_job_init (ThunarTransferJob *job)
   job->total_size = 0;
   job->total_progress = 0;
   job->file_progress = 0;
+  job->previous_percentage = 0.0;
 }
 
 
@@ -124,6 +127,8 @@ thunar_transfer_job_progress (goffset  current_num_bytes,
                               goffset  total_num_bytes,
                               gpointer user_data)
 {
+  guint64 new_percentage;
+
   ThunarTransferJob *job = user_data;
 
   _thunar_return_if_fail (THUNAR_IS_TRANSFER_JOB (job));
@@ -136,8 +141,19 @@ thunar_transfer_job_progress (goffset  current_num_bytes,
       /* update file progress */
       job->file_progress = current_num_bytes;
 
-      /* notify callers about the progress we made */
-      exo_job_percent (EXO_JOB (job), (job->total_progress * 100.0) / job->total_size);
+      /* compute the new percentage after the progress we've made */
+      new_percentage = (job->total_progress * 100.0) / job->total_size;
+
+      /* notify callers about the progress only if we have advanced by
+       * at least 0.05 percent since the last signal emission */
+      if (new_percentage > (job->previous_percentage + 0.05))
+        {
+          /* emit the percent signal */
+          exo_job_percent (EXO_JOB (job), new_percentage);
+
+          /* remember the percentage */
+          job->previous_percentage = new_percentage;
+        }
     }
 }
 
