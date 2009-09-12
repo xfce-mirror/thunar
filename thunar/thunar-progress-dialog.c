@@ -34,12 +34,13 @@
 
 
 
-static void     thunar_progress_dialog_dispose  (GObject              *object);
-static void     thunar_progress_dialog_finalize (GObject              *object);
-static gboolean thunar_progress_dialog_closed   (ThunarProgressDialog *dialog);
-static gboolean thunar_progress_dialog_toggled  (ThunarProgressDialog *dialog, 
-                                                 GdkEventButton       *button,
-                                                 GtkStatusIcon        *status_icon);
+static void     thunar_progress_dialog_dispose            (GObject              *object);
+static void     thunar_progress_dialog_finalize           (GObject              *object);
+static gboolean thunar_progress_dialog_closed             (ThunarProgressDialog *dialog);
+static gboolean thunar_progress_dialog_toggled            (ThunarProgressDialog *dialog, 
+                                                           GdkEventButton       *button,
+                                                           GtkStatusIcon        *status_icon);
+static void     thunar_progress_dialog_update_status_icon (ThunarProgressDialog *dialog);
 
 
 
@@ -224,10 +225,54 @@ thunar_progress_dialog_job_finished (ThunarProgressDialog *dialog,
       gtk_window_resize (GTK_WINDOW (dialog), 400, 10);
     }
 
-  /* destroy the dialog if there are no views left */
-  if (dialog->views == NULL)
-    gtk_widget_destroy (GTK_WIDGET (dialog));
+  /* check if we still have at least one view */
+  if (dialog->views != NULL)
+    {
+      /* update the status icon */
+      thunar_progress_dialog_update_status_icon (dialog);
+    }
+  else
+    {
+      /* destroy the dialog as there are no views left */
+      gtk_widget_destroy (GTK_WIDGET (dialog));
+    }
 }
+
+
+
+static void
+thunar_progress_dialog_update_status_icon (ThunarProgressDialog *dialog)
+{
+  gchar *tooltip_text;
+  guint  n_views;
+
+  _thunar_return_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog));
+  
+  /* make the status icon visible */
+  gtk_status_icon_set_visible (dialog->status_icon, TRUE);
+
+  /* determine the number of views now being active */
+  n_views = g_list_length (dialog->views);
+
+  /* build the tooltip text */
+  tooltip_text = g_strdup_printf (ngettext ("%d file operation running", 
+                                            "%d file operations running",
+                                            n_views), 
+                                  n_views);
+
+  /* update the tooltip */
+#if GTK_CHECK_VERSION (2, 16, 0)
+  gtk_status_icon_set_tooltip_text (dialog->status_icon, tooltip_text);
+#else
+  gtk_status_icon_set_tooltip (dialog->status_icon, tooltip_text);
+#endif
+
+  /* free the string */
+  g_free (tooltip_text);
+}
+
+
+
 
 
 
@@ -247,8 +292,6 @@ thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
 {
   GtkWidget *viewport;
   GtkWidget *view;
-  gchar     *tooltip_text;
-  guint      n_views;
 
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog));
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
@@ -263,12 +306,9 @@ thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
   /* add the view to the list of known views */
   dialog->views = g_list_prepend (dialog->views, view);
 
-  /* determine the number of views now being active */
-  n_views = g_list_length (dialog->views);
-
   /* check if we need to wrap the views in a scroll window (starting 
    * at SCROLLVIEW_THRESHOLD parallel operations */
-  if (n_views == SCROLLVIEW_THRESHOLD)
+  if (g_list_length (dialog->views) == SCROLLVIEW_THRESHOLD)
     {
       /* create a scrolled window and add it to the dialog */
       dialog->scrollwin = gtk_scrolled_window_new (NULL, NULL);
@@ -294,17 +334,5 @@ thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
   g_signal_connect_swapped (view, "finished",
                             G_CALLBACK (thunar_progress_dialog_job_finished), dialog);
 
-  /* make the status icon visible */
-  gtk_status_icon_set_visible (dialog->status_icon, TRUE);
-
-  /* set status icon tooltip */
-  tooltip_text = g_strdup_printf (ngettext ("1 file operation running", "%d file operations running",
-                                            n_views), 
-                                  n_views);
-#if GTK_CHECK_VERSION (2, 16, 0)
-  gtk_status_icon_set_tooltip_text (dialog->status_icon, tooltip_text);
-#else
-  gtk_status_icon_set_tooltip (dialog->status_icon, tooltip_text);
-#endif
-  g_free (tooltip_text);
+  thunar_progress_dialog_update_status_icon (dialog);
 }
