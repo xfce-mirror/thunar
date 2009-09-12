@@ -3220,6 +3220,33 @@ thunar_file_cache_lookup (const GFile *file)
 
 
 
+gchar *
+thunar_file_cached_display_name (const GFile *file)
+{
+  ThunarFile *cached_file;
+  gchar      *base_name;
+  gchar      *display_name;
+      
+  /* check if we have a ThunarFile for it in the cache (usually is the case) */
+  cached_file = thunar_file_cache_lookup (file);
+  if (cached_file != NULL)
+    {
+      /* determine the display name of the file */
+      display_name = g_strdup (thunar_file_get_display_name (cached_file));
+    }
+  else
+    {
+      /* determine something a hopefully good approximation of the display name */
+      base_name = g_file_get_basename (G_FILE (file));
+      display_name = g_filename_display_name (base_name);
+      g_free (base_name);
+    }
+
+  return display_name;
+}
+
+
+
 /**
  * thunar_file_list_get_applications:
  * @file_list : a #GList of #ThunarFile<!---->s.

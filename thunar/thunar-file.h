@@ -252,6 +252,7 @@ gboolean          thunar_file_same_filesystem      (const ThunarFile       *file
                                                     const ThunarFile       *file_b);
 
 ThunarFile       *thunar_file_cache_lookup         (const GFile            *file);
+gchar            *thunar_file_cached_display_name  (const GFile            *file);
 
 
 GList            *thunar_file_list_get_applications  (GList *file_list);

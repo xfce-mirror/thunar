@@ -1294,14 +1294,26 @@ thunar_application_copy_into (ThunarApplication *application,
                               GFile             *target_file,
                               GClosure          *new_files_closure)
 {
+  gchar *display_name;
+  gchar *title;
+
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
   _thunar_return_if_fail (G_IS_FILE (target_file));
 
+   /* generate a title for the progress dialog */
+   display_name = thunar_file_cached_display_name (target_file);
+   title = g_strdup_printf (_("Copying files to \"%s\"..."), display_name);
+   g_free (display_name);
+
   /* collect the target files and launch the job */
   thunar_application_collect_and_launch (application, parent, "stock_folder-copy",
-                                         _("Copying files..."), thunar_io_jobs_copy_files,
-                                         source_file_list, target_file, new_files_closure);
+                                         title, thunar_io_jobs_copy_files,
+                                         source_file_list, target_file, 
+                                         new_files_closure);
+
+  /* free the title */
+  g_free (title);
 }
 
 
@@ -1325,18 +1337,29 @@ void
 thunar_application_link_into (ThunarApplication *application,
                               gpointer           parent,
                               GList             *source_file_list,
-                              GFile     *target_file,
+                              GFile             *target_file,
                               GClosure          *new_files_closure)
 {
+  gchar *display_name;
+  gchar *title;
+
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
   _thunar_return_if_fail (G_IS_FILE (target_file));
 
+  /* generate a title for the progress dialog */
+  display_name = thunar_file_cached_display_name (target_file);
+  title = g_strdup_printf (_("Creating symbolic links in \"%s\"..."), display_name);
+  g_free (display_name);
+
   /* collect the target files and launch the job */
   thunar_application_collect_and_launch (application, parent, "stock_link",
-                                         _("Creating symbolic links..."),
-                                         thunar_io_jobs_link_files, source_file_list,
-                                         target_file, new_files_closure);
+                                         title, thunar_io_jobs_link_files, 
+                                         source_file_list, target_file, 
+                                         new_files_closure);
+
+  /* free the title */
+  g_free (title);
 }
 
 
@@ -1363,6 +1386,9 @@ thunar_application_move_into (ThunarApplication *application,
                               GFile             *target_file,
                               GClosure          *new_files_closure)
 {
+  gchar *display_name;
+  gchar *title;
+
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
   _thunar_return_if_fail (target_file != NULL);
@@ -1374,11 +1400,20 @@ thunar_application_move_into (ThunarApplication *application,
     }
   else
     {
+      /* generate a title for the progress dialog */
+      display_name = thunar_file_cached_display_name (target_file);
+      title = g_strdup_printf (_("Moving files into \"%s\"..."), display_name);
+      g_free (display_name);
+
+      /* collect the target files and launch the job */
       thunar_application_collect_and_launch (application, parent, 
-                                             "stock_folder-move", _("Moving files..."), 
+                                             "stock_folder-move", title,
                                              thunar_io_jobs_move_files, 
                                              source_file_list, target_file, 
                                              new_files_closure);
+
+      /* free the title */
+      g_free (title);
     }
 }
 
@@ -1417,7 +1452,7 @@ thunar_application_unlink_files (ThunarApplication *application,
   gboolean        permanently;
   GList          *path_list = NULL;
   GList          *lp;
-  gchar          *message;
+  gchar          *message;      
   guint           n_path_list = 0;
   gint            response;
 
