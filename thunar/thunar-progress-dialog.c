@@ -30,6 +30,10 @@
 
 
 
+#define SCROLLVIEW_THRESHOLD 5
+
+
+
 static void     thunar_progress_dialog_dispose  (GObject              *object);
 static void     thunar_progress_dialog_finalize (GObject              *object);
 static gboolean thunar_progress_dialog_closed   (ThunarProgressDialog *dialog);
@@ -202,8 +206,8 @@ thunar_progress_dialog_job_finished (ThunarProgressDialog *dialog,
   n_views = g_list_length (dialog->views);
 
   /* check if we've just removed the 4th view and are now left with
-   * 3 of them, in which case we drop the scroll window */
-  if (n_views == 3)
+   * SCROLLVIEW_THRESHOLD-1 of them, in which case we drop the scroll window */
+  if (n_views == SCROLLVIEW_THRESHOLD-1)
     {
       /* reparent the content box */
       gtk_widget_reparent (dialog->content_box, dialog->vbox);
@@ -212,8 +216,9 @@ thunar_progress_dialog_job_finished (ThunarProgressDialog *dialog,
       gtk_widget_destroy (dialog->scrollwin);
     }
 
-  /* check if we have less than 4 views and need to shrink the window */
-  if (n_views <= 3)
+  /* check if we have less than SCROLLVIEW_THRESHOLD views 
+   * and need to shrink the window */
+  if (n_views < SCROLLVIEW_THRESHOLD)
     {
       /* try to shrink the window */
       gtk_window_resize (GTK_WINDOW (dialog), 400, 10);
@@ -262,13 +267,11 @@ thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
   n_views = g_list_length (dialog->views);
 
   /* check if we need to wrap the views in a scroll window (starting 
-   * at 4 parallel operations */
-  if (n_views == 4)
+   * at SCROLLVIEW_THRESHOLD parallel operations */
+  if (n_views == SCROLLVIEW_THRESHOLD)
     {
       /* create a scrolled window and add it to the dialog */
       dialog->scrollwin = gtk_scrolled_window_new (NULL, NULL);
-      gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (dialog->scrollwin),
-                                           GTK_SHADOW_NONE);
       gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (dialog->scrollwin), 
                                       GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
       gtk_container_add (GTK_CONTAINER (dialog->vbox), dialog->scrollwin);
@@ -277,6 +280,7 @@ thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
       /* create a viewport for the content box */
       viewport = gtk_viewport_new (gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (dialog->scrollwin)),
                                    gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (dialog->scrollwin)));
+      gtk_viewport_set_shadow_type (GTK_VIEWPORT (viewport), GTK_SHADOW_NONE);
       gtk_container_add (GTK_CONTAINER (dialog->scrollwin), viewport);
       gtk_widget_show (viewport);
 
