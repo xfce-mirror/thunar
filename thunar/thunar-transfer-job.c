@@ -145,8 +145,8 @@ thunar_transfer_job_progress (goffset  current_num_bytes,
       new_percentage = (job->total_progress * 100.0) / job->total_size;
 
       /* notify callers about the progress only if we have advanced by
-       * at least 0.05 percent since the last signal emission */
-      if (new_percentage > (job->previous_percentage + 0.05))
+       * at least 0.01 percent since the last signal emission */
+      if (new_percentage >= (job->previous_percentage + 0.01))
         {
           /* emit the percent signal */
           exo_job_percent (EXO_JOB (job), new_percentage);
