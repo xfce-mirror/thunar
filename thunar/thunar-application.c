@@ -123,6 +123,7 @@ struct _ThunarApplication
   GObject                __parent__;
 
   ThunarPreferences     *preferences;
+  GtkWidget             *progress_dialog;
   GList                 *windows;
 
   gboolean               daemon;
@@ -194,6 +195,7 @@ thunar_application_init (ThunarApplication *application)
   application->preferences = thunar_preferences_get ();
 
   application->files_to_launch = NULL;
+  application->progress_dialog = NULL;
 
   /* check if we have a saved accel map */
   path = xfce_resource_lookup (XFCE_RESOURCE_CONFIG, "Thunar/accels.scm");
@@ -253,7 +255,7 @@ thunar_application_finalize (GObject *object)
   if (G_UNLIKELY (application->show_dialogs_timer_id != 0))
     g_source_remove (application->show_dialogs_timer_id);
 
-  /* drop the open windows */
+  /* drop the open windows (this includes the progress dialog) */
   for (lp = application->windows; lp != NULL; lp = lp->next)
     {
       g_signal_handlers_disconnect_by_func (G_OBJECT (lp->data), G_CALLBACK (thunar_application_window_destroyed), application);
@@ -386,7 +388,6 @@ thunar_application_launch (ThunarApplication *application,
                            GList             *target_file_list,
                            GClosure          *new_files_closure)
 {
-  GtkWindow *window;
   GtkWidget *dialog;
   GdkScreen *screen;
   ThunarJob *job;
@@ -394,7 +395,7 @@ thunar_application_launch (ThunarApplication *application,
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
 
   /* parse the parent pointer */
-  screen = thunar_util_parse_parent (parent, &window);
+  screen = thunar_util_parse_parent (parent, NULL);
 
   /* try to allocate a new job for the operation */
   job = (*launcher) (source_file_list, target_file_list);
@@ -403,31 +404,23 @@ thunar_application_launch (ThunarApplication *application,
   if (G_LIKELY (new_files_closure != NULL))
     g_signal_connect_closure (job, "new-files", new_files_closure, FALSE);
 
-  /* allocate a progress dialog for the job */
-  dialog = g_object_new (THUNAR_TYPE_PROGRESS_DIALOG,
-                         "icon-name", icon_name,
-                         "title", title,
-                         "job", job,
-                         "screen", screen,
-                         NULL);
+  /* get the shared progress dialog */
+  dialog = thunar_application_get_progress_dialog (application);
 
-  /* connect to the parent (if any) */
-  if (G_LIKELY (window != NULL))
-    gtk_window_set_transient_for (GTK_WINDOW (dialog), window);
+  /* place the dialog on the given screen */
+  if (screen != NULL)
+    gtk_window_set_screen (GTK_WINDOW (dialog), screen);
 
-  /* be sure to destroy the dialog when the job is done */
-  g_signal_connect_after (G_OBJECT (dialog), "response", G_CALLBACK (gtk_widget_destroy), dialog);
-
-  /* hook up the dialog window */
-  thunar_application_take_window (application, GTK_WINDOW (dialog));
+  thunar_progress_dialog_add_job (THUNAR_PROGRESS_DIALOG (dialog), job, icon_name, title);
 
   /* Set up a timer to show the dialog, to make sure we don't
    * just popup and destroy a dialog for a very short job.
    */
   if (G_LIKELY (application->show_dialogs_timer_id == 0))
     {
-      application->show_dialogs_timer_id = g_timeout_add_full (G_PRIORITY_DEFAULT, 750, thunar_application_show_dialogs,
-                                                               application, thunar_application_show_dialogs_destroy);
+      application->show_dialogs_timer_id = 
+        g_timeout_add_full (G_PRIORITY_DEFAULT, 750, thunar_application_show_dialogs,
+                            application, thunar_application_show_dialogs_destroy);
     }
 
   /* drop our reference on the job */
@@ -692,14 +685,12 @@ static gboolean
 thunar_application_show_dialogs (gpointer user_data)
 {
   ThunarApplication *application = THUNAR_APPLICATION (user_data);
-  GList             *lp;
 
   GDK_THREADS_ENTER ();
 
-  /* show all progress dialogs */
-  for (lp = application->windows; lp != NULL; lp = lp->next)
-    if (THUNAR_IS_PROGRESS_DIALOG (lp->data))
-      gtk_widget_show (GTK_WIDGET (lp->data));
+  /* show the progress dialog */
+  if (application->progress_dialog != NULL)
+    gtk_window_present (GTK_WINDOW (application->progress_dialog));
 
   GDK_THREADS_LEAVE ();
 
@@ -1017,6 +1008,27 @@ thunar_application_bulk_rename (ThunarApplication *application,
   thunar_file_list_free (file_list);
 
   return result;
+}
+
+
+
+GtkWidget *
+thunar_application_get_progress_dialog (ThunarApplication *application)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), NULL);
+
+  if (application->progress_dialog == NULL)
+    {
+      application->progress_dialog = thunar_progress_dialog_new ();
+
+      g_object_add_weak_pointer (G_OBJECT (application->progress_dialog),
+                                 (gpointer) &application->progress_dialog);
+
+      thunar_application_take_window (application, 
+                                      GTK_WINDOW (application->progress_dialog));
+    }
+
+  return application->progress_dialog;
 }
 
 

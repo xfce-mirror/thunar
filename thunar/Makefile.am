@@ -146,6 +146,8 @@ Thunar_SOURCES =							\
 	thunar-private.h						\
 	thunar-progress-dialog.c					\
 	thunar-progress-dialog.h					\
+	thunar-progress-view.c						\
+	thunar-progress-view.h						\
 	thunar-properties-dialog.c					\
 	thunar-properties-dialog.h					\
 	thunar-renamer-dialog.c						\
