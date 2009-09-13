@@ -309,7 +309,22 @@ thunar_progress_view_cancel_job (ThunarProgressView *view)
   _thunar_return_if_fail (THUNAR_IS_JOB (view->job));
 
   if (view->job != NULL)
-    exo_job_cancel (EXO_JOB (view->job));
+    {
+      /* cancel the job */
+      exo_job_cancel (EXO_JOB (view->job));
+
+      /* don't listen to percentage updates any more */
+      g_signal_handlers_disconnect_matched (view->job, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, 
+                                            thunar_progress_view_percent, NULL);
+
+      /* don't listen to info messages any more */
+      g_signal_handlers_disconnect_matched (view->job, G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+                                            thunar_progress_view_info_message, NULL);
+
+      /* update the progress bar text */
+      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (view->progress_bar), 
+                                 _("Cancelling..."));
+    }
 }
 
 
