@@ -179,7 +179,7 @@ thunar_progress_dialog_toggled (ThunarProgressDialog *dialog,
 
   /* toggle the visibility of the progress dialog */
   if (GTK_WIDGET_VISIBLE (GTK_WIDGET (dialog)))
-    gtk_widget_hide (GTK_WIDGET (dialog));
+    gtk_window_present (GTK_WINDOW (dialog));
   else
     gtk_widget_show (GTK_WIDGET (dialog));
 
