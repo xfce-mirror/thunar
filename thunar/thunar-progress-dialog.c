@@ -36,6 +36,7 @@
 
 static void     thunar_progress_dialog_dispose            (GObject              *object);
 static void     thunar_progress_dialog_finalize           (GObject              *object);
+static void     thunar_progress_dialog_shown              (ThunarProgressDialog *dialog);
 static gboolean thunar_progress_dialog_closed             (ThunarProgressDialog *dialog);
 static gboolean thunar_progress_dialog_toggled            (ThunarProgressDialog *dialog, 
                                                            GdkEventButton       *button,
@@ -94,6 +95,9 @@ thunar_progress_dialog_init (ThunarProgressDialog *dialog)
   gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), FALSE);
   gtk_window_set_type_hint (GTK_WINDOW (dialog), GDK_WINDOW_TYPE_HINT_NORMAL);
 
+  g_signal_connect_swapped (dialog, "show", 
+                            G_CALLBACK (thunar_progress_dialog_shown), dialog);
+
   g_signal_connect (dialog, "delete-event", 
                     G_CALLBACK (thunar_progress_dialog_closed), dialog);
 
@@ -136,6 +140,17 @@ thunar_progress_dialog_finalize (GObject *object)
   g_list_free (dialog->views);
 
   (*G_OBJECT_CLASS (thunar_progress_dialog_parent_class)->finalize) (object);
+}
+
+
+
+static void
+thunar_progress_dialog_shown (ThunarProgressDialog *dialog)
+{
+  _thunar_return_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog));
+
+  /* show the status icon */
+  gtk_status_icon_set_visible (dialog->status_icon, TRUE);
 }
 
 
@@ -248,9 +263,6 @@ thunar_progress_dialog_update_status_icon (ThunarProgressDialog *dialog)
 
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog));
   
-  /* make the status icon visible */
-  gtk_status_icon_set_visible (dialog->status_icon, TRUE);
-
   /* determine the number of views now being active */
   n_views = g_list_length (dialog->views);
 
