@@ -177,11 +177,18 @@ thunar_progress_dialog_toggled (ThunarProgressDialog *dialog,
   _thunar_return_val_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog), FALSE);
   _thunar_return_val_if_fail (GTK_IS_STATUS_ICON (status_icon), FALSE);
 
-  /* toggle the visibility of the progress dialog */
-  if (GTK_WIDGET_VISIBLE (GTK_WIDGET (dialog)))
-    gtk_window_present (GTK_WINDOW (dialog));
+  /* check if the window is visible and has the focus */
+  if (GTK_WIDGET_VISIBLE (GTK_WIDGET (dialog)) 
+      && gtk_window_is_active (GTK_WINDOW (dialog)))
+    {
+      /* it is, so hide it now */
+      gtk_widget_hide (GTK_WIDGET (dialog));
+    }
   else
-    gtk_widget_show (GTK_WIDGET (dialog));
+    {
+      /* it's not, so we need to raise it above other windows */
+      gtk_window_present (GTK_WINDOW (dialog));
+    }
 
   return TRUE;
 }
