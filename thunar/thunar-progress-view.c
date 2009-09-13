@@ -477,17 +477,17 @@ thunar_progress_view_percent (ThunarProgressView *view,
           if (remaining_time > 60 * 60)
             {
               remaining_time = (gulong) (remaining_time / (60 * 60));
-              g_snprintf (text, sizeof (text), ngettext ("(%lu hour remaining)", "(%lu hours remaining)", remaining_time), remaining_time);
+              g_snprintf (text, sizeof (text), ngettext ("%lu hour remaining", "%lu hours remaining", remaining_time), remaining_time);
             }
           else if (remaining_time > 60)
             {
               remaining_time = (gulong) (remaining_time / 60);
-              g_snprintf (text, sizeof (text), ngettext ("(%lu minute remaining)", "(%lu minutes remaining)", remaining_time), remaining_time);
+              g_snprintf (text, sizeof (text), ngettext ("%lu minute remaining", "%lu minutes remaining", remaining_time), remaining_time);
             }
           else
             {
               remaining_time = remaining_time;
-              g_snprintf (text, sizeof (text), ngettext ("(%lu second remaining)", "(%lu seconds remaining)", remaining_time), remaining_time);
+              g_snprintf (text, sizeof (text), ngettext ("%lu second remaining", "%lu seconds remaining", remaining_time), remaining_time);
             }
 
           /* apply the time text */
