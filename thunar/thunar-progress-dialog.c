@@ -110,7 +110,7 @@ thunar_progress_dialog_init (ThunarProgressDialog *dialog)
   gtk_container_add (GTK_CONTAINER (dialog->vbox), dialog->content_box);
   gtk_widget_show (dialog->content_box);
 
-  dialog->status_icon = gtk_status_icon_new_from_stock (GTK_STOCK_DIRECTORY);
+  dialog->status_icon = gtk_status_icon_new_from_icon_name ("stock_folder-copy");
   gtk_status_icon_set_visible (dialog->status_icon, FALSE);
 
   g_signal_connect_swapped (dialog->status_icon, "button-press-event", 
