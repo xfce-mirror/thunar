@@ -411,16 +411,30 @@ thunar_application_launch (ThunarApplication *application,
   if (screen != NULL)
     gtk_window_set_screen (GTK_WINDOW (dialog), screen);
 
-  thunar_progress_dialog_add_job (THUNAR_PROGRESS_DIALOG (dialog), job, icon_name, title);
-
-  /* Set up a timer to show the dialog, to make sure we don't
-   * just popup and destroy a dialog for a very short job.
-   */
-  if (G_LIKELY (application->show_dialogs_timer_id == 0))
+  if (thunar_progress_dialog_has_jobs (THUNAR_PROGRESS_DIALOG (dialog)))
     {
-      application->show_dialogs_timer_id = 
-        g_timeout_add_full (G_PRIORITY_DEFAULT, 750, thunar_application_show_dialogs,
-                            application, thunar_application_show_dialogs_destroy);
+      /* add the job to the dialog */
+      thunar_progress_dialog_add_job (THUNAR_PROGRESS_DIALOG (dialog), 
+                                      job, icon_name, title);
+
+      /* show the dialog immediately */
+      thunar_application_show_dialogs (application);
+    }
+  else
+    {
+      /* add the job to the dialog */
+      thunar_progress_dialog_add_job (THUNAR_PROGRESS_DIALOG (dialog), 
+                                      job, icon_name, title);
+
+      /* Set up a timer to show the dialog, to make sure we don't
+       * just popup and destroy a dialog for a very short job.
+       */
+      if (G_LIKELY (application->show_dialogs_timer_id == 0))
+        {
+          application->show_dialogs_timer_id = 
+            g_timeout_add_full (G_PRIORITY_DEFAULT, 750, thunar_application_show_dialogs,
+                                application, thunar_application_show_dialogs_destroy);
+        }
     }
 
   /* drop our reference on the job */

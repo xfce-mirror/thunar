@@ -60,6 +60,9 @@ struct _ThunarProgressDialog
   GtkWidget     *content_box;
 
   GList         *views;
+
+  gint           x;
+  gint           y;
 };
 
 
@@ -160,6 +163,9 @@ thunar_progress_dialog_closed (ThunarProgressDialog *dialog)
 {
   _thunar_return_val_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog), FALSE);
 
+  /* remember the position of the dialog */
+  gtk_window_get_position (GTK_WINDOW (dialog), &dialog->x, &dialog->y);
+
   /* hide the progress dialog */
   gtk_widget_hide (GTK_WIDGET (dialog));
 
@@ -181,13 +187,23 @@ thunar_progress_dialog_toggled (ThunarProgressDialog *dialog,
   if (GTK_WIDGET_VISIBLE (GTK_WIDGET (dialog)) 
       && gtk_window_is_active (GTK_WINDOW (dialog)))
     {
+      /* remember the position of the dialog */
+      gtk_window_get_position (GTK_WINDOW (dialog), &dialog->x, &dialog->y);
+
       /* it is, so hide it now */
       gtk_widget_hide (GTK_WIDGET (dialog));
     }
   else
     {
+      /* check if the dialog is invisible */
+      if (!GTK_WIDGET_VISIBLE (GTK_WIDGET (dialog)))
+        {
+          /* restore its previous position before presenting it */
+          gtk_window_move (GTK_WINDOW (dialog), dialog->x, dialog->y);
+        }
+
       /* it's not, so we need to raise it above other windows */
-      gtk_window_present (GTK_WINDOW (dialog));
+      gtk_window_present_with_time (GTK_WINDOW (dialog), event->time);
     }
 
   return TRUE;
@@ -354,4 +370,13 @@ thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
                             G_CALLBACK (thunar_progress_dialog_job_finished), dialog);
 
   thunar_progress_dialog_update_status_icon (dialog);
+}
+
+
+
+gboolean
+thunar_progress_dialog_has_jobs (ThunarProgressDialog *dialog)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog), FALSE);
+  return dialog->views != NULL;
 }
