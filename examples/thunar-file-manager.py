@@ -47,7 +47,7 @@ thunar = dbus.Interface(thunar_object, 'org.xfce.Thunar')
 # standalone version with an empty file list and /tmp
 # as default folder for the "Add Files" dialog, use:
 #
-# thunar.BulkRename('/tmp', [], True, '')
+# thunar.BulkRename('/tmp', [], True, '', '')
 #
 # See the thunar-dbus-service-infos.xml file for the exact
 # interface definition.
