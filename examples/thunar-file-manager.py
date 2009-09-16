@@ -55,4 +55,4 @@ thunar = dbus.Interface(thunar_object, 'org.xfce.Thunar')
 
 # We just popup the bulk rename dialog to
 # demonstrate that it works. ;-)
-thunar.BulkRename('/tmp', [], True, '')
+thunar.BulkRename('/tmp', [], True, '', '')
