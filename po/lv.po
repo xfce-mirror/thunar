@@ -5,52 +5,62 @@
 #
 # Rihards Prieditis <rprieditis@inbox.lv>, 2007.
 # Rihards Prieditis <RPrieditis@gmail.com>, 2008.
+# Rihards Prieditis <rprieditis@gmail.com>, 2009.
 msgid ""
 msgstr ""
 "Project-Id-Version: lv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-28 19:01+0100\n"
-"PO-Revision-Date: 2008-04-06 19:01+0300\n"
-"Last-Translator: Rihards Prieditis <RPrieditis@gmail.com>\n"
-"Language-Team: Latvian <RPrieditis@gmail.com>\n"
+"POT-Creation-Date: 2008-08-25 06:04-0700\n"
+"PO-Revision-Date: 2009-09-18 16:39+0100\n"
+"Last-Translator: Rihards Prieditis <rprieditis@gmail.com>\n"
+"Language-Team: Latvian <translation-team-lv@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);\n"
-"X-Generator: KBabel 1.11.4\n"
+"Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
+"2);\n"
+"X-Generator: Lokalize 1.0\n"
 
 #. base directory not readable
 #: ../thunar-vfs/thunar-vfs-deep-count-job.c:233
+#, c-format
 msgid "Failed to read folder contents"
 msgstr "Neizdevās nolasīt mapes saturu"
 
-#: ../thunar-vfs/thunar-vfs-exec.c:582
+#: ../thunar-vfs/thunar-vfs-exec.c:590
+#, c-format
 msgid "Unknown error"
 msgstr "Nezināma kļūda"
 
 #. TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is.
 #: ../thunar-vfs/thunar-vfs-info.c:390
+#, c-format
 msgid "No Exec field specified"
 msgstr "Nav norādīts Exec lauks"
 
 #. TRANSLATORS: `URL' is a field name in a .desktop file. You should leave it as-is.
 #: ../thunar-vfs/thunar-vfs-info.c:409
+#, c-format
 msgid "No URL field specified"
 msgstr "Nav norādīts URL lauks"
 
 #: ../thunar-vfs/thunar-vfs-info.c:414 ../thunar-vfs/thunar-vfs-private.c:384
+#, c-format
 msgid "Invalid desktop file"
-msgstr "Nederīgs darbavirsmas fails"
+msgstr "Nederīgs darbvirsmas fails"
 
 #: ../thunar-vfs/thunar-vfs-info.c:422
+#, c-format
 msgid "Failed to parse file"
 msgstr "Neizdevās parsēt failu"
 
 #: ../thunar-vfs/thunar-vfs-info.c:503
+#, c-format
 msgid "Invalid file name"
 msgstr "Nederīgs faila nosaukums"
 
 #: ../thunar-vfs/thunar-vfs-info.c:510
+#, c-format
 msgid "Only local files may be renamed"
 msgstr "Tikai vietējie faili ir pārdēvējami"
 
@@ -131,12 +141,12 @@ msgstr "saite uz %s"
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:367
 #, c-format
 msgid "another copy of %s"
-msgstr "vēlviena kopija no %s"
+msgstr "vēl viena kopija no %s"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:368
 #, c-format
 msgid "another link to %s"
-msgstr "vēlviena saite uz %s"
+msgstr "vēl viena saite uz %s"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:371
 #, c-format
@@ -154,17 +164,17 @@ msgstr "trešā saite uz %s"
 #, c-format
 msgid "%uth copy of %s"
 msgid_plural "%uth copy of %s"
-msgstr[0] "%uth kopija no %s"
-msgstr[1] "%uth kopijas no %s"
-msgstr[2] "%uth kopijas no %s"
+msgstr[0] "%u kopija no %s"
+msgstr[1] "%u kopijas no %s"
+msgstr[2] "%u kopijas no %s"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:429
 #, c-format
 msgid "%uth link to %s"
 msgid_plural "%uth link to %s"
-msgstr[0] "%uth saite uz %s"
-msgstr[1] "%uth saites uz %s"
-msgstr[2] "%uth saites uz %s"
+msgstr[0] "%u saite uz %s"
+msgstr[1] "%u saites uz %s"
+msgstr[2] "%u saites uz %s"
 
 #. unable to stat source file, impossible to copy then
 #. the file does not exist, don't try to create a symlink then
@@ -194,10 +204,12 @@ msgid "Failed to create symbolic link \"%s\""
 msgstr "Neizdevās izveidot simbolisko saiti \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:545
+#, c-format
 msgid "Special files cannot be copied"
 msgstr "Speciālie faili nav kopējami"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:625
+#, c-format
 msgid "Symbolic links are not supported"
 msgstr "Simboliskās saites netiek atbalstītas"
 
@@ -238,6 +250,7 @@ msgstr "Miskaste"
 #. we don't support moving files within the trash
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1317
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1431
+#, c-format
 msgid "Cannot move or copy files within the trash"
 msgstr "Nevar pārvietot vai kopēt failus miskastē"
 
@@ -317,19 +330,23 @@ msgid "The URI \"%s\" is invalid"
 msgstr "URI \"%s\" ir nederīgs"
 
 #: ../thunar-vfs/thunar-vfs-path.c:800
+#, c-format
 msgid "Path too long to fit into buffer"
 msgstr "Ceļš ir pārāk garš, lai ietilptu buferī"
 
 #: ../thunar-vfs/thunar-vfs-path.c:903
+#, c-format
 msgid "URI too long to fit into buffer"
 msgstr "URI ir pārāk garš, lai ietilptu buferī"
 
 #: ../thunar-vfs/thunar-vfs-private.c:233
+#, c-format
 msgid "Operation not supported"
 msgstr "Operācija netiek atbalstīta"
 
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
 #: ../thunar-vfs/thunar-vfs-private.c:335
+#, c-format
 msgid "Invalidly escaped characters"
 msgstr "URI satur nederīgas beigšanas rakstzīmes"
 
@@ -347,6 +364,7 @@ msgid "Collecting files..."
 msgstr "Failu savākšana..."
 
 #: ../thunar-vfs/thunar-vfs-util.c:251
+#, c-format
 msgid "Invalid path"
 msgstr "Nederīgs ceļš"
 
@@ -567,7 +585,7 @@ msgstr "Dzēst visus failus un mapes no miskastes?"
 #. append the "Empty Trash" menu action
 #. add the "Empty Trash" menu item
 #: ../thunar/thunar-application.c:1515 ../thunar/thunar-location-buttons.c:171
-#: ../thunar/thunar-shortcuts-view.c:865 ../thunar/thunar-tree-view.c:1072
+#: ../thunar/thunar-shortcuts-view.c:864 ../thunar/thunar-tree-view.c:1071
 #: ../thunar/thunar-window.c:269 ../plugins/thunar-tpa/main.c:49
 msgid "_Empty Trash"
 msgstr "_Iztukšot miskasti"
@@ -577,8 +595,8 @@ msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr ""
-"Ja izvēlēsieties iztukšot miskasti, visi vienumi būs neatgriezeniski "
-"zuduši. Atceraties, ka varat dzēst vienums arī atsevišķi."
+"Ja izvēlēsieties iztukšot miskasti, visi vienumi būs neatgriezeniski zuduši. "
+"Atceraties, ka varat dzēst vienums arī atsevišķi."
 
 #: ../thunar/thunar-application.c:1536
 msgid "Emptying the Trash..."
@@ -630,8 +648,10 @@ msgstr "Nav norādīta neviena lietotne"
 
 #: ../thunar/thunar-chooser-button.c:366
 #, c-format
-msgid "The selected application is used to open this and other files of type \"%s\"."
-msgstr "Norādītā lietotne tiek izmantota, lai atvērtu šo un citus faila tipus \"%s\""
+msgid ""
+"The selected application is used to open this and other files of type \"%s\"."
+msgstr ""
+"Norādītā lietotne tiek izmantota, lai atvērtu šo un citus faila tipus \"%s\""
 
 #. add the "Other Application..." choice
 #: ../thunar/thunar-chooser-button.c:504
@@ -651,7 +671,8 @@ msgstr "Izmantot _pielāgotu komandu:"
 msgid ""
 "Use a custom command for an application that is not available from the above "
 "application list."
-msgstr "Izmantot pielāgotu komandu lietotnei, kura nav pieejama lietotņu sarakstā."
+msgstr ""
+"Izmantot pielāgotu komandu lietotnei, kura nav pieejama lietotņu sarakstā."
 
 #. create the "Custom command" button
 #: ../thunar/thunar-chooser-dialog.c:314
@@ -682,8 +703,10 @@ msgstr "Atvērt <i>%s</i> un citus failus ar tipu\"%s\":"
 
 #: ../thunar/thunar-chooser-dialog.c:709
 #, c-format
-msgid "Browse the file system to select an application to open files of type \"%s\"."
-msgstr "Pārlūkot failu sistēmu, lai norādītu lietotni, \"%s\" faila tipa atvēršanai."
+msgid ""
+"Browse the file system to select an application to open files of type \"%s\"."
+msgstr ""
+"Pārlūkot failu sistēmu, lai norādītu lietotni, \"%s\" faila tipa atvēršanai."
 
 #: ../thunar/thunar-chooser-dialog.c:715
 #, c-format
@@ -872,11 +895,13 @@ msgstr "Nederīgs faila nosaukums \"%s\""
 
 #. LaunchFiles() invoked without a valid working directory
 #: ../thunar/thunar-dbus-service.c:721
+#, c-format
 msgid "The working directory must be an absolute path"
 msgstr "Darba direktorijai jābūt ar absolūtu ceļu"
 
 #. LaunchFiles() invoked with an empty filename list
 #: ../thunar/thunar-dbus-service.c:729
+#, c-format
 msgid "Atleast one filename must be specified"
 msgstr "Vismaz vienam faila nosaukumam jābūt norādītam"
 
@@ -1046,6 +1071,7 @@ msgid "File Name"
 msgstr "Faila nosaukums"
 
 #: ../thunar/thunar-file.c:796
+#, c-format
 msgid "The root folder has no parent"
 msgstr "Saknes mapei nav vecāka"
 
@@ -1218,8 +1244,8 @@ msgstr "Atvērt ar \"%s\""
 #. tell the user that we were unable to mount the volume, which is required to send files to it
 #. display an error dialog to inform the user
 #: ../thunar/thunar-launcher.c:1225 ../thunar/thunar-location-entry.c:639
-#: ../thunar/thunar-shortcuts-view.c:1344 ../thunar/thunar-tree-view.c:953
-#: ../thunar/thunar-tree-view.c:1598
+#: ../thunar/thunar-shortcuts-view.c:1343 ../thunar/thunar-tree-view.c:953
+#: ../thunar/thunar-tree-view.c:1597
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Neizdevās nomontēt \"%s\""
@@ -1323,7 +1349,7 @@ msgstr[2] "%d vienumu atlasīti"
 
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-location-buttons.c:170
-#: ../thunar/thunar-standard-view.c:323 ../thunar/thunar-tree-view.c:1088
+#: ../thunar/thunar-standard-view.c:323 ../thunar/thunar-tree-view.c:1087
 msgid "Create _Folder..."
 msgstr "Veidot _mapi"
 
@@ -1366,7 +1392,8 @@ msgstr "Izveidot jaunu mapi iekš \"%s\""
 
 #: ../thunar/thunar-location-buttons.c:1294
 #, c-format
-msgid "Move or copy files previously selected by a Cut or Copy command into \"%s\""
+msgid ""
+"Move or copy files previously selected by a Cut or Copy command into \"%s\""
 msgstr ""
 "Pārvietot vai kopēt failus, kuri iepriekš atlasīti ar Izgriezt un Kopēt "
 "komandām, iekš \"%s\""
@@ -1378,12 +1405,12 @@ msgstr "Apskatīt mapes \"%s\" rekvizītus"
 
 #. ask the user to enter a name for the new folder
 #: ../thunar/thunar-location-buttons.c:1340
-#: ../thunar/thunar-standard-view.c:1818 ../thunar/thunar-tree-view.c:1439
+#: ../thunar/thunar-standard-view.c:1818 ../thunar/thunar-tree-view.c:1438
 msgid "New Folder"
 msgstr "Jauna mape"
 
 #: ../thunar/thunar-location-buttons.c:1340
-#: ../thunar/thunar-standard-view.c:1818 ../thunar/thunar-tree-view.c:1439
+#: ../thunar/thunar-standard-view.c:1818 ../thunar/thunar-tree-view.c:1438
 msgid "Create New Folder"
 msgstr "Izveidot jaunu mapi"
 
@@ -1511,7 +1538,9 @@ msgid ""
 "If you select this option your choice will be remembered and you won't be "
 "asked again. You can use the preferences dialog to alter your choice "
 "afterwards."
-msgstr "Atzīmējiet šo opciju, ja vēlaties, lai atbildi atceras un vairāk nejautā. Varat izmantot uzstādījuma dialoglogu, lai izmainītu izvēli."
+msgstr ""
+"Atzīmējiet šo opciju, ja vēlaties, lai atbildi atceras un vairāk nejautā. "
+"Varat izmantot uzstādījuma dialoglogu, lai izmainītu izvēli."
 
 #. display an error to the user
 #: ../thunar/thunar-permissions-chooser.c:666
@@ -1738,8 +1767,8 @@ msgstr ""
 "Kad viens-klikšķis ir aktivizēts, paturot peles kursoru virs vienuma, pēc "
 "norādītā ilguma vienums tiks automātiski atlasīts. Varat atspējot šo "
 "uzvedību pārvietojot slīdni uz pašu tālāko kreiso pusi. Šī uzvedība ir "
-"noderīga, kad viens klikšķis aktivizē vienumu, un vēlaties atlasīt "
-"vienumu bez aktivizācijas."
+"noderīga, kad viens klikšķis aktivizē vienumu, un vēlaties atlasīt vienumu "
+"bez aktivizācijas."
 
 #: ../thunar/thunar-preferences-dialog.c:534
 msgid "Disabled"
@@ -1981,7 +2010,8 @@ msgid "_Rename Files"
 msgstr "Pā_rdēvēt failus"
 
 #: ../thunar/thunar-renamer-dialog.c:371
-msgid "Click here to actually rename the files listed above to their new names."
+msgid ""
+"Click here to actually rename the files listed above to their new names."
 msgstr ""
 "Uzklikšķiniet šeit, lai sāktu pārdēvēt failus uz augstāk norādītajiem "
 "nosaukumiem."
@@ -2005,9 +2035,9 @@ msgid ""
 "installation or contact your system administrator. If you install Thunar\n"
 "from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
 msgstr ""
-"Sistēmā netika atrasts neviens pārdēvēšanas modulis. Lūdzu pārbaudiet "
-"savu\n"
-"instalāciju vai sazinieties ar savas sistēmas administratoru. Ja instalējat Thunar\n"
+"Sistēmā netika atrasts neviens pārdēvēšanas modulis. Lūdzu pārbaudiet savu\n"
+"instalāciju vai sazinieties ar savas sistēmas administratoru. Ja instalējat "
+"Thunar\n"
 "no pirmavota, pārliecinieties, ka esat iespējojuši \"Simple Builtin Renamers"
 "\" spraudni."
 
@@ -2072,9 +2102,9 @@ msgid ""
 "files, or revert the previously renamed files to their previous names, or "
 "cancel the operation without reverting previous changes."
 msgstr ""
-"Varat izvēlēties izlaist failu un turpināt pārdēvēt atlikušos failus, "
-"vai atgriezt visus pārdēvētos failus uz iepriekšējiem nosaukumiem, vai "
-"atcelt operāciju neatgriežot pārdēvēto failu nosaukums."
+"Varat izvēlēties izlaist failu un turpināt pārdēvēt atlikušos failus, vai "
+"atgriezt visus pārdēvētos failus uz iepriekšējiem nosaukumiem, vai atcelt "
+"operāciju neatgriežot pārdēvēto failu nosaukums."
 
 #: ../thunar/thunar-renamer-progress.c:226
 msgid "_Revert Changes"
@@ -2086,8 +2116,27 @@ msgid "_Skip This File"
 msgstr "_Izlaist šo failu"
 
 #: ../thunar/thunar-renamer-progress.c:233
-msgid "Do you want to skip this file and continue to rename the remaining files?"
+msgid ""
+"Do you want to skip this file and continue to rename the remaining files?"
 msgstr "Vai vēlaties izlaist šo failu un turpināt pārdēvēt atlikušos failus?"
+
+#: ../thunar/thunar-settings.desktop.in.h:1
+msgid "Configure the Thunar file manager"
+msgstr "Konfigurēt Thunar faila pārvaldnieku"
+
+#. set window title and icon
+#: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2002
+#: ../Thunar.desktop.in.in.h:2
+msgid "File Manager"
+msgstr "Failu pārvaldnieks"
+
+#: ../thunar/thunar-settings.desktop.in.h:3
+msgid "File Manager Settings"
+msgstr "Faila pārvaldnieka uzstādījumi"
+
+#: ../thunar/thunar-settings.desktop.in.h:4
+msgid "Thunar Settings"
+msgstr "Thunar uzstādījumi"
 
 #: ../thunar/thunar-shortcuts-pane.c:413
 msgid "Side Pane (Create Shortcut)"
@@ -2114,39 +2163,39 @@ msgid "E_ject Volume"
 msgstr "I_zgrūst sējumu"
 
 #. append the "Unmount Volume" menu item
-#: ../thunar/thunar-shortcuts-view.c:850 ../thunar/thunar-tree-view.c:1057
+#: ../thunar/thunar-shortcuts-view.c:849 ../thunar/thunar-tree-view.c:1056
 msgid "_Unmount Volume"
 msgstr "_Nomontēt sējumu"
 
 #. append the remove menu item
-#: ../thunar/thunar-shortcuts-view.c:878
+#: ../thunar/thunar-shortcuts-view.c:877
 msgid "_Remove Shortcut"
 msgstr "_Izņemt īsinājumikonu"
 
 #. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:893
+#: ../thunar/thunar-shortcuts-view.c:892
 msgid "Re_name Shortcut"
 msgstr "Pār_dēvēt īsinājumikonu"
 
-#: ../thunar/thunar-shortcuts-view.c:1161
+#: ../thunar/thunar-shortcuts-view.c:1160
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "Ceļš \"%s\" nenorāda uz direktoriju"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1180
+#: ../thunar/thunar-shortcuts-view.c:1179
 msgid "Failed to add new shortcut"
 msgstr "Neizdevās pievienot jaunu īsinājumikonu"
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1298 ../thunar/thunar-tree-view.c:1547
+#: ../thunar/thunar-shortcuts-view.c:1297 ../thunar/thunar-tree-view.c:1546
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Neizdevās izgrūst \"%s\""
 
 #. display an error dialog to inform the user
 #. display an error dialog
-#: ../thunar/thunar-shortcuts-view.c:1388 ../thunar/thunar-tree-view.c:1738
+#: ../thunar/thunar-shortcuts-view.c:1387 ../thunar/thunar-tree-view.c:1737
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Neizdevās nomontēt \"%s\""
@@ -2187,12 +2236,12 @@ msgid "Create an empty folder within the current folder"
 msgstr "Izveidot tukšu mapi pašreizējā mapē"
 
 #. append the "Cut" menu action
-#: ../thunar/thunar-standard-view.c:325 ../thunar/thunar-tree-view.c:1109
+#: ../thunar/thunar-standard-view.c:325 ../thunar/thunar-tree-view.c:1108
 msgid "Cu_t"
 msgstr "Iz_griezt"
 
 #. append the "Copy" menu action
-#: ../thunar/thunar-standard-view.c:326 ../thunar/thunar-tree-view.c:1121
+#: ../thunar/thunar-standard-view.c:326 ../thunar/thunar-tree-view.c:1120
 msgid "_Copy"
 msgstr "_Kopēt"
 
@@ -2202,10 +2251,11 @@ msgstr "_Ielīmēt"
 
 #: ../thunar/thunar-standard-view.c:327
 msgid "Move or copy files previously selected by a Cut or Copy command"
-msgstr "Pārvietot vai kopēt iepriekš atlasītos failus ar Izgriezt vai Kopēt komandām"
+msgstr ""
+"Pārvietot vai kopēt iepriekš atlasītos failus ar Izgriezt vai Kopēt komandām"
 
 #. append the "Delete" menu action
-#: ../thunar/thunar-standard-view.c:328 ../thunar/thunar-tree-view.c:1156
+#: ../thunar/thunar-standard-view.c:328 ../thunar/thunar-tree-view.c:1155
 msgid "_Delete"
 msgstr "_Dzēst"
 
@@ -2386,12 +2436,12 @@ msgid "Loading..."
 msgstr "Ielāde..."
 
 #. append the "Paste Into Folder" menu action
-#: ../thunar/thunar-tree-view.c:1138
+#: ../thunar/thunar-tree-view.c:1137
 msgid "_Paste Into Folder"
 msgstr "_Ielīmēt mapē"
 
 #. append the "Properties" menu action
-#: ../thunar/thunar-tree-view.c:1179
+#: ../thunar/thunar-tree-view.c:1178
 msgid "P_roperties..."
 msgstr "_Rekvizīti"
 
@@ -2670,12 +2720,12 @@ msgid ""
 "You can then select the entry from the \"Create Document\" menu and a copy "
 "of the document will be created in the directory you are viewing."
 msgstr ""
-"Ja bieži veidojat noteikta veida dokumentus, izveidojiet šai mapē vienu "
-"šada dokumenta kopiju. Thunar izveidos šim dokumentam ierakstu izvēlnē "
-"\"Izveidot dokumentu\".\n"
+"Ja bieži veidojat noteikta veida dokumentus, izveidojiet šai mapē vienu šada "
+"dokumenta kopiju. Thunar izveidos šim dokumentam ierakstu izvēlnē \"Izveidot "
+"dokumentu\".\n"
 "\n"
-"Pēc tam varat izvēlēties, šo ierakstu no \"Izveidot dokumentu\" izvēlnes "
-"un tiks izveidota šī dokumenta kopija pašreizējā direktorijā."
+"Pēc tam varat izvēlēties, šo ierakstu no \"Izveidot dokumentu\" izvēlnes un "
+"tiks izveidota šī dokumenta kopija pašreizējā direktorijā."
 
 #: ../thunar/thunar-window.c:1879
 msgid "Do _not display this message again"
@@ -2697,11 +2747,6 @@ msgid ""
 msgstr ""
 "Thunar ir ātrs un viegli lietojams failu pārvaldnieks\n"
 "priekš Xfce vides."
-
-#. set window title and icon
-#: ../thunar/thunar-window.c:2002 ../Thunar.desktop.in.in.h:2
-msgid "File Manager"
-msgstr "Failu pārvaldnieks"
 
 #: ../thunarx/thunarx-property-page.c:137
 msgid "Label"
@@ -2747,7 +2792,8 @@ msgstr "Apraksts:"
 msgid ""
 "The generic name of the entry, for example \"Web Browser\" in case of "
 "Firefox."
-msgstr "Vispārējs ieraksta nosaukums, piemēram, \"Tīmekļa Pārluks\" Firefox gadījumā."
+msgstr ""
+"Vispārējs ieraksta nosaukums, piemēram, \"Tīmekļa Pārluks\" Firefox gadījumā."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:181
 msgid "Command:"
@@ -2899,7 +2945,10 @@ msgid ""
 "For example, %Y will be substituted with the year, %m with the month and %d "
 "with the day. See the documentation of the date utility for additional "
 "information."
-msgstr "Formāts apraksta datuma un laika daļas, kuras jāievieto faila nosaukumā. Piemēram, %Y tiks aizvietots ar gadu, %m ar mēnesi un %d ar dienu. Apskatiet datuma sīklietotnes dokumentāciju papildus informācijai."
+msgstr ""
+"Formāts apraksta datuma un laika daļas, kuras jāievieto faila nosaukumā. "
+"Piemēram, %Y tiks aizvietots ar gadu, %m ar mēnesi un %d ar dienu. Apskatiet "
+"datuma sīklietotnes dokumentāciju papildus informācijai."
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:250
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:199
@@ -3049,7 +3098,8 @@ msgid "Replace _With:"
 msgstr "Aizvietot _ar:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:246
-msgid "Enter the text that should be used as replacement for the pattern above."
+msgid ""
+"Enter the text that should be used as replacement for the pattern above."
 msgstr "Ievadiet tekstu, ar kuru aizvietot augšā ievadīto shēmu."
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:258
@@ -3094,8 +3144,8 @@ msgid ""
 "directly, as is, or compress the file before attaching it to an email. It is "
 "highly recommended to compress large files before sending them."
 msgstr ""
-"Kad sūtāt failus pa e-pastu, varat izvēlēties sūtīt failu pa tiešo, vai "
-"kā, kompresētu arhivu. Iesakām lielus failus saspiest pirms sūtīšanas."
+"Kad sūtāt failus pa e-pastu, varat izvēlēties sūtīt failu pa tiešo, vai kā, "
+"kompresētu arhivu. Iesakām lielus failus saspiest pirms sūtīšanas."
 
 #: ../plugins/thunar-sendto-email/main.c:192
 #, c-format
@@ -3116,9 +3166,9 @@ msgid ""
 "compressed into a single archive file and attach the archive. It is highly "
 "recommended to send multiple large files as archive."
 msgstr ""
-"Kad sūtāt vairākus failus pa e-pastu, varat izvēlēties sūtīt failus "
-"tieši, pievienojot vairākus failus e-pastam, vai sūtīt failus saspiestus "
-"vienā arhīva failā, kurš tiek pievienots e-pastam. Ieteicams vairākus lielus "
+"Kad sūtāt vairākus failus pa e-pastu, varat izvēlēties sūtīt failus tieši, "
+"pievienojot vairākus failus e-pastam, vai sūtīt failus saspiestus vienā "
+"arhīva failā, kurš tiek pievienots e-pastam. Ieteicams vairākus lielus "
 "failus sūtīt, kā arhīvu."
 
 #. allocate the progress dialog
@@ -3413,6 +3463,7 @@ msgid "Unknown element <%s>"
 msgstr "Nezināms elements <%s>"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:798
+#, c-format
 msgid "End element handler called while in root context"
 msgstr "Beigu elementa apdarinātājs izsaukts atrodoties saknes kontekstā"
 
@@ -3421,11 +3472,13 @@ msgstr "Beigu elementa apdarinātājs izsaukts atrodoties saknes kontekstā"
 msgid "Unknown closing element <%s>"
 msgstr "Nezināms aizverošais elements <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1318
+#: ../plugins/thunar-uca/thunar-uca-model.c:1332
+#, c-format
 msgid "Failed to determine save location for uca.xml"
 msgstr "Neizdevās noteikt saglabāšanas vietu uca.xml failam"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1433
+#: ../plugins/thunar-uca/thunar-uca-model.c:1447
+#, c-format
 msgid "Command not configured"
 msgstr "Komanda nav konfigurēta"
 
@@ -3434,7 +3487,8 @@ msgid "Configure c_ustom actions..."
 msgstr "Konfigurēt pi_elāgotās darbības..."
 
 #: ../plugins/thunar-uca/thunar-uca-provider.c:189
-msgid "Setup custom actions that will appear in the file managers context menus"
+msgid ""
+"Setup custom actions that will appear in the file managers context menus"
 msgstr ""
 "Izveidot pielāgotas darbības, kuras būs pieejamas failu pārvaldnieka "
 "konteksta izvēlnēs"
