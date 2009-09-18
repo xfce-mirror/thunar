@@ -1,6 +1,6 @@
 # $Id$
 
-imagesdir = $(datadir)/doc/Thunar/html/C/images
+imagesdir = $(datadir)/doc/Thunar/html/gl/images
 images_DATA =								\
 	bulk-rename.png							\
 	file-manager-window.png						\
