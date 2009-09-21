@@ -203,113 +203,17 @@ AM_CONDITIONAL([ENABLE_XML2PO], [test x"$enable_xml2po" = x"yes"])
 dnl ***********************************
 dnl *** Check for debugging support ***
 dnl ***********************************
-#XDT_FEATURE_DEBUG()
-AC_ARG_ENABLE([debug],
-AC_HELP_STRING([--enable-debug=@<:@no/minimum/yes/full@:>@], [Turn on debugging @<:@default=thunar_debug_default@:>@]),
-  [], [enable_debug=thunar_debug_default])
-AC_MSG_CHECKING([whether to enable debugging support])
-if test x"$enable_debug" = x"full" -o x"$enable_debug" = x"yes"; then
-  dnl Print the result
-  AC_MSG_RESULT([$enable_debug])
-
-  dnl Make sure we detect possible errors (if supported)
-  save_CFLAGS="$CFLAGS"
-  CFLAGS="$CFLAGS -Wall -Werror"
-  AC_MSG_CHECKING([whether $CC accepts -Wall -Werror])
-  AC_COMPILE_IFELSE(AC_LANG_SOURCE([int x;]), [
-    AC_MSG_RESULT([yes])
-    PLATFORM_CFLAGS="$PLATFORM_CFLAGS -Wall -Werror"
-  ], [
-    AC_MSG_RESULT([no])
-  ])
-  CFLAGS="$save_CFLAGS"
-
-  dnl Paranoia for --enable-debug=full
-  if test x"$enable_debug" = x"full"; then
-    dnl Enable extensive debugging
-    PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_ENABLE_DEBUG"
-
-    dnl Use -O0 -g3 if the compiler supports it
-    save_CFLAGS="$CFLAGS"
-    CFLAGS="$CFLAGS -O0 -g3"
-    AC_MSG_CHECKING([whether $CC accepts -O0 -g3])
-    AC_COMPILE_IFELSE(AC_LANG_SOURCE([int x;]), [
-      AC_MSG_RESULT([yes])
-      PLATFORM_CFLAGS="$PLATFORM_CFLAGS -O0 -g3"
-    ], [
-      AC_MSG_RESULT([no])
-    ])
-    CFLAGS="$save_CFLAGS"
-  fi
-else
-  dnl Print the result
-  AC_MSG_RESULT([$enable_debug])
-
-  dnl Disable debugging (release build)
-  PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DNDEBUG"
-
-  dnl Disable object cast checks
-  PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_DISABLE_CAST_CHECKS"
-
-  dnl Disable all checks for --enable-debug=no
-  if test x"$enable_debug" = x"no"; then
-    PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_DISABLE_ASSERT -DG_DISABLE_CHECKS"
-  fi
-fi
+XDT_FEATURE_DEBUG([thunar_debug_default])
 
 dnl **************************************
 dnl *** Check for linker optimizations ***
 dnl **************************************
-AC_MSG_CHECKING([whether $LD accepts --as-needed])
-case `$LD --as-needed -v 2>&1 </dev/null` in
-*GNU* | *'with BFD'*)
-  LDFLAGS="$LDFLAGS -Wl,--as-needed"
-  AC_MSG_RESULT([yes])
-  ;;
-*)
-  AC_MSG_RESULT([no])
-  ;;
-esac
-AC_MSG_CHECKING([whether $LD accepts -O1])
-case `$LD -O1 -v 2>&1 </dev/null` in
-*GNU* | *'with BFD'*)
-  PLATFORM_LDFLAGS="$PLATFORM_LDFLAGS -Wl,-O1"
-  AC_MSG_RESULT([yes])
-  ;;
-*)
-  AC_MSG_RESULT([no])
-  ;;
-esac
+XDT_FEATURE_LINKER_OPTS()
 
 dnl ****************************************
 dnl *** Check for ELF visibility support ***
 dnl ****************************************
-AC_ARG_ENABLE([visibility], AC_HELP_STRING([--disable-visibility], [Don't use ELF visibility attributes]), [], [enable_visibility=yes])
-have_gnuc_visibility=no
-if test x"$enable_visibility" != x"no"; then
-  dnl Check whether the compiler supports the visibility attribute
-  save_CFLAGS="$CFLAGS"
-  CFLAGS="$CFLAGS -Wall -Werror"
-  AC_MSG_CHECKING([whether $CC supports the GNUC visibility attribute])
-  AC_COMPILE_IFELSE(AC_LANG_SOURCE(
-  [
-    void __attribute__ ((visibility("default"))) test_default (void) {}
-    void __attribute__ ((visibility("hidden"))) test_hidden (void) {}
-    int main (int argc, char **argv) { test_default (); test_hidden (); return 0; }
-  ]),
-  [
-    have_gnuc_visibility=yes
-    AC_MSG_RESULT([yes])
-  ],
-  [
-    AC_MSG_RESULT([no])
-  ])
-  CFLAGS="$save_CFLAGS"
-fi
-if test x"$have_gnuc_visibility" = x"yes"; then
-  PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DHAVE_GNUC_VISIBILITY"
-fi
-AM_CONDITIONAL([HAVE_GNUC_VISIBILITY], [test x"$have_gnuc_visibility" = x"yes"])
+XDT_FEATURE_VISIBILITY()
 
 dnl *********************************
 dnl *** Substitute platform flags ***
