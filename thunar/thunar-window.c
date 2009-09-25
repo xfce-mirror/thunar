@@ -308,7 +308,7 @@ static GtkActionEntry action_entries[] =
   { "open-parent", GTK_STOCK_GO_UP, N_ ("Open _Parent"), "<alt>Up", N_ ("Open the parent folder"), G_CALLBACK (thunar_window_action_go_up), },
   { "open-home", THUNAR_STOCK_HOME, N_ ("_Home"), "<alt>Home", N_ ("Go to the home folder"), G_CALLBACK (thunar_window_action_open_home), },
   { "open-desktop", THUNAR_STOCK_DESKTOP, "Desktop", NULL, N_ ("Go to the desktop folder"), G_CALLBACK (thunar_window_action_open_desktop), },
-  { "open-file-system", GTK_STOCK_HARDDISK, N_ ("File System"), NULL, N_ ("Brwose the file system"), G_CALLBACK (thunar_window_action_open_file_system), },
+  { "open-file-system", GTK_STOCK_HARDDISK, N_ ("File System"), NULL, N_ ("Browse the file system"), G_CALLBACK (thunar_window_action_open_file_system), },
   { "open-documents", THUNAR_STOCK_DOCUMENTS, "Documents", NULL, N_ ("Go to the documents folder"), G_CALLBACK (thunar_window_action_open_documents), },
   { "open-downloads", THUNAR_STOCK_DOWNLOADS, "Download", NULL, N_ ("Go to the downloads folder"), G_CALLBACK (thunar_window_action_open_downloads), },
   { "open-music", THUNAR_STOCK_MUSIC, "Music", NULL, N_ ("Go to the music folder"), G_CALLBACK (thunar_window_action_open_music), },
