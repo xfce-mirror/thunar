@@ -24,7 +24,6 @@
 
 #include <thunarx/thunarx-renamer-provider.h>
 #include <thunarx/thunarx-private.h>
-#include <thunarx/thunarx-alias.h>
 
 
 
@@ -107,8 +106,3 @@ thunarx_renamer_provider_get_renamers (ThunarxRenamerProvider *provider)
   /* and return the list of renamers */
   return renamers;
 }
-
-
-
-#define __THUNARX_RENAMER_PROVIDER_C__
-#include <thunarx/thunarx-aliasdef.c>

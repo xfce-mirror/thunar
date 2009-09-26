@@ -27,7 +27,6 @@
 #include <thunarx/thunarx-private.h>
 #include <thunarx/thunarx-provider-module.h>
 #include <thunarx/thunarx-provider-plugin.h>
-#include <thunarx/thunarx-alias.h>
 
 
 
@@ -299,8 +298,3 @@ thunarx_provider_module_list_types (const ThunarxProviderModule *module,
 
   (*module->list_types) (types, n_types);
 }
-
-
-
-#define __THUNARX_PROVIDER_MODULE_C__
-#include <thunarx/thunarx-aliasdef.c>

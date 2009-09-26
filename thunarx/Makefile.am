@@ -7,10 +7,6 @@ INCLUDES =								\
 	-DTHUNARX_DIRECTORY=\"$(libdir)/thunarx-$(THUNARX_VERSION_API)\"	\
 	$(PLATFORM_CPPFLAGS)
 
-libthunarx_built_sources =						\
-	thunarx-alias.h							\
-	thunarx-aliasdef.c
-
 libthunarx_headers =							\
 	thunarx.h							\
 	thunarx-config.h						\
@@ -34,7 +30,6 @@ lib_LTLIBRARIES =							\
 	libthunarx-2.la
 
 libthunarx_2_la_SOURCES =						\
-	$(libthunarx_built_sources)					\
 	$(libthunarx_headers)						\
 	thunarx-config.c						\
 	thunarx-file-info.c						\
@@ -73,10 +68,7 @@ pkgconfig_DATA = thunarx-2.pc
 
 EXTRA_DIST =								\
 	abicheck.sh							\
-	make-thunarx-alias.pl						\
-	thunarx.symbols							\
-	thunarx-alias.h							\
-	thunarx-aliasdef.c
+	thunarx.symbols
 
 ##
 ## Rules to auto-generate built sources
@@ -92,22 +84,9 @@ CLEANFILES =								\
 	actual-abi							\
 	expected-abi
 
-DISTCLEANFILES =							\
-	$(libthunarx_built_sources)
-
-BUILT_SOURCES =								\
-	$(libthunarx_built_sources)
-
-if HAVE_GNUC_VISIBILITY
 TESTS =									\
 	abicheck.sh
-endif
 
-thunarx-alias.h: make-thunarx-alias.pl thunarx.symbols
-	$(PERL) $(srcdir)/make-thunarx-alias.pl < $(srcdir)/thunarx.symbols > thunarx-alias.h
-
-thunarx-aliasdef.c: make-thunarx-alias.pl thunarx.symbols
-	$(PERL) $(srcdir)/make-thunarx-alias.pl -def < $(srcdir)/thunarx.symbols > thunarx-aliasdef.c
 endif
 
 # required for gtk-doc

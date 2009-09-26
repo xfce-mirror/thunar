@@ -24,7 +24,6 @@
 
 #include <thunarx/thunarx-menu-provider.h>
 #include <thunarx/thunarx-private.h>
-#include <thunarx/thunarx-alias.h>
 
 
 
@@ -229,8 +228,3 @@ thunarx_menu_provider_get_dnd_actions (ThunarxMenuProvider *provider,
 
   return actions;
 }
-
-
-
-#define __THUNARX_MENU_PROVIDER_C__
-#include <thunarx/thunarx-aliasdef.c>

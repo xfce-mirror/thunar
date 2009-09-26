@@ -25,7 +25,6 @@
 
 #include <thunarx/thunarx-file-info.h>
 #include <thunarx/thunarx-private.h>
-#include <thunarx/thunarx-alias.h>
 
 
 
@@ -444,8 +443,3 @@ thunarx_file_info_list_free (GList *file_infos)
   g_list_foreach (file_infos, (GFunc) g_object_unref, NULL);
   g_list_free (file_infos);
 }
-
-
-
-#define __THUNARX_FILE_INFO_C__
-#include <thunarx/thunarx-aliasdef.c>

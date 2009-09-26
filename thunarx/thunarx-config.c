@@ -23,7 +23,6 @@
 #endif
 
 #include <thunarx/thunarx-config.h>
-#include <thunarx/thunarx-alias.h>
 
 
 
@@ -124,8 +123,3 @@ thunarx_check_version (guint required_major,
 {
   return NULL;
 }
-
-
-
-#define __THUNARX_CONFIG_C__
-#include <thunarx/thunarx-aliasdef.c>

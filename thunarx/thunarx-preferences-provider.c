@@ -24,7 +24,6 @@
 
 #include <thunarx/thunarx-preferences-provider.h>
 #include <thunarx/thunarx-private.h>
-#include <thunarx/thunarx-alias.h>
 
 
 
@@ -104,8 +103,3 @@ thunarx_preferences_provider_get_actions (ThunarxPreferencesProvider *provider,
 
   return actions;
 }
-
-
-
-#define __THUNARX_PREFERENCES_PROVIDER_C__
-#include <thunarx/thunarx-aliasdef.c>
