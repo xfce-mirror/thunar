@@ -287,7 +287,8 @@ thunar_dbus_service_trash_bin_changed (ThunarDBusService *dbus_service,
   _thunar_return_if_fail (THUNAR_IS_FILE (trash_bin));
 
   /* emit the "trash-changed" signal with the new state */
-  g_signal_emit_by_name (G_OBJECT (dbus_service), "trash-changed", (thunar_file_get_size (trash_bin) > 0));
+  g_signal_emit_by_name (G_OBJECT (dbus_service), "trash-changed", 
+                         thunar_file_get_item_count (trash_bin) > 0);
 }
 
 
@@ -627,7 +628,7 @@ thunar_dbus_service_query_trash (ThunarDBusService *dbus_service,
   if (thunar_dbus_service_connect_trash_bin (dbus_service, error))
     {
       /* check whether the trash bin is not empty */
-      *full = (thunar_file_get_size (dbus_service->trash_bin) > 0);
+      *full = (thunar_file_get_item_count (dbus_service->trash_bin) > 0);
       return TRUE;
     }
 
