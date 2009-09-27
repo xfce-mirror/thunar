@@ -35,10 +35,12 @@ G_BEGIN_DECLS;
 #define I_(string) (g_quark_to_string (g_quark_from_static_string ((string))))
 #endif
 
+G_GNUC_INTERNAL
 void   thunarx_object_list_take_reference (GList      *object_list,
-                                           gpointer    target) G_GNUC_INTERNAL;
+                                           gpointer    target);
 
-gchar *thunarx_param_spec_get_option_name (GParamSpec *pspec) G_GNUC_INTERNAL G_GNUC_MALLOC;
+G_GNUC_INTERNAL
+gchar *thunarx_param_spec_get_option_name (GParamSpec *pspec) G_GNUC_MALLOC;
 
 G_END_DECLS;
 
