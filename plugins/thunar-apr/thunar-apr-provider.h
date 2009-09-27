@@ -35,8 +35,8 @@ typedef struct _ThunarAprProvider      ThunarAprProvider;
 #define THUNAR_APR_IS_PROVIDER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_APR_TYPE_PROVIDER))
 #define THUNAR_APR_PROVIDER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_APR_TYPE_PROVIDER, ThunarAprProviderClass))
 
-GType thunar_apr_provider_get_type      (void) G_GNUC_CONST G_GNUC_INTERNAL;
-void  thunar_apr_provider_register_type (ThunarxProviderPlugin *plugin) G_GNUC_INTERNAL;
+GType thunar_apr_provider_get_type      (void) G_GNUC_CONST;
+void  thunar_apr_provider_register_type (ThunarxProviderPlugin *plugin);
 
 G_END_DECLS;
 

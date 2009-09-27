@@ -35,26 +35,26 @@ typedef struct _ThunarSbrRemoveRenamer      ThunarSbrRemoveRenamer;
 #define THUNAR_SBR_IS_REMOVE_RENAMER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_SBR_TYPE_REMOVE_RENAMER))
 #define THUNAR_SBR_REMOVE_RENAMER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_SBR_TYPE_REMOVE_RENAMER, ThunarSbrRemoveRenamerClass))
 
-GType                   thunar_sbr_remove_renamer_get_type              (void) G_GNUC_CONST G_GNUC_INTERNAL;
-void                    thunar_sbr_remove_renamer_register_type         (ThunarxProviderPlugin  *plugin) G_GNUC_INTERNAL;
+GType                   thunar_sbr_remove_renamer_get_type              (void) G_GNUC_CONST;
+void                    thunar_sbr_remove_renamer_register_type         (ThunarxProviderPlugin  *plugin);
 
-ThunarSbrRemoveRenamer *thunar_sbr_remove_renamer_new                   (void) G_GNUC_INTERNAL G_GNUC_MALLOC;
+ThunarSbrRemoveRenamer *thunar_sbr_remove_renamer_new                   (void) G_GNUC_MALLOC;
 
-guint                   thunar_sbr_remove_renamer_get_end_offset        (ThunarSbrRemoveRenamer *remove_renamer) G_GNUC_INTERNAL;
+guint                   thunar_sbr_remove_renamer_get_end_offset        (ThunarSbrRemoveRenamer *remove_renamer);
 void                    thunar_sbr_remove_renamer_set_end_offset        (ThunarSbrRemoveRenamer *remove_renamer,  
-                                                                         guint                   end_offset) G_GNUC_INTERNAL;
+                                                                         guint                   end_offset);
 
-ThunarSbrOffsetMode     thunar_sbr_remove_renamer_get_end_offset_mode   (ThunarSbrRemoveRenamer *remove_renamer) G_GNUC_INTERNAL;
+ThunarSbrOffsetMode     thunar_sbr_remove_renamer_get_end_offset_mode   (ThunarSbrRemoveRenamer *remove_renamer);
 void                    thunar_sbr_remove_renamer_set_end_offset_mode   (ThunarSbrRemoveRenamer *remove_renamer,
-                                                                         ThunarSbrOffsetMode     end_offset_mode) G_GNUC_INTERNAL;
+                                                                         ThunarSbrOffsetMode     end_offset_mode);
 
-guint                   thunar_sbr_remove_renamer_get_start_offset      (ThunarSbrRemoveRenamer *remove_renamer) G_GNUC_INTERNAL;
+guint                   thunar_sbr_remove_renamer_get_start_offset      (ThunarSbrRemoveRenamer *remove_renamer);
 void                    thunar_sbr_remove_renamer_set_start_offset      (ThunarSbrRemoveRenamer *remove_renamer,  
-                                                                         guint                   start_offset) G_GNUC_INTERNAL;
+                                                                         guint                   start_offset);
 
-ThunarSbrOffsetMode     thunar_sbr_remove_renamer_get_start_offset_mode (ThunarSbrRemoveRenamer *remove_renamer) G_GNUC_INTERNAL;
+ThunarSbrOffsetMode     thunar_sbr_remove_renamer_get_start_offset_mode (ThunarSbrRemoveRenamer *remove_renamer);
 void                    thunar_sbr_remove_renamer_set_start_offset_mode (ThunarSbrRemoveRenamer *remove_renamer,
-                                                                         ThunarSbrOffsetMode     start_offset_mode) G_GNUC_INTERNAL;
+                                                                         ThunarSbrOffsetMode     start_offset_mode);
 
 G_END_DECLS;
 

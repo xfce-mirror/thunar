@@ -35,8 +35,8 @@ typedef struct _ThunarUcaChooser      ThunarUcaChooser;
 #define THUNAR_UCA_IS_CHOOSER_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_UCA_TYPE_CHOOSER))
 #define THUNAR_UCA_CHOOSER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_UCA_TYPE_CHOOSER, ThunarUcaChooserClass))
 
-GType      thunar_uca_chooser_get_type      (void) G_GNUC_CONST G_GNUC_INTERNAL;
-void       thunar_uca_chooser_register_type (ThunarxProviderPlugin *plugin) G_GNUC_INTERNAL;
+GType      thunar_uca_chooser_get_type      (void) G_GNUC_CONST;
+void       thunar_uca_chooser_register_type (ThunarxProviderPlugin *plugin);
 
 G_END_DECLS;
 

@@ -35,26 +35,26 @@ typedef struct _ThunarSbrReplaceRenamer      ThunarSbrReplaceRenamer;
 #define THUNAR_SBR_IS_REPLACE_RENAMER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_SBR_TYPE_REPLACE_RENAMER))
 #define THUNAR_SBR_REPLACE_RENAMER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_SBR_TYPE_REPLACE_RENAMER, ThunarSbrReplaceRenamerClass))
 
-GType                    thunar_sbr_replace_renamer_get_type            (void) G_GNUC_CONST G_GNUC_INTERNAL;
-void                     thunar_sbr_replace_renamer_register_type       (ThunarxProviderPlugin   *plugin) G_GNUC_INTERNAL;
+GType                    thunar_sbr_replace_renamer_get_type            (void) G_GNUC_CONST;
+void                     thunar_sbr_replace_renamer_register_type       (ThunarxProviderPlugin   *plugin);
 
-ThunarSbrReplaceRenamer *thunar_sbr_replace_renamer_new                 (void) G_GNUC_INTERNAL G_GNUC_MALLOC;
+ThunarSbrReplaceRenamer *thunar_sbr_replace_renamer_new                 (void) G_GNUC_MALLOC;
 
-gboolean                 thunar_sbr_replace_renamer_get_case_sensitive  (ThunarSbrReplaceRenamer *replace_renamer) G_GNUC_INTERNAL;
+gboolean                 thunar_sbr_replace_renamer_get_case_sensitive  (ThunarSbrReplaceRenamer *replace_renamer);
 void                     thunar_sbr_replace_renamer_set_case_sensitive  (ThunarSbrReplaceRenamer *replace_renamer,
-                                                                         gboolean                 case_sensitive) G_GNUC_INTERNAL;
+                                                                         gboolean                 case_sensitive);
 
-const gchar             *thunar_sbr_replace_renamer_get_pattern         (ThunarSbrReplaceRenamer *replace_renamer) G_GNUC_INTERNAL;
+const gchar             *thunar_sbr_replace_renamer_get_pattern         (ThunarSbrReplaceRenamer *replace_renamer);
 void                     thunar_sbr_replace_renamer_set_pattern         (ThunarSbrReplaceRenamer *replace_renamer,
-                                                                         const gchar             *pattern) G_GNUC_INTERNAL;
+                                                                         const gchar             *pattern);
 
-gboolean                 thunar_sbr_replace_renamer_get_regexp          (ThunarSbrReplaceRenamer *replace_renamer) G_GNUC_INTERNAL;
+gboolean                 thunar_sbr_replace_renamer_get_regexp          (ThunarSbrReplaceRenamer *replace_renamer);
 void                     thunar_sbr_replace_renamer_set_regexp          (ThunarSbrReplaceRenamer *replace_renamer,
-                                                                         gboolean                 regexp) G_GNUC_INTERNAL;
+                                                                         gboolean                 regexp);
 
-const gchar             *thunar_sbr_replace_renamer_get_replacement     (ThunarSbrReplaceRenamer *replace_renamer) G_GNUC_INTERNAL;
+const gchar             *thunar_sbr_replace_renamer_get_replacement     (ThunarSbrReplaceRenamer *replace_renamer);
 void                     thunar_sbr_replace_renamer_set_replacement     (ThunarSbrReplaceRenamer *replace_renamer,
-                                                                         const gchar             *replacement) G_GNUC_INTERNAL;
+                                                                         const gchar             *replacement);
 
 G_END_DECLS;
 

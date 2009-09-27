@@ -35,14 +35,14 @@ typedef struct _ThunarSbrCaseRenamer      ThunarSbrCaseRenamer;
 #define THUNAR_SBR_IS_CASE_RENAMER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_SBR_TYPE_CASE_RENAMER))
 #define THUNAR_SBR_CASE_RENAMER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_SBR_TYPE_CASE_RENAMER, ThunarSbrCaseRenamerClass))
 
-GType                     thunar_sbr_case_renamer_get_type      (void) G_GNUC_CONST G_GNUC_INTERNAL;
-void                      thunar_sbr_case_renamer_register_type (ThunarxProviderPlugin   *plugin) G_GNUC_INTERNAL;
+GType                     thunar_sbr_case_renamer_get_type      (void) G_GNUC_CONST;
+void                      thunar_sbr_case_renamer_register_type (ThunarxProviderPlugin   *plugin);
 
-ThunarSbrCaseRenamer     *thunar_sbr_case_renamer_new           (void) G_GNUC_INTERNAL G_GNUC_MALLOC;
+ThunarSbrCaseRenamer     *thunar_sbr_case_renamer_new           (void) G_GNUC_MALLOC;
 
-ThunarSbrCaseRenamerMode  thunar_sbr_case_renamer_get_mode      (ThunarSbrCaseRenamer    *case_renamer) G_GNUC_INTERNAL; 
+ThunarSbrCaseRenamerMode  thunar_sbr_case_renamer_get_mode      (ThunarSbrCaseRenamer    *case_renamer); 
 void                      thunar_sbr_case_renamer_set_mode      (ThunarSbrCaseRenamer    *case_renamer,
-                                                                 ThunarSbrCaseRenamerMode mode) G_GNUC_INTERNAL;
+                                                                 ThunarSbrCaseRenamerMode mode);
 
 G_END_DECLS;
 

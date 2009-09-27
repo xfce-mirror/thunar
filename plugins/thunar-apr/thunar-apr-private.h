@@ -25,7 +25,7 @@
 
 G_BEGIN_DECLS;
 
-void thunar_apr_i18n_init (void) G_GNUC_INTERNAL;
+void thunar_apr_i18n_init (void);
 
 G_END_DECLS;
 

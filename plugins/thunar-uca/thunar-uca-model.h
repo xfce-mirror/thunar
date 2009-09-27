@@ -67,23 +67,23 @@ typedef enum /*< flags >*/
   THUNAR_UCA_TYPE_VIDEO_FILES = 1 << 5,
 } ThunarUcaTypes;
 
-GType           thunar_uca_model_get_type       (void) G_GNUC_CONST G_GNUC_INTERNAL;
-void            thunar_uca_model_register_type  (ThunarxProviderPlugin  *plugin) G_GNUC_INTERNAL;
+GType           thunar_uca_model_get_type       (void) G_GNUC_CONST;
+void            thunar_uca_model_register_type  (ThunarxProviderPlugin  *plugin);
 
-ThunarUcaModel *thunar_uca_model_get_default    (void) G_GNUC_INTERNAL;
+ThunarUcaModel *thunar_uca_model_get_default    (void);
 
 GList          *thunar_uca_model_match          (ThunarUcaModel         *uca_model,
-                                                 GList                  *file_infos) G_GNUC_INTERNAL;
+                                                 GList                  *file_infos);
 
 void            thunar_uca_model_append         (ThunarUcaModel         *uca_model,
-                                                 GtkTreeIter            *iter) G_GNUC_INTERNAL;
+                                                 GtkTreeIter            *iter);
 
 void            thunar_uca_model_exchange       (ThunarUcaModel         *uca_model,
                                                  GtkTreeIter            *iter_a,
-                                                 GtkTreeIter            *iter_b) G_GNUC_INTERNAL;
+                                                 GtkTreeIter            *iter_b);
 
 void            thunar_uca_model_remove         (ThunarUcaModel         *uca_model,
-                                                 GtkTreeIter            *iter) G_GNUC_INTERNAL;
+                                                 GtkTreeIter            *iter);
 
 void            thunar_uca_model_update         (ThunarUcaModel         *uca_model,
                                                  GtkTreeIter            *iter,
@@ -92,17 +92,17 @@ void            thunar_uca_model_update         (ThunarUcaModel         *uca_mod
                                                  const gchar            *icon,
                                                  const gchar            *command,
                                                  const gchar            *patterns,
-                                                 ThunarUcaTypes          types) G_GNUC_INTERNAL;
+                                                 ThunarUcaTypes          types);
 
 gboolean        thunar_uca_model_save           (ThunarUcaModel         *uca_model,
-                                                 GError                **error) G_GNUC_INTERNAL;
+                                                 GError                **error);
 
 gboolean        thunar_uca_model_parse_argv     (ThunarUcaModel         *uca_model,
                                                  GtkTreeIter            *iter,
                                                  GList                  *file_infos,
                                                  gint                   *argcp,
                                                  gchar                ***argvp,
-                                                 GError                **error) G_GNUC_INTERNAL;
+                                                 GError                **error);
 
 G_END_DECLS;
 

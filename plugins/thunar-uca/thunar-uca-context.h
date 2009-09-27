@@ -28,13 +28,13 @@ G_BEGIN_DECLS;
 typedef struct _ThunarUcaContext ThunarUcaContext;
 
 ThunarUcaContext *thunar_uca_context_new        (GtkWidget              *window,
-                                                 GList                  *files) G_GNUC_INTERNAL;
+                                                 GList                  *files);
 
-ThunarUcaContext *thunar_uca_context_ref        (ThunarUcaContext       *context) G_GNUC_INTERNAL;
-void              thunar_uca_context_unref      (ThunarUcaContext       *context) G_GNUC_INTERNAL;
+ThunarUcaContext *thunar_uca_context_ref        (ThunarUcaContext       *context);
+void              thunar_uca_context_unref      (ThunarUcaContext       *context);
 
-GList            *thunar_uca_context_get_files  (const ThunarUcaContext *context) G_GNUC_INTERNAL;
-GtkWidget        *thunar_uca_context_get_window (const ThunarUcaContext *context) G_GNUC_INTERNAL;
+GList            *thunar_uca_context_get_files  (const ThunarUcaContext *context);
+GtkWidget        *thunar_uca_context_get_window (const ThunarUcaContext *context);
 
 G_END_DECLS;
 

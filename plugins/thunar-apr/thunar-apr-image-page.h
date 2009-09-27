@@ -35,8 +35,8 @@ typedef struct _ThunarAprImagePage      ThunarAprImagePage;
 #define THUNAR_APR_IS_IMAGE_PAGE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_APR_TYPE_IMAGE_PAGE))
 #define THUNAR_APR_IMAGE_PAGE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_APR_TYPE_IMAGE_PAGE, ThunarAprImagePageClass))
 
-GType thunar_apr_image_page_get_type      (void) G_GNUC_CONST G_GNUC_INTERNAL;
-void  thunar_apr_image_page_register_type (ThunarxProviderPlugin *plugin) G_GNUC_INTERNAL;
+GType thunar_apr_image_page_get_type      (void) G_GNUC_CONST;
+void  thunar_apr_image_page_register_type (ThunarxProviderPlugin *plugin);
 
 G_END_DECLS;
 
