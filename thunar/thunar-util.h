@@ -25,18 +25,18 @@
 
 G_BEGIN_DECLS;
 
-gboolean   thunar_util_looks_like_an_uri  (const gchar      *string) G_GNUC_INTERNAL G_GNUC_WARN_UNUSED_RESULT;
+gboolean   thunar_util_looks_like_an_uri  (const gchar      *string) G_GNUC_WARN_UNUSED_RESULT;
 
 gchar     *thunar_util_expand_filename    (const gchar    *filename,
                                            GError        **error);
 
 gchar     *thunar_util_humanize_file_time (guint64         file_time,
-                                           ThunarDateStyle date_style) G_GNUC_INTERNAL G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+                                           ThunarDateStyle date_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 GdkScreen *thunar_util_parse_parent       (gpointer        parent,
-                                           GtkWindow     **window_return) G_GNUC_INTERNAL G_GNUC_WARN_UNUSED_RESULT;
+                                           GtkWindow     **window_return) G_GNUC_WARN_UNUSED_RESULT;
 
-time_t     thunar_util_time_from_rfc3339  (const gchar    *date_string) G_GNUC_INTERNAL G_GNUC_WARN_UNUSED_RESULT;
+time_t     thunar_util_time_from_rfc3339  (const gchar    *date_string) G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS;
 

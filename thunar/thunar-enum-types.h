@@ -42,7 +42,7 @@ typedef enum
   THUNAR_RENAMER_MODE_BOTH,
 } ThunarRenamerMode;
 
-GType thunar_renamer_mode_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+GType thunar_renamer_mode_get_type (void) G_GNUC_CONST;
 
 
 #define THUNAR_TYPE_COLOR_STYLE (thunar_color_style_get_type ())
@@ -62,7 +62,7 @@ typedef enum
   THUNAR_COLOR_STYLE_VGRADIENT,
 } ThunarColorStyle;
 
-GType thunar_color_style_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+GType thunar_color_style_get_type (void) G_GNUC_CONST;
 
 
 #define THUNAR_TYPE_DATE_STYLE (thunar_date_style_get_type ())
@@ -84,7 +84,7 @@ typedef enum
   THUNAR_DATE_STYLE_ISO,
 } ThunarDateStyle;
 
-GType thunar_date_style_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+GType thunar_date_style_get_type (void) G_GNUC_CONST;
 
 
 #define THUNAR_TYPE_COLUMN (thunar_column_get_type ())
@@ -130,7 +130,7 @@ typedef enum
   THUNAR_N_VISIBLE_COLUMNS = THUNAR_COLUMN_FILE,
 } ThunarColumn;
 
-GType thunar_column_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+GType thunar_column_get_type (void) G_GNUC_CONST;
 
 
 #define THUNAR_TYPE_ICON_SIZE (thunar_icon_size_get_type ())
@@ -158,7 +158,7 @@ typedef enum
   THUNAR_ICON_SIZE_LARGEST  = 128,
 } ThunarIconSize;
 
-GType thunar_icon_size_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+GType thunar_icon_size_get_type (void) G_GNUC_CONST;
 
 
 #define THUNAR_TYPE_RECURSIVE_PERMISSIONS (thunar_recursive_permissions_get_type ())
@@ -178,7 +178,7 @@ typedef enum
   THUNAR_RECURSIVE_PERMISSIONS_NEVER,
 } ThunarRecursivePermissionsMode;
 
-GType thunar_recursive_permissions_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+GType thunar_recursive_permissions_get_type (void) G_GNUC_CONST;
 
 
 #define THUNAR_TYPE_WALLPAPER_STYLE (thunar_wallpaper_style_get_type ())
@@ -200,7 +200,7 @@ typedef enum
   THUNAR_WALLPAPER_STYLE_TILED,
 } ThunarWallpaperStyle;
 
-GType thunar_wallpaper_style_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+GType thunar_wallpaper_style_get_type (void) G_GNUC_CONST;
 
 
 #define THUNAR_TYPE_ZOOM_LEVEL (thunar_zoom_level_get_type ())
@@ -232,8 +232,8 @@ typedef enum
   THUNAR_ZOOM_N_LEVELS,
 } ThunarZoomLevel;
 
-GType          thunar_zoom_level_get_type     (void) G_GNUC_CONST G_GNUC_INTERNAL;
-ThunarIconSize thunar_zoom_level_to_icon_size (ThunarZoomLevel zoom_level) G_GNUC_CONST G_GNUC_INTERNAL;
+GType          thunar_zoom_level_get_type     (void) G_GNUC_CONST;
+ThunarIconSize thunar_zoom_level_to_icon_size (ThunarZoomLevel zoom_level) G_GNUC_CONST;
 
 
 #define THUNAR_TYPE_JOB_RESPONSE (thunar_job_response_get_type ())
@@ -259,7 +259,7 @@ typedef enum /*< flags >*/
   THUNAR_JOB_RESPONSE_RETRY   = 1 << 5,
 } ThunarJobResponse;
 
-GType thunar_job_response_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+GType thunar_job_response_get_type (void) G_GNUC_CONST;
 
 
 #define THUNAR_TYPE_FILE_MODE (thunar_file_mode_get_type ())
@@ -288,7 +288,7 @@ typedef enum /*< flags >*/
   THUNAR_FILE_MODE_OTH_EXEC   = 00001,
 } ThunarFileMode;
 
-GType thunar_file_mode_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+GType thunar_file_mode_get_type (void) G_GNUC_CONST;
 
 G_END_DECLS;
 

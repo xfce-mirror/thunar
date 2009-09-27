@@ -34,7 +34,7 @@ gboolean thunar_exec_parse     (const gchar  *exec,
                                 gboolean      terminal,
                                 gint         *argc,
                                 gchar      ***argv,
-                                GError      **error) G_GNUC_INTERNAL;
+                                GError      **error);
 
 gboolean thunar_exec_on_screen (GdkScreen    *screen,
                                 const gchar  *working_directory,
@@ -43,11 +43,11 @@ gboolean thunar_exec_on_screen (GdkScreen    *screen,
                                 GSpawnFlags   flags,
                                 gboolean      startup_notify,
                                 const gchar  *icon_name,
-                                GError      **error) G_GNUC_INTERNAL;
+                                GError      **error);
 
 gboolean thunar_exec_sync      (const gchar  *command_line,
                                 GError      **error,
-                                ...) G_GNUC_INTERNAL;
+                                ...);
 
 G_END_DECLS;
 

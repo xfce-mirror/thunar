@@ -25,9 +25,9 @@
 G_BEGIN_DECLS;
 
 GdkScreen *thunar_gdk_screen_open       (const gchar *display_name,
-                                         GError     **error) G_GNUC_INTERNAL;
+                                         GError     **error);
 
-GdkScreen *thunar_gdk_screen_get_active (void) G_GNUC_INTERNAL;
+GdkScreen *thunar_gdk_screen_get_active (void);
 
 G_END_DECLS;
 

@@ -36,7 +36,7 @@ G_BEGIN_DECLS;
 #define THUNAR_STOCK_VIDEOS       "thunar-videos"
 #define THUNAR_STOCK_PUBLIC       "thunar-public"
 
-void thunar_stock_init (void) G_GNUC_INTERNAL;
+void thunar_stock_init (void);
 
 G_END_DECLS;
 
