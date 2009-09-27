@@ -10,9 +10,9 @@ msgstr ""
 "Project-Id-Version: thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-09-25 15:26+0200\n"
-"PO-Revision-Date: 2009-09-13 16:42+0200\n"
+"PO-Revision-Date: 2009-09-28 00:28+0200\n"
 "Last-Translator: Robert Hartl <hartl.robert@gmail.com>\n"
-"Language-Team: slovak <sk-i18n@lists.linux.sk>\n"
+"Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8-bit\n"
@@ -159,19 +159,19 @@ msgid "Copying files..."
 msgstr "Kopírujú sa súbory..."
 
 #: ../thunar/thunar-application.c:1320
-#, fuzzy, c-format
+#, c-format
 msgid "Copying files to \"%s\"..."
-msgstr "Kopírujú sa súbory..."
+msgstr "Kopírujú sa súbory do \"%s\"..."
 
 #: ../thunar/thunar-application.c:1366
-#, fuzzy, c-format
+#, c-format
 msgid "Creating symbolic links in \"%s\"..."
-msgstr "Vytvárajú sa symbolické odkazy..."
+msgstr "Vytvárajú sa symbolické odkazy v \"%s\"..."
 
 #: ../thunar/thunar-application.c:1419
-#, fuzzy, c-format
+#, c-format
 msgid "Moving files into \"%s\"..."
-msgstr "Presúvam súbory do koša..."
+msgstr "Presúvajú súbory do \"%s\"..."
 
 #: ../thunar/thunar-application.c:1504
 #, c-format
@@ -183,7 +183,7 @@ msgstr ""
 "\"%s\"?"
 
 #: ../thunar/thunar-application.c:1509
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
 "delete the selected file?"
@@ -192,13 +192,13 @@ msgid_plural ""
 "delete the %u selected files?"
 msgstr[0] ""
 "Naozaj chcete natrvalo odstrániť\n"
-"vybraný súbor?"
+"vybraný súbor %u?"
 msgstr[1] ""
 "Naozaj chcete natrvalo odstrániť\n"
-"vybrané súbory?"
+"vybrané súbory %u?"
 msgstr[2] ""
 "Naozaj chcete natrvalo odstrániť\n"
-"vybrané súbory?"
+"vybrané súbory %u?"
 
 #: ../thunar/thunar-application.c:1529
 msgid "If you delete a file, it is permanently lost."
@@ -251,9 +251,9 @@ msgstr "Nepodarilo sa určiť pôvodnú cestu pre \"%s\""
 
 #. display an error dialog
 #: ../thunar/thunar-application.c:1779
-#, fuzzy, c-format
+#, c-format
 msgid "Could not restore \"%s\""
-msgstr "Chyba pri obnovovaní \"%s\""
+msgstr "Nemožno obnoviť \"%s\""
 
 #: ../thunar/thunar-application.c:1787
 msgid "Restoring files..."
@@ -316,9 +316,9 @@ msgid "Failed to add new application \"%s\""
 msgstr "Nepodarilo sa pridať nový program \"%s\""
 
 #: ../thunar/thunar-chooser-dialog.c:492
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to execute application \"%s\""
-msgstr "Nepodarilo sa pridať nový program \"%s\""
+msgstr "Nepodarilo sa spustiť aplikáciu \"%s\""
 
 #. append the "Remove Launcher" item
 #: ../thunar/thunar-chooser-dialog.c:564
@@ -904,14 +904,14 @@ msgstr "tretí odkaz na %s"
 
 #. Fallback copy/link name for n >= 4
 #: ../thunar/thunar-io-jobs-util.c:42
-#, fuzzy, c-format
+#, c-format
 msgid "%uth copy of %s"
-msgstr "%u. kópia %s"
+msgstr "%uth kópia %s"
 
 #: ../thunar/thunar-io-jobs-util.c:42
-#, fuzzy, c-format
+#, c-format
 msgid "%uth link to %s"
-msgstr "%u. odkaz na %s"
+msgstr "%uth odkaz na %s"
 
 #: ../thunar/thunar-job.c:254
 #, c-format
@@ -1264,9 +1264,9 @@ msgid "Failed to determine the mount point of \"%s\""
 msgstr "Nepodarilo sa zistiť prípojný bod pre %s"
 
 #: ../thunar/thunar-misc-jobs.c:84
-#, fuzzy, c-format
+#, c-format
 msgid "No templates installed"
-msgstr "Nie sú dostupné žiadne šablóny"
+msgstr "Šablóny nie sú nainštalované"
 
 #: ../thunar/thunar-path-entry.c:222
 msgid "Icon size"
@@ -1686,33 +1686,32 @@ msgstr[1] ""
 msgstr[2] ""
 
 #: ../thunar/thunar-progress-view.c:326
-#, fuzzy
 msgid "Cancelling..."
-msgstr "Prebieha výpočet..."
+msgstr "Ruší sa..."
 
 #: ../thunar/thunar-progress-view.c:480
-#, fuzzy, c-format
+#, c-format
 msgid "%lu hour remaining"
 msgid_plural "%lu hours remaining"
-msgstr[0] "(zostáva %lu hodina)"
-msgstr[1] "(zostávajú %lu hodiny)"
-msgstr[2] "(zostáva %lu hodín)"
+msgstr[0] "zostáva %lu hodina"
+msgstr[1] "zostávajú %lu hodiny"
+msgstr[2] "zostáva %lu hodín"
 
 #: ../thunar/thunar-progress-view.c:485
-#, fuzzy, c-format
+#, c-format
 msgid "%lu minute remaining"
 msgid_plural "%lu minutes remaining"
-msgstr[0] "(zostáva %lu minúta)"
-msgstr[1] "(zostávajú %lu minúty)"
-msgstr[2] "(zostáva %lu minút)"
+msgstr[0] "zostáva %lu minúta"
+msgstr[1] "zostávajú %lu minúty"
+msgstr[2] "zostáva %lu minút"
 
 #: ../thunar/thunar-progress-view.c:490
-#, fuzzy, c-format
+#, c-format
 msgid "%lu second remaining"
 msgid_plural "%lu seconds remaining"
-msgstr[0] "(zostáva %lu sekunda)"
-msgstr[1] "(zostávajú %lu sekundy)"
-msgstr[2] "(zostáva %lu sekúnd)"
+msgstr[0] "zostáva %lu sekunda"
+msgstr[1] "zostávajú %lu sekundy"
+msgstr[2] "zostáva %lu sekúnd"
 
 #: ../thunar/thunar-properties-dialog.c:227
 msgid "General"
@@ -2222,9 +2221,9 @@ msgstr "Zhromažďovanie súborov..."
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:665
-#, fuzzy, c-format
+#, c-format
 msgid "Trying to restore \"%s\""
-msgstr "Chyba pri obnovovaní \"%s\""
+msgstr "Pokúšam sa obnoviť \"%s\""
 
 #: ../thunar/thunar-transfer-job.c:690
 #, fuzzy, c-format
@@ -2236,15 +2235,15 @@ msgstr ""
 "Chcete opäť adresár vytvoriť?"
 
 #: ../thunar/thunar-transfer-job.c:715
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to restore the folder \"%s\""
-msgstr "Nepodarilo sa otvoriť súbor \"%s\""
+msgstr "Nepodarilo sa obnoviť priečinok \"%s\""
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:732
-#, fuzzy, c-format
+#, c-format
 msgid "Trying to move \"%s\""
-msgstr "Nepodarilo sa vymazať \"%s\""
+msgstr "Pokúšam sa presunúť \"%s\""
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:757
@@ -2423,9 +2422,8 @@ msgid "Go to the desktop folder"
 msgstr "Prejsť do priečinka pracovnej plochy"
 
 #: ../thunar/thunar-window.c:311
-#, fuzzy
 msgid "Browse the file system"
-msgstr "Prehliada súborový systém pomocou správcu súborov"
+msgstr "Prehliadať súborový systém"
 
 #: ../thunar/thunar-window.c:312
 msgid "Go to the documents folder"
@@ -2566,11 +2564,11 @@ msgstr "Upozornenie, používate root konto, môžete si poškodiť systém."
 #. create the network action
 #: ../thunar/thunar-window.c:1435
 msgid "Network"
-msgstr ""
+msgstr "Sieť"
 
 #: ../thunar/thunar-window.c:1435
 msgid "Browse the network"
-msgstr ""
+msgstr "Prehľadávať sieť"
 
 #: ../thunar/thunar-window.c:1475
 #, c-format
@@ -2622,9 +2620,8 @@ msgstr "_Nezobrazovať viac túto správu"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2247
-#, fuzzy
 msgid "Failed to open the file system root folder"
-msgstr "Nepdarilo sa otvoriť adresár so šablónami"
+msgstr ""
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2282
@@ -2633,9 +2630,8 @@ msgstr "Nepodarilo sa zobraziť obsah koša"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2317
-#, fuzzy
 msgid "Failed to browse the network"
-msgstr "Otvorenie domovského priečinka zlyhalo"
+msgstr "Nepodarilo sa prehliadať sieť"
 
 #: ../thunar/thunar-window.c:2359
 msgid ""
@@ -2924,7 +2920,7 @@ msgstr "Číslo - Text"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:134
 msgid "Current"
-msgstr ""
+msgstr "Aktuálny"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:138
 msgid "Date Picture Taken"
@@ -3182,11 +3178,13 @@ msgid "Failed to save actions to disk."
 msgstr "Uloženie akciíí na disk zlyhalo."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:436
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Are you sure that you want to delete\n"
 "action \"%s\"?"
-msgstr "Naozaj chcete odstrániť \"%s\"?"
+msgstr ""
+"Naozaj chcete zmazať\n"
+"akciu \"%s\"?"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:437
 #, fuzzy
@@ -3437,9 +3435,8 @@ msgid "Open the specified folders in Thunar"
 msgstr "Otvorí vybrané priečinky v prehliadači Thunar"
 
 #: ../thunar/thunar-settings.desktop.in.h:1
-#, fuzzy
 msgid "Configure the Thunar file manager"
-msgstr "Správca súborov Thunar"
+msgstr "Nastavenia správcu súborov Thunar"
 
 #~ msgid "Moving files..."
 #~ msgstr "Presúvajú sa súbory"
