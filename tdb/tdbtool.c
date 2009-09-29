@@ -129,7 +129,7 @@ static char *get_token(int startover)
   return start;
 }
 
-static int open_dump_file()
+static int open_dump_file(void)
 {
   int retval = 0;
   char *tok = get_token(0);
@@ -148,7 +148,7 @@ static int open_dump_file()
     return(retval);
 }
 
-static void close_dump_file()
+static void close_dump_file(void)
 {
   if(pDumpFile != NULL && pDumpFile != stdout) {
     fclose(pDumpFile);
@@ -340,7 +340,7 @@ static void delete_tdb(void)
   }
 }
 
-static int print_rec(TDB_CONTEXT *tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+static int print_rec(TDB_CONTEXT *context, TDB_DATA key, TDB_DATA dbuf, void *state)
 {
   fprintf(pDumpFile,"\nkey %u bytes\n", (unsigned) key.dsize);
   print_asc((unsigned char*)key.dptr, key.dsize);
@@ -349,7 +349,7 @@ static int print_rec(TDB_CONTEXT *tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
   return 0;
 }
 
-static int print_key(TDB_CONTEXT *tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+static int print_key(TDB_CONTEXT *context, TDB_DATA key, TDB_DATA dbuf, void *state)
 {
   print_asc((unsigned char*)key.dptr, key.dsize);
   printf("\n");
@@ -358,7 +358,7 @@ static int print_key(TDB_CONTEXT *tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
 
 static int total_bytes;
 
-static int traverse_fn(TDB_CONTEXT *tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
+static int traverse_fn(TDB_CONTEXT *context, TDB_DATA key, TDB_DATA dbuf, void *state)
 {
   total_bytes += dbuf.dsize;
   return 0;
@@ -387,34 +387,34 @@ static char *tdb_getline(char *prompt)
   return p?line:NULL;
 }
 
-static int do_delete_fn(TDB_CONTEXT *tdb, TDB_DATA key, TDB_DATA dbuf,
+static int do_delete_fn(TDB_CONTEXT *context, TDB_DATA key, TDB_DATA dbuf,
                      void *state)
 {
-    return tdb_delete(tdb, key);
+    return tdb_delete(context, key);
 }
 
-static void first_record(TDB_CONTEXT *tdb, TDB_DATA *pkey)
+static void first_record(TDB_CONTEXT *context, TDB_DATA *pkey)
 {
   TDB_DATA dbuf;
-  *pkey = tdb_firstkey(tdb);
+  *pkey = tdb_firstkey(context);
   
-  dbuf = tdb_fetch(tdb, *pkey);
+  dbuf = tdb_fetch(context, *pkey);
   if (!dbuf.dptr) terror("fetch failed");
   /* printf("%s : %*.*s\n", k, (int)dbuf.dsize, (int)dbuf.dsize, dbuf.dptr); */
-  print_rec(tdb, *pkey, dbuf, NULL);
+  print_rec(context, *pkey, dbuf, NULL);
 }
 
-static void next_record(TDB_CONTEXT *tdb, TDB_DATA *pkey)
+static void next_record(TDB_CONTEXT *context, TDB_DATA *pkey)
 {
   TDB_DATA dbuf;
-  *pkey = tdb_nextkey(tdb, *pkey);
+  *pkey = tdb_nextkey(context, *pkey);
   
-  dbuf = tdb_fetch(tdb, *pkey);
+  dbuf = tdb_fetch(context, *pkey);
   if (!dbuf.dptr) 
     terror("fetch failed");
   else
     /* printf("%s : %*.*s\n", k, (int)dbuf.dsize, (int)dbuf.dsize, dbuf.dptr); */
-    print_rec(tdb, *pkey, dbuf, NULL);
+    print_rec(context, *pkey, dbuf, NULL);
 }
 
 int main(int argc, char *argv[])
