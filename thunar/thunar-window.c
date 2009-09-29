@@ -2391,7 +2391,7 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
 
   /* update the "Empty Trash" action */
   action = gtk_action_group_get_action (window->action_group, "empty-trash");
-  gtk_action_set_sensitive (action, (thunar_file_get_size (current_directory) > 0));
+  gtk_action_set_sensitive (action, (thunar_file_get_item_count (current_directory) > 0));
   gtk_action_set_visible (action, (thunar_file_is_root (current_directory) && thunar_file_is_trashed (current_directory)));
 
   /* set window title and icon */
