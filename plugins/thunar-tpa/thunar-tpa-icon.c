@@ -43,8 +43,6 @@ enum
 
 
 
-static void     thunar_tpa_icon_class_init          (ThunarTpaIconClass *klass);
-static void     thunar_tpa_icon_init                (ThunarTpaIcon      *icon);
 static void     thunar_tpa_icon_finalize            (GObject            *object);
 static void     thunar_tpa_icon_get_property        (GObject            *object,
                                                      guint               prop_id,
@@ -431,7 +429,7 @@ thunar_tpa_icon_drag_data_received (GtkWidget        *button,
                                     gint              y,
                                     GtkSelectionData *selection_data,
                                     guint             info,
-                                    guint             time,
+                                    guint             timestamp,
                                     ThunarTpaIcon    *icon)
 {
   gboolean succeed = FALSE;
@@ -454,7 +452,7 @@ thunar_tpa_icon_drag_data_received (GtkWidget        *button,
     }
 
   /* finish the drag */
-  gtk_drag_finish (context, succeed, TRUE, time);
+  gtk_drag_finish (context, succeed, TRUE, timestamp);
 }
 
 
