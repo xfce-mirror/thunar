@@ -75,12 +75,12 @@ static TDB_CONTEXT *db;
 
 struct timeval tp1,tp2;
 
-static void start_timer()
+static void start_timer(void)
 {
 	gettimeofday(&tp1,NULL);
 }
 
-static double end_timer()
+static double end_timer(void)
 {
 	gettimeofday(&tp2,NULL);
 	return((tp2.tv_sec - tp1.tv_sec) + 
@@ -162,8 +162,8 @@ struct tdb_flag {
 
 int main(int argc, char *argv[])
 {
-	int i, j, seed=0;
-	int k;
+	int seed=0;
+	unsigned int i, k, j;
 
 	/* Precook random buffers */
 	randdata = malloc(10000 * sizeof(randdata[0]));
