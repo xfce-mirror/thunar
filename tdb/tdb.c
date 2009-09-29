@@ -368,7 +368,7 @@ static int tdb_oob(TDB_CONTEXT *tdb, tdb_off len, int probe)
 	if (fstat(tdb->fd, &st) == -1)
 		return TDB_ERRCODE(TDB_ERR_IO, -1);
 
-	if (st.st_size < (size_t)len) {
+	if (st.st_size < (off_t)len) {
 		if (!probe) {
 			/* Ensure ecode is set for log fn. */
 			tdb->ecode = TDB_ERR_IO;
