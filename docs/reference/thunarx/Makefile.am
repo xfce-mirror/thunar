@@ -49,7 +49,8 @@ content_files = 							\
 INCLUDES =	 							\
 	-I$(top_srcdir) 						\
 	-I$(top_builddir) 						\
-	$(GTK_CFLAGS)
+	$(GTK_CFLAGS)							\
+	$(GTK_DOC_EXTRA_CFLAGS)
 
 GTKDOC_LIBS =  								\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la
