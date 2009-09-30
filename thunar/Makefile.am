@@ -332,13 +332,13 @@ thunar-dbus-service-infos.h: $(srcdir)/thunar-dbus-service-infos.xml Makefile
 thunar-thumbnailer-proxy.h: $(srcdir)/thunar-thumbnailer-dbus.xml Makefile
 	dbus-binding-tool --mode=glib-client \
 		$(srcdir)/thunar-thumbnailer-dbus.xml > thunar-thumbnailer-proxy.h \
-	&& sed -i -e 's/org_freedesktop_thumbnails_Thumbnailer/thunar_thumbnailer_proxy/g' \
+	&& sed -i -e 's/org_xfce_thumbnails_Thumbnailer/thunar_thumbnailer_proxy/g' \
 		thunar-thumbnailer-proxy.h
 
 thunar-thumbnailer-manager-proxy.h: $(srcdir)/thunar-thumbnailer-manager-dbus.xml Makefile
 	dbus-binding-tool --mode=glib-client \
 		$(srcdir)/thunar-thumbnailer-manager-dbus.xml > thunar-thumbnailer-manager-proxy.h \
-	&& sed -i -e 's/org_freedesktop_thumbnails_Manager/thunar_thumbnailer_manager_proxy/g' \
+	&& sed -i -e 's/org_xfce_thumbnails_Manager/thunar_thumbnailer_manager_proxy/g' \
 		thunar-thumbnailer-manager-proxy.h
 endif
 

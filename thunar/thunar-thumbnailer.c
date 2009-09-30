@@ -415,9 +415,9 @@ thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer *thumbnailer,
       /* create the shared thumbnailer proxy */
       thunar_thumbnailer_proxy = 
         dbus_g_proxy_new_for_name (connection, 
-                                   "org.freedesktop.thumbnails.Thumbnailer",
-                                   "/org/freedesktop/thumbnails/Thumbnailer",
-                                   "org.freedesktop.thumbnails.Thumbnailer");
+                                   "org.xfce.thumbnails.Thumbnailer",
+                                   "/org/xfce/thumbnails/Thumbnailer",
+                                   "org.xfce.thumbnails.Thumbnailer");
 
       /* make sure to set it to NULL when the last reference is dropped */
       g_object_add_weak_pointer (G_OBJECT (thunar_thumbnailer_proxy),
@@ -487,9 +487,9 @@ thunar_thumbnailer_init_manager_proxy (ThunarThumbnailer *thumbnailer,
       /* create the shared manager proxy */
       thunar_thumbnailer_manager_proxy = 
         dbus_g_proxy_new_for_name (connection, 
-                                   "org.freedesktop.thumbnails.Manager",
-                                   "/org/freedesktop/thumbnails/Manager",
-                                   "org.freedesktop.thumbnails.Manager");
+                                   "org.xfce.thumbnails.Manager",
+                                   "/org/xfce/thumbnails/Manager",
+                                   "org.xfce.thumbnails.Manager");
 
       /* make sure to set it to NULL when the last reference is dropped */
       g_object_add_weak_pointer (G_OBJECT (thunar_thumbnailer_manager_proxy),
