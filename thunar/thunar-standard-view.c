@@ -291,7 +291,7 @@ struct _ThunarStandardViewPrivate
   gint                    custom_merge_id;
 
   /* right-click drag/popup support */
-  GList                  *drathunar_g_file_list;
+  GList                  *drag_g_file_list;
   gint                    drag_scroll_timer_id;
   gint                    drag_timer_id;
   gint                    drag_x;
@@ -714,7 +714,7 @@ thunar_standard_view_finalize (GObject *object)
   g_object_unref (G_OBJECT (standard_view->priv->provider_factory));
 
   /* release the drag path list (just in case the drag-end wasn't fired before) */
-  thunar_g_file_list_free (standard_view->priv->drathunar_g_file_list);
+  thunar_g_file_list_free (standard_view->priv->drag_g_file_list);
 
   /* release the drop path list (just in case the drag-leave wasn't fired before) */
   thunar_g_file_list_free (standard_view->priv->drop_file_list);
@@ -2892,14 +2892,14 @@ thunar_standard_view_drag_begin (GtkWidget          *view,
   gint        size;
 
   /* release the drag path list (just in case the drag-end wasn't fired before) */
-  thunar_g_file_list_free (standard_view->priv->drathunar_g_file_list);
+  thunar_g_file_list_free (standard_view->priv->drag_g_file_list);
 
   /* query the list of selected URIs */
-  standard_view->priv->drathunar_g_file_list = thunar_file_list_to_thunar_g_file_list (standard_view->selected_files);
-  if (G_LIKELY (standard_view->priv->drathunar_g_file_list != NULL))
+  standard_view->priv->drag_g_file_list = thunar_file_list_to_thunar_g_file_list (standard_view->selected_files);
+  if (G_LIKELY (standard_view->priv->drag_g_file_list != NULL))
     {
       /* determine the first selected file */
-      file = thunar_file_get (standard_view->priv->drathunar_g_file_list->data, NULL);
+      file = thunar_file_get (standard_view->priv->drag_g_file_list->data, NULL);
       if (G_LIKELY (file != NULL))
         {
           /* generate an icon based on that file */
@@ -2927,7 +2927,7 @@ thunar_standard_view_drag_data_get (GtkWidget          *view,
   gchar *uri_string;
 
   /* set the URI list for the drag selection */
-  uri_string = thunar_g_file_list_to_string (standard_view->priv->drathunar_g_file_list);
+  uri_string = thunar_g_file_list_to_string (standard_view->priv->drag_g_file_list);
   gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) uri_string, strlen (uri_string));
   g_free (uri_string);
 }
@@ -2955,8 +2955,8 @@ thunar_standard_view_drag_end (GtkWidget          *view,
     g_source_remove (standard_view->priv->drag_scroll_timer_id);
 
   /* release the list of dragged URIs */
-  thunar_g_file_list_free (standard_view->priv->drathunar_g_file_list);
-  standard_view->priv->drathunar_g_file_list = NULL;
+  thunar_g_file_list_free (standard_view->priv->drag_g_file_list);
+  standard_view->priv->drag_g_file_list = NULL;
 }
 
 
