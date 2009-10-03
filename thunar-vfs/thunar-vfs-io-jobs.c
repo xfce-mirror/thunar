@@ -432,8 +432,12 @@ _thunar_vfs_io_jobs_create (ThunarVfsJob *job,
       absolute_path = thunar_vfs_path_dup_string (lp->data);
 
 again:
-      /* try to create the file at the given path */
-      fd = g_open (absolute_path, O_CREAT | O_EXCL | O_WRONLY, DEFFILEMODE);
+      /* Try to create the file at the given path.
+       *
+       * Note that despite the 0666 mask, we won't really create a world-writable
+       * file unless the user's umask permits it (ie the umask is 0000).
+       */
+      fd = g_open (absolute_path, O_CREAT | O_EXCL | O_WRONLY, 0666);
       if (G_UNLIKELY (fd < 0))
         {
           /* check if the file already exists */
@@ -707,8 +711,13 @@ _thunar_vfs_io_jobs_mkdir (ThunarVfsJob *job,
       /* update the progress information */
       _thunar_vfs_job_process_path (job, lp);
 
-      /* try to create the target directory */
-      if (!_thunar_vfs_io_ops_mkdir (lp->data, 0777 & ~umask(0), THUNAR_VFS_IO_OPS_NONE, error))
+      /* try to create the target directory
+       *
+       * Note that the mode specified here is limited by the user's umask, so we will not
+       * actually be creating a world writable directory unless the user's umask permits
+       * it.
+       */
+      if (!_thunar_vfs_io_ops_mkdir (lp->data, 0777, THUNAR_VFS_IO_OPS_NONE, error))
         return FALSE;
     }
 
