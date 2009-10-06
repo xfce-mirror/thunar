@@ -415,9 +415,9 @@ thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer *thumbnailer,
       /* create the shared thumbnailer proxy */
       thunar_thumbnailer_proxy = 
         dbus_g_proxy_new_for_name (connection, 
-                                   "org.xfce.thumbnails.Thumbnailer",
-                                   "/org/xfce/thumbnails/Thumbnailer",
-                                   "org.xfce.thumbnails.Thumbnailer");
+                                   "org.freedesktop.thumbnails.Thumbnailer1",
+                                   "/org/freedesktop/thumbnails/Thumbnailer1",
+                                   "org.freedesktop.thumbnails.Thumbnailer1");
 
       /* make sure to set it to NULL when the last reference is dropped */
       g_object_add_weak_pointer (G_OBJECT (thunar_thumbnailer_proxy),
@@ -487,9 +487,9 @@ thunar_thumbnailer_init_manager_proxy (ThunarThumbnailer *thumbnailer,
       /* create the shared manager proxy */
       thunar_thumbnailer_manager_proxy = 
         dbus_g_proxy_new_for_name (connection, 
-                                   "org.xfce.thumbnails.Manager",
-                                   "/org/xfce/thumbnails/Manager",
-                                   "org.xfce.thumbnails.Manager");
+                                   "org.freedesktop.thumbnails.Manager1",
+                                   "/org/freedesktop/thumbnails/Manager1",
+                                   "org.freedesktop.thumbnails.Manager1");
 
       /* make sure to set it to NULL when the last reference is dropped */
       g_object_add_weak_pointer (G_OBJECT (thunar_thumbnailer_manager_proxy),
@@ -783,7 +783,8 @@ thunar_thumbnailer_queue_async (ThunarThumbnailer *thumbnailer,
 
   /* queue thumbnails for the given URIs asynchronously */
   call = thunar_thumbnailer_proxy_queue_async (thumbnailer->thumbnailer_proxy,
-                                               (const gchar **)uris, mime_hints, 0, 
+                                               (const gchar **)uris, mime_hints, 
+                                               "foreground", 0, 
                                                thunar_thumbnailer_queue_async_reply,
                                                thumbnailer_call);
 

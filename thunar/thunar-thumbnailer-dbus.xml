@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<node name="/org/xfce/thumbnails/Thumbnailer">
-  <interface name="org.xfce.thumbnails.Thumbnailer">
+<node name="/org/freedesktop/thumbnails/Thumbnailer1">
+  <interface name="org.freedesktop.thumbnails.Thumbnailer1">
     <method name="Queue">
       <annotation name="org.freedesktop.DBus.GLib.Async" value="true"/>
       <arg type="as" name="uris" direction="in" />
       <arg type="as" name="mime_hints" direction="in" />
+      <arg type="s" name="scheduler" direction="in" />
       <arg type="u" name="handle_to_unqueue" direction="in" />
       <arg type="u" name="handle" direction="out" />
     </method>
