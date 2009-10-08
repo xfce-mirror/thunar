@@ -281,7 +281,7 @@ desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
 
 # install symlink to 'thunar'
-install-data-local:
+install-exec-hook:
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	-( cd $(DESTDIR)$(bindir) ; test -x thunar || ln -sf Thunar thunar )
 
