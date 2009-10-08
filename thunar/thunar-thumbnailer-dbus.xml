@@ -15,6 +15,17 @@
       <arg type="u" name="handle" direction="in" />
     </method>
 
+    <method name="GetSupported">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value="true"/>
+      <arg type="as" name="uri_schemes" direction="out" />
+      <arg type="as" name="mime_types" direction="out" />
+    </method>
+
+    <method name="GetSchedulers">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value="true"/>
+      <arg type="as" name="schedulers" direction="out" />
+    </method>
+
     <signal name="Started">
       <arg type="u" name="handle" />
     </signal>

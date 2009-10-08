@@ -27,7 +27,6 @@
 #include <dbus/dbus-glib.h>
 
 #include <thunar/thunar-thumbnailer-proxy.h>
-#include <thunar/thunar-thumbnailer-manager-proxy.h>
 #endif
 
 #include <thunar/thunar-marshal.h>
@@ -139,8 +138,6 @@ static void                   thunar_thumbnailer_finalize               (GObject
 #ifdef HAVE_DBUS              
 static void                   thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer     *thumbnailer,
                                                                          DBusGConnection       *connection);
-static void                   thunar_thumbnailer_init_manager_proxy     (ThunarThumbnailer     *thumbnailer,
-                                                                         DBusGConnection       *connection);
 static gboolean               thunar_thumbnailer_file_is_supported      (ThunarThumbnailer     *thumbnailer,
                                                                          ThunarFile            *file);
 static void                   thunar_thumbnailer_thumbnailer_finished   (DBusGProxy            *proxy,
@@ -184,7 +181,6 @@ struct _ThunarThumbnailer
 
 #ifdef HAVE_DBUS
   /* proxies to communicate with D-Bus services */
-  DBusGProxy *manager_proxy;
   DBusGProxy *thumbnailer_proxy;
 
   /* wait queue used to delay (and thereby group) thumbnail requests */
@@ -205,7 +201,9 @@ struct _ThunarThumbnailer
 
   GMutex     *lock;
 
-  /* cached array of MIME types for which thumbnails can be generated */
+  /* cached arrays of URI schemes and MIME types for which thumbnails 
+   * can be generated */
+  gchar     **supported_schemes;
   gchar     **supported_types;
 
   /* last ThunarThumbnailer request ID */
@@ -246,9 +244,7 @@ struct _ThunarThumbnailerItem
 
 
 #ifdef HAVE_DBUS
-static DBusGProxy *thunar_thumbnailer_manager_proxy;
 static DBusGProxy *thunar_thumbnailer_proxy;
-static DBusGProxy *thunar_manager_proxy;
 #endif
 
 
@@ -275,6 +271,7 @@ thunar_thumbnailer_init (ThunarThumbnailer *thumbnailer)
   DBusGConnection *connection;
 
   thumbnailer->lock = g_mutex_new ();
+  thumbnailer->supported_schemes = NULL;
   thumbnailer->supported_types = NULL;
   thumbnailer->last_request = GUINT_TO_POINTER (0);
   thumbnailer->idles = NULL;
@@ -285,7 +282,6 @@ thunar_thumbnailer_init (ThunarThumbnailer *thumbnailer)
 
   /* initialize the proxies */
   thunar_thumbnailer_init_thumbnailer_proxy (thumbnailer, connection);
-  thunar_thumbnailer_init_manager_proxy (thumbnailer, connection);
 
   /* check if we have a thumbnailer proxy */
   if (thumbnailer->thumbnailer_proxy != NULL)
@@ -340,17 +336,6 @@ thunar_thumbnailer_finalize (GObject *object)
   /* free the idle list */
   g_list_free (thumbnailer->idles);
 
-  if (thumbnailer->manager_proxy != NULL)
-    {
-      /* disconnect from the manager proxy */
-      g_signal_handlers_disconnect_matched (thumbnailer->manager_proxy,
-                                            G_SIGNAL_MATCH_DATA, 0, 0,
-                                            NULL, NULL, thumbnailer);
-  
-      /* release the manager proxy */
-      g_object_unref (thumbnailer->manager_proxy);
-    }
-
   if (thumbnailer->thumbnailer_proxy != NULL)
     {
       /* cancel all pending D-Bus calls */
@@ -382,7 +367,8 @@ thunar_thumbnailer_finalize (GObject *object)
       g_object_unref (thumbnailer->thumbnailer_proxy);
     }
 
-  /* free the cached MIME types array */
+  /* free the cached URI schemes and MIME types array */
+  g_strfreev (thumbnailer->supported_schemes);
   g_strfreev (thumbnailer->supported_types);
 
   /* release the thumbnailer lock */
@@ -470,41 +456,6 @@ thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer *thumbnailer,
 
 
 
-static void
-thunar_thumbnailer_init_manager_proxy (ThunarThumbnailer *thumbnailer,
-                                       DBusGConnection   *connection)
-{
-  /* we cannot have a proxy without a D-Bus connection */
-  if (connection == NULL)
-    {
-      thumbnailer->manager_proxy = NULL;
-      return;
-    }
-
-  /* create the manager proxy shared by all ThunarThumbnailers on demand */
-  if (thunar_manager_proxy == NULL)
-    {
-      /* create the shared manager proxy */
-      thunar_thumbnailer_manager_proxy = 
-        dbus_g_proxy_new_for_name (connection, 
-                                   "org.freedesktop.thumbnails.Manager1",
-                                   "/org/freedesktop/thumbnails/Manager1",
-                                   "org.freedesktop.thumbnails.Manager1");
-
-      /* make sure to set it to NULL when the last reference is dropped */
-      g_object_add_weak_pointer (G_OBJECT (thunar_thumbnailer_manager_proxy),
-                                 (gpointer) &thunar_thumbnailer_manager_proxy);
-
-      thumbnailer->manager_proxy = thunar_thumbnailer_manager_proxy;
-    }
-  else
-    {
-      thumbnailer->manager_proxy = g_object_ref (thunar_thumbnailer_manager_proxy);
-    }
-}
-
-
-
 static gboolean
 thunar_thumbnailer_file_is_supported (ThunarThumbnailer *thumbnailer,
                                       ThunarFile        *file)
@@ -519,36 +470,43 @@ thunar_thumbnailer_file_is_supported (ThunarThumbnailer *thumbnailer,
   /* acquire the thumbnailer lock */
   g_mutex_lock (thumbnailer->lock);
 
-  /* just assume all types are supported if we don't have a manager */
-  if (thumbnailer->manager_proxy == NULL)
+  /* no types are supported if we don't have a thumbnailer */
+  if (thumbnailer->thumbnailer_proxy == NULL)
     {
       /* release the thumbnailer lock */
       g_mutex_unlock (thumbnailer->lock);
-      return TRUE;
+      return FALSE;
     }
 
   /* request the supported types on demand */
-  if (thumbnailer->supported_types == NULL)
+  if (thumbnailer->supported_schemes == NULL 
+      || thumbnailer->supported_types == NULL)
     {
-      /* request the supported types from the manager D-Bus service. We only do
+      /* request the supported types from the thumbnailer D-Bus service. We only do
        * this once, so using a non-async call should be ok */
-      thunar_thumbnailer_manager_proxy_get_supported (thumbnailer->manager_proxy,
-                                                      &thumbnailer->supported_types, 
-                                                      NULL);
+      thunar_thumbnailer_proxy_get_supported (thumbnailer->thumbnailer_proxy,
+                                              &thumbnailer->supported_schemes,
+                                              &thumbnailer->supported_types, 
+                                              NULL);
     }
 
-  /* check if we have supported types now */
-  if (thumbnailer->supported_types != NULL)
+  /* check if we have supported URI schemes and MIME types now */
+  if (thumbnailer->supported_schemes != NULL
+      && thumbnailer->supported_types != NULL)
     {
       /* determine the content type of the passed file */
       content_type = thunar_file_get_content_type (file);
 
-      /* go through all the types */
-      for (n = 0; !supported && thumbnailer->supported_types[n] != NULL; ++n)
+      /* go through all the URI schemes we support */
+      for (n = 0; !supported && thumbnailer->supported_schemes[n] != NULL; ++n)
         {
-          /* check if the type of the file is a subtype of the supported type */
-          if (g_content_type_is_a (content_type, thumbnailer->supported_types[n]))
-            supported = TRUE;
+          /* check if the file has the current URI scheme */
+          if (thunar_file_has_uri_scheme (file, thumbnailer->supported_schemes[n]))
+            {
+              /* check if the type of the file is a subtype of the supported type */
+              if (g_content_type_is_a (content_type, thumbnailer->supported_types[n]))
+                supported = TRUE;
+            }
         }
     }
 
@@ -784,7 +742,7 @@ thunar_thumbnailer_queue_async (ThunarThumbnailer *thumbnailer,
   /* queue thumbnails for the given URIs asynchronously */
   call = thunar_thumbnailer_proxy_queue_async (thumbnailer->thumbnailer_proxy,
                                                (const gchar **)uris, mime_hints, 
-                                               "foreground", 0, 
+                                               "default", 0, 
                                                thunar_thumbnailer_queue_async_reply,
                                                thumbnailer_call);
 
