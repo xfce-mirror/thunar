@@ -321,6 +321,17 @@ gboolean         thunar_file_is_desktop              (const ThunarFile *file);
 #define thunar_file_dup_uri(file) (g_file_get_uri (THUNAR_FILE ((file))->gfile))
 
 /**
+ * thunar_file_has_uri_scheme:
+ * @file       : a #ThunarFile instance.
+ * @uri_scheme : a URI scheme string.
+ *
+ * Checks whether the URI scheme of the file matches @uri_scheme.
+ *
+ * Return value: TRUE, if the schemes match, FALSE otherwise.
+ **/
+#define thunar_file_has_uri_scheme(file, uri_scheme) (g_file_has_uri_scheme (THUNAR_FILE ((file))->gfile, (uri_scheme)))
+
+/**
  * thunar_file_changed:
  * @file : a #ThunarFile instance.
  *
