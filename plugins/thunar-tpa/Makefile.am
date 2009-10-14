@@ -46,7 +46,7 @@ desktopdir = $(datadir)/xfce4/panel-plugins
 desktop_in_in_files = thunar-tpa.desktop.in.in
 desktop_in_files = $(desktop_in_in_files:.desktop.in.in=.desktop.in)
 %.desktop.in: %.desktop.in.in
-	sed -e "s,\@libexecdir\@,$(libexecdir),g" < $< > $@
+	$(AM_V_GEN) sed -e "s,\@libexecdir\@,$(libexecdir),g" < $< > $@
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
 
