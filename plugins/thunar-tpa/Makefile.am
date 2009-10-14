@@ -39,7 +39,7 @@ DISTCLEANFILES =							\
 	thunar-tpa-bindings.h
 
 thunar-tpa-bindings.h: $(srcdir)/thunar-tpa-bindings.xml Makefile
-	dbus-binding-tool --prefix=thunar_tpa_dbus --mode=glib-client $(srcdir)/thunar-tpa-bindings.xml > thunar-tpa-bindings.h
+	$(AM_V_GEN) dbus-binding-tool --prefix=thunar_tpa_dbus --mode=glib-client $(srcdir)/thunar-tpa-bindings.xml > thunar-tpa-bindings.h
 endif
 
 desktopdir = $(datadir)/xfce4/panel-plugins

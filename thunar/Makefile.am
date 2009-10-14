@@ -325,67 +325,74 @@ BUILT_SOURCES =								\
 
 if HAVE_DBUS
 thunar-dbus-service-infos.h: $(srcdir)/thunar-dbus-service-infos.xml Makefile
-	dbus-binding-tool --prefix=thunar_dbus_service --mode=glib-server $(srcdir)/thunar-dbus-service-infos.xml > thunar-dbus-service-infos.h
+	$(AM_V_GEN) dbus-binding-tool --prefix=thunar_dbus_service --mode=glib-server $(srcdir)/thunar-dbus-service-infos.xml > thunar-dbus-service-infos.h
 
 thunar-thumbnailer-proxy.h: $(srcdir)/thunar-thumbnailer-dbus.xml Makefile
-	dbus-binding-tool --mode=glib-client \
-		$(srcdir)/thunar-thumbnailer-dbus.xml > thunar-thumbnailer-proxy.h \
-	&& sed -i -e 's/org_freedesktop_thumbnails_Thumbnailer1/thunar_thumbnailer_proxy/g' \
-		thunar-thumbnailer-proxy.h
+	$(AM_V_GEN) ( \
+		dbus-binding-tool --mode=glib-client \
+			$(srcdir)/thunar-thumbnailer-dbus.xml > thunar-thumbnailer-proxy.h \
+		&& sed -i -e 's/org_freedesktop_thumbnails_Thumbnailer1/thunar_thumbnailer_proxy/g' \
+			thunar-thumbnailer-proxy.h \
+	)
 endif
 
 thunar-throbber-fallback.c: $(srcdir)/thunar-throbber-fallback.png Makefile
-	(echo "#include <thunar/thunar-throbber-fallback.h>" && gdk-pixbuf-csource --extern --raw --stream --name=thunar_throbber_fallback $(srcdir)/thunar-throbber-fallback.png) > thunar-throbber-fallback.c
+	$(AM_V_GEN) (echo "#include <thunar/thunar-throbber-fallback.h>" && gdk-pixbuf-csource --extern --raw --stream --name=thunar_throbber_fallback $(srcdir)/thunar-throbber-fallback.png) > thunar-throbber-fallback.c
 
 thunar-thumbnail-frame.c: $(srcdir)/thunar-thumbnail-frame.png Makefile
-	(echo "#include <thunar/thunar-thumbnail-frame.h>" && gdk-pixbuf-csource --extern --raw --stream --name=thunar_thumbnail_frame $(srcdir)/thunar-thumbnail-frame.png) > thunar-thumbnail-frame.c
+	$(AM_V_GEN) (echo "#include <thunar/thunar-thumbnail-frame.h>" && gdk-pixbuf-csource --extern --raw --stream --name=thunar_thumbnail_frame $(srcdir)/thunar-thumbnail-frame.png) > thunar-thumbnail-frame.c
 
 thunar-abstract-icon-view-ui.h: Makefile $(srcdir)/thunar-abstract-icon-view-ui.xml
-	exo-csource --strip-comments --strip-content --static --name=thunar_abstract_icon_view_ui $(srcdir)/thunar-abstract-icon-view-ui.xml > thunar-abstract-icon-view-ui.h
+	$(AM_V_GEN) exo-csource --strip-comments --strip-content --static --name=thunar_abstract_icon_view_ui $(srcdir)/thunar-abstract-icon-view-ui.xml > thunar-abstract-icon-view-ui.h
 
 thunar-details-view-ui.h: Makefile $(srcdir)/thunar-details-view-ui.xml
-	exo-csource --strip-comments --strip-content --static --name=thunar_details_view_ui $(srcdir)/thunar-details-view-ui.xml > thunar-details-view-ui.h
+	$(AM_V_GEN) exo-csource --strip-comments --strip-content --static --name=thunar_details_view_ui $(srcdir)/thunar-details-view-ui.xml > thunar-details-view-ui.h
 
 thunar-launcher-ui.h: Makefile $(srcdir)/thunar-launcher-ui.xml
-	exo-csource --strip-comments --strip-content --static --name=thunar_launcher_ui $(srcdir)/thunar-launcher-ui.xml > thunar-launcher-ui.h
+	$(AM_V_GEN) exo-csource --strip-comments --strip-content --static --name=thunar_launcher_ui $(srcdir)/thunar-launcher-ui.xml > thunar-launcher-ui.h
 
 thunar-location-buttons-ui.h: Makefile $(srcdir)/thunar-location-buttons-ui.xml
-	exo-csource --strip-comments --strip-content --static --name=thunar_location_buttons_ui $(srcdir)/thunar-location-buttons-ui.xml > thunar-location-buttons-ui.h
+	$(AM_V_GEN) exo-csource --strip-comments --strip-content --static --name=thunar_location_buttons_ui $(srcdir)/thunar-location-buttons-ui.xml > thunar-location-buttons-ui.h
 
 thunar-shortcuts-pane-ui.h: Makefile $(srcdir)/thunar-shortcuts-pane-ui.xml
-	exo-csource --strip-comments --strip-content --static --name=thunar_shortcuts_pane_ui $(srcdir)/thunar-shortcuts-pane-ui.xml > thunar-shortcuts-pane-ui.h
+	$(AM_V_GEN) exo-csource --strip-comments --strip-content --static --name=thunar_shortcuts_pane_ui $(srcdir)/thunar-shortcuts-pane-ui.xml > thunar-shortcuts-pane-ui.h
 
 thunar-renamer-dialog-ui.h: Makefile $(srcdir)/thunar-renamer-dialog-ui.xml
-	exo-csource --strip-comments --strip-content --static --name=thunar_renamer_dialog_ui $(srcdir)/thunar-renamer-dialog-ui.xml > thunar-renamer-dialog-ui.h
+	$(AM_V_GEN) exo-csource --strip-comments --strip-content --static --name=thunar_renamer_dialog_ui $(srcdir)/thunar-renamer-dialog-ui.xml > thunar-renamer-dialog-ui.h
 
 thunar-standard-view-ui.h: Makefile $(srcdir)/thunar-standard-view-ui.xml
-	exo-csource --strip-comments --strip-content --static --name=thunar_standard_view_ui $(srcdir)/thunar-standard-view-ui.xml > thunar-standard-view-ui.h
+	$(AM_V_GEN) exo-csource --strip-comments --strip-content --static --name=thunar_standard_view_ui $(srcdir)/thunar-standard-view-ui.xml > thunar-standard-view-ui.h
 
 thunar-window-ui.h: Makefile $(srcdir)/thunar-window-ui.xml
-	exo-csource --strip-comments --strip-content --static --name=thunar_window_ui $(srcdir)/thunar-window-ui.xml > thunar-window-ui.h
+	$(AM_V_GEN) exo-csource --strip-comments --strip-content --static --name=thunar_window_ui $(srcdir)/thunar-window-ui.xml > thunar-window-ui.h
 
 thunar-marshal.h: stamp-thunar-marshal.h
 	@true
+
 stamp-thunar-marshal.h: thunar-marshal.list Makefile
-	cd $(srcdir) \
-	&& echo "#ifndef __THUNAR_MARSHAL_H__" > xgen-tmh \
-	&& echo "#define __THUNAR_MARSHAL_H__" >> xgen-tmh \
-	&& ( glib-genmarshal \
-		--prefix=_thunar_marshal \
-		--header thunar-marshal.list ) >> xgen-tmh \
-	&& echo "#endif /* !__THUNAR_MARSHAL_H__ */" >> xgen-tmh \
-	&& ( cmp -s xgen-tmh thunar-marshal.h || cp xgen-tmh thunar-marshal.h ) \
-	&& rm -f xgen-tmh \
-	&& echo timestamp > $(@F)
+	$(AM_V_GEN) ( \
+		cd $(srcdir) \
+		&& echo "#ifndef __THUNAR_MARSHAL_H__" > xgen-tmh \
+		&& echo "#define __THUNAR_MARSHAL_H__" >> xgen-tmh \
+		&& ( glib-genmarshal \
+			--prefix=_thunar_marshal \
+			--header thunar-marshal.list ) >> xgen-tmh \
+		&& echo "#endif /* !__THUNAR_MARSHAL_H__ */" >> xgen-tmh \
+		&& ( cmp -s xgen-tmh thunar-marshal.h || cp xgen-tmh thunar-marshal.h ) \
+		&& rm -f xgen-tmh \
+		&& echo timestamp > $(@F) \
+	)
 
 thunar-marshal.c: thunar-marshal.list Makefile
-	cd $(srcdir) \
-	&& echo "#include <thunar/thunar-marshal.h>" > xgen-tmc \
-	&& ( glib-genmarshal \
-		--prefix=_thunar_marshal \
-		--body thunar-marshal.list ) >> xgen-tmc \
-	&& cp xgen-tmc thunar-marshal.c \
-	&& rm -f xgen-tmc
+	$(AM_V_GEN) ( \
+		cd $(srcdir) \
+		&& echo "#include <thunar/thunar-marshal.h>" > xgen-tmc \
+		&& ( glib-genmarshal \
+			--prefix=_thunar_marshal \
+			--body thunar-marshal.list ) >> xgen-tmc \
+		&& cp xgen-tmc thunar-marshal.c \
+		&& rm -f xgen-tmc \
+	)
 endif
 
 EXTRA_DIST =								\

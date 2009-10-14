@@ -51,6 +51,7 @@ dnl ***************************
 AM_INIT_AUTOMAKE([1.8 dist-bzip2 tar-ustar])
 AM_CONFIG_HEADER([config.h])
 AM_MAINTAINER_MODE()
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 dnl *******************************
 dnl *** Check for UNIX variants ***
