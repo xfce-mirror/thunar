@@ -150,6 +150,7 @@ static void                   thunar_thumbnailer_thumbnailer_error      (DBusGPr
                                                                          const gchar           *message,
                                                                          ThunarThumbnailer     *thumbnailer);
 static void                   thunar_thumbnailer_thumbnailer_ready      (DBusGProxy            *proxy,
+                                                                         guint32                handle,
                                                                          const gchar          **uris,
                                                                          ThunarThumbnailer     *thumbnailer);
 static void                   thunar_thumbnailer_thumbnailer_started    (DBusGProxy            *proxy,
@@ -420,8 +421,9 @@ thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer *thumbnailer,
                                          G_TYPE_STRING,
                                          G_TYPE_INVALID);
 
-      dbus_g_object_register_marshaller ((GClosureMarshal) g_cclosure_marshal_VOID__POINTER,
+      dbus_g_object_register_marshaller ((GClosureMarshal) g_cclosure_marshal_VOID__UINT_POINTER,
                                          G_TYPE_NONE,
+                                         G_TYPE_UINT,
                                          G_TYPE_STRV,
                                          G_TYPE_INVALID);
 
@@ -431,7 +433,7 @@ thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer *thumbnailer,
       dbus_g_proxy_add_signal (thumbnailer->thumbnailer_proxy, "Finished", 
                                G_TYPE_UINT, G_TYPE_INVALID);
       dbus_g_proxy_add_signal (thumbnailer->thumbnailer_proxy, "Ready", 
-                               G_TYPE_STRV, G_TYPE_INVALID);
+                               G_TYPE_UINT, G_TYPE_STRV, G_TYPE_INVALID);
       dbus_g_proxy_add_signal (thumbnailer->thumbnailer_proxy, "Started", 
                                G_TYPE_UINT, G_TYPE_INVALID);
     }
@@ -587,6 +589,7 @@ thunar_thumbnailer_thumbnailer_finished (DBusGProxy        *proxy,
 
 static void
 thunar_thumbnailer_thumbnailer_ready (DBusGProxy        *proxy,
+                                      guint32            handle,
                                       const gchar      **uris,
                                       ThunarThumbnailer *thumbnailer)
 {
