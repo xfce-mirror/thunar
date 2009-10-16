@@ -48,36 +48,6 @@
 
 
 /**
- * thunar_util_looks_like_an_uri:
- * @string : an input string.
- *
- * Returns %TRUE if the @string looks like an URI
- * according to RFC 2396, %FALSE otherwise.
- *
- * Return value: %TRUE if @string looks like an URI.
- **/
-gboolean
-thunar_util_looks_like_an_uri (const gchar *string)
-{
-  _thunar_return_val_if_fail (string != NULL, FALSE);
-
-  /* <scheme> starts with an alpha character */
-  if (g_ascii_isalpha (*string))
-    {
-      /* <scheme> continues with (alpha | digit | "+" | "-" | ".")* */
-      for (++string; g_ascii_isalnum (*string) || *string == '+' || *string == '-' || *string == '.'; ++string)
-        ;
-
-      /* <scheme> must be followed by ":" */
-      return (*string == ':');
-    }
-
-  return FALSE;
-}
-
-
-
-/**
  * thunar_util_expand_filename:
  * @filename : a local filename.
  * @error    : return location for errors or %NULL.

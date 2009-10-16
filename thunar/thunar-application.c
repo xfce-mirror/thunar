@@ -987,7 +987,7 @@ thunar_application_bulk_rename (ThunarApplication *application,
   for (n = 0; filenames[n] != NULL; ++n)
     {
       /* check if the filename is an absolute path or looks like an URI */
-      if (g_path_is_absolute (filenames[n]) || thunar_util_looks_like_an_uri (filenames[n]))
+      if (g_path_is_absolute (filenames[n]) || exo_str_looks_like_an_uri (filenames[n]))
         {
           /* determine the file for the filename directly */
           file = thunar_file_get_for_uri (filenames[n], error);
@@ -1181,7 +1181,7 @@ thunar_application_process_filenames (ThunarApplication *application,
   for (n = 0; filenames[n] != NULL; ++n)
     {
       /* check if the filename is an absolute path or looks like an URI */
-      if (g_path_is_absolute (filenames[n]) || thunar_util_looks_like_an_uri (filenames[n]))
+      if (g_path_is_absolute (filenames[n]) || exo_str_looks_like_an_uri (filenames[n]))
         {
           /* determine the file for the filename directly */
           file = thunar_file_get_for_uri (filenames[n], &derror);

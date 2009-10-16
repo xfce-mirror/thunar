@@ -768,7 +768,7 @@ thunar_path_entry_changed (GtkEditable *editable)
 
   /* parse the entered string (handling URIs properly) */
   text = gtk_entry_get_text (GTK_ENTRY (path_entry));
-  if (G_UNLIKELY (thunar_util_looks_like_an_uri (text)))
+  if (G_UNLIKELY (exo_str_looks_like_an_uri (text)))
     {
       /* try to parse the URI text */
       file_path = g_file_new_for_uri (text);
