@@ -67,6 +67,7 @@ enum
   PROP_LAST_VIEW,
   PROP_LAST_WINDOW_HEIGHT,
   PROP_LAST_WINDOW_WIDTH,
+  PROP_LAST_WINDOW_FULLSCREEN,
   PROP_MISC_VOLUME_MANAGEMENT,
   PROP_MISC_CASE_SENSITIVE,
   PROP_MISC_DATE_STYLE,
@@ -399,6 +400,20 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                      "last-window-width",
                                                      1, G_MAXINT, 640,
                                                      EXO_PARAM_READWRITE));
+                                                     
+  /**
+   * ThunarPreferences:last-window-maximized:
+   *
+   * The last known maximized state of a #ThunarWindow, which will be used as
+   * default width for newly created windows.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_WINDOW_FULLSCREEN,
+                                   g_param_spec_boolean ("last-window-maximized",
+                                                         "LastWindowMaximized",
+                                                         "last-window-maximized",
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
 
   /**
    * ThunarPreferences:misc-volume-management:

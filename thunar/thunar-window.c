@@ -677,6 +677,7 @@ thunar_window_init (ThunarWindow *window)
   gint            position;
   gint            width;
   gint            height;
+  gboolean        maximized;
 
   /* grab a reference on the provider factory */
   window->provider_factory = thunarx_provider_factory_get_default ();
@@ -766,8 +767,12 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect_swapped (G_OBJECT (window->launcher), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
 
   /* determine the default window size from the preferences */
-  g_object_get (G_OBJECT (window->preferences), "last-window-width", &width, "last-window-height", &height, NULL);
+  g_object_get (G_OBJECT (window->preferences), "last-window-width", &width, "last-window-height", &height, "last-window-maximized", &maximized, NULL);
   gtk_window_set_default_size (GTK_WINDOW (window), width, height);
+  
+  /* restore the maxized state of the window */
+  if (G_UNLIKELY (maximized))
+    gtk_window_maximize (GTK_WINDOW (window));
 
   window->table = gtk_table_new (6, 1, FALSE);
   gtk_container_add (GTK_CONTAINER (window), window->table);
@@ -2670,7 +2675,13 @@ thunar_window_save_geometry_timer (gpointer user_data)
               gtk_window_get_size (GTK_WINDOW (window), &width, &height);
 
               /* ...and remember them as default for new windows */
-              g_object_set (G_OBJECT (window->preferences), "last-window-width", width, "last-window-height", height, NULL);
+              g_object_set (G_OBJECT (window->preferences), "last-window-width", width, "last-window-height", height,
+                            "last-window-maximized", FALSE, NULL);
+            }
+          else
+            {
+              /* only store that the window is full screen */
+              g_object_set (G_OBJECT (window->preferences), "last-window-maximized", TRUE, NULL);
             }
         }
     }
