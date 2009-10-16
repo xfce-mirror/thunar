@@ -3,13 +3,14 @@
 # Copyright (C) 2009 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the
 # Thunar package.
+#
 # Carles Muñoz Gorriz <carlesmu@internautas.org>, 2009.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "POT-Creation-Date: 2009-04-20 15:23+0200\n"
-"PO-Revision-Date: 2009-10-11 17:35+0100\n"
+"PO-Revision-Date: 2009-10-16 22:06+0100\n"
 "Last-Translator: Carles Muñoz Gorriz <carlesmu@internautas.org>\n"
 "Language-Team: Catalan <xfce-i18n@xfce.org>\n"
 "MIME-Version: 1.0\n"
@@ -1472,7 +1473,7 @@ msgstr ""
 
 #: ../docs/manual/C/Thunar.xml.in:940(title)
 msgid "Customizing Thunar"
-msgstr ""
+msgstr "Parametrització de Thunar"
 
 #: ../docs/manual/C/Thunar.xml.in:942(para)
 msgid ""
@@ -1484,7 +1485,7 @@ msgstr ""
 
 #: ../docs/manual/C/Thunar.xml.in:948(title)
 msgid "The \"Send To\" Menu"
-msgstr ""
+msgstr "El menú «Envia a»"
 
 #: ../docs/manual/C/Thunar.xml.in:950(para)
 msgid ""
@@ -1504,7 +1505,7 @@ msgstr ""
 
 #: ../docs/manual/C/Thunar.xml.in:964(phrase)
 msgid "\"Send To\" Menu"
-msgstr ""
+msgstr "Menú «Envia a»"
 
 #: ../docs/manual/C/Thunar.xml.in:969(para)
 msgid ""
@@ -1637,6 +1638,7 @@ msgstr ""
 "Exec=postr %F\n"
 "Icon=postr\n"
 "Name=Flickr\n"
+"Name[ca]=Flickr\n"
 "MimeType=image/jpeg;"
 
 #: ../docs/manual/C/Thunar.xml.in:1021(para)
@@ -1666,7 +1668,7 @@ msgstr ""
 
 #: ../docs/manual/C/Thunar.xml.in:1036(title)
 msgid "Thumbnailers"
-msgstr ""
+msgstr "Miniaturitzadors"
 
 #: ../docs/manual/C/Thunar.xml.in:1038(para)
 msgid ""
@@ -1678,6 +1680,14 @@ msgid ""
 "however dynamically extend this basic functionality with thumbnailers for "
 "additional file types."
 msgstr ""
+"Thunar empra algunes petites utilitats per crear les miniatures d'alguns "
+"tipus de fitxer, així com per mostrar la miniatura com una vista prèvia del "
+"contingut del fitxer. Aquestes petites utilitats les anomenem "
+"miniaturitzadors. Thunar ve amb miniaturitzadors per imatges i fitxers de "
+"tipus de lletra, també empra els miniaturitzadors de GNOME de forma "
+"automàtica si aquests s'han instaŀlat amb compatibilitat <literal>gconf</"
+"literal>. En qualsevol cas, es pot ampliar dinàmicament aquesta "
+"funcionalitat per altres tipus de fitxer."
 
 #: ../docs/manual/C/Thunar.xml.in:1045(para)
 msgid ""
@@ -1692,6 +1702,17 @@ msgid ""
 "scale it to the desired size, which might produce a less optimal result than "
 "generating the thumbnail with the requested dimensions."
 msgstr ""
+"Si voleu escriure un miniaturitzador personalitzat, us caldrà començar amb "
+"un programa que permeti almenys dos paràmetres de línia d'ordres, el fitxer "
+"d'entrada, que és el tipus de fitxer al que voleu afegir aquesta "
+"funcionalitat i el fitxer de sortida, que és un fitxer PNG que compleix amb "
+"el format definit en aquest <ulink type=\"http\" url=\"http://jens.triq.net/"
+"thumbnail-spec/creation.html#AEN139\">estàndard de ges</ulink>.A més a més, "
+"cal que el programe accepti la mida desitjada de la miniatura (és opcional "
+"però molt recomanable). Si la mida de la imatge és d'una mida diferent a la "
+"prevista, Thunar l'haurà d'escalar a la mida correcta i, això, por produir "
+"un resultat pitjor que si s'hagués general la miniatura amb la mida "
+"requerida."
 
 #: ../docs/manual/C/Thunar.xml.in:1054(para)
 msgid ""
@@ -1705,10 +1726,20 @@ msgid ""
 "thumbnailers/</filename>. The <filename>.desktop</filename> for thumbnailers "
 "has the following format."
 msgstr ""
+"Un com heu fet la vostra utilitat per crear miniatures, haureu de registrar "
+"el vostre miniaturitzador, perquè d'aquesta manera Thunar sigui capaç "
+"d'emprar-la. A partir d'aquí l'únic que us cal fer és instaŀlar una "
+"descripció del fitxer al miniaturitzador (un fitxer <filename>.desktop</"
+"filename>) en algun dels directoris  <filename role=\"directory\">"
+"$XDG_DATA_DIRS/thumbnailers/</filename>. Per exemple, si voleu registrar el "
+"miniaturitzador només per el vostre compte d'usuari, el podeu instaŀlar a la "
+"carpeta <filename role=\"directory\">~/.local/share/thumbnailers/</"
+"filename>. El fitxer <filename>.desktop</filename> per les miniatures té el "
+"següent format."
 
 #: ../docs/manual/C/Thunar.xml.in:1063(title)
 msgid "Thumbnailer Description File Format"
-msgstr ""
+msgstr "Format de fitxers de descripció de miniaturitzadors"
 
 #: ../docs/manual/C/Thunar.xml.in:1065(para)
 msgid ""
@@ -1719,6 +1750,12 @@ msgid ""
 "field codes. Basically, a thumbnailer description file has the following "
 "format."
 msgstr ""
+"El fitxer de descripció de miniaturitzador empra aquest <ulink type=\"http\" "
+"url=\"http://standards.freedesktop.org/desktop-entry-spec/latest/\">format "
+"de registre d'escriptori</ulink> amb un tipus «<literal>Type</literal>» "
+"especial amb el valor <literal>X-Thumbnailer</literal> i amb un altre camp "
+"especial amb els codis dels fitxers <literal>X-Thumbnailer-Exec</literal>. "
+"Bàsicament, un fitxer de descripció de miniaturitzador t'e el següent format."
 
 #: ../docs/manual/C/Thunar.xml.in:1071(programlisting)
 #, no-wrap
@@ -1732,6 +1769,15 @@ msgid ""
 "MimeType=your-supported/mime-type;\n"
 "X-Thumbnailer-Exec=your-thumbnailer %i %o %s"
 msgstr ""
+"\n"
+"[Desktop Entry]\n"
+"Version=1.0\n"
+"Encoding=UTF-8\n"
+"Type=X-Thumbnailer\n"
+"Name=Your Thumbnailer\n"
+"Name[ca]=El vostre miniaturitzador\n"
+"MimeType=your-supported/mime-type;\n"
+"X-Thumbnailer-Exec=your-thumbnailer %i %o %s"
 
 #: ../docs/manual/C/Thunar.xml.in:1080(para)
 msgid ""
@@ -1741,6 +1787,12 @@ msgid ""
 "<literal>X-Thumbnailer</literal>, otherwise your thumbnailer will not be "
 "recognized. The <literal>Name</literal> value describes your thumbnailer."
 msgstr ""
+"<literal>Version</literal> i <literal>Encoding</literal> són obligatoris "
+"segons l'especificació del format de registre d'escriptori i, per tant, "
+"empreu els valors de l'exemple anterior. El camp <literal>Type</literal> ha "
+"de tenir el valor especial <literal>X-Thumbnailer</literal> i, en qualsevol "
+"altre cal, el vostre miniaturitzador no serà reconegut. El valor de  "
+"<literal>Name</literal> descriu el vostre miniaturitzador."
 
 #: ../docs/manual/C/Thunar.xml.in:1086(para)
 msgid ""
@@ -1748,11 +1800,14 @@ msgid ""
 "your thumbnailer, and supports certain field codes that will be substituted "
 "when the thumbnailer is run. Recognized field codes are as follows:"
 msgstr ""
+"El camp <literal>X-Thumbnailer-Exec</literal> té l'ordre que executarà el "
+"miniaturitzador, i és compatible amb diversos codis que seran substituïts "
+"quan s'executi el miniaturitzador. Els codis són els següents:"
 
 #: ../docs/manual/C/Thunar.xml.in:1093(varname)
 #: ../docs/manual/C/Thunar.xml.in:1119(literal)
 msgid "%i"
-msgstr ""
+msgstr "%i"
 
 #: ../docs/manual/C/Thunar.xml.in:1094(listitem)
 msgid ""
@@ -1760,14 +1815,17 @@ msgid ""
 "either a path relative to the directory from which the thumbnailer was "
 "invoked or an absolute path."
 msgstr ""
+"El camí local al fitxer d'entrada al que se li crearà la miniatura. Pot ser "
+"tant un camí relatiu al directori en el que roman el miniaturitzador com un "
+"camí absolut."
 
 #: ../docs/manual/C/Thunar.xml.in:1101(varname)
 msgid "%o"
-msgstr ""
+msgstr "%o"
 
 #: ../docs/manual/C/Thunar.xml.in:1104(literal)
 msgid ".png"
-msgstr ""
+msgstr ".png"
 
 #: ../docs/manual/C/Thunar.xml.in:1102(listitem)
 msgid ""
@@ -1776,54 +1834,69 @@ msgid ""
 "standard (see above). Note that the path may not end with <placeholder-1/>, "
 "which matters if you invoke certain third party tools."
 msgstr ""
+"El camí local al fitxer de sortida on es desarà la miniatura generada. El "
+"fitxer de sortida s'ha d'escriure en un fitxer PNG vàlid i d'acord amb "
+"l'estàndard de miniatures (veieu més a dalt). Heu de tenir en compte que el "
+"camí no ha d'acabar amb <placeholder-1/>, ja que això pot ser important si "
+"llanceu algutes utilitats de terceres parts."
 
 #: ../docs/manual/C/Thunar.xml.in:1110(varname)
 msgid "%s"
-msgstr ""
+msgstr "%s"
 
 #: ../docs/manual/C/Thunar.xml.in:1111(listitem)
 msgid ""
 "The desired size of the generated thumbnail in pixels. This parameter is "
 "optional."
 msgstr ""
+"La mida desitjada i en píxels de la miniatura que es generarà. Aquest "
+"paràmetre és opcional."
 
 #: ../docs/manual/C/Thunar.xml.in:1117(varname)
 msgid "%u"
-msgstr ""
+msgstr "%u"
 
 #: ../docs/manual/C/Thunar.xml.in:1118(listitem)
 msgid ""
 "Similar to <placeholder-1/>, but substituted with the URI of the file, "
 "rather than the path. This was added for compatibility with GNOME."
 msgstr ""
+"Similar a <placeholder-1/>, però amb la URI del fitxer en lloc del camí. "
+"Això es va afegir per compatibilitat amb GNOME."
 
 #: ../docs/manual/C/Thunar.xml.in:1125(varname)
 msgid "%%"
-msgstr ""
+msgstr "%%"
 
 #: ../docs/manual/C/Thunar.xml.in:1127(literal)
 msgid "%"
-msgstr ""
+msgstr "%"
 
 #: ../docs/manual/C/Thunar.xml.in:1126(listitem)
 msgid "Will be substituted with a single <placeholder-1/>."
-msgstr ""
+msgstr "Es substituirà per un únic <placeholder-1/>."
 
 #: ../docs/manual/C/Thunar.xml.in:1132(para)
 msgid ""
 "You need to include atleast <literal>%o</literal> and <literal>%i</literal> "
 "or <literal>%u</literal>, otherwise your thumbnailer will be useless."
 msgstr ""
+"Com mínim heu d'incloure <literal>%o</literal> i <literal>%i</literal> o "
+"<literal>%u</literal>, en cas contrari el vostre miniaturitzador no serà "
+"d'utilitat."
 
 #: ../docs/manual/C/Thunar.xml.in:1137(para)
 msgid ""
 "The <literal>MimeType</literal> lists the MIME types - separated by "
 "semicolon - for which your thumbnailer is able to create previews."
 msgstr ""
+"La llista de <literal>MimeType</literal> és el llistat de tipus MIME —"
+"separat per comes— pel qual els vostre miniaturitzador serà capaç de crear "
+"vistes prèvies."
 
 #: ../docs/manual/C/Thunar.xml.in:1143(title)
 msgid "Example EPS Thumbnailer"
-msgstr ""
+msgstr "Exemple de miniaturitzador EPS"
 
 #: ../docs/manual/C/Thunar.xml.in:1145(para)
 msgid ""
@@ -1833,6 +1906,11 @@ msgid ""
 "script that invokes <command>convert</command> to generate a thumbnail at "
 "the requested size."
 msgstr ""
+"Aquest exemple demostra com es pot escriure i instaŀlar un nou "
+"miniaturitzador per fitxers <filename>.eps</filename> i que empra l'ordre "
+"<command>convert</command> la qual forma par de ImageMagick. Primer, creem "
+"un script que crida a <command>convert</command> per generar una miniatura "
+"de la mida que ens cal."
 
 #: ../docs/manual/C/Thunar.xml.in:1151(programlisting)
 #, no-wrap
@@ -1853,6 +1931,21 @@ msgid ""
 "# invoke convert (ImageMagick)\n"
 "exec convert \"eps:$ifile\" -scale \"$sizex$size\" \"png:$ofile\""
 msgstr ""
+"\n"
+"#!/bin/sh\n"
+"#\n"
+"# eps-thumbnailer - Exemple d'script de miniaturització per fitxers EPS.\n"
+"#\n"
+"# Ús: esp-thumbnailer FITXER-EPS FITXER-PNG MIDA\n"
+"#\n"
+"\n"
+"# paràmetres de la línia d'ordres\n"
+"ifile=$1\n"
+"ofile=$2\n"
+"size=$3\n"
+"\n"
+"# crida a convert (ImageMagick)\n"
+"exec convert \"eps:$ifile\" -scale \"$sizex$size\" \"png:$ofile\""
 
 #: ../docs/manual/C/Thunar.xml.in:1167(para)
 msgid ""
@@ -1860,6 +1953,9 @@ msgid ""
 "sure the file is executable and install it to <filename role=\"directory\">/"
 "usr/local/bin</filename>."
 msgstr ""
+"Deseu aquest script com <filename>eps-thumbnailer</filename>, comproveu que "
+"sigui executable i instaŀleu-lo a  <filename role=\"directory\">/usr/local/"
+"bin</filename>."
 
 #: ../docs/manual/C/Thunar.xml.in:1172(screen)
 #, no-wrap
@@ -1868,12 +1964,17 @@ msgid ""
 "$ chmod +x eps-thumbnailer\n"
 "$ sudo install eps-thumbnailer /usr/local/bin/eps-thumbnailer"
 msgstr ""
+"\n"
+"$ chmod +x eps-thumbnailer\n"
+"$ sudo install eps-thumbnailer /usr/local/bin/eps-thumbnailer"
 
 #: ../docs/manual/C/Thunar.xml.in:1176(para)
 msgid ""
 "Next we need to create the thumbnail description file <filename>eps-"
 "thumbnailer.desktop</filename>, which looks like this:"
 msgstr ""
+"El següent que us cal és crear el fitxer de descripció del miniaturitzador "
+"<filename>eps-thumbnailer.desktop</filename>, que serà com:"
 
 #: ../docs/manual/C/Thunar.xml.in:1180(programlisting)
 #, no-wrap
@@ -1888,12 +1989,24 @@ msgid ""
 "MimeType=image/x-eps;\n"
 "X-Thumbnailer-Exec=/usr/local/bin/eps-thumbnailer %i %o %s"
 msgstr ""
+"\n"
+"[Desktop Entry]\n"
+"Version=1.0\n"
+"Encoding=UTF-8\n"
+"Type=X-Thumbnailer\n"
+"Name=EPS Thumbnailer\n"
+"Name[ca]=Miniaturitzador EPS\n"
+"TryExec=convert\n"
+"MimeType=image/x-eps;\n"
+"X-Thumbnailer-Exec=/usr/local/bin/eps-thumbnailer %i %o %s"
 
 #: ../docs/manual/C/Thunar.xml.in:1190(para)
 msgid ""
 "This file must be installed to <filename role=\"directory\">/usr/local/share/"
 "thumbnailers</filename> (create the folder if it does not exists)."
 msgstr ""
+"Aquest fitxer s'ha d'instaŀlar a <filename role=\"directory\">/usr/local/"
+"share/thumbnailers</filename> (creeu la carpeta si aquesta no existeix)."
 
 #: ../docs/manual/C/Thunar.xml.in:1195(screen)
 #, no-wrap
@@ -1902,6 +2015,9 @@ msgid ""
 "$ sudo install -d /usr/local/share/thumbnailers\n"
 "$ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbnailer.desktop"
 msgstr ""
+"\n"
+"$ sudo install -d /usr/local/share/thumbnailers\n"
+"$ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbnailer.desktop"
 
 #: ../docs/manual/C/Thunar.xml.in:1199(para)
 msgid ""
@@ -1910,6 +2026,11 @@ msgid ""
 "be present on the system for the thumbnailer to be useful. In this case, our "
 "script is useless if the <command>convert</command> utility is not present."
 msgstr ""
+"El fitxer <filename>eps-thumbnailer.desktop</filename> empra la clau "
+"especial <literal>TryExec</literal>, la qual, si s'especifica, anomena una "
+"ordre que haurà d'estar present en el vostre sistema per a que el "
+"miniaturitzador funcioni. En aquest cas, un script no té cap utilitat si "
+"l'ordre <command>convert</command> no està en el sistema."
 
 #: ../docs/manual/C/Thunar.xml.in:1205(para)
 msgid ""
@@ -1926,11 +2047,24 @@ msgid ""
 "filename> on Debian/Ubuntu). So for example, if Thunar is installed in "
 "<filename role=\"directory\">/usr</filename>, invoke the utility as follows:"
 msgstr ""
+"El darrer pas és generar la memòria cau del miniaturitzador i, així, Thunar "
+"mostrarà les miniatures. La memòria cau del miniaturitzador es troba a "
+"<filename>$XDG_CACHE_HOME/Thunar/thumbnailers.cache</filename> (a no ser que "
+"vostè o l'administrador del sistema hageu sobreesrcit, <varname>"
+"$XDG_CACHE_HOME</varname> apunta a la carpeta <filename role=\"directory"
+"\">~/.cache/</filename>). La memòria cau del miniaturitzador la genera "
+"periòdicament Thunar, però podeu forçar la seva regeneració mitjançant "
+"l'ordre <filename>thunar-vfs-update-thumbnailers-cache-1</filename> i que és "
+"part de Thunar. Aquesta utilitat generalment la trobareu a la sub-carpeta "
+"<filename role=\"directory\">libexec</filename> del prefixe de la vostra "
+"instaŀlació (<filename role=\"directory\">sbin</filename> a Debian/Ubuntu). "
+"Per exemple, si Thunar s'ha instaŀlat a <filename role=\"directory\">/usr</"
+"filename>, crideu-la de la següent manera:"
 
 #: ../docs/manual/C/Thunar.xml.in:1216(screen)
 #, no-wrap
 msgid "$ /usr/libexec/thunar-vfs-update-thumbnailers-cache-1"
-msgstr ""
+msgstr "$ /usr/libexec/thunar-vfs-update-thumbnailers-cache-1"
 
 #: ../docs/manual/C/Thunar.xml.in:1218(para)
 msgid ""
@@ -1938,6 +2072,9 @@ msgid ""
 "account, since the thumbnailers cache is stored in your home folder, rather "
 "than a system wide location."
 msgstr ""
+"Però comproveu que l'executeu des de el vostre compte d'usuari i no des de "
+"el del super-usuari, ja que la memòria cau dels miniaturitzadors es desen en "
+"la vostra carpeta i no en una del sistema."
 
 #: ../docs/manual/C/Thunar.xml.in:1223(para)
 msgid ""
@@ -1947,21 +2084,29 @@ msgid ""
 "thumbnails using your custom thumbnailers. Otherwise you might need to "
 "completely restart Thunar to apply the changes, using"
 msgstr ""
+"Ara, si Thunar s'ha compilat amb compatibilitat per fer el seguiment de les "
+"alteracions de fitxers (ja sigui emprant els serveis de FAM o de Gamin), "
+"agafarà de forma automàtica la memòria cau dels nous moniaturitzadors en uns "
+"pocs segons i, després, serà capaç de generar miniatures emprant els vostres "
+"miniaturitzadors personalitzats. En cas contrari, caldrà que reinicieu "
+"Thunar per aplicar els canvis emprant"
 
 #: ../docs/manual/C/Thunar.xml.in:1229(screen)
 #, no-wrap
 msgid "$ Thunar -q"
-msgstr ""
+msgstr "$ Thunar -q"
 
 #: ../docs/manual/C/Thunar.xml.in:1231(para)
 msgid ""
 "to terminate any running instance, and afterwards restart it from your "
 "launcher."
 msgstr ""
+"per finalitzar qualsevol instància que s'estigui executat i, així, reiniciar-"
+"lo des del llançador."
 
 #: ../docs/manual/C/Thunar.xml.in:1237(title)
 msgid "Cleaning up Thumbnails"
-msgstr ""
+msgstr "Neteja de miniatures"
 
 #: ../docs/manual/C/Thunar.xml.in:1239(para)
 msgid ""
@@ -1971,11 +2116,16 @@ msgid ""
 "Standard</ulink>. While testing a new thumbnailer, it might help to clean up "
 "the thumbnail cache using"
 msgstr ""
+"Les miniatures generades es desen a la carpeta <filename role=\"directory"
+"\">~/.thumbnails/</filename> en compliment amb aquest <ulink type=\"http\" "
+"url=\"http://jens.triq.net/thumbnail-spec/index.html\">estàndard de gestió "
+"de miniatures</ulink>. Quan es prova un miniaturitzador nou pot ser útil "
+"netejar la memòria cau de miniatures emprant"
 
 #: ../docs/manual/C/Thunar.xml.in:1245(screen)
 #, no-wrap
 msgid "$ rm -rf ~/.thumbnails/"
-msgstr ""
+msgstr "$ rm -rf ~/.thumbnails/"
 
 #: ../docs/manual/C/Thunar.xml.in:1247(para)
 msgid ""
@@ -1983,6 +2133,10 @@ msgid ""
 "information stored within this folder was automatically generated from files "
 "in your file system, you will not loose any sensitive data."
 msgstr ""
+"que us alliberarà una mica d'espai lliure en la vostra carpeta d'usuari. "
+"Degut a que tota la informació desada en aquesta carpeta es genera "
+"automàticament a partir de fitxers del vostre sistema, no perdreu cap "
+"informació important."
 
 #: ../docs/manual/C/Thunar.xml.in:1257(title)
 msgid "Advanced Topics"
