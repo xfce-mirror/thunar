@@ -50,6 +50,7 @@
 #endif
 
 #include <gio/gio.h>
+#include <libxfce4ui/libxfce4ui.h>
 
 #include <thunarx/thunarx.h>
 
@@ -1090,8 +1091,8 @@ thunar_file_execute (ThunarFile *file,
         }
 
       /* execute the command */
-      result = thunar_exec_on_screen (screen, directory, argv, NULL, G_SPAWN_SEARCH_PATH,
-                                      snotify, icon, error);
+      result = xfce_spawn_on_screen (screen, directory, argv, NULL, G_SPAWN_SEARCH_PATH,
+                                     snotify, gtk_get_current_event_time (), icon, error);
 
       /* release the working directory */
       g_free (directory);

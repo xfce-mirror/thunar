@@ -36,19 +36,6 @@ gboolean thunar_exec_parse     (const gchar  *exec,
                                 gchar      ***argv,
                                 GError      **error);
 
-gboolean thunar_exec_on_screen (GdkScreen    *screen,
-                                const gchar  *working_directory,
-                                gchar       **argv,
-                                gchar       **envp,
-                                GSpawnFlags   flags,
-                                gboolean      startup_notify,
-                                const gchar  *icon_name,
-                                GError      **error);
-
-gboolean thunar_exec_sync      (const gchar  *command_line,
-                                GError      **error,
-                                ...);
-
 G_END_DECLS;
 
 #endif /* !__THUNAR_EXEC_H__ */
