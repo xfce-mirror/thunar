@@ -215,11 +215,7 @@ Thunar_SOURCES =							\
 	thunar-view.h							\
 	thunar-window.c							\
 	thunar-window.h							\
-	thunar-window-ui.h						\
-	xfce-heading.c							\
-	xfce-heading.h							\
-	xfce-titled-dialog.c						\
-	xfce-titled-dialog.h
+	thunar-window-ui.h
 
 Thunar_CFLAGS =								\
 	$(EXO_CFLAGS)							\
@@ -227,6 +223,7 @@ Thunar_CFLAGS =								\
 	$(GIO_CFLAGS)							\
 	$(LIBSM_CFLAGS)							\
 	$(LIBSTARTUP_NOTIFICATION_CFLAGS)				\
+	$(LIBXFCE4UI_CFLAGS)						\
 	$(PLATFORM_CFLAGS)
 
 Thunar_LDFLAGS =							\
@@ -241,7 +238,8 @@ Thunar_LDADD =								\
 	$(GTHREAD_LIBS)							\
 	$(GIO_LIBS)							\
 	$(LIBSTARTUP_NOTIFICATION_LIBS)					\
-	$(LIBSM_LIBS)
+	$(LIBSM_LIBS)							\
+	$(LIBXFCE4UI_LIBS)
 
 Thunar_DEPENDENCIES =							\
 	$(top_builddir)/tdb/libtdb.la					\

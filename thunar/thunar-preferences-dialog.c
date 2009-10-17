@@ -21,6 +21,8 @@
 #include <config.h>
 #endif
 
+#include <libxfce4ui/libxfce4ui.h>
+
 #include <thunar/sexy-url-label.h>
 #include <thunar/thunar-compact-view.h>
 #include <thunar/thunar-details-view.h>
@@ -33,7 +35,6 @@
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
-#include <thunar/xfce-titled-dialog.h>
 
 
 
