@@ -36,6 +36,8 @@
 #include <time.h>
 #endif
 
+#include <libxfce4ui/libxfce4ui.h>
+
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-browser.h>
 #include <thunar/thunar-dialogs.h>
@@ -563,7 +565,7 @@ thunar_application_drive_eject (GVolumeMonitor    *volume_monitor,
       argv[3] = NULL;
 
       /* locate the currently active screen (the one with the pointer) */
-      screen = thunar_gdk_screen_get_active ();
+      screen = xfce_gdk_screen_get_active (NULL);
 
       /* try to spawn the volume_monitor on the active screen */
       if (!gdk_spawn_on_screen (screen, NULL, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, &err))
@@ -614,7 +616,7 @@ thunar_application_volman_idle (gpointer user_data)
           application->volman_udis = g_slist_delete_link (application->volman_udis, application->volman_udis);
 
           /* locate the currently active screen (the one with the pointer) */
-          screen = thunar_gdk_screen_get_active ();
+          screen = xfce_gdk_screen_get_active (NULL);
 
           /* try to spawn the volman on the active screen */
           if (gdk_spawn_on_screen (screen, NULL, argv, NULL, G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH, NULL, NULL, &pid, &err))
