@@ -1071,10 +1071,6 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
   /* determine and the startup id of the file */
   startup_id = g_object_get_qdata (G_OBJECT (file), thunar_application_startup_id_quark);
 
-  /* unset the startup id */
-  if (startup_id != NULL)
-    g_object_set_qdata (G_OBJECT (file), thunar_application_startup_id_quark, NULL);
-
   /* check if resolving/mounting failed */
   if (error != NULL)
     {
@@ -1109,6 +1105,10 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
           thunar_application_process_files (application);
         }
     }
+
+  /* unset the startup id */
+  if (startup_id != NULL)
+    g_object_set_qdata (G_OBJECT (file), thunar_application_startup_id_quark, NULL);
 }
 
 
