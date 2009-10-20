@@ -11,14 +11,16 @@ Requires:		fam
 Requires:		libexif
 Requires:		shared-mime-info >= 0.15
 Requires:		desktop-file-utils >= 0.7
-Requires:		exo0.3 >= @EXO_REQUIRED_VERSION@
+Requires:		exo1 >= @EXO_REQUIRED_VERSION@
+Requires:               libxfce4ui >= @LIBXFCE4UI_REQUIRED_VERSION@
 Requires:		startup-notification >= @LIBSTARTUP_NOTIFICATION_REQUIRED_VERSION@
 BuildRequires:		fam-devel
 BuildRequires:		libjpeg-devel
 BuildRequires:		libexif-devel
 BuildRequires:		libpng-devel >= 2:1.2.2-16
 BuildRequires:		desktop-file-utils >= 0.7
-BuildRequires:		exo0.3-devel >= @EXO_REQUIRED_VERSION@
+BuildRequires:		exo1-devel >= @EXO_REQUIRED_VERSION@
+BuildRequires:          libxfce4ui-devel >= @LIBXFCE4UI_REQUIRED_VERSION@
 BuildRequires:		startup-notification-devel >= @LIBSTARTUP_NOTIFICATION_REQUIRED_VERSION@
 
 Provides:		@PACKAGE_TARNAME@-devel
