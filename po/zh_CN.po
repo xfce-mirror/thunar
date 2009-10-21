@@ -5,13 +5,13 @@
 # Hunt Xu <huntxu@live.cn>, 2008, 2009.
 # Chris K. Zhang <plutino@gmail.com>, 2009.
 # Aron Xu <aronmalache@163.com>, 2009.
-#
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-09-25 15:26+0200\n"
-"PO-Revision-Date: 2009-06-29 14:09+0800\n"
+"PO-Revision-Date: 2009-10-21 00:38+0800\n"
 "Last-Translator: Hunt Xu <huntxu@live.cn>\n"
 "Language-Team: Chinese <xfce-i18n@xfce.org>\n"
 "MIME-Version: 1.0\n"
@@ -56,7 +56,7 @@ msgstr "[文件...]"
 #: ../thunar/main.c:148
 #, c-format
 msgid "Thunar: Failed to open display: %s\n"
-msgstr "Thunar: 无法打开显示器: %s\n"
+msgstr "Thunar: 打开显示失败: %s\n"
 
 #. yep, there's an error, so print it
 #: ../thunar/main.c:153
@@ -132,13 +132,13 @@ msgstr "按照降序的顺序排列"
 #. display an error message to the user
 #: ../thunar/thunar-application.c:363
 msgid "Failed to launch operation"
-msgstr "无法启动操作"
+msgstr "启动操作失败"
 
 #. failed to launch exo-eject, inform the user about this
 #: ../thunar/thunar-application.c:572
 #, c-format
 msgid "Failed to execute \"%s\""
-msgstr "无法执行“%s”"
+msgstr "执行 \"%s\" 失败"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1083 ../thunar/thunar-application.c:1205
@@ -147,38 +147,38 @@ msgstr "无法执行“%s”"
 #: ../thunar/thunar-shortcuts-view.c:1236 ../thunar/thunar-window.c:1501
 #, c-format
 msgid "Failed to open \"%s\""
-msgstr "无法打开“%s”"
+msgstr "打开 \"%s\" 失败"
 
 #: ../thunar/thunar-application.c:1209
 #, c-format
 msgid "Failed to open \"%s\": %s"
-msgstr "无法打开“%s”: %s"
+msgstr "打开 \"%s\" 失败: %s"
 
 #: ../thunar/thunar-application.c:1284
 msgid "Copying files..."
 msgstr "正在复制文件..."
 
 #: ../thunar/thunar-application.c:1320
-#, fuzzy, c-format
+#, c-format
 msgid "Copying files to \"%s\"..."
-msgstr "正在复制文件..."
+msgstr "正在复制文件至 \"%s\"..."
 
 #: ../thunar/thunar-application.c:1366
-#, fuzzy, c-format
+#, c-format
 msgid "Creating symbolic links in \"%s\"..."
-msgstr "正在建立符号链接..."
+msgstr "正在 \"%s\" 建立符号链接..."
 
 #: ../thunar/thunar-application.c:1419
-#, fuzzy, c-format
+#, c-format
 msgid "Moving files into \"%s\"..."
-msgstr "正在移动文件到回收站..."
+msgstr "正在移动文件至 \"%s\"..."
 
 #: ../thunar/thunar-application.c:1504
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
-msgstr "您确定要永久删除文件“%s”吗?"
+msgstr "您确定要永久删除文件 \"%s\" 吗?"
 
 #: ../thunar/thunar-application.c:1509
 #, c-format
@@ -236,13 +236,13 @@ msgstr "正在清空回收站..."
 #: ../thunar/thunar-application.c:1762
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
-msgstr "无法确定“%s”的原始位置"
+msgstr "确定 \"%s\" 的原始路径失败"
 
 #. display an error dialog
 #: ../thunar/thunar-application.c:1779
-#, fuzzy, c-format
+#, c-format
 msgid "Could not restore \"%s\""
-msgstr "恢复“%s”失败"
+msgstr "无法恢复 \"%s\""
 
 #: ../thunar/thunar-application.c:1787
 msgid "Restoring files..."
@@ -252,7 +252,7 @@ msgstr "正在恢复文件..."
 #: ../thunar/thunar-chooser-button.c:234 ../thunar/thunar-chooser-dialog.c:465
 #, c-format
 msgid "Failed to set default application for \"%s\""
-msgstr "无法为“%s”设定预设应用程序"
+msgstr "为 \"%s\" 设定默认应用程序失败"
 
 #: ../thunar/thunar-chooser-button.c:306
 msgid "No application selected"
@@ -267,7 +267,7 @@ msgstr "选择的应用程序用来打开本文件和其他 \"%s\" 形式的文�
 #. add the "Other Application..." choice
 #: ../thunar/thunar-chooser-button.c:425
 msgid "_Other Application..."
-msgstr "其他应用程序(_O)"
+msgstr "其他应用程序(_O)..."
 
 #: ../thunar/thunar-chooser-dialog.c:185 ../thunar/thunar-launcher.c:171
 msgid "Open With"
@@ -298,12 +298,12 @@ msgstr "设为此类文件的预设模式(_D)"
 #: ../thunar/thunar-chooser-dialog.c:438
 #, c-format
 msgid "Failed to add new application \"%s\""
-msgstr "无法新增应用程序 \"%s\""
+msgstr "添加新应用程序 \"%s\" 失败"
 
 #: ../thunar/thunar-chooser-dialog.c:492
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to execute application \"%s\""
-msgstr "无法新增应用程序 \"%s\""
+msgstr "执行应用程序 \"%s\" 失败"
 
 #. append the "Remove Launcher" item
 #: ../thunar/thunar-chooser-dialog.c:564
@@ -332,7 +332,7 @@ msgstr "将打开 \"%s\" 类型文件的预设应用程序改设为所选择程�
 #: ../thunar/thunar-chooser-dialog.c:710
 #, c-format
 msgid "Are you sure that you want to remove \"%s\"?"
-msgstr "您确定真的要删除“%s”吗？"
+msgstr "您确定真的要删除 \"%s\" 吗？"
 
 #: ../thunar/thunar-chooser-dialog.c:716
 msgid ""
@@ -344,13 +344,13 @@ msgid ""
 msgstr ""
 "将会在上下文菜单中删除程序启动器，但是不会卸载程序本身。\n"
 "\n"
-"您只能删除使用文件管理器“打开方式”对话框创建的自定义的应用程序启动器。"
+"您只能删除使用文件管理器 “打开方式” 对话框创建的自定义的应用程序启动器。"
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:731
 #, c-format
 msgid "Failed to remove \"%s\""
-msgstr "删除“%s”失败"
+msgstr "删除 \"%s\" 失败"
 
 #: ../thunar/thunar-chooser-dialog.c:757
 #: ../plugins/thunar-uca/thunar-uca-editor.c:465
@@ -557,7 +557,7 @@ msgstr ""
 #. tell the user that we failed
 #: ../thunar/thunar-dialogs.c:359 ../thunar/thunar-renamer-dialog.c:942
 msgid "Failed to open the documentation browser"
-msgstr "无法打开文档浏览器"
+msgstr "打开文档浏览器失败"
 
 #: ../thunar/thunar-dialogs.c:456
 msgid "_Yes"
@@ -601,29 +601,27 @@ msgid "_Replace"
 msgstr "替换(_R)"
 
 #: ../thunar/thunar-dialogs.c:591
-#, fuzzy, c-format
+#, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
-msgstr "此目录已存在一个名为“%s”的文件。"
+msgstr "此目录已存在一个名为 \"%s\" 的符号链接。"
 
 #: ../thunar/thunar-dialogs.c:596
-#, fuzzy, c-format
+#, c-format
 msgid "This folder already contains a folder \"%s\"."
-msgstr "此目录已存在一个名为“%s”的文件。"
+msgstr "此目录已存在一个名为 \"%s\" 的目录。"
 
 #: ../thunar/thunar-dialogs.c:601
 #, c-format
 msgid "This folder already contains a file \"%s\"."
-msgstr "此目录已存在一个名为“%s”的文件。"
+msgstr "此目录已存在一个名为 \"%s\" 的文件。"
 
 #: ../thunar/thunar-dialogs.c:613
-#, fuzzy
 msgid "ReplaceDialogPart1|Do you want to replace the link"
-msgstr "您要替换现有的文件，"
+msgstr "您要替换现有的链接，"
 
 #: ../thunar/thunar-dialogs.c:615
-#, fuzzy
 msgid "ReplaceDialogPart1|Do you want to replace the existing folder"
-msgstr "您要替换现有的文件，"
+msgstr "您要替换现有的目录，"
 
 #: ../thunar/thunar-dialogs.c:617
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
@@ -643,14 +641,12 @@ msgid "Modified:"
 msgstr "最近修改:"
 
 #: ../thunar/thunar-dialogs.c:644
-#, fuzzy
 msgid "ReplaceDialogPart2|with the following link?"
-msgstr "转而使用下列文件吗？"
+msgstr "转而使用下面的符号链接吗？"
 
 #: ../thunar/thunar-dialogs.c:646
-#, fuzzy
 msgid "ReplaceDialogPart2|with the following folder?"
-msgstr "转而使用下列文件吗？"
+msgstr "转而使用下面的目录吗？"
 
 #: ../thunar/thunar-dialogs.c:648
 msgid "ReplaceDialogPart2|with the following file?"
@@ -673,7 +669,7 @@ msgstr "链接到这里(_L)"
 #: ../thunar/thunar-dnd.c:253 ../thunar/thunar-launcher.c:537
 #, c-format
 msgid "Failed to execute file \"%s\""
-msgstr "无法执行文件“%s”"
+msgstr "执行文件 \"%s\" 失败"
 
 #: ../thunar/thunar-enum-types.c:45
 msgid "Name only"
@@ -753,9 +749,9 @@ msgid "The root folder has no parent"
 msgstr "根目录没有父目录"
 
 #: ../thunar/thunar-file.c:992
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to parse the desktop file: %s"
-msgstr "无法创建空文件 \"%s\""
+msgstr "解析 desktop 文件失败: %s"
 
 #: ../thunar/thunar-file.c:1030
 #, c-format
@@ -793,7 +789,7 @@ msgstr "转到之后浏览过的文件夹"
 #: ../thunar/thunar-icon-factory.c:650
 #, c-format
 msgid "Failed to load fallback icon from \"%s\" (%s). Check your installation!"
-msgstr "无法由“%s”(%s)载入备用图标。请检查您的安装！"
+msgstr "由 \"%s\" 载入备用图标失败 (%s)。请检查您的安装！"
 
 #: ../thunar/thunar-icon-view.c:164
 msgid "Icon based directory listing"
@@ -806,17 +802,17 @@ msgstr "图标视图"
 #: ../thunar/thunar-io-jobs.c:161 ../thunar/thunar-io-jobs.c:298
 #, c-format
 msgid "The file \"%s\" already exists"
-msgstr "文件“%s”已经存在"
+msgstr "文件 \"%s\" 已经存在"
 
 #: ../thunar/thunar-io-jobs.c:184
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create empty file \"%s\": %s"
-msgstr "无法创建空文件 \"%s\""
+msgstr "创建空文件 \"%s\" 失败: %s"
 
 #: ../thunar/thunar-io-jobs.c:321
 #, c-format
 msgid "Failed to create directory \"%s\": %s"
-msgstr "无法创建目录 \"%s\": %s"
+msgstr "创建目录 \"%s\" 失败: %s"
 
 #. tell the user that we're preparing to unlink the files
 #: ../thunar/thunar-io-jobs.c:385
@@ -824,30 +820,30 @@ msgid "Preparing..."
 msgstr "正在准备..."
 
 #: ../thunar/thunar-io-jobs.c:447
-#, fuzzy, c-format
+#, c-format
 msgid "Could not delete file \"%s\": %s"
-msgstr "无法 stat 文件 \"%s\": %s"
+msgstr "无法删除文件 \"%s\": %s"
 
 #: ../thunar/thunar-io-jobs.c:595
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
-msgstr ""
+msgstr "无法创建指向 \"%s\" 的符号链接，因为它不是一个本地文件"
 
 #. generate a useful error message
 #: ../thunar/thunar-io-jobs.c:782
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change the owner of \"%s\": %s"
-msgstr "无法更改文件“%s”的所有者"
+msgstr "更改文件 \"%s\" 的所有者失败: %s"
 
 #: ../thunar/thunar-io-jobs.c:783
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change the group of \"%s\": %s"
-msgstr "无法更改文件“%s”所属的用户组"
+msgstr "更改文件 \"%s\" 所属的用户组失败: %s"
 
 #: ../thunar/thunar-io-jobs.c:939
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
-msgstr "无法更改“%s”的权限设定"
+msgstr "更改 \"%s\" 的权限失败: %s"
 
 #. Copy/link name for n <= 3
 #: ../thunar/thunar-io-jobs-util.c:37
@@ -883,12 +879,12 @@ msgstr "%s 的第三个链接"
 
 #. Fallback copy/link name for n >= 4
 #: ../thunar/thunar-io-jobs-util.c:42
-#, fuzzy, c-format
+#, c-format
 msgid "%uth copy of %s"
 msgstr "%2$s 的第 %1$u 份副本"
 
 #: ../thunar/thunar-io-jobs-util.c:42
-#, fuzzy, c-format
+#, c-format
 msgid "%uth link to %s"
 msgstr "%2$s 的第 %1$u 个链接"
 
@@ -899,7 +895,7 @@ msgid ""
 "\n"
 "If you replace an existing file, its contents will be overwritten."
 msgstr ""
-"文件“%s”已经存在。您想要用一个空文件替换它吗？\n"
+"文件 \"%s\" 已经存在。您想要用一个空文件替换它吗？\n"
 "\n"
 "如果您替换一个已存在的文件，它的内容将被覆盖。"
 
@@ -908,9 +904,8 @@ msgid "Do you want to overwrite it?"
 msgstr "您想要覆盖它吗？"
 
 #: ../thunar/thunar-job.c:388
-#, fuzzy
 msgid "Do you want to create it?"
-msgstr "您想要覆盖它吗？"
+msgstr "您想要创建它吗？"
 
 #: ../thunar/thunar-job.c:490
 msgid "Do you want to skip it?"
@@ -945,14 +940,14 @@ msgstr "选择其他应用程序来打开选择的文件"
 #: ../thunar/thunar-launcher.c:628
 #, c-format
 msgid "Failed to open file \"%s\""
-msgstr "无法打开文件 \"%s\""
+msgstr "打开文件 \"%s\" 失败"
 
 #. we can just tell that n files failed to open
 #: ../thunar/thunar-launcher.c:634
 #, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
-msgstr[0] "无法打开 %d 个文件"
+msgstr[0] "打开 %d 个文件失败"
 
 #: ../thunar/thunar-launcher.c:673
 msgid "Are you sure you want to open all folders?"
@@ -1036,7 +1031,7 @@ msgstr "用 \"%s\" 打开"
 #: ../thunar/thunar-shortcuts-view.c:1488 ../thunar/thunar-tree-view.c:1851
 #, c-format
 msgid "Failed to mount \"%s\""
-msgstr "无法挂载 \"%s\""
+msgstr "挂载 \"%s\" 失败"
 
 #: ../thunar/thunar-launcher.c:1492
 msgid "Desktop (Create Link)"
@@ -1077,27 +1072,27 @@ msgstr[0] "%d 项"
 #: ../thunar/thunar-list-model.c:2247
 #, c-format
 msgid "\"%s\" broken link"
-msgstr "“%s”无效链接"
+msgstr "\"%s\" 无效链接"
 
 #: ../thunar/thunar-list-model.c:2251
 #, c-format
 msgid "\"%s\" (%s) link to %s"
-msgstr "“%s”(%s)链接至 %s"
+msgstr "\"%s\" (%s) 链接至 %s"
 
 #: ../thunar/thunar-list-model.c:2256
-#, fuzzy, c-format
+#, c-format
 msgid "\"%s\" shortcut"
-msgstr "快捷方式(_S)"
+msgstr "\"%s\" 快捷方式"
 
 #: ../thunar/thunar-list-model.c:2260
 #, c-format
 msgid "\"%s\" mountable"
-msgstr ""
+msgstr "\"%s\" 可挂载"
 
 #: ../thunar/thunar-list-model.c:2267
 #, c-format
 msgid "\"%s\" (%s) %s"
-msgstr "“%s” (%s) %s"
+msgstr "\"%s\" (%s) %s"
 
 #. TRANSLATORS: Try to come up with a short translation of "Original Path" (which is the path
 #. * where the trashed file/folder was located before it was moved to the trash), otherwise the
@@ -1198,19 +1193,19 @@ msgid "_Location:"
 msgstr "位置(_L):"
 
 #: ../thunar/thunar-location-entry.c:382
-#, fuzzy, c-format
+#, c-format
 msgid "File does not exist"
-msgstr "上下文菜单"
+msgstr "文件不存在"
 
 #: ../thunar/thunar-location-entry.c:726
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to determine the mount point of \"%s\""
-msgstr "无法确定 %s 的挂载点"
+msgstr "确定 \"%s\" 的挂载点失败"
 
 #: ../thunar/thunar-misc-jobs.c:84
-#, fuzzy, c-format
+#, c-format
 msgid "No templates installed"
-msgstr "未安装模板"
+msgstr "没有模板已安装"
 
 #: ../thunar/thunar-path-entry.c:222
 msgid "Icon size"
@@ -1593,11 +1588,11 @@ msgstr ""
 #. tell the user that we failed to come up with the thunar-volman configuration dialog
 #: ../thunar/thunar-preferences-dialog.c:640
 msgid "Failed to display the volume management settings"
-msgstr "无法显示介质管理器配置界面"
+msgstr "显示卷管理器设置界面失败"
 
 #: ../thunar/thunar-progress-dialog.c:94
 msgid "File Operation Progress"
-msgstr ""
+msgstr "文件操作进度"
 
 #. build the tooltip text
 #: ../thunar/thunar-progress-dialog.c:293
@@ -1607,27 +1602,26 @@ msgid_plural "%d file operations running"
 msgstr[0] ""
 
 #: ../thunar/thunar-progress-view.c:326
-#, fuzzy
 msgid "Cancelling..."
-msgstr "正在计算..."
+msgstr "正在取消..."
 
 #: ../thunar/thunar-progress-view.c:480
-#, fuzzy, c-format
+#, c-format
 msgid "%lu hour remaining"
 msgid_plural "%lu hours remaining"
-msgstr[0] "(剩余 %lu 小时)"
+msgstr[0] "剩余 %lu 小时"
 
 #: ../thunar/thunar-progress-view.c:485
-#, fuzzy, c-format
+#, c-format
 msgid "%lu minute remaining"
 msgid_plural "%lu minutes remaining"
-msgstr[0] "(剩余 %lu 分钟)"
+msgstr[0] "剩余 %lu 分钟"
 
 #: ../thunar/thunar-progress-view.c:490
-#, fuzzy, c-format
+#, c-format
 msgid "%lu second remaining"
 msgid_plural "%lu seconds remaining"
-msgstr[0] "(剩余 %lu 秒)"
+msgstr[0] "剩余 %lu 秒"
 
 #: ../thunar/thunar-properties-dialog.c:227
 msgid "General"
@@ -1683,7 +1677,7 @@ msgstr "符号"
 #: ../thunar/thunar-standard-view.c:2166 ../thunar/thunar-tree-view.c:1631
 #, c-format
 msgid "Failed to rename \"%s\""
-msgstr "无法重命名\"%s\""
+msgstr "重命名 \"%s\" 失败"
 
 #. allocate the icon chooser
 #. allocate the chooser dialog
@@ -1697,7 +1691,7 @@ msgstr "为 \"%s\" 选择一个图标"
 #: ../thunar/thunar-properties-dialog.c:734
 #, c-format
 msgid "Failed to change icon of \"%s\""
-msgstr "无法更改 \"%s\" 的图标"
+msgstr "更改 \"%s\" 的图标失败"
 
 #. update the properties dialog title
 #: ../thunar/thunar-properties-dialog.c:823
@@ -1832,7 +1826,7 @@ msgstr "批量重命名 - 重命名多个文件"
 #: ../thunar/thunar-renamer-progress.c:180
 #, c-format
 msgid "Failed to rename \"%s\" to \"%s\"."
-msgstr "不能把 \"%s\" 重命名为 \"%s\"。"
+msgstr "把 \"%s\" 重命名为 \"%s\" 失败。"
 
 #: ../thunar/thunar-renamer-progress.c:187
 msgid ""
@@ -1899,14 +1893,14 @@ msgstr "路径 \"%s\" 不是目录"
 #. display an error message to the user
 #: ../thunar/thunar-shortcuts-view.c:1187
 msgid "Failed to add new shortcut"
-msgstr "无法创建快捷方式"
+msgstr "创建新的快捷方式失败"
 
 #: ../thunar/thunar-shortcuts-view.c:1372
 #: ../thunar/thunar-shortcuts-view.c:1409 ../thunar/thunar-tree-view.c:1707
 #: ../thunar/thunar-tree-view.c:1744
 #, c-format
 msgid "Failed to eject \"%s\""
-msgstr "无法弹出 \"%s\" "
+msgstr "弹出 \"%s\" 失败"
 
 #: ../thunar/thunar-size-label.c:146
 msgid "Click here to stop calculating the total size of the folder."
@@ -2048,12 +2042,12 @@ msgstr "XDS 拖拽页提供的无效文件名"
 #: ../thunar/thunar-standard-view.c:2712
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
-msgstr "创建到URL \"%s\" 的连接失败"
+msgstr "创建到URL \"%s\" 的链接失败"
 
 #: ../thunar/thunar-standard-view.c:3050
 #, c-format
 msgid "Failed to open directory \"%s\""
-msgstr "无法打开目录 \"%s\""
+msgstr "打开目录 \"%s\" 失败"
 
 #: ../thunar/thunar-standard-view.c:3377
 msgid "Prepare the selected file to be moved with a Paste command"
@@ -2101,35 +2095,34 @@ msgstr "正在搜集文件..."
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:665
-#, fuzzy, c-format
+#, c-format
 msgid "Trying to restore \"%s\""
-msgstr "恢复“%s”失败"
+msgstr "尝试恢复 \"%s\""
 
 #: ../thunar/thunar-transfer-job.c:690
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file "
 "\"%s\" from the trash"
 msgstr ""
-"文件夹“%s”已经不再存在，但是从回收站中把“%s”文件还原需要此文件夹。你想\n"
-"再次创建这个文件夹吗？"
+"文件夹 \"%s\" 已经不再存在，但是从回收站中把文件 \"%s\" 还原需要此文件夹"
 
 #: ../thunar/thunar-transfer-job.c:715
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to restore the folder \"%s\""
-msgstr "无法打开文件夹 \"%s\""
+msgstr "恢复文件夹 \"%s\" 失败"
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:732
-#, fuzzy, c-format
+#, c-format
 msgid "Trying to move \"%s\""
-msgstr "删除“%s”失败"
+msgstr "尝试移动 \"%s\""
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:757
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
-msgstr ""
+msgstr "无法直接移动 \"%s\"。正在收集需要复制的文件..."
 
 #: ../thunar/thunar-trash-action.c:104
 msgid "T_rash"
@@ -2161,7 +2154,7 @@ msgstr "无效的路径"
 #: ../thunar/thunar-util.c:144
 #, c-format
 msgid "Unknown user \"%s\""
-msgstr "未知用户“%s”"
+msgstr "未知用户 \"%s\""
 
 #. TRANSLATORS: file was modified less than one day ago
 #: ../thunar/thunar-util.c:204
@@ -2302,9 +2295,8 @@ msgid "Go to the desktop folder"
 msgstr "转到桌面文件夹"
 
 #: ../thunar/thunar-window.c:311
-#, fuzzy
 msgid "Browse the file system"
-msgstr "使用文件管理器浏览文件系统"
+msgstr "浏览文件系统"
 
 #: ../thunar/thunar-window.c:312
 msgid "Go to the documents folder"
@@ -2445,30 +2437,30 @@ msgstr "警告，您正在以超级用户的身份使用，可能会对您的系
 #. create the network action
 #: ../thunar/thunar-window.c:1435
 msgid "Network"
-msgstr ""
+msgstr "网络"
 
 #: ../thunar/thunar-window.c:1435
 msgid "Browse the network"
-msgstr ""
+msgstr "浏览网络"
 
 #: ../thunar/thunar-window.c:1475
 #, c-format
 msgid "Failed to launch \"%s\""
-msgstr "无法启动 \"%s\""
+msgstr "启动 \"%s\" 失败"
 
 #: ../thunar/thunar-window.c:1948
 msgid "Failed to open parent folder"
-msgstr "无法打开父文件夹"
+msgstr "打开上级文件夹失败"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:1973
 msgid "Failed to open the home folder"
-msgstr "无法打开用户主文件夹"
+msgstr "打开家目录失败"
 
 #: ../thunar/thunar-window.c:2034
 #, c-format
 msgid "Failed to open folder \"%s\""
-msgstr "无法打开文件夹 \"%s\""
+msgstr "打开文件夹 \"%s\" 失败"
 
 #. display the "About Templates" dialog
 #: ../thunar/thunar-window.c:2162
@@ -2489,9 +2481,9 @@ msgid ""
 "of the document will be created in the directory you are viewing."
 msgstr ""
 "如果您经常创建同一类文档，复制一份至此文件夹。Thunar 将加入此文档的条目\n"
-"至“新建文档”菜单。\n"
+"至 “新建文档” 菜单。\n"
 "\n"
-"浏览时可以从“新建文档”菜单选择条目新建此类文档。"
+"浏览时可以从 “新建文档” 菜单选择条目新建此类文档。"
 
 #: ../thunar/thunar-window.c:2203
 msgid "Do _not display this message again"
@@ -2499,20 +2491,18 @@ msgstr "不再显示此消息(_N)"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2247
-#, fuzzy
 msgid "Failed to open the file system root folder"
-msgstr "无法打开模板文件夹"
+msgstr "打开文件系统根目录失败"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2282
 msgid "Failed to display the contents of the trash can"
-msgstr "无法显示回收站"
+msgstr "显示回收站内容失败"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2317
-#, fuzzy
 msgid "Failed to browse the network"
-msgstr "无法打开家目录"
+msgstr "浏览网络失败"
 
 #: ../thunar/thunar-window.c:2359
 msgid ""
@@ -2636,7 +2626,7 @@ msgstr "链接接"
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:544
 #, c-format
 msgid "Failed to save \"%s\"."
-msgstr "保存“%s”失败。"
+msgstr "保存 \"%s\" 失败。"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:47
 msgid "Date Taken:"
@@ -2951,25 +2941,25 @@ msgstr "ZIP 命令终止，错误号 %d"
 
 #: ../plugins/thunar-sendto-email/main.c:408
 msgid "Failed to create temporary directory"
-msgstr "无法创建临时目录"
+msgstr "创建临时目录失败"
 
 #: ../plugins/thunar-sendto-email/main.c:470
 #: ../plugins/thunar-sendto-email/main.c:481
 #, c-format
 msgid "Failed to create symbolic link for \"%s\""
-msgstr "无法为“%s”创建符号链接"
+msgstr "为 \"%s\" 创建符号链接失败"
 
 #. tell the user that we failed to compress the file(s)
 #: ../plugins/thunar-sendto-email/main.c:505
 #, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
-msgstr[0] "无法压缩 %d 个文件"
+msgstr[0] "压缩 %d 个文件失败"
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:656
 msgid "Failed to compose new email"
-msgstr "无法撰写新电子邮件"
+msgstr "撰写新电子邮件失败"
 
 #: ../plugins/thunar-sendto-email/thunar-sendto-email.desktop.in.in.h:1
 msgid "Mail Recipient"
@@ -3043,14 +3033,14 @@ msgstr "新建动作"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:385
 msgid "Failed to save actions to disk."
-msgstr "无法保存动作到磁盘。"
+msgstr "保存动作到磁盘失败。"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:436
 #, c-format
 msgid ""
 "Are you sure that you want to delete\n"
 "action \"%s\"?"
-msgstr "您确定真的要彻底删除“%s”吗？"
+msgstr "您确定真的要彻底删除 \"%s\" 吗？"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:437
 msgid "If you delete a custom action, it is permanently lost."
@@ -3231,7 +3221,7 @@ msgstr "未知关闭元素 <%s>"
 #: ../plugins/thunar-uca/thunar-uca-model.c:1331
 #, c-format
 msgid "Failed to determine save location for uca.xml"
-msgstr "不能确定 uca.xml 保存的位置"
+msgstr "检测 uca.xml 保存的位置失败"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:1446
 #, c-format
@@ -3250,7 +3240,7 @@ msgstr "设置文件管理上下文菜单显示的自定义动作"
 #: ../plugins/thunar-uca/thunar-uca-provider.c:406
 #, c-format
 msgid "Failed to launch action \"%s\"."
-msgstr "无法启动动作 \"%s\" "
+msgstr "启动动作 \"%s\" 失败。"
 
 #: ../plugins/thunar-uca/uca.xml.in.h:1
 msgid "Example for a custom action"
@@ -3291,71 +3281,17 @@ msgstr "配置 Thunar 文件管理器"
 #~ msgid "Moving files..."
 #~ msgstr "正在移动文件..."
 
-#~ msgid "Failed to read folder contents"
-#~ msgstr "无法读取文件夹内容"
-
-#~ msgid "Failed to parse file"
-#~ msgstr "无法解析文件"
-
 #~ msgid "Invalid file name"
 #~ msgstr "无效的文件名"
 
 #~ msgid "Only local files may be renamed"
 #~ msgstr "只有本地文件可以被重命名"
 
-#~ msgid "Failed to open \"%s\" for reading"
-#~ msgstr "无法以读方式打开 \"%s\" "
-
-#~ msgid "Failed to open \"%s\" for writing"
-#~ msgstr "打开要写入的“%s”失败"
-
-#~ msgid "Failed to write data to \"%s\""
-#~ msgstr "写入数据到“%s”失败"
-
-#~ msgid "Failed to read data from \"%s\""
-#~ msgstr "从“%s”读取数据失败"
-
-#~ msgid "Failed to determine file info for \"%s\""
-#~ msgstr "确定“%s”的文件信息失败"
-
-#~ msgid "Failed to create directory \"%s\""
-#~ msgstr "创建目录“%s”失败"
-
-#~ msgid "Failed to create named fifo \"%s\""
-#~ msgstr "创建命名管道“%s”失败"
-
-#~ msgid "Failed to create symbolic link \"%s\""
-#~ msgstr "创建符号链接“%s”失败"
-
-#~ msgid "Special files cannot be copied"
-#~ msgstr "特殊文件无法被复制"
-
-#~ msgid "Symbolic links are not supported"
-#~ msgstr "不支持符号链接"
-
-#~ msgid "Failed to copy \"%s\" to \"%s\""
-#~ msgstr "复制“%s”到“%s”失败"
-
-#~ msgid "Failed to link \"%s\" to \"%s\""
-#~ msgstr "无法链接“%s”至“%s”"
-
-#~ msgid "Failed to move \"%s\" to \"%s\""
-#~ msgstr "无法移动“%s”至“%s”"
-
-#~ msgid "The URI \"%s\" does not refer to a valid resource in the trash"
-#~ msgstr "统一资源标志(URI) “%s”连接到回收站中一个无效的资源"
-
 #~ msgid "Trash"
 #~ msgstr "回收站"
 
 #~ msgid "Cannot move or copy files within the trash"
 #~ msgstr "无法把文件移动或复制到回收站"
-
-#~ msgid "Failed to load application from file %s"
-#~ msgstr "无法从文件 %s 载入应用程序"
-
-#~ msgid "Failed to remove \"%s\": %s"
-#~ msgstr "无法移除“%s”: %s"
 
 #~ msgid "Command"
 #~ msgstr "命令"
@@ -3381,9 +3317,6 @@ msgstr "配置 Thunar 文件管理器"
 #~ msgid "%s document"
 #~ msgstr "%s 文档"
 
-#~ msgid "The URI \"%s\" is invalid"
-#~ msgstr "统一资源标志(URI) “%s” 是无效的"
-
 #~ msgid "Path too long to fit into buffer"
 #~ msgstr "路径太长，无法放入缓冲区"
 
@@ -3398,12 +3331,6 @@ msgstr "配置 Thunar 文件管理器"
 
 #~ msgid "The desired thumbnail size"
 #~ msgstr "期望的缩略图大小"
-
-#~ msgid "Failed to connect to the HAL daemon: %s"
-#~ msgstr "无法连接至 HAL 守护进程: %s"
-
-#~ msgid "Create the folder \"%s\"?"
-#~ msgstr "新建文件夹“%s”？"
 
 #~ msgid "C_reate Folder"
 #~ msgstr "新建文件夹(_R)"
@@ -3426,9 +3353,6 @@ msgstr "配置 Thunar 文件管理器"
 
 #~ msgid "_Unmount Volume"
 #~ msgstr "卸载卷(_U)"
-
-#~ msgid "Failed to unmount \"%s\""
-#~ msgstr "无法卸载 \"%s\""
 
 #~ msgid "File Manager Settings"
 #~ msgstr "文件管理器设置"
@@ -3454,48 +3378,8 @@ msgstr "配置 Thunar 文件管理器"
 #~ msgid "Don't display any location selector"
 #~ msgstr "不显示位置选择器"
 
-#~ msgid "Delete the selected file permanently"
-#~ msgid_plural "Delete the selected files permanently"
-#~ msgstr[0] "永久删除所选择的文件"
-
-#~ msgid "Failed to change permisions of \"%s\""
-#~ msgstr "无法更改 \"%s\" 的权限设定: %s"
-
-#~ msgid "Failed to determine file info of \"%s\": %s"
-#~ msgstr "无法确定 \"%s\" 的文件信息: %s"
-
-#~ msgid ""
-#~ "Failed to remove \"%s\".\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "无法移除 \"%s\".\n"
-#~ "\n"
-#~ "您想要跳过吗？"
-
-#~ msgid ""
-#~ "Failed to create empty file \"%s\".\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "无法建立空文件 \"%s\".\n"
-#~ "\n"
-#~ "您想要跳过吗？"
-
-#~ msgid "Deleting directories..."
-#~ msgstr "删除目录中..."
-
-#~ msgid "Failed to remove directory \"%s\": %s"
-#~ msgstr "无法移除目录 \"%s\": %s"
-
 #~ msgid "Cannot transfer the root directory"
 #~ msgstr "无法转移根目录"
 
 #~ msgid "Operation canceled"
 #~ msgstr "撤销上次操作"
-
-#~ msgid "Failed to read link target from \"%s\""
-#~ msgstr "无法从 \"%s\" 读取连接目标"
-
-#~ msgid "Failed to copy special file \"%s\""
-#~ msgstr "无法复制特殊文件 \"%s\""
