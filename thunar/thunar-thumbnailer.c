@@ -745,7 +745,7 @@ thunar_thumbnailer_queue_async (ThunarThumbnailer *thumbnailer,
   /* queue thumbnails for the given URIs asynchronously */
   call = thunar_thumbnailer_proxy_queue_async (thumbnailer->thumbnailer_proxy,
                                                (const gchar **)uris, mime_hints, 
-                                               "default", 0, 
+                                               "normal", "foreground", 0, 
                                                thunar_thumbnailer_queue_async_reply,
                                                thumbnailer_call);
 
