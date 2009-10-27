@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-10-22 16:18+0200\n"
-"PO-Revision-Date: 2009-09-28 00:28+0200\n"
+"PO-Revision-Date: 2009-10-27 20:49+0100\n"
 "Last-Translator: Robert Hartl <hartl.robert@gmail.com>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
 "MIME-Version: 1.0\n"
@@ -770,7 +770,7 @@ msgstr "Koreňový priečinok nemá nadradený priečinok"
 #: ../thunar/thunar-file.c:993
 #, c-format
 msgid "Failed to parse the desktop file: %s"
-msgstr ""
+msgstr "Nepodarilo sa spracovať súbor pracovnej plochy: %s"
 
 #: ../thunar/thunar-file.c:1031
 #, c-format
@@ -1254,9 +1254,9 @@ msgid "File does not exist"
 msgstr "Súbor neexistuje"
 
 #: ../thunar/thunar-location-entry.c:726
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to determine the mount point of \"%s\""
-msgstr "Nepodarilo sa zistiť prípojný bod pre %s"
+msgstr "Nepodarilo sa zistiť prípojný bod pre \"%s\""
 
 #: ../thunar/thunar-misc-jobs.c:84
 #, c-format
@@ -1669,16 +1669,16 @@ msgstr "Nepodarilo sa zobraziť nastavenia správy zväzkov"
 
 #: ../thunar/thunar-progress-dialog.c:94
 msgid "File Operation Progress"
-msgstr ""
+msgstr "Priebeh operácie zo súborom"
 
 #. build the tooltip text
 #: ../thunar/thunar-progress-dialog.c:293
 #, c-format
 msgid "%d file operation running"
 msgid_plural "%d file operations running"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Prebieha %d operácia so súbormi"
+msgstr[1] "Prebiehajú %d operácie so súbormi"
+msgstr[2] "Prebieha %d operácií so súbormi"
 
 #: ../thunar/thunar-progress-view.c:326
 msgid "Cancelling..."
@@ -2221,13 +2221,13 @@ msgid "Trying to restore \"%s\""
 msgstr "Pokúšam sa obnoviť \"%s\""
 
 #: ../thunar/thunar-transfer-job.c:690
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file "
 "\"%s\" from the trash"
 msgstr ""
-"Adresár \"%s\" už neexistuje, ale je potrebné obnoviť súbor \"%s\" z koša. "
-"Chcete opäť adresár vytvoriť?"
+"Priečinok \"%s\" už neexistuje, ale je vyžadovaný pre obnovenie súboru \"%s"
+"\" z koša."
 
 #: ../thunar/thunar-transfer-job.c:715
 #, c-format
@@ -2245,6 +2245,8 @@ msgstr "Pokúšam sa presunúť \"%s\""
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr ""
+"Položku \"%s\" nie je možné priamo presunúť. Zhromažďovanie súborov pri "
+"kopírovaní..."
 
 #: ../thunar/thunar-trash-action.c:104
 msgid "T_rash"
@@ -2616,7 +2618,7 @@ msgstr "_Nezobrazovať viac túto správu"
 #. display an error to the user
 #: ../thunar/thunar-window.c:2252
 msgid "Failed to open the file system root folder"
-msgstr ""
+msgstr "Nepodarilo sa otvoriť koreňový priečinok"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2287
@@ -3182,9 +3184,8 @@ msgstr ""
 "akciu \"%s\"?"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:437
-#, fuzzy
 msgid "If you delete a custom action, it is permanently lost."
-msgstr "Odstránený súbor bude nenávratne stratený."
+msgstr "Ak odstránite vlastnú akciu, bude nenávratne stratená."
 
 #.
 #. Basic
