@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "POT-Creation-Date: 2009-04-20 15:23+0200\n"
-"PO-Revision-Date: 2009-10-16 22:06+0100\n"
+"PO-Revision-Date: 2009-11-26 17:42+0100\n"
 "Last-Translator: Carles Muñoz Gorriz <carlesmu@internautas.org>\n"
 "Language-Team: Catalan <xfce-i18n@xfce.org>\n"
 "MIME-Version: 1.0\n"
@@ -2140,11 +2140,11 @@ msgstr ""
 
 #: ../docs/manual/C/Thunar.xml.in:1257(title)
 msgid "Advanced Topics"
-msgstr ""
+msgstr "Temes avançats"
 
 #: ../docs/manual/C/Thunar.xml.in:1261(title)
 msgid "To Bulk Rename Files"
-msgstr ""
+msgstr "Per canviar els noms de fitxers en bloc"
 
 #: ../docs/manual/C/Thunar.xml.in:1263(para)
 msgid ""
@@ -2157,10 +2157,19 @@ msgid ""
 "<menuchoice><guimenu>Edit</guimenu><guimenuitem>Rename...</guimenuitem></"
 "menuchoice> from the main menu."
 msgstr ""
+"<emphasis>Canviar de nom</emphasis> els fitxers vol dir canviar de nom "
+"diversos fitxers alhora emprant algun criteri que s'aplica a almenys un dels "
+"fitxers. <application>Thunar</application> inclou un canviador de nom en "
+"bloc, el qual es pot executar de forma separada mitjançant l'ordre "
+"<command>Thunar -B</command> o, des de <application>Thunar</application>, "
+"seleccionant dos o més fitxers a l'àrea principal i pitjant "
+"<keycombo><keycap>F2</keycap></keycombo> o seleccionant "
+"menuchoice><guimenu>Edita</guimenu><guimenuitem></guimenuitem>Canvia de nom…"
+"</menuchoice> en la barra de menús."
 
 #: ../docs/manual/C/Thunar.xml.in:1278(phrase)
 msgid "Bulk Rename Files"
-msgstr ""
+msgstr "Canvi de noms en bloc"
 
 #: ../docs/manual/C/Thunar.xml.in:1283(para)
 msgid ""
@@ -2169,30 +2178,34 @@ msgid ""
 "files. <application>Thunar</application> currently supports the following "
 "<emphasis>Bulk Renamers</emphasis>:"
 msgstr ""
+"El <emphasis>canvi de nom en bloc</emphasis> es pot aplicar tant als noms de "
+"fitxers, com als sufixos dels fitxers o a ambdós. <application>Thunar</"
+"application> actualment permet els següents <emphasis>canvis de noms en "
+"bloc</emphasis>:"
 
 #: ../docs/manual/C/Thunar.xml.in:1290(para)
 msgid "Remove characters."
-msgstr ""
+msgstr "Supressió de caràcters."
 
 #: ../docs/manual/C/Thunar.xml.in:1291(para)
 msgid "Numbering files."
-msgstr ""
+msgstr "Numeració de fitxers."
 
 #: ../docs/manual/C/Thunar.xml.in:1292(para)
 msgid "Insert Date or Time."
-msgstr ""
+msgstr "Inserció de data o hora."
 
 #: ../docs/manual/C/Thunar.xml.in:1293(para)
 msgid "Insert or overwrite characters."
-msgstr ""
+msgstr "Inserció o reemplaçament de caràcters."
 
 #: ../docs/manual/C/Thunar.xml.in:1294(para)
 msgid "Search and replace characters."
-msgstr ""
+msgstr "Cerca i substitució de caràcters."
 
 #: ../docs/manual/C/Thunar.xml.in:1295(para)
 msgid "Convert to uppercase, lowercase or camlcase."
-msgstr ""
+msgstr "Conversió a majúscules, minúscules o inicials em majúscules."
 
 #: ../docs/manual/C/Thunar.xml.in:1298(para)
 msgid ""
@@ -2204,10 +2217,17 @@ msgid ""
 "contains further details about this feature. Feel free to add more "
 "information to the Wiki."
 msgstr ""
+"Altres <emphasis>canvis de nom en bloc</emphasis> addicionals es poden "
+"instaŀlar com a connectors de <application>Thunar</application>. Comproveu a "
+"la pàgina web de <ulink type=\"http\" url=\"http://thunar.xfce.org/plugins."
+"html\">connectors de Thunar</ulink> per les extensions disponibles. El "
+"<ulink type=\"http\" url=\"http://thunar.xfce.org/pwiki/documentation/"
+"bulk_renamer\">wiki del projecte Thunar</ulink> té més detalls sobre aquesta "
+"funcionalitat. Podeu afegir més informació al wiki si voleu."
 
 #: ../docs/manual/C/Thunar.xml.in:1308(title)
 msgid "The UNIX File System"
-msgstr ""
+msgstr "El sistema de fitxers d'UNIX"
 
 #: ../docs/manual/C/Thunar.xml.in:1310(para)
 msgid ""
@@ -2218,10 +2238,16 @@ msgid ""
 "the UNIX file system, which is used today by all incarnations of UNIX, "
 "including Linux."
 msgstr ""
+"Mentre que el gestor de fitxers Thunar fa una bona feina abstraient els "
+"detalls del sistema de fitxers, i que així l'usuari final no li calgui "
+"preocupar-se respecte a aquest, de vegades és útil saber els conceptes "
+"bàsics per entendre el el marc general. Aquesta secció intentarà donar-vos "
+"una breu introducció als sistema de fitxers d'UNIX, el qual és emprat a dia "
+"d'avui per tot tipus d'UNIX, incloent Linux."
 
 #: ../docs/manual/C/Thunar.xml.in:1318(title)
 msgid "Folders and Paths"
-msgstr ""
+msgstr "Carpetes i camins"
 
 #: ../docs/manual/C/Thunar.xml.in:1320(para)
 msgid ""
@@ -2234,6 +2260,15 @@ msgid ""
 "until you reach a common point, then down the tree through the appropriate "
 "subfolders until you reach your target."
 msgstr ""
+"Al sistema de fitxers d'UNIX totes les carpetes s'ordenen en un arbre "
+"invertit, simple, descendent i ramificat des de una única carpeta inicial, "
+"la qual es coneix com a <emphasis>directori arrel</emphasis> (el terme "
+"<emphasis>directori</emphasis> s'empra sovint en lloc de <emphasis>carpeta</"
+"emphasis>) i que Thunar mostra com «<guilabel>Sistema de fitxers</guilabel>». "
+"Això vol dir que us podeu moure des de qualsevol carpeta a una altra movent-"
+"vos cap enrere en l'arbre fins que trobeu un punt comú i, després, movent-"
+"vos cap endavant per les subcarpetes apropiades fins que arribeu a la "
+"carpeta desitjada."
 
 #: ../docs/manual/C/Thunar.xml.in:1329(para)
 msgid ""
@@ -2248,6 +2283,16 @@ msgid ""
 "role=\"directory\">/</filename> in these paths represents the top level "
 "folder."
 msgstr ""
+"La posició de qualsevol fitxer o carpeta en l'arbre de directoris es pot "
+"descriure com a <emphasis>camí</emphasis>. El camí és la llista de carpetes "
+"per les que us heu de moure per arribar a la carpeta o fitxer desitjat; això "
+"entenent que iniciu el camí des de el directori arrel. Per exemple, "
+"<filename role=\"directory\">/home/luke</filename> és la subcarpeta "
+"<filename role=\"directory\">luke</filename> de la subcarpeta <filename role="
+"\"directory\">home</filename> del directori arrel, i <filename>/home/luke/"
+"myfile.txt</filename> és el fitxer <filename>myfile.txt</filename> d'aquella "
+"subcarpeta. El «<filename role=\"directory\">/</filename>» en aquests camins "
+"representa el directori arrel."
 
 #: ../docs/manual/C/Thunar.xml.in:1338(para)
 msgid ""
@@ -2263,10 +2308,22 @@ msgid ""
 "jane</filename> would be the home directory for the user with the login name "
 "<filename role=\"directory\">jane</filename>."
 msgstr ""
+"Cada usuari té la seva carpeta per tenir-hi els seus fitxers personals així "
+"com els seus ajustaments. Aquesta carpeta s'anomena <emphasis>directori de "
+"l'usuari</emphasis> i es mostra a Thunar amb una icona especial amb el nom "
+"d'entrada de l'usuari. Aquesta carpeta és similar a la coneguda com "
+"«<guilabel>My Files</guilabel>» en sistemes Windows. Els <emphasis>directoris "
+"d'usuaris</emphasis> dels diversos usuaris del sistema sovint els trobareu "
+"dins de la carpeta <filename role=\"directory\">/home</filename>. Per "
+"exemple, <filename role=\"directory\">/home/luke</filename> hauria de ser el "
+"directori de l'usuari que té <filename role=\"directory\">luke</filename> "
+"com a nom d'entrada al sistema, mentre que <filename role=\"directory\">/"
+"home/jane</filename> hauria de ser el directori de l'usuari que té <filename "
+"role=\"directory\">jane</filename> com a nom d'entrada al sistema."
 
 #: ../docs/manual/C/Thunar.xml.in:1350(title)
 msgid "File Types"
-msgstr ""
+msgstr "Tipus de fitxers"
 
 #: ../docs/manual/C/Thunar.xml.in:1352(para)
 msgid ""
@@ -2277,15 +2334,24 @@ msgid ""
 "it to maintain a simple core over the years where other operating systems "
 "had to introduce new concepts for every new technology."
 msgstr ""
+"Pot ser que ja hageu sentit dir que tot és un fitxer en entorns UNIX. Això "
+"és cert per la majoria d'objectes que es poden trobat en els sistemes UNIX "
+"actuals. De fet, inclús els dispositius es representen com fitxers "
+"especials. Tot i que això pot no tenir sentit d'entrada, és un dels punts "
+"forts d'UNIX i dels seus derivats, i és una gran ajuda alhora de mantenir un "
+"nucli simple al llarg dels anys i on altres sistemes operatius es veuen "
+"forçats a afegir conceptes nous per cada nova tecnologia."
 
 #: ../docs/manual/C/Thunar.xml.in:1359(para)
 msgid ""
 "These are the four most important types of files in the UNIX file system."
 msgstr ""
+"Aquests són els quatre tipus de fitxers més important en els sistemes de "
+"fitxers UNIX."
 
 #: ../docs/manual/C/Thunar.xml.in:1364(title)
 msgid "Ordinary Files"
-msgstr ""
+msgstr "Fitxers ordinaris"
 
 #: ../docs/manual/C/Thunar.xml.in:1366(para)
 msgid ""
@@ -2293,10 +2359,14 @@ msgid ""
 "image files, audio files, office documents and video files. The term "
 "<emphasis>file</emphasis> is often used to refer to an ordinary file."
 msgstr ""
+"Un fitxer ordinari pot tenir text, un programa o qualsevol tipus de dades. "
+"Això inclou fitxers d'imatges, d'àudio, documents d'aplicacions ofimàtiques "
+"i fitxers de vídeo. El terme <emphasis>fitxer</emphasis> s'empra sovint per "
+"referir-se a fitxers ordinaris."
 
 #: ../docs/manual/C/Thunar.xml.in:1373(title)
 msgid "Folder Files"
-msgstr ""
+msgstr "fitxers carpetes"
 
 #: ../docs/manual/C/Thunar.xml.in:1375(para)
 msgid ""
@@ -2304,10 +2374,14 @@ msgid ""
 "special file, which contains a mapping of file names to file references for "
 "every file contained within this folder."
 msgstr ""
+"Les carpetes també són fitxers en els sistemes de fitxers UNIX. Per ser "
+"exacte una carpeta és un cas especial de fitxer, i que conté un mapa de "
+"referències de noms de fitxers a fitxers per cada fitxer que hi ha a la "
+"carpeta."
 
 #: ../docs/manual/C/Thunar.xml.in:1382(title)
 msgid "Symbolic Link Files"
-msgstr ""
+msgstr "Fitxers d'enllaç simbòlic"
 
 #: ../docs/manual/C/Thunar.xml.in:1384(para)
 msgid ""
@@ -2316,10 +2390,14 @@ msgid ""
 "files therefore do not contain any useful information themselves, but just "
 "refer to other files."
 msgstr ""
+"Un enllaç simbòlic —que sovint s'abrevia com a <emphasis>symlink</emphasis> "
+"pel seu origen anglès «Symbolic Link») és un fitxer especial que té un camí "
+"fins un altre fitxer del sistema de fitxers. Per tant, l'enllaç simbòlic no "
+"té informació valuosa per sí mateix i tant sols referencia un altre fitxer."
 
 #: ../docs/manual/C/Thunar.xml.in:1392(title)
 msgid "Device Files"
-msgstr ""
+msgstr "Fitxers de dispositius"
 
 #: ../docs/manual/C/Thunar.xml.in:1394(para)
 msgid ""
@@ -2328,10 +2406,15 @@ msgid ""
 "\"directory\">/dev</filename> folder. For example the special file "
 "<filename>/dev/hda</filename> represents the first IDE disk on Linux."
 msgstr ""
+"Com hem dit anteriorment a la majoria de dispositius es pot accedir via el "
+"sistema de fitxers. Aquest fitxers de dispositius especials els trobareu "
+"sovint en la carpeta <filename role=\"directory\">/dev</filename>. Per "
+"exemple, el fitxer especial <filename>/dev/hda</filename> representa el "
+"primer disc IDE en sistemes Linux."
 
 #: ../docs/manual/C/Thunar.xml.in:1406(title)
 msgid "Frequently Asked Questions"
-msgstr ""
+msgstr "Preguntes freqüents"
 
 #: ../docs/manual/C/Thunar.xml.in:1408(para)
 msgid ""
@@ -2341,10 +2424,15 @@ msgid ""
 "xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided\">file a request</"
 "ulink>."
 msgstr ""
+"En aquesta secció s'intenta fer un llistat de les nombroses preguntes "
+"relacionades amb Thunar que se'ns han fet. Si sabeu d'alguna altra pregunta "
+"que no hi aparegui en aquesta pàgina, si us plau, <ulink type=\"http\" url="
+"\"http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided"
+"\">ompliu una soŀlicitud</ulink>."
 
 #: ../docs/manual/C/Thunar.xml.in:1417(title)
 msgid "Why doesn't Thunar execute files marked as executable?"
-msgstr ""
+msgstr "Perquè el Thunar no executa els fitxers amb la marca d'executables?"
 
 #: ../docs/manual/C/Thunar.xml.in:1419(para)
 msgid ""
@@ -2357,6 +2445,14 @@ msgid ""
 "is given. For the other types the feature is available if the file is marked "
 "executable for the current user."
 msgstr ""
+"Per raons de seguretat Thunar només executa els fitxers de tipus "
+"<literal>application/x-desktop</literal>, <literal>application/x-executable</"
+"literal> i <literal>application/x-shellscript</literal>. Els fitxers "
+"d'escriptori només s'executen si el fitxer d'escriptori és de tipus "
+"<literal>Application</literal> i hi ha una línia vàlida <literal>Exec</"
+"literal> o els de tipus <literal>Link</literal> i hi ha una <literal>URL</"
+"literal> vàlida. Per la resta de tipus només està disponible si el fitxer "
+"està marcat com executable per l'usuari actual."
 
 #: ../docs/manual/C/Thunar.xml.in:1428(para)
 msgid ""
@@ -2366,10 +2462,14 @@ msgid ""
 "type has a parent that matches one of the two types listed above, or if the "
 "MIME-type is an alias for one of the above."
 msgstr ""
+"Tingueu en compte que per <literal>application/x-executable</literal> i "
+"<literal>application/x-shellscript</literal>, el tipus de fitxer no té per "
+"que ser exactament aquest, n'hi ha prou amb que el tipus detectat tingui un "
+"pare d'aquest tipus o que el tipus MIME sigui un àlies d'algun d'ells."
 
 #: ../docs/manual/C/Thunar.xml.in:1437(title)
 msgid "Where does Thunar store the metadata associated with files?"
-msgstr ""
+msgstr "On desa Tunar les metadates associades als fitxers?"
 
 #: ../docs/manual/C/Thunar.xml.in:1439(para)
 msgid ""
@@ -2380,10 +2480,17 @@ msgid ""
 "<command>tdbtool</command>, which is part of the Thunar distribution "
 "(located in the <filename role=\"directory\">tdb/</filename> subdirectory)."
 msgstr ""
+"El Thunar associa diversa informació amb fitxers i carpetes, a això és al "
+"que anomenem metadades. Aquestes metadades de tots els fitxers es desa en un "
+"fitxer de base de dades «tdb», al qual anomenem el metafitxer. El fitxer es "
+"desa a <filename>$XDG_CACHE_HOME/Thunar/metafile.tdb</filename> i es pot "
+"examinat mitjançant l'ordre <command>tdbtool</command> i que es distribueix "
+"amb Thunar (es troba al subdirectori <filename role=\"directory\">tdb/</"
+"filename>)."
 
 #: ../docs/manual/C/Thunar.xml.in:1450(title)
 msgid "Where does Thunar store its preferences?"
-msgstr ""
+msgstr "On desa Thunar les seves preferències?"
 
 #: ../docs/manual/C/Thunar.xml.in:1452(para)
 msgid ""
@@ -2393,10 +2500,15 @@ msgid ""
 "editor. See <filename>docs/README.thunarrc</filename> for an overview of the "
 "various preferences."
 msgstr ""
+"Thunar desa les preferències d'usuari, així com les opcions ocultes, en un "
+"fitxer <filename>.ini</filename> que es triba a <filename>$XDG_CONFIG_HOME/"
+"Thunar/thunarrc</filename> i que es pot examinar emprant qualsevol editor de "
+"text. Veieu  <filename>docs/README.thunarrc</filename> per una informació "
+"detallada de les diverses preferències."
 
 #: ../docs/manual/C/Thunar.xml.in:1462(title)
 msgid "How to use mouse gestures in Thunar?"
-msgstr ""
+msgstr "Com puc emprar gestos de ratolí («mouse gestures») amb Thunar?"
 
 #: ../docs/manual/C/Thunar.xml.in:1464(para)
 msgid ""
@@ -2408,42 +2520,50 @@ msgid ""
 "can move the cursor into four directions to perform certain actions, which "
 "are described below."
 msgstr ""
+"Actualment Thunar permet un ús bàsic a la vista d'icones dels anomenats "
+"<emphasis>gestos de ratolí</emphasis>. Podeu emprar <emphasis>gestos de "
+"ratolí</emphasis> mantenit pitjat el botó del mig del ratolí (normalment la "
+"rodeta del ratolí) mentre que el punter del ratolí es troba sobre l'àrea de "
+"fons del component de vista d'icones (qualsevol àrea no coberta per un text "
+"o una icona). En aquest moment podeu moure el punter del ratolí en qualsevol "
+"de les quatre direccions per realitzar algunes accions que us descrivim a "
+"continuació."
 
 #: ../docs/manual/C/Thunar.xml.in:1474(guilabel)
 msgid "Left"
-msgstr ""
+msgstr "Esquerra"
 
 #: ../docs/manual/C/Thunar.xml.in:1474(member)
 msgid "<placeholder-1/> - opens the previous visited folder"
-msgstr ""
+msgstr "<placeholder-1/> - obra la darrera carpeta que s'hagi visitat"
 
 #: ../docs/manual/C/Thunar.xml.in:1475(guilabel)
 msgid "Up"
-msgstr ""
+msgstr "Amunt"
 
 #: ../docs/manual/C/Thunar.xml.in:1475(member)
 msgid "<placeholder-1/> - opens the parent folder"
-msgstr ""
+msgstr "<placeholder-1/> - obra la carpeta pare"
 
 #: ../docs/manual/C/Thunar.xml.in:1476(guilabel)
 msgid "Right"
-msgstr ""
+msgstr "Dreta"
 
 #: ../docs/manual/C/Thunar.xml.in:1476(member)
 msgid "<placeholder-1/> - opens the next visited folder"
-msgstr ""
+msgstr "<placeholder-1/> - obra la següent carpeta que s'ha visitat"
 
 #: ../docs/manual/C/Thunar.xml.in:1477(guilabel)
 msgid "Down"
-msgstr ""
+msgstr "Avall"
 
 #: ../docs/manual/C/Thunar.xml.in:1477(member)
 msgid "<placeholder-1/> - reloads the current folder"
-msgstr ""
+msgstr "<placeholder-1/> - torna a carregar la carpeta actual"
 
 #: ../docs/manual/C/Thunar.xml.in:1482(title)
 msgid "How do I assign different keyboard shortcuts?"
-msgstr ""
+msgstr "Com puc assignar dreceres de teclat?"
 
 #: ../docs/manual/C/Thunar.xml.in:1484(para)
 msgid ""
@@ -2451,18 +2571,25 @@ msgid ""
 "changing shortcuts: simply hover over the menu option with the mouse pointer "
 "and press the keyboard shortcut you want to rebind it to."
 msgstr ""
+"Si voleu tornar a fixar una drecera, Thunar admet la forma estàndard de GTK+ "
+"per canviar dreceres: simplement passeu per sobre de l'opció de menú amb el "
+"ratolí i polseu la drecera de teclat que li voleu fixar."
 
 #: ../docs/manual/C/Thunar.xml.in:1490(para)
 msgid ""
 "To delete a keyboard assignment, press the <keycap>Backspace</keycap> key "
 "while you are on the menu entry."
 msgstr ""
+"Per esborrar una assignació de tecles, polseu la tecla de <keycap>retrocés</"
+"keycap> quan sigueu sobre l'entrada de menú."
 
 #: ../docs/manual/C/Thunar.xml.in:1495(para)
 msgid ""
 "If the shortcut doesn't change, then you need to enable the feature in GTK+. "
 "This can be achieved in 3 ways:"
 msgstr ""
+"Si la drecera no canvia caldrà que habiliteu aquesta funcionalitat al GTK+. "
+"Això es pot fer de tres maneres:"
 
 #: ../docs/manual/C/Thunar.xml.in:1502(para)
 msgid ""
@@ -2470,6 +2597,9 @@ msgid ""
 "menu accelerators</guilabel> in the <guilabel>User Interface Preferences</"
 "guilabel> dialog."
 msgstr ""
+"Si esteu executant Xfce 4.3 o superior, ho podeu habilitar-ho mitjançant "
+"<guilabel>dreceres de menú editables</guilabel> en el diàleg "
+"<guilabel>Preferències de la interfície d'usuari</guilabel>."
 
 #: ../docs/manual/C/Thunar.xml.in:1510(para)
 msgid ""
@@ -2477,6 +2607,9 @@ msgid ""
 "accelerators</guilabel> in the <guilabel>Menu and Toolbars</guilabel> "
 "control center dialog."
 msgstr ""
+"Si executeu GNOME podeu habilitar-ho mitjançant <guilabel>dreceres de menú "
+"editables</guilabel> en <guilabel>Menú i Eines</guilabel> del diàleg del "
+"centre de control."
 
 #: ../docs/manual/C/Thunar.xml.in:1518(para)
 msgid ""
@@ -2484,10 +2617,12 @@ msgid ""
 "(create the file if it doesn't exist):<screen>gtk-can-change-accels=1</"
 "screen>"
 msgstr ""
+"En qualsevol altre cas, poseu en el vostre fitxer <filename>~/.gtkrc-2.0</"
+"filename> (creeu-lo si no existeix): <screen>gtk-can-change-accels=1</screen>"
 
 #: ../docs/manual/C/Thunar.xml.in:1527(title)
 msgid "Where does Thunar store the keyboard shortcuts?"
-msgstr ""
+msgstr "On desa Thunar les dreceres de teclat?"
 
 #: ../docs/manual/C/Thunar.xml.in:1529(para)
 msgid ""
@@ -2496,6 +2631,11 @@ msgid ""
 "filename>. Lines starting with <literal>;</literal> are comments. See the GTK"
 "+ documentation for details about the file format."
 msgstr ""
+"Les dreceres de teclat personalitzades es desen amb l'estàndard de mapa de "
+"dreceres de GTK+ en un fitxer a <filename>$XDG_CONFIG_HOME/Thunar/accels."
+"scm</filename>. Les línies d'aquest fitxer que comencen per <literal>;</"
+"literal> són comentaris. Veieu la documentació de GTK+ per saber més "
+"informació respecte a aquest format de fitxer."
 
 #: ../docs/manual/C/Thunar.xml.in:1536(para)
 msgid ""
@@ -2508,10 +2648,20 @@ msgid ""
 "install system wide defaults to <filename>/etc/xdg/Thunar/accels.scm</"
 "filename>. Thunar will then load shortcuts from this file on first startup."
 msgstr ""
+"Si sou un empaquetador o un administrador de sistemes que voleu crear uns "
+"valors per defecte per les dreceres de teclat, lo que no és el mateix que "
+"les dreceres per defecte de Thunar, podeu creat un fitxer anomenat "
+"<filename>Thunar/accels.scm</filename> en algun dels directoris <envar>"
+"$XDG_CONFIG_DIRS</envar>. Per exemple, si <filename role=\"directory\">/etc/"
+"xdg</filename> és part de <envar>$XDG_CONFIG_DIRS</envar> (el que acostuma a "
+"ser el valor per defecte a moltes distribucions Linux), podeu instaŀlar els "
+"vostres valors per defecte i que afectaran a tot el sistema i usuaris a "
+"<filename>/etc/xdg/Thunar/accels.scm</filename>. Thunar carregarà els valors "
+"d'aquest fitxer a la seva propera engegada."
 
 #: ../docs/manual/C/Thunar.xml.in:1549(title)
 msgid "Support"
-msgstr ""
+msgstr "Suport"
 
 #: ../docs/manual/C/Thunar.xml.in:1551(para)
 msgid ""
@@ -2521,6 +2671,12 @@ msgid ""
 "ulink>. Remember that useful bug reports are ones that get bugs fixed, so a "
 "useful bug report has two qualities:"
 msgstr ""
+"Per comunicar una errada o per fer un suggeriment referents a aquesta "
+"aplicació o a aquest manual, empreu el sistema de notificacions d'errades "
+"<ulink url=\"http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;"
+"format=guided\">http://bugzilla.xfce.org/</ulink>. Recordeu que les "
+"notificacions d'errades útils són aquelles que es solucionen i que per a que "
+"sigui útil ha de complir aquestes dues qualitats:"
 
 #: ../docs/manual/C/Thunar.xml.in:1559(para)
 msgid ""
@@ -2528,6 +2684,9 @@ msgid ""
 "the bug himself to prove that it exists, he will most probably not be able "
 "to fix it at all. Every detail you can provide helps."
 msgstr ""
+"<emphasis role=\"bold\">Reproduïble.</emphasis>. Si un desenvolupador no pot "
+"veure aquesta errada per comprovar que existeix, és molt probable que tampoc "
+"la pugui solucionar de cap manera. Qualssevol detall pot ser-li d'ajuda."
 
 #: ../docs/manual/C/Thunar.xml.in:1566(para)
 msgid ""
@@ -2535,6 +2694,9 @@ msgid ""
 "isolate the problem to a specific area, the more likely he will expediently "
 "fix it."
 msgstr ""
+"<emphasis role=\"bold\">Specific.</emphasis> Entre més ràpid pugui el "
+"desenvolupador identificar el problema dins d'una àrea més possible serà que "
+"trobi la solució oportuna."
 
 #: ../docs/manual/C/Thunar.xml.in:1573(para)
 msgid ""
@@ -2547,6 +2709,15 @@ msgid ""
 "HACKING\">HACKING</ulink> - especially the section labeled <emphasis>Coding "
 "Style</emphasis> - before you start hacking up the source."
 msgstr ""
+"Si voleu demanar alguna funcionalitat nova, indiqueu de forma clara perquè "
+"la considereu valuosa per l'aplicació. És molt més possible que s'afegeixi "
+"una nova funcionalitat si doneu bons arguments en favor d'aquesta "
+"funcionalitat. Encara incrementarà més les possibilitats de que s'afegeixi "
+"si afegiu un pedaç que implementi aquesta funcionalitat que voleu. Assegureu-"
+"vos que heu llegit el fitxer <ulink type=\"http\" url=\"http://svn.xfce.org/"
+"svn/xfce/terminal/trunk/HACKING\">HACKING</ulink> —especialment la secció "
+"titulada «<emphasis>Coding Style</emphasis>»— abans de que comenceu a tocar "
+"el codi."
 
 #: ../docs/manual/C/Thunar.xml.in:1583(para)
 msgid ""
@@ -2556,6 +2727,12 @@ msgid ""
 "client to <emphasis role=\"bold\">irc.freenode.net</emphasis>, join the "
 "channel <emphasis role=\"bold\">#thunar</emphasis> and ask for help."
 msgstr ""
+"En qualsevol cas, si teniu alguna pregunta sobre l'ús o instaŀlació d'aquest "
+"programari, podeu preguntar-la a la <ulink type=\"http\" url=\"http://foo-"
+"projects.org/mailman/listinfo/thunar-dev\">llista de correu thunar-dev</"
+"ulink> o mitjançant el vostre client d'IRC en <emphasis role=\"bold\">irc."
+"freenode.net</emphasis>, unint-vos al canal <emphasis role=\"bold\">#thunar</"
+"emphasis> i demanant ajuda."
 
 #: ../docs/manual/C/Thunar.xml.in:1592(title)
 msgid "About @PACKAGE_NAME@"
@@ -2567,6 +2744,9 @@ msgid ""
 "email>). Visit the <ulink url=\"http://thunar.xfce.org/\" type=\"http"
 "\">Thunar website</ulink> for more information."
 msgstr ""
+"@PACKAGE_NAME@ ha estat escrit per Benedikt Meurer (<email>benny@xfce.org</"
+"email>). Veieu la <ulink url=\"http://thunar.xfce.org/\" type=\"http"
+"\">pàgina web de Thunar</ulink> per més informació."
 
 #: ../docs/manual/C/Thunar.xml.in:1599(para)
 msgid ""
@@ -2574,6 +2754,9 @@ msgid ""
 "email>). The latest version of this document is always available from the "
 "<ulink type=\"http\" url=\"http://thunar.xfce.org/\">Thunar website</ulink>."
 msgstr ""
+"Aquest document ha estat escrit per Benedikt Meurer (<email>benny@xfce.org</"
+"email>). La darrera versió d'aquest document està disponible a la <ulink "
+"type=\"http\" url=\"http://thunar.xfce.org/\">pàgina web de Thunar</ulink>."
 
 #: ../docs/manual/C/Thunar.xml.in:1605(para)
 msgid ""
