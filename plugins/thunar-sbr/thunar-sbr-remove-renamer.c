@@ -349,7 +349,7 @@ thunar_sbr_remove_renamer_process (ThunarxRenamer  *renamer,
                ? remove_renamer->start_offset : (text_length - remove_renamer->start_offset);
 
   /* check if anything should be removed */
-  if (G_UNLIKELY (start_offset >= end_offset || end_offset >= text_length))
+  if (G_UNLIKELY (start_offset >= end_offset || end_offset > text_length))
     return g_strdup (text);
 
   /* determine start and end pointers */
