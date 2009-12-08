@@ -17,8 +17,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-22 16:18+0200\n"
-"PO-Revision-Date: 2009-04-25 00:21+0900\n"
+"POT-Creation-Date: 2009-12-08 23:47+0900\n"
+"PO-Revision-Date: 2009-12-09 00:23+0900\n"
 "Last-Translator: Masato Hashimoto <cabezon.hashimoto@gmail.com>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
 "MIME-Version: 1.0\n"
@@ -166,19 +166,19 @@ msgid "Copying files..."
 msgstr "ファイルをコピーしています..."
 
 #: ../thunar/thunar-application.c:1322
-#, fuzzy, c-format
+#, c-format
 msgid "Copying files to \"%s\"..."
-msgstr "ファイルをコピーしています..."
+msgstr "ファイルを \"%s\" へコピーしています..."
 
 #: ../thunar/thunar-application.c:1368
-#, fuzzy, c-format
+#, c-format
 msgid "Creating symbolic links in \"%s\"..."
-msgstr "リンクを作成しています..."
+msgstr "リンクを \"%s\" に作成しています..."
 
 #: ../thunar/thunar-application.c:1421
-#, fuzzy, c-format
+#, c-format
 msgid "Moving files into \"%s\"..."
-msgstr "ファイルをゴミ箱に移動しています..."
+msgstr "ファイルを \"%s\" 内へ移動しています..."
 
 #: ../thunar/thunar-application.c:1506
 #, c-format
@@ -255,7 +255,7 @@ msgstr "\"%s\" の元のパスを取得できませんでした。"
 
 #. display an error dialog
 #: ../thunar/thunar-application.c:1781
-#, fuzzy, c-format
+#, c-format
 msgid "Could not restore \"%s\""
 msgstr "\"%s\" を復元できませんでした。"
 
@@ -320,9 +320,9 @@ msgid "Failed to add new application \"%s\""
 msgstr "新しいアプリケーション \"%s\" を追加できませんでした。"
 
 #: ../thunar/thunar-chooser-dialog.c:492
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to execute application \"%s\""
-msgstr "新しいアプリケーション \"%s\" を追加できませんでした。"
+msgstr "アプリケーション \"%s\" の実行に失敗しました。"
 
 #. append the "Remove Launcher" item
 #: ../thunar/thunar-chooser-dialog.c:564
@@ -626,14 +626,14 @@ msgid "_Replace"
 msgstr "置換(_R)"
 
 #: ../thunar/thunar-dialogs.c:591
-#, fuzzy, c-format
+#, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
-msgstr "このフォルダにはすでにファイル \"%s\" が存在しています。"
+msgstr "このフォルダにはすでにリンク \"%s\" が存在しています。"
 
 #: ../thunar/thunar-dialogs.c:596
-#, fuzzy, c-format
+#, c-format
 msgid "This folder already contains a folder \"%s\"."
-msgstr "このフォルダにはすでにファイル \"%s\" が存在しています。"
+msgstr "このフォルダにはすでにフォルダ \"%s\" が存在しています。"
 
 #: ../thunar/thunar-dialogs.c:601
 #, c-format
@@ -641,18 +641,16 @@ msgid "This folder already contains a file \"%s\"."
 msgstr "このフォルダにはすでにファイル \"%s\" が存在しています。"
 
 #: ../thunar/thunar-dialogs.c:613
-#, fuzzy
 msgid "ReplaceDialogPart1|Do you want to replace the link"
-msgstr "すでにに存在するファイル"
+msgstr "すでに存在するリンク"
 
 #: ../thunar/thunar-dialogs.c:615
-#, fuzzy
 msgid "ReplaceDialogPart1|Do you want to replace the existing folder"
-msgstr "すでにに存在するファイル"
+msgstr "すでに存在するフォルダ"
 
 #: ../thunar/thunar-dialogs.c:617
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
-msgstr "すでにに存在するファイル"
+msgstr "すでに存在するファイル"
 
 #.
 #. Fourth box (size, volume, free space)
@@ -668,14 +666,12 @@ msgid "Modified:"
 msgstr "変更日時:"
 
 #: ../thunar/thunar-dialogs.c:644
-#, fuzzy
 msgid "ReplaceDialogPart2|with the following link?"
-msgstr "を以下のファイルと置き換えますか?"
+msgstr "を以下のリンクと置き換えますか?"
 
 #: ../thunar/thunar-dialogs.c:646
-#, fuzzy
 msgid "ReplaceDialogPart2|with the following folder?"
-msgstr "を以下のファイルと置き換えますか?"
+msgstr "を以下のフォルダと置き換えますか?"
 
 #: ../thunar/thunar-dialogs.c:648
 msgid "ReplaceDialogPart2|with the following file?"
@@ -773,9 +769,9 @@ msgid "The root folder has no parent"
 msgstr "ルートフォルダに上位のフォルダはありません。"
 
 #: ../thunar/thunar-file.c:993
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to parse the desktop file: %s"
-msgstr "空のファイル \"%s\" を作成できませんでした。"
+msgstr "デスクトップファイルの解析に失敗しました: %s"
 
 #: ../thunar/thunar-file.c:1031
 #, c-format
@@ -831,14 +827,14 @@ msgid "The file \"%s\" already exists"
 msgstr "ファイル \"%s\" はすでに存在しています。"
 
 #: ../thunar/thunar-io-jobs.c:184
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create empty file \"%s\": %s"
-msgstr "空のファイル \"%s\" を作成できませんでした。"
+msgstr "空のファイル \"%s\" の作成に失敗しました: %s"
 
 #: ../thunar/thunar-io-jobs.c:321
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create directory \"%s\": %s"
-msgstr "フォルダ \"%s\" を作成できませんでした。"
+msgstr "フォルダ \"%s\" の作成に失敗しました: %s"
 
 #. tell the user that we're preparing to unlink the files
 #: ../thunar/thunar-io-jobs.c:385
@@ -846,30 +842,32 @@ msgid "Preparing..."
 msgstr "準備しています..."
 
 #: ../thunar/thunar-io-jobs.c:447
-#, fuzzy, c-format
+#, c-format
 msgid "Could not delete file \"%s\": %s"
-msgstr "ファイル \"%s\" を実行できませんでした。"
+msgstr "ファイル \"%s\" を削除できませんでした: %s"
 
 #: ../thunar/thunar-io-jobs.c:595
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
 msgstr ""
+"\"%s\" へのシンボリックリンクを作成できませんでした。ローカルファイルではあり"
+"ません。"
 
 #. generate a useful error message
 #: ../thunar/thunar-io-jobs.c:782
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change the owner of \"%s\": %s"
-msgstr "\"%s\" の所有者を変更できませんでした。"
+msgstr "\"%s\" の所有者の変更に失敗しました: %s"
 
 #: ../thunar/thunar-io-jobs.c:783
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change the group of \"%s\": %s"
-msgstr "\"%s\" の所属グループを変更できませんでした。"
+msgstr "\"%s\" の所属グループの変更に失敗しました: %s"
 
 #: ../thunar/thunar-io-jobs.c:939
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
-msgstr "\"%s\" のアクセス権を変更できませんでした。"
+msgstr "\"%s\" のアクセス権の変更に失敗しました: %s"
 
 #. Copy/link name for n <= 3
 #: ../thunar/thunar-io-jobs-util.c:37
@@ -905,12 +903,12 @@ msgstr "%s への 3 番目のリンク"
 
 #. Fallback copy/link name for n >= 4
 #: ../thunar/thunar-io-jobs-util.c:42
-#, fuzzy, c-format
+#, c-format
 msgid "%uth copy of %s"
 msgstr "%2$s の %1$u 番目のコピー"
 
 #: ../thunar/thunar-io-jobs-util.c:42
-#, fuzzy, c-format
+#, c-format
 msgid "%uth link to %s"
 msgstr "%2$s への %1$u 番目のリンク"
 
@@ -930,9 +928,8 @@ msgid "Do you want to overwrite it?"
 msgstr "これを上書きしますか?"
 
 #: ../thunar/thunar-job.c:388
-#, fuzzy
 msgid "Do you want to create it?"
-msgstr "これを上書きしますか?"
+msgstr "これを作成しますか?"
 
 #: ../thunar/thunar-job.c:490
 msgid "Do you want to skip it?"
@@ -1123,14 +1120,14 @@ msgid "\"%s\" (%s) link to %s"
 msgstr "\"%1$s\" %3$s へのリンク (%2$s)"
 
 #: ../thunar/thunar-list-model.c:2256
-#, fuzzy, c-format
+#, c-format
 msgid "\"%s\" shortcut"
-msgstr "ショートカット(_S)"
+msgstr "\"%s\"  ショートカット"
 
 #: ../thunar/thunar-list-model.c:2260
 #, c-format
 msgid "\"%s\" mountable"
-msgstr ""
+msgstr "\"%s\" マウント可能"
 
 #: ../thunar/thunar-list-model.c:2267
 #, c-format
@@ -1242,19 +1239,19 @@ msgid "_Location:"
 msgstr "フォルダの位置(_L):"
 
 #: ../thunar/thunar-location-entry.c:382
-#, fuzzy, c-format
+#, c-format
 msgid "File does not exist"
-msgstr "ファイルのコンテキストメニュー"
+msgstr "ファイルは存在しません"
 
 #: ../thunar/thunar-location-entry.c:726
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to determine the mount point of \"%s\""
-msgstr "\"%s\" のマウントポイントを取得できませんでした。"
+msgstr "\"%s\" のマウントポイントの決定に失敗しました。"
 
 #: ../thunar/thunar-misc-jobs.c:84
-#, fuzzy, c-format
+#, c-format
 msgid "No templates installed"
-msgstr "テンプレートはインストールされていません"
+msgstr "テンプレートはインストールされていません。"
 
 # NOTE: GObject property
 #: ../thunar/thunar-path-entry.c:222
@@ -1675,37 +1672,36 @@ msgstr "ボリューム管理設定を表示できませんでした"
 
 #: ../thunar/thunar-progress-dialog.c:94
 msgid "File Operation Progress"
-msgstr ""
+msgstr "ファイル操作進行中"
 
 #. build the tooltip text
 #: ../thunar/thunar-progress-dialog.c:293
 #, c-format
 msgid "%d file operation running"
 msgid_plural "%d file operations running"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d のファイル操作が実行中です"
+msgstr[1] "%d のファイル操作が実行中です"
 
 #: ../thunar/thunar-progress-view.c:326
-#, fuzzy
 msgid "Cancelling..."
-msgstr "計算しています..."
+msgstr "キャンセルしています..."
 
 #: ../thunar/thunar-progress-view.c:480
-#, fuzzy, c-format
+#, c-format
 msgid "%lu hour remaining"
 msgid_plural "%lu hours remaining"
 msgstr[0] "(残り %lu 時間)"
 msgstr[1] "(残り %lu 時間)"
 
 #: ../thunar/thunar-progress-view.c:485
-#, fuzzy, c-format
+#, c-format
 msgid "%lu minute remaining"
 msgid_plural "%lu minutes remaining"
 msgstr[0] "(残り %lu 分)"
 msgstr[1] "(残り %lu 分)"
 
 #: ../thunar/thunar-progress-view.c:490
-#, fuzzy, c-format
+#, c-format
 msgid "%lu second remaining"
 msgid_plural "%lu seconds remaining"
 msgstr[0] "(残り %lu 秒)"
@@ -2214,35 +2210,36 @@ msgstr "ファイルを集めています..."
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:665
-#, fuzzy, c-format
+#, c-format
 msgid "Trying to restore \"%s\""
-msgstr "\"%s\" を復元できませんでした。"
+msgstr "\"%s\" を復元しようとしています"
 
 #: ../thunar/thunar-transfer-job.c:690
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file "
 "\"%s\" from the trash"
 msgstr ""
 "フォルダ \"%s\" はもう存在していませんが、ゴミ箱からファイル \"%s\" を復元す"
-"るのに必要です。このフォルダを再び作成しますか?"
+"るのに必要です。"
 
 #: ../thunar/thunar-transfer-job.c:715
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to restore the folder \"%s\""
-msgstr "フォルダ \"%s\" を開けませんでした。"
+msgstr "フォルダ \"%s\" の復元に失敗しました。"
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:732
-#, fuzzy, c-format
+#, c-format
 msgid "Trying to move \"%s\""
-msgstr "\"%s\" を削除できませんでした。"
+msgstr "\"%s\" を移動しようとしています"
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:757
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr ""
+"\"%s\" を直接移動できませんでした。コピーするファイルを収集しています..."
 
 #: ../thunar/thunar-trash-action.c:104
 msgid "T_rash"
@@ -2416,9 +2413,8 @@ msgid "Go to the desktop folder"
 msgstr "デスクトップフォルダに移動します。"
 
 #: ../thunar/thunar-window.c:311
-#, fuzzy
 msgid "Browse the file system"
-msgstr "ファイルマネージャでファイルシステムを参照します"
+msgstr "ファイルシステムを参照します。"
 
 #: ../thunar/thunar-window.c:312
 msgid "Go to the documents folder"
@@ -2561,11 +2557,11 @@ msgstr ""
 #. create the network action
 #: ../thunar/thunar-window.c:1440
 msgid "Network"
-msgstr ""
+msgstr "ネットワーク"
 
 #: ../thunar/thunar-window.c:1440
 msgid "Browse the network"
-msgstr ""
+msgstr "ネットワークを参照します"
 
 #: ../thunar/thunar-window.c:1480
 #, c-format
@@ -2619,9 +2615,8 @@ msgstr "このメッセージを再び表示しない(_N)"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2252
-#, fuzzy
 msgid "Failed to open the file system root folder"
-msgstr "ホームフォルダを開けませんでした。"
+msgstr "ファイルシステムのルートフォルダを開けませんでした。"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2287
@@ -2630,9 +2625,8 @@ msgstr "ゴミ箱の中身を表示できませんでした。"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2322
-#, fuzzy
 msgid "Failed to browse the network"
-msgstr "ホームフォルダを開けませんでした。"
+msgstr "ネットワークの参照に失敗しました。"
 
 #: ../thunar/thunar-window.c:2364
 msgid ""
@@ -3521,88 +3515,3 @@ msgstr "Thunar ファイルマネージャを設定します"
 
 #~ msgid "Failed to remove \"%s\": %s"
 #~ msgstr "\"%s\" を削除できませんでした: %s"
-
-# NOTE: GObject property
-#~ msgid "Command"
-#~ msgstr "コマンド"
-
-# NOTE: GObject property
-#~ msgid "The command to run the mime handler"
-#~ msgstr "MIME ハンドラを実行するコマンドです。"
-
-# NOTE: GObject property
-#~ msgid "Flags"
-#~ msgstr "フラグ"
-
-# NOTE: GObject property
-#~ msgid "The flags for the mime handler"
-#~ msgstr "MIME ハンドラのフラグです。"
-
-# NOTE: GObject property
-#~ msgid "Icon"
-#~ msgstr "アイコン"
-
-# NOTE: GObject property
-#~ msgid "The icon of the mime handler"
-#~ msgstr "MIME ハンドラのアイコンです。"
-
-# NOTE: GObject property
-#~ msgid "The name of the mime handler"
-#~ msgstr "MIME ハンドラの名前です。"
-
-#~ msgid "%s document"
-#~ msgstr "%s ドキュメント"
-
-#~ msgid "The URI \"%s\" is invalid"
-#~ msgstr "URI \"%s\" は不適切です。"
-
-#~ msgid "Path too long to fit into buffer"
-#~ msgstr "バッファに格納するにはパスが長すぎます。"
-
-#~ msgid "URI too long to fit into buffer"
-#~ msgstr "バッファに格納するには URI が長すぎます。"
-
-#~ msgid "Operation not supported"
-#~ msgstr "この操作はサポートされていません。"
-
-#~ msgid "Invalidly escaped characters"
-#~ msgstr "URI 中に不適切なエスケープ文字があります。"
-
-# NOTE: GObject property
-#~ msgid "The desired thumbnail size"
-#~ msgstr "お望みのサムネイルサイズです。"
-
-#~ msgid "Failed to connect to the HAL daemon: %s"
-#~ msgstr "HAL デーモンとの接続に失敗しました: %s"
-
-#~ msgid "Create the folder \"%s\"?"
-#~ msgstr "フォルダ \"%s\" を作成しますか?"
-
-#~ msgid "C_reate Folder"
-#~ msgstr "フォルダの作成(_R)"
-
-#~ msgid "Failed to change group"
-#~ msgstr "\"%s\" のグループの変更に失敗しました"
-
-#~ msgid "Failed to apply new permissions"
-#~ msgstr "新しいアクセス権の適用に失敗しました"
-
-#~ msgid ""
-#~ "Install the \"thunar-volman\" package to use\n"
-#~ "the volume management support in Thunar."
-#~ msgstr ""
-#~ "Thuanr でボリューム管理サポートを利用する場合は\n"
-#~ "\"thunar-volman\" パッケージをインストールしてください。"
-
-#~ msgid ""
-#~ "Build thunar-vfs with HAL support to use\n"
-#~ "the volume management support in Thunar."
-#~ msgstr ""
-#~ "Thuanr でボリューム管理サポートを利用する場合は\n"
-#~ "\"thunar-vfs\" を HAL サポートでビルドしてください。"
-
-#~ msgid "_Unmount Volume"
-#~ msgstr "マウント解除(_U)"
-
-#~ msgid "Failed to unmount \"%s\""
-#~ msgstr "\"%s\" のマウント解除に失敗しました"
