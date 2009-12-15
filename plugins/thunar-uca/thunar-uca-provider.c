@@ -208,7 +208,7 @@ thunar_uca_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
   GList               *actions = NULL;
   GList               *paths;
   GList               *lp;
-  gchar               *stock_id;
+  gchar               *icon_name;
   gchar               *tooltip;
   gchar               *label;
   gchar               *name;
@@ -222,7 +222,7 @@ thunar_uca_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
           /* determine the label, tooltip and stock-id for the item */
           gtk_tree_model_get (GTK_TREE_MODEL (uca_provider->model), &iter,
                               THUNAR_UCA_MODEL_COLUMN_NAME, &label,
-                              THUNAR_UCA_MODEL_COLUMN_STOCK_ID, &stock_id,
+                              THUNAR_UCA_MODEL_COLUMN_ICON, &icon_name,
                               THUNAR_UCA_MODEL_COLUMN_DESCRIPTION, &tooltip,
                               -1);
 
@@ -230,7 +230,8 @@ thunar_uca_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
           name = g_strdup_printf ("ThunarUca::action-%d", ++uca_provider->last_action_id);
 
           /* create the new action with the given parameters */
-          action = gtk_action_new (name, label, tooltip, stock_id);
+          action = gtk_action_new (name, label, tooltip, NULL);
+          gtk_action_set_icon_name (action, icon_name);
 
           /* grab a tree row reference on the given path */
           row = gtk_tree_row_reference_new (GTK_TREE_MODEL (uca_provider->model), lp->data);
@@ -253,7 +254,7 @@ thunar_uca_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
           actions = g_list_prepend (actions, action);
 
           /* cleanup */
-          g_free (stock_id);
+          g_free (icon_name);
           g_free (tooltip);
           g_free (label);
           g_free (name);

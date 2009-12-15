@@ -165,7 +165,6 @@ struct _ThunarUcaModelItem
   ThunarUcaTypes types;
 
   /* derived attributes */
-  gchar         *stock_id;
   gboolean       multiple_selection : 1;
 };
 
@@ -330,9 +329,6 @@ thunar_uca_model_get_column_type (GtkTreeModel *tree_model,
     case THUNAR_UCA_MODEL_COLUMN_TYPES:
       return G_TYPE_UINT;
 
-    case THUNAR_UCA_MODEL_COLUMN_STOCK_ID:
-      return G_TYPE_STRING;
-
     case THUNAR_UCA_MODEL_COLUMN_STOCK_LABEL:
       return G_TYPE_STRING;
 
@@ -390,8 +386,6 @@ thunar_uca_model_get_value (GtkTreeModel *tree_model,
 {
   ThunarUcaModelItem *item = ((GList *) iter->user_data)->data;
   ThunarUcaModel     *uca_model = THUNAR_UCA_MODEL (tree_model);
-  GtkIconSource      *icon_source;
-  GtkIconSet         *icon_set;
   gchar              *str;
 
   g_return_if_fail (THUNAR_UCA_IS_MODEL (uca_model));
@@ -425,31 +419,6 @@ thunar_uca_model_get_value (GtkTreeModel *tree_model,
 
     case THUNAR_UCA_MODEL_COLUMN_TYPES:
       g_value_set_uint (value, item->types);
-      break;
-
-    case THUNAR_UCA_MODEL_COLUMN_STOCK_ID:
-      if (item->stock_id == NULL && item->icon != NULL)
-        {
-          /* allocate a new icon set for the item */
-          icon_set = gtk_icon_set_new ();
-          icon_source = gtk_icon_source_new ();
-          if (g_path_is_absolute (item->icon))
-            gtk_icon_source_set_filename (icon_source, item->icon);
-          else
-            gtk_icon_source_set_icon_name (icon_source, item->icon);
-          gtk_icon_set_add_source (icon_set, icon_source);
-          gtk_icon_source_free (icon_source);
-
-          /* generate a unique stock-id for the icon */
-          item->stock_id = g_strdup_printf ("thunar-uca-%p", item);
-
-          /* register the icon set */
-          gtk_icon_factory_add (uca_model->icon_factory, item->stock_id, icon_set);
-
-          /* cleanup */
-          gtk_icon_set_unref (icon_set);
-        }
-      g_value_set_static_string (value, item->stock_id);
       break;
 
     case THUNAR_UCA_MODEL_COLUMN_STOCK_LABEL:
@@ -608,7 +577,6 @@ thunar_uca_model_item_reset (ThunarUcaModelItem *item)
   /* release the previous values... */
   g_strfreev (item->patterns);
   g_free (item->description);
-  g_free (item->stock_id);
   g_free (item->command);
   g_free (item->name);
   g_free (item->icon);

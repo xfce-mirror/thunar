@@ -159,7 +159,7 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
 
   renderer = g_object_new (GTK_TYPE_CELL_RENDERER_PIXBUF, "stock-size", GTK_ICON_SIZE_DND, "xpad", 2, "ypad", 2, NULL);
   gtk_tree_view_column_pack_start (column, renderer, FALSE);
-  gtk_tree_view_column_set_attributes (column, renderer, "stock-id", THUNAR_UCA_MODEL_COLUMN_STOCK_ID, NULL);
+  gtk_tree_view_column_set_attributes (column, renderer, "icon-name", THUNAR_UCA_MODEL_COLUMN_ICON, NULL);
 
   renderer = gtk_cell_renderer_text_new ();
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
