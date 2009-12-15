@@ -32,10 +32,6 @@ void         thunar_gtk_action_group_set_action_sensitive (GtkActionGroup     *a
                                                            const gchar        *action_name,
                                                            gboolean            sensitive);
 
-void         thunar_gtk_icon_factory_insert_icon          (GtkIconFactory     *icon_factory,
-                                                           const gchar        *stock_id,
-                                                           const gchar        *icon_name);
-
 void         thunar_gtk_label_set_a11y_relation           (GtkLabel           *label,
                                                            GtkWidget          *widget);
 
