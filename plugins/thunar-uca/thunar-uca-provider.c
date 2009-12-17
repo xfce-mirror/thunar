@@ -23,8 +23,10 @@
 #include <config.h>
 #endif
 
-#include <glib/gi18n.h>
 #include <gio/gio.h>
+
+#include <libxfce4util/libxfce4util.h>
+#include <libxfce4ui/libxfce4ui.h>
 
 #include <thunar-uca/thunar-uca-chooser.h>
 #include <thunar-uca/thunar-uca-context.h>
@@ -47,10 +49,10 @@ static GList *thunar_uca_provider_get_folder_actions        (ThunarxMenuProvider
                                                              ThunarxFileInfo                  *folder);
 static void   thunar_uca_provider_activated                 (ThunarUcaProvider                *uca_provider,
                                                              GtkAction                        *action);
-static void   thunar_uca_provider_child_watch               (GPid                              pid,
-                                                             gint                              status,
-                                                             gpointer                          user_data);
-static void   thunar_uca_provider_child_watch_destroy       (gpointer                          user_data);
+static void   thunar_uca_provider_child_watch               (ThunarUcaProvider                *uca_provider,
+                                                             gint                              exit_status);
+static void   thunar_uca_provider_child_watch_destroy       (gpointer                          user_data,
+                                                             GClosure                         *closure);
 
 
 
@@ -71,7 +73,7 @@ struct _ThunarUcaProvider
    * child process has terminated.
    */
   gchar          *child_watch_path;
-  gint            child_watch_id;
+  GClosure       *child_watch;
 };
 
 
@@ -133,10 +135,6 @@ thunar_uca_provider_init (ThunarUcaProvider *uca_provider)
 
   /* grab a reference on the default model */
   uca_provider->model = thunar_uca_model_get_default ();
-
-  /* initialize child watch support */
-  uca_provider->child_watch_path = NULL;
-  uca_provider->child_watch_id = -1;
 }
 
 
@@ -145,18 +143,9 @@ static void
 thunar_uca_provider_finalize (GObject *object)
 {
   ThunarUcaProvider *uca_provider = THUNAR_UCA_PROVIDER (object);
-  GSource           *source;
 
   /* give up maintaince of any pending child watch */
-  if (G_UNLIKELY (uca_provider->child_watch_id >= 0))
-    {
-      /* reset the callback function to g_spawn_close_pid() so the plugin can be
-       * safely unloaded and the child will still not become a zombie afterwards.
-       * This also resets the child_watch_id and child_watch_path properties.
-       */
-      source = g_main_context_find_source_by_id (NULL, uca_provider->child_watch_id);
-      g_source_set_callback (source, (GSourceFunc) g_spawn_close_pid, NULL, NULL);
-    }
+  thunar_uca_provider_child_watch_destroy (uca_provider, NULL);
 
   /* drop our reference on the model */
   g_object_unref (G_OBJECT (uca_provider->model));
@@ -307,7 +296,6 @@ thunar_uca_provider_activated (ThunarUcaProvider *uca_provider,
   GtkWidget           *dialog;
   GtkWidget           *window;
   gboolean             succeed;
-  GSource             *source;
   GError              *error = NULL;
   GList               *files;
   gchar              **argv;
@@ -316,7 +304,9 @@ thunar_uca_provider_activated (ThunarUcaProvider *uca_provider,
   gchar               *label;
   gchar               *uri;
   gint                 argc;
-  gint                 pid;
+  gchar               *icon_name = NULL;
+  gboolean             startup_notify;
+  GClosure            *child_watch;
 
   g_return_if_fail (THUNAR_UCA_IS_PROVIDER (uca_provider));
   g_return_if_fail (GTK_IS_ACTION (action));
@@ -340,6 +330,12 @@ thunar_uca_provider_activated (ThunarUcaProvider *uca_provider,
   succeed = thunar_uca_model_parse_argv (uca_provider->model, &iter, files, &argc, &argv, &error);
   if (G_LIKELY (succeed))
     {
+      /* get the icon name and whether startup notification is active */
+      gtk_tree_model_get (GTK_TREE_MODEL (uca_provider->model), &iter,
+                          THUNAR_UCA_MODEL_COLUMN_ICON, &icon_name,
+                          THUNAR_UCA_MODEL_COLUMN_STARTUP_NOTIFY, &startup_notify,
+                          -1);
+
       /* determine the working from the first file */
       if (G_LIKELY (files != NULL))
         {
@@ -363,36 +359,45 @@ thunar_uca_provider_activated (ThunarUcaProvider *uca_provider,
           g_free (uri);
         }
 
+      /* build closre for child watch */
+      child_watch = g_cclosure_new_swap (G_CALLBACK (thunar_uca_provider_child_watch),
+                                         uca_provider, thunar_uca_provider_child_watch_destroy);
+      g_closure_ref (child_watch);
+      g_closure_sink (child_watch);
+
       /* spawn the command on the window's screen */
-      succeed = gdk_spawn_on_screen (gtk_widget_get_screen (GTK_WIDGET (window)), working_directory,
-                                     argv, NULL, G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH,
-                                     NULL, NULL, &pid, &error);
+      succeed = xfce_spawn_on_screen_with_child_watch (gtk_widget_get_screen (GTK_WIDGET (window)),
+                                                       working_directory, argv, NULL,
+                                                       G_SPAWN_SEARCH_PATH,
+                                                       startup_notify,
+                                                       gtk_get_current_event_time (),
+                                                       icon_name,
+                                                       child_watch,
+                                                       &error);
 
       /* check if we succeed */
       if (G_LIKELY (succeed))
         {
-          /* check if we already have a child watch */
-          if (G_UNLIKELY (uca_provider->child_watch_id >= 0))
-            {
-              /* reset the callback function to g_spawn_close_pid() so the plugin can be
-               * safely unloaded and the child will still not become a zombie afterwards.
-               */
-              source = g_main_context_find_source_by_id (NULL, uca_provider->child_watch_id);
-              g_source_set_callback (source, (GSourceFunc) g_spawn_close_pid, NULL, NULL);
-            }
+          /* release existing child watch */
+          thunar_uca_provider_child_watch_destroy (uca_provider, NULL);
 
-          /* schedule the new child watch */
-          uca_provider->child_watch_id = g_child_watch_add_full (G_PRIORITY_LOW, pid, thunar_uca_provider_child_watch,
-                                                                 uca_provider, thunar_uca_provider_child_watch_destroy);
+          /* set new closure */
+          uca_provider->child_watch = child_watch;
 
           /* take over ownership of the working directory as child watch path */
           uca_provider->child_watch_path = working_directory;
           working_directory = NULL;
         }
+      else
+        {
+          /* spawn failed, release watch */
+          g_closure_unref (child_watch);
+        }
 
       /* cleanup */
       g_free (working_directory);
       g_strfreev (argv);
+      g_free (icon_name);
     }
 
   /* present error message to the user */
@@ -416,14 +421,14 @@ thunar_uca_provider_activated (ThunarUcaProvider *uca_provider,
 
 
 static void
-thunar_uca_provider_child_watch (GPid     pid,
-                                 gint     status,
-                                 gpointer user_data)
+thunar_uca_provider_child_watch (ThunarUcaProvider *uca_provider,
+                                 gint               exit_status)
+
 {
-  ThunarUcaProvider *uca_provider = THUNAR_UCA_PROVIDER (user_data);
-  GFileMonitor      *monitor;
-  GError            *error = NULL;
-  GFile             *file;
+  GFileMonitor *monitor;
+  GFile        *file;
+
+  g_return_if_fail (THUNAR_UCA_IS_PROVIDER (uca_provider));
 
   GDK_THREADS_ENTER ();
 
@@ -434,7 +439,7 @@ thunar_uca_provider_child_watch (GPid     pid,
       file = g_file_new_for_path (uca_provider->child_watch_path);
 
       /* schedule a changed notification on the path */
-      monitor = g_file_monitor (file, G_FILE_MONITOR_NONE, NULL, &error);
+      monitor = g_file_monitor (file, G_FILE_MONITOR_NONE, NULL, NULL);
 
       if (monitor != NULL)
         {
@@ -446,8 +451,7 @@ thunar_uca_provider_child_watch (GPid     pid,
       g_object_unref (file);
     }
 
-  /* need to cleanup */
-  g_spawn_close_pid (pid);
+  thunar_uca_provider_child_watch_destroy (uca_provider, NULL);
 
   GDK_THREADS_LEAVE ();
 }
@@ -455,15 +459,27 @@ thunar_uca_provider_child_watch (GPid     pid,
 
 
 static void
-thunar_uca_provider_child_watch_destroy (gpointer user_data)
+thunar_uca_provider_child_watch_destroy (gpointer  user_data,
+                                         GClosure *closure)
 {
   ThunarUcaProvider *uca_provider = THUNAR_UCA_PROVIDER (user_data);
+  GClosure          *child_watch;
 
-  /* reset child watch id and path */
-  g_free (uca_provider->child_watch_path);
-  uca_provider->child_watch_path = NULL;
-  uca_provider->child_watch_id = -1;
+  /* leave if the closure is not the one we're watching */
+  if (uca_provider->child_watch == closure
+      || closure == NULL)
+    {
+      /* reset child watch and path */
+      if (G_UNLIKELY (uca_provider->child_watch != NULL))
+        {
+          child_watch = uca_provider->child_watch;
+          uca_provider->child_watch = NULL;
+
+          g_closure_invalidate (child_watch);
+          g_closure_unref (child_watch);
+        }
+
+      g_free (uca_provider->child_watch_path);
+      uca_provider->child_watch_path = NULL;
+    }
 }
-
-
-

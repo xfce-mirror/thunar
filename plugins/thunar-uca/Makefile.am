@@ -33,7 +33,13 @@ thunar_uca_la_SOURCES =							\
 thunar_uca_la_CFLAGS =							\
 	$(EXO_CFLAGS)							\
 	$(LIBXFCE4UTIL_CFLAGS)						\
+	$(LIBXFCE4UI_CFLAGS)						\
 	$(PLATFORM_CFLAGS)
+
+thunar_uca_la_LIBADD =							\
+	$(EXO_LIBS)							\
+	$(LIBXFCE4UTIL_LIBS)						\
+	$(LIBXFCE4UI_LIBS)
 
 thunar_uca_la_LDFLAGS =							\
 	-avoid-version							\

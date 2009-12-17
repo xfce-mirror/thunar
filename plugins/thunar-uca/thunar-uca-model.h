@@ -41,6 +41,7 @@ typedef enum
   THUNAR_UCA_MODEL_COLUMN_DESCRIPTION,
   THUNAR_UCA_MODEL_COLUMN_ICON,
   THUNAR_UCA_MODEL_COLUMN_COMMAND,
+  THUNAR_UCA_MODEL_COLUMN_STARTUP_NOTIFY,
   THUNAR_UCA_MODEL_COLUMN_PATTERNS,
   THUNAR_UCA_MODEL_COLUMN_TYPES,
   THUNAR_UCA_MODEL_COLUMN_STOCK_LABEL,
@@ -90,6 +91,7 @@ void            thunar_uca_model_update         (ThunarUcaModel         *uca_mod
                                                  const gchar            *description,
                                                  const gchar            *icon,
                                                  const gchar            *command,
+                                                 gboolean                startup_notify,
                                                  const gchar            *patterns,
                                                  ThunarUcaTypes          types);
 

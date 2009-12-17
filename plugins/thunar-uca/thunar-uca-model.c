@@ -74,6 +74,7 @@ typedef enum
   PARSER_ICON,
   PARSER_NAME,
   PARSER_COMMAND,
+  PARSER_STARTUP_NOTIFY,
   PARSER_PATTERNS,
   PARSER_DESCRIPTION,
   PARSER_DIRECTORIES,
@@ -161,6 +162,7 @@ struct _ThunarUcaModelItem
   gchar         *description;
   gchar         *icon;
   gchar         *command;
+  guint          startup_notify : 1;
   gchar        **patterns;
   ThunarUcaTypes types;
 
@@ -182,6 +184,7 @@ typedef struct
   GString        *command;
   GString        *patterns;
   GString        *description;
+  gboolean        startup_notify;
   gboolean        description_use;
   guint           description_match;
   ThunarUcaTypes  types;
@@ -323,6 +326,9 @@ thunar_uca_model_get_column_type (GtkTreeModel *tree_model,
     case THUNAR_UCA_MODEL_COLUMN_COMMAND:
       return G_TYPE_STRING;
 
+    case THUNAR_UCA_MODEL_COLUMN_STARTUP_NOTIFY:
+      return G_TYPE_BOOLEAN;
+
     case THUNAR_UCA_MODEL_COLUMN_PATTERNS:
       return G_TYPE_STRING;
 
@@ -410,6 +416,10 @@ thunar_uca_model_get_value (GtkTreeModel *tree_model,
 
     case THUNAR_UCA_MODEL_COLUMN_COMMAND:
       g_value_set_static_string (value, item->command);
+      break;
+
+    case THUNAR_UCA_MODEL_COLUMN_STARTUP_NOTIFY:
+      g_value_set_boolean (value, item->startup_notify);
       break;
 
     case THUNAR_UCA_MODEL_COLUMN_PATTERNS:
@@ -549,6 +559,7 @@ thunar_uca_model_load_from_file (ThunarUcaModel *uca_model,
   parser.command = g_string_new (NULL);
   parser.patterns = g_string_new (NULL);
   parser.description = g_string_new (NULL);
+  parser.startup_notify = FALSE;
   xfce_stack_push (parser.stack, PARSER_START);
 
   /* parse the file */
@@ -622,6 +633,7 @@ start_element_handler (GMarkupParseContext *context,
           parser->name_match = XFCE_LOCALE_NO_MATCH;
           parser->description_match = XFCE_LOCALE_NO_MATCH;
           parser->types = 0;
+          parser->startup_notify = FALSE;
           g_string_truncate (parser->icon, 0);
           g_string_truncate (parser->name, 0);
           g_string_truncate (parser->command, 0);
@@ -707,6 +719,11 @@ start_element_handler (GMarkupParseContext *context,
 
           xfce_stack_push (parser->stack, PARSER_DESCRIPTION);
         }
+      else if (strcmp (element_name, "startup-notify") == 0)
+        {
+          parser->startup_notify = TRUE;
+          xfce_stack_push (parser->stack, PARSER_STARTUP_NOTIFY);
+        }
       else if (strcmp (element_name, "directories") == 0)
         {
           parser->types |= THUNAR_UCA_TYPE_DIRECTORIES;
@@ -784,6 +801,7 @@ end_element_handler (GMarkupParseContext *context,
                                    parser->description->str,
                                    parser->icon->str,
                                    parser->command->str,
+                                   parser->startup_notify,
                                    parser->patterns->str,
                                    parser->types);
         }
@@ -813,6 +831,11 @@ end_element_handler (GMarkupParseContext *context,
 
     case PARSER_DESCRIPTION:
       if (strcmp (element_name, "description") != 0)
+        goto unknown_element;
+      break;
+
+    case PARSER_STARTUP_NOTIFY:
+      if (strcmp (element_name, "startup-notify") != 0)
         goto unknown_element;
       break;
 
@@ -1215,6 +1238,7 @@ thunar_uca_model_update (ThunarUcaModel *uca_model,
                          const gchar    *description,
                          const gchar    *icon,
                          const gchar    *command,
+                         gboolean        startup_notify,
                          const gchar    *patterns,
                          ThunarUcaTypes  types)
 {
@@ -1239,6 +1263,7 @@ thunar_uca_model_update (ThunarUcaModel *uca_model,
   if (G_LIKELY (description != NULL && *description != '\0'))
     item->description = g_strdup (description);
   item->types = types;
+  item->startup_notify = startup_notify;
 
   /* setup the patterns */
   item->patterns = g_strsplit ((patterns != NULL && *patterns != '\0') ? patterns : "*", ";", -1);
@@ -1334,6 +1359,8 @@ thunar_uca_model_save (ThunarUcaModel *uca_model,
       fprintf (fp, "%s", escaped);
       g_free (patterns);
       g_free (escaped);
+      if (item->startup_notify)
+        fprintf (fp, "<startup-notify/>");
       if ((item->types & THUNAR_UCA_TYPE_DIRECTORIES) != 0)
         fprintf (fp, "<directories/>");
       if ((item->types & THUNAR_UCA_TYPE_AUDIO_FILES) != 0)

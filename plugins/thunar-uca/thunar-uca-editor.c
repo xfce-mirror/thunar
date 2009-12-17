@@ -59,6 +59,7 @@ struct _ThunarUcaEditor
   GtkWidget   *description_entry;
   GtkWidget   *icon_button;
   GtkWidget   *command_entry;
+  GtkWidget   *sn_button;
   GtkWidget   *parameter_entry;
   GtkWidget   *patterns_entry;
   GtkWidget   *directories_button;
@@ -119,7 +120,7 @@ thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
      Basic
    */
   label = gtk_label_new (_("Basic"));
-  table = gtk_table_new (6, 2, FALSE);
+  table = gtk_table_new (7, 2, FALSE);
   gtk_table_set_col_spacings (GTK_TABLE (table), 12);
   gtk_table_set_row_spacings (GTK_TABLE (table), 6);
   gtk_container_set_border_width (GTK_CONTAINER (table), 12);
@@ -199,12 +200,19 @@ thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
 
+  uca_editor->sn_button = gtk_check_button_new_with_label (_("Use Startup Notification"));
+  gtk_widget_set_tooltip_text (uca_editor->sn_button, _("Enable this option if you want a waiting cursor to be shown while the "
+                                                        "action is launched. This is also highly recommended if you have focus "
+                                                        "stealing prevention enabled in your window manager."));
+  gtk_table_attach (GTK_TABLE (table), uca_editor->sn_button, 1, 2, 3, 4, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (uca_editor->sn_button);
+
   label = g_object_new (GTK_TYPE_LABEL, "label", _("_Icon:"), "use-underline", TRUE, "xalign", 0.0f, NULL);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, 3, 4, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), label, 0, 1, 4, 5, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
   align = gtk_alignment_new (0.0f, 0.5f, 0.0f, 0.0f);
-  gtk_table_attach (GTK_TABLE (table), align, 1, 2, 3, 4, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), align, 1, 2, 4, 5, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (align);
 
   uca_editor->icon_button = gtk_button_new_with_label (_("No icon"));
@@ -223,11 +231,11 @@ thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
   g_object_unref (G_OBJECT (relation));
 
   align = g_object_new (GTK_TYPE_ALIGNMENT, "height-request", 12, NULL);
-  gtk_table_attach (GTK_TABLE (table), align, 0, 2, 4, 5, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), align, 0, 2, 5, 6, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (align);
 
   hbox = gtk_hbox_new (FALSE, 6);
-  gtk_table_attach (GTK_TABLE (table), hbox, 0, 2, 5, 6, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), hbox, 0, 2, 6, 7, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (hbox);
 
   image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_INFO, GTK_ICON_SIZE_DND);
@@ -763,6 +771,7 @@ thunar_uca_editor_load (ThunarUcaEditor *uca_editor,
   gchar         *command;
   gchar         *icon;
   gchar         *name;
+  gboolean       startup_notify;
 
   g_return_if_fail (THUNAR_UCA_IS_EDITOR (uca_editor));
   g_return_if_fail (THUNAR_UCA_IS_MODEL (uca_model));
@@ -776,6 +785,7 @@ thunar_uca_editor_load (ThunarUcaEditor *uca_editor,
                       THUNAR_UCA_MODEL_COLUMN_TYPES, &types,
                       THUNAR_UCA_MODEL_COLUMN_ICON, &icon,
                       THUNAR_UCA_MODEL_COLUMN_NAME, &name,
+                      THUNAR_UCA_MODEL_COLUMN_STARTUP_NOTIFY, &startup_notify,
                       -1);
 
   /* setup the new selection */
@@ -789,6 +799,7 @@ thunar_uca_editor_load (ThunarUcaEditor *uca_editor,
   gtk_entry_set_text (GTK_ENTRY (uca_editor->patterns_entry), (patterns != NULL) ? patterns : "");
   gtk_entry_set_text (GTK_ENTRY (uca_editor->command_entry), (command != NULL) ? command : "");
   gtk_entry_set_text (GTK_ENTRY (uca_editor->name_entry), (name != NULL) ? name : "");
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (uca_editor->sn_button), startup_notify);
 
   /* cleanup */
   g_free (description);
@@ -823,6 +834,7 @@ thunar_uca_editor_save (ThunarUcaEditor *uca_editor,
                            gtk_entry_get_text (GTK_ENTRY (uca_editor->description_entry)),
                            thunar_uca_editor_get_icon_name (uca_editor),
                            gtk_entry_get_text (GTK_ENTRY (uca_editor->command_entry)),
+                           gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (uca_editor->sn_button)),
                            gtk_entry_get_text (GTK_ENTRY (uca_editor->patterns_entry)),
                            thunar_uca_editor_get_types (uca_editor));
 }
