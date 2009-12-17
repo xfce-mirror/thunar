@@ -1,6 +1,9 @@
-# $Id$
+SUBDIRS =								\
+	fr								\
+	ja								\
+	pl
 
-imagesdir = $(datadir)/doc/Thunar/html/pl/images
+imagesdir = $(docdir)/html/C/images
 images_DATA =								\
 	bulk-rename.png							\
 	file-manager-window.png						\

@@ -37,10 +37,10 @@
         <firstname>Benedikt</firstname>
         <surname>Meurer</surname>
         <affiliation>
-          <address><email>benny@xfce.org</email></address>
+          <jobtitle>Software developer</jobtitle>
           <orgname>os-cillation</orgname>
           <orgdiv>System development</orgdiv>
-          <jobtitle>Software developer</jobtitle>
+          <address><email>benny@xfce.org</email></address>
         </affiliation>
       </author>
     </authorgroup>
@@ -65,11 +65,11 @@
     </para>
 
     <itemizedlist>
-      <listitem>Create folders and documents.</listitem>
-      <listitem>Display your files and folders.</listitem>
-      <listitem>Manage your files and folders.</listitem>
-      <listitem>Run and manage custom actions.</listitem>
-      <listitem>Access Removable Media.</listitem>
+      <listitem><para>Create folders and documents.</para></listitem>
+      <listitem><para>Display your files and folders.</para></listitem>
+      <listitem><para>Manage your files and folders.</para></listitem>
+      <listitem><para>Run and manage custom actions.</para></listitem>
+      <listitem><para>Access Removable Media.</para></listitem>
     </itemizedlist>
   </sect1>
 
@@ -1092,39 +1092,39 @@ X-Thumbnailer-Exec=your-thumbnailer %i %o %s</programlisting>
           <varlistentry>
             <term><varname>%i</varname></term>
             <listitem>
-              The local path to the input file for which to create a thumbnail. May be either a path relative to the directory from which the
-              thumbnailer was invoked or an absolute path.
+              <para>The local path to the input file for which to create a thumbnail. May be either a path relative to the directory from which the
+              thumbnailer was invoked or an absolute path.</para>
             </listitem>
           </varlistentry>
 
           <varlistentry>
             <term><varname>%o</varname></term>
             <listitem>
-              The local path to the output file where to store the generated thumbnail. The output file must be written as valid PNG file according
+              <para>The local path to the output file where to store the generated thumbnail. The output file must be written as valid PNG file according
               to the thumbnail standard (see above). Note that the path may not end with <literal>.png</literal>, which matters if you invoke certain
-              third party tools.
+              third party tools.</para>
             </listitem>
           </varlistentry>
 
           <varlistentry>
             <term><varname>%s</varname></term>
             <listitem>
-              The desired size of the generated thumbnail in pixels. This parameter is optional.
+              <para>The desired size of the generated thumbnail in pixels. This parameter is optional.</para>
             </listitem>
           </varlistentry>
 
           <varlistentry>
             <term><varname>%u</varname></term>
             <listitem>
-              Similar to <literal>%i</literal>, but substituted with the URI of the file, rather than the path. This was added for compatibility with
-              GNOME.
+              <para>Similar to <literal>%i</literal>, but substituted with the URI of the file, rather than the path. This was added for compatibility with
+              GNOME.</para>
             </listitem>
           </varlistentry>
 
           <varlistentry>
             <term><varname>%%</varname></term>
             <listitem>
-              Will be substituted with a single <literal>%</literal>.
+              <para>Will be substituted with a single <literal>%</literal>.</para>
             </listitem>
           </varlistentry>
         </variablelist>
@@ -1413,7 +1413,7 @@ $ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbna
       a request</ulink>.
     </para>
 
-    <sect3 id="faq-executables">
+    <sect2 id="faq-executables">
       <title>Why doesn't Thunar execute files marked as executable?</title>
 
       <para>
@@ -1431,9 +1431,9 @@ $ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbna
         type has a parent that matches one of the two types listed above, or if the MIME-type is an alias for
         one of the above.
       </para>
-    </sect3>
+    </sect2>
 
-    <sect3 id="faq-metadata">
+    <sect2 id="faq-metadata">
       <title>Where does Thunar store the metadata associated with files?</title>
 
       <para>
@@ -1444,9 +1444,9 @@ $ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbna
         using the <command>tdbtool</command>, which is part of the Thunar distribution
         (located in the <filename role="directory">tdb/</filename> subdirectory).
       </para>
-    </sect3>
+    </sect2>
 
-    <sect3 id="faq-thunarrc">
+    <sect2 id="faq-thunarrc">
       <title>Where does Thunar store its preferences?</title>
 
       <para>
@@ -1456,9 +1456,9 @@ $ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbna
         using a text editor. See <filename>docs/README.thunarrc</filename> for an
         overview of the various preferences.
       </para>
-    </sect3>
+    </sect2>
 
-    <sect3 id="faq-mouse-gestures">
+    <sect2 id="faq-mouse-gestures">
       <title>How to use mouse gestures in Thunar?</title>
 
       <para>
@@ -1476,9 +1476,9 @@ $ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbna
         <member><guilabel>Right</guilabel> - opens the next visited folder</member>
         <member><guilabel>Down</guilabel> - reloads the current folder</member>
       </simplelist>
-    </sect3>
+    </sect2>
 
-    <sect3 id="faq-assign-keyboard-shortcuts">
+    <sect2 id="faq-assign-keyboard-shortcuts">
       <title>How do I assign different keyboard shortcuts?</title>
 
       <para>
@@ -1521,9 +1521,9 @@ $ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbna
           </para>
         </listitem>
       </itemizedlist>
-    </sect3>
+    </sect2>
 
-    <sect3 id="faq-store-keyboard-shortcuts">
+    <sect2 id="faq-store-keyboard-shortcuts">
       <title>Where does Thunar store the keyboard shortcuts?</title>
 
       <para>
@@ -1541,7 +1541,7 @@ $ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbna
         (the default for most Linux distributions), you can install system wide defaults to
         <filename>/etc/xdg/Thunar/accels.scm</filename>. Thunar will then load shortcuts from this file on first startup.
       </para>
-    </sect3>
+    </sect2>
   </sect1>
 
 

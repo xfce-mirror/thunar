@@ -6,7 +6,6 @@ SUBDIRS =								\
 	papers								\
 	reference
 
-docdir = $(datadir)/doc/Thunar
 doc_DATA =								\
 	README.gtkrc							\
 	README.thunarrc							\
