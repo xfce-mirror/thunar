@@ -2814,6 +2814,7 @@ thunar_standard_view_drag_motion (GtkWidget          *view,
     {
       /* check if we can handle that drag data (yet?) */
       target = gtk_drag_dest_find_target (view, context, NULL);
+
       if ((target == gdk_atom_intern_static_string ("XdndDirectSave0")) || (target == gdk_atom_intern_static_string ("_NETSCAPE_URL")))
         {
           /* determine the file for the given coordinates */
@@ -2857,7 +2858,8 @@ thunar_standard_view_drag_motion (GtkWidget          *view,
       else
         {
           /* request the drag data from the source */
-          gtk_drag_get_data (view, context, target, timestamp);
+          if (target != GDK_NONE)
+            gtk_drag_get_data (view, context, target, timestamp);
         }
 
       /* tell Gdk whether we can drop here */
