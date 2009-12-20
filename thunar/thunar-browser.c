@@ -193,8 +193,6 @@ thunar_browser_poke_mountable_finish (GObject      *object,
   _thunar_return_if_fail (THUNAR_IS_BROWSER (poke_data->browser));
   _thunar_return_if_fail (THUNAR_IS_FILE (poke_data->file));
 
-  g_debug ("  poke mountable finish");
-
   if (!g_file_mount_mountable_finish (G_FILE (object), result, &error))
     {
       if (error->domain == G_IO_ERROR)
@@ -243,8 +241,6 @@ thunar_browser_poke_file_finish (GObject      *object,
   _thunar_return_if_fail (THUNAR_IS_BROWSER (poke_data->browser));
   _thunar_return_if_fail (THUNAR_IS_FILE (poke_data->file));
 
-  g_debug ("  poke file finish");
-
   if (!g_file_mount_enclosing_volume_finish (G_FILE (object), result, &error))
     {
       if (error->domain == G_IO_ERROR)
@@ -256,9 +252,6 @@ thunar_browser_poke_file_finish (GObject      *object,
 
   if (error == NULL)
     thunar_file_reload (poke_data->file);
-
-  g_debug ("    %s type %d", thunar_file_dup_uri (poke_data->file), 
-           thunar_file_get_kind (poke_data->file));
 
   if (poke_data->func != NULL)
     {
@@ -299,13 +292,10 @@ thunar_browser_poke_file_internal (ThunarBrowser            *browser,
   _thunar_return_if_fail (THUNAR_IS_FILE (source));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  g_debug ("poke %s", thunar_file_dup_uri (file));
-
   if (thunar_file_get_kind (file) == G_FILE_TYPE_SHORTCUT)
     {
       location = thunar_file_get_target_location (file);
       target = thunar_file_get (location, &error);
-      g_debug ("  shortcut, target %s (%p)", g_file_get_uri (location), target);
       g_object_unref (location);
 
       if (target != NULL)
@@ -330,8 +320,6 @@ thunar_browser_poke_file_internal (ThunarBrowser            *browser,
     {
       if (thunar_file_is_mounted (file))
         {
-          g_debug ("  mountable, already mounted");
-
           location = thunar_file_get_target_location (file);
           target = thunar_file_get (location, &error);
           g_object_unref (location);
@@ -346,8 +334,6 @@ thunar_browser_poke_file_internal (ThunarBrowser            *browser,
         }
       else
         {
-          g_debug ("  mountable, needs mounting");
-
           poke_data = thunar_browser_poke_file_data_new (browser, source, file,
                                                          func, user_data);
 
@@ -363,8 +349,6 @@ thunar_browser_poke_file_internal (ThunarBrowser            *browser,
     }
   else if (!thunar_file_is_mounted (file))
     {
-      g_debug ("  file, enclosing volume needs mounting");
-
       poke_data = thunar_browser_poke_file_data_new (browser, source, file,
                                                      func, user_data);
 
@@ -379,8 +363,6 @@ thunar_browser_poke_file_internal (ThunarBrowser            *browser,
     }
   else
     {
-      g_debug ("  file, enclosing volume already mounted");
-
       if (func != NULL)
         func (browser, source, file, NULL, user_data);
     }
