@@ -114,7 +114,6 @@ struct _ThunarFile
   /*< private >*/
   GFileMonitor  *monitor;
   GFileInfo     *info;
-  GFileInfo     *filesystem_info;
   GFile         *gfile;
   gchar         *custom_icon_name;
   gchar         *display_name;

@@ -296,10 +296,6 @@ thunar_file_finalize (GObject *object)
   if (file->info != NULL)
     g_object_unref (file->info);
 
-  /* release filesystem info */
-  if (file->filesystem_info != NULL)
-    g_object_unref (file->filesystem_info);
-
   /* free the custom icon name */
   g_free (file->custom_icon_name);
   
@@ -409,10 +405,9 @@ thunar_file_info_get_filesystem_info (ThunarxFileInfo *file_info)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file_info), NULL);
 
-  if (THUNAR_FILE (file_info)->filesystem_info != NULL)
-    return g_object_ref (THUNAR_FILE (file_info)->filesystem_info);
-  else
-    return NULL;
+  return g_file_query_filesystem_info (THUNAR_FILE (file_info)->gfile, 
+                                       THUNARX_FILESYSTEM_INFO_NAMESPACE,
+                                       NULL, NULL);
 }
 
 
@@ -628,7 +623,6 @@ thunar_file_get (GFile   *gfile,
       file = g_object_new (THUNAR_TYPE_FILE, NULL);
       file->gfile = g_object_ref (gfile);
       file->info = NULL;
-      file->filesystem_info = NULL;
       file->custom_icon_name = NULL;
       file->display_name = NULL;
       file->basename = NULL;
@@ -727,13 +721,6 @@ thunar_file_load (ThunarFile   *file,
       file->info = NULL;
     }
 
-  /* release the current filesystem info */
-  if (file->filesystem_info != NULL)
-    {
-      g_object_unref (file->filesystem_info);
-      file->filesystem_info = NULL;
-    }
-
   /* free the custom icon name */
   g_free (file->custom_icon_name);
 
@@ -770,12 +757,6 @@ thunar_file_load (ThunarFile   *file,
           g_clear_error (&err);
         }
     }
-
-  /* query a new filesystem info */
-  file->filesystem_info = g_file_query_filesystem_info (file->gfile,
-                                                        THUNARX_FILESYSTEM_INFO_NAMESPACE,
-                                                        cancellable,
-                                                        NULL);
 
   /* determine the basename */
   file->basename = g_file_get_basename (file->gfile);
@@ -1902,16 +1883,28 @@ gboolean
 thunar_file_get_free_space (const ThunarFile *file, 
                             guint64          *free_space_return) 
 {
+  GFileInfo *filesystem_info;
+  gboolean   success = FALSE;
+
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
-  if (file->filesystem_info == NULL)
-    return FALSE;
+  filesystem_info = g_file_query_filesystem_info (file->gfile, 
+                                                  THUNARX_FILESYSTEM_INFO_NAMESPACE,
+                                                  NULL, NULL);
 
-  *free_space_return = g_file_info_get_attribute_uint64 (file->filesystem_info,
-                                                         G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
-  
-  return g_file_info_has_attribute (file->filesystem_info,
-                                    G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
+  if (filesystem_info != NULL)
+    {
+      *free_space_return = 
+        g_file_info_get_attribute_uint64 (filesystem_info,
+                                          G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
+
+      success = g_file_info_has_attribute (filesystem_info, 
+                                           G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
+
+      g_object_unref (filesystem_info);
+    }
+
+  return success;
 }
 
 

@@ -291,7 +291,7 @@ ttj_copy_file (ThunarTransferJob *job,
               && target_type == G_FILE_TYPE_DIRECTORY))
         {
           /* we tried to overwrite a directory with a directory. this normally results 
-           * in a merge. ignore the error we actually *want* to merge */
+           * in a merge. ignore the error if we actually *want* to merge */
           if (merge_directories)
             g_clear_error (&err);
         }
