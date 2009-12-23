@@ -1,9 +1,10 @@
 # Hunt Xu <huntxu@live.cn>, 2009.
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "POT-Creation-Date: 2009-12-20 11:53+0100\n"
-"PO-Revision-Date: 2009-11-24 22:01+0800\n"
+"PO-Revision-Date: 2009-12-23 15:53+0800\n"
 "Last-Translator: Hunt Xu <huntxu@live.cn>\n"
 "Language-Team: Chinese (Simplified) <xfce-i18n@xfce.org>\n"
 "MIME-Version: 1.0\n"
@@ -1025,7 +1026,7 @@ msgstr ""
 
 #: Thunar.xml:817(guilabel)
 msgid "Icon Size"
-msgstr ""
+msgstr "图标大小"
 
 #: Thunar.xml:819(para)
 msgid ""
@@ -1051,7 +1052,7 @@ msgstr ""
 
 #: Thunar.xml:843(title) Thunar.xml:856(phrase)
 msgid "Behavior Preferences"
-msgstr ""
+msgstr "行为首选项"
 
 #: Thunar.xml:845(para)
 msgid ""
@@ -1060,7 +1061,7 @@ msgstr ""
 
 #: Thunar.xml:863(guilabel)
 msgid "Single click to active items"
-msgstr ""
+msgstr "单击激活项目"
 
 #: Thunar.xml:865(para)
 msgid ""
@@ -1079,7 +1080,7 @@ msgstr ""
 
 #: Thunar.xml:880(guilabel)
 msgid "Double click to activate items"
-msgstr ""
+msgstr "双击激活项目"
 
 #: Thunar.xml:882(para)
 msgid ""
@@ -1089,15 +1090,15 @@ msgstr ""
 
 #: Thunar.xml:893(title) Thunar.xml:906(phrase)
 msgid "Advanced Preferences"
-msgstr ""
+msgstr "高级首选项"
 
 #: Thunar.xml:895(para)
 msgid "You can control advanced features of the file manager."
-msgstr ""
+msgstr "您可以控制文件管理器的高级特性。"
 
 #: Thunar.xml:913(guilabel)
 msgid "Folder Permissions"
-msgstr ""
+msgstr "文件夹权限"
 
 #: Thunar.xml:915(para)
 msgid ""
@@ -1110,7 +1111,7 @@ msgstr ""
 
 #: Thunar.xml:925(guilabel)
 msgid "Volume Management"
-msgstr ""
+msgstr "音量控制"
 
 #: Thunar.xml:927(para)
 msgid ""
@@ -1122,17 +1123,18 @@ msgstr ""
 
 #: Thunar.xml:940(title)
 msgid "Customizing Thunar"
-msgstr ""
+msgstr "自定义 Thunar"
 
 #: Thunar.xml:942(para)
 msgid ""
 "This chapter describes how to customize certain parts of the file manager to "
 "your own needs."
 msgstr ""
+"这一章介绍如何按您自己的需求定制文件管理器中的特定部分。"
 
 #: Thunar.xml:948(title)
 msgid "The \"Send To\" Menu"
-msgstr ""
+msgstr "“发送至” 菜单"
 
 #: Thunar.xml:950(para)
 msgid ""
@@ -1146,7 +1148,7 @@ msgstr ""
 
 #: Thunar.xml:964(phrase)
 msgid "\"Send To\" Menu"
-msgstr ""
+msgstr "“发送至” 菜单"
 
 #: Thunar.xml:969(para)
 msgid ""
@@ -1438,12 +1440,17 @@ msgid ""
 "$ chmod +x eps-thumbnailer\n"
 "$ sudo install eps-thumbnailer /usr/local/bin/eps-thumbnailer"
 msgstr ""
+"\n"
+"$ chmod +x eps-thumbnailer\n"
+"$ sudo install eps-thumbnailer /usr/local/bin/eps-thumbnailer"
 
 #: Thunar.xml:1176(para)
 msgid ""
 "Next we need to create the thumbnail description file <filename>eps-"
 "thumbnailer.desktop</filename>, which looks like this:"
 msgstr ""
+"下一步我们要创建缩略图描述文件 <filename>eps-"
+"thumbnailer.desktop</filename>，文件内容大致如下:"
 
 #: Thunar.xml:1180(programlisting)
 #, no-wrap
@@ -1458,12 +1465,23 @@ msgid ""
 "MimeType=image/x-eps;\n"
 "X-Thumbnailer-Exec=/usr/local/bin/eps-thumbnailer %i %o %s"
 msgstr ""
+"\n"
+"[Desktop Entry]\n"
+"Version=1.0\n"
+"Encoding=UTF-8\n"
+"Type=X-Thumbnailer\n"
+"Name=EPS Thumbnailer\n"
+"TryExec=convert\n"
+"MimeType=image/x-eps;\n"
+"X-Thumbnailer-Exec=/usr/local/bin/eps-thumbnailer %i %o %s"
 
 #: Thunar.xml:1190(para)
 msgid ""
 "This file must be installed to <filename role=\"directory\">/usr/local/share/"
 "thumbnailers</filename> (create the folder if it does not exists)."
 msgstr ""
+"此文件必须安装至 <filename role=\"directory\">/usr/local/share/"
+"thumbnailers</filename> (如果该文件夹不存在则请您自行创建)。"
 
 #: Thunar.xml:1195(screen)
 #, no-wrap
@@ -1472,6 +1490,9 @@ msgid ""
 "$ sudo install -d /usr/local/share/thumbnailers\n"
 "$ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbnailer.desktop"
 msgstr ""
+"\n"
+"$ sudo install -d /usr/local/share/thumbnailers\n"
+"$ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbnailer.desktop"
 
 #: Thunar.xml:1199(para)
 msgid ""
@@ -1560,7 +1581,7 @@ msgstr "高级内容"
 
 #: Thunar.xml:1261(title)
 msgid "To Bulk Rename Files"
-msgstr ""
+msgstr "对文件进行批量重命名"
 
 #: Thunar.xml:1263(para)
 msgid ""
@@ -1698,6 +1719,7 @@ msgstr ""
 msgid ""
 "These are the four most important types of files in the UNIX file system."
 msgstr ""
+"UNIX 文件系统之中有四种重要的文件类型。"
 
 #: Thunar.xml:1364(title)
 msgid "Ordinary Files"
@@ -1709,6 +1731,8 @@ msgid ""
 "image files, audio files, office documents and video files. The term "
 "<emphasis>file</emphasis> is often used to refer to an ordinary file."
 msgstr ""
+"一个普通文件可能包含文本、一个程序或者其他数据，包括图像文件、音频文件、办公"
+"文档和视频文件等等。术语 <emphasis>file</emphasis> 常用以指代一个普通文件。"
 
 #: Thunar.xml:1373(title)
 msgid "Folder Files"
@@ -1720,6 +1744,8 @@ msgid ""
 "special file, which contains a mapping of file names to file references for "
 "every file contained within this folder."
 msgstr ""
+"文件夹在 UNIX 文件系统中同样被认为是文件。准确地说，一个文件夹是一个包含文件夹"
+"中存放的每个文件的文件名和文件内容的对应关系的特殊文件。"
 
 #: Thunar.xml:1382(title)
 msgid "Symbolic Link Files"
@@ -1732,6 +1758,9 @@ msgid ""
 "files therefore do not contain any useful information themselves, but just "
 "refer to other files."
 msgstr ""
+"一个符号链接 (通常称作一个 <emphasis>symlink</emphasis>) 是一个包含有指向文件"
+"系统中另一个文件路径的特殊文件。符号链接文件自身并不包含任何有用信息，而只是"
+"指向其他文件。"
 
 #: Thunar.xml:1392(title)
 msgid "Device Files"
@@ -1744,6 +1773,9 @@ msgid ""
 "\"directory\">/dev</filename> folder. For example the special file "
 "<filename>/dev/hda</filename> represents the first IDE disk on Linux."
 msgstr ""
+"如前所述，(大多数) 设备可以通过文件系统来访问。这些特殊的设备文件通常位于 "
+"<filename role=\"directory\">/dev</filename> 文件夹。例如，文件 "
+"<filename>/dev/hda</filename> 在 Linux 中表示第一块 IDE 硬盘。"
 
 #: Thunar.xml:1406(title)
 msgid "Frequently Asked Questions"
@@ -1757,10 +1789,14 @@ msgid ""
 "xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided\">file a request</"
 "ulink>."
 msgstr ""
+"本节的目的是说明 Thunar 在使用过程中常出现的一些问题。如果您认为还有哪些常见"
+"问题在本节中遗漏了，请 <ulink type=\"http\" url=\"http://bugzilla."
+"xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided\">提出您的建议</"
+"ulink>。"
 
 #: Thunar.xml:1417(title)
 msgid "Why doesn't Thunar execute files marked as executable?"
-msgstr ""
+msgstr "为什么 Thunar 并不执行可执行文件？"
 
 #: Thunar.xml:1419(para)
 msgid ""
@@ -1773,6 +1809,13 @@ msgid ""
 "is given. For the other types the feature is available if the file is marked "
 "executable for the current user."
 msgstr ""
+"出于安全因素考虑，Thunar 仅会执行类型为 <literal>application/"
+"x-desktop</literal>、<literal>application/x-executable</literal> 和 "
+"<literal>application/x-shellscript</literal> 的文件。对于 desktop 文件，可执行"
+"属性仅当该 desktop 文件是 <literal>Application</literal> 类型且包含一个有效的 "
+"<literal>Exec</literal> 行或者是 <literal>Link</literal> 类型且包含一个有效的 "
+"<literal>URL</literal> 时被启用。对于其他类型的文件，可执行属性仅当当前用户对"
+"该文件具有可执行权限时有效。"
 
 #: Thunar.xml:1428(para)
 msgid ""
@@ -1782,10 +1825,14 @@ msgid ""
 "type has a parent that matches one of the two types listed above, or if the "
 "MIME-type is an alias for one of the above."
 msgstr ""
+"请您注意，对于类型为 <literal>application/x-executable</literal> 和 "
+"<literal>application/x-shellscript</literal> 的文件，文件类型并不需要和以上"
+"两种类型完全匹配，当检测到该文件为以上两种类型之一的子类型，或该文件的 MIME-"
+"type 为以上两种类型的一个别名时，文件类型即被认为是以上两种类型之一。"
 
 #: Thunar.xml:1437(title)
 msgid "Where does Thunar store the metadata associated with files?"
-msgstr ""
+msgstr "Thunar 将与文件相关的元数据存放在哪里？"
 
 #: Thunar.xml:1439(para)
 msgid ""
@@ -1796,10 +1843,15 @@ msgid ""
 "<command>tdbtool</command>, which is part of the Thunar distribution "
 "(located in the <filename role=\"directory\">tdb/</filename> subdirectory)."
 msgstr ""
+"Thunar 将各种设置与 文件/文件夹 进行关联，我们称这些设置为元数据。这些关于所有文件"
+"的元数据存放在一个 tdb 数据库文件中，我们称该文件为元数据文件。该数据库文件存放"
+"于 <filename>$XDG_CACHE_HOME/Thunar/metafile.tdb</filename> 并且可以使用 "
+"<command>tdbtool</command> 这个作为随 Thunar 发行的一部分的工具来查看"
+"(位于 <filename role=\"directory\">tdb/</filename> 子目录)。"
 
 #: Thunar.xml:1450(title)
 msgid "Where does Thunar store its preferences?"
-msgstr ""
+msgstr "Thunar 将它的首选项设置存放在哪里？"
 
 #: Thunar.xml:1452(para)
 msgid ""
@@ -1809,10 +1861,15 @@ msgid ""
 "editor. See <filename>docs/README.thunarrc</filename> for an overview of the "
 "various preferences."
 msgstr ""
+"Thunar 将用户可调节的首选项设置 (和隐藏设置) 存放在一个 "
+"<filename>.ini</filename> 文件中，位于 <filename>"
+"$XDG_CONFIG_HOME/Thunar/thunarrc</filename>，该文件可以用任意一个文本编辑器来"
+"查看。请参看 <filename>docs/README.thunarrc</filename> 以了解关于各种首选项"
+"设置的概况。"
 
 #: Thunar.xml:1462(title)
 msgid "How to use mouse gestures in Thunar?"
-msgstr ""
+msgstr "在 Thunar 中如何使用鼠标手势？"
 
 #: Thunar.xml:1464(para)
 msgid ""
@@ -1824,42 +1881,46 @@ msgid ""
 "can move the cursor into four directions to perform certain actions, which "
 "are described below."
 msgstr ""
+"Thunar 目前在其图标视图中添加了对所谓 <emphasis>鼠标手势</emphasis> 的基本"
+"支持。您可以通过当鼠标指针在图标试图的背景区域 (或者其他不被图标或者文本覆盖"
+"的区域) 时按下鼠标中键 (通常为鼠标滚轮) 来使用 <emphasis>鼠标手势</emphasis>。"
+"然后，您可以向四个不同的方向移动鼠标光标来执行特定的动作，下面将会给出详细介绍。"
 
 #: Thunar.xml:1474(guilabel)
 msgid "Left"
-msgstr ""
+msgstr "向左"
 
 #: Thunar.xml:1474(member)
 msgid "<placeholder-1/> - opens the previous visited folder"
-msgstr ""
+msgstr "<placeholder-1/> - 打开之前查看的文件夹"
 
 #: Thunar.xml:1475(guilabel)
 msgid "Up"
-msgstr ""
+msgstr "向上"
 
 #: Thunar.xml:1475(member)
 msgid "<placeholder-1/> - opens the parent folder"
-msgstr ""
+msgstr "<placeholder-1/> - 打开上一级文件夹"
 
 #: Thunar.xml:1476(guilabel)
 msgid "Right"
-msgstr ""
+msgstr "向右"
 
 #: Thunar.xml:1476(member)
 msgid "<placeholder-1/> - opens the next visited folder"
-msgstr ""
+msgstr "<placeholder-1/> - 打开在历史中之后查看的文件夹"
 
 #: Thunar.xml:1477(guilabel)
 msgid "Down"
-msgstr ""
+msgstr "向下"
 
 #: Thunar.xml:1477(member)
 msgid "<placeholder-1/> - reloads the current folder"
-msgstr ""
+msgstr "<placeholder-1/> - 重新载入当前文件夹"
 
 #: Thunar.xml:1482(title)
 msgid "How do I assign different keyboard shortcuts?"
-msgstr ""
+msgstr "我该如何指定不同的键盘快捷方式？"
 
 #: Thunar.xml:1484(para)
 msgid ""
@@ -1867,18 +1928,24 @@ msgid ""
 "changing shortcuts: simply hover over the menu option with the mouse pointer "
 "and press the keyboard shortcut you want to rebind it to."
 msgstr ""
+"如果您想重新设置一个快捷方式，Thunar 支持以标准的 GTK+ 方式来改变一个快捷方式: "
+"将鼠标光标移至该菜单项上方，然后按下您希望该选项使用的快捷键即可。"
 
 #: Thunar.xml:1490(para)
 msgid ""
 "To delete a keyboard assignment, press the <keycap>Backspace</keycap> key "
 "while you are on the menu entry."
 msgstr ""
+"要删除一个键盘快捷键，在鼠标光标在该菜单项上方时按下 <keycap>Backspace</keycap> "
+"键即可。"
 
 #: Thunar.xml:1495(para)
 msgid ""
 "If the shortcut doesn't change, then you need to enable the feature in GTK+. "
 "This can be achieved in 3 ways:"
 msgstr ""
+"如果该快捷键并未被修改，那么您需要在 GTK+ 中开启该项特性。可以通过以下三种方式来"
+"开启:"
 
 #: Thunar.xml:1502(para)
 msgid ""
@@ -1886,6 +1953,8 @@ msgid ""
 "menu accelerators</guilabel> in the <guilabel>User Interface Preferences</"
 "guilabel> dialog."
 msgstr ""
+"如果您使用 Xfce 4.3 或者以上版本，您可以在 <guilabel>用户界面首选项</guilabel> "
+"对话框中启用 <guilabel>可修改菜单快捷键</guilabel>。"
 
 #: Thunar.xml:1510(para)
 msgid ""
@@ -1893,6 +1962,8 @@ msgid ""
 "accelerators</guilabel> in the <guilabel>Menu and Toolbars</guilabel> "
 "control center dialog."
 msgstr ""
+"如果您使用 GNOME，您可以在 <guilabel>菜单和工具栏</guilabel> 控制中心"
+"对话框中启用 <guilabel>可修改菜单快捷键</guilabel>。"
 
 #: Thunar.xml:1518(para)
 msgid ""
@@ -1900,10 +1971,13 @@ msgid ""
 "(create the file if it doesn't exist):<screen>gtk-can-change-accels=1</"
 "screen>"
 msgstr ""
+"其他情况下，请在您的 <filename>~/.gtkrc-2.0</filename> 文件中 "
+"(如果没有该文件请您自行创建) 添加如下内容: <screen>gtk-can-change-accels=1</"
+"screen>"
 
 #: Thunar.xml:1527(title)
 msgid "Where does Thunar store the keyboard shortcuts?"
-msgstr ""
+msgstr "Thunar 将键盘快捷方式设置存放在哪里？"
 
 #: Thunar.xml:1529(para)
 msgid ""
@@ -1912,6 +1986,10 @@ msgid ""
 "filename>. Lines starting with <literal>;</literal> are comments. See the GTK"
 "+ documentation for details about the file format."
 msgstr ""
+"自定义的键盘快捷键存放在以标准的 GTK+ accel map 格式存放在 "
+"<filename>$XDG_CONFIG_HOME/Thunar/accels.scm</"
+"filename>文件中。以 <literal>;</literal> 开始的行为注释内容。查看 GTK"
+"+ 文档以获取关于该文件格式的详细信息。"
 
 #: Thunar.xml:1536(para)
 msgid ""
@@ -1924,6 +2002,13 @@ msgid ""
 "install system wide defaults to <filename>/etc/xdg/Thunar/accels.scm</"
 "filename>. Thunar will then load shortcuts from this file on first startup."
 msgstr ""
+"如果您是一名打包者或者系统管理员，并且希望提供在整个系统环境中使用的与 Thunar "
+"默认设置不同的键盘快捷方式，您可以在任意一个 <envar>$XDG_CONFIG_DIRS</envar> "
+"中建立一个名为 <filename>Thunar/accels.scm</filename> 的文件。例如，如果 "
+"<filename role=\"directory\">/etc/xdg</filename> 是 <envar>"
+"$XDG_CONFIG_DIRS</envar> 中的一个 (在大多数 Linux 发行版上是如此)，您可以将要让"
+"系统全局使用的键盘快捷方式存放至 <filename>/etc/xdg/Thunar/accels.scm</"
+"filename> 文件。Thunar 在第一次启动的时候将会从该文件中读取快捷键的内容。"
 
 #: Thunar.xml:1549(title)
 msgid "Support"
@@ -1937,6 +2022,10 @@ msgid ""
 "ulink>. Remember that useful bug reports are ones that get bugs fixed, so a "
 "useful bug report has two qualities:"
 msgstr ""
+"报告错误或者对本程序或本文档提供建议，请使用位于 <ulink url=\"http://bugzilla.xfce.org/"
+"enter_bug.cgi?product=Thunar&amp;format=guided\">http://bugzilla.xfce.org/</"
+"ulink> 上的 bug 追踪系统。请注意，有效的错误报告应该能够很好地帮助解决问题，"
+"因此，一个有效的错误报告应该具备如下两个特点:"
 
 #: Thunar.xml:1559(para)
 msgid ""
@@ -1944,6 +2033,9 @@ msgid ""
 "the bug himself to prove that it exists, he will most probably not be able "
 "to fix it at all. Every detail you can provide helps."
 msgstr ""
+"<emphasis role=\"bold\">可重现的</emphasis> 如果开发者自己无法体验该错误以证明"
+"其确实存在，他很可能完全无法去解决该问题。您所能够提供的每个细节信息都将会有所"
+"帮助。"
 
 #: Thunar.xml:1566(para)
 msgid ""
@@ -1951,6 +2043,8 @@ msgid ""
 "isolate the problem to a specific area, the more likely he will expediently "
 "fix it."
 msgstr ""
+"<emphasis role=\"bold\">明确的</emphasis> 开发者能够越快地确定问题的所在，"
+"问题就可能被越快地解决。"
 
 #: Thunar.xml:1573(para)
 msgid ""
@@ -1963,6 +2057,12 @@ msgid ""
 "HACKING\">HACKING</ulink> - especially the section labeled <emphasis>Coding "
 "Style</emphasis> - before you start hacking up the source."
 msgstr ""
+"如果您希望在本软件中添加新的功能特性，请清楚描述为什么您认为该功能或者特性"
+"值得添加进程序中。理由足够充分的话，该功能或者特性将更可能被添加进程序中。"
+"如果您能够直接提供该特性的补丁，添加进程序中的可能性将更高，但在您对源代码"
+"进行修改或者添加之前，请确保您先阅读以下文档 "
+"<ulink url=\"http://svn.xfce.org/svn/xfce/terminal/trunk/HACKING\">HACKING</"
+"ulink>，尤其是其中 <emphasis>Coding Style</emphasis> 一节。"
 
 #: Thunar.xml:1583(para)
 msgid ""
@@ -1972,6 +2072,11 @@ msgid ""
 "client to <emphasis role=\"bold\">irc.freenode.net</emphasis>, join the "
 "channel <emphasis role=\"bold\">#thunar</emphasis> and ask for help."
 msgstr ""
+"另外，如果您在安装或者是用本软件过程中有任何问题，请在 "
+"<ulink type=\"http\" url=\"http://foo-projects.org/mailman/"
+"listinfo/thunar-dev\">thunar 开发邮件列表</ulink> 中提问，或者可以使用您的 IRC "
+"客户端，加入 <emphasis role=\"bold\">irc.freenode.net</emphasis> 服务器上的 "
+"<emphasis role=\"bold\">#thunar</emphasis> 频道以获得帮助。"
 
 #: Thunar.xml:1592(title)
 msgid "About @PACKAGE_NAME@"
@@ -2019,4 +2124,5 @@ msgstr ""
 #. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2
 #: Thunar.xml:0(None)
 msgid "translator-credits"
-msgstr "Hunt Xu <huntxu@live.cn>, 2009."
+msgstr ""
+"Hunt Xu <huntxu@live.cn>, 2009."
