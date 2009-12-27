@@ -9,13 +9,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-22 16:18+0200\n"
-"PO-Revision-Date: 2009-10-27 20:49+0100\n"
+"POT-Creation-Date: 2009-12-22 12:36+0000\n"
+"PO-Revision-Date: 2009-12-27 15:27Centra\n"
 "Last-Translator: Robert Hartl <hartl.robert@gmail.com>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
-"Content-Transfer-Encoding: 8-bit\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 1 : (n>=2 && n<=4) ? 2 : 0;\n"
 "X-Rosetta-Export-Date: 2007-08-22 01:18:12+0000\n"
 
@@ -370,38 +370,38 @@ msgid "Failed to remove \"%s\""
 msgstr "Nepodarilo sa vymazať \"%s\""
 
 #: ../thunar/thunar-chooser-dialog.c:757
-#: ../plugins/thunar-uca/thunar-uca-editor.c:465
+#: ../plugins/thunar-uca/thunar-uca-editor.c:473
 msgid "Select an Application"
 msgstr "Vyberte program"
 
 #: ../thunar/thunar-chooser-dialog.c:767
 #: ../thunar/thunar-renamer-dialog.c:1056
-#: ../plugins/thunar-uca/thunar-uca-editor.c:475
+#: ../plugins/thunar-uca/thunar-uca-editor.c:483
 msgid "All Files"
 msgstr "Všetky súbory"
 
 #: ../thunar/thunar-chooser-dialog.c:772
-#: ../plugins/thunar-uca/thunar-uca-editor.c:480
+#: ../plugins/thunar-uca/thunar-uca-editor.c:488
 msgid "Executable Files"
 msgstr "Spustiteľné súbory"
 
 #: ../thunar/thunar-chooser-dialog.c:787
-#: ../plugins/thunar-uca/thunar-uca-editor.c:495
+#: ../plugins/thunar-uca/thunar-uca-editor.c:503
 msgid "Perl Scripts"
 msgstr "Perl skripty"
 
 #: ../thunar/thunar-chooser-dialog.c:793
-#: ../plugins/thunar-uca/thunar-uca-editor.c:501
+#: ../plugins/thunar-uca/thunar-uca-editor.c:509
 msgid "Python Scripts"
 msgstr "Python skripty"
 
 #: ../thunar/thunar-chooser-dialog.c:799
-#: ../plugins/thunar-uca/thunar-uca-editor.c:507
+#: ../plugins/thunar-uca/thunar-uca-editor.c:515
 msgid "Ruby Scripts"
 msgstr "Ruby skripty"
 
 #: ../thunar/thunar-chooser-dialog.c:805
-#: ../plugins/thunar-uca/thunar-uca-editor.c:513
+#: ../plugins/thunar-uca/thunar-uca-editor.c:521
 msgid "Shell Scripts"
 msgstr "Shell skripty"
 
@@ -492,7 +492,7 @@ msgstr "Automaticky _rozšíriť stĺpce podľa potreby"
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:458
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:285
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:286
-#: ../plugins/thunar-uca/thunar-uca-editor.c:597
+#: ../plugins/thunar-uca/thunar-uca-editor.c:605
 msgid "Unknown"
 msgstr "Neznámy"
 
@@ -525,13 +525,11 @@ msgstr "Nesprávne meno súboru \"%s\""
 
 #. LaunchFiles() invoked without a valid working directory
 #: ../thunar/thunar-dbus-service.c:696
-#, c-format
 msgid "The working directory must be an absolute path"
 msgstr "Pracovný adresár musí byť absolútna cesta"
 
 #. LaunchFiles() invoked with an empty filename list
 #: ../thunar/thunar-dbus-service.c:704
-#, c-format
 msgid "Atleast one filename must be specified"
 msgstr "Minimálne jeden názov súboru musí byť zadaný"
 
@@ -757,33 +755,29 @@ msgstr "Súbor"
 msgid "File Name"
 msgstr "Názov súboru"
 
-#: ../thunar/thunar-file.c:855 ../thunar/thunar-shortcuts-view.c:277
+#: ../thunar/thunar-file.c:836 ../thunar/thunar-shortcuts-view.c:277
 #: ../thunar/thunar-window.c:311
 msgid "File System"
 msgstr "Súborový systém"
 
-#: ../thunar/thunar-file.c:933
-#, c-format
+#: ../thunar/thunar-file.c:914
 msgid "The root folder has no parent"
 msgstr "Koreňový priečinok nemá nadradený priečinok"
 
-#: ../thunar/thunar-file.c:993
+#: ../thunar/thunar-file.c:974
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "Nepodarilo sa spracovať súbor pracovnej plochy: %s"
 
-#: ../thunar/thunar-file.c:1031
-#, c-format
+#: ../thunar/thunar-file.c:1012
 msgid "No Exec field specified"
 msgstr "Nie je vyplnené pole \"Príkaz\""
 
-#: ../thunar/thunar-file.c:1052
-#, c-format
+#: ../thunar/thunar-file.c:1033
 msgid "No URL field specified"
 msgstr "Nie je vyplnené pole \"Adresa\""
 
-#: ../thunar/thunar-file.c:1058
-#, c-format
+#: ../thunar/thunar-file.c:1039
 msgid "Invalid desktop file"
 msgstr "Neplatný .desktop súbor"
 
@@ -1130,7 +1124,7 @@ msgid "\"%s\" (%s) link to %s"
 msgstr "\"%s\" (%s) odkaz na %s"
 
 #: ../thunar/thunar-list-model.c:2256
-#, fuzzy, c-format
+#, c-format
 msgid "\"%s\" shortcut"
 msgstr "\"%s\" skratka"
 
@@ -1249,7 +1243,6 @@ msgid "_Location:"
 msgstr "_Umiestnenie:"
 
 #: ../thunar/thunar-location-entry.c:382
-#, c-format
 msgid "File does not exist"
 msgstr "Súbor neexistuje"
 
@@ -1259,7 +1252,6 @@ msgid "Failed to determine the mount point of \"%s\""
 msgstr "Nepodarilo sa zistiť prípojný bod pre \"%s\""
 
 #: ../thunar/thunar-misc-jobs.c:84
-#, c-format
 msgid "No templates installed"
 msgstr "Šablóny nie sú nainštalované"
 
@@ -1767,7 +1759,7 @@ msgstr "Nepodarilo sa premenovať \"%s\""
 #. allocate the icon chooser
 #. allocate the chooser dialog
 #: ../thunar/thunar-properties-dialog.c:708
-#: ../plugins/thunar-uca/thunar-uca-editor.c:600
+#: ../plugins/thunar-uca/thunar-uca-editor.c:608
 #, c-format
 msgid "Select an Icon for \"%s\""
 msgstr "Vybrať ikonu pre \"%s\""
@@ -2089,7 +2081,7 @@ msgstr "Vybrať všetky súbory zodpovedajúce nejakej vzorke"
 msgid "Du_plicate"
 msgstr "_Duplikovať"
 
-#: ../thunar/thunar-standard-view.c:347 ../thunar/thunar-standard-view.c:3417
+#: ../thunar/thunar-standard-view.c:347 ../thunar/thunar-standard-view.c:3419
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Vytvoriť od_kaz"
@@ -2151,54 +2143,54 @@ msgstr "Lokalita XDS drag poskytla neplatný názov súboru."
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Nepodarilo sa vytvoriť odkaz na adresu \"%s\""
 
-#: ../thunar/thunar-standard-view.c:3050
+#: ../thunar/thunar-standard-view.c:3052
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Nepodarilo sa otvoriť priečinok \"%s\""
 
-#: ../thunar/thunar-standard-view.c:3377
+#: ../thunar/thunar-standard-view.c:3379
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Vybraný súbor sa pripraví na presun príkazom Vložiť"
 msgstr[1] "Vybrané súbory sa pripravia na presun príkazom Vložiť"
 msgstr[2] "Vybrané súbory sa pripravia na presun príkazom Vložiť"
 
-#: ../thunar/thunar-standard-view.c:3385
+#: ../thunar/thunar-standard-view.c:3387
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Vybraný súbor sa pripraví na kopírovanie príkazom Vložiť"
 msgstr[1] "Vybrané súbory sa pripravia na kopírovanie príkazom Vložiť"
 msgstr[2] "Vybrané súbory sa pripravia na kopírovanie príkazom Vložiť"
 
-#: ../thunar/thunar-standard-view.c:3396
+#: ../thunar/thunar-standard-view.c:3398
 msgid "Delete the selected file"
 msgid_plural "Delete the selected files"
 msgstr[0] "Zmazať vybraný súbor"
 msgstr[1] "Zmazať vybrané súbory"
 msgstr[2] "Zmazať vybrané súbory"
 
-#: ../thunar/thunar-standard-view.c:3410
+#: ../thunar/thunar-standard-view.c:3412
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Duplikuje vybraný súbor"
 msgstr[1] "Duplikuje vybrané súbory"
 msgstr[2] "Duplikuje vybrané súbory"
 
-#: ../thunar/thunar-standard-view.c:3419
+#: ../thunar/thunar-standard-view.c:3421
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Vytvorí symbolický odkaz na vybraný súbor"
 msgstr[1] "Vytvorí symbolicéý odkazy pre všetky vybrané súbory"
 msgstr[2] "Vytvorí symbolicéý odkazy pre všetky vybrané súbory"
 
-#: ../thunar/thunar-standard-view.c:3427
+#: ../thunar/thunar-standard-view.c:3429
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Premenovať vybraný súbor"
 msgstr[1] "Premenovať vybrané súbory"
 msgstr[2] "Premenovať vybrané súbory"
 
-#: ../thunar/thunar-standard-view.c:3435
+#: ../thunar/thunar-standard-view.c:3437
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
 msgstr[0] "Obnoviť vybraný súbor"
@@ -2256,7 +2248,7 @@ msgstr "_Kôš"
 msgid "Display the contents of the trash can"
 msgstr "Zobraziť obsah koša"
 
-#: ../thunar/thunar-tree-model.c:618
+#: ../thunar/thunar-tree-model.c:619
 msgid "Loading..."
 msgstr "Načítava sa..."
 
@@ -2271,7 +2263,6 @@ msgid "P_roperties..."
 msgstr "_Vlastnosti..."
 
 #: ../thunar/thunar-util.c:78
-#, c-format
 msgid "Invalid path"
 msgstr "Neplatná cesta"
 
@@ -3190,23 +3181,23 @@ msgstr "Ak odstránite vlastnú akciu, bude nenávratne stratená."
 #.
 #. Basic
 #.
-#: ../plugins/thunar-uca/thunar-uca-editor.c:121
+#: ../plugins/thunar-uca/thunar-uca-editor.c:122
 msgid "Basic"
 msgstr "Základné"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:130
+#: ../plugins/thunar-uca/thunar-uca-editor.c:131
 msgid "_Name:"
 msgstr "_Názov:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:135
+#: ../plugins/thunar-uca/thunar-uca-editor.c:136
 msgid "The name of the action that will be displayed in the context menu."
 msgstr "Názov akcie, ktorý sa zobrazí v kontextovej ponuke."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:148
+#: ../plugins/thunar-uca/thunar-uca-editor.c:149
 msgid "_Description:"
 msgstr "_Popis:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:153
+#: ../plugins/thunar-uca/thunar-uca-editor.c:154
 msgid ""
 "The description of the action that will be displayed as tooltip in the "
 "statusbar when selecting the item from the context menu."
@@ -3214,11 +3205,11 @@ msgstr ""
 "Popis akcie, ktorý sa zobrazí ako tooltip v stavovom riadku pri vybratí "
 "položky z kontextovej ponuky."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:166
+#: ../plugins/thunar-uca/thunar-uca-editor.c:167
 msgid "_Command:"
 msgstr "_Príkaz:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:175
+#: ../plugins/thunar-uca/thunar-uca-editor.c:176
 msgid ""
 "The command (including the necessary parameters) to perform the action. See "
 "the command parameter legend below for a list of supported parameter "
@@ -3233,21 +3224,32 @@ msgstr ""
 "výbere viac ako jedného súboru. Inak bude akcia použiteľná len na výber "
 "presne jednej položky."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:186
+#: ../plugins/thunar-uca/thunar-uca-editor.c:187
 msgid "Browse the file system to select an application to use for this action."
 msgstr "Prehliada súborový systém na nájdenie aplikácie pre túto akciu."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:202
+#: ../plugins/thunar-uca/thunar-uca-editor.c:203
+msgid "Use Startup Notification"
+msgstr "Použiť oznámenie pri spustení"
+
+#: ../plugins/thunar-uca/thunar-uca-editor.c:204
+msgid ""
+"Enable this option if you want a waiting cursor to be shown while the action "
+"is launched. This is also highly recommended if you have focus stealing "
+"prevention enabled in your window manager."
+msgstr ""
+
+#: ../plugins/thunar-uca/thunar-uca-editor.c:210
 msgid "_Icon:"
 msgstr "I_kona:"
 
 #. setup a label to tell that no icon was selected
-#: ../plugins/thunar-uca/thunar-uca-editor.c:210
-#: ../plugins/thunar-uca/thunar-uca-editor.c:697
+#: ../plugins/thunar-uca/thunar-uca-editor.c:218
+#: ../plugins/thunar-uca/thunar-uca-editor.c:705
 msgid "No icon"
 msgstr "Bez ikony"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:211
+#: ../plugins/thunar-uca/thunar-uca-editor.c:219
 msgid ""
 "Click this button to select an icon file that will be displayed in the "
 "context menu in addition to the action name chosen above."
@@ -3255,7 +3257,7 @@ msgstr ""
 "Kliknutím na toto tlačítko vyberiete ikonu, ktorá sa zobrazí v kontextovej "
 "ponuke vedľa názvu akcie uvedeného vyššie."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:242
+#: ../plugins/thunar-uca/thunar-uca-editor.c:250
 msgid ""
 "The following command parameters will be\n"
 "substituted when launching the action:"
@@ -3263,41 +3265,41 @@ msgstr ""
 "Nasledujúce parametre príkazu sa\n"
 "nahradia pri spustení akcie:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:280
+#: ../plugins/thunar-uca/thunar-uca-editor.c:288
 msgid "the path to the first selected file"
 msgstr "cesta k prvému vybratému súboru"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:292
+#: ../plugins/thunar-uca/thunar-uca-editor.c:300
 msgid "the paths to all selected files"
 msgstr "cesty ku všetkým vybratým súborom"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:304
+#: ../plugins/thunar-uca/thunar-uca-editor.c:312
 #, c-format
 msgid "directory containing the file that is passed in %f"
 msgstr "adresár, v ktorom je súbor z premennej %f"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:316
+#: ../plugins/thunar-uca/thunar-uca-editor.c:324
 #, c-format
 msgid "directories containing the files that are passed in %F"
 msgstr "adresáre obsahujúce súbory z premennej %F"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:328
+#: ../plugins/thunar-uca/thunar-uca-editor.c:336
 msgid "the first selected filename (without path)"
 msgstr "prvý vybratý súbor (bez cesty)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:340
+#: ../plugins/thunar-uca/thunar-uca-editor.c:348
 msgid "the selected filenames (without paths)"
 msgstr "vybreté súbory (bez ciest)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:354
+#: ../plugins/thunar-uca/thunar-uca-editor.c:362
 msgid "Appearance Conditions"
 msgstr "Podmienky zobrazenia"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:362
+#: ../plugins/thunar-uca/thunar-uca-editor.c:370
 msgid "_File Pattern:"
 msgstr "Vzorka _názvu súborov:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:367
+#: ../plugins/thunar-uca/thunar-uca-editor.c:375
 msgid ""
 "Enter a list of patterns that will be used to determine whether this action "
 "should be displayed for a selected file. If you specify more than one "
@@ -3308,35 +3310,35 @@ msgstr ""
 "akcia zobraziť. Ak uvediete viac ako jeden vzor, zoznam položiek musí byť "
 "oddelených bodkočiarkami. (napr. *.txt;*.doc)."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:386
+#: ../plugins/thunar-uca/thunar-uca-editor.c:394
 msgid "Appears if selection contains:"
 msgstr "Zobrazí sa, ak výber obsahuje:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:399
+#: ../plugins/thunar-uca/thunar-uca-editor.c:407
 msgid "_Directories"
 msgstr "_Priečinky"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:403
+#: ../plugins/thunar-uca/thunar-uca-editor.c:411
 msgid "_Audio Files"
 msgstr "_Zvukové súbory"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:407
+#: ../plugins/thunar-uca/thunar-uca-editor.c:415
 msgid "_Image Files"
 msgstr "_Súbory obrázkov"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:411
+#: ../plugins/thunar-uca/thunar-uca-editor.c:419
 msgid "_Text Files"
 msgstr "_Textové súbory"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:416
+#: ../plugins/thunar-uca/thunar-uca-editor.c:424
 msgid "_Video Files"
 msgstr "_Video súbory"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:420
+#: ../plugins/thunar-uca/thunar-uca-editor.c:428
 msgid "_Other Files"
 msgstr "_Ostatné súbory"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:437
+#: ../plugins/thunar-uca/thunar-uca-editor.c:445
 msgid ""
 "This page lists the conditions under which the\n"
 "action will appear in the file managers context\n"
@@ -3359,41 +3361,38 @@ msgstr ""
 "uviesť, že akcia sa má objaviť pre jednotlivé\n"
 "druhy súborov."
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:784
+#: ../plugins/thunar-uca/thunar-uca-model.c:769
 #, c-format
 msgid "Unknown element <%s>"
 msgstr "Neznámy prvok <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:802
-#, c-format
+#: ../plugins/thunar-uca/thunar-uca-model.c:787
 msgid "End element handler called while in root context"
 msgstr "Konečný prvok volaných v koreňovom kontexte"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:890
+#: ../plugins/thunar-uca/thunar-uca-model.c:881
 #, c-format
 msgid "Unknown closing element <%s>"
 msgstr "Neznámy ukončovací prvok <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1331
-#, c-format
+#: ../plugins/thunar-uca/thunar-uca-model.c:1324
 msgid "Failed to determine save location for uca.xml"
 msgstr "Nepodarilo sa určiť ukladacie umiestnenie uca.xml"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1446
-#, c-format
+#: ../plugins/thunar-uca/thunar-uca-model.c:1441
 msgid "Command not configured"
 msgstr "Príkaz nie je nastavený"
 
-#: ../plugins/thunar-uca/thunar-uca-provider.c:188
+#: ../plugins/thunar-uca/thunar-uca-provider.c:177
 msgid "Configure c_ustom actions..."
 msgstr "Nastaviť vlastné _akcie..."
 
-#: ../plugins/thunar-uca/thunar-uca-provider.c:189
+#: ../plugins/thunar-uca/thunar-uca-provider.c:178
 msgid ""
 "Setup custom actions that will appear in the file managers context menus"
 msgstr "Zostaví vlastné akcie v kontextovej ponuke súborového manažéra"
 
-#: ../plugins/thunar-uca/thunar-uca-provider.c:406
+#: ../plugins/thunar-uca/thunar-uca-provider.c:412
 #, c-format
 msgid "Failed to launch action \"%s\"."
 msgstr "Nepodarilo sa spustiť \"%s\"."
