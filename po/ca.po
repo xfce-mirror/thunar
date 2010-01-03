@@ -2,14 +2,14 @@
 # Copyright (C) 2004-2007 Benedikt Meurer.
 # This file is distributed under the same license as the thunar package.
 # Pau Ruŀlan Ferragut <paurullan@bulma.net> 2005-2008.
-# Carles Muñoz Gorriz <carlesmu@internautas.org>, 2006, 2008-2009.
+# Carles Muñoz Gorriz <carlesmu@internautas.org>, 2006, 2008-2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-22 16:18+0200\n"
-"PO-Revision-Date: 2009-10-11 16:52+0100\n"
+"POT-Creation-Date: 2009-12-22 12:36+0000\n"
+"PO-Revision-Date: 2010-01-03 22:34+0100\n"
 "Last-Translator: Carles Muñoz Gorriz <carlesmu@internautas.org>\n"
 "Language-Team: Catalan <xfce-i18n@xfce.org>\n"
 "MIME-Version: 1.0\n"
@@ -373,38 +373,38 @@ msgid "Failed to remove \"%s\""
 msgstr "No s'ha pogut suprimir «%s»"
 
 #: ../thunar/thunar-chooser-dialog.c:757
-#: ../plugins/thunar-uca/thunar-uca-editor.c:465
+#: ../plugins/thunar-uca/thunar-uca-editor.c:473
 msgid "Select an Application"
 msgstr "Seleccioneu una aplicació"
 
 #: ../thunar/thunar-chooser-dialog.c:767
 #: ../thunar/thunar-renamer-dialog.c:1056
-#: ../plugins/thunar-uca/thunar-uca-editor.c:475
+#: ../plugins/thunar-uca/thunar-uca-editor.c:483
 msgid "All Files"
 msgstr "Tots els fitxers"
 
 #: ../thunar/thunar-chooser-dialog.c:772
-#: ../plugins/thunar-uca/thunar-uca-editor.c:480
+#: ../plugins/thunar-uca/thunar-uca-editor.c:488
 msgid "Executable Files"
 msgstr "Fitxers executables"
 
 #: ../thunar/thunar-chooser-dialog.c:787
-#: ../plugins/thunar-uca/thunar-uca-editor.c:495
+#: ../plugins/thunar-uca/thunar-uca-editor.c:503
 msgid "Perl Scripts"
 msgstr "Seqüències en Perl"
 
 #: ../thunar/thunar-chooser-dialog.c:793
-#: ../plugins/thunar-uca/thunar-uca-editor.c:501
+#: ../plugins/thunar-uca/thunar-uca-editor.c:509
 msgid "Python Scripts"
 msgstr "Seqüències en Python"
 
 #: ../thunar/thunar-chooser-dialog.c:799
-#: ../plugins/thunar-uca/thunar-uca-editor.c:507
+#: ../plugins/thunar-uca/thunar-uca-editor.c:515
 msgid "Ruby Scripts"
 msgstr "Seqüències en Ruby"
 
 #: ../thunar/thunar-chooser-dialog.c:805
-#: ../plugins/thunar-uca/thunar-uca-editor.c:513
+#: ../plugins/thunar-uca/thunar-uca-editor.c:521
 msgid "Shell Scripts"
 msgstr "Seqüències d'intèrpret d'ordres"
 
@@ -498,7 +498,7 @@ msgstr "_Expandeix les columnes automàticament si cal"
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:458
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:285
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:286
-#: ../plugins/thunar-uca/thunar-uca-editor.c:597
+#: ../plugins/thunar-uca/thunar-uca-editor.c:605
 msgid "Unknown"
 msgstr "Desconegut"
 
@@ -531,13 +531,11 @@ msgstr "El nom del fitxer «%s» no és vàlid"
 
 #. LaunchFiles() invoked without a valid working directory
 #: ../thunar/thunar-dbus-service.c:696
-#, c-format
 msgid "The working directory must be an absolute path"
 msgstr "El directori de treball ha de ser un camí absolut"
 
 #. LaunchFiles() invoked with an empty filename list
 #: ../thunar/thunar-dbus-service.c:704
-#, c-format
 msgid "Atleast one filename must be specified"
 msgstr "S'ha d'introduir com a mínim un nom de fitxer"
 
@@ -572,7 +570,7 @@ msgstr "_Canvia el nom"
 msgid "translator-credits"
 msgstr ""
 "Pau Ruŀlan Ferragut <paurullan@bulma.net>, 2005-2008.\n"
-"Carles Muñoz Gorriz <carlesmu@internautas.org>, 2006, 2008-2009."
+"Carles Muñoz Gorriz <carlesmu@internautas.org>, 2006, 2008-2010."
 
 #. display an error message to the user
 #. tell the user that we failed
@@ -754,33 +752,29 @@ msgstr "Fitxer"
 msgid "File Name"
 msgstr "Nom de fitxer"
 
-#: ../thunar/thunar-file.c:855 ../thunar/thunar-shortcuts-view.c:277
+#: ../thunar/thunar-file.c:836 ../thunar/thunar-shortcuts-view.c:277
 #: ../thunar/thunar-window.c:311
 msgid "File System"
 msgstr "Sistema de fitxers"
 
-#: ../thunar/thunar-file.c:933
-#, c-format
+#: ../thunar/thunar-file.c:914
 msgid "The root folder has no parent"
 msgstr "La carpeta arrel no té pare"
 
-#: ../thunar/thunar-file.c:993
+#: ../thunar/thunar-file.c:974
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "No s'ha pogut analitzar el fitxer d'escriptori: «%s»"
 
-#: ../thunar/thunar-file.c:1031
-#, c-format
+#: ../thunar/thunar-file.c:1012
 msgid "No Exec field specified"
 msgstr "No heu especificat el camp Exec"
 
-#: ../thunar/thunar-file.c:1052
-#, c-format
+#: ../thunar/thunar-file.c:1033
 msgid "No URL field specified"
 msgstr "No heu especificat el camp URL"
 
-#: ../thunar/thunar-file.c:1058
-#, c-format
+#: ../thunar/thunar-file.c:1039
 msgid "Invalid desktop file"
 msgstr "El nom de l'escriptori no és vàlid"
 
@@ -1232,7 +1226,6 @@ msgid "_Location:"
 msgstr "_Ubicació:"
 
 #: ../thunar/thunar-location-entry.c:382
-#, c-format
 msgid "File does not exist"
 msgstr "El fitxer no existeix"
 
@@ -1242,7 +1235,6 @@ msgid "Failed to determine the mount point of \"%s\""
 msgstr "No s'ha pogut determinar el punt de muntatge per «%s»"
 
 #: ../thunar/thunar-misc-jobs.c:84
-#, c-format
 msgid "No templates installed"
 msgstr "No hi han plantilles instaŀlades"
 
@@ -1750,7 +1742,7 @@ msgstr "No s'ha pogut canviar el nom «%s»"
 #. allocate the icon chooser
 #. allocate the chooser dialog
 #: ../thunar/thunar-properties-dialog.c:708
-#: ../plugins/thunar-uca/thunar-uca-editor.c:600
+#: ../plugins/thunar-uca/thunar-uca-editor.c:608
 #, c-format
 msgid "Select an Icon for \"%s\""
 msgstr "Seleccioneu una icona per «%s»"
@@ -2067,7 +2059,7 @@ msgstr "Selecciona tots els fitxers que coincideixen amb un patró"
 msgid "Du_plicate"
 msgstr "Du_plica"
 
-#: ../thunar/thunar-standard-view.c:347 ../thunar/thunar-standard-view.c:3417
+#: ../thunar/thunar-standard-view.c:347 ../thunar/thunar-standard-view.c:3419
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Crea un _enllaç"
@@ -2128,50 +2120,50 @@ msgstr "Nom de fitxer obtingut del lloc d'arrossegament XDS no és vàlid"
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "No s'ha pogut crear l'enllaç per l'URL «%s»"
 
-#: ../thunar/thunar-standard-view.c:3050
+#: ../thunar/thunar-standard-view.c:3052
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "No s'ha pogut obrir el directori «%s»"
 
-#: ../thunar/thunar-standard-view.c:3377
+#: ../thunar/thunar-standard-view.c:3379
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Prepara el fitxer seleccionat i serà mogut amb l'ordre d'enganxar"
 msgstr[1] ""
 "Prepara els fitxers seleccionats i seran moguts amb l'ordre d'enganxar"
 
-#: ../thunar/thunar-standard-view.c:3385
+#: ../thunar/thunar-standard-view.c:3387
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Prepara el fitxer seleccionat i serà copiat amb l'ordre d'enganxar"
 msgstr[1] ""
 "Prepara els fitxers seleccionats i seran copiats amb l'ordre d'enganxar"
 
-#: ../thunar/thunar-standard-view.c:3396
+#: ../thunar/thunar-standard-view.c:3398
 msgid "Delete the selected file"
 msgid_plural "Delete the selected files"
 msgstr[0] "Suprimeix el fitxer seleccionat"
 msgstr[1] "Suprimeix els fitxers seleccionats"
 
-#: ../thunar/thunar-standard-view.c:3410
+#: ../thunar/thunar-standard-view.c:3412
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Duplica el fitxer seleccionat"
 msgstr[1] "Duplica els fitxers seleccionats"
 
-#: ../thunar/thunar-standard-view.c:3419
+#: ../thunar/thunar-standard-view.c:3421
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Crea un enllaç simbòlic del fitxer seleccionat"
 msgstr[1] "Crea un enllaç simbòlic dels fitxers seleccionats"
 
-#: ../thunar/thunar-standard-view.c:3427
+#: ../thunar/thunar-standard-view.c:3429
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Canvia el nom al fitxer seleccionat"
 msgstr[1] "Canvia el nom als fitxers seleccionats"
 
-#: ../thunar/thunar-standard-view.c:3435
+#: ../thunar/thunar-standard-view.c:3437
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
 msgstr[0] "Restaura el fitxer seleccionat"
@@ -2227,7 +2219,7 @@ msgstr "Pape_rera"
 msgid "Display the contents of the trash can"
 msgstr "Mostra el contingut de la paperera"
 
-#: ../thunar/thunar-tree-model.c:618
+#: ../thunar/thunar-tree-model.c:619
 msgid "Loading..."
 msgstr "S'està carregant…"
 
@@ -2242,7 +2234,6 @@ msgid "P_roperties..."
 msgstr "P_ropietats…"
 
 #: ../thunar/thunar-util.c:78
-#, c-format
 msgid "Invalid path"
 msgstr "Camí invàlid"
 
@@ -3169,23 +3160,23 @@ msgstr "Si suprimiu una acció personalitzada, aquesta es perdrà per sempre."
 #.
 #. Basic
 #.
-#: ../plugins/thunar-uca/thunar-uca-editor.c:121
+#: ../plugins/thunar-uca/thunar-uca-editor.c:122
 msgid "Basic"
 msgstr "Bàsic"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:130
+#: ../plugins/thunar-uca/thunar-uca-editor.c:131
 msgid "_Name:"
 msgstr "_Nom:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:135
+#: ../plugins/thunar-uca/thunar-uca-editor.c:136
 msgid "The name of the action that will be displayed in the context menu."
 msgstr "El nom de l'acció que es mostrarà al menú contextual."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:148
+#: ../plugins/thunar-uca/thunar-uca-editor.c:149
 msgid "_Description:"
 msgstr "_Descripció:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:153
+#: ../plugins/thunar-uca/thunar-uca-editor.c:154
 msgid ""
 "The description of the action that will be displayed as tooltip in the "
 "statusbar when selecting the item from the context menu."
@@ -3193,11 +3184,11 @@ msgstr ""
 "La descripció de l'acció que serà mostrada com rètol indicador a la barra "
 "d'estat quan seleccioneu l'element des del menú contextual."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:166
+#: ../plugins/thunar-uca/thunar-uca-editor.c:167
 msgid "_Command:"
 msgstr "_Ordre:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:175
+#: ../plugins/thunar-uca/thunar-uca-editor.c:176
 msgid ""
 "The command (including the necessary parameters) to perform the action. See "
 "the command parameter legend below for a list of supported parameter "
@@ -3213,23 +3204,37 @@ msgstr ""
 "s'aplicarà sols i s'ha seleccionat un element. En cas contrari, és a dir amb "
 "minúscules, l'acció sols es durà a terme si s'ha seleccionat un element."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:186
+#: ../plugins/thunar-uca/thunar-uca-editor.c:187
 msgid "Browse the file system to select an application to use for this action."
 msgstr ""
 "Navegueu pel sistema de fitxers i trieu una aplicació amb la qual dur a "
 "terme aquesta acció."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:202
+#: ../plugins/thunar-uca/thunar-uca-editor.c:203
+msgid "Use Startup Notification"
+msgstr "Empra notificació d'engegada"
+
+#: ../plugins/thunar-uca/thunar-uca-editor.c:204
+msgid ""
+"Enable this option if you want a waiting cursor to be shown while the action "
+"is launched. This is also highly recommended if you have focus stealing "
+"prevention enabled in your window manager."
+msgstr ""
+"Habiliteu aquesta opció si voleu que es mostri un cursor d'espera mentre es "
+"llança una aplicació. Això és molt recomanable si teniu habilitada l'opció "
+"per evitar el furt d'enfocament en el vostre gestor de finestres."
+
+#: ../plugins/thunar-uca/thunar-uca-editor.c:210
 msgid "_Icon:"
 msgstr "_Icona:"
 
 #. setup a label to tell that no icon was selected
-#: ../plugins/thunar-uca/thunar-uca-editor.c:210
-#: ../plugins/thunar-uca/thunar-uca-editor.c:697
+#: ../plugins/thunar-uca/thunar-uca-editor.c:218
+#: ../plugins/thunar-uca/thunar-uca-editor.c:705
 msgid "No icon"
 msgstr "Sense icona"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:211
+#: ../plugins/thunar-uca/thunar-uca-editor.c:219
 msgid ""
 "Click this button to select an icon file that will be displayed in the "
 "context menu in addition to the action name chosen above."
@@ -3237,7 +3242,7 @@ msgstr ""
 "Premeu aquest botó per seleccionar un fitxer d'icona que es mostrarà al menú "
 "contextual a més a més de l'acció seleccionada anteriorment."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:242
+#: ../plugins/thunar-uca/thunar-uca-editor.c:250
 msgid ""
 "The following command parameters will be\n"
 "substituted when launching the action:"
@@ -3245,41 +3250,41 @@ msgstr ""
 "Aquests paràmetres seran substituïts\n"
 "quan llanceu l'acció:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:280
+#: ../plugins/thunar-uca/thunar-uca-editor.c:288
 msgid "the path to the first selected file"
 msgstr "el camí pel primer fitxer seleccionat"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:292
+#: ../plugins/thunar-uca/thunar-uca-editor.c:300
 msgid "the paths to all selected files"
 msgstr "el camí per tots els fitxers seleccionats"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:304
+#: ../plugins/thunar-uca/thunar-uca-editor.c:312
 #, c-format
 msgid "directory containing the file that is passed in %f"
 msgstr "el directori que conté el fitxer vingut de %f"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:316
+#: ../plugins/thunar-uca/thunar-uca-editor.c:324
 #, c-format
 msgid "directories containing the files that are passed in %F"
 msgstr "els directoris que contenen els fitxers que són passats mitjançant %F"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:328
+#: ../plugins/thunar-uca/thunar-uca-editor.c:336
 msgid "the first selected filename (without path)"
 msgstr "el primer fitxer seleccionat (sense camí)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:340
+#: ../plugins/thunar-uca/thunar-uca-editor.c:348
 msgid "the selected filenames (without paths)"
 msgstr "els fitxers seleccionats (sense camins)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:354
+#: ../plugins/thunar-uca/thunar-uca-editor.c:362
 msgid "Appearance Conditions"
 msgstr "Condicions d'aparició"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:362
+#: ../plugins/thunar-uca/thunar-uca-editor.c:370
 msgid "_File Pattern:"
 msgstr "_Fitxer patró:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:367
+#: ../plugins/thunar-uca/thunar-uca-editor.c:375
 msgid ""
 "Enter a list of patterns that will be used to determine whether this action "
 "should be displayed for a selected file. If you specify more than one "
@@ -3290,35 +3295,35 @@ msgstr ""
 "acció s'hauria de mostrar pel fitxer seleccionat. Si especificau més d'una "
 "patró haureu de separar amb punts i comes (per exemple: *.txt; *.doc)."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:386
+#: ../plugins/thunar-uca/thunar-uca-editor.c:394
 msgid "Appears if selection contains:"
 msgstr "Apareix si el contingut conté:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:399
+#: ../plugins/thunar-uca/thunar-uca-editor.c:407
 msgid "_Directories"
 msgstr "_Directoris"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:403
+#: ../plugins/thunar-uca/thunar-uca-editor.c:411
 msgid "_Audio Files"
 msgstr "Fitxers d'_àudio"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:407
+#: ../plugins/thunar-uca/thunar-uca-editor.c:415
 msgid "_Image Files"
 msgstr "Fitxers d'_imatge"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:411
+#: ../plugins/thunar-uca/thunar-uca-editor.c:419
 msgid "_Text Files"
 msgstr "Fitxers de _text"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:416
+#: ../plugins/thunar-uca/thunar-uca-editor.c:424
 msgid "_Video Files"
 msgstr "Fitxers de _vídeo"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:420
+#: ../plugins/thunar-uca/thunar-uca-editor.c:428
 msgid "_Other Files"
 msgstr "Altres _fitxers"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:437
+#: ../plugins/thunar-uca/thunar-uca-editor.c:445
 msgid ""
 "This page lists the conditions under which the\n"
 "action will appear in the file managers context\n"
@@ -3342,45 +3347,42 @@ msgstr ""
 "d'especificar que l'acció s'haurà de dur a terme\n"
 "segons el tipus de fitxers."
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:784
+#: ../plugins/thunar-uca/thunar-uca-model.c:769
 #, c-format
 msgid "Unknown element <%s>"
 msgstr "Element desconegut <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:802
-#, c-format
+#: ../plugins/thunar-uca/thunar-uca-model.c:787
 msgid "End element handler called while in root context"
 msgstr ""
 "Final de l'element identificador del fitxer mentre estava dins el context "
 "arrel"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:890
+#: ../plugins/thunar-uca/thunar-uca-model.c:881
 #, c-format
 msgid "Unknown closing element <%s>"
 msgstr "Element de tancament desconegut <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1331
-#, c-format
+#: ../plugins/thunar-uca/thunar-uca-model.c:1324
 msgid "Failed to determine save location for uca.xml"
 msgstr "No s'ha pogut determinar la ubicació pel fitxer uca.xml"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1446
-#, c-format
+#: ../plugins/thunar-uca/thunar-uca-model.c:1441
 msgid "Command not configured"
 msgstr "Ordre no configurat"
 
-#: ../plugins/thunar-uca/thunar-uca-provider.c:188
+#: ../plugins/thunar-uca/thunar-uca-provider.c:177
 msgid "Configure c_ustom actions..."
 msgstr "Config_ura les accions personalitzades…"
 
-#: ../plugins/thunar-uca/thunar-uca-provider.c:189
+#: ../plugins/thunar-uca/thunar-uca-provider.c:178
 msgid ""
 "Setup custom actions that will appear in the file managers context menus"
 msgstr ""
 "Configureu les accions personalitzades que apareixeran als menús contextuals "
 "del gestor de fitxers"
 
-#: ../plugins/thunar-uca/thunar-uca-provider.c:406
+#: ../plugins/thunar-uca/thunar-uca-provider.c:412
 #, c-format
 msgid "Failed to launch action \"%s\"."
 msgstr "No s'ha pogut llançar l'acció «%s»."
