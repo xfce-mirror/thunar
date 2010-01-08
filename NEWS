@@ -1,3 +1,38 @@
+1.1.0
+=====
+- Replace ThunarVFS with GIO. There will be a separate maintenance 
+  release of ThunarVFS soon after this release. All functionality
+  previously based on ThunarVFS is now implemented on top of GIO
+  and GVfs. This means that remote filesystems can be accessed via
+  SFTP, FTP, SMB etc. For this as well as the trash feature GVfs
+  is required. Thunar does not depend on it because GVfs is a set
+  of GIO extensions and there is no guarantee for those to be 
+  available at runtime if they are installed at buildtime. This is left
+  for distributions to set up properly.
+- Thumbnails are now generated using the thumbnail management D-Bus
+  specification. One implementation of this specification is Tumbler
+  which is released independently.
+- Show "Network" item in the side pane and the "Go" menu if the
+  network:// URI scheme is supported by GIO (via an extension). Make
+  the "Trash" item optional too.
+- Use a single shared progress dialog for file operations instead of
+  individual dialogs for each operation. The visual information in this
+  shared dialog still has to be improved (work on this has been started
+  in an experimental branch).
+- Use g_utf8_strlen to calculate the side pane width (bugs #3965, #5390)
+- Add startup ID parameter to the BulkRename and LaunchFiles D-Bus methods
+  in order to support startup notification over D-Bus.
+- Avoid requesting drag data if the drag target is GDK_NONE (bug #5771).
+- Add startup notification support to the custom actions plugin.
+- Use install-exec-hook for installing the thunar symlink (bug #5835).
+- Use silent build rules if available.
+- Use libxfce4ui instead of libxfcegui4.
+- Depend on xfce4-dev-tools >= 4.7.2 to get rid of custom configure code.
+- Depend on exo-1 >= 0.5.1.
+- Updated translations: German, French, Chinese, Portuguese, Czech, Slovak,
+  Latvian, Basque, Danish, Asturian, Japanese, Galician, Spanish, Greek,
+  Turkish, Russian, Swedish, Catalan, Albanian, Kazakh.
+
 1.0.1
 ========
 - Put quotes around filenames in thunar-wallpaper-plugin (bug #5056)
