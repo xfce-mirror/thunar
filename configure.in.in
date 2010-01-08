@@ -1,7 +1,7 @@
 # vi:set et ai sw=2 sts=2 ts=2: */
 #-
 # Copyright (c) 2004-2007 Benedikt Meurer <benny@xfce.org>
-# Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+# Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
 #
 # This program is free software; you can redistribute it and/or 
 # modify it under the terms of the GNU General Public License as
@@ -24,11 +24,11 @@ dnl ***************************
 m4_define([thunarx_verinfo], [0:0:0])
 m4_define([thunarx_version_api], [2])
 m4_define([thunar_version_major], [1])
-m4_define([thunar_version_minor], [0])
-m4_define([thunar_version_micro], [1])
+m4_define([thunar_version_minor], [1])
+m4_define([thunar_version_micro], [0])
 m4_define([thunar_version_nano], [])
 m4_define([thunar_version_build], [@REVISION@])
-m4_define([thunar_version_tag], [git])
+m4_define([thunar_version_tag], [])
 m4_define([thunar_version], [thunar_version_major().thunar_version_minor().thunar_version_micro()ifelse(thunar_version_nano(), [], [], [.thunar_version_nano()])ifelse(thunar_version_tag(), [git], [thunar_version_tag()-thunar_version_build()], [thunar_version_tag()])])
 
 dnl *******************************************
@@ -39,7 +39,7 @@ m4_define([thunar_debug_default], [ifelse(thunar_version_tag(), [git], [yes], [m
 dnl ***************************
 dnl *** Initialize autoconf ***
 dnl ***************************
-AC_COPYRIGHT([Copyright (c) 2004-2009 The Thunar development team. All rights reserved.])
+AC_COPYRIGHT([Copyright (c) 2004-2010 The Thunar development team. All rights reserved.])
 AC_INIT([Thunar], [thunar_version], [http://bugzilla.xfce.org/], [Thunar])
 AC_PREREQ([2.50])
 AC_CANONICAL_TARGET()
