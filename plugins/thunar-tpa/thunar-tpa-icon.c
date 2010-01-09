@@ -167,7 +167,7 @@ thunar_tpa_icon_init (ThunarTpaIcon *icon)
   gtk_widget_show (icon->button);
 
   /* setup the image for the trash icon */
-  icon->image = gtk_image_new_from_icon_name ("gnome-fs-trash-empty", GTK_ICON_SIZE_BUTTON);
+  icon->image = gtk_image_new_from_icon_name ("user-trash", GTK_ICON_SIZE_BUTTON);
   gtk_container_add (GTK_CONTAINER (icon->button), icon->image);
   gtk_widget_show (icon->image);
 
@@ -276,7 +276,7 @@ thunar_tpa_icon_state (ThunarTpaIcon *icon,
   gtk_widget_set_tooltip_text (icon->button, full ? _("Trash contains files") : _("Trash is empty"));
 
   /* setup the appropriate icon */
-  gtk_image_set_from_icon_name (GTK_IMAGE (icon->image), full ? "gnome-fs-trash-full" : "gnome-fs-trash-empty", GTK_ICON_SIZE_BUTTON);
+  gtk_image_set_from_icon_name (GTK_IMAGE (icon->image), full ? "user-trash-full" : "user-trash", GTK_ICON_SIZE_BUTTON);
 
   /* apply the new state */
   icon->full = full;

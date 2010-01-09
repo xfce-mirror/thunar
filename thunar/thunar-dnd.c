@@ -69,7 +69,7 @@ thunar_dnd_ask (GtkWidget    *widget,
 {
   static const GdkDragAction dnd_action_items[] = { GDK_ACTION_COPY, GDK_ACTION_MOVE, GDK_ACTION_LINK };
   static const gchar        *dnd_action_names[] = { N_ ("_Copy here"), N_ ("_Move here"), N_ ("_Link here") };
-  static const gchar        *dnd_action_icons[] = { "stock_folder-copy", "stock_folder-move", NULL };
+  static const gchar        *dnd_action_icons[] = { GTK_STOCK_COPY, "folder-move", NULL };
 
   ThunarxProviderFactory *factory;
   GdkDragAction           dnd_action = 0;

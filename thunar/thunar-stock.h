@@ -26,9 +26,9 @@ G_BEGIN_DECLS;
 #define THUNAR_STOCK_HOME         "thunar-home"         /* see ThunarWindow */
 #define THUNAR_STOCK_SHORTCUTS    "thunar-shortcuts"    /* see ThunarShortcutsPane */
 #define THUNAR_STOCK_TEMPLATES    "thunar-templates"    /* see ThunarWindow */
-#define THUNAR_STOCK_TRASH_EMPTY  "thunar-trash-empty"  /* see ThunarTrashAction */
+#define THUNAR_STOCK_TRASH_EMPTY  "thunar-trash"        /* see ThunarTrashAction */
 #define THUNAR_STOCK_TRASH_FULL   "thunar-trash-full"   /* see ThunarTrashAction */
-#define THUNAR_STOCK_DIRECTORY    "gnome-fs-directory"
+#define THUNAR_STOCK_DIRECTORY    GTK_STOCK_DIRECTORY
 #define THUNAR_STOCK_DOWNLOADS    "thunar-downloads"
 #define THUNAR_STOCK_DOCUMENTS    "thunar-documents"
 #define THUNAR_STOCK_MUSIC        "thunar-music"

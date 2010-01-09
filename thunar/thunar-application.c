@@ -1369,7 +1369,7 @@ thunar_application_link_into (ThunarApplication *application,
   g_free (display_name);
 
   /* collect the target files and launch the job */
-  thunar_application_collect_and_launch (application, parent, "stock_link",
+  thunar_application_collect_and_launch (application, parent, "insert-link",
                                          title, thunar_io_jobs_link_files, 
                                          source_file_list, target_file, 
                                          new_files_closure);
@@ -1537,7 +1537,7 @@ thunar_application_unlink_files (ThunarApplication *application,
       if (G_LIKELY (response == GTK_RESPONSE_YES))
         {
           /* launch the "Delete" operation */
-          thunar_application_launch (application, parent, "stock_delete",
+          thunar_application_launch (application, parent, "edit-delete",
                                      _("Deleting files..."), unlink_stub,
                                      path_list, path_list, NULL);
         }
@@ -1572,7 +1572,7 @@ thunar_application_trash (ThunarApplication *application,
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
   _thunar_return_if_fail (file_list != NULL);
 
-  thunar_application_launch (application, parent, "gnome-fs-trash-full", 
+  thunar_application_launch (application, parent, "user-trash-full", 
                              _("Moving files into the trash..."), trash_stub,
                              file_list, NULL, NULL);
 }
@@ -1611,7 +1611,7 @@ thunar_application_creat (ThunarApplication *application,
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
   
   /* launch the operation */
-  thunar_application_launch (application, parent, "stock_new",
+  thunar_application_launch (application, parent, "document-new",
                              _("Creating files..."), creat_stub,
                              file_list, file_list, new_files_closure);
 }
@@ -1650,7 +1650,7 @@ thunar_application_mkdir (ThunarApplication *application,
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
   /* launch the operation */
-  thunar_application_launch (application, parent, "stock_folder",
+  thunar_application_launch (application, parent, "folder-new",
                              _("Creating directories..."), mkdir_stub,
                              file_list, file_list, new_files_closure);
 }
@@ -1714,7 +1714,7 @@ thunar_application_empty_trash (ThunarApplication *application,
       file_list.prev = NULL;
 
       /* launch the operation */
-      thunar_application_launch (application, parent, "gnome-fs-trash-empty",
+      thunar_application_launch (application, parent, "user-trash",
                                  _("Emptying the Trash..."),
                                  unlink_stub, &file_list, NULL, NULL);
 
