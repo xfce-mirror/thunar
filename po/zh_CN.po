@@ -5,12 +5,11 @@
 # Hunt Xu <huntxu@live.cn>, 2008, 2009.
 # Chris K. Zhang <plutino@gmail.com>, 2009.
 # Aron Xu <aronmalache@163.com>, 2009.
-
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-12-22 12:36+0000\n"
+"POT-Creation-Date: 2010-01-09 00:50+0100\n"
 "PO-Revision-Date: 2009-12-23 11:08+0800\n"
 "Last-Translator: Hunt Xu <huntxu@live.cn>\n"
 "Language-Team: Chinese (simplified) <xfce-i18n@xfce.org>\n"
@@ -508,11 +507,13 @@ msgstr "无效的文件名 \"%s\""
 
 #. LaunchFiles() invoked without a valid working directory
 #: ../thunar/thunar-dbus-service.c:696
+#, c-format
 msgid "The working directory must be an absolute path"
 msgstr "工作目录必须是绝对路径"
 
 #. LaunchFiles() invoked with an empty filename list
 #: ../thunar/thunar-dbus-service.c:704
+#, c-format
 msgid "Atleast one filename must be specified"
 msgstr "文件名必须指定"
 
@@ -737,6 +738,7 @@ msgid "File System"
 msgstr "文件系统"
 
 #: ../thunar/thunar-file.c:914
+#, c-format
 msgid "The root folder has no parent"
 msgstr "根目录没有父目录"
 
@@ -746,14 +748,17 @@ msgid "Failed to parse the desktop file: %s"
 msgstr "解析 desktop 文件失败: %s"
 
 #: ../thunar/thunar-file.c:1012
+#, c-format
 msgid "No Exec field specified"
 msgstr "Exec 栏并未指定"
 
 #: ../thunar/thunar-file.c:1033
+#, c-format
 msgid "No URL field specified"
 msgstr "URL 栏并未指定"
 
 #: ../thunar/thunar-file.c:1039
+#, c-format
 msgid "Invalid desktop file"
 msgstr "无效的桌面文件"
 
@@ -1182,6 +1187,7 @@ msgid "_Location:"
 msgstr "位置(_L):"
 
 #: ../thunar/thunar-location-entry.c:382
+#, c-format
 msgid "File does not exist"
 msgstr "文件不存在"
 
@@ -1191,6 +1197,7 @@ msgid "Failed to determine the mount point of \"%s\""
 msgstr "确定 \"%s\" 的挂载点失败"
 
 #: ../thunar/thunar-misc-jobs.c:84
+#, c-format
 msgid "No templates installed"
 msgstr "没有模板已安装"
 
@@ -2134,6 +2141,7 @@ msgid "P_roperties..."
 msgstr "属性(_R)..."
 
 #: ../thunar/thunar-util.c:78
+#, c-format
 msgid "Invalid path"
 msgstr "无效的路径"
 
@@ -3087,8 +3095,8 @@ msgid ""
 "is launched. This is also highly recommended if you have focus stealing "
 "prevention enabled in your window manager."
 msgstr ""
-"启用此选项以当启动该动作时显示一个等待状态的鼠标光标。如果您在您的窗口管理器中"
-"启用了阻碍焦点获取，则强烈推荐您启用此选项。"
+"启用此选项以当启动该动作时显示一个等待状态的鼠标光标。如果您在您的窗口管理器"
+"中启用了阻碍焦点获取，则强烈推荐您启用此选项。"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:210
 msgid "_Icon:"
@@ -3208,6 +3216,7 @@ msgid "Unknown element <%s>"
 msgstr "未知元素 <%s>"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:787
+#, c-format
 msgid "End element handler called while in root context"
 msgstr "在根上下文中将调用的最后元素处理器"
 
@@ -3217,10 +3226,12 @@ msgid "Unknown closing element <%s>"
 msgstr "未知关闭元素 <%s>"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:1324
+#, c-format
 msgid "Failed to determine save location for uca.xml"
 msgstr "检测 uca.xml 保存的位置失败"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:1441
+#, c-format
 msgid "Command not configured"
 msgstr "没有设定命令"
 

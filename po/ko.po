@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-22 16:18+0200\n"
+"POT-Creation-Date: 2010-01-09 00:50+0100\n"
 "PO-Revision-Date: 2007-09-24 03:26+0900\n"
 "Last-Translator:  ByungHyun Choi <byunghyun.choi@gmail.com>\n"
 "Language-Team: xfce4-users-kr-i18n <xfce4-users-kr-i18n@lists.sourceforge."
@@ -359,38 +359,38 @@ msgid "Failed to remove \"%s\""
 msgstr "\"%s\"을 삭제하는데 실패했습니다."
 
 #: ../thunar/thunar-chooser-dialog.c:757
-#: ../plugins/thunar-uca/thunar-uca-editor.c:465
+#: ../plugins/thunar-uca/thunar-uca-editor.c:473
 msgid "Select an Application"
 msgstr "응용프로그램 선택"
 
 #: ../thunar/thunar-chooser-dialog.c:767
 #: ../thunar/thunar-renamer-dialog.c:1056
-#: ../plugins/thunar-uca/thunar-uca-editor.c:475
+#: ../plugins/thunar-uca/thunar-uca-editor.c:483
 msgid "All Files"
 msgstr "모든 화일"
 
 #: ../thunar/thunar-chooser-dialog.c:772
-#: ../plugins/thunar-uca/thunar-uca-editor.c:480
+#: ../plugins/thunar-uca/thunar-uca-editor.c:488
 msgid "Executable Files"
 msgstr "실행가능한 화일"
 
 #: ../thunar/thunar-chooser-dialog.c:787
-#: ../plugins/thunar-uca/thunar-uca-editor.c:495
+#: ../plugins/thunar-uca/thunar-uca-editor.c:503
 msgid "Perl Scripts"
 msgstr "펄 스크립트"
 
 #: ../thunar/thunar-chooser-dialog.c:793
-#: ../plugins/thunar-uca/thunar-uca-editor.c:501
+#: ../plugins/thunar-uca/thunar-uca-editor.c:509
 msgid "Python Scripts"
 msgstr "파이썬 스크립트"
 
 #: ../thunar/thunar-chooser-dialog.c:799
-#: ../plugins/thunar-uca/thunar-uca-editor.c:507
+#: ../plugins/thunar-uca/thunar-uca-editor.c:515
 msgid "Ruby Scripts"
 msgstr "루비 스크립트"
 
 #: ../thunar/thunar-chooser-dialog.c:805
-#: ../plugins/thunar-uca/thunar-uca-editor.c:513
+#: ../plugins/thunar-uca/thunar-uca-editor.c:521
 msgid "Shell Scripts"
 msgstr "쉘 스크립트"
 
@@ -481,7 +481,7 @@ msgstr "필요시 자동으로 항목확장(_e)"
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:458
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:285
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:286
-#: ../plugins/thunar-uca/thunar-uca-editor.c:597
+#: ../plugins/thunar-uca/thunar-uca-editor.c:605
 msgid "Unknown"
 msgstr "모름"
 
@@ -738,32 +738,32 @@ msgstr "화일"
 msgid "File Name"
 msgstr "화일명"
 
-#: ../thunar/thunar-file.c:855 ../thunar/thunar-shortcuts-view.c:277
+#: ../thunar/thunar-file.c:836 ../thunar/thunar-shortcuts-view.c:277
 #: ../thunar/thunar-window.c:311
 msgid "File System"
 msgstr "화일 시스템"
 
-#: ../thunar/thunar-file.c:933
+#: ../thunar/thunar-file.c:914
 #, c-format
 msgid "The root folder has no parent"
 msgstr "루트 폴더는 상위폴더를 가질수 없습니다."
 
-#: ../thunar/thunar-file.c:993
+#: ../thunar/thunar-file.c:974
 #, fuzzy, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "빈 \"%s\" 화일을 생성하는데 실패했습니다."
 
-#: ../thunar/thunar-file.c:1031
+#: ../thunar/thunar-file.c:1012
 #, c-format
 msgid "No Exec field specified"
 msgstr "Exec 항목이 정의되지 않았습니다."
 
-#: ../thunar/thunar-file.c:1052
+#: ../thunar/thunar-file.c:1033
 #, c-format
 msgid "No URL field specified"
 msgstr "URL 항목이 정의되지 않았습니다."
 
-#: ../thunar/thunar-file.c:1058
+#: ../thunar/thunar-file.c:1039
 #, c-format
 msgid "Invalid desktop file"
 msgstr "올바르지 않은 desktop 화일"
@@ -1726,7 +1726,7 @@ msgstr "\"%s\"의 이름변경에 실패했습니다."
 #. allocate the icon chooser
 #. allocate the chooser dialog
 #: ../thunar/thunar-properties-dialog.c:708
-#: ../plugins/thunar-uca/thunar-uca-editor.c:600
+#: ../plugins/thunar-uca/thunar-uca-editor.c:608
 #, c-format
 msgid "Select an Icon for \"%s\""
 msgstr "\"%s\"의 아이콘을 선택하세요"
@@ -2037,7 +2037,7 @@ msgstr "임의의 패턴에 맞는 모든 화일을 선택합니다."
 msgid "Du_plicate"
 msgstr "복제(_p)"
 
-#: ../thunar/thunar-standard-view.c:347 ../thunar/thunar-standard-view.c:3417
+#: ../thunar/thunar-standard-view.c:347 ../thunar/thunar-standard-view.c:3419
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "링크 생성(_k)"
@@ -2098,48 +2098,48 @@ msgstr "XDS drag site에서 제공된 화일 이름이 옳지 않습니다."
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "URL \"%s\"의 링크 생성에 실패했습니다."
 
-#: ../thunar/thunar-standard-view.c:3050
+#: ../thunar/thunar-standard-view.c:3052
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "\"%s\" 디렉토리를 여는데 실패했습니다."
 
-#: ../thunar/thunar-standard-view.c:3377
+#: ../thunar/thunar-standard-view.c:3379
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "붙여넣기 명령으로 이동되는 화일을 준비합니다."
 msgstr[1] "붙여넣기 명령으로 이동되는 화일들을 준비합니다."
 
-#: ../thunar/thunar-standard-view.c:3385
+#: ../thunar/thunar-standard-view.c:3387
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "붙여넣기 명령으로 복사되는 화일을 준비합니다."
 msgstr[1] "붙여넣기 명령으로 복사되는 화일들을 준비합니다."
 
-#: ../thunar/thunar-standard-view.c:3396
+#: ../thunar/thunar-standard-view.c:3398
 msgid "Delete the selected file"
 msgid_plural "Delete the selected files"
 msgstr[0] "선택된 화일을 삭제합니다."
 msgstr[1] "선택된 화일들을 삭제합니다."
 
-#: ../thunar/thunar-standard-view.c:3410
+#: ../thunar/thunar-standard-view.c:3412
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "선택된 화일을 복제합니다."
 msgstr[1] "선택된 각각의 화일들을 복제합니다."
 
-#: ../thunar/thunar-standard-view.c:3419
+#: ../thunar/thunar-standard-view.c:3421
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "선택된 화일의 심볼릭 링크를 생성합니다."
 msgstr[1] "선택된 화일들의 심볼릭 링크를 생성합니다."
 
-#: ../thunar/thunar-standard-view.c:3427
+#: ../thunar/thunar-standard-view.c:3429
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "선택된 화일의 이름을 변경합니다."
 msgstr[1] "선택된 화일들의 이름을 변경합니다."
 
-#: ../thunar/thunar-standard-view.c:3435
+#: ../thunar/thunar-standard-view.c:3437
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
 msgstr[0] "선택된 화일을 복구합니다."
@@ -2194,7 +2194,7 @@ msgstr "쓰레기통(_r)"
 msgid "Display the contents of the trash can"
 msgstr "쓰레기통의 내용을 보여줍니다."
 
-#: ../thunar/thunar-tree-model.c:618
+#: ../thunar/thunar-tree-model.c:619
 msgid "Loading..."
 msgstr "로딩..."
 
@@ -3136,34 +3136,34 @@ msgstr "삭제하면 복구 할 수 없습니다."
 #.
 #. Basic
 #.
-#: ../plugins/thunar-uca/thunar-uca-editor.c:121
+#: ../plugins/thunar-uca/thunar-uca-editor.c:122
 msgid "Basic"
 msgstr "기본"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:130
+#: ../plugins/thunar-uca/thunar-uca-editor.c:131
 msgid "_Name:"
 msgstr "이름(_N):"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:135
+#: ../plugins/thunar-uca/thunar-uca-editor.c:136
 msgid "The name of the action that will be displayed in the context menu."
 msgstr "팝업 메뉴에 표시될 명령의 이름입니다."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:148
+#: ../plugins/thunar-uca/thunar-uca-editor.c:149
 msgid "_Description:"
 msgstr "설명(_D):"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:153
+#: ../plugins/thunar-uca/thunar-uca-editor.c:154
 msgid ""
 "The description of the action that will be displayed as tooltip in the "
 "statusbar when selecting the item from the context menu."
 msgstr ""
 "팝업 메뉴에서 항목을 선택했을때 상태바에 툴팁으로 표시될 명령의 설명입니다."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:166
+#: ../plugins/thunar-uca/thunar-uca-editor.c:167
 msgid "_Command:"
 msgstr "명령(_C):"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:175
+#: ../plugins/thunar-uca/thunar-uca-editor.c:176
 msgid ""
 "The command (including the necessary parameters) to perform the action. See "
 "the command parameter legend below for a list of supported parameter "
@@ -3177,21 +3177,33 @@ msgstr ""
 "을때 적용될 수 있습니다. 그렇지 않으면 단지 하나의 항목이 선택되었을때 가능합"
 "니다."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:186
+#: ../plugins/thunar-uca/thunar-uca-editor.c:187
 msgid "Browse the file system to select an application to use for this action."
 msgstr "명령에 사용할 응용프로그램을 선택하기위해 화일시스템을 탐색합니다."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:202
+#: ../plugins/thunar-uca/thunar-uca-editor.c:203
+#, fuzzy
+msgid "Use Startup Notification"
+msgstr "시작할때 알림(_s)"
+
+#: ../plugins/thunar-uca/thunar-uca-editor.c:204
+msgid ""
+"Enable this option if you want a waiting cursor to be shown while the action "
+"is launched. This is also highly recommended if you have focus stealing "
+"prevention enabled in your window manager."
+msgstr ""
+
+#: ../plugins/thunar-uca/thunar-uca-editor.c:210
 msgid "_Icon:"
 msgstr "아이콘(_I):"
 
 #. setup a label to tell that no icon was selected
-#: ../plugins/thunar-uca/thunar-uca-editor.c:210
-#: ../plugins/thunar-uca/thunar-uca-editor.c:697
+#: ../plugins/thunar-uca/thunar-uca-editor.c:218
+#: ../plugins/thunar-uca/thunar-uca-editor.c:705
 msgid "No icon"
 msgstr "아이콘없음"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:211
+#: ../plugins/thunar-uca/thunar-uca-editor.c:219
 msgid ""
 "Click this button to select an icon file that will be displayed in the "
 "context menu in addition to the action name chosen above."
@@ -3199,47 +3211,47 @@ msgstr ""
 "위에서 선택한 명령 이름에 부가적으로, 팝업 메뉴에 표시될 아이콘을 선택하기 위"
 "해서 이 버튼을 누르세요."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:242
+#: ../plugins/thunar-uca/thunar-uca-editor.c:250
 msgid ""
 "The following command parameters will be\n"
 "substituted when launching the action:"
 msgstr "다음의 명령 인수는 명령 실행시 대체됩니다:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:280
+#: ../plugins/thunar-uca/thunar-uca-editor.c:288
 msgid "the path to the first selected file"
 msgstr "처음 선택된 화일의 경로"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:292
+#: ../plugins/thunar-uca/thunar-uca-editor.c:300
 msgid "the paths to all selected files"
 msgstr "선택된 모든 화일의 경로"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:304
+#: ../plugins/thunar-uca/thunar-uca-editor.c:312
 #, c-format
 msgid "directory containing the file that is passed in %f"
 msgstr "%f로 전달된 화일이 포함된 디렉토리"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:316
+#: ../plugins/thunar-uca/thunar-uca-editor.c:324
 #, c-format
 msgid "directories containing the files that are passed in %F"
 msgstr "%F로 전달된 화일들이 포함된 디렉토리"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:328
+#: ../plugins/thunar-uca/thunar-uca-editor.c:336
 msgid "the first selected filename (without path)"
 msgstr "처음 선택된 화일이름(경로 미포함)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:340
+#: ../plugins/thunar-uca/thunar-uca-editor.c:348
 msgid "the selected filenames (without paths)"
 msgstr "선택된 화일이름들(경로 미포함)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:354
+#: ../plugins/thunar-uca/thunar-uca-editor.c:362
 msgid "Appearance Conditions"
 msgstr "표현 조건"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:362
+#: ../plugins/thunar-uca/thunar-uca-editor.c:370
 msgid "_File Pattern:"
 msgstr "화일 형식(_F):"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:367
+#: ../plugins/thunar-uca/thunar-uca-editor.c:375
 msgid ""
 "Enter a list of patterns that will be used to determine whether this action "
 "should be displayed for a selected file. If you specify more than one "
@@ -3250,35 +3262,35 @@ msgstr ""
 "약 하나이상의 형식을 설정한다면, 항목의 목록은 세미콜론으로 구분해야 합니다. "
 "(예: *.txt;*.doc)."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:386
+#: ../plugins/thunar-uca/thunar-uca-editor.c:394
 msgid "Appears if selection contains:"
 msgstr "선택이 포함되면 표시:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:399
+#: ../plugins/thunar-uca/thunar-uca-editor.c:407
 msgid "_Directories"
 msgstr "디렉토리(_D)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:403
+#: ../plugins/thunar-uca/thunar-uca-editor.c:411
 msgid "_Audio Files"
 msgstr "음악화일(_A)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:407
+#: ../plugins/thunar-uca/thunar-uca-editor.c:415
 msgid "_Image Files"
 msgstr "그림화일(_I)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:411
+#: ../plugins/thunar-uca/thunar-uca-editor.c:419
 msgid "_Text Files"
 msgstr "텍스트화일(_T)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:416
+#: ../plugins/thunar-uca/thunar-uca-editor.c:424
 msgid "_Video Files"
 msgstr "동영상화일(_V)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:420
+#: ../plugins/thunar-uca/thunar-uca-editor.c:428
 msgid "_Other Files"
 msgstr "다른 화일(_O)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:437
+#: ../plugins/thunar-uca/thunar-uca-editor.c:445
 msgid ""
 "This page lists the conditions under which the\n"
 "action will appear in the file managers context\n"
@@ -3295,41 +3307,41 @@ msgstr ""
 "약 하나이상의 형식을 설정한다면, 항목의 목록은 세미콜론으로 구분해야 합니다. "
 "(예: *.txt;*.doc)."
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:784
+#: ../plugins/thunar-uca/thunar-uca-model.c:769
 #, c-format
 msgid "Unknown element <%s>"
 msgstr "알려지지 않은 구성요소 <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:802
+#: ../plugins/thunar-uca/thunar-uca-model.c:787
 #, c-format
 msgid "End element handler called while in root context"
 msgstr "End element handler called while in root context"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:890
+#: ../plugins/thunar-uca/thunar-uca-model.c:881
 #, c-format
 msgid "Unknown closing element <%s>"
 msgstr "Unknown closing element <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1331
+#: ../plugins/thunar-uca/thunar-uca-model.c:1324
 #, c-format
 msgid "Failed to determine save location for uca.xml"
 msgstr "uca.xml의 저장위치를 결정하는 실패했습니다."
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1446
+#: ../plugins/thunar-uca/thunar-uca-model.c:1441
 #, c-format
 msgid "Command not configured"
 msgstr "명령이 설정되지 않았습니다."
 
-#: ../plugins/thunar-uca/thunar-uca-provider.c:188
+#: ../plugins/thunar-uca/thunar-uca-provider.c:177
 msgid "Configure c_ustom actions..."
 msgstr "사용자 정의명령 설정(_u)..."
 
-#: ../plugins/thunar-uca/thunar-uca-provider.c:189
+#: ../plugins/thunar-uca/thunar-uca-provider.c:178
 msgid ""
 "Setup custom actions that will appear in the file managers context menus"
 msgstr "화일 관리자의 팝업 메뉴에 표시될 사용자 정의명령을 구성합니다."
 
-#: ../plugins/thunar-uca/thunar-uca-provider.c:406
+#: ../plugins/thunar-uca/thunar-uca-provider.c:412
 #, c-format
 msgid "Failed to launch action \"%s\"."
 msgstr "\"%s\"명령을 수행하는데 실패했습니다."

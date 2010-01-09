@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-12-22 12:36+0000\n"
+"POT-Creation-Date: 2010-01-09 00:50+0100\n"
 "PO-Revision-Date: 2009-12-27 15:27Centra\n"
 "Last-Translator: Robert Hartl <hartl.robert@gmail.com>\n"
 "Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
@@ -525,11 +525,13 @@ msgstr "Nesprávne meno súboru \"%s\""
 
 #. LaunchFiles() invoked without a valid working directory
 #: ../thunar/thunar-dbus-service.c:696
+#, c-format
 msgid "The working directory must be an absolute path"
 msgstr "Pracovný adresár musí byť absolútna cesta"
 
 #. LaunchFiles() invoked with an empty filename list
 #: ../thunar/thunar-dbus-service.c:704
+#, c-format
 msgid "Atleast one filename must be specified"
 msgstr "Minimálne jeden názov súboru musí byť zadaný"
 
@@ -761,6 +763,7 @@ msgid "File System"
 msgstr "Súborový systém"
 
 #: ../thunar/thunar-file.c:914
+#, c-format
 msgid "The root folder has no parent"
 msgstr "Koreňový priečinok nemá nadradený priečinok"
 
@@ -770,14 +773,17 @@ msgid "Failed to parse the desktop file: %s"
 msgstr "Nepodarilo sa spracovať súbor pracovnej plochy: %s"
 
 #: ../thunar/thunar-file.c:1012
+#, c-format
 msgid "No Exec field specified"
 msgstr "Nie je vyplnené pole \"Príkaz\""
 
 #: ../thunar/thunar-file.c:1033
+#, c-format
 msgid "No URL field specified"
 msgstr "Nie je vyplnené pole \"Adresa\""
 
 #: ../thunar/thunar-file.c:1039
+#, c-format
 msgid "Invalid desktop file"
 msgstr "Neplatný .desktop súbor"
 
@@ -1243,6 +1249,7 @@ msgid "_Location:"
 msgstr "_Umiestnenie:"
 
 #: ../thunar/thunar-location-entry.c:382
+#, c-format
 msgid "File does not exist"
 msgstr "Súbor neexistuje"
 
@@ -1252,6 +1259,7 @@ msgid "Failed to determine the mount point of \"%s\""
 msgstr "Nepodarilo sa zistiť prípojný bod pre \"%s\""
 
 #: ../thunar/thunar-misc-jobs.c:84
+#, c-format
 msgid "No templates installed"
 msgstr "Šablóny nie sú nainštalované"
 
@@ -2263,6 +2271,7 @@ msgid "P_roperties..."
 msgstr "_Vlastnosti..."
 
 #: ../thunar/thunar-util.c:78
+#, c-format
 msgid "Invalid path"
 msgstr "Neplatná cesta"
 
@@ -3367,6 +3376,7 @@ msgid "Unknown element <%s>"
 msgstr "Neznámy prvok <%s>"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:787
+#, c-format
 msgid "End element handler called while in root context"
 msgstr "Konečný prvok volaných v koreňovom kontexte"
 
@@ -3376,10 +3386,12 @@ msgid "Unknown closing element <%s>"
 msgstr "Neznámy ukončovací prvok <%s>"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:1324
+#, c-format
 msgid "Failed to determine save location for uca.xml"
 msgstr "Nepodarilo sa určiť ukladacie umiestnenie uca.xml"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:1441
+#, c-format
 msgid "Command not configured"
 msgstr "Príkaz nie je nastavený"
 
