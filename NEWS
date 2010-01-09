@@ -12,6 +12,10 @@
 - Thumbnails are now generated using the thumbnail management D-Bus
   specification. One implementation of this specification is Tumbler
   which is released independently.
+- Bump the API version of Thunarx to 2 because symbols related to 
+  ThunarVFS were removed and replaced by new symbols dealing with GIO.
+  This requires all existing plugins to be updated and linked against
+  thunarx-2 instead of thunarx-1.
 - Show "Network" item in the side pane and the "Go" menu if the
   network:// URI scheme is supported by GIO (via an extension). Make
   the "Trash" item optional too.
