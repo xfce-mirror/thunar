@@ -3019,9 +3019,11 @@ thunar_standard_view_restore_selection (ThunarListModel    *model,
    * path is set by thunar_standard_view_row_deleted() if this is the case */
   if (G_LIKELY (standard_view->priv->selection_before_delete != NULL))
     {
-      /* Restore the selection by selecting either the row before or the new
-       * first row */
+      /* Restore the selection by selecting either the row before or the new first row */
       (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->select_path) (standard_view, standard_view->priv->selection_before_delete);
+
+      /* place the cursor on the selected path */
+      (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->set_cursor) (standard_view, standard_view->priv->selection_before_delete, FALSE);
 
       /* Free the tree path */
       gtk_tree_path_free (standard_view->priv->selection_before_delete);
