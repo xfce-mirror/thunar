@@ -745,7 +745,9 @@ thunar_launcher_update (ThunarLauncher *launcher)
   /* determine the number of files/directories/executables */
   for (lp = launcher->selected_files; lp != NULL; lp = lp->next, ++n_selected_files)
     {
-      if (thunar_file_is_directory (lp->data))
+      if (thunar_file_is_directory (lp->data) 
+          || thunar_file_is_shortcut (lp->data) 
+          || thunar_file_is_mountable (lp->data))
         {
           ++n_directories;
         }

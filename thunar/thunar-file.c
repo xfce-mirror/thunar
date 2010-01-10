@@ -1949,6 +1949,48 @@ thunar_file_is_directory (const ThunarFile *file)
 
 
 /**
+ * thunar_file_is_shortcut:
+ * @file : a #ThunarFile instance.
+ *
+ * Checks whether @file refers to a shortcut to something else.
+ *
+ * Return value: %TRUE if @file is a shortcut.
+ **/
+gboolean
+thunar_file_is_shortcut (const ThunarFile *file) 
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+
+  if (file->info == NULL)
+    return FALSE;
+
+  return thunar_file_get_kind (file) == G_FILE_TYPE_SHORTCUT;
+}
+
+
+
+/**
+ * thunar_file_is_mountable:
+ * @file : a #ThunarFile instance.
+ *
+ * Checks whether @file refers to a mountable file/directory.
+ *
+ * Return value: %TRUE if @file is a mountable file/directory.
+ **/
+gboolean
+thunar_file_is_mountable (const ThunarFile *file) 
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+
+  if (file->info == NULL)
+    return FALSE;
+
+  return thunar_file_get_kind (file) == G_FILE_TYPE_MOUNTABLE;
+}
+
+
+
+/**
  * thunar_file_is_local:
  * @file : a #ThunarFile instance.
  *

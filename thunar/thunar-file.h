@@ -187,6 +187,8 @@ gboolean          thunar_file_get_free_space       (const ThunarFile       *file
 gboolean          thunar_file_is_mounted           (const ThunarFile       *file);
 gboolean          thunar_file_exists               (const ThunarFile       *file);
 gboolean          thunar_file_is_directory         (const ThunarFile       *file);
+gboolean          thunar_file_is_shortcut          (const ThunarFile       *file);
+gboolean          thunar_file_is_mountable         (const ThunarFile       *file);
 gboolean          thunar_file_is_local             (const ThunarFile       *file);
 gboolean          thunar_file_is_ancestor          (const ThunarFile       *file, 
                                                     const ThunarFile       *ancestor);
