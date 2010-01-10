@@ -1410,7 +1410,7 @@ sort_by_file_name (const ThunarFile *a,
   const gchar *a_name = thunar_file_get_display_name (a);
   const gchar *b_name = thunar_file_get_display_name (b);
 
-  if (G_UNLIKELY (!case_sensitive))
+  if (!case_sensitive)
     return strcasecmp (a_name, b_name);
   else
     return strcmp (a_name, b_name);
@@ -1423,23 +1423,51 @@ sort_by_group (const ThunarFile *a,
                const ThunarFile *b,
                gboolean          case_sensitive)
 {
-  guint32 gid_a;
-  guint32 gid_b;
+  ThunarGroup *group_a;
+  ThunarGroup *group_b;
+  guint32      gid_a;
+  guint32      gid_b;
+  gint         result;
 
   if (thunar_file_get_info (a) == NULL || thunar_file_get_info (b) == NULL)
-    return 0;
-
-  gid_a = g_file_info_get_attribute_uint32 (thunar_file_get_info (a),
-                                            G_FILE_ATTRIBUTE_UNIX_GID);
-  gid_b = g_file_info_get_attribute_uint32 (thunar_file_get_info (b),
-                                            G_FILE_ATTRIBUTE_UNIX_GID);
-
-  if (gid_a < gid_b)
-    return -1;
-  else if (gid_a > gid_b)
-    return 1;
-  else
     return sort_by_name (a, b, case_sensitive);
+
+  group_a = thunar_file_get_group (a);
+  group_b = thunar_file_get_group (b);
+
+  if (group_a != NULL && group_b != NULL)
+    {
+      if (!case_sensitive)
+        {
+          result = strcasecmp (thunar_group_get_name (group_a),
+                               thunar_group_get_name (group_b));
+        }
+      else
+        {
+          result = strcmp (thunar_group_get_name (group_a),
+                           thunar_group_get_name (group_b));
+        }
+    }
+  else
+    {
+      gid_a = g_file_info_get_attribute_uint32 (thunar_file_get_info (a),
+                                                G_FILE_ATTRIBUTE_UNIX_GID);
+      gid_b = g_file_info_get_attribute_uint32 (thunar_file_get_info (b),
+                                                G_FILE_ATTRIBUTE_UNIX_GID);
+      
+      result = CLAMP (gid_a - gid_b, -1, 1);
+    }
+
+  if (group_a != NULL)
+    g_object_unref (group_a);
+
+  if (group_b != NULL)
+    g_object_unref (group_b);
+  
+  if (result == 0)
+    return sort_by_name (a, b, case_sensitive);
+  else
+    return result;
 }
 
 
@@ -1481,23 +1509,58 @@ sort_by_owner (const ThunarFile *a,
                const ThunarFile *b,
                gboolean          case_sensitive)
 {
-  guint32 uid_a;
-  guint32 uid_b;
+  const gchar *name_a;
+  const gchar *name_b;
+  const gchar *real_name_a;
+  const gchar *real_name_b;
+  ThunarUser  *user_a;
+  ThunarUser  *user_b;
+  guint32      uid_a;
+  guint32      uid_b;
+  gchar       *str_a;
+  gchar       *str_b;
+  gint         result;
 
   if (thunar_file_get_info (a) == NULL || thunar_file_get_info (b) == NULL)
-    return 0;
-
-  uid_a = g_file_info_get_attribute_uint32 (thunar_file_get_info (a),
-                                            G_FILE_ATTRIBUTE_UNIX_UID);
-  uid_b = g_file_info_get_attribute_uint32 (thunar_file_get_info (b),
-                                            G_FILE_ATTRIBUTE_UNIX_UID);
-
-  if (uid_a < uid_b)
-    return -1;
-  else if (uid_a > uid_b)
-    return 1;
-  else
     return sort_by_name (a, b, case_sensitive);
+
+  user_a = thunar_file_get_user (a);
+  user_b = thunar_file_get_user (b);
+
+  if (user_a != NULL && user_b != NULL)
+    {
+      name_a = thunar_user_get_name (user_a);
+      real_name_a = thunar_user_get_real_name (user_a);
+      str_a = G_LIKELY (real_name_a != NULL) 
+        ? g_strdup_printf ("%s (%s)", real_name_a, name_a) : g_strdup (name_a);
+
+      name_b = thunar_user_get_name (user_b);
+      real_name_b = thunar_user_get_real_name (user_b);
+      str_b = G_LIKELY (real_name_b != NULL) 
+        ? g_strdup_printf ("%s (%s)", real_name_b, name_b) : g_strdup (name_b);
+
+      if (!case_sensitive)
+        result = strcasecmp (str_a, str_b);
+      else
+        result = strcmp (str_a, str_b);
+
+      g_free (str_a);
+      g_free (str_b);
+    }
+  else
+    {
+      uid_a = g_file_info_get_attribute_uint32 (thunar_file_get_info (a),
+                                                G_FILE_ATTRIBUTE_UNIX_UID);
+      uid_b = g_file_info_get_attribute_uint32 (thunar_file_get_info (b),
+                                                G_FILE_ATTRIBUTE_UNIX_UID);
+
+      result = CLAMP (uid_a - uid_b, -1, 1);
+    }
+
+  if (result == 0)
+    return sort_by_name (a, b, case_sensitive);
+  else
+    return result;
 }
 
 
@@ -1551,25 +1614,47 @@ sort_by_type (const ThunarFile *a,
 {
   const gchar *content_type_a;
   const gchar *content_type_b;
-  gchar       *description_a;
-  gchar       *description_b;
+  gchar       *description_a = NULL;
+  gchar       *description_b = NULL;
   gint         result;
 
-  content_type_a = thunar_file_get_content_type (a);
-  content_type_b = thunar_file_get_content_type (b);
+  /* we alter the description of symlinks here because they are 
+   * displayed as "link to ..." in the detailed list view as well */
 
-  description_a = g_content_type_get_description (content_type_a);
-  description_b = g_content_type_get_description (content_type_b);
+  if (thunar_file_is_symlink (a))
+    {
+      description_a = g_strdup_printf (_("link to %s"), 
+                                       thunar_file_get_symlink_target (a));
+    }
+  else
+    {
+      content_type_a = thunar_file_get_content_type (a);
+      description_a = g_content_type_get_description (content_type_a);
+    }
+  
+  if (thunar_file_is_symlink (b))
+    {
+      description_b = g_strdup_printf (_("link to %s"),
+                                       thunar_file_get_symlink_target (b));
+    }
+  else
+    {
+      content_type_b = thunar_file_get_content_type (b);
+      description_b = g_content_type_get_description (content_type_b);
+    }
 
-  result = strcasecmp (description_a, description_b);
-
-  if (result == 0)
-    result = sort_by_name (a, b, case_sensitive);
+  if (!case_sensitive)
+    result = strcasecmp (description_a, description_b);
+  else
+    result = strcmp (description_a, description_b);
 
   g_free (description_a);
   g_free (description_b);
 
-  return result;
+  if (result == 0)
+    result = sort_by_name (a, b, case_sensitive);
+  else
+    return result;
 }
 
 
