@@ -535,15 +535,46 @@ thunar_tree_view_set_current_directory (ThunarNavigator *navigator,
                                         ThunarFile      *current_directory)
 {
   ThunarTreeView *view = THUNAR_TREE_VIEW (navigator);
-  ThunarFile     *file, *file_parent;
+  ThunarFile     *file;
+  ThunarFile     *file_parent;
+  gboolean        needs_refiltering = FALSE;
 
   /* check if we already use that directory */
   if (G_UNLIKELY (view->current_directory == current_directory))
     return;
 
-  /* disconnect from the previous current directory */
+  /* check if we have an active directory */
   if (G_LIKELY (view->current_directory != NULL))
-    g_object_unref (G_OBJECT (view->current_directory));
+    {
+      /* update the filter if the old current directory, or one of it's parents, is hidden */
+      if (!view->show_hidden)
+        {
+          /* look if the file or one of it's parents is hidden */
+          for (file = g_object_ref (G_OBJECT (view->current_directory)); file != NULL; file = file_parent)
+            {
+              /* check if this file is hidden */
+              if (thunar_file_is_hidden (file))
+                {
+                  /* schedule an update of the filter after the current directory has been changed */
+                  needs_refiltering = TRUE;
+
+                  /* release the file */
+                  g_object_unref (G_OBJECT (file));
+
+                  break;
+                }
+            
+              /* get the file parent */
+              file_parent = thunar_file_get_parent (file, NULL);
+
+              /* release the file */
+              g_object_unref (G_OBJECT (file));
+            }
+        }
+
+      /* disconnect from the previous current directory */
+      g_object_unref (G_OBJECT (view->current_directory));
+    }
 
   /* activate the new current directory */
   view->current_directory = current_directory;
@@ -554,8 +585,10 @@ thunar_tree_view_set_current_directory (ThunarNavigator *navigator,
       /* take a reference on the directory */
       g_object_ref (G_OBJECT (current_directory));
 
-      /* update the filter if the new current directory, or one of it's parents, is hidden */
-      if (!view->show_hidden)
+      /* update the filter if the new current directory, or one of it's parents, is 
+       * hidden. we don't have to check this unless refiltering needs to be done 
+       * anyway */
+      if (!needs_refiltering && !view->show_hidden)
         {
           /* look if the file or one of it's parents is hidden */
           for (file = g_object_ref (G_OBJECT (current_directory)); file != NULL; file = file_parent)
@@ -592,6 +625,10 @@ thunar_tree_view_set_current_directory (ThunarNavigator *navigator,
           view->new_files_closure = NULL;
         }
     }
+
+  /* refilter the model if necessary */
+  if (needs_refiltering)
+    thunar_tree_model_refilter (view->model);
 
   /* notify listeners */
   g_object_notify (G_OBJECT (view), "current-directory");
