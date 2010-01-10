@@ -586,7 +586,7 @@ thunar_tree_view_set_current_directory (ThunarNavigator *navigator,
       g_object_ref (G_OBJECT (current_directory));
 
       /* update the filter if the new current directory, or one of it's parents, is 
-       * hidden. we don't have to check this unless refiltering needs to be done 
+       * hidden. we don't have to check this if refiltering needs to be done 
        * anyway */
       if (!needs_refiltering && !view->show_hidden)
         {
