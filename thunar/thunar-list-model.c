@@ -1556,7 +1556,7 @@ sort_by_type (const ThunarFile *a,
   gint         result;
 
   content_type_a = thunar_file_get_content_type (a);
-  content_type_b = thunar_file_get_content_type (a);
+  content_type_b = thunar_file_get_content_type (b);
 
   description_a = g_content_type_get_description (content_type_a);
   description_b = g_content_type_get_description (content_type_b);
@@ -1565,6 +1565,9 @@ sort_by_type (const ThunarFile *a,
 
   if (result == 0)
     result = sort_by_name (a, b, case_sensitive);
+
+  g_free (description_a);
+  g_free (description_b);
 
   return result;
 }
