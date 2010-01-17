@@ -171,6 +171,12 @@ XDT_CHECK_OPTIONAL_PACKAGE([LIBSTARTUP_NOTIFICATION],
                            [0.4], [startup-notification],
                            [startup notification library])
 
+dnl ***************************************************************
+dnl *** Optional support for GUDev (required for thunar-volman) ***
+dnl ***************************************************************
+XDT_CHECK_OPTIONAL_PACKAGE([GUDEV], [gudev-1.0], [145], [gudev], 
+                           [GUDev (required for thunar-volman)])
+
 dnl *************************
 dnl *** Check for gtk-doc ***
 dnl *************************
@@ -292,19 +298,24 @@ echo
 echo "Build Configuration:"
 echo
 if test x"$DBUS_FOUND" = x"yes"; then
-echo "* D-BUS support:             yes"
+echo "* D-BUS support:                      yes"
 else
-echo "* D-BUS support:             no"
+echo "* D-BUS support:                      no"
 fi
 if test x"$GIO_UNIX_FOUND" = x"yes"; then
-echo "* GIO UNIX features:         yes"
+echo "* GIO UNIX features:                  yes"
 else
-echo "* GIO UNIX features:         no"
+echo "* GIO UNIX features:                  no"
 fi
 if test x"$LIBSTARTUP_NOTIFICATION_FOUND" = x"yes"; then
-echo "* Startup Notification:      yes"
+echo "* Startup Notification:               yes"
 else
-echo "* Startup Notification:      no"
+echo "* Startup Notification:               no"
+fi
+if test x"$GUDEV_FOUND" = x"yes"; then
+echo "* GUDev (required for thunar-volman): yes"
+else
+echo "* GUDev (required for thunar-volman): no"
 fi
 echo "* Debug Support:             $enable_debug"
 if test x"$enable_gen_doc" = x"yes"; then
@@ -317,9 +328,9 @@ fi
 echo
 echo "Additional Plugins:"
 echo
-echo "* Advanced Properties:       $ac_bm_thunar_plugin_apr"
-echo "* Simple Builting Renamers:  $ac_bm_thunar_plugin_sbr"
-echo "* Trash Panel Applet:        $ac_bm_thunar_plugin_tpa"
-echo "* User Customizable Actions: $ac_bm_thunar_plugin_uca"
-echo "* Wallpaper support:         $ac_bm_thunar_plugin_wallpaper"
+echo "* Advanced Properties:                $ac_bm_thunar_plugin_apr"
+echo "* Simple Builting Renamers:           $ac_bm_thunar_plugin_sbr"
+echo "* Trash Panel Applet:                 $ac_bm_thunar_plugin_tpa"
+echo "* User Customizable Actions:          $ac_bm_thunar_plugin_uca"
+echo "* Wallpaper support:                  $ac_bm_thunar_plugin_wallpaper"
 echo

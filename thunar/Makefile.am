@@ -12,6 +12,7 @@ INCLUDES =								\
 	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"				\
 	-DTHUNAR_VERSION_API=\"$(THUNAR_VERSION_API)\"			\
 	-DSN_API_NOT_YET_FROZEN						\
+	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE				\
 	$(PLATFORM_CPPFLAGS)
 
 bin_SCRIPTS =								\
@@ -219,8 +220,9 @@ Thunar_SOURCES =							\
 
 Thunar_CFLAGS =								\
 	$(EXO_CFLAGS)							\
-	$(GTHREAD_CFLAGS)						\
 	$(GIO_CFLAGS)							\
+	$(GTHREAD_CFLAGS)						\
+	$(GUDEV_CFLAGS)							\
 	$(LIBSM_CFLAGS)							\
 	$(LIBSTARTUP_NOTIFICATION_CFLAGS)				\
 	$(LIBXFCE4UI_CFLAGS)						\
@@ -235,8 +237,9 @@ Thunar_LDADD =								\
 	$(top_builddir)/tdb/libtdb.la					\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la	\
 	$(EXO_LIBS)							\
-	$(GTHREAD_LIBS)							\
 	$(GIO_LIBS)							\
+	$(GTHREAD_LIBS)							\
+	$(GUDEV_LIBS)							\
 	$(LIBSTARTUP_NOTIFICATION_LIBS)					\
 	$(LIBSM_LIBS)							\
 	$(LIBXFCE4UI_LIBS)

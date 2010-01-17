@@ -36,6 +36,10 @@
 #include <time.h>
 #endif
 
+#ifdef HAVE_GUDEV
+#include <gudev/gudev.h>
+#endif
+
 #include <libxfce4ui/libxfce4ui.h>
 
 #include <thunar/thunar-application.h>
@@ -94,21 +98,23 @@ static void           thunar_application_launch                 (ThunarApplicati
                                                                  GClosure               *new_files_closure);
 static void           thunar_application_window_destroyed       (GtkWidget              *window,
                                                                  ThunarApplication      *application);
-static void           thunar_application_drive_connected        (GVolumeMonitor         *volume_monitor,
-                                                                 GDrive                 *drive,
+#ifdef HAVE_GUDEV
+static void           thunar_application_uevent                 (GUdevClient            *client,
+                                                                 const gchar            *action,
+                                                                 GUdevDevice            *device,
                                                                  ThunarApplication      *application);
-static void           thunar_application_drive_disconnected     (GVolumeMonitor         *volume_monitor,
-                                                                 GDrive                 *drive,
-                                                                 ThunarApplication      *application);
+#if 0
 static void           thunar_application_drive_eject            (GVolumeMonitor         *volume_monitor,
                                                                  GDrive                 *drive,
                                                                  ThunarApplication      *application);
+#endif
 static gboolean       thunar_application_volman_idle            (gpointer                user_data);
 static void           thunar_application_volman_idle_destroy    (gpointer                user_data);
 static void           thunar_application_volman_watch           (GPid                    pid,
                                                                  gint                    status,
                                                                  gpointer                user_data);
 static void           thunar_application_volman_watch_destroy   (gpointer                user_data);
+#endif
 static gboolean       thunar_application_show_dialogs           (gpointer                user_data);
 static void           thunar_application_show_dialogs_destroy   (gpointer                user_data);
 static void           thunar_application_process_files          (ThunarApplication      *application);
@@ -132,11 +138,13 @@ struct _ThunarApplication
 
   guint                  show_dialogs_timer_id;
 
-  GVolumeMonitor        *volume_monitor;
+#ifdef HAVE_GUDEV
+  GUdevClient           *udev_client;
 
   GSList                *volman_udis;
   guint                  volman_idle_id;
   guint                  volman_watch_id;
+#endif
 
   GList                 *files_to_launch;
 };
@@ -191,7 +199,10 @@ thunar_application_class_init (ThunarApplicationClass *klass)
 static void
 thunar_application_init (ThunarApplication *application)
 {
-  gchar *path;
+#ifdef HAVE_GUDEV
+  static const gchar *subsystems[] = { "block", "input", NULL };
+#endif
+  gchar              *path;
 
   /* initialize the application */
   application->preferences = thunar_preferences_get ();
@@ -208,13 +219,23 @@ thunar_application_init (ThunarApplication *application)
       g_free (path);
     }
 
+#ifdef HAVE_GUDEV
+#if 0
   /* connect to the volume manager */
   application->volume_monitor = g_volume_monitor_get ();
 
   /* connect the volume manager support callbacks (used to spawn thunar-volman appropriately) */
-  g_signal_connect (application->volume_monitor, "drive-connected", G_CALLBACK (thunar_application_drive_connected), application);
-  g_signal_connect (application->volume_monitor, "drive-disconnected", G_CALLBACK (thunar_application_drive_disconnected), application);
   g_signal_connect (application->volume_monitor, "drive-eject-button", G_CALLBACK (thunar_application_drive_eject), application);
+#endif
+
+  /* establish connection with udev */
+  application->udev_client = g_udev_client_new (subsystems);
+
+  /* connect to the client in order to be notified when devices are plugged in
+   * or disconnected from the computer */
+  g_signal_connect (application->udev_client, "uevent", 
+                    G_CALLBACK (thunar_application_uevent), application);
+#endif
 }
 
 
@@ -238,6 +259,7 @@ thunar_application_finalize (GObject *object)
       g_free (path);
     }
 
+#ifdef HAVE_GUDEV
   /* cancel any pending volman watch source */
   if (G_UNLIKELY (application->volman_watch_id != 0))
     g_source_remove (application->volman_watch_id);
@@ -250,8 +272,14 @@ thunar_application_finalize (GObject *object)
   g_slist_foreach (application->volman_udis, (GFunc) g_free, NULL);
   g_slist_free (application->volman_udis);
 
+#if 0
   /* disconnect from the volume monitor */
   g_object_unref (application->volume_monitor);
+#endif
+
+  /* disconnect from the udev client */
+  g_object_unref (application->udev_client);
+#endif
 
   /* drop any running "show dialogs" timer */
   if (G_UNLIKELY (application->show_dialogs_timer_id != 0))
@@ -464,79 +492,66 @@ thunar_application_window_destroyed (GtkWidget         *window,
 
 
 
+#ifdef HAVE_GUDEV
 static void
-thunar_application_drive_connected (GVolumeMonitor    *volume_monitor,
-                                    GDrive            *drive,
-                                    ThunarApplication *application)
+thunar_application_uevent (GUdevClient       *client,
+                           const gchar       *action,
+                           GUdevDevice       *device,
+                           ThunarApplication *application)
 {
-  gchar *udi = NULL;
+  const gchar *sysfs_path;
+  GSList      *lp;
 
-  _thunar_return_if_fail (G_IS_VOLUME_MONITOR (volume_monitor));
-  _thunar_return_if_fail (application->volume_monitor == volume_monitor);
-  _thunar_return_if_fail (G_IS_DRIVE (drive));
+  _thunar_return_if_fail (G_UDEV_IS_CLIENT (client));
+  _thunar_return_if_fail (action != NULL && *action != '\0');
+  _thunar_return_if_fail (G_UDEV_IS_DEVICE (device));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+  _thunar_return_if_fail (client == application->udev_client);
 
-  /* determine the HAL UDI for this drive */
-  udi = g_drive_get_identifier (drive, G_VOLUME_IDENTIFIER_KIND_HAL_UDI);
+  /* determine the sysfs path of the device */
+  sysfs_path = g_udev_device_get_sysfs_path (device);
 
-  /* check if we have a UDI */
-  if (G_LIKELY (udi != NULL))
+  /* distinguish between "add" and "remove" actions, ignore "change" and "move" */
+  if (g_strcmp0 (action, "add") == 0)
     {
-      /* only insert the UDI if we don't have it already. free it otherwise */
-      if (g_slist_find_custom (application->volman_udis, udi, (GCompareFunc) g_utf8_collate) == NULL)
-        application->volman_udis = g_slist_prepend (application->volman_udis, udi);
-      else
-        g_free (udi);
+      /* only insert the path if we don't have it already */
+      if (g_slist_find_custom (application->volman_udis, sysfs_path, 
+                               (GCompareFunc) g_utf8_collate) == NULL)
+        {
+          application->volman_udis = g_slist_prepend (application->volman_udis, 
+                                                      g_strdup (sysfs_path));
+
+          /* check if there's currently no active or scheduled handler */
+          if (G_LIKELY (application->volman_idle_id == 0 
+                        && application->volman_watch_id == 0))
+            {
+              /* schedule a new handler using the idle source, which invokes the handler */
+              application->volman_idle_id = 
+                g_idle_add_full (G_PRIORITY_LOW, thunar_application_volman_idle, 
+                                 application, thunar_application_volman_idle_destroy);
+            }
+        }
     }
-
-  /* check if there's currently no active or scheduled handler */
-  if (G_LIKELY (application->volman_idle_id == 0 && application->volman_watch_id == 0))
+  else if (g_strcmp0 (action, "remove") == 0)
     {
-      /* schedule a new handler using the idle source, which invokes the handler */
-      application->volman_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_application_volman_idle,
-                                                     application, thunar_application_volman_idle_destroy);
-    }
-}
-
-
-
-static void
-thunar_application_drive_disconnected (GVolumeMonitor    *volume_monitor,
-                                       GDrive            *drive,
-                                       ThunarApplication *application)
-{
-  GSList *lp;
-  gchar  *udi;
-
-  _thunar_return_if_fail (G_IS_VOLUME_MONITOR (volume_monitor));
-  _thunar_return_if_fail (application->volume_monitor == volume_monitor);
-  _thunar_return_if_fail (G_IS_DRIVE (drive));
-  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
-
-  /* determine the HAL UDI for this drive */
-  udi = g_drive_get_identifier (drive, G_VOLUME_IDENTIFIER_KIND_HAL_UDI);
-
-  /* check if we have a UDI */
-  if (G_LIKELY (udi != NULL))
-    {
-      /* look for the UDI in the list of pending UDIs */
-      lp = g_slist_find_custom (application->volman_udis, udi, (GCompareFunc) g_utf8_collate);
+      /* look for the sysfs path in the list of pending paths */
+      lp = g_slist_find_custom (application->volman_udis, sysfs_path, 
+                                (GCompareFunc) g_utf8_collate);
 
       if (G_LIKELY (lp != NULL))
         {
-          /* free the UDI string */
+          /* free the sysfs path string */
           g_free (lp->data);
 
-          /* drop the UDI from the list of pending device UDIs */
+          /* drop the sysfs path from the list of pending device paths */
           application->volman_udis = g_slist_delete_link (application->volman_udis, lp);
         }
-
-      g_free (udi);
     }
 }
 
 
 
+#if 0
 static void
 thunar_application_drive_eject (GVolumeMonitor    *volume_monitor,
                                 GDrive            *drive,
@@ -583,6 +598,7 @@ thunar_application_drive_eject (GVolumeMonitor    *volume_monitor,
       g_free (udi);
     }
 }
+#endif
 
 
 
@@ -694,6 +710,7 @@ thunar_application_volman_watch_destroy (gpointer user_data)
 {
   THUNAR_APPLICATION (user_data)->volman_watch_id = 0;
 }
+#endif /* HAVE_GUDEV */
 
 
 
