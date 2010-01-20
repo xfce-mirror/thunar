@@ -412,8 +412,8 @@ thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer *thumbnailer,
 
       thumbnailer->thumbnailer_proxy = thunar_thumbnailer_proxy;
 
-      /* TODO this should actually be VOID:UINT,POINTER,INT,STRING */
-      dbus_g_object_register_marshaller (_thunar_marshal_VOID__UINT_POINTER_UINT_STRING,
+      /* TODO this should actually be VOID:UINT,BOXED,INT,STRING */
+      dbus_g_object_register_marshaller (_thunar_marshal_VOID__UINT_BOXED_UINT_STRING,
                                          G_TYPE_NONE,
                                          G_TYPE_UINT, 
                                          G_TYPE_STRV, 
@@ -421,7 +421,7 @@ thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer *thumbnailer,
                                          G_TYPE_STRING,
                                          G_TYPE_INVALID);
 
-      dbus_g_object_register_marshaller ((GClosureMarshal) g_cclosure_marshal_VOID__UINT_POINTER,
+      dbus_g_object_register_marshaller ((GClosureMarshal) _thunar_marshal_VOID__UINT_BOXED,
                                          G_TYPE_NONE,
                                          G_TYPE_UINT,
                                          G_TYPE_STRV,
