@@ -1212,7 +1212,7 @@ thunar_list_model_folder_destroy (ThunarFolder    *folder,
 
   thunar_list_model_set_folder (store, NULL);
 
-  // TODO: What to do when the folder is deleted?
+  /* TODO: What to do when the folder is deleted? */
 }
 
 
@@ -1455,7 +1455,7 @@ sort_by_group (const ThunarFile *a,
       gid_b = g_file_info_get_attribute_uint32 (thunar_file_get_info (b),
                                                 G_FILE_ATTRIBUTE_UNIX_GID);
       
-      result = CLAMP (gid_a - gid_b, -1, 1);
+      result = CLAMP ((gint) gid_a - (gint) gid_b, -1, 1);
     }
 
   if (group_a != NULL)
@@ -1554,7 +1554,7 @@ sort_by_owner (const ThunarFile *a,
       uid_b = g_file_info_get_attribute_uint32 (thunar_file_get_info (b),
                                                 G_FILE_ATTRIBUTE_UNIX_UID);
 
-      result = CLAMP (uid_a - uid_b, -1, 1);
+      result = CLAMP ((gint) uid_a - (gint) uid_b, -1, 1);
     }
 
   if (result == 0)
@@ -1652,7 +1652,7 @@ sort_by_type (const ThunarFile *a,
   g_free (description_b);
 
   if (result == 0)
-    result = sort_by_name (a, b, case_sensitive);
+    return sort_by_name (a, b, case_sensitive);
   else
     return result;
 }

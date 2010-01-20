@@ -482,9 +482,9 @@ int main(int argc, char *argv[])
             delete_tdb();
         } else if (strcmp(tok,"dump") == 0) {
             bIterate = 0;
-      if(open_dump_file() == 0) { //open file
+      if(open_dump_file() == 0) { /* open file */
         tdb_traverse(tdb, print_rec, NULL);
-        close_dump_file(); //close file
+        close_dump_file(); /* close file */
       }
       pDumpFile = stdout;
         } else if (strcmp(tok,"list") == 0) {

@@ -201,7 +201,7 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
 
   if ((desktop_type == DESKTOP_TYPE_NONE) && (action != NULL))
     {
-        //gtk_widget_set_sensitive (action, FALSE);
+        /* gtk_widget_set_sensitive (action, FALSE); */
     }
 
   return actions;

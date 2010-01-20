@@ -1,4 +1,4 @@
-//* vi:set et ai sw=2 sts=2 ts=2: */
+/* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
  * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
