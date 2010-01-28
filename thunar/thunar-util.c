@@ -25,6 +25,9 @@
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>
+#endif
 
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
@@ -40,6 +43,14 @@
 #endif
 #ifdef HAVE_TIME_H
 #include <time.h>
+#endif
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
+#ifdef G_PLATFORM_WIN32
+#include <direct.h>
+#include <glib/gwin32.h>
 #endif
 
 #include <thunar/thunar-private.h>
@@ -352,3 +363,40 @@ thunar_util_time_from_rfc3339 (const gchar *date_string)
 }
 
 
+
+gchar *
+thunar_util_change_working_directory (const gchar *new_directory)
+{
+  gchar *old_directory;
+
+  _thunar_return_val_if_fail (new_directory != NULL && *new_directory != '\0', NULL);
+
+  /* allocate a path buffer for the old working directory */
+  old_directory = g_malloc0 (sizeof (gchar) * MAXPATHLEN);
+
+  /* try to determine the current working directory */
+#ifdef G_PLATFORM_WIN32
+  if (_getcwd (old_directory, MAXPATHLEN) == NULL)
+#else
+  if (getcwd (old_directory, MAXPATHLEN) == NULL)
+#endif
+    {
+      /* working directory couldn't be determined, reset the buffer */
+      g_free (old_directory);
+      old_directory = NULL;
+    }
+
+  /* try switching to the new working directory */
+#ifdef G_PLATFORM_WIN32
+  if (_chdir (new_directory) != 0)
+#else
+  if (chdir (new_directory) != 0)
+#endif
+    {
+      /* switching failed, we don't need to return the old directory */
+      g_free (old_directory);
+      old_directory = NULL;
+    }
+
+  return old_directory;
+}

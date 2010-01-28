@@ -605,6 +605,7 @@ thunar_launcher_open_paths (GAppInfo       *app_info,
   GdkAppLaunchContext *context;
   GdkScreen           *screen;
   GError              *error = NULL;
+  GFile               *working_directory = NULL;
   gchar               *message;
   gchar               *name;
   guint                n;
@@ -616,8 +617,12 @@ thunar_launcher_open_paths (GAppInfo       *app_info,
   context = gdk_app_launch_context_new ();
   gdk_app_launch_context_set_screen (context, screen);
 
+  /* determine the working directory */
+  if (launcher->current_directory != NULL)
+    working_directory = thunar_file_get_file (launcher->current_directory);
+
   /* try to execute the application with the given URIs */
-  if (!g_app_info_launch (app_info, path_list, G_APP_LAUNCH_CONTEXT (context), &error))
+  if (!thunar_g_app_info_launch (app_info, working_directory, path_list, G_APP_LAUNCH_CONTEXT (context), &error))
     {
       /* figure out the appropriate error message */
       n = g_list_length (path_list);

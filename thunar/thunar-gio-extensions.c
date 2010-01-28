@@ -27,8 +27,10 @@
 #include <exo/exo.h>
 #include <libxfce4util/libxfce4util.h>
 
+#include <thunar/thunar-file.h>
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -467,3 +469,56 @@ thunar_g_volume_is_present (GVolume *volume)
 
   return has_media;
 }
+
+
+
+gboolean
+thunar_g_app_info_launch (GAppInfo          *info,
+                          GFile             *working_directory,
+                          GList             *path_list,
+                          GAppLaunchContext *context,
+                          GError           **error)
+{
+  gboolean result = FALSE;
+  gchar   *new_path = NULL;
+  gchar   *old_path = NULL;
+
+  _thunar_return_val_if_fail (G_IS_APP_INFO (info), FALSE);
+  _thunar_return_val_if_fail (working_directory == NULL || G_IS_FILE (working_directory), FALSE);
+  _thunar_return_val_if_fail (path_list != NULL, FALSE);
+  _thunar_return_val_if_fail (G_IS_APP_LAUNCH_CONTEXT (context), FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  /* check if we want to set the working directory of the spawned app */
+  if (working_directory != NULL)
+    {
+      /* determine the working directory path */
+      new_path = g_file_get_path (working_directory);
+      if (new_path != NULL)
+        {
+          /* switch to the desired working directory, remember that of Thunar itself */
+          old_path = thunar_util_change_working_directory (new_path);
+
+          /* forget about the new working directory path */
+          g_free (new_path);
+        }
+    }
+
+  /* launch the paths with the specified app info */
+  result = g_app_info_launch (info, path_list, context, error);
+
+  /* check if we need to reset the working directory to the one Thunar was
+   * opened from */
+  if (old_path != NULL)
+    {
+      /* switch to Thunar's original working directory */
+      new_path = thunar_util_change_working_directory (old_path);
+
+      /* clean up */
+      g_free (new_path);
+      g_free (old_path);
+    }
+
+  return result;
+}
+
