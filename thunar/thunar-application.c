@@ -103,11 +103,6 @@ static void           thunar_application_uevent                 (GUdevClient    
                                                                  const gchar            *action,
                                                                  GUdevDevice            *device,
                                                                  ThunarApplication      *application);
-#if 0
-static void           thunar_application_drive_eject            (GVolumeMonitor         *volume_monitor,
-                                                                 GDrive                 *drive,
-                                                                 ThunarApplication      *application);
-#endif
 static gboolean       thunar_application_volman_idle            (gpointer                user_data);
 static void           thunar_application_volman_idle_destroy    (gpointer                user_data);
 static void           thunar_application_volman_watch           (GPid                    pid,
@@ -220,14 +215,6 @@ thunar_application_init (ThunarApplication *application)
     }
 
 #ifdef HAVE_GUDEV
-#if 0
-  /* connect to the volume manager */
-  application->volume_monitor = g_volume_monitor_get ();
-
-  /* connect the volume manager support callbacks (used to spawn thunar-volman appropriately) */
-  g_signal_connect (application->volume_monitor, "drive-eject-button", G_CALLBACK (thunar_application_drive_eject), application);
-#endif
-
   /* establish connection with udev */
   application->udev_client = g_udev_client_new (subsystems);
 
@@ -271,11 +258,6 @@ thunar_application_finalize (GObject *object)
   /* drop all pending volume manager UDIs */
   g_slist_foreach (application->volman_udis, (GFunc) g_free, NULL);
   g_slist_free (application->volman_udis);
-
-#if 0
-  /* disconnect from the volume monitor */
-  g_object_unref (application->volume_monitor);
-#endif
 
   /* disconnect from the udev client */
   g_object_unref (application->udev_client);
@@ -512,7 +494,7 @@ thunar_application_uevent (GUdevClient       *client,
   sysfs_path = g_udev_device_get_sysfs_path (device);
 
   /* distinguish between "add" and "remove" actions, ignore "change" and "move" */
-  if (g_strcmp0 (action, "add") == 0)
+  if (g_strcmp0 (action, "add") == 0 || g_strcmp0 (action, "change") == 0)
     {
       /* only insert the path if we don't have it already */
       if (g_slist_find_custom (application->volman_udis, sysfs_path, 
@@ -548,57 +530,6 @@ thunar_application_uevent (GUdevClient       *client,
         }
     }
 }
-
-
-
-#if 0
-static void
-thunar_application_drive_eject (GVolumeMonitor    *volume_monitor,
-                                GDrive            *drive,
-                                ThunarApplication *application)
-{
-  GdkScreen *screen;
-  GError    *err = NULL;
-  gchar     *argv[4];
-  gchar     *udi;
-
-  _thunar_return_if_fail (G_IS_VOLUME_MONITOR (volume_monitor));
-  _thunar_return_if_fail (application->volume_monitor == volume_monitor);
-  _thunar_return_if_fail (G_IS_DRIVE (drive));
-  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
-
-  /* determine the HAL UDI for this device */
-  udi = g_drive_get_identifier (drive, G_VOLUME_IDENTIFIER_KIND_HAL_UDI);
-
-  /* check if we have a UDI */
-  if (G_LIKELY (udi != NULL))
-    {
-      /* generate the argument list for exo-eject */
-      argv[0] = (gchar *) "exo-eject";
-      argv[1] = (gchar *) "-h";
-      argv[2] = (gchar *) udi;
-      argv[3] = NULL;
-
-      /* locate the currently active screen (the one with the pointer) */
-      screen = xfce_gdk_screen_get_active (NULL);
-
-      /* try to spawn the volume_monitor on the active screen */
-      if (!gdk_spawn_on_screen (screen, NULL, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, &err))
-        {
-          /* failed to launch exo-eject, inform the user about this */
-          thunar_dialogs_show_error (screen, err, _("Failed to execute \"%s\""), "exo-eject");
-          g_error_free (err);
-        }
-      else
-        {
-          /* we most probably removed the device */
-          thunar_application_drive_disconnected (volume_monitor, drive, application);
-        }
-
-      g_free (udi);
-    }
-}
-#endif
 
 
 
