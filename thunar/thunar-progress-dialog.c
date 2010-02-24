@@ -112,13 +112,6 @@ thunar_progress_dialog_init (ThunarProgressDialog *dialog)
   gtk_container_set_border_width (GTK_CONTAINER (dialog->content_box), 8);
   gtk_container_add (GTK_CONTAINER (dialog->vbox), dialog->content_box);
   gtk_widget_show (dialog->content_box);
-
-  dialog->status_icon = gtk_status_icon_new_from_icon_name ("stock_folder-copy");
-  gtk_status_icon_set_visible (dialog->status_icon, FALSE);
-
-  g_signal_connect_swapped (dialog->status_icon, "button-press-event", 
-                            G_CALLBACK (thunar_progress_dialog_toggled), 
-                            GTK_WIDGET (dialog));
 }
 
 
@@ -137,7 +130,8 @@ thunar_progress_dialog_finalize (GObject *object)
   ThunarProgressDialog *dialog = THUNAR_PROGRESS_DIALOG (object);
 
   /* destroy the status icon */
-  g_object_unref (dialog->status_icon);
+  if (dialog->status_icon != NULL)
+    g_object_unref (dialog->status_icon);
 
   /* free the view list */
   g_list_free (dialog->views);
@@ -153,7 +147,14 @@ thunar_progress_dialog_shown (ThunarProgressDialog *dialog)
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog));
 
   /* show the status icon */
-  gtk_status_icon_set_visible (dialog->status_icon, TRUE);
+  if (dialog->status_icon == NULL)
+    {
+      dialog->status_icon = gtk_status_icon_new_from_icon_name ("stock_folder-copy");
+      thunar_progress_dialog_update_status_icon (dialog);
+      g_signal_connect_swapped (dialog->status_icon, "button-press-event",
+                                G_CALLBACK (thunar_progress_dialog_toggled),
+                                GTK_WIDGET (dialog));
+    }
 }
 
 
@@ -267,7 +268,8 @@ thunar_progress_dialog_job_finished (ThunarProgressDialog *dialog,
   if (dialog->views != NULL)
     {
       /* update the status icon */
-      thunar_progress_dialog_update_status_icon (dialog);
+      if (dialog->status_icon != NULL)
+        thunar_progress_dialog_update_status_icon (dialog);
     }
   else
     {
@@ -285,7 +287,8 @@ thunar_progress_dialog_update_status_icon (ThunarProgressDialog *dialog)
   guint  n_views;
 
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog));
-  
+  _thunar_return_if_fail (GTK_IS_STATUS_ICON (dialog->status_icon));
+
   /* determine the number of views now being active */
   n_views = g_list_length (dialog->views);
 
@@ -293,7 +296,7 @@ thunar_progress_dialog_update_status_icon (ThunarProgressDialog *dialog)
   tooltip_text = g_strdup_printf (ngettext ("%d file operation running", 
                                             "%d file operations running",
                                             n_views), 
-                                  n_views);
+                                            n_views);
 
   /* update the tooltip */
 #if GTK_CHECK_VERSION (2, 16, 0)
@@ -369,7 +372,8 @@ thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
   g_signal_connect_swapped (view, "finished",
                             G_CALLBACK (thunar_progress_dialog_job_finished), dialog);
 
-  thunar_progress_dialog_update_status_icon (dialog);
+  if (dialog->status_icon != NULL)
+    thunar_progress_dialog_update_status_icon (dialog);
 }
 
 
