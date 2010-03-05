@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.11.4\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: KBabel 1.11.4\n"
 
 #: ../thunar/main.c:58
 msgid "Open the bulk rename dialog"
@@ -876,9 +876,9 @@ msgid "%uth copy of %s"
 msgstr "%uth копія від %s"
 
 #: ../thunar/thunar-io-jobs-util.c:42
-#, fuzzy, c-format
+#, c-format
 msgid "%uth link to %s"
-msgstr "%u-е посилання на %s"
+msgstr "%uth посилання на %s"
 
 #: ../thunar/thunar-job.c:254
 #, c-format
@@ -896,9 +896,8 @@ msgid "Do you want to overwrite it?"
 msgstr "Хочете перезаписати його?"
 
 #: ../thunar/thunar-job.c:388
-#, fuzzy
 msgid "Do you want to create it?"
-msgstr "Хочете перезаписати його?"
+msgstr "Бажаєте створити його?"
 
 #: ../thunar/thunar-job.c:490
 msgid "Do you want to skip it?"
@@ -1103,14 +1102,14 @@ msgid "\"%s\" (%s) link to %s"
 msgstr "\"%s\" (%s) посилається на %s"
 
 #: ../thunar/thunar-list-model.c:2344
-#, fuzzy, c-format
+#, c-format
 msgid "\"%s\" shortcut"
-msgstr "_Закладки"
+msgstr "\"%s\" запускач"
 
 #: ../thunar/thunar-list-model.c:2348
 #, c-format
 msgid "\"%s\" mountable"
-msgstr ""
+msgstr "\"%s\" дозволяє монтувати"
 
 #: ../thunar/thunar-list-model.c:2355
 #, c-format
@@ -1221,19 +1220,19 @@ msgid "_Location:"
 msgstr "_Адреса:"
 
 #: ../thunar/thunar-location-entry.c:382
-#, fuzzy, c-format
+#, c-format
 msgid "File does not exist"
-msgstr "Контекстне меню файлу"
+msgstr "Файл відсутній"
 
 #: ../thunar/thunar-location-entry.c:726
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to determine the mount point of \"%s\""
-msgstr "Не вдається визначити точку монтування для %s"
+msgstr "Не вдається визначити точку монтування для \"%s\""
 
 #: ../thunar/thunar-misc-jobs.c:84
-#, fuzzy, c-format
+#, c-format
 msgid "No templates installed"
-msgstr "Не встановлено жодного шаблону"
+msgstr "Шаблони не встановлені"
 
 #: ../thunar/thunar-path-entry.c:222
 msgid "Icon size"
@@ -1603,45 +1602,44 @@ msgstr "Не вдалося відобразити властивості кер
 
 #: ../thunar/thunar-progress-dialog.c:94
 msgid "File Operation Progress"
-msgstr ""
+msgstr "Прогрес файлової операції"
 
 #. build the tooltip text
 #: ../thunar/thunar-progress-dialog.c:296
 #, c-format
 msgid "%d file operation running"
 msgid_plural "%d file operations running"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%d файл опрацьовується"
+msgstr[1] "%d файлів опрацьовується"
+msgstr[2] "%d файлів опрацьовується"
 
 #: ../thunar/thunar-progress-view.c:326
-#, fuzzy
 msgid "Cancelling..."
-msgstr "Підрахунок..."
+msgstr "Завершення..."
 
 #: ../thunar/thunar-progress-view.c:480
-#, fuzzy, c-format
+#, c-format
 msgid "%lu hour remaining"
 msgid_plural "%lu hours remaining"
-msgstr[0] "(залишилась %lu година)"
-msgstr[1] "(залишилось %lu години)"
-msgstr[2] "(залишилось %lu годин)"
+msgstr[0] "залишилась %lu година"
+msgstr[1] "залишилось %lu години"
+msgstr[2] "залишилось %lu годин"
 
 #: ../thunar/thunar-progress-view.c:485
-#, fuzzy, c-format
+#, c-format
 msgid "%lu minute remaining"
 msgid_plural "%lu minutes remaining"
-msgstr[0] "(залишилась %lu хвилина)"
-msgstr[1] "(залишилось %lu хвилини)"
-msgstr[2] "(залишилось %lu хвилин)"
+msgstr[0] "залишилась %lu хвилина"
+msgstr[1] "залишилось %lu хвилини"
+msgstr[2] "залишилось %lu хвилин"
 
 #: ../thunar/thunar-progress-view.c:490
-#, fuzzy, c-format
+#, c-format
 msgid "%lu second remaining"
 msgid_plural "%lu seconds remaining"
-msgstr[0] "(залишилась %lu секунда)"
-msgstr[1] "(залишилось %lu секунди)"
-msgstr[2] "(залишилось %lu секунд)"
+msgstr[0] "залишилась %lu секунда"
+msgstr[1] "залишилось %lu секунди"
+msgstr[2] "залишилось %lu секунд"
 
 #: ../thunar/thunar-properties-dialog.c:227
 msgid "General"
@@ -2134,31 +2132,31 @@ msgstr "Збирання файлів..."
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:665
-#, fuzzy, c-format
+#, c-format
 msgid "Trying to restore \"%s\""
-msgstr "Не вдається відновити \"%s\""
+msgstr "Спроба відновити \"%s\""
 
 #: ../thunar/thunar-transfer-job.c:690
-#, fuzzy, c-format
+#, c-format
 msgid "The folder \"%s\" does not exist anymore but is required to restore the file \"%s\" from the trash"
-msgstr "Теки \"%s\" більше немає, але вона потрібна для відновлення файлу \"%s\" з Смітника. Хочете знову створити теку?"
+msgstr "Теки \"%s\" більше немає, але вона потрібна для відновлення файлу \"%s\" з Смітника"
 
 #: ../thunar/thunar-transfer-job.c:715
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to restore the folder \"%s\""
-msgstr "Не вдається відкрити теку \"%s\""
+msgstr "Не вдається відновити теку \"%s\""
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:732
-#, fuzzy, c-format
+#, c-format
 msgid "Trying to move \"%s\""
-msgstr "Не вдається видалити \"%s\""
+msgstr "Спроба перемістити \"%s\""
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:757
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
-msgstr ""
+msgstr "Неможливо перемістити \"%s\" напряму. Збираються файли для копіювання..."
 
 #: ../thunar/thunar-trash-action.c:104
 msgid "T_rash"
@@ -2331,9 +2329,8 @@ msgid "Go to the desktop folder"
 msgstr "Перейти в теку стільниці"
 
 #: ../thunar/thunar-window.c:311
-#, fuzzy
 msgid "Browse the file system"
-msgstr "Перегляд файлової системи менеджером файлів"
+msgstr "Перегляд файлової системи"
 
 #: ../thunar/thunar-window.c:312
 msgid "Go to the documents folder"
@@ -2473,7 +2470,7 @@ msgstr "Попередження, Ви зараз використовуєте �
 #. create the network action
 #: ../thunar/thunar-window.c:1440
 msgid "Network"
-msgstr ""
+msgstr "Мережа"
 
 #: ../thunar/thunar-window.c:1440
 msgid "Browse the network"
