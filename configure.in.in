@@ -196,6 +196,10 @@ if test x"$enable_gen_doc" = x"yes"; then
     if test x"$XML2PO" = x"no"; then
         enable_gen_doc=no
     fi
+
+    if test x"$enable_gen_doc" = x"no"; then
+        AC_MSG_ERROR([Compiling with --enable-gen-doc but one of xml2po, xsltproc or xmllint not found.])
+    fi
 fi
 AM_CONDITIONAL([GENERATE_DOCUMENTATION], [test x"$enable_gen_doc" = x"yes"])
 
@@ -303,7 +307,13 @@ else
 echo "* Startup Notification:      no"
 fi
 echo "* Debug Support:             $enable_debug"
-echo "* Generate Documentation:    $enable_gen_doc"
+if test x"$enable_gen_doc" = x"yes"; then
+echo "* Documentation:             yes (generate)"
+elif test -d "${srcdir}/docs/manual/html"; then
+echo "* Documentation:             yes (in tarball)"
+else
+echo "* Documentation:             no"
+fi
 echo
 echo "Additional Plugins:"
 echo
