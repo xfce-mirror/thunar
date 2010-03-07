@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-06 12:03+0100\n"
+"POT-Creation-Date: 2010-03-07 13:32+0100\n"
 "PO-Revision-Date: 2010-02-06 18:34-0300\n"
 "Last-Translator: Vladimir Melo <vmelo@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar2.conectiva.com.br>\n"
@@ -226,10 +226,10 @@ msgid "Remove all files and folders from the Trash?"
 msgstr "Remover todos os arquivos e pastas da lixeira?"
 
 #. append the "Empty Trash" menu action
-#. add the "Empty Trash" menu item
+#. prepare the menu item
 #: ../thunar/thunar-application.c:1697 ../thunar/thunar-location-buttons.c:171
 #: ../thunar/thunar-shortcuts-view.c:834 ../thunar/thunar-tree-view.c:1141
-#: ../thunar/thunar-window.c:295 ../plugins/thunar-tpa/main.c:49
+#: ../thunar/thunar-window.c:295 ../plugins/thunar-tpa/thunar-tpa.c:169
 msgid "_Empty Trash"
 msgstr "_Esvaziar a lixeira"
 
@@ -1673,7 +1673,7 @@ msgid "File Operation Progress"
 msgstr "Progresso da operação de arquivo"
 
 #. build the tooltip text
-#: ../thunar/thunar-progress-dialog.c:293
+#: ../thunar/thunar-progress-dialog.c:296
 #, c-format
 msgid "%d file operation running"
 msgid_plural "%d file operations running"
@@ -3105,28 +3105,27 @@ msgid "Mail Recipient"
 msgstr "Destinatário do e-mail"
 
 #. tell the user that we failed to connect to the trash
-#. display an error message to the user
-#: ../plugins/thunar-tpa/thunar-tpa-icon.c:261
-#: ../plugins/thunar-tpa/thunar-tpa-icon.c:306
-#: ../plugins/thunar-tpa/thunar-tpa-icon.c:335
-#: ../plugins/thunar-tpa/thunar-tpa-icon.c:369
+#: ../plugins/thunar-tpa/thunar-tpa.c:249
+#: ../plugins/thunar-tpa/thunar-tpa.c:290
+#: ../plugins/thunar-tpa/thunar-tpa.c:312
+#: ../plugins/thunar-tpa/thunar-tpa.c:339
 msgid "Failed to connect to the Trash"
 msgstr "Falha ao conectar à lixeira"
 
 #. tell the user whether the trash is full or empty
-#: ../plugins/thunar-tpa/thunar-tpa-icon.c:276
+#: ../plugins/thunar-tpa/thunar-tpa.c:264
 msgid "Trash contains files"
 msgstr "A lixeira contém arquivos"
 
-#: ../plugins/thunar-tpa/thunar-tpa-icon.c:276
+#: ../plugins/thunar-tpa/thunar-tpa.c:264
 msgid "Trash is empty"
 msgstr "A lixeira está vazia"
 
-#: ../plugins/thunar-tpa/thunar-tpa.desktop.in.in.h:1
+#: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:1
 msgid "Display the trash can"
 msgstr "Exibir a lixeira"
 
-#: ../plugins/thunar-tpa/thunar-tpa.desktop.in.in.h:2
+#: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:2
 msgid "Trash Applet"
 msgstr "Miniaplicativo da lixeira"
 
