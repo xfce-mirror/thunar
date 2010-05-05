@@ -9,10 +9,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-01-11 00:20+0100\n"
-"PO-Revision-Date: 2007-08-22 03:24+0100\n"
-"Last-Translator: Ivan Masár <helix84@centrum.sk>\n"
-"Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
+"POT-Creation-Date: 2010-05-05 16:11+0000\n"
+"PO-Revision-Date: 2010-05-05 22:42+0200\n"
+"Last-Translator: Robert Hartl <hartl.robert@gmail.com>\n"
+"Language-Team: Slovak <xfce-i18n@xfce.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -84,13 +84,13 @@ msgstr "Zmena vlastníka súboru \"%s\" zlyhala"
 msgid "Failed to change file group of \"%s\""
 msgstr "Zmena skupiny \"%s\" zlyhala"
 
-#: ../thunar-vfs/thunar-vfs-io-jobs.c:444
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:448
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:190
 #, c-format
 msgid "The file \"%s\" already exists"
 msgstr "Súbor \"%s\" už existuje"
 
-#: ../thunar-vfs/thunar-vfs-io-jobs.c:462
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:466
 #, c-format
 msgid "Failed to create empty file \"%s\""
 msgstr "Vytvorenie prázdneho súboru \"%s\" zlyhalo"
@@ -544,22 +544,20 @@ msgstr ""
 "\"%s\"?"
 
 #: ../thunar/thunar-application.c:1367
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
 "delete the selected file?"
 msgid_plural ""
 "Are you sure that you want to permanently\n"
 "delete the %u selected files?"
-msgstr[0] ""
-"Naozaj chcete natrvalo odstrániť\n"
-"vybraný súbor?"
+msgstr[0] "Naozaj chcete natrvalo odstrániť %u vybraný súbor?"
 msgstr[1] ""
-"Naozaj chcete natrvalo odstrániť\n"
-"vybrané súbory?"
+"Naozaj chcete natrvalo odstrániť \n"
+"%u vybrané súbory?"
 msgstr[2] ""
-"Naozaj chcete natrvalo odstrániť\n"
-"vybrané súbory?"
+"Naozaj chcete natrvalo odstrániť \n"
+"%u vybraných súborov?"
 
 #: ../thunar/thunar-application.c:1387
 msgid "If you delete a file, it is permanently lost."
@@ -1199,10 +1197,10 @@ msgstr[1] "Otvoriť v %d nových oknách"
 msgstr[2] "Otvoriť v %d nových oknách"
 
 #: ../thunar/thunar-launcher.c:787
-#, fuzzy, c-format
+#, c-format
 msgid "Open the selected directory in %d new window"
 msgid_plural "Open the selected directories in %d new windows"
-msgstr[0] "Otvoriť vybraný priečinok v novom okne"
+msgstr[0] "Otvoriť vybraný priečinok v %d novom okne"
 msgstr[1] "Otvoriť vybrané priečinky v %d nových oknách"
 msgstr[2] "Otvoriť vybrané priečinky v %d nových oknách"
 
@@ -2133,9 +2131,8 @@ msgstr ""
 "súborov?"
 
 #: ../thunar/thunar-settings.desktop.in.h:1
-#, fuzzy
 msgid "Configure the Thunar file manager"
-msgstr "Správca súborov Thunar"
+msgstr "Konfigurácia správcu súborov Thunar"
 
 #. set window title and icon
 #: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2243
@@ -2145,7 +2142,7 @@ msgstr "Správca súborov"
 
 #: ../thunar/thunar-shortcuts-model.c:356
 msgid "Desktop"
-msgstr ""
+msgstr "Pracovná plocha"
 
 #: ../thunar/thunar-shortcuts-pane.c:413
 msgid "Side Pane (Create Shortcut)"
@@ -2402,8 +2399,8 @@ msgstr[2] "Vytvorí symbolicéý odkazy pre všetky vybrané súbory"
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Premenovať vybraný súbor"
-msgstr[1] ""
-msgstr[2] ""
+msgstr[1] "Premenovať vybrané súbory"
+msgstr[2] "Premenovať vybrané súbory"
 
 #: ../thunar/thunar-standard-view.c:3444
 msgid "Restore the selected file"
@@ -2735,9 +2732,9 @@ msgid "Failed to open the home folder"
 msgstr "Nepodarlo sa otvoriť domovský adresár"
 
 #: ../thunar/thunar-window.c:1951
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open folder \"%s\""
-msgstr "Nepodarilo sa otvoriť súbor \"%s\""
+msgstr "Nepodarilo sa otvoriť priečinok \"%s\""
 
 #. display the "About Templates" dialog
 #: ../thunar/thunar-window.c:2076
@@ -2968,9 +2965,8 @@ msgid "Uppercase / Lowercase"
 msgstr "Veľké / malé"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:202
-#, fuzzy
 msgid "Insert _time:"
-msgstr "Vložiť"
+msgstr "Vložiť _čas:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:231
 msgid ""
@@ -2986,9 +2982,8 @@ msgid "_At position:"
 msgstr "N_a pozícii:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:593
-#, fuzzy
 msgid "Insert Date / Time"
-msgstr "Vloženie / Prepísanie"
+msgstr "Vložiť dátum alebo čas"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:93
 msgid "lowercase"
@@ -3056,12 +3051,11 @@ msgstr "Číslo - Text"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:134
 msgid "Current"
-msgstr ""
+msgstr "Súčasný"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:138
-#, fuzzy
 msgid "Date Picture Taken"
-msgstr "Dátum získania:"
+msgstr "Dátum získania snímku:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:181
 #: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:260
@@ -3254,9 +3248,8 @@ msgstr "Chyba pri pripájaní na kôš"
 
 #. tell the user whether the trash is full or empty
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:287
-#, fuzzy
 msgid "Trash contains files"
-msgstr "Kôš je plný"
+msgstr "Kôš obsahuje súbory"
 
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:287
 msgid "Trash is empty"
@@ -3315,16 +3308,17 @@ msgid "Failed to save actions to disk."
 msgstr "Uloženie akciíí na disk zlyhalo."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:463
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Are you sure that you want to delete\n"
 "action \"%s\"?"
-msgstr "Naozaj chcete odstrániť \"%s\"?"
+msgstr ""
+"Ste si istí, že chcete zmazať\n"
+"akciu \\\"%s\\\"?"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:464
-#, fuzzy
 msgid "If you delete a custom action, it is permanently lost."
-msgstr "Odstránený súbor bude nenávratne stratený."
+msgstr "Ak zmažete vlastnú akciu, bude nenávratne stratená."
 
 #.
 #. Basic
@@ -3547,7 +3541,7 @@ msgstr "Otvoriť v termináli"
 
 #: ../plugins/thunar-wallpaper/twp-provider.c:155
 msgid "Set as wallpaper"
-msgstr ""
+msgstr "Nastaviť ako pozadie plochy"
 
 #: ../Thunar.desktop.in.in.h:1
 msgid "Browse the filesystem with the file manager"
