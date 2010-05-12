@@ -362,4 +362,7 @@ thunar-vfs-marshal.c: thunar-vfs-marshal.list Makefile
 	&& rm -f xgen-tvmc
 endif
 
+# required for gtk-doc
+dist-hook: all
+
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:
