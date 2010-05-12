@@ -1169,7 +1169,11 @@ thunar_vfs_thumbnail_is_valid (const gchar      *thumbnail,
     goto done0;
 
   /* verify the png signature */
+#if PNG_LIBPNG_VER_SONUM < 14
   if (G_LIKELY (png_check_sig ((png_bytep) signature, sizeof (signature))))
+#else
+  if (G_LIKELY (!png_sig_cmp ((png_bytep) signature, 0, sizeof (signature))))
+#endif
     rewind (fp);
   else
     goto done0;
