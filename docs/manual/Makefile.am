@@ -1,4 +1,5 @@
-SUBDIRS =							\
+SUBDIRS =								\
+	am								\
 	C								\
 	da								\
 	es								\
@@ -14,9 +15,9 @@ SUBDIRS =							\
 	zh_TW
 
 cssdir = $(datadir)/doc/Thunar/html
-css_DATA =							\
+css_DATA =								\
 	thunar.css
 
-EXTRA_DIST = 						\
-	$(css_DATA)						\
+EXTRA_DIST = 								\
+	$(css_DATA)							\
 	thunar.xsl
