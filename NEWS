@@ -1,11 +1,20 @@
+1.0.2
+=====
+- Build fixes for GIT and some cleanups.
+- Fix make distcheck.
+- Work around png 1.4 API change.
+- Umask < 0022 not honoured (bug #5813 and #3532).
+- Translation updates (el, es, it, gl, pl, ru, tr, ro, lv, ur, ur_PK,
+  ast, hu, kk, nn, nl, am, bn, sk, ug).
+
 1.0.1
-========
+=====
 - Put quotes around filenames in thunar-wallpaper-plugin (bug #5056)
 - Apply umask properly when creating files/directories. 
   Patch by Giovanni Bechis (bug #3532).
 
 1.0.0
-========
+=====
 - Fix crash when entering the same hidden directory twice in the
   location entry (bug #4847).
 - Pass the current event time to startup notification, so focus
