@@ -2321,6 +2321,9 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
           /* grab the focus to the view widget */
           gtk_widget_grab_focus (GTK_BIN (standard_view)->child);
         }
+
+      /* manually reload the folder to avoid a delay */
+      thunar_standard_view_reload (THUNAR_VIEW (standard_view));
     }
 }
 
