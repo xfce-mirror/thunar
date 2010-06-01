@@ -26,7 +26,8 @@
 #include <libxfce4ui/libxfce4ui.h>
 #include <libxfce4panel/libxfce4panel.h>
 #include <thunar-tpa/thunar-tpa-bindings.h>
-
+#include <libxfce4panel/xfce-panel-macros.h>
+#include <libxfce4panel/xfce-panel-plugin.h>
 
 
 typedef struct _ThunarTpaClass ThunarTpaClass;
