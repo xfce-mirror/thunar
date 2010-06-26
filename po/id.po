@@ -1,14 +1,14 @@
 # Indonesian translation of the thunar package.
 # Copyright (C) 2004-2007 Benedikt Meurer.
 # This file is distributed under the same license as the thunar package.
-# Andhika Padmawan <andhika.padmawan@gmail.com>, 2008.
+# Andhika Padmawan <andhika.padmawan@gmail.com>, 2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-03-07 13:32+0100\n"
-"PO-Revision-Date: 2008-12-21 20:45+0700\n"
+"PO-Revision-Date: 2010-06-26 08:51-0400\n"
 "Last-Translator: Andhika Padmawan <andhika.padmawan@gmail.com>\n"
 "Language-Team: Indonesian <translation-team-id@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -156,19 +156,19 @@ msgid "Copying files..."
 msgstr "Menyalin berkas..."
 
 #: ../thunar/thunar-application.c:1322
-#, fuzzy, c-format
+#, c-format
 msgid "Copying files to \"%s\"..."
-msgstr "Menyalin berkas..."
+msgstr "Menyalin berkas ke \"%s\"..."
 
 #: ../thunar/thunar-application.c:1368
-#, fuzzy, c-format
+#, c-format
 msgid "Creating symbolic links in \"%s\"..."
-msgstr "Membuat tautan simbolik..."
+msgstr "Membuat tautan simbolik di \"%s\"..."
 
 #: ../thunar/thunar-application.c:1421
-#, fuzzy, c-format
+#, c-format
 msgid "Moving files into \"%s\"..."
-msgstr "Memindahkan berkas ke kotak sampah..."
+msgstr "Memindahkan berkas ke \"%s\"..."
 
 #: ../thunar/thunar-application.c:1506
 #, c-format
@@ -217,7 +217,7 @@ msgstr "Membuat direktori..."
 
 #: ../thunar/thunar-application.c:1692
 msgid "Remove all files and folders from the Trash?"
-msgstr "Hapus semua berkas dan folder dari Kotak sampah?"
+msgstr "Hapus semua berkas dan folder dari Kotak Sampah?"
 
 #. append the "Empty Trash" menu action
 #. prepare the menu item
@@ -232,7 +232,7 @@ msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr ""
-"Jika anda memilih untuk mengosongkan Kotak sampah, semua item di dalamnya "
+"Jika anda memilih untuk mengosongkan Kotak Sampah, semua item di dalamnya "
 "akan hilang secara permanen. Tolong diingat bahwa anda dapat juga menghapus "
 "item tersebut secara terpisah."
 
@@ -247,9 +247,9 @@ msgstr "Gagal menentukan alamat asli untuk \"%s\""
 
 #. display an error dialog
 #: ../thunar/thunar-application.c:1781
-#, fuzzy, c-format
+#, c-format
 msgid "Could not restore \"%s\""
-msgstr "Gagal mengembalikan \"%s\""
+msgstr "Tak dapat mengembalikan \"%s\""
 
 #: ../thunar/thunar-application.c:1789
 msgid "Restoring files..."
@@ -312,7 +312,7 @@ msgid "Failed to add new application \"%s\""
 msgstr "Gagal menambah aplikasi baru \"%s\""
 
 #: ../thunar/thunar-chooser-dialog.c:492
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to execute application \"%s\""
 msgstr "Gagal menambah aplikasi baru \"%s\""
 
@@ -618,14 +618,14 @@ msgid "_Replace"
 msgstr "_Ganti"
 
 #: ../thunar/thunar-dialogs.c:597
-#, fuzzy, c-format
+#, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
-msgstr "Folder ini telah berisi berkas \"%s\"."
+msgstr "Folder ini telah berisi tautan simbolis \"%s\"."
 
 #: ../thunar/thunar-dialogs.c:602
-#, fuzzy, c-format
+#, c-format
 msgid "This folder already contains a folder \"%s\"."
-msgstr "Folder ini telah berisi berkas \"%s\"."
+msgstr "Folder ini telah berisi folder \"%s\"."
 
 #: ../thunar/thunar-dialogs.c:607
 #, c-format
@@ -633,14 +633,12 @@ msgid "This folder already contains a file \"%s\"."
 msgstr "Folder ini telah berisi berkas \"%s\"."
 
 #: ../thunar/thunar-dialogs.c:619
-#, fuzzy
 msgid "ReplaceDialogPart1|Do you want to replace the link"
-msgstr "Anda ingin mengganti berkas yang ada"
+msgstr "ReplaceDialogPart1|Anda ingin mengganti tautan"
 
 #: ../thunar/thunar-dialogs.c:621
-#, fuzzy
 msgid "ReplaceDialogPart1|Do you want to replace the existing folder"
-msgstr "Anda ingin mengganti berkas yang ada"
+msgstr "ReplaceDialogPart1|Anda ingin mengganti folder yang ada"
 
 #: ../thunar/thunar-dialogs.c:623
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
@@ -660,14 +658,12 @@ msgid "Modified:"
 msgstr "Diubah:"
 
 #: ../thunar/thunar-dialogs.c:650
-#, fuzzy
 msgid "ReplaceDialogPart2|with the following link?"
-msgstr "dengan berkas berikut?"
+msgstr "ReplaceDialogPart2|dengan tautan berikut?"
 
 #: ../thunar/thunar-dialogs.c:652
-#, fuzzy
 msgid "ReplaceDialogPart2|with the following folder?"
-msgstr "dengan berkas berikut?"
+msgstr "ReplaceDialogPart2|dengan folder berikut?"
 
 #: ../thunar/thunar-dialogs.c:654
 msgid "ReplaceDialogPart2|with the following file?"
@@ -765,9 +761,9 @@ msgid "The root folder has no parent"
 msgstr "Folder root tidak mempunyai induk"
 
 #: ../thunar/thunar-file.c:974
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to parse the desktop file: %s"
-msgstr "Gagal membuat berkas kosong \"%s\""
+msgstr "Gagal mengurai berkas desktop: %s"
 
 #: ../thunar/thunar-file.c:1012
 #, c-format
@@ -822,14 +818,14 @@ msgid "The file \"%s\" already exists"
 msgstr "Berkas \"%s\" telah ada"
 
 #: ../thunar/thunar-io-jobs.c:184
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create empty file \"%s\": %s"
-msgstr "Gagal membuat berkas kosong \"%s\""
+msgstr "Gagal membuat berkas kosong \"%s\": %s"
 
 #: ../thunar/thunar-io-jobs.c:321
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create directory \"%s\": %s"
-msgstr "Gagal membuat direktori \"%s\""
+msgstr "Gagal membuat direktori \"%s\": %s"
 
 #. tell the user that we're preparing to unlink the files
 #: ../thunar/thunar-io-jobs.c:385
@@ -837,30 +833,31 @@ msgid "Preparing..."
 msgstr "Menyiapkan..."
 
 #: ../thunar/thunar-io-jobs.c:447
-#, fuzzy, c-format
+#, c-format
 msgid "Could not delete file \"%s\": %s"
-msgstr "Gagal mengeksekusi berkas \"%s\""
+msgstr "Gagal menghapus berkas \"%s\": %s"
 
 #: ../thunar/thunar-io-jobs.c:595
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
-msgstr ""
+msgstr "Tak dapat membuat tautan simbolis ke \"%s\" karena bukan merupakan "
+"berkas lokal"
 
 #. generate a useful error message
 #: ../thunar/thunar-io-jobs.c:782
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change the owner of \"%s\": %s"
-msgstr "Gagal mengganti pemilik berkas dari \"%s\""
+msgstr "Gagal mengganti pemilik dari \"%s\": %s"
 
 #: ../thunar/thunar-io-jobs.c:783
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change the group of \"%s\": %s"
-msgstr "Gagal mengganti kelompok berkas dari \"%s\""
+msgstr "Gagal mengganti kelompok dari \"%s\": %s"
 
 #: ../thunar/thunar-io-jobs.c:939
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
-msgstr "Gagal mengganti hak akses dari \"%s\""
+msgstr "Gagal mengganti hak akses dari \"%s\": %s"
 
 #. Copy/link name for n <= 3
 #: ../thunar/thunar-io-jobs-util.c:37
@@ -893,18 +890,18 @@ msgstr "salinan ketiga dari %s"
 #: ../thunar/thunar-io-jobs-util.c:39
 #, c-format
 msgid "third link to %s"
-msgstr "tautan ketiga dari %s"
+msgstr "tautan ketiga menuju %s"
 
 #. Fallback copy/link name for n >= 4
 #: ../thunar/thunar-io-jobs-util.c:42
-#, fuzzy, c-format
+#, c-format
 msgid "%uth copy of %s"
-msgstr "salinan %uth dari %s"
+msgstr "salinan ke%u dari %s"
 
 #: ../thunar/thunar-io-jobs-util.c:42
-#, fuzzy, c-format
+#, c-format
 msgid "%uth link to %s"
-msgstr "%uth tautan ke %s"
+msgstr "tautan ke%u menuju %s"
 
 #: ../thunar/thunar-job.c:254
 #, c-format
@@ -922,9 +919,8 @@ msgid "Do you want to overwrite it?"
 msgstr "Anda ingin menimpanya?"
 
 #: ../thunar/thunar-job.c:388
-#, fuzzy
 msgid "Do you want to create it?"
-msgstr "Anda ingin menimpanya?"
+msgstr "Anda ingin membuatnya?"
 
 #: ../thunar/thunar-job.c:490
 msgid "Do you want to skip it?"
@@ -1059,7 +1055,7 @@ msgstr "Buka Dengan \"%s\""
 #: ../thunar/thunar-shortcuts-view.c:1488 ../thunar/thunar-tree-view.c:1888
 #, c-format
 msgid "Failed to mount \"%s\""
-msgstr "Gagal mount \"%s\""
+msgstr "Gagal mengaitkan \"%s\""
 
 #: ../thunar/thunar-launcher.c:1499
 msgid "Desktop (Create Link)"
@@ -1114,14 +1110,14 @@ msgid "\"%s\" (%s) link to %s"
 msgstr "\"%s\" (%s) tautan ke %s"
 
 #: ../thunar/thunar-list-model.c:2344
-#, fuzzy, c-format
+#, c-format
 msgid "\"%s\" shortcut"
-msgstr "_Jalan Pintas"
+msgstr "\"%s\" jalan pintas"
 
 #: ../thunar/thunar-list-model.c:2348
 #, c-format
 msgid "\"%s\" mountable"
-msgstr ""
+msgstr "\"%s\" dapat dikaitkan"
 
 #: ../thunar/thunar-list-model.c:2355
 #, c-format
@@ -1231,17 +1227,17 @@ msgid "_Location:"
 msgstr "_Lokasi:"
 
 #: ../thunar/thunar-location-entry.c:382
-#, fuzzy, c-format
+#, c-format
 msgid "File does not exist"
-msgstr "Menu Isi Berkas"
+msgstr "Berkas tidak ada"
 
 #: ../thunar/thunar-location-entry.c:726
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to determine the mount point of \"%s\""
-msgstr "Gagal untuk menentukan titik mount untuk %s"
+msgstr "Gagal untuk menentukan titik kait dari \"%s\""
 
 #: ../thunar/thunar-misc-jobs.c:84
-#, fuzzy, c-format
+#, c-format
 msgid "No templates installed"
 msgstr "Tak ada Templat terinstal"
 
@@ -1655,41 +1651,36 @@ msgstr "Gagal menampilkan pengaturan manajemen volume"
 
 #: ../thunar/thunar-progress-dialog.c:94
 msgid "File Operation Progress"
-msgstr ""
+msgstr "Proses Operasi Berkas"
 
 #. build the tooltip text
 #: ../thunar/thunar-progress-dialog.c:296
 #, c-format
 msgid "%d file operation running"
 msgid_plural "%d file operations running"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d operasi berkas berjalan"
 
 #: ../thunar/thunar-progress-view.c:326
-#, fuzzy
 msgid "Cancelling..."
-msgstr "Menghitung..."
+msgstr "Membatalkan..."
 
 #: ../thunar/thunar-progress-view.c:480
-#, fuzzy, c-format
+#, c-format
 msgid "%lu hour remaining"
 msgid_plural "%lu hours remaining"
-msgstr[0] "(%lu jam lagi)"
-msgstr[1] "(%lu jam lagi)"
+msgstr[0] "%lu jam tersisa"
 
 #: ../thunar/thunar-progress-view.c:485
-#, fuzzy, c-format
+#, c-format
 msgid "%lu minute remaining"
 msgid_plural "%lu minutes remaining"
-msgstr[0] "(%lu menit lagi)"
-msgstr[1] "(%lu menit lagi)"
+msgstr[0] "%lu menit tersisa"
 
 #: ../thunar/thunar-progress-view.c:490
-#, fuzzy, c-format
+#, c-format
 msgid "%lu second remaining"
 msgid_plural "%lu seconds remaining"
-msgstr[0] "(%lu detik lagi)"
-msgstr[1] "(%lu detik lagi)"
+msgstr[0] "%lu detik lagi"
 
 #: ../thunar/thunar-properties-dialog.c:227
 msgid "General"
@@ -1950,7 +1941,7 @@ msgstr[1] "Tambah folder terpilih ke jalan pintas panel sisi"
 #. append the "Mount Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:810 ../thunar/thunar-tree-view.c:1117
 msgid "_Mount Volume"
-msgstr "_Mount Volume"
+msgstr "_Volume Kait"
 
 #. append the "Eject Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:820 ../thunar/thunar-tree-view.c:1127
@@ -2190,35 +2181,36 @@ msgstr "Mengumpulkan berkas..."
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:665
-#, fuzzy, c-format
+#, c-format
 msgid "Trying to restore \"%s\""
-msgstr "Gagal mengembalikan \"%s\""
+msgstr "Mencoba mengembalikan \"%s\""
 
 #: ../thunar/thunar-transfer-job.c:690
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file "
 "\"%s\" from the trash"
 msgstr ""
 "Folder \"%s\" sudah tidak ada, tapi dibutuhkan untuk mengembalikan berkas \"%"
-"s\" dari kotak sampah. Anda ingin membuat folder tersebut lagi?"
+"s\" dari kotak sampah"
 
 #: ../thunar/thunar-transfer-job.c:715
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to restore the folder \"%s\""
-msgstr "Gagal membuka folder \"%s\""
+msgstr "Gagal mengembalikan folder \"%s\""
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:732
-#, fuzzy, c-format
+#, c-format
 msgid "Trying to move \"%s\""
-msgstr "Gagal menghapus \"%s\""
+msgstr "Mencoba memindahkan \"%s\""
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:757
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
-msgstr ""
+msgstr "Tak dapat memindahkan \"%s\" secara langsung. Mengumpulkan berkas "
+"untuk penyalinan..."
 
 #: ../thunar/thunar-trash-action.c:104
 msgid "T_rash"
@@ -2391,9 +2383,8 @@ msgid "Go to the desktop folder"
 msgstr "Pergi ke folder destop"
 
 #: ../thunar/thunar-window.c:311
-#, fuzzy
 msgid "Browse the file system"
-msgstr "Ramban sistem berkas dengan manajer berkas"
+msgstr "Ramban sistem berkas"
 
 #: ../thunar/thunar-window.c:312
 msgid "Go to the documents folder"
@@ -2535,11 +2526,11 @@ msgstr ""
 #. create the network action
 #: ../thunar/thunar-window.c:1440
 msgid "Network"
-msgstr ""
+msgstr "Jaringan"
 
 #: ../thunar/thunar-window.c:1440
 msgid "Browse the network"
-msgstr ""
+msgstr "Ramban jaringan"
 
 #: ../thunar/thunar-window.c:1480
 #, c-format
@@ -2591,9 +2582,8 @@ msgstr "Ja_ngan tampilkan pesan ini lagi"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2252
-#, fuzzy
 msgid "Failed to open the file system root folder"
-msgstr "Gagal membuka folder templat"
+msgstr "Gagal membuka folder root sistem berkas"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2287
@@ -2602,9 +2592,8 @@ msgstr "Gagal untuk menampilkan isi dari kotak sampah"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2322
-#, fuzzy
 msgid "Failed to browse the network"
-msgstr "Gagal membuka folder rumah"
+msgstr "Gagal meramban jaringan"
 
 #: ../thunar/thunar-window.c:2364
 msgid ""
@@ -3094,11 +3083,11 @@ msgstr "Gagal tersambung ke Kotak Sampah."
 #. tell the user whether the trash is full or empty
 #: ../plugins/thunar-tpa/thunar-tpa.c:264
 msgid "Trash contains files"
-msgstr "Kotak sampah berisi berkas"
+msgstr "Kotak Sampah berisi berkas"
 
 #: ../plugins/thunar-tpa/thunar-tpa.c:264
 msgid "Trash is empty"
-msgstr "Kotak sampah kosong."
+msgstr "Kotak Sampah kosong."
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:1
 msgid "Display the trash can"
@@ -3219,9 +3208,8 @@ msgstr ""
 "ini."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:203
-#, fuzzy
 msgid "Use Startup Notification"
-msgstr "Gunakan pemberitahuan _hidupkan"
+msgstr "Gunakan Pemberitahuan Hidupkan"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:204
 msgid ""
@@ -3229,6 +3217,9 @@ msgid ""
 "is launched. This is also highly recommended if you have focus stealing "
 "prevention enabled in your window manager."
 msgstr ""
+"Aktifkan opsi ini jika anda ingin kursor menunggu agar ditampilkan ketika "
+"aksi dijalankan. Hal ini juga sangat direkomendasikan jika anda mempunyai "
+"pencegahan pencurian fokus diaktifkan pada manajer jendela anda."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:210
 msgid "_Icon:"
