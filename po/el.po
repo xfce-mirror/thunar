@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar git version\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-25 18:04+0100\n"
+"POT-Creation-Date: 2010-07-12 16:05+0000\n"
 "PO-Revision-Date: 2009-10-03 16:55+0200\n"
 "Last-Translator: Evaggelos Balaskas <ebalaskas@ebalaskas.gr>\n"
 "Language-Team: Greek <nls@tux.hellug.gr>\n"
@@ -57,7 +57,7 @@ msgstr "[ΑΡΧΕΙΑ...]"
 #: ../thunar/main.c:148
 #, c-format
 msgid "Thunar: Failed to open display: %s\n"
-msgstr "Thunar: Αποτυχία ανοίγματος οθόνης: %s\n"
+msgstr "Thunar: Το άνοιγμα της οθόνης: %s απέτυχε\n"
 
 #. yep, there's an error, so print it
 #: ../thunar/main.c:153
@@ -305,7 +305,7 @@ msgstr "Η προσθήκη της εφαρμογής \"%s\" απέτυχε"
 #: ../thunar/thunar-chooser-dialog.c:492
 #, c-format
 msgid "Failed to execute application \"%s\""
-msgstr "Απέτυχε η εκτέλεση της εφαρμογής \"%s\""
+msgstr "Η εκτέλεση της εφαρμογής \"%s\" απέτυχε"
 
 #. append the "Remove Launcher" item
 #: ../thunar/thunar-chooser-dialog.c:564
@@ -735,7 +735,7 @@ msgstr "Ο ριζικός φάκελος δεν έχει γονεϊκό φάκε
 #: ../thunar/thunar-file.c:974
 #, c-format
 msgid "Failed to parse the desktop file: %s"
-msgstr "Απέτυχε η ανάλυση του αρχείου της επιφάνειας εργασίας: %s"
+msgstr "Η ανάλυση του αρχείου της επιφάνειας εργασίας: %s απέτυχε"
 
 #: ../thunar/thunar-file.c:1012
 #, c-format
@@ -845,12 +845,12 @@ msgstr "δεσμός προς το %s"
 #: ../thunar/thunar-io-jobs-util.c:38
 #, c-format
 msgid "another copy of %s"
-msgstr "άλλο αντίγραφο του %s"
+msgstr "δεύτερο αντίγραφο του %s"
 
 #: ../thunar/thunar-io-jobs-util.c:38
 #, c-format
 msgid "another link to %s"
-msgstr "άλλος δεσμός προς το %s"
+msgstr "δεύτερος δεσμός προς το %s"
 
 #: ../thunar/thunar-io-jobs-util.c:39
 #, c-format
@@ -932,8 +932,8 @@ msgstr "Το άνοιγμα του αρχείου \"%s\" απέτυχε"
 #, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
-msgstr[0] "Δεν ήταν δυνατό το άνοιγμα %d αρχείου"
-msgstr[1] "Δεν ήταν δυνατό το άνοιγμα %d αρχείων"
+msgstr[0] "Το άνοιγμα %d αρχείου απέτυχε"
+msgstr[1] "Το άνοιγμα %d αρχείων απέτυχε"
 
 #: ../thunar/thunar-launcher.c:678
 msgid "Are you sure you want to open all folders?"
@@ -1203,7 +1203,7 @@ msgstr "Το αρχείο δεν υπάρχει"
 #: ../thunar/thunar-location-entry.c:726
 #, c-format
 msgid "Failed to determine the mount point of \"%s\""
-msgstr "Απέτυχε να προσδιοριστεί το σημείο προσάρτησης του \"%s\""
+msgstr "Ο προσδιορισμός του σημείου προσάρτησης του \"%s\" απέτυχε"
 
 #: ../thunar/thunar-misc-jobs.c:84
 #, c-format
@@ -1973,7 +1973,7 @@ msgstr "Επιλογή όλων των αρχείων που ταιριάζου�
 msgid "Du_plicate"
 msgstr "Δημιουργία αν_τιγράφου"
 
-#: ../thunar/thunar-standard-view.c:347 ../thunar/thunar-standard-view.c:3421
+#: ../thunar/thunar-standard-view.c:347 ../thunar/thunar-standard-view.c:3424
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Δημιουργία _δεσμού"
@@ -2025,58 +2025,58 @@ msgstr "_Μοτίβο:"
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: ../thunar/thunar-standard-view.c:2533
+#: ../thunar/thunar-standard-view.c:2536
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Το XDS παρέδωσε ένα μη έγκυρο όνομα αρχείου"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:2712
+#: ../thunar/thunar-standard-view.c:2715
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
-msgstr "Δεν ήταν δυνατή η δημιουργία δεσμού για τη διεύθυνση \"%s\""
+msgstr "Η δημιουργία δεσμού για τη διεύθυνση \"%s\" απέτυχε"
 
-#: ../thunar/thunar-standard-view.c:3054
+#: ../thunar/thunar-standard-view.c:3057
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Το άνοιγμα του καταλόγου \"%s\" απέτυχε"
 
-#: ../thunar/thunar-standard-view.c:3381
+#: ../thunar/thunar-standard-view.c:3384
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Προετοιμασία του επιλεγμένου αρχείου για μετακίνηση με μια εντολή Επικόλλησης αρχείου"
 msgstr[1] "Προετοιμασία των επιλεγμένων αρχείων για μετακίνηση με μια εντολή Επικόλλησης αρχείων"
 
-#: ../thunar/thunar-standard-view.c:3389
+#: ../thunar/thunar-standard-view.c:3392
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Προετοιμασία του επιλεγμένου αρχείου προς αντιγραφή με μια εντολή Επικόλλησης αρχείου"
 msgstr[1] "Προετοιμασία των επιλεγμένων αρχείων για αντιγραφή με μια  εντολή Επικόλλησης αρχείων"
 
-#: ../thunar/thunar-standard-view.c:3400
+#: ../thunar/thunar-standard-view.c:3403
 msgid "Delete the selected file"
 msgid_plural "Delete the selected files"
 msgstr[0] "Διαγραφή του επιλεγμένου αρχείου"
 msgstr[1] "Διαγραφή των επιλεγμένων αρχείων"
 
-#: ../thunar/thunar-standard-view.c:3414
+#: ../thunar/thunar-standard-view.c:3417
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Δημιουργία αντιγράφου για το επιλεγμένο αρχείο"
 msgstr[1] "Δημιουργία αντιγράφου για κάθε επιλεγμένο αρχείο"
 
-#: ../thunar/thunar-standard-view.c:3423
+#: ../thunar/thunar-standard-view.c:3426
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Δημιουργεί ένα συμβολικό δεσμό για το επιλεγμένο αρχείο"
 msgstr[1] "Δημιουργεί ένα συμβολικό δεσμό για κάθε επιλεγμένο αρχείο"
 
-#: ../thunar/thunar-standard-view.c:3431
+#: ../thunar/thunar-standard-view.c:3434
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Μετονομασία του επιλεγμένου αρχείου"
 msgstr[1] "Μετονομασία των επιλεγμένων αρχείων"
 
-#: ../thunar/thunar-standard-view.c:3439
+#: ../thunar/thunar-standard-view.c:3442
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
 msgstr[0] "Επαναφορά του επιλεγμένου αρχείου"
@@ -2105,7 +2105,7 @@ msgstr "Ο φάκελος \"%s\" δεν υπάρχει πια, αλλά απαι
 #: ../thunar/thunar-transfer-job.c:715
 #, c-format
 msgid "Failed to restore the folder \"%s\""
-msgstr "Αποτυχία επαναφοράς του φακέλου \"%s\""
+msgstr "Η επαναφορά του φακέλου \"%s\" απέτυχε"
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:732
@@ -2482,7 +2482,7 @@ msgstr "_Να μην εμφανιστεί ξανά αυτό το μήνυμα"
 #. display an error to the user
 #: ../thunar/thunar-window.c:2252
 msgid "Failed to open the file system root folder"
-msgstr "Απέτυχε το άνοιγμα του ριζικού φακέλου του σύστηματος αρχείων"
+msgstr "Το άνοιγμα του ριζικού φακέλου του σύστηματος αρχείων απέτυχε"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2287
@@ -2492,7 +2492,7 @@ msgstr "Το άνοιγμα των απορριμμάτων απέτυχε"
 #. display an error to the user
 #: ../thunar/thunar-window.c:2322
 msgid "Failed to browse the network"
-msgstr "Απέτυχε η περιήγηση του δικτύου"
+msgstr "Η περιήγηση του δικτύου απέτυχε"
 
 #: ../thunar/thunar-window.c:2364
 msgid ""
@@ -2918,7 +2918,7 @@ msgstr[1] "Η συμπίεση %d αρχείων απέτυχε"
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:656
 msgid "Failed to compose new email"
-msgstr "Δεν ήταν δυνατή η σύνθεση νέου email"
+msgstr "Η σύνθεση νέου email απέτυχε"
 
 #: ../plugins/thunar-sendto-email/thunar-sendto-email.desktop.in.in.h:1
 msgid "Mail Recipient"
@@ -2930,7 +2930,7 @@ msgstr "Παραλήπτης"
 #: ../plugins/thunar-tpa/thunar-tpa.c:312
 #: ../plugins/thunar-tpa/thunar-tpa.c:339
 msgid "Failed to connect to the Trash"
-msgstr "Δεν ήταν δυνατή η σύνδεση με τα απορρίμματα"
+msgstr "Η σύνδεση με τα απορρίμματα απέτυχε"
 
 #. tell the user whether the trash is full or empty
 #: ../plugins/thunar-tpa/thunar-tpa.c:264
