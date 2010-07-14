@@ -567,9 +567,8 @@ msgid "N_o to all"
 msgstr "לא ל_הכל"
 
 #: ../thunar/thunar-dialogs.c:478
-#, fuzzy
 msgid "_Retry"
-msgstr "_שחזר"
+msgstr "_ניסיון חוזר"
 
 #: ../thunar/thunar-dialogs.c:483
 msgid "_Cancel"
@@ -578,48 +577,46 @@ msgstr "_ביטול"
 #. setup the confirmation dialog
 #: ../thunar/thunar-dialogs.c:557
 msgid "Confirm to replace files"
-msgstr ""
+msgstr "אישור החלפת הקבצים"
 
 #: ../thunar/thunar-dialogs.c:563
 msgid "_Skip"
-msgstr ""
+msgstr "_דילוג"
 
 #: ../thunar/thunar-dialogs.c:564
-#, fuzzy
 msgid "Replace _All"
-msgstr "לה_חליף עם:"
+msgstr "החלפת ה_כול"
 
 #: ../thunar/thunar-dialogs.c:565
-#, fuzzy
 msgid "_Replace"
-msgstr "ש_נה שם"
+msgstr "ה_חלפה"
 
 #: ../thunar/thunar-dialogs.c:597
-#, fuzzy, c-format
+#, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
-msgstr "לא ניתן ליצור את הקישור הסימבולי \"%s\""
+msgstr "תיקייה זו כבר מכילה את הקישור הסימבולי \"%s\""
 
 #: ../thunar/thunar-dialogs.c:602
 #, c-format
 msgid "This folder already contains a folder \"%s\"."
-msgstr ""
+msgstr "תיקייה זו כבר מכילה את התיקייה \"%s\"."
 
 #: ../thunar/thunar-dialogs.c:607
 #, c-format
 msgid "This folder already contains a file \"%s\"."
-msgstr ""
+msgstr "תיקייה זו כבר מכילה את הקובץ \"%s\"."
 
 #: ../thunar/thunar-dialogs.c:619
 msgid "ReplaceDialogPart1|Do you want to replace the link"
-msgstr ""
+msgstr "האם ברצונך להחליף את הקישור"
 
 #: ../thunar/thunar-dialogs.c:621
 msgid "ReplaceDialogPart1|Do you want to replace the existing folder"
-msgstr ""
+msgstr "האם ברצונך להחליף את התיקייה הקיימת"
 
 #: ../thunar/thunar-dialogs.c:623
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
-msgstr ""
+msgstr "האם ברצונך להחליף את הקובץ הקיים"
 
 #. Fourth box (size, volume, free space)
 #. 
@@ -635,15 +632,15 @@ msgstr "שונה:"
 
 #: ../thunar/thunar-dialogs.c:650
 msgid "ReplaceDialogPart2|with the following link?"
-msgstr ""
+msgstr "בקישור הבא?"
 
 #: ../thunar/thunar-dialogs.c:652
 msgid "ReplaceDialogPart2|with the following folder?"
-msgstr ""
+msgstr "בתיקייה הבאה?"
 
 #: ../thunar/thunar-dialogs.c:654
 msgid "ReplaceDialogPart2|with the following file?"
-msgstr ""
+msgstr "בקובץ הבא?"
 
 #: ../thunar/thunar-dnd.c:71
 msgid "_Copy here"
@@ -736,9 +733,9 @@ msgid "The root folder has no parent"
 msgstr "לתיקיית השורש אין הורה"
 
 #: ../thunar/thunar-file.c:974
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to parse the desktop file: %s"
-msgstr "כישלון ביצירת קובץ ריק \"%s\""
+msgstr "ארע כשל בפענוח קובץ שולחן עבודה: %s"
 
 #: ../thunar/thunar-file.c:1012
 #, c-format
@@ -792,14 +789,14 @@ msgid "The file \"%s\" already exists"
 msgstr "הקובץ \"%s\" כבר קיים."
 
 #: ../thunar/thunar-io-jobs.c:184
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create empty file \"%s\": %s"
-msgstr "כישלון ביצירת קובץ ריק \"%s\""
+msgstr "ארע ביצירת קובץ ריק \"%s\":‏ %s"
 
 #: ../thunar/thunar-io-jobs.c:321
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create directory \"%s\": %s"
-msgstr "לא ניתן ליצור ספרייה \"%s\""
+msgstr "לא ניתן ליצור את התיקייה \"%s\":‏ %s"
 
 #. tell the user that we're preparing to unlink the files
 #: ../thunar/thunar-io-jobs.c:385
@@ -807,14 +804,14 @@ msgid "Preparing..."
 msgstr "מכין..."
 
 #: ../thunar/thunar-io-jobs.c:447
-#, fuzzy, c-format
+#, c-format
 msgid "Could not delete file \"%s\": %s"
-msgstr "לא ניתן להריץ את הקובץ \"%s\""
+msgstr "לא ניתן למחוק את הקובץ \"%s\":‏ %s"
 
 #: ../thunar/thunar-io-jobs.c:595
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
-msgstr ""
+msgstr "לא ניתן ליצור את הקישור הסימבולי אל \"%s\" מכיוון שזהו אינו קובץ מקומי"
 
 #. generate a useful error message
 #: ../thunar/thunar-io-jobs.c:782
@@ -828,9 +825,9 @@ msgid "Failed to change the group of \"%s\": %s"
 msgstr "כישלון בשינוי הקבוצה של \"%s\""
 
 #: ../thunar/thunar-io-jobs.c:939
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
-msgstr "כישלון בשינוי ההרשאות של \"%s\""
+msgstr "ארע כשל בשינוי ההרשאות של \"%s\":‏ %s"
 
 #. Copy/link name for n <= 3
 #: ../thunar/thunar-io-jobs-util.c:37
@@ -867,12 +864,12 @@ msgstr "קישור שלישי אל %s"
 
 #. Fallback copy/link name for n >= 4
 #: ../thunar/thunar-io-jobs-util.c:42
-#, fuzzy, c-format
+#, c-format
 msgid "%uth copy of %s"
-msgstr "העתק מס' %u של %s"
+msgstr "עותק מס' %u של %s"
 
 #: ../thunar/thunar-io-jobs-util.c:42
-#, fuzzy, c-format
+#, c-format
 msgid "%uth link to %s"
 msgstr "קישור מס' %u אל %s"
 
@@ -883,6 +880,9 @@ msgid ""
 "\n"
 "If you replace an existing file, its contents will be overwritten."
 msgstr ""
+"הקובץ \"%s\" כבר קיים. האם ברצונך להחליף אותו?\n"
+"\n"
+"אם יוחלף קובץ קיים תוכנו ישוכתב."
 
 #: ../thunar/thunar-job.c:334
 msgid "Do you want to overwrite it?"
