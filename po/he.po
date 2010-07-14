@@ -815,14 +815,14 @@ msgstr "לא ניתן ליצור את הקישור הסימבולי אל \"%s\" 
 
 #. generate a useful error message
 #: ../thunar/thunar-io-jobs.c:782
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change the owner of \"%s\": %s"
-msgstr "כישלון בשינוי הבעלים של \"%s\""
+msgstr "ארע בשינוי הבעלים של \"%s\":‏ %s"
 
 #: ../thunar/thunar-io-jobs.c:783
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change the group of \"%s\": %s"
-msgstr "כישלון בשינוי הקבוצה של \"%s\""
+msgstr "ארע כשל בשינוי הקבוצה של \"%s\":‏ %s"
 
 #: ../thunar/thunar-io-jobs.c:939
 #, c-format
@@ -889,9 +889,8 @@ msgid "Do you want to overwrite it?"
 msgstr "האם ברצונך לדרוס את זה?"
 
 #: ../thunar/thunar-job.c:388
-#, fuzzy
 msgid "Do you want to create it?"
-msgstr "האם ברצונך לדרוס את זה?"
+msgstr "האם ברצונך ליצור זאת?"
 
 #: ../thunar/thunar-job.c:490
 msgid "Do you want to skip it?"
@@ -1081,14 +1080,14 @@ msgid "\"%s\" (%s) link to %s"
 msgstr "\"%s\" (%s) קישור אל %s"
 
 #: ../thunar/thunar-list-model.c:2344
-#, fuzzy, c-format
+#, c-format
 msgid "\"%s\" shortcut"
-msgstr "_קיצורים"
+msgstr "קיצור דרך אל \"%s\""
 
 #: ../thunar/thunar-list-model.c:2348
 #, c-format
 msgid "\"%s\" mountable"
-msgstr ""
+msgstr "\"%s\" ניתן לעגינה"
 
 #: ../thunar/thunar-list-model.c:2355
 #, c-format
@@ -1197,17 +1196,17 @@ msgid "_Location:"
 msgstr "_כתובת:"
 
 #: ../thunar/thunar-location-entry.c:382
-#, fuzzy, c-format
+#, c-format
 msgid "File does not exist"
-msgstr "תפריט הקשר של קובץ"
+msgstr "הקובץ לא קיים"
 
 #: ../thunar/thunar-location-entry.c:726
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to determine the mount point of \"%s\""
-msgstr "לא ניתן למצוא נקודת עיגון עבור %s"
+msgstr "ארע כשל במציאת נקודת עיגון עבור \"%s\""
 
 #: ../thunar/thunar-misc-jobs.c:84
-#, fuzzy, c-format
+#, c-format
 msgid "No templates installed"
 msgstr "אין תבניות מותקנות"
 
@@ -1345,7 +1344,7 @@ msgstr "העדפות סייר קבצים"
 #. 
 #: ../thunar/thunar-preferences-dialog.c:209
 msgid "Display"
-msgstr ""
+msgstr "תצוגה"
 
 #: ../thunar/thunar-preferences-dialog.c:219
 msgid "Default View"
@@ -1398,12 +1397,12 @@ msgstr "סמן אפשרות זו כדי להציב את טקסט הפריטים 
 
 #: ../thunar/thunar-preferences-dialog.c:287
 msgid "Date"
-msgstr ""
+msgstr "תאריך"
 
 #: ../thunar/thunar-preferences-dialog.c:299
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:216
 msgid "_Format:"
-msgstr ""
+msgstr "מ_בנה:"
 
 #. Side Pane
 #. 
@@ -1568,30 +1567,30 @@ msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives\n"
 "and media (i.e. how cameras should be handled)."
 msgstr ""
+"<a href=\"volman-config:\">הגדרת</a> ניהול הכוננים והמדיה\n"
+"הנשלפים (לדוגמה: אופן הטיפול במצלמות)."
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
 #: ../thunar/thunar-preferences-dialog.c:641
-#, fuzzy
 msgid "Failed to display the volume management settings"
-msgstr "לא ניתן להתחבר אל HAL: %s"
+msgstr "לא ניתן להציג את תצורת ניהול עצמת השמע"
 
 #: ../thunar/thunar-progress-dialog.c:94
 msgid "File Operation Progress"
-msgstr ""
+msgstr "תהליך פעולה על קבצים"
 
 #. build the tooltip text
 #: ../thunar/thunar-progress-dialog.c:296
 #, c-format
 msgid "%d file operation running"
 msgid_plural "%d file operations running"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "פעולת קובץ אחת פעילה"
+msgstr[1] "%d פעולות קבצים פעילות"
 
 #: ../thunar/thunar-progress-view.c:326
-#, fuzzy
 msgid "Cancelling..."
-msgstr "מחשב..."
+msgstr "בביטול..."
 
 #: ../thunar/thunar-progress-view.c:480
 #, c-format
