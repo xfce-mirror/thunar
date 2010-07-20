@@ -493,9 +493,13 @@ thunar_application_uevent (GUdevClient       *client,
   /* determine the sysfs path of the device */
   sysfs_path = g_udev_device_get_sysfs_path (device);
 
-  /* distinguish between "add" and "remove" actions, ignore "change" and "move" */
-  if (g_strcmp0 (action, "add") == 0 || g_strcmp0 (action, "change") == 0)
+  /* distinguish between "add", "change" and "remove" actions, ignore "change" and "move" */
+  if (g_strcmp0 (action, "add") == 0) /* || g_strcmp0 (action, "change") == 0) */
     {
+#if 0
+      g_debug ("path = %s, action = %s", sysfs_path, action);
+#endif
+
       /* only insert the path if we don't have it already */
       if (g_slist_find_custom (application->volman_udis, sysfs_path, 
                                (GCompareFunc) g_utf8_collate) == NULL)
@@ -558,6 +562,8 @@ thunar_application_volman_idle (gpointer user_data)
           argv[1] = g_strdup ("--device-added");
           argv[2] = application->volman_udis->data;
           argv[3] = NULL;
+
+          g_debug ("  %s", g_strjoinv (" ", argv));
 
           /* remove the first list item from the pending list */
           application->volman_udis = g_slist_delete_link (application->volman_udis, application->volman_udis);
