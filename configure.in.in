@@ -177,6 +177,12 @@ dnl ***************************************************************
 XDT_CHECK_OPTIONAL_PACKAGE([GUDEV], [gudev-1.0], [145], [gudev], 
                            [GUDev (required for thunar-volman)])
 
+dnl **************************************
+dnl *** Optional support for libnotify ***
+dnl **************************************
+XDT_CHECK_OPTIONAL_PACKAGE([LIBNOTIFY], [libnotify], [0.4.0], [notifications],
+                           [Mount notification support], [yes])
+
 dnl *************************
 dnl *** Check for gtk-doc ***
 dnl *************************
@@ -289,6 +295,7 @@ thunar/Makefile
 thunarx/Makefile
 thunarx/thunarx-2.pc
 thunarx/thunarx-config.h
+thunar-mount-notify/Makefile
 ])
 
 dnl ***************************
@@ -317,13 +324,18 @@ echo "* GUDev (required for thunar-volman): yes"
 else
 echo "* GUDev (required for thunar-volman): no"
 fi
-echo "* Debug Support:             $enable_debug"
-if test x"$enable_gen_doc" = x"yes"; then
-echo "* Documentation:             yes (generate)"
-elif test -d "${srcdir}/docs/manual/html"; then
-echo "* Documentation:             yes (in tarball)"
+if test x"$LIBNOTIFY_FOUND" = x"yes"; then
+echo "* Mount notification support:         yes"
 else
-echo "* Documentation:             no"
+echo "* Mount notification support:         no"
+fi
+echo "* Debug Support:                      $enable_debug"
+if test x"$enable_gen_doc" = x"yes"; then
+echo "* Documentation:                      yes (generate)"
+elif test -d "${srcdir}/docs/manual/html"; then
+echo "* Documentation:                      yes (in tarball)"
+else
+echo "* Documentation:                      no"
 fi
 echo
 echo "Additional Plugins:"
