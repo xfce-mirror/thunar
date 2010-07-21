@@ -2,7 +2,7 @@
 /*-
  * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2005      Jeff Franks <jcfranks@xfce.org>
- * Copyright (c) 2009      Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -482,6 +482,8 @@ thunar_application_uevent (GUdevClient       *client,
                            ThunarApplication *application)
 {
   const gchar *sysfs_path;
+  gboolean     is_cdrom = FALSE;
+  gboolean     has_media = FALSE;
   GSList      *lp;
 
   _thunar_return_if_fail (G_UDEV_IS_CLIENT (client));
@@ -493,8 +495,13 @@ thunar_application_uevent (GUdevClient       *client,
   /* determine the sysfs path of the device */
   sysfs_path = g_udev_device_get_sysfs_path (device);
 
-  /* distinguish between "add", "change" and "remove" actions, ignore "change" and "move" */
-  if (g_strcmp0 (action, "add") == 0) /* || g_strcmp0 (action, "change") == 0) */
+  /* check if the device is a CD drive */
+  is_cdrom = g_udev_device_get_property_as_boolean (device, "ID_CDROM");
+  has_media = g_udev_device_get_property_as_boolean (device, "ID_CDROM_MEDIA");
+
+  /* distinguish between "add", "change" and "remove" actions, ignore "move" */
+  if (g_strcmp0 (action, "add") == 0  
+      || (is_cdrom && has_media && g_strcmp0 (action, "change") == 0))
     {
 #if 0
       g_debug ("path = %s, action = %s", sysfs_path, action);
