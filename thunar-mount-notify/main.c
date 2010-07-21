@@ -1,6 +1,7 @@
 /* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
  * Copyright (c) 2006-2007 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2010      Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU General Public License as
@@ -156,12 +157,12 @@ main (int argc, char **argv)
         {
           /* no error message, the GUI initialization failed */
           display_name = gdk_get_display_arg_name ();
-          g_fprintf (stderr, "exo-mount-notify: %s: %s\n", _("Failed to open display"), (display_name != NULL) ? display_name : " ");
+          g_fprintf (stderr, "thunar-mount-notify: %s: %s\n", _("Failed to open display"), (display_name != NULL) ? display_name : " ");
         }
       else
         {
           /* yep, there's an error, so print it */
-          g_fprintf (stderr, "exo-mount-notify: %s\n", err->message);
+          g_fprintf (stderr, "thunar-mount-notify: %s\n", err->message);
         }
       return EXIT_FAILURE;
     }
@@ -195,7 +196,7 @@ main (int argc, char **argv)
     }
 
   /* try to initialize libnotify */
-  if (!notify_init ("exo-mount"))
+  if (!notify_init ("thunar-mount-notify"))
     {
       /* it doesn't make sense to continue from here on */
       g_printerr ("%s: %s.\n", g_get_prgname (), "Failed to initialize libnotify");
