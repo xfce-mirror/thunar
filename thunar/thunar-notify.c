@@ -44,7 +44,7 @@ thunar_notify_unmount (GMount *mount)
   GFile               *icon_file;
   GFile               *mount_point;
   GIcon               *icon;
-  gchar               *icon_name;
+  gchar               *icon_name = NULL;
   gchar               *message;
   gchar               *name;
 
@@ -84,6 +84,9 @@ thunar_notify_unmount (GMount *mount)
         }
     }
   g_object_unref (icon);
+
+  if (icon_name == NULL)
+    icon_name = g_strdup ("drive-removable-media");
 
   if (read_only)
     {
@@ -145,7 +148,7 @@ thunar_notify_eject (GVolume *volume)
   GFile               *icon_file;
   GFile               *mount_point;
   GIcon               *icon;
-  gchar               *icon_name;
+  gchar               *icon_name = NULL;
   gchar               *message;
   gchar               *name;
 
@@ -189,6 +192,9 @@ thunar_notify_eject (GVolume *volume)
         }
     }
   g_object_unref (icon);
+
+  if (icon_name == NULL)
+    icon_name = g_strdup ("drive-removable-media");
 
   if (read_only)
     {
