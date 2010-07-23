@@ -1,4 +1,4 @@
-# $Id$
+# vi:set ts=8 sw=8 noet ai nocindent syntax=automake:
 
 INCLUDES =								\
 	-I$(top_builddir)						\
@@ -21,6 +21,12 @@ bin_SCRIPTS =								\
 bin_PROGRAMS =								\
 	Thunar
 
+if HAVE_LIBNOTIFY
+thunar_notify_sources =							\
+	thunar-notify.c							\
+	thunar-notify.h
+endif
+
 thunar_built_sources =							\
 	thunar-marshal.c						\
 	thunar-marshal.h
@@ -29,6 +35,7 @@ Thunar_SOURCES =							\
 	$(thunar_include_HEADERS)					\
 	$(thunar_built_sources)						\
 	$(thunar_dbus_sources)						\
+	$(thunar_notify_sources)					\
 	main.c								\
 	sexy-url-label.c						\
 	sexy-url-label.h						\
@@ -223,6 +230,7 @@ Thunar_CFLAGS =								\
 	$(GIO_CFLAGS)							\
 	$(GTHREAD_CFLAGS)						\
 	$(GUDEV_CFLAGS)							\
+	$(LIBNOTIFY_CFLAGS)						\
 	$(LIBSM_CFLAGS)							\
 	$(LIBSTARTUP_NOTIFICATION_CFLAGS)				\
 	$(LIBXFCE4UI_CFLAGS)						\
@@ -240,8 +248,9 @@ Thunar_LDADD =								\
 	$(GIO_LIBS)							\
 	$(GTHREAD_LIBS)							\
 	$(GUDEV_LIBS)							\
-	$(LIBSTARTUP_NOTIFICATION_LIBS)					\
+	$(LIBNOTIFY_LIBS)						\
 	$(LIBSM_LIBS)							\
+	$(LIBSTARTUP_NOTIFICATION_LIBS)					\
 	$(LIBXFCE4UI_LIBS)
 
 Thunar_DEPENDENCIES =							\
@@ -409,5 +418,3 @@ EXTRA_DIST =								\
 	thunar-window-ui.xml						\
 	thunar-settings							\
 	$(desktop_in_files)
-
-# vi:set ts=8 sw=8 noet ai nocindent syntax=automake:

@@ -1,21 +1,22 @@
-/* $Id$ */
+/* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
- * Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2006      Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This program is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA  02111-1307  USA
+ * You should have received a copy of the GNU General Public 
+ * License along with this program; if not, write to the Free 
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -24,6 +25,9 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#ifdef HAVE_LIBNOTIFY
+#include <thunar/thunar-notify.h>
+#endif
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-create-dialog.h>
@@ -1748,6 +1752,10 @@ thunar_tree_view_action_eject_finish (GObject      *object,
         }
     }
 
+#ifdef HAVE_LIBNOTIFY
+  thunar_notify_eject_finish (volume);
+#endif
+
   g_object_unref (view);
 }
 
@@ -1785,6 +1793,10 @@ thunar_tree_view_action_unmount_finish (GObject      *object,
         }
     }
 
+#ifdef HAVE_LIBNOTIFY
+  thunar_notify_unmount_finish (mount);
+#endif
+
   g_object_unref (view);
 }
 
@@ -1793,8 +1805,8 @@ thunar_tree_view_action_unmount_finish (GObject      *object,
 static void
 thunar_tree_view_action_eject (ThunarTreeView *view)
 {
-  GVolume   *volume;
-  GMount    *mount;
+  GVolume *volume;
+  GMount  *mount;
 
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
@@ -1805,6 +1817,10 @@ thunar_tree_view_action_eject (ThunarTreeView *view)
       /* determine what the appropriate method is: eject or unmount */
       if (g_volume_can_eject (volume))
         {
+#ifdef HAVE_LIBNOTIFY
+          thunar_notify_eject (volume);
+#endif
+
           /* try to to eject the volume asynchronously */
           g_volume_eject (volume, G_MOUNT_UNMOUNT_NONE, NULL, 
                           thunar_tree_view_action_eject_finish, 
@@ -1816,6 +1832,10 @@ thunar_tree_view_action_eject (ThunarTreeView *view)
           mount = g_volume_get_mount (volume);
           if (G_LIKELY (mount != NULL))
             {
+#ifdef HAVE_LIBNOTIFY
+              thunar_notify_unmount (mount);
+#endif
+
               /* the volume is mounted, try to unmount the mount */
               g_mount_unmount (mount, G_MOUNT_UNMOUNT_NONE, NULL,
                                thunar_tree_view_action_unmount_finish, 

@@ -17,10 +17,6 @@
 # Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 # Boston, MA 02110-1301, USA.
 
-if HAVE_LIBNOTIFY
-THUNAR_MOUNT_NOTIFY_SUBDIR=thunar-mount-notify
-endif
-
 SUBDIRS =								\
 	icons								\
 	pixmaps								\
@@ -29,7 +25,6 @@ SUBDIRS =								\
 	tdb								\
 	thunarx								\
 	thunar								\
-	$(THUNAR_MOUNT_NOTIFY_SUBDIR)					\
 	docs								\
 	examples							\
 	plugins
