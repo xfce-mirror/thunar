@@ -2701,13 +2701,28 @@ thunar_file_get_custom_icon (const ThunarFile *file)
 
 
 
+/**
+ * thunar_file_get_preview_icon:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the preview icon for @file if any, else %NULL is returned.
+ *
+ * Return value: the custom icon for @file or %NULL, the GIcon is owner
+ * by the file, so do not unref it.
+ **/
 GIcon *
 thunar_file_get_preview_icon (const ThunarFile *file)
 {
-  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  _thunar_return_val_if_fail (file->info != NULL, NULL);
+  GObject *icon;
 
-  return G_ICON (g_file_info_get_attribute_object (file->info, "preview::icon"));
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->info), NULL);
+
+  icon = g_file_info_get_attribute_object (file->info, "preview::icon");
+  if (G_LIKELY (icon != NULL))
+    return G_ICON (icon);
+
+  return NULL;
 }
 
 

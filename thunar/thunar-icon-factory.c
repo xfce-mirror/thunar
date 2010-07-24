@@ -881,7 +881,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
           else if (G_IS_LOADABLE_ICON (gicon))
             {
               /* we have a loadable icon, try to open it for reading */
-              stream = g_loadable_icon_load (G_LOADABLE_ICON (icon), icon_size, 
+              stream = g_loadable_icon_load (G_LOADABLE_ICON (gicon), icon_size,
                                              NULL, NULL, NULL);
 
               /* check if we have a valid input stream */
@@ -894,9 +894,6 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
                   g_object_unref (stream);
                 }
             }
-
-          /* release the preview icon */
-          g_object_unref (gicon);
 
           /* return the icon if we have one */
           if (icon != NULL)
