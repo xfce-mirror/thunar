@@ -195,7 +195,7 @@ static void
 thunar_application_init (ThunarApplication *application)
 {
 #ifdef HAVE_GUDEV
-  static const gchar *subsystems[] = { "block", "input", NULL };
+  static const gchar *subsystems[] = { "block", "input", "usb", NULL };
 #endif
   gchar              *path;
 
