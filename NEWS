@@ -1,3 +1,33 @@
+1.1.1
+=====
+- Port the code related to thunar-volman to udev. This is an optional
+  part of Thunar. The consequences are that instead of calling
+  thunar-volman with HAL UDIs, we'll now call thunar-volman with
+  sysfs paths. For this to work, a more recent version of thunar-volman
+  is required: 0.5.0.
+- Re-implement mount/eject notifications based on libnotify. 
+  Notifications were gone after the port to GIO because we no longer
+  used exo-mount to mount or eject devices.
+- Fix segfaults when loading image icons.
+- Force a folder reload when the new_file closure is finished (bug 
+  #6409).
+- Update the trash panel plugin to the new panel framework.
+- Create status icon only when we're actually going to display it.
+- Change CWD before spawning applications in ThunarLauncher. 
+- Fix browsing shortcuts and mountables in ThunarLauncher.
+- Synchronize ThunarListModel sorting with detailed list view
+  captions.
+- Fix sorting by type in ThunarListModel (bug #6143).
+- Refilter the tree model when a hidden dir is entered/left (bug 
+  #6142).
+- Properly update the cursor when a row is deleted (bug #5361).
+- Use stock icons and standard icon names where appropriate (bug 
+  #6133).
+- Updated translations: Kazakh, Hebrew, Greek, Italian, Chinese 
+  (Taiwan), Indonesian, Croatian, Bengali, German, Slovak, French,
+  Uyghur, Turkish, Galician, Spanish (Castilian), Russian, Sinhala,
+  Ukrainian, Portuguese (Brazilian), Danish, Basque, Finnish, Czech.
+
 1.1.0
 =====
 - Replace ThunarVFS with GIO. There will be a separate maintenance 

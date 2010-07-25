@@ -8,69 +8,70 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-07 13:32+0100\n"
+"POT-Creation-Date: 2010-07-25 20:09+0200\n"
 "PO-Revision-Date: 2007-05-04 23:51+0200\n"
 "Last-Translator: Terje Uriansrud <terje@uriansrud.net>\n"
 "Language-Team: Norwegian Bokmal <i18n-nb@lister.ping.uio.no>\n"
+"Language: nb\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../thunar/main.c:58
+#: ../thunar/main.c:62
 msgid "Open the bulk rename dialog"
 msgstr "Åpne «Bulk Rename» programmet"
 
-#: ../thunar/main.c:60
+#: ../thunar/main.c:64
 msgid "Run in daemon mode"
 msgstr "Kjør i skjult modus"
 
-#: ../thunar/main.c:62
+#: ../thunar/main.c:66
 msgid "Run in daemon mode (not supported)"
 msgstr "Kjør i skjult modus (ikke støttet)"
 
-#: ../thunar/main.c:66
+#: ../thunar/main.c:70
 msgid "Quit a running Thunar instance"
 msgstr "Avslutt en kjørende Thunar instans"
 
-#: ../thunar/main.c:68
+#: ../thunar/main.c:72
 msgid "Quit a running Thunar instance (not supported)"
 msgstr "Avslutt en kjørende Thunar instans (ikke støttet)"
 
-#: ../thunar/main.c:70
+#: ../thunar/main.c:74
 msgid "Print version information and exit"
 msgstr "Vis versjonsinformasjon og avslutt"
 
 #. setup application name
-#: ../thunar/main.c:124
+#: ../thunar/main.c:128
 msgid "Thunar"
 msgstr "Thunar"
 
 #. initialize Gtk+
-#: ../thunar/main.c:141
+#: ../thunar/main.c:159
 msgid "[FILES...]"
 msgstr "[FILER...]"
 
-#: ../thunar/main.c:148
+#: ../thunar/main.c:166
 #, c-format
 msgid "Thunar: Failed to open display: %s\n"
 msgstr "Thunar: Klarte ikke åpne skjerm: %s\n"
 
 #. yep, there's an error, so print it
-#: ../thunar/main.c:153
+#: ../thunar/main.c:171
 #, c-format
 msgid "Thunar: %s\n"
 msgstr "Thunar: %s\n"
 
-#: ../thunar/main.c:164
+#: ../thunar/main.c:182
 msgid "The Thunar development team. All rights reserved."
 msgstr "Thunar utviklingsteam. Alle rettigheter reservert"
 
-#: ../thunar/main.c:165
+#: ../thunar/main.c:183
 msgid "Written by Benedikt Meurer <benny@xfce.org>."
 msgstr "Skrevet av Benedikt Meurer <benny@xfce.org>."
 
-#: ../thunar/main.c:166
+#: ../thunar/main.c:184
 #, c-format
 msgid "Please report bugs to <%s>."
 msgstr "Rapporter feil til <%s>."
@@ -128,50 +129,44 @@ msgid "Sort items in descending order"
 msgstr "Sorter elementer i synkende rekkefølge"
 
 #. display an error message to the user
-#: ../thunar/thunar-application.c:365
+#: ../thunar/thunar-application.c:375
 msgid "Failed to launch operation"
 msgstr "Klarte ikke å starte operasjonen"
 
-#. failed to launch exo-eject, inform the user about this
-#: ../thunar/thunar-application.c:574
-#, c-format
-msgid "Failed to execute \"%s\""
-msgstr "Klarte ikke å kjøre «%s»"
-
 #. tell the user that we were unable to launch the file specified
-#: ../thunar/thunar-application.c:1081 ../thunar/thunar-application.c:1207
+#: ../thunar/thunar-application.c:1042 ../thunar/thunar-application.c:1168
 #: ../thunar/thunar-launcher.c:1062 ../thunar/thunar-location-entry.c:389
 #: ../thunar/thunar-location-entry.c:417
-#: ../thunar/thunar-shortcuts-view.c:1236 ../thunar/thunar-window.c:1506
+#: ../thunar/thunar-shortcuts-view.c:1237 ../thunar/thunar-window.c:1506
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "Klarte ikke åpne «%s»"
 
-#: ../thunar/thunar-application.c:1211
+#: ../thunar/thunar-application.c:1172
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "Klarte ikke åpne «%s»: %s"
 
-#: ../thunar/thunar-application.c:1286
+#: ../thunar/thunar-application.c:1247
 msgid "Copying files..."
 msgstr "Kopierer filer ..."
 
-#: ../thunar/thunar-application.c:1322
+#: ../thunar/thunar-application.c:1283
 #, fuzzy, c-format
 msgid "Copying files to \"%s\"..."
 msgstr "Kopierer filer ..."
 
-#: ../thunar/thunar-application.c:1368
+#: ../thunar/thunar-application.c:1329
 #, fuzzy, c-format
 msgid "Creating symbolic links in \"%s\"..."
 msgstr "Lager nye symbolske lenker ..."
 
-#: ../thunar/thunar-application.c:1421
+#: ../thunar/thunar-application.c:1382
 #, fuzzy, c-format
 msgid "Moving files into \"%s\"..."
 msgstr "Flytter filer til papirkurven ..."
 
-#: ../thunar/thunar-application.c:1506
+#: ../thunar/thunar-application.c:1467
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -180,7 +175,7 @@ msgstr ""
 "Er du sikker på at du vil \n"
 "slette permanent «%s»?"
 
-#: ../thunar/thunar-application.c:1511
+#: ../thunar/thunar-application.c:1472
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -195,39 +190,39 @@ msgstr[1] ""
 "Er du sikker på at du vil slette permanent\n"
 " %u filer?"
 
-#: ../thunar/thunar-application.c:1531
+#: ../thunar/thunar-application.c:1492
 msgid "If you delete a file, it is permanently lost."
 msgstr "Hvis du sletter en fil vil den være permanent borte."
 
-#: ../thunar/thunar-application.c:1541
+#: ../thunar/thunar-application.c:1502
 msgid "Deleting files..."
 msgstr "Sletter filer ..."
 
-#: ../thunar/thunar-application.c:1576
+#: ../thunar/thunar-application.c:1537
 msgid "Moving files into the trash..."
 msgstr "Flytter filer til papirkurven ..."
 
-#: ../thunar/thunar-application.c:1615
+#: ../thunar/thunar-application.c:1576
 msgid "Creating files..."
 msgstr "Lager nye filer ..."
 
-#: ../thunar/thunar-application.c:1654
+#: ../thunar/thunar-application.c:1615
 msgid "Creating directories..."
 msgstr "Lager nye mapper ..."
 
-#: ../thunar/thunar-application.c:1692
+#: ../thunar/thunar-application.c:1653
 msgid "Remove all files and folders from the Trash?"
 msgstr "Tømmer alle filer og mapper fra papirkurven?"
 
 #. append the "Empty Trash" menu action
 #. prepare the menu item
-#: ../thunar/thunar-application.c:1697 ../thunar/thunar-location-buttons.c:171
-#: ../thunar/thunar-shortcuts-view.c:834 ../thunar/thunar-tree-view.c:1141
+#: ../thunar/thunar-application.c:1658 ../thunar/thunar-location-buttons.c:171
+#: ../thunar/thunar-shortcuts-view.c:835 ../thunar/thunar-tree-view.c:1145
 #: ../thunar/thunar-window.c:295 ../plugins/thunar-tpa/thunar-tpa.c:169
 msgid "_Empty Trash"
 msgstr "_Tøm papirkurven"
 
-#: ../thunar/thunar-application.c:1701
+#: ../thunar/thunar-application.c:1662
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
@@ -235,22 +230,22 @@ msgstr ""
 "Hvis du velger å tømme papirkurven vil alle elementene bli permanent borte. "
 "Legg merke til at du også kan slette elementene separat"
 
-#: ../thunar/thunar-application.c:1718
+#: ../thunar/thunar-application.c:1679
 msgid "Emptying the Trash..."
 msgstr "Tømmer papirkurven ..."
 
-#: ../thunar/thunar-application.c:1764
+#: ../thunar/thunar-application.c:1725
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "Klart ikke bestemme opprinnelig sti for «%s»"
 
 #. display an error dialog
-#: ../thunar/thunar-application.c:1781
+#: ../thunar/thunar-application.c:1742
 #, fuzzy, c-format
 msgid "Could not restore \"%s\""
 msgstr "Klarte ikke gjenopprette «%s»"
 
-#: ../thunar/thunar-application.c:1789
+#: ../thunar/thunar-application.c:1750
 msgid "Restoring files..."
 msgstr "Gjenoppretter filer ..."
 
@@ -329,7 +324,8 @@ msgstr "Åpne <i>%s</i> og andre filer av typen «%s» med:"
 #, c-format
 msgid ""
 "Browse the file system to select an application to open files of type \"%s\"."
-msgstr "Bla gjennom filsystemet for å finne program å åpne filer av typen «%s»."
+msgstr ""
+"Bla gjennom filsystemet for å finne program å åpne filer av typen «%s»."
 
 #: ../thunar/thunar-chooser-dialog.c:663
 #, c-format
@@ -354,8 +350,8 @@ msgstr ""
 "Dette vil fjerne snarveien som vises i filens kontekstmeny, men vil ikke "
 "fjerne selve applikasjonen.\n"
 "\n"
-"Du kan bare fjerne snarveier som ble laget med «Egentilpasset kommando» under "
-"«Åpne med» menyvalget."
+"Du kan bare fjerne snarveier som ble laget med «Egentilpasset kommando» "
+"under «Åpne med» menyvalget."
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:731
@@ -746,7 +742,7 @@ msgstr "Fil"
 msgid "File Name"
 msgstr "Filnavn"
 
-#: ../thunar/thunar-file.c:836 ../thunar/thunar-shortcuts-view.c:277
+#: ../thunar/thunar-file.c:836 ../thunar/thunar-shortcuts-view.c:278
 #: ../thunar/thunar-window.c:311
 msgid "File System"
 msgstr "Filsystem"
@@ -925,13 +921,13 @@ msgstr "Ønsker du å hoppe over denne?"
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:168 ../thunar/thunar-launcher.c:801
 #: ../thunar/thunar-location-buttons.c:168
-#: ../thunar/thunar-shortcuts-view.c:785 ../thunar/thunar-tree-view.c:1091
+#: ../thunar/thunar-shortcuts-view.c:786 ../thunar/thunar-tree-view.c:1095
 msgid "_Open"
 msgstr "_Åpne"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:169 ../thunar/thunar-location-buttons.c:169
-#: ../thunar/thunar-shortcuts-view.c:796 ../thunar/thunar-tree-view.c:1103
+#: ../thunar/thunar-shortcuts-view.c:797 ../thunar/thunar-tree-view.c:1107
 msgid "Open in New Window"
 msgstr "Åpne i nytt vindu"
 
@@ -1047,8 +1043,8 @@ msgid "Open With \"%s\""
 msgstr "Åpne med «%s»"
 
 #: ../thunar/thunar-launcher.c:1380 ../thunar/thunar-location-entry.c:641
-#: ../thunar/thunar-shortcuts-view.c:1266
-#: ../thunar/thunar-shortcuts-view.c:1488 ../thunar/thunar-tree-view.c:1888
+#: ../thunar/thunar-shortcuts-view.c:1267
+#: ../thunar/thunar-shortcuts-view.c:1505 ../thunar/thunar-tree-view.c:1908
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Klarte ikke å montere «%s»"
@@ -1150,7 +1146,7 @@ msgstr[1] "%d elementer valgt"
 
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-location-buttons.c:170
-#: ../thunar/thunar-standard-view.c:337 ../thunar/thunar-tree-view.c:1157
+#: ../thunar/thunar-standard-view.c:337 ../thunar/thunar-tree-view.c:1161
 msgid "Create _Folder..."
 msgstr "Lag ny _mappe"
 
@@ -1205,12 +1201,12 @@ msgid "View the properties of the folder \"%s\""
 msgstr "Vis egenskaper for mappen «%s»"
 
 #: ../thunar/thunar-location-buttons.c:1285
-#: ../thunar/thunar-standard-view.c:1787 ../thunar/thunar-tree-view.c:1565
+#: ../thunar/thunar-standard-view.c:1787 ../thunar/thunar-tree-view.c:1569
 msgid "New Folder"
 msgstr "Ny mappe"
 
 #: ../thunar/thunar-location-buttons.c:1286
-#: ../thunar/thunar-standard-view.c:1788 ../thunar/thunar-tree-view.c:1566
+#: ../thunar/thunar-standard-view.c:1788 ../thunar/thunar-tree-view.c:1570
 msgid "Create New Folder"
 msgstr "Lag ny mappe"
 
@@ -1231,6 +1227,37 @@ msgstr "Fil kontekstmeny"
 #, fuzzy, c-format
 msgid "Failed to determine the mount point of \"%s\""
 msgstr "Klarte ikke å bestemme monteringspunktet for %s"
+
+#: ../thunar/thunar-notify.c:93
+msgid "Unmounting device"
+msgstr ""
+
+#: ../thunar/thunar-notify.c:94
+#, c-format
+msgid ""
+"The device \"%s\" is being unmounted by the system. Please do not remove the "
+"media or disconnect the drive"
+msgstr ""
+
+#: ../thunar/thunar-notify.c:100 ../thunar/thunar-notify.c:207
+msgid "Writing data to device"
+msgstr ""
+
+#: ../thunar/thunar-notify.c:101 ../thunar/thunar-notify.c:208
+#, c-format
+msgid ""
+"There is data that needs to be written to the device \"%s\" before it can be "
+"removed. Please do not remove the meida or disconnect the drive"
+msgstr ""
+
+#: ../thunar/thunar-notify.c:201
+msgid "Ejecting device"
+msgstr ""
+
+#: ../thunar/thunar-notify.c:202
+#, c-format
+msgid "The device \"%s\" is being ejected. This may take some time"
+msgstr ""
 
 #: ../thunar/thunar-misc-jobs.c:84
 #, fuzzy, c-format
@@ -1730,7 +1757,7 @@ msgstr "Emblem"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:624
-#: ../thunar/thunar-standard-view.c:2166 ../thunar/thunar-tree-view.c:1668
+#: ../thunar/thunar-standard-view.c:2166 ../thunar/thunar-tree-view.c:1672
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Klarte ikke gi nytt navn «%s»"
@@ -1932,38 +1959,38 @@ msgstr[0] "Legg til valgte mappe i snarveiområdet"
 msgstr[1] "Legg til valgte mapper i snarveiområdet"
 
 #. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:810 ../thunar/thunar-tree-view.c:1117
+#: ../thunar/thunar-shortcuts-view.c:811 ../thunar/thunar-tree-view.c:1121
 msgid "_Mount Volume"
 msgstr "_Monter enhet"
 
 #. append the "Eject Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:820 ../thunar/thunar-tree-view.c:1127
+#: ../thunar/thunar-shortcuts-view.c:821 ../thunar/thunar-tree-view.c:1131
 msgid "E_ject Volume"
 msgstr "_Løs ut enhet"
 
 #. append the remove menu item
-#: ../thunar/thunar-shortcuts-view.c:891
+#: ../thunar/thunar-shortcuts-view.c:892
 msgid "_Remove Shortcut"
 msgstr "_Fjerne"
 
 #. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:906
+#: ../thunar/thunar-shortcuts-view.c:907
 msgid "Re_name Shortcut"
 msgstr "Gi nytt _navn"
 
-#: ../thunar/thunar-shortcuts-view.c:1170
+#: ../thunar/thunar-shortcuts-view.c:1171
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "Stien  «%s»  peker ikke til en mappe"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1187
+#: ../thunar/thunar-shortcuts-view.c:1188
 msgid "Failed to add new shortcut"
 msgstr "Klarte ikke å lage ny snarvei "
 
-#: ../thunar/thunar-shortcuts-view.c:1372
-#: ../thunar/thunar-shortcuts-view.c:1409 ../thunar/thunar-tree-view.c:1744
-#: ../thunar/thunar-tree-view.c:1781
+#: ../thunar/thunar-shortcuts-view.c:1373
+#: ../thunar/thunar-shortcuts-view.c:1414 ../thunar/thunar-tree-view.c:1748
+#: ../thunar/thunar-tree-view.c:1789
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Klarte ikke løse ut «%s»"
@@ -2003,12 +2030,12 @@ msgid "Create an empty folder within the current folder"
 msgstr "Lag en tom mappe inne i gjeldende mappe"
 
 #. append the "Cut" menu action
-#: ../thunar/thunar-standard-view.c:339 ../thunar/thunar-tree-view.c:1178
+#: ../thunar/thunar-standard-view.c:339 ../thunar/thunar-tree-view.c:1182
 msgid "Cu_t"
 msgstr "_Klipp ut"
 
 #. append the "Copy" menu action
-#: ../thunar/thunar-standard-view.c:340 ../thunar/thunar-tree-view.c:1190
+#: ../thunar/thunar-standard-view.c:340 ../thunar/thunar-tree-view.c:1194
 msgid "_Copy"
 msgstr "Ko_pier"
 
@@ -2021,7 +2048,7 @@ msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr "Flytt eller kopier filer tidligere valgt «Klipp ut» eller «Kopier»"
 
 #. append the "Delete" menu action
-#: ../thunar/thunar-standard-view.c:342 ../thunar/thunar-tree-view.c:1225
+#: ../thunar/thunar-standard-view.c:342 ../thunar/thunar-tree-view.c:1229
 msgid "_Delete"
 msgstr "_Slett"
 
@@ -2053,14 +2080,14 @@ msgstr "Velg all filer som samsvarer med et gitt mønster"
 msgid "Du_plicate"
 msgstr "Du_pliser"
 
-#: ../thunar/thunar-standard-view.c:347 ../thunar/thunar-standard-view.c:3421
+#: ../thunar/thunar-standard-view.c:347 ../thunar/thunar-standard-view.c:3424
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Lag len_ke"
 msgstr[1] "Lag len_ker"
 
 #. append the "Rename" menu action
-#: ../thunar/thunar-standard-view.c:348 ../thunar/thunar-tree-view.c:1249
+#: ../thunar/thunar-standard-view.c:348 ../thunar/thunar-tree-view.c:1253
 msgid "_Rename..."
 msgstr "_Gi nytt navn"
 
@@ -2104,58 +2131,58 @@ msgid "_Pattern:"
 msgstr "_Mønster"
 
 #. tell the user that the file name provided by the X Direct Save source is invalid
-#: ../thunar/thunar-standard-view.c:2533
+#: ../thunar/thunar-standard-view.c:2536
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Ugyldig filnavn levert av XDS."
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:2712
+#: ../thunar/thunar-standard-view.c:2715
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Klarte ikke lage lenke for URL «%s»"
 
-#: ../thunar/thunar-standard-view.c:3054
+#: ../thunar/thunar-standard-view.c:3057
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Klarte ikke åpne mappen «%s»"
 
-#: ../thunar/thunar-standard-view.c:3381
+#: ../thunar/thunar-standard-view.c:3384
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Forbered valgte fil for flytting med «Lim inn» handlingen"
 msgstr[1] "Forbered valgte filer for flytting med «Lim inn» handlingen"
 
-#: ../thunar/thunar-standard-view.c:3389
+#: ../thunar/thunar-standard-view.c:3392
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Forbered valgte fil for kopiering med «Lim inn» handlingen"
 msgstr[1] "Forbered valgte filer for kopiering med «Lim inn» handlingen"
 
-#: ../thunar/thunar-standard-view.c:3400
+#: ../thunar/thunar-standard-view.c:3403
 msgid "Delete the selected file"
 msgid_plural "Delete the selected files"
 msgstr[0] "Slett valgte fil"
 msgstr[1] "Slett valgte filer"
 
-#: ../thunar/thunar-standard-view.c:3414
+#: ../thunar/thunar-standard-view.c:3417
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Dupliser valgte fil"
 msgstr[1] "Dupliser alle valgte filer"
 
-#: ../thunar/thunar-standard-view.c:3423
+#: ../thunar/thunar-standard-view.c:3426
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Lag en symbols lenke for valgte fil"
 msgstr[1] "Lag symbolske lenker for valgte filer"
 
-#: ../thunar/thunar-standard-view.c:3431
+#: ../thunar/thunar-standard-view.c:3434
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Gi valgt fil nytt navn"
 msgstr[1] "Gi valgte filer nye navn"
 
-#: ../thunar/thunar-standard-view.c:3439
+#: ../thunar/thunar-standard-view.c:3442
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
 msgstr[0] "Gjenopprett valgt fil"
@@ -2182,8 +2209,8 @@ msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file "
 "\"%s\" from the trash"
 msgstr ""
-"Mappen «%s» finnes ikke lengre, men er påkrevet for å gjenopprette filen «%s» "
-"fra papirkurven. Ønsker du å lage mappen?"
+"Mappen «%s» finnes ikke lengre, men er påkrevet for å gjenopprette filen "
+"«%s» fra papirkurven. Ønsker du å lage mappen?"
 
 #: ../thunar/thunar-transfer-job.c:715
 #, fuzzy, c-format
@@ -2215,12 +2242,12 @@ msgid "Loading..."
 msgstr "Laster ..."
 
 #. append the "Paste Into Folder" menu action
-#: ../thunar/thunar-tree-view.c:1207
+#: ../thunar/thunar-tree-view.c:1211
 msgid "_Paste Into Folder"
 msgstr "_Lim inn i mappe"
 
 #. append the "Properties" menu action
-#: ../thunar/thunar-tree-view.c:1308
+#: ../thunar/thunar-tree-view.c:1312
 msgid "P_roperties..."
 msgstr "_Egenskaper"
 
@@ -3406,6 +3433,9 @@ msgstr "Åpne angitte mapper i Thunar"
 #: ../thunar/thunar-settings.desktop.in.h:1
 msgid "Configure the Thunar file manager"
 msgstr "Konfigurer Thunar Filbehandler"
+
+#~ msgid "Failed to execute \"%s\""
+#~ msgstr "Klarte ikke å kjøre «%s»"
 
 #~ msgid "Unknown error"
 #~ msgstr "Ukjent feil"
