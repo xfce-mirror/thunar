@@ -100,7 +100,7 @@ thunar_notify_unmount (GMount *mount)
       summary = _("Writing data to device");
       message = g_strdup_printf (_("There is data that needs to be written to the "
                                    "device \"%s\" before it can be removed. Please "
-                                   "do not remove the meida or disconnect the drive"),
+                                   "do not remove the media or disconnect the drive"),
                                    name);
     }
 
@@ -207,7 +207,7 @@ thunar_notify_eject (GVolume *volume)
       summary = _("Writing data to device");
       message = g_strdup_printf (_("There is data that needs to be written to the "
                                    "device \"%s\" before it can be removed. Please "
-                                   "do not remove the meida or disconnect the drive"),
+                                   "do not remove the media or disconnect the drive"),
                                    name);
     }
 

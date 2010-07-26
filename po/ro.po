@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 1.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-25 20:09+0200\n"
+"POT-Creation-Date: 2010-07-26 10:40+0200\n"
 "PO-Revision-Date: 2009-05-30 15:53+0300\n"
 "Last-Translator: Mișu Moldovan <dumol@xfce.org>\n"
 "Language-Team: Romanian <xfce-i18n@xfce.org>\n"
@@ -134,7 +134,7 @@ msgid "Failed to launch operation"
 msgstr "Nu s-a putut lansa operațiunea"
 
 #. tell the user that we were unable to launch the file specified
-#: ../thunar/thunar-application.c:1042 ../thunar/thunar-application.c:1168
+#: ../thunar/thunar-application.c:1036 ../thunar/thunar-application.c:1162
 #: ../thunar/thunar-launcher.c:1062 ../thunar/thunar-location-entry.c:389
 #: ../thunar/thunar-location-entry.c:417
 #: ../thunar/thunar-shortcuts-view.c:1237 ../thunar/thunar-window.c:1506
@@ -142,31 +142,31 @@ msgstr "Nu s-a putut lansa operațiunea"
 msgid "Failed to open \"%s\""
 msgstr "Nu s-a putut deschide „%s”"
 
-#: ../thunar/thunar-application.c:1172
+#: ../thunar/thunar-application.c:1166
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "Nu s-a putut deschide „%s”: %s"
 
-#: ../thunar/thunar-application.c:1247
+#: ../thunar/thunar-application.c:1241
 msgid "Copying files..."
 msgstr "Se copiază fișierele..."
 
-#: ../thunar/thunar-application.c:1283
+#: ../thunar/thunar-application.c:1277
 #, fuzzy, c-format
 msgid "Copying files to \"%s\"..."
 msgstr "Se copiază fișierele..."
 
-#: ../thunar/thunar-application.c:1329
+#: ../thunar/thunar-application.c:1323
 #, fuzzy, c-format
 msgid "Creating symbolic links in \"%s\"..."
 msgstr "Se creează legăturile simbolice..."
 
-#: ../thunar/thunar-application.c:1382
+#: ../thunar/thunar-application.c:1376
 #, fuzzy, c-format
 msgid "Moving files into \"%s\"..."
 msgstr "Se mută fișierele în coșul de gunoi..."
 
-#: ../thunar/thunar-application.c:1467
+#: ../thunar/thunar-application.c:1461
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -175,7 +175,7 @@ msgstr ""
 "Sigur doriți să ștergeți\n"
 "permanent fișierul „%s”?"
 
-#: ../thunar/thunar-application.c:1472
+#: ../thunar/thunar-application.c:1466
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -193,39 +193,39 @@ msgstr[2] ""
 "Sigur doriți să ștergeți permanent\n"
 "cele %u de fișiere selectate?"
 
-#: ../thunar/thunar-application.c:1492
+#: ../thunar/thunar-application.c:1486
 msgid "If you delete a file, it is permanently lost."
 msgstr "Fișierele șterse nu vor mai putea fi recuperate."
 
-#: ../thunar/thunar-application.c:1502
+#: ../thunar/thunar-application.c:1496
 msgid "Deleting files..."
 msgstr "Se șterg fișierele..."
 
-#: ../thunar/thunar-application.c:1537
+#: ../thunar/thunar-application.c:1531
 msgid "Moving files into the trash..."
 msgstr "Se mută fișierele în coșul de gunoi..."
 
-#: ../thunar/thunar-application.c:1576
+#: ../thunar/thunar-application.c:1570
 msgid "Creating files..."
 msgstr "Se creează fișierele..."
 
-#: ../thunar/thunar-application.c:1615
+#: ../thunar/thunar-application.c:1609
 msgid "Creating directories..."
 msgstr "Se creează directoarele..."
 
-#: ../thunar/thunar-application.c:1653
+#: ../thunar/thunar-application.c:1647
 msgid "Remove all files and folders from the Trash?"
 msgstr "Doriți să ștergeți toate fișierele și dosarele din coșul de gunoi?"
 
 #. append the "Empty Trash" menu action
 #. prepare the menu item
-#: ../thunar/thunar-application.c:1658 ../thunar/thunar-location-buttons.c:171
+#: ../thunar/thunar-application.c:1652 ../thunar/thunar-location-buttons.c:171
 #: ../thunar/thunar-shortcuts-view.c:835 ../thunar/thunar-tree-view.c:1145
 #: ../thunar/thunar-window.c:295 ../plugins/thunar-tpa/thunar-tpa.c:169
 msgid "_Empty Trash"
 msgstr "Gol_ește coșul"
 
-#: ../thunar/thunar-application.c:1662
+#: ../thunar/thunar-application.c:1656
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
@@ -233,22 +233,22 @@ msgstr ""
 "Dacă alegeți să goliți coșul de gunoi, toate elementele pe care le conține "
 "vor fi permanent pierdute. Alternativ, le puteți șterg câte unul, separat."
 
-#: ../thunar/thunar-application.c:1679
+#: ../thunar/thunar-application.c:1673
 msgid "Emptying the Trash..."
 msgstr "Se golește coșul"
 
-#: ../thunar/thunar-application.c:1725
+#: ../thunar/thunar-application.c:1719
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "Nu s-a putut determina calea de origine pentru „%s”"
 
 #. display an error dialog
-#: ../thunar/thunar-application.c:1742
+#: ../thunar/thunar-application.c:1736
 #, fuzzy, c-format
 msgid "Could not restore \"%s\""
 msgstr "Nu s-a putut restaura „%s”"
 
-#: ../thunar/thunar-application.c:1750
+#: ../thunar/thunar-application.c:1744
 msgid "Restoring files..."
 msgstr "Se restaurează fișierele..."
 
@@ -1275,7 +1275,7 @@ msgstr ""
 #, c-format
 msgid ""
 "There is data that needs to be written to the device \"%s\" before it can be "
-"removed. Please do not remove the meida or disconnect the drive"
+"removed. Please do not remove the media or disconnect the drive"
 msgstr ""
 
 #: ../thunar/thunar-notify.c:201

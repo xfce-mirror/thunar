@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-25 20:09+0200\n"
+"POT-Creation-Date: 2010-07-26 10:40+0200\n"
 "PO-Revision-Date: 2007-07-06 15:47+0100\n"
 "Last-Translator: Stephan Arts <stephan@xfce.org>\n"
 "Language-Team: Dutch <xfce-i18n@xfce.org>\n"
@@ -134,7 +134,7 @@ msgid "Failed to launch operation"
 msgstr "Kon actie niet uitvoeren"
 
 #. tell the user that we were unable to launch the file specified
-#: ../thunar/thunar-application.c:1042 ../thunar/thunar-application.c:1168
+#: ../thunar/thunar-application.c:1036 ../thunar/thunar-application.c:1162
 #: ../thunar/thunar-launcher.c:1062 ../thunar/thunar-location-entry.c:389
 #: ../thunar/thunar-location-entry.c:417
 #: ../thunar/thunar-shortcuts-view.c:1237 ../thunar/thunar-window.c:1506
@@ -142,31 +142,31 @@ msgstr "Kon actie niet uitvoeren"
 msgid "Failed to open \"%s\""
 msgstr "Kon \"%s\" niet openen"
 
-#: ../thunar/thunar-application.c:1172
+#: ../thunar/thunar-application.c:1166
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "Kon \"%s\" niet openen: %s"
 
-#: ../thunar/thunar-application.c:1247
+#: ../thunar/thunar-application.c:1241
 msgid "Copying files..."
 msgstr "Bestanden kopiëren..."
 
-#: ../thunar/thunar-application.c:1283
+#: ../thunar/thunar-application.c:1277
 #, fuzzy, c-format
 msgid "Copying files to \"%s\"..."
 msgstr "Bestanden kopiëren..."
 
-#: ../thunar/thunar-application.c:1329
+#: ../thunar/thunar-application.c:1323
 #, fuzzy, c-format
 msgid "Creating symbolic links in \"%s\"..."
 msgstr "Symbolische links aan het maken..."
 
-#: ../thunar/thunar-application.c:1382
+#: ../thunar/thunar-application.c:1376
 #, fuzzy, c-format
 msgid "Moving files into \"%s\"..."
 msgstr "Verplaatsen van bestanden naar de prullenbak..."
 
-#: ../thunar/thunar-application.c:1467
+#: ../thunar/thunar-application.c:1461
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -175,7 +175,7 @@ msgstr ""
 "Weet u zeker dat u\n"
 "\"%s\" voorgoed wilt verwijderen?"
 
-#: ../thunar/thunar-application.c:1472
+#: ../thunar/thunar-application.c:1466
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -190,39 +190,39 @@ msgstr[1] ""
 "Weet u zeker dat u de %u geselecteerde\n"
 "bestanden voorgoed wilt verwijderen?"
 
-#: ../thunar/thunar-application.c:1492
+#: ../thunar/thunar-application.c:1486
 msgid "If you delete a file, it is permanently lost."
 msgstr "Als u een bestand wist, is het voorgoed verloren."
 
-#: ../thunar/thunar-application.c:1502
+#: ../thunar/thunar-application.c:1496
 msgid "Deleting files..."
 msgstr "Bestanden verwijderen..."
 
-#: ../thunar/thunar-application.c:1537
+#: ../thunar/thunar-application.c:1531
 msgid "Moving files into the trash..."
 msgstr "Verplaatsen van bestanden naar de prullenbak..."
 
-#: ../thunar/thunar-application.c:1576
+#: ../thunar/thunar-application.c:1570
 msgid "Creating files..."
 msgstr "Bestanden maken..."
 
-#: ../thunar/thunar-application.c:1615
+#: ../thunar/thunar-application.c:1609
 msgid "Creating directories..."
 msgstr "Mappen maken..."
 
-#: ../thunar/thunar-application.c:1653
+#: ../thunar/thunar-application.c:1647
 msgid "Remove all files and folders from the Trash?"
 msgstr "Alle bestanden en mappen uit de prullenbak verwijderen?"
 
 #. append the "Empty Trash" menu action
 #. prepare the menu item
-#: ../thunar/thunar-application.c:1658 ../thunar/thunar-location-buttons.c:171
+#: ../thunar/thunar-application.c:1652 ../thunar/thunar-location-buttons.c:171
 #: ../thunar/thunar-shortcuts-view.c:835 ../thunar/thunar-tree-view.c:1145
 #: ../thunar/thunar-window.c:295 ../plugins/thunar-tpa/thunar-tpa.c:169
 msgid "_Empty Trash"
 msgstr "Prullenbak l_egen"
 
-#: ../thunar/thunar-application.c:1662
+#: ../thunar/thunar-application.c:1656
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
@@ -231,22 +231,22 @@ msgstr ""
 "verloren gaan. U kunt er ook voor kiezen om bestanden een voor een te "
 "verwijderen."
 
-#: ../thunar/thunar-application.c:1679
+#: ../thunar/thunar-application.c:1673
 msgid "Emptying the Trash..."
 msgstr "Prullenbak legen..."
 
-#: ../thunar/thunar-application.c:1725
+#: ../thunar/thunar-application.c:1719
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "Kon het oorspronkelijke pad voor \"%s\" niet bepalen"
 
 #. display an error dialog
-#: ../thunar/thunar-application.c:1742
+#: ../thunar/thunar-application.c:1736
 #, fuzzy, c-format
 msgid "Could not restore \"%s\""
 msgstr "Kon \"%s\" niet herstellen"
 
-#: ../thunar/thunar-application.c:1750
+#: ../thunar/thunar-application.c:1744
 msgid "Restoring files..."
 msgstr "Bestanden herstellen..."
 
@@ -1262,7 +1262,7 @@ msgstr ""
 #, c-format
 msgid ""
 "There is data that needs to be written to the device \"%s\" before it can be "
-"removed. Please do not remove the meida or disconnect the drive"
+"removed. Please do not remove the media or disconnect the drive"
 msgstr ""
 
 #: ../thunar/thunar-notify.c:201

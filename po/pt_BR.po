@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-25 20:09+0200\n"
+"POT-Creation-Date: 2010-07-26 10:40+0200\n"
 "PO-Revision-Date: 2010-02-06 18:34-0300\n"
 "Last-Translator: Vladimir Melo <vmelo@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar2.conectiva.com.br>\n"
@@ -140,7 +140,7 @@ msgid "Failed to launch operation"
 msgstr "Falha ao lançar operação"
 
 #. tell the user that we were unable to launch the file specified
-#: ../thunar/thunar-application.c:1042 ../thunar/thunar-application.c:1168
+#: ../thunar/thunar-application.c:1036 ../thunar/thunar-application.c:1162
 #: ../thunar/thunar-launcher.c:1062 ../thunar/thunar-location-entry.c:389
 #: ../thunar/thunar-location-entry.c:417
 #: ../thunar/thunar-shortcuts-view.c:1237 ../thunar/thunar-window.c:1506
@@ -148,31 +148,31 @@ msgstr "Falha ao lançar operação"
 msgid "Failed to open \"%s\""
 msgstr "Falha ao abrir \"%s\""
 
-#: ../thunar/thunar-application.c:1172
+#: ../thunar/thunar-application.c:1166
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "Falha ao abrir \"%s\": %s"
 
-#: ../thunar/thunar-application.c:1247
+#: ../thunar/thunar-application.c:1241
 msgid "Copying files..."
 msgstr "Copiando arquivos..."
 
-#: ../thunar/thunar-application.c:1283
+#: ../thunar/thunar-application.c:1277
 #, c-format
 msgid "Copying files to \"%s\"..."
 msgstr "Copiando arquivos para \"%s\"..."
 
-#: ../thunar/thunar-application.c:1329
+#: ../thunar/thunar-application.c:1323
 #, c-format
 msgid "Creating symbolic links in \"%s\"..."
 msgstr "Criando links simbólicos em \"%s\"..."
 
-#: ../thunar/thunar-application.c:1382
+#: ../thunar/thunar-application.c:1376
 #, c-format
 msgid "Moving files into \"%s\"..."
 msgstr "Movendo arquivos para \"%s\"..."
 
-#: ../thunar/thunar-application.c:1467
+#: ../thunar/thunar-application.c:1461
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -181,7 +181,7 @@ msgstr ""
 "Você tem certeza que deseja\n"
 "excluir permanentemente \"%s\"?"
 
-#: ../thunar/thunar-application.c:1472
+#: ../thunar/thunar-application.c:1466
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -196,39 +196,39 @@ msgstr[1] ""
 "Você tem certeza que deseja excluir\n"
 "permanentemente os %u arquivos selecionados?"
 
-#: ../thunar/thunar-application.c:1492
+#: ../thunar/thunar-application.c:1486
 msgid "If you delete a file, it is permanently lost."
 msgstr "Se você excluir um arquivo, ele será permanentemente perdido."
 
-#: ../thunar/thunar-application.c:1502
+#: ../thunar/thunar-application.c:1496
 msgid "Deleting files..."
 msgstr "Excluindo arquivos..."
 
-#: ../thunar/thunar-application.c:1537
+#: ../thunar/thunar-application.c:1531
 msgid "Moving files into the trash..."
 msgstr "Movendo arquivos para a lixeira..."
 
-#: ../thunar/thunar-application.c:1576
+#: ../thunar/thunar-application.c:1570
 msgid "Creating files..."
 msgstr "Criando arquivos..."
 
-#: ../thunar/thunar-application.c:1615
+#: ../thunar/thunar-application.c:1609
 msgid "Creating directories..."
 msgstr "Criando diretórios..."
 
-#: ../thunar/thunar-application.c:1653
+#: ../thunar/thunar-application.c:1647
 msgid "Remove all files and folders from the Trash?"
 msgstr "Remover todos os arquivos e pastas da lixeira?"
 
 #. append the "Empty Trash" menu action
 #. prepare the menu item
-#: ../thunar/thunar-application.c:1658 ../thunar/thunar-location-buttons.c:171
+#: ../thunar/thunar-application.c:1652 ../thunar/thunar-location-buttons.c:171
 #: ../thunar/thunar-shortcuts-view.c:835 ../thunar/thunar-tree-view.c:1145
 #: ../thunar/thunar-window.c:295 ../plugins/thunar-tpa/thunar-tpa.c:169
 msgid "_Empty Trash"
 msgstr "_Esvaziar a lixeira"
 
-#: ../thunar/thunar-application.c:1662
+#: ../thunar/thunar-application.c:1656
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
@@ -237,22 +237,22 @@ msgstr ""
 "permanentemente perdidos. Por favor note que você pode também excluí-los "
 "separadamente."
 
-#: ../thunar/thunar-application.c:1679
+#: ../thunar/thunar-application.c:1673
 msgid "Emptying the Trash..."
 msgstr "Esvaziando a lixeira..."
 
-#: ../thunar/thunar-application.c:1725
+#: ../thunar/thunar-application.c:1719
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "Falha ao determinar o caminho original para \"%s\""
 
 #. display an error dialog
-#: ../thunar/thunar-application.c:1742
+#: ../thunar/thunar-application.c:1736
 #, c-format
 msgid "Could not restore \"%s\""
 msgstr "Não foi possível restaurar \"%s\""
 
-#: ../thunar/thunar-application.c:1750
+#: ../thunar/thunar-application.c:1744
 msgid "Restoring files..."
 msgstr "Restaurando arquivos..."
 
@@ -1265,7 +1265,7 @@ msgstr ""
 #, c-format
 msgid ""
 "There is data that needs to be written to the device \"%s\" before it can be "
-"removed. Please do not remove the meida or disconnect the drive"
+"removed. Please do not remove the media or disconnect the drive"
 msgstr ""
 
 #: ../thunar/thunar-notify.c:201

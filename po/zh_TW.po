@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.8.1svn-r25750\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-25 20:09+0200\n"
+"POT-Creation-Date: 2010-07-26 10:40+0200\n"
 "PO-Revision-Date: 2010-06-28 12:31+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -138,7 +138,7 @@ msgid "Failed to launch operation"
 msgstr "操作無法啟動"
 
 #. tell the user that we were unable to launch the file specified
-#: ../thunar/thunar-application.c:1042 ../thunar/thunar-application.c:1168
+#: ../thunar/thunar-application.c:1036 ../thunar/thunar-application.c:1162
 #: ../thunar/thunar-launcher.c:1062 ../thunar/thunar-location-entry.c:389
 #: ../thunar/thunar-location-entry.c:417
 #: ../thunar/thunar-shortcuts-view.c:1237 ../thunar/thunar-window.c:1506
@@ -146,31 +146,31 @@ msgstr "操作無法啟動"
 msgid "Failed to open \"%s\""
 msgstr "無法開啟「%s」"
 
-#: ../thunar/thunar-application.c:1172
+#: ../thunar/thunar-application.c:1166
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "無法開啟「%s」：%s"
 
-#: ../thunar/thunar-application.c:1247
+#: ../thunar/thunar-application.c:1241
 msgid "Copying files..."
 msgstr "正在複製檔案..."
 
-#: ../thunar/thunar-application.c:1283
+#: ../thunar/thunar-application.c:1277
 #, c-format
 msgid "Copying files to \"%s\"..."
 msgstr "正在複製檔案至「%s」..."
 
-#: ../thunar/thunar-application.c:1329
+#: ../thunar/thunar-application.c:1323
 #, c-format
 msgid "Creating symbolic links in \"%s\"..."
 msgstr "正在於「%s」內建立符號連結..."
 
-#: ../thunar/thunar-application.c:1382
+#: ../thunar/thunar-application.c:1376
 #, c-format
 msgid "Moving files into \"%s\"..."
 msgstr "正在將檔案移動至「%s」..."
 
-#: ../thunar/thunar-application.c:1467
+#: ../thunar/thunar-application.c:1461
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -179,7 +179,7 @@ msgstr ""
 "您確定要徹底刪除\n"
 "所選的檔案「%s」？"
 
-#: ../thunar/thunar-application.c:1472
+#: ../thunar/thunar-application.c:1466
 #, fuzzy, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -191,39 +191,39 @@ msgstr[0] ""
 "您確定要徹底刪除\n"
 "所選的檔案嗎？"
 
-#: ../thunar/thunar-application.c:1492
+#: ../thunar/thunar-application.c:1486
 msgid "If you delete a file, it is permanently lost."
 msgstr "如果您刪除了檔案，將再也找不回來。"
 
-#: ../thunar/thunar-application.c:1502
+#: ../thunar/thunar-application.c:1496
 msgid "Deleting files..."
 msgstr "刪除檔案中..."
 
-#: ../thunar/thunar-application.c:1537
+#: ../thunar/thunar-application.c:1531
 msgid "Moving files into the trash..."
 msgstr "正在將檔案移動至垃圾桶..."
 
-#: ../thunar/thunar-application.c:1576
+#: ../thunar/thunar-application.c:1570
 msgid "Creating files..."
 msgstr "建立檔案中..."
 
-#: ../thunar/thunar-application.c:1615
+#: ../thunar/thunar-application.c:1609
 msgid "Creating directories..."
 msgstr "建立目錄中..."
 
-#: ../thunar/thunar-application.c:1653
+#: ../thunar/thunar-application.c:1647
 msgid "Remove all files and folders from the Trash?"
 msgstr "將垃圾桶中所有檔案和資料夾清除？"
 
 #. append the "Empty Trash" menu action
 #. prepare the menu item
-#: ../thunar/thunar-application.c:1658 ../thunar/thunar-location-buttons.c:171
+#: ../thunar/thunar-application.c:1652 ../thunar/thunar-location-buttons.c:171
 #: ../thunar/thunar-shortcuts-view.c:835 ../thunar/thunar-tree-view.c:1145
 #: ../thunar/thunar-window.c:295 ../plugins/thunar-tpa/thunar-tpa.c:169
 msgid "_Empty Trash"
 msgstr "倒垃圾(_E)"
 
-#: ../thunar/thunar-application.c:1662
+#: ../thunar/thunar-application.c:1656
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
@@ -231,22 +231,22 @@ msgstr ""
 "如果您選擇倒垃圾，所有垃圾桶中的東西會永遠遺失。提一下：您也可以分別將它們刪"
 "除。"
 
-#: ../thunar/thunar-application.c:1679
+#: ../thunar/thunar-application.c:1673
 msgid "Emptying the Trash..."
 msgstr "正在清空垃圾桶..."
 
-#: ../thunar/thunar-application.c:1725
+#: ../thunar/thunar-application.c:1719
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "無法得知「%s」的原始路徑"
 
 #. display an error dialog
-#: ../thunar/thunar-application.c:1742
+#: ../thunar/thunar-application.c:1736
 #, c-format
 msgid "Could not restore \"%s\""
 msgstr "無法恢復「%s」"
 
-#: ../thunar/thunar-application.c:1750
+#: ../thunar/thunar-application.c:1744
 msgid "Restoring files..."
 msgstr "正在恢復檔案..."
 
@@ -1217,7 +1217,7 @@ msgstr ""
 #, c-format
 msgid ""
 "There is data that needs to be written to the device \"%s\" before it can be "
-"removed. Please do not remove the meida or disconnect the drive"
+"removed. Please do not remove the media or disconnect the drive"
 msgstr ""
 
 #: ../thunar/thunar-notify.c:201
