@@ -5,16 +5,16 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Thunar 0.9.0\n"
+"Project-Id-Version: Thunar 1.1.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-26 10:40+0200\n"
-"PO-Revision-Date: 2010-01-21 00:18+0200\n"
+"POT-Creation-Date: 2010-07-28 04:05+0000\n"
+"PO-Revision-Date: 2010-07-28 11:40+0300\n"
 "Last-Translator: Jari Rahkonen <jari.rahkonen@pp1.inet.fi>\n"
 "Language-Team: Finnish <xfce-i18n@xfce.org>\n"
-"Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: fi\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../thunar/main.c:62
@@ -1230,7 +1230,7 @@ msgstr "Liitoskohdan määritys kohteelle \"%s\" epäonnistui"
 
 #: ../thunar/thunar-notify.c:93
 msgid "Unmounting device"
-msgstr ""
+msgstr "Irrotetaan taltio"
 
 #: ../thunar/thunar-notify.c:94
 #, c-format
@@ -1238,10 +1238,12 @@ msgid ""
 "The device \"%s\" is being unmounted by the system. Please do not remove the "
 "media or disconnect the drive"
 msgstr ""
+"Taltiota \"%s\" irrotetaan tiedostojärjestelmästä. Älä poista taltiota "
+"asemasta tai laitetta tietokoneesta."
 
 #: ../thunar/thunar-notify.c:100 ../thunar/thunar-notify.c:207
 msgid "Writing data to device"
-msgstr ""
+msgstr "Kirjoitetaan laitteelle"
 
 #: ../thunar/thunar-notify.c:101 ../thunar/thunar-notify.c:208
 #, c-format
@@ -1249,15 +1251,17 @@ msgid ""
 "There is data that needs to be written to the device \"%s\" before it can be "
 "removed. Please do not remove the media or disconnect the drive"
 msgstr ""
+"Laitteelle \"%s\" täytyy kirjoittaa tietoa ennen sen irrottamista. Älä "
+"poista taltiota tai irrota laitetta."
 
 #: ../thunar/thunar-notify.c:201
 msgid "Ejecting device"
-msgstr ""
+msgstr "Irrotetaan laite"
 
 #: ../thunar/thunar-notify.c:202
 #, c-format
 msgid "The device \"%s\" is being ejected. This may take some time"
-msgstr ""
+msgstr "Laittetta \"%s\" irrotetaan. Tämä voi viedä hetken."
 
 #: ../thunar/thunar-misc-jobs.c:84
 #, c-format
@@ -1963,12 +1967,12 @@ msgstr[1] "Lisää valitut kansiot kirjanmerkkipaneeliin"
 #. append the "Mount Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:811 ../thunar/thunar-tree-view.c:1121
 msgid "_Mount Volume"
-msgstr "_Liitä taltio"
+msgstr "_Liitä"
 
 #. append the "Eject Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:821 ../thunar/thunar-tree-view.c:1131
 msgid "E_ject Volume"
-msgstr "P_oista levy"
+msgstr "I_rrota"
 
 #. append the remove menu item
 #: ../thunar/thunar-shortcuts-view.c:892
@@ -1995,7 +1999,7 @@ msgstr "Kirjanmerkin lisääminen epäonnistui"
 #: ../thunar/thunar-tree-view.c:1789
 #, c-format
 msgid "Failed to eject \"%s\""
-msgstr "Kohteen \"%s\" poistaminen asemasta epäonnistui"
+msgstr "Kohteen \"%s\" irrottaminen epäonnistui"
 
 #: ../thunar/thunar-size-label.c:146
 msgid "Click here to stop calculating the total size of the folder."
@@ -3212,8 +3216,8 @@ msgid ""
 msgstr ""
 "Komento (tarvittavine määreineen), jonka toiminto suorittaa. Alapuolella "
 "näet komennon määreiden selitteet tuetuille määremuuttujille, jotka "
-"korvataan komentoa suoritettaessa. Käytettäessä isoja kirjaimia (esim. %F, "
-"%D, %N) toiminnon voi suorittaa myös silloin, kun useita kohteita on "
+"korvataan komentoa suoritettaessa. Käytettäessä isoja kirjaimia (esim. %F, %"
+"D, %N) toiminnon voi suorittaa myös silloin, kun useita kohteita on "
 "valittuna. Muussa tapauksessa toiminto on käytettävissä silloin, kun "
 "valittuna on ainoastaan yksi tiedosto."
 
@@ -3433,152 +3437,3 @@ msgstr "Avaa valitut kansiot Thunarissa"
 #: ../thunar/thunar-settings.desktop.in.h:1
 msgid "Configure the Thunar file manager"
 msgstr "Thunar-tiedostonhallinnan asetukset"
-
-#~ msgid "Failed to execute \"%s\""
-#~ msgstr "Kohteen \"%s\" suorittaminen epäonnistui"
-
-#~ msgid "Unknown error"
-#~ msgstr "Tuntematon virhe"
-
-#~ msgid "Moving files..."
-#~ msgstr "Siirretään tiedostoja..."
-
-#~ msgid "Failed to read folder contents"
-#~ msgstr "Kansion sisällön lukeminen epäonnistui"
-
-#~ msgid "Failed to parse file"
-#~ msgstr "Tiedoston jäsentäminen epäonnistui"
-
-#~ msgid "Invalid file name"
-#~ msgstr "Tiedostonimi ei kelpaa"
-
-#~ msgid "Only local files may be renamed"
-#~ msgstr "Voit nimetä uudelleen vain paikallisia tiedostoja"
-
-#~ msgid "Failed to open \"%s\" for reading"
-#~ msgstr "Kohteen \"%s\" avaaminen luettavaksi epäonnistui"
-
-#~ msgid "Failed to open \"%s\" for writing"
-#~ msgstr "Kohteen \"%s\" avaaminen kirjoitettavaksi epäonnistui"
-
-#~ msgid "Failed to write data to \"%s\""
-#~ msgstr "Kohteeseen \"%s\" ei voi kirjoittaa"
-
-#~ msgid "Failed to read data from \"%s\""
-#~ msgstr "Kohteesta \"%s\" ei voi lukea"
-
-#~ msgid "Failed to determine file info for \"%s\""
-#~ msgstr "Tiedoston \"%s\" tietojen selvittäminen epäonnistui"
-
-#~ msgid "Failed to create named fifo \"%s\""
-#~ msgstr "Nimetyn putken \"%s\" luominen epäonnistui"
-
-#~ msgid "Failed to create symbolic link \"%s\""
-#~ msgstr "Symbolisen linkin \"%s\" luominen epäonnistui"
-
-#~ msgid "Special files cannot be copied"
-#~ msgstr "Erikoistiedostoja ei voi kopioida"
-
-#~ msgid "Symbolic links are not supported"
-#~ msgstr "Symbolisia linkkejä ei tueta"
-
-#~ msgid "Failed to copy \"%s\" to \"%s\""
-#~ msgstr "Tiedoston \"%s\" kopioiminen kohteeseen \"%s\" epäonnistui."
-
-#~ msgid "Failed to link \"%s\" to \"%s\""
-#~ msgstr "Tiedoston \"%s\" linkittäminen kohteeseen \"%s\" epäonnistui."
-
-#~ msgid "Failed to move \"%s\" to \"%s\""
-#~ msgstr "Tiedoston \"%s\" siirto kohteeseen \"%s\" epäonnistui."
-
-#~ msgid "The URI \"%s\" does not refer to a valid resource in the trash"
-#~ msgstr "URI \"%s\" ei osoita kelvolliseen kohteeseen roskakorissa"
-
-#~ msgid "Trash"
-#~ msgstr "Roskakori"
-
-#~ msgid "Cannot move or copy files within the trash"
-#~ msgstr "Tiedostoja ei voi kopioida tai siirtää roskakorissa"
-
-#~ msgid "Failed to load application from file %s"
-#~ msgstr "Sovelluksen avaaminen tiedostosta %s epäonnistui"
-
-#~ msgid "Failed to remove \"%s\": %s"
-#~ msgstr "Kohteen \"%s\" poistaminen epäonnistui: %s"
-
-#~ msgid "Command"
-#~ msgstr "Komento"
-
-#~ msgid "The command to run the mime handler"
-#~ msgstr "Mime-käsittelijän suorituskomento"
-
-#~ msgid "Flags"
-#~ msgstr "Liput"
-
-#~ msgid "The flags for the mime handler"
-#~ msgstr "Mime-käsittelijän liput"
-
-#~ msgid "Icon"
-#~ msgstr "Kuvake"
-
-#~ msgid "The icon of the mime handler"
-#~ msgstr "Mime-käsittelijän kuvake"
-
-#~ msgid "The name of the mime handler"
-#~ msgstr "Mime-käsittelijän nimi"
-
-#~ msgid "%s document"
-#~ msgstr "%s-tiedosto"
-
-#~ msgid "The URI \"%s\" is invalid"
-#~ msgstr "URI \"%s\" ei kelpaa"
-
-#~ msgid "Path too long to fit into buffer"
-#~ msgstr "Polku ei mahdu puskuriin"
-
-#~ msgid "URI too long to fit into buffer"
-#~ msgstr "URI ei mahdu puskuriin"
-
-#~ msgid "Operation not supported"
-#~ msgstr "Toimintoa ei tueta"
-
-#~ msgid "Invalidly escaped characters"
-#~ msgstr "Virheellisiä pakomerkkejä"
-
-#~ msgid "The desired thumbnail size"
-#~ msgstr "Pienoiskuvan koko"
-
-#~ msgid "Failed to connect to the HAL daemon: %s"
-#~ msgstr "HAL-taustaprosessiin yhdistäminen epäonnistui: %s"
-
-#~ msgid "Create the folder \"%s\"?"
-#~ msgstr "Luodaanko kansio \"%s\"?"
-
-#~ msgid "C_reate Folder"
-#~ msgstr "Luo _kansio"
-
-#~ msgid "Failed to change group"
-#~ msgstr "Ryhmän vaihtaminen epäonnistui"
-
-#~ msgid "Failed to apply new permissions"
-#~ msgstr "Oikeuksien asettaminen epäonnistui"
-
-#~ msgid ""
-#~ "Install the \"thunar-volman\" package to use\n"
-#~ "the volume management support in Thunar."
-#~ msgstr ""
-#~ "Asenna paketti \"thunar-volman\" voidaksesi\n"
-#~ "käyttää Thunarin taltionhallintaa."
-
-#~ msgid ""
-#~ "Build thunar-vfs with HAL support to use\n"
-#~ "the volume management support in Thunar."
-#~ msgstr ""
-#~ "Käännä thunar-vfs HAL-tuella voidaksesi\n"
-#~ "käyttää Thunarin taltionhallintaa."
-
-#~ msgid "_Unmount Volume"
-#~ msgstr "_Irrota taltio"
-
-#~ msgid "Failed to unmount \"%s\""
-#~ msgstr "Kohteen \"%s\" irrottaminen epäonnistui"
