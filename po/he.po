@@ -2118,40 +2118,39 @@ msgstr "אוסף קבצים..."
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:665
-#, fuzzy, c-format
+#, c-format
 msgid "Trying to restore \"%s\""
-msgstr "כישלון בשחזור \"%s\""
+msgstr "מתבצע ניסיון לשחזור \"%s\""
 
 #: ../thunar/thunar-transfer-job.c:690
-#, fuzzy, c-format
+#, c-format
 msgid "The folder \"%s\" does not exist anymore but is required to restore the file \"%s\" from the trash"
-msgstr "התיקייה \"%s\" לא קיימת, אבל היא דרוש בשביל לשחזר את הקובץ \"%s\" מסל המחזור. האם ברצונך ליצור את התיקייה?"
+msgstr "התיקייה \"%s\" אינה קיימת עוד אך היא נדרשת לצורך שחזור הקובץ \"%s\" מהאשפה"
 
 #: ../thunar/thunar-transfer-job.c:715
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to restore the folder \"%s\""
-msgstr "לא ניתן לפתוח את הקובץ \"%s\""
+msgstr "ארע כשל בשחזור התיקייה \"%s\""
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:732
-#, fuzzy, c-format
+#, c-format
 msgid "Trying to move \"%s\""
-msgstr "לא ניתן למחוק את \"%s\""
+msgstr "מתבצע ניסיון להעברת \"%s\""
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:757
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
-msgstr ""
+msgstr "לא ניתן להעביר את \"%s\" ישירות. הקבצים להעתקה נאספים..."
 
 #: ../thunar/thunar-trash-action.c:104
 msgid "T_rash"
 msgstr "_סל מחזור"
 
 #: ../thunar/thunar-trash-action.c:162
-#, fuzzy
 msgid "Display the contents of the trash can"
-msgstr "לא ניתן להתחבר אל HAL: %s"
+msgstr "הצגת התכנים של סל האשפה"
 
 #: ../thunar/thunar-tree-model.c:619
 msgid "Loading..."
@@ -2184,9 +2183,9 @@ msgstr "היום"
 
 #. TRANSLATORS: file was modified less than one day ago
 #: ../thunar/thunar-util.c:190
-#, fuzzy, c-format
+#, c-format
 msgid "Today at %X"
-msgstr "היום"
+msgstr "היום בשעה %X"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:198
@@ -2195,21 +2194,21 @@ msgstr "אתמול"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:203
-#, fuzzy, c-format
+#, c-format
 msgid "Yesterday at %X"
-msgstr "אתמול"
+msgstr "אתמול בשעה %X"
 
 #. Days from last week
 #: ../thunar/thunar-util.c:211
 #, c-format
 msgid "%A at %X"
-msgstr ""
+msgstr "%A בשעה %X"
 
 #. Any other date
 #: ../thunar/thunar-util.c:216
 #, c-format
 msgid "%x at %X"
-msgstr ""
+msgstr "%x בשעה %X"
 
 #: ../thunar/thunar-window.c:293
 msgid "Open New _Window"
@@ -2312,44 +2311,36 @@ msgid "Go to the home folder"
 msgstr "עבור לתיקיית הבית"
 
 #: ../thunar/thunar-window.c:310
-#, fuzzy
 msgid "Go to the desktop folder"
-msgstr "עבור לתיקיית הבית"
+msgstr "מעבר לתיקיית שולחן העבודה"
 
 #: ../thunar/thunar-window.c:311
-#, fuzzy
 msgid "Browse the file system"
-msgstr "עיין במערכת הקבצים עם מנהל הקבצים"
+msgstr "עיון במערכת הקבצים"
 
 #: ../thunar/thunar-window.c:312
-#, fuzzy
 msgid "Go to the documents folder"
-msgstr "עבור לתיקיית הבית"
+msgstr "מעבר לתיקיית המסמכים"
 
 #: ../thunar/thunar-window.c:313
-#, fuzzy
 msgid "Go to the downloads folder"
-msgstr "עבור לתיקיית התבניות"
+msgstr "מעבר לתיקיית ההורדות"
 
 #: ../thunar/thunar-window.c:314
-#, fuzzy
 msgid "Go to the music folder"
-msgstr "עבור לתיקיית הבית"
+msgstr "מעבר לתיקיית המוזיקה"
 
 #: ../thunar/thunar-window.c:315
-#, fuzzy
 msgid "Go to the pictures folder"
-msgstr "עבור לתיקיית התבניות"
+msgstr "מעבר לתיקיית התמונות"
 
 #: ../thunar/thunar-window.c:316
-#, fuzzy
 msgid "Go to the videos folder"
-msgstr "עבור לתיקיית הבית"
+msgstr "מעבר לתיקיית הווידאו"
 
 #: ../thunar/thunar-window.c:317
-#, fuzzy
 msgid "Go to the public folder"
-msgstr "עבור לתיקיית התבניות"
+msgstr "מעבר לתיקייה הציבורית"
 
 #: ../thunar/thunar-window.c:318
 msgid "T_emplates"
@@ -2460,16 +2451,16 @@ msgstr "הצג את תוכן התיקייה בתצוגת רשימה קומפקט
 #. add the label with the root warning
 #: ../thunar/thunar-window.c:812
 msgid "Warning, you are using the root account, you may harm your system."
-msgstr ""
+msgstr "אזהרה, נעשה שימוש בחשבון העל על ידיך, עלול להיגרם נזק למערכת."
 
 #. create the network action
 #: ../thunar/thunar-window.c:1440
 msgid "Network"
-msgstr ""
+msgstr "רשת"
 
 #: ../thunar/thunar-window.c:1440
 msgid "Browse the network"
-msgstr ""
+msgstr "עיון ברשת"
 
 #: ../thunar/thunar-window.c:1480
 #, c-format
@@ -2482,14 +2473,13 @@ msgstr "לא ניתן לפתוח את תיקיית ההורה"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:1978
-#, fuzzy
 msgid "Failed to open the home folder"
-msgstr "לא ניתן לפתוח את תיקיית התבניות"
+msgstr "ארע כשל בפתיחת תיקיית הבית"
 
 #: ../thunar/thunar-window.c:2039
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open folder \"%s\""
-msgstr "לא ניתן לפתוח את הקובץ \"%s\""
+msgstr "ארע כשל בפתיחת התיקייה \"%s\""
 
 #. display the "About Templates" dialog
 #: ../thunar/thunar-window.c:2167
@@ -2506,6 +2496,9 @@ msgid ""
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr ""
+"אם ישנו סוג מסוים של מסמכים שנוצר על ידיך לעתים קרובות, באפשרותך ליצור עותק של קובץ זה ולשים אותו בתיקייה זו. Thunar יוסיף רשומה למסמך זה בתפריט \"יצירת מסמך\".\n"
+"\n"
+"כעת באפשרותך לבחור ברשומה מהתפריט \"יצירת מסמך\" ולהעתיק את המסמך שייווצר לתיקייה הנצפית."
 
 #: ../thunar/thunar-window.c:2208
 msgid "Do _not display this message again"
@@ -2513,9 +2506,8 @@ msgstr "_אל תציג הודעה זו בעתיד"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2252
-#, fuzzy
 msgid "Failed to open the file system root folder"
-msgstr "לא ניתן לפתוח את תיקיית התבניות"
+msgstr "ארע כשל בפתיחת תיקיית העל של מערכת הקבצים"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2287
