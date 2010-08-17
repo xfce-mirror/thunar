@@ -2563,11 +2563,11 @@ msgstr "כתובת העזרה"
 
 #: ../thunarx/thunarx-renamer.c:131
 msgid "The URL to the documentation of the renamer"
-msgstr ""
+msgstr "הכתובת אל תיעוד משנה השמות"
 
 #: ../thunarx/thunarx-renamer.c:146
 msgid "The user visible name of the renamer"
-msgstr ""
+msgstr "השם שיופיע למשתמש של משנה השמות"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:150
 msgid "Description:"
@@ -2575,7 +2575,7 @@ msgstr "תיאור:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:157
 msgid "The generic name of the entry, for example \"Web Browser\" in case of Firefox."
-msgstr ""
+msgstr "השם הגנרי של הרשומה, לדוגמה \"דפדפן\" במקרה של פיירפוקס."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:173
 msgid "Command:"
@@ -2599,7 +2599,7 @@ msgstr "הערה:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:224
 msgid "Tooltip for the entry, for example \"View sites on the Internet\" in case of Firefox. Should not be redundant with the name or the description."
-msgstr ""
+msgstr "חלונית עצה עבור הרשומה, לדוגמה \"צפייה באתרים באינטרנט\" במקרה של פיירפוקס. שלא לבלבל בין השם או התיאור."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:244
 msgid "Options:"
@@ -2821,14 +2821,12 @@ msgid "Numbering"
 msgstr "מספור"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:175
-#, fuzzy
 msgid "Remove _From Position:"
-msgstr "למחוק מ_נקודה:"
+msgstr "הסרה מה_מיקום"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:210
-#, fuzzy
 msgid "_To Position:"
-msgstr "_אל נקודה:"
+msgstr "_אל המיקום:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:426
 msgid "Remove Characters"
@@ -2886,82 +2884,78 @@ msgstr ""
 #: ../plugins/thunar-sendto-email/main.c:199
 #: ../plugins/thunar-sendto-email/main.c:218
 msgid "Send _directly"
-msgstr ""
+msgstr "שליחה י_שירות"
 
 #: ../plugins/thunar-sendto-email/main.c:200
 msgid "Send com_pressed"
-msgstr ""
+msgstr "שליחת קובץ _דחוס"
 
 #: ../plugins/thunar-sendto-email/main.c:202
 msgid "When sending a file via email, you can either choose to send the file directly, as is, or compress the file before attaching it to an email. It is highly recommended to compress large files before sending them."
-msgstr ""
+msgstr "בעת שליחת קובץ באמצעות דוא״ל, ניתן לבחור לשלוח את הקובץ ישירות כפי שהוא או לדחוס את הקובץ בטרם הוספתו להודעת דוא״ל. מומלץ בחום לדחוס קבצים גדולים בטרם שליחתם."
 
 #: ../plugins/thunar-sendto-email/main.c:213
 #, c-format
 msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "האם לשלוח קובץ %d כארכיון דחוס?"
+msgstr[1] "האם לשלוח %d קבצים כארכיון דחוס?"
 
 #: ../plugins/thunar-sendto-email/main.c:219
 msgid "Send as _archive"
-msgstr ""
+msgstr "שליחה כ_ארכיון"
 
 #: ../plugins/thunar-sendto-email/main.c:221
 msgid "When sending multiple files via email, you can either choose to send the files directly, attaching multiple files to an email, or send all files compressed into a single archive file and attach the archive. It is highly recommended to send multiple large files as archive."
-msgstr ""
+msgstr "בעת שליחת מספר קבצים דרך דוא״ל, ניתן לבחור לשלוח את הקבצים ישירות, בצירוף מספר קבצים לדוא״ל או לשלוח את כל הקבצים דחוסים בקובץ ארכיון יחיד ולהוסיף את הארכיון. מומלץ בחום לשלוח מספר קבצים גדולים יחס כארכיון."
 
 #. allocate the progress dialog
 #. setup the label
 #: ../plugins/thunar-sendto-email/main.c:270
 #: ../plugins/thunar-sendto-email/main.c:295
-#, fuzzy
 msgid "Compressing files..."
-msgstr "מעתיק קבצים..."
+msgstr "הקבצים נדחסים..."
 
 #. tell the user that the command failed
 #: ../plugins/thunar-sendto-email/main.c:320
 #, c-format
 msgid "ZIP command terminated with error %d"
-msgstr ""
+msgstr "פקודת ה־ZIP חוסלה עם קוד השגיאה %d"
 
 #: ../plugins/thunar-sendto-email/main.c:408
-#, fuzzy
 msgid "Failed to create temporary directory"
-msgstr "לא ניתן ליצור ספרייה \"%s\""
+msgstr "ארע כשל ביצירת תיקייה זמנית"
 
 #: ../plugins/thunar-sendto-email/main.c:470
 #: ../plugins/thunar-sendto-email/main.c:481
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create symbolic link for \"%s\""
-msgstr "לא ניתן ליצור את הקישור הסימבולי \"%s\""
+msgstr "ארע כשל ביצירת קישור סימבולי עבור \"%s\""
 
 #. tell the user that we failed to compress the file(s)
 #: ../plugins/thunar-sendto-email/main.c:505
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
-msgstr[0] "לא ניתן לפתוח קובץ %d"
-msgstr[1] "לא ניתן לפתוח קובץ %d"
+msgstr[0] "ארע כשל בדחיסת קובץ %d"
+msgstr[1] "ארע כשל בדחיסת %d קבצים"
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:656
-#, fuzzy
 msgid "Failed to compose new email"
-msgstr "לא ניתן לפתוח קובץ %d"
+msgstr "ארע כשל בחיבור הודעה חדשה"
 
 #: ../plugins/thunar-sendto-email/thunar-sendto-email.desktop.in.in.h:1
 msgid "Mail Recipient"
-msgstr ""
+msgstr "נמען דוא״ל"
 
 #. tell the user that we failed to connect to the trash
 #: ../plugins/thunar-tpa/thunar-tpa.c:249
 #: ../plugins/thunar-tpa/thunar-tpa.c:290
 #: ../plugins/thunar-tpa/thunar-tpa.c:312
 #: ../plugins/thunar-tpa/thunar-tpa.c:339
-#, fuzzy
 msgid "Failed to connect to the Trash"
-msgstr "לא ניתן להתחבר אל HAL: %s"
+msgstr "ארע כשל בהתחברות אל האשפה"
 
 #. tell the user whether the trash is full or empty
 #: ../plugins/thunar-tpa/thunar-tpa.c:264
