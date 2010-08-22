@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-20 04:05+0000\n"
+"POT-Creation-Date: 2010-08-22 10:05+0000\n"
 "PO-Revision-Date: 2009-08-15 02:53+0200\n"
 "Last-Translator: Jannis Pohlmann <jannis@xfce.org>\n"
 "Language-Team: German <xfce-i18n@xfce.org>\n"
@@ -153,19 +153,19 @@ msgid "Copying files..."
 msgstr "Kopiere Dateien..."
 
 #: ../thunar/thunar-application.c:1277
-#, fuzzy, c-format
+#, c-format
 msgid "Copying files to \"%s\"..."
-msgstr "Dateien werden nach \"%s\" kopiert..."
+msgstr "Dateien werden nach »%s« kopiert..."
 
 #: ../thunar/thunar-application.c:1323
-#, fuzzy, c-format
+#, c-format
 msgid "Creating symbolic links in \"%s\"..."
-msgstr "Erstelle Verknüpfungen..."
+msgstr "Erstelle Verknüpfungen in »%s«..."
 
 #: ../thunar/thunar-application.c:1376
-#, fuzzy, c-format
+#, c-format
 msgid "Moving files into \"%s\"..."
-msgstr "Dateien werden in den Papierkorb verschoben..."
+msgstr "Dateien werden in »%s« verschoben..."
 
 #: ../thunar/thunar-application.c:1461
 #, c-format
@@ -296,9 +296,9 @@ msgid "Failed to add new application \"%s\""
 msgstr "Die Anwendung »%s« konnte nicht hinzugefügt werden"
 
 #: ../thunar/thunar-chooser-dialog.c:492
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to execute application \"%s\""
-msgstr "Die Anwendung »%s« konnte nicht hinzugefügt werden"
+msgstr "Die Anwendung »%s« konnte nicht ausgeführt werden"
 
 #. append the "Remove Launcher" item
 #: ../thunar/thunar-chooser-dialog.c:564
@@ -593,12 +593,12 @@ msgid "_Replace"
 msgstr "_Ersetzen"
 
 #: ../thunar/thunar-dialogs.c:597
-#, fuzzy, c-format
+#, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
 msgstr "Dieser Ordner enthält bereits eine Verknüpfung »%s«."
 
 #: ../thunar/thunar-dialogs.c:602
-#, fuzzy, c-format
+#, c-format
 msgid "This folder already contains a folder \"%s\"."
 msgstr "Dieser Ordner enthält bereits einen Ordner »%s«."
 
@@ -608,14 +608,12 @@ msgid "This folder already contains a file \"%s\"."
 msgstr "Dieser Ordner enthält bereits eine Datei »%s«."
 
 #: ../thunar/thunar-dialogs.c:619
-#, fuzzy
 msgid "ReplaceDialogPart1|Do you want to replace the link"
-msgstr "Wollen Sie die existierende Verknüpfung"
+msgstr "Wollen Sie die vorhandene Verknüpfung"
 
 #: ../thunar/thunar-dialogs.c:621
-#, fuzzy
 msgid "ReplaceDialogPart1|Do you want to replace the existing folder"
-msgstr "Wollen Sie den existierenden Ordner"
+msgstr "Wollen Sie den vorhandenen Ordner"
 
 #: ../thunar/thunar-dialogs.c:623
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
@@ -634,12 +632,10 @@ msgid "Modified:"
 msgstr "Geändert:"
 
 #: ../thunar/thunar-dialogs.c:650
-#, fuzzy
 msgid "ReplaceDialogPart2|with the following link?"
 msgstr "mit dieser ersetzen?"
 
 #: ../thunar/thunar-dialogs.c:652
-#, fuzzy
 msgid "ReplaceDialogPart2|with the following folder?"
 msgstr "mit diesem ersetzen?"
 
@@ -738,9 +734,9 @@ msgid "The root folder has no parent"
 msgstr "Der Wurzelordner hat keinen übergeordneten Ordner"
 
 #: ../thunar/thunar-file.c:974
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to parse the desktop file: %s"
-msgstr "Die Datei »%s« konnte nicht erstellt werden"
+msgstr "Die Desktop-Datei »%s« konnte nicht geparst werden"
 
 #: ../thunar/thunar-file.c:1012
 #, c-format
@@ -794,14 +790,14 @@ msgid "The file \"%s\" already exists"
 msgstr "Die Datei »%s« existiert bereits"
 
 #: ../thunar/thunar-io-jobs.c:184
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create empty file \"%s\": %s"
-msgstr "Die Datei »%s« konnte nicht erstellt werden"
+msgstr "Die leere Datei »%s« konnte nicht erstellt werden: %s"
 
 #: ../thunar/thunar-io-jobs.c:321
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create directory \"%s\": %s"
-msgstr "Konnte den Ordner »%s« nicht erstellen"
+msgstr "Konnte den Ordner »%s« nicht erstellen: %s"
 
 #. tell the user that we're preparing to unlink the files
 #: ../thunar/thunar-io-jobs.c:385
@@ -809,9 +805,9 @@ msgid "Preparing..."
 msgstr "Vorbereitung..."
 
 #: ../thunar/thunar-io-jobs.c:447
-#, fuzzy, c-format
+#, c-format
 msgid "Could not delete file \"%s\": %s"
-msgstr "Konnte »%s« nicht löschen"
+msgstr "Konnte »%s« nicht löschen: %s"
 
 #: ../thunar/thunar-io-jobs.c:595
 #, c-format
@@ -820,19 +816,19 @@ msgstr "Konnte Verknüpfung \"%s\" nicht erstellen, weil es keine lokale Datei i
 
 #. generate a useful error message
 #: ../thunar/thunar-io-jobs.c:782
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change the owner of \"%s\": %s"
-msgstr "Der Besitzer von »%s« konnte nicht geändert werden"
+msgstr "Der Besitzer von »%s« konnte nicht geändert werden: %s"
 
 #: ../thunar/thunar-io-jobs.c:783
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change the group of \"%s\": %s"
-msgstr "Die Gruppe von »%s« konnte nicht geändert werden"
+msgstr "Die Gruppe von »%s« konnte nicht geändert werden: %s"
 
 #: ../thunar/thunar-io-jobs.c:939
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
-msgstr "Die Berechtigungen von »%s« konnten nicht geändert werden"
+msgstr "Die Berechtigungen von »%s« konnten nicht geändert werden: %s"
 
 #. Copy/link name for n <= 3
 #: ../thunar/thunar-io-jobs-util.c:37
@@ -869,12 +865,12 @@ msgstr "Dritte Verknüpfung mit »%s«"
 
 #. Fallback copy/link name for n >= 4
 #: ../thunar/thunar-io-jobs-util.c:42
-#, fuzzy, c-format
+#, c-format
 msgid "%uth copy of %s"
 msgstr "%ute Kopie von »%s«"
 
 #: ../thunar/thunar-io-jobs-util.c:42
-#, fuzzy, c-format
+#, c-format
 msgid "%uth link to %s"
 msgstr "%ute Verknüpfung mit »%s«"
 
@@ -894,9 +890,8 @@ msgid "Do you want to overwrite it?"
 msgstr "Wollen Sie diese überschreiben?"
 
 #: ../thunar/thunar-job.c:388
-#, fuzzy
 msgid "Do you want to create it?"
-msgstr "Wollen Sie diese überschreiben?"
+msgstr "Wollen Sie diese anlegen?"
 
 #: ../thunar/thunar-job.c:490
 msgid "Do you want to skip it?"
@@ -1086,7 +1081,7 @@ msgid "\"%s\" (%s) link to %s"
 msgstr "»%s« (%s) Verknüpfung mit »%s«"
 
 #: ../thunar/thunar-list-model.c:2344
-#, fuzzy, c-format
+#, c-format
 msgid "\"%s\" shortcut"
 msgstr "_Lesezeichen"
 
@@ -1202,19 +1197,18 @@ msgid "_Location:"
 msgstr "_Ort:"
 
 #: ../thunar/thunar-location-entry.c:382
-#, fuzzy, c-format
+#, c-format
 msgid "File does not exist"
-msgstr "Datei existiert nicht"
+msgstr "Datei ist nicht vorhanden"
 
 #: ../thunar/thunar-location-entry.c:726
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to determine the mount point of \"%s\""
 msgstr "Der Einhängepunkt für »%s« konnte nicht bestimmt werden"
 
 #: ../thunar/thunar-notify.c:93
-#, fuzzy
 msgid "Unmounting device"
-msgstr "Aushängen des Geräts"
+msgstr "Gerät wird ausgehängt"
 
 #: ../thunar/thunar-notify.c:94
 #, c-format
@@ -1223,24 +1217,24 @@ msgstr "Das Gerät \"%s\" wird vom System ausgehängt. Bitte entfernen Sie nicht
 
 #: ../thunar/thunar-notify.c:100 ../thunar/thunar-notify.c:207
 msgid "Writing data to device"
-msgstr ""
+msgstr "Daten werden auf Gerät geschrieben"
 
 #: ../thunar/thunar-notify.c:101 ../thunar/thunar-notify.c:208
 #, c-format
 msgid "There is data that needs to be written to the device \"%s\" before it can be removed. Please do not remove the media or disconnect the drive"
-msgstr ""
+msgstr "Es müssen noch Daten auf das Gerät »%s« geschrieben werden, bevor es entfernt werden kann. Bitte entfernen Sie das Medium nicht."
 
 #: ../thunar/thunar-notify.c:201
 msgid "Ejecting device"
-msgstr ""
+msgstr "Gerät wird ausgeworfen"
 
 #: ../thunar/thunar-notify.c:202
 #, c-format
 msgid "The device \"%s\" is being ejected. This may take some time"
-msgstr ""
+msgstr "Das Gerät »%s« wird ausgeworfen. Dies kann einige Zeit dauern."
 
 #: ../thunar/thunar-misc-jobs.c:84
-#, fuzzy, c-format
+#, c-format
 msgid "No templates installed"
 msgstr "Keine Vorlagen installiert"
 
@@ -1616,37 +1610,36 @@ msgstr "Die Einstellungen der Datenträgerverwaltung konnten nicht geöffnet wer
 
 #: ../thunar/thunar-progress-dialog.c:94
 msgid "File Operation Progress"
-msgstr ""
+msgstr "Fortschritt der Dateioperation"
 
 #. build the tooltip text
 #: ../thunar/thunar-progress-dialog.c:296
 #, c-format
 msgid "%d file operation running"
 msgid_plural "%d file operations running"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d Dateioperation wird ausgeführt"
+msgstr[1] "%d Dateioperationen werden ausgeführt"
 
 #: ../thunar/thunar-progress-view.c:326
-#, fuzzy
 msgid "Cancelling..."
 msgstr "Abbrechen..."
 
 #: ../thunar/thunar-progress-view.c:480
-#, fuzzy, c-format
+#, c-format
 msgid "%lu hour remaining"
 msgid_plural "%lu hours remaining"
 msgstr[0] "(%lu Stunde verbleibend)"
 msgstr[1] "(%lu Stunden verbleibend)"
 
 #: ../thunar/thunar-progress-view.c:485
-#, fuzzy, c-format
+#, c-format
 msgid "%lu minute remaining"
 msgid_plural "%lu minutes remaining"
 msgstr[0] "(%lu Minute verbleibend)"
 msgstr[1] "(%lu Minuten verbleibend)"
 
 #: ../thunar/thunar-progress-view.c:490
-#, fuzzy, c-format
+#, c-format
 msgid "%lu second remaining"
 msgid_plural "%lu seconds remaining"
 msgstr[0] "(%lu Sekunde verbleibend)"
@@ -2133,31 +2126,31 @@ msgstr "Sammle Dateien..."
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:665
-#, fuzzy, c-format
+#, c-format
 msgid "Trying to restore \"%s\""
-msgstr "Die Datei »%s« konnte nicht wieder hergestellt werden"
+msgstr "Die Datei »%s« konnte nicht wiederhergestellt werden"
 
 #: ../thunar/thunar-transfer-job.c:690
-#, fuzzy, c-format
+#, c-format
 msgid "The folder \"%s\" does not exist anymore but is required to restore the file \"%s\" from the trash"
-msgstr "Der Ordner »%s« existiert nicht mehr, wird allerdings benötigt, um die Datei »%s« aus dem Papierkorb wieder herzustellen. Soll der Ordner erstellt werden?"
+msgstr "Der Ordner »%s« ist nicht mehr vorhanden. Sie wird allerdings benötigt, um die Datei »%s« aus dem Papierkorb wiederherzustellen. Soll der Ordner erstellt werden?"
 
 #: ../thunar/thunar-transfer-job.c:715
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to restore the folder \"%s\""
-msgstr "Konnte Ordner »%s« nicht öffnen"
+msgstr "Konnte Ordner »%s« nicht wiederherstellen"
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:732
-#, fuzzy, c-format
+#, c-format
 msgid "Trying to move \"%s\""
-msgstr "Die Datei »%s« konnte nicht gelöscht werden"
+msgstr "Die Datei »%s« konnte nicht verschoben werden"
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:757
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
-msgstr ""
+msgstr "Die Datei »%s« konnte nicht direkt verschoben werden. Sammle Dateien zum Kopieren...."
 
 #: ../thunar/thunar-trash-action.c:104
 msgid "T_rash"
@@ -2330,9 +2323,8 @@ msgid "Go to the desktop folder"
 msgstr "Den Desktop-Ordner öffnen"
 
 #: ../thunar/thunar-window.c:311
-#, fuzzy
 msgid "Browse the file system"
-msgstr "Das Dateisystem im Dateimanager anzeigen"
+msgstr "Dateisystem durchsuchen"
 
 #: ../thunar/thunar-window.c:312
 msgid "Go to the documents folder"
@@ -2475,7 +2467,6 @@ msgid "Network"
 msgstr "Netzwerk"
 
 #: ../thunar/thunar-window.c:1440
-#, fuzzy
 msgid "Browse the network"
 msgstr "Netzwerk durchsuchen"
 
@@ -2523,9 +2514,8 @@ msgstr "Diese Meldung in Zukunft _nicht mehr anzeigen"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2252
-#, fuzzy
 msgid "Failed to open the file system root folder"
-msgstr "Der Ordner mit den Vorlagen konnte nicht geöffnet werden"
+msgstr "Das Stammverzeichnis konnte nicht geöffnet werden"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2287
@@ -2534,9 +2524,8 @@ msgstr "Der Inhalt des Papierkorbs konnte nicht angezeigt werden"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2322
-#, fuzzy
 msgid "Failed to browse the network"
-msgstr "Der persönliche Ordner konnte nicht geöffnet werden"
+msgstr "Das Netzwerk konnte nicht durchsucht werden"
 
 #: ../thunar/thunar-window.c:2364
 msgid ""
@@ -3085,13 +3074,12 @@ msgid "Browse the file system to select an application to use for this action."
 msgstr "Das Dateisystem durchsuchen, um eine Anwendung für diese Aktion auszuwählen."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:203
-#, fuzzy
 msgid "Use Startup Notification"
-msgstr "_Visuelle Rückmeldung über Programmstart"
+msgstr "Benachrichtigung über Programmstart"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:204
 msgid "Enable this option if you want a waiting cursor to be shown while the action is launched. This is also highly recommended if you have focus stealing prevention enabled in your window manager."
-msgstr ""
+msgstr "Aktivieren Sie dies, wenn Sie einen wartenden Zeiger dargstellt möchten, während die Aktion gestartet wird. Dies wird auch wärmstens empfohlen, wenn der Fokusverlust aktiv von der Fensterverwaltung verhindert wird."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:210
 msgid "_Icon:"
