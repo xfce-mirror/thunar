@@ -9,7 +9,10 @@ INCLUDES =								\
 	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"				\
 	$(PLATFORM_CPPFLAGS)
 
-libexec_PROGRAMS =							\
+thunar_sendto_emaildir =						\
+	$(libdir)/Thunar
+
+thunar_sendto_email_PROGRAMS =						\
 	thunar-sendto-email
 
 thunar_sendto_email_SOURCES =						\
@@ -27,7 +30,7 @@ desktopdir = $(datadir)/Thunar/sendto
 desktop_in_in_files = thunar-sendto-email.desktop.in.in
 desktop_in_files = $(desktop_in_in_files:.desktop.in.in=.desktop.in)
 %.desktop.in: %.desktop.in.in
-	sed -e "s,\@libexecdir\@,$(libexecdir),g" < $< > $@
+	sed -e "s,\@libdir\@,$(libdir),g" < $< > $@
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
 

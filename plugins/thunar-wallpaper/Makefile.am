@@ -3,7 +3,6 @@ INCLUDES =								\
 	-I$(top_srcdir)							\
 	-DG_LOG_DOMAIN=\"thunar-wallpaper-plugin\"			\
 	-DEXO_API_SUBJECT_TO_CHANGE					\
-	-DLIBEXECDIR=\"$(libexecdir)\"					\
 	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"				\
 	$(PLATFORM_CPPFLAGS)
 
