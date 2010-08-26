@@ -62,7 +62,7 @@ ThunarBulkRename: ThunarBulkRename.in Makefile
 ThunarHelp: ThunarHelp.in Makefile
 	$(AM_V_GEN) (							\
 		rm -f ThunarHelp.gen ThunarHelp				\
-		&& sed -e "s,\@datadir\@,$(datadir),g" 			\
+		&& sed -e "s,\@docdir\@,$(docdir),g" 			\
 			< $(srcdir)/ThunarHelp.in			\
 			> ThunarHelp.gen				\
 		&& mv ThunarHelp.gen ThunarHelp				\
