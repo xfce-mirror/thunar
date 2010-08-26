@@ -7,7 +7,7 @@ INCLUDES =								\
 	-DG_LOG_DOMAIN=\"libthunar-tpa\"				\
 	$(PLATFORM_CPPFLAGS)
 
-plugindir = $(libdir)/xfce4/panel-plugins
+plugindir = $(libdir)/xfce4/panel/plugins
 plugin_LTLIBRARIES =							\
 	libthunar-tpa.la
 
