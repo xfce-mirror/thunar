@@ -1,9 +1,10 @@
 SUBDIRS = \
-	images
+	images \
+	po
 
 STYLESHEET = $(PACKAGE)-html.xsl
 DOCUMENT = $(PACKAGE).xml
-LINGUAS = $(shell cd $(top_srcdir)/po-doc && echo `/bin/ls *.po | sed 's,[.]po,,g'`)
+LINGUAS = $(shell cd $(srcdir)/po && echo `/bin/ls *.po | sed 's,[.]po,,g'`)
 ALL_LINGUAS = C $(LINGUAS)
 
 # install the html files to the destdir
@@ -45,11 +46,11 @@ if GENERATE_DOCUMENTATION
 
 # regenerate po(t) files
 update-po:
-	rm -f $(top_srcdir)/po-doc/$(GETTEXT_PACKAGE).pot; \
-	$(XML2PO) -o $(top_srcdir)/po-doc/$(GETTEXT_PACKAGE).pot $(srcdir)/$(DOCUMENT); \
+	rm -f $(srcdir)/po/$(GETTEXT_PACKAGE).pot; \
+	$(XML2PO) -o $(srcdir)/po/$(GETTEXT_PACKAGE).pot $(srcdir)/$(DOCUMENT); \
 	for lang in $(LINGUAS); do \
-		pofile=$(top_srcdir)/po-doc/$$lang.po; \
-		$(XML2PO) -u $(top_srcdir)/po-doc/$$lang.po $(srcdir)/$(DOCUMENT); \
+		pofile=$(srcdir)/po/$$lang.po; \
+		$(XML2PO) -u $(srcdir)/po/$$lang.po $(srcdir)/$(DOCUMENT); \
 	done
 
 # build the translated help files
@@ -58,7 +59,7 @@ doc-build.stamp: $(srcdir)/$(DOCUMENT) $(srcdir)/$(STYLESHEET)
 	rm -rf $(srcdir)/html; \
 	echo; \
 	for lang in $(ALL_LINGUAS); do \
-		pofile=$(top_srcdir)/po-doc/$$lang.po; \
+		pofile=$(srcdir)/po/$$lang.po; \
 		echo "*** Generating $$lang documentation"; \
 		if test x"$$lang" = x"C"; then \
 			cp $(srcdir)/$(DOCUMENT) xgen-doc; \
