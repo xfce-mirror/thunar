@@ -72,7 +72,7 @@ doc-build.stamp: $(srcdir)/$(DOCUMENT) $(srcdir)/$(STYLESHEET)
 			-e "s,\@PACKAGE_VERSION\@,$(PACKAGE_VERSION),g" \
 			-i xgen-doc; \
 		echo "Validating DocBook XML file"; \
-		$(XMLLINT) --noout --valid xgen-doc; \
+		$(XMLLINT) --noout --valid xgen-doc || exit 1; \
 		echo "Creating the HTML pages"; \
 		$(XSLTPROC) --nonet -o $(srcdir)/html/$$lang/ $(srcdir)/$(STYLESHEET) xgen-doc; \
 		chmod -R u+w $(srcdir)/html/$$lang; \
