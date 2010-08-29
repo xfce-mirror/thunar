@@ -119,7 +119,8 @@ void               thunar_application_mkdir               (ThunarApplication *ap
                                                            GClosure          *new_files_closure);
 
 void               thunar_application_empty_trash         (ThunarApplication *application,
-                                                           gpointer           parent);
+                                                           gpointer           parent,
+                                                           const gchar       *startup_id);
 
 void               thunar_application_restore_files       (ThunarApplication *application,
                                                            gpointer           parent,

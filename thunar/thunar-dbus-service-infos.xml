@@ -33,12 +33,14 @@
     <!--
       DisplayChooserDialog (uri : STRING, open : BOOLEAN, display : STRING) : VOID
 
-      uri     : either a file:-URI or an absolute path.
-      open    : TRUE to let the user open the file identified by the
-                uri after choosing an application, FALSE to only update
-                the mime database.
-      display : the screen on which to display the chooser dialog or
-                "" to use the default screen of the file manager.
+      uri        : either a file:-URI or an absolute path.
+      open       : TRUE to let the user open the file identified by the
+                   uri after choosing an application, FALSE to only update
+                   the mime database.
+      display    : the screen on which to display the chooser dialog or
+                   "" to use the default screen of the file manager.
+      startup-id : the DESKTOP_STARTUP_ID environment variable for properly
+                   handling startup notification and focus stealing.
 
       Displays the chooser dialog, which lets the user select an application
       to handle the file identified by the uri (and all other files of the
@@ -49,19 +51,23 @@
       <arg direction="in" name="uri" type="s" />
       <arg direction="in" name="open" type="b" />
       <arg direction="in" name="display" type="s" />
+      <arg direction="in" name="startup-id" type="s" />
     </method>
 
 
     <!--
       DisplayFolder (uri : STRING, display : STRING) : VOID
 
-      uri     : either a file:-URI or an absolute path.
-      display : the screen on which to display the folder or ""
-                to use the default screen of the file manager.
+      uri        : either a file:-URI or an absolute path.
+      display    : the screen on which to display the folder or ""
+                   to use the default screen of the file manager.
+      startup-id : the DESKTOP_STARTUP_ID environment variable for properly
+                   handling startup notification and focus stealing.
     -->
     <method name="DisplayFolder">
       <arg direction="in" name="uri" type="s" />
       <arg direction="in" name="display" type="s" />
+      <arg direction="in" name="startup-id" type="s" />
     </method>
 
 
@@ -76,6 +82,8 @@
                    must be a name relative to the folder URI.
       display    : the screen on which to display the folder or ""
                    to use the default screen of the file manager.
+      startup-id : the DESKTOP_STARTUP_ID environment variable for properly
+                   handling startup notification and focus stealing.
 
       Note to implementors: Not all file managers may be able to
       implement this method properly for whatever reasons. If you
@@ -86,19 +94,23 @@
       <arg direction="in" name="uri" type="s" />
       <arg direction="in" name="filename" type="s" />
       <arg direction="in" name="display" type="s" />
+      <arg direction="in" name="startup-id" type="s" />
     </method>
 
 
     <!--
       DisplayFileProperties (uri : STRING, display : STRING) : VOID
 
-      uri     : either a file:-URI or an absolute path.
-      display : the screen on which to display the file properties
-                or "" to use the default screen of the file manager.
+      uri        : either a file:-URI or an absolute path.
+      display    : the screen on which to display the file properties
+                   or "" to use the default screen of the file manager.
+      startup-id : the DESKTOP_STARTUP_ID environment variable for properly
+                   handling startup notification and focus stealing.
     -->
     <method name="DisplayFileProperties">
       <arg direction="in" name="uri" type="s" />
       <arg direction="in" name="display" type="s" />
+      <arg direction="in" name="startup-id" type="s" />
     </method>
 
 
@@ -108,21 +120,27 @@
       uri        : either a file:-URI or an absolute path.
       display    : the screen on which to launch the file or ""
                    to use the default screen of the file manager.
+      startup-id : the DESKTOP_STARTUP_ID environment variable for properly
+                   handling startup notification and focus stealing.
     -->
     <method name="Launch">
       <arg direction="in" name="uri" type="s" />
       <arg direction="in" name="display" type="s" />
+      <arg direction="in" name="startup-id" type="s" />
     </method>
 
 
     <!--
       DisplayPreferencesDialog (display : STRING) : VOID
 
-      display : the screen on which to display the preferences dialog
-                or "" to use the default screen of the file manager.
+      display    : the screen on which to display the preferences dialog
+                   or "" to use the default screen of the file manager.
+      startup-id : the DESKTOP_STARTUP_ID environment variable for properly
+                   handling startup notification and focus stealing.
     -->
     <method name="DisplayPreferencesDialog">
       <arg direction="in" name="display" type="s" />
+      <arg direction="in" name="startup-id" type="s" />
     </method>
 
 
@@ -232,6 +250,27 @@
       <arg direction="in" name="display" type="s" />
       <arg direction="in" name="startup-id" type="s" />
     </method>
+
+
+    <!--
+      LaunchFiles (working-directory : STRING, filenames : ARRAY OF STRING, display : STRING, startup-id : STRING) : VOID
+
+      working-directory : the directory, relative to which filenames should
+                          be interpreted.
+      filenames         : an array of file names to launch. The file names may
+                          be either file:-URIs, absolute paths or paths relative
+                          to the working-directory.
+      display           : the screen on which to launch the filenames or ""
+                          to use the default screen of the file manager.
+      startup-id        : the DESKTOP_STARTUP_ID environment variable for properly
+                           handling startup notification and focus stealing.
+    -->
+    <method name="LaunchFiles">
+      <arg direction="in" name="working-directory" type="s" />
+      <arg direction="in" name="filenames" type="as" />
+      <arg direction="in" name="display" type="s" />
+      <arg direction="in" name="startup-id" type="s" />
+    </method>
   </interface>
 
 
@@ -247,38 +286,46 @@
     <!--
       DisplayTrash (display : STRING) : VOID
 
-      display : the screen on which to display the trash folder
-                contents or "" to use the default screen of the
-                file manager.
+      display    : the screen on which to display the trash folder
+                   contents or "" to use the default screen of the
+                   file manager.
+      startup-id : the DESKTOP_STARTUP_ID environment variable for properly
+                   handling startup notification and focus stealing.
 
       Opens a new file manager window showing the trash folder
       contents.
     -->
     <method name="DisplayTrash">
       <arg direction="in" name="display" type="s" />
+      <arg direction="in" name="startup-id" type="s" />
     </method>
 
     <!--
       EmptyTrash (display : STRING) : VOID
 
-      display : the screen on which to display the confirmation of
-                the operation and the progress status or "" to use
-                the default screen of the file manager.
+      display    : the screen on which to display the confirmation of
+                   the operation and the progress status or "" to use
+                   the default screen of the file manager.
+      startup-id : the DESKTOP_STARTUP_ID environment variable for properly
+                   handling startup notification and focus stealing.
 
       Tells the file manager to empty the trash bin.
     -->
     <method name="EmptyTrash">
       <arg direction="in" name="display" type="s" />
+      <arg direction="in" name="startup-id" type="s" />
     </method>
 
     <!--
       MoveToTrash (uris : ARRAY OF STRING, display : STRING) : VOID
 
-      filenames : an array of file:-URIs or absolute paths for the files
-                  that should be moved to the trash can.
-      display   : the screen on which to display the progress dialog
-                  and possible error messages and confirmation dialogs
-                  or "" to use the default screen of the file manager.
+      filenames  : an array of file:-URIs or absolute paths for the files
+                   that should be moved to the trash can.
+      display    : the screen on which to display the progress dialog
+                   and possible error messages and confirmation dialogs
+                   or "" to use the default screen of the file manager.
+      startup-id : the DESKTOP_STARTUP_ID environment variable for properly
+                   handling startup notification and focus stealing.
 
       Tells the file manager to move all files specified by the filenames
       to the trash bin.
@@ -286,6 +333,7 @@
     <method name="MoveToTrash">
       <arg direction="in" name="filenames" type="as" />
       <arg direction="in" name="display" type="s" />
+      <arg direction="in" name="startup-id" type="s" />
     </method>
 
     <!--
@@ -358,25 +406,6 @@
       <arg direction="in" name="startup-id" type="s" />
     </method>
 
-    <!--
-      LaunchFiles (working-directory : STRING, filenames : ARRAY OF STRING, display : STRING, startup-id : STRING) : VOID
-
-      working-directory : the directory, relative to which filenames should
-                          be interpreted.
-      filenames         : an array of file names to launch. The file names may
-                          be either file:-URIs, absolute paths or paths relative
-                          to the working-directory.
-      display           : the screen on which to launch the filenames or ""
-                          to use the default screen of the file manager.
-      startup-id        : the DESKTOP_STARTUP_ID environment variable for properly
-                           handling startup notification and focus stealing.
-    -->
-    <method name="LaunchFiles">
-      <arg direction="in" name="working-directory" type="s" />
-      <arg direction="in" name="filenames" type="as" />
-      <arg direction="in" name="display" type="s" />
-      <arg direction="in" name="startup-id" type="s" />
-    </method>
 
     <!--
       Terminate () : VOID

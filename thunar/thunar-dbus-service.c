@@ -80,36 +80,45 @@ static gboolean thunar_dbus_service_display_chooser_dialog      (ThunarDBusServi
                                                                  const gchar            *uri,
                                                                  gboolean                open,
                                                                  const gchar            *display,
+                                                                 const gchar            *startup_id,
                                                                  GError                **error);
 static gboolean thunar_dbus_service_display_folder              (ThunarDBusService      *dbus_service,
                                                                  const gchar            *uri,
                                                                  const gchar            *display,
+                                                                 const gchar            *startup_id,
                                                                  GError                **error);
 static gboolean thunar_dbus_service_display_folder_and_select   (ThunarDBusService      *dbus_service,
                                                                  const gchar            *uri,
                                                                  const gchar            *filename,
                                                                  const gchar            *display,
+                                                                 const gchar            *startup_id,
                                                                  GError                **error);
 static gboolean thunar_dbus_service_display_file_properties     (ThunarDBusService      *dbus_service,
                                                                  const gchar            *uri,
                                                                  const gchar            *display,
+                                                                 const gchar            *startup_id,
                                                                  GError                **error);
 static gboolean thunar_dbus_service_launch                      (ThunarDBusService      *dbus_service,
                                                                  const gchar            *uri,
                                                                  const gchar            *display,
+                                                                 const gchar            *startup_id,
                                                                  GError                **error);
 static gboolean thunar_dbus_service_display_preferences_dialog  (ThunarDBusService      *dbus_service,
                                                                  const gchar            *display,
+                                                                 const gchar            *startup_id,
                                                                  GError                **error);
 static gboolean thunar_dbus_service_display_trash               (ThunarDBusService      *dbus_service,
                                                                  const gchar            *display,
+                                                                 const gchar            *startup_id,
                                                                  GError                **error);
 static gboolean thunar_dbus_service_empty_trash                 (ThunarDBusService      *dbus_service,
                                                                  const gchar            *display,
+                                                                 const gchar            *startup_id,
                                                                  GError                **error);
 static gboolean thunar_dbus_service_move_to_trash               (ThunarDBusService      *dbus_service,
                                                                  gchar                 **filenames,
                                                                  const gchar            *display,
+                                                                 const gchar            *startup_id,
                                                                  GError                **error);
 static gboolean thunar_dbus_service_query_trash                 (ThunarDBusService      *dbus_service,
                                                                  gboolean               *empty,
@@ -351,6 +360,7 @@ thunar_dbus_service_display_chooser_dialog (ThunarDBusService *dbus_service,
                                             const gchar       *uri,
                                             gboolean           open,
                                             const gchar       *display,
+                                            const gchar       *startup_id,
                                             GError           **error)
 {
   ThunarFile *file;
@@ -361,6 +371,7 @@ thunar_dbus_service_display_chooser_dialog (ThunarDBusService *dbus_service,
     return FALSE;
 
   /* popup the chooser dialog */
+  /* TODO use the startup id! */
   thunar_show_chooser_dialog (screen, file, open);
 
   /* cleanup */
@@ -376,6 +387,7 @@ static gboolean
 thunar_dbus_service_display_folder (ThunarDBusService *dbus_service,
                                     const gchar       *uri,
                                     const gchar       *display,
+                                    const gchar       *startup_id,
                                     GError           **error)
 {
   ThunarApplication *application;
@@ -388,7 +400,7 @@ thunar_dbus_service_display_folder (ThunarDBusService *dbus_service,
 
   /* popup a new window for the folder */
   application = thunar_application_get ();
-  thunar_application_open_window (application, file, screen, NULL);
+  thunar_application_open_window (application, file, screen, startup_id);
   g_object_unref (G_OBJECT (application));
 
   /* cleanup */
@@ -405,6 +417,7 @@ thunar_dbus_service_display_folder_and_select (ThunarDBusService *dbus_service,
                                                const gchar       *uri,
                                                const gchar       *filename,
                                                const gchar       *display,
+                                               const gchar       *startup_id,
                                                GError           **error)
 {
   ThunarApplication *application;
@@ -427,7 +440,7 @@ thunar_dbus_service_display_folder_and_select (ThunarDBusService *dbus_service,
 
   /* popup a new window for the folder */
   application = thunar_application_get ();
-  window = thunar_application_open_window (application, folder, screen, NULL);
+  window = thunar_application_open_window (application, folder, screen, startup_id);
   g_object_unref (application);
 
   /* determine the path for the filename relative to the folder */
@@ -462,6 +475,7 @@ static gboolean
 thunar_dbus_service_display_file_properties (ThunarDBusService *dbus_service,
                                              const gchar       *uri,
                                              const gchar       *display,
+                                             const gchar       *startup_id,
                                              GError           **error)
 {
   ThunarApplication *application;
@@ -476,8 +490,9 @@ thunar_dbus_service_display_file_properties (ThunarDBusService *dbus_service,
   /* popup the file properties dialog */
   dialog = thunar_properties_dialog_new ();
   gtk_window_set_screen (GTK_WINDOW (dialog), screen);
+  gtk_window_set_startup_id (GTK_WINDOW (dialog), startup_id);
   thunar_properties_dialog_set_file (THUNAR_PROPERTIES_DIALOG (dialog), file);
-  gtk_widget_show (dialog);
+  gtk_window_present (GTK_WINDOW (dialog));
 
   /* let the application take control over the dialog */
   application = thunar_application_get ();
@@ -497,6 +512,7 @@ static gboolean
 thunar_dbus_service_launch (ThunarDBusService *dbus_service,
                             const gchar       *uri,
                             const gchar       *display,
+                            const gchar       *startup_id,
                             GError           **error)
 {
   ThunarFile *file;
@@ -507,7 +523,7 @@ thunar_dbus_service_launch (ThunarDBusService *dbus_service,
   if (thunar_dbus_service_parse_uri_and_display (dbus_service, uri, display, &file, &screen, error))
     {
       /* try to launch the file on the given screen */
-      result = thunar_file_launch (file, screen, NULL, error);
+      result = thunar_file_launch (file, screen, startup_id, error);
 
       /* cleanup */
       g_object_unref (G_OBJECT (screen));
@@ -522,6 +538,7 @@ thunar_dbus_service_launch (ThunarDBusService *dbus_service,
 static gboolean
 thunar_dbus_service_display_preferences_dialog (ThunarDBusService *dbus_service,
                                                 const gchar       *display,
+                                                const gchar       *startup_id,
                                                 GError           **error)
 {
   ThunarApplication *application;
@@ -536,7 +553,8 @@ thunar_dbus_service_display_preferences_dialog (ThunarDBusService *dbus_service,
   /* popup the preferences dialog... */
   dialog = thunar_preferences_dialog_new (NULL);
   gtk_window_set_screen (GTK_WINDOW (dialog), screen);
-  gtk_window_present (GTK_WINDOW (dialog));
+  gtk_window_set_startup_id (GTK_WINDOW (dialog), startup_id);
+  gtk_widget_show (GTK_WIDGET (dialog));
 
   /* ...and let the application take care of it */
   application = thunar_application_get ();
@@ -554,6 +572,7 @@ thunar_dbus_service_display_preferences_dialog (ThunarDBusService *dbus_service,
 static gboolean
 thunar_dbus_service_display_trash (ThunarDBusService *dbus_service,
                                    const gchar       *display,
+                                   const gchar       *startup_id,
                                    GError           **error)
 {
   ThunarApplication *application;
@@ -569,7 +588,7 @@ thunar_dbus_service_display_trash (ThunarDBusService *dbus_service,
     {
       /* tell the application to display the trash bin */
       application = thunar_application_get ();
-      thunar_application_open_window (application, dbus_service->trash_bin, screen, NULL);
+      thunar_application_open_window (application, dbus_service->trash_bin, screen, startup_id);
       g_object_unref (G_OBJECT (application));
 
       /* release the screen */
@@ -585,6 +604,7 @@ thunar_dbus_service_display_trash (ThunarDBusService *dbus_service,
 static gboolean
 thunar_dbus_service_empty_trash (ThunarDBusService *dbus_service,
                                  const gchar       *display,
+                                 const gchar       *startup_id,
                                  GError           **error)
 {
   ThunarApplication *application;
@@ -596,7 +616,7 @@ thunar_dbus_service_empty_trash (ThunarDBusService *dbus_service,
     {
       /* tell the application to empty the trash bin */
       application = thunar_application_get ();
-      thunar_application_empty_trash (application, screen);
+      thunar_application_empty_trash (application, screen, startup_id);
       g_object_unref (G_OBJECT (application));
 
       /* release the screen */
@@ -613,6 +633,7 @@ static gboolean
 thunar_dbus_service_move_to_trash (ThunarDBusService *dbus_service,
                                    gchar            **filenames,
                                    const gchar       *display,
+                                   const gchar       *startup_id,
                                    GError           **error)
 {
   ThunarApplication *application;

@@ -1342,7 +1342,7 @@ thunar_location_buttons_action_empty_trash (GtkAction             *action,
 
   /* launch the operation */
   application = thunar_application_get ();
-  thunar_application_empty_trash (application, GTK_WIDGET (buttons));
+  thunar_application_empty_trash (application, GTK_WIDGET (buttons), NULL);
   g_object_unref (G_OBJECT (application));
 }
 

@@ -1339,7 +1339,7 @@ thunar_shortcuts_view_empty_trash (ThunarShortcutsView *view)
 
   /* empty the trash bin (asking the user first) */
   application = thunar_application_get ();
-  thunar_application_empty_trash (application, GTK_WIDGET (view));
+  thunar_application_empty_trash (application, GTK_WIDGET (view), NULL);
   g_object_unref (G_OBJECT (application));
 }
 

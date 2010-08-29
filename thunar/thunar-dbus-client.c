@@ -197,7 +197,7 @@ thunar_dbus_client_launch_files (const gchar *working_directory,
     startup_id = "";
 
   /* generate the LaunchFiles() method (disable activation!) */
-  message = dbus_message_new_method_call ("org.xfce.Thunar", "/org/xfce/FileManager", "org.xfce.Thunar", "LaunchFiles");
+  message = dbus_message_new_method_call ("org.xfce.Thunar", "/org/xfce/FileManager", "org.xfce.FileManager", "LaunchFiles");
   dbus_message_set_auto_start (message, FALSE);
   dbus_message_append_args (message,
                             DBUS_TYPE_STRING, &working_directory,

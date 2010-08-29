@@ -1630,7 +1630,8 @@ thunar_application_mkdir (ThunarApplication *application,
  **/
 void
 thunar_application_empty_trash (ThunarApplication *application,
-                                gpointer           parent)
+                                gpointer           parent,
+                                const gchar       *startup_id)
 {
   GtkWidget *dialog;
   GtkWindow *window;
@@ -1653,6 +1654,7 @@ thunar_application_empty_trash (ThunarApplication *application,
                                    _("Remove all files and folders from the Trash?"));
   if (G_UNLIKELY (window == NULL && screen != NULL))
     gtk_window_set_screen (GTK_WINDOW (dialog), screen);
+  gtk_window_set_startup_id (GTK_WINDOW (dialog), startup_id);
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                           GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                           _("_Empty Trash"), GTK_RESPONSE_YES,
