@@ -1404,6 +1404,9 @@ unlink_stub (GList *source_path_list,
  * @application : a #ThunarApplication.
  * @parent      : a #GdkScreen, a #GtkWidget or %NULL.
  * @file_list   : the list of #ThunarFile<!---->s that should be deleted.
+ * @permanently : whether to unlink the files permanently. Even if this is set to
+ *                FALSE, the files may be erased permanently if the SHIFT key
+ *                is pressed at the time the function is called.
  *
  * Deletes all files in the @file_list and takes care of all user interaction.
  *
@@ -1414,13 +1417,13 @@ unlink_stub (GList *source_path_list,
 void
 thunar_application_unlink_files (ThunarApplication *application,
                                  gpointer           parent,
-                                 GList             *file_list)
+                                 GList             *file_list,
+                                 gboolean           permanently)
 {
   GdkModifierType state;
   GtkWidget      *dialog;
   GtkWindow      *window;
   GdkScreen      *screen;
-  gboolean        permanently;
   GList          *path_list = NULL;
   GList          *lp;
   gchar          *message;      
@@ -1430,8 +1433,11 @@ thunar_application_unlink_files (ThunarApplication *application,
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
-  /* check if we should permanently delete the files (user holds shift) */
-  permanently = (gtk_get_current_event_state (&state) && (state & GDK_SHIFT_MASK) != 0);
+  if (!permanently)
+    {
+      /* check if we should permanently delete the files (user holds shift) */
+      permanently = (gtk_get_current_event_state (&state) && (state & GDK_SHIFT_MASK) != 0);
+    }
 
   /* determine the paths for the files */
   for (lp = g_list_last (file_list); lp != NULL; lp = lp->prev, ++n_path_list)

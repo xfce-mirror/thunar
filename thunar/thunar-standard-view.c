@@ -1973,7 +1973,7 @@ thunar_standard_view_action_delete (GtkAction          *action,
 
   /* delete the selected files */
   application = thunar_application_get ();
-  thunar_application_unlink_files (application, GTK_WIDGET (standard_view), standard_view->selected_files);
+  thunar_application_unlink_files (application, GTK_WIDGET (standard_view), standard_view->selected_files, FALSE);
   g_object_unref (G_OBJECT (application));
 }
 

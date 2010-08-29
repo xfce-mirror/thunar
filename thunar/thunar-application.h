@@ -101,7 +101,8 @@ void               thunar_application_move_into           (ThunarApplication *ap
 
 void               thunar_application_unlink_files        (ThunarApplication *application,
                                                            gpointer           parent,
-                                                           GList             *file_list);
+                                                           GList             *file_list,
+                                                           gboolean           permanently);
 
 void               thunar_application_trash               (ThunarApplication *application,
                                                            gpointer           parent,
