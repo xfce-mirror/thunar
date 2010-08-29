@@ -1,7 +1,8 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2006      Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2010      Daniel Morales <daniel@daniel.com.uy>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
