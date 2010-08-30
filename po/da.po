@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: thunar 1.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-27 16:05+0000\n"
+"POT-Creation-Date: 2010-08-30 10:08+0000\n"
 "PO-Revision-Date: 2009-12-23 12:03+0100\n"
 "Last-Translator: Per Kongstad <p_kongstad@op.pl>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
@@ -170,7 +170,7 @@ msgstr "Oprettelse af symbolske henvisninger i \"%s\"..."
 msgid "Moving files into \"%s\"..."
 msgstr "Flytter filer til \"%s\"..."
 
-#: ../thunar/thunar-application.c:1461
+#: ../thunar/thunar-application.c:1467
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -179,7 +179,7 @@ msgstr ""
 "Er du sikker på, at du vil\n"
 "slette for bestandigt \"%s\"?"
 
-#: ../thunar/thunar-application.c:1466
+#: ../thunar/thunar-application.c:1472
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -194,58 +194,58 @@ msgstr[1] ""
 "Er du sikker på, at du ønsker for bestandigt\n"
 "at slette %u valgte filer?"
 
-#: ../thunar/thunar-application.c:1486
+#: ../thunar/thunar-application.c:1492
 msgid "If you delete a file, it is permanently lost."
 msgstr "Hvis du sletter en fil, er denne tabt for bestandig."
 
-#: ../thunar/thunar-application.c:1496
+#: ../thunar/thunar-application.c:1502
 msgid "Deleting files..."
 msgstr "Sletter filer..."
 
-#: ../thunar/thunar-application.c:1531
+#: ../thunar/thunar-application.c:1537
 msgid "Moving files into the trash..."
 msgstr "Flytter filer til papirkurven..."
 
-#: ../thunar/thunar-application.c:1570
+#: ../thunar/thunar-application.c:1576
 msgid "Creating files..."
 msgstr "Opretter filer..."
 
-#: ../thunar/thunar-application.c:1609
+#: ../thunar/thunar-application.c:1615
 msgid "Creating directories..."
 msgstr "Opretter mapper..."
 
-#: ../thunar/thunar-application.c:1647
+#: ../thunar/thunar-application.c:1653
 msgid "Remove all files and folders from the Trash?"
 msgstr "Fjern alle filer og mapper fra papirkurven?"
 
 #. append the "Empty Trash" menu action
 #. prepare the menu item
-#: ../thunar/thunar-application.c:1652 ../thunar/thunar-location-buttons.c:171
+#: ../thunar/thunar-application.c:1658 ../thunar/thunar-location-buttons.c:171
 #: ../thunar/thunar-shortcuts-view.c:835 ../thunar/thunar-tree-view.c:1145
 #: ../thunar/thunar-window.c:295 ../plugins/thunar-tpa/thunar-tpa.c:169
 msgid "_Empty Trash"
 msgstr "_Tøm papirkurv"
 
-#: ../thunar/thunar-application.c:1656
+#: ../thunar/thunar-application.c:1662
 msgid "If you choose to empty the Trash, all items in it will be permanently lost. Please note that you can also delete them separately."
 msgstr "Hvis du vælger at tømme papirkurven, vil alle elementer i denne være tabt for bestandig. Vær opmærksom på at du også kan slette dem enkeltvis."
 
-#: ../thunar/thunar-application.c:1673
+#: ../thunar/thunar-application.c:1679
 msgid "Emptying the Trash..."
 msgstr "Tømmer papirkurven..."
 
-#: ../thunar/thunar-application.c:1719
+#: ../thunar/thunar-application.c:1725
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "Kunne ikke bestemme den originale sti til \"%s\""
 
 #. display an error dialog
-#: ../thunar/thunar-application.c:1736
+#: ../thunar/thunar-application.c:1742
 #, c-format
 msgid "Could not restore \"%s\""
 msgstr "Kunne ikke genoprette \"%s\""
 
-#: ../thunar/thunar-application.c:1744
+#: ../thunar/thunar-application.c:1750
 msgid "Restoring files..."
 msgstr "Genopretter filer..."
 
@@ -496,22 +496,42 @@ msgstr "Angiv nyt navn:"
 msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "Kan ikke oversætte filnavn \"%s\" til lokal sprogkode"
 
-#: ../thunar/thunar-dbus-service.c:367
+#: ../thunar/thunar-dbus-service.c:420
 #, c-format
 msgid "Invalid filename \"%s\""
 msgstr "Ugyldigt filnavn \"%s\""
 
 #. LaunchFiles() invoked without a valid working directory
-#: ../thunar/thunar-dbus-service.c:696
+#: ../thunar/thunar-dbus-service.c:749
 #, c-format
 msgid "The working directory must be an absolute path"
 msgstr "Aktiv mappe skal være fuld sti"
 
 #. LaunchFiles() invoked with an empty filename list
-#: ../thunar/thunar-dbus-service.c:704
+#: ../thunar/thunar-dbus-service.c:757
 #, c-format
 msgid "Atleast one filename must be specified"
 msgstr "Mindst et filnavn skal angives"
+
+#: ../thunar/thunar-dbus-service.c:803
+#, c-format
+msgid "At least one source filename must be specified"
+msgstr "Mindst et kildefilnavn skal angives"
+
+#: ../thunar/thunar-dbus-service.c:813
+#, c-format
+msgid "The number of source and target filenames must be the same"
+msgstr "Nummeret på kilde- og målfilnavne skal være ens"
+
+#: ../thunar/thunar-dbus-service.c:822
+#, c-format
+msgid "A destination directory must be specified"
+msgstr "En målmappe skal angives"
+
+#: ../thunar/thunar-dbus-service.c:1025
+#, c-format
+msgid "At least one filename must be specified"
+msgstr "Mindst ét filnavn skal angives"
 
 #: ../thunar/thunar-details-view.c:129
 msgid "Configure _Columns..."
