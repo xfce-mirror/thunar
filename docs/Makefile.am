@@ -8,9 +8,7 @@ SUBDIRS =								\
 
 doc_DATA =								\
 	README.gtkrc							\
-	README.thunarrc							\
-	README.volumes							\
-	ThumbnailersCacheFormat.txt
+	README.thunarrc
 
 man_MANS =								\
 	Thunar.1
