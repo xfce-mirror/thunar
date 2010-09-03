@@ -873,7 +873,7 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
     str = g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (dialog->file));
   else
     str = g_content_type_get_description (content_type);
-  gtk_widget_set_tooltip_text (dialog->kind_ebox, str);
+  gtk_widget_set_tooltip_text (dialog->kind_ebox, content_type);
   gtk_label_set_text (GTK_LABEL (dialog->kind_label), str);
   g_free (str);
 
