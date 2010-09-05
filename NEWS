@@ -1,3 +1,22 @@
+1.1.2
+=====
+- Move helpers from $libexecdir to $libdir/Thunar.
+- Fix replacing @docdir@ in ThunarHelp.
+- Move panel plugin to $(libdir)/xfce4/panel/plugins.
+- Move manual translations to docs/manual/po.
+- Abort dist when validating the xml file fails.
+- Wait for a reply in thunar-settings.
+- Add CopyTo, CopyInto, MoveInto, LinkInto, UnlinkFiles
+  D-Bus methods.
+- Add startup-id to more D-Bus methods.
+- Move LaunchFiles to org.xfce.FM.
+- Remove README.volumes and ThumbnailersCacheFormat as
+  those are specific to thunar-vfs.
+- Display content type in the file properties dialog
+  tooltip (bug #2369).
+- Translation updates (kk, pt, ca, fr, da, fi, it, uk, he, de,
+  zh_TW, gl)
+
 1.1.1
 =====
 - Port the code related to thunar-volman to udev. This is an optional
@@ -5,44 +24,44 @@
   thunar-volman with HAL UDIs, we'll now call thunar-volman with
   sysfs paths. For this to work, a more recent version of thunar-volman
   is required: 0.5.0.
-- Re-implement mount/eject notifications based on libnotify. 
+- Re-implement mount/eject notifications based on libnotify.
   Notifications were gone after the port to GIO because we no longer
   used exo-mount to mount or eject devices.
 - Fix segfaults when loading image icons.
-- Force a folder reload when the new_file closure is finished (bug 
+- Force a folder reload when the new_file closure is finished (bug
   #6409).
 - Update the trash panel plugin to the new panel framework.
 - Create status icon only when we're actually going to display it.
-- Change CWD before spawning applications in ThunarLauncher. 
+- Change CWD before spawning applications in ThunarLauncher.
 - Fix browsing shortcuts and mountables in ThunarLauncher.
 - Synchronize ThunarListModel sorting with detailed list view
   captions.
 - Fix sorting by type in ThunarListModel (bug #6143).
-- Refilter the tree model when a hidden dir is entered/left (bug 
+- Refilter the tree model when a hidden dir is entered/left (bug
   #6142).
 - Properly update the cursor when a row is deleted (bug #5361).
-- Use stock icons and standard icon names where appropriate (bug 
+- Use stock icons and standard icon names where appropriate (bug
   #6133).
-- Updated translations: Kazakh, Hebrew, Greek, Italian, Chinese 
+- Updated translations: Kazakh, Hebrew, Greek, Italian, Chinese
   (Taiwan), Indonesian, Croatian, Bengali, German, Slovak, French,
   Uyghur, Turkish, Galician, Spanish (Castilian), Russian, Sinhala,
   Ukrainian, Portuguese (Brazilian), Danish, Basque, Finnish, Czech.
 
 1.1.0
 =====
-- Replace ThunarVFS with GIO. There will be a separate maintenance 
+- Replace ThunarVFS with GIO. There will be a separate maintenance
   release of ThunarVFS soon after this release. All functionality
   previously based on ThunarVFS is now implemented on top of GIO
   and GVfs. This means that remote filesystems can be accessed via
   SFTP, FTP, SMB etc. For this as well as the trash feature GVfs
   is required. Thunar does not depend on it because GVfs is a set
-  of GIO extensions and there is no guarantee for those to be 
+  of GIO extensions and there is no guarantee for those to be
   available at runtime if they are installed at buildtime. This is left
   for distributions to set up properly.
 - Thumbnails are now generated using the thumbnail management D-Bus
   specification. One implementation of this specification is Tumbler
   which is released independently.
-- Bump the API version of Thunarx to 2 because symbols related to 
+- Bump the API version of Thunarx to 2 because symbols related to
   ThunarVFS were removed and replaced by new symbols dealing with GIO.
   This requires all existing plugins to be updated and linked against
   thunarx-2 instead of thunarx-1.
@@ -70,7 +89,7 @@
 1.0.1
 ========
 - Put quotes around filenames in thunar-wallpaper-plugin (bug #5056)
-- Apply umask properly when creating files/directories. 
+- Apply umask properly when creating files/directories.
   Patch by Giovanni Bechis (bug #3532).
 
 1.0.0
@@ -83,13 +102,13 @@
 0.9.99.1
 ========
 - Optional nano version added to configure.in.in.
-- Update Danish, Norwegian Bokmal, Simplified Chinese and Turkish 
+- Update Danish, Norwegian Bokmal, Simplified Chinese and Turkish
   translations.
 
 0.9.93
 ======
 - Fix crash in the tree side pane when hidden files are toggled (bug #2502).
-- Always show an error dialog if one of the files passed via the command 
+- Always show an error dialog if one of the files passed via the command
   line cannot be opened.
 - Only show eject option for devices when requires_eject is TRUE (bug #3978).
 - Fix crash when cd drive is ejected (bug #4257).
@@ -103,7 +122,7 @@
   people with dead keys to use the location selector.
 - Unload folders in the tree side pane when they are collapsed (bug #4051).
 - Don't monitor /proc and /dev on Linux systems.
-- Implement window groups so modal dialogs don't block other Thunar 
+- Implement window groups so modal dialogs don't block other Thunar
   windows (bug #3586).
 - Open a question dialog before removing a custom action (bug #3838).
 - Make the first alpha numeric character upper-case in the case renamer
@@ -114,25 +133,25 @@
 - Implement menu providers in the side pane popup menus (bug #2740).
 - Unmounted volumes are 50% translucent so give some visual feedback.
 - Add rename option to the tree side pane popup menu.
-- Don't go back in the history anymore if the new directory is the first 
+- Don't go back in the history anymore if the new directory is the first
   one in the backward history (bug #4660).
 - Implement reorder, positioned drag and drop and rubberbanding in the
   renamer dialog (bug #3325).
 - Change Name value of the desktop entry to "Thunar File Manager".
 - Go back and forward using the 8th and 9th button on the mouse (bug #4687).
-- Various compilers warnings were fixed, some performace improvements 
+- Various compilers warnings were fixed, some performace improvements
   and less memory allocations.
-- Update Albanian, Basque, Belarusian, Brazilian Portuguese, Catalan, Czech, 
-  Danish, Finnish, French, Galician, German, Hungarian, Indonesian, Japanese, 
+- Update Albanian, Basque, Belarusian, Brazilian Portuguese, Catalan, Czech,
+  Danish, Finnish, French, Galician, German, Hungarian, Indonesian, Japanese,
   Norwegian Bokmal, Polish, Simplified Chinese, Spanish, Swedish, Turkish and
   Ukrainian translations.
 
 0.9.92
 ======
 - Fix build on MacOS X (bug #4433).
-- Don't create Thunar -> thunar symlink on case-insensitive 
+- Don't create Thunar -> thunar symlink on case-insensitive
   filesystems (bug #4430).
-- Add thunar-wallpaper-plugin for setting the wallpaper on 
+- Add thunar-wallpaper-plugin for setting the wallpaper on
   xfdesktop >= 4.5.90.
 
 0.9.91
@@ -141,9 +160,9 @@
 
 0.9.80
 ======
-- Fix .desktop file to launch thunar-settings dialog with 
+- Fix .desktop file to launch thunar-settings dialog with
   xfce4-settings-manager
-- Update Indonesian, Korean, Polisn, Arabic, Ukranian, Galician, Turkish, 
+- Update Indonesian, Korean, Polisn, Arabic, Ukranian, Galician, Turkish,
   English Brittish, Lithuanian, Latvian, Chinese (traditional), Portuguese,
   Brazilian Portuguese, Catalan, Greek, French, Spanish, Russian, Czech and
   Hungarian translations.
