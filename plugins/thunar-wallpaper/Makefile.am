@@ -16,16 +16,25 @@ thunar_wallpaper_plugin_la_SOURCES =					\
 	thunar-wallpaper-plugin.c
 
 thunar_wallpaper_plugin_la_CFLAGS =					\
-	$(PLATFORM_CFLAGS)						\
-	$(THUNARX_CFLAGS)						\
-	$(EXO_CFLAGS)
+	$(EXO_CFLAGS)							\
+	$(GLIB_CFLAGS)							\
+	$(GTK_CFLAGS)							\
+	$(PLATFORM_CFLAGS)
 
 thunar_wallpaper_plugin_la_LDFLAGS =					\
 	-avoid-version							\
 	-export-dynamic							\
 	-export-symbols-regex "^thunar_extension_(shutdown|initialize|list_types)" \
 	-module								\
-	$(PLATFORM_LDFLAGS)						\
-	$(THUNARX_LDFLAGS)
+	$(PLATFORM_LDFLAGS)
+
+thunar_wallpaper_plugin_la_LIBADD =					\
+	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la	\
+	$(EXO_LIBS)							\
+	$(GLIB_LIBS)							\
+	$(GTK_LIBS)
+	
+thunar_wallpaper_plugin_la_DEPENDENCIES =				\
+	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la
 
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:

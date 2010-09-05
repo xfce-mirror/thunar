@@ -29,6 +29,8 @@ thunar_apr_la_SOURCES =							\
 thunar_apr_la_CFLAGS =							\
 	$(EXIF_CFLAGS)							\
 	$(EXO_CFLAGS)							\
+	$(GLIB_CFLAGS)							\
+	$(GTK_CFLAGS)							\
 	$(PLATFORM_CFLAGS)
 
 thunar_apr_la_LDFLAGS =							\
@@ -39,7 +41,15 @@ thunar_apr_la_LDFLAGS =							\
 	$(PLATFORM_LDFLAGS)
 
 thunar_apr_la_LIBADD =							\
-	$(EXIF_LIBS)
+	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la	\
+	$(EXIF_LIBS)							\
+	$(EXO_LIBS)							\
+	$(GLIB_LIBS)							\
+	$(GTK_LIBS)
+
+thunar_apr_la_DEPENDENCIES =						\
+	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la
+	
 
 EXTRA_DIST =								\
 	README

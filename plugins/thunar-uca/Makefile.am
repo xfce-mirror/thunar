@@ -36,17 +36,21 @@ thunar_uca_la_CFLAGS =							\
 	$(LIBXFCE4UI_CFLAGS)						\
 	$(PLATFORM_CFLAGS)
 
-thunar_uca_la_LIBADD =							\
-	$(EXO_LIBS)							\
-	$(LIBXFCE4UTIL_LIBS)						\
-	$(LIBXFCE4UI_LIBS)
-
 thunar_uca_la_LDFLAGS =							\
 	-avoid-version							\
 	-export-dynamic							\
 	-export-symbols-regex "^thunar_extension_(shutdown|initialize|list_types)" \
 	-module								\
 	$(PLATFORM_LDFLAGS)
+
+thunar_uca_la_LIBADD =							\
+	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la	\
+	$(EXO_LIBS)							\
+	$(LIBXFCE4UTIL_LIBS)						\
+	$(LIBXFCE4UI_LIBS)
+
+thunar_uca_la_DEPENDENCIES =						\
+	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la
 
 defaultsdir = $(sysconfdir)/xdg/Thunar
 defaults_in_files = uca.xml.in
