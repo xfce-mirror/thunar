@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar trunk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-09 16:05+0000\n"
+"POT-Creation-Date: 2010-09-06 16:08+0000\n"
 "PO-Revision-Date: 2010-07-02 16:42+0100\n"
 "Last-Translator: Cristian Marchi <cri.penta@gmail.com>\n"
 "Language-Team: Italian Translation Team <xfce-it-translators@googlegroups.com>\n"
@@ -168,7 +168,7 @@ msgstr "Creazione del collegamento simbolico \"%s\" in corso..."
 msgid "Moving files into \"%s\"..."
 msgstr "Spostamento dei file in \"%s\" in corso..."
 
-#: ../thunar/thunar-application.c:1461
+#: ../thunar/thunar-application.c:1467
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -177,7 +177,7 @@ msgstr ""
 "Cancellare davvero in modo\n"
 "permanente \"%s\"?"
 
-#: ../thunar/thunar-application.c:1466
+#: ../thunar/thunar-application.c:1472
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -192,58 +192,58 @@ msgstr[1] ""
 "Cancellare davvero in modo\n"
 "permanente i %u file selezionati?"
 
-#: ../thunar/thunar-application.c:1486
+#: ../thunar/thunar-application.c:1492
 msgid "If you delete a file, it is permanently lost."
 msgstr "Se si cancella un file, questo è perso per sempre."
 
-#: ../thunar/thunar-application.c:1496
+#: ../thunar/thunar-application.c:1502
 msgid "Deleting files..."
 msgstr "Eliminazione dei file in corso..."
 
-#: ../thunar/thunar-application.c:1531
+#: ../thunar/thunar-application.c:1537
 msgid "Moving files into the trash..."
 msgstr "Spostamento dei file nel cestino in corso..."
 
-#: ../thunar/thunar-application.c:1570
+#: ../thunar/thunar-application.c:1576
 msgid "Creating files..."
 msgstr "Creazione dei file in corso..."
 
-#: ../thunar/thunar-application.c:1609
+#: ../thunar/thunar-application.c:1615
 msgid "Creating directories..."
 msgstr "Creazione delle cartelle in corso..."
 
-#: ../thunar/thunar-application.c:1647
+#: ../thunar/thunar-application.c:1654
 msgid "Remove all files and folders from the Trash?"
 msgstr "Rimuovere tutti i file e le cartelle dal cestino?"
 
 #. append the "Empty Trash" menu action
 #. prepare the menu item
-#: ../thunar/thunar-application.c:1652 ../thunar/thunar-location-buttons.c:171
+#: ../thunar/thunar-application.c:1660 ../thunar/thunar-location-buttons.c:171
 #: ../thunar/thunar-shortcuts-view.c:835 ../thunar/thunar-tree-view.c:1145
 #: ../thunar/thunar-window.c:295 ../plugins/thunar-tpa/thunar-tpa.c:169
 msgid "_Empty Trash"
 msgstr "_Svuota il cestino"
 
-#: ../thunar/thunar-application.c:1656
+#: ../thunar/thunar-application.c:1664
 msgid "If you choose to empty the Trash, all items in it will be permanently lost. Please note that you can also delete them separately."
 msgstr "Scegliendo di svuotare il cestino tutti gli elementi al suo interno verranno persi irrimediabilmente. È comunque possibile cancellarli singolarmente."
 
-#: ../thunar/thunar-application.c:1673
+#: ../thunar/thunar-application.c:1681
 msgid "Emptying the Trash..."
 msgstr "Svuotamento del cestino in corso..."
 
-#: ../thunar/thunar-application.c:1719
+#: ../thunar/thunar-application.c:1727
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "Impossibile determinare il percorso originario di \"%s\""
 
 #. display an error dialog
-#: ../thunar/thunar-application.c:1736
+#: ../thunar/thunar-application.c:1744
 #, c-format
 msgid "Could not restore \"%s\""
 msgstr "Impossibile ripristinare \"%s\""
 
-#: ../thunar/thunar-application.c:1744
+#: ../thunar/thunar-application.c:1752
 msgid "Restoring files..."
 msgstr "Ripristino dei file in corso..."
 
@@ -496,21 +496,41 @@ msgstr "Inserire il nuovo nome:"
 msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "Impossibile convertire il nome del file \"%s\" nella codifica locale"
 
-#: ../thunar/thunar-dbus-service.c:367
+#: ../thunar/thunar-dbus-service.c:433
 #, c-format
 msgid "Invalid filename \"%s\""
 msgstr "Nome del file \"%s\" non valido"
 
 #. LaunchFiles() invoked without a valid working directory
-#: ../thunar/thunar-dbus-service.c:696
+#: ../thunar/thunar-dbus-service.c:770
 #, c-format
 msgid "The working directory must be an absolute path"
 msgstr "La cartella di lavoro deve essere un percorso assoluto"
 
 #. LaunchFiles() invoked with an empty filename list
-#: ../thunar/thunar-dbus-service.c:704
+#: ../thunar/thunar-dbus-service.c:778
 #, c-format
 msgid "Atleast one filename must be specified"
+msgstr "Almeno un nome di file deve essere specificato"
+
+#: ../thunar/thunar-dbus-service.c:824
+#, c-format
+msgid "At least one source filename must be specified"
+msgstr "Almeno un nome di file sorgente deve essere specificato"
+
+#: ../thunar/thunar-dbus-service.c:834
+#, c-format
+msgid "The number of source and target filenames must be the same"
+msgstr "Il numero di nomi di file sorgente e destinazione deve essere lo stesso"
+
+#: ../thunar/thunar-dbus-service.c:843
+#, c-format
+msgid "A destination directory must be specified"
+msgstr "Almeno una cartella di destinazione deve essere specificata"
+
+#: ../thunar/thunar-dbus-service.c:1046
+#, fuzzy, c-format
+msgid "At least one filename must be specified"
 msgstr "Almeno un nome di file deve essere specificato"
 
 #: ../thunar/thunar-details-view.c:129
