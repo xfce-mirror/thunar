@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-22 10:05+0000\n"
+"POT-Creation-Date: 2010-09-13 16:12+0000\n"
 "PO-Revision-Date: 2009-08-15 02:53+0200\n"
 "Last-Translator: Jannis Pohlmann <jannis@xfce.org>\n"
 "Language-Team: German <xfce-i18n@xfce.org>\n"
@@ -167,7 +167,7 @@ msgstr "Erstelle Verknüpfungen in »%s«..."
 msgid "Moving files into \"%s\"..."
 msgstr "Dateien werden in »%s« verschoben..."
 
-#: ../thunar/thunar-application.c:1461
+#: ../thunar/thunar-application.c:1467
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -176,7 +176,7 @@ msgstr ""
 "Sind Sie sicher, dass Sie »%s«\n"
 "dauerhaft löschen wollen?"
 
-#: ../thunar/thunar-application.c:1466
+#: ../thunar/thunar-application.c:1472
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -193,58 +193,58 @@ msgstr[1] ""
 "wirklich\r\n"
 "dauerhaft gelöscht werden?"
 
-#: ../thunar/thunar-application.c:1486
+#: ../thunar/thunar-application.c:1492
 msgid "If you delete a file, it is permanently lost."
 msgstr "Wenn Sie eine Datei oder einen Ordner löschen, gehen die Daten dauerhaft verloren."
 
-#: ../thunar/thunar-application.c:1496
+#: ../thunar/thunar-application.c:1502
 msgid "Deleting files..."
 msgstr "Lösche Dateien..."
 
-#: ../thunar/thunar-application.c:1531
+#: ../thunar/thunar-application.c:1537
 msgid "Moving files into the trash..."
 msgstr "Dateien werden in den Papierkorb verschoben..."
 
-#: ../thunar/thunar-application.c:1570
+#: ../thunar/thunar-application.c:1576
 msgid "Creating files..."
 msgstr "Erstelle Dateien..."
 
-#: ../thunar/thunar-application.c:1609
+#: ../thunar/thunar-application.c:1615
 msgid "Creating directories..."
 msgstr "Erstelle Ordner..."
 
-#: ../thunar/thunar-application.c:1647
+#: ../thunar/thunar-application.c:1654
 msgid "Remove all files and folders from the Trash?"
 msgstr "Alle Dateien und Ordner aus dem Papierkorb löschen?"
 
 #. append the "Empty Trash" menu action
 #. prepare the menu item
-#: ../thunar/thunar-application.c:1652 ../thunar/thunar-location-buttons.c:171
+#: ../thunar/thunar-application.c:1660 ../thunar/thunar-location-buttons.c:171
 #: ../thunar/thunar-shortcuts-view.c:835 ../thunar/thunar-tree-view.c:1145
 #: ../thunar/thunar-window.c:295 ../plugins/thunar-tpa/thunar-tpa.c:169
 msgid "_Empty Trash"
 msgstr "Papierkorb l_eeren"
 
-#: ../thunar/thunar-application.c:1656
+#: ../thunar/thunar-application.c:1664
 msgid "If you choose to empty the Trash, all items in it will be permanently lost. Please note that you can also delete them separately."
 msgstr "Wenn Sie den Papierkorb leeren, werden darin enthaltene Objekte dauerhaft gelöscht. Beachten Sie, dass Sie auch einzelne Objekte löschen können."
 
-#: ../thunar/thunar-application.c:1673
+#: ../thunar/thunar-application.c:1681
 msgid "Emptying the Trash..."
 msgstr "Papierkorb leeren..."
 
-#: ../thunar/thunar-application.c:1719
+#: ../thunar/thunar-application.c:1727
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "Der Herkunftsort von »%s« konnte nicht ermittelt werden"
 
 #. display an error dialog
-#: ../thunar/thunar-application.c:1736
+#: ../thunar/thunar-application.c:1744
 #, c-format
 msgid "Could not restore \"%s\""
 msgstr "Die Datei »%s« konnte nicht wiederhergestellt werden"
 
-#: ../thunar/thunar-application.c:1744
+#: ../thunar/thunar-application.c:1752
 msgid "Restoring files..."
 msgstr "Dateien werden wieder hergestellt..."
 
@@ -497,22 +497,42 @@ msgstr "Neuen Namen eingeben:"
 msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "Der Dateiname »%s« kann nicht in den Zeichensatz des Dateisystems umgewandelt werden"
 
-#: ../thunar/thunar-dbus-service.c:367
+#: ../thunar/thunar-dbus-service.c:433
 #, c-format
 msgid "Invalid filename \"%s\""
 msgstr "Ungültiger Dateiname »%s«"
 
 #. LaunchFiles() invoked without a valid working directory
-#: ../thunar/thunar-dbus-service.c:696
+#: ../thunar/thunar-dbus-service.c:770
 #, c-format
 msgid "The working directory must be an absolute path"
 msgstr "Das Arbeitsverzeichnis muss ein absoluter Pfad sein"
 
 #. LaunchFiles() invoked with an empty filename list
-#: ../thunar/thunar-dbus-service.c:704
+#: ../thunar/thunar-dbus-service.c:778
 #, c-format
 msgid "Atleast one filename must be specified"
 msgstr "Es muss mindestens ein Dateiname angegeben werden"
+
+#: ../thunar/thunar-dbus-service.c:824
+#, c-format
+msgid "At least one source filename must be specified"
+msgstr "Mindestens ein Dateiname für die Quelle muss angegeben werden"
+
+#: ../thunar/thunar-dbus-service.c:834
+#, c-format
+msgid "The number of source and target filenames must be the same"
+msgstr "Die Anzahl der Dateinamen für Quelle und Ziel muss übereinstimmen"
+
+#: ../thunar/thunar-dbus-service.c:843
+#, c-format
+msgid "A destination directory must be specified"
+msgstr "Ein Zielverzeichnis muss angegeben werden"
+
+#: ../thunar/thunar-dbus-service.c:1046
+#, c-format
+msgid "At least one filename must be specified"
+msgstr "Mindestens ein Dateiname muss angegeben werden"
 
 #: ../thunar/thunar-details-view.c:129
 msgid "Configure _Columns..."
