@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.8.1svn-r25750\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-09-26 04:12+0000\n"
-"PO-Revision-Date: 2010-09-26 15:46+0800\n"
+"PO-Revision-Date: 2010-09-29 16:50+0800\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
 "MIME-Version: 1.0\n"
@@ -312,7 +312,7 @@ msgstr "無法執行應用程式「%s」"
 #. append the "Remove Launcher" item
 #: ../thunar/thunar-chooser-dialog.c:564
 msgid "_Remove Launcher"
-msgstr "移除快速啟動(_R)"
+msgstr "移除啟動器(_R)"
 
 #. update the header label
 #: ../thunar/thunar-chooser-dialog.c:649
@@ -341,9 +341,9 @@ msgid ""
 "\n"
 "You can only remove application launchers that were created using the custom command box in the \"Open With\" dialog of the file manager."
 msgstr ""
-"將會移除右鍵選單中快速啟動的選項， 不過並不會移除選項所關聯的程式。\n"
+"將會移除右鍵選單中啟動器的選項， 不過並不會解除安裝它所關聯的應用程式。\n"
 "\n"
-"您可以選擇只移除透過檔案管理員中「以其它程式開啟」的選項所建立的檔案開啟方式。"
+"您只能移除透過使用檔案管理員中「以此開啟」對話窗內的自訂指令方塊所建立的應用程式啟動器。"
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:731
@@ -2666,7 +2666,7 @@ msgstr "選擇此選項以便在終端機視窗中執行指令"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:331
 msgid "Launcher"
-msgstr "快速啟動"
+msgstr "啟動器"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:333
 msgid "Link"
@@ -3100,7 +3100,7 @@ msgstr "指令(_C)："
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:176
 msgid "The command (including the necessary parameters) to perform the action. See the command parameter legend below for a list of supported parameter variables, which will be substituted when launching the command. When upper-case letters (e.g. %F, %D, %N) are used, the action will be applicable even if more than one item is selected. Else the action will only be applicable if exactly one item is selected."
-msgstr "此命令 (包含必要的參數) 可用來執行的動作。請參看 the command parameter legend below for a list of 支援的參數列表 variables, which will be substituted when launching the command. 當使用大寫字母 (e.g. %F, %D, %N) 的參數時，即使有下其他參數大寫字母關聯的動作也會被優先執行。如果選取了 超過一個項目， Else the action will only be applicable if exactly one item is selected."
+msgstr "此指令 (包含必要的參數) 可用來執行的動作。請參看 the command parameter legend below for a list of 支援的參數列表 variables, which will be substituted when launching the command. 當使用大寫字母 (e.g. %F, %D, %N) 的參數時，即使有下其他參數大寫字母關聯的動作也會被優先執行。如果選取了 超過一個項目， Else the action will only be applicable if exactly one item is selected."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:187
 msgid "Browse the file system to select an application to use for this action."
@@ -3134,7 +3134,7 @@ msgid ""
 "substituted when launching the action:"
 msgstr ""
 "當啟動此動作時，以下的\n"
-"命令參數都將被取代:"
+"指令參數都將被取代："
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:288
 msgid "the path to the first selected file"
