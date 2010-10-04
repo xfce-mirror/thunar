@@ -2746,6 +2746,8 @@ thunar_window_set_current_directory (ThunarWindow *window,
                                      ThunarFile   *current_directory)
 {
   ThunarFile *file;
+  ThunarFile *selected_file;
+  GList       selected_files;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
@@ -2809,6 +2811,39 @@ thunar_window_set_current_directory (ThunarWindow *window,
       file = g_hash_table_lookup (window->scroll_to_files, window->current_directory);
       if (G_LIKELY (file != NULL))
         thunar_window_scroll_to_file (window, file, FALSE, TRUE, 0.0f, 0.0f);
+
+      /* reset the selected files list */
+      selected_files.data = NULL;
+      selected_files.prev = NULL;
+      selected_files.next = NULL;
+      
+      /* determine the next file in the history */
+      selected_file = thunar_history_peek_forward (window->history);
+      if (selected_file != NULL)
+        {
+          /* mark the file from history for selection if it is inside the new
+           * directory */
+          if (thunar_file_is_parent (window->current_directory, selected_file))
+            selected_files.data = selected_file;
+        }
+
+      /* do the same with the previous file in the history */
+      if (selected_files.data == NULL)
+        {
+          selected_file = thunar_history_peek_back (window->history);
+          if (selected_file != NULL)
+            {
+              /* mark the file from history for selection if it is inside the 
+               * new directory */
+              if (thunar_file_is_parent (window->current_directory, selected_file))
+                selected_files.data = selected_file;
+            }
+        }
+
+      /* select the previous or next file from the history if it is inside the
+       * new current directory */
+      if (selected_files.data != NULL)
+        thunar_component_set_selected_files (THUNAR_COMPONENT (window->view), &selected_files);
     }
 }
 
