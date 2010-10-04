@@ -565,3 +565,57 @@ thunar_history_set_action_group (ThunarHistory  *history,
   g_object_notify (G_OBJECT (history), "action-group");
 }
 
+
+
+/**
+ * thunar_file_history_peek_back:
+ * @history : a #ThunarHistory.
+ *
+ * Returns the previous directory in the history. 
+ *
+ * The returned #ThunarFile is owned by the #ThunarHistory and must
+ * not be released by the caller.
+ *
+ * Return value: the previous #ThunarFile in the history.
+ **/
+ThunarFile *
+thunar_history_peek_back (ThunarHistory *history)
+{
+  ThunarFile *result = NULL;
+
+  _thunar_return_val_if_fail (THUNAR_IS_HISTORY (history), NULL);
+
+  /* pick the first (conceptually the last) file in the back list, if there are any */
+  if (history->back_list != NULL)
+    result = history->back_list->data;
+
+  return result;
+}
+
+
+
+/**
+ * thunar_file_history_peek_forward:
+ * @history : a #ThunarHistory.
+ *
+ * Returns the next directory in the history. This often but not always 
+ * refers to a child of the current directory.
+ *
+ * The returned #ThunarFile is owned by the #ThunarHistory and must
+ * not be released by the caller.
+ *
+ * Return value: the next #ThunarFile in the history.
+ **/
+ThunarFile *
+thunar_history_peek_forward (ThunarHistory *history)
+{
+  ThunarFile *result = NULL;
+
+  _thunar_return_val_if_fail (THUNAR_IS_HISTORY (history), NULL);
+
+  /* pick the first file in the forward list, if there are any */
+  if (history->forward_list != NULL)
+    result = history->forward_list->data;
+
+  return result;
+}

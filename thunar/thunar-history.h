@@ -20,7 +20,7 @@
 #ifndef __THUNAR_HISTORY_H__
 #define __THUNAR_HISTORY_H__
 
-#include <gtk/gtk.h>
+#include <thunar/thunar-file.h>
 
 G_BEGIN_DECLS;
 
@@ -41,6 +41,8 @@ ThunarHistory  *thunar_history_new              (void) G_GNUC_MALLOC;
 GtkActionGroup *thunar_history_get_action_group (const ThunarHistory *history);
 void            thunar_history_set_action_group (ThunarHistory       *history,
                                                  GtkActionGroup      *action_group);
+ThunarFile     *thunar_history_peek_back        (ThunarHistory       *history);
+ThunarFile     *thunar_history_peek_forward     (ThunarHistory       *history);
 
 G_END_DECLS;
 
