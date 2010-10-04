@@ -2009,6 +2009,37 @@ thunar_file_is_local (const ThunarFile *file)
 
 
 /**
+ * thunar_file_is_parent:
+ * @file  : a #ThunarFile instance.
+ * @child : another #ThunarFile instance.
+ *
+ * Determines whether @file is the parent directory of @child.
+ *
+ * Return value: %TRUE if @file is the parent of @child.
+ **/
+gboolean
+thunar_file_is_parent (const ThunarFile *file,
+                       const ThunarFile *child)
+{
+  gboolean is_parent = FALSE;
+  GFile   *parent;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (child), FALSE);
+
+  parent = g_file_get_parent (child->gfile);
+  if (parent != NULL)
+    {
+      is_parent = g_file_equal (file->gfile, parent);
+      g_object_unref (parent);
+    }
+
+  return is_parent;
+}
+
+
+
+/**
  * thunar_file_is_ancestor:
  * @file     : a #ThunarFile instance.
  * @ancestor : another #ThunarFile instance.
