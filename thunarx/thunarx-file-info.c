@@ -421,8 +421,11 @@ thunarx_file_info_list_copy (GList *file_infos)
   GList *list = NULL;
   GList *lp;
 
-  for (lp = g_list_last (file_infos); lp != NULL; lp = lp->prev)
-    list = g_list_prepend (list, g_object_ref (G_OBJECT (lp->data)));
+  if (file_infos != NULL)
+    {
+      for (lp = g_list_last (file_infos); lp != NULL; lp = lp->prev)
+        list = g_list_prepend (list, g_object_ref (G_OBJECT (lp->data)));
+    }
 
   return list;
 }
@@ -440,6 +443,9 @@ thunarx_file_info_list_copy (GList *file_infos)
 void
 thunarx_file_info_list_free (GList *file_infos)
 {
-  g_list_foreach (file_infos, (GFunc) g_object_unref, NULL);
-  g_list_free (file_infos);
-}
+  if (file_infos != NULL)
+    {
+      g_list_foreach (file_infos, (GFunc) g_object_unref, NULL);
+      g_list_free (file_infos);
+    }
+}   
