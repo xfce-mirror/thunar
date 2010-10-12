@@ -397,7 +397,7 @@ thunar_g_volume_is_removable (GVolume *volume)
   GMount  *mount;
 
   _thunar_return_val_if_fail (G_IS_VOLUME (volume), FALSE);
-
+  
   /* check if the volume can be ejected */
   can_eject = g_volume_can_eject (volume);
 
@@ -456,7 +456,9 @@ gboolean
 thunar_g_volume_is_present (GVolume *volume)
 {
   gboolean has_media = FALSE;
+  gboolean is_shadowed = FALSE;
   GDrive  *drive;
+  GMount  *mount;
 
   _thunar_return_val_if_fail (G_IS_VOLUME (volume), FALSE);
 
@@ -467,7 +469,14 @@ thunar_g_volume_is_present (GVolume *volume)
       g_object_unref (drive);
     }
 
-  return has_media;
+  mount = g_volume_get_mount (volume);
+  if (mount != NULL)
+    {
+      is_shadowed = g_mount_is_shadowed (mount);
+      g_object_unref (mount);
+    }
+
+  return has_media && !is_shadowed;
 }
 
 
