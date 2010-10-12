@@ -561,12 +561,15 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
       g_value_init (value, G_TYPE_STRING);
       if (shortcut->volume != NULL)
         {
-          mount = g_volume_get_mount (shortcut->volume);
-          if (g_volume_can_eject (shortcut->volume) || (mount != NULL && g_mount_can_unmount (mount)))
-            g_value_set_static_string (value, "media-eject");
+          if (thunar_g_volume_is_removable (shortcut->volume) 
+              && thunar_g_volume_is_present (shortcut->volume))
+            {
+              g_value_set_static_string (value, "media-eject");
+            }
           else
-            g_value_set_static_string (value, "");
-          g_object_unref (mount);
+            {
+              g_value_set_static_string (value, "");
+            }
         }
       else
         {
