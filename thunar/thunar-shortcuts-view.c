@@ -150,6 +150,7 @@ struct _ThunarShortcutsView
    * button-release-event should activate.
    */
   gint pressed_button;
+  guint pressed_eject_button : 1;
 
   /* drop site support */
   guint  drop_data_ready : 1; /* whether the drop data was received already */
@@ -283,6 +284,15 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
                                        "text", THUNAR_SHORTCUTS_MODEL_COLUMN_NAME,
                                        NULL);
 
+  /* allocate icon renderer for the eject symbol */
+  renderer = gtk_cell_renderer_pixbuf_new ();
+  g_object_set (renderer, "mode", GTK_CELL_RENDERER_MODE_ACTIVATABLE, NULL);
+  gtk_tree_view_column_pack_start (column, renderer, FALSE);
+  gtk_tree_view_column_set_attributes (column, renderer,
+                                       "icon-name", THUNAR_SHORTCUTS_MODEL_COLUMN_EJECT,
+                                       NULL);
+
+
   /* enable drag support for the shortcuts view (actually used to support reordering) */
   gtk_tree_view_enable_model_drag_source (GTK_TREE_VIEW (view), GDK_BUTTON1_MASK, drag_targets,
                                           G_N_ELEMENTS (drag_targets), GDK_ACTION_MOVE);
@@ -331,9 +341,11 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
   GtkTreePath         *path;
   GtkTreeIter          iter;
   gboolean             result;
+  gchar               *eject_icon;
 
   /* reset the pressed button state */
   view->pressed_button = -1;
+  view->pressed_eject_button = 0;
 
   /* completely ignore double click events */
   if (event->type == GDK_2BUTTON_PRESS)
@@ -362,8 +374,32 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
       else if ((event->button == 1 || event->button == 2) && event->type == GDK_BUTTON_PRESS
             && (event->state & gtk_accelerator_get_default_mod_mask ()) == 0)
         {
+          /* check if we clicked the eject button area */
+          gint icon_width, icon_height, column_width;
+          column_width = gtk_tree_view_column_get_width (gtk_tree_view_get_column (GTK_TREE_VIEW (view), 0));
+          gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &icon_width, &icon_height);
+          if (event->x >= column_width - icon_width - 3)
+            {
+              /* check if that shortcut actually has an eject button */
+              model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
+              if (gtk_tree_model_get_iter (model, &iter, path))
+                {
+                  gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_EJECT, &eject_icon, -1);
+                  if (strlen (eject_icon) > 0)
+                    view->pressed_eject_button = 1;
+                  g_free (eject_icon);
+                }
+            }
+
+          /*
+          g_debug("thunar_shortcuts_view_button_press_event(): x: %f, y: %f; my width: %i, eject width: %i, eject: %i", 
+                  event->x, event->y, column_width, icon_width, view->pressed_eject_button);
+          */
+
           /* remember the button as pressed and handle it in the release handler */
           view->pressed_button = event->button;
+
+
         }
 
       /* release the path */
@@ -384,6 +420,9 @@ thunar_shortcuts_view_button_release_event (GtkWidget      *widget,
   /* check if we have an event matching the pressed button state */
   if (G_LIKELY (view->pressed_button == (gint) event->button))
     {
+      if (view->pressed_eject_button)
+        thunar_shortcuts_view_eject (view);
+
       /* check if we should simply open or open in new window */
       if (G_LIKELY (event->button == 1))
         thunar_shortcuts_view_open (view, FALSE);
@@ -393,6 +432,7 @@ thunar_shortcuts_view_button_release_event (GtkWidget      *widget,
 
   /* reset the pressed button state */
   view->pressed_button = -1;
+  view->pressed_eject_button = 0;
 
   /* call the parent's release event handler */
   return (*GTK_WIDGET_CLASS (thunar_shortcuts_view_parent_class)->button_release_event) (widget, event);

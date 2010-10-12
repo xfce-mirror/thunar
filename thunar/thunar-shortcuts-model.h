@@ -40,6 +40,7 @@ typedef struct _ThunarShortcutsModel      ThunarShortcutsModel;
  * @THUNAR_SHORTCUTS_MODEL_COLUMN_FILE      : the index of the file column.
  * @THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME    : the index of the volume column.
  * @THUNAR_SHORTCUTS_MODEL_COLUMN_MUTABLE   : tells whether a row is mutable.
+ * @THUNAR_SHORTCUTS_MODEL_COLUMN_EJECT     : stock icon name for eject symbol
  * @THUNAR_SHORTCUTS_MODEL_COLUMN_SEPARATOR : tells whether a row is a separator.
  *
  * Columns exported by #ThunarShortcutsModel using the
@@ -51,6 +52,7 @@ typedef enum
   THUNAR_SHORTCUTS_MODEL_COLUMN_FILE,
   THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME,
   THUNAR_SHORTCUTS_MODEL_COLUMN_MUTABLE,
+  THUNAR_SHORTCUTS_MODEL_COLUMN_EJECT,
   THUNAR_SHORTCUTS_MODEL_COLUMN_SEPARATOR,
   THUNAR_SHORTCUTS_MODEL_N_COLUMNS,
 } ThunarShortcutsModelColumn;

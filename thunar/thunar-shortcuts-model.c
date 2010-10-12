@@ -432,6 +432,9 @@ thunar_shortcuts_model_get_column_type (GtkTreeModel *tree_model,
     case THUNAR_SHORTCUTS_MODEL_COLUMN_MUTABLE:
       return G_TYPE_BOOLEAN;
 
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_EJECT:
+      return G_TYPE_STRING;
+
     case THUNAR_SHORTCUTS_MODEL_COLUMN_SEPARATOR:
       return G_TYPE_BOOLEAN;
     }
@@ -552,6 +555,23 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
     case THUNAR_SHORTCUTS_MODEL_COLUMN_MUTABLE:
       g_value_init (value, G_TYPE_BOOLEAN);
       g_value_set_boolean (value, shortcut->type == THUNAR_SHORTCUT_USER_DEFINED);
+      break;
+
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_EJECT:
+      g_value_init (value, G_TYPE_STRING);
+      if (shortcut->volume != NULL)
+        {
+          mount = g_volume_get_mount (shortcut->volume);
+          if (g_volume_can_eject (shortcut->volume) || (mount != NULL && g_mount_can_unmount (mount)))
+            g_value_set_static_string (value, "media-eject");
+          else
+            g_value_set_static_string (value, "");
+          g_object_unref (mount);
+        }
+      else
+        {
+          g_value_set_static_string (value, "");
+        }
       break;
 
     case THUNAR_SHORTCUTS_MODEL_COLUMN_SEPARATOR:
