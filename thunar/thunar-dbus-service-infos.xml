@@ -39,7 +39,7 @@
                    the mime database.
       display    : the screen on which to display the chooser dialog or
                    "" to use the default screen of the file manager.
-      startup-id : the DESKTOP_STARTUP_ID environment variable for properly
+      startup_id : the DESKTOP_STARTUP_ID environment variable for properly
                    handling startup notification and focus stealing.
 
       Displays the chooser dialog, which lets the user select an application
@@ -51,7 +51,7 @@
       <arg direction="in" name="uri" type="s" />
       <arg direction="in" name="open" type="b" />
       <arg direction="in" name="display" type="s" />
-      <arg direction="in" name="startup-id" type="s" />
+      <arg direction="in" name="startup_id" type="s" />
     </method>
 
 
@@ -61,13 +61,13 @@
       uri        : either a file:-URI or an absolute path.
       display    : the screen on which to display the folder or ""
                    to use the default screen of the file manager.
-      startup-id : the DESKTOP_STARTUP_ID environment variable for properly
+      startup_id : the DESKTOP_STARTUP_ID environment variable for properly
                    handling startup notification and focus stealing.
     -->
     <method name="DisplayFolder">
       <arg direction="in" name="uri" type="s" />
       <arg direction="in" name="display" type="s" />
-      <arg direction="in" name="startup-id" type="s" />
+      <arg direction="in" name="startup_id" type="s" />
     </method>
 
 
@@ -82,7 +82,7 @@
                    must be a name relative to the folder URI.
       display    : the screen on which to display the folder or ""
                    to use the default screen of the file manager.
-      startup-id : the DESKTOP_STARTUP_ID environment variable for properly
+      startup_id : the DESKTOP_STARTUP_ID environment variable for properly
                    handling startup notification and focus stealing.
 
       Note to implementors: Not all file managers may be able to
@@ -94,7 +94,7 @@
       <arg direction="in" name="uri" type="s" />
       <arg direction="in" name="filename" type="s" />
       <arg direction="in" name="display" type="s" />
-      <arg direction="in" name="startup-id" type="s" />
+      <arg direction="in" name="startup_id" type="s" />
     </method>
 
 
@@ -104,13 +104,13 @@
       uri        : either a file:-URI or an absolute path.
       display    : the screen on which to display the file properties
                    or "" to use the default screen of the file manager.
-      startup-id : the DESKTOP_STARTUP_ID environment variable for properly
+      startup_id : the DESKTOP_STARTUP_ID environment variable for properly
                    handling startup notification and focus stealing.
     -->
     <method name="DisplayFileProperties">
       <arg direction="in" name="uri" type="s" />
       <arg direction="in" name="display" type="s" />
-      <arg direction="in" name="startup-id" type="s" />
+      <arg direction="in" name="startup_id" type="s" />
     </method>
 
 
@@ -120,13 +120,13 @@
       uri        : either a file:-URI or an absolute path.
       display    : the screen on which to launch the file or ""
                    to use the default screen of the file manager.
-      startup-id : the DESKTOP_STARTUP_ID environment variable for properly
+      startup_id : the DESKTOP_STARTUP_ID environment variable for properly
                    handling startup notification and focus stealing.
     -->
     <method name="Launch">
       <arg direction="in" name="uri" type="s" />
       <arg direction="in" name="display" type="s" />
-      <arg direction="in" name="startup-id" type="s" />
+      <arg direction="in" name="startup_id" type="s" />
     </method>
 
 
@@ -135,141 +135,141 @@
 
       display    : the screen on which to display the preferences dialog
                    or "" to use the default screen of the file manager.
-      startup-id : the DESKTOP_STARTUP_ID environment variable for properly
+      startup_id : the DESKTOP_STARTUP_ID environment variable for properly
                    handling startup notification and focus stealing.
     -->
     <method name="DisplayPreferencesDialog">
       <arg direction="in" name="display" type="s" />
-      <arg direction="in" name="startup-id" type="s" />
+      <arg direction="in" name="startup_id" type="s" />
     </method>
 
 
     <!--
-      CopyTo (working-directory : STRING, source-filenames : ARRAY OF STRING, target-filenames : ARRAY OF STRING, display : STRING, startup-id : STRING) : VOID
+      CopyTo (working_directory : STRING, source_filenames : ARRAY OF STRING, target_filenames : ARRAY OF STRING, display : STRING, startup_id : STRING) : VOID
 
-      working-directory : working directory used to resolve relative filenames.
-      source-filenames  : an array of file names to copy. The file names may
+      working_directory : working directory used to resolve relative filenames.
+      source_filenames  : an array of file names to copy. The file names may
                           be either file:-URIs, absolute paths or paths relative
-                          to the working-directory.
-      target-filenames  : the target filenames.
+                          to the working_directory.
+      target_filenames  : the target filenames.
       display           : the screen on which to launch the filenames or ""
                           to use the default screen of the file manager.
-      startup-id        : the DESKTOP_STARTUP_ID environment variable for properly
+      startup_id        : the DESKTOP_STARTUP_ID environment variable for properly
                           handling startup notification and focus stealing.
     -->
     <method name="CopyTo">
-      <arg direction="in" name="working-directory" type="s" />
-      <arg direction="in" name="source-filenames" type="as" />
-      <arg direction="in" name="target-filenames" type="as" />
+      <arg direction="in" name="working_directory" type="s" />
+      <arg direction="in" name="source_filenames" type="as" />
+      <arg direction="in" name="target_filenames" type="as" />
       <arg direction="in" name="display" type="s" />
-      <arg direction="in" name="startup-id" type="s" />
+      <arg direction="in" name="startup_id" type="s" />
     </method>
 
 
     <!--
-      CopyInto (working-directory : STRING, source-filenames : ARRAY OF STRING, target-filename : STRING, display : STRING, startup-id : STRING) : VOID
+      CopyInto (working_directory : STRING, source_filenames : ARRAY OF STRING, target_filename : STRING, display : STRING, startup_id : STRING) : VOID
 
-      working-directory : working directory used to resolve relative filenames.
-      source-filenames  : an array of file names to copy. The file names may
+      working_directory : working directory used to resolve relative filenames.
+      source_filenames  : an array of file names to copy. The file names may
                           be either file:-URIs, absolute paths or paths relative
-                          to the working-directory.
-      target-filename   : the target directory.
+                          to the working_directory.
+      target_filename   : the target directory.
       display           : the screen on which to launch the filenames or ""
                           to use the default screen of the file manager.
-      startup-id        : the DESKTOP_STARTUP_ID environment variable for properly
+      startup_id        : the DESKTOP_STARTUP_ID environment variable for properly
                           handling startup notification and focus stealing.
     -->
     <method name="CopyInto">
-      <arg direction="in" name="working-directory" type="s" />
-      <arg direction="in" name="source-filenames" type="as" />
-      <arg direction="in" name="target-filename" type="s" />
+      <arg direction="in" name="working_directory" type="s" />
+      <arg direction="in" name="source_filenames" type="as" />
+      <arg direction="in" name="target_filename" type="s" />
       <arg direction="in" name="display" type="s" />
-      <arg direction="in" name="startup-id" type="s" />
+      <arg direction="in" name="startup_id" type="s" />
     </method>
 
 
     <!--
-      MoveInto (working-directory : STRING, source-filenames : ARRAY OF STRING, target-filename : STRING, display : STRING, startup-id : STRING) : VOID
+      MoveInto (working_directory : STRING, source_filenames : ARRAY OF STRING, target_filename : STRING, display : STRING, startup_id : STRING) : VOID
 
-      working-directory : working directory used to resolve relative filenames.
-      source-filenames  : an array of file names to move. The file names may
+      working_directory : working directory used to resolve relative filenames.
+      source_filenames  : an array of file names to move. The file names may
                           be either file:-URIs, absolute paths or paths relative
-                          to the working-directory.
-      target-filename   : the target directory.
+                          to the working_directory.
+      target_filename   : the target directory.
       display           : the screen on which to launch the filenames or ""
                           to use the default screen of the file manager.
-      startup-id        : the DESKTOP_STARTUP_ID environment variable for properly
+      startup_id        : the DESKTOP_STARTUP_ID environment variable for properly
                            handling startup notification and focus stealing.
     -->
     <method name="MoveInto">
-      <arg direction="in" name="working-directory" type="s" />
-      <arg direction="in" name="source-filenames" type="as" />
-      <arg direction="in" name="target-filename" type="s" />
+      <arg direction="in" name="working_directory" type="s" />
+      <arg direction="in" name="source_filenames" type="as" />
+      <arg direction="in" name="target_filename" type="s" />
       <arg direction="in" name="display" type="s" />
-      <arg direction="in" name="startup-id" type="s" />
+      <arg direction="in" name="startup_id" type="s" />
     </method>
 
 
     <!--
-      LinkInto (working-directory : STRING, source-filenames : ARRAY OF STRING, target-filename : STRING, display : STRING, startup-id : STRING) : VOID
+      LinkInto (working_directory : STRING, source_filenames : ARRAY OF STRING, target_filename : STRING, display : STRING, startup_id : STRING) : VOID
 
-      working-directory : working directory used to resolve relative filenames.
-      source-filenames  : an array of file names to link. The file names may
+      working_directory : working directory used to resolve relative filenames.
+      source_filenames  : an array of file names to link. The file names may
                           be either file:-URIs, absolute paths or paths relative
-                          to the working-directory.
-      target-filename   : the target directory.
+                          to the working_directory.
+      target_filename   : the target directory.
       display           : the screen on which to launch the filenames or ""
                           to use the default screen of the file manager.
-      startup-id        : the DESKTOP_STARTUP_ID environment variable for properly
+      startup_id        : the DESKTOP_STARTUP_ID environment variable for properly
                            handling startup notification and focus stealing.
     -->
     <method name="LinkInto">
-      <arg direction="in" name="working-directory" type="s" />
-      <arg direction="in" name="source-filenames" type="as" />
-      <arg direction="in" name="target-filename" type="s" />
+      <arg direction="in" name="working_directory" type="s" />
+      <arg direction="in" name="source_filenames" type="as" />
+      <arg direction="in" name="target_filename" type="s" />
       <arg direction="in" name="display" type="s" />
-      <arg direction="in" name="startup-id" type="s" />
+      <arg direction="in" name="startup_id" type="s" />
     </method>
 
 
     <!--
-      UnlinkFiles (working-directory : STRING, filenames : ARRAY OF STRING, display : STRING, startup-id : STRING) : VOID
+      UnlinkFiles (working_directory : STRING, filenames : ARRAY OF STRING, display : STRING, startup_id : STRING) : VOID
 
-      working-directory : working directory used to resolve relative filenames.
+      working_directory : working directory used to resolve relative filenames.
       filenames         : an array of file names to delete. The file names may
                           be either file:-URIs, absolute paths or paths relative
-                          to the working-directory.
+                          to the working_directory.
       display           : the screen on which to launch the filenames or ""
                           to use the default screen of the file manager.
-      startup-id        : the DESKTOP_STARTUP_ID environment variable for properly
+      startup_id        : the DESKTOP_STARTUP_ID environment variable for properly
                           handling startup notification and focus stealing.
     -->
     <method name="UnlinkFiles">
-      <arg direction="in" name="working-directory" type="s" />
+      <arg direction="in" name="working_directory" type="s" />
       <arg direction="in" name="filenames" type="as" />
       <arg direction="in" name="display" type="s" />
-      <arg direction="in" name="startup-id" type="s" />
+      <arg direction="in" name="startup_id" type="s" />
     </method>
 
 
     <!--
-      LaunchFiles (working-directory : STRING, filenames : ARRAY OF STRING, display : STRING, startup-id : STRING) : VOID
+      LaunchFiles (working_directory : STRING, filenames : ARRAY OF STRING, display : STRING, startup_id : STRING) : VOID
 
-      working-directory : the directory, relative to which filenames should
+      working_directory : the directory, relative to which filenames should
                           be interpreted.
       filenames         : an array of file names to launch. The file names may
                           be either file:-URIs, absolute paths or paths relative
-                          to the working-directory.
+                          to the working_directory.
       display           : the screen on which to launch the filenames or ""
                           to use the default screen of the file manager.
-      startup-id        : the DESKTOP_STARTUP_ID environment variable for properly
+      startup_id        : the DESKTOP_STARTUP_ID environment variable for properly
                            handling startup notification and focus stealing.
     -->
     <method name="LaunchFiles">
-      <arg direction="in" name="working-directory" type="s" />
+      <arg direction="in" name="working_directory" type="s" />
       <arg direction="in" name="filenames" type="as" />
       <arg direction="in" name="display" type="s" />
-      <arg direction="in" name="startup-id" type="s" />
+      <arg direction="in" name="startup_id" type="s" />
     </method>
   </interface>
 
@@ -289,7 +289,7 @@
       display    : the screen on which to display the trash folder
                    contents or "" to use the default screen of the
                    file manager.
-      startup-id : the DESKTOP_STARTUP_ID environment variable for properly
+      startup_id : the DESKTOP_STARTUP_ID environment variable for properly
                    handling startup notification and focus stealing.
 
       Opens a new file manager window showing the trash folder
@@ -297,7 +297,7 @@
     -->
     <method name="DisplayTrash">
       <arg direction="in" name="display" type="s" />
-      <arg direction="in" name="startup-id" type="s" />
+      <arg direction="in" name="startup_id" type="s" />
     </method>
 
     <!--
@@ -306,14 +306,14 @@
       display    : the screen on which to display the confirmation of
                    the operation and the progress status or "" to use
                    the default screen of the file manager.
-      startup-id : the DESKTOP_STARTUP_ID environment variable for properly
+      startup_id : the DESKTOP_STARTUP_ID environment variable for properly
                    handling startup notification and focus stealing.
 
       Tells the file manager to empty the trash bin.
     -->
     <method name="EmptyTrash">
       <arg direction="in" name="display" type="s" />
-      <arg direction="in" name="startup-id" type="s" />
+      <arg direction="in" name="startup_id" type="s" />
     </method>
 
     <!--
@@ -324,7 +324,7 @@
       display    : the screen on which to display the progress dialog
                    and possible error messages and confirmation dialogs
                    or "" to use the default screen of the file manager.
-      startup-id : the DESKTOP_STARTUP_ID environment variable for properly
+      startup_id : the DESKTOP_STARTUP_ID environment variable for properly
                    handling startup notification and focus stealing.
 
       Tells the file manager to move all files specified by the filenames
@@ -333,7 +333,7 @@
     <method name="MoveToTrash">
       <arg direction="in" name="filenames" type="as" />
       <arg direction="in" name="display" type="s" />
-      <arg direction="in" name="startup-id" type="s" />
+      <arg direction="in" name="startup_id" type="s" />
     </method>
 
     <!--
@@ -375,9 +375,9 @@
     <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="thunar_dbus_service" />
 
     <!--
-      BulkRename (working-directory : STRING, filenames : ARRAY OF STRING, standalone : BOOLEAN, display : STRING, startup-id : STRING) : VOID
+      BulkRename (working_directory : STRING, filenames : ARRAY OF STRING, standalone : BOOLEAN, display : STRING, startup_id : STRING) : VOID
 
-      working-directory : the default directory for the "Add Files" dialog of the
+      working_directory : the default directory for the "Add Files" dialog of the
                           bulk rename window. May also be the empty string, in
                           which case the current working directory of the file
                           manager process will be used. This is also used to
@@ -387,7 +387,7 @@
                           appear in the bulk renamer list by default. May also
                           be an empty list. any file that is neither an absolute
                           path nor a file:-URI will be translated into an
-                          absolute path relative to the working-directory.
+                          absolute path relative to the working_directory.
       standalone        : TRUE if the bulk rename dialog should appear like a
                           standalone application. This is usually what you want.
                           It should only be FALSE when invoked from another file
@@ -395,15 +395,15 @@
                           bunch of selected files will be renamed.
       display           : the screen on which to launch the filenames or ""
                           to use the default screen of the file manager.
-      startup-id        : the DESKTOP_STARTUP_ID environment variable for properly
+      startup_id        : the DESKTOP_STARTUP_ID environment variable for properly
                            handling startup notification and focus stealing.
     -->
     <method name="BulkRename">
-      <arg direction="in" name="working-directory" type="s" />
+      <arg direction="in" name="working_directory" type="s" />
       <arg direction="in" name="filenames" type="as" />
       <arg direction="in" name="standalone" type="b" />
       <arg direction="in" name="display" type="s" />
-      <arg direction="in" name="startup-id" type="s" />
+      <arg direction="in" name="startup_id" type="s" />
     </method>
 
 
