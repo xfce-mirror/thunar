@@ -45,7 +45,9 @@
 
 /**
  * thunar_dialogs_show_rename_file:
- * @parent : the parent #GtkWindow.
+ * @parent : a #GtkWidget on which the error dialog should be shown, or a #GdkScreen
+ *           if no #GtkWidget is known. May also be %NULL, in which case the default
+ *           #GdkScreen will be used.
  * @file   : the #ThunarFile we're going to rename.
  *
  * Displays the Thunar rename dialog for a single file rename.
@@ -54,7 +56,7 @@
  *               %NULL if there was no renaming required.
  **/
 ThunarJob *
-thunar_dialogs_show_rename_file (GtkWindow *parent,
+thunar_dialogs_show_rename_file (gpointer    parent,
                                  ThunarFile *file)
 {
   ThunarIconFactory *icon_factory;
@@ -67,13 +69,18 @@ thunar_dialogs_show_rename_file (GtkWindow *parent,
   GtkWidget         *label;
   GtkWidget         *image;
   GtkWidget         *table;
+  GtkWindow         *window;
   GdkPixbuf         *icon;
+  GdkScreen         *screen;
   glong              offset;
   gchar             *title;
   gint               response;
 
-  _thunar_return_val_if_fail (GTK_IS_WINDOW (parent), FALSE);
+  _thunar_return_val_if_fail (window == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WINDOW (parent), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+
+  /* parse the parent window and screen */
+  screen = thunar_util_parse_parent (parent, &window);
 
   /* get the filename of the file */
   filename = thunar_file_get_display_name (file);
@@ -81,7 +88,7 @@ thunar_dialogs_show_rename_file (GtkWindow *parent,
   /* create a new dialog window */
   title = g_strdup_printf (_("Rename \"%s\""), filename);
   dialog = gtk_dialog_new_with_buttons (title,
-                                        GTK_WINDOW (parent),
+                                        window,
                                         GTK_DIALOG_MODAL
                                         | GTK_DIALOG_NO_SEPARATOR
                                         | GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -91,6 +98,10 @@ thunar_dialogs_show_rename_file (GtkWindow *parent,
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
   gtk_window_set_default_size (GTK_WINDOW (dialog), 300, -1);
   g_free (title);
+
+  /* move the dialog to the appropriate screen */
+  if (G_UNLIKELY (window == NULL && screen != NULL))
+    gtk_window_set_screen (GTK_WINDOW (dialog), screen);
 
   table = g_object_new (GTK_TYPE_TABLE, "border-width", 6, "column-spacing", 6, "row-spacing", 3, NULL);
   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), table, TRUE, TRUE, 0);
