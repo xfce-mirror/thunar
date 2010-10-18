@@ -263,11 +263,26 @@
       display           : the screen on which to launch the filenames or ""
                           to use the default screen of the file manager.
       startup_id        : the DESKTOP_STARTUP_ID environment variable for properly
-                           handling startup notification and focus stealing.
+                          handling startup notification and focus stealing.
     -->
     <method name="LaunchFiles">
       <arg direction="in" name="working_directory" type="s" />
       <arg direction="in" name="filenames" type="as" />
+      <arg direction="in" name="display" type="s" />
+      <arg direction="in" name="startup_id" type="s" />
+    </method>
+
+    <!--
+      RenameFile (uri : STRING, display : STRING, startup_id : STRING) : VOID
+
+      uri        : a URI to rename. This may be either a file:-URI or an absolute path.
+      display    : the screen on which to launch the filenames or ""
+                   to use the default screen of the file manager.
+      startup_id : the DESKTOP_STARTUP_ID environment variable for properly
+                   handling startup notification and focus stealing.
+    -->
+    <method name="RenameFile">
+      <arg direction="in" name="filename" type="s" />
       <arg direction="in" name="display" type="s" />
       <arg direction="in" name="startup_id" type="s" />
     </method>

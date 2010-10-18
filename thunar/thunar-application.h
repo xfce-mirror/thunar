@@ -75,6 +75,11 @@ gboolean           thunar_application_process_filenames   (ThunarApplication *ap
 
 gboolean           thunar_application_is_processing       (ThunarApplication *application);
 
+void               thunar_application_rename_file         (ThunarApplication *application,
+                                                           ThunarFile        *file,
+                                                           GdkScreen         *screen,
+                                                           const gchar       *startup_id);
+
 void               thunar_application_copy_to             (ThunarApplication *application,
                                                            gpointer           parent,
                                                            GList             *source_file_list,

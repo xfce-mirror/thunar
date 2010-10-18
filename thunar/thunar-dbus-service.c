@@ -136,6 +136,11 @@ static gboolean thunar_dbus_service_launch_files                (ThunarDBusServi
                                                                  const gchar            *display,
                                                                  const gchar            *startup_id,
                                                                  GError                **error);
+static gboolean thunar_dbus_service_rename_file                 (ThunarDBusService      *dbus_service,
+                                                                 const gchar            *uri,
+                                                                 const gchar            *display,
+                                                                 const gchar            *startup_id,
+                                                                 GError                **error);
 static gboolean thunar_dbus_service_copy_to                     (ThunarDBusService      *dbus_service,
                                                                  const gchar            *working_directory,
                                                                  gchar                 **source_filenames,
@@ -793,6 +798,35 @@ thunar_dbus_service_launch_files (ThunarDBusService *dbus_service,
     }
 
   return result;
+}
+
+
+
+static gboolean
+thunar_dbus_service_rename_file (ThunarDBusService *dbus_service,
+                                 const gchar       *uri,
+                                 const gchar       *display,
+                                 const gchar       *startup_id,
+                                 GError           **error)
+{
+  ThunarApplication *application;
+  ThunarFile        *file;
+  GdkScreen         *screen;
+
+  /* parse uri and display parameters */
+  if (!thunar_dbus_service_parse_uri_and_display (dbus_service, uri, display, &file, &screen, error))
+    return FALSE;
+
+  /* popup a new window for the folder */
+  application = thunar_application_get ();
+  thunar_application_rename_file (application, file, screen, startup_id);
+  g_object_unref (G_OBJECT (application));
+
+  /* cleanup */
+  g_object_unref (G_OBJECT (screen));
+  g_object_unref (G_OBJECT (file));
+
+  return TRUE;
 }
 
 

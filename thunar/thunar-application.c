@@ -148,6 +148,7 @@ struct _ThunarApplication
 
 static GQuark thunar_application_screen_quark;
 static GQuark thunar_application_startup_id_quark;
+static GQuark thunar_application_file_quark;
 
 
 
@@ -166,6 +167,8 @@ thunar_application_class_init (ThunarApplicationClass *klass)
     g_quark_from_static_string ("thunar-application-screen");
   thunar_application_startup_id_quark =
     g_quark_from_static_string ("thunar-application-startup-id");
+  thunar_application_file_quark =
+    g_quark_from_static_string ("thunar-application-file");
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_application_finalize;
@@ -1205,6 +1208,73 @@ thunar_application_is_processing (ThunarApplication *application)
 {
   _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
   return application->files_to_launch != NULL;
+}
+
+
+
+static void
+thunar_application_rename_file_error (ExoJob            *job,
+                                      GError            *error,
+                                      ThunarApplication *application)
+{
+  ThunarFile *file;
+  GdkScreen  *screen;
+
+  _thunar_return_if_fail (EXO_IS_JOB (job));
+  _thunar_return_if_fail (error != NULL);
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+
+  screen = g_object_get_qdata (G_OBJECT (job), thunar_application_screen_quark);
+  file = g_object_get_qdata (G_OBJECT (job), thunar_application_file_quark);
+
+  g_assert (screen != NULL);
+  g_assert (file != NULL);
+
+  thunar_dialogs_show_error (screen, error, _("Failed to rename \"%s\""), 
+                             thunar_file_get_display_name (file));
+}
+
+
+
+/**
+ * thunar_application_rename_file:
+ * @application : a #ThunarApplication.
+ * @file        : a #ThunarFile to be renamed.
+ * @screen      : the #GdkScreen on which to open the window or %NULL
+ *                to open on the default screen.
+ * @startup_id  : startup id from startup notification passed along
+ *                with dbus to make focus stealing work properly.
+ *
+ * Prompts the user to rename the @file.
+ **/
+void
+thunar_application_rename_file (ThunarApplication *application,
+                                ThunarFile        *file,
+                                GdkScreen         *screen,
+                                const gchar       *startup_id)
+{
+  ThunarJob *job;
+
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (GDK_IS_SCREEN (screen));
+  _thunar_return_if_fail (startup_id != NULL);
+
+  /* TODO pass the startup ID to the rename dialog */
+
+  /* run the rename dialog */
+  job = thunar_dialogs_show_rename_file (screen, file);
+  if (G_LIKELY (job != NULL))
+    {
+      /* remember the screen and file */
+      g_object_set_qdata (G_OBJECT (job), thunar_application_screen_quark, screen);
+      g_object_set_qdata_full (G_OBJECT (job), thunar_application_file_quark, 
+                               g_object_ref (file), g_object_unref);
+
+      /* handle rename errors */
+      g_signal_connect (job, "error", 
+                        G_CALLBACK (thunar_application_rename_file_error), application);
+    }
 }
 
 
