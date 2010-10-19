@@ -1,7 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -47,7 +47,7 @@ const gchar       *thunar_create_dialog_get_content_type (const ThunarCreateDial
 void               thunar_create_dialog_set_content_type (ThunarCreateDialog       *dialog,
                                                           const gchar              *content_type);
 
-gchar             *thunar_show_create_dialog             (GtkWidget                *parent,
+gchar             *thunar_show_create_dialog             (gpointer                  parent,
                                                           const gchar              *content_type,
                                                           const gchar              *filename,
                                                           const gchar              *title) G_GNUC_MALLOC;

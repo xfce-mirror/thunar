@@ -1,7 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -29,6 +29,7 @@
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -415,7 +416,7 @@ thunar_create_dialog_set_content_type (ThunarCreateDialog *dialog,
 
 /**
  * thunar_show_create_dialog:
- * @parent       : the parent widget or %NULL.
+ * @parent       : a #GdkScreen, a #GtkWidget or %NULL.
  * @content_type : the content type of the file or folder to create.
  * @filename     : the suggested filename or %NULL.
  * @title        : the dialog title.
@@ -431,20 +432,21 @@ thunar_create_dialog_set_content_type (ThunarCreateDialog *dialog,
  *               cancelled the dialog.
  **/
 gchar*
-thunar_show_create_dialog (GtkWidget   *parent,
+thunar_show_create_dialog (gpointer     parent,
                            const gchar *content_type,
                            const gchar *filename,
                            const gchar *title)
 {
   GtkWidget *dialog;
-  GtkWidget *window;
+  GtkWindow *window;
+  GdkScreen *screen;
   GError    *error = NULL;
   gchar     *name = NULL;
 
-  _thunar_return_val_if_fail (parent == NULL || GTK_IS_WIDGET (parent), NULL);
+  _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), NULL);
 
-  /* determine the toplevel window */
-  window = (parent != NULL) ? gtk_widget_get_toplevel (parent) : NULL;
+  /* parse the parent window and screen */
+  screen = thunar_util_parse_parent (parent, &window);
 
   /* display the create dialog */
   dialog = g_object_new (THUNAR_TYPE_CREATE_DIALOG,
@@ -454,8 +456,13 @@ thunar_show_create_dialog (GtkWidget   *parent,
                          "modal", TRUE,
                          "title", title,
                          NULL);
-  if (G_LIKELY (window != NULL))
-    gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
+
+  if (screen != NULL)
+    gtk_window_set_screen (GTK_WINDOW (dialog), screen);
+
+  if (window != NULL)
+    gtk_window_set_transient_for (GTK_WINDOW (dialog), window);
+
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
     {
       /* determine the chosen filename */
