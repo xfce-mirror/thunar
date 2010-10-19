@@ -44,6 +44,7 @@
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-browser.h>
+#include <thunar/thunar-create-dialog.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gdk-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
@@ -1280,10 +1281,78 @@ thunar_application_rename_file (ThunarApplication *application,
 
 
 /**
+ * thunar_application_create_folder:
+ * @application      : a #ThunarApplication.
+ * @parent_directory : the #ThunarFile of the parent directory
+ * @content_type     : the content type of the new file.
+ * @screen           : the #GdkScreen on which to open the window or %NULL
+ *                     to open on the default screen.
+ * @startup_id       : startup id from startup notification passed along
+ *                     with dbus to make focus stealing work properly.
+ *
+ * Prompts the user to create a new file or directory in @parent_directory.
+ * The @content_type defines the icon and other elements in the filename 
+ * prompt dialog.
+ **/
+void
+thunar_application_create_file (ThunarApplication *application,
+                                ThunarFile        *parent_directory,
+                                const gchar       *content_type,
+                                GdkScreen         *screen,
+                                const gchar       *startup_id)
+{
+  const gchar *dialog_title;
+  const gchar *title;
+  gboolean     is_directory;
+  GList        path_list;
+  gchar       *name;
+
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+  _thunar_return_if_fail (THUNAR_IS_FILE (parent_directory));
+  _thunar_return_if_fail (content_type != NULL && *content_type != '\0');
+  _thunar_return_if_fail (GDK_IS_SCREEN (screen));
+  _thunar_return_if_fail (startup_id != NULL);
+
+  is_directory = (g_strcmp0 (content_type, "inode/directory") == 0);
+
+  if (is_directory)
+    {
+      dialog_title = _("New Folder");
+      title = _("Create New Folder");
+    }
+  else
+    {
+      dialog_title = _("New File");
+      title = _("Create New File");
+    }
+
+  /* TODO pass the startup ID to the rename dialog */
+
+  /* ask the user to enter a name for the new folder */
+  name = thunar_show_create_dialog (screen, content_type, dialog_title, title);
+  if (G_LIKELY (name != NULL))
+    {
+      path_list.data = g_file_get_child (thunar_file_get_file (parent_directory), name);
+      path_list.next = path_list.prev = NULL;
+
+      /* launch the operation */
+      if (is_directory)
+        thunar_application_mkdir (application, screen, &path_list, NULL);
+      else
+        thunar_application_creat (application, screen, &path_list, NULL);
+
+      g_object_unref (path_list.data);
+      g_free (name);
+    }
+}
+
+
+
+/**
  * thunar_application_copy_to:
  * @application       : a #ThunarApplication.
  * @parent            : a #GdkScreen, a #GtkWidget or %NULL.
- * @source_file_list  : the list of #GFile<!---->s that should be copied.
+ * @source_file_list  : the lst of #GFile<!---->s that should be copied.
  * @target_file_list  : the list of #GFile<!---->s where files should be copied to.
  * @new_files_closure : a #GClosure to connect to the job's "new-files" signal,
  *                      which will be emitted when the job finishes with the

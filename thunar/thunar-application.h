@@ -79,7 +79,11 @@ void               thunar_application_rename_file         (ThunarApplication *ap
                                                            ThunarFile        *file,
                                                            GdkScreen         *screen,
                                                            const gchar       *startup_id);
-
+void               thunar_application_create_file         (ThunarApplication *application,
+                                                           ThunarFile        *parent_directory,
+                                                           const gchar       *content_type,
+                                                           GdkScreen         *screen,
+                                                           const gchar       *startup_id);
 void               thunar_application_copy_to             (ThunarApplication *application,
                                                            gpointer           parent,
                                                            GList             *source_file_list,

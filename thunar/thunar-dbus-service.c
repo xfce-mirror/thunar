@@ -141,6 +141,12 @@ static gboolean thunar_dbus_service_rename_file                 (ThunarDBusServi
                                                                  const gchar            *display,
                                                                  const gchar            *startup_id,
                                                                  GError                **error);
+static gboolean thunar_dbus_service_create_file                 (ThunarDBusService      *dbus_service,
+                                                                 const gchar            *parent_directory,
+                                                                 const gchar            *content_type,
+                                                                 const gchar            *display,
+                                                                 const gchar            *startup_id,
+                                                                 GError                **error);
 static gboolean thunar_dbus_service_copy_to                     (ThunarDBusService      *dbus_service,
                                                                  const gchar            *working_directory,
                                                                  gchar                 **source_filenames,
@@ -820,6 +826,40 @@ thunar_dbus_service_rename_file (ThunarDBusService *dbus_service,
   /* popup a new window for the folder */
   application = thunar_application_get ();
   thunar_application_rename_file (application, file, screen, startup_id);
+  g_object_unref (G_OBJECT (application));
+
+  /* cleanup */
+  g_object_unref (G_OBJECT (screen));
+  g_object_unref (G_OBJECT (file));
+
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_dbus_service_create_file (ThunarDBusService *dbus_service,
+                                 const gchar       *parent_directory,
+                                 const gchar       *content_type,
+                                 const gchar       *display,
+                                 const gchar       *startup_id,
+                                 GError           **error)
+{
+  ThunarApplication *application;
+  ThunarFile        *file;
+  GdkScreen         *screen;
+
+  /* parse uri and display parameters */
+  if (!thunar_dbus_service_parse_uri_and_display (dbus_service, parent_directory, display, &file, &screen, error))
+    return FALSE;
+
+  /* fall back to plain text file if no content type is provided */
+  if (content_type == NULL || *content_type == '\0')
+    content_type = "text/plain";
+
+  /* popup a new window for the folder */
+  application = thunar_application_get ();
+  thunar_application_create_file (application, file, content_type, screen, startup_id);
   g_object_unref (G_OBJECT (application));
 
   /* cleanup */
