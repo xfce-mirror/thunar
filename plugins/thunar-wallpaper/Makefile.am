@@ -19,6 +19,7 @@ thunar_wallpaper_plugin_la_CFLAGS =					\
 	$(EXO_CFLAGS)							\
 	$(GLIB_CFLAGS)							\
 	$(GTK_CFLAGS)							\
+	$(LIBX11_CFLAGS)						\
 	$(PLATFORM_CFLAGS)
 
 thunar_wallpaper_plugin_la_LDFLAGS =					\
@@ -32,7 +33,8 @@ thunar_wallpaper_plugin_la_LIBADD =					\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la	\
 	$(EXO_LIBS)							\
 	$(GLIB_LIBS)							\
-	$(GTK_LIBS)
+	$(GTK_LIBS)							\
+	$(LIBX11_LIBS)
 	
 thunar_wallpaper_plugin_la_DEPENDENCIES =				\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la
