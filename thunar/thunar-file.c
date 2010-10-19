@@ -1,7 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -1797,8 +1797,27 @@ thunar_file_get_size (const ThunarFile *file)
 GAppInfo *
 thunar_file_get_default_handler (const ThunarFile *file) 
 {
+  const gchar *content_type;
+  GAppInfo    *app_info = NULL;
+  gboolean     must_support_uris = FALSE;
+  gchar       *path;
+
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return g_file_query_default_handler (THUNAR_FILE ((file))->gfile, NULL, NULL);
+
+  content_type = thunar_file_get_content_type (file);
+  if (content_type != NULL)
+    {
+      path = g_file_get_path (file->gfile);
+      must_support_uris = (path == NULL);
+      g_free (path);
+
+      app_info = g_app_info_get_default_for_type (content_type, must_support_uris);
+    }
+
+  if (app_info == NULL)
+    app_info = g_file_query_default_handler (file->gfile, NULL, NULL);
+
+  return app_info;
 }
 
 
