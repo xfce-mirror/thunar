@@ -103,6 +103,13 @@ static gboolean thunar_dbus_service_launch                      (ThunarDBusServi
                                                                  const gchar            *display,
                                                                  const gchar            *startup_id,
                                                                  GError                **error);
+static gboolean thunar_dbus_service_execute                     (ThunarDBusService      *dbus_service,
+                                                                 const gchar            *working_directory,
+                                                                 const gchar            *uri,
+                                                                 const gchar           **files,
+                                                                 const gchar            *display,
+                                                                 const gchar            *startup_id,
+                                                                 GError                **error);
 static gboolean thunar_dbus_service_display_preferences_dialog  (ThunarDBusService      *dbus_service,
                                                                  const gchar            *display,
                                                                  const gchar            *startup_id,
@@ -545,6 +552,59 @@ thunar_dbus_service_launch (ThunarDBusService *dbus_service,
       /* cleanup */
       g_object_unref (G_OBJECT (screen));
       g_object_unref (G_OBJECT (file));
+    }
+
+  return result;
+}
+
+
+
+static gboolean
+thunar_dbus_service_execute (ThunarDBusService *dbus_service,
+                             const gchar       *working_directory,
+                             const gchar       *uri,
+                             const gchar      **files,
+                             const gchar       *display,
+                             const gchar       *startup_id,
+                             GError           **error)
+{
+  ThunarFile *file;
+  GdkScreen  *screen;
+  gboolean    result = FALSE;
+  GFile      *working_dir;
+  GList      *file_list = NULL;
+  gchar      *tmp_working_dir = NULL;
+  gchar      *old_working_dir = NULL;
+  guint       n;
+
+  /* parse uri and display parameters */
+  if (thunar_dbus_service_parse_uri_and_display (dbus_service, uri, display, &file, &screen, error))
+    {
+      if (working_directory != NULL && *working_directory != '\0')
+        old_working_dir = thunar_util_change_working_directory (working_directory);
+
+      for (n = 0; files != NULL && files[n] != NULL; ++n)
+        file_list = g_list_prepend (file_list, g_file_new_for_commandline_arg (files[n]));
+
+      file_list = g_list_reverse (file_list);
+
+      if (old_working_dir != NULL)
+        {
+          tmp_working_dir = thunar_util_change_working_directory (old_working_dir);
+          g_free (tmp_working_dir);
+          g_free (old_working_dir);
+        }
+
+      /* try to launch the file on the given screen */
+      working_dir = g_file_new_for_commandline_arg (working_directory);
+      result = thunar_file_execute (file, working_dir, screen, file_list, error);
+      g_object_unref (working_dir);
+
+      /* cleanup */
+      g_list_foreach (file_list, (GFunc) g_object_unref, NULL);
+      g_list_free (file_list);
+      g_object_unref (screen);
+      g_object_unref (file);
     }
 
   return result;

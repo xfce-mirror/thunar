@@ -115,7 +115,7 @@
 
 
     <!--
-      Launch (uri : STRING, display : STRING) : VOID
+      Launch (uri : STRING, display : STRING, startup_id : STRING) : VOID
 
       uri        : either a file:-URI or an absolute path.
       display    : the screen on which to launch the file or ""
@@ -125,6 +125,27 @@
     -->
     <method name="Launch">
       <arg direction="in" name="uri" type="s" />
+      <arg direction="in" name="display" type="s" />
+      <arg direction="in" name="startup_id" type="s" />
+    </method>
+
+
+    <!--
+      Execute (working_directory : STRING, uri : STRING, files : ARRAY OF STRING, display : STRING, startup_id : STRING) : VOID
+
+      working_directory : working directory used to resolve relative filenames.
+      uri               : either a file:-URI or an relative or absolute path.
+      files             : an array of file:-URIs, relative or absolute paths to supply to
+                          the executed URI on execution.
+      display           : the screen on which to launch the file or ""
+                          to use the default screen of the file manager.
+      startup_id        : the DESKTOP_STARTUP_ID environment variable for properly
+                          handling startup notification and focus stealing.
+    -->
+    <method name="Execute">
+      <arg direction="in" name="working_directory" type="s" />
+      <arg direction="in" name="uri" type="s" />
+      <arg direction="in" name="files" type="as" />
       <arg direction="in" name="display" type="s" />
       <arg direction="in" name="startup_id" type="s" />
     </method>
