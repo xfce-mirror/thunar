@@ -1,7 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -246,7 +246,8 @@ thunar_dnd_perform (GtkWidget    *widget,
     }
   else if (thunar_file_is_executable (file))
     {
-      succeed = thunar_file_execute (file, gtk_widget_get_screen (widget), file_list, &error);
+      /* TODO any chance to determine the working dir here? */
+      succeed = thunar_file_execute (file, NULL, gtk_widget_get_screen (widget), file_list, &error);
       if (G_UNLIKELY (!succeed))
         {
           /* display an error to the user */

@@ -523,6 +523,7 @@ thunar_launcher_execute_files (ThunarLauncher *launcher,
 {
   GdkScreen *screen;
   GError    *error = NULL;
+  GFile     *working_directory;
   GList     *lp;
 
   /* determine the screen on which to run the file(s) */
@@ -531,7 +532,9 @@ thunar_launcher_execute_files (ThunarLauncher *launcher,
   /* execute all selected files */
   for (lp = files; lp != NULL; lp = lp->next)
     {
-      if (!thunar_file_execute (lp->data, screen, NULL, &error))
+      working_directory = thunar_file_get_file (launcher->current_directory);
+
+      if (!thunar_file_execute (lp->data, working_directory, screen, NULL, &error))
         {
           /* display an error message to the user */
           thunar_dialogs_show_error (launcher->widget, error, _("Failed to execute file \"%s\""), thunar_file_get_display_name (lp->data));

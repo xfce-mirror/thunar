@@ -925,10 +925,12 @@ thunar_file_get_parent (const ThunarFile *file,
 
 /**
  * thunar_file_execute:
- * @file      : a #ThunarFile instance.
- * @screen    : a #GdkScreen.
- * @file_list : the list of #GFile<!---->s to supply to @file on execution.
- * @error     : return location for errors or %NULL.
+ * @file              : a #ThunarFile instance.
+ * @working_directory : the working directory used to resolve relative filenames 
+ *                      in @file_list.
+ * @screen            : a #GdkScreen.
+ * @file_list         : the list of #GFile<!---->s to supply to @file on execution.
+ * @error             : return location for errors or %NULL.
  *
  * Tries to execute @file on the specified @screen. If @file is executable
  * and could have been spawned successfully, %TRUE is returned, else %FALSE
@@ -937,10 +939,11 @@ thunar_file_get_parent (const ThunarFile *file,
  * Return value: %TRUE on success, else %FALSE.
  **/
 gboolean
-thunar_file_execute (ThunarFile *file,
-                     GdkScreen  *screen,
-                     GList      *file_list,
-                     GError    **error)
+thunar_file_execute (ThunarFile  *file,
+                     GFile       *working_directory,
+                     GdkScreen   *screen,
+                     GList       *file_list,
+                     GError     **error)
 {
   gboolean  snotify = FALSE;
   gboolean  terminal;
@@ -1056,7 +1059,12 @@ thunar_file_execute (ThunarFile *file,
   if (G_LIKELY (result))
     {
       /* determine the working directory */
-      if (G_LIKELY (file_list != NULL))
+      if (G_LIKELY (working_directory != NULL))
+        {
+          /* copy the working directory provided to this method */
+          directory = g_file_get_path (working_directory);
+        }
+      else if (file_list != NULL)
         {
           /* use the directory of the first list item */
           parent = g_file_get_parent (file_list->data);
@@ -1146,7 +1154,7 @@ thunar_file_launch (ThunarFile  *file,
 
   /* check if we should execute the file */
   if (thunar_file_is_executable (file))
-    return thunar_file_execute (file, screen, NULL, error);
+    return thunar_file_execute (file, NULL, screen, NULL, error);
 
   /* determine the default application to open the file */
   /* TODO We should probably add a cancellable argument to thunar_file_launch() */

@@ -139,6 +139,7 @@ ThunarFile       *thunar_file_get_parent           (const ThunarFile       *file
                                                     GError                **error);
 
 gboolean          thunar_file_execute              (ThunarFile             *file,
+                                                    GFile                  *working_directory,
                                                     GdkScreen              *screen,
                                                     GList                  *path_list,
                                                     GError                **error);
