@@ -288,7 +288,7 @@
     </method>
 
     <!--
-      CreateFile (working_directory : STRING, display : STRING, startup_id : STRING) : VOID
+      CreateFile (working_directory : content_type : STRING, STRING, display : STRING, startup_id : STRING) : VOID
 
       parent_directory : the parent directory in which the file will be created.
       content_type     : content type of the file to be created (text/plain assumed 
@@ -301,6 +301,23 @@
     <method name="CreateFile">
       <arg direction="in" name="parent_directory" type="s" />
       <arg direction="in" name="content_type" type="s" />
+      <arg direction="in" name="display" type="s" />
+      <arg direction="in" name="startup_id" type="s" />
+    </method>
+
+    <!--
+      CreateFileFromTemplate(working_directory : STRING, template_uri : STRING, display : STRING, start_id : STRING) : VOID
+
+      parent_directory : the parent directory in which the file will be created.
+      template_uri     : the URI or absolute path to the template file.
+      display          : the screen on which to launch the filenames or ""
+                         to use the default screen of the file manager.
+      startup_id       : the DESKTOP_STARTUP_ID environment variable for properly
+                         handling startup notification and focus stealing.
+    -->
+    <method name="CreateFileFromTemplate">
+      <arg direction="in" name="parent_directory" type="s" />
+      <arg direction="in" name="template_uri" type="s" />
       <arg direction="in" name="display" type="s" />
       <arg direction="in" name="startup_id" type="s" />
     </method>
@@ -438,7 +455,6 @@
       <arg direction="in" name="display" type="s" />
       <arg direction="in" name="startup_id" type="s" />
     </method>
-
 
     <!--
       Terminate () : VOID

@@ -1281,9 +1281,9 @@ thunar_application_rename_file (ThunarApplication *application,
 
 
 /**
- * thunar_application_create_folder:
+ * thunar_application_create_file:
  * @application      : a #ThunarApplication.
- * @parent_directory : the #ThunarFile of the parent directory
+ * @parent_directory : the #ThunarFile of the parent directory.
  * @content_type     : the content type of the new file.
  * @screen           : the #GdkScreen on which to open the window or %NULL
  *                     to open on the default screen.
@@ -1344,6 +1344,77 @@ thunar_application_create_file (ThunarApplication *application,
       g_object_unref (path_list.data);
       g_free (name);
     }
+}
+
+
+
+/**
+ * thunar_application_create_file_from_template:
+ * @application      : a #ThunarApplication.
+ * @parent_directory : the #ThunarFile of the parent directory.
+ * @template_file    : the #ThunarFile of the template.
+ * @screen           : the #GdkScreen on which to open the window or %NULL
+ *                     to open on the default screen.
+ * @startup_id       : startup id from startup notification passed along
+ *                     with dbus to make focus stealing work properly.
+ *
+ * Prompts the user to create a new file or directory in @parent_directory
+ * from an existing @template_file which predefines the name and extension
+ * in the create dialog.
+ **/
+void
+thunar_application_create_file_from_template (ThunarApplication *application,
+                                              ThunarFile        *parent_directory,
+                                              ThunarFile        *template_file,
+                                              GdkScreen         *screen,
+                                              const gchar       *startup_id)
+{
+  GList  source_path_list;
+  GList  target_path_list;
+  gchar *name;
+  gchar *title;
+
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+  _thunar_return_if_fail (THUNAR_IS_FILE (parent_directory));
+  _thunar_return_if_fail (THUNAR_IS_FILE (template_file));
+  _thunar_return_if_fail (GDK_IS_SCREEN (screen));
+  _thunar_return_if_fail (startup_id != NULL);
+
+  /* generate a title for the create dialog */
+  title = g_strdup_printf (_("Create Document from template \"%s\""),
+                           thunar_file_get_display_name (template_file));
+
+  /* TODO pass the startup ID to the rename dialog */
+
+  /* ask the user to enter a name for the new document */
+  name = thunar_show_create_dialog (screen, 
+                                    thunar_file_get_content_type (template_file),
+                                    thunar_file_get_display_name (template_file), 
+                                    title);
+  if (G_LIKELY (name != NULL))
+    {
+      /* fake the source file list */
+      source_path_list.data = thunar_file_get_file (template_file);
+      source_path_list.prev = source_path_list.next = NULL;
+
+      /* fake the target path list */
+      target_path_list.data = g_file_get_child (thunar_file_get_file (parent_directory), name);
+      target_path_list.next = target_path_list.prev = NULL;
+
+      /* launch the operation */
+      thunar_application_copy_to (application, screen, 
+                                  &source_path_list, &target_path_list,
+                                  NULL);
+
+      /* release the target path */
+      g_object_unref (target_path_list.data);
+
+      /* release the file name */
+      g_free (name);
+    }
+
+  /* clean up */
+  g_free (title);
 }
 
 

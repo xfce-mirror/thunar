@@ -147,6 +147,12 @@ static gboolean thunar_dbus_service_create_file                 (ThunarDBusServi
                                                                  const gchar            *display,
                                                                  const gchar            *startup_id,
                                                                  GError                **error);
+static gboolean thunar_dbus_service_create_file_from_template   (ThunarDBusService      *dbus_service,
+                                                                 const gchar            *parent_directory,
+                                                                 const gchar            *template_uri,
+                                                                 const gchar            *display,
+                                                                 const gchar            *startup_id,
+                                                                 GError                **error);
 static gboolean thunar_dbus_service_copy_to                     (ThunarDBusService      *dbus_service,
                                                                  const gchar            *working_directory,
                                                                  gchar                 **source_filenames,
@@ -860,6 +866,42 @@ thunar_dbus_service_create_file (ThunarDBusService *dbus_service,
   /* popup a new window for the folder */
   application = thunar_application_get ();
   thunar_application_create_file (application, file, content_type, screen, startup_id);
+  g_object_unref (G_OBJECT (application));
+
+  /* cleanup */
+  g_object_unref (G_OBJECT (screen));
+  g_object_unref (G_OBJECT (file));
+
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_dbus_service_create_file_from_template (ThunarDBusService *dbus_service,
+                                               const gchar       *parent_directory,
+                                               const gchar       *template_uri,
+                                               const gchar       *display,
+                                               const gchar       *startup_id,
+                                               GError           **error)
+{
+  ThunarApplication *application;
+  ThunarFile        *file;
+  ThunarFile        *template_file;
+  GdkScreen         *screen;
+
+  /* parse uri and display parameters */
+  if (!thunar_dbus_service_parse_uri_and_display (dbus_service, parent_directory, display, &file, &screen, error))
+    return FALSE;
+
+  /* try to determine the file for the template URI */
+  template_file = thunar_file_get_for_uri (template_uri, error);
+  if(template_file == NULL)
+    return FALSE;
+
+  /* popup a new window for the folder */
+  application = thunar_application_get ();
+  thunar_application_create_file_from_template (application, file, template_file, screen, startup_id);
   g_object_unref (G_OBJECT (application));
 
   /* cleanup */
