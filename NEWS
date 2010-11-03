@@ -1,3 +1,25 @@
+1.1.3
+=====
+- Add new D-Bus methods:
+  - Execute()
+  - CreateFileFromTemplate()
+  - CreateFile()
+  - RenameFile()
+- Properly remember the default handler for a file / content type (bug
+  #6167).
+- Replace - with _ in parameter names of the D-Bus API.
+- Do not display shadowed mounts.
+- Provide an eject button for removable and present volumes in the 
+  side pane (bug #3658).
+- Auto-select previously selected subdirectories when walking through
+  the history (bug #5538).
+- Delay applying the file selection until folders have finished 
+  loading.
+- Fix broken compilation with -Wl,-z,defs and -Wl,--as-needed.
+- Translation updates: Basque, Chinese (Taiwan), Ukrainian, Galician,
+  Portuguese, Catalan (Valencian), Finnish, Italian, Danish, Kazakh,
+  Swedish, Greek, Japanese, Russian, German, Uyghur. 
+
 1.1.2
 =====
 - Move helpers from $libexecdir to $libdir/Thunar.

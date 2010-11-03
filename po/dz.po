@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-07-26 10:40+0200\n"
+"POT-Creation-Date: 2010-11-03 21:42+0100\n"
 "PO-Revision-Date: 2006-10-24 16:21+0530\n"
 "Last-Translator: sonam pelden <sonaa_peldn@yahoo.com>\n"
 "Language-Team: Dzongkha <pgeyleg@dit.gov.bt>\n"
@@ -131,44 +131,80 @@ msgid "Sort items in descending order"
 msgstr "རྣམ་གྲངས་ཚུ་མར་འབབས་རིམ་པའི་ནང་དབྱེ་སེལ་འབད།"
 
 #. display an error message to the user
-#: ../thunar/thunar-application.c:375
+#: ../thunar/thunar-application.c:379
 msgid "Failed to launch operation"
 msgstr "བཀོལ་སྤྱོད་གསར་བཙུགས་འབད་ནི་ལུ་འཐུསཤོར་འབྱུང་ནུག"
 
 #. tell the user that we were unable to launch the file specified
-#: ../thunar/thunar-application.c:1036 ../thunar/thunar-application.c:1162
-#: ../thunar/thunar-launcher.c:1062 ../thunar/thunar-location-entry.c:389
+#: ../thunar/thunar-application.c:1040 ../thunar/thunar-application.c:1166
+#: ../thunar/thunar-launcher.c:1065 ../thunar/thunar-location-entry.c:389
 #: ../thunar/thunar-location-entry.c:417
-#: ../thunar/thunar-shortcuts-view.c:1237 ../thunar/thunar-window.c:1506
+#: ../thunar/thunar-shortcuts-view.c:1277 ../thunar/thunar-window.c:1506
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "\"%s\"ཁ་ཕྱེ་ནི་ལུ་འཐུས་ཤོར་འབྱུང་ནུག"
 
-#: ../thunar/thunar-application.c:1166
+#: ../thunar/thunar-application.c:1170
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr " \"%s\"ཁ་ཕྱེ་ནི་ལུ་འཐུས་ཤོར་འབྱུང་ནུག:%s"
 
-#: ../thunar/thunar-application.c:1241
+#. display an error message
+#: ../thunar/thunar-application.c:1234
+#: ../thunar/thunar-properties-dialog.c:624
+#: ../thunar/thunar-standard-view.c:2203 ../thunar/thunar-tree-view.c:1672
+#, c-format
+msgid "Failed to rename \"%s\""
+msgstr " \"%s\"བསྐྱར་མིང་བཏགས་ནི་འདི་ལུ་འཐུས་ཤོར་འབྱུང་ནུག"
+
+#: ../thunar/thunar-application.c:1320
+#: ../thunar/thunar-location-buttons.c:1285
+#: ../thunar/thunar-standard-view.c:1824 ../thunar/thunar-tree-view.c:1569
+msgid "New Folder"
+msgstr "སྣོད་འཛིན་གསརཔ།"
+
+#: ../thunar/thunar-application.c:1321
+#: ../thunar/thunar-location-buttons.c:1286
+#: ../thunar/thunar-standard-view.c:1825 ../thunar/thunar-tree-view.c:1570
+msgid "Create New Folder"
+msgstr "སྣོད་འཛིན་གསརཔ་གསར་བསྐྲུན་འབད།"
+
+#: ../thunar/thunar-application.c:1325
+#, fuzzy
+msgid "New File"
+msgstr "སྣོད་འཛིན་གསརཔ།"
+
+#: ../thunar/thunar-application.c:1326
+#, fuzzy
+msgid "Create New File"
+msgstr "སྣོད་འཛིན་གསརཔ་གསར་བསྐྲུན་འབད།"
+
+#. generate a title for the create dialog
+#: ../thunar/thunar-application.c:1384 ../thunar/thunar-standard-view.c:1870
+#, c-format
+msgid "Create Document from template \"%s\""
+msgstr "\"%s\"ཊེམ་པེལེཊི་ལས་ ཡིག་ཆ་གསར་བསྐྲུན་འབད།"
+
+#: ../thunar/thunar-application.c:1451
 msgid "Copying files..."
 msgstr "ཡིག་སྣོད་ཚུ་འདྲ་བཤུས་བརྐྱབ་དོ..."
 
-#: ../thunar/thunar-application.c:1277
+#: ../thunar/thunar-application.c:1487
 #, fuzzy, c-format
 msgid "Copying files to \"%s\"..."
 msgstr "ཡིག་སྣོད་ཚུ་འདྲ་བཤུས་བརྐྱབ་དོ..."
 
-#: ../thunar/thunar-application.c:1323
+#: ../thunar/thunar-application.c:1533
 #, fuzzy, c-format
 msgid "Creating symbolic links in \"%s\"..."
 msgstr "བརྡ་མཚོན་པའི་འབྲེལ་ལམ་ཚུ་གསར་བསྐྲུན་འབད་དོ..."
 
-#: ../thunar/thunar-application.c:1376
+#: ../thunar/thunar-application.c:1586
 #, fuzzy, c-format
 msgid "Moving files into \"%s\"..."
 msgstr "ཡིག་སྣོད་ཚུ་ཕྱགས་ཧོད་ནང་ལུ་སྤོ་བཤུད་འབད་དོ..."
 
-#: ../thunar/thunar-application.c:1461
+#: ../thunar/thunar-application.c:1677
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -177,7 +213,7 @@ msgstr ""
 "ཁྱོད་ཀྱིས་ \"%s\" རྩ་བསྐྲད་གཏང་ནི་འདི་\n"
 "ངེས་བདེན་ཨིན་ན?"
 
-#: ../thunar/thunar-application.c:1466
+#: ../thunar/thunar-application.c:1682
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -192,39 +228,39 @@ msgstr[1] ""
 "ཁྱོད་ཀྱིས་ %u སེལ་འཐུ་འབད་དེ་ཡོད་པའི་ཡིག་སྣོད་རྟག་བརྟན་འབད་བཏོན་གཏང་ནི་འདི་\n"
 "ངེས་བདེན་ཨིན་ན?"
 
-#: ../thunar/thunar-application.c:1486
+#: ../thunar/thunar-application.c:1702
 msgid "If you delete a file, it is permanently lost."
 msgstr "ཁྱོད་ཀྱིས་ཡིག་སྣོད་འདི་བཏོན་གཏང་པ་ཅིན་  རྟག་བརྟན་འབད་བརླག་སྟོར་ཞུགས་འོང་།"
 
-#: ../thunar/thunar-application.c:1496
+#: ../thunar/thunar-application.c:1712
 msgid "Deleting files..."
 msgstr "ཡིག་སྣོད་ཚུ་བཏོན་གཏང་དོ..."
 
-#: ../thunar/thunar-application.c:1531
+#: ../thunar/thunar-application.c:1747
 msgid "Moving files into the trash..."
 msgstr "ཡིག་སྣོད་ཚུ་ཕྱགས་ཧོད་ནང་ལུ་སྤོ་བཤུད་འབད་དོ..."
 
-#: ../thunar/thunar-application.c:1570
+#: ../thunar/thunar-application.c:1786
 msgid "Creating files..."
 msgstr "ཡིག་སྣོད་ཚུ་གསར་བསྐྲུན་འབ་དོ..."
 
-#: ../thunar/thunar-application.c:1609
+#: ../thunar/thunar-application.c:1825
 msgid "Creating directories..."
 msgstr "སྣོད་ཐོ་ཚུ་གསར་བསྐྲུན་འབད་དོ..."
 
-#: ../thunar/thunar-application.c:1647
+#: ../thunar/thunar-application.c:1864
 msgid "Remove all files and folders from the Trash?"
 msgstr "ཕྱགས་ཧོད་ནང་ལས་ཡིག་སྣོད་ཚུ་དང་ སྣོད་འཛིན་ཆ་མཉམ་རྩ་བསྐྲད་གཏང་ད་ག?"
 
 #. append the "Empty Trash" menu action
 #. prepare the menu item
-#: ../thunar/thunar-application.c:1652 ../thunar/thunar-location-buttons.c:171
-#: ../thunar/thunar-shortcuts-view.c:835 ../thunar/thunar-tree-view.c:1145
+#: ../thunar/thunar-application.c:1870 ../thunar/thunar-location-buttons.c:171
+#: ../thunar/thunar-shortcuts-view.c:875 ../thunar/thunar-tree-view.c:1145
 #: ../thunar/thunar-window.c:295 ../plugins/thunar-tpa/thunar-tpa.c:169
 msgid "_Empty Trash"
 msgstr "ཕྱགས་ཧོད་སྟོངམ།(_E)"
 
-#: ../thunar/thunar-application.c:1656
+#: ../thunar/thunar-application.c:1874
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
@@ -232,22 +268,22 @@ msgstr ""
 "ཁྱོད་ཀྱིས་ཕྱགས་ཧོད་འདི་སྟོངམ་སྟོན་ནི་ལུ་གདམ་ཁ་བརྐྱབ་པ་ཅིན་  དེ་ནང་ལུ་ཡོད་པའི་རྣམ་པ་ཚུ་ཆ་ཚང་རྟག་བརྟན་"
 "འབད་བརླག་སྟོར་ཞུགས་འོང་།  དེ་ཚུ་སོ་སོ་འབད་བཏོན་གཏང་དགོ་ཟེར་ ཁྱོད་ཀྱིས་དྲན་འཛིན་འབད་གནང་།"
 
-#: ../thunar/thunar-application.c:1673
+#: ../thunar/thunar-application.c:1891
 msgid "Emptying the Trash..."
 msgstr "ཕྱགས་ཧོད་འདི་སྟོངམ་སྟོན་དོ..."
 
-#: ../thunar/thunar-application.c:1719
+#: ../thunar/thunar-application.c:1937
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "\"%s\"དོན་ལུ་  འགྲུལ་ལམ་ངོ་མ་གཏན་འབེབས་བཟོ་ནི་ལུ་ འཐུས་ཤོར་འབྱུང་ནུག"
 
 #. display an error dialog
-#: ../thunar/thunar-application.c:1736
+#: ../thunar/thunar-application.c:1954
 #, fuzzy, c-format
 msgid "Could not restore \"%s\""
 msgstr "\"%s\"སོར་ཆུད་འབད་ནི་ལུ་འཐུས་ཤོར་འབྱུང་ནུག"
 
-#: ../thunar/thunar-application.c:1744
+#: ../thunar/thunar-application.c:1962
 msgid "Restoring files..."
 msgstr "ཡིག་སྣོད་ཚུ་སོར་ཆུད་འབད་དོ..."
 
@@ -502,35 +538,55 @@ msgstr "སྣོད་ཐོ་ཐོ་ཡིག་བརྐྱབ་ནི་
 msgid "Compact view"
 msgstr "མཐོང་སྣང་སྲབ་ཆུང་བཟོ།"
 
-#: ../thunar/thunar-create-dialog.c:136
+#: ../thunar/thunar-create-dialog.c:137
 msgid "C_reate"
 msgstr "གསར་བསྐྲུན་འབད།(_r)"
 
-#: ../thunar/thunar-create-dialog.c:151 ../thunar/thunar-dialogs.c:110
+#: ../thunar/thunar-create-dialog.c:152 ../thunar/thunar-dialogs.c:121
 msgid "Enter the new name:"
 msgstr "མིང་གསརཔ་ཐོ་བཀོད་འབད:"
 
 #. display an error message
-#: ../thunar/thunar-create-dialog.c:469
+#: ../thunar/thunar-create-dialog.c:476
 #, c-format
 msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "ཡིག་སྣོད་མིང་  \"%s\" འདི་ཉེ་གནས་ཨིན་ཀོ་དིང་ལུ་གཞི་བསྒྱུར་འབད་མི་བཏུབ།"
 
-#: ../thunar/thunar-dbus-service.c:367
+#: ../thunar/thunar-dbus-service.c:457
 #, c-format
 msgid "Invalid filename \"%s\""
 msgstr "ནུས་ཅན་མེད་པའི་ཡིག་སྣོད་མིང་ \"%s\""
 
 #. LaunchFiles() invoked without a valid working directory
-#: ../thunar/thunar-dbus-service.c:696
+#: ../thunar/thunar-dbus-service.c:847
 #, c-format
 msgid "The working directory must be an absolute path"
 msgstr "ལཱ་འབད་མི་སྣོད་ཐོ་འདི་  འགྲུལ་ལམ་ཡང་དག་འོང་དགོཔ་ཨིན།"
 
 #. LaunchFiles() invoked with an empty filename list
-#: ../thunar/thunar-dbus-service.c:704
+#: ../thunar/thunar-dbus-service.c:855
 #, c-format
 msgid "Atleast one filename must be specified"
+msgstr "ཡིག་སྣོད་མིང་གཅིག་འདི་མ་པ་ལས་རང་  གསལ་བཀོད་འབད་དགོ།"
+
+#: ../thunar/thunar-dbus-service.c:1000
+#, fuzzy, c-format
+msgid "At least one source filename must be specified"
+msgstr "ཡིག་སྣོད་མིང་གཅིག་འདི་མ་པ་ལས་རང་  གསལ་བཀོད་འབད་དགོ།"
+
+#: ../thunar/thunar-dbus-service.c:1010
+#, c-format
+msgid "The number of source and target filenames must be the same"
+msgstr ""
+
+#: ../thunar/thunar-dbus-service.c:1019
+#, fuzzy, c-format
+msgid "A destination directory must be specified"
+msgstr "ཡིག་སྣོད་མིང་གཅིག་འདི་མ་པ་ལས་རང་  གསལ་བཀོད་འབད་དགོ།"
+
+#: ../thunar/thunar-dbus-service.c:1222
+#, fuzzy, c-format
+msgid "At least one filename must be specified"
 msgstr "ཡིག་སྣོད་མིང་གཅིག་འདི་མ་པ་ལས་རང་  གསལ་བཀོད་འབད་དགོ།"
 
 #: ../thunar/thunar-details-view.c:129
@@ -550,118 +606,118 @@ msgid "Details view"
 msgstr "མཐོང་སྣང་ཚུ་ རྒྱས་བཤད་འབདཝ་ཨིན།"
 
 #. create a new dialog window
-#: ../thunar/thunar-dialogs.c:82
+#: ../thunar/thunar-dialogs.c:89
 #, c-format
 msgid "Rename \"%s\""
 msgstr "\"%s\"བསྐྱར་མིང་བཏགས།"
 
-#: ../thunar/thunar-dialogs.c:89
+#: ../thunar/thunar-dialogs.c:96
 msgid "_Rename"
 msgstr "བསྐྱར་མིང་བཏགས།(_R)"
 
-#: ../thunar/thunar-dialogs.c:238
+#: ../thunar/thunar-dialogs.c:249
 msgid "translator-credits"
 msgstr "སྐད་བསྒྱུར་པའི་-ངོ་བསྟོད་ཚུ།"
 
 #. display an error message to the user
 #. tell the user that we failed
-#: ../thunar/thunar-dialogs.c:365 ../thunar/thunar-renamer-dialog.c:942
+#: ../thunar/thunar-dialogs.c:376 ../thunar/thunar-renamer-dialog.c:942
 msgid "Failed to open the documentation browser"
 msgstr "ཡིག་ཐོག་བཀོད་པའི་བརྡ་འཚོལ་པ་འདི་ཁ་ཕྱེ་ནི་ལུ་ འཐུས་ཤོར་འབྱུང་ནུག"
 
-#: ../thunar/thunar-dialogs.c:462
+#: ../thunar/thunar-dialogs.c:473
 msgid "_Yes"
 msgstr "བཏུབ།(_Y)"
 
-#: ../thunar/thunar-dialogs.c:466
+#: ../thunar/thunar-dialogs.c:477
 msgid "Yes to _all"
 msgstr "ཆ་མཉམ་ལུ་བཏུབ།(_a)"
 
-#: ../thunar/thunar-dialogs.c:470
+#: ../thunar/thunar-dialogs.c:481
 msgid "_No"
 msgstr "མི་བཏུབ།(_N)"
 
-#: ../thunar/thunar-dialogs.c:474
+#: ../thunar/thunar-dialogs.c:485
 msgid "N_o to all"
 msgstr "ཆ་མཉམ་ལུ་མི་བཏུབ།(_o)"
 
-#: ../thunar/thunar-dialogs.c:478
+#: ../thunar/thunar-dialogs.c:489
 #, fuzzy
 msgid "_Retry"
 msgstr "སོར་ཆུད་འབད།(_R)"
 
-#: ../thunar/thunar-dialogs.c:483
+#: ../thunar/thunar-dialogs.c:494
 msgid "_Cancel"
 msgstr "ཆ་མེད་གཏང་།(_C)"
 
 #. setup the confirmation dialog
-#: ../thunar/thunar-dialogs.c:557
+#: ../thunar/thunar-dialogs.c:568
 msgid "Confirm to replace files"
 msgstr ""
 
-#: ../thunar/thunar-dialogs.c:563
+#: ../thunar/thunar-dialogs.c:574
 msgid "_Skip"
 msgstr ""
 
-#: ../thunar/thunar-dialogs.c:564
+#: ../thunar/thunar-dialogs.c:575
 #, fuzzy
 msgid "Replace _All"
 msgstr "དང་བཅས་ཚབ་བཙུགས:(_W)"
 
-#: ../thunar/thunar-dialogs.c:565
+#: ../thunar/thunar-dialogs.c:576
 #, fuzzy
 msgid "_Replace"
 msgstr "བསྐྱར་མིང་བཏགས།(_R)"
 
-#: ../thunar/thunar-dialogs.c:597
+#: ../thunar/thunar-dialogs.c:608
 #, fuzzy, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
 msgstr "\"%s\"བརྡ་མཚོན་པའི་འབྲེལ་མཐུད་གསར་བསྐྲུན་འབད་ནི་ལུ་འཐུས་ཤོར་འབྱུང་ནུག"
 
-#: ../thunar/thunar-dialogs.c:602
+#: ../thunar/thunar-dialogs.c:613
 #, c-format
 msgid "This folder already contains a folder \"%s\"."
 msgstr ""
 
-#: ../thunar/thunar-dialogs.c:607
+#: ../thunar/thunar-dialogs.c:618
 #, c-format
 msgid "This folder already contains a file \"%s\"."
 msgstr ""
 
-#: ../thunar/thunar-dialogs.c:619
+#: ../thunar/thunar-dialogs.c:630
 msgid "ReplaceDialogPart1|Do you want to replace the link"
 msgstr ""
 
-#: ../thunar/thunar-dialogs.c:621
+#: ../thunar/thunar-dialogs.c:632
 msgid "ReplaceDialogPart1|Do you want to replace the existing folder"
 msgstr ""
 
-#: ../thunar/thunar-dialogs.c:623
+#: ../thunar/thunar-dialogs.c:634
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
 msgstr ""
 
 #.
 #. Fourth box (size, volume, free space)
 #.
-#: ../thunar/thunar-dialogs.c:640 ../thunar/thunar-dialogs.c:671
+#: ../thunar/thunar-dialogs.c:651 ../thunar/thunar-dialogs.c:682
 #: ../thunar/thunar-properties-dialog.c:408
 msgid "Size:"
 msgstr "ཚད:"
 
-#: ../thunar/thunar-dialogs.c:640 ../thunar/thunar-dialogs.c:671
+#: ../thunar/thunar-dialogs.c:651 ../thunar/thunar-dialogs.c:682
 #: ../thunar/thunar-properties-dialog.c:369
 msgid "Modified:"
 msgstr "ལེགས་བཅོས་འབད་ནུག:"
 
-#: ../thunar/thunar-dialogs.c:650
+#: ../thunar/thunar-dialogs.c:661
 msgid "ReplaceDialogPart2|with the following link?"
 msgstr ""
 
-#: ../thunar/thunar-dialogs.c:652
+#: ../thunar/thunar-dialogs.c:663
 msgid "ReplaceDialogPart2|with the following folder?"
 msgstr ""
 
-#: ../thunar/thunar-dialogs.c:654
+#: ../thunar/thunar-dialogs.c:665
 msgid "ReplaceDialogPart2|with the following file?"
 msgstr ""
 
@@ -679,7 +735,7 @@ msgstr "ནཱ་ལུ་འབྲེལ་མཐུད་འབད།(_L)"
 
 #. display an error to the user
 #. display an error message to the user
-#: ../thunar/thunar-dnd.c:253 ../thunar/thunar-launcher.c:537
+#: ../thunar/thunar-dnd.c:254 ../thunar/thunar-launcher.c:540
 #, c-format
 msgid "Failed to execute file \"%s\""
 msgstr "ཡིག་སྣོད་ \"%s\" ལུ་ལག་ལེན་འཐབ་ནི་འདི་འཐུས་ཤོར་འབྱུང་ནུག"
@@ -746,7 +802,7 @@ msgstr "ཡིག་སྣོད།"
 msgid "File Name"
 msgstr "ཡིག་སྣོད་མིང་།"
 
-#: ../thunar/thunar-file.c:836 ../thunar/thunar-shortcuts-view.c:278
+#: ../thunar/thunar-file.c:836 ../thunar/thunar-shortcuts-view.c:279
 #: ../thunar/thunar-window.c:311
 msgid "File System"
 msgstr "ཡིག་སྣོད་རིམ་ལུགས།"
@@ -756,22 +812,22 @@ msgstr "ཡིག་སྣོད་རིམ་ལུགས།"
 msgid "The root folder has no parent"
 msgstr "སྣོད་འཛིན་གྱི་རྩ་བ་ལུ་རྩ་ལག་མིན་འདུག"
 
-#: ../thunar/thunar-file.c:974
+#: ../thunar/thunar-file.c:977
 #, fuzzy, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "\"%s\"ཡིག་སྣོད་སྟོངམ་གསར་བསྐྲུན་འབད་ནི་ལུ་ འཐུས་ཤོར་འབྱུང་ནུག"
 
-#: ../thunar/thunar-file.c:1012
+#: ../thunar/thunar-file.c:1015
 #, c-format
 msgid "No Exec field specified"
 msgstr "ལག་ལེན་འཐབ་ནི་ས་སྒོ་འདི་གསལ་བཀོད་མ་འབད་བས།"
 
-#: ../thunar/thunar-file.c:1033
+#: ../thunar/thunar-file.c:1036
 #, c-format
 msgid "No URL field specified"
 msgstr "ཡུ་ཨར་ཨེལ་ས་སྒོ་གསལ་བཀོད་མ་འབད་བས།"
 
-#: ../thunar/thunar-file.c:1039
+#: ../thunar/thunar-file.c:1042
 #, c-format
 msgid "Invalid desktop file"
 msgstr "ནུས་ཅན་མེད་པའི་ཌེཀསི་ཊོཔ་ཡིག་སྣོད།"
@@ -921,15 +977,15 @@ msgid "Do you want to skip it?"
 msgstr "ཁྱོད་ཀྱིས་གོམ་འགྱོ་ནི་ཨིན་ན?"
 
 #. append the "Open" menu action
-#: ../thunar/thunar-launcher.c:168 ../thunar/thunar-launcher.c:801
+#: ../thunar/thunar-launcher.c:168 ../thunar/thunar-launcher.c:804
 #: ../thunar/thunar-location-buttons.c:168
-#: ../thunar/thunar-shortcuts-view.c:786 ../thunar/thunar-tree-view.c:1095
+#: ../thunar/thunar-shortcuts-view.c:826 ../thunar/thunar-tree-view.c:1095
 msgid "_Open"
 msgstr "ཁ་ཕྱེ།(_O)"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:169 ../thunar/thunar-location-buttons.c:169
-#: ../thunar/thunar-shortcuts-view.c:797 ../thunar/thunar-tree-view.c:1107
+#: ../thunar/thunar-shortcuts-view.c:837 ../thunar/thunar-tree-view.c:1107
 msgid "Open in New Window"
 msgstr "སྒོ་སྒྲིག་གསརཔ་ནང་ཁ་ཕྱེ།"
 
@@ -942,35 +998,35 @@ msgid "Open With Other _Application..."
 msgstr "འཇུག་སྤྱོད་གཞན་མི་དང་ཅིག་ཁར་  ཁ་ཕྱེ...(_A)"
 
 #: ../thunar/thunar-launcher.c:170 ../thunar/thunar-launcher.c:172
-#: ../thunar/thunar-launcher.c:884
+#: ../thunar/thunar-launcher.c:887
 msgid "Choose another application with which to open the selected file"
 msgstr "སེལ་འཐུ་འབད་ཡོད་པའི་ཡིག་སྣོད་དང་བཅས་ཁ་ཕྱེ་བཏུབ་པའི་འཇུག་སྤྱོད་གཞན་མི་ཅིག་གདམ་ཁ་བརྐྱབ།"
 
-#: ../thunar/thunar-launcher.c:633
+#: ../thunar/thunar-launcher.c:636
 #, c-format
 msgid "Failed to open file \"%s\""
 msgstr "ཡིག་སྣོད་ \"%s\" ཁ་ཕྱེ་ནི་འདི་ལུ་འཐུས་ཤོར་འབྱུང་ནུག"
 
 #. we can just tell that n files failed to open
-#: ../thunar/thunar-launcher.c:639
+#: ../thunar/thunar-launcher.c:642
 #, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
 msgstr[0] "%d ཡིག་སྣོད་ཁ་ཕྱེ་ནི་ལུ་འཐུས་ཤོར་འབྱུང་ནུག"
 msgstr[1] "%dཡིག་སྣོད་ཚུ་ཁ་ཕྱེ་ནི་ལུ་ འཐུས་ཤོར་འབྱུང་ནུག"
 
-#: ../thunar/thunar-launcher.c:678
+#: ../thunar/thunar-launcher.c:681
 msgid "Are you sure you want to open all folders?"
 msgstr "ཁྱོད་ཀྱིས་སྣོད་འཛིན་ཚུ་ཆ་མཉམ་ཁ་ཕྱེ་ནི་འདི་ངེས་བདེན་ཨིན་ན?"
 
-#: ../thunar/thunar-launcher.c:680
+#: ../thunar/thunar-launcher.c:683
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
 msgstr[0] " %d སོ་སོའི་ཡིག་སྣོད་འཛིན་སྐྱོང་སྒོ་སྒྲིག་འདི་  དེ་གིས་འབད་ཁ་ཕྱེ་འོང་།"
 msgstr[1] "%dསོ་སོའི་ཡིག་སྣོད་འཛིན་སྐྱོང་སྒོ་སྒྲིག་ཚུ་  དེ་གིས་འབད་ཁ་ཕྱེ་འོང་།"
 
-#: ../thunar/thunar-launcher.c:684
+#: ../thunar/thunar-launcher.c:687
 #, c-format
 msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
@@ -978,92 +1034,92 @@ msgstr[0] "%dགི་སྒོ་སྒྲིག་གསརཔ་དེ་ཁ�
 msgstr[1] "%dསྒོ་སྒྲིག་གསརཔ་ཁ་ཕྱེ།"
 
 #. turn "Open" into "Open in n New Windows"
-#: ../thunar/thunar-launcher.c:779
+#: ../thunar/thunar-launcher.c:782
 #, c-format
 msgid "Open in %d New Window"
 msgid_plural "Open in %d New Windows"
 msgstr[0] "%dསྒོ་སྒྲིག་གསརཔ་ནང་ཁ་ཕྱེ།"
 msgstr[1] "%dསྒོ་སྒྲིག་གསརཔ་ཚུ་ཁ་ཕྱེ།"
 
-#: ../thunar/thunar-launcher.c:780
+#: ../thunar/thunar-launcher.c:783
 #, c-format
 msgid "Open the selected directory in %d new window"
 msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] "%dསྒོ་སྒྲིག་གསརཔ་ནང་  སེལ་འཐུ་འབད་ཡོད་པའི་སྣོད་ཐོ་འདི་ཁ་ཕྱེ་"
 msgstr[1] "%d སྒོ་སྒྲིག་གསརཔ་ཚུ་ནང་  སེལ་འཐུ་འབད་དེ་ཡོད་པའི་སྣོད་ཐོ་ཚུ་ཁ་ཕྱེ།"
 
-#: ../thunar/thunar-launcher.c:800
+#: ../thunar/thunar-launcher.c:803
 msgid "_Open in New Window"
 msgstr "སྒོ་སྒྲིག་གསརཔ་ནང་ཁ་ཕྱེ།(_O)"
 
-#: ../thunar/thunar-launcher.c:803
+#: ../thunar/thunar-launcher.c:806
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
 msgstr[0] "སེལ་འཐུ་འབད་ཡོད་པའི་ཡིག་སྣོད་ཁ་ཕྱེ་"
 msgstr[1] "སེལ་འཐུ་འབད་ཡོད་པའི་  ཡིག་སྣོད་ཚུ་ཁ་ཕྱེ།"
 
-#: ../thunar/thunar-launcher.c:852
+#: ../thunar/thunar-launcher.c:855
 msgid "_Execute"
 msgstr "ལག་ལེན་འཐབ།(_E)"
 
-#: ../thunar/thunar-launcher.c:853
+#: ../thunar/thunar-launcher.c:856
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
 msgstr[0] "སེལ་འཐུ་འབད་ཡོད་པའི་ཡིག་སྣོད་ལག་ལེན་འཐབ་"
 msgstr[1] "སེལ་འཐུ་འབད་ཡོད་པའི་ཡིག་སྣོད་ཚུ་ ལག་ལེན་འཐབ།"
 
 #. turn the "Open" action into "Open With DEFAULT"
-#: ../thunar/thunar-launcher.c:859
+#: ../thunar/thunar-launcher.c:862
 #, c-format
 msgid "_Open With \"%s\""
 msgstr " \"%s\"དང་བཅས་ཁ་ཕྱེ། (_O)"
 
-#: ../thunar/thunar-launcher.c:860 ../thunar/thunar-launcher.c:946
+#: ../thunar/thunar-launcher.c:863 ../thunar/thunar-launcher.c:949
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "སེལ་འཐུ་འབད་ཡོད་པའི་ཡིག་སྣོད་ཁ་ཕྱེ་ནི་ལུ་   \"%s\" ལག་ལེན་འཐབ་"
 msgstr[1] "སེལ་འཐུ་འབད་ཡོད་པའི་ཡིག་སྣོད་ཚུ་ཁ་ཕྱེ་ནི་ལུ་  \"%s\" ལག་ལེན་འཐབ།"
 
-#: ../thunar/thunar-launcher.c:883
+#: ../thunar/thunar-launcher.c:886
 msgid "_Open With Other Application..."
 msgstr "འཇུག་སྤྱོད་གཞན་མི་དང་ཅིག་ཁར་ཁ་ཕྱེ...(_O)"
 
-#: ../thunar/thunar-launcher.c:892
+#: ../thunar/thunar-launcher.c:895
 msgid "_Open With Default Applications"
 msgstr "སྔོན་སྒྲིག་འབད་ཡོད་པའི་འཇུག་སྤྱོད་ཚུ་དང་བཅས་ཁ་ཕྱེ།(_O)"
 
-#: ../thunar/thunar-launcher.c:893
+#: ../thunar/thunar-launcher.c:896
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
 msgstr[0] "སེལ་འཐུ་འབད་ཡོད་པའི་ཡིག་སྣོད་འདི་  སྔོན་སྒྲིག་འཇུག་སྤྱོད་དང་བཅས་ཁ་ཕྱེ་"
 msgstr[1] "སེལ་འཐུ་འབད་ཡོད་པའི་ཡིག་སྣོད་འདི་  སྔོན་སྒྲིག་འཇུག་སྤྱོད་ཚུ་དང་བཅས་ཁ་ཕྱེ།"
 
-#: ../thunar/thunar-launcher.c:945
+#: ../thunar/thunar-launcher.c:948
 #, c-format
 msgid "Open With \"%s\""
 msgstr "\"%s\"དང་བཅས་ཁ་ཕྱེ།"
 
-#: ../thunar/thunar-launcher.c:1380 ../thunar/thunar-location-entry.c:641
-#: ../thunar/thunar-shortcuts-view.c:1267
-#: ../thunar/thunar-shortcuts-view.c:1505 ../thunar/thunar-tree-view.c:1908
+#: ../thunar/thunar-launcher.c:1383 ../thunar/thunar-location-entry.c:641
+#: ../thunar/thunar-shortcuts-view.c:1307
+#: ../thunar/thunar-shortcuts-view.c:1545 ../thunar/thunar-tree-view.c:1908
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "\"%s\"སྦྱར་བརྩེགས་འབད་ནི་ལུ་འཐུས་ཤོར་འབྱུང་ནུག"
 
-#: ../thunar/thunar-launcher.c:1499
+#: ../thunar/thunar-launcher.c:1502
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "ཌེཀསི་ཊོཔ་ (འབྲེལ་ལམ་གསར་བསྐྲུན་འབད་)"
 msgstr[1] "ཌེཀསི་ཊོཔ་(འབྲེལ་ལམ་ཚུ་གསར་བསྐྲུན་འབད།)"
 
-#: ../thunar/thunar-launcher.c:1500
+#: ../thunar/thunar-launcher.c:1503
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "ཌེཀསི་ཊོཔ་གུ་  སེལ་འཐུ་འབད་ཡོད་པའི་ཡིག་སྣོད་ལུ་  འབྲེལ་ལམ་གཅིག་གསར་བསྐྲུན་འབད་"
 msgstr[1] "ཌེཀསི་ཊོཔ་གུ་སེལ་འཐུ་འབད་ཡོད་པའི་ཡིགི་སྣོད་ལུ་  འབྲེལ་ལམ་ཚུ་གསར་བསྐྲུན་འབད།"
 
-#: ../thunar/thunar-launcher.c:1537 ../thunar/thunar-launcher.c:1594
+#: ../thunar/thunar-launcher.c:1540 ../thunar/thunar-launcher.c:1597
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
@@ -1148,7 +1204,7 @@ msgstr[1] "%dརྣམ་གྲངས་ཚུ་སེལ་འཐུ་འབ�
 
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-location-buttons.c:170
-#: ../thunar/thunar-standard-view.c:337 ../thunar/thunar-tree-view.c:1161
+#: ../thunar/thunar-standard-view.c:340 ../thunar/thunar-tree-view.c:1161
 msgid "Create _Folder..."
 msgstr "སྣོད་འཛིན་གསར་བསྐྲུན་འབད...(_F)"
 
@@ -1157,12 +1213,12 @@ msgid "Delete all files and folders in the Trash"
 msgstr "ཕྱགས་ཧོད་ནང་ཡིག་སྣོད་ཚུ་དང་སྣོད་འཛིན་ཆ་མཉམ་བཏོན་གཏང་།"
 
 #: ../thunar/thunar-location-buttons.c:172
-#: ../thunar/thunar-standard-view.c:343
+#: ../thunar/thunar-standard-view.c:346
 msgid "Paste Into Folder"
 msgstr "སྣོད་འཛིན་ནང་ལུ་སྦྱར།"
 
 #: ../thunar/thunar-location-buttons.c:173
-#: ../thunar/thunar-renamer-dialog.c:184 ../thunar/thunar-standard-view.c:338
+#: ../thunar/thunar-renamer-dialog.c:184 ../thunar/thunar-standard-view.c:341
 msgid "_Properties..."
 msgstr "རྒྱུ་དངོས...(_P)"
 
@@ -1201,16 +1257,6 @@ msgstr ""
 #, c-format
 msgid "View the properties of the folder \"%s\""
 msgstr "\"%s\"སྣོད་འཛིན་གྱི་  རྒྱུ་དངོས་འདི་སྟོན།"
-
-#: ../thunar/thunar-location-buttons.c:1285
-#: ../thunar/thunar-standard-view.c:1787 ../thunar/thunar-tree-view.c:1569
-msgid "New Folder"
-msgstr "སྣོད་འཛིན་གསརཔ།"
-
-#: ../thunar/thunar-location-buttons.c:1286
-#: ../thunar/thunar-standard-view.c:1788 ../thunar/thunar-tree-view.c:1570
-msgid "Create New Folder"
-msgstr "སྣོད་འཛིན་གསརཔ་གསར་བསྐྲུན་འབད།"
 
 #: ../thunar/thunar-location-dialog.c:65
 msgid "Open Location"
@@ -1761,13 +1807,6 @@ msgstr "བར་སྟོང་སྟོངམ:"
 msgid "Emblems"
 msgstr "ལས་རྟགས་ཚུ།"
 
-#. display an error message
-#: ../thunar/thunar-properties-dialog.c:624
-#: ../thunar/thunar-standard-view.c:2166 ../thunar/thunar-tree-view.c:1672
-#, c-format
-msgid "Failed to rename \"%s\""
-msgstr " \"%s\"བསྐྱར་མིང་བཏགས་ནི་འདི་ལུ་འཐུས་ཤོར་འབྱུང་ནུག"
-
 #. allocate the icon chooser
 #. allocate the chooser dialog
 #: ../thunar/thunar-properties-dialog.c:708
@@ -1800,7 +1839,7 @@ msgstr "ཡིག་སྣོད།(_F)"
 msgid "_Send To"
 msgstr "གཏང་།(_S)"
 
-#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:335
+#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:338
 msgid "File Context Menu"
 msgstr "ཡིག་སྣོད་སྐབས་དོན་དཀར་ཆག"
 
@@ -1828,7 +1867,7 @@ msgstr "སྐོར་ལས།(_A)"
 msgid "Display information about Thunar Bulk Rename"
 msgstr "ཐུ་ནར་སྦུང་ཚད་ཅན་བསྐྱར་མིང་བཏགས་ནིི་སྐོར་ལས་  བརྡ་དོན་བཀྲམ་སྟོན་འབད།"
 
-#: ../thunar/thunar-renamer-dialog.c:184 ../thunar/thunar-standard-view.c:338
+#: ../thunar/thunar-renamer-dialog.c:184 ../thunar/thunar-standard-view.c:341
 msgid "View the properties of the selected file"
 msgstr "སེལ་འཐུ་འབད་ཡོད་པའི་ཡིག་སྣོད་ཀྱི་  རྒྱུ་དངོས་འདི་སྟོན།"
 
@@ -1968,37 +2007,37 @@ msgstr[0] "སེལ་འཐུ་འབད་དེ་ཡོད་མི་ས
 msgstr[1] "སེལ་འཐུ་འབད་དེ་ཡོད་མི་སྣོད་འཛིན་འདི་  མགྱོགས་ཐབས་ཟུར་པེན་ལུ་ཁ་སྐོང་བརྐྱབ།"
 
 #. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:811 ../thunar/thunar-tree-view.c:1121
+#: ../thunar/thunar-shortcuts-view.c:851 ../thunar/thunar-tree-view.c:1121
 msgid "_Mount Volume"
 msgstr "སྦྱར་བརྩེགས་སྐད་ཤུགས།(_M)"
 
 #. append the "Eject Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:821 ../thunar/thunar-tree-view.c:1131
+#: ../thunar/thunar-shortcuts-view.c:861 ../thunar/thunar-tree-view.c:1131
 msgid "E_ject Volume"
 msgstr "སྐད་ཤུགས་ཕྱིར་བཏོན།"
 
 #. append the remove menu item
-#: ../thunar/thunar-shortcuts-view.c:892
+#: ../thunar/thunar-shortcuts-view.c:932
 msgid "_Remove Shortcut"
 msgstr "མགྱོགས་ཐབས་རྩ་བསྐྲད་གཏང་།(_R)"
 
 #. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:907
+#: ../thunar/thunar-shortcuts-view.c:947
 msgid "Re_name Shortcut"
 msgstr "མགྱོགས་ཐབས་བསྐྱར་མིང་བཏགས།(_n)"
 
-#: ../thunar/thunar-shortcuts-view.c:1171
+#: ../thunar/thunar-shortcuts-view.c:1211
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr " \"%s\" འགྲུལ་ལམ་འདི་གིས་  སྣོད་ཐོ་ཅིག་ལུ་གཞི་བསྟུན་འབད་ནི་མེད།"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1188
+#: ../thunar/thunar-shortcuts-view.c:1228
 msgid "Failed to add new shortcut"
 msgstr "མགྱོགས་ཐབས་གསརཔ་ཁ་སྐོང་བརྐྱབ་ནི་ལུ་འཐུས་ཤོར་འབྱུང་ནུག"
 
-#: ../thunar/thunar-shortcuts-view.c:1373
-#: ../thunar/thunar-shortcuts-view.c:1414 ../thunar/thunar-tree-view.c:1748
+#: ../thunar/thunar-shortcuts-view.c:1413
+#: ../thunar/thunar-shortcuts-view.c:1454 ../thunar/thunar-tree-view.c:1748
 #: ../thunar/thunar-tree-view.c:1789
 #, c-format
 msgid "Failed to eject \"%s\""
@@ -2030,40 +2069,40 @@ msgid_plural "%u items, totalling %s"
 msgstr[0] "%u རྣམ་གྲངས་, %sབསྡོམས་དོ་"
 msgstr[1] "%u རྣམ་གྲངས་ཚུ་,  %sབསྡོམས་དོ།"
 
-#: ../thunar/thunar-standard-view.c:336
+#: ../thunar/thunar-standard-view.c:339
 msgid "Folder Context Menu"
 msgstr "སྣོད་འཛིན་སྐབས་དོན་དཀར་ཆག"
 
-#: ../thunar/thunar-standard-view.c:337
+#: ../thunar/thunar-standard-view.c:340
 msgid "Create an empty folder within the current folder"
 msgstr "ད་ལྟོའི་སྣོད་འཛིན་ནང་འཁོད་  སྣོད་འཛིན་སྟོངམ་ཅིག་གསར་བསྐྲུན་འབད།"
 
 #. append the "Cut" menu action
-#: ../thunar/thunar-standard-view.c:339 ../thunar/thunar-tree-view.c:1182
+#: ../thunar/thunar-standard-view.c:342 ../thunar/thunar-tree-view.c:1182
 msgid "Cu_t"
 msgstr "བཏོག།(_t)"
 
 #. append the "Copy" menu action
-#: ../thunar/thunar-standard-view.c:340 ../thunar/thunar-tree-view.c:1194
+#: ../thunar/thunar-standard-view.c:343 ../thunar/thunar-tree-view.c:1194
 msgid "_Copy"
 msgstr "འདྲ་བཤུས་བརྐྱབ།(_C)"
 
-#: ../thunar/thunar-standard-view.c:341
+#: ../thunar/thunar-standard-view.c:344
 msgid "_Paste"
 msgstr "སྦྱར།(_P)"
 
-#: ../thunar/thunar-standard-view.c:341
+#: ../thunar/thunar-standard-view.c:344
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr ""
 "ཧེ་མ་བཏོག་ཡང་ན་འདྲ་བཤུའི་བརྡ་བཀོད་ཀྱིས་  སེལ་འཐུ་འབད་དེ་ཡོད་པའི་  ཡིག་སྣོད་འདྲ་བཤུས་བརྐྱབ་ནི་ཡང་"
 "ན་  སྤོ་བཤུད་འབད།"
 
 #. append the "Delete" menu action
-#: ../thunar/thunar-standard-view.c:342 ../thunar/thunar-tree-view.c:1229
+#: ../thunar/thunar-standard-view.c:345 ../thunar/thunar-tree-view.c:1229
 msgid "_Delete"
 msgstr "བཏོན་གཏང་།(_D)"
 
-#: ../thunar/thunar-standard-view.c:343
+#: ../thunar/thunar-standard-view.c:346
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
@@ -2071,93 +2110,87 @@ msgstr ""
 "ཧེ་མ་ལས་  བཏོག་ཡང་ན་འདྲ་བཤའི་བརྡ་བཀོད་ཀྱིས་  སེལ་འཐུ་འབད་ཡོད་པའི་སྣོད་འཛིན་ནང་ལུ་སེལ་འཐུ་འབད་དེ་"
 "ཡོད་པའི་  ཡིག་སྣོད་འདི་འདྲ་བཤུས་བརྐྱབ་ནི་ཡང་ན་  སྤོ་བཤུད་འབད།"
 
-#: ../thunar/thunar-standard-view.c:344
+#: ../thunar/thunar-standard-view.c:347
 msgid "Select _all Files"
 msgstr "ཡིག་སྣོད་ཚུ་ཆ་ཚང་སེལ་འཐུ་འབད། (_a)"
 
-#: ../thunar/thunar-standard-view.c:344
+#: ../thunar/thunar-standard-view.c:347
 msgid "Select all files in this window"
 msgstr "སྒོ་སྒྲིག་འདི་གི་ནང་ལུ་  ཡིག་སྣོད་ཚུ་ཆ་ཚང་སེལ་འཐུ་འབད།"
 
-#: ../thunar/thunar-standard-view.c:345
+#: ../thunar/thunar-standard-view.c:348
 msgid "Select _by Pattern..."
 msgstr "དཔེ་གཞི་གིས་འབད་སེལ་འཐུ་འབད...(_b)"
 
-#: ../thunar/thunar-standard-view.c:345
+#: ../thunar/thunar-standard-view.c:348
 msgid "Select all files that match a certain pattern"
 msgstr "དཔེ་གཞི་ལ་ལོ་ཅིག་ལུ་མཐུན་པའི་ཡིག་སྣོད་ཚུ་ཆ་ཚང་སེལ་འཐུ་འབད།"
 
-#: ../thunar/thunar-standard-view.c:346
+#: ../thunar/thunar-standard-view.c:349
 msgid "Du_plicate"
 msgstr "རྫུན་མ།(_p)"
 
-#: ../thunar/thunar-standard-view.c:347 ../thunar/thunar-standard-view.c:3424
+#: ../thunar/thunar-standard-view.c:350 ../thunar/thunar-standard-view.c:3461
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "འབྲེལ་ལམ་བཟོ།(_k)"
 msgstr[1] "འབྲེལ་ལམ་ཚུ་བཟོ།(_k)"
 
 #. append the "Rename" menu action
-#: ../thunar/thunar-standard-view.c:348 ../thunar/thunar-tree-view.c:1253
+#: ../thunar/thunar-standard-view.c:351 ../thunar/thunar-tree-view.c:1253
 msgid "_Rename..."
 msgstr "བསྐྱར་མིང་བཏགས...(_R)"
 
-#: ../thunar/thunar-standard-view.c:349
+#: ../thunar/thunar-standard-view.c:352
 msgid "_Restore"
 msgstr "སོར་ཆུད་འབད།(_R)"
 
 #. add the "Create Document" sub menu action
-#: ../thunar/thunar-standard-view.c:562
+#: ../thunar/thunar-standard-view.c:565
 msgid "Create _Document"
 msgstr "ཡིག་ཆ་གསར་བསྐྲུན་འབད།(_D)"
 
-#: ../thunar/thunar-standard-view.c:1259
+#: ../thunar/thunar-standard-view.c:1296
 msgid "Loading folder contents..."
 msgstr "སྣོད་འཛིན་ནང་དོན་ཚུ་མངོན་གསལ་འབད་དོ..."
 
-#: ../thunar/thunar-standard-view.c:1743
+#: ../thunar/thunar-standard-view.c:1780
 msgid "New Empty File"
 msgstr "ཡིག་སྣོད་སྟོངམ་གསརཔ།"
 
-#: ../thunar/thunar-standard-view.c:1744
+#: ../thunar/thunar-standard-view.c:1781
 msgid "New Empty File..."
 msgstr "ཡིག་སྣོད་སྟོངམ་གསརཔ..."
 
-#. generate a title for the create dialog
-#: ../thunar/thunar-standard-view.c:1833
-#, c-format
-msgid "Create Document from template \"%s\""
-msgstr "\"%s\"ཊེམ་པེལེཊི་ལས་ ཡིག་ཆ་གསར་བསྐྲུན་འབད།"
-
-#: ../thunar/thunar-standard-view.c:2032
+#: ../thunar/thunar-standard-view.c:2069
 msgid "Select by Pattern"
 msgstr "དཔེ་གཞི་གིས་འབད་སེལ་འཐུ་འབད།"
 
-#: ../thunar/thunar-standard-view.c:2038
+#: ../thunar/thunar-standard-view.c:2075
 msgid "_Select"
 msgstr "སེལ་འཐུ་འབད།(_S)"
 
-#: ../thunar/thunar-standard-view.c:2047
+#: ../thunar/thunar-standard-view.c:2084
 msgid "_Pattern:"
 msgstr "དཔེ་གཞི:(_P)"
 
 #. tell the user that the file name provided by the X Direct Save source is invalid
-#: ../thunar/thunar-standard-view.c:2536
+#: ../thunar/thunar-standard-view.c:2573
 msgid "Invalid filename provided by XDS drag site"
 msgstr "ཨེགསི་ཌི་ཨེསི་འདྲུད་ནི་གིས་བྱིན་ཡོད་པའི་  ནུས་ཅན་མེད་པའི་ཡིག་སྣོད་མིང་།"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:2715
+#: ../thunar/thunar-standard-view.c:2752
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "ཡུ་ཨར་ཨེལ་\"%s\"དོན་ལུ་འབྲེལ་ལམ་ཅིག་གསར་བསྐྲུན་འབད་ནི་ལུ་  འཐུས་ཤོར་བྱུང་ནུག"
 
-#: ../thunar/thunar-standard-view.c:3057
+#: ../thunar/thunar-standard-view.c:3094
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "\"%s\"སྣོད་ཐོ་ཁ་ཕྱེ་ནི་ལུ་འཐུས་ཤོར་འབྱུང་ནུག"
 
-#: ../thunar/thunar-standard-view.c:3384
+#: ../thunar/thunar-standard-view.c:3421
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] ""
@@ -2167,7 +2200,7 @@ msgstr[1] ""
 "སྦྱར་ཡོད་པའི་བརྡ་བཀོད་ཅིག་དང་ཅིག་ཁར་སྤོ་བཤུད་འབད་ནི་ལུ་  སེལ་འཐུ་འབད་ཡོད་པའི་ཡིག་སྣོད་འདི་གྲ་སྒྲིག་"
 "འབད།"
 
-#: ../thunar/thunar-standard-view.c:3392
+#: ../thunar/thunar-standard-view.c:3429
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] ""
@@ -2176,32 +2209,32 @@ msgstr[0] ""
 msgstr[1] ""
 "སྦྱར་བའི་བརྡ་བཀོད་ཅིག་དང་ཅིག་ཁར་འདྲ་བཤུས་བརྐྱབ་ནི་ལུ་  སེལ་འཐུ་འབད་དེ་ཡོད་པའི་ཡིག་སྣོད་ཚུ་གྲ་སྒྲིག་འབད།"
 
-#: ../thunar/thunar-standard-view.c:3403
+#: ../thunar/thunar-standard-view.c:3440
 msgid "Delete the selected file"
 msgid_plural "Delete the selected files"
 msgstr[0] "སེལ་འཐུ་འབད་དེ་ཡོད་པའི་ཡིག་སྣོད་འདི་བཏོན་གཏང་"
 msgstr[1] "སེལ་འཐུ་འབད་དེ་ཡོད་པའི་ཡིག་སྣོད་ཚུ་བཏོན་གཏང་།"
 
-#: ../thunar/thunar-standard-view.c:3417
+#: ../thunar/thunar-standard-view.c:3454
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "སེལ་འཐུ་འབད་དེ་ཡོད་པའི་ཡིག་སྣོད་འདི་རྫུན་མ་བཟོ།"
 msgstr[1] "སེལ་འཐུ་འབད་དེ་ཡོད་པའི་ཡིག་སྣོད་རེ་རེ་རྫུན་མ་བཟོ།"
 
-#: ../thunar/thunar-standard-view.c:3426
+#: ../thunar/thunar-standard-view.c:3463
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "སེལ་འཐུ་འབད་དེ་ཡོད་པའི་ཡིག་སྣོད་དོན་ལུ་  བརྡ་མཚོན་པའི་འབྲེལ་མཐུད་ཅིག་གསར་བསྐྲུན་འབད།"
 msgstr[1] ""
 "སེལ་འཐུ་འབད་དེ་ཡོད་པའི་ཡིག་སྣོད་རེ་རེ་གི་དོན་ལུ་  བརྡ་མཚོན་པའི་འབྲེལ་མཐུད་ཅིག་གསར་བསྐྲུན་འབད།"
 
-#: ../thunar/thunar-standard-view.c:3434
+#: ../thunar/thunar-standard-view.c:3471
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "སེལ་འཐུ་འབད་དེ་ཡོད་པའི་ཡིག་སྣོད་འདི་བསྐྱར་མིང་བཏགས།"
 msgstr[1] "སེལ་འཐུ་འབད་དེ་ཡོད་པའི་ཡིག་སྣོད་ཚུ་ལུ་བསྐྱར་མིང་བཏགས།"
 
-#: ../thunar/thunar-standard-view.c:3442
+#: ../thunar/thunar-standard-view.c:3479
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
 msgstr[0] "སེལ་འཐུ་འབད་དེ་ཡོད་པའི་ཡིག་སྣོད་འདི་སོར་ཆུད་འབད།"
