@@ -17,8 +17,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-03 21:42+0100\n"
-"PO-Revision-Date: 2010-01-06 17:32+0900\n"
+"POT-Creation-Date: 2010-11-04 19:34+0900\n"
+"PO-Revision-Date: 2010-11-04 19:34+0900\n"
 "Last-Translator: Masato Hashimoto <cabezon.hashimoto@gmail.com>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
 "Language: ja\n"
@@ -177,14 +177,12 @@ msgid "Create New Folder"
 msgstr "新しいフォルダを作成します。"
 
 #: ../thunar/thunar-application.c:1325
-#, fuzzy
 msgid "New File"
-msgstr "新しいフォルダ"
+msgstr "新しいファイル"
 
 #: ../thunar/thunar-application.c:1326
-#, fuzzy
 msgid "Create New File"
-msgstr "新しいフォルダを作成します。"
+msgstr "新しいファイルを作成します。"
 
 #. generate a title for the create dialog
 #: ../thunar/thunar-application.c:1384 ../thunar/thunar-standard-view.c:1870
@@ -577,24 +575,24 @@ msgid "Atleast one filename must be specified"
 msgstr "もう一つ別のファイル名を指定する必要があります。"
 
 #: ../thunar/thunar-dbus-service.c:1000
-#, fuzzy, c-format
+#, c-format
 msgid "At least one source filename must be specified"
-msgstr "もう一つ別のファイル名を指定する必要があります。"
+msgstr "少なくとも一つの転送元ファイル名を指定する必要があります。"
 
 #: ../thunar/thunar-dbus-service.c:1010
 #, c-format
 msgid "The number of source and target filenames must be the same"
-msgstr ""
+msgstr "転送元と転送先のファイル名は同じでなければなりません"
 
 #: ../thunar/thunar-dbus-service.c:1019
-#, fuzzy, c-format
+#, c-format
 msgid "A destination directory must be specified"
-msgstr "もう一つ別のファイル名を指定する必要があります。"
+msgstr "転送先ファイル名を指定する必要があります。"
 
 #: ../thunar/thunar-dbus-service.c:1222
-#, fuzzy, c-format
+#, c-format
 msgid "At least one filename must be specified"
-msgstr "もう一つ別のファイル名を指定する必要があります。"
+msgstr "少なくとも一つのファイル名を指定する必要があります。"
 
 #: ../thunar/thunar-details-view.c:129
 msgid "Configure _Columns..."
@@ -1292,7 +1290,7 @@ msgstr "\"%s\" のマウントポイントの決定に失敗しました。"
 
 #: ../thunar/thunar-notify.c:93
 msgid "Unmounting device"
-msgstr ""
+msgstr "デバイスのマウントを解除解除しています"
 
 #: ../thunar/thunar-notify.c:94
 #, c-format
@@ -1300,10 +1298,12 @@ msgid ""
 "The device \"%s\" is being unmounted by the system. Please do not remove the "
 "media or disconnect the drive"
 msgstr ""
+"システムはデバイス \"%s\" のマウントを解除しています。メディアを取り出したり"
+"ドライブを切り離したりしないでください。"
 
 #: ../thunar/thunar-notify.c:100 ../thunar/thunar-notify.c:207
 msgid "Writing data to device"
-msgstr ""
+msgstr "デバイスへデータ書き込んでいます"
 
 #: ../thunar/thunar-notify.c:101 ../thunar/thunar-notify.c:208
 #, c-format
@@ -1311,15 +1311,17 @@ msgid ""
 "There is data that needs to be written to the device \"%s\" before it can be "
 "removed. Please do not remove the media or disconnect the drive"
 msgstr ""
+"デバイス \"%s\" が取り外される前に書き込まなければならないデータが存在しま"
+"す。メディアを取り出したりドライブを切り離したりしないでください。"
 
 #: ../thunar/thunar-notify.c:201
 msgid "Ejecting device"
-msgstr ""
+msgstr "デバイスを取り出しています"
 
 #: ../thunar/thunar-notify.c:202
 #, c-format
 msgid "The device \"%s\" is being ejected. This may take some time"
-msgstr ""
+msgstr "デバイス \"%s\" を取り出しています。少々お待ちください。"
 
 #: ../thunar/thunar-misc-jobs.c:84
 #, c-format
