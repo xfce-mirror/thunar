@@ -2,5 +2,7 @@
 
 test "x$DISPLAY" != "x" || DISPLAY=:0
 
-dbus-send --session --print-reply --dest=org.xfce.FileManager /org/xfce/FileManager \
-    org.xfce.FileManager.DisplayPreferencesDialog "string:$DISPLAY" 1> /dev/null
+dbus-send --session --print-reply --dest=org.xfce.FileManager \
+  /org/xfce/FileManager \
+  org.xfce.FileManager.DisplayPreferencesDialog \
+  "string:$DISPLAY" "string:$DESKTOP_STARTUP_ID" 1> /dev/null
