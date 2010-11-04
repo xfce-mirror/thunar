@@ -23,6 +23,9 @@
 #endif
 
 #include <gio/gio.h>
+#ifdef HAVE_GIO_UNIX
+#include <gio/gunixmounts.h>
+#endif
 
 #include <exo/exo.h>
 #include <libxfce4util/libxfce4util.h>
@@ -386,15 +389,77 @@ thunar_g_file_list_free (GList *list)
 
 
 
+#ifdef HAVE_GIO_UNIX
+static gboolean
+thunar_g_mount_is_internal (GMount *mount)
+{
+  const gchar *point_mount_path;
+  gboolean     is_internal = FALSE;
+  GFile       *root;
+  GList       *lp;
+  GList       *mount_points;
+  gchar       *mount_path;
+
+  _thunar_return_val_if_fail (G_IS_MOUNT (mount), FALSE);
+
+  /* determine the mount path */
+  root = g_mount_get_root (mount);
+  mount_path = g_file_get_path (root);
+  g_object_unref (root);
+
+  /* assume non-internal if we cannot determine the path */
+  if (mount_path == NULL)
+    return FALSE;
+
+  if (g_unix_is_mount_path_system_internal (mount_path))
+    {
+      /* mark as internal */
+      is_internal = TRUE;
+    }
+  else
+    {
+      /* get a list of all mount points */
+      mount_points = g_unix_mount_points_get (NULL);
+
+      /* search for the mount point associated with the mount entry */
+      for (lp = mount_points; !is_internal && lp != NULL; lp = lp->next)
+        {
+          point_mount_path = g_unix_mount_point_get_mount_path (lp->data);
+
+          /* check if this is the mount point we are looking for */
+          if (g_strcmp0 (mount_path, point_mount_path) == 0)
+            {
+              /* mark as internal if the user cannot mount this device */
+              if (!g_unix_mount_point_is_user_mountable (lp->data))
+                is_internal = TRUE;
+            }
+              
+          /* free the mount point, we no longer need it */
+          g_unix_mount_point_free (lp->data);
+        }
+
+      /* free the mount point list */
+      g_list_free (mount_points);
+    }
+
+  g_free (mount_path);
+
+  return is_internal;
+}
+#endif
+
+
+
 gboolean
 thunar_g_volume_is_removable (GVolume *volume)
 {
-  gboolean can_eject = FALSE;
-  gboolean can_mount = FALSE;
-  gboolean can_unmount = FALSE;
-  gboolean is_removable = FALSE;
-  GDrive  *drive;
-  GMount  *mount;
+  gboolean         can_eject = FALSE;
+  gboolean         can_mount = FALSE;
+  gboolean         can_unmount = FALSE;
+  gboolean         is_removable = FALSE;
+  gboolean         is_internal = FALSE;
+  GDrive          *drive;
+  GMount          *mount;
 
   _thunar_return_val_if_fail (G_IS_VOLUME (volume), FALSE);
   
@@ -416,6 +481,10 @@ thunar_g_volume_is_removable (GVolume *volume)
   mount = g_volume_get_mount (volume);
   if (mount != NULL)
     {
+#ifdef HAVE_GIO_UNIX
+      is_internal = thunar_g_mount_is_internal (mount);
+#endif
+
       /* check if the volume can be unmounted */
       can_unmount = g_mount_can_unmount (mount);
 
@@ -426,7 +495,7 @@ thunar_g_volume_is_removable (GVolume *volume)
   /* determine whether the device can be mounted */
   can_mount = g_volume_can_mount (volume);
 
-  return can_eject || can_unmount || is_removable || can_mount;
+  return (!is_internal) && (can_eject || can_unmount || is_removable || can_mount);
 }
 
 
