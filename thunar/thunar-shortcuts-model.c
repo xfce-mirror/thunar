@@ -278,29 +278,6 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
           shortcut->type = THUNAR_SHORTCUT_SYSTEM_DEFINED;
           shortcut->file = file;
 
-          if (thunar_g_file_is_desktop (lp->data))
-            {
-              gchar *old_locale = NULL;
-              gchar *locale = NULL;
-
-              bindtextdomain (XDG_USER_DIRS_PACKAGE, PACKAGE_LOCALE_DIR);
-#ifdef HAVE_BIND_TEXTDOMAIN_CODESET
-              bind_textdomain_codeset (XDG_USER_DIRS_PACKAGE, "UTF-8");
-#endif /* HAVE_BIND_TEXTDOMAIN_CODESET */
-
-              /* save the old locale */
-              old_locale = setlocale (LC_MESSAGES, NULL);
-
-              /* set the new locale */
-              locale = _thunar_get_xdg_user_dirs_locale ();
-              setlocale (LC_MESSAGES, locale);
-              g_free (locale);
-
-              shortcut->name = g_strdup (dgettext (XDG_USER_DIRS_PACKAGE, "Desktop"));
-
-              setlocale (LC_MESSAGES, old_locale);
-            }
-
           /* append the shortcut to the list */
           thunar_shortcuts_model_add_shortcut (model, shortcut, path);
           gtk_tree_path_next (path);
