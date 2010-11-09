@@ -41,26 +41,26 @@ xfce_file_manager = dbus.Interface(xfce_file_manager_object, 'org.xfce.FileManag
 # for example, to open a new file manager window for /tmp, you
 # would use the following method:
 #
-# xfce_file_manager.DisplayFolder('/tmp', '')
+# xfce_file_manager.DisplayFolder('/tmp', '', '')
 #
 # or, if you also want to pre-select a file in the folder, you
 # can use:
 #
-# xfce_file_manager.DisplayFolderAndSelect('/tmp', 'file.txt', '')
+# xfce_file_manager.DisplayFolderAndSelect('/tmp', 'file.txt', '', '')
 #
 # else if you want to display the file managers preferences
 # dialog, you'd use
 #
-# xfce_file_manager.DisplayPreferencesDialog('')
+# xfce_file_manager.DisplayPreferencesDialog('', '')
 #
 # and to open the file properties dialog of a given file, use
 #
-# xfce_file_manager.DisplayFileProperties('/path/to/file', '')
+# xfce_file_manager.DisplayFileProperties('/path/to/file', '', '')
 #
 # and last but not least, to launch a given file (or open
 # a folder), use
 #
-# xfce_file_manager.Launch('/path/to/file', '')
+# xfce_file_manager.Launch('/path/to/file', '', '')
 #
 # See the thunar-dbus-service-infos.xml file for the exact
 # interface definition.
@@ -68,4 +68,4 @@ xfce_file_manager = dbus.Interface(xfce_file_manager_object, 'org.xfce.FileManag
 
 # We just popup a new window for the root directory here to
 # demonstrate that it works. ;-)
-xfce_file_manager.Launch('/', '')
+xfce_file_manager.Launch('/', '', '')
