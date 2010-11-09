@@ -33,6 +33,7 @@ GFile    *thunar_g_file_new_for_user_special_dir (GUserDirectory        dir);
                                                                       
 gboolean  thunar_g_file_is_root                  (GFile                *file);
 gboolean  thunar_g_file_is_trashed               (GFile                *file);
+gboolean  thunar_g_file_is_home                  (GFile                *file);
 gboolean  thunar_g_file_is_desktop               (GFile                *file);
                                                                       
 GKeyFile *thunar_g_file_query_key_file           (GFile                *file,

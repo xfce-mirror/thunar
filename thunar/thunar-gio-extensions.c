@@ -113,6 +113,23 @@ thunar_g_file_is_trashed (GFile *file)
 
 
 gboolean
+thunar_g_file_is_home (GFile *file)
+{
+  GFile   *home;
+  gboolean is_home = FALSE;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+
+  home = thunar_g_file_new_for_home ();
+  is_home = g_file_equal (home, file);
+  g_object_unref (home);
+
+  return is_home;
+}
+
+
+
+gboolean
 thunar_g_file_is_desktop (GFile *file)
 {
   GFile   *desktop;

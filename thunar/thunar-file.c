@@ -2237,16 +2237,8 @@ thunar_file_is_hidden (const ThunarFile *file)
 gboolean
 thunar_file_is_home (const ThunarFile *file)
 {
-  gboolean is_home = FALSE;
-  GFile   *home;
-
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-
-  home = thunar_g_file_new_for_home ();
-  is_home = g_file_equal (file->gfile, home);
-  g_object_unref (home);
-
-  return is_home;
+  return thunar_g_file_is_home (file->gfile);
 }
 
 
