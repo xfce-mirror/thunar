@@ -271,6 +271,9 @@ thunar_sendto_model_get_matching (ThunarSendtoModel *sendto_model,
           g_free (dir);
         }
       g_strfreev (datadirs);
+
+      /* load the model */
+      thunar_sendto_model_load (sendto_model);
     }
 
   /* test all handlers */
