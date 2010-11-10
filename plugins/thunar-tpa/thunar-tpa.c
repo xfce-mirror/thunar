@@ -1,6 +1,7 @@
 /*-
  * Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2010 Nick Schermer <nick@xfce.org>
+ * Copyright (c) 2010 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -460,6 +461,7 @@ static void
 thunar_tpa_display_trash (ThunarTpa *plugin)
 {
   gchar *display_name;
+  gchar *startup_id;
 
   g_return_if_fail (THUNAR_IS_TPA (plugin));
 
@@ -472,7 +474,9 @@ thunar_tpa_display_trash (ThunarTpa *plugin)
 
       /* schedule a new call */
       display_name = gdk_screen_make_display_name (gtk_widget_get_screen (GTK_WIDGET (plugin)));
-      plugin->display_trash_call = org_xfce_Trash_display_trash_async (plugin->proxy, display_name, thunar_tpa_display_trash_reply, plugin);
+      startup_id = g_strdup_printf ("_TIME%d", gtk_get_current_event_time ());
+      plugin->display_trash_call = org_xfce_Trash_display_trash_async (plugin->proxy, display_name, startup_id, thunar_tpa_display_trash_reply, plugin);
+      g_free (startup_id);
       g_free (display_name);
     }
 }
@@ -483,6 +487,7 @@ static void
 thunar_tpa_empty_trash (ThunarTpa *plugin)
 {
   gchar *display_name;
+  gchar *startup_id;
 
   g_return_if_fail (THUNAR_IS_TPA (plugin));
 
@@ -495,7 +500,9 @@ thunar_tpa_empty_trash (ThunarTpa *plugin)
 
       /* schedule a new call */
       display_name = gdk_screen_make_display_name (gtk_widget_get_screen (GTK_WIDGET (plugin)));
-      plugin->empty_trash_call = org_xfce_Trash_empty_trash_async (plugin->proxy, display_name, thunar_tpa_empty_trash_reply, plugin);
+      startup_id = g_strdup_printf ("_TIME%d", gtk_get_current_event_time ());
+      plugin->empty_trash_call = org_xfce_Trash_empty_trash_async (plugin->proxy, display_name, startup_id, thunar_tpa_empty_trash_reply, plugin);
+      g_free (startup_id);
       g_free (display_name);
     }
 }
@@ -507,6 +514,7 @@ thunar_tpa_move_to_trash (ThunarTpa    *plugin,
                           const gchar **uri_list)
 {
   gchar *display_name;
+  gchar *startup_id;
 
   g_return_val_if_fail (THUNAR_IS_TPA (plugin), FALSE);
   g_return_val_if_fail (uri_list != NULL, FALSE);
@@ -521,7 +529,9 @@ thunar_tpa_move_to_trash (ThunarTpa    *plugin,
 
   /* schedule a new call */
   display_name = gdk_screen_make_display_name (gtk_widget_get_screen (GTK_WIDGET (plugin)));
-  plugin->move_to_trash_call = org_xfce_Trash_move_to_trash_async (plugin->proxy, uri_list, display_name, thunar_tpa_move_to_trash_reply, plugin);
+  startup_id = g_strdup_printf ("_TIME%d", gtk_get_current_event_time ());
+  plugin->move_to_trash_call = org_xfce_Trash_move_to_trash_async (plugin->proxy, uri_list, display_name, startup_id, thunar_tpa_move_to_trash_reply, plugin);
+  g_free (startup_id);
   g_free (display_name);
 
   return TRUE;
