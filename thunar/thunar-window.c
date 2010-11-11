@@ -1,7 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -2016,13 +2016,20 @@ thunar_window_open_user_folder (GtkAction           *action,
   else
     user_dir = g_file_new_for_path (path);
 
-  user_file = thunar_file_get (user_dir, &error);
-  if (G_UNLIKELY (user_file == NULL && error->domain == G_FILE_ERROR && error->code == G_FILE_ERROR_NOENT))
-    {
-      g_error_free (error);
-      error = NULL;
+  /* try to load the user dir */
+  user_file = thunar_file_get (user_dir, NULL);
 
-      /* try to create the folder */
+  /* handle the case where the file does not exists */
+  if (G_UNLIKELY (user_file == NULL || !thunar_file_exists (user_file)))
+    {
+      /* release the instance if it does not exist */
+      if (user_file != NULL)
+        {
+          g_object_unref (user_file);
+          user_file = NULL;
+        }
+
+      /* try to create the folder, then reload the file */
       if (G_LIKELY (xfce_mkdirhier (path, 0755, &error)))
         user_file = thunar_file_get (user_dir, &error);
     }
@@ -2899,12 +2906,12 @@ thunar_window_set_zoom_level (ThunarWindow   *window,
 
 /**
  * thunar_window_scroll_to_file:
- * @window    : a #ThunarWindow instance.
- * @file      : a #ThunarFile.
- * @select    : if %TRUE the @file will also be selected.
- * @use_align : %TRUE to use the alignment arguments.
- * @row_align : the vertical alignment.
- * @col_align : the horizontal alignment.
+ * @window      : a #ThunarWindow instance.
+ * @file        : a #ThunarFile.
+ * @select_file : if %TRUE the @file will also be selected.
+ * @use_align   : %TRUE to use the alignment arguments.
+ * @row_align   : the vertical alignment.
+ * @col_align   : the horizontal alignment.
  *
  * Tells the @window to scroll to the @file
  * in the current view.
@@ -2912,7 +2919,7 @@ thunar_window_set_zoom_level (ThunarWindow   *window,
 void
 thunar_window_scroll_to_file (ThunarWindow *window,
                               ThunarFile   *file,
-                              gboolean      select,
+                              gboolean      select_file,
                               gboolean      use_align,
                               gfloat        row_align,
                               gfloat        col_align)
@@ -2922,7 +2929,7 @@ thunar_window_scroll_to_file (ThunarWindow *window,
 
   /* verify that we have a valid view */
   if (G_LIKELY (window->view != NULL))
-    thunar_view_scroll_to_file (THUNAR_VIEW (window->view), file, select, use_align, row_align, col_align);
+    thunar_view_scroll_to_file (THUNAR_VIEW (window->view), file, select_file, use_align, row_align, col_align);
 }
 
 
