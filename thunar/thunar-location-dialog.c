@@ -1,20 +1,22 @@
-/* $Id$ */
+/* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2010 Jannis Pohlmann <jannis@xfce.org>
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This program is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA  02111-1307  USA
+ * You should have received a copy of the GNU General Public 
+ * License along with this program; if not, write to the Free 
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -123,6 +125,7 @@ ThunarFile*
 thunar_location_dialog_get_selected_file (ThunarLocationDialog *location_dialog)
 {
   _thunar_return_val_if_fail (THUNAR_IS_LOCATION_DIALOG (location_dialog), NULL);
+
   return thunar_path_entry_get_current_file (THUNAR_PATH_ENTRY (location_dialog->entry));
 }
 
@@ -141,7 +144,26 @@ thunar_location_dialog_set_selected_file (ThunarLocationDialog *location_dialog,
 {
   _thunar_return_if_fail (THUNAR_IS_LOCATION_DIALOG (location_dialog));
   _thunar_return_if_fail (selected_file == NULL || THUNAR_IS_FILE (selected_file));
-  thunar_path_entry_set_current_file (THUNAR_PATH_ENTRY (location_dialog->entry), selected_file);
+
+  thunar_path_entry_set_current_file (THUNAR_PATH_ENTRY (location_dialog->entry), 
+                                      selected_file);
 }
 
 
+/**
+ * thunar_location_dialog_set_working_directory:
+ * @location_dialog : a #ThunarLocationDialog.
+ * @directory       : a #ThunarFile or %NULL.
+ *
+ * Sets the working directory of @location_dialog to @directory.
+ **/
+void
+thunar_location_dialog_set_working_directory (ThunarLocationDialog *location_dialog,
+                                              ThunarFile           *directory)
+{
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_DIALOG (location_dialog));
+  _thunar_return_if_fail (directory == NULL || THUNAR_IS_FILE (directory));
+
+  thunar_path_entry_set_working_directory (THUNAR_PATH_ENTRY (location_dialog->entry),
+                                           directory);
+}

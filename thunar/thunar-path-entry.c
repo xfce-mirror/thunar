@@ -1,21 +1,22 @@
-/* $Id$ */
+/* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This program is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA  02111-1307  USA
+ * You should have received a copy of the GNU General Public 
+ * License along with this program; if not, write to the Free 
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
  *
  * The icon code is based on ideas from SexyIconEntry, which was written by
  * Christian Hammond <chipx86@chipx86.com>.
@@ -142,6 +143,7 @@ struct _ThunarPathEntry
   ThunarIconFactory *icon_factory;
   ThunarFile        *current_folder;
   ThunarFile        *current_file;
+  GFile             *working_directory;
   GdkWindow         *icon_area;
 
   gint               drag_button;
@@ -245,6 +247,7 @@ thunar_path_entry_init (ThunarPathEntry *path_entry)
   ThunarListModel    *store;
 
   path_entry->check_completion_idle_id = -1;
+  path_entry->working_directory = NULL;
 
   /* allocate a new entry completion for the given model */
   completion = gtk_entry_completion_new ();
@@ -303,6 +306,10 @@ thunar_path_entry_finalize (GObject *object)
       g_signal_handlers_disconnect_by_func (G_OBJECT (path_entry->current_file), thunar_path_entry_set_current_file, path_entry);
       g_object_unref (G_OBJECT (path_entry->current_file));
     }
+
+  /* release the working directory */
+  if (G_LIKELY (path_entry->working_directory != NULL))
+    g_object_unref (G_OBJECT (path_entry->working_directory));
 
   /* drop the check_completion_idle source */
   if (G_UNLIKELY (path_entry->check_completion_idle_id >= 0))
@@ -1226,7 +1233,9 @@ thunar_path_entry_parse (ThunarPathEntry *path_entry,
   _thunar_return_val_if_fail (file_part != NULL, FALSE);
 
   /* expand the filename */
-  filename = thunar_util_expand_filename (gtk_entry_get_text (GTK_ENTRY (path_entry)), error);
+  filename = thunar_util_expand_filename (gtk_entry_get_text (GTK_ENTRY (path_entry)),
+                                          path_entry->working_directory,
+                                          error);
   if (G_UNLIKELY (filename == NULL))
     return FALSE;
 
@@ -1411,3 +1420,28 @@ thunar_path_entry_set_current_file (ThunarPathEntry *path_entry,
   gtk_widget_queue_draw (GTK_WIDGET (path_entry));
 }
 
+
+
+/**
+ * thunar_path_entry_set_working_directory:
+ * @path_entry        : a #ThunarPathEntry.
+ * @working_directory : a #ThunarFile or %NULL.
+ *
+ * Sets the #ThunarFile that should be used as the
+ * working directory for @path_entry.
+ **/
+void
+thunar_path_entry_set_working_directory (ThunarPathEntry *path_entry,
+                                         ThunarFile      *working_directory)
+{
+  _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
+  _thunar_return_if_fail (working_directory == NULL || THUNAR_IS_FILE (working_directory));
+
+  if (G_LIKELY (path_entry->working_directory != NULL))
+    g_object_unref (path_entry->working_directory);
+
+  path_entry->working_directory = NULL;
+
+  if (THUNAR_IS_FILE (working_directory))
+    path_entry->working_directory = g_object_ref (thunar_file_get_file (working_directory));
+}

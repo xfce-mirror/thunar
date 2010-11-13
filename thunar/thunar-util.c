@@ -1,21 +1,22 @@
-/* $Id$ */
+/* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
  * Copyright (c) 2006-2007 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This program is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA  02111-1307  USA
+ * You should have received a copy of the GNU General Public 
+ * License along with this program; if not, write to the Free 
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -60,11 +61,13 @@
 
 /**
  * thunar_util_expand_filename:
- * @filename : a local filename.
- * @error    : return location for errors or %NULL.
+ * @filename          : a local filename.
+ * @working_directory : #GFile of the current working directory.
+ * @error             : return location for errors or %NULL.
  *
  * Takes a user-typed @filename and expands a tilde at the
- * beginning of the @filename.
+ * beginning of the @filename. It also resolves paths prefixed with
+ * '.' using the current working directory.
  *
  * The caller is responsible to free the returned string using
  * g_free() when no longer needed.
@@ -73,6 +76,7 @@
  **/
 gchar *
 thunar_util_expand_filename (const gchar  *filename,
+                             GFile        *working_directory,
                              GError      **error)
 {
   struct passwd *passwd;
@@ -80,6 +84,8 @@ thunar_util_expand_filename (const gchar  *filename,
   const gchar   *remainder;
   const gchar   *slash;
   gchar         *username;
+  gchar         *pwd;
+  gchar         *result = NULL;
 
   g_return_val_if_fail (filename != NULL, NULL);
 
@@ -91,48 +97,75 @@ thunar_util_expand_filename (const gchar  *filename,
     }
 
   /* check if we start with a '~' */
-  if (G_LIKELY (*filename != '~'))
-    return g_strdup (filename);
-
-  /* examine the remainder of the filename */
-  remainder = filename + 1;
-
-  /* if we have only the slash, then we want the home dir */
-  if (G_UNLIKELY (*remainder == '\0'))
-    return g_strdup (xfce_get_homedir ());
-
-  /* lookup the slash */
-  for (slash = remainder; *slash != '\0' && *slash != G_DIR_SEPARATOR; ++slash)
-    ;
-
-  /* check if a username was given after the '~' */
-  if (G_LIKELY (slash == remainder))
+  if (*filename == '~')
     {
-      /* replace the tilde with the home dir */
-      replacement = xfce_get_homedir ();
-    }
-  else
-    {
-      /* lookup the pwd entry for the username */
-      username = g_strndup (remainder, slash - remainder);
-      passwd = getpwnam (username);
-      g_free (username);
+      /* examine the remainder of the filename */
+      remainder = filename + 1;
 
-      /* check if we have a valid entry */
-      if (G_UNLIKELY (passwd == NULL))
+      /* if we have only the slash, then we want the home dir */
+      if (G_UNLIKELY (*remainder == '\0'))
+        return g_strdup (xfce_get_homedir ());
+
+      /* lookup the slash */
+      for (slash = remainder; *slash != '\0' && *slash != G_DIR_SEPARATOR; ++slash);
+
+      /* check if a username was given after the '~' */
+      if (G_LIKELY (slash == remainder))
         {
-          username = g_strndup (remainder, slash - remainder);
-          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Unknown user \"%s\""), username);
-          g_free (username);
-          return NULL;
+          /* replace the tilde with the home dir */
+          replacement = xfce_get_homedir ();
         }
+      else
+        {
+          /* lookup the pwd entry for the username */
+          username = g_strndup (remainder, slash - remainder);
+          passwd = getpwnam (username);
+          g_free (username);
 
-      /* use the homedir of the specified user */
-      replacement = passwd->pw_dir;
+          /* check if we have a valid entry */
+          if (G_UNLIKELY (passwd == NULL))
+            {
+              username = g_strndup (remainder, slash - remainder);
+              g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Unknown user \"%s\""), username);
+              g_free (username);
+              return NULL;
+            }
+
+          /* use the homedir of the specified user */
+          replacement = passwd->pw_dir;
+        }
+    
+      /* generate the filename */
+      return g_build_filename (replacement, slash, NULL);
+    }
+  else if (*filename == '.')
+    {
+      /* examine the remainder of the filename */
+      remainder = filename + 1;
+      
+      /* transform working directory into a filename string */
+      if (G_LIKELY (working_directory != NULL))
+        {
+          pwd = g_file_get_path (working_directory);
+    
+          /* if we only have the slash then we want the working directory only */
+          if (G_UNLIKELY (*remainder == '\0'))
+            return pwd;
+
+          /* concatenate working directory and remainder */
+          result = g_build_filename (pwd, remainder, G_DIR_SEPARATOR_S, NULL);
+
+          /* free the working directory string */
+          g_free (pwd);
+        }
+      else
+        result = g_strdup (filename);
+
+      /* return the resulting path string */
+      return result;
     }
 
-  /* generate the filename */
-  return g_build_filename (replacement, slash, NULL);
+  return g_strdup (filename);
 }
 
 
