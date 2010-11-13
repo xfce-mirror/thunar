@@ -42,56 +42,75 @@ enum
 
 
 
-static void thunar_chooser_button_finalize        (GObject                  *object);
-static void thunar_chooser_button_get_property    (GObject                  *object,
-                                                   guint                     prop_id,
-                                                   GValue                   *value,
-                                                   GParamSpec               *pspec);
-static void thunar_chooser_button_set_property    (GObject                  *object,
-                                                   guint                     prop_id,
-                                                   const GValue             *value,
-                                                   GParamSpec               *pspec);
-static void thunar_chooser_button_activate        (ThunarChooserButton      *chooser_button,
-                                                   GtkWidget                *item);
-static void thunar_chooser_button_activate_other  (ThunarChooserButton      *chooser_button);
-static void thunar_chooser_button_file_changed    (ThunarChooserButton      *chooser_button,
-                                                   ThunarFile               *file);
-static void thunar_chooser_button_pressed         (ThunarChooserButton      *chooser_button,
-                                                   GtkWidget                *button);
+enum
+{
+  THUNAR_CHOOSER_BUTTON_STORE_COLUMN_NAME,
+  THUNAR_CHOOSER_BUTTON_STORE_COLUMN_ICON,
+  THUNAR_CHOOSER_BUTTON_STORE_COLUMN_APPLICATION,
+  THUNAR_CHOOSER_BUTTON_STORE_COLUMN_SENSITIVE,
+  THUNAR_CHOOSER_BUTTON_STORE_COLUMN_STYLE,
+  THUNAR_CHOOSER_BUTTON_STORE_N_COLUMNS
+};
+
+
+
+static void     thunar_chooser_button_finalize          (GObject             *object);
+static void     thunar_chooser_button_get_property      (GObject             *object,
+                                                         guint                prop_id,
+                                                         GValue              *value,
+                                                         GParamSpec          *pspec);
+static void     thunar_chooser_button_set_property      (GObject             *object,
+                                                         guint                prop_id,
+                                                         const GValue        *value,
+                                                         GParamSpec          *pspec);
+static gboolean thunar_chooser_button_scroll_event      (GtkWidget           *widget,
+                                                         GdkEventScroll      *event);
+static void     thunar_chooser_button_changed           (GtkComboBox         *combo_box);
+static void     thunar_chooser_button_popup             (ThunarChooserButton *chooser_button);
+static gint     thunar_chooser_button_sort_applications (gconstpointer        a,
+                                                         gconstpointer        b);
+static gboolean thunar_chooser_button_row_separator     (GtkTreeModel        *model,
+                                                         GtkTreeIter         *iter,
+                                                         gpointer             data);
+static void     thunar_chooser_button_chooser_dialog    (ThunarChooserButton *chooser_button);
+static void     thunar_chooser_button_file_changed      (ThunarChooserButton *chooser_button,
+                                                         ThunarFile          *file);
 
 
 
 struct _ThunarChooserButtonClass
 {
-  GtkHBoxClass __parent__;
+  GtkComboBoxClass __parent__;
 };
 
 struct _ThunarChooserButton
 {
-  GtkHBox __parent__;
+  GtkComboBox   __parent__;
 
-  GtkWidget             *image;
-  GtkWidget             *label;
-  GtkWidget             *button;
-
-  ThunarFile            *file;
+  GtkListStore *store;
+  ThunarFile   *file;
+  gboolean      has_default_application;
 };
 
 
 
-G_DEFINE_TYPE (ThunarChooserButton, thunar_chooser_button, GTK_TYPE_HBOX)
+G_DEFINE_TYPE (ThunarChooserButton, thunar_chooser_button, GTK_TYPE_COMBO_BOX)
 
 
 
 static void
 thunar_chooser_button_class_init (ThunarChooserButtonClass *klass)
 {
-  GObjectClass *gobject_class;
+  GObjectClass   *gobject_class;
+  GtkWidgetClass *gtkwidget_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_chooser_button_finalize;
   gobject_class->get_property = thunar_chooser_button_get_property;
   gobject_class->set_property = thunar_chooser_button_set_property;
+
+  gtkwidget_class = GTK_WIDGET_CLASS (klass);
+  gtkwidget_class->scroll_event = thunar_chooser_button_scroll_event;
 
   /**
    * ThunarChooserButton:file:
@@ -111,38 +130,49 @@ thunar_chooser_button_class_init (ThunarChooserButtonClass *klass)
 static void
 thunar_chooser_button_init (ThunarChooserButton *chooser_button)
 {
-  GtkWidget *separator;
-  GtkWidget *arrow;
-  GtkWidget *hbox;
+  GtkCellRenderer *renderer;
 
-  gtk_widget_push_composite_child ();
+  /* allocate a new store for the combo box */
+  chooser_button->store = gtk_list_store_new (THUNAR_CHOOSER_BUTTON_STORE_N_COLUMNS,
+                                              G_TYPE_STRING,
+                                              G_TYPE_ICON,
+                                              G_TYPE_OBJECT,
+                                              G_TYPE_BOOLEAN,
+                                              PANGO_TYPE_STYLE);
+  gtk_combo_box_set_model (GTK_COMBO_BOX (chooser_button), 
+                           GTK_TREE_MODEL (chooser_button->store));
 
-  chooser_button->button = gtk_button_new ();
-  g_signal_connect_swapped (G_OBJECT (chooser_button->button), "pressed", G_CALLBACK (thunar_chooser_button_pressed), chooser_button);
-  gtk_box_pack_start (GTK_BOX (chooser_button), chooser_button->button, TRUE, TRUE, 0);
-  gtk_widget_show (chooser_button->button);
+  g_signal_connect (chooser_button, "changed", 
+                    G_CALLBACK (thunar_chooser_button_changed), NULL);
+  g_signal_connect (chooser_button, "popup",
+                    G_CALLBACK (thunar_chooser_button_popup), NULL);
 
-  hbox = gtk_hbox_new (FALSE, 4);
-  gtk_container_add (GTK_CONTAINER (chooser_button->button), hbox);
-  gtk_widget_show (hbox);
+  /* set separator function */
+  gtk_combo_box_set_row_separator_func (GTK_COMBO_BOX (chooser_button),
+                                        thunar_chooser_button_row_separator,
+                                        NULL, NULL);
 
-  chooser_button->image = gtk_image_new ();
-  gtk_box_pack_start (GTK_BOX (hbox), chooser_button->image, FALSE, FALSE, 0);
-  gtk_widget_show (chooser_button->image);
+  /* add renderer for the application icon */
+  renderer = gtk_cell_renderer_pixbuf_new ();
+  gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (chooser_button), renderer, FALSE);
+  gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (chooser_button), renderer,
+                                  "gicon", 
+                                  THUNAR_CHOOSER_BUTTON_STORE_COLUMN_ICON,
+                                  "sensitive", 
+                                  THUNAR_CHOOSER_BUTTON_STORE_COLUMN_SENSITIVE,
+                                  NULL);
 
-  chooser_button->label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, "yalign", 0.0f, NULL);
-  gtk_box_pack_start (GTK_BOX (hbox), chooser_button->label, TRUE, TRUE, 0);
-  gtk_widget_show (chooser_button->label);
-
-  separator = g_object_new (GTK_TYPE_VSEPARATOR, "height-request", 16, NULL);
-  gtk_box_pack_start (GTK_BOX (hbox), separator, FALSE, FALSE, 0);
-  gtk_widget_show (separator);
-
-  arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
-  gtk_box_pack_start (GTK_BOX (hbox), arrow, FALSE, FALSE, 0);
-  gtk_widget_show (arrow);
-
-  gtk_widget_pop_composite_child ();
+  /* add renderer for the application name */
+  renderer = gtk_cell_renderer_text_new ();
+  gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (chooser_button), renderer, FALSE);
+  gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (chooser_button), renderer,
+                                  "text", 
+                                  THUNAR_CHOOSER_BUTTON_STORE_COLUMN_NAME,
+                                  "sensitive", 
+                                  THUNAR_CHOOSER_BUTTON_STORE_COLUMN_SENSITIVE,
+                                  "style",
+                                  THUNAR_CHOOSER_BUTTON_STORE_COLUMN_STYLE,
+                                  NULL);
 }
 
 
@@ -154,6 +184,9 @@ thunar_chooser_button_finalize (GObject *object)
 
   /* reset the "file" property */
   thunar_chooser_button_set_file (chooser_button, NULL);
+
+  /* release the store */
+  g_object_unref (G_OBJECT (chooser_button->store));
 
   (*G_OBJECT_CLASS (thunar_chooser_button_parent_class)->finalize) (object);
 }
@@ -204,48 +237,147 @@ thunar_chooser_button_set_property (GObject      *object,
 
 
 
-static void
-thunar_chooser_button_activate (ThunarChooserButton *chooser_button,
-                                GtkWidget           *item)
+static gboolean
+thunar_chooser_button_scroll_event (GtkWidget      *widget,
+                                    GdkEventScroll *event)
 {
-  const gchar *content_type;
-  GAppInfo    *app_info;
-  GError      *error = NULL;
+  ThunarChooserButton *chooser_button = THUNAR_CHOOSER_BUTTON (widget);
+  GtkTreeIter          iter;
+  GObject             *application;
+  GtkTreeModel        *model = GTK_TREE_MODEL (chooser_button->store);
+
+  g_return_val_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button), FALSE);
+
+  /* check if the next application in the store is valid if we scroll down,
+   * else drop the event so we don't popup the chooser dailog */
+  if (event->direction != GDK_SCROLL_UP
+      && gtk_combo_box_get_active_iter (GTK_COMBO_BOX (widget), &iter)
+      && gtk_tree_model_iter_next (model, &iter))
+    {
+      gtk_tree_model_get (model, &iter, 
+                          THUNAR_CHOOSER_BUTTON_STORE_COLUMN_APPLICATION, 
+                          &application, -1);
+
+      if (application == NULL)
+        return FALSE;
+
+      g_object_unref (G_OBJECT (application));
+    }
+
+  return (*GTK_WIDGET_CLASS (thunar_chooser_button_parent_class)->scroll_event) (widget, event);
+}
+
+
+
+static void
+thunar_chooser_button_changed (GtkComboBox *combo_box)
+{
+  ThunarChooserButton *chooser_button = THUNAR_CHOOSER_BUTTON (combo_box);
+  GtkTreeIter          iter;
+  const gchar         *content_type;
+  GAppInfo            *app_info;
+  GError              *error = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button));
-  _thunar_return_if_fail (GTK_IS_MENU_ITEM (item));
+  _thunar_return_if_fail (GTK_IS_LIST_STORE (chooser_button->store));
 
   /* verify that we still have a valid file */
   if (G_UNLIKELY (chooser_button->file == NULL))
     return;
 
-  /* determine the application that was set for the item */
-  app_info = g_object_get_data (G_OBJECT (item), "app-info");
-  if (G_UNLIKELY (app_info == NULL))
+  /* get the selected item in the combo box */
+  if (!gtk_combo_box_get_active_iter (combo_box, &iter))
     return;
 
-  /* determine the mime info for the file */
-  content_type = thunar_file_get_content_type (chooser_button->file);
+  /* determine the application that was set for the item */
+  gtk_tree_model_get (GTK_TREE_MODEL (chooser_button->store), &iter,
+                      THUNAR_CHOOSER_BUTTON_STORE_COLUMN_APPLICATION,
+                      &app_info, -1);
 
-  /* try to set application as default for these kind of file */
-  if (!g_app_info_set_as_default_for_type (app_info, content_type, &error))
+  if (G_LIKELY (app_info != NULL))
     {
-      /* tell the user that it didn't work */
-      thunar_dialogs_show_error (GTK_WIDGET (chooser_button), error, _("Failed to set default application for \"%s\""),
-                                 thunar_file_get_display_name (chooser_button->file));
-      g_error_free (error);
+      /* determine the mime info for the file */
+      content_type = thunar_file_get_content_type (chooser_button->file);
+
+      /* try to set application as default for these kind of file */
+      if (!g_app_info_set_as_default_for_type (app_info, content_type, &error))
+        {
+          /* tell the user that it didn't work */
+          thunar_dialogs_show_error (GTK_WIDGET (chooser_button), error, 
+                                     _("Failed to set default application for \"%s\""),
+                                     thunar_file_get_display_name (chooser_button->file));
+          g_error_free (error);
+        }
+      else
+        {
+          /* emit "changed" on the file, so everybody updates its state */
+          thunar_file_changed (chooser_button->file);
+        }
+
+      /* release the application */
+      g_object_unref (app_info);
     }
   else
     {
-      /* emit "changed" on the file, so everybody updates its state */
-      thunar_file_changed (chooser_button->file);
+      /* no application was found in the store, looks like the other... option */
+      thunar_chooser_button_chooser_dialog (chooser_button);
     }
 }
 
 
 
 static void
-thunar_chooser_button_activate_other (ThunarChooserButton *chooser_button)
+thunar_chooser_button_popup (ThunarChooserButton *chooser_button)
+{
+  _thunar_return_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button));
+
+  if (!chooser_button->has_default_application)
+    {
+      /* don't show the menu */
+      gtk_combo_box_popdown (GTK_COMBO_BOX (chooser_button));
+
+      /* open the chooser dialog if the filetype has no default action */
+      thunar_chooser_button_chooser_dialog (chooser_button);
+    }
+}
+
+
+
+static gint
+thunar_chooser_button_sort_applications (gconstpointer a,
+                                         gconstpointer b)
+{
+  _thunar_return_val_if_fail (G_IS_APP_INFO (a), -1);
+  _thunar_return_val_if_fail (G_IS_APP_INFO (b), -1);
+
+  return g_utf8_collate (g_app_info_get_name (G_APP_INFO (a)),
+                         g_app_info_get_name (G_APP_INFO (b)));
+}
+
+
+
+static gboolean
+thunar_chooser_button_row_separator (GtkTreeModel *model,
+                                     GtkTreeIter  *iter,
+                                     gpointer      data)
+{
+  gchar *name;
+
+  /* determine the value of the "name" column */
+  gtk_tree_model_get (model, iter, THUNAR_CHOOSER_BUTTON_STORE_COLUMN_NAME, &name, -1);
+  if (G_LIKELY (name != NULL))
+    {
+      g_free (name);
+      return FALSE;
+    }
+
+  return TRUE;
+}
+
+
+
+static void
+thunar_chooser_button_chooser_dialog (ThunarChooserButton *chooser_button)
 {
   GtkWidget *toplevel;
   GtkWidget *dialog;
@@ -262,7 +394,8 @@ thunar_chooser_button_activate_other (ThunarChooserButton *chooser_button)
   exo_binding_new (G_OBJECT (chooser_button), "file", G_OBJECT (dialog), "file");
   gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (toplevel));
   gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
-  gtk_dialog_run (GTK_DIALOG (dialog));
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) != GTK_RESPONSE_ACCEPT)
+    thunar_chooser_button_file_changed (chooser_button, chooser_button->file);
   gtk_widget_destroy (dialog);
 }
 
@@ -273,169 +406,106 @@ thunar_chooser_button_file_changed (ThunarChooserButton *chooser_button,
                                     ThunarFile          *file)
 {
   const gchar *content_type;
+  GtkTreeIter  iter;
   GAppInfo    *app_info;
+  GList       *app_infos;
+  GList       *lp;
   gchar       *description;
+  guint        i = 0;
 
   _thunar_return_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button));
   _thunar_return_if_fail (chooser_button->file == file);
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
+  /* clear the store */
+  gtk_list_store_clear (chooser_button->store);
+
+  /* reset the default application flag */
+  chooser_button->has_default_application = FALSE;
+
+  /* block the changed signal for a moment */
+  g_signal_handlers_block_by_func (chooser_button,
+                                   thunar_chooser_button_changed,
+                                   NULL);
+
   /* determine the content type of the file */
   content_type = thunar_file_get_content_type (file);
+
+  /* setup a useful tooltip for the button */
+  description = g_content_type_get_description (content_type);
+  thunar_gtk_widget_set_tooltip (GTK_WIDGET (chooser_button),
+                                 _("The selected application is used to open "
+                                   "this and other files of type \"%s\"."),
+                                 description);
+  g_free (description);
 
   /* determine the default application for that content type */
   app_info = g_app_info_get_default_for_type (content_type, FALSE);
   if (G_LIKELY (app_info != NULL))
     {
-      /* setup the image for the application */
-      gtk_image_set_from_gicon (GTK_IMAGE (chooser_button->image), 
-                                g_app_info_get_icon (app_info),
-                                GTK_ICON_SIZE_MENU);
+      /* determine all applications that claim to be able to handle the file */
+      app_infos = g_app_info_get_all_for_type (content_type);
+      app_infos = g_list_sort (app_infos, thunar_chooser_button_sort_applications);
+      
+      /* add all possible applications */
+      for (lp = app_infos, i = 0; lp != NULL; lp = lp->next, ++i)
+        {
+          /* insert the item into the store */
+          gtk_list_store_insert_with_values (chooser_button->store, &iter, i,
+                                             THUNAR_CHOOSER_BUTTON_STORE_COLUMN_NAME,
+                                             g_app_info_get_name (lp->data),
+                                             THUNAR_CHOOSER_BUTTON_STORE_COLUMN_APPLICATION,
+                                             lp->data,
+                                             THUNAR_CHOOSER_BUTTON_STORE_COLUMN_ICON,
+                                             g_app_info_get_icon (lp->data),
+                                             THUNAR_CHOOSER_BUTTON_STORE_COLUMN_SENSITIVE,
+                                             TRUE,
+                                             -1);
 
-      /* setup the label for the application */
-      gtk_label_set_attributes (GTK_LABEL (chooser_button->label), NULL);
-      gtk_label_set_text (GTK_LABEL (chooser_button->label), g_app_info_get_name (app_info));
+          /* pre-select the default application */
+          if (g_app_info_equal (lp->data, app_info))
+            gtk_combo_box_set_active_iter (GTK_COMBO_BOX (chooser_button), &iter);
 
-      /* cleanup */
+          /* release the application */
+          g_object_unref (lp->data);
+        }
+
+      /* release the application list */
+      g_list_free (app_infos);
+
+      /* release the default application */
       g_object_unref (app_info);
+
+      /* assume we have some applications in the list */
+      chooser_button->has_default_application = TRUE;
     }
   else
     {
-      /* no default application specified */
-      gtk_label_set_attributes (GTK_LABEL (chooser_button->label), thunar_pango_attr_list_italic ());
-      gtk_label_set_text (GTK_LABEL (chooser_button->label), _("No application selected"));
-      gtk_image_set_from_pixbuf (GTK_IMAGE (chooser_button->image), NULL);
+      /* add the "No application selected" item and set as active */
+      gtk_list_store_insert_with_values (chooser_button->store, &iter, 0,
+                                         THUNAR_CHOOSER_BUTTON_STORE_COLUMN_NAME,
+                                         _("No application selected"),
+                                         THUNAR_CHOOSER_BUTTON_STORE_COLUMN_STYLE,
+                                         PANGO_STYLE_ITALIC,
+                                         -1);
+      gtk_combo_box_set_active_iter (GTK_COMBO_BOX (chooser_button), &iter);
     }
 
-  /* setup a useful tooltip for the button */
-  description = g_content_type_get_description (content_type);
-  thunar_gtk_widget_set_tooltip (chooser_button->button,
-                                 _("The selected application is used to open "
-                                   "this and other files of type \"%s\"."),
-                                 description);
-  g_free (description);
-}
+  /* insert empty row that will appear as a separator */
+  gtk_list_store_insert_with_values (chooser_button->store, NULL, ++i, -1);
 
+  /* add the "Other Application..." option */
+  gtk_list_store_insert_with_values (chooser_button->store, NULL, ++i,
+                                     THUNAR_CHOOSER_BUTTON_STORE_COLUMN_NAME,
+                                     _("Other Application..."),
+                                     THUNAR_CHOOSER_BUTTON_STORE_COLUMN_SENSITIVE,
+                                     TRUE,
+                                     -1);
 
-
-static void
-menu_position (GtkMenu  *menu,
-               gint     *x,
-               gint     *y,
-               gboolean *push_in,
-               gpointer  chooser)
-{
-  GtkRequisition chooser_request;
-  GtkRequisition menu_request;
-  GdkRectangle   geometry;
-  GdkScreen     *screen;
-  GtkWidget     *toplevel = gtk_widget_get_toplevel (chooser);
-  gint           monitor;
-  gint           x0;
-  gint           y0;
-
-  gtk_widget_translate_coordinates (GTK_WIDGET (chooser), toplevel, 0, 0, &x0, &y0);
-
-  gtk_widget_size_request (GTK_WIDGET (chooser), &chooser_request);
-  gtk_widget_size_request (GTK_WIDGET (menu), &menu_request);
-
-  gdk_window_get_position (GTK_WIDGET (chooser)->window, x, y);
-
-  *y += y0;
-  *x += x0;
-
-  /* verify the the menu is on-screen */
-  screen = gtk_widget_get_screen (GTK_WIDGET (chooser));
-  if (G_LIKELY (screen != NULL))
-    {
-      monitor = gdk_screen_get_monitor_at_point (screen, *x, *y);
-      gdk_screen_get_monitor_geometry (screen, monitor, &geometry);
-      if (*y + menu_request.height > geometry.y + geometry.height)
-        *y -= menu_request.height - chooser_request.height;
-    }
-
-  *push_in = TRUE;
-}
-
-
-
-static void
-thunar_chooser_button_pressed (ThunarChooserButton *chooser_button,
-                               GtkWidget           *button)
-{
-  const gchar *content_type;
-  GtkWidget   *image;
-  GtkWidget   *item;
-  GtkWidget   *menu;
-  GAppInfo    *default_app_info;
-  GList       *app_infos;
-  GList       *lp;
-
-  _thunar_return_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button));
-  _thunar_return_if_fail (chooser_button->button == button);
-  _thunar_return_if_fail (GTK_IS_BUTTON (button));
-
-  /* verify that we have a valid file */
-  if (G_UNLIKELY (chooser_button->file == NULL))
-    return;
-
-  /* determine the content type for the file */
-  content_type = thunar_file_get_content_type (chooser_button->file);
-
-  /* determine the default application */
-  default_app_info = g_app_info_get_default_for_type (content_type, FALSE);
-  if (G_UNLIKELY (default_app_info == NULL))
-    {
-      /* no default application, just popup the application chooser */
-      thunar_chooser_button_activate_other (chooser_button);
-      g_object_unref (default_app_info);
-      return;
-    }
-
-  /* determine all applications that claim to be able to handle the file */
-  app_infos = g_app_info_get_all_for_type (content_type);
-
-  /* allocate a new popup menu */
-  menu = gtk_menu_new ();
-
-  /* add the other possible applications */
-  for (lp = app_infos; lp != NULL; lp = lp->next)
-    {
-      item = gtk_image_menu_item_new_with_label (g_app_info_get_name (lp->data));
-      g_object_set_data_full (G_OBJECT (item), I_("app-info"), lp->data, g_object_unref);
-      g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_chooser_button_activate), chooser_button);
-      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-      gtk_widget_show (item);
-
-      /* setup the icon for the application */
-      image = gtk_image_new_from_gicon (g_app_info_get_icon (lp->data), GTK_ICON_SIZE_MENU);
-      gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-      gtk_widget_show (image);
-    }
-
-  /* append a separator */
-  item = gtk_separator_menu_item_new ();
-  gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-  gtk_widget_show (item);
-
-  /* release the applications list */
-  g_list_free (app_infos);
-
-  /* add the "Other Application..." choice */
-  item = gtk_image_menu_item_new_with_mnemonic (_("_Other Application..."));
-  g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_chooser_button_activate_other), chooser_button);
-  gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-  gtk_widget_show (item);
-
-  /* make sure the menu has atleast the same width as the chooser */
-  if (menu->allocation.width < button->allocation.width)
-    gtk_widget_set_size_request (menu, button->allocation.width, -1);
-
-  /* run the menu on the button's screen (takes over the floating reference of menu) */
-  thunar_gtk_menu_run (GTK_MENU (menu), button, menu_position, button, 0, gtk_get_current_event_time ());
-
-  /* yeppa, that's a requirement */
-  gtk_button_released (GTK_BUTTON (button));
+  /* unblock the changed signal */
+  g_signal_handlers_unblock_by_func (chooser_button,
+                                     thunar_chooser_button_changed,
+                                     NULL);
 }
 
 
