@@ -2,8 +2,7 @@
 
 pixmapsdir = $(datadir)/pixmaps/Thunar
 pixmaps_DATA =								\
-	Thunar-about-logo.png						\
-	Thunar-fallback-icon.png
+	Thunar-about-logo.png
 
 EXTRA_DIST =								\
 	$(pixmaps_DATA)

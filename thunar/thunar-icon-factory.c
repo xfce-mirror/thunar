@@ -1,7 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -92,7 +92,8 @@ static void       thunar_icon_factory_mark_recently_used    (ThunarIconFactory  
 static guint      thunar_icon_key_hash                      (gconstpointer             data);
 static gboolean   thunar_icon_key_equal                     (gconstpointer             a,
                                                              gconstpointer             b);
-static GdkPixbuf *thunar_icon_factory_load_fallback         (gint                      size);
+static GdkPixbuf *thunar_icon_factory_load_fallback         (ThunarIconFactory        *factory,
+                                                             gint                      size);
 
 
 
@@ -541,7 +542,7 @@ thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
           if (!wants_default)
             return NULL;
           else
-            return thunar_icon_factory_load_fallback (size);
+            return thunar_icon_factory_load_fallback (factory, size);
         }
 
       /* generate a key for the new cached icon */
@@ -635,23 +636,10 @@ thunar_icon_key_equal (gconstpointer a,
 
 
 static GdkPixbuf*
-thunar_icon_factory_load_fallback (gint size)
+thunar_icon_factory_load_fallback (ThunarIconFactory *factory,
+                                   gint               size)
 {
-  static const gchar THUNAR_FALLBACK_ICON_PATH[] = DATADIR "/pixmaps/Thunar/Thunar-fallback-icon.png";
-  GdkPixbuf         *pixbuf;
-  GError            *error = NULL;
-
-  /* try to load the fallback icon */
-  pixbuf = gdk_pixbuf_new_from_file_at_scale (THUNAR_FALLBACK_ICON_PATH, size, size, TRUE, &error);
-
-  /* verify that it was loaded */
-  if (G_UNLIKELY (pixbuf == NULL))
-    {
-      g_error (_("Failed to load fallback icon from \"%s\" (%s). Check your installation!"), THUNAR_FALLBACK_ICON_PATH, error->message);
-      g_error_free (error);
-    }
-
-  return pixbuf;
+  return thunar_icon_factory_lookup_icon (factory, GTK_STOCK_FILE, size, FALSE);
 }
 
 
@@ -787,7 +775,7 @@ thunar_icon_factory_load_icon (ThunarIconFactory        *factory,
     {
       /* check if the caller will happly accept the fallback icon */
       if (G_LIKELY (wants_default))
-        return thunar_icon_factory_load_fallback (size);
+        return thunar_icon_factory_load_fallback (factory, size);
       else
         return NULL;
     }
