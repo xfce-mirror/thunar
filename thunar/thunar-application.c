@@ -732,19 +732,19 @@ thunar_application_get_daemon (ThunarApplication *application)
 /**
  * thunar_application_set_daemon:
  * @application : a #ThunarApplication.
- * @daemon      : %TRUE to set @application into daemon mode.
+ * @daemonize   : %TRUE to set @application into daemon mode.
  *
  * If @daemon is %TRUE, @application will be set into daemon mode.
  **/
 void
 thunar_application_set_daemon (ThunarApplication *application,
-                               gboolean           daemon)
+                               gboolean           daemonize)
 {
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
-  if (application->daemon != daemon)
+  if (application->daemon != daemonize)
     {
-      application->daemon = daemon;
+      application->daemon = daemonize;
       g_object_notify (G_OBJECT (application), "daemon");
     }
 }
@@ -1656,8 +1656,8 @@ thunar_application_unlink_files (ThunarApplication *application,
       path_list = thunar_g_file_list_prepend (path_list, thunar_file_get_file (lp->data));
 
       /* permanently delete if at least one of the file is not a local 
-       * file (e.g. resides in the trash) */
-      if (!thunar_file_is_local (lp->data))
+       * file (e.g. resides in the trash) or cannot be trashed */
+      if (!thunar_file_is_local (lp->data) || !thunar_file_can_be_trashed (lp->data))
         permanently = TRUE;
     }
 
