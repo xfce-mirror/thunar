@@ -34,7 +34,7 @@
 #endif
 
 #ifdef HAVE_LIBNOTIFY
-#include <libnotify/notify.h>
+#include <thunar/thunar-notify.h>
 #endif
 
 #include <thunar/thunar-application.h>
@@ -137,20 +137,6 @@ main (int argc, char **argv)
   /* initialize the GThread system */
   if (!g_thread_supported ())
     g_thread_init (NULL);
-
-#ifdef HAVE_LIBNOTIFY
-  if (notify_init (PACKAGE_NAME))
-    {
-      /* we do this to work around bugs in libnotify < 0.6.0. Older
-       * versions crash in notify_uninit() when no notifications are
-       * displayed before. These versions also segfault when the 
-       * ret_spec_version parameter of notify_get_server_info is 
-       * NULL... */
-      gchar *spec_version = NULL;
-      notify_get_server_info (NULL, NULL, NULL, &spec_version);
-      g_free (spec_version);
-    }
-#endif
     
   /* get the startup notification id */
   startup_id = g_getenv ("DESKTOP_STARTUP_ID");
@@ -319,8 +305,7 @@ error0:
   g_object_unref (G_OBJECT (application));
 
 #ifdef HAVE_LIBNOTIFY
-  if (notify_is_initted ())
-    notify_uninit ();
+  thunar_notify_uninit ();
 #endif
 
   return EXIT_SUCCESS;

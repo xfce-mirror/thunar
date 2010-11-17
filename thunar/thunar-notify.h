@@ -24,14 +24,13 @@
 #include <glib.h>
 #include <gio/gio.h>
 
-#include <libnotify/notify.h>
-
 G_BEGIN_DECLS
 
 void thunar_notify_unmount        (GMount  *mount);
 void thunar_notify_unmount_finish (GMount  *mount);
 void thunar_notify_eject          (GVolume *volume);
 void thunar_notify_eject_finish   (GVolume *volume);
+void thunar_notify_uninit         (void);
 
 G_END_DECLS
 
