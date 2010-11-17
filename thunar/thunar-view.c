@@ -294,12 +294,12 @@ thunar_view_get_visible_range (ThunarView  *view,
 
 /**
  * thunar_view_scroll_to_file:
- * @view      : a #ThunarView instance.
- * @file      : the #ThunarFile to scroll to.
- * @select    : %TRUE to also select the @file in the @view.
- * @use_align : whether to use alignment arguments.
- * @row_align : the vertical alignment.
- * @col_align : the horizontal alignment.
+ * @view        : a #ThunarView instance.
+ * @file        : the #ThunarFile to scroll to.
+ * @select_file : %TRUE to also select the @file in the @view.
+ * @use_align   : whether to use alignment arguments.
+ * @row_align   : the vertical alignment.
+ * @col_align   : the horizontal alignment.
  *
  * Tells @view to scroll to the @file. If @view is currently
  * loading, it'll remember to scroll to @file later when
@@ -308,7 +308,7 @@ thunar_view_get_visible_range (ThunarView  *view,
 void
 thunar_view_scroll_to_file (ThunarView *view,
                             ThunarFile *file,
-                            gboolean    select,
+                            gboolean    select_file,
                             gboolean    use_align,
                             gfloat      row_align,
                             gfloat      col_align)
@@ -317,7 +317,7 @@ thunar_view_scroll_to_file (ThunarView *view,
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (row_align >= 0.0f && row_align <= 1.0f);
   _thunar_return_if_fail (col_align >= 0.0f && col_align <= 1.0f);
-  (*THUNAR_VIEW_GET_IFACE (view)->scroll_to_file) (view, file, select, use_align, row_align, col_align);
+  (*THUNAR_VIEW_GET_IFACE (view)->scroll_to_file) (view, file, select_file, use_align, row_align, col_align);
 }
 
 

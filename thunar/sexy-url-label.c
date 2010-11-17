@@ -217,7 +217,7 @@ sexy_url_label_motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
 	GList *l;
 	int idx, trailing;
 	int x, y;
-	SexyUrlLabelLink *link = NULL;
+	SexyUrlLabelLink *llink = NULL;
 
 	if (event->is_hint)
 		gdk_window_get_pointer(event->window, &x, &y, &state);
@@ -235,9 +235,9 @@ sexy_url_label_motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
 	{
 		for (l = priv->links; l != NULL; l = l->next)
 		{
-			link = (SexyUrlLabelLink *)l->data;
+			llink = (SexyUrlLabelLink *)l->data;
 
-			if (idx >= link->start && idx <= link->end)
+			if (idx >= llink->start && idx <= llink->end)
 			{
 				found = TRUE;
 				break;
@@ -256,7 +256,7 @@ sexy_url_label_motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
 			gdk_window_set_cursor(priv->event_window, cursor);
 			gdk_cursor_unref(cursor);
 
-			priv->active_link = link;
+			priv->active_link = llink;
 		}
 	}
 	else
@@ -573,17 +573,17 @@ sexy_url_label_rescan_label(SexyUrlLabel *url_label)
 			gint start, end;
 			PangoRectangle start_pos;
 			PangoRectangle end_pos;
-			SexyUrlLabelLink *link;
+			SexyUrlLabelLink *llink;
 
 			pango_attr_iterator_range(iter, &start, &end);
 			pango_layout_index_to_pos(layout, start, &start_pos);
 			pango_layout_index_to_pos(layout, end,   &end_pos);
 
-			link = g_new0(SexyUrlLabelLink, 1);
-			link->start = start;
-			link->end   = end;
-			link->url   = (const gchar *)url_list->data;
-			priv->links = g_list_append(priv->links, link);
+			llink = g_new0(SexyUrlLabelLink, 1);
+			llink->start = start;
+			llink->end   = end;
+			llink->url   = (const gchar *)url_list->data;
+			priv->links = g_list_append(priv->links, llink);
 
 			url_list = url_list->next;
 		}

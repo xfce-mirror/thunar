@@ -87,7 +87,7 @@ gboolean        thunar_view_get_visible_range   (ThunarView     *view,
 
 void            thunar_view_scroll_to_file      (ThunarView     *view,
                                                  ThunarFile     *file,
-                                                 gboolean        select,
+                                                 gboolean        select_file,
                                                  gboolean        use_align,
                                                  gfloat          row_align,
                                                  gfloat          col_align);

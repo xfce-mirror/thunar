@@ -1392,7 +1392,7 @@ thunar_tree_model_item_files_removed (ThunarTreeModelItem *item,
   GNode           *child_node;
   GNode           *node;
   GList           *lp;
-  GSList          *link;
+  GSList          *inv_link;
 
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (item->folder == folder);
@@ -1436,14 +1436,14 @@ thunar_tree_model_item_files_removed (ThunarTreeModelItem *item,
       for (lp = files; lp != NULL; lp = lp->next)
         {
           /* find the file in the hidden list */
-          link = g_slist_find (item->invisible_children, lp->data);
-          if (link != NULL)
+          inv_link = g_slist_find (item->invisible_children, lp->data);
+          if (inv_link != NULL)
             {
               /* release the file */
               g_object_unref (G_OBJECT (lp->data));
 
               /* remove from the list */
-              item->invisible_children = g_slist_delete_link (item->invisible_children, link);
+              item->invisible_children = g_slist_delete_link (item->invisible_children, inv_link);
             }
         }
     }
