@@ -657,9 +657,11 @@ _thunar_io_jobs_trash (ThunarJob   *job,
                        GValueArray *param_values,
                        GError     **error)
 {
-  GError *err = NULL;
-  GList  *file_list;
-  GList  *lp;
+  ThunarFile *parent_file;
+  GError     *err = NULL;
+  GFile      *parent;
+  GList      *file_list;
+  GList      *lp;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -674,7 +676,26 @@ _thunar_io_jobs_trash (ThunarJob   *job,
   for (lp = file_list; err == NULL && lp != NULL; lp = lp->next)
     {
       _thunar_assert (G_IS_FILE (lp->data));
-      g_file_trash (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err);
+      
+      if (g_file_trash (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err))
+        {
+          /* determine the parent folder of the file if there is any */
+          parent = g_file_get_parent (lp->data);
+          if (parent != NULL)
+            {
+              /* obtain the thunar file for this folder from the cache */
+              parent_file = thunar_file_cache_lookup (parent);
+              if (parent_file != NULL)
+                {
+                  /* Feed a change event so that the delete event is 
+                   * picked up immediately */
+                  thunar_file_monitor_file_changed (parent_file);
+                }
+
+              /* release the parent */
+              g_object_unref (parent);
+            }
+        }
     }
 
   if (err != NULL)
