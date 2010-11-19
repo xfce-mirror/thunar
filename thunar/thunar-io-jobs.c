@@ -25,7 +25,6 @@
 #include <gio/gio.h>
 
 #include <thunar/thunar-enum-types.h>
-#include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-io-scan-directory.h>
 #include <thunar/thunar-io-jobs.h>
@@ -367,10 +366,8 @@ _thunar_io_jobs_unlink (ThunarJob   *job,
                         GError     **error)
 {
   ThunarJobResponse response;
-  ThunarFile       *parent_file;
   GFileInfo        *info;
   GError           *err = NULL;
-  GFile            *parent;
   GList            *file_list;
   GList            *lp;
   gchar            *base_name;
@@ -457,25 +454,6 @@ again:
           /* check whether to retry */
           if (response == THUNAR_JOB_RESPONSE_RETRY)
             goto again;
-        }
-      else
-        {
-          /* determine the parent folder of the file if there is any */
-          parent = g_file_get_parent (lp->data);
-          if (parent != NULL)
-            {
-              /* obtain the thunar file for this folder from the cache */
-              parent_file = thunar_file_cache_lookup (parent);
-              if (parent_file != NULL)
-                {
-                  /* Feed a change event so that the delete event is 
-                   * picked up immediately */
-                  thunar_file_monitor_file_changed (parent_file);
-                }
-
-              /* release the parent */
-              g_object_unref (parent);
-            }
         }
     }
 
