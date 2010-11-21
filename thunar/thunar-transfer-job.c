@@ -669,7 +669,8 @@ thunar_transfer_job_execute (ExoJob  *job,
           target_parent = g_file_get_parent (tp->data);
 
           /* check if the parent exists */
-          parent_exists = g_file_query_exists (target_parent, exo_job_get_cancellable (job));
+          if (target_parent != NULL)
+            parent_exists = g_file_query_exists (target_parent, exo_job_get_cancellable (job));
 
           /* abort on cancellation */
           if (exo_job_set_error_if_cancelled (job, &err))
@@ -678,7 +679,7 @@ thunar_transfer_job_execute (ExoJob  *job,
               break;
             }
 
-          if (G_LIKELY (!parent_exists))
+          if (target_parent != NULL && !parent_exists)
             {
               /* determine the display name of the parent */
               base_name = g_file_get_basename (target_parent);
@@ -724,6 +725,9 @@ thunar_transfer_job_execute (ExoJob  *job,
               /* clean up */
               g_free (parent_display_name);
             }
+
+          if (target_parent != NULL)
+            g_object_unref (target_parent);
         }
       
       if (transfer_job->type == THUNAR_TRANSFER_JOB_MOVE)
