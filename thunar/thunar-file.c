@@ -778,9 +778,11 @@ thunar_file_load (ThunarFile   *file,
       /* use the filename as custom icon name for thumbnails */
       file->custom_icon_name = g_file_get_path (file->gfile);
     }
-  else if (thunar_file_is_desktop_file (file))
+
+  /* check if this file is a desktop entry */
+  if (thunar_file_is_desktop_file (file))
     {
-      /* determine the custom icon name for .desktop files */
+      /* determine the custom icon and display name for .desktop files */
 
       /* query a key file for the .desktop file */
       key_file = thunar_g_file_query_key_file (file->gfile, cancellable, NULL);
@@ -810,6 +812,25 @@ thunar_file_load (ThunarFile   *file,
                 }
             }
 
+          /* read the display name from the .desktop file (will be overwritten later
+           * if it's undefined here) */
+          file->display_name = g_key_file_get_string (key_file,
+                                                      G_KEY_FILE_DESKTOP_GROUP,
+                                                      G_KEY_FILE_DESKTOP_KEY_NAME,
+                                                      NULL);
+          
+          /* check if we have a display name now */
+          if (file->display_name != NULL)
+            {
+              /* drop the name if it's empty or has invalid encoding */
+              if (*file->display_name == '\0' 
+                  || !g_utf8_validate (file->display_name, -1, NULL))
+                {
+                  g_free (file->display_name);
+                  file->display_name = NULL;
+                }
+            }
+
           /* free the key file */
           g_key_file_free (key_file);
         }
@@ -830,28 +851,31 @@ thunar_file_load (ThunarFile   *file,
   g_free (thumbnail_dir_path);
 
   /* determine the display name */
-  if (file->info != NULL)
+  if (file->display_name == NULL)
     {
-      if (g_strcmp0 (g_file_info_get_display_name (file->info), "/") == 0)
-        file->display_name = g_strdup (_("File System"));
-      else
-        file->display_name = g_strdup (g_file_info_get_display_name (file->info));
-    }
-  else
-    {
-      if (g_file_is_native (file->gfile))
+      if (file->info != NULL)
         {
-          uri = g_file_get_path (file->gfile);
-          if (uri == NULL)
-            uri = g_file_get_uri (file->gfile);
+          if (g_strcmp0 (g_file_info_get_display_name (file->info), "/") == 0)
+            file->display_name = g_strdup (_("File System"));
+          else
+            file->display_name = g_strdup (g_file_info_get_display_name (file->info));
         }
       else
         {
-          uri = g_file_get_uri (file->gfile);
-        }
+          if (g_file_is_native (file->gfile))
+            {
+              uri = g_file_get_path (file->gfile);
+              if (uri == NULL)
+                uri = g_file_get_uri (file->gfile);
+            }
+          else
+            {
+              uri = g_file_get_uri (file->gfile);
+            }
 
-      file->display_name = g_filename_display_name (uri);
-      g_free (uri);
+          file->display_name = g_filename_display_name (uri);
+          g_free (uri);
+        }
     }
 
   /* set thumb state to unknown */
