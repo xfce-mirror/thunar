@@ -723,13 +723,18 @@ thunar_file_load (ThunarFile   *file,
 
   /* free the custom icon name */
   g_free (file->custom_icon_name);
+  file->custom_icon_name = NULL;
 
   /* free display name and basename */
   g_free (file->display_name);
+  file->display_name = NULL;
+
   g_free (file->basename);
+  file->basename = NULL;
 
   /* free thumbnail path */
   g_free (file->thumbnail_path);
+  file->thumbnail_path = NULL;
 
   /* assume the file is mounted by default */
   file->is_mounted = TRUE;
