@@ -134,7 +134,11 @@ thunar_notify_unmount (GMount *mount)
                                    name);
     }
 
+#if NOTIFY_CHECK_VERSION (0, 7, 0)
+  notification = notify_notification_new (summary, message, icon_name);
+#else
   notification = notify_notification_new (summary, message, icon_name, NULL);
+#endif
   notify_notification_set_urgency (notification, NOTIFY_URGENCY_CRITICAL);
   notify_notification_set_timeout (notification, NOTIFY_EXPIRES_NEVER);
   notify_notification_show (notification, NULL);
@@ -244,7 +248,11 @@ thunar_notify_eject (GVolume *volume)
                                    name);
     }
 
+#if NOTIFY_CHECK_VERSION (0, 7, 0)
+  notification = notify_notification_new (summary, message, icon_name);
+#else
   notification = notify_notification_new (summary, message, icon_name, NULL);
+#endif
   notify_notification_set_urgency (notification, NOTIFY_URGENCY_CRITICAL);
   notify_notification_set_timeout (notification, NOTIFY_EXPIRES_NEVER);
   notify_notification_show (notification, NULL);
