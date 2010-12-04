@@ -555,12 +555,14 @@ thunar_g_volume_is_present (GVolume *volume)
       g_object_unref (drive);
     }
 
+#if GLIB_CHECK_VERSION (2, 20, 0)
   mount = g_volume_get_mount (volume);
   if (mount != NULL)
     {
       is_shadowed = g_mount_is_shadowed (mount);
       g_object_unref (mount);
     }
+#endif
 
   return has_media && !is_shadowed;
 }

@@ -1158,7 +1158,6 @@ thunar_file_launch (ThunarFile  *file,
   GAppInfo            *app_info;
   gboolean             succeed;
   GList                path_list;
-  const gchar         *command_line;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -1199,9 +1198,9 @@ thunar_file_launch (ThunarFile  *file,
 
   /* HACK: check if we're not trying to launch another file manager again, possibly
    * ourselfs which will end in a loop */
-  command_line = g_app_info_get_commandline (app_info);
-  if (command_line != NULL
-      && strstr (command_line, "exo-helper-1 --launch FileManager") != NULL)
+  if (g_strcmp0 (g_app_info_get_id (app_info), "exo-file-manager.desktop") == 0
+      || g_strcmp0 (g_app_info_get_id (app_info), "Thunar.desktop") == 0
+      || g_strcmp0 (g_app_info_get_name (app_info), "exo-file-manager") == 0)
     {
       g_object_unref (G_OBJECT (app_info));
       thunar_show_chooser_dialog (parent, file, TRUE);
