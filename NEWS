@@ -1,8 +1,13 @@
-1.1.x
+1.1.5
 =====
 - Make .desktop entries installed by Thunar validate against 
   desktop-file-utils 0.16 (bug #6655). Patch by Samuli Suominen.
 - Fix missing instruction to load the sendto model (bug #6762).
+- Fix the sample D-Bus client for the org.xfce.FileManager interface.
+- Fix home folder being displayed as "Desktop" if $HOME is set to
+  /home/username/Desktop.
+- Fix outdated Thunar D-Bus API usage in the trash panel applet.
+- Create user dirs instead of showing an error if they don't exist.
 - Allow scrolling in the 'Open With' combo box of the file properties
   dialog (bug #3055).
 - Expand filenames starting with './' based on the current working
@@ -12,11 +17,19 @@
 - Permanently delete files if at least one of them cannot be trashed
   (bug #6748).
 - Fix a typo in configure.in.in (bug #6724).
+- Include panel macro header (bug #6680).
 - Use GTK_STOCK_FILE as the fallback icon for files (bug #6662).
+- Fix compiler warnings about shadowed variables.
 - Use Name field as display name of desktop entries (bug #6860).
+- Fix a memory leak in thunar_transfer_job_execute().
+- Fix a segmentation fault when reloading files.
 - Avoid GIO 2.20 function calls.
 - Properly avoid launching the file manager recursively by checking
   the GAppInfo id/name.
+- Translation updates: Hungarian, German, Slovak, 
+  Portuguese (Brazilian), Chinese (China), Greek, Catalan (Valencian),
+  Italian, Basque, Spanish (Castilian), Kazakh, Portuguese, Hebrew,
+  Galician, Indonesian, Chinese (Taiwan), Japanese, 
 
 1.1.4
 =====

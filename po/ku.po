@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ku\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-04 14:35+0100\n"
+"POT-Creation-Date: 2010-12-05 16:18+0100\n"
 "PO-Revision-Date: 2008-04-20 22:23+0200\n"
 "Last-Translator: Erdal Ronahi <erdal dot ronahi at gmail dot com>\n"
 "Language-Team: Kurdish <ku@li.org>\n"
@@ -52,30 +52,30 @@ msgid "Thunar"
 msgstr "Thunar"
 
 #. initialize Gtk+
-#: ../thunar/main.c:159
+#: ../thunar/main.c:145
 msgid "[FILES...]"
 msgstr "[PEL...]"
 
-#: ../thunar/main.c:166
+#: ../thunar/main.c:152
 #, c-format
 msgid "Thunar: Failed to open display: %s\n"
 msgstr "Thunar: Vêkirina dîmenderê biserneket: %s\n"
 
 #. yep, there's an error, so print it
-#: ../thunar/main.c:171
+#: ../thunar/main.c:157
 #, c-format
 msgid "Thunar: %s\n"
 msgstr "Thunar: %s\n"
 
-#: ../thunar/main.c:182
+#: ../thunar/main.c:168
 msgid "The Thunar development team. All rights reserved."
 msgstr "Tîma pêşdebirên Thunar. Hemû mafên wê parastî ne."
 
-#: ../thunar/main.c:183
+#: ../thunar/main.c:169
 msgid "Written by Benedikt Meurer <benny@xfce.org>."
 msgstr "Nivîskar: Benedikt Meurer <benny@xfce.org>."
 
-#: ../thunar/main.c:184
+#: ../thunar/main.c:170
 #, c-format
 msgid "Please report bugs to <%s>."
 msgstr "Ji kerema xwe re çewtiyan ragihîne <%s>"
@@ -139,9 +139,9 @@ msgstr "Kirar nehate destpêkirin"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1040 ../thunar/thunar-application.c:1166
-#: ../thunar/thunar-launcher.c:1065 ../thunar/thunar-location-entry.c:389
-#: ../thunar/thunar-location-entry.c:417
-#: ../thunar/thunar-shortcuts-view.c:1277 ../thunar/thunar-window.c:1506
+#: ../thunar/thunar-launcher.c:1065 ../thunar/thunar-location-entry.c:394
+#: ../thunar/thunar-location-entry.c:422
+#: ../thunar/thunar-shortcuts-view.c:1277 ../thunar/thunar-window.c:1507
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "\"%s\"  venebû"
@@ -258,7 +258,7 @@ msgstr "Bila hemû pel û peldank ji çopê were rakirin?"
 #. prepare the menu item
 #: ../thunar/thunar-application.c:1870 ../thunar/thunar-location-buttons.c:171
 #: ../thunar/thunar-shortcuts-view.c:875 ../thunar/thunar-tree-view.c:1145
-#: ../thunar/thunar-window.c:295 ../plugins/thunar-tpa/thunar-tpa.c:169
+#: ../thunar/thunar-window.c:296 ../plugins/thunar-tpa/thunar-tpa.c:177
 msgid "_Empty Trash"
 msgstr "_Çopê Vala Bike"
 
@@ -289,17 +289,12 @@ msgstr "\"%s\" paş de nehate barkirin"
 msgid "Restoring files..."
 msgstr "Pel paş de têne barkirin"
 
-#. tell the user that it didn't work
-#: ../thunar/thunar-chooser-button.c:234 ../thunar/thunar-chooser-dialog.c:465
+#: ../thunar/thunar-chooser-button.c:309 ../thunar/thunar-chooser-dialog.c:465
 #, c-format
 msgid "Failed to set default application for \"%s\""
 msgstr "Ji bo \"%s\" mîhengkirina sepana standard bi ser neket"
 
-#: ../thunar/thunar-chooser-button.c:306
-msgid "No application selected"
-msgstr "Sepanek nehat hilbijartin"
-
-#: ../thunar/thunar-chooser-button.c:313
+#: ../thunar/thunar-chooser-button.c:439
 #, c-format
 msgid ""
 "The selected application is used to open this and other files of type \"%s\"."
@@ -307,9 +302,13 @@ msgstr ""
 "Sepana ku hatiye hilbijartin ji bo vekirina vê pelgehê û pelgehên ku di "
 "cureyê \"%s\" de ye tê bikaranîn."
 
-#. add the "Other Application..." choice
-#: ../thunar/thunar-chooser-button.c:425
-msgid "_Other Application..."
+#: ../thunar/thunar-chooser-button.c:489
+msgid "No application selected"
+msgstr "Sepanek nehat hilbijartin"
+
+#: ../thunar/thunar-chooser-button.c:502
+#, fuzzy
+msgid "Other Application..."
 msgstr "Sepana _Din..."
 
 #: ../thunar/thunar-chooser-dialog.c:185 ../thunar/thunar-launcher.c:171
@@ -519,7 +518,7 @@ msgstr "Dema hewce be stûnan fireh bike"
 #. tell the user that we're unable to determine the file info
 #: ../thunar/thunar-column-model.c:858 ../thunar/thunar-list-model.c:682
 #: ../thunar/thunar-list-model.c:710
-#: ../thunar/thunar-permissions-chooser.c:240 ../thunar/thunar-util.c:236
+#: ../thunar/thunar-permissions-chooser.c:240 ../thunar/thunar-util.c:269
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:458
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:285
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:286
@@ -804,32 +803,32 @@ msgstr "Pel"
 msgid "File Name"
 msgstr "Navê Pelê"
 
-#: ../thunar/thunar-file.c:836 ../thunar/thunar-shortcuts-view.c:279
-#: ../thunar/thunar-window.c:311
+#: ../thunar/thunar-file.c:864 ../thunar/thunar-shortcuts-view.c:279
+#: ../thunar/thunar-window.c:312
 msgid "File System"
 msgstr "Pergala Pelan"
 
-#: ../thunar/thunar-file.c:914
+#: ../thunar/thunar-file.c:943
 #, c-format
 msgid "The root folder has no parent"
 msgstr "Jorî peldanka rootê tuneye"
 
-#: ../thunar/thunar-file.c:977
+#: ../thunar/thunar-file.c:1006
 #, fuzzy, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "Pelê vala ya \"%s\" çênebû"
 
-#: ../thunar/thunar-file.c:1015
+#: ../thunar/thunar-file.c:1044
 #, c-format
 msgid "No Exec field specified"
 msgstr "Qada Execê nehatiye diyarkirin"
 
-#: ../thunar/thunar-file.c:1036
+#: ../thunar/thunar-file.c:1065
 #, c-format
 msgid "No URL field specified"
 msgstr "Qada URL nehatiye diyarkirin"
 
-#: ../thunar/thunar-file.c:1042
+#: ../thunar/thunar-file.c:1071
 #, c-format
 msgid "Invalid desktop file"
 msgstr "Pela sermasê a nederbasdar"
@@ -851,13 +850,6 @@ msgstr "Pêşde"
 #: ../thunar/thunar-history.c:158
 msgid "Go to the next visited folder"
 msgstr "Biçe peldanka ku dû re hatibû ziyaretkirin"
-
-#: ../thunar/thunar-icon-factory.c:650
-#, c-format
-msgid "Failed to load fallback icon from \"%s\" (%s). Check your installation!"
-msgstr ""
-"Ji \"%s\" îkona paşdevegerînê nehate barkirin (%s). Sazkirina xwe kontrol "
-"bike!"
 
 #: ../thunar/thunar-icon-view.c:164
 msgid "Icon based directory listing"
@@ -1102,7 +1094,7 @@ msgstr[1] "Pelên hatine hilbijartin bi sepana standard veke"
 msgid "Open With \"%s\""
 msgstr "Bi \"%s\" Veke"
 
-#: ../thunar/thunar-launcher.c:1383 ../thunar/thunar-location-entry.c:641
+#: ../thunar/thunar-launcher.c:1383 ../thunar/thunar-location-entry.c:646
 #: ../thunar/thunar-shortcuts-view.c:1307
 #: ../thunar/thunar-shortcuts-view.c:1545 ../thunar/thunar-tree-view.c:1908
 #, c-format
@@ -1210,7 +1202,7 @@ msgstr[1] "%d hêman hilbijartî"
 msgid "Create _Folder..."
 msgstr "Peldank Bi_afirîne..."
 
-#: ../thunar/thunar-location-buttons.c:171 ../thunar/thunar-window.c:295
+#: ../thunar/thunar-location-buttons.c:171 ../thunar/thunar-window.c:296
 msgid "Delete all files and folders in the Trash"
 msgstr "Hemû peldank û pelên ku di çopê de ye jê bibe"
 
@@ -1260,51 +1252,51 @@ msgstr ""
 msgid "View the properties of the folder \"%s\""
 msgstr "Taybetmendiyên peldanka \"%s\" nîşan bide"
 
-#: ../thunar/thunar-location-dialog.c:65
+#: ../thunar/thunar-location-dialog.c:67
 msgid "Open Location"
 msgstr "Cih veke"
 
-#: ../thunar/thunar-location-dialog.c:79
+#: ../thunar/thunar-location-dialog.c:81
 msgid "_Location:"
 msgstr "_Cih:"
 
-#: ../thunar/thunar-location-entry.c:382
+#: ../thunar/thunar-location-entry.c:387
 #, fuzzy, c-format
 msgid "File does not exist"
 msgstr "Pêşeka Naveroka Pel"
 
-#: ../thunar/thunar-location-entry.c:726
+#: ../thunar/thunar-location-entry.c:731
 #, fuzzy, c-format
 msgid "Failed to determine the mount point of \"%s\""
 msgstr "Ji bo %s xala girêdanê nehate diyarkirin"
 
-#: ../thunar/thunar-notify.c:93
+#: ../thunar/thunar-notify.c:123
 msgid "Unmounting device"
 msgstr ""
 
-#: ../thunar/thunar-notify.c:94
+#: ../thunar/thunar-notify.c:124
 #, c-format
 msgid ""
 "The device \"%s\" is being unmounted by the system. Please do not remove the "
 "media or disconnect the drive"
 msgstr ""
 
-#: ../thunar/thunar-notify.c:100 ../thunar/thunar-notify.c:207
+#: ../thunar/thunar-notify.c:130 ../thunar/thunar-notify.c:248
 msgid "Writing data to device"
 msgstr ""
 
-#: ../thunar/thunar-notify.c:101 ../thunar/thunar-notify.c:208
+#: ../thunar/thunar-notify.c:131 ../thunar/thunar-notify.c:249
 #, c-format
 msgid ""
 "There is data that needs to be written to the device \"%s\" before it can be "
 "removed. Please do not remove the media or disconnect the drive"
 msgstr ""
 
-#: ../thunar/thunar-notify.c:201
+#: ../thunar/thunar-notify.c:242
 msgid "Ejecting device"
 msgstr ""
 
-#: ../thunar/thunar-notify.c:202
+#: ../thunar/thunar-notify.c:243
 #, c-format
 msgid "The device \"%s\" is being ejected. This may take some time"
 msgstr ""
@@ -1314,11 +1306,11 @@ msgstr ""
 msgid "No templates installed"
 msgstr "Şabloneke Sazkirî Tuneye"
 
-#: ../thunar/thunar-path-entry.c:222
+#: ../thunar/thunar-path-entry.c:224
 msgid "Icon size"
 msgstr "Mezinahiyê Îkonê"
 
-#: ../thunar/thunar-path-entry.c:223
+#: ../thunar/thunar-path-entry.c:225
 msgid "The icon size for the path entry"
 msgstr ""
 
@@ -1813,11 +1805,11 @@ msgstr "%s - Taybetmendî"
 msgid "broken link"
 msgstr "lînka şikestî"
 
-#: ../thunar/thunar-renamer-dialog.c:177 ../thunar/thunar-window.c:292
+#: ../thunar/thunar-renamer-dialog.c:177 ../thunar/thunar-window.c:293
 msgid "_File"
 msgstr "_Pel"
 
-#: ../thunar/thunar-renamer-dialog.c:178 ../thunar/thunar-window.c:294
+#: ../thunar/thunar-renamer-dialog.c:178 ../thunar/thunar-window.c:295
 msgid "_Send To"
 msgstr "_Bişîne"
 
@@ -1841,7 +1833,7 @@ msgstr "Paqij Bike"
 msgid "Clear the file list below"
 msgstr "Lîsteya pelan ya jêr pakij bike"
 
-#: ../thunar/thunar-renamer-dialog.c:183 ../thunar/thunar-window.c:322
+#: ../thunar/thunar-renamer-dialog.c:183 ../thunar/thunar-window.c:323
 msgid "_About"
 msgstr "_Der barê"
 
@@ -1962,10 +1954,6 @@ msgstr ""
 msgid ""
 "Do you want to skip this file and continue to rename the remaining files?"
 msgstr "Tu dixwazî ji ser vî pelî gav bike û pelên mayî ji nû ve binavîne?"
-
-#: ../thunar/thunar-shortcuts-model.c:299
-msgid "Desktop"
-msgstr ""
 
 #: ../thunar/thunar-shortcuts-pane.c:360
 msgid "Side Pane (Create Shortcut)"
@@ -2219,7 +2207,7 @@ msgstr "Pel tên kom kirin..."
 msgid "Trying to restore \"%s\""
 msgstr "\"%s\" paş de nehate barkirin"
 
-#: ../thunar/thunar-transfer-job.c:690
+#: ../thunar/thunar-transfer-job.c:691
 #, fuzzy, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file "
@@ -2228,19 +2216,19 @@ msgstr ""
 "Peldanka \"%s\" êdî nayê dîtin, lê ji bo ku tu karibî pelgeha \"%s\" ji çopê "
 "derxe pêwist e. Tu dixwazî peldankê dîsa çêbike?"
 
-#: ../thunar/thunar-transfer-job.c:715
+#: ../thunar/thunar-transfer-job.c:716
 #, fuzzy, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Vekirina pela \"%s\" serneket"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:732
+#: ../thunar/thunar-transfer-job.c:736
 #, fuzzy, c-format
 msgid "Trying to move \"%s\""
 msgstr "\"%s\" nehate jêbirin"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:757
+#: ../thunar/thunar-transfer-job.c:761
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr ""
@@ -2267,341 +2255,341 @@ msgstr "_Bi Peldankê Ve Ke"
 msgid "P_roperties..."
 msgstr "_Taybetmendî"
 
-#: ../thunar/thunar-util.c:89
+#: ../thunar/thunar-util.c:95
 #, c-format
 msgid "Invalid path"
 msgstr "Rêça nederbasdar"
 
-#: ../thunar/thunar-util.c:125
+#: ../thunar/thunar-util.c:129
 #, c-format
 msgid "Unknown user \"%s\""
 msgstr "Bikarhênera/ê nenas \"%s\""
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:185
+#: ../thunar/thunar-util.c:218
 msgid "Today"
 msgstr "Îro"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:190
+#: ../thunar/thunar-util.c:223
 #, fuzzy, c-format
 msgid "Today at %X"
 msgstr "Îro"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:198
+#: ../thunar/thunar-util.c:231
 msgid "Yesterday"
 msgstr "Do"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:203
+#: ../thunar/thunar-util.c:236
 #, fuzzy, c-format
 msgid "Yesterday at %X"
 msgstr "Do"
 
 #. Days from last week
-#: ../thunar/thunar-util.c:211
+#: ../thunar/thunar-util.c:244
 #, c-format
 msgid "%A at %X"
 msgstr ""
 
 #. Any other date
-#: ../thunar/thunar-util.c:216
+#: ../thunar/thunar-util.c:249
 #, c-format
 msgid "%x at %X"
 msgstr ""
 
-#: ../thunar/thunar-window.c:293
+#: ../thunar/thunar-window.c:294
 msgid "Open New _Window"
 msgstr "_Paceyeke Nû Veke"
 
-#: ../thunar/thunar-window.c:293
+#: ../thunar/thunar-window.c:294
 msgid "Open a new Thunar window for the displayed location"
 msgstr "Ji bo cihê hatiye nîşandan paceyeke nû ya Thunar veke"
 
-#: ../thunar/thunar-window.c:296
+#: ../thunar/thunar-window.c:297
 msgid "Close _All Windows"
 msgstr "_Hemû Paceyan Bigire"
 
-#: ../thunar/thunar-window.c:296
+#: ../thunar/thunar-window.c:297
 msgid "Close all Thunar windows"
 msgstr "Hemû paceyên Thunar bigire"
 
-#: ../thunar/thunar-window.c:297
+#: ../thunar/thunar-window.c:298
 msgid "_Close"
 msgstr "_Bigire"
 
-#: ../thunar/thunar-window.c:297
+#: ../thunar/thunar-window.c:298
 msgid "Close this window"
 msgstr "Vê paceyê bigire"
 
-#: ../thunar/thunar-window.c:298
+#: ../thunar/thunar-window.c:299
 msgid "_Edit"
 msgstr "_Biguherîne"
 
-#: ../thunar/thunar-window.c:299
+#: ../thunar/thunar-window.c:300
 msgid "Pr_eferences..."
 msgstr "_Vebijêrk..."
 
-#: ../thunar/thunar-window.c:299
+#: ../thunar/thunar-window.c:300
 msgid "Edit Thunars Preferences"
 msgstr "Vebijêrkên Thunarê Sererast Bike"
 
-#: ../thunar/thunar-window.c:300
+#: ../thunar/thunar-window.c:301
 msgid "_View"
 msgstr "_Bergeh"
 
-#: ../thunar/thunar-window.c:301
+#: ../thunar/thunar-window.c:302
 msgid "_Reload"
 msgstr "_Rojane bike"
 
-#: ../thunar/thunar-window.c:301
+#: ../thunar/thunar-window.c:302
 msgid "Reload the current folder"
 msgstr "Peldanka derbasdar dîsa bar bike"
 
-#: ../thunar/thunar-window.c:302
+#: ../thunar/thunar-window.c:303
 msgid "_Location Selector"
 msgstr "Hilbijêrê _Cih"
 
-#: ../thunar/thunar-window.c:303
+#: ../thunar/thunar-window.c:304
 msgid "_Side Pane"
 msgstr "Panelê _Kêlekê"
 
-#: ../thunar/thunar-window.c:304
+#: ../thunar/thunar-window.c:305
 msgid "Zoom I_n"
 msgstr ""
 
-#: ../thunar/thunar-window.c:304
+#: ../thunar/thunar-window.c:305
 msgid "Show the contents in more detail"
 msgstr "Kîtekîtên naverokê nîşan bide"
 
-#: ../thunar/thunar-window.c:305
+#: ../thunar/thunar-window.c:306
 msgid "Zoom _Out"
 msgstr "_Dûrtir"
 
-#: ../thunar/thunar-window.c:305
+#: ../thunar/thunar-window.c:306
 msgid "Show the contents in less detail"
 msgstr "Naverokê bi kîtekîtên hindik nîşan bide"
 
-#: ../thunar/thunar-window.c:306
+#: ../thunar/thunar-window.c:307
 msgid "Normal Si_ze"
 msgstr "Mezinahiya _Asayî"
 
-#: ../thunar/thunar-window.c:306
+#: ../thunar/thunar-window.c:307
 msgid "Show the contents at the normal size"
 msgstr "Hêmanan di mezinahiya asayî de nîşan bide"
 
-#: ../thunar/thunar-window.c:307
+#: ../thunar/thunar-window.c:308
 msgid "_Go"
 msgstr "_Biçe"
 
-#: ../thunar/thunar-window.c:308
+#: ../thunar/thunar-window.c:309
 msgid "Open _Parent"
 msgstr "_Jorepeldankekê Veke"
 
-#: ../thunar/thunar-window.c:308
+#: ../thunar/thunar-window.c:309
 msgid "Open the parent folder"
 msgstr "Jorepeldankê veke"
 
-#: ../thunar/thunar-window.c:309
+#: ../thunar/thunar-window.c:310
 msgid "_Home"
 msgstr "_Mal"
 
-#: ../thunar/thunar-window.c:309
+#: ../thunar/thunar-window.c:310
 msgid "Go to the home folder"
 msgstr "Here peldanka malê"
 
-#: ../thunar/thunar-window.c:310
+#: ../thunar/thunar-window.c:311
 #, fuzzy
 msgid "Go to the desktop folder"
 msgstr "Here peldanka malê"
 
-#: ../thunar/thunar-window.c:311
+#: ../thunar/thunar-window.c:312
 msgid "Browse the file system"
 msgstr ""
 
-#: ../thunar/thunar-window.c:312
+#: ../thunar/thunar-window.c:313
 #, fuzzy
 msgid "Go to the documents folder"
 msgstr "Here peldanka malê"
 
-#: ../thunar/thunar-window.c:313
+#: ../thunar/thunar-window.c:314
 #, fuzzy
 msgid "Go to the downloads folder"
 msgstr "Here peldanka şablonan"
 
-#: ../thunar/thunar-window.c:314
+#: ../thunar/thunar-window.c:315
 #, fuzzy
 msgid "Go to the music folder"
 msgstr "Here peldanka malê"
 
-#: ../thunar/thunar-window.c:315
+#: ../thunar/thunar-window.c:316
 #, fuzzy
 msgid "Go to the pictures folder"
 msgstr "Here peldanka şablonan"
 
-#: ../thunar/thunar-window.c:316
+#: ../thunar/thunar-window.c:317
 #, fuzzy
 msgid "Go to the videos folder"
 msgstr "Here peldanka malê"
 
-#: ../thunar/thunar-window.c:317
+#: ../thunar/thunar-window.c:318
 #, fuzzy
 msgid "Go to the public folder"
 msgstr "Here peldanka şablonan"
 
-#: ../thunar/thunar-window.c:318
+#: ../thunar/thunar-window.c:319
 msgid "T_emplates"
 msgstr "_Şablon"
 
-#: ../thunar/thunar-window.c:318
+#: ../thunar/thunar-window.c:319
 msgid "Go to the templates folder"
 msgstr "Here peldanka şablonan"
 
-#: ../thunar/thunar-window.c:319
+#: ../thunar/thunar-window.c:320
 msgid "_Open Location..."
 msgstr "Cih _Veke..."
 
-#: ../thunar/thunar-window.c:319
+#: ../thunar/thunar-window.c:320
 msgid "Specify a location to open"
 msgstr "Ji bo vekirinê cihekî diyar bike"
 
-#: ../thunar/thunar-window.c:320
+#: ../thunar/thunar-window.c:321
 msgid "_Help"
 msgstr "_Alîkarî"
 
-#: ../thunar/thunar-window.c:321
+#: ../thunar/thunar-window.c:322
 msgid "_Contents"
 msgstr "_Naverok"
 
-#: ../thunar/thunar-window.c:321
+#: ../thunar/thunar-window.c:322
 msgid "Display Thunar user manual"
 msgstr ""
 
-#: ../thunar/thunar-window.c:322
+#: ../thunar/thunar-window.c:323
 msgid "Display information about Thunar"
 msgstr "Agahiyan der barê Thunarê de nîşan bide"
 
-#: ../thunar/thunar-window.c:327
+#: ../thunar/thunar-window.c:328
 msgid "Show _Hidden Files"
 msgstr "Pelên _veşartî nîşan bide"
 
-#: ../thunar/thunar-window.c:327
+#: ../thunar/thunar-window.c:328
 msgid "Toggles the display of hidden files in the current window"
 msgstr ""
 "Hildibijêre bê ka bila di paceya heyî de pelên nepen werine nîşandan yan na"
 
-#: ../thunar/thunar-window.c:328
+#: ../thunar/thunar-window.c:329
 msgid "_Pathbar Style"
 msgstr ""
 
-#: ../thunar/thunar-window.c:328
+#: ../thunar/thunar-window.c:329
 msgid "Modern approach with buttons that correspond to folders"
 msgstr ""
 
-#: ../thunar/thunar-window.c:329
+#: ../thunar/thunar-window.c:330
 msgid "_Toolbar Style"
 msgstr "Teşeya Şiva _Amûran"
 
-#: ../thunar/thunar-window.c:329
+#: ../thunar/thunar-window.c:330
 msgid "Traditional approach with location bar and navigation buttons"
 msgstr ""
 
-#: ../thunar/thunar-window.c:330
+#: ../thunar/thunar-window.c:331
 msgid "_Shortcuts"
 msgstr "_Kurterê"
 
-#: ../thunar/thunar-window.c:330
+#: ../thunar/thunar-window.c:331
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr ""
 
-#: ../thunar/thunar-window.c:331
+#: ../thunar/thunar-window.c:332
 msgid "_Tree"
 msgstr "_Dar"
 
-#: ../thunar/thunar-window.c:331
+#: ../thunar/thunar-window.c:332
 msgid "Toggles the visibility of the tree pane"
 msgstr ""
 
-#: ../thunar/thunar-window.c:332
+#: ../thunar/thunar-window.c:333
 msgid "St_atusbar"
 msgstr "Şiva _Rewşê"
 
-#: ../thunar/thunar-window.c:332
+#: ../thunar/thunar-window.c:333
 msgid "Change the visibility of this window's statusbar"
 msgstr "Xuyaneka darikê rewşa paceyê biguherîne"
 
 #.
 #. * add view options
 #.
-#: ../thunar/thunar-window.c:732
+#: ../thunar/thunar-window.c:733
 msgid "View as _Icons"
 msgstr "Wekî _Dawêran bibîne"
 
-#: ../thunar/thunar-window.c:732
+#: ../thunar/thunar-window.c:733
 msgid "Display folder content in an icon view"
 msgstr "Naveroka pel di nîşandana îkonan de nîşan bide"
 
-#: ../thunar/thunar-window.c:739
+#: ../thunar/thunar-window.c:740
 msgid "View as _Detailed List"
 msgstr "Wekî Lîsteya _Kîtekît Nîşan Bide"
 
-#: ../thunar/thunar-window.c:739
+#: ../thunar/thunar-window.c:740
 msgid "Display folder content in a detailed list view"
 msgstr "Naveroka peldankê di xuyaneka lîsteya kîtekît de nîşan bide"
 
-#: ../thunar/thunar-window.c:746
+#: ../thunar/thunar-window.c:747
 msgid "View as _Compact List"
 msgstr ""
 
-#: ../thunar/thunar-window.c:746
+#: ../thunar/thunar-window.c:747
 msgid "Display folder content in a compact list view"
 msgstr ""
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:812
+#: ../thunar/thunar-window.c:813
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr ""
 "Hişyarî, tu hesabê kok (root) bikar tîne, dibe ku tu xisarê bide pergalê."
 
 #. create the network action
-#: ../thunar/thunar-window.c:1440
+#: ../thunar/thunar-window.c:1441
 msgid "Network"
 msgstr ""
 
-#: ../thunar/thunar-window.c:1440
+#: ../thunar/thunar-window.c:1441
 msgid "Browse the network"
 msgstr ""
 
-#: ../thunar/thunar-window.c:1480
+#: ../thunar/thunar-window.c:1481
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "\"%s\" nehate xebitandin"
 
-#: ../thunar/thunar-window.c:1953
+#: ../thunar/thunar-window.c:1957
 msgid "Failed to open parent folder"
 msgstr "Peldanka jor nehate vekirin"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:1978
+#: ../thunar/thunar-window.c:1982
 msgid "Failed to open the home folder"
 msgstr ""
 
-#: ../thunar/thunar-window.c:2039
+#: ../thunar/thunar-window.c:2050
 #, fuzzy, c-format
 msgid "Failed to open folder \"%s\""
 msgstr "Vekirina pela \"%s\" serneket"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:2167
+#: ../thunar/thunar-window.c:2178
 msgid "About Templates"
 msgstr "Der barê Şablonan"
 
-#: ../thunar/thunar-window.c:2189
+#: ../thunar/thunar-window.c:2200
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
 
-#: ../thunar/thunar-window.c:2196
+#: ../thunar/thunar-window.c:2207
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and "
 "put it in this folder. Thunar will add an entry for this document in the "
@@ -2611,35 +2599,35 @@ msgid ""
 "of the document will be created in the directory you are viewing."
 msgstr ""
 
-#: ../thunar/thunar-window.c:2208
+#: ../thunar/thunar-window.c:2219
 msgid "Do _not display this message again"
 msgstr "Vê peyamê carekî din nîşan _nede"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2252
+#: ../thunar/thunar-window.c:2263
 #, fuzzy
 msgid "Failed to open the file system root folder"
 msgstr "Peldanka jor nehate vekirin"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2287
+#: ../thunar/thunar-window.c:2298
 msgid "Failed to display the contents of the trash can"
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2322
+#: ../thunar/thunar-window.c:2333
 #, fuzzy
 msgid "Failed to browse the network"
 msgstr "Pelê vala ya \"%s\" çênebû"
 
-#: ../thunar/thunar-window.c:2364
+#: ../thunar/thunar-window.c:2375
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr ""
 
 #. set window title and icon
-#: ../thunar/thunar-window.c:2403 ../Thunar.desktop.in.in.h:2
+#: ../thunar/thunar-window.c:2414 ../Thunar.desktop.in.in.h:2
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "File Manager"
 msgstr "Gerinendeyê Pelan"
@@ -3086,20 +3074,20 @@ msgid "Mail Recipient"
 msgstr ""
 
 #. tell the user that we failed to connect to the trash
-#: ../plugins/thunar-tpa/thunar-tpa.c:249
-#: ../plugins/thunar-tpa/thunar-tpa.c:290
-#: ../plugins/thunar-tpa/thunar-tpa.c:312
-#: ../plugins/thunar-tpa/thunar-tpa.c:339
+#: ../plugins/thunar-tpa/thunar-tpa.c:257
+#: ../plugins/thunar-tpa/thunar-tpa.c:298
+#: ../plugins/thunar-tpa/thunar-tpa.c:320
+#: ../plugins/thunar-tpa/thunar-tpa.c:347
 msgid "Failed to connect to the Trash"
 msgstr ""
 
 #. tell the user whether the trash is full or empty
-#: ../plugins/thunar-tpa/thunar-tpa.c:264
+#: ../plugins/thunar-tpa/thunar-tpa.c:272
 #, fuzzy
 msgid "Trash contains files"
 msgstr "Çop tijî ye"
 
-#: ../plugins/thunar-tpa/thunar-tpa.c:264
+#: ../plugins/thunar-tpa/thunar-tpa.c:272
 msgid "Trash is empty"
 msgstr "Çop vala ye"
 
@@ -3401,6 +3389,12 @@ msgstr ""
 #, fuzzy
 msgid "Configure the Thunar file manager"
 msgstr "Thunar, Gerinendeyê Pelan"
+
+#~ msgid ""
+#~ "Failed to load fallback icon from \"%s\" (%s). Check your installation!"
+#~ msgstr ""
+#~ "Ji \"%s\" îkona paşdevegerînê nehate barkirin (%s). Sazkirina xwe kontrol "
+#~ "bike!"
 
 #~ msgid "Failed to execute \"%s\""
 #~ msgstr "\"%s\"  nehate xebitandin"

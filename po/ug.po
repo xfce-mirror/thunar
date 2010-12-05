@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-04 14:35+0100\n"
+"POT-Creation-Date: 2010-12-05 16:18+0100\n"
 "PO-Revision-Date: 2010-01-06 17:32+0900\n"
 "Last-Translator: Gheyret T.Kenji <gheyret@gmail.com>\n"
 "Language-Team:Uyghur Computer Science Association <UKIJ@yahoogroups.com>\n"
@@ -49,30 +49,30 @@ msgid "Thunar"
 msgstr "Thunar"
 
 #. initialize Gtk+
-#: ../thunar/main.c:159
+#: ../thunar/main.c:145
 msgid "[FILES...]"
 msgstr "[ھۆججەتلەر...]"
 
-#: ../thunar/main.c:166
+#: ../thunar/main.c:152
 #, c-format
 msgid "Thunar: Failed to open display: %s\n"
 msgstr "Thunar: ئېكراننى ئېچىش مەغلۇپ بولدى: %s\n"
 
 #. yep, there's an error, so print it
-#: ../thunar/main.c:171
+#: ../thunar/main.c:157
 #, c-format
 msgid "Thunar: %s\n"
 msgstr "Thunar: %s\n"
 
-#: ../thunar/main.c:182
+#: ../thunar/main.c:168
 msgid "The Thunar development team. All rights reserved."
 msgstr "Thunar ئىجادىيەت گۇرۇپپىسى. All rights reserved."
 
-#: ../thunar/main.c:183
+#: ../thunar/main.c:169
 msgid "Written by Benedikt Meurer <benny@xfce.org>."
 msgstr "ئىجادىيەتچى: Benedikt Meurer <benny@xfce.org>"
 
-#: ../thunar/main.c:184
+#: ../thunar/main.c:170
 #, c-format
 msgid "Please report bugs to <%s>."
 msgstr "كەمتۈكنى <%s> غا دوكلات قىلىڭ."
@@ -136,9 +136,9 @@ msgstr "مەشغۇلاتنى ئىجرا قىلىش مەغلۇپ بولدى"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1040 ../thunar/thunar-application.c:1166
-#: ../thunar/thunar-launcher.c:1065 ../thunar/thunar-location-entry.c:389
-#: ../thunar/thunar-location-entry.c:417
-#: ../thunar/thunar-shortcuts-view.c:1277 ../thunar/thunar-window.c:1506
+#: ../thunar/thunar-launcher.c:1065 ../thunar/thunar-location-entry.c:394
+#: ../thunar/thunar-location-entry.c:422
+#: ../thunar/thunar-shortcuts-view.c:1277 ../thunar/thunar-window.c:1507
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "\"%s\" نى ئېچىش مەغلۇپ بولدى"
@@ -248,7 +248,7 @@ msgstr "ئەخلەت ساندۇقىدىكى ھەممە ھۆججەت ۋە مۇن�
 #. prepare the menu item
 #: ../thunar/thunar-application.c:1870 ../thunar/thunar-location-buttons.c:171
 #: ../thunar/thunar-shortcuts-view.c:875 ../thunar/thunar-tree-view.c:1145
-#: ../thunar/thunar-window.c:295 ../plugins/thunar-tpa/thunar-tpa.c:169
+#: ../thunar/thunar-window.c:296 ../plugins/thunar-tpa/thunar-tpa.c:177
 msgid "_Empty Trash"
 msgstr "ئەخلەت ساندۇقىنى پاكىزلاش(_E)"
 
@@ -280,17 +280,12 @@ msgstr "\"%s\" نى ئەسلىگە كەلتۈرگىلى بولمىدى"
 msgid "Restoring files..."
 msgstr "ھۆججەتلەرنى ئەسلگە كەلتۈرۈۋاتىدۇ..."
 
-#. tell the user that it didn't work
-#: ../thunar/thunar-chooser-button.c:234 ../thunar/thunar-chooser-dialog.c:465
+#: ../thunar/thunar-chooser-button.c:309 ../thunar/thunar-chooser-dialog.c:465
 #, c-format
 msgid "Failed to set default application for \"%s\""
 msgstr "\"%s\" نىڭ كۆڭۈلدىكى پروگراممىسىنى بېكىتىش مەغلۇپ بولدى"
 
-#: ../thunar/thunar-chooser-button.c:306
-msgid "No application selected"
-msgstr "پروگرامما تاللانمىدى"
-
-#: ../thunar/thunar-chooser-button.c:313
+#: ../thunar/thunar-chooser-button.c:439
 #, c-format
 msgid ""
 "The selected application is used to open this and other files of type \"%s\"."
@@ -298,9 +293,13 @@ msgstr ""
 "تاللانغان پروگرامما ئارقىلىق مەزكۇر ھۆججەت ۋە كېڭەيتمە نامى \"%s\" بولغان "
 "ھۆججەتلەرنى ئېچىشقا بولىدۇ"
 
-#. add the "Other Application..." choice
-#: ../thunar/thunar-chooser-button.c:425
-msgid "_Other Application..."
+#: ../thunar/thunar-chooser-button.c:489
+msgid "No application selected"
+msgstr "پروگرامما تاللانمىدى"
+
+#: ../thunar/thunar-chooser-button.c:502
+#, fuzzy
+msgid "Other Application..."
 msgstr "باشقا پروگراممىلار(_O)..."
 
 #: ../thunar/thunar-chooser-dialog.c:185 ../thunar/thunar-launcher.c:171
@@ -511,7 +510,7 @@ msgstr "ئېھتىياجغا ئاساسەن ئىستونلارنى ئاپتوم�
 #. tell the user that we're unable to determine the file info
 #: ../thunar/thunar-column-model.c:858 ../thunar/thunar-list-model.c:682
 #: ../thunar/thunar-list-model.c:710
-#: ../thunar/thunar-permissions-chooser.c:240 ../thunar/thunar-util.c:236
+#: ../thunar/thunar-permissions-chooser.c:240 ../thunar/thunar-util.c:269
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:458
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:285
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:286
@@ -788,32 +787,32 @@ msgstr "ھۆججەت"
 msgid "File Name"
 msgstr "ھۆججەت ئاتى"
 
-#: ../thunar/thunar-file.c:836 ../thunar/thunar-shortcuts-view.c:279
-#: ../thunar/thunar-window.c:311
+#: ../thunar/thunar-file.c:864 ../thunar/thunar-shortcuts-view.c:279
+#: ../thunar/thunar-window.c:312
 msgid "File System"
 msgstr "ھۆججەت سىستېمىسى"
 
-#: ../thunar/thunar-file.c:914
+#: ../thunar/thunar-file.c:943
 #, c-format
 msgid "The root folder has no parent"
 msgstr "root مۇندەرىجىسىنىڭ ئاتا مۇندەرىجىسى يوق"
 
-#: ../thunar/thunar-file.c:977
+#: ../thunar/thunar-file.c:1006
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "ئۈستەليۈزى ھۆججىتىنى يېشىش مەغلۇپ بولدى: %s"
 
-#: ../thunar/thunar-file.c:1015
+#: ../thunar/thunar-file.c:1044
 #, c-format
 msgid "No Exec field specified"
 msgstr "Exec field بېكىتىلمىگەن"
 
-#: ../thunar/thunar-file.c:1036
+#: ../thunar/thunar-file.c:1065
 #, c-format
 msgid "No URL field specified"
 msgstr "URL field بېكىتىلمىگەن"
 
-#: ../thunar/thunar-file.c:1042
+#: ../thunar/thunar-file.c:1071
 #, c-format
 msgid "Invalid desktop file"
 msgstr "ئىناۋەتسىز ئۈستەل يۈزى ھۆججىتى"
@@ -835,13 +834,6 @@ msgstr "ئالدىغا"
 #: ../thunar/thunar-history.c:158
 msgid "Go to the next visited folder"
 msgstr "كېيىنكى مۇندەرىجىگە يۆتكەل"
-
-#: ../thunar/thunar-icon-factory.c:650
-#, c-format
-msgid "Failed to load fallback icon from \"%s\" (%s). Check your installation!"
-msgstr ""
-"\"%s\" (%s) دىن fallback سىنبەلگىسىنى ئوقۇش مەغلۇپ بولدى. ئورناتمىڭىزنى "
-"تەكشۈرۈڭ!"
 
 #: ../thunar/thunar-icon-view.c:164
 msgid "Icon based directory listing"
@@ -1081,7 +1073,7 @@ msgstr[0] "تاللانغان ھۆججەتنى كۆڭۈلدىكى پروگرام
 msgid "Open With \"%s\""
 msgstr "\"%s\" دا ئاچ"
 
-#: ../thunar/thunar-launcher.c:1383 ../thunar/thunar-location-entry.c:641
+#: ../thunar/thunar-launcher.c:1383 ../thunar/thunar-location-entry.c:646
 #: ../thunar/thunar-shortcuts-view.c:1307
 #: ../thunar/thunar-shortcuts-view.c:1545 ../thunar/thunar-tree-view.c:1908
 #, c-format
@@ -1182,7 +1174,7 @@ msgstr[0] "%d تۈر تاللاندى"
 msgid "Create _Folder..."
 msgstr "مۇندەرىجە ياسا(_F)..."
 
-#: ../thunar/thunar-location-buttons.c:171 ../thunar/thunar-window.c:295
+#: ../thunar/thunar-location-buttons.c:171 ../thunar/thunar-window.c:296
 msgid "Delete all files and folders in the Trash"
 msgstr "ئەخلەت ساندۇقىدىكى بارلىق ھۆججەت ۋە مۇندەرىجىلەرنى ئۆچۈرۈش"
 
@@ -1234,29 +1226,29 @@ msgstr ""
 msgid "View the properties of the folder \"%s\""
 msgstr "مۇندەرىجە \"%s\" نىڭ خاسلىقىنى كۆرۈش"
 
-#: ../thunar/thunar-location-dialog.c:65
+#: ../thunar/thunar-location-dialog.c:67
 msgid "Open Location"
 msgstr "ئورۇن ئاچ"
 
-#: ../thunar/thunar-location-dialog.c:79
+#: ../thunar/thunar-location-dialog.c:81
 msgid "_Location:"
 msgstr "مۇندەرىجە ئورنى(_L):"
 
-#: ../thunar/thunar-location-entry.c:382
+#: ../thunar/thunar-location-entry.c:387
 #, c-format
 msgid "File does not exist"
 msgstr "ھۆججەت يوق"
 
-#: ../thunar/thunar-location-entry.c:726
+#: ../thunar/thunar-location-entry.c:731
 #, c-format
 msgid "Failed to determine the mount point of \"%s\""
 msgstr "\"%s\" نىڭ mount نۇقتىسىنى بېكىتىش مەغلۇپ بولدى"
 
-#: ../thunar/thunar-notify.c:93
+#: ../thunar/thunar-notify.c:123
 msgid "Unmounting device"
 msgstr "ئۈسكۈنىنى unmount قىلىۋاتىدۇ"
 
-#: ../thunar/thunar-notify.c:94
+#: ../thunar/thunar-notify.c:124
 #, c-format
 msgid ""
 "The device \"%s\" is being unmounted by the system. Please do not remove the "
@@ -1265,11 +1257,11 @@ msgstr ""
 "سىستېما ئۈسكۈنە \"%s\" نى unmoun قىلىۋاتىدۇ. دىسكىنى چىقارماڭ ياكى ئۈسكۈنىنى "
 "كومپيۇتېردىن ئايرىۋەتمەڭ."
 
-#: ../thunar/thunar-notify.c:100 ../thunar/thunar-notify.c:207
+#: ../thunar/thunar-notify.c:130 ../thunar/thunar-notify.c:248
 msgid "Writing data to device"
 msgstr "سانلىق-ئاساسلارنى ئۈسكىنىگە يېزىۋاتىدۇ"
 
-#: ../thunar/thunar-notify.c:101 ../thunar/thunar-notify.c:208
+#: ../thunar/thunar-notify.c:131 ../thunar/thunar-notify.c:249
 #, c-format
 msgid ""
 "There is data that needs to be written to the device \"%s\" before it can be "
@@ -1278,11 +1270,11 @@ msgstr ""
 "ئۈسكۈنە \"%s\" چىقىرىشتىن بۇرۇن بىر يېزىشقا تېگىشلىك سانلىق ئاسالار بار."
 "دىسكىنى چىقارماق ياكى ئۈسكۈنىنى كومپيۇتېردىن ئايرىۋەتمەڭ."
 
-#: ../thunar/thunar-notify.c:201
+#: ../thunar/thunar-notify.c:242
 msgid "Ejecting device"
 msgstr "ئۈسكۈنە چىقىرىش"
 
-#: ../thunar/thunar-notify.c:202
+#: ../thunar/thunar-notify.c:243
 #, c-format
 msgid "The device \"%s\" is being ejected. This may take some time"
 msgstr "ئۈسكۈنە \"%s\" نى چىقىرىۋاتىدۇ. ئازراق ۋاقىت كېتىشى مۇمكىن."
@@ -1293,12 +1285,12 @@ msgid "No templates installed"
 msgstr "ھېچقانداق قېلىپ ئورنىتىلمىغان"
 
 # NOTE: GObject property
-#: ../thunar/thunar-path-entry.c:222
+#: ../thunar/thunar-path-entry.c:224
 msgid "Icon size"
 msgstr "سىنبەلگە چوڭلۇقى"
 
 # NOTE: GObject property
-#: ../thunar/thunar-path-entry.c:223
+#: ../thunar/thunar-path-entry.c:225
 msgid "The icon size for the path entry"
 msgstr "يول entry نىڭ سىنبەلگە چوڭلۇقى"
 
@@ -1801,11 +1793,11 @@ msgstr "%s - خاسلىق"
 msgid "broken link"
 msgstr "بۇزۇلغان ئۇلانما"
 
-#: ../thunar/thunar-renamer-dialog.c:177 ../thunar/thunar-window.c:292
+#: ../thunar/thunar-renamer-dialog.c:177 ../thunar/thunar-window.c:293
 msgid "_File"
 msgstr "ھۆججەت(_F)"
 
-#: ../thunar/thunar-renamer-dialog.c:178 ../thunar/thunar-window.c:294
+#: ../thunar/thunar-renamer-dialog.c:178 ../thunar/thunar-window.c:295
 msgid "_Send To"
 msgstr "ئەۋەت(_S)"
 
@@ -1829,7 +1821,7 @@ msgstr "تازىلا"
 msgid "Clear the file list below"
 msgstr "تۆۋەندىكى ھۆججەت تىزىملىكىنى تازىلا"
 
-#: ../thunar/thunar-renamer-dialog.c:183 ../thunar/thunar-window.c:322
+#: ../thunar/thunar-renamer-dialog.c:183 ../thunar/thunar-window.c:323
 msgid "_About"
 msgstr "ھەققىدە(_A)"
 
@@ -1956,10 +1948,6 @@ msgid ""
 msgstr ""
 "بۇ ھۆججەتنى ئۆتكۈزۈۋېتىپ قالغان ھۆججەتلەرنىڭ ئاتىنى ئۆزگەرتىشنى "
 "داۋاملاشتۇرامسىز؟"
-
-#: ../thunar/thunar-shortcuts-model.c:299
-msgid "Desktop"
-msgstr "ئۈستەل يۈزى"
 
 #: ../thunar/thunar-shortcuts-pane.c:360
 msgid "Side Pane (Create Shortcut)"
@@ -2203,7 +2191,7 @@ msgstr "ھۆججەت توپلاۋاتىدۇ..."
 msgid "Trying to restore \"%s\""
 msgstr "\"%s\" نى ئەسلىگە كەلتۈرۈشكە ئۇرۇنۇۋاتىدۇ"
 
-#: ../thunar/thunar-transfer-job.c:690
+#: ../thunar/thunar-transfer-job.c:691
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file "
@@ -2212,19 +2200,19 @@ msgstr ""
 "قىسقۇچ \"%s\" ئەمدى مەۋجۇت ئەمەس. ھۆججەت \"%s\" نى ئەخلەت ساندۇقىدىن ئەسلىگە "
 "كەلتۈرۈش كېرەك."
 
-#: ../thunar/thunar-transfer-job.c:715
+#: ../thunar/thunar-transfer-job.c:716
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "قىسقۇچ \"%s\" نى ئەسلىگە كەلتۈرۈش مەغلۇپ بولدى"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:732
+#: ../thunar/thunar-transfer-job.c:736
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "\"%s\" نى يۆتكىمەكچى بولۇۋاتىدۇ"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:757
+#: ../thunar/thunar-transfer-job.c:761
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr ""
@@ -2253,260 +2241,260 @@ msgstr "مۇندەرىجىگە چاپلا(_P)"
 msgid "P_roperties..."
 msgstr "خاسلىق(_R)..."
 
-#: ../thunar/thunar-util.c:89
+#: ../thunar/thunar-util.c:95
 #, c-format
 msgid "Invalid path"
 msgstr "ئىناۋەتسىز يوق"
 
-#: ../thunar/thunar-util.c:125
+#: ../thunar/thunar-util.c:129
 #, c-format
 msgid "Unknown user \"%s\""
 msgstr "\"%s\" تونۇمايدىغان ئىشلەتكۈچى"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:185
+#: ../thunar/thunar-util.c:218
 msgid "Today"
 msgstr "بۈگۈن"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:190
+#: ../thunar/thunar-util.c:223
 #, c-format
 msgid "Today at %X"
 msgstr "بۈگۈن سائەت%X"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:198
+#: ../thunar/thunar-util.c:231
 msgid "Yesterday"
 msgstr "تۈنۈگۈن"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:203
+#: ../thunar/thunar-util.c:236
 #, c-format
 msgid "Yesterday at %X"
 msgstr "تۈنۈگۈن سائەت %X"
 
 #. Days from last week
-#: ../thunar/thunar-util.c:211
+#: ../thunar/thunar-util.c:244
 #, c-format
 msgid "%A at %X"
 msgstr "%A  %X دە"
 
 #. Any other date
-#: ../thunar/thunar-util.c:216
+#: ../thunar/thunar-util.c:249
 #, c-format
 msgid "%x at %X"
 msgstr "%x %X دە"
 
-#: ../thunar/thunar-window.c:293
+#: ../thunar/thunar-window.c:294
 msgid "Open New _Window"
 msgstr "يېڭى كۆزنەك ئاچ(_W)"
 
-#: ../thunar/thunar-window.c:293
+#: ../thunar/thunar-window.c:294
 msgid "Open a new Thunar window for the displayed location"
 msgstr "كۆرسىتىلگەن يەرنى يېڭى Thunar كۆزنىكىدە ئاچ"
 
-#: ../thunar/thunar-window.c:296
+#: ../thunar/thunar-window.c:297
 msgid "Close _All Windows"
 msgstr "ھەممە كۆزنەكنى تاقا(_A)"
 
-#: ../thunar/thunar-window.c:296
+#: ../thunar/thunar-window.c:297
 msgid "Close all Thunar windows"
 msgstr "Thunar نىڭ ھەممە كۆزنىكىنى تاقايدۇ"
 
-#: ../thunar/thunar-window.c:297
+#: ../thunar/thunar-window.c:298
 msgid "_Close"
 msgstr "تاقاش(_C)"
 
-#: ../thunar/thunar-window.c:297
+#: ../thunar/thunar-window.c:298
 msgid "Close this window"
 msgstr "مەزكۇر كۆزنەكنى تاقايدۇ"
 
-#: ../thunar/thunar-window.c:298
+#: ../thunar/thunar-window.c:299
 msgid "_Edit"
 msgstr "تەھرىر(_E)"
 
-#: ../thunar/thunar-window.c:299
+#: ../thunar/thunar-window.c:300
 msgid "Pr_eferences..."
 msgstr "تەڭشەك(_E)..."
 
-#: ../thunar/thunar-window.c:299
+#: ../thunar/thunar-window.c:300
 msgid "Edit Thunars Preferences"
 msgstr "Thunar نىڭ تەڭشىكىنى تەھرىرلەش"
 
-#: ../thunar/thunar-window.c:300
+#: ../thunar/thunar-window.c:301
 msgid "_View"
 msgstr "كۆرۈنۈش(_V)"
 
-#: ../thunar/thunar-window.c:301
+#: ../thunar/thunar-window.c:302
 msgid "_Reload"
 msgstr "قايتا ئوقۇ(_R)"
 
-#: ../thunar/thunar-window.c:301
+#: ../thunar/thunar-window.c:302
 msgid "Reload the current folder"
 msgstr "ھازىرقى مۇندەرىجىنى قايتا ئوقۇيدۇ"
 
-#: ../thunar/thunar-window.c:302
+#: ../thunar/thunar-window.c:303
 msgid "_Location Selector"
 msgstr "ئورۇن تاللىغۇ(_L)"
 
-#: ../thunar/thunar-window.c:303
+#: ../thunar/thunar-window.c:304
 msgid "_Side Pane"
 msgstr "يان Pane(_S)"
 
-#: ../thunar/thunar-window.c:304
+#: ../thunar/thunar-window.c:305
 msgid "Zoom I_n"
 msgstr "چوڭايت(_N)"
 
-#: ../thunar/thunar-window.c:304
+#: ../thunar/thunar-window.c:305
 msgid "Show the contents in more detail"
 msgstr "مەزمۇنلارنىڭ تەپسىلاتىنى كۆرسىتىدۇ"
 
-#: ../thunar/thunar-window.c:305
+#: ../thunar/thunar-window.c:306
 msgid "Zoom _Out"
 msgstr "كىچىكلەت(_O)"
 
-#: ../thunar/thunar-window.c:305
+#: ../thunar/thunar-window.c:306
 msgid "Show the contents in less detail"
 msgstr "مەزمۇنلارنىڭ تەپسىلاتىنى ئانچە كۆرسەتمەيدۇ"
 
-#: ../thunar/thunar-window.c:306
+#: ../thunar/thunar-window.c:307
 msgid "Normal Si_ze"
 msgstr "نورمال چوڭلۇق(_Z)"
 
-#: ../thunar/thunar-window.c:306
+#: ../thunar/thunar-window.c:307
 msgid "Show the contents at the normal size"
 msgstr "مەزمۇنلارنى نورمال چوڭلۇقتا كۆرسىتىدۇ"
 
-#: ../thunar/thunar-window.c:307
+#: ../thunar/thunar-window.c:308
 msgid "_Go"
 msgstr "يۆتكەل(_G)"
 
-#: ../thunar/thunar-window.c:308
+#: ../thunar/thunar-window.c:309
 msgid "Open _Parent"
 msgstr "ئاتا مۇندەرىجە ئاچ(_P)"
 
-#: ../thunar/thunar-window.c:308
+#: ../thunar/thunar-window.c:309
 msgid "Open the parent folder"
 msgstr "ئاتا مۇندەرىجىنى ئاچىدۇ"
 
-#: ../thunar/thunar-window.c:309
+#: ../thunar/thunar-window.c:310
 msgid "_Home"
 msgstr "ماكان(_H)"
 
-#: ../thunar/thunar-window.c:309
+#: ../thunar/thunar-window.c:310
 msgid "Go to the home folder"
 msgstr "ماكان مۇندەرىجىگە يۆتكىلىدۇ"
 
-#: ../thunar/thunar-window.c:310
+#: ../thunar/thunar-window.c:311
 msgid "Go to the desktop folder"
 msgstr "ئۈستەل يۈزى مۇندەرىجىسىگە يۆتكىلىدۇ"
 
-#: ../thunar/thunar-window.c:311
+#: ../thunar/thunar-window.c:312
 msgid "Browse the file system"
 msgstr "ھۆججەت سىستېمىسىنى كۆرىدۇ"
 
-#: ../thunar/thunar-window.c:312
+#: ../thunar/thunar-window.c:313
 msgid "Go to the documents folder"
 msgstr "پۈتۈك مۇندەرىجىسىگە يۆتكىلىدۇ"
 
-#: ../thunar/thunar-window.c:313
+#: ../thunar/thunar-window.c:314
 msgid "Go to the downloads folder"
 msgstr "چۈشۈرۈلمە مۇندەرىجىسىگە يۆتكىلىدۇ"
 
-#: ../thunar/thunar-window.c:314
+#: ../thunar/thunar-window.c:315
 msgid "Go to the music folder"
 msgstr "ئۇن مۇندەرىجىسىگە يۆتكىلىدۇ"
 
-#: ../thunar/thunar-window.c:315
+#: ../thunar/thunar-window.c:316
 msgid "Go to the pictures folder"
 msgstr "سۈرەت مۇندەرىجىسىگە يۆتكىلىدۇ"
 
-#: ../thunar/thunar-window.c:316
+#: ../thunar/thunar-window.c:317
 msgid "Go to the videos folder"
 msgstr "سىن مۇندەرىجىسىگە يۆتكىلىدۇ"
 
-#: ../thunar/thunar-window.c:317
+#: ../thunar/thunar-window.c:318
 msgid "Go to the public folder"
 msgstr "ئاممىۋى مۇندەرىجىسىگە يۆتكىلىدۇ"
 
-#: ../thunar/thunar-window.c:318
+#: ../thunar/thunar-window.c:319
 msgid "T_emplates"
 msgstr "قېلىپ(_E)"
 
-#: ../thunar/thunar-window.c:318
+#: ../thunar/thunar-window.c:319
 msgid "Go to the templates folder"
 msgstr "قېلىپ مۇندەرىجىسىگە يۆتكىلىدۇ"
 
-#: ../thunar/thunar-window.c:319
+#: ../thunar/thunar-window.c:320
 msgid "_Open Location..."
 msgstr "كۆرسىتىلگەن ئورۇننى ئاچ(_O)..."
 
-#: ../thunar/thunar-window.c:319
+#: ../thunar/thunar-window.c:320
 msgid "Specify a location to open"
 msgstr "ئاچماقچى بولغان ئورۇننى بەلگىلەيدۇ"
 
-#: ../thunar/thunar-window.c:320
+#: ../thunar/thunar-window.c:321
 msgid "_Help"
 msgstr "ياردەم(_H)"
 
-#: ../thunar/thunar-window.c:321
+#: ../thunar/thunar-window.c:322
 msgid "_Contents"
 msgstr "مۇندەرىجە(_C)"
 
-#: ../thunar/thunar-window.c:321
+#: ../thunar/thunar-window.c:322
 msgid "Display Thunar user manual"
 msgstr "Thunar نىڭ قوللانمىسىنى كۆرسەت"
 
-#: ../thunar/thunar-window.c:322
+#: ../thunar/thunar-window.c:323
 msgid "Display information about Thunar"
 msgstr "Thunar ھەققىدىكى ئۇچۇرلارنى كۆرسەت"
 
-#: ../thunar/thunar-window.c:327
+#: ../thunar/thunar-window.c:328
 msgid "Show _Hidden Files"
 msgstr "يوشۇرۇن ھۆججەتلەرنى كۆرسەت(_H)"
 
-#: ../thunar/thunar-window.c:327
+#: ../thunar/thunar-window.c:328
 msgid "Toggles the display of hidden files in the current window"
 msgstr ""
 "ھازىرقى كۆزنەكتىكى يوشۇرۇن ھۆججەتلەرنى ئېچىش/ئاچماسلىقنى ئۆزئارا ئۆزگەرتىدۇ"
 
-#: ../thunar/thunar-window.c:328
+#: ../thunar/thunar-window.c:329
 msgid "_Pathbar Style"
 msgstr "Pathbar ئۇسلۇبى(_P)"
 
-#: ../thunar/thunar-window.c:328
+#: ../thunar/thunar-window.c:329
 msgid "Modern approach with buttons that correspond to folders"
 msgstr ""
 
-#: ../thunar/thunar-window.c:329
+#: ../thunar/thunar-window.c:330
 msgid "_Toolbar Style"
 msgstr "قورال تاياقچىنىڭ ئۇسلۇبى(_T)"
 
-#: ../thunar/thunar-window.c:329
+#: ../thunar/thunar-window.c:330
 msgid "Traditional approach with location bar and navigation buttons"
 msgstr "ئورۇن تاياقچىسى ۋە يولچى توپچىلىرى بار ئەنئەنىۋى ئۇسۇل"
 
-#: ../thunar/thunar-window.c:330
+#: ../thunar/thunar-window.c:331
 msgid "_Shortcuts"
 msgstr "تېزلەتمىلەر(_S)"
 
-#: ../thunar/thunar-window.c:330
+#: ../thunar/thunar-window.c:331
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "تېزلەتمە pane نى كۆرسىتىش/كۆرسەتمەسلىكنى ئۆزئارا ئالماشتۇرىدۇ"
 
-#: ../thunar/thunar-window.c:331
+#: ../thunar/thunar-window.c:332
 msgid "_Tree"
 msgstr "دەرەخسىمان(_T)"
 
-#: ../thunar/thunar-window.c:331
+#: ../thunar/thunar-window.c:332
 msgid "Toggles the visibility of the tree pane"
 msgstr "دەرەخسىمان pane نى كۆرسىتىش/كۆرسەتمەسلىكنى ئۆزئارا ئالماشتۇرىدۇ"
 
-#: ../thunar/thunar-window.c:332
+#: ../thunar/thunar-window.c:333
 msgid "St_atusbar"
 msgstr "ھالەت تاياقچىسى(_A)"
 
-#: ../thunar/thunar-window.c:332
+#: ../thunar/thunar-window.c:333
 msgid "Change the visibility of this window's statusbar"
 msgstr ""
 "كۆزنەكنىڭ ھالەت تاياقچىسىنى كۆرسىتىش/كۆرسەتمەسلىكنى ئۆزئارا ئالماشتۇرىدۇ"
@@ -2514,75 +2502,75 @@ msgstr ""
 #.
 #. * add view options
 #.
-#: ../thunar/thunar-window.c:732
+#: ../thunar/thunar-window.c:733
 msgid "View as _Icons"
 msgstr "سىنبەلگىدە كۆرسەت(_I)"
 
-#: ../thunar/thunar-window.c:732
+#: ../thunar/thunar-window.c:733
 msgid "Display folder content in an icon view"
 msgstr "مۇندەرىجە مەزمۇنىنى سىنبەلگە view دا كۆرسىتىدۇ"
 
-#: ../thunar/thunar-window.c:739
+#: ../thunar/thunar-window.c:740
 msgid "View as _Detailed List"
 msgstr "Detailed List دا كۆرسەت(_D)"
 
-#: ../thunar/thunar-window.c:739
+#: ../thunar/thunar-window.c:740
 msgid "Display folder content in a detailed list view"
 msgstr "مۇندەرىجە مەزمۇنىنى Detailed List view دا كۆرسىتىدۇ"
 
-#: ../thunar/thunar-window.c:746
+#: ../thunar/thunar-window.c:747
 msgid "View as _Compact List"
 msgstr "Compact List دا كۆرسەت(_C)"
 
-#: ../thunar/thunar-window.c:746
+#: ../thunar/thunar-window.c:747
 msgid "Display folder content in a compact list view"
 msgstr "مۇندەرىجە مەزمۇنىنى compact list view دا كۆرسىتىدۇ"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:812
+#: ../thunar/thunar-window.c:813
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr ""
 "دىققەت: root ھوقۇقىدا مەشغۇلات قىلىۋاتىسىز. بەك دىققەت قىلىڭ، سىستېمىنى "
 "بۇزۇپ قويۇشىڭىز مۇمكىن"
 
 #. create the network action
-#: ../thunar/thunar-window.c:1440
+#: ../thunar/thunar-window.c:1441
 msgid "Network"
 msgstr "تور"
 
-#: ../thunar/thunar-window.c:1440
+#: ../thunar/thunar-window.c:1441
 msgid "Browse the network"
 msgstr "تورلارنى كۆرۈش"
 
-#: ../thunar/thunar-window.c:1480
+#: ../thunar/thunar-window.c:1481
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "\"%s\" نى ئىجرا قىلىش مەغلۇپ بولدى"
 
-#: ../thunar/thunar-window.c:1953
+#: ../thunar/thunar-window.c:1957
 msgid "Failed to open parent folder"
 msgstr "ئاتا مۇندەرىجىنى ئېچىش مەغلۇپ بولدى"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:1978
+#: ../thunar/thunar-window.c:1982
 msgid "Failed to open the home folder"
 msgstr "ماكان مۇندەرىجىسى ئېچىش مەغلۇپ بولدى"
 
-#: ../thunar/thunar-window.c:2039
+#: ../thunar/thunar-window.c:2050
 #, c-format
 msgid "Failed to open folder \"%s\""
 msgstr "مۇندەرىجە \"%s\" نى ئېچىش مەغلۇپ بولدى"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:2167
+#: ../thunar/thunar-window.c:2178
 msgid "About Templates"
 msgstr "قېلىپلار ھەققىدە"
 
-#: ../thunar/thunar-window.c:2189
+#: ../thunar/thunar-window.c:2200
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "بۇ مۇندەرىجىدىكى بارلىق ھۆججەتلەر «پۈتۈك قۇر»تىزىملىكىدە كۆرۈنىدۇ"
 
-#: ../thunar/thunar-window.c:2196
+#: ../thunar/thunar-window.c:2207
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and "
 "put it in this folder. Thunar will add an entry for this document in the "
@@ -2592,26 +2580,26 @@ msgid ""
 "of the document will be created in the directory you are viewing."
 msgstr ""
 
-#: ../thunar/thunar-window.c:2208
+#: ../thunar/thunar-window.c:2219
 msgid "Do _not display this message again"
 msgstr "بۇ ئۇچۇرنى بۇنىڭدىن كېيىن كۆرسەتمە(_N)"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2252
+#: ../thunar/thunar-window.c:2263
 msgid "Failed to open the file system root folder"
 msgstr "ھۆججەت سىستېمىسىنىڭ غول قىسقۇچىنى ئېچىش مەغلۇپ بولدى"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2287
+#: ../thunar/thunar-window.c:2298
 msgid "Failed to display the contents of the trash can"
 msgstr "ئەخلەت ساندۇقىنىڭ مەزمۇنىنى كۆرسىتىش مەغلۇپ بولدى"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2322
+#: ../thunar/thunar-window.c:2333
 msgid "Failed to browse the network"
 msgstr "تورنى كۆرۈش مەغلۇپ بولدى"
 
-#: ../thunar/thunar-window.c:2364
+#: ../thunar/thunar-window.c:2375
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -2620,7 +2608,7 @@ msgstr ""
 "بولغان ھۆججەت باشقۇرغۇ"
 
 #. set window title and icon
-#: ../thunar/thunar-window.c:2403 ../Thunar.desktop.in.in.h:2
+#: ../thunar/thunar-window.c:2414 ../Thunar.desktop.in.in.h:2
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "File Manager"
 msgstr "ھۆججەت باشقۇرغۇچ"
@@ -3086,19 +3074,19 @@ msgid "Mail Recipient"
 msgstr "تاپشۇرۇپ ئالغۇچى"
 
 #. tell the user that we failed to connect to the trash
-#: ../plugins/thunar-tpa/thunar-tpa.c:249
-#: ../plugins/thunar-tpa/thunar-tpa.c:290
-#: ../plugins/thunar-tpa/thunar-tpa.c:312
-#: ../plugins/thunar-tpa/thunar-tpa.c:339
+#: ../plugins/thunar-tpa/thunar-tpa.c:257
+#: ../plugins/thunar-tpa/thunar-tpa.c:298
+#: ../plugins/thunar-tpa/thunar-tpa.c:320
+#: ../plugins/thunar-tpa/thunar-tpa.c:347
 msgid "Failed to connect to the Trash"
 msgstr "ئەخلەت ساندۇقىغا باغلىنىش مەغلۇپ بولدى"
 
 #. tell the user whether the trash is full or empty
-#: ../plugins/thunar-tpa/thunar-tpa.c:264
+#: ../plugins/thunar-tpa/thunar-tpa.c:272
 msgid "Trash contains files"
 msgstr "ئەخلەت ساندۇقىدا ھۆججەت بار"
 
-#: ../plugins/thunar-tpa/thunar-tpa.c:264
+#: ../plugins/thunar-tpa/thunar-tpa.c:272
 msgid "Trash is empty"
 msgstr "ئەخلەت ساندۇقى قۇرۇق"
 
@@ -3404,6 +3392,15 @@ msgstr "Thunar دىكى بەلگىلەنگەن مۇندەرىجىنى ئاچ"
 #: ../thunar/thunar-settings.desktop.in.h:1
 msgid "Configure the Thunar file manager"
 msgstr "Thunar ھۆججەت باشقۇرغۇنى تەڭشەش"
+
+#~ msgid ""
+#~ "Failed to load fallback icon from \"%s\" (%s). Check your installation!"
+#~ msgstr ""
+#~ "\"%s\" (%s) دىن fallback سىنبەلگىسىنى ئوقۇش مەغلۇپ بولدى. ئورناتمىڭىزنى "
+#~ "تەكشۈرۈڭ!"
+
+#~ msgid "Desktop"
+#~ msgstr "ئۈستەل يۈزى"
 
 #~ msgid "Failed to execute \"%s\""
 #~ msgstr "\"%s\" نى ئىجرا قىلىش مەغلۇپ بولدى"
