@@ -544,7 +544,9 @@ thunar_g_volume_is_present (GVolume *volume)
   gboolean has_media = FALSE;
   gboolean is_shadowed = FALSE;
   GDrive  *drive;
+#if GLIB_CHECK_VERSION (2, 20, 0)
   GMount  *mount;
+#endif
 
   _thunar_return_val_if_fail (G_IS_VOLUME (volume), FALSE);
 
