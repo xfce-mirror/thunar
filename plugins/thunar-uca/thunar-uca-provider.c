@@ -220,7 +220,11 @@ thunar_uca_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
 
           /* create the new action with the given parameters */
           action = gtk_action_new (name, label, tooltip, NULL);
+#if GTK_CHECK_VERSION (2, 16, 0)
           gtk_action_set_icon_name (action, icon_name);
+#else
+          g_object_set (G_OBJECT (action), "icon-name", icon_name, NULL);
+#endif
 
           /* grab a tree row reference on the given path */
           row = gtk_tree_row_reference_new (GTK_TREE_MODEL (uca_provider->model), lp->data);
