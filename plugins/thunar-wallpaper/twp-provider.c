@@ -208,7 +208,7 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
 }
 
 static void
-twp_action_set_wallpaper (GtkAction *action, 
+twp_action_set_wallpaper (GtkAction *action,
                           gpointer   user_data)
 {
   ThunarxFileInfo *file_info = user_data;
@@ -222,6 +222,7 @@ twp_action_set_wallpaper (GtkAction *action,
   gchar           *image_show_prop;
   gchar           *image_style_prop;
   gchar           *file_uri;
+  gchar           *escaped_file_name;
   gchar           *file_name = NULL;
   gchar           *hostname = NULL;
   gchar           *command;
@@ -235,14 +236,14 @@ twp_action_set_wallpaper (GtkAction *action,
           g_free (hostname);
           g_free (file_uri);
           g_free (file_name);
-         
+
           return;
         }
       if (n_screens > 1)
         screen = gdk_display_get_default_screen (display);
       else
         screen = gdk_display_get_screen (display, 0);
-      
+
       n_monitors = gdk_screen_get_n_monitors (screen);
       if (n_monitors > 1)
         {
@@ -250,6 +251,8 @@ twp_action_set_wallpaper (GtkAction *action,
         }
       g_free(file_uri);
     }
+
+  escaped_file_name = g_shell_quote (file_name);
 
   switch (desktop_type)
     {
@@ -259,7 +262,7 @@ twp_action_set_wallpaper (GtkAction *action,
         image_show_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-show", screen_nr, monitor_nr);
         image_style_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-style", screen_nr, monitor_nr);
 
-        command = g_strdup_printf ("xfconf-query -c xfce4-desktop -p %s --create -t string -s \"%s\"", image_path_prop, file_name);
+        command = g_strdup_printf ("xfconf-query -c xfce4-desktop -p %s --create -t string -s %s", image_path_prop, escaped_file_name);
         g_spawn_command_line_async (command, NULL);
         g_free (command);
 
@@ -275,13 +278,13 @@ twp_action_set_wallpaper (GtkAction *action,
         g_free(image_show_prop);
         g_free(image_style_prop);
         break;
-          
+
       case DESKTOP_TYPE_NAUTILUS:
         g_debug ("set on gnome");
         image_path_prop = g_strdup_printf("/desktop/gnome/background/picture_filename");
         image_show_prop = g_strdup_printf("/desktop/gnome/background/draw_background");
 
-        command = g_strdup_printf ("gconftool-2 %s --set %s--type string", image_path_prop, file_name);
+        command = g_strdup_printf ("gconftool-2 %s --set %s--type string", image_path_prop, escaped_file_name);
         g_spawn_command_line_async (command, NULL);
         g_free (command);
 
@@ -299,5 +302,6 @@ twp_action_set_wallpaper (GtkAction *action,
         break;
     }
 
+  g_free (escaped_file_name);
   g_free(file_name);
 }
