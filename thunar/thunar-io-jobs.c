@@ -1,6 +1,6 @@
 /* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
- * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2011 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-io-scan-directory.h>
 #include <thunar/thunar-io-jobs.h>
+#include <thunar/thunar-io-jobs-util.h>
 #include <thunar/thunar-job.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-simple-job.h>
@@ -513,21 +514,144 @@ thunar_io_jobs_copy_files (GList *source_file_list,
 
 
 
+static GFile *
+_thunar_io_jobs_link_file (ThunarJob *job,
+                           GFile     *source_file,
+                           GFile     *target_file,
+                           GError   **error)
+{
+  ThunarJobResponse response;
+  GError           *err = NULL;
+  gchar            *base_name;
+  gchar            *display_name;
+  gchar            *source_path;
+  gint              n;
+
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), NULL);
+  _thunar_return_val_if_fail (G_IS_FILE (source_file), NULL);
+  _thunar_return_val_if_fail (G_IS_FILE (target_file), NULL);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* abort on cancellation */
+  if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
+    return NULL;
+
+  /* try to determine the source path */
+  source_path = g_file_get_path (source_file);
+  if (source_path == NULL)
+    {
+      base_name = g_file_get_basename (source_file);
+      display_name = g_filename_display_name (base_name);
+      g_set_error (&err, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
+                   _("Could not create symbolic link to \"%s\" "
+                     "because it is not a local file"), display_name);
+      g_free (display_name);
+      g_free (base_name);
+    }
+
+  /* various attempts to create the symbolic link */
+  while (err == NULL)
+    {
+      if (!g_file_equal (source_file, target_file))
+        {
+          /* try to create the symlink */
+          if (g_file_make_symbolic_link (target_file, source_path, 
+                                         exo_job_get_cancellable (EXO_JOB (job)),
+                                         &err))
+            {
+              /* release the source path */
+              g_free (source_path);
+
+              /* return the real target file */
+              return g_object_ref (target_file);
+            }
+        }
+      else
+        {
+          for (n = 1; err == NULL; ++n)
+            {
+              GFile *duplicate_file = thunar_io_jobs_util_next_duplicate_file (job,
+                                                                               source_file,
+                                                                               FALSE, n,
+                                                                               &err);
+
+              if (err == NULL)
+                {
+                  /* try to create the symlink */
+                  if (g_file_make_symbolic_link (duplicate_file, source_path,
+                                                 exo_job_get_cancellable (EXO_JOB (job)),
+                                                 &err))
+                    {
+                      /* release the source path */
+                      g_free (source_path);
+
+                      /* return the real target file */
+                      return duplicate_file;
+                    }
+                  
+                  /* release the duplicate file, we no longer need it */
+                  g_object_unref (duplicate_file);
+                }
+
+              if (err != NULL && err->domain == G_IO_ERROR && err->code == G_IO_ERROR_EXISTS)
+                {
+                  /* this duplicate already exists => clear the error and try the next alternative */
+                  g_clear_error (&err);
+                }
+            }
+        }
+
+      /* check if we can recover from this error */
+      if (err->domain == G_IO_ERROR && err->code == G_IO_ERROR_EXISTS)
+        {
+          /* ask the user whether to replace the target file */
+          response = thunar_job_ask_overwrite (job, "%s", err->message);
+
+          /* reset the error */
+          g_clear_error (&err);
+
+          /* propagate the cancelled error if the job was aborted */
+          if (exo_job_set_error_if_cancelled (EXO_JOB (job), &err))
+            break;
+
+          /* try to delete the file */
+          if (response == THUNAR_JOB_RESPONSE_YES)
+            {
+              /* try to remove the target file. if not possible, err will be set and 
+               * the while loop will be aborted */
+              g_file_delete (target_file, exo_job_get_cancellable (EXO_JOB (job)), &err);
+            }
+
+          /* tell the caller that we skipped this file if the user doesn't want to
+           * overwrite it */
+          if (response == THUNAR_JOB_RESPONSE_NO)
+            return g_object_ref (source_file);
+        }
+    }
+
+  _thunar_assert (err != NULL);
+
+  /* free the source path */
+  g_free (source_path);
+
+  g_propagate_error (error, err);
+  return NULL;
+}
+
+
+
 static gboolean
 _thunar_io_jobs_link (ThunarJob   *job,
                       GValueArray *param_values,
                       GError     **error)
 {
-  ThunarJobResponse response;
-  GError           *err = NULL;
-  GList            *new_files_list = NULL;
-  GList            *source_file_list;
-  GList            *sp;
-  GList            *target_file_list;
-  GList            *tp;
-  gchar            *base_name;
-  gchar            *display_name;
-  gchar            *source_path;
+  GError *err = NULL;
+  GFile  *real_target_file;
+  GList  *new_files_list = NULL;
+  GList  *source_file_list;
+  GList  *sp;
+  GList  *target_file_list;
+  GList  *tp;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -551,51 +675,19 @@ _thunar_io_jobs_link (ThunarJob   *job,
       /* update progress information */
       thunar_job_processing_file (THUNAR_JOB (job), sp);
 
-again:
-      source_path = g_file_get_path (sp->data);
-
-      if (G_LIKELY (source_path != NULL))
+      /* try to create the symbolic link */
+      real_target_file = _thunar_io_jobs_link_file (job, sp->data, tp->data, &err);
+      if (real_target_file != NULL)
         {
-          /* try to create the symlink */
-          g_file_make_symbolic_link (tp->data, source_path, 
-                                     exo_job_get_cancellable (EXO_JOB (job)),
-                                     &err);
-
-          g_free (source_path);
-
-          if (err == NULL)
-            new_files_list = thunar_g_file_list_prepend (new_files_list, sp->data);
-          else
+          /* queue the file for the folder update unless it was skipped */
+          if (sp->data != real_target_file)
             {
-              /* check if we have an error from which we can recover */
-              if (err->domain == G_IO_ERROR && err->code == G_IO_ERROR_EXISTS)
-                {
-                  /* ask the user whether he wants to overwrite the existing file */
-                  response = thunar_job_ask_overwrite (THUNAR_JOB (job), "%s", 
-                                                       err->message);
-
-                  /* release the error */
-                  g_clear_error (&err);
-
-                  /* try to delete the file */
-                  if (G_LIKELY (response == THUNAR_JOB_RESPONSE_YES))
-                    {
-                      /* try to remove the target file (fail if not possible) */
-                      if (g_file_delete (tp->data, exo_job_get_cancellable (EXO_JOB (job)), &err))
-                        goto again;
-                    }
-                }
+              new_files_list = thunar_g_file_list_prepend (new_files_list, 
+                                                           real_target_file);
             }
-        }
-      else
-        {
-          base_name = g_file_get_basename (sp->data);
-          display_name = g_filename_display_name (base_name);
-          g_set_error (&err, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
-                       _("Could not create symbolic link to \"%s\" "
-                         "because it is not a local file"), display_name);
-          g_free (display_name);
-          g_free (base_name);
+  
+          /* release the real target file */
+          g_object_unref (real_target_file);
         }
     }
 
