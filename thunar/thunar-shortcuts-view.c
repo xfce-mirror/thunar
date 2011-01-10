@@ -1,7 +1,7 @@
 /* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
  * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2011 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU General Public License as
@@ -854,8 +854,8 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
 
-      /* check if the volume is ejectable */
-      if (thunar_g_volume_is_removable (volume))
+      /* check if the volume is present and can be ejected */
+      if (thunar_g_volume_is_present (volume) && thunar_g_volume_is_removable (volume))
         {
           /* append the "Eject Volume" menu action */
           item = gtk_image_menu_item_new_with_mnemonic (_("E_ject Volume"));
