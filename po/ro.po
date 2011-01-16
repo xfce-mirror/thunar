@@ -2,53 +2,62 @@
 # Copyright (C) 2004-2007 Benedikt Meurer.
 # This file is distributed under the same license as the thunar package.
 # Mişu Moldovan <dumol@gnome.ro>, 2006-2007.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-28 19:01+0100\n"
+"POT-Creation-Date: 2011-01-16 05:20+0000\n"
 "PO-Revision-Date: 2007-11-16 23:31+0200\n"
 "Last-Translator: Mişu Moldovan <dumol@gnome.ro>\n"
 "Language-Team: Romanian <xfce-i18n@xfce.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3;plural=(n==1?0:(n==0||((n%100)>0&&(n%100)<20))?"
-"1:2)\n"
+"Plural-Forms: nplurals=3;plural=(n==1?0:(n==0||((n%100)>0&&(n%100)<20))?1:2)\n"
 
 #. base directory not readable
 #: ../thunar-vfs/thunar-vfs-deep-count-job.c:233
+#, c-format
 msgid "Failed to read folder contents"
 msgstr "Nu s-a putut citi conţinutul dosarului"
 
 #: ../thunar-vfs/thunar-vfs-exec.c:582
+#, c-format
 msgid "Unknown error"
 msgstr "Eroare necunoscută"
 
-#. TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is.
+#. TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it
+#. as-is.
 #: ../thunar-vfs/thunar-vfs-info.c:390
+#, c-format
 msgid "No Exec field specified"
 msgstr "Nu s-a specificat un câmp „Exec”"
 
-#. TRANSLATORS: `URL' is a field name in a .desktop file. You should leave it as-is.
+#. TRANSLATORS: `URL' is a field name in a .desktop file. You should leave it
+#. as-is.
 #: ../thunar-vfs/thunar-vfs-info.c:409
+#, c-format
 msgid "No URL field specified"
 msgstr "Nu s-a specificat un URL"
 
 #: ../thunar-vfs/thunar-vfs-info.c:414 ../thunar-vfs/thunar-vfs-private.c:384
+#, c-format
 msgid "Invalid desktop file"
 msgstr "Fişier desktop invalid"
 
 #: ../thunar-vfs/thunar-vfs-info.c:422
+#, c-format
 msgid "Failed to parse file"
 msgstr "Nu s-a putut analiza fişierul"
 
 #: ../thunar-vfs/thunar-vfs-info.c:503
+#, c-format
 msgid "Invalid file name"
 msgstr "Nume invalid de fişier"
 
 #: ../thunar-vfs/thunar-vfs-info.c:510
+#, c-format
 msgid "Only local files may be renamed"
 msgstr "Doar fişierele locale pot fi redenumite"
 
@@ -179,7 +188,8 @@ msgstr "Nu s-au putut găsi detalii despre „%s”"
 msgid "Failed to create directory \"%s\""
 msgstr "Nu s-a putut crea directorul „%s”"
 
-#. TRANSLATORS: FIFO is an acronym for First In, First Out. You can replace the word with `pipe'.
+#. TRANSLATORS: FIFO is an acronym for First In, First Out. You can replace
+#. the word with `pipe'.
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:514
 #, c-format
 msgid "Failed to create named fifo \"%s\""
@@ -192,10 +202,12 @@ msgid "Failed to create symbolic link \"%s\""
 msgstr "Nu s-a putut crea legătura simbolică „%s”"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:545
+#, c-format
 msgid "Special files cannot be copied"
 msgstr "Fişierele speciale nu pot fi copiate"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:625
+#, c-format
 msgid "Symbolic links are not supported"
 msgstr "Legăturile simbolice nu sunt suportate"
 
@@ -236,6 +248,7 @@ msgstr "Coş de gunoi"
 #. we don't support moving files within the trash
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1317
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1431
+#, c-format
 msgid "Cannot move or copy files within the trash"
 msgstr "Nu se pot muta ori copia fişiere în interiorul coşului de gunoi"
 
@@ -315,19 +328,24 @@ msgid "The URI \"%s\" is invalid"
 msgstr "URI-ul „%s” este invalid"
 
 #: ../thunar-vfs/thunar-vfs-path.c:800
+#, c-format
 msgid "Path too long to fit into buffer"
 msgstr "Cale prea lungă pentru a încăpea în memoria tampon"
 
 #: ../thunar-vfs/thunar-vfs-path.c:903
+#, c-format
 msgid "URI too long to fit into buffer"
 msgstr "URI prea lung pentru a încăpea în memoria tampon"
 
 #: ../thunar-vfs/thunar-vfs-private.c:233
+#, c-format
 msgid "Operation not supported"
 msgstr "Operaţiune nesuportată"
 
-#. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
+#. TRANSLATORS: This error indicates that an URI contains an invalid escaped
+#. character (RFC 2396)
 #: ../thunar-vfs/thunar-vfs-private.c:335
+#, c-format
 msgid "Invalidly escaped characters"
 msgstr "Caractere citate invalid"
 
@@ -345,6 +363,7 @@ msgid "Collecting files..."
 msgstr "Se colectează fişierele..."
 
 #: ../thunar-vfs/thunar-vfs-util.c:251
+#, c-format
 msgid "Invalid path"
 msgstr "Cale invalidă"
 
@@ -488,7 +507,8 @@ msgstr "Nu s-a putut lansa operaţiunea"
 msgid "Failed to execute \"%s\""
 msgstr "Nu s-a putut executa „%s”"
 
-#. tell the user that we were unable to launch the file specified on the cmdline
+#. tell the user that we were unable to launch the file specified on the
+#. cmdline
 #: ../thunar/thunar-application.c:1104
 #, c-format
 msgid "Failed to open \"%s\""
@@ -571,12 +591,8 @@ msgid "_Empty Trash"
 msgstr "Gol_eşte coşul"
 
 #: ../thunar/thunar-application.c:1519
-msgid ""
-"If you choose to empty the Trash, all items in it will be permanently lost. "
-"Please note that you can also delete them separately."
-msgstr ""
-"Dacă alegeţi să goliţi coşul de gunoi, toate elementele pe care le conţine "
-"vor fi permanent pierdute. Alternativ, le puteţi şterg câte unul, separat."
+msgid "If you choose to empty the Trash, all items in it will be permanently lost. Please note that you can also delete them separately."
+msgstr "Dacă alegeţi să goliţi coşul de gunoi, toate elementele pe care le conţine vor fi permanent pierdute. Alternativ, le puteţi şterg câte unul, separat."
 
 #: ../thunar/thunar-application.c:1536
 msgid "Emptying the Trash..."
@@ -598,12 +614,8 @@ msgstr "Creează dosa_r..."
 
 #: ../thunar/thunar-application.c:1628
 #, c-format
-msgid ""
-"The folder \"%s\" does not exist anymore, but it is required to restore the "
-"file \"%s\" from the trash. Do you want to create the folder again?"
-msgstr ""
-"Dosarul „%s” nu mai există, dar este necesar pentru a restaura fişierul „%s” "
-"din coşul de gunoi. Doriţi să creeaţi din nou dosarul?"
+msgid "The folder \"%s\" does not exist anymore, but it is required to restore the file \"%s\" from the trash. Do you want to create the folder again?"
+msgstr "Dosarul „%s” nu mai există, dar este necesar pentru a restaura fişierul „%s” din coşul de gunoi. Doriţi să creeaţi din nou dosarul?"
 
 #. display an error dialog
 #: ../thunar/thunar-application.c:1665
@@ -628,11 +640,8 @@ msgstr "Nici o aplicaţie nu e selectată"
 
 #: ../thunar/thunar-chooser-button.c:366
 #, c-format
-msgid ""
-"The selected application is used to open this and other files of type \"%s\"."
-msgstr ""
-"Aplicaţia selectată este utilizată pentru a deschide acest fişier şi altele "
-"de tip „%s”."
+msgid "The selected application is used to open this and other files of type \"%s\"."
+msgstr "Aplicaţia selectată este utilizată pentru a deschide acest fişier şi altele de tip „%s”."
 
 #. add the "Other Application..." choice
 #: ../thunar/thunar-chooser-button.c:504
@@ -649,12 +658,8 @@ msgid "Use a _custom command:"
 msgstr "Utilizează o _comandă personalizată:"
 
 #: ../thunar/thunar-chooser-dialog.c:295
-msgid ""
-"Use a custom command for an application that is not available from the above "
-"application list."
-msgstr ""
-"Utilizează o comandă personalizată pentru a asocia o aplicaţie ce nu apareîn "
-"lista de aplicaţii de mai sus."
+msgid "Use a custom command for an application that is not available from the above application list."
+msgstr "Utilizează o comandă personalizată pentru a asocia o aplicaţie ce nu apareîn lista de aplicaţii de mai sus."
 
 #. create the "Custom command" button
 #: ../thunar/thunar-chooser-dialog.c:314
@@ -685,20 +690,13 @@ msgstr "Deschide <i>%s</i> şi alte fişiere de tipul „%s” cu:"
 
 #: ../thunar/thunar-chooser-dialog.c:709
 #, c-format
-msgid ""
-"Browse the file system to select an application to open files of type \"%s\"."
-msgstr ""
-"Navigaţi în sistemul de fişiere pentru a selecta o aplicaţie pentru "
-"deschiderea fişierelor de tip „%s”."
+msgid "Browse the file system to select an application to open files of type \"%s\"."
+msgstr "Navigaţi în sistemul de fişiere pentru a selecta o aplicaţie pentru deschiderea fişierelor de tip „%s”."
 
 #: ../thunar/thunar-chooser-dialog.c:715
 #, c-format
-msgid ""
-"Change the default application for files of type \"%s\" to the selected "
-"application."
-msgstr ""
-"Schimbaţi aplicaţia implicită pentru fişierele de tipul „%s” cu aplicaţia "
-"selectată."
+msgid "Change the default application for files of type \"%s\" to the selected application."
+msgstr "Schimbaţi aplicaţia implicită pentru fişierele de tipul „%s” cu aplicaţia selectată."
 
 #: ../thunar/thunar-chooser-dialog.c:762
 #, c-format
@@ -707,17 +705,13 @@ msgstr "Sigur doriţi să ştergeţi „%s”?"
 
 #: ../thunar/thunar-chooser-dialog.c:768
 msgid ""
-"This will remove the application launcher that appears in the file context "
-"menu, but will not uninstall the application itself.\n"
+"This will remove the application launcher that appears in the file context menu, but will not uninstall the application itself.\n"
 "\n"
-"You can only remove application launchers that were created using the custom "
-"command box in the \"Open With\" dialog of the file manager."
+"You can only remove application launchers that were created using the custom command box in the \"Open With\" dialog of the file manager."
 msgstr ""
-"Această acţiune va şterge lansatorul aplicaţiei ce apare în meniul "
-"contextual al fişierelor, dar nu va dezinstala aplicaţia.\n"
+"Această acţiune va şterge lansatorul aplicaţiei ce apare în meniul contextual al fişierelor, dar nu va dezinstala aplicaţia.\n"
 "\n"
-"Nu puteţi şterge decât lansatoarele de aplicaţii create utilizând comenzi "
-"personalizate în dialogul „Deschide cu” al administratorului de fişiere."
+"Nu puteţi şterge decât lansatoarele de aplicaţii create utilizând comenzi personalizate în dialogul „Deschide cu” al administratorului de fişiere."
 
 #: ../thunar/thunar-chooser-dialog.c:809
 #: ../plugins/thunar-uca/thunar-uca-editor.c:492
@@ -880,11 +874,13 @@ msgstr "Nume invalid de fişier „%s”"
 
 #. LaunchFiles() invoked without a valid working directory
 #: ../thunar/thunar-dbus-service.c:721
+#, c-format
 msgid "The working directory must be an absolute path"
 msgstr "Directorul de lucru trebuie să fie o cale absolută"
 
 #. LaunchFiles() invoked with an empty filename list
 #: ../thunar/thunar-dbus-service.c:729
+#, c-format
 msgid "Atleast one filename must be specified"
 msgstr "Trebuie specificat cel puţin un nume de fişier"
 
@@ -964,9 +960,8 @@ msgstr "Acest director conţine deja un fişier „%s”."
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
 msgstr "Doriţi să înlocuiţi fişierul existent"
 
-#.
 #. Fourth box (size, volume, free space)
-#.
+#. 
 #: ../thunar/thunar-dialogs.c:495 ../thunar/thunar-dialogs.c:520
 #: ../thunar/thunar-properties-dialog.c:440
 msgid "Size:"
@@ -1034,9 +1029,8 @@ msgstr "Tip MIME"
 msgid "Owner"
 msgstr "Deţinător"
 
-#.
 #. Permissions chooser
-#.
+#. 
 #: ../thunar/thunar-enum-types.c:120 ../thunar/thunar-properties-dialog.c:513
 msgid "Permissions"
 msgstr "Drepturi"
@@ -1054,6 +1048,7 @@ msgid "File Name"
 msgstr "Nume fişier"
 
 #: ../thunar/thunar-file.c:796
+#, c-format
 msgid "The root folder has no parent"
 msgstr "Dosarul rădăcină nu are părinţi"
 
@@ -1078,9 +1073,7 @@ msgstr "Înainte în următorul dosar vizitat"
 #: ../thunar/thunar-icon-factory.c:754
 #, c-format
 msgid "Failed to load fallback icon from \"%s\" (%s). Check your installation!"
-msgstr ""
-"Nu s-a putut încărca iconiţa de rezervă din „%s” (%s). Verificaţi "
-"corectitudinea instalării!"
+msgstr "Nu s-a putut încărca iconiţa de rezervă din „%s” (%s). Verificaţi corectitudinea instalării!"
 
 #: ../thunar/thunar-icon-view.c:198
 msgid "Icon based directory listing"
@@ -1138,12 +1131,9 @@ msgstr "Sigur doriţi să deschideţi toate dosarele?"
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
-msgstr[0] ""
-"Această acţiune presupune deschiderea unei ferestre Thunar separate."
-msgstr[1] ""
-"Această acţiune presupune deschiderea a %d ferestre Thunar separate."
-msgstr[2] ""
-"Această acţiune presupune deschiderea a %d de ferestre Thunar separate."
+msgstr[0] "Această acţiune presupune deschiderea unei ferestre Thunar separate."
+msgstr[1] "Această acţiune presupune deschiderea a %d ferestre Thunar separate."
+msgstr[2] "Această acţiune presupune deschiderea a %d de ferestre Thunar separate."
 
 #: ../thunar/thunar-launcher.c:694
 #, c-format
@@ -1226,7 +1216,8 @@ msgstr[2] "Deschide fişierele selectate cu aplicaţiile implicite"
 msgid "Open With \"%s\""
 msgstr "Deschide cu „%s”"
 
-#. tell the user that we were unable to mount the volume, which is required to send files to it
+#. tell the user that we were unable to mount the volume, which is required to
+#. send files to it
 #. display an error dialog to inform the user
 #: ../thunar/thunar-launcher.c:1225 ../thunar/thunar-location-entry.c:639
 #: ../thunar/thunar-shortcuts-view.c:1344 ../thunar/thunar-tree-view.c:953
@@ -1302,10 +1293,12 @@ msgstr "„%s” (%s) legătură către %s"
 msgid "\"%s\" (%s) %s"
 msgstr "„%s” (%s) %s"
 
-#. TRANSLATORS: Try to come up with a short translation of "Original Path" (which is the path
-#. * where the trashed file/folder was located before it was moved to the trash), otherwise the
+#. TRANSLATORS: Try to come up with a short translation of "Original Path"
+#. (which is the path
+#. * where the trashed file/folder was located before it was moved to the
+#. trash), otherwise the
 #. * properties dialog width will be messed up.
-#.
+#. 
 #: ../thunar/thunar-list-model.c:2297 ../thunar/thunar-properties-dialog.c:362
 msgid "Original Path:"
 msgstr "Origine:"
@@ -1377,11 +1370,8 @@ msgstr "Creează un nou dosar în „%s”"
 
 #: ../thunar/thunar-location-buttons.c:1294
 #, c-format
-msgid ""
-"Move or copy files previously selected by a Cut or Copy command into \"%s\""
-msgstr ""
-"Mută sau copiază fişierele selectate anterior în „%s” utilizând una din "
-"comenzile „Taie” sau „Lipeşte”"
+msgid "Move or copy files previously selected by a Cut or Copy command into \"%s\""
+msgstr "Mută sau copiază fişierele selectate anterior în „%s” utilizând una din comenzile „Taie” sau „Lipeşte”"
 
 #: ../thunar/thunar-location-buttons.c:1300
 #, c-format
@@ -1519,13 +1509,8 @@ msgid "Do _not ask me again"
 msgstr "_Nu mai repeta această întrebare"
 
 #: ../thunar/thunar-permissions-chooser.c:586
-msgid ""
-"If you select this option your choice will be remembered and you won't be "
-"asked again. You can use the preferences dialog to alter your choice "
-"afterwards."
-msgstr ""
-"Dacă selectaţi această opţiune, alegerea vă va fi reţinută şi nu veţi mai fi "
-"întrebat din nou. Puteţi schimba această opţiune în preferinţele Thunar."
+msgid "If you select this option your choice will be remembered and you won't be asked again. You can use the preferences dialog to alter your choice afterwards."
+msgstr "Dacă selectaţi această opţiune, alegerea vă va fi reţinută şi nu veţi mai fi întrebat din nou. Puteţi schimba această opţiune în preferinţele Thunar."
 
 #. display an error to the user
 #: ../thunar/thunar-permissions-chooser.c:666
@@ -1551,22 +1536,15 @@ msgid "Correct folder permissions"
 msgstr "Correctează drepturile dosarului"
 
 #: ../thunar/thunar-permissions-chooser.c:1036
-msgid ""
-"The folder permissions will be reset to a consistent state. Only users "
-"allowed to read the contents of this folder will be allowed to enter the "
-"folder afterwards."
-msgstr ""
-"Drepturile dosarului vor fi resetate la o stare consistentă. Doar "
-"utilizatorii cu drepturi de citire a conţinutului dosarului vor mai putea "
-"intra apoi în acest dosar."
+msgid "The folder permissions will be reset to a consistent state. Only users allowed to read the contents of this folder will be allowed to enter the folder afterwards."
+msgstr "Drepturile dosarului vor fi resetate la o stare consistentă. Doar utilizatorii cu drepturi de citire a conţinutului dosarului vor mai putea intra apoi în acest dosar."
 
 #: ../thunar/thunar-preferences-dialog.c:228
 msgid "File Manager Preferences"
 msgstr "Preferinţe administrator de fişiere"
 
-#.
 #. Display
-#.
+#. 
 #: ../thunar/thunar-preferences-dialog.c:245
 msgid "Display"
 msgstr "Ecran"
@@ -1602,33 +1580,23 @@ msgstr "Sortează _dosarele înaintea fişierelor"
 
 #: ../thunar/thunar-preferences-dialog.c:288
 msgid "Select this option to list folders before files when you sort a folder."
-msgstr ""
-"Selectaţi această opţiune pentru a lista dosarele înaintea fişierelor la "
-"sortarea conţinutului unui dosar."
+msgstr "Selectaţi această opţiune pentru a lista dosarele înaintea fişierelor la sortarea conţinutului unui dosar."
 
 #: ../thunar/thunar-preferences-dialog.c:292
 msgid "_Show thumbnails"
 msgstr "Arată _miniaturi"
 
 #: ../thunar/thunar-preferences-dialog.c:294
-msgid ""
-"Select this option to display previewable files within a folder as "
-"automatically generated thumbnail icons."
-msgstr ""
-"Selectaţi această opţiune pentru a activa afişarea ca iconiţe miniaturale "
-"automat generate a fişierelor ce pot fi previzualizate."
+msgid "Select this option to display previewable files within a folder as automatically generated thumbnail icons."
+msgstr "Selectaţi această opţiune pentru a activa afişarea ca iconiţe miniaturale automat generate a fişierelor ce pot fi previzualizate."
 
 #: ../thunar/thunar-preferences-dialog.c:315
 msgid "_Text beside icons"
 msgstr "_Text lângă iconiţe"
 
 #: ../thunar/thunar-preferences-dialog.c:317
-msgid ""
-"Select this option to place the icon captions for items beside the icon "
-"rather than below the icon."
-msgstr ""
-"Selectaţi această opţiune pentru a plasa etichetele iconiţelor elementelor "
-"lângă şi nu sub iconiţe."
+msgid "Select this option to place the icon captions for items beside the icon rather than below the icon."
+msgstr "Selectaţi această opţiune pentru a plasa etichetele iconiţelor elementelor lângă şi nu sub iconiţe."
 
 #: ../thunar/thunar-preferences-dialog.c:326
 msgid "Date"
@@ -1639,9 +1607,8 @@ msgstr "Dată"
 msgid "_Format:"
 msgstr "_Format"
 
-#.
 #. Side Pane
-#.
+#. 
 #: ../thunar/thunar-preferences-dialog.c:362
 msgid "Side Pane"
 msgstr "Vedere laterală"
@@ -1694,12 +1661,8 @@ msgid "Show Icon _Emblems"
 msgstr "Arată _emblemele iconiţelor"
 
 #: ../thunar/thunar-preferences-dialog.c:408
-msgid ""
-"Select this option to display icon emblems in the shortcuts pane for all "
-"folders for which emblems have been defined in the folders properties dialog."
-msgstr ""
-"Selectaţi această opţiune pentru a afişa emblemele iconiţelor în dreptul "
-"scurtăturilor pentru toate dosarele cu embleme asociate."
+msgid "Select this option to display icon emblems in the shortcuts pane for all folders for which emblems have been defined in the folders properties dialog."
+msgstr "Selectaţi această opţiune pentru a afişa emblemele iconiţelor în dreptul scurtăturilor pentru toate dosarele cu embleme asociate."
 
 #: ../thunar/thunar-preferences-dialog.c:417
 msgid "Tree Pane"
@@ -1714,16 +1677,11 @@ msgid "Show Icon E_mblems"
 msgstr "Arată e_mblemele iconiţelor"
 
 #: ../thunar/thunar-preferences-dialog.c:453
-msgid ""
-"Select this option to display icon emblems in the tree pane for all folders "
-"for which emblems have been defined in the folders properties dialog."
-msgstr ""
-"Selectaţi această opţiune pentru a afişa emblemele iconiţelor în vederea de "
-"tip arbore pentru toate dosarele cu embleme asociate."
+msgid "Select this option to display icon emblems in the tree pane for all folders for which emblems have been defined in the folders properties dialog."
+msgstr "Selectaţi această opţiune pentru a afişa emblemele iconiţelor în vederea de tip arbore pentru toate dosarele cu embleme asociate."
 
-#.
 #. Behavior
-#.
+#. 
 #: ../thunar/thunar-preferences-dialog.c:462
 msgid "Behavior"
 msgstr "Comportament"
@@ -1745,19 +1703,8 @@ msgstr ""
 "selectat automat când se găseşte sub maus:"
 
 #: ../thunar/thunar-preferences-dialog.c:516
-msgid ""
-"When single-click activation is enabled, pausing the mouse pointer over an "
-"item will automatically select that item after the chosen delay. You can "
-"disable this behavior by moving the slider to the left-most position. This "
-"behavior may be useful when single clicks activate items, and you want only "
-"to select the item without activating it."
-msgstr ""
-"Când utilizaţi activarea prin clic simplu, oprirea cursorului de maus "
-"deasupra unui element va duce la selectarea sa automată după o întârziere "
-"predefinită. Puteţi dezactiva acest comportament trăgând glisorul alăturat "
-"până în marginea stângă. Acest comportament poate fi util atunci când un "
-"clic simplu ar activa elementul, dar se doreşte doar selectarea elementului, "
-"fără activarea sa."
+msgid "When single-click activation is enabled, pausing the mouse pointer over an item will automatically select that item after the chosen delay. You can disable this behavior by moving the slider to the left-most position. This behavior may be useful when single clicks activate items, and you want only to select the item without activating it."
+msgstr "Când utilizaţi activarea prin clic simplu, oprirea cursorului de maus deasupra unui element va duce la selectarea sa automată după o întârziere predefinită. Puteţi dezactiva acest comportament trăgând glisorul alăturat până în marginea stângă. Acest comportament poate fi util atunci când un clic simplu ar activa elementul, dar se doreşte doar selectarea elementului, fără activarea sa."
 
 #: ../thunar/thunar-preferences-dialog.c:534
 msgid "Disabled"
@@ -1775,9 +1722,8 @@ msgstr "Lungă"
 msgid "_Double click to activate items"
 msgstr "_Dublu-clic pentru activarea elementelor"
 
-#.
 #. Advanced
-#.
+#. 
 #: ../thunar/thunar-preferences-dialog.c:562
 msgid "Advanced"
 msgstr "Avansate"
@@ -1833,17 +1779,18 @@ msgstr ""
 msgid "Enable _Volume Management"
 msgstr "Activează administrarea de _volume"
 
-#. TRANSLATORS: Make sure you place the <a>...</a>-link on the first line, otherwise the user will be unable to click on it
+#. TRANSLATORS: Make sure you place the <a>...</a>-link on the first line,
+#. otherwise the user will be unable to click on it
 #: ../thunar/thunar-preferences-dialog.c:657
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives\n"
 "and media (i.e. how cameras should be handled)."
 msgstr ""
-"<a href=\"volman-config:\">Configuraţi</a> administrarea unităţilor "
-"movibile\n"
+"<a href=\"volman-config:\">Configuraţi</a> administrarea unităţilor movibile\n"
 "(de exemplu cum ar trebui să fie tratate camerele foto)."
 
-#. tell the user that we failed to come up with the thunar-volman configuration dialog
+#. tell the user that we failed to come up with the thunar-volman
+#. configuration dialog
 #: ../thunar/thunar-preferences-dialog.c:718
 msgid "Failed to display the volume management settings"
 msgstr "Nu s-au putut afişa preferinţele pentru administrarea de volume"
@@ -1880,9 +1827,8 @@ msgstr "Generale"
 msgid "Name:"
 msgstr "Nume:"
 
-#.
 #. Second box (kind, open with, link target)
-#.
+#. 
 #: ../thunar/thunar-properties-dialog.c:308
 msgid "Kind:"
 msgstr "Tip:"
@@ -1895,9 +1841,8 @@ msgstr "Deschide cu:"
 msgid "Link Target:"
 msgstr "Ţintă legătură:"
 
-#.
 #. Third box (deleted, modified, accessed)
-#.
+#. 
 #: ../thunar/thunar-properties-dialog.c:387
 msgid "Deleted:"
 msgstr "Şters:"
@@ -1914,9 +1859,8 @@ msgstr "Volum:"
 msgid "Free Space:"
 msgstr "Spaţiu liber:"
 
-#.
 #. Emblem chooser
-#.
+#. 
 #: ../thunar/thunar-properties-dialog.c:502
 msgid "Emblems"
 msgstr "Embleme"
@@ -2000,8 +1944,7 @@ msgid "_Rename Files"
 msgstr "R_edenumeşte fişierele"
 
 #: ../thunar/thunar-renamer-dialog.c:371
-msgid ""
-"Click here to actually rename the files listed above to their new names."
+msgid "Click here to actually rename the files listed above to their new names."
 msgstr "Daţi clic aici pentru a redenumi fişierele de mai sus cu noile nume."
 
 #: ../thunar/thunar-renamer-dialog.c:443
@@ -2010,13 +1953,13 @@ msgstr "Nume nou"
 
 #: ../thunar/thunar-renamer-dialog.c:508
 msgid "Click here to view the documentation for the selected rename operation."
-msgstr ""
-"Daţi clic aici pentru a deschide documentaţia pentru operaţiunea de "
-"redenumire a elementelor selectate."
+msgstr "Daţi clic aici pentru a deschide documentaţia pentru operaţiunea de redenumire a elementelor selectate."
 
-#. TRANSLATORS: You can test this string by temporarily removing thunar-sbr.* from $libdir/thunarx-1/,
-#. *              and opening the multi rename dialog by selecting multiple files and pressing F2.
-#.
+#. TRANSLATORS: You can test this string by temporarily removing thunar-sbr.*
+#. from $libdir/thunarx-1/,
+#. *              and opening the multi rename dialog by selecting multiple
+#. files and pressing F2.
+#. 
 #: ../thunar/thunar-renamer-dialog.c:616
 msgid ""
 "No renamer modules were found on your system. Please check your\n"
@@ -2083,15 +2026,8 @@ msgid "Failed to rename \"%s\" to \"%s\"."
 msgstr "Nu s-a putut redenumi „%s” în „%s”."
 
 #: ../thunar/thunar-renamer-progress.c:221
-msgid ""
-"You can either choose to skip this file and continue to rename the remaining "
-"files, or revert the previously renamed files to their previous names, or "
-"cancel the operation without reverting previous changes."
-msgstr ""
-"Puteţi alege să omiteţi acest fişier şi să continuaţi să redenumiţi "
-"fişierele rămase, puteţi reveni la vechile nume pentru fişierele deja "
-"redenumite sau puteţi opri acţiunea de redenumire fără a schimba fişierele "
-"deja redenumite."
+msgid "You can either choose to skip this file and continue to rename the remaining files, or revert the previously renamed files to their previous names, or cancel the operation without reverting previous changes."
+msgstr "Puteţi alege să omiteţi acest fişier şi să continuaţi să redenumiţi fişierele rămase, puteţi reveni la vechile nume pentru fişierele deja redenumite sau puteţi opri acţiunea de redenumire fără a schimba fişierele deja redenumite."
 
 #: ../thunar/thunar-renamer-progress.c:226
 msgid "_Revert Changes"
@@ -2103,10 +2039,8 @@ msgid "_Skip This File"
 msgstr "_Omite acest fişier"
 
 #: ../thunar/thunar-renamer-progress.c:233
-msgid ""
-"Do you want to skip this file and continue to rename the remaining files?"
-msgstr ""
-"Doriţi să omiteţi acest fişier şi să continuaţi acţiunea de redenumire?"
+msgid "Do you want to skip this file and continue to rename the remaining files?"
+msgstr "Doriţi să omiteţi acest fişier şi să continuaţi acţiunea de redenumire?"
 
 #: ../thunar/thunar-shortcuts-pane.c:413
 msgid "Side Pane (Create Shortcut)"
@@ -2221,9 +2155,7 @@ msgstr "_Lipeşte"
 
 #: ../thunar/thunar-standard-view.c:327
 msgid "Move or copy files previously selected by a Cut or Copy command"
-msgstr ""
-"Mută sau copiază fişierele anterior selectate cu o comandă de tip „Taie” sau "
-"„Copiază”"
+msgstr "Mută sau copiază fişierele anterior selectate cu o comandă de tip „Taie” sau „Copiază”"
 
 #. append the "Delete" menu action
 #: ../thunar/thunar-standard-view.c:328 ../thunar/thunar-tree-view.c:1156
@@ -2231,12 +2163,8 @@ msgid "_Delete"
 msgstr "Şter_ge"
 
 #: ../thunar/thunar-standard-view.c:329
-msgid ""
-"Move or copy files previously selected by a Cut or Copy command into the "
-"selected folder"
-msgstr ""
-"Mută sau copiază în dosarul ales fişierele anterior selectate cu o comandă "
-"de tip „Taie” sau „Copiază”"
+msgid "Move or copy files previously selected by a Cut or Copy command into the selected folder"
+msgstr "Mută sau copiază în dosarul ales fişierele anterior selectate cu o comandă de tip „Taie” sau „Copiază”"
 
 #: ../thunar/thunar-standard-view.c:330
 msgid "Select _all Files"
@@ -2319,7 +2247,8 @@ msgstr "Redenumeşte „%s”"
 msgid "_Rename"
 msgstr "_Redenumeşte"
 
-#. tell the user that the file name provided by the X Direct Save source is invalid
+#. tell the user that the file name provided by the X Direct Save source is
+#. invalid
 #: ../thunar/thunar-standard-view.c:2582
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Nume de fişier invalid de la sursa XDS"
@@ -2339,20 +2268,15 @@ msgstr "Nu s-a putut deschide directorul „%s”"
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Pregăteşte fişierul selectat pentru a fi mutat cu comanda „Lipeşte”"
-msgstr[1] ""
-"Pregăteşte fişierele selectate pentru a fi mutate cu comanda „Lipeşte”"
-msgstr[2] ""
-"Pregăteşte fişierele selectate pentru a fi mutate cu comanda „Lipeşte”"
+msgstr[1] "Pregăteşte fişierele selectate pentru a fi mutate cu comanda „Lipeşte”"
+msgstr[2] "Pregăteşte fişierele selectate pentru a fi mutate cu comanda „Lipeşte”"
 
 #: ../thunar/thunar-standard-view.c:3359
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
-msgstr[0] ""
-"Pregăteşte fişierul selectat pentru a fi copiat cu comanda „Lipeşte”"
-msgstr[1] ""
-"Pregăteşte fişierele selectate pentru a fi copiate cu comanda „Lipeşte”"
-msgstr[2] ""
-"Pregăteşte fişierele selectate pentru a fi copiate cu comanda „Lipeşte”"
+msgstr[0] "Pregăteşte fişierul selectat pentru a fi copiat cu comanda „Lipeşte”"
+msgstr[1] "Pregăteşte fişierele selectate pentru a fi copiate cu comanda „Lipeşte”"
+msgstr[2] "Pregăteşte fişierele selectate pentru a fi copiate cu comanda „Lipeşte”"
 
 #: ../thunar/thunar-standard-view.c:3370
 msgid "Delete the selected file"
@@ -2635,9 +2559,8 @@ msgstr "_Bară de stare"
 msgid "Change the visibility of this window's statusbar"
 msgstr "Arată sau ascunde bara de stare a ferestrei"
 
-#.
 #. * add view options
-#.
+#. 
 #: ../thunar/thunar-window.c:657
 msgid "View as _Icons"
 msgstr "Arată ca _iconiţe"
@@ -2683,24 +2606,17 @@ msgstr "Despre şabloane"
 
 #: ../thunar/thunar-window.c:1860
 msgid "All files in this folder will appear in the \"Create Document\" menu."
-msgstr ""
-"Toate fişierele din acest dosar vor apărea în meniul „Creează un document”."
+msgstr "Toate fişierele din acest dosar vor apărea în meniul „Creează un document”."
 
 #: ../thunar/thunar-window.c:1867
 msgid ""
-"If you frequently create certain kinds of documents, make a copy of one and "
-"put it in this folder. Thunar will add an entry for this document in the "
-"\"Create Document\" menu.\n"
+"If you frequently create certain kinds of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
-"You can then select the entry from the \"Create Document\" menu and a copy "
-"of the document will be created in the directory you are viewing."
+"You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr ""
-"În cazul în care creaţi frecvent un anumit tip de document, copiaţi un "
-"exemplar în acest dosar. În Thunar se va adăuga o intrare pentru acest "
-"document în meniul „Creează un document”.\n"
+"În cazul în care creaţi frecvent un anumit tip de document, copiaţi un exemplar în acest dosar. În Thunar se va adăuga o intrare pentru acest document în meniul „Creează un document”.\n"
 "\n"
-"Apoi, prin selectarea noii intrări din meniul „Creează un document”, veţi "
-"copia un exemplar al acestui document în dosarul curent."
+"Apoi, prin selectarea noii intrări din meniul „Creează un document”, veţi copia un exemplar al acestui document în dosarul curent."
 
 #: ../thunar/thunar-window.c:1879
 msgid "Do _not display this message again"
@@ -2769,9 +2685,7 @@ msgid "Description:"
 msgstr "Descriere:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:165
-msgid ""
-"The generic name of the entry, for example \"Web Browser\" in case of "
-"Firefox."
+msgid "The generic name of the entry, for example \"Web Browser\" in case of Firefox."
 msgstr "Numele generic al intrării, de exemplu „Navigator web” pentru Firefox."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:181
@@ -2795,12 +2709,8 @@ msgid "Comment:"
 msgstr "Comentariu:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:232
-msgid ""
-"Tooltip for the entry, for example \"View sites on the Internet\" in case of "
-"Firefox. Should not be redundant with the name or the description."
-msgstr ""
-"Indiciu pentru intrare, de exemplu „Vizitaţi adrese Internet” pentru "
-"Firefox. Nu ar trebui să repete numele descriptiv."
+msgid "Tooltip for the entry, for example \"View sites on the Internet\" in case of Firefox. Should not be redundant with the name or the description."
+msgstr "Indiciu pentru intrare, de exemplu „Vizitaţi adrese Internet” pentru Firefox. Nu ar trebui să repete numele descriptiv."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:252
 msgid "Options:"
@@ -2811,13 +2721,8 @@ msgid "Use _startup notification"
 msgstr "Utilizează _notificare la pornire"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:259
-msgid ""
-"Select this option to enable startup notification when the command is run "
-"from the file manager or the menu. Not every application supports startup "
-"notification."
-msgstr ""
-"Selectaţi această opţiune pentru a activa notificarea la pornire atunci când "
-"comanda este executată din administratorul de fişiere sau dintr-un meniu. "
+msgid "Select this option to enable startup notification when the command is run from the file manager or the menu. Not every application supports startup notification."
+msgstr "Selectaţi această opţiune pentru a activa notificarea la pornire atunci când comanda este executată din administratorul de fişiere sau dintr-un meniu. "
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:266
 msgid "Run in _terminal"
@@ -2914,17 +2819,12 @@ msgid "Uppercase / Lowercase"
 msgstr "Majuscule / Minuscule"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:202
-#, fuzzy
 msgid "Insert _time:"
-msgstr "Inserează"
+msgstr "Inserează _ora:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:231
-msgid ""
-"The format describes the date and time parts to insert into the file name. "
-"For example, %Y will be substituted with the year, %m with the month and %d "
-"with the day. See the documentation of the date utility for additional "
-"information."
-msgstr ""
+msgid "The format describes the date and time parts to insert into the file name. For example, %Y will be substituted with the year, %m with the month and %d with the day. See the documentation of the date utility for additional information."
+msgstr "Formatul descrie data și ora de inserat în numele fișierului. De exemplu, %Y  va fi substituit cu anul curent, %m cu luna în curs și %d cu ziua de azi. Consultați documentația comenzii „date” pentru detalii suplimentare."
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:250
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:199
@@ -2932,9 +2832,8 @@ msgid "_At position:"
 msgstr "_La poziţie:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:593
-#, fuzzy
 msgid "Insert Date / Time"
-msgstr "Inserare / Suprascriere"
+msgstr "Inserează data/ora"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:93
 msgid "lowercase"
@@ -3002,12 +2901,11 @@ msgstr "Număr- Text"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:134
 msgid "Current"
-msgstr ""
+msgstr "Curentă"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:138
-#, fuzzy
 msgid "Date Picture Taken"
-msgstr "Data fotografierii:"
+msgstr "Data fotografierii"
 
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:181
 #: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:260
@@ -3061,36 +2959,24 @@ msgid "Regular _Expression"
 msgstr "_Expresii regulare"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:231
-msgid ""
-"If you enable this option, the pattern will be treated as a regular "
-"expression and matched using the Perl-compatible regular expressions (PCRE). "
-"Check the documentation for details about the regular expression syntax."
-msgstr ""
-"La activarea acestei opţiuni, expresia va fi tratată ca o expresie regulară "
-"şi potrivirile se vor verifica utilizând regulile Perl regexp (PCRE). "
-"Verificaţi documentaţia pentru detalii despre sintaxa expresiilor regulare."
+msgid "If you enable this option, the pattern will be treated as a regular expression and matched using the Perl-compatible regular expressions (PCRE). Check the documentation for details about the regular expression syntax."
+msgstr "La activarea acestei opţiuni, expresia va fi tratată ca o expresie regulară şi potrivirile se vor verifica utilizând regulile Perl regexp (PCRE). Verificaţi documentaţia pentru detalii despre sintaxa expresiilor regulare."
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:238
 msgid "Replace _With:"
 msgstr "Înlocuieşte c_u:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:246
-msgid ""
-"Enter the text that should be used as replacement for the pattern above."
-msgstr ""
-"Introduceţi textul de utilizat ca înlocuitor pentru potrivirea de mai sus."
+msgid "Enter the text that should be used as replacement for the pattern above."
+msgstr "Introduceţi textul de utilizat ca înlocuitor pentru potrivirea de mai sus."
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:258
 msgid "C_ase Sensitive Search"
 msgstr "Căutare sensibilă la _majuscule"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:260
-msgid ""
-"If you enable this option, the pattern will be searched in a case-sensitive "
-"manner. The default is to use a case-insensitive search."
-msgstr ""
-"Dacă activaţi această opţiune, expresia va fi căutată ţinându-se cont de "
-"majuscule. Implicit nu se va diferenţia între literele mari şi cele mici."
+msgid "If you enable this option, the pattern will be searched in a case-sensitive manner. The default is to use a case-insensitive search."
+msgstr "Dacă activaţi această opţiune, expresia va fi căutată ţinându-se cont de majuscule. Implicit nu se va diferenţia între literele mari şi cele mici."
 
 #. setup a tooltip with the error message
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:620
@@ -3117,14 +3003,8 @@ msgid "Send com_pressed"
 msgstr "Trimite com_primat"
 
 #: ../plugins/thunar-sendto-email/main.c:181
-msgid ""
-"When sending a file via email, you can either choose to send the file "
-"directly, as is, or compress the file before attaching it to an email. It is "
-"highly recommended to compress large files before sending them."
-msgstr ""
-"Când trimiteţi un fişier prin mail puteţi trimite fişierul nemodificat sau "
-"îl puteţi comprima înainte de a-l ataşa unui mail. Este recomandat să "
-"comprimaţi fişierele mari înainte de a le trimite."
+msgid "When sending a file via email, you can either choose to send the file directly, as is, or compress the file before attaching it to an email. It is highly recommended to compress large files before sending them."
+msgstr "Când trimiteţi un fişier prin mail puteţi trimite fişierul nemodificat sau îl puteţi comprima înainte de a-l ataşa unui mail. Este recomandat să comprimaţi fişierele mari înainte de a le trimite."
 
 #: ../plugins/thunar-sendto-email/main.c:192
 #, c-format
@@ -3139,15 +3019,8 @@ msgid "Send as _archive"
 msgstr "Trimite ca ar_hivă"
 
 #: ../plugins/thunar-sendto-email/main.c:200
-msgid ""
-"When sending multiple files via email, you can either choose to send the "
-"files directly, attaching multiple files to an email, or send all files "
-"compressed into a single archive file and attach the archive. It is highly "
-"recommended to send multiple large files as archive."
-msgstr ""
-"Când trimiteţi mai multe fişiere prin mail le puteţi trimite direct sau le "
-"puteţi comprima într-o singură arhivă şi să trimiteţi arhiva. Este "
-"recomandat să trimiteţi multiple fişiere mari ca o arhivă."
+msgid "When sending multiple files via email, you can either choose to send the files directly, attaching multiple files to an email, or send all files compressed into a single archive file and attach the archive. It is highly recommended to send multiple large files as archive."
+msgstr "Când trimiteţi mai multe fişiere prin mail le puteţi trimite direct sau le puteţi comprima într-o singură arhivă şi să trimiteţi arhiva. Este recomandat să trimiteţi multiple fişiere mari ca o arhivă."
 
 #. allocate the progress dialog
 #. setup the label
@@ -3259,9 +3132,8 @@ msgstr "Creare acţiune"
 msgid "Failed to save actions to disk."
 msgstr "Nu s-au putut salva pe disc acţiunile."
 
-#.
 #. Basic
-#.
+#. 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:135
 msgid "Basic"
 msgstr "Iniţiale"
@@ -3279,38 +3151,20 @@ msgid "_Description:"
 msgstr "_Descriere:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:167
-msgid ""
-"The description of the action that will be displayed as tooltip in the "
-"statusbar when selecting the item from the context menu."
-msgstr ""
-"Descriere a acţiunii pentru afişarea ca indiciu în bara de stare când acest "
-"element este selectat în meniul contextual."
+msgid "The description of the action that will be displayed as tooltip in the statusbar when selecting the item from the context menu."
+msgstr "Descriere a acţiunii pentru afişarea ca indiciu în bara de stare când acest element este selectat în meniul contextual."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:180
 msgid "_Command:"
 msgstr "_Comandă:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:189
-msgid ""
-"The command (including the necessary parameters) to perform the action. See "
-"the command parameter legend below for a list of supported parameter "
-"variables, which will be substituted when launching the command. When upper-"
-"case letters (e.g. %F, %D, %N) are used, the action will be applicable even "
-"if more than one item is selected. Else the action will only be applicable "
-"if exactly one item is selected."
-msgstr ""
-"Comanda (inclusiv parametrii necesari) pentru efectuarea acestei acţiuni. "
-"Consultaţi lista de mai jos a parametrilor suportaţi pentru care se vor face "
-"substituiri la executarea comenzii. Când se utilizează litere mari (de ex.: %"
-"F, %D, %N), acţiunea va fi aplicată chiar dacă sunt selectate două sau mai "
-"multe elemente. Altfel, acţiunea se va aplica doar dacă un singur element "
-"este selectat."
+msgid "The command (including the necessary parameters) to perform the action. See the command parameter legend below for a list of supported parameter variables, which will be substituted when launching the command. When upper-case letters (e.g. %F, %D, %N) are used, the action will be applicable even if more than one item is selected. Else the action will only be applicable if exactly one item is selected."
+msgstr "Comanda (inclusiv parametrii necesari) pentru efectuarea acestei acţiuni. Consultaţi lista de mai jos a parametrilor suportaţi pentru care se vor face substituiri la executarea comenzii. Când se utilizează litere mari (de ex.: %F, %D, %N), acţiunea va fi aplicată chiar dacă sunt selectate două sau mai multe elemente. Altfel, acţiunea se va aplica doar dacă un singur element este selectat."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:200
 msgid "Browse the file system to select an application to use for this action."
-msgstr ""
-"Navigare în sistemul de fişiere pentru selectarea unei aplicaţii de utilizat "
-"pentru această acţiune."
+msgstr "Navigare în sistemul de fişiere pentru selectarea unei aplicaţii de utilizat pentru această acţiune."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:216
 msgid "_Icon:"
@@ -3323,12 +3177,8 @@ msgid "No icon"
 msgstr "Fără iconiţă"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:225
-msgid ""
-"Click this button to select an icon file that will be displayed in the "
-"context menu in addition to the action name chosen above."
-msgstr ""
-"Daţi click pe acest buton pentru a selecta o iconiţă ce va fi afişată în "
-"meniul contextual în dreptul numelui acţiunii selectate mai sus."
+msgid "Click this button to select an icon file that will be displayed in the context menu in addition to the action name chosen above."
+msgstr "Daţi click pe acest buton pentru a selecta o iconiţă ce va fi afişată în meniul contextual în dreptul numelui acţiunii selectate mai sus."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:256
 msgid ""
@@ -3373,16 +3223,8 @@ msgid "_File Pattern:"
 msgstr "Tip de _fişiere:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:381
-msgid ""
-"Enter a list of patterns that will be used to determine whether this action "
-"should be displayed for a selected file. If you specify more than one "
-"pattern here, the list items must be separated with semicolons (e.g. *.txt;*."
-"doc)."
-msgstr ""
-"Introduceţi o listă de tipuri de fişiere ce va fi utilizată pentru a "
-"determina dacă această acţiune va fi afişată pentru fişierul selectat. Dacă "
-"specificaţi mai mult de un tip de fişiere aici, elementele listei trebuie "
-"separate prin „punct şi virgulă” (de ex.: *.txt;*.doc)."
+msgid "Enter a list of patterns that will be used to determine whether this action should be displayed for a selected file. If you specify more than one pattern here, the list items must be separated with semicolons (e.g. *.txt;*.doc)."
+msgstr "Introduceţi o listă de tipuri de fişiere ce va fi utilizată pentru a determina dacă această acţiune va fi afişată pentru fişierul selectat. Dacă specificaţi mai mult de un tip de fişiere aici, elementele listei trebuie separate prin „punct şi virgulă” (de ex.: *.txt;*.doc)."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:400
 msgid "Appears if selection contains:"
@@ -3442,6 +3284,7 @@ msgid "Unknown element <%s>"
 msgstr "Element necunoscut <%s>"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:798
+#, c-format
 msgid "End element handler called while in root context"
 msgstr "Apel în cel mai de jos context pentru un descriptor de element final"
 
@@ -3450,11 +3293,13 @@ msgstr "Apel în cel mai de jos context pentru un descriptor de element final"
 msgid "Unknown closing element <%s>"
 msgstr "Element de închidere necunoscut <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1318
+#: ../plugins/thunar-uca/thunar-uca-model.c:1332
+#, c-format
 msgid "Failed to determine save location for uca.xml"
 msgstr "Nu s-a putut determina locaţia de salvare pentru uca.xml"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1433
+#: ../plugins/thunar-uca/thunar-uca-model.c:1447
+#, c-format
 msgid "Command not configured"
 msgstr "Comandă neconfigurată"
 
@@ -3463,11 +3308,8 @@ msgid "Configure c_ustom actions..."
 msgstr "Acţi_uni personalizate..."
 
 #: ../plugins/thunar-uca/thunar-uca-provider.c:189
-msgid ""
-"Setup custom actions that will appear in the file managers context menus"
-msgstr ""
-"Definiţi acţiunile personalizate ce vor apărea în meniurile contextuale ale "
-"admistratorului de fişiere"
+msgid "Setup custom actions that will appear in the file managers context menus"
+msgstr "Definiţi acţiunile personalizate ce vor apărea în meniurile contextuale ale admistratorului de fişiere"
 
 #: ../plugins/thunar-uca/thunar-uca-provider.c:406
 #, c-format
