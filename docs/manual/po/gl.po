@@ -321,7 +321,7 @@ msgstr "Seleccione <menuchoice><guimenu>Ficheiro</guimenu><guimenuitem>Abrir con
 
 #: Thunar.xml270(para)
 msgid "Either choose an application in the <guilabel>Open With</guilabel> dialog or select <guibutton>Use a custom command</guibutton> and browse to the program with which you wish to open this type."
-msgstr "Pode escoller un aplicativo no diálogo <guilabel>Abrir con</guilabel> ou seleccionar <guibutton>Usar un comando personalizado</guibutton> e buscar o programa co que desexa abrir este tipo de ficheiro."
+msgstr "Pode escoller un aplicativo no diálogo <guilabel>Abrir con</guilabel> ou seleccionar <guibutton>Usar unha orde personalizada</guibutton> e buscar o programa co que desexa abrir este tipo de ficheiro."
 
 #: Thunar.xml277(para)
 msgid "The action you have chosen is now added to the list of actions for that particular file type. If you enabled the <guibutton>Use as default for this kind of file</guibutton> option or there was no prior action associated with the type, the newly added action is the default."
@@ -445,7 +445,7 @@ msgstr "Aínda así esta notificación só se mostrará se se activou o soporte 
 
 #: Thunar.xml464(para)
 msgid "Be aware that you cannot eject or unmount media that is still in use by one or more applications. Therefore if the file manager refuses to eject media, make sure you close all applications that were accessing the media, and be sure to also check command line applications running in <application>Terminal</application> windows."
-msgstr "Teña en conta que non pode expulsar ou desmontar soportes que aínda están en uso por un ou máis aplicativos. Polo tanto se o xestor de ficheiros rexeita expulsar os soportes, asegúrese de que pechou todos os aplicativos que estaban accedendo aos soportes, e asegúrese de comprobar tamén os aplicativos de liña de comandos que se executen nas xanelas de <application>Terminal</application>."
+msgstr "Teña en conta que non pode expulsar ou desmontar soportes que aínda están en uso por un ou máis aplicativos. Polo tanto se o xestor de ficheiros rexeita expulsar os soportes, asegúrese de que pechou todos os aplicativos que estaban accedendo aos soportes, e asegúrese de comprobar tamén os aplicativos de liña de ordes que se executen nas xanelas de <application>Terminal</application>."
 
 #: Thunar.xml470(para)
 msgid "Make sure to unmount removable media before ejecting. Do not eject a diskette from the floppy drive before your unmount the diskette. Do not remove an USB stick before you unmount the flash drive. If you do not unmount the media first you might lose data or cause your system to crash."
@@ -489,7 +489,7 @@ msgstr "Active esta opción para montar automaticamente os sistemas de ficheiros
 
 #: Thunar.xml533(para)
 msgid "This option must be enabled for certain other features to work with removable drives. For example, if you disable this option, certain kinds of portable music players cannot be detected any more and so, even if you enabled the <guilabel>Play music files when connected</guilabel> option on the <guilabel>Multimedia</guilabel> page, the specified command will not be run when you hot-plug your portable music player."
-msgstr "Esta opción debe estar activada para que algunha outra funcionalidade funcione cas unidades extraíbles. Por exemplo, se desactiva esta opción, certos tipos de reprodutores de música portátiles non se detectarán, aínda que active a opción <guilabel>Reproducir os ficheiros de música ao conectar</guilabel> da páxina <guilabel>Multimedia</guilabel>, o comando especificado non se executará cando conecte o reprodutor de música portátil."
+msgstr "Esta opción debe estar activada para que algunha outra funcionalidade funcione cas unidades extraíbles. Por exemplo, se desactiva esta opción, certos tipos de reprodutores de música portátiles non se detectarán, aínda que active a opción <guilabel>Reproducir os ficheiros de música ao conectar</guilabel> da páxina <guilabel>Multimedia</guilabel>, a orde especificada non se executará cando conecte o reprodutor de música portátil."
 
 #: Thunar.xml544(guilabel)
 msgid "Mount removable media when inserted"
@@ -533,7 +533,7 @@ msgstr ""
 
 #: Thunar.xml602(para)
 msgid "The remaining options allow you to specify a command to run when a certain kind of media is inserted into a drive or a certain kind of external device is connected. The command can use three special variables, that will be substituted when the command is run:"
-msgstr "As opcións restantes permítenlle especificar un comando para executar cando certo tipo de soporte se insire nunha unidade ou cando se conecta certo tipo de dispositivo externo. O comando pode usar tres variables especiais, que se substituirán cando se execute o comando:"
+msgstr "As opcións restantes permítenlle especificar unha orde para executar cando certo tipo de soporte se insire nunha unidade ou cando se conecta certo tipo de dispositivo externo. A orde pode usar tres variables especiais, que se substituirán cando se execute a orde:"
 
 #: Thunar.xml610(literal)
 msgid "%d"
@@ -541,7 +541,7 @@ msgstr "%d"
 
 #: Thunar.xml612(para)
 msgid "Each appearance of <literal>%d</literal> in the command will be substituted with the device file path of the newly added device. For example, if you have plugged in an USB stick, the device file path will be <filename>/dev/da0s1</filename> or <filename>/dev/sda1</filename>."
-msgstr "Cada aparición de <literal>%d</literal> no comando substituirase ca ruta do ficheiro do dispositivo do dispositivo recén engadido. Por exemplo, se conectou unha memoria USB, a ruta do ficheiro de dispositivo será <filename>/dev/da0s1</filename> ou <filename>/dev/sda1</filename>."
+msgstr "Cada aparición de <literal>%d</literal> na orde substituirase ca ruta do ficheiro do dispositivo do dispositivo recén engadido. Por exemplo, se conectou unha memoria USB, a ruta do ficheiro de dispositivo será <filename>/dev/da0s1</filename> ou <filename>/dev/sda1</filename>."
 
 #: Thunar.xml617(para)
 msgid "If no device file is associated with the device or the device file could not be found for some reason, the variable <literal>%d</literal> will be substituted with the empty string."
@@ -553,7 +553,7 @@ msgstr "%h"
 
 #: Thunar.xml627(para)
 msgid "Each appearance of <literal>%h</literal> in the command will be substituted with the HAL UDI of the newly added device."
-msgstr "Cada aparición de <literal>%h</literal> no comando substituirase polo UDI de HAL do novo dispositivo engadido."
+msgstr "Cada aparición de <literal>%h</literal> na orde substituirase polo UDI de HAL do novo dispositivo engadido."
 
 #: Thunar.xml635(literal)
 msgid "%m"
@@ -561,7 +561,7 @@ msgstr "%m"
 
 #: Thunar.xml637(para)
 msgid "Each appearance of <literal>%m</literal> in the command will be substituted with the mount point where the newly added device was mounted. If the device cannot be mounted (for example printers or keyboards) or if the automatic mounting was disabled, <literal>%m</literal> will be substituted with the empty string."
-msgstr "Cada aparición de <literal>%m</literal> no comando substituirase polo punto de montaxe onde se montou o novo dispositivo engadido. Se non se pode montar o dispositivo (por exemplo as impresoras ou os teclados) ou se se desactivou a montaxe automática, <literal>%m</literal> substituirase por unha cadea baleira."
+msgstr "Cada aparición de <literal>%m</literal> na orde substituirase polo punto de montaxe onde se montou o novo dispositivo engadido. Se non se pode montar o dispositivo (por exemplo as impresoras ou os teclados) ou se se desactivou a montaxe automática, <literal>%m</literal> substituirase por unha cadea baleira."
 
 #: Thunar.xml648(title)
 msgid "Troubleshooting the Volume Manager"
@@ -826,7 +826,7 @@ msgstr "Thunar usa pequenas utilidades para crear miniaturas de certos tipos de 
 
 #: Thunar.xml1045(para)
 msgid "If you plan to write a custom thumbnailers, you need to start with a program that accepts atleast two command line parameters, the input file, which is of the file type you plan to support and the output file, which is a PNG file that complies with the format specified by the <ulink type=\"http\" url=\"http://jens.triq.net/thumbnail-spec/creation.html#AEN139\">Thumbnail Management Standard</ulink>. Additionally your program may also accept the desired size of the thumbnail, which is optional but highly recommended. If you write the output file at an arbitrary image size, Thunar will afterwards scale it to the desired size, which might produce a less optimal result than generating the thumbnail with the requested dimensions."
-msgstr "Se pensa escribir un miniaturizador propio, ten que comezar cun programa que acepte polo menos dous parámetros de liña de comandos, o ficheiro de entrada, que é do tipo de ficheiro que pensa soportar e mailo ficheiro de saída, que é un ficheiro PNG que cumpre o formato especificado no <ulink type=\"http\" url=\"http://jens.triq.net/thumbnail-spec/creation.html#AEN139\">Thumbnail Management Standard</ulink>. Ademais o seu programa tamén podería aceptar o tamaño desexado da miniatura, que é opcional pero moi recomendable. Se escribe un ficheiro de saída cun tamaño de imaxe arbitrario, Thunar escalarao posteriormente ao tamaño desexado, o que podería producir un resultado menos óptimo do que se obtería xerando unha miniatura das dimensións solicitadas."
+msgstr "Se pensa escribir un miniaturizador propio, ten que comezar cun programa que acepte polo menos dous parámetros de liña de ordes, o ficheiro de entrada, que é do tipo de ficheiro que pensa soportar e mailo ficheiro de saída, que é un ficheiro PNG que cumpre o formato especificado no <ulink type=\"http\" url=\"http://jens.triq.net/thumbnail-spec/creation.html#AEN139\">Thumbnail Management Standard</ulink>. Ademais o seu programa tamén podería aceptar o tamaño desexado da miniatura, que é opcional pero moi recomendable. Se escribe un ficheiro de saída cun tamaño de imaxe arbitrario, Thunar escalarao posteriormente ao tamaño desexado, o que podería producir un resultado menos óptimo do que se obtería xerando unha miniatura das dimensións solicitadas."
 
 #: Thunar.xml1054(para)
 msgid "Once your utility to generate the thumbnails is done, you will need to register your thumbnailer, so Thunar is able to locate and use it. Therefore all you need to do is to install a description file for the thumbnailer (a <filename>.desktop</filename> file) in one of the <filename role=\"directory\">$XDG_DATA_DIRS/thumbnailers/</filename> paths. For example, if you want to register the thumbnailer for your user account only, you can install the file into the folder <filename role=\"directory\">~/.local/share/thumbnailers/</filename>. The <filename>.desktop</filename> for thumbnailers has the following format."
@@ -867,7 +867,7 @@ msgstr "<literal>Version</literal> e <literal>Encoding</literal> son obrigatorio
 
 #: Thunar.xml1086(para)
 msgid "The <literal>X-Thumbnailer-Exec</literal> field contains the command to run your thumbnailer, and supports certain field codes that will be substituted when the thumbnailer is run. Recognized field codes are as follows:"
-msgstr "O campo <literal>X-Thumbnailer-Exec</literal> contén o comando para executar o seu miniaturizador, e soporta certos códigos de campo que se substituirán cando se execute o miniaturizador. Os códigos de campo recoñecidos son os seguintes:"
+msgstr "O campo <literal>X-Thumbnailer-Exec</literal> contén a orde para executar o seu miniaturizador, e admite certos códigos de campo que se substituirán cando se execute o miniaturizador. Os códigos de campo recoñecidos son os seguintes:"
 
 #: Thunar.xml1093(varname)
 msgid "%i"
@@ -952,7 +952,7 @@ msgstr ""
 "# Modo de uso: esp-thumbnailer ficheiro-eps ficheiro-png tamaño\n"
 "#\n"
 "\n"
-"# parámetros de liña de comandos\n"
+"# parámetros de liña de ordes\n"
 "ifile=$1\n"
 "ofile=$2\n"
 "size=$3\n"
@@ -1019,7 +1019,7 @@ msgstr ""
 
 #: Thunar.xml1199(para)
 msgid "The <filename>eps-thumbnailer.desktop</filename> file uses the special key <literal>TryExec</literal>, which, if specified, names a command that must be present on the system for the thumbnailer to be useful. In this case, our script is useless if the <command>convert</command> utility is not present."
-msgstr "O ficheiro <filename>eps-thumbnailer.desktop</filename> usa a clave especial <literal>TryExec</literal>, a cal se se especifica menciona un comando que debe estar presente no sistema para que o miniaturizador sexa útil. No noso exemplo o script é inútil se a utilidade <command>convert</command> non está presente."
+msgstr "O ficheiro <filename>eps-thumbnailer.desktop</filename> usa a clave especial <literal>TryExec</literal>, a cal se se especifica menciona unha orde que debe estar presente no sistema para que o miniaturizador sexa útil. No noso exemplo o script é inútil se a utilidade <command>convert</command> non está presente."
 
 #: Thunar.xml1205(para)
 msgid "The last step is to regenerate the thumbnailer cache, so Thunar will pick up our thumbnailer. The thumbnailer cache is located at <filename>$XDG_CACHE_HOME/Thunar/thumbnailers.cache</filename> (unless overridden by your or your system administrator, the <varname>$XDG_CACHE_HOME</varname> points to the folder <filename role=\"directory\">~/.cache/</filename>). The thumbnailers cache is regenerated periodically by Thunar, but you can force to regenerate it by invoking the <filename>thunar-vfs-update-thumbnailers-cache-1</filename> utility, that ships as part of Thunar. This utility is usually installed in the <filename role=\"directory\">libexec</filename> subfolder of your installation prefix (<filename role=\"directory\">sbin</filename> on Debian/Ubuntu). So for example, if Thunar is installed in <filename role=\"directory\">/usr</filename>, invoke the utility as follows:"
@@ -1074,7 +1074,7 @@ msgstr "Renomear ficheiros de xeito masivo"
 
 #: Thunar.xml1263(para)
 msgid "To <emphasis>bulk rename</emphasis> files means to rename multiple files at once using some criterion, that applies to atleast one of the files. <application>Thunar</application> includes a bulk renamer, which can be run separately using the command <command>Thunar -B</command> or from within <application>Thunar</application> by selecting two or more files in the main area and pressing <keycombo><keycap>F2</keycap></keycombo> or choosing <menuchoice><guimenu>Edit</guimenu><guimenuitem>Rename...</guimenuitem></menuchoice> from the main menu."
-msgstr "<emphasis>Renomear de xeito masivo</emphasis> os ficheiros significa renomear varios ficheiros dunha soa vez usando algún criterio, que se aplica a polo menos un dos ficheiros. <application>Thunar</application> inclúe un renomeador masivo, o cal se pode executar indepentemente usando o comando <command>Thunar -B</command> ou tamén dende <application>Thunar</application> seleccionando dous ou máis ficheiros na zona principal e premendo <keycombo><keycap>F2</keycap></keycombo> ou seleccionando <menuchoice><guimenu>Editar</guimenu><guimenuitem>Renomear...</guimenuitem></menuchoice> no menú principal."
+msgstr "<emphasis>Renomear de xeito masivo</emphasis> os ficheiros significa renomear varios ficheiros dunha soa vez usando algún criterio, que se aplica a polo menos un dos ficheiros. <application>Thunar</application> inclúe un renomeador masivo, o cal se pode executar indepentemente usando a orde <command>Thunar -B</command> ou tamén dende <application>Thunar</application> seleccionando dous ou máis ficheiros na zona principal e premendo <keycombo><keycap>F2</keycap></keycombo> ou seleccionando <menuchoice><guimenu>Editar</guimenu><guimenuitem>Renomear...</guimenuitem></menuchoice> no menú principal."
 
 #: Thunar.xml1278(phrase)
 msgid "Bulk Rename Files"
