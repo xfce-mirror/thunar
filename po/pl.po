@@ -4,20 +4,20 @@
 # Piotr Maliński <riklaunim@gmail.com>, 2006.
 # Tomasz Michał Łukaszewski <T.Lukaszewski@aster.pl>, 2006.
 # Szymon Kałasz <szymon_maestro@gazeta.pl>, 2007.
-# Piotr Sokół <piotr.sokol@10g.pl>, 2009.
+# Piotr Sokół <psokol@jabster.pl>, 2009, 2011.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Thunar 0.9.92\n"
+"Project-Id-Version: Thunar 1.1.6\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-16 17:16+0100\n"
-"PO-Revision-Date: 2009-07-15 21:09+0100\n"
-"Last-Translator: Piotr Sokół <piotr.sokol@10g.pl>\n"
-"Language-Team: Polish\n"
-"Language: \n"
+"POT-Creation-Date: 2011-01-19 11:14+0000\n"
+"PO-Revision-Date: 2011-01-20 11:15+0100\n"
+"Last-Translator: Piotr Sokół <psokol@jabster.pl>\n"
+"Language-Team: Polish <>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=3; plural=((n==1) ? 0 : ((n%10>=2 && n%10<=4 && (n"
 "%100<10 || n%100>=20)) ? 1 : 2));\n"
 
@@ -171,9 +171,8 @@ msgid "Create New Folder"
 msgstr "Nowy katalog"
 
 #: ../thunar/thunar-application.c:1325
-#, fuzzy
 msgid "New File"
-msgstr "Nowy katalog"
+msgstr "Nowy plik"
 
 #: ../thunar/thunar-application.c:1326
 #, fuzzy
@@ -191,19 +190,19 @@ msgid "Copying files..."
 msgstr "Kopiowanie plików..."
 
 #: ../thunar/thunar-application.c:1487
-#, fuzzy, c-format
+#, c-format
 msgid "Copying files to \"%s\"..."
-msgstr "Kopiowanie plików..."
+msgstr "Kopiowanie plików do „%s”..."
 
 #: ../thunar/thunar-application.c:1533
 #, fuzzy, c-format
 msgid "Creating symbolic links in \"%s\"..."
-msgstr "Tworzenie dowiązań..."
+msgstr "Tworzenie dowiązań symbolicznych w katalogu „%s”..."
 
 #: ../thunar/thunar-application.c:1586
-#, fuzzy, c-format
+#, c-format
 msgid "Moving files into \"%s\"..."
-msgstr "Przenoszenie plików do kosza..."
+msgstr "Przenoszenie plików do „%s”..."
 
 #: ../thunar/thunar-application.c:1677
 #, c-format
@@ -262,7 +261,7 @@ msgid ""
 "Please note that you can also delete them separately."
 msgstr ""
 "Po opróżnieniu kosza, wszystkie elementy zostaną z niego trwale usunięte. "
-"Zawartość kosza można także usuwać pojedynczo."
+"Elementy znajdujące się w koszu można także usuwać pojedynczo."
 
 #: ../thunar/thunar-application.c:1891
 msgid "Emptying the Trash..."
@@ -275,9 +274,9 @@ msgstr "Nie udało się ustalić pierwotnej ścieżki dla „%s”"
 
 #. display an error dialog
 #: ../thunar/thunar-application.c:1954
-#, fuzzy, c-format
+#, c-format
 msgid "Could not restore \"%s\""
-msgstr "Nie udało się przywrócić „%s”"
+msgstr "Nie można przywrócić „%s”"
 
 #: ../thunar/thunar-application.c:1962
 msgid "Restoring files..."
@@ -299,7 +298,6 @@ msgid "No application selected"
 msgstr "Nie wybrano programu."
 
 #: ../thunar/thunar-chooser-button.c:502
-#, fuzzy
 msgid "Other Application..."
 msgstr "_Inny program..."
 
@@ -335,9 +333,9 @@ msgid "Failed to add new application \"%s\""
 msgstr "Nie udało się dodać programu „%s”"
 
 #: ../thunar/thunar-chooser-dialog.c:492
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to execute application \"%s\""
-msgstr "Nie udało się dodać programu „%s”"
+msgstr "Nie udało się uruchomić programu „%s”"
 
 #. append the "Remove Launcher" item
 #: ../thunar/thunar-chooser-dialog.c:564
@@ -348,7 +346,7 @@ msgstr "_Usuń aktywator"
 #: ../thunar/thunar-chooser-dialog.c:649
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
-msgstr "„%s” i inne pliki typu „%s” otwierane będą przy użyciu:"
+msgstr "Otwieranie pliku „%s” i innych plików typu „%s”, przy użyciu:"
 
 #: ../thunar/thunar-chooser-dialog.c:657
 #, c-format
@@ -380,8 +378,8 @@ msgid ""
 msgstr ""
 "Z menu podręcznego pliku zostanie usunięty aktywator programu, ale sam "
 "program nie zostanie odinstalowany.\n"
-"Możesz usuwać tylko aktywatory utworzone opcją „Użyj polecenia użytkownika” "
-"w oknie dialogowym „Otwórz za pomocą innego programu”."
+"Można usuwać tylko aktywatory utworzone z opcją „Własne polecenie” w oknie "
+"dialogowym otwieranym poleceniem „Otwórz za pomocą innego programu...”."
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:731
@@ -456,8 +454,8 @@ msgid ""
 "Choose the order of information to appear in the\n"
 "detailed list view."
 msgstr ""
-"Proszę określić kolejność informacji wyświetlanych\n"
-"w widoku szczegółowej listy:"
+"Określa kolejność informacji wyświetlanych w\n"
+"widoku listy szczegółowej."
 
 #. create the "Move Up" button
 #: ../thunar/thunar-column-editor.c:192
@@ -539,7 +537,7 @@ msgstr "Proszę wprowadzić nazwę:"
 #: ../thunar/thunar-create-dialog.c:476
 #, c-format
 msgid "Cannot convert filename \"%s\" to the local encoding"
-msgstr "Nie można konwertować pliku „%s” do lokalnego kodowania"
+msgstr "Nie można skonwertować pliku „%s” do lokalnego kodowania"
 
 #: ../thunar/thunar-dbus-service.c:457
 #, c-format
@@ -556,27 +554,27 @@ msgstr "Katalog roboczy musi być ścieżką bezwzględną"
 #: ../thunar/thunar-dbus-service.c:855
 #, c-format
 msgid "Atleast one filename must be specified"
-msgstr "Należy podać co najmniej jeden plik"
+msgstr "Należy okeślić co najmniej jeden plik"
 
 #: ../thunar/thunar-dbus-service.c:1000
-#, fuzzy, c-format
+#, c-format
 msgid "At least one source filename must be specified"
-msgstr "Należy podać co najmniej jeden plik"
+msgstr "Należy określić co najmniej jeden plik źródłowy"
 
 #: ../thunar/thunar-dbus-service.c:1010
 #, c-format
 msgid "The number of source and target filenames must be the same"
-msgstr ""
+msgstr "Ilość plików źródłowych i docelowych musi być taka sama"
 
 #: ../thunar/thunar-dbus-service.c:1019
-#, fuzzy, c-format
+#, c-format
 msgid "A destination directory must be specified"
-msgstr "Należy podać co najmniej jeden plik"
+msgstr "Należy określić katalog docelowy"
 
 #: ../thunar/thunar-dbus-service.c:1222
-#, fuzzy, c-format
+#, c-format
 msgid "At least one filename must be specified"
-msgstr "Należy podać co najmniej jeden plik"
+msgstr "Należy określić co najmniej jeden plik"
 
 #: ../thunar/thunar-details-view.c:129
 msgid "Configure _Columns..."
@@ -607,10 +605,10 @@ msgstr "_Zmień nazwę"
 #: ../thunar/thunar-dialogs.c:249
 msgid "translator-credits"
 msgstr ""
-"Piotr Maliński <admin@rk.edu.pl>\n"
-"Tomasz Michał Łukaszewski <T.Lukaszewski@aster.pl>\n"
-"Szymon Kałasz <szymon_maestro@gazeta.pl>\n"
-"Piotr Sokół <piotr.sokol@10g.pl>"
+"Piotr Maliński <admin@rk.edu.pl>, 2006.\n"
+"Tomasz Michał Łukaszewski <T.Lukaszewski@aster.pl>, 2006.\n"
+"Szymon Kałasz <szymon_maestro@gazeta.pl>, 2007.\n"
+"Piotr Sokół <psokol@jabster.pl>, 2009, 2011."
 
 #. display an error message to the user
 #. tell the user that we failed
@@ -660,14 +658,14 @@ msgid "_Replace"
 msgstr "_Zastąp"
 
 #: ../thunar/thunar-dialogs.c:608
-#, fuzzy, c-format
+#, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
-msgstr "Ten katalog zawiera już plik „%s”."
+msgstr "Ten katalog zawiera już dowiązanie symboliczne „%s”."
 
 #: ../thunar/thunar-dialogs.c:613
-#, fuzzy, c-format
+#, c-format
 msgid "This folder already contains a folder \"%s\"."
-msgstr "Ten katalog zawiera już plik „%s”."
+msgstr "Ten katalog zawiera już katalog „%s”."
 
 #: ../thunar/thunar-dialogs.c:618
 #, c-format
@@ -675,14 +673,12 @@ msgid "This folder already contains a file \"%s\"."
 msgstr "Ten katalog zawiera już plik „%s”."
 
 #: ../thunar/thunar-dialogs.c:630
-#, fuzzy
 msgid "ReplaceDialogPart1|Do you want to replace the link"
-msgstr "Zastąpić istniejący plik"
+msgstr "Zastąpić istniejące dowiązanie symboliczne"
 
 #: ../thunar/thunar-dialogs.c:632
-#, fuzzy
 msgid "ReplaceDialogPart1|Do you want to replace the existing folder"
-msgstr "Zastąpić istniejący plik"
+msgstr "Zastąpić istniejący katalog"
 
 #: ../thunar/thunar-dialogs.c:634
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
@@ -702,14 +698,12 @@ msgid "Modified:"
 msgstr "Ostatnio zmodyfikowany:"
 
 #: ../thunar/thunar-dialogs.c:661
-#, fuzzy
 msgid "ReplaceDialogPart2|with the following link?"
-msgstr "następującym plikiem?"
+msgstr "następującym dowiązaniem?"
 
 #: ../thunar/thunar-dialogs.c:663
-#, fuzzy
 msgid "ReplaceDialogPart2|with the following folder?"
-msgstr "następującym plikiem?"
+msgstr "następującym katalogiem?"
 
 #: ../thunar/thunar-dialogs.c:665
 msgid "ReplaceDialogPart2|with the following file?"
@@ -778,7 +772,7 @@ msgstr "Właściciel"
 #.
 #: ../thunar/thunar-enum-types.c:121 ../thunar/thunar-properties-dialog.c:481
 msgid "Permissions"
-msgstr "Prawa dostępu"
+msgstr "Uprawnienia"
 
 #: ../thunar/thunar-enum-types.c:122
 msgid "Size"
@@ -809,7 +803,7 @@ msgstr "Katalog główny nie ma katalogu nadrzędnego"
 #: ../thunar/thunar-file.c:1006
 #, fuzzy, c-format
 msgid "Failed to parse the desktop file: %s"
-msgstr "Nie udało się utworzyć pustego pliku „%s”"
+msgstr "Nie udało się przetworzyć pliku desktop: %s"
 
 #: ../thunar/thunar-file.c:1044
 #, c-format
@@ -858,14 +852,14 @@ msgid "The file \"%s\" already exists"
 msgstr "Plik „%s” już istnieje"
 
 #: ../thunar/thunar-io-jobs.c:185
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create empty file \"%s\": %s"
-msgstr "Nie udało się utworzyć pustego pliku „%s”"
+msgstr "Nie udało się utworzyć pustego pliku „%s”: %s"
 
 #: ../thunar/thunar-io-jobs.c:322
 #, c-format
 msgid "Failed to create directory \"%s\": %s"
-msgstr "Nie udało się utworzyć katalogu \"%s\": %s"
+msgstr "Nie udało się utworzyć katalogu „%s”: %s"
 
 #. tell the user that we're preparing to unlink the files
 #: ../thunar/thunar-io-jobs.c:386
@@ -873,9 +867,9 @@ msgid "Preparing..."
 msgstr "Przygotowywanie..."
 
 #: ../thunar/thunar-io-jobs.c:448
-#, fuzzy, c-format
+#, c-format
 msgid "Could not delete file \"%s\": %s"
-msgstr "Nie mogę odczytać atrybutów pliku \"%s\": %s"
+msgstr "Nie można usunąć pliku \"%s\": %s"
 
 #: ../thunar/thunar-io-jobs.c:546
 #, c-format
@@ -884,19 +878,19 @@ msgstr ""
 
 #. generate a useful error message
 #: ../thunar/thunar-io-jobs.c:874
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change the owner of \"%s\": %s"
-msgstr "Nie udało się zmienić właściciela dla „%s”"
+msgstr "Nie udało się zmienić właściciela dla „%s”: %s"
 
 #: ../thunar/thunar-io-jobs.c:875
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change the group of \"%s\": %s"
-msgstr "Nie udało się zmienić grupy dla „%s”"
+msgstr "Nie udało się zmienić grupy dla „%s”: %s"
 
 #: ../thunar/thunar-io-jobs.c:1031
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
-msgstr "Nie udało się zmienić uprawnień dla „%s”"
+msgstr "Nie udało się zmienić uprawnień dla „%s”: %s"
 
 #. Copy/link name for n <= 3
 #: ../thunar/thunar-io-jobs-util.c:37
@@ -957,9 +951,8 @@ msgid "Do you want to overwrite it?"
 msgstr "Zastąpić go?"
 
 #: ../thunar/thunar-job.c:388
-#, fuzzy
 msgid "Do you want to create it?"
-msgstr "Zastąpić go?"
+msgstr "Utworzyć go?"
 
 #: ../thunar/thunar-job.c:490
 msgid "Do you want to skip it?"
@@ -1273,18 +1266,18 @@ msgid "_Location:"
 msgstr "_Położenie:"
 
 #: ../thunar/thunar-location-entry.c:387
-#, fuzzy, c-format
+#, c-format
 msgid "File does not exist"
-msgstr "Menu podręczne pliku"
+msgstr "Plik nie istnieje"
 
 #: ../thunar/thunar-location-entry.c:731
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to determine the mount point of \"%s\""
-msgstr "Nie udało się określić punktu montowania dla %s"
+msgstr "Nie udało się określić punktu montowania dla „%s”"
 
 #: ../thunar/thunar-notify.c:123
 msgid "Unmounting device"
-msgstr ""
+msgstr "Odmontowywanie nośnika"
 
 #: ../thunar/thunar-notify.c:124
 #, c-format
@@ -1292,10 +1285,12 @@ msgid ""
 "The device \"%s\" is being unmounted by the system. Please do not remove the "
 "media or disconnect the drive"
 msgstr ""
+"Trwa odmontowywanie nośnika „%s”. Proszę nie wysuwać nośnika bądź odłączać "
+"napędu."
 
 #: ../thunar/thunar-notify.c:130 ../thunar/thunar-notify.c:248
 msgid "Writing data to device"
-msgstr ""
+msgstr "Zapisywanie danych na nośniku"
 
 #: ../thunar/thunar-notify.c:131 ../thunar/thunar-notify.c:249
 #, c-format
@@ -1303,18 +1298,20 @@ msgid ""
 "There is data that needs to be written to the device \"%s\" before it can be "
 "removed. Please do not remove the media or disconnect the drive"
 msgstr ""
+"Pewne dane muszą zostać zapisane na nośniku „%s” przed jego wysunięciem. "
+"Proszę nie wysuwać nośnika bądź odłączać napędu."
 
 #: ../thunar/thunar-notify.c:242
 msgid "Ejecting device"
-msgstr ""
+msgstr "Wysuwanie nośnika"
 
 #: ../thunar/thunar-notify.c:243
 #, c-format
 msgid "The device \"%s\" is being ejected. This may take some time"
-msgstr ""
+msgstr "Trwa wysuwanie nośnika „%s”. Może to potrwać dłuższy czas."
 
 #: ../thunar/thunar-misc-jobs.c:84
-#, fuzzy, c-format
+#, c-format
 msgid "No templates installed"
 msgstr "Brak szablonów"
 
@@ -1334,17 +1331,17 @@ msgstr "Brak"
 #. 0002
 #: ../thunar/thunar-permissions-chooser.c:215
 msgid "Write only"
-msgstr "Tylko do zapisu"
+msgstr "Tylko zapisywanie"
 
 #. 0004
 #: ../thunar/thunar-permissions-chooser.c:217
 msgid "Read only"
-msgstr "Tylko do odczytu"
+msgstr "Tylko odczytywanie"
 
 #. 0006
 #: ../thunar/thunar-permissions-chooser.c:219
 msgid "Read & Write"
-msgstr "Do odczytu i zapisu"
+msgstr "Odczytywanie i zapisywanie"
 
 #: ../thunar/thunar-permissions-chooser.c:230
 msgid "Owner:"
@@ -1353,7 +1350,7 @@ msgstr "Właściciel:"
 #: ../thunar/thunar-permissions-chooser.c:248
 #: ../thunar/thunar-permissions-chooser.c:289
 msgid "Access:"
-msgstr "Uprawnienia:"
+msgstr "Prawa dostępu:"
 
 #: ../thunar/thunar-permissions-chooser.c:271
 msgid "Group:"
@@ -1714,45 +1711,44 @@ msgstr "Nie udało się wyświetlić ustawień menedżera wolumenów"
 
 #: ../thunar/thunar-progress-dialog.c:94
 msgid "File Operation Progress"
-msgstr ""
+msgstr "Postęp operacji plikowych"
 
 #. build the tooltip text
 #: ../thunar/thunar-progress-dialog.c:299
-#, c-format
+#, fuzzy, c-format
 msgid "%d file operation running"
 msgid_plural "%d file operations running"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Trwa %d operacja plikowa"
+msgstr[1] "Trwają %d operacje plikowe"
+msgstr[2] "Trwa %d operacji plikowych"
 
 #: ../thunar/thunar-progress-view.c:326
-#, fuzzy
 msgid "Cancelling..."
-msgstr "Obliczanie..."
+msgstr "Anulowanie..."
 
 #: ../thunar/thunar-progress-view.c:480
-#, fuzzy, c-format
+#, c-format
 msgid "%lu hour remaining"
 msgid_plural "%lu hours remaining"
-msgstr[0] "(pozostała %lu godzina)"
-msgstr[1] "(pozostały %lu godziny)"
-msgstr[2] "(pozostało %lu godzin)"
+msgstr[0] "pozostała %lu godzina"
+msgstr[1] "pozostały %lu godziny"
+msgstr[2] "pozostało %lu godzin"
 
 #: ../thunar/thunar-progress-view.c:485
-#, fuzzy, c-format
+#, c-format
 msgid "%lu minute remaining"
 msgid_plural "%lu minutes remaining"
-msgstr[0] "(pozostała %lu minuta)"
-msgstr[1] "(pozostały %lu minuty)"
-msgstr[2] "(pozostało %lu minut)"
+msgstr[0] "pozostała %lu minuta"
+msgstr[1] "pozostały %lu minuty"
+msgstr[2] "pozostało %lu minut"
 
 #: ../thunar/thunar-progress-view.c:490
-#, fuzzy, c-format
+#, c-format
 msgid "%lu second remaining"
 msgid_plural "%lu seconds remaining"
-msgstr[0] "(pozostała %lu sekunda)"
-msgstr[1] "(pozostały %lu sekundy)"
-msgstr[2] "(pozostało %lu sekund)"
+msgstr[0] "pozostała %lu sekunda"
+msgstr[1] "pozostały %lu sekundy"
+msgstr[2] "pozostało %lu sekund"
 
 #: ../thunar/thunar-properties-dialog.c:227
 msgid "General"
@@ -2158,7 +2154,7 @@ msgstr "Nowy pusty plik..."
 
 #: ../thunar/thunar-standard-view.c:2069
 msgid "Select by Pattern"
-msgstr "Zaznaczanie według wzoru"
+msgstr "Wprowadzanie wzoru"
 
 #: ../thunar/thunar-standard-view.c:2075
 msgid "_Select"
@@ -2255,18 +2251,18 @@ msgid "Trying to restore \"%s\""
 msgstr "Nie udało się przywrócić „%s”"
 
 #: ../thunar/thunar-transfer-job.c:691
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file "
 "\"%s\" from the trash"
 msgstr ""
 "Katalog „%s” już nie istnieje, lecz jest potrzebny do przywrócenia pliku "
-"„%s” z kosza. Utworzyć ten katalog na nowo?"
+"„%s” z kosza"
 
 #: ../thunar/thunar-transfer-job.c:716
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to restore the folder \"%s\""
-msgstr "Nie udało się otworzyć katalogu „%s”"
+msgstr "Nie udało się przywrócić katalogu „%s”"
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:736
@@ -2276,9 +2272,10 @@ msgstr "Nie udało się usunąć „%s”"
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:761
-#, c-format
+#, fuzzy, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr ""
+"Nie można przenieść „%s” bezpośrednio. Zliczanie plików do skopiowania..."
 
 #: ../thunar/thunar-trash-action.c:104
 msgid "T_rash"
@@ -2489,7 +2486,7 @@ msgstr "Przechodzi do katalogu szablonów"
 
 #: ../thunar/thunar-window.c:320
 msgid "_Open Location..."
-msgstr "_Otwórz położenie..."
+msgstr "_Położenie..."
 
 #: ../thunar/thunar-window.c:320
 msgid "Specify a location to open"
@@ -2501,7 +2498,7 @@ msgstr "Pomo_c"
 
 #: ../thunar/thunar-window.c:322
 msgid "_Contents"
-msgstr "_Zawartość"
+msgstr "_Spis treści"
 
 #: ../thunar/thunar-window.c:322
 msgid "Display Thunar user manual"
@@ -2513,7 +2510,7 @@ msgstr "Wyświetla informacje o programie"
 
 #: ../thunar/thunar-window.c:328
 msgid "Show _Hidden Files"
-msgstr "_Ukryte pliki"
+msgstr "Wyświetlanie _ukrytych plików"
 
 #: ../thunar/thunar-window.c:328
 msgid "Toggles the display of hidden files in the current window"
@@ -2596,7 +2593,7 @@ msgstr ""
 #. create the network action
 #: ../thunar/thunar-window.c:1441
 msgid "Network"
-msgstr ""
+msgstr "Sieć"
 
 #: ../thunar/thunar-window.c:1441
 msgid "Browse the network"
@@ -2757,7 +2754,7 @@ msgstr "Opcje:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:250
 msgid "Use _startup notification"
-msgstr "P_owiadamianie przy uruchamianiu"
+msgstr "P_owiadamianie o uruchamianiu"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:251
 msgid ""
@@ -3172,9 +3169,9 @@ msgid ""
 "You can configure custom actions that will appear in the\n"
 "file managers context menus for certain kinds of files."
 msgstr ""
-"Możliwe jest skonfigurowanie poleceń wykonywanych w odniesieniu\n"
-"do określonych typów plików. Polecenia te uruchomiać można\n"
-"za pośrednictwem menu podręcznego pliku."
+"Konfiguruje polecenia wykonywane z  katalogami lub\n"
+"określonymi typami plików. Polecenia te wywoływać\n"
+"można za pośrednictwem menu podręcznego elementu."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:173
 msgid "Add a new custom action."
@@ -3206,7 +3203,7 @@ msgstr "Nowa czynność"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:385
 msgid "Failed to save actions to disk."
-msgstr "Nie udało się zapisać czynności na dysku."
+msgstr "Nie udało się zapisać czynności."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:436
 #, c-format
@@ -3217,14 +3214,14 @@ msgstr "Usunąć czynność „%s”?"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:437
 msgid "If you delete a custom action, it is permanently lost."
-msgstr "Po usunięciu czynności, nie będzie można jej odzyskać."
+msgstr "Czynność zostanie trwale usunięta."
 
 #.
 #. Basic
 #.
 #: ../plugins/thunar-uca/thunar-uca-editor.c:122
 msgid "Basic"
-msgstr "Podstawowe"
+msgstr "Ogólne"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:131
 msgid "_Name:"
@@ -3270,9 +3267,8 @@ msgid "Browse the file system to select an application to use for this action."
 msgstr "Przegląda system plików w poszukiwaniu programu do wykonania czynności"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:203
-#, fuzzy
 msgid "Use Startup Notification"
-msgstr "P_owiadamianie przy uruchamianiu"
+msgstr "Powiadamianie o uruchamianiu"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:204
 msgid ""
@@ -3289,7 +3285,7 @@ msgstr "_Ikona:"
 #: ../plugins/thunar-uca/thunar-uca-editor.c:218
 #: ../plugins/thunar-uca/thunar-uca-editor.c:705
 msgid "No icon"
-msgstr "Brak ikony"
+msgstr "Brak"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:219
 msgid ""
@@ -3307,29 +3303,29 @@ msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:288
 msgid "the path to the first selected file"
-msgstr "ścieżka do pierwszego zaznaczonego pliku"
+msgstr "Ścieżka pierwszego zaznaczonego pliku"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:300
 msgid "the paths to all selected files"
-msgstr "ścieżki do wszystkich zaznaczonych plików"
+msgstr "Ścieżki wszystkich zaznaczonych plików"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:312
 #, c-format
 msgid "directory containing the file that is passed in %f"
-msgstr "katalog, w którym znajduje się plik %f"
+msgstr "Katalog zawierający plik określony parametrem %f"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:324
 #, c-format
 msgid "directories containing the files that are passed in %F"
-msgstr "katalogi, w których znajdują się pliki zawarte w %F"
+msgstr "Katalogi zawierające pliki określone parametrem %F"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:336
 msgid "the first selected filename (without path)"
-msgstr "nazwa pierwszego zaznaczonego pliku"
+msgstr "Nazwa pierwszego zaznaczonego pliku"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:348
 msgid "the selected filenames (without paths)"
-msgstr "nazwy zaznaczonych plików"
+msgstr "Nazwa zaznaczonych plików"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:362
 msgid "Appearance Conditions"
@@ -3347,12 +3343,12 @@ msgid ""
 "doc)."
 msgstr ""
 "Wprowadza wzory używane do ustalenia, czy czynność powinna być dostępna dla "
-"określonego pliku. Użycie większe niż jeden liczby wzorów wymaga "
+"określonego elementu. Użycie większe niż jeden liczby wzorów wymaga "
 "rozdzielenia ich średnikami (np.: *.txt;*.doc)."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:394
 msgid "Appears if selection contains:"
-msgstr "Czynność dostępna jeśli zaznaczono:"
+msgstr "Typy elementamów:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:407
 msgid "_Directories"
@@ -3391,14 +3387,14 @@ msgid ""
 "action should only appear for certain kinds of\n"
 "files."
 msgstr ""
-"Ta karta zawiera warunki, dla których czynności będą\n"
-"dostępne w menu podręcznym menedżera plików.\n"
+"Określa warunki wyświetlania czynności w menu\n"
+"podręcznym menedżera plików.\n"
 "Wzory stanowią listę prostych filtrów plików,\n"
-"oddzielonych średnikami (np. *.txt;*.doc). Aby\n"
-"akcja pojawiła się w menu podręcznym danego\n"
+"rozdzieloną średnikami (np. *.txt;*.doc). Aby\n"
+"czynności pojawiła się w menu podręcznym danego\n"
 "elementu, przynajmniej jeden z tych wzorów musi\n"
 "do niego pasować. Ponadto można określić\n"
-"dostępność akcji tylko dla pewnego rodzaju plików."
+"dostępność czynności tylko dla pewnego typu plików."
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:769
 #, c-format
