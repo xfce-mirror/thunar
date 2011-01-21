@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: Thunar 1.1.6\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-01-19 11:14+0000\n"
-"PO-Revision-Date: 2011-01-20 11:15+0100\n"
+"PO-Revision-Date: 2011-01-21 11:29+0100\n"
 "Last-Translator: Piotr Sokół <psokol@jabster.pl>\n"
 "Language-Team: Polish <>\n"
 "MIME-Version: 1.0\n"
@@ -72,12 +72,12 @@ msgstr "Zespół programistów programu Thunar. Wszelkie prawa zastrzeżone."
 
 #: ../thunar/main.c:169
 msgid "Written by Benedikt Meurer <benny@xfce.org>."
-msgstr "Napisany przez Benedikta Meurera <benny@xfce.org>."
+msgstr "Autor: Benedikt Meurer <benny@xfce.org>."
 
 #: ../thunar/main.c:170
 #, c-format
 msgid "Please report bugs to <%s>."
-msgstr "Błędy proszę zgłaszać na <%s>."
+msgstr "Proszę zgłaszać błędy na adres <%s>."
 
 #: ../thunar/thunar-abstract-icon-view.c:115
 msgid "Arran_ge Items"
@@ -183,7 +183,7 @@ msgstr "Nowy katalog"
 #: ../thunar/thunar-application.c:1384 ../thunar/thunar-standard-view.c:1870
 #, c-format
 msgid "Create Document from template \"%s\""
-msgstr "Utwórz dokument z szablonu „%s”"
+msgstr "Tworzenie pliku z szablonu „%s”"
 
 #: ../thunar/thunar-application.c:1451
 msgid "Copying files..."
@@ -195,9 +195,9 @@ msgid "Copying files to \"%s\"..."
 msgstr "Kopiowanie plików do „%s”..."
 
 #: ../thunar/thunar-application.c:1533
-#, fuzzy, c-format
+#, c-format
 msgid "Creating symbolic links in \"%s\"..."
-msgstr "Tworzenie dowiązań symbolicznych w katalogu „%s”..."
+msgstr "Tworzenie dowiązań symbolicznych w „%s”..."
 
 #: ../thunar/thunar-application.c:1586
 #, c-format
@@ -801,9 +801,9 @@ msgid "The root folder has no parent"
 msgstr "Katalog główny nie ma katalogu nadrzędnego"
 
 #: ../thunar/thunar-file.c:1006
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to parse the desktop file: %s"
-msgstr "Nie udało się przetworzyć pliku desktop: %s"
+msgstr "Nie udało się przetworzyć pliku aktywatora: %s"
 
 #: ../thunar/thunar-file.c:1044
 #, c-format
@@ -875,6 +875,8 @@ msgstr "Nie można usunąć pliku \"%s\": %s"
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
 msgstr ""
+"Nie można utworzyć dowiązania symbolicznego do „%s”, ponieważ plik źródłowy "
+"nie jest plikiem lokalnym"
 
 #. generate a useful error message
 #: ../thunar/thunar-io-jobs.c:874
@@ -927,12 +929,12 @@ msgstr "trzecie dowiązanie do %s"
 
 #. Fallback copy/link name for n >= 4
 #: ../thunar/thunar-io-jobs-util.c:42
-#, fuzzy, c-format
+#, c-format
 msgid "%uth copy of %s"
 msgstr "%u. kopia %s"
 
 #: ../thunar/thunar-io-jobs-util.c:42
-#, fuzzy, c-format
+#, c-format
 msgid "%uth link to %s"
 msgstr "%u. dowiązanie do %s"
 
@@ -1067,9 +1069,9 @@ msgstr "_Otwórz za pomocą „%s”"
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
-msgstr[0] "Używa „%s” do otwarcia zaznaczonego pliku"
-msgstr[1] "Używa „%s” do otwarcia zaznaczonych plików"
-msgstr[2] "Używa „%s” do otwarcia zaznaczonych plików"
+msgstr[0] "Otwiera zaznaczony plik za pomocą „%s”"
+msgstr[1] "Otwiera zaznaczone pliki za pomocą „%s”"
+msgstr[2] "Otwiera zaznaczone pliki za pomocą „%s”"
 
 #: ../thunar/thunar-launcher.c:886
 msgid "_Open With Other Application..."
@@ -1077,14 +1079,14 @@ msgstr "_Otwórz za pomocą..."
 
 #: ../thunar/thunar-launcher.c:895
 msgid "_Open With Default Applications"
-msgstr "_Otwórz za pomocą domyślnego programu:"
+msgstr "_Otwórz za pomocą domyślnych programów"
 
 #: ../thunar/thunar-launcher.c:896
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
-msgstr[0] "Otwórz zaznaczony plik za pomocą domyślnego programu"
-msgstr[1] "Otwórz zaznaczone pliki za pomocą domyślnych programów"
-msgstr[2] "Otwórz zaznaczone pliki za pomocą domyślnych programów"
+msgstr[0] "Otwiera zaznaczony plik za pomocą domyślnego programu"
+msgstr[1] "Otwiera zaznaczone pliki za pomocą domyślnych programów"
+msgstr[2] "Otwiera zaznaczone pliki za pomocą domyślnych programów"
 
 #: ../thunar/thunar-launcher.c:948
 #, c-format
@@ -1149,12 +1151,12 @@ msgstr[2] "%d elementów"
 #: ../thunar/thunar-list-model.c:2335
 #, c-format
 msgid "\"%s\" broken link"
-msgstr "Nieprawidłowe dowiązanie „%s”"
+msgstr "Nieprawidłowe dowiązanie symboliczne „%s”"
 
 #: ../thunar/thunar-list-model.c:2339
 #, c-format
 msgid "\"%s\" (%s) link to %s"
-msgstr "„%s” (%s) odnosi się do %s"
+msgstr "Dowiązanie symboliczne „%s” (%s) do %s"
 
 #: ../thunar/thunar-list-model.c:2344
 #, fuzzy, c-format
@@ -1715,7 +1717,7 @@ msgstr "Postęp operacji plikowych"
 
 #. build the tooltip text
 #: ../thunar/thunar-progress-dialog.c:299
-#, fuzzy, c-format
+#, c-format
 msgid "%d file operation running"
 msgid_plural "%d file operations running"
 msgstr[0] "Trwa %d operacja plikowa"
@@ -2150,7 +2152,7 @@ msgstr "Nowy pusty plik"
 
 #: ../thunar/thunar-standard-view.c:1781
 msgid "New Empty File..."
-msgstr "Nowy pusty plik..."
+msgstr "Nowy plik"
 
 #: ../thunar/thunar-standard-view.c:2069
 msgid "Select by Pattern"
@@ -2246,9 +2248,9 @@ msgstr "Wyszukiwanie plików..."
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:665
-#, fuzzy, c-format
+#, c-format
 msgid "Trying to restore \"%s\""
-msgstr "Nie udało się przywrócić „%s”"
+msgstr "Próbowanie przywrócenia „%s”"
 
 #: ../thunar/thunar-transfer-job.c:691
 #, c-format
@@ -2266,13 +2268,13 @@ msgstr "Nie udało się przywrócić katalogu „%s”"
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:736
-#, fuzzy, c-format
+#, c-format
 msgid "Trying to move \"%s\""
-msgstr "Nie udało się usunąć „%s”"
+msgstr "Próbowanie przeniesienia „%s”"
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:761
-#, fuzzy, c-format
+#, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr ""
 "Nie można przenieść „%s” bezpośrednio. Zliczanie plików do skopiowania..."
@@ -2448,7 +2450,6 @@ msgid "Go to the desktop folder"
 msgstr "Przechodzi do katalogu pulpitu"
 
 #: ../thunar/thunar-window.c:312
-#, fuzzy
 msgid "Browse the file system"
 msgstr "Przegląda system plików za pomocą menedżera plików"
 
@@ -2597,7 +2598,7 @@ msgstr "Sieć"
 
 #: ../thunar/thunar-window.c:1441
 msgid "Browse the network"
-msgstr ""
+msgstr "Przegląda sieć za pomocą menedżera plików"
 
 #: ../thunar/thunar-window.c:1481
 #, c-format
@@ -2647,9 +2648,8 @@ msgstr "_Ukrywanie tego okna w przyszłości"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2263
-#, fuzzy
 msgid "Failed to open the file system root folder"
-msgstr "Nie udało się otworzyć katalogu szablonów"
+msgstr "Nie udało się otworzyć katalogu głównego systemu plików"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2298
@@ -2658,9 +2658,8 @@ msgstr "Nie udało się wyświetlić zawartości kosza"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:2333
-#, fuzzy
 msgid "Failed to browse the network"
-msgstr "Nie udało się przejść do katalogu domowego"
+msgstr "Nie udało się wyświetlić zawartości sieci"
 
 #: ../thunar/thunar-window.c:2375
 msgid ""
@@ -3276,6 +3275,9 @@ msgid ""
 "is launched. This is also highly recommended if you have focus stealing "
 "prevention enabled in your window manager."
 msgstr ""
+"Wyświetla kursor oczekiwania podczas wykonywania czynności. Opcja "
+"rekomendowana także jeśli użyto opcji zapobiegania utraty zaznaczenia w "
+"konfiguracji menedżera okien."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:210
 msgid "_Icon:"
@@ -3325,7 +3327,7 @@ msgstr "Nazwa pierwszego zaznaczonego pliku"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:348
 msgid "the selected filenames (without paths)"
-msgstr "Nazwa zaznaczonych plików"
+msgstr "Nazwy zaznaczonych plików"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:362
 msgid "Appearance Conditions"
