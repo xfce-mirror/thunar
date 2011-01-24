@@ -1,6 +1,6 @@
 /* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
- * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2011 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ thunar_io_scan_directory (ThunarJob          *job,
                           GFile              *file,
                           GFileQueryInfoFlags flags,
                           gboolean            recursively,
+                          gboolean            unlinking,
                           GError            **error)
 {
   GFileEnumerator *enumerator;
@@ -55,6 +56,18 @@ thunar_io_scan_directory (ThunarJob          *job,
   /* abort if the job was cancelled */
   if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
     return NULL;
+
+  /* don't recurse when we are scanning prior to unlinking and the current 
+   * file/dir is in the trash. In GVfs, only the top-level directories in 
+   * the trash can be modified and deleted directly. See
+   * http://bugzilla.xfce.org/show_bug.cgi?id=7147
+   * for more information */
+  if (unlinking
+      && thunar_g_file_is_trashed (file)
+      && !thunar_g_file_is_root (file))
+    {
+      return NULL;
+    }
 
   /* query the file type */
   type = g_file_query_file_type (file, flags, exo_job_get_cancellable (EXO_JOB (job)));
@@ -96,7 +109,8 @@ thunar_io_scan_directory (ThunarJob          *job,
       /* if the child is a directory and we need to recurse ... just do so */
       if (recursively && g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
         {
-          child_files = thunar_io_scan_directory (job, child_file, flags, recursively, &err);
+          child_files = thunar_io_scan_directory (job, child_file, flags, recursively, 
+                                                  unlinking, &err);
 
           /* prepend children to the file list to make sure they're 
            * processed first (required for unlinking) */

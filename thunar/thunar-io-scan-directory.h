@@ -1,6 +1,6 @@
 /* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
- * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2011 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ GList *thunar_io_scan_directory (ThunarJob          *job,
                                  GFile              *file,
                                  GFileQueryInfoFlags flags,
                                  gboolean            recursively,
+                                 gboolean            unlinking,
                                  GError            **error);
 
 G_END_DECLS

@@ -1,6 +1,6 @@
 /* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
- * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2011 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ _thunar_misc_jobs_load_templates (ThunarJob   *job,
     {
       paths = thunar_io_scan_directory (job, templates_dir, 
                                         G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                                        TRUE, NULL);
+                                        TRUE, FALSE, NULL);
 
       /* turn the GFile list into a ThunarFile list */
       for (lp = g_list_last (paths); 
