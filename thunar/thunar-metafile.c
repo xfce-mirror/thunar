@@ -278,7 +278,7 @@ thunar_metafile_fetch (ThunarMetafile   *metafile,
 
   /* generate the key data */
   key_data.dptr = key_path;
-  key_data.dsize = key_size - 1;
+  key_data.dsize = key_size;
 
   /* release any earlier result data */
   if (G_LIKELY (metafile->data.dptr != NULL))
@@ -373,7 +373,7 @@ thunar_metafile_store (ThunarMetafile   *metafile,
 
   /* generate the key data */
   key_data.dptr = key_path;
-  key_data.dsize = key_size - 1;
+  key_data.dsize = key_size;
 
   /* fetch the current value for the key */
   value_data = thunar_metafile_read (metafile, key_data);
