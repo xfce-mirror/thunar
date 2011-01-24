@@ -39,6 +39,7 @@
 static GList *
 _tij_collect_nofollow (ThunarJob *job,
                        GList     *base_file_list,
+                       gboolean   unlinking,
                        GError   **error)
 {
   GError *err = NULL;
@@ -54,7 +55,7 @@ _tij_collect_nofollow (ThunarJob *job,
       /* try to scan the directory */
       child_file_list = thunar_io_scan_directory (job, lp->data, 
                                                   G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, 
-                                                  TRUE, &err);
+                                                  TRUE, unlinking, &err);
 
       /* prepend the new files to the existing list */
       file_list = thunar_g_file_list_prepend (file_list, lp->data);
@@ -386,7 +387,7 @@ _thunar_io_jobs_unlink (ThunarJob   *job,
   exo_job_info_message (EXO_JOB (job), _("Preparing..."));
 
   /* recursively collect files for removal, not following any symlinks */
-  file_list = _tij_collect_nofollow (job, file_list, &err);
+  file_list = _tij_collect_nofollow (job, file_list, TRUE, &err);
 
   /* free the file list and fail if there was an error or the job was cancelled */
   if (err != NULL || exo_job_is_cancelled (EXO_JOB (job)))
@@ -818,7 +819,7 @@ _thunar_io_jobs_chown (ThunarJob   *job,
 
   /* collect the files for the chown operation */
   if (recursive)
-    file_list = _tij_collect_nofollow (job, file_list, &err);
+    file_list = _tij_collect_nofollow (job, file_list, FALSE, &err);
   else
     file_list = thunar_g_file_list_copy (file_list);
 
@@ -965,7 +966,7 @@ _thunar_io_jobs_chmod (ThunarJob   *job,
 
   /* collect the files for the chown operation */
   if (recursive)
-    file_list = _tij_collect_nofollow (job, file_list, &err);
+    file_list = _tij_collect_nofollow (job, file_list, FALSE, &err);
   else
     file_list = thunar_g_file_list_copy (file_list);
 
@@ -1119,7 +1120,7 @@ _thunar_io_jobs_ls (ThunarJob   *job,
   /* collect directory contents (non-recursively) */
   path_list = thunar_io_scan_directory (job, directory, 
                                         G_FILE_QUERY_INFO_NONE, 
-                                        FALSE, &err);
+                                        FALSE, FALSE, &err);
 
   /* turn the GFile list into a ThunarFile list */
   for (lp = g_list_last (path_list); 

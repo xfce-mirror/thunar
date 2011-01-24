@@ -1,7 +1,7 @@
 /* vi:set sw=2 sts=2 ts=2 et ai: */
 /*-
  * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2011 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify 
  * it under the terms of the GNU General Public License as published by 
@@ -195,7 +195,7 @@ thunar_transfer_job_collect_node (ThunarTransferJob  *job,
       /* scan the directory for immediate children */
       file_list = thunar_io_scan_directory (THUNAR_JOB (job), node->source_file,
                                             G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                                            FALSE, &err);
+                                            FALSE, FALSE, &err);
 
       /* add children to the transfer node */
       for (lp = file_list; err == NULL && lp != NULL; lp = lp->next)
