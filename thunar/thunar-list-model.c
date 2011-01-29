@@ -1,7 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2004-2007 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2011 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -1641,6 +1641,15 @@ sort_by_type (const ThunarFile *a,
     {
       content_type_b = thunar_file_get_content_type (b);
       description_b = g_content_type_get_description (content_type_b);
+    }
+
+  /* avoid calling strcasecmp with NULL parameters */
+  if (description_a == NULL || description_b == NULL)
+    {
+      g_free (description_a);
+      g_free (description_b);
+
+      return 0;
     }
 
   if (!case_sensitive)
