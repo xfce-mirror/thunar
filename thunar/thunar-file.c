@@ -1,21 +1,22 @@
-/* $Id$ */
+/* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
  * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2011 Jannis Pohlmann <jannis@xfce.org>
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This program is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA  02111-1307  USA
+ * You should have received a copy of the GNU General Public 
+ * License along with this program; if not, write to the Free 
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -1253,76 +1254,116 @@ thunar_file_rename (ThunarFile   *file,
                     gboolean      called_from_job,
                     GError      **error)
 {
-  GFile *previous_file;
-  GFile *renamed_file;
-  gint   watch_count;
+  GKeyFile *key_file;
+  GError   *err = NULL;
+  GFile    *previous_file;
+  GFile    *renamed_file;
+  gint      watch_count;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (g_utf8_validate (name, -1, NULL), FALSE);
   _thunar_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  /* remember the previous file */
-  previous_file = g_object_ref (file->gfile);
-  
-  /* try to rename the file */
-  renamed_file = g_file_set_display_name (file->gfile, name, cancellable, error);
-
-  /* check if we succeeded */
-  if (renamed_file != NULL)
+  /* check if this file is a desktop entry */
+  if (thunar_file_is_desktop_file (file))
     {
-      /* set the new file */
-      file->gfile = renamed_file;
-
-      /* reload file information */
-      thunar_file_load (file, NULL, NULL);
-
-      /* need to re-register the monitor handle for the new uri */
-      watch_count = THUNAR_FILE_GET_WATCH_COUNT (file);
-      if (G_LIKELY (watch_count > 0))
+      /* try to load the desktop entry into a key file */
+      key_file = thunar_g_file_query_key_file (file->gfile, cancellable, &err);
+      if (key_file == NULL)
         {
-          /* drop the watch_count temporary */
-          THUNAR_FILE_SET_WATCH_COUNT (file, 1);
-
-          /* drop the previous handle (with the old path) */
-          thunar_file_unwatch (file);
-
-          /* register the new handle (with the new path) */
-          thunar_file_watch (file);
-
-          /* reset the watch count */
-          THUNAR_FILE_SET_WATCH_COUNT (file, watch_count);
+          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL,
+                       _("Failed to parse the desktop file: %s"), err->message);
+          g_error_free (err);
+          return FALSE;
         }
 
-      G_LOCK (file_cache_mutex);
+      /* change the Name field of the desktop entry */
+      g_key_file_set_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
+                             G_KEY_FILE_DESKTOP_KEY_NAME, name);
 
-      /* drop the previous entry from the cache */
-      g_hash_table_remove (file_cache, previous_file);
-
-      /* drop the reference on the previous file */
-      g_object_unref (previous_file);
-
-      /* insert the new entry */
-      g_hash_table_insert (file_cache, g_object_ref (file->gfile), file);
-
-      G_UNLOCK (file_cache_mutex);
-
-      if (!called_from_job)
+      /* write the changes back to the file */
+      if (thunar_g_file_write_key_file (file->gfile, key_file, cancellable, &err))
         {
-          /* tell the associated folder that the file was renamed */
-          thunarx_file_info_renamed (THUNARX_FILE_INFO (file));
-
-          /* emit the file changed signal */
+          /* notify everybody that the file has changed */
           thunar_file_changed (file);
-        }
 
-      return TRUE;
+          /* release the key file and return with success */
+          g_key_file_free (key_file);
+          return TRUE;
+        }
+      else
+        {
+          /* propagate the error message and return with failure */
+          g_propagate_error (error, err);
+          g_key_file_free (key_file);
+          return FALSE;
+        }
     }
   else
     {
-      g_object_unref (previous_file);
+      /* remember the previous file */
+      previous_file = g_object_ref (file->gfile);
+      
+      /* try to rename the file */
+      renamed_file = g_file_set_display_name (file->gfile, name, cancellable, error);
 
-      return FALSE;
+      /* check if we succeeded */
+      if (renamed_file != NULL)
+        {
+          /* set the new file */
+          file->gfile = renamed_file;
+
+          /* reload file information */
+          thunar_file_load (file, NULL, NULL);
+
+          /* need to re-register the monitor handle for the new uri */
+          watch_count = THUNAR_FILE_GET_WATCH_COUNT (file);
+          if (G_LIKELY (watch_count > 0))
+            {
+              /* drop the watch_count temporary */
+              THUNAR_FILE_SET_WATCH_COUNT (file, 1);
+
+              /* drop the previous handle (with the old path) */
+              thunar_file_unwatch (file);
+
+              /* register the new handle (with the new path) */
+              thunar_file_watch (file);
+
+              /* reset the watch count */
+              THUNAR_FILE_SET_WATCH_COUNT (file, watch_count);
+            }
+
+          G_LOCK (file_cache_mutex);
+
+          /* drop the previous entry from the cache */
+          g_hash_table_remove (file_cache, previous_file);
+
+          /* drop the reference on the previous file */
+          g_object_unref (previous_file);
+
+          /* insert the new entry */
+          g_hash_table_insert (file_cache, g_object_ref (file->gfile), file);
+
+          G_UNLOCK (file_cache_mutex);
+
+          if (!called_from_job)
+            {
+              /* tell the associated folder that the file was renamed */
+              thunarx_file_info_renamed (THUNARX_FILE_INFO (file));
+
+              /* emit the file changed signal */
+              thunar_file_changed (file);
+            }
+
+          return TRUE;
+        }
+      else
+        {
+          g_object_unref (previous_file);
+
+          return FALSE;
+        }
     }
 }
 
