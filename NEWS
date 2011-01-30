@@ -8,6 +8,7 @@
 - Fix segfault when calling strcasecmp with NULL parameters (bug #7206).
 - Only change the Name field when renaming desktop files (bug #7155).
 - Force desktop file reload after changing the Name field.
+- Fix memory leak caused by not destroying the rename job.
 
 1.2.0
 =====

@@ -1237,6 +1237,18 @@ thunar_application_rename_file_error (ExoJob            *job,
 
 
 
+static void
+thunar_application_rename_file_finished (ExoJob  *job,
+                                         gpointer user_data)
+{
+  _thunar_return_if_fail (EXO_IS_JOB (job));
+
+  /* destroy the job object */
+  g_object_unref (job);
+}
+
+
+
 /**
  * thunar_application_rename_file:
  * @application : a #ThunarApplication.
@@ -1275,6 +1287,10 @@ thunar_application_rename_file (ThunarApplication *application,
       /* handle rename errors */
       g_signal_connect (job, "error", 
                         G_CALLBACK (thunar_application_rename_file_error), application);
+
+      /* destroy the job when it has finished */
+      g_signal_connect (job, "finished",
+                        G_CALLBACK (thunar_application_rename_file_finished), NULL);
     }
 }
 
