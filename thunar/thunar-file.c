@@ -1285,8 +1285,17 @@ thunar_file_rename (ThunarFile   *file,
       /* write the changes back to the file */
       if (thunar_g_file_write_key_file (file->gfile, key_file, cancellable, &err))
         {
-          /* notify everybody that the file has changed */
-          thunar_file_changed (file);
+          /* reload file information */
+          thunar_file_load (file, NULL, NULL);
+
+          if (!called_from_job)
+            {
+              /* tell the associated folder that the file was renamed */
+              thunarx_file_info_renamed (THUNARX_FILE_INFO (file));
+
+              /* notify everybody that the file has changed */
+              thunar_file_changed (file);
+            }
 
           /* release the key file and return with success */
           g_key_file_free (key_file);
