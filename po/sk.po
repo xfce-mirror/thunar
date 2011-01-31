@@ -4,19 +4,20 @@
 # Copyright (c) 2006 Canonical Ltd, and Rosetta Contributors 2006
 # Ubuntu Slovak Translators: Furby, Jozef Káčer, Marcel Hecko, Martin,
 #   Michal Ingeli, Patrik Mondok, Peter Chabada, funnny, helix84
-# Robert Hartl <hartl.robert@gmail.com>, 2009.
+# Robert Hartl <hartl.robert@gmail.com>, 2009, 2011.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-30 19:30+0100\n"
-"PO-Revision-Date: 2009-12-27 15:27Centra\n"
+"POT-Creation-Date: 2011-01-31 11:27+0000\n"
+"PO-Revision-Date: 2011-01-31 14:45+0100\n"
 "Last-Translator: Robert Hartl <hartl.robert@gmail.com>\n"
-"Language-Team: Slovak <sk-i18n@lists.linux.sk>\n"
-"Language: sk\n"
+"Language-Team: Slovak <xfce-i18n@xfce.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: sk\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 1 : (n>=2 && n<=4) ? 2 : 0;\n"
 "X-Rosetta-Export-Date: 2007-08-22 01:18:12+0000\n"
 
@@ -306,9 +307,8 @@ msgid "No application selected"
 msgstr "Nie je vybraný program"
 
 #: ../thunar/thunar-chooser-button.c:502
-#, fuzzy
 msgid "Other Application..."
-msgstr "Ďalšie _programy..."
+msgstr "Ostatné _aplikácie..."
 
 #: ../thunar/thunar-chooser-dialog.c:185 ../thunar/thunar-launcher.c:171
 msgid "Open With"
@@ -564,24 +564,24 @@ msgid "Atleast one filename must be specified"
 msgstr "Minimálne jeden názov súboru musí byť zadaný"
 
 #: ../thunar/thunar-dbus-service.c:1000
-#, fuzzy, c-format
+#, c-format
 msgid "At least one source filename must be specified"
-msgstr "Minimálne jeden názov súboru musí byť zadaný"
+msgstr "Aspoň jeden názov zdrojového súboru musí byť zadaný"
 
 #: ../thunar/thunar-dbus-service.c:1010
 #, c-format
 msgid "The number of source and target filenames must be the same"
-msgstr ""
+msgstr "Počet zdrojových a cieľových názvov sa musí zhodovať"
 
 #: ../thunar/thunar-dbus-service.c:1019
-#, fuzzy, c-format
+#, c-format
 msgid "A destination directory must be specified"
-msgstr "Minimálne jeden názov súboru musí byť zadaný"
+msgstr "Cieľový adresár musí byť zadaný"
 
 #: ../thunar/thunar-dbus-service.c:1222
-#, fuzzy, c-format
+#, c-format
 msgid "At least one filename must be specified"
-msgstr "Minimálne jeden názov súboru musí byť zadaný"
+msgstr "Musí byť zadaný aspoň jeden názov súboru"
 
 #: ../thunar/thunar-details-view.c:129
 msgid "Configure _Columns..."
@@ -1294,7 +1294,7 @@ msgstr "Nepodarilo sa zistiť prípojný bod pre \"%s\""
 
 #: ../thunar/thunar-notify.c:123
 msgid "Unmounting device"
-msgstr ""
+msgstr "Odpojovanie zariadenia"
 
 #: ../thunar/thunar-notify.c:124
 #, c-format
@@ -1302,10 +1302,11 @@ msgid ""
 "The device \"%s\" is being unmounted by the system. Please do not remove the "
 "media or disconnect the drive"
 msgstr ""
+"Systém odpojuje zariadenie %s. Nevyberajte médium ani neodpájajte jednotku"
 
 #: ../thunar/thunar-notify.c:130 ../thunar/thunar-notify.c:248
 msgid "Writing data to device"
-msgstr ""
+msgstr "Zapisovanie dát na zariadenie"
 
 #: ../thunar/thunar-notify.c:131 ../thunar/thunar-notify.c:249
 #, c-format
@@ -1313,15 +1314,17 @@ msgid ""
 "There is data that needs to be written to the device \"%s\" before it can be "
 "removed. Please do not remove the media or disconnect the drive"
 msgstr ""
+"Pred odobraním zariadenia „%s“ je potrebné zapísať dáta. Nevyberajte médium "
+"ani neodpájajte jednoku"
 
 #: ../thunar/thunar-notify.c:242
 msgid "Ejecting device"
-msgstr ""
+msgstr "Vysúvanie zariadenia"
 
 #: ../thunar/thunar-notify.c:243
 #, c-format
 msgid "The device \"%s\" is being ejected. This may take some time"
-msgstr ""
+msgstr "Zariadenie „%s“ sa vysúva. Môže to chvíľu trvať"
 
 #: ../thunar/thunar-misc-jobs.c:84
 #, c-format
@@ -2644,7 +2647,6 @@ msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Všetky súbory z tohoto priečinka budú v ponuke \"Vytvoriť dokument\"."
 
 #: ../thunar/thunar-window.c:2207
-#, fuzzy
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and "
 "put it in this folder. Thunar will add an entry for this document in the "
@@ -2653,11 +2655,11 @@ msgid ""
 "You can then select the entry from the \"Create Document\" menu and a copy "
 "of the document will be created in the directory you are viewing."
 msgstr ""
-"Ak často vytvárate daný druh dokumentov, vytvorte si jeho kópiu do tohoto "
+"Ak často vytvárate daný druh dokumentov, vytvorte si jednu kópiu do tohoto "
 "priečinku. Thunar ho pridá do ponuky \"Vytvoriť dokument\".\n"
 "\n"
 "Môžete potom vybrať z ponuky \"Vytvoriť dokument\" položku a vytvorí sa "
-"kópia daného dokumentu v priečinku, ktorý práve prehlidate."
+"kópia daného dokumentu v priečinku, ktorý práve prehliadate."
 
 #: ../thunar/thunar-window.c:2219
 msgid "Do _not display this message again"
@@ -2889,6 +2891,9 @@ msgid ""
 "with the day. See the documentation of the date utility for additional "
 "information."
 msgstr ""
+"Formát popisuje časti dátumu a času vložených do názvu súboru. Napríklad %Y "
+"bude nahradený rokom, %m mesiacom a %d dňom. Viac informácií získa v "
+"dokumentácii."
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:243
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:197
