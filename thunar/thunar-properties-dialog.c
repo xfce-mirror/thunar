@@ -1,21 +1,22 @@
-/* $Id$ */
+/* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
  * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2011 Jannis Pohlmann <jannis@xfce.org>
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This program is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA  02111-1307  USA
+ * You should have received a copy of the GNU General Public 
+ * License along with this program; if not, write to the Free 
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -52,6 +53,7 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-size-label.h>
+#include <thunar/thunar-thumbnailer.h>
 
 
 
@@ -106,31 +108,34 @@ struct _ThunarPropertiesDialogClass
 
 struct _ThunarPropertiesDialog
 {
-  ThunarAbstractDialog    __parent__;
+  ThunarAbstractDialog     __parent__;
 
-  ThunarxProviderFactory *provider_factory;
-  GList                  *provider_pages;
+  ThunarxProviderFactory  *provider_factory;
+  GList                   *provider_pages;
 
-  ThunarPreferences      *preferences;
+  ThunarPreferences       *preferences;
 
-  ThunarFile             *file;
+  ThunarFile              *file;
 
-  GtkWidget              *notebook;
-  GtkWidget              *icon_button;
-  GtkWidget              *icon_image;
-  GtkWidget              *name_entry;
-  GtkWidget              *kind_ebox;
-  GtkWidget              *kind_label;
-  GtkWidget              *openwith_chooser;
-  GtkWidget              *link_label;
-  GtkWidget              *origin_label;
-  GtkWidget              *deleted_label;
-  GtkWidget              *modified_label;
-  GtkWidget              *accessed_label;
-  GtkWidget              *freespace_label;
-  GtkWidget              *volume_image;
-  GtkWidget              *volume_label;
-  GtkWidget              *permissions_chooser;
+  ThunarThumbnailer       *thumbnailer;
+  ThunarThumbnailerRequest thumbnail_request;
+
+  GtkWidget               *notebook;
+  GtkWidget               *icon_button;
+  GtkWidget               *icon_image;
+  GtkWidget               *name_entry;
+  GtkWidget               *kind_ebox;
+  GtkWidget               *kind_label;
+  GtkWidget               *openwith_chooser;
+  GtkWidget               *link_label;
+  GtkWidget               *origin_label;
+  GtkWidget               *deleted_label;
+  GtkWidget               *modified_label;
+  GtkWidget               *accessed_label;
+  GtkWidget               *freespace_label;
+  GtkWidget               *volume_image;
+  GtkWidget               *volume_label;
+  GtkWidget               *permissions_chooser;
 };
 
 
@@ -208,6 +213,10 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   dialog->preferences = thunar_preferences_get ();
   g_signal_connect_swapped (G_OBJECT (dialog->preferences), "notify::misc-date-style",
                             G_CALLBACK (thunar_properties_dialog_reload), dialog);
+
+  /* create a new thumbnailer */
+  dialog->thumbnailer = thunar_thumbnailer_new ();
+  dialog->thumbnail_request = 0;
 
   dialog->provider_factory = thunarx_provider_factory_get_default ();
 
@@ -514,6 +523,16 @@ thunar_properties_dialog_finalize (GObject *object)
   g_signal_handlers_disconnect_by_func (dialog->preferences, thunar_properties_dialog_reload, dialog);
   g_object_unref (dialog->preferences);
 
+  /* cancel any pending thumbnailer requests */
+  if (dialog->thumbnail_request > 0)
+    {
+      thunar_thumbnailer_unqueue (dialog->thumbnailer, dialog->thumbnail_request);
+      dialog->thumbnail_request = 0;
+    }
+
+  /* release the thumbnailer */
+  g_object_unref (dialog->thumbnailer);
+
   /* release the provider property pages */
   g_list_foreach (dialog->provider_pages, (GFunc) g_object_unref, NULL);
   g_list_free (dialog->provider_pages);
@@ -812,6 +831,20 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (THUNAR_IS_FILE (dialog->file));
+
+  /* cancel any pending thumbnail requests */
+  if (dialog->thumbnail_request > 0)
+    {
+      thunar_thumbnailer_unqueue (dialog->thumbnailer, dialog->thumbnail_request);
+      dialog->thumbnail_request = 0;
+    }
+
+  if (dialog->file != NULL)
+    {
+      /* queue a new thumbnail request */
+      thunar_thumbnailer_queue_file (dialog->thumbnailer, dialog->file, 
+                                     &dialog->thumbnail_request);
+    }
 
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (dialog)));
   icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
