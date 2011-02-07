@@ -108,34 +108,34 @@ struct _ThunarPropertiesDialogClass
 
 struct _ThunarPropertiesDialog
 {
-  ThunarAbstractDialog     __parent__;
+  ThunarAbstractDialog    __parent__;
 
-  ThunarxProviderFactory  *provider_factory;
-  GList                   *provider_pages;
+  ThunarxProviderFactory *provider_factory;
+  GList                  *provider_pages;
 
-  ThunarPreferences       *preferences;
+  ThunarPreferences      *preferences;
 
-  ThunarFile              *file;
+  ThunarFile             *file;
 
-  ThunarThumbnailer       *thumbnailer;
-  ThunarThumbnailerRequest thumbnail_request;
+  ThunarThumbnailer      *thumbnailer;
+  guint                   thumbnail_request;
 
-  GtkWidget               *notebook;
-  GtkWidget               *icon_button;
-  GtkWidget               *icon_image;
-  GtkWidget               *name_entry;
-  GtkWidget               *kind_ebox;
-  GtkWidget               *kind_label;
-  GtkWidget               *openwith_chooser;
-  GtkWidget               *link_label;
-  GtkWidget               *origin_label;
-  GtkWidget               *deleted_label;
-  GtkWidget               *modified_label;
-  GtkWidget               *accessed_label;
-  GtkWidget               *freespace_label;
-  GtkWidget               *volume_image;
-  GtkWidget               *volume_label;
-  GtkWidget               *permissions_chooser;
+  GtkWidget              *notebook;
+  GtkWidget              *icon_button;
+  GtkWidget              *icon_image;
+  GtkWidget              *name_entry;
+  GtkWidget              *kind_ebox;
+  GtkWidget              *kind_label;
+  GtkWidget              *openwith_chooser;
+  GtkWidget              *link_label;
+  GtkWidget              *origin_label;
+  GtkWidget              *deleted_label;
+  GtkWidget              *modified_label;
+  GtkWidget              *accessed_label;
+  GtkWidget              *freespace_label;
+  GtkWidget              *volume_image;
+  GtkWidget              *volume_label;
+  GtkWidget              *permissions_chooser;
 };
 
 
@@ -526,7 +526,7 @@ thunar_properties_dialog_finalize (GObject *object)
   /* cancel any pending thumbnailer requests */
   if (dialog->thumbnail_request > 0)
     {
-      thunar_thumbnailer_unqueue (dialog->thumbnailer, dialog->thumbnail_request);
+      thunar_thumbnailer_dequeue (dialog->thumbnailer, dialog->thumbnail_request);
       dialog->thumbnail_request = 0;
     }
 
@@ -835,7 +835,7 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   /* cancel any pending thumbnail requests */
   if (dialog->thumbnail_request > 0)
     {
-      thunar_thumbnailer_unqueue (dialog->thumbnailer, dialog->thumbnail_request);
+      thunar_thumbnailer_dequeue (dialog->thumbnailer, dialog->thumbnail_request);
       dialog->thumbnail_request = 0;
     }
 

@@ -49,34 +49,17 @@
  *
  * When a request call is sent out, an internal request ID is created and 
  * associated with the corresponding DBusGProxyCall via the request_call_mapping hash 
- * table. It also remembers the URIs for the internal request ID in the 
- * request_uris_mapping hash table. 
+ * table. 
  *
  * The D-Bus reply handler then checks if there was an delivery error or
  * not. If the request method was sent successfully, the handle returned by the
  * D-Bus thumbnailer is associated bidirectionally with the internal request ID via 
- * the request_handle_mapping and handle_request_mappings. If the request could
- * not be sent at all, the URIs array is dropped from request_uris_mapping. In 
- * both cases, the association of the internal request ID with the DBusGProxyCall
- * is removed from request_call_mapping.
+ * the request_handle_mapping and handle_request_mappings. In both cases, the 
+ * association of the internal request ID with the DBusGProxyCall is removed from 
+ * request_call_mapping.
  *
- * These hash tables play a major role in the Started, Finished, Error and Ready
+ * These hash tables play a major role in the Finished, Error and Ready
  * signal handlers.
- *
- *
- * Started
- * =======
- *
- * When a Started signal is emitted by the D-Bus thumbnailer, ThunarThumbnailer
- * receives the handle and looks up the corresponding internal request ID. If
- * it exists (which it should), it schedules an idle function to handle the
- * signal in the application's main loop. 
- *
- * The idle function then looks up the URIs array for the request ID from the
- * request_uris_mapping. For each of these URIs the corresponding ThunarFile
- * is looked up from the file cache (which represents files currently being
- * used somewhere in the UI), and if the ThunarFile exists in the cache it's
- * thumb state is set to _LOADING (unless it's already marked as _READY).
  *
  *
  * Ready / Error
@@ -92,7 +75,7 @@
  *
  * The Finished signal handler looks up the internal request ID based on
  * the D-Bus thumbnailer handle. It then drops all corresponding information
- * from handle_request_mapping, request_handle_mapping and request_uris_mapping.
+ * from handle_request_mapping and request_handle_mapping.
  */
 
 
@@ -133,15 +116,11 @@ static void                   thunar_thumbnailer_thumbnailer_ready      (DBusGPr
                                                                          guint32                handle,
                                                                          const gchar          **uris,
                                                                          ThunarThumbnailer     *thumbnailer);
-static void                   thunar_thumbnailer_thumbnailer_started    (DBusGProxy            *proxy,
-                                                                         guint                  handle,
-                                                                         ThunarThumbnailer     *thumbnailer);
 static guint                  thunar_thumbnailer_queue_async            (ThunarThumbnailer     *thumbnailer,
                                                                          gchar                **uris,
                                                                          const gchar          **mime_hints);
 static gboolean               thunar_thumbnailer_error_idle             (gpointer               user_data);
 static gboolean               thunar_thumbnailer_ready_idle             (gpointer               user_data);
-static gboolean               thunar_thumbnailer_started_idle           (gpointer               user_data);
 static void                   thunar_thumbnailer_call_free              (ThunarThumbnailerCall *call);
 static void                   thunar_thumbnailer_idle_free              (gpointer               data);
 #endif
@@ -170,9 +149,6 @@ struct _ThunarThumbnailer
   /* hash table to map ThunarThumbnailer requests to DBusGProxyCalls */
   GHashTable *request_call_mapping;
 
-  /* hash table to map ThunarThumbnailer requests to URI arrays */
-  GHashTable *request_uris_mapping;
-
   GMutex     *lock;
 
   /* cached arrays of URI schemes and MIME types for which thumbnails 
@@ -181,7 +157,7 @@ struct _ThunarThumbnailer
   gchar     **supported_types;
 
   /* last ThunarThumbnailer request ID */
-  ThunarThumbnailerRequest last_request;
+  guint       last_request;
 
   /* IDs of idle functions */
   GList      *idles;
@@ -263,9 +239,6 @@ thunar_thumbnailer_init (ThunarThumbnailer *thumbnailer)
         g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, NULL);
       thumbnailer->request_call_mapping = 
         g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, NULL);
-      thumbnailer->request_uris_mapping =
-        g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, 
-                               (GDestroyNotify) g_strfreev);
     }
 
   /* release the D-Bus connection if we have one */
@@ -309,16 +282,15 @@ thunar_thumbnailer_finalize (GObject *object)
       g_hash_table_unref (thumbnailer->request_call_mapping);
 
 #if 0 
-      /* unqueue all pending requests */
+      /* dequeue all pending requests */
       list = g_hash_table_get_keys (thumbnailer->handle_request_mapping);
       for (lp = list; lp != NULL; lp = lp->next)
-        thunar_thumbnailer_unqueue_internal (thumbnailer, GPOINTER_TO_UINT (lp->data));
+        thunar_thumbnailer_dequeue_internal (thumbnailer, GPOINTER_TO_UINT (lp->data));
       g_list_free (list);
 #endif
 
       g_hash_table_unref (thumbnailer->handle_request_mapping);
       g_hash_table_unref (thumbnailer->request_handle_mapping);
-      g_hash_table_unref (thumbnailer->request_uris_mapping);
 
       /* disconnect from the thumbnailer proxy */
       g_signal_handlers_disconnect_matched (thumbnailer->thumbnailer_proxy,
@@ -397,9 +369,6 @@ thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer *thumbnailer,
                                thumbnailer, NULL);
   dbus_g_proxy_connect_signal (thumbnailer->thumbnailer_proxy, "Ready",
                                G_CALLBACK (thunar_thumbnailer_thumbnailer_ready), 
-                               thumbnailer, NULL);
-  dbus_g_proxy_connect_signal (thumbnailer->thumbnailer_proxy, "Started", 
-                               G_CALLBACK (thunar_thumbnailer_thumbnailer_started), 
                                thumbnailer, NULL);
 }
 
@@ -528,7 +497,6 @@ thunar_thumbnailer_thumbnailer_finished (DBusGProxy        *proxy,
       /* the request is finished, drop all the information about it */
       g_hash_table_remove (thumbnailer->handle_request_mapping, request);
       g_hash_table_remove (thumbnailer->request_handle_mapping, request);
-      g_hash_table_remove (thumbnailer->request_uris_mapping, request);
     }
 }
 
@@ -569,44 +537,6 @@ thunar_thumbnailer_thumbnailer_ready (DBusGProxy        *proxy,
 
 
 static void
-thunar_thumbnailer_thumbnailer_started (DBusGProxy        *proxy,
-                                        guint              handle,
-                                        ThunarThumbnailer *thumbnailer)
-{
-  ThunarThumbnailerIdle *idle;
-  gpointer               request;
-
-  _thunar_return_if_fail (DBUS_IS_G_PROXY (proxy));
-  _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
-
-  /* look up the request for this D-Bus service handle */
-  request = g_hash_table_lookup (thumbnailer->handle_request_mapping, 
-                                 GUINT_TO_POINTER (handle));
-
-  /* check if we have a request for this handle */
-  if (request != NULL)
-    {
-      /* allocate a new idle struct */
-      idle = g_slice_new0 (ThunarThumbnailerIdle);
-      idle->type = THUNAR_THUMBNAILER_IDLE_STARTED;
-      idle->thumbnailer = g_object_ref (thumbnailer);
-
-      /* remember the request because we need it in the idle function */
-      idle->data.request = request;
-
-      /* remember the idle struct because we might have to remove it in finalize() */
-      thumbnailer->idles = g_list_prepend (thumbnailer->idles, idle);
-
-      /* call the started idle function when we have the time */
-      idle->id = g_idle_add_full (G_PRIORITY_LOW,
-                                  thunar_thumbnailer_started_idle, idle, 
-                                  thunar_thumbnailer_idle_free);
-    }
-}
-
-
-
-static void
 thunar_thumbnailer_queue_async_reply (DBusGProxy *proxy,
                                       guint       handle,
                                       GError     *error,
@@ -614,9 +544,6 @@ thunar_thumbnailer_queue_async_reply (DBusGProxy *proxy,
 {
   ThunarThumbnailerCall *call = user_data;
   ThunarThumbnailer     *thumbnailer = THUNAR_THUMBNAILER (call->thumbnailer);
-#ifndef NDEBUG
-  gchar                **uris;
-#endif
 
   _thunar_return_if_fail (DBUS_IS_G_PROXY (proxy));
   _thunar_return_if_fail (call != NULL);
@@ -624,20 +551,7 @@ thunar_thumbnailer_queue_async_reply (DBusGProxy *proxy,
 
   g_mutex_lock (thumbnailer->lock);
 
-  if (error != NULL)
-    {
-#ifndef NDEBUG
-      /* get the URIs array for this request */
-      uris = g_hash_table_lookup (thumbnailer->request_uris_mapping, call->request);
-
-      /* the array should always exist, otherwise there's a bug in the program */
-      _thunar_assert (uris != NULL);
-#endif
-
-      /* the request is "finished", forget about its URIs */
-      g_hash_table_remove (thumbnailer->request_uris_mapping, call->request);
-    }
-  else
+  if (error == NULL)
     {
       /* remember that this request and D-Bus handle belong together */
       g_hash_table_insert (thumbnailer->request_handle_mapping,
@@ -685,9 +599,6 @@ thunar_thumbnailer_queue_async (ThunarThumbnailer *thumbnailer,
   thumbnailer_call = g_slice_new0 (ThunarThumbnailerCall);
   thumbnailer_call->request = request;
   thumbnailer_call->thumbnailer = g_object_ref (thumbnailer);
-
-  /* remember the URIs for this request */
-  g_hash_table_insert (thumbnailer->request_uris_mapping, request, uris);
 
   /* queue thumbnails for the given URIs asynchronously */
   call = thunar_thumbnailer_proxy_queue_async (thumbnailer->thumbnailer_proxy,
@@ -783,54 +694,6 @@ thunar_thumbnailer_ready_idle (gpointer user_data)
 
 
 
-static gboolean
-thunar_thumbnailer_started_idle (gpointer user_data)
-{
-  ThunarThumbnailerIdle *idle = user_data;
-  const gchar          **uris;
-  ThunarFile            *file;
-  GFile                 *gfile;
-  guint                  n;
-
-  _thunar_return_val_if_fail (idle != NULL, FALSE);
-  _thunar_return_val_if_fail (idle->type == THUNAR_THUMBNAILER_IDLE_STARTED, FALSE);
-
-  g_mutex_lock (idle->thumbnailer->lock);
-
-  /* look up the URIs that belong to this request */
-  uris = g_hash_table_lookup (idle->thumbnailer->request_uris_mapping, 
-                              idle->data.request);
-
-  /* iterate over all URIs if there are any */
-  for (n = 0; uris != NULL && uris[n] != NULL; ++n)
-    {
-      /* look up the corresponding ThunarFile from the cache */
-      gfile = g_file_new_for_uri (uris[n]);
-      file = thunar_file_cache_lookup (gfile);
-      g_object_unref (gfile);
-
-      /* check if we have a file in the cache */
-      if (file != NULL)
-        {
-          /* set the thumbnail state to loading unless we already have a thumbnail.
-           * This is to prevent race conditions with the other idle functions */
-          if (thunar_file_get_thumb_state (file) != THUNAR_FILE_THUMB_STATE_READY)
-            thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_LOADING);
-        }
-    }
-  
-
-  /* remove the idle struct */
-  idle->thumbnailer->idles = g_list_remove (idle->thumbnailer->idles, idle);
-
-  g_mutex_unlock (idle->thumbnailer->lock);
-
-  /* remove the idle source, which also destroys the idle struct */
-  return FALSE;
-}
-
-
-
 static void
 thunar_thumbnailer_call_free (ThunarThumbnailerCall *call)
 {
@@ -889,9 +752,9 @@ thunar_thumbnailer_new (void)
 
 
 gboolean
-thunar_thumbnailer_queue_file (ThunarThumbnailer        *thumbnailer,
-                               ThunarFile               *file,
-                               ThunarThumbnailerRequest *request)
+thunar_thumbnailer_queue_file (ThunarThumbnailer *thumbnailer,
+                               ThunarFile        *file,
+                               guint             *request)
 {
   GList files;
 
@@ -910,9 +773,9 @@ thunar_thumbnailer_queue_file (ThunarThumbnailer        *thumbnailer,
 
 
 gboolean
-thunar_thumbnailer_queue_files (ThunarThumbnailer        *thumbnailer,
-                                GList                    *files,
-                                ThunarThumbnailerRequest *request)
+thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
+                                GList             *files,
+                                guint             *request)
 {
   const gchar **mime_hints;
   gboolean      success = FALSE;
@@ -963,6 +826,9 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer        *thumbnailer,
       /* fill URI and MIME hint arrays with items from the wait queue */
       for (lp = g_list_last (supported_files), n = 0; lp != NULL; lp = lp->prev, ++n)
         {
+          /* set the thumbnail state to loading */
+          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_LOADING);
+
           /* save URI and MIME hint in the arrays */
           uris[n] = thunar_file_dup_uri (lp->data);
           mime_hints[n] = thunar_file_get_content_type (lp->data);
@@ -976,15 +842,9 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer        *thumbnailer,
 
       /* queue a thumbnail request for the URIs from the wait queue */
       if (request != NULL)
-        {
-          *request = thunar_thumbnailer_queue_async (thumbnailer, uris, 
-                                                     (const gchar **)mime_hints);
-        }
+        *request = thunar_thumbnailer_queue_async (thumbnailer, uris, mime_hints);
       else
-        {
-          thunar_thumbnailer_queue_async (thumbnailer, uris,
-                                          (const gchar **)mime_hints);
-        }
+        thunar_thumbnailer_queue_async (thumbnailer, uris, mime_hints);
 
       g_mutex_unlock (thumbnailer->lock);
 
@@ -1004,8 +864,8 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer        *thumbnailer,
 
 
 void
-thunar_thumbnailer_unqueue (ThunarThumbnailer       *thumbnailer,
-                            ThunarThumbnailerRequest request)
+thunar_thumbnailer_dequeue (ThunarThumbnailer *thumbnailer,
+                            guint              request)
 {
 #ifdef HAVE_DBUS
   gpointer request_ptr;
@@ -1028,14 +888,13 @@ thunar_thumbnailer_unqueue (ThunarThumbnailer       *thumbnailer,
       handle = g_hash_table_lookup (thumbnailer->request_handle_mapping, request_ptr);
       if (GPOINTER_TO_UINT (handle) > 0)
         {
-          /* unqueue the request */
-          thunar_thumbnailer_proxy_unqueue (thumbnailer->thumbnailer_proxy, 
+          /* Dequeue the request */
+          thunar_thumbnailer_proxy_dequeue (thumbnailer->thumbnailer_proxy, 
                                             GPOINTER_TO_UINT (handle), NULL);
 
           /* drop all the request information */
           g_hash_table_remove (thumbnailer->handle_request_mapping, handle);
           g_hash_table_remove (thumbnailer->request_handle_mapping, request_ptr);
-          g_hash_table_remove (thumbnailer->request_uris_mapping, request_ptr);
         }
     }
 

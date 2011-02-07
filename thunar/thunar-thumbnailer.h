@@ -23,9 +23,7 @@
 
 #include <thunar/thunar-file.h>
 
-G_BEGIN_DECLS;
-
-typedef guint ThunarThumbnailerRequest;
+G_BEGIN_DECLS
 
 typedef struct _ThunarThumbnailerClass ThunarThumbnailerClass;
 typedef struct _ThunarThumbnailer      ThunarThumbnailer;
@@ -43,13 +41,13 @@ ThunarThumbnailer *thunar_thumbnailer_new             (void) G_GNUC_MALLOC;
 
 gboolean           thunar_thumbnailer_queue_file      (ThunarThumbnailer        *thumbnailer,
                                                        ThunarFile               *file,
-                                                       ThunarThumbnailerRequest *request);
+                                                       guint                    *request);
 gboolean           thunar_thumbnailer_queue_files     (ThunarThumbnailer        *thumbnailer,
                                                        GList                    *files,
-                                                       ThunarThumbnailerRequest *request);
-void               thunar_thumbnailer_unqueue         (ThunarThumbnailer        *thumbnailer,
-                                                       ThunarThumbnailerRequest  request);
+                                                       guint                    *request);
+void               thunar_thumbnailer_dequeue         (ThunarThumbnailer        *thumbnailer,
+                                                       guint                     request);
 
-G_END_DECLS;
+G_END_DECLS
 
 #endif /* !__THUNAR_THUMBNAILER_H__ */
