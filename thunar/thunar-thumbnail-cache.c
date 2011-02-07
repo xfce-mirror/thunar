@@ -58,6 +58,10 @@ struct _ThunarThumbnailCache
   GList      *move_target_queue;
   guint       move_queue_idle_id;
 
+  GList      *copy_source_queue;
+  GList      *copy_target_queue;
+  guint       copy_queue_idle_id;
+
   GList      *delete_queue;
   guint       delete_queue_idle_id;
 
@@ -130,6 +134,14 @@ thunar_thumbnail_cache_finalize (GObject *object)
   g_list_free (cache->move_source_queue);
   g_list_free (cache->move_target_queue);
 
+  /* drop the copy queue idle and all queued files */
+  if (cache->copy_queue_idle_id > 0)
+    g_source_remove (cache->copy_queue_idle_id);
+  g_list_foreach (cache->copy_source_queue, (GFunc) g_object_unref, NULL);
+  g_list_foreach (cache->copy_target_queue, (GFunc) g_object_unref, NULL);
+  g_list_free (cache->copy_source_queue);
+  g_list_free (cache->copy_target_queue);
+
   /* drop the delete queue idle and all queued files */
   if (cache->delete_queue_idle_id > 0)
     g_source_remove (cache->delete_queue_idle_id);
@@ -179,6 +191,34 @@ thunar_thumbnail_cache_move_async (ThunarThumbnailCache *cache,
   thunar_thumbnail_cache_proxy_move_async (cache->cache_proxy,
                                            source_uris, target_uris,
                                            thunar_thumbnail_cache_move_async_reply,
+                                           NULL);
+}
+
+
+
+static void
+thunar_thumbnail_cache_copy_async_reply (DBusGProxy *proxy,
+                                         GError     *error,
+                                         gpointer    user_data)
+{
+  _thunar_return_if_fail (DBUS_IS_G_PROXY (proxy));
+}
+
+
+
+static void
+thunar_thumbnail_cache_copy_async (ThunarThumbnailCache *cache,
+                                   const gchar         **source_uris,
+                                   const gchar         **target_uris)
+{
+  _thunar_return_if_fail (THUNAR_IS_THUMBNAIL_CACHE (cache));
+  _thunar_return_if_fail (source_uris != NULL);
+  _thunar_return_if_fail (target_uris != NULL);
+
+  /* request a thumbnail cache update asynchronously */
+  thunar_thumbnail_cache_proxy_copy_async (cache->cache_proxy,
+                                           source_uris, target_uris,
+                                           thunar_thumbnail_cache_copy_async_reply,
                                            NULL);
 }
 
@@ -267,6 +307,73 @@ thunar_thumbnail_cache_process_move_queue (ThunarThumbnailCache *cache)
 
   /* reset the move queue idle ID */
   cache->move_queue_idle_id = 0;
+
+  /* release the cache lock */
+  g_mutex_unlock (cache->lock);
+
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_thumbnail_cache_process_copy_queue (ThunarThumbnailCache *cache)
+{
+  GList  *sp;
+  GList  *tp;
+  gchar **source_uris;
+  gchar **target_uris;
+  guint   n_uris;
+  guint   n;
+
+  _thunar_return_val_if_fail (THUNAR_IS_THUMBNAIL_CACHE (cache), FALSE);
+
+  /* acquire a cache lock */
+  g_mutex_lock (cache->lock);
+  
+  /* compute how many URIs there are */
+  n_uris = g_list_length (cache->copy_source_queue);
+
+  /* allocate a string array for the URIs */
+  source_uris = g_new0 (gchar *, n_uris + 1);
+  target_uris = g_new0 (gchar *, n_uris + 1);
+
+  /* fill URI array with file URIs from the copy queue */
+  for (n = 0,
+       sp = g_list_last (cache->copy_source_queue), 
+       tp = g_list_last (cache->copy_target_queue);
+       sp != NULL && tp != NULL; 
+       sp = sp->prev, tp = tp->prev, ++n)
+    {
+      source_uris[n] = g_file_get_uri (sp->data);
+      target_uris[n] = g_file_get_uri (tp->data);
+
+      /* release the file objects */
+      g_object_unref (sp->data);
+      g_object_unref (tp->data);
+    }
+
+  /* NULL-terminate the URI arrays */
+  source_uris[n] = NULL;
+  target_uris[n] = NULL;
+
+  /* asynchronously copy the thumbnails */
+  thunar_thumbnail_cache_copy_async (cache, 
+                                     (const gchar **)source_uris,
+                                     (const gchar **)target_uris);
+
+  /* free the URI arrays */
+  g_free (source_uris);
+  g_free (target_uris);
+
+  /* release the copy queue lists */
+  g_list_free (cache->copy_source_queue);
+  g_list_free (cache->copy_target_queue);
+  cache->copy_source_queue = NULL;
+  cache->copy_target_queue = NULL;
+
+  /* reset the copy queue idle ID */
+  cache->copy_queue_idle_id = 0;
 
   /* release the cache lock */
   g_mutex_unlock (cache->lock);
@@ -369,6 +476,48 @@ thunar_thumbnail_cache_move_file (ThunarThumbnailCache *cache,
       /* process the move queue in a 250ms timeout */
       cache->move_queue_idle_id =
         g_timeout_add (250, (GSourceFunc) thunar_thumbnail_cache_process_move_queue,
+                       cache);
+    }
+
+  /* release the cache lock */
+  g_mutex_unlock (cache->lock);
+#endif
+}
+
+
+
+void
+thunar_thumbnail_cache_copy_file (ThunarThumbnailCache *cache,
+                                  GFile                *source_file,
+                                  GFile                *target_file)
+{
+  _thunar_return_if_fail (THUNAR_IS_THUMBNAIL_CACHE (cache));
+  _thunar_return_if_fail (G_IS_FILE (source_file));
+  _thunar_return_if_fail (G_IS_FILE (target_file));
+
+#ifdef HAVE_DBUS
+  /* acquire a cache lock */
+  g_mutex_lock (cache->lock);
+
+  /* check if we have a valid proxy for the cache service */
+  if (cache->cache_proxy != NULL)
+    {
+      /* cancel any pending timeout to process the copy queue */
+      if (cache->copy_queue_idle_id > 0)
+        {
+          g_source_remove (cache->copy_queue_idle_id);
+          cache->copy_queue_idle_id = 0;
+        }
+
+      /* add the files to the copy queues */
+      cache->copy_source_queue = g_list_prepend (cache->copy_source_queue, 
+                                                 g_object_ref (source_file));
+      cache->copy_target_queue = g_list_prepend (cache->copy_target_queue,
+                                                 g_object_ref (target_file));
+
+      /* process the copy queue in a 250ms timeout */
+      cache->copy_queue_idle_id =
+        g_timeout_add (250, (GSourceFunc) thunar_thumbnail_cache_process_copy_queue,
                        cache);
     }
 

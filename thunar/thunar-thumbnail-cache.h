@@ -43,6 +43,9 @@ ThunarThumbnailCache *thunar_thumbnail_cache_new         (void) G_GNUC_MALLOC G_
 void                  thunar_thumbnail_cache_move_file   (ThunarThumbnailCache *cache,
                                                           GFile                *source_file,
                                                           GFile                *target_file);
+void                  thunar_thumbnail_cache_copy_file   (ThunarThumbnailCache *cache,
+                                                          GFile                *source_file,
+                                                          GFile                *target_file);
 void                  thunar_thumbnail_cache_delete_file (ThunarThumbnailCache *cache,
                                                           GFile                *file);
 
