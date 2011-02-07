@@ -53,6 +53,13 @@ struct _ThunarThumbnailCache
 
 #ifdef HAVE_DBUS
   DBusGProxy *cache_proxy;
+  
+  GList      *move_source_queue;
+  GList      *move_target_queue;
+  guint       move_queue_idle_id;
+
+  GList      *delete_queue;
+  guint       delete_queue_idle_id;
 
   GMutex     *lock;
 #endif
@@ -115,6 +122,20 @@ thunar_thumbnail_cache_finalize (GObject *object)
   /* acquire a cache lock */
   g_mutex_lock (cache->lock);
 
+  /* drop the move queue idle and all queued files */
+  if (cache->move_queue_idle_id > 0)
+    g_source_remove (cache->move_queue_idle_id);
+  g_list_foreach (cache->move_source_queue, (GFunc) g_object_unref, NULL);
+  g_list_foreach (cache->move_target_queue, (GFunc) g_object_unref, NULL);
+  g_list_free (cache->move_source_queue);
+  g_list_free (cache->move_target_queue);
+
+  /* drop the delete queue idle and all queued files */
+  if (cache->delete_queue_idle_id > 0)
+    g_source_remove (cache->delete_queue_idle_id);
+  g_list_foreach (cache->delete_queue, (GFunc) g_object_unref, NULL);
+  g_list_free (cache->delete_queue);
+
   /* check if we have a valid cache proxy */
   if (cache->cache_proxy != NULL)
     {
@@ -160,6 +181,150 @@ thunar_thumbnail_cache_move_async (ThunarThumbnailCache *cache,
                                            thunar_thumbnail_cache_move_async_reply,
                                            NULL);
 }
+
+
+
+static void
+thunar_thumbnail_cache_delete_async_reply (DBusGProxy *proxy,
+                                           GError     *error,
+                                           gpointer    user_data)
+{
+  _thunar_return_if_fail (DBUS_IS_G_PROXY (proxy));
+}
+
+
+
+static void
+thunar_thumbnail_cache_delete_async (ThunarThumbnailCache *cache,
+                                     const gchar         **uris)
+{
+  _thunar_return_if_fail (THUNAR_IS_THUMBNAIL_CACHE (cache));
+  _thunar_return_if_fail (uris != NULL);
+
+  /* request a thumbnail cache update asynchronously */
+  thunar_thumbnail_cache_proxy_delete_async (cache->cache_proxy, uris,
+                                             thunar_thumbnail_cache_delete_async_reply,
+                                             NULL);
+}
+
+
+
+static gboolean
+thunar_thumbnail_cache_process_move_queue (ThunarThumbnailCache *cache)
+{
+  GList  *sp;
+  GList  *tp;
+  gchar **source_uris;
+  gchar **target_uris;
+  guint   n_uris;
+  guint   n;
+
+  _thunar_return_val_if_fail (THUNAR_IS_THUMBNAIL_CACHE (cache), FALSE);
+
+  /* acquire a cache lock */
+  g_mutex_lock (cache->lock);
+  
+  /* compute how many URIs there are */
+  n_uris = g_list_length (cache->move_source_queue);
+
+  /* allocate a string array for the URIs */
+  source_uris = g_new0 (gchar *, n_uris + 1);
+  target_uris = g_new0 (gchar *, n_uris + 1);
+
+  /* fill URI array with file URIs from the move queue */
+  for (n = 0,
+       sp = g_list_last (cache->move_source_queue), 
+       tp = g_list_last (cache->move_target_queue);
+       sp != NULL && tp != NULL; 
+       sp = sp->prev, tp = tp->prev, ++n)
+    {
+      source_uris[n] = g_file_get_uri (sp->data);
+      target_uris[n] = g_file_get_uri (tp->data);
+
+      /* release the file objects */
+      g_object_unref (sp->data);
+      g_object_unref (tp->data);
+    }
+
+  /* NULL-terminate the URI arrays */
+  source_uris[n] = NULL;
+  target_uris[n] = NULL;
+
+  /* asynchronously move the thumbnails */
+  thunar_thumbnail_cache_move_async (cache, 
+                                     (const gchar **)source_uris,
+                                     (const gchar **)target_uris);
+
+  /* free the URI arrays */
+  g_free (source_uris);
+  g_free (target_uris);
+
+  /* release the move queue lists */
+  g_list_free (cache->move_source_queue);
+  g_list_free (cache->move_target_queue);
+  cache->move_source_queue = NULL;
+  cache->move_target_queue = NULL;
+
+  /* reset the move queue idle ID */
+  cache->move_queue_idle_id = 0;
+
+  /* release the cache lock */
+  g_mutex_unlock (cache->lock);
+
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_thumbnail_cache_process_delete_queue (ThunarThumbnailCache *cache)
+{
+  GList  *lp;
+  gchar **uris;
+  guint   n_uris;
+  guint   n;
+
+  _thunar_return_val_if_fail (THUNAR_IS_THUMBNAIL_CACHE (cache), FALSE);
+
+  /* acquire a cache lock */
+  g_mutex_lock (cache->lock);
+  
+  /* compute how many URIs there are */
+  n_uris = g_list_length (cache->delete_queue);
+
+  /* allocate a string array for the URIs */
+  uris = g_new0 (gchar *, n_uris + 1);
+
+  /* fill URI array with file URIs from the delete queue */
+  for (lp = g_list_last (cache->delete_queue), n = 0; lp != NULL; lp = lp->prev, ++n)
+    {
+      uris[n] = g_file_get_uri (lp->data);
+
+      /* release the file object */
+      g_object_unref (lp->data);
+    }
+
+  /* NULL-terminate the URI array */
+  uris[n] = NULL;
+
+  /* asynchronously delete the thumbnails */
+  thunar_thumbnail_cache_delete_async (cache, (const gchar **)uris);
+
+  /* free the URI array */
+  g_free (uris);
+
+  /* release the delete queue list */
+  g_list_free (cache->delete_queue);
+  cache->delete_queue = NULL;
+
+  /* reset the delete queue idle ID */
+  cache->delete_queue_idle_id = 0;
+
+  /* release the cache lock */
+  g_mutex_unlock (cache->lock);
+
+  return FALSE;
+}
 #endif /* HAVE_DBUS */
 
 
@@ -177,9 +342,6 @@ thunar_thumbnail_cache_move_file (ThunarThumbnailCache *cache,
                                   GFile                *source_file,
                                   GFile                *target_file)
 {
-  gchar *source_uris[2] = { NULL, NULL };
-  gchar *target_uris[2] = { NULL, NULL };
-
   _thunar_return_if_fail (THUNAR_IS_THUMBNAIL_CACHE (cache));
   _thunar_return_if_fail (G_IS_FILE (source_file));
   _thunar_return_if_fail (G_IS_FILE (target_file));
@@ -191,20 +353,60 @@ thunar_thumbnail_cache_move_file (ThunarThumbnailCache *cache,
   /* check if we have a valid proxy for the cache service */
   if (cache->cache_proxy != NULL)
     {
-      /* build the source and target URI arrays */
-      source_uris[0] = g_file_get_uri (source_file);
-      target_uris[0] = g_file_get_uri (target_file);
+      /* cancel any pending timeout to process the move queue */
+      if (cache->move_queue_idle_id > 0)
+        {
+          g_source_remove (cache->move_queue_idle_id);
+          cache->move_queue_idle_id = 0;
+        }
 
-      /* notify the thumbnail cache of the move operation. the cache
-       * can thereby copy the thumbnail and we avoid regenerating it
-       * just because the file name changed */
-      thunar_thumbnail_cache_move_async (cache,
-                                         (const gchar **)source_uris, 
-                                         (const gchar **)target_uris);
+      /* add the files to the move queues */
+      cache->move_source_queue = g_list_prepend (cache->move_source_queue, 
+                                                 g_object_ref (source_file));
+      cache->move_target_queue = g_list_prepend (cache->move_target_queue,
+                                                 g_object_ref (target_file));
 
-      /* release the source and target URI */
-      g_free (source_uris[0]);
-      g_free (target_uris[0]);
+      /* process the move queue in a 250ms timeout */
+      cache->move_queue_idle_id =
+        g_timeout_add (250, (GSourceFunc) thunar_thumbnail_cache_process_move_queue,
+                       cache);
+    }
+
+  /* release the cache lock */
+  g_mutex_unlock (cache->lock);
+#endif
+}
+
+
+
+void
+thunar_thumbnail_cache_delete_file (ThunarThumbnailCache *cache,
+                                    GFile                *file)
+{
+  _thunar_return_if_fail (THUNAR_IS_THUMBNAIL_CACHE (cache));
+  _thunar_return_if_fail (G_IS_FILE (file));
+
+#ifdef HAVE_DBUS
+  /* acquire a cache lock */
+  g_mutex_lock (cache->lock);
+
+  /* check if we have a valid proxy for the cache service */
+  if (cache->cache_proxy)
+    {
+      /* cancel any pending timeout to process the delete queue */
+      if (cache->delete_queue_idle_id > 0)
+        {
+          g_source_remove (cache->delete_queue_idle_id);
+          cache->delete_queue_idle_id = 0;
+        }
+
+      /* add the file to the delete queue */
+      cache->delete_queue = g_list_prepend (cache->delete_queue, g_object_ref (file));
+
+      /* process the delete queue in a 250ms timeout */
+      cache->delete_queue_idle_id = 
+        g_timeout_add (250, (GSourceFunc) thunar_thumbnail_cache_process_delete_queue, 
+                       cache);
     }
 
   /* release the cache lock */
