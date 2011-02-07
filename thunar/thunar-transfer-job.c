@@ -502,6 +502,11 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
    * wrt restoring files from the trash. Other transfer_nodes will be called with target_parent_file.
    */
 
+  /* take a reference on the thumbnail cache */
+  application = thunar_application_get ();
+  thumbnail_cache = thunar_application_get_thumbnail_cache (application);
+  g_object_unref (application);
+
   for (; err == NULL && node != NULL; node = node->next)
     {
       /* guess the target file for this node (unless already provided) */
@@ -541,12 +546,9 @@ retry_copy:
           if (G_LIKELY (node->source_file != real_target_file))
             {
               /* notify the thumbnail cache of the copy operation */
-              application = thunar_application_get ();
-              thumbnail_cache = thunar_application_get_thumbnail_cache (application);
-              thunar_thumbnail_cache_copy_file (thumbnail_cache, node->source_file, 
+              thunar_thumbnail_cache_copy_file (thumbnail_cache, 
+                                                node->source_file, 
                                                 real_target_file);
-              g_object_unref (thumbnail_cache);
-              g_object_unref (application);
 
               /* check if we have children to copy */
               if (node->children != NULL)
@@ -585,13 +587,8 @@ retry_remove:
                                      &err))
                     {
                       /* notify the thumbnail cache of the delete operation */
-                      application = thunar_application_get ();
-                      thumbnail_cache = 
-                        thunar_application_get_thumbnail_cache (application);
                       thunar_thumbnail_cache_delete_file (thumbnail_cache, 
                                                           node->source_file);
-                      g_object_unref (thumbnail_cache);
-                      g_object_unref (application);
                     }
                   else
                     {
@@ -636,6 +633,9 @@ retry_remove:
       g_object_unref (info);
     }
 
+  /* release the thumbnail cache */
+  g_object_unref (thumbnail_cache);
+
   /* propagate error if we failed or the job was cancelled */
   if (G_UNLIKELY (err != NULL))
     g_propagate_error (error, err);
@@ -670,6 +670,11 @@ thunar_transfer_job_execute (ExoJob  *job,
     return FALSE;
 
   exo_job_info_message (job, _("Collecting files..."));
+
+  /* take a reference on the thumbnail cache */
+  application = thunar_application_get ();
+  thumbnail_cache = thunar_application_get_thumbnail_cache (application);
+  g_object_unref (application);
 
   for (sp = transfer_job->source_node_list, tp = transfer_job->target_file_list;
        sp != NULL && tp != NULL && err == NULL;
@@ -777,12 +782,9 @@ thunar_transfer_job_execute (ExoJob  *job,
                            NULL, NULL, &err))
             {
               /* notify the thumbnail cache of the move operation */
-              application = thunar_application_get ();
-              thumbnail_cache = thunar_application_get_thumbnail_cache (application);
               thunar_thumbnail_cache_move_file (thumbnail_cache, 
-                                                node->source_file, tp->data);
-              g_object_unref (thumbnail_cache);
-              g_object_unref (application);
+                                                node->source_file, 
+                                                tp->data);
 
               /* add the target file to the new files list */
               new_files_list = thunar_g_file_list_prepend (new_files_list, tp->data);
@@ -820,6 +822,9 @@ thunar_transfer_job_execute (ExoJob  *job,
 
       g_object_unref (info);
     }
+
+  /* release the thumbnail cache */
+  g_object_unref (thumbnail_cache);
 
   /* continue if there were no errors yet */
   if (G_LIKELY (err == NULL))
