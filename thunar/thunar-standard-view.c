@@ -3341,7 +3341,7 @@ thunar_standard_view_schedule_thumbnail_timeout (ThunarStandardView *standard_vi
 
   /* schedule the timeout handler */
   standard_view->priv->thumbnail_source_id = 
-    g_timeout_add (250, (GSourceFunc) thunar_standard_view_request_thumbnails, 
+    g_timeout_add (175, (GSourceFunc) thunar_standard_view_request_thumbnails, 
                    standard_view);
 }
 
