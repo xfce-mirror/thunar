@@ -467,7 +467,7 @@ thunar_thumbnail_cache_move_file (ThunarThumbnailCache *cache,
           cache->move_queue_idle_id = 0;
         }
 
-      /* add the files to the move queues */
+      /* add the files to the move queue */
       cache->move_source_queue = g_list_prepend (cache->move_source_queue, 
                                                  g_object_ref (source_file));
       cache->move_target_queue = g_list_prepend (cache->move_target_queue,

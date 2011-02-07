@@ -408,6 +408,11 @@ _thunar_io_jobs_unlink (ThunarJob   *job,
   /* we know the total list of files to process */
   thunar_job_set_total_files (THUNAR_JOB (job), file_list);
 
+  /* take a reference on the thumbnail cache */
+  application = thunar_application_get ();
+  thumbnail_cache = thunar_application_get_thumbnail_cache (application);
+  g_object_unref (application);
+
   /* remove all the files */
   for (lp = file_list; lp != NULL && !exo_job_is_cancelled (EXO_JOB (job)); lp = lp->next)
     {
@@ -421,11 +426,9 @@ again:
       /* try to delete the file */
       if (g_file_delete (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err))
         {
-          application = thunar_application_get ();
-          thumbnail_cache = thunar_application_get_thumbnail_cache (application);
+          /* notify the thumbnail cache that the corresponding thumbnail can also
+           * be deleted now */
           thunar_thumbnail_cache_delete_file (thumbnail_cache, lp->data);
-          g_object_unref (thumbnail_cache);
-          g_object_unref (application);
         }
       else
         {
@@ -470,6 +473,9 @@ again:
             goto again;
         }
     }
+
+  /* release the thumbnail cache */
+  g_object_unref (thumbnail_cache);
 
   /* release the file list */
   thunar_g_file_list_free (file_list);
@@ -658,13 +664,15 @@ _thunar_io_jobs_link (ThunarJob   *job,
                       GValueArray *param_values,
                       GError     **error)
 {
-  GError *err = NULL;
-  GFile  *real_target_file;
-  GList  *new_files_list = NULL;
-  GList  *source_file_list;
-  GList  *sp;
-  GList  *target_file_list;
-  GList  *tp;
+  ThunarThumbnailCache *thumbnail_cache;
+  ThunarApplication    *application;
+  GError               *err = NULL;
+  GFile                *real_target_file;
+  GList                *new_files_list = NULL;
+  GList                *source_file_list;
+  GList                *sp;
+  GList                *target_file_list;
+  GList                *tp;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -676,6 +684,11 @@ _thunar_io_jobs_link (ThunarJob   *job,
 
   /* we know the total list of paths to process */
   thunar_job_set_total_files (THUNAR_JOB (job), source_file_list);
+
+  /* take a reference on the thumbnail cache */
+  application = thunar_application_get ();
+  thumbnail_cache = thunar_application_get_thumbnail_cache (application);
+  g_object_unref (application);
 
   /* process all files */
   for (sp = source_file_list, tp = target_file_list;
@@ -697,12 +710,21 @@ _thunar_io_jobs_link (ThunarJob   *job,
             {
               new_files_list = thunar_g_file_list_prepend (new_files_list, 
                                                            real_target_file);
+
+              /* notify the thumbnail cache that we need to copy the original
+               * thumbnail for the symlink to have one too */
+              thunar_thumbnail_cache_copy_file (thumbnail_cache, sp->data, 
+                                                real_target_file);
+
             }
   
           /* release the real target file */
           g_object_unref (real_target_file);
         }
     }
+
+  /* release the thumbnail cache */
+  g_object_unref (thumbnail_cache);
 
   if (err != NULL)
     {
