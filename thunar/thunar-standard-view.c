@@ -3438,6 +3438,9 @@ thunar_standard_view_request_thumbnails (ThunarStandardView *standard_view)
       gtk_tree_path_free (end_path);
     }
 
+  /* reset the timeout or idle handler ID */
+  standard_view->priv->thumbnail_source_id = 0;
+
   return FALSE;
 }
 
