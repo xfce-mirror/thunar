@@ -24,6 +24,7 @@
 
 #include <gio/gio.h>
 
+#include <thunar/thunar-application.h>
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-io-scan-directory.h>
@@ -32,6 +33,7 @@
 #include <thunar/thunar-job.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-simple-job.h>
+#include <thunar/thunar-thumbnail-cache.h>
 #include <thunar/thunar-transfer-job.h>
 
 
@@ -367,13 +369,15 @@ _thunar_io_jobs_unlink (ThunarJob   *job,
                         GValueArray *param_values,
                         GError     **error)
 {
-  ThunarJobResponse response;
-  GFileInfo        *info;
-  GError           *err = NULL;
-  GList            *file_list;
-  GList            *lp;
-  gchar            *base_name;
-  gchar            *display_name;
+  ThunarThumbnailCache *thumbnail_cache;
+  ThunarApplication    *application;
+  ThunarJobResponse     response;
+  GFileInfo            *info;
+  GError               *err = NULL;
+  GList                *file_list;
+  GList                *lp;
+  gchar                *base_name;
+  gchar                *display_name;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -415,7 +419,15 @@ _thunar_io_jobs_unlink (ThunarJob   *job,
 
 again:
       /* try to delete the file */
-      if (!g_file_delete (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err))
+      if (g_file_delete (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err))
+        {
+          application = thunar_application_get ();
+          thumbnail_cache = thunar_application_get_thumbnail_cache (application);
+          thunar_thumbnail_cache_delete_file (thumbnail_cache, lp->data);
+          g_object_unref (thumbnail_cache);
+          g_object_unref (application);
+        }
+      else
         {
           /* query the file info for the display name */
           info = g_file_query_info (lp->data, 
