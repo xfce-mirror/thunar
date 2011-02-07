@@ -200,6 +200,8 @@ Thunar_SOURCES =							\
 	thunar-throbber.h						\
 	thunar-throbber-fallback.c					\
 	thunar-throbber-fallback.h					\
+	thunar-thumbnail-cache.c					\
+	thunar-thumbnail-cache.h					\
 	thunar-thumbnailer.c						\
 	thunar-thumbnailer.h						\
 	thunar-thumbnail-frame.c					\
@@ -259,6 +261,7 @@ Thunar_DEPENDENCIES =							\
 if HAVE_DBUS
 thunar_built_sources +=							\
 	thunar-dbus-service-infos.h					\
+	thunar-thumbnail-cache-proxy.h					\
 	thunar-thumbnailer-proxy.h
 
 thunar_dbus_sources =							\
@@ -266,6 +269,7 @@ thunar_dbus_sources =							\
 	thunar-dbus-client.h						\
 	thunar-dbus-service.c						\
 	thunar-dbus-service.h						\
+	thunar-thumbnail-cache-proxy.h					\
 	thunar-thumbnailer-proxy.h
 
 Thunar_CFLAGS +=							\
@@ -342,6 +346,14 @@ thunar-thumbnailer-proxy.h: $(srcdir)/thunar-thumbnailer-dbus.xml Makefile
 			$(srcdir)/thunar-thumbnailer-dbus.xml > thunar-thumbnailer-proxy.h \
 		&& sed -i -e 's/org_freedesktop_thumbnails_Thumbnailer1/thunar_thumbnailer_proxy/g' \
 			thunar-thumbnailer-proxy.h \
+	)
+
+thunar-thumbnail-cache-proxy.h: $(srcdir)/thunar-thumbnail-cache-dbus.xml Makefile
+	$(AM_V_GEN) ( \
+		dbus-binding-tool --mode=glib-client \
+			$(srcdir)/thunar-thumbnail-cache-dbus.xml > thunar-thumbnail-cache-proxy.h \
+		&& sed -i -e 's/org_freedesktop_thumbnails_Cache1/thunar_thumbnail_cache_proxy/g' \
+			thunar-thumbnail-cache-proxy.h \
 	)
 endif
 

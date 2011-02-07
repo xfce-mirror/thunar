@@ -1,22 +1,23 @@
-/* $Id$ */
+/* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
  * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2005      Jeff Franks <jcfranks@xfce.org>
- * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2011 Jannis Pohlmann <jannis@xfce.org>
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This program is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA  02111-1307  USA
+ * You should have received a copy of the GNU General Public 
+ * License along with this program; if not, write to the Free 
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -53,6 +54,7 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-progress-dialog.h>
 #include <thunar/thunar-renamer-dialog.h>
+#include <thunar/thunar-thumbnail-cache.h>
 #include <thunar/thunar-util.h>
 
 
@@ -130,6 +132,8 @@ struct _ThunarApplication
   GtkWidget             *progress_dialog;
   GList                 *windows;
 
+  ThunarThumbnailCache  *thumbnail_cache;
+
   gboolean               daemon;
 
   guint                  show_dialogs_timer_id;
@@ -205,6 +209,7 @@ thunar_application_init (ThunarApplication *application)
 
   /* initialize the application */
   application->preferences = thunar_preferences_get ();
+  application->thumbnail_cache = thunar_thumbnail_cache_new ();
 
   application->files_to_launch = NULL;
   application->progress_dialog = NULL;
@@ -278,6 +283,9 @@ thunar_application_finalize (GObject *object)
       gtk_widget_destroy (GTK_WIDGET (lp->data));
     }
   g_list_free (application->windows);
+
+  /* release the thumbnail cache */
+  g_object_unref (G_OBJECT (application->thumbnail_cache));
 
   /* disconnect from the preferences */
   g_object_unref (G_OBJECT (application->preferences));
@@ -1982,6 +1990,15 @@ thunar_application_restore_files (ThunarApplication *application,
   /* free path lists */
   thunar_g_file_list_free (source_path_list);
   thunar_g_file_list_free (target_path_list);
+}
+
+
+
+ThunarThumbnailCache *
+thunar_application_get_thumbnail_cache (ThunarApplication *application)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), NULL);
+  return g_object_ref (application->thumbnail_cache);
 }
 
 
