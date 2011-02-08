@@ -120,9 +120,9 @@ thunar_thumbnail_cache_init (ThunarThumbnailCache *cache)
 static void
 thunar_thumbnail_cache_finalize (GObject *object)
 {
+#ifdef HAVE_DBUS
   ThunarThumbnailCache *cache = THUNAR_THUMBNAIL_CACHE (object);
 
-#ifdef HAVE_DBUS
   /* acquire a cache lock */
   g_mutex_lock (cache->lock);
 

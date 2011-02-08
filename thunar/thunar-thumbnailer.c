@@ -80,7 +80,7 @@
 
 
 
-#if HAVE_DBUS
+#ifdef HAVE_DBUS
 typedef enum
 {
   THUNAR_THUMBNAILER_IDLE_ERROR,
@@ -777,9 +777,9 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
                                 GList             *files,
                                 guint             *request)
 {
-  const gchar **mime_hints;
   gboolean      success = FALSE;
 #ifdef HAVE_DBUS
+  const gchar **mime_hints;
   gchar       **uris;
   GList        *lp;
   GList        *supported_files = NULL;
