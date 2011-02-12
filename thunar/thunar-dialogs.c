@@ -349,7 +349,7 @@ thunar_dialogs_show_help (gpointer     parent,
   screen = thunar_util_parse_parent (parent, NULL);
 
   /* generate the command for the documentation browser */
-  command = g_strdup (LIBDIR G_DIR_SEPARATOR_S "Thunar" G_DIR_SEPARATOR_S "ThunarHelp");
+  command = g_strdup (HELPERDIR G_DIR_SEPARATOR_S "Thunar" G_DIR_SEPARATOR_S "ThunarHelp");
 
   /* check if a page is given */
   if (G_UNLIKELY (page != NULL))

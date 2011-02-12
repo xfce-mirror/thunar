@@ -8,6 +8,7 @@ INCLUDES =								\
 	-DEXO_DISABLE_DEPRECATED					\
 	-DG_LOG_DOMAIN=\"Thunar\"					\
 	-DLIBDIR=\"$(libdir)\"						\
+	-DHELPERDIR=\"$(HELPER_PATH_PREFIX)\"				\
 	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"				\
 	-DTHUNAR_VERSION_API=\"$(THUNAR_VERSION_API)\"			\
 	-DSN_API_NOT_YET_FROZEN						\

@@ -35,7 +35,7 @@ thunar_wallpaper_plugin_la_LIBADD =					\
 	$(GLIB_LIBS)							\
 	$(GTK_LIBS)							\
 	$(LIBX11_LIBS)
-	
+
 thunar_wallpaper_plugin_la_DEPENDENCIES =				\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la
 

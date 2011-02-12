@@ -44,7 +44,7 @@ ChangeLog: Makefile
 
 dist-hook: ChangeLog
 
-thunar_scriptsdir = $(libdir)/Thunar
+thunar_scriptsdir = $(HELPER_PATH_PREFIX)/Thunar
 thunar_scripts_SCRIPTS =							\
 	ThunarBulkRename						\
 	ThunarHelp
@@ -74,7 +74,7 @@ desktop_in_in_files = 							\
 	Thunar-folder-handler.desktop.in.in
 desktop_in_files = $(desktop_in_in_files:.desktop.in.in=.desktop.in)
 %.desktop.in: %.desktop.in.in
-	$(AM_V_GEN) sed -e "s,\@libdir\@,$(libdir),g" < $< > $@
+	$(AM_V_GEN) sed -e "s,\@HELPERDIR\@,$(HELPER_PATH_PREFIX),g" < $< > $@
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
 

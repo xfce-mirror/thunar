@@ -10,7 +10,7 @@ INCLUDES =								\
 	$(PLATFORM_CPPFLAGS)
 
 thunar_sendto_emaildir =						\
-	$(libdir)/Thunar
+	$(HELPER_PATH_PREFIX)/Thunar
 
 thunar_sendto_email_PROGRAMS =						\
 	thunar-sendto-email
@@ -30,7 +30,7 @@ desktopdir = $(datadir)/Thunar/sendto
 desktop_in_in_files = thunar-sendto-email.desktop.in.in
 desktop_in_files = $(desktop_in_in_files:.desktop.in.in=.desktop.in)
 %.desktop.in: %.desktop.in.in
-	sed -e "s,\@libdir\@,$(libdir),g" < $< > $@
+	sed -e "s,\@HELPERDIR\@,$(HELPER_PATH_PREFIX),g" < $< > $@
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
 

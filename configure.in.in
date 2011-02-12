@@ -94,6 +94,16 @@ AC_SUBST([THUNAR_VERSION_MAJOR])
 AC_SUBST([THUNAR_VERSION_MINOR])
 AC_SUBST([THUNAR_VERSION_MICRO])
 
+dnl ******************************
+dnl *** Set helper path prefix ***
+dnl ******************************
+AC_ARG_WITH([helper-path-prefix],
+            [AC_HELP_STRING([--with-helper-path-prefix=PATH],
+                            [Path prefix under which helper executables will be installed (default: $libdir)])],
+            [HELPER_PATH_PREFIX="$withval"],
+            [HELPER_PATH_PREFIX="$libdir"])
+AC_SUBST([HELPER_PATH_PREFIX])
+
 dnl ***********************************************
 dnl *** Determine the u32 type required for tdb ***
 dnl ***********************************************
