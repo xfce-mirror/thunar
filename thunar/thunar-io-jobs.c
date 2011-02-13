@@ -762,9 +762,11 @@ _thunar_io_jobs_trash (ThunarJob   *job,
                        GValueArray *param_values,
                        GError     **error)
 {
-  GError *err = NULL;
-  GList  *file_list;
-  GList  *lp;
+  ThunarThumbnailCache *thumbnail_cache;
+  ThunarApplication    *application;
+  GError               *err = NULL;
+  GList                *file_list;
+  GList                *lp;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -776,11 +778,24 @@ _thunar_io_jobs_trash (ThunarJob   *job,
   if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
     return FALSE;
 
+  /* take a reference on the thumbnail cache */
+  application = thunar_application_get ();
+  thumbnail_cache = thunar_application_get_thumbnail_cache (application);
+  g_object_unref (application);
+
   for (lp = file_list; err == NULL && lp != NULL; lp = lp->next)
     {
       _thunar_assert (G_IS_FILE (lp->data));
+
+      /* trash the file or folder */
       g_file_trash (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err);
+
+      /* update the thumbnail cache */
+      thunar_thumbnail_cache_cleanup_file (thumbnail_cache, lp->data);
     }
+
+  /* release the thumbnail cache */
+  g_object_unref (thumbnail_cache);
 
   if (err != NULL)
     {
