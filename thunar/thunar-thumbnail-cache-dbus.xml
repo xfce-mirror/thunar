@@ -20,7 +20,7 @@
 
     <method name="Cleanup">
       <annotation name="org.freedesktop.DBus.GLib.Async" value="true"/>
-      <arg type="s" name="uri_prefix" direction="in" />
+      <arg type="as" name="base_uris" direction="in" />
       <arg type="u" name="since" direction="in" />
     </method>
   </interface>

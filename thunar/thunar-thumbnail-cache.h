@@ -36,18 +36,20 @@ typedef struct _ThunarThumbnailCachePrivate ThunarThumbnailCachePrivate;
 typedef struct _ThunarThumbnailCacheClass   ThunarThumbnailCacheClass;
 typedef struct _ThunarThumbnailCache        ThunarThumbnailCache;
 
-GType                 thunar_thumbnail_cache_get_type    (void) G_GNUC_CONST;
+GType                 thunar_thumbnail_cache_get_type     (void) G_GNUC_CONST;
 
-ThunarThumbnailCache *thunar_thumbnail_cache_new         (void) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarThumbnailCache *thunar_thumbnail_cache_new          (void) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
-void                  thunar_thumbnail_cache_move_file   (ThunarThumbnailCache *cache,
-                                                          GFile                *source_file,
-                                                          GFile                *target_file);
-void                  thunar_thumbnail_cache_copy_file   (ThunarThumbnailCache *cache,
-                                                          GFile                *source_file,
-                                                          GFile                *target_file);
-void                  thunar_thumbnail_cache_delete_file (ThunarThumbnailCache *cache,
-                                                          GFile                *file);
+void                  thunar_thumbnail_cache_move_file    (ThunarThumbnailCache *cache,
+                                                           GFile                *source_file,
+                                                           GFile                *target_file);
+void                  thunar_thumbnail_cache_copy_file    (ThunarThumbnailCache *cache,
+                                                           GFile                *source_file,
+                                                           GFile                *target_file);
+void                  thunar_thumbnail_cache_delete_file  (ThunarThumbnailCache *cache,
+                                                           GFile                *file);
+void                  thunar_thumbnail_cache_cleanup_file (ThunarThumbnailCache *cache,
+                                                           GFile                *file);
 
 G_END_DECLS
 
