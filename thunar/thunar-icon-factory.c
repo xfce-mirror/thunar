@@ -1,25 +1,22 @@
-/* $Id$ */
+/* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2011 Jannis Pohlmann <jannis@xfce.org>
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This program is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * The basic idea for the icon factory implementation was borrowed from
- * Nautilus initially, but the implementation is very different from
- * what Nautilus does.
+ * You should have received a copy of the GNU General Public 
+ * License along with this program; if not, write to the Free 
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -38,7 +35,6 @@
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-thumbnail-frame.h>
-#include <thunar/thunar-thumbnailer.h>
 
 
 
@@ -105,8 +101,6 @@ struct _ThunarIconFactoryClass
 struct _ThunarIconFactory
 {
   GObject __parent__;
-
-  ThunarThumbnailer *thumbnailer;
 
   ThunarPreferences *preferences;
 
@@ -209,9 +203,6 @@ thunar_icon_factory_init (ThunarIconFactory *factory)
 
   /* allocate the hash table for the icon cache */
   factory->icon_cache = g_hash_table_new_full (thunar_icon_key_hash, thunar_icon_key_equal, g_free, g_object_unref);
-
-  /* create a new thumbnailer */
-  factory->thumbnailer = thunar_thumbnailer_new ();
 }
 
 
@@ -249,9 +240,6 @@ thunar_icon_factory_finalize (GObject *object)
 
   /* clear the icon cache hash table */
   g_hash_table_destroy (factory->icon_cache);
-
-  /* release the thumbnailer */
-  g_object_unref (G_OBJECT (factory->thumbnailer));
 
   /* remove the "changed" emission hook from the GtkIconTheme class */
   g_signal_remove_emission_hook (g_signal_lookup ("changed", GTK_TYPE_ICON_THEME), factory->changed_hook_id);
@@ -804,7 +792,6 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
                                     ThunarFileIconState icon_state,
                                     gint                icon_size)
 {
-  ThunarFileThumbState thumb_state;
   GInputStream        *stream;
   GtkIconInfo         *icon_info;
   const gchar         *thumbnail_path;
@@ -830,20 +817,6 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
   /* check if thumbnails are enabled and we can display a thumbnail for the item */
   if (G_LIKELY (factory->show_thumbnails && thunar_file_is_regular (file)))
     {
-      /* this is how thumbnails for files are loaded: first, we check the thumbnail
-       * state. If that is unknown, we request a thumbnail to be generated in the
-       * background. At the same time we already try to load the thumbnail, in case
-       * it's already there. when the thumbnail is ready, we just load it */
-
-      /* determine the thumbnail state of the file */
-      thumb_state = thunar_file_get_thumb_state (file);
-
-      if (thumb_state == THUNAR_FILE_THUMB_STATE_UNKNOWN)
-        {
-          /* we don't know the state yet so request a new thumbnail in the background */
-          thunar_thumbnailer_queue_file (factory->thumbnailer, file);
-        }
-
       /* determine the preview icon first */
       gicon = thunar_file_get_preview_icon (file);
 

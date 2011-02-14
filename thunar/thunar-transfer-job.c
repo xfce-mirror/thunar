@@ -1,22 +1,22 @@
-/* vi:set sw=2 sts=2 ts=2 et ai: */
+/* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
  * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2009-2011 Jannis Pohlmann <jannis@xfce.org>
  *
- * This program is free software; you can redistribute it and/or modify 
- * it under the terms of the GNU General Public License as published by 
- * the Free Software Foundation; either version 2 of the License, or (at 
- * your option) any later version.
+ * This program is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
- * General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
- * along with this program; if not, write to the Free Software 
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, 
- * MA  02111-1307  USA
+ * You should have received a copy of the GNU General Public 
+ * License along with this program; if not, write to the Free 
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -25,11 +25,13 @@
 
 #include <gio/gio.h>
 
+#include <thunar/thunar-application.h>
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-io-scan-directory.h>
 #include <thunar/thunar-io-jobs-util.h>
 #include <thunar/thunar-job.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-thumbnail-cache.h>
 #include <thunar/thunar-transfer-job.h>
 
 
@@ -481,11 +483,13 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
                                GList             **target_file_list_return,
                                GError            **error)
 {
-  ThunarJobResponse response;
-  GFileInfo        *info;
-  GError           *err = NULL;
-  GFile            *real_target_file = NULL;
-  gchar            *base_name;
+  ThunarThumbnailCache *thumbnail_cache;
+  ThunarApplication    *application;
+  ThunarJobResponse     response;
+  GFileInfo            *info;
+  GError               *err = NULL;
+  GFile                *real_target_file = NULL;
+  gchar                *base_name;
 
   _thunar_return_if_fail (THUNAR_IS_TRANSFER_JOB (job));
   _thunar_return_if_fail (node != NULL && G_IS_FILE (node->source_file));
@@ -497,6 +501,11 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
    * transfer_nodes (for which next is NULL) should be called with target_file, to get proper behavior
    * wrt restoring files from the trash. Other transfer_nodes will be called with target_parent_file.
    */
+
+  /* take a reference on the thumbnail cache */
+  application = thunar_application_get ();
+  thumbnail_cache = thunar_application_get_thumbnail_cache (application);
+  g_object_unref (application);
 
   for (; err == NULL && node != NULL; node = node->next)
     {
@@ -536,6 +545,11 @@ retry_copy:
           /* node->source_file == real_target_file means to skip the file */
           if (G_LIKELY (node->source_file != real_target_file))
             {
+              /* notify the thumbnail cache of the copy operation */
+              thunar_thumbnail_cache_copy_file (thumbnail_cache, 
+                                                node->source_file, 
+                                                real_target_file);
+
               /* check if we have children to copy */
               if (node->children != NULL)
                 {
@@ -558,22 +572,37 @@ retry_copy:
 
               /* add the real target file to the return list */
               if (G_LIKELY (target_file_list_return != NULL))
-                *target_file_list_return = thunar_g_file_list_prepend (*target_file_list_return, real_target_file);
+                {
+                  *target_file_list_return = 
+                    thunar_g_file_list_prepend (*target_file_list_return, 
+                                                real_target_file);
+                }
 
 retry_remove:
               /* try to remove the source directory if we are on copy+remove fallback for move */
-              if (job->type == THUNAR_TRANSFER_JOB_MOVE && 
-                  !g_file_delete (node->source_file, exo_job_get_cancellable (EXO_JOB (job)), &err))
+              if (job->type == THUNAR_TRANSFER_JOB_MOVE)
                 {
-                  /* ask the user to retry */
-                  response = thunar_job_ask_skip (THUNAR_JOB (job), "%s", err->message);
+                  if (g_file_delete (node->source_file, 
+                                     exo_job_get_cancellable (EXO_JOB (job)), 
+                                     &err))
+                    {
+                      /* notify the thumbnail cache of the delete operation */
+                      thunar_thumbnail_cache_delete_file (thumbnail_cache, 
+                                                          node->source_file);
+                    }
+                  else
+                    {
+                      /* ask the user to retry */
+                      response = thunar_job_ask_skip (THUNAR_JOB (job), "%s", 
+                                                      err->message);
 
-                  /* reset the error */
-                  g_clear_error (&err);
+                      /* reset the error */
+                      g_clear_error (&err);
 
-                  /* check whether to retry */
-                  if (G_UNLIKELY (response == THUNAR_JOB_RESPONSE_RETRY))
-                    goto retry_remove;
+                      /* check whether to retry */
+                      if (G_UNLIKELY (response == THUNAR_JOB_RESPONSE_RETRY))
+                        goto retry_remove;
+                    }
                 }
             }
 
@@ -604,6 +633,9 @@ retry_remove:
       g_object_unref (info);
     }
 
+  /* release the thumbnail cache */
+  g_object_unref (thumbnail_cache);
+
   /* propagate error if we failed or the job was cancelled */
   if (G_UNLIKELY (err != NULL))
     g_propagate_error (error, err);
@@ -614,20 +646,22 @@ static gboolean
 thunar_transfer_job_execute (ExoJob  *job,
                              GError **error)
 {
-  ThunarTransferNode *node;
-  ThunarJobResponse   response;
-  ThunarTransferJob  *transfer_job = THUNAR_TRANSFER_JOB (job);
-  GFileInfo          *info;
-  gboolean            parent_exists;
-  GError             *err = NULL;
-  GList              *new_files_list = NULL;
-  GList              *snext;
-  GList              *sp;
-  GList              *tnext;
-  GList              *tp;
-  GFile              *target_parent;
-  gchar              *base_name;
-  gchar              *parent_display_name;
+  ThunarThumbnailCache *thumbnail_cache;
+  ThunarTransferNode   *node;
+  ThunarApplication    *application;
+  ThunarJobResponse     response;
+  ThunarTransferJob    *transfer_job = THUNAR_TRANSFER_JOB (job);
+  GFileInfo            *info;
+  gboolean              parent_exists;
+  GError               *err = NULL;
+  GList                *new_files_list = NULL;
+  GList                *snext;
+  GList                *sp;
+  GList                *tnext;
+  GList                *tp;
+  GFile                *target_parent;
+  gchar                *base_name;
+  gchar                *parent_display_name;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -636,6 +670,11 @@ thunar_transfer_job_execute (ExoJob  *job,
     return FALSE;
 
   exo_job_info_message (job, _("Collecting files..."));
+
+  /* take a reference on the thumbnail cache */
+  application = thunar_application_get ();
+  thumbnail_cache = thunar_application_get_thumbnail_cache (application);
+  g_object_unref (application);
 
   for (sp = transfer_job->source_node_list, tp = transfer_job->target_file_list;
        sp != NULL && tp != NULL && err == NULL;
@@ -742,6 +781,11 @@ thunar_transfer_job_execute (ExoJob  *job,
                            exo_job_get_cancellable (job),
                            NULL, NULL, &err))
             {
+              /* notify the thumbnail cache of the move operation */
+              thunar_thumbnail_cache_move_file (thumbnail_cache, 
+                                                node->source_file, 
+                                                tp->data);
+
               /* add the target file to the new files list */
               new_files_list = thunar_g_file_list_prepend (new_files_list, tp->data);
 
@@ -778,6 +822,9 @@ thunar_transfer_job_execute (ExoJob  *job,
 
       g_object_unref (info);
     }
+
+  /* release the thumbnail cache */
+  g_object_unref (thumbnail_cache);
 
   /* continue if there were no errors yet */
   if (G_LIKELY (err == NULL))

@@ -1254,11 +1254,13 @@ thunar_file_rename (ThunarFile   *file,
                     gboolean      called_from_job,
                     GError      **error)
 {
-  GKeyFile *key_file;
-  GError   *err = NULL;
-  GFile    *previous_file;
-  GFile    *renamed_file;
-  gint      watch_count;
+  ThunarApplication    *application;
+  ThunarThumbnailCache *thumbnail_cache;
+  GKeyFile             *key_file;
+  GError               *err = NULL;
+  GFile                *previous_file;
+  GFile                *renamed_file;
+  gint                  watch_count;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (g_utf8_validate (name, -1, NULL), FALSE);
@@ -1316,6 +1318,13 @@ thunar_file_rename (ThunarFile   *file,
       
       /* try to rename the file */
       renamed_file = g_file_set_display_name (file->gfile, name, cancellable, error);
+
+      /* notify the thumbnail cache that we can now also move the thumbnail */
+      application = thunar_application_get ();
+      thumbnail_cache = thunar_application_get_thumbnail_cache (application);
+      thunar_thumbnail_cache_move_file (thumbnail_cache, previous_file, renamed_file);
+      g_object_unref (thumbnail_cache);
+      g_object_unref (application);
 
       /* check if we succeeded */
       if (renamed_file != NULL)
