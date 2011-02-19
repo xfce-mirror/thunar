@@ -867,15 +867,22 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 
   /* update the content type */
   content_type = thunar_file_get_content_type (dialog->file);
-  if (G_UNLIKELY (g_content_type_equals (content_type, "inode/symlink")))
-    str = g_strdup (_("broken link"));
-  else if (G_UNLIKELY (thunar_file_is_symlink (dialog->file)))
-    str = g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (dialog->file));
+  if (content_type != NULL)
+    {
+      if (G_UNLIKELY (g_content_type_equals (content_type, "inode/symlink")))
+        str = g_strdup (_("broken link"));
+      else if (G_UNLIKELY (thunar_file_is_symlink (dialog->file)))
+        str = g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (dialog->file));
+      else
+        str = g_content_type_get_description (content_type);
+      gtk_widget_set_tooltip_text (dialog->kind_ebox, content_type);
+      gtk_label_set_text (GTK_LABEL (dialog->kind_label), str);
+      g_free (str);
+    }
   else
-    str = g_content_type_get_description (content_type);
-  gtk_widget_set_tooltip_text (dialog->kind_ebox, content_type);
-  gtk_label_set_text (GTK_LABEL (dialog->kind_label), str);
-  g_free (str);
+    {
+      gtk_label_set_text (GTK_LABEL (dialog->kind_label), _("unknown"));
+    }
 
   /* update the application chooser (shown only for non-executable regular files!) */
   g_object_set (G_OBJECT (dialog->openwith_chooser),

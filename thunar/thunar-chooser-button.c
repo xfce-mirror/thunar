@@ -1,8 +1,8 @@
 /* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
  * Copyright (c) 2010      Nick Schermer <nick@xfce.org>
+ * Copyright (c) 2009-2011 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU General Public License as
@@ -432,56 +432,59 @@ thunar_chooser_button_file_changed (ThunarChooserButton *chooser_button,
 
   /* determine the content type of the file */
   content_type = thunar_file_get_content_type (file);
-
-  /* setup a useful tooltip for the button */
-  description = g_content_type_get_description (content_type);
-  thunar_gtk_widget_set_tooltip (GTK_WIDGET (chooser_button),
-                                 _("The selected application is used to open "
-                                   "this and other files of type \"%s\"."),
-                                 description);
-  g_free (description);
-
-  /* determine the default application for that content type */
-  app_info = g_app_info_get_default_for_type (content_type, FALSE);
-  if (G_LIKELY (app_info != NULL))
+  if (content_type != NULL)
     {
-      /* determine all applications that claim to be able to handle the file */
-      app_infos = g_app_info_get_all_for_type (content_type);
-      app_infos = g_list_sort (app_infos, thunar_chooser_button_sort_applications);
-      
-      /* add all possible applications */
-      for (lp = app_infos, i = 0; lp != NULL; lp = lp->next, ++i)
+      /* setup a useful tooltip for the button */
+      description = g_content_type_get_description (content_type);
+      thunar_gtk_widget_set_tooltip (GTK_WIDGET (chooser_button),
+                                     _("The selected application is used to open "
+                                       "this and other files of type \"%s\"."),
+                                     description);
+      g_free (description);
+
+      /* determine the default application for that content type */
+      app_info = g_app_info_get_default_for_type (content_type, FALSE);
+      if (G_LIKELY (app_info != NULL))
         {
-          /* insert the item into the store */
-          gtk_list_store_insert_with_values (chooser_button->store, &iter, i,
-                                             THUNAR_CHOOSER_BUTTON_STORE_COLUMN_NAME,
-                                             g_app_info_get_name (lp->data),
-                                             THUNAR_CHOOSER_BUTTON_STORE_COLUMN_APPLICATION,
-                                             lp->data,
-                                             THUNAR_CHOOSER_BUTTON_STORE_COLUMN_ICON,
-                                             g_app_info_get_icon (lp->data),
-                                             THUNAR_CHOOSER_BUTTON_STORE_COLUMN_SENSITIVE,
-                                             TRUE,
-                                             -1);
+          /* determine all applications that claim to be able to handle the file */
+          app_infos = g_app_info_get_all_for_type (content_type);
+          app_infos = g_list_sort (app_infos, thunar_chooser_button_sort_applications);
+          
+          /* add all possible applications */
+          for (lp = app_infos, i = 0; lp != NULL; lp = lp->next, ++i)
+            {
+              /* insert the item into the store */
+              gtk_list_store_insert_with_values (chooser_button->store, &iter, i,
+                                                 THUNAR_CHOOSER_BUTTON_STORE_COLUMN_NAME,
+                                                 g_app_info_get_name (lp->data),
+                                                 THUNAR_CHOOSER_BUTTON_STORE_COLUMN_APPLICATION,
+                                                 lp->data,
+                                                 THUNAR_CHOOSER_BUTTON_STORE_COLUMN_ICON,
+                                                 g_app_info_get_icon (lp->data),
+                                                 THUNAR_CHOOSER_BUTTON_STORE_COLUMN_SENSITIVE,
+                                                 TRUE,
+                                                 -1);
 
-          /* pre-select the default application */
-          if (g_app_info_equal (lp->data, app_info))
-            gtk_combo_box_set_active_iter (GTK_COMBO_BOX (chooser_button), &iter);
+              /* pre-select the default application */
+              if (g_app_info_equal (lp->data, app_info))
+                gtk_combo_box_set_active_iter (GTK_COMBO_BOX (chooser_button), &iter);
 
-          /* release the application */
-          g_object_unref (lp->data);
+              /* release the application */
+              g_object_unref (lp->data);
+            }
+
+          /* release the application list */
+          g_list_free (app_infos);
+
+          /* release the default application */
+          g_object_unref (app_info);
+
+          /* assume we have some applications in the list */
+          chooser_button->has_default_application = TRUE;
         }
-
-      /* release the application list */
-      g_list_free (app_infos);
-
-      /* release the default application */
-      g_object_unref (app_info);
-
-      /* assume we have some applications in the list */
-      chooser_button->has_default_application = TRUE;
     }
-  else
+  
+  if (content_type == NULL || !chooser_button->has_default_application)
     {
       /* add the "No application selected" item and set as active */
       gtk_list_store_insert_with_values (chooser_button->store, &iter, 0,
