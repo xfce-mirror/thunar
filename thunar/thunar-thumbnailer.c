@@ -396,6 +396,17 @@ thunar_thumbnailer_file_is_supported (ThunarThumbnailer *thumbnailer,
       return FALSE;
     }
 
+  /* determine the content type of the passed file */
+  content_type = thunar_file_get_content_type (file);
+
+  /* abort if the content type is unknown */
+  if (content_type == NULL)
+    {
+      /* release the thumbnailer lock */
+      g_mutex_unlock (thumbnailer->lock);
+      return FALSE;
+    }
+
   /* request the supported types on demand */
   if (thumbnailer->supported_schemes == NULL 
       || thumbnailer->supported_types == NULL)
@@ -412,9 +423,6 @@ thunar_thumbnailer_file_is_supported (ThunarThumbnailer *thumbnailer,
   if (thumbnailer->supported_schemes != NULL
       && thumbnailer->supported_types != NULL)
     {
-      /* determine the content type of the passed file */
-      content_type = thunar_file_get_content_type (file);
-
       /* go through all the URI schemes we support */
       for (n = 0; !supported && thumbnailer->supported_schemes[n] != NULL; ++n)
         {
