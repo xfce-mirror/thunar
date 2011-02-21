@@ -1,5 +1,5 @@
 # Polish translation for thunar package.
-# Copyright (C) 2004-2007 Benedikt Meurer.
+# Copyright (C) 2004-2011 Benedikt Meurer.
 # This file is distributed under the same license as the thunar package.
 # Piotr Maliński <riklaunim@gmail.com>, 2006.
 # Tomasz Michał Łukaszewski <T.Lukaszewski@aster.pl>, 2006.
@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: Thunar 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-02-18 11:14+0000\n"
-"PO-Revision-Date: 2011-02-19 15:16+0100\n"
+"PO-Revision-Date: 2011-02-21 16:41+0100\n"
 "Last-Translator: Piotr Sokół <psokol@jabster.pl>\n"
 "Language-Team: Polish <>\n"
 "Language: \n"
@@ -390,7 +390,7 @@ msgstr "Nie udało się usunąć „%s”"
 #: ../thunar/thunar-chooser-dialog.c:757
 #: ../plugins/thunar-uca/thunar-uca-editor.c:473
 msgid "Select an Application"
-msgstr "Wybierz program"
+msgstr "Wybór pliku"
 
 #: ../thunar/thunar-chooser-dialog.c:767
 #: ../thunar/thunar-renamer-dialog.c:1056
@@ -2439,11 +2439,11 @@ msgstr "Przechodzi do katalogu nadrzędnego"
 
 #: ../thunar/thunar-window.c:310
 msgid "_Home"
-msgstr "Katalog _domowy"
+msgstr "Katalog _użytkownika"
 
 #: ../thunar/thunar-window.c:310
 msgid "Go to the home folder"
-msgstr "Przechodzi do katalogu domowego"
+msgstr "Przechodzi do katalogu użytkownika"
 
 #: ../thunar/thunar-window.c:311
 msgid "Go to the desktop folder"
@@ -2459,11 +2459,11 @@ msgstr "Przechodzi do katalogu dokumentów"
 
 #: ../thunar/thunar-window.c:314
 msgid "Go to the downloads folder"
-msgstr "Przechodzi do katalogu pobierania"
+msgstr "Przechodzi do katalogu pobranych plików"
 
 #: ../thunar/thunar-window.c:315
 msgid "Go to the music folder"
-msgstr "Przechodzi do katalogu muzyki"
+msgstr "Przechodzi do katalogu nagrań dźwiękowych"
 
 #: ../thunar/thunar-window.c:316
 msgid "Go to the pictures folder"
@@ -2471,7 +2471,7 @@ msgstr "Przechodzi do katalogu obrazów"
 
 #: ../thunar/thunar-window.c:317
 msgid "Go to the videos folder"
-msgstr "Przechodzi do katalogu wideo"
+msgstr "Przechodzi do katalogu nagrań wideo"
 
 #: ../thunar/thunar-window.c:318
 msgid "Go to the public folder"
@@ -3168,8 +3168,8 @@ msgid ""
 "You can configure custom actions that will appear in the\n"
 "file managers context menus for certain kinds of files."
 msgstr ""
-"Konfiguruje polecenia wykonywane z  katalogami lub\n"
-"określonymi typami plików. Polecenia te wywoływać\n"
+"Konfiguruje polecenia wykonywane na katalogach lub\n"
+"określonych typach plików. Polecenia te wywoływać\n"
 "można za pośrednictwem menu podręcznego elementu."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:173
@@ -3256,9 +3256,9 @@ msgid ""
 "if exactly one item is selected."
 msgstr ""
 "Wprowadza polecenie (wraz z koniecznymi parametrami) do wykonania czynności. "
-"W poniższym opisie znajduje się lista obsługiwanych parametrów. Zastosowanie "
-"wiekich liter parametrów (np. %F, %D, %N), umożliwia wykonanie czynności w "
-"odniesieniu do wielu plików. W przeciwnym wypadku, polecenie uruchomiene "
+"W opisie poniżej znajduje się lista obsługiwanych parametrów. Zastosowanie "
+"wielkich liter parametrów (np. %F, %D, %N), umożliwia wykonanie czynności w "
+"odniesieniu do wielu plików. W przeciwnym wypadku, polecenie uruchomione "
 "będzie tylko dla jednego pliku."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:187
@@ -3300,34 +3300,34 @@ msgid ""
 "The following command parameters will be\n"
 "substituted when launching the action:"
 msgstr ""
-"Czynność można skonfigurować, używając\n"
+"Do skonfigurowania czynności można użyć\n"
 "następujących parametrów:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:288
 msgid "the path to the first selected file"
-msgstr "Ścieżka pierwszego zaznaczonego pliku"
+msgstr "ścieżka pierwszego zaznaczonego pliku,"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:300
 msgid "the paths to all selected files"
-msgstr "Ścieżki wszystkich zaznaczonych plików"
+msgstr "ścieżki  wszystkich zaznaczonych plików,"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:312
 #, c-format
 msgid "directory containing the file that is passed in %f"
-msgstr "Katalog zawierający plik określony parametrem %f"
+msgstr "ścieżka położenia, w którym znajduje się plik określony jako %f,"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:324
 #, c-format
 msgid "directories containing the files that are passed in %F"
-msgstr "Katalogi zawierające pliki określone parametrem %F"
+msgstr "ścieżki położeń, w którym znajdują się pliki określone jako %F,"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:336
 msgid "the first selected filename (without path)"
-msgstr "Nazwa pierwszego zaznaczonego pliku"
+msgstr "nazwa pierwszego zaznaczonego pliku,"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:348
 msgid "the selected filenames (without paths)"
-msgstr "Nazwy zaznaczonych plików"
+msgstr "nazwy zaznaczonych plików."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:362
 msgid "Appearance Conditions"
@@ -3358,11 +3358,11 @@ msgstr "_Katalogi"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:411
 msgid "_Audio Files"
-msgstr "Pliki _dźwiękowe"
+msgstr "Pliki nagrań _dźwiękowych"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:415
 msgid "_Image Files"
-msgstr "Pliki _graficzne"
+msgstr "Pliki _obrazów"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:419
 msgid "_Text Files"
@@ -3370,7 +3370,7 @@ msgstr "Pliki _tekstowe"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:424
 msgid "_Video Files"
-msgstr "Pliki _wideo"
+msgstr "Pliki nagrań _wideo"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:428
 msgid "_Other Files"
