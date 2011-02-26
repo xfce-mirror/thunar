@@ -1,10 +1,6 @@
-SUBDIRS =								\
-	el								\
-	fr								\
-	ja								\
-	pl
+# $Id$
 
-imagesdir = $(docdir)/html/C/images
+imagesdir = $(docdir)/html/el/images
 images_DATA =								\
 	bulk-rename.png							\
 	file-manager-window.png						\
