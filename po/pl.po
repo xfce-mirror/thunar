@@ -10,14 +10,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-18 11:14+0000\n"
-"PO-Revision-Date: 2011-02-21 16:41+0100\n"
+"POT-Creation-Date: 2011-03-24 05:14+0000\n"
+"PO-Revision-Date: 2011-03-24 09:44+0100\n"
 "Last-Translator: Piotr Sokół <psokol@jabster.pl>\n"
 "Language-Team: Polish <>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: \n"
 "Plural-Forms: nplurals=3; plural=((n==1) ? 0 : ((n%10>=2 && n%10<=4 && (n"
 "%100<10 || n%100>=20)) ? 1 : 2));\n"
 
@@ -287,17 +287,17 @@ msgstr "Przywracanie plików..."
 msgid "Failed to set default application for \"%s\""
 msgstr "Nie udało się ustawić domyślnego programu dla „%s”"
 
-#: ../thunar/thunar-chooser-button.c:439
+#: ../thunar/thunar-chooser-button.c:440
 #, c-format
 msgid ""
 "The selected application is used to open this and other files of type \"%s\"."
 msgstr "Określa program używany do otwierania tego i innych plików typu „%s”"
 
-#: ../thunar/thunar-chooser-button.c:489
+#: ../thunar/thunar-chooser-button.c:492
 msgid "No application selected"
 msgstr "Nie wybrano programu."
 
-#: ../thunar/thunar-chooser-button.c:502
+#: ../thunar/thunar-chooser-button.c:505
 msgid "Other Application..."
 msgstr "Inny program..."
 
@@ -790,32 +790,32 @@ msgstr "Plik"
 msgid "File Name"
 msgstr "Nazwa pliku"
 
-#: ../thunar/thunar-file.c:865 ../thunar/thunar-shortcuts-view.c:279
+#: ../thunar/thunar-file.c:867 ../thunar/thunar-shortcuts-view.c:279
 #: ../thunar/thunar-window.c:312
 msgid "File System"
 msgstr "System plików"
 
-#: ../thunar/thunar-file.c:944
+#: ../thunar/thunar-file.c:946
 #, c-format
 msgid "The root folder has no parent"
 msgstr "Katalog główny nie ma katalogu nadrzędnego"
 
-#: ../thunar/thunar-file.c:1007 ../thunar/thunar-file.c:1278
+#: ../thunar/thunar-file.c:1009 ../thunar/thunar-file.c:1280
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "Nie udało się przetworzyć pliku aktywatora: %s"
 
-#: ../thunar/thunar-file.c:1045
+#: ../thunar/thunar-file.c:1047
 #, c-format
 msgid "No Exec field specified"
 msgstr "Nie określono pola Exec"
 
-#: ../thunar/thunar-file.c:1066
+#: ../thunar/thunar-file.c:1068
 #, c-format
 msgid "No URL field specified"
 msgstr "Nie określono pola URL"
 
-#: ../thunar/thunar-file.c:1072
+#: ../thunar/thunar-file.c:1074
 #, c-format
 msgid "Invalid desktop file"
 msgstr "Nieprawidłowy plik .desktop"
@@ -902,7 +902,7 @@ msgstr "kopia %s"
 
 #: ../thunar/thunar-io-jobs-util.c:37 ../thunar/thunar-list-model.c:727
 #: ../thunar/thunar-list-model.c:1626 ../thunar/thunar-list-model.c:1637
-#: ../thunar/thunar-properties-dialog.c:906
+#: ../thunar/thunar-properties-dialog.c:908
 #, c-format
 msgid "link to %s"
 msgstr "dowiązanie do %s"
@@ -1821,9 +1821,14 @@ msgstr "Nie udało się zmienić ikony „%s”"
 msgid "%s - Properties"
 msgstr "%s – właściwości"
 
-#: ../thunar/thunar-properties-dialog.c:904
+#: ../thunar/thunar-properties-dialog.c:906
 msgid "broken link"
 msgstr "nieprawidłowe dowiązanie"
+
+#: ../thunar/thunar-properties-dialog.c:917
+#, fuzzy
+msgid "unknown"
+msgstr "Nieznany"
 
 #: ../thunar/thunar-renamer-dialog.c:177 ../thunar/thunar-window.c:293
 msgid "_File"
@@ -3157,7 +3162,7 @@ msgstr "Wyświetla zawartość kosza"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:2
 msgid "Trash Applet"
-msgstr "Aplet kosza"
+msgstr "Kosz"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:116
 msgid "Custom Actions"
@@ -3301,7 +3306,7 @@ msgid ""
 "substituted when launching the action:"
 msgstr ""
 "Do skonfigurowania czynności można użyć\n"
-"następujących parametrów:"
+"następujących oznaczeń:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:288
 msgid "the path to the first selected file"
@@ -3350,7 +3355,7 @@ msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:394
 msgid "Appears if selection contains:"
-msgstr "Typy elementamów:"
+msgstr "Typy elementów:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:407
 msgid "_Directories"
@@ -3430,12 +3435,12 @@ msgstr "_Czynności..."
 #: ../plugins/thunar-uca/thunar-uca-provider.c:178
 msgid ""
 "Setup custom actions that will appear in the file managers context menus"
-msgstr "Otwiera okno akcji menu podręcznego"
+msgstr "Otwiera okno czynności menu podręcznego"
 
 #: ../plugins/thunar-uca/thunar-uca-provider.c:416
 #, c-format
 msgid "Failed to launch action \"%s\"."
-msgstr "Nie udało się uruchomić akcji „%s”."
+msgstr "Nie udało się uruchomić czynności „%s”."
 
 #: ../plugins/thunar-uca/uca.xml.in.h:1
 msgid "Example for a custom action"
