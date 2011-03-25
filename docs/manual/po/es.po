@@ -550,11 +550,11 @@ msgstr "Cada aparición de <literal>%m</literal> en el comando se sustituirá co
 
 #: Thunar.xml648(title)
 msgid "Troubleshooting the Volume Manager"
-msgstr ""
+msgstr "Solucionando problemas del gestor de volumen"
 
 #: Thunar.xml650(para)
 msgid "Useful tips to trouble shoot the volume manager in case it does not work as expected."
-msgstr ""
+msgstr "Consejos útiles para el gestor de volumen en caso de no funcionar como se esperaba."
 
 #: Thunar.xml656(para)
 msgid "Make sure <application>Thunar</application> is running as daemon. The volume manager depends on this, as it is not a daemon by itself. By default, Xfce automatically spawns <application>Thunar</application> as daemon on startup. If it got killed for some reason, open the <guilabel>Run program</guilabel> (using the keyboard shortcut <keycombo><keycap>Alt</keycap><keycap>F2</keycap></keycombo> or right-click on the desktop and choose <guilabel>Run Program...</guilabel> from the desktop menu), enter <literal>Thunar --daemon</literal> and click <guibutton>Run</guibutton>."
@@ -562,11 +562,11 @@ msgstr ""
 
 #: Thunar.xml668(para)
 msgid "Try running <application>thunar-volman</application> from a <application>Terminal</application> window after hot-plugging the drive or inserting the media. First, you need to figure out the HAL UDI of the new device using <application>lshal</application> or <application>hal-device</application>. Once you know the UDI, run <literal>thunar-volman --device-added &lt;udi-of-your-device&gt;</literal> in a <application>Terminal</application> window and watch the output for errors or warnings."
-msgstr ""
+msgstr "Pruebe correr <application>thunar-volman</application> desde una ventana de <application>Terminal</application> después de haber conectado el dispositvo. Primero, averigüe la dirección HAL del nuevo dispositivo, usando para ello <application>lshal</application> o <application>hal-device</application>. Una vez hecho esto, corra el comando <literal>thunar-volman --device-added &lt;dirección de su dispositivo&gt;</literal> en una ventana de <application>Terminal</application> y analice los errores o avisos mostrados."
 
 #: Thunar.xml678(para)
 msgid "If it still refuses to work, ask on the <ulink type=\"http\" url=\"http://forum.xfce.org/\">Xfce Forum</ulink> or the <ulink type=\"http\" url=\"http://foo-projects.org/mailman/listinfo/thunar-dev\">thunar-dev mailing list</ulink> for help."
-msgstr ""
+msgstr "Si aún no funciona, consulte en el <ulink type=\"http\" url=\"http://forum.xfce.org/\">Foro Xfce</ulink> o en la <ulink type=\"http\" url=\"http://foo-projects.org/mailman/listinfo/thunar-dev\">lista de correo thunar-dev t</ulink> para más ayuda."
 
 #: Thunar.xml689(title)
 msgid "File Management Preferences"
@@ -746,7 +746,7 @@ msgstr "El menú \"Enviar a\" "
 
 #: Thunar.xml969(para)
 msgid "By default, the <guilabel>Send To</guilabel> menu includes an entry named <guilabel>Desktop (Create Link)</guilabel> for all files and folders, which simply creates a link on the desktop for each selected file. In addition, if the <guilabel>Shortcuts Pane</guilabel> is active, the menu also includes an entry called <guilabel>Side Pane (Create Shortcut)</guilabel> for folders, which allows users to add new shortcuts to the side pane. Following these entries, <application>Thunar</application> lists the removable drives currently plugged into the computer. In the screenshot above, the <guilabel>Floppy Drive</guilabel> represents a possible target where files can be sent to. Note that the device is mounted automatically once selected from the <guilabel>Send To</guilabel> menu, so you do not need to manually mount it."
-msgstr ""
+msgstr "Por defecto, el menú <guilabel>Enviar a</guilabel> incluye una entrada llamada <guilabel>Escritorio (Crear acceso directo)</guilabel> para todos los archivos y carpetas, la que simplemente crea un acceso directo en el escritorio para cada archivo seleccionado. Además, si el <guilabel>Panel de accesos directos</guilabel> está activo, el menu también incluirá una entrada llamada <guilabel>Panel lateral (Crear acceso directo)</guilabel> para carpetas, la que permite añadir nuevos accesos en el panel lateral. A continuación de estas entradas, <application>Thunar</application> muestra los dispositivos removibles que están conectados al ordenador. En la fotografía de arriba, la <guilabel>Disquetera</guilabel> representa una posible ubicación a la cual los archivos pueden ser enviados. Tenga en cuenta que los dispostivos son montados automáticamente una vez seleccionados desde el menú <guilabel>Enviar a</guilabel>, por lo que no necesitará montarlos de forma manual."
 
 #: Thunar.xml979(para)
 msgid "In addition <application>Thunar</application> also ships the <application>thunar-sendto-email</application> plugin, which adds the entry <guilabel>Mail Recipient</guilabel> to the menu, that opens the mail composer with the selected files attach to the new email. If the selection contains atleast one folder, the selected items are added to a ZIP archive before attaching them to the email. Otherwise, if the selection contains multiple files, or a single file, which is larger than 200Kib, the user will be prompted whether to pack the files into a ZIP archive, and send the ZIP archive."
@@ -762,10 +762,10 @@ msgstr ""
 
 #: Thunar.xml1004(para)
 msgid "A complete example using the <application>postr</application> application is shown below:"
-msgstr ""
+msgstr "Un ejemplo completo de cómo usar la aplicación <application>postr</application> se muestra a continuación:"
 
 #: Thunar.xml1008(programlisting)
-#, no-wrap
+#, no-wrap, fuzzy
 msgid ""
 "\n"
 "# postr.desktop - Integrate postr into\n"
@@ -780,6 +780,17 @@ msgid ""
 "Name=Flickr\n"
 "MimeType=image/jpeg;"
 msgstr ""
+"n# postr.desktop - Integrate postr into\n"
+"# the \"Send To\" menu.\n"
+"[Desktop Entry]\n"
+"Type=Application\n"
+"Version=1.0\n"
+"Encoding=UTF-8\n"
+"TryExec=postr\n"
+"Exec=postr %F\n"
+"Icon=postr\n"
+"Name=Flickr\n"
+"MimeType=image/jpeg;"
 
 #: Thunar.xml1021(para)
 msgid "If you install this file to <filename role=\"directory\">~/.local/share/Thunar/sendto/</filename> (create the folder if it does not exist yet), the <guilabel>Send To</guilabel> menu for JPEG files will show the new entry <guilabel>Flickr</guilabel>, which can be used to upload JPEG images to Flickr."
@@ -791,11 +802,11 @@ msgstr ""
 
 #: Thunar.xml1036(title)
 msgid "Thumbnailers"
-msgstr ""
+msgstr "Previsualizadores"
 
 #: Thunar.xml1038(para)
 msgid "Thunar uses small utilities to create thumbnails of certain file types and displays the thumbnails as preview of the file content. These small tools are called thumbnailers. Thunar ships with thumbnailers for image and font files, and makes use of the installed thumbnailers from GNOME automatically if it was installed with support for <literal>gconf</literal>. Users may however dynamically extend this basic functionality with thumbnailers for additional file types."
-msgstr ""
+msgstr "Thunar usa pequeñas utilidades para crear previsualizaciones de ciertos tipos de archivos y las muestra como vista previa de los contenidos de los archivos. Estas pequeñas herramientas son llamadas Previsualizadores. Thunar incluye previsualizadores para archivos de imágenes y de fuente, y hace uso de previsualizadores instalados desde GNOME automáticamente si estos fueron instalados con soporte para <literal>gconf</literal>. Si lo desea, puede extender esta funcionalidad con previsualizadores adicionales para otros tipos de archivos."
 
 #: Thunar.xml1045(para)
 msgid "If you plan to write a custom thumbnailers, you need to start with a program that accepts atleast two command line parameters, the input file, which is of the file type you plan to support and the output file, which is a PNG file that complies with the format specified by the <ulink type=\"http\" url=\"http://jens.triq.net/thumbnail-spec/creation.html#AEN139\">Thumbnail Management Standard</ulink>. Additionally your program may also accept the desired size of the thumbnail, which is optional but highly recommended. If you write the output file at an arbitrary image size, Thunar will afterwards scale it to the desired size, which might produce a less optimal result than generating the thumbnail with the requested dimensions."
@@ -814,7 +825,7 @@ msgid "Thumbnailer description files utilize the <ulink type=\"http\" url=\"http
 msgstr ""
 
 #: Thunar.xml1071(programlisting)
-#, no-wrap
+#, no-wrap, fuzzy
 msgid ""
 "\n"
 "[Desktop Entry]\n"
@@ -825,6 +836,14 @@ msgid ""
 "MimeType=your-supported/mime-type;\n"
 "X-Thumbnailer-Exec=your-thumbnailer %i %o %s"
 msgstr ""
+"\n"
+"[Desktop Entry]\n"
+"Version=1.0\n"
+"Encoding=UTF-8\n"
+"Type=X-Thumbnailer\n"
+"Name=Your Thumbnailer\n"
+"MimeType=your-supported/mime-type;\n"
+"X-Thumbnailer-Exec=your-thumbnailer %i %o %s"
 
 #: Thunar.xml1080(para)
 msgid "The <literal>Version</literal> and <literal>Encoding</literal> are mandated by the Desktop Entry Specification, just use the values shown in the example above. The <literal>Type</literal> field must have the special value <literal>X-Thumbnailer</literal>, otherwise your thumbnailer will not be recognized. The <literal>Name</literal> value describes your thumbnailer."
@@ -836,7 +855,7 @@ msgstr ""
 
 #: Thunar.xml1093(varname)
 msgid "%i"
-msgstr ""
+msgstr "%i"
 
 #: Thunar.xml1095(para)
 msgid "The local path to the input file for which to create a thumbnail. May be either a path relative to the directory from which the thumbnailer was invoked or an absolute path."
@@ -844,7 +863,7 @@ msgstr ""
 
 #: Thunar.xml1101(varname)
 msgid "%o"
-msgstr ""
+msgstr "%o"
 
 #: Thunar.xml1103(para)
 msgid "The local path to the output file where to store the generated thumbnail. The output file must be written as valid PNG file according to the thumbnail standard (see above). Note that the path may not end with <literal>.png</literal>, which matters if you invoke certain third party tools."
