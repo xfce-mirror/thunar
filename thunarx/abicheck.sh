@@ -2,23 +2,23 @@
 #
 # Copyright (c) 2004 The GLib Development Team.
 # Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>.
+# Copyright (c) 2011 Guido Berhoerster <gber@opensuse.org>
 #
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Library General Public
-# License as published by the Free Software Foundation; either
-# version 2 of the License, or (at your option) any later version.
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; version 2 of the License ONLY.
 #
-# This library is distributed in the hope that it will be useful,
+# This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# Library General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
-# You should have received a copy of the GNU Library General Public
-# License along with this library; if not, write to the
-# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-# Boston, MA 02111-1307, USA.
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-cpp -P -DALL_FILES ${srcdir:-.}/thunarx.symbols | sed -e '/^$/d' -e 's/ G_GNUC.*$//' -e 's/ PRIVATE//' | sort > expected-abi
-nm -D .libs/libthunarx-2.so | grep " T\|R " | cut -d ' ' -f 3 | grep -v '^_.*' | sort > actual-abi
-diff -u expected-abi actual-abi && rm expected-abi actual-abi
+trap 'rm expected-abi actual-abi' EXIT
+${CPP:-cpp} -DINCLUDE_INTERNAL_SYMBOLS -DINCLUDE_VARIABLES -DALL_FILES ${srcdir:-.}/thunarx.symbols | sed 's/ G_GNUC.*$//;s/ PRIVATE//;/^ *$/d;/^#/d' | sort >expected-abi
+${NM:-nm} -D -g -P .libs/libthunarx-2.so | awk '$2~/^[DRTG]$/&&$1~/^[^_]/{print $1}' | sort >actual-abi
+diff -u expected-abi actual-abi
