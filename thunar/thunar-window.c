@@ -1,7 +1,7 @@
 /* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
  * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2011 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU General Public License as
@@ -821,7 +821,7 @@ thunar_window_init (ThunarWindow *window)
     }
 
   window->paned = gtk_hpaned_new ();
-  gtk_container_set_border_width (GTK_CONTAINER (window->paned), 6);
+  gtk_container_set_border_width (GTK_CONTAINER (window->paned), 0);
   gtk_table_attach (GTK_TABLE (window->table), window->paned, 0, 1, 4, 5, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
   gtk_widget_show (window->paned);
 
@@ -832,7 +832,7 @@ thunar_window_init (ThunarWindow *window)
   /* always remember the last separator position for newly opened windows */
   exo_binding_new (G_OBJECT (window->paned), "position", G_OBJECT (window->preferences), "last-separator-position");
 
-  window->view_box = gtk_vbox_new (FALSE, 6);
+  window->view_box = gtk_table_new (3, 1, FALSE);
   gtk_paned_pack2 (GTK_PANED (window->paned), window->view_box, TRUE, FALSE);
   gtk_widget_show (window->view_box);
 
@@ -1290,7 +1290,7 @@ thunar_window_install_location_bar (ThunarWindow *window,
       else
         {
           /* it's a standalone location bar, just place it above the view */
-          gtk_box_pack_start (GTK_BOX (window->view_box), window->location_bar, FALSE, FALSE, 0);
+          gtk_table_attach (GTK_TABLE (window->view_box), window->location_bar, 0, 1, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 6);
         }
 
       /* display the new location bar widget */
@@ -1806,7 +1806,7 @@ thunar_window_action_statusbar_changed (GtkToggleAction *action,
     {
       /* setup a new statusbar */
       window->statusbar = thunar_statusbar_new ();
-      gtk_table_attach (GTK_TABLE (window->table), window->statusbar, 0, 1, 6, 7, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+      gtk_table_attach (GTK_TABLE (window->view_box), window->statusbar, 0, 1, 2, 3, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
       gtk_widget_show (window->statusbar);
 
       /* connect to the view (if any) */
@@ -1903,7 +1903,7 @@ thunar_window_action_view_changed (GtkRadioAction *action,
       exo_binding_new (G_OBJECT (window->view), "loading", G_OBJECT (window->throbber), "animated");
       exo_binding_new (G_OBJECT (window->view), "selected-files", G_OBJECT (window->launcher), "selected-files");
       exo_mutual_binding_new (G_OBJECT (window->view), "zoom-level", G_OBJECT (window), "zoom-level");
-      gtk_box_pack_end (GTK_BOX (window->view_box), window->view, TRUE, TRUE, 0);
+      gtk_table_attach (GTK_TABLE (window->view_box), window->view, 0, 1, 1, 2, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
       gtk_widget_grab_focus (window->view);
       gtk_widget_show (window->view);
 
