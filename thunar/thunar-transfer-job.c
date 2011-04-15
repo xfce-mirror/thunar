@@ -525,7 +525,7 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
         }
 
       /* update progress information */
-      exo_job_info_message (EXO_JOB (job), g_file_info_get_display_name (info));
+      exo_job_info_message (EXO_JOB (job), "%s", g_file_info_get_display_name (info));
 
 retry_copy:
       /* copy the item specified by this node (not recursively) */
