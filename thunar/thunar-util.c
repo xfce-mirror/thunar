@@ -57,6 +57,8 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
 
+#include <glib.h>
+#include <glib/gstdio.h>
 
 
 /**
@@ -404,27 +406,11 @@ thunar_util_change_working_directory (const gchar *new_directory)
 
   _thunar_return_val_if_fail (new_directory != NULL && *new_directory != '\0', NULL);
 
-  /* allocate a path buffer for the old working directory */
-  old_directory = g_malloc0 (sizeof (gchar) * MAXPATHLEN);
-
   /* try to determine the current working directory */
-#ifdef G_PLATFORM_WIN32
-  if (_getcwd (old_directory, MAXPATHLEN) == NULL)
-#else
-  if (getcwd (old_directory, MAXPATHLEN) == NULL)
-#endif
-    {
-      /* working directory couldn't be determined, reset the buffer */
-      g_free (old_directory);
-      old_directory = NULL;
-    }
+  old_directory = g_get_current_dir();
 
   /* try switching to the new working directory */
-#ifdef G_PLATFORM_WIN32
-  if (_chdir (new_directory) != 0)
-#else
-  if (chdir (new_directory) != 0)
-#endif
+  if (g_chdir (new_directory) != 0)
     {
       /* switching failed, we don't need to return the old directory */
       g_free (old_directory);
