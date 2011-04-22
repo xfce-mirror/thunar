@@ -471,13 +471,12 @@ thunar_sbr_number_renamer_update (ThunarSbrNumberRenamer *number_renamer)
   GdkColor back;
   GdkColor text;
   gchar   *endp;
-  guint    number;
 
   /* check whether "start" is valid for the "mode" */
   if (number_renamer->mode < THUNAR_SBR_NUMBER_MODE_ABC)
     {
       /* "start" must be a positive number */
-      number = strtoul (number_renamer->start, &endp, 10);
+      strtoul (number_renamer->start, &endp, 10);
       invalid = (endp <= number_renamer->start || *endp != '\0');
     }
   else if (number_renamer->mode == THUNAR_SBR_NUMBER_MODE_ABC)

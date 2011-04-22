@@ -68,6 +68,12 @@
 #include <unistd.h>
 #endif
 
+#if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
+#define G_GNUC_UNUSED __attribute__((__unused__))
+#else
+#define G_GNUC_UNUSED
+#endif
+
 #include <tdb/tdb.h>
 
 /* a tdb tool for manipulating a tdb database */
@@ -419,7 +425,8 @@ static void next_record(TDB_CONTEXT *context, TDB_DATA *pkey)
 
 int main(int argc, char *argv[])
 {
-    int bIterate = 0, ignore;
+    int bIterate = 0;
+    int ignore G_GNUC_UNUSED;
     char *line;
     char *tok;
   TDB_DATA iterate_kbuf;

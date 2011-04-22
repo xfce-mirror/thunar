@@ -541,27 +541,11 @@ thunar_show_column_editor (gpointer parent)
 {
   GtkWidget *window = NULL;
   GtkWidget *dialog;
-  GdkScreen *screen;
 
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
 
-  /* determine the screen for the dialog */
-  if (G_UNLIKELY (parent == NULL))
-    {
-      /* just use the default screen, no toplevel window */
-      screen = gdk_screen_get_default ();
-    }
-  else if (GTK_IS_WIDGET (parent))
-    {
-      /* use the screen for the widget and the toplevel window */
-      screen = gtk_widget_get_screen (parent);
-      window = gtk_widget_get_toplevel (parent);
-    }
-  else
-    {
-      /* parent is a screen, no toplevel window */
-      screen = GDK_SCREEN (parent);
-    }
+  if (GTK_IS_WIDGET (parent))
+    window = gtk_widget_get_toplevel (parent);
 
   /* display the column editor */
   dialog = thunar_column_editor_new ();
