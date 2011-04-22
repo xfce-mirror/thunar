@@ -609,10 +609,10 @@ thunar_renamer_model_file_changed (ThunarRenamerModel *renamer_model,
         if (G_LIKELY (!renamer_model->frozen))
           {
             /* the file changed */
-            THUNAR_RENAMER_MODEL_ITEM (lp->data)->changed = TRUE;
+            item->changed = TRUE;
 
             /* invalidate the item */
-            thunar_renamer_model_invalidate_item (renamer_model, lp->data);
+            thunar_renamer_model_invalidate_item (renamer_model, item);
             break;
           }
 
