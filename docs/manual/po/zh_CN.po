@@ -397,47 +397,47 @@ msgstr "挂载介质"
 
 #: Thunar.xml414(para)
 msgid "To <emphasis>mount</emphasis> media is to make the file system of the media available for access. When you mount media, the file system of the media is attached as a subdirectory to your file system."
-msgstr ""
+msgstr "<emphasis>挂载</emphasis> 介质是为了访问介质文件系统。挂载介质时，介质文件系统作为子目录被附加在文件系统下。"
 
 #: Thunar.xml419(para)
 msgid "To access media, insert the media in the appropriate device, or connect the new device to your computer (i.e. connect an USB stick to one of your USB ports). An object that represents the media is added to the side pane of the file manager. If <application>xfdesktop</application> is running and configured to display <guilabel>File/launcher icons</guilabel> this object will also be added to your desktop."
-msgstr ""
+msgstr "要访问介质，在适当设备中插入介质，或将设备与您的计算机连接（比如，将 USB 存储卡连到 USB 端口）。在文件管理器的侧边栏里会加入一代表介质的对象。若 <application>xfdesktop</application> 正在运行并配置显示 <guilabel>File/launcher icons</guilabel> ，此对象也会被添加到桌面上。"
 
 #: Thunar.xml426(para)
 msgid "To actually mount the media, click on the object that represents the media. For example, to mount a floppy diskette, click on the <guilabel>Floppy Drive</guilabel> object in the side pane. The file manager will now add the file system of the media to your file system hierarchy and display the contents of the floppy diskette in the main area."
-msgstr ""
+msgstr "实际挂载介质，需点击表示介质的对象。比如，要挂载软盘，点击侧边栏里的 <guilabel>软盘驱动器</guilabel> 。文件管理器便将介质文件系统添加到您的文件系统目录下并在主区域显示软盘的内容。"
 
 #: Thunar.xml434(title)
 msgid "To Eject Media"
-msgstr ""
+msgstr "弹出介质"
 
 #: Thunar.xml436(para)
 msgid "If the drive for the media is a motorized drive (i.e. a CD-ROM drive), right-click on the media object in the side pane or on the desktop and choose <guilabel>Eject Volume</guilabel>. The media is ejected from the drive after a few seconds. If the drive for the media is not motorized (i.e. a floppy drive or an USB stick), right-click on the media object and choose <guilabel>Unmount Volume</guilabel>. After a short period of time, a notification will appear to inform you that it is now safe to remove the media or disconnect the drive from the computer."
-msgstr ""
+msgstr "若介质驱动器是机械的（比如光驱），右击侧边栏里或桌面上的介质对象并选择 <guilabel>弹出</guilabel> 。介质几秒后驱动器便会弹出介质。若介质驱动器不是机械的（比如软驱或 USB 存储卡），右击介质对象并选择 <guilabel>卸载</guilabel> 。一段时间后，会显示一通知提醒您可以安全地移除介质或断开驱动器与计算机的连接。"
 
 #: Thunar.xml451(phrase)
 msgid "Unmount notification"
-msgstr ""
+msgstr "卸载通知"
 
 #: Thunar.xml456(para)
 msgid "However this notification will only be displayed if support for <application>libnotify</application> is enabled, and you have installed a notification daemon. A notification daemon for Xfce is available from the <ulink type=\"http\" url=\"http://goodies.xfce.org/projects/applications/notification-daemon-xfce\">Xfce Goodies Project</ulink>. If notification support is not available, wait until the context menu disappears before you remove the media or disconnect the drive."
-msgstr ""
+msgstr "然而此通知只有在通知守护进程安装且支持 <application>libnotify</application> 开启时才会显示，Xfce 中下的通知守护进程可以从 <ulink type=\"http\" url=\"http://goodies.xfce.org/projects/applications/notification-daemon-xfce\">Xfce Goodies Project</ulink> 处获得。如果通知支持无效，需一直等到通知菜单出现后才能移除介质或断开驱动器与计算机的连接。"
 
 #: Thunar.xml464(para)
 msgid "Be aware that you cannot eject or unmount media that is still in use by one or more applications. Therefore if the file manager refuses to eject media, make sure you close all applications that were accessing the media, and be sure to also check command line applications running in <application>Terminal</application> windows."
-msgstr ""
+msgstr "当心不能弹出或卸载仍在被一个或多个程序使用的介质。因此如果文件管理器拒绝弹出介质，确保关闭所有正在访问介质的程序，也一定要检查 <application>Terminal</application> 窗口中运行的命令行程序。"
 
 #: Thunar.xml470(para)
 msgid "Make sure to unmount removable media before ejecting. Do not eject a diskette from the floppy drive before your unmount the diskette. Do not remove an USB stick before you unmount the flash drive. If you do not unmount the media first you might lose data or cause your system to crash."
-msgstr ""
+msgstr "一定要先卸载介质然后再弹出介质。不要在卸载软盘之前将软盘从软驱弹出。不要在卸载闪存盘之前拔出 USB 存储卡。如果您不先卸载介质，可能会丢失数据或引发系统崩溃。"
 
 #: Thunar.xml479(title)
 msgid "Management of Removable Drives and Media"
-msgstr ""
+msgstr "管理可移动驱动器和介质"
 
 #: Thunar.xml481(para)
 msgid "Thunar is also able to automatically manage removable drives and media if the <ulink type=\"http\" url=\"http://www.foo-projects.org/~benny/projects/thunar-volman/index.html\">thunar-volman</ulink> package is installed on your system. Note however that this feature requires HAL support."
-msgstr ""
+msgstr "如果 <ulink type=\"http\" url=\"http://www.foo-projects.org/~benny/projects/thunar-volman/index.html\">thunar-volman</ulink> 文件包已经安装在系统中， Thunar 还可以自动地管理可移动驱动器和介质。注意此功能需要 HAL 支持。"
 
 #: Thunar.xml487(para)
 msgid "Now, if HAL support is available and <application>thunar-volman</application> is installed on your system, you can choose to enable the <guilabel>Volume Management</guilabel> feature of Thunar. Therefore, open the file manager preferences, go to the <guilabel>Advanced</guilabel> page and check the <guilabel>Enable Volume Management</guilabel> button."
