@@ -516,9 +516,8 @@ msgid "The remaining options allow you to specify a command to run when a certai
 msgstr "其它选项用来指定某一特定类型的介质或外部设备接入后所要运行的命令。此命令在运行时，能包含三个用来替换的特殊变量："
 
 #: Thunar.xml610(literal)
-#, fuzzy
 msgid "%d"
-msgstr "%d"
+msgstr "d"
 
 #: Thunar.xml612(para)
 msgid "Each appearance of <literal>%d</literal> in the command will be substituted with the device file path of the newly added device. For example, if you have plugged in an USB stick, the device file path will be <filename>/dev/da0s1</filename> or <filename>/dev/sda1</filename>."
@@ -529,18 +528,16 @@ msgid "If no device file is associated with the device or the device file could 
 msgstr "如果设备文件没有相关联的设备或设备文件由于某些原因找不到，将用空行替换 <literal>%d</literal> 。"
 
 #: Thunar.xml625(literal)
-#, fuzzy
 msgid "%h"
-msgstr "%h"
+msgstr "h"
 
 #: Thunar.xml627(para)
 msgid "Each appearance of <literal>%h</literal> in the command will be substituted with the HAL UDI of the newly added device."
 msgstr "新添加设备的 HAL UDI 会替换命令中的 <literal>%h</literal> 。"
 
 #: Thunar.xml635(literal)
-#, fuzzy
 msgid "%m"
-msgstr "%m"
+msgstr "m"
 
 #: Thunar.xml637(para)
 msgid "Each appearance of <literal>%m</literal> in the command will be substituted with the mount point where the newly added device was mounted. If the device cannot be mounted (for example printers or keyboards) or if the automatic mounting was disabled, <literal>%m</literal> will be substituted with the empty string."
@@ -560,55 +557,55 @@ msgstr "确保 <application>Thunar</application> 守护进程正在运行。卷�
 
 #: Thunar.xml668(para)
 msgid "Try running <application>thunar-volman</application> from a <application>Terminal</application> window after hot-plugging the drive or inserting the media. First, you need to figure out the HAL UDI of the new device using <application>lshal</application> or <application>hal-device</application>. Once you know the UDI, run <literal>thunar-volman --device-added &lt;udi-of-your-device&gt;</literal> in a <application>Terminal</application> window and watch the output for errors or warnings."
-msgstr ""
+msgstr "热插拔或接入介质后，要从 <application>Terminal</application> 窗口运行 <application>thunar-volman</application> 。首先，需使用 <application>lshal</application> 或 <application>hal-device</application> 设置好新设备的 HAL UDI 。只要知道 UDI ，即可在 <application>Terminal</application> 窗口里运行 <literal>thunar-volman --device-added &lt;udi-of-your-device&gt;</literal> 以查看输出的错误或警告信息。"
 
 #: Thunar.xml678(para)
 msgid "If it still refuses to work, ask on the <ulink type=\"http\" url=\"http://forum.xfce.org/\">Xfce Forum</ulink> or the <ulink type=\"http\" url=\"http://foo-projects.org/mailman/listinfo/thunar-dev\">thunar-dev mailing list</ulink> for help."
-msgstr ""
+msgstr "如果仍然不行，到 <ulink type=\"http\" url=\"http://forum.xfce.org/\">Xfce Forum</ulink> or the <ulink type=\"http\" url=\"http://foo-projects.org/mailman/listinfo/thunar-dev\">thunar-dev mailing list</ulink> 提问寻求帮助。"
 
 #: Thunar.xml689(title)
 msgid "File Management Preferences"
-msgstr ""
+msgstr "文件管理首选项"
 
 #: Thunar.xml691(para)
 msgid "Use the <guilabel>File Manager Preferences</guilabel> dialog to set your <application>Thunar</application> file manager preferences. To open the preferences dialog, choose <menuchoice><guimenu>Edit</guimenu><guimenuitem>Preferences...</guimenuitem></menuchoice> from the menu bar, or click on the <guibutton>File Manager</guibutton> button in the Xfce Settings Manager."
-msgstr ""
+msgstr "使用 <guilabel>文件管理首选项</guilabel> 设置 <application>Thunar</application> 的文件管理首选项。从菜单栏上选择 <menuchoice><guimenu>编辑</guimenu><guimenuitem>首选项...</guimenuitem></menuchoice> ，或点击 Xfce 设置管理器里的 <guibutton>文件管理器</guibutton> 按钮可以打开首选项对话框，"
 
 #: Thunar.xml697(para)
 msgid "The <guilabel>File Manager Preferences</guilabel> dialog is divided into four pages with different options, each described in a separate section below. Basically you can set preferences in the following categories:"
-msgstr ""
+msgstr "<guilabel>文件管理器首选项</guilabel> 对话框分为四个页面，各有不同选项，每个都单独分节叙述如下。基本上您可以按如下分类去设置："
 
 #: Thunar.xml703(para)
 msgid "The default settings for the views."
-msgstr ""
+msgstr "视图默认设置。"
 
 #: Thunar.xml704(para)
 msgid "The default settings for the side pane."
-msgstr ""
+msgstr "侧边栏默认设置。"
 
 #: Thunar.xml705(para)
 msgid "The behavior of the file manager windows."
-msgstr ""
+msgstr "文件管理器窗口行为。"
 
 #: Thunar.xml706(para)
 msgid "Advanced features of the file manager."
-msgstr ""
+msgstr "文件管理器高级特性。"
 
 #: Thunar.xml709(para)
 msgid "Thunar also supports a bunch of so-called <emphasis>Hidden Options</emphasis>, which control several advanced features of the file manager, but are not included in the preferences in order to keep the preferences dialog simple. The <ulink type=\"http\" url=\"http://svn.xfce.org/svn/xfce/thunar/trunk/docs/README.thunarrc\"><filename>README.thunarrc</filename></ulink> file that is included with the Thunar distribution describes all available options in detail."
-msgstr ""
+msgstr "Thunar 还支持很多控制文件管理器的一些高级特性的所谓 <emphasis>隐藏选项</emphasis> ，但为了使首选项对话框看上去简单而没有包含在首选项里。与 Thunar 一道发行的 <ulink type=\"http\" url=\"http://svn.xfce.org/svn/xfce/thunar/trunk/docs/README.thunarrc\"><filename>README.thunarrc</filename></ulink> 文件详细地描述了所有的选项。"
 
 #: Thunar.xml718(title) Thunar.xml733(phrase)
 msgid "Views Preferences"
-msgstr ""
+msgstr "视图选项"
 
 #: Thunar.xml720(para)
 msgid "You can specify a default view, select sort options and display options. You can also specify whether thumbnails should be displayed for file types that support this."
-msgstr ""
+msgstr "您可以指定默认的视图，选择排序选项和显示选项。您也可以指定支持缩略图功能的文件在显示时是否启用缩略图。"
 
 #: Thunar.xml740(guilabel)
 msgid "View new folder using"
-msgstr ""
+msgstr "新文件夹视图"
 
 #: Thunar.xml742(para)
 msgid "Select the default view for folders. When you open a new window, the is displayed in the view that you select. This can be either the icon view, the compact list view or the detailed list view. You can also select <guilabel>Last Active View</guilabel> here to use the view you used for the last active window."
