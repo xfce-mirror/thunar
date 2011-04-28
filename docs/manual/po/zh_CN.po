@@ -513,47 +513,50 @@ msgstr "启用此选项后，可移动驱动器和介质便可自动打开。详
 
 #: Thunar.xml602(para)
 msgid "The remaining options allow you to specify a command to run when a certain kind of media is inserted into a drive or a certain kind of external device is connected. The command can use three special variables, that will be substituted when the command is run:"
-msgstr ""
+msgstr "其它选项用来指定某一特定类型的介质或外部设备接入后所要运行的命令。此命令在运行时，能包含三个用来替换的特殊变量："
 
 #: Thunar.xml610(literal)
+#, fuzzy
 msgid "%d"
-msgstr ""
+msgstr "%d"
 
 #: Thunar.xml612(para)
 msgid "Each appearance of <literal>%d</literal> in the command will be substituted with the device file path of the newly added device. For example, if you have plugged in an USB stick, the device file path will be <filename>/dev/da0s1</filename> or <filename>/dev/sda1</filename>."
-msgstr ""
+msgstr "新添加设备的设备文件路径会替换命令中的 <literal>%d</literal> 。比如，如果您接入了 USB 存储卡，设备文件路径应该是 <filename>/dev/da0s1</filename> 或 <filename>/dev/sda1</filename>。"
 
 #: Thunar.xml617(para)
 msgid "If no device file is associated with the device or the device file could not be found for some reason, the variable <literal>%d</literal> will be substituted with the empty string."
-msgstr ""
+msgstr "如果设备文件没有相关联的设备或设备文件由于某些原因找不到，将用空行替换 <literal>%d</literal> 。"
 
 #: Thunar.xml625(literal)
+#, fuzzy
 msgid "%h"
-msgstr ""
+msgstr "%h"
 
 #: Thunar.xml627(para)
 msgid "Each appearance of <literal>%h</literal> in the command will be substituted with the HAL UDI of the newly added device."
-msgstr ""
+msgstr "新添加设备的 HAL UDI 会替换命令中的 <literal>%h</literal> 。"
 
 #: Thunar.xml635(literal)
+#, fuzzy
 msgid "%m"
-msgstr ""
+msgstr "%m"
 
 #: Thunar.xml637(para)
 msgid "Each appearance of <literal>%m</literal> in the command will be substituted with the mount point where the newly added device was mounted. If the device cannot be mounted (for example printers or keyboards) or if the automatic mounting was disabled, <literal>%m</literal> will be substituted with the empty string."
-msgstr ""
+msgstr "新添加设备挂载的挂载点会替换命令中的 <literal>%m</literal> 。如果设备无法挂载（比如打印机或键盘）或自动挂载被禁用，将用空行替换 <literal>%m</literal> 。"
 
 #: Thunar.xml648(title)
 msgid "Troubleshooting the Volume Manager"
-msgstr ""
+msgstr "卷管理的故障查找与处理"
 
 #: Thunar.xml650(para)
 msgid "Useful tips to trouble shoot the volume manager in case it does not work as expected."
-msgstr ""
+msgstr "卷管理未能在预料范围内工作时的故障查找与处理小窍门"
 
 #: Thunar.xml656(para)
 msgid "Make sure <application>Thunar</application> is running as daemon. The volume manager depends on this, as it is not a daemon by itself. By default, Xfce automatically spawns <application>Thunar</application> as daemon on startup. If it got killed for some reason, open the <guilabel>Run program</guilabel> (using the keyboard shortcut <keycombo><keycap>Alt</keycap><keycap>F2</keycap></keycombo> or right-click on the desktop and choose <guilabel>Run Program...</guilabel> from the desktop menu), enter <literal>Thunar --daemon</literal> and click <guibutton>Run</guibutton>."
-msgstr ""
+msgstr "确保 <application>Thunar</application> 守护进程正在运行。卷管理本身不是个守护进程，所以卷管理依赖 <application>Thunar</application> 守护进程。默认情况下， Xfce 在启动时会自动将 <application>Thunar</application> 添加为守护进程。如果由于某些原因此进程终止了，打开 <guilabel>运行程序</guilabel>（用键盘快捷键 <keycombo><keycap>Alt</keycap><keycap>F2</keycap></keycombo> 或右击桌面并从桌面菜单中选择 <guilabel>运行程序...</guilabel>），进入 <literal>Thunar --daemon</literal> 并点击 <guibutton>运行</guibutton>."
 
 #: Thunar.xml668(para)
 msgid "Try running <application>thunar-volman</application> from a <application>Terminal</application> window after hot-plugging the drive or inserting the media. First, you need to figure out the HAL UDI of the new device using <application>lshal</application> or <application>hal-device</application>. Once you know the UDI, run <literal>thunar-volman --device-added &lt;udi-of-your-device&gt;</literal> in a <application>Terminal</application> window and watch the output for errors or warnings."
