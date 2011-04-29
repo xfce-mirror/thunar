@@ -757,7 +757,7 @@ msgstr ""
 
 #: Thunar.xml1004(para)
 msgid "A complete example using the <application>postr</application> application is shown below:"
-msgstr ""
+msgstr "使用 <application>postr</application> 程序的完整示例如下："
 
 #: Thunar.xml1008(programlisting)
 #, no-wrap
@@ -775,6 +775,18 @@ msgid ""
 "Name=Flickr\n"
 "MimeType=image/jpeg;"
 msgstr ""
+"\n"
+"# postr.desktop - Integrate postr into\n"
+"# the \"Send To\" menu.\n"
+"[Desktop Entry]\n"
+"Type=Application\n"
+"Version=1.0\n"
+"Encoding=UTF-8\n"
+"TryExec=postr\n"
+"Exec=postr %F\n"
+"Icon=postr\n"
+"Name=Flickr\n"
+"MimeType=image/jpeg；"
 
 #: Thunar.xml1021(para)
 msgid "If you install this file to <filename role=\"directory\">~/.local/share/Thunar/sendto/</filename> (create the folder if it does not exist yet), the <guilabel>Send To</guilabel> menu for JPEG files will show the new entry <guilabel>Flickr</guilabel>, which can be used to upload JPEG images to Flickr."
