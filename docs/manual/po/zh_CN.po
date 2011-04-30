@@ -753,7 +753,7 @@ msgstr "与 <application>Thunar</application> 的大部分其它功能一样，�
 
 #: Thunar.xml996(para)
 msgid "The <literal>MimeType</literal> of the target <filename>.desktop</filename> specifies the types of files for which this action should be available in the <guilabel>Send To</guilabel> menu. For example, say you want to add entry for a <ulink type=\"http\" url=\"http://flickr.com/\">Flickr</ulink> uploader tool, then this entry should only show up if the selection contains JPEG files (other file formats are not supported by Flickr) and so you should add a line <literal>MimeType=image/jpeg;</literal>. If you do not specify any <literal>MimeType</literal> your entry will show up for all file types."
-msgstr ""
+msgstr "对象 <filename>.desktop</filename> 的 <literal>MimeType</literal> 指定应该在 <guilabel>发送至</guilabel> 菜单里需出现的动作的文件的类型。比如说您要为 <ulink type=\"http\" url=\"http://flickr.com/\">Flickr</ulink> 上传工具添加条目，此条目只有在您选中的对象中包含 JPEG 文件（Flickr 不支持其它格式）时出现，所以需要添加行 <literal>MimeType=image/jpeg;</literal> 。如果没有指定任何 <literal>MimeType</literal> ，条目会显示所有文件类型的。"
 
 #: Thunar.xml1004(para)
 msgid "A complete example using the <application>postr</application> application is shown below:"
@@ -832,6 +832,14 @@ msgid ""
 "MimeType=your-supported/mime-type;\n"
 "X-Thumbnailer-Exec=your-thumbnailer %i %o %s"
 msgstr ""
+"\n"
+"[Desktop Entry]\n"
+"Version=1.0\n"
+"Encoding=UTF-8\n"
+"Type=X-Thumbnailer\n"
+"Name=Your Thumbnailer\n"
+"MimeType=your-supported/mime-type;\n"
+"X-Thumbnailer-Exec=your-thumbnailer %i %o %s"
 
 #: Thunar.xml1080(para)
 msgid "The <literal>Version</literal> and <literal>Encoding</literal> are mandated by the Desktop Entry Specification, just use the values shown in the example above. The <literal>Type</literal> field must have the special value <literal>X-Thumbnailer</literal>, otherwise your thumbnailer will not be recognized. The <literal>Name</literal> value describes your thumbnailer."
@@ -843,7 +851,7 @@ msgstr ""
 
 #: Thunar.xml1093(varname)
 msgid "%i"
-msgstr ""
+msgstr "i"
 
 #: Thunar.xml1095(para)
 msgid "The local path to the input file for which to create a thumbnail. May be either a path relative to the directory from which the thumbnailer was invoked or an absolute path."
@@ -851,7 +859,7 @@ msgstr ""
 
 #: Thunar.xml1101(varname)
 msgid "%o"
-msgstr ""
+msgstr "o"
 
 #: Thunar.xml1103(para)
 msgid "The local path to the output file where to store the generated thumbnail. The output file must be written as valid PNG file according to the thumbnail standard (see above). Note that the path may not end with <literal>.png</literal>, which matters if you invoke certain third party tools."
@@ -859,7 +867,7 @@ msgstr ""
 
 #: Thunar.xml1110(varname)
 msgid "%s"
-msgstr ""
+msgstr "s"
 
 #: Thunar.xml1112(para)
 msgid "The desired size of the generated thumbnail in pixels. This parameter is optional."
@@ -867,7 +875,7 @@ msgstr ""
 
 #: Thunar.xml1117(varname)
 msgid "%u"
-msgstr ""
+msgstr "u"
 
 #: Thunar.xml1119(para)
 msgid "Similar to <literal>%i</literal>, but substituted with the URI of the file, rather than the path. This was added for compatibility with GNOME."
@@ -875,7 +883,7 @@ msgstr ""
 
 #: Thunar.xml1125(varname)
 msgid "%%"
-msgstr ""
+msgstr "%"
 
 #: Thunar.xml1127(para)
 msgid "Will be substituted with a single <literal>%</literal>."
@@ -898,7 +906,7 @@ msgid "This example demonstrates how to write and install a new thumbnailer for 
 msgstr "<command>convert</command> 是 ImageMagick 的一个工具，下面的示例说明了如何为 <filename>.eps</filename> 文件编写和安装新的缩略图生成器。首先，我们启动一个简单的调用 <command>convert</command> 命令的脚本，然后按所需大小生成一个缩略图。"
 
 #: Thunar.xml1151(programlisting)
-#, no-wrap, fuzzy
+#, no-wrap
 msgid ""
 "\n"
 "#!/bin/sh\n"
@@ -990,7 +998,6 @@ msgstr ""
 "$ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbnailer.desktop"
 
 #: Thunar.xml1199(para)
-#, fuzzy
 msgid "The <filename>eps-thumbnailer.desktop</filename> file uses the special key <literal>TryExec</literal>, which, if specified, names a command that must be present on the system for the thumbnailer to be useful. In this case, our script is useless if the <command>convert</command> utility is not present."
 msgstr "<filename>eps-thumbnailer.desktop</filename> 文件使用特殊的 <literal>TryExec</literal> 键，指定后，系统中必须有缩略图生成器所需的命令，给此命令命名是有用的。这样，如果没有 <command>convert</command> 工具，我们的脚本是无效的。"
 
