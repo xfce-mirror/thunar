@@ -790,31 +790,31 @@ msgstr ""
 
 #: Thunar.xml1021(para)
 msgid "If you install this file to <filename role=\"directory\">~/.local/share/Thunar/sendto/</filename> (create the folder if it does not exist yet), the <guilabel>Send To</guilabel> menu for JPEG files will show the new entry <guilabel>Flickr</guilabel>, which can be used to upload JPEG images to Flickr."
-msgstr ""
+msgstr "如果您将此文件安装在 <filename role=\"directory\">~/.local/share/Thunar/sendto/</filename> 下（如果没有此文件夹则先创建）， JPEG 文件的再大 <guilabel>发送至</guilabel> "
 
 #: Thunar.xml1027(para)
 msgid "The <ulink type=\"http\" url=\"http://thunar.xfce.org/pwiki/documentation/sendto_menu\">Thunar Project Wiki</ulink> contains additional examples of useful targets for the <guilabel>Send To</guilabel> menu. Feel free to extend the Wiki page with new examples."
-msgstr ""
+msgstr "将以上脚本存入一个文件 <filename>eps-thumbnailer</filename> 中，此文件必须是可执行文件且安装在 <filename role=\"directory\">/usr/local/bin</filename> 中。"
 
 #: Thunar.xml1036(title)
 msgid "Thumbnailers"
-msgstr ""
+msgstr "缩略图生成器"
 
 #: Thunar.xml1038(para)
 msgid "Thunar uses small utilities to create thumbnails of certain file types and displays the thumbnails as preview of the file content. These small tools are called thumbnailers. Thunar ships with thumbnailers for image and font files, and makes use of the installed thumbnailers from GNOME automatically if it was installed with support for <literal>gconf</literal>. Users may however dynamically extend this basic functionality with thumbnailers for additional file types."
-msgstr ""
+msgstr "Thunar 使用小工具给特定类型的文件创建缩略图以便预览文件内容。这些小工具称为缩略图生成器。Thunar 自带图片和字体文件缩略图生成器，如果 Thunar 安装时支持 <literal>gconf</literal> ，还可以从 GNOME 自动安装缩略图生成器。对于其它类型的文件，此基本功能可以被用户动态地扩展。"
 
 #: Thunar.xml1045(para)
 msgid "If you plan to write a custom thumbnailers, you need to start with a program that accepts atleast two command line parameters, the input file, which is of the file type you plan to support and the output file, which is a PNG file that complies with the format specified by the <ulink type=\"http\" url=\"http://jens.triq.net/thumbnail-spec/creation.html#AEN139\">Thumbnail Management Standard</ulink>. Additionally your program may also accept the desired size of the thumbnail, which is optional but highly recommended. If you write the output file at an arbitrary image size, Thunar will afterwards scale it to the desired size, which might produce a less optimal result than generating the thumbnail with the requested dimensions."
-msgstr ""
+msgstr "如果您要编写自定义的缩略图生成器，您需要启动一个至少包含两个命令行参数的程序，所要支持的文件类型称为输入文件，此自定义生成器生成的缩略图 PNG 文件称为输出文件，它的文件格式由 <ulink type=\"http\" url=\"http://jens.triq.net/thumbnail-spec/creation.html#AEN139\">缩略图管理Standard</ulink> 指定。您的程序还要包含所需缩略图大小的参数，此参数虽然可以没有，但我们强烈推荐添加。如果您编写的输出文件即图片的大小是任意的， Thunar 后来会以合适大小缩放，但相比事先在生成缩略图文件中定义好大小，缩放后的效果可能稍差。"
 
 #: Thunar.xml1054(para)
 msgid "Once your utility to generate the thumbnails is done, you will need to register your thumbnailer, so Thunar is able to locate and use it. Therefore all you need to do is to install a description file for the thumbnailer (a <filename>.desktop</filename> file) in one of the <filename role=\"directory\">$XDG_DATA_DIRS/thumbnailers/</filename> paths. For example, if you want to register the thumbnailer for your user account only, you can install the file into the folder <filename role=\"directory\">~/.local/share/thumbnailers/</filename>. The <filename>.desktop</filename> for thumbnailers has the following format."
-msgstr ""
+msgstr "一旦生成缩略图的工具即缩略图生成器编写好了，您需要注册此缩略图生成器以便 Thunar 能够找到并使用它。因此您需要在 <filename role=\"directory\">$XDG_DATA_DIRS/thumbnailers/</filename> 某个路径下为缩略图生成器安装一个说明文件。比如，如果仅为您的用户注册缩略图生成器，您可以将说明文件安装在 <filename role=\"directory\">~/.local/share/thumbnailers/</filename> 。缩略图生成器的说明文件 <filename>.desktop</filename> 有如下格式。"
 
 #: Thunar.xml1063(title)
 msgid "Thumbnailer Description File Format"
-msgstr ""
+msgstr "缩略图生成器说明文件格式"
 
 #: Thunar.xml1065(para)
 msgid "Thumbnailer description files utilize the <ulink type=\"http\" url=\"http://standards.freedesktop.org/desktop-entry-spec/latest/\">Desktop Entry Format</ulink> with a special <literal>Type</literal> of <literal>X-Thumbnailer</literal> and special field <literal>X-Thumbnailer-Exec</literal> with new field codes. Basically, a thumbnailer description file has the following format."
