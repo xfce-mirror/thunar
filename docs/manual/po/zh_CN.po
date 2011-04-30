@@ -709,7 +709,7 @@ msgstr "文件夹权限"
 
 #: Thunar.xml915(para)
 msgid "Choose the action that should be performed when you change the permissions of a folder in the <guilabel>Properties</guilabel> dialog. You can choose to let <application>Thunar</application> ask everytime when you change folder permissions, tell it to default to applying the new permissions to the folder only or to apply them recursively to the folder contents as well."
-msgstr ""
+msgstr "在 <guilabel>属性</guilabel> 对话框内选择当您更改文件夹权限时要执行的动作。在您更改文件夹权限时，您可以选择让 <application>Thunar</application> 每次都询问是使用默认的将更改仅应用到所选文件夹，还是将更改递归地应用到子文件夹及其内容。"
 
 #: Thunar.xml925(guilabel)
 msgid "Volume Management"
@@ -717,7 +717,7 @@ msgstr "卷管理"
 
 #: Thunar.xml927(para)
 msgid "If <application>Thunar</application> was installed with support for HAL and the <application>thunar-volman</application> package is also installed, you can enable the integrated volume manager. See <xref linkend=\"management-of-removable-drives-and-media\"/> for details about this feature."
-msgstr ""
+msgstr "如果 <application>Thunar</application> 已安装且支持 HAL ，并且 <application>thunar-volman</application> 也安装了，您就可以启用整合的卷管理。此功能的详情请参阅 <xref linkend=\"management-of-removable-drives-and-media\"/> 。"
 
 #: Thunar.xml940(title)
 msgid "Customizing Thunar"
@@ -733,7 +733,7 @@ msgstr "“发送至” 菜单"
 
 #: Thunar.xml950(para)
 msgid "Thunar includes a <guilabel>Send To</guilabel> menu, which provides possible targets where files and folders can be sent to. To access the <guilabel>Send To</guilabel> menu, choose <menuchoice><guimenu>File</guimenu><guimenuitem>Send To</guimenuitem></menuchoice> from the main menu, or right-click on a file or folder and choose <menuchoice><guimenuitem>Send To</guimenuitem></menuchoice>."
-msgstr ""
+msgstr "Thunar 有一将文件和文件夹发送到某个地方的 <guilabel>发送至</guilabel> 菜单。从主菜单中选择 <menuchoice><guimenu>文件</guimenu><guimenuitem>发送至</guimenuitem></menuchoice> ，或右击文件或文件夹并选择 <menuchoice><guimenuitem>发送至</guimenuitem></menuchoice> 即可访问 <guilabel>发送至</guilabel> 菜单。"
 
 #: Thunar.xml964(phrase)
 msgid "\"Send To\" Menu"
@@ -741,11 +741,11 @@ msgstr "“发送至” 菜单"
 
 #: Thunar.xml969(para)
 msgid "By default, the <guilabel>Send To</guilabel> menu includes an entry named <guilabel>Desktop (Create Link)</guilabel> for all files and folders, which simply creates a link on the desktop for each selected file. In addition, if the <guilabel>Shortcuts Pane</guilabel> is active, the menu also includes an entry called <guilabel>Side Pane (Create Shortcut)</guilabel> for folders, which allows users to add new shortcuts to the side pane. Following these entries, <application>Thunar</application> lists the removable drives currently plugged into the computer. In the screenshot above, the <guilabel>Floppy Drive</guilabel> represents a possible target where files can be sent to. Note that the device is mounted automatically once selected from the <guilabel>Send To</guilabel> menu, so you do not need to manually mount it."
-msgstr ""
+msgstr "默认情况下， <guilabel>发送至</guilabel> 菜单中有一个 <guilabel>桌面 (创建链接)</guilabel> 条目，此条目仅为桌面上选中的文件创建链接。而且，如果 <guilabel>快捷方式栏</guilabel> 已运行，菜单中也有一个 <guilabel>侧边栏（创建快捷方式）</guilabel> 条目，此条目可以在侧边栏中为每个文件夹添加快捷方式。顺着这些条目， <application>Thunar</application> 列出当前接入计算机的可移动驱动器。在上面的截图中， <guilabel>软盘驱动器</guilabel> 表示文件可被发送至的可能目的地。注意在您从菜单中选择 <guilabel>发送至</guilabel> 时，设备自动挂载，所以您无需手动挂载它。"
 
 #: Thunar.xml979(para)
 msgid "In addition <application>Thunar</application> also ships the <application>thunar-sendto-email</application> plugin, which adds the entry <guilabel>Mail Recipient</guilabel> to the menu, that opens the mail composer with the selected files attach to the new email. If the selection contains atleast one folder, the selected items are added to a ZIP archive before attaching them to the email. Otherwise, if the selection contains multiple files, or a single file, which is larger than 200Kib, the user will be prompted whether to pack the files into a ZIP archive, and send the ZIP archive."
-msgstr ""
+msgstr "而且， <application>Thunar</application> 还有 <application>thunar-sendto-email</application> 插件，此插件在菜单中添加 <guilabel>邮件接收人</guilabel> 条目，点击此条目打开邮件撰写且把选中文件当作邮件附件。如果选中的项目包含文件夹，那么此项目先压缩为 ZIP 档案然后再添加为邮件附件。如果选择的项目是混合文件，或超过 200K 的单个文件，会先询问用户是否打包并存入 ZIP 档案。"
 
 #: Thunar.xml987(para)
 msgid "Like most other features of <application>Thunar</application>, the <guilabel>Send to</guilabel> menu can be easily extended by users and application developers with new targets, using standard <ulink type=\"http\" url=\"http://freedesktop.org/wiki/Standards_2fdesktop_2dentry_2dspec\">desktop entry files</ulink>. These files must be installed into one of the <filename role=\"directory\">$XDG_DATA_DIRS/Thunar/sendto/</filename> folders (see the <ulink type=\"http\" url=\"http://freedesktop.org/wiki/Standards_2fbasedir_2dspec\">XDG Base Directory Specification</ulink> for details about the <literal>$XDG_DATA_DIRS</literal> variable)."
