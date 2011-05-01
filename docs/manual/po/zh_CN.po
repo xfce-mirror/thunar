@@ -1086,11 +1086,11 @@ msgstr "搜索与替换字符。"
 
 #: Thunar.xml1295(para)
 msgid "Convert to uppercase, lowercase or camlcase."
-msgstr ""
+msgstr "转换成大写、小写或复合写"
 
 #: Thunar.xml1298(para)
 msgid "Additional <emphasis>Bulk Renamers</emphasis> may be installed as plugins for <application>Thunar</application>. Check the <ulink type=\"http\" url=\"http://thunar.xfce.org/plugins.html\">Thunar Plugins</ulink> website for currently available extensions. The <ulink type=\"http\" url=\"http://thunar.xfce.org/pwiki/documentation/bulk_renamer\">Thunar Project Wiki</ulink> contains further details about this feature. Feel free to add more information to the Wiki."
-msgstr ""
+msgstr "附加的 <emphasis>批量重命名工具</emphasis> 可以作为 Thunar 的插件安装。在 <ulink type=\"http\" url=\"http://thunar.xfce.org/plugins.html\">Thunar 插件</ulink> 网址可以查找当前可用的扩展。 The <ulink type=\"http\" url=\"http://thunar.xfce.org/pwiki/documentation/bulk_renamer\">Thunar Project Wiki</ulink> 里有更多有关此功能的详述。您可在此 Wiki 中添加更多信息而用不着客气。"
 
 #: Thunar.xml1308(title)
 msgid "The UNIX File System"
@@ -1098,7 +1098,7 @@ msgstr "UNIX 文件系统"
 
 #: Thunar.xml1310(para)
 msgid "While the Thunar file manager does a good job at abstracting the details of the underlying file system, so the user does not need to care about them, it is sometimes useful to understand the basic concepts to get the whole picture. This section tries to give a brief introduction to the concepts of the UNIX file system, which is used today by all incarnations of UNIX, including Linux."
-msgstr ""
+msgstr "虽然 Thunar 文件管理器在概括描述底层文件系统详细情况上做得很好，用户用不着关注这些底层系统，但有时对系统的全局有个基本概念还是有用的。 UNIX 文件系统被包括 Linux 在内的当今所有的 UNIX 变体使用，本节试着对 UNIX 文件系统做个简短的介绍。"
 
 #: Thunar.xml1318(title)
 msgid "Folders and Paths"
@@ -1106,7 +1106,7 @@ msgstr "文件夹和路径"
 
 #: Thunar.xml1320(para)
 msgid "In a UNIX file system all folders are arranged in a simple inverted tree structure descending and branching down from a single top level folder, which is called the <emphasis>root directory</emphasis> (the term <emphasis>directory</emphasis> is often used instead of <emphasis>folder</emphasis>) and displayed as <guilabel>File System</guilabel> in Thunar. This means that you can get from any folder to any other by going up the tree until you reach a common point, then down the tree through the appropriate subfolders until you reach your target."
-msgstr ""
+msgstr "在 UNIX 文件系统中，所有文件夹都按照一个倒立的树状结构安排，此树状结构的最上方是 <emphasis>根目录</emphasis> （常用术语 <emphasis>目录</emphasis> 而不是 <emphasis>文件夹</emphasis> ），根目录在 Thunar 中显示为 <guilabel>文件系统</guilabel> ， UNIX 文件系统沿着根目录自上而下扩展分叉。这意味着如果要从一个文件夹到任何其它文件夹，您只需先向上找到所在文件夹与目标文件夹的共用文件夹，然后再沿着合适的子文件夹向下直至您要到的文件夹。"
 
 #: Thunar.xml1329(para)
 msgid "The position of any file or folder in the tree can be described by its <emphasis>path</emphasis>. The path is the list of folders you would have to descend through to get to the target folder or file, starting from the top level folder. For example <filename role=\"directory\">/home/luke</filename> is the subfolder <filename role=\"directory\">luke</filename> of the subfolder <filename role=\"directory\">home</filename> of the top level folder, and <filename>/home/luke/myfile.txt</filename> is the file <filename>myfile.txt</filename> in that subfolder. The leading <filename role=\"directory\">/</filename> in these paths represents the top level folder."
