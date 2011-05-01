@@ -818,7 +818,7 @@ msgstr "缩略图生成器说明文件格式"
 
 #: Thunar.xml1065(para)
 msgid "Thumbnailer description files utilize the <ulink type=\"http\" url=\"http://standards.freedesktop.org/desktop-entry-spec/latest/\">Desktop Entry Format</ulink> with a special <literal>Type</literal> of <literal>X-Thumbnailer</literal> and special field <literal>X-Thumbnailer-Exec</literal> with new field codes. Basically, a thumbnailer description file has the following format."
-msgstr ""
+msgstr "缩略图生成器描述文件使用特殊的 <literal>X-Thumbnailer</literal> <literal>Type</literal> 类型和特殊的采用新域代码的 <literal>X-Thumbnailer-Exec</literal> 域。基本上，缩略图描述文件具有以下格式。"
 
 #: Thunar.xml1071(programlisting)
 #, no-wrap
@@ -843,11 +843,11 @@ msgstr ""
 
 #: Thunar.xml1080(para)
 msgid "The <literal>Version</literal> and <literal>Encoding</literal> are mandated by the Desktop Entry Specification, just use the values shown in the example above. The <literal>Type</literal> field must have the special value <literal>X-Thumbnailer</literal>, otherwise your thumbnailer will not be recognized. The <literal>Name</literal> value describes your thumbnailer."
-msgstr ""
+msgstr "<literal>Version</literal> 和 <literal>Encoding</literal> 由桌面条目规格托管，仅需使用以上所示的值即可。 <literal>Type</literal> 域必须有特殊的值 <literal>X-Thumbnailer</literal> ，否则您的缩略图生成器不会通过认证。 <literal>Name</literal> 值描述了您的缩略图生成器。"
 
 #: Thunar.xml1086(para)
 msgid "The <literal>X-Thumbnailer-Exec</literal> field contains the command to run your thumbnailer, and supports certain field codes that will be substituted when the thumbnailer is run. Recognized field codes are as follows:"
-msgstr ""
+msgstr "<literal>X-Thumbnailer-Exec</literal> 域包含运行缩略图生成器的命令，且支持缩略图生成器在运行时需要被替换的特定域代码。认证域代码如下："
 
 #: Thunar.xml1093(varname)
 msgid "%i"
@@ -855,7 +855,7 @@ msgstr "i"
 
 #: Thunar.xml1095(para)
 msgid "The local path to the input file for which to create a thumbnail. May be either a path relative to the directory from which the thumbnailer was invoked or an absolute path."
-msgstr ""
+msgstr "创建缩略图的输入文件的本地路径。可以是相对于需调用的缩略图生成器所在路径的相对路径，也可以是绝对路径。"
 
 #: Thunar.xml1101(varname)
 msgid "%o"
@@ -863,7 +863,7 @@ msgstr "o"
 
 #: Thunar.xml1103(para)
 msgid "The local path to the output file where to store the generated thumbnail. The output file must be written as valid PNG file according to the thumbnail standard (see above). Note that the path may not end with <literal>.png</literal>, which matters if you invoke certain third party tools."
-msgstr ""
+msgstr "存储缩略图的输出文件的本地路径。输出文件必须是有效的 PNG 文件且必须按以上所述的缩略图标准（参照上述）编写。此路径不能以 <literal>.png</literal> 结尾，因为 <literal>.png</literal> 影响您调用某些特定第三方工具。"
 
 #: Thunar.xml1110(varname)
 msgid "%s"
@@ -871,7 +871,7 @@ msgstr "s"
 
 #: Thunar.xml1112(para)
 msgid "The desired size of the generated thumbnail in pixels. This parameter is optional."
-msgstr ""
+msgstr "缩略图所需的像素大小。此参数可选。"
 
 #: Thunar.xml1117(varname)
 msgid "%u"
@@ -879,7 +879,7 @@ msgstr "u"
 
 #: Thunar.xml1119(para)
 msgid "Similar to <literal>%i</literal>, but substituted with the URI of the file, rather than the path. This was added for compatibility with GNOME."
-msgstr ""
+msgstr "与 <literal>%i</literal> 相似，但会用文件的 URI 代替而不是路径。如此添加可以与 GNOME 兼容。"
 
 #: Thunar.xml1125(varname)
 msgid "%%"
@@ -887,19 +887,19 @@ msgstr "%"
 
 #: Thunar.xml1127(para)
 msgid "Will be substituted with a single <literal>%</literal>."
-msgstr ""
+msgstr "将会用单独的 <literal>%</literal> 替换。"
 
 #: Thunar.xml1132(para)
 msgid "You need to include atleast <literal>%o</literal> and <literal>%i</literal> or <literal>%u</literal>, otherwise your thumbnailer will be useless."
-msgstr ""
+msgstr "至少需要两个， <literal>%o</literal> 和 <literal>%i</literal> 或 <literal>%u</literal> ，否则您的缩略图生成器无效。"
 
 #: Thunar.xml1137(para)
 msgid "The <literal>MimeType</literal> lists the MIME types - separated by semicolon - for which your thumbnailer is able to create previews."
-msgstr ""
+msgstr "<literal>MimeType</literal> 列出 MIME 类型－用分号隔开－以便您的缩略图生成器能够创建预览。"
 
 #: Thunar.xml1143(title)
 msgid "Example EPS Thumbnailer"
-msgstr ""
+msgstr "EPS 缩略图生成器示例"
 
 #: Thunar.xml1145(para)
 msgid "This example demonstrates how to write and install a new thumbnailer for <filename>.eps</filename> files, which uses the <command>convert</command> utility that ships as part of ImageMagick. First, we start with a simple script that invokes <command>convert</command> to generate a thumbnail at the requested size."
@@ -1003,7 +1003,7 @@ msgstr "<filename>eps-thumbnailer.desktop</filename> 文件使用特殊的 <lite
 
 #: Thunar.xml1205(para)
 msgid "The last step is to regenerate the thumbnailer cache, so Thunar will pick up our thumbnailer. The thumbnailer cache is located at <filename>$XDG_CACHE_HOME/Thunar/thumbnailers.cache</filename> (unless overridden by your or your system administrator, the <varname>$XDG_CACHE_HOME</varname> points to the folder <filename role=\"directory\">~/.cache/</filename>). The thumbnailers cache is regenerated periodically by Thunar, but you can force to regenerate it by invoking the <filename>thunar-vfs-update-thumbnailers-cache-1</filename> utility, that ships as part of Thunar. This utility is usually installed in the <filename role=\"directory\">libexec</filename> subfolder of your installation prefix (<filename role=\"directory\">sbin</filename> on Debian/Ubuntu). So for example, if Thunar is installed in <filename role=\"directory\">/usr</filename>, invoke the utility as follows:"
-msgstr ""
+msgstr "最后一步是重新生成缩略图生成器缓存文件，这样 Thunar 就可以找到我们的缩略图生成器了。缩略图缓存文件位于 <filename>$XDG_CACHE_HOME/Thunar/thumbnailers.cache</filename> （除非您或您的系统管理员改写了， <varname>$XDG_CACHE_HOME</varname> 指向文件夹 <filename role=\"directory\">~/.cache/</filename> ）。 Thunar 定期重新生成缩略图生成器缓存文件，但您可以调用 <filename>thunar-vfs-update-thumbnailers-cache-1</filename> 工具强制重新生成，此工具是 Thunar 的一项功能。此工具通常安装在您的安装前缀（<filename role=\"directory\">sbin</filename> on Debian/Ubuntu）子文件夹下。所以比如说，假如 Thunar 安装在 <filename role=\"directory\">/usr</filename> 处，将如下调用此工具："
 
 #: Thunar.xml1216(screen)
 #, no-wrap
@@ -1012,11 +1012,11 @@ msgstr "$ /usr/libexec/thunar-vfs-update-thumbnailers-cache-1"
 
 #: Thunar.xml1218(para)
 msgid "But make sure you run the program from your user account, not the superuser account, since the thumbnailers cache is stored in your home folder, rather than a system wide location."
-msgstr ""
+msgstr "由于缩略图生成器缓存文件存储在您的主文件夹而不是系统级文件夹下，所以一定要使用您的用户帐号而不是系统管理员帐号运行此程序，"
 
 #: Thunar.xml1223(para)
 msgid "Now, if Thunar is compiled with support for file alteration monitoring (using the FAM or Gamin services), it will automatically pick up the new thumbnailers cache within a few seconds and afterwards be able to generate thumbnails using your custom thumbnailers. Otherwise you might need to completely restart Thunar to apply the changes, using"
-msgstr ""
+msgstr "现在，如果 Thunar 编译支持文件变更监视（使用 FAM 或 Gamin 服务），它会先在几秒内自动找到新的缩略图生成器，然后能用您自定义的缩略图生成器生成缩略图。然而您需要完全重启 Thunar 以便应用更改，使用"
 
 #: Thunar.xml1229(screen)
 #, no-wrap
