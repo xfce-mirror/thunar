@@ -59,6 +59,7 @@ enum
 
 
 static void thunar_clipboard_manager_finalize           (GObject                     *object);
+static void thunar_clipboard_manager_dispose            (GObject                     *object);
 static void thunar_clipboard_manager_get_property       (GObject                     *object,
                                                          guint                        prop_id,
                                                          GValue                      *value,
@@ -136,6 +137,7 @@ thunar_clipboard_manager_class_init (ThunarClipboardManagerClass *klass)
   GObjectClass *gobject_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->dispose = thunar_clipboard_manager_dispose;
   gobject_class->finalize = thunar_clipboard_manager_finalize;
   gobject_class->get_property = thunar_clipboard_manager_get_property;
 
@@ -175,6 +177,27 @@ static void
 thunar_clipboard_manager_init (ThunarClipboardManager *manager)
 {
   manager->x_special_gnome_copied_files = gdk_atom_intern_static_string ("x-special/gnome-copied-files");
+}
+
+
+
+static void
+thunar_clipboard_manager_dispose (GObject *object)
+{
+  ThunarClipboardManager *manager = THUNAR_CLIPBOARD_MANAGER (object);
+
+  /* store the clipboard if we still own it and a clipboard
+   * manager is running (gtk_clipboard_store checks this) */
+  if (gtk_clipboard_get_owner (manager->clipboard) == object
+      && manager->files != NULL)
+    {
+      gtk_clipboard_set_can_store (manager->clipboard, clipboard_targets,
+                                   G_N_ELEMENTS (clipboard_targets));
+
+      gtk_clipboard_store (manager->clipboard);
+    }
+
+  (*G_OBJECT_CLASS (thunar_clipboard_manager_parent_class)->dispose) (object);
 }
 
 
@@ -532,6 +555,9 @@ thunar_clipboard_manager_get_for_display (GdkDisplay *display)
   /* listen for the "owner-change" signal on the clipboard */
   g_signal_connect (G_OBJECT (manager->clipboard), "owner-change",
                     G_CALLBACK (thunar_clipboard_manager_owner_changed), manager);
+
+  /* look for usable data on the clipboard */
+  thunar_clipboard_manager_owner_changed (manager->clipboard, NULL, manager);
 
   return manager;
 }
