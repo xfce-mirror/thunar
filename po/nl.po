@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-08 16:30+0000\n"
+"POT-Creation-Date: 2011-05-09 04:29+0000\n"
 "PO-Revision-Date: 2007-07-06 15:47+0100\n"
 "Last-Translator: Stephan Arts <stephan@xfce.org>\n"
 "Language-Team: Dutch <xfce-i18n@xfce.org>\n"
@@ -271,7 +271,7 @@ msgstr "Kon het oorspronkelijke pad voor \"%s\" niet bepalen"
 
 #. display an error dialog
 #: ../thunar/thunar-application.c:1970
-#, fuzzy, c-format
+#, c-format
 msgid "Could not restore \"%s\""
 msgstr "Kon \"%s\" niet herstellen"
 
@@ -294,7 +294,6 @@ msgid "No application selected"
 msgstr "Geen toepassing geselecteerd"
 
 #: ../thunar/thunar-chooser-button.c:505
-#, fuzzy
 msgid "Other Application..."
 msgstr "Ander Pr_ogramma..."
 
@@ -559,7 +558,7 @@ msgid "A destination directory must be specified"
 msgstr "Een bestemmingsmap moet worden aangegeven"
 
 #: ../thunar/thunar-dbus-service.c:1222
-#, fuzzy, c-format
+#, c-format
 msgid "At least one filename must be specified"
 msgstr "Geef minimaal één bestandsnaam op"
 
@@ -838,14 +837,14 @@ msgid "The file \"%s\" already exists"
 msgstr "Het bestand \"%s\" bestaat al"
 
 #: ../thunar/thunar-io-jobs.c:186
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create empty file \"%s\": %s"
-msgstr "Kon leeg bestand \"%s\" niet maken"
+msgstr "Kon leeg bestand \"%s\" niet maken: %s"
 
 #: ../thunar/thunar-io-jobs.c:323
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create directory \"%s\": %s"
-msgstr "Kon map \"%s\" niet maken"
+msgstr "Kon map \"%s\" niet maken: %s"
 
 #. tell the user that we're preparing to unlink the files
 #: ../thunar/thunar-io-jobs.c:387
@@ -1272,7 +1271,7 @@ msgid "The device \"%s\" is being ejected. This may take some time"
 msgstr "Het apparaat \"%s\" wordt uitgeworpen. Dit kan even duren"
 
 #: ../thunar/thunar-misc-jobs.c:84
-#, fuzzy, c-format
+#, c-format
 msgid "No templates installed"
 msgstr "Geen sjablonen geïnstalleerd"
 
@@ -1666,14 +1665,14 @@ msgstr[0] "(%lu uur resterend)"
 msgstr[1] "(%lu uren resterend)"
 
 #: ../thunar/thunar-progress-view.c:485
-#, fuzzy, c-format
+#, c-format
 msgid "%lu minute remaining"
 msgid_plural "%lu minutes remaining"
 msgstr[0] "(%lu minuut resterend)"
 msgstr[1] "(%lu minuten resterend)"
 
 #: ../thunar/thunar-progress-view.c:490
-#, fuzzy, c-format
+#, c-format
 msgid "%lu second remaining"
 msgid_plural "%lu seconds remaining"
 msgstr[0] "(%lu seconde resterend)"
@@ -1750,7 +1749,6 @@ msgid "broken link"
 msgstr "defecte koppeling"
 
 #: ../thunar/thunar-properties-dialog.c:884
-#, fuzzy
 msgid "unknown"
 msgstr "Onbekend"
 
@@ -2523,7 +2521,6 @@ msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Alle bestanden in deze map zullen in het \"Document aanmaken\" menu verschijnen."
 
 #: ../thunar/thunar-window.c:2207
-#, fuzzy
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
@@ -2531,7 +2528,7 @@ msgid ""
 msgstr ""
 "Als u regelmatig bepaalde documenttypen maakt, maak dan van één een kopie en zet het in deze map. Thunar zal dan dit documenttype aan het \"Document aanmaken\" menu toevoegen.\n"
 "\n"
-"U kunt vervolgens dit type kiezen uit het \"Document aanmaken\" menu waarna een kopie van dit document zal worden gemaakt in de folder waar u zich op dat moment bevindt."
+"U kunt vervolgens dit type kiezen uit het \"Document aanmaken\" menu waarna een kopie van dit document zal worden gemaakt in de map die u op dat ogenblik bekijkt."
 
 #: ../thunar/thunar-window.c:2219
 msgid "Do _not display this message again"
@@ -3055,7 +3052,7 @@ msgid "Failed to save actions to disk."
 msgstr "Kon de acties niet op schijf opslaan."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:436
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Are you sure that you want to delete\n"
 "action \"%s\"?"
