@@ -32,8 +32,8 @@ typedef struct _ThunarClipboardManager      ThunarClipboardManager;
 #define THUNAR_CLIPBOARD_MANAGER(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_CLIPBOARD_MANAGER, ThunarClipboardManager))
 #define THUNAR_CLIPBOARD_MANAGER_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((obj), THUNAR_TYPE_CLIPBOARD_MANAGER, ThunarClipboardManagerClass))
 #define THUNAR_IS_CLIPBOARD_MANAGER(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_CLIPBOARD_MANAGER))
-#define THUNAR_IS_CLIPBAORD_MANAGER_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_CLIPBOARD_MANAGER))
-#define THUNAR_CLIPBOARD_MANAGER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_CLIPBAORD_MANAGER, ThunarClipboardManagerClass))
+#define THUNAR_IS_CLIPBOARD_MANAGER_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_CLIPBOARD_MANAGER))
+#define THUNAR_CLIPBOARD_MANAGER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_CLIPBOARD_MANAGER, ThunarClipboardManagerClass))
 
 GType                   thunar_clipboard_manager_get_type        (void) G_GNUC_CONST;
 
