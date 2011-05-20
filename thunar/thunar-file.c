@@ -2310,7 +2310,8 @@ thunar_file_is_hidden (const ThunarFile *file)
   if (file->info == NULL)
     return FALSE;
 
-  return g_file_info_get_is_hidden (file->info);
+  return g_file_info_get_is_hidden (file->info)
+         || g_file_info_get_is_backup (file->info);
 }
 
 
