@@ -921,7 +921,6 @@ static gboolean
 thunar_thumbnailer_process_wait_queue (ThunarThumbnailer *thumbnailer)
 {
   ThunarThumbnailerItem *item;
-  gpointer               request;
   GList                 *lp;
   gchar                **mime_hints;
   gchar                **uris;
@@ -959,8 +958,7 @@ thunar_thumbnailer_process_wait_queue (ThunarThumbnailer *thumbnailer)
   mime_hints[n] = NULL;
 
   /* queue a thumbnail request for the URIs from the wait queue */
-  request = thunar_thumbnailer_queue_async (thumbnailer, uris, 
-                                            (const gchar **)mime_hints);
+  thunar_thumbnailer_queue_async (thumbnailer, uris, (const gchar **)mime_hints);
 
   /* free mime hints array */
   g_strfreev (mime_hints);
