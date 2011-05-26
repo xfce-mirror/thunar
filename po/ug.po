@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-30 19:30+0100\n"
+"POT-Creation-Date: 2011-05-26 23:58+0200\n"
 "PO-Revision-Date: 2010-01-06 17:32+0900\n"
 "Last-Translator: Gheyret T.Kenji <gheyret@gmail.com>\n"
 "Language-Team:Uyghur Computer Science Association <UKIJ@yahoogroups.com>\n"
@@ -285,7 +285,7 @@ msgstr "ھۆججەتلەرنى ئەسلگە كەلتۈرۈۋاتىدۇ..."
 msgid "Failed to set default application for \"%s\""
 msgstr "\"%s\" نىڭ كۆڭۈلدىكى پروگراممىسىنى بېكىتىش مەغلۇپ بولدى"
 
-#: ../thunar/thunar-chooser-button.c:439
+#: ../thunar/thunar-chooser-button.c:440
 #, c-format
 msgid ""
 "The selected application is used to open this and other files of type \"%s\"."
@@ -293,11 +293,11 @@ msgstr ""
 "تاللانغان پروگرامما ئارقىلىق مەزكۇر ھۆججەت ۋە كېڭەيتمە نامى \"%s\" بولغان "
 "ھۆججەتلەرنى ئېچىشقا بولىدۇ"
 
-#: ../thunar/thunar-chooser-button.c:489
+#: ../thunar/thunar-chooser-button.c:492
 msgid "No application selected"
 msgstr "پروگرامما تاللانمىدى"
 
-#: ../thunar/thunar-chooser-button.c:502
+#: ../thunar/thunar-chooser-button.c:505
 #, fuzzy
 msgid "Other Application..."
 msgstr "باشقا پروگراممىلار(_O)..."
@@ -439,7 +439,7 @@ msgid "Other Applications"
 msgstr "باشقا پروگراممىلار"
 
 #. tell the user that we cannot paste
-#: ../thunar/thunar-clipboard-manager.c:329
+#: ../thunar/thunar-clipboard-manager.c:352
 msgid "There is nothing on the clipboard to paste"
 msgstr "clipboard دا چاپلىغۇدەك نەرسە يوق"
 
@@ -787,32 +787,32 @@ msgstr "ھۆججەت"
 msgid "File Name"
 msgstr "ھۆججەت ئاتى"
 
-#: ../thunar/thunar-file.c:865 ../thunar/thunar-shortcuts-view.c:279
+#: ../thunar/thunar-file.c:867 ../thunar/thunar-shortcuts-view.c:279
 #: ../thunar/thunar-window.c:312
 msgid "File System"
 msgstr "ھۆججەت سىستېمىسى"
 
-#: ../thunar/thunar-file.c:944
+#: ../thunar/thunar-file.c:946
 #, c-format
 msgid "The root folder has no parent"
 msgstr "root مۇندەرىجىسىنىڭ ئاتا مۇندەرىجىسى يوق"
 
-#: ../thunar/thunar-file.c:1007 ../thunar/thunar-file.c:1276
+#: ../thunar/thunar-file.c:1009 ../thunar/thunar-file.c:1278
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "ئۈستەليۈزى ھۆججىتىنى يېشىش مەغلۇپ بولدى: %s"
 
-#: ../thunar/thunar-file.c:1045
+#: ../thunar/thunar-file.c:1047
 #, c-format
 msgid "No Exec field specified"
 msgstr "Exec field بېكىتىلمىگەن"
 
-#: ../thunar/thunar-file.c:1066
+#: ../thunar/thunar-file.c:1068
 #, c-format
 msgid "No URL field specified"
 msgstr "URL field بېكىتىلمىگەن"
 
-#: ../thunar/thunar-file.c:1072
+#: ../thunar/thunar-file.c:1074
 #, c-format
 msgid "Invalid desktop file"
 msgstr "ئىناۋەتسىز ئۈستەل يۈزى ھۆججىتى"
@@ -899,7 +899,7 @@ msgstr "%s نىڭ كۆچۈرۈلمىسى"
 
 #: ../thunar/thunar-io-jobs-util.c:37 ../thunar/thunar-list-model.c:727
 #: ../thunar/thunar-list-model.c:1626 ../thunar/thunar-list-model.c:1637
-#: ../thunar/thunar-properties-dialog.c:873
+#: ../thunar/thunar-properties-dialog.c:875
 #, c-format
 msgid "link to %s"
 msgstr "%s نىڭ ئۇلانمىسى"
@@ -1226,11 +1226,11 @@ msgstr ""
 msgid "View the properties of the folder \"%s\""
 msgstr "مۇندەرىجە \"%s\" نىڭ خاسلىقىنى كۆرۈش"
 
-#: ../thunar/thunar-location-dialog.c:67
+#: ../thunar/thunar-location-dialog.c:66
 msgid "Open Location"
 msgstr "ئورۇن ئاچ"
 
-#: ../thunar/thunar-location-dialog.c:81
+#: ../thunar/thunar-location-dialog.c:80
 msgid "_Location:"
 msgstr "مۇندەرىجە ئورنى(_L):"
 
@@ -1789,9 +1789,14 @@ msgstr "\"%s\" نىڭ سىنبەلگىسىنى ئۆزگەرتىش مەغلۇپ �
 msgid "%s - Properties"
 msgstr "%s - خاسلىق"
 
-#: ../thunar/thunar-properties-dialog.c:871
+#: ../thunar/thunar-properties-dialog.c:873
 msgid "broken link"
 msgstr "بۇزۇلغان ئۇلانما"
+
+#: ../thunar/thunar-properties-dialog.c:884
+#, fuzzy
+msgid "unknown"
+msgstr "نامەلۇم"
 
 #: ../thunar/thunar-renamer-dialog.c:177 ../thunar/thunar-window.c:293
 msgid "_File"
@@ -2918,7 +2923,7 @@ msgstr "باشلىنىش نومۇرى(_S):"
 msgid "Text _Format:"
 msgstr "تېكىستنىڭ فورماتى(_F):"
 
-#: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:533
+#: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:532
 msgid "Numbering"
 msgstr "نومۇر بېكىتىش"
 

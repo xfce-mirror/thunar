@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-30 19:30+0100\n"
+"POT-Creation-Date: 2011-05-26 23:58+0200\n"
 "PO-Revision-Date: 2007-09-24 03:26+0900\n"
 "Last-Translator:  ByungHyun Choi <byunghyun.choi@gmail.com>\n"
 "Language-Team: xfce4-users-kr-i18n <xfce4-users-kr-i18n@lists.sourceforge."
@@ -286,18 +286,18 @@ msgstr "복구중..."
 msgid "Failed to set default application for \"%s\""
 msgstr "\"%s\"에 대한 기본응용프로그램 설정에 실패했습니다."
 
-#: ../thunar/thunar-chooser-button.c:439
+#: ../thunar/thunar-chooser-button.c:440
 #, c-format
 msgid ""
 "The selected application is used to open this and other files of type \"%s\"."
 msgstr ""
 "선택된 응용프로그램은 \"%s\" 형식의 화일과 이 화일을 여는데 사용됩니다."
 
-#: ../thunar/thunar-chooser-button.c:489
+#: ../thunar/thunar-chooser-button.c:492
 msgid "No application selected"
 msgstr "응용프로그램이 선택되지 않았습니다."
 
-#: ../thunar/thunar-chooser-button.c:502
+#: ../thunar/thunar-chooser-button.c:505
 #, fuzzy
 msgid "Other Application..."
 msgstr "다른 응용프로그램(_O)..."
@@ -437,7 +437,7 @@ msgid "Other Applications"
 msgstr "다른 응용프로그램"
 
 #. tell the user that we cannot paste
-#: ../thunar/thunar-clipboard-manager.c:329
+#: ../thunar/thunar-clipboard-manager.c:352
 msgid "There is nothing on the clipboard to paste"
 msgstr "클립보드에서 붙여넣을 자료가 없습니다."
 
@@ -788,32 +788,32 @@ msgstr "화일"
 msgid "File Name"
 msgstr "화일명"
 
-#: ../thunar/thunar-file.c:865 ../thunar/thunar-shortcuts-view.c:279
+#: ../thunar/thunar-file.c:867 ../thunar/thunar-shortcuts-view.c:279
 #: ../thunar/thunar-window.c:312
 msgid "File System"
 msgstr "화일 시스템"
 
-#: ../thunar/thunar-file.c:944
+#: ../thunar/thunar-file.c:946
 #, c-format
 msgid "The root folder has no parent"
 msgstr "루트 폴더는 상위폴더를 가질수 없습니다."
 
-#: ../thunar/thunar-file.c:1007 ../thunar/thunar-file.c:1276
+#: ../thunar/thunar-file.c:1009 ../thunar/thunar-file.c:1278
 #, fuzzy, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "빈 \"%s\" 화일을 생성하는데 실패했습니다."
 
-#: ../thunar/thunar-file.c:1045
+#: ../thunar/thunar-file.c:1047
 #, c-format
 msgid "No Exec field specified"
 msgstr "Exec 항목이 정의되지 않았습니다."
 
-#: ../thunar/thunar-file.c:1066
+#: ../thunar/thunar-file.c:1068
 #, c-format
 msgid "No URL field specified"
 msgstr "URL 항목이 정의되지 않았습니다."
 
-#: ../thunar/thunar-file.c:1072
+#: ../thunar/thunar-file.c:1074
 #, c-format
 msgid "Invalid desktop file"
 msgstr "올바르지 않은 desktop 화일"
@@ -898,7 +898,7 @@ msgstr "%s의 복사"
 
 #: ../thunar/thunar-io-jobs-util.c:37 ../thunar/thunar-list-model.c:727
 #: ../thunar/thunar-list-model.c:1626 ../thunar/thunar-list-model.c:1637
-#: ../thunar/thunar-properties-dialog.c:873
+#: ../thunar/thunar-properties-dialog.c:875
 #, c-format
 msgid "link to %s"
 msgstr "%s의 링크"
@@ -1240,11 +1240,11 @@ msgstr ""
 msgid "View the properties of the folder \"%s\""
 msgstr "폴더 \"%s\"의 속성을 봅니다."
 
-#: ../thunar/thunar-location-dialog.c:67
+#: ../thunar/thunar-location-dialog.c:66
 msgid "Open Location"
 msgstr "위치 열기"
 
-#: ../thunar/thunar-location-dialog.c:81
+#: ../thunar/thunar-location-dialog.c:80
 msgid "_Location:"
 msgstr "위치(_L):"
 
@@ -1801,9 +1801,14 @@ msgstr "\"%s\"의 아이콘변경에 실패했습니다."
 msgid "%s - Properties"
 msgstr "%s - 속성"
 
-#: ../thunar/thunar-properties-dialog.c:871
+#: ../thunar/thunar-properties-dialog.c:873
 msgid "broken link"
 msgstr "사라진 링크"
+
+#: ../thunar/thunar-properties-dialog.c:884
+#, fuzzy
+msgid "unknown"
+msgstr "모름"
 
 #: ../thunar/thunar-renamer-dialog.c:177 ../thunar/thunar-window.c:293
 msgid "_File"
@@ -2943,7 +2948,7 @@ msgstr "~로 시작(_S):"
 msgid "Text _Format:"
 msgstr "문자 형식(_F):"
 
-#: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:533
+#: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:532
 msgid "Numbering"
 msgstr "Numbering"
 
