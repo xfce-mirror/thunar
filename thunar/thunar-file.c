@@ -702,15 +702,14 @@ thunar_file_load (ThunarFile   *file,
                   GCancellable *cancellable,
                   GError      **error)
 {
-  const gchar *target_uri;
-  GKeyFile    *key_file;
-  GError      *err = NULL;
-  GFile       *thumbnail_dir;
-  gchar       *base_name;
-  gchar       *md5_hash;
-  gchar       *p;
-  gchar       *thumbnail_dir_path;
-  gchar       *uri = NULL;
+  GKeyFile *key_file;
+  GError   *err = NULL;
+  GFile    *thumbnail_dir;
+  gchar    *base_name;
+  gchar    *md5_hash;
+  gchar    *p;
+  gchar    *thumbnail_dir_path;
+  gchar    *uri = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -751,10 +750,9 @@ thunar_file_load (ThunarFile   *file,
     {
       if (g_file_info_get_file_type (file->info) == G_FILE_TYPE_MOUNTABLE)
         {
-          target_uri = 
-            g_file_info_get_attribute_string (file->info,
-                                              G_FILE_ATTRIBUTE_STANDARD_TARGET_URI);
-          file->is_mounted = (target_uri != NULL);
+          file->is_mounted = 
+            !g_file_info_get_attribute_boolean (file->info,
+                                                G_FILE_ATTRIBUTE_MOUNTABLE_CAN_MOUNT);
         }
     }
   else
