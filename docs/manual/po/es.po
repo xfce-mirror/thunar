@@ -940,6 +940,9 @@ msgid ""
 "$ chmod +x eps-thumbnailer\n"
 "$ sudo install eps-thumbnailer /usr/local/bin/eps-thumbnailer"
 msgstr ""
+"\n"
+"$ chmod +x eps-thumbnailer\n"
+"$ sudo install eps-thumbnailer /usr/local/bin/eps-thumbnailer"
 
 #: Thunar.xml1176(para)
 msgid "Next we need to create the thumbnail description file <filename>eps-thumbnailer.desktop</filename>, which looks like this:"
@@ -970,6 +973,9 @@ msgid ""
 "$ sudo install -d /usr/local/share/thumbnailers\n"
 "$ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbnailer.desktop"
 msgstr ""
+"\n"
+"$ sudo install -d /usr/local/share/thumbnailers\n"
+"$ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbnailer.desktop"
 
 #: Thunar.xml1199(para)
 msgid "The <filename>eps-thumbnailer.desktop</filename> file uses the special key <literal>TryExec</literal>, which, if specified, names a command that must be present on the system for the thumbnailer to be useful. In this case, our script is useless if the <command>convert</command> utility is not present."
@@ -982,7 +988,7 @@ msgstr ""
 #: Thunar.xml1216(screen)
 #, no-wrap
 msgid "$ /usr/libexec/thunar-vfs-update-thumbnailers-cache-1"
-msgstr ""
+msgstr "$ /usr/libexec/thunar-vfs-update-thumbnailers-cache-1"
 
 #: Thunar.xml1218(para)
 msgid "But make sure you run the program from your user account, not the superuser account, since the thumbnailers cache is stored in your home folder, rather than a system wide location."
@@ -999,7 +1005,7 @@ msgstr "$ Thunar -q"
 
 #: Thunar.xml1231(para)
 msgid "to terminate any running instance, and afterwards restart it from your launcher."
-msgstr ""
+msgstr "para terminar cualquier instancia en ejecución, y después reiniciarla desde su lanzador."
 
 #: Thunar.xml1237(title)
 msgid "Cleaning up Thumbnails"
@@ -1059,7 +1065,6 @@ msgid "Search and replace characters."
 msgstr "Buscar y reemplazar carácteres."
 
 #: Thunar.xml1295(para)
-#, fuzzy
 msgid "Convert to uppercase, lowercase or camlcase."
 msgstr "Convertir a mayúsculas, minúsculas o mayúsculas/minúsculas (camlcase)."
 
