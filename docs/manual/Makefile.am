@@ -20,7 +20,7 @@ install-data-local:
 			done; \
 			if test x"$$lang" != x"C" -a ! -d $(srcdir)/images/$$lang; then \
 				echo "--- Creating symlink to C images for $$lang"; \
-				ln -sf $(docdir)/html/C/images $(DESTDIR)$(docdir)/html/$$lang/images; \
+				ln -sf ../C/images $(DESTDIR)$(docdir)/html/$$lang/images; \
 			fi \
 		fi \
 	done;
