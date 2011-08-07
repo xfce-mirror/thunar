@@ -557,8 +557,9 @@ msgid "Useful tips to trouble shoot the volume manager in case it does not work 
 msgstr "Consejos útiles para el gestor de volumen en caso de no funcionar como se esperaba."
 
 #: Thunar.xml656(para)
+#, fuzzy
 msgid "Make sure <application>Thunar</application> is running as daemon. The volume manager depends on this, as it is not a daemon by itself. By default, Xfce automatically spawns <application>Thunar</application> as daemon on startup. If it got killed for some reason, open the <guilabel>Run program</guilabel> (using the keyboard shortcut <keycombo><keycap>Alt</keycap><keycap>F2</keycap></keycombo> or right-click on the desktop and choose <guilabel>Run Program...</guilabel> from the desktop menu), enter <literal>Thunar --daemon</literal> and click <guibutton>Run</guibutton>."
-msgstr ""
+msgstr "Asegurese que <application>Thunar</application> esta corriendo como daemon. "
 
 #: Thunar.xml668(para)
 msgid "Try running <application>thunar-volman</application> from a <application>Terminal</application> window after hot-plugging the drive or inserting the media. First, you need to figure out the HAL UDI of the new device using <application>lshal</application> or <application>hal-device</application>. Once you know the UDI, run <literal>thunar-volman --device-added &lt;udi-of-your-device&gt;</literal> in a <application>Terminal</application> window and watch the output for errors or warnings."
