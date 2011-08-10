@@ -559,7 +559,7 @@ msgstr "Consejos útiles para el gestor de volumen en caso de no funcionar como 
 #: Thunar.xml656(para)
 #, fuzzy
 msgid "Make sure <application>Thunar</application> is running as daemon. The volume manager depends on this, as it is not a daemon by itself. By default, Xfce automatically spawns <application>Thunar</application> as daemon on startup. If it got killed for some reason, open the <guilabel>Run program</guilabel> (using the keyboard shortcut <keycombo><keycap>Alt</keycap><keycap>F2</keycap></keycombo> or right-click on the desktop and choose <guilabel>Run Program...</guilabel> from the desktop menu), enter <literal>Thunar --daemon</literal> and click <guibutton>Run</guibutton>."
-msgstr "Asegurese que <application>Thunar</application> esta corriendo como daemon. "
+msgstr "Cerciorarse <application> Thunar </application> se está ejecutando como demonio. El gestor de volúmenes depende de esto, ya que no es un demonio por sí mismo. Por defecto, Xfce automáticamente genera <application> Thunar </application> como demonio en el arranque. Si fue asesinado por alguna razón, abrir el <guilabel> Ejecutar el programa </guilabel> (Utilizando el atajo de teclado <keycombo><keycap> Alt </keycap><keycap> F2 </keycap></keycombo> o haga clic derecho en el escritorio y seleccione <guilabel> Ejecución del programa ... </guilabel> en el menú de escritorio), introduzca <literal> Thunar - demonio </literal> y haga clic en <guibutton> Ejecutar </guibutton> ."
 
 #: Thunar.xml668(para)
 msgid "Try running <application>thunar-volman</application> from a <application>Terminal</application> window after hot-plugging the drive or inserting the media. First, you need to figure out the HAL UDI of the new device using <application>lshal</application> or <application>hal-device</application>. Once you know the UDI, run <literal>thunar-volman --device-added &lt;udi-of-your-device&gt;</literal> in a <application>Terminal</application> window and watch the output for errors or warnings."
@@ -750,16 +750,19 @@ msgid "By default, the <guilabel>Send To</guilabel> menu includes an entry named
 msgstr "Por defecto, el menú <guilabel>Enviar a</guilabel> incluye una entrada llamada <guilabel>Escritorio (Crear acceso directo)</guilabel> para todos los archivos y carpetas, la que simplemente crea un acceso directo en el escritorio para cada archivo seleccionado. Además, si el <guilabel>Panel de accesos directos</guilabel> está activo, el menu también incluirá una entrada llamada <guilabel>Panel lateral (Crear acceso directo)</guilabel> para carpetas, la que permite añadir nuevos accesos en el panel lateral. A continuación de estas entradas, <application>Thunar</application> muestra los dispositivos removibles que están conectados al ordenador. En la fotografía de arriba, la <guilabel>Disquetera</guilabel> representa una posible ubicación a la cual los archivos pueden ser enviados. Tenga en cuenta que los dispostivos son montados automáticamente una vez seleccionados desde el menú <guilabel>Enviar a</guilabel>, por lo que no necesitará montarlos de forma manual."
 
 #: Thunar.xml979(para)
+#, fuzzy
 msgid "In addition <application>Thunar</application> also ships the <application>thunar-sendto-email</application> plugin, which adds the entry <guilabel>Mail Recipient</guilabel> to the menu, that opens the mail composer with the selected files attach to the new email. If the selection contains atleast one folder, the selected items are added to a ZIP archive before attaching them to the email. Otherwise, if the selection contains multiple files, or a single file, which is larger than 200Kib, the user will be prompted whether to pack the files into a ZIP archive, and send the ZIP archive."
-msgstr ""
+msgstr "Además <application> Thunar </application> también incluye la <application> thunar-sendto-mail </application> plugin, que añade una entrada <guilabel> Destinatario de correo </guilabel> en el menú, que se abre el editor de correo con los archivos seleccionados adjuntar al correo electrónico de nuevo. Si la selección contiene al menos un carpeta, los elementos seleccionados se agregan a un archivo ZIP antes de adjuntarlos al correo electrónico. De lo contrario, si la selección contiene varios archivos, o un solo archivo, que es más grande que 200Kib, el usuario se le pregunte si desea empaquetar los archivos en un archivo ZIP, y envía el archivo ZIP."
 
 #: Thunar.xml987(para)
+#, fuzzy
 msgid "Like most other features of <application>Thunar</application>, the <guilabel>Send to</guilabel> menu can be easily extended by users and application developers with new targets, using standard <ulink type=\"http\" url=\"http://freedesktop.org/wiki/Standards_2fdesktop_2dentry_2dspec\">desktop entry files</ulink>. These files must be installed into one of the <filename role=\"directory\">$XDG_DATA_DIRS/Thunar/sendto/</filename> folders (see the <ulink type=\"http\" url=\"http://freedesktop.org/wiki/Standards_2fbasedir_2dspec\">XDG Base Directory Specification</ulink> for details about the <literal>$XDG_DATA_DIRS</literal> variable)."
-msgstr ""
+msgstr "Como la mayoría de otras características de <application> Thunar </application> , La <guilabel> Enviar a </guilabel> menú se puede ampliar fácilmente por los usuarios y desarrolladores de aplicaciones con nuevos objetivos, la utilización de <ulink type=\"http\" url=\"http://freedesktop.org/wiki/Standards_2fdesktop_2dentry_2dspec\"> desktop entrada </ulink> . Estos archivos deben ser instalados en una de las <filename role=\"directory\"> $ XDG_DATA_DIRS / Thunar / sendto / </filename> carpetas (ver el <ulink type=\"http\" url=\"http://freedesktop.org/wiki/Standards_2fbasedir_2dspec\"> Base XDG Directorio de Especificación </ulink> para más detalles acerca de la <literal> $ XDG_DATA_DIRS </literal> variable)."
 
 #: Thunar.xml996(para)
+#, fuzzy
 msgid "The <literal>MimeType</literal> of the target <filename>.desktop</filename> specifies the types of files for which this action should be available in the <guilabel>Send To</guilabel> menu. For example, say you want to add entry for a <ulink type=\"http\" url=\"http://flickr.com/\">Flickr</ulink> uploader tool, then this entry should only show up if the selection contains JPEG files (other file formats are not supported by Flickr) and so you should add a line <literal>MimeType=image/jpeg;</literal>. If you do not specify any <literal>MimeType</literal> your entry will show up for all file types."
-msgstr ""
+msgstr "La <literal> MIME </literal> de la meta <filename> . Escritorio </filename> especifica los tipos de archivos para los que esta acción debe estar disponible en el <guilabel> Enviar a </guilabel> menú. Por ejemplo, digamos que usted desea agregar la entrada de un <ulink type=\"http\" url=\"http://flickr.com/\"> Flickr </ulink> herramienta de carga, entonces esta entrada sólo debe aparecer si la selección contiene los archivos JPEG (otros formatos no son compatibles con Flickr) y lo que debería agregar una línea de <literal> = Tipo MIME image / jpeg; </literal> . Si no se especifica ningún <literal> MIME </literal> su entrada se mostrará a todo tipo de archivos."
 
 #: Thunar.xml1004(para)
 msgid "A complete example using the <application>postr</application> application is shown below:"
@@ -794,12 +797,14 @@ msgstr ""
 "MimeType=image/jpeg;"
 
 #: Thunar.xml1021(para)
+#, fuzzy
 msgid "If you install this file to <filename role=\"directory\">~/.local/share/Thunar/sendto/</filename> (create the folder if it does not exist yet), the <guilabel>Send To</guilabel> menu for JPEG files will show the new entry <guilabel>Flickr</guilabel>, which can be used to upload JPEG images to Flickr."
-msgstr ""
+msgstr "Si instala este archivo para <filename role=\"directory\"> ~ / .local / Share / Thunar / sendto / </filename> (Crear la carpeta si aún no existe), el <guilabel> Enviar a </guilabel> menú para los archivos JPEG se mostrará la nueva entrada <guilabel> Flickr </guilabel> , Que se puede utilizar para cargar las imágenes JPEG de Flickr."
 
 #: Thunar.xml1027(para)
+#, fuzzy
 msgid "The <ulink type=\"http\" url=\"http://thunar.xfce.org/pwiki/documentation/sendto_menu\">Thunar Project Wiki</ulink> contains additional examples of useful targets for the <guilabel>Send To</guilabel> menu. Feel free to extend the Wiki page with new examples."
-msgstr ""
+msgstr "La <ulink type=\"http\" url=\"http://thunar.xfce.org/pwiki/documentation/sendto_menu\"> Thunar proyecto Wiki </ulink> contiene ejemplos de objetivos útiles para la <guilabel> Enviar a </guilabel> menú. Siéntase libre para ampliar la página Wiki con nuevos ejemplos."
 
 #: Thunar.xml1036(title)
 msgid "Thumbnailers"
@@ -810,20 +815,23 @@ msgid "Thunar uses small utilities to create thumbnails of certain file types an
 msgstr "Thunar usa pequeñas utilidades para crear previsualizaciones de ciertos tipos de archivos y las muestra como vista previa de los contenidos de los archivos. Estas pequeñas herramientas son llamadas Previsualizadores. Thunar incluye previsualizadores para archivos de imágenes y de fuente, y hace uso de previsualizadores instalados desde GNOME automáticamente si estos fueron instalados con soporte para <literal>gconf</literal>. Si lo desea, puede extender esta funcionalidad con previsualizadores adicionales para otros tipos de archivos."
 
 #: Thunar.xml1045(para)
+#, fuzzy
 msgid "If you plan to write a custom thumbnailers, you need to start with a program that accepts atleast two command line parameters, the input file, which is of the file type you plan to support and the output file, which is a PNG file that complies with the format specified by the <ulink type=\"http\" url=\"http://jens.triq.net/thumbnail-spec/creation.html#AEN139\">Thumbnail Management Standard</ulink>. Additionally your program may also accept the desired size of the thumbnail, which is optional but highly recommended. If you write the output file at an arbitrary image size, Thunar will afterwards scale it to the desired size, which might produce a less optimal result than generating the thumbnail with the requested dimensions."
-msgstr ""
+msgstr "Si va a escribir una thumbnailers costumbre, usted necesita comenzar con un programa que acepte Atleast dos parámetros de línea de comandos, el archivo de entrada, que es del tipo de archivo que se pretende utilizar y el archivo de salida, que es un archivo PNG que cumpla con el formato especificado por el <ulink type=\"http\" url=\"http://jens.triq.net/thumbnail-spec/creation.html#AEN139\"> Miniatura de Normas de Gestión </ulink> . Además el programa también puede aceptar el tamaño deseado de la miniatura, que es opcional pero muy recomendable. Si se escribe el archivo de salida en un tamaño de imagen arbitraria, Thunar después lo escala hasta el tamaño deseado, lo que podría producir un resultado menos óptimo de generar la imagen con las dimensiones solicitadas."
 
 #: Thunar.xml1054(para)
+#, fuzzy
 msgid "Once your utility to generate the thumbnails is done, you will need to register your thumbnailer, so Thunar is able to locate and use it. Therefore all you need to do is to install a description file for the thumbnailer (a <filename>.desktop</filename> file) in one of the <filename role=\"directory\">$XDG_DATA_DIRS/thumbnailers/</filename> paths. For example, if you want to register the thumbnailer for your user account only, you can install the file into the folder <filename role=\"directory\">~/.local/share/thumbnailers/</filename>. The <filename>.desktop</filename> for thumbnailers has the following format."
-msgstr ""
+msgstr "Una vez que su utilidad para generar las miniaturas se hace, tendrá que registrar su thumbnailer, por lo que Thunar es capaz de localizar y utilizar. Por lo tanto todo lo que necesita hacer es instalar un archivo de descripción para el thumbnailer (a <filename> . Escritorio </filename> archivo) en uno de los <filename role=\"directory\"> $ XDG_DATA_DIRS / thumbnailers / </filename> caminos. Por ejemplo, si desea registrar el thumbnailer para su cuenta de usuario único, puede instalar el archivo en la carpeta <filename role=\"directory\"> ~ / .local / Share / thumbnailers / </filename> . La <filename> . Escritorio </filename> para thumbnailers tiene el siguiente formato."
 
 #: Thunar.xml1063(title)
 msgid "Thumbnailer Description File Format"
 msgstr ""
 
 #: Thunar.xml1065(para)
+#, fuzzy
 msgid "Thumbnailer description files utilize the <ulink type=\"http\" url=\"http://standards.freedesktop.org/desktop-entry-spec/latest/\">Desktop Entry Format</ulink> with a special <literal>Type</literal> of <literal>X-Thumbnailer</literal> and special field <literal>X-Thumbnailer-Exec</literal> with new field codes. Basically, a thumbnailer description file has the following format."
-msgstr ""
+msgstr "Archivos Thumbnailer utilizar la descripción <ulink type=\"http\" url=\"http://standards.freedesktop.org/desktop-entry-spec/latest/\"> Formato de entrada de escritorio </ulink> con un especial <literal> Tipo </literal> de <literal> X-Thumbnailer </literal> y el campo especial <literal> X-Thumbnailer-Exec </literal> con los códigos de campo nuevo. Básicamente, un archivo de descripción thumbnailer tiene el siguiente formato."
 
 #: Thunar.xml1071(programlisting)
 #, no-wrap, fuzzy
@@ -847,12 +855,14 @@ msgstr ""
 "X-Thumbnailer-Exec=your-thumbnailer %i %o %s"
 
 #: Thunar.xml1080(para)
+#, fuzzy
 msgid "The <literal>Version</literal> and <literal>Encoding</literal> are mandated by the Desktop Entry Specification, just use the values shown in the example above. The <literal>Type</literal> field must have the special value <literal>X-Thumbnailer</literal>, otherwise your thumbnailer will not be recognized. The <literal>Name</literal> value describes your thumbnailer."
-msgstr ""
+msgstr "La <literal> Versión </literal> y <literal> Codificación </literal> son exigidas por la especificación de entrada de escritorio, sólo tiene que utilizar los valores mostrados en el ejemplo anterior. La <literal> Tipo </literal> campo debe tener el valor especial <literal> X-Thumbnailer </literal> , De lo contrario su thumbnailer no será reconocido. La <literal> Nombre </literal> valor describe su thumbnailer."
 
 #: Thunar.xml1086(para)
+#, fuzzy
 msgid "The <literal>X-Thumbnailer-Exec</literal> field contains the command to run your thumbnailer, and supports certain field codes that will be substituted when the thumbnailer is run. Recognized field codes are as follows:"
-msgstr ""
+msgstr "La <literal> X-Thumbnailer-Exec </literal> campo contiene el comando para ejecutar su thumbnailer, y soporta ciertos códigos de campo que será sustituido cuando el thumbnailer se ejecuta. Reconoce los códigos de campo son las siguientes:"
 
 #: Thunar.xml1093(varname)
 msgid "%i"
@@ -867,8 +877,9 @@ msgid "%o"
 msgstr "%o"
 
 #: Thunar.xml1103(para)
+#, fuzzy
 msgid "The local path to the output file where to store the generated thumbnail. The output file must be written as valid PNG file according to the thumbnail standard (see above). Note that the path may not end with <literal>.png</literal>, which matters if you invoke certain third party tools."
-msgstr ""
+msgstr "La ruta local al archivo de salida donde guardar la imagen generada. El archivo de salida debe ser escrita como válida archivo PNG de acuerdo a la norma en miniatura (véase más arriba). Tenga en cuenta que la ruta no puede terminar con <literal> . Png </literal> , Lo que importa si se llama a ciertas herramientas de terceros."
 
 #: Thunar.xml1110(varname)
 msgid "%s"
@@ -899,19 +910,21 @@ msgid "You need to include atleast <literal>%o</literal> and <literal>%i</litera
 msgstr ""
 
 #: Thunar.xml1137(para)
+#, fuzzy
 msgid "The <literal>MimeType</literal> lists the MIME types - separated by semicolon - for which your thumbnailer is able to create previews."
-msgstr ""
+msgstr "La <literal> MIME </literal> enumera los tipos MIME - separados por punto y coma - para que su thumbnailer es capaz de crear previstas."
 
 #: Thunar.xml1143(title)
 msgid "Example EPS Thumbnailer"
 msgstr ""
 
 #: Thunar.xml1145(para)
+#, fuzzy
 msgid "This example demonstrates how to write and install a new thumbnailer for <filename>.eps</filename> files, which uses the <command>convert</command> utility that ships as part of ImageMagick. First, we start with a simple script that invokes <command>convert</command> to generate a thumbnail at the requested size."
-msgstr ""
+msgstr "Este ejemplo muestra cómo escribir e instalar una nueva thumbnailer <filename> . Eps </filename> archivos, que utiliza el <command> convertir </command> utilidad que se incluye como parte de ImageMagick. En primer lugar, comenzar con un simple script que invoca <command> convertir </command> para generar una imagen en el tamaño solicitado."
 
 #: Thunar.xml1151(programlisting)
-#, no-wrap
+#, no-wrap, fuzzy
 msgid ""
 "\n"
 "#!/bin/sh\n"
@@ -928,11 +941,12 @@ msgid ""
 "\n"
 "# invoke convert (ImageMagick)\n"
 "exec convert \"eps:$ifile\" -scale \"$sizex$size\" \"png:$ofile\""
-msgstr ""
+msgstr "!. \\ N # / bin / sh \\ n # \\ n # eps-thumbnailer - Script de ejemplo para los archivos EPS thumbnailer \\ n # Uso \\ n #: esp-thumbnailer eps-png-el tamaño del archivo \\ n # \\ n \\ n # comando parámetros de la línea \\ nifile = $ 1 \\ nofile = $ 2 \\ nSize = $ 3 \\ n \\ n # invocar convertir (ImageMagick) \\ nexec convertir \\ \"eps: $ ifile \" escala \\ \"$ SizeX $ size \" \\ \"png : $ objArchivo \\ \""
 
 #: Thunar.xml1167(para)
+#, fuzzy
 msgid "Save this script above to a file <filename>eps-thumbnailer</filename>, make sure the file is executable and install it to <filename role=\"directory\">/usr/local/bin</filename>."
-msgstr ""
+msgstr "Guardar esta secuencia de comandos en un archivo <filename> eps-thumbnailer </filename> , Asegúrese de que el archivo es ejecutable e instalarlo en <filename role=\"directory\"> / Usr / local / bin </filename> ."
 
 #: Thunar.xml1172(screen)
 #, no-wrap
@@ -979,12 +993,14 @@ msgstr ""
 "$ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbnailer.desktop"
 
 #: Thunar.xml1199(para)
+#, fuzzy
 msgid "The <filename>eps-thumbnailer.desktop</filename> file uses the special key <literal>TryExec</literal>, which, if specified, names a command that must be present on the system for the thumbnailer to be useful. In this case, our script is useless if the <command>convert</command> utility is not present."
-msgstr ""
+msgstr "La <filename> eps-thumbnailer.desktop </filename> archivo utiliza la llave especial <literal> TryExec </literal> , Que, si se especifica, los nombres de un comando que debe estar presente en el sistema de thumbnailer para ser útil. En este caso, el guión es inútil si la <command> convertir </command> utilidad no está presente."
 
 #: Thunar.xml1205(para)
+#, fuzzy
 msgid "The last step is to regenerate the thumbnailer cache, so Thunar will pick up our thumbnailer. The thumbnailer cache is located at <filename>$XDG_CACHE_HOME/Thunar/thumbnailers.cache</filename> (unless overridden by your or your system administrator, the <varname>$XDG_CACHE_HOME</varname> points to the folder <filename role=\"directory\">~/.cache/</filename>). The thumbnailers cache is regenerated periodically by Thunar, but you can force to regenerate it by invoking the <filename>thunar-vfs-update-thumbnailers-cache-1</filename> utility, that ships as part of Thunar. This utility is usually installed in the <filename role=\"directory\">libexec</filename> subfolder of your installation prefix (<filename role=\"directory\">sbin</filename> on Debian/Ubuntu). So for example, if Thunar is installed in <filename role=\"directory\">/usr</filename>, invoke the utility as follows:"
-msgstr ""
+msgstr "El último paso es volver a generar la caché thumbnailer, por lo que Thunar Recogeremos a nuestros thumbnailer. El caché de thumbnailer se encuentra en <filename> $ XDG_CACHE_HOME / Thunar / thumbnailers.cache </filename> (A no ser eliminados por su o su administrador de sistema, el <varname> $ XDG_CACHE_HOME </varname> señala a la carpeta <filename role=\"directory\"> ~ /. Cache / </filename> ). El caché de thumbnailers se regenera periódicamente por Thunar, pero se puede pedir para regenerarla mediante la invocación de la <filename> thunar-vfs-update-thumbnailers-cache-1 </filename> de servicios públicos, que se distribuye como parte de Thunar. Esta utilidad se instala normalmente en el <filename role=\"directory\"> libexec </filename> subcarpeta del prefijo de la instalación ( <filename role=\"directory\"> sbin </filename> en Debian / Ubuntu). Así, por ejemplo, si se instala en Thunar <filename role=\"directory\"> / Usr </filename> , Invocar la utilidad de la siguiente manera:"
 
 #: Thunar.xml1216(screen)
 #, no-wrap
@@ -996,8 +1012,9 @@ msgid "But make sure you run the program from your user account, not the superus
 msgstr ""
 
 #: Thunar.xml1223(para)
+#, fuzzy
 msgid "Now, if Thunar is compiled with support for file alteration monitoring (using the FAM or Gamin services), it will automatically pick up the new thumbnailers cache within a few seconds and afterwards be able to generate thumbnails using your custom thumbnailers. Otherwise you might need to completely restart Thunar to apply the changes, using"
-msgstr ""
+msgstr "Ahora bien, si Thunar está compilado con soporte para el monitoreo de archivos alteración (con la FAM o servicios Gamin), se seleccionará automáticamente la caché thumbnailers nuevo en unos pocos segundos y luego ser capaz de generar imágenes en miniatura utilizando su thumbnailers personalizado. De lo contrario puede que tenga que reiniciar completamente Thunar para aplicar los cambios, utilizando"
 
 #: Thunar.xml1229(screen)
 #, no-wrap
