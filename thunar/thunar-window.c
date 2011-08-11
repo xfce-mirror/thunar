@@ -2410,13 +2410,18 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
   gtk_action_set_sensitive (action, (thunar_file_get_item_count (current_directory) > 0));
   gtk_action_set_visible (action, (thunar_file_is_root (current_directory) && thunar_file_is_trashed (current_directory)));
 
-  /* set window title and icon */
+  /* set window title */
   title = g_strdup_printf ("%s - %s", thunar_file_get_display_name (current_directory), _("File Manager"));
-  icon = thunar_icon_factory_load_file_icon (window->icon_factory, current_directory, THUNAR_FILE_ICON_STATE_DEFAULT, 48);
   gtk_window_set_title (GTK_WINDOW (window), title);
-  gtk_window_set_icon (GTK_WINDOW (window), icon);
-  g_object_unref (G_OBJECT (icon));
   g_free (title);
+
+  /* set window icon */
+  icon = thunar_icon_factory_load_file_icon (window->icon_factory, current_directory, THUNAR_FILE_ICON_STATE_DEFAULT, 48);
+  if (G_LIKELY (icon != NULL))
+    {
+      gtk_window_set_icon (GTK_WINDOW (window), icon);
+      g_object_unref (G_OBJECT (icon));
+    }
 }
 
 
