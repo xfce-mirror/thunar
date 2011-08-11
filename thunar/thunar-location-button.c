@@ -462,9 +462,12 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
       /* update the icon for the image */
       icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
       icon = thunar_icon_factory_load_file_icon (icon_factory, file, location_button->file_icon_state, size);
-      gtk_image_set_from_pixbuf (GTK_IMAGE (location_button->image), icon);
+      if (G_LIKELY (icon != NULL))
+        {
+          gtk_image_set_from_pixbuf (GTK_IMAGE (location_button->image), icon);
+          g_object_unref (G_OBJECT (icon));
+        }
       g_object_unref (G_OBJECT (icon_factory));
-      g_object_unref (G_OBJECT (icon));
 
       /* show the image widget */
       gtk_widget_show (location_button->image);
