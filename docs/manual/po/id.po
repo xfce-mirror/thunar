@@ -546,103 +546,103 @@ msgstr "Tiap tampilan <literal>%m</literal> di perintah akan digantikan dengan t
 
 #: Thunar.xml648(title)
 msgid "Troubleshooting the Volume Manager"
-msgstr ""
+msgstr "Memecahkan Masalah pada Menajer Volume"
 
 #: Thunar.xml650(para)
 msgid "Useful tips to trouble shoot the volume manager in case it does not work as expected."
-msgstr ""
+msgstr "Tips yang berguna untuk memecahakan masalah pada manajer volume dalam kasus tidak bekerja seperti yang diharapkan."
 
 #: Thunar.xml656(para)
 msgid "Make sure <application>Thunar</application> is running as daemon. The volume manager depends on this, as it is not a daemon by itself. By default, Xfce automatically spawns <application>Thunar</application> as daemon on startup. If it got killed for some reason, open the <guilabel>Run program</guilabel> (using the keyboard shortcut <keycombo><keycap>Alt</keycap><keycap>F2</keycap></keycombo> or right-click on the desktop and choose <guilabel>Run Program...</guilabel> from the desktop menu), enter <literal>Thunar --daemon</literal> and click <guibutton>Run</guibutton>."
-msgstr ""
+msgstr "Pastikan <application> Thunar </application> berjalan sebagai daemon karena manajer volume bergantung pada aplikasi tersebut (manajer volume bukanlah daemon). Secara standar, Xfce secara otomatis akan menjalankan <application> Thunar </application> sebagai daemon pada setiap kali permulaan sistem. Jika aplikasi tersebut dimatikan untuk beberapa alasan, bukalah menu <guilabel> Jalankan Program </guilabel> (dengan menggunakan tombol pintas <keycombo><keycap> Alt </keycap><keycap> F2 </keycap></keycombo> atau klik kanan pada desktop dan pilih dari menu tersebut: <guilabel> Jalankan Program ... </guilabel>), masukkan <literal> Thunar - daemon </literal> dan klik <guibutton> Jalankan </guibutton> ."
 
 #: Thunar.xml668(para)
 msgid "Try running <application>thunar-volman</application> from a <application>Terminal</application> window after hot-plugging the drive or inserting the media. First, you need to figure out the HAL UDI of the new device using <application>lshal</application> or <application>hal-device</application>. Once you know the UDI, run <literal>thunar-volman --device-added &lt;udi-of-your-device&gt;</literal> in a <application>Terminal</application> window and watch the output for errors or warnings."
-msgstr ""
+msgstr "Cobalah jalankan <application> thunar-volman </application> dari jendela <application> Terminal </application> setelah memasukkan media. Pertama, Anda perlu mengetahui UDI HAL perangkat tersebut dengan menggunakan <application> lshal </application> atau <application> hal-device </application>. Setelah Anda mengetahui UDI, jalankan <literal> thunar-volman --device-added &lt;UDI-perangkat-anda&gt; </literal> dalam jendela<application> Terminal </application> dan lihat laporan perintah yang muncul untuk mengetahui kesalahan atau peringatan yang terjadi."
 
 #: Thunar.xml678(para)
 msgid "If it still refuses to work, ask on the <ulink type=\"http\" url=\"http://forum.xfce.org/\">Xfce Forum</ulink> or the <ulink type=\"http\" url=\"http://foo-projects.org/mailman/listinfo/thunar-dev\">thunar-dev mailing list</ulink> for help."
-msgstr ""
+msgstr "Jika masih menolak untuk bekerja, silahkan tanyakan melalui <ulink type=\"http\" url=\"http://forum.xfce.org/\"> Xfce Forum </ulink> atau <ulink type=\"http\" url=\"http://foo-projects.org/mailman/listinfo/thunar-dev\"> thunar-dev mailing list </ulink> untuk bantuan lebih lanjut."
 
 #: Thunar.xml689(title)
 msgid "File Management Preferences"
-msgstr ""
+msgstr "Preferensi Manajemen Berkas"
 
 #: Thunar.xml691(para)
 msgid "Use the <guilabel>File Manager Preferences</guilabel> dialog to set your <application>Thunar</application> file manager preferences. To open the preferences dialog, choose <menuchoice><guimenu>Edit</guimenu><guimenuitem>Preferences...</guimenuitem></menuchoice> from the menu bar, or click on the <guibutton>File Manager</guibutton> button in the Xfce Settings Manager."
-msgstr ""
+msgstr "Gunakan dialog <guilabel> Preferensi Manajemen Berkas </guilabel> untuk mengatur preferensi pada <application> Thunar </application> Anda. Untuk membuka dialog preferensi, pilih <menuchoice><guimenu> Sunting </guimenu><guimenuitem> Pengaturan... </guimenuitem></menuchoice> dari batang menu, atau klik pada tombol <guibutton> Manager Berkas </guibutton> pada Manajer Pengaturan Xfce."
 
 #: Thunar.xml697(para)
 msgid "The <guilabel>File Manager Preferences</guilabel> dialog is divided into four pages with different options, each described in a separate section below. Basically you can set preferences in the following categories:"
-msgstr ""
+msgstr "Dialog <guilabel> Preferensi Manajemen Berkas </guilabel> dibagi menjadi empat halaman (tab) dengan pilihan yang berbeda, masing-masing diuraikan dalam bagian terpisah di bawahnya. Pada dasarnya Anda dapat mengatur preferensi dalam kategori berikut:"
 
 #: Thunar.xml703(para)
 msgid "The default settings for the views."
-msgstr ""
+msgstr "Pengaturan standar untuk tampilan."
 
 #: Thunar.xml704(para)
 msgid "The default settings for the side pane."
-msgstr ""
+msgstr "Pengaturan standar untuk panel sisi."
 
 #: Thunar.xml705(para)
 msgid "The behavior of the file manager windows."
-msgstr ""
+msgstr "Perilaku jendela manajer berkas."
 
 #: Thunar.xml706(para)
 msgid "Advanced features of the file manager."
-msgstr ""
+msgstr "Fitur lanjutan pada manajer berkas."
 
 #: Thunar.xml709(para)
 msgid "Thunar also supports a bunch of so-called <emphasis>Hidden Options</emphasis>, which control several advanced features of the file manager, but are not included in the preferences in order to keep the preferences dialog simple. The <ulink type=\"http\" url=\"http://svn.xfce.org/svn/xfce/thunar/trunk/docs/README.thunarrc\"><filename>README.thunarrc</filename></ulink> file that is included with the Thunar distribution describes all available options in detail."
-msgstr ""
+msgstr "Thunar juga mendukung sekelompok <emphasis> Pengaturan Tersembunyi </emphasis>, yang mengendalikan beberapa fitur canggih dari manager berkas, namun tidak ditampilkan dalam preferensi untuk menjaga kesederhanaan dikalog preferensi. Penjelasan lebih lanjut dapat dilihat pada <ulink type=\"http\" url=\"http://svn.xfce.org/svn/xfce/thunar/trunk/docs/README.thunarrc\"><filename> README.thunarrc </filename></ulink>, yang memuat pilihan yang tersedia secara detail."
 
 #: Thunar.xml718(title) Thunar.xml733(phrase)
 msgid "Views Preferences"
-msgstr ""
+msgstr "Preferensi Tampilan"
 
 #: Thunar.xml720(para)
 msgid "You can specify a default view, select sort options and display options. You can also specify whether thumbnails should be displayed for file types that support this."
-msgstr ""
+msgstr "Anda dapat menentukan tampilan standar, memilih pilihan pengurutan, dan opsi-opsi tampilan lainnya. Anda juga dapat menentukan apakah thumbnail harus ditampilkan untuk jenis file yang didukung."
 
 #: Thunar.xml740(guilabel)
 msgid "View new folder using"
-msgstr ""
+msgstr "Tampilkan folder baru menggunakan"
 
 #: Thunar.xml742(para)
 msgid "Select the default view for folders. When you open a new window, the is displayed in the view that you select. This can be either the icon view, the compact list view or the detailed list view. You can also select <guilabel>Last Active View</guilabel> here to use the view you used for the last active window."
-msgstr ""
+msgstr "Memilih tampilan standar untuk folder. Anda dapat memilih tampilan yang akan tampil pada jendela baru dalam bentuk tampilan ikon, tampilan daftar kompak, atau tampilan daftar rinci. Anda juga dapat memilih <guilabel> Tampilan Aktif Terakhir </guilabel> untuk menyamakan bentuk tampilan dengan jendela aktif terakhir."
 
 #: Thunar.xml752(guilabel)
 msgid "Sort folders before files"
-msgstr ""
+msgstr "Urut folder sebelum berkas"
 
 #: Thunar.xml754(para)
 msgid "Select this option to list folders before files when you sort a folder."
-msgstr ""
+msgstr "Pilih opsi ini untuk mendaftar folder sebelum berkas ketika Anda melakukan pengurutan."
 
 #: Thunar.xml761(guilabel)
 msgid "Show thumbnails"
-msgstr ""
+msgstr "Tampilkan thumbnail"
 
 #: Thunar.xml763(para)
 msgid "Select this option to show thumbnails of image files and other supported files. The file manager stores the thumbnail files for each folder in the hidden <filename role=\"directory\">.thumbnails</filename> directory in the user's Home Folder."
-msgstr ""
+msgstr "Pilih opsi ini untuk menampilkan thumbnail dari berkas gambar dan berkas yang didukung lainnya. Manajer berkas menyimpan berkas thumbnail untuk setiap folder secara tersembunyi di folder <filename role=\"directory\"> .thumbnails </filename> pada folder rumah (home) pengguna."
 
 #: Thunar.xml768(para)
 msgid "See <xref linkend=\"thumbnailers\"/> if you want to extend the basic thumbnail functionality provided by <application>Thunar</application> with support for additional file types."
-msgstr ""
+msgstr "Lihat <xref linkend=\"thumbnailers\"/> jika Anda ingin memperluas fungsionalitas dasar yang disediakan oleh thumbnail <application> Thunar </application> dengan dukungan untuk berbagai jenis file tambahan."
 
 #: Thunar.xml777(guilabel)
 msgid "Text beside icons"
-msgstr ""
+msgstr "Teks di samping ikon"
 
 #: Thunar.xml779(para)
 msgid "Select this options to place the icon captions for items in the icon view beside the icon rather than under the icon."
-msgstr ""
+msgstr "Saat dalam bentuk tampilan ikon, pilih opsi ini untuk menempatkan keterangan ikon  di samping ikon (jika tidak dipilih akan ditampilkan di bawah ikon)."
 
 #: Thunar.xml790(title) Thunar.xml803(phrase)
 msgid "Side Pane Preferences"
-msgstr ""
+msgstr "Preferensi Panel Sisi"
 
 #: Thunar.xml792(para)
 msgid "You can select display options for the shortcuts pane and the tree pane."
