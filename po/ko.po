@@ -862,9 +862,9 @@ msgid "Failed to change the group of \"%s\": %s"
 msgstr "\"%s\"의 그룹을 바꾸는데 실패했습니다: %s"
 
 #: ../thunar/thunar-io-jobs.c:1032
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
-msgstr "\"%s\"의 소유권 변경에 실패했습니다."
+msgstr "\"%s\"의 소유권을 바꾸는데 실패했습니다: %s"
 
 #. Copy/link name for n <= 3
 #: ../thunar/thunar-io-jobs-util.c:37
@@ -901,14 +901,14 @@ msgstr "%s의 세번째 링크"
 
 #. Fallback copy/link name for n >= 4
 #: ../thunar/thunar-io-jobs-util.c:42
-#, fuzzy, c-format
+#, c-format
 msgid "%uth copy of %s"
-msgstr "%u번째 복사(%s의)"
+msgstr "%u번째 %s의 복사"
 
 #: ../thunar/thunar-io-jobs-util.c:42
-#, fuzzy, c-format
+#, c-format
 msgid "%uth link to %s"
-msgstr "%u번째 링크(%s의)"
+msgstr "%u번째 %s(으)로의 링크"
 
 #: ../thunar/thunar-job.c:254
 #, c-format
@@ -926,9 +926,8 @@ msgid "Do you want to overwrite it?"
 msgstr "덮어 쓰시렵니까?"
 
 #: ../thunar/thunar-job.c:388
-#, fuzzy
 msgid "Do you want to create it?"
-msgstr "덮어 쓰시렵니까?"
+msgstr "만드시렵니까?"
 
 #: ../thunar/thunar-job.c:490
 msgid "Do you want to skip it?"
@@ -1120,12 +1119,12 @@ msgstr "\"%s\" (%s) 을(를) %s에 연결"
 #: ../thunar/thunar-list-model.c:2353
 #, c-format
 msgid "\"%s\" shortcut"
-msgstr ""
+msgstr "\"%s\" 바로 가기"
 
 #: ../thunar/thunar-list-model.c:2357
 #, c-format
 msgid "\"%s\" mountable"
-msgstr ""
+msgstr "\"%s\" 마운트 가능"
 
 #: ../thunar/thunar-list-model.c:2364
 #, c-format
@@ -1224,18 +1223,18 @@ msgid "_Location:"
 msgstr "위치(_L):"
 
 #: ../thunar/thunar-location-entry.c:387
-#, fuzzy, c-format
+#, c-format
 msgid "File does not exist"
-msgstr "화일 문맥메뉴"
+msgstr "파일이 존재하지 않습니다"
 
 #: ../thunar/thunar-location-entry.c:731
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to determine the mount point of \"%s\""
-msgstr "%s에 대한 마운트 지점을 결정하는데 실패했습니다."
+msgstr "\"%s\"에 대한 마운트 지점을 결정하는데 실패했습니다"
 
 #: ../thunar/thunar-notify.c:123
 msgid "Unmounting device"
-msgstr ""
+msgstr "장치 언마운트 중"
 
 #: ../thunar/thunar-notify.c:124
 #, c-format
@@ -1244,7 +1243,7 @@ msgstr ""
 
 #: ../thunar/thunar-notify.c:130 ../thunar/thunar-notify.c:248
 msgid "Writing data to device"
-msgstr ""
+msgstr "장치로 데이터 쓰는 중"
 
 #: ../thunar/thunar-notify.c:131 ../thunar/thunar-notify.c:249
 #, c-format
@@ -1261,9 +1260,9 @@ msgid "The device \"%s\" is being ejected. This may take some time"
 msgstr ""
 
 #: ../thunar/thunar-misc-jobs.c:84
-#, fuzzy, c-format
+#, c-format
 msgid "No templates installed"
-msgstr "인스톨된 템플릿이 없습니다."
+msgstr "설치된 서식이 없습니다"
 
 #: ../thunar/thunar-path-entry.c:224
 msgid "Icon size"
@@ -2149,9 +2148,9 @@ msgstr "폴더 \"%s\"을(를) 복구하는데 실패했습니다."
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:736
-#, fuzzy, c-format
+#, c-format
 msgid "Trying to move \"%s\""
-msgstr "\"%s\"을 삭제하는데 실패했습니다."
+msgstr "\"%s\" 옮기기 시도 중"
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:761
@@ -2326,44 +2325,36 @@ msgid "Go to the home folder"
 msgstr "홈 폴더로 갑니다."
 
 #: ../thunar/thunar-window.c:311
-#, fuzzy
 msgid "Go to the desktop folder"
-msgstr "홈 폴더로 갑니다."
+msgstr "데스크톱 폴더로 이동"
 
 #: ../thunar/thunar-window.c:312
-#, fuzzy
 msgid "Browse the file system"
-msgstr "화일 관리자로 화일시스템을 탐색합니다."
+msgstr "파일 시스템 탐색"
 
 #: ../thunar/thunar-window.c:313
-#, fuzzy
 msgid "Go to the documents folder"
-msgstr "홈 폴더로 갑니다."
+msgstr "문서 폴더로 이동"
 
 #: ../thunar/thunar-window.c:314
-#, fuzzy
 msgid "Go to the downloads folder"
-msgstr "템플릿 폴더로 갑니다."
+msgstr "다운로드 폴더로 이동"
 
 #: ../thunar/thunar-window.c:315
-#, fuzzy
 msgid "Go to the music folder"
-msgstr "홈 폴더로 갑니다."
+msgstr "음악 폴더로 이동"
 
 #: ../thunar/thunar-window.c:316
-#, fuzzy
 msgid "Go to the pictures folder"
-msgstr "템플릿 폴더로 갑니다."
+msgstr "사진 폴더로 이동"
 
 #: ../thunar/thunar-window.c:317
-#, fuzzy
 msgid "Go to the videos folder"
-msgstr "홈 폴더로 갑니다."
+msgstr "비디오 폴더로 이동"
 
 #: ../thunar/thunar-window.c:318
-#, fuzzy
 msgid "Go to the public folder"
-msgstr "템플릿 폴더로 갑니다."
+msgstr "공용 폴더로 이동"
 
 #: ../thunar/thunar-window.c:319
 msgid "T_emplates"
