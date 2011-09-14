@@ -671,6 +671,8 @@ thunar_transfer_job_execute (ExoJob  *job,
           /* check if the parent exists */
           if (target_parent != NULL)
             parent_exists = g_file_query_exists (target_parent, exo_job_get_cancellable (job));
+          else
+            parent_exists = FALSE;
 
           /* abort on cancellation */
           if (exo_job_set_error_if_cancelled (job, &err))
