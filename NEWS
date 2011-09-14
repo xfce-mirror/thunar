@@ -2,12 +2,19 @@
 =====
 - Use glib functions for get/set cwd (bug #7522).
 - Revert "Speed up initial start by loading the network item later
-  (bug #7373).
+  (bug #7373)."
+- Revert "Fix crash when opening a mountable drive with no media 
+  (bug #7308)."
+- Fix crash when opening a mountable drive with no media (bug #7308)
+  in a way that does not break SMB shares (#bug 7774).
+  Patches by Ambroz Bizjak and Axel Sommerfeldt.
 
 1.2.2
 =====
 - Fix crash when trying to thumbnail a file with unknown content type.
 - Fix properties dialog crash with files with unknown content type.
+- Fix crash when opening a mountable drive with no media (bug #7308).
+  Reported and solved by Ambroz Bizjak.
 - Fix crash when hovering a CD drive with a special icon (bug #7309).
   Reported and solved by Ambroz Bizjak.
 - Treat backup files as hidden as with thunar-vfs (bug #7615).
