@@ -825,10 +825,10 @@ thunar_file_load (ThunarFile   *file,
 
           /* read the display name from the .desktop file (will be overwritten later
            * if it's undefined here) */
-          file->display_name = g_key_file_get_string (key_file,
-                                                      G_KEY_FILE_DESKTOP_GROUP,
-                                                      G_KEY_FILE_DESKTOP_KEY_NAME,
-                                                      NULL);
+          file->display_name = g_key_file_get_locale_string (key_file,
+                                                             G_KEY_FILE_DESKTOP_GROUP,
+                                                             G_KEY_FILE_DESKTOP_KEY_NAME,
+                                                             NULL, NULL);
           
           /* check if we have a display name now */
           if (file->display_name != NULL)
