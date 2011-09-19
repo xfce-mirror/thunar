@@ -176,7 +176,7 @@ typedef struct
 {
   ParserStack    *stack;
   ThunarUcaModel *model;
-  const gchar    *locale;
+  gchar          *locale;
   GString        *name;
   gboolean        name_use;
   guint           name_match;
@@ -553,7 +553,7 @@ thunar_uca_model_load_from_file (ThunarUcaModel *uca_model,
   /* initialize the parser */
   parser.stack = xfce_stack_new (ParserStack);
   parser.model = uca_model;
-  parser.locale = setlocale (LC_MESSAGES, NULL);
+  parser.locale = g_strdup (setlocale (LC_MESSAGES, NULL));
   parser.name = g_string_new (NULL);
   parser.icon = g_string_new (NULL);
   parser.command = g_string_new (NULL);
@@ -574,6 +574,7 @@ thunar_uca_model_load_from_file (ThunarUcaModel *uca_model,
   g_string_free (parser.command, TRUE);
   g_string_free (parser.icon, TRUE);
   g_string_free (parser.name, TRUE);
+  g_free (parser.locale);
   xfce_stack_free (parser.stack);
   g_free (content);
 

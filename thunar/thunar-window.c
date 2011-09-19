@@ -618,7 +618,7 @@ thunar_window_setup_user_dir_menu_entries (ThunarWindow *window)
 #endif /* HAVE_BIND_TEXTDOMAIN_CODESET */
 
   /* save the old locale */
-  old_locale = setlocale (LC_MESSAGES, NULL);
+  old_locale = g_strdup(setlocale (LC_MESSAGES, NULL));
 
   /* set the new locale */
   locale = _thunar_get_xdg_user_dirs_locale ();
@@ -656,6 +656,7 @@ thunar_window_setup_user_dir_menu_entries (ThunarWindow *window)
   g_object_unref (home_dir);
 
   setlocale (LC_MESSAGES, old_locale);
+  g_free (old_locale);
 }
 
 
