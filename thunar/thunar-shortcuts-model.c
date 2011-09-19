@@ -869,7 +869,7 @@ thunar_shortcuts_model_load (ThunarShortcutsModel *model)
     {
       /* ~/.gtk-bookmarks wasn't there or it was unreadable.
        * here we recreate it with some useful xdg user special dirs */
-      const char *old_locale = NULL;
+      gchar *old_locale = NULL;
       gchar *locale          = NULL;
 
       bindtextdomain (XDG_USER_DIRS_PACKAGE, PACKAGE_LOCALE_DIR);
@@ -878,7 +878,7 @@ thunar_shortcuts_model_load (ThunarShortcutsModel *model)
 #endif /* HAVE_BIND_TEXTDOMAIN_CODESET */
 
       /* save the old locale */
-      old_locale = setlocale (LC_MESSAGES, NULL);
+      old_locale = g_strdup(setlocale (LC_MESSAGES, NULL));
 
       /* set the new locale */
       locale = _thunar_get_xdg_user_dirs_locale ();
@@ -938,7 +938,7 @@ thunar_shortcuts_model_load (ThunarShortcutsModel *model)
 
       /* restore the old locale */
       setlocale (LC_MESSAGES, old_locale);
-
+      g_free(old_locale);
       gtk_tree_path_free (path);
 
       /* we try to save the obtained new model */
