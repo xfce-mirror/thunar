@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-01 10:17+0000\n"
+"POT-Creation-Date: 2011-09-22 16:17+0000\n"
 "PO-Revision-Date: 2010-06-17 01:51+0200\n"
 "Last-Translator: Ivica Kolić<ikoli@yahoo.com> <>\n"
 "Language-Team: Croatian <petar.koretic@gmail.com>\n"
@@ -137,7 +137,7 @@ msgstr "Neuspješno izvršavanje radnje"
 #: ../thunar/thunar-application.c:1048 ../thunar/thunar-application.c:1174
 #: ../thunar/thunar-launcher.c:1065 ../thunar/thunar-location-entry.c:394
 #: ../thunar/thunar-location-entry.c:422
-#: ../thunar/thunar-shortcuts-view.c:1277 ../thunar/thunar-window.c:1507
+#: ../thunar/thunar-shortcuts-view.c:1277 ../thunar/thunar-window.c:1508
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "Neuspješno otvaranje \"%s\""
@@ -767,32 +767,32 @@ msgstr "Datoteka"
 msgid "File Name"
 msgstr "Ime datoteke"
 
-#: ../thunar/thunar-file.c:865 ../thunar/thunar-shortcuts-view.c:279
+#: ../thunar/thunar-file.c:870 ../thunar/thunar-shortcuts-view.c:279
 #: ../thunar/thunar-window.c:312
 msgid "File System"
 msgstr "Datotečni sustav"
 
-#: ../thunar/thunar-file.c:944
+#: ../thunar/thunar-file.c:949
 #, c-format
 msgid "The root folder has no parent"
 msgstr "Korijenska mapa nema roditelja"
 
-#: ../thunar/thunar-file.c:1007 ../thunar/thunar-file.c:1278
+#: ../thunar/thunar-file.c:1012 ../thunar/thunar-file.c:1283
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "Ne mogu parsirati desktop datoteku: %s"
 
-#: ../thunar/thunar-file.c:1045
+#: ../thunar/thunar-file.c:1050
 #, c-format
 msgid "No Exec field specified"
 msgstr ""
 
-#: ../thunar/thunar-file.c:1066
+#: ../thunar/thunar-file.c:1071
 #, c-format
 msgid "No URL field specified"
 msgstr "URL polje nije određeno"
 
-#: ../thunar/thunar-file.c:1072
+#: ../thunar/thunar-file.c:1077
 #, c-format
 msgid "Invalid desktop file"
 msgstr "Neispravna datoteka radne površine"
@@ -1318,7 +1318,7 @@ msgstr "Program:"
 
 #: ../thunar/thunar-permissions-chooser.c:341
 msgid "Allow this file to _run as a program"
-msgstr ""
+msgstr "Dopusti da se ova datoteka _pokreće kao program"
 
 #: ../thunar/thunar-permissions-chooser.c:361
 msgid ""
@@ -1379,15 +1379,15 @@ msgstr "Ako odaberete ovu opciju vaš izbor će biti zapamćen i nećete biti po
 msgid "Unknown file owner"
 msgstr "Nepoznati vlasnik datoteke"
 
-#: ../thunar/thunar-permissions-chooser.c:984
+#: ../thunar/thunar-permissions-chooser.c:986
 msgid "Correct folder permissions automatically?"
 msgstr "Ispraviti dozvole mape automatski?"
 
-#: ../thunar/thunar-permissions-chooser.c:986
+#: ../thunar/thunar-permissions-chooser.c:988
 msgid "Correct folder permissions"
 msgstr "Ispravi dozvole mape"
 
-#: ../thunar/thunar-permissions-chooser.c:988
+#: ../thunar/thunar-permissions-chooser.c:990
 msgid "The folder permissions will be reset to a consistent state. Only users allowed to read the contents of this folder will be allowed to enter the folder afterwards."
 msgstr ""
 
@@ -2131,24 +2131,24 @@ msgstr "Prikupljam datoteke..."
 msgid "Trying to restore \"%s\""
 msgstr "Pokušavam vratiti \"%s\""
 
-#: ../thunar/thunar-transfer-job.c:730
+#: ../thunar/thunar-transfer-job.c:732
 #, c-format
 msgid "The folder \"%s\" does not exist anymore but is required to restore the file \"%s\" from the trash"
 msgstr "Mapa \"%s\" više ne postoji ali je potrebna za obnovu datoteke \"%s\" iz smeća"
 
-#: ../thunar/thunar-transfer-job.c:755
+#: ../thunar/thunar-transfer-job.c:757
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Nisam uspio vratiti mapu \"%s\""
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:775
+#: ../thunar/thunar-transfer-job.c:777
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Pokušavam pomaknuti \"%s\""
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:805
+#: ../thunar/thunar-transfer-job.c:807
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "Ne mogu premjestiti \"%s\" izravno. Prikupljanje datoteka za kopiranje ..."
@@ -2433,73 +2433,73 @@ msgstr "Promijeni vidljivost statusne trake prozora"
 
 #. * add view options
 #. 
-#: ../thunar/thunar-window.c:733
+#: ../thunar/thunar-window.c:734
 msgid "View as _Icons"
 msgstr "Pogled kao _ikone"
 
-#: ../thunar/thunar-window.c:733
+#: ../thunar/thunar-window.c:734
 msgid "Display folder content in an icon view"
 msgstr "Prikaz sadržaja  mape u prikazu ikona"
 
-#: ../thunar/thunar-window.c:740
+#: ../thunar/thunar-window.c:741
 msgid "View as _Detailed List"
 msgstr "Pogled kao _detaljna lista"
 
-#: ../thunar/thunar-window.c:740
+#: ../thunar/thunar-window.c:741
 msgid "Display folder content in a detailed list view"
 msgstr "Prikaži sadržaj mape kao detaljnu listu"
 
-#: ../thunar/thunar-window.c:747
+#: ../thunar/thunar-window.c:748
 msgid "View as _Compact List"
 msgstr "POgled kao _Zbijena lista"
 
-#: ../thunar/thunar-window.c:747
+#: ../thunar/thunar-window.c:748
 msgid "Display folder content in a compact list view"
 msgstr "Prikaži sadržaj mape kao zbijenu listu"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:813
+#: ../thunar/thunar-window.c:814
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr "Upozorenje. koristite korijenski račun.možete oštetiti svoj sustav."
 
 #. create the network action
-#: ../thunar/thunar-window.c:1441
+#: ../thunar/thunar-window.c:1442
 msgid "Network"
 msgstr "Mreža"
 
-#: ../thunar/thunar-window.c:1441
+#: ../thunar/thunar-window.c:1442
 msgid "Browse the network"
 msgstr "Pregledaj mrežu"
 
-#: ../thunar/thunar-window.c:1481
+#: ../thunar/thunar-window.c:1482
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Neuspjelo pokretanje \"%s\""
 
-#: ../thunar/thunar-window.c:1957
+#: ../thunar/thunar-window.c:1958
 msgid "Failed to open parent folder"
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:1982
+#: ../thunar/thunar-window.c:1983
 msgid "Failed to open the home folder"
 msgstr "Neuspjeh u otvaranju osobne mape"
 
-#: ../thunar/thunar-window.c:2050
+#: ../thunar/thunar-window.c:2051
 #, c-format
 msgid "Failed to open folder \"%s\""
 msgstr "Neuspjeh u otvaranju mape \"%s\""
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:2178
+#: ../thunar/thunar-window.c:2179
 msgid "About Templates"
 msgstr "O predlošcima"
 
-#: ../thunar/thunar-window.c:2200
+#: ../thunar/thunar-window.c:2201
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Sve datoteke u ovoj mapi pojaviti će se u \"Napravi dokument\" izborniku."
 
-#: ../thunar/thunar-window.c:2207
+#: ../thunar/thunar-window.c:2208
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
@@ -2509,33 +2509,33 @@ msgstr ""
 "\n"
 "Tada možete odabrati unos iz \"Napravi dokument\" izbornika i kopija dokumenta će biti napravljena u direktoriju koji gledate."
 
-#: ../thunar/thunar-window.c:2219
+#: ../thunar/thunar-window.c:2220
 msgid "Do _not display this message again"
 msgstr "Ne _prikazuj ponovo ovu poruku"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2263
+#: ../thunar/thunar-window.c:2264
 msgid "Failed to open the file system root folder"
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2298
+#: ../thunar/thunar-window.c:2299
 msgid "Failed to display the contents of the trash can"
 msgstr "Neuspjeli prikaz sadržaja smeća"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2333
+#: ../thunar/thunar-window.c:2334
 msgid "Failed to browse the network"
 msgstr "Neuspjelo pregledavanje mreže."
 
-#: ../thunar/thunar-window.c:2375
+#: ../thunar/thunar-window.c:2376
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar je brz i lagan za upotrebu upravitelj datotekama za Xfce radno okruženje"
 
-#. set window title and icon
-#: ../thunar/thunar-window.c:2414 ../Thunar.desktop.in.in.h:2
+#. set window title
+#: ../thunar/thunar-window.c:2415 ../Thunar.desktop.in.in.h:2
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "File Manager"
 msgstr "Upravitelj datotekama"
@@ -2598,7 +2598,7 @@ msgstr "URL:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:202
 msgid "The URL to access."
-msgstr ""
+msgstr "URL za pristup."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:217
 msgid "Comment:"
@@ -2841,7 +2841,7 @@ msgstr "Ukoni znakove"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:202
 msgid "_Search For:"
-msgstr ""
+msgstr "_Traži:"
 
 #. reset to default tooltip
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:210
@@ -2950,7 +2950,7 @@ msgstr[1] "Nisam uspio komprimirati %d datoteke"
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:656
 msgid "Failed to compose new email"
-msgstr ""
+msgstr "Neuspjelo sastavljanje nove e-pošte"
 
 #: ../plugins/thunar-sendto-email/thunar-sendto-email.desktop.in.in.h:1
 msgid "Mail Recipient"
@@ -3176,27 +3176,27 @@ msgid ""
 "files."
 msgstr ""
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:769
+#: ../plugins/thunar-uca/thunar-uca-model.c:770
 #, c-format
 msgid "Unknown element <%s>"
 msgstr "Nepoznati element <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:787
+#: ../plugins/thunar-uca/thunar-uca-model.c:788
 #, c-format
 msgid "End element handler called while in root context"
 msgstr ""
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:881
+#: ../plugins/thunar-uca/thunar-uca-model.c:882
 #, c-format
 msgid "Unknown closing element <%s>"
 msgstr ""
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1324
+#: ../plugins/thunar-uca/thunar-uca-model.c:1325
 #, c-format
 msgid "Failed to determine save location for uca.xml"
-msgstr ""
+msgstr " Neuspjelo određivane mjesta za spremanje uca.xml"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1441
+#: ../plugins/thunar-uca/thunar-uca-model.c:1442
 #, c-format
 msgid "Command not configured"
 msgstr "Naredba nije podešena."
