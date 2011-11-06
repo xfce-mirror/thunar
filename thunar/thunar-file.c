@@ -3168,12 +3168,12 @@ static gint
 compare_by_name_using_number (const gchar *ap,
                               const gchar *bp)
 {
-  guint anum;
-  guint bnum;
+  guint64 anum;
+  guint64 bnum;
 
   /* determine the numbers in ap and bp */
-  anum = strtoul (ap, NULL, 10);
-  bnum = strtoul (bp, NULL, 10);
+  anum = strtouq (ap, NULL, 10);
+  bnum = strtouq (bp, NULL, 10);
 
   /* compare the numbers */
   if (anum < bnum)
