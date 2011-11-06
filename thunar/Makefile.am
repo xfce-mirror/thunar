@@ -6,7 +6,7 @@ INCLUDES =								\
 	-DBINDIR=\"$(bindir)\"						\
 	-DDATADIR=\"$(datadir)\"					\
 	-DEXO_DISABLE_DEPRECATED					\
-	-DG_LOG_DOMAIN=\"Thunar\"					\
+	-DG_LOG_DOMAIN=\"thunar\"					\
 	-DLIBDIR=\"$(libdir)\"						\
 	-DHELPERDIR=\"$(HELPER_PATH_PREFIX)\"				\
 	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"				\
@@ -19,7 +19,7 @@ bin_SCRIPTS =								\
 	thunar-settings
 
 bin_PROGRAMS =								\
-	Thunar
+	thunar
 
 if HAVE_LIBNOTIFY
 thunar_notify_sources =							\
@@ -31,7 +31,7 @@ thunar_built_sources =							\
 	thunar-marshal.c						\
 	thunar-marshal.h
 
-Thunar_SOURCES =							\
+thunar_SOURCES =							\
 	$(thunar_include_HEADERS)					\
 	$(thunar_built_sources)						\
 	$(thunar_dbus_sources)						\
@@ -227,7 +227,7 @@ Thunar_SOURCES =							\
 	thunar-window.h							\
 	thunar-window-ui.h
 
-Thunar_CFLAGS =								\
+thunar_CFLAGS =								\
 	$(EXO_CFLAGS)							\
 	$(GIO_CFLAGS)							\
 	$(GTHREAD_CFLAGS)						\
@@ -238,12 +238,12 @@ Thunar_CFLAGS =								\
 	$(LIBXFCE4UI_CFLAGS)						\
 	$(PLATFORM_CFLAGS)
 
-Thunar_LDFLAGS =							\
+thunar_LDFLAGS =							\
 	-no-undefined							\
 	$(LIBSM_LDFLAGS)						\
 	$(PLATFORM_LDFLAGS)
 
-Thunar_LDADD =								\
+thunar_LDADD =								\
 	$(top_builddir)/tdb/libtdb.la					\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la	\
 	$(EXO_LIBS)							\
@@ -255,7 +255,7 @@ Thunar_LDADD =								\
 	$(LIBSTARTUP_NOTIFICATION_LIBS)					\
 	$(LIBXFCE4UI_LIBS)
 
-Thunar_DEPENDENCIES =							\
+thunar_DEPENDENCIES =							\
 	$(top_builddir)/tdb/libtdb.la					\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la
 
@@ -273,19 +273,19 @@ thunar_dbus_sources =							\
 	thunar-thumbnail-cache-proxy.h					\
 	thunar-thumbnailer-proxy.h
 
-Thunar_CFLAGS +=							\
+thunar_CFLAGS +=							\
 	-DDBUS_API_SUBJECT_TO_CHANGE					\
 	$(DBUS_CFLAGS)
 
-Thunar_LDADD +=								\
+thunar_LDADD +=								\
 	$(DBUS_LIBS)
 endif
 
 if HAVE_GIO_UNIX
-Thunar_CFLAGS +=							\
+thunar_CFLAGS +=							\
 	$(GIO_UNIX_CFLAGS)
 
-Thunar_LDADD +=								\
+thunar_LDADD +=								\
 	$(GIO_UNIX_LIBS)
 endif
 
@@ -297,7 +297,7 @@ desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 # install symlink to 'thunar'
 install-exec-hook:
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
-	-( cd $(DESTDIR)$(bindir) ; test -x thunar || ln -sf Thunar thunar )
+	-( cd $(DESTDIR)$(bindir) ; test -x Thunar || ln -sf thunar Thunar )
 
 clean-local:
 	rm -f *.core core core.*
