@@ -48,7 +48,7 @@ AC_REVISION([$Id$])
 dnl ***************************
 dnl *** Initialize automake ***
 dnl ***************************
-AM_INIT_AUTOMAKE([1.8 dist-bzip2 tar-ustar])
+AM_INIT_AUTOMAKE([1.8 dist-bzip2 tar-ustar no-dist-gzip])
 AM_CONFIG_HEADER([config.h])
 AM_MAINTAINER_MODE()
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
@@ -77,8 +77,8 @@ AC_CHECK_PROGS([PERL], [perl5 perl])
 dnl **************************
 dnl *** Initialize libtool ***
 dnl **************************
-AC_DISABLE_STATIC()
-AC_PROG_LIBTOOL()
+LT_PREREQ([2.2.6])
+LT_INIT([disable-static])
 
 dnl **************************************
 dnl *** Substitute version information ***
@@ -275,7 +275,6 @@ BM_THUNAR_PLUGIN_WALLPAPER()
 
 AC_OUTPUT([
 Makefile
-Thunar.spec
 docs/Makefile
 docs/design/Makefile
 docs/manual/Makefile

@@ -29,11 +29,7 @@ SUBDIRS =								\
 	plugins
 
 distclean-local:
-	rm -rf *.spec *.cache *~
-
-rpm: dist
-	rpmbuild -ta $(PACKAGE)-$(VERSION).tar.gz
-	@rm -f $(PACKAGE)-$(VERSION).tar.gz
+	rm -rf *.cache *~
 
 .PHONY: ChangeLog
 
@@ -90,7 +86,6 @@ EXTRA_DIST =								\
 	FAQ								\
 	HACKING								\
 	ThunarBulkRename.in						\
-	Thunar.spec.in							\
 	ThunarHelp.in							\
 	intltool-extract.in						\
 	intltool-merge.in						\
@@ -100,7 +95,6 @@ EXTRA_DIST =								\
 
 DISTCLEANFILES =							\
 	ThunarBulkRename						\
-	Thunar.spec							\
 	ThunarHelp							\
 	intltool-extract						\
 	intltool-merge							\
