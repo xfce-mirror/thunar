@@ -823,10 +823,9 @@ thunar_renamer_model_process_item (ThunarRenamerModel     *renamer_model,
           /* determine the new suffix */
           suffix = thunarx_renamer_process (renamer_model->renamer, THUNARX_FILE_INFO (item->file), dot + 1, idx);
 
-          /* generate the new file name */
-          name = g_new (gchar, (dot - display_name) + 1 + strlen (suffix) + 1);
-          memcpy (name, display_name, (dot - display_name) + 1);
-          memcpy (name + (dot - display_name) + 1, suffix, strlen (suffix) + 1);
+          prefix = g_strndup (display_name, (dot - display_name) + 1);
+          name = g_strconcat (prefix, suffix, NULL);
+          g_free (prefix);
 
           /* release the suffix */
           g_free (suffix);
