@@ -29,6 +29,8 @@
 #include <thunar/thunar-job.h>
 #include <thunar/thunar-private.h>
 
+#define DEBUG_FILE_CHANGES FALSE
+
 
 
 /* property identifiers */
@@ -511,6 +513,63 @@ thunar_folder_file_destroyed (ThunarFileMonitor *file_monitor,
 
 
 
+#if DEBUG_FILE_CHANGES
+static void
+thunar_file_infos_equal (ThunarFile *file,
+                         GFile      *event_file)
+{
+  gchar     **attrs;
+  GFileInfo  *info1 = G_FILE_INFO (file->info);
+  GFileInfo  *info2;
+  guint       i;
+  gchar      *attr1, *attr2;
+  gboolean    printed = FALSE;
+  gchar      *bname;
+
+  attrs = g_file_info_list_attributes (info1, NULL);
+  info2 = g_file_query_info (event_file, THUNARX_FILE_INFO_NAMESPACE,
+                             G_FILE_QUERY_INFO_NONE, NULL, NULL);
+
+  if (info1 != NULL && info2 != NULL)
+    {
+      for (i = 0; attrs[i] != NULL; i++)
+        {
+          if (g_file_info_has_attribute (info2, attrs[i]))
+            {
+              attr1 = g_file_info_get_attribute_as_string (info1, attrs[i]);
+              attr2 = g_file_info_get_attribute_as_string (info2, attrs[i]);
+
+              if (g_strcmp0 (attr1, attr2) != 0)
+                {
+                  if (!printed)
+                    {
+                      bname = g_file_get_basename (event_file);
+                      g_print ("%s\n", bname);
+                      g_free (bname);
+
+                      printed = TRUE;
+                    }
+
+                  g_print ("  %s: %s -> %s\n", attrs[i], attr1, attr2);
+                }
+
+              g_free (attr1);
+              g_free (attr2);
+            }
+        }
+
+      g_object_unref (info2);
+    }
+
+  if (printed)
+    g_print ("\n");
+
+  g_free (attrs);
+}
+#endif
+
+
+
 static void
 thunar_folder_monitor (GFileMonitor     *monitor,
                        GFile            *event_file,
@@ -557,7 +616,12 @@ thunar_folder_monitor (GFileMonitor     *monitor,
           if (event_type == G_FILE_MONITOR_EVENT_DELETED)
             thunar_file_destroy (lp->data);
           else
-            thunar_file_reload (lp->data);
+            {
+#if DEBUG_FILE_CHANGES
+              thunar_file_infos_equal (lp->data, event_file);
+#endif
+              thunar_file_reload (lp->data);
+            }
         }
     }
   else
