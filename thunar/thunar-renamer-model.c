@@ -159,6 +159,7 @@ struct _ThunarRenamerModelItem
 {
   ThunarFile *file;
   gchar      *name;
+  guint64     date_changed;
   guint       changed : 1;  /* if the file changed */
   guint       conflict : 1; /* if the item conflicts with another item */
   guint       dirty : 1;    /* if the item must be updated */
@@ -592,6 +593,7 @@ thunar_renamer_model_file_changed (ThunarRenamerModel *renamer_model,
   GtkTreePath            *path;
   GtkTreeIter             iter;
   GList                  *lp;
+  guint64                 date_changed;
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor));
@@ -602,14 +604,23 @@ thunar_renamer_model_file_changed (ThunarRenamerModel *renamer_model,
   for (lp = renamer_model->items; lp != NULL; lp = lp->next)
     if (THUNAR_RENAMER_MODEL_ITEM (lp->data)->file == file)
       {
-        /* check if the file changed on disk */
         item = THUNAR_RENAMER_MODEL_ITEM (lp->data);
+
+        /* check if the file changed on disk, this is done to prevent
+         * excessive looping when some renamers are used
+         * (thunar-media-tags-plugin is an example) */
+        date_changed = thunar_file_get_date (file, THUNAR_FILE_DATE_CHANGED);
+        if (item->date_changed == date_changed)
+          break;
 
         /* check if we're frozen */
         if (G_LIKELY (!renamer_model->frozen))
           {
             /* the file changed */
             item->changed = TRUE;
+
+            /* set the new mtime */
+            item->date_changed = date_changed;
 
             /* invalidate the item */
             thunar_renamer_model_invalidate_item (renamer_model, item);
@@ -957,6 +968,7 @@ thunar_renamer_model_item_new (ThunarFile *file)
 
   item = g_slice_new0 (ThunarRenamerModelItem);
   item->file = g_object_ref (G_OBJECT (file));
+  item->date_changed = thunar_file_get_date (file, THUNAR_FILE_DATE_CHANGED);
   item->dirty = TRUE;
 
   return item;
