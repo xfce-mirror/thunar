@@ -28,6 +28,8 @@
 #include <string.h>
 #endif
 
+#include <libxfce4ui/libxfce4ui.h>
+
 #include <thunar/thunar-abstract-dialog.h>
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-dialogs.h>
@@ -928,7 +930,8 @@ thunar_renamer_dialog_help (ThunarRenamerDialog *renamer_dialog)
   if (G_LIKELY (help_url == NULL))
     {
       /* open the general documentation if no specific URL */
-      thunar_dialogs_show_help (GTK_WIDGET (renamer_dialog), "advanced-topics", "to-bulk-rename-files");
+      xfce_dialog_show_help (GTK_WINDOW (renamer_dialog), "thunar",
+                             "advanced-topics", "to-bulk-rename-files");
     }
   else
     {

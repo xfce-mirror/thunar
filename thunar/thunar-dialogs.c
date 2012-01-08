@@ -323,67 +323,6 @@ thunar_dialogs_show_error (gpointer      parent,
 
 
 /**
- * thunar_dialogs_show_help:
- * @parent : a #GtkWidget on which the user manual should be shown, or a #GdkScreen
- *           if no #GtkWidget is known. May also be %NULL, in which case the default
- *           #GdkScreen will be used.
- * @page   : the name of the page of the user manual to display or %NULL to display
- *           the overview page.
- * @offset : the offset of the topic in the @page to display or %NULL to just display
- *           @page.
- *
- * Displays the Thunar user manual. If @page is not %NULL it specifies the basename
- * of the HTML file to display. @offset may refer to a anchor in the @page.
- **/
-void
-thunar_dialogs_show_help (gpointer     parent,
-                          const gchar *page,
-                          const gchar *offset)
-{
-  GdkScreen *screen;
-  GError    *error = NULL;
-  gchar     *command;
-  gchar     *tmp;
-
-  /* determine the screen on which to launch the help */
-  screen = thunar_util_parse_parent (parent, NULL);
-
-  /* generate the command for the documentation browser */
-  command = g_strdup (HELPERDIR G_DIR_SEPARATOR_S "Thunar" G_DIR_SEPARATOR_S "ThunarHelp");
-
-  /* check if a page is given */
-  if (G_UNLIKELY (page != NULL))
-    {
-      /* append page as second parameter */
-      tmp = g_strconcat (command, " ", page, NULL);
-      g_free (command);
-      command = tmp;
-
-      /* check if an offset is given */
-      if (G_UNLIKELY (offset != NULL))
-        {
-          /* append offset as third parameter */
-          tmp = g_strconcat (command, " ", offset, NULL);
-          g_free (command);
-          command = tmp;
-        }
-    }
-
-  /* try to run the documentation browser */
-  if (!gdk_spawn_command_line_on_screen (screen, command, &error))
-    {
-      /* display an error message to the user */
-      thunar_dialogs_show_error (parent, error, _("Failed to open the documentation browser"));
-      g_error_free (error);
-    }
-
-  /* cleanup */
-  g_free (command);
-}
-
-
-
-/**
  * thunar_dialogs_show_job_ask:
  * @parent   : the parent #GtkWindow or %NULL.
  * @question : the question text.

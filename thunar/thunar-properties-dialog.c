@@ -33,6 +33,7 @@
 #include <gdk/gdkkeysyms.h>
 
 #include <exo/exo.h>
+#include <libxfce4ui/libxfce4ui.h>
 
 #include <thunar/thunar-abstract-dialog.h>
 #include <thunar/thunar-application.h>
@@ -599,7 +600,9 @@ thunar_properties_dialog_response (GtkDialog *dialog,
     }
   else if (response == GTK_RESPONSE_HELP)
     {
-      thunar_dialogs_show_help (dialog, "working-with-files-and-folders", "file-properties");
+      xfce_dialog_show_help (GTK_WINDOW (dialog), "thunar",
+                             "working-with-files-and-folders",
+                             "file-properties");
     }
   else if (GTK_DIALOG_CLASS (thunar_properties_dialog_parent_class)->response != NULL)
     {

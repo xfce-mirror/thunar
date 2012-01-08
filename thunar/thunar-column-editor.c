@@ -21,6 +21,8 @@
 #include <config.h>
 #endif
 
+#include <libxfce4ui/libxfce4ui.h>
+
 #include <thunar/thunar-abstract-dialog.h>
 #include <thunar/thunar-column-editor.h>
 #include <thunar/thunar-dialogs.h>
@@ -302,7 +304,10 @@ thunar_column_editor_help_clicked (GtkWidget          *button,
   _thunar_return_if_fail (GTK_IS_BUTTON (button));
 
   /* open the user manual */
-  thunar_dialogs_show_help (column_editor, "the-file-manager-window", "visible-columns-in-the-detailed-list-view");
+  xfce_dialog_show_help (GTK_WINDOW (gtk_widget_get_toplevel (button)),
+                         "thunar",
+                         "the-file-manager-window",
+                         "visible-columns-in-the-detailed-list-view");
 }
 
 

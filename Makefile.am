@@ -54,15 +54,6 @@ ThunarBulkRename: ThunarBulkRename.in Makefile
 		&& mv ThunarBulkRename.gen ThunarBulkRename 		\
 	)
 
-ThunarHelp: ThunarHelp.in Makefile
-	$(AM_V_GEN) (							\
-		rm -f ThunarHelp.gen ThunarHelp				\
-		&& sed -e "s,\@docdir\@,$(docdir),g" 			\
-			< $(srcdir)/ThunarHelp.in			\
-			> ThunarHelp.gen				\
-		&& mv ThunarHelp.gen ThunarHelp				\
-	)
-
 desktopdir = $(datadir)/applications
 desktop_in_in_files = 							\
 	Thunar.desktop.in.in						\
@@ -86,7 +77,6 @@ EXTRA_DIST =								\
 	FAQ								\
 	HACKING								\
 	ThunarBulkRename.in						\
-	ThunarHelp.in							\
 	intltool-extract.in						\
 	intltool-merge.in						\
 	intltool-update.in						\
@@ -95,7 +85,6 @@ EXTRA_DIST =								\
 
 DISTCLEANFILES =							\
 	ThunarBulkRename						\
-	ThunarHelp							\
 	intltool-extract						\
 	intltool-merge							\
 	intltool-update							\

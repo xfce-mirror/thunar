@@ -31,6 +31,7 @@
 #endif
 
 #include <gdk/gdkkeysyms.h>
+#include <libxfce4ui/libxfce4ui.h>
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-browser.h>
@@ -2362,7 +2363,7 @@ thunar_window_action_contents (GtkAction    *action,
                                ThunarWindow *window)
 {
   /* display the documentation index */
-  thunar_dialogs_show_help (window, NULL, NULL);
+  xfce_dialog_show_help (GTK_WINDOW (window), "thunar", NULL, NULL);
 }
 
 

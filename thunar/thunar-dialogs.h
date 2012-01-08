@@ -39,10 +39,6 @@ void               thunar_dialogs_show_error           (gpointer              pa
                                                         const gchar          *format,
                                                         ...) G_GNUC_PRINTF (3, 4);
 
-void               thunar_dialogs_show_help            (gpointer              parent,
-                                                        const gchar          *page,
-                                                        const gchar          *offset);
-
 ThunarJobResponse  thunar_dialogs_show_job_ask         (GtkWindow            *parent,
                                                         const gchar          *question,
                                                         ThunarJobResponse     choices);
