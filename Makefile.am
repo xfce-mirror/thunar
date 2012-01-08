@@ -41,9 +41,8 @@ ChangeLog: Makefile
 dist-hook: ChangeLog
 
 thunar_scriptsdir = $(HELPER_PATH_PREFIX)/Thunar
-thunar_scripts_SCRIPTS =							\
-	ThunarBulkRename						\
-	ThunarHelp
+thunar_scripts_SCRIPTS =						\
+	ThunarBulkRename
 
 ThunarBulkRename: ThunarBulkRename.in Makefile
 	$(AM_V_GEN) (							\
