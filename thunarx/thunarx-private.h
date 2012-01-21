@@ -29,11 +29,7 @@
 
 G_BEGIN_DECLS;
 
-#if GLIB_CHECK_VERSION(2,9,0)
 #define I_(string) (g_intern_static_string ((string)))
-#else
-#define I_(string) (g_quark_to_string (g_quark_from_static_string ((string))))
-#endif
 
 G_GNUC_INTERNAL
 void   thunarx_object_list_take_reference (GList      *object_list,

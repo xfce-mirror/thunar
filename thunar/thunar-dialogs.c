@@ -228,11 +228,6 @@ thunar_dialogs_show_about (GtkWindow   *parent,
   /* try to load the about logo */
   logo = gdk_pixbuf_new_from_file (DATADIR "/pixmaps/Thunar/Thunar-about-logo.png", NULL);
 
-#if !GTK_CHECK_VERSION (2, 18, 0)
-  gtk_about_dialog_set_email_hook (exo_gtk_url_about_dialog_hook, NULL, NULL);
-  gtk_about_dialog_set_url_hook (exo_gtk_url_about_dialog_hook, NULL, NULL);
-#endif
-
   /* open the about dialog */
   gtk_show_about_dialog (parent,
                          "artists", artists,

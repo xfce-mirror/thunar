@@ -302,11 +302,7 @@ thunar_progress_dialog_update_status_icon (ThunarProgressDialog *dialog)
                                             n_views);
 
   /* update the tooltip */
-#if GTK_CHECK_VERSION (2, 16, 0)
   gtk_status_icon_set_tooltip_text (dialog->status_icon, tooltip_text);
-#else
-  gtk_status_icon_set_tooltip (dialog->status_icon, tooltip_text);
-#endif
 
   /* free the string */
   g_free (tooltip_text);

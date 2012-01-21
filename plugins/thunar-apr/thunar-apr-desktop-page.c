@@ -41,7 +41,7 @@
 #include <thunar-apr/thunar-apr-desktop-page.h>
 
 /* use g_access() on win32 */
-#if GLIB_CHECK_VERSION(2,8,0) && defined(G_OS_WIN32)
+#if defined(G_OS_WIN32)
 #include <glib/gstdio.h>
 #else
 #define g_access(filename, mode) (access ((filename), (mode)))

@@ -205,11 +205,7 @@ thunar_g_file_write_key_file (GFile        *file,
 
   /* try to replace the file contents with the key file data */
   if (!g_file_replace_contents (file, contents, length, NULL, FALSE, 
-#if GLIB_CHECK_VERSION(2,20,0)
                                 G_FILE_CREATE_REPLACE_DESTINATION,
-#else
-                                G_FILE_CREATE_NONE,
-#endif
                                 NULL, cancellable, error))
     {
       g_free (contents);
@@ -544,9 +540,7 @@ thunar_g_volume_is_present (GVolume *volume)
   gboolean has_media = FALSE;
   gboolean is_shadowed = FALSE;
   GDrive  *drive;
-#if GLIB_CHECK_VERSION (2, 20, 0)
   GMount  *mount;
-#endif
 
   _thunar_return_val_if_fail (G_IS_VOLUME (volume), FALSE);
 
@@ -557,14 +551,12 @@ thunar_g_volume_is_present (GVolume *volume)
       g_object_unref (drive);
     }
 
-#if GLIB_CHECK_VERSION (2, 20, 0)
   mount = g_volume_get_mount (volume);
   if (mount != NULL)
     {
       is_shadowed = g_mount_is_shadowed (mount);
       g_object_unref (mount);
     }
-#endif
 
   return has_media && !is_shadowed;
 }
