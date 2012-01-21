@@ -384,6 +384,15 @@ thunar_chooser_model_remove (ThunarChooserModel *model,
                                              model->content_type,
                                              error);
 
+  /* try to delete the file */
+  if (succeed && g_app_info_delete (app_info))
+    {
+      g_set_error (error, G_IO_ERROR,
+                   G_IO_ERROR_FAILED,
+                   _("Failed to remove \"%s\"."),
+                   g_app_info_get_id (app_info));
+    }
+
   /* clean up */
   g_object_unref (app_info);
 

@@ -562,8 +562,7 @@ thunar_chooser_dialog_context_menu (ThunarChooserDialog *dialog,
 
   /* append the "Remove Launcher" item */
   item = gtk_image_menu_item_new_with_mnemonic (_("_Remove Launcher"));
-  /* FIXME Need a way to find out whether the appinfo was created by the user: */
-  gtk_widget_set_sensitive (item, FALSE);
+  gtk_widget_set_sensitive (item, g_app_info_can_delete (app_info));
   g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_chooser_dialog_action_remove), dialog);
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show (item);
@@ -695,8 +694,7 @@ thunar_chooser_dialog_action_remove (ThunarChooserDialog *dialog)
   if (G_UNLIKELY (app_info == NULL))
     return;
 
-  /* FIXME need a way to verify that the application is usercreated */
-  if (FALSE)
+  if (g_app_info_can_delete (app_info))
     {
       /* determine the name of the app info */
       name = g_app_info_get_name (app_info);
