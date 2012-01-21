@@ -261,6 +261,16 @@ compare_app_infos (gconstpointer a,
 
 
 
+static gint
+sort_app_infos (gconstpointer a,
+                gconstpointer b)
+{
+  return g_utf8_collate (g_app_info_get_name (G_APP_INFO (a)),
+                         g_app_info_get_name (G_APP_INFO (b)));
+}
+
+
+
 static void
 thunar_chooser_model_reload (ThunarChooserModel *model)
 {
@@ -284,17 +294,18 @@ thunar_chooser_model_reload (ThunarChooserModel *model)
                                recommended);
 
   all = g_app_info_get_all ();
-  for (lp = g_list_last (all); lp != NULL; lp = lp->prev)
+  for (lp = all; lp != NULL; lp = lp->next)
     {
-      if (g_list_find_custom (recommended, 
-                              lp->data, 
-                              (GCompareFunc) compare_app_infos) == NULL)
+      if (g_list_find_custom (recommended,
+                              lp->data,
+                              compare_app_infos) == NULL)
         {
           other = g_list_prepend (other, lp->data);
         }
     }
 
   /* append the other applications */
+  other = g_list_sort (other, sort_app_infos);
   thunar_chooser_model_append (model,
                                _("Other Applications"),
                                "gnome-applications",

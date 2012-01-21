@@ -244,7 +244,6 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
                                        "weight", THUNAR_CHOOSER_MODEL_COLUMN_WEIGHT,
                                        "weight-set", THUNAR_CHOOSER_MODEL_COLUMN_WEIGHT_SET,
                                        NULL);
-  gtk_tree_view_column_set_sort_column_id (column, THUNAR_CHOOSER_MODEL_COLUMN_NAME);
   gtk_tree_view_append_column (GTK_TREE_VIEW (dialog->tree_view), column);
 
   /* don't show the expanders */
