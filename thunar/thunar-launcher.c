@@ -718,8 +718,6 @@ thunar_launcher_update (ThunarLauncher *launcher)
 {
   const gchar  *context_menu_path;
   const gchar  *file_menu_path;
-  GtkWidget    *menu_item;
-  GtkWidget    *image;
   GtkAction    *action;
   gboolean      default_is_open_with_other = FALSE;
   GList        *applications;
@@ -728,7 +726,6 @@ thunar_launcher_update (ThunarLauncher *launcher)
   gchar        *tooltip;
   gchar        *label;
   gchar        *name;
-  gchar        *ui_path;
   gint          n_directories = 0;
   gint          n_executables = 0;
   gint          n_regulars = 0;
@@ -952,6 +949,7 @@ thunar_launcher_update (ThunarLauncher *launcher)
 
               /* allocate a new action for the application */
               action = gtk_action_new (name, label, tooltip, NULL);
+              gtk_action_set_gicon (action, g_app_info_get_icon (lp->data));
               gtk_action_group_add_action (launcher->action_group, action);
               g_object_set_qdata_full (G_OBJECT (action), thunar_launcher_handler_quark, lp->data, g_object_unref);
               g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_launcher_action_open), launcher);
@@ -962,23 +960,6 @@ thunar_launcher_update (ThunarLauncher *launcher)
                                      context_menu_path, name, name,
                                      GTK_UI_MANAGER_MENUITEM, FALSE);
               g_object_unref (G_OBJECT (action));
-
-              /* FIXME There's no API for creating GtkActions using GIcon in GTK+ 2.14. A "gicon" property
-               * has been added to GtkAction in GTK+ 2.16 though. For now, this hack will have to do: */
-
-              ui_path = g_strconcat (file_menu_path, "/", name, NULL);
-              menu_item = gtk_ui_manager_get_widget (launcher->ui_manager, ui_path);
-              image = gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (menu_item));
-              gtk_image_set_from_gicon (GTK_IMAGE (image), g_app_info_get_icon (lp->data), GTK_ICON_SIZE_MENU);
-              g_free (ui_path);
-              	
-              ui_path = g_strconcat (context_menu_path, "/", name, NULL);
-              menu_item = gtk_ui_manager_get_widget (launcher->ui_manager, ui_path);
-              image = gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (menu_item));
-              gtk_image_set_from_gicon (GTK_IMAGE (image), g_app_info_get_icon (lp->data), GTK_ICON_SIZE_MENU);
-              g_free (ui_path);
-
-              /* FIXME End of the hack */
 
               /* cleanup */
               g_free (tooltip);
@@ -1466,8 +1447,6 @@ thunar_launcher_sendto_idle (gpointer user_data)
   ThunarLauncher *launcher = THUNAR_LAUNCHER (user_data);
   const gchar    *label;
   GtkAction      *action;
-  GtkWidget      *image;
-  GtkWidget      *menu_item;
   gboolean        linkable = TRUE;
   GIcon          *icon;
   GList          *handlers;
@@ -1475,7 +1454,6 @@ thunar_launcher_sendto_idle (gpointer user_data)
   GList          *lp;
   gchar          *name;
   gchar          *tooltip;
-  gchar          *ui_path;
   gchar          *volume_name;
   gint            n_selected_files;
   gint            n = 0;
@@ -1554,26 +1532,12 @@ thunar_launcher_sendto_idle (gpointer user_data)
                                  name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
           g_object_unref (action);
 
-          /* FIXME There's no API for creating GtkActions using GIcon in GTK+ 2.14. A "gicon" property
-           * has been added to GtkAction in GTK+ 2.16 though. For now, this hack will have to do: */
-
-          ui_path = g_strconcat ("/main-menu/file-menu/sendto-menu/placeholder-sendto-actions/", name, NULL);
-          menu_item = gtk_ui_manager_get_widget (launcher->ui_manager, ui_path);
-          image = gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (menu_item));
           icon = g_volume_get_icon (lp->data);
-          gtk_image_set_from_gicon (GTK_IMAGE (image), icon, GTK_ICON_SIZE_MENU);
-          g_object_unref (icon);
-          g_free (ui_path);
-          	
-          ui_path = g_strconcat ("/file-context-menu/sendto-menu/placeholder-sendto-actions/", name, NULL);
-          menu_item = gtk_ui_manager_get_widget (launcher->ui_manager, ui_path);
-          image = gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (menu_item));
-          icon = g_volume_get_icon (lp->data);
-          gtk_image_set_from_gicon (GTK_IMAGE (image), icon, GTK_ICON_SIZE_MENU);
-          g_object_unref (icon);
-          g_free (ui_path);
-
-          /* FIXME End of the hack */
+          if (G_LIKELY (icon != NULL))
+            {
+              gtk_action_set_gicon (action, icon);
+              g_object_unref (icon);
+            }
 
           /* cleanup */
           g_free (name);
@@ -1600,6 +1564,7 @@ thunar_launcher_sendto_idle (gpointer user_data)
 
               /* allocate a new action for the handler */
               action = gtk_action_new (name, label, tooltip, NULL);
+              gtk_action_set_gicon (action, g_app_info_get_icon (lp->data));
               g_object_set_qdata_full (G_OBJECT (action), thunar_launcher_handler_quark, lp->data, g_object_unref);
               g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_launcher_action_open), launcher);
               gtk_action_group_add_action (launcher->action_group, action);
@@ -1610,23 +1575,6 @@ thunar_launcher_sendto_idle (gpointer user_data)
                                      "/file-context-menu/sendto-menu/placeholder-sendto-actions",
                                      name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
               g_object_unref (G_OBJECT (action));
-
-              /* FIXME There's no API for creating GtkActions using GIcon in GTK+ 2.14. A "gicon" property
-               * has been added to GtkAction in GTK+ 2.16 though. For now, this hack will have to do: */
-
-              ui_path = g_strconcat ("/main-menu/file-menu/sendto-menu/placeholder-sendto-actions/", name, NULL);
-              menu_item = gtk_ui_manager_get_widget (launcher->ui_manager, ui_path);
-              image = gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (menu_item));
-              gtk_image_set_from_gicon (GTK_IMAGE (image), g_app_info_get_icon (lp->data), GTK_ICON_SIZE_MENU);
-              g_free (ui_path);
-              	
-              ui_path = g_strconcat ("/file-context-menu/sendto-menu/placeholder-sendto-actions/", name, NULL);
-              menu_item = gtk_ui_manager_get_widget (launcher->ui_manager, ui_path);
-              image = gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (menu_item));
-              gtk_image_set_from_gicon (GTK_IMAGE (image), g_app_info_get_icon (lp->data), GTK_ICON_SIZE_MENU);
-              g_free (ui_path);
-
-              /* FIXME End of the hack */
 
               /* cleanup */
               g_free (tooltip);
