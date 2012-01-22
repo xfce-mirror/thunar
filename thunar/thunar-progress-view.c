@@ -29,6 +29,7 @@
 #include <thunar/thunar-job.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-util.h>
 #include <thunar/thunar-progress-view.h>
 
 
@@ -86,8 +87,8 @@ struct _ThunarProgressView
 
   ThunarJob *job;
 
-  GTimeVal   start_time;
-  GTimeVal   last_update_time;
+  gint64     start_time;
+  gint64     last_update_time;
 
   GtkWidget *progress_bar;
   GtkWidget *progress_label;
@@ -174,7 +175,7 @@ thunar_progress_view_init (ThunarProgressView *view)
   GtkWidget *hbox;
 
   /* remember the current time as start time */
-  g_get_current_time (&view->start_time);
+  view->start_time = thunar_util_get_real_time ();
 
   vbox = gtk_vbox_new (FALSE, 6);
   gtk_container_add (GTK_CONTAINER (view), vbox);
@@ -435,39 +436,29 @@ thunar_progress_view_info_message (ThunarProgressView *view,
 
 
 
-static inline guint64
-time_diff (const GTimeVal *now,
-           const GTimeVal *last)
-{
-  return ((guint64) now->tv_sec - last->tv_sec) * G_USEC_PER_SEC
-       + ((guint64) last->tv_usec - last->tv_usec);
-}
-
-
-
 static void
 thunar_progress_view_percent (ThunarProgressView *view,
                               gdouble             percent,
                               ExoJob             *job)
 {
-  GTimeVal current_time;
-  gulong   remaining_time;
-  gulong   elapsed_time;
-  gchar    text[512];
+  gint64 current_time;
+  gulong remaining_time;
+  gint64 elapsed_time;
+  gchar  text[512];
 
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_VIEW (view));
   _thunar_return_if_fail (percent >= 0.0 && percent <= 100.0);
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
   _thunar_return_if_fail (view->job == THUNAR_JOB (job));
-  
+
   gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (view->progress_bar), percent / 100.0);
 
   /* check if we should update the time display (every 400ms) */
-  g_get_current_time (&current_time);
-  if (time_diff (&current_time, &view->last_update_time) > 400 * 1000)
+  current_time = thunar_util_get_real_time ();
+  if (current_time - view->last_update_time > (400 * 1000))
     {
       /* calculate the remaining time (in seconds) */
-      elapsed_time = time_diff (&current_time, &view->start_time) / 1000;
+      elapsed_time = (current_time - view->start_time) / 1000;
       remaining_time = ((100 * elapsed_time) / percent - elapsed_time) / 1000;
 
       /* setup the time label */
