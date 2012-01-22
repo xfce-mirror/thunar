@@ -29,6 +29,7 @@
 #include <thunar/thunar-deep-count-job.h>
 #include <thunar/thunar-job.h>
 #include <thunar/thunar-marshal.h>
+#include <thunar/thunar-util.h>
 #include <thunar/thunar-private.h>
 
 
@@ -68,7 +69,7 @@ struct _ThunarDeepCountJob
   GFileQueryInfoFlags query_flags;
 
   /* the time of the last "status-update" emission */
-  GTimeVal            last_time;
+  gint64              last_time;
 
   /* status information */
   guint64             total_size;
@@ -135,6 +136,7 @@ thunar_deep_count_job_init (ThunarDeepCountJob *job)
   job->file_count = 0;
   job->directory_count = 0;
   job->unreadable_directory_count = 0;
+  job->last_time = 0;
 }
 
 
@@ -179,6 +181,7 @@ thunar_deep_count_job_process (ExoJob  *job,
   GFileInfo          *info;
   gboolean            success = TRUE;
   GFile              *child;
+  gint64              real_time;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
@@ -267,8 +270,14 @@ thunar_deep_count_job_process (ExoJob  *job,
             }
         }
 
-      /* emit status update whenever we've finished a directory */
-      thunar_deep_count_job_status_update (count_job);
+      /* emit status update whenever we've finished a directory,
+       * but not more than fourth per second */
+      real_time = thunar_util_get_real_time ();
+      if (real_time >= count_job->last_time)
+        {
+          thunar_deep_count_job_status_update (count_job);
+          count_job->last_time = real_time + (G_USEC_PER_SEC / 4);
+        }
     }
   else
     {
