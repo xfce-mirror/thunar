@@ -55,6 +55,12 @@ GType           thunar_tpa_get_type            (void);
 void            thunar_tpa_register_type       (XfcePanelTypeModule *type_module);
 static void     thunar_tpa_finalize            (GObject             *object);
 static void     thunar_tpa_construct           (XfcePanelPlugin     *panel_plugin);
+
+#if defined (LIBXFCE4PANEL_CHECK_VERSION) && LIBXFCE4PANEL_CHECK_VERSION (4,9,0)
+static gboolean thunar_tpa_size_changed        (XfcePanelPlugin     *panel_plugin,
+                                                gint                 size);
+#endif
+
 static void     thunar_tpa_error               (ThunarTpa           *plugin,
                                                 GError              *error);
 static void     thunar_tpa_state               (ThunarTpa           *plugin,
@@ -147,6 +153,12 @@ thunar_tpa_class_init (ThunarTpaClass *klass)
 
   plugin_class = XFCE_PANEL_PLUGIN_CLASS (klass);
   plugin_class->construct = thunar_tpa_construct;
+
+#ifdef LIBXFCE4PANEL_CHECK_VERSION
+#if LIBXFCE4PANEL_CHECK_VERSION (4, 9, 0)
+  plugin_class->size_changed = thunar_tpa_size_changed;
+#endif
+#endif
 }
 
 
@@ -232,12 +244,38 @@ thunar_tpa_construct (XfcePanelPlugin *panel_plugin)
 {
   ThunarTpa *plugin = THUNAR_TPA (panel_plugin);
 
+#ifdef LIBXFCE4PANEL_CHECK_VERSION
+#if LIBXFCE4PANEL_CHECK_VERSION (4, 9, 0)
+  /* make the plugin fit a single row */
+  xfce_panel_plugin_set_small (panel_plugin, TRUE);
+#endif
+#endif
+
   /* add the "Empty Trash" menu item */
   xfce_panel_plugin_menu_insert_item (panel_plugin, GTK_MENU_ITEM (plugin->mi));
 
   /* update the state of the trash plugin */
   thunar_tpa_query_trash (plugin);
 }
+
+
+
+#ifdef LIBXFCE4PANEL_CHECK_VERSION
+#if LIBXFCE4PANEL_CHECK_VERSION (4, 9, 0)
+static gboolean
+thunar_tpa_size_changed (XfcePanelPlugin *panel_plugin,
+                         gint             size)
+{
+  g_return_val_if_fail (panel_plugin != NULL, FALSE);
+
+  /* make the plugin fit a single row */
+  size /= xfce_panel_plugin_get_nrows (panel_plugin);
+  gtk_widget_set_size_request (GTK_WIDGET (panel_plugin), size, size);
+
+  return TRUE;
+}
+#endif
+#endif
 
 
 
