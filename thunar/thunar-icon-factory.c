@@ -441,7 +441,7 @@ thunar_icon_factory_load_from_file (ThunarIconFactory *factory,
        * want to do this for icons displayed in the details view).
        */
       needs_frame = (strstr (path, G_DIR_SEPARATOR_S ".thumbnails" G_DIR_SEPARATOR_S) != NULL)
-                 && (size >= 36) && thumbnail_needs_frame (pixbuf, width, height);
+                 && (size >= 32) && thumbnail_needs_frame (pixbuf, width, height);
 
       /* be sure to make framed thumbnails fit into the size */
       if (G_LIKELY (needs_frame))
