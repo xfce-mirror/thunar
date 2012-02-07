@@ -6,13 +6,13 @@
 # Hunt Xu <huntxu@live.cn>, 2008, 2009, 2010.
 # Chris K. Zhang <plutino@gmail.com>, 2009.
 # Aron Xu <aronmalache@163.com>, 2009.
-# Chipong Luo <chipong_l@yahoo.com>, 2011.
+# Chipong Luo <chipong_l@yahoo.com>, 2011, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-28 01:45+0000\n"
+"POT-Creation-Date: 2012-02-06 23:33+0000\n"
 "PO-Revision-Date: 2010-11-23 23:03+0800\n"
 "Last-Translator: Chipong Luo <chipong_l@yahoo.com>\n"
 "Language-Team: Chinese (Simplified) <xfce-i18n@xfce.org>\n"
@@ -48,7 +48,7 @@ msgstr "列印版本信息并退出"
 #. setup application name
 #: ../thunar/main.c:128
 msgid "Thunar"
-msgstr "Thunar 文件管理器"
+msgstr "Thunar"
 
 #. initialize Gtk+
 #: ../thunar/main.c:145
@@ -72,7 +72,7 @@ msgstr "Thunar 开发团队。保留所有权利。"
 
 #: ../thunar/main.c:169
 msgid "Written by Benedikt Meurer <benny@xfce.org>."
-msgstr "由 Benedikt Meurer <benny@xfce.org> 编写。"
+msgstr "由 Benedikt Meurer <benny@xfce.org> 撰写。"
 
 #: ../thunar/main.c:170
 #, c-format
@@ -148,7 +148,7 @@ msgstr "无法打开 “%s”"
 #: ../thunar/thunar-application.c:1178
 #, c-format
 msgid "Failed to open \"%s\": %s"
-msgstr "无法打开 “%s” ：%s"
+msgstr "无法打开 “%s”：%s"
 
 #. display an error message
 #: ../thunar/thunar-application.c:1242
@@ -218,7 +218,8 @@ msgid ""
 msgid_plural ""
 "Are you sure that you want to permanently\n"
 "delete the %u selected files?"
-msgstr[0] "您确定要永远删除选中的 %u 个文件吗？"
+msgstr[0] ""
+"您确定要永远删除选中的 %u 个文件吗？"
 
 #: ../thunar/thunar-application.c:1726
 msgid "If you delete a file, it is permanently lost."
@@ -257,7 +258,8 @@ msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr ""
-"如果您选择清空回收站，里面的所有项目将永远消失。请注意您还可以逐一删除文件。"
+"如果您选择清空回收站，里面的所有项目将永远"
+"消失。请注意您还可以逐一删除文件。"
 
 #: ../thunar/thunar-application.c:1915
 msgid "Emptying the Trash..."
@@ -272,7 +274,7 @@ msgstr "无法确定 “%s” 的原路径"
 #: ../thunar/thunar-application.c:1978
 #, c-format
 msgid "Could not restore \"%s\""
-msgstr "无法恢复 “%s”"
+msgstr "未能恢复 “%s”"
 
 #: ../thunar/thunar-application.c:1986
 msgid "Restoring files..."
@@ -287,7 +289,9 @@ msgstr "无法为 “%s” 设置默认应用程序"
 #, c-format
 msgid ""
 "The selected application is used to open this and other files of type \"%s\"."
-msgstr "选中的应用程序将用来打开此文件和其它 “%s” 类型的文件。"
+msgstr ""
+"选中的应用程序将用来打开此文件和其它 "
+"“%s” 类型的文件。"
 
 #: ../thunar/thunar-chooser-button.c:492
 msgid "No application selected"
@@ -310,7 +314,9 @@ msgstr "使用自定义命令(_C)："
 msgid ""
 "Use a custom command for an application that is not available from the above "
 "application list."
-msgstr "让以上应用程序列表中没有列出的应用程序使用自定义的命令。"
+msgstr ""
+"让以上应用程序列表中没有列出的应用程序使用"
+"自定义的命令。"
 
 #. create the "Custom command" button
 #: ../thunar/thunar-chooser-dialog.c:276
@@ -342,20 +348,26 @@ msgstr "删除启动器(_R)"
 #: ../thunar/thunar-chooser-dialog.c:647
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
-msgstr "<i>%s</i> 和其它 “%s” 类型文件的打开方式："
+msgstr ""
+"<i>%s</i> 和其它 “%s” 类型文件的"
+"打开方式："
 
 #: ../thunar/thunar-chooser-dialog.c:655
 #, c-format
 msgid ""
 "Browse the file system to select an application to open files of type \"%s\"."
-msgstr "浏览文件系统以选择用来打开 “%s” 类型文件的应用程序。"
+msgstr ""
+"浏览文件系统以选择用来打开 “%s” 类型"
+"文件的应用程序。"
 
 #: ../thunar/thunar-chooser-dialog.c:661
 #, c-format
 msgid ""
 "Change the default application for files of type \"%s\" to the selected "
 "application."
-msgstr "将打开 “%s” 类型文件的默认应用程序更改为选中的应用程序。"
+msgstr ""
+"将打开 “%s” 类型文件的默认应用程序"
+"更改为选中的应用程序。"
 
 #: ../thunar/thunar-chooser-dialog.c:707
 #, c-format
@@ -373,8 +385,8 @@ msgstr ""
 "这会移除交互菜单中出现的应用程序启动器，\n"
 "但不会卸载应用程序本身。\n"
 "\n"
-"您只能移除在文件管理器 “打开方式” 对话框中使用自定义命令窗口创建的应用程序启"
-"动器。"
+"您只能移除在文件管理器 “打开方式” 对话框"
+"中使用自定义命令窗口创建的应用程序启动器。"
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:728
@@ -492,9 +504,9 @@ msgid ""
 "able this behavior below the file manager will always\n"
 "use the user defined column widths."
 msgstr ""
-"按默认设置，为了确保所有的文字都能显示，栏会\n"
-"自动延展。如果您禁用了以下行为，文件管理器将\n"
-"一直使用用户指定的栏宽。"
+"按默认设置，为了确保所有的文字都能显示，\n"
+"栏会自动延展。如果您禁用了以下行为，文件\n"
+"管理器将一直使用用户指定的栏宽。"
 
 #. create the "Automatically expand columns as needed" button
 #: ../thunar/thunar-column-editor.c:262
@@ -534,7 +546,7 @@ msgstr "输入新名称："
 #: ../thunar/thunar-create-dialog.c:476
 #, c-format
 msgid "Cannot convert filename \"%s\" to the local encoding"
-msgstr "无法将文件名 “%s” 转换为本地编码"
+msgstr "未能将文件名 “%s” 转换为本地编码"
 
 #: ../thunar/thunar-dbus-service.c:457
 #, c-format
@@ -602,12 +614,12 @@ msgstr "重命名(_R)"
 #: ../thunar/thunar-dialogs.c:244
 msgid "translator-credits"
 msgstr ""
-"kangkang  <kanger@gmail.com>\n"
-"jeanet <qianxiaojun604@gmail.com>\n"
-"Hunt Xu <huntxu@live.cn>\n"
-"Chris K. Zhang <plutino@gmail.com>\n"
-"Aron Xu <aronmalache@163.com>\n"
-"Chipong Luo <chipong_l@yahoo.com, 2011."
+"kangkang <kanger@gmail.com>, 2006.\n"
+"jeanet <qianxiaojun604@gmail.com>.\n"
+"Hunt Xu <huntxu@live.cn>, 2008, 2009, 2010.\n"
+"Chris K. Zhang <plutino@gmail.com>, 2009.\n"
+"Aron Xu <aronmalache@163.com>, 2009.\n"
+"Chipong Luo <chipong_l@yahoo.com, 2011, 2012."
 
 #: ../thunar/thunar-dialogs.c:407
 msgid "_Yes"
@@ -653,12 +665,14 @@ msgstr "替换(_R)"
 #: ../thunar/thunar-dialogs.c:542
 #, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
-msgstr "此文件夹已包含一个名为 “%s” 的符号链接。"
+msgstr ""
+"此文件夹已包含一个名为 “%s” 的符号链接。"
 
 #: ../thunar/thunar-dialogs.c:547
 #, c-format
 msgid "This folder already contains a folder \"%s\"."
-msgstr "此文件夹已包含一个名为 “%s” 的文件夹。"
+msgstr ""
+"此文件夹已包含一个名为 “%s” 的文件夹。"
 
 #: ../thunar/thunar-dialogs.c:552
 #, c-format
@@ -688,7 +702,7 @@ msgstr "大小："
 #: ../thunar/thunar-dialogs.c:585 ../thunar/thunar-dialogs.c:616
 #: ../thunar/thunar-properties-dialog.c:379
 msgid "Modified:"
-msgstr "最近修改："
+msgstr "修改："
 
 #: ../thunar/thunar-dialogs.c:595
 msgid "ReplaceDialogPart2|with the following link?"
@@ -867,7 +881,9 @@ msgstr "未能删除文件 “%s”：%s"
 #: ../thunar/thunar-io-jobs.c:565
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
-msgstr "因为 “%s” 不是本地文件，所以未能创建指向它的符号链接"
+msgstr ""
+"因为 “%s” 不是本地文件，所以未能创建"
+"指向它的符号链接"
 
 #. generate a useful error message
 #: ../thunar/thunar-io-jobs.c:924
@@ -938,7 +954,7 @@ msgid ""
 msgstr ""
 "文件 “%s” 已经存在。您要替换它吗？\n"
 "\n"
-"如果您替换一个已存在的文件，将改写它的内容。"
+"如果您替换已存在的文件，将改写它的内容。"
 
 #: ../thunar/thunar-job.c:334
 msgid "Do you want to overwrite it?"
@@ -1183,11 +1199,11 @@ msgstr "属性(_P)..."
 
 #: ../thunar/thunar-location-buttons.c:223
 msgid "Spacing"
-msgstr "间隔"
+msgstr "间距"
 
 #: ../thunar/thunar-location-buttons.c:224
 msgid "The amount of space between the path buttons"
-msgstr "路径按钮间的间隔的大小"
+msgstr "路径按钮间的间距的大小"
 
 #: ../thunar/thunar-location-buttons.c:1220
 #, c-format
@@ -1202,13 +1218,15 @@ msgstr "在新窗口中打开 “%s”"
 #: ../thunar/thunar-location-buttons.c:1231
 #, c-format
 msgid "Create a new folder in \"%s\""
-msgstr "在 “%s” 中创建一个文件夹"
+msgstr "在 “%s” 中创建新的文件夹"
 
 #: ../thunar/thunar-location-buttons.c:1243
 #, c-format
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into \"%s\""
-msgstr "使用剪切或复制命令将先前选中的文件移动或复制至 “%s”"
+msgstr ""
+"使用剪切或复制命令将先前选中的文件移动或"
+"复制至 “%s”"
 
 #: ../thunar/thunar-location-buttons.c:1249
 #, c-format
@@ -1242,7 +1260,9 @@ msgstr "正在卸载设备"
 msgid ""
 "The device \"%s\" is being unmounted by the system. Please do not remove the "
 "media or disconnect the drive"
-msgstr "系统正在卸载设备 “%s”。请不要移除介质或断开驱动器。"
+msgstr ""
+"系统正在卸载设备 “%s”。请不要移除"
+"介质或断开驱动器。"
 
 #: ../thunar/thunar-notify.c:130 ../thunar/thunar-notify.c:248
 msgid "Writing data to device"
@@ -1253,7 +1273,9 @@ msgstr "正在向设备写入数据"
 msgid ""
 "There is data that needs to be written to the device \"%s\" before it can be "
 "removed. Please do not remove the media or disconnect the drive"
-msgstr "在可以移除设备 “%s” 之前有数据需要写入其中。请不要移除介质或断开驱动器"
+msgstr ""
+"在可以移除设备 “%s” 之前有数据需要写入"
+"其中。请不要移除介质或断开驱动器"
 
 #: ../thunar/thunar-notify.c:242
 msgid "Ejecting device"
@@ -1267,7 +1289,7 @@ msgstr "正在弹出设备 “%s”。这可能需要一些时间"
 #: ../thunar/thunar-misc-jobs.c:84
 #, c-format
 msgid "No templates installed"
-msgstr "没有安装模板"
+msgstr "未安装模板"
 
 #: ../thunar/thunar-path-entry.c:224
 msgid "Icon size"
@@ -1326,13 +1348,17 @@ msgstr "允许此文件作为程序来运行(_R)"
 msgid ""
 "Allowing untrusted programs to run\n"
 "presents a security risk to your system."
-msgstr "允许未认证的程序运行会给您的系统带来安全风险。"
+msgstr ""
+"允许未认证的程序运行会给您的系统\n"
+"带来安全风险。"
 
 #: ../thunar/thunar-permissions-chooser.c:376
 msgid ""
 "The folder permissions are inconsistent, you\n"
 "may not be able to work with files in this folder."
-msgstr "权限不符，您可能无法操作此文件夹中的文件。"
+msgstr ""
+"权限不符，您可能无法操作此文件夹\n"
+"中的文件。"
 
 #: ../thunar/thunar-permissions-chooser.c:389
 msgid "Correct folder permissions..."
@@ -1377,8 +1403,9 @@ msgid ""
 "asked again. You can use the preferences dialog to alter your choice "
 "afterwards."
 msgstr ""
-"如果您选中此项，会记住您的选择且下次不再询问。您可以在后来使用首选项对话框改"
-"变您的选择。"
+"如果您选中此项，会记住您的选择且下次不再"
+"询问。您可在以后使用首选项对话框改变您的"
+"选择。"
 
 #: ../thunar/thunar-permissions-chooser.c:854
 msgid "Unknown file owner"
@@ -1398,7 +1425,8 @@ msgid ""
 "allowed to read the contents of this folder will be allowed to enter the "
 "folder afterwards."
 msgstr ""
-"将重置文件夹权限为相符的状态。以前只有读权限的用户在此之后将能进入此文件夹。"
+"将重置文件夹权限为相符的状态。以前只有读"
+"权限的用户在此之后将能进入此文件夹。"
 
 #: ../thunar/thunar-preferences-dialog.c:192
 msgid "File Manager Preferences"
@@ -1442,7 +1470,9 @@ msgstr "文件夹排列在文件前(_F)"
 
 #: ../thunar/thunar-preferences-dialog.c:249
 msgid "Select this option to list folders before files when you sort a folder."
-msgstr "选择此项以便您在排列文件夹时将文件夹排列在文件前。"
+msgstr ""
+"选择此项以便您在排列文件夹时将文件夹排列"
+"在文件前。"
 
 #: ../thunar/thunar-preferences-dialog.c:253
 msgid "_Show thumbnails"
@@ -1452,7 +1482,9 @@ msgstr "显示缩略图(_S)"
 msgid ""
 "Select this option to display previewable files within a folder as "
 "automatically generated thumbnail icons."
-msgstr "选择此项后，文件夹内可预览的文件将以自动生成的缩略图图标显示。"
+msgstr ""
+"选择此项后，文件夹内可预览的文件将以自动"
+"生成的缩略图图标显示。"
 
 #: ../thunar/thunar-preferences-dialog.c:276
 msgid "_Text beside icons"
@@ -1462,7 +1494,9 @@ msgstr "文字在图标旁(_T)"
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
-msgstr "选择此项后，项目的图标说明文字将在图标旁显示而不是在图标下显示。"
+msgstr ""
+"选择此项后，项目的图标说明文字将在图标旁"
+"显示而不是在图标下显示。"
 
 #: ../thunar/thunar-preferences-dialog.c:287
 msgid "Date"
@@ -1491,7 +1525,7 @@ msgstr "图标大小(_I)："
 #: ../thunar/thunar-preferences-dialog.c:347
 #: ../thunar/thunar-preferences-dialog.c:389
 msgid "Very Small"
-msgstr "很小"
+msgstr "非常小"
 
 #: ../thunar/thunar-preferences-dialog.c:348
 #: ../thunar/thunar-preferences-dialog.c:390
@@ -1521,7 +1555,7 @@ msgstr "较大"
 #: ../thunar/thunar-preferences-dialog.c:353
 #: ../thunar/thunar-preferences-dialog.c:395
 msgid "Very Large"
-msgstr "很大"
+msgstr "非常大"
 
 #: ../thunar/thunar-preferences-dialog.c:361
 msgid "Show Icon _Emblems"
@@ -1532,8 +1566,9 @@ msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties dialog."
 msgstr ""
-"选择此项后，如果在文件夹属性对话框中已定义好了文件夹的徽标，则这些图标徽标会"
-"在快捷方式栏里显示。"
+"选择此项后，如果在文件夹属性对话框中已定义"
+"了文件夹的徽标，则这些图标徽标会在快捷方式"
+"栏里显示。"
 
 #: ../thunar/thunar-preferences-dialog.c:372
 msgid "Tree Pane"
@@ -1552,8 +1587,9 @@ msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
 msgstr ""
-"选择此项后，如果在文件夹属性对话框中已定义好了文件夹的徽标，则这些图标徽标会"
-"在树形栏里显示。"
+"选择此项后，如果在文件夹属性对话框中已定义"
+"了文件夹的徽标，则这些图标徽标会在树形栏里"
+"显示。"
 
 #.
 #. Behavior
@@ -1574,7 +1610,9 @@ msgstr "单击激活项目(_S)"
 msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
-msgstr "指定鼠标从停在项目上开始到选中项目为止的延时(_E)："
+msgstr ""
+"指定鼠标从停在项目上开始到选中项目为止的"
+"延时(_E)："
 
 #: ../thunar/thunar-preferences-dialog.c:468
 msgid ""
@@ -1584,9 +1622,11 @@ msgid ""
 "behavior may be useful when single clicks activate items, and you want only "
 "to select the item without activating it."
 msgstr ""
-"启用单击激活后，鼠标指针在项目上停留的时间超过指定的延时后，会自动选中此项"
-"目。您可以通过把滑块移动至最左端来禁用此行为。此行为在单击激活项目，且您只想"
-"选中而不想激活此项目时可能有用。"
+"启用单击激活后，鼠标指针在项目上停留的时间"
+"超过指定的延时后，会自动选中此项目。您可以"
+"通过把滑块移动至最左端来禁用此行为。此行为"
+"在单击激活项目，且您只想选中项目而不想激活"
+"时可能有用。"
 
 #: ../thunar/thunar-preferences-dialog.c:486
 msgid "Disabled"
@@ -1638,12 +1678,12 @@ msgstr "应用于文件夹及其内容"
 
 #: ../thunar/thunar-preferences-dialog.c:556
 msgid "Volume Management"
-msgstr "卷管理器"
+msgstr "卷管理"
 
 #. add check button to enable/disable auto mounting
 #: ../thunar/thunar-preferences-dialog.c:572
 msgid "Enable _Volume Management"
-msgstr "启用卷管理器(_V)"
+msgstr "启用卷管理(_V)"
 
 #. TRANSLATORS: Make sure you place the <a>...</a>-link on the first line, otherwise the user will be unable to click on it
 #: ../thunar/thunar-preferences-dialog.c:582
@@ -1705,7 +1745,7 @@ msgstr "名称："
 #.
 #: ../thunar/thunar-properties-dialog.c:286
 msgid "Kind:"
-msgstr "类型："
+msgstr "种类："
 
 #: ../thunar/thunar-properties-dialog.c:308
 msgid "Open With:"
@@ -1842,9 +1882,10 @@ msgid ""
 "installation or contact your system administrator. If you install Thunar\n"
 "from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
 msgstr ""
-"您的系统中没有发现重命名模块。请检查您的安装或联系\n"
-"您的系统管理员。如果 Thunar 是您从源码安装的，一定\n"
-"要启用 “简单内建重命名” 插件。"
+"您的系统中没有发现重命名模块。请检查您的\n"
+"安装或联系您的系统管理员。如果 Thunar 是\n"
+"您从源码安装的，一定要启用 “简单内建重命名”\n"
+"插件。"
 
 #. tell the user that we failed
 #: ../thunar/thunar-renamer-dialog.c:945
@@ -1908,8 +1949,9 @@ msgid ""
 "files, or revert the previously renamed files to their previous names, or "
 "cancel the operation without reverting previous changes."
 msgstr ""
-"您可以选择跳过此文件并继续重命名剩下的文件，或将已重命名的文件重置为原来的名"
-"称，或取消操作而不重置之前的更改。"
+"您可以选择跳过此文件并继续重命名剩下的文件，"
+"或将已重命名的文件重置为原来的名称，或取消"
+"操作而不重置之前的更改。"
 
 #: ../thunar/thunar-renamer-progress.c:192
 msgid "_Revert Changes"
@@ -1918,7 +1960,7 @@ msgstr "重置更改(_R)"
 #: ../thunar/thunar-renamer-progress.c:193
 #: ../thunar/thunar-renamer-progress.c:202
 msgid "_Skip This File"
-msgstr "跳过文件(_S)"
+msgstr "跳过此文件(_S)"
 
 #: ../thunar/thunar-renamer-progress.c:199
 msgid ""
@@ -1989,7 +2031,7 @@ msgstr "正在计算..."
 #: ../thunar/thunar-size-label.c:376
 #, c-format
 msgid "%s Bytes"
-msgstr "%s 字节"
+msgstr "%s B"
 
 #: ../thunar/thunar-size-label.c:468
 #, c-format
@@ -2021,7 +2063,8 @@ msgstr "粘贴(_P)"
 
 #: ../thunar/thunar-standard-view.c:363
 msgid "Move or copy files previously selected by a Cut or Copy command"
-msgstr "使用剪切或复制命令来移动或复制选中的文件"
+msgstr ""
+"使用剪切或复制命令来移动或复制选中的文件"
 
 #. append the "Delete" menu action
 #: ../thunar/thunar-standard-view.c:364 ../thunar/thunar-tree-view.c:1229
@@ -2032,7 +2075,9 @@ msgstr "删除(_D)"
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
-msgstr "使用剪切或复制命令将先前选中的文件移动或复制至选中的文件夹"
+msgstr ""
+"使用剪切或复制命令将先前选中的文件移动或"
+"复制至选中的文件夹"
 
 #: ../thunar/thunar-standard-view.c:366
 msgid "Select _all Files"
@@ -2095,7 +2140,7 @@ msgstr "选择(_S)"
 
 #: ../thunar/thunar-standard-view.c:2146
 msgid "_Pattern:"
-msgstr "匹配类型(_P)："
+msgstr "类型(_P)："
 
 #. tell the user that the file name provided by the X Direct Save source is invalid
 #: ../thunar/thunar-standard-view.c:2635
@@ -2168,7 +2213,9 @@ msgstr "正在尝试恢复 “%s”"
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file "
 "\"%s\" from the trash"
-msgstr "文件夹 “%s” 已经不再存在，但要从回收站中恢复此文件 “%s” 需要它"
+msgstr ""
+"文件夹 “%s” 已经不再存在，但要从回收站中"
+"恢复此文件 “%s” 需要它"
 
 #: ../thunar/thunar-transfer-job.c:757
 #, c-format
@@ -2185,7 +2232,8 @@ msgstr "正在尝试移动 “%s”"
 #: ../thunar/thunar-transfer-job.c:807
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
-msgstr "无法直接移动 “%s”。正在收集要复制的文件..."
+msgstr ""
+"未能直接移动 “%s”。正在收集要复制的文件..."
 
 #: ../thunar/thunar-trash-action.c:104
 msgid "T_rash"
@@ -2212,7 +2260,7 @@ msgstr "属性(_R)..."
 #: ../thunar/thunar-util.c:97
 #, c-format
 msgid "Invalid path"
-msgstr "无效的路径"
+msgstr "无效路径"
 
 #: ../thunar/thunar-util.c:131
 #, c-format
@@ -2245,13 +2293,13 @@ msgstr "昨天 %X"
 #: ../thunar/thunar-util.c:246
 #, c-format
 msgid "%A at %X"
-msgstr "%A 在 %X"
+msgstr "%A %X"
 
 #. Any other date
 #: ../thunar/thunar-util.c:251
 #, c-format
 msgid "%x at %X"
-msgstr "%x 在 %X"
+msgstr "%x %X"
 
 #: ../thunar/thunar-window.c:295
 msgid "Open New _Window"
@@ -2387,7 +2435,7 @@ msgstr "转到公共文件夹"
 
 #: ../thunar/thunar-window.c:320
 msgid "T_emplates"
-msgstr "模板(_T)"
+msgstr "模板(_E)"
 
 #: ../thunar/thunar-window.c:320
 msgid "Go to the templates folder"
@@ -2399,7 +2447,7 @@ msgstr "打开位置(_O)..."
 
 #: ../thunar/thunar-window.c:321
 msgid "Specify a location to open"
-msgstr "指定一个位置打开"
+msgstr "指定要打开的位置"
 
 #: ../thunar/thunar-window.c:322
 msgid "_Help"
