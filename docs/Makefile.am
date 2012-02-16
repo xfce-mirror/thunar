@@ -2,7 +2,6 @@
 
 SUBDIRS =								\
 	design								\
-	manual								\
 	papers								\
 	reference
 
