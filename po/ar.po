@@ -6,20 +6,22 @@
 # Arabic translation for thunar
 # Copyright (c) (c) 2006 Canonical Ltd, and Rosetta Contributors 2006
 # This file is distributed under the same license as the thunar package.
+# كريم أولاد الشلحة <herr.linux88@gmail.com>, 2012.
 msgid ""
 msgstr ""
 "Project-Id-Version: thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-02-19 08:03+0000\n"
-"PO-Revision-Date: 2012-02-19 12:34-0000\n"
+"PO-Revision-Date: 2012-02-19 12:59+0000\n"
 "Last-Translator: كريم أولاد الشلحة <herr.linux88@gmail.com>\n"
-"Language-Team: Arabic Xfce Translation Team <herr.linux88@gmail.com>\n"
+"Language-Team: Arabic Xfce Translation Team\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: Plural-Forms: nplurals=4; plural=n==1 ? 0 : n==2 ? 1 : n>=3 && n<=10 ? 2 : 3\n"
-"X-Generator: KBabel 1.11.4\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+"X-Generator: Virtaal 0.7.0\n"
 "X-Poedit-Language: Arabic\n"
 "X-Poedit-Country: Morocco\n"
 
@@ -1038,6 +1040,8 @@ msgstr[0] "إفتح في %d نافذة جديدة"
 msgstr[1] "إفتح في %d نافذة جديدة"
 msgstr[2] "إفتح في %d نوافذ جديدة"
 msgstr[3] "إفتح في \"d%\" نوافذ جديدة"
+msgstr[4] ""
+msgstr[5] ""
 
 #: ../thunar/thunar-launcher.c:780
 #, c-format
@@ -1530,18 +1534,18 @@ msgstr "التاريخ"
 #: ../thunar/thunar-preferences-dialog.c:299
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:216
 msgid "_Format:"
-msgstr ""
+msgstr "ال_صيغة:"
 
 #.
 #. Side Pane
 #.
 #: ../thunar/thunar-preferences-dialog.c:320
 msgid "Side Pane"
-msgstr ""
+msgstr "الشريط الجانبي"
 
 #: ../thunar/thunar-preferences-dialog.c:330
 msgid "Shortcuts Pane"
-msgstr ""
+msgstr "شريط الإختصارات"
 
 #: ../thunar/thunar-preferences-dialog.c:342
 msgid "_Icon Size:"
@@ -1584,7 +1588,7 @@ msgstr "كبير جدا"
 
 #: ../thunar/thunar-preferences-dialog.c:361
 msgid "Show Icon _Emblems"
-msgstr ""
+msgstr "عرض أيقونة ال_شعارات"
 
 #: ../thunar/thunar-preferences-dialog.c:363
 msgid "Select this option to display icon emblems in the shortcuts pane for all folders for which emblems have been defined in the folders properties dialog."
@@ -1592,7 +1596,7 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:372
 msgid "Tree Pane"
-msgstr ""
+msgstr "شجرة الشريط"
 
 #: ../thunar/thunar-preferences-dialog.c:384
 msgid "Icon _Size:"
@@ -1600,7 +1604,7 @@ msgstr "حج_م الأيقونة:"
 
 #: ../thunar/thunar-preferences-dialog.c:403
 msgid "Show Icon E_mblems"
-msgstr ""
+msgstr "عرض أيقونة ال_شعارات"
 
 #: ../thunar/thunar-preferences-dialog.c:405
 msgid "Select this option to display icon emblems in the tree pane for all folders for which emblems have been defined in the folders properties dialog."
@@ -1615,7 +1619,7 @@ msgstr "السلوك"
 
 #: ../thunar/thunar-preferences-dialog.c:424
 msgid "Navigation"
-msgstr ""
+msgstr "تصفح"
 
 #: ../thunar/thunar-preferences-dialog.c:436
 msgid "_Single click to activate items"
@@ -1625,7 +1629,8 @@ msgstr "_نقرة واحدة لتفعيل العناصر"
 msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
-msgstr "إختر المدة الزم_نية التي بعدها يتم تفعيل العنصر الذي توجد فوقه مؤشر الفأرة:"
+msgstr ""
+"إختر المدة الزم_نية التي بعدها يتم تفعيل العنصر الذي توجد فوقه مؤشر الفأرة:"
 
 #: ../thunar/thunar-preferences-dialog.c:468
 msgid "When single-click activation is enabled, pausing the mouse pointer over an item will automatically select that item after the chosen delay. You can disable this behavior by moving the slider to the left-most position. This behavior may be useful when single clicks activate items, and you want only to select the item without activating it."
@@ -1656,7 +1661,7 @@ msgstr "متقدم"
 
 #: ../thunar/thunar-preferences-dialog.c:524
 msgid "Folder Permissions"
-msgstr ""
+msgstr "صلاحيات المجلد"
 
 #: ../thunar/thunar-preferences-dialog.c:536
 msgid ""
@@ -1671,11 +1676,11 @@ msgstr "إسأل كل مرة"
 
 #: ../thunar/thunar-preferences-dialog.c:545
 msgid "Apply to Folder Only"
-msgstr ""
+msgstr "تطبيق على المجلد فقط"
 
 #: ../thunar/thunar-preferences-dialog.c:546
 msgid "Apply to Folder and Contents"
-msgstr ""
+msgstr "تطبيق على المجلد و المحتويات"
 
 #: ../thunar/thunar-preferences-dialog.c:556
 msgid "Volume Management"
@@ -1684,7 +1689,7 @@ msgstr "مدير الأقراص"
 #. add check button to enable/disable auto mounting
 #: ../thunar/thunar-preferences-dialog.c:572
 msgid "Enable _Volume Management"
-msgstr ""
+msgstr "تمكين _إدارة وحدات التخزين"
 
 #. TRANSLATORS: Make sure you place the <a>...</a>-link on the first line, otherwise the user will be unable to click on it
 #: ../thunar/thunar-preferences-dialog.c:582
@@ -1700,21 +1705,23 @@ msgstr ""
 
 #: ../thunar/thunar-progress-dialog.c:94
 msgid "File Operation Progress"
-msgstr ""
+msgstr "تقدم عملية الملف"
 
 #. build the tooltip text
 #: ../thunar/thunar-progress-dialog.c:299
 #, c-format
 msgid "%d file operation running"
 msgid_plural "%d file operations running"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "عملية ملف %d  قيد التشغيل"
+msgstr[1] "%d عمليات ملف قيد التشغيل"
+msgstr[2] "%d عمليات ملف قيد التشغيل"
+msgstr[3] "%d عمليات ملف قيد التشغيل"
+msgstr[4] "%d عمليات ملف قيد التشغيل"
+msgstr[5] "%d عمليات ملف قيد التشغيل"
 
 #: ../thunar/thunar-progress-view.c:327
 msgid "Cancelling..."
-msgstr "حساب..."
+msgstr "إلغاء..."
 
 #: ../thunar/thunar-progress-view.c:471
 #, c-format
@@ -1745,7 +1752,7 @@ msgstr[3] ""
 
 #: ../thunar/thunar-properties-dialog.c:237
 msgid "General"
-msgstr ""
+msgstr "عام"
 
 #: ../thunar/thunar-properties-dialog.c:261
 msgid "Name:"
@@ -1775,22 +1782,22 @@ msgstr "محذوف:"
 
 #: ../thunar/thunar-properties-dialog.c:393
 msgid "Accessed:"
-msgstr ""
+msgstr "تم الوصول إليه:"
 
 #: ../thunar/thunar-properties-dialog.c:431
 msgid "Volume:"
-msgstr ""
+msgstr "وحدة التخزين:"
 
 #: ../thunar/thunar-properties-dialog.c:455
 msgid "Free Space:"
-msgstr ""
+msgstr "مساحة خالية:"
 
 #.
 #. Emblem chooser
 #.
 #: ../thunar/thunar-properties-dialog.c:480
 msgid "Emblems"
-msgstr ""
+msgstr "شعارات"
 
 #. allocate the icon chooser
 #. allocate the chooser dialog
@@ -1828,7 +1835,7 @@ msgstr "_ملف"
 #: ../thunar/thunar-renamer-dialog.c:180
 #: ../thunar/thunar-window.c:296
 msgid "_Send To"
-msgstr ""
+msgstr "أرس_ل إلى:"
 
 #: ../thunar/thunar-renamer-dialog.c:181
 #: ../thunar/thunar-standard-view.c:357
@@ -1858,7 +1865,7 @@ msgstr "_حول"
 
 #: ../thunar/thunar-renamer-dialog.c:185
 msgid "Display information about Thunar Bulk Rename"
-msgstr ""
+msgstr "أظهر معلومات عن تونار إعادة تسمية الكل"
 
 #: ../thunar/thunar-renamer-dialog.c:186
 #: ../thunar/thunar-standard-view.c:360
@@ -1995,13 +2002,13 @@ msgstr[3] ""
 #: ../thunar/thunar-shortcuts-view.c:851
 #: ../thunar/thunar-tree-view.c:1121
 msgid "_Mount Volume"
-msgstr ""
+msgstr "ضم وحدة الت_خزين"
 
 #. append the "Eject Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:861
 #: ../thunar/thunar-tree-view.c:1131
 msgid "E_ject Volume"
-msgstr ""
+msgstr "إخراج وحد_ة التخزين"
 
 #. append the remove menu item
 #: ../thunar/thunar-shortcuts-view.c:932
@@ -2058,6 +2065,8 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 msgstr[3] ""
+msgstr[4] ""
+msgstr[5] ""
 
 #: ../thunar/thunar-standard-view.c:358
 msgid "Folder Context Menu"
@@ -2115,7 +2124,7 @@ msgstr ""
 
 #: ../thunar/thunar-standard-view.c:368
 msgid "Du_plicate"
-msgstr ""
+msgstr "م_ضاعفة"
 
 #: ../thunar/thunar-standard-view.c:369
 #: ../thunar/thunar-standard-view.c:3738
@@ -2155,7 +2164,7 @@ msgstr "ملف جديد فارغ..."
 
 #: ../thunar/thunar-standard-view.c:2131
 msgid "Select by Pattern"
-msgstr ""
+msgstr "تحديد حسب النمط"
 
 #: ../thunar/thunar-standard-view.c:2137
 msgid "_Select"
@@ -2163,7 +2172,7 @@ msgstr "_إختيار"
 
 #: ../thunar/thunar-standard-view.c:2146
 msgid "_Pattern:"
-msgstr ""
+msgstr "_نمط:"
 
 #. tell the user that the file name provided by the X Direct Save source is invalid
 #: ../thunar/thunar-standard-view.c:2635
