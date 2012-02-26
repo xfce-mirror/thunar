@@ -546,17 +546,28 @@ thunar_launcher_execute_files (ThunarLauncher *launcher,
 
 
 
+static guint
+thunar_launcher_g_app_info_hash (gconstpointer app_info)
+{
+  return 0;
+}
+
+
+
 static void
 thunar_launcher_open_files (ThunarLauncher *launcher,
                             GList          *files)
 {
-  GAppInfo   *app_info;
   GHashTable *applications;
+  GAppInfo   *app_info;
   GList      *file_list;
   GList      *lp;
 
-  /* allocate a hash table to associate applications to URIs */
-  applications = g_hash_table_new_full (g_direct_hash,
+  /* allocate a hash table to associate applications to URIs. since GIO allocates
+   * new GAppInfo objects every time, g_direct_hash does not work. we therefor use
+   * a fake hash function to always hit the collision list of the hash table and
+   * avoid storing multiple equal GAppInfos by means of g_app_info_equal(). */
+  applications = g_hash_table_new_full (thunar_launcher_g_app_info_hash,
                                         (GEqualFunc) g_app_info_equal,
                                         (GDestroyNotify) g_object_unref,
                                         (GDestroyNotify) thunar_g_file_list_free);
