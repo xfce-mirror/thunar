@@ -236,6 +236,7 @@ thunar_folder_finalize (GObject *object)
   /* disconnect from the file alteration monitor */
   if (G_LIKELY (folder->monitor != NULL))
     {
+      g_signal_handlers_disconnect_matched (folder->monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
       g_file_monitor_cancel (folder->monitor);
       g_object_unref (folder->monitor);
     }
@@ -705,6 +706,7 @@ thunar_folder_reload (ThunarFolder *folder)
   /* disconnect from the file alteration monitor */
   if (G_UNLIKELY (folder->monitor != NULL))
     {
+      g_signal_handlers_disconnect_matched (folder->monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
       g_file_monitor_cancel (folder->monitor);
       g_object_unref (folder->monitor);
       folder->monitor = NULL;
