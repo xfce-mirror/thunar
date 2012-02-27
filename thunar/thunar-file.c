@@ -3173,28 +3173,96 @@ thunar_file_destroy (ThunarFile *file)
 
 
 
+static guint
+skip_leading_zeros (const gchar **ap,
+                    const gchar  *name)
+{
+  const gchar *bp;
+  guint        skipped_zeros = 0;
+
+  /* do a backward search to check if the number starts with a '0' */
+  for (bp = *ap; bp >= name; --bp)
+    {
+      if (*bp != '0')
+        break;
+    }
+
+  /* if the number starts with a '0' skip all following '0' */
+  if (!g_ascii_isdigit (*bp) || *bp == '0')
+   {
+     for (bp = *ap; *bp != '\0'; ++bp)
+       {
+         if (*bp != '0')
+           break;
+       }
+
+     skipped_zeros = bp - *ap;
+     *ap = bp;
+     return skipped_zeros;
+   }
+
+  return 0;
+}
+
+
+
 static gint
 compare_by_name_using_number (const gchar *ap,
-                              const gchar *bp)
+                              const gchar *bp,
+                              const gchar *start_a,
+                              const gchar *start_b)
 {
-  guint64 anum;
-  guint64 bnum;
+  const gchar *ai;
+  const gchar *bi;
+  gchar        ac;
+  gchar        bc;
+  guint        skipped_zeros_a;
+  guint        skipped_zeros_b;
 
-  /* determine the numbers in ap and bp */
-  anum = strtouq (ap, NULL, 10);
-  bnum = strtouq (bp, NULL, 10);
+  /* up until now the numbers match. Now compare the numbers by digit
+   * count, the longest number is the largest. If the lengths are equal
+   * compare the digits. */
 
-  /* compare the numbers */
-  if (anum < bnum)
-    return -1;
-  else if (anum > bnum)
+  /* skip leading zeros of both numbers */
+  skipped_zeros_a = skip_leading_zeros (&ap, start_a);
+  skipped_zeros_b = skip_leading_zeros (&bp, start_b);
+
+  /* determine the largest number */
+  for (ai = ap, bi = bp;; ++ai, ++bi)
+    {
+      ac = *ai;
+      bc = *bi;
+      if (!g_ascii_isdigit (ac) || !g_ascii_isdigit (bc))
+        break;
+    }
+
+  /* if one of the numbers still has a digit, that number is the largest. */
+  if (g_ascii_isdigit (ac))
     return 1;
+  else if (g_ascii_isdigit (bc))
+    return -1;
 
-  /* the numbers are equal, and so the higher first digit should
-   * be sorted first, i.e. 'file10' before 'file010', since we
-   * also sort 'file10' before 'file011'.
-   */
-  return (*bp - *ap);
+  /* both numbers have the same length. look for the first digit that
+   * is different */
+  for (;; ++ap, ++bp)
+    {
+      ac = *ap;
+      bc = *bp;
+
+      /* check if the characters differ or we have a non-digit char */
+      if (ac != bc || !g_ascii_isdigit (ac))
+        break;
+    }
+
+  /* if we have reached the end of the numbers and they are still equal,
+   * then they differ only in the number of leading zeros. let us always
+   * sort the one with more leading zeros first. */
+  if (G_UNLIKELY (!g_ascii_isdigit (ac) || !g_ascii_isdigit (bc)))
+    return skipped_zeros_b - skipped_zeros_a;
+      
+  /* for all regular numbers that have the same length, the one with the
+   * lowest different digit should be sorted first */
+  return (ac - bc);
 }
 
 
@@ -3218,8 +3286,10 @@ thunar_file_compare_by_name (const ThunarFile *file_a,
 {
   const gchar *ap;
   const gchar *bp;
-  guint        ac;
-  guint        bc;
+  const gchar *filename_a;
+  const gchar *filename_b;
+  guchar       ac;
+  guchar       bc;
 
 #ifdef G_ENABLE_DEBUG
   /* probably too expensive to do the instance check every time
@@ -3230,8 +3300,12 @@ thunar_file_compare_by_name (const ThunarFile *file_a,
 #endif
 
   /* we compare only the display names (UTF-8!) */
-  ap = thunar_file_get_display_name (file_a);
-  bp = thunar_file_get_display_name (file_b);
+  filename_a = thunar_file_get_display_name (file_a);
+  filename_b = thunar_file_get_display_name (file_b);
+
+  /* start at the beginning of both strings */
+  ap = filename_a;
+  bp = filename_b;
 
   /* check if we should ignore case */
   if (G_LIKELY (case_sensitive))
@@ -3240,8 +3314,8 @@ thunar_file_compare_by_name (const ThunarFile *file_a,
       for (;; ++ap, ++bp)
         {
           /* check if the characters differ or we have a non-ASCII char */
-          ac = *((const guchar *) ap);
-          bc = *((const guchar *) bp);
+          ac = *((const guchar *)ap);
+          bc = *((const guchar *)bp);
           if (ac != bc || ac == 0 || ac > 127)
             break;
         }
@@ -3265,8 +3339,8 @@ thunar_file_compare_by_name (const ThunarFile *file_a,
       for (;; ++ap, ++bp)
         {
           /* check if the characters differ or we have a non-ASCII char */
-          ac = *((const guchar *) ap);
-          bc = *((const guchar *) bp);
+          ac = *((const guchar *)ap);
+          bc = *((const guchar *)bp);
           if (g_ascii_tolower (ac) != g_ascii_tolower (bc) || ac == 0 || ac > 127)
             break;
         }
@@ -3286,8 +3360,12 @@ thunar_file_compare_by_name (const ThunarFile *file_a,
     }
 
   /* if both strings are equal, we're done */
-  if (G_UNLIKELY (ac == bc || (!case_sensitive && g_unichar_tolower (ac) == g_unichar_tolower (bc))))
-    return 0;
+  if (G_UNLIKELY (ac == bc
+                  || (!case_sensitive
+                      && g_unichar_tolower (ac) == g_unichar_tolower (bc))))
+    {
+      return 0;
+    }
 
   /* check if one of the characters that differ is a digit */
   if (G_UNLIKELY (g_ascii_isdigit (ac) || g_ascii_isdigit (bc)))
@@ -3296,16 +3374,23 @@ thunar_file_compare_by_name (const ThunarFile *file_a,
        * to get sorting 'file1', 'file5', 'file10' done the right way.
        */
       if (g_ascii_isdigit (ac) && g_ascii_isdigit (bc))
-        return compare_by_name_using_number (ap, bp);
+        {
+          return compare_by_name_using_number (ap, bp, filename_a, filename_b);
+        }
 
       /* a second case is '20 file' and '2file', where comparison by number
-       * makes sense, if the previous char for both strings is a digit.
+       * makes sense if the previous char for both strings is a digit.
        */
-      if (ap > thunar_file_get_display_name (file_a) 
-          && bp > thunar_file_get_display_name (file_b)
-          && g_ascii_isdigit (*(ap - 1)) && g_ascii_isdigit (*(bp - 1)))
+      if (ap > filename_a
+          && bp > filename_b
+          && g_ascii_isdigit (*(ap - 1))
+          && g_ascii_isdigit (*(bp - 1)))
         {
-          return compare_by_name_using_number (ap - 1, bp - 1);
+          /* go back one character to have both variables point to the numbers again */
+          ap -= 1;
+          bp -= 1;
+
+          return compare_by_name_using_number (ap, bp, filename_a, filename_b);
         }
     }
 
@@ -3337,8 +3422,8 @@ thunar_file_compare_by_name (const ThunarFile *file_a,
           /* transform the unicode chars to strings and
            * make sure the strings are nul-terminated.
            */
-          abuf[g_unichar_to_utf8 (ac, abuf)] = '\0';
-          bbuf[g_unichar_to_utf8 (bc, bbuf)] = '\0';
+          abuf[g_unichar_to_utf8 (g_unichar_tolower(ac), abuf)] = '\0';
+          bbuf[g_unichar_to_utf8 (g_unichar_tolower(bc), bbuf)] = '\0';
 
           /* compare the unicode chars (as strings) */
           return strcoll (abuf, bbuf);
