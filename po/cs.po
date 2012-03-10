@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-18 20:21+0000\n"
-"PO-Revision-Date: 2012-02-19 02:34+0100\n"
+"POT-Creation-Date: 2012-03-10 06:36+0000\n"
+"PO-Revision-Date: 2012-03-10 12:46+0100\n"
 "Last-Translator: Michal Várady <miko.vaji@gmail.com>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
 "Language: cs\n"
@@ -135,7 +135,7 @@ msgstr "Nepodařilo se spustit operaci"
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1048
 #: ../thunar/thunar-application.c:1174
-#: ../thunar/thunar-launcher.c:1046
+#: ../thunar/thunar-launcher.c:1057
 #: ../thunar/thunar-location-entry.c:394
 #: ../thunar/thunar-location-entry.c:422
 #: ../thunar/thunar-shortcuts-view.c:1277
@@ -713,7 +713,7 @@ msgstr "Přesunout se_m"
 
 #: ../thunar/thunar-dnd.c:72
 msgid "_Link here"
-msgstr "Umístit _odkaz sem"
+msgstr "Vytvořit zde _odkaz"
 
 #. display an error to the user
 #. display an error message to the user
@@ -963,7 +963,7 @@ msgstr "Chcete jej přeskočit?"
 
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:168
-#: ../thunar/thunar-launcher.c:801
+#: ../thunar/thunar-launcher.c:812
 #: ../thunar/thunar-location-buttons.c:168
 #: ../thunar/thunar-shortcuts-view.c:826
 #: ../thunar/thunar-tree-view.c:1095
@@ -989,17 +989,17 @@ msgstr "Otevřít v jiné _aplikaci..."
 
 #: ../thunar/thunar-launcher.c:170
 #: ../thunar/thunar-launcher.c:172
-#: ../thunar/thunar-launcher.c:884
+#: ../thunar/thunar-launcher.c:895
 msgid "Choose another application with which to open the selected file"
 msgstr "Vybere jinou aplikaci pro otevření vybraného souboru"
 
-#: ../thunar/thunar-launcher.c:636
+#: ../thunar/thunar-launcher.c:647
 #, c-format
 msgid "Failed to open file \"%s\""
 msgstr "Nepodařilo se otevřít soubor \"%s\""
 
 #. we can just tell that n files failed to open
-#: ../thunar/thunar-launcher.c:642
+#: ../thunar/thunar-launcher.c:653
 #, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
@@ -1007,11 +1007,11 @@ msgstr[0] "Nepodařilo se otevřít %d soubor."
 msgstr[1] "Nepodařilo se otevřít %d soubory."
 msgstr[2] "Nepodařilo se otevřít %d souborů."
 
-#: ../thunar/thunar-launcher.c:681
+#: ../thunar/thunar-launcher.c:692
 msgid "Are you sure you want to open all folders?"
 msgstr "Opravdu chcete otevřít všechny složky?"
 
-#: ../thunar/thunar-launcher.c:683
+#: ../thunar/thunar-launcher.c:694
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
@@ -1019,7 +1019,7 @@ msgstr[0] "Bude otevřeno %d oddělěné okno správce souborů."
 msgstr[1] "Budou otevřena %d oddělěná okna správce souborů."
 msgstr[2] "Bude otevřeno %d oddělěných oken správce souborů."
 
-#: ../thunar/thunar-launcher.c:687
+#: ../thunar/thunar-launcher.c:698
 #, c-format
 msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
@@ -1028,7 +1028,7 @@ msgstr[1] "Otevřít %d nová okna"
 msgstr[2] "Otevřít %d nových oken"
 
 #. turn "Open" into "Open in n New Windows"
-#: ../thunar/thunar-launcher.c:779
+#: ../thunar/thunar-launcher.c:790
 #, c-format
 msgid "Open in %d New Window"
 msgid_plural "Open in %d New Windows"
@@ -1036,7 +1036,7 @@ msgstr[0] "Otevřít v jednom novém okně"
 msgstr[1] "Otevřít ve %d nových oknech"
 msgstr[2] "Otevřít v %d nových oknech"
 
-#: ../thunar/thunar-launcher.c:780
+#: ../thunar/thunar-launcher.c:791
 #, c-format
 msgid "Open the selected directory in %d new window"
 msgid_plural "Open the selected directories in %d new windows"
@@ -1044,22 +1044,22 @@ msgstr[0] "Otevřít vybraný adresář v jednom novém okně"
 msgstr[1] "Otevřít vybrané adresáře ve %d nových oknech"
 msgstr[2] "Otevřít vybrané adresáře v %d nových oknech"
 
-#: ../thunar/thunar-launcher.c:800
+#: ../thunar/thunar-launcher.c:811
 msgid "_Open in New Window"
 msgstr "_Otevřít v novém okně"
 
-#: ../thunar/thunar-launcher.c:803
+#: ../thunar/thunar-launcher.c:814
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
 msgstr[0] "Otevře vybraný soubor"
 msgstr[1] "Otevře vybrané soubory"
 msgstr[2] "Otevře vybrané soubory"
 
-#: ../thunar/thunar-launcher.c:852
+#: ../thunar/thunar-launcher.c:863
 msgid "_Execute"
 msgstr "_Spustit"
 
-#: ../thunar/thunar-launcher.c:853
+#: ../thunar/thunar-launcher.c:864
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
 msgstr[0] "Spustit vybraný soubor"
@@ -1067,13 +1067,13 @@ msgstr[1] "Spustit vybrané soubory"
 msgstr[2] "Spustit vybrané soubory"
 
 #. turn the "Open" action into "Open With DEFAULT"
-#: ../thunar/thunar-launcher.c:859
+#: ../thunar/thunar-launcher.c:870
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "_Spustit pomocí \"%s\""
 
-#: ../thunar/thunar-launcher.c:860
-#: ../thunar/thunar-launcher.c:946
+#: ../thunar/thunar-launcher.c:871
+#: ../thunar/thunar-launcher.c:957
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
@@ -1081,27 +1081,27 @@ msgstr[0] "Použít \"%s\" pro otevření vybraného souboru"
 msgstr[1] "Použít \"%s\" pro otevření vybraných souborů"
 msgstr[2] "Použít \"%s\" pro otevření vybraných souborů"
 
-#: ../thunar/thunar-launcher.c:883
+#: ../thunar/thunar-launcher.c:894
 msgid "_Open With Other Application..."
 msgstr "_Otevřít pomocí jiné aplikace..."
 
-#: ../thunar/thunar-launcher.c:892
+#: ../thunar/thunar-launcher.c:903
 msgid "_Open With Default Applications"
 msgstr "_Otevřít výchozí aplikací"
 
-#: ../thunar/thunar-launcher.c:893
+#: ../thunar/thunar-launcher.c:904
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
 msgstr[0] "Otevře vybraný soubor výchozí aplikací"
 msgstr[1] "Otevře vybrané soubory výchozí aplikací"
 msgstr[2] "Otevře vybrané soubory výchozí aplikací"
 
-#: ../thunar/thunar-launcher.c:945
+#: ../thunar/thunar-launcher.c:956
 #, c-format
 msgid "Open With \"%s\""
 msgstr "Otevřít pomocí \"%s\""
 
-#: ../thunar/thunar-launcher.c:1364
+#: ../thunar/thunar-launcher.c:1375
 #: ../thunar/thunar-location-entry.c:646
 #: ../thunar/thunar-shortcuts-view.c:1307
 #: ../thunar/thunar-shortcuts-view.c:1545
@@ -1110,22 +1110,22 @@ msgstr "Otevřít pomocí \"%s\""
 msgid "Failed to mount \"%s\""
 msgstr "Nepodařilo se připojit \"%s\""
 
-#: ../thunar/thunar-launcher.c:1480
+#: ../thunar/thunar-launcher.c:1491
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "Pracovní plocha (Vytvořit symbolický odkaz)"
 msgstr[1] "Pracovní plocha (Vytvořit symbolické odkazy)"
 msgstr[2] "Pracovní plocha (Vytvořit symbolické odkazy)"
 
-#: ../thunar/thunar-launcher.c:1481
+#: ../thunar/thunar-launcher.c:1492
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "Vytvoří symbolický odkaz pro vybraný soubor na pracovní ploše"
 msgstr[1] "Vytvoří symbolický odkaz pro vybrané soubory na pracovní ploše"
 msgstr[2] "Vytvoří symbolický odkaz pro vybrané soubory na pracovní ploše"
 
-#: ../thunar/thunar-launcher.c:1518
-#: ../thunar/thunar-launcher.c:1561
+#: ../thunar/thunar-launcher.c:1529
+#: ../thunar/thunar-launcher.c:1572
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
