@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-10 08:45+0000\n"
+"POT-Creation-Date: 2012-03-11 00:00+0000\n"
 "PO-Revision-Date: 2010-11-23 23:03+0800\n"
 "Last-Translator: Chipong Luo <chipong.luo@yahoo.com>\n"
 "Language-Team: Chinese (Simplified) <xfce-i18n@xfce.org>\n"
@@ -20,6 +20,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #: ../thunar/main.c:62
 msgid "Open the bulk rename dialog"
@@ -138,7 +139,7 @@ msgstr "无法启动操作"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1048 ../thunar/thunar-application.c:1174
-#: ../thunar/thunar-launcher.c:1046 ../thunar/thunar-location-entry.c:394
+#: ../thunar/thunar-launcher.c:1057 ../thunar/thunar-location-entry.c:394
 #: ../thunar/thunar-location-entry.c:422
 #: ../thunar/thunar-shortcuts-view.c:1277 ../thunar/thunar-window.c:1509
 #, c-format
@@ -257,8 +258,7 @@ msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr ""
-"如果您选择清空回收站，里面的所有项目将永远"
-"消失。请注意您还可以逐一删除文件。"
+"如果您选择清空回收站，里面的所有项目将永远消失。请注意您还可以逐一删除文件。"
 
 #: ../thunar/thunar-application.c:1915
 msgid "Emptying the Trash..."
@@ -288,9 +288,7 @@ msgstr "无法为 “%s” 设置默认应用程序"
 #, c-format
 msgid ""
 "The selected application is used to open this and other files of type \"%s\"."
-msgstr ""
-"选中的应用程序将用来打开此文件和其它 “%s” "
-"类型的文件。"
+msgstr "选中的应用程序将用来打开此文件和其它 “%s” 类型的文件。"
 
 #: ../thunar/thunar-chooser-button.c:492
 msgid "No application selected"
@@ -313,9 +311,7 @@ msgstr "使用自定义命令(_C)："
 msgid ""
 "Use a custom command for an application that is not available from the above "
 "application list."
-msgstr ""
-"让以上应用程序列表中没有列出的应用程序使用"
-"自定义的命令。"
+msgstr "让以上应用程序列表中没有列出的应用程序使用自定义的命令。"
 
 #. create the "Custom command" button
 #: ../thunar/thunar-chooser-dialog.c:276
@@ -353,18 +349,14 @@ msgstr "<i>%s</i> 和其它 “%s” 类型文件的打开方式："
 #, c-format
 msgid ""
 "Browse the file system to select an application to open files of type \"%s\"."
-msgstr ""
-"浏览文件系统以选择用来打开 “%s” 类型文件的"
-"应用程序。"
+msgstr "浏览文件系统以选择用来打开 “%s” 类型文件的应用程序。"
 
 #: ../thunar/thunar-chooser-dialog.c:661
 #, c-format
 msgid ""
 "Change the default application for files of type \"%s\" to the selected "
 "application."
-msgstr ""
-"将打开 “%s” 类型文件的默认应用程序更改为"
-"选中的应用程序。"
+msgstr "将打开 “%s” 类型文件的默认应用程序更改为选中的应用程序。"
 
 #: ../thunar/thunar-chooser-dialog.c:707
 #, c-format
@@ -382,8 +374,8 @@ msgstr ""
 "这会移除交互菜单中出现的应用程序启动器，\n"
 "但不会卸载应用程序本身。\n"
 "\n"
-"您只能移除在文件管理器 “打开方式” 对话框中"
-"使用自定义命令窗口创建的应用程序启动器。"
+"您只能移除在文件管理器 “打开方式” 对话框中使用自定义命令窗口创建的应用程序启"
+"动器。"
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:728
@@ -876,9 +868,7 @@ msgstr "未能删除文件 “%s”：%s"
 #: ../thunar/thunar-io-jobs.c:565
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
-msgstr ""
-"因为 “%s” 不是本地文件，所以未能创建指向它的"
-"符号链接"
+msgstr "因为 “%s” 不是本地文件，所以未能创建指向它的符号链接"
 
 #. generate a useful error message
 #: ../thunar/thunar-io-jobs.c:924
@@ -964,7 +954,7 @@ msgid "Do you want to skip it?"
 msgstr "您要跳过它吗？"
 
 #. append the "Open" menu action
-#: ../thunar/thunar-launcher.c:168 ../thunar/thunar-launcher.c:801
+#: ../thunar/thunar-launcher.c:168 ../thunar/thunar-launcher.c:812
 #: ../thunar/thunar-location-buttons.c:168
 #: ../thunar/thunar-shortcuts-view.c:826 ../thunar/thunar-tree-view.c:1095
 msgid "_Open"
@@ -985,117 +975,117 @@ msgid "Open With Other _Application..."
 msgstr "用其它应用程序打开(_A)..."
 
 #: ../thunar/thunar-launcher.c:170 ../thunar/thunar-launcher.c:172
-#: ../thunar/thunar-launcher.c:884
+#: ../thunar/thunar-launcher.c:895
 msgid "Choose another application with which to open the selected file"
 msgstr "选择另一个应用程序来打开选中的文件"
 
-#: ../thunar/thunar-launcher.c:636
+#: ../thunar/thunar-launcher.c:647
 #, c-format
 msgid "Failed to open file \"%s\""
 msgstr "无法打开文件 “%s”"
 
 #. we can just tell that n files failed to open
-#: ../thunar/thunar-launcher.c:642
+#: ../thunar/thunar-launcher.c:653
 #, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
 msgstr[0] "无法打开 %d 个文件"
 
-#: ../thunar/thunar-launcher.c:681
+#: ../thunar/thunar-launcher.c:692
 msgid "Are you sure you want to open all folders?"
 msgstr "您确定要打开所有的文件夹吗？"
 
-#: ../thunar/thunar-launcher.c:683
+#: ../thunar/thunar-launcher.c:694
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
 msgstr[0] "这会打开 %d 个单独的文件管理器窗口。"
 
-#: ../thunar/thunar-launcher.c:687
+#: ../thunar/thunar-launcher.c:698
 #, c-format
 msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
 msgstr[0] "打开 %d 个新窗口"
 
 #. turn "Open" into "Open in n New Windows"
-#: ../thunar/thunar-launcher.c:779
+#: ../thunar/thunar-launcher.c:790
 #, c-format
 msgid "Open in %d New Window"
 msgid_plural "Open in %d New Windows"
 msgstr[0] "在 %d 个新窗口中打开"
 
-#: ../thunar/thunar-launcher.c:780
+#: ../thunar/thunar-launcher.c:791
 #, c-format
 msgid "Open the selected directory in %d new window"
 msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] "在 %d 个新窗口中打开选中的目录"
 
-#: ../thunar/thunar-launcher.c:800
+#: ../thunar/thunar-launcher.c:811
 msgid "_Open in New Window"
 msgstr "在新窗口中打开(_O)"
 
-#: ../thunar/thunar-launcher.c:803
+#: ../thunar/thunar-launcher.c:814
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
 msgstr[0] "打开选中的文件"
 
-#: ../thunar/thunar-launcher.c:852
+#: ../thunar/thunar-launcher.c:863
 msgid "_Execute"
 msgstr "执行(_E)"
 
-#: ../thunar/thunar-launcher.c:853
+#: ../thunar/thunar-launcher.c:864
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
 msgstr[0] "执行选中的文件"
 
 #. turn the "Open" action into "Open With DEFAULT"
-#: ../thunar/thunar-launcher.c:859
+#: ../thunar/thunar-launcher.c:870
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "用 “%s” 打开(_O)"
 
-#: ../thunar/thunar-launcher.c:860 ../thunar/thunar-launcher.c:946
+#: ../thunar/thunar-launcher.c:871 ../thunar/thunar-launcher.c:957
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "使用 “%s” 打开选中的文件"
 
-#: ../thunar/thunar-launcher.c:883
+#: ../thunar/thunar-launcher.c:894
 msgid "_Open With Other Application..."
 msgstr "用其它应用程序打开(_O)"
 
-#: ../thunar/thunar-launcher.c:892
+#: ../thunar/thunar-launcher.c:903
 msgid "_Open With Default Applications"
 msgstr "用默认应用程序打开(_O)"
 
-#: ../thunar/thunar-launcher.c:893
+#: ../thunar/thunar-launcher.c:904
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
 msgstr[0] "用默认的应用程序打开选中的文件"
 
-#: ../thunar/thunar-launcher.c:945
+#: ../thunar/thunar-launcher.c:956
 #, c-format
 msgid "Open With \"%s\""
 msgstr "用 “%s” 打开"
 
-#: ../thunar/thunar-launcher.c:1364 ../thunar/thunar-location-entry.c:646
+#: ../thunar/thunar-launcher.c:1375 ../thunar/thunar-location-entry.c:646
 #: ../thunar/thunar-shortcuts-view.c:1307
 #: ../thunar/thunar-shortcuts-view.c:1545 ../thunar/thunar-tree-view.c:1908
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "无法挂载 “%s”"
 
-#: ../thunar/thunar-launcher.c:1480
+#: ../thunar/thunar-launcher.c:1491
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "桌面(创建链接)"
 
-#: ../thunar/thunar-launcher.c:1481
+#: ../thunar/thunar-launcher.c:1492
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "在桌面上为选中的文件创建链接"
 
-#: ../thunar/thunar-launcher.c:1518 ../thunar/thunar-launcher.c:1561
+#: ../thunar/thunar-launcher.c:1529 ../thunar/thunar-launcher.c:1572
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
@@ -1253,9 +1243,7 @@ msgstr "正在卸载设备"
 msgid ""
 "The device \"%s\" is being unmounted by the system. Please do not remove the "
 "media or disconnect the drive"
-msgstr ""
-"系统正在卸载设备 “%s”。请不要移除介质或断开"
-"驱动器。"
+msgstr "系统正在卸载设备 “%s”。请不要移除介质或断开驱动器。"
 
 #: ../thunar/thunar-notify.c:130 ../thunar/thunar-notify.c:248
 msgid "Writing data to device"
@@ -1266,9 +1254,7 @@ msgstr "正在向设备写入数据"
 msgid ""
 "There is data that needs to be written to the device \"%s\" before it can be "
 "removed. Please do not remove the media or disconnect the drive"
-msgstr ""
-"在可以移除设备 “%s” 之前有数据需要写入其中。"
-"请不要移除介质或断开驱动器"
+msgstr "在可以移除设备 “%s” 之前有数据需要写入其中。请不要移除介质或断开驱动器"
 
 #: ../thunar/thunar-notify.c:242
 msgid "Ejecting device"
@@ -1396,8 +1382,8 @@ msgid ""
 "asked again. You can use the preferences dialog to alter your choice "
 "afterwards."
 msgstr ""
-"如果您选中此项，会记住您的选择且下次不再询问。"
-"您可在以后使用首选项对话框改变您的选择。"
+"如果您选中此项，会记住您的选择且下次不再询问。您可在以后使用首选项对话框改变"
+"您的选择。"
 
 #: ../thunar/thunar-permissions-chooser.c:854
 msgid "Unknown file owner"
@@ -1417,8 +1403,7 @@ msgid ""
 "allowed to read the contents of this folder will be allowed to enter the "
 "folder afterwards."
 msgstr ""
-"将重置文件夹权限为相符的状态。以前只有读权限的"
-"用户在此之后将能进入此文件夹。"
+"将重置文件夹权限为相符的状态。以前只有读权限的用户在此之后将能进入此文件夹。"
 
 #: ../thunar/thunar-preferences-dialog.c:192
 msgid "File Manager Preferences"
@@ -1462,8 +1447,7 @@ msgstr "文件夹排列在文件前(_F)"
 
 #: ../thunar/thunar-preferences-dialog.c:249
 msgid "Select this option to list folders before files when you sort a folder."
-msgstr ""
-"选择此项以便您在排列文件夹时将文件夹排列在文件前。"
+msgstr "选择此项以便您在排列文件夹时将文件夹排列在文件前。"
 
 #: ../thunar/thunar-preferences-dialog.c:253
 msgid "_Show thumbnails"
@@ -1473,9 +1457,7 @@ msgstr "显示缩略图(_S)"
 msgid ""
 "Select this option to display previewable files within a folder as "
 "automatically generated thumbnail icons."
-msgstr ""
-"选择此项后，文件夹内可预览的文件将以自动生成的"
-"缩略图图标显示。"
+msgstr "选择此项后，文件夹内可预览的文件将以自动生成的缩略图图标显示。"
 
 #: ../thunar/thunar-preferences-dialog.c:276
 msgid "_Text beside icons"
@@ -1485,9 +1467,7 @@ msgstr "文字在图标旁(_T)"
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
-msgstr ""
-"选择此项后，项目的图标说明文字将在图标旁显示"
-"而不是在图标下显示。"
+msgstr "选择此项后，项目的图标说明文字将在图标旁显示而不是在图标下显示。"
 
 #: ../thunar/thunar-preferences-dialog.c:287
 msgid "Date"
@@ -1557,9 +1537,8 @@ msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties dialog."
 msgstr ""
-"选择此项后，如果在文件夹属性对话框中已定义了"
-"文件夹的徽标，则这些图标徽标会在快捷方式栏里"
-"显示。"
+"选择此项后，如果在文件夹属性对话框中已定义了文件夹的徽标，则这些图标徽标会在"
+"快捷方式栏里显示。"
 
 #: ../thunar/thunar-preferences-dialog.c:372
 msgid "Tree Pane"
@@ -1578,8 +1557,8 @@ msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
 msgstr ""
-"选择此项后，如果在文件夹属性对话框中已定义了"
-"文件夹的徽标，则这些图标徽标会在树形栏里显示。"
+"选择此项后，如果在文件夹属性对话框中已定义了文件夹的徽标，则这些图标徽标会在"
+"树形栏里显示。"
 
 #.
 #. Behavior
@@ -1600,8 +1579,7 @@ msgstr "单击激活项目(_S)"
 msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
-msgstr ""
-"指定鼠标从停在项目上开始到选中项目为止的延时(_E)："
+msgstr "指定鼠标从停在项目上开始到选中项目为止的延时(_E)："
 
 #: ../thunar/thunar-preferences-dialog.c:468
 msgid ""
@@ -1611,10 +1589,9 @@ msgid ""
 "behavior may be useful when single clicks activate items, and you want only "
 "to select the item without activating it."
 msgstr ""
-"启用单击激活后，鼠标指针在项目上停留的时间超过"
-"指定的延时后，会自动选中此项目。您可以通过把滑块"
-"移动至最左端来禁用此行为。此行为在单击激活项目，"
-"且您只想选中项目而不想激活时可能有用。"
+"启用单击激活后，鼠标指针在项目上停留的时间超过指定的延时后，会自动选中此项"
+"目。您可以通过把滑块移动至最左端来禁用此行为。此行为在单击激活项目，且您只想"
+"选中项目而不想激活时可能有用。"
 
 #: ../thunar/thunar-preferences-dialog.c:486
 msgid "Disabled"
@@ -1937,9 +1914,8 @@ msgid ""
 "files, or revert the previously renamed files to their previous names, or "
 "cancel the operation without reverting previous changes."
 msgstr ""
-"您可以选择跳过此文件并继续重命名剩下的文件，或"
-"将已重命名的文件重置为原来的名称，或取消操作而"
-"不重置之前的更改。"
+"您可以选择跳过此文件并继续重命名剩下的文件，或将已重命名的文件重置为原来的名"
+"称，或取消操作而不重置之前的更改。"
 
 #: ../thunar/thunar-renamer-progress.c:192
 msgid "_Revert Changes"
@@ -2062,9 +2038,7 @@ msgstr "删除(_D)"
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
-msgstr ""
-"使用剪切或复制命令将先前选中的文件移动或复制"
-"至选中的文件夹"
+msgstr "使用剪切或复制命令将先前选中的文件移动或复制至选中的文件夹"
 
 #: ../thunar/thunar-standard-view.c:366
 msgid "Select _all Files"
@@ -2200,9 +2174,7 @@ msgstr "正在尝试恢复 “%s”"
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file "
 "\"%s\" from the trash"
-msgstr ""
-"文件夹 “%s” 已经不再存在，但要从回收站中恢复"
-"此文件 “%s” 需要它"
+msgstr "文件夹 “%s” 已经不再存在，但要从回收站中恢复此文件 “%s” 需要它"
 
 #: ../thunar/thunar-transfer-job.c:757
 #, c-format
@@ -2566,8 +2538,7 @@ msgstr "关于模板"
 
 #: ../thunar/thunar-window.c:2202
 msgid "All files in this folder will appear in the \"Create Document\" menu."
-msgstr ""
-"此文件夹下的所有文件都会在 “创建文档” 菜单中出现。"
+msgstr "此文件夹下的所有文件都会在 “创建文档” 菜单中出现。"
 
 #: ../thunar/thunar-window.c:2209
 msgid ""
@@ -2578,12 +2549,11 @@ msgid ""
 "You can then select the entry from the \"Create Document\" menu and a copy "
 "of the document will be created in the directory you are viewing."
 msgstr ""
-"如果您经常创建特定类型的文档，复制一份并放入"
-"此文件夹中。Thunar 会在 “创建文档” 菜单中"
-"为此文档添加一个条目。\n"
+"如果您经常创建特定类型的文档，复制一份并放入此文件夹中。Thunar 会在 “创建文"
+"档” 菜单中为此文档添加一个条目。\n"
 "\n"
-"然后您从 “创建文档” 菜单中选择此条目，就会"
-"在您正在浏览的目录中创建此文档的一个副本。"
+"然后您从 “创建文档” 菜单中选择此条目，就会在您正在浏览的目录中创建此文档的一"
+"个副本。"
 
 #: ../thunar/thunar-window.c:2221
 msgid "Do _not display this message again"
@@ -2662,9 +2632,7 @@ msgstr "描述："
 msgid ""
 "The generic name of the entry, for example \"Web Browser\" in case of "
 "Firefox."
-msgstr ""
-"条目的通用名称，例如对于 Firefox 来说为 "
-"“网络浏览器”。"
+msgstr "条目的通用名称，例如对于 Firefox 来说为 “网络浏览器”。"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:173
 msgid "Command:"
@@ -2691,9 +2659,8 @@ msgid ""
 "Tooltip for the entry, for example \"View sites on the Internet\" in case of "
 "Firefox. Should not be redundant with the name or the description."
 msgstr ""
-"条目的工具提示，比如对于 Firefox 来说为 "
-"“浏览互联网站点”。不要与名称或描述重复以免"
-"显得累赘。"
+"条目的工具提示，比如对于 Firefox 来说为 “浏览互联网站点”。不要与名称或描述重"
+"复以免显得累赘。"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:244
 msgid "Options:"
@@ -2709,8 +2676,8 @@ msgid ""
 "from the file manager or the menu. Not every application supports startup "
 "notification."
 msgstr ""
-"选择此项后，当从文件管理器或菜单中运行命令时"
-"启用启动通知。不是所有应用程序都支持启动通知。"
+"选择此项后，当从文件管理器或菜单中运行命令时启用启动通知。不是所有应用程序都"
+"支持启动通知。"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:258
 msgid "Run in _terminal"
@@ -2815,9 +2782,8 @@ msgid ""
 "with the day. See the documentation of the date utility for additional "
 "information."
 msgstr ""
-"描述插入文件名中的日期和时间部分的格式。比如，"
-"%Y 会用年替换，%m 会用月替换，%d 会用日替换。"
-"参看 date 工具的文档获取额外信息。"
+"描述插入文件名中的日期和时间部分的格式。比如，%Y 会用年替换，%m 会用月替"
+"换，%d 会用日替换。参看 date 工具的文档获取额外信息。"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:243
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:197
@@ -2957,9 +2923,8 @@ msgid ""
 "expression and matched using the Perl-compatible regular expressions (PCRE). "
 "Check the documentation for details about the regular expression syntax."
 msgstr ""
-"如果启用此项，会将此类型当作正则表达并使用 Perl "
-"兼容的正则表达(PCRE)匹配。核对相关文档获取有关"
-"正则表达句法的详细信息。"
+"如果启用此项，会将此类型当作正则表达并使用 Perl 兼容的正则表达(PCRE)匹配。核"
+"对相关文档获取有关正则表达句法的详细信息。"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:231
 msgid "Replace _With:"
@@ -2979,8 +2944,7 @@ msgid ""
 "If you enable this option, the pattern will be searched in a case-sensitive "
 "manner. The default is to use a case-insensitive search."
 msgstr ""
-"如果启用此项，将使用区分大小写的方式搜索。默认"
-"使用不区分大小写方式搜索。"
+"如果启用此项，将使用区分大小写的方式搜索。默认使用不区分大小写方式搜索。"
 
 #. setup a tooltip with the error message
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:610
@@ -3012,9 +2976,8 @@ msgid ""
 "directly, as is, or compress the file before attaching it to an email. It is "
 "highly recommended to compress large files before sending them."
 msgstr ""
-"通过电子邮件发送文件时，您可直接发送此文件，照原样；"
-"也可把文件压缩后作为邮件附件发送。强烈推荐将大文件"
-"压缩后发送。"
+"通过电子邮件发送文件时，您可直接发送此文件，照原样；也可把文件压缩后作为邮件"
+"附件发送。强烈推荐将大文件压缩后发送。"
 
 #: ../plugins/thunar-sendto-email/main.c:213
 #, c-format
@@ -3033,10 +2996,9 @@ msgid ""
 "compressed into a single archive file and attach the archive. It is highly "
 "recommended to send multiple large files as archive."
 msgstr ""
-"通过电子邮件发送多个文件时，您可直接将多个文件作为"
-"邮件附件发送，也可将所有文件压缩为一个归档文件并将"
-"此归档文件作为附件发送。强烈推荐将多个大文件作为归"
-"档文件发送。"
+"通过电子邮件发送多个文件时，您可直接将多个文件作为邮件附件发送，也可将所有文"
+"件压缩为一个归档文件并将此归档文件作为附件发送。强烈推荐将多个大文件作为归档"
+"文件发送。"
 
 #. allocate the progress dialog
 #. setup the label
@@ -3180,9 +3142,7 @@ msgstr "描述(_D)："
 msgid ""
 "The description of the action that will be displayed as tooltip in the "
 "statusbar when selecting the item from the context menu."
-msgstr ""
-"从交互菜单中选择此项目时，动作的描述将在状态栏中"
-"以工具提示显示。"
+msgstr "从交互菜单中选择此项目时，动作的描述将在状态栏中以工具提示显示。"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:167
 msgid "_Command:"
@@ -3197,11 +3157,9 @@ msgid ""
 "if more than one item is selected. Else the action will only be applicable "
 "if exactly one item is selected."
 msgstr ""
-"执行此动作的命令(包含必要的参数)。参看如下命令参数"
-"说明获取支持的参数变量列表，在命令执行时会替换这些"
-"变量。使用大写字母(比如 %F、%D、%N)时，即使选中了"
-"多个项目，此动作也会执行。否则动作只在仅有一个参数"
-"时才会执行。"
+"执行此动作的命令(包含必要的参数)。参看如下命令参数说明获取支持的参数变量列"
+"表，在命令执行时会替换这些变量。使用大写字母(比如 %F、%D、%N)时，即使选中了多"
+"个项目，此动作也会执行。否则动作只在仅有一个参数时才会执行。"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:187
 msgid "Browse the file system to select an application to use for this action."
@@ -3217,9 +3175,8 @@ msgid ""
 "is launched. This is also highly recommended if you have focus stealing "
 "prevention enabled in your window manager."
 msgstr ""
-"启用此项以便在启动动作时显示一等待状态的光标。"
-"如果您在您的窗口管理器中启用了焦点防偷看，则"
-"强烈推荐启用。"
+"启用此项以便在启动动作时显示一等待状态的光标。如果您在您的窗口管理器中启用了"
+"焦点防偷看，则强烈推荐启用。"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:210
 msgid "_Icon:"
@@ -3236,8 +3193,8 @@ msgid ""
 "Click this button to select an icon file that will be displayed in the "
 "context menu in addition to the action name chosen above."
 msgstr ""
-"点击此按钮来选择一图标文件，除上面选择的动作名称"
-"之外，此图标文件也会在交互菜单中显示。"
+"点击此按钮来选择一图标文件，除上面选择的动作名称之外，此图标文件也会在交互菜"
+"单中显示。"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:250
 msgid ""
@@ -3286,9 +3243,8 @@ msgid ""
 "pattern here, the list items must be separated with semicolons (e.g. *.txt;*."
 "doc)."
 msgstr ""
-"输入为选中的文件确定此动作是否应该显示的类型序列。"
-"如果您在此指定了不止一个类型，项目必须用分号隔开"
-"(比如 *.txt;*.doc)。"
+"输入为选中的文件确定此动作是否应该显示的类型序列。如果您在此指定了不止一个类"
+"型，项目必须用分号隔开(比如 *.txt;*.doc)。"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:394
 msgid "Appears if selection contains:"
