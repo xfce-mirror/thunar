@@ -1,4 +1,4 @@
-1.3.x
+1.3.1
 =====
 - Fix crash when trying to thumbnail a file with unknown content type.
 - Fix properties dialog crash with files with unknown content type.
@@ -12,7 +12,7 @@
   in a way that does not break SMB shares (#bug 7774).
   Patches by Ambroz Bizjak and Axel Sommerfeldt.
 - Fix segfaults in case icons are missing or not found (bug #7880).
-- Allow exec bit of MS-DOS executables and MSI to be changed 
+- Allow exec bit of MS-DOS executables and MSI to be changed
   (bug #3545).
 - Prevent falling back to an unexpected locale (bug #4746).
   Patch by Martin Jürgens and Mark Trompell.
@@ -26,6 +26,24 @@
 - Improve sorting of file names that include numbers (bug #5359,
   bug #8022, #4269, #5286).
 - Add a "Skip All" button to the file overwrite dialog (bug #4263).
+- Compress icons and images.
+- Remove the manual.
+- Use 32 instead of 36 pixels for small icons.
+- Show Thunar settings in category.
+- Don't update UI more then fourth per second in deep count job.
+- Fix sorting of applications in chooser dialog.
+- Depend on Gtk 2.20 and Glib 2.24 and drop some workarounds.
+- Fix removing custom application launchers again.
+- Prevent looping in some renamers.
+- Fix segfault when plugin returns a NULL suffix.
+- Remove spec file, rpm build and update libtool.
+- Lowercase the thunar executable and install a Thunar symlink.
+- Make the clipboard persistence (bug #7060).
+- Use glib functions for get/set cwd (bug #7522).
+- Don't interpret file display names as format strings
+- Translation updates (ar, ca, cs, da, de, el, es, eu, fi, fr, gl, he,
+  hr, hu, id, is, it, kk, ko, lt, nl, nn, pl, pt, pt_BR, ro, ru, sk,
+  sv, te, tr, uk, zh_CN, zh_TW).
 
 1.3.0
 =====
@@ -54,7 +72,7 @@
 - Properly try alternative names when creating links (bug #6867).
 - Only show the "Eject Volume" context menu action when the volume is
   present.
-- Translation updates: Arabic, French, Galician, Greek, Romanian, 
+- Translation updates: Arabic, French, Galician, Greek, Romanian,
   Turkish.
 
 1.1.6
@@ -70,7 +88,7 @@
 
 1.1.5
 =====
-- Make .desktop entries installed by Thunar validate against 
+- Make .desktop entries installed by Thunar validate against
   desktop-file-utils 0.16 (bug #6655). Patch by Samuli Suominen.
 - Fix missing instruction to load the sendto model (bug #6762).
 - Fix the sample D-Bus client for the org.xfce.FileManager interface.
@@ -96,14 +114,14 @@
 - Avoid GIO 2.20 function calls.
 - Properly avoid launching the file manager recursively by checking
   the GAppInfo id/name.
-- Translation updates: Hungarian, German, Slovak, 
+- Translation updates: Hungarian, German, Slovak,
   Portuguese (Brazilian), Chinese (China), Greek, Catalan (Valencian),
   Italian, Basque, Spanish (Castilian), Kazakh, Portuguese, Hebrew,
-  Galician, Indonesian, Chinese (Taiwan), Japanese. 
+  Galician, Indonesian, Chinese (Taiwan), Japanese.
 
 1.1.4
 =====
-- Add startup parameter to the D-Bus call in thunar-settings (bug 
+- Add startup parameter to the D-Bus call in thunar-settings (bug
   #6768). This will make thunar-settings start again.
 - Properly hide partitions that are not mountable by the user.
 - Translation updates: Japanese, Finnish.
@@ -119,16 +137,16 @@
   #6167).
 - Replace - with _ in parameter names of the D-Bus API.
 - Do not display shadowed mounts.
-- Provide an eject button for removable and present volumes in the 
+- Provide an eject button for removable and present volumes in the
   side pane (bug #3658).
 - Auto-select previously selected subdirectories when walking through
   the history (bug #5538).
-- Delay applying the file selection until folders have finished 
+- Delay applying the file selection until folders have finished
   loading.
 - Fix broken compilation with -Wl,-z,defs and -Wl,--as-needed.
 - Translation updates: Basque, Chinese (Taiwan), Ukrainian, Galician,
   Portuguese, Catalan (Valencian), Finnish, Italian, Danish, Kazakh,
-  Swedish, Greek, Japanese, Russian, German, Uyghur. 
+  Swedish, Greek, Japanese, Russian, German, Uyghur.
 
 1.1.2
 =====
