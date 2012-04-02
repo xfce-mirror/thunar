@@ -2774,7 +2774,7 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
                   if (G_LIKELY (file != NULL))
                     {
                       /* determine the absolute path to the target directory */
-                      working_directory = g_file_get_uri (thunar_file_get_file (file));
+                      working_directory = thunar_file_dup_uri (file);
 
                       /* prepare the basic part of the command */
                       argv[n++] = "exo-desktop-item-edit";

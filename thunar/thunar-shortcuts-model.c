@@ -1034,7 +1034,7 @@ thunar_shortcuts_model_save (ThunarShortcutsModel *model)
       shortcut = THUNAR_SHORTCUT (lp->data);
       if (shortcut->type == THUNAR_SHORTCUT_USER_DEFINED)
         {
-          uri = g_file_get_uri (thunar_file_get_file (shortcut->file));
+          uri = thunar_file_dup_uri (shortcut->file);
           if (G_LIKELY (shortcut->name != NULL))
             fprintf (fp, "%s %s\n", uri, shortcut->name);
           else

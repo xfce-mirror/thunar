@@ -326,7 +326,7 @@ thunar_file_info_get_name (ThunarxFileInfo *file_info)
 static gchar*
 thunar_file_info_get_uri (ThunarxFileInfo *file_info)
 {
-  return g_file_get_uri (THUNAR_FILE (file_info)->gfile);
+  return thunar_file_dup_uri (file_info);
 }
 
 
@@ -352,7 +352,7 @@ thunar_file_info_get_parent_uri (ThunarxFileInfo *file_info)
 static gchar*
 thunar_file_info_get_uri_scheme (ThunarxFileInfo *file_info)
 {
-  return g_file_get_uri_scheme (THUNAR_FILE (file_info)->gfile);
+  return thunar_file_dup_uri (file_info);
 }
 
 
@@ -877,11 +877,11 @@ thunar_file_load (ThunarFile   *file,
             {
               uri = g_file_get_path (file->gfile);
               if (uri == NULL)
-                uri = g_file_get_uri (file->gfile);
+                uri = thunar_file_dup_uri (file);
             }
           else
             {
-              uri = g_file_get_uri (file->gfile);
+              uri = thunar_file_dup_uri (file);
             }
 
           file->display_name = g_filename_display_name (uri);
@@ -894,7 +894,7 @@ thunar_file_load (ThunarFile   *file,
     (file->flags & ~THUNAR_FILE_THUMB_STATE_MASK) | THUNAR_FILE_THUMB_STATE_UNKNOWN;
 
   /* determine thumbnail path */
-  uri = g_file_get_uri (file->gfile);
+  uri = thunar_file_dup_uri (file);
   md5_hash = g_compute_checksum_for_string (G_CHECKSUM_MD5, uri, -1);
   base_name = g_strdup_printf ("%s.png", md5_hash);
   file->thumbnail_path = g_build_filename (xfce_get_homedir (), ".thumbnails", 
