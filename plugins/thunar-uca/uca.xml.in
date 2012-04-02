@@ -14,6 +14,8 @@
   <!ELEMENT description (#PCDATA)>
   <!ATTLIST description xml:lang CDATA #IMPLIED>
 
+  <!ELEMENT startup-notify EMPTY>
+
   <!ELEMENT directories EMPTY>
   <!ELEMENT audio-files EMPTY>
   <!ELEMENT image-files EMPTY>
@@ -39,7 +41,7 @@
     <_name>Open Terminal Here</_name>
     <command>exo-open --working-directory %f --launch TerminalEmulator</command>
     <_description>Example for a custom action</_description>
-    
+    <startup-notify/>
     <directories/>
   </action>
 
