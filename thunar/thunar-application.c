@@ -56,6 +56,7 @@
 #include <thunar/thunar-renamer-dialog.h>
 #include <thunar/thunar-thumbnail-cache.h>
 #include <thunar/thunar-util.h>
+#include <thunar/thunar-view.h>
 
 
 
@@ -91,6 +92,8 @@ static void           thunar_application_collect_and_launch     (ThunarApplicati
                                                                  GList                  *source_file_list,
                                                                  GFile                  *target_file,
                                                                  GClosure               *new_files_closure);
+static void           thunar_application_launch_finished        (ThunarJob              *job,
+                                                                 ThunarView             *view);
 static void           thunar_application_launch                 (ThunarApplication      *application,
                                                                  gpointer                parent,
                                                                  const gchar            *icon_name,
@@ -403,6 +406,42 @@ thunar_application_collect_and_launch (ThunarApplication *application,
 
 
 static void
+thunar_application_launch_finished_too_late (gpointer  user_data,
+                                             GObject  *where_the_object_was)
+{
+  ThunarJob *job = THUNAR_JOB (user_data);
+
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+  _thunar_return_if_fail (THUNAR_IS_VIEW (where_the_object_was));
+
+  /* remove the finished signal */
+  g_signal_handlers_disconnect_by_func (G_OBJECT (job),
+                                        G_CALLBACK (thunar_application_launch_finished),
+                                        where_the_object_was);
+}
+
+
+
+static void
+thunar_application_launch_finished (ThunarJob  *job,
+                                    ThunarView *view)
+{
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+  _thunar_return_if_fail (THUNAR_IS_VIEW (view));
+
+  /* remove the view weak ref */
+  g_object_weak_unref (G_OBJECT (view),
+                       thunar_application_launch_finished_too_late,
+                       job);
+
+  /* the job completed, refresh the interface
+   * directly to make it feel snappy */
+  thunar_view_reload (view);
+}
+
+
+
+static void
 thunar_application_launch (ThunarApplication *application,
                            gpointer           parent,
                            const gchar       *icon_name,
@@ -423,7 +462,21 @@ thunar_application_launch (ThunarApplication *application,
 
   /* try to allocate a new job for the operation */
   job = (*launcher) (source_file_list, target_file_list);
-    
+
+  if (THUNAR_IS_VIEW (parent))
+    {
+      /* connect a callback to instantly refresh the thunar view */
+      g_signal_connect (G_OBJECT (job), "finished",
+                        G_CALLBACK (thunar_application_launch_finished),
+                        parent);
+
+      /* watch destruction of the parent, so we disconnect before the
+       * job is finished */
+      g_object_weak_ref (G_OBJECT (parent),
+                         thunar_application_launch_finished_too_late,
+                         job);
+    }
+
   /* connect the "new-files" closure (if any) */
   if (G_LIKELY (new_files_closure != NULL))
     g_signal_connect_closure (job, "new-files", new_files_closure, FALSE);
