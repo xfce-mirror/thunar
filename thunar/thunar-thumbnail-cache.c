@@ -331,8 +331,8 @@ thunar_thumbnail_cache_process_move_queue (ThunarThumbnailCache *cache)
                                      (const gchar **)target_uris);
 
   /* free the URI arrays */
-  g_free (source_uris);
-  g_free (target_uris);
+  g_strfreev (source_uris);
+  g_strfreev (target_uris);
 
   /* release the move queue lists */
   g_list_free (cache->move_source_queue);
@@ -398,8 +398,8 @@ thunar_thumbnail_cache_process_copy_queue (ThunarThumbnailCache *cache)
                                      (const gchar **)target_uris);
 
   /* free the URI arrays */
-  g_free (source_uris);
-  g_free (target_uris);
+  g_strfreev (source_uris);
+  g_strfreev (target_uris);
 
   /* release the copy queue lists */
   g_list_free (cache->copy_source_queue);
@@ -453,7 +453,7 @@ thunar_thumbnail_cache_process_delete_queue (ThunarThumbnailCache *cache)
   thunar_thumbnail_cache_delete_async (cache, (const gchar **)uris);
 
   /* free the URI array */
-  g_free (uris);
+  g_strfreev (uris);
 
   /* release the delete queue list */
   g_list_free (cache->delete_queue);

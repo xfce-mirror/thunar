@@ -858,6 +858,7 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
 
       /* free mime hints array */
       g_free (mime_hints);
+      g_strfreev (uris);
 
       /* free the list of supported files */
       g_list_free (supported_files);
