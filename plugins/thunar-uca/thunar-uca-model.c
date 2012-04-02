@@ -1339,19 +1339,19 @@ thunar_uca_model_save (ThunarUcaModel *uca_model,
   fp = fdopen (fd, "w");
 
   /* write the header */
-  fprintf (fp, "<?xml encoding=\"UTF-8\" version=\"1.0\"?>\n<actions>");
+  fprintf (fp, "<?xml encoding=\"UTF-8\" version=\"1.0\"?>\n<actions>\n");
 
   /* write the model items */
   for (lp = uca_model->items; lp != NULL; lp = lp->next)
     {
       item = (ThunarUcaModelItem *) lp->data;
-      fprintf (fp, "<action>");
+      fprintf (fp, "<action>\n");
       patterns = g_strjoinv (";", item->patterns);
-      escaped = g_markup_printf_escaped ("<icon>%s</icon>"
-                                         "<name>%s</name>"
-                                         "<command>%s</command>"
-                                         "<description>%s</description>"
-                                         "<patterns>%s</patterns>",
+      escaped = g_markup_printf_escaped ("\t<icon>%s</icon>\n"
+                                         "\t<name>%s</name>\n"
+                                         "\t<command>%s</command>\n"
+                                         "\t<description>%s</description>\n"
+                                         "\t<patterns>%s</patterns>\n",
                                          (item->icon != NULL) ? item->icon : "",
                                          (item->name != NULL) ? item->name : "",
                                          (item->command != NULL) ? item->command : "",
@@ -1361,20 +1361,20 @@ thunar_uca_model_save (ThunarUcaModel *uca_model,
       g_free (patterns);
       g_free (escaped);
       if (item->startup_notify)
-        fprintf (fp, "<startup-notify/>");
+        fprintf (fp, "\t<startup-notify/>\n");
       if ((item->types & THUNAR_UCA_TYPE_DIRECTORIES) != 0)
-        fprintf (fp, "<directories/>");
+        fprintf (fp, "\t<directories/>\n");
       if ((item->types & THUNAR_UCA_TYPE_AUDIO_FILES) != 0)
-        fprintf (fp, "<audio-files/>");
+        fprintf (fp, "\t<audio-files/>\n");
       if ((item->types & THUNAR_UCA_TYPE_IMAGE_FILES) != 0)
-        fprintf (fp, "<image-files/>");
+        fprintf (fp, "\t<image-files/>\n");
       if ((item->types & THUNAR_UCA_TYPE_OTHER_FILES) != 0)
-        fprintf (fp, "<other-files/>");
+        fprintf (fp, "\t<other-files/>\n");
       if ((item->types & THUNAR_UCA_TYPE_TEXT_FILES) != 0)
-        fprintf (fp, "<text-files/>");
+        fprintf (fp, "\t<text-files/>\n");
       if ((item->types & THUNAR_UCA_TYPE_VIDEO_FILES) != 0)
-        fprintf (fp, "<video-files/>");
-      fprintf (fp, "</action>");
+        fprintf (fp, "\t<video-files/>\n");
+      fprintf (fp, "</action>\n");
     }
 
   /* write the footer and close the tmp file */
