@@ -489,14 +489,18 @@ thunar_thumbnail_cache_process_cleanup_queue (ThunarThumbnailCache *cache)
   /* allocate a string array for the URIs */
   uris = g_new0 (gchar *, n_uris + 1);
 
+#ifndef NDEBUG
   g_debug ("cleanup:");
+#endif
 
   /* fill URI array with file URIs from the cleanup queue */
   for (lp = g_list_last (cache->cleanup_queue), n = 0; lp != NULL; lp = lp->prev, ++n)
     {
       uris[n] = g_file_get_uri (lp->data);
 
+#ifndef NDEBUG
       g_debug ("  %s", uris[n]);
+#endif
 
       /* release the file object */
       g_object_unref (lp->data);
@@ -509,7 +513,7 @@ thunar_thumbnail_cache_process_cleanup_queue (ThunarThumbnailCache *cache)
   thunar_thumbnail_cache_cleanup_async (cache, (const gchar *const *)uris);
 
   /* free the URI array */
-  g_free (uris);
+  g_strfreev (uris);
 
   /* release the cleanup queue list */
   g_list_free (cache->cleanup_queue);
