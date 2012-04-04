@@ -125,8 +125,6 @@ struct _ThunarStandardView
   ThunarListModel           *model;
   gchar                     *statusbar_text;
 
-  GList                     *selected_files;
-
   GtkActionGroup            *action_group;
   GtkUIManager              *ui_manager;
   guint                      ui_merge_id;

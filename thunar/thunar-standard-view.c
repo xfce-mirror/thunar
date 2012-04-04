@@ -794,9 +794,6 @@ thunar_standard_view_finalize (GObject *object)
   g_signal_handlers_disconnect_matched (G_OBJECT (standard_view->model), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, standard_view);
   g_object_unref (G_OBJECT (standard_view->model));
   
-  /* release our list of currently selected files */
-  thunar_file_list_free (standard_view->selected_files);
-
   /* free the statusbar text (if any) */
   g_free (standard_view->statusbar_text);
 
@@ -997,7 +994,7 @@ thunar_standard_view_expose_event (GtkWidget      *widget,
 static GList*
 thunar_standard_view_get_selected_files (ThunarComponent *component)
 {
-  return THUNAR_STANDARD_VIEW (component)->selected_files;
+  return THUNAR_STANDARD_VIEW (component)->priv->selected_files;
 }
 
 
@@ -1985,17 +1982,17 @@ thunar_standard_view_action_properties (GtkAction          *action,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* check if no files are currently selected */
-  if (standard_view->selected_files == NULL)
+  if (standard_view->priv->selected_files == NULL)
     {
       /* if we don't have any files selected, we just popup
        * the properties dialog for the current folder.
        */
       file = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
     }
-  else if (g_list_length (standard_view->selected_files) == 1)
+  else if (g_list_length (standard_view->priv->selected_files) == 1)
     {
       /* popup the properties dialog for the one and only selected file */
-      file = THUNAR_FILE (standard_view->selected_files->data);
+      file = THUNAR_FILE (standard_view->priv->selected_files->data);
     }
 
   /* popup the properties dialog if we have exactly one file */
@@ -2024,7 +2021,7 @@ thunar_standard_view_action_cut (GtkAction          *action,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (standard_view->clipboard));
 
-  thunar_clipboard_manager_cut_files (standard_view->clipboard, standard_view->selected_files);
+  thunar_clipboard_manager_cut_files (standard_view->clipboard, standard_view->priv->selected_files);
 }
 
 
@@ -2037,7 +2034,7 @@ thunar_standard_view_action_copy (GtkAction          *action,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (standard_view->clipboard));
 
-  thunar_clipboard_manager_copy_files (standard_view->clipboard, standard_view->selected_files);
+  thunar_clipboard_manager_copy_files (standard_view->clipboard, standard_view->priv->selected_files);
 }
 
 
@@ -2072,7 +2069,7 @@ thunar_standard_view_action_delete (GtkAction          *action,
 
   /* delete the selected files */
   application = thunar_application_get ();
-  thunar_application_unlink_files (application, GTK_WIDGET (standard_view), standard_view->selected_files, FALSE);
+  thunar_application_unlink_files (application, GTK_WIDGET (standard_view), standard_view->priv->selected_files, FALSE);
   g_object_unref (G_OBJECT (application));
 }
 
@@ -2088,7 +2085,7 @@ thunar_standard_view_action_paste_into_folder (GtkAction          *action,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* determine the first selected file and verify that it's a folder */
-  file = g_list_nth_data (standard_view->selected_files, 0);
+  file = g_list_nth_data (standard_view->priv->selected_files, 0);
   if (G_LIKELY (file != NULL && thunar_file_is_directory (file)))
     thunar_clipboard_manager_paste_files (standard_view->clipboard, thunar_file_get_file (file), GTK_WIDGET (standard_view), NULL);
 }
@@ -2188,7 +2185,7 @@ thunar_standard_view_action_duplicate (GtkAction          *action,
   if (G_LIKELY (current_directory != NULL))
     {
       /* determine the selected files for the view */
-      selected_files = thunar_file_list_to_thunar_g_file_list (standard_view->selected_files);
+      selected_files = thunar_file_list_to_thunar_g_file_list (standard_view->priv->selected_files);
       if (G_LIKELY (selected_files != NULL))
         {
           /* copy the selected files into the current directory, which effectively
@@ -2225,7 +2222,7 @@ thunar_standard_view_action_make_link (GtkAction          *action,
   if (G_LIKELY (current_directory != NULL))
     {
       /* determine the selected paths for the view */
-      selected_files = thunar_file_list_to_thunar_g_file_list (standard_view->selected_files);
+      selected_files = thunar_file_list_to_thunar_g_file_list (standard_view->priv->selected_files);
       if (G_LIKELY (selected_files != NULL))
         {
           /* link the selected files into the current directory, which effectively
@@ -2308,13 +2305,13 @@ thunar_standard_view_action_rename (GtkAction          *action,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* start renaming if we have exactly one selected file */
-  if (G_LIKELY (standard_view->selected_files != NULL && standard_view->selected_files->next == NULL))
+  if (G_LIKELY (standard_view->priv->selected_files != NULL && standard_view->priv->selected_files->next == NULL))
     {
       /* get the window */
       window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
 
       /* get the file */
-      file = THUNAR_FILE (standard_view->selected_files->data);
+      file = THUNAR_FILE (standard_view->priv->selected_files->data);
 
       /* run the rename dialog */
       job = thunar_dialogs_show_rename_file (GTK_WINDOW (window), file);
@@ -2324,13 +2321,13 @@ thunar_standard_view_action_rename (GtkAction          *action,
           g_signal_connect (job, "finished", G_CALLBACK (thunar_standard_view_rename_finished), standard_view);
         }
     }
-  else if (g_list_length (standard_view->selected_files) > 1)
+  else if (g_list_length (standard_view->priv->selected_files) > 1)
     {
       /* determine the current directory of the view */
       file = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
 
       /* display the bulk rename dialog */
-      thunar_show_renamer_dialog (GTK_WIDGET (standard_view), file, standard_view->selected_files, FALSE, NULL);
+      thunar_show_renamer_dialog (GTK_WIDGET (standard_view), file, standard_view->priv->selected_files, FALSE, NULL);
     }
 }
 
@@ -2347,7 +2344,7 @@ thunar_standard_view_action_restore (GtkAction          *action,
 
   /* restore the selected files */
   application = thunar_application_get ();
-  thunar_application_restore_files (application, GTK_WIDGET (standard_view), standard_view->selected_files,
+  thunar_application_restore_files (application, GTK_WIDGET (standard_view), standard_view->priv->selected_files,
                                     thunar_standard_view_new_files_closure (standard_view));
   g_object_unref (G_OBJECT (application));
 }
@@ -2996,7 +2993,7 @@ thunar_standard_view_drag_begin (GtkWidget          *view,
   thunar_g_file_list_free (standard_view->priv->drag_g_file_list);
 
   /* query the list of selected URIs */
-  standard_view->priv->drag_g_file_list = thunar_file_list_to_thunar_g_file_list (standard_view->selected_files);
+  standard_view->priv->drag_g_file_list = thunar_file_list_to_thunar_g_file_list (standard_view->priv->selected_files);
   if (G_LIKELY (standard_view->priv->drag_g_file_list != NULL))
     {
       /* determine the first selected file */
@@ -3067,7 +3064,7 @@ thunar_standard_view_row_deleted (ThunarListModel    *model,
                                   GtkTreePath        *path,
                                   ThunarStandardView *standard_view)
 {
-  GtkTreePath *path_copy = NULL;
+  GtkTreePath *path_copy;
   GList       *selected_items;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
@@ -3093,9 +3090,14 @@ thunar_standard_view_row_deleted (ThunarListModel    *model,
    * been removed. If the first row is removed, select the first row after the
    * removal, if any other row is removed, select the row before that one */
   if (G_LIKELY (gtk_tree_path_prev (path_copy)))
-    standard_view->priv->selection_before_delete = gtk_tree_path_copy (path_copy);
+    {
+      standard_view->priv->selection_before_delete = path_copy;
+    }
   else
-    standard_view->priv->selection_before_delete = gtk_tree_path_copy (path_copy);
+    {
+      standard_view->priv->selection_before_delete = gtk_tree_path_new_first ();
+      gtk_tree_path_free (path_copy);
+    }
 
   /* Free path list */
   g_list_foreach (selected_items, (GFunc) gtk_tree_path_free, NULL);
@@ -3641,7 +3643,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
     }
 
   /* release the previously selected files */
-  thunar_file_list_free (standard_view->selected_files);
+  thunar_file_list_free (standard_view->priv->selected_files);
 
   /* determine the new list of selected files (replacing GtkTreePath's with ThunarFile's) */
   selected_files = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
@@ -3658,7 +3660,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
     }
 
   /* and setup the new selected files list */
-  standard_view->selected_files = selected_files;
+  standard_view->priv->selected_files = selected_files;
 
   /* enable "Restore" if we have only trashed files (atleast one file) */
   for (lp = selected_files, restorable = (lp != NULL); lp != NULL; lp = lp->next)
