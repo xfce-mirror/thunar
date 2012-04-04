@@ -44,6 +44,7 @@ enum
 
 
 
+static void              thunar_progress_view_finalize     (GObject            *object);
 static void              thunar_progress_view_dispose      (GObject            *object);
 static void              thunar_progress_view_get_property (GObject            *object,
                                                             guint               prop_id,
@@ -109,6 +110,7 @@ thunar_progress_view_class_init (ThunarProgressViewClass *klass)
   GObjectClass *gobject_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = thunar_progress_view_finalize;
   gobject_class->dispose = thunar_progress_view_dispose;
   gobject_class->get_property = thunar_progress_view_get_property;
   gobject_class->set_property = thunar_progress_view_set_property;
@@ -222,6 +224,19 @@ thunar_progress_view_init (ThunarProgressView *view)
 
   /* connect the view title to the action label */
   exo_binding_new (G_OBJECT (view), "title", G_OBJECT (label), "label");
+}
+
+
+
+static void
+thunar_progress_view_finalize (GObject *object)
+{
+  ThunarProgressView *view = THUNAR_PROGRESS_VIEW (object);
+
+  g_free (view->icon_name);
+  g_free (view->title);
+
+  (*G_OBJECT_CLASS (thunar_progress_view_parent_class)->finalize) (object);
 }
 
 
