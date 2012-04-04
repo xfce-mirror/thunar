@@ -331,6 +331,8 @@ thunarx_provider_factory_list_providers (ThunarxProviderFactory *factory,
       for (lp = modules; lp != NULL; lp = lp->next)
         if (!thunarx_provider_plugin_get_resident (lp->data))
           g_type_module_unuse (G_TYPE_MODULE (lp->data));
+
+      g_list_free (modules);
     }
 
   return providers;
