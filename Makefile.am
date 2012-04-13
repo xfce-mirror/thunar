@@ -50,7 +50,7 @@ thunar_scripts_SCRIPTS =						\
 ThunarBulkRename: ThunarBulkRename.in Makefile
 	$(AM_V_GEN) (							\
 		rm -f ThunarBulkRename.gen ThunarBulkRename		\
-		&& sed -e "s,\@bindir\@,$(bindir),g" 			\
+		&& $(SED) -e "s,\@bindir\@,$(bindir),g" 			\
 			< $(srcdir)/ThunarBulkRename.in			\
 			> ThunarBulkRename.gen				\
 		&& mv ThunarBulkRename.gen ThunarBulkRename 		\
@@ -63,7 +63,7 @@ desktop_in_in_files = 							\
 	Thunar-folder-handler.desktop.in.in
 desktop_in_files = $(desktop_in_in_files:.desktop.in.in=.desktop.in)
 %.desktop.in: %.desktop.in.in
-	$(AM_V_GEN) sed -e "s,\@HELPERDIR\@,$(HELPER_PATH_PREFIX),g" < $< > $@
+	$(AM_V_GEN) $(SED) -e "s,\@HELPERDIR\@,$(HELPER_PATH_PREFIX),g" < $< > $@
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
 
@@ -72,7 +72,7 @@ servicedir = $(datadir)/dbus-1/services
 service_in_files = org.xfce.FileManager.service.in org.xfce.Thunar.service.in
 service_DATA = $(service_in_files:.service.in=.service)
 %.service: %.service.in
-	$(AM_V_GEN) sed -e "s,\@bindir\@,$(bindir),g" < $< > $@
+	$(AM_V_GEN) $(SED) -e "s,\@bindir\@,$(bindir),g" < $< > $@
 endif
 
 EXTRA_DIST =								\

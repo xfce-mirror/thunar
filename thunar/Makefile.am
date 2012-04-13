@@ -345,7 +345,7 @@ thunar-thumbnailer-proxy.h: $(srcdir)/thunar-thumbnailer-dbus.xml Makefile
 	$(AM_V_GEN) ( \
 		dbus-binding-tool --mode=glib-client \
 			$(srcdir)/thunar-thumbnailer-dbus.xml > thunar-thumbnailer-proxy.h \
-		&& sed -i -e 's/org_freedesktop_thumbnails_Thumbnailer1/thunar_thumbnailer_proxy/g' \
+		&& $(SED) -i -e 's/org_freedesktop_thumbnails_Thumbnailer1/thunar_thumbnailer_proxy/g' \
 			thunar-thumbnailer-proxy.h \
 	)
 
@@ -353,7 +353,7 @@ thunar-thumbnail-cache-proxy.h: $(srcdir)/thunar-thumbnail-cache-dbus.xml Makefi
 	$(AM_V_GEN) ( \
 		dbus-binding-tool --mode=glib-client \
 			$(srcdir)/thunar-thumbnail-cache-dbus.xml > thunar-thumbnail-cache-proxy.h \
-		&& sed -i -e 's/org_freedesktop_thumbnails_Cache1/thunar_thumbnail_cache_proxy/g' \
+		&& $(SED) -i -e 's/org_freedesktop_thumbnails_Cache1/thunar_thumbnail_cache_proxy/g' \
 			thunar-thumbnail-cache-proxy.h \
 	)
 endif
