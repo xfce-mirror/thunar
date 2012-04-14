@@ -50,6 +50,7 @@ libthunarx_2_la_CFLAGS =						\
 	$(GLIB_CFLAGS)							\
 	$(GIO_CFLAGS)							\
 	$(GTK_CFLAGS)							\
+	$(GMODULE_CFLAGS)						\
 	$(PLATFORM_CFLAGS)
 
 libthunarx_2_la_LDFLAGS =						\
@@ -60,6 +61,7 @@ libthunarx_2_la_LDFLAGS =						\
 
 libthunarx_2_la_LIBADD =						\
 	$(GLIB_LIBS)							\
+	$(GMODULE_LIBS)							\
 	$(GIO_LIBS)							\
 	$(GTK_LIBS)
 
