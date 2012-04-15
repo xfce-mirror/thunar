@@ -2399,9 +2399,10 @@ static void
 thunar_window_current_directory_changed (ThunarFile   *current_directory,
                                          ThunarWindow *window)
 {
-  GtkAction *action;
-  GdkPixbuf *icon;
-  gchar     *title;
+  GtkIconTheme *icon_theme;
+  GtkAction    *action;
+  gchar        *icon_name;
+  gchar        *title;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_IS_FILE (current_directory));
@@ -2418,12 +2419,12 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
   g_free (title);
 
   /* set window icon */
-  icon = thunar_icon_factory_load_file_icon (window->icon_factory, current_directory, THUNAR_FILE_ICON_STATE_DEFAULT, 48);
-  if (G_LIKELY (icon != NULL))
-    {
-      gtk_window_set_icon (GTK_WINDOW (window), icon);
-      g_object_unref (G_OBJECT (icon));
-    }
+  icon_theme = gtk_icon_theme_get_default ();
+  icon_name = thunar_file_get_icon_name (current_directory,
+                                         THUNAR_FILE_ICON_STATE_DEFAULT,
+                                         icon_theme);
+  gtk_window_set_icon_name (GTK_WINDOW (window), icon_name);
+  g_free (icon_name);
 }
 
 
