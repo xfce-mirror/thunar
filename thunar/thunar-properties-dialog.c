@@ -996,7 +996,11 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   if (thunar_file_is_directory (dialog->file) 
       && thunar_file_get_free_space (dialog->file, &size))
     {
+#if GLIB_CHECK_VERSION (2, 30, 0)
+      size_string = g_format_size (size);
+#else
       size_string = g_format_size_for_display (size);
+#endif
       gtk_label_set_text (GTK_LABEL (dialog->freespace_label), size_string);
       gtk_widget_show (dialog->freespace_label);
       g_free (size_string);
