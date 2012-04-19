@@ -141,6 +141,7 @@ G_DEFINE_TYPE_WITH_CODE (ThunarFile, thunar_file, G_TYPE_OBJECT,
 
 
 #ifdef G_ENABLE_DEBUG
+#ifdef HAVE_ATEXIT
 static gboolean thunar_file_atexit_registered = FALSE;
 
 static void
@@ -176,6 +177,7 @@ thunar_file_atexit (void)
   G_UNLOCK (file_cache_mutex);
 }
 #endif
+#endif
 
 
 
@@ -185,11 +187,13 @@ thunar_file_class_init (ThunarFileClass *klass)
   GObjectClass *gobject_class;
 
 #ifdef G_ENABLE_DEBUG
+#ifdef HAVE_ATEXIT
   if (G_UNLIKELY (!thunar_file_atexit_registered))
     {
-      g_atexit (thunar_file_atexit);
+      atexit ((void (*)(void)) thunar_file_atexit);
       thunar_file_atexit_registered = TRUE;
     }
+#endif
 #endif
 
   /* pre-allocate the required quarks */
