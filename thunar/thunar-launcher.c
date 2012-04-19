@@ -1426,6 +1426,8 @@ thunar_launcher_action_sendto_volume (GtkAction      *action,
       /* try to mount the volume and later start sending the files */
       g_volume_mount (volume, G_MOUNT_MOUNT_NONE, mount_operation, NULL,
                       thunar_launcher_sendto_mount_finish, data);
+
+      g_object_unref (mount_operation);
     }
   else
     {
