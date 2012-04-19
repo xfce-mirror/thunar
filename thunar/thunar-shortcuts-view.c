@@ -1401,7 +1401,7 @@ thunar_shortcuts_view_eject_finish (GObject      *object,
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
 
   /* check if there was an error */
-  if (!g_volume_eject_finish (volume, result, &error))
+  if (!g_volume_eject_with_operation_finish (volume, result, &error))
     {
       /* ignore GIO errors already handled */
       if (error->domain != G_IO_ERROR || error->code != G_IO_ERROR_FAILED_HANDLED)
@@ -1442,7 +1442,7 @@ thunar_shortcuts_view_unmount_finish (GObject      *object,
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
 
   /* check if there was an error */
-  if (!g_mount_unmount_finish (mount, result, &error))
+  if (!g_mount_unmount_with_operation_finish (mount, result, &error))
     {
       /* ignore GIO errors already handled */
       if (error->domain != G_IO_ERROR || error->code != G_IO_ERROR_FAILED_HANDLED)
@@ -1475,6 +1475,8 @@ thunar_shortcuts_view_eject (ThunarShortcutsView *view)
   GtkTreeIter       iter;
   GVolume          *volume;
   GMount           *mount;
+  GMountOperation  *mount_operation;
+  GtkWidget        *window;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
 
@@ -1486,6 +1488,10 @@ thunar_shortcuts_view_eject (ThunarShortcutsView *view)
       gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME, &volume, -1);
       if (G_UNLIKELY (volume != NULL))
         {
+          /* prepare a mount operation */
+          window = gtk_widget_get_toplevel (GTK_WIDGET (view));
+          mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
+
           /* determine what the appropriate method is: eject or unmount */
           if (g_volume_can_eject (volume))
             {
@@ -1494,9 +1500,9 @@ thunar_shortcuts_view_eject (ThunarShortcutsView *view)
 #endif
 
               /* try to to eject the volume asynchronously */
-              g_volume_eject (volume, G_MOUNT_UNMOUNT_NONE, NULL, 
-                              thunar_shortcuts_view_eject_finish, 
-                              g_object_ref (view));
+              g_volume_eject_with_operation (volume, G_MOUNT_UNMOUNT_NONE, mount_operation, NULL,
+                                             thunar_shortcuts_view_eject_finish,
+                                             g_object_ref (view));
             }
           else
             {
@@ -1509,9 +1515,9 @@ thunar_shortcuts_view_eject (ThunarShortcutsView *view)
 #endif
 
                   /* the volume is mounted, try to unmount the mount */
-                  g_mount_unmount (mount, G_MOUNT_UNMOUNT_NONE, NULL,
-                                   thunar_shortcuts_view_unmount_finish, 
-                                   g_object_ref (view));
+                  g_mount_unmount_with_operation (mount, G_MOUNT_UNMOUNT_NONE, mount_operation, NULL,
+                                                  thunar_shortcuts_view_unmount_finish,
+                                                  g_object_ref (view));
 
                   /* release the mount */
                   g_object_unref (mount);
@@ -1520,6 +1526,7 @@ thunar_shortcuts_view_eject (ThunarShortcutsView *view)
 
           /* cleanup */
           g_object_unref (volume);
+          g_object_unref (mount_operation);
         }
     }
 }

@@ -1736,7 +1736,7 @@ thunar_tree_view_action_eject_finish (GObject      *object,
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
   /* check if there was an error */
-  if (!g_volume_eject_finish (volume, result, &error))
+  if (!g_volume_eject_with_operation_finish (volume, result, &error))
     {
       /* ignore GIO errors already handled */
       if (error->domain != G_IO_ERROR || error->code != G_IO_ERROR_FAILED_HANDLED)
@@ -1777,7 +1777,7 @@ thunar_tree_view_action_unmount_finish (GObject      *object,
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
   /* check if there was an error */
-  if (!g_mount_unmount_finish (mount, result, &error))
+  if (!g_mount_unmount_with_operation_finish (mount, result, &error))
     {
       /* ignore GIO errors already handled */
       if (error->domain != G_IO_ERROR || error->code != G_IO_ERROR_FAILED_HANDLED)
@@ -1805,8 +1805,10 @@ thunar_tree_view_action_unmount_finish (GObject      *object,
 static void
 thunar_tree_view_action_eject (ThunarTreeView *view)
 {
-  GVolume *volume;
-  GMount  *mount;
+  GVolume         *volume;
+  GMount          *mount;
+  GMountOperation *mount_operation;
+  GtkWidget       *window;
 
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
@@ -1814,6 +1816,10 @@ thunar_tree_view_action_eject (ThunarTreeView *view)
   volume = thunar_tree_view_get_selected_volume (view);
   if (G_LIKELY (volume != NULL))
     {
+      /* prepare a mount operation */
+      window = gtk_widget_get_toplevel (GTK_WIDGET (view));
+      mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
+
       /* determine what the appropriate method is: eject or unmount */
       if (g_volume_can_eject (volume))
         {
@@ -1822,9 +1828,9 @@ thunar_tree_view_action_eject (ThunarTreeView *view)
 #endif
 
           /* try to to eject the volume asynchronously */
-          g_volume_eject (volume, G_MOUNT_UNMOUNT_NONE, NULL, 
-                          thunar_tree_view_action_eject_finish, 
-                          g_object_ref (view));
+          g_volume_eject_with_operation (volume, G_MOUNT_UNMOUNT_NONE, mount_operation, NULL,
+                                         thunar_tree_view_action_eject_finish,
+                                         g_object_ref (view));
         }
       else
         {
@@ -1837,9 +1843,9 @@ thunar_tree_view_action_eject (ThunarTreeView *view)
 #endif
 
               /* the volume is mounted, try to unmount the mount */
-              g_mount_unmount (mount, G_MOUNT_UNMOUNT_NONE, NULL,
-                               thunar_tree_view_action_unmount_finish, 
-                               g_object_ref (view));
+              g_mount_unmount_with_operation (mount, G_MOUNT_UNMOUNT_NONE, mount_operation, NULL,
+                                              thunar_tree_view_action_unmount_finish,
+                                              g_object_ref (view));
 
               /* release the mount */
               g_object_unref (mount);
@@ -1848,6 +1854,7 @@ thunar_tree_view_action_eject (ThunarTreeView *view)
 
       /* release the volume */
       g_object_unref (volume);
+      g_object_unref (mount_operation);
     }
 }
 
