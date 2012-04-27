@@ -356,7 +356,7 @@ thunar_file_info_get_parent_uri (ThunarxFileInfo *file_info)
 static gchar*
 thunar_file_info_get_uri_scheme (ThunarxFileInfo *file_info)
 {
-  return thunar_file_dup_uri (file_info);
+  return g_file_get_uri_scheme (THUNAR_FILE (file_info)->gfile);
 }
 
 
