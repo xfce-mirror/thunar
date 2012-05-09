@@ -187,7 +187,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   /* configure the dialog properties */
   gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
-  gtk_window_set_icon_name (GTK_WINDOW (dialog), "xfce-filemanager");
+  gtk_window_set_icon_name (GTK_WINDOW (dialog), "system-file-manager");
   gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
   gtk_window_set_title (GTK_WINDOW (dialog), _("File Manager Preferences"));
 
