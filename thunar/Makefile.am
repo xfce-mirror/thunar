@@ -37,8 +37,6 @@ thunar_SOURCES =							\
 	$(thunar_dbus_sources)						\
 	$(thunar_notify_sources)					\
 	main.c								\
-	sexy-url-label.c						\
-	sexy-url-label.h						\
 	thunar-abstract-dialog.c					\
 	thunar-abstract-dialog.h					\
 	thunar-abstract-icon-view-ui.h					\

@@ -23,7 +23,6 @@
 
 #include <libxfce4ui/libxfce4ui.h>
 
-#include <thunar/sexy-url-label.h>
 #include <thunar/thunar-compact-view.h>
 #include <thunar/thunar-details-view.h>
 #include <thunar/thunar-dialogs.h>
@@ -574,13 +573,12 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_table_attach (GTK_TABLE (table), button, 0, 1, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (button);
 
-  label = sexy_url_label_new ();
+  label = gtk_label_new (NULL);
   gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
   exo_binding_new (G_OBJECT (button), "active", G_OBJECT (label), "sensitive");
-  g_signal_connect_swapped (G_OBJECT (label), "url-activated", G_CALLBACK (thunar_preferences_dialog_configure), dialog);
-  /* TRANSLATORS: Make sure you place the <a>...</a>-link on the first line, otherwise the user will be unable to click on it */
-  sexy_url_label_set_markup (SEXY_URL_LABEL (label), _("<a href=\"volman-config:\">Configure</a> the management of removable drives\n"
-                                                       "and media (i.e. how cameras should be handled)."));
+  g_signal_connect_swapped (G_OBJECT (label), "activate-link", G_CALLBACK (thunar_preferences_dialog_configure), dialog);
+  gtk_label_set_markup (GTK_LABEL (label), _("<a href=\"volman-config:\">Configure</a> the management of removable drives\n"
+                                             "and media (i.e. how cameras should be handled)."));
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
