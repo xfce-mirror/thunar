@@ -33,7 +33,6 @@
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-size-label.h>
-#include <thunar/thunar-throbber.h>
 #include <thunar/thunar-deep-count-job.h>
 
 
@@ -88,7 +87,7 @@ struct _ThunarSizeLabel
   GList              *files;
 
   GtkWidget          *label;
-  GtkWidget          *throbber;
+  GtkWidget          *spinner;
 };
 
 
@@ -132,17 +131,19 @@ thunar_size_label_init (ThunarSizeLabel *size_label)
   /* configure the box */
   gtk_box_set_spacing (GTK_BOX (size_label), 6);
 
-  /* add an evenbox for the throbber */
+  /* add an evenbox for the spinner */
   ebox = gtk_event_box_new ();
   gtk_event_box_set_visible_window (GTK_EVENT_BOX (ebox), FALSE);
   g_signal_connect (G_OBJECT (ebox), "button-press-event", G_CALLBACK (thunar_size_label_button_press_event), size_label);
   gtk_widget_set_tooltip_text (ebox, _("Click here to stop calculating the total size of the folder."));
   gtk_box_pack_start (GTK_BOX (size_label), ebox, FALSE, FALSE, 0);
 
-  /* add the throbber widget */
-  size_label->throbber = thunar_throbber_new ();
-  exo_binding_new (G_OBJECT (size_label->throbber), "visible", G_OBJECT (ebox), "visible");
-  gtk_container_add (GTK_CONTAINER (ebox), size_label->throbber);
+  /* add the spinner widget */
+  size_label->spinner = gtk_spinner_new ();
+  gtk_widget_set_size_request (size_label->spinner, 16, 16);
+  exo_binding_new (G_OBJECT (size_label->spinner), "visible", G_OBJECT (ebox), "visible");
+  gtk_container_add (GTK_CONTAINER (ebox), size_label->spinner);
+  gtk_widget_show (size_label->spinner);
 
   /* add the label widget */
   size_label->label = gtk_label_new (_("Calculating..."));
@@ -230,7 +231,7 @@ thunar_size_label_button_press_event (GtkWidget       *ebox,
   _thunar_return_val_if_fail (GTK_IS_EVENT_BOX (ebox), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_SIZE_LABEL (size_label), FALSE);
 
-  /* left button press on the throbber cancels the calculation */
+  /* left button press on the spinner cancels the calculation */
   if (G_LIKELY (event->button == 1))
     {
       /* cancel the pending job (if any) */
@@ -242,9 +243,9 @@ thunar_size_label_button_press_event (GtkWidget       *ebox,
           size_label->job = NULL;
         }
 
-      /* be sure to stop and hide the throbber */
-      thunar_throbber_set_animated (THUNAR_THROBBER (size_label->throbber), FALSE);
-      gtk_widget_hide (size_label->throbber);
+      /* be sure to stop and hide the spinner */
+      gtk_spinner_stop (GTK_SPINNER (size_label->spinner));
+      gtk_widget_hide (size_label->spinner);
 
       /* tell the user that the operation was canceled */
       gtk_label_set_text (GTK_LABEL (size_label->label), _("Calculation aborted"));
@@ -289,17 +290,17 @@ thunar_size_label_files_changed (ThunarSizeLabel *size_label)
 
       /* tell the user that we started calculation */
       gtk_label_set_text (GTK_LABEL (size_label->label), _("Calculating..."));
-      thunar_throbber_set_animated (THUNAR_THROBBER (size_label->throbber), TRUE);
-      gtk_widget_show (size_label->throbber);
+      gtk_spinner_start (GTK_SPINNER (size_label->spinner));
+      gtk_widget_show (size_label->spinner);
 
       /* launch the job */
       exo_job_launch (EXO_JOB (size_label->job));
     }
   else
     {
-      /* this is going to be quick, stop and hide the throbber */
-      thunar_throbber_set_animated (THUNAR_THROBBER (size_label->throbber), FALSE);
-      gtk_widget_hide (size_label->throbber);
+      /* this is going to be quick, stop and hide the spinner */
+      gtk_spinner_stop (GTK_SPINNER (size_label->spinner));
+      gtk_widget_hide (size_label->spinner);
 
       /* determine the size of the file */
       size = thunar_file_get_size (THUNAR_FILE (size_label->files->data));
@@ -336,9 +337,9 @@ thunar_size_label_finished (ExoJob          *job,
   _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
   _thunar_return_if_fail (size_label->job == THUNAR_DEEP_COUNT_JOB (job));
 
-  /* stop and hide the throbber */
-  thunar_throbber_set_animated (THUNAR_THROBBER (size_label->throbber), FALSE);
-  gtk_widget_hide (size_label->throbber);
+  /* stop and hide the spinner */
+  gtk_spinner_stop (GTK_SPINNER (size_label->spinner));
+  gtk_widget_hide (size_label->spinner);
 
   /* disconnect from the job */
   g_signal_handlers_disconnect_matched (size_label->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, size_label);

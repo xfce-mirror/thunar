@@ -195,10 +195,6 @@ thunar_SOURCES =							\
 	thunar-templates-action.h					\
 	thunar-text-renderer.c						\
 	thunar-text-renderer.h						\
-	thunar-throbber.c						\
-	thunar-throbber.h						\
-	thunar-throbber-fallback.c					\
-	thunar-throbber-fallback.h					\
 	thunar-thumbnail-cache.c					\
 	thunar-thumbnail-cache.h					\
 	thunar-thumbnailer.c						\
@@ -318,7 +314,6 @@ DISTCLEANFILES +=							\
 	thunar-shortcuts-pane-ui.h					\
 	thunar-renamer-dialog-ui.h					\
 	thunar-standard-view-ui.h					\
-	thunar-throbber-fallback.c					\
 	thunar-thumbnail-frame.c					\
 	thunar-window-ui.h
 
@@ -331,7 +326,6 @@ BUILT_SOURCES =								\
 	thunar-shortcuts-pane-ui.h					\
 	thunar-renamer-dialog-ui.h					\
 	thunar-standard-view-ui.h					\
-	thunar-throbber-fallback.c					\
 	thunar-thumbnail-frame.c					\
 	thunar-window-ui.h
 
@@ -355,9 +349,6 @@ thunar-thumbnail-cache-proxy.h: $(srcdir)/thunar-thumbnail-cache-dbus.xml Makefi
 			thunar-thumbnail-cache-proxy.h \
 	)
 endif
-
-thunar-throbber-fallback.c: $(srcdir)/thunar-throbber-fallback.png Makefile
-	$(AM_V_GEN) (echo "#include <thunar/thunar-throbber-fallback.h>" && gdk-pixbuf-csource --extern --raw --stream --name=thunar_throbber_fallback $(srcdir)/thunar-throbber-fallback.png) > thunar-throbber-fallback.c
 
 thunar-thumbnail-frame.c: $(srcdir)/thunar-thumbnail-frame.png Makefile
 	$(AM_V_GEN) (echo "#include <thunar/thunar-thumbnail-frame.h>" && gdk-pixbuf-csource --extern --raw --stream --name=thunar_thumbnail_frame $(srcdir)/thunar-thumbnail-frame.png) > thunar-thumbnail-frame.c

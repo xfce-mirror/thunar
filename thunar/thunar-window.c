@@ -56,7 +56,6 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-statusbar.h>
 #include <thunar/thunar-stock.h>
-#include <thunar/thunar-throbber.h>
 #include <thunar/thunar-trash-action.h>
 #include <thunar/thunar-tree-pane.h>
 #include <thunar/thunar-window.h>
@@ -253,7 +252,7 @@ struct _ThunarWindow
   GClosure               *menu_item_deselected_closure;
 
   GtkWidget              *table;
-  GtkWidget              *throbber;
+  GtkWidget              *spinner;
   GtkWidget              *paned;
   GtkWidget              *sidepane;
   GtkWidget              *view_box;
@@ -785,17 +784,18 @@ thunar_window_init (ThunarWindow *window)
   gtk_table_attach (GTK_TABLE (window->table), menubar, 0, 1, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (menubar);
 
-  /* append the menu item for the throbber */
+  /* append the menu item for the spinner */
   item = gtk_menu_item_new ();
   gtk_widget_set_sensitive (GTK_WIDGET (item), FALSE);
   gtk_menu_item_set_right_justified (GTK_MENU_ITEM (item), TRUE);
   gtk_menu_shell_append (GTK_MENU_SHELL (menubar), item);
   gtk_widget_show (item);
 
-  /* place the throbber into the menu item */
-  window->throbber = thunar_throbber_new ();
-  gtk_container_add (GTK_CONTAINER (item), window->throbber);
-  gtk_widget_show (window->throbber);
+  /* place the spinner into the menu item */
+  window->spinner = gtk_spinner_new ();
+  gtk_container_add (GTK_CONTAINER (item), window->spinner);
+  gtk_widget_set_size_request (window->spinner, 16, 16);
+  gtk_widget_show (window->spinner);
 
   /* check if we need to add the root warning */
   if (G_UNLIKELY (geteuid () == 0))
@@ -1902,7 +1902,7 @@ thunar_window_action_view_changed (GtkRadioAction *action,
       g_signal_connect_swapped (G_OBJECT (window->view), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
       exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->view), "current-directory");
       exo_binding_new (G_OBJECT (window), "show-hidden", G_OBJECT (window->view), "show-hidden");
-      exo_binding_new (G_OBJECT (window->view), "loading", G_OBJECT (window->throbber), "animated");
+      exo_binding_new (G_OBJECT (window->view), "loading", G_OBJECT (window->spinner), "active");
       exo_binding_new (G_OBJECT (window->view), "selected-files", G_OBJECT (window->launcher), "selected-files");
       exo_mutual_binding_new (G_OBJECT (window->view), "zoom-level", G_OBJECT (window), "zoom-level");
       gtk_table_attach (GTK_TABLE (window->view_box), window->view, 0, 1, 1, 2, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
