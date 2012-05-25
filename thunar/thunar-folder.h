@@ -44,6 +44,8 @@ gboolean      thunar_folder_get_loading            (const ThunarFolder *folder);
 
 void          thunar_folder_reload                 (ThunarFolder       *folder);
 
+void          thunar_folder_destroy                (ThunarFolder       *folder);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_FOLDER_H__ */
