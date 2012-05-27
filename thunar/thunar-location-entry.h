@@ -36,8 +36,6 @@ typedef struct _ThunarLocationEntry      ThunarLocationEntry;
 
 GType      thunar_location_entry_get_type (void) G_GNUC_CONST;
 
-GtkWidget *thunar_location_entry_new      (void);
-
 G_END_DECLS;
 
 #endif /* !__THUNAR_LOCATION_ENTRY_H__ */
