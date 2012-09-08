@@ -85,7 +85,7 @@ thunar_sbr_case_renamer_class_init (ThunarSbrCaseRenamerClass *klass)
   /**
    * ThunarSbrCaseRenamer:mode:
    *
-   * The #ThunarSbrCaseRenamerMode for this 
+   * The #ThunarSbrCaseRenamerMode for this
    * #ThunarSbrCaseRenamer instance.
    **/
   g_object_class_install_property (gobject_class,
@@ -183,7 +183,8 @@ thunar_sbr_case_renamer_set_property (GObject      *object,
 
 
 static gchar*
-tscr_utf8_strcamel (const gchar *text)
+tscr_utf8_strcase (const gchar *text,
+                   gboolean     camelcase)
 {
   const gchar *t;
   gboolean     upper = TRUE;
@@ -198,7 +199,8 @@ tscr_utf8_strcamel (const gchar *text)
     {
       /* check the next char */
       c = g_utf8_get_char (t);
-      if (g_unichar_isspace (c))
+      if (camelcase
+          && g_unichar_isspace (c))
         {
           upper = TRUE;
         }
@@ -238,7 +240,10 @@ thunar_sbr_case_renamer_process (ThunarxRenamer  *renamer,
       return g_utf8_strup (text, -1);
 
     case THUNAR_SBR_CASE_RENAMER_MODE_CAMEL:
-      return tscr_utf8_strcamel (text);
+      return tscr_utf8_strcase (text, TRUE);
+
+   case THUNAR_SBR_CASE_RENAMER_MODE_SENTENCE:
+      return tscr_utf8_strcase (text, FALSE);
 
     default:
       g_assert_not_reached ();
