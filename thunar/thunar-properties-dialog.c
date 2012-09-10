@@ -56,6 +56,8 @@
 #include <thunar/thunar-size-label.h>
 #include <thunar/thunar-thumbnailer.h>
 
+#define FIGURE_DASH_STRING "\xE2\x80\x92"
+
 
 
 /* Property identifiers */
@@ -125,6 +127,8 @@ struct _ThunarPropertiesDialog
   GtkWidget              *icon_button;
   GtkWidget              *icon_image;
   GtkWidget              *name_entry;
+  GtkWidget              *names_label;
+  GtkWidget              *single_box;
   GtkWidget              *kind_ebox;
   GtkWidget              *kind_label;
   GtkWidget              *openwith_chooser;
@@ -209,6 +213,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   GtkWidget *box;
   GtkWidget *spacer;
   gint       row = 0;
+  GtkWidget *image;
 
   /* acquire a reference on the preferences and monitor the "misc-date-style" setting */
   dialog->preferences = thunar_preferences_get ();
@@ -243,32 +248,59 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
 
   /*
-     First box (icon, name)
+     First box (icon, name) for 1 file
    */
-  box = gtk_hbox_new (FALSE, 6);
-  gtk_table_attach (GTK_TABLE (table), box, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
-  gtk_widget_show (box);
+  dialog->single_box = gtk_hbox_new (FALSE, 6);
+  gtk_table_attach (GTK_TABLE (table), dialog->single_box, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
 
   dialog->icon_button = gtk_button_new ();
   g_signal_connect (G_OBJECT (dialog->icon_button), "clicked", G_CALLBACK (thunar_properties_dialog_icon_button_clicked), dialog);
-  gtk_box_pack_start (GTK_BOX (box), dialog->icon_button, FALSE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (dialog->single_box), dialog->icon_button, FALSE, TRUE, 0);
   gtk_widget_show (dialog->icon_button);
 
   dialog->icon_image = thunar_image_new ();
-  gtk_box_pack_start (GTK_BOX (box), dialog->icon_image, FALSE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (dialog->single_box), dialog->icon_image, FALSE, TRUE, 0);
   gtk_widget_show (dialog->icon_image);
 
   label = gtk_label_new (_("Name:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
-  gtk_box_pack_end (GTK_BOX (box), label, TRUE, TRUE, 0);
+  gtk_box_pack_end (GTK_BOX (dialog->single_box), label, TRUE, TRUE, 0);
   gtk_widget_show (label);
 
   dialog->name_entry = g_object_new (GTK_TYPE_ENTRY, "editable", FALSE, NULL);
   g_signal_connect (G_OBJECT (dialog->name_entry), "activate", G_CALLBACK (thunar_properties_dialog_name_activate), dialog);
   g_signal_connect (G_OBJECT (dialog->name_entry), "focus-out-event", G_CALLBACK (thunar_properties_dialog_name_focus_out_event), dialog);
   gtk_table_attach (GTK_TABLE (table), dialog->name_entry, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
-  gtk_widget_show (dialog->name_entry);
+  exo_binding_new (G_OBJECT (dialog->single_box), "visible", G_OBJECT (dialog->name_entry), "visible");
+
+  ++row;
+
+
+  /*
+     First box (icon, name) for multiple files
+   */
+  box = gtk_hbox_new (FALSE, 6);
+  gtk_table_attach (GTK_TABLE (table), box, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
+  exo_binding_new_with_negation (G_OBJECT (dialog->single_box), "visible", G_OBJECT (box), "visible");
+
+  image = gtk_image_new_from_icon_name ("text-x-generic", GTK_ICON_SIZE_DIALOG);
+  gtk_box_pack_start (GTK_BOX (box), image, FALSE, TRUE, 0);
+  gtk_widget_show (image);
+
+  label = gtk_label_new (_("Names:"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_box_pack_end (GTK_BOX (box), label, TRUE, TRUE, 0);
+  gtk_widget_show (label);
+
+  dialog->names_label = gtk_label_new ("");
+  gtk_misc_set_alignment (GTK_MISC (dialog->names_label), 0.0f, 0.5f);
+  gtk_table_attach (GTK_TABLE (table), dialog->names_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_label_set_ellipsize (GTK_LABEL (dialog->names_label), PANGO_ELLIPSIZE_END);
+  gtk_label_set_selectable (GTK_LABEL (dialog->names_label), TRUE);
+  exo_binding_new (G_OBJECT (box), "visible", G_OBJECT (dialog->names_label), "visible");
+
 
   ++row;
 
@@ -1002,11 +1034,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   if (thunar_file_is_directory (file)
       && thunar_file_get_free_space (file, &size))
     {
-#if GLIB_CHECK_VERSION (2, 30, 0)
       size_string = g_format_size (size);
-#else
-      size_string = g_format_size_for_display (size);
-#endif
       gtk_label_set_text (GTK_LABEL (dialog->freespace_label), size_string);
       gtk_widget_show (dialog->freespace_label);
       g_free (size_string);
@@ -1042,6 +1070,72 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
 
 
 static void
+thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
+{
+  ThunarFile  *file;
+  GString     *names_string;
+  const gchar *display_name;
+  gboolean     first_file = TRUE;
+  GList       *lp;
+  const gchar *content_type;
+  const gchar *tmp;
+  gchar       *str;
+
+  _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
+  _thunar_return_if_fail (g_list_length (dialog->files) > 1);
+
+  names_string = g_string_new (NULL);
+
+  /* collect data of the selected files */
+  for (lp = dialog->files; lp != NULL; lp = lp->next)
+    {
+      _thunar_assert (THUNAR_IS_FILE (lp->data));
+      file = THUNAR_FILE (lp->data);
+
+      /* append the name */
+      if (!first_file)
+        g_string_append (names_string, ", ");
+      display_name = thunar_file_get_display_name (file);
+      g_string_append (names_string, display_name);
+
+      /* update the content type */
+      if (first_file)
+        {
+          content_type = thunar_file_get_content_type (file);
+        }
+      else if (content_type != NULL)
+        {
+          /* check the types match */
+          tmp = thunar_file_get_content_type (file);
+          if (tmp == NULL || !g_content_type_equals (content_type, tmp))
+            content_type = NULL;
+        }
+
+      first_file = FALSE;
+    }
+
+  /* set the labels string */
+  gtk_label_set_text (GTK_LABEL (dialog->names_label), names_string->str);
+  g_string_free (names_string, TRUE);
+
+  /* update the content type */
+  if (content_type != NULL
+      && !g_content_type_equals (content_type, "inode/symlink"))
+    {
+      str = g_content_type_get_description (content_type);
+      gtk_widget_set_tooltip_text (dialog->kind_ebox, content_type);
+      gtk_label_set_text (GTK_LABEL (dialog->kind_label), str);
+      g_free (str);
+    }
+  else
+    {
+      gtk_label_set_text (GTK_LABEL (dialog->kind_label), FIGURE_DASH_STRING);
+    }
+}
+
+
+
+static void
 thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 {
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
@@ -1049,12 +1143,19 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 
   if (dialog->files->next == NULL)
     {
+      /* show single file name box */
+      gtk_widget_show (dialog->single_box);
+
       /* update the properties for a dialog showing 1 file */
       thunar_properties_dialog_update_single (dialog);
     }
   else
     {
+      /* show multiple files box */
+      gtk_widget_hide (dialog->single_box);
 
+      /* update the properties for a dialog showing multiple files */
+      thunar_properties_dialog_update_multiple (dialog);
     }
 }
 
