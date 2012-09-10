@@ -512,7 +512,7 @@ thunar_dbus_service_display_file_properties (ThunarDBusService *dbus_service,
     return FALSE;
 
   /* popup the file properties dialog */
-  dialog = thunar_properties_dialog_new ();
+  dialog = thunar_properties_dialog_new (NULL);
   gtk_window_set_screen (GTK_WINDOW (dialog), screen);
   gtk_window_set_startup_id (GTK_WINDOW (dialog), startup_id);
   thunar_properties_dialog_set_file (THUNAR_PROPERTIES_DIALOG (dialog), file);

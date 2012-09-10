@@ -38,9 +38,9 @@ GType       thunar_size_label_get_type  (void) G_GNUC_CONST;
 
 GtkWidget  *thunar_size_label_new       (void) G_GNUC_MALLOC;
 
-ThunarFile *thunar_size_label_get_file  (ThunarSizeLabel *size_label);
-void        thunar_size_label_set_file  (ThunarSizeLabel *size_label,
-                                         ThunarFile      *file);
+GList      *thunar_size_label_get_files (ThunarSizeLabel *size_label);
+void        thunar_size_label_set_files (ThunarSizeLabel *size_label,
+                                         GList           *files);
 
 G_END_DECLS;
 

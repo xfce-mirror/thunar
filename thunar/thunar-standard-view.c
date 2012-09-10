@@ -3,18 +3,18 @@
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2009-2011 Jannis Pohlmann <jannis@xfce.org>
  *
- * This program is free software; you can redistribute it and/or 
+ * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of 
+ * published by the Free Software Foundation; either version 2 of
  * the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public 
- * License along with this program; if not, write to the Free 
+ * You should have received a copy of the GNU General Public
+ * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
@@ -316,7 +316,7 @@ struct _ThunarStandardViewPrivate
   guint                   drop_occurred : 1;   /* whether the data was dropped */
   GList                  *drop_file_list;      /* the list of URIs that are contained in the drop data */
 
-  /* the "new-files" closure, which is used to select files whenever 
+  /* the "new-files" closure, which is used to select files whenever
    * new files are created by a ThunarJob associated with this view
    */
   GClosure               *new_files_closure;
@@ -345,7 +345,7 @@ struct _ThunarStandardViewPrivate
   guint                   thumbnail_source_id;
   gboolean                thumbnailing_scheduled;
 
-  /* Tree path for restoring the selection after selecting and 
+  /* Tree path for restoring the selection after selecting and
    * deleting an item */
   GtkTreePath            *selection_before_delete;
 };
@@ -621,7 +621,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::num-files", G_CALLBACK (thunar_standard_view_update_statusbar_text), standard_view);
 
   /* connect to size allocation signals for generating thumbnail requests */
-  g_signal_connect_after (G_OBJECT (standard_view), "size-allocate", 
+  g_signal_connect_after (G_OBJECT (standard_view), "size-allocate",
                           G_CALLBACK (thunar_standard_view_size_allocate), NULL);
 }
 
@@ -793,7 +793,7 @@ thunar_standard_view_finalize (GObject *object)
   /* disconnect from the list model */
   g_signal_handlers_disconnect_matched (G_OBJECT (standard_view->model), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, standard_view);
   g_object_unref (G_OBJECT (standard_view->model));
-  
+
   /* free the statusbar text (if any) */
   g_free (standard_view->statusbar_text);
 
@@ -864,7 +864,7 @@ thunar_standard_view_set_property (GObject      *object,
       thunar_standard_view_set_loading (standard_view, g_value_get_boolean (value));
       break;
       break;
-      
+
     case PROP_SELECTED_FILES:
       thunar_component_set_selected_files (THUNAR_COMPONENT (object), g_value_get_boxed (value));
       break;
@@ -1552,7 +1552,7 @@ thunar_standard_view_delete_selected_files (ThunarStandardView *standard_view)
   permanently = (gtk_get_current_event_state (&state) && (state & GDK_SHIFT_MASK) != 0);
 
   /* check if the user defined a custom accelerator and is not holding the
-   * shift button. if he or she has, we don't response to the predefined key 
+   * shift button. if he or she has, we don't response to the predefined key
    * bindings (bug #4173) */
   accel_path = gtk_action_get_accel_path (action);
   if (accel_path != NULL && gtk_accel_map_lookup_entry (accel_path, &key)
@@ -1834,9 +1834,9 @@ thunar_standard_view_action_create_empty_file (GtkAction          *action,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* ask the user to enter a name for the new empty file */
-  name = thunar_show_create_dialog (GTK_WIDGET (standard_view), 
-                                    "text/plain", 
-                                    _("New Empty File"), 
+  name = thunar_show_create_dialog (GTK_WIDGET (standard_view),
+                                    "text/plain",
+                                    _("New Empty File"),
                                     _("New Empty File..."));
   if (G_LIKELY (name != NULL))
     {
@@ -1878,9 +1878,9 @@ thunar_standard_view_action_create_folder (GtkAction          *action,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* ask the user to enter a name for the new folder */
-  name = thunar_show_create_dialog (GTK_WIDGET (standard_view), 
-                                    "inode/directory", 
-                                    _("New Folder"), 
+  name = thunar_show_create_dialog (GTK_WIDGET (standard_view),
+                                    "inode/directory",
+                                    _("New Folder"),
                                     _("Create New Folder"));
   if (G_LIKELY (name != NULL))
     {
@@ -1926,13 +1926,13 @@ thunar_standard_view_action_create_template (GtkAction           *action,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* generate a title for the create dialog */
-  title = g_strdup_printf (_("Create Document from template \"%s\""), 
+  title = g_strdup_printf (_("Create Document from template \"%s\""),
                            thunar_file_get_display_name (file));
 
   /* ask the user to enter a name for the new document */
-  name = thunar_show_create_dialog (GTK_WIDGET (standard_view), 
-                                    thunar_file_get_content_type (file), 
-                                    thunar_file_get_display_name (file), 
+  name = thunar_show_create_dialog (GTK_WIDGET (standard_view),
+                                    thunar_file_get_content_type (file),
+                                    thunar_file_get_display_name (file),
                                     title);
   if (G_LIKELY (name != NULL))
     {
@@ -1974,40 +1974,36 @@ static void
 thunar_standard_view_action_properties (GtkAction          *action,
                                         ThunarStandardView *standard_view)
 {
-  ThunarFile *file = NULL;
+  ThunarFile *directory;
   GtkWidget  *toplevel;
   GtkWidget  *dialog;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
-  /* check if no files are currently selected */
-  if (standard_view->priv->selected_files == NULL)
+  /* popup the files dialog */
+  toplevel = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
+  if (G_LIKELY (toplevel != NULL))
     {
-      /* if we don't have any files selected, we just popup
-       * the properties dialog for the current folder.
-       */
-      file = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
-    }
-  else if (g_list_length (standard_view->priv->selected_files) == 1)
-    {
-      /* popup the properties dialog for the one and only selected file */
-      file = THUNAR_FILE (standard_view->priv->selected_files->data);
-    }
+      dialog = thunar_properties_dialog_new (GTK_WINDOW (toplevel));
 
-  /* popup the properties dialog if we have exactly one file */
-  if (G_LIKELY (file != NULL))
-    {
-      toplevel = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
-      if (G_LIKELY (toplevel != NULL))
+      /* check if no files are currently selected */
+      if (standard_view->priv->selected_files == NULL)
         {
-          dialog = g_object_new (THUNAR_TYPE_PROPERTIES_DIALOG,
-                                 "destroy-with-parent", TRUE,
-                                 "file", file,
-                                 NULL);
-          gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (toplevel));
-          gtk_widget_show (dialog);
+          /* if we don't have any files selected, we just popup
+           * the properties dialog for the current folder.
+           */
+          directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
+          thunar_properties_dialog_set_file (THUNAR_PROPERTIES_DIALOG (dialog), directory);
         }
+      else
+        {
+          /* popup the properties dialog for all file(s) */
+          thunar_properties_dialog_set_files (THUNAR_PROPERTIES_DIALOG (dialog),
+                                              standard_view->priv->selected_files);
+        }
+
+      gtk_widget_show (dialog);
     }
 }
 
@@ -2258,7 +2254,7 @@ thunar_standard_view_rename_error (ExoJob             *job,
   file = g_value_get_object (g_value_array_get_nth (param_values, 0));
 
   /* display an error message */
-  thunar_dialogs_show_error (GTK_WIDGET (standard_view), error, 
+  thunar_dialogs_show_error (GTK_WIDGET (standard_view), error,
                              _("Failed to rename \"%s\""),
                              thunar_file_get_display_name (file));
 }
@@ -2606,7 +2602,7 @@ thunar_standard_view_drag_drop (GtkWidget          *view,
               if (G_LIKELY (*prop_text != '\0' && strchr ((const gchar *) prop_text, G_DIR_SEPARATOR) == NULL))
                 {
                   /* allocate the relative path for the target */
-                  path = g_file_resolve_relative_path (thunar_file_get_file (file), 
+                  path = g_file_resolve_relative_path (thunar_file_get_file (file),
                                                        (const gchar *)prop_text);
 
                   /* determine the new URI */
@@ -2917,9 +2913,9 @@ thunar_standard_view_drag_motion (GtkWidget          *view,
           file = thunar_standard_view_get_drop_file (standard_view, x, y, &path);
 
           /* check if we can save here */
-          if (G_LIKELY (file != NULL 
-                        && thunar_file_is_local (file) 
-                        && thunar_file_is_directory (file) 
+          if (G_LIKELY (file != NULL
+                        && thunar_file_is_local (file)
+                        && thunar_file_is_directory (file)
                         && thunar_file_is_writable (file)))
             {
               action = context->suggested_action;
@@ -3086,7 +3082,7 @@ thunar_standard_view_row_deleted (ThunarListModel    *model,
   /* Create a copy the path (we're not allowed to modify it in this handler) */
   path_copy = gtk_tree_path_copy (path);
 
-  /* Remember the selected path so that it can be restored after the row has 
+  /* Remember the selected path so that it can be restored after the row has
    * been removed. If the first row is removed, select the first row after the
    * removal, if any other row is removed, select the row before that one */
   if (G_LIKELY (gtk_tree_path_prev (path_copy)))
@@ -3116,7 +3112,7 @@ thunar_standard_view_restore_selection (ThunarListModel    *model,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (standard_view->model == model);
 
-  /* Check if there was only one file selected before the row was deleted. The 
+  /* Check if there was only one file selected before the row was deleted. The
    * path is set by thunar_standard_view_row_deleted() if this is the case */
   if (G_LIKELY (standard_view->priv->selection_before_delete != NULL))
     {
@@ -3330,7 +3326,7 @@ static void
 thunar_standard_view_schedule_thumbnail_timeout (ThunarStandardView *standard_view)
 {
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-  
+
   /* delay creating the idle until the view has finished loading.
    * this is done because we only can tell the visible range reliably after
    * all items have been added and we've perhaps scrolled to the file remember
@@ -3345,8 +3341,8 @@ thunar_standard_view_schedule_thumbnail_timeout (ThunarStandardView *standard_vi
   thunar_standard_view_cancel_thumbnailing (standard_view);
 
   /* schedule the timeout handler */
-  standard_view->priv->thumbnail_source_id = 
-    g_timeout_add (175, (GSourceFunc) thunar_standard_view_request_thumbnails, 
+  standard_view->priv->thumbnail_source_id =
+    g_timeout_add (175, (GSourceFunc) thunar_standard_view_request_thumbnails,
                    standard_view);
 }
 
@@ -3356,10 +3352,10 @@ static void
 thunar_standard_view_schedule_thumbnail_idle (ThunarStandardView *standard_view)
 {
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-  
+
   /* delay creating the idle until the view has finished loading.
    * this is done because we only can tell the visible range reliably after
-   * all items have been added, layouting has finished and we've perhaps 
+   * all items have been added, layouting has finished and we've perhaps
    * scrolled to the file remembered the last time */
   if (thunar_view_get_loading (THUNAR_VIEW (standard_view)))
     {
@@ -3371,7 +3367,7 @@ thunar_standard_view_schedule_thumbnail_idle (ThunarStandardView *standard_view)
   thunar_standard_view_cancel_thumbnailing (standard_view);
 
   /* schedule the timeout or idle handler */
-  standard_view->priv->thumbnail_source_id = 
+  standard_view->priv->thumbnail_source_id =
     g_idle_add ((GSourceFunc) thunar_standard_view_request_thumbnails, standard_view);
 }
 
@@ -3422,7 +3418,7 @@ thunar_standard_view_request_thumbnails (ThunarStandardView *standard_view)
           if (gtk_tree_path_compare (path, end_path) != 0)
             {
               /* try to compute the next visible item */
-              valid_iter = 
+              valid_iter =
                 gtk_tree_model_iter_next (GTK_TREE_MODEL (standard_view->model), &iter);
             }
           else
@@ -3472,7 +3468,7 @@ thunar_standard_view_show_thumbnails_toggled (ThunarStandardView *standard_view,
   if (show_thumbnails)
     {
       /* get the vertical adjustment of the view */
-      vadjustment = 
+      vadjustment =
         gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (standard_view));
 
       /* fake a scroll event to generate thumbnail requests */
@@ -3689,7 +3685,8 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   gtk_action_set_sensitive (standard_view->priv->action_create_document, !trashed && writable);
 
   /* update the "Properties" action */
-  gtk_action_set_sensitive (standard_view->priv->action_properties, (n_selected_files == 1 || (n_selected_files == 0 && current_directory != NULL)));
+  gtk_action_set_sensitive (standard_view->priv->action_properties,
+                            current_directory != NULL || n_selected_files > 0);
 
   /* update the "Cut" action */
   g_object_set (G_OBJECT (standard_view->priv->action_cut),

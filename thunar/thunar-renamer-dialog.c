@@ -1217,17 +1217,11 @@ thunar_renamer_dialog_action_properties (GtkAction           *action,
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
 
-  /* verify that we have exactly one file selected */
-  if (G_LIKELY (g_list_length (renamer_dialog->selected_files) == 1))
-    {
-      /* popup the properties dialog */
-      dialog = thunar_properties_dialog_new ();
-      gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
-      gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
-      gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (renamer_dialog));
-      thunar_properties_dialog_set_file (THUNAR_PROPERTIES_DIALOG (dialog), renamer_dialog->selected_files->data);
-      gtk_widget_show (dialog);
-    }
+  /* popup the properties dialog */
+  dialog = thunar_properties_dialog_new (GTK_WINDOW (renamer_dialog));
+  gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
+  thunar_properties_dialog_set_files (THUNAR_PROPERTIES_DIALOG (dialog), renamer_dialog->selected_files);
+  gtk_widget_show (dialog);
 }
 
 
@@ -1651,7 +1645,7 @@ thunar_renamer_dialog_selection_changed (GtkTreeSelection    *selection,
 
   /* the "Properties" action is only sensitive if we have exactly one selected file */
   action = gtk_action_group_get_action (renamer_dialog->action_group, "properties");
-  gtk_action_set_sensitive (action, (n_selected_files == 1));
+  gtk_action_set_sensitive (action, n_selected_files > 0);
 
   /* notify listeners */
   g_object_notify (G_OBJECT (renamer_dialog), "selected-files");

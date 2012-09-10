@@ -36,11 +36,14 @@ typedef struct _ThunarPropertiesDialog      ThunarPropertiesDialog;
 
 GType       thunar_properties_dialog_get_type (void) G_GNUC_CONST;
 
-GtkWidget  *thunar_properties_dialog_new      (void);
+GtkWidget  *thunar_properties_dialog_new       (GtkWindow              *parent);
 
-ThunarFile *thunar_properties_dialog_get_file (ThunarPropertiesDialog *dialog);
-void        thunar_properties_dialog_set_file (ThunarPropertiesDialog *dialog,  
-                                               ThunarFile             *file);
+GList      *thunar_properties_dialog_get_files (ThunarPropertiesDialog *dialog);
+void        thunar_properties_dialog_set_files (ThunarPropertiesDialog *dialog,  
+                                                GList                  *files);
+
+void        thunar_properties_dialog_set_file  (ThunarPropertiesDialog *dialog,  
+                                                ThunarFile             *file);
 
 G_END_DECLS;
 

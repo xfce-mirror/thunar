@@ -1434,10 +1434,8 @@ thunar_location_buttons_action_properties (GtkAction             *action,
       if (G_LIKELY (toplevel != NULL && GTK_WIDGET_TOPLEVEL (toplevel)))
         {
           /* popup the properties dialog */
-          dialog = thunar_properties_dialog_new ();
-          gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
+          dialog = thunar_properties_dialog_new (GTK_WINDOW (toplevel));
           thunar_properties_dialog_set_file (THUNAR_PROPERTIES_DIALOG (dialog), directory);
-          gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (toplevel));
           gtk_widget_show (dialog);
         }
     }
