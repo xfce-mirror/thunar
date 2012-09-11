@@ -2,6 +2,7 @@
 /*-
  * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2009-2011 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2012      Nick Schermer <nick@xfce.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -524,7 +525,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
    */
   label = gtk_label_new (_("Emblems"));
   chooser = thunar_emblem_chooser_new ();
-  /*TODOexo_binding_new (G_OBJECT (dialog), "file", G_OBJECT (chooser), "file");*/
+  /*TODOexo_binding_new (G_OBJECT (dialog), "files", G_OBJECT (chooser), "files");*/
   gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), chooser, label);
   gtk_widget_show (chooser);
   gtk_widget_show (label);
