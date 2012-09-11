@@ -56,8 +56,6 @@
 #include <thunar/thunar-size-label.h>
 #include <thunar/thunar-thumbnailer.h>
 
-#define FIGURE_DASH_STRING "\xE2\x80\x92"
-
 
 
 /* Property identifiers */
@@ -133,6 +131,7 @@ struct _ThunarPropertiesDialog
   GtkWidget              *kind_label;
   GtkWidget              *openwith_chooser;
   GtkWidget              *link_label;
+  GtkWidget              *location_label;
   GtkWidget              *origin_label;
   GtkWidget              *deleted_label;
   GtkWidget              *modified_label;
@@ -383,6 +382,20 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   ++row;
 
+  label = gtk_label_new (_("Location:"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_show (label);
+
+  dialog->location_label = g_object_new (GTK_TYPE_LABEL, "ellipsize", PANGO_ELLIPSIZE_START, "xalign", 0.0f, NULL);
+  gtk_label_set_selectable (GTK_LABEL (dialog->location_label), TRUE);
+  exo_binding_new (G_OBJECT (dialog->location_label), "visible", G_OBJECT (label), "visible");
+  gtk_table_attach (GTK_TABLE (table), dialog->location_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_show (dialog->location_label);
+
+  ++row;
+
 
   spacer = g_object_new (GTK_TYPE_ALIGNMENT, "height-request", 12, NULL);
   gtk_table_attach (GTK_TABLE (table), spacer, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
@@ -439,7 +452,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   spacer = g_object_new (GTK_TYPE_ALIGNMENT, "height-request", 12, NULL);
   gtk_table_attach (GTK_TABLE (table), spacer, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
-  gtk_widget_show (spacer);
+  exo_binding_new (G_OBJECT (dialog->accessed_label), "visible", G_OBJECT (spacer), "visible");
 
   ++row;
 
@@ -864,6 +877,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   gchar             *str;
   gchar             *volume_name;
   ThunarFile        *file;
+  ThunarFile        *parent_file;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (g_list_length (dialog->files) == 1);
@@ -874,13 +888,6 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
 
   /* hide the permissions chooser for trashed files */
   gtk_widget_set_visible (dialog->permissions_chooser, !thunar_file_is_trashed (file));
-
-  /* cancel any pending thumbnail requests */
-  if (dialog->thumbnail_request > 0)
-    {
-      thunar_thumbnailer_dequeue (dialog->thumbnailer, dialog->thumbnail_request);
-      dialog->thumbnail_request = 0;
-    }
 
   /* queue a new thumbnail request */
   thunar_thumbnailer_queue_file (dialog->thumbnailer, file,
@@ -991,6 +998,21 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
       gtk_widget_hide (dialog->origin_label);
     }
 
+  /* update the file or folder location (parent) */
+  parent_file = thunar_file_get_parent (file, NULL);
+  if (G_UNLIKELY (parent_file != NULL))
+    {
+      display_name = g_file_get_parse_name (thunar_file_get_file (parent_file));
+      gtk_label_set_text (GTK_LABEL (dialog->location_label), display_name);
+      gtk_widget_show (dialog->location_label);
+      g_object_unref (G_OBJECT (parent_file));
+      g_free (display_name);
+    }
+  else
+    {
+      gtk_widget_hide (dialog->location_label);
+    }
+
   /* update the deleted time */
   date = thunar_file_get_deletion_date (file, date_style);
   if (G_LIKELY (date != NULL))
@@ -1074,15 +1096,33 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
 {
   ThunarFile  *file;
   GString     *names_string;
-  const gchar *display_name;
   gboolean     first_file = TRUE;
   GList       *lp;
   const gchar *content_type;
   const gchar *tmp;
   gchar       *str;
+  GVolume     *volume = NULL;
+  GVolume     *tmp_volume;
+  GIcon       *gicon;
+  gchar       *volume_name;
+  gchar       *display_name;
+  ThunarFile  *parent_file = NULL;
+  ThunarFile  *tmp_parent;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (g_list_length (dialog->files) > 1);
+
+  /* update the properties dialog title */
+  gtk_window_set_title (GTK_WINDOW (dialog), _("Properties"));
+
+  /* widgets not used with > 1 file selected */
+  gtk_widget_hide (dialog->deleted_label);
+  gtk_widget_hide (dialog->modified_label);
+  gtk_widget_hide (dialog->accessed_label);
+  gtk_widget_hide (dialog->freespace_label);
+  gtk_widget_hide (dialog->origin_label);
+  gtk_widget_hide (dialog->openwith_chooser);
+  gtk_widget_hide (dialog->link_label);
 
   names_string = g_string_new (NULL);
 
@@ -1095,8 +1135,7 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
       /* append the name */
       if (!first_file)
         g_string_append (names_string, ", ");
-      display_name = thunar_file_get_display_name (file);
-      g_string_append (names_string, display_name);
+      g_string_append (names_string, thunar_file_get_display_name (file));
 
       /* update the content type */
       if (first_file)
@@ -1109,6 +1148,44 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
           tmp = thunar_file_get_content_type (file);
           if (tmp == NULL || !g_content_type_equals (content_type, tmp))
             content_type = NULL;
+        }
+
+      /* check if all selected files are on the same volume */
+      tmp_volume = thunar_file_get_volume (file);
+      if (first_file)
+        {
+          volume = tmp_volume;
+        }
+      else if (tmp_volume != NULL)
+        {
+          /* we only display information if the files are on the same volume */
+          if (tmp_volume != volume)
+            {
+              if (volume != NULL)
+                g_object_unref (G_OBJECT (volume));
+              volume = NULL;
+            }
+
+          g_object_unref (G_OBJECT (tmp_volume));
+        }
+
+      /* check if all files have the same parent */
+      tmp_parent = thunar_file_get_parent (file, NULL);
+      if (first_file)
+        {
+          parent_file = tmp_parent;
+        }
+      else if (tmp_parent != NULL)
+        {
+          /* we only display the location if they are all equal */
+          if (!g_file_equal (thunar_file_get_file (parent_file), thunar_file_get_file (tmp_parent)))
+            {
+              if (parent_file != NULL)
+                g_object_unref (G_OBJECT (parent_file));
+              parent_file = NULL;
+            }
+
+          g_object_unref (G_OBJECT (tmp_parent));
         }
 
       first_file = FALSE;
@@ -1129,8 +1206,46 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
     }
   else
     {
-      gtk_label_set_text (GTK_LABEL (dialog->kind_label), FIGURE_DASH_STRING);
+      gtk_label_set_text (GTK_LABEL (dialog->kind_label), _("mixed"));
     }
+
+  /* update the file or folder location (parent) */
+  if (G_UNLIKELY (parent_file != NULL))
+    {
+      display_name = g_file_get_parse_name (thunar_file_get_file (parent_file));
+      gtk_label_set_text (GTK_LABEL (dialog->location_label), display_name);
+      gtk_widget_show (dialog->location_label);
+      g_object_unref (G_OBJECT (parent_file));
+      g_free (display_name);
+    }
+  else
+    {
+      gtk_widget_hide (dialog->location_label);
+    }
+
+  /* update the volume */
+  if (G_LIKELY (volume != NULL))
+    {
+      gicon = g_volume_get_icon (volume);
+      gtk_image_set_from_gicon (GTK_IMAGE (dialog->volume_image), gicon, GTK_ICON_SIZE_MENU);
+      if (G_LIKELY (gicon != NULL))
+        g_object_unref (gicon);
+
+      volume_name = g_volume_get_name (volume);
+      gtk_label_set_text (GTK_LABEL (dialog->volume_label), volume_name);
+      gtk_widget_show (dialog->volume_label);
+      g_free (volume_name);
+
+      g_object_unref (G_OBJECT (volume));
+    }
+  else
+    {
+      gtk_widget_hide (dialog->volume_label);
+    }
+
+  /* all files should have the same base-location, if that is the
+   * trash or inside the trash, hide the permission chooser */
+  gtk_widget_set_visible (dialog->permissions_chooser, FALSE/*!thunar_file_is_trashed (file)*/);
 }
 
 
@@ -1140,6 +1255,13 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 {
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (dialog->files != NULL);
+
+  /* cancel any pending thumbnail requests */
+  if (dialog->thumbnail_request > 0)
+    {
+      thunar_thumbnailer_dequeue (dialog->thumbnailer, dialog->thumbnail_request);
+      dialog->thumbnail_request = 0;
+    }
 
   if (dialog->files->next == NULL)
     {
