@@ -38,7 +38,7 @@
 enum
 {
   PROP_0,
-  PROP_FILE,
+  PROP_FILES,
 };
 
 
@@ -57,8 +57,7 @@ static void       thunar_emblem_chooser_realize         (GtkWidget              
 static void       thunar_emblem_chooser_unrealize       (GtkWidget                *widget);
 static void       thunar_emblem_chooser_button_toggled  (GtkToggleButton          *button,
                                                          ThunarEmblemChooser      *chooser);
-static void       thunar_emblem_chooser_file_changed    (ThunarFile               *file,
-                                                         ThunarEmblemChooser      *chooser);
+static void       thunar_emblem_chooser_file_changed    (ThunarEmblemChooser      *chooser);
 static void       thunar_emblem_chooser_theme_changed   (GtkIconTheme             *icon_theme,
                                                          ThunarEmblemChooser      *chooser);
 static void       thunar_emblem_chooser_create_buttons  (ThunarEmblemChooser      *chooser);
@@ -78,7 +77,7 @@ struct _ThunarEmblemChooser
 
   GtkIconTheme *icon_theme;
   GtkSizeGroup *size_group;
-  ThunarFile   *file;
+  GList        *files;
   GtkWidget    *table;
 };
 
@@ -110,10 +109,10 @@ thunar_emblem_chooser_class_init (ThunarEmblemChooserClass *klass)
    * The file for which emblems should be choosen.
    **/
   g_object_class_install_property (gobject_class,
-                                   PROP_FILE,
-                                   g_param_spec_object ("file", "file", "file",
-                                                        THUNAR_TYPE_FILE,
-                                                        EXO_PARAM_READWRITE));
+                                   PROP_FILES,
+                                   g_param_spec_boxed ("files", "files", "files",
+                                                       THUNARX_TYPE_FILE_INFO_LIST,
+                                                       EXO_PARAM_READWRITE));
 }
 
 
@@ -152,7 +151,7 @@ thunar_emblem_chooser_dispose (GObject *object)
   ThunarEmblemChooser *chooser = THUNAR_EMBLEM_CHOOSER (object);
 
   /* disconnect from the file */
-  thunar_emblem_chooser_set_file (chooser, NULL);
+  thunar_emblem_chooser_set_files (chooser, NULL);
 
   (*G_OBJECT_CLASS (thunar_emblem_chooser_parent_class)->dispose) (object);
 }
@@ -182,8 +181,8 @@ thunar_emblem_chooser_get_property (GObject    *object,
 
   switch (prop_id)
     {
-    case PROP_FILE:
-      g_value_set_object (value, thunar_emblem_chooser_get_file (chooser));
+    case PROP_FILES:
+      g_value_set_boxed (value, thunar_emblem_chooser_get_files (chooser));
       break;
 
     default:
@@ -204,8 +203,8 @@ thunar_emblem_chooser_set_property (GObject      *object,
 
   switch (prop_id)
     {
-    case PROP_FILE:
-      thunar_emblem_chooser_set_file (chooser, g_value_get_object (value));
+    case PROP_FILES:
+      thunar_emblem_chooser_set_files (chooser, g_value_get_boxed (value));
       break;
 
     default:
@@ -261,70 +260,121 @@ thunar_emblem_chooser_button_toggled (GtkToggleButton     *button,
                                       ThunarEmblemChooser *chooser)
 {
   const gchar *emblem_name;
-  GList *emblem_names = NULL;
-  GList *children;
-  GList *lp;
+  GList       *emblem_names;
+  GList       *lp;
+  GList       *delete_link;
+  gboolean     is_modified;
 
   _thunar_return_if_fail (GTK_IS_TOGGLE_BUTTON (button));
   _thunar_return_if_fail (THUNAR_IS_EMBLEM_CHOOSER (chooser));
 
   /* we just ignore toggle events if no file is set */
-  if (G_LIKELY (chooser->file == NULL))
+  if (G_LIKELY (chooser->files == NULL))
     return;
 
-  /* determine the list of selected emblems */
-  children = gtk_container_get_children (GTK_CONTAINER (chooser->table));
-  for (lp = children; lp != NULL; lp = lp->next)
-    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lp->data)))
+  /* get the name of the toggled button */
+  emblem_name = g_object_get_data (G_OBJECT (button), I_("thunar-emblem"));
+  if (G_UNLIKELY (emblem_name == NULL))
+    return;
+
+  /* once clicked, it is active or inactive */
+  gtk_toggle_button_set_inconsistent (button, FALSE);
+
+  for (lp = chooser->files; lp != NULL; lp = lp->next)
+    {
+      emblem_names = thunar_file_get_emblem_names (THUNAR_FILE (lp->data));
+      is_modified = FALSE;
+
+      if (gtk_toggle_button_get_active (button))
+        {
+          /* check if we need to add the new emblem */
+          if (g_list_find_custom (emblem_names, emblem_name, (GCompareFunc) strcmp) == NULL)
+            {
+              emblem_names = g_list_append (emblem_names, (gchar *) emblem_name);
+              is_modified = TRUE;
+            }
+        }
+      else
+        {
+          delete_link = g_list_find_custom (emblem_names, emblem_name, (GCompareFunc) strcmp);
+          if (delete_link != NULL)
+            {
+              emblem_names = g_list_delete_link (emblem_names, delete_link);
+              is_modified = TRUE;
+            }
+        }
+
+      if (is_modified)
       {
-        emblem_name = g_object_get_data (G_OBJECT (lp->data), I_("thunar-emblem"));
-        emblem_names = g_list_append (emblem_names, g_strdup (emblem_name));
+        g_signal_handlers_block_by_func (lp->data, thunar_emblem_chooser_file_changed, chooser);
+        thunar_file_set_emblem_names (THUNAR_FILE (lp->data), emblem_names);
+        g_signal_handlers_unblock_by_func (lp->data, thunar_emblem_chooser_file_changed, chooser);
       }
-  g_list_free (children);
 
-  /* setup the new emblem name list for the file */
-  thunar_file_set_emblem_names (chooser->file, emblem_names);
-
-  /* release the emblem name list */
-  g_list_foreach (emblem_names, (GFunc) g_free, NULL);
-  g_list_free (emblem_names);
+      g_list_free (emblem_names);
+    }
 }
 
 
 
 static void
-thunar_emblem_chooser_file_changed (ThunarFile          *file,
-                                    ThunarEmblemChooser *chooser)
+thunar_emblem_chooser_file_changed (ThunarEmblemChooser *chooser)
 {
   const gchar *emblem_name;
-  GList       *emblem_names;
+  GHashTable  *emblem_names;
+  GList       *file_emblems;
   GList       *children;
-  GList       *lp;
+  GList       *lp, *li;
+  guint       *count;
+  guint        n_files = 0;
 
-  _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (THUNAR_IS_EMBLEM_CHOOSER (chooser));
-  _thunar_return_if_fail (chooser->file == file);
 
-  /* temporarily reset the file attribute */
-  chooser->file = NULL;
+  emblem_names = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, g_free);
 
-  /* determine the emblems set for the file */
-  emblem_names = thunar_file_get_emblem_names (file);
+  /* determine the emblems set for the files */
+  for (lp = chooser->files; lp != NULL; lp = lp->next)
+    {
+      file_emblems = thunar_file_get_emblem_names (THUNAR_FILE (lp->data));
+      for (li = file_emblems; li != NULL; li = li->next)
+        {
+          count = g_hash_table_lookup (emblem_names, li->data);
+          if (count == NULL)
+            {
+              count = g_new0 (guint, 1);
+              g_hash_table_insert (emblem_names, li->data, count);
+            }
+
+          *count = *count + 1;
+        }
+
+      n_files++;
+    }
 
   /* toggle the button states appropriately */
   children = gtk_container_get_children (GTK_CONTAINER (chooser->table));
   for (lp = children; lp != NULL; lp = lp->next)
     {
       emblem_name = g_object_get_data (G_OBJECT (lp->data), I_("thunar-emblem"));
-      if (g_list_find_custom (emblem_names, emblem_name, (GCompareFunc) strcmp) != NULL)
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lp->data), TRUE);
+      count = g_hash_table_lookup (emblem_names, emblem_name);
+
+      g_signal_handlers_block_by_func (lp->data, thunar_emblem_chooser_button_toggled, chooser);
+
+      if (count == NULL || *count == n_files)
+        {
+          gtk_toggle_button_set_inconsistent (GTK_TOGGLE_BUTTON (lp->data), FALSE);
+          gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lp->data), count != NULL);
+        }
       else
-        gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lp->data), FALSE);
+        {
+          gtk_toggle_button_set_inconsistent (GTK_TOGGLE_BUTTON (lp->data), TRUE);
+        }
+
+      g_signal_handlers_unblock_by_func (lp->data, thunar_emblem_chooser_button_toggled, chooser);
     }
   g_list_free (children);
 
-  /* reset the file attribute */
-  chooser->file = file;
+  g_hash_table_destroy (emblem_names);
 }
 
 
@@ -381,8 +431,8 @@ thunar_emblem_chooser_create_buttons (ThunarEmblemChooser *chooser)
   g_list_free (emblems);
 
   /* be sure to update the buttons according to the selected file */
-  if (G_LIKELY (chooser->file != NULL))
-    thunar_emblem_chooser_file_changed (chooser->file, chooser);
+  if (G_LIKELY (chooser->files != NULL))
+    thunar_emblem_chooser_file_changed (chooser);
 }
 
 
@@ -460,20 +510,20 @@ thunar_emblem_chooser_new (void)
 
 
 /**
- * thunar_emblem_chooser_get_file:
+ * thunar_emblem_chooser_get_files:
  * @chooser : a #ThunarEmblemChooser.
  *
- * Returns the #ThunarFile associated with
+ * Returns the #ThunarFile's associated with
  * the @chooser or %NULL.
  *
  * Return value: the #ThunarFile associated
  *               with @chooser.
  **/
-ThunarFile*
-thunar_emblem_chooser_get_file (const ThunarEmblemChooser *chooser)
+GList*
+thunar_emblem_chooser_get_files (const ThunarEmblemChooser *chooser)
 {
   _thunar_return_val_if_fail (THUNAR_IS_EMBLEM_CHOOSER (chooser), NULL);
-  return chooser->file;
+  return chooser->files;
 }
 
 
@@ -481,36 +531,40 @@ thunar_emblem_chooser_get_file (const ThunarEmblemChooser *chooser)
 /**
  * thunar_emblem_chooser_set_file:
  * @chooser : a #ThunarEmblemChooser.
- * @file    : a #ThunarFile or %NULL.
+ * @file    : a list of #ThunarFile's or %NULL.
  *
  * Associates @chooser with @file.
  **/
 void
-thunar_emblem_chooser_set_file (ThunarEmblemChooser *chooser,
-                                ThunarFile          *file)
+thunar_emblem_chooser_set_files (ThunarEmblemChooser *chooser,
+                                 GList               *files)
 {
-  _thunar_return_if_fail (THUNAR_IS_EMBLEM_CHOOSER (chooser));
-  _thunar_return_if_fail (file == NULL || THUNAR_IS_FILE (file));
+  GList *lp;
 
-  if (G_LIKELY (chooser->file != file))
+  _thunar_return_if_fail (THUNAR_IS_EMBLEM_CHOOSER (chooser));
+
+  if (G_LIKELY (chooser->files != files))
     {
       /* disconnect from the previous file (if any) */
-      if (G_LIKELY (chooser->file != NULL))
+      for (lp = chooser->files; lp != NULL; lp = lp->next)
         {
-          g_signal_handlers_disconnect_by_func (G_OBJECT (chooser->file), thunar_emblem_chooser_file_changed, chooser);
-          g_object_unref (G_OBJECT (chooser->file));
+          g_signal_handlers_disconnect_by_func (G_OBJECT (lp->data), thunar_emblem_chooser_file_changed, chooser);
+          g_object_unref (G_OBJECT (lp->data));
         }
+      g_list_free (chooser->files);
 
       /* activate the new file */
-      chooser->file = file;
+      chooser->files = g_list_copy (files);
 
       /* connect to the new file (if any) */
-      if (G_LIKELY (file != NULL))
+      for (lp = files; lp != NULL; lp = lp->next)
         {
-          g_object_ref (G_OBJECT (file));
-          thunar_emblem_chooser_file_changed (file, chooser);
-          g_signal_connect (G_OBJECT (file), "changed", G_CALLBACK (thunar_emblem_chooser_file_changed), chooser);
+          g_object_ref (G_OBJECT (lp->data));
+          g_signal_connect_swapped (G_OBJECT (lp->data), "changed", G_CALLBACK (thunar_emblem_chooser_file_changed), chooser);
         }
+
+      if (chooser->files != NULL)
+        thunar_emblem_chooser_file_changed (chooser);
     }
 }
 

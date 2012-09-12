@@ -525,7 +525,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
    */
   label = gtk_label_new (_("Emblems"));
   chooser = thunar_emblem_chooser_new ();
-  /*TODOexo_binding_new (G_OBJECT (dialog), "files", G_OBJECT (chooser), "files");*/
+  exo_binding_new (G_OBJECT (dialog), "files", G_OBJECT (chooser), "files");
   gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), chooser, label);
   gtk_widget_show (chooser);
   gtk_widget_show (label);

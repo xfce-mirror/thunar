@@ -34,13 +34,13 @@ typedef struct _ThunarEmblemChooser      ThunarEmblemChooser;
 #define THUNAR_IS_EMBLEM_CHOOSER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_EMBLEM_CHOOSER))
 #define THUNAR_EMBLEM_CHOOSER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_EMBLEM_CHOOSER, ThunarEmblemChooserClass))
 
-GType       thunar_emblem_chooser_get_type (void) G_GNUC_CONST;
+GType       thunar_emblem_chooser_get_type  (void) G_GNUC_CONST;
 
-GtkWidget  *thunar_emblem_chooser_new      (void) G_GNUC_MALLOC;
+GtkWidget  *thunar_emblem_chooser_new       (void) G_GNUC_MALLOC;
 
-ThunarFile *thunar_emblem_chooser_get_file (const ThunarEmblemChooser *chooser);
-void        thunar_emblem_chooser_set_file (ThunarEmblemChooser       *chooser,
-                                            ThunarFile                *file);
+GList      *thunar_emblem_chooser_get_files (const ThunarEmblemChooser *chooser);
+void        thunar_emblem_chooser_set_files (ThunarEmblemChooser       *chooser,
+                                             GList                     *files);
 
 G_END_DECLS;
 
