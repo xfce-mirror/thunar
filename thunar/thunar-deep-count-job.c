@@ -130,13 +130,7 @@ thunar_deep_count_job_class_init (ThunarDeepCountJobClass *klass)
 static void
 thunar_deep_count_job_init (ThunarDeepCountJob *job)
 {
-  job->files = NULL;
   job->query_flags = G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS;
-  job->total_size = 0;
-  job->file_count = 0;
-  job->directory_count = 0;
-  job->unreadable_directory_count = 0;
-  job->last_time = 0;
 }
 
 
@@ -271,11 +265,12 @@ thunar_deep_count_job_process (ExoJob    *job,
         }
 
       /* emit status update whenever we've finished a directory,
-       * but not more than fourth per second */
+       * but not more than four times per second */
       real_time = thunar_util_get_real_time ();
       if (real_time >= count_job->last_time)
         {
-          thunar_deep_count_job_status_update (count_job);
+          if (count_job->last_time != 0)
+            thunar_deep_count_job_status_update (count_job);
           count_job->last_time = real_time + (G_USEC_PER_SEC / 4);
         }
     }
@@ -299,10 +294,11 @@ static gboolean
 thunar_deep_count_job_execute (ExoJob  *job,
                                GError **error)
 {
-  gboolean success;
-  GError  *err = NULL;
-  GList   *lp;
-  GFile   *gfile;
+  ThunarDeepCountJob *count_job = THUNAR_DEEP_COUNT_JOB (job);
+  gboolean            success;
+  GError             *err = NULL;
+  GList              *lp;
+  GFile              *gfile;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -311,8 +307,15 @@ thunar_deep_count_job_execute (ExoJob  *job,
   if (exo_job_set_error_if_cancelled (job, error))
     return FALSE;
 
+  /* reset counters */
+  count_job->total_size = 0;
+  count_job->file_count = 0;
+  count_job->directory_count = 0;
+  count_job->unreadable_directory_count = 0;
+  count_job->last_time = 0;
+
   /* count files, directories and compute size of the job files */
-  for (lp = THUNAR_DEEP_COUNT_JOB (job)->files; lp != NULL; lp = lp->next)
+  for (lp = count_job->files; lp != NULL; lp = lp->next)
     {
       gfile = thunar_file_get_file (THUNAR_FILE (lp->data));
       success = thunar_deep_count_job_process (job, gfile, TRUE, &err);
@@ -340,7 +343,7 @@ thunar_deep_count_job_execute (ExoJob  *job,
   else if (!exo_job_is_cancelled (job))
     {
       /* emit final status update at the very end of the computation */
-      thunar_deep_count_job_status_update (THUNAR_DEEP_COUNT_JOB (job));
+      thunar_deep_count_job_status_update (count_job);
     }
 
   return success;

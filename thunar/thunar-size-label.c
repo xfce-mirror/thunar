@@ -71,8 +71,6 @@ static void     thunar_size_label_status_update         (ThunarDeepCountJob   *j
                                                          guint                 directory_count,
                                                          guint                 unreadable_directory_count,
                                                          ThunarSizeLabel      *size_label);
-static gboolean thunar_size_label_animate_timer         (gpointer              user_data);
-static void     thunar_size_label_animate_timer_destroy (gpointer              user_data);
 
 
 
@@ -91,9 +89,6 @@ struct _ThunarSizeLabel
 
   GtkWidget          *label;
   GtkWidget          *throbber;
-
-  /* the throbber animation is started after a timeout */
-  guint               animate_timer_id;
 };
 
 
@@ -178,10 +173,6 @@ thunar_size_label_finalize (GObject *object)
   /* reset the file property */
   thunar_size_label_set_files (size_label, NULL);
 
-  /* be sure to cancel any pending animate timer */
-  if (G_UNLIKELY (size_label->animate_timer_id != 0))
-    g_source_remove (size_label->animate_timer_id);
-
   (*G_OBJECT_CLASS (thunar_size_label_parent_class)->finalize) (object);
 }
 
@@ -242,10 +233,6 @@ thunar_size_label_button_press_event (GtkWidget       *ebox,
   /* left button press on the throbber cancels the calculation */
   if (G_LIKELY (event->button == 1))
     {
-      /* be sure to cancel the animate timer */
-      if (G_UNLIKELY (size_label->animate_timer_id != 0))
-        g_source_remove (size_label->animate_timer_id);
-
       /* cancel the pending job (if any) */
       if (G_UNLIKELY (size_label->job != NULL))
         {
@@ -281,10 +268,6 @@ thunar_size_label_files_changed (ThunarSizeLabel *size_label)
   _thunar_return_if_fail (size_label->files != NULL);
   _thunar_return_if_fail (THUNAR_IS_FILE (size_label->files->data));
 
-  /* be sure to cancel the animate timer */
-  if (G_UNLIKELY (size_label->animate_timer_id != 0))
-    g_source_remove (size_label->animate_timer_id);
-
   /* cancel the pending job (if any) */
   if (G_UNLIKELY (size_label->job != NULL))
     {
@@ -293,10 +276,6 @@ thunar_size_label_files_changed (ThunarSizeLabel *size_label)
       g_object_unref (size_label->job);
       size_label->job = NULL;
     }
-
-  /* be sure to stop and hide the throbber */
-  thunar_throbber_set_animated (THUNAR_THROBBER (size_label->throbber), FALSE);
-  gtk_widget_hide (size_label->throbber);
 
   /* check if there are multiple files or the single file is a directory */
   if (size_label->files->next != NULL
@@ -310,12 +289,18 @@ thunar_size_label_files_changed (ThunarSizeLabel *size_label)
 
       /* tell the user that we started calculation */
       gtk_label_set_text (GTK_LABEL (size_label->label), _("Calculating..."));
+      thunar_throbber_set_animated (THUNAR_THROBBER (size_label->throbber), TRUE);
+      gtk_widget_show (size_label->throbber);
 
       /* launch the job */
       exo_job_launch (EXO_JOB (size_label->job));
     }
   else
     {
+      /* this is going to be quick, stop and hide the throbber */
+      thunar_throbber_set_animated (THUNAR_THROBBER (size_label->throbber), FALSE);
+      gtk_widget_hide (size_label->throbber);
+
       /* determine the size of the file */
       size = thunar_file_get_size (THUNAR_FILE (size_label->files->data));
 
@@ -351,10 +336,6 @@ thunar_size_label_finished (ExoJob          *job,
   _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
   _thunar_return_if_fail (size_label->job == THUNAR_DEEP_COUNT_JOB (job));
 
-  /* be sure to cancel the animate timer */
-  if (G_UNLIKELY (size_label->animate_timer_id != 0))
-    g_source_remove (size_label->animate_timer_id);
-
   /* stop and hide the throbber */
   thunar_throbber_set_animated (THUNAR_THROBBER (size_label->throbber), FALSE);
   gtk_widget_hide (size_label->throbber);
@@ -384,14 +365,6 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
   _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
   _thunar_return_if_fail (size_label->job == job);
 
-  /* check if the animate timer is already running */
-  if (G_UNLIKELY (size_label->animate_timer_id == 0))
-    {
-      /* schedule the animate timer to animate and display the throbber after 1s */
-      size_label->animate_timer_id = g_timeout_add_full (G_PRIORITY_LOW, 1000, thunar_size_label_animate_timer,
-                                                         size_label, thunar_size_label_animate_timer_destroy);
-    }
-
   /* determine the total number of items */
   n = file_count + directory_count + unreadable_directory_count;
 
@@ -411,32 +384,6 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
 
   gtk_label_set_text (GTK_LABEL (size_label->label), text);
   g_free (text);
-}
-
-
-
-static gboolean
-thunar_size_label_animate_timer (gpointer user_data)
-{
-  ThunarSizeLabel *size_label = THUNAR_SIZE_LABEL (user_data);
-
-  GDK_THREADS_ENTER ();
-
-  /* animate and display the throbber */
-  thunar_throbber_set_animated (THUNAR_THROBBER (size_label->throbber), TRUE);
-  gtk_widget_show (size_label->throbber);
-
-  GDK_THREADS_LEAVE ();
-
-  return FALSE;
-}
-
-
-
-static void
-thunar_size_label_animate_timer_destroy (gpointer user_data)
-{
-  THUNAR_SIZE_LABEL (user_data)->animate_timer_id = 0;
 }
 
 
