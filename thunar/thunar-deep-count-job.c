@@ -2,19 +2,19 @@
 /*-
  * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>.
  *
- * This program is free software; you can redistribute it and/or modify 
- * it under the terms of the GNU General Public License as published by 
- * the Free Software Foundation; either version 2 of the License, or (at 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License 
- * along with this program; if not, write to the Free Software 
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA  02111-1307  USA
  */
 
@@ -65,7 +65,7 @@ struct _ThunarDeepCountJob
 {
   ThunarJob __parent__;
 
-  GFile              *file;
+  GList              *files;
   GFileQueryInfoFlags query_flags;
 
   /* the time of the last "status-update" emission */
@@ -95,7 +95,7 @@ thunar_deep_count_job_class_init (ThunarDeepCountJobClass *klass)
   GObjectClass *gobject_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->finalize = thunar_deep_count_job_finalize; 
+  gobject_class->finalize = thunar_deep_count_job_finalize;
 
   job_class = EXO_JOB_CLASS (klass);
   job_class->execute = thunar_deep_count_job_execute;
@@ -108,7 +108,7 @@ thunar_deep_count_job_class_init (ThunarDeepCountJobClass *klass)
    * @directory_count            : the number of directories.
    * @unreadable_directory_count : the number of unreadable directories.
    *
-   * Emitted by the @job to inform listeners about the number of files, 
+   * Emitted by the @job to inform listeners about the number of files,
    * directories and bytes counted so far.
    **/
   deep_count_signals[STATUS_UPDATE] =
@@ -130,7 +130,7 @@ thunar_deep_count_job_class_init (ThunarDeepCountJobClass *klass)
 static void
 thunar_deep_count_job_init (ThunarDeepCountJob *job)
 {
-  job->file = NULL;
+  job->files = NULL;
   job->query_flags = G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS;
   job->total_size = 0;
   job->file_count = 0;
@@ -146,8 +146,7 @@ thunar_deep_count_job_finalize (GObject *object)
 {
   ThunarDeepCountJob *job = THUNAR_DEEP_COUNT_JOB (object);
 
-  if (G_LIKELY (job->file != NULL))
-    g_object_unref (job->file);
+  g_list_free_full (job->files, g_object_unref);
 
   (*G_OBJECT_CLASS (thunar_deep_count_job_parent_class)->finalize) (object);
 }
@@ -159,7 +158,7 @@ thunar_deep_count_job_status_update (ThunarDeepCountJob *job)
 {
   _thunar_return_if_fail (THUNAR_IS_DEEP_COUNT_JOB (job));
 
-  exo_job_emit (EXO_JOB (job), 
+  exo_job_emit (EXO_JOB (job),
                 deep_count_signals[STATUS_UPDATE],
                 0,
                 job->total_size,
@@ -171,9 +170,10 @@ thunar_deep_count_job_status_update (ThunarDeepCountJob *job)
 
 
 static gboolean
-thunar_deep_count_job_process (ExoJob  *job,
-                               GFile   *file,
-                               GError **error)
+thunar_deep_count_job_process (ExoJob    *job,
+                               GFile     *file,
+                               gboolean   toplevel_file,
+                               GError   **error)
 {
   ThunarDeepCountJob *count_job = THUNAR_DEEP_COUNT_JOB (job);
   GFileEnumerator    *enumerator;
@@ -192,7 +192,7 @@ thunar_deep_count_job_process (ExoJob  *job,
     return FALSE;
 
   /* query size and type of the current file */
-  info = g_file_query_info (file, 
+  info = g_file_query_info (file,
                             G_FILE_ATTRIBUTE_STANDARD_TYPE ","
                             G_FILE_ATTRIBUTE_STANDARD_SIZE,
                             count_job->query_flags,
@@ -225,7 +225,7 @@ thunar_deep_count_job_process (ExoJob  *job,
               /* directory was unreadable */
               count_job->unreadable_directory_count += 1;
 
-              if (file == count_job->file)
+              if (toplevel_file)
                 {
                   /* we only bail out if the job file is unreadable */
                   success = FALSE;
@@ -258,7 +258,7 @@ thunar_deep_count_job_process (ExoJob  *job,
 
                   /* recurse unless the job was cancelled before */
                   if (!exo_job_is_cancelled (job))
-                    thunar_deep_count_job_process (job, child, error);
+                    thunar_deep_count_job_process (job, child, FALSE, error);
 
                   /* free resources */
                   g_object_unref (child);
@@ -288,10 +288,6 @@ thunar_deep_count_job_process (ExoJob  *job,
   /* destroy the file info */
   g_object_unref (info);
 
-  /* emit final status update at the very end of the computation */
-  if (file == count_job->file)
-    thunar_deep_count_job_status_update (count_job);
-
   /* we've succeeded if there was no error when loading information
    * about the job file itself and the job was not cancelled */
   return !exo_job_is_cancelled (job) && success;
@@ -305,6 +301,8 @@ thunar_deep_count_job_execute (ExoJob  *job,
 {
   gboolean success;
   GError  *err = NULL;
+  GList   *lp;
+  GFile   *gfile;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -313,16 +311,20 @@ thunar_deep_count_job_execute (ExoJob  *job,
   if (exo_job_set_error_if_cancelled (job, error))
     return FALSE;
 
-  /* count files, directories and compute size of the job file */
-  success = thunar_deep_count_job_process (job, 
-                                           THUNAR_DEEP_COUNT_JOB (job)->file, 
-                                           &err);
+  /* count files, directories and compute size of the job files */
+  for (lp = THUNAR_DEEP_COUNT_JOB (job)->files; lp != NULL; lp = lp->next)
+    {
+      gfile = thunar_file_get_file (THUNAR_FILE (lp->data));
+      success = thunar_deep_count_job_process (job, gfile, TRUE, &err);
+      if (G_UNLIKELY (!success))
+        break;
+    }
 
   if (!success)
     {
       g_assert (err != NULL || exo_job_is_cancelled (job));
 
-      /* set error if the job was cancelled. otherwise just propagate 
+      /* set error if the job was cancelled. otherwise just propagate
        * the results of the processing function */
       if (exo_job_set_error_if_cancelled (job, error))
         {
@@ -334,26 +336,31 @@ thunar_deep_count_job_execute (ExoJob  *job,
           if (err != NULL)
             g_propagate_error (error, err);
         }
-      
-      return FALSE;
     }
-  else
-    return TRUE;
+  else if (!exo_job_is_cancelled (job))
+    {
+      /* emit final status update at the very end of the computation */
+      thunar_deep_count_job_status_update (THUNAR_DEEP_COUNT_JOB (job));
+    }
+
+  return success;
 }
 
 
 
 ThunarDeepCountJob *
-thunar_deep_count_job_new (GFile              *file,
-                           GFileQueryInfoFlags flags)
+thunar_deep_count_job_new (GList               *files,
+                           GFileQueryInfoFlags  flags)
 {
   ThunarDeepCountJob *job;
 
-  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
+  _thunar_return_val_if_fail (files != NULL, NULL);
 
   job = g_object_new (THUNAR_TYPE_DEEP_COUNT_JOB, NULL);
-  job->file = g_object_ref (file);
+  job->files = g_list_copy (files);
   job->query_flags = flags;
+
+  g_list_foreach (job->files, (GFunc) g_object_ref, NULL);
 
   return job;
 }

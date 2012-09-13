@@ -40,7 +40,7 @@ typedef struct _ThunarDeepCountJob        ThunarDeepCountJob;
 
 GType               thunar_deep_count_job_get_type (void) G_GNUC_CONST;
 
-ThunarDeepCountJob *thunar_deep_count_job_new      (GFile              *file,
+ThunarDeepCountJob *thunar_deep_count_job_new      (GList              *files,
                                                     GFileQueryInfoFlags flags) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS;
