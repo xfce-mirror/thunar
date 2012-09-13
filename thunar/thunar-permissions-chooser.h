@@ -34,13 +34,13 @@ typedef struct _ThunarPermissionsChooser      ThunarPermissionsChooser;
 #define THUNAR_IS_PERMISSIONS_CHOOSER_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_PERMISSIONS_CHOOSER))
 #define THUNAR_PERMISSIONS_CHOOSER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_PERMISSIONS_CHOOSER, ThunarPermissionsChooserClass))
 
-GType       thunar_permissions_chooser_get_type (void) G_GNUC_CONST;
+GType       thunar_permissions_chooser_get_type  (void) G_GNUC_CONST;
 
-GtkWidget  *thunar_permissions_chooser_new      (void) G_GNUC_MALLOC;
+GtkWidget  *thunar_permissions_chooser_new       (void) G_GNUC_MALLOC;
 
-ThunarFile *thunar_permissions_chooser_get_file (ThunarPermissionsChooser *chooser);
-void        thunar_permissions_chooser_set_file (ThunarPermissionsChooser *chooser,
-                                                 ThunarFile               *file);
+GList      *thunar_permissions_chooser_get_files (ThunarPermissionsChooser *chooser);
+void        thunar_permissions_chooser_set_files (ThunarPermissionsChooser *chooser,
+                                                  GList                    *files);
 
 G_END_DECLS;
 

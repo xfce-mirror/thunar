@@ -958,25 +958,20 @@ retry_chown:
 
 
 ThunarJob *
-thunar_io_jobs_change_group (GFile    *file,
+thunar_io_jobs_change_group (GList    *files,
                              guint32   gid,
                              gboolean  recursive)
 {
-  GList file_list;
+  _thunar_return_val_if_fail (files != NULL, NULL);
 
-  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
+  /* files are released when the list if destroyed */
+  g_list_foreach (files, (GFunc) g_object_ref, NULL);
 
-  file_list.data = g_object_ref (file);
-  file_list.next = NULL; 
-  file_list.prev = NULL;
-  
   return thunar_simple_job_launch (_thunar_io_jobs_chown, 4,
-                                   THUNAR_TYPE_G_FILE_LIST, &file_list,
+                                   THUNAR_TYPE_G_FILE_LIST, files,
                                    G_TYPE_INT, -1,
                                    G_TYPE_INT, (gint) gid,
                                    G_TYPE_BOOLEAN, recursive);
-
-  g_object_unref (file_list.data);
 }
 
 
@@ -1112,30 +1107,25 @@ retry_chown:
 
 
 ThunarJob *
-thunar_io_jobs_change_mode (GFile         *file,
+thunar_io_jobs_change_mode (GList         *files,
                             ThunarFileMode dir_mask,
                             ThunarFileMode dir_mode,
                             ThunarFileMode file_mask,
                             ThunarFileMode file_mode,
                             gboolean       recursive)
 {
-  GList file_list;
+  _thunar_return_val_if_fail (files != NULL, NULL);
 
-  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
+  /* files are released when the list if destroyed */
+  g_list_foreach (files, (GFunc) g_object_ref, NULL);
 
-  file_list.data = g_object_ref (file);
-  file_list.next = NULL; 
-  file_list.prev = NULL;
-  
   return thunar_simple_job_launch (_thunar_io_jobs_chmod, 6,
-                                   THUNAR_TYPE_G_FILE_LIST, &file_list,
+                                   THUNAR_TYPE_G_FILE_LIST, files,
                                    THUNAR_TYPE_FILE_MODE, dir_mask,
                                    THUNAR_TYPE_FILE_MODE, dir_mode,
                                    THUNAR_TYPE_FILE_MODE, file_mask,
                                    THUNAR_TYPE_FILE_MODE, file_mode,
                                    G_TYPE_BOOLEAN, recursive);
-
-  g_object_unref (file_list.data);
 }
 
 

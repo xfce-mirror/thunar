@@ -534,7 +534,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
    */
   label = gtk_label_new (_("Permissions"));
   dialog->permissions_chooser = thunar_permissions_chooser_new ();
-  /*TODOexo_binding_new (G_OBJECT (dialog), "files", G_OBJECT (dialog->permissions_chooser), "files");*/
+  exo_binding_new (G_OBJECT (dialog), "files", G_OBJECT (dialog->permissions_chooser), "files");
   gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), dialog->permissions_chooser, label);
   gtk_widget_show (dialog->permissions_chooser);
   gtk_widget_show (label);
@@ -1110,6 +1110,7 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
   gchar       *display_name;
   ThunarFile  *parent_file = NULL;
   ThunarFile  *tmp_parent;
+  gboolean     has_trashed_files = FALSE;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (g_list_length (dialog->files) > 1);
@@ -1190,12 +1191,18 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
           g_object_unref (G_OBJECT (tmp_parent));
         }
 
+      if (thunar_file_is_trashed (file))
+        has_trashed_files = TRUE;
+
       first_file = FALSE;
     }
 
   /* set the labels string */
   gtk_label_set_text (GTK_LABEL (dialog->names_label), names_string->str);
   g_string_free (names_string, TRUE);
+
+  /* hide the permissions chooser for trashed files */
+  gtk_widget_set_visible (dialog->permissions_chooser, !has_trashed_files);
 
   /* update the content type */
   if (content_type != NULL
@@ -1244,10 +1251,6 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
     {
       gtk_widget_hide (dialog->volume_label);
     }
-
-  /* all files should have the same base-location, if that is the
-   * trash or inside the trash, hide the permission chooser */
-  gtk_widget_set_visible (dialog->permissions_chooser, FALSE/*!thunar_file_is_trashed (file)*/);
 }
 
 

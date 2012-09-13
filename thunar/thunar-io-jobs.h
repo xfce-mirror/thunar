@@ -38,10 +38,10 @@ ThunarJob *thunar_io_jobs_link_files       (GList         *source_file_list,
 ThunarJob *thunar_io_jobs_trash_files      (GList         *file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 ThunarJob *thunar_io_jobs_restore_files    (GList         *source_file_list,
                                             GList         *target_file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-ThunarJob *thunar_io_jobs_change_group     (GFile         *file,
+ThunarJob *thunar_io_jobs_change_group     (GList         *files,
                                             guint32        gid,
                                             gboolean       recursive) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-ThunarJob *thunar_io_jobs_change_mode      (GFile         *file,
+ThunarJob *thunar_io_jobs_change_mode      (GList         *files,
                                             ThunarFileMode dir_mask,
                                             ThunarFileMode dir_mode,
                                             ThunarFileMode file_mask,
