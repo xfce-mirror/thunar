@@ -122,7 +122,7 @@ thunar_size_label_class_init (ThunarSizeLabelClass *klass)
                                    PROP_FILES,
                                    g_param_spec_boxed ("files", "files", "files",
                                                        THUNARX_TYPE_FILE_INFO_LIST,
-                                                       EXO_PARAM_WRITABLE));
+                                                       EXO_PARAM_READWRITE));
 }
 
 
