@@ -167,6 +167,14 @@ thunar_size_label_finalize (GObject *object)
 {
   ThunarSizeLabel *size_label = THUNAR_SIZE_LABEL (object);
 
+  /* cancel the pending job (if any) */
+  if (G_UNLIKELY (size_label->job != NULL))
+    {
+      g_signal_handlers_disconnect_matched (G_OBJECT (size_label->job), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, size_label);
+      exo_job_cancel (EXO_JOB (size_label->job));
+      g_object_unref (size_label->job);
+    }
+
   /* reset the file property */
   thunar_size_label_set_files (size_label, NULL);
 
@@ -299,6 +307,9 @@ thunar_size_label_files_changed (ThunarSizeLabel *size_label)
       g_signal_connect (size_label->job, "error", G_CALLBACK (thunar_size_label_error), size_label);
       g_signal_connect (size_label->job, "finished", G_CALLBACK (thunar_size_label_finished), size_label);
       g_signal_connect (size_label->job, "status-update", G_CALLBACK (thunar_size_label_status_update), size_label);
+
+      /* tell the user that we started calculation */
+      gtk_label_set_text (GTK_LABEL (size_label->label), _("Calculating..."));
 
       /* launch the job */
       exo_job_launch (EXO_JOB (size_label->job));
@@ -475,15 +486,6 @@ thunar_size_label_set_files (ThunarSizeLabel *size_label,
 
   _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
   _thunar_return_if_fail (files == NULL || THUNAR_IS_FILE (files->data));
-
-  /* stop a running job */
-  if (G_UNLIKELY (size_label->job != NULL))
-    {
-      g_signal_handlers_disconnect_matched (size_label->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, size_label);
-      exo_job_cancel (EXO_JOB (size_label->job));
-      g_object_unref (size_label->job);
-      size_label->job = NULL;
-    }
 
   /* disconnect from the previous files */
   for (lp = size_label->files; lp != NULL; lp = lp->next)
