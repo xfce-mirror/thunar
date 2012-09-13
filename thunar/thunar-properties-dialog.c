@@ -344,7 +344,6 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_show (label);
 
   dialog->openwith_chooser = thunar_chooser_button_new ();
-  /*TODO exo_binding_new (G_OBJECT (dialog), "file", G_OBJECT (dialog->openwith_chooser), "file");*/
   exo_binding_new (G_OBJECT (dialog->openwith_chooser), "visible", G_OBJECT (label), "visible");
   gtk_table_attach (GTK_TABLE (table), dialog->openwith_chooser, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (dialog->openwith_chooser);
@@ -879,6 +878,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   gchar             *volume_name;
   ThunarFile        *file;
   ThunarFile        *parent_file;
+  gboolean           show_chooser;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (g_list_length (dialog->files) == 1);
@@ -967,9 +967,10 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
     }
 
   /* update the application chooser (shown only for non-executable regular files!) */
-  g_object_set (G_OBJECT (dialog->openwith_chooser),
-                "visible", (thunar_file_is_regular (file) && !thunar_file_is_executable (file)),
-                NULL);
+  show_chooser = thunar_file_is_regular (file) && !thunar_file_is_executable (file);
+  gtk_widget_set_visible (dialog->openwith_chooser, show_chooser);
+  if (show_chooser)
+    thunar_chooser_button_set_file (THUNAR_CHOOSER_BUTTON (dialog->openwith_chooser), file);
 
   /* update the link target */
   path = thunar_file_is_symlink (file) ? thunar_file_get_symlink_target (file) : NULL;
