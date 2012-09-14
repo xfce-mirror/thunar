@@ -788,7 +788,7 @@ group_compare (gconstpointer group_a,
                gconstpointer group_b,
                gpointer      group_primary)
 {
-  guint32 group_primary_id = thunar_group_get_id (THUNAR_GROUP (group_primary));
+  guint32 group_primary_id;
   guint32 group_a_id = thunar_group_get_id (THUNAR_GROUP (group_a));
   guint32 group_b_id = thunar_group_get_id (THUNAR_GROUP (group_b));
 
@@ -797,10 +797,14 @@ group_compare (gconstpointer group_a,
     return 0;
 
   /* the primary group is always sorted first */
-  if (group_a_id == group_primary_id)
-    return -1;
-  else if (group_b_id == group_primary_id)
-    return 1;
+  if (group_primary != NULL)
+    {
+      group_primary_id = thunar_group_get_id (THUNAR_GROUP (group_primary));
+      if (group_a_id == group_primary_id)
+        return -1;
+      else if (group_b_id == group_primary_id)
+        return 1;
+    }
 
   /* system groups (< 100) are always sorted last */
   if (group_a_id < 100 && group_b_id >= 100)
@@ -820,9 +824,9 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser)
 {
   ThunarFile        *file;
   ThunarUserManager *user_manager;
-  ThunarFileMode     mode;
-  ThunarGroup       *group;
-  ThunarUser        *user;
+  ThunarFileMode     mode = 0;
+  ThunarGroup       *group = NULL;
+  ThunarUser        *user = NULL;
   GtkListStore      *store;
   GtkTreeIter        iter;
   const gchar       *user_name;
@@ -831,8 +835,48 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser)
   GList             *lp;
   gchar              buffer[1024];
   guint              n;
+  guint              n_files = 0;
+
+  gint               modes[3] = { 0, };
+  gint               file_modes[3];
 
   _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
+
+  /* compare multiple files */
+  for (lp = chooser->files; lp != NULL; lp = lp->next)
+    {
+      file = THUNAR_FILE (lp->data);
+
+      /* transform the file modes in r/w/r+w for each group */
+      mode = thunar_file_get_mode (file);
+      for (n = 0; n < 3; n++)
+        file_modes[n] = ((mode >> (n * 3)) & 0007) >> 1;
+
+      if (n_files == 0)
+        {
+          /* get information of the first file */
+          user = thunar_file_get_user (file);
+          group = thunar_file_get_group (file);
+
+          for (n = 0; n < 3; n++)
+            modes[n] = file_modes[n];
+        }
+      else
+        {
+          /* unset the file info if it is different from the other files */
+          if (user != NULL && user != thunar_file_get_user (file))
+            user = NULL;
+
+          if (group != NULL && group != thunar_file_get_group (file))
+            group = NULL;
+
+          for (n = 0; n < 3; n++)
+            if (file_modes[n] != modes[n])
+              modes[n] = -1;
+        }
+
+      n_files++;
+    }
 
   file = THUNAR_FILE (chooser->files->data);
 
@@ -842,69 +886,8 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser)
   gtk_combo_box_set_model (GTK_COMBO_BOX (chooser->group_combo), GTK_TREE_MODEL (store));
 
   /* determine the owner of the new file */
-  user = thunar_file_get_user (file);
   if (G_LIKELY (user != NULL))
     {
-      /* determine the group of the new file */
-      group = thunar_file_get_group (file);
-      if (G_LIKELY (group != NULL))
-        {
-          /* check if we have superuser privileges */
-          if (G_UNLIKELY (geteuid () == 0))
-            {
-              /* determine all groups in the system */
-              user_manager = thunar_user_manager_get_default ();
-              groups = thunar_user_manager_get_all_groups (user_manager);
-              g_object_unref (G_OBJECT (user_manager));
-            }
-          else
-            {
-              /* determine the groups for the user and take a copy */
-              groups = g_list_copy (thunar_user_get_groups (user));
-              g_list_foreach (groups, (GFunc) g_object_ref, NULL);
-            }
-
-          /* make sure that the group list includes the file group */
-          if (G_UNLIKELY (g_list_find (groups, group) == NULL))
-            groups = g_list_prepend (groups, g_object_ref (G_OBJECT (group)));
-
-          /* sort the groups according to group_compare() */
-          groups = g_list_sort_with_data (groups, group_compare, group);
-
-          /* add the groups to the store */
-          for (lp = groups, n = 0; lp != NULL; lp = lp->next)
-            {
-              /* append a separator after the primary group and after the user-groups (not system groups) */
-              if (thunar_group_get_id (groups->data) == thunar_group_get_id (group)
-                  && lp != groups && n == 0)
-                {
-                  gtk_list_store_append (store, &iter);
-                  n += 1;
-                }
-              else if (lp != groups && thunar_group_get_id (lp->data) < 100 && n == 1)
-                {
-                  gtk_list_store_append (store, &iter);
-                  n += 1;
-                }
-
-              /* append a new item for the group */
-              gtk_list_store_append (store, &iter);
-              gtk_list_store_set (store, &iter,
-                                  THUNAR_PERMISSIONS_STORE_COLUMN_NAME, thunar_group_get_name (lp->data),
-                                  THUNAR_PERMISSIONS_STORE_COLUMN_GID, thunar_group_get_id (lp->data),
-                                  -1);
-
-              /* set the active iter for the combo box if this group is the primary group */
-              if (G_UNLIKELY (lp->data == group))
-                gtk_combo_box_set_active_iter (GTK_COMBO_BOX (chooser->group_combo), &iter);
-            }
-
-          /* cleanup */
-          g_list_foreach (groups, (GFunc) g_object_unref, NULL);
-          g_object_unref (G_OBJECT (group));
-          g_list_free (groups);
-        }
-
       /* determine sane display name for the owner */
       user_name = thunar_user_get_name (user);
       real_name = thunar_user_get_real_name (user);
@@ -913,19 +896,89 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser)
       else
         g_strlcpy (buffer, user_name, sizeof (buffer));
       gtk_label_set_text (GTK_LABEL (chooser->user_label), buffer);
-      g_object_unref (G_OBJECT (user));
     }
   else
     {
-      gtk_label_set_text (GTK_LABEL (chooser->user_label), _("Unknown file owner"));
+      gtk_label_set_text (GTK_LABEL (chooser->user_label),
+                          n_files > 1 ? _("Mixed file owners") :_("Unknown file owner"));
     }
 
+  /* check if we have superuser privileges */
+  if (G_UNLIKELY (geteuid () == 0))
+    {
+      /* determine all groups in the system */
+      user_manager = thunar_user_manager_get_default ();
+      groups = thunar_user_manager_get_all_groups (user_manager);
+      g_object_unref (G_OBJECT (user_manager));
+    }
+  else
+    {
+      if (G_UNLIKELY (user == NULL && n_files > 1))
+        {
+          /* get groups of the active user */
+          user_manager = thunar_user_manager_get_default ();
+          user = thunar_user_manager_get_user_by_id (user_manager, geteuid ());
+          g_object_unref (G_OBJECT (user_manager));
+        }
+
+      /* determine the groups for the user and take a copy */
+      if (G_LIKELY (user != NULL))
+        {
+          groups = g_list_copy (thunar_user_get_groups (user));
+          g_list_foreach (groups, (GFunc) g_object_ref, NULL);
+        }
+    }
+
+  /* make sure that the group list includes the file group */
+  if (G_UNLIKELY (group != NULL && g_list_find (groups, group) == NULL))
+    groups = g_list_prepend (groups, g_object_ref (G_OBJECT (group)));
+
+  /* sort the groups according to group_compare() */
+  groups = g_list_sort_with_data (groups, group_compare, group);
+
+  /* add the groups to the store */
+  for (lp = groups, n = 0; lp != NULL; lp = lp->next)
+    {
+      /* append a separator after the primary group and after the user-groups (not system groups) */
+      if (group != NULL
+          && thunar_group_get_id (groups->data) == thunar_group_get_id (group)
+          && lp != groups && n == 0)
+        {
+          gtk_list_store_append (store, &iter);
+          n += 1;
+        }
+      else if (lp != groups && thunar_group_get_id (lp->data) < 100 && n == 1)
+        {
+          gtk_list_store_append (store, &iter);
+          n += 1;
+        }
+
+      /* append a new item for the group */
+      gtk_list_store_append (store, &iter);
+      gtk_list_store_set (store, &iter,
+                          THUNAR_PERMISSIONS_STORE_COLUMN_NAME, thunar_group_get_name (lp->data),
+                          THUNAR_PERMISSIONS_STORE_COLUMN_GID, thunar_group_get_id (lp->data),
+                          -1);
+
+      /* set the active iter for the combo box if this group is the primary group */
+      if (G_UNLIKELY (lp->data == group))
+        gtk_combo_box_set_active_iter (GTK_COMBO_BOX (chooser->group_combo), &iter);
+    }
+
+  /* cleanup */
+  if (G_LIKELY (user != NULL))
+    g_object_unref (G_OBJECT (user));
+  if (G_LIKELY (group != NULL))
+    g_object_unref (G_OBJECT (group));
+
+  g_list_foreach (groups, (GFunc) g_object_unref, NULL);
+  g_list_free (groups);
+
   /* determine the file mode and update the combo boxes */
-  mode = thunar_file_get_mode (file);
   for (n = 0; n < G_N_ELEMENTS (chooser->access_combos); ++n)
     {
       g_signal_handlers_block_by_func (G_OBJECT (chooser->access_combos[n]), thunar_permissions_chooser_access_changed, chooser);
-      gtk_combo_box_set_active (GTK_COMBO_BOX (chooser->access_combos[n]), ((mode >> (n * 3)) & 0007) >> 1);
+      gtk_combo_box_set_active (GTK_COMBO_BOX (chooser->access_combos[n]), modes[n]);
       g_signal_handlers_unblock_by_func (G_OBJECT (chooser->access_combos[n]), thunar_permissions_chooser_access_changed, chooser);
     }
 
