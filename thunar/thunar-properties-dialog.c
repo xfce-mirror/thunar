@@ -538,10 +538,6 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), dialog->permissions_chooser, label);
   gtk_widget_show (dialog->permissions_chooser);
   gtk_widget_show (label);
-
-
-  /* place the initial focus on the name entry widget */
-  gtk_widget_grab_focus (dialog->name_entry);
 }
 
 
@@ -1275,6 +1271,9 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 
       /* update the properties for a dialog showing 1 file */
       thunar_properties_dialog_update_single (dialog);
+
+      /* place the initial focus on the name entry widget */
+      gtk_widget_grab_focus (dialog->name_entry);
     }
   else
     {
