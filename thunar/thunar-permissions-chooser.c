@@ -2,6 +2,7 @@
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2012      Nick Schermer <nick@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -84,7 +85,7 @@ static void                 thunar_permissions_chooser_set_property     (GObject
 static gint                 thunar_permissions_chooser_ask_recursive    (ThunarPermissionsChooser       *chooser);
 static void                 thunar_permissions_chooser_change_group     (ThunarPermissionsChooser       *chooser,
                                                                          guint32                         gid);
-static void                 thunar_permissions_chooser_change_mode      (ThunarPermissionsChooser       *chooser,
+static gboolean             thunar_permissions_chooser_change_mode      (ThunarPermissionsChooser       *chooser,
                                                                          ThunarFileMode                  dir_mask,
                                                                          ThunarFileMode                  dir_mode,
                                                                          ThunarFileMode                  file_mask,
@@ -194,8 +195,6 @@ static void
 thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
 {
   GtkCellRenderer *renderer_text;
-  GtkListStore    *store;
-  GtkTreeIter      iter;
   GtkWidget       *separator;
   GtkWidget       *button;
   GtkWidget       *label;
@@ -205,13 +204,6 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
 
   /* setup the chooser */
   gtk_container_set_border_width (GTK_CONTAINER (chooser), 12);
-
-  /* allocate the store for the permission combos */
-  store = gtk_list_store_new (1, G_TYPE_STRING);
-  gtk_list_store_insert_with_values (store, &iter, 0, 0, _("None"), -1);         /* 0000 */
-  gtk_list_store_insert_with_values (store, &iter, 1, 0, _("Write only"), -1);   /* 0002 */
-  gtk_list_store_insert_with_values (store, &iter, 2, 0, _("Read only"), -1);    /* 0004 */
-  gtk_list_store_insert_with_values (store, &iter, 3, 0, _("Read & Write"), -1); /* 0006 */
 
   /* allocate the shared renderer for the various combo boxes */
   renderer_text = gtk_cell_renderer_text_new ();
@@ -246,7 +238,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_table_attach (GTK_TABLE (chooser->table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
-  chooser->access_combos[2] = gtk_combo_box_new_with_model (GTK_TREE_MODEL (store));
+  chooser->access_combos[2] = gtk_combo_box_new ();
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (chooser->access_combos[2]), renderer_text, TRUE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (chooser->access_combos[2]), renderer_text, "text", 0);
   exo_binding_new (G_OBJECT (chooser), "mutable", G_OBJECT (chooser->access_combos[2]), "sensitive");
@@ -287,7 +279,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_table_attach (GTK_TABLE (chooser->table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
-  chooser->access_combos[1] = gtk_combo_box_new_with_model (GTK_TREE_MODEL (store));
+  chooser->access_combos[1] = gtk_combo_box_new ();
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (chooser->access_combos[1]), renderer_text, TRUE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (chooser->access_combos[1]), renderer_text, "text", 0);
   exo_binding_new (G_OBJECT (chooser), "mutable", G_OBJECT (chooser->access_combos[1]), "sensitive");
@@ -310,7 +302,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_table_attach (GTK_TABLE (chooser->table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
-  chooser->access_combos[0] = gtk_combo_box_new_with_model (GTK_TREE_MODEL (store));
+  chooser->access_combos[0] = gtk_combo_box_new ();
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (chooser->access_combos[0]), renderer_text, TRUE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (chooser->access_combos[0]), renderer_text, "text", 0);
   exo_binding_new (G_OBJECT (chooser), "mutable", G_OBJECT (chooser->access_combos[0]), "sensitive");
@@ -406,9 +398,6 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   image = gtk_image_new_from_stock (GTK_STOCK_CANCEL, GTK_ICON_SIZE_MENU);
   gtk_container_add (GTK_CONTAINER (button), image);
   gtk_widget_show (image);
-
-  /* release the shared combo store */
-  g_object_unref (G_OBJECT (store));
 }
 
 
@@ -705,7 +694,7 @@ thunar_permissions_chooser_change_group (ThunarPermissionsChooser *chooser,
 
 
 
-static void
+static gboolean
 thunar_permissions_chooser_change_mode (ThunarPermissionsChooser *chooser,
                                         ThunarFileMode            dir_mask,
                                         ThunarFileMode            dir_mode,
@@ -717,8 +706,8 @@ thunar_permissions_chooser_change_mode (ThunarPermissionsChooser *chooser,
   gint       response;
   GList     *file_list;
 
-  _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
-  _thunar_return_if_fail (chooser->files != NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser), FALSE);
+  _thunar_return_val_if_fail (chooser->files != NULL, FALSE);
 
   /* check if we should operate recursively */
   if (thunar_permissions_chooser_has_directory (chooser))
@@ -736,7 +725,7 @@ thunar_permissions_chooser_change_mode (ThunarPermissionsChooser *chooser,
 
         default:  /* cancelled by the user */
           thunar_permissions_chooser_file_changed (chooser);
-          return;
+          return FALSE;
         }
     }
 
@@ -746,6 +735,8 @@ thunar_permissions_chooser_change_mode (ThunarPermissionsChooser *chooser,
   thunar_permissions_chooser_job_start (chooser, job, recursive);
   g_list_free_full (file_list, g_object_unref);
   g_object_unref (job);
+
+  return TRUE;
 }
 
 
@@ -759,13 +750,21 @@ thunar_permissions_chooser_access_changed (ThunarPermissionsChooser *chooser,
   ThunarFileMode  dir_mask;
   ThunarFileMode  dir_mode;
   guint           n;
+  gint            active_mode;
+  GtkTreeModel   *model;
+  GtkTreeIter     iter;
 
   _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
   _thunar_return_if_fail (GTK_IS_COMBO_BOX (combo));
 
+  /* leave if the active mode is varying */
+  active_mode = gtk_combo_box_get_active (GTK_COMBO_BOX (combo));
+  if (active_mode > 3)
+    return;
+
   /* determine the new mode from the combo box */
   for (n = 0; n < G_N_ELEMENTS (chooser->access_combos) && chooser->access_combos[n] != combo ; ++n);
-  dir_mode = file_mode = (gtk_combo_box_get_active (GTK_COMBO_BOX (combo)) << 1) << (n * 3);
+  dir_mode = file_mode = (active_mode << 1) << (n * 3);
   dir_mask = file_mask = 0006 << (n * 3);
 
   /* keep exec bit in sync for folders */
@@ -778,7 +777,13 @@ thunar_permissions_chooser_access_changed (ThunarPermissionsChooser *chooser,
     }
 
   /* change the permissions */
-  thunar_permissions_chooser_change_mode (chooser, dir_mask, dir_mode, file_mask, file_mode);
+  if (thunar_permissions_chooser_change_mode (chooser, dir_mask, dir_mode, file_mask, file_mode))
+    {
+      /* for better feedback remove the varying item */
+      model = gtk_combo_box_get_model (GTK_COMBO_BOX (combo));
+      if (gtk_tree_model_get_iter_from_string (model, &iter, "4"))
+        gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
+    }
 }
 
 
@@ -836,9 +841,9 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser)
   gchar              buffer[1024];
   guint              n;
   guint              n_files = 0;
-
   gint               modes[3] = { 0, };
   gint               file_modes[3];
+  GtkListStore      *access_store;
 
   _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
 
@@ -872,7 +877,7 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser)
 
           for (n = 0; n < 3; n++)
             if (file_modes[n] != modes[n])
-              modes[n] = -1;
+              modes[n] = 4;
         }
 
       n_files++;
@@ -978,8 +983,22 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser)
   for (n = 0; n < G_N_ELEMENTS (chooser->access_combos); ++n)
     {
       g_signal_handlers_block_by_func (G_OBJECT (chooser->access_combos[n]), thunar_permissions_chooser_access_changed, chooser);
+
+      /* allocate the store for the permission combos */
+      access_store = gtk_list_store_new (1, G_TYPE_STRING);
+      gtk_list_store_insert_with_values (access_store, NULL, 0, 0, _("None"), -1);         /* 0000 */
+      gtk_list_store_insert_with_values (access_store, NULL, 1, 0, _("Write only"), -1);   /* 0002 */
+      gtk_list_store_insert_with_values (access_store, NULL, 2, 0, _("Read only"), -1);    /* 0004 */
+      gtk_list_store_insert_with_values (access_store, NULL, 3, 0, _("Read & Write"), -1); /* 0006 */
+      if (modes[n] == 4)
+        gtk_list_store_insert_with_values (access_store, NULL, 4, 0, _("Varying (no change)"), -1);
+
+      gtk_combo_box_set_model (GTK_COMBO_BOX (chooser->access_combos[n]), GTK_TREE_MODEL (access_store));
       gtk_combo_box_set_active (GTK_COMBO_BOX (chooser->access_combos[n]), modes[n]);
+
       g_signal_handlers_unblock_by_func (G_OBJECT (chooser->access_combos[n]), thunar_permissions_chooser_access_changed, chooser);
+
+      g_object_unref (G_OBJECT (access_store));
     }
 
   /* update the program setting based on the mode (only visible for regular files, allowed for execution) */
