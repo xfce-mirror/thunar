@@ -1195,6 +1195,7 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
 
   /* set the labels string */
   gtk_label_set_text (GTK_LABEL (dialog->names_label), names_string->str);
+  gtk_widget_set_tooltip_text (dialog->names_label, names_string->str);
   g_string_free (names_string, TRUE);
 
   /* hide the permissions chooser for trashed files */
