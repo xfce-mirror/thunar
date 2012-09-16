@@ -577,8 +577,7 @@ thunar_properties_dialog_finalize (GObject *object)
   g_object_unref (dialog->thumbnailer);
 
   /* release the provider property pages */
-  g_list_foreach (dialog->provider_pages, (GFunc) g_object_unref, NULL);
-  g_list_free (dialog->provider_pages);
+  g_list_free_full (dialog->provider_pages, g_object_unref);
 
   /* drop the reference on the provider factory */
   g_object_unref (dialog->provider_factory);

@@ -509,8 +509,7 @@ thunar_templates_action_menu_shown (GtkWidget             *menu,
 
   /* drop all existing children of the menu first */
   children = gtk_container_get_children (GTK_CONTAINER (menu));
-  g_list_foreach (children, (GFunc) gtk_widget_destroy, NULL);
-  g_list_free (children);
+  g_list_free_full (children, (GDestroyNotify) gtk_widget_destroy);
 
   if (G_LIKELY (templates_action->job == NULL))
     {

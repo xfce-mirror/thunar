@@ -1876,8 +1876,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
       g_slist_free (rows);
 
       /* remove hidden entries */
-      g_slist_foreach (store->hidden, (GFunc) g_object_unref, NULL);
-      g_slist_free (store->hidden);
+      g_slist_free_full (store->hidden, g_object_unref);
       store->hidden = NULL;
 
       /* unregister signals and drop the reference */
@@ -2170,8 +2169,7 @@ thunar_list_model_get_num_files (ThunarListModel *store)
  *
  * The caller is responsible to free the returned list using:
  * <informalexample><programlisting>
- * g_list_foreach (list, (GFunc) gtk_tree_path_free, NULL);
- * g_list_free (list);
+ * g_list_free_full (list, (GDestroyNotify) gtk_tree_path_free);
  * </programlisting></informalexample>
  *
  * Return value: the list of #GtkTreePath<!---->s for @files.
@@ -2206,8 +2204,7 @@ thunar_list_model_get_paths_for_files (ThunarListModel *store,
  *
  * The caller is responsible to free the returned list using:
  * <informalexample><programlisting>
- * g_list_foreach (list, (GFunc) gtk_tree_path_free, NULL);
- * g_list_free (list);
+ * g_list_free_full (list, (GDestroyNotify) gtk_tree_path_free);
  * </programlisting></informalexample>
  *
  * Return value: the list of #GtkTreePath<!---->s that match @pattern.

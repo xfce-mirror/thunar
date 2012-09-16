@@ -72,8 +72,7 @@ thunarx_preferences_provider_get_type (void)
  * The caller is responsible to free the returned list of actions using
  * something like this when no longer needed:
  * <informalexample><programlisting>
- * g_list_foreach (list, (GFunc) g_object_unref, NULL);
- * g_list_free (list);
+ * g_list_free_full (list, g_object_unref);
  * </programlisting></informalexample>
  *
  * Return value: the list of #GtkAction<!---->s that @provider has

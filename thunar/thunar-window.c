@@ -1623,8 +1623,7 @@ thunar_window_action_close_all_windows (GtkAction    *action,
   g_object_unref (G_OBJECT (application));
 
   /* destroy all open windows */
-  g_list_foreach (windows, (GFunc) gtk_widget_destroy, NULL);
-  g_list_free (windows);
+  g_list_free_full (windows, (GDestroyNotify) gtk_widget_destroy);
 }
 
 

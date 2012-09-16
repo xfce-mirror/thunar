@@ -3554,8 +3554,7 @@ thunar_file_cached_display_name (const GFile *file)
  *
  * The caller is responsible to free the returned list using something like:
  * <informalexample><programlisting>
- * g_list_foreach (list, (GFunc) g_object_unref, NULL);
- * g_list_free (list);
+ * g_list_free_full (list, g_object_unref);
  * </programlisting></informalexample>
  *
  * Return value: the list of #GAppInfo<!---->s that can be used to open all 
@@ -3612,8 +3611,7 @@ thunar_file_list_get_applications (GList *file_list)
             }
 
           /* release the list of applications for this file */
-          g_list_foreach (list, (GFunc) g_object_unref, NULL);
-          g_list_free (list);
+          g_list_free_full (list, g_object_unref);
         }
 
       /* check if the set is still not empty */

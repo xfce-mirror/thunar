@@ -383,8 +383,7 @@ thunar_tree_model_finalize (GObject *object)
   g_object_unref (model->file_monitor);
 
   /* release all hidden volumes */
-  g_list_foreach (model->hidden_volumes, (GFunc) g_object_unref, NULL);
-  g_list_free (model->hidden_volumes);
+  g_list_free_full (model->hidden_volumes, g_object_unref);
 
   /* release all resources allocated to the model */
   g_node_traverse (model->root, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_model_node_traverse_free, NULL);
@@ -1263,8 +1262,7 @@ thunar_tree_model_item_reset (ThunarTreeModelItem *item)
   /* free all the invisible children */
   if (item->invisible_children != NULL)
     {
-      g_slist_foreach (item->invisible_children, (GFunc) g_object_unref, NULL);
-      g_slist_free (item->invisible_children);
+      g_slist_free_full (item->invisible_children, g_object_unref);
       item->invisible_children = NULL;
     }
 

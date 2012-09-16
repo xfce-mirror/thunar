@@ -94,8 +94,7 @@ thunarx_property_page_provider_get_type (void)
  * something like this when no longer needed:
  * <informalexample><programlisting>
  * g_list_foreach (list, (GFunc) g_object_ref_sink, NULL);
- * g_list_foreach (list, (GFunc) g_object_unref, NULL);
- * g_list_free (list);
+ * g_list_free_full (list, g_object_unref);
  * </programlisting></informalexample>
  *
  * Return value: the list of #ThunarxPropertyPage<!---->s that @provider has to offer

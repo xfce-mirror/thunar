@@ -43,7 +43,7 @@ typedef struct _ThunarTransferNode ThunarTransferNode;
 static void     thunar_transfer_job_finalize     (GObject                *object);
 static gboolean thunar_transfer_job_execute      (ExoJob                 *job,
                                                   GError                **error);
-static void     thunar_transfer_node_free        (ThunarTransferNode     *node);
+static void     thunar_transfer_node_free        (gpointer                data);
 
 
 
@@ -114,8 +114,7 @@ thunar_transfer_job_finalize (GObject *object)
 {
   ThunarTransferJob *job = THUNAR_TRANSFER_JOB (object);
 
-  g_list_foreach (job->source_node_list, (GFunc) thunar_transfer_node_free, NULL);
-  g_list_free (job->source_node_list);
+  g_list_free_full (job->source_node_list, thunar_transfer_node_free);
 
   thunar_g_file_list_free (job->target_file_list);
 
@@ -858,8 +857,9 @@ thunar_transfer_job_execute (ExoJob  *job,
 
 
 static void
-thunar_transfer_node_free (ThunarTransferNode *node)
+thunar_transfer_node_free (gpointer data)
 {
+  ThunarTransferNode *node = data;
   ThunarTransferNode *next;
 
   /* free all nodes in a row */

@@ -1056,8 +1056,7 @@ thunar_standard_view_set_selected_files (ThunarComponent *component,
           (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->scroll_to_path) (standard_view, first_path, FALSE, 0.0f, 0.0f);
 
           /* release the tree paths */
-          g_list_foreach (paths, (GFunc) gtk_tree_path_free, NULL);
-          g_list_free (paths);
+          g_list_free_full (paths, (GDestroyNotify) gtk_tree_path_free);
         }
     }
 }
@@ -1355,8 +1354,7 @@ thunar_standard_view_get_statusbar_text (ThunarView *view)
         return _("Loading folder contents...");
 
       standard_view->statusbar_text = thunar_list_model_get_statusbar_text (standard_view->model, items);
-      g_list_foreach (items, (GFunc) gtk_tree_path_free, NULL);
-      g_list_free (items);
+      g_list_free_full (items, (GDestroyNotify) gtk_tree_path_free);
     }
 
   return standard_view->statusbar_text;
@@ -1529,8 +1527,7 @@ thunar_standard_view_scroll_to_file (ThunarView *view,
             }
 
           /* cleanup */
-          g_list_foreach (paths, (GFunc) gtk_tree_path_free, NULL);
-          g_list_free (paths);
+          g_list_free_full (paths, (GDestroyNotify) gtk_tree_path_free);
         }
     }
 }
@@ -3074,8 +3071,7 @@ thunar_standard_view_row_deleted (ThunarListModel    *model,
   /* Do nothing if the deleted row is not selected or there is more than one file selected */
   if (G_UNLIKELY (g_list_find_custom (selected_items, path, (GCompareFunc) gtk_tree_path_compare) == NULL || g_list_length (selected_items) != 1))
     {
-      g_list_foreach (selected_items, (GFunc) gtk_tree_path_free, NULL);
-      g_list_free (selected_items);
+      g_list_free_full (selected_items, (GDestroyNotify) gtk_tree_path_free);
       return;
     }
 
@@ -3096,8 +3092,7 @@ thunar_standard_view_row_deleted (ThunarListModel    *model,
     }
 
   /* Free path list */
-  g_list_foreach (selected_items, (GFunc) gtk_tree_path_free, NULL);
-  g_list_free (selected_items);
+  g_list_free_full (selected_items, (GDestroyNotify) gtk_tree_path_free);
 }
 
 
@@ -3436,8 +3431,7 @@ thunar_standard_view_request_thumbnails (ThunarStandardView *standard_view)
                                       &standard_view->priv->thumbnail_request);
 
       /* release the file list */
-      g_list_foreach (visible_files, (GFunc) g_object_unref, NULL);
-      g_list_free (visible_files);
+      g_list_free_full (visible_files, g_object_unref);
 
       /* release the start and end path */
       gtk_tree_path_free (start_path);
@@ -3536,8 +3530,7 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view,
   /* merge the custom menu actions for the selected items */
   selected_items = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
   thunar_standard_view_merge_custom_actions (standard_view, selected_items);
-  g_list_foreach (selected_items, (GFunc) gtk_tree_path_free, NULL);
-  g_list_free (selected_items);
+  g_list_free_full (selected_items, (GDestroyNotify) gtk_tree_path_free);
 
   /* grab an additional reference on the view */
   g_object_ref (G_OBJECT (standard_view));

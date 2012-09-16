@@ -98,13 +98,14 @@ thunar_renamer_pair_copy (ThunarRenamerPair *renamer_pair)
 
 /**
  * thunar_renamer_pair_free:
- * @renamer_pair : a #ThunarRenamerPair.
+ * @data : a #ThunarRenamerPair.
  *
  * Frees the specified @renamer_pair.
  **/
 void
-thunar_renamer_pair_free (ThunarRenamerPair *renamer_pair)
+thunar_renamer_pair_free (gpointer data)
 {
+  ThunarRenamerPair *renamer_pair = data;
   if (G_LIKELY (renamer_pair != NULL))
     {
       g_object_unref (G_OBJECT (renamer_pair->file));
@@ -150,8 +151,7 @@ thunar_renamer_pair_list_copy (GList *renamer_pair_list)
 void
 thunar_renamer_pair_list_free (GList *renamer_pair_list)
 {
-  g_list_foreach (renamer_pair_list, (GFunc) thunar_renamer_pair_free, NULL);
-  g_list_free (renamer_pair_list);
+  g_list_free_full (renamer_pair_list, thunar_renamer_pair_free);
 }
 
 

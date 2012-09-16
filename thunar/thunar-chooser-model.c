@@ -311,11 +311,8 @@ thunar_chooser_model_reload (ThunarChooserModel *model)
                                "gnome-applications",
                                other);
 
-  g_list_foreach (recommended, (GFunc) g_object_unref, NULL);
-  g_list_free (recommended);
-
-  g_list_foreach (all, (GFunc) g_object_unref, NULL);
-  g_list_free (all);
+  g_list_free_full (recommended, g_object_unref);
+  g_list_free_full (all, g_object_unref);
 
   g_list_free (other);
 }

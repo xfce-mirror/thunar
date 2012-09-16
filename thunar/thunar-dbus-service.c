@@ -601,8 +601,7 @@ thunar_dbus_service_execute (ThunarDBusService *dbus_service,
       g_object_unref (working_dir);
 
       /* cleanup */
-      g_list_foreach (file_list, (GFunc) g_object_unref, NULL);
-      g_list_free (file_list);
+      g_list_free_full (file_list, g_object_unref);
       g_object_unref (screen);
       g_object_unref (file);
     }

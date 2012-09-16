@@ -93,8 +93,7 @@ thunar_sendto_model_finalize (GObject *object)
   GList             *lp;
 
   /* release the handlers */
-  g_list_foreach (sendto_model->handlers, (GFunc) g_object_unref, NULL);
-  g_list_free (sendto_model->handlers);
+  g_list_free_full (sendto_model->handlers, g_object_unref);
 
   /* disconnect all monitors */
   for (lp = sendto_model->monitors; lp != NULL; lp = lp->next)
@@ -171,8 +170,7 @@ thunar_sendto_model_event (GFileMonitor     *monitor,
   /* release the previously loaded handlers */
   if (G_LIKELY (sendto_model->handlers != NULL))
     {
-      g_list_foreach (sendto_model->handlers, (GFunc) g_object_unref, NULL);
-      g_list_free (sendto_model->handlers);
+      g_list_free_full (sendto_model->handlers, g_object_unref);
       sendto_model->handlers = NULL;
     }
 
@@ -222,8 +220,7 @@ thunar_sendto_model_get_default (void)
  * The returned list is owned by the caller and must be freed when no
  * longer needed, using:
  * <informalexample><programlisting>
- * g_list_foreach (list, (GFunc) g_object_unref, NULL);
- * g_list_free (list);
+ * g_list_free_full (list, g_object_unref);
  * </programlisting></informalexample>
  *
  * Return value: a #GList of supported #GAppInfo<!---->s as

@@ -608,8 +608,7 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
     }
 
   /* release the renamers list */
-  g_list_foreach (renamers, (GFunc) g_object_unref, NULL);
-  g_list_free (renamers);
+  g_list_free_full (renamers, g_object_unref);
 }
 
 
@@ -1518,8 +1517,7 @@ thunar_renamer_dialog_drag_drop (GtkWidget           *tree_view,
 
           /* perform the move */
           thunar_renamer_model_reorder (renamer_dialog->model, rows, position);
-          g_list_foreach (rows, (GFunc) gtk_tree_path_free, NULL);
-          g_list_free (rows);
+          g_list_free_full (rows, (GDestroyNotify) gtk_tree_path_free);
         }
 
       /* finish the dnd operation */

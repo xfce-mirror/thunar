@@ -976,8 +976,7 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser)
   if (G_LIKELY (group != NULL))
     g_object_unref (G_OBJECT (group));
 
-  g_list_foreach (groups, (GFunc) g_object_unref, NULL);
-  g_list_free (groups);
+  g_list_free_full (groups, g_object_unref);
 
   /* determine the file mode and update the combo boxes */
   for (n = 0; n < G_N_ELEMENTS (chooser->access_combos); ++n)

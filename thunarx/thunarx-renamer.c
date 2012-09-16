@@ -639,8 +639,7 @@ thunarx_renamer_save (ThunarxRenamer *renamer,
  * The caller is responsible to free the returned list using something
  * like the following:
  * <informalexample><programlisting>
- * g_list_foreach (list, (GFunc) g_object_unref, NULL);
- * g_list_free (list);
+ * g_list_free_full (list, g_object_unref);
  * </programlisting></informalexample>
  *
  * As a special note, this method automatically takes a reference on the

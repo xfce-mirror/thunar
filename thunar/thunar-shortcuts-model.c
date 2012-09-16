@@ -356,8 +356,7 @@ thunar_shortcuts_model_finalize (GObject *object)
   g_list_free (model->shortcuts);
 
   /* free all hidden volumes */
-  g_list_foreach (model->hidden_volumes, (GFunc) g_object_unref, NULL);
-  g_list_free (model->hidden_volumes);
+  g_list_free_full (model->hidden_volumes, g_object_unref);
 
   /* detach from the file monitor */
   if (model->monitor != NULL)

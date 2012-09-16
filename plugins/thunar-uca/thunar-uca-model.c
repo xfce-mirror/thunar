@@ -122,7 +122,7 @@ static gboolean           thunar_uca_model_load_from_file   (ThunarUcaModel     
                                                              const gchar          *filename,
                                                              GError              **error);
 static void               thunar_uca_model_item_reset       (ThunarUcaModelItem   *item);
-static void               thunar_uca_model_item_free        (ThunarUcaModelItem   *item);
+static void               thunar_uca_model_item_free        (gpointer              data);
 static void               start_element_handler             (GMarkupParseContext  *context,
                                                              const gchar          *element_name,
                                                              const gchar         **attribute_names,
@@ -284,8 +284,7 @@ thunar_uca_model_finalize (GObject *object)
   g_object_unref (G_OBJECT (uca_model->icon_factory));
 
   /* release all items */
-  g_list_foreach (uca_model->items, (GFunc) thunar_uca_model_item_free, NULL);
-  g_list_free (uca_model->items);
+  g_list_free_full (uca_model->items, thunar_uca_model_item_free);
 
   (*G_OBJECT_CLASS (thunar_uca_model_parent_class)->finalize) (object);
 }
@@ -600,8 +599,9 @@ thunar_uca_model_item_reset (ThunarUcaModelItem *item)
 
 
 static void
-thunar_uca_model_item_free (ThunarUcaModelItem *item)
+thunar_uca_model_item_free (gpointer data)
 {
+  ThunarUcaModelItem *item = data;
   thunar_uca_model_item_reset (item);
   g_free (item);
 }
@@ -1000,8 +1000,7 @@ types_from_mime_type (const gchar *mime_type)
  *
  * The caller is responsible to free the returned list using
  * <informalexample><programlisting>
- * g_list_foreach (list, (GFunc) gtk_tree_path_free, NULL);
- * g_list_free (list);
+ * g_list_free_full (list, (GDestroyNotify) gtk_tree_path_free);
  * </programlisting></informalexample>
  *
  * Return value: the list of #GtkTreePath<!---->s to items

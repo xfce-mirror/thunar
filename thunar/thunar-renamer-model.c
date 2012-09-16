@@ -119,7 +119,7 @@ static gchar                  *thunar_renamer_model_process_item        (ThunarR
 static gboolean                thunar_renamer_model_update_idle         (gpointer                 user_data);
 static void                    thunar_renamer_model_update_idle_destroy (gpointer                 user_data);
 static ThunarRenamerModelItem *thunar_renamer_model_item_new            (ThunarFile              *file) G_GNUC_MALLOC;
-static void                    thunar_renamer_model_item_free           (ThunarRenamerModelItem  *item);
+static void                    thunar_renamer_model_item_free           (gpointer                 data);
 static gint                    thunar_renamer_model_cmp_array           (gconstpointer            pointer_a,
                                                                          gconstpointer            pointer_b,
                                                                          gpointer                 user_data);
@@ -288,8 +288,7 @@ thunar_renamer_model_finalize (GObject *object)
   thunar_renamer_model_set_renamer (renamer_model, NULL);
 
   /* release all items */
-  g_list_foreach (renamer_model->items, (GFunc) thunar_renamer_model_item_free, NULL);
-  g_list_free (renamer_model->items);
+  g_list_free_full (renamer_model->items, thunar_renamer_model_item_free);
 
   /* disconnect from the file monitor */
   g_signal_handlers_disconnect_by_func (G_OBJECT (renamer_model->file_monitor), thunar_renamer_model_file_destroyed, renamer_model);
@@ -977,8 +976,10 @@ thunar_renamer_model_item_new (ThunarFile *file)
 
 
 static void
-thunar_renamer_model_item_free (ThunarRenamerModelItem *item)
+thunar_renamer_model_item_free (gpointer data)
 {
+  ThunarRenamerModelItem *item = data;
+
   g_object_unref (G_OBJECT (item->file));
   g_free (item->name);
   g_slice_free (ThunarRenamerModelItem, item);

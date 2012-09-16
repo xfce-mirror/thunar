@@ -268,8 +268,7 @@ thunar_application_finalize (GObject *object)
     g_source_remove (application->volman_idle_id);
 
   /* drop all pending volume manager UDIs */
-  g_slist_foreach (application->volman_udis, (GFunc) g_free, NULL);
-  g_slist_free (application->volman_udis);
+  g_slist_free_full (application->volman_udis, g_free);
 
   /* disconnect from the udev client */
   g_object_unref (application->udev_client);
@@ -659,8 +658,7 @@ thunar_application_volman_idle (gpointer user_data)
   else
     {
       /* drop all pending HAL device UDIs */
-      g_slist_foreach (application->volman_udis, (GFunc) g_free, NULL);
-      g_slist_free (application->volman_udis);
+      g_slist_free_full (application->volman_udis, g_free);
       application->volman_udis = NULL;
     }
 

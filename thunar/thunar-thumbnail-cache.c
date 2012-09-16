@@ -132,37 +132,28 @@ thunar_thumbnail_cache_finalize (GObject *object)
   /* drop the move queue idle and all queued files */
   if (cache->move_queue_idle_id > 0)
     g_source_remove (cache->move_queue_idle_id);
-  g_list_foreach (cache->move_source_queue, (GFunc) g_object_unref, NULL);
-  g_list_foreach (cache->move_target_queue, (GFunc) g_object_unref, NULL);
-  g_list_free (cache->move_source_queue);
-  g_list_free (cache->move_target_queue);
+  g_list_free_full (cache->move_source_queue, g_object_unref);
+  g_list_free_full (cache->move_target_queue, g_object_unref);
 
   /* drop the copy queue idle and all queued files */
   if (cache->copy_queue_idle_id > 0)
     g_source_remove (cache->copy_queue_idle_id);
-  g_list_foreach (cache->copy_source_queue, (GFunc) g_object_unref, NULL);
-  g_list_foreach (cache->copy_target_queue, (GFunc) g_object_unref, NULL);
-  g_list_free (cache->copy_source_queue);
-  g_list_free (cache->copy_target_queue);
+  g_list_free_full (cache->copy_source_queue, g_object_unref);
+  g_list_free_full (cache->copy_target_queue, g_object_unref);
 
   /* drop the delete queue idle and all queued files */
   if (cache->delete_queue_idle_id > 0)
     g_source_remove (cache->delete_queue_idle_id);
-  g_list_foreach (cache->delete_queue, (GFunc) g_object_unref, NULL);
-  g_list_free (cache->delete_queue);
+  g_list_free_full (cache->delete_queue, g_object_unref);
 
   /* drop the cleanup queue idle and all queued files */
   if (cache->cleanup_queue_idle_id > 0)
     g_source_remove (cache->cleanup_queue_idle_id);
-  g_list_foreach (cache->cleanup_queue, (GFunc) g_object_unref, NULL);
-  g_list_free (cache->cleanup_queue);
+  g_list_free_full (cache->cleanup_queue, g_object_unref);
 
   /* check if we have a valid cache proxy */
   if (cache->cache_proxy != NULL)
-    {
-      /* release the cache proxy itself */
-      g_object_unref (cache->cache_proxy);
-    }
+    g_object_unref (cache->cache_proxy);
 
   /* release the cache lock */
   g_mutex_unlock (cache->lock);

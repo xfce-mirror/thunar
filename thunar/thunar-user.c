@@ -239,8 +239,7 @@ thunar_user_finalize (GObject *object)
   ThunarUser *user = THUNAR_USER (object);
 
   /* unref the associated groups */
-  g_list_foreach (user->groups, (GFunc) g_object_unref, NULL);
-  g_list_free (user->groups);
+  g_list_free_full (user->groups, g_object_unref);
 
   /* drop the reference on the primary group */
   if (G_LIKELY (user->primary_group != NULL))
@@ -737,8 +736,7 @@ thunar_user_manager_get_user_by_id (ThunarUserManager *manager,
  *
  * The caller is responsible to free the returned list using:
  * <informalexample><programlisting>
- * g_list_foreach (list, (GFunc) g_object_unref, NULL);
- * g_list_free (list);
+ * g_list_free_full (list, g_object_unref);
  * </programlisting></informalexample>
  *
  * Return value: the list of all groups known to the @manager.

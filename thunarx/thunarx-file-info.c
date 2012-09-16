@@ -443,9 +443,5 @@ thunarx_file_info_list_copy (GList *file_infos)
 void
 thunarx_file_info_list_free (GList *file_infos)
 {
-  if (file_infos != NULL)
-    {
-      g_list_foreach (file_infos, (GFunc) g_object_unref, NULL);
-      g_list_free (file_infos);
-    }
-}   
+  g_list_free_full (file_infos, g_object_unref);
+}

@@ -40,7 +40,7 @@ ThunarRenamerPair *thunar_renamer_pair_new        (ThunarFile        *file,
                                                    const gchar       *name) G_GNUC_MALLOC;
 
 ThunarRenamerPair *thunar_renamer_pair_copy       (ThunarRenamerPair *renamer_pair) G_GNUC_MALLOC;
-void               thunar_renamer_pair_free       (ThunarRenamerPair *renamer_pair);
+void               thunar_renamer_pair_free       (gpointer           data);
 
 GList             *thunar_renamer_pair_list_copy  (GList             *renamer_pair_list) G_GNUC_MALLOC;
 void               thunar_renamer_pair_list_free  (GList             *renamer_pair_list);
