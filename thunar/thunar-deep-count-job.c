@@ -220,7 +220,8 @@ thunar_deep_count_job_process (ExoJob    *job,
               /* directory was unreadable */
               count_job->unreadable_directory_count += 1;
 
-              if (toplevel_file)
+              if (toplevel_file
+                  && g_list_length (count_job->files) < 2)
                 {
                   /* we only bail out if the job file is unreadable */
                   success = FALSE;
@@ -228,8 +229,7 @@ thunar_deep_count_job_process (ExoJob    *job,
               else
                 {
                   /* ignore errors from files other than the job file */
-                  g_error_free (*error);
-                  *error = NULL;
+                  g_clear_error (error);
                 }
             }
           else

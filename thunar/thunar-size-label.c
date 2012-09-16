@@ -368,22 +368,30 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
   /* determine the total number of items */
   n = file_count + directory_count + unreadable_directory_count;
 
-  /* update the label */
-  size_string = g_format_size (total_size);
-  text = g_strdup_printf (ngettext ("%u item, totalling %s", "%u items, totalling %s", n), n, size_string);
-  g_free (size_string);
-
-  if (unreadable_directory_count > 0)
+  if (G_LIKELY (n > unreadable_directory_count))
     {
-      /* TRANSLATORS: this is shows if during the deep count size
-       * directories were not accessible */
-      unreable_text = g_strconcat (text, "\n", _("(some contents unreadable)"), NULL);
+      /* update the label */
+      size_string = g_format_size (total_size);
+      text = g_strdup_printf (ngettext ("%u item, totalling %s", "%u items, totalling %s", n), n, size_string);
+      g_free (size_string);
+      
+      if (unreadable_directory_count > 0)
+        {
+          /* TRANSLATORS: this is shows if during the deep count size
+           * directories were not accessible */
+          unreable_text = g_strconcat (text, "\n", _("(some contents unreadable)"), NULL);
+          g_free (text);
+          text = unreable_text;
+        }
+      
+      gtk_label_set_text (GTK_LABEL (size_label->label), text);
       g_free (text);
-      text = unreable_text;
     }
-
-  gtk_label_set_text (GTK_LABEL (size_label->label), text);
-  g_free (text);
+  else
+    {
+      /* nothing was readable, so permission was denied */
+      gtk_label_set_text (GTK_LABEL (size_label->label), _("Permission denied"));
+    }
 }
 
 
