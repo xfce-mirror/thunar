@@ -836,7 +836,7 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser)
   GtkTreeIter        iter;
   const gchar       *user_name;
   const gchar       *real_name;
-  GList             *groups;
+  GList             *groups = NULL;
   GList             *lp;
   gchar              buffer[1024];
   guint              n;

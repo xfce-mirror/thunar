@@ -296,7 +296,7 @@ thunar_deep_count_job_execute (ExoJob  *job,
                                GError **error)
 {
   ThunarDeepCountJob *count_job = THUNAR_DEEP_COUNT_JOB (job);
-  gboolean            success;
+  gboolean            success = TRUE;
   GError             *err = NULL;
   GList              *lp;
   GFile              *gfile;

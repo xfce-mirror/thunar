@@ -1096,7 +1096,7 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
   GString     *names_string;
   gboolean     first_file = TRUE;
   GList       *lp;
-  const gchar *content_type;
+  const gchar *content_type = NULL;
   const gchar *tmp;
   gchar       *str;
   GVolume     *volume = NULL;

@@ -76,7 +76,7 @@ thunar_dialogs_show_rename_file (gpointer    parent,
   gchar             *title;
   gint               response;
 
-  _thunar_return_val_if_fail (window == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WINDOW (parent), FALSE);
+  _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WINDOW (parent), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
   /* parse the parent window and screen */
