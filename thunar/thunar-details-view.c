@@ -58,6 +58,7 @@ static void         thunar_details_view_disconnect_ui_manager   (ThunarStandardV
 static GList       *thunar_details_view_get_selected_items      (ThunarStandardView     *standard_view);
 static void         thunar_details_view_select_all              (ThunarStandardView     *standard_view);
 static void         thunar_details_view_unselect_all            (ThunarStandardView     *standard_view);
+static void         thunar_details_view_selection_invert        (ThunarStandardView     *standard_view);
 static void         thunar_details_view_select_path             (ThunarStandardView     *standard_view,
                                                                  GtkTreePath            *path);
 static void         thunar_details_view_set_cursor              (ThunarStandardView     *standard_view,
@@ -156,6 +157,7 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
   thunarstandard_view_class->get_selected_items = thunar_details_view_get_selected_items;
   thunarstandard_view_class->select_all = thunar_details_view_select_all;
   thunarstandard_view_class->unselect_all = thunar_details_view_unselect_all;
+  thunarstandard_view_class->selection_invert = thunar_details_view_selection_invert;
   thunarstandard_view_class->select_path = thunar_details_view_select_path;
   thunarstandard_view_class->set_cursor = thunar_details_view_set_cursor;
   thunarstandard_view_class->scroll_to_path = thunar_details_view_scroll_to_path;
@@ -455,6 +457,56 @@ thunar_details_view_unselect_all (ThunarStandardView *standard_view)
 
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (GTK_BIN (standard_view)->child));
   gtk_tree_selection_unselect_all (selection);
+}
+
+
+
+static void
+thunar_details_view_selection_invert_foreach (GtkTreeModel *model,
+                                              GtkTreePath  *path,
+                                              GtkTreeIter  *iter,
+                                              gpointer      data)
+{
+  GList      **list = data;
+
+  *list = g_list_prepend (*list, gtk_tree_path_copy (path));
+}
+
+
+
+static void
+thunar_details_view_selection_invert (ThunarStandardView *standard_view)
+{
+  GtkTreeSelection *selection;
+  GList            *selected_paths = NULL;
+  GList            *lp;
+  GtkTreePath      *path;
+
+  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view));
+
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (GTK_BIN (standard_view)->child));
+
+  /* block updates */
+  g_signal_handlers_block_by_func (selection, thunar_standard_view_selection_changed, standard_view);
+
+  /* get paths of selected files */
+  gtk_tree_selection_selected_foreach (selection, thunar_details_view_selection_invert_foreach, &selected_paths);
+
+  gtk_tree_selection_select_all (selection);
+
+  for (lp = selected_paths; lp != NULL; lp = lp->next)
+    {
+      path = lp->data;
+      gtk_tree_selection_unselect_path (selection, path);
+      gtk_tree_path_free (path);
+    }
+
+  g_list_free (selected_paths);
+
+  /* unblock updates */
+  g_signal_handlers_unblock_by_func (selection, thunar_standard_view_selection_changed, standard_view);
+
+  thunar_standard_view_selection_changed (THUNAR_STANDARD_VIEW (standard_view));
 }
 
 

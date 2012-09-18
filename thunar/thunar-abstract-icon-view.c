@@ -44,6 +44,7 @@ static void         thunar_abstract_icon_view_disconnect_ui_manager (ThunarStand
 static GList       *thunar_abstract_icon_view_get_selected_items    (ThunarStandardView           *standard_view);
 static void         thunar_abstract_icon_view_select_all            (ThunarStandardView           *standard_view);
 static void         thunar_abstract_icon_view_unselect_all          (ThunarStandardView           *standard_view);
+static void         thunar_abstract_icon_view_selection_invert      (ThunarStandardView           *standard_view);
 static void         thunar_abstract_icon_view_select_path           (ThunarStandardView           *standard_view,
                                                                      GtkTreePath                  *path);
 static void         thunar_abstract_icon_view_set_cursor            (ThunarStandardView           *standard_view,
@@ -153,6 +154,7 @@ thunar_abstract_icon_view_class_init (ThunarAbstractIconViewClass *klass)
   thunarstandard_view_class->get_selected_items = thunar_abstract_icon_view_get_selected_items;
   thunarstandard_view_class->select_all = thunar_abstract_icon_view_select_all;
   thunarstandard_view_class->unselect_all = thunar_abstract_icon_view_unselect_all;
+  thunarstandard_view_class->selection_invert = thunar_abstract_icon_view_selection_invert;
   thunarstandard_view_class->select_path = thunar_abstract_icon_view_select_path;
   thunarstandard_view_class->set_cursor = thunar_abstract_icon_view_set_cursor;
   thunarstandard_view_class->scroll_to_path = thunar_abstract_icon_view_scroll_to_path;
@@ -314,6 +316,15 @@ thunar_abstract_icon_view_unselect_all (ThunarStandardView *standard_view)
 {
   _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
   exo_icon_view_unselect_all (EXO_ICON_VIEW (GTK_BIN (standard_view)->child));
+}
+
+
+
+static void
+thunar_abstract_icon_view_selection_invert (ThunarStandardView *standard_view)
+{
+  _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
+  exo_icon_view_selection_invert (EXO_ICON_VIEW (GTK_BIN (standard_view)->child));
 }
 
 

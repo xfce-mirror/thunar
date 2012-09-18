@@ -181,6 +181,8 @@ static void                 thunar_standard_view_action_select_all_files    (Gtk
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_select_by_pattern   (GtkAction                *action,
                                                                              ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_action_selection_invert    (GtkAction                *action,
+                                                                             ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_duplicate           (GtkAction                *action,
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_make_link           (GtkAction                *action,
@@ -289,6 +291,7 @@ struct _ThunarStandardViewPrivate
   GtkAction              *action_paste_into_folder;
   GtkAction              *action_select_all_files;
   GtkAction              *action_select_by_pattern;
+  GtkAction              *action_selection_invert;
   GtkAction              *action_duplicate;
   GtkAction              *action_make_link;
   GtkAction              *action_rename;
@@ -366,6 +369,7 @@ static const GtkActionEntry action_entries[] =
   { "paste-into-folder", GTK_STOCK_PASTE, N_ ("Paste Into Folder"), NULL, N_ ("Move or copy files previously selected by a Cut or Copy command into the selected folder"), G_CALLBACK (thunar_standard_view_action_paste_into_folder), },
   { "select-all-files", NULL, N_ ("Select _all Files"), NULL, N_ ("Select all files in this window"), G_CALLBACK (thunar_standard_view_action_select_all_files), },
   { "select-by-pattern", NULL, N_ ("Select _by Pattern..."), "<control>S", N_ ("Select all files that match a certain pattern"), G_CALLBACK (thunar_standard_view_action_select_by_pattern), },
+  { "invert-selection", NULL, N_ ("_Invert Selection"), NULL, N_ ("Select all and only the items that are not currently selected"), G_CALLBACK (thunar_standard_view_action_selection_invert), },
   { "duplicate", NULL, N_ ("Du_plicate"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_duplicate), },
   { "make-link", NULL, N_ ("Ma_ke Link"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_make_link), },
   { "rename", NULL, N_ ("_Rename..."), "F2", NULL, G_CALLBACK (thunar_standard_view_action_rename), },
@@ -580,6 +584,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->action_paste_into_folder = gtk_action_group_get_action (standard_view->action_group, "paste-into-folder");
   standard_view->priv->action_select_all_files = gtk_action_group_get_action (standard_view->action_group, "select-all-files");
   standard_view->priv->action_select_by_pattern = gtk_action_group_get_action (standard_view->action_group, "select-by-pattern");
+  standard_view->priv->action_selection_invert = gtk_action_group_get_action (standard_view->action_group, "invert-selection");
   standard_view->priv->action_duplicate = gtk_action_group_get_action (standard_view->action_group, "duplicate");
   standard_view->priv->action_make_link = gtk_action_group_get_action (standard_view->action_group, "make-link");
   standard_view->priv->action_rename = gtk_action_group_get_action (standard_view->action_group, "rename");
@@ -2158,6 +2163,22 @@ thunar_standard_view_action_select_by_pattern (GtkAction          *action,
     }
 
   gtk_widget_destroy (dialog);
+}
+
+
+
+static void
+thunar_standard_view_action_selection_invert (GtkAction          *action,
+                                              ThunarStandardView *standard_view)
+{
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  /* grab the focus to the view */
+  gtk_widget_grab_focus (GTK_WIDGET (standard_view));
+
+  /* invert all files in the real view */
+  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->selection_invert) (standard_view);
 }
 
 

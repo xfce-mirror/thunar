@@ -61,6 +61,9 @@ struct _ThunarStandardViewClass
   /* Unselects all items in the view */
   void         (*unselect_all)          (ThunarStandardView *standard_view);
 
+  /* Invert selection in the view */
+  void         (*selection_invert)      (ThunarStandardView *standard_view);
+
   /* Selects the given item */
   void         (*select_path)           (ThunarStandardView *standard_view,
                                          GtkTreePath        *path);
