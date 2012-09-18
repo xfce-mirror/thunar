@@ -232,13 +232,14 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
 
   row += 1;
 
-  label = gtk_label_new (_("Access:"));
+  label = gtk_label_new_with_mnemonic (_("_Access:"));
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_table_attach (GTK_TABLE (chooser->table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
   chooser->access_combos[2] = gtk_combo_box_new ();
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), chooser->access_combos[2]);
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (chooser->access_combos[2]), renderer_text, TRUE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (chooser->access_combos[2]), renderer_text, "text", 0);
   exo_binding_new (G_OBJECT (chooser), "mutable", G_OBJECT (chooser->access_combos[2]), "sensitive");
@@ -255,13 +256,14 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
 
   row += 1;
 
-  label = gtk_label_new (_("Group:"));
+  label = gtk_label_new_with_mnemonic (_("Gro_up:"));
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_table_attach (GTK_TABLE (chooser->table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
   chooser->group_combo = gtk_combo_box_new ();
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), chooser->group_combo);
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (chooser->group_combo), renderer_text, TRUE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (chooser->group_combo), renderer_text, "text", THUNAR_PERMISSIONS_STORE_COLUMN_NAME);
   gtk_combo_box_set_row_separator_func (GTK_COMBO_BOX (chooser->group_combo), thunar_permissions_chooser_row_separator, NULL, NULL);
@@ -273,13 +275,14 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
 
   row += 1;
 
-  label = gtk_label_new (_("Access:"));
+  label = gtk_label_new_with_mnemonic (_("Acce_ss:"));
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_table_attach (GTK_TABLE (chooser->table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
   chooser->access_combos[1] = gtk_combo_box_new ();
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), chooser->access_combos[1]);
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (chooser->access_combos[1]), renderer_text, TRUE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (chooser->access_combos[1]), renderer_text, "text", 0);
   exo_binding_new (G_OBJECT (chooser), "mutable", G_OBJECT (chooser->access_combos[1]), "sensitive");
@@ -296,13 +299,14 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
 
   row += 1;
 
-  label = gtk_label_new (_("Others:"));
+  label = gtk_label_new_with_mnemonic (_("O_thers:"));
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_table_attach (GTK_TABLE (chooser->table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
   chooser->access_combos[0] = gtk_combo_box_new ();
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), chooser->access_combos[0]);
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (chooser->access_combos[0]), renderer_text, TRUE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (chooser->access_combos[0]), renderer_text, "text", 0);
   exo_binding_new (G_OBJECT (chooser), "mutable", G_OBJECT (chooser->access_combos[0]), "sensitive");
@@ -373,7 +377,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_table_attach (GTK_TABLE (chooser->table), hbox, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (hbox);
 
-  chooser->fixperm_button = gtk_button_new_with_mnemonic (_("Correct folder permissions..."));
+  chooser->fixperm_button = gtk_button_new_with_mnemonic (_("Correct _folder permissions..."));
   gtk_widget_set_tooltip_text (chooser->fixperm_button, _("Click here to automatically fix the folder permissions."));
   g_signal_connect_swapped (G_OBJECT (chooser->fixperm_button), "clicked", G_CALLBACK (thunar_permissions_chooser_fixperm_clicked), chooser);
   exo_binding_new (G_OBJECT (chooser->fixperm_button), "visible", G_OBJECT (hbox), "visible");
@@ -1123,7 +1127,7 @@ thunar_permissions_chooser_fixperm_clicked (ThunarPermissionsChooser *chooser,
                                    GTK_BUTTONS_NONE,
                                    _("Correct folder permissions automatically?"));
   gtk_dialog_add_button (GTK_DIALOG (dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
-  gtk_dialog_add_button (GTK_DIALOG (dialog), _("Correct folder permissions"), GTK_RESPONSE_OK);
+  gtk_dialog_add_button (GTK_DIALOG (dialog), _("Correct _folder permissions"), GTK_RESPONSE_OK);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
   gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("The folder permissions will be reset to a consistent state. Only users "
                                                                            "allowed to read the contents of this folder will be allowed to enter the "

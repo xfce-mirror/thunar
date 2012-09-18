@@ -262,13 +262,14 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_box_pack_start (GTK_BOX (dialog->single_box), dialog->icon_image, FALSE, TRUE, 0);
   gtk_widget_show (dialog->icon_image);
 
-  label = gtk_label_new (_("Name:"));
+  label = gtk_label_new_with_mnemonic (_("_Name:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
   gtk_box_pack_end (GTK_BOX (dialog->single_box), label, TRUE, TRUE, 0);
   gtk_widget_show (label);
 
   dialog->name_entry = g_object_new (GTK_TYPE_ENTRY, "editable", FALSE, NULL);
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), dialog->name_entry);
   g_signal_connect (G_OBJECT (dialog->name_entry), "activate", G_CALLBACK (thunar_properties_dialog_name_activate), dialog);
   g_signal_connect (G_OBJECT (dialog->name_entry), "focus-out-event", G_CALLBACK (thunar_properties_dialog_name_focus_out_event), dialog);
   gtk_table_attach (GTK_TABLE (table), dialog->name_entry, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
@@ -337,13 +338,14 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   ++row;
 
-  label = gtk_label_new (_("Open With:"));
+  label = gtk_label_new_with_mnemonic (_("_Open With:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);
 
   dialog->openwith_chooser = thunar_chooser_button_new ();
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), dialog->openwith_chooser);
   exo_binding_new (G_OBJECT (dialog->openwith_chooser), "visible", G_OBJECT (label), "visible");
   gtk_table_attach (GTK_TABLE (table), dialog->openwith_chooser, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (dialog->openwith_chooser);
