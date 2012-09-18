@@ -189,7 +189,8 @@ static void                 thunar_standard_view_action_rename              (Gtk
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_restore             (GtkAction                *action,
                                                                              ThunarStandardView       *standard_view);
-static GClosure            *thunar_standard_view_new_files_closure          (ThunarStandardView       *standard_view);
+static GClosure            *thunar_standard_view_new_files_closure          (ThunarStandardView       *standard_view,
+                                                                             GtkWidget                *source_view);
 static void                 thunar_standard_view_new_files                  (ThunarStandardView       *standard_view,
                                                                              GList                    *path_list);
 static gboolean             thunar_standard_view_button_release_event       (GtkWidget                *view,
@@ -1848,7 +1849,7 @@ thunar_standard_view_action_create_empty_file (GtkAction          *action,
           /* launch the operation */
           application = thunar_application_get ();
           thunar_application_creat (application, GTK_WIDGET (standard_view), &path_list,
-                                    thunar_standard_view_new_files_closure (standard_view));
+                                    thunar_standard_view_new_files_closure (standard_view, NULL));
           g_object_unref (application);
 
           /* release the path */
@@ -1892,7 +1893,7 @@ thunar_standard_view_action_create_folder (GtkAction          *action,
           /* launch the operation */
           application = thunar_application_get ();
           thunar_application_mkdir (application, GTK_WIDGET (standard_view), &path_list,
-                                    thunar_standard_view_new_files_closure (standard_view));
+                                    thunar_standard_view_new_files_closure (standard_view, NULL));
           g_object_unref (G_OBJECT (application));
 
           /* release the path */
@@ -1950,7 +1951,7 @@ thunar_standard_view_action_create_template (GtkAction           *action,
           /* launch the operation */
           application = thunar_application_get ();
           thunar_application_copy_to (application, GTK_WIDGET (standard_view), &source_path_list, &target_path_list,
-                                      thunar_standard_view_new_files_closure (standard_view));
+                                      thunar_standard_view_new_files_closure (standard_view, NULL));
           g_object_unref (G_OBJECT (application));
 
           /* release the target path */
@@ -2045,7 +2046,7 @@ thunar_standard_view_action_paste (GtkAction          *action,
   if (G_LIKELY (current_directory != NULL))
     {
       thunar_clipboard_manager_paste_files (standard_view->clipboard, thunar_file_get_file (current_directory),
-                                            GTK_WIDGET (standard_view), thunar_standard_view_new_files_closure (standard_view));
+                                            GTK_WIDGET (standard_view), thunar_standard_view_new_files_closure (standard_view, NULL));
     }
 }
 
@@ -2185,7 +2186,7 @@ thunar_standard_view_action_duplicate (GtkAction          *action,
            * creates duplicates of the files.
            */
           application = thunar_application_get ();
-          new_files_closure = thunar_standard_view_new_files_closure (standard_view);
+          new_files_closure = thunar_standard_view_new_files_closure (standard_view, NULL);
           thunar_application_copy_into (application, GTK_WIDGET (standard_view), selected_files,
                                         thunar_file_get_file (current_directory), new_files_closure);
           g_object_unref (G_OBJECT (application));
@@ -2222,7 +2223,7 @@ thunar_standard_view_action_make_link (GtkAction          *action,
            * creates new unique links for the files.
            */
           application = thunar_application_get ();
-          new_files_closure = thunar_standard_view_new_files_closure (standard_view);
+          new_files_closure = thunar_standard_view_new_files_closure (standard_view, NULL);
           thunar_application_link_into (application, GTK_WIDGET (standard_view), selected_files,
                                         thunar_file_get_file (current_directory), new_files_closure);
           g_object_unref (G_OBJECT (application));
@@ -2338,21 +2339,27 @@ thunar_standard_view_action_restore (GtkAction          *action,
   /* restore the selected files */
   application = thunar_application_get ();
   thunar_application_restore_files (application, GTK_WIDGET (standard_view), standard_view->priv->selected_files,
-                                    thunar_standard_view_new_files_closure (standard_view));
+                                    thunar_standard_view_new_files_closure (standard_view, NULL));
   g_object_unref (G_OBJECT (application));
 }
 
 
 
 static GClosure*
-thunar_standard_view_new_files_closure (ThunarStandardView *standard_view)
+thunar_standard_view_new_files_closure (ThunarStandardView *standard_view,
+                                        GtkWidget          *source_view)
 {
+  _thunar_return_val_if_fail (source_view == NULL || THUNAR_IS_VIEW (source_view), NULL);
+
   /* drop any previous "new-files" closure */
   if (G_UNLIKELY (standard_view->priv->new_files_closure != NULL))
     {
       g_closure_invalidate (standard_view->priv->new_files_closure);
       g_closure_unref (standard_view->priv->new_files_closure);
     }
+
+  /* set the remove view data we possibly need to reload */
+  g_object_set_data (G_OBJECT (standard_view), I_("source-view"), source_view);
 
   /* allocate a new "new-files" closure */
   standard_view->priv->new_files_closure = g_cclosure_new_swap (G_CALLBACK (thunar_standard_view_new_files), standard_view, NULL);
@@ -2372,6 +2379,7 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
   ThunarFile*file;
   GList     *file_list = NULL;
   GList     *lp;
+  GtkWidget *source_view;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
@@ -2411,6 +2419,11 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
           gtk_widget_grab_focus (GTK_BIN (standard_view)->child);
         }
     }
+
+  /* when performing dnd between 2 views, we force a review on the source as well */
+  source_view = g_object_get_data (G_OBJECT (standard_view), I_("source-view"));
+  if (THUNAR_IS_VIEW (source_view))
+    thunar_view_reload (THUNAR_VIEW (source_view));
 }
 
 
@@ -2697,6 +2710,8 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
   gchar       **bits;
   gint          pid;
   gint          n = 0;
+  GtkWidget    *source_widget;
+  GtkWidget    *source_view = NULL;
 
   /* check if we don't already know the drop data */
   if (G_LIKELY (!standard_view->priv->drop_data_ready))
@@ -2831,8 +2846,19 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
               /* perform the requested action */
               if (G_LIKELY (action != 0))
                 {
+                  /* look if we can find the drag source widget */
+                  source_widget = gtk_drag_get_source_widget (context);
+                  if (source_widget != NULL)
+                    {
+                      /* if this is a source view, attach it to the view receiving
+                       * the data, see thunar_standard_view_new_files */
+                      source_view = gtk_widget_get_parent (source_widget);
+                      if (!THUNAR_IS_VIEW (source_view))
+                        source_view = NULL;
+                    }
+
                   succeed = thunar_dnd_perform (GTK_WIDGET (standard_view), file, standard_view->priv->drop_file_list,
-                                                action, thunar_standard_view_new_files_closure (standard_view));
+                                                action, thunar_standard_view_new_files_closure (standard_view, source_view));
                 }
             }
 
