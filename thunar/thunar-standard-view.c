@@ -2312,15 +2312,38 @@ static void
 thunar_standard_view_action_rename (GtkAction          *action,
                                     ThunarStandardView *standard_view)
 {
-  ThunarFile *file;
-  GtkWidget  *window;
-  ThunarJob  *job;
+  ThunarFile      *file;
+  GtkWidget       *window;
+  ThunarJob       *job;
+  GdkModifierType  state;
+  gboolean         force_bulk_renamer;
+  const gchar     *accel_path;
+  GtkAccelKey      key;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
+  /* leave if no files are selected */
+  if (G_UNLIKELY (standard_view->priv->selected_files == NULL))
+    return;
+
+  /* open the bulk renamer also with one file selected and shift */
+  force_bulk_renamer = (gtk_get_current_event_state (&state) && (state & GDK_SHIFT_MASK) != 0);
+  if (G_UNLIKELY (force_bulk_renamer))
+    {
+      /* Check if the user defined a custom accelerator that includes the
+       * shift button. If he or she has, we won't force the bulk renamer. */
+      accel_path = gtk_action_get_accel_path (action);
+      gtk_accel_map_lookup_entry (accel_path, &key);
+      if (accel_path != NULL
+          && gtk_accel_map_lookup_entry (accel_path, &key)
+          && (key.accel_mods & GDK_SHIFT_MASK) != 0)
+        force_bulk_renamer = FALSE;
+    }
+
   /* start renaming if we have exactly one selected file */
-  if (G_LIKELY (standard_view->priv->selected_files != NULL && standard_view->priv->selected_files->next == NULL))
+  if (!force_bulk_renamer
+      && standard_view->priv->selected_files->next == NULL)
     {
       /* get the window */
       window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
@@ -2336,7 +2359,7 @@ thunar_standard_view_action_rename (GtkAction          *action,
           g_signal_connect (job, "finished", G_CALLBACK (thunar_standard_view_rename_finished), standard_view);
         }
     }
-  else if (g_list_length (standard_view->priv->selected_files) > 1)
+  else
     {
       /* determine the current directory of the view */
       file = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
