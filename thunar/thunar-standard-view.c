@@ -1546,20 +1546,21 @@ thunar_standard_view_delete_selected_files (ThunarStandardView *standard_view)
   GtkAction       *action = GTK_ACTION (standard_view->priv->action_delete);
   const gchar     *accel_path;
   GtkAccelKey      key;
-  GdkModifierType  state;
-  gboolean         permanently;
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
-  /* if this looks like a permanently delete */
-  permanently = (gtk_get_current_event_state (&state) && (state & GDK_SHIFT_MASK) != 0);
-
-  /* check if the user defined a custom accelerator and is not holding the
-   * shift button. if he or she has, we don't response to the predefined key
-   * bindings (bug #4173) */
+  /* Check if there is a user defined accelerator for the delete action,
+   * if there is, skip events from the hard-coded keys which are set in
+   * the class of the standard view. See bug #4173.
+   *
+   * The trick here is that if a custom accelerator is set by the user,
+   * this function is never called. If a hardcoded key combination is
+   * pressed and a custom accelerator is set, accel_key || accel_mods
+   * are no 0. */
   accel_path = gtk_action_get_accel_path (action);
-  if (accel_path != NULL && gtk_accel_map_lookup_entry (accel_path, &key)
-      && key.accel_key != 0 && key.accel_mods != 0 && permanently == FALSE)
+  if (accel_path != NULL
+      && gtk_accel_map_lookup_entry (accel_path, &key)
+      && (key.accel_key != 0 || key.accel_mods != 0))
     return FALSE;
 
   /* just emit the "activate" signal on the "delete" action */
@@ -2062,13 +2063,31 @@ thunar_standard_view_action_delete (GtkAction          *action,
                                     ThunarStandardView *standard_view)
 {
   ThunarApplication *application;
+  gboolean           permanently;
+  GdkModifierType    state;
+  const gchar       *accel_path;
+  GtkAccelKey        key;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
+  /* check if we should permanently delete the files (user holds shift) */
+  permanently = (gtk_get_current_event_state (&state) && (state & GDK_SHIFT_MASK) != 0);
+  if (permanently)
+    {
+      /* look if the user has set a custom accelerator (accel_key != 0)
+       * that contains a shift modifier */
+      accel_path = gtk_action_get_accel_path (action);
+      if (accel_path != NULL
+          && gtk_accel_map_lookup_entry (accel_path, &key)
+          && key.accel_key != 0
+          && (key.accel_mods & GDK_SHIFT_MASK) != 0)
+        permanently = FALSE;
+    }
+
   /* delete the selected files */
   application = thunar_application_get ();
-  thunar_application_unlink_files (application, GTK_WIDGET (standard_view), standard_view->priv->selected_files, FALSE);
+  thunar_application_unlink_files (application, GTK_WIDGET (standard_view), standard_view->priv->selected_files, permanently);
   g_object_unref (G_OBJECT (application));
 }
 

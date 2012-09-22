@@ -1037,20 +1037,15 @@ thunar_tree_view_row_collapsed (GtkTreeView *tree_view,
 static gboolean
 thunar_tree_view_delete_selected_files (ThunarTreeView *view)
 {
-  GtkAccelKey     key;
-  GdkModifierType state;
-  gboolean        permanently;
+  GtkAccelKey key;
 
   _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW (view), FALSE);
 
-  /* if this looks like a permanently delete */
-  permanently = (gtk_get_current_event_state (&state) && (state & GDK_SHIFT_MASK) != 0);
-
-  /* check if the user defined a custom accelerator and is not holding the
-   * shift button. if he or she has, we don't response to the predefined key 
-   * bindings (bug #4173) */
+  /* Check if there is a user defined accelerator for the delete action,
+   * if there is, skip events from the hard-coded keys which are set in
+   * the class of the standard view. See bug #4173. */
   if (gtk_accel_map_lookup_entry ("<Actions>/ThunarStandardView/delete", &key)
-      && key.accel_key != 0 && key.accel_mods != 0 && permanently == FALSE)
+      && (key.accel_key != 0 || key.accel_mods != 0))
     return FALSE;
 
   /* ask the user whether to delete the folder... */
@@ -1629,6 +1624,8 @@ thunar_tree_view_action_delete (ThunarTreeView *view)
   ThunarApplication *application;
   ThunarFile        *file;
   GList              file_list;
+  gboolean           permanently;
+  GdkModifierType    state;
 
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
@@ -1641,9 +1638,12 @@ thunar_tree_view_action_delete (ThunarTreeView *view)
       file_list.next = NULL;
       file_list.prev = NULL;
 
+      /* check if we should permanently delete the files (user holds shift) */
+      permanently = (gtk_get_current_event_state (&state) && (state & GDK_SHIFT_MASK) != 0);
+
       /* delete the file */
       application = thunar_application_get ();
-      thunar_application_unlink_files (application, GTK_WIDGET (view), &file_list, FALSE);
+      thunar_application_unlink_files (application, GTK_WIDGET (view), &file_list, permanently);
       g_object_unref (G_OBJECT (application));
 
       /* release the file */
