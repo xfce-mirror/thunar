@@ -2823,9 +2823,13 @@ thunar_file_set_thumb_state (ThunarFile          *file,
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
+  /* check if the state changes */
+  if (thunar_file_get_thumb_state (file) == state)
+    return;
+
   /* set the new thumbnail state */
   file->flags = (file->flags & ~THUNAR_FILE_THUMB_STATE_MASK) | (state);
-  
+
   /* notify others of this change, so that all components can update
    * their file information */
   thunar_file_monitor_file_changed (file);
