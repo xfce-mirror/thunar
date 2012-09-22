@@ -1438,6 +1438,10 @@ thunar_standard_view_reload (ThunarView *view)
   folder = thunar_list_model_get_folder (standard_view->model);
   if (G_LIKELY (folder != NULL))
     thunar_folder_reload (folder);
+
+  /* schedule thumbnail reload update */
+  if (!standard_view->priv->thumbnailing_scheduled)
+    thunar_standard_view_schedule_thumbnail_idle (standard_view);
 }
 
 
