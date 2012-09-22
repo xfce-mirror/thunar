@@ -2334,7 +2334,6 @@ thunar_standard_view_action_rename (GtkAction          *action,
       /* Check if the user defined a custom accelerator that includes the
        * shift button. If he or she has, we won't force the bulk renamer. */
       accel_path = gtk_action_get_accel_path (action);
-      gtk_accel_map_lookup_entry (accel_path, &key);
       if (accel_path != NULL
           && gtk_accel_map_lookup_entry (accel_path, &key)
           && (key.accel_mods & GDK_SHIFT_MASK) != 0)
