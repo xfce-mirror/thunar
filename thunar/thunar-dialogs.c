@@ -75,6 +75,10 @@ thunar_dialogs_show_rename_file (gpointer    parent,
   glong              offset;
   gchar             *title;
   gint               response;
+  PangoLayout       *layout;
+  gint               layout_width;
+  gint               layout_offset;
+  gint               parent_width = 500;
 
   _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WINDOW (parent), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
@@ -96,7 +100,6 @@ thunar_dialogs_show_rename_file (gpointer    parent,
                                         _("_Rename"), GTK_RESPONSE_OK,
                                         NULL);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
-  gtk_window_set_default_size (GTK_WINDOW (dialog), 300, -1);
   g_free (title);
 
   /* move the dialog to the appropriate screen */
@@ -149,6 +152,23 @@ thunar_dialogs_show_rename_file (gpointer    parent,
             gtk_editable_select_region (GTK_EDITABLE (entry), 0, offset);
         }
     }
+
+  /* get the size the entry requires to render the full text */
+  layout = gtk_entry_get_layout (GTK_ENTRY (entry));
+  pango_layout_get_pixel_size (layout, &layout_width, NULL);
+  gtk_entry_get_layout_offsets (GTK_ENTRY (entry), &layout_offset, NULL);
+  layout_width += (layout_offset * 2) + (12 * 4) + 48; /* 12px free space in entry */
+
+  /* parent window width */
+  if (G_LIKELY (window != NULL))
+    {
+      /* keep below 90% of the parent window width */
+      gtk_window_get_size (GTK_WINDOW (window), &parent_width, NULL);
+      parent_width *= 0.90f;
+    }
+
+  /* resize the dialog to make long names fit as much as possible */
+  gtk_window_set_default_size (GTK_WINDOW (dialog), CLAMP (layout_width, 300, parent_width), -1);
 
   /* run the dialog */
   response = gtk_dialog_run (GTK_DIALOG (dialog));
