@@ -1240,7 +1240,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
   gtk_action_set_visible (standard_view->priv->action_restore, trashed);
 
   /* schedule a thumbnail timeout */
-  thunar_standard_view_schedule_thumbnail_timeout (standard_view);
+  /* NOTE: quickly after this we always trigger a size allocate wich will handle this */
 
   /* notify all listeners about the new/old current directory */
   g_object_notify (G_OBJECT (standard_view), "current-directory");
@@ -3592,8 +3592,16 @@ thunar_standard_view_size_allocate (ThunarStandardView *standard_view,
 {
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
-  /* reschedule a thumbnail request timeout */
-  thunar_standard_view_schedule_thumbnail_timeout (standard_view);
+  /* ignore size changes when the view is still loading */
+  if (thunar_view_get_loading (THUNAR_VIEW (standard_view)))
+    return;
+
+  /* to avoid a flow of updates, don't update if there is already a request pending */
+  if (standard_view->priv->thumbnail_source_id == 0)
+    {
+      /* reschedule a thumbnail request timeout */
+      thunar_standard_view_schedule_thumbnail_timeout (standard_view);
+    }
 }
 
 
