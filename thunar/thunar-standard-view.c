@@ -252,6 +252,10 @@ static void                 thunar_standard_view_drag_end                   (Gtk
 static void                 thunar_standard_view_row_deleted                (ThunarListModel          *model,
                                                                              GtkTreePath              *path,
                                                                              ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_row_changed                (ThunarListModel          *model,
+                                                                             GtkTreePath              *path,
+                                                                             GtkTreeIter              *iter,
+                                                                             ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_restore_selection          (ThunarListModel          *model,
                                                                              GtkTreePath              *path,
                                                                              ThunarStandardView       *standard_view);
@@ -265,6 +269,9 @@ static gboolean             thunar_standard_view_drag_scroll_timer          (gpo
 static void                 thunar_standard_view_drag_scroll_timer_destroy  (gpointer                  user_data);
 static gboolean             thunar_standard_view_drag_timer                 (gpointer                  user_data);
 static void                 thunar_standard_view_drag_timer_destroy         (gpointer                  user_data);
+static void                 thunar_standard_view_finished_thumbnailing      (ThunarThumbnailer        *thumbnailer,
+                                                                             guint                     request,
+                                                                             ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_cancel_thumbnailing        (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_schedule_thumbnail_timeout (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_schedule_thumbnail_idle    (ThunarStandardView       *standard_view);
@@ -348,6 +355,9 @@ struct _ThunarStandardViewPrivate
   guint                   thumbnail_request;
   guint                   thumbnail_source_id;
   gboolean                thumbnailing_scheduled;
+
+  /* file insert signal */
+  gulong                  row_changed_id;
 
   /* Tree path for restoring the selection after selecting and
    * deleting an item */
@@ -557,6 +567,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
 
   /* create a thumbnailer */
   standard_view->priv->thumbnailer = thunar_thumbnailer_new ();
+  g_signal_connect (G_OBJECT (standard_view->priv->thumbnailer), "request-finished", G_CALLBACK (thunar_standard_view_finished_thumbnailing), standard_view);
   standard_view->priv->thumbnailing_scheduled = FALSE;
 
   /* initialize the scrolled window */
@@ -602,6 +613,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   /* setup the list model */
   standard_view->model = thunar_list_model_new ();
   g_signal_connect (G_OBJECT (standard_view->model), "row-deleted", G_CALLBACK (thunar_standard_view_row_deleted), standard_view);
+  standard_view->priv->row_changed_id = g_signal_connect (G_OBJECT (standard_view->model), "row-changed", G_CALLBACK (thunar_standard_view_row_changed), standard_view);
   g_signal_connect_after (G_OBJECT (standard_view->model), "row-deleted", G_CALLBACK (thunar_standard_view_restore_selection), standard_view);
   g_signal_connect (G_OBJECT (standard_view->model), "error", G_CALLBACK (thunar_standard_view_error), standard_view);
   exo_binding_new (G_OBJECT (standard_view->preferences), "misc-case-sensitive", G_OBJECT (standard_view->model), "case-sensitive");
@@ -1272,6 +1284,12 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
 
   /* apply the new state */
   standard_view->loading = loading;
+
+  /* block or unblock the insert signal to avoid queuing thumbnail reloads */
+  if (loading)
+    g_signal_handler_block (standard_view->model, standard_view->priv->row_changed_id);
+  else
+    g_signal_handler_unblock (standard_view->model, standard_view->priv->row_changed_id);
 
   /* check if we're done loading and have a scheduled scroll_to_file */
   if (G_UNLIKELY (!loading && standard_view->priv->scroll_to_file != NULL))
@@ -3190,6 +3208,40 @@ thunar_standard_view_row_deleted (ThunarListModel    *model,
 
 
 static void
+thunar_standard_view_row_changed (ThunarListModel    *model,
+                                  GtkTreePath        *path,
+                                  GtkTreeIter        *iter,
+                                  ThunarStandardView *standard_view)
+{
+  ThunarFile *file;
+  gboolean    show_thumbnails;
+
+  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
+  _thunar_return_if_fail (path != NULL);
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (standard_view->model == model);
+
+  if (standard_view->priv->thumbnail_request != 0)
+    return;
+
+  g_object_get (standard_view->icon_factory, "show-thumbnails", &show_thumbnails, NULL);
+  if (!show_thumbnails)
+    return;
+
+  /* queue a thumbnail request */
+  file = thunar_list_model_get_file (standard_view->model, iter);
+  if (thunar_file_get_thumb_state (file) == THUNAR_FILE_THUMB_STATE_UNKNOWN)
+    {
+      thunar_standard_view_cancel_thumbnailing (standard_view);
+      thunar_thumbnailer_queue_file (standard_view->priv->thumbnailer, file,
+                                     &standard_view->priv->thumbnail_request);
+    }
+  g_object_unref (G_OBJECT (file));
+}
+
+
+
+static void
 thunar_standard_view_restore_selection (ThunarListModel    *model,
                                         GtkTreePath        *path,
                                         ThunarStandardView *standard_view)
@@ -3380,6 +3432,19 @@ thunar_standard_view_drag_timer_destroy (gpointer user_data)
 
   /* reset the drag timer source id */
   THUNAR_STANDARD_VIEW (user_data)->priv->drag_timer_id = -1;
+}
+
+
+
+static void
+thunar_standard_view_finished_thumbnailing (ThunarThumbnailer  *thumbnailer,
+                                            guint               request,
+                                            ThunarStandardView *standard_view)
+{
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  if (standard_view->priv->thumbnail_request == request)
+    standard_view->priv->thumbnail_request = 0;
 }
 
 

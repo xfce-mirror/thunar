@@ -89,6 +89,13 @@ typedef struct _ThunarThumbnailerJob  ThunarThumbnailerJob;
 typedef struct _ThunarThumbnailerIdle ThunarThumbnailerIdle;
 #endif
 
+/* Signal identifiers */
+enum
+{
+  REQUEST_FINISHED,
+  LAST_SIGNAL,
+};
+
 
 
 static void                   thunar_thumbnailer_finalize               (GObject                    *object);
@@ -183,6 +190,10 @@ struct _ThunarThumbnailerIdle
 
 
 
+static guint thumbnailer_signals[LAST_SIGNAL];
+
+
+
 G_DEFINE_TYPE (ThunarThumbnailer, thunar_thumbnailer, G_TYPE_OBJECT);
 
 
@@ -194,6 +205,22 @@ thunar_thumbnailer_class_init (ThunarThumbnailerClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_thumbnailer_finalize;
+
+  /**
+   * ThunarThumbnailer:request-finished:
+   * @thumbnailer : a #ThunarThumbnailer.
+   * @request     : id of the request that is finished.
+   *
+   * Emitted by @thumbnailer, when a request is finished
+   * by the thumbnail generator
+   **/
+  thumbnailer_signals[REQUEST_FINISHED] =
+    g_signal_new (I_("request-finished"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  0, NULL, NULL,
+                  g_cclosure_marshal_VOID__UINT,
+                  G_TYPE_NONE, 1, G_TYPE_UINT);
 }
 
 
@@ -469,6 +496,9 @@ thunar_thumbnailer_thumbnailer_finished (DBusGProxy        *proxy,
         {
           /* this job is finished, forget about the handle */
           job->handle = 0;
+
+          /* tell everybody we're done here */
+          g_signal_emit (G_OBJECT (thumbnailer), thumbnailer_signals[REQUEST_FINISHED], 0, job->request);
 
           /* remove job from the list */
           g_mutex_lock (thumbnailer->lock);

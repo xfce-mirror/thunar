@@ -2831,8 +2831,10 @@ thunar_file_set_thumb_state (ThunarFile          *file,
   file->flags = (file->flags & ~THUNAR_FILE_THUMB_STATE_MASK) | (state);
 
   /* notify others of this change, so that all components can update
-   * their file information */
-  thunar_file_monitor_file_changed (file);
+   * their file information. loading is only a state for the thumbnailer,
+   * so don't emit changes for that */
+  if (state != THUNAR_FILE_THUMB_STATE_LOADING)
+    thunar_file_monitor_file_changed (file);
 }
 
 
