@@ -453,21 +453,25 @@ thunar_chooser_button_file_changed (ThunarChooserButton *chooser_button,
           /* add all possible applications */
           for (lp = app_infos, i = 0; lp != NULL; lp = lp->next, ++i)
             {
-              /* insert the item into the store */
-              gtk_list_store_insert_with_values (chooser_button->store, &iter, i,
-                                                 THUNAR_CHOOSER_BUTTON_STORE_COLUMN_NAME,
-                                                 g_app_info_get_name (lp->data),
-                                                 THUNAR_CHOOSER_BUTTON_STORE_COLUMN_APPLICATION,
-                                                 lp->data,
-                                                 THUNAR_CHOOSER_BUTTON_STORE_COLUMN_ICON,
-                                                 g_app_info_get_icon (lp->data),
-                                                 THUNAR_CHOOSER_BUTTON_STORE_COLUMN_SENSITIVE,
-                                                 TRUE,
-                                                 -1);
-
-              /* pre-select the default application */
-              if (g_app_info_equal (lp->data, app_info))
-                gtk_combo_box_set_active_iter (GTK_COMBO_BOX (chooser_button), &iter);
+              /* skip infos that have NoDisplay or OnlyShowIn set */
+              if (g_app_info_should_show (lp->data))
+                {
+                  /* insert the item into the store */
+                  gtk_list_store_insert_with_values (chooser_button->store, &iter, i,
+                                                     THUNAR_CHOOSER_BUTTON_STORE_COLUMN_NAME,
+                                                     g_app_info_get_name (lp->data),
+                                                     THUNAR_CHOOSER_BUTTON_STORE_COLUMN_APPLICATION,
+                                                     lp->data,
+                                                     THUNAR_CHOOSER_BUTTON_STORE_COLUMN_ICON,
+                                                     g_app_info_get_icon (lp->data),
+                                                     THUNAR_CHOOSER_BUTTON_STORE_COLUMN_SENSITIVE,
+                                                     TRUE,
+                                                     -1);
+                  
+                  /* pre-select the default application */
+                  if (g_app_info_equal (lp->data, app_info))
+                    gtk_combo_box_set_active_iter (GTK_COMBO_BOX (chooser_button), &iter);
+                }
 
               /* release the application */
               g_object_unref (lp->data);
