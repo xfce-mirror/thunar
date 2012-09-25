@@ -207,6 +207,7 @@ thunar_chooser_model_append (ThunarChooserModel *model,
   GtkTreeIter parent_iter;
   GIcon      *icon;
   GList      *lp;
+  gboolean    inserted_infos = FALSE;
 
   _thunar_return_if_fail (THUNAR_IS_CHOOSER_MODEL (model));
   _thunar_return_if_fail (title != NULL);
@@ -229,6 +230,10 @@ thunar_chooser_model_append (ThunarChooserModel *model,
       /* insert the program items */
       for (lp = app_infos; lp != NULL; lp = lp->next)
         {
+          /* skip infos that have NoDisplay or OnlyShowIn set */
+          if (!g_app_info_should_show (lp->data))
+            continue;
+
           /* append the tree row with the program data */
           gtk_tree_store_append (GTK_TREE_STORE (model), &child_iter, &parent_iter);
           gtk_tree_store_set (GTK_TREE_STORE (model), &child_iter,
@@ -236,9 +241,12 @@ thunar_chooser_model_append (ThunarChooserModel *model,
                               THUNAR_CHOOSER_MODEL_COLUMN_ICON, g_app_info_get_icon (lp->data),
                               THUNAR_CHOOSER_MODEL_COLUMN_APPLICATION, lp->data,
                               -1);
+
+          inserted_infos = TRUE;
         }
     }
-  else
+  
+  if (!inserted_infos)
     {
       /* tell the user that we don't have any applications for this category */
       gtk_tree_store_append (GTK_TREE_STORE (model), &child_iter, &parent_iter);
