@@ -197,7 +197,6 @@ thunar_uca_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
   GList               *actions = NULL;
   GList               *paths;
   GList               *lp;
-  gchar               *icon_name;
   gchar               *tooltip;
   gchar               *label;
   gchar               *name;
@@ -212,7 +211,6 @@ thunar_uca_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
           /* determine the label, tooltip and stock-id for the item */
           gtk_tree_model_get (GTK_TREE_MODEL (uca_provider->model), &iter,
                               THUNAR_UCA_MODEL_COLUMN_NAME, &label,
-                              THUNAR_UCA_MODEL_COLUMN_ICON_NAME, &icon_name,
                               THUNAR_UCA_MODEL_COLUMN_GICON, &gicon,
                               THUNAR_UCA_MODEL_COLUMN_DESCRIPTION, &tooltip,
                               -1);
@@ -245,7 +243,6 @@ thunar_uca_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
           actions = g_list_prepend (actions, action);
 
           /* cleanup */
-          g_free (icon_name);
           g_free (tooltip);
           g_free (label);
           g_free (name);
