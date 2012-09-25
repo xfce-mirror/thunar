@@ -839,14 +839,15 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
                                 GList             *files,
                                 guint             *request)
 {
-  gboolean      success = FALSE;
+  gboolean               success = FALSE;
 #ifdef HAVE_DBUS
-  const gchar **mime_hints;
-  gchar       **uris;
-  GList        *lp;
-  GList        *supported_files = NULL;
-  guint         n;
-  guint         n_items = 0;
+  const gchar          **mime_hints;
+  gchar                **uris;
+  GList                 *lp;
+  GList                 *supported_files = NULL;
+  guint                  n;
+  guint                  n_items = 0;
+  ThunarFileThumbState   thumb_state;
 #endif
 
   _thunar_return_val_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer), FALSE);
@@ -871,10 +872,27 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
    * processed (and awaiting to be refreshed) */
   for (lp = g_list_last (files); lp != NULL; lp = lp->prev)
     {
-      if (thunar_thumbnailer_file_is_supported (thumbnailer, lp->data))
+      /* get the current thumb state */
+      thumb_state = thunar_file_get_thumb_state (lp->data);
+
+      /* if previously this failed, don't both to check. this saves a
+       * lot of check when resizing a window */
+      if (thumb_state == THUNAR_FILE_THUMB_STATE_NONE)
+        continue;
+
+      /* if the state is unknown of there previously was a thumb, add
+       * to the supported list */
+      if (thumb_state == THUNAR_FILE_THUMB_STATE_READY
+          || thunar_thumbnailer_file_is_supported (thumbnailer, lp->data))
         {
           supported_files = g_list_prepend (supported_files, lp->data);
           n_items++;
+        }
+      else
+        {
+          /* we have no thumb for this mime-type / scheme combination,
+           * so don't both in the future */
+          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE);
         }
     }
 
