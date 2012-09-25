@@ -296,6 +296,7 @@ thunar_chooser_model_reload (ThunarChooserModel *model)
   recommended = g_app_info_get_all_for_type (model->content_type);
 
   /* append them as recommended */
+  recommended = g_list_sort (recommended, sort_app_infos);
   thunar_chooser_model_append (model, 
                                _("Recommended Applications"), 
                                "preferences-desktop-default-applications", 
