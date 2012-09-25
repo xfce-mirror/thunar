@@ -783,20 +783,32 @@ thunar_thumbnailer_idle_free (gpointer data)
 
 
 /**
- * thunar_thumbnailer_new:
+ * thunar_thumbnailer_get:
  *
- * Allocates a new #ThunarThumbnailer object, which can be used to
+ * Return a shared new #ThunarThumbnailer object, which can be used to
  * generate and store thumbnails for files.
  *
  * The caller is responsible to free the returned
  * object using g_object_unref() when no longer needed.
  *
- * Return value: a newly allocated #ThunarThumbnailer.
+ * Return value: a #ThunarThumbnailer.
  **/
 ThunarThumbnailer*
-thunar_thumbnailer_new (void)
+thunar_thumbnailer_get (void)
 {
-  return g_object_new (THUNAR_TYPE_THUMBNAILER, NULL);
+  static ThunarThumbnailer *thumbnailer = NULL;
+
+  if (G_UNLIKELY (thumbnailer == NULL))
+    {
+      thumbnailer = g_object_new (THUNAR_TYPE_THUMBNAILER, NULL);
+      g_object_add_weak_pointer (G_OBJECT (thumbnailer), (gpointer) &thumbnailer);
+    }
+  else
+    {
+      g_object_ref (G_OBJECT (thumbnailer));
+    }
+
+  return thumbnailer;
 }
 
 

@@ -37,7 +37,7 @@ typedef struct _ThunarThumbnailer      ThunarThumbnailer;
 
 GType              thunar_thumbnailer_get_type        (void) G_GNUC_CONST;
 
-ThunarThumbnailer *thunar_thumbnailer_new             (void) G_GNUC_MALLOC;
+ThunarThumbnailer *thunar_thumbnailer_get             (void) G_GNUC_MALLOC;
 
 gboolean           thunar_thumbnailer_queue_file      (ThunarThumbnailer        *thumbnailer,
                                                        ThunarFile               *file,

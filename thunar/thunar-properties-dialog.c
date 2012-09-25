@@ -221,7 +221,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
                             G_CALLBACK (thunar_properties_dialog_reload), dialog);
 
   /* create a new thumbnailer */
-  dialog->thumbnailer = thunar_thumbnailer_new ();
+  dialog->thumbnailer = thunar_thumbnailer_get ();
   dialog->thumbnail_request = 0;
 
   dialog->provider_factory = thunarx_provider_factory_get_default ();

@@ -566,7 +566,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->provider_factory = thunarx_provider_factory_get_default ();
 
   /* create a thumbnailer */
-  standard_view->priv->thumbnailer = thunar_thumbnailer_new ();
+  standard_view->priv->thumbnailer = thunar_thumbnailer_get ();
   g_signal_connect (G_OBJECT (standard_view->priv->thumbnailer), "request-finished", G_CALLBACK (thunar_standard_view_finished_thumbnailing), standard_view);
   standard_view->priv->thumbnailing_scheduled = FALSE;
 
