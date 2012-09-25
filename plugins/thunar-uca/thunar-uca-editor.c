@@ -647,11 +647,9 @@ static void
 thunar_uca_editor_set_icon_name (ThunarUcaEditor *uca_editor,
                                  const gchar     *icon_name)
 {
-  GtkIconTheme *icon_theme;
-  GdkPixbuf    *icon_scaled;
-  GdkPixbuf    *icon = NULL;
-  GtkWidget    *image;
-  GtkWidget    *label;
+  GIcon     *icon = NULL;
+  GtkWidget *image;
+  GtkWidget *label;
 
   g_return_if_fail (THUNAR_UCA_IS_EDITOR (uca_editor));
 
@@ -659,34 +657,14 @@ thunar_uca_editor_set_icon_name (ThunarUcaEditor *uca_editor,
   if (GTK_BIN (uca_editor->icon_button)->child != NULL)
     gtk_widget_destroy (GTK_BIN (uca_editor->icon_button)->child);
 
-  /* try to load the icon */
-  if (G_LIKELY (icon_name != NULL && g_path_is_absolute (icon_name)))
-    {
-      /* load the icon from the file */
-      icon = exo_gdk_pixbuf_new_from_file_at_max_size (icon_name, 48, 48, TRUE, NULL);
-    }
-  else if (icon_name != NULL)
-    {
-      /* determine the appropriate icon theme */
-      if (G_LIKELY (gtk_widget_has_screen (GTK_WIDGET (uca_editor))))
-        icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (uca_editor)));
-      else
-        icon_theme = gtk_icon_theme_get_default ();
-
-      /* try to load the named icon */
-      icon = gtk_icon_theme_load_icon (icon_theme, icon_name, 48, 0, NULL);
-    }
-
   /* setup the icon button */
+  if (icon_name != NULL)
+    icon = g_icon_new_for_string (icon_name, NULL);
+
   if (G_LIKELY (icon != NULL))
     {
-      /* scale down the icon if required */
-      icon_scaled = exo_gdk_pixbuf_scale_down (icon, TRUE, 48, 48);
-      g_object_unref (G_OBJECT (icon));
-      icon = icon_scaled;
-
       /* setup an image for the icon */
-      image = gtk_image_new_from_pixbuf (icon);
+      image = gtk_image_new_from_gicon (icon, GTK_ICON_SIZE_DIALOG);
       gtk_container_add (GTK_CONTAINER (uca_editor->icon_button), image);
       gtk_widget_show (image);
 
@@ -769,7 +747,7 @@ thunar_uca_editor_load (ThunarUcaEditor *uca_editor,
   gchar         *description;
   gchar         *patterns;
   gchar         *command;
-  gchar         *icon;
+  gchar         *icon_name;
   gchar         *name;
   gboolean       startup_notify;
 
@@ -783,7 +761,7 @@ thunar_uca_editor_load (ThunarUcaEditor *uca_editor,
                       THUNAR_UCA_MODEL_COLUMN_PATTERNS, &patterns,
                       THUNAR_UCA_MODEL_COLUMN_COMMAND, &command,
                       THUNAR_UCA_MODEL_COLUMN_TYPES, &types,
-                      THUNAR_UCA_MODEL_COLUMN_ICON, &icon,
+                      THUNAR_UCA_MODEL_COLUMN_ICON_NAME, &icon_name,
                       THUNAR_UCA_MODEL_COLUMN_NAME, &name,
                       THUNAR_UCA_MODEL_COLUMN_STARTUP_NOTIFY, &startup_notify,
                       -1);
@@ -792,7 +770,7 @@ thunar_uca_editor_load (ThunarUcaEditor *uca_editor,
   thunar_uca_editor_set_types (uca_editor, types);
 
   /* setup the new icon */
-  thunar_uca_editor_set_icon_name (uca_editor, icon);
+  thunar_uca_editor_set_icon_name (uca_editor, icon_name);
 
   /* apply the new values */
   gtk_entry_set_text (GTK_ENTRY (uca_editor->description_entry), (description != NULL) ? description : "");
@@ -805,7 +783,7 @@ thunar_uca_editor_load (ThunarUcaEditor *uca_editor,
   g_free (description);
   g_free (patterns);
   g_free (command);
-  g_free (icon);
+  g_free (icon_name);
   g_free (name);
 }
 

@@ -49,6 +49,8 @@
 
 #include <gtk/gtk.h>
 
+#include <exo/exo.h>
+
 #include <libxfce4util/libxfce4util.h>
 
 #include <thunar-uca/thunar-uca-model.h>
@@ -160,7 +162,8 @@ struct _ThunarUcaModelItem
 {
   gchar         *name;
   gchar         *description;
-  gchar         *icon;
+  gchar         *icon_name;
+  GIcon         *gicon;
   gchar         *command;
   guint          startup_notify : 1;
   gchar        **patterns;
@@ -180,7 +183,7 @@ typedef struct
   GString        *name;
   gboolean        name_use;
   guint           name_match;
-  GString        *icon;
+  GString        *icon_name;
   GString        *command;
   GString        *patterns;
   GString        *description;
@@ -319,7 +322,10 @@ thunar_uca_model_get_column_type (GtkTreeModel *tree_model,
     case THUNAR_UCA_MODEL_COLUMN_DESCRIPTION:
       return G_TYPE_STRING;
 
-    case THUNAR_UCA_MODEL_COLUMN_ICON:
+    case THUNAR_UCA_MODEL_COLUMN_GICON:
+      return G_TYPE_ICON;
+
+    case THUNAR_UCA_MODEL_COLUMN_ICON_NAME:
       return G_TYPE_STRING;
 
     case THUNAR_UCA_MODEL_COLUMN_COMMAND:
@@ -409,8 +415,18 @@ thunar_uca_model_get_value (GtkTreeModel *tree_model,
       g_value_set_static_string (value, item->description);
       break;
 
-    case THUNAR_UCA_MODEL_COLUMN_ICON:
-      g_value_set_static_string (value, item->icon);
+    case THUNAR_UCA_MODEL_COLUMN_GICON:
+      if (item->gicon == NULL && item->icon_name != NULL)
+        {
+          /* cache gicon from the name */
+          item->gicon = g_icon_new_for_string (item->icon_name, NULL);
+        }
+
+      g_value_set_object (value, item->gicon);
+      break;
+
+    case THUNAR_UCA_MODEL_COLUMN_ICON_NAME:
+      g_value_set_static_string (value, item->icon_name);
       break;
 
     case THUNAR_UCA_MODEL_COLUMN_COMMAND:
@@ -554,7 +570,7 @@ thunar_uca_model_load_from_file (ThunarUcaModel *uca_model,
   parser.model = uca_model;
   parser.locale = g_strdup (setlocale (LC_MESSAGES, NULL));
   parser.name = g_string_new (NULL);
-  parser.icon = g_string_new (NULL);
+  parser.icon_name = g_string_new (NULL);
   parser.command = g_string_new (NULL);
   parser.patterns = g_string_new (NULL);
   parser.description = g_string_new (NULL);
@@ -571,7 +587,7 @@ thunar_uca_model_load_from_file (ThunarUcaModel *uca_model,
   g_string_free (parser.description, TRUE);
   g_string_free (parser.patterns, TRUE);
   g_string_free (parser.command, TRUE);
-  g_string_free (parser.icon, TRUE);
+  g_string_free (parser.icon_name, TRUE);
   g_string_free (parser.name, TRUE);
   g_free (parser.locale);
   xfce_stack_free (parser.stack);
@@ -590,7 +606,10 @@ thunar_uca_model_item_reset (ThunarUcaModelItem *item)
   g_free (item->description);
   g_free (item->command);
   g_free (item->name);
-  g_free (item->icon);
+  g_free (item->icon_name);
+
+  if (item->gicon != NULL)
+    g_object_unref (item->gicon);
 
   /* ...and reset the item memory */
   memset (item, 0, sizeof (*item));
@@ -635,7 +654,7 @@ start_element_handler (GMarkupParseContext *context,
           parser->description_match = XFCE_LOCALE_NO_MATCH;
           parser->types = 0;
           parser->startup_notify = FALSE;
-          g_string_truncate (parser->icon, 0);
+          g_string_truncate (parser->icon_name, 0);
           g_string_truncate (parser->name, 0);
           g_string_truncate (parser->command, 0);
           g_string_truncate (parser->patterns, 0);
@@ -678,7 +697,7 @@ start_element_handler (GMarkupParseContext *context,
         }
       else if (strcmp (element_name, "icon") == 0)
         {
-          g_string_truncate (parser->icon, 0);
+          g_string_truncate (parser->icon_name, 0);
           xfce_stack_push (parser->stack, PARSER_ICON);
         }
       else if (strcmp (element_name, "command") == 0)
@@ -800,7 +819,7 @@ end_element_handler (GMarkupParseContext *context,
           thunar_uca_model_update (parser->model, &iter,
                                    parser->name->str,
                                    parser->description->str,
-                                   parser->icon->str,
+                                   parser->icon_name->str,
                                    parser->command->str,
                                    parser->startup_notify,
                                    parser->patterns->str,
@@ -901,7 +920,7 @@ text_handler (GMarkupParseContext *context,
       break;
 
     case PARSER_ICON:
-      g_string_append_len (parser->icon, text, text_len);
+      g_string_append_len (parser->icon_name, text, text_len);
       break;
 
     case PARSER_COMMAND:
@@ -1257,7 +1276,7 @@ thunar_uca_model_update (ThunarUcaModel *uca_model,
   if (G_LIKELY (name != NULL && *name != '\0'))
     item->name = g_strdup (name);
   if (G_LIKELY (icon != NULL && *icon != '\0'))
-    item->icon = g_strdup (icon);
+    item->icon_name = g_strdup (icon);
   if (G_LIKELY (command != NULL && *command != '\0'))
     item->command = g_strdup (command);
   if (G_LIKELY (description != NULL && *description != '\0'))
@@ -1351,7 +1370,7 @@ thunar_uca_model_save (ThunarUcaModel *uca_model,
                                          "\t<command>%s</command>\n"
                                          "\t<description>%s</description>\n"
                                          "\t<patterns>%s</patterns>\n",
-                                         (item->icon != NULL) ? item->icon : "",
+                                         (item->icon_name != NULL) ? item->icon_name : "",
                                          (item->name != NULL) ? item->name : "",
                                          (item->command != NULL) ? item->command : "",
                                          (item->description != NULL) ? item->description : "",

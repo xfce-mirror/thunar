@@ -201,6 +201,7 @@ thunar_uca_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
   gchar               *tooltip;
   gchar               *label;
   gchar               *name;
+  GIcon               *gicon;
 
   paths = thunar_uca_model_match (uca_provider->model, files);
   for (lp = g_list_last (paths); lp != NULL; lp = lp->prev)
@@ -211,7 +212,8 @@ thunar_uca_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
           /* determine the label, tooltip and stock-id for the item */
           gtk_tree_model_get (GTK_TREE_MODEL (uca_provider->model), &iter,
                               THUNAR_UCA_MODEL_COLUMN_NAME, &label,
-                              THUNAR_UCA_MODEL_COLUMN_ICON, &icon_name,
+                              THUNAR_UCA_MODEL_COLUMN_ICON_NAME, &icon_name,
+                              THUNAR_UCA_MODEL_COLUMN_GICON, &gicon,
                               THUNAR_UCA_MODEL_COLUMN_DESCRIPTION, &tooltip,
                               -1);
 
@@ -220,7 +222,7 @@ thunar_uca_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
 
           /* create the new action with the given parameters */
           action = gtk_action_new (name, label, tooltip, NULL);
-          gtk_action_set_icon_name (action, icon_name);
+          gtk_action_set_gicon (action, gicon);
 
           /* grab a tree row reference on the given path */
           row = gtk_tree_row_reference_new (GTK_TREE_MODEL (uca_provider->model), lp->data);
@@ -247,6 +249,9 @@ thunar_uca_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
           g_free (tooltip);
           g_free (label);
           g_free (name);
+
+          if (gicon != NULL)
+            g_object_unref (G_OBJECT (gicon));
         }
 
       /* release the tree path */
@@ -332,7 +337,7 @@ thunar_uca_provider_activated (ThunarUcaProvider *uca_provider,
     {
       /* get the icon name and whether startup notification is active */
       gtk_tree_model_get (GTK_TREE_MODEL (uca_provider->model), &iter,
-                          THUNAR_UCA_MODEL_COLUMN_ICON, &icon_name,
+                          THUNAR_UCA_MODEL_COLUMN_ICON_NAME, &icon_name,
                           THUNAR_UCA_MODEL_COLUMN_STARTUP_NOTIFY, &startup_notify,
                           -1);
 
