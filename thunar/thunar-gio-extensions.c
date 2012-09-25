@@ -249,6 +249,9 @@ thunar_g_vfs_is_uri_scheme_supported (const gchar *scheme)
   gvfs = g_vfs_get_default ();
   supported_schemes = g_vfs_get_supported_uri_schemes (gvfs);
 
+  if (supported_schemes == NULL)
+    return FALSE;
+
   for (n = 0; !supported && supported_schemes[n] != NULL; ++n) 
     if (g_strcmp0 (supported_schemes[n], scheme) == 0)
       supported = TRUE;
