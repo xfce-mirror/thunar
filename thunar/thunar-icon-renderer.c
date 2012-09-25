@@ -404,7 +404,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
         {
           if ((flags & GTK_CELL_RENDERER_SELECTED) != 0)
             {
-              state = GTK_WIDGET_HAS_FOCUS (widget) ? GTK_STATE_SELECTED : GTK_STATE_ACTIVE;
+              state = gtk_widget_has_focus (widget) ? GTK_STATE_SELECTED : GTK_STATE_ACTIVE;
               temp = exo_gdk_pixbuf_colorize (icon, &widget->style->base[state]);
               g_object_unref (G_OBJECT (icon));
               icon = temp;
@@ -419,7 +419,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
         }
 
       /* check if we should render an insensitive icon */
-      if (G_UNLIKELY (GTK_WIDGET_STATE (widget) == GTK_STATE_INSENSITIVE || !renderer->sensitive))
+      if (G_UNLIKELY (gtk_widget_get_state (widget) == GTK_STATE_INSENSITIVE || !renderer->sensitive))
         {
           /* allocate an icon source */
           icon_source = gtk_icon_source_new ();

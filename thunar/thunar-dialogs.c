@@ -454,7 +454,7 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
         }
 
       button = gtk_button_new_with_mnemonic (mnemonic);
-      GTK_WIDGET_SET_FLAGS (button, GTK_CAN_DEFAULT);
+      gtk_widget_set_can_default (button, TRUE);
       gtk_dialog_add_action_widget (GTK_DIALOG (message), button, response);
       gtk_widget_show (button);
 

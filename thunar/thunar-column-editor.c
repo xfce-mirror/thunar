@@ -117,7 +117,6 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   /* setup the dialog */
   gtk_dialog_add_button (GTK_DIALOG (column_editor), GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
   gtk_dialog_set_default_response (GTK_DIALOG (column_editor), GTK_RESPONSE_CLOSE);
-  gtk_dialog_set_has_separator (GTK_DIALOG (column_editor), FALSE);
   gtk_window_set_resizable (GTK_WINDOW (column_editor), FALSE);
   gtk_window_set_title (GTK_WINDOW (column_editor), _("Configure Columns in the Detailed List View"));
 
@@ -572,7 +571,7 @@ thunar_show_column_editor (gpointer parent)
   dialog = thunar_column_editor_new ();
 
   /* check if we have a toplevel window */
-  if (G_LIKELY (window != NULL && GTK_WIDGET_TOPLEVEL (window)))
+  if (G_LIKELY (window != NULL && gtk_widget_get_toplevel (window)))
     {
       /* dialog is transient for toplevel window and modal */
       gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);

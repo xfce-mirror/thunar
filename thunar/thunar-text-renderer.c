@@ -469,19 +469,19 @@ thunar_text_renderer_render (GtkCellRenderer     *renderer,
 
   if ((flags & GTK_CELL_RENDERER_SELECTED) == GTK_CELL_RENDERER_SELECTED)
     {
-      if (GTK_WIDGET_HAS_FOCUS (widget))
+      if (gtk_widget_has_focus (widget))
         state = GTK_STATE_SELECTED;
       else
         state = GTK_STATE_ACTIVE;
     }
   else if ((flags & GTK_CELL_RENDERER_PRELIT) == GTK_CELL_RENDERER_PRELIT
-        && GTK_WIDGET_STATE (widget) == GTK_STATE_PRELIGHT)
+        && gtk_widget_get_state (widget) == GTK_STATE_PRELIGHT)
     {
       state = GTK_STATE_PRELIGHT;
     }
   else
     {
-      if (GTK_WIDGET_STATE (widget) == GTK_STATE_INSENSITIVE)
+      if (gtk_widget_get_state (widget) == GTK_STATE_INSENSITIVE)
         state = GTK_STATE_INSENSITIVE;
       else
         state = GTK_STATE_NORMAL;
@@ -556,7 +556,7 @@ thunar_text_renderer_render (GtkCellRenderer     *renderer,
   /* draw the focus indicator */
   if (text_renderer->follow_state && (flags & GTK_CELL_RENDERER_FOCUSED) != 0)
     {
-      gtk_paint_focus (widget->style, window, GTK_WIDGET_STATE (widget), NULL, widget, "icon_view",
+      gtk_paint_focus (widget->style, window, gtk_widget_get_state (widget), NULL, widget, "icon_view",
                        cell_area->x + x_offset, cell_area->y + y_offset, text_width, text_height);
     }
 
@@ -802,7 +802,7 @@ thunar_text_renderer_entry_menu_popdown_timer (gpointer user_data)
   GDK_THREADS_ENTER ();
 
   /* check if we still have the keyboard focus */
-  if (G_UNLIKELY (!GTK_WIDGET_HAS_FOCUS (text_renderer->entry)))
+  if (G_UNLIKELY (!gtk_widget_has_focus (text_renderer->entry)))
     thunar_text_renderer_editing_done (GTK_CELL_EDITABLE (text_renderer->entry), text_renderer);
 
   GDK_THREADS_LEAVE ();

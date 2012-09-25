@@ -1214,7 +1214,7 @@ thunar_window_configure_event (GtkWidget         *widget,
         g_source_remove (window->save_geometry_timer_id);
 
       /* check if we should schedule another save timer */
-      if (GTK_WIDGET_VISIBLE (widget))
+      if (gtk_widget_get_visible (widget))
         {
           /* save the geometry one second after the last configure event */
           window->save_geometry_timer_id = g_timeout_add_full (G_PRIORITY_LOW, 1000, thunar_window_save_geometry_timer,
@@ -2585,7 +2585,7 @@ thunar_window_notify_loading (ThunarView   *view,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_VIEW (window->view) == view);
 
-  if (GTK_WIDGET_REALIZED (window))
+  if (gtk_widget_get_realized (GTK_WIDGET (window)))
     {
       /* setup the proper cursor */
       if (thunar_view_get_loading (view))
@@ -2681,7 +2681,7 @@ thunar_window_save_geometry_timer (gpointer user_data)
   if (G_LIKELY (remember_geometry))
     {
       /* check if the window is still visible */
-      if (GTK_WIDGET_VISIBLE (window))
+      if (gtk_widget_get_visible (GTK_WIDGET (window)))
         {
           /* determine the current state of the window */
           state = gdk_window_get_state (GTK_WIDGET (window)->window);

@@ -120,7 +120,7 @@ thunar_dnd_ask (GtkWidget    *widget,
 
   /* determine the toplevel window the widget belongs to */
   window = gtk_widget_get_toplevel (widget);
-  if (G_LIKELY (window != NULL && GTK_WIDGET_TOPLEVEL (window)))
+  if (G_LIKELY (window != NULL && gtk_widget_get_toplevel (window)))
     {
       /* check if we can resolve all paths */
       for (lp = path_list; lp != NULL; lp = lp->next)
@@ -218,7 +218,7 @@ thunar_dnd_perform (GtkWidget    *widget,
 
   _thunar_return_val_if_fail (GTK_IS_WIDGET (widget), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  _thunar_return_val_if_fail (GTK_WIDGET_REALIZED (widget), FALSE);
+  _thunar_return_val_if_fail (gtk_widget_get_realized (widget), FALSE);
 
   /* query a reference on the application object */
   application = thunar_application_get ();

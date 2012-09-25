@@ -488,7 +488,7 @@ thunar_sbr_number_renamer_update (ThunarSbrNumberRenamer *number_renamer)
     }
 
   /* check if the start entry is realized */
-  if (GTK_WIDGET_REALIZED (number_renamer->start_entry))
+  if (gtk_widget_get_realized (number_renamer->start_entry))
     {
       /* check if the "start" value is valid */
       if (G_UNLIKELY (invalid))

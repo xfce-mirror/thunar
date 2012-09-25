@@ -61,7 +61,6 @@ thunar_location_dialog_init (ThunarLocationDialog *location_dialog)
 
   gtk_box_set_spacing (GTK_BOX (GTK_DIALOG (location_dialog)->vbox), 2);
   gtk_container_set_border_width (GTK_CONTAINER (location_dialog), 5);
-  gtk_dialog_set_has_separator (GTK_DIALOG (location_dialog), FALSE);
   gtk_window_set_default_size (GTK_WINDOW (location_dialog), 350, -1);
   gtk_window_set_title (GTK_WINDOW (location_dialog), _("Open Location"));
 

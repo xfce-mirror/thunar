@@ -466,7 +466,7 @@ thunar_emblem_chooser_create_button (ThunarEmblemChooser *chooser,
 
   /* allocate the button */
   button = gtk_check_button_new ();
-  GTK_WIDGET_UNSET_FLAGS (button, GTK_CAN_FOCUS);
+  gtk_widget_set_can_focus (button, FALSE);
   g_object_set_data_full (G_OBJECT (button), I_("thunar-emblem"), g_strdup (emblem), g_free);
   g_signal_connect (G_OBJECT (button), "toggled", G_CALLBACK (thunar_emblem_chooser_button_toggled), chooser);
 

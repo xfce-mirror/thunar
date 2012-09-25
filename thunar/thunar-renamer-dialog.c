@@ -336,7 +336,6 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   g_list_free (providers);
 
   /* initialize the dialog */
-  gtk_dialog_set_has_separator (GTK_DIALOG (renamer_dialog), FALSE);
   gtk_window_set_default_size (GTK_WINDOW (renamer_dialog), 510, 490);
   gtk_window_set_title (GTK_WINDOW (renamer_dialog), _("Rename Multiple Files"));
 
@@ -480,9 +479,9 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
       xfce_rc_set_group (rc, "Configuration");
 
       /* create the renamer combo box for the renamer selection */
-      rcombo = gtk_combo_box_new_text ();
+      rcombo = gtk_combo_box_text_new ();
       for (lp = renamers; lp != NULL; lp = lp->next)
-        gtk_combo_box_append_text (GTK_COMBO_BOX (rcombo), thunarx_renamer_get_name (lp->data));
+        gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (rcombo), thunarx_renamer_get_name (lp->data));
       gtk_box_pack_start (GTK_BOX (rbox), rcombo, FALSE, FALSE, 0);
       gtk_widget_show (rcombo);
 
@@ -498,14 +497,14 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
       gtk_widget_show (image);
 
       /* create the name/suffix/both combo box */
-      mcombo = gtk_combo_box_new_text ();
+      mcombo = gtk_combo_box_text_new ();
       klass = g_type_class_ref (THUNAR_TYPE_RENAMER_MODE);
       active_str = xfce_rc_read_entry_untranslated (rc, "LastActiveMode", "");
       for (active = 0, n = 0; n < klass->n_values; ++n)
         {
           if (exo_str_is_equal (active_str, klass->values[n].value_name))
             active = n;
-          gtk_combo_box_append_text (GTK_COMBO_BOX (mcombo), _(klass->values[n].value_nick));
+          gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (mcombo), _(klass->values[n].value_nick));
         }
       exo_mutual_binding_new (G_OBJECT (renamer_dialog->model), "mode", G_OBJECT (mcombo), "active");
       gtk_box_pack_end (GTK_BOX (rbox), mcombo, FALSE, FALSE, 0);
@@ -1872,7 +1871,7 @@ thunar_show_renamer_dialog (gpointer     parent,
     gtk_window_set_startup_id (GTK_WINDOW (dialog), startup_id);
 
   /* check if we have a toplevel window */
-  if (G_LIKELY (window != NULL && GTK_WIDGET_TOPLEVEL (window)))
+  if (G_LIKELY (window != NULL && gtk_widget_get_toplevel (window)))
     {
       /* dialog is transient for toplevel window, but not modal */
       gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);

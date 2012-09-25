@@ -429,7 +429,7 @@ thunar_path_entry_size_allocate (GtkWidget     *widget,
 
   (*GTK_WIDGET_CLASS (thunar_path_entry_parent_class)->size_allocate) (widget, allocation);
 
-  if (GTK_WIDGET_REALIZED (widget))
+  if (gtk_widget_get_realized (widget))
     {
       gdk_window_move_resize (GTK_ENTRY (path_entry)->text_area,
                               text_allocation.x,
@@ -490,7 +490,7 @@ thunar_path_entry_realize (GtkWidget *widget)
 
   path_entry->icon_area = gdk_window_new (widget->window, &attributes, attributes_mask);
   gdk_window_set_user_data (path_entry->icon_area, widget);
-  gdk_window_set_background (path_entry->icon_area, &widget->style->base[GTK_WIDGET_STATE (widget)]);
+  gdk_window_set_background (path_entry->icon_area, &widget->style->base[gtk_widget_get_state (widget)]);
   gdk_window_show (path_entry->icon_area);
 
   gtk_widget_queue_resize (widget);
@@ -530,7 +530,7 @@ thunar_path_entry_focus (GtkWidget       *widget,
   control_pressed = (gtk_get_current_event_state (&state) && (state & GDK_CONTROL_MASK) != 0);
 
   /* evil hack, but works for GtkFileChooserEntry, so who cares :-) */
-  if ((direction == GTK_DIR_TAB_FORWARD) && (GTK_WIDGET_HAS_FOCUS (widget)) && !control_pressed)
+  if ((direction == GTK_DIR_TAB_FORWARD) && (gtk_widget_has_focus (widget)) && !control_pressed)
     {
       /* if we don't have a completion and the cursor is at the end of the line, we just insert the common prefix */
       if (!path_entry->has_completion && gtk_editable_get_position (GTK_EDITABLE (path_entry)) == GTK_ENTRY (path_entry)->text_length)
@@ -568,7 +568,7 @@ thunar_path_entry_expose_event (GtkWidget      *widget,
       gdk_drawable_get_size (GDK_DRAWABLE (path_entry->icon_area), &width, &height);
 
       gtk_paint_flat_box (widget->style, path_entry->icon_area,
-                          GTK_WIDGET_STATE (widget), GTK_SHADOW_NONE,
+                          gtk_widget_get_state (widget), GTK_SHADOW_NONE,
                           NULL, widget, "entry_bg",
                           0, 0, width, height);
 

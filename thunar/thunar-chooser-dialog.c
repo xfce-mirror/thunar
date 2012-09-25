@@ -179,7 +179,6 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
   GtkWidget         *swin;
 
   /* setup basic window properties */
-  gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
   gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
   gtk_window_set_title (GTK_WINDOW (dialog), _("Open With"));
@@ -626,7 +625,7 @@ thunar_chooser_dialog_update_header (ThunarChooserDialog *dialog)
   gchar       *text;
 
   _thunar_return_if_fail (THUNAR_IS_CHOOSER_DIALOG (dialog));
-  _thunar_return_if_fail (GTK_WIDGET_REALIZED (dialog));
+  _thunar_return_if_fail (gtk_widget_get_realized (GTK_WIDGET (dialog)));
 
   /* check if we have a valid file set */
   if (G_UNLIKELY (dialog->file == NULL))
@@ -942,11 +941,11 @@ thunar_chooser_dialog_expand (ThunarChooserDialog *dialog)
     }
 
   /* reset the cursor */
-  if (G_LIKELY (GTK_WIDGET_REALIZED (dialog)))
+  if (G_LIKELY (gtk_widget_get_realized (GTK_WIDGET (dialog))))
     gdk_window_set_cursor (GTK_WIDGET (dialog)->window, NULL);
 
   /* grab focus to the tree view widget */
-  if (G_LIKELY (GTK_WIDGET_REALIZED (dialog->tree_view)))
+  if (G_LIKELY (gtk_widget_get_realized (dialog->tree_view)))
     gtk_widget_grab_focus (dialog->tree_view);
 }
 
@@ -1128,7 +1127,7 @@ thunar_chooser_dialog_set_file (ThunarChooserDialog *dialog,
     }
 
   /* update the header */
-  if (GTK_WIDGET_REALIZED (dialog))
+  if (gtk_widget_get_realized (GTK_WIDGET (dialog)))
     thunar_chooser_dialog_update_header (dialog);
 
   /* notify listeners */
@@ -1234,7 +1233,7 @@ thunar_show_chooser_dialog (gpointer    parent,
                          NULL);
 
   /* check if we have a toplevel window */
-  if (G_LIKELY (window != NULL && GTK_WIDGET_TOPLEVEL (window)))
+  if (G_LIKELY (window != NULL && gtk_widget_get_toplevel (window)))
     {
       /* dialog is transient for toplevel window and modal */
       gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);

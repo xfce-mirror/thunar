@@ -267,7 +267,7 @@ thunar_location_buttons_init (ThunarLocationButtons *buttons)
   gtk_action_group_set_translation_domain (buttons->action_group, GETTEXT_PACKAGE);
   gtk_action_group_add_actions (buttons->action_group, action_entries, G_N_ELEMENTS (action_entries), buttons);
 
-  GTK_WIDGET_SET_FLAGS (buttons, GTK_NO_WINDOW);
+  gtk_widget_set_has_window (GTK_WIDGET (buttons), FALSE);
   gtk_widget_set_redraw_on_allocate (GTK_WIDGET (buttons), FALSE);
 
   buttons->left_slider = gtk_button_new ();
@@ -766,7 +766,7 @@ static void
 thunar_location_buttons_state_changed (GtkWidget   *widget,
                                        GtkStateType previous_state)
 {
-  if (!GTK_WIDGET_IS_SENSITIVE (widget))
+  if (!gtk_widget_is_sensitive (widget))
     thunar_location_buttons_stop_scrolling (THUNAR_LOCATION_BUTTONS (widget));
 }
 
@@ -884,7 +884,7 @@ static void
 thunar_location_buttons_remove_1 (GtkContainer *container,
                                   GtkWidget    *widget)
 {
-  gboolean need_resize = GTK_WIDGET_VISIBLE (widget);
+  gboolean need_resize = gtk_widget_get_visible (widget);
   gtk_widget_unparent (widget);
   if (G_LIKELY (need_resize))
     gtk_widget_queue_resize (GTK_WIDGET (container));
@@ -899,9 +899,9 @@ thunar_location_buttons_scroll_timeout (gpointer user_data)
 
   GDK_THREADS_ENTER ();
 
-  if (GTK_WIDGET_HAS_FOCUS (buttons->left_slider))
+  if (gtk_widget_has_focus (buttons->left_slider))
     thunar_location_buttons_scroll_left (buttons->left_slider, buttons);
-  else if (GTK_WIDGET_HAS_FOCUS (buttons->right_slider))
+  else if (gtk_widget_has_focus (buttons->right_slider))
     thunar_location_buttons_scroll_right (buttons->right_slider, buttons);
 
   GDK_THREADS_LEAVE ();
@@ -966,7 +966,7 @@ thunar_location_buttons_slider_button_press (GtkWidget             *button,
                                              GdkEventButton        *event,
                                              ThunarLocationButtons *buttons)
 {
-  if (!GTK_WIDGET_HAS_FOCUS (button))
+  if (!gtk_widget_has_focus (button))
     gtk_widget_grab_focus (button);
 
   if (event->type != GDK_BUTTON_PRESS || event->button != 1)
@@ -1431,7 +1431,7 @@ thunar_location_buttons_action_properties (GtkAction             *action,
     {
       /* determine the toplevel window */
       toplevel = gtk_widget_get_toplevel (GTK_WIDGET (buttons));
-      if (G_LIKELY (toplevel != NULL && GTK_WIDGET_TOPLEVEL (toplevel)))
+      if (G_LIKELY (toplevel != NULL && gtk_widget_get_toplevel (toplevel)))
         {
           /* popup the properties dialog */
           dialog = thunar_properties_dialog_new (GTK_WINDOW (toplevel));

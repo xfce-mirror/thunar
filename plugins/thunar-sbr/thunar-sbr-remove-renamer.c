@@ -374,7 +374,7 @@ thunar_sbr_remove_renamer_update (ThunarSbrRemoveRenamer *remove_renamer)
   guint    end_offset;
 
   /* check if the renamer is realized */
-  if (GTK_WIDGET_REALIZED (remove_renamer))
+  if (gtk_widget_get_realized (GTK_WIDGET (remove_renamer)))
     {
       /* check if start and end offset make sense */
       end_offset = (remove_renamer->end_offset_mode == THUNAR_SBR_OFFSET_MODE_LEFT)

@@ -263,7 +263,7 @@ thunar_location_button_init (ThunarLocationButton *location_button)
 
   /* create the toggle button */
   button = gtk_toggle_button_new ();
-  GTK_WIDGET_UNSET_FLAGS (button, GTK_CAN_FOCUS);
+  gtk_widget_set_can_focus (button, FALSE);
   g_signal_connect_swapped (G_OBJECT (button), "clicked", G_CALLBACK (thunar_location_button_clicked), location_button);
   exo_mutual_binding_new (G_OBJECT (location_button), "active", G_OBJECT (button), "active");
   gtk_container_add (GTK_CONTAINER (location_button), button);
@@ -968,7 +968,7 @@ thunar_location_button_set_file (ThunarLocationButton *location_button,
       g_signal_connect_swapped (G_OBJECT (file), "destroy", G_CALLBACK (thunar_location_button_file_destroy), location_button);
 
       /* update our internal state for the new file (if realized) */
-      if (GTK_WIDGET_REALIZED (location_button))
+      if (gtk_widget_get_realized (GTK_WIDGET (location_button)))
         thunar_location_button_file_changed (location_button, file);
     }
 

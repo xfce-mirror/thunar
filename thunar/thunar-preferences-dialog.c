@@ -185,7 +185,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   dialog->preferences = thunar_preferences_get ();
 
   /* configure the dialog properties */
-  gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
   gtk_window_set_icon_name (GTK_WINDOW (dialog), "system-file-manager");
   gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
   gtk_window_set_title (GTK_WINDOW (dialog), _("File Manager Preferences"));
@@ -231,11 +230,11 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
-  combo = gtk_combo_box_new_text ();
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Icon View"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Detailed List View"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Compact List View"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Last Active View"));
+  combo = gtk_combo_box_text_new ();
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Icon View"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Detailed List View"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Compact List View"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Last Active View"));
   exo_mutual_binding_new_full (G_OBJECT (dialog->preferences), "default-view", G_OBJECT (combo), "active",
                                transform_view_string_to_index, transform_view_index_to_string, NULL, NULL);
   gtk_table_attach (GTK_TABLE (table), combo, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
@@ -299,11 +298,11 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
-  combo = gtk_combo_box_new_text ();
+  combo = gtk_combo_box_text_new ();
   for (date_style = THUNAR_DATE_STYLE_SIMPLE; date_style <= THUNAR_DATE_STYLE_ISO; ++date_style)
     {
       date = thunar_util_humanize_file_time (time (NULL), date_style);
-      gtk_combo_box_append_text (GTK_COMBO_BOX (combo), date);
+      gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), date);
       g_free (date);
     }
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-date-style", G_OBJECT (combo), "active");
@@ -342,14 +341,14 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
-  combo = gtk_combo_box_new_text ();
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Very Small"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Smaller"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Small"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Normal"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Large"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Larger"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Very Large"));
+  combo = gtk_combo_box_text_new ();
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Very Small"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Smaller"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Small"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Normal"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Large"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Larger"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Very Large"));
   exo_mutual_binding_new_full (G_OBJECT (dialog->preferences), "shortcuts-icon-size", G_OBJECT (combo), "active",
                                transform_icon_size_to_index, transform_index_to_icon_size, NULL, NULL);
   gtk_table_attach (GTK_TABLE (table), combo, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
@@ -384,14 +383,14 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
-  combo = gtk_combo_box_new_text ();
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Very Small"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Smaller"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Small"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Normal"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Large"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Larger"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Very Large"));
+  combo = gtk_combo_box_text_new ();
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Very Small"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Smaller"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Small"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Normal"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Large"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Larger"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Very Large"));
   exo_mutual_binding_new_full (G_OBJECT (dialog->preferences), "tree-icon-size", G_OBJECT (combo), "active",
                                transform_icon_size_to_index, transform_index_to_icon_size, NULL, NULL);
   gtk_table_attach (GTK_TABLE (table), combo, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
@@ -539,10 +538,10 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
-  combo = gtk_combo_box_new_text ();
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Ask everytime"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Apply to Folder Only"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Apply to Folder and Contents"));
+  combo = gtk_combo_box_text_new ();
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Ask everytime"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Apply to Folder Only"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Apply to Folder and Contents"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-recursive-permissions", G_OBJECT (combo), "active");
   gtk_table_attach (GTK_TABLE (table), combo, 0, 1, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);

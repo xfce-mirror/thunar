@@ -204,7 +204,7 @@ thunarx_property_page_size_request (GtkWidget      *widget,
 {
   GtkBin *bin = GTK_BIN (widget);
 
-  if (G_LIKELY (bin->child != NULL && GTK_WIDGET_VISIBLE (bin->child)))
+  if (G_LIKELY (bin->child != NULL && gtk_widget_get_visible (bin->child)))
     {
       gtk_widget_size_request (bin->child, requisition);
     }
@@ -231,7 +231,7 @@ thunarx_property_page_size_allocate (GtkWidget     *widget,
   widget->allocation = *allocation;
 
   /* apply the child allocation if we have a child */
-  if (G_LIKELY (bin->child != NULL && GTK_WIDGET_VISIBLE (bin->child)))
+  if (G_LIKELY (bin->child != NULL && gtk_widget_get_visible (bin->child)))
     {
       /* calculate the allocation for the child widget */
       child_allocation.x = allocation->x + GTK_CONTAINER (bin)->border_width + widget->style->xthickness;

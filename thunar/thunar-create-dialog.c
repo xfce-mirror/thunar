@@ -137,7 +137,6 @@ thunar_create_dialog_init (ThunarCreateDialog *dialog)
                           _("C_reate"), GTK_RESPONSE_OK,
                           NULL);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
-  gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
   gtk_dialog_set_response_sensitive (GTK_DIALOG (dialog), GTK_RESPONSE_OK, FALSE);
   gtk_window_set_default_size (GTK_WINDOW (dialog), 300, -1);
 
@@ -405,7 +404,7 @@ thunar_create_dialog_set_content_type (ThunarCreateDialog *dialog,
   dialog->content_type = g_strdup (content_type);
 
   /* update the image if we're already realized */
-  if (GTK_WIDGET_REALIZED (dialog))
+  if (gtk_widget_get_realized (GTK_WIDGET (dialog)))
     thunar_create_dialog_update_image (dialog);
 
   /* notify listeners */

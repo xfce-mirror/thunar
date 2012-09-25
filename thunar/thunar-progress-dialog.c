@@ -188,7 +188,7 @@ thunar_progress_dialog_toggled (ThunarProgressDialog *dialog,
   _thunar_return_val_if_fail (GTK_IS_STATUS_ICON (status_icon), FALSE);
 
   /* check if the window is visible and has the focus */
-  if (GTK_WIDGET_VISIBLE (GTK_WIDGET (dialog)) 
+  if (gtk_widget_get_visible (GTK_WIDGET (dialog)) 
       && gtk_window_is_active (GTK_WINDOW (dialog)))
     {
       /* remember the position of the dialog */
@@ -200,7 +200,7 @@ thunar_progress_dialog_toggled (ThunarProgressDialog *dialog,
   else
     {
       /* check if the dialog is invisible */
-      if (!GTK_WIDGET_VISIBLE (GTK_WIDGET (dialog)))
+      if (!gtk_widget_get_visible (GTK_WIDGET (dialog)))
         {
           /* restore its previous position before presenting it */
           gtk_window_move (GTK_WINDOW (dialog), dialog->x, dialog->y);

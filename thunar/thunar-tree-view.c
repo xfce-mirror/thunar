@@ -2124,7 +2124,7 @@ thunar_tree_view_action_properties (ThunarTreeView *view)
     {
       /* determine the toplevel window */
       toplevel = gtk_widget_get_toplevel (GTK_WIDGET (view));
-      if (G_LIKELY (toplevel != NULL && GTK_WIDGET_TOPLEVEL (toplevel)))
+      if (G_LIKELY (toplevel != NULL && gtk_widget_is_toplevel (toplevel)))
         {
           /* popup the properties dialog */
           dialog = thunar_properties_dialog_new (GTK_WINDOW (toplevel));
@@ -2344,7 +2344,7 @@ thunar_tree_view_drag_scroll_timer (gpointer user_data)
   GDK_THREADS_ENTER ();
 
   /* verify that we are realized */
-  if (GTK_WIDGET_REALIZED (view))
+  if (gtk_widget_get_realized (GTK_WIDGET (view)))
     {
       /* determine pointer location and window geometry */
       gdk_window_get_pointer (GTK_WIDGET (view)->window, NULL, &y, NULL);

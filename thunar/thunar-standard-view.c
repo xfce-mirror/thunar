@@ -2875,7 +2875,7 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
 
                       /* determine the toplevel window */
                       toplevel = gtk_widget_get_toplevel (view);
-                      if (toplevel != NULL && GTK_WIDGET_TOPLEVEL (toplevel))
+                      if (toplevel != NULL && gtk_widget_is_toplevel (toplevel))
                         {
 #if defined(GDK_WINDOWING_X11)
                           /* on X11, we can supply the parent window id here */
@@ -3350,7 +3350,7 @@ thunar_standard_view_drag_scroll_timer (gpointer user_data)
   GDK_THREADS_ENTER ();
 
   /* verify that we are realized */
-  if (G_LIKELY (GTK_WIDGET_REALIZED (standard_view)))
+  if (G_LIKELY (gtk_widget_get_realized (GTK_WIDGET (standard_view))))
     {
       /* determine pointer location and window geometry */
       gdk_window_get_pointer (GTK_BIN (standard_view)->child->window, &x, &y, NULL);

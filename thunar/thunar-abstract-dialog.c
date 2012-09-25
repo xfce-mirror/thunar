@@ -65,7 +65,7 @@ thunar_abstract_dialog_close (GtkDialog *dialog)
   GdkEvent *event;
 
   /* verify that dialog is realized */
-  if (G_LIKELY (GTK_WIDGET_REALIZED (dialog)))
+  if (G_LIKELY (gtk_widget_get_realized (GTK_WIDGET (dialog))))
     {
       /* send a delete event to the dialog */
       event = gdk_event_new (GDK_DELETE);
