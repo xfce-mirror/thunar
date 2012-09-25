@@ -148,10 +148,8 @@ struct _ThunarThumbnailer
 
   GMutex     *lock;
 
-  /* cached arrays of URI schemes and MIME types for which thumbnails
-   * can be generated */
-  gchar     **supported_schemes;
-  gchar     **supported_types;
+  /* cached MIME types -> URI schemes for which thumbs can be generated */
+  GHashTable *supported;
 
   /* last ThunarThumbnailer request ID */
   guint       last_request;
@@ -297,9 +295,9 @@ thunar_thumbnailer_finalize (GObject *object)
   if (thumbnailer->thumbnailer_proxy != NULL)
     g_object_unref (thumbnailer->thumbnailer_proxy);
 
-  /* free the cached URI schemes and MIME types array */
-  g_strfreev (thumbnailer->supported_schemes);
-  g_strfreev (thumbnailer->supported_types);
+  /* free the cached URI schemes and MIME types table */
+  if (thumbnailer->supported != NULL)
+    g_hash_table_unref (thumbnailer->supported);
 
   /* release the thumbnailer lock */
   g_mutex_unlock (thumbnailer->lock);
@@ -370,6 +368,102 @@ thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer *thumbnailer,
 
 
 
+static gint
+thunar_thumbnailer_file_schemes_compare (gconstpointer a,
+                                         gconstpointer b)
+{
+  const gchar *scheme_a = *(gconstpointer *) a;
+  const gchar *scheme_b = *(gconstpointer *) b;
+
+  /* sort file before other schemes */
+  if (strcmp (scheme_a, "file") == 0)
+    return -1;
+  if (strcmp (scheme_b, "file") == 0)
+    return 1;
+
+  /* sort trash before other schemes */
+  if (strcmp (scheme_a, "trash") == 0)
+    return -1;
+  if (strcmp (scheme_b, "trash") == 0)
+    return 1;
+
+  /* other order is just fine */
+  return 0;
+}
+
+
+
+static void
+thunar_thumbnailer_file_sort_schemes (gpointer mime_type,
+                                      gpointer schemes,
+                                      gpointer user_data)
+{
+  g_ptr_array_sort (schemes, thunar_thumbnailer_file_schemes_compare);
+}
+
+
+
+static void
+thunar_thumbnailer_get_supported_types (ThunarThumbnailer *thumbnailer)
+{
+  guint       n;
+  gchar     **schemes = NULL;
+  gchar     **types = NULL;
+  GPtrArray  *schemes_array;
+
+  _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
+  _thunar_return_if_fail (DBUS_IS_G_PROXY (thumbnailer->thumbnailer_proxy));
+  _thunar_return_if_fail (!g_mutex_trylock (thumbnailer->lock));
+
+  /* leave if there already is a hash table */
+  if (thumbnailer->supported != NULL)
+    return;
+
+  /* prepare table */
+  thumbnailer->supported = g_hash_table_new_full (g_str_hash, g_str_equal,
+                                                  g_free,
+                                                  (GDestroyNotify) g_ptr_array_unref);
+
+  /* request the supported types from the thumbnailer D-Bus service. We only do
+   * this once, so using a non-async call should be ok */
+  thunar_thumbnailer_proxy_get_supported (thumbnailer->thumbnailer_proxy,
+                                          &schemes, &types,
+                                          NULL);
+
+  if (G_LIKELY (schemes != NULL && types != NULL))
+    {
+      /* combine content types and uri schemes */
+      for (n = 0; types[n] != NULL; ++n)
+        {
+          schemes_array = g_hash_table_lookup (thumbnailer->supported, types[n]);
+          if (G_UNLIKELY (schemes_array == NULL))
+            {
+              /* create an array for the uri schemes this content type supports */
+              schemes_array = g_ptr_array_new_with_free_func (g_free);
+              g_ptr_array_add (schemes_array, schemes[n]);
+              g_hash_table_insert (thumbnailer->supported, types[n], schemes_array);
+            }
+          else
+            {
+              /* add the uri scheme to the array of the content type */
+              g_ptr_array_add (schemes_array, schemes[n]);
+
+              /* cleanup */
+              g_free (types[n]);
+            }
+        }
+
+      /* remove arrays, we stole the values */
+      g_free (types);
+      g_free (schemes);
+
+      /* sort array to optimize for local files */
+      g_hash_table_foreach (thumbnailer->supported, thunar_thumbnailer_file_sort_schemes, NULL);
+    }
+}
+
+
+
 static gboolean
 thunar_thumbnailer_file_is_supported (ThunarThumbnailer *thumbnailer,
                                       ThunarFile        *file)
@@ -377,63 +471,35 @@ thunar_thumbnailer_file_is_supported (ThunarThumbnailer *thumbnailer,
   const gchar *content_type;
   gboolean     supported = FALSE;
   guint        n;
+  GPtrArray   *schemes_array;
+  const gchar *scheme;
 
   _thunar_return_val_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-
-  /* acquire the thumbnailer lock */
-  g_mutex_lock (thumbnailer->lock);
-
-  /* no types are supported if we don't have a thumbnailer */
-  if (thumbnailer->thumbnailer_proxy == NULL)
-    {
-      /* release the thumbnailer lock */
-      g_mutex_unlock (thumbnailer->lock);
-      return FALSE;
-    }
+  _thunar_return_val_if_fail (DBUS_IS_G_PROXY (thumbnailer->thumbnailer_proxy), FALSE);
+  _thunar_return_val_if_fail (thumbnailer->supported != NULL, FALSE);
+  _thunar_return_val_if_fail (!g_mutex_trylock (thumbnailer->lock), FALSE);
 
   /* determine the content type of the passed file */
   content_type = thunar_file_get_content_type (file);
 
   /* abort if the content type is unknown */
   if (content_type == NULL)
-    {
-      /* release the thumbnailer lock */
-      g_mutex_unlock (thumbnailer->lock);
-      return FALSE;
-    }
+    return FALSE;
 
-  /* request the supported types on demand */
-  if (thumbnailer->supported_schemes == NULL
-      || thumbnailer->supported_types == NULL)
+  /* lazy lookup the content type, no difficult parent type matching here */
+  schemes_array = g_hash_table_lookup (thumbnailer->supported, content_type);
+  if (schemes_array != NULL)
     {
-      /* request the supported types from the thumbnailer D-Bus service. We only do
-       * this once, so using a non-async call should be ok */
-      thunar_thumbnailer_proxy_get_supported (thumbnailer->thumbnailer_proxy,
-                                              &thumbnailer->supported_schemes,
-                                              &thumbnailer->supported_types,
-                                              NULL);
-    }
-
-  /* check if we have supported URI schemes and MIME types now */
-  if (thumbnailer->supported_schemes != NULL
-      && thumbnailer->supported_types != NULL)
-    {
-      /* go through all the URI schemes we support */
-      for (n = 0; !supported && thumbnailer->supported_schemes[n] != NULL; ++n)
+      /* go through all the URI schemes this type supports */
+      for (n = 0; !supported && n < schemes_array->len; ++n)
         {
           /* check if the file has the current URI scheme */
-          if (thunar_file_has_uri_scheme (file, thumbnailer->supported_schemes[n]))
-            {
-              /* check if the type of the file is a subtype of the supported type */
-              if (g_content_type_is_a (content_type, thumbnailer->supported_types[n]))
-                supported = TRUE;
-            }
+          scheme = g_ptr_array_index (schemes_array, n);
+          if (thunar_file_has_uri_scheme (file, scheme))
+            supported = TRUE;
         }
     }
-
-  /* release the thumbnailer lock */
-  g_mutex_unlock (thumbnailer->lock);
 
   return supported;
 }
@@ -768,7 +834,7 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
   GList        *lp;
   GList        *supported_files = NULL;
   guint         n;
-  guint         n_items;
+  guint         n_items = 0;
 #endif
 
   _thunar_return_val_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer), FALSE);
@@ -785,8 +851,8 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
       return FALSE;
     }
 
-  /* release the thumbnailer lock */
-  g_mutex_unlock (thumbnailer->lock);
+  /* make sure there is a hash table with supported files */
+  thunar_thumbnailer_get_supported_types (thumbnailer);
 
   /* collect all supported files from the list that are neither in the
    * about to be queued (wait queue), nor already queued, nor already
@@ -794,11 +860,14 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
   for (lp = g_list_last (files); lp != NULL; lp = lp->prev)
     {
       if (thunar_thumbnailer_file_is_supported (thumbnailer, lp->data))
-        supported_files = g_list_prepend (supported_files, lp->data);
+        {
+          supported_files = g_list_prepend (supported_files, lp->data);
+          n_items++;
+        }
     }
 
-  /* determine how many URIs are in the wait queue */
-  n_items = g_list_length (supported_files);
+  /* release the thumbnailer lock */
+  g_mutex_unlock (thumbnailer->lock);
 
   /* check if we have any supported files */
   if (n_items > 0)
