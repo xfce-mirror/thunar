@@ -474,7 +474,6 @@ thunar_history_show_menu (GtkAction     *action,
       /* setup the image for the file */
       image = gtk_image_new_from_pixbuf (icon);
       gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-      gtk_widget_show (image);
 
       /* release the icon */
       g_object_unref (G_OBJECT (icon));

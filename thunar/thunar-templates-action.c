@@ -381,7 +381,6 @@ thunar_templates_action_files_ready (ThunarJob             *job,
       /* allocate an image based on the icon */
       image = gtk_image_new_from_pixbuf (icon);
       gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-      gtk_widget_show (image);
 
       /* release the icon reference */
       g_object_unref (icon);
@@ -480,7 +479,6 @@ thunar_templates_action_load_finished (ThunarJob             *job,
       /* add the icon for the emtpy file item */
       image = gtk_image_new_from_stock (GTK_STOCK_NEW, GTK_ICON_SIZE_MENU);
       gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-      gtk_widget_show (image);
     }
 
   g_signal_handlers_disconnect_matched (job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL,

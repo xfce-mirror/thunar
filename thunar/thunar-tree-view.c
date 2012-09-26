@@ -1096,7 +1096,6 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
   /* set the stock icon */
   image = gtk_image_new_from_stock (GTK_STOCK_OPEN, GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-  gtk_widget_show (image);
 
   /* append the "Open in New Window" menu action */
   item = gtk_image_menu_item_new_with_mnemonic (_("Open in New Window"));
@@ -1183,7 +1182,6 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
           /* set the stock icon */
           image = gtk_image_new_from_stock (GTK_STOCK_CUT, GTK_ICON_SIZE_MENU);
           gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-          gtk_widget_show (image);
 
           /* append the "Copy" menu action */
           item = gtk_image_menu_item_new_with_mnemonic (_("_Copy"));
@@ -1195,7 +1193,6 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
           /* set the stock icon */
           image = gtk_image_new_from_stock (GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
           gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-          gtk_widget_show (image);
 
           /* cleanup */
           if (G_LIKELY (parent_file != NULL))
@@ -1212,7 +1209,6 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
       /* set the stock icon */
       image = gtk_image_new_from_stock (GTK_STOCK_PASTE, GTK_ICON_SIZE_MENU);
       gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-      gtk_widget_show (image);
 
       /* "Delete" and "Rename" don't make much sense for volumes */
       if (G_LIKELY (volume == NULL))
@@ -1230,7 +1226,6 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
           /* set the stock icon */
           image = gtk_image_new_from_stock (GTK_STOCK_DELETE, GTK_ICON_SIZE_MENU);
           gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-          gtk_widget_show (image);
 
           /* cleanup */
           if (G_LIKELY (parent_file != NULL))
@@ -1313,7 +1308,6 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
   /* set the stock icon */
   image = gtk_image_new_from_stock (GTK_STOCK_PROPERTIES, GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-  gtk_widget_show (image);
 
   /* run the menu on the view's screen (taking over the floating reference on the menu) */
   thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (view), NULL, NULL, (event != NULL) ? event->button : 0,

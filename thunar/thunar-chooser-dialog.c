@@ -567,7 +567,6 @@ thunar_chooser_dialog_context_menu (ThunarChooserDialog *dialog,
 
   image = gtk_image_new_from_stock (GTK_STOCK_REMOVE, GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-  gtk_widget_show (image);
 
   /* run the menu on the dialog's screen (takes over the floating of menu) */
   thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (dialog), NULL, NULL, button, timestamp);

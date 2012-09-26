@@ -109,7 +109,6 @@ thunar_dnd_ask (GtkWidget    *widget,
           {
             image = gtk_image_new_from_icon_name (dnd_action_icons[n], GTK_ICON_SIZE_MENU);
             gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-            gtk_widget_show (image);
           }
       }
 

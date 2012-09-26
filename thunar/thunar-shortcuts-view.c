@@ -831,7 +831,6 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   /* set the stock icon */
   image = gtk_image_new_from_stock (GTK_STOCK_OPEN, GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-  gtk_widget_show (image);
 
   /* append the "Open in New Window" menu action */
   item = gtk_image_menu_item_new_with_mnemonic (_("Open in New Window"));
@@ -941,7 +940,6 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   /* set the remove stock icon */
   image = gtk_image_new_from_stock (GTK_STOCK_REMOVE, GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-  gtk_widget_show (image);
 
   /* append the rename menu item */
   item = gtk_image_menu_item_new_with_mnemonic (_("Re_name Shortcut"));
