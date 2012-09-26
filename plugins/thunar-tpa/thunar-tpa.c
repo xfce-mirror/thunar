@@ -441,10 +441,9 @@ thunar_tpa_drag_data_received (GtkWidget        *button,
   if (G_LIKELY (info == TARGET_TEXT_URI_LIST))
     {
       /* check if the data is valid for text/uri-list */
-      if (G_LIKELY (selection_data->length >= 0 && selection_data->format == 8))
+      uri_list = gtk_selection_data_get_uris (selection_data);
+      if (G_LIKELY (uri_list != NULL))
         {
-          /* parse the URI list according to RFC 2483 */
-          uri_list = g_uri_list_extract_uris ((const gchar *) selection_data->data);
           succeed = thunar_tpa_move_to_trash (plugin, (const gchar **) uri_list);
           g_strfreev (uri_list);
         }
