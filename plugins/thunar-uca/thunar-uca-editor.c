@@ -447,7 +447,7 @@ thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
                            "menus. The file patterns are specified as a list\n"
                            "of simple file patterns separated by semicolons\n"
                            "(e.g. *.txt;*.doc). For an action to appear in the\n"
-                           "context menu of a file or folder, atleast one of\n"
+                           "context menu of a file or folder, at least one of\n"
                            "these patterns must match the name of the file\n"
                            "or folder. Additionally, you can specify that the\n"
                            "action should only appear for certain kinds of\nfiles."));
