@@ -429,10 +429,16 @@ thunar_file_info_get_location (ThunarxFileInfo *file_info)
 static void
 thunar_file_info_changed (ThunarxFileInfo *file_info)
 {
-  thunar_file_set_thumb_state (THUNAR_FILE (file_info), THUNAR_FILE_THUMB_STATE_UNKNOWN);
+  ThunarFile *file = THUNAR_FILE (file_info);
+
+  _thunar_return_if_fail (THUNAR_IS_FILE (file_info));
+
+  /* set the new thumbnail state manually, so we only emit file
+   * changed once */
+  file->flags = (file->flags & ~THUNAR_FILE_THUMB_STATE_MASK) | (THUNAR_FILE_THUMB_STATE_UNKNOWN);
 
   /* tell the file monitor that this file changed */
-  thunar_file_monitor_file_changed (THUNAR_FILE (file_info));
+  thunar_file_monitor_file_changed (file);
 }
 
 
