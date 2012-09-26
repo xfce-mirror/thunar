@@ -339,7 +339,11 @@ thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
   thunar_progress_view_set_title (THUNAR_PROGRESS_VIEW (view), title);
   gtk_box_pack_start (GTK_BOX (dialog->content_box), view, FALSE, TRUE, 0);
   gtk_widget_show (view);
-  
+
+  /* use the first job's icon-name for the dialog */
+  if (dialog->views == NULL)
+    gtk_window_set_icon_name (GTK_WINDOW (dialog), icon_name);
+
   /* add the view to the list of known views */
   dialog->views = g_list_prepend (dialog->views, view);
 
