@@ -125,6 +125,8 @@ thunar_sendto_model_load (ThunarSendtoModel *sendto_model)
   gchar          **specs;
   gchar           *path;
   guint            n;
+  XfceRc          *rc;
+  gchar          **mime_types;
 
   /* lookup all sendto .desktop files */
   specs = xfce_resource_match (XFCE_RESOURCE_DATA, "Thunar/sendto/*.desktop", TRUE);
@@ -146,6 +148,16 @@ thunar_sendto_model_load (ThunarSendtoModel *sendto_model)
               sendto_model->handlers = g_list_insert_sorted (sendto_model->handlers, 
                                                              G_APP_INFO (app_info),
                                                              (GCompareFunc) g_app_info_compare);
+
+              /* load the mime-type data */
+              rc = xfce_rc_simple_open (path, TRUE);
+              if (G_LIKELY (rc != NULL))
+                {
+                  mime_types = xfce_rc_read_list_entry (rc, "MimeType", ";");
+                  if (mime_types != NULL)
+                    g_object_set_data_full (G_OBJECT (app_info), "mime-types", mime_types, (GDestroyNotify) g_strfreev);
+                  xfce_rc_close (rc);
+                }
             }
         }
 
@@ -238,6 +250,8 @@ thunar_sendto_model_get_matching (ThunarSendtoModel *sendto_model,
   GList        *hp;
   GList        *fp;
   guint         n;
+  const gchar **mime_types;
+  const gchar  *content_type;
 
   _thunar_return_val_if_fail (THUNAR_IS_SENDTO_MODEL (sendto_model), NULL);
 
@@ -291,7 +305,30 @@ thunar_sendto_model_get_matching (ThunarSendtoModel *sendto_model,
             continue;
         }
 
-      /* FIXME Check if the GAppInfo supports all files */
+      /* check if we need to test mime types for this handler */
+      mime_types = g_object_get_data (G_OBJECT (hp->data), "mime-types");
+      if (mime_types != NULL)
+        {
+          /* each file must match atleast one of the specified mime types */
+          for (fp = files; fp != NULL; fp = fp->next)
+            {
+              /* each file must be supported by one of the mime types */
+              for (n = 0; mime_types[n] != NULL; ++n)
+                {
+                  content_type = thunar_file_get_content_type (fp->data);
+                  if (g_content_type_equals (content_type, mime_types[n]))
+                    break;
+                }
+
+              /* check if all mime types failed */
+              if (mime_types[n] == NULL)
+                break;
+            }
+
+          /* check if the test failed */
+          if (G_UNLIKELY (fp != NULL))
+            continue;
+        }
 
       /* the handler is supported */
       handlers = g_list_prepend (handlers, g_object_ref (G_OBJECT (hp->data)));
