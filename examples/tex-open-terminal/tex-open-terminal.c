@@ -29,6 +29,7 @@
 #include <string.h>
 #endif
 
+#include <libxfce4ui/libxfce4ui.h>
 #include <tex-open-terminal/tex-open-terminal.h>
 
 
@@ -143,7 +144,6 @@ tex_open_terminal_activated (GtkAction *action,
                              GtkWidget *window)
 {
   const gchar *path;
-  GtkWidget   *dialog;
   GError      *error = NULL;
   gchar       *command;
 
@@ -156,18 +156,10 @@ tex_open_terminal_activated (GtkAction *action,
   command = g_strdup_printf ("Terminal --working-directory \"%s\"", path);
 
   /* try to run the terminal command */
-  if (!gdk_spawn_command_line_on_screen (gtk_widget_get_screen (window), command, &error))
+  if (!xfce_spawn_command_line_on_screen (gtk_widget_get_screen (window), command, FALSE, FALSE, &error))
     {
       /* display an error dialog */
-      dialog = gtk_message_dialog_new (GTK_WINDOW (window),
-                                       GTK_DIALOG_DESTROY_WITH_PARENT,
-                                       GTK_MESSAGE_ERROR,
-                                       GTK_BUTTONS_CLOSE,
-                                       "Failed to open terminal in folder %s.",
-                                       path);
-      gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s.", error->message);
-      gtk_dialog_run (GTK_DIALOG (dialog));
-      gtk_widget_destroy (dialog);
+      xfce_dialog_show_error (GTK_WINDOW (window), error, "Failed to open terminal in folder %s.", path);
       g_error_free (error);
     }
 

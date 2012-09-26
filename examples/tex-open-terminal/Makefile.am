@@ -18,6 +18,7 @@ tex_open_terminal_la_SOURCES =						\
 
 tex_open_terminal_la_CFLAGS =						\
 	$(GTK_CFLAGS)							\
+	$(LIBXFCE4UI_CFLAGS)						\
 	$(PLATFORM_CFLAGS)
 
 tex_open_terminal_la_DEPENDENCIES =					\
@@ -25,6 +26,7 @@ tex_open_terminal_la_DEPENDENCIES =					\
 
 tex_open_terminal_la_LIBADD =						\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la	\
+	$(LIBXFCE4UI_LIBS)						\
 	$(GTK_LIBS)
 
 tex_open_terminal_la_LDFLAGS =						\
