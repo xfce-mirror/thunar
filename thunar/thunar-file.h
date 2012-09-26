@@ -27,7 +27,6 @@
 
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-gio-extensions.h>
-#include <thunar/thunar-metafile.h>
 #include <thunar/thunar-user.h>
 
 G_BEGIN_DECLS;
@@ -231,14 +230,6 @@ GIcon            *thunar_file_get_preview_icon     (const ThunarFile        *fil
 gchar            *thunar_file_get_icon_name        (const ThunarFile        *file,
                                                     ThunarFileIconState     icon_state,
                                                     GtkIconTheme           *icon_theme);
-
-const gchar      *thunar_file_get_metadata         (ThunarFile             *file,
-                                                    ThunarMetafileKey       key,
-                                                    const gchar            *default_value);
-void              thunar_file_set_metadata         (ThunarFile             *file,
-                                                    ThunarMetafileKey       key,
-                                                    const gchar            *value,
-                                                    const gchar            *default_value);
 
 void              thunar_file_watch                (ThunarFile             *file);
 void              thunar_file_unwatch              (ThunarFile             *file);

@@ -27,14 +27,7 @@ appropriate answers to these questions.
 3. Where does Thunar store the metadata associated with files?
 ==============================================================
 
-  Thunar associates various settings with files/folders, which we call metadata.
-  This metadata for all files is stored in tdb database file, which is called
-  the metafile. The database file is stored in
-  
-    $XDG_CACHE_HOME/Thunar/metafile.tdb
-
-  and can be examined using the tdbtool, which is part of the Thunar
-  distribution (located in the tdb/ subdirectory).
+  Thunar uses the metadata daemon provided by GVFS.
 
 
 4. Where does Thunar store its preferences?

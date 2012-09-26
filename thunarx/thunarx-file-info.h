@@ -45,7 +45,8 @@ G_BEGIN_DECLS;
   "time::*," \
   "thumbnail::*," \
   "trash::*," \
-  "unix::*"
+  "unix::*," \
+  "metadata::emblems"
 
 /**
  * Filesystem information namespaces available in the #GFileInfo

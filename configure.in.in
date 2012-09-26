@@ -106,21 +106,6 @@ AC_ARG_WITH([helper-path-prefix],
 AC_SUBST([HELPER_PATH_PREFIX])
 
 dnl ***********************************************
-dnl *** Determine the u32 type required for tdb ***
-dnl ***********************************************
-AC_CHECK_SIZEOF([int])
-AC_CHECK_SIZEOF([long])
-AC_CHECK_SIZEOF([short])
-AC_MSG_CHECKING([for 32bit unsigned integer])
-case 4 in
-$ac_cv_sizeof_int)   TDB_U32_TYPE="unsigned int" ;;
-$ac_cv_sizeof_long)  TDB_U32_TYPE="unsigned long" ;;
-$ac_cv_sizeof_short) TDB_U32_TYPE="unsigned short" ;;
-esac
-AC_SUBST([TDB_U32_TYPE])
-AC_MSG_RESULT([$TDB_U32_TYPE])
-
-dnl ***********************************************
 dnl *** Work-around system-specific limitations ***
 dnl ***********************************************
 AC_SYS_LARGEFILE()
@@ -274,8 +259,6 @@ plugins/thunar-tpa/Makefile
 plugins/thunar-uca/Makefile
 plugins/thunar-wallpaper/Makefile
 po/Makefile.in
-tdb/Makefile
-tdb/tdbconfig.h
 thunar/Makefile
 thunarx/Makefile
 thunarx/thunarx-2.pc

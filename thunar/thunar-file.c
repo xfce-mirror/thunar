@@ -69,9 +69,7 @@
 
 
 /* Additional flags associated with a ThunarFile */
-#define THUNAR_FILE_IN_DESTRUCTION          0x04
-#define THUNAR_FILE_OWNS_METAFILE_REFERENCE 0x08
-#define THUNAR_FILE_OWNS_EMBLEM_NAMES       0x10
+#define THUNAR_FILE_IN_DESTRUCTION 0x04
 
 
 /* the watch count is stored in the GObject data
@@ -111,7 +109,6 @@ static gboolean           thunar_file_denies_access_permission (const ThunarFile
                                                                 ThunarFileMode          usr_permissions,
                                                                 ThunarFileMode          grp_permissions,
                                                                 ThunarFileMode          oth_permissions);
-static ThunarMetafile    *thunar_file_get_metafile             (ThunarFile             *file);
 static void               thunar_file_monitor                  (GFileMonitor           *monitor,
                                                                 GFile                  *path,
                                                                 GFile                  *other_path,
@@ -125,12 +122,10 @@ G_LOCK_DEFINE_STATIC (file_cache_mutex);
 
 
 static ThunarUserManager *user_manager;
-static ThunarMetafile    *metafile;
 static GHashTable        *file_cache;
 static guint32            effective_user_id;
 static GQuark             thunar_file_thumb_path_quark;
 static GQuark             thunar_file_watch_count_quark;
-static GQuark             thunar_file_emblem_names_quark;
 static guint              file_signals[LAST_SIGNAL];
 
 
@@ -199,7 +194,6 @@ thunar_file_class_init (ThunarFileClass *klass)
   /* pre-allocate the required quarks */
   thunar_file_thumb_path_quark = g_quark_from_static_string ("thunar-file-thumb-path");
   thunar_file_watch_count_quark = g_quark_from_static_string ("thunar-file-watch-count");
-  thunar_file_emblem_names_quark = g_quark_from_static_string ("thunar-file-emblem-names");
 
   /* grab a reference on the user manager */
   user_manager = thunar_user_manager_get_default ();
@@ -292,10 +286,6 @@ thunar_file_finalize (GObject *object)
   G_LOCK (file_cache_mutex);
   g_hash_table_remove (file_cache, file->gfile);
   G_UNLOCK (file_cache_mutex);
-
-  /* drop a reference on the metadata if we own one */
-  if ((file->flags & THUNAR_FILE_OWNS_METAFILE_REFERENCE) != 0)
-    g_object_unref (G_OBJECT (metafile));
 
   /* release file info */
   if (file->info != NULL)
@@ -518,31 +508,6 @@ thunar_file_denies_access_permission (const ThunarFile *file,
 
 
 
-static ThunarMetafile*
-thunar_file_get_metafile (ThunarFile *file)
-{
-  if ((file->flags & THUNAR_FILE_OWNS_METAFILE_REFERENCE) == 0)
-    {
-      /* take a reference on the metafile for this file */
-      if (G_UNLIKELY (metafile == NULL))
-        {
-          metafile = thunar_metafile_get_default ();
-          g_object_add_weak_pointer (G_OBJECT (metafile), (gpointer) &metafile);
-        }
-      else
-        {
-          g_object_ref (G_OBJECT (metafile));
-        }
-
-      /* remember that we own a reference now */
-      file->flags |= THUNAR_FILE_OWNS_METAFILE_REFERENCE;
-    }
-
-  return metafile;
-}
-
-
-
 static void
 thunar_file_monitor_update (GFile             *path,
                             GFileMonitorEvent  event_type)
@@ -595,6 +560,27 @@ thunar_file_monitor (GFileMonitor     *monitor,
 
   if (G_UNLIKELY (G_IS_FILE (other_path)))
     thunar_file_monitor_update (other_path, event_type);
+}
+
+
+
+static void
+thunar_file_set_emblem_names_ready (GObject      *source_object,
+                                    GAsyncResult *result,
+                                    gpointer      user_data)
+{
+  ThunarFile *file = THUNAR_FILE (user_data);
+  GError     *error = NULL;
+
+  if (!g_file_set_attributes_finish (G_FILE (source_object), result, NULL, &error))
+    {
+      g_warning ("Failed to set metadata: %s", error->message);
+      g_error_free (error);
+
+      g_file_info_remove_attribute (file->info, "metadata:emblems");
+    }
+
+  thunar_file_changed (file);
 }
 
 
@@ -2613,28 +2599,15 @@ thunar_file_can_be_trashed (const ThunarFile *file)
 GList*
 thunar_file_get_emblem_names (ThunarFile *file)
 {
-  const gchar *emblem_string;
-  guint32      uid;
-  gchar      **emblem_names;
-  GList       *emblems = NULL;
+  guint32   uid;
+  gchar   **emblem_names;
+  GList    *emblems = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-
-  /* check if we need to load the emblems_list from the metafile */
-  if (G_UNLIKELY ((file->flags & THUNAR_FILE_OWNS_EMBLEM_NAMES) == 0))
-    {
-      emblem_string = thunar_file_get_metadata (file, THUNAR_METAFILE_KEY_EMBLEMS, "");
-      if (G_UNLIKELY (*emblem_string != '\0'))
-        {
-          emblem_names = g_strsplit (emblem_string, ";", -1);
-          g_object_set_qdata_full (G_OBJECT (file), thunar_file_emblem_names_quark,
-                                   emblem_names, (GDestroyNotify) g_strfreev);
-        }
-      file->flags |= THUNAR_FILE_OWNS_EMBLEM_NAMES;
-    }
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->info), NULL);
 
   /* determine the custom emblems */
-  emblem_names = g_object_get_qdata (G_OBJECT (file), thunar_file_emblem_names_quark);
+  emblem_names = g_file_info_get_attribute_stringv (file->info, "metadata::emblems");
   if (G_UNLIKELY (emblem_names != NULL))
     {
       for (; *emblem_names != NULL; ++emblem_names)
@@ -2686,12 +2659,13 @@ void
 thunar_file_set_emblem_names (ThunarFile *file,
                               GList      *emblem_names)
 {
-  GList  *lp;
-  gchar **emblems;
-  gchar  *emblems_string;
-  gint    n;
+  GList      *lp;
+  gchar     **emblems = NULL;
+  gint        n;
+  GFileInfo  *info;
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (G_IS_FILE_INFO (file->info));
 
   /* allocate a zero-terminated array for the emblem names */
   emblems = g_new0 (gchar *, g_list_length (emblem_names) + 1);
@@ -2710,18 +2684,24 @@ thunar_file_set_emblem_names (ThunarFile *file,
       emblems[n++] = g_strdup (lp->data);
     }
 
-  /* associate the emblems with the file */
-  file->flags |= THUNAR_FILE_OWNS_EMBLEM_NAMES;
-  g_object_set_qdata_full (G_OBJECT (file), thunar_file_emblem_names_quark,
-                           emblems, (GDestroyNotify) g_strfreev);
+  /* set the value in the current info */
+  if (n == 0)
+    g_file_info_remove_attribute (file->info, "metadata::emblems");
+  else
+    g_file_info_set_attribute_stringv (file->info, "metadata::emblems", emblems);
 
-  /* store the emblem list in the file's metadata */
-  emblems_string = g_strjoinv (";", emblems);
-  thunar_file_set_metadata (file, THUNAR_METAFILE_KEY_EMBLEMS, emblems_string, "");
-  g_free (emblems_string);
+  /* set meta data to the daemon */
+  info = g_file_info_new ();
+  g_file_info_set_attribute_stringv (info, "metadata::emblems", emblems);
+  g_file_set_attributes_async (file->gfile, info,
+                               G_FILE_QUERY_INFO_NONE,
+                               G_PRIORITY_DEFAULT,
+                               NULL,
+                               thunar_file_set_emblem_names_ready,
+                               file);
+  g_object_unref (G_OBJECT (info));
 
-  /* tell everybody that we have changed */
-  thunar_file_changed (file);
+  g_strfreev (emblems);
 }
 
 
@@ -2984,68 +2964,6 @@ thunar_file_get_icon_name (const ThunarFile   *file,
     }
 
   return icon_name;
-}
-
-
-
-/**
- * thunar_file_get_metadata:
- * @file          : a #ThunarFile instance.
- * @key           : a #ThunarMetaFileKey.
- * @default_value : the default value for @key in @file
- *                  which is returned when @key isn't
- *                  explicitly set for @file (may be
- *                  %NULL).
- *
- * Returns the metadata available for @key in @file.
- *
- * The returned string is owned by the @file and uses
- * an internal buffer that will be overridden on the
- * next call to any of the metadata retrieval methods.
- *
- * Return value: the metadata available for @key in @file
- *               or @default_value if @key is not set for
- *               @file.
- **/
-const gchar*
-thunar_file_get_metadata (ThunarFile       *file,
-                          ThunarMetafileKey key,
-                          const gchar      *default_value)
-{
-  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  _thunar_return_val_if_fail (key < THUNAR_METAFILE_N_KEYS, NULL);
-
-  return thunar_metafile_fetch (thunar_file_get_metafile (file),
-                                file->gfile, key,
-                                default_value);
-}
-
-
-
-/**
- * thunar_file_set_metadata:
- * @file          : a #ThunarFile instance.
- * @key           : a #ThunarMetafileKey.
- * @value         : the new value for @key on @file.
- * @default_value : the default for @key on @file.
- *
- * Sets the metadata available for @key in @file to
- * the given @value.
- **/
-void
-thunar_file_set_metadata (ThunarFile       *file,
-                          ThunarMetafileKey key,
-                          const gchar      *value,
-                          const gchar      *default_value)
-{
-  _thunar_return_if_fail (THUNAR_IS_FILE (file));
-  _thunar_return_if_fail (key < THUNAR_METAFILE_N_KEYS);
-  _thunar_return_if_fail (default_value != NULL);
-  _thunar_return_if_fail (value != NULL);
-
-  thunar_metafile_store (thunar_file_get_metafile (file),
-                         file->gfile, key, value,
-                         default_value);
 }
 
 

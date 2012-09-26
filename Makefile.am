@@ -21,7 +21,6 @@ SUBDIRS =								\
 	icons								\
 	pixmaps								\
 	po								\
-	tdb								\
 	thunarx								\
 	thunar								\
 	docs								\

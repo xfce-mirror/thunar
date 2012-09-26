@@ -133,8 +133,6 @@ thunar_SOURCES =							\
 	thunar-location-dialog.h					\
 	thunar-location-entry.c						\
 	thunar-location-entry.h						\
-	thunar-metafile.c						\
-	thunar-metafile.h						\
 	thunar-misc-jobs.c						\
 	thunar-misc-jobs.h						\
 	thunar-navigator.c						\
@@ -238,7 +236,6 @@ thunar_LDFLAGS =							\
 	$(PLATFORM_LDFLAGS)
 
 thunar_LDADD =								\
-	$(top_builddir)/tdb/libtdb.la					\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la	\
 	$(EXO_LIBS)							\
 	$(GIO_LIBS)							\
@@ -250,7 +247,6 @@ thunar_LDADD =								\
 	$(LIBXFCE4UI_LIBS)
 
 thunar_DEPENDENCIES =							\
-	$(top_builddir)/tdb/libtdb.la					\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la
 
 if HAVE_DBUS
