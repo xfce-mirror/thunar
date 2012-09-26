@@ -321,8 +321,6 @@ thunar_templates_action_files_ready (ThunarJob             *job,
   GList             *items = NULL;
   GList             *parent_menus = NULL;
   GList             *pp;
-  gchar             *label;
-  gchar             *dot;
 
   /* determine the menu to add the items and submenus to */
   menu = g_object_get_data (G_OBJECT (job), "menu");
@@ -365,14 +363,8 @@ thunar_templates_action_files_ready (ThunarJob             *job,
         }
       else
         {
-          /* generate a label by stripping off the extension */
-          label = g_strdup (thunar_file_get_display_name (file));
-          dot = g_utf8_strrchr (label, -1, '.');
-          if (G_LIKELY (dot != NULL))
-            *dot = '\0';
-
           /* allocate a new menu item */
-          item = gtk_image_menu_item_new_with_label (label);
+          item = gtk_image_menu_item_new_with_label (thunar_file_get_display_name (file));
           g_object_set_data_full (G_OBJECT (item), I_("thunar-file"), 
                                   g_object_ref (file), g_object_unref);
           g_signal_connect (item, "activate", G_CALLBACK (item_activated), 
