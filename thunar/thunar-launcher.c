@@ -630,6 +630,8 @@ thunar_launcher_open_paths (GAppInfo       *app_info,
   /* create launch context */
   context = gdk_app_launch_context_new ();
   gdk_app_launch_context_set_screen (context, screen);
+  gdk_app_launch_context_set_timestamp (context, gtk_get_current_event_time ());
+  gdk_app_launch_context_set_icon (context, g_app_info_get_icon (app_info));
 
   /* determine the working directory */
   if (launcher->current_directory != NULL)
