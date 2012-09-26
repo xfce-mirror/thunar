@@ -125,7 +125,7 @@ thunar_sendto_model_load (ThunarSendtoModel *sendto_model)
   gchar          **specs;
   gchar           *path;
   guint            n;
-  XfceRc          *rc;
+  GKeyFile        *key_file;
   gchar          **mime_types;
 
   /* lookup all sendto .desktop files */
@@ -136,12 +136,20 @@ thunar_sendto_model_load (ThunarSendtoModel *sendto_model)
       path = xfce_resource_lookup (XFCE_RESOURCE_DATA, specs[n]);
       if (G_LIKELY (path != NULL))
         {
-#ifdef HAVE_GIO_UNIX
           /* try to load the .desktop file */
-          app_info = g_desktop_app_info_new_from_filename (path);
+          key_file = g_key_file_new ();
+          if (!g_key_file_load_from_file (key_file, path, G_KEY_FILE_NONE, NULL))
+            {
+              g_key_file_free (key_file);
+              continue;
+            }
+
+#ifdef HAVE_GIO_UNIX
+          app_info = g_desktop_app_info_new_from_keyfile (key_file);
 #else
           /* FIXME try to create the app info ourselves in a platform independent way */
 #endif
+
           if (G_LIKELY (app_info != NULL))
             {
               /* add to our handler list, sorted by their desktop-ids (reverse order) */
@@ -149,16 +157,16 @@ thunar_sendto_model_load (ThunarSendtoModel *sendto_model)
                                                              G_APP_INFO (app_info),
                                                              (GCompareFunc) g_app_info_compare);
 
-              /* load the mime-type data */
-              rc = xfce_rc_simple_open (path, TRUE);
-              if (G_LIKELY (rc != NULL))
-                {
-                  mime_types = xfce_rc_read_list_entry (rc, "MimeType", ";");
-                  if (mime_types != NULL)
-                    g_object_set_data_full (G_OBJECT (app_info), "mime-types", mime_types, (GDestroyNotify) g_strfreev);
-                  xfce_rc_close (rc);
-                }
+              /* attach the mime-types to the object */
+              mime_types = g_key_file_get_string_list (key_file,
+                                                       G_KEY_FILE_DESKTOP_GROUP,
+                                                       G_KEY_FILE_DESKTOP_KEY_MIME_TYPE,
+                                                       NULL, NULL);
+              if (mime_types != NULL)
+                g_object_set_data_full (G_OBJECT (app_info), "mime-types", mime_types, (GDestroyNotify) g_strfreev);
             }
+
+          g_key_file_free (key_file);
         }
 
       /* cleanup */
