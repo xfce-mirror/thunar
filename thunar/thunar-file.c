@@ -3591,7 +3591,11 @@ thunar_file_list_get_applications (GList *file_list)
         }
 
       /* determine the list of applications that can open this file */
-      list = current_type == NULL ? NULL : g_app_info_get_all_for_type (current_type);
+      if (G_UNLIKELY (current_type != NULL))
+        list = g_app_info_get_all_for_type (current_type);
+      else
+        list = NULL;
+
       if (G_UNLIKELY (applications == NULL))
         {
           /* first file, so just use the applications list */
@@ -3623,6 +3627,22 @@ thunar_file_list_get_applications (GList *file_list)
       /* check if the set is still not empty */
       if (G_LIKELY (applications == NULL))
         break;
+    }
+
+  /* remove hidden applications */
+  for (ap = applications; ap != NULL; ap = next)
+    {
+      /* grab a pointer on the next application */
+      next = ap->next;
+
+      if (!g_app_info_should_show (ap->data))
+        {
+          /* drop our reference on the application */
+          g_object_unref (G_OBJECT (ap->data));
+
+          /* drop this application from the list */
+          applications = g_list_delete_link (applications, ap);
+        }
     }
 
   return applications;
