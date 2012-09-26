@@ -376,7 +376,7 @@ thunar_templates_action_files_ready (ThunarJob             *job,
       /* determine the icon for this file/directory */
       icon = thunar_icon_factory_load_file_icon (icon_factory, file,
                                                  THUNAR_FILE_ICON_STATE_DEFAULT,
-                                                 GTK_ICON_SIZE_MENU);
+                                                 16);
 
       /* allocate an image based on the icon */
       image = gtk_image_new_from_pixbuf (icon);
