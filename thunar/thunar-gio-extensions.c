@@ -337,7 +337,8 @@ thunar_g_file_list_to_string (GList *list)
       string = g_string_append (string, uri);
       g_free (uri);
 
-      string = g_string_append (string, "\r\n");
+      if (lp->next != NULL)
+        string = g_string_append (string, "\r\n");
     }
 
   return g_string_free (string, FALSE);
