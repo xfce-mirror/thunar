@@ -43,7 +43,6 @@ G_BEGIN_DECLS;
   "preview::*," \
   "standard::*," \
   "time::*," \
-  "thumbnail::*," \
   "trash::*," \
   "unix::*," \
   "metadata::emblems"

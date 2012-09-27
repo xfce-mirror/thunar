@@ -703,10 +703,8 @@ thunar_file_load (ThunarFile   *file,
   GError      *err = NULL;
   GFile       *thumbnail_dir;
   gchar       *base_name;
-  gchar       *md5_hash;
   gchar       *p;
   gchar       *thumbnail_dir_path;
-  gchar       *uri = NULL;
   const gchar *display_name;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
@@ -898,18 +896,6 @@ thunar_file_load (ThunarFile   *file,
   /* set thumb state to unknown */
   file->flags = 
     (file->flags & ~THUNAR_FILE_THUMB_STATE_MASK) | THUNAR_FILE_THUMB_STATE_UNKNOWN;
-
-  /* determine thumbnail path */
-  uri = thunar_file_dup_uri (file);
-  md5_hash = g_compute_checksum_for_string (G_CHECKSUM_MD5, uri, -1);
-  base_name = g_strdup_printf ("%s.png", md5_hash);
-  file->thumbnail_path = g_build_filename (xfce_get_homedir (), ".thumbnails", 
-                                           "normal", base_name, NULL);
-  g_free (base_name);
-  g_free (md5_hash);
-  g_free (uri);
-
-  /* TODO monitor the thumbnail file for changes */
 
   if (err != NULL)
     {
@@ -2791,9 +2777,33 @@ thunar_file_is_desktop (const ThunarFile *file)
 
 
 const gchar *
-thunar_file_get_thumbnail_path (const ThunarFile *file)
+thunar_file_get_thumbnail_path (ThunarFile *file)
 {
+  GChecksum *checksum;
+  gchar     *basename;
+  gchar     *uri;
+
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+
+  if (G_UNLIKELY (file->thumbnail_path == NULL))
+    {
+      checksum = g_checksum_new (G_CHECKSUM_MD5);
+      if (G_LIKELY (checksum != NULL))
+        {
+          uri = thunar_file_dup_uri (file);
+          g_checksum_update (checksum, (const guchar *) uri, strlen (uri));
+          g_free (uri);
+
+          basename = g_strconcat (g_checksum_get_string (checksum), ".png", NULL);
+          g_checksum_free (checksum);
+
+          file->thumbnail_path = g_build_filename (xfce_get_homedir (), ".thumbnails", 
+                                                   "normal", basename, NULL);
+
+          g_free (basename);
+        }
+    }
+
   return file->thumbnail_path;
 }
 

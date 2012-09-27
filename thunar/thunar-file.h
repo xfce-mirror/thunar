@@ -222,7 +222,7 @@ gboolean          thunar_file_set_custom_icon      (ThunarFile              *fil
                                                     const gchar             *custom_icon,
                                                     GError                 **error);
 
-const gchar     *thunar_file_get_thumbnail_path    (const ThunarFile        *file);
+const gchar     *thunar_file_get_thumbnail_path    (ThunarFile              *file);
 gboolean         thunar_file_is_thumbnail          (const ThunarFile        *file);
 void             thunar_file_set_thumb_state       (ThunarFile              *file, 
                                                     ThunarFileThumbState     state);
