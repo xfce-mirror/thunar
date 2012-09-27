@@ -347,7 +347,7 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
   if (filename != NULL && g_key_file_load_from_file (key_file, filename, G_KEY_FILE_NONE, NULL))
     {
       /* determine the type of the .desktop file (default to "Application") */
-      type = g_key_file_get_string (key_file, "Desktop Entry", "Type", NULL);
+      type = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP, "Type", NULL);
       if (G_UNLIKELY (type == NULL))
         type = g_strdup ("Application");
 
@@ -360,7 +360,7 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
         thunarx_property_page_set_label (THUNARX_PROPERTY_PAGE (desktop_page), type);
 
       /* update the "Description" entry */
-      value = g_key_file_get_locale_string (key_file, "Desktop Entry", "GenericName", NULL, NULL);
+      value = g_key_file_get_locale_string (key_file, G_KEY_FILE_DESKTOP_GROUP, "GenericName", NULL, NULL);
       if (!exo_str_is_equal (value, desktop_page->description_text))
         {
           /* update the entry */
@@ -376,7 +376,7 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
         }
 
       /* update the "Comment" entry */
-      value = g_key_file_get_locale_string (key_file, "Desktop Entry", "Comment", NULL, NULL);
+      value = g_key_file_get_locale_string (key_file, G_KEY_FILE_DESKTOP_GROUP, "Comment", NULL, NULL);
       if (!exo_str_is_equal (value, desktop_page->comment_text))
         {
           /* update the entry */
@@ -395,7 +395,7 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
       if (strcmp (type, "Application") == 0)
         {
           /* update the "Command" entry */
-          value = g_key_file_get_string (key_file, "Desktop Entry", "Exec", NULL);
+          value = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP, "Exec", NULL);
           if (!exo_str_is_equal (value, desktop_page->command_text))
             {
               /* update the entry */
@@ -411,7 +411,7 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
             }
 
           /* update the "Path" entry */
-          value = g_key_file_get_string (key_file, "Desktop Entry", "Path", NULL);
+          value = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP, "Path", NULL);
           if (!exo_str_is_equal (value, desktop_page->path_text))
             {
               /* update the entry */
@@ -427,14 +427,14 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
             }
 
           /* update the "Use startup notification" button */
-          enabled = g_key_file_get_boolean (key_file, "Desktop Entry", "StartupNotify", &error);
+          enabled = g_key_file_get_boolean (key_file, G_KEY_FILE_DESKTOP_GROUP, "StartupNotify", &error);
           g_signal_handlers_block_by_func (G_OBJECT (desktop_page->snotify_button), thunar_apr_desktop_page_toggled, desktop_page);
           gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (desktop_page->snotify_button), (error == NULL && enabled));
           g_signal_handlers_unblock_by_func (G_OBJECT (desktop_page->snotify_button), thunar_apr_desktop_page_toggled, desktop_page);
           g_clear_error (&error);
 
           /* update the "Run in terminal" button */
-          enabled = g_key_file_get_boolean (key_file, "Desktop Entry", "Terminal", &error);
+          enabled = g_key_file_get_boolean (key_file, G_KEY_FILE_DESKTOP_GROUP, "Terminal", &error);
           g_signal_handlers_block_by_func (G_OBJECT (desktop_page->terminal_button), thunar_apr_desktop_page_toggled, desktop_page);
           gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (desktop_page->terminal_button), (error == NULL && enabled));
           g_signal_handlers_unblock_by_func (G_OBJECT (desktop_page->terminal_button), thunar_apr_desktop_page_toggled, desktop_page);
@@ -450,7 +450,7 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
       else if (strcmp (type, "Link") == 0)
         {
           /* update the "URL" entry */
-          value = g_key_file_get_string (key_file, "Desktop Entry", "URL", NULL);
+          value = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP, "URL", NULL);
           if (!exo_str_is_equal (value, desktop_page->url_text))
             {
               /* update the entry */
@@ -618,10 +618,10 @@ thunar_apr_desktop_page_save_widget (ThunarAprDesktopPage *desktop_page,
       /* save the new description (localized if required) */
       for (locale = g_get_language_names (); *locale != NULL; ++locale)
         {
-          key = g_strdup_printf ("GenericName[%s]", *locale);
-          if (g_key_file_has_key (key_file, "Desktop Entry", key, NULL))
+          key = g_strdup_printf (G_KEY_FILE_DESKTOP_KEY_GENERIC_NAME "[%s]", *locale);
+          if (g_key_file_has_key (key_file, G_KEY_FILE_DESKTOP_GROUP, key, NULL))
             {
-              g_key_file_set_string (key_file, "Desktop Entry", key, desktop_page->description_text);
+              g_key_file_set_string (key_file, G_KEY_FILE_DESKTOP_GROUP, key, desktop_page->description_text);
               g_free (key);
               break;
             }
@@ -630,7 +630,12 @@ thunar_apr_desktop_page_save_widget (ThunarAprDesktopPage *desktop_page,
 
       /* fallback to unlocalized description */
       if (G_UNLIKELY (*locale == NULL))
-        g_key_file_set_string (key_file, "Desktop Entry", "GenericName", desktop_page->description_text);
+        {
+          g_key_file_set_string (key_file,
+                                 G_KEY_FILE_DESKTOP_GROUP,
+                                 G_KEY_FILE_DESKTOP_KEY_GENERIC_NAME,
+                                 desktop_page->description_text);
+        }
     }
   else if (widget == desktop_page->command_entry)
     {
@@ -639,7 +644,10 @@ thunar_apr_desktop_page_save_widget (ThunarAprDesktopPage *desktop_page,
       desktop_page->command_text = gtk_editable_get_chars (GTK_EDITABLE (widget), 0, -1);
 
       /* save the unlocalized command */
-      g_key_file_set_string (key_file, "Desktop Entry", "Exec", desktop_page->command_text);
+      g_key_file_set_string (key_file,
+                             G_KEY_FILE_DESKTOP_GROUP,
+                             G_KEY_FILE_DESKTOP_KEY_EXEC,
+                             desktop_page->command_text);
     }
   else if (widget == desktop_page->path_entry)
     {
@@ -648,7 +656,10 @@ thunar_apr_desktop_page_save_widget (ThunarAprDesktopPage *desktop_page,
       desktop_page->path_text = gtk_editable_get_chars (GTK_EDITABLE (widget), 0, -1);
 
       /* save the unlocalized command */
-      g_key_file_set_string (key_file, "Desktop Entry", "Path", desktop_page->path_text);
+      g_key_file_set_string (key_file,
+                             G_KEY_FILE_DESKTOP_GROUP,
+                             G_KEY_FILE_DESKTOP_KEY_PATH,
+                             desktop_page->path_text);
     }
   else if (widget == desktop_page->url_entry)
     {
@@ -657,7 +668,10 @@ thunar_apr_desktop_page_save_widget (ThunarAprDesktopPage *desktop_page,
       desktop_page->url_text = gtk_editable_get_chars (GTK_EDITABLE (widget), 0, -1);
 
       /* save the unlocalized url */
-      g_key_file_set_string (key_file, "Desktop Entry", "URL", desktop_page->url_text);
+      g_key_file_set_string (key_file,
+                             G_KEY_FILE_DESKTOP_GROUP,
+                             G_KEY_FILE_DESKTOP_KEY_URL,
+                             desktop_page->url_text);
     }
   else if (widget == desktop_page->comment_entry)
     {
@@ -668,10 +682,13 @@ thunar_apr_desktop_page_save_widget (ThunarAprDesktopPage *desktop_page,
       /* save the new comment (localized if required) */
       for (locale = g_get_language_names (); *locale != NULL; ++locale)
         {
-          key = g_strdup_printf ("Comment[%s]", *locale);
-          if (g_key_file_has_key (key_file, "Desktop Entry", key, NULL))
+          key = g_strdup_printf (G_KEY_FILE_DESKTOP_KEY_COMMENT "[%s]", *locale);
+          if (g_key_file_has_key (key_file, G_KEY_FILE_DESKTOP_GROUP, key, NULL))
             {
-              g_key_file_set_string (key_file, "Desktop Entry", key, desktop_page->comment_text);
+              g_key_file_set_string (key_file,
+                                     G_KEY_FILE_DESKTOP_GROUP,
+                                     key,
+                                     desktop_page->comment_text);
               g_free (key);
               break;
             }
@@ -680,15 +697,24 @@ thunar_apr_desktop_page_save_widget (ThunarAprDesktopPage *desktop_page,
 
       /* fallback to unlocalized comment */
       if (G_UNLIKELY (*locale == NULL))
-        g_key_file_set_string (key_file, "Desktop Entry", "Comment", desktop_page->comment_text);
+        g_key_file_set_string (key_file,
+                              G_KEY_FILE_DESKTOP_GROUP,
+                              G_KEY_FILE_DESKTOP_KEY_COMMENT,
+                              desktop_page->comment_text);
     }
   else if (widget == desktop_page->snotify_button)
     {
-      g_key_file_set_boolean (key_file, "Desktop Entry", "StartupNotify", gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)));
+      g_key_file_set_boolean (key_file,
+                              G_KEY_FILE_DESKTOP_GROUP,
+                              G_KEY_FILE_DESKTOP_KEY_STARTUP_NOTIFY,
+                              gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)));
     }
   else if (widget == desktop_page->terminal_button)
     {
-      g_key_file_set_boolean (key_file, "Desktop Entry", "Terminal", gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)));
+      g_key_file_set_boolean (key_file,
+                              G_KEY_FILE_DESKTOP_GROUP,
+                              G_KEY_FILE_DESKTOP_KEY_TERMINAL,
+                              gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)));
     }
   else
     {
