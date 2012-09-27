@@ -990,7 +990,7 @@ thunar_file_execute (ThunarFile  *file,
   gchar    *escaped_location;
   gchar   **argv = NULL;
   gchar    *exec;
-  gchar    *directory;
+  gchar    *directory = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (GDK_IS_SCREEN (screen), FALSE);
@@ -1025,6 +1025,8 @@ thunar_file_execute (ThunarFile  *file,
                                                    NULL);
               icon = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
                                             G_KEY_FILE_DESKTOP_KEY_ICON, NULL);
+              directory = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
+                                                 G_KEY_FILE_DESKTOP_KEY_PATH, NULL);
               terminal = g_key_file_get_boolean (key_file, G_KEY_FILE_DESKTOP_GROUP,
                                                  G_KEY_FILE_DESKTOP_KEY_TERMINAL, NULL);
               snotify = g_key_file_get_boolean (key_file, G_KEY_FILE_DESKTOP_GROUP,
@@ -1089,38 +1091,40 @@ thunar_file_execute (ThunarFile  *file,
 
   if (G_LIKELY (result))
     {
-      /* determine the working directory */
-      if (G_LIKELY (working_directory != NULL))
+      /* use other directory if the Path from the desktop file was not set */
+      if (G_LIKELY (directory == NULL))
         {
-          /* copy the working directory provided to this method */
-          directory = g_file_get_path (working_directory);
-        }
-      else if (file_list != NULL)
-        {
-          /* use the directory of the first list item */
-          parent = g_file_get_parent (file_list->data);
-          directory = (parent != NULL) ? thunar_g_file_get_location (parent) : NULL;
-          g_object_unref (parent);
-        }
-      else
-        {
-          /* use the directory of the executable file */
-          parent = g_file_get_parent (file->gfile);
-          directory = (parent != NULL) ? thunar_g_file_get_location (parent) : NULL;
-          g_object_unref (parent);
+          /* determine the working directory */
+          if (G_LIKELY (working_directory != NULL))
+            {
+              /* copy the working directory provided to this method */
+              directory = g_file_get_path (working_directory);
+            }
+          else if (file_list != NULL)
+            {
+              /* use the directory of the first list item */
+              parent = g_file_get_parent (file_list->data);
+              directory = (parent != NULL) ? thunar_g_file_get_location (parent) : NULL;
+              g_object_unref (parent);
+            }
+          else
+            {
+              /* use the directory of the executable file */
+              parent = g_file_get_parent (file->gfile);
+              directory = (parent != NULL) ? thunar_g_file_get_location (parent) : NULL;
+              g_object_unref (parent);
+            }
         }
 
       /* execute the command */
       result = xfce_spawn_on_screen (screen, directory, argv, NULL, G_SPAWN_SEARCH_PATH,
                                      snotify, gtk_get_current_event_time (), icon, error);
-
-      /* release the working directory */
-      g_free (directory);
     }
 
   /* clean up */
   g_strfreev (argv);
   g_free (location);
+  g_free (directory);
 
   return result;
 }
