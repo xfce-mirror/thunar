@@ -52,6 +52,7 @@ enum
 
 enum
 {
+  TARGET_TEXT_URI_LIST,
   TARGET_GNOME_COPIED_FILES,
   TARGET_UTF8_STRING,
 };
@@ -118,6 +119,7 @@ typedef struct
 
 static const GtkTargetEntry clipboard_targets[] =
 {
+  { "text/uri-list", 0, TARGET_TEXT_URI_LIST },
   { "x-special/gnome-copied-files", 0, TARGET_GNOME_COPIED_FILES },
   { "UTF8_STRING", 0, TARGET_UTF8_STRING }
 };
@@ -404,16 +406,53 @@ thunar_clipboard_manager_targets_received (GtkClipboard     *clipboard,
 
 
 
+static gchar *
+thunar_clipboard_manager_g_file_list_to_string (GList       *list,
+                                                const gchar *prefix,
+                                                gboolean     format_for_text,
+                                                gsize       *len)
+{
+  GString *string;
+  gchar   *tmp;
+  GList   *lp;
+
+  /* allocate initial string */
+  string = g_string_new (prefix);
+
+  for (lp = list; lp != NULL; lp = lp->next)
+    {
+      if (format_for_text)
+        tmp = g_file_get_parse_name (G_FILE (lp->data));
+      else
+        tmp = g_file_get_uri (G_FILE (lp->data));
+
+      string = g_string_append (string, tmp);
+      g_free (tmp);
+
+      if (lp->next != NULL)
+        string = g_string_append_c (string, '\n');
+    }
+
+  if (len != NULL)
+    *len = string->len;
+
+  return g_string_free (string, FALSE);
+}
+
+
+
 static void
 thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
                                        GtkSelectionData *selection_data,
                                        guint             target_info,
                                        gpointer          user_data)
 {
-  ThunarClipboardManager *manager = THUNAR_CLIPBOARD_MANAGER (user_data);
-  GList                  *file_list = NULL;
-  gchar                  *string_list;
-  gchar                  *data;
+  ThunarClipboardManager  *manager = THUNAR_CLIPBOARD_MANAGER (user_data);
+  GList                   *file_list;
+  gchar                   *str;
+  gchar                  **uris;
+  const gchar             *prefix;
+  gsize                    len;
 
   _thunar_return_if_fail (GTK_IS_CLIPBOARD (clipboard));
   _thunar_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
@@ -422,19 +461,25 @@ thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
   /* determine the path list from the file list */
   file_list = thunar_file_list_to_thunar_g_file_list (manager->files);
 
-  /* determine the string representation of the path list */
-  string_list = thunar_g_file_list_to_string (file_list);
-
   switch (target_info)
     {
+    case TARGET_TEXT_URI_LIST:
+      uris = thunar_g_file_list_to_stringv (file_list);
+      gtk_selection_data_set_uris (selection_data, uris);
+      g_strfreev (uris);
+      break;
+
     case TARGET_GNOME_COPIED_FILES:
-      data = g_strconcat (manager->files_cutted ? "cut\n" : "copy\n", string_list, NULL);
-      gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) data, strlen (data));
-      g_free (data);
+      prefix = manager->files_cutted ? "cut\n" : "copy\n";
+      str = thunar_clipboard_manager_g_file_list_to_string (file_list, prefix, FALSE, &len);
+      gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) str, len);
+      g_free (str);
       break;
 
     case TARGET_UTF8_STRING:
-      gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) string_list, strlen (string_list));
+      str = thunar_clipboard_manager_g_file_list_to_string (file_list, NULL, TRUE, &len);
+      gtk_selection_data_set_text (selection_data, str, len);
+      g_free (str);
       break;
 
     default:
@@ -443,7 +488,6 @@ thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
 
   /* cleanup */
   thunar_g_file_list_free (file_list);
-  g_free (string_list);
 }
 
 

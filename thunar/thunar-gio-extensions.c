@@ -312,36 +312,28 @@ thunar_g_file_list_new_from_string (const gchar *string)
 
 
 /**
- * thunar_g_file_list_to_string:
+ * thunar_g_file_list_to_stringv:
  * @list : a list of #GFile<!---->s.
  *
- * Free the returned value using g_free() when you
- * are done with it.
+ * Free the returned value using g_strfreev() when you
+ * are done with it. Useful for gtk_selection_data_set_uris.
  *
- * Return value: the string representation of @list conforming to the
- *               text/uri-list mime type defined in RFC 2483.
+ * Return value: and array of uris.
  **/
-gchar *
-thunar_g_file_list_to_string (GList *list)
+gchar **
+thunar_g_file_list_to_stringv (GList *list)
 {
-  GString *string;
-  gchar   *uri;
-  GList   *lp;
+  gchar **uris;
+  guint   n;
+  GList  *lp;
 
   /* allocate initial string */
-  string = g_string_new (NULL);
+  uris = g_new0 (gchar *, g_list_length (list) + 1);
 
-  for (lp = list; lp != NULL; lp = lp->next)
-    {
-      uri = g_file_get_uri (lp->data);
-      string = g_string_append (string, uri);
-      g_free (uri);
+  for (lp = list, n = 0; lp != NULL; lp = lp->next)
+    uris[n++] = g_file_get_uri (G_FILE (lp->data));
 
-      if (lp->next != NULL)
-        string = g_string_append (string, "\r\n");
-    }
-
-  return g_string_free (string, FALSE);
+  return uris;
 }
 
 

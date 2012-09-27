@@ -2982,12 +2982,15 @@ thunar_standard_view_drag_data_get (GtkWidget          *view,
                                     guint               timestamp,
                                     ThunarStandardView *standard_view)
 {
-  gchar *uri_string;
+  gchar **uris;
 
   /* set the URI list for the drag selection */
-  uri_string = thunar_g_file_list_to_string (standard_view->priv->drag_g_file_list);
-  gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) uri_string, strlen (uri_string));
-  g_free (uri_string);
+  if (standard_view->priv->drag_g_file_list != NULL)
+    {
+      uris = thunar_g_file_list_to_stringv (standard_view->priv->drag_g_file_list);
+      gtk_selection_data_set_uris (selection_data, uris);
+      g_strfreev (uris);
+    }
 }
 
 

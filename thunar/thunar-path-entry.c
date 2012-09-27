@@ -716,22 +716,21 @@ thunar_path_entry_drag_data_get (GtkWidget        *widget,
                                  guint             info,
                                  guint             timestamp)
 {
-  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
-  GList            file_list;
-  gchar           *uri_string;
+  ThunarPathEntry  *path_entry = THUNAR_PATH_ENTRY (widget);
+  GList             file_list;
+  gchar           **uris;
 
   /* verify that we actually display a path */
   if (G_LIKELY (path_entry->current_file != NULL))
     {
       /* transform the path for the current file into an uri string list */
-      file_list.data = thunar_file_get_file (path_entry->current_file); file_list.next = file_list.prev = NULL;
-      uri_string = thunar_g_file_list_to_string (&file_list);
+      file_list.next = file_list.prev = NULL;
+      file_list.data = thunar_file_get_file (path_entry->current_file);
 
       /* setup the uri list for the drag selection */
-      gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) uri_string, strlen (uri_string));
-
-      /* clean up */
-      g_free (uri_string);
+      uris = thunar_g_file_list_to_stringv (&file_list);
+      gtk_selection_data_set_uris (selection_data, uris);
+      g_strfreev (uris);
     }
 }
 

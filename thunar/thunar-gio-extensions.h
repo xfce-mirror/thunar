@@ -59,6 +59,7 @@ gboolean  thunar_g_vfs_is_uri_scheme_supported   (const gchar          *scheme);
 GType     thunar_g_file_list_get_type               (void);
 
 GList    *thunar_g_file_list_new_from_string        (const gchar       *string);
+gchar   **thunar_g_file_list_to_stringv             (GList             *list);
 gchar    *thunar_g_file_list_to_string              (GList             *list);
 GList    *thunar_g_file_list_append                 (GList             *list,
                                                      GFile             *file);
