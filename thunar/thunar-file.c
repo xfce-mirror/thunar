@@ -707,6 +707,7 @@ thunar_file_load (ThunarFile   *file,
   gchar       *p;
   gchar       *thumbnail_dir_path;
   gchar       *uri = NULL;
+  const gchar *display_name;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -860,28 +861,37 @@ thunar_file_load (ThunarFile   *file,
   /* determine the display name */
   if (file->display_name == NULL)
     {
-      if (file->info != NULL)
+      if (G_LIKELY (file->info != NULL))
         {
-          if (g_strcmp0 (g_file_info_get_display_name (file->info), "/") == 0)
-            file->display_name = g_strdup (_("File System"));
-          else
-            file->display_name = g_strdup (g_file_info_get_display_name (file->info));
+          display_name = g_file_info_get_display_name (file->info);
+          if (G_LIKELY (display_name != NULL))
+            {
+              if (strcmp (display_name, "/") == 0)
+                file->display_name = g_strdup (_("File System"));
+              else
+                file->display_name = g_strdup (display_name);
+            }
         }
-      else
+
+      if (file->display_name == NULL)
         {
-          if (g_file_is_native (file->gfile))
+          base_name = g_file_get_basename (file->gfile);
+          if (G_LIKELY (base_name != NULL))
             {
-              uri = g_file_get_path (file->gfile);
-              if (uri == NULL)
-                uri = thunar_file_dup_uri (file);
+              if (g_utf8_validate (base_name, -1, NULL))
+                {
+                  file->display_name = base_name;
+                }
+              else
+                {
+                  file->display_name = g_uri_escape_string (base_name, G_URI_RESERVED_CHARS_ALLOWED_IN_PATH, TRUE);
+                  g_free (base_name);
+                }
             }
           else
             {
-              uri = thunar_file_dup_uri (file);
+              file->display_name = g_strdup ("?");
             }
-
-          file->display_name = g_filename_display_name (uri);
-          g_free (uri);
         }
     }
 
