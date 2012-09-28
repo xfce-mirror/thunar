@@ -555,6 +555,16 @@ thunar_apr_desktop_page_save (ThunarAprDesktopPage *desktop_page,
       /* save the widget changes to the key file */
       thunar_apr_desktop_page_save_widget (desktop_page, widget, key_file);
 
+      /* give empty desktop files a type */
+      if (!g_key_file_has_key (key_file, G_KEY_FILE_DESKTOP_GROUP,
+                               G_KEY_FILE_DESKTOP_KEY_TYPE, NULL))
+        {
+          g_key_file_set_string (key_file,
+                                 G_KEY_FILE_DESKTOP_GROUP,
+                                 G_KEY_FILE_DESKTOP_KEY_TYPE,
+                                 "Application");
+        }
+
       /* determine the content of the key file */
       data = g_key_file_to_data (key_file, &data_length, &error);
       if (G_LIKELY (data_length > 0))
