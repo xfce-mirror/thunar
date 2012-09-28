@@ -2388,6 +2388,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
           /* check if we can determine the dimension of this file (only for image files) */
           absolute_path = g_file_get_path (thunar_file_get_file (file));
           if (absolute_path != NULL
+              && g_str_has_prefix (thunar_file_get_content_type (file), "image/") /* bug #2913 */
               && gdk_pixbuf_get_file_info (absolute_path, &width, &height) != NULL)
             {
               /* append the image dimensions to the statusbar text */
