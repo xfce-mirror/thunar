@@ -557,7 +557,7 @@ thunar_apr_desktop_page_save (ThunarAprDesktopPage *desktop_page,
 
       /* determine the content of the key file */
       data = g_key_file_to_data (key_file, &data_length, &error);
-      if (G_LIKELY (data != NULL))
+      if (G_LIKELY (data_length > 0))
         {
           /* try to save the key file content to disk */
           fp = fopen (filename, "w");
@@ -571,10 +571,10 @@ thunar_apr_desktop_page_save (ThunarAprDesktopPage *desktop_page,
             {
               error = g_error_new_literal (G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
             }
-
-          /* cleanup */
-          g_free (data);
         }
+
+      /* cleanup */
+      g_free (data);
     }
 
   /* check if we succeed */
