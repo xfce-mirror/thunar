@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-26 21:00+0000\n"
+"POT-Creation-Date: 2012-09-28 10:27+0000\n"
 "PO-Revision-Date: 2011-09-08 15:47+0100\n"
 "Last-Translator: Pjotr\n"
 "Language-Team: Dutch (Flemish)\n"
@@ -451,7 +451,7 @@ msgid "Failed to remove \"%s\"."
 msgstr "Kon '%s' niet verwijderen."
 
 #. tell the user that we cannot paste
-#: ../thunar/thunar-clipboard-manager.c:352
+#: ../thunar/thunar-clipboard-manager.c:354
 msgid "There is nothing on the clipboard to paste"
 msgstr "Er is niets op het klembord om te plakken"
 
@@ -525,7 +525,7 @@ msgstr "Kolomm_en automatisch openvouwen indien nodig"
 #: ../thunar/thunar-column-model.c:858 ../thunar/thunar-list-model.c:682
 #: ../thunar/thunar-list-model.c:710
 #: ../thunar/thunar-permissions-chooser.c:227 ../thunar/thunar-util.c:271
-#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:458
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:503
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:285
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:286
 #: ../plugins/thunar-uca/thunar-uca-editor.c:605
@@ -801,34 +801,34 @@ msgstr "Bestand"
 msgid "File Name"
 msgstr "Bestandnaam"
 
-#: ../thunar/thunar-file.c:880 ../thunar/thunar-shortcuts-view.c:279
+#: ../thunar/thunar-file.c:868 ../thunar/thunar-shortcuts-view.c:279
 #: ../thunar/thunar-window.c:312
 msgid "File System"
 msgstr "Bestandssysteem"
 
-#: ../thunar/thunar-file.c:959
+#: ../thunar/thunar-file.c:941
 #, c-format
 msgid "The root folder has no parent"
 msgstr "De hoofdmap heeft geen bovenliggende map"
 
-#: ../thunar/thunar-file.c:1022 ../thunar/thunar-file.c:1293
+#: ../thunar/thunar-file.c:1004 ../thunar/thunar-file.c:1279
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "Kon het bureaubladbestand niet lezen: %s"
 
 # Unknown word "Exec"
-#: ../thunar/thunar-file.c:1060
+#: ../thunar/thunar-file.c:1044
 #, c-format
 msgid "No Exec field specified"
 msgstr "Geen Exec-veld gespecificeerd"
 
 # Unknown word "Exec"
-#: ../thunar/thunar-file.c:1081
+#: ../thunar/thunar-file.c:1065
 #, c-format
 msgid "No URL field specified"
 msgstr "Geen URL-veld gespecificeerd"
 
-#: ../thunar/thunar-file.c:1087
+#: ../thunar/thunar-file.c:1071
 #, c-format
 msgid "Invalid desktop file"
 msgstr "Ongeldig bureaubladbestand"
@@ -2180,7 +2180,7 @@ msgstr ""
 msgid "Du_plicate"
 msgstr "Du_pliceren"
 
-#: ../thunar/thunar-standard-view.c:384 ../thunar/thunar-standard-view.c:3749
+#: ../thunar/thunar-standard-view.c:384 ../thunar/thunar-standard-view.c:3752
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Koppeling m_aken"
@@ -2231,12 +2231,12 @@ msgstr "_Patroon:"
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Kon geen koppeling voor de URL '%s' maken"
 
-#: ../thunar/thunar-standard-view.c:3147
+#: ../thunar/thunar-standard-view.c:3150
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Kon map '%s' niet openen"
 
-#: ../thunar/thunar-standard-view.c:3709
+#: ../thunar/thunar-standard-view.c:3712
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] ""
@@ -2246,7 +2246,7 @@ msgstr[1] ""
 "Bereid de geselecteerde bestanden voor om met een plakopdracht verplaatst te "
 "worden"
 
-#: ../thunar/thunar-standard-view.c:3717
+#: ../thunar/thunar-standard-view.c:3720
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] ""
@@ -2256,31 +2256,31 @@ msgstr[1] ""
 "Bereid de geselecteerde bestanden voor om met een plakopdracht gekopieerd te "
 "worden"
 
-#: ../thunar/thunar-standard-view.c:3728
+#: ../thunar/thunar-standard-view.c:3731
 msgid "Delete the selected file"
 msgid_plural "Delete the selected files"
 msgstr[0] "Verwijder het geselecteerde bestand"
 msgstr[1] "Verwijder de geselecteerde bestanden"
 
-#: ../thunar/thunar-standard-view.c:3742
+#: ../thunar/thunar-standard-view.c:3745
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Het geselecteerde bestand dupliceren"
 msgstr[1] "De geselecteerde bestanden dupliceren"
 
-#: ../thunar/thunar-standard-view.c:3751
+#: ../thunar/thunar-standard-view.c:3754
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Maak een symbolische koppeling voor het geselecteerde bestand"
 msgstr[1] "Maak een symbolische koppeling voor de geselecteerde bestanden"
 
-#: ../thunar/thunar-standard-view.c:3759
+#: ../thunar/thunar-standard-view.c:3762
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Hernoem het geselecteerde bestand"
 msgstr[1] "Hernoem de geselecteerde bestanden"
 
-#: ../thunar/thunar-standard-view.c:3767
+#: ../thunar/thunar-standard-view.c:3770
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
 msgstr[0] "Herstel het geselecteerde bestand"
@@ -2768,11 +2768,11 @@ msgstr "De URL naar de documentatie van de hernoemer"
 msgid "The user visible name of the renamer"
 msgstr "De voor gebruikers zichtbare naam van de hernoemer"
 
-#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:150
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:152
 msgid "Description:"
 msgstr "Omschrijving:"
 
-#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:157
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:159
 msgid ""
 "The generic name of the entry, for example \"Web Browser\" in case of "
 "Firefox."
@@ -2780,27 +2780,35 @@ msgstr ""
 "De generieke naam van het veld, bijvoorbeeld \"Webbrowser\" in het geval van "
 "Firefox."
 
-#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:173
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:175
 msgid "Command:"
 msgstr "Opdracht:"
 
-#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:180
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:182
 msgid "The program to execute, possibly with arguments."
 msgstr "Het uit te voeren programma, desgewenst met argumenten."
 
-#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:195
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:197
+msgid "Working Directory:"
+msgstr "Werkmap:"
+
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:204
+msgid "The working directory for the program."
+msgstr "De werkmap voor het programma."
+
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:219
 msgid "URL:"
 msgstr "URL:"
 
-#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:202
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:226
 msgid "The URL to access."
 msgstr "De te bezoeken URL."
 
-#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:217
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:241
 msgid "Comment:"
 msgstr "Opmerking:"
 
-#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:224
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:248
 msgid ""
 "Tooltip for the entry, for example \"View sites on the Internet\" in case of "
 "Firefox. Should not be redundant with the name or the description."
@@ -2809,15 +2817,15 @@ msgstr ""
 "in het geval van Firefox. Naam of beschrijving mag hierin niet worden "
 "herhaald."
 
-#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:244
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:268
 msgid "Options:"
 msgstr "Opties:"
 
-#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:250
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:274
 msgid "Use _startup notification"
 msgstr "Gebruik op_startmelding"
 
-#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:251
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:275
 msgid ""
 "Select this option to enable startup notification when the command is run "
 "from the file manager or the menu. Not every application supports startup "
@@ -2827,24 +2835,24 @@ msgstr ""
 "opdracht wordt uitgevoerd vanuit de bestandbeheerder of het menu. Niet elk "
 "programma ondersteunt opstartnotificatie."
 
-#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:258
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:282
 msgid "Run in _terminal"
 msgstr "In _terminal uitvoeren"
 
-#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:259
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:283
 msgid "Select this option to run the command in a terminal window."
 msgstr ""
 "Selecteer deze optie om de opdracht in een terminalvenster uit te voeren."
 
-#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:331
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:356
 msgid "Launcher"
 msgstr "Starter"
 
-#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:333
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:358
 msgid "Link"
 msgstr "Koppeling"
 
-#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:544
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:590
 #, c-format
 msgid "Failed to save \"%s\"."
 msgstr "Kon '%s' niet opslaan."
