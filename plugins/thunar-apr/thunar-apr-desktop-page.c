@@ -602,6 +602,27 @@ thunar_apr_desktop_page_save (ThunarAprDesktopPage *desktop_page,
 
 
 static void
+thunar_apr_desktop_page_set_string (GKeyFile    *key_file,
+                                    const gchar *key,
+                                    const gchar *value)
+{
+  if (value != NULL && *value != '\0')
+    {
+      g_key_file_set_string (key_file,
+                             G_KEY_FILE_DESKTOP_GROUP,
+                             key, value);
+    }
+  else
+    {
+      g_key_file_remove_key  (key_file,
+                              G_KEY_FILE_DESKTOP_GROUP,
+                              key, NULL);
+    }
+}
+
+
+
+static void
 thunar_apr_desktop_page_save_widget (ThunarAprDesktopPage *desktop_page,
                                      GtkWidget            *widget,
                                      GKeyFile             *key_file)
@@ -621,7 +642,7 @@ thunar_apr_desktop_page_save_widget (ThunarAprDesktopPage *desktop_page,
           key = g_strdup_printf (G_KEY_FILE_DESKTOP_KEY_GENERIC_NAME "[%s]", *locale);
           if (g_key_file_has_key (key_file, G_KEY_FILE_DESKTOP_GROUP, key, NULL))
             {
-              g_key_file_set_string (key_file, G_KEY_FILE_DESKTOP_GROUP, key, desktop_page->description_text);
+              thunar_apr_desktop_page_set_string (key_file, key, desktop_page->description_text);
               g_free (key);
               break;
             }
@@ -631,10 +652,9 @@ thunar_apr_desktop_page_save_widget (ThunarAprDesktopPage *desktop_page,
       /* fallback to unlocalized description */
       if (G_UNLIKELY (*locale == NULL))
         {
-          g_key_file_set_string (key_file,
-                                 G_KEY_FILE_DESKTOP_GROUP,
-                                 G_KEY_FILE_DESKTOP_KEY_GENERIC_NAME,
-                                 desktop_page->description_text);
+          thunar_apr_desktop_page_set_string (key_file,
+                                              G_KEY_FILE_DESKTOP_KEY_GENERIC_NAME,
+                                              desktop_page->description_text);
         }
     }
   else if (widget == desktop_page->command_entry)
@@ -644,10 +664,9 @@ thunar_apr_desktop_page_save_widget (ThunarAprDesktopPage *desktop_page,
       desktop_page->command_text = gtk_editable_get_chars (GTK_EDITABLE (widget), 0, -1);
 
       /* save the unlocalized command */
-      g_key_file_set_string (key_file,
-                             G_KEY_FILE_DESKTOP_GROUP,
-                             G_KEY_FILE_DESKTOP_KEY_EXEC,
-                             desktop_page->command_text);
+      thunar_apr_desktop_page_set_string (key_file,
+                                          G_KEY_FILE_DESKTOP_KEY_EXEC,
+                                          desktop_page->command_text);
     }
   else if (widget == desktop_page->path_entry)
     {
@@ -656,10 +675,9 @@ thunar_apr_desktop_page_save_widget (ThunarAprDesktopPage *desktop_page,
       desktop_page->path_text = gtk_editable_get_chars (GTK_EDITABLE (widget), 0, -1);
 
       /* save the unlocalized command */
-      g_key_file_set_string (key_file,
-                             G_KEY_FILE_DESKTOP_GROUP,
-                             G_KEY_FILE_DESKTOP_KEY_PATH,
-                             desktop_page->path_text);
+      thunar_apr_desktop_page_set_string (key_file,
+                                          G_KEY_FILE_DESKTOP_KEY_PATH,
+                                          desktop_page->path_text);
     }
   else if (widget == desktop_page->url_entry)
     {
@@ -668,10 +686,9 @@ thunar_apr_desktop_page_save_widget (ThunarAprDesktopPage *desktop_page,
       desktop_page->url_text = gtk_editable_get_chars (GTK_EDITABLE (widget), 0, -1);
 
       /* save the unlocalized url */
-      g_key_file_set_string (key_file,
-                             G_KEY_FILE_DESKTOP_GROUP,
-                             G_KEY_FILE_DESKTOP_KEY_URL,
-                             desktop_page->url_text);
+      thunar_apr_desktop_page_set_string (key_file,
+                                          G_KEY_FILE_DESKTOP_KEY_URL,
+                                          desktop_page->url_text);
     }
   else if (widget == desktop_page->comment_entry)
     {
@@ -685,10 +702,7 @@ thunar_apr_desktop_page_save_widget (ThunarAprDesktopPage *desktop_page,
           key = g_strdup_printf (G_KEY_FILE_DESKTOP_KEY_COMMENT "[%s]", *locale);
           if (g_key_file_has_key (key_file, G_KEY_FILE_DESKTOP_GROUP, key, NULL))
             {
-              g_key_file_set_string (key_file,
-                                     G_KEY_FILE_DESKTOP_GROUP,
-                                     key,
-                                     desktop_page->comment_text);
+              thunar_apr_desktop_page_set_string (key_file, key, desktop_page->comment_text);
               g_free (key);
               break;
             }
@@ -697,10 +711,9 @@ thunar_apr_desktop_page_save_widget (ThunarAprDesktopPage *desktop_page,
 
       /* fallback to unlocalized comment */
       if (G_UNLIKELY (*locale == NULL))
-        g_key_file_set_string (key_file,
-                              G_KEY_FILE_DESKTOP_GROUP,
-                              G_KEY_FILE_DESKTOP_KEY_COMMENT,
-                              desktop_page->comment_text);
+        thunar_apr_desktop_page_set_string (key_file,
+                                            G_KEY_FILE_DESKTOP_KEY_COMMENT,
+                                            desktop_page->comment_text);
     }
   else if (widget == desktop_page->snotify_button)
     {
