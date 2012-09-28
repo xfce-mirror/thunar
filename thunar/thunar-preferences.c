@@ -72,6 +72,7 @@ enum
   PROP_MISC_CASE_SENSITIVE,
   PROP_MISC_DATE_STYLE,
   PROP_MISC_FOLDERS_FIRST,
+  PROP_MISC_FULL_PATH_IN_TITLE,
   PROP_MISC_HORIZONTAL_WHEEL_NAVIGATES,
   PROP_MISC_RECURSIVE_PERMISSIONS,
   PROP_MISC_REMEMBER_GEOMETRY,
@@ -467,6 +468,20 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                          "MiscFoldersFirst",
                                                          "misc-folders-first",
                                                          TRUE,
+                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:misc-full-path-in-title:
+   *
+   * Show the full directory path in the window title, instead of
+   * only the directory name.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_MISC_FULL_PATH_IN_TITLE,
+                                   g_param_spec_boolean ("misc-full-path-in-title",
+                                                         "MiscFullPathInTitle",
+                                                         "misc-full-path-in-title",
+                                                         FALSE,
                                                          EXO_PARAM_READWRITE));
 
   /**

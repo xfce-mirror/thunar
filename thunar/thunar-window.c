@@ -2402,6 +2402,9 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
   GtkAction    *action;
   gchar        *icon_name;
   gchar        *title;
+  gboolean      show_full_path;
+  gchar        *parse_name = NULL;
+  const gchar  *name;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_IS_FILE (current_directory));
@@ -2412,10 +2415,18 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
   gtk_action_set_sensitive (action, (thunar_file_get_item_count (current_directory) > 0));
   gtk_action_set_visible (action, (thunar_file_is_root (current_directory) && thunar_file_is_trashed (current_directory)));
 
+  /* get name of directory or full path */
+  g_object_get (G_OBJECT (window->preferences), "misc-full-path-in-title", &show_full_path, NULL);
+  if (G_UNLIKELY (show_full_path))
+    name = parse_name = g_file_get_parse_name (thunar_file_get_file (current_directory));
+  else
+    name = thunar_file_get_display_name (current_directory);
+
   /* set window title */
-  title = g_strdup_printf ("%s - %s", thunar_file_get_display_name (current_directory), _("File Manager"));
+  title = g_strdup_printf ("%s - %s", name, _("File Manager"));
   gtk_window_set_title (GTK_WINDOW (window), title);
   g_free (title);
+  g_free (parse_name);
 
   /* set window icon */
   icon_theme = gtk_icon_theme_get_default ();
