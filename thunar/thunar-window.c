@@ -1036,9 +1036,33 @@ thunar_window_set_property (GObject            *object,
 static gboolean
 thunar_window_back (ThunarWindow *window)
 {
-  GtkAction *action;
+  GtkAction   *action;
+  GdkEvent    *event;
+  const gchar *accel_path;
+  GtkAccelKey  key;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  /* check source event */
+  event = gtk_get_current_event ();
+  if (event != NULL
+      && event->type == GDK_KEY_PRESS)
+    {
+      action = thunar_gtk_ui_manager_get_action_by_name (window->ui_manager, "open-parent");
+      if (G_LIKELY (action != NULL))
+        {
+          /* check if the current event (back) is different then the open-parent
+           * accelerator. this way a user can override the default backspace action
+           * of back in open-parent, without backspace resulting in a back action
+           * if open-parent is insensitive in the menu */
+          accel_path = gtk_action_get_accel_path (action);
+          if (accel_path != NULL
+              && gtk_accel_map_lookup_entry (accel_path, &key)
+              && key.accel_key == ((GdkEventKey *) event)->keyval
+              && key.accel_mods == 0)
+            return FALSE;
+        }
+    }
 
   /* activate the "back" action */
   action = thunar_gtk_ui_manager_get_action_by_name (window->ui_manager, "back");
