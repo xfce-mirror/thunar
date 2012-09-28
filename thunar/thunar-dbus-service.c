@@ -272,6 +272,10 @@ thunar_dbus_service_init (ThunarDBusService *dbus_service)
 
       /* request the org.xfce.FileManager name for Thunar */
       dbus_bus_request_name (dbus_g_connection_get_connection (dbus_service->connection), "org.xfce.FileManager", DBUS_NAME_FLAG_REPLACE_EXISTING, NULL);
+
+      /* once we registered, unset dbus variables (bug #8800) */
+      g_unsetenv ("DBUS_STARTER_ADDRESS");
+      g_unsetenv ("DBUS_STARTER_BUS_TYPE");
     }
   else
     {
