@@ -2266,6 +2266,8 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
   ThunarFile  *file;
   guint64      size;
   guint64      size_summary;
+  gint         folder_count;
+  gint         non_folder_count;
   GSList      *row;
   GList       *lp;
   gchar       *absolute_path;
@@ -2273,10 +2275,12 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
   gchar       *display_name;
   gchar       *size_string;
   gchar       *text;
+  gchar       *folder_text;
+  gchar       *non_folder_text;
   gchar       *s;
   gint         height;
   gint         width;
-  gint         n;
+  gchar       *description;
 
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
 
@@ -2290,28 +2294,30 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
         {
           /* humanize the free space */
           fspace_string = g_format_size (size);
+          size_summary = 0;
 
           /* check if we have atleast one file in this folder */
           if (G_LIKELY (store->nrows > 0))
             {
-              /* calculate the size of all items */
-              for (row = store->rows, size_summary = 0; row != NULL; row = row->next)
-                size_summary += thunar_file_get_size (row->data);
+              /* calculate the size of all file items */
+              for (row = store->rows; row != NULL; row = row->next)
+                if (thunar_file_is_regular (row->data))
+                  size_summary += thunar_file_get_size (row->data);
+            }
 
-              /* humanize the size summary */
-              size_string = g_format_size (size_summary);
-
+          if (size_summary > 0)
+            {
               /* generate a text which includes the size of all items in the folder */
+              size_string = g_format_size (size_summary);
               text = g_strdup_printf (ngettext ("%d item (%s), Free space: %s", "%d items (%s), Free space: %s", store->nrows),
                                       store->nrows, size_string, fspace_string);
-
-              /* cleanup */
               g_free (size_string);
             }
           else
             {
               /* just the standard text */
-              text = g_strdup_printf (ngettext ("%d item, Free space: %s", "%d items, Free space: %s", store->nrows), store->nrows, fspace_string);
+              text = g_strdup_printf (ngettext ("%d item, Free space: %s", "%d items, Free space: %s", store->nrows),
+                                      store->nrows, fspace_string);
             }
 
           /* cleanup */
@@ -2329,12 +2335,9 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
 
       /* get the file for the given iter */
       file = THUNAR_FILE (G_SLIST (iter.user_data)->data);
-      
+
       /* determine the content type of the file */
       content_type = thunar_file_get_content_type (file);
-
-      /* calculate the text to be displayed */
-      size_string = thunar_file_get_size_string (file);
 
       if (G_UNLIKELY (content_type != NULL && g_str_equal (content_type, "inode/symlink")))
         {
@@ -2342,8 +2345,10 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
         }
       else if (G_UNLIKELY (thunar_file_is_symlink (file)))
         {
+          size_string = thunar_file_get_size_string (file);
           text = g_strdup_printf (_("\"%s\" (%s) link to %s"), thunar_file_get_display_name (file),
                                   size_string, thunar_file_get_symlink_target (file));
+          g_free (size_string);
         }
       else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_SHORTCUT))
         {
@@ -2353,16 +2358,21 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
         {
           text = g_strdup_printf (_("\"%s\" mountable"), thunar_file_get_display_name (file));
         }
-      else
+      else if (thunar_file_is_regular (file))
         {
-          gchar *description;
-          
-          description = g_content_type_get_description (thunar_file_get_content_type (file));
+          description = g_content_type_get_description (content_type);
+          size_string = thunar_file_get_size_string (file);
           text = g_strdup_printf (_("\"%s\" (%s) %s"), thunar_file_get_display_name (file),
                                   size_string, description);
           g_free (description);
+          g_free (size_string);
         }
-      g_free (size_string);
+      else
+        {
+          description = g_content_type_get_description (content_type);
+          text = g_strdup_printf (_("\"%s\" %s"), thunar_file_get_display_name (file), description);
+          g_free (description);
+        }
 
       /* append the original path (if any) */
       original_path = thunar_file_get_original_path (file);
@@ -2375,12 +2385,13 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
           g_free (text);
           text = s;
         }
-      else if (thunar_file_is_local (file) && thunar_file_is_regular (file))
+      else if (thunar_file_is_local (file)
+               && thunar_file_is_regular (file)
+               && g_str_has_prefix (content_type, "image/")) /* bug #2913 */
         {
           /* check if we can determine the dimension of this file (only for image files) */
           absolute_path = g_file_get_path (thunar_file_get_file (file));
           if (absolute_path != NULL
-              && g_str_has_prefix (thunar_file_get_content_type (file), "image/") /* bug #2913 */
               && gdk_pixbuf_get_file_info (absolute_path, &width, &height) != NULL)
             {
               /* append the image dimensions to the statusbar text */
@@ -2393,22 +2404,78 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
     }
   else
     {
-      /* sum up all sizes */
-      for (lp = selected_items, n = 0, size_summary = 0; lp != NULL; lp = lp->next, ++n)
+      /* reset */
+      size_summary = 0;
+      folder_count = 0;
+      non_folder_count = 0;
+
+      /* analyze selection */
+      for (lp = selected_items; lp != NULL; lp = lp->next)
         {
           gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, lp->data);
-          size_summary += thunar_file_get_size (THUNAR_FILE (G_SLIST (iter.user_data)->data));
+          file = THUNAR_FILE (G_SLIST (iter.user_data)->data);
+          if (thunar_file_is_directory (file))
+            {
+              folder_count++;
+            }
+          else
+            {
+              non_folder_count++;
+              if (thunar_file_is_regular (file))
+                size_summary += thunar_file_get_size (file);
+            }
         }
 
-      if (size_summary > 0)
+     /* text for the items in the folder */
+     if (non_folder_count > 0)
         {
           size_string = g_format_size (size_summary);
-          text = g_strdup_printf (ngettext ("%d item selected (%s)", "%d items selected (%s)", n), n, size_string);
+          if (folder_count > 0)
+            {
+              /* item count if there are also folders in the selection */
+              non_folder_text = g_strdup_printf (ngettext ("%d other item selected (%s)",
+                                                           "%d other items selected (%s)",
+                                                           non_folder_count), non_folder_count, size_string);
+            }
+          else
+            {
+              /* only non-folders are selected */
+              non_folder_text = g_strdup_printf (ngettext ("%d item selected (%s)",
+                                                           "%d items selected (%s)",
+                                                           non_folder_count), non_folder_count, size_string);
+            }
           g_free (size_string);
         }
       else
         {
-          text = g_strdup_printf (ngettext ("%d item selected", "%d items selected", n), n);
+          non_folder_text = NULL;
+        }
+
+      /* text for the folders */
+      if (folder_count > 0)
+        {
+          folder_text = g_strdup_printf (ngettext ("%d folder selected",
+                                                   "%d folders selected",
+                                                   folder_count), folder_count);
+        }
+      else
+        {
+          folder_text = NULL;
+        }
+
+      if (folder_text == NULL)
+        text = non_folder_text;
+      else if (non_folder_text == NULL)
+        text = folder_text;
+      else
+        {
+          /* This is marked for translation in case a localizer
+           * needs to change ", " to something else. The comma
+           * is between the message about the number of folders
+           * and the number of items in the selection */
+          text = g_strdup_printf (_("%s, %s"), folder_text, non_folder_text);
+          g_free (folder_text);
+          g_free (non_folder_text);
         }
     }
 
