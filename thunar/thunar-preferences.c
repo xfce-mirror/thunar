@@ -58,6 +58,7 @@ enum
   PROP_LAST_DETAILS_VIEW_ZOOM_LEVEL,
   PROP_LAST_ICON_VIEW_ZOOM_LEVEL,
   PROP_LAST_LOCATION_BAR,
+  PROP_LAST_MENUBAR_VISIBLE,
   PROP_LAST_SEPARATOR_POSITION,
   PROP_LAST_SHOW_HIDDEN,
   PROP_LAST_SIDE_PANE,
@@ -277,6 +278,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                         "last-location-bar",
                                                         "ThunarLocationButtons",
                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:last-menubar-visible:
+   *
+   * Whether to display a menubar in new windows by default.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_MENUBAR_VISIBLE,
+                                   g_param_spec_boolean ("last-menubar-visible",
+                                                         "LastMenubarVisible",
+                                                         "last-menubar-visible",
+                                                         TRUE,
+                                                         EXO_PARAM_READWRITE));
 
   /**
    * ThunarPreferences:last-separator-position:

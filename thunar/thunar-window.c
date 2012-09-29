@@ -81,6 +81,7 @@ enum
   BACK,
   RELOAD,
   TOGGLE_SIDEPANE,
+  TOGGLE_MENUBAR,
   ZOOM_IN,
   ZOOM_OUT,
   ZOOM_RESET,
@@ -102,6 +103,9 @@ static void     thunar_window_set_property                (GObject              
 static gboolean thunar_window_back                        (ThunarWindow           *window);
 static gboolean thunar_window_reload                      (ThunarWindow           *window);
 static gboolean thunar_window_toggle_sidepane             (ThunarWindow           *window);
+static gboolean thunar_window_toggle_menubar              (ThunarWindow           *window);
+static void     thunar_window_toggle_menubar_deactivate   (GtkWidget              *menubar,
+                                                           ThunarWindow           *window);
 static gboolean thunar_window_zoom_in                     (ThunarWindow           *window);
 static gboolean thunar_window_zoom_out                    (ThunarWindow           *window);
 static gboolean thunar_window_zoom_reset                  (ThunarWindow           *window);
@@ -138,6 +142,8 @@ static void     thunar_window_action_shortcuts_changed    (GtkToggleAction      
 static void     thunar_window_action_tree_changed         (GtkToggleAction        *action,
                                                            ThunarWindow           *window);
 static void     thunar_window_action_statusbar_changed    (GtkToggleAction        *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_menubar_changed      (GtkToggleAction        *action,
                                                            ThunarWindow           *window);
 static void     thunar_window_action_zoom_in              (GtkAction              *action,
                                                            ThunarWindow           *window);
@@ -219,6 +225,7 @@ struct _ThunarWindowClass
   gboolean (*back)            (ThunarWindow *window);
   gboolean (*reload)          (ThunarWindow *window);
   gboolean (*toggle_sidepane) (ThunarWindow *window);
+  gboolean (*toggle_menubar)  (ThunarWindow *window);
   gboolean (*zoom_in)         (ThunarWindow *window);
   gboolean (*zoom_out)        (ThunarWindow *window);
   gboolean (*zoom_reset)      (ThunarWindow *window);
@@ -252,6 +259,7 @@ struct _ThunarWindow
   GClosure               *menu_item_deselected_closure;
 
   GtkWidget              *table;
+  GtkWidget              *menubar;
   GtkWidget              *spinner;
   GtkWidget              *paned;
   GtkWidget              *sidepane;
@@ -331,6 +339,7 @@ static const GtkToggleActionEntry toggle_action_entries[] =
   { "view-side-pane-shortcuts", NULL, N_ ("_Shortcuts"), "<control>B", N_ ("Toggles the visibility of the shortcuts pane"), G_CALLBACK (thunar_window_action_shortcuts_changed), FALSE, },
   { "view-side-pane-tree", NULL, N_ ("_Tree"), "<control>T", N_ ("Toggles the visibility of the tree pane"), G_CALLBACK (thunar_window_action_tree_changed), FALSE, },
   { "view-statusbar", NULL, N_ ("St_atusbar"), NULL, N_ ("Change the visibility of this window's statusbar"), G_CALLBACK (thunar_window_action_statusbar_changed), FALSE, },
+  { "view-menubar", NULL, N_ ("_Menubar"), "<control>M", N_ ("Change the visibility of this window's menubar"), G_CALLBACK (thunar_window_action_menubar_changed), TRUE, },
 };
 
 
@@ -365,6 +374,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
   klass->back = thunar_window_back;
   klass->reload = thunar_window_reload;
   klass->toggle_sidepane = thunar_window_toggle_sidepane;
+  klass->toggle_menubar = thunar_window_toggle_menubar;
   klass->zoom_in = thunar_window_zoom_in;
   klass->zoom_out = thunar_window_zoom_out;
   klass->zoom_reset = thunar_window_zoom_reset;
@@ -461,7 +471,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
                   G_TYPE_BOOLEAN, 0);
 
   /**
-   * ThunarWindow::reload:
+   * ThunarWindow::toggle-sidepane:
    * @window : a #ThunarWindow instance.
    *
    * Emitted whenever the user toggles the visibility of the
@@ -473,6 +483,23 @@ thunar_window_class_init (ThunarWindowClass *klass)
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
                   G_STRUCT_OFFSET (ThunarWindowClass, toggle_sidepane),
+                  g_signal_accumulator_true_handled, NULL,
+                  _thunar_marshal_BOOLEAN__VOID,
+                  G_TYPE_BOOLEAN, 0);
+
+  /**
+   * ThunarWindow::toggle-sidepane:
+   * @window : a #ThunarWindow instance.
+   *
+   * Emitted whenever the user toggles the visibility of the
+   * sidepane. This is an internal signal used to bind the
+   * action to keys.
+   **/
+  window_signals[TOGGLE_MENUBAR] =
+    g_signal_new (I_("toggle-menubar"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                  G_STRUCT_OFFSET (ThunarWindowClass, toggle_menubar),
                   g_signal_accumulator_true_handled, NULL,
                   _thunar_marshal_BOOLEAN__VOID,
                   G_TYPE_BOOLEAN, 0);
@@ -530,6 +557,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
   gtk_binding_entry_add_signal (binding_set, GDK_BackSpace, 0, "back", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_F5, 0, "reload", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_F9, 0, "toggle-sidepane", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_F10, 0, "toggle-menubar", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_KP_Add, GDK_CONTROL_MASK, "zoom-in", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_KP_Subtract, GDK_CONTROL_MASK, "zoom-out", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_KP_0, GDK_CONTROL_MASK, "zoom-reset", 0);
@@ -666,7 +694,6 @@ thunar_window_init (ThunarWindow *window)
   GtkRadioAction *radio_action;
   GtkAccelGroup  *accel_group;
   GtkWidget      *separator;
-  GtkWidget      *menubar;
   GtkWidget      *label;
   GtkWidget      *ebox;
   GtkWidget      *item;
@@ -780,15 +807,20 @@ thunar_window_init (ThunarWindow *window)
   gtk_container_add (GTK_CONTAINER (window), window->table);
   gtk_widget_show (window->table);
 
-  menubar = gtk_ui_manager_get_widget (window->ui_manager, "/main-menu");
-  gtk_table_attach (GTK_TABLE (window->table), menubar, 0, 1, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
-  gtk_widget_show (menubar);
+  window->menubar = gtk_ui_manager_get_widget (window->ui_manager, "/main-menu");
+  gtk_table_attach (GTK_TABLE (window->table), window->menubar, 0, 1, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+
+  /* update menubar visibiliy */
+  g_object_get (G_OBJECT (window->preferences), "last-menubar-visible", &visible, NULL);
+  action = gtk_action_group_get_action (window->action_group, "view-menubar");
+  g_signal_connect (G_OBJECT (window->menubar), "deactivate", G_CALLBACK (thunar_window_toggle_menubar_deactivate), window);
+  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), visible);
 
   /* append the menu item for the spinner */
   item = gtk_menu_item_new ();
   gtk_widget_set_sensitive (GTK_WIDGET (item), FALSE);
   gtk_menu_item_set_right_justified (GTK_MENU_ITEM (item), TRUE);
-  gtk_menu_shell_append (GTK_MENU_SHELL (menubar), item);
+  gtk_menu_shell_append (GTK_MENU_SHELL (window->menubar), item);
   gtk_widget_show (item);
 
   /* place the spinner into the menu item */
@@ -1136,6 +1168,40 @@ thunar_window_toggle_sidepane (ThunarWindow *window)
     }
 
   return TRUE;
+}
+
+
+
+static gboolean
+thunar_window_toggle_menubar (ThunarWindow *window)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  if (!gtk_widget_get_visible (window->menubar))
+    {
+      /* temporarily show menu bar */
+      gtk_widget_show (window->menubar);
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
+
+
+static void
+thunar_window_toggle_menubar_deactivate (GtkWidget    *menubar,
+                                         ThunarWindow *window)
+{
+  GtkAction *action;
+
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (window->menubar == menubar);
+
+  /* this was a temporarily show, hide the bar */
+  action = gtk_action_group_get_action (window->action_group, "view-menubar");
+  if (!gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action)))
+    gtk_widget_hide (menubar);
 }
 
 
@@ -1841,6 +1907,27 @@ thunar_window_action_statusbar_changed (GtkToggleAction *action,
 
   /* remember the setting */
   g_object_set (G_OBJECT (window->preferences), "last-statusbar-visible", active, NULL);
+}
+
+
+
+static void
+thunar_window_action_menubar_changed (GtkToggleAction *action,
+                                      ThunarWindow    *window)
+{
+  gboolean active;
+
+  _thunar_return_if_fail (GTK_IS_TOGGLE_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* determine the new state of the action */
+  active = gtk_toggle_action_get_active (action);
+
+  /* show or hide the bar */
+  gtk_widget_set_visible (window->menubar, active);
+
+  /* remember the setting */
+  g_object_set (G_OBJECT (window->preferences), "last-menubar-visible", active, NULL);
 }
 
 
