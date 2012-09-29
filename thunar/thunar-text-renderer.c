@@ -40,6 +40,7 @@
 enum
 {
   PROP_0,
+  PROP_ALIGNMENT,
   PROP_FOLLOW_PRELIT,
   PROP_FOLLOW_STATE,
   PROP_TEXT,
@@ -118,24 +119,25 @@ struct _ThunarTextRenderer
 {
   GtkCellRenderer __parent__;
 
-  PangoLayout  *layout;
-  GtkWidget    *widget;
-  gboolean      text_static;
-  gchar        *text;
-  gint          char_width;
-  gint          char_height;
-  PangoWrapMode wrap_mode;
-  gint          wrap_width;
-  gboolean      follow_state;
-  gint          focus_width;;
+  PangoLayout    *layout;
+  GtkWidget      *widget;
+  gboolean        text_static;
+  gchar          *text;
+  gint            char_width;
+  gint            char_height;
+  PangoWrapMode   wrap_mode;
+  gint            wrap_width;
+  gboolean        follow_state;
+  gint            focus_width;;
+  PangoAlignment  alignment;
 
   /* underline prelited rows */
-  gboolean      follow_prelit;
+  gboolean        follow_prelit;
 
   /* cell editing support */
-  GtkWidget    *entry;
-  gboolean      entry_menu_active;
-  gint          entry_menu_popdown_timer_id;
+  GtkWidget      *entry;
+  gboolean        entry_menu_active;
+  gint            entry_menu_popdown_timer_id;
 };
 
 
@@ -163,6 +165,20 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
   gtkcell_renderer_class->get_size = thunar_text_renderer_get_size;
   gtkcell_renderer_class->render = thunar_text_renderer_render;
   gtkcell_renderer_class->start_editing = thunar_text_renderer_start_editing;
+
+  /**
+   * ThunarTextRenderer:alignment:
+   *
+   * Specifies how to align the lines of text with respect to each other.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_ALIGNMENT,
+                                   g_param_spec_enum ("alignment",
+                                                      "alignment",
+                                                      "alignment",
+                                                      PANGO_TYPE_ALIGNMENT,
+                                                      PANGO_ALIGN_LEFT,
+                                                      EXO_PARAM_READWRITE));
 
   /**
    * ThunarTextRenderer:follow-prelit:
@@ -264,6 +280,7 @@ thunar_text_renderer_init (ThunarTextRenderer *text_renderer)
 {
   text_renderer->wrap_width = -1;
   text_renderer->entry_menu_popdown_timer_id = -1;
+  text_renderer->alignment = PANGO_ALIGN_LEFT;
 }
 
 
@@ -295,6 +312,10 @@ thunar_text_renderer_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_ALIGNMENT:
+      g_value_set_enum (value, text_renderer->alignment);
+      break;
+
     case PROP_FOLLOW_PRELIT:
       g_value_set_boolean (value, text_renderer->follow_prelit);
       break;
@@ -334,6 +355,10 @@ thunar_text_renderer_set_property (GObject      *object,
 
   switch (prop_id)
     {
+    case PROP_ALIGNMENT:
+      text_renderer->alignment = g_value_get_enum (value);
+      break;
+
     case PROP_FOLLOW_PRELIT:
       text_renderer->follow_prelit = g_value_get_boolean (value);
       break;
@@ -459,10 +484,9 @@ thunar_text_renderer_render (GtkCellRenderer     *renderer,
   GtkStateType        state;
   cairo_t            *cr;
   gint                x0, x1, y0, y1;
-  gint                text_width;
-  gint                text_height;
   gint                x_offset;
   gint                y_offset;
+  PangoRectangle      rect;
 
   /* setup the new widget */
   thunar_text_renderer_set_widget (text_renderer, widget);
@@ -506,24 +530,25 @@ thunar_text_renderer_render (GtkCellRenderer     *renderer,
     }
 
   pango_layout_set_text (text_renderer->layout, text_renderer->text, -1);
+  pango_layout_set_alignment (text_renderer->layout, text_renderer->alignment);
 
   /* calculate the real text dimension */
-  pango_layout_get_pixel_size (text_renderer->layout, &text_width, &text_height);
+  pango_layout_get_pixel_extents (text_renderer->layout, NULL, &rect);
 
   /* take into account the state indicator (required for calculation) */
   if (text_renderer->follow_state)
     {
-      text_width += 2 * text_renderer->focus_width;
-      text_height += 2 * text_renderer->focus_width;
+      rect.width += 2 * text_renderer->focus_width;
+      rect.height += 2 * text_renderer->focus_width;
     }
 
   /* calculate the real x-offset */
   x_offset = ((gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL) ? (1.0 - renderer->xalign) : renderer->xalign)
-           * (cell_area->width - text_width - (2 * renderer->xpad));
+           * (cell_area->width - rect.width - (2 * renderer->xpad));
   x_offset = MAX (x_offset, 0);
 
   /* calculate the real y-offset */
-  y_offset = renderer->yalign * (cell_area->height - text_height - (2 * renderer->ypad));
+  y_offset = renderer->yalign * (cell_area->height - rect.height - (2 * renderer->ypad));
   y_offset = MAX (y_offset, 0);
 
   /* render the state indicator */
@@ -532,8 +557,8 @@ thunar_text_renderer_render (GtkCellRenderer     *renderer,
       /* calculate the text bounding box (including the focus padding/width) */
       x0 = cell_area->x + x_offset;
       y0 = cell_area->y + y_offset;
-      x1 = x0 + text_width;
-      y1 = y0 + text_height;
+      x1 = x0 + rect.width;
+      y1 = y0 + rect.height;
 
       /* Cairo produces nicer results than using a polygon
        * and so we use it directly if possible.
@@ -557,14 +582,14 @@ thunar_text_renderer_render (GtkCellRenderer     *renderer,
   if (text_renderer->follow_state && (flags & GTK_CELL_RENDERER_FOCUSED) != 0)
     {
       gtk_paint_focus (widget->style, window, gtk_widget_get_state (widget), NULL, widget, "icon_view",
-                       cell_area->x + x_offset, cell_area->y + y_offset, text_width, text_height);
+                       cell_area->x + x_offset, cell_area->y + y_offset, rect.width, rect.height);
     }
 
   /* get proper sizing for the layout drawing */
   if (text_renderer->follow_state)
     {
-      text_width -= 2 * text_renderer->focus_width;
-      text_height -= 2 * text_renderer->focus_width;
+      rect.width -= 2 * text_renderer->focus_width;
+      rect.height -= 2 * text_renderer->focus_width;
       x_offset += text_renderer->focus_width;
       y_offset += text_renderer->focus_width;
     }
@@ -572,8 +597,8 @@ thunar_text_renderer_render (GtkCellRenderer     *renderer,
   /* draw the text */
   gtk_paint_layout (widget->style, window, state, TRUE,
                     expose_area, widget, "cellrenderertext",
-                    cell_area->x + x_offset + renderer->xpad,
-                    cell_area->y + y_offset + renderer->ypad,
+                    cell_area->x + x_offset + renderer->xpad - rect.x,
+                    cell_area->y + y_offset + renderer->ypad - rect.y,
                     text_renderer->layout);
 }
 
