@@ -30,6 +30,8 @@
 #include <string.h>
 #endif
 
+#include <gdk/gdkkeysyms.h>
+
 #ifdef HAVE_LIBNOTIFY
 #include <thunar/thunar-notify.h>
 #endif
@@ -68,6 +70,8 @@ static gboolean       thunar_shortcuts_view_button_press_event           (GtkWid
                                                                           GdkEventButton           *event);
 static gboolean       thunar_shortcuts_view_button_release_event         (GtkWidget                *widget,
                                                                           GdkEventButton           *event);
+static gboolean       thunar_shortcuts_view_key_release_event            (GtkWidget                *widget,
+                                                                          GdkEventKey              *event);
 static void           thunar_shortcuts_view_drag_begin                   (GtkWidget                *widget,
                                                                           GdkDragContext           *context);
 static void           thunar_shortcuts_view_drag_data_received           (GtkWidget                *widget,
@@ -200,6 +204,7 @@ thunar_shortcuts_view_class_init (ThunarShortcutsViewClass *klass)
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->button_press_event = thunar_shortcuts_view_button_press_event;
   gtkwidget_class->button_release_event = thunar_shortcuts_view_button_release_event;
+  gtkwidget_class->key_release_event = thunar_shortcuts_view_key_release_event;
   gtkwidget_class->drag_begin = thunar_shortcuts_view_drag_begin;
   gtkwidget_class->drag_data_received = thunar_shortcuts_view_drag_data_received;
   gtkwidget_class->drag_drop = thunar_shortcuts_view_drag_drop;
@@ -436,6 +441,32 @@ thunar_shortcuts_view_button_release_event (GtkWidget      *widget,
 
   /* call the parent's release event handler */
   return (*GTK_WIDGET_CLASS (thunar_shortcuts_view_parent_class)->button_release_event) (widget, event);
+}
+
+
+
+static gboolean
+thunar_shortcuts_view_key_release_event (GtkWidget   *widget,
+                                         GdkEventKey *event)
+{
+  ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (widget);
+
+  /* work nicer with keyboard navigation */
+  switch (event->keyval)
+    {
+    case GDK_Up:
+    case GDK_Down:
+    case GDK_KP_Up:
+    case GDK_KP_Down:
+      thunar_shortcuts_view_open (view, FALSE);
+
+      /* keep focus on us */
+      gtk_widget_grab_focus (widget);
+      break;
+    }
+
+  /* call the parent's release event handler */
+  return (*GTK_WIDGET_CLASS (thunar_shortcuts_view_parent_class)->key_release_event) (widget, event);
 }
 
 
