@@ -177,7 +177,7 @@ thunar_progress_view_init (ThunarProgressView *view)
   GtkWidget *hbox;
 
   /* remember the current time as start time */
-  view->start_time = thunar_util_get_real_time ();
+  view->start_time = g_get_real_time ();
 
   vbox = gtk_vbox_new (FALSE, 6);
   gtk_container_add (GTK_CONTAINER (view), vbox);
@@ -473,7 +473,7 @@ thunar_progress_view_percent (ThunarProgressView *view,
   gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (view->progress_bar), percent / 100.0);
 
   /* check if we should update the time display (every 400ms) */
-  current_time = thunar_util_get_real_time ();
+  current_time = g_get_real_time ();
   if (current_time - view->last_update_time > (400 * 1000))
     {
       /* calculate the remaining time (in seconds) */

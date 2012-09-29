@@ -419,17 +419,3 @@ thunar_util_change_working_directory (const gchar *new_directory)
 
   return old_directory;
 }
-
-
-
-#if !GLIB_CHECK_VERSION (2, 28, 0)
-gint64
-thunar_util_get_real_time (void)
-{
-  GTimeVal tv;
-
-  g_get_current_time (&tv);
-
-  return (((gint64) tv.tv_sec) * G_USEC_PER_SEC) + tv.tv_usec;
-}
-#endif

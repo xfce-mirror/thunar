@@ -267,7 +267,7 @@ thunar_deep_count_job_process (ExoJob    *job,
 
       /* emit status update whenever we've finished a directory,
        * but not more than four times per second */
-      real_time = thunar_util_get_real_time ();
+      real_time = g_get_real_time ();
       if (real_time >= count_job->last_time)
         {
           if (count_job->last_time != 0)

@@ -1682,11 +1682,7 @@ gchar *
 thunar_file_get_size_string (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-#if GLIB_CHECK_VERSION (2, 30, 0)
   return g_format_size (thunar_file_get_size (file));
-#else
-  return g_format_size_for_display (thunar_file_get_size (file));
-#endif
 }
 
 
