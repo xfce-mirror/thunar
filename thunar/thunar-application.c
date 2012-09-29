@@ -1414,7 +1414,7 @@ thunar_application_create_file (ThunarApplication *application,
       if (is_directory)
         thunar_application_mkdir (application, screen, &path_list, NULL);
       else
-        thunar_application_creat (application, screen, &path_list, NULL);
+        thunar_application_creat (application, screen, &path_list, NULL, NULL);
 
       g_object_unref (path_list.data);
       g_free (name);
@@ -1444,7 +1444,6 @@ thunar_application_create_file_from_template (ThunarApplication *application,
                                               GdkScreen         *screen,
                                               const gchar       *startup_id)
 {
-  GList  source_path_list;
   GList  target_path_list;
   gchar *name;
   gchar *title;
@@ -1468,18 +1467,15 @@ thunar_application_create_file_from_template (ThunarApplication *application,
                                     title);
   if (G_LIKELY (name != NULL))
     {
-      /* fake the source file list */
-      source_path_list.data = thunar_file_get_file (template_file);
-      source_path_list.prev = source_path_list.next = NULL;
-
       /* fake the target path list */
       target_path_list.data = g_file_get_child (thunar_file_get_file (parent_directory), name);
       target_path_list.next = target_path_list.prev = NULL;
 
       /* launch the operation */
-      thunar_application_copy_to (application, screen, 
-                                  &source_path_list, &target_path_list,
-                                  NULL);
+      thunar_application_creat (application, screen,
+                                &target_path_list,
+                                thunar_file_get_file (template_file),
+                                NULL);
 
       /* release the target path */
       g_object_unref (target_path_list.data);
@@ -1817,10 +1813,11 @@ thunar_application_trash (ThunarApplication *application,
 
 
 static ThunarJob *
-creat_stub (GList *source_path_list,
+creat_stub (GList *template_file,
             GList *target_path_list)
 {
-  return thunar_io_jobs_create_files (source_path_list);
+   _thunar_return_val_if_fail (template_file->data == NULL || G_IS_FILE (template_file->data), NULL);
+  return thunar_io_jobs_create_files (target_path_list, template_file->data);
 }
 
 
@@ -1842,15 +1839,21 @@ void
 thunar_application_creat (ThunarApplication *application,
                           gpointer           parent,
                           GList             *file_list,
+                          GFile             *template_file,
                           GClosure          *new_files_closure)
 {
+  GList template_list;
+
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
   
+  template_list.next = template_list.prev = NULL;
+  template_list.data = template_file;
+
   /* launch the operation */
   thunar_application_launch (application, parent, "document-new",
                              _("Creating files..."), creat_stub,
-                             file_list, file_list, new_files_closure);
+                             &template_list, file_list, new_files_closure);
 }
 
 

@@ -1875,7 +1875,7 @@ thunar_standard_view_action_create_empty_file (GtkAction          *action,
 
           /* launch the operation */
           application = thunar_application_get ();
-          thunar_application_creat (application, GTK_WIDGET (standard_view), &path_list,
+          thunar_application_creat (application, GTK_WIDGET (standard_view), &path_list, NULL,
                                     thunar_standard_view_new_files_closure (standard_view, NULL));
           g_object_unref (application);
 
@@ -1941,7 +1941,6 @@ thunar_standard_view_action_create_template (GtkAction           *action,
 {
   ThunarApplication *application;
   ThunarFile        *current_directory;
-  GList              source_path_list;
   GList              target_path_list;
   gchar             *name;
   gchar             *title;
@@ -1965,11 +1964,6 @@ thunar_standard_view_action_create_template (GtkAction           *action,
       current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
       if (G_LIKELY (current_directory != NULL))
         {
-          /* fake the source path list */
-          source_path_list.data = thunar_file_get_file (file);
-          source_path_list.next = NULL;
-          source_path_list.prev = NULL;
-
           /* fake the target path list */
           target_path_list.data = g_file_get_child (thunar_file_get_file (current_directory), name);
           target_path_list.next = NULL;
@@ -1977,8 +1971,9 @@ thunar_standard_view_action_create_template (GtkAction           *action,
 
           /* launch the operation */
           application = thunar_application_get ();
-          thunar_application_copy_to (application, GTK_WIDGET (standard_view), &source_path_list, &target_path_list,
-                                      thunar_standard_view_new_files_closure (standard_view, NULL));
+          thunar_application_creat (application, GTK_WIDGET (standard_view), &target_path_list, 
+                                    thunar_file_get_file (file),
+                                    thunar_standard_view_new_files_closure (standard_view, NULL));
           g_object_unref (G_OBJECT (application));
 
           /* release the target path */

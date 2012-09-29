@@ -96,17 +96,32 @@ _thunar_io_jobs_create (ThunarJob   *job,
   GList             *lp;
   gchar             *base_name;
   gchar             *display_name;
+  GFile             *template_file;
+  GFileInputStream  *template_stream = NULL;
   
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
-  _thunar_return_val_if_fail (param_values->n_values == 1, FALSE);
+  _thunar_return_val_if_fail (param_values->n_values == 2, FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   /* get the file list */
   file_list = g_value_get_boxed (g_value_array_get_nth (param_values, 0));
+  template_file = g_value_get_object (g_value_array_get_nth (param_values, 1));
 
   /* we know the total amount of files to be processed */
   thunar_job_set_total_files (THUNAR_JOB (job), file_list);
+
+  /* check if we need to open the template */
+  if (template_file != NULL)
+    {
+      /* open read stream to feed in the new files */
+      template_stream = g_file_read (template_file, exo_job_get_cancellable (EXO_JOB (job)), &err);
+      if (G_UNLIKELY (template_stream == NULL))
+        {
+          g_propagate_error (error, err);
+          return FALSE;
+        }
+    }
 
   /* iterate over all files in the list */
   for (lp = file_list; 
@@ -197,8 +212,23 @@ again:
             }
         }
       else
-        g_object_unref (stream);
+        {
+          if (template_stream != NULL)
+            {
+              /* write the template into the new file */
+              g_output_stream_splice (G_OUTPUT_STREAM (stream),
+                                      G_INPUT_STREAM (template_stream),
+                                      G_OUTPUT_STREAM_SPLICE_CLOSE_TARGET,
+                                      exo_job_get_cancellable (EXO_JOB (job)),
+                                      NULL);
+            }
+
+          g_object_unref (stream);
+        }
     }
+
+  if (template_stream != NULL)
+    g_object_unref (template_stream);
 
   /* check if we have failed */
   if (err != NULL)
@@ -220,10 +250,12 @@ again:
 
 
 ThunarJob *
-thunar_io_jobs_create_files (GList *file_list)
+thunar_io_jobs_create_files (GList *file_list,
+                             GFile *template_file)
 {
-  return thunar_simple_job_launch (_thunar_io_jobs_create, 1,
-                                   THUNAR_TYPE_G_FILE_LIST, file_list);
+  return thunar_simple_job_launch (_thunar_io_jobs_create, 2,
+                                   THUNAR_TYPE_G_FILE_LIST, file_list,
+                                   G_TYPE_FILE, template_file);
 }
 
 

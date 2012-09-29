@@ -26,7 +26,8 @@
 
 G_BEGIN_DECLS
 
-ThunarJob *thunar_io_jobs_create_files     (GList         *file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarJob *thunar_io_jobs_create_files     (GList         *file_list,
+                                            GFile         *template_file) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 ThunarJob *thunar_io_jobs_make_directories (GList         *file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 ThunarJob *thunar_io_jobs_unlink_files     (GList         *file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 ThunarJob *thunar_io_jobs_move_files       (GList         *source_file_list,

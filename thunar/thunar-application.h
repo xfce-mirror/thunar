@@ -127,6 +127,7 @@ void                  thunar_application_trash                     (ThunarApplic
 void                  thunar_application_creat                     (ThunarApplication *application,
                                                                     gpointer           parent,
                                                                     GList             *file_list,
+                                                                    GFile             *template_file,
                                                                     GClosure          *new_files_closure);
 
 void                  thunar_application_mkdir                     (ThunarApplication *application,
