@@ -30,6 +30,7 @@
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
+#include <thunar/thunar-transfer-job.h>
 #include <thunar/thunar-progress-view.h>
 
 
@@ -91,11 +92,9 @@ struct _ThunarProgressView
 
   ThunarJob *job;
 
-  gint64     start_time;
-  gint64     last_update_time;
-
   GtkWidget *progress_bar;
   GtkWidget *progress_label;
+  GtkWidget *message_label;
 
   gchar     *icon_name;
   gchar     *title;
@@ -121,7 +120,7 @@ thunar_progress_view_class_init (ThunarProgressViewClass *klass)
   /**
    * ThunarProgressView:job:
    *
-   * The #ThunarJob, whose progress is displayed by this view, or 
+   * The #ThunarJob, whose progress is displayed by this view, or
    * %NULL if no job is set.
    **/
   g_object_class_install_property (gobject_class,
@@ -177,10 +176,8 @@ thunar_progress_view_init (ThunarProgressView *view)
   GtkWidget *button;
   GtkWidget *vbox;
   GtkWidget *vbox2;
+  GtkWidget *vbox3;
   GtkWidget *hbox;
-
-  /* remember the current time as start time */
-  view->start_time = g_get_real_time ();
 
   vbox = gtk_vbox_new (FALSE, 6);
   gtk_container_add (GTK_CONTAINER (view), vbox);
@@ -205,19 +202,28 @@ thunar_progress_view_init (ThunarProgressView *view)
   gtk_box_pack_start (GTK_BOX (vbox2), label, TRUE, TRUE, 0);
   gtk_widget_show (label);
 
-  view->progress_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
-  gtk_label_set_ellipsize (GTK_LABEL (view->progress_label), PANGO_ELLIPSIZE_MIDDLE);
-  gtk_box_pack_start (GTK_BOX (vbox2), view->progress_label, TRUE, TRUE, 0);
-  gtk_widget_grab_focus (view->progress_label);
-  gtk_widget_show (view->progress_label);
+  view->message_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  gtk_label_set_ellipsize (GTK_LABEL (view->message_label), PANGO_ELLIPSIZE_MIDDLE);
+  gtk_box_pack_start (GTK_BOX (vbox2), view->message_label, TRUE, TRUE, 0);
+  gtk_widget_show (view->message_label);
 
   hbox = gtk_hbox_new (FALSE, 6);
-  gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
   gtk_widget_show (hbox);
 
-  view->progress_bar = g_object_new (GTK_TYPE_PROGRESS_BAR, "text", "", NULL);
-  gtk_box_pack_start (GTK_BOX (hbox), view->progress_bar, TRUE, TRUE, 0);
+  vbox3 = gtk_vbox_new (FALSE, 3);
+  gtk_box_pack_start (GTK_BOX (hbox), vbox3, TRUE, TRUE, 0);
+  gtk_widget_show (vbox3);
+
+  view->progress_bar = gtk_progress_bar_new ();
+  gtk_box_pack_start (GTK_BOX (vbox3), view->progress_bar, TRUE, TRUE, 0);
   gtk_widget_show (view->progress_bar);
+
+  view->progress_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  gtk_label_set_ellipsize (GTK_LABEL (view->progress_label), PANGO_ELLIPSIZE_END);
+  gtk_label_set_attributes (GTK_LABEL (view->progress_label), thunar_pango_attr_list_small ());
+  gtk_box_pack_start (GTK_BOX (vbox3), view->progress_label, FALSE, TRUE, 0);
+  gtk_widget_show (view->progress_label);
 
   button = gtk_button_new ();
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (thunar_progress_view_cancel_job), view);
@@ -225,7 +231,7 @@ thunar_progress_view_init (ThunarProgressView *view)
   gtk_widget_set_can_focus (button, FALSE);
   gtk_widget_show (button);
 
-  image = gtk_image_new_from_stock (GTK_STOCK_CANCEL, GTK_ICON_SIZE_SMALL_TOOLBAR);
+  image = gtk_image_new_from_stock (GTK_STOCK_CANCEL, GTK_ICON_SIZE_BUTTON);
   gtk_container_add (GTK_CONTAINER (button), image);
   gtk_widget_show (image);
 
@@ -337,7 +343,7 @@ thunar_progress_view_cancel_job (ThunarProgressView *view)
       exo_job_cancel (EXO_JOB (view->job));
 
       /* don't listen to percentage updates any more */
-      g_signal_handlers_disconnect_matched (view->job, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, 
+      g_signal_handlers_disconnect_matched (view->job, G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
                                             thunar_progress_view_percent, NULL);
 
       /* don't listen to info messages any more */
@@ -345,7 +351,7 @@ thunar_progress_view_cancel_job (ThunarProgressView *view)
                                             thunar_progress_view_info_message, NULL);
 
       /* update the progress bar text */
-      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (view->progress_bar), 
+      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (view->progress_bar),
                                  _("Cancelling..."));
     }
 }
@@ -372,7 +378,7 @@ thunar_progress_view_ask (ThunarProgressView *view,
   window = gtk_widget_get_toplevel (GTK_WIDGET (view));
 
   /* display the question view */
-  return thunar_dialogs_show_job_ask (window != NULL ? GTK_WINDOW (window) : NULL, 
+  return thunar_dialogs_show_job_ask (window != NULL ? GTK_WINDOW (window) : NULL,
                                       message, choices);
 }
 
@@ -399,7 +405,7 @@ thunar_progress_view_ask_replace (ThunarProgressView *view,
   window = gtk_widget_get_toplevel (GTK_WIDGET (view));
 
   /* display the question view */
-  return thunar_dialogs_show_job_ask_replace (window != NULL ? GTK_WINDOW (window) : NULL, 
+  return thunar_dialogs_show_job_ask_replace (window != NULL ? GTK_WINDOW (window) : NULL,
                                               src_file, dst_file);
 }
 
@@ -453,7 +459,7 @@ thunar_progress_view_info_message (ThunarProgressView *view,
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
   _thunar_return_if_fail (view->job == THUNAR_JOB (job));
 
-  gtk_label_set_text (GTK_LABEL (view->progress_label), message);
+  gtk_label_set_text (GTK_LABEL (view->message_label), message);
 }
 
 
@@ -463,58 +469,20 @@ thunar_progress_view_percent (ThunarProgressView *view,
                               gdouble             percent,
                               ExoJob             *job)
 {
-  gint64 current_time;
-  gulong remaining_time;
-  gint64 elapsed_time;
-  gchar  text[512];
+  gchar *text;
 
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_VIEW (view));
   _thunar_return_if_fail (percent >= 0.0 && percent <= 100.0);
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
   _thunar_return_if_fail (view->job == THUNAR_JOB (job));
 
+  /* update progressbar */
   gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (view->progress_bar), percent / 100.0);
 
-  /* check if we should update the time display (every 400ms) */
-  current_time = g_get_real_time ();
-  if (current_time - view->last_update_time > (400 * 1000))
-    {
-      /* calculate the remaining time (in seconds) */
-      elapsed_time = (current_time - view->start_time) / 1000;
-      remaining_time = ((100 * elapsed_time) / percent - elapsed_time) / 1000;
-
-      /* setup the time label */
-      if (G_LIKELY (remaining_time > 0))
-        {
-          /* format the time text */
-          if (remaining_time > 60 * 60)
-            {
-              remaining_time = (gulong) (remaining_time / (60 * 60));
-              g_snprintf (text, sizeof (text), ngettext ("%lu hour remaining", "%lu hours remaining", remaining_time), remaining_time);
-            }
-          else if (remaining_time > 60)
-            {
-              remaining_time = (gulong) (remaining_time / 60);
-              g_snprintf (text, sizeof (text), ngettext ("%lu minute remaining", "%lu minutes remaining", remaining_time), remaining_time);
-            }
-          else
-            {
-              remaining_time = remaining_time;
-              g_snprintf (text, sizeof (text), ngettext ("%lu second remaining", "%lu seconds remaining", remaining_time), remaining_time);
-            }
-
-          /* apply the time text */
-          gtk_progress_bar_set_text (GTK_PROGRESS_BAR (view->progress_bar), text);
-        }
-      else
-        {
-          /* display an empty label */
-          gtk_progress_bar_set_text (GTK_PROGRESS_BAR (view->progress_bar), " ");
-        }
-
-      /* remember the current time as last update time */
-      view->last_update_time = current_time;
-    }
+  /* set progress text */
+  text = thunar_transfer_job_get_status (THUNAR_TRANSFER_JOB (job));
+  gtk_label_set_text (GTK_LABEL (view->progress_label), text);
+  g_free (text);
 }
 
 

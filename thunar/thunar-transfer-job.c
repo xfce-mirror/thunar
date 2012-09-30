@@ -3,18 +3,18 @@
  * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2009-2011 Jannis Pohlmann <jannis@xfce.org>
  *
- * This program is free software; you can redistribute it and/or 
+ * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of 
+ * published by the Free Software Foundation; either version 2 of
  * the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public 
- * License along with this program; if not, write to the Free 
+ * You should have received a copy of the GNU General Public
+ * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
@@ -33,6 +33,11 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-thumbnail-cache.h>
 #include <thunar/thunar-transfer-job.h>
+
+
+
+/* seconds before we show the transfer rate + remaining time */
+#define MINIMUM_TRANSFER_TIME (10 * G_USEC_PER_SEC) /* 10 seconds */
 
 
 
@@ -60,11 +65,14 @@ struct _ThunarTransferJob
   GList                *source_node_list;
   GList                *target_file_list;
 
+  gint64                start_time;
+  gint64                last_update_time;
+  guint64               last_total_progress;
+
   guint64               total_size;
   guint64               total_progress;
   guint64               file_progress;
-
-  gdouble               previous_percentage;
+  guint64               transfer_rate;
 };
 
 struct _ThunarTransferNode
@@ -87,7 +95,7 @@ thunar_transfer_job_class_init (ThunarTransferJobClass *klass)
   ExoJobClass  *exojob_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->finalize = thunar_transfer_job_finalize; 
+  gobject_class->finalize = thunar_transfer_job_finalize;
 
   exojob_class = EXO_JOB_CLASS (klass);
   exojob_class->execute = thunar_transfer_job_execute;
@@ -104,7 +112,10 @@ thunar_transfer_job_init (ThunarTransferJob *job)
   job->total_size = 0;
   job->total_progress = 0;
   job->file_progress = 0;
-  job->previous_percentage = 0.0;
+  job->last_update_time = 0;
+  job->last_total_progress = 0;
+  job->transfer_rate = 0;
+  job->start_time = 0;
 }
 
 
@@ -128,12 +139,14 @@ thunar_transfer_job_progress (goffset  current_num_bytes,
                               goffset  total_num_bytes,
                               gpointer user_data)
 {
-  guint64 new_percentage;
-
   ThunarTransferJob *job = user_data;
+  guint64            new_percentage;
+  gint64             current_time;
+  gint64             expired_time;
+  guint64            transfer_rate;
 
   _thunar_return_if_fail (THUNAR_IS_TRANSFER_JOB (job));
-  
+
   if (G_LIKELY (job->total_size > 0))
     {
       /* update total progress */
@@ -145,15 +158,28 @@ thunar_transfer_job_progress (goffset  current_num_bytes,
       /* compute the new percentage after the progress we've made */
       new_percentage = (job->total_progress * 100.0) / job->total_size;
 
-      /* notify callers about the progress only if we have advanced by
-       * at least 0.01 percent since the last signal emission */
-      if (new_percentage >= (job->previous_percentage + 0.01))
+      /* get current time */
+      current_time = g_get_real_time ();
+      expired_time = current_time - job->last_update_time;
+
+      /* notify callers not more then every 500ms */
+      if (expired_time > (500 * 1000))
         {
+          /* calculate the transfer rate in the last expired time */
+          transfer_rate = (job->total_progress - job->last_total_progress) / ((gfloat) expired_time / G_USEC_PER_SEC);
+
+          /* take the average of the last 10 rates (5 sec), so the output is less jumpy */
+          if (job->transfer_rate > 0)
+            job->transfer_rate = ((job->transfer_rate * 10) + transfer_rate) / 11;
+          else
+            job->transfer_rate = transfer_rate;
+
           /* emit the percent signal */
           exo_job_percent (EXO_JOB (job), new_percentage);
 
-          /* remember the percentage */
-          job->previous_percentage = new_percentage;
+          /* update internals */
+          job->last_update_time = current_time;
+          job->last_total_progress = job->total_progress;
         }
     }
 }
@@ -178,7 +204,7 @@ thunar_transfer_job_collect_node (ThunarTransferJob  *job,
   if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
     return FALSE;
 
-  info = g_file_query_info (node->source_file, 
+  info = g_file_query_info (node->source_file,
                             G_FILE_ATTRIBUTE_STANDARD_SIZE ","
                             G_FILE_ATTRIBUTE_STANDARD_TYPE,
                             G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
@@ -212,7 +238,7 @@ thunar_transfer_job_collect_node (ThunarTransferJob  *job,
           /* collect the child node */
           thunar_transfer_job_collect_node (job, child_node, &err);
         }
-      
+
       /* release the child files */
       thunar_g_file_list_free (file_list);
     }
@@ -286,12 +312,12 @@ ttj_copy_file (ThunarTransferJob *job,
   /* check if there were errors */
   if (G_UNLIKELY (err != NULL && err->domain == G_IO_ERROR))
     {
-      if (err->code == G_IO_ERROR_WOULD_MERGE 
-          || (err->code == G_IO_ERROR_EXISTS 
+      if (err->code == G_IO_ERROR_WOULD_MERGE
+          || (err->code == G_IO_ERROR_EXISTS
               && source_type == G_FILE_TYPE_DIRECTORY
               && target_type == G_FILE_TYPE_DIRECTORY))
         {
-          /* we tried to overwrite a directory with a directory. this normally results 
+          /* we tried to overwrite a directory with a directory. this normally results
            * in a merge. ignore the error if we actually *want* to merge */
           if (merge_directories)
             g_clear_error (&err);
@@ -300,14 +326,14 @@ ttj_copy_file (ThunarTransferJob *job,
         {
           g_clear_error (&err);
 
-          /* we tried to copy a directory and either 
+          /* we tried to copy a directory and either
            *
-           * - the target did not exist which means we simple have to 
+           * - the target did not exist which means we simple have to
            *   create the target directory
            *
            * or
            *
-           * - the target is not a directory and we tried to overwrite it in 
+           * - the target is not a directory and we tried to overwrite it in
            *   which case we have to delete it first and then create the target
            *   directory
            */
@@ -322,8 +348,8 @@ ttj_copy_file (ThunarTransferJob *job,
               if (target_exists)
                 {
                   /* the target still exists and thus is not a directory. try to remove it */
-                  g_file_delete (target_file, 
-                                 exo_job_get_cancellable (EXO_JOB (job)), 
+                  g_file_delete (target_file,
+                                 exo_job_get_cancellable (EXO_JOB (job)),
                                  &err);
                 }
 
@@ -331,8 +357,8 @@ ttj_copy_file (ThunarTransferJob *job,
               if (err == NULL)
                 {
                   /* now try to create the directory */
-                  g_file_make_directory (target_file, 
-                                         exo_job_get_cancellable (EXO_JOB (job)), 
+                  g_file_make_directory (target_file,
+                                         exo_job_get_cancellable (EXO_JOB (job)),
                                          &err);
                 }
             }
@@ -362,16 +388,16 @@ ttj_copy_file (ThunarTransferJob *job,
  * Tries to copy @source_file to @target_file. The real destination is the
  * return value and may differ from @target_file (e.g. if you try to copy
  * the file "/foo/bar" into the same directory you'll end up with something
- * like "/foo/copy of bar" instead of "/foo/bar". 
+ * like "/foo/copy of bar" instead of "/foo/bar".
  *
  * The return value is guaranteed to be %NULL on errors and @error will
  * always be set in those cases. If the file is skipped, the return value
  * will be @source_file.
  *
- * Return value: the destination #GFile to which @source_file was copied 
- *               or linked. The caller is reposible to release it with 
- *               g_object_unref() if no longer needed. It points to 
- *               @source_file if the file was skipped and will be %NULL 
+ * Return value: the destination #GFile to which @source_file was copied
+ *               or linked. The caller is reposible to release it with
+ *               g_object_unref() if no longer needed. It points to
+ *               @source_file if the file was skipped and will be %NULL
  *               on error or cancellation.
  **/
 static GFile *
@@ -411,8 +437,8 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
           for (n = 1; err == NULL; ++n)
             {
               GFile *duplicate_file = thunar_io_jobs_util_next_duplicate_file (THUNAR_JOB (job),
-                                                                               source_file, 
-                                                                               TRUE, n, 
+                                                                               source_file,
+                                                                               TRUE, n,
                                                                                &err);
 
               if (err == NULL)
@@ -423,7 +449,7 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
                       /* return the real target file */
                       return duplicate_file;
                     }
-                  
+
                   g_object_unref (duplicate_file);
                 }
 
@@ -442,7 +468,7 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
           g_clear_error (&err);
 
           /* ask the user whether to replace the target file */
-          response = thunar_job_ask_replace (THUNAR_JOB (job), source_file, 
+          response = thunar_job_ask_replace (THUNAR_JOB (job), source_file,
                                              target_file, &err);
 
           if (err != NULL)
@@ -459,7 +485,7 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
               continue;
             }
 
-          /* tell the caller we skipped the file if the user 
+          /* tell the caller we skipped the file if the user
            * doesn't want to retry/overwrite */
           if (response == THUNAR_JOB_RESPONSE_NO)
             return g_object_ref (source_file);
@@ -537,7 +563,7 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
 
 retry_copy:
       /* copy the item specified by this node (not recursively) */
-      real_target_file = thunar_transfer_job_copy_file (job, node->source_file, 
+      real_target_file = thunar_transfer_job_copy_file (job, node->source_file,
                                                         target_file, &err);
       if (G_LIKELY (real_target_file != NULL))
         {
@@ -545,8 +571,8 @@ retry_copy:
           if (G_LIKELY (node->source_file != real_target_file))
             {
               /* notify the thumbnail cache of the copy operation */
-              thunar_thumbnail_cache_copy_file (thumbnail_cache, 
-                                                node->source_file, 
+              thunar_thumbnail_cache_copy_file (thumbnail_cache,
+                                                node->source_file,
                                                 real_target_file);
 
               /* check if we have children to copy */
@@ -572,8 +598,8 @@ retry_copy:
               /* add the real target file to the return list */
               if (G_LIKELY (target_file_list_return != NULL))
                 {
-                  *target_file_list_return = 
-                    thunar_g_file_list_prepend (*target_file_list_return, 
+                  *target_file_list_return =
+                    thunar_g_file_list_prepend (*target_file_list_return,
                                                 real_target_file);
                 }
 
@@ -581,18 +607,18 @@ retry_remove:
               /* try to remove the source directory if we are on copy+remove fallback for move */
               if (job->type == THUNAR_TRANSFER_JOB_MOVE)
                 {
-                  if (g_file_delete (node->source_file, 
-                                     exo_job_get_cancellable (EXO_JOB (job)), 
+                  if (g_file_delete (node->source_file,
+                                     exo_job_get_cancellable (EXO_JOB (job)),
                                      &err))
                     {
                       /* notify the thumbnail cache of the delete operation */
-                      thunar_thumbnail_cache_delete_file (thumbnail_cache, 
+                      thunar_thumbnail_cache_delete_file (thumbnail_cache,
                                                           node->source_file);
                     }
                   else
                     {
                       /* ask the user to retry */
-                      response = thunar_job_ask_skip (THUNAR_JOB (job), "%s", 
+                      response = thunar_job_ask_skip (THUNAR_JOB (job), "%s",
                                                       err->message);
 
                       /* reset the error */
@@ -608,9 +634,9 @@ retry_remove:
           g_object_unref (real_target_file);
         }
       else if (err != NULL)
-        { 
+        {
           /* we can only skip if there is space left on the device */
-          if (err->domain != G_IO_ERROR || err->code != G_IO_ERROR_NO_SPACE) 
+          if (err->domain != G_IO_ERROR || err->code != G_IO_ERROR_NO_SPACE)
             {
               /* ask the user to skip this node and all subnodes */
               response = thunar_job_ask_skip (THUNAR_JOB (job), "%s", err->message);
@@ -696,7 +722,7 @@ thunar_transfer_job_execute (ExoJob  *job,
         break;
 
       /* check if we are moving a file out of the trash */
-      if (transfer_job->type == THUNAR_TRANSFER_JOB_MOVE 
+      if (transfer_job->type == THUNAR_TRANSFER_JOB_MOVE
           && thunar_g_file_is_trashed (node->source_file))
         {
           /* update progress information */
@@ -731,7 +757,7 @@ thunar_transfer_job_execute (ExoJob  *job,
                                                 _("The folder \"%s\" does not exist anymore but is "
                                                   "required to restore the file \"%s\" from the "
                                                   "trash"),
-                                                parent_display_name, 
+                                                parent_display_name,
                                                 g_file_info_get_display_name (info));
 
               /* abort if cancelled */
@@ -743,7 +769,7 @@ thunar_transfer_job_execute (ExoJob  *job,
                 }
 
               /* try to create the parent directory */
-              if (!g_file_make_directory_with_parents (target_parent, 
+              if (!g_file_make_directory_with_parents (target_parent,
                                                        exo_job_get_cancellable (job),
                                                        &err))
                 {
@@ -753,7 +779,7 @@ thunar_transfer_job_execute (ExoJob  *job,
 
                       /* overwrite the internal GIO error with something more user-friendly */
                       g_set_error (&err, G_IO_ERROR, G_IO_ERROR_FAILED,
-                                   _("Failed to restore the folder \"%s\""), 
+                                   _("Failed to restore the folder \"%s\""),
                                    parent_display_name);
                     }
 
@@ -769,22 +795,22 @@ thunar_transfer_job_execute (ExoJob  *job,
           if (target_parent != NULL)
             g_object_unref (target_parent);
         }
-      
+
       if (transfer_job->type == THUNAR_TRANSFER_JOB_MOVE)
         {
           /* update progress information */
-          exo_job_info_message (job, _("Trying to move \"%s\""), 
+          exo_job_info_message (job, _("Trying to move \"%s\""),
                                 g_file_info_get_display_name (info));
 
-          if (g_file_move (node->source_file, tp->data, 
-                           G_FILE_COPY_NOFOLLOW_SYMLINKS 
+          if (g_file_move (node->source_file, tp->data,
+                           G_FILE_COPY_NOFOLLOW_SYMLINKS
                            | G_FILE_COPY_NO_FALLBACK_FOR_MOVE,
                            exo_job_get_cancellable (job),
                            NULL, NULL, &err))
             {
               /* notify the thumbnail cache of the move operation */
-              thunar_thumbnail_cache_move_file (thumbnail_cache, 
-                                                node->source_file, 
+              thunar_thumbnail_cache_move_file (thumbnail_cache,
+                                                node->source_file,
                                                 tp->data);
 
               /* add the target file to the new files list */
@@ -830,12 +856,15 @@ thunar_transfer_job_execute (ExoJob  *job,
   /* continue if there were no errors yet */
   if (G_LIKELY (err == NULL))
     {
+      /* transfer starts now */
+      transfer_job->start_time = g_get_real_time ();
+
       /* perform the copy recursively for all source transfer nodes */
       for (sp = transfer_job->source_node_list, tp = transfer_job->target_file_list;
            sp != NULL && tp != NULL && err == NULL;
            sp = sp->next, tp = tp->next)
         {
-          thunar_transfer_job_copy_node (transfer_job, sp->data, tp->data, NULL, 
+          thunar_transfer_job_copy_node (transfer_job, sp->data, tp->data, NULL,
                                          &new_files_list, &err);
         }
     }
@@ -902,8 +931,8 @@ thunar_transfer_job_new (GList                *source_node_list,
   job->type = type;
 
   /* add a transfer node for each source path and a matching target parent path */
-  for (sp = source_node_list, tp = target_file_list; 
-       sp != NULL; 
+  for (sp = source_node_list, tp = target_file_list;
+       sp != NULL;
        sp = sp->next, tp = tp->next)
     {
       /* make sure we don't transfer root directories. this should be prevented in the GUI */
@@ -928,3 +957,70 @@ thunar_transfer_job_new (GList                *source_node_list,
 
   return THUNAR_JOB (job);
 }
+
+
+
+gchar *
+thunar_transfer_job_get_status (ThunarTransferJob *job)
+{
+  gchar   *total_size_str;
+  gchar   *total_progress_str;
+  gchar   *transfer_rate_str;
+  GString *status;
+  gulong   remaining_time;
+
+  _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), NULL);
+
+  status = g_string_sized_new (100);
+
+  /* transfer status like "22.6MB of 134.1MB" */
+  total_size_str = g_format_size (job->total_size);
+  total_progress_str = g_format_size (job->total_progress);
+  g_string_append_printf (status, _("%s of %s"), total_progress_str, total_size_str);
+  g_free (total_size_str);
+  g_free (total_progress_str);
+
+  /* show time and transfer rate after 10 seconds */
+  if (job->transfer_rate > 0
+      && (job->last_update_time - job->start_time) > MINIMUM_TRANSFER_TIME)
+    {
+      /* remaining time based on the transfer speed */
+      transfer_rate_str = g_format_size (job->transfer_rate);
+      remaining_time = (job->total_size - job->total_progress) / job->transfer_rate;
+
+      if (remaining_time > 0)
+        {
+          /* insert long dash */
+          g_string_append (status, " \xE2\x80\x94 ");
+
+          if (remaining_time > 60 * 60)
+            {
+              remaining_time = (gulong) (remaining_time / (60 * 60));
+              g_string_append_printf (status, ngettext ("%lu hour remaining (%s/sec)",
+                                                        "%lu hours remaining (%s/sec)",
+                                                        remaining_time),
+                                                        remaining_time, transfer_rate_str);
+            }
+          else if (remaining_time > 60)
+            {
+              remaining_time = (gulong) (remaining_time / 60);
+              g_string_append_printf (status, ngettext ("%lu minute remaining (%s/sec)",
+                                                        "%lu minutes remaining (%s/sec)",
+                                                        remaining_time),
+                                                        remaining_time, transfer_rate_str);
+            }
+          else
+            {
+              g_string_append_printf (status, ngettext ("%lu second remaining (%s/sec)",
+                                                        "%lu seconds remaining (%s/sec)",
+                                                        remaining_time),
+                                                        remaining_time, transfer_rate_str);
+            }
+        }
+
+      g_free (transfer_rate_str);
+    }
+
+  return g_string_free (status, FALSE);
+}
+
