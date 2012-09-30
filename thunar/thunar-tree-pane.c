@@ -291,18 +291,3 @@ thunar_tree_pane_set_show_hidden (ThunarSidePane *side_pane,
 }
 
 
-
-/**
- * thunar_tree_pane_new:
- *
- * Allocates a new #ThunarTreePane instance.
- *
- * Return value: the newly allocated #ThunarTreePane instance.
- **/
-GtkWidget*
-thunar_tree_pane_new (void)
-{
-  return g_object_new (THUNAR_TYPE_TREE_PANE, NULL);
-}
-
-

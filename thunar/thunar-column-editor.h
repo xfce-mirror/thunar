@@ -36,8 +36,6 @@ typedef struct _ThunarColumnEditor      ThunarColumnEditor;
 
 GType      thunar_column_editor_get_type (void) G_GNUC_CONST;
 
-GtkWidget *thunar_column_editor_new      (void) G_GNUC_MALLOC;
-
 void       thunar_show_column_editor     (gpointer parent);
 
 G_END_DECLS;

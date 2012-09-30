@@ -177,10 +177,10 @@ thunar_group_get_name (ThunarGroup *group)
 
 
 
-static void        thunar_user_finalize   (GObject         *object);
-static void        thunar_user_load       (ThunarUser      *user);
-static ThunarUser *thunar_user_new        (guint32          id);
-
+static void        thunar_user_finalize          (GObject         *object);
+static void        thunar_user_load              (ThunarUser      *user);
+static ThunarUser *thunar_user_new               (guint32          id);
+static ThunarGroup*thunar_user_get_primary_group (ThunarUser      *user);
 
 
 struct _ThunarUserClass
@@ -319,6 +319,19 @@ thunar_user_new (guint32 id)
 }
 
 
+static ThunarGroup*
+thunar_user_get_primary_group (ThunarUser *user)
+{
+  g_return_val_if_fail (THUNAR_IS_USER (user), NULL);
+
+  /* load the user data on-demand */
+  if (G_UNLIKELY (user->name == NULL))
+    thunar_user_load (user);
+
+  return user->primary_group;
+}
+
+
 
 /**
  * thunar_user_get_groups:
@@ -381,49 +394,6 @@ thunar_user_get_groups (ThunarUser *user)
     }
 
   return user->groups;
-}
-
-
-
-/**
- * thunar_user_get_primary_group:
- * @user : a #ThunarUser.
- *
- * Returns the primary group of @user or %NULL if @user
- * has no primary group.
- *
- * No reference is taken for the caller, so you must
- * not call g_object_unref() on the returned object.
- *
- * Return value: the primary group of @user or %NULL.
- **/
-ThunarGroup*
-thunar_user_get_primary_group (ThunarUser *user)
-{
-  g_return_val_if_fail (THUNAR_IS_USER (user), NULL);
-
-  /* load the user data on-demand */
-  if (G_UNLIKELY (user->name == NULL))
-    thunar_user_load (user);
-
-  return user->primary_group;
-}
-
-
-
-/**
- * thunar_user_get_id:
- * @user : a #ThunarUser.
- *
- * Returns the unique id of @user.
- *
- * Return value: the unique id of @user.
- **/
-guint32
-thunar_user_get_id (ThunarUser *user)
-{
-  g_return_val_if_fail (THUNAR_IS_USER (user), 0);
-  return user->id;
 }
 
 

@@ -57,15 +57,7 @@ GType                thunar_renamer_model_get_type       (void) G_GNUC_CONST;
 
 ThunarRenamerModel  *thunar_renamer_model_new            (void) G_GNUC_MALLOC;
 
-gboolean             thunar_renamer_model_get_can_rename (ThunarRenamerModel *renamer_model);
-
-gboolean             thunar_renamer_model_get_frozen     (ThunarRenamerModel *renamer_model);
-void                 thunar_renamer_model_set_frozen     (ThunarRenamerModel *renamer_model,
-                                                          gboolean            frozen);
-
 ThunarRenamerMode    thunar_renamer_model_get_mode       (ThunarRenamerModel *renamer_model);
-void                 thunar_renamer_model_set_mode       (ThunarRenamerModel *renamer_model,
-                                                          ThunarRenamerMode   mode);
 
 ThunarxRenamer      *thunar_renamer_model_get_renamer    (ThunarRenamerModel *renamer_model);
 void                 thunar_renamer_model_set_renamer    (ThunarRenamerModel *renamer_model,

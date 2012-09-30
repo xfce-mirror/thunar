@@ -37,21 +37,11 @@ typedef struct _ThunarListModel      ThunarListModel;
 GType            thunar_list_model_get_type               (void) G_GNUC_CONST;
 
 ThunarListModel *thunar_list_model_new                    (void);
-ThunarListModel *thunar_list_model_new_with_folder        (ThunarFolder     *folder);
-
-gboolean         thunar_list_model_get_case_sensitive     (ThunarListModel  *store);
-void             thunar_list_model_set_case_sensitive     (ThunarListModel  *store,
-                                                           gboolean          case_sensitive);
-
-ThunarDateStyle  thunar_list_model_get_date_style         (ThunarListModel  *store);
-void             thunar_list_model_set_date_style         (ThunarListModel  *store,
-                                                           ThunarDateStyle   date_style);
 
 ThunarFolder    *thunar_list_model_get_folder             (ThunarListModel  *store);
 void             thunar_list_model_set_folder             (ThunarListModel  *store,
                                                            ThunarFolder     *folder);
 
-gboolean         thunar_list_model_get_folders_first      (ThunarListModel  *store);
 void             thunar_list_model_set_folders_first      (ThunarListModel  *store,
                                                            gboolean          folders_first);
 
@@ -62,7 +52,6 @@ void             thunar_list_model_set_show_hidden        (ThunarListModel  *sto
 ThunarFile      *thunar_list_model_get_file               (ThunarListModel  *store,
                                                            GtkTreeIter      *iter);
 
-gint             thunar_list_model_get_num_files          (ThunarListModel  *store);
 
 GList           *thunar_list_model_get_paths_for_files    (ThunarListModel  *store,
                                                            GList            *files);

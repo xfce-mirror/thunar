@@ -1441,21 +1441,3 @@ thunar_location_buttons_action_properties (GtkAction             *action,
     }
 }
 
-
-
-/**
- * thunar_location_buttons_new:
- * 
- * Creates a new #ThunarLocationButtons object, that does
- * not display any path by default.
- *
- * Return value: the newly allocated #ThunarLocationButtons object.
- **/
-GtkWidget*
-thunar_location_buttons_new (void)
-{
-  return g_object_new (THUNAR_TYPE_LOCATION_BUTTONS, NULL);
-}
-
-
-

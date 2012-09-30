@@ -462,21 +462,3 @@ thunar_shortcuts_pane_action_shortcuts_add (GtkAction           *action,
       thunar_file_list_free (lp);
     }
 }
-
-
-
-/**
- * thunar_shortcuts_pane_new:
- *
- * Allocates a new #ThunarShortcutsPane instance.
- *
- * Return value: the newly allocated #ThunarShortcutsPane instance.
- **/
-GtkWidget*
-thunar_shortcuts_pane_new (void)
-{
-  return g_object_new (THUNAR_TYPE_SHORTCUTS_PANE, NULL);
-}
-
-
-

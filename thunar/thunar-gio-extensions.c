@@ -129,23 +129,6 @@ thunar_g_file_is_home (GFile *file)
 
 
 
-gboolean
-thunar_g_file_is_desktop (GFile *file)
-{
-  GFile   *desktop;
-  gboolean is_desktop;
-
-  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
-
-  desktop = thunar_g_file_new_for_desktop ();
-  is_desktop = g_file_equal (desktop, file);
-  g_object_unref (desktop);
-
-  return is_desktop;
-}
-
-
-
 GKeyFile *
 thunar_g_file_query_key_file (GFile              *file,
                               GCancellable       *cancellable,

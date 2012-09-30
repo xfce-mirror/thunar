@@ -118,6 +118,7 @@ static void           thunar_application_volman_watch_destroy   (gpointer       
 #endif
 static gboolean       thunar_application_show_dialogs           (gpointer                user_data);
 static void           thunar_application_show_dialogs_destroy   (gpointer                user_data);
+static GtkWidget     *thunar_application_get_progress_dialog    (ThunarApplication      *application);
 static void           thunar_application_process_files          (ThunarApplication      *application);
 
 
@@ -1046,7 +1047,7 @@ thunar_application_bulk_rename (ThunarApplication *application,
 
 
 
-GtkWidget *
+static GtkWidget *
 thunar_application_get_progress_dialog (ThunarApplication *application)
 {
   _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), NULL);

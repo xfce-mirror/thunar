@@ -35,22 +35,12 @@ typedef struct _ThunarCreateDialog      ThunarCreateDialog;
 #define THUNAR_IS_CREATE_DIALOG_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_CREATE_DIALOG))
 #define THUNAR_CREATE_DIALOG_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_CREATE_DIALOG, ThunarCreateDialogClass))
 
-GType              thunar_create_dialog_get_type         (void) G_GNUC_CONST;
+GType  thunar_create_dialog_get_type (void) G_GNUC_CONST;
 
-GtkWidget         *thunar_create_dialog_new              (void) G_GNUC_MALLOC;
-
-const gchar       *thunar_create_dialog_get_filename     (const ThunarCreateDialog *dialog);
-void               thunar_create_dialog_set_filename     (ThunarCreateDialog       *dialog,
-                                                          const gchar              *filename);
-
-const gchar       *thunar_create_dialog_get_content_type (const ThunarCreateDialog *dialog);
-void               thunar_create_dialog_set_content_type (ThunarCreateDialog       *dialog,
-                                                          const gchar              *content_type);
-
-gchar             *thunar_show_create_dialog             (gpointer                  parent,
-                                                          const gchar              *content_type,
-                                                          const gchar              *filename,
-                                                          const gchar              *title) G_GNUC_MALLOC;
+gchar *thunar_show_create_dialog     (gpointer     parent,
+                                      const gchar *content_type,
+                                      const gchar *filename,
+                                      const gchar *title) G_GNUC_MALLOC;
 
 G_END_DECLS;
 

@@ -38,7 +38,6 @@ GType       thunar_properties_dialog_get_type (void) G_GNUC_CONST;
 
 GtkWidget  *thunar_properties_dialog_new       (GtkWindow              *parent);
 
-GList      *thunar_properties_dialog_get_files (ThunarPropertiesDialog *dialog);
 void        thunar_properties_dialog_set_files (ThunarPropertiesDialog *dialog,  
                                                 GList                  *files);
 

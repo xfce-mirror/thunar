@@ -26,6 +26,10 @@
 
 
 
+static ThunarRenamerPair *thunar_renamer_pair_copy (ThunarRenamerPair *renamer_pair) G_GNUC_MALLOC;
+
+
+
 GType
 thunar_renamer_pair_get_type (void)
 {
@@ -87,7 +91,7 @@ thunar_renamer_pair_new (ThunarFile  *file,
  *
  * Return value: the newly allocated copy of @renamer_pair.
  **/
-ThunarRenamerPair*
+static ThunarRenamerPair*
 thunar_renamer_pair_copy (ThunarRenamerPair *renamer_pair)
 {
   _thunar_return_val_if_fail (renamer_pair != NULL, NULL);

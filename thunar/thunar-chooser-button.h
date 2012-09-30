@@ -38,7 +38,6 @@ GType       thunar_chooser_button_get_type (void) G_GNUC_CONST;
 
 GtkWidget  *thunar_chooser_button_new      (void) G_GNUC_MALLOC;
 
-ThunarFile *thunar_chooser_button_get_file (ThunarChooserButton *chooser_button);
 void        thunar_chooser_button_set_file (ThunarChooserButton *chooser_button,
                                             ThunarFile          *file);
 

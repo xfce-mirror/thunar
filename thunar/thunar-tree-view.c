@@ -188,6 +188,9 @@ static ThunarTreeViewMountData *thunar_tree_view_mount_data_new               (T
                                                                                gboolean                 open_after_mounting,
                                                                                gboolean                 open_in_new_window);
 static void                     thunar_tree_view_mount_data_free              (ThunarTreeViewMountData *data);
+static gboolean                 thunar_tree_view_get_show_hidden              (ThunarTreeView          *view);
+static void                     thunar_tree_view_set_show_hidden              (ThunarTreeView          *view,
+                                                                               gboolean                 show_hidden);
 
 
 
@@ -2486,21 +2489,6 @@ thunar_tree_view_mount_data_free (ThunarTreeViewMountData *data)
 
 
 /**
- * thunar_tree_view_new:
- *
- * Allocates a new #ThunarTreeView instance.
- *
- * Return value: the newly allocated #ThunarTreeView instance.
- **/
-GtkWidget*
-thunar_tree_view_new (void)
-{
-  return g_object_new (THUNAR_TYPE_TREE_VIEW, NULL);
-}
-
-
-
-/**
  * thunar_tree_view_get_show_hidden:
  * @view : a #ThunarTreeView.
  *
@@ -2509,7 +2497,7 @@ thunar_tree_view_new (void)
  *
  * Return value: %TRUE if hidden folders are shown.
  **/
-gboolean
+static gboolean
 thunar_tree_view_get_show_hidden (ThunarTreeView *view)
 {
   _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW (view), FALSE);
@@ -2526,7 +2514,7 @@ thunar_tree_view_get_show_hidden (ThunarTreeView *view)
  * If @show_hidden is %TRUE, @view will shown hidden and
  * backup folders. Else, these folders will be hidden.
  **/
-void
+static void
 thunar_tree_view_set_show_hidden (ThunarTreeView *view,
                                   gboolean        show_hidden)
 {
@@ -2548,4 +2536,19 @@ thunar_tree_view_set_show_hidden (ThunarTreeView *view,
       /* notify listeners */
       g_object_notify (G_OBJECT (view), "show-hidden");
     }
+}
+
+
+
+/**
+ * thunar_tree_view_new:
+ *
+ * Allocates a new #ThunarTreeView instance.
+ *
+ * Return value: the newly allocated #ThunarTreeView instance.
+ **/
+GtkWidget*
+thunar_tree_view_new (void)
+{
+  return g_object_new (THUNAR_TYPE_TREE_VIEW, NULL);
 }

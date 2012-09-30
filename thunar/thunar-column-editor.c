@@ -513,21 +513,6 @@ thunar_column_editor_use_defaults (GtkWidget          *button,
 
 
 /**
- * thunar_column_editor_new:
- *
- * Allocates a new #ThunarColumnEditor instance.
- *
- * Return value: the newly allocated #ThunarColumnEditor.
- **/
-GtkWidget*
-thunar_column_editor_new (void)
-{
-  return g_object_new (THUNAR_TYPE_COLUMN_EDITOR, NULL);
-}
-
-
-
-/**
  * thunar_show_column_editor:
  * @parent : the #GtkWidget the #GdkScreen on which to open the
  *           column editor dialog. May also be %NULL in which case
@@ -568,7 +553,7 @@ thunar_show_column_editor (gpointer parent)
     }
 
   /* display the column editor */
-  dialog = thunar_column_editor_new ();
+  dialog = g_object_new (THUNAR_TYPE_COLUMN_EDITOR, NULL);
 
   /* check if we have a toplevel window */
   if (G_LIKELY (window != NULL && gtk_widget_get_toplevel (window)))

@@ -36,12 +36,6 @@ typedef struct _ThunarDetailsView      ThunarDetailsView;
 
 GType      thunar_details_view_get_type          (void) G_GNUC_CONST;
 
-GtkWidget *thunar_details_view_new               (void);
-
-gboolean   thunar_details_view_get_fixed_columns (ThunarDetailsView *details_view);
-void       thunar_details_view_set_fixed_columns (ThunarDetailsView *details_view,
-                                                  gboolean           fixed_columns);
-
 G_END_DECLS;
 
 #endif /* !__THUNAR_DETAILS_VIEW_H__ */

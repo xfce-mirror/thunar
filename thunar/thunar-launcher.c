@@ -116,7 +116,7 @@ static void                    thunar_launcher_poke_files_finish          (Thuna
                                                                            gpointer                  user_data);
 static ThunarLauncherPokeData *thunar_launcher_poke_data_new              (GList                    *files);
 static void                    thunar_launcher_poke_data_free             (ThunarLauncherPokeData   *data);
-
+static GtkWidget              *thunar_launcher_get_widget                 (const ThunarLauncher     *launcher);
 
 
 struct _ThunarLauncherClass
@@ -1639,7 +1639,7 @@ thunar_launcher_new (void)
  *
  * Return value: the widget associated with @launcher.
  **/
-GtkWidget*
+static GtkWidget*
 thunar_launcher_get_widget (const ThunarLauncher *launcher)
 {
   _thunar_return_val_if_fail (THUNAR_IS_LAUNCHER (launcher), NULL);

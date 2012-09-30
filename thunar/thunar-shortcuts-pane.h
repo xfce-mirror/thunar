@@ -36,8 +36,6 @@ typedef struct _ThunarShortcutsPane      ThunarShortcutsPane;
 
 GType      thunar_shortcuts_pane_get_type  (void) G_GNUC_CONST;
 
-GtkWidget *thunar_shortcuts_pane_new       (void) G_GNUC_MALLOC;
-
 G_END_DECLS;
 
 #endif /* !__THUNAR_SHORTCUTS_PANE_H__ */

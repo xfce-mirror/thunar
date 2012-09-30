@@ -539,7 +539,8 @@ thunar_folder_file_destroyed (ThunarFileMonitor *file_monitor,
   if (G_UNLIKELY (folder->corresponding_file == file))
     {
       /* the folder is useless now */
-      thunar_folder_destroy (folder);
+      if (!folder->in_destruction)
+        g_object_run_dispose (G_OBJECT (folder));
     }
   else
     {
@@ -833,23 +834,4 @@ thunar_folder_reload (ThunarFolder *folder)
 
   /* tell all consumers that we're loading */
   g_object_notify (G_OBJECT (folder), "loading");
-}
-
-
-
-/**
- * thunar_folder_destroy:
- * @folder : a #ThunarFolder instance.
- *
- * Destroy the @folder, this is a replacement for
- * the old gtk_object_destroy function which has been
- * removed from gtk3.
- **/
-void
-thunar_folder_destroy (ThunarFolder *folder)
-{
-  _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
-
-  if (!folder->in_destruction)
-    g_object_run_dispose (G_OBJECT (folder));
 }

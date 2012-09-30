@@ -55,8 +55,6 @@ typedef struct _ThunarUser      ThunarUser;
 GType         thunar_user_get_type          (void) G_GNUC_CONST;
 
 GList        *thunar_user_get_groups        (ThunarUser *user);
-ThunarGroup  *thunar_user_get_primary_group (ThunarUser *user);
-guint32       thunar_user_get_id            (ThunarUser *user);
 const gchar  *thunar_user_get_name          (ThunarUser *user);
 const gchar  *thunar_user_get_real_name     (ThunarUser *user);
 gboolean      thunar_user_is_me             (ThunarUser *user);

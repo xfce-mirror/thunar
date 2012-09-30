@@ -123,6 +123,12 @@ static void                    thunar_renamer_model_item_free           (gpointe
 static gint                    thunar_renamer_model_cmp_array           (gconstpointer            pointer_a,
                                                                          gconstpointer            pointer_b,
                                                                          gpointer                 user_data);
+static gboolean                thunar_renamer_model_get_can_rename      (ThunarRenamerModel      *renamer_model);
+static gboolean                thunar_renamer_model_get_frozen          (ThunarRenamerModel      *renamer_model);
+static void                    thunar_renamer_model_set_frozen          (ThunarRenamerModel      *renamer_model,
+                                                                         gboolean                 frozen);
+static void                    thunar_renamer_model_set_mode            (ThunarRenamerModel      *renamer_model,
+                                                                         ThunarRenamerMode        mode);
 
 
 
@@ -1034,7 +1040,7 @@ thunar_renamer_model_new (void)
  *
  * Return value: %TRUE if bulk rename can be performed.
  **/
-gboolean
+static gboolean
 thunar_renamer_model_get_can_rename (ThunarRenamerModel *renamer_model)
 {
   gboolean can_rename = FALSE;
@@ -1072,7 +1078,7 @@ thunar_renamer_model_get_can_rename (ThunarRenamerModel *renamer_model)
  *
  * Return value: %TRUE if @renamer_model is frozen.
  **/
-gboolean
+static gboolean
 thunar_renamer_model_get_frozen (ThunarRenamerModel *renamer_model)
 {
   _thunar_return_val_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model), FALSE);
@@ -1090,7 +1096,7 @@ thunar_renamer_model_get_frozen (ThunarRenamerModel *renamer_model)
  * and no updates will be processed until you call this method again with a
  * value of %FALSE for @frozen.
  **/
-void
+static void
 thunar_renamer_model_set_frozen (ThunarRenamerModel *renamer_model,
                                  gboolean            frozen)
 {
@@ -1154,7 +1160,7 @@ thunar_renamer_model_get_mode (ThunarRenamerModel *renamer_model)
  * Sets the rename operation mode of @renamer_model
  * to @mode and updates all items.
  **/
-void
+static void
 thunar_renamer_model_set_mode (ThunarRenamerModel *renamer_model,
                                ThunarRenamerMode   mode)
 {

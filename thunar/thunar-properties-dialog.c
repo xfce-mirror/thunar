@@ -97,7 +97,7 @@ static void     thunar_properties_dialog_icon_button_clicked  (GtkWidget        
                                                                ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_update               (ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_update_providers     (ThunarPropertiesDialog      *dialog);
-
+static GList   *thunar_properties_dialog_get_files            (ThunarPropertiesDialog      *dialog);
 
 
 struct _ThunarPropertiesDialogClass
@@ -1321,7 +1321,7 @@ thunar_properties_dialog_new (GtkWindow *parent)
  * Return value: list of #ThunarFile's displayed by @dialog
  *               or %NULL.
  **/
-GList*
+static GList*
 thunar_properties_dialog_get_files (ThunarPropertiesDialog *dialog)
 {
   _thunar_return_val_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog), NULL);

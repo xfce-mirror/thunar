@@ -43,26 +43,29 @@ enum
 
 
 
-static void       thunar_emblem_chooser_dispose         (GObject                  *object);
-static void       thunar_emblem_chooser_finalize        (GObject                  *object);
-static void       thunar_emblem_chooser_get_property    (GObject                  *object,
-                                                         guint                     prop_id,
-                                                         GValue                   *value,
-                                                         GParamSpec               *pspec);
-static void       thunar_emblem_chooser_set_property    (GObject                  *object,
-                                                         guint                     prop_id,
-                                                         const GValue             *value,
-                                                         GParamSpec               *pspec);
-static void       thunar_emblem_chooser_realize         (GtkWidget                *widget);
-static void       thunar_emblem_chooser_unrealize       (GtkWidget                *widget);
-static void       thunar_emblem_chooser_button_toggled  (GtkToggleButton          *button,
-                                                         ThunarEmblemChooser      *chooser);
-static void       thunar_emblem_chooser_file_changed    (ThunarEmblemChooser      *chooser);
-static void       thunar_emblem_chooser_theme_changed   (GtkIconTheme             *icon_theme,
-                                                         ThunarEmblemChooser      *chooser);
-static void       thunar_emblem_chooser_create_buttons  (ThunarEmblemChooser      *chooser);
-static GtkWidget *thunar_emblem_chooser_create_button   (ThunarEmblemChooser      *chooser,
-                                                         const gchar              *emblem);
+static void       thunar_emblem_chooser_dispose         (GObject                   *object);
+static void       thunar_emblem_chooser_finalize        (GObject                   *object);
+static void       thunar_emblem_chooser_get_property    (GObject                   *object,
+                                                         guint                      prop_id,
+                                                         GValue                    *value,
+                                                         GParamSpec                *pspec);
+static void       thunar_emblem_chooser_set_property    (GObject                   *object,
+                                                         guint                      prop_id,
+                                                         const GValue              *value,
+                                                         GParamSpec                *pspec);
+static void       thunar_emblem_chooser_realize         (GtkWidget                 *widget);
+static void       thunar_emblem_chooser_unrealize       (GtkWidget                 *widget);
+static void       thunar_emblem_chooser_button_toggled  (GtkToggleButton           *button,
+                                                         ThunarEmblemChooser       *chooser);
+static void       thunar_emblem_chooser_file_changed    (ThunarEmblemChooser       *chooser);
+static void       thunar_emblem_chooser_theme_changed   (GtkIconTheme              *icon_theme,
+                                                         ThunarEmblemChooser       *chooser);
+static void       thunar_emblem_chooser_create_buttons  (ThunarEmblemChooser       *chooser);
+static GtkWidget *thunar_emblem_chooser_create_button   (ThunarEmblemChooser       *chooser,
+                                                         const gchar               *emblem);
+static GList     *thunar_emblem_chooser_get_files       (const ThunarEmblemChooser *chooser);
+static void       thunar_emblem_chooser_set_files       (ThunarEmblemChooser       *chooser,
+                                                         GList                     *files);
 
 
 

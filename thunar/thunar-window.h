@@ -37,15 +37,9 @@ typedef struct _ThunarWindow      ThunarWindow;
 
 GType           thunar_window_get_type              (void) G_GNUC_CONST;
 
-GtkWidget      *thunar_window_new                   (void);
-
 ThunarFile     *thunar_window_get_current_directory (ThunarWindow   *window);
 void            thunar_window_set_current_directory (ThunarWindow   *window,
                                                      ThunarFile     *current_directory);
-
-ThunarZoomLevel thunar_window_get_zoom_level        (ThunarWindow   *window);
-void            thunar_window_set_zoom_level        (ThunarWindow   *window,
-                                                     ThunarZoomLevel zoom_level);
 
 void            thunar_window_scroll_to_file        (ThunarWindow   *window,
                                                      ThunarFile     *file,

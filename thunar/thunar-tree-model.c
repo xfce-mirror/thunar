@@ -160,6 +160,9 @@ static gboolean             thunar_tree_model_node_traverse_free      (GNode    
                                                                        gpointer                user_data);
 static gboolean             thunar_tree_model_node_traverse_visible   (GNode                  *node,
                                                                        gpointer                user_data);
+static gboolean             thunar_tree_model_get_case_sensitive      (ThunarTreeModel        *model);
+static void                 thunar_tree_model_set_case_sensitive      (ThunarTreeModel        *model,
+                                                                       gboolean                case_sensitive);
 
 
 
@@ -1893,7 +1896,7 @@ thunar_tree_model_get_default (void)
  *
  * Return value: %TRUE if @model is sorted case-sensitive.
  **/
-gboolean
+static gboolean
 thunar_tree_model_get_case_sensitive (ThunarTreeModel *model)
 {
   _thunar_return_val_if_fail (THUNAR_IS_TREE_MODEL (model), FALSE);
@@ -1910,7 +1913,7 @@ thunar_tree_model_get_case_sensitive (ThunarTreeModel *model)
  * If @case_sensitive is %TRUE the @model will be sorted
  * in a case-sensitive manner.
  **/
-void
+static void
 thunar_tree_model_set_case_sensitive (ThunarTreeModel *model,
                                       gboolean         case_sensitive)
 {

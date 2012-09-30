@@ -36,8 +36,6 @@ typedef struct _ThunarLocationButtons      ThunarLocationButtons;
 
 GType      thunar_location_buttons_get_type (void) G_GNUC_CONST;
 
-GtkWidget *thunar_location_buttons_new      (void);
-
 G_END_DECLS;
 
 #endif /* !__THUNAR_LOCATION_BUTTONS_H__ */

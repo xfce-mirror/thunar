@@ -51,47 +51,52 @@ enum
 
 
 
-static void     thunar_chooser_dialog_dispose             (GObject                  *object);
-static void     thunar_chooser_dialog_get_property        (GObject                  *object,
-                                                           guint                     prop_id,
-                                                           GValue                   *value,
-                                                           GParamSpec               *pspec);
-static void     thunar_chooser_dialog_set_property        (GObject                  *object,
-                                                           guint                     prop_id,
-                                                           const GValue             *value,
-                                                           GParamSpec               *pspec);
-static void     thunar_chooser_dialog_realize             (GtkWidget                *widget);
-static void     thunar_chooser_dialog_response            (GtkDialog                *widget,
-                                                           gint                      response);
-static gboolean thunar_chooser_dialog_selection_func      (GtkTreeSelection         *selection,
-                                                           GtkTreeModel             *model,
-                                                           GtkTreePath              *path,
-                                                           gboolean                  path_currently_selected,
-                                                           gpointer                  user_data);
-static gboolean thunar_chooser_dialog_context_menu        (ThunarChooserDialog      *dialog,
-                                                           guint                     button,
-                                                           guint32                   time);
-static void     thunar_chooser_dialog_update_accept       (ThunarChooserDialog      *dialog);
-static void     thunar_chooser_dialog_update_header       (ThunarChooserDialog      *dialog);
-static void     thunar_chooser_dialog_action_remove       (ThunarChooserDialog      *dialog);
-static void     thunar_chooser_dialog_browse_clicked      (GtkWidget                *button,
-                                                           ThunarChooserDialog      *dialog);
-static gboolean thunar_chooser_dialog_button_press_event  (GtkWidget                *tree_view,
-                                                           GdkEventButton           *event,
-                                                           ThunarChooserDialog      *dialog);
-static void     thunar_chooser_dialog_notify_expanded     (GtkExpander              *expander,
-                                                           GParamSpec               *pspec,
-                                                           ThunarChooserDialog      *dialog);
-static void     thunar_chooser_dialog_expand              (ThunarChooserDialog      *dialog);
-static gboolean thunar_chooser_dialog_popup_menu          (GtkWidget                *tree_view,
-                                                           ThunarChooserDialog      *dialog);
-static void     thunar_chooser_dialog_row_activated       (GtkTreeView              *treeview,
-                                                           GtkTreePath              *path,
-                                                           GtkTreeViewColumn        *column,
-                                                           ThunarChooserDialog      *dialog);
-static void     thunar_chooser_dialog_selection_changed   (GtkTreeSelection         *selection,
-                                                           ThunarChooserDialog      *dialog);
-
+static void        thunar_chooser_dialog_dispose             (GObject                  *object);
+static void        thunar_chooser_dialog_get_property        (GObject                  *object,
+                                                              guint                     prop_id,
+                                                              GValue                   *value,
+                                                              GParamSpec               *pspec);
+static void        thunar_chooser_dialog_set_property        (GObject                  *object,
+                                                              guint                     prop_id,
+                                                              const GValue             *value,
+                                                              GParamSpec               *pspec);
+static void        thunar_chooser_dialog_realize             (GtkWidget                *widget);
+static void        thunar_chooser_dialog_response            (GtkDialog                *widget,
+                                                              gint                      response);
+static gboolean    thunar_chooser_dialog_selection_func      (GtkTreeSelection         *selection,
+                                                              GtkTreeModel             *model,
+                                                              GtkTreePath              *path,
+                                                              gboolean                  path_currently_selected,
+                                                              gpointer                  user_data);
+static gboolean    thunar_chooser_dialog_context_menu        (ThunarChooserDialog      *dialog,
+                                                              guint                     button,
+                                                              guint32                   time);
+static void        thunar_chooser_dialog_update_accept       (ThunarChooserDialog      *dialog);
+static void        thunar_chooser_dialog_update_header       (ThunarChooserDialog      *dialog);
+static void        thunar_chooser_dialog_action_remove       (ThunarChooserDialog      *dialog);
+static void        thunar_chooser_dialog_browse_clicked      (GtkWidget                *button,
+                                                              ThunarChooserDialog      *dialog);
+static gboolean    thunar_chooser_dialog_button_press_event  (GtkWidget                *tree_view,
+                                                              GdkEventButton           *event,
+                                                              ThunarChooserDialog      *dialog);
+static void        thunar_chooser_dialog_notify_expanded     (GtkExpander              *expander,
+                                                              GParamSpec               *pspec,
+                                                              ThunarChooserDialog      *dialog);
+static void        thunar_chooser_dialog_expand              (ThunarChooserDialog      *dialog);
+static gboolean    thunar_chooser_dialog_popup_menu          (GtkWidget                *tree_view,
+                                                              ThunarChooserDialog      *dialog);
+static void        thunar_chooser_dialog_row_activated       (GtkTreeView              *treeview,
+                                                              GtkTreePath              *path,
+                                                              GtkTreeViewColumn        *column,
+                                                              ThunarChooserDialog      *dialog);
+static void        thunar_chooser_dialog_selection_changed   (GtkTreeSelection         *selection,
+                                                              ThunarChooserDialog      *dialog);
+static ThunarFile *thunar_chooser_dialog_get_file            (ThunarChooserDialog *dialog);
+static void        thunar_chooser_dialog_set_file            (ThunarChooserDialog *dialog,
+                                                              ThunarFile          *file);
+static gboolean    thunar_chooser_dialog_get_open            (ThunarChooserDialog *dialog);
+static void        thunar_chooser_dialog_set_open            (ThunarChooserDialog *dialog,
+                                                              gboolean             open);
 
 
 struct _ThunarChooserDialogClass
@@ -1043,21 +1048,6 @@ thunar_chooser_dialog_selection_changed (GtkTreeSelection    *selection,
 
 
 /**
- * thunar_chooser_dialog_new:
- *
- * Allocates a new #ThunarChooserDialog.
- *
- * Return value: the newly allocated #ThunarChooserDialog.
- **/
-GtkWidget*
-thunar_chooser_dialog_new (void)
-{
-  return g_object_new (THUNAR_TYPE_CHOOSER_DIALOG, NULL);
-}
-
-
-
-/**
  * thunar_chooser_dialog_get_file:
  * @dialog : a #ThunarChooserDialog.
  *
@@ -1066,7 +1056,7 @@ thunar_chooser_dialog_new (void)
  *
  * Return value: the #ThunarFile associated with @dialog.
  **/
-ThunarFile*
+static ThunarFile*
 thunar_chooser_dialog_get_file (ThunarChooserDialog *dialog)
 {
   _thunar_return_val_if_fail (THUNAR_IS_CHOOSER_DIALOG (dialog), NULL);
@@ -1082,7 +1072,7 @@ thunar_chooser_dialog_get_file (ThunarChooserDialog *dialog)
  *
  * Associates @dialog with @file.
  **/
-void
+static void
 thunar_chooser_dialog_set_file (ThunarChooserDialog *dialog,
                                 ThunarFile          *file)
 {
@@ -1143,7 +1133,7 @@ thunar_chooser_dialog_set_file (ThunarChooserDialog *dialog,
  *
  * Return value: %TRUE if @dialog should open the file.
  **/
-gboolean
+static gboolean
 thunar_chooser_dialog_get_open (ThunarChooserDialog *dialog)
 {
   _thunar_return_val_if_fail (THUNAR_IS_CHOOSER_DIALOG (dialog), FALSE);
@@ -1159,7 +1149,7 @@ thunar_chooser_dialog_get_open (ThunarChooserDialog *dialog)
  *
  * Sets whether the chooser @dialog should open the file.
  **/
-void
+static void
 thunar_chooser_dialog_set_open (ThunarChooserDialog *dialog,
                                 gboolean             open)
 {

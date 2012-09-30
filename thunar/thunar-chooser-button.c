@@ -206,7 +206,7 @@ thunar_chooser_button_get_property (GObject    *object,
   switch (prop_id)
     {
     case PROP_FILE:
-      g_value_set_object (value, thunar_chooser_button_get_file (chooser_button));
+      g_value_set_object (value, chooser_button->file);
       break;
 
     default:
@@ -530,23 +530,6 @@ GtkWidget*
 thunar_chooser_button_new (void)
 {
   return g_object_new (THUNAR_TYPE_CHOOSER_BUTTON, NULL);
-}
-
-
-
-/**
- * thunar_chooser_button_get_file:
- * @chooser_button : a #ThunarChooserButton instance.
- *
- * Returns the #ThunarFile associated with @chooser_button.
- *
- * Return value: the file associated with @chooser_button.
- **/
-ThunarFile*
-thunar_chooser_button_get_file (ThunarChooserButton *chooser_button)
-{
-  _thunar_return_val_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button), NULL);
-  return chooser_button->file;
 }
 
 

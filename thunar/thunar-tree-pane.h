@@ -36,8 +36,6 @@ typedef struct _ThunarTreePane      ThunarTreePane;
 
 GType      thunar_tree_pane_get_type (void) G_GNUC_CONST;
 
-GtkWidget *thunar_tree_pane_new      (void) G_GNUC_MALLOC;
-
 G_END_DECLS;
 
 #endif /* !__THUNAR_TREE_PANE_H__ */

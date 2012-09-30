@@ -66,8 +66,6 @@ gboolean              thunar_application_bulk_rename                (ThunarAppli
                                                                      const gchar       *startup_id,
                                                                      GError           **error);
 
-GtkWidget            *thunar_application_get_progress_dialog        (ThunarApplication *application);
-
 gboolean              thunar_application_process_filenames          (ThunarApplication *application,
                                                                      const gchar       *working_directory,
                                                                      gchar            **filenames,

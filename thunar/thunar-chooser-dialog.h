@@ -36,16 +36,6 @@ typedef struct _ThunarChooserDialog      ThunarChooserDialog;
 
 GType       thunar_chooser_dialog_get_type  (void) G_GNUC_CONST;
 
-GtkWidget  *thunar_chooser_dialog_new       (void) G_GNUC_MALLOC;
-
-ThunarFile *thunar_chooser_dialog_get_file  (ThunarChooserDialog *dialog);
-void        thunar_chooser_dialog_set_file  (ThunarChooserDialog *dialog,
-                                             ThunarFile          *file);
-
-gboolean    thunar_chooser_dialog_get_open  (ThunarChooserDialog *dialog);
-void        thunar_chooser_dialog_set_open  (ThunarChooserDialog *dialog,
-                                             gboolean             open);
-
 void        thunar_show_chooser_dialog      (gpointer             parent,
                                              ThunarFile          *file,
                                              gboolean             open);

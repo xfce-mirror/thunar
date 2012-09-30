@@ -70,6 +70,9 @@ static void     thunar_size_label_status_update         (ThunarDeepCountJob   *j
                                                          guint                 directory_count,
                                                          guint                 unreadable_directory_count,
                                                          ThunarSizeLabel      *size_label);
+static GList   *thunar_size_label_get_files             (ThunarSizeLabel      *size_label);
+static void     thunar_size_label_set_files             (ThunarSizeLabel      *size_label,
+                                                         GList                *files);
 
 
 
@@ -398,27 +401,12 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
 
 
 /**
- * thunar_size_label_new:
- *
- * Allocates a new #ThunarSizeLabel instance.
- *
- * Return value: the newly allocated #ThunarSizeLabel.
- **/
-GtkWidget*
-thunar_size_label_new (void)
-{
-  return g_object_new (THUNAR_TYPE_SIZE_LABEL, NULL);
-}
-
-
-
-/**
  * thunar_size_label_get_files:
  * @size_label : a #ThunarSizeLabel.
  *
  * Get the files displayed by the @size_label.
  **/
-GList*
+static GList*
 thunar_size_label_get_files (ThunarSizeLabel *size_label)
 {
   _thunar_return_val_if_fail (THUNAR_IS_SIZE_LABEL (size_label), NULL);
@@ -434,7 +422,7 @@ thunar_size_label_get_files (ThunarSizeLabel *size_label)
  *
  * Sets @file as the #ThunarFile displayed by the @size_label.
  **/
-void
+static void
 thunar_size_label_set_files (ThunarSizeLabel *size_label,
                              GList           *files)
 {
@@ -471,4 +459,18 @@ thunar_size_label_set_files (ThunarSizeLabel *size_label,
   g_object_notify (G_OBJECT (size_label), "files");
 }
 
+
+
+/**
+ * thunar_size_label_new:
+ *
+ * Allocates a new #ThunarSizeLabel instance.
+ *
+ * Return value: the newly allocated #ThunarSizeLabel.
+ **/
+GtkWidget*
+thunar_size_label_new (void)
+{
+  return g_object_new (THUNAR_TYPE_SIZE_LABEL, NULL);
+}
 

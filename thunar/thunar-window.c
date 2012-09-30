@@ -214,6 +214,8 @@ static gboolean thunar_window_merge_idle                  (gpointer             
 static void     thunar_window_merge_idle_destroy          (gpointer                user_data);
 static gboolean thunar_window_save_geometry_timer         (gpointer                user_data);
 static void     thunar_window_save_geometry_timer_destroy (gpointer                user_data);
+static void     thunar_window_set_zoom_level              (ThunarWindow           *window,
+                                                           ThunarZoomLevel         zoom_level);
 
 
 
@@ -2842,17 +2844,32 @@ thunar_window_save_geometry_timer_destroy (gpointer user_data)
 
 
 /**
- * thunar_window_new:
+ * thunar_window_set_zoom_level:
+ * @window     : a #ThunarWindow instance.
+ * @zoom_level : the new zoom level for @window.
  *
- * Allocates a new #ThunarWindow instance, which isn't
- * associated with any directory.
- *
- * Return value: the newly allocated #ThunarWindow instance.
+ * Sets the zoom level for @window to @zoom_level.
  **/
-GtkWidget*
-thunar_window_new (void)
+void
+thunar_window_set_zoom_level (ThunarWindow   *window,
+                              ThunarZoomLevel zoom_level)
 {
-  return g_object_new (THUNAR_TYPE_WINDOW, NULL);
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (zoom_level < THUNAR_ZOOM_N_LEVELS);
+
+  /* check if we have a new zoom level */
+  if (G_LIKELY (window->zoom_level != zoom_level))
+    {
+      /* remember the new zoom level */
+      window->zoom_level = zoom_level;
+
+      /* update the "Zoom In" and "Zoom Out" actions */
+      thunar_gtk_action_group_set_action_sensitive (window->action_group, "zoom-in", (zoom_level < THUNAR_ZOOM_N_LEVELS - 1));
+      thunar_gtk_action_group_set_action_sensitive (window->action_group, "zoom-out", (zoom_level > 0));
+
+      /* notify listeners */
+      g_object_notify (G_OBJECT (window), "zoom-level");
+    }
 }
 
 
@@ -2984,54 +3001,6 @@ thunar_window_set_current_directory (ThunarWindow *window,
        * new current directory */
       if (selected_files.data != NULL)
         thunar_component_set_selected_files (THUNAR_COMPONENT (window->view), &selected_files);
-    }
-}
-
-
-
-/**
- * thunar_window_get_zoom_level:
- * @window : a #ThunarWindow instance.
- *
- * Returns the #ThunarZoomLevel for @window.
- *
- * Return value: the #ThunarZoomLevel for @indow.
- **/
-ThunarZoomLevel
-thunar_window_get_zoom_level (ThunarWindow *window)
-{
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), THUNAR_ZOOM_LEVEL_NORMAL);
-  return window->zoom_level;
-}
-
-
-
-/**
- * thunar_window_set_zoom_level:
- * @window     : a #ThunarWindow instance.
- * @zoom_level : the new zoom level for @window.
- *
- * Sets the zoom level for @window to @zoom_level.
- **/
-void
-thunar_window_set_zoom_level (ThunarWindow   *window,
-                              ThunarZoomLevel zoom_level)
-{
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
-  _thunar_return_if_fail (zoom_level < THUNAR_ZOOM_N_LEVELS);
-
-  /* check if we have a new zoom level */
-  if (G_LIKELY (window->zoom_level != zoom_level))
-    {
-      /* remember the new zoom level */
-      window->zoom_level = zoom_level;
-
-      /* update the "Zoom In" and "Zoom Out" actions */
-      thunar_gtk_action_group_set_action_sensitive (window->action_group, "zoom-in", (zoom_level < THUNAR_ZOOM_N_LEVELS - 1));
-      thunar_gtk_action_group_set_action_sensitive (window->action_group, "zoom-out", (zoom_level > 0));
-
-      /* notify listeners */
-      g_object_notify (G_OBJECT (window), "zoom-level");
     }
 }
 

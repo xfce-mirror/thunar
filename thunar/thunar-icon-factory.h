@@ -63,8 +63,6 @@ GType                  thunar_icon_factory_get_type           (void) G_GNUC_CONS
 ThunarIconFactory     *thunar_icon_factory_get_default        (void);
 ThunarIconFactory     *thunar_icon_factory_get_for_icon_theme (GtkIconTheme             *icon_theme);
 
-GtkIconTheme          *thunar_icon_factory_get_icon_theme     (const ThunarIconFactory  *factory);
-
 GdkPixbuf             *thunar_icon_factory_load_icon          (ThunarIconFactory        *factory,
                                                                const gchar              *name,
                                                                gint                      size,

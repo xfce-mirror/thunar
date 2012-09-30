@@ -36,18 +36,6 @@ typedef struct _ThunarRenamerDialog      ThunarRenamerDialog;
 
 GType       thunar_renamer_dialog_get_type              (void) G_GNUC_CONST;
 
-GtkWidget  *thunar_renamer_dialog_new                   (void) G_GNUC_MALLOC;
-
-ThunarFile *thunar_renamer_dialog_get_current_directory (ThunarRenamerDialog *renamer_dialog);
-void        thunar_renamer_dialog_set_current_directory (ThunarRenamerDialog *renamer_dialog,
-                                                         ThunarFile          *current_directory);
-
-GList      *thunar_renamer_dialog_get_selected_files    (ThunarRenamerDialog *renamer_dialog);
-
-gboolean    thunar_renamer_dialog_get_standalone        (ThunarRenamerDialog *renamer_dialog);
-void        thunar_renamer_dialog_set_standalone        (ThunarRenamerDialog *renamer_dialog,
-                                                         gboolean             fixed);
-
 void        thunar_show_renamer_dialog                  (gpointer             parent,
                                                          ThunarFile          *current_directory,
                                                          GList               *files,

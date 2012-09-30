@@ -38,7 +38,6 @@ GType           thunar_launcher_get_type            (void) G_GNUC_CONST;
 
 ThunarLauncher *thunar_launcher_new                 (void) G_GNUC_MALLOC;
 
-GtkWidget      *thunar_launcher_get_widget          (const ThunarLauncher *launcher);
 void            thunar_launcher_set_widget          (ThunarLauncher       *launcher,
                                                      GtkWidget            *widget);
 

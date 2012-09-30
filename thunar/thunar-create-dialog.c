@@ -43,19 +43,24 @@ enum
 
 
 
-static void thunar_create_dialog_dispose      (GObject                 *object);
-static void thunar_create_dialog_get_property (GObject                 *object,
-                                               guint                    prop_id,
-                                               GValue                  *value,
-                                               GParamSpec              *pspec);
-static void thunar_create_dialog_set_property (GObject                 *object,
-                                               guint                    prop_id,
-                                               const GValue            *value,
-                                               GParamSpec              *pspec);
-static void thunar_create_dialog_realize      (GtkWidget               *widget);
-static void thunar_create_dialog_update_image (ThunarCreateDialog      *dialog);
-static void thunar_create_dialog_text_changed (GtkWidget               *entry,
-                                               ThunarCreateDialog      *dialog);
+static void         thunar_create_dialog_dispose          (GObject                 *object);
+static void         thunar_create_dialog_get_property     (GObject                 *object,
+                                                           guint                    prop_id,
+                                                           GValue                  *value,
+                                                           GParamSpec              *pspec);
+static void         thunar_create_dialog_set_property     (GObject                 *object,
+                                                           guint                    prop_id,
+                                                           const GValue            *value,
+                                                           GParamSpec              *pspec);
+static void         thunar_create_dialog_realize          (GtkWidget               *widget);
+static void         thunar_create_dialog_update_image     (ThunarCreateDialog      *dialog);
+static void         thunar_create_dialog_text_changed     (GtkWidget               *entry,
+                                                           ThunarCreateDialog      *dialog);
+static const gchar *thunar_create_dialog_get_filename     (const ThunarCreateDialog *dialog);
+static void         thunar_create_dialog_set_filename     (ThunarCreateDialog       *dialog,
+                                                           const gchar              *filename);
+static void         thunar_create_dialog_set_content_type (ThunarCreateDialog       *dialog,
+                                                           const gchar              *content_type);
 
 
 
@@ -189,7 +194,7 @@ thunar_create_dialog_get_property (GObject    *object,
       break;
 
     case PROP_CONTENT_TYPE:
-      g_value_set_string (value, thunar_create_dialog_get_content_type (dialog));
+      g_value_set_string (value, dialog->content_type);
       break;
 
     default:
@@ -286,21 +291,6 @@ thunar_create_dialog_text_changed (GtkWidget          *entry,
 
 
 /**
- * thunar_create_dialog_new:
- *
- * Allocates a new #ThunarCreateDialog instance.
- *
- * Return value: the newly allocated #ThunarCreateDialog instance.
- **/
-GtkWidget*
-thunar_create_dialog_new (void)
-{
-  return g_object_new (THUNAR_TYPE_CREATE_DIALOG, NULL);
-}
-
-
-
-/**
  * thunar_create_dialog_get_filename:
  * @dialog : a #ThunarCreateDialog.
  *
@@ -363,23 +353,6 @@ thunar_create_dialog_set_filename (ThunarCreateDialog *dialog,
 
   /* notify listeners */
   g_object_notify (G_OBJECT (dialog), "filename");
-}
-
-
-
-/**
- * thunar_create_dialog_get_content_type:
- * @dialog : a #ThunarCreateDialog.
- *
- * Returns the current content type for @dialog or %NULL.
- *
- * Return value: the content type for @dialog.
- **/
-const gchar *
-thunar_create_dialog_get_content_type (const ThunarCreateDialog *dialog)
-{
-  _thunar_return_val_if_fail (THUNAR_IS_CREATE_DIALOG (dialog), NULL);
-  return dialog->content_type;
 }
 
 

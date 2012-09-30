@@ -118,7 +118,9 @@ static void                 thunar_permissions_chooser_job_start        (ThunarP
 static gboolean             thunar_permissions_chooser_row_separator    (GtkTreeModel                   *model,
                                                                          GtkTreeIter                    *iter,
                                                                          gpointer                        data);
-
+static GList               *thunar_permissions_chooser_get_files        (ThunarPermissionsChooser       *chooser);
+static void                 thunar_permissions_chooser_set_files        (ThunarPermissionsChooser       *chooser,
+                                                                         GList                          *files);
 
 
 struct _ThunarPermissionsChooserClass
@@ -1326,21 +1328,6 @@ thunar_permissions_chooser_row_separator (GtkTreeModel *model,
 
 
 /**
- * thunar_permissions_chooser_new:
- *
- * Allocates a new #ThunarPermissionsChooser instance.
- *
- * Return value: the newly allocated #ThunarPermissionsChooser.
- **/
-GtkWidget*
-thunar_permissions_chooser_new (void)
-{
-  return g_object_new (THUNAR_TYPE_PERMISSIONS_CHOOSER, NULL);
-}
-
-
-
-/**
  * thunar_permissions_chooser_get_files:
  * @chooser : a #ThunarPermissionsChooser.
  *
@@ -1408,3 +1395,16 @@ thunar_permissions_chooser_set_files (ThunarPermissionsChooser *chooser,
 }
 
 
+
+/**
+ * thunar_permissions_chooser_new:
+ *
+ * Allocates a new #ThunarPermissionsChooser instance.
+ *
+ * Return value: the newly allocated #ThunarPermissionsChooser.
+ **/
+GtkWidget*
+thunar_permissions_chooser_new (void)
+{
+  return g_object_new (THUNAR_TYPE_PERMISSIONS_CHOOSER, NULL);
+}

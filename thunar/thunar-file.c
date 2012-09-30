@@ -114,6 +114,12 @@ static void               thunar_file_monitor                  (GFileMonitor    
                                                                 GFile                  *other_path,
                                                                 GFileMonitorEvent       event_type,
                                                                 gpointer                user_data);
+static gboolean           thunar_file_load                     (ThunarFile             *file,
+                                                                GCancellable           *cancellable,
+                                                                GError                **error);
+static gboolean           thunar_file_is_readable              (const ThunarFile       *file);
+static gboolean           thunar_file_same_filesystem          (const ThunarFile       *file_a,
+                                                                const ThunarFile       *file_b);
 
 
 
@@ -693,7 +699,7 @@ thunar_file_get_for_uri (const gchar *uri,
  *
  * Return value: %TRUE on success, %FALSE on error or interruption.
  **/
-gboolean
+static gboolean
 thunar_file_load (ThunarFile   *file,
                   GCancellable *cancellable,
                   GError      **error)
@@ -768,9 +774,6 @@ thunar_file_load (ThunarFile   *file,
   file->basename = g_file_get_basename (file->gfile);
   _thunar_assert (file->basename != NULL);
 
-  /* assume all files are not thumbnails themselves */
-  file->is_thumbnail = FALSE;
-
   /* create a GFile for the $HOME/.thumbnails/ directory */
   thumbnail_dir_path = g_build_filename (xfce_get_homedir (), ".thumbnails", NULL);
   thumbnail_dir = g_file_new_for_path (thumbnail_dir_path);
@@ -778,9 +781,6 @@ thunar_file_load (ThunarFile   *file,
   /* check if this file is a thumbnail */
   if (g_file_has_prefix (file->gfile, thumbnail_dir))
     {
-      /* remember that this file is a thumbnail */
-      file->is_thumbnail = TRUE;
-
       /* use the filename as custom icon name for thumbnails */
       file->custom_icon_name = g_file_get_path (file->gfile);
     }
@@ -2250,7 +2250,7 @@ thunar_file_is_executable (const ThunarFile *file)
  *
  * Return value: %TRUE if @file can be read.
  **/
-gboolean
+static gboolean
 thunar_file_is_readable (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
@@ -2801,15 +2801,6 @@ thunar_file_get_thumbnail_path (ThunarFile *file)
     }
 
   return file->thumbnail_path;
-}
-
-
-
-gboolean
-thunar_file_is_thumbnail (const ThunarFile *file)
-{
-  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  return file->is_thumbnail;
 }
 
 
@@ -3398,7 +3389,7 @@ thunar_file_compare_by_name (const ThunarFile *file_a,
 
 
 
-gboolean
+static gboolean
 thunar_file_same_filesystem (const ThunarFile *file_a,
                              const ThunarFile *file_b)
 {

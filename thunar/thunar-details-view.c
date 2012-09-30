@@ -98,6 +98,9 @@ static void         thunar_details_view_columns_changed         (ThunarColumnMod
 static void         thunar_details_view_zoom_level_changed      (ThunarDetailsView      *details_view);
 static void         thunar_details_view_action_setup_columns    (GtkAction              *action,
                                                                  ThunarDetailsView      *details_view);
+static gboolean     thunar_details_view_get_fixed_columns       (ThunarDetailsView      *details_view);
+static void         thunar_details_view_set_fixed_columns       (ThunarDetailsView      *details_view,
+                                                                 gboolean                fixed_columns);
 
 
 
@@ -839,22 +842,6 @@ thunar_details_view_action_setup_columns (GtkAction         *action,
 
 
 /**
- * thunar_details_view_new:
- *
- * Allocates a new #ThunarDetailsView instance, which is not
- * associated with any #ThunarListModel yet.
- *
- * Return value: the newly allocated #ThunarDetailsView instance.
- **/
-GtkWidget*
-thunar_details_view_new (void)
-{
-  return g_object_new (THUNAR_TYPE_DETAILS_VIEW, NULL);
-}
-
-
-
-/**
  * thunar_details_view_get_fixed_columns:
  * @details_view : a #ThunarDetailsView.
  *
@@ -862,7 +849,7 @@ thunar_details_view_new (void)
  *
  * Return value: %TRUE if @details_view uses fixed column widths.
  **/
-gboolean
+static gboolean
 thunar_details_view_get_fixed_columns (ThunarDetailsView *details_view)
 {
   _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (details_view), FALSE);
@@ -878,7 +865,7 @@ thunar_details_view_get_fixed_columns (ThunarDetailsView *details_view)
  *
  * Applies @fixed_columns to @details_view.
  **/
-void
+static void
 thunar_details_view_set_fixed_columns (ThunarDetailsView *details_view,
                                        gboolean           fixed_columns)
 {
@@ -927,5 +914,3 @@ thunar_details_view_set_fixed_columns (ThunarDetailsView *details_view,
       g_object_notify (G_OBJECT (details_view), "fixed-columns");
     }
 }
-
-

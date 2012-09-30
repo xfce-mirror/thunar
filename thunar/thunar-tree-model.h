@@ -61,10 +61,6 @@ GType            thunar_tree_model_get_type           (void) G_GNUC_CONST;
 
 ThunarTreeModel *thunar_tree_model_get_default        (void);
 
-gboolean         thunar_tree_model_get_case_sensitive (ThunarTreeModel            *model);
-void             thunar_tree_model_set_case_sensitive (ThunarTreeModel            *model,
-                                                       gboolean                    case_sensitive);
-
 void             thunar_tree_model_set_visible_func   (ThunarTreeModel            *model,
                                                        ThunarTreeModelVisibleFunc  func,
                                                        gpointer                    data);

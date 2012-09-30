@@ -38,9 +38,6 @@ GType      thunar_statusbar_get_type    (void) G_GNUC_CONST;
 
 GtkWidget *thunar_statusbar_new         (void);
 
-void       thunar_statusbar_set_text    (ThunarStatusbar *statusbar,
-                                         const gchar     *text);
-
 G_END_DECLS;
 
 #endif /* !__THUNAR_STATUSBAR_H__ */

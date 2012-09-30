@@ -57,29 +57,6 @@ thunar_renamer_mode_get_type (void)
 
 
 GType
-thunar_color_style_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GEnumValue values[] =
-      {
-        { THUNAR_COLOR_STYLE_SOLID,     "THUNAR_COLOR_STYLE_SOLID",     "solid",     },
-        { THUNAR_COLOR_STYLE_HGRADIENT, "THUNAR_COLOR_STYLE_HGRADIENT", "hgradient", },
-        { THUNAR_COLOR_STYLE_VGRADIENT, "THUNAR_COLOR_STYLE_VGRADIENT", "vgradient", },
-        { 0,                            NULL,                           NULL,        },
-      };
-
-      type = g_enum_register_static (I_("ThunarColorStyle"), values);
-    }
-
-  return type;
-}
-
-
-
-GType
 thunar_date_style_get_type (void)
 {
   static GType type = G_TYPE_INVALID;
@@ -185,30 +162,6 @@ thunar_recursive_permissions_get_type (void)
 
 
 GType
-thunar_wallpaper_style_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GEnumValue values[] =
-      {
-        { THUNAR_WALLPAPER_STYLE_CENTERED,  "THUNAR_WALLPAPER_STYLE_CENTERED",  "centered",  },
-        { THUNAR_WALLPAPER_STYLE_SCALED,    "THUNAR_WALLPAPER_STYLE_SCALED",    "scaled",    },
-        { THUNAR_WALLPAPER_STYLE_STRETCHED, "THUNAR_WALLPAPER_STYLE_STRETCHED", "stretched", },
-        { THUNAR_WALLPAPER_STYLE_TILED,     "THUNAR_WALLPAPER_STYLE_TILED",     "tiled",     },
-        { 0,                                NULL,                               NULL,        },
-      };
-
-      type = g_enum_register_static (I_("ThunarWallpaperStyle"), values);
-    }
-
-  return type;
-}
-
-
-
-GType
 thunar_zoom_level_get_type (void)
 {
   static GType type = G_TYPE_INVALID;
@@ -246,7 +199,7 @@ thunar_zoom_level_get_type (void)
  *
  * Return value: the #ThunarIconSize for @zoom_level.
  **/
-ThunarIconSize
+static ThunarIconSize
 thunar_zoom_level_to_icon_size (ThunarZoomLevel zoom_level)
 {
   switch (zoom_level)

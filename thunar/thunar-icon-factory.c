@@ -712,23 +712,6 @@ thunar_icon_factory_get_for_icon_theme (GtkIconTheme *icon_theme)
 
 
 /**
- * thunar_icon_factory_get_icon_theme:
- * @factory : a #ThunarIconFactory instance.
- *
- * Returns the #GtkIconTheme associated with @factory.
- *
- * Return value: the #GtkIconTheme associated with @factory.
- **/
-GtkIconTheme*
-thunar_icon_factory_get_icon_theme (const ThunarIconFactory *factory)
-{
-  _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
-  return factory->icon_theme;
-}
-
-
-
-/**
  * thunar_icon_factory_load_icon:
  * @factory       : a #ThunarIconFactory instance.
  * @name          : name of the icon to load.

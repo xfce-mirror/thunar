@@ -74,6 +74,9 @@ static void              thunar_progress_view_info_message (ThunarProgressView *
 static void              thunar_progress_view_percent      (ThunarProgressView *view,
                                                             gdouble             percent,
                                                             ExoJob             *job);
+static ThunarJob        *thunar_progress_view_get_job      (ThunarProgressView *view);
+static void              thunar_progress_view_set_job      (ThunarProgressView *view,
+                                                            ThunarJob          *job);
 
 
 
@@ -517,21 +520,6 @@ thunar_progress_view_percent (ThunarProgressView *view,
 
 
 /**
- * thunar_progress_view_new:
- *
- * Allocates a new #ThunarProgressView.
- *
- * Return value: the newly allocated #ThunarProgressView.
- **/
-GtkWidget*
-thunar_progress_view_new (void)
-{
-  return thunar_progress_view_new_with_job (NULL);
-}
-
-
-
-/**
  * thunar_progress_view_new_with_job:
  * @job : a #ThunarJob or %NULL.
  *
@@ -557,7 +545,7 @@ thunar_progress_view_new_with_job (ThunarJob *job)
  *
  * Return value: the job associated with @view or %NULL.
  **/
-ThunarJob *
+static ThunarJob *
 thunar_progress_view_get_job (ThunarProgressView *view)
 {
   _thunar_return_val_if_fail (THUNAR_IS_PROGRESS_VIEW (view), NULL);
@@ -573,7 +561,7 @@ thunar_progress_view_get_job (ThunarProgressView *view)
  *
  * Associates @job with @view.
  **/
-void
+static void
 thunar_progress_view_set_job (ThunarProgressView *view,
                               ThunarJob          *job)
 {

@@ -40,36 +40,38 @@ enum
 
 
 
-static void         thunar_history_navigator_init         (ThunarNavigatorIface *iface);
-static void         thunar_history_dispose                (GObject              *object);
-static void         thunar_history_finalize               (GObject              *object);
-static void         thunar_history_get_property           (GObject              *object,
-                                                           guint                 prop_id,
-                                                           GValue               *value,
-                                                           GParamSpec           *pspec);
-static void         thunar_history_set_property           (GObject              *object,
-                                                           guint                 prop_id,
-                                                           const GValue         *value,
-                                                           GParamSpec           *pspec);
-static ThunarFile  *thunar_history_get_current_directory  (ThunarNavigator      *navigator);
-static void         thunar_history_set_current_directory  (ThunarNavigator      *navigator,
-                                                           ThunarFile           *current_directory);
-static void         thunar_history_go_back                (ThunarHistory        *history,
-                                                           guint                 n);
-static void         thunar_history_go_forward             (ThunarHistory        *history,
-                                                           guint                 n);
-static void         thunar_history_action_back            (GtkAction            *action,
-                                                           ThunarHistory        *history);
-static void         thunar_history_action_back_nth        (GtkWidget            *item,
-                                                           ThunarHistory        *history);
-static void         thunar_history_action_forward         (GtkAction            *action,
-                                                           ThunarHistory        *history);
-static void         thunar_history_action_forward_nth     (GtkWidget            *item,
-                                                           ThunarHistory        *history);
-static void         thunar_history_show_menu              (GtkAction            *action,
-                                                           GtkWidget            *menu,
-                                                           ThunarHistory        *history);
-
+static void            thunar_history_navigator_init         (ThunarNavigatorIface *iface);
+static void            thunar_history_dispose                (GObject              *object);
+static void            thunar_history_finalize               (GObject              *object);
+static void            thunar_history_get_property           (GObject              *object,
+                                                              guint                 prop_id,
+                                                              GValue               *value,
+                                                              GParamSpec           *pspec);
+static void            thunar_history_set_property           (GObject              *object,
+                                                              guint                 prop_id,
+                                                              const GValue         *value,
+                                                              GParamSpec           *pspec);
+static ThunarFile     *thunar_history_get_current_directory  (ThunarNavigator      *navigator);
+static void            thunar_history_set_current_directory  (ThunarNavigator      *navigator,
+                                                              ThunarFile           *current_directory);
+static void            thunar_history_go_back                (ThunarHistory        *history,
+                                                              guint                 n);
+static void            thunar_history_go_forward             (ThunarHistory        *history,
+                                                              guint                 n);
+static void            thunar_history_action_back            (GtkAction            *action,
+                                                              ThunarHistory        *history);
+static void            thunar_history_action_back_nth        (GtkWidget            *item,
+                                                              ThunarHistory        *history);
+static void            thunar_history_action_forward         (GtkAction            *action,
+                                                              ThunarHistory        *history);
+static void            thunar_history_action_forward_nth     (GtkWidget            *item,
+                                                              ThunarHistory        *history);
+static void            thunar_history_show_menu              (GtkAction            *action,
+                                                              GtkWidget            *menu,
+                                                              ThunarHistory        *history);
+static GtkActionGroup *thunar_history_get_action_group       (const ThunarHistory  *history);
+static void            thunar_history_set_action_group       (ThunarHistory        *history,
+                                                              GtkActionGroup       *action_group);
 
 
 struct _ThunarHistoryClass
@@ -486,21 +488,6 @@ thunar_history_show_menu (GtkAction     *action,
 
 
 /**
- * thunar_history_new:
- *
- * Allocates a new #ThunarHistory object.
- *
- * Return value: the newly allocated #ThunarHistory object.
- **/
-ThunarHistory*
-thunar_history_new (void)
-{
-  return g_object_new (THUNAR_TYPE_HISTORY, NULL);
-}
-
-
-
-/**
  * thunar_history_get_action_group:
  * @history : a #ThunarHistory.
  *
@@ -511,7 +498,7 @@ thunar_history_new (void)
  * Return value: the #GtkActionGroup to which
  *               @history is currently attached.
  **/
-GtkActionGroup*
+static GtkActionGroup*
 thunar_history_get_action_group (const ThunarHistory *history)
 {
   _thunar_return_val_if_fail (THUNAR_IS_HISTORY (history), NULL);
@@ -530,7 +517,7 @@ thunar_history_get_action_group (const ThunarHistory *history)
  * "forward" provided by @history on the given
  * @action_group.
  **/
-void
+static void
 thunar_history_set_action_group (ThunarHistory  *history,
                                  GtkActionGroup *action_group)
 {

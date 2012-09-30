@@ -189,6 +189,14 @@ static gint               sort_by_type                            (const ThunarF
                                                                    const ThunarFile       *b,
                                                                    gboolean                case_sensitive);
 
+static gboolean           thunar_list_model_get_case_sensitive    (ThunarListModel        *store);
+static void               thunar_list_model_set_case_sensitive    (ThunarListModel        *store,
+                                                                   gboolean                case_sensitive);
+static ThunarDateStyle    thunar_list_model_get_date_style        (ThunarListModel        *store);
+static void               thunar_list_model_set_date_style        (ThunarListModel        *store,
+                                                                   ThunarDateStyle         date_style);
+static gint               thunar_list_model_get_num_files         (ThunarListModel        *store);
+static gboolean           thunar_list_model_get_folders_first     (ThunarListModel        *store);
 
 
 struct _ThunarListModelClass
@@ -1685,24 +1693,6 @@ thunar_list_model_new (void)
 
 
 /**
- * thunar_list_model_new_with_folder:
- * @folder : a valid #ThunarFolder object.
- *
- * Allocates a new #ThunarListModel instance and associates
- * it with @folder.
- *
- * Return value: the newly created #ThunarListModel instance.
- **/
-ThunarListModel*
-thunar_list_model_new_with_folder (ThunarFolder *folder)
-{
-  _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), NULL);
-  return g_object_new (THUNAR_TYPE_LIST_MODEL, "folder", folder, NULL);
-}
-
-
-
-/**
  * thunar_list_model_get_case_sensitive:
  * @store : a valid #ThunarListModel object.
  *
@@ -1711,7 +1701,7 @@ thunar_list_model_new_with_folder (ThunarFolder *folder)
  *
  * Return value: %TRUE if sorting is case-sensitive.
  **/
-gboolean
+static gboolean
 thunar_list_model_get_case_sensitive (ThunarListModel *store)
 {
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), FALSE);
@@ -1728,7 +1718,7 @@ thunar_list_model_get_case_sensitive (ThunarListModel *store)
  * If @case_sensitive is %TRUE the sorting in @store will be done
  * in a case-sensitive manner.
  **/
-void
+static void
 thunar_list_model_set_case_sensitive (ThunarListModel *store,
                                       gboolean         case_sensitive)
 {
@@ -1760,7 +1750,7 @@ thunar_list_model_set_case_sensitive (ThunarListModel *store,
  * Return value: the #ThunarDateStyle used to format dates in
  *               the given @store.
  **/
-ThunarDateStyle
+static ThunarDateStyle
 thunar_list_model_get_date_style (ThunarListModel *store)
 {
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), THUNAR_DATE_STYLE_SIMPLE);
@@ -1778,7 +1768,7 @@ thunar_list_model_get_date_style (ThunarListModel *store)
  * Chances the style used to format dates in @store to the specified
  * @date_style.
  **/
-void
+static void
 thunar_list_model_set_date_style (ThunarListModel *store,
                                   ThunarDateStyle  date_style)
 {
@@ -1971,7 +1961,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
  *
  * Return value: %TRUE if @store lists folders first.
  **/
-gboolean
+static gboolean
 thunar_list_model_get_folders_first (ThunarListModel *store)
 {
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), FALSE);
@@ -2147,7 +2137,7 @@ thunar_list_model_get_file (ThunarListModel *store,
  *
  * Return value: ahe number of visible files in @store.
  **/
-gint
+static gint
 thunar_list_model_get_num_files (ThunarListModel *store)
 {
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), 0);

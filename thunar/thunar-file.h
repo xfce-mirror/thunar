@@ -119,7 +119,6 @@ struct _ThunarFile
   gchar         *basename;
   gchar         *thumbnail_path;
   guint          flags;
-  guint          is_thumbnail : 1;
   guint          is_mounted : 1;
 };
 
@@ -128,10 +127,6 @@ GType             thunar_file_get_type             (void) G_GNUC_CONST;
 ThunarFile       *thunar_file_get                  (GFile                  *file,
                                                     GError                **error);
 ThunarFile       *thunar_file_get_for_uri          (const gchar            *uri,
-                                                    GError                **error);
-
-gboolean          thunar_file_load                 (ThunarFile             *file,
-                                                    GCancellable           *cancellable,
                                                     GError                **error);
 
 ThunarFile       *thunar_file_get_parent           (const ThunarFile       *file,
@@ -195,7 +190,6 @@ gboolean          thunar_file_is_parent            (const ThunarFile       *file
 gboolean          thunar_file_is_ancestor          (const ThunarFile       *file, 
                                                     const ThunarFile       *ancestor);
 gboolean          thunar_file_is_executable        (const ThunarFile       *file);
-gboolean          thunar_file_is_readable          (const ThunarFile       *file);
 gboolean          thunar_file_is_writable          (const ThunarFile       *file);
 gboolean          thunar_file_is_hidden            (const ThunarFile       *file);
 gboolean          thunar_file_is_home              (const ThunarFile       *file);
@@ -223,7 +217,6 @@ gboolean          thunar_file_set_custom_icon      (ThunarFile              *fil
                                                     GError                 **error);
 
 const gchar     *thunar_file_get_thumbnail_path    (ThunarFile              *file);
-gboolean         thunar_file_is_thumbnail          (const ThunarFile        *file);
 void             thunar_file_set_thumb_state       (ThunarFile              *file, 
                                                     ThunarFileThumbState     state);
 GIcon            *thunar_file_get_preview_icon     (const ThunarFile        *file);
@@ -242,9 +235,6 @@ void              thunar_file_destroy              (ThunarFile             *file
 gint              thunar_file_compare_by_name      (const ThunarFile       *file_a,
                                                     const ThunarFile       *file_b,
                                                     gboolean                case_sensitive);
-
-gboolean          thunar_file_same_filesystem      (const ThunarFile       *file_a,
-                                                    const ThunarFile       *file_b);
 
 ThunarFile       *thunar_file_cache_lookup         (const GFile            *file);
 gchar            *thunar_file_cached_display_name  (const GFile            *file);

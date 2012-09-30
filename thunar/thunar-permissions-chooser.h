@@ -38,10 +38,6 @@ GType       thunar_permissions_chooser_get_type  (void) G_GNUC_CONST;
 
 GtkWidget  *thunar_permissions_chooser_new       (void) G_GNUC_MALLOC;
 
-GList      *thunar_permissions_chooser_get_files (ThunarPermissionsChooser *chooser);
-void        thunar_permissions_chooser_set_files (ThunarPermissionsChooser *chooser,
-                                                  GList                    *files);
-
 G_END_DECLS;
 
 #endif /* !__THUNAR_PERMISSIONS_CHOOSER_H__ */

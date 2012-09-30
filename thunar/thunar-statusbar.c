@@ -43,7 +43,8 @@ static void        thunar_statusbar_set_property          (GObject              
                                                            guint                 prop_id,
                                                            const GValue         *value,
                                                            GParamSpec           *pspec);
-
+static void        thunar_statusbar_set_text              (ThunarStatusbar      *statusbar,
+                                                           const gchar          *text);
 
 
 struct _ThunarStatusbarClass
@@ -131,29 +132,13 @@ thunar_statusbar_set_property (GObject      *object,
 
 
 /**
- * thunar_statusbar_new:
- *
- * Allocates a new #ThunarStatusbar instance with no
- * text set.
- *
- * Return value: the newly allocated #ThunarStatusbar instance.
- **/
-GtkWidget*
-thunar_statusbar_new (void)
-{
-  return g_object_new (THUNAR_TYPE_STATUSBAR, NULL);
-}
-
-
-
-/**
  * thunar_statusbar_set_text:
  * @statusbar : a #ThunarStatusbar instance.
  * @text      : the main text to be displayed in @statusbar.
  *
  * Sets up a new main text for @statusbar.
  **/
-void
+static void
 thunar_statusbar_set_text (ThunarStatusbar *statusbar,
                            const gchar     *text)
 {
@@ -166,3 +151,16 @@ thunar_statusbar_set_text (ThunarStatusbar *statusbar,
 
 
 
+/**
+ * thunar_statusbar_new:
+ *
+ * Allocates a new #ThunarStatusbar instance with no
+ * text set.
+ *
+ * Return value: the newly allocated #ThunarStatusbar instance.
+ **/
+GtkWidget*
+thunar_statusbar_new (void)
+{
+  return g_object_new (THUNAR_TYPE_STATUSBAR, NULL);
+}

@@ -38,10 +38,6 @@ GType      thunar_tree_view_get_type        (void) G_GNUC_CONST;
 
 GtkWidget *thunar_tree_view_new             (void) G_GNUC_MALLOC;
 
-gboolean   thunar_tree_view_get_show_hidden (ThunarTreeView *view);
-void       thunar_tree_view_set_show_hidden (ThunarTreeView *view,
-                                             gboolean        show_hidden);
-
 G_END_DECLS;
 
 #endif /* !__THUNAR_TREE_VIEW_H__ */

@@ -38,10 +38,6 @@ GType       thunar_emblem_chooser_get_type  (void) G_GNUC_CONST;
 
 GtkWidget  *thunar_emblem_chooser_new       (void) G_GNUC_MALLOC;
 
-GList      *thunar_emblem_chooser_get_files (const ThunarEmblemChooser *chooser);
-void        thunar_emblem_chooser_set_files (ThunarEmblemChooser       *chooser,
-                                             GList                     *files);
-
 G_END_DECLS;
 
 #endif /* !__THUNAR_EMBLEM_CHOOSER_H__ */
