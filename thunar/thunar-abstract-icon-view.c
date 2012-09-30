@@ -496,7 +496,7 @@ thunar_abstract_icon_view_button_press_event (ExoIconView            *view,
           gtk_tree_path_free (path);
 
           /* queue the menu popup */
-          thunar_standard_view_queue_popup (THUNAR_STANDARD_VIEW (abstract_icon_view), event);
+          thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (abstract_icon_view), event->button, event->time);
         }
       else if ((event->state & gtk_accelerator_get_default_mod_mask ()) == 0)
         {
