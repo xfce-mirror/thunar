@@ -350,9 +350,8 @@ thunar_progress_view_cancel_job (ThunarProgressView *view)
       g_signal_handlers_disconnect_matched (view->job, G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
                                             thunar_progress_view_info_message, NULL);
 
-      /* update the progress bar text */
-      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (view->progress_bar),
-                                 _("Cancelling..."));
+      /* update the status text */
+      gtk_label_set_text (GTK_LABEL (view->progress_label), _("Cancelling..."));
     }
 }
 
