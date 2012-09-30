@@ -258,7 +258,9 @@ thunar_dbus_service_class_init (ThunarDBusServiceClass *klass)
 static void
 thunar_dbus_service_init (ThunarDBusService *dbus_service)
 {
-  GError *error = NULL;
+  GError         *error = NULL;
+  DBusConnection *dbus_connection;
+  gint            result;
 
   /* try to connect to the session bus */
   dbus_service->connection = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
@@ -268,10 +270,24 @@ thunar_dbus_service_init (ThunarDBusService *dbus_service)
       dbus_g_connection_register_g_object (dbus_service->connection, "/org/xfce/FileManager", G_OBJECT (dbus_service));
 
       /* request the org.xfce.Thunar name for Thunar */
-      dbus_bus_request_name (dbus_g_connection_get_connection (dbus_service->connection), "org.xfce.Thunar", DBUS_NAME_FLAG_REPLACE_EXISTING, NULL);
+      dbus_connection = dbus_g_connection_get_connection (dbus_service->connection);
+      result = dbus_bus_request_name (dbus_connection, "org.xfce.Thunar",
+                                      DBUS_NAME_FLAG_ALLOW_REPLACEMENT | DBUS_NAME_FLAG_DO_NOT_QUEUE, NULL);
+
+      /* check if we successfully acquired the name */
+      if (result != DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER)
+        {
+          g_printerr ("Thunar: D-BUS name org.xfce.Thunar already registered.\n");
+
+          /* unset connection */
+          dbus_g_connection_unref (dbus_service->connection);
+          dbus_service->connection = NULL;
+
+          return;
+        }
 
       /* request the org.xfce.FileManager name for Thunar */
-      dbus_bus_request_name (dbus_g_connection_get_connection (dbus_service->connection), "org.xfce.FileManager", DBUS_NAME_FLAG_REPLACE_EXISTING, NULL);
+      dbus_bus_request_name (dbus_connection, "org.xfce.FileManager", DBUS_NAME_FLAG_REPLACE_EXISTING, NULL);
 
       /* once we registered, unset dbus variables (bug #8800) */
       g_unsetenv ("DBUS_STARTER_ADDRESS");
@@ -280,7 +296,7 @@ thunar_dbus_service_init (ThunarDBusService *dbus_service)
   else
     {
       /* notify the user that D-BUS service won't be available */
-      g_fprintf (stderr, "Thunar: Failed to connect to the D-BUS session bus: %s\n", error->message);
+      g_printerr ("Thunar: Failed to connect to the D-BUS session bus: %s\n", error->message);
       g_error_free (error);
     }
 }
@@ -291,10 +307,18 @@ static void
 thunar_dbus_service_finalize (GObject *object)
 {
   ThunarDBusService *dbus_service = THUNAR_DBUS_SERVICE (object);
+  DBusConnection    *dbus_connection;
 
   /* release the D-BUS connection object */
   if (G_LIKELY (dbus_service->connection != NULL))
-    dbus_g_connection_unref (dbus_service->connection);
+    {
+      /* release the names */
+      dbus_connection = dbus_g_connection_get_connection (dbus_service->connection);
+      dbus_bus_release_name (dbus_connection, "org.xfce.Thunar", NULL);
+      dbus_bus_release_name (dbus_connection, "org.xfce.FileManager", NULL);
+
+      dbus_g_connection_unref (dbus_service->connection);
+    }
 
   /* check if we are connected to the trash bin */
   if (G_LIKELY (dbus_service->trash_bin != NULL))
@@ -1297,4 +1321,13 @@ thunar_dbus_service_terminate (ThunarDBusService *dbus_service,
 
   /* we cannot fail */
   return TRUE;
+}
+
+
+
+gboolean
+thunar_dbus_service_has_connection (ThunarDBusService *dbus_service)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_DBUS_SERVICE (dbus_service), FALSE);
+  return dbus_service->connection != NULL;
 }

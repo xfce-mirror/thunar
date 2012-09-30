@@ -149,12 +149,12 @@ main (int argc, char **argv)
         {
           /* no error message, the GUI initialization failed */
           const gchar *display_name = gdk_get_display_arg_name ();
-          g_fprintf (stderr, _("Thunar: Failed to open display: %s\n"), (display_name != NULL) ? display_name : " ");
+          g_printerr (_("Thunar: Failed to open display: %s\n"), (display_name != NULL) ? display_name : " ");
         }
       else
         {
           /* yep, there's an error, so print it */
-          g_fprintf (stderr, _("Thunar: %s\n"), error->message);
+          g_printerr (_("Thunar: %s\n"), error->message);
           g_error_free (error);
         }
       return EXIT_FAILURE;
@@ -187,7 +187,7 @@ main (int argc, char **argv)
       /* try to terminate whatever is running */
       if (!thunar_dbus_client_terminate (&error))
         {
-          g_fprintf (stderr, "Thunar: Failed to terminate running instance: %s\n", error->message);
+          g_printerr ("Thunar: Failed to terminate running instance: %s\n", error->message);
           g_error_free (error);
           return EXIT_FAILURE;
         }
@@ -259,7 +259,7 @@ main (int argc, char **argv)
     {
       /* we failed to process the filenames or the bulk rename failed */
 error0:
-      g_fprintf (stderr, "Thunar: %s\n", error->message);
+      g_printerr ("Thunar: %s\n", error->message);
       g_object_unref (G_OBJECT (application));
       g_error_free (error);
       return EXIT_FAILURE;
@@ -278,6 +278,10 @@ error0:
 #ifdef HAVE_DBUS
       /* attach the D-Bus service */
       dbus_service = g_object_new (THUNAR_TYPE_DBUS_SERVICE, NULL);
+
+      /* check if the name was requested successfully */
+      if (!thunar_dbus_service_has_connection (dbus_service))
+        goto dbus_name_failed;
 #endif
     }
   else
@@ -294,6 +298,7 @@ error0:
   gtk_main ();
 
 #ifdef HAVE_DBUS
+  dbus_name_failed:
   if (dbus_service != NULL)
     g_object_unref (G_OBJECT (dbus_service));
 #endif
