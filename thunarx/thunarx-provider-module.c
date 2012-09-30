@@ -184,7 +184,7 @@ thunarx_provider_module_load (GTypeModule *type_module)
   /* check if the load operation was successfull */
   if (G_UNLIKELY (module->library == NULL))
     {
-      g_warning ("Failed to load plugin `%s': %s", type_module->name, g_module_error ());
+      g_printerr ("Thunar :Failed to load plugin `%s': %s\n", type_module->name, g_module_error ());
       return FALSE;
     }
 
@@ -193,7 +193,7 @@ thunarx_provider_module_load (GTypeModule *type_module)
       || !g_module_symbol (module->library, "thunar_extension_initialize", (gpointer) &module->initialize)
       || !g_module_symbol (module->library, "thunar_extension_list_types", (gpointer) &module->list_types))
     {
-      g_warning ("Plugin `%s' lacks required symbols.", type_module->name);
+      g_printerr ("Thunar :Plugin `%s' lacks required symbols.\n", type_module->name);
       g_module_close (module->library);
       return FALSE;
     }
