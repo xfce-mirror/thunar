@@ -240,6 +240,7 @@ thunar_job_response_get_type (void)
 	      { THUNAR_JOB_RESPONSE_CANCEL,  "THUNAR_JOB_RESPONSE_CANCEL",  "cancel"  },
 	      { THUNAR_JOB_RESPONSE_NO_ALL,  "THUNAR_JOB_RESPONSE_NO_ALL",  "no-all"  },
 	      { THUNAR_JOB_RESPONSE_RETRY,   "THUNAR_JOB_RESPONSE_RETRY",   "retry"   },
+	      { THUNAR_JOB_RESPONSE_FORCE,   "THUNAR_JOB_RESPONSE_FORCE",   "force"   },
 	      { 0,                           NULL,                          NULL      }
 	    };
 

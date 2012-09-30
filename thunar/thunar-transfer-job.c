@@ -667,6 +667,96 @@ retry_remove:
 }
 
 
+
+static gboolean
+thunar_transfer_job_veryify_destination (ThunarTransferJob  *transfer_job,
+                                         GError            **error)
+{
+  GFileInfo *filesystem_info;
+  guint64     free_space;
+  GFile     *dest;
+  GFileInfo *dest_info;
+  gchar     *dest_name = NULL;
+  gchar     *base_name;
+  gboolean   succeed = TRUE;
+  gchar     *size_string;
+
+  _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (transfer_job), FALSE);
+
+  /* no target file list */
+  if (transfer_job->target_file_list == NULL)
+    return TRUE;
+
+  /* total size is nul, should be fine */
+  if (transfer_job->total_size == 0)
+    return TRUE;
+
+  /* for all actions in thunar use the same target directory so
+   * although not all files are checked, this should work nicely */
+  dest = g_file_get_parent (G_FILE (transfer_job->target_file_list->data));
+
+  /* query information about the filesystem */
+  filesystem_info = g_file_query_filesystem_info (dest, THUNARX_FILESYSTEM_INFO_NAMESPACE,
+                                                  exo_job_get_cancellable (EXO_JOB (transfer_job)),
+                                                  NULL);
+
+  /* unable to query the info, this could happen on some backends */
+  if (filesystem_info == NULL)
+    {
+      g_object_unref (G_OBJECT (dest));
+      return TRUE;
+    }
+
+  /* some info about the file */
+  dest_info = g_file_query_info (dest, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME, 0,
+                                 exo_job_get_cancellable (EXO_JOB (transfer_job)),
+                                 NULL);
+  if (dest_info != NULL)
+    {
+      dest_name = g_strdup (g_file_info_get_display_name (dest_info));
+      g_object_unref (G_OBJECT (dest_info));
+    }
+
+  if (dest_name == NULL)
+    {
+      base_name = g_file_get_basename (dest);
+      dest_name = g_filename_display_name (base_name);
+      g_free (base_name);
+    }
+
+  if (g_file_info_has_attribute (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE))
+    {
+      free_space = g_file_info_get_attribute_uint64 (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
+      if (transfer_job->total_size > free_space)
+        {
+          size_string = g_format_size (transfer_job->total_size - free_space);
+          succeed = thunar_job_ask_no_size (THUNAR_JOB (transfer_job),
+                                             _("Error while copying to \"%s\": %s more space is "
+                                               "required to copy to the destination"),
+                                            dest_name, size_string);
+          g_free (size_string);
+        }
+    }
+
+  if (succeed && g_file_info_get_attribute_boolean (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_READONLY))
+    {
+      g_set_error (error, G_IO_ERROR, G_IO_ERROR_READ_ONLY,
+                   _("Error while copying to \"%s\": The destination is read-only"),
+                   dest_name);
+
+      /* meh */
+      succeed = FALSE;
+    }
+
+  g_object_unref (filesystem_info);
+  g_object_unref (G_OBJECT (dest));
+  g_free (dest_name);
+
+  return succeed;
+}
+
+
+
 static gboolean
 thunar_transfer_job_execute (ExoJob  *job,
                              GError **error)
@@ -856,6 +946,21 @@ thunar_transfer_job_execute (ExoJob  *job,
   /* continue if there were no errors yet */
   if (G_LIKELY (err == NULL))
     {
+      /* check destination */
+      if (!thunar_transfer_job_veryify_destination (transfer_job, &err))
+        {
+          if (err != NULL)
+            {
+              g_propagate_error (error, err);
+              return FALSE;
+            }
+          else
+            {
+              /* pretend nothing happened */
+              return TRUE;
+            }
+        }
+
       /* transfer starts now */
       transfer_job->start_time = g_get_real_time ();
 

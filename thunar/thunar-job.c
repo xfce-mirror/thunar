@@ -519,6 +519,34 @@ thunar_job_ask_skip (ThunarJob   *job,
 
 
 gboolean
+thunar_job_ask_no_size (ThunarJob   *job,
+                        const gchar *format,
+                        ...)
+{
+  ThunarJobResponse response;
+  va_list           var_args;
+
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), THUNAR_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (format != NULL, THUNAR_JOB_RESPONSE_CANCEL);
+
+  /* check if the user already cancelled the job */
+  if (G_UNLIKELY (exo_job_is_cancelled (EXO_JOB (job))))
+    return THUNAR_JOB_RESPONSE_CANCEL;
+
+  /* ask the user what he wants to do */
+  va_start (var_args, format);
+  response = _thunar_job_ask_valist (job, format, var_args,
+                                     _("There is not enough space on the destination. Try to remove files to make space."),
+                                     THUNAR_JOB_RESPONSE_FORCE
+                                     | THUNAR_JOB_RESPONSE_CANCEL);
+  va_end (var_args);
+
+  return (response == THUNAR_JOB_RESPONSE_FORCE);
+}
+
+
+
+gboolean
 thunar_job_files_ready (ThunarJob *job,
                         GList     *file_list)
 {

@@ -204,6 +204,7 @@ GType          thunar_zoom_level_get_type     (void) G_GNUC_CONST;
  * @THUNAR_JOB_RESPONSE_NO_ALL  :
  * @THUNAR_JOB_RESPONSE_CANCEL  :
  * @THUNAR_JOB_RESPONSE_RETRY   :
+ * @THUNAR_JOB_RESPONSE_FORCE   :
  *
  * Possible responses for the ThunarJob::ask signal.
  **/
@@ -215,6 +216,7 @@ typedef enum /*< flags >*/
   THUNAR_JOB_RESPONSE_CANCEL  = 1 << 3,
   THUNAR_JOB_RESPONSE_NO_ALL  = 1 << 4,
   THUNAR_JOB_RESPONSE_RETRY   = 1 << 5,
+  THUNAR_JOB_RESPONSE_FORCE   = 1 << 6,
 } ThunarJobResponse;
 
 GType thunar_job_response_get_type (void) G_GNUC_CONST;

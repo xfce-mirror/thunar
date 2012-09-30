@@ -360,7 +360,8 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
   GString     *secondary = g_string_sized_new (256);
   GString     *primary = g_string_sized_new (256);
   gint         response;
-  gint         n, m;
+  gint         n;
+  gboolean     has_cancel = FALSE;
 
   _thunar_return_val_if_fail (parent == NULL || GTK_IS_WINDOW (parent), THUNAR_JOB_RESPONSE_CANCEL);
   _thunar_return_val_if_fail (g_utf8_validate (question, -1, NULL), THUNAR_JOB_RESPONSE_CANCEL);
@@ -411,13 +412,10 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
     gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s", secondary->str);
 
   /* add the buttons based on the possible choices */
-  for (n = 5; n >= 0; --n)
+  for (n = 6; n >= 0; --n)
     {
-      /* "Cancel" should be the last button, but "Retry" was added last */
-      m = (n == 5) ? 3 : (n == 3) ? 5 : n;
-
       /* check if the response is set */
-      response = choices & (1 << m);
+      response = choices & (1 << n);
       if (response == 0)
         continue;
 
@@ -443,10 +441,14 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
           mnemonic = _("_Retry");
           break;
 
-        case THUNAR_JOB_RESPONSE_CANCEL:
-          response = GTK_RESPONSE_CANCEL;
-          mnemonic = _("_Cancel");
+        case THUNAR_JOB_RESPONSE_FORCE:
+          mnemonic = _("Copy _Anyway");
           break;
+
+        case THUNAR_JOB_RESPONSE_CANCEL:
+          /* cancel is always the last option */
+          has_cancel = TRUE;
+          continue;
 
         default:
           g_assert_not_reached ();
@@ -459,6 +461,15 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
       gtk_widget_show (button);
 
       gtk_dialog_set_default_response (GTK_DIALOG (message), response);
+    }
+
+  if (has_cancel)
+    {
+      button = gtk_button_new_with_mnemonic (_("_Cancel"));
+      gtk_widget_set_can_default (button, TRUE);
+      gtk_dialog_add_action_widget (GTK_DIALOG (message), button, GTK_RESPONSE_CANCEL);
+      gtk_widget_show (button);
+      gtk_dialog_set_default_response (GTK_DIALOG (message), GTK_RESPONSE_CANCEL);
     }
 
   /* run the question dialog */
