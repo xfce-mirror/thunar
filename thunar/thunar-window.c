@@ -212,6 +212,7 @@ static void     thunar_window_mount_pre_unmount           (GVolumeMonitor       
                                                            ThunarWindow           *window);
 static gboolean thunar_window_merge_idle                  (gpointer                user_data);
 static void     thunar_window_merge_idle_destroy          (gpointer                user_data);
+static gboolean thunar_window_save_paned                  (ThunarWindow           *window);
 static gboolean thunar_window_save_geometry_timer         (gpointer                user_data);
 static void     thunar_window_save_geometry_timer_destroy (gpointer                user_data);
 static void     thunar_window_set_zoom_level              (ThunarWindow           *window,
@@ -864,9 +865,8 @@ thunar_window_init (ThunarWindow *window)
   /* determine the last separator position and apply it to the paned view */
   g_object_get (G_OBJECT (window->preferences), "last-separator-position", &position, NULL);
   gtk_paned_set_position (GTK_PANED (window->paned), position);
-
-  /* always remember the last separator position for newly opened windows */
-  exo_binding_new (G_OBJECT (window->paned), "position", G_OBJECT (window->preferences), "last-separator-position");
+  g_signal_connect_swapped (window->paned, "accept-position", G_CALLBACK (thunar_window_save_paned), window);
+  g_signal_connect_swapped (window->paned, "button-release-event", G_CALLBACK (thunar_window_save_paned), window);
 
   window->view_box = gtk_table_new (3, 1, FALSE);
   gtk_paned_pack2 (GTK_PANED (window->paned), window->view_box, TRUE, FALSE);
@@ -1416,6 +1416,7 @@ thunar_window_install_sidepane (ThunarWindow *window,
     {
       /* allocate the new side pane widget */
       window->sidepane = g_object_new (type, NULL);
+      gtk_widget_set_size_request (window->sidepane, 0, -1);
       thunar_component_set_ui_manager (THUNAR_COMPONENT (window->sidepane), window->ui_manager);
       exo_binding_new (G_OBJECT (window), "show-hidden", G_OBJECT (window->sidepane), "show-hidden");
       exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->sidepane), "current-directory");
@@ -2785,6 +2786,20 @@ static void
 thunar_window_merge_idle_destroy (gpointer user_data)
 {
   THUNAR_WINDOW (user_data)->merge_idle_id = 0;
+}
+
+
+
+static gboolean
+thunar_window_save_paned (ThunarWindow *window)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  g_object_set (G_OBJECT (window->preferences), "last-separator-position",
+                gtk_paned_get_position (GTK_PANED (window->paned)), NULL);
+
+  /* for button release event */
+  return FALSE;
 }
 
 
