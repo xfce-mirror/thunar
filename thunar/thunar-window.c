@@ -747,9 +747,6 @@ thunar_window_init (ThunarWindow *window)
   g_object_get (G_OBJECT (window->preferences), "last-show-hidden", &show_hidden, NULL);
   gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), show_hidden);
 
-  /* synchronize the "show-hidden" state with the "last-show-hidden" preference */
-  exo_binding_new (G_OBJECT (window), "show-hidden", G_OBJECT (window->preferences), "last-show-hidden");
-
   /* setup the history support */
   window->history = g_object_new (THUNAR_TYPE_HISTORY, "action-group", window->action_group, NULL);
   g_signal_connect_swapped (G_OBJECT (window->history), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
@@ -1392,7 +1389,8 @@ thunar_window_install_location_bar (ThunarWindow *window,
     }
 
   /* remember the setting */
-  g_object_set (G_OBJECT (window->preferences), "last-location-bar", g_type_name (type), NULL);
+  if (gtk_widget_get_visible (GTK_WIDGET (window)))
+    g_object_set (G_OBJECT (window->preferences), "last-location-bar", g_type_name (type), NULL);
 }
 
 
@@ -1430,7 +1428,8 @@ thunar_window_install_sidepane (ThunarWindow *window,
     }
 
   /* remember the setting */
-  g_object_set (G_OBJECT (window->preferences), "last-side-pane", g_type_name (type), NULL);
+  if (gtk_widget_get_visible (GTK_WIDGET (window)))
+    g_object_set (G_OBJECT (window->preferences), "last-side-pane", g_type_name (type), NULL);
 }
 
 
@@ -1909,7 +1908,8 @@ thunar_window_action_statusbar_changed (GtkToggleAction *action,
     }
 
   /* remember the setting */
-  g_object_set (G_OBJECT (window->preferences), "last-statusbar-visible", active, NULL);
+  if (gtk_widget_get_visible (GTK_WIDGET (window)))
+    g_object_set (G_OBJECT (window->preferences), "last-statusbar-visible", active, NULL);
 }
 
 
@@ -1930,7 +1930,8 @@ thunar_window_action_menubar_changed (GtkToggleAction *action,
   gtk_widget_set_visible (window->menubar, active);
 
   /* remember the setting */
-  g_object_set (G_OBJECT (window->preferences), "last-menubar-visible", active, NULL);
+  if (gtk_widget_get_visible (GTK_WIDGET (window)))
+    g_object_set (G_OBJECT (window->preferences), "last-menubar-visible", active, NULL);
 }
 
 
@@ -2045,7 +2046,8 @@ thunar_window_action_view_changed (GtkRadioAction *action,
     }
 
   /* remember the setting */
-  g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (type), NULL);
+  if (gtk_widget_get_visible (GTK_WIDGET (window)))
+    g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (type), NULL);
 
   /* release the file reference */
   if (G_UNLIKELY (file != NULL))
@@ -2504,6 +2506,10 @@ thunar_window_action_show_hidden (GtkToggleAction *action,
    * signal and the view will automatically sync its state.
    */
   g_object_notify (G_OBJECT (window), "show-hidden");
+
+  if (gtk_widget_get_visible (GTK_WIDGET (window)))
+    g_object_set (G_OBJECT (window->preferences), "last-show-hidden",
+                  gtk_toggle_action_get_active (action), NULL);
 }
 
 
