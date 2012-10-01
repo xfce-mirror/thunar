@@ -33,6 +33,8 @@
 #include <gio/gdesktopappinfo.h>
 #endif
 
+#include <xfconf/xfconf.h>
+
 #ifdef HAVE_LIBNOTIFY
 #include <thunar/thunar-notify.h>
 #endif
@@ -170,6 +172,14 @@ main (int argc, char **argv)
       g_print (_("Please report bugs to <%s>."), PACKAGE_BUGREPORT);
       g_print ("\n");
       return EXIT_SUCCESS;
+    }
+
+  /* initialize xfconf */
+  if (!xfconf_init (&error))
+    {
+      g_critical ("Failed to initialize Xfconf: %s", error->message);
+      g_error_free (error);
+      return EXIT_FAILURE;
     }
 
 #ifdef HAVE_GIO_UNIX
