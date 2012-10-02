@@ -1492,6 +1492,11 @@ sort_by_mime_type (const ThunarFile *a,
   content_type_a = thunar_file_get_content_type (a);
   content_type_b = thunar_file_get_content_type (b);
 
+  if (content_type_a == NULL)
+    content_type_a = "";
+  if (content_type_b == NULL)
+    content_type_b = "";
+
   result = strcasecmp (content_type_a, content_type_b);
 
   if (result == 0)
