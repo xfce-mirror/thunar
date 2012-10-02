@@ -2175,6 +2175,11 @@ thunar_standard_view_action_select_by_pattern (GtkAction          *action,
       /* select all files that match the entered pattern */
       paths = thunar_list_model_get_paths_for_pattern (standard_view->model, gtk_entry_get_text (GTK_ENTRY (entry)));
       THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->unselect_all (standard_view);
+
+      /* set the cursor and scroll to the first selected item */
+      if (paths != NULL)
+        THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->set_cursor (standard_view, g_list_last (paths)->data, FALSE);
+
       for (lp = paths; lp != NULL; lp = lp->next)
         {
           THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->select_path (standard_view, lp->data);
