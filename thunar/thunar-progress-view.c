@@ -479,9 +479,12 @@ thunar_progress_view_percent (ThunarProgressView *view,
   gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (view->progress_bar), percent / 100.0);
 
   /* set progress text */
-  text = thunar_transfer_job_get_status (THUNAR_TRANSFER_JOB (job));
-  gtk_label_set_text (GTK_LABEL (view->progress_label), text);
-  g_free (text);
+  if (THUNAR_IS_TRANSFER_JOB (job))
+    {
+      text = thunar_transfer_job_get_status (THUNAR_TRANSFER_JOB (job));
+      gtk_label_set_text (GTK_LABEL (view->progress_label), text);
+      g_free (text);
+    }
 }
 
 
