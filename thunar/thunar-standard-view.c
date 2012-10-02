@@ -660,7 +660,7 @@ thunar_standard_view_constructor (GType                  type,
   thunar_view_set_zoom_level (THUNAR_VIEW (standard_view), zoom_level);
 
   /* save the "zoom-level" as "last-<view>-zoom-level" whenever the user changes the zoom level */
-  exo_binding_new (object, "zoom-level", G_OBJECT (standard_view->preferences), THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->zoom_level_property_name);
+  g_object_bind_property (object, "zoom-level", G_OBJECT (standard_view->preferences), THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->zoom_level_property_name, G_BINDING_DEFAULT);
 
   /* determine the real view widget (treeview or iconview) */
   view = GTK_BIN (object)->child;

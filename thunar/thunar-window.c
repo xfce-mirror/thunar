@@ -2884,13 +2884,13 @@ thunar_window_set_zoom_level (ThunarWindow   *window,
       /* remember the new zoom level */
       window->zoom_level = zoom_level;
 
-      /* update the "Zoom In" and "Zoom Out" actions */
-      thunar_gtk_action_group_set_action_sensitive (window->action_group, "zoom-in", (zoom_level < THUNAR_ZOOM_N_LEVELS - 1));
-      thunar_gtk_action_group_set_action_sensitive (window->action_group, "zoom-out", (zoom_level > 0));
-
       /* notify listeners */
       g_object_notify (G_OBJECT (window), "zoom-level");
     }
+
+  /* update the "Zoom In" and "Zoom Out" actions */
+  thunar_gtk_action_group_set_action_sensitive (window->action_group, "zoom-in", (zoom_level < THUNAR_ZOOM_N_LEVELS - 1));
+  thunar_gtk_action_group_set_action_sensitive (window->action_group, "zoom-out", (zoom_level > 0));
 }
 
 
