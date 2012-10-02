@@ -1418,6 +1418,11 @@ sort_by_file_name (const ThunarFile *a,
   const gchar *a_name = thunar_file_get_display_name (a);
   const gchar *b_name = thunar_file_get_display_name (b);
 
+  if (a_name == NULL)
+    a_name = "";
+  if (b_name == NULL)
+    b_name = "";
+
   if (!case_sensitive)
     return strcasecmp (a_name, b_name);
   else
