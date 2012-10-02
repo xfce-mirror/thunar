@@ -288,9 +288,6 @@ struct _ThunarStandardViewPrivate
   GtkAction              *action_paste;
   GtkAction              *action_delete;
   GtkAction              *action_paste_into_folder;
-  GtkAction              *action_select_all_files;
-  GtkAction              *action_select_by_pattern;
-  GtkAction              *action_selection_invert;
   GtkAction              *action_duplicate;
   GtkAction              *action_make_link;
   GtkAction              *action_rename;
@@ -582,9 +579,6 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->action_paste = gtk_action_group_get_action (standard_view->action_group, "paste");
   standard_view->priv->action_delete = gtk_action_group_get_action (standard_view->action_group, "delete");
   standard_view->priv->action_paste_into_folder = gtk_action_group_get_action (standard_view->action_group, "paste-into-folder");
-  standard_view->priv->action_select_all_files = gtk_action_group_get_action (standard_view->action_group, "select-all-files");
-  standard_view->priv->action_select_by_pattern = gtk_action_group_get_action (standard_view->action_group, "select-by-pattern");
-  standard_view->priv->action_selection_invert = gtk_action_group_get_action (standard_view->action_group, "invert-selection");
   standard_view->priv->action_duplicate = gtk_action_group_get_action (standard_view->action_group, "duplicate");
   standard_view->priv->action_make_link = gtk_action_group_get_action (standard_view->action_group, "make-link");
   standard_view->priv->action_rename = gtk_action_group_get_action (standard_view->action_group, "rename");
