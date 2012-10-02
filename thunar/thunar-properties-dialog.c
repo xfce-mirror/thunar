@@ -686,17 +686,9 @@ static void
 thunar_properties_dialog_rename_finished (ExoJob                 *job,
                                           ThunarPropertiesDialog *dialog)
 {
-  const gchar *new_name;
-
   _thunar_return_if_fail (EXO_IS_JOB (job));
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (g_list_length (dialog->files) == 1);
-
-  /* determine the new display name */
-  new_name = thunar_file_get_display_name (THUNAR_FILE (dialog->files->data));
-
-  /* reset the entry widget to the new name */
-  gtk_entry_set_text (GTK_ENTRY (dialog->name_entry), new_name);
 
   g_signal_handlers_disconnect_matched (job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, dialog);
   g_object_unref (job);
