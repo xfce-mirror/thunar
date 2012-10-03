@@ -1093,12 +1093,15 @@ retry_chown:
        * information) into account */
       new_mode = ((old_mode & ~mask) | mode) & 07777;
 
-      /* try to change the file mode */
-      g_file_set_attribute_uint32 (lp->data,
-                                   G_FILE_ATTRIBUTE_UNIX_MODE, new_mode,
-                                   G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                                   exo_job_get_cancellable (EXO_JOB (job)),
-                                   &err);
+      if (old_mode != new_mode)
+        {
+          /* try to change the file mode */
+          g_file_set_attribute_uint32 (lp->data,
+                                       G_FILE_ATTRIBUTE_UNIX_MODE, new_mode,
+                                       G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                       exo_job_get_cancellable (EXO_JOB (job)),
+                                       &err);
+        }
 
       /* check if there was a recoverable error */
       if (err != NULL && !exo_job_is_cancelled (EXO_JOB (job)))
