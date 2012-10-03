@@ -98,29 +98,7 @@ typedef enum /*< flags >*/
 #define THUNAR_FILE_EMBLEM_NAME_CANT_WRITE "emblem-nowrite"
 #define THUNAR_FILE_EMBLEM_NAME_DESKTOP "emblem-desktop"
 
-struct _ThunarFileClass
-{
-  GObjectClass __parent__;
 
-  /* signals */
-  void (*destroy) (ThunarFile *file);
-};
-
-struct _ThunarFile
-{
-  GObject        __parent__;
-
-  /*< private >*/
-  GFileMonitor  *monitor;
-  GFileInfo     *info;
-  GFile         *gfile;
-  gchar         *custom_icon_name;
-  gchar         *display_name;
-  gchar         *basename;
-  gchar         *thumbnail_path;
-  guint          flags;
-  guint          is_mounted : 1;
-};
 
 GType             thunar_file_get_type             (void) G_GNUC_CONST;
 
@@ -128,6 +106,10 @@ ThunarFile       *thunar_file_get                  (GFile                  *file
                                                     GError                **error);
 ThunarFile       *thunar_file_get_for_uri          (const gchar            *uri,
                                                     GError                **error);
+
+GFile            *thunar_file_get_file             (const ThunarFile       *file);
+
+GFileInfo        *thunar_file_get_info             (const ThunarFile       *file);
 
 ThunarFile       *thunar_file_get_parent           (const ThunarFile       *file,
                                                     GError                **error);
@@ -218,6 +200,7 @@ gboolean          thunar_file_set_custom_icon      (ThunarFile              *fil
                                                     GError                 **error);
 
 const gchar     *thunar_file_get_thumbnail_path    (ThunarFile              *file);
+ThunarFileThumbState thunar_file_get_thumb_state   (const ThunarFile        *file);
 void             thunar_file_set_thumb_state       (ThunarFile              *file, 
                                                     ThunarFileThumbState     state);
 GIcon            *thunar_file_get_preview_icon     (const ThunarFile        *file);
@@ -254,7 +237,7 @@ gboolean         thunar_file_is_desktop              (const ThunarFile *file);
  *
  * Return value: %TRUE if @file is the root directory.
  **/
-#define thunar_file_is_root(file) (thunar_g_file_is_root (THUNAR_FILE ((file))->gfile))
+#define thunar_file_is_root(file) (thunar_g_file_is_root (thunar_file_get_file (file)))
 
 /**
  * thunar_file_has_parent:
@@ -268,34 +251,6 @@ gboolean         thunar_file_is_desktop              (const ThunarFile *file);
 #define thunar_file_has_parent(file) (!thunar_file_is_root (THUNAR_FILE ((file))))
 
 /**
- * thunar_file_get_info:
- * @file : a #ThunarFile instance.
- *
- * Returns the #GFileInfo for @file.
- *
- * Note, that there's no reference taken for the caller on the
- * returned #GFileInfo, so if you need the object for a longer
- * perioud, you'll need to take a reference yourself using the
- * g_object_ref() method.
- *
- * Return value: the #GFileInfo for @file.
- **/
-#define thunar_file_get_info(file) (THUNAR_FILE ((file))->info)
-
-/**
- * thunar_file_get_file:
- * @file : a #ThunarFile instance.
- *
- * Returns the #GFile that refers to the location of @file.
- *
- * The returned #GFile is owned by @file and must not be released
- * with g_object_unref().
- * 
- * Return value: the #GFile corresponding to @file.
- **/
-#define thunar_file_get_file(file) (THUNAR_FILE ((file))->gfile)
-
-/**
  * thunar_file_dup_uri:
  * @file : a #ThunarFile instance.
  *
@@ -304,7 +259,7 @@ gboolean         thunar_file_is_desktop              (const ThunarFile *file);
  *
  * Return value: the URI for @file.
  **/
-#define thunar_file_dup_uri(file) (g_file_get_uri (THUNAR_FILE ((file))->gfile))
+#define thunar_file_dup_uri(file) (g_file_get_uri (thunar_file_get_file (file)))
 
 /**
  * thunar_file_has_uri_scheme:
@@ -315,7 +270,7 @@ gboolean         thunar_file_is_desktop              (const ThunarFile *file);
  *
  * Return value: TRUE, if the schemes match, FALSE otherwise.
  **/
-#define thunar_file_has_uri_scheme(file, uri_scheme) (g_file_has_uri_scheme (THUNAR_FILE ((file))->gfile, (uri_scheme)))
+#define thunar_file_has_uri_scheme(file, uri_scheme) (g_file_has_uri_scheme (thunar_file_get_file (file), (uri_scheme)))
 
 /**
  * thunar_file_changed:
@@ -328,17 +283,6 @@ gboolean         thunar_file_is_desktop              (const ThunarFile *file);
 G_STMT_START{                                             \
   thunarx_file_info_changed (THUNARX_FILE_INFO ((file))); \
 }G_STMT_END
-
-/**
- * thunar_file_get_thumb_state:
- * @file : a #ThunarFile.
- *
- * Returns the current #ThunarFileThumbState for @file. This
- * method is intended to be used by #ThunarIconFactory only.
- *
- * Return value: the #ThunarFileThumbState for @file.
- **/
-#define thunar_file_get_thumb_state(file) (THUNAR_FILE ((file))->flags & THUNAR_FILE_THUMB_STATE_MASK)
 
 /**
  * thunar_file_list_copy:

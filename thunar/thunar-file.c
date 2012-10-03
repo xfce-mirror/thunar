@@ -137,6 +137,32 @@ static guint              file_signals[LAST_SIGNAL];
 
 
 
+struct _ThunarFileClass
+{
+  GObjectClass __parent__;
+
+  /* signals */
+  void (*destroy) (ThunarFile *file);
+};
+
+struct _ThunarFile
+{
+  GObject        __parent__;
+
+  /*< private >*/
+  GFileMonitor  *monitor;
+  GFileInfo     *info;
+  GFile         *gfile;
+  gchar         *custom_icon_name;
+  gchar         *display_name;
+  gchar         *basename;
+  gchar         *thumbnail_path;
+  guint          flags;
+  guint          is_mounted : 1;
+};
+
+
+
 G_DEFINE_TYPE_WITH_CODE (ThunarFile, thunar_file, G_TYPE_OBJECT,
     G_IMPLEMENT_INTERFACE (THUNARX_TYPE_FILE_INFO, thunar_file_info_init))
 
@@ -327,7 +353,7 @@ thunar_file_info_get_name (ThunarxFileInfo *file_info)
 static gchar*
 thunar_file_info_get_uri (ThunarxFileInfo *file_info)
 {
-  return thunar_file_dup_uri (file_info);
+  return thunar_file_dup_uri (THUNAR_FILE (file_info));
 }
 
 
@@ -909,6 +935,51 @@ thunar_file_load (ThunarFile   *file,
       return TRUE;
     }
 }
+
+
+/**
+ * thunar_file_get_file:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the #GFile that refers to the location of @file.
+ *
+ * The returned #GFile is owned by @file and must not be released
+ * with g_object_unref().
+ * 
+ * Return value: the #GFile corresponding to @file.
+ **/
+GFile *
+thunar_file_get_file (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  _thunar_return_val_if_fail (G_IS_FILE (file->gfile), NULL);
+  return file->gfile;
+}
+
+
+
+/**
+ * thunar_file_get_info:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the #GFileInfo for @file.
+ *
+ * Note, that there's no reference taken for the caller on the
+ * returned #GFileInfo, so if you need the object for a longer
+ * perioud, you'll need to take a reference yourself using the
+ * g_object_ref() method.
+ *
+ * Return value: the #GFileInfo for @file or %NULL.
+ **/
+GFileInfo *
+thunar_file_get_info (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  _thunar_return_val_if_fail (file->info == NULL || G_IS_FILE_INFO (file->info), NULL);
+  return file->info;
+}
+
+
 
 /**
  * thunar_file_get_parent:
@@ -2840,6 +2911,24 @@ thunar_file_get_thumbnail_path (ThunarFile *file)
     }
 
   return file->thumbnail_path;
+}
+
+
+
+/**
+ * thunar_file_get_thumb_state:
+ * @file : a #ThunarFile.
+ *
+ * Returns the current #ThunarFileThumbState for @file. This
+ * method is intended to be used by #ThunarIconFactory only.
+ *
+ * Return value: the #ThunarFileThumbState for @file.
+ **/
+ThunarFileThumbState
+thunar_file_get_thumb_state (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), THUNAR_FILE_THUMB_STATE_UNKNOWN);
+  return (file->flags & THUNAR_FILE_THUMB_STATE_MASK);
 }
 
 
