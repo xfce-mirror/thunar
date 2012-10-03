@@ -134,7 +134,7 @@ ThunarFile       *thunar_file_get_parent           (const ThunarFile       *file
 
 gboolean          thunar_file_execute              (ThunarFile             *file,
                                                     GFile                  *working_directory,
-                                                    GdkScreen              *screen,
+                                                    gpointer                parent,
                                                     GList                  *path_list,
                                                     GError                **error);
 
@@ -195,7 +195,8 @@ gboolean          thunar_file_is_hidden            (const ThunarFile       *file
 gboolean          thunar_file_is_home              (const ThunarFile       *file);
 gboolean          thunar_file_is_regular           (const ThunarFile       *file);
 gboolean          thunar_file_is_trashed           (const ThunarFile       *file);
-gboolean          thunar_file_is_desktop_file      (const ThunarFile       *file);
+gboolean          thunar_file_is_desktop_file      (const ThunarFile       *file,
+                                                    gboolean               *is_secure);
 const gchar      *thunar_file_get_display_name     (const ThunarFile       *file);
 
 gchar            *thunar_file_get_deletion_date    (const ThunarFile       *file,

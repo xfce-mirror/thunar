@@ -65,6 +65,7 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-user.h>
 #include <thunar/thunar-util.h>
+#include <thunar/thunar-dialogs.h>
 
 
 
@@ -712,6 +713,7 @@ thunar_file_load (ThunarFile   *file,
   gchar       *p;
   gchar       *thumbnail_dir_path;
   const gchar *display_name;
+  gboolean     is_secure = FALSE;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -786,7 +788,7 @@ thunar_file_load (ThunarFile   *file,
     }
 
   /* check if this file is a desktop entry */
-  if (thunar_file_is_desktop_file (file))
+  if (thunar_file_is_desktop_file (file, &is_secure) && is_secure)
     {
       /* determine the custom icon and display name for .desktop files */
 
@@ -955,7 +957,7 @@ thunar_file_get_parent (const ThunarFile *file,
  * @file              : a #ThunarFile instance.
  * @working_directory : the working directory used to resolve relative filenames 
  *                      in @file_list.
- * @screen            : a #GdkScreen.
+ * @parent            : %NULL, a #GdkScreen or #GtkWidget.
  * @file_list         : the list of #GFile<!---->s to supply to @file on execution.
  * @error             : return location for errors or %NULL.
  *
@@ -968,36 +970,36 @@ thunar_file_get_parent (const ThunarFile *file,
 gboolean
 thunar_file_execute (ThunarFile  *file,
                      GFile       *working_directory,
-                     GdkScreen   *screen,
+                     gpointer     parent,
                      GList       *file_list,
                      GError     **error)
 {
-  gboolean  snotify = FALSE;
-  gboolean  terminal;
-  gboolean  result = FALSE;
-  GKeyFile *key_file;
-  GError   *err = NULL;
-  GFile    *parent;
-  gchar    *icon = NULL;
-  gchar    *name;
-  gchar    *type;
-  gchar    *url;
-  gchar    *location;
-  gchar    *escaped_location;
-  gchar   **argv = NULL;
-  gchar    *exec;
-  gchar    *directory = NULL;
+  gboolean    snotify = FALSE;
+  gboolean    terminal;
+  gboolean    result = FALSE;
+  GKeyFile   *key_file;
+  GError     *err = NULL;
+  GFile      *file_parent;
+  gchar      *icon_name = NULL;
+  gchar      *name;
+  gchar      *type;
+  gchar      *url;
+  gchar      *location;
+  gchar      *escaped_location;
+  gchar     **argv = NULL;
+  gchar      *exec;
+  gchar      *directory = NULL;
+  gboolean    is_secure = FALSE;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  _thunar_return_val_if_fail (GDK_IS_SCREEN (screen), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   location = thunar_g_file_get_location (file->gfile);
 
-  if (thunar_file_is_desktop_file (file))
+  if (thunar_file_is_desktop_file (file, &is_secure))
     {
+      /* parse file first, even if it is insecure */
       key_file = thunar_g_file_query_key_file (file->gfile, NULL, &err);
-
       if (key_file == NULL)
         {
           g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL,
@@ -1006,69 +1008,69 @@ thunar_file_execute (ThunarFile  *file,
           return FALSE;
         }
 
-      type = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
-                                    G_KEY_FILE_DESKTOP_KEY_TYPE, NULL);
-
+      type = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_TYPE, NULL);
       if (G_LIKELY (exo_str_is_equal (type, "Application")))
         {
-          exec = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
-                                        G_KEY_FILE_DESKTOP_KEY_EXEC, NULL);
+          exec = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_EXEC, NULL);
           if (G_LIKELY (exec != NULL))
             {
-              /* parse other fields */
-              name = g_key_file_get_locale_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
-                                                   G_KEY_FILE_DESKTOP_KEY_NAME, NULL,
-                                                   NULL);
-              icon = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
-                                            G_KEY_FILE_DESKTOP_KEY_ICON, NULL);
-              directory = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
-                                                 G_KEY_FILE_DESKTOP_KEY_PATH, NULL);
-              terminal = g_key_file_get_boolean (key_file, G_KEY_FILE_DESKTOP_GROUP,
-                                                 G_KEY_FILE_DESKTOP_KEY_TERMINAL, NULL);
-              snotify = g_key_file_get_boolean (key_file, G_KEY_FILE_DESKTOP_GROUP,
-                                                G_KEY_FILE_DESKTOP_KEY_STARTUP_NOTIFY, 
-                                                NULL);
+              /* if the .desktop file is not secure, ask user what to do */
+              if (is_secure || thunar_dialogs_show_insecure_program (parent, _("Untrusted application launcher"), file, exec))
+                {
+                  /* parse other fields */
+                  name = g_key_file_get_locale_string (key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_NAME, NULL, NULL);
+                  icon_name = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_ICON, NULL);
+                  directory = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_PATH, NULL);
+                  terminal = g_key_file_get_boolean (key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_TERMINAL, NULL);
+                  snotify = g_key_file_get_boolean (key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_STARTUP_NOTIFY, NULL);
 
-              result = thunar_exec_parse (exec, file_list, icon, name, location, 
-                                          terminal, NULL, &argv, error);
-              
-              g_free (name);
-              g_free (icon);
+                  result = thunar_exec_parse (exec, file_list, icon_name, name, location, terminal, NULL, &argv, error);
+
+                  g_free (name);
+                }
+              else
+                {
+                  /* fall-through to free value and leave without execution */
+                  result = TRUE;
+                }
+
               g_free (exec);
             }
           else
             {
-              /* TRANSLATORS: `Exec' is a field name in a .desktop file. 
-               * Don't translate it. */
-              g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, 
+              /* TRANSLATORS: `Exec' is a field name in a .desktop file. Don't translate it. */
+              g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL,
                            _("No Exec field specified"));
             }
         }
       else if (exo_str_is_equal (type, "Link"))
         {
-          url = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
-                                       G_KEY_FILE_DESKTOP_KEY_URL, NULL);
+          url = g_key_file_get_string (key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_URL, NULL);
           if (G_LIKELY (url != NULL))
             {
-              /* pass the URL to exo-open which will fire up the appropriate viewer */
-              argv = g_new (gchar *, 3);
-              argv[0] = g_strdup ("exo-open");
-              argv[1] = url;
-              argv[2] = NULL;
+              /* if the .desktop file is not secure, ask user what to do */
+              if (is_secure || thunar_dialogs_show_insecure_program (parent, _("Untrusted link launcher"), file, url))
+                {
+                  /* pass the URL to the webbrowser, this could be a bit strange,
+                   * but then at least we are on the secure side */
+                  argv = g_new (gchar *, 3);
+                  argv[0] = g_strdup ("exo-open");
+                  argv[1] = url;
+                  argv[2] = NULL;
+                }
+
               result = TRUE;
             }
           else
             {
-              /* TRANSLATORS: `URL' is a field name in a .desktop file.
-               * Don't translate it. */
+              /* TRANSLATORS: `URL' is a field name in a .desktop file. Don't translate it. */
               g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, 
                            _("No URL field specified"));
             }
         }
       else
         {
-          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, 
-                       _("Invalid desktop file"));
+          g_set_error_literal (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Invalid desktop file"));
         }
 
       g_free (type);
@@ -1079,13 +1081,12 @@ thunar_file_execute (ThunarFile  *file,
       /* fake the Exec line */
       escaped_location = g_shell_quote (location);
       exec = g_strconcat (escaped_location, " %F", NULL);
-      result = thunar_exec_parse (exec, file_list, NULL, NULL, NULL, FALSE, NULL, &argv,
-                                  error);
+      result = thunar_exec_parse (exec, file_list, NULL, NULL, NULL, FALSE, NULL, &argv, error);
       g_free (escaped_location);
       g_free (exec);
     }
 
-  if (G_LIKELY (result))
+  if (G_LIKELY (result && argv != NULL))
     {
       /* use other directory if the Path from the desktop file was not set */
       if (G_LIKELY (directory == NULL))
@@ -1099,9 +1100,9 @@ thunar_file_execute (ThunarFile  *file,
           else if (file_list != NULL)
             {
               /* use the directory of the first list item */
-              parent = g_file_get_parent (file_list->data);
-              directory = (parent != NULL) ? thunar_g_file_get_location (parent) : NULL;
-              g_object_unref (parent);
+              file_parent = g_file_get_parent (file_list->data);
+              directory = (file_parent != NULL) ? thunar_g_file_get_location (file_parent) : NULL;
+              g_object_unref (file_parent);
             }
           else
             {
@@ -1113,14 +1114,16 @@ thunar_file_execute (ThunarFile  *file,
         }
 
       /* execute the command */
-      result = xfce_spawn_on_screen (screen, directory, argv, NULL, G_SPAWN_SEARCH_PATH,
-                                     snotify, gtk_get_current_event_time (), icon, error);
+      result = xfce_spawn_on_screen (thunar_util_parse_parent (parent, NULL), 
+                                     directory, argv, NULL, G_SPAWN_SEARCH_PATH,
+                                     snotify, gtk_get_current_event_time (), icon_name, error);
     }
 
   /* clean up */
   g_strfreev (argv);
   g_free (location);
   g_free (directory);
+  g_free (icon_name);
 
   return result;
 }
@@ -1156,22 +1159,16 @@ thunar_file_launch (ThunarFile  *file,
 {
   GdkAppLaunchContext *context;
   ThunarApplication   *application;
-  GdkScreen           *screen;
   GAppInfo            *app_info;
   gboolean             succeed;
   GList                path_list;
+  GdkScreen           *screen;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
   _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), FALSE);
-  
-  /* determine the screen for the parent */
-  if (G_UNLIKELY (parent == NULL))
-    screen = gdk_screen_get_default ();
-  else if (GTK_IS_WIDGET (parent))
-    screen = gtk_widget_get_screen (parent);
-  else
-    screen = GDK_SCREEN (parent);
+
+  screen = thunar_util_parse_parent (parent, NULL);
 
   /* check if we have a folder here */
   if (thunar_file_is_directory (file))
@@ -1184,7 +1181,7 @@ thunar_file_launch (ThunarFile  *file,
 
   /* check if we should execute the file */
   if (thunar_file_is_executable (file))
-    return thunar_file_execute (file, NULL, screen, NULL, error);
+    return thunar_file_execute (file, NULL, parent, NULL, error);
 
   /* determine the default application to open the file */
   /* TODO We should probably add a cancellable argument to thunar_file_launch() */
@@ -1216,6 +1213,7 @@ thunar_file_launch (ThunarFile  *file,
   /* create a launch context */
   context = gdk_app_launch_context_new ();
   gdk_app_launch_context_set_screen (context, screen);
+  gdk_app_launch_context_set_timestamp (context, gtk_get_current_event_time ());
 
   /* otherwise try to execute the application */
   succeed = g_app_info_launch (app_info, &path_list, G_APP_LAUNCH_CONTEXT (context), error);
@@ -1269,7 +1267,7 @@ thunar_file_rename (ThunarFile   *file,
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   /* check if this file is a desktop entry */
-  if (thunar_file_is_desktop_file (file))
+  if (thunar_file_is_desktop_file (file, NULL))
     {
       /* try to load the desktop entry into a key file */
       key_file = thunar_g_file_query_key_file (file->gfile, cancellable, &err);
@@ -2236,7 +2234,7 @@ thunar_file_is_executable (const ThunarFile *file)
         }
     }
 
-  return can_execute || thunar_file_is_desktop_file (file);
+  return can_execute || thunar_file_is_desktop_file (file, NULL);
 }
 
 
@@ -2370,30 +2368,71 @@ thunar_file_is_trashed (const ThunarFile *file)
 
 /**
  * thunar_file_is_desktop_file:
- * @file : a #ThunarFile.
+ * @file      : a #ThunarFile.
+ * @is_secure : if %NULL do a simple check, else it will set this boolean
+ *              to indicate if the desktop file is safe see bug #5012
+ *              for more info.
  *
- * Returns %TRUE if @file is a .desktop file, but not a .directory file.
+ * Returns %TRUE if @file is a .desktop file. The @is_secure return value
+ * will tell if the .desktop file is also secure.
  *
  * Return value: %TRUE if @file is a .desktop file.
  **/
 gboolean
-thunar_file_is_desktop_file (const ThunarFile *file)
+thunar_file_is_desktop_file (const ThunarFile *file,
+                             gboolean         *is_secure)
 {
-  const gchar *content_type;
-  gboolean     is_desktop_file = FALSE;
+  const gchar * const *data_dirs;
+  guint                n;
+  gchar               *path;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
   if (file->info == NULL)
     return FALSE;
 
-  content_type = g_file_info_get_content_type (file->info);
+  /* only allow regular files with a .desktop extension */
+  if (!g_str_has_suffix (thunar_file_get_basename (file), ".desktop")
+      || g_file_info_get_file_type (file->info) != G_FILE_TYPE_REGULAR)
+    return FALSE;
 
-  if (content_type != NULL)
-    is_desktop_file = g_content_type_equals (content_type, "application/x-desktop");
+  /* don't check more if not needed */
+  if (is_secure == NULL)
+    return TRUE;
 
-  return is_desktop_file 
-    && !g_str_has_suffix (thunar_file_get_basename (file), ".directory");
+  /* desktop files outside xdg directories need to be executable for security reasons */
+  if (g_file_info_get_attribute_boolean (file->info, G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE))
+    {
+      /* has +x */
+      *is_secure = TRUE;
+    }
+  else
+    {
+      /* assume the file is not safe */
+      *is_secure = FALSE;
+
+      /* deskopt files in xdg directories are also fine... */
+      if (g_file_is_native (thunar_file_get_file (file)))
+        {
+          data_dirs = g_get_system_data_dirs ();
+          if (G_LIKELY (data_dirs != NULL))
+            {
+              path = g_file_get_path (thunar_file_get_file (file));
+              for (n = 0; data_dirs[n] != NULL; n++)
+                {
+                  if (g_str_has_prefix (path, data_dirs[n]))
+                    {
+                      /* has known prefix, can launch without problems */
+                      *is_secure = TRUE;
+                      break;
+                    }
+                }
+              g_free (path);
+            }
+        }
+    }
+
+  return TRUE;
 }
 
 

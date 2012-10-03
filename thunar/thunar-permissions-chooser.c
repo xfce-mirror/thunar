@@ -1011,6 +1011,7 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser)
   g_object_set (G_OBJECT (chooser->program_button), "visible", thunar_file_is_regular (file)
       && (thunarx_file_info_has_mime_type (THUNARX_FILE_INFO (file), "application/x-executable")
        || thunarx_file_info_has_mime_type (THUNARX_FILE_INFO (file), "application/x-shellscript")
+       || thunarx_file_info_has_mime_type (THUNARX_FILE_INFO (file), "application/x-desktop")
        || thunarx_file_info_has_mime_type (THUNARX_FILE_INFO (file), "application/x-ms-dos-executable")
        || thunarx_file_info_has_mime_type (THUNARX_FILE_INFO (file), "application/x-msi")), NULL);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (chooser->program_button), (mode & 0111) != 0);
