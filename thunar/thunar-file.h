@@ -107,9 +107,9 @@ ThunarFile       *thunar_file_get                  (GFile                  *file
 ThunarFile       *thunar_file_get_for_uri          (const gchar            *uri,
                                                     GError                **error);
 
-GFile            *thunar_file_get_file             (const ThunarFile       *file);
+GFile            *thunar_file_get_file             (const ThunarFile       *file) G_GNUC_PURE;
 
-GFileInfo        *thunar_file_get_info             (const ThunarFile       *file);
+GFileInfo        *thunar_file_get_info             (const ThunarFile       *file) G_GNUC_PURE;
 
 ThunarFile       *thunar_file_get_parent           (const ThunarFile       *file,
                                                     GError                **error);
@@ -137,7 +137,7 @@ GdkDragAction     thunar_file_accepts_drop         (ThunarFile             *file
                                                     GdkDragAction          *suggested_action_return);
 
 guint64           thunar_file_get_date             (const ThunarFile       *file,
-                                                    ThunarFileDateType      date_type);
+                                                    ThunarFileDateType      date_type) G_GNUC_PURE;
 
 gchar            *thunar_file_get_date_string      (const ThunarFile       *file,
                                                     ThunarFileDateType      date_type,
@@ -152,7 +152,7 @@ ThunarUser       *thunar_file_get_user             (const ThunarFile       *file
 
 const gchar      *thunar_file_get_content_type     (const ThunarFile       *file);
 const gchar      *thunar_file_get_symlink_target   (const ThunarFile       *file);
-const gchar      *thunar_file_get_basename         (const ThunarFile       *file);
+const gchar      *thunar_file_get_basename         (const ThunarFile       *file) G_GNUC_CONST;
 gboolean          thunar_file_is_symlink           (const ThunarFile       *file);
 guint64           thunar_file_get_size             (const ThunarFile       *file);
 GAppInfo         *thunar_file_get_default_handler  (const ThunarFile       *file);
@@ -179,7 +179,7 @@ gboolean          thunar_file_is_regular           (const ThunarFile       *file
 gboolean          thunar_file_is_trashed           (const ThunarFile       *file);
 gboolean          thunar_file_is_desktop_file      (const ThunarFile       *file,
                                                     gboolean               *is_secure);
-const gchar      *thunar_file_get_display_name     (const ThunarFile       *file);
+const gchar      *thunar_file_get_display_name     (const ThunarFile       *file) G_GNUC_CONST;
 
 gchar            *thunar_file_get_deletion_date    (const ThunarFile       *file,
                                                     ThunarDateStyle         date_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
