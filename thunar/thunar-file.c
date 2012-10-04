@@ -155,6 +155,8 @@ struct _ThunarFile
   GFile         *gfile;
   gchar         *custom_icon_name;
   gchar         *display_name;
+  gchar         *collate_key;
+  gchar         *collate_key_nocase;
   gchar         *basename;
   gchar         *thumbnail_path;
   guint          flags;
@@ -330,6 +332,11 @@ thunar_file_finalize (GObject *object)
   /* free display name and basename */
   g_free (file->display_name);
   g_free (file->basename);
+
+  /* free collate keys */
+  if (file->collate_key_nocase != file->collate_key)
+    g_free (file->collate_key_nocase);
+  g_free (file->collate_key);
 
   /* free the thumbnail path */
   g_free (file->thumbnail_path);
@@ -652,10 +659,6 @@ thunar_file_get (GFile   *gfile,
       /* allocate a new object */
       file = g_object_new (THUNAR_TYPE_FILE, NULL);
       file->gfile = g_object_ref (gfile);
-      file->info = NULL;
-      file->custom_icon_name = NULL;
-      file->display_name = NULL;
-      file->basename = NULL;
 
       if (thunar_file_load (file, NULL, error))
         {
@@ -740,6 +743,7 @@ thunar_file_load (ThunarFile   *file,
   gchar       *thumbnail_dir_path;
   const gchar *display_name;
   gboolean     is_secure = FALSE;
+  gchar       *casefold;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -762,6 +766,14 @@ thunar_file_load (ThunarFile   *file,
 
   g_free (file->basename);
   file->basename = NULL;
+
+  /* free collate keys */
+  if (file->collate_key_nocase != file->collate_key)
+    g_free (file->collate_key_nocase);
+  file->collate_key_nocase = NULL;
+
+  g_free (file->collate_key);
+  file->collate_key = NULL;
 
   /* free thumbnail path */
   g_free (file->thumbnail_path);
@@ -920,6 +932,21 @@ thunar_file_load (ThunarFile   *file,
             }
         }
     }
+
+  /* create case sensitive collation key */
+  file->collate_key = g_utf8_collate_key_for_filename (file->display_name, -1);
+
+  /* lowercase the display name */
+  casefold = g_utf8_casefold (file->display_name, -1);
+
+  /* if the lowercase name is equal, only peek the already hash key */
+  if (casefold != NULL && strcmp (casefold, file->display_name) != 0)
+    file->collate_key_nocase = g_utf8_collate_key_for_filename (casefold, -1);
+  else
+    file->collate_key_nocase = file->collate_key;
+
+  /* cleanup */
+  g_free (casefold);
 
   /* set thumb state to unknown */
   file->flags = 
@@ -3250,100 +3277,6 @@ thunar_file_destroy (ThunarFile *file)
 
 
 
-static guint
-skip_leading_zeros (const gchar **ap,
-                    const gchar  *name)
-{
-  const gchar *bp;
-  guint        skipped_zeros = 0;
-
-  /* do a backward search to check if the number starts with a '0' */
-  for (bp = *ap; bp >= name; --bp)
-    {
-      if (*bp != '0')
-        break;
-    }
-
-  /* if the number starts with a '0' skip all following '0' */
-  if (!g_ascii_isdigit (*bp) || *bp == '0')
-   {
-     for (bp = *ap; *bp != '\0'; ++bp)
-       {
-         if (*bp != '0')
-           break;
-       }
-
-     skipped_zeros = bp - *ap;
-     *ap = bp;
-     return skipped_zeros;
-   }
-
-  return 0;
-}
-
-
-
-static gint
-compare_by_name_using_number (const gchar *ap,
-                              const gchar *bp,
-                              const gchar *start_a,
-                              const gchar *start_b)
-{
-  const gchar *ai;
-  const gchar *bi;
-  gchar        ac;
-  gchar        bc;
-  guint        skipped_zeros_a;
-  guint        skipped_zeros_b;
-
-  /* up until now the numbers match. Now compare the numbers by digit
-   * count, the longest number is the largest. If the lengths are equal
-   * compare the digits. */
-
-  /* skip leading zeros of both numbers */
-  skipped_zeros_a = skip_leading_zeros (&ap, start_a);
-  skipped_zeros_b = skip_leading_zeros (&bp, start_b);
-
-  /* determine the largest number */
-  for (ai = ap, bi = bp;; ++ai, ++bi)
-    {
-      ac = *ai;
-      bc = *bi;
-      if (!g_ascii_isdigit (ac) || !g_ascii_isdigit (bc))
-        break;
-    }
-
-  /* if one of the numbers still has a digit, that number is the largest. */
-  if (g_ascii_isdigit (ac))
-    return 1;
-  else if (g_ascii_isdigit (bc))
-    return -1;
-
-  /* both numbers have the same length. look for the first digit that
-   * is different */
-  for (;; ++ap, ++bp)
-    {
-      ac = *ap;
-      bc = *bp;
-
-      /* check if the characters differ or we have a non-digit char */
-      if (ac != bc || !g_ascii_isdigit (ac))
-        break;
-    }
-
-  /* if we have reached the end of the numbers and they are still equal,
-   * then they differ only in the number of leading zeros. let us always
-   * sort the one with more leading zeros first. */
-  if (G_UNLIKELY (!g_ascii_isdigit (ac) || !g_ascii_isdigit (bc)))
-    return skipped_zeros_b - skipped_zeros_a;
-      
-  /* for all regular numbers that have the same length, the one with the
-   * lowest different digit should be sorted first */
-  return (ac - bc);
-}
-
-
-
 /**
  * thunar_file_compare_by_name:
  * @file_a         : the first #ThunarFile.
@@ -3361,12 +3294,7 @@ thunar_file_compare_by_name (const ThunarFile *file_a,
                              const ThunarFile *file_b,
                              gboolean          case_sensitive)
 {
-  const gchar *ap;
-  const gchar *bp;
-  const gchar *filename_a;
-  const gchar *filename_b;
-  guchar       ac;
-  guchar       bc;
+  gint result = 0;
 
 #ifdef G_ENABLE_DEBUG
   /* probably too expensive to do the instance check every time
@@ -3376,143 +3304,20 @@ thunar_file_compare_by_name (const ThunarFile *file_a,
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file_b), 0);
 #endif
 
-  /* we compare only the display names (UTF-8!) */
-  filename_a = thunar_file_get_display_name (file_a);
-  filename_b = thunar_file_get_display_name (file_b);
+  /* case insensitive checking */
+  if (G_LIKELY (!case_sensitive))
+    result = strcmp (file_a->collate_key_nocase, file_b->collate_key_nocase);
 
-  /* start at the beginning of both strings */
-  ap = filename_a;
-  bp = filename_b;
+  /* fall-back to case sensitive */
+  if (result == 0)
+    result = strcmp (file_a->collate_key, file_b->collate_key);
 
-  /* check if we should ignore case */
-  if (G_LIKELY (case_sensitive))
-    {
-      /* try simple (fast) ASCII comparison first */
-      for (;; ++ap, ++bp)
-        {
-          /* check if the characters differ or we have a non-ASCII char */
-          ac = *((const guchar *)ap);
-          bc = *((const guchar *)bp);
-          if (ac != bc || ac == 0 || ac > 127)
-            break;
-        }
+#ifdef G_ENABLE_DEBUG
+  /* check final output */
+  _thunar_return_val_if_fail (result != 0, 0);
+ #endif
 
-      /* fallback to Unicode comparison */
-      if (G_UNLIKELY (ac > 127 || bc > 127))
-        {
-          for (;; ap = g_utf8_next_char (ap), bp = g_utf8_next_char (bp))
-            {
-              /* check if characters differ or end of string */
-              ac = g_utf8_get_char (ap);
-              bc = g_utf8_get_char (bp);
-              if (ac != bc || ac == 0)
-                break;
-            }
-        }
-    }
-  else
-    {
-      /* try simple (fast) ASCII comparison first (case-insensitive!) */
-      for (;; ++ap, ++bp)
-        {
-          /* check if the characters differ or we have a non-ASCII char */
-          ac = *((const guchar *)ap);
-          bc = *((const guchar *)bp);
-          if (g_ascii_tolower (ac) != g_ascii_tolower (bc) || ac == 0 || ac > 127)
-            break;
-        }
-
-      /* fallback to Unicode comparison (case-insensitive!) */
-      if (G_UNLIKELY (ac > 127 || bc > 127))
-        {
-          for (;; ap = g_utf8_next_char (ap), bp = g_utf8_next_char (bp))
-            {
-              /* check if characters differ or end of string */
-              ac = g_utf8_get_char (ap);
-              bc = g_utf8_get_char (bp);
-              if (g_unichar_tolower (ac) != g_unichar_tolower (bc) || ac == 0)
-                break;
-            }
-        }
-    }
-
-  /* if both strings are equal, we're done */
-  if (G_UNLIKELY (ac == bc
-                  || (!case_sensitive
-                      && g_unichar_tolower (ac) == g_unichar_tolower (bc))))
-    {
-      return 0;
-    }
-
-  /* check if one of the characters that differ is a digit */
-  if (G_UNLIKELY (g_ascii_isdigit (ac) || g_ascii_isdigit (bc)))
-    {
-      /* if both strings differ in a digit, we use a smarter comparison
-       * to get sorting 'file1', 'file5', 'file10' done the right way.
-       */
-      if (g_ascii_isdigit (ac) && g_ascii_isdigit (bc))
-        {
-          return compare_by_name_using_number (ap, bp, filename_a, filename_b);
-        }
-
-      /* a second case is '20 file' and '2file', where comparison by number
-       * makes sense if the previous char for both strings is a digit.
-       */
-      if (ap > filename_a
-          && bp > filename_b
-          && g_ascii_isdigit (*(ap - 1))
-          && g_ascii_isdigit (*(bp - 1)))
-        {
-          /* go back one character to have both variables point to the numbers again */
-          ap -= 1;
-          bp -= 1;
-
-          return compare_by_name_using_number (ap, bp, filename_a, filename_b);
-        }
-    }
-
-  /* otherwise, if they differ in a unicode char, use the
-   * appropriate collate function for the current locale (only
-   * if charset is UTF-8, else the required transformations
-   * would be too expensive)
-   */
-#ifdef HAVE_STRCOLL
-  if ((ac > 127 || bc > 127) && g_get_charset (NULL))
-    {
-      /* case-sensitive is easy, case-insensitive is expensive,
-       * but we use a simple optimization to make it fast.
-       */
-      if (G_LIKELY (case_sensitive))
-        {
-          return strcoll (ap, bp);
-        }
-      else
-        {
-          /* we use a trick here, so we don't need to allocate
-           * and transform the two strings completely first (8
-           * byte for each buffer, so all compilers should align
-           * them properly)
-           */
-          gchar abuf[8];
-          gchar bbuf[8];
-
-          /* transform the unicode chars to strings and
-           * make sure the strings are nul-terminated.
-           */
-          abuf[g_unichar_to_utf8 (g_unichar_tolower(ac), abuf)] = '\0';
-          bbuf[g_unichar_to_utf8 (g_unichar_tolower(bc), bbuf)] = '\0';
-
-          /* compare the unicode chars (as strings) */
-          return strcoll (abuf, bbuf);
-        }
-    }
-#endif
-
-  /* else, they differ in an ASCII character */
-  if (G_UNLIKELY (!case_sensitive))
-    return (g_unichar_tolower (ac) > g_unichar_tolower (bc)) ? 1 : -1;
-  else
-    return (ac > bc) ? 1 : -1;
+  return result;
 }
 
 

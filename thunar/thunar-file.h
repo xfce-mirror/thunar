@@ -218,7 +218,7 @@ void              thunar_file_destroy              (ThunarFile             *file
 
 gint              thunar_file_compare_by_name      (const ThunarFile       *file_a,
                                                     const ThunarFile       *file_b,
-                                                    gboolean                case_sensitive);
+                                                    gboolean                case_sensitive) G_GNUC_PURE;
 
 ThunarFile       *thunar_file_cache_lookup         (const GFile            *file);
 gchar            *thunar_file_cached_display_name  (const GFile            *file);
