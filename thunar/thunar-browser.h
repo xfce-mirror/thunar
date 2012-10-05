@@ -2,18 +2,18 @@
 /*-
  * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
- * This program is free software; you can redistribute it and/or 
+ * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of 
+ * published by the Free Software Foundation; either version 2 of
  * the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public 
- * License along with this program; if not, write to the Free 
+ * You should have received a copy of the GNU General Public
+ * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
@@ -33,17 +33,24 @@ G_BEGIN_DECLS
 typedef struct _ThunarBrowser      ThunarBrowser;
 typedef struct _ThunarBrowserIface ThunarBrowserIface;
 
-typedef void (*ThunarBrowserPokeFileFunc)   (ThunarBrowser *browser,
-                                             ThunarFile    *file,
-                                             ThunarFile    *target_file,
-                                             GError        *error,
-                                             gpointer       user_data);
+typedef void (*ThunarBrowserPokeFileFunc)     (ThunarBrowser *browser,
+                                               ThunarFile    *file,
+                                               ThunarFile    *target_file,
+                                               GError        *error,
+                                               gpointer       user_data);
 
-typedef void (*ThunarBrowserPokeVolumeFunc) (ThunarBrowser *browser,
-                                             GVolume       *volume,
-                                             ThunarFile    *mount_point,
-                                             GError        *error,
-                                             gpointer       user_data);
+typedef void (*ThunarBrowserPokeVolumeFunc)   (ThunarBrowser *browser,
+                                               GVolume       *volume,
+                                               ThunarFile    *mount_point,
+                                               GError        *error,
+                                               gpointer       user_data);
+
+typedef void (*ThunarBrowserPokeLocationFunc) (ThunarBrowser *browser,
+                                               GFile         *location,
+                                               ThunarFile    *file,
+                                               ThunarFile    *target_file,
+                                               GError        *error,
+                                               gpointer       user_data);
 
 struct _ThunarBrowserIface
 {
@@ -54,18 +61,23 @@ struct _ThunarBrowserIface
   /* virtual methods */
 };
 
-GType thunar_browser_get_type    (void) G_GNUC_CONST;
+GType thunar_browser_get_type      (void) G_GNUC_CONST;
 
-void  thunar_browser_poke_file   (ThunarBrowser              *browser,
-                                  ThunarFile                 *file,
-                                  gpointer                    widget,
-                                  ThunarBrowserPokeFileFunc   func,
-                                  gpointer                    user_data);
-void  thunar_browser_poke_volume (ThunarBrowser              *browser,
-                                  GVolume                    *volume,
-                                  gpointer                    widget,
-                                  ThunarBrowserPokeVolumeFunc func,
-                                  gpointer                    user_data);
+void  thunar_browser_poke_file     (ThunarBrowser                 *browser,
+                                    ThunarFile                    *file,
+                                    gpointer                       widget,
+                                    ThunarBrowserPokeFileFunc      func,
+                                    gpointer                       user_data);
+void  thunar_browser_poke_volume   (ThunarBrowser                 *browser,
+                                    GVolume                       *volume,
+                                    gpointer                       widget,
+                                    ThunarBrowserPokeVolumeFunc    func,
+                                    gpointer                       user_data);
+void  thunar_browser_poke_location (ThunarBrowser                 *browser,
+                                    GFile                           *location,
+                                    gpointer                       widget,
+                                    ThunarBrowserPokeLocationFunc  func,
+                                    gpointer                       user_data);
 
 G_END_DECLS
 
