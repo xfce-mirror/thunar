@@ -683,9 +683,7 @@ thunar_file_info_reload (ThunarFile   *file,
 {
   const gchar *target_uri;
   GKeyFile    *key_file;
-  GFile       *thumbnail_dir;
   gchar       *p;
-  gchar       *thumbnail_dir_path;
   const gchar *display_name;
   gboolean     is_secure = FALSE;
   gchar       *casefold;
@@ -705,21 +703,6 @@ thunar_file_info_reload (ThunarFile   *file,
   /* determine the basename */
   file->basename = g_file_get_basename (file->gfile);
   _thunar_assert (file->basename != NULL);
-
-  /* create a GFile for the $HOME/.thumbnails/ directory */
-  thumbnail_dir_path = g_build_filename (xfce_get_homedir (), ".thumbnails", NULL);
-  thumbnail_dir = g_file_new_for_path (thumbnail_dir_path);
-
-  /* check if this file is a thumbnail */
-  if (g_file_has_prefix (file->gfile, thumbnail_dir))
-    {
-      /* use the filename as custom icon name for thumbnails */
-      file->custom_icon_name = g_file_get_path (file->gfile);
-    }
-
-  /* free $HOME/.thumbnails/ GFile and path */
-  g_object_unref (thumbnail_dir);
-  g_free (thumbnail_dir_path);
 
   /* check if this file is a desktop entry */
   if (thunar_file_is_desktop_file (file, &is_secure) && is_secure)
