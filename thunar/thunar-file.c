@@ -3398,10 +3398,12 @@ thunar_file_compare_by_name (const ThunarFile *file_a,
   if (result == 0)
     result = strcmp (file_a->collate_key, file_b->collate_key);
 
-#ifdef G_ENABLE_DEBUG
-  /* check final output */
-  _thunar_return_val_if_fail (result != 0, 0);
- #endif
+  /* this happens in the trash */
+  if (result == 0)
+    {
+      result = g_strcmp0 (thunar_file_get_original_path (file_a),
+                          thunar_file_get_original_path (file_b));
+    }
 
   return result;
 }
