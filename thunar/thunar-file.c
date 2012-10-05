@@ -684,7 +684,6 @@ thunar_file_info_reload (ThunarFile   *file,
   const gchar *target_uri;
   GKeyFile    *key_file;
   GFile       *thumbnail_dir;
-  gchar       *base_name;
   gchar       *p;
   gchar       *thumbnail_dir_path;
   const gchar *display_name;
@@ -762,31 +761,17 @@ thunar_file_info_reload (ThunarFile   *file,
                                                              G_KEY_FILE_DESKTOP_KEY_NAME,
                                                              NULL, NULL);
           
-          /* check if we have a display name now */
-          if (file->display_name != NULL)
+          /* drop the name if it's empty or has invalid encoding */
+          if (exo_str_is_empty (file->display_name)
+              || !g_utf8_validate (file->display_name, -1, NULL))
             {
-              /* drop the name if it's empty or has invalid encoding */
-              if (*file->display_name == '\0' 
-                  || !g_utf8_validate (file->display_name, -1, NULL))
-                {
-                  g_free (file->display_name);
-                  file->display_name = NULL;
-                }
+              g_free (file->display_name);
+              file->display_name = NULL;
             }
 
           /* free the key file */
           g_key_file_free (key_file);
         }
-      else
-        {
-          /* cannot parse the key file, no custom icon */
-          file->custom_icon_name = NULL;
-        }
-    }
-  else
-    {
-      /* not a .desktop file, no custom icon */
-      file->custom_icon_name = NULL;
     }
 
   /* determine the display name */
@@ -804,26 +789,9 @@ thunar_file_info_reload (ThunarFile   *file,
             }
         }
 
+      /* faccl back to a name for the gfile */
       if (file->display_name == NULL)
-        {
-          base_name = g_file_get_basename (file->gfile);
-          if (G_LIKELY (base_name != NULL))
-            {
-              if (g_utf8_validate (base_name, -1, NULL))
-                {
-                  file->display_name = base_name;
-                }
-              else
-                {
-                  file->display_name = g_uri_escape_string (base_name, G_URI_RESERVED_CHARS_ALLOWED_IN_PATH, TRUE);
-                  g_free (base_name);
-                }
-            }
-          else
-            {
-              file->display_name = g_strdup ("?");
-            }
-        }
+        file->display_name = thunar_g_file_get_display_name (file->gfile);
     }
 
   /* create case sensitive collation key */

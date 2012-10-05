@@ -219,6 +219,42 @@ thunar_g_file_get_location (GFile *file)
 
 
 
+gchar *
+thunar_g_file_get_display_name (GFile *file)
+{
+  gchar *base_name;
+  gchar *display_name;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
+
+  base_name = g_file_get_basename (file);
+  if (G_LIKELY (base_name != NULL))
+    {
+      if (strcmp (base_name, "/") == 0)
+        {
+          display_name = g_strdup (_("File System"));
+          g_free (base_name);
+        }
+      else if (g_utf8_validate (base_name, -1, NULL))
+       {
+         display_name = base_name;
+       }
+     else
+       {
+         display_name = g_uri_escape_string (base_name, G_URI_RESERVED_CHARS_ALLOWED_IN_PATH, TRUE);
+         g_free (base_name);
+       }
+   }
+ else
+   {
+     display_name = g_strdup ("?");
+   }
+
+  return display_name;
+}
+
+
+
 gboolean
 thunar_g_vfs_is_uri_scheme_supported (const gchar *scheme)
 {
