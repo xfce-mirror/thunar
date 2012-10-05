@@ -38,6 +38,8 @@ typedef struct _ThunarShortcutsModel      ThunarShortcutsModel;
  * ThunarShortcutsModelColumn:
  * @THUNAR_SHORTCUTS_MODEL_COLUMN_NAME      : the index of the name column.
  * @THUNAR_SHORTCUTS_MODEL_COLUMN_FILE      : the index of the file column.
+ * @THUNAR_SHORTCUTS_MODEL_COLUMN_LOCATION  : file of the location.
+ * @THUNAR_SHORTCUTS_MODEL_COLUMN_GICON     : custom image.
  * @THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME    : the index of the volume column.
  * @THUNAR_SHORTCUTS_MODEL_COLUMN_MUTABLE   : tells whether a row is mutable.
  * @THUNAR_SHORTCUTS_MODEL_COLUMN_EJECT     : stock icon name for eject symbol
@@ -50,6 +52,8 @@ typedef enum
 {
   THUNAR_SHORTCUTS_MODEL_COLUMN_NAME,
   THUNAR_SHORTCUTS_MODEL_COLUMN_FILE,
+  THUNAR_SHORTCUTS_MODEL_COLUMN_LOCATION,
+  THUNAR_SHORTCUTS_MODEL_COLUMN_GICON,
   THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME,
   THUNAR_SHORTCUTS_MODEL_COLUMN_MUTABLE,
   THUNAR_SHORTCUTS_MODEL_COLUMN_EJECT,
@@ -64,6 +68,10 @@ ThunarShortcutsModel *thunar_shortcuts_model_get_default    (void);
 gboolean               thunar_shortcuts_model_iter_for_file (ThunarShortcutsModel *model,
                                                              ThunarFile           *file,
                                                              GtkTreeIter          *iter);
+
+void                   thunar_shortcuts_model_set_file      (ThunarShortcutsModel *model,
+                                                             GFile                *location,
+                                                             ThunarFile           *file);
 
 gboolean               thunar_shortcuts_model_drop_possible (ThunarShortcutsModel *model,
                                                              GtkTreePath          *path);

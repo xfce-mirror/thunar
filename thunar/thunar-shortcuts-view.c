@@ -267,6 +267,7 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   view->icon_renderer = thunar_shortcuts_icon_renderer_new ();
   gtk_tree_view_column_pack_start (column, view->icon_renderer, FALSE);
   gtk_tree_view_column_set_attributes (column, view->icon_renderer,
+                                       "gicon", THUNAR_SHORTCUTS_MODEL_COLUMN_GICON,
                                        "file", THUNAR_SHORTCUTS_MODEL_COLUMN_FILE,
                                        "volume", THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME,
                                        NULL);
@@ -1311,6 +1312,29 @@ thunar_shortcuts_view_poke_file_finish (ThunarBrowser *browser,
 
 
 static void
+thunar_shortcuts_view_poke_location_finish (ThunarBrowser *browser,
+                                            GFile         *location,
+                                            ThunarFile    *file,
+                                            ThunarFile    *target_file,
+                                            GError        *error,
+                                            gpointer       user_data)
+{
+  ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (browser);
+  GtkTreeModel        *model;
+
+  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (browser));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  /* sotre the new file in the shortcuts model */
+  model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
+  thunar_shortcuts_model_set_file (THUNAR_SHORTCUTS_MODEL (model), location, file);
+
+  thunar_shortcuts_view_poke_file_finish (browser, file, target_file, error, user_data);
+}
+
+
+
+static void
 thunar_shortcuts_view_poke_volume_finish (ThunarBrowser *browser,
                                           GVolume       *volume,
                                           ThunarFile    *mount_point,
@@ -1349,6 +1373,7 @@ thunar_shortcuts_view_open (ThunarShortcutsView *view,
   GtkTreeIter       iter;
   ThunarFile       *file;
   GVolume          *volume;
+  GFile            *location;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
 
@@ -1364,7 +1389,8 @@ thunar_shortcuts_view_open (ThunarShortcutsView *view,
       /* determine the file for the shortcut at the given tree iterator */
       gtk_tree_model_get (model, &iter, 
                           THUNAR_SHORTCUTS_MODEL_COLUMN_FILE, &file,
-                          THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME, &volume, 
+                          THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME, &volume,
+                          THUNAR_SHORTCUTS_MODEL_COLUMN_LOCATION, &location,
                           -1);
 
       if (G_LIKELY (volume != NULL))
@@ -1379,12 +1405,21 @@ thunar_shortcuts_view_open (ThunarShortcutsView *view,
                                     thunar_shortcuts_view_poke_file_finish,
                                     GUINT_TO_POINTER (new_window));
         }
+      else if (location != NULL)
+        {
+          thunar_browser_poke_location (THUNAR_BROWSER (view), location, view,
+                                        thunar_shortcuts_view_poke_location_finish,
+                                        GUINT_TO_POINTER (new_window));
+        }
 
       if (file != NULL)
         g_object_unref (file);
 
       if (volume != NULL)
         g_object_unref (volume);
+
+      if (location != NULL)
+        g_object_unref (location);
     }
 }
 
