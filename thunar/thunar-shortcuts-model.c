@@ -1499,8 +1499,10 @@ thunar_shortcuts_model_mount_changed (GVolumeMonitor       *volume_monitor,
     if (THUNAR_SHORTCUT (lp->data)->mount == mount)
       break;
 
+  if (lp == NULL)
+    return;
+
   /* something is broken if we don't have a shortcut here */
-  _thunar_assert (lp != NULL);
   _thunar_assert (THUNAR_SHORTCUT (lp->data)->mount == mount);
 
   /* generate an iterator for the path */
@@ -1587,8 +1589,10 @@ thunar_shortcuts_model_mount_removed (GVolumeMonitor       *volume_monitor,
     if (THUNAR_SHORTCUT (lp->data)->mount == mount)
       break;
 
+  if (lp == NULL)
+    return;
+
   /* something is broken if we don't have a shortcut here */
-  _thunar_assert (lp != NULL);
   _thunar_assert (THUNAR_SHORTCUT (lp->data)->mount == mount);
 
   /* drop the shortcut from the model */

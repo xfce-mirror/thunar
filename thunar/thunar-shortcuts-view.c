@@ -1767,7 +1767,7 @@ thunar_shortcuts_view_disconnect (ThunarShortcutsView *view)
 #endif
 
                   /* try unmounting the mount */
-                  g_mount_unmount_with_operation (mount,
+                  g_mount_unmount_with_operation (volume_mount,
                                                   G_MOUNT_UNMOUNT_NONE,
                                                   mount_operation,
                                                   NULL,
