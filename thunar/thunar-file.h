@@ -100,12 +100,28 @@ typedef enum /*< flags >*/
 
 
 
+/**
+ * ThunarFileGetFunc:
+ *
+ * Callback type for loading #ThunarFile<!---->s asynchronously.
+ **/
+typedef void (*ThunarFileGetFunc) (GFile      *location,
+                                   ThunarFile *file,
+                                   GError     *error,
+                                   gpointer    user_data);
+
+
+
 GType             thunar_file_get_type             (void) G_GNUC_CONST;
 
 ThunarFile       *thunar_file_get                  (GFile                  *file,
                                                     GError                **error);
 ThunarFile       *thunar_file_get_for_uri          (const gchar            *uri,
                                                     GError                **error);
+void              thunar_file_get_async            (GFile                 *location,
+                                                    GCancellable          *cancellable,
+                                                    ThunarFileGetFunc      func,
+                                                    gpointer               user_data);
 
 GFile            *thunar_file_get_file             (const ThunarFile       *file) G_GNUC_PURE;
 

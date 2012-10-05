@@ -163,6 +163,14 @@ struct _ThunarFile
   guint          is_mounted : 1;
 };
 
+typedef struct
+{
+  ThunarFileGetFunc  func;
+  gpointer           user_data;
+  GCancellable      *cancellable;
+}
+ThunarFileGetData;
+
 
 
 G_DEFINE_TYPE_WITH_CODE (ThunarFile, thunar_file, G_TYPE_OBJECT,
@@ -625,130 +633,11 @@ thunar_file_set_emblem_names_ready (GObject      *source_object,
 
 
 
-/**
- * thunar_file_get:
- * @file  : a #GFile.
- * @error : return location for errors.
- *
- * Looks up the #ThunarFile referred to by @file. This function may return a
- * ThunarFile even though the file doesn't actually exist. This is the case
- * with remote URIs (like SFTP) for instance, if they are not mounted.
- *
- * The caller is responsible to call g_object_unref()
- * when done with the returned object.
- *
- * Return value: the #ThunarFile for @file or %NULL on errors.
- **/
-ThunarFile*
-thunar_file_get (GFile   *gfile,
-                 GError **error)
+static void
+thunar_file_info_clear (ThunarFile *file)
 {
-  ThunarFile *file;
-
-  _thunar_return_val_if_fail (G_IS_FILE (gfile), NULL);
-
-  /* check if we already have a cached version of that file */
-  file = thunar_file_cache_lookup (gfile);
-  if (G_UNLIKELY (file != NULL))
-    {
-      /* take a reference for the caller */
-      g_object_ref (file);
-    }
-  else
-    {
-      /* allocate a new object */
-      file = g_object_new (THUNAR_TYPE_FILE, NULL);
-      file->gfile = g_object_ref (gfile);
-
-      if (thunar_file_load (file, NULL, error))
-        {
-          /* insert the file into the cache */
-          G_LOCK (file_cache_mutex);
-          g_hash_table_insert (file_cache, g_object_ref (file->gfile), file);
-          G_UNLOCK (file_cache_mutex);
-        }
-      else
-        {
-          /* failed loading, destroy the file */
-          g_object_unref (file);
-
-          /* make sure we return NULL */
-          file = NULL;
-        }
-    }
-
-  return file;
-}
-
-
-
-/**
- * thunar_file_get_for_uri:
- * @uri   : an URI or an absolute filename.
- * @error : return location for errors or %NULL.
- *
- * Convenience wrapper function for thunar_file_get_for_path(), as its
- * often required to determine a #ThunarFile for a given @uri.
- *
- * The caller is responsible to free the returned object using
- * g_object_unref() when no longer needed.
- *
- * Return value: the #ThunarFile for the given @uri or %NULL if
- *               unable to determine.
- **/
-ThunarFile*
-thunar_file_get_for_uri (const gchar *uri,
-                         GError     **error)
-{
-  ThunarFile *file;
-  GFile      *path;
-
-  _thunar_return_val_if_fail (uri != NULL, NULL);
-  _thunar_return_val_if_fail (error == NULL || *error == NULL, NULL);
-
-  path = g_file_new_for_commandline_arg (uri);
-  file = thunar_file_get (path, error);
-  g_object_unref (path);
-
-  return file;
-}
-
-
-
-/**
- * thunar_file_load:
- * @file        : a #ThunarFile.
- * @cancellable : a #GCancellable.
- * @error       : return location for errors or %NULL.
- *
- * Loads all information about the file. As this is a possibly
- * blocking call, it can be cancelled using @cancellable. 
- *
- * If loading the file fails or the operation is cancelled,
- * @error will be set.
- *
- * Return value: %TRUE on success, %FALSE on error or interruption.
- **/
-static gboolean
-thunar_file_load (ThunarFile   *file,
-                  GCancellable *cancellable,
-                  GError      **error)
-{
-  const gchar *target_uri;
-  GKeyFile    *key_file;
-  GError      *err = NULL;
-  GFile       *thumbnail_dir;
-  gchar       *base_name;
-  gchar       *p;
-  gchar       *thumbnail_dir_path;
-  const gchar *display_name;
-  gboolean     is_secure = FALSE;
-  gchar       *casefold;
-
-  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-  _thunar_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), FALSE);
-
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+  
   /* release the current file info */
   if (file->info != NULL)
     {
@@ -782,31 +671,35 @@ thunar_file_load (ThunarFile   *file,
   /* assume the file is mounted by default */
   file->is_mounted = TRUE;
 
-  /* query a new file info */
-  file->info = g_file_query_info (file->gfile,
-                                  THUNARX_FILE_INFO_NAMESPACE,
-                                  G_FILE_QUERY_INFO_NONE,
-                                  cancellable, &err);
+  /* set thumb state to unknown */
+  file->flags = (file->flags & ~THUNAR_FILE_THUMB_STATE_MASK) | THUNAR_FILE_THUMB_STATE_UNKNOWN;
+}
 
-  if (err == NULL)
+
+
+static void
+thunar_file_info_reload (ThunarFile   *file,
+                         GCancellable *cancellable)
+{
+  const gchar *target_uri;
+  GKeyFile    *key_file;
+  GFile       *thumbnail_dir;
+  gchar       *base_name;
+  gchar       *p;
+  gchar       *thumbnail_dir_path;
+  const gchar *display_name;
+  gboolean     is_secure = FALSE;
+  gchar       *casefold;
+
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (file->info == NULL || G_IS_FILE_INFO (file->info));
+
+  if (G_LIKELY (file->info != NULL))
     {
       if (g_file_info_get_file_type (file->info) == G_FILE_TYPE_MOUNTABLE)
         {
-          target_uri =
-            g_file_info_get_attribute_string (file->info,
-                                              G_FILE_ATTRIBUTE_STANDARD_TARGET_URI);
-          file->is_mounted =
-            (target_uri != NULL) 
-            && !g_file_info_get_attribute_boolean (file->info, 
-                                                   G_FILE_ATTRIBUTE_MOUNTABLE_CAN_MOUNT);
-        }
-    }
-  else
-    {
-      if (err->domain == G_IO_ERROR && err->code == G_IO_ERROR_NOT_MOUNTED)
-        {
-          file->is_mounted = FALSE;
-          g_clear_error (&err);
+          target_uri = g_file_info_get_attribute_string (file->info, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI);
+          file->is_mounted = (target_uri != NULL) && !g_file_info_get_attribute_boolean (file->info, G_FILE_ATTRIBUTE_MOUNTABLE_CAN_MOUNT);
         }
     }
 
@@ -824,6 +717,10 @@ thunar_file_load (ThunarFile   *file,
       /* use the filename as custom icon name for thumbnails */
       file->custom_icon_name = g_file_get_path (file->gfile);
     }
+
+  /* free $HOME/.thumbnails/ GFile and path */
+  g_object_unref (thumbnail_dir);
+  g_free (thumbnail_dir_path);
 
   /* check if this file is a desktop entry */
   if (thunar_file_is_desktop_file (file, &is_secure) && is_secure)
@@ -892,10 +789,6 @@ thunar_file_load (ThunarFile   *file,
       file->custom_icon_name = NULL;
     }
 
-  /* free $HOME/.thumbnails/ GFile and path */
-  g_object_unref (thumbnail_dir);
-  g_free (thumbnail_dir_path);
-
   /* determine the display name */
   if (file->display_name == NULL)
     {
@@ -947,10 +840,117 @@ thunar_file_load (ThunarFile   *file,
 
   /* cleanup */
   g_free (casefold);
+}
 
-  /* set thumb state to unknown */
-  file->flags = 
-    (file->flags & ~THUNAR_FILE_THUMB_STATE_MASK) | THUNAR_FILE_THUMB_STATE_UNKNOWN;
+
+
+static void
+thunar_file_get_async_finish (GObject      *object,
+                              GAsyncResult *result,
+                              gpointer      user_data)
+{
+  ThunarFileGetData *data = user_data;
+  ThunarFile        *file;
+  GFileInfo         *file_info;
+  GError            *error = NULL;
+  GFile             *location = G_FILE (object);
+
+  _thunar_return_if_fail (G_IS_FILE (location));
+  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
+
+  /* finish querying the file information */
+  file_info = g_file_query_info_finish (location, result, &error);
+
+  /* allocate a new file object */
+  file = g_object_new (THUNAR_TYPE_FILE, NULL);
+  file->gfile = g_object_ref (location);
+
+  /* reset the file */
+  thunar_file_info_clear (file);
+
+  /* set the file information */
+  file->info = file_info;
+
+  /* update the file from the information */
+  thunar_file_info_reload (file, data->cancellable);
+
+  /* update the mounted info */
+  if (error != NULL
+      && error->domain == G_IO_ERROR
+      && error->code == G_IO_ERROR_NOT_MOUNTED)
+   {
+      file->is_mounted = FALSE;
+      g_clear_error (&error);
+   }
+
+  /* insert the file into the cache */
+  G_LOCK (file_cache_mutex);
+  g_hash_table_insert (file_cache, g_object_ref (file->gfile), file);
+  G_UNLOCK (file_cache_mutex);
+
+  /* pass the loaded file and possible errors to the return function */
+  (data->func) (location, file, error, data->user_data);
+
+  /* free the error, if there is any */
+  if (error != NULL)
+    g_error_free (error);
+
+  /* release the file */
+  g_object_unref (file);
+
+  /* release the get data */
+  if (data->cancellable != NULL)
+    g_object_unref (data->cancellable);
+  g_slice_free (ThunarFileGetData, data);
+}
+
+
+
+/**
+ * thunar_file_load:
+ * @file        : a #ThunarFile.
+ * @cancellable : a #GCancellable.
+ * @error       : return location for errors or %NULL.
+ *
+ * Loads all information about the file. As this is a possibly
+ * blocking call, it can be cancelled using @cancellable. 
+ *
+ * If loading the file fails or the operation is cancelled,
+ * @error will be set.
+ *
+ * Return value: %TRUE on success, %FALSE on error or interruption.
+ **/
+static gboolean
+thunar_file_load (ThunarFile   *file,
+                  GCancellable *cancellable,
+                  GError      **error)
+{
+  GError *err = NULL;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  _thunar_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), FALSE);
+
+  /* reset the file */
+  thunar_file_info_clear (file);
+
+  /* query a new file info */
+  file->info = g_file_query_info (file->gfile,
+                                  THUNARX_FILE_INFO_NAMESPACE,
+                                  G_FILE_QUERY_INFO_NONE,
+                                  cancellable, &err);
+
+  /* update the file from the information */
+  thunar_file_info_reload (file, cancellable);
+
+  /* update the mounted info */
+  if (err != NULL
+      && err->domain == G_IO_ERROR
+      && err->code == G_IO_ERROR_NOT_MOUNTED)
+   {
+      file->is_mounted = FALSE;
+      g_clear_error (&err);
+   }
 
   if (err != NULL)
     {
@@ -962,6 +962,141 @@ thunar_file_load (ThunarFile   *file,
       return TRUE;
     }
 }
+
+
+
+/**
+ * thunar_file_get:
+ * @file  : a #GFile.
+ * @error : return location for errors.
+ *
+ * Looks up the #ThunarFile referred to by @file. This function may return a
+ * ThunarFile even though the file doesn't actually exist. This is the case
+ * with remote URIs (like SFTP) for instance, if they are not mounted.
+ *
+ * The caller is responsible to call g_object_unref()
+ * when done with the returned object.
+ *
+ * Return value: the #ThunarFile for @file or %NULL on errors.
+ **/
+ThunarFile*
+thunar_file_get (GFile   *gfile,
+                 GError **error)
+{
+  ThunarFile *file;
+
+  _thunar_return_val_if_fail (G_IS_FILE (gfile), NULL);
+
+  /* check if we already have a cached version of that file */
+  file = thunar_file_cache_lookup (gfile);
+  if (G_UNLIKELY (file != NULL))
+    {
+      /* take a reference for the caller */
+      g_object_ref (file);
+    }
+  else
+    {
+      /* allocate a new object */
+      file = g_object_new (THUNAR_TYPE_FILE, NULL);
+      file->gfile = g_object_ref (gfile);
+
+      if (thunar_file_load (file, NULL, error))
+        {
+          /* insert the file into the cache */
+          G_LOCK (file_cache_mutex);
+          g_hash_table_insert (file_cache, g_object_ref (file->gfile), file);
+          G_UNLOCK (file_cache_mutex);
+        }
+      else
+        {
+          /* failed loading, destroy the file */
+          g_object_unref (file);
+
+          /* make sure we return NULL */
+          file = NULL;
+        }
+    }
+
+  return file;
+}
+
+
+
+/**
+ * thunar_file_get_async:
+ **/
+void
+thunar_file_get_async (GFile            *location,
+                       GCancellable     *cancellable,
+                       ThunarFileGetFunc func,
+                       gpointer          user_data)
+{
+  ThunarFile        *file;
+  ThunarFileGetData *data;
+
+  _thunar_return_if_fail (G_IS_FILE (location));
+  _thunar_return_if_fail (func != NULL);
+  
+  /* check if we already have a cached version of that file */
+  file = thunar_file_cache_lookup (location);
+  if (G_UNLIKELY (file != NULL))
+    {
+      /* call the return function with the file from the cache */
+      (func) (location, file, NULL, user_data);
+    }
+  else
+    {
+      /* allocate get data */
+      data = g_slice_new0 (ThunarFileGetData);
+      data->user_data = user_data;
+      data->func = func;
+      if (cancellable != NULL)
+        data->cancellable = g_object_ref (cancellable);
+
+      /* load the file information asynchronously */
+      g_file_query_info_async (location,
+                               THUNARX_FILE_INFO_NAMESPACE,
+                               G_FILE_QUERY_INFO_NONE,
+                               G_PRIORITY_DEFAULT,
+                               cancellable,
+                               thunar_file_get_async_finish,
+                               data);
+    }
+}
+
+
+
+/**
+ * thunar_file_get_for_uri:
+ * @uri   : an URI or an absolute filename.
+ * @error : return location for errors or %NULL.
+ *
+ * Convenience wrapper function for thunar_file_get_for_path(), as its
+ * often required to determine a #ThunarFile for a given @uri.
+ *
+ * The caller is responsible to free the returned object using
+ * g_object_unref() when no longer needed.
+ *
+ * Return value: the #ThunarFile for the given @uri or %NULL if
+ *               unable to determine.
+ **/
+ThunarFile*
+thunar_file_get_for_uri (const gchar *uri,
+                         GError     **error)
+{
+  ThunarFile *file;
+  GFile      *path;
+
+  _thunar_return_val_if_fail (uri != NULL, NULL);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  path = g_file_new_for_commandline_arg (uri);
+  file = thunar_file_get (path, error);
+  g_object_unref (path);
+
+  return file;
+}
+
 
 
 /**
