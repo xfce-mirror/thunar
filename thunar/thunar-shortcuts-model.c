@@ -310,6 +310,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
   GFile          *bookmarks;
   GFile          *desktop;
   GFile          *trash;
+  ThunarFile     *file;
 
   /* add the places heading */
   shortcut = g_slice_new0 (ThunarShortcut);
@@ -322,23 +323,31 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
   home = thunar_g_file_new_for_home ();
 
   /* add home entry */
-  shortcut = g_slice_new0 (ThunarShortcut);
-  shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES;
-  shortcut->file = thunar_file_get (home, NULL);
-  shortcut->sort_id = 0;
-  shortcut->gicon = g_themed_icon_new ("user-home");
-  thunar_shortcuts_model_add_shortcut (model, shortcut);
+  file = thunar_file_get (home, NULL);
+  if (file != NULL)
+    {
+      shortcut = g_slice_new0 (ThunarShortcut);
+      shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES;
+      shortcut->file = file;
+      shortcut->sort_id = 0;
+      shortcut->gicon = g_themed_icon_new ("user-home");
+      thunar_shortcuts_model_add_shortcut (model, shortcut);
+    }
 
   /* add desktop entry */
   desktop = thunar_g_file_new_for_desktop ();
   if (!g_file_equal (desktop, home))
     {
-      shortcut = g_slice_new0 (ThunarShortcut);
-      shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES;
-      shortcut->file = thunar_file_get (desktop, NULL);
-      shortcut->gicon = g_themed_icon_new ("user-desktop");
-      shortcut->sort_id =  1;
-      thunar_shortcuts_model_add_shortcut (model, shortcut);
+      file = thunar_file_get (desktop, NULL);
+      if (file != NULL)
+        {
+          shortcut = g_slice_new0 (ThunarShortcut);
+          shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES;
+          shortcut->file = file;
+          shortcut->gicon = g_themed_icon_new ("user-desktop");
+          shortcut->sort_id =  1;
+          thunar_shortcuts_model_add_shortcut (model, shortcut);
+        }
     }
   g_object_unref (desktop);
 
@@ -346,15 +355,18 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
   if (thunar_g_vfs_is_uri_scheme_supported ("trash"))
     {
       trash = thunar_g_file_new_for_trash ();
-
-      shortcut = g_slice_new0 (ThunarShortcut);
-      shortcut->group = THUNAR_SHORTCUT_GROUP_TRASH;
-      shortcut->file = thunar_file_get (trash, NULL);
-      shortcut->gicon = g_themed_icon_new ("user-trash");
-      shortcut->name = g_strdup (_("Trash"));
-      thunar_shortcuts_model_add_shortcut (model, shortcut);
-
+      file = thunar_file_get (trash, NULL);
       g_object_unref (trash);
+
+      if (file != NULL)
+        {
+          shortcut = g_slice_new0 (ThunarShortcut);
+          shortcut->group = THUNAR_SHORTCUT_GROUP_TRASH;
+          shortcut->file = file;
+          shortcut->gicon = g_themed_icon_new ("user-trash");
+          shortcut->name = g_strdup (_("Trash"));
+          thunar_shortcuts_model_add_shortcut (model, shortcut);
+        }
     }
 
   /* determine the URI to the Gtk+ bookmarks file */
@@ -1084,6 +1096,7 @@ thunar_shortcuts_model_load (ThunarShortcutsModel *model)
           file = thunar_file_get (file_path, NULL);
           g_object_unref (file_path);
 
+          /* TODO invisible item? */
           if (G_UNLIKELY (file == NULL))
             continue;
 
