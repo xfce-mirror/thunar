@@ -333,10 +333,10 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
 
   /* allocate icon renderer for the eject symbol */
   renderer = gtk_cell_renderer_pixbuf_new ();
-  g_object_set (renderer, "mode", GTK_CELL_RENDERER_MODE_ACTIVATABLE, NULL);
+  g_object_set (renderer, "mode", GTK_CELL_RENDERER_MODE_ACTIVATABLE, "icon-name", "media-eject", NULL);
   gtk_tree_view_column_pack_start (column, renderer, FALSE);
   gtk_tree_view_column_set_attributes (column, renderer,
-                                       "icon-name", THUNAR_SHORTCUTS_MODEL_COLUMN_EJECT,
+                                       "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_CAN_EJECT,
                                        "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_NOT_HEADER,
                                        NULL);
 
@@ -389,7 +389,7 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
   GtkTreePath         *path;
   GtkTreeIter          iter;
   gboolean             result;
-  gchar               *eject_icon;
+  gboolean             can_eject;
 
   /* reset the pressed button state */
   view->pressed_button = -1;
@@ -432,10 +432,9 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
               model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
               if (gtk_tree_model_get_iter (model, &iter, path))
                 {
-                  gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_EJECT, &eject_icon, -1);
-                  if (strlen (eject_icon) > 0)
+                  gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_CAN_EJECT, &can_eject, -1);
+                  if (can_eject)
                     view->pressed_eject_button = 1;
-                  g_free (eject_icon);
                 }
             }
 

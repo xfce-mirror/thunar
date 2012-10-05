@@ -483,8 +483,8 @@ thunar_shortcuts_model_get_column_type (GtkTreeModel *tree_model,
     case THUNAR_SHORTCUTS_MODEL_COLUMN_MUTABLE:
       return G_TYPE_BOOLEAN;
 
-    case THUNAR_SHORTCUTS_MODEL_COLUMN_EJECT:
-      return G_TYPE_STRING;
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_CAN_EJECT:
+      return G_TYPE_BOOLEAN;
 
     case THUNAR_SHORTCUTS_MODEL_COLUMN_GROUP:
       return G_TYPE_UINT;
@@ -550,6 +550,7 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
   ThunarFile     *file;
   GMount         *mount;
   GFile          *mount_point;
+  gboolean        can_eject;
 
   _thunar_return_if_fail (iter->stamp == THUNAR_SHORTCUTS_MODEL (tree_model)->stamp);
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (tree_model));
@@ -645,24 +646,24 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
       g_value_set_boolean (value, shortcut->group == THUNAR_SHORTCUT_GROUP_BOOKMARKS);
       break;
 
-    case THUNAR_SHORTCUTS_MODEL_COLUMN_EJECT:
-      g_value_init (value, G_TYPE_STRING);
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_CAN_EJECT:
       if (shortcut->volume != NULL)
         {
-          if (thunar_g_volume_is_removable (shortcut->volume)
-              && thunar_g_volume_is_present (shortcut->volume))
-            {
-              g_value_set_static_string (value, "media-eject");
-            }
-          else
-            {
-              g_value_set_static_string (value, "");
-            }
+          can_eject = thunar_g_volume_is_removable (shortcut->volume)
+                        && thunar_g_volume_is_present (shortcut->volume);
+        }
+      else if (shortcut->mount != NULL)
+        {
+          can_eject = g_mount_can_eject (shortcut->mount)
+                      || g_mount_can_unmount (shortcut->mount);
         }
       else
         {
-          g_value_set_static_string (value, "");
+          can_eject = FALSE;
         }
+
+      g_value_init (value, G_TYPE_BOOLEAN);
+      g_value_set_boolean (value, can_eject);
       break;
 
     case THUNAR_SHORTCUTS_MODEL_COLUMN_GROUP:
