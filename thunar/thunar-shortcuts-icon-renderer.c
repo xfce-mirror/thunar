@@ -36,6 +36,7 @@ enum
 {
   PROP_0,
   PROP_VOLUME,
+  PROP_GICON,
 };
 
 
@@ -69,6 +70,7 @@ struct _ThunarShortcutsIconRenderer
   ThunarIconRenderer __parent__;
 
   GVolume           *volume;
+  GIcon             *gicon;
 };
 
 
@@ -102,6 +104,18 @@ thunar_shortcuts_icon_renderer_class_init (ThunarShortcutsIconRendererClass *kla
                                    g_param_spec_object ("volume", "volume", "volume",
                                                         G_TYPE_VOLUME,
                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarIconRenderer:gicon:
+   *
+   * The GIcon to render, this property has preference over the the icon returned
+   * by the ThunarFile property.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_GICON,
+                                   g_param_spec_object ("gicon", "gicon", "gicon",
+                                                        G_TYPE_ICON,
+                                                        EXO_PARAM_READWRITE));
 }
 
 
@@ -125,6 +139,10 @@ thunar_shortcuts_icon_renderer_finalize (GObject *object)
   if (G_UNLIKELY (shortcuts_icon_renderer->volume != NULL))
     g_object_unref (shortcuts_icon_renderer->volume);
 
+  /* release the icon */
+  if (G_UNLIKELY (shortcuts_icon_renderer->gicon != NULL))
+    g_object_unref (shortcuts_icon_renderer->gicon);
+
   (*G_OBJECT_CLASS (thunar_shortcuts_icon_renderer_parent_class)->finalize) (object);
 }
 
@@ -142,6 +160,10 @@ thunar_shortcuts_icon_renderer_get_property (GObject    *object,
     {
     case PROP_VOLUME:
       g_value_set_object (value, shortcuts_icon_renderer->volume);
+      break;
+
+    case PROP_GICON:
+      g_value_set_object (value, shortcuts_icon_renderer->gicon);
       break;
 
     default:
@@ -166,6 +188,12 @@ thunar_shortcuts_icon_renderer_set_property (GObject      *object,
       if (G_UNLIKELY (shortcuts_icon_renderer->volume != NULL))
         g_object_unref (shortcuts_icon_renderer->volume);
       shortcuts_icon_renderer->volume = g_value_dup_object (value);
+      break;
+
+    case PROP_GICON:
+      if (G_UNLIKELY (shortcuts_icon_renderer->gicon != NULL))
+        g_object_unref (shortcuts_icon_renderer->gicon);
+      shortcuts_icon_renderer->gicon = g_value_dup_object (value);
       break;
 
     default:
@@ -195,13 +223,18 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
   GIcon                       *gicon;
 
   /* check if we have a volume set */
-  if (G_UNLIKELY (shortcuts_icon_renderer->volume != NULL))
+  if (G_UNLIKELY (shortcuts_icon_renderer->volume != NULL
+      || shortcuts_icon_renderer->gicon != NULL))
     {
       /* load the volume icon */
       icon_theme = gtk_icon_theme_get_for_screen (gdk_drawable_get_screen (window));
 
-      /* look up the volume icon info */
-      gicon = g_volume_get_icon (shortcuts_icon_renderer->volume);
+      /* look up the icon info */
+      if (shortcuts_icon_renderer->gicon != NULL)
+        gicon = g_object_ref (shortcuts_icon_renderer->gicon);
+      else
+        gicon = g_volume_get_icon (shortcuts_icon_renderer->volume);
+
       icon_info = gtk_icon_theme_lookup_by_gicon (icon_theme, gicon, cell_area->width, 
                                                   GTK_ICON_LOOKUP_USE_BUILTIN);
       g_object_unref (gicon);
@@ -233,7 +266,8 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
               icon_area.height = gdk_pixbuf_get_height (icon);
             }
 
-          if (!thunar_g_volume_is_mounted (shortcuts_icon_renderer->volume))
+          if (shortcuts_icon_renderer->volume != NULL
+              && !thunar_g_volume_is_mounted (shortcuts_icon_renderer->volume))
             {
               /* 50% translucent for unmounted volumes */
               temp = exo_gdk_pixbuf_lucent (icon, 50);
