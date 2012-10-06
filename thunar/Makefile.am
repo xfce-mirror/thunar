@@ -71,6 +71,10 @@ thunar_SOURCES =							\
 	thunar-details-view.h						\
 	thunar-dialogs.c						\
 	thunar-dialogs.h						\
+	thunar-device.c							\
+	thunar-device.h							\
+	thunar-device-monitor.c						\
+	thunar-device-monitor.h						\
 	thunar-dnd.c							\
 	thunar-dnd.h							\
 	thunar-emblem-chooser.c						\
