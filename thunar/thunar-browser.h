@@ -74,7 +74,7 @@ void  thunar_browser_poke_volume   (ThunarBrowser                 *browser,
                                     ThunarBrowserPokeVolumeFunc    func,
                                     gpointer                       user_data);
 void  thunar_browser_poke_location (ThunarBrowser                 *browser,
-                                    GFile                           *location,
+                                    GFile                         *location,
                                     gpointer                       widget,
                                     ThunarBrowserPokeLocationFunc  func,
                                     gpointer                       user_data);

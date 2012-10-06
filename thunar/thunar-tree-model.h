@@ -43,7 +43,7 @@ typedef gboolean (* ThunarTreeModelVisibleFunc) (ThunarTreeModel *model,
  * @THUNAR_TREE_MODEL_COLUMN_FILE   : the index of the file column.
  * @THUNAR_TREE_MODEL_COLUMN_NAME   : the index of the name column.
  * @THUNAR_TREE_MODEL_COLUMN_ATTR   : the index of the #PangoAttrList column.
- * @THUNAR_TREE_MODEL_COLUMN_VOLUME : the index of the #GVolume column.
+ * @THUNAR_TREE_MODEL_COLUMN_DEVICE : the index of the #ThunarDevice column.
  *
  * Columns exported by the #ThunarTreeModel using the
  * #GtkTreeModel interface.
@@ -53,7 +53,7 @@ typedef enum
   THUNAR_TREE_MODEL_COLUMN_FILE,
   THUNAR_TREE_MODEL_COLUMN_NAME,
   THUNAR_TREE_MODEL_COLUMN_ATTR,
-  THUNAR_TREE_MODEL_COLUMN_VOLUME,
+  THUNAR_TREE_MODEL_COLUMN_DEVICE,
   THUNAR_TREE_MODEL_N_COLUMNS,
 } ThunarTreeModelColumn;
 

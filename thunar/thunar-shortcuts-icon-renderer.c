@@ -36,7 +36,6 @@
 enum
 {
   PROP_0,
-  PROP_VOLUME,
   PROP_DEVICE,
   PROP_GICON,
 };
@@ -71,7 +70,6 @@ struct _ThunarShortcutsIconRenderer
 {
   ThunarIconRenderer __parent__;
 
-  GVolume           *volume;
   ThunarDevice      *device;
   GIcon             *gicon;
 };
@@ -95,18 +93,6 @@ thunar_shortcuts_icon_renderer_class_init (ThunarShortcutsIconRendererClass *kla
 
   gtkcell_renderer_class = GTK_CELL_RENDERER_CLASS (klass);
   gtkcell_renderer_class->render = thunar_shortcuts_icon_renderer_render;
-
-  /**
-   * ThunarShortcutsIconRenderer:volume:
-   *
-   * The #GVolume for which to render an icon or %NULL to fallback
-   * to the default icon renderering (see #ThunarIconRenderer).
-   **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_VOLUME,
-                                   g_param_spec_object ("volume", "volume", "volume",
-                                                        G_TYPE_VOLUME,
-                                                        EXO_PARAM_READWRITE));
 
   /**
    * ThunarShortcutsIconRenderer:device:
@@ -150,9 +136,6 @@ thunar_shortcuts_icon_renderer_finalize (GObject *object)
 {
   ThunarShortcutsIconRenderer *renderer = THUNAR_SHORTCUTS_ICON_RENDERER (object);
 
-  if (G_UNLIKELY (renderer->volume != NULL))
-    g_object_unref (renderer->volume);
-
   if (G_UNLIKELY (renderer->device != NULL))
     g_object_unref (renderer->device);
 
@@ -174,10 +157,6 @@ thunar_shortcuts_icon_renderer_get_property (GObject    *object,
 
   switch (prop_id)
     {
-    case PROP_VOLUME:
-      g_value_set_object (value, renderer->volume);
-      break;
-
     case PROP_DEVICE:
       g_value_set_object (value, renderer->device);
       break;
@@ -204,12 +183,6 @@ thunar_shortcuts_icon_renderer_set_property (GObject      *object,
 
   switch (prop_id)
     {
-    case PROP_VOLUME:
-      if (G_UNLIKELY (renderer->volume != NULL))
-        g_object_unref (renderer->volume);
-      renderer->volume = g_value_dup_object (value);
-      break;
-
     case PROP_DEVICE:
       if (G_UNLIKELY (renderer->device != NULL))
         g_object_unref (renderer->device);
@@ -249,8 +222,7 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
   GIcon                       *gicon;
 
   /* check if we have a volume set */
-  if (G_UNLIKELY (shortcuts_icon_renderer->volume != NULL
-      || shortcuts_icon_renderer->gicon != NULL
+  if (G_UNLIKELY (shortcuts_icon_renderer->gicon != NULL
       ||  shortcuts_icon_renderer->device != NULL))
     {
       /* load the volume icon */
@@ -259,8 +231,6 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
       /* look up the icon info */
       if (shortcuts_icon_renderer->gicon != NULL)
         gicon = g_object_ref (shortcuts_icon_renderer->gicon);
-      else if (shortcuts_icon_renderer->volume != NULL)
-        gicon = g_volume_get_icon (shortcuts_icon_renderer->volume);
       else
         gicon = thunar_device_get_icon (shortcuts_icon_renderer->device);
 

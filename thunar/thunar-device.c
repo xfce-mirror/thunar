@@ -281,6 +281,38 @@ thunar_device_mount_eject_finish (GObject      *object,
 
 
 static void
+thunar_device_volume_mount_finished (GObject      *object,
+                                     GAsyncResult *result,
+                                     gpointer      user_data)
+{
+  ThunarDeviceOperation *operation = user_data;
+  GError                *error = NULL;
+
+  _thunar_return_if_fail (G_IS_VOLUME (object));
+  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
+  
+  /* finish the eject */
+  if (!g_volume_eject_with_operation_finish (G_VOLUME (object), result, &error))
+    {
+      /* unset the error if a helper program has already interacted with the user */
+      if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_FAILED_HANDLED)
+          || g_error_matches (error, G_IO_ERROR, G_IO_ERROR_ALREADY_MOUNTED)
+          || g_error_matches (error, G_IO_ERROR, G_IO_ERROR_PENDING))
+        g_clear_error (&error);
+    }
+
+  /* callback */
+  (operation->callback) (operation->device, error, operation->user_data);
+
+  /* cleanup */
+  if (error != NULL)
+    g_error_free (error);
+  thunar_device_operation_free (operation);
+}
+
+
+
+static void
 thunar_device_volume_eject_finish (GObject      *object,
                                    GAsyncResult *result,
                                    gpointer      user_data)
@@ -554,10 +586,23 @@ thunar_device_mount (ThunarDevice         *device,
                      ThunarDeviceCallback  callback,
                      gpointer              user_data)
 {
+  ThunarDeviceOperation *operation;
+  
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
   _thunar_return_if_fail (G_IS_MOUNT_OPERATION (mount_operation));
   _thunar_return_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable));
   _thunar_return_if_fail (callback != NULL);
+  
+  if (G_IS_VOLUME (device->device))
+    {
+      operation = thunar_device_operation_new (device, callback, user_data);
+      g_volume_mount (G_VOLUME (device->device),
+                      G_MOUNT_MOUNT_NONE,
+                      mount_operation,
+                      cancellable,
+                      thunar_device_volume_mount_finished,
+                      operation);
+    }
 }
 
 

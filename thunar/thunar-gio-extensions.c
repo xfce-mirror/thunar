@@ -549,35 +549,6 @@ thunar_g_volume_is_mounted (GVolume *volume)
 
 
 
-gboolean 
-thunar_g_volume_is_present (GVolume *volume)
-{
-  gboolean has_media = FALSE;
-  gboolean is_shadowed = FALSE;
-  GDrive  *drive;
-  GMount  *mount;
-
-  _thunar_return_val_if_fail (G_IS_VOLUME (volume), FALSE);
-
-  drive = g_volume_get_drive (volume);
-  if (drive != NULL)
-    {
-      has_media = g_drive_has_media (drive);
-      g_object_unref (drive);
-    }
-
-  mount = g_volume_get_mount (volume);
-  if (mount != NULL)
-    {
-      is_shadowed = g_mount_is_shadowed (mount);
-      g_object_unref (mount);
-    }
-
-  return has_media && !is_shadowed;
-}
-
-
-
 gboolean
 thunar_g_app_info_launch (GAppInfo          *info,
                           GFile             *working_directory,
