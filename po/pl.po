@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-06 16:24+0000\n"
+"POT-Creation-Date: 2012-10-06 21:45+0000\n"
 "PO-Revision-Date: 2012-04-19 20:23+0100\n"
 "Last-Translator: Michał Olber <michal.olber@osworld.pl>\n"
 "Language-Team: polski <>\n"
@@ -715,19 +715,22 @@ msgid "ReplaceDialogPart2|with the following file?"
 msgstr "następującym plikiem?"
 
 #: ../thunar/thunar-dialogs.c:760
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "The desktop file \"%s\" is in an insecure location and not marked as "
 "executable. If you do not trust this program, click Cancel."
-msgstr "Plik pulpitu \"%s\" znajduje się w niezabezpieczonym położeniu oraz nie jest oznaczony jako wykonywalny. Jeśli program jest niezaufany kliknij Anuluj"
+msgstr ""
+"Plik pulpitu \"%s\" znajduje się w niezabezpieczonym położeniu oraz nie jest "
+"oznaczony jako wykonywalny. Jeśli program jest niezaufany kliknij Anuluj"
 
 #: ../thunar/thunar-dialogs.c:777
 msgid "_Launch Anyway"
 msgstr "_Uruchom mimo wszystko"
 
 #: ../thunar/thunar-dialogs.c:779
+#, fuzzy
 msgid "Mark _Executable"
-msgstr "Oznacz jako _Wykonywalny"
+msgstr "Oznacz jako _wykonywalny"
 
 #: ../thunar/thunar-dnd.c:72
 msgid "_Copy here"
@@ -826,9 +829,8 @@ msgstr "Nie udało się przetworzyć pliku aktywatora: %s"
 
 #. if the .desktop file is not secure, ask user what to do
 #: ../thunar/thunar-file.c:1116
-#, fuzzy
 msgid "Untrusted application launcher"
-msgstr "Nie wybrano programu."
+msgstr "Niezaufany aktywator programu"
 
 #: ../thunar/thunar-file.c:1141
 #, c-format
@@ -838,7 +840,7 @@ msgstr "Nie określono pola Exec"
 #. if the .desktop file is not secure, ask user what to do
 #: ../thunar/thunar-file.c:1150
 msgid "Untrusted link launcher"
-msgstr "Niezaufany odnośnik aktywatora"
+msgstr "Niezaufany aktywator odnośnika"
 
 #: ../thunar/thunar-file.c:1166
 #, c-format
@@ -847,7 +849,7 @@ msgstr "Nie określono pola URL"
 
 #: ../thunar/thunar-file.c:1171
 msgid "Invalid desktop file"
-msgstr "Nieprawidłowy plik .desktop"
+msgstr "Nieprawidłowy plik aktywatora"
 
 #. create the "back" action
 #: ../thunar/thunar-history.c:154
@@ -993,7 +995,9 @@ msgstr "Pominąć go?"
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
-msgstr "Brak przestrzeni w miejscu docelowym. Spróbuj usunąć pliki aby uzyskać przestrzeń."
+msgstr ""
+"Brak przestrzeni w miejscu docelowym. Spróbuj usunąć pliki aby uzyskać "
+"przestrzeń."
 
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:168 ../thunar/thunar-launcher.c:810
@@ -1812,7 +1816,7 @@ msgstr "Typ:"
 
 #: ../thunar/thunar-properties-dialog.c:340
 msgid "_Open With:"
-msgstr "Otwórz za pomocą:"
+msgstr "_Otwieranie za pomocą:"
 
 #: ../thunar/thunar-properties-dialog.c:354
 msgid "Link Target:"
@@ -2325,12 +2329,15 @@ msgstr "_Pusty plik"
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
 "destination"
-msgstr "Błąd podczas kopiowania do \"%s\": %s wymagana jest większa przestrzeń aby skopiować do miejsca docelowego."
+msgstr ""
+"Błąd podczas kopiowania do \"%s\": %s wymagana jest większa przestrzeń aby "
+"skopiować do miejsca docelowego."
 
 #: ../thunar/thunar-transfer-job.c:744
 #, c-format
 msgid "Error while copying to \"%s\": The destination is read-only"
-msgstr "Błąd podczas kopiowania do \"%s\": Miejsce docelowe jest tylko do odczytu"
+msgstr ""
+"Błąd podczas kopiowania do \"%s\": Miejsce docelowe jest tylko do odczytu"
 
 #: ../thunar/thunar-transfer-job.c:787
 msgid "Collecting files..."
@@ -2678,11 +2685,11 @@ msgstr "Wyświetla pasek stanu"
 
 #: ../thunar/thunar-window.c:345
 msgid "_Menubar"
-msgstr "_Menu"
+msgstr "Pasek p_oleceń"
 
 #: ../thunar/thunar-window.c:345
 msgid "Change the visibility of this window's menubar"
-msgstr "Zmienia widoczność paska menu tego okna"
+msgstr "Zmienia widoczność paska poleceń bieżącego okna"
 
 #. * add view options
 #. 
