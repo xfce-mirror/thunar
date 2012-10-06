@@ -347,6 +347,13 @@ static const GtkToggleActionEntry toggle_action_entries[] =
 
 
 
+static const gchar *thunar_user_directory_names[9] = {
+  "Desktop", "Documents", "Download", "Music", "Pictures", "Public",
+  "Templates", "Videos", NULL,
+};
+
+
+
 static guint window_signals[LAST_SIGNAL];
 
 
@@ -617,6 +624,35 @@ view_index2type (gint idx)
     }
 }
 
+/* Reads the current xdg user dirs locale from ~/.config/xdg-user-dirs.locale
+ * Notice that the result shall be freed by using g_free (). */
+static gchar *
+thunar_get_xdg_user_dirs_locale (void)
+{
+  gchar *file    = NULL;
+  gchar *content = NULL;
+  gchar *locale  = NULL;
+
+  /* get the file pathname */
+  file = g_build_filename (g_get_user_config_dir (), LOCALE_FILE_NAME, NULL);
+
+  /* grab the contents and get ride of the surrounding spaces */
+  if (g_file_get_contents (file, &content, NULL, NULL))
+    locale = g_strdup (g_strstrip (content));
+
+  g_free (content);
+  g_free (file);
+
+  /* if we got nothing, let's set the default locale as C */
+  if (exo_str_is_equal (locale, ""))
+    {
+      g_free (locale);
+      locale = g_strdup ("C");
+    }
+
+  return locale;
+}
+
 /* this function hides all the user directory menu entries in case of
  * glib <= 2.12. Otherwise it hide the menu entries only for the directories
  * that point to $HOME or to NULL. Then, it translates the labels. */
@@ -652,7 +688,7 @@ thunar_window_setup_user_dir_menu_entries (ThunarWindow *window)
   old_locale = g_strdup(setlocale (LC_MESSAGES, NULL));
 
   /* set the new locale */
-  locale = _thunar_get_xdg_user_dirs_locale ();
+  locale = thunar_get_xdg_user_dirs_locale ();
   setlocale (LC_MESSAGES, locale);
   g_free (locale);
 
@@ -665,7 +701,7 @@ thunar_window_setup_user_dir_menu_entries (ThunarWindow *window)
 
       /* special case: got NULL for the templates dir. Force it to ~/Templates */
       if (G_UNLIKELY (path == NULL && i == G_USER_DIRECTORY_TEMPLATES))
-        dir = g_file_resolve_relative_path (home_dir, _thunar_user_directory_names[i]);
+        dir = g_file_resolve_relative_path (home_dir, thunar_user_directory_names[i]);
       else if (path != NULL)
         dir = g_file_new_for_path (path);
       else
@@ -675,7 +711,7 @@ thunar_window_setup_user_dir_menu_entries (ThunarWindow *window)
       if (G_LIKELY (path != NULL && !g_file_equal (dir, home_dir)))
         {
           /* menu entry label translation */
-          translation = dgettext (XDG_USER_DIRS_PACKAGE, (gchar *) _thunar_user_directory_names[i]);
+          translation = dgettext (XDG_USER_DIRS_PACKAGE, (gchar *) thunar_user_directory_names[i]);
           g_object_set (action, "label", translation, NULL);
         }
       else

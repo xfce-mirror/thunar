@@ -88,9 +88,6 @@ typedef GUserDirectory ThunarUserDirectory;
 #define THUNAR_USER_DIRECTORY_VIDEOS       G_USER_DIRECTORY_VIDEOS
 #define THUNAR_USER_N_DIRECTORIES          (8)
 
-gchar *_thunar_get_xdg_user_dirs_locale (void);
-extern const gchar *_thunar_user_directory_names[THUNAR_USER_N_DIRECTORIES+1];
-
 G_END_DECLS;
 
 #endif /* !__THUNAR_PRIVATE_H__ */
