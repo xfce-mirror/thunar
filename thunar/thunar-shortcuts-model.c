@@ -95,7 +95,7 @@ static void               thunar_shortcuts_model_add_shortcut       (ThunarShort
                                                                      ThunarShortcut            *shortcut);
 static void               thunar_shortcuts_model_remove_shortcut    (ThunarShortcutsModel      *model,
                                                                      ThunarShortcut            *shortcut);
-static void               thunar_shortcuts_model_load               (ThunarShortcutsModel      *model);
+static gboolean           thunar_shortcuts_model_load               (gpointer                   data);
 static void               thunar_shortcuts_model_save               (ThunarShortcutsModel      *model);
 static void               thunar_shortcuts_model_monitor            (GFileMonitor              *monitor,
                                                                      GFile                     *file,
@@ -148,10 +148,13 @@ struct _ThunarShortcutsModel
 #endif
 
   GList          *shortcuts;
+
   GList          *hidden_volumes;
   GVolumeMonitor *volume_monitor;
+  guint           volume_monitor_idle_id;
 
   GFileMonitor   *monitor;
+  guint           load_idle_id;
 };
 
 struct _ThunarShortcut
@@ -218,13 +221,16 @@ thunar_shortcuts_model_drag_source_init (GtkTreeDragSourceIface *iface)
 
 
 
-static void
-thunar_shortcuts_model_volumes_load (ThunarShortcutsModel *model)
+static gboolean
+thunar_shortcuts_model_volumes_load (gpointer data)
 {
+  ThunarShortcutsModel *model = THUNAR_SHORTCUTS_MODEL (data);
   ThunarShortcut *shortcut;
   GList          *volumes;
   GList          *lp;
   GList          *mounts;
+
+  GDK_THREADS_ENTER ();
 
   /* add the devices heading */
   shortcut = g_slice_new0 (ThunarShortcut);
@@ -262,6 +268,8 @@ thunar_shortcuts_model_volumes_load (ThunarShortcutsModel *model)
     }
   g_list_free (mounts);
 
+  GDK_THREADS_LEAVE ();
+
   /* monitor for changes */
   g_signal_connect (model->volume_monitor, "volume-added", G_CALLBACK (thunar_shortcuts_model_volume_added), model);
   g_signal_connect (model->volume_monitor, "volume-removed", G_CALLBACK (thunar_shortcuts_model_volume_removed), model);
@@ -269,6 +277,10 @@ thunar_shortcuts_model_volumes_load (ThunarShortcutsModel *model)
   g_signal_connect (model->volume_monitor, "mount-added", G_CALLBACK (thunar_shortcuts_model_mount_added), model);
   g_signal_connect (model->volume_monitor, "mount-removed", G_CALLBACK (thunar_shortcuts_model_mount_removed), model);
   g_signal_connect (model->volume_monitor, "mount-changed", G_CALLBACK (thunar_shortcuts_model_mount_changed), model);
+
+  model->volume_monitor_idle_id = 0;
+
+  return FALSE;
 }
 
 
@@ -293,6 +305,7 @@ thunar_shortcuts_model_shortcut_network (ThunarShortcutsModel *model)
   shortcut->gicon = g_themed_icon_new (GTK_STOCK_NETWORK);
   thunar_shortcuts_model_add_shortcut (model, shortcut);
 }
+
 
 
 static void
@@ -367,7 +380,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
     g_signal_connect (model->monitor, "changed", G_CALLBACK (thunar_shortcuts_model_monitor), model);
 
   /* read the Gtk+ bookmarks file */
-  thunar_shortcuts_model_load (model);
+  model->load_idle_id = g_idle_add (thunar_shortcuts_model_load, model);
 
   g_object_unref (home);
   g_object_unref (bookmarks);
@@ -384,7 +397,7 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
 #endif
 
   /* load volumes */
-  thunar_shortcuts_model_volumes_load (model);
+  model->volume_monitor_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_shortcuts_model_volumes_load, model, NULL);
 
   /* add network */
   thunar_shortcuts_model_shortcut_network (model);
@@ -401,6 +414,14 @@ thunar_shortcuts_model_finalize (GObject *object)
   ThunarShortcutsModel *model = THUNAR_SHORTCUTS_MODEL (object);
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
+
+  /* stop bookmark load idle */
+  if (model->load_idle_id != 0)
+    g_source_remove (model->load_idle_id);
+
+  /* stop volume monitor loading */
+  if (model->volume_monitor_idle_id != 0)
+    g_source_remove (model->volume_monitor_idle_id);
 
   /* free all shortcuts */
   g_list_foreach (model->shortcuts, (GFunc) thunar_shortcut_free, model);
@@ -919,18 +940,21 @@ thunar_shortcuts_model_remove_shortcut (ThunarShortcutsModel *model,
 
 
 
-static void
-thunar_shortcuts_model_load (ThunarShortcutsModel *model)
+static gboolean
+thunar_shortcuts_model_load (gpointer data)
 {
-  ThunarShortcut *shortcut;
-  ThunarFile      *file;
-  GFile           *file_path;
-  GFile           *home;
-  gchar           *bookmarks_path;
-  gchar            line[2048];
-  gchar           *name;
-  FILE            *fp;
-  gint             sort_id;
+  ThunarShortcutsModel *model = THUNAR_SHORTCUTS_MODEL (data);
+  ThunarShortcut       *shortcut;
+  ThunarFile           *file;
+  GFile                *file_path;
+  GFile                *home;
+  gchar                *bookmarks_path;
+  gchar                 line[2048];
+  gchar                *name;
+  FILE                 *fp;
+  gint                  sort_id;
+
+  _thunar_return_val_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model), FALSE);
 
   home = thunar_g_file_new_for_home ();
 
@@ -942,6 +966,8 @@ thunar_shortcuts_model_load (ThunarShortcutsModel *model)
   if (G_LIKELY (fp != NULL))
     {
       sort_id = 0;
+
+      GDK_THREADS_ENTER ();
 
       while (fgets (line, sizeof (line), fp) != NULL)
         {
@@ -1003,8 +1029,9 @@ thunar_shortcuts_model_load (ThunarShortcutsModel *model)
               /* append the shortcut to the list */
               thunar_shortcuts_model_add_shortcut (model, shortcut);
             }
-
         }
+
+      GDK_THREADS_LEAVE ();
 
       /* clean up */
       fclose (fp);
@@ -1013,25 +1040,26 @@ thunar_shortcuts_model_load (ThunarShortcutsModel *model)
   /* clean up */
   g_object_unref (home);
   g_free (bookmarks_path);
+
+  model->load_idle_id = 0;
+
+  return FALSE;
 }
 
 
 
-static void
-thunar_shortcuts_model_monitor (GFileMonitor     *monitor,
-                                GFile            *file,
-                                GFile            *other_file,
-                                GFileMonitorEvent event_type,
-                                gpointer          user_data)
+static gboolean
+thunar_shortcuts_model_reload (gpointer data)
 {
-  ThunarShortcutsModel *model = THUNAR_SHORTCUTS_MODEL (user_data);
+  ThunarShortcutsModel *model = THUNAR_SHORTCUTS_MODEL (data);
   ThunarShortcut       *shortcut;
   GtkTreePath          *path;
   GList                *lp;
   gint                  idx;
 
-  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
-  _thunar_return_if_fail (model->monitor == monitor);
+  _thunar_return_val_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model), FALSE);
+
+  GDK_THREADS_ENTER ();
 
   /* drop all existing user-defined shortcuts from the model */
   for (idx = 0, lp = model->shortcuts; lp != NULL; )
@@ -1062,8 +1090,29 @@ thunar_shortcuts_model_monitor (GFileMonitor     *monitor,
         }
     }
 
+  GDK_THREADS_LEAVE ();
+
+  /* load new bookmarks */
+  return thunar_shortcuts_model_load (data);
+}
+
+
+
+static void
+thunar_shortcuts_model_monitor (GFileMonitor     *monitor,
+                                GFile            *file,
+                                GFile            *other_file,
+                                GFileMonitorEvent event_type,
+                                gpointer          user_data)
+{
+  ThunarShortcutsModel *model = THUNAR_SHORTCUTS_MODEL (user_data);
+
+  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
+  _thunar_return_if_fail (model->monitor == monitor);
+
   /* reload the shortcuts model */
-  thunar_shortcuts_model_load (model);
+  if (model->load_idle_id == 0)
+    model->load_idle_id = g_idle_add (thunar_shortcuts_model_reload, model);
 }
 
 
