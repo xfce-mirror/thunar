@@ -322,7 +322,6 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
                            "ellipsize-set", TRUE,
                            "ellipsize", PANGO_ELLIPSIZE_END,
-                           "width-chars", g_utf8_strlen (_("File System"), -1),
                            NULL);
   g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (thunar_shortcuts_view_renamed), view);
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
@@ -337,7 +336,6 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   gtk_tree_view_column_pack_start (column, renderer, FALSE);
   gtk_tree_view_column_set_attributes (column, renderer,
                                        "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_CAN_EJECT,
-                                       "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_NOT_HEADER,
                                        NULL);
 
 
