@@ -557,9 +557,6 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
                                   GValue       *value)
 {
   ThunarShortcut *shortcut;
-  ThunarFile     *file;
-  GMount         *mount;
-  GFile          *mount_point;
   gboolean        can_eject;
 
   _thunar_return_if_fail (iter->stamp == THUNAR_SHORTCUTS_MODEL (tree_model)->stamp);
@@ -598,34 +595,7 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
 
     case THUNAR_SHORTCUTS_MODEL_COLUMN_FILE:
       g_value_init (value, THUNAR_TYPE_FILE);
-
-      if (shortcut->file != NULL)
-        {
-          g_value_set_object (value, shortcut->file);
-        }
-      if (shortcut->volume != NULL
-          || shortcut->mount != NULL)
-        {
-          /* determine the mount of the volume */
-          if (shortcut->volume != NULL)
-            mount = g_volume_get_mount (shortcut->volume);
-          else
-            mount = g_object_ref (shortcut->mount);
-
-          if (G_LIKELY (mount != NULL))
-            {
-              /* the volume is mounted, get the mount point */
-              mount_point = g_mount_get_root (mount);
-
-              /* try to allocate/reference a file pointing to the mount point */
-              file = thunar_file_get (mount_point, NULL);
-              g_value_take_object (value, file);
-
-              /* release resources */
-              g_object_unref (mount_point);
-              g_object_unref (mount);
-            }
-        }
+      g_value_set_object (value, shortcut->file);
       break;
 
     case THUNAR_SHORTCUTS_MODEL_COLUMN_GICON:
@@ -658,19 +628,11 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
 
     case THUNAR_SHORTCUTS_MODEL_COLUMN_CAN_EJECT:
       if (shortcut->volume != NULL)
-        {
-          can_eject = thunar_g_volume_is_removable (shortcut->volume)
-                        && thunar_g_volume_is_present (shortcut->volume);
-        }
+        can_eject = thunar_g_volume_can_eject (shortcut->volume);
       else if (shortcut->mount != NULL)
-        {
-          can_eject = g_mount_can_eject (shortcut->mount)
-                      || g_mount_can_unmount (shortcut->mount);
-        }
+        can_eject = g_mount_can_eject (shortcut->mount) || g_mount_can_unmount (shortcut->mount);
       else
-        {
-          can_eject = FALSE;
-        }
+        can_eject = FALSE;
 
       g_value_init (value, G_TYPE_BOOLEAN);
       g_value_set_boolean (value, can_eject);
@@ -1550,12 +1512,10 @@ thunar_shortcut_free (ThunarShortcut       *shortcut,
     }
 
   if (G_LIKELY (shortcut->volume != NULL))
-    {
-      g_signal_handlers_disconnect_matched (shortcut->volume,
-                                            G_SIGNAL_MATCH_DATA, 0,
-                                            0, NULL, NULL, model);
-      g_object_unref (shortcut->volume);
-    }
+    g_object_unref (shortcut->volume);
+
+  if (G_LIKELY (shortcut->mount != NULL))
+    g_object_unref (shortcut->mount);
 
   if (G_LIKELY (shortcut->gicon != NULL))
     g_object_unref (shortcut->gicon);

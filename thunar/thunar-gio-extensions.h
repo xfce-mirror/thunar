@@ -72,6 +72,8 @@ void      thunar_g_file_list_free                   (GList             *list);
 gboolean  thunar_g_volume_is_removable              (GVolume           *volume);
 gboolean  thunar_g_volume_is_mounted                (GVolume           *volume);
 gboolean  thunar_g_volume_is_present                (GVolume           *volume);
+gboolean
+thunar_g_volume_can_eject (GVolume *volume);
 
 gboolean  thunar_g_app_info_launch                  (GAppInfo          *info,
                                                      GFile             *working_directory,

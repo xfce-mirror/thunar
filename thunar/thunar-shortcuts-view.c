@@ -941,7 +941,7 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
 
         /* append the "Disconnect" (eject + safely remove drive) item */
         item = gtk_image_menu_item_new_with_mnemonic (_("_Eject"));
-        gtk_widget_set_visible (item, (volume_mount != NULL && g_mount_can_eject (volume_mount)) || g_volume_can_eject (volume));
+        gtk_widget_set_visible (item, thunar_g_volume_can_eject (volume));
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
         g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_disconnect), view);
 

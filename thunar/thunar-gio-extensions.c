@@ -578,6 +578,43 @@ thunar_g_volume_is_present (GVolume *volume)
 
 
 
+/**
+ * thunar_g_volume_can_eject:
+ *
+ * If we should show the eject arrow/menu item
+ * in the interface.
+ *
+ * Check if the mount can eject/unmount or else look at
+ * the capability of the drive.
+ **/
+gboolean
+thunar_g_volume_can_eject (GVolume *volume)
+{
+  GMount   *mount;
+  GDrive   *drive;
+  gboolean  can_eject;
+
+  mount = g_volume_get_mount (volume);
+  if (mount != NULL)
+    {
+      can_eject = g_mount_can_eject (mount) || g_mount_can_unmount (mount);
+      g_object_unref (mount);
+      return can_eject;
+    }
+
+  drive = g_volume_get_drive (volume);
+  if (drive != NULL)
+    {
+      can_eject = g_drive_can_eject (drive);
+      g_object_unref (drive);
+      return can_eject;
+    }
+
+  return FALSE;
+}
+
+
+
 gboolean
 thunar_g_app_info_launch (GAppInfo          *info,
                           GFile             *working_directory,
