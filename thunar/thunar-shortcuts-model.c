@@ -330,7 +330,6 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
       shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES;
       shortcut->file = file;
       shortcut->sort_id = 0;
-      shortcut->gicon = g_themed_icon_new ("user-home");
       thunar_shortcuts_model_add_shortcut (model, shortcut);
     }
 
@@ -344,7 +343,6 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
           shortcut = g_slice_new0 (ThunarShortcut);
           shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES;
           shortcut->file = file;
-          shortcut->gicon = g_themed_icon_new ("user-desktop");
           shortcut->sort_id =  1;
           thunar_shortcuts_model_add_shortcut (model, shortcut);
         }
@@ -363,8 +361,6 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
           shortcut = g_slice_new0 (ThunarShortcut);
           shortcut->group = THUNAR_SHORTCUT_GROUP_TRASH;
           shortcut->file = file;
-          shortcut->gicon = g_themed_icon_new ("user-trash");
-          shortcut->name = g_strdup (_("Trash"));
           thunar_shortcuts_model_add_shortcut (model, shortcut);
         }
     }
