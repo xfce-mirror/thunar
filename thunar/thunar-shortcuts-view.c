@@ -32,9 +32,6 @@
 
 #include <gdk/gdkkeysyms.h>
 
-#ifdef HAVE_LIBNOTIFY
-#include <thunar/thunar-notify.h>
-#endif
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-browser.h>
 #include <thunar/thunar-dialogs.h>
@@ -46,6 +43,7 @@
 #include <thunar/thunar-shortcuts-icon-renderer.h>
 #include <thunar/thunar-shortcuts-model.h>
 #include <thunar/thunar-shortcuts-view.h>
+#include <thunar/thunar-device-monitor.h>
 
 
 
@@ -128,7 +126,7 @@ static void           thunar_shortcuts_view_open                         (Thunar
                                                                           gboolean                  new_window);
 static void           thunar_shortcuts_view_open_in_new_window_clicked   (ThunarShortcutsView      *view);
 static void           thunar_shortcuts_view_empty_trash                  (ThunarShortcutsView      *view);
-static void           thunar_shortcuts_view_disconnect                   (ThunarShortcutsView      *view);
+static void           thunar_shortcuts_view_eject                        (ThunarShortcutsView      *view);
 static void           thunar_shortcuts_view_mount                        (ThunarShortcutsView      *view);
 static void           thunar_shortcuts_view_unmount                      (ThunarShortcutsView      *view);
 
@@ -305,8 +303,7 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   gtk_tree_view_column_set_attributes (column, view->icon_renderer,
                                        "gicon", THUNAR_SHORTCUTS_MODEL_COLUMN_GICON,
                                        "file", THUNAR_SHORTCUTS_MODEL_COLUMN_FILE,
-                                       "volume", THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME,
-                                       "mount", THUNAR_SHORTCUTS_MODEL_COLUMN_MOUNT,
+                                       "device", THUNAR_SHORTCUTS_MODEL_COLUMN_DEVICE,
                                        "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_NOT_HEADER,
                                        NULL);
 
@@ -466,7 +463,7 @@ thunar_shortcuts_view_button_release_event (GtkWidget      *widget,
   if (G_LIKELY (view->pressed_button == (gint) event->button))
     {
       if (view->pressed_eject_button)
-        thunar_shortcuts_view_disconnect (view);
+        thunar_shortcuts_view_eject (view);
 
       /* check if we should simply open or open in new window */
       if (G_LIKELY (event->button == 1))
@@ -876,9 +873,7 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   GtkWidget           *item;
   GtkWidget           *window;
   gboolean             mutable;
-  GVolume             *volume;
-  GMount              *mount;
-  GMount              *volume_mount;
+  ThunarDevice        *device;
   GList               *providers, *lp;
   GList               *actions = NULL, *tmp;
   ThunarShortcutGroup  group;
@@ -891,8 +886,7 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   /* check whether the shortcut at the given path is mutable */
   gtk_tree_model_get (model, iter,
                       THUNAR_SHORTCUTS_MODEL_COLUMN_FILE, &file,
-                      THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME, &volume,
-                      THUNAR_SHORTCUTS_MODEL_COLUMN_MOUNT, &mount,
+                      THUNAR_SHORTCUTS_MODEL_COLUMN_DEVICE, &device,
                       THUNAR_SHORTCUTS_MODEL_COLUMN_MUTABLE, &mutable,
                       THUNAR_SHORTCUTS_MODEL_COLUMN_GROUP, &group,
                       -1);
@@ -916,7 +910,6 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show (item);
 
-  /* check if we have a volume here */
   switch (group)
     {
       case THUNAR_SHORTCUT_GROUP_VOLUMES:
@@ -925,28 +918,23 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
         gtk_widget_show (item);
 
-        volume_mount = g_volume_get_mount (volume);
-
         /* append the "Mount" item */
         item = gtk_image_menu_item_new_with_mnemonic (_("_Mount"));
-        gtk_widget_set_visible (item, volume_mount == NULL && g_volume_can_mount (volume));
+        gtk_widget_set_visible (item, thunar_device_can_mount (device));
         g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_mount), view);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 
         /* append the "Unmount" item */
         item = gtk_image_menu_item_new_with_mnemonic (_("_Unmount"));
-        gtk_widget_set_visible (item, volume_mount != NULL && g_mount_can_unmount (volume_mount));
+        gtk_widget_set_visible (item, thunar_device_can_unmount (device));
         g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_unmount), view);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 
         /* append the "Disconnect" (eject + safely remove drive) item */
         item = gtk_image_menu_item_new_with_mnemonic (_("_Eject"));
-        gtk_widget_set_visible (item, thunar_g_volume_can_eject (volume));
+        gtk_widget_set_visible (item, thunar_device_can_eject (device));
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-        g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_disconnect), view);
-
-        if (volume_mount != NULL)
-          g_object_unref (volume_mount);
+        g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_eject), view);
         break;
 
       case THUNAR_SHORTCUT_GROUP_MOUNTS:
@@ -958,11 +946,11 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
 
         /* append the "Disconnect" item */
         item = gtk_image_menu_item_new_with_mnemonic (_("Disconn_ect"));
-        g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_disconnect), view);
+        gtk_widget_set_sensitive (item, thunar_device_can_eject (device));
+        g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_eject), view);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
         gtk_widget_show (item);
         break;
-
 
       case THUNAR_SHORTCUT_GROUP_TRASH:
         /* append a menu separator */
@@ -1065,10 +1053,8 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   /* clean up */
   if (G_LIKELY (file != NULL))
     g_object_unref (G_OBJECT (file));
-  if (G_UNLIKELY (volume != NULL))
-    g_object_unref (G_OBJECT (volume));
-  if (G_UNLIKELY (mount != NULL))
-    g_object_unref (G_OBJECT (mount));
+  if (G_UNLIKELY (device != NULL))
+    g_object_unref (G_OBJECT (device));
   gtk_tree_path_free (path);
 }
 
@@ -1459,7 +1445,7 @@ thunar_shortcuts_view_open (ThunarShortcutsView *view,
   GtkTreeModel     *model;
   GtkTreeIter       iter;
   ThunarFile       *file;
-  GVolume          *volume;
+  ThunarDevice     *device;
   GFile            *location;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
@@ -1476,13 +1462,13 @@ thunar_shortcuts_view_open (ThunarShortcutsView *view,
       /* determine the file for the shortcut at the given tree iterator */
       gtk_tree_model_get (model, &iter,
                           THUNAR_SHORTCUTS_MODEL_COLUMN_FILE, &file,
-                          THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME, &volume,
+                          THUNAR_SHORTCUTS_MODEL_COLUMN_DEVICE, &device,
                           THUNAR_SHORTCUTS_MODEL_COLUMN_LOCATION, &location,
                           -1);
 
-      if (G_LIKELY (volume != NULL))
-        {
-          thunar_browser_poke_volume (THUNAR_BROWSER (view), volume, view,
+      if (G_LIKELY (FALSE && device != NULL))
+        {/* TODO */
+          thunar_browser_poke_volume (THUNAR_BROWSER (view), (GVolume *)device, view,
                                       thunar_shortcuts_view_poke_volume_finish,
                                       GUINT_TO_POINTER (new_window));
         }
@@ -1502,8 +1488,8 @@ thunar_shortcuts_view_open (ThunarShortcutsView *view,
       if (file != NULL)
         g_object_unref (file);
 
-      if (volume != NULL)
-        g_object_unref (volume);
+      if (device != NULL)
+        g_object_unref (device);
 
       if (location != NULL)
         g_object_unref (location);
@@ -1537,40 +1523,24 @@ thunar_shortcuts_view_empty_trash (ThunarShortcutsView *view)
 
 
 static void
-thunar_shortcuts_view_eject_volume_finish (GObject      *object,
-                                           GAsyncResult *result,
-                                           gpointer      user_data)
+thunar_shortcuts_view_eject_finish (ThunarDevice *device,
+                                    const GError *error,
+                                    gpointer      user_data)
 {
   ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (user_data);
-  GtkWidget           *window;
-  GVolume             *volume = G_VOLUME (object);
-  GError              *error = NULL;
-  gchar               *volume_name;
+  gchar               *device_name;
 
-  _thunar_return_if_fail (G_IS_VOLUME (object));
-  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
+  _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
 
   /* check if there was an error */
-  if (!g_volume_eject_with_operation_finish (volume, result, &error))
+  if (error != NULL)
     {
-      /* ignore GIO errors already handled */
-      if (error->domain != G_IO_ERROR || error->code != G_IO_ERROR_FAILED_HANDLED)
-        {
-          window = gtk_widget_get_toplevel (GTK_WIDGET (view));
-
-          /* display an error dialog to inform the user */
-          volume_name = g_volume_get_name (volume);
-          thunar_dialogs_show_error (window, error, _("Failed to eject \"%s\""), volume_name);
-          g_free (volume_name);
-
-          g_error_free (error);
-        }
+      /* display an error dialog to inform the user */
+      device_name = thunar_device_get_name (device);
+      thunar_dialogs_show_error (GTK_WIDGET (view), error, _("Failed to eject \"%s\""), device_name);
+      g_free (device_name);
     }
-
-#ifdef HAVE_LIBNOTIFY
-  thunar_notify_eject_finish (volume);
-#endif
 
   g_object_unref (view);
 }
@@ -1578,96 +1548,12 @@ thunar_shortcuts_view_eject_volume_finish (GObject      *object,
 
 
 static void
-thunar_shortcuts_view_eject_mount_finish (GObject      *object,
-                                          GAsyncResult *result,
-                                          gpointer      user_data)
-{
-  ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (user_data);
-  GtkWidget           *window;
-  GMount              *mount = G_MOUNT (object);
-  GError              *error = NULL;
-  gchar               *mount_name;
-
-  _thunar_return_if_fail (G_IS_MOUNT (object));
-  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
-  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
-
-  /* check if there was an error */
-  if (!g_mount_eject_with_operation_finish (mount, result, &error))
-    {
-      /* ignore GIO errors already handled */
-      if (error->domain != G_IO_ERROR || error->code != G_IO_ERROR_FAILED_HANDLED)
-        {
-          window = gtk_widget_get_toplevel (GTK_WIDGET (view));
-
-          /* display an error dialog to inform the user */
-          mount_name = g_mount_get_name (mount);
-          thunar_dialogs_show_error (window, error, _("Failed to eject \"%s\""), mount_name);
-          g_free (mount_name);
-
-          g_error_free (error);
-        }
-    }
-
-#ifdef HAVE_LIBNOTIFY
-  thunar_notify_unmount_finish (mount);
-#endif
-
-  g_object_unref (view);
-}
-
-
-
-static void
-thunar_shortcuts_view_unmount_finish (GObject      *object,
-                                      GAsyncResult *result,
-                                      gpointer      user_data)
-{
-  ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (user_data);
-  GtkWidget           *window;
-  GMount              *mount = G_MOUNT (object);
-  GError              *error = NULL;
-  gchar               *mount_name;
-
-  _thunar_return_if_fail (G_IS_MOUNT (object));
-  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
-  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
-
-  /* check if there was an error */
-  if (!g_mount_unmount_with_operation_finish (mount, result, &error))
-    {
-      /* ignore GIO errors already handled */
-      if (error->domain != G_IO_ERROR || error->code != G_IO_ERROR_FAILED_HANDLED)
-        {
-          window = gtk_widget_get_toplevel (GTK_WIDGET (view));
-
-          /* display an error dialog to inform the user */
-          mount_name = g_mount_get_name (mount);
-          thunar_dialogs_show_error (window, error, _("Failed to eject \"%s\""), mount_name);
-          g_free (mount_name);
-
-          g_error_free (error);
-        }
-    }
-
-#ifdef HAVE_LIBNOTIFY
-  thunar_notify_unmount_finish (mount);
-#endif
-
-  g_object_unref (view);
-}
-
-
-
-static void
-thunar_shortcuts_view_disconnect (ThunarShortcutsView *view)
+thunar_shortcuts_view_eject (ThunarShortcutsView *view)
 {
   GtkTreeSelection *selection;
   GtkTreeModel     *model;
   GtkTreeIter       iter;
-  GVolume          *volume;
-  GMount           *mount;
-  GMount           *volume_mount;
+  ThunarDevice     *device;
   GMountOperation  *mount_operation;
   GtkWidget        *window;
 
@@ -1675,109 +1561,24 @@ thunar_shortcuts_view_disconnect (ThunarShortcutsView *view)
 
   /* determine the selected item */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
-  if (!gtk_tree_selection_get_selected (selection, &model, &iter))
-    return;
-
-  /* determine the volume/mount for the shortcut at the given tree iterator */
-  gtk_tree_model_get (model, &iter,
-                      THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME, &volume,
-                      THUNAR_SHORTCUTS_MODEL_COLUMN_MOUNT, &mount, -1);
-
-  _thunar_return_if_fail (volume == NULL || G_IS_VOLUME (volume));
-  _thunar_return_if_fail (mount == NULL || G_IS_MOUNT (mount));
-
-  /* prepare a mount operation */
-  window = gtk_widget_get_toplevel (GTK_WIDGET (view));
-  mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
-
-  if (mount != NULL)
+  if (gtk_tree_selection_get_selected (selection, &model, &iter))
     {
-      /* distinguish between ejectable and unmountable mounts */
-      if (g_mount_can_eject (mount))
-        {
-#ifdef HAVE_LIBNOTIFY
-          thunar_notify_unmount (mount);
-#endif
+      /* determine the volume/mount for the shortcut at the given tree iterator */
+      gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_DEVICE, &device, -1);
+      _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
 
-          /* try ejecting the mount */
-          g_mount_eject_with_operation (mount,
-                                        G_MOUNT_UNMOUNT_NONE,
-                                        mount_operation,
-                                        NULL,
-                                        thunar_shortcuts_view_eject_mount_finish,
-                                        g_object_ref (view));
-        }
-      else if (g_mount_can_unmount (mount))
-        {
-#ifdef HAVE_LIBNOTIFY
-          thunar_notify_unmount (mount);
-#endif
+      /* prepare a mount operation */
+      window = gtk_widget_get_toplevel (GTK_WIDGET (view));
+      mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
 
-          /* try unmounting the mount */
-          g_mount_unmount_with_operation (mount,
-                                          G_MOUNT_UNMOUNT_NONE,
-                                          mount_operation,
-                                          NULL,
-                                          thunar_shortcuts_view_unmount_finish,
-                                          g_object_ref (view));
-        }
+      /* try to unmount */
+      thunar_device_eject (device,
+                           mount_operation,
+                           NULL,
+                           thunar_shortcuts_view_eject_finish,
+                           g_object_ref (view));
 
-      g_object_unref (mount);
-    }
-  else if (volume != NULL)
-    {
-      if (g_volume_can_eject (volume))
-        {
-#ifdef HAVE_LIBNOTIFY
-          thunar_notify_eject (volume);
-#endif
-          /* try ejecting the volume */
-          g_volume_eject_with_operation (volume,
-                                         G_MOUNT_UNMOUNT_NONE,
-                                         mount_operation,
-                                         NULL,
-                                         thunar_shortcuts_view_eject_volume_finish,
-                                         g_object_ref (view));
-        }
-      else
-        {
-          volume_mount = g_volume_get_mount (volume);
-          if (volume_mount != NULL)
-            {
-              /* distinguish between ejectable and unmountable mounts */
-              if (g_mount_can_eject (volume_mount))
-                {
-#ifdef HAVE_LIBNOTIFY
-                  thunar_notify_unmount (volume_mount);
-#endif
-
-                  g_mount_eject_with_operation (mount,
-                                                G_MOUNT_UNMOUNT_NONE,
-                                                mount_operation,
-                                                NULL,
-                                                thunar_shortcuts_view_eject_mount_finish,
-                                                g_object_ref (view));
-                }
-              else if (g_mount_can_unmount (volume_mount))
-                {
-#ifdef HAVE_LIBNOTIFY
-                 thunar_notify_unmount (volume_mount);
-#endif
-
-                  /* try unmounting the mount */
-                  g_mount_unmount_with_operation (volume_mount,
-                                                  G_MOUNT_UNMOUNT_NONE,
-                                                  mount_operation,
-                                                  NULL,
-                                                  thunar_shortcuts_view_unmount_finish,
-                                                  g_object_ref (view));
-                }
-
-              g_object_unref (volume_mount);
-            }
-        }
-
-      g_object_unref (volume);
+      g_object_unref (G_OBJECT (device));
     }
 }
 
@@ -1806,7 +1607,6 @@ thunar_shortcuts_view_poke_volume_mount_finish (ThunarBrowser *browser,
 
 
 
-
 static void
 thunar_shortcuts_view_mount (ThunarShortcutsView *view)
 {
@@ -1827,9 +1627,10 @@ thunar_shortcuts_view_mount (ThunarShortcutsView *view)
   if (gtk_tree_selection_get_selected (selection, &model, &iter))
     {
       /* determine the file for the shortcut at the given tree iterator */
-      gtk_tree_model_get (model, &iter,
+      volume = NULL;
+      /*gtk_tree_model_get (model, &iter,
                           THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME, &volume,
-                          -1);
+                          -1);*/
 
       if (G_LIKELY (volume != NULL))
         {
@@ -1844,14 +1645,37 @@ thunar_shortcuts_view_mount (ThunarShortcutsView *view)
 
 
 static void
+thunar_shortcuts_view_unmount_finish (ThunarDevice *device,
+                                      const GError *error,
+                                      gpointer      user_data)
+{
+  ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (user_data);
+  gchar               *device_name;
+
+  _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
+  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
+
+  /* check if there was an error */
+  if (error != NULL)
+    {
+      /* display an error dialog to inform the user */
+      device_name = thunar_device_get_name (device);
+      thunar_dialogs_show_error (GTK_WIDGET (view), error, _("Failed to unmount \"%s\""), device_name);
+      g_free (device_name);
+    }
+
+  g_object_unref (view);
+}
+
+
+
+static void
 thunar_shortcuts_view_unmount (ThunarShortcutsView *view)
 {
   GtkTreeSelection *selection;
   GtkTreeModel     *model;
   GtkTreeIter       iter;
-  GVolume          *volume;
-  GMount           *mount;
-  GMount           *volume_mount;
+  ThunarDevice     *device;
   GMountOperation  *mount_operation;
   GtkWidget        *window;
 
@@ -1862,65 +1686,21 @@ thunar_shortcuts_view_unmount (ThunarShortcutsView *view)
   if (gtk_tree_selection_get_selected (selection, &model, &iter))
     {
       /* determine the volume/mount for the shortcut at the given tree iterator */
-      gtk_tree_model_get (model, &iter,
-                          THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME, &volume,
-                          THUNAR_SHORTCUTS_MODEL_COLUMN_MOUNT, &mount, -1);
-
-      _thunar_return_if_fail (volume == NULL || G_IS_VOLUME (volume));
-      _thunar_return_if_fail (mount == NULL || G_IS_MOUNT (mount));
+      gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_DEVICE, &device, -1);
+      _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
 
       /* prepare a mount operation */
       window = gtk_widget_get_toplevel (GTK_WIDGET (view));
       mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
 
-      if (mount != NULL)
-        {
-          /* only handle mounts that can be unmounted here */
-          if (g_mount_can_unmount (mount))
-            {
-#ifdef HAVE_LIBNOTIFY
-              thunar_notify_unmount (mount);
-#endif
+      /* try to unmount */
+      thunar_device_unmount (device,
+                             mount_operation,
+                             NULL,
+                             thunar_shortcuts_view_unmount_finish,
+                             g_object_ref (view));
 
-              /* try unmounting the mount */
-              g_mount_unmount_with_operation (mount,
-                                              G_MOUNT_UNMOUNT_NONE,
-                                              mount_operation,
-                                              NULL,
-                                              thunar_shortcuts_view_unmount_finish,
-                                              g_object_ref (view));
-            }
-
-          g_object_unref (mount);
-        }
-      else if (volume != NULL)
-        {
-          volume_mount = g_volume_get_mount (volume);
-          if (volume_mount != NULL)
-            {
-              /* only handle mounts that can be unmounted here */
-              if (g_mount_can_unmount (volume_mount))
-                {
-#ifdef HAVE_LIBNOTIFY
-                  thunar_notify_unmount (volume_mount);
-#endif
-
-                  /* try unmounting the mount */
-                  g_mount_unmount_with_operation (volume_mount,
-                                                  G_MOUNT_UNMOUNT_NONE,
-                                                  mount_operation,
-                                                  NULL,
-                                                  thunar_shortcuts_view_unmount_finish,
-                                                  g_object_ref (view));
-                }
-
-              g_object_unref (volume_mount);
-            }
-
-          g_object_unref (volume);
-        }
-
-      g_object_unref (mount_operation);
+      g_object_unref (G_OBJECT (device));
     }
 }
 

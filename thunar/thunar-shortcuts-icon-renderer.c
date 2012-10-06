@@ -28,6 +28,7 @@
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-shortcuts-icon-renderer.h>
+#include <thunar/thunar-device.h>
 
 
 
@@ -36,7 +37,7 @@ enum
 {
   PROP_0,
   PROP_VOLUME,
-  PROP_MOUNT,
+  PROP_DEVICE,
   PROP_GICON,
 };
 
@@ -71,7 +72,7 @@ struct _ThunarShortcutsIconRenderer
   ThunarIconRenderer __parent__;
 
   GVolume           *volume;
-  GMount            *mount;
+  ThunarDevice      *device;
   GIcon             *gicon;
 };
 
@@ -108,15 +109,15 @@ thunar_shortcuts_icon_renderer_class_init (ThunarShortcutsIconRendererClass *kla
                                                         EXO_PARAM_READWRITE));
 
   /**
-   * ThunarShortcutsIconRenderer:mount:
+   * ThunarShortcutsIconRenderer:device:
    *
-   * The #GMount for which to render an icon or %NULL to fallback
+   * The #ThunarDevice for which to render an icon or %NULL to fallback
    * to the default icon renderering (see #ThunarIconRenderer).
    **/
   g_object_class_install_property (gobject_class,
-                                   PROP_MOUNT,
-                                   g_param_spec_object ("mount", "mount", "mount",
-                                                        G_TYPE_MOUNT,
+                                   PROP_DEVICE,
+                                   g_param_spec_object ("device", "device", "device",
+                                                        THUNAR_TYPE_DEVICE,
                                                         EXO_PARAM_READWRITE));
 
   /**
@@ -152,8 +153,8 @@ thunar_shortcuts_icon_renderer_finalize (GObject *object)
   if (G_UNLIKELY (renderer->volume != NULL))
     g_object_unref (renderer->volume);
 
-  if (G_UNLIKELY (renderer->mount != NULL))
-    g_object_unref (renderer->mount);
+  if (G_UNLIKELY (renderer->device != NULL))
+    g_object_unref (renderer->device);
 
   if (G_UNLIKELY (renderer->gicon != NULL))
     g_object_unref (renderer->gicon);
@@ -177,8 +178,8 @@ thunar_shortcuts_icon_renderer_get_property (GObject    *object,
       g_value_set_object (value, renderer->volume);
       break;
 
-    case PROP_MOUNT:
-      g_value_set_object (value, renderer->mount);
+    case PROP_DEVICE:
+      g_value_set_object (value, renderer->device);
       break;
 
     case PROP_GICON:
@@ -209,10 +210,10 @@ thunar_shortcuts_icon_renderer_set_property (GObject      *object,
       renderer->volume = g_value_dup_object (value);
       break;
 
-    case PROP_MOUNT:
-      if (G_UNLIKELY (renderer->mount != NULL))
-        g_object_unref (renderer->mount);
-      renderer->mount = g_value_dup_object (value);
+    case PROP_DEVICE:
+      if (G_UNLIKELY (renderer->device != NULL))
+        g_object_unref (renderer->device);
+      renderer->device = g_value_dup_object (value);
       break;
 
     case PROP_GICON:
@@ -250,7 +251,7 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
   /* check if we have a volume set */
   if (G_UNLIKELY (shortcuts_icon_renderer->volume != NULL
       || shortcuts_icon_renderer->gicon != NULL
-      ||  shortcuts_icon_renderer->mount != NULL))
+      ||  shortcuts_icon_renderer->device != NULL))
     {
       /* load the volume icon */
       icon_theme = gtk_icon_theme_get_for_screen (gdk_drawable_get_screen (window));
@@ -261,7 +262,7 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
       else if (shortcuts_icon_renderer->volume != NULL)
         gicon = g_volume_get_icon (shortcuts_icon_renderer->volume);
       else
-        gicon = g_mount_get_icon (shortcuts_icon_renderer->mount);
+        gicon = thunar_device_get_icon (shortcuts_icon_renderer->device);
 
       icon_info = gtk_icon_theme_lookup_by_gicon (icon_theme, gicon, cell_area->width, 
                                                   GTK_ICON_LOOKUP_USE_BUILTIN);
@@ -294,8 +295,8 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
               icon_area.height = gdk_pixbuf_get_height (icon);
             }
 
-          if (shortcuts_icon_renderer->volume != NULL
-              && !thunar_g_volume_is_mounted (shortcuts_icon_renderer->volume))
+          if (shortcuts_icon_renderer->device != NULL
+              && !thunar_device_is_mounted (shortcuts_icon_renderer->device))
             {
               /* 50% translucent for unmounted volumes */
               temp = exo_gdk_pixbuf_lucent (icon, 50);
