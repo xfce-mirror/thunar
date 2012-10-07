@@ -611,6 +611,7 @@ thunar_device_monitor_mount_pre_unmount (GVolumeMonitor      *volume_monitor,
 {
   ThunarDevice *device;
   GVolume      *volume;
+  GFile        *root_file;
 
   _thunar_return_if_fail (G_IS_VOLUME_MONITOR (volume_monitor));
   _thunar_return_if_fail (THUNAR_IS_DEVICE_MONITOR (monitor));
@@ -633,7 +634,11 @@ thunar_device_monitor_mount_pre_unmount (GVolumeMonitor      *volume_monitor,
   if (device != NULL)
     {
       /* notify */
-      g_signal_emit (G_OBJECT (monitor), device_monitor_signals[DEVICE_PRE_UNMOUNT], 0, device);
+      root_file = g_mount_get_root (mount);
+      g_signal_emit (G_OBJECT (monitor),
+                     device_monitor_signals[DEVICE_PRE_UNMOUNT],
+                     0, device, root_file);
+      g_object_unref (root_file);
     }
 }
 
