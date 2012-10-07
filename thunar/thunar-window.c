@@ -60,6 +60,7 @@
 #include <thunar/thunar-tree-pane.h>
 #include <thunar/thunar-window.h>
 #include <thunar/thunar-window-ui.h>
+#include <thunar/thunar-device-monitor.h>
 
 #include <glib.h>
 
@@ -207,8 +208,8 @@ static void     thunar_window_menu_item_deselected        (GtkWidget            
 static void     thunar_window_notify_loading              (ThunarView             *view,
                                                            GParamSpec             *pspec,
                                                            ThunarWindow           *window);
-static void     thunar_window_mount_pre_unmount           (GVolumeMonitor         *volume_monitor,
-                                                           GMount                 *mount,
+static void     thunar_window_device_pre_unmount          (ThunarDeviceMonitor    *device_monitor,
+                                                           ThunarDevice           *device,
                                                            ThunarWindow           *window);
 static gboolean thunar_window_merge_idle                  (gpointer                user_data);
 static void     thunar_window_merge_idle_destroy          (gpointer                user_data);
@@ -254,8 +255,8 @@ struct _ThunarWindow
   GtkActionGroup         *action_group;
   GtkUIManager           *ui_manager;
 
-  /* to be able to change folder on "mount-pre-unmount" if required */
-  GVolumeMonitor         *volume_monitor;
+  /* to be able to change folder on "device-pre-unmount" if required */
+  ThunarDeviceMonitor    *device_monitor;
 
   /* closures for the menu_item_selected()/menu_item_deselected() callbacks */
   GClosure               *menu_item_selected_closure;
@@ -757,8 +758,8 @@ thunar_window_init (ThunarWindow *window)
   window->scroll_to_files = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, g_object_unref);
 
   /* connect to the volume monitor */
-  window->volume_monitor = g_volume_monitor_get ();
-  g_signal_connect (window->volume_monitor, "mount-pre-unmount", G_CALLBACK (thunar_window_mount_pre_unmount), window);
+  window->device_monitor = thunar_device_monitor_get ();
+  g_signal_connect (window->device_monitor, "device-pre-unmount", G_CALLBACK (thunar_window_device_pre_unmount), window);
 
   /* allocate a closure for the menu_item_selected() callback */
   window->menu_item_selected_closure = g_cclosure_new_object (G_CALLBACK (thunar_window_menu_item_selected), G_OBJECT (window));
@@ -1012,8 +1013,8 @@ thunar_window_finalize (GObject *object)
   g_closure_unref (window->menu_item_selected_closure);
 
   /* disconnect from the volume monitor */
-  g_signal_handlers_disconnect_matched (window->volume_monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
-  g_object_unref (window->volume_monitor);
+  g_signal_handlers_disconnect_matched (window->device_monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
+  g_object_unref (window->device_monitor);
 
   /* disconnect from the ui manager */
   g_signal_handlers_disconnect_matched (window->ui_manager, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
@@ -2771,17 +2772,17 @@ thunar_window_notify_loading (ThunarView   *view,
 
 
 static void
-thunar_window_mount_pre_unmount (GVolumeMonitor *volume_monitor,
-                                 GMount         *mount,
-                                 ThunarWindow   *window)
+thunar_window_device_pre_unmount (ThunarDeviceMonitor *device_monitor,
+                                  ThunarDevice        *device,
+                                  ThunarWindow        *window)
 {
   ThunarFile *file;
   GtkAction  *action;
   GFile      *mount_point;
 
-  _thunar_return_if_fail (G_IS_VOLUME_MONITOR (volume_monitor));
-  _thunar_return_if_fail (window->volume_monitor == volume_monitor);
-  _thunar_return_if_fail (G_IS_MOUNT (mount));
+  _thunar_return_if_fail (THUNAR_IS_DEVICE_MONITOR (device_monitor));
+  _thunar_return_if_fail (window->device_monitor == device_monitor);
+  _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* nothing to do if we don't have a current directory */
@@ -2789,10 +2790,10 @@ thunar_window_mount_pre_unmount (GVolumeMonitor *volume_monitor,
     return;
 
   /* try to get the ThunarFile for the mount point from the file cache */
-  mount_point = g_mount_get_root (mount);
+  mount_point = thunar_device_get_root (device);
   file = thunar_file_cache_lookup (mount_point);
   g_object_unref (mount_point);
-
+g_message ("%p file", file);
   if (G_UNLIKELY (file == NULL))
     return;
 

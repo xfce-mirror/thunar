@@ -32,7 +32,7 @@
 
 
 typedef struct _PokeFileData   PokeFileData;
-typedef struct _PokeVolumeData PokeVolumeData;
+typedef struct _PokeDeviceData PokeDeviceData;
 
 
 
@@ -58,12 +58,12 @@ struct _PokeFileData
   gpointer                      user_data;
 };
 
-struct _PokeVolumeData
+struct _PokeDeviceData
 {
   ThunarBrowser              *browser;
-  GVolume                    *volume;
+  ThunarDevice               *device;
   ThunarFile                 *mount_point;
-  ThunarBrowserPokeVolumeFunc func;
+  ThunarBrowserPokeDeviceFunc func;
   gpointer                    user_data;
 };
 
@@ -150,20 +150,20 @@ thunar_browser_poke_file_data_free (PokeFileData *poke_data)
 
 
 
-static PokeVolumeData *
-thunar_browser_poke_volume_data_new (ThunarBrowser              *browser,
-                                     GVolume                    *volume,
-                                     ThunarBrowserPokeVolumeFunc func,
+static PokeDeviceData *
+thunar_browser_poke_device_data_new (ThunarBrowser              *browser,
+                                     ThunarDevice               *device,
+                                     ThunarBrowserPokeDeviceFunc func,
                                      gpointer                    user_data)
 {
-  PokeVolumeData *poke_data;
+  PokeDeviceData *poke_data;
 
   _thunar_return_val_if_fail (THUNAR_IS_BROWSER (browser), NULL);
-  _thunar_return_val_if_fail (G_IS_VOLUME (volume), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_DEVICE (device), NULL);
 
-  poke_data = g_slice_new0 (PokeVolumeData);
+  poke_data = g_slice_new0 (PokeDeviceData);
   poke_data->browser = g_object_ref (browser);
-  poke_data->volume = g_object_ref (volume);
+  poke_data->device = g_object_ref (device);
   poke_data->func = func;
   poke_data->user_data = user_data;
 
@@ -173,16 +173,16 @@ thunar_browser_poke_volume_data_new (ThunarBrowser              *browser,
 
 
 static void
-thunar_browser_poke_volume_data_free (PokeVolumeData *poke_data)
+thunar_browser_poke_device_data_free (PokeDeviceData *poke_data)
 {
   _thunar_return_if_fail (poke_data != NULL);
   _thunar_return_if_fail (THUNAR_IS_BROWSER (poke_data->browser));
-  _thunar_return_if_fail (G_IS_VOLUME (poke_data->volume));
+  _thunar_return_if_fail (THUNAR_IS_DEVICE (poke_data->device));
 
   g_object_unref (poke_data->browser);
-  g_object_unref (poke_data->volume);
+  g_object_unref (poke_data->device);
 
-  g_slice_free (PokeVolumeData, poke_data);
+  g_slice_free (PokeDeviceData, poke_data);
 }
 
 
@@ -549,137 +549,123 @@ thunar_browser_poke_file (ThunarBrowser            *browser,
 
 
 static void
-thunar_browser_poke_volume_file_finish (GFile      *location,
+thunar_browser_poke_device_file_finish (GFile      *location,
                                         ThunarFile *file,
                                         GError     *error,
                                         gpointer    user_data)
 {
-  PokeVolumeData *poke_data = user_data;
+  PokeDeviceData *poke_data = user_data;
 
   _thunar_return_if_fail (G_IS_FILE (location));
   _thunar_return_if_fail (user_data != NULL);
   _thunar_return_if_fail (THUNAR_IS_BROWSER (poke_data->browser));
-  _thunar_return_if_fail (G_IS_VOLUME (poke_data->volume));
+  _thunar_return_if_fail (THUNAR_IS_DEVICE (poke_data->device));
 
   if (poke_data->func != NULL)
     {
-      (poke_data->func) (poke_data->browser, poke_data->volume, file, error,
+      (poke_data->func) (poke_data->browser, poke_data->device, file, error,
                          poke_data->user_data);
     }
 
-  thunar_browser_poke_volume_data_free (poke_data);
+  thunar_browser_poke_device_data_free (poke_data);
 }
 
 
 
 static void
-thunar_browser_poke_volume_finish (GObject      *object,
-                                   GAsyncResult *result,
+thunar_browser_poke_device_finish (ThunarDevice *device,
+                                   const GError *error,
                                    gpointer      user_data)
 {
-  PokeVolumeData *poke_data = user_data;
-  GError         *error = NULL;
-  GMount         *mount;
+  PokeDeviceData *poke_data = user_data;
   GFile          *mount_point;
 
-  _thunar_return_if_fail (G_IS_VOLUME (object));
-  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
+  _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
   _thunar_return_if_fail (user_data != NULL);
   _thunar_return_if_fail (THUNAR_IS_BROWSER (poke_data->browser));
-  _thunar_return_if_fail (G_IS_VOLUME (poke_data->volume));
-  _thunar_return_if_fail (G_VOLUME (object) == poke_data->volume);
-
-  if (!g_volume_mount_finish (G_VOLUME (object), result, &error))
-    {
-      if (error->domain == G_IO_ERROR)
-        {
-          if (error->code == G_IO_ERROR_ALREADY_MOUNTED)
-            g_clear_error (&error);
-        }
-    }
+  _thunar_return_if_fail (THUNAR_IS_DEVICE (poke_data->device));
+  _thunar_return_if_fail (device == poke_data->device);
 
   if (error == NULL)
     {
-      mount = g_volume_get_mount (poke_data->volume);
-      mount_point = g_mount_get_root (mount);
+      mount_point = thunar_device_get_root (device);
 
       /* resolve the ThunarFile for the mount point asynchronously
        * and defer cleaning up the poke data until that has finished */
       thunar_file_get_async (mount_point, NULL,
-                             thunar_browser_poke_volume_file_finish,
+                             thunar_browser_poke_device_file_finish,
                              poke_data);
 
       g_object_unref (mount_point);
-      g_object_unref (mount);
     }
   else
     {
       if (poke_data->func != NULL)
         {
-          (poke_data->func) (poke_data->browser, poke_data->volume, NULL, error,
+          (poke_data->func) (poke_data->browser, poke_data->device, NULL, (GError *) error,
                              poke_data->user_data);
         }
 
-      thunar_browser_poke_volume_data_free (poke_data);
+      thunar_browser_poke_device_data_free (poke_data);
     }
 }
 
 
 
 /**
- * thunar_browser_poke_volume:
+ * thunar_browser_poke_device:
  * @browser   : a #ThunarBrowser.
- * @volume    : a #GVolume.
+ * @device    : a #ThunarDevice.
  * @widget    : a #GtkWidget, a #GdkScreen or %NULL.
- * @func      : a #ThunarBrowserPokeVolumeFunc callback or %NULL.
+ * @func      : a #ThunarBrowserPokeDeviceFunc callback or %NULL.
  * @user_data : pointer to arbitrary user data or %NULL.
  *
- * This function checks if @volume is mounted or not. If it is, it loads
+ * This function checks if @device is mounted or not. If it is, it loads
  * a #ThunarFile for the mount root and calls @func. If it is not mounted,
- * it first mounts the volume asynchronously and calls @func with the
+ * it first mounts the device asynchronously and calls @func with the
  * #ThunarFile corresponding to the mount root when the mounting is finished.
  *
  * The #ThunarFile passed to @func will be %NULL if, and only if mounting
- * the @volume failed. The #GError passed to @func will be set if, and only if
+ * the @device failed. The #GError passed to @func will be set if, and only if
  * mounting failed.
  **/
 void
-thunar_browser_poke_volume (ThunarBrowser              *browser,
-                            GVolume                    *volume,
+thunar_browser_poke_device (ThunarBrowser              *browser,
+                            ThunarDevice               *device,
                             gpointer                    widget,
-                            ThunarBrowserPokeVolumeFunc func,
+                            ThunarBrowserPokeDeviceFunc func,
                             gpointer                    user_data)
 {
   GMountOperation *mount_operation;
-  PokeVolumeData  *poke_data;
-  GMount          *mount;
+  PokeDeviceData  *poke_data;
   GFile           *mount_point;
 
   _thunar_return_if_fail (THUNAR_IS_BROWSER (browser));
-  _thunar_return_if_fail (G_IS_VOLUME (volume));
+  _thunar_return_if_fail (THUNAR_DEVICE (device));
 
-  if (thunar_g_volume_is_mounted (volume))
+  if (thunar_device_is_mounted (device))
     {
-      mount = g_volume_get_mount (volume);
-      mount_point = g_mount_get_root (mount);
+      mount_point = thunar_device_get_root (device);
 
-      poke_data = thunar_browser_poke_volume_data_new (browser, volume, func, user_data);
+      poke_data = thunar_browser_poke_device_data_new (browser, device, func, user_data);
 
       thunar_file_get_async (mount_point, NULL,
-                             thunar_browser_poke_volume_file_finish,
+                             thunar_browser_poke_device_file_finish,
                              poke_data);
 
       g_object_unref (mount_point);
-      g_object_unref (mount);
     }
   else
     {
-      poke_data = thunar_browser_poke_volume_data_new (browser, volume, func, user_data);
+      poke_data = thunar_browser_poke_device_data_new (browser, device, func, user_data);
 
       mount_operation = thunar_browser_mount_operation_new (widget);
 
-      g_volume_mount (volume, G_MOUNT_MOUNT_NONE, mount_operation, NULL,
-                      thunar_browser_poke_volume_finish, poke_data);
+      thunar_device_mount (device,
+                           mount_operation,
+                           NULL,
+                           thunar_browser_poke_device_finish,
+                           poke_data);
 
       g_object_unref (mount_operation);
     }
@@ -730,7 +716,7 @@ thunar_browser_poke_location_file_finish (GFile      *location,
  * @browser   : a #ThunarBrowser.
  * @location  : a #GFile.
  * @widget    : a #GtkWidget, a #GdkScreen or %NULL.
- * @func      : a #ThunarBrowserPokeVolumeFunc callback or %NULL.
+ * @func      : a #ThunarBrowserPokeDeviceFunc callback or %NULL.
  * @user_data : pointer to arbitrary user data or %NULL.
  *
  * Pokes a #GFile to see what's behind it.

@@ -41,6 +41,7 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-sendto-model.h>
 #include <thunar/thunar-stock.h>
+#include <thunar/thunar-device-monitor.h>
 
 
 
@@ -100,7 +101,7 @@ static void                    thunar_launcher_action_open_in_new_window  (GtkAc
                                                                            ThunarLauncher           *launcher);
 static void                    thunar_launcher_action_sendto_desktop      (GtkAction                *action,
                                                                            ThunarLauncher           *launcher);
-static void                    thunar_launcher_action_sendto_volume       (GtkAction                *action,
+static void                    thunar_launcher_action_sendto_device       (GtkAction                *action,
                                                                            ThunarLauncher           *launcher);
 static void                    thunar_launcher_widget_destroyed           (ThunarLauncher           *launcher,
                                                                            GtkWidget                *widget);
@@ -144,7 +145,7 @@ struct _ThunarLauncher
 
   GtkWidget              *widget;
 
-  GVolumeMonitor         *volume_monitor;
+  ThunarDeviceMonitor    *device_monitor;
   ThunarSendtoModel      *sendto_model;
   gint                    sendto_idle_id;
 };
@@ -262,10 +263,10 @@ thunar_launcher_init (ThunarLauncher *launcher)
   /* setup the "Send To" support */
   launcher->sendto_model = thunar_sendto_model_get_default ();
 
-  /* the "Send To" menu also displays removable devices from the volume monitor */
-  launcher->volume_monitor = g_volume_monitor_get ();
-  g_signal_connect_swapped (launcher->volume_monitor, "volume-added", G_CALLBACK (thunar_launcher_update), launcher);
-  g_signal_connect_swapped (launcher->volume_monitor, "volume-removed", G_CALLBACK (thunar_launcher_update), launcher);
+  /* the "Send To" menu also displays removable devices from the device monitor */
+  launcher->device_monitor = thunar_device_monitor_get ();
+  g_signal_connect_swapped (launcher->device_monitor, "device-added", G_CALLBACK (thunar_launcher_update), launcher);
+  g_signal_connect_swapped (launcher->device_monitor, "device-removed", G_CALLBACK (thunar_launcher_update), launcher);
 }
 
 
@@ -305,9 +306,9 @@ thunar_launcher_finalize (GObject *object)
   /* release the reference on the action group */
   g_object_unref (launcher->action_group);
 
-  /* disconnect from the volume monitor used for the "Send To" menu */
-  g_signal_handlers_disconnect_by_func (launcher->volume_monitor, thunar_launcher_update, launcher);
-  g_object_unref (launcher->volume_monitor);
+  /* disconnect from the device monitor used for the "Send To" menu */
+  g_signal_handlers_disconnect_by_func (launcher->device_monitor, thunar_launcher_update, launcher);
+  g_object_unref (launcher->device_monitor);
 
   /* release the reference on the sendto model */
   g_object_unref (launcher->sendto_model);
@@ -1319,66 +1320,56 @@ thunar_launcher_poke_data_free (ThunarLauncherPokeData *data)
 
 
 static void
-thunar_launcher_sendto_volume (ThunarLauncher *launcher,
-                               GVolume        *volume,
+thunar_launcher_sendto_device (ThunarLauncher *launcher,
+                               ThunarDevice   *device,
                                GList          *files)
 {
   ThunarApplication *application;
-  GMount            *mount;
   GFile             *mount_point;
 
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
-  _thunar_return_if_fail (G_IS_VOLUME (volume));
+  _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
 
-  if (!thunar_g_volume_is_mounted (volume))
+  if (!thunar_device_is_mounted (device))
     return;
   
-  mount = g_volume_get_mount (volume);
-  if (mount != NULL)
+  mount_point = thunar_device_get_root (device);
+  if (mount_point != NULL)
     {
-      mount_point = g_mount_get_root (mount);
-      
-      /* copy the files onto the specified volume */
+      /* copy the files onto the specified device */
       application = thunar_application_get ();
       thunar_application_copy_into (application, launcher->widget, files, mount_point, NULL);
       g_object_unref (application);
 
       g_object_unref (mount_point);
-      g_object_unref (mount);
     }
 }
 
 
 
 static void
-thunar_launcher_sendto_mount_finish (GObject      *object,
-                                     GAsyncResult *result,
+thunar_launcher_sendto_mount_finish (ThunarDevice *device,
+                                     const GError *error,
                                      gpointer      user_data)
 {
   ThunarLauncherMountData *data = user_data;
-  GVolume                 *volume = G_VOLUME (object);
-  GError                  *error = NULL;
-  gchar                   *volume_name;
+  gchar                   *device_name;
 
-  _thunar_return_if_fail (G_IS_VOLUME (object));
-  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
+  _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
   _thunar_return_if_fail (user_data != NULL);
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (data->launcher));
 
-  if (!g_volume_mount_finish (volume, result, &error))
+  if (error != NULL)
     {
-      /* tell the user that we were unable to mount the volume, which is 
+      /* tell the user that we were unable to mount the device, which is 
        * required to send files to it */
-      volume_name = g_volume_get_name (volume);
-      thunar_dialogs_show_error (data->launcher->widget, error, _("Failed to mount \"%s\""), 
-                                 volume_name);
-      g_free (volume_name);
-
-      g_error_free (error);
+      device_name = thunar_device_get_name (device);
+      thunar_dialogs_show_error (data->launcher->widget, error, _("Failed to mount \"%s\""), device_name);
+      g_free (device_name);
     }
   else
     {
-      thunar_launcher_sendto_volume (data->launcher, volume, data->files);
+      thunar_launcher_sendto_device (data->launcher, device, data->files);
     }
 
   thunar_launcher_mount_data_free (data);
@@ -1387,13 +1378,13 @@ thunar_launcher_sendto_mount_finish (GObject      *object,
 
 
 static void
-thunar_launcher_action_sendto_volume (GtkAction      *action,
+thunar_launcher_action_sendto_device (GtkAction      *action,
                                       ThunarLauncher *launcher)
 {
   ThunarLauncherMountData *data;
   GMountOperation         *mount_operation;
   GtkWidget               *window;
-  GVolume                 *volume;
+  ThunarDevice            *device;
   GList                   *files;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
@@ -1404,13 +1395,13 @@ thunar_launcher_action_sendto_volume (GtkAction      *action,
   if (G_UNLIKELY (files == NULL))
     return;
 
-  /* determine the volume to which to send */
-  volume = g_object_get_qdata (G_OBJECT (action), thunar_launcher_handler_quark);
-  if (G_UNLIKELY (volume == NULL))
+  /* determine the device to which to send */
+  device = g_object_get_qdata (G_OBJECT (action), thunar_launcher_handler_quark);
+  if (G_UNLIKELY (device == NULL))
     return;
 
-  /* make sure to mount the volume first, if it's not already mounted */
-  if (!thunar_g_volume_is_mounted (volume))
+  /* make sure to mount the device first, if it's not already mounted */
+  if (!thunar_device_is_mounted (device))
     {
       /* determine the toplevel window */
       window = gtk_widget_get_toplevel (launcher->widget);
@@ -1421,15 +1412,18 @@ thunar_launcher_action_sendto_volume (GtkAction      *action,
       /* allocate a GTK+ mount operation */
       mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
 
-      /* try to mount the volume and later start sending the files */
-      g_volume_mount (volume, G_MOUNT_MOUNT_NONE, mount_operation, NULL,
-                      thunar_launcher_sendto_mount_finish, data);
+      /* try to mount the device and later start sending the files */
+      thunar_device_mount (device,
+                           mount_operation,
+                           NULL,
+                           thunar_launcher_sendto_mount_finish,
+                           data);
 
       g_object_unref (mount_operation);
     }
   else
     {
-      thunar_launcher_sendto_volume (launcher, volume, files);
+      thunar_launcher_sendto_device (launcher, device, files);
     }
 
   /* cleanup */
@@ -1461,11 +1455,11 @@ thunar_launcher_sendto_idle (gpointer user_data)
   gboolean        linkable = TRUE;
   GIcon          *icon;
   GList          *handlers;
-  GList          *volumes;
+  GList          *devices;
   GList          *lp;
   gchar          *name;
   gchar          *tooltip;
-  gchar          *volume_name;
+  gchar          *device_name;
   gint            n_selected_files;
   gint            n = 0;
 
@@ -1509,31 +1503,23 @@ thunar_launcher_sendto_idle (gpointer user_data)
       if (G_UNLIKELY (launcher->ui_addons_merge_id == 0))
         launcher->ui_addons_merge_id = gtk_ui_manager_new_merge_id (launcher->ui_manager);
 
-      /* determine the currently active volumes */
-      volumes = g_volume_monitor_get_volumes (launcher->volume_monitor);
+      /* determine the currently active devices */
+      devices = thunar_device_monitor_get_devices (launcher->device_monitor);
 
       /* add removable (and writable) drives and media */
-      for (lp = volumes; lp != NULL; lp = lp->next, ++n)
+      for (lp = devices; lp != NULL; lp = lp->next, ++n)
         {
-          /* skip non-removable or disc media (CD-ROMs aren't writable by Thunar) */
-          /* TODO skip non-writable volumes like CD-ROMs here */
-          if (!thunar_g_volume_is_removable (lp->data))
-            {
-              g_object_unref (lp->data);
-              continue;
-            }
-
-          /* generate a unique name and tooltip for the volume */
-          volume_name = g_volume_get_name (lp->data);
+          /* generate a unique name and tooltip for the device */
+          device_name = thunar_device_get_name (lp->data);
           name = g_strdup_printf ("thunar-launcher-sendto%d-%p", n, launcher);
           tooltip = g_strdup_printf (ngettext ("Send the selected file to \"%s\"",
                                                "Send the selected files to \"%s\"",
-                                               n_selected_files), volume_name);
+                                               n_selected_files), device_name);
 
-          /* allocate a new action for the volume */
-          action = gtk_action_new (name, volume_name, tooltip, NULL);
+          /* allocate a new action for the device */
+          action = gtk_action_new (name, device_name, tooltip, NULL);
           g_object_set_qdata_full (G_OBJECT (action), thunar_launcher_handler_quark, lp->data, g_object_unref);
-          g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_launcher_action_sendto_volume), launcher);
+          g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_launcher_action_sendto_device), launcher);
           gtk_action_group_add_action (launcher->action_group, action);
           gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
                                  "/main-menu/file-menu/sendto-menu/placeholder-sendto-actions",
@@ -1543,7 +1529,7 @@ thunar_launcher_sendto_idle (gpointer user_data)
                                  name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
           g_object_unref (action);
 
-          icon = g_volume_get_icon (lp->data);
+          icon = thunar_device_get_icon (lp->data);
           if (G_LIKELY (icon != NULL))
             {
               gtk_action_set_gicon (action, icon);
@@ -1553,11 +1539,11 @@ thunar_launcher_sendto_idle (gpointer user_data)
           /* cleanup */
           g_free (name);
           g_free (tooltip);
-          g_free (volume_name);
+          g_free (device_name);
         }
 
-      /* free the volumes list */
-      g_list_free (volumes);
+      /* free the devices list */
+      g_list_free (devices);
 
       /* determine the sendto handlers for the selected files */
       handlers = thunar_sendto_model_get_matching (launcher->sendto_model, launcher->selected_files);

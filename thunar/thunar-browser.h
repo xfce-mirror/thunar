@@ -22,6 +22,7 @@
 #define __THUNAR_BROWSER_H__
 
 #include <thunar/thunar-file.h>
+#include <thunar/thunar-device.h>
 
 G_BEGIN_DECLS
 
@@ -39,8 +40,8 @@ typedef void (*ThunarBrowserPokeFileFunc)     (ThunarBrowser *browser,
                                                GError        *error,
                                                gpointer       user_data);
 
-typedef void (*ThunarBrowserPokeVolumeFunc)   (ThunarBrowser *browser,
-                                               GVolume       *volume,
+typedef void (*ThunarBrowserPokeDeviceFunc)   (ThunarBrowser *browser,
+                                               ThunarDevice  *volume,
                                                ThunarFile    *mount_point,
                                                GError        *error,
                                                gpointer       user_data);
@@ -68,10 +69,10 @@ void  thunar_browser_poke_file     (ThunarBrowser                 *browser,
                                     gpointer                       widget,
                                     ThunarBrowserPokeFileFunc      func,
                                     gpointer                       user_data);
-void  thunar_browser_poke_volume   (ThunarBrowser                 *browser,
-                                    GVolume                       *volume,
+void  thunar_browser_poke_device   (ThunarBrowser                 *browser,
+                                    ThunarDevice                  *device,
                                     gpointer                       widget,
-                                    ThunarBrowserPokeVolumeFunc    func,
+                                    ThunarBrowserPokeDeviceFunc    func,
                                     gpointer                       user_data);
 void  thunar_browser_poke_location (ThunarBrowser                 *browser,
                                     GFile                         *location,

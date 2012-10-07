@@ -1408,17 +1408,17 @@ thunar_shortcuts_view_poke_location_finish (ThunarBrowser *browser,
 
 
 static void
-thunar_shortcuts_view_poke_volume_finish (ThunarBrowser *browser,
-                                          GVolume       *volume,
+thunar_shortcuts_view_poke_device_finish (ThunarBrowser *browser,
+                                          ThunarDevice  *device,
                                           ThunarFile    *mount_point,
                                           GError        *error,
                                           gpointer       user_data)
 {
   gboolean new_window = GPOINTER_TO_UINT (user_data);
-  gchar   *volume_name;
+  gchar   *device_name;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (browser));
-  _thunar_return_if_fail (G_IS_VOLUME (volume));
+  _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
 
   if (error == NULL)
     {
@@ -1428,10 +1428,10 @@ thunar_shortcuts_view_poke_volume_finish (ThunarBrowser *browser,
     }
   else
     {
-      volume_name = g_volume_get_name (volume);
+      device_name = thunar_device_get_name (device);
       thunar_dialogs_show_error (GTK_WIDGET (browser), error,
-                                 _("Failed to mount \"%s\""), volume_name);
-      g_free (volume_name);
+                                 _("Failed to mount \"%s\""), device_name);
+      g_free (device_name);
     }
 }
 
@@ -1466,10 +1466,10 @@ thunar_shortcuts_view_open (ThunarShortcutsView *view,
                           THUNAR_SHORTCUTS_MODEL_COLUMN_LOCATION, &location,
                           -1);
 
-      if (G_LIKELY (FALSE && device != NULL))
-        {/* TODO */
-          thunar_browser_poke_volume (THUNAR_BROWSER (view), (GVolume *)device, view,
-                                      thunar_shortcuts_view_poke_volume_finish,
+      if (G_LIKELY (device != NULL))
+        {
+          thunar_browser_poke_device (THUNAR_BROWSER (view), device, view,
+                                      thunar_shortcuts_view_poke_device_finish,
                                       GUINT_TO_POINTER (new_window));
         }
       else if (file != NULL)
@@ -1563,7 +1563,7 @@ thunar_shortcuts_view_eject (ThunarShortcutsView *view)
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
   if (gtk_tree_selection_get_selected (selection, &model, &iter))
     {
-      /* determine the volume/mount for the shortcut at the given tree iterator */
+      /* determine the device/mount for the shortcut at the given tree iterator */
       gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_DEVICE, &device, -1);
       _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
 
@@ -1585,23 +1585,23 @@ thunar_shortcuts_view_eject (ThunarShortcutsView *view)
 
 
 static void
-thunar_shortcuts_view_poke_volume_mount_finish (ThunarBrowser *browser,
-                                                GVolume       *volume,
+thunar_shortcuts_view_poke_device_mount_finish (ThunarBrowser *browser,
+                                                ThunarDevice  *device,
                                                 ThunarFile    *mount_point,
                                                 GError        *error,
                                                 gpointer       ignored)
 {
-  gchar *volume_name;
+  gchar *device_name;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (browser));
-  _thunar_return_if_fail (G_IS_VOLUME (volume));
+  _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
 
   if (error != NULL)
     {
-      volume_name = g_volume_get_name (volume);
+      device_name = thunar_device_get_name (device);
       thunar_dialogs_show_error (GTK_WIDGET (browser), error,
-                                 _("Failed to mount \"%s\""), volume_name);
-      g_free (volume_name);
+                                 _("Failed to mount \"%s\""), device_name);
+      g_free (device_name);
     }
 }
 
@@ -1613,7 +1613,7 @@ thunar_shortcuts_view_mount (ThunarShortcutsView *view)
   GtkTreeSelection *selection;
   GtkTreeModel     *model;
   GtkTreeIter       iter;
-  GVolume          *volume;
+  ThunarDevice     *device;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
 
@@ -1627,17 +1627,16 @@ thunar_shortcuts_view_mount (ThunarShortcutsView *view)
   if (gtk_tree_selection_get_selected (selection, &model, &iter))
     {
       /* determine the file for the shortcut at the given tree iterator */
-      volume = NULL;
-      /*gtk_tree_model_get (model, &iter,
-                          THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME, &volume,
-                          -1);*/
+      gtk_tree_model_get (model, &iter,
+                          THUNAR_SHORTCUTS_MODEL_COLUMN_DEVICE, &device,
+                          -1);
 
-      if (G_LIKELY (volume != NULL))
+      if (G_LIKELY (device != NULL))
         {
-          thunar_browser_poke_volume (THUNAR_BROWSER (view), volume, view,
-                                      thunar_shortcuts_view_poke_volume_mount_finish,
+          thunar_browser_poke_device (THUNAR_BROWSER (view), device, view,
+                                      thunar_shortcuts_view_poke_device_mount_finish,
                                       NULL);
-          g_object_unref (volume);
+          g_object_unref (device);
         }
     }
 }
@@ -1685,7 +1684,7 @@ thunar_shortcuts_view_unmount (ThunarShortcutsView *view)
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
   if (gtk_tree_selection_get_selected (selection, &model, &iter))
     {
-      /* determine the volume/mount for the shortcut at the given tree iterator */
+      /* determine the device/mount for the shortcut at the given tree iterator */
       gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_DEVICE, &device, -1);
       _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
 

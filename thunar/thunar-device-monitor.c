@@ -37,6 +37,7 @@ enum
   DEVICE_ADDED,
   DEVICE_REMOVED,
   DEVICE_CHANGED,
+  DEVICE_PRE_UNMOUNT,
   LAST_SIGNAL
 };
 
@@ -61,6 +62,9 @@ static void           thunar_device_monitor_mount_removed          (GVolumeMonit
 static void           thunar_device_monitor_mount_changed          (GVolumeMonitor         *volume_monitor,
                                                                     GMount                 *mount,
                                                                     ThunarDeviceMonitor    *monitor);
+static void           thunar_device_monitor_mount_pre_unmount      (GVolumeMonitor         *volume_monitor,
+                                                                    GMount                 *mount,
+                                                                    ThunarDeviceMonitor    *monitor);
 
 
 
@@ -69,12 +73,14 @@ struct _ThunarDeviceMonitorClass
   GObjectClass __parent__;
 
   /* signals */
-  void (*device_added)   (ThunarDeviceMonitor *monitor,
-                          ThunarDevice        *device);
-  void (*device_removed) (ThunarDeviceMonitor *monitor,
-                          ThunarDevice        *device);
-  void (*device_changed) (ThunarDeviceMonitor *monitor,
-                          ThunarDevice        *device);
+  void (*device_added)       (ThunarDeviceMonitor *monitor,
+                              ThunarDevice        *device);
+  void (*device_removed)     (ThunarDeviceMonitor *monitor,
+                              ThunarDevice        *device);
+  void (*device_changed)     (ThunarDeviceMonitor *monitor,
+                              ThunarDevice        *device);
+  void (*device_pre_unmount) (ThunarDeviceMonitor *monitor,
+                              ThunarDevice        *device);
 };
 
 struct _ThunarDeviceMonitor
@@ -87,11 +93,6 @@ struct _ThunarDeviceMonitor
   GHashTable     *devices;
 
   GList          *hidden_volumes;
-};
-
-struct _ThunarDevice
-{
-
 };
 
 
@@ -118,8 +119,8 @@ thunar_device_monitor_class_init (ThunarDeviceMonitorClass *klass)
                     G_SIGNAL_RUN_LAST,
                     G_STRUCT_OFFSET (ThunarDeviceMonitorClass, device_added),
                     NULL, NULL,
-                    g_cclosure_marshal_VOID__POINTER,
-                    G_TYPE_NONE, 1, G_TYPE_POINTER);
+                    g_cclosure_marshal_VOID__OBJECT,
+                    G_TYPE_NONE, 1, G_TYPE_OBJECT);
 
   device_monitor_signals[DEVICE_REMOVED] =
       g_signal_new (I_("device-removed"),
@@ -127,8 +128,8 @@ thunar_device_monitor_class_init (ThunarDeviceMonitorClass *klass)
                     G_SIGNAL_RUN_LAST,
                     G_STRUCT_OFFSET (ThunarDeviceMonitorClass, device_removed),
                     NULL, NULL,
-                    g_cclosure_marshal_VOID__POINTER,
-                    G_TYPE_NONE, 1, G_TYPE_POINTER);
+                    g_cclosure_marshal_VOID__OBJECT,
+                    G_TYPE_NONE, 1, G_TYPE_OBJECT);
 
   device_monitor_signals[DEVICE_CHANGED] =
       g_signal_new (I_("device-changed"),
@@ -136,8 +137,17 @@ thunar_device_monitor_class_init (ThunarDeviceMonitorClass *klass)
                     G_SIGNAL_RUN_LAST,
                     G_STRUCT_OFFSET (ThunarDeviceMonitorClass, device_changed),
                     NULL, NULL,
-                    g_cclosure_marshal_VOID__POINTER,
-                    G_TYPE_NONE, 1, G_TYPE_POINTER);
+                    g_cclosure_marshal_VOID__OBJECT,
+                    G_TYPE_NONE, 1, G_TYPE_OBJECT);
+
+  device_monitor_signals[DEVICE_PRE_UNMOUNT] =
+      g_signal_new (I_("device-pre-unmount"),
+                    G_TYPE_FROM_CLASS (klass),
+                    G_SIGNAL_RUN_LAST,
+                    G_STRUCT_OFFSET (ThunarDeviceMonitorClass, device_pre_unmount),
+                    NULL, NULL,
+                    g_cclosure_marshal_VOID__OBJECT,
+                    G_TYPE_NONE, 1, G_TYPE_OBJECT);
 }
 
 
@@ -179,6 +189,7 @@ thunar_device_monitor_init (ThunarDeviceMonitor *monitor)
   g_signal_connect (monitor->volume_monitor, "mount-added", G_CALLBACK (thunar_device_monitor_mount_added), monitor);
   g_signal_connect (monitor->volume_monitor, "mount-removed", G_CALLBACK (thunar_device_monitor_mount_removed), monitor);
   g_signal_connect (monitor->volume_monitor, "mount-changed", G_CALLBACK (thunar_device_monitor_mount_changed), monitor);
+  g_signal_connect (monitor->volume_monitor, "mount-pre-unmount", G_CALLBACK (thunar_device_monitor_mount_pre_unmount), monitor);
 }
 
 
@@ -588,6 +599,41 @@ thunar_device_monitor_mount_changed (GVolumeMonitor      *volume_monitor,
     {
       /* notify */
       g_signal_emit (G_OBJECT (monitor), device_monitor_signals[DEVICE_CHANGED], 0, device);
+    }
+}
+
+
+
+static void
+thunar_device_monitor_mount_pre_unmount (GVolumeMonitor      *volume_monitor,
+                                         GMount              *mount,
+                                         ThunarDeviceMonitor *monitor)
+{
+  ThunarDevice *device;
+  GVolume      *volume;
+
+  _thunar_return_if_fail (G_IS_VOLUME_MONITOR (volume_monitor));
+  _thunar_return_if_fail (THUNAR_IS_DEVICE_MONITOR (monitor));
+  _thunar_return_if_fail (monitor->volume_monitor == volume_monitor);
+  _thunar_return_if_fail (G_IS_MOUNT (mount));
+
+  /* check if we have a device for this mount */
+  device = g_hash_table_lookup (monitor->devices, mount);
+  if (device == NULL)
+    {
+      /* maybe a volume device? */
+      volume = g_mount_get_volume (mount);
+      if (volume != NULL)
+        {
+          device = g_hash_table_lookup (monitor->devices, volume);
+          g_object_unref (volume);
+        }
+    }
+
+  if (device != NULL)
+    {
+      /* notify */
+      g_signal_emit (G_OBJECT (monitor), device_monitor_signals[DEVICE_PRE_UNMOUNT], 0, device);
     }
 }
 
