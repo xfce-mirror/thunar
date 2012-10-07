@@ -1365,7 +1365,7 @@ thunar_shortcuts_view_poke_file_finish (ThunarBrowser *browser,
                                           gtk_widget_get_screen (GTK_WIDGET (browser)), NULL);
           g_object_unref (application);
         }
-      else
+      else if (thunar_file_check_loaded (target_file))
         {
           /* invoke the signal to change to that folder */
           g_signal_emit (browser, view_signals[SHORTCUT_ACTIVATED], 0, target_file);

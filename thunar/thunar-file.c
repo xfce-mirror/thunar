@@ -1137,6 +1137,28 @@ thunar_file_get_parent (const ThunarFile *file,
 
 
 /**
+ * thunar_file_check_loaded:
+ * @file              : a #ThunarFile instance.
+ *
+ * Check if @file has its information loaded, if not, try this once else
+ * return %FALSE.
+ *
+ * Return value: %TRUE on success, else %FALSE.
+ **/
+gboolean
+thunar_file_check_loaded (ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+
+  if (G_UNLIKELY (file->info == NULL))
+    thunar_file_load (file, NULL, NULL);
+
+  return (file->info != NULL);
+}
+
+
+
+/**
  * thunar_file_execute:
  * @file              : a #ThunarFile instance.
  * @working_directory : the working directory used to resolve relative filenames 
@@ -2823,7 +2845,10 @@ thunar_file_get_emblem_names (ThunarFile *file)
   GList    *emblems = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->info), NULL);
+
+  /* leave if there is no info */
+  if (file->info == NULL)
+    return NULL;
 
   /* determine the custom emblems */
   emblem_names = g_file_info_get_attribute_stringv (file->info, "metadata::emblems");

@@ -707,11 +707,9 @@ thunar_folder_get_for_file (ThunarFile *file)
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
-  /* make sure the folder is mounted, this happens when a
-   * mount is entered for the first time */
-  if (thunar_file_get_info (file) == NULL
-      && !thunar_file_is_mounted (file))
-    thunar_file_reload (file);
+  /* make sure the file is loaded */
+  if (!thunar_file_check_loaded (file))
+    return NULL;
 
   _thunar_return_val_if_fail (thunar_file_is_directory (file), NULL);
 

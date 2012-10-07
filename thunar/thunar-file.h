@@ -130,6 +130,8 @@ GFileInfo        *thunar_file_get_info             (const ThunarFile       *file
 ThunarFile       *thunar_file_get_parent           (const ThunarFile       *file,
                                                     GError                **error);
 
+gboolean          thunar_file_check_loaded         (ThunarFile             *file);
+
 gboolean          thunar_file_execute              (ThunarFile             *file,
                                                     GFile                  *working_directory,
                                                     gpointer                parent,
