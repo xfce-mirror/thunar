@@ -28,6 +28,7 @@
 
 #include <thunar/thunar-device-monitor.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-marshal.h>
 
 
 
@@ -80,7 +81,8 @@ struct _ThunarDeviceMonitorClass
   void (*device_changed)     (ThunarDeviceMonitor *monitor,
                               ThunarDevice        *device);
   void (*device_pre_unmount) (ThunarDeviceMonitor *monitor,
-                              ThunarDevice        *device);
+                              ThunarDevice        *device,
+                              GFile               *root_file);
 };
 
 struct _ThunarDeviceMonitor
@@ -146,8 +148,9 @@ thunar_device_monitor_class_init (ThunarDeviceMonitorClass *klass)
                     G_SIGNAL_RUN_LAST,
                     G_STRUCT_OFFSET (ThunarDeviceMonitorClass, device_pre_unmount),
                     NULL, NULL,
-                    g_cclosure_marshal_VOID__OBJECT,
-                    G_TYPE_NONE, 1, G_TYPE_OBJECT);
+                    _thunar_marshal_VOID__OBJECT_OBJECT,
+                    G_TYPE_NONE, 2,
+                    G_TYPE_OBJECT, G_TYPE_OBJECT);
 }
 
 
@@ -536,6 +539,8 @@ thunar_device_monitor_mount_removed (GVolumeMonitor      *volume_monitor,
                                      ThunarDeviceMonitor *monitor)
 {
   ThunarDevice *device;
+  GVolume      *volume;
+  GFile        *root_file;
 
   _thunar_return_if_fail (G_IS_VOLUME_MONITOR (volume_monitor));
   _thunar_return_if_fail (THUNAR_IS_DEVICE_MONITOR (monitor));
@@ -547,10 +552,30 @@ thunar_device_monitor_mount_removed (GVolumeMonitor      *volume_monitor,
   if (device != NULL)
     {
       /* notify */
-      g_signal_emit (G_OBJECT (monitor), device_monitor_signals[DEVICE_REMOVED], 0, device);
+      g_signal_emit (G_OBJECT (monitor),device_monitor_signals[DEVICE_REMOVED], 0, device);
 
       /* drop it */
       g_hash_table_remove (monitor->devices, mount);
+    }
+  else
+    {
+      /* maybe a mount was removed from a known volume, gphoto2 does this */
+      volume = g_mount_get_volume (mount);
+      if (volume != NULL)
+        {
+          device = g_hash_table_lookup (monitor->devices, volume);
+          if (device != NULL)
+            {
+              /* we can't get the file from the volume at this point so provide it */
+              root_file = g_mount_get_root (mount);
+              g_signal_emit (G_OBJECT (monitor),
+                             device_monitor_signals[DEVICE_PRE_UNMOUNT], 0,
+                             device, root_file);
+              g_object_unref (root_file);
+            }
+
+          g_object_unref (volume);
+        }
     }
 }
 

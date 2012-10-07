@@ -120,6 +120,7 @@ static void                 thunar_tree_model_device_added            (ThunarDev
                                                                        ThunarTreeModel        *model);
 static void                 thunar_tree_model_device_pre_unmount      (ThunarDeviceMonitor    *device_monitor,
                                                                        ThunarDevice           *device,
+                                                                       GFile                  *root_file,
                                                                        ThunarTreeModel        *model);
 static void                 thunar_tree_model_device_removed          (ThunarDeviceMonitor    *device_monitor,
                                                                        ThunarDevice           *device,
@@ -1025,6 +1026,7 @@ thunar_tree_model_device_changed (ThunarDeviceMonitor *device_monitor,
 static void
 thunar_tree_model_device_pre_unmount (ThunarDeviceMonitor *device_monitor,
                                       ThunarDevice        *device,
+                                      GFile               *root_file,
                                       ThunarTreeModel     *model)
 {
   GNode *node;
@@ -1032,6 +1034,7 @@ thunar_tree_model_device_pre_unmount (ThunarDeviceMonitor *device_monitor,
   _thunar_return_if_fail (THUNAR_IS_DEVICE_MONITOR (device_monitor));
   _thunar_return_if_fail (model->device_monitor == device_monitor);
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
+  _thunar_return_if_fail (G_IS_FILE (root_file));
   _thunar_return_if_fail (THUNAR_IS_TREE_MODEL (model));
 
   /* lookup the node for the volume (if visible) */

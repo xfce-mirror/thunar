@@ -210,6 +210,10 @@ static void     thunar_window_notify_loading              (ThunarView           
                                                            ThunarWindow           *window);
 static void     thunar_window_device_pre_unmount          (ThunarDeviceMonitor    *device_monitor,
                                                            ThunarDevice           *device,
+                                                           GFile                  *root_file,
+                                                           ThunarWindow           *window);
+static void     thunar_window_device_removed              (ThunarDeviceMonitor    *device_monitor,
+                                                           ThunarDevice           *device,
                                                            ThunarWindow           *window);
 static gboolean thunar_window_merge_idle                  (gpointer                user_data);
 static void     thunar_window_merge_idle_destroy          (gpointer                user_data);
@@ -760,6 +764,7 @@ thunar_window_init (ThunarWindow *window)
   /* connect to the volume monitor */
   window->device_monitor = thunar_device_monitor_get ();
   g_signal_connect (window->device_monitor, "device-pre-unmount", G_CALLBACK (thunar_window_device_pre_unmount), window);
+  g_signal_connect (window->device_monitor, "device-removed", G_CALLBACK (thunar_window_device_removed), window);
 
   /* allocate a closure for the menu_item_selected() callback */
   window->menu_item_selected_closure = g_cclosure_new_object (G_CALLBACK (thunar_window_menu_item_selected), G_OBJECT (window));
@@ -2768,21 +2773,22 @@ thunar_window_notify_loading (ThunarView   *view,
         }
     }
 }
-  
+
 
 
 static void
 thunar_window_device_pre_unmount (ThunarDeviceMonitor *device_monitor,
                                   ThunarDevice        *device,
+                                  GFile               *root_file,
                                   ThunarWindow        *window)
 {
   ThunarFile *file;
   GtkAction  *action;
-  GFile      *mount_point;
 
   _thunar_return_if_fail (THUNAR_IS_DEVICE_MONITOR (device_monitor));
   _thunar_return_if_fail (window->device_monitor == device_monitor);
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
+  _thunar_return_if_fail (G_IS_FILE (root_file));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* nothing to do if we don't have a current directory */
@@ -2790,10 +2796,7 @@ thunar_window_device_pre_unmount (ThunarDeviceMonitor *device_monitor,
     return;
 
   /* try to get the ThunarFile for the mount point from the file cache */
-  mount_point = thunar_device_get_root (device);
-  file = thunar_file_cache_lookup (mount_point);
-  g_object_unref (mount_point);
-
+  file = thunar_file_cache_lookup (root_file);
   if (G_UNLIKELY (file == NULL))
     return;
 
@@ -2805,6 +2808,25 @@ thunar_window_device_pre_unmount (ThunarDeviceMonitor *device_monitor,
       if (G_LIKELY (action != NULL))
         gtk_action_activate (action);
     }
+}
+
+
+
+static void
+thunar_window_device_removed (ThunarDeviceMonitor *device_monitor,
+                              ThunarDevice        *device,
+                              ThunarWindow        *window)
+{
+  GFile *root_file;
+
+  _thunar_return_if_fail (THUNAR_IS_DEVICE_MONITOR (device_monitor));
+  _thunar_return_if_fail (window->device_monitor == device_monitor);
+  _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  root_file = thunar_device_get_root (device);
+  thunar_window_device_pre_unmount (device_monitor, device, root_file, window);
+  g_object_unref (root_file);
 }
 
 
