@@ -1218,10 +1218,10 @@ thunar_tree_model_item_reset (ThunarTreeModelItem *item)
 static void
 thunar_tree_model_item_load_folder (ThunarTreeModelItem *item)
 {
-  _thunar_return_if_fail (item->file != NULL || item->device != NULL);
+  _thunar_return_if_fail (THUNAR_IS_FILE (item->file) || THUNAR_IS_DEVICE (item->device));
 
   /* schedule the "load" idle source (if not already done) */
-  if (G_LIKELY (item->load_idle_id == 0 && item->device == NULL))
+  if (G_LIKELY (item->load_idle_id == 0 && item->folder == NULL))
     {
       item->load_idle_id = g_idle_add_full (G_PRIORITY_HIGH, thunar_tree_model_item_load_idle,
                                             item, thunar_tree_model_item_load_idle_destroy);
