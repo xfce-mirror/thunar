@@ -43,6 +43,9 @@
 #include <thunar/thunar-device-monitor.h>
 #include <thunar/thunar-private.h>
 
+#define SPINNER_CYCLE_DURATION 1000
+#define SPINNER_NUM_STEPS      12
+
 
 
 #define THUNAR_SHORTCUT(obj) ((ThunarShortcut *) (obj))
@@ -146,6 +149,8 @@ struct _ThunarShortcutsModel
 
   GFileMonitor        *monitor;
   guint                load_idle_id;
+
+  guint busy_timeout_id;
 };
 
 struct _ThunarShortcut
@@ -157,6 +162,9 @@ struct _ThunarShortcut
   gchar               *name;
   GIcon               *gicon;
   gint                 sort_id;
+
+  guint                busy : 1;
+  guint                busy_pule;
 
   GFile               *location;
   ThunarFile          *file;
@@ -392,6 +400,10 @@ thunar_shortcuts_model_finalize (GObject *object)
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
 
+  /* stop the busy timeout */
+  if (model->busy_timeout_id != 0)
+    g_source_remove (model->busy_timeout_id);
+
   /* stop bookmark load idle */
   if (model->load_idle_id != 0)
     g_source_remove (model->load_idle_id);
@@ -468,6 +480,12 @@ thunar_shortcuts_model_get_column_type (GtkTreeModel *tree_model,
       return G_TYPE_BOOLEAN;
 
     case THUNAR_SHORTCUTS_MODEL_COLUMN_GROUP:
+      return G_TYPE_UINT;
+
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_BUSY:
+      return G_TYPE_BOOLEAN;
+
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_BUSY_PULSE:
       return G_TYPE_UINT;
     }
 
@@ -603,6 +621,16 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
     case THUNAR_SHORTCUTS_MODEL_COLUMN_GROUP:
       g_value_init (value, G_TYPE_UINT);
       g_value_set_uint (value, shortcut->group);
+      break;
+
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_BUSY:
+      g_value_init (value, G_TYPE_BOOLEAN);
+      g_value_set_boolean (value, shortcut->busy);
+      break;
+
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_BUSY_PULSE:
+      g_value_init (value, G_TYPE_UINT);
+      g_value_set_uint (value, shortcut->busy_pule);
       break;
 
     default:
@@ -1306,6 +1334,55 @@ thunar_shortcut_free (ThunarShortcut       *shortcut,
 
 
 
+static gboolean
+thunar_shortcuts_model_busy_timeout (gpointer data)
+{
+  ThunarShortcutsModel *model = THUNAR_SHORTCUTS_MODEL (data);
+  gboolean              keep_running = FALSE;
+  ThunarShortcut       *shortcut;
+  GtkTreePath          *path;
+  guint                 idx;
+  GtkTreeIter           iter;
+  GList                *lp;
+
+  _thunar_return_val_if_fail (THUNAR_IS_SHORTCUTS_MODEL (data), FALSE);
+
+  for (lp = model->shortcuts, idx = 0; lp != NULL; lp = lp->next, idx++)
+    {
+      shortcut = lp->data;
+      if (!shortcut->busy)
+        continue;
+
+      /* loop the pulse of the shortcut */
+      shortcut->busy_pule++;
+      if (shortcut->busy_pule >= SPINNER_NUM_STEPS)
+        shortcut->busy_pule = 0;
+
+      /* generate an iterator for the path */
+      GTK_TREE_ITER_INIT (iter, model->stamp, lp);
+
+      /* notify the views about the change */
+      path = gtk_tree_path_new_from_indices (idx, -1);
+      gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &iter);
+      gtk_tree_path_free (path);
+
+      /* keep the timeout running */
+      keep_running = TRUE;
+    }
+
+  return keep_running;
+}
+
+
+
+static void
+thunar_shortcuts_model_busy_timeout_destroyed (gpointer data)
+{
+  THUNAR_SHORTCUTS_MODEL (data)->busy_timeout_id = 0;
+}
+
+
+
 /**
  * thunar_shortcuts_model_get_default:
  *
@@ -1701,4 +1778,53 @@ thunar_shortcuts_model_rename (ThunarShortcutsModel *model,
 
 
 
+void
+thunar_shortcuts_model_set_busy (ThunarShortcutsModel *model,
+                                 ThunarDevice         *device,
+                                 gboolean              busy)
+{
+  ThunarShortcut *shortcut;
+  GList          *lp;
+  guint           idx;
+  GtkTreeIter     iter;
+  GtkTreePath    *path;
 
+  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
+  _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
+
+  /* get the device */
+  for (lp = model->shortcuts, idx = 0; lp != NULL; lp = lp->next, idx++)
+    if (THUNAR_SHORTCUT (lp->data)->device == device)
+      break;
+
+  if (lp == NULL)
+    return;
+
+  shortcut = lp->data;
+  _thunar_assert (shortcut->device == device);
+
+  if (G_LIKELY (shortcut->busy != busy))
+    {
+      shortcut->busy = busy;
+
+      if (busy && model->busy_timeout_id == 0)
+        {
+          /* start the global cycle timeout */
+          model->busy_timeout_id =
+            gdk_threads_add_timeout_full (G_PRIORITY_DEFAULT,
+                                          SPINNER_CYCLE_DURATION / SPINNER_NUM_STEPS,
+                                          thunar_shortcuts_model_busy_timeout, model,
+                                          thunar_shortcuts_model_busy_timeout_destroyed);
+        }
+      else if (!busy)
+        {
+          /* generate an iterator for the path */
+          GTK_TREE_ITER_INIT (iter, model->stamp, lp);
+
+          /* notify the views about the change */
+          path = gtk_tree_path_new_from_indices (idx, -1);
+          gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &iter);
+          gtk_tree_path_free (path);
+        }
+    }
+}

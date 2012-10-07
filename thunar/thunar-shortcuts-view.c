@@ -307,8 +307,6 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
                                        "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_NOT_HEADER,
                                        NULL);
 
-
-
   /* sync the "emblems" property of the icon renderer with the "shortcuts-icon-emblems" preference
    * and the "size" property of the renderer with the "shortcuts-icon-size" preference.
    */
@@ -327,6 +325,15 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
                                        "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_NOT_HEADER,
                                        NULL);
 
+  /* spinner to indicate (un)mount/eject delay */
+  renderer = gtk_cell_renderer_spinner_new ();
+  gtk_tree_view_column_pack_start (column, renderer, FALSE);
+  gtk_tree_view_column_set_attributes (column, renderer,
+                                       "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_BUSY,
+                                       "active", THUNAR_SHORTCUTS_MODEL_COLUMN_BUSY,
+                                       "pulse", THUNAR_SHORTCUTS_MODEL_COLUMN_BUSY_PULSE,
+                                       NULL);
+
   /* allocate icon renderer for the eject symbol */
   renderer = gtk_cell_renderer_pixbuf_new ();
   g_object_set (renderer, "mode", GTK_CELL_RENDERER_MODE_ACTIVATABLE, "icon-name", "media-eject", NULL);
@@ -334,7 +341,6 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   gtk_tree_view_column_set_attributes (column, renderer,
                                        "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_CAN_EJECT,
                                        NULL);
-
 
   /* enable drag support for the shortcuts view (actually used to support reordering) */
   gtk_tree_view_enable_model_drag_source (GTK_TREE_VIEW (view), GDK_BUTTON1_MASK, drag_targets,
@@ -1414,8 +1420,9 @@ thunar_shortcuts_view_poke_device_finish (ThunarBrowser *browser,
                                           GError        *error,
                                           gpointer       user_data)
 {
-  gboolean new_window = GPOINTER_TO_UINT (user_data);
-  gchar   *device_name;
+  gboolean      new_window = GPOINTER_TO_UINT (user_data);
+  gchar        *device_name;
+  GtkTreeModel *model;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (browser));
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
@@ -1433,6 +1440,10 @@ thunar_shortcuts_view_poke_device_finish (ThunarBrowser *browser,
                                  _("Failed to mount \"%s\""), device_name);
       g_free (device_name);
     }
+
+  /* stop the spinner */
+  model = gtk_tree_view_get_model (GTK_TREE_VIEW (browser));
+  thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (model), device, FALSE);
 }
 
 
@@ -1468,6 +1479,9 @@ thunar_shortcuts_view_open (ThunarShortcutsView *view,
 
       if (G_LIKELY (device != NULL))
         {
+          /* start the spinner */
+          thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (model), device, TRUE);
+
           thunar_browser_poke_device (THUNAR_BROWSER (view), device, view,
                                       thunar_shortcuts_view_poke_device_finish,
                                       GUINT_TO_POINTER (new_window));
@@ -1529,6 +1543,7 @@ thunar_shortcuts_view_eject_finish (ThunarDevice *device,
 {
   ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (user_data);
   gchar               *device_name;
+  GtkTreeModel        *model;
 
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
@@ -1541,6 +1556,10 @@ thunar_shortcuts_view_eject_finish (ThunarDevice *device,
       thunar_dialogs_show_error (GTK_WIDGET (view), error, _("Failed to eject \"%s\""), device_name);
       g_free (device_name);
     }
+
+  /* stop the spinner */
+  model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
+  thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (model), device, FALSE);
 
   g_object_unref (view);
 }
@@ -1571,6 +1590,9 @@ thunar_shortcuts_view_eject (ThunarShortcutsView *view)
       window = gtk_widget_get_toplevel (GTK_WIDGET (view));
       mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
 
+      /* start the spinner */
+      thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (model), device, TRUE);
+
       /* try to unmount */
       thunar_device_eject (device,
                            mount_operation,
@@ -1591,7 +1613,8 @@ thunar_shortcuts_view_poke_device_mount_finish (ThunarBrowser *browser,
                                                 GError        *error,
                                                 gpointer       ignored)
 {
-  gchar *device_name;
+  gchar        *device_name;
+  GtkTreeModel *model;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (browser));
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
@@ -1603,6 +1626,10 @@ thunar_shortcuts_view_poke_device_mount_finish (ThunarBrowser *browser,
                                  _("Failed to mount \"%s\""), device_name);
       g_free (device_name);
     }
+
+  /* stop the spinner */
+  model = gtk_tree_view_get_model (GTK_TREE_VIEW (browser));
+  thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (model), device, FALSE);
 }
 
 
@@ -1633,6 +1660,9 @@ thunar_shortcuts_view_mount (ThunarShortcutsView *view)
 
       if (G_LIKELY (device != NULL))
         {
+          /* start the spinner */
+          thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (model), device, TRUE);
+
           thunar_browser_poke_device (THUNAR_BROWSER (view), device, view,
                                       thunar_shortcuts_view_poke_device_mount_finish,
                                       NULL);
@@ -1650,6 +1680,7 @@ thunar_shortcuts_view_unmount_finish (ThunarDevice *device,
 {
   ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (user_data);
   gchar               *device_name;
+  GtkTreeModel        *model;
 
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
@@ -1662,6 +1693,10 @@ thunar_shortcuts_view_unmount_finish (ThunarDevice *device,
       thunar_dialogs_show_error (GTK_WIDGET (view), error, _("Failed to unmount \"%s\""), device_name);
       g_free (device_name);
     }
+
+  /* stop the spinner */
+  model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
+  thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (model), device, FALSE);
 
   g_object_unref (view);
 }
@@ -1691,6 +1726,9 @@ thunar_shortcuts_view_unmount (ThunarShortcutsView *view)
       /* prepare a mount operation */
       window = gtk_widget_get_toplevel (GTK_WIDGET (view));
       mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
+
+      /* start the spinner */
+      thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (model), device, TRUE);
 
       /* try to unmount */
       thunar_device_unmount (device,

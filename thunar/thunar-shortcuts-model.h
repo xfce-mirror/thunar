@@ -21,6 +21,7 @@
 #define __THUNAR_SHORTCUTS_MODEL_H__
 
 #include <thunar/thunar-file.h>
+#include <thunar/thunar-device.h>
 
 G_BEGIN_DECLS;
 
@@ -61,6 +62,8 @@ typedef enum
   THUNAR_SHORTCUTS_MODEL_COLUMN_MUTABLE,
   THUNAR_SHORTCUTS_MODEL_COLUMN_CAN_EJECT,
   THUNAR_SHORTCUTS_MODEL_COLUMN_GROUP,
+  THUNAR_SHORTCUTS_MODEL_COLUMN_BUSY,
+  THUNAR_SHORTCUTS_MODEL_COLUMN_BUSY_PULSE,
   THUNAR_SHORTCUTS_MODEL_N_COLUMNS,
 } ThunarShortcutsModelColumn;
 
@@ -104,6 +107,9 @@ void                   thunar_shortcuts_model_remove        (ThunarShortcutsMode
 void                   thunar_shortcuts_model_rename        (ThunarShortcutsModel *model,
                                                              GtkTreeIter          *iter,
                                                              const gchar          *name);
+void                   thunar_shortcuts_model_set_busy      (ThunarShortcutsModel *model,
+                                                             ThunarDevice         *device,
+                                                             gboolean              busy);
 
 G_END_DECLS;
 
