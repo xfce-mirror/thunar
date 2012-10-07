@@ -706,7 +706,18 @@ thunar_folder_get_for_file (ThunarFile *file)
   ThunarFolder *folder;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+
+  /* make sure the folder is mounted, this happens when a
+   * mount is entered for the first time */
+  if (thunar_file_get_info (file) == NULL
+      && !thunar_file_is_mounted (file))
+    thunar_file_reload (file);
+
   _thunar_return_val_if_fail (thunar_file_is_directory (file), NULL);
+
+  /* load if the file is not a folder */
+  if (!thunar_file_is_directory (file))
+    return NULL;
 
   /* determine the "thunar-folder" quark on-demand */
   if (G_UNLIKELY (thunar_folder_quark == 0))
