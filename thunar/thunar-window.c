@@ -2825,8 +2825,11 @@ thunar_window_device_removed (ThunarDeviceMonitor *device_monitor,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   root_file = thunar_device_get_root (device);
-  thunar_window_device_pre_unmount (device_monitor, device, root_file, window);
-  g_object_unref (root_file);
+  if (root_file != NULL)
+    {
+      thunar_window_device_pre_unmount (device_monitor, device, root_file, window);
+      g_object_unref (root_file);
+    }
 }
 
 

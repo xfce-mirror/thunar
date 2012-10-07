@@ -549,6 +549,9 @@ thunar_device_get_root (const ThunarDevice *device)
           root = g_mount_get_root (volume_mount);
           g_object_unref (volume_mount);
         }
+
+      if (root == NULL)
+        root = g_volume_get_activation_root (device->device);
     }
   else if (G_IS_MOUNT (device->device))
     {
