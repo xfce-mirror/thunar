@@ -276,57 +276,6 @@ thunar_device_monitor_mount_is_internal (GMount *mount)
 
 
 static gboolean
-thunar_device_monitor_has_location (ThunarDeviceMonitor *monitor,
-                                    GFile               *location)
-{
-
-  _thunar_return_val_if_fail (G_IS_FILE (location), FALSE);
-  _thunar_return_val_if_fail (THUNAR_IS_DEVICE_MONITOR (monitor), FALSE);
-
-  return FALSE;
-}
-
-
-
-static gboolean
-thunar_device_monitor_mount_is_hidden (GMount              *mount,
-                                       ThunarDeviceMonitor *monitor)
-{
-  GVolume *volume;
-  GFile   *location;
-
-  _thunar_return_val_if_fail (G_IS_MOUNT (mount), TRUE);
-  _thunar_return_val_if_fail (THUNAR_IS_DEVICE_MONITOR (monitor), TRUE);
-
-  /* never show shadowed mounts */
-  if (g_mount_is_shadowed (mount))
-    return TRUE;
-
-  /* skip mounts with a volume, we prefer a volume as device */
-  volume = g_mount_get_volume (mount);
-  if (volume != NULL)
-    {
-      g_object_unref (volume);
-      return TRUE;
-    }
-
-  location = g_mount_get_root (mount);
-
-  /* skip ghoto locations, since those also have a volume
-   * and igore locations already in the device list */
-  if (g_file_has_uri_scheme (location, "gphoto2")
-      || thunar_device_monitor_has_location (monitor, location))
-    {
-      g_object_unref (location);
-      return TRUE;
-    }
-
-  return FALSE;
-}
-
-
-
-static gboolean
 thunar_device_monitor_volume_is_visible (GVolume *volume)
 {
   gboolean         can_eject = FALSE;
@@ -519,25 +468,39 @@ thunar_device_monitor_mount_added (GVolumeMonitor      *volume_monitor,
   ThunarDevice     *device;
   GFile            *location;
   ThunarDeviceKind  kind = THUNAR_DEVICE_KIND_MOUNT_LOCAL;
+  GVolume          *volume;
 
   _thunar_return_if_fail (G_IS_VOLUME_MONITOR (volume_monitor));
   _thunar_return_if_fail (THUNAR_IS_DEVICE_MONITOR (monitor));
   _thunar_return_if_fail (monitor->volume_monitor == volume_monitor);
   _thunar_return_if_fail (G_IS_MOUNT (mount));
 
-  if (!thunar_device_monitor_mount_is_hidden (mount, monitor))
+  /* never handle shadowed mounts */
+  if (g_mount_is_shadowed (mount))
+    return;
+
+  /* volume for this mount */
+  volume = g_mount_get_volume (mount);
+  if (volume == NULL)
     {
       location = g_mount_get_root (mount);
-      if (G_LIKELY (location != NULL))
-        {
-          if (g_file_has_uri_scheme (location, "file")
-              || g_file_has_uri_scheme (location, "archive"))
-            kind = THUNAR_DEVICE_KIND_MOUNT_LOCAL;
-          else
-            kind = THUNAR_DEVICE_KIND_MOUNT_REMOTE;
+      if (G_UNLIKELY (location == NULL))
+        return;
 
+      /* skip ghoto locations, since those also have a volume */
+      if (g_file_has_uri_scheme (location, "gphoto2"))
+        {
           g_object_unref (location);
+          return;
         }
+
+      if (g_file_has_uri_scheme (location, "file")
+          || g_file_has_uri_scheme (location, "archive"))
+        kind = THUNAR_DEVICE_KIND_MOUNT_LOCAL;
+      else
+        kind = THUNAR_DEVICE_KIND_MOUNT_REMOTE;
+
+      g_object_unref (location);
 
       /* create a new device for this mount */
       device = g_object_new (THUNAR_TYPE_DEVICE,
@@ -550,6 +513,18 @@ thunar_device_monitor_mount_added (GVolumeMonitor      *volume_monitor,
 
       /* notify */
       g_signal_emit (G_OBJECT (monitor), device_monitor_signals[DEVICE_ADDED], 0, device);
+    }
+  else
+    {
+      /* maybe we mounted a volume */
+      device = g_hash_table_lookup (monitor->devices, volume);
+      if (device != NULL)
+        {
+          /* notify */
+          g_signal_emit (G_OBJECT (monitor), device_monitor_signals[DEVICE_CHANGED], 0, device);
+        }
+
+      g_object_unref (volume);
     }
 }
 

@@ -853,7 +853,7 @@ thunar_tree_model_sort (ThunarTreeModel *model,
   guint        n_children;
   gint        *new_order;
   guint        n;
-  
+
   _thunar_return_if_fail (THUNAR_IS_TREE_MODEL (model));
 
   /* determine the number of children of the node */
@@ -970,7 +970,7 @@ thunar_tree_model_device_changed (ThunarDeviceMonitor *device_monitor,
   _thunar_return_if_fail (model->device_monitor == device_monitor);
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
   _thunar_return_if_fail (THUNAR_IS_TREE_MODEL (model));
-  
+
   /* lookup the volume in the item list */
   for (node = model->root->children; node != NULL; node = node->next)
     {
@@ -982,7 +982,7 @@ thunar_tree_model_device_changed (ThunarDeviceMonitor *device_monitor,
   /* verify that we actually found the item */
   _thunar_assert (item != NULL);
   _thunar_assert (item->device == device);
-  
+
   /* check if the volume is mounted and we don't have a file yet */
   if (thunar_device_is_mounted (device) && item->file == NULL)
     {
@@ -1002,15 +1002,15 @@ thunar_tree_model_device_changed (ThunarDeviceMonitor *device_monitor,
     {
       /* reset the item for the node */
       thunar_tree_model_item_reset (item);
-    
+
       /* release all child nodes */
       while (node->children != NULL)
         g_node_traverse (node->children, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_model_node_traverse_remove, model);
-    
+
       /* append the dummy node */
       thunar_tree_model_node_insert_dummy (node, model);
     }
-  
+
   /* generate an iterator for the item */
   GTK_TREE_ITER_INIT (iter, model->stamp, node);
 
@@ -1065,7 +1065,7 @@ thunar_tree_model_device_added (ThunarDeviceMonitor *device_monitor,
   GtkTreePath         *path;
   GtkTreeIter          iter;
   GNode               *node;
-  
+
   _thunar_return_if_fail (THUNAR_IS_DEVICE_MONITOR (device_monitor));
   _thunar_return_if_fail (model->device_monitor == device_monitor);
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));

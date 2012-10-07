@@ -2793,7 +2793,7 @@ thunar_window_device_pre_unmount (ThunarDeviceMonitor *device_monitor,
   mount_point = thunar_device_get_root (device);
   file = thunar_file_cache_lookup (mount_point);
   g_object_unref (mount_point);
-g_message ("%p file", file);
+
   if (G_UNLIKELY (file == NULL))
     return;
 
