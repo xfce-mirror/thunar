@@ -326,12 +326,12 @@ thunar_tree_model_init (ThunarTreeModel *model)
   if (thunar_g_vfs_is_uri_scheme_supported ("trash"))
     system_paths = g_list_append (system_paths, thunar_g_file_new_for_trash ());
 
-  /* append the root file system */
-  system_paths = g_list_append (system_paths, thunar_g_file_new_for_root ());
-
   /* append the network icon if browsing the network is supported */
   if (thunar_g_vfs_is_uri_scheme_supported ("network"))
     system_paths = g_list_append (system_paths, g_file_new_for_uri ("network://"));
+
+  /* append the root file system */
+  system_paths = g_list_append (system_paths, thunar_g_file_new_for_root ());
 
   /* append the system defined nodes ('Home', 'Trash', 'File System') */
   for (lp = system_paths; lp != NULL; lp = lp->next)
