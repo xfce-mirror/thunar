@@ -435,6 +435,9 @@ thunar_shortcuts_model_get_column_type (GtkTreeModel *tree_model,
     case THUNAR_SHORTCUTS_MODEL_COLUMN_NAME:
       return G_TYPE_STRING;
 
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_TOOLTIP:
+      return G_TYPE_STRING;
+
     case THUNAR_SHORTCUTS_MODEL_COLUMN_FILE:
       return THUNAR_TYPE_FILE;
 
@@ -521,6 +524,7 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
 {
   ThunarShortcut *shortcut;
   gboolean        can_eject;
+  GFile          *file;
 
   _thunar_return_if_fail (iter->stamp == THUNAR_SHORTCUTS_MODEL (tree_model)->stamp);
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (tree_model));
@@ -562,6 +566,24 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
         g_value_take_string (value, thunar_g_file_get_display_name (shortcut->location));
       else
         g_value_set_static_string (value, "");
+      break;
+
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_TOOLTIP:
+      g_value_init (value, G_TYPE_STRING);
+      if (shortcut->file != NULL)
+        file = g_object_ref (thunar_file_get_file (shortcut->file));
+      else if (shortcut->location != NULL)
+        file = g_object_ref (shortcut->location);
+      else if (shortcut->device != NULL)
+        file = thunar_device_get_root (shortcut->device);
+      else
+        file = NULL;
+
+      if (G_LIKELY (file != NULL))
+        {
+          g_value_take_string (value, g_file_get_parse_name (file));
+          g_object_unref (file);
+        }
       break;
 
     case THUNAR_SHORTCUTS_MODEL_COLUMN_FILE:

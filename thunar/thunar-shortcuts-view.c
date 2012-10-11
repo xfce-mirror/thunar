@@ -243,6 +243,7 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   /* configure the tree view */
   gtk_tree_view_set_enable_search (GTK_TREE_VIEW (view), FALSE);
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (view), FALSE);
+  gtk_tree_view_set_tooltip_column (GTK_TREE_VIEW (view), THUNAR_SHORTCUTS_MODEL_COLUMN_TOOLTIP);
 
   /* grab a reference on the provider factory */
   view->provider_factory = thunarx_provider_factory_get_default ();
