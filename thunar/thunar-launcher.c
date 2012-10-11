@@ -1462,6 +1462,9 @@ thunar_launcher_sendto_idle (gpointer user_data)
   gchar          *device_name;
   gint            n_selected_files;
   gint            n = 0;
+  gboolean        got_devices = FALSE;
+  const gchar    *file_menu_path;
+  const gchar    *context_menu_path;
 
   /* verify that we have an UI manager */
   if (launcher->ui_manager == NULL)
@@ -1505,6 +1508,11 @@ thunar_launcher_sendto_idle (gpointer user_data)
 
       /* determine the currently active devices */
       devices = thunar_device_monitor_get_devices (launcher->device_monitor);
+      got_devices = (devices != NULL);
+
+      /* paths in ui */
+      file_menu_path = "/main-menu/file-menu/sendto-menu/placeholder-sendto-actions";
+      context_menu_path = "/file-context-menu/sendto-menu/placeholder-sendto-actions";
 
       /* add removable (and writable) drives and media */
       for (lp = devices; lp != NULL; lp = lp->next, ++n)
@@ -1522,11 +1530,9 @@ thunar_launcher_sendto_idle (gpointer user_data)
           g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_launcher_action_sendto_device), launcher);
           gtk_action_group_add_action (launcher->action_group, action);
           gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
-                                 "/main-menu/file-menu/sendto-menu/placeholder-sendto-actions",
-                                 name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
+                                 file_menu_path, name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
           gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
-                                 "/file-context-menu/sendto-menu/placeholder-sendto-actions",
-                                 name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
+                                 context_menu_path, name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
           g_object_unref (action);
 
           icon = thunar_device_get_icon (lp->data);
@@ -1549,6 +1555,17 @@ thunar_launcher_sendto_idle (gpointer user_data)
       handlers = thunar_sendto_model_get_matching (launcher->sendto_model, launcher->selected_files);
       if (G_LIKELY (handlers != NULL))
         {
+          if (got_devices)
+            {
+              /* add separator between the devices and actions action */
+              gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
+                                     file_menu_path, "separator", NULL,
+                                     GTK_UI_MANAGER_SEPARATOR, FALSE);
+              gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
+                                     context_menu_path, "separator", NULL,
+                                     GTK_UI_MANAGER_SEPARATOR, FALSE);
+            }
+
           /* add all handlers to the user interface */
           for (lp = handlers; lp != NULL; lp = lp->next, ++n)
             {
@@ -1566,11 +1583,9 @@ thunar_launcher_sendto_idle (gpointer user_data)
               g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_launcher_action_open), launcher);
               gtk_action_group_add_action (launcher->action_group, action);
               gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
-                                     "/main-menu/file-menu/sendto-menu/placeholder-sendto-actions",
-                                     name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
+                                     file_menu_path, name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
               gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
-                                     "/file-context-menu/sendto-menu/placeholder-sendto-actions",
-                                     name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
+                                     context_menu_path, name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
               g_object_unref (G_OBJECT (action));
 
               /* cleanup */

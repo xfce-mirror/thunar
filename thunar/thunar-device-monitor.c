@@ -29,6 +29,7 @@
 #include <thunar/thunar-device-monitor.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-marshal.h>
+#include <thunar/thunar-preferences.h>
 
 
 
@@ -42,9 +43,26 @@ enum
   LAST_SIGNAL
 };
 
+enum
+{
+  PROP_0,
+  PROP_HIDDEN_DEVICES
+};
+
 
 
 static void           thunar_device_monitor_finalize               (GObject                *object);
+static void           thunar_device_monitor_get_property           (GObject                *object,
+                                                                    guint                   prop_id,
+                                                                    GValue                 *value,
+                                                                    GParamSpec             *pspec);
+static void           thunar_device_monitor_set_property           (GObject                *object,
+                                                                    guint                   prop_id,
+                                                                    const GValue           *value,
+                                                                    GParamSpec             *pspec);
+static void           thunar_device_monitor_update_hidden          (gpointer                key,
+                                                                    gpointer                value,
+                                                                    gpointer                data);
 static void           thunar_device_monitor_volume_added           (GVolumeMonitor         *volume_monitor,
                                                                     GVolume                *volume,
                                                                     ThunarDeviceMonitor    *monitor);
@@ -89,12 +107,17 @@ struct _ThunarDeviceMonitor
 {
   GObject __parent__;
 
-  GVolumeMonitor *volume_monitor;
+  GVolumeMonitor     *volume_monitor;
 
   /* GVolume/GMount -> ThunarDevice */
-  GHashTable     *devices;
+  GHashTable         *devices;
 
-  GList          *hidden_volumes;
+  /* GVolumes from GVolumeMonitor that are currently invisible */
+  GList              *hidden_volumes;
+
+  /* user defined hidden volumes */
+  ThunarPreferences  *preferences;
+  gchar             **hidden_devices;
 };
 
 
@@ -114,6 +137,16 @@ thunar_device_monitor_class_init (ThunarDeviceMonitorClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_device_monitor_finalize;
+  gobject_class->get_property = thunar_device_monitor_get_property;
+  gobject_class->set_property = thunar_device_monitor_set_property;
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_HIDDEN_DEVICES,
+                                   g_param_spec_boxed ("hidden-devices",
+                                                       NULL,
+                                                       NULL,
+                                                       G_TYPE_STRV,
+                                                       EXO_PARAM_READWRITE));
 
   device_monitor_signals[DEVICE_ADDED] =
       g_signal_new (I_("device-added"),
@@ -161,6 +194,10 @@ thunar_device_monitor_init (ThunarDeviceMonitor *monitor)
   GList *list;
   GList *lp;
 
+  monitor->preferences = thunar_preferences_get ();
+  exo_binding_new (G_OBJECT (monitor->preferences), "hidden-devices",
+                   G_OBJECT (monitor), "hidden-devices");
+
   /* table for GVolume/GMount (key) -> ThunarDevice (value) */
   monitor->devices = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, g_object_unref);
 
@@ -202,6 +239,10 @@ thunar_device_monitor_finalize (GObject *object)
 {
   ThunarDeviceMonitor *monitor = THUNAR_DEVICE_MONITOR (object);
 
+  /* release properties */
+  g_object_unref (monitor->preferences);
+  g_strfreev (monitor->hidden_devices);
+
   /* detatch from the monitor */
   g_signal_handlers_disconnect_matched (monitor->volume_monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, monitor);
   g_object_unref (monitor->volume_monitor);
@@ -213,6 +254,99 @@ thunar_device_monitor_finalize (GObject *object)
   g_list_free_full (monitor->hidden_volumes, g_object_unref);
 
   (*G_OBJECT_CLASS (thunar_device_monitor_parent_class)->finalize) (object);
+}
+
+
+
+static void
+thunar_device_monitor_get_property (GObject    *object,
+                                    guint       prop_id,
+                                    GValue     *value,
+                                    GParamSpec *pspec)
+{
+  ThunarDeviceMonitor *monitor = THUNAR_DEVICE_MONITOR (object);
+
+  switch (prop_id)
+    {
+    case PROP_HIDDEN_DEVICES:
+      g_value_set_boxed (value, monitor->hidden_devices);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+
+
+static void
+thunar_device_monitor_set_property (GObject      *object,
+                                    guint         prop_id,
+                                    const GValue *value,
+                                    GParamSpec   *pspec)
+{
+  ThunarDeviceMonitor *monitor = THUNAR_DEVICE_MONITOR (object);
+
+  switch (prop_id)
+    {
+    case PROP_HIDDEN_DEVICES:
+      /* set */
+      g_strfreev (monitor->hidden_devices);
+      monitor->hidden_devices = g_value_dup_boxed (value);
+
+      /* update the devices */
+      if (monitor->devices != NULL)
+        g_hash_table_foreach (monitor->devices, thunar_device_monitor_update_hidden, monitor);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+
+
+static gboolean
+thunar_device_monitor_id_is_hidden (ThunarDeviceMonitor *monitor,
+                                    const gchar         *id)
+{
+  guint n;
+
+  if (id == NULL || monitor->hidden_devices == NULL)
+    return FALSE;
+
+  /* check if the uuid is in the hidden list */
+  for (n = 0; monitor->hidden_devices[n] != NULL; n++)
+    if (g_strcmp0 (monitor->hidden_devices[n], id)== 0)
+      return TRUE;
+
+  return FALSE;
+}
+
+
+
+static void
+thunar_device_monitor_update_hidden (gpointer key,
+                                     gpointer value,
+                                     gpointer data)
+{
+  ThunarDeviceMonitor *monitor = THUNAR_DEVICE_MONITOR (data);
+  ThunarDevice        *device = THUNAR_DEVICE (value);
+  gchar               *id;
+  gboolean             hidden;
+
+  /* get state of the device */
+  id = thunar_device_get_identifier (device);
+  hidden = thunar_device_monitor_id_is_hidden (monitor, id);
+  g_free (id);
+
+  if (thunar_device_get_hidden (device) != hidden)
+    {g_message ("update device");
+      g_object_set (G_OBJECT (device), "hidden", hidden, NULL);
+      g_signal_emit (G_OBJECT (monitor), device_monitor_signals[DEVICE_CHANGED], 0, device);
+    }
 }
 
 
@@ -401,6 +535,7 @@ thunar_device_monitor_volume_changed (GVolumeMonitor      *volume_monitor,
 {
   GList        *lp;
   ThunarDevice *device;
+  gchar        *id;
 
   _thunar_return_if_fail (G_IS_VOLUME_MONITOR (volume_monitor));
   _thunar_return_if_fail (THUNAR_IS_DEVICE_MONITOR (monitor));
@@ -421,6 +556,13 @@ thunar_device_monitor_volume_changed (GVolumeMonitor      *volume_monitor,
                                  "device", volume,
                                  "kind", THUNAR_DEVICE_KIND_VOLUME,
                                  NULL);
+
+          /* set visibility */
+          id = thunar_device_get_identifier (device);
+          g_object_set (G_OBJECT (device),
+                        "hidden", thunar_device_monitor_id_is_hidden (monitor, id),
+                        NULL);
+          g_free (id);
 
           /* insert to list (takes ref from hidden list) */
           g_hash_table_insert (monitor->devices, volume, device);
@@ -472,6 +614,7 @@ thunar_device_monitor_mount_added (GVolumeMonitor      *volume_monitor,
   GFile            *location;
   ThunarDeviceKind  kind = THUNAR_DEVICE_KIND_MOUNT_LOCAL;
   GVolume          *volume;
+  gchar            *id;
 
   _thunar_return_if_fail (G_IS_VOLUME_MONITOR (volume_monitor));
   _thunar_return_if_fail (THUNAR_IS_DEVICE_MONITOR (monitor));
@@ -510,6 +653,13 @@ thunar_device_monitor_mount_added (GVolumeMonitor      *volume_monitor,
                              "device", mount,
                              "kind", kind,
                              NULL);
+
+      /* set visibility */
+      id = thunar_device_get_identifier (device);
+      g_object_set (G_OBJECT (device),
+                    "hidden", thunar_device_monitor_id_is_hidden (monitor, id),
+                    NULL);
+      g_free (id);
 
       /* insert to list */
       g_hash_table_insert (monitor->devices, g_object_ref (mount), device);
@@ -687,4 +837,52 @@ thunar_device_monitor_get_devices (ThunarDeviceMonitor *monitor)
   g_hash_table_foreach (monitor->devices, thunar_device_monitor_list_prepend, &list);
 
   return list;
+}
+
+
+
+void
+thunar_device_monitor_set_hidden (ThunarDeviceMonitor *monitor,
+                                  ThunarDevice        *device,
+                                  gboolean             hidden)
+{
+  gchar  *id;
+  gchar **devices;
+  guint   length;
+  guint   n;
+  guint   pos;
+
+  _thunar_return_if_fail (THUNAR_IS_DEVICE_MONITOR (monitor));
+  _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
+
+  id = thunar_device_get_identifier (device);
+  if (id == NULL)
+    return;
+
+  /* update device */
+  g_object_set (G_OBJECT (device), "hidden", hidden, NULL);
+  g_signal_emit (G_OBJECT (monitor), device_monitor_signals[DEVICE_CHANGED], 0, device);
+
+  /* update the device list */
+  length = monitor->hidden_devices != NULL ? g_strv_length (monitor->hidden_devices) : 0;
+  devices = g_new0 (gchar *, length + 2);
+  pos = 0;
+
+  /* copy other identifiers in the new list */
+  if (monitor->hidden_devices != NULL)
+    {
+      for (n = 0; monitor->hidden_devices[n] != NULL; n++)
+        if (g_strcmp0 (monitor->hidden_devices[n], id) != 0)
+          devices[pos++] = g_strdup (monitor->hidden_devices[n]);
+    }
+
+  /* add the new identifiers if it should hide */
+  if (hidden)
+    devices[pos++] = id;
+  else
+    g_free (id);
+
+  /* store new list */
+  g_object_set (G_OBJECT (monitor->preferences), "hidden-devices", devices, NULL);
+  g_strfreev (devices);
 }

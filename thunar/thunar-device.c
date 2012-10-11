@@ -32,6 +32,7 @@ enum
 {
   PROP_0,
   PROP_DEVICE,
+  PROP_HIDDEN,
   PROP_KIND
 };
 
@@ -62,6 +63,8 @@ struct _ThunarDevice
   gpointer          device;
 
   ThunarDeviceKind  kind;
+
+  guint             hidden : 1;
 };
 
 typedef struct
@@ -96,6 +99,14 @@ thunar_device_class_init (ThunarDeviceClass *klass)
                                                         G_TYPE_OBJECT,
                                                         EXO_PARAM_READWRITE
                                                         | G_PARAM_CONSTRUCT_ONLY));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_HIDDEN,
+                                   g_param_spec_boolean ("hidden",
+                                                         "hidden",
+                                                         "hidden",
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class,
                                    PROP_KIND,
@@ -146,6 +157,10 @@ thunar_device_get_property (GObject    *object,
       g_value_set_object (value, device->device);
       break;
 
+    case PROP_HIDDEN:
+      g_value_set_boolean (value, device->hidden);
+      break;
+
     case PROP_KIND:
       g_value_set_uint (value, device->kind);
       break;
@@ -171,6 +186,10 @@ thunar_device_set_property (GObject      *object,
     case PROP_DEVICE:
       device->device = g_value_dup_object (value);
       _thunar_assert (G_IS_VOLUME (device->device) || G_IS_MOUNT (device->device));
+      break;
+
+    case PROP_HIDDEN:
+      device->hidden = g_value_get_boolean (value);
       break;
 
     case PROP_KIND:
@@ -290,7 +309,7 @@ thunar_device_volume_mount_finished (GObject      *object,
 
   _thunar_return_if_fail (G_IS_VOLUME (object));
   _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
-  
+
   /* finish the eject */
   if (!g_volume_eject_with_operation_finish (G_VOLUME (object), result, &error))
     {
@@ -385,6 +404,44 @@ thunar_device_get_kind (const ThunarDevice *device)
 {
   _thunar_return_val_if_fail (THUNAR_IS_DEVICE (device), THUNAR_DEVICE_KIND_VOLUME);
   return device->kind;
+}
+
+
+
+gchar *
+thunar_device_get_identifier (const ThunarDevice *device)
+{
+  gchar *ident = NULL;
+
+  _thunar_return_val_if_fail (THUNAR_IS_DEVICE (device), NULL);
+
+  if (G_IS_VOLUME (device->device))
+    {
+      ident = g_volume_get_uuid (device->device);
+      if (ident == NULL)
+        ident = g_volume_get_identifier (device->device, G_VOLUME_IDENTIFIER_KIND_UUID);
+      if (ident == NULL)
+        ident = g_volume_get_name (device->device);
+    }
+  else if (G_IS_MOUNT (device->device))
+    {
+      ident = g_mount_get_uuid (device->device);
+      if (ident == NULL)
+        ident = g_mount_get_name (device->device);
+    }
+  else
+    _thunar_assert_not_reached ();
+
+  return ident;
+}
+
+
+
+gboolean
+thunar_device_get_hidden (const ThunarDevice *device)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_DEVICE (device), FALSE);
+  return device->hidden;
 }
 
 
@@ -509,7 +566,7 @@ thunar_device_is_mounted (const ThunarDevice *device)
   GMount   *volume_mount;
 
   _thunar_return_val_if_fail (THUNAR_IS_DEVICE (device), FALSE);
-  
+
   if (G_IS_VOLUME (device->device))
     {
       /* a volume with a mount point is mounted */
@@ -590,12 +647,12 @@ thunar_device_mount (ThunarDevice         *device,
                      gpointer              user_data)
 {
   ThunarDeviceOperation *operation;
-  
+
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
   _thunar_return_if_fail (G_IS_MOUNT_OPERATION (mount_operation));
   _thunar_return_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable));
   _thunar_return_if_fail (callback != NULL);
-  
+
   if (G_IS_VOLUME (device->device))
     {
       operation = thunar_device_operation_new (device, callback, user_data);

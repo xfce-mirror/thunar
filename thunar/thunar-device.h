@@ -53,6 +53,10 @@ GIcon               *thunar_device_get_icon         (const ThunarDevice   *devic
 
 ThunarDeviceKind     thunar_device_get_kind         (const ThunarDevice   *device) G_GNUC_PURE;
 
+gchar               *thunar_device_get_identifier   (const ThunarDevice   *device) G_GNUC_MALLOC;
+
+gboolean             thunar_device_get_hidden       (const ThunarDevice   *device);
+
 gboolean             thunar_device_can_eject        (const ThunarDevice   *device);
 
 gboolean             thunar_device_can_mount        (const ThunarDevice   *device);

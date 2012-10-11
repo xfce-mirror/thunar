@@ -325,6 +325,7 @@ thunar_shortcuts_pane_set_selected_files (ThunarComponent *component,
 {
   ThunarShortcutsPane *shortcuts_pane = THUNAR_SHORTCUTS_PANE (component);
   GtkTreeModel        *model;
+  GtkTreeModel        *child_model;
   GtkTreeIter          iter;
   GtkAction           *action;
   GList               *lp;
@@ -350,8 +351,9 @@ thunar_shortcuts_pane_set_selected_files (ThunarComponent *component,
       if (G_LIKELY (model != NULL))
         {
           /* check all selected folders */
+          child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
           for (lp = selected_files; lp != NULL; lp = lp->next)
-            if (!thunar_shortcuts_model_iter_for_file (THUNAR_SHORTCUTS_MODEL (model), lp->data, &iter))
+            if (!thunar_shortcuts_model_iter_for_file (THUNAR_SHORTCUTS_MODEL (child_model), lp->data, &iter))
               break;
         }
 
@@ -436,6 +438,7 @@ thunar_shortcuts_pane_action_shortcuts_add (GtkAction           *action,
                                             ThunarShortcutsPane *shortcuts_pane)
 {
   GtkTreeModel *model;
+  GtkTreeModel *child_model;
   GtkTreePath  *path;
   GList        *lp;
 
@@ -447,12 +450,13 @@ thunar_shortcuts_pane_action_shortcuts_add (GtkAction           *action,
   if (G_LIKELY (model != NULL))
     {
       /* add all selected folders to the model */
+      child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
       for (lp = shortcuts_pane->selected_files; lp != NULL; lp = lp->next)
         if (G_LIKELY (thunar_file_is_directory (lp->data)))
           {
             /* append the folder to the shortcuts model */
-            path = gtk_tree_path_new_from_indices (gtk_tree_model_iter_n_children (model, NULL), -1);
-            thunar_shortcuts_model_add (THUNAR_SHORTCUTS_MODEL (model), path, lp->data);
+            path = gtk_tree_path_new_from_indices (gtk_tree_model_iter_n_children (child_model, NULL), -1);
+            thunar_shortcuts_model_add (THUNAR_SHORTCUTS_MODEL (child_model), path, lp->data);
             gtk_tree_path_free (path);
           }
 

@@ -27,6 +27,7 @@ G_BEGIN_DECLS;
 
 typedef struct _ThunarShortcutsModelClass ThunarShortcutsModelClass;
 typedef struct _ThunarShortcutsModel      ThunarShortcutsModel;
+typedef enum   _ThunarShortcutGroup       ThunarShortcutGroup;
 
 #define THUNAR_TYPE_SHORTCUTS_MODEL            (thunar_shortcuts_model_get_type ())
 #define THUNAR_SHORTCUTS_MODEL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_SHORTCUTS_MODEL, ThunarShortcutsModel))
@@ -35,25 +36,11 @@ typedef struct _ThunarShortcutsModel      ThunarShortcutsModel;
 #define THUNAR_IS_SHORTCUTS_MODEL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_SHORTCUTS_MODEL))
 #define THUNAR_SHORTCUTS_MODEL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_MODEL_SHORTCUTS_MODEL, ThunarShortcutsModelClass))
 
-/**
- * ThunarShortcutsModelColumn:
- * @THUNAR_SHORTCUTS_MODEL_COLUMN_TYPE      : #ThunarShortcutType.
- * @THUNAR_SHORTCUTS_MODEL_COLUMN_NAME      : the index of the name column.
- * @THUNAR_SHORTCUTS_MODEL_COLUMN_FILE      : the index of the file column.
- * @THUNAR_SHORTCUTS_MODEL_COLUMN_LOCATION  : file of the location.
- * @THUNAR_SHORTCUTS_MODEL_COLUMN_GICON     : custom image.
- * @THUNAR_SHORTCUTS_MODEL_COLUMN_DEVICE    : the index of the device column.
- * @THUNAR_SHORTCUTS_MODEL_COLUMN_MUTABLE   : tells whether a row is mutable.
- * @THUNAR_SHORTCUTS_MODEL_COLUMN_EJECT     : stock icon name for eject symbol
- * @THUNAR_SHORTCUTS_MODEL_COLUMN_SEPARATOR : tells whether a row is a separator.
- *
- * Columns exported by #ThunarShortcutsModel using the
- * #GtkTreeModel interface.
- **/
 typedef enum
 {
   THUNAR_SHORTCUTS_MODEL_COLUMN_HEADER,
-  THUNAR_SHORTCUTS_MODEL_COLUMN_NOT_HEADER,
+  THUNAR_SHORTCUTS_MODEL_COLUMN_ITEM,
+  THUNAR_SHORTCUTS_MODEL_COLUMN_VISIBLE,
   THUNAR_SHORTCUTS_MODEL_COLUMN_NAME,
   THUNAR_SHORTCUTS_MODEL_COLUMN_FILE,
   THUNAR_SHORTCUTS_MODEL_COLUMN_LOCATION,
@@ -67,23 +54,48 @@ typedef enum
   THUNAR_SHORTCUTS_MODEL_N_COLUMNS,
 } ThunarShortcutsModelColumn;
 
-typedef enum
+#define THUNAR_SHORTCUT_GROUP_DEVICES (THUNAR_SHORTCUT_GROUP_DEVICES_HEADER \
+                                       | THUNAR_SHORTCUT_GROUP_DEVICES_FILESYSTEM \
+                                       | THUNAR_SHORTCUT_GROUP_DEVICES_VOLUMES \
+                                       | THUNAR_SHORTCUT_GROUP_DEVICES_MOUNTS)
+#define THUNAR_SHORTCUT_GROUP_PLACES  (THUNAR_SHORTCUT_GROUP_PLACES_HEADER \
+                                       | THUNAR_SHORTCUT_GROUP_PLACES_DEFAULT \
+                                       | THUNAR_SHORTCUT_GROUP_PLACES_TRASH \
+                                       | THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
+#define THUNAR_SHORTCUT_GROUP_NETWORK (THUNAR_SHORTCUT_GROUP_NETWORK_HEADER \
+                                       | THUNAR_SHORTCUT_GROUP_NETWORK_DEFAULT \
+                                       | THUNAR_SHORTCUT_GROUP_NETWORK_MOUNTS \
+                                       | THUNAR_SHORTCUT_GROUP_NETWORK_BOOKMARKS)
+#define THUNAR_SHORTCUT_GROUP_HEADER  (THUNAR_SHORTCUT_GROUP_DEVICES_HEADER \
+                                       | THUNAR_SHORTCUT_GROUP_PLACES_HEADER \
+                                       | THUNAR_SHORTCUT_GROUP_NETWORK_HEADER)
+
+enum _ThunarShortcutGroup
 {
-  THUNAR_SHORTCUT_GROUP_DEVICES,
-  THUNAR_SHORTCUT_GROUP_VOLUMES,
-  THUNAR_SHORTCUT_GROUP_MOUNTS,
-  THUNAR_SHORTCUT_GROUP_PLACES,
-  THUNAR_SHORTCUT_GROUP_TRASH,
-  THUNAR_SHORTCUT_GROUP_BOOKMARKS,
-  THUNAR_SHORTCUT_GROUP_NETWORK,
-  THUNAR_SHORTCUT_GROUP_NETWORK_MOUNTS
-} ThunarShortcutGroup;
+  /* THUNAR_SHORTCUT_GROUP_DEVICES */
+  THUNAR_SHORTCUT_GROUP_DEVICES_HEADER     = (1 << 0),  /* devices header */
+  THUNAR_SHORTCUT_GROUP_DEVICES_FILESYSTEM = (1 << 1),  /* local filesystem */
+  THUNAR_SHORTCUT_GROUP_DEVICES_VOLUMES    = (1 << 2),  /* local ThunarDevices */
+  THUNAR_SHORTCUT_GROUP_DEVICES_MOUNTS     = (1 << 3),  /* local mounts, like cameras and archives */
+
+  /* THUNAR_SHORTCUT_GROUP_PLACES */
+  THUNAR_SHORTCUT_GROUP_PLACES_HEADER      = (1 << 4),  /* places header */
+  THUNAR_SHORTCUT_GROUP_PLACES_DEFAULT     = (1 << 5),  /* home and desktop */
+  THUNAR_SHORTCUT_GROUP_PLACES_TRASH       = (1 << 6),  /* trash */
+  THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS   = (1 << 7),  /* local bookmarks */
+
+  /* THUNAR_SHORTCUT_GROUP_NETWORK */
+  THUNAR_SHORTCUT_GROUP_NETWORK_HEADER     = (1 << 8),  /* network header */
+  THUNAR_SHORTCUT_GROUP_NETWORK_DEFAULT    = (1 << 9),  /* browse network */
+  THUNAR_SHORTCUT_GROUP_NETWORK_MOUNTS     = (1 << 10), /* remote ThunarDevices */
+  THUNAR_SHORTCUT_GROUP_NETWORK_BOOKMARKS  = (1 << 11), /* remote bookmarks */
+};
 
 
 
 GType                  thunar_shortcuts_model_get_type      (void) G_GNUC_CONST;
 
-ThunarShortcutsModel *thunar_shortcuts_model_get_default    (void);
+ThunarShortcutsModel  *thunar_shortcuts_model_get_default   (void);
 
 gboolean               thunar_shortcuts_model_iter_for_file (ThunarShortcutsModel *model,
                                                              ThunarFile           *file,
@@ -110,6 +122,9 @@ void                   thunar_shortcuts_model_rename        (ThunarShortcutsMode
 void                   thunar_shortcuts_model_set_busy      (ThunarShortcutsModel *model,
                                                              ThunarDevice         *device,
                                                              gboolean              busy);
+void                   thunar_shortcuts_model_set_hidden    (ThunarShortcutsModel *model,
+                                                             GtkTreePath          *path,
+                                                             gboolean              hidden);
 
 G_END_DECLS;
 

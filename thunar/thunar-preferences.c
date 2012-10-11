@@ -50,6 +50,8 @@ enum
 {
   PROP_0,
   PROP_DEFAULT_VIEW,
+  PROP_HIDDEN_DEVICES,
+  PROP_HIDDEN_BOOKMARKS,
   PROP_LAST_COMPACT_VIEW_ZOOM_LEVEL,
   PROP_LAST_DETAILS_VIEW_COLUMN_ORDER,
   PROP_LAST_DETAILS_VIEW_COLUMN_WIDTHS,
@@ -118,6 +120,8 @@ struct _ThunarPreferences
   GObject __parent__;
 
   XfconfChannel *channel;
+
+  gulong         property_changed_id;
 };
 
 
@@ -150,6 +154,35 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                         NULL,
                                                         "void",
                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:hidden-bookmarks:
+   *
+   * List of URI's that are hidden in the bookmarks (obtained from ~/.gtk-bookmarks).
+   * If an URI is not in the bookmarks file it will be removed from this list.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_HIDDEN_BOOKMARKS,
+                                   g_param_spec_boxed ("hidden-bookmarks",
+                                                       NULL,
+                                                       NULL,
+                                                       G_TYPE_STRV,
+                                                       EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:hidden-devices:
+   *
+   * List of hidden devices. The value could be an UUID or name.
+   * Visibility of the device can be obtained with
+   * thunar_device_get_hidden().
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_HIDDEN_DEVICES,
+                                   g_param_spec_boxed ("hidden-devices",
+                                                       NULL,
+                                                       NULL,
+                                                       G_TYPE_STRV,
+                                                       EXO_PARAM_READWRITE));
 
   /**
    * ThunarPreferences:last-compact-view-zoom-level:
@@ -666,7 +699,7 @@ thunar_preferences_init (ThunarPreferences *preferences)
   const gchar check_prop[] = "/last-view";
 
   /* load the channel */
-  preferences->channel = xfconf_channel_new ("thunar");
+  preferences->channel = xfconf_channel_get ("thunar");
 
   /* check one of the property to see if there are values */
   if (!xfconf_channel_has_property (preferences->channel, check_prop))
@@ -679,8 +712,9 @@ thunar_preferences_init (ThunarPreferences *preferences)
         xfconf_channel_set_string (preferences->channel, check_prop, "ThunarIconView");
     }
 
-  g_signal_connect (G_OBJECT (preferences->channel), "property-changed",
-                    G_CALLBACK (thunar_preferences_prop_changed), preferences);
+  preferences->property_changed_id =
+    g_signal_connect (G_OBJECT (preferences->channel), "property-changed",
+                      G_CALLBACK (thunar_preferences_prop_changed), preferences);
 }
 
 
@@ -690,8 +724,8 @@ thunar_preferences_finalize (GObject *object)
 {
   ThunarPreferences *preferences = THUNAR_PREFERENCES (object);
 
-  /* release the channel */
-  g_object_unref (G_OBJECT (preferences->channel));
+  /* disconnect from the updates */
+  g_signal_handler_disconnect (preferences->channel, preferences->property_changed_id);
 
   (*G_OBJECT_CLASS (thunar_preferences_parent_class)->finalize) (object);
 }
@@ -704,19 +738,26 @@ thunar_preferences_get_property (GObject    *object,
                                  GValue     *value,
                                  GParamSpec *pspec)
 {
-  ThunarPreferences *preferences = THUNAR_PREFERENCES (object);
-  GValue             src = { 0, };
-  gchar              prop_name[64];
+  ThunarPreferences  *preferences = THUNAR_PREFERENCES (object);
+  GValue              src = { 0, };
+  gchar               prop_name[64];
+  gchar             **array;
 
   /* build property name */
   g_snprintf (prop_name, sizeof (prop_name), "/%s", g_param_spec_get_name (pspec));
 
-  if (xfconf_channel_get_property (preferences->channel, prop_name, &src))
+  if (G_VALUE_TYPE (value) == G_TYPE_STRV)
+    {
+      /* handle arrays directly since we cannot transform those */
+      array = xfconf_channel_get_string_list (preferences->channel, prop_name);
+      g_value_take_boxed (value, array);
+    }
+  else if (xfconf_channel_get_property (preferences->channel, prop_name, &src))
     {
       if (G_VALUE_TYPE (value) == G_VALUE_TYPE (&src))
         g_value_copy (&src, value);
       else if (!g_value_transform (&src, value))
-        g_printerr ("Thunar: Failed to transform property %s", prop_name);
+        g_printerr ("Thunar: Failed to transform property %s\n", prop_name);
       g_value_unset (&src);
     }
   else
@@ -734,12 +775,16 @@ thunar_preferences_set_property (GObject      *object,
                                  const GValue *value,
                                  GParamSpec   *pspec)
 {
-  ThunarPreferences *preferences = THUNAR_PREFERENCES (object);
-  GValue             dst = { 0, };
-  gchar              prop_name[64];
+  ThunarPreferences  *preferences = THUNAR_PREFERENCES (object);
+  GValue              dst = { 0, };
+  gchar               prop_name[64];
+  gchar             **array;
 
   /* build property name */
   g_snprintf (prop_name, sizeof (prop_name), "/%s", g_param_spec_get_name (pspec));
+
+  /* freeze */
+  g_signal_handler_block (preferences->channel, preferences->property_changed_id);
 
   if (G_VALUE_HOLDS_ENUM (value))
     {
@@ -749,11 +794,23 @@ thunar_preferences_set_property (GObject      *object,
         xfconf_channel_set_property (preferences->channel, prop_name, &dst);
       g_value_unset (&dst);
     }
+  else if (G_VALUE_HOLDS (value, G_TYPE_STRV))
+    {
+      /* convert to a GValue GPtrArray in xfconf */
+      array = g_value_get_boxed (value);
+      if (array != NULL && *array != NULL)
+        xfconf_channel_set_string_list (preferences->channel, prop_name, (const gchar * const *) array);
+      else
+        xfconf_channel_reset_property (preferences->channel, prop_name, FALSE);
+    }
   else
     {
       /* other types we support directly */
       xfconf_channel_set_property (preferences->channel, prop_name, value);
     }
+
+  /* thaw */
+  g_signal_handler_unblock (preferences->channel, preferences->property_changed_id);
 }
 
 
