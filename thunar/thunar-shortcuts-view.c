@@ -1591,6 +1591,7 @@ thunar_shortcuts_view_poke_device_finish (ThunarBrowser *browser,
   gboolean      new_window = GPOINTER_TO_UINT (user_data);
   gchar        *device_name;
   GtkTreeModel *model;
+  GtkTreeModel *child_model;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (browser));
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
@@ -1611,7 +1612,8 @@ thunar_shortcuts_view_poke_device_finish (ThunarBrowser *browser,
 
   /* stop the spinner */
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (browser));
-  thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (model), device, FALSE);
+  child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
+  thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (child_model), device, FALSE);
 }
 
 
@@ -1626,6 +1628,7 @@ thunar_shortcuts_view_open (ThunarShortcutsView *view,
   ThunarFile       *file;
   ThunarDevice     *device;
   GFile            *location;
+  GtkTreeModel     *child_model;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
 
@@ -1648,7 +1651,8 @@ thunar_shortcuts_view_open (ThunarShortcutsView *view,
       if (G_LIKELY (device != NULL))
         {
           /* start the spinner */
-          thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (model), device, TRUE);
+          child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
+          thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (child_model), device, TRUE);
 
           thunar_browser_poke_device (THUNAR_BROWSER (view), device, view,
                                       thunar_shortcuts_view_poke_device_finish,
@@ -1712,6 +1716,7 @@ thunar_shortcuts_view_eject_finish (ThunarDevice *device,
   ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (user_data);
   gchar               *device_name;
   GtkTreeModel        *model;
+  GtkTreeModel        *child_model;
 
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
@@ -1727,7 +1732,8 @@ thunar_shortcuts_view_eject_finish (ThunarDevice *device,
 
   /* stop the spinner */
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
-  thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (model), device, FALSE);
+  child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
+  thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (child_model), device, FALSE);
 
   g_object_unref (view);
 }
@@ -1743,6 +1749,7 @@ thunar_shortcuts_view_eject (ThunarShortcutsView *view)
   ThunarDevice     *device;
   GMountOperation  *mount_operation;
   GtkWidget        *window;
+  GtkTreeModel     *child_model;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
 
@@ -1759,7 +1766,8 @@ thunar_shortcuts_view_eject (ThunarShortcutsView *view)
       mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
 
       /* start the spinner */
-      thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (model), device, TRUE);
+      child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
+      thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (child_model), device, TRUE);
 
       /* try to unmount */
       thunar_device_eject (device,
@@ -1783,6 +1791,7 @@ thunar_shortcuts_view_poke_device_mount_finish (ThunarBrowser *browser,
 {
   gchar        *device_name;
   GtkTreeModel *model;
+  GtkTreeModel *child_model;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (browser));
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
@@ -1797,7 +1806,8 @@ thunar_shortcuts_view_poke_device_mount_finish (ThunarBrowser *browser,
 
   /* stop the spinner */
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (browser));
-  thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (model), device, FALSE);
+  child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
+  thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (child_model), device, FALSE);
 }
 
 
@@ -1809,6 +1819,7 @@ thunar_shortcuts_view_mount (ThunarShortcutsView *view)
   GtkTreeModel     *model;
   GtkTreeIter       iter;
   ThunarDevice     *device;
+  GtkTreeModel     *child_model;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
 
@@ -1829,7 +1840,8 @@ thunar_shortcuts_view_mount (ThunarShortcutsView *view)
       if (G_LIKELY (device != NULL))
         {
           /* start the spinner */
-          thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (model), device, TRUE);
+          child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
+          thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (child_model), device, TRUE);
 
           thunar_browser_poke_device (THUNAR_BROWSER (view), device, view,
                                       thunar_shortcuts_view_poke_device_mount_finish,
@@ -1849,6 +1861,7 @@ thunar_shortcuts_view_unmount_finish (ThunarDevice *device,
   ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (user_data);
   gchar               *device_name;
   GtkTreeModel        *model;
+  GtkTreeModel        *child_model;
 
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
@@ -1864,7 +1877,8 @@ thunar_shortcuts_view_unmount_finish (ThunarDevice *device,
 
   /* stop the spinner */
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
-  thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (model), device, FALSE);
+  child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
+  thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (child_model), device, FALSE);
 
   g_object_unref (view);
 }
@@ -1880,6 +1894,7 @@ thunar_shortcuts_view_unmount (ThunarShortcutsView *view)
   ThunarDevice     *device;
   GMountOperation  *mount_operation;
   GtkWidget        *window;
+  GtkTreeModel     *child_model;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
 
@@ -1896,7 +1911,8 @@ thunar_shortcuts_view_unmount (ThunarShortcutsView *view)
       mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
 
       /* start the spinner */
-      thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (model), device, TRUE);
+      child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
+      thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (child_model), device, TRUE);
 
       /* try to unmount */
       thunar_device_unmount (device,
