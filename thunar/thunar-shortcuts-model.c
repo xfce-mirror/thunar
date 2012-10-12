@@ -187,6 +187,7 @@ struct _ThunarShortcut
 
   gchar               *name;
   GIcon               *gicon;
+  gchar               *tooltip;
   gint                 sort_id;
 
   guint                busy : 1;
@@ -569,21 +570,26 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
       break;
 
     case THUNAR_SHORTCUTS_MODEL_COLUMN_TOOLTIP:
-      g_value_init (value, G_TYPE_STRING);
-      if (shortcut->file != NULL)
-        file = g_object_ref (thunar_file_get_file (shortcut->file));
-      else if (shortcut->location != NULL)
-        file = g_object_ref (shortcut->location);
-      else if (shortcut->device != NULL)
-        file = thunar_device_get_root (shortcut->device);
-      else
-        file = NULL;
-
-      if (G_LIKELY (file != NULL))
+      if (shortcut->tooltip == NULL)
         {
-          g_value_take_string (value, g_file_get_parse_name (file));
-          g_object_unref (file);
+          if (shortcut->file != NULL)
+            file = g_object_ref (thunar_file_get_file (shortcut->file));
+          else if (shortcut->location != NULL)
+            file = g_object_ref (shortcut->location);
+          else if (shortcut->device != NULL)
+            file = thunar_device_get_root (shortcut->device);
+          else
+            file = NULL;
+
+          if (G_LIKELY (file != NULL))
+            {
+              shortcut->tooltip = g_file_get_parse_name (file);;
+              g_object_unref (file);
+            }
         }
+
+      g_value_init (value, G_TYPE_STRING);
+      g_value_set_static_string (value, shortcut->tooltip);
       break;
 
     case THUNAR_SHORTCUTS_MODEL_COLUMN_FILE:
@@ -1506,8 +1512,8 @@ thunar_shortcut_free (ThunarShortcut       *shortcut,
   if (G_LIKELY (shortcut->location != NULL))
     g_object_unref (shortcut->location);
 
-  /* release the shortcut name */
   g_free (shortcut->name);
+  g_free (shortcut->tooltip);
 
   /* release the shortcut itself */
   g_slice_free (ThunarShortcut, shortcut);
