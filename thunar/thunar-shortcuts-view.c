@@ -1162,7 +1162,8 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
     }
 
   /* append the remove menu item */
-  if (group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
+  if (group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS
+      || group == THUNAR_SHORTCUT_GROUP_NETWORK_BOOKMARKS)
     {
       /* append a menu separator */
       item = gtk_separator_menu_item_new ();
@@ -1194,16 +1195,16 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
       gtk_widget_show (item);
     }
 
-  /* run the menu on the view's screen (taking over the floating reference on menu) */
-  thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (view), NULL, NULL, (event != NULL) ? event->button : 0,
-                       (event != NULL) ? event->time : gtk_get_current_event_time ());
-
   /* clean up */
   if (G_LIKELY (file != NULL))
     g_object_unref (G_OBJECT (file));
   if (G_UNLIKELY (device != NULL))
     g_object_unref (G_OBJECT (device));
   gtk_tree_path_free (path);
+
+  /* run the menu on the view's screen (taking over the floating reference on menu) */
+  thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (view), NULL, NULL, (event != NULL) ? event->button : 0,
+                       (event != NULL) ? event->time : gtk_get_current_event_time ());
 }
 
 
@@ -1556,9 +1557,7 @@ thunar_shortcuts_view_poke_location_finish (ThunarBrowser *browser,
                                             GError        *error,
                                             gpointer       user_data)
 {
-  ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (browser);
-  GtkTreeModel        *model;
-  gchar               *name;
+  gchar *name;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (browser));
   _thunar_return_if_fail (G_IS_FILE (location));
@@ -1566,9 +1565,6 @@ thunar_shortcuts_view_poke_location_finish (ThunarBrowser *browser,
   /* sotre the new file in the shortcuts model */
   if (error == NULL)
     {
-      model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
-      thunar_shortcuts_model_set_file (THUNAR_SHORTCUTS_MODEL (model), location, file);
-
       thunar_shortcuts_view_poke_file_finish (browser, file, target_file, error, user_data);
     }
   else
@@ -1833,9 +1829,7 @@ thunar_shortcuts_view_mount (ThunarShortcutsView *view)
   if (gtk_tree_selection_get_selected (selection, &model, &iter))
     {
       /* determine the file for the shortcut at the given tree iterator */
-      gtk_tree_model_get (model, &iter,
-                          THUNAR_SHORTCUTS_MODEL_COLUMN_DEVICE, &device,
-                          -1);
+      gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_DEVICE, &device, -1);
 
       if (G_LIKELY (device != NULL))
         {

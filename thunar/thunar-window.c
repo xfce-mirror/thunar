@@ -2782,8 +2782,7 @@ thunar_window_device_pre_unmount (ThunarDeviceMonitor *device_monitor,
                                   GFile               *root_file,
                                   ThunarWindow        *window)
 {
-  ThunarFile *file;
-  GtkAction  *action;
+  GtkAction *action;
 
   _thunar_return_if_fail (THUNAR_IS_DEVICE_MONITOR (device_monitor));
   _thunar_return_if_fail (window->device_monitor == device_monitor);
@@ -2795,13 +2794,8 @@ thunar_window_device_pre_unmount (ThunarDeviceMonitor *device_monitor,
   if (G_UNLIKELY (window->current_directory == NULL))
     return;
 
-  /* try to get the ThunarFile for the mount point from the file cache */
-  file = thunar_file_cache_lookup (root_file);
-  if (G_UNLIKELY (file == NULL))
-    return;
-
   /* check if the file is the current directory or an ancestor of the current directory */
-  if (window->current_directory == file || thunar_file_is_ancestor (window->current_directory, file))
+  if (thunar_file_is_gfile_ancestor (window->current_directory, root_file))
     {
       /* change to the home folder */
       action = gtk_action_group_get_action (window->action_group, "open-home");

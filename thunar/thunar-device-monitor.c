@@ -343,7 +343,7 @@ thunar_device_monitor_update_hidden (gpointer key,
   g_free (id);
 
   if (thunar_device_get_hidden (device) != hidden)
-    {g_message ("update device");
+    {
       g_object_set (G_OBJECT (device), "hidden", hidden, NULL);
       g_signal_emit (G_OBJECT (monitor), device_monitor_signals[DEVICE_CHANGED], 0, device);
     }

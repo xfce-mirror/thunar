@@ -187,6 +187,8 @@ gboolean          thunar_file_is_mountable         (const ThunarFile       *file
 gboolean          thunar_file_is_local             (const ThunarFile       *file);
 gboolean          thunar_file_is_parent            (const ThunarFile       *file,
                                                     const ThunarFile       *child);
+gboolean          thunar_file_is_gfile_ancestor    (const ThunarFile       *file, 
+                                                    GFile                  *ancestor);
 gboolean          thunar_file_is_ancestor          (const ThunarFile       *file, 
                                                     const ThunarFile       *ancestor);
 gboolean          thunar_file_is_executable        (const ThunarFile       *file);

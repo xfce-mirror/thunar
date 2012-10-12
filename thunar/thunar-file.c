@@ -182,6 +182,8 @@ G_DEFINE_TYPE_WITH_CODE (ThunarFile, thunar_file, G_TYPE_OBJECT,
 #ifdef HAVE_ATEXIT
 static gboolean thunar_file_atexit_registered = FALSE;
 
+
+
 static void
 thunar_file_atexit_foreach (gpointer key,
                             gpointer value,
@@ -191,8 +193,12 @@ thunar_file_atexit_foreach (gpointer key,
 
   uri = g_file_get_uri (key);
   g_print ("--> %s (%u)\n", uri, G_OBJECT (value)->ref_count);
+  if (G_OBJECT (key)->ref_count > 2)
+    g_print ("    GFile (%u)\n", G_OBJECT (key)->ref_count - 2);
   g_free (uri);
 }
+
+
 
 static void
 thunar_file_atexit (void)
@@ -845,9 +851,6 @@ thunar_file_get_async_finish (GObject      *object,
   /* free the error, if there is any */
   if (error != NULL)
     g_error_free (error);
-
-  /* release the file */
-  g_object_unref (file);
 
   /* release the get data */
   if (data->cancellable != NULL)
@@ -2357,6 +2360,43 @@ thunar_file_is_parent (const ThunarFile *file,
 }
 
 
+/**
+ * thunar_file_is_ancestor:
+ * @file     : a #ThunarFile instance.
+ * @ancestor : another #GFile instance.
+ *
+ * Determines whether @file is somewhere inside @ancestor,
+ * possibly with intermediate folders.
+ *
+ * Return value: %TRUE if @ancestor contains @file as a
+ *               child, grandchild, great grandchild, etc.
+ **/
+gboolean
+thunar_file_is_gfile_ancestor (const ThunarFile *file,
+                               GFile            *ancestor)
+{
+  gboolean is_ancestor = FALSE;
+  GFile   *current = NULL;
+  GFile   *tmp;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (G_IS_FILE (ancestor), FALSE);
+
+  for (current = g_object_ref (file->gfile);
+       is_ancestor == FALSE && current != NULL;
+       tmp = g_file_get_parent (current), g_object_unref (current), current = tmp)
+    {
+      if (G_UNLIKELY (g_file_equal (current, ancestor)))
+        is_ancestor = TRUE;
+    }
+
+  if (current != NULL)
+    g_object_unref (current);
+
+  return is_ancestor;
+}
+
+
 
 /**
  * thunar_file_is_ancestor:
@@ -2370,28 +2410,13 @@ thunar_file_is_parent (const ThunarFile *file,
  *               child, grandchild, great grandchild, etc.
  **/
 gboolean
-thunar_file_is_ancestor (const ThunarFile *file, 
+thunar_file_is_ancestor (const ThunarFile *file,
                          const ThunarFile *ancestor)
 {
-  gboolean is_ancestor = FALSE;
-  GFile   *current = NULL;
-  GFile   *tmp;
-
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (ancestor), FALSE);
 
-  for (current = g_object_ref (file->gfile);
-       is_ancestor == FALSE && current != NULL;
-       tmp = g_file_get_parent (current), g_object_unref (current), current = tmp)
-    {
-      if (G_UNLIKELY (g_file_equal (current, ancestor->gfile)))
-        is_ancestor = TRUE;
-    }
-
-  if (current != NULL)
-    g_object_unref (current);
-
-  return is_ancestor;
+  return thunar_file_is_gfile_ancestor (file, ancestor->gfile);
 }
 
 
