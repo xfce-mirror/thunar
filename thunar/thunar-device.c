@@ -24,6 +24,7 @@
 #include <thunar/thunar-notify.h>
 #endif
 #include <thunar/thunar-device.h>
+#include <thunar/thunar-device-monitor.h>
 #include <thunar/thunar-private.h>
 
 
@@ -72,6 +73,7 @@ typedef struct
   ThunarDevice         *device;
   ThunarDeviceCallback  callback;
   gpointer              user_data;
+  GFile                *root_file;
 }
 ThunarDeviceOperation;
 
@@ -216,6 +218,7 @@ thunar_device_operation_new (ThunarDevice         *device,
   operation->device = g_object_ref (device);
   operation->callback = callback;
   operation->user_data = user_data;
+  operation->root_file = thunar_device_get_root (device);
 
   return operation;
 }
@@ -226,7 +229,27 @@ static void
 thunar_device_operation_free (ThunarDeviceOperation *operation)
 {
   g_object_unref (operation->device);
+  if (operation->root_file != NULL)
+    g_object_unref (operation->root_file);
   g_slice_free (ThunarDeviceOperation, operation);
+}
+
+
+
+static void
+thunar_device_operation_emit_pre_unmount (ThunarDeviceOperation *operation)
+{
+  ThunarDeviceMonitor *monitor;
+
+  if (operation->root_file != NULL)
+    {
+      /* make sure the pre-unmount event is emitted, this is important
+       * for the interface */
+      monitor = thunar_device_monitor_get ();
+      g_signal_emit_by_name (monitor, "device-pre-unmount",
+                             operation->device, operation->root_file);
+      g_object_unref (monitor);
+    }
 }
 
 
@@ -245,6 +268,9 @@ thunar_device_mount_unmount_finish (GObject      *object,
 #ifdef HAVE_LIBNOTIFY
   thunar_notify_unmount_finish (G_MOUNT (object));
 #endif
+
+  /* make sure this event happened */
+  thunar_device_operation_emit_pre_unmount (operation);
 
   /* finish the unmount */
   if (!g_mount_unmount_with_operation_finish (G_MOUNT (object), result, &error))
@@ -279,6 +305,9 @@ thunar_device_mount_eject_finish (GObject      *object,
 #ifdef HAVE_LIBNOTIFY
   thunar_notify_unmount_finish (G_MOUNT (object));
 #endif
+
+  /* make sure this event happened */
+  thunar_device_operation_emit_pre_unmount (operation);
 
   /* finish the eject */
   if (!g_mount_eject_with_operation_finish (G_MOUNT (object), result, &error))
@@ -345,6 +374,9 @@ thunar_device_volume_eject_finish (GObject      *object,
 #ifdef HAVE_LIBNOTIFY
   thunar_notify_eject_finish (G_VOLUME (object));
 #endif
+
+  /* make sure this event happened */
+  thunar_device_operation_emit_pre_unmount (operation);
 
   /* finish the eject */
   if (!g_volume_eject_with_operation_finish (G_VOLUME (object), result, &error))

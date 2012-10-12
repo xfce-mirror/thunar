@@ -342,7 +342,7 @@ thunar_file_finalize (GObject *object)
 
   /* free the custom icon name */
   g_free (file->custom_icon_name);
-  
+
   /* free display name and basename */
   g_free (file->display_name);
   g_free (file->basename);

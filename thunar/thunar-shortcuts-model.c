@@ -1463,10 +1463,11 @@ thunar_shortcuts_model_device_changed (ThunarDeviceMonitor  *device_monitor,
                                        ThunarDevice         *device,
                                        ThunarShortcutsModel *model)
 {
-  GtkTreeIter  iter;
-  GList       *lp;
-  gint         idx;
-  GtkTreePath *path;
+  GtkTreeIter     iter;
+  GList          *lp;
+  gint            idx;
+  GtkTreePath    *path;
+  ThunarShortcut *shortcut;
 
   _thunar_return_if_fail (THUNAR_DEVICE_MONITOR (device_monitor));
   _thunar_return_if_fail (model->device_monitor == device_monitor);
@@ -1484,6 +1485,12 @@ thunar_shortcuts_model_device_changed (ThunarDeviceMonitor  *device_monitor,
 
   if (G_LIKELY (lp != NULL))
     {
+      shortcut = lp->data;
+
+      /* cleanup tooltip */
+      g_free (shortcut->tooltip);
+      shortcut->tooltip = NULL;
+
       /* generate an iterator for the path */
       GTK_TREE_ITER_INIT (iter, model->stamp, lp);
 
