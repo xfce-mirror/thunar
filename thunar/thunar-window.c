@@ -1722,7 +1722,7 @@ thunar_window_action_open_new_window (GtkAction    *action,
   if (window->view != NULL && thunar_view_get_visible_range (THUNAR_VIEW (window->view), &start_file, NULL))
     {
       /* scroll the new window to the same file */
-      thunar_window_scroll_to_file (THUNAR_WINDOW (new_window), start_file, FALSE, TRUE, 0.0f, 0.0f);
+      thunar_window_scroll_to_file (THUNAR_WINDOW (new_window), start_file, FALSE, TRUE, 0.1f, 0.1f);
 
       /* release the file reference */
       g_object_unref (G_OBJECT (start_file));
@@ -3048,7 +3048,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
       /* check if we have a scroll_to_file for the new directory and scroll to the file */
       file = g_hash_table_lookup (window->scroll_to_files, window->current_directory);
       if (G_LIKELY (file != NULL))
-        thunar_window_scroll_to_file (window, file, FALSE, TRUE, 0.0f, 0.0f);
+        thunar_window_scroll_to_file (window, file, FALSE, TRUE, 0.1f, 0.1f);
 
       /* reset the selected files list */
       selected_files.data = NULL;
