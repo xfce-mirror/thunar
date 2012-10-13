@@ -459,7 +459,7 @@ thunar_icon_factory_load_from_file (ThunarIconFactory *factory,
       if (G_LIKELY (width > max_width || height > max_height))
         {
           /* scale down to the required size */
-          tmp = exo_gdk_pixbuf_scale_down (pixbuf, TRUE, max_height, max_height);
+          tmp = exo_gdk_pixbuf_scale_down (pixbuf, TRUE, MAX (1, max_height), MAX (1, max_height));
           g_object_unref (G_OBJECT (pixbuf));
           pixbuf = tmp;
         }

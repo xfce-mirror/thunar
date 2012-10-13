@@ -257,7 +257,7 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
           if (G_UNLIKELY (icon_area.width > cell_area->width || icon_area.height > cell_area->height))
             {
               /* scale down to fit */
-              temp = exo_gdk_pixbuf_scale_down (icon, TRUE, cell_area->width, cell_area->height);
+              temp = exo_gdk_pixbuf_scale_down (icon, TRUE, MAX (1, cell_area->width), MAX (1, cell_area->height));
               g_object_unref (G_OBJECT (icon));
               icon = temp;
 
