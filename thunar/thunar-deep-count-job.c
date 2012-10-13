@@ -43,6 +43,10 @@ enum
 };
 
 
+#define DEEP_COUNT_FILE_INFO_NAMESPACE \
+  G_FILE_ATTRIBUTE_STANDARD_TYPE "," \
+  G_FILE_ATTRIBUTE_STANDARD_SIZE "," \
+  G_FILE_ATTRIBUTE_ID_FILESYSTEM
 
 static void     thunar_deep_count_job_finalize   (GObject                 *object);
 static gboolean thunar_deep_count_job_execute    (ExoJob                  *job,
@@ -165,10 +169,11 @@ thunar_deep_count_job_status_update (ThunarDeepCountJob *job)
 
 
 static gboolean
-thunar_deep_count_job_process (ExoJob    *job,
-                               GFile     *file,
-                               gboolean   toplevel_file,
-                               GError   **error)
+thunar_deep_count_job_process (ExoJob       *job,
+                               GFile        *file,
+                               GFileInfo    *file_info,
+                               const gchar  *toplevel_fs_id,
+                               GError      **error)
 {
   ThunarDeepCountJob *count_job = THUNAR_DEEP_COUNT_JOB (job);
   GFileEnumerator    *enumerator;
@@ -177,26 +182,63 @@ thunar_deep_count_job_process (ExoJob    *job,
   gboolean            success = TRUE;
   GFile              *child;
   gint64              real_time;
+  const gchar        *fs_id;
+  gboolean            toplevel_file = (toplevel_fs_id == NULL);
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (file_info == NULL || G_IS_FILE_INFO (file_info), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   /* abort if job was already cancelled */
   if (exo_job_is_cancelled (job))
     return FALSE;
 
-  /* query size and type of the current file */
-  info = g_file_query_info (file,
-                            G_FILE_ATTRIBUTE_STANDARD_TYPE ","
-                            G_FILE_ATTRIBUTE_STANDARD_SIZE,
-                            count_job->query_flags,
-                            exo_job_get_cancellable (job),
-                            error);
+  if (file_info != NULL)
+    {
+      /* use the enumerator info */
+      info = g_object_ref (file_info);
+    }
+  else
+    {
+      /* query size and type of the current file */
+      info = g_file_query_info (file,
+                                DEEP_COUNT_FILE_INFO_NAMESPACE,
+                                count_job->query_flags,
+                                exo_job_get_cancellable (job),
+                                error);
+    }
 
   /* abort on invalid info or cancellation */
-  if (info == NULL || exo_job_is_cancelled (job))
+  if (info == NULL)
     return FALSE;
+
+  /* abort on cancellation */
+  if (exo_job_is_cancelled (job))
+    {
+      g_object_unref (info);
+      return FALSE;
+    }
+
+  /* only check files on the same filesystem so no remote mounts or
+   * dummy filesystems are counted */
+  fs_id = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_ID_FILESYSTEM);
+  if (fs_id == NULL)
+    fs_id = "";
+
+  if (toplevel_fs_id == NULL)
+    {
+      /* first toplevel, so use this id */
+      toplevel_fs_id = fs_id;
+    }
+  else if (strcmp (fs_id, toplevel_fs_id) != 0)
+    {
+      /* release the file info */
+      g_object_unref (info);
+
+      /* other filesystem, continue */
+      return TRUE;
+    }
 
   /* add size of the file to the total size */
   count_job->total_size += g_file_info_get_size (info);
@@ -206,8 +248,7 @@ thunar_deep_count_job_process (ExoJob    *job,
     {
       /* try to read from the directory */
       enumerator = g_file_enumerate_children (file,
-                                              G_FILE_ATTRIBUTE_STANDARD_TYPE ","
-                                              G_FILE_ATTRIBUTE_STANDARD_SIZE ","
+                                              DEEP_COUNT_FILE_INFO_NAMESPACE ","
                                               G_FILE_ATTRIBUTE_STANDARD_NAME,
                                               count_job->query_flags,
                                               exo_job_get_cancellable (job),
@@ -218,7 +259,7 @@ thunar_deep_count_job_process (ExoJob    *job,
           if (enumerator == NULL)
             {
               /* directory was unreadable */
-              count_job->unreadable_directory_count += 1;
+              count_job->unreadable_directory_count++;
 
               if (toplevel_file
                   && g_list_length (count_job->files) < 2)
@@ -235,7 +276,7 @@ thunar_deep_count_job_process (ExoJob    *job,
           else
             {
               /* directory was readable */
-              count_job->directory_count += 1;
+              count_job->directory_count++;
 
               while (!exo_job_is_cancelled (job))
                 {
@@ -245,25 +286,29 @@ thunar_deep_count_job_process (ExoJob    *job,
                                                             error);
 
                   /* abort on invalid child info (iteration ends) or cancellation */
-                  if (child_info == NULL || exo_job_is_cancelled (job))
+                  if (child_info == NULL)
                     break;
 
-                  /* generate a GFile for the child */
-                  child = g_file_resolve_relative_path (file, g_file_info_get_name (child_info));
-
-                  /* recurse unless the job was cancelled before */
                   if (!exo_job_is_cancelled (job))
-                    thunar_deep_count_job_process (job, child, FALSE, error);
+                    {
+                      /* generate a GFile for the child */
+                      child = g_file_resolve_relative_path (file, g_file_info_get_name (child_info));
 
-                  /* free resources */
-                  g_object_unref (child);
+                      /* recurse unless the job was cancelled before */
+                      thunar_deep_count_job_process (job, child, child_info, toplevel_fs_id, error);
+
+                      /* free resources */
+                      g_object_unref (child);
+                    }
+
                   g_object_unref (child_info);
                 }
-
-              /* destroy the enumerator */
-              g_object_unref (enumerator);
             }
         }
+
+      /* destroy the enumerator */
+      if (enumerator != NULL)
+        g_object_unref (enumerator);
 
       /* emit status update whenever we've finished a directory,
        * but not more than four times per second */
@@ -278,7 +323,7 @@ thunar_deep_count_job_process (ExoJob    *job,
   else
     {
       /* we have a regular file or at least not a directory */
-      count_job->file_count += 1;
+      count_job->file_count++;
     }
 
   /* destroy the file info */
@@ -319,7 +364,7 @@ thunar_deep_count_job_execute (ExoJob  *job,
   for (lp = count_job->files; lp != NULL; lp = lp->next)
     {
       gfile = thunar_file_get_file (THUNAR_FILE (lp->data));
-      success = thunar_deep_count_job_process (job, gfile, TRUE, &err);
+      success = thunar_deep_count_job_process (job, gfile, NULL, NULL, &err);
       if (G_UNLIKELY (!success))
         break;
     }
