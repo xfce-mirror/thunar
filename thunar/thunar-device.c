@@ -269,9 +269,6 @@ thunar_device_mount_unmount_finish (GObject      *object,
   thunar_notify_unmount_finish (G_MOUNT (object));
 #endif
 
-  /* make sure this event happened */
-  thunar_device_operation_emit_pre_unmount (operation);
-
   /* finish the unmount */
   if (!g_mount_unmount_with_operation_finish (G_MOUNT (object), result, &error))
     {
@@ -305,9 +302,6 @@ thunar_device_mount_eject_finish (GObject      *object,
 #ifdef HAVE_LIBNOTIFY
   thunar_notify_unmount_finish (G_MOUNT (object));
 #endif
-
-  /* make sure this event happened */
-  thunar_device_operation_emit_pre_unmount (operation);
 
   /* finish the eject */
   if (!g_mount_eject_with_operation_finish (G_MOUNT (object), result, &error))
@@ -374,9 +368,6 @@ thunar_device_volume_eject_finish (GObject      *object,
 #ifdef HAVE_LIBNOTIFY
   thunar_notify_eject_finish (G_VOLUME (object));
 #endif
-
-  /* make sure this event happened */
-  thunar_device_operation_emit_pre_unmount (operation);
 
   /* finish the eject */
   if (!g_volume_eject_with_operation_finish (G_VOLUME (object), result, &error))
@@ -738,6 +729,7 @@ thunar_device_unmount (ThunarDevice         *device,
 
           /* try unmounting the mount */
           operation = thunar_device_operation_new (device, callback, user_data);
+          thunar_device_operation_emit_pre_unmount (operation);
           g_mount_unmount_with_operation (mount,
                                           G_MOUNT_UNMOUNT_NONE,
                                           mount_operation,
@@ -786,6 +778,7 @@ thunar_device_eject (ThunarDevice         *device,
 
           /* try ejecting the volume */
           operation = thunar_device_operation_new (device, callback, user_data);
+          thunar_device_operation_emit_pre_unmount (operation);
           g_volume_eject_with_operation (volume,
                                          G_MOUNT_UNMOUNT_NONE,
                                          mount_operation,
@@ -820,6 +813,7 @@ thunar_device_eject (ThunarDevice         *device,
 
           /* try ejecting the mount */
           operation = thunar_device_operation_new (device, callback, user_data);
+          thunar_device_operation_emit_pre_unmount (operation);
           g_mount_eject_with_operation (mount,
                                         G_MOUNT_UNMOUNT_NONE,
                                         mount_operation,
@@ -835,6 +829,7 @@ thunar_device_eject (ThunarDevice         *device,
 
           /* try unmounting the mount */
           operation = thunar_device_operation_new (device, callback, user_data);
+          thunar_device_operation_emit_pre_unmount (operation);
           g_mount_unmount_with_operation (mount,
                                           G_MOUNT_UNMOUNT_NONE,
                                           mount_operation,
