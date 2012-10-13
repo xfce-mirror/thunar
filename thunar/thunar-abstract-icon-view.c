@@ -621,6 +621,7 @@ thunar_abstract_icon_view_expose_event (ExoIconView            *view,
   gchar      *stock_id;
   GdkColor    bg;
   cairo_t    *cr;
+  gint        x, y;
 
   _thunar_return_val_if_fail (EXO_IS_ICON_VIEW (view), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view), FALSE);
@@ -628,14 +629,13 @@ thunar_abstract_icon_view_expose_event (ExoIconView            *view,
   _thunar_return_val_if_fail (abstract_icon_view->priv->gesture_motion_id > 0, FALSE);
   _thunar_return_val_if_fail (abstract_icon_view->priv->gesture_release_id > 0, FALSE);
 
-  /* shade the abstract_icon view content while performing mouse gestures */
+  /* create the cairo context (is already clipped) */
   cr = gdk_cairo_create (event->window);
+
+  /* shade the abstract_icon view content while performing mouse gestures */
   bg = GTK_WIDGET (view)->style->base[GTK_STATE_NORMAL];
   cairo_set_source_rgba (cr, bg.red / 65535.0, bg.green / 65535.0, bg.blue / 65535.0, 0.7);
-  cairo_rectangle (cr, event->area.x, event->area.y, event->area.width, event->area.height);
-  cairo_clip (cr);
   cairo_paint (cr);
-  cairo_destroy (cr);
 
   /* determine the gesture action */
   action = thunar_abstract_icon_view_gesture_action (abstract_icon_view);
@@ -657,12 +657,16 @@ thunar_abstract_icon_view_expose_event (ExoIconView            *view,
       /* draw the rendered icon */
       if (G_LIKELY (stock_icon != NULL))
         {
+          /* x/y position of the icon */
+          x = abstract_icon_view->priv->gesture_start_x - gdk_pixbuf_get_width (stock_icon) / 2;
+          y = abstract_icon_view->priv->gesture_start_y - gdk_pixbuf_get_height (stock_icon) / 2;
+
           /* render the stock abstract_icon into the abstract_icon view window */
-          gdk_draw_pixbuf (event->window, NULL, stock_icon, 0, 0,
-                           abstract_icon_view->priv->gesture_start_x - gdk_pixbuf_get_width (stock_icon) / 2,
-                           abstract_icon_view->priv->gesture_start_y - gdk_pixbuf_get_height (stock_icon) / 2,
-                           gdk_pixbuf_get_width (stock_icon), gdk_pixbuf_get_height (stock_icon),
-                           GDK_RGB_DITHER_NONE, 0, 0);
+          gdk_cairo_set_source_pixbuf (cr, stock_icon, x, y);
+          cairo_rectangle (cr, x, y,
+                           gdk_pixbuf_get_width (stock_icon),
+                           gdk_pixbuf_get_height (stock_icon));
+          cairo_fill (cr);
 
           /* release the stock abstract_icon */
           g_object_unref (G_OBJECT (stock_icon));
@@ -671,6 +675,9 @@ thunar_abstract_icon_view_expose_event (ExoIconView            *view,
       /* release the stock id */
       g_free (stock_id);
     }
+
+  /* destroy context */
+  cairo_destroy (cr);
 
   return FALSE;
 }
