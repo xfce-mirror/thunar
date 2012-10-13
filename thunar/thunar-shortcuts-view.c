@@ -1773,6 +1773,7 @@ thunar_shortcuts_view_eject (ThunarShortcutsView *view)
                            g_object_ref (view));
 
       g_object_unref (G_OBJECT (device));
+      g_object_unref (G_OBJECT (mount_operation));
     }
 }
 
@@ -1916,6 +1917,7 @@ thunar_shortcuts_view_unmount (ThunarShortcutsView *view)
                              g_object_ref (view));
 
       g_object_unref (G_OBJECT (device));
+      g_object_unref (G_OBJECT (mount_operation));
     }
 }
 
