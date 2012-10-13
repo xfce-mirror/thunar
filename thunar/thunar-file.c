@@ -73,14 +73,6 @@
 #define THUNAR_FILE_IN_DESTRUCTION 0x04
 
 
-/* the watch count is stored in the GObject data
- * list, as it is needed only for a very few
- * files.
- */
-#define THUNAR_FILE_GET_WATCH_COUNT(file)        (GPOINTER_TO_INT (g_object_get_qdata (G_OBJECT ((file)), thunar_file_watch_count_quark)))
-#define THUNAR_FILE_SET_WATCH_COUNT(file, count) (g_object_set_qdata (G_OBJECT ((file)), thunar_file_watch_count_quark, GINT_TO_POINTER ((count))))
-
-
 
 /* Signal identifiers */
 enum
@@ -131,8 +123,7 @@ G_LOCK_DEFINE_STATIC (file_cache_mutex);
 static ThunarUserManager *user_manager;
 static GHashTable        *file_cache;
 static guint32            effective_user_id;
-static GQuark             thunar_file_thumb_path_quark;
-static GQuark             thunar_file_watch_count_quark;
+static GQuark             thunar_file_watch_quark;
 static guint              file_signals[LAST_SIGNAL];
 
 
@@ -150,7 +141,6 @@ struct _ThunarFile
   GObject        __parent__;
 
   /*< private >*/
-  GFileMonitor  *monitor;
   GFileInfo     *info;
   GFile         *gfile;
   gchar         *custom_icon_name;
@@ -162,6 +152,13 @@ struct _ThunarFile
   guint          flags;
   guint          is_mounted : 1;
 };
+
+typedef struct
+{
+  GFileMonitor  *monitor;
+  guint          watch_count;
+}
+ThunarFileWatch;
 
 typedef struct
 {
@@ -241,8 +238,7 @@ thunar_file_class_init (ThunarFileClass *klass)
 #endif
 
   /* pre-allocate the required quarks */
-  thunar_file_thumb_path_quark = g_quark_from_static_string ("thunar-file-thumb-path");
-  thunar_file_watch_count_quark = g_quark_from_static_string ("thunar-file-watch-count");
+  thunar_file_watch_quark = g_quark_from_static_string ("thunar-file-watch");
 
   /* grab a reference on the user manager */
   user_manager = thunar_user_manager_get_default ();
@@ -324,10 +320,11 @@ thunar_file_finalize (GObject *object)
 
   /* verify that nobody's watching the file anymore */
 #ifdef G_ENABLE_DEBUG
-  if (G_UNLIKELY (THUNAR_FILE_GET_WATCH_COUNT (file) != 0))
+  ThunarFileWatch *file_watch = g_object_get_qdata (G_OBJECT (file), thunar_file_watch_quark);
+  if (file_watch != NULL)
     {
       g_error ("Attempt to finalize a ThunarFile, which has an active "
-               "watch count of %d", THUNAR_FILE_GET_WATCH_COUNT (file));
+               "watch count of %d", file_watch->watch_count);
     }
 #endif
 
@@ -614,6 +611,50 @@ thunar_file_monitor (GFileMonitor     *monitor,
 
   if (G_UNLIKELY (G_IS_FILE (other_path)))
     thunar_file_monitor_update (other_path, event_type);
+}
+
+
+
+static void
+thunar_file_watch_destroyed (gpointer data)
+{
+  ThunarFileWatch *file_watch = data;
+
+  if (G_LIKELY (file_watch->monitor != NULL))
+    {
+      g_file_monitor_cancel (file_watch->monitor);
+      g_object_unref (file_watch->monitor);
+    }
+
+  g_slice_free (ThunarFileWatch, file_watch);
+}
+
+
+
+static void
+thunar_file_watch_reconnect (ThunarFile *file)
+{
+  ThunarFileWatch *file_watch;
+
+  /* recreate the monitor without changing the watch_count for file renames */
+  file_watch = g_object_get_qdata (G_OBJECT (file), thunar_file_watch_quark);
+  if (file_watch != NULL)
+    {
+      /* reset the old monitor */
+      if (G_LIKELY (file_watch->monitor != NULL))
+        {
+          g_file_monitor_cancel (file_watch->monitor);
+          g_object_unref (file_watch->monitor);
+        }
+
+      /* create a file or directory monitor */
+      file_watch->monitor = g_file_monitor (file->gfile, G_FILE_MONITOR_WATCH_MOUNTS, NULL, NULL);
+      if (G_LIKELY (file_watch->monitor != NULL))
+        {
+          /* watch monitor for file changes */
+          g_signal_connect (file_watch->monitor, "changed", G_CALLBACK (thunar_file_monitor), file);
+        }
+    }
 }
 
 
@@ -1479,7 +1520,6 @@ thunar_file_rename (ThunarFile   *file,
   GError               *err = NULL;
   GFile                *previous_file;
   GFile                *renamed_file;
-  gint                  watch_count;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (g_utf8_validate (name, -1, NULL), FALSE);
@@ -1555,21 +1595,7 @@ thunar_file_rename (ThunarFile   *file,
           thunar_file_load (file, NULL, NULL);
 
           /* need to re-register the monitor handle for the new uri */
-          watch_count = THUNAR_FILE_GET_WATCH_COUNT (file);
-          if (G_LIKELY (watch_count > 0))
-            {
-              /* drop the watch_count temporary */
-              THUNAR_FILE_SET_WATCH_COUNT (file, 1);
-
-              /* drop the previous handle (with the old path) */
-              thunar_file_unwatch (file);
-
-              /* register the new handle (with the new path) */
-              thunar_file_watch (file);
-
-              /* reset the watch count */
-              THUNAR_FILE_SET_WATCH_COUNT (file, watch_count);
-            }
+          thunar_file_watch_reconnect (file);
 
           G_LOCK (file_cache_mutex);
 
@@ -3300,28 +3326,33 @@ thunar_file_get_icon_name (const ThunarFile   *file,
 void
 thunar_file_watch (ThunarFile *file)
 {
-  gint watch_count;
+  ThunarFileWatch *file_watch;
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
-  _thunar_return_if_fail (THUNAR_FILE_GET_WATCH_COUNT (file) >= 0);
 
-  watch_count = THUNAR_FILE_GET_WATCH_COUNT (file);
-
-  if (++watch_count == 1)
+  file_watch = g_object_get_qdata (G_OBJECT (file), thunar_file_watch_quark);
+  if (file_watch == NULL)
     {
+      file_watch = g_slice_new (ThunarFileWatch);
+      file_watch->watch_count = 1;
+
       /* create a file or directory monitor */
-      file->monitor = g_file_monitor (file->gfile, G_FILE_MONITOR_WATCH_MOUNTS, NULL, NULL);
-      if (G_LIKELY (file->monitor != NULL))
+      file_watch->monitor = g_file_monitor (file->gfile, G_FILE_MONITOR_WATCH_MOUNTS, NULL, NULL);
+      if (G_LIKELY (file_watch->monitor != NULL))
         {
-          /* make sure the pointer is set to NULL once the monitor is destroyed */
-          g_object_add_weak_pointer (G_OBJECT (file->monitor), (gpointer) &(file->monitor));
-
           /* watch monitor for file changes */
-          g_signal_connect (file->monitor, "changed", G_CALLBACK (thunar_file_monitor), file);
+          g_signal_connect (file_watch->monitor, "changed", G_CALLBACK (thunar_file_monitor), file);
         }
-    }
 
-  THUNAR_FILE_SET_WATCH_COUNT (file, watch_count);
+      /* attach to file */
+      g_object_set_qdata_full (G_OBJECT (file), thunar_file_watch_quark, file_watch, thunar_file_watch_destroyed);
+    }
+  else
+    {
+      /* increase watch count */
+      _thunar_return_if_fail (G_IS_FILE_MONITOR (file_watch->monitor));
+      file_watch->watch_count++;
+    }
 }
 
 
@@ -3336,26 +3367,21 @@ thunar_file_watch (ThunarFile *file)
 void
 thunar_file_unwatch (ThunarFile *file)
 {
-  gint watch_count;
+  ThunarFileWatch *file_watch;
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
-  _thunar_return_if_fail (THUNAR_FILE_GET_WATCH_COUNT (file) > 0);
 
-  watch_count = THUNAR_FILE_GET_WATCH_COUNT (file);
-
-  if (--watch_count == 0)
+  file_watch = g_object_get_qdata (G_OBJECT (file), thunar_file_watch_quark);
+  if (file_watch != NULL)
     {
-      if (G_LIKELY (file->monitor != NULL))
-        {
-          /* cancel monitoring */
-          g_file_monitor_cancel (file->monitor);
-
-          /* destroy the monitor */
-          g_object_unref (file->monitor);
-        }
+      /* remove if this was the last ref */
+      if (--file_watch->watch_count == 0)
+        g_object_set_qdata (G_OBJECT (file), thunar_file_watch_quark, NULL);
     }
-
-  THUNAR_FILE_SET_WATCH_COUNT (file, watch_count);
+  else
+    {
+      _thunar_assert_not_reached ();
+    }
 }
 
 
