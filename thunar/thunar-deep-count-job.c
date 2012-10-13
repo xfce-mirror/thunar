@@ -240,9 +240,6 @@ thunar_deep_count_job_process (ExoJob       *job,
       return TRUE;
     }
 
-  /* add size of the file to the total size */
-  count_job->total_size += g_file_info_get_size (info);
-
   /* recurse if we have a directory */
   if (g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
     {
@@ -324,6 +321,9 @@ thunar_deep_count_job_process (ExoJob       *job,
     {
       /* we have a regular file or at least not a directory */
       count_job->file_count++;
+
+      /* add size of the file to the total size */
+      count_job->total_size += g_file_info_get_size (info);
     }
 
   /* destroy the file info */
