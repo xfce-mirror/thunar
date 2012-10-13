@@ -70,16 +70,8 @@ static void     thunar_path_entry_set_property                  (GObject        
                                                                  guint                 prop_id,
                                                                  const GValue         *value,
                                                                  GParamSpec           *pspec);
-static void     thunar_path_entry_size_request                  (GtkWidget            *widget,
-                                                                 GtkRequisition       *requisition);
-static void     thunar_path_entry_size_allocate                 (GtkWidget            *widget,
-                                                                 GtkAllocation        *allocation);
-static void     thunar_path_entry_realize                       (GtkWidget            *widget);
-static void     thunar_path_entry_unrealize                     (GtkWidget            *widget);
 static gboolean thunar_path_entry_focus                         (GtkWidget            *widget,
                                                                  GtkDirectionType      direction);
-static gboolean thunar_path_entry_expose_event                  (GtkWidget            *widget,
-                                                                 GdkEventExpose       *event);
 static gboolean thunar_path_entry_button_press_event            (GtkWidget            *widget,
                                                                  GdkEventButton       *event);
 static gboolean thunar_path_entry_button_release_event          (GtkWidget            *widget,
@@ -99,14 +91,6 @@ static void     thunar_path_entry_do_insert_text                (GtkEditable    
                                                                  const gchar          *new_text,
                                                                  gint                  new_text_length,
                                                                  gint                 *position);
-static void     thunar_path_entry_get_borders                   (ThunarPathEntry      *path_entry,
-                                                                 gint                 *xborder,
-                                                                 gint                 *yborder);
-static void     thunar_path_entry_get_text_area_size            (ThunarPathEntry      *path_entry,
-                                                                 gint                 *x,
-                                                                 gint                 *y,
-                                                                 gint                 *width,
-                                                                 gint                 *height);
 static void     thunar_path_entry_clear_completion              (ThunarPathEntry      *path_entry);
 static void     thunar_path_entry_common_prefix_append          (ThunarPathEntry      *path_entry,
                                                                  gboolean              highlight);
@@ -144,16 +128,15 @@ struct _ThunarPathEntry
   ThunarFile        *current_folder;
   ThunarFile        *current_file;
   GFile             *working_directory;
-  GdkWindow         *icon_area;
 
-  gint               drag_button;
+  guint              drag_button;
   gint               drag_x;
   gint               drag_y;
 
   /* auto completion support */
   guint              in_change : 1;
   guint              has_completion : 1;
-  gint               check_completion_idle_id;
+  guint              check_completion_idle_id;
 };
 
 
@@ -187,12 +170,7 @@ thunar_path_entry_class_init (ThunarPathEntryClass *klass)
   gobject_class->set_property = thunar_path_entry_set_property;
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
-  gtkwidget_class->size_request = thunar_path_entry_size_request;
-  gtkwidget_class->size_allocate = thunar_path_entry_size_allocate;
-  gtkwidget_class->realize = thunar_path_entry_realize;
-  gtkwidget_class->unrealize = thunar_path_entry_unrealize;
   gtkwidget_class->focus = thunar_path_entry_focus;
-  gtkwidget_class->expose_event = thunar_path_entry_expose_event;
   gtkwidget_class->button_press_event = thunar_path_entry_button_press_event;
   gtkwidget_class->button_release_event = thunar_path_entry_button_release_event;
   gtkwidget_class->motion_notify_event = thunar_path_entry_motion_notify_event;
@@ -246,7 +224,7 @@ thunar_path_entry_init (ThunarPathEntry *path_entry)
   GtkCellRenderer    *renderer;
   ThunarListModel    *store;
 
-  path_entry->check_completion_idle_id = -1;
+  path_entry->check_completion_idle_id = 0;
   path_entry->working_directory = NULL;
 
   /* allocate a new entry completion for the given model */
@@ -296,6 +274,10 @@ thunar_path_entry_finalize (GObject *object)
 {
   ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (object);
 
+  /* release factory */
+  if (path_entry->icon_factory != NULL)
+    g_object_unref (path_entry->icon_factory);
+
   /* release the current-folder reference */
   if (G_LIKELY (path_entry->current_folder != NULL))
     g_object_unref (G_OBJECT (path_entry->current_folder));
@@ -312,7 +294,7 @@ thunar_path_entry_finalize (GObject *object)
     g_object_unref (G_OBJECT (path_entry->working_directory));
 
   /* drop the check_completion_idle source */
-  if (G_UNLIKELY (path_entry->check_completion_idle_id >= 0))
+  if (G_UNLIKELY (path_entry->check_completion_idle_id != 0))
     g_source_remove (path_entry->check_completion_idle_id);
 
   (*G_OBJECT_CLASS (thunar_path_entry_parent_class)->finalize) (object);
@@ -364,160 +346,6 @@ thunar_path_entry_set_property (GObject      *object,
 
 
 
-static void
-thunar_path_entry_size_request (GtkWidget      *widget,
-                                GtkRequisition *requisition)
-{
-  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
-  gint             text_height;
-  gint             icon_size;
-  gint             xborder;
-  gint             yborder;
-
-  gtk_widget_style_get (GTK_WIDGET (widget),
-                        "icon-size", &icon_size,
-                        NULL);
-
-  (*GTK_WIDGET_CLASS (thunar_path_entry_parent_class)->size_request) (widget, requisition);
-
-  thunar_path_entry_get_text_area_size (path_entry, &xborder, &yborder, NULL, &text_height);
-
-  requisition->width += icon_size + xborder + 2 * ICON_MARGIN;
-  requisition->height = 2 * yborder + MAX (icon_size + 2 * ICON_MARGIN, text_height);
-}
-
-
-
-static void
-thunar_path_entry_size_allocate (GtkWidget     *widget,
-                                 GtkAllocation *allocation)
-{
-  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
-  GtkAllocation    icon_allocation;
-  GtkAllocation    text_allocation;
-  gint             icon_size;
-  gint             text_height;
-  gint             xborder;
-  gint             yborder;
-
-  gtk_widget_style_get (GTK_WIDGET (widget),
-                        "icon-size", &icon_size,
-                        NULL);
-
-  widget->allocation = *allocation;
-
-  thunar_path_entry_get_text_area_size (path_entry, &xborder, &yborder, NULL, &text_height);
-
-  text_allocation.y = yborder;
-  text_allocation.width = allocation->width - icon_size - 2 * xborder - 2 * ICON_MARGIN;
-  text_allocation.height = text_height;
-
-  icon_allocation.y = yborder;
-  icon_allocation.width = icon_size + 2 * ICON_MARGIN;
-  icon_allocation.height = MAX (icon_size + 2 * ICON_MARGIN, text_height);
-
-  if (gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL)
-    {
-      text_allocation.x = xborder;
-      icon_allocation.x = allocation->width - icon_allocation.width - xborder - 2 * ICON_MARGIN;
-    }
-  else
-    {
-      icon_allocation.x = xborder;
-      text_allocation.x = allocation->width - text_allocation.width - xborder;
-    }
-
-  (*GTK_WIDGET_CLASS (thunar_path_entry_parent_class)->size_allocate) (widget, allocation);
-
-  if (gtk_widget_get_realized (widget))
-    {
-      gdk_window_move_resize (GTK_ENTRY (path_entry)->text_area,
-                              text_allocation.x,
-                              text_allocation.y,
-                              text_allocation.width,
-                              text_allocation.height);
-
-      gdk_window_move_resize (path_entry->icon_area,
-                              icon_allocation.x,
-                              icon_allocation.y,
-                              icon_allocation.width,
-                              icon_allocation.height);
-    }
-}
-
-
-
-static void
-thunar_path_entry_realize (GtkWidget *widget)
-{
-  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
-  GdkWindowAttr    attributes;
-  GtkIconTheme    *icon_theme;
-  gint             attributes_mask;
-  gint             text_height;
-  gint             icon_size;
-  gint             spacing;
-
-  /* query the proper icon factory */
-  icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
-  path_entry->icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
-
-  gtk_widget_style_get (GTK_WIDGET (widget),
-                        "icon-size", &icon_size,
-                        NULL);
-
-  (*GTK_WIDGET_CLASS (thunar_path_entry_parent_class)->realize) (widget);
-
-  thunar_path_entry_get_text_area_size (path_entry, NULL, NULL, NULL, &text_height);
-  spacing = widget->requisition.height -text_height;
-
-  attributes.window_type = GDK_WINDOW_CHILD;
-  attributes.wclass = GDK_INPUT_OUTPUT;
-  attributes.visual = gtk_widget_get_visual (widget);
-  attributes.colormap = gtk_widget_get_colormap (widget);
-  attributes.event_mask = gtk_widget_get_events (widget)
-                        | GDK_BUTTON_PRESS_MASK
-                        | GDK_BUTTON_RELEASE_MASK
-                        | GDK_ENTER_NOTIFY_MASK
-                        | GDK_EXPOSURE_MASK
-                        | GDK_LEAVE_NOTIFY_MASK
-                        | GDK_POINTER_MOTION_MASK;
-  attributes.x = widget->allocation.x + widget->allocation.width - icon_size - spacing;
-  attributes.y = widget->allocation.y + (widget->allocation.height - widget->requisition.height) / 2;
-  attributes.width = icon_size + spacing;
-  attributes.height = widget->requisition.height;
-  attributes_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL | GDK_WA_COLORMAP;
-
-  path_entry->icon_area = gdk_window_new (widget->window, &attributes, attributes_mask);
-  gdk_window_set_user_data (path_entry->icon_area, widget);
-  gdk_window_set_background (path_entry->icon_area, &widget->style->base[gtk_widget_get_state (widget)]);
-  gdk_window_show (path_entry->icon_area);
-
-  gtk_widget_queue_resize (widget);
-}
-
-
-
-static void
-thunar_path_entry_unrealize (GtkWidget *widget)
-{
-  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
-
-  /* destroy the icon window */
-  gdk_window_set_user_data (path_entry->icon_area, NULL);
-  gdk_window_destroy (path_entry->icon_area);
-  path_entry->icon_area = NULL;
-
-  /* disconnect from the icon factory */
-  g_object_unref (G_OBJECT (path_entry->icon_factory));
-  path_entry->icon_factory = NULL;
-
-  /* let the GtkWidget class do the rest */
-  (*GTK_WIDGET_CLASS (thunar_path_entry_parent_class)->unrealize) (widget);
-}
-
-
-
 static gboolean
 thunar_path_entry_focus (GtkWidget       *widget,
                          GtkDirectionType direction)
@@ -548,70 +376,13 @@ thunar_path_entry_focus (GtkWidget       *widget,
 
 
 static gboolean
-thunar_path_entry_expose_event (GtkWidget      *widget,
-                                GdkEventExpose *event)
-{
-  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
-  GdkPixbuf       *icon;
-  gint             icon_height;
-  gint             icon_width;
-  gint             icon_size;
-  gint             height;
-  gint             width;
-
-  if (event->window == path_entry->icon_area)
-    {
-      gtk_widget_style_get (GTK_WIDGET (widget),
-                            "icon-size", &icon_size,
-                            NULL);
-
-      gdk_drawable_get_size (GDK_DRAWABLE (path_entry->icon_area), &width, &height);
-
-      gtk_paint_flat_box (widget->style, path_entry->icon_area,
-                          gtk_widget_get_state (widget), GTK_SHADOW_NONE,
-                          NULL, widget, "entry_bg",
-                          0, 0, width, height);
-
-      if (G_UNLIKELY (path_entry->current_file != NULL))
-        icon = thunar_icon_factory_load_file_icon (path_entry->icon_factory, path_entry->current_file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_size);
-      else if (G_LIKELY (path_entry->current_folder != NULL))
-        icon = thunar_icon_factory_load_file_icon (path_entry->icon_factory, path_entry->current_folder, THUNAR_FILE_ICON_STATE_DEFAULT, icon_size);
-      else
-        icon = gtk_widget_render_icon (widget, GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_SMALL_TOOLBAR, "path_entry");
-
-      if (G_LIKELY (icon != NULL))
-        {
-          icon_width = gdk_pixbuf_get_width (icon);
-          icon_height = gdk_pixbuf_get_height (icon);
-
-          gdk_draw_pixbuf (path_entry->icon_area,
-                           widget->style->black_gc,
-                           icon, 0, 0,
-                           (width - icon_width) / 2,
-                           (height - icon_height) / 2,
-                           icon_width, icon_height,
-                           GDK_RGB_DITHER_NORMAL, 0, 0);
-
-          g_object_unref (G_OBJECT (icon));
-        }
-    }
-  else
-    {
-      return (*GTK_WIDGET_CLASS (thunar_path_entry_parent_class)->expose_event) (widget, event);
-    }
-
-  return TRUE;
-}
-
-
-
-static gboolean
 thunar_path_entry_button_press_event (GtkWidget      *widget,
                                       GdkEventButton *event)
 {
   ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
 
-  if (event->window == path_entry->icon_area && event->button == 1)
+  if (event->button == 1
+      && event->window == gtk_entry_get_icon_window (GTK_ENTRY (widget), GTK_ENTRY_ICON_PRIMARY))
     {
       /* consume the event */
       path_entry->drag_button = event->button;
@@ -631,7 +402,8 @@ thunar_path_entry_button_release_event (GtkWidget      *widget,
 {
   ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
 
-  if (event->window == path_entry->icon_area && event->button == (guint) path_entry->drag_button)
+  if (event->button == path_entry->drag_button
+      && event->window == gtk_entry_get_icon_window (GTK_ENTRY (widget), GTK_ENTRY_ICON_PRIMARY))
     {
       /* reset the drag button state */
       path_entry->drag_button = 0;
@@ -653,7 +425,9 @@ thunar_path_entry_motion_notify_event (GtkWidget      *widget,
   GdkPixbuf       *icon;
   gint             size;
 
-  if (event->window == path_entry->icon_area && path_entry->drag_button > 0 && path_entry->current_file != NULL
+  if (path_entry->drag_button > 0
+      && path_entry->current_file != NULL
+      && event->window == gtk_entry_get_icon_window (GTK_ENTRY (widget), GTK_ENTRY_ICON_PRIMARY)
       && gtk_drag_check_threshold (widget, path_entry->drag_x, path_entry->drag_y, event->x, event->y))
     {
       /* create the drag context */
@@ -663,7 +437,10 @@ thunar_path_entry_motion_notify_event (GtkWidget      *widget,
 
       /* setup the drag icon (atleast 24px) */
       gtk_widget_style_get (widget, "icon-size", &size, NULL);
-      icon = thunar_icon_factory_load_file_icon (path_entry->icon_factory, path_entry->current_file, THUNAR_FILE_ICON_STATE_DEFAULT, MAX (size, 24));
+      icon = thunar_icon_factory_load_file_icon (path_entry->icon_factory,
+                                                 path_entry->current_file,
+                                                 THUNAR_FILE_ICON_STATE_DEFAULT,
+                                                 MAX (size, 16));
       if (G_LIKELY (icon != NULL))
         {
           gtk_drag_set_icon_pixbuf (context, icon, 0, 0);
@@ -767,6 +544,10 @@ thunar_path_entry_changed (GtkEditable *editable)
   GFile              *file_path = NULL;
   gchar              *folder_part = NULL;
   gchar              *file_part = NULL;
+  GdkPixbuf          *icon = NULL;
+  GtkIconTheme       *icon_theme;
+  gboolean            update_icon = FALSE;
+  gint                icon_size;
 
   /* check if we should ignore this event */
   if (G_UNLIKELY (path_entry->in_change))
@@ -838,6 +619,9 @@ thunar_path_entry_changed (GtkEditable *editable)
       /* cleanup */
       if (G_LIKELY (folder != NULL))
         g_object_unref (G_OBJECT (folder));
+
+      /* we most likely need a new icon */
+      update_icon = TRUE;
     }
 
   /* update the current file if required */
@@ -855,6 +639,49 @@ thunar_path_entry_changed (GtkEditable *editable)
           g_signal_connect_swapped (G_OBJECT (current_file), "changed", G_CALLBACK (thunar_path_entry_set_current_file), path_entry);
         }
       g_object_notify (G_OBJECT (path_entry), "current-file");
+
+      /* we most likely need a new icon */
+      update_icon = TRUE;
+    }
+
+  if (update_icon)
+    {
+      if (path_entry->icon_factory == NULL)
+        {
+          icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (path_entry)));
+          path_entry->icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
+        }
+
+      gtk_widget_style_get (GTK_WIDGET (path_entry), "icon-size", &icon_size, NULL);
+
+      if (G_UNLIKELY (path_entry->current_file != NULL))
+        {
+          icon = thunar_icon_factory_load_file_icon (path_entry->icon_factory,
+                                                     path_entry->current_file,
+                                                     THUNAR_FILE_ICON_STATE_DEFAULT,
+                                                     icon_size);
+        }
+      else if (G_LIKELY (path_entry->current_folder != NULL))
+        {
+          icon = thunar_icon_factory_load_file_icon (path_entry->icon_factory,
+                                                     path_entry->current_folder,
+                                                     THUNAR_FILE_ICON_STATE_DEFAULT,
+                                                     icon_size);
+        }
+
+      if (icon != NULL)
+        {
+          gtk_entry_set_icon_from_pixbuf (GTK_ENTRY (path_entry),
+                                          GTK_ENTRY_ICON_PRIMARY,
+                                          icon);
+          g_object_unref (icon);
+        }
+      else
+        {
+          gtk_entry_set_icon_from_icon_name (GTK_ENTRY (path_entry),
+                                             GTK_ENTRY_ICON_PRIMARY,
+                                             GTK_STOCK_DIALOG_ERROR);
+        }
     }
 
   /* cleanup */
@@ -884,63 +711,6 @@ thunar_path_entry_do_insert_text (GtkEditable *editable,
   /* queue a completion check if this insert operation was triggered by the user */
   if (G_LIKELY (!path_entry->in_change))
     thunar_path_entry_queue_check_completion (path_entry);
-}
-
-
-
-static void
-thunar_path_entry_get_borders (ThunarPathEntry *path_entry,
-                               gint            *xborder,
-                               gint            *yborder)
-{
-	gboolean interior_focus;
-	gint     focus_width;
-
-	gtk_widget_style_get (GTK_WIDGET (path_entry),
-                        "focus-line-width", &focus_width,
-                        "interior-focus", &interior_focus,
-                        NULL);
-
-	if (gtk_entry_get_has_frame (GTK_ENTRY (path_entry)))
-    {
-		  *xborder = GTK_WIDGET (path_entry)->style->xthickness;
-  		*yborder = GTK_WIDGET (path_entry)->style->ythickness;
-	  }
-	else
-	  {
-  		*xborder = 0;
-	  	*yborder = 0;
-  	}
-
-	if (!interior_focus)
-	  {
-  		*xborder += focus_width;
-	  	*yborder += focus_width;
-  	}
-}
-
-
-
-static void
-thunar_path_entry_get_text_area_size (ThunarPathEntry *path_entry,
-                                      gint            *x,
-                                      gint            *y,
-                                      gint            *width,
-                                      gint            *height)
-{
-	GtkRequisition requisition;
-	GtkWidget     *widget = GTK_WIDGET (path_entry);
-	gint           xborder;
-  gint           yborder;
-
-	gtk_widget_get_child_requisition (widget, &requisition);
-
-  thunar_path_entry_get_borders (path_entry, &xborder, &yborder);
-
-	if (x != NULL) *x = xborder;
-	if (y != NULL) *y = yborder;
-	if (width  != NULL) *width  = widget->allocation.width - xborder * 2;
-	if (height != NULL) *height = requisition.height - yborder * 2;
 }
 
 
@@ -1289,7 +1059,7 @@ thunar_path_entry_parse (ThunarPathEntry *path_entry,
 static void
 thunar_path_entry_queue_check_completion (ThunarPathEntry *path_entry)
 {
-  if (G_LIKELY (path_entry->check_completion_idle_id < 0))
+  if (G_LIKELY (path_entry->check_completion_idle_id == 0))
     {
       path_entry->check_completion_idle_id = g_idle_add_full (G_PRIORITY_HIGH, thunar_path_entry_check_completion_idle,
                                                               path_entry, thunar_path_entry_check_completion_idle_destroy);
@@ -1324,7 +1094,7 @@ thunar_path_entry_check_completion_idle (gpointer user_data)
 static void
 thunar_path_entry_check_completion_idle_destroy (gpointer user_data)
 {
-  THUNAR_PATH_ENTRY (user_data)->check_completion_idle_id = -1;
+  THUNAR_PATH_ENTRY (user_data)->check_completion_idle_id = 0;
 }
 
 
