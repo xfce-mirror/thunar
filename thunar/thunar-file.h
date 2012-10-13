@@ -176,16 +176,16 @@ const gchar      *thunar_file_get_basename         (const ThunarFile       *file
 gboolean          thunar_file_is_symlink           (const ThunarFile       *file);
 guint64           thunar_file_get_size             (const ThunarFile       *file);
 GAppInfo         *thunar_file_get_default_handler  (const ThunarFile       *file);
-GFileType         thunar_file_get_kind             (const ThunarFile       *file);
+GFileType         thunar_file_get_kind             (const ThunarFile       *file) G_GNUC_PURE;
 GFile            *thunar_file_get_target_location  (const ThunarFile       *file);
 ThunarFileMode    thunar_file_get_mode             (const ThunarFile       *file);
 gboolean          thunar_file_get_free_space       (const ThunarFile       *file, 
                                                     guint64                *free_space_return);
 gboolean          thunar_file_is_mounted           (const ThunarFile       *file);
 gboolean          thunar_file_exists               (const ThunarFile       *file);
-gboolean          thunar_file_is_directory         (const ThunarFile       *file);
-gboolean          thunar_file_is_shortcut          (const ThunarFile       *file);
-gboolean          thunar_file_is_mountable         (const ThunarFile       *file);
+gboolean          thunar_file_is_directory         (const ThunarFile       *file) G_GNUC_PURE;
+gboolean          thunar_file_is_shortcut          (const ThunarFile       *file) G_GNUC_PURE;
+gboolean          thunar_file_is_mountable         (const ThunarFile       *file) G_GNUC_PURE;
 gboolean          thunar_file_is_local             (const ThunarFile       *file);
 gboolean          thunar_file_is_parent            (const ThunarFile       *file,
                                                     const ThunarFile       *child);
@@ -197,7 +197,7 @@ gboolean          thunar_file_is_executable        (const ThunarFile       *file
 gboolean          thunar_file_is_writable          (const ThunarFile       *file);
 gboolean          thunar_file_is_hidden            (const ThunarFile       *file);
 gboolean          thunar_file_is_home              (const ThunarFile       *file);
-gboolean          thunar_file_is_regular           (const ThunarFile       *file);
+gboolean          thunar_file_is_regular           (const ThunarFile       *file) G_GNUC_PURE;
 gboolean          thunar_file_is_trashed           (const ThunarFile       *file);
 gboolean          thunar_file_is_desktop_file      (const ThunarFile       *file,
                                                     gboolean               *is_secure);

@@ -142,6 +142,7 @@ struct _ThunarFile
 
   /*< private >*/
   GFileInfo     *info;
+  GFileType      kind;
   GFile         *gfile;
   gchar         *custom_icon_name;
   gchar         *display_name;
@@ -692,6 +693,9 @@ thunar_file_info_clear (ThunarFile *file)
       file->info = NULL;
     }
 
+  /* unset */
+  file->kind = G_FILE_TYPE_UNKNOWN;
+
   /* free the custom icon name */
   g_free (file->custom_icon_name);
   file->custom_icon_name = NULL;
@@ -740,7 +744,10 @@ thunar_file_info_reload (ThunarFile   *file,
 
   if (G_LIKELY (file->info != NULL))
     {
-      if (g_file_info_get_file_type (file->info) == G_FILE_TYPE_MOUNTABLE)
+      /* this is requesed so often, cache it */
+      file->kind = g_file_info_get_file_type (file->info);
+
+      if (file->kind == G_FILE_TYPE_MOUNTABLE)
         {
           target_uri = g_file_info_get_attribute_string (file->info, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI);
           file->is_mounted = (target_uri != NULL) && !g_file_info_get_attribute_boolean (file->info, G_FILE_ATTRIBUTE_MOUNTABLE_CAN_MOUNT);
@@ -2174,11 +2181,7 @@ GFileType
 thunar_file_get_kind (const ThunarFile *file) 
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), G_FILE_TYPE_UNKNOWN);
-
-  if (file->info == NULL)
-    return G_FILE_TYPE_UNKNOWN;
-
-  return g_file_info_get_file_type (file->info);
+  return file->kind;
 }
 
 
@@ -2298,11 +2301,7 @@ gboolean
 thunar_file_is_directory (const ThunarFile *file) 
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-
-  if (file->info == NULL)
-    return FALSE;
-
-  return thunar_file_get_kind (file) == G_FILE_TYPE_DIRECTORY;
+  return file->kind == G_FILE_TYPE_DIRECTORY;
 }
 
 
@@ -2319,11 +2318,7 @@ gboolean
 thunar_file_is_shortcut (const ThunarFile *file) 
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-
-  if (file->info == NULL)
-    return FALSE;
-
-  return thunar_file_get_kind (file) == G_FILE_TYPE_SHORTCUT;
+  return file->kind == G_FILE_TYPE_SHORTCUT;
 }
 
 
@@ -2340,11 +2335,7 @@ gboolean
 thunar_file_is_mountable (const ThunarFile *file) 
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-
-  if (file->info == NULL)
-    return FALSE;
-
-  return thunar_file_get_kind (file) == G_FILE_TYPE_MOUNTABLE;
+  return file->kind == G_FILE_TYPE_MOUNTABLE;
 }
 
 
@@ -2610,7 +2601,7 @@ gboolean
 thunar_file_is_regular (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  return thunar_file_get_kind (file) == G_FILE_TYPE_REGULAR;
+  return file->kind == G_FILE_TYPE_REGULAR;
 }
 
 
@@ -2660,8 +2651,8 @@ thunar_file_is_desktop_file (const ThunarFile *file,
     return FALSE;
 
   /* only allow regular files with a .desktop extension */
-  if (!g_str_has_suffix (thunar_file_get_basename (file), ".desktop")
-      || g_file_info_get_file_type (file->info) != G_FILE_TYPE_REGULAR)
+  if (!g_str_has_suffix (file->basename, ".desktop")
+      || file->kind != G_FILE_TYPE_REGULAR)
     return FALSE;
 
   /* don't check more if not needed */

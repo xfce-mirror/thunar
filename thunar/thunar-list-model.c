@@ -164,9 +164,6 @@ static gint               sort_by_date_accessed                   (const ThunarF
 static gint               sort_by_date_modified                   (const ThunarFile       *a,
                                                                    const ThunarFile       *b,
                                                                    gboolean                case_sensitive);
-static gint               sort_by_file_name                       (const ThunarFile       *a,
-                                                                   const ThunarFile       *b,
-                                                                   gboolean                case_sensitive);
 static gint               sort_by_group                           (const ThunarFile       *a,
                                                                    const ThunarFile       *b,
                                                                    gboolean                case_sensitive);
@@ -878,7 +875,7 @@ thunar_list_model_get_sort_column_id (GtkTreeSortable *sortable,
     *sort_column_id = THUNAR_COLUMN_MIME_TYPE;
   else if (store->sort_func == sort_by_name)
     *sort_column_id = THUNAR_COLUMN_NAME;
-  else if (store->sort_func == sort_by_file_name)
+  else if (store->sort_func == sort_by_name)
     *sort_column_id = THUNAR_COLUMN_FILE_NAME;
   else if (store->sort_func == sort_by_permissions)
     *sort_column_id = THUNAR_COLUMN_PERMISSIONS;
@@ -937,6 +934,7 @@ thunar_list_model_set_sort_column_id (GtkTreeSortable *sortable,
       store->sort_func = sort_by_mime_type;
       break;
 
+    case THUNAR_COLUMN_FILE_NAME:
     case THUNAR_COLUMN_NAME:
       store->sort_func = sort_by_name;
       break;
@@ -955,10 +953,6 @@ thunar_list_model_set_sort_column_id (GtkTreeSortable *sortable,
 
     case THUNAR_COLUMN_TYPE:
       store->sort_func = sort_by_type;
-      break;
-
-    case THUNAR_COLUMN_FILE_NAME:
-      store->sort_func = sort_by_file_name;
       break;
 
     default:
@@ -1019,11 +1013,8 @@ thunar_list_model_cmp (ThunarListModel *store,
     {
       isdir_a = thunar_file_is_directory (a);
       isdir_b = thunar_file_is_directory (b);
-
-      if (isdir_a && !isdir_b)
-        return -1;
-      else if (!isdir_a && isdir_b)
-        return 1;
+      if (isdir_a != isdir_b)
+        return isdir_a ? -1 : 1;
     }
 
   return (*store->sort_func) (a, b, store->sort_case_sensitive) * store->sort_sign;
@@ -1406,27 +1397,6 @@ sort_by_date_modified (const ThunarFile *a,
     return 1;
 
   return sort_by_name (a, b, case_sensitive);
-}
-
-
-
-static gint
-sort_by_file_name (const ThunarFile *a,
-                   const ThunarFile *b,
-                   gboolean          case_sensitive)
-{
-  const gchar *a_name = thunar_file_get_display_name (a);
-  const gchar *b_name = thunar_file_get_display_name (b);
-
-  if (a_name == NULL)
-    a_name = "";
-  if (b_name == NULL)
-    b_name = "";
-
-  if (!case_sensitive)
-    return strcasecmp (a_name, b_name);
-  else
-    return strcmp (a_name, b_name);
 }
 
 
