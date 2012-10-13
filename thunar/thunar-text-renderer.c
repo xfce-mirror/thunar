@@ -46,6 +46,7 @@ enum
   PROP_TEXT,
   PROP_WRAP_MODE,
   PROP_WRAP_WIDTH,
+  PROP_ELLIPSIZE_MODE,
 };
 
 enum
@@ -117,27 +118,28 @@ struct _ThunarTextRendererClass
 
 struct _ThunarTextRenderer
 {
-  GtkCellRenderer __parent__;
+  GtkCellRenderer     __parent__;
 
-  PangoLayout    *layout;
-  GtkWidget      *widget;
-  gboolean        text_static;
-  gchar          *text;
-  gint            char_width;
-  gint            char_height;
-  PangoWrapMode   wrap_mode;
-  gint            wrap_width;
-  gboolean        follow_state;
-  gint            focus_width;;
-  PangoAlignment  alignment;
+  PangoLayout        *layout;
+  GtkWidget          *widget;
+  gboolean            text_static;
+  gchar              *text;
+  gint                char_width;
+  gint                char_height;
+  PangoWrapMode       wrap_mode;
+  gint                wrap_width;
+  PangoEllipsizeMode  ellipsize_mode;
+  gboolean            follow_state;
+  gint                focus_width;
+  PangoAlignment      alignment;
 
   /* underline prelited rows */
-  gboolean        follow_prelit;
+  gboolean            follow_prelit;
 
   /* cell editing support */
-  GtkWidget      *entry;
-  gboolean        entry_menu_active;
-  gint            entry_menu_popdown_timer_id;
+  GtkWidget          *entry;
+  gboolean            entry_menu_active;
+  gint                entry_menu_popdown_timer_id;
 };
 
 
@@ -254,6 +256,24 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
                                                      -1, G_MAXINT, -1,
                                                      EXO_PARAM_READWRITE));
 
+
+  /**
+   * ThunarTextRenderer:ellipsize-mode:
+   *
+   * Specifies whether to break the string into multiple lines or
+   * to shorten the line, if the cell renderer does not have enough room
+   * to display the entire string. This property has
+   * no effect unless the wrap-width property is set.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_ELLIPSIZE_MODE,
+                                   g_param_spec_enum ("ellipsize-mode",
+                                                      "ellipsize-mode",
+                                                      "ellipsize-mode",
+                                                      PANGO_TYPE_ELLIPSIZE_MODE,
+                                                      PANGO_ELLIPSIZE_NONE,
+                                                      EXO_PARAM_READWRITE));
+
   /**
    * ThunarTextRenderer::edited:
    * @text_renderer : a #ThunarTextRenderer.
@@ -336,6 +356,10 @@ thunar_text_renderer_get_property (GObject    *object,
       g_value_set_int (value, text_renderer->wrap_width);
       break;
 
+    case PROP_ELLIPSIZE_MODE:
+      g_value_set_enum (value, text_renderer->ellipsize_mode);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -389,6 +413,10 @@ thunar_text_renderer_set_property (GObject      *object,
         gtk_cell_renderer_set_fixed_size (GTK_CELL_RENDERER (text_renderer), -1, -1);
       break;
 
+    case PROP_ELLIPSIZE_MODE:
+      text_renderer->ellipsize_mode = g_value_get_enum (value);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -432,6 +460,7 @@ thunar_text_renderer_get_size (GtkCellRenderer *renderer,
       /* calculate the real text dimension */
       pango_layout_set_width (text_renderer->layout, text_renderer->wrap_width * PANGO_SCALE);
       pango_layout_set_wrap (text_renderer->layout, text_renderer->wrap_mode);
+      pango_layout_set_ellipsize (text_renderer->layout, text_renderer->ellipsize_mode);
       pango_layout_set_text (text_renderer->layout, text_renderer->text, -1);
       pango_layout_get_pixel_size (text_renderer->layout, &text_width, &text_height);
     }

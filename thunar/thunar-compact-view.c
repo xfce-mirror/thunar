@@ -80,7 +80,8 @@ thunar_compact_view_init (ThunarCompactView *compact_view)
   /* setup the name renderer (wrap only very long names) */
   g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (compact_view)->name_renderer),
                 "wrap-mode", PANGO_WRAP_WORD_CHAR,
-                "wrap-width", 1280,
+                "ellipsize-mode", PANGO_ELLIPSIZE_MIDDLE,
+                "wrap-width", 200,
                 "xalign", 0.0f,
                 "yalign", 0.5f,
                 NULL);
