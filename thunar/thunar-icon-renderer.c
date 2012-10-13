@@ -333,6 +333,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   GList                  *lp;
   gint                    max_emblems;
   gint                    position;
+  cairo_t                *cr;
 
   if (G_UNLIKELY (icon_renderer->file == NULL))
     return;
@@ -377,6 +378,9 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
 
   icon_area.x = cell_area->x + (cell_area->width - icon_area.width) / 2;
   icon_area.y = cell_area->y + (cell_area->height - icon_area.height) / 2;
+
+  /* create the context */
+  cr = gdk_cairo_create (window);
 
   /* check whether the icon is affected by the expose event */
   if (gdk_rectangle_intersect (expose_area, &icon_area, &draw_area))
@@ -438,10 +442,9 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
         }
 
       /* render the invalid parts of the icon */
-      gdk_draw_pixbuf (window, widget->style->black_gc, icon,
-                       draw_area.x - icon_area.x, draw_area.y - icon_area.y,
-                       draw_area.x, draw_area.y, draw_area.width, draw_area.height,
-                       GDK_RGB_DITHER_NORMAL, 0, 0);
+      gdk_cairo_set_source_pixbuf (cr, icon, icon_area.x, icon_area.y);
+      gdk_cairo_rectangle (cr, &draw_area);
+      cairo_fill (cr);
     }
 
   /* release the file's icon */
@@ -520,10 +523,10 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
               /* render the emblem */
               if (gdk_rectangle_intersect (expose_area, &emblem_area, &draw_area))
                 {
-                  gdk_draw_pixbuf (window, widget->style->black_gc, emblem,
-                                   draw_area.x - emblem_area.x, draw_area.y - emblem_area.y,
-                                   draw_area.x, draw_area.y, draw_area.width, draw_area.height,
-                                   GDK_RGB_DITHER_NORMAL, 0, 0);
+                  /* render the invalid parts of the icon */
+                  gdk_cairo_set_source_pixbuf (cr, emblem, emblem_area.x, emblem_area.y);
+                  gdk_cairo_rectangle (cr, &draw_area);
+                  cairo_fill (cr);
                 }
 
               /* release the emblem */
@@ -537,6 +540,9 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
           g_list_free (emblems);
         }
     }
+
+  /* destroy the context */
+  cairo_destroy (cr);
 
   /* release our reference on the icon factory */
   g_object_unref (G_OBJECT (icon_factory));

@@ -220,6 +220,7 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
   GdkPixbuf                   *icon = NULL;
   GdkPixbuf                   *temp;
   GIcon                       *gicon;
+  cairo_t                     *cr;
 
   /* check if we have a volume set */
   if (G_UNLIKELY (shortcuts_icon_renderer->gicon != NULL
@@ -281,10 +282,11 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
           if (gdk_rectangle_intersect (expose_area, &icon_area, &draw_area))
             {
               /* render the invalid parts of the icon */
-              gdk_draw_pixbuf (window, widget->style->black_gc, icon,
-                               draw_area.x - icon_area.x, draw_area.y - icon_area.y,
-                               draw_area.x, draw_area.y, draw_area.width, draw_area.height,
-                               GDK_RGB_DITHER_NORMAL, 0, 0);
+              cr = gdk_cairo_create (window);
+              gdk_cairo_set_source_pixbuf (cr, icon, icon_area.x, icon_area.y);
+              gdk_cairo_rectangle (cr, &draw_area);
+              cairo_fill (cr);
+              cairo_destroy (cr);
             }
 
           /* cleanup */
