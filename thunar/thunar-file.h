@@ -103,7 +103,9 @@ typedef enum /*< flags >*/
 /**
  * ThunarFileGetFunc:
  *
- * Callback type for loading #ThunarFile<!---->s asynchronously.
+ * Callback type for loading #ThunarFile<!---->s asynchronously. If you
+ * want to keep the #ThunarFile, you need to ref it, else it will be
+ * destroyed.
  **/
 typedef void (*ThunarFileGetFunc) (GFile      *location,
                                    ThunarFile *file,

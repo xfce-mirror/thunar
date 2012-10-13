@@ -842,11 +842,18 @@ thunar_file_get_async_finish (GObject      *object,
 
   /* insert the file into the cache */
   G_LOCK (file_cache_mutex);
+#ifdef G_ENABLE_DEBUG
+  /* check if there is no instance created in the meantime */
+  _thunar_assert (g_hash_table_lookup (file_cache, file->gfile) == NULL);
+#endif
   g_hash_table_insert (file_cache, g_object_ref (file->gfile), file);
   G_UNLOCK (file_cache_mutex);
 
   /* pass the loaded file and possible errors to the return function */
   (data->func) (location, file, error, data->user_data);
+
+  /* release the file, see description in ThunarFileGetFunc */
+  g_object_unref (file);
 
   /* free the error, if there is any */
   if (error != NULL)
@@ -958,6 +965,10 @@ thunar_file_get (GFile   *gfile,
         {
           /* insert the file into the cache */
           G_LOCK (file_cache_mutex);
+#ifdef G_ENABLE_DEBUG
+          /* check if there is no instance created in the meantime */
+          _thunar_assert (g_hash_table_lookup (file_cache, file->gfile) == NULL);
+#endif
           g_hash_table_insert (file_cache, g_object_ref (file->gfile), file);
           G_UNLOCK (file_cache_mutex);
         }
