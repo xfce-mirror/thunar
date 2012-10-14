@@ -1,3 +1,50 @@
+1.5.0
+=====
+- Add support for multiple selections in file preferences dialog.
+- Depend on Gtk 2.24 and Glib 2.30.
+- Implement selection inversion.
+- Improve refresh feedback when using dnd between 2 windows.
+- Resize rename dialog based on filename length (bug #7684).
+- Force bulk renamer when Shift is pressed (bug #7684).
+- Add a sentence case rename mode to sbr.
+- Regenerate thumbnails on file changes (bug #8473).
+- Hide recommended applications that are not visible (bug #9169).
+- Sort recommended applications (bug #8927).
+- Use system-file-manager icon-name in desktop file (bug #9128).
+- Check mime type in desktop files in the sendto menu (bug #7392).
+- Improvement in the file progress dialog.
+- Show full template filename in menu (bug #6140).
+- Store metadata (emblems) in GVFS's daemon.
+- Use Path from desktop file as CWD (bug #5760).
+- Add working directory entry to apr (bug #5760).
+- Add hidden option to show full path in window title (bug #6412).
+- Unset DBUS variables once registered (bug #8800).
+- Only collect image data if the mime-type is image/* (bug #2913).
+- Don't copy templates but create them (bug #8312).
+- Add menu item to hide the menu bar.
+- Improve statusbar selection text (bug #8989).
+- Don't allow starting multiple daemons (bug #3814).
+- Make massing plugin warnings non-fatal (bug #2604).
+- Show transfer rate in transfer dialog (bug #8250).
+- Check free space before copying (bug #5658).
+- Port settings to xfconf.
+- Handle null content-types when sorting (bug #8465).
+- Scroll to first file with pattern select.
+- Add secure desktop file launching (bug #5012).
+- Use g_utf8_collate_key_for_filename for sorting (bug #7110).
+- Only deep-count on the same filesystem.
+- Don't force scrolling to the window edge.
+- Translation updates: Amharic, Arabic, Asturian, Belarusian,
+  Bengali, Catalan (Valencian), Czech, Danish, German, Dzongkha, Greek,
+  English (United Kingdom), Esperanto, Spanish (Castilian), Estonian,
+  Basque, Finnish, French, Galician, Hebrew, Croatian, Hungarian,
+  Indonesian, Icelandic, Italian, Japanese, Georgian, Kazakh, Korean,
+  Kurdish, Lithuanian, Latvian, Macedonian, Norwegian Bokmal, Dutch
+  (Flemish), Norwegian Nynorsk, Panjabi (Punjabi), Polish, Portuguese,
+  Portuguese (Brazilian), Romanian, Russian, Sinhala, Slovak, Albanian,
+  Serbian, Swedish, Telugu, Turkish, Uyghur, Ukrainian, Urdu, Urdu
+  (Pakistan), Vietnamese, Chinese (China), Chinese (Taiwan).
+
 1.4.0
 =====
 - Add a 64x64 and 128x128 icon for Thunar.
