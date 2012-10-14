@@ -856,12 +856,15 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   const gchar       *name;
   const gchar       *path;
   GVolume           *volume;
-  guint64            size;
+  guint64            fs_free;
+  guint64            fs_size;
   GIcon             *gicon;
   glong              offset;
   gchar             *date;
   gchar             *display_name;
-  gchar             *size_string;
+  gchar             *fs_free_str;
+  gchar             *fs_size_str;
+  gchar             *fs_string;
   gchar             *str;
   gchar             *volume_name;
   ThunarFile        *file;
@@ -1044,12 +1047,20 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
 
   /* update the free space (only for folders) */
   if (thunar_file_is_directory (file)
-      && thunar_file_get_free_space (file, &size))
+      && thunar_file_get_free_space (file, &fs_free, &fs_size)
+      && fs_size > 0)
     {
-      size_string = g_format_size (size);
-      gtk_label_set_text (GTK_LABEL (dialog->freespace_label), size_string);
+      fs_free_str = g_format_size (fs_free);
+      fs_size_str = g_format_size (fs_size);
+      fs_string = g_strdup_printf (_("%s of %s (%d%% used)"),
+                                   fs_free_str, fs_size_str,
+                                   (gint) ((fs_size - fs_free) * 100 / fs_size));
+      g_free (fs_free_str);
+      g_free (fs_size_str);
+
+      gtk_label_set_text (GTK_LABEL (dialog->freespace_label), fs_string);
       gtk_widget_show (dialog->freespace_label);
-      g_free (size_string);
+      g_free (fs_string);
     }
   else
     {

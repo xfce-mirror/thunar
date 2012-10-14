@@ -2260,7 +2260,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       file = (store->folder != NULL) ? thunar_folder_get_corresponding_file (store->folder) : NULL;
 
       /* check if we can determine the amount of free space for the volume */
-      if (G_LIKELY (file != NULL && thunar_file_get_free_space (file, &size)))
+      if (G_LIKELY (file != NULL && thunar_file_get_free_space (file, &size, NULL)))
         {
           /* humanize the free space */
           fspace_string = g_format_size (size);

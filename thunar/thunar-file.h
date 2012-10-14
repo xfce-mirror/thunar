@@ -180,7 +180,8 @@ GFileType         thunar_file_get_kind             (const ThunarFile       *file
 GFile            *thunar_file_get_target_location  (const ThunarFile       *file);
 ThunarFileMode    thunar_file_get_mode             (const ThunarFile       *file);
 gboolean          thunar_file_get_free_space       (const ThunarFile       *file, 
-                                                    guint64                *free_space_return);
+                                                    guint64                *fs_free_return,
+                                                    guint64                *fs_size_return);
 gboolean          thunar_file_is_mounted           (const ThunarFile       *file);
 gboolean          thunar_file_exists               (const ThunarFile       *file);
 gboolean          thunar_file_is_directory         (const ThunarFile       *file) G_GNUC_PURE;
