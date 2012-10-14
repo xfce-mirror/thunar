@@ -221,6 +221,7 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
   GdkPixbuf                   *temp;
   GIcon                       *gicon;
   cairo_t                     *cr;
+  gdouble                      alpha;
 
   /* check if we have a volume set */
   if (G_UNLIKELY (shortcuts_icon_renderer->gicon != NULL
@@ -266,14 +267,12 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
               icon_area.height = gdk_pixbuf_get_height (icon);
             }
 
+          /* 50% translucent for unmounted volumes */
           if (shortcuts_icon_renderer->device != NULL
               && !thunar_device_is_mounted (shortcuts_icon_renderer->device))
-            {
-              /* 50% translucent for unmounted volumes */
-              temp = exo_gdk_pixbuf_lucent (icon, 50);
-              g_object_unref (G_OBJECT (icon));
-              icon = temp;
-            }
+            alpha = 0.50;
+          else
+            alpha = 1.00;
 
           icon_area.x = cell_area->x + (cell_area->width - icon_area.width) / 2;
           icon_area.y = cell_area->y + (cell_area->height - icon_area.height) / 2;
@@ -285,7 +284,7 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
               cr = gdk_cairo_create (window);
               gdk_cairo_set_source_pixbuf (cr, icon, icon_area.x, icon_area.y);
               gdk_cairo_rectangle (cr, &draw_area);
-              cairo_fill (cr);
+              cairo_paint_with_alpha (cr, alpha);
               cairo_destroy (cr);
             }
 

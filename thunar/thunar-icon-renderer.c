@@ -334,6 +334,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   gint                    max_emblems;
   gint                    position;
   cairo_t                *cr;
+  gdouble                 alpha;
 
   if (G_UNLIKELY (icon_renderer->file == NULL))
     return;
@@ -390,16 +391,16 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
       if (thunar_clipboard_manager_has_cutted_file (clipboard, icon_renderer->file))
         {
           /* 50% translucent for cutted files */
-          temp = exo_gdk_pixbuf_lucent (icon, 50);
-          g_object_unref (G_OBJECT (icon));
-          icon = temp;
+          alpha = 0.50;
         }
       else if (thunar_file_is_hidden (icon_renderer->file))
         {
           /* 75% translucent for hidden files */
-          temp = exo_gdk_pixbuf_lucent (icon, 75);
-          g_object_unref (G_OBJECT (icon));
-          icon = temp;
+          alpha = 0.75;
+        }
+      else
+        {
+          alpha = 1.00;
         }
       g_object_unref (G_OBJECT (clipboard));
 
@@ -444,7 +445,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
       /* render the invalid parts of the icon */
       gdk_cairo_set_source_pixbuf (cr, icon, icon_area.x, icon_area.y);
       gdk_cairo_rectangle (cr, &draw_area);
-      cairo_fill (cr);
+      cairo_paint_with_alpha (cr, alpha);
     }
 
   /* release the file's icon */
@@ -526,7 +527,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
                   /* render the invalid parts of the icon */
                   gdk_cairo_set_source_pixbuf (cr, emblem, emblem_area.x, emblem_area.y);
                   gdk_cairo_rectangle (cr, &draw_area);
-                  cairo_fill (cr);
+                  cairo_paint (cr);
                 }
 
               /* release the emblem */
