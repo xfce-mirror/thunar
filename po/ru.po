@@ -1003,7 +1003,7 @@ msgstr "Пропустить?"
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
-msgstr ""
+msgstr "Недостаточно свободного места в папке назначения. Попробуйте удалить некоторые файлы, чтобы его освободить."
 
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:169 ../thunar/thunar-launcher.c:811
@@ -1218,9 +1218,9 @@ msgid "\"%s\" (%s) %s"
 msgstr "«%s» (%s) %s"
 
 #: ../thunar/thunar-list-model.c:2343
-#, fuzzy, c-format
+#, c-format
 msgid "\"%s\" %s"
-msgstr "«%s» (%s) %s"
+msgstr "«%s» %s"
 
 #. TRANSLATORS: Try to come up with a short translation of "Original Path"
 #. (which is the path
@@ -1240,7 +1240,7 @@ msgstr "Размер:"
 
 #. item count if there are also folders in the selection
 #: ../thunar/thunar-list-model.c:2406
-#, fuzzy, c-format
+#, c-format
 msgid "%d other item selected (%s)"
 msgid_plural "%d other items selected (%s)"
 msgstr[0] "выбран %d другой объект (%s)"
@@ -1257,7 +1257,7 @@ msgstr[1] "выбрано %d объекта (%s)"
 msgstr[2] "выбрано %d объектов (%s)"
 
 #: ../thunar/thunar-list-model.c:2427
-#, fuzzy, c-format
+#, c-format
 msgid "%d folder selected"
 msgid_plural "%d folders selected"
 msgstr[0] "выбрана %d папка"
@@ -2075,11 +2075,11 @@ msgstr ""
 
 #: ../thunar/thunar-shortcuts-model.c:801
 msgid "DEVICES"
-msgstr ""
+msgstr "Устройства"
 
 #: ../thunar/thunar-shortcuts-model.c:847
 msgid "NETWORK"
-msgstr ""
+msgstr "Сеть"
 
 #: ../thunar/thunar-shortcuts-model.c:853
 msgid "Browse Network"
@@ -2182,7 +2182,6 @@ msgstr[2] "%u элементов, вычисление объёма %s"
 #. TRANSLATORS: this is shows if during the deep count size
 #. * directories were not accessible
 #: ../thunar/thunar-size-label.c:385
-#, fuzzy
 msgid "(some contents unreadable)"
 msgstr "(некоторые файлы нечитаемы)"
 
@@ -2377,9 +2376,9 @@ msgid ""
 msgstr "Ошибка в процессе копирования в «%s»: %s недостаточно места для завершеня копирования."
 
 #: ../thunar/thunar-transfer-job.c:744
-#, c-format
+#, c-format, fuzzy
 msgid "Error while copying to \"%s\": The destination is read-only"
-msgstr ""
+msgstr "Ошибка при копировании в «%s». Путь назначения находится на ФС, смонтированной «только для чтения»."
 
 #: ../thunar/thunar-transfer-job.c:787
 msgid "Collecting files..."
@@ -2419,33 +2418,33 @@ msgstr ""
 "Невозможно переместить «%s» напрямую. Файл отмечен для группового копирования"
 
 #: ../thunar/thunar-transfer-job.c:1084
-#, fuzzy, c-format
+#, c-format
 msgid "%s of %s"
-msgstr "копия %s"
+msgstr "%s из %s"
 
 #: ../thunar/thunar-transfer-job.c:1104
-#, fuzzy, c-format
+#, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
-msgstr[0] "остаётся %lu час"
-msgstr[1] "(остаётся %lu часа)"
-msgstr[2] "(остаётся %lu часов)"
+msgstr[0] "остаётся %lu час (%s/сек)"
+msgstr[1] "остаётся %lu часа (%s/сек)"
+msgstr[2] "остаётся %lu часов (%s/сек)"
 
 #: ../thunar/thunar-transfer-job.c:1112
-#, fuzzy, c-format
+#, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
-msgstr[0] "остаётся %lu минут"
-msgstr[1] "(остаётся %lu минуты)"
-msgstr[2] "(остаётся %lu минут)"
+msgstr[0] "остаётся %lu минут (%s/сек)"
+msgstr[1] "остаётся %lu минуты (%s/сек)"
+msgstr[2] "(остаётся %lu минут (%s/сек)"
 
 #: ../thunar/thunar-transfer-job.c:1119
-#, fuzzy, c-format
+#, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
-msgstr[0] "остаётся %lu секунд"
-msgstr[1] "(остаётся %lu секунды)"
-msgstr[2] "(остаётся %lu секунд)"
+msgstr[0] "остаётся %lu секунд (%s/сек)"
+msgstr[1] "остаётся %lu секунды (%s/сек)"
+msgstr[2] "остаётся %lu секунд (%s/сек)"
 
 #: ../thunar/thunar-trash-action.c:104
 msgid "T_rash"
@@ -2728,12 +2727,11 @@ msgstr "Показать/скрыть строку статуса"
 
 #: ../thunar/thunar-window.c:350
 msgid "_Menubar"
-msgstr ""
+msgstr "Панель меню"
 
 #: ../thunar/thunar-window.c:350
-#, fuzzy
 msgid "Change the visibility of this window's menubar"
-msgstr "Показать/скрыть строку статуса"
+msgstr "Показать/скрыть меню окна"
 
 #. * add view options
 #. 
@@ -2911,12 +2909,11 @@ msgstr "Программа, которая будет запущена, с во�
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:197
 msgid "Working Directory:"
-msgstr ""
+msgstr "Рабочий каталог"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:204
-#, fuzzy
 msgid "The working directory for the program."
-msgstr "Рабочий каталог должен быть указан в виде абсолютного пути"
+msgstr "Рабочий каталог для программы"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:219
 msgid "URL:"
@@ -3575,7 +3572,6 @@ msgid "_Other Files"
 msgstr "_Другие файлы"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:445
-#, fuzzy
 msgid ""
 "This page lists the conditions under which the\n"
 "action will appear in the file managers context\n"
