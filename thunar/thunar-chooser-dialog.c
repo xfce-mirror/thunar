@@ -185,7 +185,6 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
 
   /* setup basic window properties */
   gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
-  gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
   gtk_window_set_title (GTK_WINDOW (dialog), _("Open With"));
 
   /* create the main widget box */
