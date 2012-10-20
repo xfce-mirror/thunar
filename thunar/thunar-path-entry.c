@@ -915,10 +915,16 @@ thunar_path_entry_match_func (GtkEntryCompletion *completion,
       /* determine the real file name for the iter */
       gtk_tree_model_get (model, iter, THUNAR_COLUMN_FILE_NAME, &name, -1);
       name_normalized = g_utf8_normalize (name, -1, G_NORMALIZE_ALL);
-      g_free (name);
+      if (G_LIKELY (name_normalized != NULL))
+        g_free (name);
+      else
+        name_normalized = name;
 
       /* check if we have a match here */
-      matched = g_str_has_prefix (name_normalized, last_slash);
+      if (name_normalized != NULL)
+        matched = g_str_has_prefix (name_normalized, last_slash);
+      else
+        matched = FALSE;
 
       /* cleanup */
       g_free (name_normalized);
