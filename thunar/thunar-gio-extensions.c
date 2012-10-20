@@ -23,8 +23,10 @@
 #endif
 
 #include <gio/gio.h>
+
 #ifdef HAVE_GIO_UNIX
 #include <gio/gunixmounts.h>
+#include <gio/gdesktopappinfo.h>
 #endif
 
 #include <exo/exo.h>
@@ -467,3 +469,34 @@ thunar_g_app_info_launch (GAppInfo          *info,
   return result;
 }
 
+
+
+gboolean
+thunar_g_app_info_should_show (GAppInfo *info)
+{
+#ifdef HAVE_GIO_UNIX
+  const gchar *filename;
+
+  _thunar_return_val_if_fail (G_IS_APP_INFO (info), FALSE);
+
+  /* check if NoDesktop is set or OnlyShowIn is set but
+   * does not contain XFCE */
+  if (g_app_info_should_show (info))
+    return TRUE;
+
+  if (G_IS_DESKTOP_APP_INFO (info))
+    {
+      /* show custom command from the user directory, this to not
+       * exclude custom commands */
+      filename = g_desktop_app_info_get_filename (G_DESKTOP_APP_INFO (info));
+      if (filename != NULL
+          && g_str_has_prefix (filename, g_get_user_data_dir ()))
+        return TRUE;
+    }
+
+  return FALSE;
+#else
+  /* we cannot exclude custom actions, so show everything */
+  return TRUE;
+#endif
+}

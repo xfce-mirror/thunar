@@ -75,6 +75,8 @@ gboolean  thunar_g_app_info_launch                  (GAppInfo          *info,
                                                      GAppLaunchContext *context,
                                                      GError           **error);
 
+gboolean  thunar_g_app_info_should_show             (GAppInfo          *info);
+
 G_END_DECLS
 
 #endif /* !__THUNAR_GIO_EXTENSIONS_H__ */

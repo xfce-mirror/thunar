@@ -454,7 +454,7 @@ thunar_chooser_button_file_changed (ThunarChooserButton *chooser_button,
           for (lp = app_infos, i = 0; lp != NULL; lp = lp->next, ++i)
             {
               /* skip infos that have NoDisplay or OnlyShowIn set */
-              if (g_app_info_should_show (lp->data))
+              if (thunar_g_app_info_should_show (lp->data))
                 {
                   /* insert the item into the store */
                   gtk_list_store_insert_with_values (chooser_button->store, &iter, i,

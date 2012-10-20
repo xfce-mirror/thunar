@@ -3676,7 +3676,7 @@ thunar_file_list_get_applications (GList *file_list)
       /* grab a pointer on the next application */
       next = ap->next;
 
-      if (!g_app_info_should_show (ap->data))
+      if (!thunar_g_app_info_should_show (ap->data))
         {
           /* drop our reference on the application */
           g_object_unref (G_OBJECT (ap->data));
