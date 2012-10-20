@@ -67,7 +67,8 @@ gboolean             thunar_device_is_mounted       (const ThunarDevice   *devic
 
 GFile               *thunar_device_get_root         (const ThunarDevice   *device);
 
-const gchar         *thunar_device_get_sort_key     (const ThunarDevice   *device);
+gint                 thunar_device_sort             (const ThunarDevice   *device1,
+                                                     const ThunarDevice   *device2);
 
 void                 thunar_device_mount            (ThunarDevice         *device,
                                                      GMountOperation      *mount_operation,

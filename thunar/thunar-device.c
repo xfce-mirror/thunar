@@ -65,7 +65,11 @@ struct _ThunarDevice
 
   ThunarDeviceKind  kind;
 
+  /* if the device is the list of hidden names */
   guint             hidden : 1;
+
+  /* added time for sorting */
+  gint64            stamp;
 };
 
 typedef struct
@@ -128,6 +132,7 @@ static void
 thunar_device_init (ThunarDevice *device)
 {
   device->kind = THUNAR_DEVICE_KIND_VOLUME;
+  device->stamp = g_get_real_time ();
 }
 
 
@@ -645,19 +650,19 @@ thunar_device_get_root (const ThunarDevice *device)
 
 
 
-const gchar *
-thunar_device_get_sort_key (const ThunarDevice *device)
+gint
+thunar_device_sort (const ThunarDevice *device1,
+                    const ThunarDevice *device2)
 {
-  _thunar_return_val_if_fail (THUNAR_IS_DEVICE (device), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_DEVICE (device1), 0);
+  _thunar_return_val_if_fail (THUNAR_IS_DEVICE (device2), 0);
 
-  if (G_IS_VOLUME (device->device))
-    return g_volume_get_sort_key (device->device);
-  else if (G_IS_MOUNT (device->device))
-    return g_mount_get_sort_key (device->device);
-  else
-    _thunar_assert_not_reached ();
+  /* sort volumes above mounts */
+  if (G_OBJECT_TYPE (device1->device) != G_OBJECT_TYPE (device2->device))
+    return G_IS_VOLUME (device1->device) ? 1 : -1;
 
-  return NULL;
+  /* sort by detect stamp */
+  return device1->stamp > device2->stamp ? 1 : -1;
 }
 
 
