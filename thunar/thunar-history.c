@@ -595,6 +595,7 @@ thunar_history_show_menu (GtkAction     *action,
   ThunarFile        *file;
   const gchar       *display_name;
   const gchar       *icon_name;
+  gchar             *parse_name;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (GTK_IS_MENU_SHELL (menu));
@@ -628,6 +629,10 @@ thunar_history_show_menu (GtkAction     *action,
       g_signal_connect (G_OBJECT (item), "activate", handler, history);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
+
+      parse_name = g_file_get_parse_name (lp->data);
+      gtk_widget_set_tooltip_text (item, parse_name);
+      g_free (parse_name);
 
       file = thunar_file_cache_lookup (lp->data);
       image = NULL;
