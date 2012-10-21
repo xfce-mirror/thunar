@@ -3071,6 +3071,8 @@ thunar_window_set_current_directory (ThunarWindow *window,
            * directory */
           if (thunar_file_is_parent (window->current_directory, selected_file))
             selected_files.data = selected_file;
+          else
+            g_object_unref (selected_file);
         }
 
       /* do the same with the previous file in the history */
@@ -3083,13 +3085,18 @@ thunar_window_set_current_directory (ThunarWindow *window,
                * new directory */
               if (thunar_file_is_parent (window->current_directory, selected_file))
                 selected_files.data = selected_file;
+              else
+                g_object_unref (selected_file);
             }
         }
 
       /* select the previous or next file from the history if it is inside the
        * new current directory */
       if (selected_files.data != NULL)
-        thunar_component_set_selected_files (THUNAR_COMPONENT (window->view), &selected_files);
+        {
+          thunar_component_set_selected_files (THUNAR_COMPONENT (window->view), &selected_files);
+          g_object_unref (G_OBJECT (selected_files.data));
+        }
     }
 }
 
