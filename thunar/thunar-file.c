@@ -567,7 +567,6 @@ thunar_file_monitor_update (GFile             *path,
   ThunarFile *file;
 
   _thunar_return_if_fail (G_IS_FILE (path));
-  
   file = thunar_file_cache_lookup (path);
   if (G_LIKELY (file != NULL))
     {
@@ -1011,13 +1010,13 @@ thunar_file_get (GFile   *gfile,
 
       if (thunar_file_load (file, NULL, error))
         {
-          /* insert the file into the cache */
+          /* setup lock until the file is inserted */
           G_LOCK (file_cache_mutex);
-#ifdef G_ENABLE_DEBUG
-          /* check if there is no instance created in the meantime */
-          _thunar_assert (g_hash_table_lookup (file_cache, file->gfile) == NULL);
-#endif
+
+          /* insert the file into the cache */
           g_hash_table_insert (file_cache, g_object_ref (file->gfile), file);
+
+          /* done inserting in the cache */
           G_UNLOCK (file_cache_mutex);
         }
       else
@@ -3569,9 +3568,8 @@ gchar *
 thunar_file_cached_display_name (const GFile *file)
 {
   ThunarFile *cached_file;
-  gchar      *base_name;
   gchar      *display_name;
-      
+
   /* check if we have a ThunarFile for it in the cache (usually is the case) */
   cached_file = thunar_file_cache_lookup (file);
   if (cached_file != NULL)
@@ -3582,9 +3580,7 @@ thunar_file_cached_display_name (const GFile *file)
   else
     {
       /* determine something a hopefully good approximation of the display name */
-      base_name = g_file_get_basename (G_FILE (file));
-      display_name = g_filename_display_name (base_name);
-      g_free (base_name);
+      display_name = thunar_g_file_get_display_name (G_FILE (file));
     }
 
   return display_name;
