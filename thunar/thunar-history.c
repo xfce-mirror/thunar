@@ -646,14 +646,14 @@ thunar_history_show_menu (GtkAction     *action,
       if (image == NULL)
         {
           /* some custom likely alternatives */
-          if (thunar_g_file_is_root (lp->data))
-            icon_name = "drive-harddisk";
-          else if (thunar_g_file_is_home (lp->data))
+          if (thunar_g_file_is_home (lp->data))
             icon_name = "user-home";
-          else if (g_file_has_uri_scheme (lp->data, "file"))
-            icon_name = GTK_STOCK_DIRECTORY;
-          else
+          else if (!g_file_has_uri_scheme (lp->data, "file"))
             icon_name = "folder-remote";
+          else if (thunar_g_file_is_root (lp->data))
+            icon_name = "drive-harddisk";
+          else
+            icon_name = GTK_STOCK_DIRECTORY;
 
           image = gtk_image_new_from_icon_name (icon_name, GTK_ICON_SIZE_MENU);
         }
