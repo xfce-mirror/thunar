@@ -759,7 +759,7 @@ thunar_window_init (ThunarWindow *window)
   window->preferences = thunar_preferences_get ();
 
   /* allocate the scroll_to_files mapping */
-  window->scroll_to_files = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, g_object_unref);
+  window->scroll_to_files = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, g_object_unref, g_object_unref);
 
   /* connect to the volume monitor */
   window->device_monitor = thunar_device_monitor_get ();
@@ -2986,6 +2986,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
   ThunarFile *file;
   ThunarFile *selected_file;
   GList       selected_files;
+  GFile      *gfile;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
@@ -3001,7 +3002,10 @@ thunar_window_set_current_directory (ThunarWindow *window,
       if (window->view != NULL && thunar_view_get_visible_range (THUNAR_VIEW (window->view), &file, NULL))
         {
           /* add the file to our internal mapping of directories to scroll files */
-          g_hash_table_replace (window->scroll_to_files, g_object_ref (G_OBJECT (window->current_directory)), file);
+          g_hash_table_replace (window->scroll_to_files,
+                                g_object_ref (thunar_file_get_file (window->current_directory)),
+                                g_object_ref (thunar_file_get_file (file)));
+          g_object_unref (file);
         }
 
       /* disconnect signals and release reference */
@@ -3046,9 +3050,13 @@ thunar_window_set_current_directory (ThunarWindow *window,
   if (G_LIKELY (window->current_directory != NULL))
     {
       /* check if we have a scroll_to_file for the new directory and scroll to the file */
-      file = g_hash_table_lookup (window->scroll_to_files, window->current_directory);
-      if (G_LIKELY (file != NULL))
-        thunar_window_scroll_to_file (window, file, FALSE, TRUE, 0.1f, 0.1f);
+      gfile = g_hash_table_lookup (window->scroll_to_files, thunar_file_get_file (window->current_directory));
+      if (G_LIKELY (gfile != NULL))
+        {
+          file = thunar_file_cache_lookup (gfile);
+          if (G_LIKELY (file != NULL))
+            thunar_window_scroll_to_file (window, file, FALSE, TRUE, 0.1f, 0.1f);
+        }
 
       /* reset the selected files list */
       selected_files.data = NULL;
