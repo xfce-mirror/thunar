@@ -257,6 +257,75 @@ thunar_g_file_get_display_name (GFile *file)
 
 
 
+gchar *
+thunar_g_file_get_display_name_remote (GFile *mount_point)
+{
+  gchar       *scheme;
+  gchar       *parse_name;
+  const gchar *p;
+  const gchar *path;
+  gchar       *hostname;
+  gchar       *display_name = NULL;
+  const gchar *skip;
+  const gchar  skip_chars[] = G_URI_RESERVED_CHARS_ALLOWED_IN_PATH_ELEMENT;
+  guint        n;
+
+  _thunar_return_val_if_fail (G_IS_FILE (mount_point), NULL);
+
+  /* not intended for local mounts */
+  if (!g_file_is_native (mount_point))
+    {
+      scheme = g_file_get_uri_scheme (mount_point);
+      parse_name = g_file_get_parse_name (mount_point);
+
+      if (g_str_has_prefix (parse_name, scheme))
+        {
+          /* extract the hostname */
+          p = parse_name + strlen (scheme);
+          while (*p == ':' || *p == '/')
+            ++p;
+
+          /* goto path part */
+          path = strchr (p, '/');
+
+          /* skip password or login names in the hostname */
+          for (n = 0; n < G_N_ELEMENTS (skip_chars) - 1; n++)
+            {
+              skip = strchr (p, skip_chars[n]);
+              if (skip != NULL && (path == NULL || skip < path))
+                p = skip + 1;
+            }
+
+          /* extract the path and hostname from the string */
+          if (G_LIKELY (path != NULL))
+            {
+              hostname = g_strndup (p, path - p);
+            }
+          else
+            {
+              hostname = g_strdup (p);
+              path = "/";
+            }
+
+          /* TRANSLATORS: this will result in "<path> on <hostname>" */
+          display_name = g_strdup_printf (_("%s on %s"), path, hostname);
+
+          g_free (hostname);
+        }
+
+      g_free (scheme);
+      g_free (parse_name);
+    }
+
+  /* never return null */
+  if (display_name == NULL)
+    display_name = thunar_g_file_get_display_name (mount_point);
+
+  return display_name;
+}
+
+
+
 gboolean
 thunar_g_vfs_is_uri_scheme_supported (const gchar *scheme)
 {
