@@ -340,7 +340,7 @@ thunar_device_volume_mount_finished (GObject      *object,
   _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
 
   /* finish the eject */
-  if (!g_volume_eject_with_operation_finish (G_VOLUME (object), result, &error))
+  if (!g_volume_mount_finish (G_VOLUME (object), result, &error))
     {
       /* unset the error if a helper program has already interacted with the user */
       if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_FAILED_HANDLED)
