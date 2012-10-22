@@ -564,7 +564,7 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
       else if (shortcut->file != NULL)
         g_value_set_static_string (value, thunar_file_get_display_name (shortcut->file));
       else if (shortcut->location != NULL)
-        g_value_take_string (value, thunar_g_file_get_display_name (shortcut->location));
+        g_value_take_string (value, thunar_g_file_get_display_name_remote (shortcut->location));
       else
         g_value_set_static_string (value, "");
       break;
@@ -1617,6 +1617,49 @@ thunar_shortcuts_model_get_default (void)
 
 
 /**
+ * thunar_shortcuts_model_has_bookmark:
+ * @model : a #ThunarShortcutsModel instance.
+ * @file  : a #ThuanrFile instance.
+ *
+ * Returns %TRUE if there is a bookmark (not a mount or volume) with
+ * @file as destination.
+ *
+ * Return value: %TRUE if @file was found, else %FALSE.
+ **/
+gboolean
+thunar_shortcuts_model_has_bookmark (ThunarShortcutsModel *model,
+                                     GFile                *file)
+{
+  GList          *lp;
+  ThunarShortcut *shortcut;
+
+  _thunar_return_val_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model), FALSE);
+  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+
+  for (lp = model->shortcuts; lp != NULL; lp = lp->next)
+    {
+      shortcut = lp->data;
+
+      /* only check bookmarks */
+      if (shortcut->group != THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS
+          && shortcut->group != THUNAR_SHORTCUT_GROUP_NETWORK_BOOKMARKS)
+        continue;
+
+      if (shortcut->file != NULL
+          && g_file_equal (thunar_file_get_file (shortcut->file), file))
+        return TRUE;
+
+      if (shortcut->location != NULL
+          && g_file_equal (shortcut->location, file))
+        return TRUE;
+    }
+
+  return FALSE;
+}
+
+
+
+/**
  * thunar_shortcuts_model_iter_for_file:
  * @model : a #ThunarShortcutsModel instance.
  * @file  : a #ThuanrFile instance.
@@ -1736,27 +1779,32 @@ thunar_shortcuts_model_drop_possible (ThunarShortcutsModel *model,
 void
 thunar_shortcuts_model_add (ThunarShortcutsModel *model,
                             GtkTreePath          *dst_path,
-                            ThunarFile           *file)
+                            gpointer              file)
 {
   ThunarShortcut *shortcut;
-  GList           *lp;
+  GFile          *location;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
-  _thunar_return_if_fail (gtk_tree_path_get_depth (dst_path) > 0);
-  _thunar_return_if_fail (gtk_tree_path_get_indices (dst_path)[0] >= 0);
-  _thunar_return_if_fail (gtk_tree_path_get_indices (dst_path)[0] <= (gint) g_list_length (model->shortcuts));
-  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (dst_path == NULL || gtk_tree_path_get_depth (dst_path) > 0);
+  _thunar_return_if_fail (dst_path == NULL || gtk_tree_path_get_indices (dst_path)[0] >= 0);
+  _thunar_return_if_fail (dst_path == NULL || gtk_tree_path_get_indices (dst_path)[0] <= (gint) g_list_length (model->shortcuts));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file) || G_IS_FILE (file));
+
+  location = G_IS_FILE (file) ? file : thunar_file_get_file (file);
 
   /* verify that the file is not already in use as shortcut */
-  for (lp = model->shortcuts; lp != NULL; lp = lp->next)
-    if (THUNAR_SHORTCUT (lp->data)->file == file)
-      return;
+  if (thunar_shortcuts_model_has_bookmark (model, location))
+    return;
 
   /* create the new shortcut that will be inserted */
   shortcut = g_slice_new0 (ThunarShortcut);
-  shortcut->file = g_object_ref (G_OBJECT (file));
 
-  if (thunar_file_is_local (file))
+  if (THUNAR_IS_FILE (file) && thunar_file_is_local (file))
+    shortcut->file = g_object_ref (G_OBJECT (file));
+  else
+    shortcut->location = g_object_ref (G_OBJECT (location));
+
+  if (g_file_has_uri_scheme (location, "file"))
     {
       shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS;
     }

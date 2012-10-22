@@ -326,7 +326,6 @@ thunar_shortcuts_pane_set_selected_files (ThunarComponent *component,
   ThunarShortcutsPane *shortcuts_pane = THUNAR_SHORTCUTS_PANE (component);
   GtkTreeModel        *model;
   GtkTreeModel        *child_model;
-  GtkTreeIter          iter;
   GtkAction           *action;
   GList               *lp;
   gint                 n;
@@ -353,7 +352,7 @@ thunar_shortcuts_pane_set_selected_files (ThunarComponent *component,
           /* check all selected folders */
           child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
           for (lp = selected_files; lp != NULL; lp = lp->next)
-            if (!thunar_shortcuts_model_iter_for_file (THUNAR_SHORTCUTS_MODEL (child_model), lp->data, &iter))
+            if (!thunar_shortcuts_model_has_bookmark (THUNAR_SHORTCUTS_MODEL (child_model), thunar_file_get_file (lp->data)))
               break;
         }
 
@@ -439,7 +438,6 @@ thunar_shortcuts_pane_action_shortcuts_add (GtkAction           *action,
 {
   GtkTreeModel *model;
   GtkTreeModel *child_model;
-  GtkTreePath  *path;
   GList        *lp;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
@@ -455,9 +453,7 @@ thunar_shortcuts_pane_action_shortcuts_add (GtkAction           *action,
         if (G_LIKELY (thunar_file_is_directory (lp->data)))
           {
             /* append the folder to the shortcuts model */
-            path = gtk_tree_path_new_from_indices (gtk_tree_model_iter_n_children (child_model, NULL), -1);
-            thunar_shortcuts_model_add (THUNAR_SHORTCUTS_MODEL (child_model), path, lp->data);
-            gtk_tree_path_free (path);
+            thunar_shortcuts_model_add (THUNAR_SHORTCUTS_MODEL (child_model), NULL, lp->data);
           }
 
       /* update the user interface to reflect the new action state */

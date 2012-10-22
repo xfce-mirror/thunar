@@ -26,6 +26,7 @@
 #include <thunar/thunar-device.h>
 #include <thunar/thunar-device-monitor.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-file.h>
 
 
 
@@ -396,12 +397,30 @@ thunar_device_volume_eject_finish (GObject      *object,
 gchar *
 thunar_device_get_name (const ThunarDevice *device)
 {
+  GFile *mount_point;
+  gchar *display_name = NULL;
+
   _thunar_return_val_if_fail (THUNAR_IS_DEVICE (device), NULL);
 
   if (G_IS_VOLUME (device->device))
-    return g_volume_get_name (device->device);
+    {
+      return g_volume_get_name (device->device);
+    }
   else if (G_IS_MOUNT (device->device))
-   return g_mount_get_name (device->device);
+    {
+      /* probably we can make a nicer name for this mount */
+      mount_point = thunar_device_get_root (device);
+      if (mount_point != NULL)
+        {
+          display_name = thunar_g_file_get_display_name_remote (mount_point);
+          g_object_unref (mount_point);
+        }
+
+      if (display_name == NULL)
+        display_name = g_mount_get_name (device->device);
+
+      return display_name;
+    }
   else
     _thunar_assert_not_reached ();
 

@@ -45,6 +45,7 @@
 #include <thunar/thunar-shortcuts-model.h>
 #include <thunar/thunar-shortcuts-view.h>
 #include <thunar/thunar-device-monitor.h>
+#include <thunar/thunar-stock.h>
 
 
 
@@ -132,6 +133,7 @@ static void           thunar_shortcuts_view_open                         (Thunar
                                                                           gboolean                  new_window);
 static void           thunar_shortcuts_view_open_in_new_window_clicked   (ThunarShortcutsView      *view);
 static void           thunar_shortcuts_view_empty_trash                  (ThunarShortcutsView      *view);
+static void           thunar_shortcuts_view_create_shortcut              (ThunarShortcutsView      *view);
 static void           thunar_shortcuts_view_eject                        (ThunarShortcutsView      *view);
 static void           thunar_shortcuts_view_mount                        (ThunarShortcutsView      *view);
 static void           thunar_shortcuts_view_unmount                      (ThunarShortcutsView      *view);
@@ -1017,6 +1019,8 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   GList               *actions = NULL, *tmp;
   ThunarShortcutGroup  group;
   gboolean             is_header;
+  GFile               *mount_point;
+  GtkTreeModel        *shortcuts_model;
 
   /* check if this is an item menu or a header menu */
   gtk_tree_model_get (model, iter, THUNAR_SHORTCUTS_MODEL_COLUMN_HEADER, &is_header, -1);
@@ -1085,8 +1089,32 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
         g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_eject), view);
         break;
 
-      case THUNAR_SHORTCUT_GROUP_DEVICES_MOUNTS:
       case THUNAR_SHORTCUT_GROUP_NETWORK_MOUNTS:
+        /* append a menu separator */
+        item = gtk_separator_menu_item_new ();
+        gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+        gtk_widget_show (item);
+
+        /* get the mount point */
+        mount_point = thunar_device_get_root (device);
+        shortcuts_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
+
+        /* append the "Disconnect" item */
+        item = gtk_image_menu_item_new_with_mnemonic (_("Create _Shortcut"));
+        gtk_widget_set_sensitive (item, mount_point != NULL && !thunar_shortcuts_model_has_bookmark (THUNAR_SHORTCUTS_MODEL (shortcuts_model), mount_point));
+        g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_create_shortcut), view);
+        gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+        gtk_widget_show (item);
+
+        image = gtk_image_new_from_stock (THUNAR_STOCK_SHORTCUTS, GTK_ICON_SIZE_MENU);
+        gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+
+        if (mount_point != NULL)
+          g_object_unref (mount_point);
+
+        /* fall-through */
+
+      case THUNAR_SHORTCUT_GROUP_DEVICES_MOUNTS:
         /* append a menu separator */
         item = gtk_separator_menu_item_new ();
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
@@ -1098,6 +1126,9 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
         g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_eject), view);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
         gtk_widget_show (item);
+
+        image = gtk_image_new_from_stock (GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_MENU);
+        gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
         break;
 
       case THUNAR_SHORTCUT_GROUP_PLACES_TRASH:
@@ -1569,7 +1600,7 @@ thunar_shortcuts_view_poke_location_finish (ThunarBrowser *browser,
     }
   else
     {
-      name = thunar_g_file_get_display_name (location);
+      name = thunar_g_file_get_display_name_remote (location);
       thunar_dialogs_show_error (GTK_WIDGET (browser), error, _("Failed to open \"%s\""), name);
       g_free (name);
     }
@@ -1700,6 +1731,41 @@ thunar_shortcuts_view_empty_trash (ThunarShortcutsView *view)
   application = thunar_application_get ();
   thunar_application_empty_trash (application, GTK_WIDGET (view), NULL);
   g_object_unref (G_OBJECT (application));
+}
+
+
+
+static void
+thunar_shortcuts_view_create_shortcut (ThunarShortcutsView *view)
+{
+  GtkTreeSelection *selection;
+  GtkTreeModel     *model;
+  GtkTreeIter       iter;
+  ThunarDevice     *device;
+  GFile            *mount_point;
+  GtkTreeModel     *shortcuts_model;
+
+  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
+
+  /* determine the selected item */
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+  if (gtk_tree_selection_get_selected (selection, &model, &iter))
+    {
+      /* determine the device/mount for the shortcut at the given tree iterator */
+      gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_DEVICE, &device, -1);
+      _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
+
+      /* add the mount point to the model */
+      mount_point = thunar_device_get_root (device);
+      if (mount_point != NULL)
+        {
+          shortcuts_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
+          thunar_shortcuts_model_add (THUNAR_SHORTCUTS_MODEL (shortcuts_model), NULL, mount_point);
+          g_object_unref (mount_point);
+        }
+
+      g_object_unref (G_OBJECT (device));
+    }
 }
 
 

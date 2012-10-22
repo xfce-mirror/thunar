@@ -98,6 +98,9 @@ GType                  thunar_shortcuts_model_get_type      (void) G_GNUC_CONST;
 
 ThunarShortcutsModel  *thunar_shortcuts_model_get_default   (void);
 
+gboolean               thunar_shortcuts_model_has_bookmark  (ThunarShortcutsModel *model,
+                                                             GFile                *file);
+
 gboolean               thunar_shortcuts_model_iter_for_file (ThunarShortcutsModel *model,
                                                              ThunarFile           *file,
                                                              GtkTreeIter          *iter);
@@ -107,7 +110,7 @@ gboolean               thunar_shortcuts_model_drop_possible (ThunarShortcutsMode
 
 void                   thunar_shortcuts_model_add           (ThunarShortcutsModel *model,
                                                              GtkTreePath          *dst_path,
-                                                             ThunarFile           *file);
+                                                             gpointer              file);
 void                   thunar_shortcuts_model_move          (ThunarShortcutsModel *model,
                                                              GtkTreePath          *src_path,
                                                              GtkTreePath          *dst_path);
