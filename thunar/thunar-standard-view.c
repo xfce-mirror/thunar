@@ -746,6 +746,7 @@ thunar_standard_view_finalize (GObject *object)
   _thunar_assert (standard_view->clipboard == NULL);
 
   /* release the thumbnailer */
+  g_signal_handlers_disconnect_by_func (standard_view->priv->thumbnailer, thunar_standard_view_finished_thumbnailing, standard_view);
   g_object_unref (standard_view->priv->thumbnailer);
 
   /* release the scroll_to_file reference (if any) */

@@ -55,6 +55,7 @@
 #include <thunar/thunar-progress-dialog.h>
 #include <thunar/thunar-renamer-dialog.h>
 #include <thunar/thunar-thumbnail-cache.h>
+#include <thunar/thunar-thumbnailer.h>
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-view.h>
 
@@ -137,6 +138,7 @@ struct _ThunarApplication
   GList                 *windows;
 
   ThunarThumbnailCache  *thumbnail_cache;
+  ThunarThumbnailer     *thumbnailer;
 
   gboolean               daemon;
 
@@ -213,7 +215,6 @@ thunar_application_init (ThunarApplication *application)
 
   /* initialize the application */
   application->preferences = thunar_preferences_get ();
-  application->thumbnail_cache = thunar_thumbnail_cache_new ();
 
   application->files_to_launch = NULL;
   application->progress_dialog = NULL;
@@ -279,6 +280,10 @@ thunar_application_finalize (GObject *object)
   if (G_UNLIKELY (application->show_dialogs_timer_id != 0))
     g_source_remove (application->show_dialogs_timer_id);
 
+  /* drop ref on the thumbnailer */
+  if (application->thumbnailer != NULL)
+    g_object_unref (application->thumbnailer);
+
   /* drop the open windows (this includes the progress dialog) */
   for (lp = application->windows; lp != NULL; lp = lp->next)
     {
@@ -288,7 +293,8 @@ thunar_application_finalize (GObject *object)
   g_list_free (application->windows);
 
   /* release the thumbnail cache */
-  g_object_unref (G_OBJECT (application->thumbnail_cache));
+  if (application->thumbnail_cache != NULL)
+    g_object_unref (G_OBJECT (application->thumbnail_cache));
 
   /* disconnect from the preferences */
   g_object_unref (G_OBJECT (application->preferences));
@@ -527,6 +533,12 @@ thunar_application_window_destroyed (GtkWidget         *window,
   _thunar_return_if_fail (GTK_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
   _thunar_return_if_fail (g_list_find (application->windows, window) != NULL);
+
+  /* take a ref on the thumbnailer in daemon mode, this way we don't
+   * need to build the content-type / scheme match table
+   */
+  if (application->thumbnailer == NULL && application->daemon)
+    application->thumbnailer = thunar_thumbnailer_get ();
 
   application->windows = g_list_remove (application->windows, window);
 
@@ -2044,6 +2056,10 @@ ThunarThumbnailCache *
 thunar_application_get_thumbnail_cache (ThunarApplication *application)
 {
   _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), NULL);
+
+  if (application->thumbnail_cache == NULL)
+    application->thumbnail_cache = thunar_thumbnail_cache_new ();
+
   return g_object_ref (application->thumbnail_cache);
 }
 

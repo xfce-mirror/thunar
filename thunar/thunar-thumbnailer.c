@@ -947,6 +947,7 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
 }
 
 
+
 void
 thunar_thumbnailer_dequeue (ThunarThumbnailer *thumbnailer,
                             guint              request)
