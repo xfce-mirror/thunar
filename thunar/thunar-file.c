@@ -72,6 +72,9 @@
 /* Additional flags associated with a ThunarFile */
 #define THUNAR_FILE_IN_DESTRUCTION 0x04
 
+/* Dump the file cache every X second, set to 0 to disable */
+#define DUMP_FILE_CACHE 0
+
 
 
 /* Signal identifiers */
@@ -223,6 +226,44 @@ thunar_file_atexit (void)
 
 
 
+#if DUMP_FILE_CACHE
+static void
+thunar_file_cache_dump_foreach (gpointer gfile,
+                                gpointer value,
+                                gpointer user_data)
+{
+  gchar *name;
+
+  name = g_file_get_parse_name (G_FILE (gfile));
+  g_print ("    %s (%u)\n", name, G_OBJECT (value)->ref_count);
+  g_free (name);
+}
+
+
+
+static gboolean
+thunar_file_cache_dump (gpointer user_data)
+{
+  G_LOCK (file_cache_mutex);
+
+  if (file_cache != NULL)
+    {
+      g_print ("--- %d ThunarFile objects in cache:\n",
+               g_hash_table_size (file_cache));
+
+      g_hash_table_foreach (file_cache, thunar_file_cache_dump_foreach, NULL);
+
+      g_print ("\n");
+    }
+
+  G_UNLOCK (file_cache_mutex);
+
+  return TRUE;
+}
+#endif
+
+
+
 static void
 thunar_file_class_init (ThunarFileClass *klass)
 {
@@ -236,6 +277,10 @@ thunar_file_class_init (ThunarFileClass *klass)
       thunar_file_atexit_registered = TRUE;
     }
 #endif
+#endif
+
+#if DUMP_FILE_CACHE
+  g_timeout_add_seconds (DUMP_FILE_CACHE, thunar_file_cache_dump, NULL);
 #endif
 
   /* pre-allocate the required quarks */
