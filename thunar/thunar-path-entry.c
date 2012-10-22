@@ -1154,6 +1154,7 @@ thunar_path_entry_set_current_file (ThunarPathEntry *path_entry,
   GFile *file;
   gchar *text;
   gchar *unescaped;
+  gchar *tmp;
 
   _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
   _thunar_return_if_fail (current_file == NULL || THUNAR_IS_FILE (current_file));
@@ -1180,6 +1181,16 @@ thunar_path_entry_set_current_file (ThunarPathEntry *path_entry,
         {
           /* not a native file, use the URI */
           text = g_file_get_uri (file);
+        }
+
+      /* if the file is a directory, end with a / to avoid loading the parent
+       * directory which is probably not something the user wants */
+      if (thunar_file_is_directory (current_file)
+          && !g_str_has_suffix (text, "/"))
+        {
+          tmp = g_strconcat (text, "/", NULL);
+          g_free (text);
+          text = tmp;
         }
     }
 
