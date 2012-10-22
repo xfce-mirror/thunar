@@ -331,10 +331,10 @@ thunar_shortcuts_pane_set_selected_files (ThunarComponent *component,
   gint                 n;
 
   /* disconnect from the previously selected files... */
-  thunar_file_list_free (shortcuts_pane->selected_files);
+  thunar_g_file_list_free (shortcuts_pane->selected_files);
 
   /* ...and take a copy of the newly selected files */
-  shortcuts_pane->selected_files = thunar_file_list_copy (selected_files);
+  shortcuts_pane->selected_files = thunar_g_file_list_copy (selected_files);
 
   /* check if the selection contains only folders */
   for (lp = selected_files, n = 0; lp != NULL; lp = lp->next, ++n)
@@ -457,8 +457,8 @@ thunar_shortcuts_pane_action_shortcuts_add (GtkAction           *action,
           }
 
       /* update the user interface to reflect the new action state */
-      lp = thunar_file_list_copy (shortcuts_pane->selected_files);
+      lp = thunar_g_file_list_copy (shortcuts_pane->selected_files);
       thunar_component_set_selected_files (THUNAR_COMPONENT (shortcuts_pane), lp);
-      thunar_file_list_free (lp);
+      thunar_g_file_list_free (lp);
     }
 }

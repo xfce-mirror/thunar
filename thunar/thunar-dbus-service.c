@@ -1297,7 +1297,7 @@ thunar_dbus_service_unlink_files (ThunarDBusService  *dbus_service,
         }
 
       /* cleanup */
-      thunar_file_list_free (file_list);
+      thunar_g_file_list_free (file_list);
       g_object_unref (screen);
     }
 

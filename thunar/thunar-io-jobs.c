@@ -1229,7 +1229,7 @@ _thunar_io_jobs_ls (ThunarJob   *job,
         {
           /* none of the handlers took over the file list, so it's up to us
            * to destroy it */
-          thunar_file_list_free (file_list);
+          thunar_g_file_list_free (file_list);
         }
     }
   

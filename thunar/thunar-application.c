@@ -248,7 +248,7 @@ thunar_application_finalize (GObject *object)
   GList             *lp;
 
   /* unqueue all files waiting to be processed */
-  thunar_file_list_free (application->files_to_launch);
+  thunar_g_file_list_free (application->files_to_launch);
 
   /* save the current accel map */
   path = xfce_resource_save_location (XFCE_RESOURCE_CONFIG, "Thunar/accels.scm", TRUE);
@@ -1040,7 +1040,7 @@ thunar_application_bulk_rename (ThunarApplication *application,
 
   /* cleanup */
   g_object_unref (G_OBJECT (current_directory));
-  thunar_file_list_free (file_list);
+  thunar_g_file_list_free (file_list);
 
   return result;
 }
@@ -1102,7 +1102,7 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
         }
 
       /* stop processing files */
-      thunar_file_list_free (application->files_to_launch);
+      thunar_g_file_list_free (application->files_to_launch);
       application->files_to_launch = NULL;
     }
   else
@@ -1230,7 +1230,7 @@ thunar_application_process_filenames (ThunarApplication *application,
                        _("Failed to open \"%s\": %s"), filenames[n], derror->message);
           g_error_free (derror);
 
-          thunar_file_list_free (file_list);
+          thunar_g_file_list_free (file_list);
 
           return FALSE;
         }

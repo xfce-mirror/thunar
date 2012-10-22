@@ -753,7 +753,7 @@ thunar_standard_view_finalize (GObject *object)
     g_object_unref (G_OBJECT (standard_view->priv->scroll_to_file));
 
   /* release the selected_files list (if any) */
-  thunar_file_list_free (standard_view->priv->selected_files);
+  thunar_g_file_list_free (standard_view->priv->selected_files);
 
   /* release our reference on the provider factory */
   g_object_unref (G_OBJECT (standard_view->priv->provider_factory));
@@ -1008,7 +1008,7 @@ thunar_standard_view_set_selected_files (ThunarComponent *component,
   /* release the previous selected files list (if any) */
   if (G_UNLIKELY (standard_view->priv->selected_files != NULL))
     {
-      thunar_file_list_free (standard_view->priv->selected_files);
+      thunar_g_file_list_free (standard_view->priv->selected_files);
       standard_view->priv->selected_files = NULL;
     }
 
@@ -1016,7 +1016,7 @@ thunar_standard_view_set_selected_files (ThunarComponent *component,
   if (thunar_view_get_loading (THUNAR_VIEW (standard_view)))
     {
       /* remember a copy of the list for later */
-      standard_view->priv->selected_files = thunar_file_list_copy (selected_files);
+      standard_view->priv->selected_files = thunar_g_file_list_copy (selected_files);
     }
   else
     {
@@ -1313,7 +1313,7 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
       thunar_component_set_selected_files (THUNAR_COMPONENT (standard_view), selected_files);
 
       /* cleanup */
-      thunar_file_list_free (selected_files);
+      thunar_g_file_list_free (selected_files);
     }
 
   /* check if we're done loading and a thumbnail timeout or idle was requested */
@@ -1742,7 +1742,7 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
 
       /* cleanup the selected files list (if any) */
       if (G_LIKELY (files != NULL))
-        thunar_file_list_free (files);
+        thunar_g_file_list_free (files);
     }
 
   /* remove the previously determined menu actions from the UI manager */
@@ -3506,7 +3506,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
     }
 
   /* release the previously selected files */
-  thunar_file_list_free (standard_view->priv->selected_files);
+  thunar_g_file_list_free (standard_view->priv->selected_files);
 
   /* determine the new list of selected files (replacing GtkTreePath's with ThunarFile's) */
   selected_files = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);

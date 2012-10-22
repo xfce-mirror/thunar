@@ -418,16 +418,16 @@ thunarx_file_info_list_get_type (void)
 GList*
 thunarx_file_info_list_copy (GList *file_infos)
 {
-  GList *list = NULL;
-  GList *lp;
+#if GLIB_CHECK_VERSION (2, 34, 0)
+  return g_list_copy_deep (file_infos, (GCopyFunc) g_object_ref, NULL);
+#else
+  GList *copy;
 
-  if (file_infos != NULL)
-    {
-      for (lp = g_list_last (file_infos); lp != NULL; lp = lp->prev)
-        list = g_list_prepend (list, g_object_ref (G_OBJECT (lp->data)));
-    }
+  copy = g_list_copy (file_infos);
+  g_list_foreach (copy, (GFunc) g_object_ref, NULL);
 
-  return list;
+  return copy;
+#endif
 }
 
 

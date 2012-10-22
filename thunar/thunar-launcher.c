@@ -282,7 +282,7 @@ thunar_launcher_dispose (GObject *object)
   thunar_launcher_set_widget (THUNAR_LAUNCHER (launcher), NULL);
 
   /* disconnect from the currently selected files */
-  thunar_file_list_free (launcher->selected_files);
+  thunar_g_file_list_free (launcher->selected_files);
   launcher->selected_files = NULL;
 
   (*G_OBJECT_CLASS (thunar_launcher_parent_class)->dispose) (object);
@@ -438,10 +438,10 @@ thunar_launcher_set_selected_files (ThunarComponent *component,
   if (G_UNLIKELY (np != NULL || op != NULL))
     {
       /* disconnect from the previously selected files */
-      thunar_file_list_free (launcher->selected_files);
+      thunar_g_file_list_free (launcher->selected_files);
 
       /* connect to the new selected files list */
-      launcher->selected_files = thunar_file_list_copy (selected_files);
+      launcher->selected_files = thunar_g_file_list_copy (selected_files);
 
       /* update the launcher actions */
       thunar_launcher_update (launcher);
@@ -1299,7 +1299,7 @@ thunar_launcher_poke_data_new (GList *files)
   ThunarLauncherPokeData *data;
 
   data = g_slice_new0 (ThunarLauncherPokeData);
-  data->files = thunar_file_list_copy (files);
+  data->files = thunar_g_file_list_copy (files);
   data->resolved_files = NULL;
 
   return data;
@@ -1312,8 +1312,8 @@ thunar_launcher_poke_data_free (ThunarLauncherPokeData *data)
 {
   _thunar_return_if_fail (data != NULL);
 
-  thunar_file_list_free (data->files);
-  thunar_file_list_free (data->resolved_files);
+  thunar_g_file_list_free (data->files);
+  thunar_g_file_list_free (data->resolved_files);
   g_slice_free (ThunarLauncherPokeData, data);
 }
 

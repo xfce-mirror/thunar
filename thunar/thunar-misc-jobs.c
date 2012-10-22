@@ -88,7 +88,7 @@ _thunar_misc_jobs_load_templates (ThunarJob   *job,
   else
     {
       if (!thunar_job_files_ready (job, files))
-        thunar_file_list_free (files);
+        thunar_g_file_list_free (files);
 
       return TRUE;
     }

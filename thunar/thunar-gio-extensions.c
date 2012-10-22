@@ -428,66 +428,6 @@ thunar_g_file_list_to_stringv (GList *list)
 
 
 
-GList *
-thunar_g_file_list_append (GList *list,
-                           GFile *file)
-{
-  return g_list_append (list, g_object_ref (file));
-}
-
-
-
-GList *
-thunar_g_file_list_prepend (GList *list,
-                            GFile *file)
-{
-  return g_list_prepend (list, g_object_ref (file));
-}
-
-
-
-/**
- * thunar_g_file_list_copy:
- * @list : a list of #GFile<!---->s.
- *
- * Takes a deep copy of @list and returns the
- * result. The caller is responsible to free the
- * returned list using thunar_g_file_list_free().
- *
- * Return value: a deep copy of @list.
- **/
-GList*
-thunar_g_file_list_copy (GList *list)
-{
-  GList *copy = NULL;
-  GList *lp;
-
-  for (lp = g_list_last (list); lp != NULL; lp = lp->prev)
-    copy = g_list_prepend (copy, g_object_ref (lp->data));
-
-  return copy;
-}
-
-
-
-/**
- * thunar_g_file_list_free:
- * @list : a list of #GFile<!---->s.
- *
- * Frees the #GFile<!---->s in @list and
- * the @list itself.
- **/
-void
-thunar_g_file_list_free (GList *list)
-{
-  GList *lp;
-  for (lp = list; lp != NULL; lp = lp->next)
-    g_object_unref (lp->data);
-  g_list_free (list);
-}
-
-
-
 gboolean
 thunar_g_app_info_launch (GAppInfo          *info,
                           GFile             *working_directory,

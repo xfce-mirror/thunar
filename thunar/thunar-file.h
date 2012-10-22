@@ -307,29 +307,6 @@ G_STMT_START{                                             \
   thunarx_file_info_changed (THUNARX_FILE_INFO ((file))); \
 }G_STMT_END
 
-/**
- * thunar_file_list_copy:
- * @file_list : a list of #ThunarFile<!---->s.
- *
- * Returns a deep-copy of @file_list, which must be
- * freed using thunar_file_list_free().
- *
- * Return value: a deep copy of @file_list.
- **/
-#define thunar_file_list_copy(file_list) (thunarx_file_info_list_copy ((file_list)))
-
-/**
- * thunar_file_list_free:
- * @file_list : a list of #ThunarFile<!---->s.
- *
- * Unrefs the #ThunarFile<!---->s contained in @file_list
- * and frees the list itself.
- **/
-#define thunar_file_list_free(file_list)      \
-G_STMT_START{                                 \
-  thunarx_file_info_list_free ((file_list));  \
-}G_STMT_END
-
 
 G_END_DECLS;
 
