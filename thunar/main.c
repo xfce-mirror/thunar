@@ -35,15 +35,12 @@
 
 #include <xfconf/xfconf.h>
 
-#ifdef HAVE_LIBNOTIFY
-#include <thunar/thunar-notify.h>
-#endif
-
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-dbus-client.h>
 #include <thunar/thunar-dbus-service.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-notify.h>
 #include <thunar/thunar-session-client.h>
 #include <thunar/thunar-stock.h>
 

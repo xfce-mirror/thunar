@@ -20,13 +20,17 @@
 #include <config.h>
 #endif
 
-#ifdef HAVE_LIBNOTIFY
-#include <thunar/thunar-notify.h>
-#endif
 #include <thunar/thunar-device.h>
 #include <thunar/thunar-device-monitor.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-file.h>
+#include <thunar/thunar-notify.h>
+
+
+
+typedef gboolean   (*AsyncCallbackFinish) (GObject       *object,
+                                           GAsyncResult  *result,
+                                           GError       **error);
 
 
 
@@ -75,10 +79,15 @@ struct _ThunarDevice
 
 typedef struct
 {
+  /* the device the operation is working on */
   ThunarDevice         *device;
+
+  /* finish function for the async callback */
+  AsyncCallbackFinish   callback_finish;
+
+  /* callback for the user */
   ThunarDeviceCallback  callback;
   gpointer              user_data;
-  GFile                *root_file;
 }
 ThunarDeviceOperation;
 
@@ -212,184 +221,83 @@ thunar_device_set_property (GObject      *object,
 
 
 
-
 static ThunarDeviceOperation *
 thunar_device_operation_new (ThunarDevice         *device,
                              ThunarDeviceCallback  callback,
-                             gpointer              user_data)
+                             gpointer              user_data,
+                             gpointer              callback_finish)
 {
-  ThunarDeviceOperation *operation;
+  ThunarDeviceOperation *op;
 
-  operation = g_slice_new0 (ThunarDeviceOperation);
-  operation->device = g_object_ref (device);
-  operation->callback = callback;
-  operation->user_data = user_data;
-  operation->root_file = thunar_device_get_root (device);
+  op = g_slice_new0 (ThunarDeviceOperation);
+  op->device = g_object_ref (device);
+  op->callback = callback;
+  op->callback_finish = callback_finish;
+  op->user_data = user_data;
 
-  return operation;
+  return op;
 }
 
 
 
 static void
-thunar_device_operation_free (ThunarDeviceOperation *operation)
+thunar_device_operation_finish (GObject      *object,
+                                GAsyncResult *result,
+                                gpointer      user_data)
 {
-  g_object_unref (operation->device);
-  if (operation->root_file != NULL)
-    g_object_unref (operation->root_file);
-  g_slice_free (ThunarDeviceOperation, operation);
+  ThunarDeviceOperation *op = user_data;
+  GError                *error = NULL;
+  
+  _thunar_return_if_fail (G_IS_OBJECT (object));
+  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
+
+  /* remove notification */
+  thunar_notify_finish (op->device);
+
+  /* finish the operation */
+  if (!(op->callback_finish) (object, result, &error))
+    {
+      /* unset the error if a helper program has already interacted with the user */
+      if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_FAILED_HANDLED))
+        g_clear_error (&error);
+
+      if (op->callback_finish == (AsyncCallbackFinish) g_volume_mount_finish)
+        {
+          /* special handling for mount operation */
+          if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_ALREADY_MOUNTED)
+              || g_error_matches (error, G_IO_ERROR, G_IO_ERROR_PENDING))
+            g_clear_error (&error);
+        }
+    }
+
+  /* user callback */
+  (op->callback) (op->device, error, op->user_data);
+
+  /* cleanup */
+  g_clear_error (&error);
+  g_object_unref (G_OBJECT (op->device));
+  g_slice_free (ThunarDeviceOperation, op);
 }
 
 
 
 static void
-thunar_device_operation_emit_pre_unmount (ThunarDeviceOperation *operation)
+thunar_device_emit_pre_unmount (ThunarDevice *device,
+                                gboolean      all_volumes)
 {
   ThunarDeviceMonitor *monitor;
+  GFile               *root_file;
 
-  if (operation->root_file != NULL)
+  root_file = thunar_device_get_root (device);
+  if (root_file != NULL)
     {
       /* make sure the pre-unmount event is emitted, this is important
        * for the interface */
       monitor = thunar_device_monitor_get ();
-      g_signal_emit_by_name (monitor, "device-pre-unmount",
-                             operation->device, operation->root_file);
+      g_signal_emit_by_name (monitor, "device-pre-unmount", device, root_file);
       g_object_unref (monitor);
+      g_object_unref (root_file);
     }
-}
-
-
-
-static void
-thunar_device_mount_unmount_finish (GObject      *object,
-                                    GAsyncResult *result,
-                                    gpointer      user_data)
-{
-  ThunarDeviceOperation *operation = user_data;
-  GError                *error = NULL;
-
-  _thunar_return_if_fail (G_IS_MOUNT (object));
-  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
-
-#ifdef HAVE_LIBNOTIFY
-  thunar_notify_unmount_finish (G_MOUNT (object));
-#endif
-
-  /* finish the unmount */
-  if (!g_mount_unmount_with_operation_finish (G_MOUNT (object), result, &error))
-    {
-      /* unset the error if a helper program has already interacted with the user */
-      if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_FAILED_HANDLED))
-        g_clear_error (&error);
-    }
-
-  /* callback */
-  (operation->callback) (operation->device, error, operation->user_data);
-
-  /* cleanup */
-  if (error != NULL)
-    g_error_free (error);
-  thunar_device_operation_free (operation);
-}
-
-
-
-static void
-thunar_device_mount_eject_finish (GObject      *object,
-                                  GAsyncResult *result,
-                                  gpointer      user_data)
-{
-  ThunarDeviceOperation *operation = user_data;
-  GError                *error = NULL;
-
-  _thunar_return_if_fail (G_IS_MOUNT (object));
-  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
-
-#ifdef HAVE_LIBNOTIFY
-  thunar_notify_unmount_finish (G_MOUNT (object));
-#endif
-
-  /* finish the eject */
-  if (!g_mount_eject_with_operation_finish (G_MOUNT (object), result, &error))
-    {
-      /* unset the error if a helper program has already interacted with the user */
-      if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_FAILED_HANDLED))
-        g_clear_error (&error);
-    }
-
-  /* callback */
-  (operation->callback) (operation->device, error, operation->user_data);
-
-  /* cleanup */
-  if (error != NULL)
-    g_error_free (error);
-  thunar_device_operation_free (operation);
-}
-
-
-
-static void
-thunar_device_volume_mount_finished (GObject      *object,
-                                     GAsyncResult *result,
-                                     gpointer      user_data)
-{
-  ThunarDeviceOperation *operation = user_data;
-  GError                *error = NULL;
-
-  _thunar_return_if_fail (G_IS_VOLUME (object));
-  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
-
-  /* finish the eject */
-  if (!g_volume_mount_finish (G_VOLUME (object), result, &error))
-    {
-      /* unset the error if a helper program has already interacted with the user */
-      if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_FAILED_HANDLED)
-          || g_error_matches (error, G_IO_ERROR, G_IO_ERROR_ALREADY_MOUNTED)
-          || g_error_matches (error, G_IO_ERROR, G_IO_ERROR_PENDING))
-        g_clear_error (&error);
-    }
-
-  /* callback */
-  (operation->callback) (operation->device, error, operation->user_data);
-
-  /* cleanup */
-  if (error != NULL)
-    g_error_free (error);
-  thunar_device_operation_free (operation);
-}
-
-
-
-static void
-thunar_device_volume_eject_finish (GObject      *object,
-                                   GAsyncResult *result,
-                                   gpointer      user_data)
-{
-  ThunarDeviceOperation *operation = user_data;
-  GError                *error = NULL;
-
-  _thunar_return_if_fail (G_IS_VOLUME (object));
-  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
-
-#ifdef HAVE_LIBNOTIFY
-  thunar_notify_eject_finish (G_VOLUME (object));
-#endif
-
-  /* finish the eject */
-  if (!g_volume_eject_with_operation_finish (G_VOLUME (object), result, &error))
-    {
-      /* unset the error if a helper program has already interacted with the user */
-      if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_FAILED_HANDLED))
-        g_clear_error (&error);
-    }
-
-  /* callback */
-  (operation->callback) (operation->device, error, operation->user_data);
-
-  /* cleanup */
-  if (error != NULL)
-    g_error_free (error);
-  thunar_device_operation_free (operation);
 }
 
 
@@ -503,21 +411,32 @@ thunar_device_can_eject (const ThunarDevice *device)
 {
   gboolean  can_eject = FALSE;
   GMount   *volume_mount;
+  GDrive   *drive;
 
   _thunar_return_val_if_fail (THUNAR_IS_DEVICE (device), FALSE);
 
   if (G_IS_VOLUME (device->device))
     {
-      can_eject = g_volume_can_eject (device->device);
+      drive = g_volume_get_drive (device->device);
+      if (drive != NULL)
+        {
+          can_eject = g_drive_can_eject (drive) || g_drive_can_stop (drive);
+          g_object_unref (drive);
+        }
 
       if (!can_eject)
         {
-          /* check if the mount can eject/unmount */
-          volume_mount = g_volume_get_mount (device->device);
-          if (volume_mount != NULL)
+          /* check if the volume can eject */
+          can_eject = g_volume_can_eject (device->device);
+          if (!can_eject)
             {
-              can_eject = g_mount_can_eject (volume_mount) || g_mount_can_unmount (volume_mount);
-              g_object_unref (volume_mount);
+              /* check if the mount can eject/unmount */
+              volume_mount = g_volume_get_mount (device->device);
+              if (volume_mount != NULL)
+                {
+                  can_eject = g_mount_can_eject (volume_mount) || g_mount_can_unmount (volume_mount);
+                  g_object_unref (volume_mount);
+                }
             }
         }
     }
@@ -693,7 +612,7 @@ thunar_device_mount (ThunarDevice         *device,
                      ThunarDeviceCallback  callback,
                      gpointer              user_data)
 {
-  ThunarDeviceOperation *operation;
+  ThunarDeviceOperation *op;
 
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
   _thunar_return_if_fail (G_IS_MOUNT_OPERATION (mount_operation));
@@ -702,13 +621,14 @@ thunar_device_mount (ThunarDevice         *device,
 
   if (G_IS_VOLUME (device->device))
     {
-      operation = thunar_device_operation_new (device, callback, user_data);
+      op = thunar_device_operation_new (device, callback, user_data,
+                                        g_volume_mount_finish);
       g_volume_mount (G_VOLUME (device->device),
                       G_MOUNT_MOUNT_NONE,
                       mount_operation,
                       cancellable,
-                      thunar_device_volume_mount_finished,
-                      operation);
+                      thunar_device_operation_finish,
+                      op);
     }
 }
 
@@ -726,7 +646,7 @@ thunar_device_unmount (ThunarDevice         *device,
                        ThunarDeviceCallback  callback,
                        gpointer              user_data)
 {
-  ThunarDeviceOperation *operation;
+  ThunarDeviceOperation *op;
   GMount                *mount;
 
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
@@ -747,19 +667,19 @@ thunar_device_unmount (ThunarDevice         *device,
       /* only handle mounts that can be unmounted here */
       if (g_mount_can_unmount (mount))
         {
-#ifdef HAVE_LIBNOTIFY
-          thunar_notify_unmount (mount);
-#endif
+          /* inform user */
+          thunar_notify_unmount (device);
 
           /* try unmounting the mount */
-          operation = thunar_device_operation_new (device, callback, user_data);
-          thunar_device_operation_emit_pre_unmount (operation);
+          thunar_device_emit_pre_unmount (device, FALSE);
+          op = thunar_device_operation_new (device, callback, user_data,
+                                            g_mount_unmount_with_operation_finish);
           g_mount_unmount_with_operation (mount,
                                           G_MOUNT_UNMOUNT_NONE,
                                           mount_operation,
                                           cancellable,
-                                          thunar_device_mount_unmount_finish,
-                                          operation);
+                                          thunar_device_operation_finish,
+                                          op);
         }
 
       g_object_unref (G_OBJECT (mount));
@@ -780,35 +700,84 @@ thunar_device_eject (ThunarDevice         *device,
                      ThunarDeviceCallback  callback,
                      gpointer              user_data)
 {
-  ThunarDeviceOperation *operation;
+  ThunarDeviceOperation *op;
   GMount                *mount = NULL;
   GVolume               *volume;
+  GDrive                *drive;
 
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
   _thunar_return_if_fail (G_IS_MOUNT_OPERATION (mount_operation));
   _thunar_return_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable));
   _thunar_return_if_fail (callback != NULL);
 
-
   if (G_IS_VOLUME (device->device))
     {
       volume = device->device;
+      drive = g_volume_get_drive (volume);
+
+      if (drive != NULL)
+        {
+          if (g_drive_can_stop (drive))
+            {g_message ("stop drive");
+              /* inform user */
+              thunar_notify_eject (device);
+
+              /* try to stop the drive */
+              thunar_device_emit_pre_unmount (device, TRUE);
+              op = thunar_device_operation_new (device, callback, user_data,
+                                                g_drive_stop_finish);
+              g_drive_stop (drive,
+                            G_MOUNT_UNMOUNT_NONE,
+                            mount_operation,
+                            cancellable,
+                            thunar_device_operation_finish,
+                            op);
+
+              g_object_unref (drive);
+
+              /* done */
+              return;
+            }
+          else if (g_drive_can_eject (drive))
+            {g_message ("eject drive");
+              /* inform user */
+              thunar_notify_eject (device);
+
+              /* try to stop the drive */
+              thunar_device_emit_pre_unmount (device, TRUE);
+              op = thunar_device_operation_new (device, callback, user_data,
+                                                g_drive_eject_with_operation_finish);
+              g_drive_eject_with_operation (drive,
+                                            G_MOUNT_UNMOUNT_NONE,
+                                            mount_operation,
+                                            cancellable,
+                                            thunar_device_operation_finish,
+                                            op);
+
+              g_object_unref (drive);
+
+              /* done */
+              return;
+            }
+
+          g_object_unref (drive);
+        }
 
       if (g_volume_can_eject (volume))
         {
-#ifdef HAVE_LIBNOTIFY
-          thunar_notify_eject (volume);
-#endif
+          /* inform user */
+          thunar_notify_eject (device);
 
           /* try ejecting the volume */
-          operation = thunar_device_operation_new (device, callback, user_data);
-          thunar_device_operation_emit_pre_unmount (operation);
+          thunar_device_emit_pre_unmount (device, TRUE);
+          op = thunar_device_operation_new (device, callback, user_data,
+                                            g_volume_eject_with_operation_finish);
           g_volume_eject_with_operation (volume,
                                          G_MOUNT_UNMOUNT_NONE,
                                          mount_operation,
                                          cancellable,
-                                         thunar_device_volume_eject_finish,
-                                         operation);
+                                         thunar_device_operation_finish,
+                                         op);
 
           /* done */
           return;
@@ -831,35 +800,35 @@ thunar_device_eject (ThunarDevice         *device,
       /* distinguish between ejectable and unmountable mounts */
       if (g_mount_can_eject (mount))
         {
-#ifdef HAVE_LIBNOTIFY
-          thunar_notify_unmount (mount);
-#endif
+          /* inform user */
+          thunar_notify_eject (device);
 
           /* try ejecting the mount */
-          operation = thunar_device_operation_new (device, callback, user_data);
-          thunar_device_operation_emit_pre_unmount (operation);
+          thunar_device_emit_pre_unmount (device, FALSE);
+          op = thunar_device_operation_new (device, callback, user_data,
+                                            g_mount_eject_with_operation_finish);
           g_mount_eject_with_operation (mount,
                                         G_MOUNT_UNMOUNT_NONE,
                                         mount_operation,
                                         cancellable,
-                                        thunar_device_mount_eject_finish,
-                                        operation);
+                                        thunar_device_operation_finish,
+                                        op);
         }
       else if (g_mount_can_unmount (mount))
         {
-#ifdef HAVE_LIBNOTIFY
-          thunar_notify_unmount (mount);
-#endif
+          /* inform user */
+          thunar_notify_unmount (device);
 
           /* try unmounting the mount */
-          operation = thunar_device_operation_new (device, callback, user_data);
-          thunar_device_operation_emit_pre_unmount (operation);
+          thunar_device_emit_pre_unmount (device, FALSE);
+          op = thunar_device_operation_new (device, callback, user_data,
+                                            g_mount_unmount_with_operation_finish);
           g_mount_unmount_with_operation (mount,
                                           G_MOUNT_UNMOUNT_NONE,
                                           mount_operation,
                                           cancellable,
-                                          thunar_device_mount_unmount_finish,
-                                          operation);
+                                          thunar_device_operation_finish,
+                                          op);
         }
 
       g_object_unref (G_OBJECT (mount));

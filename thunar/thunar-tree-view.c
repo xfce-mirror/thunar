@@ -25,9 +25,6 @@
 
 #include <gdk/gdkkeysyms.h>
 
-#ifdef HAVE_LIBNOTIFY
-#include <thunar/thunar-notify.h>
-#endif
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-create-dialog.h>

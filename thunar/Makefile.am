@@ -21,12 +21,6 @@ bin_SCRIPTS =								\
 bin_PROGRAMS =								\
 	thunar
 
-if HAVE_LIBNOTIFY
-thunar_notify_sources =							\
-	thunar-notify.c							\
-	thunar-notify.h
-endif
-
 thunar_built_sources =							\
 	thunar-marshal.c						\
 	thunar-marshal.h
@@ -35,7 +29,6 @@ thunar_SOURCES =							\
 	$(thunar_include_HEADERS)					\
 	$(thunar_built_sources)						\
 	$(thunar_dbus_sources)						\
-	$(thunar_notify_sources)					\
 	main.c								\
 	thunar-abstract-dialog.c					\
 	thunar-abstract-dialog.h					\
@@ -137,6 +130,8 @@ thunar_SOURCES =							\
 	thunar-location-entry.h						\
 	thunar-misc-jobs.c						\
 	thunar-misc-jobs.h						\
+	thunar-notify.c							\
+	thunar-notify.h							\
 	thunar-navigator.c						\
 	thunar-navigator.h						\
 	thunar-pango-extensions.c					\
