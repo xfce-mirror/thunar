@@ -56,26 +56,32 @@ enum
 
 
 
-static void        thunar_location_entry_component_init        (ThunarComponentIface     *iface);
-static void        thunar_location_entry_navigator_init        (ThunarNavigatorIface     *iface);
-static void        thunar_location_entry_location_bar_init     (ThunarLocationBarIface   *iface);
-static void        thunar_location_entry_finalize              (GObject                  *object);
-static void        thunar_location_entry_get_property          (GObject                  *object,
-                                                                guint                     prop_id,
-                                                                GValue                   *value,
-                                                                GParamSpec               *pspec);
-static void        thunar_location_entry_set_property          (GObject                  *object,
-                                                                guint                     prop_id,
-                                                                const GValue             *value,
-                                                                GParamSpec               *pspec);
-static ThunarFile *thunar_location_entry_get_current_directory (ThunarNavigator          *navigator);
-static void        thunar_location_entry_set_current_directory (ThunarNavigator          *navigator,
-                                                                ThunarFile               *current_directory);
-static gboolean    thunar_location_entry_accept_focus          (ThunarLocationBar        *location_bar,
-                                                                const gchar              *initial_text);
-static void        thunar_location_entry_activate              (GtkWidget                *path_entry,
-                                                                ThunarLocationEntry      *location_entry);
-static gboolean    thunar_location_entry_reset                 (ThunarLocationEntry      *location_entry);
+static void        thunar_location_entry_component_init           (ThunarComponentIface     *iface);
+static void        thunar_location_entry_navigator_init           (ThunarNavigatorIface     *iface);
+static void        thunar_location_entry_location_bar_init        (ThunarLocationBarIface   *iface);
+static void        thunar_location_entry_finalize                 (GObject                  *object);
+static void        thunar_location_entry_get_property             (GObject                  *object,
+                                                                   guint                     prop_id,
+                                                                   GValue                   *value,
+                                                                   GParamSpec               *pspec);
+static void        thunar_location_entry_set_property             (GObject                  *object,
+                                                                   guint                     prop_id,
+                                                                   const GValue             *value,
+                                                                   GParamSpec               *pspec);
+static ThunarFile *thunar_location_entry_get_current_directory    (ThunarNavigator          *navigator);
+static void        thunar_location_entry_set_current_directory    (ThunarNavigator          *navigator,
+                                                                   ThunarFile               *current_directory);
+static void        thunar_location_entry_component_set_ui_manager (ThunarComponent          *component,
+                                                                   GtkUIManager             *ui_manager);
+static gboolean    thunar_location_entry_accept_focus             (ThunarLocationBar        *location_bar,
+                                                                   const gchar              *initial_text);
+static void        thunar_location_entry_activate                 (GtkWidget                *path_entry,
+                                                                   ThunarLocationEntry      *location_entry);
+static gboolean    thunar_location_entry_reset                    (ThunarLocationEntry      *location_entry);
+static void        thunar_location_entry_reload                   (GtkEntry                 *entry,
+                                                                   GtkEntryIconPosition      icon_pos,
+                                                                   GdkEvent                 *event,
+                                                                   ThunarLocationEntry      *location_entry);
 
 
 
@@ -91,8 +97,9 @@ struct _ThunarLocationEntry
 {
   GtkHBox __parent__;
 
-  ThunarFile *current_directory;
-  GtkWidget  *path_entry;
+  ThunarFile   *current_directory;
+  GtkWidget    *path_entry;
+  GtkUIManager *ui_manager;
 };
 
 
@@ -154,7 +161,7 @@ thunar_location_entry_component_init (ThunarComponentIface *iface)
   iface->get_selected_files = (gpointer) exo_noop_null;
   iface->set_selected_files = (gpointer) exo_noop;
   iface->get_ui_manager = (gpointer) exo_noop_null;
-  iface->set_ui_manager = (gpointer) exo_noop;
+  iface->set_ui_manager = thunar_location_entry_component_set_ui_manager;
 }
 
 
@@ -187,6 +194,14 @@ thunar_location_entry_init (ThunarLocationEntry *location_entry)
   g_signal_connect_after (G_OBJECT (location_entry->path_entry), "activate", G_CALLBACK (thunar_location_entry_activate), location_entry);
   gtk_box_pack_start (GTK_BOX (location_entry), location_entry->path_entry, TRUE, TRUE, 0);
   gtk_widget_show (location_entry->path_entry);
+
+  /* put reload button in entry */
+  gtk_entry_set_icon_from_icon_name (GTK_ENTRY (location_entry->path_entry),
+                                     GTK_ENTRY_ICON_SECONDARY, GTK_STOCK_REFRESH);
+  gtk_entry_set_icon_tooltip_text (GTK_ENTRY (location_entry->path_entry),
+                                   GTK_ENTRY_ICON_SECONDARY, _("Reload the current folder"));
+  g_signal_connect (G_OBJECT (location_entry->path_entry), "icon-release",
+                    G_CALLBACK (thunar_location_entry_reload), location_entry);
 }
 
 
@@ -293,6 +308,24 @@ thunar_location_entry_set_current_directory (ThunarNavigator *navigator,
 
   /* notify listeners */
   g_object_notify (G_OBJECT (location_entry), "current-directory");
+}
+
+
+
+static void
+thunar_location_entry_component_set_ui_manager (ThunarComponent *component,
+                                                GtkUIManager    *ui_manager)
+{
+  ThunarLocationEntry *location_entry = THUNAR_LOCATION_ENTRY (component);
+
+  if (location_entry->ui_manager != NULL)
+    {
+      g_object_unref (location_entry->ui_manager);
+      location_entry->ui_manager = NULL;
+    }
+
+  if (ui_manager != NULL)
+    location_entry->ui_manager = g_object_ref (ui_manager);
 }
 
 
@@ -431,4 +464,25 @@ thunar_location_entry_reset (ThunarLocationEntry *location_entry)
   gtk_editable_select_region (GTK_EDITABLE (location_entry->path_entry), 0, -1);
 
   return TRUE;
+}
+
+
+
+static void
+thunar_location_entry_reload (GtkEntry            *entry,
+                              GtkEntryIconPosition icon_pos,
+                              GdkEvent            *event,
+                              ThunarLocationEntry *location_entry)
+{
+  GtkAction *action;
+
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_ENTRY (location_entry));
+
+  if (icon_pos == GTK_ENTRY_ICON_SECONDARY
+      && location_entry->ui_manager != NULL)
+    {
+      action = gtk_ui_manager_get_action (location_entry->ui_manager, "/main-menu/view-menu/reload");
+      _thunar_return_if_fail (GTK_IS_ACTION (action));
+      gtk_action_activate (action);
+    }
 }
