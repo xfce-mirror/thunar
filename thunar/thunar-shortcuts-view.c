@@ -461,12 +461,13 @@ thunar_shortcuts_view_button_release_event (GtkWidget      *widget,
   /* check if we have an event matching the pressed button state */
   if (G_LIKELY (view->pressed_button == (gint) event->button))
     {
+      /* check if the eject button has been pressed */
       if (view->pressed_eject_button)
         thunar_shortcuts_view_eject (view);
-
-      /* check if we should simply open or open in new window */
-      if (G_LIKELY (event->button == 1))
+      /* button 1 opens in the same window */
+      else if (G_LIKELY (event->button == 1))
         thunar_shortcuts_view_open (view, FALSE);
+      /* button 2 opens in a new window */
       else if (G_UNLIKELY (event->button == 2))
         thunar_shortcuts_view_open (view, TRUE);
     }
