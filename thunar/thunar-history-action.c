@@ -217,6 +217,25 @@ thunar_history_action_activate (GtkWidget           *toggle_button,
 
 
 
+static void
+thunar_history_action_toolbar_configured (GtkWidget *tool_item,
+                                          GtkWidget *toggle_button)
+{
+  GtkWidget *icon;
+  GtkAction *action;
+
+  gtk_button_set_relief (GTK_BUTTON (toggle_button),
+      gtk_tool_item_get_relief_style (GTK_TOOL_ITEM (tool_item)));
+
+  icon = gtk_bin_get_child (GTK_BIN (toggle_button));
+  action = g_object_get_data (G_OBJECT (toggle_button), I_("thunar-history-action"));
+  gtk_image_set_from_stock (GTK_IMAGE (icon),
+                            gtk_action_get_stock_id (action),
+                            gtk_tool_item_get_icon_size (GTK_TOOL_ITEM (tool_item)));
+}
+
+
+
 static GtkWidget*
 thunar_history_action_create_tool_item (GtkAction *action)
 {
@@ -232,20 +251,28 @@ thunar_history_action_create_tool_item (GtkAction *action)
 
   button = gtk_toggle_button_new ();
   gtk_container_add (GTK_CONTAINER (tool_item), button);
-  gtk_button_set_relief (GTK_BUTTON (button), gtk_tool_item_get_relief_style (GTK_TOOL_ITEM (tool_item)));
+  gtk_button_set_relief (GTK_BUTTON (button),
+      gtk_tool_item_get_relief_style (GTK_TOOL_ITEM (tool_item)));
   gtk_button_set_focus_on_click (GTK_BUTTON (button), FALSE);
   gtk_widget_show (button);
 
-  icon = gtk_image_new_from_stock (gtk_action_get_stock_id (action), gtk_tool_item_get_icon_size (GTK_TOOL_ITEM (tool_item)));
+  icon = gtk_image_new_from_stock (gtk_action_get_stock_id (action),
+      gtk_tool_item_get_icon_size (GTK_TOOL_ITEM (tool_item)));
   gtk_container_add (GTK_CONTAINER (button), icon);
   gtk_widget_show (icon);
 
   g_object_set_data (G_OBJECT (button), I_("thunar-history-action"), action);
 
-  g_signal_connect (G_OBJECT (button), "button-press-event", G_CALLBACK (thunar_history_action_button_press_event), tool_item);
-  g_signal_connect (G_OBJECT (button), "button-release-event", G_CALLBACK (thunar_history_action_button_release_event), tool_item);
-  g_signal_connect (G_OBJECT (button), "leave-notify-event", G_CALLBACK (thunar_history_action_leave_notify_event), action);
-  g_signal_connect (G_OBJECT (button), "activate", G_CALLBACK (thunar_history_action_activate), action);
+  g_signal_connect (G_OBJECT (tool_item), "toolbar-reconfigured",
+      G_CALLBACK (thunar_history_action_toolbar_configured), button);
+  g_signal_connect (G_OBJECT (button), "button-press-event",
+      G_CALLBACK (thunar_history_action_button_press_event), tool_item);
+  g_signal_connect (G_OBJECT (button), "button-release-event",
+      G_CALLBACK (thunar_history_action_button_release_event), tool_item);
+  g_signal_connect (G_OBJECT (button), "leave-notify-event",
+      G_CALLBACK (thunar_history_action_leave_notify_event), action);
+  g_signal_connect (G_OBJECT (button), "activate",
+      G_CALLBACK (thunar_history_action_activate), action);
 
   return tool_item;
 }

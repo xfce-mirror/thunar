@@ -1402,14 +1402,9 @@ thunar_window_install_location_bar (ThunarWindow *window,
         {
           /* setup the toolbar for the location bar */
           window->location_toolbar = gtk_ui_manager_get_widget (window->ui_manager, "/location-toolbar");
+          /*gtk_toolbar_set_icon_size (GTK_TOOLBAR (window->location_toolbar), GTK_ICON_SIZE_SMALL_TOOLBAR);*/
           gtk_table_attach (GTK_TABLE (window->table), window->location_toolbar, 0, 1, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
           gtk_widget_show (window->location_toolbar);
-
-          /* add a separator before the location bar (destroyed with the location bar) */
-          item = gtk_separator_tool_item_new ();
-          g_signal_connect_object (G_OBJECT (window->location_bar), "destroy", G_CALLBACK (gtk_widget_destroy), item, G_CONNECT_SWAPPED);
-          gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), item, -1);
-          gtk_widget_show (GTK_WIDGET (item));
 
           /* add the location bar tool item (destroyed with the location bar) */
           item = gtk_tool_item_new ();
