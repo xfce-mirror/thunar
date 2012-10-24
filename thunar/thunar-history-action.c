@@ -28,7 +28,9 @@
 
 static GtkWidget *thunar_history_action_create_tool_item  (GtkAction                *action);
 static void       thunar_history_action_show_menu         (GtkWidget                *tool_item,
-                                                           ThunarHistoryAction      *history_action);
+                                                           ThunarHistoryAction      *history_action,
+                                                           guint button,
+                                                           guint32 timestamp);
 
 
 
@@ -40,6 +42,8 @@ struct _ThunarHistoryActionClass
 struct _ThunarHistoryAction
 {
   GtkAction __parent__;
+
+  guint popup_delay;
 };
 
 
@@ -79,20 +83,169 @@ thunar_history_action_init (ThunarHistoryAction *actions_changed)
 
 
 
+static gboolean
+thunar_history_action_popup_delayed (gpointer data)
+{
+  GtkWidget           *button = GTK_WIDGET (data);
+  ThunarHistoryAction *history_action;
+
+  history_action = g_object_get_data (G_OBJECT (button), I_("thunar-history-action"));
+
+  GDK_THREADS_ENTER ();
+  thunar_history_action_show_menu (button, history_action, 3, 0);
+  GDK_THREADS_LEAVE ();
+
+  history_action->popup_delay = 0;
+
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_history_action_button_press_event (GtkWidget      *toggle_button,
+                                          GdkEventButton *event,
+                                          GtkWidget      *tool_item)
+{
+  ThunarHistoryAction *history_action;
+
+  _thunar_return_val_if_fail (GTK_IS_TOGGLE_BUTTON (toggle_button), FALSE);
+  _thunar_return_val_if_fail (GTK_IS_TOOL_ITEM (tool_item), FALSE);
+
+  history_action = g_object_get_data (G_OBJECT (toggle_button), I_("thunar-history-action"));
+
+  if (event->button == 1)
+    {
+      /* shouldn't happen, but stop pending timeout */
+      if (history_action->popup_delay != 0)
+        g_source_remove (history_action->popup_delay);
+
+      /* schedule a popup for button press */
+      history_action->popup_delay = g_timeout_add (500, thunar_history_action_popup_delayed, toggle_button);
+    }
+  else if (event->button == 3)
+    {
+      /* directy show the menu */
+      thunar_history_action_show_menu (toggle_button, history_action,
+                                       event->button, event->time);
+    }
+
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_history_action_button_release_event (GtkWidget      *toggle_button,
+                                            GdkEventButton *event,
+                                            GtkWidget      *tool_item)
+{
+  ThunarHistoryAction *history_action;
+
+  _thunar_return_val_if_fail (GTK_IS_TOGGLE_BUTTON (toggle_button), FALSE);
+  _thunar_return_val_if_fail (GTK_IS_TOOL_ITEM (tool_item), FALSE);
+
+  if (event->button == 1)
+    {
+      history_action = g_object_get_data (G_OBJECT (toggle_button), I_("thunar-history-action"));
+      if (history_action->popup_delay != 0)
+        {
+          /* stop timeout */
+          g_source_remove (history_action->popup_delay);
+          history_action->popup_delay = 0;
+
+          /* activate event */
+          gtk_action_activate (GTK_ACTION (history_action));
+        }
+    }
+
+  /* bit of a strange trick to get the button untoggeled */
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle_button),
+      gtk_widget_is_sensitive (toggle_button));
+
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_history_action_leave_notify_event (GtkWidget           *toggle_button,
+                                          GdkEventCrossing    *event,
+                                          ThunarHistoryAction *history_action)
+{
+
+  GtkAllocation alloc;
+
+  _thunar_return_val_if_fail (GTK_IS_TOGGLE_BUTTON (toggle_button), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_HISTORY_ACTION (history_action), FALSE);
+
+  if (history_action->popup_delay != 0)
+    {
+      /* stop the timeout */
+      g_source_remove (history_action->popup_delay);
+      history_action->popup_delay = 0;
+
+      /* if the user dragged to the bottom, directly popup the menu */
+      gtk_widget_get_allocation (toggle_button, &alloc);
+      if (event->x >= 0
+          && event->x < alloc.width
+          && event->y >= alloc.height)
+        {
+          thunar_history_action_show_menu (toggle_button, history_action,
+                                           3, event->time);
+        }
+    }
+
+  return FALSE;
+}
+
+
+
+static void
+thunar_history_action_activate (GtkWidget           *toggle_button,
+                                ThunarHistoryAction *history_action)
+{
+  _thunar_return_if_fail (GTK_IS_TOGGLE_BUTTON (toggle_button));
+  _thunar_return_if_fail (THUNAR_IS_HISTORY_ACTION (history_action));
+
+  /* activate event (only key events trigger this function) */
+  gtk_action_activate (GTK_ACTION (history_action));
+
+  /* activate, so the code deactivates a bit later... */
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle_button), TRUE);
+}
+
+
+
 static GtkWidget*
 thunar_history_action_create_tool_item (GtkAction *action)
 {
   GtkWidget *tool_item;
+  GtkWidget *button;
+  GtkWidget *icon;
 
   _thunar_return_val_if_fail (THUNAR_IS_HISTORY_ACTION (action), NULL);
 
   /* allocate the tool item with an empty menu */
-  tool_item = g_object_new (GTK_TYPE_MENU_TOOL_BUTTON,
-                            "menu", gtk_menu_new (),
-                            NULL);
+  tool_item = g_object_new (GTK_TYPE_TOOL_ITEM, NULL);
+  gtk_tool_item_set_homogeneous (GTK_TOOL_ITEM (tool_item), TRUE);
 
-  /* be sure to be informed before the menu is shown */
-  g_signal_connect (G_OBJECT (tool_item), "show-menu", G_CALLBACK (thunar_history_action_show_menu), action);
+  button = gtk_toggle_button_new ();
+  gtk_container_add (GTK_CONTAINER (tool_item), button);
+  gtk_button_set_relief (GTK_BUTTON (button), gtk_tool_item_get_relief_style (GTK_TOOL_ITEM (tool_item)));
+  gtk_button_set_focus_on_click (GTK_BUTTON (button), FALSE);
+  gtk_widget_show (button);
+
+  icon = gtk_image_new_from_stock (gtk_action_get_stock_id (action), gtk_tool_item_get_icon_size (GTK_TOOL_ITEM (tool_item)));
+  gtk_container_add (GTK_CONTAINER (button), icon);
+  gtk_widget_show (icon);
+
+  g_object_set_data (G_OBJECT (button), I_("thunar-history-action"), action);
+
+  g_signal_connect (G_OBJECT (button), "button-press-event", G_CALLBACK (thunar_history_action_button_press_event), tool_item);
+  g_signal_connect (G_OBJECT (button), "button-release-event", G_CALLBACK (thunar_history_action_button_release_event), tool_item);
+  g_signal_connect (G_OBJECT (button), "leave-notify-event", G_CALLBACK (thunar_history_action_leave_notify_event), action);
+  g_signal_connect (G_OBJECT (button), "activate", G_CALLBACK (thunar_history_action_activate), action);
 
   return tool_item;
 }
@@ -100,25 +253,63 @@ thunar_history_action_create_tool_item (GtkAction *action)
 
 
 static void
-thunar_history_action_show_menu (GtkWidget           *tool_item,
-                                 ThunarHistoryAction *history_action)
+thunar_history_action_position_menu (GtkMenu  *menu,
+                                     gint     *x,
+                                     gint     *y,
+                                     gboolean *push_in,
+                                     gpointer  user_data)
+{
+  GtkWidget     *button = GTK_WIDGET (user_data);
+  GtkAllocation  alloc;
+
+  gdk_window_get_origin (gtk_widget_get_window (button), x, y);
+
+  gtk_widget_get_allocation (button, &alloc);
+  *x += alloc.x;
+  *y += alloc.y + alloc.height;
+  *push_in = FALSE;
+}
+
+
+
+static void
+thunar_history_action_menu_deactivate (GtkWidget *toggle_button)
+{
+  /* untoggle the button */
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle_button), FALSE);
+}
+
+
+
+static void
+thunar_history_action_show_menu (GtkWidget           *toggle_button,
+                                 ThunarHistoryAction *history_action,
+                                 guint                button,
+                                 guint32              timestamp)
 {
   GtkWidget *menu;
 
-  _thunar_return_if_fail (GTK_IS_MENU_TOOL_BUTTON (tool_item));
+  _thunar_return_if_fail (GTK_IS_TOGGLE_BUTTON (toggle_button));
   _thunar_return_if_fail (THUNAR_IS_HISTORY_ACTION (history_action));
 
   /* allocate a new menu for the action */
   menu = gtk_menu_new ();
-
-  /* setup the appropriate screen for the menu */
-  gtk_menu_set_screen (GTK_MENU (menu), gtk_widget_get_screen (tool_item));
+  gtk_menu_attach_to_widget (GTK_MENU (menu), toggle_button, NULL);
+  g_signal_connect_swapped (G_OBJECT (menu), "deactivate",
+      G_CALLBACK (thunar_history_action_menu_deactivate), toggle_button);
 
   /* generate the menu items */
   g_signal_emit_by_name (G_OBJECT (history_action), "show-menu", menu);
 
-  /* setup the menu for the tool item */
-  gtk_menu_tool_button_set_menu (GTK_MENU_TOOL_BUTTON (tool_item), menu);
+  /* toggle the button */
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle_button), TRUE);
+
+  /* show menu */
+  gtk_menu_popup (GTK_MENU (menu),
+                  NULL, NULL,
+                  thunar_history_action_position_menu, toggle_button,
+                  button,
+                  timestamp ? timestamp : gtk_get_current_event_time ());
 }
 
 
