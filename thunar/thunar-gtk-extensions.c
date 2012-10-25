@@ -57,7 +57,7 @@ thunar_gtk_action_set_tooltip (GtkAction   *action,
   va_end (var_args);
 
   /* setup the tooltip for the action */
-  g_object_set (G_OBJECT (action), "tooltip", tooltip, NULL);
+  gtk_action_set_tooltip (action, tooltip);
 
   /* release the tooltip */
   g_free (tooltip);

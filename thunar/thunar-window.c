@@ -2701,25 +2701,24 @@ static void
 thunar_window_menu_item_selected (GtkWidget    *menu_item,
                                   ThunarWindow *window)
 {
-  GtkAction *action;
-  gchar     *tooltip;
-  gint       id;
+  GtkAction   *action;
+  const gchar *tooltip;
+  gint         id;
 
   /* we can only display tooltips if we have a statusbar */
   if (G_LIKELY (window->statusbar != NULL))
     {
       /* determine the action for the menu item */
-      action = g_object_get_data (G_OBJECT (menu_item), I_("gtk-action"));
+      action = gtk_widget_get_action (menu_item);
       if (G_UNLIKELY (action == NULL))
         return;
 
       /* determine the tooltip from the action */
-      g_object_get (G_OBJECT (action), "tooltip", &tooltip, NULL);
+      tooltip = gtk_action_get_tooltip (action);
       if (G_LIKELY (tooltip != NULL))
         {
           id = gtk_statusbar_get_context_id (GTK_STATUSBAR (window->statusbar), "Menu tooltip");
           gtk_statusbar_push (GTK_STATUSBAR (window->statusbar), id, tooltip);
-          g_free (tooltip);
         }
     }
 }
