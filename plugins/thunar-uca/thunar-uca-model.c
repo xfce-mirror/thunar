@@ -978,6 +978,8 @@ thunar_uca_model_get_default (void)
 static inline ThunarUcaTypes
 types_from_mime_type (const gchar *mime_type)
 {
+  if (mime_type == NULL)
+    return 0;
   if (strcmp (mime_type, "inode/directory") == 0)
     return THUNAR_UCA_TYPE_DIRECTORIES;
   else if (strncmp (mime_type, "audio/", 6) == 0)
