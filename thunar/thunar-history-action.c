@@ -359,13 +359,23 @@ thunar_history_action_new (const gchar *name,
                            const gchar *tooltip,
                            const gchar *stock_id)
 {
+  gchar     *fulltip;
+  GtkAction *action;
+
   _thunar_return_val_if_fail (name != NULL, NULL);
 
-  return g_object_new (THUNAR_TYPE_HISTORY_ACTION,
-                       "name", name,
-                       "label", label,
-                       "tooltip", tooltip,
-                       "stock-id", stock_id,
-                       NULL);
+  /* extend history tooltip with function of the button */
+  fulltip = g_strconcat (tooltip, "\n", _("Right-click or pull down to show history"), NULL);
+
+  action = g_object_new (THUNAR_TYPE_HISTORY_ACTION,
+                         "name", name,
+                         "label", label,
+                         "tooltip", fulltip,
+                         "stock-id", stock_id,
+                         NULL);
+
+  g_free (fulltip);
+
+  return action;
 }
 

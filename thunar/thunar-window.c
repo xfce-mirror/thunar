@@ -2704,6 +2704,8 @@ thunar_window_menu_item_selected (GtkWidget    *menu_item,
   GtkAction   *action;
   const gchar *tooltip;
   gint         id;
+  gchar       *short_tip = NULL;
+  gchar       *p;
 
   /* we can only display tooltips if we have a statusbar */
   if (G_LIKELY (window->statusbar != NULL))
@@ -2717,8 +2719,18 @@ thunar_window_menu_item_selected (GtkWidget    *menu_item,
       tooltip = gtk_action_get_tooltip (action);
       if (G_LIKELY (tooltip != NULL))
         {
+          /* check if there is a new line in the tooltip */
+          p = strchr (tooltip, '\n');
+          if (p != NULL)
+            {
+              short_tip = g_strndup (tooltip, p - tooltip);
+              tooltip = short_tip;
+            }
+
+          /* push to the statusbar */
           id = gtk_statusbar_get_context_id (GTK_STATUSBAR (window->statusbar), "Menu tooltip");
           gtk_statusbar_push (GTK_STATUSBAR (window->statusbar), id, tooltip);
+          g_free (short_tip);
         }
     }
 }
