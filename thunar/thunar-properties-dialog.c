@@ -233,7 +233,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
                           GTK_STOCK_HELP, GTK_RESPONSE_HELP,
                           GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
                           NULL);
-  gtk_window_set_default_size (GTK_WINDOW (dialog), 400, 430);
+  gtk_window_set_default_size (GTK_WINDOW (dialog), 500, 550);
 
   dialog->notebook = gtk_notebook_new ();
   gtk_container_set_border_width (GTK_CONTAINER (dialog->notebook), 6);
