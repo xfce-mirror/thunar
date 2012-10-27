@@ -71,18 +71,21 @@ enum
   PROP_LAST_WINDOW_HEIGHT,
   PROP_LAST_WINDOW_WIDTH,
   PROP_LAST_WINDOW_FULLSCREEN,
+  PROP_MISC_ALWAYS_SHOW_TABS,
   PROP_MISC_VOLUME_MANAGEMENT,
   PROP_MISC_CASE_SENSITIVE,
   PROP_MISC_DATE_STYLE,
   PROP_MISC_FOLDERS_FIRST,
   PROP_MISC_FULL_PATH_IN_TITLE,
   PROP_MISC_HORIZONTAL_WHEEL_NAVIGATES,
+  PROP_MISC_MIDDLE_CLICK_IN_TAB,
   PROP_MISC_RECURSIVE_PERMISSIONS,
   PROP_MISC_REMEMBER_GEOMETRY,
   PROP_MISC_SHOW_ABOUT_TEMPLATES,
   PROP_MISC_SHOW_THUMBNAILS,
   PROP_MISC_SINGLE_CLICK,
   PROP_MISC_SINGLE_CLICK_TIMEOUT,
+  PROP_MISC_TAB_CLOSE_MIDDLE_CLICK,
   PROP_MISC_TEXT_BESIDE_ICONS,
   PROP_SHORTCUTS_ICON_EMBLEMS,
   PROP_SHORTCUTS_ICON_SIZE,
@@ -449,6 +452,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                          EXO_PARAM_READWRITE));
 
   /**
+   * ThunarPreferences:misc-always-show-tabs:
+   *
+   * If the view tabs should always be visible.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_MISC_ALWAYS_SHOW_TABS,
+                                   g_param_spec_boolean ("misc-always-show-tabs",
+                                                         NULL,
+                                                         NULL,
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
+
+  /**
    * ThunarPreferences:misc-volume-management:
    *
    * Whether to enable volume management capabilities (requires HAL and the
@@ -526,6 +542,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                    PROP_MISC_HORIZONTAL_WHEEL_NAVIGATES,
                                    g_param_spec_boolean ("misc-horizontal-wheel-navigates",
                                                          "MiscHorizontalWheelNavigates",
+                                                         NULL,
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:misc-middle-click-in-tab:
+   *
+   * If middle click opens a folder in a new window (FALSE) or in a new window (TRUE);
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_MISC_MIDDLE_CLICK_IN_TAB,
+                                   g_param_spec_boolean ("misc-middle-click-in-tab",
+                                                         NULL,
                                                          NULL,
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
@@ -617,6 +646,20 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                       NULL,
                                                       0u, G_MAXUINT, 500u,
                                                       EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:misc-tab-close-middle-click:
+   *
+   * Whether to close tabs when the tab label is clicked with the 2nd
+   * mouse button.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_MISC_TAB_CLOSE_MIDDLE_CLICK,
+                                   g_param_spec_boolean ("misc-tab-close-middle-click",
+                                                         NULL,
+                                                         NULL,
+                                                         TRUE,
+                                                         EXO_PARAM_READWRITE));
 
   /**
    * ThunarPreferences:misc-text-beside-icons:

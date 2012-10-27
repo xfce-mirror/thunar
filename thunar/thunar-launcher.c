@@ -42,6 +42,7 @@
 #include <thunar/thunar-sendto-model.h>
 #include <thunar/thunar-stock.h>
 #include <thunar/thunar-device-monitor.h>
+#include <thunar/thunar-window.h>
 
 
 
@@ -99,6 +100,8 @@ static void                    thunar_launcher_action_open_with_other     (GtkAc
                                                                            ThunarLauncher           *launcher);
 static void                    thunar_launcher_action_open_in_new_window  (GtkAction                *action,
                                                                            ThunarLauncher           *launcher);
+static void                    thunar_launcher_action_open_in_new_tab     (GtkAction                *action,
+                                                                           ThunarLauncher           *launcher);
 static void                    thunar_launcher_action_sendto_desktop      (GtkAction                *action,
                                                                            ThunarLauncher           *launcher);
 static void                    thunar_launcher_action_sendto_device       (GtkAction                *action,
@@ -141,6 +144,7 @@ struct _ThunarLauncher
   GtkAction              *action_open;
   GtkAction              *action_open_with_other;
   GtkAction              *action_open_in_new_window;
+  GtkAction              *action_open_in_new_tab;
   GtkAction              *action_open_with_other_in_menu;
 
   GtkWidget              *widget;
@@ -167,7 +171,8 @@ struct _ThunarLauncherPokeData
 static const GtkActionEntry action_entries[] =
 {
   { "open", GTK_STOCK_OPEN, N_ ("_Open"), "<control>O", NULL, G_CALLBACK (thunar_launcher_action_open), },
-  { "open-in-new-window", NULL, N_ ("Open in New Window"), "<control><shift>O", N_ ("Open the selected directory in a new window"), G_CALLBACK (thunar_launcher_action_open_in_new_window), },
+  { "open-in-new-tab", NULL, N_ ("Open in New _Tab"), "<control><shift>P", NULL, G_CALLBACK (thunar_launcher_action_open_in_new_tab), },
+  { "open-in-new-window", NULL, N_ ("Open in New _Window"), "<control><shift>O", NULL, G_CALLBACK (thunar_launcher_action_open_in_new_window), },
   { "open-with-other", NULL, N_ ("Open With Other _Application..."), NULL, N_ ("Choose another application with which to open the selected file"), G_CALLBACK (thunar_launcher_action_open_with_other), },
   { "open-with-menu", NULL, N_ ("Open With"), NULL, NULL, NULL, },
   { "open-with-other-in-menu", NULL, N_ ("Open With Other _Application..."), NULL, N_ ("Choose another application with which to open the selected file"), G_CALLBACK (thunar_launcher_action_open_with_other), },
@@ -192,7 +197,7 @@ thunar_launcher_class_init (ThunarLauncherClass *klass)
 
   /* determine the "thunar-launcher-handler" quark */
   thunar_launcher_handler_quark = g_quark_from_static_string ("thunar-launcher-handler");
-  
+
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_launcher_dispose;
   gobject_class->finalize = thunar_launcher_finalize;
@@ -254,6 +259,7 @@ thunar_launcher_init (ThunarLauncher *launcher)
   launcher->action_open = gtk_action_group_get_action (launcher->action_group, "open");
   launcher->action_open_with_other = gtk_action_group_get_action (launcher->action_group, "open-with-other");
   launcher->action_open_in_new_window = gtk_action_group_get_action (launcher->action_group, "open-in-new-window");
+  launcher->action_open_in_new_tab = gtk_action_group_get_action (launcher->action_group, "open-in-new-tab");
   launcher->action_open_with_other_in_menu = gtk_action_group_get_action (launcher->action_group, "open-with-other-in-menu");
 
   /* initialize and add our custom icon factory for the application/action icons */
@@ -760,8 +766,8 @@ thunar_launcher_update (ThunarLauncher *launcher)
   /* determine the number of files/directories/executables */
   for (lp = launcher->selected_files; lp != NULL; lp = lp->next, ++n_selected_files)
     {
-      if (thunar_file_is_directory (lp->data) 
-          || thunar_file_is_shortcut (lp->data) 
+      if (thunar_file_is_directory (lp->data)
+          || thunar_file_is_shortcut (lp->data)
           || thunar_file_is_mountable (lp->data))
         {
           ++n_directories;
@@ -779,46 +785,80 @@ thunar_launcher_update (ThunarLauncher *launcher)
     {
       /** CASE 1: nothing selected or atleast one directory in the selection
        **
-       ** - "Open" and "Open in n New Windows" actions
+       ** - "Open", "Open in n New Windows" and "Open in n New Tabs" actions
        **/
 
-      /* the "Open" action is "Open in n New Windows" if we have two or more directories */
-      if (G_UNLIKELY (n_selected_files == n_directories && n_directories > 1))
+      /* Prepare "Open" label */
+      gtk_action_set_label (launcher->action_open, _("_Open"));
+
+      if (n_selected_files == n_directories && n_directories >= 1)
         {
-          /* turn "Open" into "Open in n New Windows" */
-          label = g_strdup_printf (ngettext ("Open in %d New Window", "Open in %d New Windows", n_directories), n_directories);
-          tooltip = g_strdup_printf (ngettext ("Open the selected directory in %d new window",
-                                               "Open the selected directories in %d new windows",
-                                               n_directories), n_directories);
-          g_object_set (G_OBJECT (launcher->action_open),
-                        "label", label,
-                        "sensitive", TRUE,
-                        "tooltip", tooltip,
-                        NULL);
-          g_free (tooltip);
-          g_free (label);
+          if (n_directories > 1)
+            {
+              /* turn "Open New Window" into "Open in n New Windows" */
+              label = g_strdup_printf (ngettext ("Open in %d New _Window", "Open in %d New _Windows", n_directories), n_directories);
+              tooltip = g_strdup_printf (ngettext ("Open the selected directory in %d new window",
+                                                   "Open the selected directories in %d new windows",
+                                                   n_directories), n_directories);
+              g_object_set (G_OBJECT (launcher->action_open_in_new_window),
+                            "label", label,
+                            "tooltip", tooltip,
+                            NULL);
+              g_free (tooltip);
+              g_free (label);
+
+              /* turn "Open in New Tab" into "Open in x New Tabs" */
+              label = g_strdup_printf (ngettext ("Open in %d New _Tab", "Open in %d New _Tabs", n_directories), n_directories);
+              tooltip = g_strdup_printf (ngettext ("Open the selected directory in %d new tab",
+                                                   "Open the selected directories in %d new tabs",
+                                                   n_directories), n_directories);
+              g_object_set (G_OBJECT (launcher->action_open_in_new_tab),
+                            "label", label,
+                            "tooltip", tooltip,
+                            NULL);
+              g_free (tooltip);
+              g_free (label);
+            }
+          else if (n_directories == 1)
+            {
+              /* prepare "Open in New Window" */
+              g_object_set (G_OBJECT (launcher->action_open_in_new_window),
+                            "label", _("Open in New _Window"),
+                            "tooltip", _("Open the selected directory in a new window"),
+                            NULL);
+
+              /* prepare "Open in New Tab" */
+              g_object_set (G_OBJECT (launcher->action_open_in_new_tab),
+                            "label", _("Open in New _Tab"),
+                            "tooltip", _("Open the selected directory in a new tab"),
+                            NULL);
+
+              /* set tooltip that makes sence */
+              gtk_action_set_tooltip (launcher->action_open, _("Open the selected directory"));
+            }
+
+          /* Show Window/Tab action if there are only directories selected */
+          gtk_action_set_visible (launcher->action_open_in_new_window, n_directories > 0);
+          gtk_action_set_visible (launcher->action_open_in_new_tab, n_directories > 0);
+
+          /* Show open if there is exactly 1 directory selected */
+          gtk_action_set_visible (launcher->action_open, n_directories == 1);
+          gtk_action_set_sensitive (launcher->action_open, TRUE);
         }
       else
         {
-          /* the "Open" action is sensitive if we have atleast one selected file,
-           * the label is set to "Open in New Window" if we're not in a regular
-           * view (i.e. current_directory is not set) and have only one directory
-           * selected to reflect that this action will open a new window.
-           */
-          g_object_set (G_OBJECT (launcher->action_open),
-                        "label", (launcher->current_directory == NULL && n_directories == n_selected_files && n_directories == 1)
-                                 ? _("_Open in New Window")
-                                 : _("_Open"),
-                        "sensitive", (n_selected_files > 0),
-                        "tooltip", ngettext ("Open the selected file", "Open the selected files", n_selected_files),
-                        NULL);
-        }
+          /* Hide New Window and Tab action */
+          gtk_action_set_visible (launcher->action_open_in_new_window, FALSE);
+          gtk_action_set_visible (launcher->action_open_in_new_tab, FALSE);
 
-      /* the "Open in New Window" action is visible if we have exactly one directory */
-      g_object_set (G_OBJECT (launcher->action_open_in_new_window),
-                    "sensitive", (n_directories == 1),
-                    "visible", (n_directories == n_selected_files && n_selected_files <= 1 && launcher->current_directory != NULL),
-                    NULL);
+          /* Normal open action, because there are also directories included */
+          gtk_action_set_visible (launcher->action_open, TRUE);
+          gtk_action_set_sensitive (launcher->action_open, n_selected_files > 0);
+          gtk_action_set_tooltip (launcher->action_open,
+                                  ngettext ("Open the selected file",
+                                            "Open the selected files",
+                                            n_selected_files));
+        }
 
       /* hide the "Open With Other Application" actions */
       gtk_action_set_visible (launcher->action_open_with_other, FALSE);
@@ -845,8 +885,9 @@ thunar_launcher_update (ThunarLauncher *launcher)
       /* make the "Open" action sensitive */
       gtk_action_set_sensitive (launcher->action_open, TRUE);
 
-      /* hide the "Open in n New Windows" action */
+      /* hide the "Open in n New Windows/Tabs" action */
       gtk_action_set_visible (launcher->action_open_in_new_window, FALSE);
+      gtk_action_set_visible (launcher->action_open_in_new_tab, FALSE);
 
       /* determine the set of applications that work for all selected files */
       applications = thunar_file_list_get_applications (launcher->selected_files);
@@ -880,7 +921,7 @@ thunar_launcher_update (ThunarLauncher *launcher)
           /* remember the default application for the "Open" action */
           g_object_set_qdata_full (G_OBJECT (launcher->action_open), thunar_launcher_handler_quark, applications->data, g_object_unref);
 
-          /* FIXME Add the desktop actions for this application. 
+          /* FIXME Add the desktop actions for this application.
            * Unfortunately this is not supported by GIO directly */
 
           /* drop the default application from the list */
@@ -947,7 +988,7 @@ thunar_launcher_update (ThunarLauncher *launcher)
           /* process all applications and determine the desktop actions */
           for (lp = applications, n = 0; lp != NULL; lp = lp->next, ++n)
             {
-              /* FIXME Determine the desktop actions for this application. 
+              /* FIXME Determine the desktop actions for this application.
                * Unfortunately this is not supported by GIO directly. */
 
               /* generate a unique label, unique id and tooltip for the application's action */
@@ -981,7 +1022,7 @@ thunar_launcher_update (ThunarLauncher *launcher)
           g_list_free (applications);
         }
 
-      /* FIXME Add desktop actions here. Unfortunately they are not supported by 
+      /* FIXME Add desktop actions here. Unfortunately they are not supported by
        * GIO, so we'll have to roll our own thing here */
     }
 
@@ -1003,7 +1044,7 @@ thunar_launcher_open_file (ThunarLauncher *launcher,
 
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
-            
+
   files.data = file;
   files.next = NULL;
   files.prev = NULL;
@@ -1053,7 +1094,7 @@ thunar_launcher_poke_file_finish (ThunarBrowser *browser,
   else
     {
       thunar_dialogs_show_error (THUNAR_LAUNCHER (browser)->widget, error,
-                                 _("Failed to open \"%s\""), 
+                                 _("Failed to open \"%s\""),
                                  thunar_file_get_display_name (file));
     }
 }
@@ -1069,7 +1110,7 @@ thunar_launcher_poke_files (ThunarLauncher         *launcher,
   _thunar_return_if_fail (poke_data->files != NULL);
 
   thunar_browser_poke_file (THUNAR_BROWSER (launcher), poke_data->files->data,
-                            launcher->widget, thunar_launcher_poke_files_finish, 
+                            launcher->widget, thunar_launcher_poke_files_finish,
                             poke_data);
 }
 
@@ -1092,12 +1133,12 @@ thunar_launcher_poke_files_finish (ThunarBrowser *browser,
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (poke_data != NULL);
   _thunar_return_if_fail (poke_data->files != NULL);
-  
+
   /* check if poking succeeded */
   if (error == NULL)
     {
       /* add the resolved file to the list of file to be opened/executed later */
-      poke_data->resolved_files = g_list_prepend (poke_data->resolved_files, 
+      poke_data->resolved_files = g_list_prepend (poke_data->resolved_files,
                                                   g_object_ref (target_file));
     }
 
@@ -1186,14 +1227,14 @@ thunar_launcher_action_open (GtkAction      *action,
     }
   else if (g_list_length (launcher->selected_files) == 1)
     {
-      thunar_browser_poke_file (THUNAR_BROWSER (launcher), 
+      thunar_browser_poke_file (THUNAR_BROWSER (launcher),
                                 launcher->selected_files->data, launcher->widget,
                                 thunar_launcher_poke_file_finish, NULL);
     }
   else
     {
       /* resolve files one after another until none is left. Open/execute
-       * the resolved files/directories when all this is done at a later 
+       * the resolved files/directories when all this is done at a later
        * stage */
       poke_data = thunar_launcher_poke_data_new (launcher->selected_files);
       thunar_launcher_poke_files (launcher, poke_data);
@@ -1228,6 +1269,29 @@ thunar_launcher_action_open_in_new_window (GtkAction      *action,
 
   /* open the selected directories in new windows */
   thunar_launcher_open_windows (launcher, launcher->selected_files);
+}
+
+
+
+static void
+thunar_launcher_action_open_in_new_tab (GtkAction      *action,
+                                        ThunarLauncher *launcher)
+{
+  GList *lp;
+  GList *selected_files;
+
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  /* open all selected directories in a new tab */
+  selected_files = thunar_g_file_list_copy (launcher->selected_files);
+  for (lp = selected_files; lp != NULL; lp = lp->next)
+    {
+      if (thunar_file_is_directory (lp->data))
+        thunar_navigator_open_new_tab (THUNAR_NAVIGATOR (launcher), lp->data);
+      g_object_unref (G_OBJECT (lp->data));
+    }
+  g_list_free (selected_files);
 }
 
 
@@ -1332,7 +1396,7 @@ thunar_launcher_sendto_device (ThunarLauncher *launcher,
 
   if (!thunar_device_is_mounted (device))
     return;
-  
+
   mount_point = thunar_device_get_root (device);
   if (mount_point != NULL)
     {
@@ -1361,7 +1425,7 @@ thunar_launcher_sendto_mount_finish (ThunarDevice *device,
 
   if (error != NULL)
     {
-      /* tell the user that we were unable to mount the device, which is 
+      /* tell the user that we were unable to mount the device, which is
        * required to send files to it */
       device_name = thunar_device_get_name (device);
       thunar_dialogs_show_error (data->launcher->widget, error, _("Failed to mount \"%s\""), device_name);

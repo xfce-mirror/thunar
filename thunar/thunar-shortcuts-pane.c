@@ -179,6 +179,7 @@ thunar_shortcuts_pane_init (ThunarShortcutsPane *shortcuts_pane)
 
   /* connect the "shortcut-activated" signal */
   g_signal_connect_swapped (G_OBJECT (shortcuts_pane->view), "shortcut-activated", G_CALLBACK (thunar_navigator_change_directory), shortcuts_pane);
+  g_signal_connect_swapped (G_OBJECT (shortcuts_pane->view), "shortcut-activated-tab", G_CALLBACK (thunar_navigator_open_new_tab), shortcuts_pane);
 }
 
 

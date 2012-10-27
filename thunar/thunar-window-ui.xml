@@ -12,7 +12,9 @@
 
   <menubar name="main-menu">
     <menu action="file-menu">
-      <menuitem action="open-new-window" />
+      <menuitem action="new-tab" />
+      <menuitem action="new-window" />
+      <separator />
       <placeholder name="placeholder-create-actions" />
       <separator />
       <placeholder name="placeholder-launcher" />
@@ -26,8 +28,11 @@
       <separator />
       <menuitem action="empty-trash" />
       <separator />
+      <menuitem action="detach-tab" />
+      <separator />
       <menuitem action="close-all-windows" />
-      <menuitem action="close" />
+      <menuitem action="close-tab" />
+      <menuitem action="close-window" />
     </menu>
 
     <menu action="edit-menu">
@@ -70,8 +75,7 @@
 
     <menu action="go-menu">
       <menuitem action="open-parent" />
-      <menuitem action="back" />
-      <menuitem action="forward" />
+      <placeholder name="placeholder-go-history-actions" />
       <separator />
       <menuitem action="open-home" />
       <menuitem action="open-desktop" />
@@ -110,9 +114,16 @@
     <placeholder name="placeholder-file-actions" />
   </popup>
 
+  <popup action="tab-context-menu">
+    <menuitem action="new-tab" />
+    <separator />
+    <menuitem action="detach-tab" />
+    <separator />
+    <menuitem action="close-tab" />
+  </popup>
+
   <toolbar name="location-toolbar">
-    <toolitem action="back" />
-    <toolitem action="forward" />
+    <placeholder name="placeholder-history-actions" />
     <toolitem action="open-parent" />
     <toolitem action="open-home" />
   </toolbar>

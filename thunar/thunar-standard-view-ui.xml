@@ -40,6 +40,13 @@
         <menuitem action="restore" />
       </placeholder>
     </menu>
+    
+    <menu action="go-menu">
+      <placeholder name="placeholder-go-history-actions">
+        <menuitem action="back" />
+        <menuitem action="forward" />
+      </placeholder>
+    </menu>
   </menubar>
 
   <popup action="file-context-menu">
@@ -75,6 +82,13 @@
     <separator />
     <menuitem action="properties" />
   </popup>
+
+  <toolbar name="location-toolbar">
+    <placeholder name="placeholder-history-actions">
+      <toolitem action="back" />
+      <toolitem action="forward" />
+    </placeholder>
+  </toolbar>
 
 </ui>
 

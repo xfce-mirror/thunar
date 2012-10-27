@@ -29,6 +29,7 @@
 enum
 {
   CHANGE_DIRECTORY,
+  OPEN_NEW_TAB,
   LAST_SIGNAL,
 };
 
@@ -106,6 +107,15 @@ thunar_navigator_base_init (gpointer klass)
                       G_TYPE_FROM_INTERFACE (klass),
                       G_SIGNAL_RUN_LAST,
                       G_STRUCT_OFFSET (ThunarNavigatorIface, change_directory),
+                      NULL, NULL,
+                      g_cclosure_marshal_VOID__OBJECT,
+                      G_TYPE_NONE, 1, THUNAR_TYPE_FILE);
+
+      navigator_signals[OPEN_NEW_TAB] =
+        g_signal_new (I_("open-new-tab"),
+                      G_TYPE_FROM_INTERFACE (klass),
+                      G_SIGNAL_RUN_LAST,
+                      G_STRUCT_OFFSET (ThunarNavigatorIface, open_new_tab),
                       NULL, NULL,
                       g_cclosure_marshal_VOID__OBJECT,
                       G_TYPE_NONE, 1, THUNAR_TYPE_FILE);
@@ -212,3 +222,14 @@ thunar_navigator_change_directory (ThunarNavigator *navigator,
 }
 
 
+
+void
+thunar_navigator_open_new_tab (ThunarNavigator *navigator,
+                               ThunarFile      *directory)
+{
+  _thunar_return_if_fail (THUNAR_IS_NAVIGATOR (navigator));
+  _thunar_return_if_fail (THUNAR_IS_FILE (directory));
+  _thunar_return_if_fail (thunar_file_is_directory (directory));
+
+  g_signal_emit (G_OBJECT (navigator), navigator_signals[OPEN_NEW_TAB], 0, directory);
+}

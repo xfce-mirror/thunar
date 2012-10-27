@@ -27,6 +27,7 @@
 #include <thunar/thunar-abstract-icon-view-ui.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
+#include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 
 
@@ -475,10 +476,13 @@ thunar_abstract_icon_view_button_press_event (ExoIconView            *view,
                                               GdkEventButton         *event,
                                               ThunarAbstractIconView *abstract_icon_view)
 {
-  GtkTreePath *path;
-  GtkTreeIter  iter;
-  ThunarFile  *file;
-  GtkAction   *action;
+  GtkTreePath       *path;
+  GtkTreeIter        iter;
+  ThunarFile        *file;
+  GtkAction         *action;
+  ThunarPreferences *preferences;
+  gboolean           in_tab;
+  const gchar       *action_name;
 
   if (event->type == GDK_BUTTON_PRESS && event->button == 3)
     {
@@ -533,10 +537,26 @@ thunar_abstract_icon_view_button_press_event (ExoIconView            *view,
               if (G_LIKELY (file != NULL))
                 {
                   /* determine the action to perform depending on the type of the file */
-                  action = thunar_gtk_ui_manager_get_action_by_name (THUNAR_STANDARD_VIEW (abstract_icon_view)->ui_manager,
-                      thunar_file_is_directory (file) ? "open-in-new-window" : "open");
-      
+                  if (thunar_file_is_directory (file))
+                    {
+                      /* lookup setting if we should open in a tab or a window */
+                      preferences = thunar_preferences_get ();
+                      g_object_get (preferences, "misc-middle-click-in-tab", &in_tab, NULL);
+                      g_object_unref (preferences);
+
+                      /* holding ctrl inverts the action */
+                      if ((event->state & GDK_CONTROL_MASK) != 0)
+                        in_tab = !in_tab;
+
+                      action_name = in_tab ? "open-in-new-tab" : "open-in-new-window";
+                    }
+                  else
+                    {
+                      action_name = "open";
+                    }
+
                   /* emit the action */
+                  action = thunar_gtk_ui_manager_get_action_by_name (THUNAR_STANDARD_VIEW (abstract_icon_view)->ui_manager, action_name);
                   if (G_LIKELY (action != NULL))
                     gtk_action_activate (action);
 

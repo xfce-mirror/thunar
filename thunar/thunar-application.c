@@ -930,7 +930,7 @@ thunar_application_open_window (ThunarApplication *application,
   gchar     *role;
 
   _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), NULL);
-  _thunar_return_val_if_fail (THUNAR_IS_FILE (directory), NULL);
+  _thunar_return_val_if_fail (directory == NULL || THUNAR_IS_FILE (directory), NULL);
   _thunar_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), NULL);
 
   if (G_UNLIKELY (screen == NULL))
@@ -959,7 +959,8 @@ thunar_application_open_window (ThunarApplication *application,
   gtk_widget_show (window);
 
   /* change the directory */
-  thunar_window_set_current_directory (THUNAR_WINDOW (window), directory);
+  if (directory != NULL)
+    thunar_window_set_current_directory (THUNAR_WINDOW (window), directory);
 
   return window;
 }

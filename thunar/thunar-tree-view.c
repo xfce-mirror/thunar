@@ -157,11 +157,13 @@ static void                     thunar_tree_view_mount_finish                 (T
                                                                                gpointer                 user_data);
 static void                     thunar_tree_view_mount                        (ThunarTreeView          *view,
                                                                                gboolean                 open_after_mounting,
-                                                                               gboolean                 open_in_new_window);
+                                                                               guint                    open_in);
 static void                     thunar_tree_view_action_open                  (ThunarTreeView          *view);
 static void                     thunar_tree_view_open_selection               (ThunarTreeView          *view);
 static void                     thunar_tree_view_action_open_in_new_window    (ThunarTreeView          *view);
+static void                     thunar_tree_view_action_open_in_new_tab       (ThunarTreeView          *view);
 static void                     thunar_tree_view_open_selection_in_new_window (ThunarTreeView          *view);
+static void                     thunar_tree_view_open_selection_in_new_tab    (ThunarTreeView          *view);
 static void                     thunar_tree_view_action_paste_into_folder     (ThunarTreeView          *view);
 static void                     thunar_tree_view_action_properties            (ThunarTreeView          *view);
 static GClosure                *thunar_tree_view_new_files_closure            (ThunarTreeView          *view);
@@ -185,7 +187,7 @@ static void                     thunar_tree_view_expand_timer_destroy         (g
 static ThunarTreeViewMountData *thunar_tree_view_mount_data_new               (ThunarTreeView          *view,
                                                                                GtkTreePath             *path,
                                                                                gboolean                 open_after_mounting,
-                                                                               gboolean                 open_in_new_window);
+                                                                               guint                    open_in);
 static void                     thunar_tree_view_mount_data_free              (ThunarTreeViewMountData *data);
 static gboolean                 thunar_tree_view_get_show_hidden              (ThunarTreeView          *view);
 static void                     thunar_tree_view_set_show_hidden              (ThunarTreeView          *view,
@@ -246,12 +248,19 @@ struct _ThunarTreeView
   gint                    expand_timer_id;
 };
 
+enum
+{
+  OPEN_IN_VIEW,
+  OPEN_IN_WINDOW,
+  OPEN_IN_TAB
+};
+
 struct _ThunarTreeViewMountData
 {
   ThunarTreeView *view;
   GtkTreePath    *path;
   gboolean        open_after_mounting;
-  gboolean        open_in_new_window;
+  guint           open_in;
 };
 
 
@@ -708,8 +717,9 @@ thunar_tree_view_button_press_event (GtkWidget      *widget,
               result = TRUE;
             }
         }
-      else if ((event->button == 1 || event->button == 2) && event->type == GDK_BUTTON_PRESS
-            && (event->state & gtk_accelerator_get_default_mod_mask ()) == 0)
+      else if ((event->button == 1 || event->button == 2)
+               && event->type == GDK_BUTTON_PRESS
+               && (event->state & gtk_accelerator_get_default_mod_mask ()) == 0)
         {
           /* remember the button as pressed and handled it in the release handler */
           view->pressed_button = event->button;
@@ -729,15 +739,24 @@ thunar_tree_view_button_release_event (GtkWidget      *widget,
                                        GdkEventButton *event)
 {
   ThunarTreeView *view = THUNAR_TREE_VIEW (widget);
+  gboolean        in_tab;
 
   /* check if we have an event matching the pressed button state */
   if (G_LIKELY (view->pressed_button == (gint) event->button))
     {
       /* check if we should simply open or open in new window */
       if (G_LIKELY (event->button == 1))
-        thunar_tree_view_action_open (view);
+        {
+          thunar_tree_view_action_open (view);
+        }
       else if (G_UNLIKELY (event->button == 2))
-        thunar_tree_view_action_open_in_new_window (view);
+        {
+          g_object_get (view->preferences, "misc-middle-click-in-tab", &in_tab, NULL);
+          if (in_tab)
+            thunar_tree_view_action_open_in_new_tab (view);
+          else
+            thunar_tree_view_action_open_in_new_window (view);
+        }
     }
 
   /* reset the pressed button state */
@@ -997,7 +1016,7 @@ thunar_tree_view_test_expand_row (GtkTreeView *tree_view,
           expandable = FALSE;
 
           /* allocate a mount data struct */
-          data = thunar_tree_view_mount_data_new (view, path, FALSE, FALSE);
+          data = thunar_tree_view_mount_data_new (view, path, FALSE, OPEN_IN_VIEW);
 
           /* allocate a GTK+ mount operation */
           window = gtk_widget_get_toplevel (GTK_WIDGET (view));
@@ -1101,6 +1120,13 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
   /* set the stock icon */
   image = gtk_image_new_from_stock (GTK_STOCK_OPEN, GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+  
+  /* append the "Open in New Tab" menu action */
+  item = gtk_image_menu_item_new_with_mnemonic (_("Open in New Tab"));
+  g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_open_in_new_tab), view);
+  gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+  gtk_widget_set_sensitive (item, (file != NULL || device != NULL));
+  gtk_widget_show (item);
 
   /* append the "Open in New Window" menu action */
   item = gtk_image_menu_item_new_with_mnemonic (_("Open in New Window"));
@@ -1866,7 +1892,7 @@ static void
 thunar_tree_view_action_mount (ThunarTreeView *view)
 {
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
-  thunar_tree_view_mount (view, FALSE, FALSE);
+  thunar_tree_view_mount (view, FALSE, OPEN_IN_VIEW);
 }
 
 
@@ -1892,10 +1918,20 @@ thunar_tree_view_mount_finish (ThunarDevice *device,
     {
       if (G_LIKELY (data->open_after_mounting))
         {
-          if (data->open_in_new_window)
-            thunar_tree_view_open_selection_in_new_window (data->view);
-          else
-            thunar_tree_view_open_selection (data->view);
+          switch (data->open_in)
+            {
+            case OPEN_IN_WINDOW:
+              thunar_tree_view_open_selection_in_new_window (data->view);
+              break;
+            
+            case OPEN_IN_TAB:
+              thunar_tree_view_open_selection_in_new_tab (data->view);
+              break;
+            
+            default:
+              thunar_tree_view_open_selection (data->view);
+              break;
+            }
         }
       else if (data->path != NULL)
         {
@@ -1911,7 +1947,7 @@ thunar_tree_view_mount_finish (ThunarDevice *device,
 static void
 thunar_tree_view_mount (ThunarTreeView *view,
                         gboolean        open_after_mounting,
-                        gboolean        open_in_new_window)
+                        guint           open_in)
 {
   ThunarTreeViewMountData *data;
   GMountOperation         *mount_operation;
@@ -1928,8 +1964,7 @@ thunar_tree_view_mount (ThunarTreeView *view,
       if (!thunar_device_is_mounted (device))
         {
           /* allocate mount data */
-          data = thunar_tree_view_mount_data_new (view, NULL, open_after_mounting,
-                                                  open_in_new_window);
+          data = thunar_tree_view_mount_data_new (view, NULL, open_after_mounting, open_in);
 
           /* allocate a GTK+ mount operation */
           window = gtk_widget_get_toplevel (GTK_WIDGET (view));
@@ -1971,7 +2006,7 @@ thunar_tree_view_action_open (ThunarTreeView *view)
       if (thunar_device_is_mounted (device))
         thunar_tree_view_open_selection (view);
       else
-        thunar_tree_view_mount (view, TRUE, FALSE);
+        thunar_tree_view_mount (view, TRUE, OPEN_IN_TAB);
 
       g_object_unref (device);
     }
@@ -2020,13 +2055,43 @@ thunar_tree_view_action_open_in_new_window (ThunarTreeView *view)
       if (thunar_device_is_mounted (device))
         thunar_tree_view_open_selection_in_new_window (view);
       else
-        thunar_tree_view_mount (view, TRUE, FALSE);
+        thunar_tree_view_mount (view, TRUE, OPEN_IN_WINDOW);
 
       g_object_unref (device);
     }
   else if (file != NULL)
     {
       thunar_tree_view_open_selection_in_new_window (view);
+      g_object_unref (file);
+    }
+}
+
+
+
+static void
+thunar_tree_view_action_open_in_new_tab (ThunarTreeView *view)
+{
+  ThunarFile   *file;
+  ThunarDevice *device;
+
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
+
+  /* determine the selected device and file */
+  device = thunar_tree_view_get_selected_device (view);
+  file = thunar_tree_view_get_selected_file (view);
+
+  if (device != NULL)
+    {
+      if (thunar_device_is_mounted (device))
+        thunar_tree_view_open_selection_in_new_tab (view);
+      else
+        thunar_tree_view_mount (view, TRUE, OPEN_IN_TAB);
+
+      g_object_unref (device);
+    }
+  else if (file != NULL)
+    {
+      thunar_tree_view_open_selection_in_new_tab (view);
       g_object_unref (file);
     }
 }
@@ -2050,6 +2115,25 @@ thunar_tree_view_open_selection_in_new_window (ThunarTreeView *view)
       thunar_application_open_window (application, file,
                                       gtk_widget_get_screen (GTK_WIDGET (view)), NULL);
       g_object_unref (application);
+      g_object_unref (file);
+    }
+}
+
+
+
+static void
+thunar_tree_view_open_selection_in_new_tab (ThunarTreeView *view)
+{
+  ThunarFile *file;
+
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
+
+  /* determine the selected file */
+  file = thunar_tree_view_get_selected_file (view);
+  if (G_LIKELY (file != NULL))
+    {
+      /* open a new tab for the selected folder */
+      thunar_navigator_open_new_tab (THUNAR_NAVIGATOR (view), file);
       g_object_unref (file);
     }
 }
@@ -2159,13 +2243,15 @@ thunar_tree_view_visible_func (ThunarTreeModel *model,
                                ThunarFile      *file,
                                gpointer         user_data)
 {
-  ThunarTreeView *view = THUNAR_TREE_VIEW (user_data);
+  ThunarTreeView *view;
   gboolean        visible = TRUE;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_TREE_MODEL (model), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW (user_data), FALSE);
 
   /* if show_hidden is TRUE, nothing is filtered */
+  view = THUNAR_TREE_VIEW (user_data);
   if (G_LIKELY (!view->show_hidden))
     {
       /* we display all non-hidden file and hidden files that are ancestors of the current directory */
@@ -2435,7 +2521,7 @@ static ThunarTreeViewMountData *
 thunar_tree_view_mount_data_new (ThunarTreeView *view,
                                  GtkTreePath    *path,
                                  gboolean        open_after_mounting,
-                                 gboolean        open_in_new_window)
+                                 guint           open_in)
 {
   ThunarTreeViewMountData *data;
 
@@ -2443,7 +2529,7 @@ thunar_tree_view_mount_data_new (ThunarTreeView *view,
   data->path = path == NULL ? NULL : gtk_tree_path_copy (path);
   data->view = g_object_ref (view);
   data->open_after_mounting = open_after_mounting;
-  data->open_in_new_window = open_in_new_window;
+  data->open_in = open_in;
 
   return data;
 }

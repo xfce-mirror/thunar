@@ -505,6 +505,30 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_table_attach (GTK_TABLE (table), button, 0, 1, 2, 3, GTK_EXPAND | GTK_FILL, 0, 0, 0);
   gtk_widget_show (button);
 
+  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
+  gtk_widget_show (frame);
+
+  label = gtk_label_new (_("Middle Click"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_frame_set_label_widget (GTK_FRAME (frame), label);
+  gtk_widget_show (label);
+
+  vbox = gtk_vbox_new (FALSE, 6);
+  gtk_container_add (GTK_CONTAINER (frame), vbox);
+  gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
+  gtk_widget_show (vbox);
+
+  button = gtk_radio_button_new_with_mnemonic_from_widget (NULL, _("Open folder in new _window"));
+  g_signal_connect (G_OBJECT (button), "toggled", G_CALLBACK (g_object_notify), "active");
+  gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, TRUE, 0);
+  gtk_widget_show (button);
+
+  button = gtk_radio_button_new_with_mnemonic_from_widget (GTK_RADIO_BUTTON (button), _("Open folder in new _tab"));
+  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-middle-click-in-tab", G_OBJECT (button), "active");
+  g_signal_connect (G_OBJECT (button), "toggled", G_CALLBACK (g_object_notify), "active");
+  gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, TRUE, 0);
+  gtk_widget_show (button);
 
   /*
      Advanced

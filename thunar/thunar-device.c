@@ -718,7 +718,7 @@ thunar_device_eject (ThunarDevice         *device,
       if (drive != NULL)
         {
           if (g_drive_can_stop (drive))
-            {g_message ("stop drive");
+            {
               /* inform user */
               thunar_notify_eject (device);
 
@@ -739,7 +739,7 @@ thunar_device_eject (ThunarDevice         *device,
               return;
             }
           else if (g_drive_can_eject (drive))
-            {g_message ("eject drive");
+            {
               /* inform user */
               thunar_notify_eject (device);
 

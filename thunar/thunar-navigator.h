@@ -44,6 +44,8 @@ struct _ThunarNavigatorIface
   /* signals */
   void        (*change_directory)      (ThunarNavigator *navigator,
                                         ThunarFile      *directory);
+  void        (*open_new_tab)          (ThunarNavigator *navigator,
+                                        ThunarFile      *directory);
 };
 
 GType       thunar_navigator_get_type              (void) G_GNUC_CONST;
@@ -53,6 +55,9 @@ void        thunar_navigator_set_current_directory (ThunarNavigator *navigator,
                                                     ThunarFile      *current_directory);
 
 void        thunar_navigator_change_directory      (ThunarNavigator *navigator,
+                                                    ThunarFile      *directory);
+
+void        thunar_navigator_open_new_tab          (ThunarNavigator *navigator,
                                                     ThunarFile      *directory);
 
 G_END_DECLS;

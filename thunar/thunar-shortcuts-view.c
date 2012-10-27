@@ -53,6 +53,7 @@
 enum
 {
   SHORTCUT_ACTIVATED,
+  SHORTCUT_ACTIVATED_TAB,
   LAST_SIGNAL,
 };
 
@@ -62,6 +63,15 @@ enum
   GTK_TREE_MODEL_ROW,
   TEXT_URI_LIST,
 };
+
+/* Target for open action */
+typedef enum
+{
+  OPEN_IN_VIEW,
+  OPEN_IN_WINDOW,
+  OPEN_IN_TAB
+}
+OpenTarget;
 
 
 
@@ -130,8 +140,9 @@ static void           thunar_shortcuts_view_drop_uri_list                (Thunar
                                                                           GtkTreePath              *dst_path);
 static void           thunar_shortcuts_view_open_clicked                 (ThunarShortcutsView      *view);
 static void           thunar_shortcuts_view_open                         (ThunarShortcutsView      *view,
-                                                                          gboolean                  new_window);
+                                                                          OpenTarget                open_in);
 static void           thunar_shortcuts_view_open_in_new_window_clicked   (ThunarShortcutsView      *view);
+static void           thunar_shortcuts_view_open_in_new_tab_clicked      (ThunarShortcutsView      *view);
 static void           thunar_shortcuts_view_empty_trash                  (ThunarShortcutsView      *view);
 static void           thunar_shortcuts_view_create_shortcut              (ThunarShortcutsView      *view);
 static void           thunar_shortcuts_view_eject                        (ThunarShortcutsView      *view);
@@ -226,6 +237,19 @@ thunar_shortcuts_view_class_init (ThunarShortcutsViewClass *klass)
    **/
   view_signals[SHORTCUT_ACTIVATED] =
     g_signal_new (I_("shortcut-activated"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  0, NULL, NULL,
+                  g_cclosure_marshal_VOID__OBJECT,
+                  G_TYPE_NONE, 1, THUNAR_TYPE_FILE);
+
+  /**
+   * ThunarShortcutsView:shortcut-activated-tab:
+   *
+   * Invoked whenever a shortcut is activated by the user and should be opened in a new tab,
+   **/
+  view_signals[SHORTCUT_ACTIVATED_TAB] =
+    g_signal_new (I_("shortcut-activated-tab"),
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
                   0, NULL, NULL,
@@ -384,6 +408,7 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
   GtkTreeIter          iter;
   gboolean             result;
   gboolean             can_eject;
+  gint                 icon_width, icon_height, column_width;
 
   /* reset the pressed button state */
   view->pressed_button = -1;
@@ -413,11 +438,11 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
               result = TRUE;
             }
         }
-      else if ((event->button == 1 || event->button == 2) && event->type == GDK_BUTTON_PRESS
-            && (event->state & gtk_accelerator_get_default_mod_mask ()) == 0)
+      else if ((event->button == 1 || event->button == 2)
+               && event->type == GDK_BUTTON_PRESS
+               && (event->state & gtk_accelerator_get_default_mod_mask ()) == 0)
         {
           /* check if we clicked the eject button area */
-          gint icon_width, icon_height, column_width;
           column_width = gtk_tree_view_column_get_width (gtk_tree_view_get_column (GTK_TREE_VIEW (view), 0));
           gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &icon_width, &icon_height);
           if (event->x >= column_width - icon_width - 3)
@@ -432,15 +457,8 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
                 }
             }
 
-          /*
-          g_debug("thunar_shortcuts_view_button_press_event(): x: %f, y: %f; my width: %i, eject width: %i, eject: %i",
-                  event->x, event->y, column_width, icon_width, view->pressed_eject_button);
-          */
-
           /* remember the button as pressed and handle it in the release handler */
           view->pressed_button = event->button;
-
-
         }
 
       /* release the path */
@@ -457,19 +475,27 @@ thunar_shortcuts_view_button_release_event (GtkWidget      *widget,
                                             GdkEventButton *event)
 {
   ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (widget);
+  gboolean             in_tab;
 
   /* check if we have an event matching the pressed button state */
   if (G_LIKELY (view->pressed_button == (gint) event->button))
     {
       /* check if the eject button has been pressed */
       if (view->pressed_eject_button)
-        thunar_shortcuts_view_eject (view);
-      /* button 1 opens in the same window */
+        {
+          thunar_shortcuts_view_eject (view);
+        }
       else if (G_LIKELY (event->button == 1))
-        thunar_shortcuts_view_open (view, FALSE);
-      /* button 2 opens in a new window */
+        {
+          /* button 1 opens in the same window */
+          thunar_shortcuts_view_open (view, OPEN_IN_VIEW);
+        }
       else if (G_UNLIKELY (event->button == 2))
-        thunar_shortcuts_view_open (view, TRUE);
+        {
+          /* button 2 opens in a new window or tab */
+          g_object_get (view->preferences, "misc-middle-click-in-tab", &in_tab, NULL);
+          thunar_shortcuts_view_open (view, in_tab ? OPEN_IN_TAB : OPEN_IN_WINDOW);
+        }
     }
 
   /* reset the pressed button state */
@@ -495,7 +521,7 @@ thunar_shortcuts_view_key_release_event (GtkWidget   *widget,
     case GDK_Down:
     case GDK_KP_Up:
     case GDK_KP_Down:
-      thunar_shortcuts_view_open (view, FALSE);
+      thunar_shortcuts_view_open (view, OPEN_IN_VIEW);
 
       /* keep focus on us */
       gtk_widget_grab_focus (widget);
@@ -869,7 +895,7 @@ thunar_shortcuts_view_row_activated (GtkTreeView       *tree_view,
     (*GTK_TREE_VIEW_CLASS (thunar_shortcuts_view_parent_class)->row_activated) (tree_view, path, column);
 
   /* open the selected shortcut */
-  thunar_shortcuts_view_open (view, FALSE);
+  thunar_shortcuts_view_open (view, OPEN_IN_VIEW);
 }
 
 
@@ -1056,6 +1082,12 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   /* set the stock icon */
   image = gtk_image_new_from_stock (GTK_STOCK_OPEN, GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+  
+  /* append the "Open in New Tab" menu action */
+  item = gtk_image_menu_item_new_with_mnemonic (_("Open in New Tab"));
+  g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_open_in_new_tab_clicked), view);
+  gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+  gtk_widget_show (item);
 
   /* append the "Open in New Window" menu action */
   item = gtk_image_menu_item_new_with_mnemonic (_("Open in New Window"));
@@ -1538,7 +1570,7 @@ static void
 thunar_shortcuts_view_open_clicked (ThunarShortcutsView *view)
 {
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
-  thunar_shortcuts_view_open (view, FALSE);
+  thunar_shortcuts_view_open (view, OPEN_IN_VIEW);
 }
 
 
@@ -1551,20 +1583,25 @@ thunar_shortcuts_view_poke_file_finish (ThunarBrowser *browser,
                                         gpointer       user_data)
 {
   ThunarApplication *application;
-  gboolean           new_window = GPOINTER_TO_UINT (user_data);
+  OpenTarget         open_in = GPOINTER_TO_UINT (user_data);
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (browser));
   _thunar_return_if_fail (THUNAR_IS_FILE (target_file));
 
   if (error == NULL)
     {
-      if (new_window)
+      if (open_in == OPEN_IN_WINDOW)
         {
           /* open a new window for the target folder */
           application = thunar_application_get ();
           thunar_application_open_window (application, target_file,
                                           gtk_widget_get_screen (GTK_WIDGET (browser)), NULL);
           g_object_unref (application);
+        }
+      else if (open_in == OPEN_IN_TAB)
+        {
+          /* invoke the signal to change to open folder in a new tab */
+          g_signal_emit (browser, view_signals[SHORTCUT_ACTIVATED_TAB], 0, target_file);
         }
       else if (thunar_file_check_loaded (target_file))
         {
@@ -1616,7 +1653,6 @@ thunar_shortcuts_view_poke_device_finish (ThunarBrowser *browser,
                                           GError        *error,
                                           gpointer       user_data)
 {
-  gboolean      new_window = GPOINTER_TO_UINT (user_data);
   gchar        *device_name;
   GtkTreeModel *model;
   GtkTreeModel *child_model;
@@ -1628,7 +1664,7 @@ thunar_shortcuts_view_poke_device_finish (ThunarBrowser *browser,
     {
       thunar_browser_poke_file (browser, mount_point, GTK_WIDGET (browser),
                                 thunar_shortcuts_view_poke_file_finish,
-                                GUINT_TO_POINTER (new_window));
+                                user_data);
     }
   else
     {
@@ -1648,7 +1684,7 @@ thunar_shortcuts_view_poke_device_finish (ThunarBrowser *browser,
 
 static void
 thunar_shortcuts_view_open (ThunarShortcutsView *view,
-                            gboolean             new_window)
+                            OpenTarget           open_in)
 {
   GtkTreeSelection *selection;
   GtkTreeModel     *model;
@@ -1684,19 +1720,19 @@ thunar_shortcuts_view_open (ThunarShortcutsView *view,
 
           thunar_browser_poke_device (THUNAR_BROWSER (view), device, view,
                                       thunar_shortcuts_view_poke_device_finish,
-                                      GUINT_TO_POINTER (new_window));
+                                      GUINT_TO_POINTER (open_in));
         }
       else if (file != NULL)
         {
           thunar_browser_poke_file (THUNAR_BROWSER (view), file, view,
                                     thunar_shortcuts_view_poke_file_finish,
-                                    GUINT_TO_POINTER (new_window));
+                                    GUINT_TO_POINTER (open_in));
         }
       else if (location != NULL)
         {
           thunar_browser_poke_location (THUNAR_BROWSER (view), location, view,
                                         thunar_shortcuts_view_poke_location_finish,
-                                        GUINT_TO_POINTER (new_window));
+                                        GUINT_TO_POINTER (open_in));
         }
 
       if (file != NULL)
@@ -1716,7 +1752,16 @@ static void
 thunar_shortcuts_view_open_in_new_window_clicked (ThunarShortcutsView *view)
 {
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
-  thunar_shortcuts_view_open (view, TRUE);
+  thunar_shortcuts_view_open (view, OPEN_IN_WINDOW);
+}
+
+
+
+static void
+thunar_shortcuts_view_open_in_new_tab_clicked (ThunarShortcutsView *view)
+{
+  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
+  thunar_shortcuts_view_open (view, OPEN_IN_TAB);
 }
 
 
