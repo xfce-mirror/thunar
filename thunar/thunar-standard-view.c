@@ -2801,6 +2801,11 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
           /* grab the focus to the view widget */
           gtk_widget_grab_focus (GTK_BIN (standard_view)->child);
         }
+      else
+        {
+          /* thunar files are not created yet, try again later */
+          standard_view->priv->new_files_path_list = thunar_g_file_list_copy (path_list);
+        }
     }
 
   /* when performing dnd between 2 views, we force a review on the source as well */
