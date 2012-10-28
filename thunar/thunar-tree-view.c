@@ -973,8 +973,6 @@ thunar_tree_view_row_activated (GtkTreeView       *tree_view,
                                 GtkTreePath       *path,
                                 GtkTreeViewColumn *column)
 {
-  ThunarTreeView *view = THUNAR_TREE_VIEW (tree_view);
-
   /* call the parent's "row-activated" handler */
   if (GTK_TREE_VIEW_CLASS (thunar_tree_view_parent_class)->row_activated != NULL)
     (*GTK_TREE_VIEW_CLASS (thunar_tree_view_parent_class)->row_activated) (tree_view, path, column);
@@ -984,9 +982,6 @@ thunar_tree_view_row_activated (GtkTreeView       *tree_view,
     gtk_tree_view_collapse_row (tree_view, path);
   else
     gtk_tree_view_expand_row (tree_view, path, FALSE);
-
-  /* ...open the selected folder */
-  thunar_tree_view_action_open (view);
 }
 
 
