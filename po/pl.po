@@ -5,12 +5,12 @@
 # Tomasz Michał Łukaszewski <T.Lukaszewski@aster.pl>, 2006.
 # Szymon Kałasz <szymon_maestro@gazeta.pl>, 2007.
 # Piotr Sokół <psokol@jabster.pl>, 2009, 2011, 2012.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 1.2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-10-24 12:24+0000\n"
+"POT-Creation-Date: 2012-10-28 07:21+0000\n"
 "PO-Revision-Date: 2012-10-24 19:43+0200\n"
 "Last-Translator: Piotr Sokół <psokol@jabster.pl>\n"
 "Language-Team: polski <>\n"
@@ -18,8 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bits\n"
 "Language: \n"
-"Plural-Forms: nplurals=3; plural=((n==1) ? 0 : ((n%10>=2 && n%10<=4 && (n"
-"%100<10 || n%100>=20)) ? 1 : 2));\n"
+"Plural-Forms: nplurals=3; plural=((n==1) ? 0 : ((n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20)) ? 1 : 2));\n"
 "X-Generator: Gtranslator 2.91.5\n"
 
 #: ../thunar/main.c:61
@@ -141,8 +140,8 @@ msgstr "Nie udało się wykonać operacji"
 #: ../thunar/thunar-application.c:1112 ../thunar/thunar-application.c:1238
 #: ../thunar/thunar-launcher.c:1056 ../thunar/thunar-location-entry.c:402
 #: ../thunar/thunar-location-entry.c:430
-#: ../thunar/thunar-shortcuts-view.c:1576
-#: ../thunar/thunar-shortcuts-view.c:1604 ../thunar/thunar-window.c:1644
+#: ../thunar/thunar-shortcuts-view.c:1577
+#: ../thunar/thunar-shortcuts-view.c:1605 ../thunar/thunar-window.c:1639
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "Nie udało się otworzyć „%s”"
@@ -251,7 +250,7 @@ msgstr "Opróżnić kosz ze wszystkich elementów?"
 #. append the "Empty Trash" menu action
 #. prepare the menu item
 #: ../thunar/thunar-application.c:1952 ../thunar/thunar-location-buttons.c:171
-#: ../thunar/thunar-shortcuts-view.c:1141 ../thunar/thunar-tree-view.c:1158
+#: ../thunar/thunar-shortcuts-view.c:1142 ../thunar/thunar-tree-view.c:1158
 #: ../thunar/thunar-window.c:312 ../plugins/thunar-tpa/thunar-tpa.c:189
 msgid "_Empty Trash"
 msgstr "Opróżnij _kosz"
@@ -694,7 +693,7 @@ msgid "ReplaceDialogPart1|Do you want to replace the existing file"
 msgstr "Zastąpić istniejący plik"
 
 #. Fourth box (size, volume, free space)
-#.
+#. 
 #: ../thunar/thunar-dialogs.c:618 ../thunar/thunar-dialogs.c:649
 #: ../thunar/thunar-properties-dialog.c:464
 msgid "Size:"
@@ -794,7 +793,7 @@ msgid "Owner"
 msgstr "Właściciel"
 
 #. Permissions chooser
-#.
+#. 
 #: ../thunar/thunar-enum-types.c:98 ../thunar/thunar-properties-dialog.c:536
 msgid "Permissions"
 msgstr "Uprawnienia"
@@ -859,6 +858,11 @@ msgstr "Nieprawidłowy plik aktywatora"
 #, c-format
 msgid "%s on %s"
 msgstr "%s z %s"
+
+#. extend history tooltip with function of the button
+#: ../thunar/thunar-history-action.c:368
+msgid "Right-click or pull down to show history"
+msgstr "Kliknięcie prawym przyciskiem myszy lub przytrzymanie pokazuje historię"
 
 #. create the "back" action
 #: ../thunar/thunar-history.c:163
@@ -1021,13 +1025,13 @@ msgstr ""
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:169 ../thunar/thunar-launcher.c:811
 #: ../thunar/thunar-location-buttons.c:168
-#: ../thunar/thunar-shortcuts-view.c:1050 ../thunar/thunar-tree-view.c:1095
+#: ../thunar/thunar-shortcuts-view.c:1051 ../thunar/thunar-tree-view.c:1095
 msgid "_Open"
 msgstr "_Otwórz"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:170 ../thunar/thunar-location-buttons.c:169
-#: ../thunar/thunar-shortcuts-view.c:1060 ../thunar/thunar-tree-view.c:1106
+#: ../thunar/thunar-shortcuts-view.c:1061 ../thunar/thunar-tree-view.c:1106
 msgid "Open in New Window"
 msgstr "Otwórz w nowym oknie"
 
@@ -1151,8 +1155,8 @@ msgstr[2] "Otwiera zaznaczone pliki za pomocą domyślnych programów"
 msgid "Open With \"%s\""
 msgstr "Otwórz za pomocą „%s”"
 
-#: ../thunar/thunar-launcher.c:1367 ../thunar/thunar-shortcuts-view.c:1636
-#: ../thunar/thunar-shortcuts-view.c:1866 ../thunar/thunar-tree-view.c:1888
+#: ../thunar/thunar-launcher.c:1367 ../thunar/thunar-shortcuts-view.c:1637
+#: ../thunar/thunar-shortcuts-view.c:1867 ../thunar/thunar-tree-view.c:1888
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Nie udało się zamontować „%s”"
@@ -1239,7 +1243,7 @@ msgstr "%2$s „%1$s”"
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#.
+#. 
 #: ../thunar/thunar-list-model.c:2353 ../thunar/thunar-properties-dialog.c:372
 msgid "Original Path:"
 msgstr "Pierwotna ścieżka:"
@@ -1550,7 +1554,7 @@ msgid "File Manager Preferences"
 msgstr "Preferencje"
 
 #. Display
-#.
+#. 
 #: ../thunar/thunar-preferences-dialog.c:207
 msgid "Display"
 msgstr "Wyświetlanie"
@@ -1618,7 +1622,7 @@ msgid "_Format:"
 msgstr "_Format:"
 
 #. Side Pane
-#.
+#. 
 #: ../thunar/thunar-preferences-dialog.c:318
 msgid "Side Pane"
 msgstr "Panel boczny"
@@ -1695,7 +1699,7 @@ msgid ""
 msgstr "Wyświetla zdefiniowane symbole katalogów w panelu drzewa katalogów"
 
 #. Behavior
-#.
+#. 
 #: ../thunar/thunar-preferences-dialog.c:412
 msgid "Behavior"
 msgstr "Zachowanie"
@@ -1746,7 +1750,7 @@ msgid "_Double click to activate items"
 msgstr "Zaznaczanie _dwukrotnym kliknięciem"
 
 #. Advanced
-#.
+#. 
 #: ../thunar/thunar-preferences-dialog.c:512
 msgid "Advanced"
 msgstr "Zaawansowane"
@@ -1831,7 +1835,7 @@ msgid "Names:"
 msgstr "Nazwy:"
 
 #. Second box (kind, open with, link target)
-#.
+#. 
 #: ../thunar/thunar-properties-dialog.c:318
 msgid "Kind:"
 msgstr "Typ:"
@@ -1849,7 +1853,7 @@ msgid "Location:"
 msgstr "Położenie:"
 
 #. Third box (deleted, modified, accessed)
-#.
+#. 
 #: ../thunar/thunar-properties-dialog.c:411
 msgid "Deleted:"
 msgstr "Usunięto:"
@@ -1867,7 +1871,7 @@ msgid "Free Space:"
 msgstr "Wolna przestrzeń:"
 
 #. Emblem chooser
-#.
+#. 
 #: ../thunar/thunar-properties-dialog.c:526
 msgid "Emblems"
 msgstr "Symbole"
@@ -1902,7 +1906,7 @@ msgstr "Nieznany"
 #: ../thunar/thunar-properties-dialog.c:1055
 #, c-format
 msgid "%s of %s (%d%% used)"
-msgstr ""
+msgstr "%s z %s (%d%% w użyciu)"
 
 #. update the properties dialog title
 #: ../thunar/thunar-properties-dialog.c:1118
@@ -1981,7 +1985,7 @@ msgstr "Wyświetla pomoc na temat zaznaczonej operacji zmiany nazwy"
 #. from $libdir/thunarx-2/,
 #. *              and opening the multi rename dialog by selecting multiple
 #. files and pressing F2.
-#.
+#. 
 #: ../thunar/thunar-renamer-dialog.c:607
 msgid ""
 "No renamer modules were found on your system. Please check your\n"
@@ -2088,9 +2092,8 @@ msgid "NETWORK"
 msgstr "SIEĆ"
 
 #: ../thunar/thunar-shortcuts-model.c:853
-#, fuzzy
 msgid "Browse Network"
-msgstr "Przegląda sieć za pomocą menedżera plików"
+msgstr "Przeglądanie sieci"
 
 #: ../thunar/thunar-shortcuts-model.c:874
 msgid "PLACES"
@@ -2112,59 +2115,58 @@ msgstr[2] "Dodaje zakładki do zaznaczonych katalogów"
 
 #. append the "Mount" item
 #. append the "Mount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1074 ../thunar/thunar-tree-view.c:1122
+#: ../thunar/thunar-shortcuts-view.c:1075 ../thunar/thunar-tree-view.c:1122
 msgid "_Mount"
 msgstr "_Zamontuj"
 
 #. append the "Unmount" item
 #. append the "Unmount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1080 ../thunar/thunar-tree-view.c:1128
+#: ../thunar/thunar-shortcuts-view.c:1081 ../thunar/thunar-tree-view.c:1128
 msgid "_Unmount"
 msgstr "_Odmontuj"
 
 #. append the "Disconnect" (eject + safely remove drive) item
 #. append the "Eject" menu action
-#: ../thunar/thunar-shortcuts-view.c:1086 ../thunar/thunar-tree-view.c:1134
+#: ../thunar/thunar-shortcuts-view.c:1087 ../thunar/thunar-tree-view.c:1134
 msgid "_Eject"
 msgstr "_Wysuń"
 
 #. append the "Disconnect" item
-#: ../thunar/thunar-shortcuts-view.c:1103
-#, fuzzy
+#: ../thunar/thunar-shortcuts-view.c:1104
 msgid "Create _Shortcut"
-msgstr "Zmień _nazwę zakładki"
+msgstr "Tworzy _dowiązanie"
 
 #. append the "Disconnect" item
 #. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:1124 ../thunar/thunar-tree-view.c:1143
+#: ../thunar/thunar-shortcuts-view.c:1125 ../thunar/thunar-tree-view.c:1143
 msgid "Disconn_ect"
 msgstr "_Odłącz"
 
-#: ../thunar/thunar-shortcuts-view.c:1204
+#: ../thunar/thunar-shortcuts-view.c:1205
 msgid "_Remove Shortcut"
 msgstr "_Usuń zakładkę"
 
 #. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:1218
+#: ../thunar/thunar-shortcuts-view.c:1219
 msgid "Re_name Shortcut"
 msgstr "Zmień _nazwę zakładki"
 
-#: ../thunar/thunar-shortcuts-view.c:1507
+#: ../thunar/thunar-shortcuts-view.c:1508
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "Ścieżka „%s” nie wskazuje na katalog"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1527
+#: ../thunar/thunar-shortcuts-view.c:1528
 msgid "Failed to add new shortcut"
 msgstr "Nie udało się dodać nowej zakładki"
 
-#: ../thunar/thunar-shortcuts-view.c:1791 ../thunar/thunar-tree-view.c:1752
+#: ../thunar/thunar-shortcuts-view.c:1792 ../thunar/thunar-tree-view.c:1752
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Nie udało się wysunąć „%s”"
 
-#: ../thunar/thunar-shortcuts-view.c:1935 ../thunar/thunar-tree-view.c:1809
+#: ../thunar/thunar-shortcuts-view.c:1936 ../thunar/thunar-tree-view.c:1809
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Nie udało się odmontować „%s”"
@@ -2754,7 +2756,7 @@ msgid "Change the visibility of this window's menubar"
 msgstr "Zmienia widoczność paska poleceń bieżącego okna"
 
 #. * add view options
-#.
+#. 
 #: ../thunar/thunar-window.c:804
 msgid "View as _Icons"
 msgstr "Iko_ny"
@@ -2787,44 +2789,44 @@ msgstr ""
 "uszkodzenia systemu."
 
 #. create the network action
-#: ../thunar/thunar-window.c:1578
+#: ../thunar/thunar-window.c:1573
 msgid "Network"
 msgstr "Sieć"
 
-#: ../thunar/thunar-window.c:1578
+#: ../thunar/thunar-window.c:1573
 msgid "Browse the network"
 msgstr "Przegląda sieć za pomocą menedżera plików"
 
-#: ../thunar/thunar-window.c:1618
+#: ../thunar/thunar-window.c:1613
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Nie udało się uruchomić „%s”"
 
-#: ../thunar/thunar-window.c:2117
+#: ../thunar/thunar-window.c:2112
 msgid "Failed to open parent folder"
 msgstr "Nie udało się otworzyć katalogu nadrzędnego"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2142
+#: ../thunar/thunar-window.c:2137
 msgid "Failed to open the home folder"
 msgstr "Nie udało się otworzyć katalogu domowego"
 
-#: ../thunar/thunar-window.c:2210
+#: ../thunar/thunar-window.c:2205
 #, c-format
 msgid "Failed to open folder \"%s\""
 msgstr "Nie udało się otworzyć katalogu „%s”"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:2338
+#: ../thunar/thunar-window.c:2333
 msgid "About Templates"
 msgstr "O szablonach"
 
-#: ../thunar/thunar-window.c:2360
+#: ../thunar/thunar-window.c:2355
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
 "Pliki katalogu szablonów zostaną wyświetlone w menu „Utwórz z szablonu...”"
 
-#: ../thunar/thunar-window.c:2367
+#: ../thunar/thunar-window.c:2362
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and "
 "put it in this folder. Thunar will add an entry for this document in the "
@@ -2837,26 +2839,26 @@ msgstr ""
 "pozycji w menu „Utwórz z szablonu...” odpowiadającej danemu plikowi, utworzy "
 "kopię tego pliku w bieżącym katalogu."
 
-#: ../thunar/thunar-window.c:2379
+#: ../thunar/thunar-window.c:2374
 msgid "Do _not display this message again"
 msgstr "_Ukrywanie tego okna w przyszłości"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2423
+#: ../thunar/thunar-window.c:2418
 msgid "Failed to open the file system root folder"
 msgstr "Nie udało się otworzyć katalogu głównego systemu plików"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2458
+#: ../thunar/thunar-window.c:2453
 msgid "Failed to display the contents of the trash can"
 msgstr "Nie udało się wyświetlić zawartości kosza"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2493
+#: ../thunar/thunar-window.c:2488
 msgid "Failed to browse the network"
 msgstr "Nie udało się wyświetlić zawartości sieci"
 
-#: ../thunar/thunar-window.c:2535
+#: ../thunar/thunar-window.c:2530
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -2865,7 +2867,7 @@ msgstr ""
 "plików dla środowiska Xfce."
 
 #. set window title
-#: ../thunar/thunar-window.c:2589 ../Thunar.desktop.in.in.h:2
+#: ../thunar/thunar-window.c:2584 ../Thunar.desktop.in.in.h:2
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "File Manager"
 msgstr "Menedżer plików"
@@ -3425,7 +3427,7 @@ msgid "If you delete a custom action, it is permanently lost."
 msgstr "Czynność zostanie trwale usunięta."
 
 #. Basic
-#.
+#. 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:122
 msgid "Basic"
 msgstr "Ogólne"
@@ -3617,12 +3619,12 @@ msgstr "Funkcja obsługi elementu zamykającego wywołana z głównego kontekstu
 msgid "Unknown closing element <%s>"
 msgstr "Nieznany element zamykający <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1343
+#: ../plugins/thunar-uca/thunar-uca-model.c:1345
 #, c-format
 msgid "Failed to determine save location for uca.xml"
 msgstr "Nie udało się określić miejsca zapisu dla uca.xml"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1460
+#: ../plugins/thunar-uca/thunar-uca-model.c:1462
 #, c-format
 msgid "Command not configured"
 msgstr "Polecenie nie skonfigurowane"
