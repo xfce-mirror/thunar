@@ -271,7 +271,7 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
                    G_OBJECT (model), "hidden-bookmarks");
 
   /* load volumes */
-  model->devices_monitor_idle_id = g_idle_add (thunar_shortcuts_model_devices_load, model);
+  model->devices_monitor_idle_id = g_idle_add_full (G_PRIORITY_DEFAULT, thunar_shortcuts_model_devices_load, model, NULL);
 
   /* add network */
   thunar_shortcuts_model_shortcut_network (model);
@@ -935,7 +935,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
     }
 
   /* read the Gtk+ bookmarks file */
-  model->bookmarks_idle_id = g_idle_add (thunar_shortcuts_model_load, model);
+  model->bookmarks_idle_id = g_idle_add_full (G_PRIORITY_DEFAULT, thunar_shortcuts_model_load, model, NULL);
 
   g_object_unref (home);
 }
