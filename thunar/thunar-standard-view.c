@@ -1150,6 +1150,7 @@ thunar_standard_view_set_ui_manager (ThunarComponent *component,
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (component);
   GError             *error = NULL;
+  gboolean            ui_ensure_update = FALSE;
 
   /* leave if nothing changed */
   if (standard_view->ui_manager == ui_manager)
@@ -1184,6 +1185,7 @@ thunar_standard_view_set_ui_manager (ThunarComponent *component,
 
       /* force update to remove all actions and proxies */
       gtk_ui_manager_ensure_update (standard_view->ui_manager);
+      ui_ensure_update = TRUE;
 
       /* drop the reference on the previous UI manager */
       g_object_unref (G_OBJECT (standard_view->ui_manager));
@@ -1214,7 +1216,8 @@ thunar_standard_view_set_ui_manager (ThunarComponent *component,
       (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->connect_ui_manager) (standard_view, ui_manager);
 
       /* force update to avoid flickering */
-      gtk_ui_manager_ensure_update (standard_view->ui_manager);
+      if (ui_ensure_update)
+        gtk_ui_manager_ensure_update (standard_view->ui_manager);
     }
 
   /* let others know that we have a new manager */
