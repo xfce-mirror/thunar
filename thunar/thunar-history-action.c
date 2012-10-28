@@ -158,6 +158,10 @@ thunar_history_action_button_release_event (GtkWidget      *toggle_button,
           gtk_action_activate (GTK_ACTION (history_action));
         }
     }
+  else
+    {
+      return TRUE;
+    }
 
   /* bit of a strange trick to get the button untoggeled */
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle_button),
