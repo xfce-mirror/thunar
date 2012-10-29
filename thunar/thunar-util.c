@@ -309,7 +309,8 @@ thunar_util_parse_parent (gpointer    parent,
     {
       /* parent is a widget, so let's determine the toplevel window */
       window = gtk_widget_get_toplevel (GTK_WIDGET (parent));
-      if (gtk_widget_is_toplevel (window))
+      if (window != NULL
+          && gtk_widget_is_toplevel (window))
         {
           /* make sure the toplevel window is shown */
           gtk_widget_show_now (window);
