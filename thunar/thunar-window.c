@@ -767,20 +767,21 @@ thunar_window_init (ThunarWindow *window)
 {
   GtkRadioAction *radio_action;
   GtkAccelGroup  *accel_group;
-  GtkWidget      *separator;
   GtkWidget      *label;
-  GtkWidget      *ebox;
+  GtkWidget      *infobar;
   GtkWidget      *item;
   GtkAction      *action;
-  gboolean        show_hidden;
-  gboolean        visible;
+  gboolean        last_show_hidden;
+  gboolean        last_menubar_visible;
   GSList         *group;
-  gchar          *type_name;
+  gchar          *last_location_bar;
+  gchar          *last_side_pane;
   GType           type;
-  gint            position;
-  gint            width;
-  gint            height;
-  gboolean        maximized;
+  gint            last_separator_position;
+  gint            last_window_width;
+  gint            last_window_height;
+  gboolean        last_window_maximized;
+  gboolean        last_statusbar_visible;
   GtkRcStyle     *style;
 
   /* unset the view type */
@@ -791,6 +792,19 @@ thunar_window_init (ThunarWindow *window)
 
   /* grab a reference on the preferences */
   window->preferences = thunar_preferences_get ();
+
+  /* get all properties for init */
+  g_object_get (G_OBJECT (window->preferences),
+                "last-show-hidden", &last_show_hidden,
+                "last-window-width", &last_window_width,
+                "last-window-height", &last_window_height,
+                "last-window-maximized", &last_window_maximized,
+                "last-menubar-visible", &last_menubar_visible,
+                "last-separator-position", &last_separator_position,
+                "last-location-bar", &last_location_bar,
+                "last-side-pane", &last_side_pane,
+                "last-statusbar-visible", &last_statusbar_visible,
+                NULL);
 
   /* connect to the volume monitor */
   window->device_monitor = thunar_device_monitor_get ();
@@ -807,7 +821,6 @@ thunar_window_init (ThunarWindow *window)
   window->menu_item_deselected_closure = g_cclosure_new_object (G_CALLBACK (thunar_window_menu_item_deselected), G_OBJECT (window));
   g_closure_ref (window->menu_item_deselected_closure);
   g_closure_sink (window->menu_item_deselected_closure);
-
   window->icon_factory = thunar_icon_factory_get_default ();
 
   /* setup the action group for this window */
@@ -818,8 +831,7 @@ thunar_window_init (ThunarWindow *window)
 
   /* initialize the "show-hidden" action using the last value from the preferences */
   action = gtk_action_group_get_action (window->action_group, "show-hidden");
-  g_object_get (G_OBJECT (window->preferences), "last-show-hidden", &show_hidden, NULL);
-  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), show_hidden);
+  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), last_show_hidden);
 
   /* rename the user dir menu entries and hide the unexisting ones */
   thunar_window_setup_user_dir_menu_entries (window);
@@ -866,11 +878,10 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect_swapped (G_OBJECT (window->launcher), "open-new-tab", G_CALLBACK (thunar_window_notebook_insert), window);
 
   /* determine the default window size from the preferences */
-  g_object_get (G_OBJECT (window->preferences), "last-window-width", &width, "last-window-height", &height, "last-window-maximized", &maximized, NULL);
-  gtk_window_set_default_size (GTK_WINDOW (window), width, height);
+  gtk_window_set_default_size (GTK_WINDOW (window), last_window_width, last_window_height);
 
   /* restore the maxized state of the window */
-  if (G_UNLIKELY (maximized))
+  if (G_UNLIKELY (last_window_maximized))
     gtk_window_maximize (GTK_WINDOW (window));
 
   window->table = gtk_table_new (6, 1, FALSE);
@@ -881,10 +892,9 @@ thunar_window_init (ThunarWindow *window)
   gtk_table_attach (GTK_TABLE (window->table), window->menubar, 0, 1, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
 
   /* update menubar visibiliy */
-  g_object_get (G_OBJECT (window->preferences), "last-menubar-visible", &visible, NULL);
   action = gtk_action_group_get_action (window->action_group, "view-menubar");
   g_signal_connect (G_OBJECT (window->menubar), "deactivate", G_CALLBACK (thunar_window_toggle_menubar_deactivate), window);
-  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), visible);
+  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), last_menubar_visible);
 
   /* append the menu item for the spinner */
   item = gtk_menu_item_new ();
@@ -902,26 +912,16 @@ thunar_window_init (ThunarWindow *window)
   /* check if we need to add the root warning */
   if (G_UNLIKELY (geteuid () == 0))
     {
-      /* install default settings for the root warning text box */
-      gtk_rc_parse_string ("style\"thunar-window-root-style\"{bg[NORMAL]=\"#b4254b\"\nfg[NORMAL]=\"#fefefe\"}\n"
-                           "widget\"ThunarWindow.*.root-warning\"style\"thunar-window-root-style\"\n"
-                           "widget\"ThunarWindow.*.root-warning.GtkLabel\"style\"thunar-window-root-style\"\n");
-
-      /* add the box for the root warning */
-      ebox = gtk_event_box_new ();
-      gtk_widget_set_name (ebox, "root-warning");
-      gtk_table_attach (GTK_TABLE (window->table), ebox, 0, 1, 2, 3, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
-      gtk_widget_show (ebox);
+      /* add the bar for the root warning */
+      infobar = gtk_info_bar_new ();
+      gtk_info_bar_set_message_type (GTK_INFO_BAR (infobar), GTK_MESSAGE_WARNING);
+      gtk_table_attach (GTK_TABLE (window->table), infobar, 0, 1, 2, 3, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+      gtk_widget_show (infobar);
 
       /* add the label with the root warning */
       label = gtk_label_new (_("Warning, you are using the root account, you may harm your system."));
-      gtk_misc_set_padding (GTK_MISC (label), 6, 3);
-      gtk_container_add (GTK_CONTAINER (ebox), label);
+      gtk_container_add (GTK_CONTAINER (gtk_info_bar_get_content_area (GTK_INFO_BAR (infobar))), label);
       gtk_widget_show (label);
-
-      separator = gtk_hseparator_new ();
-      gtk_table_attach (GTK_TABLE (window->table), separator, 0, 1, 3, 4, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
-      gtk_widget_show (separator);
     }
 
   window->paned = gtk_hpaned_new ();
@@ -930,8 +930,7 @@ thunar_window_init (ThunarWindow *window)
   gtk_widget_show (window->paned);
 
   /* determine the last separator position and apply it to the paned view */
-  g_object_get (G_OBJECT (window->preferences), "last-separator-position", &position, NULL);
-  gtk_paned_set_position (GTK_PANED (window->paned), position);
+  gtk_paned_set_position (GTK_PANED (window->paned), last_separator_position);
   g_signal_connect_swapped (window->paned, "accept-position", G_CALLBACK (thunar_window_save_paned), window);
   g_signal_connect_swapped (window->paned, "button-release-event", G_CALLBACK (thunar_window_save_paned), window);
 
@@ -961,14 +960,13 @@ thunar_window_init (ThunarWindow *window)
   g_object_unref (G_OBJECT (style));
 
   /* determine the selected location selector */
-  g_object_get (G_OBJECT (window->preferences), "last-location-bar", &type_name, NULL);
-  if (exo_str_is_equal (type_name, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS)))
+  if (exo_str_is_equal (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS)))
     type = THUNAR_TYPE_LOCATION_BUTTONS;
-  else if (exo_str_is_equal (type_name, g_type_name (THUNAR_TYPE_LOCATION_ENTRY)))
+  else if (exo_str_is_equal (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_ENTRY)))
     type = THUNAR_TYPE_LOCATION_ENTRY;
   else
     type = G_TYPE_NONE;
-  g_free (type_name);
+  g_free (last_location_bar);
 
   /* activate the selected location selector */
   action = gtk_action_group_get_action (window->action_group, "view-location-selector-pathbar");
@@ -977,14 +975,13 @@ thunar_window_init (ThunarWindow *window)
   gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), (type == THUNAR_TYPE_LOCATION_ENTRY));
 
   /* determine the selected side pane (FIXME: Should probably be last-shortcuts-visible and last-tree-visible preferences) */
-  g_object_get (G_OBJECT (window->preferences), "last-side-pane", &type_name, NULL);
-  if (exo_str_is_equal (type_name, g_type_name (THUNAR_TYPE_SHORTCUTS_PANE)))
+  if (exo_str_is_equal (last_side_pane, g_type_name (THUNAR_TYPE_SHORTCUTS_PANE)))
     type = THUNAR_TYPE_SHORTCUTS_PANE;
-  else if (exo_str_is_equal (type_name, g_type_name (THUNAR_TYPE_TREE_PANE)))
+  else if (exo_str_is_equal (last_side_pane, g_type_name (THUNAR_TYPE_TREE_PANE)))
     type = THUNAR_TYPE_TREE_PANE;
   else
     type = G_TYPE_NONE;
-  g_free (type_name);
+  g_free (last_side_pane);
 
   /* activate the selected side pane */
   action = gtk_action_group_get_action (window->action_group, "view-side-pane-shortcuts");
@@ -993,9 +990,8 @@ thunar_window_init (ThunarWindow *window)
   gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), (type == THUNAR_TYPE_TREE_PANE));
 
   /* check if we should display the statusbar by default */
-  g_object_get (G_OBJECT (window->preferences), "last-statusbar-visible", &visible, NULL);
   action = gtk_action_group_get_action (window->action_group, "view-statusbar");
-  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), visible);
+  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), last_statusbar_visible);
 
   /* connect signal */
   action = gtk_action_group_get_action (window->action_group, "view-as-icons");
