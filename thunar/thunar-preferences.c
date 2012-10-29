@@ -85,6 +85,7 @@ enum
   PROP_MISC_SHOW_THUMBNAILS,
   PROP_MISC_SINGLE_CLICK,
   PROP_MISC_SINGLE_CLICK_TIMEOUT,
+  PROP_MISC_SMALL_TOOLBAR_ICONS,
   PROP_MISC_TAB_CLOSE_MIDDLE_CLICK,
   PROP_MISC_TEXT_BESIDE_ICONS,
   PROP_SHORTCUTS_ICON_EMBLEMS,
@@ -646,6 +647,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                       NULL,
                                                       0u, G_MAXUINT, 500u,
                                                       EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:misc-small-toolbar-icons:
+   *
+   * Use small icons on the toolbar instead of the default toolbar size.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_MISC_SMALL_TOOLBAR_ICONS,
+                                   g_param_spec_boolean ("misc-small-toolbar-icons",
+                                                         NULL,
+                                                         NULL,
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
 
   /**
    * ThunarPreferences:misc-tab-close-middle-click:
