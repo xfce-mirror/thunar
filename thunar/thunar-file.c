@@ -1571,6 +1571,7 @@ thunar_file_rename (ThunarFile   *file,
   GError               *err = NULL;
   GFile                *previous_file;
   GFile                *renamed_file;
+  gboolean              is_secure;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (g_utf8_validate (name, -1, NULL), FALSE);
@@ -1578,7 +1579,8 @@ thunar_file_rename (ThunarFile   *file,
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   /* check if this file is a desktop entry */
-  if (thunar_file_is_desktop_file (file, NULL))
+  if (thunar_file_is_desktop_file (file, &is_secure)
+      && is_secure)
     {
       /* try to load the desktop entry into a key file */
       key_file = thunar_g_file_query_key_file (file->gfile, cancellable, &err);
