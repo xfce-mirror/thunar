@@ -400,6 +400,7 @@ static const GtkTargetEntry drag_targets[] =
 static const GtkTargetEntry drop_targets[] =
 {
   { "text/uri-list", 0, TARGET_TEXT_URI_LIST, },
+  { "XdndDirectSave0", 0, TARGET_XDND_DIRECT_SAVE0, },
   { "_NETSCAPE_URL", 0, TARGET_NETSCAPE_URL, },
 };
 
@@ -2915,7 +2916,12 @@ thunar_standard_view_drag_drop (GtkWidget          *view,
                                 guint               timestamp,
                                 ThunarStandardView *standard_view)
 {
-  GdkAtom target;
+  ThunarFile *file = NULL;
+  GdkAtom     target;
+  guchar     *prop_text;
+  GFile      *path;
+  gchar      *uri = NULL;
+  gint        prop_len;
 
   target = gtk_drag_dest_find_target (view, context, NULL);
   if (G_UNLIKELY (target == GDK_NONE))
@@ -2923,13 +2929,69 @@ thunar_standard_view_drag_drop (GtkWidget          *view,
       /* we cannot handle the drag data */
       return FALSE;
     }
+  else if (G_UNLIKELY (target == gdk_atom_intern_static_string ("XdndDirectSave0")))
+    {
+      /* determine the file for the drop position */
+      file = thunar_standard_view_get_drop_file (standard_view, x, y, NULL);
+      if (G_LIKELY (file != NULL))
+        {
+          /* determine the file name from the DnD source window */
+          if (gdk_property_get (context->source_window, gdk_atom_intern_static_string ("XdndDirectSave0"),
+                                gdk_atom_intern_static_string ("text/plain"), 0, 1024, FALSE, NULL, NULL,
+                                &prop_len, &prop_text) && prop_text != NULL)
+            {
+              /* zero-terminate the string */
+              prop_text = g_realloc (prop_text, prop_len + 1);
+              prop_text[prop_len] = '\0';
+
+              /* verify that the file name provided by the source is valid */
+              if (G_LIKELY (*prop_text != '\0' && strchr ((const gchar *) prop_text, G_DIR_SEPARATOR) == NULL))
+                {
+                  /* allocate the relative path for the target */
+                  path = g_file_resolve_relative_path (thunar_file_get_file (file),
+                                                       (const gchar *)prop_text);
+
+                  /* determine the new URI */
+                  uri = g_file_get_uri (path);
+
+                  /* setup the property */
+                  gdk_property_change (GDK_DRAWABLE (context->source_window),
+                                       gdk_atom_intern_static_string ("XdndDirectSave0"),
+                                       gdk_atom_intern_static_string ("text/plain"), 8,
+                                       GDK_PROP_MODE_REPLACE, (const guchar *) uri,
+                                       strlen (uri));
+
+                  /* cleanup */
+                  g_object_unref (path);
+                  g_free (uri);
+                }
+              else
+                {
+                  /* tell the user that the file name provided by the X Direct Save source is invalid */
+                  thunar_dialogs_show_error (GTK_WIDGET (standard_view), NULL, _("Invalid filename provided by XDS drag site"));
+                }
+
+              /* cleanup */
+              g_free (prop_text);
+            }
+
+          /* release the file reference */
+          g_object_unref (G_OBJECT (file));
+        }
+
+      /* if uri == NULL, we didn't set the property */
+      if (G_UNLIKELY (uri == NULL))
+        return FALSE;
+    }
 
   /* set state so the drag-data-received knows that
    * this is really a drop this time.
    */
   standard_view->priv->drop_occurred = TRUE;
 
-  /* request the drag data from the source */
+  /* request the drag data from the source (initiates
+   * saving in case of XdndDirectSave).
+   */
   gtk_drag_get_data (view, context, target, timestamp);
 
   /* we'll call gtk_drag_finish() later */
@@ -2974,6 +3036,7 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
 {
   GdkDragAction actions;
   GdkDragAction action;
+  ThunarFolder *folder;
   ThunarFile   *file = NULL;
   GtkWidget    *toplevel;
   gboolean      succeed = FALSE;
@@ -3003,7 +3066,42 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
       /* reset the state */
       standard_view->priv->drop_occurred = FALSE;
 
-      if (G_UNLIKELY (info == TARGET_NETSCAPE_URL))
+      /* check if we're doing XdndDirectSave */
+      if (G_UNLIKELY (info == TARGET_XDND_DIRECT_SAVE0))
+        {
+          /* we don't handle XdndDirectSave stage (3), result "F" yet */
+          if (G_UNLIKELY (selection_data->format == 8 && selection_data->length == 1 && selection_data->data[0] == 'F'))
+            {
+              /* indicate that we don't provide "F" fallback */
+              gdk_property_change (GDK_DRAWABLE (context->source_window),
+                                   gdk_atom_intern_static_string ("XdndDirectSave0"),
+                                   gdk_atom_intern_static_string ("text/plain"), 8,
+                                   GDK_PROP_MODE_REPLACE, (const guchar *) "", 0);
+            }
+          else if (G_LIKELY (selection_data->format == 8 && selection_data->length == 1 && selection_data->data[0] == 'S'))
+            {
+              /* XDS was successfull, so determine the file for the drop position */
+              file = thunar_standard_view_get_drop_file (standard_view, x, y, NULL);
+              if (G_LIKELY (file != NULL))
+                {
+                  /* verify that we have a directory here */
+                  if (thunar_file_is_directory (file))
+                    {
+                      /* reload the folder corresponding to the file */
+                      folder = thunar_folder_get_for_file (file);
+                      thunar_folder_reload (folder);
+                      g_object_unref (G_OBJECT (folder));
+                    }
+
+                  /* cleanup */
+                  g_object_unref (G_OBJECT (file));
+                }
+            }
+
+          /* in either case, we succeed! */
+          succeed = TRUE;
+        }
+      else if (G_UNLIKELY (info == TARGET_NETSCAPE_URL))
         {
           /* check if the format is valid and we have any data */
           if (G_LIKELY (selection_data->format == 8 && selection_data->length > 0))
@@ -3158,6 +3256,8 @@ thunar_standard_view_drag_motion (GtkWidget          *view,
                                   ThunarStandardView *standard_view)
 {
   GdkDragAction action = 0;
+  GtkTreePath  *path;
+  ThunarFile   *file = NULL;
   GdkAtom       target;
 
   /* request the drop data on-demand (if we don't have it already) */
@@ -3166,9 +3266,52 @@ thunar_standard_view_drag_motion (GtkWidget          *view,
       /* check if we can handle that drag data (yet?) */
       target = gtk_drag_dest_find_target (view, context, NULL);
 
-      /* request the drag data from the source */
-      if (target != GDK_NONE)
-        gtk_drag_get_data (view, context, target, timestamp);
+      if ((target == gdk_atom_intern_static_string ("XdndDirectSave0")) || (target == gdk_atom_intern_static_string ("_NETSCAPE_URL")))
+        {
+          /* determine the file for the given coordinates */
+          file = thunar_standard_view_get_drop_file (standard_view, x, y, &path);
+
+          /* check if we can save here */
+          if (G_LIKELY (file != NULL
+                        && thunar_file_is_local (file)
+                        && thunar_file_is_directory (file)
+                        && thunar_file_is_writable (file)))
+            {
+              action = context->suggested_action;
+            }
+
+          /* reset path if we cannot drop */
+          if (G_UNLIKELY (action == 0 && path != NULL))
+            {
+              gtk_tree_path_free (path);
+              path = NULL;
+            }
+
+          /* do the view highlighting */
+          if (standard_view->priv->drop_highlight != (path == NULL && action != 0))
+            {
+              standard_view->priv->drop_highlight = (path == NULL && action != 0);
+              gtk_widget_queue_draw (GTK_WIDGET (standard_view));
+            }
+
+          /* setup drop-file for the icon renderer to highlight the target */
+          g_object_set (G_OBJECT (standard_view->icon_renderer), "drop-file", (action != 0) ? file : NULL, NULL);
+
+          /* do the item highlighting */
+          (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->highlight_path) (standard_view, path);
+
+          /* cleanup */
+          if (G_LIKELY (file != NULL))
+            g_object_unref (G_OBJECT (file));
+          if (G_LIKELY (path != NULL))
+            gtk_tree_path_free (path);
+        }
+      else
+        {
+          /* request the drag data from the source */
+          if (target != GDK_NONE)
+            gtk_drag_get_data (view, context, target, timestamp);
+        }
 
       /* tell Gdk whether we can drop here */
       gdk_drag_status (context, action, timestamp);
