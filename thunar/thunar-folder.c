@@ -636,6 +636,8 @@ thunar_folder_monitor (GFileMonitor     *monitor,
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (folder->monitor == monitor);
   _thunar_return_if_fail (folder->job == NULL);
+  _thunar_return_if_fail (THUNAR_IS_FILE (folder->corresponding_file));
+  _thunar_return_if_fail (G_IS_FILE (event_file));
 
   /* check on which file the event occurred */
   if (!g_file_equal (event_file, thunar_file_get_file (folder->corresponding_file)))
