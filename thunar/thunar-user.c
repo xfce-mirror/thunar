@@ -54,8 +54,8 @@
 
 
 
-/* the interval in which the user/group cache is flushed (in ms) */
-#define THUNAR_USER_MANAGER_FLUSH_INTERVAL (10 * 60 * 1000)
+/* the interval in which the user/group cache is flushed (in seconds) */
+#define THUNAR_USER_MANAGER_FLUSH_INTERVAL (10 * 60)
 
 
 
@@ -521,9 +521,9 @@ thunar_user_manager_init (ThunarUserManager *manager)
 #endif
 
   /* start the flush timer */
-  manager->flush_timer_id = g_timeout_add_full (G_PRIORITY_LOW, THUNAR_USER_MANAGER_FLUSH_INTERVAL,
-                                                thunar_user_manager_flush_timer, manager,
-                                                thunar_user_manager_flush_timer_destroy);
+  manager->flush_timer_id = g_timeout_add_seconds_full (G_PRIORITY_LOW, THUNAR_USER_MANAGER_FLUSH_INTERVAL,
+                                                        thunar_user_manager_flush_timer, manager,
+                                                        thunar_user_manager_flush_timer_destroy);
 }
 
 
