@@ -88,6 +88,7 @@ static void       thunar_icon_factory_mark_recently_used    (ThunarIconFactory  
 static guint      thunar_icon_key_hash                      (gconstpointer             data);
 static gboolean   thunar_icon_key_equal                     (gconstpointer             a,
                                                              gconstpointer             b);
+static void       thunar_icon_key_free                      (gpointer                  data);
 static GdkPixbuf *thunar_icon_factory_load_fallback         (ThunarIconFactory        *factory,
                                                              gint                      size);
 
@@ -202,7 +203,7 @@ thunar_icon_factory_init (ThunarIconFactory *factory)
                                                          0, thunar_icon_factory_changed, factory, NULL);
 
   /* allocate the hash table for the icon cache */
-  factory->icon_cache = g_hash_table_new_full (thunar_icon_key_hash, thunar_icon_key_equal, g_free, g_object_unref);
+  factory->icon_cache = g_hash_table_new_full (thunar_icon_key_hash, thunar_icon_key_equal, thunar_icon_key_free, g_object_unref);
 }
 
 
@@ -534,10 +535,9 @@ thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
         }
 
       /* generate a key for the new cached icon */
-      key = g_malloc (sizeof (ThunarIconKey) + strlen (name) + 1);
-      key->name = ((gchar *) key) + sizeof (ThunarIconKey);
+      key = g_slice_new (ThunarIconKey);
       key->size = size;
-      strcpy (key->name, name);
+      key->name = g_strdup (name);
 
       /* insert the new icon into the cache */
       g_hash_table_insert (factory->icon_cache, key, pixbuf);
@@ -619,6 +619,17 @@ thunar_icon_key_equal (gconstpointer a,
 
   /* do a full string comparison on the names */
   return exo_str_is_equal (a_key->name, b_key->name);
+}
+
+
+
+static void
+thunar_icon_key_free (gpointer data)
+{
+  ThunarIconKey *key = data;
+
+  g_free (key->name);
+  g_slice_free (ThunarIconKey, key);
 }
 
 
