@@ -870,7 +870,7 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
   /* collect all supported files from the list that are neither in the
    * about to be queued (wait queue), nor already queued, nor already
    * processed (and awaiting to be refreshed) */
-  for (lp = g_list_last (files); lp != NULL; lp = lp->prev)
+  for (lp = files; lp != NULL; lp = lp->next)
     {
       /* get the current thumb state */
       thumb_state = thunar_file_get_thumb_state (lp->data);
@@ -907,7 +907,7 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
       mime_hints = g_new0 (const gchar *, n_items + 1);
 
       /* fill URI and MIME hint arrays with items from the wait queue */
-      for (lp = g_list_last (supported_files), n = 0; lp != NULL; lp = lp->prev, ++n)
+      for (lp = supported_files, n = 0; lp != NULL; lp = lp->next, ++n)
         {
           /* set the thumbnail state to loading */
           thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_LOADING);
