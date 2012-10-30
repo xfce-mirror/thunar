@@ -114,7 +114,6 @@ struct _ThunarIconFactory
 
   gboolean           show_thumbnails;
 
-  gint               changed_idle_id;
   gint               sweep_timer_id;
 
   gulong             changed_hook_id;
@@ -192,7 +191,6 @@ static void
 thunar_icon_factory_init (ThunarIconFactory *factory)
 {
   /* initialize GSource ids */
-  factory->changed_idle_id = -1;
   factory->sweep_timer_id = -1;
 
   /* connect emission hook for the "changed" signal on the GtkIconTheme class. We use the emission
@@ -214,9 +212,6 @@ thunar_icon_factory_dispose (GObject *object)
   ThunarIconFactory *factory = THUNAR_ICON_FACTORY (object);
 
   _thunar_return_if_fail (THUNAR_IS_ICON_FACTORY (factory));
-
-  if (G_UNLIKELY (factory->changed_idle_id >= 0))
-    g_source_remove (factory->changed_idle_id);
 
   if (G_UNLIKELY (factory->sweep_timer_id >= 0))
     g_source_remove (factory->sweep_timer_id);
