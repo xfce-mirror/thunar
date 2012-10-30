@@ -40,6 +40,7 @@
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
+#include <thunar/thunar-stock.h>
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-private.h>
@@ -180,7 +181,9 @@ static void                 thunar_standard_view_action_copy                (Gtk
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_paste               (GtkAction                *action,
                                                                              ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_action_delete              (GtkAction                *action,
+static void                 thunar_standard_view_action_move_to_trash       (GtkAction                *action,
+                                                                             ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_action_delete             (GtkAction                *action,
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_paste_into_folder   (GtkAction                *action,
                                                                              ThunarStandardView       *standard_view);
@@ -297,6 +300,7 @@ struct _ThunarStandardViewPrivate
   GtkAction              *action_cut;
   GtkAction              *action_copy;
   GtkAction              *action_paste;
+  GtkAction              *action_move_to_trash;
   GtkAction              *action_delete;
   GtkAction              *action_paste_into_folder;
   GtkAction              *action_duplicate;
@@ -380,6 +384,7 @@ static const GtkActionEntry action_entries[] =
   { "cut", GTK_STOCK_CUT, N_ ("Cu_t"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_cut), },
   { "copy", GTK_STOCK_COPY, N_ ("_Copy"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_copy), },
   { "paste", GTK_STOCK_PASTE, N_ ("_Paste"), NULL, N_ ("Move or copy files previously selected by a Cut or Copy command"), G_CALLBACK (thunar_standard_view_action_paste), },
+  { "move-to-trash", THUNAR_STOCK_TRASH_FULL, N_ ("Mo_ve to Tash"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_move_to_trash), },
   { "delete", GTK_STOCK_DELETE, N_ ("_Delete"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_delete), },
   { "paste-into-folder", GTK_STOCK_PASTE, N_ ("Paste Into Folder"), NULL, N_ ("Move or copy files previously selected by a Cut or Copy command into the selected folder"), G_CALLBACK (thunar_standard_view_action_paste_into_folder), },
   { "select-all-files", NULL, N_ ("Select _all Files"), NULL, N_ ("Select all files in this window"), G_CALLBACK (thunar_standard_view_action_select_all_files), },
@@ -621,6 +626,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->action_cut = gtk_action_group_get_action (standard_view->action_group, "cut");
   standard_view->priv->action_copy = gtk_action_group_get_action (standard_view->action_group, "copy");
   standard_view->priv->action_paste = gtk_action_group_get_action (standard_view->action_group, "paste");
+  standard_view->priv->action_move_to_trash = gtk_action_group_get_action (standard_view->action_group, "move-to-trash");
   standard_view->priv->action_delete = gtk_action_group_get_action (standard_view->action_group, "delete");
   standard_view->priv->action_paste_into_folder = gtk_action_group_get_action (standard_view->action_group, "paste-into-folder");
   standard_view->priv->action_duplicate = gtk_action_group_get_action (standard_view->action_group, "duplicate");
@@ -1767,7 +1773,7 @@ thunar_standard_view_scroll_to_file (ThunarView *view,
 static gboolean
 thunar_standard_view_delete_selected_files (ThunarStandardView *standard_view)
 {
-  GtkAction       *action = GTK_ACTION (standard_view->priv->action_delete);
+  GtkAction       *action = GTK_ACTION (standard_view->priv->action_move_to_trash);
   const gchar     *accel_path;
   GtkAccelKey      key;
 
@@ -2374,8 +2380,8 @@ thunar_standard_view_action_paste (GtkAction          *action,
 
 
 static void
-thunar_standard_view_action_delete (GtkAction          *action,
-                                    ThunarStandardView *standard_view)
+thunar_standard_view_action_move_to_trash (GtkAction          *action,
+                                           ThunarStandardView *standard_view)
 {
   ThunarApplication *application;
   gboolean           permanently;
@@ -2403,6 +2409,23 @@ thunar_standard_view_action_delete (GtkAction          *action,
   /* delete the selected files */
   application = thunar_application_get ();
   thunar_application_unlink_files (application, GTK_WIDGET (standard_view), standard_view->priv->selected_files, permanently);
+  g_object_unref (G_OBJECT (application));
+}
+
+
+
+static void
+thunar_standard_view_action_delete (GtkAction          *action,
+                                    ThunarStandardView *standard_view)
+{
+  ThunarApplication *application;
+
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  /* delete the selected files */
+  application = thunar_application_get ();
+  thunar_application_unlink_files (application, GTK_WIDGET (standard_view), standard_view->priv->selected_files, TRUE);
   g_object_unref (G_OBJECT (application));
 }
 
@@ -4057,11 +4080,19 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   /* update the "Paste" action */
   gtk_action_set_sensitive (standard_view->priv->action_paste, writable && pastable);
 
+  /* update the "Move to Trash" action */
+  g_object_set (G_OBJECT (standard_view->priv->action_move_to_trash),
+                "sensitive", (n_selected_files > 0) && writable,
+                "tooltip", ngettext ("Move the selected file to the Trash",
+                                     "Move the selected files to the Trash",
+                                     n_selected_files),
+                NULL);
+
   /* update the "Delete" action */
   g_object_set (G_OBJECT (standard_view->priv->action_delete),
                 "sensitive", (n_selected_files > 0) && writable,
-                "tooltip", ngettext ("Delete the selected file",
-                                     "Delete the selected files",
+                "tooltip", ngettext ("Permanently delete the selected file",
+                                     "Permanently delete the selected files",
                                      n_selected_files),
                 NULL);
 

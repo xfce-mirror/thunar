@@ -36,6 +36,7 @@
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-stock.h>
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-shortcuts-icon-renderer.h>
 #include <thunar/thunar-simple-job.h>
@@ -146,6 +147,7 @@ static ThunarDevice            *thunar_tree_view_get_selected_device          (T
 static void                     thunar_tree_view_action_copy                  (ThunarTreeView          *view);
 static void                     thunar_tree_view_action_create_folder         (ThunarTreeView          *view);
 static void                     thunar_tree_view_action_cut                   (ThunarTreeView          *view);
+static void                     thunar_tree_view_action_move_to_trash         (ThunarTreeView          *view);
 static void                     thunar_tree_view_action_delete                (ThunarTreeView          *view);
 static void                     thunar_tree_view_action_rename                (ThunarTreeView          *view);
 static void                     thunar_tree_view_action_eject                 (ThunarTreeView          *view);
@@ -1063,12 +1065,12 @@ thunar_tree_view_delete_selected_files (ThunarTreeView *view)
   /* Check if there is a user defined accelerator for the delete action,
    * if there is, skip events from the hard-coded keys which are set in
    * the class of the standard view. See bug #4173. */
-  if (gtk_accel_map_lookup_entry ("<Actions>/ThunarStandardView/delete", &key)
+  if (gtk_accel_map_lookup_entry ("<Actions>/ThunarStandardView/move-to-trash", &key)
       && (key.accel_key != 0 || key.accel_mods != 0))
     return FALSE;
 
   /* ask the user whether to delete the folder... */
-  thunar_tree_view_action_delete (view);
+  thunar_tree_view_action_move_to_trash (view);
 
   /* ...and we're done */
   return TRUE;
@@ -1117,14 +1119,14 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
   gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
   
   /* append the "Open in New Tab" menu action */
-  item = gtk_image_menu_item_new_with_mnemonic (_("Open in New Tab"));
+  item = gtk_image_menu_item_new_with_mnemonic (_("Open in New _Tab"));
   g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_open_in_new_tab), view);
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_set_sensitive (item, (file != NULL || device != NULL));
   gtk_widget_show (item);
 
   /* append the "Open in New Window" menu action */
-  item = gtk_image_menu_item_new_with_mnemonic (_("Open in New Window"));
+  item = gtk_image_menu_item_new_with_mnemonic (_("Open in New _Window"));
   g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_open_in_new_window), view);
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_set_sensitive (item, (file != NULL || device != NULL));
@@ -1255,6 +1257,22 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
         {
           /* determine the parent file (required to determine "Delete" sensitivity) */
           parent_file = thunar_file_get_parent (file, NULL);
+
+          /* append a separator item */
+          item = gtk_separator_menu_item_new ();
+          gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+          gtk_widget_show (item);
+
+          /* append the "Delete" menu action */
+          item = gtk_image_menu_item_new_with_mnemonic (_("Mo_ve to Trash"));
+          g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_move_to_trash), view);
+          gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+          gtk_widget_set_sensitive (item, (parent_file != NULL && thunar_file_is_writable (parent_file)));
+          gtk_widget_show (item);
+
+          /* set the stock icon */
+          image = gtk_image_new_from_stock (THUNAR_STOCK_TRASH_FULL, GTK_ICON_SIZE_MENU);
+          gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
 
           /* append the "Delete" menu action */
           item = gtk_image_menu_item_new_with_mnemonic (_("_Delete"));
@@ -1653,7 +1671,7 @@ thunar_tree_view_action_cut (ThunarTreeView *view)
 
 
 static void
-thunar_tree_view_action_delete (ThunarTreeView *view)
+thunar_tree_view_action_move_to_trash (ThunarTreeView *view)
 {
   ThunarApplication *application;
   ThunarFile        *file;
@@ -1678,6 +1696,36 @@ thunar_tree_view_action_delete (ThunarTreeView *view)
       /* delete the file */
       application = thunar_application_get ();
       thunar_application_unlink_files (application, GTK_WIDGET (view), &file_list, permanently);
+      g_object_unref (G_OBJECT (application));
+
+      /* release the file */
+      g_object_unref (G_OBJECT (file));
+    }
+}
+
+
+
+static void
+thunar_tree_view_action_delete (ThunarTreeView *view)
+{
+  ThunarApplication *application;
+  ThunarFile        *file;
+  GList              file_list;
+
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
+
+  /* determine the selected file */
+  file = thunar_tree_view_get_selected_file (view);
+  if (G_LIKELY (file != NULL))
+    {
+      /* fake a file list */
+      file_list.data = file;
+      file_list.next = NULL;
+      file_list.prev = NULL;
+
+      /* delete the file */
+      application = thunar_application_get ();
+      thunar_application_unlink_files (application, GTK_WIDGET (view), &file_list, TRUE);
       g_object_unref (G_OBJECT (application));
 
       /* release the file */
