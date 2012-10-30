@@ -1779,22 +1779,30 @@ thunar_standard_view_delete_selected_files (ThunarStandardView *standard_view)
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
-  /* Check if there is a user defined accelerator for the delete action,
-   * if there is, skip events from the hard-coded keys which are set in
-   * the class of the standard view. See bug #4173.
-   *
-   * The trick here is that if a custom accelerator is set by the user,
-   * this function is never called. If a hardcoded key combination is
-   * pressed and a custom accelerator is set, accel_key || accel_mods
-   * are no 0. */
-  accel_path = gtk_action_get_accel_path (action);
-  if (accel_path != NULL
-      && gtk_accel_map_lookup_entry (accel_path, &key)
-      && (key.accel_key != 0 || key.accel_mods != 0))
-    return FALSE;
+  if (thunar_g_vfs_is_uri_scheme_supported ("trash"))
+    {
+      /* Check if there is a user defined accelerator for the delete action,
+       * if there is, skip events from the hard-coded keys which are set in
+       * the class of the standard view. See bug #4173.
+       *
+       * The trick here is that if a custom accelerator is set by the user,
+       * this function is never called. If a hardcoded key combination is
+       * pressed and a custom accelerator is set, accel_key || accel_mods
+       * are no 0. */
+      accel_path = gtk_action_get_accel_path (action);
+      if (accel_path != NULL
+          && gtk_accel_map_lookup_entry (accel_path, &key)
+          && (key.accel_key != 0 || key.accel_mods != 0))
+        return FALSE;
 
-  /* just emit the "activate" signal on the "delete" action */
-  gtk_action_activate (action);
+      /* just emit the "activate" signal on the "move-trash" action */
+      gtk_action_activate (action);
+    }
+  else
+    {
+      /* do a permanent delete */
+      gtk_action_activate (GTK_ACTION (standard_view->priv->action_delete));
+    }
 
   /* ...and we're done */
   return TRUE;
@@ -4016,6 +4024,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 
   /* determine the new list of selected files (replacing GtkTreePath's with ThunarFile's) */
   selected_files = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
+  restorable = (selected_files != NULL);
   for (lp = selected_files; lp != NULL; lp = lp->next, ++n_selected_files)
     {
       /* determine the iterator for the path */
@@ -4026,18 +4035,14 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 
       /* ...and replace it with the file */
       lp->data = thunar_list_model_get_file (standard_view->model, &iter);
+
+      /* enable "Restore" if we have only trashed files (atleast one file) */
+      if (!thunar_file_is_trashed (lp->data))
+        restorable = FALSE;
     }
 
   /* and setup the new selected files list */
   standard_view->priv->selected_files = selected_files;
-
-  /* enable "Restore" if we have only trashed files (atleast one file) */
-  for (lp = selected_files, restorable = (lp != NULL); lp != NULL; lp = lp->next)
-    if (!thunar_file_is_trashed (lp->data))
-      {
-        restorable = FALSE;
-        break;
-      }
 
   /* check whether the folder displayed by the view is writable/in the trash */
   current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
@@ -4083,6 +4088,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   /* update the "Move to Trash" action */
   g_object_set (G_OBJECT (standard_view->priv->action_move_to_trash),
                 "sensitive", (n_selected_files > 0) && writable,
+                "visible", !trashed && thunar_g_vfs_is_uri_scheme_supported ("trash"),
                 "tooltip", ngettext ("Move the selected file to the Trash",
                                      "Move the selected files to the Trash",
                                      n_selected_files),

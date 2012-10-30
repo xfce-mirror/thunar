@@ -1263,16 +1263,20 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
           gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
           gtk_widget_show (item);
 
-          /* append the "Delete" menu action */
-          item = gtk_image_menu_item_new_with_mnemonic (_("Mo_ve to Trash"));
-          g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_move_to_trash), view);
-          gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-          gtk_widget_set_sensitive (item, (parent_file != NULL && thunar_file_is_writable (parent_file)));
-          gtk_widget_show (item);
+          if (thunar_g_vfs_is_uri_scheme_supported ("trash")
+              && thunar_file_can_be_trashed (file))
+            {
+              /* append the "Move to Tash" menu action */
+              item = gtk_image_menu_item_new_with_mnemonic (_("Mo_ve to Trash"));
+              g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_move_to_trash), view);
+              gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+              gtk_widget_set_sensitive (item, (parent_file != NULL && thunar_file_is_writable (parent_file)));
+              gtk_widget_show (item);
 
-          /* set the stock icon */
-          image = gtk_image_new_from_stock (THUNAR_STOCK_TRASH_FULL, GTK_ICON_SIZE_MENU);
-          gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+              /* set the stock icon */
+              image = gtk_image_new_from_stock (THUNAR_STOCK_TRASH_FULL, GTK_ICON_SIZE_MENU);
+              gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+            }
 
           /* append the "Delete" menu action */
           item = gtk_image_menu_item_new_with_mnemonic (_("_Delete"));
