@@ -3211,10 +3211,8 @@ thunar_file_set_thumb_state (ThunarFile          *file,
       file->thumbnail_path = NULL;
     }
 
-  /* notify others of this change, so that all components can update
-   * their file information. loading is only a state for the thumbnailer,
-   * so don't emit changes for that */
-  if (state != THUNAR_FILE_THUMB_STATE_LOADING)
+  /* if the file has a thumbnail, reload it */
+  if (state == THUNAR_FILE_THUMB_STATE_READY)
     thunar_file_monitor_file_changed (file);
 }
 
