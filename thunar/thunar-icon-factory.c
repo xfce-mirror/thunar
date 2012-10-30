@@ -112,9 +112,9 @@ struct _ThunarIconFactory
 
   GtkIconTheme      *icon_theme;
 
-  gboolean           show_thumbnails;
+  guint              show_thumbnails : 1;
 
-  gint               sweep_timer_id;
+  guint              sweep_timer_id;
 
   gulong             changed_hook_id;
 };
@@ -190,9 +190,6 @@ thunar_icon_factory_class_init (ThunarIconFactoryClass *klass)
 static void
 thunar_icon_factory_init (ThunarIconFactory *factory)
 {
-  /* initialize GSource ids */
-  factory->sweep_timer_id = -1;
-
   /* connect emission hook for the "changed" signal on the GtkIconTheme class. We use the emission
    * hook way here, because that way we can make sure that the icon cache is definetly cleared
    * before any other part of the application gets notified about the icon theme change.
@@ -213,7 +210,7 @@ thunar_icon_factory_dispose (GObject *object)
 
   _thunar_return_if_fail (THUNAR_IS_ICON_FACTORY (factory));
 
-  if (G_UNLIKELY (factory->sweep_timer_id >= 0))
+  if (G_UNLIKELY (factory->sweep_timer_id != 0))
     g_source_remove (factory->sweep_timer_id);
 
   (*G_OBJECT_CLASS (thunar_icon_factory_parent_class)->dispose) (object);
@@ -360,7 +357,7 @@ thunar_icon_factory_sweep_timer (gpointer user_data)
 static void
 thunar_icon_factory_sweep_timer_destroy (gpointer user_data)
 {
-  THUNAR_ICON_FACTORY (user_data)->sweep_timer_id = -1;
+  THUNAR_ICON_FACTORY (user_data)->sweep_timer_id = 0;
 }
 
 
@@ -574,7 +571,7 @@ thunar_icon_factory_mark_recently_used (ThunarIconFactory *factory,
   factory->recently_pos = (factory->recently_pos + 1) % MAX_RECENTLY;
 
   /* schedule the sweeper */
-  if (G_UNLIKELY (factory->sweep_timer_id < 0))
+  if (G_UNLIKELY (factory->sweep_timer_id == 0))
     {
       factory->sweep_timer_id = g_timeout_add_full (G_PRIORITY_LOW, THUNAR_ICON_FACTORY_SWEEP_TIMEOUT,
                                                     thunar_icon_factory_sweep_timer, factory,
