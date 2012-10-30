@@ -826,7 +826,9 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
               if (stream != NULL)
                 {
                   /* load the pixbuf from the stream */
-                  icon = gdk_pixbuf_new_from_stream (stream, NULL, NULL);
+                  icon = gdk_pixbuf_new_from_stream_at_scale (stream, icon_size,
+                                                              icon_size, TRUE,
+                                                              NULL, NULL);
 
                   /* destroy the stream */
                   g_object_unref (stream);
