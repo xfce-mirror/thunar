@@ -41,23 +41,6 @@ typedef struct _ThunarIconFactory      ThunarIconFactory;
  **/
 #define THUNAR_THUMBNAIL_SIZE (128)
 
-/**
- * THUNAR_EMBLEM_MAX_ATTACH_POINTS:
- * The maximum number of attach points for icons managed
- * by the #ThunarIconFactory.
- **/
-#define THUNAR_EMBLEM_MAX_ATTACH_POINTS (12)
-
-/**
- * ThunarEmblemAttachPoints:
- * Holds the emblem attach points for a given icon.
- */
-typedef struct
-{
-	gint     num_points;
-	GdkPoint points[THUNAR_EMBLEM_MAX_ATTACH_POINTS];
-} ThunarEmblemAttachPoints;
-
 GType                  thunar_icon_factory_get_type           (void) G_GNUC_CONST;
 
 ThunarIconFactory     *thunar_icon_factory_get_default        (void);
@@ -66,7 +49,6 @@ ThunarIconFactory     *thunar_icon_factory_get_for_icon_theme (GtkIconTheme     
 GdkPixbuf             *thunar_icon_factory_load_icon          (ThunarIconFactory        *factory,
                                                                const gchar              *name,
                                                                gint                      size,
-                                                               ThunarEmblemAttachPoints *attach_points,
                                                                gboolean                  wants_default);
 
 GdkPixbuf             *thunar_icon_factory_load_file_icon     (ThunarIconFactory        *factory,

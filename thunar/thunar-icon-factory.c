@@ -685,7 +685,6 @@ thunar_icon_factory_get_for_icon_theme (GtkIconTheme *icon_theme)
  * @factory       : a #ThunarIconFactory instance.
  * @name          : name of the icon to load.
  * @size          : desired icon size.
- * @attach_points : location to store the attach points to or %NULL.
  * @wants_default : %TRUE to return the fallback icon if no icon of @name
  *                  is found in the @factory.
  *
@@ -703,7 +702,6 @@ GdkPixbuf*
 thunar_icon_factory_load_icon (ThunarIconFactory        *factory,
                                const gchar              *name,
                                gint                      size,
-                               ThunarEmblemAttachPoints *attach_points,
                                gboolean                  wants_default)
 {
   _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
@@ -847,7 +845,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
   if (G_LIKELY (icon == NULL))
     {
       icon_name = thunar_file_get_icon_name (file, icon_state, factory->icon_theme);
-      icon = thunar_icon_factory_load_icon (factory, icon_name, icon_size, NULL, TRUE);
+      icon = thunar_icon_factory_load_icon (factory, icon_name, icon_size, TRUE);
       g_free (icon_name);
     }
 

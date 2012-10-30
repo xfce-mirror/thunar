@@ -465,7 +465,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
           for (lp = emblems, position = 0; lp != NULL && position < max_emblems; lp = lp->next)
             {
               /* check if we have the emblem in the icon theme */
-              emblem = thunar_icon_factory_load_icon (icon_factory, lp->data, icon_renderer->size, NULL, FALSE);
+              emblem = thunar_icon_factory_load_icon (icon_factory, lp->data, icon_renderer->size, FALSE);
               if (G_UNLIKELY (emblem == NULL))
                 continue;
 
