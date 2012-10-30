@@ -3135,6 +3135,10 @@ thunar_file_get_thumbnail_path (ThunarFile *file)
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
+  /* if the thumbstate is known to be not there, return null */
+  if (thunar_file_get_thumb_state (file) == THUNAR_FILE_THUMB_STATE_NONE)
+    return NULL;
+
   if (G_UNLIKELY (file->thumbnail_path == NULL))
     {
       checksum = g_checksum_new (G_CHECKSUM_MD5);
@@ -3198,6 +3202,14 @@ thunar_file_set_thumb_state (ThunarFile          *file,
 
   /* set the new thumbnail state */
   file->flags = (file->flags & ~THUNAR_FILE_THUMB_STATE_MASK) | (state);
+
+  /* remove path if the type is not supported */
+  if (state == THUNAR_FILE_THUMB_STATE_NONE
+      && file->thumbnail_path != NULL)
+    {
+      g_free (file->thumbnail_path);
+      file->thumbnail_path = NULL;
+    }
 
   /* notify others of this change, so that all components can update
    * their file information. loading is only a state for the thumbnailer,
