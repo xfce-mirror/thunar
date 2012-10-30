@@ -43,6 +43,7 @@ gboolean           thunar_thumbnailer_queue_file      (ThunarThumbnailer        
                                                        ThunarFile               *file,
                                                        guint                    *request);
 gboolean           thunar_thumbnailer_queue_files     (ThunarThumbnailer        *thumbnailer,
+                                                       gboolean                  lazy_checks,
                                                        GList                    *files,
                                                        guint                    *request);
 void               thunar_thumbnailer_dequeue         (ThunarThumbnailer        *thumbnailer,

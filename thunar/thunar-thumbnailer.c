@@ -829,13 +829,14 @@ thunar_thumbnailer_queue_file (ThunarThumbnailer *thumbnailer,
   files.prev = NULL;
 
   /* queue a thumbnail request for the file */
-  return thunar_thumbnailer_queue_files (thumbnailer, &files, request);
+  return thunar_thumbnailer_queue_files (thumbnailer, FALSE, &files, request);
 }
 
 
 
 gboolean
 thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
+                                gboolean           lazy_checks,
                                 GList             *files,
                                 guint             *request)
 {
@@ -875,13 +876,16 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
       /* get the current thumb state */
       thumb_state = thunar_file_get_thumb_state (lp->data);
 
-      /* if previously this failed, don't both to check. this saves a
-       * lot of check when resizing a window */
-      if (thumb_state == THUNAR_FILE_THUMB_STATE_NONE)
-        continue;
+      if (lazy_checks)
+        {
+          /* in lazy mode, don't both for files that have already
+           * been loaded or are not supported */
+          if (thumb_state == THUNAR_FILE_THUMB_STATE_NONE
+              || thumb_state == THUNAR_FILE_THUMB_STATE_READY)
+            continue;
+        }
 
-      /* if the state is unknown of there previously was a thumb, add
-       * to the supported list */
+      /* check if the file is supported, assume it is when the state was ready previously */
       if (thumb_state == THUNAR_FILE_THUMB_STATE_READY
           || thunar_thumbnailer_file_is_supported (thumbnailer, lp->data))
         {
