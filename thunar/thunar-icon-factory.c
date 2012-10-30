@@ -806,7 +806,8 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
               icon_info = 
                 gtk_icon_theme_lookup_by_gicon (factory->icon_theme, 
                                                 gicon, icon_size, 
-                                                GTK_ICON_LOOKUP_USE_BUILTIN);
+                                                GTK_ICON_LOOKUP_USE_BUILTIN
+                                                | GTK_ICON_LOOKUP_FORCE_SIZE);
 
               /* check if the lookup succeeded */
               if (icon_info != NULL)
