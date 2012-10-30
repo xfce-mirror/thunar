@@ -744,12 +744,12 @@ static void
 thunar_properties_dialog_icon_button_clicked (GtkWidget              *button,
                                               ThunarPropertiesDialog *dialog)
 {
-  GtkWidget  *chooser;
-  GError     *err = NULL;
-  gchar      *custom_icon;
-  gchar      *title;
-  gchar      *icon;
-  ThunarFile *file;
+  GtkWidget   *chooser;
+  GError      *err = NULL;
+  const gchar *custom_icon;
+  gchar       *title;
+  gchar       *icon;
+  ThunarFile  *file;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (GTK_IS_BUTTON (button));
@@ -775,7 +775,6 @@ thunar_properties_dialog_icon_button_clicked (GtkWidget              *button,
   custom_icon = thunar_file_get_custom_icon (file);
   if (G_LIKELY (custom_icon != NULL && *custom_icon != '\0'))
     exo_icon_chooser_dialog_set_icon (EXO_ICON_CHOOSER_DIALOG (chooser), custom_icon);
-  g_free (custom_icon);
 
   /* run the icon chooser dialog and make sure the dialog still has a file */
   if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT && file != NULL)

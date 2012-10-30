@@ -3218,11 +3218,11 @@ thunar_file_set_thumb_state (ThunarFile          *file,
  *
  * Return value: the custom icon for @file or %NULL.
  **/
-gchar *
+const gchar *
 thunar_file_get_custom_icon (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return g_strdup (file->custom_icon_name);
+  return file->custom_icon_name;
 }
 
 

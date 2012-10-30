@@ -618,7 +618,7 @@ thunar_icon_key_equal (gconstpointer a,
     return FALSE;
 
   /* do a full string comparison on the names */
-  return (strcmp (a_key->name, b_key->name) == 0);
+  return exo_str_is_equal (a_key->name, b_key->name);
 }
 
 
@@ -776,24 +776,24 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
                                     ThunarFileIconState icon_state,
                                     gint                icon_size)
 {
-  GInputStream        *stream;
-  GtkIconInfo         *icon_info;
-  const gchar         *thumbnail_path;
-  GdkPixbuf           *icon = NULL;
-  GIcon               *gicon;
-  gchar               *icon_name;
+  GInputStream *stream;
+  GtkIconInfo  *icon_info;
+  const gchar  *thumbnail_path;
+  GdkPixbuf    *icon = NULL;
+  GIcon        *gicon;
+  gchar        *icon_name;
+  const gchar  *custom_icon;
 
   _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (icon_size > 0, NULL);
 
   /* check if we have a custom icon for this file */
-  icon_name = thunar_file_get_custom_icon (file);
-  if (icon_name != NULL)
+  custom_icon = thunar_file_get_custom_icon (file);
+  if (custom_icon != NULL)
     {
       /* try to load the icon */
-      icon = thunar_icon_factory_lookup_icon (factory, icon_name, icon_size, FALSE);
-      g_free (icon_name);
+      icon = thunar_icon_factory_lookup_icon (factory, custom_icon, icon_size, FALSE);
       if (G_LIKELY (icon != NULL))
         return icon;
     }
@@ -854,23 +854,18 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
           if (thumbnail_path != NULL)
             {
               /* try to load the thumbnail */
-              icon = thunar_icon_factory_load_from_file (factory, thumbnail_path, 
-                                                         icon_size);
-
-              /* return the thumbnail if it could be loaded */
-              if (icon != NULL)
-                return icon;
+              icon = thunar_icon_factory_load_from_file (factory, thumbnail_path, icon_size);
             }
         }
     }
 
   /* lookup the icon name for the icon in the given state and load the icon */
-  icon_name = thunar_file_get_icon_name (file, icon_state, factory->icon_theme);
-  icon = thunar_icon_factory_load_icon (factory, icon_name, icon_size, NULL, TRUE);
-  g_free (icon_name);
+  if (G_LIKELY (icon == NULL))
+    {
+      icon_name = thunar_file_get_icon_name (file, icon_state, factory->icon_theme);
+      icon = thunar_icon_factory_load_icon (factory, icon_name, icon_size, NULL, TRUE);
+      g_free (icon_name);
+    }
+
   return icon;
 }
-
-
-
-

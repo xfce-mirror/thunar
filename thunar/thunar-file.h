@@ -217,7 +217,7 @@ GList            *thunar_file_get_emblem_names     (ThunarFile              *fil
 void              thunar_file_set_emblem_names     (ThunarFile              *file,
                                                     GList                   *emblem_names);
 
-gchar            *thunar_file_get_custom_icon      (const ThunarFile        *file);
+const gchar      *thunar_file_get_custom_icon      (const ThunarFile        *file);
 gboolean          thunar_file_set_custom_icon      (ThunarFile              *file,
                                                     const gchar             *custom_icon,
                                                     GError                 **error);

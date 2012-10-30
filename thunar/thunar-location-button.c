@@ -428,6 +428,7 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
   gint               height;
   gint               width;
   gint               size;
+  const gchar       *custom_icon;
 
   _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
   _thunar_return_if_fail (location_button->file == file);
@@ -479,14 +480,17 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
     }
 
   /* setup the DnD icon for the button */
-  icon_name = thunar_file_get_custom_icon (file);
-  if (icon_name == NULL)
+  custom_icon = thunar_file_get_custom_icon (file);
+  if (custom_icon != NULL)
     {
-      icon_name = thunar_file_get_icon_name (file, location_button->file_icon_state, 
-                                             icon_theme);
+      gtk_drag_source_set_icon_name (GTK_BIN (location_button)->child, custom_icon);
     }
-  gtk_drag_source_set_icon_name (GTK_BIN (location_button)->child, icon_name);
-  g_free (icon_name);
+  else
+    {
+      icon_name = thunar_file_get_icon_name (file, location_button->file_icon_state, icon_theme);
+      gtk_drag_source_set_icon_name (GTK_BIN (location_button)->child, icon_name);
+      g_free (icon_name);
+    }
 }
 
 
