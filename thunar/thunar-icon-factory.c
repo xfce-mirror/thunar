@@ -128,9 +128,6 @@ struct _ThunarIconKey
 
 
 static GQuark thunar_icon_factory_quark = 0;
-static GQuark thunar_icon_thumb_uri_quark = 0;
-static GQuark thunar_icon_thumb_time_quark = 0;
-static GQuark thunar_file_thumb_uri_quark = 0;
 
 
 
@@ -142,13 +139,6 @@ static void
 thunar_icon_factory_class_init (ThunarIconFactoryClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* setup the thunar-icon-thumb-{path,time} quarks */
-  thunar_icon_thumb_uri_quark = g_quark_from_static_string ("thunar-icon-thumb-path");
-  thunar_icon_thumb_time_quark = g_quark_from_static_string ("thunar-icon-thumb-time");
-
-  /* setup the thunar-file-thumb-path quark */
-  thunar_file_thumb_uri_quark = g_quark_from_static_string ("thunar-file-thumb-path");
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_icon_factory_dispose;
