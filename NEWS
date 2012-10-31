@@ -1,3 +1,43 @@
+1.5.1
+=====
+- Show custom commands again in the menus (bug #9169).
+- Drop usage of glib 2.32 functions.
+- Allow resizing of chooser dialog.
+- Don't abort on non-utf8 charaters in path entry.
+- Don't show drive icon for remote mounts in history.
+- Release all ThunarFiles when closing a view, this should resolve
+  mounts that were empty after unmounting.
+- Show tooltip uri/filename in history menu item.
+- End with a / in the path entry.
+- Add function to generate nice remote display names.
+- Easy adding bookmarks for remote mounts.
+- Do not call eject in thunar_device_volume_mount_finished.
+- Reduce tumbler traffic on startup of Thunar.
+- Use drive_stop in device handling.
+- Put reload button in location entry.
+- Create pull-down history buttons and remove arrows.
+- Shortcut pane: Do not mount after eject (bug #9403).
+- Use go-home icon name for menu and toolbar.
+- Drop the separators in the toolbar.
+- Extend history tooltips to describe functionality of the button.
+- Avoid segfault with null mime-type (bug #8390).
+- Implement tabs in Thunar (bug #6102).
+- Do not try to mount a device twice in treeview (bug #9412).
+- Keep delaying selecing files if not loaded yet (bug #7328).
+- Slightly toned thumbnail frame.
+- Make loading priority in shortcuts model higher.
+- Collect properties at once in window_init.
+- Use infobar for root warning in window.
+- Option to set small toolbar icons (bug #3971).
+- Avoid crash when toplevel window cannot be found (bug #9417).
+- Revert "Remove XdndDirectSave0 protocol." (bug #9414).
+- Rename filename of insecure desktop files (bug #8786).
+- Cache pixmaps on the ThunarFile and drop ring buffer.
+- Add lazy checks to thumbnailer.
+- Add menu item for permanent delete.
+- Only show "Move to Trash" if trash is supported.
+
+
 1.5.0
 =====
 - Add support for multiple selections in file preferences dialog.
