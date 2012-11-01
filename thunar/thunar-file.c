@@ -66,6 +66,7 @@
 #include <thunar/thunar-user.h>
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-dialogs.h>
+#include <thunar/thunar-icon-factory.h>
 
 
 
@@ -3455,6 +3456,9 @@ void
 thunar_file_reload (ThunarFile *file)
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  /* clear file pxmap cache */
+  thunar_icon_factory_clear_pixmap_cache (file);
 
   if (!thunar_file_load (file, NULL, NULL))
     {

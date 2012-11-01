@@ -879,5 +879,6 @@ thunar_icon_factory_clear_pixmap_cache (ThunarFile *file)
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   /* unset the data */
-  g_object_set_qdata (G_OBJECT (file), thunar_icon_factory_store_quark, NULL);
+  if (thunar_icon_factory_store_quark != 0)
+    g_object_set_qdata (G_OBJECT (file), thunar_icon_factory_store_quark, NULL);
 }
