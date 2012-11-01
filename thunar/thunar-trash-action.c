@@ -26,6 +26,7 @@
 #include <thunar/thunar-stock.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-trash-action.h>
+#include <thunar/thunar-icon-factory.h>
 
 
 
@@ -136,6 +137,9 @@ thunar_trash_action_changed (ThunarTrashAction *trash_action,
   _thunar_return_if_fail (THUNAR_IS_TRASH_ACTION (trash_action));
   _thunar_return_if_fail (trash_action->trash_bin == trash_bin);
   _thunar_return_if_fail (THUNAR_IS_FILE (trash_bin));
+
+  /* unset the pixmap cache on the file */
+  thunar_icon_factory_clear_pixmap_cache (trash_bin);
 
   /* adjust the stock icon appropriately */
   if (thunar_file_get_item_count (trash_bin) > 0) 

@@ -41,6 +41,8 @@ typedef struct _ThunarIconFactory      ThunarIconFactory;
  **/
 #define THUNAR_THUMBNAIL_SIZE (128)
 
+
+
 GType                  thunar_icon_factory_get_type           (void) G_GNUC_CONST;
 
 ThunarIconFactory     *thunar_icon_factory_get_default        (void);
@@ -55,6 +57,8 @@ GdkPixbuf             *thunar_icon_factory_load_file_icon     (ThunarIconFactory
                                                                ThunarFile               *file,
                                                                ThunarFileIconState       icon_state,
                                                                gint                      icon_size);
+
+void                   thunar_icon_factory_clear_pixmap_cache (ThunarFile               *file);
 
 G_END_DECLS;
 
