@@ -3317,7 +3317,8 @@ thunar_file_get_icon_name (const ThunarFile   *file,
       else if (G_IS_FILE_ICON (icon))
         {
           icon_file = g_file_icon_get_file (G_FILE_ICON (icon));
-          icon_name = g_file_get_path (icon_file);
+          if (icon_file != NULL)
+            icon_name = g_file_get_path (icon_file);
         }
     }
   
