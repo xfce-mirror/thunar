@@ -200,6 +200,10 @@ thunar_simple_job_launch (ThunarSimpleJobFunc func,
         }
 
       g_array_insert_val (simple_job->param_values, n, value);
+
+      /* manually unset the value, g_value_unset doesn't work
+       * because we don't want to free the data */
+      memset (&value, 0, sizeof (GValue));
     }
   va_end (var_args);
 
