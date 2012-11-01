@@ -476,6 +476,14 @@ thunar_device_monitor_volume_added (GVolumeMonitor      *volume_monitor,
   _thunar_return_if_fail (monitor->volume_monitor == volume_monitor);
   _thunar_return_if_fail (G_IS_VOLUME (volume));
 
+  /* check that the volume is not in the internal list already */
+  if (g_list_find (monitor->hidden_volumes, volume) != NULL)
+    return;
+
+  /* nor in the list of visible volumes */
+  if (g_hash_table_lookup (monitor->devices, volume) != NULL)
+    return;
+
   /* add to internal list */
   monitor->hidden_volumes = g_list_prepend (monitor->hidden_volumes, g_object_ref (volume));
 
@@ -620,6 +628,10 @@ thunar_device_monitor_mount_added (GVolumeMonitor      *volume_monitor,
   _thunar_return_if_fail (THUNAR_IS_DEVICE_MONITOR (monitor));
   _thunar_return_if_fail (monitor->volume_monitor == volume_monitor);
   _thunar_return_if_fail (G_IS_MOUNT (mount));
+
+  /* check if the mount is not already known */
+  if (g_hash_table_lookup (monitor->devices, mount) != NULL)
+    return;
 
   /* never handle shadowed mounts */
   if (g_mount_is_shadowed (mount))
