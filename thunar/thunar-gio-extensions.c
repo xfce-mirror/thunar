@@ -177,8 +177,9 @@ thunar_g_file_write_key_file (GFile        *file,
                               GCancellable *cancellable,
                               GError      **error)
 {
-  gchar *contents;
-  gsize  length;
+  gchar    *contents;
+  gsize     length;
+  gboolean  result = TRUE;
 
   _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (key_file != NULL, FALSE);
@@ -189,18 +190,17 @@ thunar_g_file_write_key_file (GFile        *file,
   contents = g_key_file_to_data (key_file, &length, NULL);
 
   /* try to replace the file contents with the key file data */
-  if (!g_file_replace_contents (file, contents, length, NULL, FALSE, 
-                                G_FILE_CREATE_REPLACE_DESTINATION,
-                                NULL, cancellable, error))
+  if (contents != NULL)
     {
+      result = g_file_replace_contents (file, contents, length, NULL, FALSE, 
+                                        G_FILE_CREATE_NONE,
+                                        NULL, cancellable, error);
+      
+      /* cleanup */
       g_free (contents);
-      return FALSE;
     }
-  else
-    {
-      g_free (contents);
-      return TRUE;
-    }
+
+  return result;
 }
 
 
