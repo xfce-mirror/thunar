@@ -1573,6 +1573,9 @@ thunar_file_rename (ThunarFile   *file,
   GFile                *previous_file;
   GFile                *renamed_file;
   gboolean              is_secure;
+  const gchar * const  *languages;
+  guint                 i;
+  gboolean              name_set = FALSE;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (g_utf8_validate (name, -1, NULL), FALSE);
@@ -1593,9 +1596,32 @@ thunar_file_rename (ThunarFile   *file,
           return FALSE;
         }
 
-      /* change the Name field of the desktop entry */
-      g_key_file_set_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
-                             G_KEY_FILE_DESKTOP_KEY_NAME, name);
+      /* check if we can set the language name */
+      languages = g_get_language_names ();
+      if (languages != NULL)
+        {
+          for (i = 0; !name_set && languages[i] != NULL; i++)
+            {
+              /* skip C language */
+              if (g_ascii_strcasecmp (languages[i], "C") == 0)
+                continue;
+
+              /* change the translated Name field of the desktop entry */
+              g_key_file_set_locale_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
+                                            G_KEY_FILE_DESKTOP_KEY_NAME,
+                                            languages[i], name);
+
+              /* done */
+              name_set = TRUE;
+            }
+        }
+
+      if (!name_set)
+        {
+          /* change the Name field of the desktop entry */
+          g_key_file_set_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
+                                 G_KEY_FILE_DESKTOP_KEY_NAME, name);
+        }
 
       /* write the changes back to the file */
       if (thunar_g_file_write_key_file (file->gfile, key_file, cancellable, &err))
