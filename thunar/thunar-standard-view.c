@@ -384,7 +384,7 @@ static const GtkActionEntry action_entries[] =
   { "cut", GTK_STOCK_CUT, N_ ("Cu_t"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_cut), },
   { "copy", GTK_STOCK_COPY, N_ ("_Copy"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_copy), },
   { "paste", GTK_STOCK_PASTE, N_ ("_Paste"), NULL, N_ ("Move or copy files previously selected by a Cut or Copy command"), G_CALLBACK (thunar_standard_view_action_paste), },
-  { "move-to-trash", THUNAR_STOCK_TRASH_FULL, N_ ("Mo_ve to Tash"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_move_to_trash), },
+  { "move-to-trash", THUNAR_STOCK_TRASH_FULL, N_ ("Mo_ve to Trash"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_move_to_trash), },
   { "delete", GTK_STOCK_DELETE, N_ ("_Delete"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_delete), },
   { "paste-into-folder", GTK_STOCK_PASTE, N_ ("Paste Into Folder"), NULL, N_ ("Move or copy files previously selected by a Cut or Copy command into the selected folder"), G_CALLBACK (thunar_standard_view_action_paste_into_folder), },
   { "select-all-files", NULL, N_ ("Select _all Files"), NULL, N_ ("Select all files in this window"), G_CALLBACK (thunar_standard_view_action_select_all_files), },
