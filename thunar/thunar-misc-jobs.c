@@ -33,9 +33,9 @@
 
 
 static gboolean
-_thunar_misc_jobs_load_templates (ThunarJob   *job,
-                                  GValueArray *param_values,
-                                  GError     **error)
+_thunar_misc_jobs_load_templates (ThunarJob  *job,
+                                  GArray     *param_values,
+                                  GError    **error)
 {
   ThunarFile *file;
   GtkWidget  *menu;
@@ -47,9 +47,9 @@ _thunar_misc_jobs_load_templates (ThunarJob   *job,
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-  _thunar_return_val_if_fail (param_values != NULL && param_values->n_values == 1, FALSE);
+  _thunar_return_val_if_fail (param_values != NULL && param_values->len == 1, FALSE);
 
-  menu = g_value_get_object (g_value_array_get_nth (param_values, 0));
+  menu = g_value_get_object (&g_array_index (param_values, GValue, 0));
   g_object_set_data (G_OBJECT (job), "menu", menu);
 
   home_dir = thunar_g_file_new_for_home ();

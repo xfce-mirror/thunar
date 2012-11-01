@@ -36,6 +36,14 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-thumbnail-cache.h>
 
+#if GLIB_CHECK_VERSION (2, 32, 0)
+#define _thumbnail_cache_lock(cache)   g_mutex_lock (&((cache)->lock))
+#define _thumbnail_cache_unlock(cache) g_mutex_unlock (&((cache)->lock))
+#else
+#define _thumbnail_cache_lock(cache)   g_mutex_lock ((cache)->lock)
+#define _thumbnail_cache_unlock(cache) g_mutex_unlock ((cache)->lock)
+#endif
+
 
 
 static void thunar_thumbnail_cache_finalize (GObject *object);
@@ -68,7 +76,11 @@ struct _ThunarThumbnailCache
   GList      *cleanup_queue;
   guint       cleanup_queue_idle_id;
 
+#if GLIB_CHECK_VERSION (2, 32, 0)
+  GMutex      lock;
+#else
   GMutex     *lock;
+#endif
 #endif
 };
 
@@ -113,8 +125,12 @@ thunar_thumbnail_cache_init (ThunarThumbnailCache *cache)
       dbus_g_connection_unref (connection);
     }
 
-  /* create a new mutex for accessing the cache from different threads */
+/* create a new mutex for accessing the cache from different threads */
+#if GLIB_CHECK_VERSION (2, 32, 0)
+  g_mutex_init (&cache->lock);
+#else
   cache->lock = g_mutex_new ();
+#endif
 #endif
 }
 
@@ -127,7 +143,7 @@ thunar_thumbnail_cache_finalize (GObject *object)
   ThunarThumbnailCache *cache = THUNAR_THUMBNAIL_CACHE (object);
 
   /* acquire a cache lock */
-  g_mutex_lock (cache->lock);
+  _thumbnail_cache_lock (cache);
 
   /* drop the move queue idle and all queued files */
   if (cache->move_queue_idle_id > 0)
@@ -156,10 +172,12 @@ thunar_thumbnail_cache_finalize (GObject *object)
     g_object_unref (cache->cache_proxy);
 
   /* release the cache lock */
-  g_mutex_unlock (cache->lock);
+  _thumbnail_cache_unlock (cache);
 
+#if !GLIB_CHECK_VERSION (2, 32, 0)
   /* release the mutex itself */
   g_mutex_free (cache->lock);
+#endif
 #endif
 
   (*G_OBJECT_CLASS (thunar_thumbnail_cache_parent_class)->finalize) (object);
@@ -288,7 +306,7 @@ thunar_thumbnail_cache_process_move_queue (ThunarThumbnailCache *cache)
   _thunar_return_val_if_fail (THUNAR_IS_THUMBNAIL_CACHE (cache), FALSE);
 
   /* acquire a cache lock */
-  g_mutex_lock (cache->lock);
+  _thumbnail_cache_lock (cache);
   
   /* compute how many URIs there are */
   n_uris = g_list_length (cache->move_source_queue);
@@ -335,7 +353,7 @@ thunar_thumbnail_cache_process_move_queue (ThunarThumbnailCache *cache)
   cache->move_queue_idle_id = 0;
 
   /* release the cache lock */
-  g_mutex_unlock (cache->lock);
+  _thumbnail_cache_unlock (cache);
 
   return FALSE;
 }
@@ -355,7 +373,7 @@ thunar_thumbnail_cache_process_copy_queue (ThunarThumbnailCache *cache)
   _thunar_return_val_if_fail (THUNAR_IS_THUMBNAIL_CACHE (cache), FALSE);
 
   /* acquire a cache lock */
-  g_mutex_lock (cache->lock);
+  _thumbnail_cache_lock (cache);
   
   /* compute how many URIs there are */
   n_uris = g_list_length (cache->copy_source_queue);
@@ -402,7 +420,7 @@ thunar_thumbnail_cache_process_copy_queue (ThunarThumbnailCache *cache)
   cache->copy_queue_idle_id = 0;
 
   /* release the cache lock */
-  g_mutex_unlock (cache->lock);
+  _thumbnail_cache_unlock (cache);
 
   return FALSE;
 }
@@ -420,7 +438,7 @@ thunar_thumbnail_cache_process_delete_queue (ThunarThumbnailCache *cache)
   _thunar_return_val_if_fail (THUNAR_IS_THUMBNAIL_CACHE (cache), FALSE);
 
   /* acquire a cache lock */
-  g_mutex_lock (cache->lock);
+  _thumbnail_cache_lock (cache);
   
   /* compute how many URIs there are */
   n_uris = g_list_length (cache->delete_queue);
@@ -454,7 +472,7 @@ thunar_thumbnail_cache_process_delete_queue (ThunarThumbnailCache *cache)
   cache->delete_queue_idle_id = 0;
 
   /* release the cache lock */
-  g_mutex_unlock (cache->lock);
+  _thumbnail_cache_unlock (cache);
 
   return FALSE;
 }
@@ -472,7 +490,7 @@ thunar_thumbnail_cache_process_cleanup_queue (ThunarThumbnailCache *cache)
   _thunar_return_val_if_fail (THUNAR_IS_THUMBNAIL_CACHE (cache), FALSE);
 
   /* acquire a cache lock */
-  g_mutex_lock (cache->lock);
+  _thumbnail_cache_lock (cache);
   
   /* compute how many URIs there are */
   n_uris = g_list_length (cache->cleanup_queue);
@@ -514,7 +532,7 @@ thunar_thumbnail_cache_process_cleanup_queue (ThunarThumbnailCache *cache)
   cache->cleanup_queue_idle_id = 0;
 
   /* release the cache lock */
-  g_mutex_unlock (cache->lock);
+  _thumbnail_cache_unlock (cache);
 
   return FALSE;
 }
@@ -541,7 +559,7 @@ thunar_thumbnail_cache_move_file (ThunarThumbnailCache *cache,
 
 #ifdef HAVE_DBUS
   /* acquire a cache lock */
-  g_mutex_lock (cache->lock);
+  _thumbnail_cache_lock (cache);
 
   /* check if we have a valid proxy for the cache service */
   if (cache->cache_proxy != NULL)
@@ -566,7 +584,7 @@ thunar_thumbnail_cache_move_file (ThunarThumbnailCache *cache,
     }
 
   /* release the cache lock */
-  g_mutex_unlock (cache->lock);
+  _thumbnail_cache_unlock (cache);
 #endif
 }
 
@@ -583,7 +601,7 @@ thunar_thumbnail_cache_copy_file (ThunarThumbnailCache *cache,
 
 #ifdef HAVE_DBUS
   /* acquire a cache lock */
-  g_mutex_lock (cache->lock);
+  _thumbnail_cache_lock (cache);
 
   /* check if we have a valid proxy for the cache service */
   if (cache->cache_proxy != NULL)
@@ -608,7 +626,7 @@ thunar_thumbnail_cache_copy_file (ThunarThumbnailCache *cache,
     }
 
   /* release the cache lock */
-  g_mutex_unlock (cache->lock);
+  _thumbnail_cache_unlock (cache);
 #endif
 }
 
@@ -623,7 +641,7 @@ thunar_thumbnail_cache_delete_file (ThunarThumbnailCache *cache,
 
 #ifdef HAVE_DBUS
   /* acquire a cache lock */
-  g_mutex_lock (cache->lock);
+  _thumbnail_cache_lock (cache);
 
   /* check if we have a valid proxy for the cache service */
   if (cache->cache_proxy)
@@ -645,7 +663,7 @@ thunar_thumbnail_cache_delete_file (ThunarThumbnailCache *cache,
     }
 
   /* release the cache lock */
-  g_mutex_unlock (cache->lock);
+  _thumbnail_cache_unlock (cache);
 #endif
 }
 
@@ -660,7 +678,7 @@ thunar_thumbnail_cache_cleanup_file (ThunarThumbnailCache *cache,
 
 #ifdef HAVE_DBUS
   /* acquire a cache lock */
-  g_mutex_lock (cache->lock);
+  _thumbnail_cache_lock (cache);
 
   /* check if we have a valid proxy for the cache service */
   if (cache->cache_proxy)
@@ -682,6 +700,6 @@ thunar_thumbnail_cache_cleanup_file (ThunarThumbnailCache *cache,
     }
 
   /* release the cache lock */
-  g_mutex_unlock (cache->lock);
+  _thumbnail_cache_unlock (cache);
 #endif
 }

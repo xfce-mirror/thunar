@@ -2632,15 +2632,15 @@ thunar_standard_view_rename_error (ExoJob             *job,
                                    GError             *error,
                                    ThunarStandardView *standard_view)
 {
-  GValueArray *param_values;
-  ThunarFile  *file;
+  GArray     *param_values;
+  ThunarFile *file;
 
   _thunar_return_if_fail (EXO_IS_JOB (job));
   _thunar_return_if_fail (error != NULL);
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   param_values = thunar_simple_job_get_param_values (THUNAR_SIMPLE_JOB (job));
-  file = g_value_get_object (g_value_array_get_nth (param_values, 0));
+  file = g_value_get_object (&g_array_index (param_values, GValue, 0));
 
   /* display an error message */
   thunar_dialogs_show_error (GTK_WIDGET (standard_view), error,
@@ -2654,14 +2654,14 @@ static void
 thunar_standard_view_rename_finished (ExoJob             *job,
                                       ThunarStandardView *standard_view)
 {
-  GValueArray *param_values;
-  ThunarFile  *file;
+  GArray     *param_values;
+  ThunarFile *file;
 
   _thunar_return_if_fail (EXO_IS_JOB (job));
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   param_values = thunar_simple_job_get_param_values (THUNAR_SIMPLE_JOB (job));
-  file = g_value_get_object (g_value_array_get_nth (param_values, 0));
+  file = g_value_get_object (&g_array_index (param_values, GValue, 0));
 
   /* make sure the file is still visible */
   thunar_view_scroll_to_file (THUNAR_VIEW (standard_view), file, TRUE, FALSE, 0.0f, 0.0f);

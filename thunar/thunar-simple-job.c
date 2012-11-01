@@ -54,9 +54,10 @@ struct _ThunarSimpleJobClass
 
 struct _ThunarSimpleJob
 {
-  ThunarJob           __parent__;
-  ThunarSimpleJobFunc func;
-  GValueArray        *param_values;
+  ThunarJob __parent__;
+
+  ThunarSimpleJobFunc  func;
+  GArray              *param_values;
 };
 
 
@@ -91,9 +92,12 @@ static void
 thunar_simple_job_finalize (GObject *object)
 {
   ThunarSimpleJob *simple_job = THUNAR_SIMPLE_JOB (object);
+  guint            i;
 
   /* release the param values */
-  g_value_array_free (simple_job->param_values);
+  for (i = 0; i < simple_job->param_values->len; i++)
+    g_value_unset (&g_array_index (simple_job->param_values, GValue, i));
+  g_array_free (simple_job->param_values, TRUE);
 
   (*G_OBJECT_CLASS (thunar_simple_job_parent_class)->finalize) (object);
 }
@@ -176,7 +180,7 @@ thunar_simple_job_launch (ThunarSimpleJobFunc func,
   /* allocate and initialize the simple job */
   simple_job = g_object_new (THUNAR_TYPE_SIMPLE_JOB, NULL);
   simple_job->func = func;
-  simple_job->param_values = g_value_array_new (n_param_values);
+  simple_job->param_values = g_array_sized_new (FALSE, TRUE, sizeof (GValue), n_param_values);
 
   /* collect the parameters */
   va_start (var_args, n_param_values);
@@ -195,8 +199,7 @@ thunar_simple_job_launch (ThunarSimpleJobFunc func,
           g_free (error_message);
         }
 
-      g_value_array_insert (simple_job->param_values, n, &value);
-      g_value_unset (&value);
+      g_array_insert_val (simple_job->param_values, n, value);
     }
   va_end (var_args);
 
@@ -206,7 +209,7 @@ thunar_simple_job_launch (ThunarSimpleJobFunc func,
 
 
 
-GValueArray *
+GArray *
 thunar_simple_job_get_param_values (ThunarSimpleJob *job)
 {
   _thunar_return_val_if_fail (THUNAR_IS_SIMPLE_JOB (job), NULL);

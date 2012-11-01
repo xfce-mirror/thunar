@@ -28,7 +28,7 @@ G_BEGIN_DECLS
 /**
  * ThunarSimpleJobFunc:
  * @job            : a #ThunarJob.
- * @param_values   : a #GValueArray of the #GValue<!---->s passed to 
+ * @param_values   : a #GArray of the #GValue<!---->s passed to 
  *                   thunar_simple_job_launch().
  * @error          : return location for errors.
  *
@@ -37,9 +37,9 @@ G_BEGIN_DECLS
  *
  * Return value: %TRUE on success, %FALSE in case of an error.
  **/
-typedef gboolean (*ThunarSimpleJobFunc) (ThunarJob   *job,
-                                         GValueArray *param_values,
-                                         GError     **error);
+typedef gboolean (*ThunarSimpleJobFunc) (ThunarJob  *job,
+                                         GArray     *param_values,
+                                         GError    **error);
 
 
 typedef struct _ThunarSimpleJobClass ThunarSimpleJobClass;
@@ -57,7 +57,7 @@ GType      thunar_simple_job_get_type           (void) G_GNUC_CONST;
 ThunarJob *thunar_simple_job_launch             (ThunarSimpleJobFunc func,
                                                  guint               n_param_values,
                                                  ...) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-GValueArray *thunar_simple_job_get_param_values (ThunarSimpleJob    *job);
+GArray    *thunar_simple_job_get_param_values   (ThunarSimpleJob    *job);
 
 G_END_DECLS
 
