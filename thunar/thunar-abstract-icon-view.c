@@ -418,12 +418,12 @@ thunar_abstract_icon_view_gesture_action (ThunarAbstractIconView *abstract_icon_
   else if (abstract_icon_view->priv->gesture_start_x - abstract_icon_view->priv->gesture_current_x > 40
       && ABS (abstract_icon_view->priv->gesture_start_y - abstract_icon_view->priv->gesture_current_y) < 40)
     {
-      return gtk_ui_manager_get_action (THUNAR_STANDARD_VIEW (abstract_icon_view)->ui_manager, "/main-menu/go-menu/back");
+      return gtk_ui_manager_get_action (THUNAR_STANDARD_VIEW (abstract_icon_view)->ui_manager, "/main-menu/go-menu/placeholder-go-history-actions/back");
     }
   else if (abstract_icon_view->priv->gesture_current_x - abstract_icon_view->priv->gesture_start_x > 40
       && ABS (abstract_icon_view->priv->gesture_start_y - abstract_icon_view->priv->gesture_current_y) < 40)
     {
-      return gtk_ui_manager_get_action (THUNAR_STANDARD_VIEW (abstract_icon_view)->ui_manager, "/main-menu/go-menu/forward");
+      return gtk_ui_manager_get_action (THUNAR_STANDARD_VIEW (abstract_icon_view)->ui_manager, "/main-menu/go-menu/placeholder-go-history-actions/forward");
     }
   else if (abstract_icon_view->priv->gesture_current_y - abstract_icon_view->priv->gesture_start_y > 40
       && ABS (abstract_icon_view->priv->gesture_start_x - abstract_icon_view->priv->gesture_current_x) < 40)

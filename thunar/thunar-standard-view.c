@@ -2898,9 +2898,9 @@ thunar_standard_view_button_press_event (GtkWidget          *view,
     {
       /* determine the appropriate action ("back" for button 8, "forward" for button 9) */
       if (G_UNLIKELY (event->button == 8))
-        action = gtk_ui_manager_get_action (standard_view->ui_manager, "/main-menu/go-menu/back");
+        action = gtk_ui_manager_get_action (standard_view->ui_manager, "/main-menu/go-menu/placeholder-go-history-actions/back");
       else if (G_UNLIKELY (event->button == 9))
-        action = gtk_ui_manager_get_action (standard_view->ui_manager, "/main-menu/go-menu/forward");
+        action = gtk_ui_manager_get_action (standard_view->ui_manager, "/main-menu/go-menu/placeholder-go-history-actions/forward");
 
       /* perform the action (if any) */
       if (G_UNLIKELY (action != NULL))
