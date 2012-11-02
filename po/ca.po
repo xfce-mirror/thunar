@@ -732,11 +732,11 @@ msgstr "amb aquest fitxer?"
 msgid ""
 "The desktop file \"%s\" is in an insecure location and not marked as "
 "executable. If you do not trust this program, click Cancel."
-msgstr ""
+msgstr "El fitxer d'escriptori «%s» està en un lloc insegur i no es pot marcar com executable. Si no us enrefieu d'aquests programa, feu clic a «Cancel·la»."
 
 #: ../thunar/thunar-dialogs.c:777
 msgid "_Launch Anyway"
-msgstr ""
+msgstr "_Llança igualment"
 
 #: ../thunar/thunar-dialogs.c:779
 msgid "Mark _Executable"
@@ -892,7 +892,7 @@ msgstr "Vés a la carpeta visitada posteriorment"
 
 #: ../thunar/thunar-history.c:352
 msgid "The item will be removed from the history"
-msgstr ""
+msgstr "L'element s'eliminarà de l'historial"
 
 #: ../thunar/thunar-history.c:355
 #, c-format
@@ -1790,7 +1790,7 @@ msgstr "_Doble clic per a activar els elements"
 
 #: ../thunar/thunar-preferences-dialog.c:512
 msgid "Middle Click"
-msgstr ""
+msgstr "Botó del mig"
 
 #: ../thunar/thunar-preferences-dialog.c:522
 msgid "Open folder in new _window"
@@ -2133,11 +2133,11 @@ msgstr "Voleu ometre aquest fitxer i continuar canviant el nom als que queden?"
 
 #: ../thunar/thunar-shortcuts-model.c:801
 msgid "DEVICES"
-msgstr ""
+msgstr "DISPOSITIUS"
 
 #: ../thunar/thunar-shortcuts-model.c:847
 msgid "NETWORK"
-msgstr ""
+msgstr "XARXA"
 
 #: ../thunar/thunar-shortcuts-model.c:853
 msgid "Browse Network"
@@ -2145,7 +2145,7 @@ msgstr "Navega la xarxa"
 
 #: ../thunar/thunar-shortcuts-model.c:874
 msgid "PLACES"
-msgstr ""
+msgstr "UBICACIONS"
 
 #: ../thunar/thunar-shortcuts-pane.c:362
 msgid "Side Pane (Create Shortcut)"
@@ -2161,41 +2161,37 @@ msgstr[1] "Afegeix les carpetes a la subfinestra de dreceres"
 
 #. append the "Open in New Tab" menu action
 #: ../thunar/thunar-shortcuts-view.c:1087
-#, fuzzy
 msgid "Open in New Tab"
-msgstr "Obre en una finestra nova"
+msgstr "Obre en una pestanya nova"
 
 #. append the "Mount" item
 #. append the "Mount" menu action
 #: ../thunar/thunar-shortcuts-view.c:1107 ../thunar/thunar-tree-view.c:1145
-#, fuzzy
 msgid "_Mount"
-msgstr "_Munta el volum"
+msgstr "_Munta"
 
 #. append the "Unmount" item
 #. append the "Unmount" menu action
 #: ../thunar/thunar-shortcuts-view.c:1113 ../thunar/thunar-tree-view.c:1151
-#, fuzzy
 msgid "_Unmount"
-msgstr "Desm_unta el volum"
+msgstr "Desm_unta"
 
 #. append the "Disconnect" (eject + safely remove drive) item
 #. append the "Eject" menu action
 #: ../thunar/thunar-shortcuts-view.c:1119 ../thunar/thunar-tree-view.c:1157
 msgid "_Eject"
-msgstr ""
+msgstr "_Extreu"
 
 #. append the "Disconnect" item
 #: ../thunar/thunar-shortcuts-view.c:1136
-#, fuzzy
 msgid "Create _Shortcut"
-msgstr "Ca_nvia el nom a la drecera"
+msgstr "Crea una _drecera"
 
 #. append the "Disconnect" item
 #. append the "Mount Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:1157 ../thunar/thunar-tree-view.c:1166
 msgid "Disconn_ect"
-msgstr ""
+msgstr "Descon_necta"
 
 #: ../thunar/thunar-shortcuts-view.c:1237
 msgid "_Remove Shortcut"
@@ -2251,15 +2247,13 @@ msgstr[1] "%u elements, en total %s"
 #. TRANSLATORS: this is shows if during the deep count size
 #. * directories were not accessible
 #: ../thunar/thunar-size-label.c:385
-#, fuzzy
 msgid "(some contents unreadable)"
-msgstr "Mostra els continguts amb més detall"
+msgstr "(part del contingut és illegible) "
 
 #. nothing was readable, so permission was denied
 #: ../thunar/thunar-size-label.c:396
-#, fuzzy
 msgid "Permission denied"
-msgstr "Permisos"
+msgstr "Denegació de permís"
 
 #: ../thunar/thunar-standard-view.c:381
 msgid "Folder Context Menu"
@@ -2291,9 +2285,8 @@ msgstr ""
 
 #. append the "Move to Tash" menu action
 #: ../thunar/thunar-standard-view.c:387 ../thunar/thunar-tree-view.c:1270
-#, fuzzy
 msgid "Mo_ve to Trash"
-msgstr "Buida la pap_erera"
+msgstr "_Mou a la paperera"
 
 #. append the "Delete" menu action
 #: ../thunar/thunar-standard-view.c:388 ../thunar/thunar-tree-view.c:1282
@@ -2326,11 +2319,11 @@ msgstr "Selecciona tots els fitxers que coincideixen amb un patró"
 
 #: ../thunar/thunar-standard-view.c:392
 msgid "_Invert Selection"
-msgstr ""
+msgstr "_Inverteix la selecció"
 
 #: ../thunar/thunar-standard-view.c:392
 msgid "Select all and only the items that are not currently selected"
-msgstr ""
+msgstr "Selecciona només tots iels elements que no estan seleccionats"
 
 #: ../thunar/thunar-standard-view.c:393
 msgid "Du_plicate"
@@ -2417,18 +2410,16 @@ msgstr[1] ""
 "Prepara els fitxers seleccionats i seran copiats amb l'ordre d'enganxar"
 
 #: ../thunar/thunar-standard-view.c:4092
-#, fuzzy
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
-msgstr[0] "Envia el fitxer seleccionat a «%s»"
-msgstr[1] "Envia els fitxers seleccionats a «%s»"
+msgstr[0] "Mou el fitxer seleccionat a la paperera"
+msgstr[1] "Mou els fitxers seleccionats a la paperera"
 
 #: ../thunar/thunar-standard-view.c:4100
-#, fuzzy
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
-msgstr[0] "Suprimeix el fitxer seleccionat"
-msgstr[1] "Suprimeix els fitxers seleccionats"
+msgstr[0] "Suprimeix el fitxer seleccionat permanentment"
+msgstr[1] "Suprimeix els fitxers seleccionats permanentment"
 
 #: ../thunar/thunar-standard-view.c:4114
 msgid "Duplicate the selected file"
@@ -2464,12 +2455,12 @@ msgstr "Fitx_er buit"
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
 "destination"
-msgstr ""
+msgstr "S'ha produït un error al copiar «%s»: A %s li cal més espai en el destí"
 
 #: ../thunar/thunar-transfer-job.c:744
 #, c-format
 msgid "Error while copying to \"%s\": The destination is read-only"
-msgstr ""
+msgstr "S'ha produït un error al copiar «%s»: El destí és només de lectura"
 
 #: ../thunar/thunar-transfer-job.c:787
 msgid "Collecting files..."
