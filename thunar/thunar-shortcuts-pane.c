@@ -87,6 +87,8 @@ struct _ThunarShortcutsPane
   guint             ui_merge_id;
 
   GtkWidget        *view;
+
+  guint             idle_select_directory;
 };
 
 
@@ -283,6 +285,25 @@ thunar_shortcuts_pane_get_current_directory (ThunarNavigator *navigator)
 
 
 
+static gboolean
+thunar_shortcuts_pane_set_current_directory_idle (gpointer data)
+{
+  ThunarShortcutsPane *shortcuts_pane = THUNAR_SHORTCUTS_PANE (data);
+
+  if (shortcuts_pane->current_directory != NULL)
+    {
+      thunar_shortcuts_view_select_by_file (THUNAR_SHORTCUTS_VIEW (shortcuts_pane->view),
+                                            shortcuts_pane->current_directory);
+    }
+
+  /* unset id */
+  shortcuts_pane->idle_select_directory = 0;
+
+  return FALSE;
+}
+
+
+
 static void
 thunar_shortcuts_pane_set_current_directory (ThunarNavigator *navigator,
                                              ThunarFile      *current_directory)
@@ -293,6 +314,13 @@ thunar_shortcuts_pane_set_current_directory (ThunarNavigator *navigator,
   if (G_LIKELY (shortcuts_pane->current_directory != NULL))
     g_object_unref (G_OBJECT (shortcuts_pane->current_directory));
 
+  /* remove pending timeout */
+  if (shortcuts_pane->idle_select_directory != 0)
+    {
+      g_source_remove (shortcuts_pane->idle_select_directory);
+      shortcuts_pane->idle_select_directory = 0;
+    }
+
   /* activate the new directory */
   shortcuts_pane->current_directory = current_directory;
 
@@ -302,8 +330,11 @@ thunar_shortcuts_pane_set_current_directory (ThunarNavigator *navigator,
       /* take a reference on the new directory */
       g_object_ref (G_OBJECT (current_directory));
 
-      /* select the file in the view (if possible) */
-      thunar_shortcuts_view_select_by_file (THUNAR_SHORTCUTS_VIEW (shortcuts_pane->view), current_directory);
+      /* start idle to select item in sidepane (this to also make
+       * the selection work when the bookmarks are loaded idle) */
+      shortcuts_pane->idle_select_directory =
+        g_idle_add_full (G_PRIORITY_LOW, thunar_shortcuts_pane_set_current_directory_idle,
+                         shortcuts_pane, NULL);
     }
 
   /* notify listeners */
