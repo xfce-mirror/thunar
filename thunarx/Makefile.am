@@ -56,6 +56,7 @@ libthunarx_2_la_CFLAGS =						\
 libthunarx_2_la_LDFLAGS =						\
 	-export-dynamic							\
 	-export-symbols-regex "^[^_].*"					\
+	-no-undefined							\
 	-version-info $(THUNARX_VERINFO)				\
 	$(PLATFORM_LDFLAGS)
 

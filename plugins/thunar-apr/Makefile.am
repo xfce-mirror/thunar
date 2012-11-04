@@ -36,6 +36,7 @@ thunar_apr_la_CFLAGS =							\
 thunar_apr_la_LDFLAGS =							\
 	-avoid-version							\
 	-export-dynamic							\
+	-no-undefined							\
 	-export-symbols-regex "^thunar_extension_(shutdown|initialize|list_types)" \
 	-module								\
 	$(PLATFORM_LDFLAGS)
