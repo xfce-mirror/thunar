@@ -1374,8 +1374,8 @@ thunar_window_configure_event (GtkWidget         *widget,
       if (gtk_widget_get_visible (widget))
         {
           /* save the geometry one second after the last configure event */
-          window->save_geometry_timer_id = g_timeout_add_full (G_PRIORITY_LOW, 1000, thunar_window_save_geometry_timer,
-                                                               window, thunar_window_save_geometry_timer_destroy);
+          window->save_geometry_timer_id = g_timeout_add_seconds_full (G_PRIORITY_LOW, 1, thunar_window_save_geometry_timer,
+                                                                       window, thunar_window_save_geometry_timer_destroy);
         }
     }
 

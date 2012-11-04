@@ -31,8 +31,8 @@
 
 
 
-/* "provider cache" cleanup interval (in ms) */
-#define THUNARX_PROVIDER_FACTORY_INTERVAL (45 * 1000)
+/* "provider cache" cleanup interval (in seconds) */
+#define THUNARX_PROVIDER_FACTORY_INTERVAL (45)
 
 
 
@@ -299,9 +299,9 @@ thunarx_provider_factory_list_providers (ThunarxProviderFactory *factory,
       modules = thunarx_provider_factory_load_modules (factory);
 
       /* start the "provider cache" cleanup timer */
-      factory->timer_id = g_timeout_add_full (G_PRIORITY_LOW, THUNARX_PROVIDER_FACTORY_INTERVAL,
-                                              thunarx_provider_factory_timer, factory,
-                                              thunarx_provider_factory_timer_destroy);
+      factory->timer_id = g_timeout_add_seconds_full (G_PRIORITY_LOW, THUNARX_PROVIDER_FACTORY_INTERVAL,
+                                                      thunarx_provider_factory_timer, factory,
+                                                      thunarx_provider_factory_timer_destroy);
     }
 
   /* determine all available providers for the type */
