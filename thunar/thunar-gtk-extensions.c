@@ -149,7 +149,7 @@ thunar_gtk_menu_run (GtkMenu            *menu,
                      guint32             activate_time)
 {
   GMainLoop *loop;
-  guint      signal_id;
+  gulong     signal_id;
 
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (GTK_IS_MENU (menu));

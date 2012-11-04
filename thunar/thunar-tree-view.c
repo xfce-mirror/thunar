@@ -238,7 +238,7 @@ struct _ThunarTreeView
   /* id of the signal used to queue a resize on the
    * column whenever the shortcuts icon size is changed.
    */
-  gint                    queue_resize_signal_id;
+  gulong                  queue_resize_signal_id;
 
   /* set cursor to current directory idle source */
   gint                    cursor_idle_id;

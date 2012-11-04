@@ -159,8 +159,10 @@ struct _ThunarShortcutsViewClass
 struct _ThunarShortcutsView
 {
   GtkTreeView        __parent__;
-  ThunarPreferences *preferences;
-  GtkCellRenderer   *icon_renderer;
+
+
+  ThunarPreferences      *preferences;
+  GtkCellRenderer        *icon_renderer;
 
   ThunarxProviderFactory *provider_factory;
 
@@ -168,7 +170,7 @@ struct _ThunarShortcutsView
    * button-press-event handler if the associated
    * button-release-event should activate.
    */
-  gint pressed_button;
+  gint  pressed_button;
   guint pressed_eject_button : 1;
 
   /* drop site support */
@@ -179,7 +181,7 @@ struct _ThunarShortcutsView
   /* id of the signal used to queue a resize on the
    * column whenever the shortcuts icon size is changed.
    */
-  gint queue_resize_signal_id;
+  gulong queue_resize_signal_id;
 };
 
 

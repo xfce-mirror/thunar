@@ -101,13 +101,13 @@ struct _ThunarAbstractIconViewPrivate
   gint ui_merge_id;
 
   /* mouse gesture support */
-  gint gesture_start_x;
-  gint gesture_start_y;
-  gint gesture_current_x;
-  gint gesture_current_y;
-  gint gesture_expose_id;
-  gint gesture_motion_id;
-  gint gesture_release_id;
+  gint   gesture_start_x;
+  gint   gesture_start_y;
+  gint   gesture_current_x;
+  gint   gesture_current_y;
+  gulong gesture_expose_id;
+  gulong gesture_motion_id;
+  gulong gesture_release_id;
 };
 
 
