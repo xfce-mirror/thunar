@@ -119,24 +119,25 @@ struct _ThunarTextRenderer
 {
   GtkCellRenderer __parent__;
 
+  /* pango renderer properties */
   PangoLayout    *layout;
   GtkWidget      *widget;
-  gboolean        text_static;
+  guint           text_static : 1;
   gchar          *text;
   gint            char_width;
   gint            char_height;
   PangoWrapMode   wrap_mode;
   gint            wrap_width;
-  gboolean        follow_state;
+  guint           follow_state : 1;
   gint            focus_width;;
   PangoAlignment  alignment;
 
   /* underline prelited rows */
-  gboolean        follow_prelit;
+  guint           follow_prelit : 1;
 
   /* cell editing support */
   GtkWidget      *entry;
-  gboolean        entry_menu_active;
+  guint           entry_menu_active : 1;
   guint           entry_menu_popdown_timer_id;
 };
 
