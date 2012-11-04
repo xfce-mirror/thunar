@@ -57,7 +57,7 @@ struct _ThunarRenamerProgress
   gboolean     pairs_undo;  /* whether we're undoing previous changes */
 
   /* internal main loop for the _rename() method */
-  gint         next_idle_id;
+  guint        next_idle_id;
   GMainLoop   *next_idle_loop;
 };
 
@@ -85,8 +85,6 @@ thunar_renamer_progress_class_init (ThunarRenamerProgressClass *klass)
 static void
 thunar_renamer_progress_init (ThunarRenamerProgress *renamer_progress)
 {
-  renamer_progress->next_idle_id = -1;
-
   gtk_alignment_set (GTK_ALIGNMENT (renamer_progress), 0.5f, 0.5f, 1.0f, 0.0f);
 
   renamer_progress->bar = gtk_progress_bar_new ();
@@ -102,7 +100,7 @@ thunar_renamer_progress_finalize (GObject *object)
   ThunarRenamerProgress *renamer_progress = THUNAR_RENAMER_PROGRESS (object);
 
   /* make sure we're not finalized while the main loop is active */
-  _thunar_assert (renamer_progress->next_idle_id < 0);
+  _thunar_assert (renamer_progress->next_idle_id == 0);
   _thunar_assert (renamer_progress->next_idle_loop == NULL);
 
   /* release the pairs */
@@ -264,7 +262,7 @@ thunar_renamer_progress_next_idle (gpointer user_data)
 static void
 thunar_renamer_progress_next_idle_destroy (gpointer user_data)
 {
-  THUNAR_RENAMER_PROGRESS (user_data)->next_idle_id = -1;
+  THUNAR_RENAMER_PROGRESS (user_data)->next_idle_id = 0;
 }
 
 
@@ -337,7 +335,8 @@ thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
   _thunar_return_if_fail (THUNAR_IS_RENAMER_PROGRESS (renamer_progress));
 
   /* make sure we're not already renaming */
-  if (G_UNLIKELY (renamer_progress->next_idle_id >= 0 || renamer_progress->next_idle_loop != NULL))
+  if (G_UNLIKELY (renamer_progress->next_idle_id != 0
+      || renamer_progress->next_idle_loop != NULL))
     return;
 
   /* take an additional reference on the progress */
@@ -362,7 +361,7 @@ thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
   renamer_progress->next_idle_loop = NULL;
 
   /* be sure to cancel any pending idle source */
-  if (G_UNLIKELY (renamer_progress->next_idle_id >= 0))
+  if (G_UNLIKELY (renamer_progress->next_idle_id != 0))
     g_source_remove (renamer_progress->next_idle_id);
 
   /* release the list of completed items */

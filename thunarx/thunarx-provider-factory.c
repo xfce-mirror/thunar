@@ -63,7 +63,7 @@ struct _ThunarxProviderFactory
   ThunarxProviderInfo *infos;     /* provider types and cached provider references */
   gint                 n_infos;   /* number of items in the infos array */
 
-  gint                 timer_id;  /* GSource timer to cleanup cached providers */
+  guint                timer_id;  /* GSource timer to cleanup cached providers */
 };
 
 
@@ -101,7 +101,7 @@ thunarx_provider_factory_finalize (GObject *object)
   gint                    n;
 
   /* stop the "provider cache" cleanup timer */
-  if (G_LIKELY (factory->timer_id > 0))
+  if (G_LIKELY (factory->timer_id != 0))
     g_source_remove (factory->timer_id);
 
   /* release provider infos */

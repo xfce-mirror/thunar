@@ -241,13 +241,13 @@ struct _ThunarTreeView
   gulong                  queue_resize_signal_id;
 
   /* set cursor to current directory idle source */
-  gint                    cursor_idle_id;
+  guint                   cursor_idle_id;
 
   /* autoscroll during drag timer source */
-  gint                    drag_scroll_timer_id;
+  guint                   drag_scroll_timer_id;
 
   /* expand drag dest row timer source */
-  gint                    expand_timer_id;
+  guint                   expand_timer_id;
 };
 
 enum
@@ -374,11 +374,6 @@ thunar_tree_view_init (ThunarTreeView *view)
   GtkTreeSelection  *selection;
   GtkCellRenderer   *renderer;
 
-  /* initialize the view internals */
-  view->cursor_idle_id = -1;
-  view->drag_scroll_timer_id = -1;
-  view->expand_timer_id = -1;
-
   /* grab a reference on the provider factory */
   view->provider_factory = thunarx_provider_factory_get_default ();
 
@@ -459,15 +454,15 @@ thunar_tree_view_finalize (GObject *object)
   g_signal_handler_disconnect (G_OBJECT (view->preferences), view->queue_resize_signal_id);
 
   /* be sure to cancel the cursor idle source */
-  if (G_UNLIKELY (view->cursor_idle_id >= 0))
+  if (G_UNLIKELY (view->cursor_idle_id != 0))
     g_source_remove (view->cursor_idle_id);
 
   /* cancel any running autoscroll timer */
-  if (G_LIKELY (view->drag_scroll_timer_id >= 0))
+  if (G_LIKELY (view->drag_scroll_timer_id != 0))
     g_source_remove (view->drag_scroll_timer_id);
 
   /* be sure to cancel the expand timer source */
-  if (G_UNLIKELY (view->expand_timer_id >= 0))
+  if (G_UNLIKELY (view->expand_timer_id != 0))
     g_source_remove (view->expand_timer_id);
 
   /* reset the current-directory property */
@@ -631,7 +626,7 @@ thunar_tree_view_set_current_directory (ThunarNavigator *navigator,
         }
 
       /* schedule an idle source to set the cursor to the current directory */
-      if (G_LIKELY (view->cursor_idle_id < 0))
+      if (G_LIKELY (view->cursor_idle_id == 0))
         view->cursor_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_tree_view_cursor_idle, view, thunar_tree_view_cursor_idle_destroy);
 
       /* drop any existing "new-files" closure */
@@ -903,7 +898,7 @@ thunar_tree_view_drag_motion (GtkWidget      *widget,
     }
 
   /* start the drag autoscroll timer if not already running */
-  if (G_UNLIKELY (view->drag_scroll_timer_id < 0))
+  if (G_UNLIKELY (view->drag_scroll_timer_id == 0))
     {
       /* schedule the drag autoscroll timer */
       view->drag_scroll_timer_id = g_timeout_add_full (G_PRIORITY_LOW, 50, thunar_tree_view_drag_scroll_timer,
@@ -923,7 +918,7 @@ thunar_tree_view_drag_leave (GtkWidget      *widget,
   ThunarTreeView *view = THUNAR_TREE_VIEW (widget);
 
   /* cancel any running autoscroll timer */
-  if (G_LIKELY (view->drag_scroll_timer_id >= 0))
+  if (G_LIKELY (view->drag_scroll_timer_id != 0))
     g_source_remove (view->drag_scroll_timer_id);
 
   /* reset the "drop-file" of the icon renderer */
@@ -1036,7 +1031,7 @@ thunar_tree_view_test_expand_row (GtkTreeView *tree_view,
     }
 
   /* cancel the cursor idle source if not expandable */
-  if (!expandable && view->cursor_idle_id >= 0)
+  if (!expandable && view->cursor_idle_id != 0)
     g_source_remove (view->cursor_idle_id);
 
   return !expandable;
@@ -1399,7 +1394,7 @@ thunar_tree_view_get_dest_actions (ThunarTreeView *view,
   ThunarFile   *file = NULL;
 
   /* cancel any previously active expand timer */
-  if (G_LIKELY (view->expand_timer_id >= 0))
+  if (G_LIKELY (view->expand_timer_id != 0))
     g_source_remove (view->expand_timer_id);
 
   /* determine the path for x/y */
@@ -2429,7 +2424,7 @@ thunar_tree_view_cursor_idle (gpointer user_data)
 static void
 thunar_tree_view_cursor_idle_destroy (gpointer user_data)
 {
-  THUNAR_TREE_VIEW (user_data)->cursor_idle_id = -1;
+  THUNAR_TREE_VIEW (user_data)->cursor_idle_id = 0;
 }
 
 
@@ -2479,7 +2474,7 @@ thunar_tree_view_drag_scroll_timer (gpointer user_data)
                * if a path is expanded while scrolling through the view.
                * reschedule it if the drag dest path is still visible.
                */
-              if (G_UNLIKELY (view->expand_timer_id >= 0))
+              if (G_UNLIKELY (view->expand_timer_id != 0))
                 {
                   /* drop the current expand timer source */
                   g_source_remove (view->expand_timer_id);
@@ -2523,7 +2518,7 @@ thunar_tree_view_drag_scroll_timer (gpointer user_data)
 static void
 thunar_tree_view_drag_scroll_timer_destroy (gpointer user_data)
 {
-  THUNAR_TREE_VIEW (user_data)->drag_scroll_timer_id = -1;
+  THUNAR_TREE_VIEW (user_data)->drag_scroll_timer_id = 0;
 }
 
 
@@ -2537,7 +2532,7 @@ thunar_tree_view_expand_timer (gpointer user_data)
   GDK_THREADS_ENTER ();
 
   /* cancel the drag autoscroll timer when expanding a row */
-  if (G_UNLIKELY (view->drag_scroll_timer_id >= 0))
+  if (G_UNLIKELY (view->drag_scroll_timer_id != 0))
     g_source_remove (view->drag_scroll_timer_id);
 
   /* determine the drag dest row */
@@ -2559,7 +2554,7 @@ thunar_tree_view_expand_timer (gpointer user_data)
 static void
 thunar_tree_view_expand_timer_destroy (gpointer user_data)
 {
-  THUNAR_TREE_VIEW (user_data)->expand_timer_id = -1;
+  THUNAR_TREE_VIEW (user_data)->expand_timer_id = 0;
 }
 
 

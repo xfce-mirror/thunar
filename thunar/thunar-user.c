@@ -484,7 +484,7 @@ struct _ThunarUserManager
   GHashTable *groups;
   GHashTable *users;
 
-  gint        flush_timer_id;
+  guint       flush_timer_id;
 };
 
 
@@ -534,7 +534,7 @@ thunar_user_manager_finalize (GObject *object)
   ThunarUserManager *manager = THUNAR_USER_MANAGER (object);
 
   /* stop the flush timer */
-  if (G_LIKELY (manager->flush_timer_id >= 0))
+  if (G_LIKELY (manager->flush_timer_id != 0))
     g_source_remove (manager->flush_timer_id);
 
   /* destroy the hash tables */
@@ -591,7 +591,7 @@ thunar_user_manager_flush_timer (gpointer user_data)
 static void
 thunar_user_manager_flush_timer_destroy (gpointer user_data)
 {
-  THUNAR_USER_MANAGER (user_data)->flush_timer_id = -1;
+  THUNAR_USER_MANAGER (user_data)->flush_timer_id = 0;
 }
 
 

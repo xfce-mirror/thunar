@@ -137,7 +137,7 @@ struct _ThunarLocationButton
   ThunarFileIconState file_icon_state;
   
   /* enter folders using DnD */
-  gint                enter_timeout_id;
+  guint               enter_timeout_id;
 
   /* drop support for the button */
   GList              *drop_file_list;

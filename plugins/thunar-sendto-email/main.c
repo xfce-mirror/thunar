@@ -257,7 +257,7 @@ tse_progress (const gchar *working_directory,
   GtkWidget *vbox;
   gboolean   succeed = FALSE;
   GPid       pid;
-  gint       pulse_timer_id;
+  guint      pulse_timer_id;
   gint       watch_id;
   gint       response;
   gint       status;

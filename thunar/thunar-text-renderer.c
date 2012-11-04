@@ -137,7 +137,7 @@ struct _ThunarTextRenderer
   /* cell editing support */
   GtkWidget      *entry;
   gboolean        entry_menu_active;
-  gint            entry_menu_popdown_timer_id;
+  guint           entry_menu_popdown_timer_id;
 };
 
 
@@ -279,7 +279,6 @@ static void
 thunar_text_renderer_init (ThunarTextRenderer *text_renderer)
 {
   text_renderer->wrap_width = -1;
-  text_renderer->entry_menu_popdown_timer_id = -1;
   text_renderer->alignment = PANGO_ALIGN_LEFT;
 }
 
@@ -794,7 +793,7 @@ thunar_text_renderer_populate_popup (GtkEntry           *entry,
                                      GtkMenu            *menu,
                                      ThunarTextRenderer *text_renderer)
 {
-  if (G_UNLIKELY (text_renderer->entry_menu_popdown_timer_id >= 0))
+  if (G_UNLIKELY (text_renderer->entry_menu_popdown_timer_id != 0))
     g_source_remove (text_renderer->entry_menu_popdown_timer_id);
 
   text_renderer->entry_menu_active = TRUE;
@@ -810,7 +809,7 @@ thunar_text_renderer_popup_unmap (GtkMenu            *menu,
 {
   text_renderer->entry_menu_active = FALSE;
 
-  if (G_LIKELY (text_renderer->entry_menu_popdown_timer_id < 0))
+  if (G_LIKELY (text_renderer->entry_menu_popdown_timer_id == 0))
     {
       text_renderer->entry_menu_popdown_timer_id = g_timeout_add_full (G_PRIORITY_LOW, 500u, thunar_text_renderer_entry_menu_popdown_timer,
                                                                        text_renderer, thunar_text_renderer_entry_menu_popdown_timer_destroy);
@@ -840,7 +839,7 @@ thunar_text_renderer_entry_menu_popdown_timer (gpointer user_data)
 static void
 thunar_text_renderer_entry_menu_popdown_timer_destroy (gpointer user_data)
 {
-  THUNAR_TEXT_RENDERER (user_data)->entry_menu_popdown_timer_id = -1;
+  THUNAR_TEXT_RENDERER (user_data)->entry_menu_popdown_timer_id = 0;
 }
 
 

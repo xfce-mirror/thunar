@@ -151,7 +151,7 @@ struct _ThunarLauncher
 
   ThunarDeviceMonitor    *device_monitor;
   ThunarSendtoModel      *sendto_model;
-  gint                    sendto_idle_id;
+  guint                   sendto_idle_id;
 };
 
 struct _ThunarLauncherMountData

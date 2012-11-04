@@ -318,10 +318,10 @@ struct _ThunarWindow
   ThunarZoomLevel         zoom_level;
 
   /* menu merge idle source */
-  gint                    merge_idle_id;
+  guint                   merge_idle_id;
 
   /* support to remember window geometry */
-  gint                    save_geometry_timer_id;
+  guint                   save_geometry_timer_id;
 
   /* support to toggle side pane using F9,
    * see the toggle_sidepane() function.
@@ -1009,11 +1009,11 @@ thunar_window_dispose (GObject *object)
   ThunarWindow *window = THUNAR_WINDOW (object);
 
   /* destroy the save geometry timer source */
-  if (G_UNLIKELY (window->save_geometry_timer_id > 0))
+  if (G_UNLIKELY (window->save_geometry_timer_id != 0))
     g_source_remove (window->save_geometry_timer_id);
 
   /* destroy the merge idle source */
-  if (G_UNLIKELY (window->merge_idle_id > 0))
+  if (G_UNLIKELY (window->merge_idle_id != 0))
     g_source_remove (window->merge_idle_id);
 
   /* un-merge the custom preferences */
@@ -1367,7 +1367,7 @@ thunar_window_configure_event (GtkWidget         *widget,
   if (widget->allocation.width != event->width || widget->allocation.height != event->height)
     {
       /* drop any previous timer source */
-      if (window->save_geometry_timer_id > 0)
+      if (window->save_geometry_timer_id != 0)
         g_source_remove (window->save_geometry_timer_id);
 
       /* check if we should schedule another save timer */
