@@ -93,6 +93,8 @@ static void        thunar_renamer_dialog_action_about          (GtkAction       
                                                                 ThunarRenamerDialog      *renamer_dialog);
 static void        thunar_renamer_dialog_action_properties     (GtkAction                *action,
                                                                 ThunarRenamerDialog      *renamer_dialog);
+static void        thunar_renamer_dialog_name_column_clicked   (GtkTreeViewColumn        *column,
+                                                                ThunarRenamerDialog      *renamer_dialog);
 static gboolean    thunar_renamer_dialog_button_press_event    (GtkWidget                *tree_view,
                                                                 GdkEventButton           *event,
                                                                 ThunarRenamerDialog      *renamer_dialog);
@@ -165,6 +167,8 @@ struct _ThunarRenamerDialog
 
   GtkWidget           *tree_view;
   GtkWidget           *progress;
+
+  GtkTreeViewColumn   *name_column;
 
   /* the current directory used for the "Add Files" dialog */
   ThunarFile          *current_directory;
@@ -287,7 +291,8 @@ static gint
 trd_renamer_compare (gconstpointer a,
                      gconstpointer b)
 {
-  return g_utf8_collate (thunarx_renamer_get_name (THUNARX_RENAMER (a)), thunarx_renamer_get_name (THUNARX_RENAMER (b)));
+  return g_utf8_collate (thunarx_renamer_get_name (THUNARX_RENAMER (a)),
+                         thunarx_renamer_get_name (THUNARX_RENAMER (b)));
 }
 
 
@@ -409,13 +414,15 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   gtk_widget_show (renamer_dialog->tree_view);
 
   /* create the tree view column for the old file name */
-  column = gtk_tree_view_column_new ();
+  renamer_dialog->name_column = column = gtk_tree_view_column_new ();
   gtk_tree_view_column_set_spacing (column, 2);
   gtk_tree_view_column_set_min_width (column, 100);
   gtk_tree_view_column_set_title (column, _("Name"));
   gtk_tree_view_column_set_resizable (column, TRUE);
   gtk_tree_view_column_set_fixed_width (column, 250);
   gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_FIXED);
+  gtk_tree_view_column_set_clickable (column, TRUE);
+  g_signal_connect (G_OBJECT (column), "clicked", G_CALLBACK (thunar_renamer_dialog_name_column_clicked), renamer_dialog);
   renderer = g_object_new (THUNAR_TYPE_ICON_RENDERER, "size", 16, NULL);
   gtk_tree_view_column_pack_start (column, renderer, FALSE);
   gtk_tree_view_column_set_attributes (column, renderer, "file", THUNAR_RENAMER_MODEL_COLUMN_FILE, NULL);
@@ -1102,6 +1109,9 @@ thunar_renamer_dialog_action_add_files (GtkAction           *action,
               /* append the file to the renamer model */
               thunar_renamer_model_append (renamer_dialog->model, file);
 
+              /* unset sort order */
+              gtk_tree_view_column_set_sort_indicator (renamer_dialog->name_column, FALSE);
+
               /* release the file */
               g_object_unref (G_OBJECT (file));
             }
@@ -1230,6 +1240,37 @@ thunar_renamer_dialog_action_properties (GtkAction           *action,
 
 
 
+static void
+thunar_renamer_dialog_name_column_clicked (GtkTreeViewColumn   *column,
+                                           ThunarRenamerDialog *renamer_dialog)
+{
+  GtkSortType sort_order = GTK_SORT_ASCENDING;
+
+  _thunar_return_if_fail (renamer_dialog->name_column == column);
+
+  if (!gtk_tree_view_column_get_sort_indicator (column))
+    {
+      /* show sort order */
+      gtk_tree_view_column_set_sort_indicator (column, TRUE);
+    }
+  else
+    {
+      /* invert new sort order */
+      if (gtk_tree_view_column_get_sort_order (column) == GTK_SORT_ASCENDING)
+        sort_order = GTK_SORT_DESCENDING;
+      else
+        sort_order = GTK_SORT_ASCENDING;
+    }
+
+  /* set new sort direction */
+  gtk_tree_view_column_set_sort_order (column, sort_order);
+
+  /* sort the model */
+  thunar_renamer_model_sort (renamer_dialog->model, sort_order);
+}
+
+
+
 static gboolean
 thunar_renamer_dialog_button_press_event (GtkWidget           *tree_view,
                                           GdkEventButton      *event,
@@ -1340,6 +1381,9 @@ thunar_renamer_dialog_drag_data_received (GtkWidget           *tree_view,
             {
               /* insert the file in the model */
               thunar_renamer_model_insert (renamer_dialog->model, file, position);
+
+              /* unset sort order */
+              gtk_tree_view_column_set_sort_indicator (renamer_dialog->name_column, FALSE);
 
               /* advance the offset if we do not append, so the drop order is consistent */
               if (position != -1)
@@ -1521,8 +1565,14 @@ thunar_renamer_dialog_drag_drop (GtkWidget           *tree_view,
             }
 
           /* perform the move */
-          thunar_renamer_model_reorder (renamer_dialog->model, rows, position);
-          g_list_free_full (rows, (GDestroyNotify) gtk_tree_path_free);
+          if (G_LIKELY (rows != NULL))
+            {
+              thunar_renamer_model_reorder (renamer_dialog->model, rows, position);
+              g_list_free_full (rows, (GDestroyNotify) gtk_tree_path_free);
+            }
+
+          /* unset sort column */
+          gtk_tree_view_column_set_sort_indicator (renamer_dialog->name_column, FALSE);
         }
 
       /* finish the dnd operation */

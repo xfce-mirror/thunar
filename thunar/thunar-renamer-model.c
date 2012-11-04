@@ -1011,6 +1011,27 @@ thunar_renamer_model_cmp_array (gconstpointer pointer_a,
 
 
 
+static gint
+thunar_renamer_model_cmp_name (gconstpointer pointer_a,
+                               gconstpointer pointer_b,
+                               gpointer      user_data)
+{
+  const SortTuple              *tuple_a = pointer_a;
+  const SortTuple              *tuple_b = pointer_b;
+  const ThunarRenamerModelItem *a = tuple_a->item->data;
+  const ThunarRenamerModelItem *b = tuple_b->item->data;
+  GtkSortType                   sort_order = GPOINTER_TO_INT (user_data);
+  gint                          result;
+
+  /* sort files by their old filename */
+  result = thunar_file_compare_by_name (a->file, b->file, TRUE);
+
+  /* insert order for desc sorting */
+  return sort_order == GTK_SORT_ASCENDING ? result : -result;
+}
+
+
+
 /**
  * thunar_renamer_model_new:
  *
@@ -1313,14 +1334,19 @@ thunar_renamer_model_reorder (ThunarRenamerModel *renamer_model,
   gint         k, n, m;
   SortTuple   *sort_array;
 
+  _thunar_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
+
   /* leave when there is nothing to sort */
   n_items = g_list_length (renamer_model->items);
   if (G_UNLIKELY (n_items <= 1))
     return;
 
   /* correct the sort position to match the list items */
-  if (position == -1 || position > n_items)
-    position = n_items;
+  if (tree_paths != NULL)
+    {
+      if (position == -1 || position > n_items)
+        position = n_items;
+    }
 
   /* be sure to not overuse the stack */
   if (G_LIKELY (n_items < 500))
@@ -1332,7 +1358,8 @@ thunar_renamer_model_reorder (ThunarRenamerModel *renamer_model,
   for (lp = renamer_model->items, m = 0, n = 0; lp != NULL; lp = lp->next, ++n, ++m)
     {
       /* leave a hole in the sort position for the drop items */
-      if (G_UNLIKELY (m == position))
+      if (G_UNLIKELY (tree_paths != NULL
+          && m == position))
         m++;
 
       sort_array[n].offset = n;
@@ -1348,7 +1375,10 @@ thunar_renamer_model_reorder (ThunarRenamerModel *renamer_model,
     }
 
   /* sort the array using QuickSort */
-  g_qsort_with_data (sort_array, n_items, sizeof (SortTuple), thunar_renamer_model_cmp_array, NULL);
+  if (tree_paths != NULL)
+    g_qsort_with_data (sort_array, n_items, sizeof (SortTuple), thunar_renamer_model_cmp_array, NULL);
+  else
+    g_qsort_with_data (sort_array, n_items, sizeof (SortTuple), thunar_renamer_model_cmp_name, GINT_TO_POINTER (position));
 
   /* update our internals and generate the new order */
   new_order = g_newa (gint, n_items);
@@ -1383,6 +1413,25 @@ thunar_renamer_model_reorder (ThunarRenamerModel *renamer_model,
   /* cleanup if we used the heap */
   if (G_UNLIKELY (n_items >= 500))
     g_free (sort_array);
+}
+
+
+
+/**
+ * thunar_renamer_model_sort:
+ * @renamer_model : a #ThunarRenamerModel.
+ * @sort_order    : sort direction of the model.
+ *
+ * Sort the entire model by the old filename.
+ **/
+void
+thunar_renamer_model_sort (ThunarRenamerModel *renamer_model,
+                           GtkSortType         sort_order)
+{
+  _thunar_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
+
+  /* abuse function above */
+  thunar_renamer_model_reorder (renamer_model, NULL, sort_order);
 }
 
 

@@ -69,6 +69,8 @@ void                 thunar_renamer_model_insert         (ThunarRenamerModel *re
 void                 thunar_renamer_model_reorder        (ThunarRenamerModel *renamer_model,
                                                           GList              *tree_paths,
                                                           gint                position);
+void                 thunar_renamer_model_sort           (ThunarRenamerModel *renamer_model,
+                                                          GtkSortType         sort_order);
 void                 thunar_renamer_model_clear          (ThunarRenamerModel *renamer_model);
 void                 thunar_renamer_model_remove         (ThunarRenamerModel *renamer_model,
                                                           GtkTreePath        *path);
