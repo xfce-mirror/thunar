@@ -396,8 +396,7 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   gtk_widget_show (swin);
 
   /* create the tree view */
-  renamer_dialog->tree_view = exo_tree_view_new ();
-  gtk_tree_view_set_model (GTK_TREE_VIEW (renamer_dialog->tree_view), GTK_TREE_MODEL (renamer_dialog->model));
+  renamer_dialog->tree_view = gtk_tree_view_new_with_model (GTK_TREE_MODEL (renamer_dialog->model));
   gtk_tree_view_set_search_column (GTK_TREE_VIEW (renamer_dialog->tree_view), THUNAR_RENAMER_MODEL_COLUMN_OLDNAME);
   gtk_tree_view_set_fixed_height_mode (GTK_TREE_VIEW (renamer_dialog->tree_view), TRUE);
   gtk_tree_view_set_enable_search (GTK_TREE_VIEW (renamer_dialog->tree_view), TRUE);
