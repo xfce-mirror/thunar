@@ -2388,10 +2388,30 @@ thunar_standard_view_action_paste (GtkAction          *action,
 
 
 static void
+thunar_standard_view_unlink_selection (ThunarStandardView *standard_view,
+                                       gboolean            permanently)
+{
+  ThunarApplication *application;
+
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  /* delete the selected files */
+  application = thunar_application_get ();
+  thunar_application_unlink_files (application, GTK_WIDGET (standard_view),
+                                   standard_view->priv->selected_files,
+                                   permanently);
+  g_object_unref (G_OBJECT (application));
+
+  /* do not select new files */
+  thunar_component_set_selected_files (THUNAR_COMPONENT (standard_view), NULL);
+}
+
+
+
+static void
 thunar_standard_view_action_move_to_trash (GtkAction          *action,
                                            ThunarStandardView *standard_view)
 {
-  ThunarApplication *application;
   gboolean           permanently;
   GdkModifierType    state;
   const gchar       *accel_path;
@@ -2414,10 +2434,7 @@ thunar_standard_view_action_move_to_trash (GtkAction          *action,
         permanently = FALSE;
     }
 
-  /* delete the selected files */
-  application = thunar_application_get ();
-  thunar_application_unlink_files (application, GTK_WIDGET (standard_view), standard_view->priv->selected_files, permanently);
-  g_object_unref (G_OBJECT (application));
+  thunar_standard_view_unlink_selection (standard_view, permanently);
 }
 
 
@@ -2426,15 +2443,7 @@ static void
 thunar_standard_view_action_delete (GtkAction          *action,
                                     ThunarStandardView *standard_view)
 {
-  ThunarApplication *application;
-
-  _thunar_return_if_fail (GTK_IS_ACTION (action));
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-
-  /* delete the selected files */
-  application = thunar_application_get ();
-  thunar_application_unlink_files (application, GTK_WIDGET (standard_view), standard_view->priv->selected_files, TRUE);
-  g_object_unref (G_OBJECT (application));
+  thunar_standard_view_unlink_selection (standard_view, TRUE);
 }
 
 
