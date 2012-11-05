@@ -298,7 +298,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                    g_param_spec_string ("last-location-bar",
                                                         "LastLocationBar",
                                                         NULL,
-                                                        "ThunarLocationButtons",
+                                                        "ThunarLocationEntry",
                                                         EXO_PARAM_READWRITE));
 
   /**
