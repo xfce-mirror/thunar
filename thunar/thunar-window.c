@@ -1849,8 +1849,8 @@ thunar_window_install_location_bar (ThunarWindow *window,
           /* setup the toolbar for the location bar */
           window->location_toolbar = gtk_ui_manager_get_widget (window->ui_manager, "/location-toolbar");
           g_object_get (G_OBJECT (window->preferences), "misc-small-toolbar-icons", &small_icons, NULL);
-          if (small_icons)
-            gtk_toolbar_set_icon_size (GTK_TOOLBAR (window->location_toolbar), GTK_ICON_SIZE_SMALL_TOOLBAR);
+          gtk_toolbar_set_icon_size (GTK_TOOLBAR (window->location_toolbar),
+                                     small_icons ? GTK_ICON_SIZE_SMALL_TOOLBAR : GTK_ICON_SIZE_LARGE_TOOLBAR);
           gtk_table_attach (GTK_TABLE (window->table), window->location_toolbar, 0, 1, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
           gtk_widget_show (window->location_toolbar);
 
