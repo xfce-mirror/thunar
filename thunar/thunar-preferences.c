@@ -825,7 +825,7 @@ thunar_preferences_get_property (GObject    *object,
       array = xfconf_channel_get_string_list (preferences->channel, prop_name);
       g_value_take_boxed (value, array);
     }
-  else if (0&&xfconf_channel_get_property (preferences->channel, prop_name, &src))
+  else if (xfconf_channel_get_property (preferences->channel, prop_name, &src))
     {
       if (G_VALUE_TYPE (value) == G_VALUE_TYPE (&src))
         g_value_copy (&src, value);
