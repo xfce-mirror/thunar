@@ -130,6 +130,11 @@ struct _ThunarPreferences
 
 
 
+/* don't do anything in case xfconf_init() failed */
+static gboolean no_xfconf = FALSE;
+
+
+
 G_DEFINE_TYPE (ThunarPreferences, thunar_preferences, G_TYPE_OBJECT)
 
 
@@ -755,6 +760,10 @@ thunar_preferences_init (ThunarPreferences *preferences)
 {
   const gchar check_prop[] = "/last-view";
 
+  /* don't set a channel if xfconf init failed */
+  if (no_xfconf)
+    return;
+
   /* load the channel */
   preferences->channel = xfconf_channel_get ("thunar");
 
@@ -800,6 +809,13 @@ thunar_preferences_get_property (GObject    *object,
   gchar               prop_name[64];
   gchar             **array;
 
+  /* only set defaults if channel is not set */
+  if (G_UNLIKELY (preferences->channel == NULL))
+    {
+      g_param_value_set_default (pspec, value);
+      return;
+    }
+
   /* build property name */
   g_snprintf (prop_name, sizeof (prop_name), "/%s", g_param_spec_get_name (pspec));
 
@@ -809,7 +825,7 @@ thunar_preferences_get_property (GObject    *object,
       array = xfconf_channel_get_string_list (preferences->channel, prop_name);
       g_value_take_boxed (value, array);
     }
-  else if (xfconf_channel_get_property (preferences->channel, prop_name, &src))
+  else if (0&&xfconf_channel_get_property (preferences->channel, prop_name, &src))
     {
       if (G_VALUE_TYPE (value) == G_VALUE_TYPE (&src))
         g_value_copy (&src, value);
@@ -836,6 +852,10 @@ thunar_preferences_set_property (GObject      *object,
   GValue              dst = { 0, };
   gchar               prop_name[64];
   gchar             **array;
+
+  /* leave if the channel is not set */
+  if (G_UNLIKELY (preferences->channel == NULL))
+    return;
 
   /* build property name */
   g_snprintf (prop_name, sizeof (prop_name), "/%s", g_param_spec_get_name (pspec));
@@ -1001,3 +1021,9 @@ thunar_preferences_get (void)
 }
 
 
+
+void
+thunar_preferences_xfconf_init_failed (void)
+{
+  no_xfconf = TRUE;
+}

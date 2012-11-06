@@ -43,6 +43,7 @@
 #include <thunar/thunar-notify.h>
 #include <thunar/thunar-session-client.h>
 #include <thunar/thunar-stock.h>
+#include <thunar/thunar-preferences.h>
 
 
 
@@ -176,9 +177,11 @@ main (int argc, char **argv)
   /* initialize xfconf */
   if (!xfconf_init (&error))
     {
-      g_critical ("Failed to initialize Xfconf: %s", error->message);
-      g_error_free (error);
-      return EXIT_FAILURE;
+      g_printerr (PACKAGE_NAME ": Failed to initialize Xfconf: %s\n\n", error->message);
+      g_clear_error (&error);
+
+      /* disable get/set properties */
+      thunar_preferences_xfconf_init_failed ();
     }
 
 #ifdef HAVE_GIO_UNIX
