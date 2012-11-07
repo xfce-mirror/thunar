@@ -267,7 +267,8 @@ thunar_g_file_get_display_name_remote (GFile *mount_point)
   gchar       *hostname;
   gchar       *display_name = NULL;
   const gchar *skip;
-  const gchar  skip_chars[] = G_URI_RESERVED_CHARS_ALLOWED_IN_PATH_ELEMENT;
+  const gchar *firstdot;
+  const gchar  skip_chars[] = ":@";
   guint        n;
 
   _thunar_return_val_if_fail (G_IS_FILE (mount_point), NULL);
@@ -287,13 +288,19 @@ thunar_g_file_get_display_name_remote (GFile *mount_point)
 
           /* goto path part */
           path = strchr (p, '/');
+          firstdot = strchr (p, '.');
 
-          /* skip password or login names in the hostname */
-          for (n = 0; n < G_N_ELEMENTS (skip_chars) - 1; n++)
+          if (firstdot != NULL)
             {
-              skip = strchr (p, skip_chars[n]);
-              if (skip != NULL && (path == NULL || skip < path))
-                p = skip + 1;
+              /* skip password or login names in the hostname */
+              for (n = 0; n < G_N_ELEMENTS (skip_chars) - 1; n++)
+                {
+                  skip = strchr (p, skip_chars[n]);
+                  if (skip != NULL
+                       && (path == NULL || skip < path)
+                       && (skip < firstdot))
+                    p = skip + 1;
+                }
             }
 
           /* extract the path and hostname from the string */
