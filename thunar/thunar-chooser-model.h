@@ -41,7 +41,6 @@ typedef struct _ThunarChooserModel      ThunarChooserModel;
  * @THUNAR_CHOOSER_MODEL_COLUMN_ICON        : the name or absolute path of the application's icon.
  * @THUNAR_CHOOSER_MODEL_COLUMN_APPLICATION : the #GAppInfo object.
  * @THUNAR_CHOOSER_MODEL_COLUMN_STYLE       : custom font style.
- * @THUNAR_CHOOSER_MODEL_COLUMN_STYLE_SET   : whether to actually use the custom font style.
  * @THUNAR_CHOOSER_MODEL_N_COLUMNS          : the number of columns in #ThunarChooserModel.
  *
  * The identifiers for the columns provided by the #ThunarChooserModel.
@@ -52,9 +51,7 @@ typedef enum
   THUNAR_CHOOSER_MODEL_COLUMN_ICON,
   THUNAR_CHOOSER_MODEL_COLUMN_APPLICATION,
   THUNAR_CHOOSER_MODEL_COLUMN_STYLE,
-  THUNAR_CHOOSER_MODEL_COLUMN_STYLE_SET,
   THUNAR_CHOOSER_MODEL_COLUMN_WEIGHT,
-  THUNAR_CHOOSER_MODEL_COLUMN_WEIGHT_SET,
   THUNAR_CHOOSER_MODEL_N_COLUMNS,
 } ThunarChooserModelColumn;
 

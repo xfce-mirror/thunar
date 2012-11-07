@@ -37,16 +37,18 @@ typedef struct _ThunarRenamerModel      ThunarRenamerModel;
 
 /**
  * ThunarRenamerModelColumn:
- * @THUNAR_RENAMER_MODEL_COLUMN_CONFLICT : the column which tells whether there's a name conflict.
- * @THUNAR_RENAMER_MODEL_COLUMN_FILE     : the column with the #ThunarFile.
- * @THUNAR_RENAMER_MODEL_COLUMN_NEWNAME  : the column with the new name.
- * @THUNAR_RENAMER_MODEL_COLUMN_OLDNAME  : the column with the old name.
+ * @THUNAR_RENAMER_MODEL_COLUMN_CONFLICT        : the column which tells whether there's a name conflict.
+ * @THUNAR_RENAMER_MODEL_COLUMN_CONFLICT_WEIGHT : Use to set the text to bold in case of a conflict
+ * @THUNAR_RENAMER_MODEL_COLUMN_FILE            : the column with the #ThunarFile.
+ * @THUNAR_RENAMER_MODEL_COLUMN_NEWNAME         : the column with the new name.
+ * @THUNAR_RENAMER_MODEL_COLUMN_OLDNAME         : the column with the old name.
  *
  * The column ids provided by #ThunarRenamerModel instances.
  **/
 typedef enum
 {
   THUNAR_RENAMER_MODEL_COLUMN_CONFLICT,
+  THUNAR_RENAMER_MODEL_COLUMN_CONFLICT_WEIGHT,
   THUNAR_RENAMER_MODEL_COLUMN_FILE,
   THUNAR_RENAMER_MODEL_COLUMN_NEWNAME,
   THUNAR_RENAMER_MODEL_COLUMN_OLDNAME,

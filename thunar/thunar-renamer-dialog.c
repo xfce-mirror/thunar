@@ -426,7 +426,7 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   renderer = g_object_new (THUNAR_TYPE_ICON_RENDERER, "size", 16, NULL);
   gtk_tree_view_column_pack_start (column, renderer, FALSE);
   gtk_tree_view_column_set_attributes (column, renderer, "file", THUNAR_RENAMER_MODEL_COLUMN_FILE, NULL);
-  renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT, "ellipsize", PANGO_ELLIPSIZE_END, "ellipsize-set", TRUE, NULL);
+  renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
   gtk_tree_view_column_set_attributes (column, renderer, "text", THUNAR_RENAMER_MODEL_COLUMN_OLDNAME, NULL);
   gtk_tree_view_append_column (GTK_TREE_VIEW (renamer_dialog->tree_view), column);
@@ -439,15 +439,13 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_FIXED);
   renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
                            "ellipsize", PANGO_ELLIPSIZE_END,
-                           "ellipsize-set", TRUE,
                            "foreground", "Red",
-                           "weight", PANGO_WEIGHT_SEMIBOLD,
                            NULL);
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
   gtk_tree_view_column_set_attributes (column, renderer,
                                        "foreground-set", THUNAR_RENAMER_MODEL_COLUMN_CONFLICT,
                                        "text", THUNAR_RENAMER_MODEL_COLUMN_NEWNAME,
-                                       "weight-set", THUNAR_RENAMER_MODEL_COLUMN_CONFLICT,
+                                       "weight", THUNAR_RENAMER_MODEL_COLUMN_CONFLICT_WEIGHT,
                                        NULL);
   gtk_tree_view_append_column (GTK_TREE_VIEW (renamer_dialog->tree_view), column);
 

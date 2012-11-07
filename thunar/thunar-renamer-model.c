@@ -399,6 +399,9 @@ thunar_renamer_model_get_column_type (GtkTreeModel *tree_model,
     case THUNAR_RENAMER_MODEL_COLUMN_CONFLICT:
       return G_TYPE_BOOLEAN;
 
+    case THUNAR_RENAMER_MODEL_COLUMN_CONFLICT_WEIGHT:
+      return PANGO_TYPE_WEIGHT;
+
     case THUNAR_RENAMER_MODEL_COLUMN_FILE:
       return THUNAR_TYPE_FILE;
 
@@ -477,6 +480,11 @@ thunar_renamer_model_get_value (GtkTreeModel *tree_model,
     case THUNAR_RENAMER_MODEL_COLUMN_CONFLICT:
       g_value_init (value, G_TYPE_BOOLEAN);
       g_value_set_boolean (value, item->conflict);
+      break;
+
+    case THUNAR_RENAMER_MODEL_COLUMN_CONFLICT_WEIGHT:
+      g_value_init (value, PANGO_TYPE_WEIGHT);
+      g_value_set_enum (value, item->conflict ? PANGO_WEIGHT_BOLD : PANGO_WEIGHT_NORMAL);
       break;
 
     case THUNAR_RENAMER_MODEL_COLUMN_FILE:

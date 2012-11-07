@@ -116,9 +116,7 @@ thunar_chooser_model_init (ThunarChooserModel *model)
     G_TYPE_ICON,
     G_TYPE_APP_INFO,
     PANGO_TYPE_STYLE,
-    G_TYPE_BOOLEAN,
     PANGO_TYPE_WEIGHT,
-    G_TYPE_BOOLEAN,
   };
 
   /* register the column types */
@@ -219,8 +217,7 @@ thunar_chooser_model_append (ThunarChooserModel *model,
   gtk_tree_store_set (GTK_TREE_STORE (model), &parent_iter,
                       THUNAR_CHOOSER_MODEL_COLUMN_NAME, title,
                       THUNAR_CHOOSER_MODEL_COLUMN_ICON, icon,
-                      THUNAR_CHOOSER_MODEL_COLUMN_WEIGHT, PANGO_WEIGHT_SEMIBOLD,
-                      THUNAR_CHOOSER_MODEL_COLUMN_WEIGHT_SET, TRUE,
+                      THUNAR_CHOOSER_MODEL_COLUMN_WEIGHT, PANGO_WEIGHT_BOLD,
                       -1);
 
   g_object_unref (icon);
@@ -239,6 +236,7 @@ thunar_chooser_model_append (ThunarChooserModel *model,
                               THUNAR_CHOOSER_MODEL_COLUMN_NAME, g_app_info_get_name (lp->data),
                               THUNAR_CHOOSER_MODEL_COLUMN_ICON, g_app_info_get_icon (lp->data),
                               THUNAR_CHOOSER_MODEL_COLUMN_APPLICATION, lp->data,
+                              THUNAR_CHOOSER_MODEL_COLUMN_WEIGHT, PANGO_WEIGHT_NORMAL,
                               -1);
 
           inserted_infos = TRUE;
@@ -252,7 +250,7 @@ thunar_chooser_model_append (ThunarChooserModel *model,
       gtk_tree_store_set (GTK_TREE_STORE (model), &child_iter,
                           THUNAR_CHOOSER_MODEL_COLUMN_NAME, _("None available"),
                           THUNAR_CHOOSER_MODEL_COLUMN_STYLE, PANGO_STYLE_ITALIC,
-                          THUNAR_CHOOSER_MODEL_COLUMN_STYLE_SET, TRUE,
+                          THUNAR_CHOOSER_MODEL_COLUMN_WEIGHT, PANGO_WEIGHT_NORMAL,
                           -1);
     }
 }

@@ -298,7 +298,6 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   /* header */
   renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
                            "weight", PANGO_WEIGHT_BOLD,
-                           "weight-set", TRUE,
                            "xpad", 6,
                            "ypad", 6,
                            NULL);
@@ -334,7 +333,6 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
 
   /* allocate the text renderer (ellipsizing as required, but "File System" must fit) */
   renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
-                           "ellipsize-set", TRUE,
                            "ellipsize", PANGO_ELLIPSIZE_END,
                            NULL);
   g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (thunar_shortcuts_view_renamed), view);
