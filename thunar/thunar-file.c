@@ -3317,15 +3317,10 @@ thunar_file_get_icon_name (const ThunarFile   *file,
   _thunar_return_val_if_fail (GTK_IS_ICON_THEME (icon_theme), NULL);
 
   /* the system root folder has a special icon */
-  if (thunar_file_is_root (file) 
+  if (thunar_file_is_directory (file)
       && thunar_file_is_local (file)
-      && thunar_file_is_directory (file))
-    {
-      return g_strdup ("drive-harddisk");
-    }
-
-  if (thunar_file_is_home (file))
-    return g_strdup (GTK_STOCK_HOME);
+      && thunar_file_is_root (file))
+    return g_strdup ("drive-harddisk");
 
   if (file->info == NULL)
     return NULL;
