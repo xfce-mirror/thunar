@@ -3324,6 +3324,9 @@ thunar_file_get_icon_name (const ThunarFile   *file,
       return g_strdup ("drive-harddisk");
     }
 
+  if (thunar_file_is_home (file))
+    return g_strdup (GTK_STOCK_HOME);
+
   if (file->info == NULL)
     return NULL;
 

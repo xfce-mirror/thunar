@@ -352,7 +352,7 @@ static GtkActionEntry action_entries[] =
   { "zoom-reset", GTK_STOCK_ZOOM_100, N_ ("Normal Si_ze"), "<control>0", N_ ("Show the contents at the normal size"), G_CALLBACK (thunar_window_action_zoom_reset), },
   { "go-menu", NULL, N_ ("_Go"), NULL, },
   { "open-parent", GTK_STOCK_GO_UP, N_ ("Open _Parent"), "<alt>Up", N_ ("Open the parent folder"), G_CALLBACK (thunar_window_action_go_up), },
-  { "open-home", THUNAR_STOCK_HOME, N_ ("_Home"), "<alt>Home", N_ ("Go to the home folder"), G_CALLBACK (thunar_window_action_open_home), },
+  { "open-home", GTK_STOCK_HOME, N_ ("_Home"), "<alt>Home", N_ ("Go to the home folder"), G_CALLBACK (thunar_window_action_open_home), },
   { "open-desktop", THUNAR_STOCK_DESKTOP, "Desktop", NULL, N_ ("Go to the desktop folder"), G_CALLBACK (thunar_window_action_open_desktop), },
   { "open-file-system", GTK_STOCK_HARDDISK, N_ ("File System"), NULL, N_ ("Browse the file system"), G_CALLBACK (thunar_window_action_open_file_system), },
   { "open-network", GTK_STOCK_NETWORK, N_("B_rowse Network"), NULL, N_ ("Browse local network connections"), G_CALLBACK (thunar_window_action_open_network), },

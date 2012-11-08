@@ -46,7 +46,6 @@ typedef struct
 static const ThunarStockIcon thunar_stock_icons[] =
 {
   { THUNAR_STOCK_DESKTOP,     "user-desktop" },
-  { THUNAR_STOCK_HOME,        "go-home" },
   { THUNAR_STOCK_SHORTCUTS,   "stock_thunar-shortcuts" },
   { THUNAR_STOCK_TEMPLATES,   "text-x-generic-template" },
   { THUNAR_STOCK_TRASH_EMPTY, "user-trash",   },
