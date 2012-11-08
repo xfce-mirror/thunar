@@ -1883,17 +1883,32 @@ thunar_window_merge_custom_preferences (ThunarWindow *window)
 
 
 static void
-thunar_window_bookmark_changed (GFileMonitor      *monitor,
-                                GFile             *file,
-                                GFile             *other_file,
-                                GFileMonitorEvent  event_type,
-                                ThunarWindow      *window)
+thunar_window_bookmark_changed (ThunarWindow *window)
 {
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
-  _thunar_return_if_fail (window->bookmark_monitor == monitor);
 
   if (window->bookmark_reload_idle_id == 0)
     window->bookmark_reload_idle_id = g_idle_add (thunar_window_bookmark_merge, window);
+}
+
+
+
+static void
+thunar_window_bookmark_release_file (gpointer data)
+{
+  ThunarFile *file = THUNAR_FILE (data);
+
+  /* stop watching */
+  thunar_file_unwatch (file);
+
+  /* disconnect changed and destroy signals */
+  g_signal_handlers_disconnect_matched (file,
+                                        G_SIGNAL_MATCH_FUNC, 0,
+                                        0, NULL,
+                                        G_CALLBACK (thunar_window_bookmark_changed),
+                                        NULL);
+
+  g_object_unref (file);
 }
 
 
@@ -1944,7 +1959,16 @@ thunar_window_bookmark_merge_line (GFile       *file_path,
             name = thunar_file_get_display_name (file);
 
           action = gtk_action_new (unique_name, name, tooltip, GTK_STOCK_DIRECTORY);
-          g_object_set_data_full (G_OBJECT (action), I_("thunar-file"), file, g_object_unref);
+          g_object_set_data_full (G_OBJECT (action), I_("thunar-file"), file,
+                                  thunar_window_bookmark_release_file);
+
+          /* watch the file */
+          thunar_file_watch (file);
+
+          g_signal_connect_swapped (G_OBJECT (file), "destroy",
+                                    G_CALLBACK (thunar_window_bookmark_changed), window);
+          g_signal_connect_swapped (G_OBJECT (file), "changed",
+                                    G_CALLBACK (thunar_window_bookmark_changed), window);
         }
       else
         {
@@ -2012,7 +2036,10 @@ thunar_window_bookmark_merge (gpointer user_data)
 
   /* remove old actions */
   if (window->bookmark_items_actions_merge_id != 0)
-    gtk_ui_manager_remove_ui (window->ui_manager, window->bookmark_items_actions_merge_id);
+    {
+      gtk_ui_manager_remove_ui (window->ui_manager, window->bookmark_items_actions_merge_id);
+      gtk_ui_manager_ensure_update (window->ui_manager);
+    }
 
   /* drop old bookmarks action group */
   if (window->bookmark_action_group != NULL)
@@ -2031,8 +2058,8 @@ thunar_window_bookmark_merge (gpointer user_data)
       window->bookmark_monitor = g_file_monitor_file (window->bookmark_file, G_FILE_MONITOR_NONE, NULL, NULL);
       if (G_LIKELY (window->bookmark_monitor != NULL))
         {
-          g_signal_connect (window->bookmark_monitor, "changed",
-                            G_CALLBACK (thunar_window_bookmark_changed), window);
+          g_signal_connect_swapped (window->bookmark_monitor, "changed",
+                                    G_CALLBACK (thunar_window_bookmark_changed), window);
         }
     }
 
