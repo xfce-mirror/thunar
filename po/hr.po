@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-06 21:24+0000\n"
+"POT-Creation-Date: 2012-11-08 21:33+0000\n"
 "PO-Revision-Date: 2010-06-17 01:51+0200\n"
 "Last-Translator: Ivica Kolić<ikoli@yahoo.com> <>\n"
 "Language-Team: Croatian <petar.koretic@gmail.com>\n"
@@ -137,8 +137,8 @@ msgstr "Neuspješno izvršavanje radnje"
 #: ../thunar/thunar-application.c:1113 ../thunar/thunar-application.c:1239
 #: ../thunar/thunar-launcher.c:1097 ../thunar/thunar-location-entry.c:402
 #: ../thunar/thunar-location-entry.c:430
-#: ../thunar/thunar-shortcuts-view.c:1616
-#: ../thunar/thunar-shortcuts-view.c:1644 ../thunar/thunar-window.c:2088
+#: ../thunar/thunar-shortcuts-view.c:1614
+#: ../thunar/thunar-shortcuts-view.c:1642 ../thunar/thunar-window.c:2169
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "Neuspješno otvaranje \"%s\""
@@ -252,8 +252,8 @@ msgstr "Uklonite sve datoteke i mape iz smeća?"
 #. append the "Empty Trash" menu action
 #. prepare the menu item
 #: ../thunar/thunar-application.c:1953 ../thunar/thunar-location-buttons.c:171
-#: ../thunar/thunar-shortcuts-view.c:1176 ../thunar/thunar-tree-view.c:1176
-#: ../thunar/thunar-window.c:340 ../plugins/thunar-tpa/thunar-tpa.c:189
+#: ../thunar/thunar-shortcuts-view.c:1174 ../thunar/thunar-tree-view.c:1176
+#: ../thunar/thunar-window.c:339 ../plugins/thunar-tpa/thunar-tpa.c:189
 msgid "_Empty Trash"
 msgstr "_Isprazni smeće"
 
@@ -284,7 +284,7 @@ msgstr "Nije moguće vratiti \"%s\""
 msgid "Restoring files..."
 msgstr "Vraćanje datoteka..."
 
-#: ../thunar/thunar-chooser-button.c:309 ../thunar/thunar-chooser-dialog.c:467
+#: ../thunar/thunar-chooser-button.c:309 ../thunar/thunar-chooser-dialog.c:465
 #, c-format
 msgid "Failed to set default application for \"%s\""
 msgstr "Ne mogu postaviti zadani program za  \"%s\""
@@ -309,11 +309,11 @@ msgid "Open With"
 msgstr "Otvori pomoću"
 
 #. create the "Custom command" expand
-#: ../thunar/thunar-chooser-dialog.c:259
+#: ../thunar/thunar-chooser-dialog.c:257
 msgid "Use a _custom command:"
 msgstr "Koristi _prolagođenu naredbu"
 
-#: ../thunar/thunar-chooser-dialog.c:260
+#: ../thunar/thunar-chooser-dialog.c:258
 msgid ""
 "Use a custom command for an application that is not available from the above "
 "application list."
@@ -322,38 +322,38 @@ msgstr ""
 "aplikacija"
 
 #. create the "Custom command" button
-#: ../thunar/thunar-chooser-dialog.c:279
+#: ../thunar/thunar-chooser-dialog.c:277
 msgid "_Browse..."
 msgstr "_Pregledaj"
 
 #. create the "Use as default for this kind of file" button
-#: ../thunar/thunar-chooser-dialog.c:285
+#: ../thunar/thunar-chooser-dialog.c:283
 msgid "Use as _default for this kind of file"
 msgstr "Koristi kao _zadano za ovu vrstu datoteka"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:440
+#: ../thunar/thunar-chooser-dialog.c:438
 #, c-format
 msgid "Failed to add new application \"%s\""
 msgstr "Nisam uspio dodati novi program \"%s\""
 
-#: ../thunar/thunar-chooser-dialog.c:495
+#: ../thunar/thunar-chooser-dialog.c:493
 #, c-format
 msgid "Failed to execute application \"%s\""
 msgstr "Nisam uspio izvršiti program \"%s\""
 
 #. append the "Remove Launcher" item
-#: ../thunar/thunar-chooser-dialog.c:567
+#: ../thunar/thunar-chooser-dialog.c:565
 msgid "_Remove Launcher"
 msgstr "_Ukloni pokretač"
 
 #. update the header label
-#: ../thunar/thunar-chooser-dialog.c:650
+#: ../thunar/thunar-chooser-dialog.c:648
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
 msgstr "Otvori <i>%s</i> i ostale tipove \"%s\" sa:"
 
-#: ../thunar/thunar-chooser-dialog.c:658
+#: ../thunar/thunar-chooser-dialog.c:656
 #, c-format
 msgid ""
 "Browse the file system to select an application to open files of type \"%s\"."
@@ -361,7 +361,7 @@ msgstr ""
 "Pretraži datotečni sustav i odaberi aplikaciju za otvaranje datoteka tipa "
 "\"%s\"."
 
-#: ../thunar/thunar-chooser-dialog.c:664
+#: ../thunar/thunar-chooser-dialog.c:662
 #, c-format
 msgid ""
 "Change the default application for files of type \"%s\" to the selected "
@@ -370,12 +370,12 @@ msgstr ""
 "Promjeni automatski zadanu aplikaciju za datoteke tipa  \"%s\" na odabranu "
 "aplikaciju."
 
-#: ../thunar/thunar-chooser-dialog.c:710
+#: ../thunar/thunar-chooser-dialog.c:708
 #, c-format
 msgid "Are you sure that you want to remove \"%s\"?"
 msgstr "Jeste li sigurni da želite ukloniti \"%s\"?"
 
-#: ../thunar/thunar-chooser-dialog.c:716
+#: ../thunar/thunar-chooser-dialog.c:714
 msgid ""
 "This will remove the application launcher that appears in the file context "
 "menu, but will not uninstall the application itself.\n"
@@ -385,60 +385,60 @@ msgid ""
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:731
+#: ../thunar/thunar-chooser-dialog.c:729
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "Nisam uspio ukloniti \"%s\""
 
-#: ../thunar/thunar-chooser-dialog.c:757
+#: ../thunar/thunar-chooser-dialog.c:755
 #: ../plugins/thunar-uca/thunar-uca-editor.c:473
 msgid "Select an Application"
 msgstr "Odaberi program"
 
-#: ../thunar/thunar-chooser-dialog.c:767
-#: ../thunar/thunar-renamer-dialog.c:1070
+#: ../thunar/thunar-chooser-dialog.c:765
+#: ../thunar/thunar-renamer-dialog.c:1068
 #: ../plugins/thunar-uca/thunar-uca-editor.c:483
 msgid "All Files"
 msgstr "Sve datoteke"
 
-#: ../thunar/thunar-chooser-dialog.c:772
+#: ../thunar/thunar-chooser-dialog.c:770
 #: ../plugins/thunar-uca/thunar-uca-editor.c:488
 msgid "Executable Files"
 msgstr "Izvršne datoteke"
 
-#: ../thunar/thunar-chooser-dialog.c:787
+#: ../thunar/thunar-chooser-dialog.c:785
 #: ../plugins/thunar-uca/thunar-uca-editor.c:503
 msgid "Perl Scripts"
 msgstr "Perl skripte"
 
-#: ../thunar/thunar-chooser-dialog.c:793
+#: ../thunar/thunar-chooser-dialog.c:791
 #: ../plugins/thunar-uca/thunar-uca-editor.c:509
 msgid "Python Scripts"
 msgstr "Python skripte"
 
-#: ../thunar/thunar-chooser-dialog.c:799
+#: ../thunar/thunar-chooser-dialog.c:797
 #: ../plugins/thunar-uca/thunar-uca-editor.c:515
 msgid "Ruby Scripts"
 msgstr "Ruby skripte"
 
-#: ../thunar/thunar-chooser-dialog.c:805
+#: ../thunar/thunar-chooser-dialog.c:803
 #: ../plugins/thunar-uca/thunar-uca-editor.c:521
 msgid "Shell Scripts"
 msgstr "Skripte ljuske"
 
-#: ../thunar/thunar-chooser-model.c:253
+#: ../thunar/thunar-chooser-model.c:251
 msgid "None available"
 msgstr "Nije dostupan"
 
-#: ../thunar/thunar-chooser-model.c:300
+#: ../thunar/thunar-chooser-model.c:298
 msgid "Recommended Applications"
 msgstr "Preporučeni programi"
 
-#: ../thunar/thunar-chooser-model.c:318
+#: ../thunar/thunar-chooser-model.c:316
 msgid "Other Applications"
 msgstr "Ostali programi"
 
-#: ../thunar/thunar-chooser-model.c:408
+#: ../thunar/thunar-chooser-model.c:406
 #, c-format
 msgid "Failed to remove \"%s\"."
 msgstr "Nisam uspio ukloniti \"%s\"."
@@ -517,7 +517,7 @@ msgstr "Automatski _proširi stupce po potrebi"
 #. tell the user that we're unable to determine the file info
 #: ../thunar/thunar-column-model.c:858 ../thunar/thunar-list-model.c:687
 #: ../thunar/thunar-list-model.c:715
-#: ../thunar/thunar-permissions-chooser.c:229 ../thunar/thunar-util.c:271
+#: ../thunar/thunar-permissions-chooser.c:229 ../thunar/thunar-util.c:334
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:503
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:285
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:286
@@ -811,8 +811,8 @@ msgstr "Datoteka"
 msgid "File Name"
 msgstr "Ime datoteke"
 
-#: ../thunar/thunar-file.c:868 ../thunar/thunar-gio-extensions.c:237
-#: ../thunar/thunar-shortcuts-model.c:807 ../thunar/thunar-window.c:358
+#: ../thunar/thunar-file.c:868 ../thunar/thunar-gio-extensions.c:221
+#: ../thunar/thunar-shortcuts-model.c:808 ../thunar/thunar-window.c:357
 msgid "File System"
 msgstr "Datotečni sustav"
 
@@ -851,7 +851,7 @@ msgid "Invalid desktop file"
 msgstr "Neispravna datoteka radne površine"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: ../thunar/thunar-gio-extensions.c:311
+#: ../thunar/thunar-gio-extensions.c:302
 #, c-format
 msgid "%s on %s"
 msgstr ""
@@ -1026,7 +1026,7 @@ msgstr ""
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:173 ../thunar/thunar-launcher.c:792
 #: ../thunar/thunar-location-buttons.c:168
-#: ../thunar/thunar-shortcuts-view.c:1079 ../thunar/thunar-tree-view.c:1106
+#: ../thunar/thunar-shortcuts-view.c:1077 ../thunar/thunar-tree-view.c:1106
 msgid "_Open"
 msgstr "_Otvori"
 
@@ -1173,8 +1173,8 @@ msgstr[1] "Otvori odabrane datoteke sa zadanim programima"
 msgid "Open With \"%s\""
 msgstr "Otvori pomoću \"%s\""
 
-#: ../thunar/thunar-launcher.c:1431 ../thunar/thunar-shortcuts-view.c:1675
-#: ../thunar/thunar-shortcuts-view.c:1914 ../thunar/thunar-tree-view.c:1956
+#: ../thunar/thunar-launcher.c:1431 ../thunar/thunar-shortcuts-view.c:1673
+#: ../thunar/thunar-shortcuts-view.c:1912 ../thunar/thunar-tree-view.c:1956
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Nisam uspio montirati \"%s\""
@@ -1300,7 +1300,7 @@ msgstr "%s, %s"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-location-buttons.c:169
-#: ../thunar/thunar-shortcuts-view.c:1095
+#: ../thunar/thunar-shortcuts-view.c:1093
 msgid "Open in New Window"
 msgstr "Otvori u novom prozoru"
 
@@ -1310,7 +1310,7 @@ msgstr "Otvori u novom prozoru"
 msgid "Create _Folder..."
 msgstr "Napravi _Mapu"
 
-#: ../thunar/thunar-location-buttons.c:171 ../thunar/thunar-window.c:340
+#: ../thunar/thunar-location-buttons.c:171 ../thunar/thunar-window.c:339
 msgid "Delete all files and folders in the Trash"
 msgstr "Obriši sve datoteke i mape u Smeću"
 
@@ -1368,7 +1368,7 @@ msgstr "Otvori lokaciju"
 msgid "_Location:"
 msgstr "_Lokacija:"
 
-#: ../thunar/thunar-location-entry.c:202 ../thunar/thunar-window.c:348
+#: ../thunar/thunar-location-entry.c:202 ../thunar/thunar-window.c:347
 msgid "Reload the current folder"
 msgstr "POnovno učitaj trenutnu mapu"
 
@@ -1412,7 +1412,7 @@ msgstr "Izbacivanje uređaja"
 msgid "The device \"%s\" is being ejected. This may take some time"
 msgstr "Uređaj  \"%s\" se izbacuje. To može potrajati neko vrijeme"
 
-#: ../thunar/thunar-misc-jobs.c:84
+#: ../thunar/thunar-misc-jobs.c:89
 #, c-format
 msgid "No templates installed"
 msgstr "Nema instaliranih predložaka"
@@ -1934,11 +1934,11 @@ msgstr "Svojstva"
 msgid "mixed"
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:190 ../thunar/thunar-window.c:336
+#: ../thunar/thunar-renamer-dialog.c:190 ../thunar/thunar-window.c:335
 msgid "_File"
 msgstr "_Datoteka"
 
-#: ../thunar/thunar-renamer-dialog.c:191 ../thunar/thunar-window.c:339
+#: ../thunar/thunar-renamer-dialog.c:191 ../thunar/thunar-window.c:338
 msgid "_Send To"
 msgstr "_Pošalji za"
 
@@ -1962,7 +1962,7 @@ msgstr "Očisti"
 msgid "Clear the file list below"
 msgstr "Očisti listu datoteka ispod"
 
-#: ../thunar/thunar-renamer-dialog.c:196 ../thunar/thunar-window.c:369
+#: ../thunar/thunar-renamer-dialog.c:196 ../thunar/thunar-window.c:363
 msgid "_About"
 msgstr "_O programu"
 
@@ -1975,7 +1975,7 @@ msgid "View the properties of the selected file"
 msgstr "Pogledaj svojstva odabrane datoteke"
 
 #: ../thunar/thunar-renamer-dialog.c:352
-#: ../thunar/thunar-renamer-dialog.c:1829
+#: ../thunar/thunar-renamer-dialog.c:1827
 #: ../Thunar-bulk-rename.desktop.in.in.h:2
 msgid "Rename Multiple Files"
 msgstr "Preimenovanje više datoteka"
@@ -1996,7 +1996,7 @@ msgstr ""
 msgid "New Name"
 msgstr "Novo ime"
 
-#: ../thunar/thunar-renamer-dialog.c:503
+#: ../thunar/thunar-renamer-dialog.c:501
 msgid "Click here to view the documentation for the selected rename operation."
 msgstr "Kliknite ovdje za prikaz dokumentacije tražene radnje preimenovanja."
 
@@ -2005,7 +2005,7 @@ msgstr "Kliknite ovdje za prikaz dokumentacije tražene radnje preimenovanja."
 #. *              and opening the multi rename dialog by selecting multiple
 #. files and pressing F2.
 #. 
-#: ../thunar/thunar-renamer-dialog.c:613
+#: ../thunar/thunar-renamer-dialog.c:611
 msgid ""
 "No renamer modules were found on your system. Please check your\n"
 "installation or contact your system administrator. If you install Thunar\n"
@@ -2013,34 +2013,34 @@ msgid ""
 msgstr ""
 
 #. tell the user that we failed
-#: ../thunar/thunar-renamer-dialog.c:956
+#: ../thunar/thunar-renamer-dialog.c:954
 msgid "Failed to open the documentation browser"
 msgstr "Neuspjeh u otvaranju preglednika dokumentacije"
 
 #. allocate the file chooser
-#: ../thunar/thunar-renamer-dialog.c:1059
+#: ../thunar/thunar-renamer-dialog.c:1057
 msgid "Select files to rename"
 msgstr "Odaberite datoteke za preimenovanje"
 
-#: ../thunar/thunar-renamer-dialog.c:1075
+#: ../thunar/thunar-renamer-dialog.c:1073
 msgid "Audio Files"
 msgstr "Audio datoteke"
 
-#: ../thunar/thunar-renamer-dialog.c:1080
+#: ../thunar/thunar-renamer-dialog.c:1078
 msgid "Image Files"
 msgstr "Slike"
 
-#: ../thunar/thunar-renamer-dialog.c:1085
+#: ../thunar/thunar-renamer-dialog.c:1083
 msgid "Video Files"
 msgstr "Video datoteke"
 
 #. just popup the about dialog
-#: ../thunar/thunar-renamer-dialog.c:1218
+#: ../thunar/thunar-renamer-dialog.c:1216
 #: ../Thunar-bulk-rename.desktop.in.in.h:1
 msgid "Bulk Rename"
 msgstr "Bulk Rename"
 
-#: ../thunar/thunar-renamer-dialog.c:1219
+#: ../thunar/thunar-renamer-dialog.c:1217
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
@@ -2048,20 +2048,20 @@ msgstr ""
 "Thunar Bulk Rename je snažan i proširiv\n"
 "alat za preimenovanje više datoteka odjednom."
 
-#: ../thunar/thunar-renamer-dialog.c:1692
+#: ../thunar/thunar-renamer-dialog.c:1690
 msgid "Remove File"
 msgid_plural "Remove Files"
 msgstr[0] "Ukloni datotekeu"
 msgstr[1] "Ukloni datoteke"
 
-#: ../thunar/thunar-renamer-dialog.c:1694
+#: ../thunar/thunar-renamer-dialog.c:1692
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] "Ukloni odabranu datoteku s popisa datoteka za preimenovanje"
 msgstr[1] "Ukloni odabrane datoteke s popisa datoteka za preimenovanje"
 
 #. change title to reflect the standalone status
-#: ../thunar/thunar-renamer-dialog.c:1829
+#: ../thunar/thunar-renamer-dialog.c:1827
 msgid "Bulk Rename - Rename Multiple Files"
 msgstr "Bulk Rename - Preimenovanje više datoteka"
 
@@ -2096,19 +2096,19 @@ msgstr ""
 "Želite li preskočiti ovu datoteku i nastaviti s preimenovanjem preostalih "
 "datoteka?"
 
-#: ../thunar/thunar-shortcuts-model.c:801
+#: ../thunar/thunar-shortcuts-model.c:802
 msgid "DEVICES"
 msgstr "UREĐAJI"
 
-#: ../thunar/thunar-shortcuts-model.c:847
+#: ../thunar/thunar-shortcuts-model.c:848
 msgid "NETWORK"
 msgstr "MREŽA"
 
-#: ../thunar/thunar-shortcuts-model.c:853
+#: ../thunar/thunar-shortcuts-model.c:854
 msgid "Browse Network"
 msgstr "Pregledaj mrežu"
 
-#: ../thunar/thunar-shortcuts-model.c:874
+#: ../thunar/thunar-shortcuts-model.c:875
 msgid "PLACES"
 msgstr "MJESTA"
 
@@ -2125,64 +2125,64 @@ msgstr[0] "Dodaj odabranu mapu u bočni stupac prečaca"
 msgstr[1] "Dodaj odabrane mape u bočni stupac prečaca"
 
 #. append the "Open in New Tab" menu action
-#: ../thunar/thunar-shortcuts-view.c:1089
+#: ../thunar/thunar-shortcuts-view.c:1087
 msgid "Open in New Tab"
 msgstr "Otvori u novoj kartici"
 
 #. append the "Mount" item
 #. append the "Mount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1109 ../thunar/thunar-tree-view.c:1140
+#: ../thunar/thunar-shortcuts-view.c:1107 ../thunar/thunar-tree-view.c:1140
 msgid "_Mount"
 msgstr "_Montiraj"
 
 #. append the "Unmount" item
 #. append the "Unmount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1115 ../thunar/thunar-tree-view.c:1146
+#: ../thunar/thunar-shortcuts-view.c:1113 ../thunar/thunar-tree-view.c:1146
 msgid "_Unmount"
 msgstr "_Odmontiraj"
 
 #. append the "Disconnect" (eject + safely remove drive) item
 #. append the "Eject" menu action
-#: ../thunar/thunar-shortcuts-view.c:1121 ../thunar/thunar-tree-view.c:1152
+#: ../thunar/thunar-shortcuts-view.c:1119 ../thunar/thunar-tree-view.c:1152
 msgid "_Eject"
 msgstr "_Izbaci"
 
 #. append the "Disconnect" item
-#: ../thunar/thunar-shortcuts-view.c:1138
+#: ../thunar/thunar-shortcuts-view.c:1136
 msgid "Create _Shortcut"
 msgstr "Napravi _prečac"
 
 #. append the "Disconnect" item
 #. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:1159 ../thunar/thunar-tree-view.c:1161
+#: ../thunar/thunar-shortcuts-view.c:1157 ../thunar/thunar-tree-view.c:1161
 msgid "Disconn_ect"
 msgstr "Odspo_ji"
 
-#: ../thunar/thunar-shortcuts-view.c:1239
+#: ../thunar/thunar-shortcuts-view.c:1237
 msgid "_Remove Shortcut"
 msgstr "_Ukloni prečac"
 
 #. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:1253
+#: ../thunar/thunar-shortcuts-view.c:1251
 msgid "Re_name Shortcut"
 msgstr "Pre_imenuj prečac"
 
-#: ../thunar/thunar-shortcuts-view.c:1542
+#: ../thunar/thunar-shortcuts-view.c:1540
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "Putanja \"% s\" se ne odnosi na direktorij"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1562
+#: ../thunar/thunar-shortcuts-view.c:1560
 msgid "Failed to add new shortcut"
 msgstr "Nisam uspio dodati novi prečac"
 
-#: ../thunar/thunar-shortcuts-view.c:1839 ../thunar/thunar-tree-view.c:1820
+#: ../thunar/thunar-shortcuts-view.c:1837 ../thunar/thunar-tree-view.c:1820
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Nisam uspio izbaciti \"%s\""
 
-#: ../thunar/thunar-shortcuts-view.c:1983 ../thunar/thunar-tree-view.c:1877
+#: ../thunar/thunar-shortcuts-view.c:1981 ../thunar/thunar-tree-view.c:1877
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Nisam uspio odmontirati \"%s\""
@@ -2294,7 +2294,7 @@ msgstr ""
 msgid "Du_plicate"
 msgstr "Du_pliciraj"
 
-#: ../thunar/thunar-standard-view.c:394 ../thunar/thunar-standard-view.c:4130
+#: ../thunar/thunar-standard-view.c:394 ../thunar/thunar-standard-view.c:4140
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Na_pravi poveznicu"
@@ -2319,7 +2319,7 @@ msgid "Loading folder contents..."
 msgstr "Učitavanje sadržaja mape"
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2127 ../thunar/thunar-window.c:2640
+#: ../thunar/thunar-standard-view.c:2127 ../thunar/thunar-window.c:2721
 msgid "Failed to open the home folder"
 msgstr "Neuspjeh u otvaranju osobne mape"
 
@@ -2345,64 +2345,64 @@ msgstr "_Uzorak"
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: ../thunar/thunar-standard-view.c:3012
+#: ../thunar/thunar-standard-view.c:3022
 msgid "Invalid filename provided by XDS drag site"
 msgstr ""
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:3193
+#: ../thunar/thunar-standard-view.c:3203
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Ne mogu napraviti prečicu za URL \"%s\""
 
-#: ../thunar/thunar-standard-view.c:3586
+#: ../thunar/thunar-standard-view.c:3596 ../thunar/thunar-window.c:2816
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Neuspješno otvaranje mape  \"%s\""
 
-#: ../thunar/thunar-standard-view.c:4081
+#: ../thunar/thunar-standard-view.c:4091
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-standard-view.c:4089
+#: ../thunar/thunar-standard-view.c:4099
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Pripremite odabranu datoteku za kopiranje naredbom Zalijepi"
 msgstr[1] "Pripremite odabrane datoteke za kopiranje naredbom Zalijepi"
 
-#: ../thunar/thunar-standard-view.c:4101
+#: ../thunar/thunar-standard-view.c:4111
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "Premjestite odabranu datoteku u smeće"
 msgstr[1] "Premjestite odabrane datoteke u smeće"
 
-#: ../thunar/thunar-standard-view.c:4109
+#: ../thunar/thunar-standard-view.c:4119
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "Trajno izbriši odabranu datoteku"
 msgstr[1] "Trajno izbriši odabrane datoteke"
 
-#: ../thunar/thunar-standard-view.c:4123
+#: ../thunar/thunar-standard-view.c:4133
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Dupliciraj odabranu datoteku"
 msgstr[1] "Duplicirajodabrane datoteke"
 
-#: ../thunar/thunar-standard-view.c:4132
+#: ../thunar/thunar-standard-view.c:4142
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Napravite simboličkupoveznicu za odabranu datoteku"
 msgstr[1] "Napravite simboličku poveznicu za svaku odabranu datoteku"
 
-#: ../thunar/thunar-standard-view.c:4140
+#: ../thunar/thunar-standard-view.c:4150
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Preimenuj odabranu datoteku"
 msgstr[1] "Preimenuj odabrane datoteke"
 
-#: ../thunar/thunar-standard-view.c:4148
+#: ../thunar/thunar-standard-view.c:4158
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
 msgstr[0] "Vrati odabranu datoteku"
@@ -2512,359 +2512,339 @@ msgstr "_Zalijepi u mapu"
 msgid "P_roperties..."
 msgstr "S_vojstva"
 
-#: ../thunar/thunar-util.c:97
+#: ../thunar/thunar-util.c:160
 #, c-format
 msgid "Invalid path"
 msgstr "Neispravana staza"
 
-#: ../thunar/thunar-util.c:131
+#: ../thunar/thunar-util.c:194
 #, c-format
 msgid "Unknown user \"%s\""
 msgstr "Nepoznati korisnik \"%s\""
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:220
+#: ../thunar/thunar-util.c:283
 msgid "Today"
 msgstr "Danas"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:225
+#: ../thunar/thunar-util.c:288
 #, c-format
 msgid "Today at %X"
 msgstr "Danas u %X"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:233
+#: ../thunar/thunar-util.c:296
 msgid "Yesterday"
 msgstr "Jučer"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:238
+#: ../thunar/thunar-util.c:301
 #, c-format
 msgid "Yesterday at %X"
 msgstr "Jučer u %X"
 
 #. Days from last week
-#: ../thunar/thunar-util.c:246
+#: ../thunar/thunar-util.c:309
 #, c-format
 msgid "%A at %X"
 msgstr "%A na %X"
 
 #. Any other date
-#: ../thunar/thunar-util.c:251
+#: ../thunar/thunar-util.c:314
 #, c-format
 msgid "%x at %X"
 msgstr "%xna %X"
 
-#: ../thunar/thunar-window.c:337
+#: ../thunar/thunar-window.c:336
 msgid "New _Tab"
 msgstr "Nova _kartica"
 
-#: ../thunar/thunar-window.c:337
+#: ../thunar/thunar-window.c:336
 msgid "Open a new tab for the displayed location"
 msgstr "Otvori novu karticu za prikazanu lokaciju"
 
-#: ../thunar/thunar-window.c:338
+#: ../thunar/thunar-window.c:337
 msgid "New _Window"
 msgstr "Novi _prozor"
 
-#: ../thunar/thunar-window.c:338
+#: ../thunar/thunar-window.c:337
 msgid "Open a new Thunar window for the displayed location"
 msgstr "Otvori novi Thunar prozor za prikazanu lokaciju"
 
-#: ../thunar/thunar-window.c:341
+#: ../thunar/thunar-window.c:340
 msgid "Detac_h Tab"
 msgstr ""
 
-#: ../thunar/thunar-window.c:341
+#: ../thunar/thunar-window.c:340
 msgid "Open current folder in a new window"
 msgstr "Otvori trenutnu mapu u novom prozoru"
 
-#: ../thunar/thunar-window.c:342
+#: ../thunar/thunar-window.c:341
 msgid "Close _All Windows"
 msgstr "Zatvori _sve prozore"
 
-#: ../thunar/thunar-window.c:342
+#: ../thunar/thunar-window.c:341
 msgid "Close all Thunar windows"
 msgstr "Zatvori sve Thunar prozore "
 
-#: ../thunar/thunar-window.c:343
+#: ../thunar/thunar-window.c:342
 msgid "C_lose Tab"
 msgstr "Z_atvori karticu"
 
-#: ../thunar/thunar-window.c:343
+#: ../thunar/thunar-window.c:342
 msgid "Close this folder"
 msgstr "Zatvori ovu mapu"
 
-#: ../thunar/thunar-window.c:344
+#: ../thunar/thunar-window.c:343
 msgid "_Close Window"
 msgstr "_Zatvori prozor"
 
-#: ../thunar/thunar-window.c:344
+#: ../thunar/thunar-window.c:343
 msgid "Close this window"
 msgstr "Zatvori ovaj prozor"
 
-#: ../thunar/thunar-window.c:345
+#: ../thunar/thunar-window.c:344
 msgid "_Edit"
 msgstr "_Uredi"
 
-#: ../thunar/thunar-window.c:346
+#: ../thunar/thunar-window.c:345
 msgid "Pr_eferences..."
 msgstr "Os_obitosti"
 
-#: ../thunar/thunar-window.c:346
+#: ../thunar/thunar-window.c:345
 msgid "Edit Thunars Preferences"
 msgstr "Uredi  Thunar postavke "
 
-#: ../thunar/thunar-window.c:347
+#: ../thunar/thunar-window.c:346
 msgid "_View"
 msgstr "_Pogled"
 
-#: ../thunar/thunar-window.c:348
+#: ../thunar/thunar-window.c:347
 msgid "_Reload"
 msgstr "_Ponovno učitaj"
 
-#: ../thunar/thunar-window.c:349
+#: ../thunar/thunar-window.c:348
 msgid "_Location Selector"
 msgstr "_Birač lokacije"
 
-#: ../thunar/thunar-window.c:350
+#: ../thunar/thunar-window.c:349
 msgid "_Side Pane"
 msgstr "_Bočni stupac"
 
-#: ../thunar/thunar-window.c:351
+#: ../thunar/thunar-window.c:350
 msgid "Zoom I_n"
 msgstr ""
 
-#: ../thunar/thunar-window.c:351
+#: ../thunar/thunar-window.c:350
 msgid "Show the contents in more detail"
 msgstr "Pokaži sadržaj sa više detalja"
 
-#: ../thunar/thunar-window.c:352
+#: ../thunar/thunar-window.c:351
 msgid "Zoom _Out"
 msgstr ""
 
-#: ../thunar/thunar-window.c:352
+#: ../thunar/thunar-window.c:351
 msgid "Show the contents in less detail"
 msgstr "Pokaži sadržaj sa manje detalja"
 
-#: ../thunar/thunar-window.c:353
+#: ../thunar/thunar-window.c:352
 msgid "Normal Si_ze"
 msgstr "Normalna ve_ličina"
 
-#: ../thunar/thunar-window.c:353
+#: ../thunar/thunar-window.c:352
 msgid "Show the contents at the normal size"
 msgstr "Pokaži sadržaj u normalnoj veličini"
 
-#: ../thunar/thunar-window.c:354
+#: ../thunar/thunar-window.c:353
 msgid "_Go"
 msgstr "_Idi"
 
-#: ../thunar/thunar-window.c:355
+#: ../thunar/thunar-window.c:354
 msgid "Open _Parent"
 msgstr ""
 
-#: ../thunar/thunar-window.c:355
+#: ../thunar/thunar-window.c:354
 msgid "Open the parent folder"
 msgstr ""
 
-#: ../thunar/thunar-window.c:356
+#: ../thunar/thunar-window.c:355
 msgid "_Home"
 msgstr "_Početna"
 
-#: ../thunar/thunar-window.c:356
+#: ../thunar/thunar-window.c:355
 msgid "Go to the home folder"
 msgstr "Idi u osobnu mapu"
 
-#: ../thunar/thunar-window.c:357
+#: ../thunar/thunar-window.c:356
 msgid "Go to the desktop folder"
 msgstr "Idi u mapu radne površine"
 
-#: ../thunar/thunar-window.c:358
+#: ../thunar/thunar-window.c:357
 msgid "Browse the file system"
 msgstr "Pregledaj datotečni sustav"
 
+#: ../thunar/thunar-window.c:358
+msgid "B_rowse Network"
+msgstr "P_regledaj mrežu"
+
+#: ../thunar/thunar-window.c:358
+msgid "Browse local network connections"
+msgstr "Pregledaj lokalne mrežne veze"
+
 #: ../thunar/thunar-window.c:359
-msgid "Go to the documents folder"
-msgstr "Idi u mapu dokumenata"
-
-#: ../thunar/thunar-window.c:360
-msgid "Go to the downloads folder"
-msgstr "Idi u mapu preuzimanja"
-
-#: ../thunar/thunar-window.c:361
-msgid "Go to the music folder"
-msgstr "Idi u mapu glazbe"
-
-#: ../thunar/thunar-window.c:362
-msgid "Go to the pictures folder"
-msgstr "Idi u mapu slika"
-
-#: ../thunar/thunar-window.c:363
-msgid "Go to the videos folder"
-msgstr "Idi u mapu video datoteka"
-
-#: ../thunar/thunar-window.c:364
-msgid "Go to the public folder"
-msgstr "Idi u javnu mapu"
-
-#: ../thunar/thunar-window.c:365
 msgid "T_emplates"
 msgstr "P_redlošci"
 
-#: ../thunar/thunar-window.c:365
+#: ../thunar/thunar-window.c:359
 msgid "Go to the templates folder"
 msgstr "Idi u mapu predložaka"
 
-#: ../thunar/thunar-window.c:366
+#: ../thunar/thunar-window.c:360
 msgid "_Open Location..."
 msgstr "_Otvori lokaciju"
 
-#: ../thunar/thunar-window.c:366
+#: ../thunar/thunar-window.c:360
 msgid "Specify a location to open"
 msgstr "Odredi lokaciju otvaranja"
 
-#: ../thunar/thunar-window.c:367
+#: ../thunar/thunar-window.c:361
 msgid "_Help"
 msgstr "_Pomoć"
 
-#: ../thunar/thunar-window.c:368
+#: ../thunar/thunar-window.c:362
 msgid "_Contents"
 msgstr "_Sadržaj"
 
-#: ../thunar/thunar-window.c:368
+#: ../thunar/thunar-window.c:362
 msgid "Display Thunar user manual"
 msgstr "Prikaži Thunar korisnički priručnik"
 
-#: ../thunar/thunar-window.c:369
+#: ../thunar/thunar-window.c:363
 msgid "Display information about Thunar"
 msgstr "Prikaži informacije o Thunar-u"
 
-#: ../thunar/thunar-window.c:374
+#: ../thunar/thunar-window.c:368
 msgid "Show _Hidden Files"
 msgstr "Pokaži _skrivene datoteke"
 
-#: ../thunar/thunar-window.c:374
+#: ../thunar/thunar-window.c:368
 msgid "Toggles the display of hidden files in the current window"
 msgstr ""
 
-#: ../thunar/thunar-window.c:375
+#: ../thunar/thunar-window.c:369
 msgid "_Pathbar Style"
 msgstr ""
 
-#: ../thunar/thunar-window.c:375
+#: ../thunar/thunar-window.c:369
 msgid "Modern approach with buttons that correspond to folders"
 msgstr ""
 
-#: ../thunar/thunar-window.c:376
+#: ../thunar/thunar-window.c:370
 msgid "_Toolbar Style"
 msgstr "_Stil alatne trake"
 
-#: ../thunar/thunar-window.c:376
+#: ../thunar/thunar-window.c:370
 msgid "Traditional approach with location bar and navigation buttons"
 msgstr "Tradicionalni pristup sa lokacijskom trakom i navigacijskim dugmetima"
 
-#: ../thunar/thunar-window.c:377
+#: ../thunar/thunar-window.c:371
 msgid "_Shortcuts"
 msgstr "_Prečaci"
 
-#: ../thunar/thunar-window.c:377
+#: ../thunar/thunar-window.c:371
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr ""
 
-#: ../thunar/thunar-window.c:378
+#: ../thunar/thunar-window.c:372
 msgid "_Tree"
 msgstr "_Stablo"
 
-#: ../thunar/thunar-window.c:378
+#: ../thunar/thunar-window.c:372
 msgid "Toggles the visibility of the tree pane"
 msgstr ""
 
-#: ../thunar/thunar-window.c:379
+#: ../thunar/thunar-window.c:373
 msgid "St_atusbar"
 msgstr "St_atusna traka"
 
-#: ../thunar/thunar-window.c:379
+#: ../thunar/thunar-window.c:373
 msgid "Change the visibility of this window's statusbar"
 msgstr "Promijeni vidljivost statusne trake prozora"
 
-#: ../thunar/thunar-window.c:380
+#: ../thunar/thunar-window.c:374
 msgid "_Menubar"
 msgstr "_Traka izbornika"
 
-#: ../thunar/thunar-window.c:380
+#: ../thunar/thunar-window.c:374
 msgid "Change the visibility of this window's menubar"
 msgstr "Promijeni vidljivost statusne trake prozora"
 
 #. * add view options
 #. 
-#: ../thunar/thunar-window.c:842
+#: ../thunar/thunar-window.c:725
 msgid "View as _Icons"
 msgstr "Pogled kao _ikone"
 
-#: ../thunar/thunar-window.c:842
+#: ../thunar/thunar-window.c:725
 msgid "Display folder content in an icon view"
 msgstr "Prikaz sadržaja  mape u prikazu ikona"
 
-#: ../thunar/thunar-window.c:849
+#: ../thunar/thunar-window.c:732
 msgid "View as _Detailed List"
 msgstr "Pogled kao _detaljna lista"
 
-#: ../thunar/thunar-window.c:849
+#: ../thunar/thunar-window.c:732
 msgid "Display folder content in a detailed list view"
 msgstr "Prikaži sadržaj mape kao detaljnu listu"
 
-#: ../thunar/thunar-window.c:856
+#: ../thunar/thunar-window.c:739
 msgid "View as _Compact List"
 msgstr "POgled kao _Zbijena lista"
 
-#: ../thunar/thunar-window.c:856
+#: ../thunar/thunar-window.c:739
 msgid "Display folder content in a compact list view"
 msgstr "Prikaži sadržaj mape kao zbijenu listu"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:922
+#: ../thunar/thunar-window.c:805
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr "Upozorenje. koristite korijenski račun.možete oštetiti svoj sustav."
 
-#: ../thunar/thunar-window.c:1776
+#: ../thunar/thunar-window.c:1684
 msgid "Close tab"
 msgstr "Zatvori karticu"
 
-#. create the network action
-#: ../thunar/thunar-window.c:2022
-msgid "Network"
-msgstr "Mreža"
+#: ../thunar/thunar-window.c:1945
+#, c-format
+msgid "Open the location \"%s\""
+msgstr "Otvori lokaciju \"%s\""
 
-#: ../thunar/thunar-window.c:2022
-msgid "Browse the network"
-msgstr "Pregledaj mrežu"
-
-#: ../thunar/thunar-window.c:2062
+#: ../thunar/thunar-window.c:2143
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Neuspjelo pokretanje \"%s\""
 
-#: ../thunar/thunar-window.c:2615
+#: ../thunar/thunar-window.c:2696
 msgid "Failed to open parent folder"
 msgstr ""
 
-#: ../thunar/thunar-window.c:2708
+#: ../thunar/thunar-window.c:2791
 #, c-format
-msgid "Failed to open folder \"%s\""
-msgstr "Neuspjeh u otvaranju mape \"%s\""
+msgid "The directory \"%s\" does not exist. Do you want to create it?"
+msgstr ""
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:2836
+#: ../thunar/thunar-window.c:2873
 msgid "About Templates"
 msgstr "O predlošcima"
 
-#: ../thunar/thunar-window.c:2858
+#: ../thunar/thunar-window.c:2895
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
 "Sve datoteke u ovoj mapi pojaviti će se u \"Napravi dokument\" izborniku."
 
-#: ../thunar/thunar-window.c:2865
+#: ../thunar/thunar-window.c:2902
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and "
 "put it in this folder. Thunar will add an entry for this document in the "
@@ -2880,26 +2860,26 @@ msgstr ""
 "Tada možete odabrati unos iz \"Napravi dokument\" izbornika i kopija "
 "dokumenta će biti napravljena u direktoriju koji gledate."
 
-#: ../thunar/thunar-window.c:2877
+#: ../thunar/thunar-window.c:2914
 msgid "Do _not display this message again"
 msgstr "Ne _prikazuj ponovo ovu poruku"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2921
+#: ../thunar/thunar-window.c:2944
 msgid "Failed to open the file system root folder"
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2956
+#: ../thunar/thunar-window.c:2979
 msgid "Failed to display the contents of the trash can"
 msgstr "Neuspjeli prikaz sadržaja smeća"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2991
+#: ../thunar/thunar-window.c:3014
 msgid "Failed to browse the network"
 msgstr "Neuspjelo pregledavanje mreže."
 
-#: ../thunar/thunar-window.c:3033
+#: ../thunar/thunar-window.c:3098
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -2908,7 +2888,7 @@ msgstr ""
 "okruženje"
 
 #. set window title
-#: ../thunar/thunar-window.c:3087 ../Thunar.desktop.in.in.h:2
+#: ../thunar/thunar-window.c:3152 ../Thunar.desktop.in.in.h:2
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "File Manager"
 msgstr "Upravitelj datotekama"
@@ -3682,6 +3662,30 @@ msgstr "Otvori odabrane mape u Thunaru"
 #: ../thunar/thunar-settings.desktop.in.h:1
 msgid "Configure the Thunar file manager"
 msgstr "Podesi Thunar upravitelja datoteka"
+
+#~ msgid "Go to the documents folder"
+#~ msgstr "Idi u mapu dokumenata"
+
+#~ msgid "Go to the downloads folder"
+#~ msgstr "Idi u mapu preuzimanja"
+
+#~ msgid "Go to the music folder"
+#~ msgstr "Idi u mapu glazbe"
+
+#~ msgid "Go to the pictures folder"
+#~ msgstr "Idi u mapu slika"
+
+#~ msgid "Go to the videos folder"
+#~ msgstr "Idi u mapu video datoteka"
+
+#~ msgid "Go to the public folder"
+#~ msgstr "Idi u javnu mapu"
+
+#~ msgid "Network"
+#~ msgstr "Mreža"
+
+#~ msgid "Failed to open folder \"%s\""
+#~ msgstr "Neuspjeh u otvaranju mape \"%s\""
 
 #~ msgid "_Open in New Window"
 #~ msgstr "_Otvori u novom prozoru"
