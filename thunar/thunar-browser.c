@@ -445,7 +445,7 @@ thunar_browser_poke_file_internal (ThunarBrowser                *browser,
       target = thunar_file_get_target_location (file);
 
       poke_data = thunar_browser_poke_file_data_new (browser, location, source,
-                                                     file, func, NULL, user_data);
+                                                     file, func, location_func, user_data);
 
       thunar_file_get_async (target, NULL,
                              thunar_browser_poke_shortcut_file_finish,
@@ -460,7 +460,7 @@ thunar_browser_poke_file_internal (ThunarBrowser                *browser,
           target = thunar_file_get_target_location (file);
 
           poke_data = thunar_browser_poke_file_data_new (browser, location, source,
-                                                         file, func, NULL, user_data);
+                                                         file, func, location_func, user_data);
 
           thunar_file_get_async (target, NULL,
                                  thunar_browser_poke_mountable_file_finish,
@@ -471,7 +471,7 @@ thunar_browser_poke_file_internal (ThunarBrowser                *browser,
       else
         {
           poke_data = thunar_browser_poke_file_data_new (browser, location, source,
-                                                         file, func, NULL, user_data);
+                                                         file, func, location_func, user_data);
 
           mount_operation = thunar_browser_mount_operation_new (widget);
 
@@ -486,7 +486,7 @@ thunar_browser_poke_file_internal (ThunarBrowser                *browser,
   else if (!thunar_file_is_mounted (file))
     {
       poke_data = thunar_browser_poke_file_data_new (browser, location, source,
-                                                     file, func, NULL, user_data);
+                                                     file, func, location_func, user_data);
 
       mount_operation = thunar_browser_mount_operation_new (widget);
 
