@@ -37,13 +37,14 @@ _thunar_misc_jobs_load_templates (ThunarJob  *job,
                                   GArray     *param_values,
                                   GError    **error)
 {
-  ThunarFile *file;
-  GtkWidget  *menu;
-  GFile      *home_dir;
-  GFile      *templates_dir;
-  GList      *files = NULL;
-  GList      *lp;
-  GList      *paths = NULL;
+  ThunarFile  *file;
+  GtkWidget   *menu;
+  GFile       *home_dir;
+  GFile       *templates_dir;
+  GList       *files = NULL;
+  GList       *lp;
+  GList       *paths = NULL;
+  const gchar *path;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -53,7 +54,11 @@ _thunar_misc_jobs_load_templates (ThunarJob  *job,
   g_object_set_data (G_OBJECT (job), "menu", menu);
 
   home_dir = thunar_g_file_new_for_home ();
-  templates_dir = thunar_g_file_new_for_user_special_dir (G_USER_DIRECTORY_TEMPLATES);
+  path = g_get_user_special_dir (G_USER_DIRECTORY_TEMPLATES);
+  if (G_LIKELY (path != NULL))
+    templates_dir = g_file_new_for_path (path);
+  else
+    templates_dir = g_file_resolve_relative_path (home_dir, "Templates");
 
   if (G_LIKELY (!g_file_equal (templates_dir, home_dir)))
     {

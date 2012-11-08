@@ -26,7 +26,16 @@
 
 G_BEGIN_DECLS;
 
-gboolean   thunar_util_looks_like_an_uri        (const gchar      *string) G_GNUC_WARN_UNUSED_RESULT;
+typedef void (*ThunarBookmarksFunc) (GFile       *file,
+                                     const gchar *name,
+                                     gint         row_num,
+                                     gpointer     user_data);
+
+void       thunar_util_load_bookmarks           (GFile               *bookmarks_file,
+                                                 ThunarBookmarksFunc  foreach_func,
+                                                 gpointer             user_data);
+
+gboolean   thunar_util_looks_like_an_uri        (const gchar    *string) G_GNUC_WARN_UNUSED_RESULT;
 
 gchar     *thunar_util_expand_filename          (const gchar    *filename,
                                                  GFile          *working_directory,

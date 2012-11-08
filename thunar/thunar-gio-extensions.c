@@ -71,22 +71,6 @@ thunar_g_file_new_for_desktop (void)
 
 
 
-GFile *
-thunar_g_file_new_for_user_special_dir (GUserDirectory dir)
-{
-  const gchar *path;
-
-  _thunar_return_val_if_fail (dir < G_USER_N_DIRECTORIES, NULL);
-
-  path = g_get_user_special_dir (dir);
-  if (path == NULL)
-    path = xfce_get_homedir ();
-
-  return g_file_new_for_path (path);
-}
-
-
-
 gboolean
 thunar_g_file_is_root (GFile *file)
 {

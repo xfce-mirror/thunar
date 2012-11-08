@@ -45,18 +45,12 @@ typedef struct
 /* keep in sync with thunar-stock.h */
 static const ThunarStockIcon thunar_stock_icons[] =
 {
-  { THUNAR_STOCK_DESKTOP,     "user-desktop",       },
-  { THUNAR_STOCK_HOME,        "go-home",          },
-  { THUNAR_STOCK_SHORTCUTS,   "stock_thunar-shortcuts", },
-  { THUNAR_STOCK_TEMPLATES,   "text-x-generic-template", },
+  { THUNAR_STOCK_DESKTOP,     "user-desktop" },
+  { THUNAR_STOCK_HOME,        "go-home" },
+  { THUNAR_STOCK_SHORTCUTS,   "stock_thunar-shortcuts" },
+  { THUNAR_STOCK_TEMPLATES,   "text-x-generic-template" },
   { THUNAR_STOCK_TRASH_EMPTY, "user-trash",   },
-  { THUNAR_STOCK_TRASH_FULL,  "user-trash-full",    },
-  { THUNAR_STOCK_DOWNLOADS,   "emblem-downloads",       },
-  { THUNAR_STOCK_DOCUMENTS,   "emblem-documents",       },
-  { THUNAR_STOCK_MUSIC,       "audio-x-generic",        },
-  { THUNAR_STOCK_PICTURES,    "emblem-photos",          },
-  { THUNAR_STOCK_VIDEOS,      "video-x-generic",        },
-  { THUNAR_STOCK_PUBLIC,      "emblem-shared",          },
+  { THUNAR_STOCK_TRASH_FULL,  "user-trash-full" },
 };
 
 

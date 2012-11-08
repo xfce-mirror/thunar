@@ -61,6 +61,69 @@
 #include <glib/gstdio.h>
 
 
+
+void
+thunar_util_load_bookmarks (GFile               *bookmarks_file,
+                            ThunarBookmarksFunc  foreach_func,
+                            gpointer             user_data)
+{
+  gchar       *bookmarks_path;
+  gchar        line[1024];
+  const gchar *name;
+  gchar       *space;
+  FILE        *fp;
+  gint         row_num = 1;
+  GFile       *file;
+
+  _thunar_return_if_fail (G_IS_FILE (bookmarks_file));
+  _thunar_return_if_fail (g_file_is_native (bookmarks_file));
+  _thunar_return_if_fail (foreach_func != NULL);
+
+  /* determine the path to the GTK+ bookmarks file */
+  bookmarks_path = g_file_get_path (bookmarks_file);
+
+  /* append the GTK+ bookmarks (if any) */
+  fp = fopen (bookmarks_path, "r");
+  if (G_LIKELY (fp != NULL))
+    {
+      while (fgets (line, sizeof (line), fp) != NULL)
+        {
+          /* remove trailing spaces */
+          g_strchomp (line);
+
+          /* skip over empty lines */
+          if (*line == '\0' || *line == ' ')
+            continue;
+
+          /* check if there is a custom name in the line */
+          name = NULL;
+          space = strchr (line, ' ');
+          if (space != NULL)
+            {
+              /* break line */
+              *space++ = '\0';
+
+              /* get the custom name */
+              if (G_LIKELY (*space != '\0'))
+                name = space;
+            }
+
+          file = g_file_new_for_uri (line);
+
+          /* callback */
+          foreach_func (file, name, row_num++, user_data);
+
+          g_object_unref (G_OBJECT (file));
+        }
+
+      fclose (fp);
+    }
+
+  g_free (bookmarks_path);
+}
+
+
+
 /**
  * thunar_util_expand_filename:
  * @filename          : a local filename.
