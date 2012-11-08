@@ -2802,6 +2802,8 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
   GList     *file_list = NULL;
   GList     *lp;
   GtkWidget *source_view;
+  GFile     *parent_file;
+  gboolean   belongs_here;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
@@ -2820,12 +2822,18 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
     }
   else if (G_LIKELY (path_list != NULL))
     {
+      /* to check if we should reload */
+      parent_file = thunar_file_get_file (standard_view->priv->current_directory);
+      belongs_here = FALSE;
+
       /* determine the files for the paths */
       for (lp = path_list; lp != NULL; lp = lp->next)
         {
           file = thunar_file_cache_lookup (lp->data);
           if (G_LIKELY (file != NULL))
             file_list = g_list_prepend (file_list, file);
+          else if (!belongs_here && g_file_has_parent (lp->data, parent_file))
+            belongs_here = TRUE;
         }
 
       /* check if we have any new files here */
@@ -2840,9 +2848,11 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
           /* grab the focus to the view widget */
           gtk_widget_grab_focus (GTK_BIN (standard_view)->child);
         }
-      else
+      else if (belongs_here)
         {
-          /* thunar files are not created yet, try again later */
+          /* thunar files are not created yet, try again later because we know
+           * some of them belong in this directory, so eventually they
+           * will get a ThunarFile */
           standard_view->priv->new_files_path_list = thunar_g_file_list_copy (path_list);
         }
     }
