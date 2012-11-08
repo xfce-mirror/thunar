@@ -3307,11 +3307,11 @@ thunar_file_get_icon_name (const ThunarFile   *file,
                            ThunarFileIconState icon_state,
                            GtkIconTheme       *icon_theme)
 {
-  GFile  *icon_file;
-  GIcon  *icon;
-  gchar **themed_icon_names;
-  gchar  *icon_name = NULL;
-  gint    i;
+  GFile               *icon_file;
+  GIcon               *icon;
+  const gchar * const *names;
+  gchar               *icon_name = NULL;
+  gint                 i;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (GTK_IS_ICON_THEME (icon_theme), NULL);
@@ -3331,13 +3331,17 @@ thunar_file_get_icon_name (const ThunarFile   *file,
     {
       if (G_IS_THEMED_ICON (icon))
         {
-          g_object_get (icon, "names", &themed_icon_names, NULL);
-
-          for (i = 0; icon_name == NULL && themed_icon_names[i] != NULL; ++i)
-            if (gtk_icon_theme_has_icon (icon_theme, themed_icon_names[i]))
-              icon_name = g_strdup (themed_icon_names[i]);
-
-          g_strfreev (themed_icon_names);
+          names = g_themed_icon_get_names (G_THEMED_ICON (icon));
+          if (G_LIKELY (names != NULL))
+            {
+              for (i = 0; names[i] != NULL; ++i)
+                if (names[i] != NULL
+                    && gtk_icon_theme_has_icon (icon_theme, names[i]))
+                  {
+                    icon_name = g_strdup (names[i]);
+                    break;
+                  }
+            }
         }
       else if (G_IS_FILE_ICON (icon))
         {
@@ -3366,9 +3370,10 @@ thunar_file_get_icon_name (const ThunarFile   *file,
     }
 
   /* check if we have an accept icon for the icon we found */
-  if (icon_name != NULL 
-      && (g_str_equal (icon_name, "inode-directory") 
-          || g_str_equal (icon_name, "folder")))
+  if (icon_name != NULL
+      && icon_state != THUNAR_FILE_ICON_STATE_DEFAULT
+      && (strcmp (icon_name, "inode-directory") == 0
+          || strcmp (icon_name, "folder") == 0))
     {
       if (icon_state == THUNAR_FILE_ICON_STATE_DROP)
         {
