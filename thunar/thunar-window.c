@@ -1975,18 +1975,21 @@ thunar_window_bookmark_merge_line (GFile       *file_path,
 
   if (G_LIKELY (action != NULL))
     {
-      /* connect action */
-      g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_window_action_open_bookmark), window);
+      if (gtk_action_group_get_action (window->bookmark_action_group, unique_name) == NULL)
+        {
+          /* connect action */
+          g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_window_action_open_bookmark), window);
 
-      /* insert the bookmark in the group */
-      gtk_action_group_add_action_with_accel (window->bookmark_action_group, action, NULL);
+          /* insert the bookmark in the group */
+          gtk_action_group_add_action_with_accel (window->bookmark_action_group, action, NULL);
 
-      /* add the action to the UI manager */
-      gtk_ui_manager_add_ui (window->ui_manager,
-                             window->bookmark_items_actions_merge_id,
-                             path,
-                             unique_name, unique_name,
-                             GTK_UI_MANAGER_MENUITEM, FALSE);
+          /* add the action to the UI manager */
+          gtk_ui_manager_add_ui (window->ui_manager,
+                                 window->bookmark_items_actions_merge_id,
+                                 path,
+                                 unique_name, unique_name,
+                                 GTK_UI_MANAGER_MENUITEM, FALSE);
+        }
 
       g_object_unref (action);
     }
