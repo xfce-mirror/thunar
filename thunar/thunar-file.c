@@ -718,7 +718,7 @@ thunar_file_set_emblem_names_ready (GObject      *source_object,
       g_warning ("Failed to set metadata: %s", error->message);
       g_error_free (error);
 
-      g_file_info_remove_attribute (file->info, "metadata:emblems");
+      g_file_info_remove_attribute (file->info, "metadata::emblems");
     }
 
   thunar_file_changed (file);
