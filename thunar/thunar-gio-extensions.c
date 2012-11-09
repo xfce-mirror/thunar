@@ -2,18 +2,18 @@
 /*-
  * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
  *
- * This program is free software; you can redistribute it and/or 
+ * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of 
+ * published by the Free Software Foundation; either version 2 of
  * the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public 
- * License along with this program; if not, write to the Free 
+ * You should have received a copy of the GNU General Public
+ * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
@@ -104,7 +104,7 @@ thunar_g_file_is_root (GFile *file)
 
 
 
-gboolean 
+gboolean
 thunar_g_file_is_trashed (GFile *file)
 {
   _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
@@ -191,10 +191,10 @@ thunar_g_file_write_key_file (GFile        *file,
   /* try to replace the file contents with the key file data */
   if (contents != NULL)
     {
-      result = g_file_replace_contents (file, contents, length, NULL, FALSE, 
+      result = g_file_replace_contents (file, contents, length, NULL, FALSE,
                                         G_FILE_CREATE_NONE,
                                         NULL, cancellable, error);
-      
+
       /* cleanup */
       g_free (contents);
     }
@@ -210,7 +210,7 @@ thunar_g_file_get_location (GFile *file)
   gchar *location;
 
   _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
-  
+
   location = g_file_get_path (file);
   if (location == NULL)
     location = g_file_get_uri (file);
@@ -348,11 +348,89 @@ thunar_g_vfs_is_uri_scheme_supported (const gchar *scheme)
   if (supported_schemes == NULL)
     return FALSE;
 
-  for (n = 0; !supported && supported_schemes[n] != NULL; ++n) 
+  for (n = 0; !supported && supported_schemes[n] != NULL; ++n)
     if (g_strcmp0 (supported_schemes[n], scheme) == 0)
       supported = TRUE;
 
   return supported;
+}
+
+
+
+/**
+ * thunar_g_file_get_free_space:
+ * @file           : a #GFile instance.
+ * @fs_free_return : return location for the amount of
+ *                   free space or %NULL.
+ * @fs_size_return : return location for the total volume size.
+ *
+ * Determines the amount of free space of the volume on
+ * which @file resides. Returns %TRUE if the amount of
+ * free space was determined successfully and placed into
+ * @free_space_return, else %FALSE will be returned.
+ *
+ * Return value: %TRUE if successfull, else %FALSE.
+ **/
+gboolean
+thunar_g_file_get_free_space (GFile   *file,
+                              guint64 *fs_free_return,
+                              guint64 *fs_size_return)
+{
+  GFileInfo *filesystem_info;
+  gboolean   success = FALSE;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+
+  filesystem_info = g_file_query_filesystem_info (file,
+                                                  THUNARX_FILESYSTEM_INFO_NAMESPACE,
+                                                  NULL, NULL);
+
+  if (filesystem_info != NULL)
+    {
+      if (fs_free_return != NULL)
+        {
+          *fs_free_return = g_file_info_get_attribute_uint64 (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
+          success = g_file_info_has_attribute (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
+        }
+
+      if (fs_size_return != NULL)
+        {
+          *fs_size_return = g_file_info_get_attribute_uint64 (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
+          success = g_file_info_has_attribute (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
+        }
+
+      g_object_unref (filesystem_info);
+    }
+
+  return success;
+}
+
+
+gchar *
+thunar_g_file_get_free_space_string (GFile *file)
+{
+  gchar   *fs_free_str;
+  gchar   *fs_size_str;
+  guint64  fs_free;
+  guint64  fs_size;
+  gchar   *fs_string = NULL;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
+
+  if (thunar_g_file_get_free_space (file, &fs_free, &fs_size)
+      && fs_size > 0)
+    {
+      fs_free_str = g_format_size (fs_free);
+      fs_size_str = g_format_size (fs_size);
+      /* free disk space string */
+      fs_string = g_strdup_printf (_("%s of %s (%d%% used)"),
+                                   fs_free_str, fs_size_str,
+                                   (gint) ((fs_size - fs_free) * 100 / fs_size));
+      g_free (fs_free_str);
+      g_free (fs_size_str);
+    }
+
+  return fs_string;
 }
 
 

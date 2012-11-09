@@ -2,18 +2,18 @@
 /*-
  * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
- * This program is free software; you can redistribute it and/or 
+ * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of 
+ * published by the Free Software Foundation; either version 2 of
  * the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public 
- * License along with this program; if not, write to the Free 
+ * You should have received a copy of the GNU General Public
+ * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
@@ -34,7 +34,7 @@ GFile    *thunar_g_file_new_for_bookmarks        (void);
 gboolean  thunar_g_file_is_root                  (GFile                *file);
 gboolean  thunar_g_file_is_trashed               (GFile                *file);
 gboolean  thunar_g_file_is_home                  (GFile                *file);
-                                                                      
+
 GKeyFile *thunar_g_file_query_key_file           (GFile                *file,
                                                   GCancellable         *cancellable,
                                                   GError              **error);
@@ -42,19 +42,25 @@ gboolean  thunar_g_file_write_key_file           (GFile                *file,
                                                   GKeyFile             *key_file,
                                                   GCancellable         *cancellable,
                                                   GError              **error);
-                                                                      
+
 gchar    *thunar_g_file_get_location             (GFile                *file);
 
 gchar    *thunar_g_file_get_display_name         (GFile                *file);
 
 gchar    *thunar_g_file_get_display_name_remote  (GFile                *file);
-                                                                      
+
 gboolean  thunar_g_vfs_is_uri_scheme_supported   (const gchar          *scheme);
+
+gboolean  thunar_g_file_get_free_space           (GFile                *file,
+                                                  guint64              *fs_free_return,
+                                                  guint64              *fs_size_return);
+
+gchar    *thunar_g_file_get_free_space_string    (GFile                *file);
 
 /**
  * THUNAR_TYPE_G_FILE_LIST:
  *
- * Returns the type ID for #GList<!---->s of #GFile<!---->s which is a 
+ * Returns the type ID for #GList<!---->s of #GFile<!---->s which is a
  * boxed type.
  **/
 #define THUNAR_TYPE_G_FILE_LIST (thunar_g_file_list_get_type ())

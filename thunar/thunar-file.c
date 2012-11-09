@@ -2322,56 +2322,6 @@ thunar_file_get_mode (const ThunarFile *file)
 
 
 
-/**
- * thunar_file_get_free_space:
- * @file           : a #ThunarFile instance.
- * @fs_free_return : return location for the amount of
- *                   free space or %NULL.
- * @fs_size_return : return location for the total volume size.
- *
- * Determines the amount of free space of the volume on
- * which @file resides. Returns %TRUE if the amount of
- * free space was determined successfully and placed into
- * @free_space_return, else %FALSE will be returned.
- *
- * Return value: %TRUE if successfull, else %FALSE.
- **/
-gboolean
-thunar_file_get_free_space (const ThunarFile *file, 
-                            guint64          *fs_free_return,
-                            guint64          *fs_size_return)
-{
-  GFileInfo *filesystem_info;
-  gboolean   success = FALSE;
-
-  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-
-  filesystem_info = g_file_query_filesystem_info (file->gfile, 
-                                                  THUNARX_FILESYSTEM_INFO_NAMESPACE,
-                                                  NULL, NULL);
-
-  if (filesystem_info != NULL)
-    {
-      if (fs_free_return != NULL)
-        {
-          *fs_free_return = g_file_info_get_attribute_uint64 (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
-          success = g_file_info_has_attribute (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
-        }
-
-      if (fs_size_return != NULL)
-        {
-          *fs_size_return = g_file_info_get_attribute_uint64 (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
-          success = g_file_info_has_attribute (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_SIZE);
-        }
-
-      g_object_unref (filesystem_info);
-    }
-
-  return success;
-}
-
-
-
 gboolean
 thunar_file_is_mounted (const ThunarFile *file)
 {

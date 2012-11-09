@@ -527,6 +527,7 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
   ThunarShortcut *shortcut;
   gboolean        can_eject;
   GFile          *file;
+  gchar          *disk_usage;
 
   _thunar_return_if_fail (iter->stamp == THUNAR_SHORTCUTS_MODEL (tree_model)->stamp);
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (tree_model));
@@ -571,25 +572,37 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
       break;
 
     case THUNAR_SHORTCUTS_MODEL_COLUMN_TOOLTIP:
-      if (shortcut->tooltip == NULL)
+      g_value_init (value, G_TYPE_STRING);
+      if ((shortcut->group & THUNAR_SHORTCUT_GROUP_DEVICES) != 0)
+        {
+          if (shortcut->device != NULL)
+            file = thunar_device_get_root (shortcut->device);
+          else if (shortcut->file != NULL)
+            file = g_object_ref (thunar_file_get_file (shortcut->file));
+          else
+            file = NULL;
+
+          if (file != NULL)
+            {
+              disk_usage = thunar_g_file_get_free_space_string (file);
+              g_object_unref (file);
+              g_value_take_string (value, disk_usage);
+            }
+          break;
+        }
+      else if (shortcut->tooltip == NULL)
         {
           if (shortcut->file != NULL)
-            file = g_object_ref (thunar_file_get_file (shortcut->file));
+            file = thunar_file_get_file (shortcut->file);
           else if (shortcut->location != NULL)
-            file = g_object_ref (shortcut->location);
-          else if (shortcut->device != NULL)
-            file = thunar_device_get_root (shortcut->device);
+            file = shortcut->location;
           else
             file = NULL;
 
           if (G_LIKELY (file != NULL))
-            {
-              shortcut->tooltip = g_file_get_parse_name (file);;
-              g_object_unref (file);
-            }
+            shortcut->tooltip = g_file_get_parse_name (file);
         }
 
-      g_value_init (value, G_TYPE_STRING);
       g_value_set_static_string (value, shortcut->tooltip);
       break;
 
