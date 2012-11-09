@@ -76,7 +76,6 @@ typedef enum /*< enum >*/
 
 /**
  * ThunarFileThumbState:
- * @THUNAR_FILE_THUMB_STATE_MASK    : the mask to extract the thumbnail state.
  * @THUNAR_FILE_THUMB_STATE_UNKNOWN : unknown whether there's a thumbnail.
  * @THUNAR_FILE_THUMB_STATE_NONE    : no thumbnail is available.
  * @THUNAR_FILE_THUMB_STATE_READY   : a thumbnail is available.
@@ -86,17 +85,18 @@ typedef enum /*< enum >*/
  **/
 typedef enum /*< flags >*/
 {
-  THUNAR_FILE_THUMB_STATE_MASK    = 0x03,
-  THUNAR_FILE_THUMB_STATE_UNKNOWN = 0x00,
-  THUNAR_FILE_THUMB_STATE_NONE    = 0x01,
-  THUNAR_FILE_THUMB_STATE_READY   = 0x02,
-  THUNAR_FILE_THUMB_STATE_LOADING = 0x03,
+  THUNAR_FILE_THUMB_STATE_UNKNOWN = 0,
+  THUNAR_FILE_THUMB_STATE_NONE    = 1,
+  THUNAR_FILE_THUMB_STATE_READY   = 2,
+  THUNAR_FILE_THUMB_STATE_LOADING = 3,
 } ThunarFileThumbState;
 
+
+
 #define THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK "emblem-symbolic-link"
-#define THUNAR_FILE_EMBLEM_NAME_CANT_READ "emblem-noread"
-#define THUNAR_FILE_EMBLEM_NAME_CANT_WRITE "emblem-nowrite"
-#define THUNAR_FILE_EMBLEM_NAME_DESKTOP "emblem-desktop"
+#define THUNAR_FILE_EMBLEM_NAME_CANT_READ     "emblem-noread"
+#define THUNAR_FILE_EMBLEM_NAME_CANT_WRITE    "emblem-nowrite"
+#define THUNAR_FILE_EMBLEM_NAME_DESKTOP       "emblem-desktop"
 
 
 

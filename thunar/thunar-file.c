@@ -70,9 +70,6 @@
 
 
 
-/* Additional flags associated with a ThunarFile */
-#define THUNAR_FILE_IN_DESTRUCTION 0x04
-
 /* Dump the file cache every X second, set to 0 to disable */
 #define DUMP_FILE_CACHE 0
 
@@ -132,6 +129,22 @@ static guint              file_signals[LAST_SIGNAL];
 
 
 
+#define FLAG_SET_THUMB_STATE(file,new_state) G_STMT_START{ (file)->flags = ((file)->flags & ~THUNAR_FILE_FLAG_THUMB_MASK) | (new_state); }G_STMT_END
+#define FLAG_GET_THUMB_STATE(file)           ((file)->flags & THUNAR_FILE_FLAG_THUMB_MASK)
+#define FLAG_SET(file,flag)                  G_STMT_START{ ((file)->flags |= (flag)); }G_STMT_END
+#define FLAG_UNSET(file,flag)                G_STMT_START{ ((file)->flags &= ~(flag)); }G_STMT_END
+#define FLAG_IS_SET(file,flag)               (((file)->flags & (flag)) != 0)
+
+
+
+typedef enum
+{
+  THUNAR_FILE_FLAG_THUMB_MASK     = 0x03,   /* storage for ThunarFileThumbState */
+  THUNAR_FILE_FLAG_IN_DESTRUCTION = 1 << 2, /* for avoiding recursion during destroy */
+  THUNAR_FILE_FLAG_IS_MOUNTED     = 1 << 3, /* whether this file is mounted */
+}
+ThunarFileFlags;
+
 struct _ThunarFileClass
 {
   GObjectClass __parent__;
@@ -142,20 +155,24 @@ struct _ThunarFileClass
 
 struct _ThunarFile
 {
-  GObject        __parent__;
+  GObject __parent__;
 
-  /*< private >*/
-  GFileInfo     *info;
-  GFileType      kind;
-  GFile         *gfile;
-  gchar         *custom_icon_name;
-  gchar         *display_name;
-  gchar         *collate_key;
-  gchar         *collate_key_nocase;
-  gchar         *basename;
-  gchar         *thumbnail_path;
-  guint          flags;
-  guint          is_mounted : 1;
+  /* storage for the file information */
+  GFileInfo            *info;
+  GFileType             kind;
+  GFile                *gfile;
+
+  gchar                *custom_icon_name;
+  gchar                *display_name;
+  gchar                *basename;
+  gchar                *thumbnail_path;
+
+  /* sorting */
+  gchar                *collate_key;
+  gchar                *collate_key_nocase;
+
+  /* flags for thumbnail state etc */
+  ThunarFileFlags       flags;
 };
 
 typedef struct
@@ -347,12 +364,12 @@ thunar_file_dispose (GObject *object)
   ThunarFile *file = THUNAR_FILE (object);
 
   /* check that we don't recurse here */
-  if (G_LIKELY ((file->flags & THUNAR_FILE_IN_DESTRUCTION) == 0))
+  if (!FLAG_IS_SET (file, THUNAR_FILE_FLAG_IN_DESTRUCTION))
     {
       /* emit the "destroy" signal */
-      file->flags |= THUNAR_FILE_IN_DESTRUCTION;
+      FLAG_SET (file, THUNAR_FILE_FLAG_IN_DESTRUCTION);
       g_signal_emit (object, file_signals[DESTROY], 0);
-      file->flags &= ~THUNAR_FILE_IN_DESTRUCTION;
+      FLAG_UNSET (file, THUNAR_FILE_FLAG_IN_DESTRUCTION);
     }
 
   (*G_OBJECT_CLASS (thunar_file_parent_class)->dispose) (object);
@@ -523,7 +540,7 @@ thunar_file_info_changed (ThunarxFileInfo *file_info)
 
   /* set the new thumbnail state manually, so we only emit file
    * changed once */
-  file->flags = (file->flags & ~THUNAR_FILE_THUMB_STATE_MASK) | (THUNAR_FILE_THUMB_STATE_UNKNOWN);
+  FLAG_SET_THUMB_STATE (file, THUNAR_FILE_THUMB_STATE_UNKNOWN);
 
   /* tell the file monitor that this file changed */
   thunar_file_monitor_file_changed (file);
@@ -765,10 +782,10 @@ thunar_file_info_clear (ThunarFile *file)
   file->thumbnail_path = NULL;
 
   /* assume the file is mounted by default */
-  file->is_mounted = TRUE;
+  FLAG_SET (file, THUNAR_FILE_FLAG_IS_MOUNTED);
 
   /* set thumb state to unknown */
-  file->flags = (file->flags & ~THUNAR_FILE_THUMB_STATE_MASK) | THUNAR_FILE_THUMB_STATE_UNKNOWN;
+  FLAG_SET_THUMB_STATE (file, THUNAR_FILE_THUMB_STATE_UNKNOWN);
 }
 
 
@@ -795,7 +812,11 @@ thunar_file_info_reload (ThunarFile   *file,
       if (file->kind == G_FILE_TYPE_MOUNTABLE)
         {
           target_uri = g_file_info_get_attribute_string (file->info, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI);
-          file->is_mounted = (target_uri != NULL) && !g_file_info_get_attribute_boolean (file->info, G_FILE_ATTRIBUTE_MOUNTABLE_CAN_MOUNT);
+          if (target_uri != NULL
+              && !g_file_info_get_attribute_boolean (file->info, G_FILE_ATTRIBUTE_MOUNTABLE_CAN_MOUNT))
+            FLAG_SET (file, THUNAR_FILE_FLAG_IS_MOUNTED);
+          else
+             FLAG_UNSET (file, THUNAR_FILE_FLAG_IS_MOUNTED);
         }
     }
 
@@ -929,7 +950,7 @@ thunar_file_get_async_finish (GObject      *object,
       && error->domain == G_IO_ERROR
       && error->code == G_IO_ERROR_NOT_MOUNTED)
    {
-      file->is_mounted = FALSE;
+      FLAG_UNSET (file, THUNAR_FILE_FLAG_IS_MOUNTED);
       g_clear_error (&error);
    }
 
@@ -1002,7 +1023,7 @@ thunar_file_load (ThunarFile   *file,
       && err->domain == G_IO_ERROR
       && err->code == G_IO_ERROR_NOT_MOUNTED)
    {
-      file->is_mounted = FALSE;
+      FLAG_UNSET (file, THUNAR_FILE_FLAG_IS_MOUNTED);
       g_clear_error (&err);
    }
 
@@ -2355,7 +2376,7 @@ gboolean
 thunar_file_is_mounted (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  return file->is_mounted;
+  return FLAG_IS_SET (file, THUNAR_FILE_FLAG_IS_MOUNTED);
 }
 
 
@@ -3203,7 +3224,7 @@ ThunarFileThumbState
 thunar_file_get_thumb_state (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), THUNAR_FILE_THUMB_STATE_UNKNOWN);
-  return (file->flags & THUNAR_FILE_THUMB_STATE_MASK);
+  return FLAG_GET_THUMB_STATE (file);
 }
 
 
@@ -3228,7 +3249,7 @@ thunar_file_set_thumb_state (ThunarFile          *file,
     return;
 
   /* set the new thumbnail state */
-  file->flags = (file->flags & ~THUNAR_FILE_THUMB_STATE_MASK) | (state);
+  FLAG_SET_THUMB_STATE (file, state);
 
   /* remove path if the type is not supported */
   if (state == THUNAR_FILE_THUMB_STATE_NONE
@@ -3518,7 +3539,7 @@ thunar_file_destroy (ThunarFile *file)
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  if (G_LIKELY ((file->flags & THUNAR_FILE_IN_DESTRUCTION) == 0))
+  if (!FLAG_IS_SET (file, THUNAR_FILE_FLAG_IN_DESTRUCTION))
     {
       /* take an additional reference on the file, as the file-destroyed
        * invocation may already release the last reference.
