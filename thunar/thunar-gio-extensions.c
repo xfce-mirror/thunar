@@ -71,6 +71,21 @@ thunar_g_file_new_for_desktop (void)
 
 
 
+GFile *
+thunar_g_file_new_for_bookmarks (void)
+{
+  gchar *filename;
+  GFile *bookmarks;
+
+  filename = g_build_filename (xfce_get_homedir (), ".gtk-bookmarks", NULL);
+  bookmarks = g_file_new_for_path (filename);
+  g_free (filename);
+
+  return bookmarks;
+}
+
+
+
 gboolean
 thunar_g_file_is_root (GFile *file)
 {

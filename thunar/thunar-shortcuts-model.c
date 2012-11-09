@@ -907,6 +907,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
         }
     }
   g_object_unref (desktop);
+  g_object_unref (home);
 
   /* append the trash icon if the trash is supported */
   if (thunar_g_vfs_is_uri_scheme_supported ("trash"))
@@ -926,7 +927,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
     }
 
   /* determine the URI to the Gtk+ bookmarks file */
-  model->bookmarks_file = g_file_resolve_relative_path (home, ".gtk-bookmarks");
+  model->bookmarks_file = thunar_g_file_new_for_bookmarks ();
 
   /* register with the alteration monitor for the bookmarks file */
   model->bookmarks_monitor = g_file_monitor_file (model->bookmarks_file, G_FILE_MONITOR_NONE, NULL, NULL);
@@ -938,8 +939,6 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
 
   /* read the Gtk+ bookmarks file */
   model->bookmarks_idle_id = g_idle_add_full (G_PRIORITY_DEFAULT, thunar_shortcuts_model_load, model, NULL);
-
-  g_object_unref (home);
 }
 
 

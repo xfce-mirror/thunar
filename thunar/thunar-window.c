@@ -2028,7 +2028,6 @@ static gboolean
 thunar_window_bookmark_merge (gpointer user_data)
 {
   ThunarWindow *window = THUNAR_WINDOW (user_data);
-  GFile        *home;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
@@ -2051,10 +2050,7 @@ thunar_window_bookmark_merge (gpointer user_data)
   /* lazy initialize the bookmarks */
   if (window->bookmark_file == NULL)
     {
-      home = thunar_g_file_new_for_home ();
-      window->bookmark_file = g_file_resolve_relative_path (home, ".gtk-bookmarks");
-      g_object_unref (home);
-
+      window->bookmark_file = thunar_g_file_new_for_bookmarks ();
       window->bookmark_monitor = g_file_monitor_file (window->bookmark_file, G_FILE_MONITOR_NONE, NULL, NULL);
       if (G_LIKELY (window->bookmark_monitor != NULL))
         {
