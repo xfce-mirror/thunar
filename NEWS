@@ -1,3 +1,50 @@
+1.5.2
+=====
+- Do not unref g_file_icon_get_file() file (bug #9439).
+- Don't add duplicates of devices (bug #9440).
+- Fix typo of Trash in standard view (bug #9437).
+- Don't use deprecated g_thread_init().
+- Use GArray instead of GValueArray and new mutex API.
+- Clear cached icon when trash changed (bug #9432).
+- Also clear cache on reload of a file.
+- Keep file permissions when renaming a desktop file.
+- Write localized name of a desktop file (bug #8783).
+- Fix back/forward gestures and 8/9 button events.
+- Use seconds timers where possible.
+- Idle selecting item in shortcuts pane.
+- Do not set selection after removing files (bug #8780).
+- Fix linking on Cygwin (bug #4561).
+- Sort renamer list by clicking on name header (bug #2622).
+- Always set the icons size of the toolbar.
+- Make the entry the default location bar.
+- Don't set weight in chooser model to light (bug #7688).
+- Fallback to only default values if xfconf failed.
+- Improve generating remote display names (bug #9442).
+- Remove user directories and add bookmarks in go menu.
+- Trigger callback function when opening unmounted locations (bug #9447).
+- Don't add a bookmark to the same location twice.
+- Also watch the bookmark files.
+- Use stock home icons for ~.
+- Do not freeze on new files outsize this directory (bug #9468).
+- Some more optimizations in icon name loading.
+- Don't include notify.h if not available (bug #9480).
+- Add free space tooltip for devices.
+- Use GSequence in the list model.
+- Directly collect the full info namespace for ls dir.
+- Drop unused check for icons of executables.
+- Don't write empty session files.
+- Add support for tabs in session saving.
+- Translation updates: Amharic, Arabic, Asturian, Belarusian,
+  Bengali, Catalan (Valencian), Czech, Danish, German, Dzongkha, Greek,
+  English (United Kingdom), Esperanto, Spanish (Castilian), Estonian,
+  Basque, Finnish, French, Galician, Hebrew, Croatian, Hungarian,
+  Indonesian, Icelandic, Italian, Japanese, Georgian, Kazakh, Korean,
+  Kurdish, Lithuanian, Latvian, Macedonian, Norwegian Bokmal, Dutch
+  (Flemish), Norwegian Nynorsk, Panjabi (Punjabi), Polish, Portuguese,
+  Portuguese (Brazilian), Romanian, Russian, Sinhala, Slovak, Albanian,
+  Serbian, Swedish, Telugu, Turkish, Uyghur, Ukrainian, Urdu, Urdu
+  (Pakistan), Vietnamese, Chinese (China), Chinese (Taiwan).
+
 1.5.1
 =====
 - Show custom commands again in the menus (bug #9169).
