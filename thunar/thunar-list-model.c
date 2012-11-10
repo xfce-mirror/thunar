@@ -1197,6 +1197,7 @@ thunar_list_model_files_added (ThunarFolder    *folder,
   gint          *indices;
   GSequenceIter *row;
   GList         *lp;
+  gboolean       has_handler;
 
   /* we use a simple trick here to avoid allocating
    * GtkTreePath's again and again, by simply accessing
@@ -1205,6 +1206,9 @@ thunar_list_model_files_added (ThunarFolder    *folder,
    */
   path = gtk_tree_path_new_first ();
   indices = gtk_tree_path_get_indices (path);
+
+  /* check if we have any handlers connected for "row-inserted" */
+  has_handler = g_signal_has_handler_pending (G_OBJECT (store), store->row_inserted_id, 0, FALSE);
 
   /* process all added files */
   for (lp = files; lp != NULL; lp = lp->next)
@@ -1224,11 +1228,14 @@ thunar_list_model_files_added (ThunarFolder    *folder,
           row = g_sequence_insert_sorted (store->rows, file,
                                           thunar_list_model_cmp_func, store);
 
-          /* generate an iterator for the new item */
-          GTK_TREE_ITER_INIT (iter, store->stamp, row);
+          if (has_handler)
+            {
+              /* generate an iterator for the new item */
+              GTK_TREE_ITER_INIT (iter, store->stamp, row);
 
-          indices[0] = g_sequence_iter_get_position (row);
-          gtk_tree_model_row_inserted (GTK_TREE_MODEL (store), path, &iter);
+              indices[0] = g_sequence_iter_get_position (row);
+              gtk_tree_model_row_inserted (GTK_TREE_MODEL (store), path, &iter);
+            }
         }
     }
 
