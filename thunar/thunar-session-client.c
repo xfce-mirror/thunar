@@ -370,37 +370,43 @@ thunar_session_client_save_yourself (SmcConn              connection,
   /* check if we should save our current state */
   if (save_type == SmSaveLocal || save_type == SmSaveBoth)
     {
-      /* try to open the session file for writing */
-      fp = fopen (session_client->path, "w");
-      if (G_LIKELY (fp != NULL))
+      /* save the active windows */
+      application = thunar_application_get ();
+      windows = thunar_application_get_windows (application);
+
+      if (windows != NULL)
         {
-          /* save the active windows */
-          application = thunar_application_get ();
-          windows = thunar_application_get_windows (application);
-          for (lp = windows; lp != NULL; lp = lp->next)
+          /* try to open the session file for writing */
+          fp = fopen (session_client->path, "w");
+          if (G_LIKELY (fp != NULL))
             {
-              /* determine the directory for the window */
-              directory = thunar_window_get_current_directory (lp->data);
-              if (G_UNLIKELY (directory == NULL))
-                continue;
+              for (lp = windows; lp != NULL; lp = lp->next)
+                {
+                  /* determine the directory for the window */
+                  directory = thunar_window_get_current_directory (lp->data);
+                  if (G_UNLIKELY (directory == NULL))
+                    continue;
 
-              /* determine the role for the window */
-              role = gtk_window_get_role (lp->data);
-              if (G_UNLIKELY (role == NULL))
-                continue;
+                  /* determine the role for the window */
+                  role = gtk_window_get_role (lp->data);
+                  if (G_UNLIKELY (role == NULL))
+                    continue;
 
-              /* save the window */
-              uri = thunar_file_dup_uri (directory);
-              fprintf (fp, "[%s]\n", role);
-              fprintf (fp, "URI=%s\n\n", uri);
-              g_free (uri);
+                  /* save the window */
+                  uri = thunar_file_dup_uri (directory);
+                  fprintf (fp, "[%s]\n", role);
+                  fprintf (fp, "URI=%s\n\n", uri);
+                  g_free (uri);
+                }
+
+              /* cleanup */
+              fclose (fp);
             }
 
-          /* cleanup */
-          g_object_unref (G_OBJECT (application));
           g_list_free (windows);
-          fclose (fp);
         }
+
+      g_object_unref (G_OBJECT (application));
     }
 
   /* tell the session manager that we're done */
