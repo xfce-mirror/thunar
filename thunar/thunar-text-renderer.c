@@ -46,6 +46,7 @@ enum
   PROP_TEXT,
   PROP_WRAP_MODE,
   PROP_WRAP_WIDTH,
+  N_PROPERTIES
 };
 
 enum
@@ -143,7 +144,8 @@ struct _ThunarTextRenderer
 
 
 
-static guint text_renderer_signals[LAST_SIGNAL];
+static guint       text_renderer_signals[LAST_SIGNAL];
+static GParamSpec *text_renderer_props[N_PROPERTIES] = { NULL, };
 
 
 
@@ -172,14 +174,13 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
    *
    * Specifies how to align the lines of text with respect to each other.
    **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_ALIGNMENT,
-                                   g_param_spec_enum ("alignment",
-                                                      "alignment",
-                                                      "alignment",
-                                                      PANGO_TYPE_ALIGNMENT,
-                                                      PANGO_ALIGN_LEFT,
-                                                      EXO_PARAM_READWRITE));
+  text_renderer_props[PROP_ALIGNMENT] =
+      g_param_spec_enum ("alignment",
+                         "alignment",
+                         "alignment",
+                         PANGO_TYPE_ALIGNMENT,
+                         PANGO_ALIGN_LEFT,
+                         EXO_PARAM_READWRITE);
 
   /**
    * ThunarTextRenderer:follow-prelit:
@@ -187,13 +188,12 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
    * Whether to underline prelited cells. This is used for the single
    * click support in the detailed list view.
    **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_FOLLOW_PRELIT,
-                                   g_param_spec_boolean ("follow-prelit",
-                                                         "follow-prelit",
-                                                         "follow-prelit",
-                                                         FALSE,
-                                                         EXO_PARAM_READWRITE));
+  text_renderer_props[PROP_FOLLOW_PRELIT] =
+      g_param_spec_boolean ("follow-prelit",
+                            "follow-prelit",
+                            "follow-prelit",
+                            FALSE,
+                            EXO_PARAM_READWRITE);
 
   /**
    * ThunarTextRenderer:follow-state:
@@ -203,26 +203,24 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
    * for #ExoIconView, which doesn't draw any item state indicators
    * itself.
    **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_FOLLOW_STATE,
-                                   g_param_spec_boolean ("follow-state",
-                                                         "follow-state",
-                                                         "follow-state",
-                                                         FALSE,
-                                                         EXO_PARAM_READWRITE));
+  text_renderer_props[PROP_FOLLOW_STATE] =
+      g_param_spec_boolean ("follow-state",
+                            "follow-state",
+                            "follow-state",
+                            FALSE,
+                            EXO_PARAM_READWRITE);
 
   /**
    * ThunarTextRenderer:text:
    *
    * The text to render.
    **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_TEXT,
-                                   g_param_spec_string ("text",
-                                                        "text",
-                                                        "text",
-                                                        NULL,
-                                                        EXO_PARAM_READWRITE));
+  text_renderer_props[PROP_TEXT] =
+      g_param_spec_string ("text",
+                           "text",
+                           "text",
+                           NULL,
+                           EXO_PARAM_READWRITE);
 
   /**
    * ThunarTextRenderer:wrap-mode:
@@ -231,14 +229,13 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
    * does not have enough room to display the entire string. This property has
    * no effect unless the wrap-width property is set.
    **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_WRAP_MODE,
-                                   g_param_spec_enum ("wrap-mode",
-                                                      "wrap-mode",
-                                                      "wrap-mode",
-                                                      PANGO_TYPE_WRAP_MODE,
-                                                      PANGO_WRAP_CHAR,
-                                                      EXO_PARAM_READWRITE));
+  text_renderer_props[PROP_WRAP_MODE] =
+      g_param_spec_enum ("wrap-mode",
+                         "wrap-mode",
+                         "wrap-mode",
+                         PANGO_TYPE_WRAP_MODE,
+                         PANGO_WRAP_CHAR,
+                         EXO_PARAM_READWRITE);
 
   /**
    * ThunarTextRenderer:wrap-width:
@@ -247,13 +244,15 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
    * be used to influence at what character positions the line breaks can be placed.
    * Setting wrap-width to -1 turns wrapping off.
    **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_WRAP_WIDTH,
-                                   g_param_spec_int ("wrap-width",
-                                                     "wrap-width",
-                                                     "wrap-width",
-                                                     -1, G_MAXINT, -1,
-                                                     EXO_PARAM_READWRITE));
+  text_renderer_props[PROP_WRAP_WIDTH] =
+      g_param_spec_int ("wrap-width",
+                        "wrap-width",
+                        "wrap-width",
+                        -1, G_MAXINT, -1,
+                        EXO_PARAM_READWRITE);
+
+  /* install properties */
+  g_object_class_install_properties (gobject_class, N_PROPERTIES, text_renderer_props);
 
   /**
    * ThunarTextRenderer::edited:
