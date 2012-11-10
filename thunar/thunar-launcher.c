@@ -59,6 +59,7 @@ enum
   PROP_SELECTED_FILES,
   PROP_UI_MANAGER,
   PROP_WIDGET,
+  N_PROPERTIES
 };
 
 
@@ -183,6 +184,10 @@ static GQuark thunar_launcher_handler_quark;
 
 
 
+static GParamSpec *launcher_props[N_PROPERTIES] = { NULL, };
+
+
+
 G_DEFINE_TYPE_WITH_CODE (ThunarLauncher, thunar_launcher, G_TYPE_OBJECT,
     G_IMPLEMENT_INTERFACE (THUNAR_TYPE_BROWSER, NULL)
     G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR, thunar_launcher_navigator_init)
@@ -194,6 +199,7 @@ static void
 thunar_launcher_class_init (ThunarLauncherClass *klass)
 {
   GObjectClass *gobject_class;
+  gpointer      g_iface;
 
   /* determine the "thunar-launcher-handler" quark */
   thunar_launcher_handler_quark = g_quark_from_static_string ("thunar-launcher-handler");
@@ -204,25 +210,36 @@ thunar_launcher_class_init (ThunarLauncherClass *klass)
   gobject_class->get_property = thunar_launcher_get_property;
   gobject_class->set_property = thunar_launcher_set_property;
 
-  /* Override ThunarNavigator's properties */
-  g_object_class_override_property (gobject_class, PROP_CURRENT_DIRECTORY, "current-directory");
-
-  /* Override ThunarComponent's properties */
-  g_object_class_override_property (gobject_class, PROP_SELECTED_FILES, "selected-files");
-  g_object_class_override_property (gobject_class, PROP_UI_MANAGER, "ui-manager");
-
   /**
    * ThunarLauncher:widget:
    *
    * The #GtkWidget with which this launcher is associated.
    **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_WIDGET,
-                                   g_param_spec_object ("widget",
-                                                        "widget",
-                                                        "widget",
-                                                        GTK_TYPE_WIDGET,
-                                                        EXO_PARAM_READWRITE));
+  launcher_props[PROP_WIDGET] =
+      g_param_spec_object ("widget",
+                           "widget",
+                           "widget",
+                           GTK_TYPE_WIDGET,
+                           EXO_PARAM_READWRITE);
+
+  /* Override ThunarNavigator's properties */
+  g_iface = g_type_default_interface_peek (THUNAR_TYPE_NAVIGATOR);
+  launcher_props[PROP_CURRENT_DIRECTORY] =
+      g_param_spec_override ("current-directory",
+                             g_object_interface_find_property (g_iface, "current-directory"));
+
+  /* Override ThunarComponent's properties */
+  g_iface = g_type_default_interface_peek (THUNAR_TYPE_COMPONENT);
+  launcher_props[PROP_SELECTED_FILES] =
+      g_param_spec_override ("selected-files",
+                             g_object_interface_find_property (g_iface, "selected-files"));
+
+  launcher_props[PROP_UI_MANAGER] =
+      g_param_spec_override ("ui-manager",
+                             g_object_interface_find_property (g_iface, "ui-manager"));
+
+  /* install properties */
+  g_object_class_install_properties (gobject_class, N_PROPERTIES, launcher_props);
 }
 
 
@@ -414,7 +431,7 @@ thunar_launcher_set_current_directory (ThunarNavigator *navigator,
     g_object_ref (G_OBJECT (current_directory));
 
   /* notify listeners */
-  g_object_notify (G_OBJECT (launcher), "current-directory");
+  g_object_notify_by_pspec (G_OBJECT (launcher), launcher_props[PROP_CURRENT_DIRECTORY]);
 }
 
 
@@ -453,7 +470,7 @@ thunar_launcher_set_selected_files (ThunarComponent *component,
       thunar_launcher_update (launcher);
 
       /* notify listeners */
-      g_object_notify (G_OBJECT (launcher), "selected-files");
+      g_object_notify_by_pspec (G_OBJECT (launcher), launcher_props[PROP_SELECTED_FILES]);
     }
 }
 
@@ -519,7 +536,7 @@ thunar_launcher_set_ui_manager (ThunarComponent *component,
     }
 
   /* notify listeners */
-  g_object_notify (G_OBJECT (launcher), "ui-manager");
+  g_object_notify_by_pspec (G_OBJECT (launcher), launcher_props[PROP_UI_MANAGER]);
 }
 
 
@@ -1741,7 +1758,7 @@ thunar_launcher_set_widget (ThunarLauncher *launcher,
     }
 
   /* notify listeners */
-  g_object_notify (G_OBJECT (launcher), "widget");
+  g_object_notify_by_pspec (G_OBJECT (launcher), launcher_props[PROP_WIDGET]);
 }
 
 
