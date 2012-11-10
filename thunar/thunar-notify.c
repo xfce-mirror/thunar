@@ -22,7 +22,9 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_LIBNOTIFY
 #include <libnotify/notify.h>
+#endif
 
 #include <thunar/thunar-notify.h>
 #include <thunar/thunar-device.h>
