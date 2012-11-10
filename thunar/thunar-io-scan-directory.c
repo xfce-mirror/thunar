@@ -39,6 +39,7 @@ thunar_io_scan_directory (ThunarJob          *job,
                           GFileQueryInfoFlags flags,
                           gboolean            recursively,
                           gboolean            unlinking,
+                          gboolean            return_thunar_files,
                           GError            **error)
 {
   GFileEnumerator *enumerator;
@@ -48,6 +49,9 @@ thunar_io_scan_directory (ThunarJob          *job,
   GFile           *child_file;
   GList           *child_files = NULL;
   GList           *files = NULL;
+  const gchar     *namespace;
+  ThunarFile      *thunar_file;
+  gboolean         is_mounted;
   
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), NULL);
   _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
@@ -80,10 +84,15 @@ thunar_io_scan_directory (ThunarJob          *job,
   if (type != G_FILE_TYPE_DIRECTORY)
     return NULL;
 
+  /* determine the namespace */
+  if (return_thunar_files)
+    namespace = THUNARX_FILE_INFO_NAMESPACE;
+  else
+    namespace = G_FILE_ATTRIBUTE_STANDARD_TYPE ","
+                G_FILE_ATTRIBUTE_STANDARD_NAME;
+
   /* try to read from the direectory */
-  enumerator = g_file_enumerate_children (file,
-                                          G_FILE_ATTRIBUTE_STANDARD_TYPE ","
-                                          G_FILE_ATTRIBUTE_STANDARD_NAME,
+  enumerator = g_file_enumerate_children (file, namespace,
                                           flags, exo_job_get_cancellable (EXO_JOB (job)),
                                           &err);
 
@@ -93,36 +102,64 @@ thunar_io_scan_directory (ThunarJob          *job,
       g_propagate_error (error, err);
       return NULL;
     }
-        
-  /* query info of the first child */
-  info = g_file_enumerator_next_file (enumerator,
-                                      exo_job_get_cancellable (EXO_JOB (job)), 
-                                      &err);
 
-  /* iterate over children one by one as long as there's no error */
-  while (info != NULL && err == NULL && !exo_job_is_cancelled (EXO_JOB (job)))
+  /* iterate over children one by one */
+  while (!exo_job_is_cancelled (EXO_JOB (job)))
     {
-      /* create GFile for the child and prepend it to the file list */
+      /* query info of the child */
+      info = g_file_enumerator_next_file (enumerator,
+                                          exo_job_get_cancellable (EXO_JOB (job)), 
+                                          &err);
+
+      if (G_UNLIKELY (info == NULL))
+        break;
+
+      is_mounted = TRUE;
+      if (err != NULL)
+        {
+          if (g_error_matches (err, G_IO_ERROR, G_IO_ERROR_NOT_MOUNTED))
+            {
+              is_mounted = FALSE;
+              g_clear_error (&err);
+            }
+          else
+            {
+              /* break on errors */
+              break;
+            }
+        }
+
+      /* create GFile for the child */
       child_file = g_file_get_child (file, g_file_info_get_name (info));
-      files = thunar_g_file_list_prepend (files, child_file);
+
+      if (return_thunar_files)
+        {
+          /* Prepend the ThunarFile */
+          thunar_file = thunar_file_get_with_info (child_file, info, !is_mounted);
+          files = thunar_g_file_list_prepend (files, thunar_file);
+          g_object_unref (G_OBJECT (thunar_file));
+        }
+      else
+        {
+          /* Prepend the GFile */
+          files = thunar_g_file_list_prepend (files, child_file);
+        }
 
       /* if the child is a directory and we need to recurse ... just do so */
-      if (recursively && g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
+      if (recursively
+          && is_mounted
+          && g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
         {
           child_files = thunar_io_scan_directory (job, child_file, flags, recursively, 
-                                                  unlinking, &err);
+                                                  unlinking, return_thunar_files, &err);
 
           /* prepend children to the file list to make sure they're 
            * processed first (required for unlinking) */
           files = g_list_concat (child_files, files);
         }
-      
+
       g_object_unref (child_file);
       g_object_unref (info);
-
-      info = g_file_enumerator_next_file (enumerator, 
-                                          exo_job_get_cancellable (EXO_JOB (job)), 
-                                          &err);
     }
 
   /* release the enumerator */

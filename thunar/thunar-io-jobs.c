@@ -57,7 +57,7 @@ _tij_collect_nofollow (ThunarJob *job,
       /* try to scan the directory */
       child_file_list = thunar_io_scan_directory (job, lp->data, 
                                                   G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, 
-                                                  TRUE, unlinking, &err);
+                                                  TRUE, unlinking, FALSE, &err);
 
       /* prepend the new files to the existing list */
       file_list = thunar_g_file_list_prepend (file_list, lp->data);
@@ -1170,12 +1170,9 @@ _thunar_io_jobs_ls (ThunarJob  *job,
                     GArray     *param_values,
                     GError    **error)
 {
-  ThunarFile *file;
-  GError     *err = NULL;
-  GFile      *directory;
-  GList      *file_list = NULL;
-  GList      *lp;
-  GList      *path_list;
+  GError *err = NULL;
+  GFile  *directory;
+  GList  *file_list = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -1192,22 +1189,9 @@ _thunar_io_jobs_ls (ThunarJob  *job,
   _thunar_assert (G_IS_FILE (directory));
 
   /* collect directory contents (non-recursively) */
-  path_list = thunar_io_scan_directory (job, directory, 
+  file_list = thunar_io_scan_directory (job, directory,
                                         G_FILE_QUERY_INFO_NONE, 
-                                        FALSE, FALSE, &err);
-
-  /* turn the GFile list into a ThunarFile list */
-  for (lp = g_list_last (path_list); 
-       err == NULL && !exo_job_is_cancelled (EXO_JOB (job)) && lp != NULL; 
-       lp = lp->prev)
-    {
-      file = thunar_file_get (lp->data, &err);
-      if (G_LIKELY (file != NULL))
-        file_list = g_list_prepend (file_list, file);
-    }
-
-  /* free the GFile list */
-  thunar_g_file_list_free (path_list);
+                                        FALSE, FALSE, TRUE, &err);
 
   /* abort on errors or cancellation */
   if (err != NULL)

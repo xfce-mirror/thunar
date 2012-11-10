@@ -1005,6 +1005,7 @@ thunar_file_load (ThunarFile   *file,
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
   _thunar_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), FALSE);
+  _thunar_return_val_if_fail (G_IS_FILE (file->gfile), FALSE);
 
   /* reset the file */
   thunar_file_info_clear (file);
@@ -1100,48 +1101,74 @@ thunar_file_get (GFile   *gfile,
 }
 
 
-
 /**
- * thunar_file_get_async:
+ * thunar_file_get_with_info:
+ * @uri         : an URI or an absolute filename.
+ * @info        : #GFileInfo to use when loading the info.
+ * @not_mounted : if the file is mounted.
+ *
+ * Looks up the #ThunarFile referred to by @file. This function may return a
+ * ThunarFile even though the file doesn't actually exist. This is the case
+ * with remote URIs (like SFTP) for instance, if they are not mounted.
+ *
+ * This function does not use g_file_query_info() to get the info,
+ * but takes a reference on the @info,
+ *
+ * The caller is responsible to call g_object_unref()
+ * when done with the returned object.
+ *
+ * Return value: the #ThunarFile for @file or %NULL on errors.
  **/
-void
-thunar_file_get_async (GFile            *location,
-                       GCancellable     *cancellable,
-                       ThunarFileGetFunc func,
-                       gpointer          user_data)
+ThunarFile *
+thunar_file_get_with_info (GFile     *gfile,
+                           GFileInfo *info,
+                           gboolean   not_mounted)
 {
-  ThunarFile        *file;
-  ThunarFileGetData *data;
+  ThunarFile *file;
 
-  _thunar_return_if_fail (G_IS_FILE (location));
-  _thunar_return_if_fail (func != NULL);
-  
+  _thunar_return_val_if_fail (G_IS_FILE (gfile), NULL);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (info), NULL);
+
   /* check if we already have a cached version of that file */
-  file = thunar_file_cache_lookup (location);
+  file = thunar_file_cache_lookup (gfile);
   if (G_UNLIKELY (file != NULL))
     {
-      /* call the return function with the file from the cache */
-      (func) (location, file, NULL, user_data);
+      /* take a reference for the caller */
+      g_object_ref (file);
     }
   else
     {
-      /* allocate get data */
-      data = g_slice_new0 (ThunarFileGetData);
-      data->user_data = user_data;
-      data->func = func;
-      if (cancellable != NULL)
-        data->cancellable = g_object_ref (cancellable);
+      /* allocate a new object */
+      file = g_object_new (THUNAR_TYPE_FILE, NULL);
+      file->gfile = g_object_ref (gfile);
 
-      /* load the file information asynchronously */
-      g_file_query_info_async (location,
-                               THUNARX_FILE_INFO_NAMESPACE,
-                               G_FILE_QUERY_INFO_NONE,
-                               G_PRIORITY_DEFAULT,
-                               cancellable,
-                               thunar_file_get_async_finish,
-                               data);
+      /* reset the file */
+      thunar_file_info_clear (file);
+
+      /* set the passed info */
+      file->info = g_object_ref (info);
+
+      /* update the file from the information */
+      thunar_file_info_reload (file, NULL);
+
+      /* update the mounted info */
+      if (not_mounted)
+        FLAG_UNSET (file, THUNAR_FILE_FLAG_IS_MOUNTED);
+
+      /* setup lock until the file is inserted */
+      G_LOCK (file_cache_mutex);
+
+      /* insert the file into the cache */
+      g_hash_table_insert (file_cache, g_object_ref (file->gfile), file);
+
+      /* done inserting in the cache */
+      G_UNLOCK (file_cache_mutex);
     }
+
+  return file;
 }
+
+
 
 
 
@@ -1174,6 +1201,50 @@ thunar_file_get_for_uri (const gchar *uri,
   g_object_unref (path);
 
   return file;
+}
+
+
+
+/**
+ * thunar_file_get_async:
+ **/
+void
+thunar_file_get_async (GFile            *location,
+                       GCancellable     *cancellable,
+                       ThunarFileGetFunc func,
+                       gpointer          user_data)
+{
+  ThunarFile        *file;
+  ThunarFileGetData *data;
+
+  _thunar_return_if_fail (G_IS_FILE (location));
+  _thunar_return_if_fail (func != NULL);
+
+  /* check if we already have a cached version of that file */
+  file = thunar_file_cache_lookup (location);
+  if (G_UNLIKELY (file != NULL))
+    {
+      /* call the return function with the file from the cache */
+      (func) (location, file, NULL, user_data);
+    }
+  else
+    {
+      /* allocate get data */
+      data = g_slice_new0 (ThunarFileGetData);
+      data->user_data = user_data;
+      data->func = func;
+      if (cancellable != NULL)
+        data->cancellable = g_object_ref (cancellable);
+
+      /* load the file information asynchronously */
+      g_file_query_info_async (location,
+                               THUNARX_FILE_INFO_NAMESPACE,
+                               G_FILE_QUERY_INFO_NONE,
+                               G_PRIORITY_DEFAULT,
+                               cancellable,
+                               thunar_file_get_async_finish,
+                               data);
+    }
 }
 
 
@@ -3330,7 +3401,7 @@ thunar_file_get_icon_name (const ThunarFile   *file,
        * 'Thunar', 'xfmedia', etc.).
        */
       if (G_UNLIKELY (thunar_file_is_executable (file)))
-        {
+        {g_message("exect crap");
           icon_name = g_file_get_basename (file->gfile);
           if (G_LIKELY (!gtk_icon_theme_has_icon (icon_theme, icon_name)))
             {

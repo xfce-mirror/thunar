@@ -118,12 +118,15 @@ GType             thunar_file_get_type             (void) G_GNUC_CONST;
 
 ThunarFile       *thunar_file_get                  (GFile                  *file,
                                                     GError                **error);
+ThunarFile       *thunar_file_get_with_info        (GFile                  *file,
+                                                    GFileInfo              *info,
+                                                    gboolean                not_mounted);
 ThunarFile       *thunar_file_get_for_uri          (const gchar            *uri,
                                                     GError                **error);
-void              thunar_file_get_async            (GFile                 *location,
-                                                    GCancellable          *cancellable,
-                                                    ThunarFileGetFunc      func,
-                                                    gpointer               user_data);
+void              thunar_file_get_async            (GFile                  *location,
+                                                    GCancellable           *cancellable,
+                                                    ThunarFileGetFunc       func,
+                                                    gpointer                user_data);
 
 GFile            *thunar_file_get_file             (const ThunarFile       *file) G_GNUC_PURE;
 

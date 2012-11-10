@@ -37,13 +37,10 @@ _thunar_misc_jobs_load_templates (ThunarJob  *job,
                                   GArray     *param_values,
                                   GError    **error)
 {
-  ThunarFile  *file;
   GtkWidget   *menu;
   GFile       *home_dir;
   GFile       *templates_dir;
   GList       *files = NULL;
-  GList       *lp;
-  GList       *paths = NULL;
   const gchar *path;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
@@ -62,22 +59,10 @@ _thunar_misc_jobs_load_templates (ThunarJob  *job,
 
   if (G_LIKELY (!g_file_equal (templates_dir, home_dir)))
     {
-      paths = thunar_io_scan_directory (job, templates_dir, 
+      /* load the ThunarFiles */
+      files = thunar_io_scan_directory (job, templates_dir,
                                         G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                                        TRUE, FALSE, NULL);
-
-      /* turn the GFile list into a ThunarFile list */
-      for (lp = g_list_last (paths); 
-           lp != NULL && !exo_job_is_cancelled (EXO_JOB (job));
-           lp = lp->prev)
-        {
-          file = thunar_file_get (lp->data, NULL);
-          if (G_LIKELY (file != NULL))
-            files = g_list_prepend (files, file);
-        }
-
-      /* free the GFile list */
-      thunar_g_file_list_free (paths);
+                                        TRUE, FALSE, TRUE, NULL);
     }
 
   g_object_unref (templates_dir);
