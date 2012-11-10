@@ -77,6 +77,7 @@ enum
   PROP_STATUSBAR_TEXT,
   PROP_UI_MANAGER,
   PROP_ZOOM_LEVEL,
+  N_PROPERTIES
 };
 
 /* Signal identifiers */
@@ -412,7 +413,8 @@ static const GtkTargetEntry drop_targets[] =
 
 
 
-static guint standard_view_signals[LAST_SIGNAL];
+static guint       standard_view_signals[LAST_SIGNAL];
+static GParamSpec *standard_view_props[N_PROPERTIES] = { NULL, };
 
 
 
@@ -429,6 +431,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   GtkWidgetClass *gtkwidget_class;
   GtkBindingSet  *binding_set;
   GObjectClass   *gobject_class;
+  gpointer        g_iface;
 
   g_type_class_add_private (klass, sizeof (ThunarStandardViewPrivate));
 
@@ -454,53 +457,74 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
    *
    * Whether the folder associated with this view is
    * currently being loaded from the underlying media.
+   *
+   * Override property to set the property as writable
+   * for the binding.
    **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_LOADING,
-                                   g_param_spec_override ("loading",
-                                                          g_param_spec_boolean ("loading",
-                                                                                "loading",
-                                                                                "loading",
-                                                                                FALSE,
-                                                                                EXO_PARAM_READWRITE)));
+  standard_view_props[PROP_LOADING] =
+      g_param_spec_override ("loading",
+                             g_param_spec_boolean ("loading",
+                                                   "loading",
+                                                   "loading",
+                                                   FALSE,
+                                                   EXO_PARAM_READWRITE));
 
   /**
    * ThunarStandardView:display-name:
    *
    * Display name of the current directory, for label text
    **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_DISPLAY_NAME,
-                                   g_param_spec_string ("display-name",
-                                                        "display-name",
-                                                        "display-name",
-                                                        NULL,
-                                                        EXO_PARAM_READABLE));
+  standard_view_props[PROP_DISPLAY_NAME] =
+      g_param_spec_string ("display-name",
+                           "display-name",
+                           "display-name",
+                           NULL,
+                           EXO_PARAM_READABLE);
 
   /**
    * ThunarStandardView:parse-name:
    *
    * Full parsed name of the current directory, for label tooltip
    **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_TOOLTIP_TEXT,
-                                   g_param_spec_string ("tooltip-text",
-                                                        "tooltip-text",
-                                                        "tooltip-text",
-                                                        NULL,
-                                                        EXO_PARAM_READABLE));
+  standard_view_props[PROP_TOOLTIP_TEXT] =
+      g_param_spec_string ("tooltip-text",
+                           "tooltip-text",
+                           "tooltip-text",
+                           NULL,
+                           EXO_PARAM_READABLE);
 
   /* override ThunarComponent's properties */
-  g_object_class_override_property (gobject_class, PROP_SELECTED_FILES, "selected-files");
-  g_object_class_override_property (gobject_class, PROP_UI_MANAGER, "ui-manager");
+  g_iface = g_type_default_interface_peek (THUNAR_TYPE_COMPONENT);
+  standard_view_props[PROP_SELECTED_FILES] =
+      g_param_spec_override ("selected-files",
+                             g_object_interface_find_property (g_iface, "selected-files"));
+
+  standard_view_props[PROP_UI_MANAGER] =
+      g_param_spec_override ("ui-manager",
+                             g_object_interface_find_property (g_iface, "ui-manager"));
 
   /* override ThunarNavigator's properties */
-  g_object_class_override_property (gobject_class, PROP_CURRENT_DIRECTORY, "current-directory");
+  g_iface = g_type_default_interface_peek (THUNAR_TYPE_NAVIGATOR);
+  standard_view_props[PROP_CURRENT_DIRECTORY] =
+      g_param_spec_override ("current-directory",
+                             g_object_interface_find_property (g_iface, "current-directory"));
 
   /* override ThunarView's properties */
-  g_object_class_override_property (gobject_class, PROP_STATUSBAR_TEXT, "statusbar-text");
-  g_object_class_override_property (gobject_class, PROP_SHOW_HIDDEN, "show-hidden");
-  g_object_class_override_property (gobject_class, PROP_ZOOM_LEVEL, "zoom-level");
+  g_iface = g_type_default_interface_peek (THUNAR_TYPE_VIEW);
+  standard_view_props[PROP_STATUSBAR_TEXT] =
+      g_param_spec_override ("statusbar-text",
+                             g_object_interface_find_property (g_iface, "statusbar-text"));
+
+  standard_view_props[PROP_SHOW_HIDDEN] =
+      g_param_spec_override ("show-hidden",
+                             g_object_interface_find_property (g_iface, "show-hidden"));
+
+  standard_view_props[PROP_ZOOM_LEVEL] =
+      g_param_spec_override ("zoom-level",
+                             g_object_interface_find_property (g_iface, "zoom-level"));
+
+  /* install all properties */
+  g_object_class_install_properties (gobject_class, N_PROPERTIES, standard_view_props);
 
   /**
    * ThunarStandardView::start-opn-location:
@@ -1226,7 +1250,7 @@ thunar_standard_view_set_ui_manager (ThunarComponent *component,
     }
 
   /* let others know that we have a new manager */
-  g_object_notify (G_OBJECT (standard_view), "ui-manager");
+  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_UI_MANAGER]);
 }
 
 
@@ -1436,11 +1460,11 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
   /* NOTE: quickly after this we always trigger a size allocate wich will handle this */
 
   /* notify all listeners about the new/old current directory */
-  g_object_notify (G_OBJECT (standard_view), "current-directory");
+  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_CURRENT_DIRECTORY]);
 
   /* update tab label and tooltip */
-  g_object_notify (G_OBJECT (standard_view), "display-name");
-  g_object_notify (G_OBJECT (standard_view), "tooltip-text");
+  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_DISPLAY_NAME]);
+  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_TOOLTIP_TEXT]);
 
   /* restore the selection from the history */
   thunar_standard_view_restore_selection_from_history (standard_view);
@@ -1558,8 +1582,8 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
 
   /* notify listeners */
   g_object_freeze_notify (G_OBJECT (standard_view));
-  g_object_notify (G_OBJECT (standard_view), "loading");
-  g_object_notify (G_OBJECT (standard_view), "statusbar-text");
+  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_LOADING]);
+  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_STATUSBAR_TEXT]);
   g_object_thaw_notify (G_OBJECT (standard_view));
 }
 
@@ -1629,7 +1653,7 @@ thunar_standard_view_set_zoom_level (ThunarView     *view,
   if (G_LIKELY (standard_view->priv->zoom_level != zoom_level))
     {
       standard_view->priv->zoom_level = zoom_level;
-      g_object_notify (G_OBJECT (standard_view), "zoom-level");
+      g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_ZOOM_LEVEL]);
     }
 }
 
@@ -2058,7 +2082,7 @@ thunar_standard_view_update_statusbar_text (ThunarStandardView *standard_view)
   standard_view->statusbar_text = NULL;
 
   /* tell everybody that the statusbar text may have changed */
-  g_object_notify (G_OBJECT (standard_view), "statusbar-text");
+  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_STATUSBAR_TEXT]);
 }
 
 
@@ -2153,8 +2177,8 @@ thunar_standard_view_current_directory_changed (ThunarFile         *current_dire
   _thunar_return_if_fail (standard_view->priv->current_directory == current_directory);
 
   /* update tab label and tooltip */
-  g_object_notify (G_OBJECT (standard_view), "display-name");
-  g_object_notify (G_OBJECT (standard_view), "tooltip-text");
+  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_DISPLAY_NAME]);
+  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_TOOLTIP_TEXT]);
 }
 
 
@@ -3635,8 +3659,8 @@ thunar_standard_view_loading_unbound (gpointer user_data)
     {
       standard_view->loading = FALSE;
       g_object_freeze_notify (G_OBJECT (standard_view));
-      g_object_notify (G_OBJECT (standard_view), "loading");
-      g_object_notify (G_OBJECT (standard_view), "statusbar-text");
+      g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_LOADING]);
+      g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_STATUSBAR_TEXT]);
       g_object_thaw_notify (G_OBJECT (standard_view));
     }
 }
@@ -4165,6 +4189,6 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   thunar_standard_view_update_statusbar_text (standard_view);
 
   /* emit notification for "selected-files" */
-  g_object_notify (G_OBJECT (standard_view), "selected-files");
+  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_SELECTED_FILES]);
 }
 
