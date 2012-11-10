@@ -3377,7 +3377,7 @@ thunar_file_get_icon_name (const ThunarFile   *file,
           if (G_LIKELY (names != NULL))
             {
               for (i = 0; names[i] != NULL; ++i)
-                if (names[i] != NULL
+                if (*names[i] != '(' /* see gnome bug 688042 */
                     && gtk_icon_theme_has_icon (icon_theme, names[i]))
                   {
                     icon_name = g_strdup (names[i]);
