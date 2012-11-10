@@ -3585,3 +3585,81 @@ thunar_window_scroll_to_file (ThunarWindow *window,
 }
 
 
+
+gchar **
+thunar_window_get_directories (ThunarWindow *window,
+                               gint         *active_page)
+{
+  gint         n;
+  gint         n_pages;
+  gchar      **uris;
+  GtkWidget   *view;
+  ThunarFile  *directory;
+
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), NULL);
+
+  n_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook));
+  if (G_UNLIKELY (n_pages == 0))
+    return NULL;
+
+  /* create array of uris */
+  uris = g_new0 (gchar *, n_pages + 1);
+  for (n = 0; n < n_pages; n++)
+    {
+      /* get the view */
+      view = gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook), n);
+      _thunar_return_val_if_fail (THUNAR_IS_NAVIGATOR (view), FALSE);
+
+      /* get the directory of the view */
+      directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (view));
+      _thunar_return_val_if_fail (THUNAR_IS_FILE (directory), FALSE);
+
+      /* add to array */
+      uris[n] = thunar_file_dup_uri (directory);
+    }
+
+  /* selected tab */
+  if (active_page != NULL)
+    *active_page = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook));
+
+  return uris;
+}
+
+
+
+gboolean
+thunar_window_set_directories (ThunarWindow   *window,
+                               gchar         **uris,
+                               gint            active_page)
+{
+  ThunarFile *directory;
+  guint       n;
+
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+  _thunar_return_val_if_fail (uris != NULL, FALSE);
+
+  for (n = 0; uris[n] != NULL; n++)
+    {
+      /* get the file for the uri */
+      directory = thunar_file_get_for_uri (uris[n], NULL);
+      if (G_UNLIKELY (directory == NULL))
+        continue;
+
+      /* open the directory in a new notebook */
+      if (thunar_file_is_directory (directory))
+        {
+          if (gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook)) == 0)
+            thunar_window_set_current_directory (window, directory);
+          else
+            thunar_window_notebook_insert (window, directory);
+        }
+
+      g_object_unref (G_OBJECT (directory));
+    }
+
+  /* select the page */
+  gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook), active_page);
+
+  /* we succeeded if new pages have been opened */
+  return gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook)) > 0;
+}

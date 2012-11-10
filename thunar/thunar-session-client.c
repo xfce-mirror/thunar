@@ -269,12 +269,12 @@ static void
 thunar_session_client_restore (ThunarSessionClient *session_client)
 {
   ThunarApplication *application;
-  const gchar       *uri;
-  ThunarFile        *directory;
+  gchar            **uris;
   GtkWidget         *window;
   XfceRc            *rc;
   gchar            **roles;
   guint              n;
+  gint               active_tab;
 
   /* try to open the session file */
   rc = xfce_rc_simple_open (session_client->path, TRUE);
@@ -288,33 +288,33 @@ thunar_session_client_restore (ThunarSessionClient *session_client)
   roles = xfce_rc_get_groups (rc);
   for (n = 0; roles[n] != NULL; ++n)
     {
+      /* skip the null group */
+      if (strcmp (roles[n], "[NULL]") == 0)
+        continue;
+
       /* enter the group */
       xfce_rc_set_group (rc, roles[n]);
 
       /* determine the URI for the new window */
-      uri = xfce_rc_read_entry (rc, "URI", NULL);
-      if (G_UNLIKELY (uri == NULL))
+      uris = xfce_rc_read_list_entry (rc, "URI", ";");
+      g_message ("%d uris", uris ? g_strv_length (uris) : 0);
+      if (G_UNLIKELY (uris == NULL))
         continue;
 
-      /* determine the directory for the new window */
-      directory = thunar_file_get_for_uri (uri, NULL);
-      if (G_UNLIKELY (directory == NULL))
-        continue;
+      /* active tab */
+      active_tab = xfce_rc_read_int_entry (rc, "PAGE", -1);
 
-      /* verify that we have a directory */
-      if (thunar_file_is_directory (directory))
-        {
-          /* open the new window */
-          window = g_object_new (THUNAR_TYPE_WINDOW,
-                                 "current-directory", directory,
-                                 "role", roles[n],
-                                 NULL);
-          thunar_application_take_window (application, GTK_WINDOW (window));
-          gtk_widget_show (window);
-        }
+      /* open the new window */
+      window = g_object_new (THUNAR_TYPE_WINDOW, "role", roles[n], NULL);
+      thunar_application_take_window (application, GTK_WINDOW (window));
+      gtk_widget_show (window);
+
+      /* open tabs */
+      if (!thunar_window_set_directories (THUNAR_WINDOW (window), uris, active_tab))
+        gtk_widget_destroy (window);
 
       /* cleanup */
-      g_object_unref (G_OBJECT (directory));
+      g_strfreev (uris);
     }
 
   /* cleanup */
@@ -358,11 +358,12 @@ thunar_session_client_save_yourself (SmcConn              connection,
 {
   ThunarApplication *application;
   const gchar       *role;
-  ThunarFile        *directory;
+  gchar            **uris;
   GList             *windows;
   GList             *lp;
-  gchar             *uri;
+  guint              n;
   FILE              *fp;
+  gint               active_page;
 
   _thunar_return_if_fail (THUNAR_IS_SESSION_CLIENT (session_client));
   _thunar_return_if_fail (session_client->connection == connection);
@@ -382,21 +383,26 @@ thunar_session_client_save_yourself (SmcConn              connection,
             {
               for (lp = windows; lp != NULL; lp = lp->next)
                 {
-                  /* determine the directory for the window */
-                  directory = thunar_window_get_current_directory (lp->data);
-                  if (G_UNLIKELY (directory == NULL))
-                    continue;
-
                   /* determine the role for the window */
                   role = gtk_window_get_role (lp->data);
                   if (G_UNLIKELY (role == NULL))
                     continue;
 
+                  /* determine the directories for the window */
+                  uris = thunar_window_get_directories (lp->data, &active_page);
+                  if (G_UNLIKELY (uris == NULL))
+                    continue;
+
                   /* save the window */
-                  uri = thunar_file_dup_uri (directory);
                   fprintf (fp, "[%s]\n", role);
-                  fprintf (fp, "URI=%s\n\n", uri);
-                  g_free (uri);
+                  fprintf (fp, "PAGE=%d\n", active_page);
+                  fprintf (fp, "URI=");
+                  for (n = 0; uris[n] != NULL; n++)
+                    fprintf (fp, "%s;", uris[n]);
+                  fprintf (fp, "\n\n");
+
+                  /* cleanup */
+                  g_strfreev (uris);
                 }
 
               /* cleanup */

@@ -3816,6 +3816,7 @@ thunar_standard_view_request_thumbnails_real (ThunarStandardView *standard_view,
   GList       *visible_files = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (standard_view->icon_factory), FALSE);
 
   /* determine whether the user wants us to create thumbnails */
   g_object_get (standard_view->icon_factory, "show-thumbnails", &show_thumbnails, NULL);
