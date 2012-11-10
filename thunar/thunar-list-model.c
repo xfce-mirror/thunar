@@ -49,6 +49,7 @@ enum
   PROP_FOLDERS_FIRST,
   PROP_NUM_FILES,
   PROP_SHOW_HIDDEN,
+  N_PROPERTIES
 };
 
 /* Signal identifiers */
@@ -229,7 +230,8 @@ struct _ThunarListModel
 
 
 
-static guint list_model_signals[LAST_SIGNAL];
+static guint       list_model_signals[LAST_SIGNAL];
+static GParamSpec *list_model_props[N_PROPERTIES] = { NULL, };
 
 
 
@@ -255,79 +257,76 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
    *
    * Tells whether the sorting should be case sensitive.
    **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_CASE_SENSITIVE,
-                                   g_param_spec_boolean ("case-sensitive",
-                                                         "case-sensitive",
-                                                         "case-sensitive",
-                                                         TRUE,
-                                                         EXO_PARAM_READWRITE));
+  list_model_props[PROP_CASE_SENSITIVE] =
+      g_param_spec_boolean ("case-sensitive",
+                            "case-sensitive",
+                            "case-sensitive",
+                            TRUE,
+                            EXO_PARAM_READWRITE);
 
   /**
    * ThunarListModel:date-style:
    *
    * The style used to format dates.
    **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_DATE_STYLE,
-                                   g_param_spec_enum ("date-style",
-                                                      "date-style",
-                                                      "date-style",
-                                                      THUNAR_TYPE_DATE_STYLE,
-                                                      THUNAR_DATE_STYLE_SIMPLE,
-                                                      EXO_PARAM_READWRITE));
+  list_model_props[PROP_DATE_STYLE] =
+      g_param_spec_enum ("date-style",
+                         "date-style",
+                         "date-style",
+                         THUNAR_TYPE_DATE_STYLE,
+                         THUNAR_DATE_STYLE_SIMPLE,
+                         EXO_PARAM_READWRITE);
 
   /**
    * ThunarListModel:folder:
    *
    * The folder presented by this #ThunarListModel.
    **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_FOLDER,
-                                   g_param_spec_object ("folder",
-                                                        "folder",
-                                                        "folder",
-                                                        THUNAR_TYPE_FOLDER,
-                                                        EXO_PARAM_READWRITE));
+  list_model_props[PROP_FOLDER] =
+      g_param_spec_object ("folder",
+                           "folder",
+                           "folder",
+                           THUNAR_TYPE_FOLDER,
+                           EXO_PARAM_READWRITE);
 
   /**
    * ThunarListModel::folders-first:
    *
    * Tells whether to always sort folders before other files.
    **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_FOLDERS_FIRST,
-                                   g_param_spec_boolean ("folders-first",
-                                                         "folders-first",
-                                                         "folders-first",
-                                                         TRUE,
-                                                         EXO_PARAM_READWRITE));
+  list_model_props[PROP_FOLDERS_FIRST] =
+      g_param_spec_boolean ("folders-first",
+                            "folders-first",
+                            "folders-first",
+                            TRUE,
+                            EXO_PARAM_READWRITE);
 
   /**
    * ThunarListModel::num-files:
    *
    * The number of files in the folder presented by this #ThunarListModel.
    **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_NUM_FILES,
-                                   g_param_spec_uint ("num-files",
-                                                      "num-files",
-                                                      "num-files",
-                                                      0, G_MAXUINT, 0,
-                                                      EXO_PARAM_READABLE));
+  list_model_props[PROP_NUM_FILES] =
+      g_param_spec_uint ("num-files",
+                         "num-files",
+                         "num-files",
+                         0, G_MAXUINT, 0,
+                         EXO_PARAM_READABLE);
 
   /**
    * ThunarListModel::show-hidden:
    *
    * Tells whether to include hidden (and backup) files.
    **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_SHOW_HIDDEN,
-                                   g_param_spec_boolean ("show-hidden",
-                                                         "show-hidden",
-                                                         "show-hidden",
-                                                         FALSE,
-                                                         EXO_PARAM_READWRITE));
+  list_model_props[PROP_SHOW_HIDDEN] =
+      g_param_spec_boolean ("show-hidden",
+                            "show-hidden",
+                            "show-hidden",
+                            FALSE,
+                            EXO_PARAM_READWRITE);
+
+  /* install properties */
+  g_object_class_install_properties (gobject_class, N_PROPERTIES, list_model_props);
 
   /**
    * ThunarListModel::error:
@@ -1243,7 +1242,7 @@ thunar_list_model_files_added (ThunarFolder    *folder,
   gtk_tree_path_free (path);
 
   /* number of visible files may have changed */
-  g_object_notify (G_OBJECT (store), "num-files");
+  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_NUM_FILES]);
 }
 
 
@@ -1304,7 +1303,7 @@ thunar_list_model_files_removed (ThunarFolder    *folder,
     }
 
   /* this probably changed */
-  g_object_notify (G_OBJECT (store), "num-files");
+  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_NUM_FILES]);
 }
 
 
@@ -1643,7 +1642,7 @@ thunar_list_model_set_case_sensitive (ThunarListModel *store,
       thunar_list_model_sort (store);
 
       /* notify listeners */
-      g_object_notify (G_OBJECT (store), "case-sensitive");
+      g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_CASE_SENSITIVE]);
     }
 }
 
@@ -1687,7 +1686,7 @@ thunar_list_model_set_date_style (ThunarListModel *store,
       store->date_style = date_style;
 
       /* notify listeners */
-      g_object_notify (G_OBJECT (store), "date-style");
+      g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_DATE_STYLE]);
 
       /* emit a "changed" signal for each row, so the display is reloaded with the new date style */
       gtk_tree_model_foreach (GTK_TREE_MODEL (store), (GtkTreeModelForeachFunc) gtk_tree_model_row_changed, NULL);
@@ -1804,8 +1803,8 @@ thunar_list_model_set_folder (ThunarListModel *store,
     }
 
   /* notify listeners that we have a new folder */
-  g_object_notify (G_OBJECT (store), "folder");
-  g_object_notify (G_OBJECT (store), "num-files");
+  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_FOLDER]);
+  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_NUM_FILES]);
   g_object_thaw_notify (G_OBJECT (store));
 }
 
@@ -1846,7 +1845,7 @@ thunar_list_model_set_folders_first (ThunarListModel *store,
 
   /* apply the new setting (re-sorting the store) */
   store->sort_folders_first = folders_first;
-  g_object_notify (G_OBJECT (store), "folders-first");
+  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_FOLDERS_FIRST]);
   thunar_list_model_sort (store);
 }
 
@@ -1948,8 +1947,8 @@ thunar_list_model_set_show_hidden (ThunarListModel *store,
 
   /* notify listeners about the new setting */
   g_object_freeze_notify (G_OBJECT (store));
-  g_object_notify (G_OBJECT (store), "num-files");
-  g_object_notify (G_OBJECT (store), "show-hidden");
+  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_NUM_FILES]);
+  g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_SHOW_HIDDEN]);
   g_object_thaw_notify (G_OBJECT (store));
 }
 
