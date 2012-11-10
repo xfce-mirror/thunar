@@ -2861,7 +2861,7 @@ thunar_file_get_deletion_date (const ThunarFile *file,
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (G_IS_FILE_INFO (file->info), NULL);
 
-  date = g_file_info_get_attribute_string (file->info, "trash::deletion-date");
+  date = g_file_info_get_attribute_string (file->info, G_FILE_ATTRIBUTE_TRASH_DELETION_DATE);
   if (G_UNLIKELY (date == NULL))
     return NULL;
 
@@ -2893,7 +2893,7 @@ thunar_file_get_original_path (const ThunarFile *file)
   if (file->info == NULL)
     return NULL;
 
-  return g_file_info_get_attribute_byte_string (file->info, "trash::orig-path");
+  return g_file_info_get_attribute_byte_string (file->info, G_FILE_ATTRIBUTE_TRASH_ORIG_PATH);
 }
 
 
@@ -3323,7 +3323,7 @@ thunar_file_get_preview_icon (const ThunarFile *file)
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (G_IS_FILE_INFO (file->info), NULL);
 
-  icon = g_file_info_get_attribute_object (file->info, "preview::icon");
+  icon = g_file_info_get_attribute_object (file->info, G_FILE_ATTRIBUTE_PREVIEW_ICON);
   if (G_LIKELY (icon != NULL))
     return G_ICON (icon);
 
