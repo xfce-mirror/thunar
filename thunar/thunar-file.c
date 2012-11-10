@@ -3392,24 +3392,6 @@ thunar_file_get_icon_name (const ThunarFile   *file,
             icon_name = g_file_get_path (icon_file);
         }
     }
-  
-  if (icon_name == NULL)
-    {
-      /* try to be smart when determining icons for executable files
-       * in that we use the name of the file as icon name (which will
-       * work for quite a lot of binaries, e.g. 'Terminal', 'mousepad',
-       * 'Thunar', 'xfmedia', etc.).
-       */
-      if (G_UNLIKELY (thunar_file_is_executable (file)))
-        {g_message("exect crap");
-          icon_name = g_file_get_basename (file->gfile);
-          if (G_LIKELY (!gtk_icon_theme_has_icon (icon_theme, icon_name)))
-            {
-              g_free (icon_name);
-              icon_name = NULL;
-            }
-        }
-    }
 
   /* check if we have an accept icon for the icon we found */
   if (icon_name != NULL
