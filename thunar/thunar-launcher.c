@@ -949,7 +949,7 @@ thunar_launcher_update_idle (gpointer data)
            * Unfortunately this is not supported by GIO directly */
 
           /* drop the default application from the list */
-          applications = g_list_remove (applications, applications->data);
+          applications = g_list_delete_link (applications, applications);
         }
       else if (G_UNLIKELY (n_selected_files == 1))
         {
@@ -1048,6 +1048,13 @@ thunar_launcher_update_idle (gpointer data)
 
       /* FIXME Add desktop actions here. Unfortunately they are not supported by
        * GIO, so we'll have to roll our own thing here */
+
+      /* schedule an update of the "Send To" menu */
+      if (G_LIKELY (launcher->sendto_idle_id == 0))
+        {
+          launcher->sendto_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_launcher_sendto_idle,
+                                                      launcher, thunar_launcher_sendto_idle_destroy);
+        }
     }
 
   return FALSE;
@@ -1064,20 +1071,73 @@ thunar_launcher_update_idle_destroy (gpointer data)
 
 
 static void
+thunar_launcher_update_check (ThunarLauncher *launcher)
+{
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  /* check if the menu is in a dirty state */
+  if (launcher->launcher_idle_id != 0)
+    {
+      /* stop the timeout */
+      g_source_remove (launcher->launcher_idle_id);
+
+      /* force an update */
+      thunar_launcher_update_idle (launcher);
+
+      /* ui update */
+      gtk_ui_manager_ensure_update (launcher->ui_manager);
+    }
+}
+
+
+
+static void
 thunar_launcher_update (ThunarLauncher *launcher)
 {
-  /* schedule an update of the launcher items */
-  if (G_LIKELY (launcher->launcher_idle_id == 0))
+  GSList    *proxies, *lp;
+  GtkWidget *menu;
+  gboolean   instant_update;
+
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  proxies = gtk_action_get_proxies (launcher->action_open);
+  instant_update = (proxies == NULL);
+  for (lp = proxies; lp != NULL; lp = lp->next)
     {
-      launcher->launcher_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_launcher_update_idle,
-                                                    launcher, thunar_launcher_update_idle_destroy);
+      menu = gtk_widget_get_toplevel (lp->data);
+      if (G_LIKELY (menu != NULL))
+        {
+          /* instant update if a menu is visible */
+          if (gtk_widget_get_visible (menu))
+            instant_update = TRUE;
+
+          /* watch menu changes */
+          g_signal_handlers_disconnect_by_func (G_OBJECT (menu), G_CALLBACK (thunar_launcher_update_check), launcher);
+          g_signal_connect_swapped (G_OBJECT (menu), "show", G_CALLBACK (thunar_launcher_update_check), launcher);
+        }
     }
 
-  /* schedule an update of the "Send To" menu */
-  if (G_LIKELY (launcher->sendto_idle_id == 0))
+  /* stop pending timeouts */
+  if (launcher->launcher_idle_id != 0)
+    g_source_remove (launcher->launcher_idle_id);
+
+  if (instant_update)
     {
-      launcher->sendto_idle_id = g_idle_add_full (G_PRIORITY_LOW + 50, thunar_launcher_sendto_idle,
-                                                  launcher, thunar_launcher_sendto_idle_destroy);
+      /* directly update without interruption */
+      thunar_launcher_update_idle (launcher);
+    }
+  else
+    {
+      /* assume all actions are working */
+      gtk_action_set_sensitive (launcher->action_open, TRUE);
+      gtk_action_set_visible (launcher->action_open_with_other, TRUE);
+      gtk_action_set_visible (launcher->action_open_in_new_window, TRUE);
+      gtk_action_set_visible (launcher->action_open_in_new_tab, TRUE);
+      gtk_action_set_visible (launcher->action_open_with_other_in_menu, TRUE);
+
+      /* delayed update */
+      launcher->launcher_idle_id = g_timeout_add_seconds_full (G_PRIORITY_LOW, 5, thunar_launcher_update_idle,
+                                                               launcher, thunar_launcher_update_idle_destroy);
     }
 }
 
@@ -1263,6 +1323,11 @@ thunar_launcher_action_open (GtkAction      *action,
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
+  /* force update if still dirty */
+  thunar_launcher_update_check (launcher);
+  if (!gtk_action_get_sensitive (action))
+    return;
+
   /* check if we have a mime handler associated with the action */
   app_info = g_object_get_qdata (G_OBJECT (action), thunar_launcher_handler_quark);
   if (G_LIKELY (app_info != NULL))
@@ -1272,19 +1337,22 @@ thunar_launcher_action_open (GtkAction      *action,
       thunar_launcher_open_paths (app_info, selected_paths, launcher);
       thunar_g_file_list_free (selected_paths);
     }
-  else if (g_list_length (launcher->selected_files) == 1)
+  else if (launcher->selected_files != NULL)
     {
-      thunar_browser_poke_file (THUNAR_BROWSER (launcher),
-                                launcher->selected_files->data, launcher->widget,
-                                thunar_launcher_poke_file_finish, NULL);
-    }
-  else
-    {
-      /* resolve files one after another until none is left. Open/execute
-       * the resolved files/directories when all this is done at a later
-       * stage */
-      poke_data = thunar_launcher_poke_data_new (launcher->selected_files);
-      thunar_launcher_poke_files (launcher, poke_data);
+      if (launcher->selected_files->next == NULL)
+        {
+          thunar_browser_poke_file (THUNAR_BROWSER (launcher),
+                                    launcher->selected_files->data, launcher->widget,
+                                    thunar_launcher_poke_file_finish, NULL);
+        }
+      else
+        {
+          /* resolve files one after another until none is left. Open/execute
+           * the resolved files/directories when all this is done at a later
+           * stage */
+           poke_data = thunar_launcher_poke_data_new (launcher->selected_files);
+           thunar_launcher_poke_files (launcher, poke_data);
+        }
     }
 }
 
@@ -1296,6 +1364,11 @@ thunar_launcher_action_open_with_other (GtkAction      *action,
 {
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  /* force update if still dirty */
+  thunar_launcher_update_check (launcher);
+  if (!gtk_action_get_visible (action))
+    return;
 
   /* verify that we have atleast one selected file */
   if (G_LIKELY (launcher->selected_files != NULL))
@@ -1314,6 +1387,11 @@ thunar_launcher_action_open_in_new_window (GtkAction      *action,
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
+  /* force update if still dirty */
+  thunar_launcher_update_check (launcher);
+  if (!gtk_action_get_visible (action))
+    return;
+
   /* open the selected directories in new windows */
   thunar_launcher_open_windows (launcher, launcher->selected_files);
 }
@@ -1329,6 +1407,11 @@ thunar_launcher_action_open_in_new_tab (GtkAction      *action,
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  /* force update if still dirty */
+  thunar_launcher_update_check (launcher);
+  if (!gtk_action_get_visible (action))
+    return;
 
   /* open all selected directories in a new tab */
   selected_files = thunar_g_file_list_copy (launcher->selected_files);
