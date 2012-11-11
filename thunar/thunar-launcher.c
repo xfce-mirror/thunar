@@ -136,6 +136,8 @@ struct _ThunarLauncher
   ThunarFile             *current_directory;
   GList                  *selected_files;
 
+  guint                   launcher_idle_id;
+
   GtkIconFactory         *icon_factory;
   GtkActionGroup         *action_group;
   GtkUIManager           *ui_manager;
@@ -321,6 +323,10 @@ thunar_launcher_finalize (GObject *object)
   /* be sure to cancel the sendto idle source */
   if (G_UNLIKELY (launcher->sendto_idle_id != 0))
     g_source_remove (launcher->sendto_idle_id);
+
+  /* be sure to cancel the launcher idle source */
+  if (G_UNLIKELY (launcher->launcher_idle_id != 0))
+    g_source_remove (launcher->launcher_idle_id);
 
   /* drop our custom icon factory for the application/action icons */
   gtk_icon_factory_remove_default (launcher->icon_factory);
@@ -746,28 +752,29 @@ thunar_launcher_open_windows (ThunarLauncher *launcher,
 
 
 
-static void
-thunar_launcher_update (ThunarLauncher *launcher)
+static gboolean
+thunar_launcher_update_idle (gpointer data)
 {
-  const gchar  *context_menu_path;
-  const gchar  *file_menu_path;
-  GtkAction    *action;
-  gboolean      default_is_open_with_other = FALSE;
-  GList        *applications;
-  GList        *actions;
-  GList        *lp;
-  gchar        *tooltip;
-  gchar        *label;
-  gchar        *name;
-  gint          n_directories = 0;
-  gint          n_executables = 0;
-  gint          n_regulars = 0;
-  gint          n_selected_files = 0;
-  gint          n;
+  ThunarLauncher *launcher = THUNAR_LAUNCHER (data);
+  const gchar    *context_menu_path;
+  const gchar    *file_menu_path;
+  GtkAction      *action;
+  gboolean        default_is_open_with_other = FALSE;
+  GList          *applications;
+  GList          *actions;
+  GList          *lp;
+  gchar          *tooltip;
+  gchar          *label;
+  gchar          *name;
+  gint            n_directories = 0;
+  gint            n_executables = 0;
+  gint            n_regulars = 0;
+  gint            n_selected_files = 0;
+  gint            n;
 
   /* verify that we're connected to an UI manager */
   if (G_UNLIKELY (launcher->ui_manager == NULL))
-    return;
+    return FALSE;
 
   /* drop the previous addons ui controls from the UI manager */
   if (G_LIKELY (launcher->ui_addons_merge_id != 0))
@@ -1043,10 +1050,33 @@ thunar_launcher_update (ThunarLauncher *launcher)
        * GIO, so we'll have to roll our own thing here */
     }
 
+  return FALSE;
+}
+
+
+
+static void
+thunar_launcher_update_idle_destroy (gpointer data)
+{
+  THUNAR_LAUNCHER (data)->launcher_idle_id = 0;
+}
+
+
+
+static void
+thunar_launcher_update (ThunarLauncher *launcher)
+{
+  /* schedule an update of the launcher items */
+  if (G_LIKELY (launcher->launcher_idle_id == 0))
+    {
+      launcher->launcher_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_launcher_update_idle,
+                                                    launcher, thunar_launcher_update_idle_destroy);
+    }
+
   /* schedule an update of the "Send To" menu */
   if (G_LIKELY (launcher->sendto_idle_id == 0))
     {
-      launcher->sendto_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_launcher_sendto_idle,
+      launcher->sendto_idle_id = g_idle_add_full (G_PRIORITY_LOW + 50, thunar_launcher_sendto_idle,
                                                   launcher, thunar_launcher_sendto_idle_destroy);
     }
 }
