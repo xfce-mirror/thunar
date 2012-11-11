@@ -776,6 +776,8 @@ thunar_launcher_update_idle (gpointer data)
   if (G_UNLIKELY (launcher->ui_manager == NULL))
     return FALSE;
 
+  GDK_THREADS_ENTER ();
+
   /* drop the previous addons ui controls from the UI manager */
   if (G_LIKELY (launcher->ui_addons_merge_id != 0))
     {
@@ -1056,6 +1058,8 @@ thunar_launcher_update_idle (gpointer data)
                                                       launcher, thunar_launcher_sendto_idle_destroy);
         }
     }
+
+  GDK_THREADS_LEAVE ();
 
   return FALSE;
 }

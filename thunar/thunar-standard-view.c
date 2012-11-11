@@ -2085,6 +2085,8 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
+  GDK_THREADS_ENTER ();
+
   /* clear the current status text (will be recalculated on-demand) */
   g_free (standard_view->priv->statusbar_text);
   standard_view->priv->statusbar_text = NULL;
@@ -2093,6 +2095,8 @@ thunar_standard_view_update_statusbar_text_idle (gpointer data)
 
   /* tell everybody that the statusbar text may have changed */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_STATUSBAR_TEXT]);
+
+  GDK_THREADS_LEAVE ();
 
   return FALSE;
 }
