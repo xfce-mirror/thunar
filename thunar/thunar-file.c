@@ -3703,6 +3703,15 @@ thunar_file_cached_display_name (const GFile *file)
 
 
 
+static gint
+compare_app_infos (gconstpointer a,
+                   gconstpointer b)
+{
+  return g_app_info_equal (G_APP_INFO (a), G_APP_INFO (b)) ? 0 : 1;
+}
+
+
+
 /**
  * thunar_file_list_get_applications:
  * @file_list : a #GList of #ThunarFile<!---->s.
@@ -3734,13 +3743,13 @@ thunar_file_list_get_applications (GList *file_list)
     {
       current_type = thunar_file_get_content_type (lp->data);
 
-      /* no need to check anything if this file has the same mime type as the previous file */
-      if (current_type != NULL && lp->prev != NULL)
-        {
-          previous_type = thunar_file_get_content_type (lp->prev->data);
-          if (G_LIKELY (g_content_type_equals (previous_type, current_type)))
-            continue;
-        }
+      /* no need to check anything if this file has the same mimetype as the previous file */
+      if (current_type != NULL && previous_type != NULL)
+        if (G_LIKELY (g_content_type_equals (previous_type, current_type)))
+          continue;
+
+      /* store the previous type */
+      previous_type = current_type;
 
       /* determine the list of applications that can open this file */
       if (G_UNLIKELY (current_type != NULL))
@@ -3762,7 +3771,7 @@ thunar_file_list_get_applications (GList *file_list)
               next = ap->next;
 
               /* check if the application is present in list */
-              if (g_list_find (list, ap->data) == NULL)
+              if (g_list_find_custom (list, ap->data, compare_app_infos) == NULL)
                 {
                   /* drop our reference on the application */
                   g_object_unref (G_OBJECT (ap->data));
