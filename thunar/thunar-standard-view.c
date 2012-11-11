@@ -321,6 +321,10 @@ struct _ThunarStandardViewPrivate
   /* scroll_to_file support */
   GHashTable             *scroll_to_files;
 
+  /* statusbar */
+  gchar                  *statusbar_text;
+  guint                   statusbar_text_idle_id;
+
   /* custom menu actions support */
   GtkActionGroup         *custom_actions;
   gint                    custom_merge_id;
@@ -883,7 +887,9 @@ thunar_standard_view_finalize (GObject *object)
   g_object_unref (G_OBJECT (standard_view->model));
 
   /* free the statusbar text (if any) */
-  g_free (standard_view->statusbar_text);
+  if (standard_view->priv->statusbar_text_idle_id != 0)
+    g_source_remove (standard_view->priv->statusbar_text_idle_id);
+  g_free (standard_view->priv->statusbar_text);
 
   /* release the scroll_to_files hash table */
   g_hash_table_destroy (standard_view->priv->scroll_to_files);
@@ -1583,7 +1589,7 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
   /* notify listeners */
   g_object_freeze_notify (G_OBJECT (standard_view));
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_LOADING]);
-  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_STATUSBAR_TEXT]);
+  thunar_standard_view_update_statusbar_text (standard_view);
   g_object_thaw_notify (G_OBJECT (standard_view));
 }
 
@@ -1598,7 +1604,7 @@ thunar_standard_view_get_statusbar_text (ThunarView *view)
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), NULL);
 
   /* generate the statusbar text on-demand */
-  if (standard_view->statusbar_text == NULL)
+  if (standard_view->priv->statusbar_text == NULL)
     {
       /* query the selected items (actually a list of GtkTreePath's) */
       items = THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items (standard_view);
@@ -1609,11 +1615,11 @@ thunar_standard_view_get_statusbar_text (ThunarView *view)
       if (items == NULL && standard_view->loading)
         return _("Loading folder contents...");
 
-      standard_view->statusbar_text = thunar_list_model_get_statusbar_text (standard_view->model, items);
+      standard_view->priv->statusbar_text = thunar_list_model_get_statusbar_text (standard_view->model, items);
       g_list_free_full (items, (GDestroyNotify) gtk_tree_path_free);
     }
 
-  return standard_view->statusbar_text;
+  return standard_view->priv->statusbar_text;
 }
 
 
@@ -2072,17 +2078,39 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
 
 
 
-static void
-thunar_standard_view_update_statusbar_text (ThunarStandardView *standard_view)
+static gboolean
+thunar_standard_view_update_statusbar_text_idle (gpointer data)
 {
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (data);
+
+  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
   /* clear the current status text (will be recalculated on-demand) */
-  g_free (standard_view->statusbar_text);
-  standard_view->statusbar_text = NULL;
+  g_free (standard_view->priv->statusbar_text);
+  standard_view->priv->statusbar_text = NULL;
+
+  standard_view->priv->statusbar_text_idle_id = 0;
 
   /* tell everybody that the statusbar text may have changed */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_STATUSBAR_TEXT]);
+
+  return FALSE;
+}
+
+
+
+static void
+thunar_standard_view_update_statusbar_text (ThunarStandardView *standard_view)
+{
+  /* stop pending timeout */
+  if (standard_view->priv->statusbar_text_idle_id != 0)
+    g_source_remove (standard_view->priv->statusbar_text_idle_id);
+
+  /* restart a new one, this way we avoid multiple update when
+   * the user is pressing a key to scroll */
+  standard_view->priv->statusbar_text_idle_id =
+      g_timeout_add_full (G_PRIORITY_LOW, 50, thunar_standard_view_update_statusbar_text_idle,
+                          standard_view, NULL);
 }
 
 
@@ -3660,7 +3688,7 @@ thunar_standard_view_loading_unbound (gpointer user_data)
       standard_view->loading = FALSE;
       g_object_freeze_notify (G_OBJECT (standard_view));
       g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_LOADING]);
-      g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_STATUSBAR_TEXT]);
+      thunar_standard_view_update_statusbar_text (standard_view);
       g_object_thaw_notify (G_OBJECT (standard_view));
     }
 }

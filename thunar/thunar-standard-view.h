@@ -126,7 +126,6 @@ struct _ThunarStandardView
 
   ThunarClipboardManager    *clipboard;
   ThunarListModel           *model;
-  gchar                     *statusbar_text;
 
   GtkActionGroup            *action_group;
   GtkUIManager              *ui_manager;
