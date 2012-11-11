@@ -893,6 +893,10 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
    * processed (and awaiting to be refreshed) */
   for (lp = files; lp != NULL; lp = lp->next)
     {
+      /* the icon factory only loads icons for regular files */
+      if (!thunar_file_is_regular (lp->data))
+        goto unsupported_type;
+
       /* get the current thumb state */
       thumb_state = thunar_file_get_thumb_state (lp->data);
 
@@ -914,6 +918,8 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
         }
       else
         {
+          unsupported_type:
+
           /* we have no thumb for this mime-type / scheme combination,
            * so don't both in the future */
           thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE);
