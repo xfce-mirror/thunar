@@ -70,6 +70,7 @@ typedef gint (*ThunarSortFunc) (const ThunarFile *a,
 static void               thunar_list_model_tree_model_init       (GtkTreeModelIface      *iface);
 static void               thunar_list_model_drag_dest_init        (GtkTreeDragDestIface   *iface);
 static void               thunar_list_model_sortable_init         (GtkTreeSortableIface   *iface);
+static void               thunar_list_model_dispose               (GObject                *object);
 static void               thunar_list_model_finalize              (GObject                *object);
 static void               thunar_list_model_get_property          (GObject                *object,
                                                                    guint                   prop_id,
@@ -248,6 +249,7 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
   GObjectClass *gobject_class;
 
   gobject_class               = G_OBJECT_CLASS (klass);
+  gobject_class->dispose      = thunar_list_model_dispose;
   gobject_class->finalize     = thunar_list_model_finalize;
   gobject_class->get_property = thunar_list_model_get_property;
   gobject_class->set_property = thunar_list_model_set_property;
@@ -416,12 +418,20 @@ thunar_list_model_init (ThunarListModel *store)
 
 
 static void
+thunar_list_model_dispose (GObject *object)
+{
+  /* unlink from the folder (if any) */
+  thunar_list_model_set_folder (THUNAR_LIST_MODEL (object), NULL);
+
+  (*G_OBJECT_CLASS (thunar_list_model_parent_class)->dispose) (object);
+}
+
+
+
+static void
 thunar_list_model_finalize (GObject *object)
 {
   ThunarListModel *store = THUNAR_LIST_MODEL (object);
-
-  /* unlink from the folder (if any) */
-  thunar_list_model_set_folder (store, NULL);
 
   g_sequence_free (store->rows);
 
