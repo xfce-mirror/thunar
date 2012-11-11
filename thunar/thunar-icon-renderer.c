@@ -335,6 +335,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   gint                    position;
   cairo_t                *cr;
   gdouble                 alpha;
+  gint                    emblem_size;
 
   if (G_UNLIKELY (icon_renderer->file == NULL))
     return;
@@ -464,8 +465,11 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
           /* render the emblems */
           for (lp = emblems, position = 0; lp != NULL && position < max_emblems; lp = lp->next)
             {
+              /* calculate the emblem size */
+              emblem_size = MIN ((2 * icon_renderer->size) / 3, 32);
+
               /* check if we have the emblem in the icon theme */
-              emblem = thunar_icon_factory_load_icon (icon_factory, lp->data, icon_renderer->size, FALSE);
+              emblem = thunar_icon_factory_load_icon (icon_factory, lp->data, emblem_size, FALSE);
               if (G_UNLIKELY (emblem == NULL))
                 continue;
 
@@ -474,10 +478,10 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
               emblem_area.height = gdk_pixbuf_get_height (emblem);
 
               /* shrink insane emblems */
-              if (G_UNLIKELY (MAX (emblem_area.width, emblem_area.height) > (gint) MIN ((2 * icon_renderer->size) / 3, 32)))
+              if (G_UNLIKELY (MAX (emblem_area.width, emblem_area.height) > emblem_size))
                 {
                   /* scale down the emblem */
-                  temp = exo_gdk_pixbuf_scale_ratio (emblem, MIN ((2 * icon_renderer->size) / 3, 32));
+                  temp = exo_gdk_pixbuf_scale_ratio (emblem, emblem_size);
                   g_object_unref (G_OBJECT (emblem));
                   emblem = temp;
 
