@@ -26,6 +26,7 @@
 
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-gdk-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-shortcuts-icon-renderer.h>
 #include <thunar/thunar-device.h>
@@ -282,7 +283,7 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
             {
               /* render the invalid parts of the icon */
               cr = gdk_cairo_create (window);
-              gdk_cairo_set_source_pixbuf (cr, icon, icon_area.x, icon_area.y);
+              thunar_gdk_cairo_set_source_pixbuf (cr, icon, icon_area.x, icon_area.y);
               gdk_cairo_rectangle (cr, &draw_area);
               cairo_paint_with_alpha (cr, alpha);
               cairo_destroy (cr);

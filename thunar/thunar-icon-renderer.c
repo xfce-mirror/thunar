@@ -23,6 +23,7 @@
 
 #include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-gdk-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-private.h>
@@ -444,7 +445,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
         }
 
       /* render the invalid parts of the icon */
-      gdk_cairo_set_source_pixbuf (cr, icon, icon_area.x, icon_area.y);
+      thunar_gdk_cairo_set_source_pixbuf (cr, icon, icon_area.x, icon_area.y);
       gdk_cairo_rectangle (cr, &draw_area);
       cairo_paint_with_alpha (cr, alpha);
     }
@@ -529,7 +530,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
               if (gdk_rectangle_intersect (expose_area, &emblem_area, &draw_area))
                 {
                   /* render the invalid parts of the icon */
-                  gdk_cairo_set_source_pixbuf (cr, emblem, emblem_area.x, emblem_area.y);
+                  thunar_gdk_cairo_set_source_pixbuf (cr, emblem, emblem_area.x, emblem_area.y);
                   gdk_cairo_rectangle (cr, &draw_area);
                   cairo_paint (cr);
                 }
