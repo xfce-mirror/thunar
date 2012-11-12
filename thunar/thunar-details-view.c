@@ -684,10 +684,11 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
           /* select the path on which the user clicked if not selected yet */
           if (!gtk_tree_selection_path_is_selected (selection, path))
             {
-              /* we don't unselect all other items if Control is active */
+              /* only select an item if Control is not pressed, else we
+               * use this to popup the current directory actionW */
+              gtk_tree_selection_unselect_all (selection);
               if ((event->state & GDK_CONTROL_MASK) == 0)
-                gtk_tree_selection_unselect_all (selection);
-              gtk_tree_selection_select_path (selection, path);
+                gtk_tree_selection_select_path (selection, path);
             }
           gtk_tree_path_free (path);
         }
