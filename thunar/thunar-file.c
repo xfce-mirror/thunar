@@ -3434,8 +3434,8 @@ thunar_file_get_icon_name_for_state (const gchar         *icon_name,
  * Return value: the icon name for @file in @icon_theme.
  **/
 const gchar *
-thunar_file_get_icon_name (ThunarFile   *file,
-                           ThunarFileIconState icon_state,
+thunar_file_get_icon_name (ThunarFile          *file,
+                           ThunarFileIconState  icon_state,
                            GtkIconTheme       *icon_theme)
 {
   GFile               *icon_file;
@@ -3443,7 +3443,7 @@ thunar_file_get_icon_name (ThunarFile   *file,
   const gchar * const *names;
   gchar               *icon_name = NULL;
   gchar               *path;
-  const gchar         *special_names[3] = { NULL, "folder", NULL };
+  const gchar         *special_names[] = { NULL, "folder", NULL };
   guint                i;
   const gchar         *special_dir;
 
@@ -3466,24 +3466,26 @@ thunar_file_get_icon_name (ThunarFile   *file,
           else if (strcmp (path, xfce_get_homedir ()) == 0)
             *special_names = "user-home";
           else
-            for (i = 0; i < G_N_ELEMENTS (thunar_file_dirs); i++)
-              {
-                special_dir = g_get_user_special_dir (thunar_file_dirs[i].type);
-                if (special_dir != NULL
-                    && strcmp (path, special_dir) == 0)
-                  {
-                    *special_names = thunar_file_dirs[i].icon_name;
-                    break;
-                  }
-              }
+            {
+              for (i = 0; i < G_N_ELEMENTS (thunar_file_dirs); i++)
+                {
+                  special_dir = g_get_user_special_dir (thunar_file_dirs[i].type);
+                  if (special_dir != NULL
+                      && strcmp (path, special_dir) == 0)
+                    {
+                      *special_names = thunar_file_dirs[i].icon_name;
+                      break;
+                    }
+                }
+            }
 
-            g_free (path);
+          g_free (path);
 
-            if (*special_names != NULL)
-              {
-                names = special_names;
-                goto check_names;
-              }
+          if (*special_names != NULL)
+            {
+              names = special_names;
+              goto check_names;
+            }
         }
     }
 
