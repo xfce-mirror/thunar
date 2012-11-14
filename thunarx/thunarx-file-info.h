@@ -38,14 +38,21 @@ G_BEGIN_DECLS;
  **/
 #define THUNARX_FILE_INFO_NAMESPACE \
   "access::*," \
-  "id::*," \
-  "mountable::*," \
+  "id::filesystem," \
+  "mountable::can-mount,standard::target-uri," \
   "preview::*," \
-  "standard::*," \
+  "standard::type,standard::is-hidden,standard::is-backup," \
+  "standard::is-symlink,standard::name,standard::display-name," \
+  "standard::size,standard::symlink-target," \
   "time::*," \
   "trash::*," \
-  "unix::*," \
+  "unix::gid,unix::uid,unix::mode," \
   "metadata::emblems"
+
+#define THUNARX_FILE_INFO_MIME_NAMESPACE \
+  "standard::content-type"
+
+
 
 /**
  * Filesystem information namespaces available in the #GFileInfo

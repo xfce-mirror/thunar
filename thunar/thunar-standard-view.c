@@ -2324,7 +2324,7 @@ thunar_standard_view_action_create_template (GtkAction           *action,
 
   /* ask the user to enter a name for the new document */
   name = thunar_show_create_dialog (GTK_WIDGET (standard_view),
-                                    thunar_file_get_content_type (file),
+                                    thunar_file_get_content_type (THUNAR_FILE (file)),
                                     thunar_file_get_display_name (file),
                                     title);
   if (G_LIKELY (name != NULL))

@@ -1422,8 +1422,8 @@ sort_by_mime_type (const ThunarFile *a,
   const gchar *content_type_b;
   gint         result;
 
-  content_type_a = thunar_file_get_content_type (a);
-  content_type_b = thunar_file_get_content_type (b);
+  content_type_a = thunar_file_get_content_type (THUNAR_FILE (a));
+  content_type_b = thunar_file_get_content_type (THUNAR_FILE (b));
 
   if (content_type_a == NULL)
     content_type_a = "";
@@ -1551,7 +1551,7 @@ sort_by_type (const ThunarFile *a,
     }
   else
     {
-      content_type_a = thunar_file_get_content_type (a);
+      content_type_a = thunar_file_get_content_type (THUNAR_FILE (a));
       description_a = g_content_type_get_description (content_type_a);
     }
 
@@ -1562,7 +1562,7 @@ sort_by_type (const ThunarFile *a,
     }
   else
     {
-      content_type_b = thunar_file_get_content_type (b);
+      content_type_b = thunar_file_get_content_type (THUNAR_FILE (a));
       description_b = g_content_type_get_description (content_type_b);
     }
 

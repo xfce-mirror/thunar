@@ -161,6 +161,8 @@ struct _ThunarFile
   GFileInfo            *info;
   GFileType             kind;
   GFile                *gfile;
+  gchar                *content_type;
+  gchar                *icon_name;
 
   gchar                *custom_icon_name;
   gchar                *display_name;
@@ -189,6 +191,23 @@ typedef struct
   GCancellable      *cancellable;
 }
 ThunarFileGetData;
+
+static struct
+{
+  GUserDirectory  type;
+  const gchar    *icon_name;
+}
+thunar_file_dirs[] =
+{
+  { G_USER_DIRECTORY_DESKTOP,      "user-desktop" },
+  { G_USER_DIRECTORY_DOCUMENTS,    "folder-documents" },
+  { G_USER_DIRECTORY_DOWNLOAD,     "folder-download" },
+  { G_USER_DIRECTORY_MUSIC,        "folder-music" },
+  { G_USER_DIRECTORY_PICTURES,     "folder-pictures" },
+  { G_USER_DIRECTORY_PUBLIC_SHARE, "folder-publicshare" },
+  { G_USER_DIRECTORY_TEMPLATES,    "folder-templates" },
+  { G_USER_DIRECTORY_VIDEOS,       "folder-videos" }
+};
 
 
 
@@ -404,6 +423,10 @@ thunar_file_finalize (GObject *object)
   /* free the custom icon name */
   g_free (file->custom_icon_name);
 
+  /* content type info */
+  g_free (file->content_type);
+  g_free (file->icon_name);
+
   /* free display name and basename */
   g_free (file->display_name);
   g_free (file->basename);
@@ -469,10 +492,7 @@ thunar_file_info_get_uri_scheme (ThunarxFileInfo *file_info)
 static gchar*
 thunar_file_info_get_mime_type (ThunarxFileInfo *file_info)
 {
-  if (THUNAR_FILE (file_info)->info == NULL)
-    return NULL;
-
-  return g_strdup (g_file_info_get_content_type (THUNAR_FILE (file_info)->info));
+  return g_strdup (thunar_file_get_content_type (THUNAR_FILE (file_info)));
 }
 
 
@@ -484,7 +504,7 @@ thunar_file_info_has_mime_type (ThunarxFileInfo *file_info,
   if (THUNAR_FILE (file_info)->info == NULL)
     return FALSE;
 
-  return g_content_type_is_a (g_file_info_get_content_type (THUNAR_FILE (file_info)->info), mime_type);
+  return g_content_type_is_a (thunar_file_get_content_type (THUNAR_FILE (file_info)), mime_type);
 }
 
 
@@ -768,6 +788,12 @@ thunar_file_info_clear (ThunarFile *file)
 
   g_free (file->basename);
   file->basename = NULL;
+
+  /* content type */
+  g_free (file->content_type);
+  file->content_type = NULL;
+  g_free (file->icon_name);
+  file->icon_name = NULL;
 
   /* free collate keys */
   if (file->collate_key_nocase != file->collate_key)
@@ -1590,7 +1616,7 @@ thunar_file_launch (ThunarFile  *file,
 
   /* determine the default application to open the file */
   /* TODO We should probably add a cancellable argument to thunar_file_launch() */
-  app_info = thunar_file_get_default_handler (file);
+  app_info = thunar_file_get_default_handler (THUNAR_FILE (file));
 
   /* display the application chooser if no application is defined for this file
    * type yet */
@@ -2201,14 +2227,55 @@ thunar_file_get_user (const ThunarFile *file)
  * Return value: content type of @file.
  **/
 const gchar *
-thunar_file_get_content_type (const ThunarFile *file)
+thunar_file_get_content_type (ThunarFile *file)
 {
+  GFileInfo   *info;
+  GError      *err = NULL;
+  const gchar *content_type = NULL;
+
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
-  if (file->info == NULL)
-    return NULL;
+  if (G_UNLIKELY (file->content_type == NULL))
+    {
+      /* make sure this is not loaded in the general info */
+      _thunar_assert (file->info == NULL
+          || !g_file_info_has_attribute (file->info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE));
 
-  return g_file_info_get_content_type (file->info);
+      if (file->kind == G_FILE_TYPE_DIRECTORY)
+        {
+          /* this we known for sure */
+          file->content_type = g_strdup ("inode/directory");
+          return file->content_type;
+        }
+
+      /* async load the content-type */
+      info = g_file_query_info (file->gfile,
+                                THUNARX_FILE_INFO_MIME_NAMESPACE,
+                                G_FILE_QUERY_INFO_NONE,
+                                NULL, &err);
+
+      if (G_LIKELY (info != NULL))
+        {
+          /* store the new content type */
+          content_type = g_file_info_get_content_type (info);
+          if (G_UNLIKELY (content_type != NULL))
+            file->content_type = g_strdup (content_type);
+          g_object_unref (G_OBJECT (info));
+        }
+      else
+        {
+          g_warning ("Content type loading failed for %s: %s",
+                     thunar_file_get_display_name (file),
+                     err->message);
+          g_error_free (err);
+        }
+
+      /* always provide a fallback */
+      if (file->content_type == NULL)
+        file->content_type = g_strdup ("unknown");
+    }
+
+  return file->content_type;
 }
 
 
@@ -2316,7 +2383,7 @@ thunar_file_get_default_handler (const ThunarFile *file)
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
-  content_type = thunar_file_get_content_type (file);
+  content_type = thunar_file_get_content_type (THUNAR_FILE (file));
   if (content_type != NULL)
     {
       path = g_file_get_path (file->gfile);
@@ -2596,7 +2663,7 @@ thunar_file_is_executable (const ThunarFile *file)
   if (g_file_info_get_attribute_boolean (file->info, G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE))
     {
       /* get the content type of the file */
-      content_type = g_file_info_get_content_type (file->info);
+      content_type = thunar_file_get_content_type (THUNAR_FILE (file));
       if (G_LIKELY (content_type != NULL))
         {
 #ifdef G_OS_WIN32
@@ -3332,6 +3399,29 @@ thunar_file_get_preview_icon (const ThunarFile *file)
 
 
 
+static const gchar *
+thunar_file_get_icon_name_for_state (const gchar         *icon_name,
+                                     ThunarFileIconState  icon_state)
+{
+  if (exo_str_is_empty (icon_name))
+    return NULL;
+
+  /* check if we have an accept icon for the icon we found */
+  if (icon_state != THUNAR_FILE_ICON_STATE_DEFAULT
+      && (strcmp (icon_name, "inode-directory") == 0
+          || strcmp (icon_name, "folder") == 0))
+    {
+      if (icon_state == THUNAR_FILE_ICON_STATE_DROP)
+        return "folder-drag-accept";
+      else if (icon_state == THUNAR_FILE_ICON_STATE_OPEN)
+        return "folder-open";
+    }
+
+  return icon_name;
+}
+
+
+
 /**
  * thunar_file_get_icon_name:
  * @file       : a #ThunarFile instance.
@@ -3339,41 +3429,78 @@ thunar_file_get_preview_icon (const ThunarFile *file)
  * @icon_theme : the #GtkIconTheme on which to lookup up the icon name.
  *
  * Returns the name of the icon that can be used to present @file, based
- * on the given @icon_state and @icon_theme. The returned string has to
- * be freed using g_free().
+ * on the given @icon_state and @icon_theme.
  *
  * Return value: the icon name for @file in @icon_theme.
  **/
-gchar *
-thunar_file_get_icon_name (const ThunarFile   *file,
+const gchar *
+thunar_file_get_icon_name (ThunarFile   *file,
                            ThunarFileIconState icon_state,
                            GtkIconTheme       *icon_theme)
 {
   GFile               *icon_file;
-  GIcon               *icon;
+  GIcon               *icon = NULL;
   const gchar * const *names;
   gchar               *icon_name = NULL;
-  gint                 i;
+  gchar               *path;
+  const gchar         *special_names[3] = { NULL, "folder", NULL };
+  guint                i;
+  const gchar         *special_dir;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (GTK_IS_ICON_THEME (icon_theme), NULL);
 
+  /* return cached name */
+  if (G_LIKELY (file->icon_name != NULL))
+    return thunar_file_get_icon_name_for_state (file->icon_name, icon_state);
+
   /* the system root folder has a special icon */
   if (thunar_file_is_directory (file)
-      && thunar_file_is_local (file)
-      && thunar_file_is_root (file))
-    return g_strdup ("drive-harddisk");
+      && thunar_file_is_local (file))
+    {
+      path = g_file_get_path (file->gfile);
+      if (G_LIKELY (path != NULL))
+        {
+          if (strcmp (path, G_DIR_SEPARATOR_S) == 0)
+            *special_names = "drive-harddisk";
+          else if (strcmp (path, xfce_get_homedir ()) == 0)
+            *special_names = "user-home";
+          else
+            for (i = 0; i < G_N_ELEMENTS (thunar_file_dirs); i++)
+              {
+                special_dir = g_get_user_special_dir (thunar_file_dirs[i].type);
+                if (special_dir != NULL
+                    && strcmp (path, special_dir) == 0)
+                  {
+                    *special_names = thunar_file_dirs[i].icon_name;
+                    break;
+                  }
+              }
 
+            g_free (path);
+
+            if (*special_names != NULL)
+              {
+                names = special_names;
+                goto check_names;
+              }
+        }
+    }
+
+  /* try again later */
   if (file->info == NULL)
     return NULL;
 
-  icon = g_file_info_get_icon (file->info);
-
+  /* lookup for content type, just like gio does*/
+  icon = g_content_type_get_icon (thunar_file_get_content_type (file));
   if (icon != NULL)
     {
       if (G_IS_THEMED_ICON (icon))
         {
           names = g_themed_icon_get_names (G_THEMED_ICON (icon));
+
+          check_names:
+
           if (G_LIKELY (names != NULL))
             {
               for (i = 0; names[i] != NULL; ++i)
@@ -3391,27 +3518,18 @@ thunar_file_get_icon_name (const ThunarFile   *file,
           if (icon_file != NULL)
             icon_name = g_file_get_path (icon_file);
         }
+
+      if (G_LIKELY (icon != NULL))
+        g_object_unref (icon);
     }
 
-  /* check if we have an accept icon for the icon we found */
-  if (icon_name != NULL
-      && icon_state != THUNAR_FILE_ICON_STATE_DEFAULT
-      && (strcmp (icon_name, "inode-directory") == 0
-          || strcmp (icon_name, "folder") == 0))
-    {
-      if (icon_state == THUNAR_FILE_ICON_STATE_DROP)
-        {
-          g_free (icon_name);
-          icon_name = g_strdup ("folder-drag-accept");
-        }
-      else if (icon_state == THUNAR_FILE_ICON_STATE_OPEN)
-        {
-          g_free (icon_name);
-          icon_name = g_strdup ("folder-open");
-        }
-    }
+  /* store new name, or empty string to avoid recursion */
+  if (G_LIKELY (icon_name != NULL))
+    file->icon_name = icon_name;
+  else
+    file->icon_name = g_strdup ("");
 
-  return icon_name;
+  return thunar_file_get_icon_name_for_state (file->icon_name, icon_state);
 }
 
 
@@ -3735,7 +3853,7 @@ thunar_file_list_get_applications (GList *file_list)
   GList       *next;
   GList       *ap;
   GList       *lp;
-  const gchar *previous_type;
+  const gchar *previous_type = NULL;
   const gchar *current_type;
 
   /* determine the set of applications that can open all files */

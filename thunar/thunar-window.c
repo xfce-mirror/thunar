@@ -3122,7 +3122,7 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
 {
   GtkIconTheme *icon_theme;
   GtkAction    *action;
-  gchar        *icon_name;
+  const gchar  *icon_name;
   gchar        *title;
   gboolean      show_full_path;
   gchar        *parse_name = NULL;
@@ -3156,7 +3156,6 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
                                          THUNAR_FILE_ICON_STATE_DEFAULT,
                                          icon_theme);
   gtk_window_set_icon_name (GTK_WINDOW (window), icon_name);
-  g_free (icon_name);
 }
 
 

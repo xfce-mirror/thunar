@@ -173,7 +173,7 @@ GVolume          *thunar_file_get_volume           (const ThunarFile       *file
 ThunarGroup      *thunar_file_get_group            (const ThunarFile       *file);
 ThunarUser       *thunar_file_get_user             (const ThunarFile       *file);
 
-const gchar      *thunar_file_get_content_type     (const ThunarFile       *file);
+const gchar      *thunar_file_get_content_type     (ThunarFile             *file);
 const gchar      *thunar_file_get_symlink_target   (const ThunarFile       *file);
 const gchar      *thunar_file_get_basename         (const ThunarFile       *file) G_GNUC_CONST;
 gboolean          thunar_file_is_symlink           (const ThunarFile       *file);
@@ -227,7 +227,7 @@ ThunarFileThumbState thunar_file_get_thumb_state   (const ThunarFile        *fil
 void             thunar_file_set_thumb_state       (ThunarFile              *file, 
                                                     ThunarFileThumbState     state);
 GIcon            *thunar_file_get_preview_icon     (const ThunarFile        *file);
-gchar            *thunar_file_get_icon_name        (const ThunarFile        *file,
+const gchar      *thunar_file_get_icon_name        (ThunarFile        *file,
                                                     ThunarFileIconState     icon_state,
                                                     GtkIconTheme           *icon_theme);
 

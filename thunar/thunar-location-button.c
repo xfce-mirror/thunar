@@ -424,7 +424,7 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
   GtkIconTheme      *icon_theme;
   GtkSettings       *settings;
   GdkPixbuf         *icon;
-  gchar             *icon_name;
+  const gchar       *icon_name;
   gint               height;
   gint               width;
   gint               size;
@@ -489,7 +489,6 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
     {
       icon_name = thunar_file_get_icon_name (file, location_button->file_icon_state, icon_theme);
       gtk_drag_source_set_icon_name (GTK_BIN (location_button)->child, icon_name);
-      g_free (icon_name);
     }
 }
 
