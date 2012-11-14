@@ -1033,15 +1033,14 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
 {
   typedef struct
   {
-    const gchar   *name;
-    ThunarUcaTypes types;
+    gchar          *name;
+    ThunarUcaTypes  types;
   } ThunarUcaFile;
 
   ThunarUcaModelItem *item;
   ThunarUcaFile      *files;
-  GFileInfo          *info;
   GFile              *location;
-  const gchar        *mime_type;
+  gchar              *mime_type;
   gboolean            matches;
   GList              *paths = NULL;
   GList              *lp;
@@ -1071,17 +1070,15 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
 
       g_object_unref (location);
 
-      info = thunarx_file_info_get_file_info (lp->data);
+      mime_type = thunarx_file_info_get_mime_type (lp->data);
 
-      mime_type = g_file_info_get_content_type (info);
-
-      files[n].name = g_file_info_get_name (info);
+      files[n].name = thunarx_file_info_get_name (lp->data);
       files[n].types = types_from_mime_type (mime_type);
 
       if (G_UNLIKELY (files[n].types == 0))
         files[n].types = THUNAR_UCA_TYPE_OTHER_FILES;
 
-      g_object_unref (info);
+      g_free (mime_type);
     }
 
   /* lookup the matching items */
@@ -1114,6 +1111,8 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
     }
 
   /* cleanup */
+  for (n = 0; n < n_files; ++n)
+    g_free (files[n].name);
   g_free (files);
 
   return paths;
