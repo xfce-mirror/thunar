@@ -118,6 +118,7 @@ static gboolean           thunar_file_same_filesystem          (const ThunarFile
 
 
 G_LOCK_DEFINE_STATIC (file_cache_mutex);
+G_LOCK_DEFINE_STATIC (file_content_type_mutex);
 
 
 
@@ -2237,45 +2238,71 @@ thunar_file_get_content_type (ThunarFile *file)
 
   if (G_UNLIKELY (file->content_type == NULL))
     {
+      G_LOCK (file_content_type_mutex);
+
+      /* make sure we weren't waiting for a lock */
+      if (G_UNLIKELY (file->content_type != NULL))
+        goto bailout;
+
       /* make sure this is not loaded in the general info */
       _thunar_assert (file->info == NULL
           || !g_file_info_has_attribute (file->info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE));
 
-      if (file->kind == G_FILE_TYPE_DIRECTORY)
+      if (G_UNLIKELY (file->kind == G_FILE_TYPE_DIRECTORY))
         {
           /* this we known for sure */
           file->content_type = g_strdup ("inode/directory");
-          return file->content_type;
-        }
-
-      /* async load the content-type */
-      info = g_file_query_info (file->gfile,
-                                THUNARX_FILE_INFO_MIME_NAMESPACE,
-                                G_FILE_QUERY_INFO_NONE,
-                                NULL, &err);
-
-      if (G_LIKELY (info != NULL))
-        {
-          /* store the new content type */
-          content_type = g_file_info_get_content_type (info);
-          if (G_UNLIKELY (content_type != NULL))
-            file->content_type = g_strdup (content_type);
-          g_object_unref (G_OBJECT (info));
         }
       else
         {
-          g_warning ("Content type loading failed for %s: %s",
-                     thunar_file_get_display_name (file),
-                     err->message);
-          g_error_free (err);
+          /* async load the content-type */
+          info = g_file_query_info (file->gfile,
+                                    THUNARX_FILE_INFO_MIME_NAMESPACE,
+                                    G_FILE_QUERY_INFO_NONE,
+                                    NULL, &err);
+
+          if (G_LIKELY (info != NULL))
+            {
+              /* store the new content type */
+              content_type = g_file_info_get_content_type (info);
+              if (G_UNLIKELY (content_type != NULL))
+                file->content_type = g_strdup (content_type);
+              g_object_unref (G_OBJECT (info));
+            }
+          else
+            {
+              g_warning ("Content type loading failed for %s: %s",
+                         thunar_file_get_display_name (file),
+                         err->message);
+              g_error_free (err);
+            }
+
+          /* always provide a fallback */
+          if (file->content_type == NULL)
+            file->content_type = g_strdup ("unknown");
         }
 
-      /* always provide a fallback */
-      if (file->content_type == NULL)
-        file->content_type = g_strdup ("unknown");
+      bailout:
+
+      G_UNLOCK (file_content_type_mutex);
     }
 
   return file->content_type;
+}
+
+
+
+gboolean
+thunar_file_load_content_type (ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), TRUE);
+
+  if (file->content_type != NULL)
+    return FALSE;
+
+  thunar_file_get_content_type (file);
+
+  return TRUE;
 }
 
 
