@@ -3482,37 +3482,45 @@ thunar_file_get_icon_name (ThunarFile          *file,
     return thunar_file_get_icon_name_for_state (file->icon_name, icon_state);
 
   /* the system root folder has a special icon */
-  if (thunar_file_is_directory (file)
-      && thunar_file_is_local (file))
+  if (thunar_file_is_directory (file))
     {
-      path = g_file_get_path (file->gfile);
-      if (G_LIKELY (path != NULL))
+      if (G_LIKELY (thunar_file_is_local (file)))
         {
-          if (strcmp (path, G_DIR_SEPARATOR_S) == 0)
-            *special_names = "drive-harddisk";
-          else if (strcmp (path, xfce_get_homedir ()) == 0)
-            *special_names = "user-home";
-          else
+          path = g_file_get_path (file->gfile);
+          if (G_LIKELY (path != NULL))
             {
-              for (i = 0; i < G_N_ELEMENTS (thunar_file_dirs); i++)
+              if (strcmp (path, G_DIR_SEPARATOR_S) == 0)
+                *special_names = "drive-harddisk";
+              else if (strcmp (path, xfce_get_homedir ()) == 0)
+                *special_names = "user-home";
+              else
                 {
-                  special_dir = g_get_user_special_dir (thunar_file_dirs[i].type);
-                  if (special_dir != NULL
-                      && strcmp (path, special_dir) == 0)
+                  for (i = 0; i < G_N_ELEMENTS (thunar_file_dirs); i++)
                     {
-                      *special_names = thunar_file_dirs[i].icon_name;
-                      break;
+                      special_dir = g_get_user_special_dir (thunar_file_dirs[i].type);
+                      if (special_dir != NULL
+                          && strcmp (path, special_dir) == 0)
+                        {
+                          *special_names = thunar_file_dirs[i].icon_name;
+                          break;
+                        }
                     }
                 }
-            }
 
-          g_free (path);
-
-          if (*special_names != NULL)
-            {
-              names = special_names;
-              goto check_names;
+              g_free (path);
             }
+        }
+      else if (g_file_has_uri_scheme (file->gfile, "trash")
+               && !thunar_file_has_parent (file))
+        {
+          special_names[0] = thunar_file_get_item_count (file) > 0 ? "user-trash-full" : "user-trash";
+          special_names[1] = "user-trash";
+        }
+
+      if (*special_names != NULL)
+        {
+          names = special_names;
+          goto check_names;
         }
     }
 
@@ -3520,9 +3528,9 @@ thunar_file_get_icon_name (ThunarFile          *file,
   if (file->info == NULL)
     return NULL;
 
-  /* lookup for content type, just like gio does*/
+  /* lookup for content type, just like gio does for local files */
   icon = g_content_type_get_icon (thunar_file_get_content_type (file));
-  if (icon != NULL)
+  if (G_LIKELY (icon != NULL))
     {
       if (G_IS_THEMED_ICON (icon))
         {
