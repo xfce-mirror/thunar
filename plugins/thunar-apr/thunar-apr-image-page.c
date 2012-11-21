@@ -44,7 +44,7 @@ static const struct
   ExifTag      tag;
 } TAIP_EXIF[] =
 {
-  { N_ ("Date Taken:"),        EXIF_TAG_DATE_TIME,           },
+  { N_ ("Date Taken:"),        EXIF_TAG_DATE_TIME_ORIGINAL,  },
   { N_ ("Camera Brand:"),      EXIF_TAG_MAKE,                },
   { N_ ("Camera Model:"),      EXIF_TAG_MODEL,               },
   { N_ ("Exposure Time:"),     EXIF_TAG_EXPOSURE_TIME,       },
