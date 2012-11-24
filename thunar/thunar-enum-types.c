@@ -191,6 +191,29 @@ thunar_zoom_level_get_type (void)
 
 
 
+GType
+thunar_thumbnail_mode_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GEnumValue values[] =
+      {
+        { THUNAR_THUMBNAIL_MODE_NEVER,      "THUNAR_THUMBNAIL_MODE_NEVER",      "never",      },
+        { THUNAR_THUMBNAIL_MODE_ONLY_LOCAL, "THUNAR_THUMBNAIL_MODE_ONLY_LOCAL", "only-local", },
+        { THUNAR_THUMBNAIL_MODE_ALWAYS,     "THUNAR_THUMBNAIL_MODE_ALWAYS",     "always",     },
+        { 0,                                NULL,                               NULL,         },
+      };
+
+      type = g_enum_register_static (I_("ThunarThumbnailMode"), values);
+    }
+
+  return type;
+}
+
+
+
 /**
  * thunar_zoom_level_to_icon_size:
  * @zoom_level : a #ThunarZoomLevel.

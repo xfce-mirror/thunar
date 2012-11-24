@@ -406,6 +406,7 @@ thunar_g_file_get_free_space (GFile   *file,
 }
 
 
+
 gchar *
 thunar_g_file_get_free_space_string (GFile *file)
 {

@@ -48,7 +48,7 @@ enum
 {
   PROP_0,
   PROP_ICON_THEME,
-  PROP_SHOW_THUMBNAILS,
+  PROP_THUMBNAIL_MODE,
 };
 
 
@@ -98,20 +98,20 @@ struct _ThunarIconFactory
 {
   GObject __parent__;
 
-  ThunarPreferences *preferences;
+  ThunarPreferences   *preferences;
 
-  GHashTable        *icon_cache;
+  GHashTable          *icon_cache;
 
-  GtkIconTheme      *icon_theme;
+  GtkIconTheme        *icon_theme;
 
-  guint              show_thumbnails : 1;
+  ThunarThumbnailMode  thumbnail_mode;
 
-  guint              sweep_timer_id;
+  guint                sweep_timer_id;
 
-  gulong             changed_hook_id;
+  gulong               changed_hook_id;
 
   /* stamp that gets bumped when the theme changes */
-  guint              theme_stamp;
+  guint                theme_stamp;
 };
 
 struct _ThunarIconKey
@@ -169,18 +169,19 @@ thunar_icon_factory_class_init (ThunarIconFactoryClass *klass)
                                                         EXO_PARAM_READABLE));
 
   /**
-   * ThunarIconFactory:show-thumbnails:
+   * ThunarIconFactory:thumbnail-mode:
    *
    * Whether this #ThunarIconFactory will try to generate and load thumbnails
    * when loading icons for #ThunarFile<!---->s.
    **/
   g_object_class_install_property (gobject_class,
-                                   PROP_SHOW_THUMBNAILS,
-                                   g_param_spec_boolean ("show-thumbnails",
-                                                         "show-thumbnails",
-                                                         "show-thumbnails",
-                                                         FALSE,
-                                                         EXO_PARAM_READWRITE));
+                                   PROP_THUMBNAIL_MODE,
+                                   g_param_spec_enum ("thumbnail-mode",
+                                                      "thumbnail-mode",
+                                                      "thumbnail-mode",
+                                                      THUNAR_TYPE_THUMBNAIL_MODE,
+                                                      THUNAR_THUMBNAIL_MODE_ONLY_LOCAL,
+                                                      EXO_PARAM_READWRITE));
 }
 
 
@@ -188,6 +189,8 @@ thunar_icon_factory_class_init (ThunarIconFactoryClass *klass)
 static void
 thunar_icon_factory_init (ThunarIconFactory *factory)
 {
+  factory->thumbnail_mode = THUNAR_THUMBNAIL_MODE_ONLY_LOCAL;
+
   /* connect emission hook for the "changed" signal on the GtkIconTheme class. We use the emission
    * hook way here, because that way we can make sure that the icon cache is definetly cleared
    * before any other part of the application gets notified about the icon theme change.
@@ -259,8 +262,8 @@ thunar_icon_factory_get_property (GObject    *object,
       g_value_set_object (value, factory->icon_theme);
       break;
 
-    case PROP_SHOW_THUMBNAILS:
-      g_value_set_boolean (value, factory->show_thumbnails);
+    case PROP_THUMBNAIL_MODE:
+      g_value_set_enum (value, factory->thumbnail_mode);
       break;
 
     default:
@@ -281,8 +284,8 @@ thunar_icon_factory_set_property (GObject      *object,
 
   switch (prop_id)
     {
-    case PROP_SHOW_THUMBNAILS:
-      factory->show_thumbnails = g_value_get_boolean (value);
+    case PROP_THUMBNAIL_MODE:
+      factory->thumbnail_mode = g_value_get_enum (value);
       break;
 
     default:
@@ -667,8 +670,8 @@ thunar_icon_factory_get_for_icon_theme (GtkIconTheme *icon_theme)
 
       /* connect the "show-thumbnails" property to the global preference */
       factory->preferences = thunar_preferences_get ();
-      exo_binding_new (G_OBJECT (factory->preferences), "misc-show-thumbnails",
-                       G_OBJECT (factory), "show-thumbnails");
+      exo_binding_new (G_OBJECT (factory->preferences), "misc-thumbnail-mode",
+                       G_OBJECT (factory), "thumbnail-mode");
     }
   else
     {
@@ -676,6 +679,46 @@ thunar_icon_factory_get_for_icon_theme (GtkIconTheme *icon_theme)
     }
 
   return factory;
+}
+
+
+
+/**
+ * thunar_icon_factory_get_thumbnail_mode:
+ * @factory       : a #ThunarIconFactory instance.
+ * @file          : a #ThunarFile.
+ *
+ * Return value: if a Thumbnail show be shown for @file.
+ **/
+gboolean
+thunar_icon_factory_get_show_thumbnail (const ThunarIconFactory *factory,
+                                        const ThunarFile        *file)
+{
+  GFilesystemPreviewType preview;
+
+  _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), THUNAR_THUMBNAIL_MODE_NEVER);
+  _thunar_return_val_if_fail (file == NULL || THUNAR_IS_FILE (file), THUNAR_THUMBNAIL_MODE_NEVER);
+
+  if (file == NULL
+      || factory->thumbnail_mode == THUNAR_THUMBNAIL_MODE_NEVER)
+    return FALSE;
+
+  /* always create thumbs for local files */
+  if (thunar_file_is_local (file))
+    return TRUE;
+
+  preview = thunar_file_get_preview_type (file);
+
+  /* file system says to never thumbnail anything */
+  if (preview == G_FILESYSTEM_PREVIEW_TYPE_NEVER)
+    return FALSE;
+
+  /* only if the setting is local and the fs reports to be local */
+  if (factory->thumbnail_mode == THUNAR_THUMBNAIL_MODE_ONLY_LOCAL)
+    return preview == G_FILESYSTEM_PREVIEW_TYPE_IF_LOCAL;
+
+  /* THUNAR_THUMBNAIL_MODE_ALWAYS */
+  return TRUE;
 }
 
 
@@ -778,7 +821,8 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
     }
 
   /* check if thumbnails are enabled and we can display a thumbnail for the item */
-  if (G_LIKELY (factory->show_thumbnails && thunar_file_is_regular (file)))
+  if (thunar_icon_factory_get_show_thumbnail (factory, file)
+      && thunar_file_is_regular (file))
     {
       /* determine the preview icon first */
       gicon = thunar_file_get_preview_icon (file);

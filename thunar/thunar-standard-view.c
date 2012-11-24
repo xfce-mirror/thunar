@@ -280,7 +280,7 @@ static void                 thunar_standard_view_schedule_thumbnail_timeout (Thu
 static void                 thunar_standard_view_schedule_thumbnail_idle    (ThunarStandardView       *standard_view);
 static gboolean             thunar_standard_view_request_thumbnails         (gpointer                  data);
 static gboolean             thunar_standard_view_request_thumbnails_lazy    (gpointer                  data);
-static void                 thunar_standard_view_show_thumbnails_toggled    (ThunarStandardView       *standard_view,
+static void                 thunar_standard_view_thumbnail_mode_toggled     (ThunarStandardView       *standard_view,
                                                                              GParamSpec               *pspec,
                                                                              ThunarIconFactory        *icon_factory);
 static void                 thunar_standard_view_scrolled                   (GtkAdjustment            *adjustment,
@@ -1023,10 +1023,10 @@ thunar_standard_view_realize (GtkWidget *widget)
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
   standard_view->icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
 
-  /* we need to redraw whenever the "show-thumbnails" property is toggled */
+  /* we need to redraw whenever the "thumbnail_mode" property is toggled */
   g_signal_connect_swapped (standard_view->icon_factory,
-                            "notify::show-thumbnails",
-                            G_CALLBACK (thunar_standard_view_show_thumbnails_toggled),
+                            "notify::thumbnail_mode",
+                            G_CALLBACK (thunar_standard_view_thumbnail_mode_toggled),
                             standard_view);
 }
 
@@ -3576,7 +3576,6 @@ thunar_standard_view_row_changed (ThunarListModel    *model,
                                   ThunarStandardView *standard_view)
 {
   ThunarFile *file;
-  gboolean    show_thumbnails;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
   _thunar_return_if_fail (path != NULL);
@@ -3586,8 +3585,9 @@ thunar_standard_view_row_changed (ThunarListModel    *model,
   if (standard_view->priv->thumbnail_request != 0)
     return;
 
-  g_object_get (standard_view->icon_factory, "show-thumbnails", &show_thumbnails, NULL);
-  if (!show_thumbnails)
+  /* leave if this view is not suitable for generating thumbnails */
+  if (!thunar_icon_factory_get_show_thumbnail (standard_view->icon_factory,
+                                               standard_view->priv->current_directory))
     return;
 
   /* queue a thumbnail request */
@@ -3867,18 +3867,15 @@ thunar_standard_view_request_thumbnails_real (ThunarStandardView *standard_view,
   GtkTreePath *path;
   GtkTreeIter  iter;
   ThunarFile  *file;
-  gboolean     show_thumbnails;
   gboolean     valid_iter;
   GList       *visible_files = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (standard_view->icon_factory), FALSE);
 
-  /* determine whether the user wants us to create thumbnails */
-  g_object_get (standard_view->icon_factory, "show-thumbnails", &show_thumbnails, NULL);
-
   /* do nothing if we are not supposed to show thumbnails at all */
-  if (!show_thumbnails)
+  if (!thunar_icon_factory_get_show_thumbnail (standard_view->icon_factory,
+                                               standard_view->priv->current_directory))
     return FALSE;
 
   /* reschedule the source if we're still loading the folder */
@@ -3956,23 +3953,22 @@ thunar_standard_view_request_thumbnails_lazy (gpointer data)
 
 
 static void
-thunar_standard_view_show_thumbnails_toggled (ThunarStandardView *standard_view,
-                                              GParamSpec         *pspec,
-                                              ThunarIconFactory  *icon_factory)
+thunar_standard_view_thumbnail_mode_toggled (ThunarStandardView *standard_view,
+                                             GParamSpec         *pspec,
+                                             ThunarIconFactory  *icon_factory)
 {
   GtkAdjustment *vadjustment;
-  gboolean       show_thumbnails;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (THUNAR_IS_ICON_FACTORY (icon_factory));
+  _thunar_return_if_fail (standard_view->icon_factory == icon_factory);
 
   /* check whether the user wants us to generate thumbnails */
-  g_object_get (icon_factory, "show-thumbnails", &show_thumbnails, NULL);
-  if (show_thumbnails)
+  if (thunar_icon_factory_get_show_thumbnail (icon_factory,
+                                              standard_view->priv->current_directory))
     {
       /* get the vertical adjustment of the view */
-      vadjustment =
-        gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (standard_view));
+      vadjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (standard_view));
 
       /* fake a scroll event to generate thumbnail requests */
       thunar_standard_view_scrolled (vadjustment, standard_view);

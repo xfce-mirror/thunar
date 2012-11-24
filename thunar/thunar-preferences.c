@@ -82,12 +82,12 @@ enum
   PROP_MISC_RECURSIVE_PERMISSIONS,
   PROP_MISC_REMEMBER_GEOMETRY,
   PROP_MISC_SHOW_ABOUT_TEMPLATES,
-  PROP_MISC_SHOW_THUMBNAILS,
   PROP_MISC_SINGLE_CLICK,
   PROP_MISC_SINGLE_CLICK_TIMEOUT,
   PROP_MISC_SMALL_TOOLBAR_ICONS,
   PROP_MISC_TAB_CLOSE_MIDDLE_CLICK,
   PROP_MISC_TEXT_BESIDE_ICONS,
+  PROP_MISC_THUMBNAIL_MODE,
   PROP_SHORTCUTS_ICON_EMBLEMS,
   PROP_SHORTCUTS_ICON_SIZE,
   PROP_TREE_ICON_EMBLEMS,
@@ -99,17 +99,17 @@ enum
 
 static void     thunar_preferences_finalize           (GObject                *object);
 static void     thunar_preferences_get_property       (GObject                *object,
-                          guint                   prop_id,
-                          GValue                 *value,
-                          GParamSpec             *pspec);
+                                                       guint                   prop_id,
+                                                       GValue                 *value,
+                                                       GParamSpec             *pspec);
 static void     thunar_preferences_set_property       (GObject                *object,
-                          guint                   prop_id,
-                          const GValue           *value,
-                          GParamSpec             *pspec);
+                                                       guint                   prop_id,
+                                                       const GValue           *value,
+                                                       GParamSpec             *pspec);
 static void     thunar_preferences_prop_changed       (XfconfChannel          *channel,
-                          const gchar            *prop_name,
-                          const GValue           *value,
-                          ThunarPreferences      *preferences);
+                                                       const gchar            *prop_name,
+                                                       const GValue           *value,
+                                                       ThunarPreferences      *preferences);
 static void     thunar_preferences_load_rc_file       (ThunarPreferences      *preferences);
 
 
@@ -583,18 +583,6 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:misc-show-thumbnails:
-   *
-   * Whether to generate and display thumbnails for previewable files.
-   **/
-  preferences_props[PROP_MISC_SHOW_THUMBNAILS] =
-      g_param_spec_boolean ("misc-show-thumbnails",
-                            "MiscShowThumbnails",
-                            NULL,
-                            TRUE,
-                            EXO_PARAM_READWRITE);
-
-  /**
    * ThunarPreferences:misc-single-click:
    *
    * Whether to use single click navigation.
@@ -658,6 +646,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             NULL,
                             FALSE,
                             EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-thumbnail-mode:
+   *
+   * Whether to generate and display thumbnails for previewable files.
+   **/
+  preferences_props[PROP_MISC_THUMBNAIL_MODE] =
+      g_param_spec_enum ("misc-thumbnail-mode",
+                         NULL,
+                         NULL,
+                         THUNAR_TYPE_THUMBNAIL_MODE,
+                         THUNAR_THUMBNAIL_MODE_ONLY_LOCAL,
+                         EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:shortcuts-icon-emblems:
@@ -940,6 +941,14 @@ thunar_preferences_load_rc_file (ThunarPreferences *preferences)
         }
 
       g_value_unset (&src);
+    }
+
+  /* manually migrate the thumbnails property */
+  if (!xfce_rc_read_bool_entry (rc, "MiscShowThumbnails", TRUE))
+    {
+      xfconf_channel_set_string (preferences->channel,
+                                 "/misc-thumbnail-mode",
+                                 "THUNAR_THUMBNAIL_MODE_NEVER");
     }
 
   g_free (pspecs);

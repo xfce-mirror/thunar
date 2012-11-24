@@ -147,6 +147,41 @@ transform_view_index_to_string (const GValue *src_value,
 
 
 
+static gboolean
+transform_thumbnail_mode_to_index (const GValue *src_value,
+                                   GValue       *dst_value,
+                                   gpointer      user_data)
+{
+  GEnumClass *klass;
+  guint       n;
+
+  klass = g_type_class_ref (THUNAR_TYPE_THUMBNAIL_MODE);
+  for (n = 0; n < klass->n_values; ++n)
+    if (klass->values[n].value == g_value_get_enum (src_value))
+      g_value_set_int (dst_value, n);
+  g_type_class_unref (klass);
+
+  return TRUE;
+}
+
+
+
+static gboolean
+transform_thumbnail_index_to_mode (const GValue *src_value,
+                                   GValue       *dst_value,
+                                   gpointer      user_data)
+{
+  GEnumClass *klass;
+
+  klass = g_type_class_ref (THUNAR_TYPE_THUMBNAIL_MODE);
+  g_value_set_enum (dst_value, klass->values[g_value_get_int (src_value)].value);
+  g_type_class_unref (klass);
+
+  return TRUE;
+}
+
+
+
 static void
 thunar_preferences_dialog_class_init (ThunarPreferencesDialogClass *klass)
 {
@@ -227,6 +262,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_show (table);
 
   label = gtk_label_new_with_mnemonic (_("View _new folders using:"));
+  gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
@@ -242,16 +278,25 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
 
+  label = gtk_label_new_with_mnemonic (_("Show thumbnails:"));
+  gtk_misc_set_alignment (GTK_MISC (label), 0.0, 0.5);
+  gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (label);
+
+  combo = gtk_combo_box_text_new ();
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Never"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Local Files Only"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Always"));
+  exo_mutual_binding_new_full (G_OBJECT (dialog->preferences), "misc-thumbnail-mode", G_OBJECT (combo), "active",
+                               transform_thumbnail_mode_to_index, transform_thumbnail_index_to_mode, NULL, NULL);
+  gtk_table_attach (GTK_TABLE (table), combo, 1, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
+  gtk_widget_show (combo);
+
   button = gtk_check_button_new_with_mnemonic (_("Sort _folders before files"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-folders-first", G_OBJECT (button), "active");
   gtk_widget_set_tooltip_text (button, _("Select this option to list folders before files when you sort a folder."));
-  gtk_table_attach (GTK_TABLE (table), button, 0, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
-  gtk_widget_show (button);
-
-  button = gtk_check_button_new_with_mnemonic (_("_Show thumbnails"));
-  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-show-thumbnails", G_OBJECT (button), "active");
-  gtk_widget_set_tooltip_text (button, _("Select this option to display previewable files within a "
-                                         "folder as automatically generated thumbnail icons."));
   gtk_table_attach (GTK_TABLE (table), button, 0, 2, 2, 3, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (button);
 

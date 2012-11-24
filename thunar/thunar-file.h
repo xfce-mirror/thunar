@@ -228,7 +228,8 @@ ThunarFileThumbState thunar_file_get_thumb_state   (const ThunarFile        *fil
 void             thunar_file_set_thumb_state       (ThunarFile              *file, 
                                                     ThunarFileThumbState     state);
 GIcon            *thunar_file_get_preview_icon     (const ThunarFile        *file);
-const gchar      *thunar_file_get_icon_name        (ThunarFile        *file,
+GFilesystemPreviewType thunar_file_get_preview_type (const ThunarFile *file);
+const gchar      *thunar_file_get_icon_name        (ThunarFile              *file,
                                                     ThunarFileIconState     icon_state,
                                                     GtkIconTheme           *icon_theme);
 
@@ -251,7 +252,7 @@ gchar            *thunar_file_cached_display_name  (const GFile            *file
 GList            *thunar_file_list_get_applications  (GList *file_list);
 GList            *thunar_file_list_to_thunar_g_file_list    (GList *file_list);
 
-gboolean         thunar_file_is_desktop              (const ThunarFile *file);
+gboolean          thunar_file_is_desktop           (const ThunarFile *file);
 
 /**
  * thunar_file_is_root:
