@@ -1,3 +1,24 @@
+1.5.3
+=====
+- Re-add the has-handler check when inserting rows.
+- Use g_object_notify_by_pspec in most places.
+- Install GParamSpec properties at once in a couple of objects.
+- Update the statusbar in a short timeout.
+- Remove image resolution from statusbar.
+- Fix supported applications for multiple files.
+- Idle updating the launcher.
+- Don't queue tumbler requests for non-regular files.
+- Pass the correct emblem size to the icon factory.
+- Store cairo surfaces on pixbufs.
+- Right-click on not-selected row will show menu of current folder
+  in details view (bug #3386).
+- Load content types on-demand and preload in an idle.
+- Use origional date in properties page for images.
+- Add option to only show local thumbnails.
+- Translation updates: Arabic, Czech, German, Italian, Kazakh, 
+  Korean, Polish, Portuguese, Russian, Ukrainian, Chinese (China), 
+  Chinese (Taiwan).
+
 1.5.2
 =====
 - Do not unref g_file_icon_get_file() file (bug #9439).
