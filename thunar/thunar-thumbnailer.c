@@ -869,6 +869,7 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
   guint                  n;
   guint                  n_items = 0;
   ThunarFileThumbState   thumb_state;
+  const gchar           *thumbnail_path;
 #endif
 
   _thunar_return_val_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer), FALSE);
@@ -895,7 +896,10 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
     {
       /* the icon factory only loads icons for regular files */
       if (!thunar_file_is_regular (lp->data))
-        goto unsupported_type;
+        {
+          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE);
+          continue;
+        }
 
       /* get the current thumb state */
       thumb_state = thunar_file_get_thumb_state (lp->data);
@@ -918,11 +922,15 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
         }
       else
         {
-          unsupported_type:
+          /* still a regular file, but the type is now known to tumbler but
+           * maybe the application created a thumbnail */
+          thumbnail_path = thunar_file_get_thumbnail_path (lp->data);
 
-          /* we have no thumb for this mime-type / scheme combination,
-           * so don't both in the future */
-          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE);
+          /* test if a thumbnail can be found */
+          if (g_file_test (thumbnail_path, G_FILE_TEST_EXISTS))
+            thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_READY);
+          else
+            thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE);
         }
     }
 
