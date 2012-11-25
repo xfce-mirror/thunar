@@ -212,7 +212,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   GtkWidget *label;
   GtkWidget *box;
   GtkWidget *spacer;
-  gint       row = 0;
+  guint      row = 0;
   GtkWidget *image;
 
   /* acquire a reference on the preferences and monitor the "misc-date-style" setting */
@@ -237,7 +237,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), dialog->notebook, TRUE, TRUE, 0);
   gtk_widget_show (dialog->notebook);
 
-  table = gtk_table_new (2, 2, FALSE);
+  table = gtk_table_new (16, 2, FALSE);
   label = gtk_label_new (_("General"));
   gtk_table_set_col_spacings (GTK_TABLE (table), 12);
   gtk_container_set_border_width (GTK_CONTAINER (table), 6);
@@ -305,20 +305,12 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   ++row;
 
 
-  spacer = g_object_new (GTK_TYPE_ALIGNMENT, "height-request", 12, NULL);
-  gtk_table_attach (GTK_TABLE (table), spacer, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
-  gtk_widget_show (spacer);
-
-  ++row;
-
-
   /*
      Second box (kind, open with, link target)
    */
   label = gtk_label_new (_("Kind:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
-  exo_binding_new (G_OBJECT (label), "visible", G_OBJECT (spacer), "visible");
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);
 
