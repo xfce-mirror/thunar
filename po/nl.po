@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-09 08:15+0000\n"
+"POT-Creation-Date: 2012-11-26 06:51+0000\n"
 "PO-Revision-Date: 2011-09-08 15:47+0100\n"
 "Last-Translator: Pjotr\n"
 "Language-Team: Dutch (Flemish)\n"
@@ -135,10 +135,10 @@ msgstr "Kon actie niet uitvoeren"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1113 ../thunar/thunar-application.c:1239
-#: ../thunar/thunar-launcher.c:1097 ../thunar/thunar-location-entry.c:402
+#: ../thunar/thunar-launcher.c:1208 ../thunar/thunar-location-entry.c:402
 #: ../thunar/thunar-location-entry.c:430
 #: ../thunar/thunar-shortcuts-view.c:1614
-#: ../thunar/thunar-shortcuts-view.c:1642 ../thunar/thunar-window.c:2169
+#: ../thunar/thunar-shortcuts-view.c:1642 ../thunar/thunar-window.c:2165
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "Kon '%s' niet openen"
@@ -150,21 +150,21 @@ msgstr "Kon '%s' niet openen: %s"
 
 #. display an error message
 #: ../thunar/thunar-application.c:1307
-#: ../thunar/thunar-properties-dialog.c:679
-#: ../thunar/thunar-standard-view.c:2656 ../thunar/thunar-tree-view.c:1753
+#: ../thunar/thunar-properties-dialog.c:671
+#: ../thunar/thunar-standard-view.c:2712 ../thunar/thunar-tree-view.c:1753
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Hernoemen van '%s' mislukt"
 
 #: ../thunar/thunar-application.c:1409
 #: ../thunar/thunar-location-buttons.c:1285
-#: ../thunar/thunar-standard-view.c:2221 ../thunar/thunar-tree-view.c:1615
+#: ../thunar/thunar-standard-view.c:2277 ../thunar/thunar-tree-view.c:1615
 msgid "New Folder"
 msgstr "Nieuwe map"
 
 #: ../thunar/thunar-application.c:1410
 #: ../thunar/thunar-location-buttons.c:1286
-#: ../thunar/thunar-standard-view.c:2222 ../thunar/thunar-tree-view.c:1616
+#: ../thunar/thunar-standard-view.c:2278 ../thunar/thunar-tree-view.c:1616
 msgid "Create New Folder"
 msgstr "Nieuwe map maken"
 
@@ -177,7 +177,7 @@ msgid "Create New File"
 msgstr "Nieuw bestand maken"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-application.c:1472 ../thunar/thunar-standard-view.c:2266
+#: ../thunar/thunar-application.c:1472 ../thunar/thunar-standard-view.c:2322
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Document maken volgens sjabloon '%s'"
@@ -306,7 +306,7 @@ msgstr "Geen toepassing geselecteerd"
 msgid "Other Application..."
 msgstr "Andere toepassing..."
 
-#: ../thunar/thunar-chooser-dialog.c:188 ../thunar/thunar-launcher.c:177
+#: ../thunar/thunar-chooser-dialog.c:188 ../thunar/thunar-launcher.c:180
 msgid "Open With"
 msgstr "Openen met"
 
@@ -523,8 +523,8 @@ msgstr "Kolomm_en automatisch openvouwen indien nodig"
 #. the file_time is invalid
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:858 ../thunar/thunar-list-model.c:687
-#: ../thunar/thunar-list-model.c:715
+#: ../thunar/thunar-column-model.c:858 ../thunar/thunar-list-model.c:679
+#: ../thunar/thunar-list-model.c:707
 #: ../thunar/thunar-permissions-chooser.c:229 ../thunar/thunar-util.c:334
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:503
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:285
@@ -705,12 +705,12 @@ msgstr "ReplaceDialogPart1|Wilt u het bestaande bestand vervangen"
 #. Fourth box (size, volume, free space)
 #. 
 #: ../thunar/thunar-dialogs.c:618 ../thunar/thunar-dialogs.c:649
-#: ../thunar/thunar-properties-dialog.c:464
+#: ../thunar/thunar-properties-dialog.c:456
 msgid "Size:"
 msgstr "Grootte:"
 
 #: ../thunar/thunar-dialogs.c:618 ../thunar/thunar-dialogs.c:649
-#: ../thunar/thunar-properties-dialog.c:425
+#: ../thunar/thunar-properties-dialog.c:417
 msgid "Modified:"
 msgstr "Gewijzigd:"
 
@@ -757,7 +757,7 @@ msgstr "Hiernaar een koppe_ling maken"
 
 #. display an error to the user
 #. display an error message to the user
-#: ../thunar/thunar-dnd.c:254 ../thunar/thunar-launcher.c:543
+#: ../thunar/thunar-dnd.c:254 ../thunar/thunar-launcher.c:566
 #, c-format
 msgid "Failed to execute file \"%s\""
 msgstr "Kon bestand '%s' niet uitvoeren"
@@ -803,7 +803,7 @@ msgstr "Eigenaar"
 
 #. Permissions chooser
 #. 
-#: ../thunar/thunar-enum-types.c:98 ../thunar/thunar-properties-dialog.c:536
+#: ../thunar/thunar-enum-types.c:98 ../thunar/thunar-properties-dialog.c:528
 msgid "Permissions"
 msgstr "Rechten"
 
@@ -823,52 +823,58 @@ msgstr "Bestand"
 msgid "File Name"
 msgstr "Bestandnaam"
 
-#: ../thunar/thunar-file.c:868 ../thunar/thunar-gio-extensions.c:221
-#: ../thunar/thunar-shortcuts-model.c:808 ../thunar/thunar-window.c:357
+#: ../thunar/thunar-file.c:916 ../thunar/thunar-gio-extensions.c:236
+#: ../thunar/thunar-shortcuts-model.c:821 ../thunar/thunar-window.c:357
 msgid "File System"
 msgstr "Bestandssysteem"
 
-#: ../thunar/thunar-file.c:1234
+#: ../thunar/thunar-file.c:1353
 #, c-format
 msgid "The root folder has no parent"
 msgstr "De hoofdmap heeft geen bovenliggende map"
 
-#: ../thunar/thunar-file.c:1319 ../thunar/thunar-file.c:1594
+#: ../thunar/thunar-file.c:1438 ../thunar/thunar-file.c:1713
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "Kon het bureaubladbestand niet lezen: %s"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1331
+#: ../thunar/thunar-file.c:1450
 msgid "Untrusted application launcher"
 msgstr "Starter van niet-vertrouwde toepassing"
 
 # Unknown word "Exec"
-#: ../thunar/thunar-file.c:1356
+#: ../thunar/thunar-file.c:1475
 #, c-format
 msgid "No Exec field specified"
 msgstr "Geen Exec-veld gespecificeerd"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1365
+#: ../thunar/thunar-file.c:1484
 msgid "Untrusted link launcher"
 msgstr "Starter van niet-vertrouwde koppeling"
 
 # Unknown word "Exec"
-#: ../thunar/thunar-file.c:1381
+#: ../thunar/thunar-file.c:1500
 #, c-format
 msgid "No URL field specified"
 msgstr "Geen URL-veld gespecificeerd"
 
-#: ../thunar/thunar-file.c:1386
+#: ../thunar/thunar-file.c:1505
 msgid "Invalid desktop file"
 msgstr "Ongeldig bureaubladbestand"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: ../thunar/thunar-gio-extensions.c:302
+#: ../thunar/thunar-gio-extensions.c:317
 #, c-format
 msgid "%s on %s"
 msgstr "%s op %s"
+
+#. free disk space string
+#: ../thunar/thunar-gio-extensions.c:427
+#, c-format
+msgid "%s of %s (%d%% used)"
+msgstr "%s van %s (%d%% gebruikt)"
 
 #. extend history tooltip with function of the button
 #: ../thunar/thunar-history-action.c:372
@@ -964,9 +970,9 @@ msgstr "Kon de rechten van '%s' niet veranderen: %s"
 msgid "copy of %s"
 msgstr "kopie van %s"
 
-#: ../thunar/thunar-io-jobs-util.c:37 ../thunar/thunar-list-model.c:732
-#: ../thunar/thunar-list-model.c:1614 ../thunar/thunar-list-model.c:1625
-#: ../thunar/thunar-properties-dialog.c:947
+#: ../thunar/thunar-io-jobs-util.c:37 ../thunar/thunar-list-model.c:724
+#: ../thunar/thunar-list-model.c:1549 ../thunar/thunar-list-model.c:1560
+#: ../thunar/thunar-properties-dialog.c:935
 #, c-format
 msgid "link to %s"
 msgstr "koppeling naar %s"
@@ -1040,58 +1046,58 @@ msgstr ""
 #. *
 #. Prepare "Open" label
 #. append the "Open" menu action
-#: ../thunar/thunar-launcher.c:173 ../thunar/thunar-launcher.c:792
+#: ../thunar/thunar-launcher.c:176 ../thunar/thunar-launcher.c:818
 #: ../thunar/thunar-location-buttons.c:168
 #: ../thunar/thunar-shortcuts-view.c:1077 ../thunar/thunar-tree-view.c:1106
 msgid "_Open"
 msgstr "_Openen"
 
 #. append the "Open in New Tab" menu action
-#: ../thunar/thunar-launcher.c:174 ../thunar/thunar-launcher.c:832
+#: ../thunar/thunar-launcher.c:177 ../thunar/thunar-launcher.c:858
 #: ../thunar/thunar-tree-view.c:1117
 msgid "Open in New _Tab"
 msgstr "Open in nieuw tabblad"
 
 #. append the "Open in New Window" menu action
-#: ../thunar/thunar-launcher.c:175 ../thunar/thunar-launcher.c:826
+#: ../thunar/thunar-launcher.c:178 ../thunar/thunar-launcher.c:852
 #: ../thunar/thunar-tree-view.c:1124
 msgid "Open in New _Window"
 msgstr "Open in nieuw venster"
 
-#: ../thunar/thunar-launcher.c:176 ../thunar/thunar-launcher.c:178
+#: ../thunar/thunar-launcher.c:179 ../thunar/thunar-launcher.c:181
 msgid "Open With Other _Application..."
 msgstr "Met _andere toepassing openen..."
 
-#: ../thunar/thunar-launcher.c:176 ../thunar/thunar-launcher.c:178
-#: ../thunar/thunar-launcher.c:935
+#: ../thunar/thunar-launcher.c:179 ../thunar/thunar-launcher.c:181
+#: ../thunar/thunar-launcher.c:961
 msgid "Choose another application with which to open the selected file"
 msgstr "Kies een andere toepassing om het geselecteerde bestand mee te openen"
 
-#: ../thunar/thunar-launcher.c:652
+#: ../thunar/thunar-launcher.c:675
 #, c-format
 msgid "Failed to open file \"%s\""
 msgstr "Kon bestand '%s' niet openen"
 
 #. we can just tell that n files failed to open
-#: ../thunar/thunar-launcher.c:658
+#: ../thunar/thunar-launcher.c:681
 #, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
 msgstr[0] "Kon %d bestand niet openen"
 msgstr[1] "Kon %d bestanden niet openen"
 
-#: ../thunar/thunar-launcher.c:697
+#: ../thunar/thunar-launcher.c:720
 msgid "Are you sure you want to open all folders?"
 msgstr "Weet u zeker dat u alle mappen wil openen?"
 
-#: ../thunar/thunar-launcher.c:699
+#: ../thunar/thunar-launcher.c:722
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
 msgstr[0] "Dit zal %d apart venster van de bestandbeheerder openen."
 msgstr[1] "Dit zal %d aparte vensters van de bestandbeheerder openen."
 
-#: ../thunar/thunar-launcher.c:703
+#: ../thunar/thunar-launcher.c:726
 #, c-format
 msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
@@ -1099,14 +1105,14 @@ msgstr[0] "Open %d nieuw venster"
 msgstr[1] "Open %d nieuwe vensters"
 
 #. turn "Open New Window" into "Open in n New Windows"
-#: ../thunar/thunar-launcher.c:799
+#: ../thunar/thunar-launcher.c:825
 #, c-format
 msgid "Open in %d New _Window"
 msgid_plural "Open in %d New _Windows"
 msgstr[0] "Open in %d nieuw venster"
 msgstr[1] "Open in %d nieuwe vensters"
 
-#: ../thunar/thunar-launcher.c:800
+#: ../thunar/thunar-launcher.c:826
 #, c-format
 msgid "Open the selected directory in %d new window"
 msgid_plural "Open the selected directories in %d new windows"
@@ -1114,107 +1120,107 @@ msgstr[0] "Open de geselecteerde map in %d nieuw venster"
 msgstr[1] "Open de geselecteerde mappen in %d nieuwe vensters"
 
 #. turn "Open in New Tab" into "Open in x New Tabs"
-#: ../thunar/thunar-launcher.c:811
+#: ../thunar/thunar-launcher.c:837
 #, c-format
 msgid "Open in %d New _Tab"
 msgid_plural "Open in %d New _Tabs"
 msgstr[0] "Open in %d nieuw tabblad"
 msgstr[1] "Open in %d nieuwe tabbladen"
 
-#: ../thunar/thunar-launcher.c:812
+#: ../thunar/thunar-launcher.c:838
 #, c-format
 msgid "Open the selected directory in %d new tab"
 msgid_plural "Open the selected directories in %d new tabs"
 msgstr[0] "Open de geselecteerde map in %d nieuw tabblad"
 msgstr[1] "Open de geselecteerde mappen in %d nieuwe tabbladen"
 
-#: ../thunar/thunar-launcher.c:827
+#: ../thunar/thunar-launcher.c:853
 msgid "Open the selected directory in a new window"
 msgstr "Open de geselecteerde map in een nieuw venster"
 
-#: ../thunar/thunar-launcher.c:833
+#: ../thunar/thunar-launcher.c:859
 msgid "Open the selected directory in a new tab"
 msgstr "Open de geselecteerde map in een nieuw tabblad"
 
 #. set tooltip that makes sence
-#: ../thunar/thunar-launcher.c:837
+#: ../thunar/thunar-launcher.c:863
 msgid "Open the selected directory"
 msgstr "Open de geselecteerde map"
 
-#: ../thunar/thunar-launcher.c:858
+#: ../thunar/thunar-launcher.c:884
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
 msgstr[0] "Het geselecteerde bestand openen"
 msgstr[1] "De geselecteerde bestanden openen"
 
-#: ../thunar/thunar-launcher.c:903
+#: ../thunar/thunar-launcher.c:929
 msgid "_Execute"
 msgstr "Uitvoer_en"
 
-#: ../thunar/thunar-launcher.c:904
+#: ../thunar/thunar-launcher.c:930
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
 msgstr[0] "Het geselecteerde bestand uitvoeren"
 msgstr[1] "De geselecteerde bestanden uitvoeren"
 
 #. turn the "Open" action into "Open With DEFAULT"
-#: ../thunar/thunar-launcher.c:910
+#: ../thunar/thunar-launcher.c:936
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "_Openen met '%s'"
 
-#: ../thunar/thunar-launcher.c:911 ../thunar/thunar-launcher.c:997
+#: ../thunar/thunar-launcher.c:937 ../thunar/thunar-launcher.c:1023
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "Gebruik '%s' om het geselecteerde bestand te openen"
 msgstr[1] "Gebruik '%s' om de geselecteerde bestanden te openen"
 
-#: ../thunar/thunar-launcher.c:934
+#: ../thunar/thunar-launcher.c:960
 msgid "_Open With Other Application..."
 msgstr "_Openen met andere toepassing..."
 
-#: ../thunar/thunar-launcher.c:943
+#: ../thunar/thunar-launcher.c:969
 msgid "_Open With Default Applications"
 msgstr "_Openen met standaardtoepassingen"
 
-#: ../thunar/thunar-launcher.c:944
+#: ../thunar/thunar-launcher.c:970
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
 msgstr[0] "Open het geselecteerde bestand met de standaardtoepassing"
 msgstr[1] "Open de geselecteerde bestanden met de standaardtoepassing"
 
-#: ../thunar/thunar-launcher.c:996
+#: ../thunar/thunar-launcher.c:1022
 #, c-format
 msgid "Open With \"%s\""
 msgstr "Openen met '%s'"
 
-#: ../thunar/thunar-launcher.c:1431 ../thunar/thunar-shortcuts-view.c:1673
+#: ../thunar/thunar-launcher.c:1565 ../thunar/thunar-shortcuts-view.c:1673
 #: ../thunar/thunar-shortcuts-view.c:1912 ../thunar/thunar-tree-view.c:1956
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Kon '%s' niet aankoppelen"
 
-#: ../thunar/thunar-launcher.c:1552
+#: ../thunar/thunar-launcher.c:1686
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "Bureaublad (koppeling maken)"
 msgstr[1] "Bureaublad (koppelingen maken)"
 
-#: ../thunar/thunar-launcher.c:1553
+#: ../thunar/thunar-launcher.c:1687
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "Maak een koppeling op het bureaublad naar het geselecteerde bestand"
 msgstr[1] "Maak koppelingen op het bureaublad naar de geselecteerde bestanden"
 
-#: ../thunar/thunar-launcher.c:1587 ../thunar/thunar-launcher.c:1639
+#: ../thunar/thunar-launcher.c:1721 ../thunar/thunar-launcher.c:1773
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
 msgstr[0] "Stuur het geselecteerde bestand naar '%s'"
 msgstr[1] "Stuur de geselecteerde bestanden naar '%s'"
 
-#: ../thunar/thunar-list-model.c:2282
+#: ../thunar/thunar-list-model.c:2192
 #, c-format
 msgid "%d item (%s), Free space: %s"
 msgid_plural "%d items (%s), Free space: %s"
@@ -1222,46 +1228,46 @@ msgstr[0] "%d element (%s), vrije ruimte: %s"
 msgstr[1] "%d elementen (%s), vrije ruimte: %s"
 
 #. just the standard text
-#: ../thunar/thunar-list-model.c:2289
+#: ../thunar/thunar-list-model.c:2199
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
 msgstr[0] "%d element, vrije ruimte: %s"
 msgstr[1] "%d elementen, vrije ruimte: %s"
 
-#: ../thunar/thunar-list-model.c:2298
+#: ../thunar/thunar-list-model.c:2208
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d element"
 msgstr[1] "%d elementen"
 
-#: ../thunar/thunar-list-model.c:2314
+#: ../thunar/thunar-list-model.c:2224
 #, c-format
 msgid "\"%s\" broken link"
 msgstr "'%s' defecte koppeling"
 
-#: ../thunar/thunar-list-model.c:2319
+#: ../thunar/thunar-list-model.c:2229
 #, c-format
 msgid "\"%s\" (%s) link to %s"
 msgstr "'%s' (%s) koppeling naar %s"
 
-#: ../thunar/thunar-list-model.c:2325
+#: ../thunar/thunar-list-model.c:2235
 #, c-format
 msgid "\"%s\" shortcut"
 msgstr "'%s' sneltoets"
 
-#: ../thunar/thunar-list-model.c:2329
+#: ../thunar/thunar-list-model.c:2239
 #, c-format
 msgid "\"%s\" mountable"
 msgstr "'%s' koppelbaar"
 
-#: ../thunar/thunar-list-model.c:2335
+#: ../thunar/thunar-list-model.c:2245
 #, c-format
 msgid "\"%s\" (%s) %s"
 msgstr "'%s' (%s) %s"
 
-#: ../thunar/thunar-list-model.c:2343
+#: ../thunar/thunar-list-model.c:2253
 #, c-format
 msgid "\"%s\" %s"
 msgstr "'%s' %s"
@@ -1272,18 +1278,12 @@ msgstr "'%s' %s"
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
 #. 
-#: ../thunar/thunar-list-model.c:2353 ../thunar/thunar-properties-dialog.c:372
+#: ../thunar/thunar-list-model.c:2263 ../thunar/thunar-properties-dialog.c:364
 msgid "Original Path:"
 msgstr "Oorspronkelijk pad:"
 
-#. append the image dimensions to the statusbar text
-#: ../thunar/thunar-list-model.c:2368
-#: ../plugins/thunar-apr/thunar-apr-image-page.c:149
-msgid "Image Size:"
-msgstr "Afbeeldingsgrootte:"
-
 #. item count if there are also folders in the selection
-#: ../thunar/thunar-list-model.c:2406
+#: ../thunar/thunar-list-model.c:2300
 #, c-format
 msgid "%d other item selected (%s)"
 msgid_plural "%d other items selected (%s)"
@@ -1291,14 +1291,14 @@ msgstr[0] "%d ander element geselecteerd (%s)"
 msgstr[1] "%d andere elementen geselecteerd (%s)"
 
 #. only non-folders are selected
-#: ../thunar/thunar-list-model.c:2413
+#: ../thunar/thunar-list-model.c:2307
 #, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
 msgstr[0] "%d element geselecteerd (%s)"
 msgstr[1] "%d elementen geselecteerd (%s)"
 
-#: ../thunar/thunar-list-model.c:2427
+#: ../thunar/thunar-list-model.c:2321
 #, c-format
 msgid "%d folder selected"
 msgid_plural "%d folders selected"
@@ -1309,7 +1309,7 @@ msgstr[1] "%d mappen geselecteerd"
 #. * needs to change ", " to something else. The comma
 #. * is between the message about the number of folders
 #. * and the number of items in the selection
-#: ../thunar/thunar-list-model.c:2446
+#: ../thunar/thunar-list-model.c:2340
 #, c-format
 msgid "%s, %s"
 msgstr "%s, %s"
@@ -1322,7 +1322,7 @@ msgstr "Openen in nieuw venster"
 
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-location-buttons.c:170
-#: ../thunar/thunar-standard-view.c:382 ../thunar/thunar-tree-view.c:1192
+#: ../thunar/thunar-standard-view.c:387 ../thunar/thunar-tree-view.c:1192
 msgid "Create _Folder..."
 msgstr "_Map maken..."
 
@@ -1331,12 +1331,12 @@ msgid "Delete all files and folders in the Trash"
 msgstr "Verwijder alle bestanden en mappen in de prullenbak"
 
 #: ../thunar/thunar-location-buttons.c:172
-#: ../thunar/thunar-standard-view.c:389
+#: ../thunar/thunar-standard-view.c:394
 msgid "Paste Into Folder"
 msgstr "In deze map plakken"
 
 #: ../thunar/thunar-location-buttons.c:173
-#: ../thunar/thunar-renamer-dialog.c:197 ../thunar/thunar-standard-view.c:383
+#: ../thunar/thunar-renamer-dialog.c:197 ../thunar/thunar-standard-view.c:388
 msgid "_Properties..."
 msgstr "_Eigenschappen"
 
@@ -1393,11 +1393,11 @@ msgstr "Huidige map verversen"
 msgid "File does not exist"
 msgstr "Bestand bestaat niet"
 
-#: ../thunar/thunar-notify.c:166
+#: ../thunar/thunar-notify.c:168
 msgid "Unmounting device"
 msgstr "Bezig met ontkoppelen van apparaat"
 
-#: ../thunar/thunar-notify.c:167
+#: ../thunar/thunar-notify.c:169
 #, c-format
 msgid ""
 "The device \"%s\" is being unmounted by the system. Please do not remove the "
@@ -1406,11 +1406,11 @@ msgstr ""
 "Het apparaat '%s' wordt ontkoppeld door het systeem. Gelieve het apparaat "
 "nog niet te verwijderen"
 
-#: ../thunar/thunar-notify.c:173 ../thunar/thunar-notify.c:212
+#: ../thunar/thunar-notify.c:175 ../thunar/thunar-notify.c:214
 msgid "Writing data to device"
 msgstr "Gegevens naar het apparaat aan het schrijven"
 
-#: ../thunar/thunar-notify.c:174 ../thunar/thunar-notify.c:213
+#: ../thunar/thunar-notify.c:176 ../thunar/thunar-notify.c:215
 #, c-format
 msgid ""
 "There is data that needs to be written to the device \"%s\" before it can be "
@@ -1419,16 +1419,16 @@ msgstr ""
 "Er zijn gegevens die moeten worden geschreven naar het apparaat '%s' voordat "
 "het kan worden verwijderd. Gelieve het apparaat nog niet te verwijderen."
 
-#: ../thunar/thunar-notify.c:206
+#: ../thunar/thunar-notify.c:208
 msgid "Ejecting device"
 msgstr "Apparaat aan het uitwerpen"
 
-#: ../thunar/thunar-notify.c:207
+#: ../thunar/thunar-notify.c:209
 #, c-format
 msgid "The device \"%s\" is being ejected. This may take some time"
 msgstr "Het apparaat '%s' wordt uitgeworpen. Dit kan even duren"
 
-#: ../thunar/thunar-misc-jobs.c:89
+#: ../thunar/thunar-misc-jobs.c:74
 #, c-format
 msgid "No templates installed"
 msgstr "Geen sjablonen geïnstalleerd"
@@ -1581,69 +1581,72 @@ msgstr ""
 "Alleen gebruikers met toestemming voor het lezen van de inhoud van deze map "
 "zullen daarna toegang tot deze map hebben."
 
-#: ../thunar/thunar-preferences-dialog.c:190
+#: ../thunar/thunar-preferences-dialog.c:225
 msgid "File Manager Preferences"
 msgstr "Voorkeuren voor bestandbeheerder"
 
 #. Display
 #. 
-#: ../thunar/thunar-preferences-dialog.c:207
+#: ../thunar/thunar-preferences-dialog.c:242
 msgid "Display"
 msgstr "Weergave"
 
-#: ../thunar/thunar-preferences-dialog.c:217
+#: ../thunar/thunar-preferences-dialog.c:252
 msgid "Default View"
 msgstr "Standaardweergave"
 
-#: ../thunar/thunar-preferences-dialog.c:229
+#: ../thunar/thunar-preferences-dialog.c:264
 msgid "View _new folders using:"
 msgstr "_Nieuwe mappen tonen met:"
 
-#: ../thunar/thunar-preferences-dialog.c:234
-#: ../thunar/thunar-preferences-dialog.c:262
+#: ../thunar/thunar-preferences-dialog.c:270
+#: ../thunar/thunar-preferences-dialog.c:307
 msgid "Icon View"
 msgstr "Pictogramweergave"
 
-#: ../thunar/thunar-preferences-dialog.c:235
+#: ../thunar/thunar-preferences-dialog.c:271
 msgid "Detailed List View"
 msgstr "Gedetailleerde lijstweergave"
 
-#: ../thunar/thunar-preferences-dialog.c:236
+#: ../thunar/thunar-preferences-dialog.c:272
 msgid "Compact List View"
 msgstr "Compacte lijstweergave"
 
-#: ../thunar/thunar-preferences-dialog.c:237
+#: ../thunar/thunar-preferences-dialog.c:273
 msgid "Last Active View"
 msgstr "Vorige weergavemodus"
 
-#: ../thunar/thunar-preferences-dialog.c:245
+#: ../thunar/thunar-preferences-dialog.c:281
+msgid "Show thumbnails:"
+msgstr "Miniaturen weergeven:"
+
+#: ../thunar/thunar-preferences-dialog.c:287
+msgid "Never"
+msgstr "Nooit"
+
+#: ../thunar/thunar-preferences-dialog.c:288
+msgid "Local Files Only"
+msgstr "Alleen plaatselijke bestanden"
+
+#: ../thunar/thunar-preferences-dialog.c:289
+msgid "Always"
+msgstr "Altijd"
+
+#: ../thunar/thunar-preferences-dialog.c:297
 msgid "Sort _folders before files"
 msgstr "_Mappen vóór bestanden sorteren"
 
-#: ../thunar/thunar-preferences-dialog.c:247
+#: ../thunar/thunar-preferences-dialog.c:299
 msgid "Select this option to list folders before files when you sort a folder."
 msgstr ""
 "Selecteer deze optie om mappen vóór bestanden weer te geven wanneer u een "
 "map sorteert."
 
-#: ../thunar/thunar-preferences-dialog.c:251
-msgid "_Show thumbnails"
-msgstr "Miniaturen _weergeven"
-
-#: ../thunar/thunar-preferences-dialog.c:253
-msgid ""
-"Select this option to display previewable files within a folder as "
-"automatically generated thumbnail icons."
-msgstr ""
-"Selecteer deze optie om bestanden binnen een map, die voorbeeldweergaven "
-"ondersteunen, weer te geven als automatisch gegenereerde "
-"miniatuurpictogrammen."
-
-#: ../thunar/thunar-preferences-dialog.c:274
+#: ../thunar/thunar-preferences-dialog.c:319
 msgid "_Text beside icons"
 msgstr "_Tekst naast pictogrammen"
 
-#: ../thunar/thunar-preferences-dialog.c:276
+#: ../thunar/thunar-preferences-dialog.c:321
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
@@ -1651,69 +1654,69 @@ msgstr ""
 "Selecteer deze optie om beschrijvingen van elementen naast de pictogrammen "
 "weer te geven in plaats van eronder."
 
-#: ../thunar/thunar-preferences-dialog.c:285
+#: ../thunar/thunar-preferences-dialog.c:330
 msgid "Date"
 msgstr "Datum"
 
-#: ../thunar/thunar-preferences-dialog.c:297
+#: ../thunar/thunar-preferences-dialog.c:342
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:216
 msgid "_Format:"
 msgstr "_Opmaak:"
 
 #. Side Pane
 #. 
-#: ../thunar/thunar-preferences-dialog.c:318
+#: ../thunar/thunar-preferences-dialog.c:363
 msgid "Side Pane"
 msgstr "Zijbalk"
 
-#: ../thunar/thunar-preferences-dialog.c:328
+#: ../thunar/thunar-preferences-dialog.c:373
 msgid "Shortcuts Pane"
 msgstr "Sneltoetsenbalk"
 
-#: ../thunar/thunar-preferences-dialog.c:340
+#: ../thunar/thunar-preferences-dialog.c:385
 msgid "_Icon Size:"
 msgstr "_Pictogramgrootte:"
 
-#: ../thunar/thunar-preferences-dialog.c:345
-#: ../thunar/thunar-preferences-dialog.c:387
+#: ../thunar/thunar-preferences-dialog.c:390
+#: ../thunar/thunar-preferences-dialog.c:432
 msgid "Very Small"
 msgstr "Zeer klein"
 
-#: ../thunar/thunar-preferences-dialog.c:346
-#: ../thunar/thunar-preferences-dialog.c:388
+#: ../thunar/thunar-preferences-dialog.c:391
+#: ../thunar/thunar-preferences-dialog.c:433
 msgid "Smaller"
 msgstr "Kleiner"
 
-#: ../thunar/thunar-preferences-dialog.c:347
-#: ../thunar/thunar-preferences-dialog.c:389
+#: ../thunar/thunar-preferences-dialog.c:392
+#: ../thunar/thunar-preferences-dialog.c:434
 msgid "Small"
 msgstr "Klein"
 
-#: ../thunar/thunar-preferences-dialog.c:348
-#: ../thunar/thunar-preferences-dialog.c:390
+#: ../thunar/thunar-preferences-dialog.c:393
+#: ../thunar/thunar-preferences-dialog.c:435
 msgid "Normal"
 msgstr "Normaal"
 
-#: ../thunar/thunar-preferences-dialog.c:349
-#: ../thunar/thunar-preferences-dialog.c:391
+#: ../thunar/thunar-preferences-dialog.c:394
+#: ../thunar/thunar-preferences-dialog.c:436
 msgid "Large"
 msgstr "Groot"
 
-#: ../thunar/thunar-preferences-dialog.c:350
-#: ../thunar/thunar-preferences-dialog.c:392
+#: ../thunar/thunar-preferences-dialog.c:395
+#: ../thunar/thunar-preferences-dialog.c:437
 msgid "Larger"
 msgstr "Groter"
 
-#: ../thunar/thunar-preferences-dialog.c:351
-#: ../thunar/thunar-preferences-dialog.c:393
+#: ../thunar/thunar-preferences-dialog.c:396
+#: ../thunar/thunar-preferences-dialog.c:438
 msgid "Very Large"
 msgstr "Zeer groot"
 
-#: ../thunar/thunar-preferences-dialog.c:359
+#: ../thunar/thunar-preferences-dialog.c:404
 msgid "Show Icon _Emblems"
 msgstr "Pictogram_emblemen weergeven"
 
-#: ../thunar/thunar-preferences-dialog.c:361
+#: ../thunar/thunar-preferences-dialog.c:406
 msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties dialog."
@@ -1722,19 +1725,19 @@ msgstr ""
 "geven, voor alle mappen waarvoor emblemen zijn ingesteld in het "
 "dialoogvenster voor mapeigenschappen."
 
-#: ../thunar/thunar-preferences-dialog.c:370
+#: ../thunar/thunar-preferences-dialog.c:415
 msgid "Tree Pane"
 msgstr "Boomstructuurbalk"
 
-#: ../thunar/thunar-preferences-dialog.c:382
+#: ../thunar/thunar-preferences-dialog.c:427
 msgid "Icon _Size:"
 msgstr "Pictogram_grootte:"
 
-#: ../thunar/thunar-preferences-dialog.c:401
+#: ../thunar/thunar-preferences-dialog.c:446
 msgid "Show Icon E_mblems"
 msgstr "Pictogram-e_mblemen weergeven"
 
-#: ../thunar/thunar-preferences-dialog.c:403
+#: ../thunar/thunar-preferences-dialog.c:448
 msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
@@ -1745,19 +1748,19 @@ msgstr ""
 
 #. Behavior
 #. 
-#: ../thunar/thunar-preferences-dialog.c:412
+#: ../thunar/thunar-preferences-dialog.c:457
 msgid "Behavior"
 msgstr "Gedrag"
 
-#: ../thunar/thunar-preferences-dialog.c:422
+#: ../thunar/thunar-preferences-dialog.c:467
 msgid "Navigation"
 msgstr "Navigatie"
 
-#: ../thunar/thunar-preferences-dialog.c:434
+#: ../thunar/thunar-preferences-dialog.c:479
 msgid "_Single click to activate items"
 msgstr "_Onderdelen met enkele klik activeren"
 
-#: ../thunar/thunar-preferences-dialog.c:454
+#: ../thunar/thunar-preferences-dialog.c:499
 msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
@@ -1765,7 +1768,7 @@ msgstr ""
 "Specificeer de v_ertraging voordat een element wordt\n"
 "geselecteerd, wanneer de muisaanwijzer erop rust:"
 
-#: ../thunar/thunar-preferences-dialog.c:466
+#: ../thunar/thunar-preferences-dialog.c:511
 msgid ""
 "When single-click activation is enabled, pausing the mouse pointer over an "
 "item will automatically select that item after the chosen delay. You can "
@@ -1779,45 +1782,45 @@ msgstr ""
 "helemaal naar links te verschuiven. Deze optie is handig wanneer u bestanden "
 "wil selecteren zonder ze uit te voeren."
 
-#: ../thunar/thunar-preferences-dialog.c:484
+#: ../thunar/thunar-preferences-dialog.c:529
 msgid "Disabled"
 msgstr "Uitgeschakeld"
 
-#: ../thunar/thunar-preferences-dialog.c:490
+#: ../thunar/thunar-preferences-dialog.c:535
 msgid "Medium"
 msgstr "Gemiddeld"
 
-#: ../thunar/thunar-preferences-dialog.c:496
+#: ../thunar/thunar-preferences-dialog.c:541
 msgid "Long"
 msgstr "Lang"
 
-#: ../thunar/thunar-preferences-dialog.c:502
+#: ../thunar/thunar-preferences-dialog.c:547
 msgid "_Double click to activate items"
 msgstr "_Dubbelklikken om elementen te starten"
 
-#: ../thunar/thunar-preferences-dialog.c:512
+#: ../thunar/thunar-preferences-dialog.c:557
 msgid "Middle Click"
 msgstr "Middelklik"
 
-#: ../thunar/thunar-preferences-dialog.c:522
+#: ../thunar/thunar-preferences-dialog.c:567
 msgid "Open folder in new _window"
 msgstr "Open map in nieuw venster"
 
-#: ../thunar/thunar-preferences-dialog.c:527
+#: ../thunar/thunar-preferences-dialog.c:572
 msgid "Open folder in new _tab"
 msgstr "Open map in nieuw tabblad"
 
 #. Advanced
 #. 
-#: ../thunar/thunar-preferences-dialog.c:536
+#: ../thunar/thunar-preferences-dialog.c:581
 msgid "Advanced"
 msgstr "Geavanceerd"
 
-#: ../thunar/thunar-preferences-dialog.c:546
+#: ../thunar/thunar-preferences-dialog.c:591
 msgid "Folder Permissions"
 msgstr "Maprechten"
 
-#: ../thunar/thunar-preferences-dialog.c:558
+#: ../thunar/thunar-preferences-dialog.c:603
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
@@ -1827,28 +1830,28 @@ msgstr ""
 "u die veranderingen ook op de inhoud van die map\n"
 "toepassen. Kies hieronder het standaardgedrag:"
 
-#: ../thunar/thunar-preferences-dialog.c:566
+#: ../thunar/thunar-preferences-dialog.c:611
 msgid "Ask everytime"
 msgstr "Altijd vragen"
 
-#: ../thunar/thunar-preferences-dialog.c:567
+#: ../thunar/thunar-preferences-dialog.c:612
 msgid "Apply to Folder Only"
 msgstr "Alleen op map toepassen"
 
-#: ../thunar/thunar-preferences-dialog.c:568
+#: ../thunar/thunar-preferences-dialog.c:613
 msgid "Apply to Folder and Contents"
 msgstr "Toepassen op map en inhoud"
 
-#: ../thunar/thunar-preferences-dialog.c:578
+#: ../thunar/thunar-preferences-dialog.c:623
 msgid "Volume Management"
 msgstr "Mediumbeheer"
 
 #. add check button to enable/disable auto mounting
-#: ../thunar/thunar-preferences-dialog.c:594
+#: ../thunar/thunar-preferences-dialog.c:639
 msgid "Enable _Volume Management"
 msgstr "Schakel _mediumbeheer in"
 
-#: ../thunar/thunar-preferences-dialog.c:603
+#: ../thunar/thunar-preferences-dialog.c:648
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives\n"
 "and media (i.e. how cameras should be handled)."
@@ -1859,7 +1862,7 @@ msgstr ""
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: ../thunar/thunar-preferences-dialog.c:663
+#: ../thunar/thunar-preferences-dialog.c:708
 msgid "Failed to display the volume management settings"
 msgstr "Kon de instellingen voor mediumbeheer niet weergeven."
 
@@ -1895,84 +1898,79 @@ msgstr "Namen:"
 
 #. Second box (kind, open with, link target)
 #. 
-#: ../thunar/thunar-properties-dialog.c:318
+#: ../thunar/thunar-properties-dialog.c:311
 msgid "Kind:"
 msgstr "Soort:"
 
-#: ../thunar/thunar-properties-dialog.c:340
+#: ../thunar/thunar-properties-dialog.c:332
 msgid "_Open With:"
 msgstr "Openen met:"
 
-#: ../thunar/thunar-properties-dialog.c:354
+#: ../thunar/thunar-properties-dialog.c:346
 msgid "Link Target:"
 msgstr "Doel van koppeling:"
 
-#: ../thunar/thunar-properties-dialog.c:386
+#: ../thunar/thunar-properties-dialog.c:378
 msgid "Location:"
 msgstr "Locatie:"
 
 #. Third box (deleted, modified, accessed)
 #. 
-#: ../thunar/thunar-properties-dialog.c:411
+#: ../thunar/thunar-properties-dialog.c:403
 msgid "Deleted:"
 msgstr "Verwijderd:"
 
-#: ../thunar/thunar-properties-dialog.c:439
+#: ../thunar/thunar-properties-dialog.c:431
 msgid "Accessed:"
 msgstr "Geopend:"
 
-#: ../thunar/thunar-properties-dialog.c:477
+#: ../thunar/thunar-properties-dialog.c:469
 msgid "Volume:"
 msgstr "Medium:"
 
-#: ../thunar/thunar-properties-dialog.c:501
+#: ../thunar/thunar-properties-dialog.c:493
 msgid "Free Space:"
 msgstr "Vrije ruimte:"
 
 #. Emblem chooser
 #. 
-#: ../thunar/thunar-properties-dialog.c:526
+#: ../thunar/thunar-properties-dialog.c:518
 msgid "Emblems"
 msgstr "Emblemen"
 
 #. allocate the icon chooser
 #. allocate the chooser dialog
-#: ../thunar/thunar-properties-dialog.c:765
+#: ../thunar/thunar-properties-dialog.c:757
 #: ../plugins/thunar-uca/thunar-uca-editor.c:608
 #, c-format
 msgid "Select an Icon for \"%s\""
 msgstr "Selecteer een pictogram voor '%s'"
 
-#: ../thunar/thunar-properties-dialog.c:791
+#: ../thunar/thunar-properties-dialog.c:783
 #, c-format
 msgid "Failed to change icon of \"%s\""
 msgstr "Kon pictogram van '%s' niet wijzigen"
 
 #. update the properties dialog title
-#: ../thunar/thunar-properties-dialog.c:894
+#: ../thunar/thunar-properties-dialog.c:882
 #, c-format
 msgid "%s - Properties"
 msgstr "%s - Eigenschappen"
 
-#: ../thunar/thunar-properties-dialog.c:945
+#: ../thunar/thunar-properties-dialog.c:933
 msgid "broken link"
 msgstr "defecte koppeling"
 
-#: ../thunar/thunar-properties-dialog.c:956
+#: ../thunar/thunar-properties-dialog.c:944
 msgid "unknown"
 msgstr "onbekend"
 
-#: ../thunar/thunar-properties-dialog.c:1054
-#, c-format
-msgid "%s of %s (%d%% used)"
-msgstr "%s van %s (%d%% gebruikt)"
-
 #. update the properties dialog title
-#: ../thunar/thunar-properties-dialog.c:1117
+#: ../thunar/thunar-properties-dialog.c:1103
 msgid "Properties"
 msgstr "Eigenschappen"
 
-#: ../thunar/thunar-properties-dialog.c:1217
+#: ../thunar/thunar-properties-dialog.c:1203
 msgid "mixed"
 msgstr "gemengd"
 
@@ -1984,7 +1982,7 @@ msgstr "_Bestand"
 msgid "_Send To"
 msgstr "_Stuur naar"
 
-#: ../thunar/thunar-renamer-dialog.c:192 ../thunar/thunar-standard-view.c:380
+#: ../thunar/thunar-renamer-dialog.c:192 ../thunar/thunar-standard-view.c:385
 msgid "File Context Menu"
 msgstr "Contextmenu van bestand"
 
@@ -2012,7 +2010,7 @@ msgstr "_Over"
 msgid "Display information about Thunar Bulk Rename"
 msgstr "Informatie weergeven over Thunar Massaal Hernoemen"
 
-#: ../thunar/thunar-renamer-dialog.c:197 ../thunar/thunar-standard-view.c:383
+#: ../thunar/thunar-renamer-dialog.c:197 ../thunar/thunar-standard-view.c:388
 msgid "View the properties of the selected file"
 msgstr "Bekijk de eigenschappen van het geselecteerde bestand"
 
@@ -2147,19 +2145,19 @@ msgstr ""
 "Wilt u dit bestand overslaan en doorgaan met het hernoemen van de resterende "
 "bestanden?"
 
-#: ../thunar/thunar-shortcuts-model.c:802
+#: ../thunar/thunar-shortcuts-model.c:815
 msgid "DEVICES"
 msgstr "APPARATEN"
 
-#: ../thunar/thunar-shortcuts-model.c:848
+#: ../thunar/thunar-shortcuts-model.c:861
 msgid "NETWORK"
 msgstr "NETWERK"
 
-#: ../thunar/thunar-shortcuts-model.c:854
+#: ../thunar/thunar-shortcuts-model.c:867
 msgid "Browse Network"
 msgstr "Blader door het netwerk"
 
-#: ../thunar/thunar-shortcuts-model.c:875
+#: ../thunar/thunar-shortcuts-model.c:888
 msgid "PLACES"
 msgstr "LOCATIES"
 
@@ -2271,45 +2269,45 @@ msgstr "(sommige inhoud onleesbaar)"
 msgid "Permission denied"
 msgstr "Toestemming geweigerd"
 
-#: ../thunar/thunar-standard-view.c:381
+#: ../thunar/thunar-standard-view.c:386
 msgid "Folder Context Menu"
 msgstr "Contextmenu van map"
 
-#: ../thunar/thunar-standard-view.c:382
+#: ../thunar/thunar-standard-view.c:387
 msgid "Create an empty folder within the current folder"
 msgstr "Maak een lege map in de huidige map"
 
 #. append the "Cut" menu action
-#: ../thunar/thunar-standard-view.c:384 ../thunar/thunar-tree-view.c:1213
+#: ../thunar/thunar-standard-view.c:389 ../thunar/thunar-tree-view.c:1213
 msgid "Cu_t"
 msgstr "K_nippen"
 
 #. append the "Copy" menu action
-#: ../thunar/thunar-standard-view.c:385 ../thunar/thunar-tree-view.c:1224
+#: ../thunar/thunar-standard-view.c:390 ../thunar/thunar-tree-view.c:1224
 msgid "_Copy"
 msgstr "_Kopiëren"
 
-#: ../thunar/thunar-standard-view.c:386
+#: ../thunar/thunar-standard-view.c:391
 msgid "_Paste"
 msgstr "_Plakken"
 
-#: ../thunar/thunar-standard-view.c:386
+#: ../thunar/thunar-standard-view.c:391
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr ""
 "Bestanden verplaatsen of kopiëren die eerder met een knip- of "
 "kopieeropdracht zijn geselecteerd"
 
 #. append the "Move to Tash" menu action
-#: ../thunar/thunar-standard-view.c:387 ../thunar/thunar-tree-view.c:1265
+#: ../thunar/thunar-standard-view.c:392 ../thunar/thunar-tree-view.c:1265
 msgid "Mo_ve to Trash"
 msgstr "_Verplaats naar prullenbak"
 
 #. append the "Delete" menu action
-#: ../thunar/thunar-standard-view.c:388 ../thunar/thunar-tree-view.c:1277
+#: ../thunar/thunar-standard-view.c:393 ../thunar/thunar-tree-view.c:1277
 msgid "_Delete"
 msgstr "_Verwijderen"
 
-#: ../thunar/thunar-standard-view.c:389
+#: ../thunar/thunar-standard-view.c:394
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
@@ -2317,103 +2315,103 @@ msgstr ""
 "Bestanden die eerder met een knip- of kopieeropdracht zijn geselecteerd, "
 "naar de geselecteerde map verplaatsen"
 
-#: ../thunar/thunar-standard-view.c:390
+#: ../thunar/thunar-standard-view.c:395
 msgid "Select _all Files"
 msgstr "_Alle bestanden selecteren"
 
-#: ../thunar/thunar-standard-view.c:390
+#: ../thunar/thunar-standard-view.c:395
 msgid "Select all files in this window"
 msgstr "Selecteer alle bestanden in dit venster"
 
-#: ../thunar/thunar-standard-view.c:391
+#: ../thunar/thunar-standard-view.c:396
 msgid "Select _by Pattern..."
 msgstr "_Op patroon selecteren"
 
-#: ../thunar/thunar-standard-view.c:391
+#: ../thunar/thunar-standard-view.c:396
 msgid "Select all files that match a certain pattern"
 msgstr "Selecteer alle bestanden die aan een bepaald patroon voldoen"
 
-#: ../thunar/thunar-standard-view.c:392
+#: ../thunar/thunar-standard-view.c:397
 msgid "_Invert Selection"
 msgstr "Selectie omdraaien"
 
-#: ../thunar/thunar-standard-view.c:392
+#: ../thunar/thunar-standard-view.c:397
 msgid "Select all and only the items that are not currently selected"
 msgstr ""
 "Selecteer alles en alleen de elementen die thans niet geselecteerd zijn"
 
-#: ../thunar/thunar-standard-view.c:393
+#: ../thunar/thunar-standard-view.c:398
 msgid "Du_plicate"
 msgstr "Du_pliceren"
 
-#: ../thunar/thunar-standard-view.c:394 ../thunar/thunar-standard-view.c:4140
+#: ../thunar/thunar-standard-view.c:399 ../thunar/thunar-standard-view.c:4193
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Koppeling m_aken"
 msgstr[1] "Koppelingen m_aken"
 
 #. append the "Rename" menu action
-#: ../thunar/thunar-standard-view.c:395 ../thunar/thunar-tree-view.c:1300
+#: ../thunar/thunar-standard-view.c:400 ../thunar/thunar-tree-view.c:1300
 msgid "_Rename..."
 msgstr "He_rnoemen..."
 
-#: ../thunar/thunar-standard-view.c:396
+#: ../thunar/thunar-standard-view.c:401
 msgid "_Restore"
 msgstr "He_rstellen"
 
 #. add the "Create Document" sub menu action
-#: ../thunar/thunar-standard-view.c:638
+#: ../thunar/thunar-standard-view.c:666
 msgid "Create _Document"
 msgstr "_Document aanmaken"
 
-#: ../thunar/thunar-standard-view.c:1586
+#: ../thunar/thunar-standard-view.c:1616
 msgid "Loading folder contents..."
 msgstr "Mapinhoud aan het laden..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2127 ../thunar/thunar-window.c:2721
+#: ../thunar/thunar-standard-view.c:2183 ../thunar/thunar-window.c:2717
 msgid "Failed to open the home folder"
 msgstr "Kon persoonlijke map niet openen"
 
-#: ../thunar/thunar-standard-view.c:2177
+#: ../thunar/thunar-standard-view.c:2233
 msgid "New Empty File"
 msgstr "Nieuw leeg bestand"
 
-#: ../thunar/thunar-standard-view.c:2178
+#: ../thunar/thunar-standard-view.c:2234
 msgid "New Empty File..."
 msgstr "Nieuw leeg bestand..."
 
-#: ../thunar/thunar-standard-view.c:2501
+#: ../thunar/thunar-standard-view.c:2557
 msgid "Select by Pattern"
 msgstr "Op patroon selecteren"
 
-#: ../thunar/thunar-standard-view.c:2507
+#: ../thunar/thunar-standard-view.c:2563
 msgid "_Select"
 msgstr "_Selecteren"
 
-#: ../thunar/thunar-standard-view.c:2516
+#: ../thunar/thunar-standard-view.c:2572
 msgid "_Pattern:"
 msgstr "_Patroon:"
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: ../thunar/thunar-standard-view.c:3022
+#: ../thunar/thunar-standard-view.c:3078
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Ongeldige bestandnaam verkregen van XDS-sleepbron"
 
 #. display an error dialog to the user
 # Unknown word "fifo"
-#: ../thunar/thunar-standard-view.c:3203
+#: ../thunar/thunar-standard-view.c:3259
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Kon geen koppeling voor de URL '%s' maken"
 
-#: ../thunar/thunar-standard-view.c:3596 ../thunar/thunar-window.c:2816
+#: ../thunar/thunar-standard-view.c:3652 ../thunar/thunar-window.c:2812
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Kon map '%s' niet openen"
 
-#: ../thunar/thunar-standard-view.c:4091
+#: ../thunar/thunar-standard-view.c:4144
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] ""
@@ -2423,7 +2421,7 @@ msgstr[1] ""
 "Bereid de geselecteerde bestanden voor om met een plakopdracht verplaatst te "
 "worden"
 
-#: ../thunar/thunar-standard-view.c:4099
+#: ../thunar/thunar-standard-view.c:4152
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] ""
@@ -2433,37 +2431,37 @@ msgstr[1] ""
 "Bereid de geselecteerde bestanden voor om met een plakopdracht gekopieerd te "
 "worden"
 
-#: ../thunar/thunar-standard-view.c:4111
+#: ../thunar/thunar-standard-view.c:4164
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "Verplaats het geselecteerde bestand naar de prullenbak"
 msgstr[1] "Verplaats de geselecteerde bestanden naar de prullenbak"
 
-#: ../thunar/thunar-standard-view.c:4119
+#: ../thunar/thunar-standard-view.c:4172
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "Verwijder het geselecteerde bestand blijvend"
 msgstr[1] "Verwijder de geselecteerde bestanden blijvend"
 
-#: ../thunar/thunar-standard-view.c:4133
+#: ../thunar/thunar-standard-view.c:4186
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Het geselecteerde bestand dupliceren"
 msgstr[1] "De geselecteerde bestanden dupliceren"
 
-#: ../thunar/thunar-standard-view.c:4142
+#: ../thunar/thunar-standard-view.c:4195
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Maak een symbolische koppeling voor het geselecteerde bestand"
 msgstr[1] "Maak een symbolische koppeling voor de geselecteerde bestanden"
 
-#: ../thunar/thunar-standard-view.c:4150
+#: ../thunar/thunar-standard-view.c:4203
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Hernoem het geselecteerde bestand"
 msgstr[1] "Hernoem de geselecteerde bestanden"
 
-#: ../thunar/thunar-standard-view.c:4158
+#: ../thunar/thunar-standard-view.c:4211
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
 msgstr[0] "Herstel het geselecteerde bestand"
@@ -2884,32 +2882,32 @@ msgstr "Sluit tabblad"
 msgid "Open the location \"%s\""
 msgstr "Open de locatie '%s'"
 
-#: ../thunar/thunar-window.c:2143
+#: ../thunar/thunar-window.c:2139
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Kon '%s' niet uitvoeren"
 
-#: ../thunar/thunar-window.c:2696
+#: ../thunar/thunar-window.c:2692
 msgid "Failed to open parent folder"
 msgstr "Kon bovenliggende map niet openen"
 
-#: ../thunar/thunar-window.c:2791
+#: ../thunar/thunar-window.c:2787
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "De map '%s' bestaat niet. Wilt u hem maken?"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:2873
+#: ../thunar/thunar-window.c:2869
 msgid "About Templates"
 msgstr "Over sjablonen"
 
-#: ../thunar/thunar-window.c:2895
+#: ../thunar/thunar-window.c:2891
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
 "Alle bestanden in deze map zullen in het \"Document aanmaken\" menu "
 "verschijnen."
 
-#: ../thunar/thunar-window.c:2902
+#: ../thunar/thunar-window.c:2898
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and "
 "put it in this folder. Thunar will add an entry for this document in the "
@@ -2926,26 +2924,26 @@ msgstr ""
 "er een kopie van dit document zal worden gemaakt in de map die u op dat "
 "ogenblik bekijkt."
 
-#: ../thunar/thunar-window.c:2914
+#: ../thunar/thunar-window.c:2910
 msgid "Do _not display this message again"
 msgstr "Dit bericht _niet meer weergeven"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2944
+#: ../thunar/thunar-window.c:2940
 msgid "Failed to open the file system root folder"
 msgstr "Kon de rootmap van het bestandssysteem niet openen"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2979
+#: ../thunar/thunar-window.c:2975
 msgid "Failed to display the contents of the trash can"
 msgstr "Kon de inhoud van de prullenbak niet weergeven"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3014
+#: ../thunar/thunar-window.c:3010
 msgid "Failed to browse the network"
 msgstr "Kon niet bladeren door het netwerk"
 
-#: ../thunar/thunar-window.c:3098
+#: ../thunar/thunar-window.c:3094
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -2954,7 +2952,7 @@ msgstr ""
 "bestandbeheerder voor de Xfce-werkomgeving."
 
 #. set window title
-#: ../thunar/thunar-window.c:3152 ../Thunar.desktop.in.in.h:2
+#: ../thunar/thunar-window.c:3148 ../Thunar.desktop.in.in.h:2
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "File Manager"
 msgstr "Bestandbeheerder"
@@ -3142,6 +3140,10 @@ msgstr "Afbeelding"
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:129
 msgid "Image Type:"
 msgstr "Afbeeldingtype:"
+
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:149
+msgid "Image Size:"
+msgstr "Afbeeldingsgrootte:"
 
 #. update the "Image Size" label
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:243
@@ -3729,12 +3731,12 @@ msgstr "Einde element handler aangeroepen in beheerderscontext"
 msgid "Unknown closing element <%s>"
 msgstr "Onbekend afsluitend element <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1345
+#: ../plugins/thunar-uca/thunar-uca-model.c:1344
 #, c-format
 msgid "Failed to determine save location for uca.xml"
 msgstr "Kan opslaglocatie voor uca.xml niet bepalen"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1462
+#: ../plugins/thunar-uca/thunar-uca-model.c:1461
 #, c-format
 msgid "Command not configured"
 msgstr "Opdracht niet geconfigureerd"
@@ -3790,6 +3792,14 @@ msgstr "De geselecteerde mappen in Thunar openen"
 #: ../thunar/thunar-settings.desktop.in.h:1
 msgid "Configure the Thunar file manager"
 msgstr "Configureer Thunar bestandbeheerder"
+
+#~ msgid ""
+#~ "Select this option to display previewable files within a folder as "
+#~ "automatically generated thumbnail icons."
+#~ msgstr ""
+#~ "Selecteer deze optie om bestanden binnen een map, die voorbeeldweergaven "
+#~ "ondersteunen, weer te geven als automatisch gegenereerde "
+#~ "miniatuurpictogrammen."
 
 #~ msgid "Go to the documents folder"
 #~ msgstr "Ga naar de documentenmap"
