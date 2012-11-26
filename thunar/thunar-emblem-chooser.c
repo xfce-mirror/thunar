@@ -44,7 +44,6 @@ enum
 
 
 static void       thunar_emblem_chooser_dispose         (GObject                   *object);
-static void       thunar_emblem_chooser_finalize        (GObject                   *object);
 static void       thunar_emblem_chooser_get_property    (GObject                   *object,
                                                          guint                      prop_id,
                                                          GValue                    *value,
@@ -79,7 +78,6 @@ struct _ThunarEmblemChooser
   GtkScrolledWindow __parent__;
 
   GtkIconTheme *icon_theme;
-  GtkSizeGroup *size_group;
   GList        *files;
   GtkWidget    *table;
 };
@@ -98,7 +96,6 @@ thunar_emblem_chooser_class_init (ThunarEmblemChooserClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_emblem_chooser_dispose;
-  gobject_class->finalize = thunar_emblem_chooser_finalize;
   gobject_class->get_property = thunar_emblem_chooser_get_property;
   gobject_class->set_property = thunar_emblem_chooser_set_property;
 
@@ -138,12 +135,14 @@ thunar_emblem_chooser_init (ThunarEmblemChooser *chooser)
   gtk_widget_show (viewport);
 
   /* setup the wrap table */
-  chooser->table = g_object_new (EXO_TYPE_WRAP_TABLE, "border-width", 6, "homogeneous", TRUE, NULL);
+  chooser->table = g_object_new (EXO_TYPE_WRAP_TABLE,
+                                 "border-width", 6,
+                                 "homogeneous", TRUE,
+                                 "col-spacing", 12,
+                                 "row-spacing", 12,
+                                 NULL);
   gtk_container_add (GTK_CONTAINER (viewport), chooser->table);
   gtk_widget_show (chooser->table);
-
-  /* allocate a size-group for the buttons */
-  chooser->size_group = gtk_size_group_new (GTK_SIZE_GROUP_BOTH);
 }
 
 
@@ -157,19 +156,6 @@ thunar_emblem_chooser_dispose (GObject *object)
   thunar_emblem_chooser_set_files (chooser, NULL);
 
   (*G_OBJECT_CLASS (thunar_emblem_chooser_parent_class)->dispose) (object);
-}
-
-
-
-static void
-thunar_emblem_chooser_finalize (GObject *object)
-{
-  ThunarEmblemChooser *chooser = THUNAR_EMBLEM_CHOOSER (object);
-
-  /* release the size-group */
-  g_object_unref (G_OBJECT (chooser->size_group));
-
-  (*G_OBJECT_CLASS (thunar_emblem_chooser_parent_class)->finalize) (object);
 }
 
 
@@ -448,8 +434,6 @@ thunar_emblem_chooser_create_button (ThunarEmblemChooser *chooser,
   const gchar *name;
   GtkWidget   *button = NULL;
   GtkWidget   *image;
-  GtkWidget   *label;
-  GtkWidget   *vbox;
   GdkPixbuf   *icon;
 
   /* lookup the icon info for the emblem */
@@ -473,21 +457,11 @@ thunar_emblem_chooser_create_button (ThunarEmblemChooser *chooser,
   g_object_set_data_full (G_OBJECT (button), I_("thunar-emblem"), g_strdup (emblem), g_free);
   g_signal_connect (G_OBJECT (button), "toggled", G_CALLBACK (thunar_emblem_chooser_button_toggled), chooser);
 
-  /* allocate the box */
-  vbox = gtk_vbox_new (FALSE, 2);
-  gtk_size_group_add_widget (chooser->size_group, vbox);
-  gtk_container_add (GTK_CONTAINER (button), vbox);
-  gtk_widget_show (vbox);
-
   /* allocate the image */
   image = gtk_image_new_from_pixbuf (icon);
-  gtk_box_pack_start (GTK_BOX (vbox), image, TRUE, TRUE, 0);
+  gtk_container_add (GTK_CONTAINER (button), image);
+  gtk_widget_set_tooltip_text (image, name);
   gtk_widget_show (image);
-
-  /* allocate the label */
-  label = gtk_label_new (name);
-  gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
-  gtk_widget_show (label);
 
   g_object_unref (G_OBJECT (icon));
 done:
