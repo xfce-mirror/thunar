@@ -1562,7 +1562,7 @@ sort_by_type (const ThunarFile *a,
     }
   else
     {
-      content_type_b = thunar_file_get_content_type (THUNAR_FILE (a));
+      content_type_b = thunar_file_get_content_type (THUNAR_FILE (b));
       description_b = g_content_type_get_description (content_type_b);
     }
 
