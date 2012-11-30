@@ -1929,6 +1929,8 @@ thunar_window_bookmark_merge_line (GFile       *file_path,
   gchar        *remote_name = NULL;
   const gchar  *unique_name;
   const gchar  *path;
+  GtkIconTheme *icon_theme;
+  const gchar  *icon_name;
 
   _thunar_return_if_fail (G_IS_FILE (file_path));
   _thunar_return_if_fail (name == NULL || g_utf8_validate (name, -1, NULL));
@@ -1945,6 +1947,8 @@ thunar_window_bookmark_merge_line (GFile       *file_path,
   tooltip = g_strdup_printf (_("Open the location \"%s\""), parse_name);
   g_free (parse_name);
 
+  icon_theme = gtk_icon_theme_get_for_screen (gtk_window_get_screen (GTK_WINDOW (window)));
+
   if (g_file_has_uri_scheme (file_path, "file"))
     {
       /* try to open the file corresponding to the uri */
@@ -1958,7 +1962,9 @@ thunar_window_bookmark_merge_line (GFile       *file_path,
           if (name == NULL)
             name = thunar_file_get_display_name (file);
 
-          action = gtk_action_new (unique_name, name, tooltip, GTK_STOCK_DIRECTORY);
+          action = gtk_action_new (unique_name, name, tooltip, NULL);
+          icon_name = thunar_file_get_icon_name (file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_theme);
+          gtk_action_set_icon_name (action, icon_name);
           g_object_set_data_full (G_OBJECT (action), I_("thunar-file"), file,
                                   thunar_window_bookmark_release_file);
 
@@ -3151,7 +3157,7 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
   g_free (parse_name);
 
   /* set window icon */
-  icon_theme = gtk_icon_theme_get_default ();
+  icon_theme = gtk_icon_theme_get_for_screen (gtk_window_get_screen (GTK_WINDOW (window)));
   icon_name = thunar_file_get_icon_name (current_directory,
                                          THUNAR_FILE_ICON_STATE_DEFAULT,
                                          icon_theme);
