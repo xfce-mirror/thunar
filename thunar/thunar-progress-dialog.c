@@ -92,7 +92,7 @@ thunar_progress_dialog_init (ThunarProgressDialog *dialog)
   dialog->views = NULL;
 
   gtk_window_set_title (GTK_WINDOW (dialog), _("File Operation Progress"));
-  gtk_window_set_default_size (GTK_WINDOW (dialog), 400, 10);
+  gtk_window_set_default_size (GTK_WINDOW (dialog), 450, 10);
   gtk_window_set_modal (GTK_WINDOW (dialog), FALSE);
   gtk_window_set_transient_for (GTK_WINDOW (dialog), NULL);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), FALSE);
@@ -264,7 +264,7 @@ thunar_progress_dialog_job_finished (ThunarProgressDialog *dialog,
   if (n_views < SCROLLVIEW_THRESHOLD)
     {
       /* try to shrink the window */
-      gtk_window_resize (GTK_WINDOW (dialog), 400, 10);
+      gtk_window_resize (GTK_WINDOW (dialog), 450, 10);
     }
 
   /* check if we still have at least one view */
