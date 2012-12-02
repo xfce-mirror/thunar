@@ -681,10 +681,15 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
       selection = gtk_tree_view_get_selection (tree_view);
       if (gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y, &path, NULL, NULL, NULL))
         {
-          /* show the current directory menu if a user right-clicks an
-           * uselected item in the view. */
+          /* select the path on which the user clicked if not selected yet */
           if (!gtk_tree_selection_path_is_selected (selection, path))
-            gtk_tree_selection_unselect_all (selection);
+            {
+              /* only select an item if Control is not pressed, else we
+               * use this to popup the current directory actionW */
+              gtk_tree_selection_unselect_all (selection);
+              if ((event->state & GDK_CONTROL_MASK) == 0)
+                gtk_tree_selection_select_path (selection, path);
+            }
           gtk_tree_path_free (path);
         }
 
