@@ -528,6 +528,8 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
   gboolean        can_eject;
   GFile          *file;
   gchar          *disk_usage;
+  guint32         trash_items;
+  gchar          *trash_string;
 
   _thunar_return_if_fail (iter->stamp == THUNAR_SHORTCUTS_MODEL (tree_model)->stamp);
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (tree_model));
@@ -587,6 +589,22 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
               disk_usage = thunar_g_file_get_free_space_string (file);
               g_object_unref (file);
               g_value_take_string (value, disk_usage);
+            }
+          break;
+        }
+      else if ((shortcut->group & THUNAR_SHORTCUT_GROUP_PLACES_TRASH) != 0)
+        {
+          trash_items = thunar_file_get_item_count (shortcut->file);
+          if (trash_items == 0)
+            {
+              g_value_set_static_string (value, _("Trash is empty"));
+            }
+          else
+            {
+              trash_string = g_strdup_printf (ngettext ("Trash contains %d file",
+                                                        "Trash contains %d files",
+                                                        trash_items), trash_items);
+              g_value_take_string (value, trash_string);
             }
           break;
         }
