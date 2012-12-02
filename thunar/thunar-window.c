@@ -3645,6 +3645,10 @@ thunar_window_set_directories (ThunarWindow   *window,
 
   for (n = 0; uris[n] != NULL; n++)
     {
+      /* check if the string looks like an uri */
+      if (!exo_str_looks_like_an_uri (uris[n]))
+        continue;
+
       /* get the file for the uri */
       directory = thunar_file_get_for_uri (uris[n], NULL);
       if (G_UNLIKELY (directory == NULL))

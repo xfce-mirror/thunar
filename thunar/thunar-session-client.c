@@ -299,7 +299,6 @@ thunar_session_client_restore (ThunarSessionClient *session_client)
 
       /* determine the URI for the new window */
       uris = xfce_rc_read_list_entry (rc, "URI", ";");
-      g_message ("%d uris", uris ? g_strv_length (uris) : 0);
       if (G_UNLIKELY (uris == NULL))
         continue;
 
@@ -400,7 +399,11 @@ thunar_session_client_save_yourself (SmcConn              connection,
                   fprintf (fp, "PAGE=%d\n", active_page);
                   fprintf (fp, "URI=");
                   for (n = 0; uris[n] != NULL; n++)
-                    fprintf (fp, "%s;", uris[n]);
+                    {
+                      fprintf (fp, "%s", uris[n]);
+                      if (G_LIKELY (uris[n + 1] != NULL))
+                        fprintf (fp, ";");
+                    }
                   fprintf (fp, "\n\n");
 
                   /* cleanup */
