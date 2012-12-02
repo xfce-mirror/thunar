@@ -36,6 +36,8 @@
 #include <X11/SM/SMlib.h>
 #endif
 
+#include <glib/gstdio.h>
+
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-ice.h>
 #include <thunar/thunar-private.h>
@@ -410,6 +412,11 @@ thunar_session_client_save_yourself (SmcConn              connection,
             }
 
           g_list_free (windows);
+        }
+      else
+        {
+          /* no windows, remove the file */
+          g_unlink (session_client->path);
         }
 
       g_object_unref (G_OBJECT (application));
