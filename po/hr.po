@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-29 15:06+0000\n"
+"POT-Creation-Date: 2012-12-02 23:21+0000\n"
 "PO-Revision-Date: 2010-06-17 01:51+0200\n"
 "Last-Translator: Ivica Kolić<ikoli@yahoo.com> <>\n"
 "Language-Team: Croatian <petar.koretic@gmail.com>\n"
@@ -138,7 +138,7 @@ msgstr "Neuspješno izvršavanje radnje"
 #: ../thunar/thunar-launcher.c:1208 ../thunar/thunar-location-entry.c:402
 #: ../thunar/thunar-location-entry.c:430
 #: ../thunar/thunar-shortcuts-view.c:1614
-#: ../thunar/thunar-shortcuts-view.c:1642 ../thunar/thunar-window.c:2165
+#: ../thunar/thunar-shortcuts-view.c:1642 ../thunar/thunar-window.c:2171
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "Neuspješno otvaranje \"%s\""
@@ -812,7 +812,7 @@ msgid "File Name"
 msgstr "Ime datoteke"
 
 #: ../thunar/thunar-file.c:916 ../thunar/thunar-gio-extensions.c:236
-#: ../thunar/thunar-shortcuts-model.c:821 ../thunar/thunar-window.c:357
+#: ../thunar/thunar-shortcuts-model.c:839 ../thunar/thunar-window.c:357
 msgid "File System"
 msgstr "Datotečni sustav"
 
@@ -2097,19 +2097,31 @@ msgstr ""
 "Želite li preskočiti ovu datoteku i nastaviti s preimenovanjem preostalih "
 "datoteka?"
 
-#: ../thunar/thunar-shortcuts-model.c:815
+#: ../thunar/thunar-shortcuts-model.c:600
+#: ../plugins/thunar-tpa/thunar-tpa.c:310
+msgid "Trash is empty"
+msgstr "Smeće je prazno"
+
+#: ../thunar/thunar-shortcuts-model.c:604
+#, c-format
+msgid "Trash contains %d file"
+msgid_plural "Trash contains %d files"
+msgstr[0] "Smeće sadrži %d datoteku"
+msgstr[1] "Smeće sadrži %d datoteke"
+
+#: ../thunar/thunar-shortcuts-model.c:833
 msgid "DEVICES"
 msgstr "UREĐAJI"
 
-#: ../thunar/thunar-shortcuts-model.c:861
+#: ../thunar/thunar-shortcuts-model.c:879
 msgid "NETWORK"
 msgstr "MREŽA"
 
-#: ../thunar/thunar-shortcuts-model.c:867
+#: ../thunar/thunar-shortcuts-model.c:885
 msgid "Browse Network"
 msgstr "Pregledaj mrežu"
 
-#: ../thunar/thunar-shortcuts-model.c:888
+#: ../thunar/thunar-shortcuts-model.c:906
 msgid "PLACES"
 msgstr "MJESTA"
 
@@ -2320,7 +2332,7 @@ msgid "Loading folder contents..."
 msgstr "Učitavanje sadržaja mape"
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2183 ../thunar/thunar-window.c:2717
+#: ../thunar/thunar-standard-view.c:2183 ../thunar/thunar-window.c:2723
 msgid "Failed to open the home folder"
 msgstr "Neuspjeh u otvaranju osobne mape"
 
@@ -2356,7 +2368,7 @@ msgstr ""
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Ne mogu napraviti prečicu za URL \"%s\""
 
-#: ../thunar/thunar-standard-view.c:3652 ../thunar/thunar-window.c:2812
+#: ../thunar/thunar-standard-view.c:3652 ../thunar/thunar-window.c:2818
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Neuspješno otvaranje mape  \"%s\""
@@ -2816,36 +2828,36 @@ msgstr "Upozorenje. koristite korijenski račun.možete oštetiti svoj sustav."
 msgid "Close tab"
 msgstr "Zatvori karticu"
 
-#: ../thunar/thunar-window.c:1945
+#: ../thunar/thunar-window.c:1947
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Otvori lokaciju \"%s\""
 
-#: ../thunar/thunar-window.c:2139
+#: ../thunar/thunar-window.c:2145
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Neuspjelo pokretanje \"%s\""
 
-#: ../thunar/thunar-window.c:2692
+#: ../thunar/thunar-window.c:2698
 msgid "Failed to open parent folder"
 msgstr ""
 
-#: ../thunar/thunar-window.c:2787
+#: ../thunar/thunar-window.c:2793
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr ""
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:2869
+#: ../thunar/thunar-window.c:2875
 msgid "About Templates"
 msgstr "O predlošcima"
 
-#: ../thunar/thunar-window.c:2891
+#: ../thunar/thunar-window.c:2897
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
 "Sve datoteke u ovoj mapi pojaviti će se u \"Napravi dokument\" izborniku."
 
-#: ../thunar/thunar-window.c:2898
+#: ../thunar/thunar-window.c:2904
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and "
 "put it in this folder. Thunar will add an entry for this document in the "
@@ -2861,26 +2873,26 @@ msgstr ""
 "Tada možete odabrati unos iz \"Napravi dokument\" izbornika i kopija "
 "dokumenta će biti napravljena u direktoriju koji gledate."
 
-#: ../thunar/thunar-window.c:2910
+#: ../thunar/thunar-window.c:2916
 msgid "Do _not display this message again"
 msgstr "Ne _prikazuj ponovo ovu poruku"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2940
+#: ../thunar/thunar-window.c:2946
 msgid "Failed to open the file system root folder"
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2975
+#: ../thunar/thunar-window.c:2981
 msgid "Failed to display the contents of the trash can"
 msgstr "Neuspjeli prikaz sadržaja smeća"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3010
+#: ../thunar/thunar-window.c:3016
 msgid "Failed to browse the network"
 msgstr "Neuspjelo pregledavanje mreže."
 
-#: ../thunar/thunar-window.c:3094
+#: ../thunar/thunar-window.c:3100
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -2889,7 +2901,7 @@ msgstr ""
 "okruženje"
 
 #. set window title
-#: ../thunar/thunar-window.c:3148 ../Thunar.desktop.in.in.h:2
+#: ../thunar/thunar-window.c:3154 ../Thunar.desktop.in.in.h:2
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "File Manager"
 msgstr "Upravitelj datotekama"
@@ -3370,10 +3382,6 @@ msgstr "Nije uspjelo spajanje sa smećem"
 #: ../plugins/thunar-tpa/thunar-tpa.c:310
 msgid "Trash contains files"
 msgstr "Smeće sadrži datoteke"
-
-#: ../plugins/thunar-tpa/thunar-tpa.c:310
-msgid "Trash is empty"
-msgstr "Smeće je prazno"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:1
 msgid "Display the trash can"
