@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-26 06:51+0000\n"
+"POT-Creation-Date: 2012-12-04 07:27+0000\n"
 "PO-Revision-Date: 2011-09-08 15:47+0100\n"
 "Last-Translator: Pjotr\n"
 "Language-Team: Dutch (Flemish)\n"
@@ -138,7 +138,7 @@ msgstr "Kon actie niet uitvoeren"
 #: ../thunar/thunar-launcher.c:1208 ../thunar/thunar-location-entry.c:402
 #: ../thunar/thunar-location-entry.c:430
 #: ../thunar/thunar-shortcuts-view.c:1614
-#: ../thunar/thunar-shortcuts-view.c:1642 ../thunar/thunar-window.c:2165
+#: ../thunar/thunar-shortcuts-view.c:1642 ../thunar/thunar-window.c:2171
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "Kon '%s' niet openen"
@@ -824,7 +824,7 @@ msgid "File Name"
 msgstr "Bestandnaam"
 
 #: ../thunar/thunar-file.c:916 ../thunar/thunar-gio-extensions.c:236
-#: ../thunar/thunar-shortcuts-model.c:821 ../thunar/thunar-window.c:357
+#: ../thunar/thunar-shortcuts-model.c:839 ../thunar/thunar-window.c:357
 msgid "File System"
 msgstr "Bestandssysteem"
 
@@ -2145,19 +2145,31 @@ msgstr ""
 "Wilt u dit bestand overslaan en doorgaan met het hernoemen van de resterende "
 "bestanden?"
 
-#: ../thunar/thunar-shortcuts-model.c:815
+#: ../thunar/thunar-shortcuts-model.c:600
+#: ../plugins/thunar-tpa/thunar-tpa.c:310
+msgid "Trash is empty"
+msgstr "Prullenbak is leeg"
+
+#: ../thunar/thunar-shortcuts-model.c:604
+#, c-format
+msgid "Trash contains %d file"
+msgid_plural "Trash contains %d files"
+msgstr[0] "Prullenbak bevat %d bestand"
+msgstr[1] "Prullenbak bevat %d bestanden"
+
+#: ../thunar/thunar-shortcuts-model.c:833
 msgid "DEVICES"
 msgstr "APPARATEN"
 
-#: ../thunar/thunar-shortcuts-model.c:861
+#: ../thunar/thunar-shortcuts-model.c:879
 msgid "NETWORK"
 msgstr "NETWERK"
 
-#: ../thunar/thunar-shortcuts-model.c:867
+#: ../thunar/thunar-shortcuts-model.c:885
 msgid "Browse Network"
 msgstr "Blader door het netwerk"
 
-#: ../thunar/thunar-shortcuts-model.c:888
+#: ../thunar/thunar-shortcuts-model.c:906
 msgid "PLACES"
 msgstr "LOCATIES"
 
@@ -2369,7 +2381,7 @@ msgid "Loading folder contents..."
 msgstr "Mapinhoud aan het laden..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2183 ../thunar/thunar-window.c:2717
+#: ../thunar/thunar-standard-view.c:2183 ../thunar/thunar-window.c:2723
 msgid "Failed to open the home folder"
 msgstr "Kon persoonlijke map niet openen"
 
@@ -2406,7 +2418,7 @@ msgstr "Ongeldige bestandnaam verkregen van XDS-sleepbron"
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Kon geen koppeling voor de URL '%s' maken"
 
-#: ../thunar/thunar-standard-view.c:3652 ../thunar/thunar-window.c:2812
+#: ../thunar/thunar-standard-view.c:3652 ../thunar/thunar-window.c:2818
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Kon map '%s' niet openen"
@@ -2877,37 +2889,37 @@ msgstr "LET OP: U gebruikt het root-account; u kunt uw systeem beschadigen."
 msgid "Close tab"
 msgstr "Sluit tabblad"
 
-#: ../thunar/thunar-window.c:1945
+#: ../thunar/thunar-window.c:1947
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Open de locatie '%s'"
 
-#: ../thunar/thunar-window.c:2139
+#: ../thunar/thunar-window.c:2145
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Kon '%s' niet uitvoeren"
 
-#: ../thunar/thunar-window.c:2692
+#: ../thunar/thunar-window.c:2698
 msgid "Failed to open parent folder"
 msgstr "Kon bovenliggende map niet openen"
 
-#: ../thunar/thunar-window.c:2787
+#: ../thunar/thunar-window.c:2793
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "De map '%s' bestaat niet. Wilt u hem maken?"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:2869
+#: ../thunar/thunar-window.c:2875
 msgid "About Templates"
 msgstr "Over sjablonen"
 
-#: ../thunar/thunar-window.c:2891
+#: ../thunar/thunar-window.c:2897
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
 "Alle bestanden in deze map zullen in het \"Document aanmaken\" menu "
 "verschijnen."
 
-#: ../thunar/thunar-window.c:2898
+#: ../thunar/thunar-window.c:2904
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and "
 "put it in this folder. Thunar will add an entry for this document in the "
@@ -2924,26 +2936,26 @@ msgstr ""
 "er een kopie van dit document zal worden gemaakt in de map die u op dat "
 "ogenblik bekijkt."
 
-#: ../thunar/thunar-window.c:2910
+#: ../thunar/thunar-window.c:2916
 msgid "Do _not display this message again"
 msgstr "Dit bericht _niet meer weergeven"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2940
+#: ../thunar/thunar-window.c:2946
 msgid "Failed to open the file system root folder"
 msgstr "Kon de rootmap van het bestandssysteem niet openen"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2975
+#: ../thunar/thunar-window.c:2981
 msgid "Failed to display the contents of the trash can"
 msgstr "Kon de inhoud van de prullenbak niet weergeven"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3010
+#: ../thunar/thunar-window.c:3016
 msgid "Failed to browse the network"
 msgstr "Kon niet bladeren door het netwerk"
 
-#: ../thunar/thunar-window.c:3094
+#: ../thunar/thunar-window.c:3100
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -2952,7 +2964,7 @@ msgstr ""
 "bestandbeheerder voor de Xfce-werkomgeving."
 
 #. set window title
-#: ../thunar/thunar-window.c:3148 ../Thunar.desktop.in.in.h:2
+#: ../thunar/thunar-window.c:3154 ../Thunar.desktop.in.in.h:2
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "File Manager"
 msgstr "Bestandbeheerder"
@@ -3456,10 +3468,6 @@ msgstr "Kon geen verbinding met de prullenbak maken"
 #: ../plugins/thunar-tpa/thunar-tpa.c:310
 msgid "Trash contains files"
 msgstr "Prullenbak bevat bestanden"
-
-#: ../plugins/thunar-tpa/thunar-tpa.c:310
-msgid "Trash is empty"
-msgstr "Prullenbak is leeg"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:1
 msgid "Display the trash can"
