@@ -411,10 +411,10 @@ thunar_sbr_get_time_from_string (const gchar *string)
       tm.tm_mon = month - 1;
       tm.tm_mday = day;
 
-		  /* set the time */
-		  tm.tm_hour = result >= 4? hour : 0;
-		  tm.tm_min = result >= 5 ? min : 0;
-		  tm.tm_sec = result >= 6 ? sec : 0;
+      /* set the time */
+      tm.tm_hour = result >= 4? hour : 0;
+      tm.tm_min = result >= 5 ? min : 0;
+      tm.tm_sec = result >= 6 ? sec : 0;
     }
   else
     {

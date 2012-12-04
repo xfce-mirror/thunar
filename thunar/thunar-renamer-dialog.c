@@ -940,7 +940,7 @@ thunar_renamer_dialog_help (ThunarRenamerDialog *renamer_dialog)
     {
       /* open the general documentation if no specific URL */
       xfce_dialog_show_help (GTK_WINDOW (renamer_dialog), "thunar",
-                             "advanced-topics", "to-bulk-rename-files");
+                             "bulk-renamer/start", NULL);
     }
   else
     {
