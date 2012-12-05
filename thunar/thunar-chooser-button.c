@@ -453,7 +453,6 @@ thunar_chooser_button_file_changed (ThunarChooserButton *chooser_button,
           /* add all possible applications */
           for (lp = app_infos, i = 0; lp != NULL; lp = lp->next, ++i)
             {
-              /* skip infos that have NoDisplay or OnlyShowIn set */
               if (thunar_g_app_info_should_show (lp->data))
                 {
                   /* insert the item into the store */
