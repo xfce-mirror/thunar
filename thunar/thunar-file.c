@@ -2257,7 +2257,9 @@ thunar_file_get_content_type (ThunarFile *file)
         {
           /* async load the content-type */
           info = g_file_query_info (file->gfile,
-                                    THUNARX_FILE_INFO_MIME_NAMESPACE,
+                                    thunar_file_is_readable (file) ?
+                                        G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE :
+                                        G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
                                     G_FILE_QUERY_INFO_NONE,
                                     NULL, &err);
 
@@ -2279,7 +2281,7 @@ thunar_file_get_content_type (ThunarFile *file)
 
           /* always provide a fallback */
           if (file->content_type == NULL)
-            file->content_type = g_strdup ("unknown");
+            file->content_type = g_strdup ("application/octet-stream");
         }
 
       bailout:

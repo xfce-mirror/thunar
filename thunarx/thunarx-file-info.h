@@ -49,9 +49,6 @@ G_BEGIN_DECLS;
   "unix::gid,unix::uid,unix::mode," \
   "metadata::emblems"
 
-#define THUNARX_FILE_INFO_MIME_NAMESPACE \
-  "standard::content-type"
-
 
 
 /**
