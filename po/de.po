@@ -4,19 +4,19 @@
 # Benedikt Meurer <benny@xfce.org>, 2005-2007.
 # Fabian Nowak <timystery@arcor.de>, 2006-2008, 2010.
 # Jannis Pohlmann <jannis@xfce.org>, 2006, 2009.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-01 20:36+0000\n"
+"POT-Creation-Date: 2012-12-05 19:56+0100\n"
 "PO-Revision-Date: 2012-11-03 16:45+0100\n"
 "Last-Translator: Harald Judt <harald.judt@gmx.at>\n"
 "Language-Team: German <xfce-i18n@xfce.org>\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../thunar/main.c:62
@@ -301,11 +301,11 @@ msgstr ""
 "Die gewählte Anwendung wird verwendet, um diese und andere Dateien des Typs "
 "»%s« zu öffnen."
 
-#: ../thunar/thunar-chooser-button.c:496
+#: ../thunar/thunar-chooser-button.c:495
 msgid "No application selected"
 msgstr "Keine Anwendung ausgewählt"
 
-#: ../thunar/thunar-chooser-button.c:509
+#: ../thunar/thunar-chooser-button.c:508
 msgid "Other Application..."
 msgstr "Andere Anwendung…"
 
@@ -709,8 +709,9 @@ msgstr "Wollen Sie den vorhandenen Ordner"
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
 msgstr "Wollen Sie die existierende Datei"
 
+#.
 #. Fourth box (size, volume, free space)
-#. 
+#.
 #: ../thunar/thunar-dialogs.c:618 ../thunar/thunar-dialogs.c:649
 #: ../thunar/thunar-properties-dialog.c:456
 msgid "Size:"
@@ -809,8 +810,9 @@ msgstr "Name"
 msgid "Owner"
 msgstr "Besitzer"
 
+#.
 #. Permissions chooser
-#. 
+#.
 #: ../thunar/thunar-enum-types.c:98 ../thunar/thunar-properties-dialog.c:528
 msgid "Permissions"
 msgstr "Berechtigungen"
@@ -832,7 +834,7 @@ msgid "File Name"
 msgstr "Dateiname"
 
 #: ../thunar/thunar-file.c:916 ../thunar/thunar-gio-extensions.c:236
-#: ../thunar/thunar-shortcuts-model.c:821 ../thunar/thunar-window.c:357
+#: ../thunar/thunar-shortcuts-model.c:839 ../thunar/thunar-window.c:357
 msgid "File System"
 msgstr "Dateisystem"
 
@@ -1273,28 +1275,28 @@ msgstr "Verknüpfung mit »%s«"
 msgid "\"%s\" mountable"
 msgstr "»%s« ist einhängbar"
 
-#: ../thunar/thunar-list-model.c:2245
+#. I18N, first %s is the display name of the file, 2nd the file size, 3rd the content type
+#: ../thunar/thunar-list-model.c:2246
 #, c-format
 msgid "\"%s\" (%s) %s"
 msgstr "»%s« (%s) %s"
 
-#: ../thunar/thunar-list-model.c:2253
+#. I18N, first %s is the display name of the file, second the content type
+#: ../thunar/thunar-list-model.c:2255
 #, c-format
 msgid "\"%s\" %s"
 msgstr "»%s« %s"
 
-#. TRANSLATORS: Try to come up with a short translation of "Original Path"
-#. (which is the path
-#. * where the trashed file/folder was located before it was moved to the
-#. trash), otherwise the
+#. TRANSLATORS: Try to come up with a short translation of "Original Path" (which is the path
+#. * where the trashed file/folder was located before it was moved to the trash), otherwise the
 #. * properties dialog width will be messed up.
-#. 
-#: ../thunar/thunar-list-model.c:2263 ../thunar/thunar-properties-dialog.c:364
+#.
+#: ../thunar/thunar-list-model.c:2265 ../thunar/thunar-properties-dialog.c:364
 msgid "Original Path:"
 msgstr "Herkunftsort:"
 
 #. item count if there are also folders in the selection
-#: ../thunar/thunar-list-model.c:2300
+#: ../thunar/thunar-list-model.c:2302
 #, c-format
 msgid "%d other item selected (%s)"
 msgid_plural "%d other items selected (%s)"
@@ -1302,14 +1304,14 @@ msgstr[0] "%d anderes Objekt ausgewählt (%s)"
 msgstr[1] "%d andere Objekte ausgewählt (%s)"
 
 #. only non-folders are selected
-#: ../thunar/thunar-list-model.c:2307
+#: ../thunar/thunar-list-model.c:2309
 #, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
 msgstr[0] "%d Objekt ausgewählt (%s)"
 msgstr[1] "%d Objekte ausgewählt (%s)"
 
-#: ../thunar/thunar-list-model.c:2321
+#: ../thunar/thunar-list-model.c:2323
 #, c-format
 msgid "%d folder selected"
 msgid_plural "%d folders selected"
@@ -1320,7 +1322,7 @@ msgstr[1] "%d Ordner ausgewählt"
 #. * needs to change ", " to something else. The comma
 #. * is between the message about the number of folders
 #. * and the number of items in the selection
-#: ../thunar/thunar-list-model.c:2340
+#: ../thunar/thunar-list-model.c:2342
 #, c-format
 msgid "%s, %s"
 msgstr "%s, %s"
@@ -1600,8 +1602,9 @@ msgstr ""
 msgid "File Manager Preferences"
 msgstr "Dateimanager-Einstellungen"
 
+#.
 #. Display
-#. 
+#.
 #: ../thunar/thunar-preferences-dialog.c:242
 msgid "Display"
 msgstr "Anzeige"
@@ -1678,8 +1681,9 @@ msgstr "Datum"
 msgid "_Format:"
 msgstr "_Format:"
 
+#.
 #. Side Pane
-#. 
+#.
 #: ../thunar/thunar-preferences-dialog.c:363
 msgid "Side Pane"
 msgstr "Seitenleiste"
@@ -1759,8 +1763,9 @@ msgstr ""
 "Embleme in der Baumansicht für alle Ordner anzeigen, für die im "
 "Dateieigenschaftendialog die Option »Embleme« ausgewählt wurde."
 
+#.
 #. Behavior
-#. 
+#.
 #: ../thunar/thunar-preferences-dialog.c:457
 msgid "Behavior"
 msgstr "Verhalten"
@@ -1823,8 +1828,9 @@ msgstr "Ordner in neuem _Fenster darstellen"
 msgid "Open folder in new _tab"
 msgstr "Ordner in neuem Rei_ter darstellen"
 
+#.
 #. Advanced
-#. 
+#.
 #: ../thunar/thunar-preferences-dialog.c:581
 msgid "Advanced"
 msgstr "Fortgeschritten"
@@ -1873,8 +1879,7 @@ msgstr ""
 "Die <a href=\"volman-config:\">Verwaltung</a> von Wechseldatenträgern und\n"
 "-medien konfigurieren (z.B. Digitalkameras)."
 
-#. tell the user that we failed to come up with the thunar-volman
-#. configuration dialog
+#. tell the user that we failed to come up with the thunar-volman configuration dialog
 #: ../thunar/thunar-preferences-dialog.c:708
 msgid "Failed to display the volume management settings"
 msgstr ""
@@ -1910,8 +1915,9 @@ msgstr "_Name:"
 msgid "Names:"
 msgstr "Namen:"
 
+#.
 #. Second box (kind, open with, link target)
-#. 
+#.
 #: ../thunar/thunar-properties-dialog.c:311
 msgid "Kind:"
 msgstr "Typ:"
@@ -1928,8 +1934,9 @@ msgstr "Verknüpfungsziel:"
 msgid "Location:"
 msgstr "Ort:"
 
+#.
 #. Third box (deleted, modified, accessed)
-#. 
+#.
 #: ../thunar/thunar-properties-dialog.c:403
 msgid "Deleted:"
 msgstr "Gelöscht:"
@@ -1946,8 +1953,9 @@ msgstr "Datenträger:"
 msgid "Free Space:"
 msgstr "Freier Speicher:"
 
+#.
 #. Emblem chooser
-#. 
+#.
 #: ../thunar/thunar-properties-dialog.c:518
 msgid "Emblems"
 msgstr "Embleme"
@@ -2054,11 +2062,9 @@ msgstr "Neuer Name"
 msgid "Click here to view the documentation for the selected rename operation."
 msgstr "Die Dokumentation für den ausgewählten Umbenennungsmodus anzeigen."
 
-#. TRANSLATORS: You can test this string by temporarily removing thunar-sbr.*
-#. from $libdir/thunarx-2/,
-#. *              and opening the multi rename dialog by selecting multiple
-#. files and pressing F2.
-#. 
+#. TRANSLATORS: You can test this string by temporarily removing thunar-sbr.* from $libdir/thunarx-2/,
+#. *              and opening the multi rename dialog by selecting multiple files and pressing F2.
+#.
 #: ../thunar/thunar-renamer-dialog.c:611
 msgid ""
 "No renamer modules were found on your system. Please check your\n"
@@ -2161,19 +2167,31 @@ msgstr ""
 "Soll diese Datei übersprungen werden und mit den restlichen Dateien "
 "fortgefahren werden?"
 
-#: ../thunar/thunar-shortcuts-model.c:815
+#: ../thunar/thunar-shortcuts-model.c:600
+#: ../plugins/thunar-tpa/thunar-tpa.c:310
+msgid "Trash is empty"
+msgstr "Leerer Papierkorb "
+
+#: ../thunar/thunar-shortcuts-model.c:604
+#, fuzzy, c-format
+msgid "Trash contains %d file"
+msgid_plural "Trash contains %d files"
+msgstr[0] "Objekte im Papierkorb vorhanden"
+msgstr[1] "Objekte im Papierkorb vorhanden"
+
+#: ../thunar/thunar-shortcuts-model.c:833
 msgid "DEVICES"
 msgstr "GERÄTE"
 
-#: ../thunar/thunar-shortcuts-model.c:861
+#: ../thunar/thunar-shortcuts-model.c:879
 msgid "NETWORK"
 msgstr "NETZWERK"
 
-#: ../thunar/thunar-shortcuts-model.c:867
+#: ../thunar/thunar-shortcuts-model.c:885
 msgid "Browse Network"
 msgstr "Netzwerk durchsuchen"
 
-#: ../thunar/thunar-shortcuts-model.c:888
+#: ../thunar/thunar-shortcuts-model.c:906
 msgid "PLACES"
 msgstr "ORTE"
 
@@ -2408,8 +2426,7 @@ msgstr "Aus_wählen"
 msgid "_Pattern:"
 msgstr "_Muster:"
 
-#. tell the user that the file name provided by the X Direct Save source is
-#. invalid
+#. tell the user that the file name provided by the X Direct Save source is invalid
 #: ../thunar/thunar-standard-view.c:3078
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Ungültiger Dateiname seitens der Quelle"
@@ -2850,8 +2867,9 @@ msgstr "_Menüleiste"
 msgid "Change the visibility of this window's menubar"
 msgstr "Die Sichtbarkeit der Menüleiste dieses Fensters ändern"
 
+#.
 #. * add view options
-#. 
+#.
 #: ../thunar/thunar-window.c:725
 msgid "View as _Icons"
 msgstr "_Symbolansicht"
@@ -2960,8 +2978,8 @@ msgstr ""
 "Dateimanager für die Arbeitsumgebung »Xfce«."
 
 #. set window title
-#: ../thunar/thunar-window.c:3154 ../Thunar.desktop.in.in.h:2
-#: ../thunar/thunar-settings.desktop.in.h:2
+#: ../thunar/thunar-window.c:3154 ../Thunar.desktop.in.in.h:3
+#: ../thunar/thunar-settings.desktop.in.h:1
 msgid "File Manager"
 msgstr "Dateimanager"
 
@@ -3465,17 +3483,13 @@ msgstr "Konnte keine Verbindung zum Papierkorb-Dienst aufbauen"
 msgid "Trash contains files"
 msgstr "Objekte im Papierkorb vorhanden"
 
-#: ../plugins/thunar-tpa/thunar-tpa.c:310
-msgid "Trash is empty"
-msgstr "Leerer Papierkorb "
-
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:1
-msgid "Display the trash can"
-msgstr "Papierkorb anzeigen"
-
-#: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:2
 msgid "Trash Applet"
 msgstr "Papierkorb-Applet"
+
+#: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:2
+msgid "Display the trash can"
+msgstr "Papierkorb anzeigen"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:116
 msgid "Custom Actions"
@@ -3535,8 +3549,9 @@ msgid "If you delete a custom action, it is permanently lost."
 msgstr ""
 "Wenn Sie eine benutzerdefinierte Aktion löschen, geht sie dauerhaft verloren."
 
+#.
 #. Basic
-#. 
+#.
 #: ../plugins/thunar-uca/thunar-uca-editor.c:122
 msgid "Basic"
 msgstr "Allgemein"
@@ -3764,38 +3779,38 @@ msgid "Failed to launch action \"%s\"."
 msgstr "Die Aktion »%s« konnte nicht ausgeführt werden."
 
 #: ../plugins/thunar-uca/uca.xml.in.h:1
-msgid "Example for a custom action"
-msgstr "Beispiel für eine eigene Aktion"
-
-#: ../plugins/thunar-uca/uca.xml.in.h:2
 msgid "Open Terminal Here"
 msgstr "Terminal hier öffnen"
+
+#: ../plugins/thunar-uca/uca.xml.in.h:2
+msgid "Example for a custom action"
+msgstr "Beispiel für eine eigene Aktion"
 
 #: ../plugins/thunar-wallpaper/twp-provider.c:173
 msgid "Set as wallpaper"
 msgstr "Als Hintergrundbild verwenden"
 
 #: ../Thunar.desktop.in.in.h:1
-msgid "Browse the filesystem with the file manager"
-msgstr "Das Dateisystem im Dateimanager anzeigen"
-
-#: ../Thunar.desktop.in.in.h:3
 msgid "Thunar File Manager"
 msgstr "Dateimanager Thunar"
 
-#: ../Thunar-folder-handler.desktop.in.in.h:1
-msgid "Open Folder"
-msgstr "Ordner öffnen"
+#: ../Thunar.desktop.in.in.h:2
+msgid "Browse the filesystem with the file manager"
+msgstr "Das Dateisystem im Dateimanager anzeigen"
 
-#: ../Thunar-folder-handler.desktop.in.in.h:2
+#: ../Thunar-folder-handler.desktop.in.in.h:1
 msgid "Open Folder with Thunar"
 msgstr "Ordner in Thunar öffnen"
 
-#: ../Thunar-folder-handler.desktop.in.in.h:3
+#: ../Thunar-folder-handler.desktop.in.in.h:2
 msgid "Open the specified folders in Thunar"
 msgstr "Angegebene Ordner mit Thunar öffnen"
 
-#: ../thunar/thunar-settings.desktop.in.h:1
+#: ../Thunar-folder-handler.desktop.in.in.h:3
+msgid "Open Folder"
+msgstr "Ordner öffnen"
+
+#: ../thunar/thunar-settings.desktop.in.h:2
 msgid "Configure the Thunar file manager"
 msgstr "Dateimanager Thunar einrichten"
 

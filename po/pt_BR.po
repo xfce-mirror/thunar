@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-04 07:27+0000\n"
+"POT-Creation-Date: 2012-12-05 19:56+0100\n"
 "PO-Revision-Date: 2012-12-04 09:52-0300\n"
 "Last-Translator: Rafael Ferreira <rafael.f.f1@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar2.conectiva.com.br>\n"
@@ -304,11 +304,11 @@ msgstr ""
 "O aplicativo selecionado é usado para abrir este e outros arquivos do tipo "
 "\"%s\"."
 
-#: ../thunar/thunar-chooser-button.c:496
+#: ../thunar/thunar-chooser-button.c:495
 msgid "No application selected"
 msgstr "Nenhum aplicativo selecionado"
 
-#: ../thunar/thunar-chooser-button.c:509
+#: ../thunar/thunar-chooser-button.c:508
 msgid "Other Application..."
 msgstr "Outro aplicativo..."
 
@@ -1272,12 +1272,14 @@ msgstr "Atalho \"%s\""
 msgid "\"%s\" mountable"
 msgstr "\"%s\" montável"
 
-#: ../thunar/thunar-list-model.c:2245
+#. I18N, first %s is the display name of the file, 2nd the file size, 3rd the content type
+#: ../thunar/thunar-list-model.c:2246
 #, c-format
 msgid "\"%s\" (%s) %s"
 msgstr "\"%s\" (%s) %s"
 
-#: ../thunar/thunar-list-model.c:2253
+#. I18N, first %s is the display name of the file, second the content type
+#: ../thunar/thunar-list-model.c:2255
 #, c-format
 msgid "\"%s\" %s"
 msgstr "\"%s\" %s"
@@ -1286,12 +1288,12 @@ msgstr "\"%s\" %s"
 #. * where the trashed file/folder was located before it was moved to the trash), otherwise the
 #. * properties dialog width will be messed up.
 #.
-#: ../thunar/thunar-list-model.c:2263 ../thunar/thunar-properties-dialog.c:364
+#: ../thunar/thunar-list-model.c:2265 ../thunar/thunar-properties-dialog.c:364
 msgid "Original Path:"
 msgstr "Caminho original:"
 
 #. item count if there are also folders in the selection
-#: ../thunar/thunar-list-model.c:2300
+#: ../thunar/thunar-list-model.c:2302
 #, c-format
 msgid "%d other item selected (%s)"
 msgid_plural "%d other items selected (%s)"
@@ -1299,14 +1301,14 @@ msgstr[0] "%d outro item selecionado (%s)"
 msgstr[1] "%d outros itens selecionados (%s)"
 
 #. only non-folders are selected
-#: ../thunar/thunar-list-model.c:2307
+#: ../thunar/thunar-list-model.c:2309
 #, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
 msgstr[0] "%d item selecionado (%s)"
 msgstr[1] "%d itens selecionados (%s)"
 
-#: ../thunar/thunar-list-model.c:2321
+#: ../thunar/thunar-list-model.c:2323
 #, c-format
 msgid "%d folder selected"
 msgid_plural "%d folders selected"
@@ -1317,7 +1319,7 @@ msgstr[1] "%d pastas selecionados"
 #. * needs to change ", " to something else. The comma
 #. * is between the message about the number of folders
 #. * and the number of items in the selection
-#: ../thunar/thunar-list-model.c:2340
+#: ../thunar/thunar-list-model.c:2342
 #, c-format
 msgid "%s, %s"
 msgstr "%s, %s"
@@ -2966,8 +2968,8 @@ msgstr ""
 "para o ambiente de trabalho Xfce."
 
 #. set window title
-#: ../thunar/thunar-window.c:3154 ../Thunar.desktop.in.in.h:2
-#: ../thunar/thunar-settings.desktop.in.h:2
+#: ../thunar/thunar-window.c:3154 ../Thunar.desktop.in.in.h:3
+#: ../thunar/thunar-settings.desktop.in.h:1
 msgid "File Manager"
 msgstr "Gerenciador de arquivos"
 
@@ -3465,12 +3467,12 @@ msgid "Trash contains files"
 msgstr "A lixeira contém arquivos"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:1
-msgid "Display the trash can"
-msgstr "Exibir a lixeira"
-
-#: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:2
 msgid "Trash Applet"
 msgstr "Miniaplicativo da lixeira"
+
+#: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:2
+msgid "Display the trash can"
+msgstr "Exibir a lixeira"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:116
 msgid "Custom Actions"
@@ -3758,38 +3760,38 @@ msgid "Failed to launch action \"%s\"."
 msgstr "Falha ao executar a ação \"%s\"."
 
 #: ../plugins/thunar-uca/uca.xml.in.h:1
-msgid "Example for a custom action"
-msgstr "Exemplo de uma ação personalizada"
-
-#: ../plugins/thunar-uca/uca.xml.in.h:2
 msgid "Open Terminal Here"
 msgstr "Abrir terminal aqui"
+
+#: ../plugins/thunar-uca/uca.xml.in.h:2
+msgid "Example for a custom action"
+msgstr "Exemplo de uma ação personalizada"
 
 #: ../plugins/thunar-wallpaper/twp-provider.c:173
 msgid "Set as wallpaper"
 msgstr "Definir como papel de parede"
 
 #: ../Thunar.desktop.in.in.h:1
-msgid "Browse the filesystem with the file manager"
-msgstr "Navegue no sistema de arquivos com o gerenciador de arquivos"
-
-#: ../Thunar.desktop.in.in.h:3
 msgid "Thunar File Manager"
 msgstr "Gerenciador de arquivos Thunar"
 
-#: ../Thunar-folder-handler.desktop.in.in.h:1
-msgid "Open Folder"
-msgstr "Abrir pasta"
+#: ../Thunar.desktop.in.in.h:2
+msgid "Browse the filesystem with the file manager"
+msgstr "Navegue no sistema de arquivos com o gerenciador de arquivos"
 
-#: ../Thunar-folder-handler.desktop.in.in.h:2
+#: ../Thunar-folder-handler.desktop.in.in.h:1
 msgid "Open Folder with Thunar"
 msgstr "Abrir pasta com o Thunar"
 
-#: ../Thunar-folder-handler.desktop.in.in.h:3
+#: ../Thunar-folder-handler.desktop.in.in.h:2
 msgid "Open the specified folders in Thunar"
 msgstr "Abrir as pastas especificadas no Thunar"
 
-#: ../thunar/thunar-settings.desktop.in.h:1
+#: ../Thunar-folder-handler.desktop.in.in.h:3
+msgid "Open Folder"
+msgstr "Abrir pasta"
+
+#: ../thunar/thunar-settings.desktop.in.h:2
 msgid "Configure the Thunar file manager"
 msgstr "Configurar o gerenciador de arquivos Thunar"
 

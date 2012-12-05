@@ -2242,6 +2242,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
         {
           description = g_content_type_get_description (content_type);
           size_string = thunar_file_get_size_string (file);
+          /* I18N, first %s is the display name of the file, 2nd the file size, 3rd the content type */
           text = g_strdup_printf (_("\"%s\" (%s) %s"), thunar_file_get_display_name (file),
                                   size_string, description);
           g_free (description);
@@ -2250,6 +2251,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       else
         {
           description = g_content_type_get_description (content_type);
+          /* I18N, first %s is the display name of the file, second the content type */
           text = g_strdup_printf (_("\"%s\" %s"), thunar_file_get_display_name (file), description);
           g_free (description);
         }

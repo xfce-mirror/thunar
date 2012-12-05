@@ -1,24 +1,25 @@
 # Russian translation of Thunar
 # Copyright (C) 2004-2006 Benedikt Meurer.
 # This file is distributed under the same license as the Thunar package.
-# 
+#
 # Dmitrij Smirnov <other@igus.lv>, 2011.
 # Andrey Fedoseev <andrey.fedoseev@gmail.com>, 2006-2008.
 # Sergey Fedoseev <fedoseev.sergey@gmail.com>, 2006.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 1.5.1 ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-03 10:03+0000\n"
+"POT-Creation-Date: 2012-12-05 19:56+0100\n"
 "PO-Revision-Date: 2012-11-11 14:55+0400\n"
 "Last-Translator: Sergey Alyoshin <alyoshin.s@gmail.com>\n"
 "Language-Team: xfce-i18n@xfce.org\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ru\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
 #: ../thunar/main.c:62
 msgid "Open the bulk rename dialog"
@@ -302,11 +303,11 @@ msgstr ""
 "Выбранное приложение будет использоваться для открытия этого файла и других "
 "файлов типа «%s»."
 
-#: ../thunar/thunar-chooser-button.c:496
+#: ../thunar/thunar-chooser-button.c:495
 msgid "No application selected"
 msgstr "Приложения не выбраны"
 
-#: ../thunar/thunar-chooser-button.c:509
+#: ../thunar/thunar-chooser-button.c:508
 msgid "Other Application..."
 msgstr "Другое приложение..."
 
@@ -702,8 +703,9 @@ msgstr "Вы хотите заменить существующий катало
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
 msgstr "Вы хотите заменить существующий файл"
 
+#.
 #. Fourth box (size, volume, free space)
-#. 
+#.
 #: ../thunar/thunar-dialogs.c:618 ../thunar/thunar-dialogs.c:649
 #: ../thunar/thunar-properties-dialog.c:456
 msgid "Size:"
@@ -801,8 +803,9 @@ msgstr "Название"
 msgid "Owner"
 msgstr "Владелец"
 
+#.
 #. Permissions chooser
-#. 
+#.
 #: ../thunar/thunar-enum-types.c:98 ../thunar/thunar-properties-dialog.c:528
 msgid "Permissions"
 msgstr "Права"
@@ -1275,28 +1278,28 @@ msgstr "«%s» закладка"
 msgid "\"%s\" mountable"
 msgstr "«%s» возможно подключить"
 
-#: ../thunar/thunar-list-model.c:2245
+#. I18N, first %s is the display name of the file, 2nd the file size, 3rd the content type
+#: ../thunar/thunar-list-model.c:2246
 #, c-format
 msgid "\"%s\" (%s) %s"
 msgstr "«%s» (%s) %s"
 
-#: ../thunar/thunar-list-model.c:2253
+#. I18N, first %s is the display name of the file, second the content type
+#: ../thunar/thunar-list-model.c:2255
 #, c-format
 msgid "\"%s\" %s"
 msgstr "«%s» %s"
 
-#. TRANSLATORS: Try to come up with a short translation of "Original Path"
-#. (which is the path
-#. * where the trashed file/folder was located before it was moved to the
-#. trash), otherwise the
+#. TRANSLATORS: Try to come up with a short translation of "Original Path" (which is the path
+#. * where the trashed file/folder was located before it was moved to the trash), otherwise the
 #. * properties dialog width will be messed up.
-#. 
-#: ../thunar/thunar-list-model.c:2263 ../thunar/thunar-properties-dialog.c:364
+#.
+#: ../thunar/thunar-list-model.c:2265 ../thunar/thunar-properties-dialog.c:364
 msgid "Original Path:"
 msgstr "Исходный путь:"
 
 #. item count if there are also folders in the selection
-#: ../thunar/thunar-list-model.c:2300
+#: ../thunar/thunar-list-model.c:2302
 #, c-format
 msgid "%d other item selected (%s)"
 msgid_plural "%d other items selected (%s)"
@@ -1305,7 +1308,7 @@ msgstr[1] "выбрано %d других объекта (%s)"
 msgstr[2] "выбрано %d других объектов (%s)"
 
 #. only non-folders are selected
-#: ../thunar/thunar-list-model.c:2307
+#: ../thunar/thunar-list-model.c:2309
 #, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
@@ -1313,7 +1316,7 @@ msgstr[0] "выбран %d объект (%s)"
 msgstr[1] "выбрано %d объекта (%s)"
 msgstr[2] "выбрано %d объектов (%s)"
 
-#: ../thunar/thunar-list-model.c:2321
+#: ../thunar/thunar-list-model.c:2323
 #, c-format
 msgid "%d folder selected"
 msgid_plural "%d folders selected"
@@ -1325,7 +1328,7 @@ msgstr[2] "выбрано %d каталогов"
 #. * needs to change ", " to something else. The comma
 #. * is between the message about the number of folders
 #. * and the number of items in the selection
-#: ../thunar/thunar-list-model.c:2340
+#: ../thunar/thunar-list-model.c:2342
 #, c-format
 msgid "%s, %s"
 msgstr "%s, %s"
@@ -1599,8 +1602,9 @@ msgstr ""
 msgid "File Manager Preferences"
 msgstr "Настройки файлового менеджера"
 
+#.
 #. Display
-#. 
+#.
 #: ../thunar/thunar-preferences-dialog.c:242
 msgid "Display"
 msgstr "Отображение"
@@ -1677,8 +1681,9 @@ msgstr "Дата"
 msgid "_Format:"
 msgstr "_Формат:"
 
+#.
 #. Side Pane
-#. 
+#.
 #: ../thunar/thunar-preferences-dialog.c:363
 msgid "Side Pane"
 msgstr "Боковая панель"
@@ -1758,8 +1763,9 @@ msgstr ""
 "Используйте этот параметр, чтобы включить отображение эмблем на значках в "
 "дереве."
 
+#.
 #. Behavior
-#. 
+#.
 #: ../thunar/thunar-preferences-dialog.c:457
 msgid "Behavior"
 msgstr "Поведение"
@@ -1822,8 +1828,9 @@ msgstr "Открыть каталог в новом о_кне"
 msgid "Open folder in new _tab"
 msgstr "Открыть каталог в новой _вкладке"
 
+#.
 #. Advanced
-#. 
+#.
 #: ../thunar/thunar-preferences-dialog.c:581
 msgid "Advanced"
 msgstr "Дополнительно"
@@ -1870,8 +1877,7 @@ msgid ""
 msgstr ""
 "<a href=\"volman-config:\">Настроить</a> управление съёмными носителями."
 
-#. tell the user that we failed to come up with the thunar-volman
-#. configuration dialog
+#. tell the user that we failed to come up with the thunar-volman configuration dialog
 #: ../thunar/thunar-preferences-dialog.c:708
 msgid "Failed to display the volume management settings"
 msgstr "Не удаётся открыть настройки менеджера томов"
@@ -1907,8 +1913,9 @@ msgstr "_Имя:"
 msgid "Names:"
 msgstr "Имена:"
 
+#.
 #. Second box (kind, open with, link target)
-#. 
+#.
 #: ../thunar/thunar-properties-dialog.c:311
 msgid "Kind:"
 msgstr "Тип:"
@@ -1927,8 +1934,9 @@ msgstr "Цель ссылки:"
 msgid "Location:"
 msgstr "Адрес:"
 
+#.
 #. Third box (deleted, modified, accessed)
-#. 
+#.
 #: ../thunar/thunar-properties-dialog.c:403
 msgid "Deleted:"
 msgstr "Удалён:"
@@ -1945,8 +1953,9 @@ msgstr "Том:"
 msgid "Free Space:"
 msgstr "Свободно:"
 
+#.
 #. Emblem chooser
-#. 
+#.
 #: ../thunar/thunar-properties-dialog.c:518
 msgid "Emblems"
 msgstr "Эмблемы"
@@ -2051,11 +2060,9 @@ msgstr "Новое имя"
 msgid "Click here to view the documentation for the selected rename operation."
 msgstr "Просмотреть документацию по выбранной операции переименования."
 
-#. TRANSLATORS: You can test this string by temporarily removing thunar-sbr.*
-#. from $libdir/thunarx-2/,
-#. *              and opening the multi rename dialog by selecting multiple
-#. files and pressing F2.
-#. 
+#. TRANSLATORS: You can test this string by temporarily removing thunar-sbr.* from $libdir/thunarx-2/,
+#. *              and opening the multi rename dialog by selecting multiple files and pressing F2.
+#.
 #: ../thunar/thunar-renamer-dialog.c:611
 msgid ""
 "No renamer modules were found on your system. Please check your\n"
@@ -2415,8 +2422,7 @@ msgstr "_Выбрать"
 msgid "_Pattern:"
 msgstr "_Шаблон:"
 
-#. tell the user that the file name provided by the X Direct Save source is
-#. invalid
+#. tell the user that the file name provided by the X Direct Save source is invalid
 #: ../thunar/thunar-standard-view.c:3078
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Из источника XDS получено неверное имя файла."
@@ -2864,8 +2870,9 @@ msgstr "Панель меню"
 msgid "Change the visibility of this window's menubar"
 msgstr "Отображение меню окна"
 
+#.
 #. * add view options
-#. 
+#.
 #: ../thunar/thunar-window.c:725
 msgid "View as _Icons"
 msgstr "_Значки"
@@ -2974,8 +2981,8 @@ msgstr ""
 "менеджер для рабочего окружения Xfce."
 
 #. set window title
-#: ../thunar/thunar-window.c:3154 ../Thunar.desktop.in.in.h:2
-#: ../thunar/thunar-settings.desktop.in.h:2
+#: ../thunar/thunar-window.c:3154 ../Thunar.desktop.in.in.h:3
+#: ../thunar/thunar-settings.desktop.in.h:1
 msgid "File Manager"
 msgstr "Файловый менеджер"
 
@@ -3475,12 +3482,12 @@ msgid "Trash contains files"
 msgstr "Корзина содержит файлы"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:1
-msgid "Display the trash can"
-msgstr "Отображает корзину на панели"
-
-#: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:2
 msgid "Trash Applet"
 msgstr "Корзина"
+
+#: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:2
+msgid "Display the trash can"
+msgstr "Отображает корзину на панели"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:116
 msgid "Custom Actions"
@@ -3538,8 +3545,9 @@ msgstr "Вы уверены, что хотите удалить действие
 msgid "If you delete a custom action, it is permanently lost."
 msgstr "Если вы удалите файл, он будет утрачен навсегда."
 
+#.
 #. Basic
-#. 
+#.
 #: ../plugins/thunar-uca/thunar-uca-editor.c:122
 msgid "Basic"
 msgstr "Основное"
@@ -3763,38 +3771,38 @@ msgid "Failed to launch action \"%s\"."
 msgstr "Не удалось выполнить действие «%s»."
 
 #: ../plugins/thunar-uca/uca.xml.in.h:1
-msgid "Example for a custom action"
-msgstr "Пример особого действия"
-
-#: ../plugins/thunar-uca/uca.xml.in.h:2
 msgid "Open Terminal Here"
 msgstr "Открыть терминал"
+
+#: ../plugins/thunar-uca/uca.xml.in.h:2
+msgid "Example for a custom action"
+msgstr "Пример особого действия"
 
 #: ../plugins/thunar-wallpaper/twp-provider.c:173
 msgid "Set as wallpaper"
 msgstr "Сделать фоновым изображением"
 
 #: ../Thunar.desktop.in.in.h:1
-msgid "Browse the filesystem with the file manager"
-msgstr "Просмотр файловой системы с помощью файлового менеджера"
-
-#: ../Thunar.desktop.in.in.h:3
 msgid "Thunar File Manager"
 msgstr "Файловый менеджер Thunar"
 
-#: ../Thunar-folder-handler.desktop.in.in.h:1
-msgid "Open Folder"
-msgstr "Открыть каталог"
+#: ../Thunar.desktop.in.in.h:2
+msgid "Browse the filesystem with the file manager"
+msgstr "Просмотр файловой системы с помощью файлового менеджера"
 
-#: ../Thunar-folder-handler.desktop.in.in.h:2
+#: ../Thunar-folder-handler.desktop.in.in.h:1
 msgid "Open Folder with Thunar"
 msgstr "Открыть каталог с помощью Thunar"
 
-#: ../Thunar-folder-handler.desktop.in.in.h:3
+#: ../Thunar-folder-handler.desktop.in.in.h:2
 msgid "Open the specified folders in Thunar"
 msgstr "Открыть выбранные каталоги в Thunar"
 
-#: ../thunar/thunar-settings.desktop.in.h:1
+#: ../Thunar-folder-handler.desktop.in.in.h:3
+msgid "Open Folder"
+msgstr "Открыть каталог"
+
+#: ../thunar/thunar-settings.desktop.in.h:2
 msgid "Configure the Thunar file manager"
 msgstr "Настроить файловый менеджер Thunar"
 
