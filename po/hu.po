@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-26 06:51+0000\n"
+"POT-Creation-Date: 2012-12-04 23:30+0000\n"
 "PO-Revision-Date: 2012-11-26 03:24+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
 "Language-Team: Hungarian <gnome-hu-list at gnome dot org>\n"
@@ -140,7 +140,7 @@ msgstr "A művelet indítása meghiúsult"
 #: ../thunar/thunar-launcher.c:1208 ../thunar/thunar-location-entry.c:402
 #: ../thunar/thunar-location-entry.c:430
 #: ../thunar/thunar-shortcuts-view.c:1614
-#: ../thunar/thunar-shortcuts-view.c:1642 ../thunar/thunar-window.c:2165
+#: ../thunar/thunar-shortcuts-view.c:1642 ../thunar/thunar-window.c:2171
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "„%s” megnyitása meghiúsult"
@@ -822,7 +822,7 @@ msgid "File Name"
 msgstr "Fájlnév"
 
 #: ../thunar/thunar-file.c:916 ../thunar/thunar-gio-extensions.c:236
-#: ../thunar/thunar-shortcuts-model.c:821 ../thunar/thunar-window.c:357
+#: ../thunar/thunar-shortcuts-model.c:839 ../thunar/thunar-window.c:357
 msgid "File System"
 msgstr "Fájlrendszer"
 
@@ -2123,19 +2123,31 @@ msgid ""
 msgstr ""
 "Ki szeretné hagyni ezt a fájlt és a többi fájl átnevezésével folytatni?"
 
-#: ../thunar/thunar-shortcuts-model.c:815
+#: ../thunar/thunar-shortcuts-model.c:600
+#: ../plugins/thunar-tpa/thunar-tpa.c:310
+msgid "Trash is empty"
+msgstr "A Kuka üres"
+
+#: ../thunar/thunar-shortcuts-model.c:604
+#, c-format
+msgid "Trash contains %d file"
+msgid_plural "Trash contains %d files"
+msgstr[0] "A Kuka %d fájlt tartalmaz"
+msgstr[1] "A Kuka %d fájlt tartalmaz"
+
+#: ../thunar/thunar-shortcuts-model.c:833
 msgid "DEVICES"
 msgstr "ESZKÖZÖK"
 
-#: ../thunar/thunar-shortcuts-model.c:861
+#: ../thunar/thunar-shortcuts-model.c:879
 msgid "NETWORK"
 msgstr "HÁLÓZAT"
 
-#: ../thunar/thunar-shortcuts-model.c:867
+#: ../thunar/thunar-shortcuts-model.c:885
 msgid "Browse Network"
 msgstr "Hálózat tallózása"
 
-#: ../thunar/thunar-shortcuts-model.c:888
+#: ../thunar/thunar-shortcuts-model.c:906
 msgid "PLACES"
 msgstr "HELYEK"
 
@@ -2346,7 +2358,7 @@ msgid "Loading folder contents..."
 msgstr "Mappatartalom betöltése…"
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2183 ../thunar/thunar-window.c:2717
+#: ../thunar/thunar-standard-view.c:2183 ../thunar/thunar-window.c:2723
 msgid "Failed to open the home folder"
 msgstr "A saját mappa megnyitása meghiúsult"
 
@@ -2382,7 +2394,7 @@ msgstr "Az XDS húzási hely érvénytelen fájlnevet adott meg"
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "A hivatkozás létrehozása meghiúsult erre az URL-címre: „%s”"
 
-#: ../thunar/thunar-standard-view.c:3652 ../thunar/thunar-window.c:2812
+#: ../thunar/thunar-standard-view.c:3652 ../thunar/thunar-window.c:2818
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "A(z) „%s” könyvtár megnyitása meghiúsult"
@@ -2841,36 +2853,36 @@ msgstr "Figyelem, a root fiókot használja, így árthat is a rendszerének."
 msgid "Close tab"
 msgstr "Lap bezárása"
 
-#: ../thunar/thunar-window.c:1945
+#: ../thunar/thunar-window.c:1947
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "„%s” megnyitása"
 
-#: ../thunar/thunar-window.c:2139
+#: ../thunar/thunar-window.c:2145
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "„%s” indítása meghiúsult"
 
-#: ../thunar/thunar-window.c:2692
+#: ../thunar/thunar-window.c:2698
 msgid "Failed to open parent folder"
 msgstr "A szülőmappa megnyitása meghiúsult"
 
-#: ../thunar/thunar-window.c:2787
+#: ../thunar/thunar-window.c:2793
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "A(z) „%s” könyvtár nem létezik. Létrehozza?"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:2869
+#: ../thunar/thunar-window.c:2875
 msgid "About Templates"
 msgstr "Sablonok névjegye"
 
-#: ../thunar/thunar-window.c:2891
+#: ../thunar/thunar-window.c:2897
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
 "Ezen mappa minden fájlja megjelenik a „Dokumentum létrehozása” menüben."
 
-#: ../thunar/thunar-window.c:2898
+#: ../thunar/thunar-window.c:2904
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and "
 "put it in this folder. Thunar will add an entry for this document in the "
@@ -2886,26 +2898,26 @@ msgstr ""
 "Ezután kiválaszthatja a „Dokumentum létrehozása” menü elemét és az éppen "
 "megjelenített könyvtárban létrejön a dokumentum egy másolata."
 
-#: ../thunar/thunar-window.c:2910
+#: ../thunar/thunar-window.c:2916
 msgid "Do _not display this message again"
 msgstr "_Ne jelenítse meg újra ezt az üzenetet"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2940
+#: ../thunar/thunar-window.c:2946
 msgid "Failed to open the file system root folder"
 msgstr "A fájlrendszer gyökérmappájának megnyitása meghiúsult"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2975
+#: ../thunar/thunar-window.c:2981
 msgid "Failed to display the contents of the trash can"
 msgstr "A Kuka tartalmának megjelenítése meghiúsult"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3010
+#: ../thunar/thunar-window.c:3016
 msgid "Failed to browse the network"
 msgstr "A hálózat tallózása meghiúsult"
 
-#: ../thunar/thunar-window.c:3094
+#: ../thunar/thunar-window.c:3100
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -2914,7 +2926,7 @@ msgstr ""
 "fájlkezelő az Xfce asztali környezethez."
 
 #. set window title
-#: ../thunar/thunar-window.c:3148 ../Thunar.desktop.in.in.h:2
+#: ../thunar/thunar-window.c:3154 ../Thunar.desktop.in.in.h:2
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "File Manager"
 msgstr "Fájlkezelő"
@@ -3407,10 +3419,6 @@ msgstr "A csatlakozás meghiúsult a Kukához"
 #: ../plugins/thunar-tpa/thunar-tpa.c:310
 msgid "Trash contains files"
 msgstr "A Kuka fájlokat tartalmaz"
-
-#: ../plugins/thunar-tpa/thunar-tpa.c:310
-msgid "Trash is empty"
-msgstr "A Kuka üres"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:1
 msgid "Display the trash can"
