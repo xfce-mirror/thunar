@@ -114,6 +114,7 @@ static gboolean           thunar_shortcuts_model_drag_data_get      (GtkTreeDrag
                                                                      GtkSelectionData          *selection_data);
 static gboolean           thunar_shortcuts_model_drag_data_delete   (GtkTreeDragSource         *source,
                                                                      GtkTreePath               *path);
+static void               thunar_shortcuts_model_header_visibility  (ThunarShortcutsModel      *model);
 static void               thunar_shortcuts_model_shortcut_places    (ThunarShortcutsModel      *model);
 static void               thunar_shortcuts_model_shortcut_network   (ThunarShortcutsModel      *model);
 static gboolean           thunar_shortcuts_model_devices_load       (gpointer                   data);
@@ -393,6 +394,9 @@ thunar_shortcuts_model_set_property (GObject      *object,
               gtk_tree_path_free (path);
             }
         }
+
+      /* update header visibility */
+      thunar_shortcuts_model_header_visibility (model);
       break;
 
     default:
@@ -553,10 +557,7 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
 
     case THUNAR_SHORTCUTS_MODEL_COLUMN_VISIBLE:
       g_value_init (value, G_TYPE_BOOLEAN);
-      if (shortcut->device == NULL)
-        g_value_set_boolean (value, !shortcut->hidden);
-      else
-        g_value_set_boolean (value, !thunar_device_get_hidden (shortcut->device));
+      g_value_set_boolean (value, !shortcut->hidden);
       break;
 
     case THUNAR_SHORTCUTS_MODEL_COLUMN_NAME:
@@ -817,6 +818,66 @@ thunar_shortcuts_model_drag_data_delete (GtkTreeDragSource *source,
 
 
 
+static void
+thunar_shortcuts_model_header_visibility (ThunarShortcutsModel *model)
+{
+  GList          *lp;
+  ThunarShortcut *shortcut;
+  ThunarShortcut *header;
+  guint           n_children = 0;
+  GList          *lp_header = NULL;
+  gint            idx_header = 0;
+  gint            i;
+  GtkTreePath    *path;
+  GtkTreeIter     iter;
+
+  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
+
+  for (lp = model->shortcuts, i = 0; lp != NULL; lp = lp->next, i++)
+    {
+      shortcut = lp->data;
+
+      if ((shortcut->group & THUNAR_SHORTCUT_GROUP_HEADER) != 0)
+        {
+          if (lp_header != NULL)
+            {
+              update_header:
+
+              header = lp_header->data;
+              if (header->hidden != (n_children == 0))
+                {
+                  /* set new visibility */
+                  header->hidden = (n_children == 0);
+
+                  /* notify view */
+                  path = gtk_tree_path_new_from_indices (idx_header, -1);
+                  GTK_TREE_ITER_INIT (iter, model->stamp, lp_header);
+                  gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &iter);
+                  gtk_tree_path_free (path);
+                }
+
+              if (lp == NULL)
+                return;
+            }
+
+          /* reset for new */
+          idx_header = i;
+          lp_header = lp;
+          n_children = 0;
+        }
+      else if (!shortcut->hidden)
+        {
+          n_children++;
+        }
+    }
+
+  _thunar_assert (lp == NULL);
+  if (lp_header != NULL)
+    goto update_header;
+}
+
+
+
 static gboolean
 thunar_shortcuts_model_devices_load (gpointer data)
 {
@@ -849,7 +910,7 @@ thunar_shortcuts_model_devices_load (gpointer data)
   devices = thunar_device_monitor_get_devices (model->device_monitor);
   for (lp = devices; lp != NULL; lp = lp->next)
     {
-      thunar_shortcuts_model_device_added (model->device_monitor, lp->data, model);
+      thunar_shortcuts_model_device_added (NULL, lp->data, model);
       g_object_unref (G_OBJECT (lp->data));
     }
   g_list_free (devices);
@@ -860,6 +921,8 @@ thunar_shortcuts_model_devices_load (gpointer data)
   g_signal_connect (model->device_monitor, "device-added", G_CALLBACK (thunar_shortcuts_model_device_added), model);
   g_signal_connect (model->device_monitor, "device-removed", G_CALLBACK (thunar_shortcuts_model_device_removed), model);
   g_signal_connect (model->device_monitor, "device-changed", G_CALLBACK (thunar_shortcuts_model_device_changed), model);
+
+  thunar_shortcuts_model_header_visibility (model);
 
   model->devices_monitor_idle_id = 0;
 
@@ -1175,6 +1238,7 @@ thunar_shortcuts_model_load_line (GFile       *file_path,
       shortcut->gicon = g_themed_icon_new ("folder-remote");
       shortcut->location = g_object_ref (file_path);
       shortcut->sort_id = row_num;
+      shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
       shortcut->name = g_strdup (name);
 
       /* append the shortcut to the list */
@@ -1197,6 +1261,9 @@ thunar_shortcuts_model_load (gpointer data)
   thunar_util_load_bookmarks (model->bookmarks_file,
                               thunar_shortcuts_model_load_line,
                               model);
+
+  /* update the visibility */
+  thunar_shortcuts_model_header_visibility (model);
 
   GDK_THREADS_LEAVE ();
 
@@ -1406,8 +1473,8 @@ thunar_shortcuts_model_device_added (ThunarDeviceMonitor  *device_monitor,
 {
   ThunarShortcut *shortcut;
 
-  _thunar_return_if_fail (THUNAR_DEVICE_MONITOR (device_monitor));
-  _thunar_return_if_fail (model->device_monitor == device_monitor);
+  _thunar_return_if_fail (device_monitor == NULL || THUNAR_DEVICE_MONITOR (device_monitor));
+  _thunar_return_if_fail (device_monitor == NULL || model->device_monitor == device_monitor);
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
 
@@ -1433,6 +1500,11 @@ thunar_shortcuts_model_device_added (ThunarDeviceMonitor  *device_monitor,
 
   /* insert in the model */
   thunar_shortcuts_model_add_shortcut (model, shortcut);
+
+  /* header visibility if call is from monitor */
+  if (device_monitor != NULL
+      && !shortcut->hidden)
+    thunar_shortcuts_model_header_visibility (model);
 }
 
 
@@ -1475,6 +1547,7 @@ thunar_shortcuts_model_device_changed (ThunarDeviceMonitor  *device_monitor,
   gint            idx;
   GtkTreePath    *path;
   ThunarShortcut *shortcut;
+  gboolean        update_header = FALSE;
 
   _thunar_return_if_fail (THUNAR_DEVICE_MONITOR (device_monitor));
   _thunar_return_if_fail (model->device_monitor == device_monitor);
@@ -1498,6 +1571,13 @@ thunar_shortcuts_model_device_changed (ThunarDeviceMonitor  *device_monitor,
       g_free (shortcut->tooltip);
       shortcut->tooltip = NULL;
 
+      /* hidden state */
+      if (shortcut->hidden != thunar_device_get_hidden (device))
+        {
+          shortcut->hidden = thunar_device_get_hidden (device);
+          update_header = TRUE;
+        }
+
       /* generate an iterator for the path */
       GTK_TREE_ITER_INIT (iter, model->stamp, lp);
 
@@ -1506,6 +1586,10 @@ thunar_shortcuts_model_device_changed (ThunarDeviceMonitor  *device_monitor,
       gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &iter);
       gtk_tree_path_free (path);
     }
+
+  /* header visibility */
+  if (update_header)
+    thunar_shortcuts_model_header_visibility (model);
 }
 
 
@@ -2125,4 +2209,7 @@ thunar_shortcuts_model_set_hidden (ThunarShortcutsModel *model,
   /* store new list */
   g_object_set (G_OBJECT (model->preferences), "hidden-bookmarks", bookmarks, NULL);
   g_strfreev (bookmarks);
+
+  /* header visibility */
+  thunar_shortcuts_model_header_visibility (model);
 }

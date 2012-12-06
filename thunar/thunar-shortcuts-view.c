@@ -468,7 +468,7 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
       /* release the path */
       gtk_tree_path_free (path);
     }
-  else
+  else if (event->button == 3)
     {
       thunar_shortcuts_view_context_menu_visibility (view, event, model);
       result = TRUE;
