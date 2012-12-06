@@ -307,7 +307,7 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   gtk_tree_view_column_pack_start (column, renderer, FALSE);
   gtk_tree_view_column_set_attributes (column, renderer,
                                        "text", THUNAR_SHORTCUTS_MODEL_COLUMN_NAME,
-                                       "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_HEADER,
+                                       "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_IS_HEADER,
                                        NULL);
 
   /* separator for indent */
@@ -315,7 +315,7 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   g_object_set (G_OBJECT (renderer), "xpad", 6, NULL);
   gtk_tree_view_column_pack_start (column, renderer, FALSE);
   gtk_tree_view_column_set_attributes (column, renderer,
-                                       "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_ITEM,
+                                       "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_IS_ITEM,
                                        NULL);
 
   /* allocate the special icon renderer */
@@ -325,7 +325,7 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
                                        "gicon", THUNAR_SHORTCUTS_MODEL_COLUMN_GICON,
                                        "file", THUNAR_SHORTCUTS_MODEL_COLUMN_FILE,
                                        "device", THUNAR_SHORTCUTS_MODEL_COLUMN_DEVICE,
-                                       "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_ITEM,
+                                       "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_IS_ITEM,
                                        NULL);
 
   /* sync the "emblems" property of the icon renderer with the "shortcuts-icon-emblems" preference
@@ -342,7 +342,7 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
   gtk_tree_view_column_set_attributes (column, renderer,
                                        "text", THUNAR_SHORTCUTS_MODEL_COLUMN_NAME,
-                                       "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_ITEM,
+                                       "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_IS_ITEM,
                                        NULL);
 
   /* spinner to indicate (un)mount/eject delay */
@@ -921,7 +921,7 @@ thunar_shortcuts_view_selection_func (GtkTreeSelection *selection,
 
   /* don't allow selecting headers */
   gtk_tree_model_get_iter (model, &iter, path);
-  gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_HEADER, &is_header, -1);
+  gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_IS_HEADER, &is_header, -1);
   return !is_header;
 }
 
@@ -1057,7 +1057,7 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   GtkTreeModel        *shortcuts_model;
 
   /* check if this is an item menu or a header menu */
-  gtk_tree_model_get (model, iter, THUNAR_SHORTCUTS_MODEL_COLUMN_HEADER, &is_header, -1);
+  gtk_tree_model_get (model, iter, THUNAR_SHORTCUTS_MODEL_COLUMN_IS_HEADER, &is_header, -1);
   if (is_header)
     {
       thunar_shortcuts_view_context_menu_visibility (view, event, model);

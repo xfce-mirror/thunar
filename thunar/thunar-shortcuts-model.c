@@ -425,10 +425,10 @@ thunar_shortcuts_model_get_column_type (GtkTreeModel *tree_model,
 {
   switch (idx)
     {
-    case THUNAR_SHORTCUTS_MODEL_COLUMN_HEADER:
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_IS_HEADER:
       return G_TYPE_BOOLEAN;
 
-    case THUNAR_SHORTCUTS_MODEL_COLUMN_ITEM:
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_IS_ITEM:
       return G_TYPE_BOOLEAN;
 
     case THUNAR_SHORTCUTS_MODEL_COLUMN_VISIBLE:
@@ -541,12 +541,12 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
 
   switch (column)
     {
-    case THUNAR_SHORTCUTS_MODEL_COLUMN_HEADER:
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_IS_HEADER:
       g_value_init (value, G_TYPE_BOOLEAN);
       g_value_set_boolean (value, (shortcut->group & THUNAR_SHORTCUT_GROUP_HEADER) != 0);
       break;
 
-    case THUNAR_SHORTCUTS_MODEL_COLUMN_ITEM:
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_IS_ITEM:
       g_value_init (value, G_TYPE_BOOLEAN);
       g_value_set_boolean (value, (shortcut->group & THUNAR_SHORTCUT_GROUP_HEADER) == 0);
       break;
