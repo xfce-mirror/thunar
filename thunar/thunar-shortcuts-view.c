@@ -113,6 +113,9 @@ static gboolean       thunar_shortcuts_view_selection_func               (GtkTre
                                                                           GtkTreePath              *path,
                                                                           gboolean                  path_currently_selected,
                                                                           gpointer                  user_data);
+static void           thunar_shortcuts_view_context_menu_visibility      (ThunarShortcutsView      *view,
+                                                                          GdkEventButton           *event,
+                                                                          GtkTreeModel             *model);
 static void           thunar_shortcuts_view_context_menu                 (ThunarShortcutsView      *view,
                                                                           GdkEventButton           *event,
                                                                           GtkTreeModel             *model,
@@ -421,6 +424,8 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
   /* let the widget process the event first (handles focussing and scrolling) */
   result = (*GTK_WIDGET_CLASS (thunar_shortcuts_view_parent_class)->button_press_event) (widget, event);
 
+  model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
+
   /* resolve the path at the cursor position */
   if (gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (widget), event->x, event->y, &path, NULL, NULL, NULL))
     {
@@ -428,7 +433,6 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
       if (G_UNLIKELY (event->button == 3 && event->type == GDK_BUTTON_PRESS))
         {
           /* determine the iterator for the path */
-          model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
           if (gtk_tree_model_get_iter (model, &iter, path))
             {
               /* popup the context menu */
@@ -463,6 +467,11 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
 
       /* release the path */
       gtk_tree_path_free (path);
+    }
+  else
+    {
+      thunar_shortcuts_view_context_menu_visibility (view, event, model);
+      result = TRUE;
     }
 
   return result;
@@ -919,8 +928,8 @@ thunar_shortcuts_view_selection_func (GtkTreeSelection *selection,
 
 
 static void
-thunar_shortcuts_view_context_menu_header_toggled (GtkCheckMenuItem *item,
-                                                   GtkTreeModel     *model)
+thunar_shortcuts_view_context_menu_visibility_toggled (GtkCheckMenuItem *item,
+                                                       GtkTreeModel     *model)
 {
   gboolean             hidden;
   GtkTreePath         *path;
@@ -942,10 +951,9 @@ thunar_shortcuts_view_context_menu_header_toggled (GtkCheckMenuItem *item,
 
 
 static void
-thunar_shortcuts_view_context_menu_header (ThunarShortcutsView *view,
-                                           GdkEventButton      *event,
-                                           GtkTreeModel        *model,
-                                           GtkTreeIter         *header_iter)
+thunar_shortcuts_view_context_menu_visibility (ThunarShortcutsView *view,
+                                               GdkEventButton      *event,
+                                               GtkTreeModel        *model)
 {
   GtkTreeIter          iter;
   guint                mask = 0;
@@ -957,17 +965,18 @@ thunar_shortcuts_view_context_menu_header (ThunarShortcutsView *view,
   gboolean             visible;
   GtkTreePath         *path;
   GtkTreeModel        *child_model;
+  GtkWidget           *submenu;
 
   /* unselect the items */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
   gtk_tree_selection_unselect_all (GTK_TREE_SELECTION (selection));
 
   /* prepare the popup menu */
-  menu = gtk_menu_new ();
+  menu = submenu = gtk_menu_new ();
 
   /* process all items below the header */
   child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
-  gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (model), &iter, header_iter);
+  gtk_tree_model_get_iter_first (GTK_TREE_MODEL (child_model), &iter);
   path = gtk_tree_model_get_path (child_model, &iter);
   do
     {
@@ -978,7 +987,7 @@ thunar_shortcuts_view_context_menu_header (ThunarShortcutsView *view,
                           THUNAR_SHORTCUTS_MODEL_COLUMN_VISIBLE, &visible,
                           -1);
 
-      if (mask == 0 && (group & THUNAR_SHORTCUT_GROUP_HEADER) != 0)
+      if ((group & THUNAR_SHORTCUT_GROUP_HEADER) != 0)
         {
           /* get the mask of the group */
           if ((group & THUNAR_SHORTCUT_GROUP_DEVICES) != 0)
@@ -993,23 +1002,21 @@ thunar_shortcuts_view_context_menu_header (ThunarShortcutsView *view,
           /* create menu items */
           mi = gtk_menu_item_new_with_label (label);
           gtk_menu_shell_append (GTK_MENU_SHELL (menu), mi);
-          gtk_widget_set_sensitive (mi, FALSE);
           gtk_widget_show (mi);
 
-          mi = gtk_separator_menu_item_new ();
-          gtk_menu_shell_append (GTK_MENU_SHELL (menu), mi);
-          gtk_widget_show (mi);
+          submenu = gtk_menu_new ();
+          gtk_menu_item_set_submenu (GTK_MENU_ITEM (mi), submenu);
         }
       else if ((group & mask) != 0)
         {
           mi = gtk_check_menu_item_new_with_label (label);
-          gtk_menu_shell_append (GTK_MENU_SHELL (menu), mi);
+          gtk_menu_shell_append (GTK_MENU_SHELL (submenu), mi);
           gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (mi), visible);
           g_object_set_data_full (G_OBJECT (mi), I_("thunar-shortcuts-row"),
                                   gtk_tree_row_reference_new (child_model, path),
                                   (GDestroyNotify) gtk_tree_row_reference_free);
           g_signal_connect (G_OBJECT (mi), "toggled",
-            G_CALLBACK (thunar_shortcuts_view_context_menu_header_toggled), child_model);
+            G_CALLBACK (thunar_shortcuts_view_context_menu_visibility_toggled), child_model);
           gtk_widget_show (mi);
         }
 
@@ -1053,7 +1060,7 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   gtk_tree_model_get (model, iter, THUNAR_SHORTCUTS_MODEL_COLUMN_HEADER, &is_header, -1);
   if (is_header)
     {
-      thunar_shortcuts_view_context_menu_header (view, event, model, iter);
+      thunar_shortcuts_view_context_menu_visibility (view, event, model);
       return;
     }
 
