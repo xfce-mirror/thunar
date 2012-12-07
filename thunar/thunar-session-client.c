@@ -342,7 +342,7 @@ thunar_session_client_restore (ThunarSessionClient *session_client)
       if (thunar_window_set_directories (THUNAR_WINDOW (window), uris, active_tab))
         {
           /* add idle to make sure the trash status is up2date (bug #9513) */
-          session_client->trash_load_idle = g_idle_add (thunar_session_client_restore_trash, session_client);
+          session_client->trash_load_idle = g_timeout_add_seconds (2, thunar_session_client_restore_trash, session_client);
         }
       else
         {
