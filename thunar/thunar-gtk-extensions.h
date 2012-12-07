@@ -24,30 +24,32 @@
 
 G_BEGIN_DECLS;
 
-void         thunar_gtk_action_set_tooltip                (GtkAction          *action,
-                                                           const gchar        *format,
-                                                           ...) G_GNUC_PRINTF (2, 3);
+void             thunar_gtk_action_set_tooltip                (GtkAction          *action,
+                                                               const gchar        *format,
+                                                               ...) G_GNUC_PRINTF (2, 3);
 
-void         thunar_gtk_action_group_set_action_sensitive (GtkActionGroup     *action_group,
-                                                           const gchar        *action_name,
-                                                           gboolean            sensitive);
+void             thunar_gtk_action_group_set_action_sensitive (GtkActionGroup     *action_group,
+                                                               const gchar        *action_name,
+                                                               gboolean            sensitive);
 
-void         thunar_gtk_label_set_a11y_relation           (GtkLabel           *label,
-                                                           GtkWidget          *widget);
+void             thunar_gtk_label_set_a11y_relation           (GtkLabel           *label,
+                                                               GtkWidget          *widget);
 
-void         thunar_gtk_menu_run                          (GtkMenu            *menu,
-                                                           gpointer            parent,
-                                                           GtkMenuPositionFunc func,
-                                                           gpointer            data,
-                                                           guint               button,
-                                                           guint32             activate_time);
+void             thunar_gtk_menu_run                          (GtkMenu            *menu,
+                                                               gpointer            parent,
+                                                               GtkMenuPositionFunc func,
+                                                               gpointer            data,
+                                                               guint               button,
+                                                               guint32             activate_time);
 
-GtkAction   *thunar_gtk_ui_manager_get_action_by_name     (GtkUIManager       *ui_manager,
-                                                           const gchar        *action_name);
+GtkAction       *thunar_gtk_ui_manager_get_action_by_name     (GtkUIManager       *ui_manager,
+                                                               const gchar        *action_name);
 
-void         thunar_gtk_widget_set_tooltip                (GtkWidget          *widget,
-                                                           const gchar        *format,
-                                                           ...) G_GNUC_PRINTF (2, 3);
+void             thunar_gtk_widget_set_tooltip                (GtkWidget          *widget,
+                                                               const gchar        *format,
+                                                               ...) G_GNUC_PRINTF (2, 3);
+
+GMountOperation *thunar_gtk_mount_operation_new               (gpointer            parent);
 
 G_END_DECLS;
 

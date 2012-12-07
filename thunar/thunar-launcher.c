@@ -1581,7 +1581,6 @@ thunar_launcher_action_sendto_device (GtkAction      *action,
 {
   ThunarLauncherMountData *data;
   GMountOperation         *mount_operation;
-  GtkWidget               *window;
   ThunarDevice            *device;
   GList                   *files;
 
@@ -1601,14 +1600,11 @@ thunar_launcher_action_sendto_device (GtkAction      *action,
   /* make sure to mount the device first, if it's not already mounted */
   if (!thunar_device_is_mounted (device))
     {
-      /* determine the toplevel window */
-      window = gtk_widget_get_toplevel (launcher->widget);
-
       /* allocate mount data */
       data = thunar_launcher_mount_data_new (launcher, files);
 
       /* allocate a GTK+ mount operation */
-      mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
+      mount_operation = thunar_gtk_mount_operation_new (launcher->widget);
 
       /* try to mount the device and later start sending the files */
       thunar_device_mount (device,

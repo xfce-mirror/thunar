@@ -991,7 +991,6 @@ thunar_tree_view_test_expand_row (GtkTreeView *tree_view,
   ThunarTreeViewMountData *data;
   GMountOperation         *mount_operation;
   ThunarTreeView          *view = THUNAR_TREE_VIEW (tree_view);
-  GtkWidget               *window;
   gboolean                 expandable = TRUE;
   ThunarDevice            *device;
 
@@ -1011,8 +1010,7 @@ thunar_tree_view_test_expand_row (GtkTreeView *tree_view,
           data = thunar_tree_view_mount_data_new (view, path, FALSE, OPEN_IN_VIEW);
 
           /* allocate a GTK+ mount operation */
-          window = gtk_widget_get_toplevel (GTK_WIDGET (view));
-          mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
+          mount_operation = thunar_gtk_mount_operation_new (GTK_WIDGET (view));
 
           /* try to mount the device and expand the row on success. the
            * data is destroyed in the finish callback */
@@ -1831,7 +1829,6 @@ thunar_tree_view_action_eject (ThunarTreeView *view)
 {
   ThunarDevice    *device;
   GMountOperation *mount_operation;
-  GtkWidget       *window;
 
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
@@ -1840,8 +1837,7 @@ thunar_tree_view_action_eject (ThunarTreeView *view)
   if (G_LIKELY (device != NULL))
     {
       /* prepare a mount operation */
-      window = gtk_widget_get_toplevel (GTK_WIDGET (view));
-      mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
+      mount_operation = thunar_gtk_mount_operation_new (GTK_WIDGET (view));
 
       /* eject */
       thunar_device_eject (device,
@@ -1888,7 +1884,6 @@ thunar_tree_view_action_unmount (ThunarTreeView *view)
 {
   ThunarDevice    *device;
   GMountOperation *mount_operation;
-  GtkWidget       *window;
 
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
@@ -1897,8 +1892,7 @@ thunar_tree_view_action_unmount (ThunarTreeView *view)
   if (G_LIKELY (device != NULL))
     {
       /* prepare a mount operation */
-      window = gtk_widget_get_toplevel (GTK_WIDGET (view));
-      mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
+      mount_operation = thunar_gtk_mount_operation_new (GTK_WIDGET (view));
 
       /* eject */
       thunar_device_unmount (device,
@@ -1993,7 +1987,6 @@ thunar_tree_view_mount (ThunarTreeView *view,
 {
   ThunarTreeViewMountData *data;
   GMountOperation         *mount_operation;
-  GtkWidget               *window;
   ThunarDevice            *device;
 
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
@@ -2009,8 +2002,7 @@ thunar_tree_view_mount (ThunarTreeView *view,
           data = thunar_tree_view_mount_data_new (view, NULL, open_after_mounting, open_in);
 
           /* allocate a GTK+ mount operation */
-          window = gtk_widget_get_toplevel (GTK_WIDGET (view));
-          mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
+          mount_operation = thunar_gtk_mount_operation_new (GTK_WIDGET (view));
 
           /* try to mount the device and expand the row on success. the
            * data is destroyed in the finish callback */

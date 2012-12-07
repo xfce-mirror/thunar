@@ -28,6 +28,7 @@
 #include <thunar/thunar-file.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
+#include <thunar/thunar-gtk-extensions.h>
 
 
 
@@ -183,24 +184,6 @@ thunar_browser_poke_device_data_free (PokeDeviceData *poke_data)
   g_object_unref (poke_data->device);
 
   g_slice_free (PokeDeviceData, poke_data);
-}
-
-
-
-static GMountOperation *
-thunar_browser_mount_operation_new (gpointer parent)
-{
-  GMountOperation *mount_operation;
-  GtkWindow       *window = NULL;
-  GdkScreen       *screen = NULL;
-
-  mount_operation = gtk_mount_operation_new (NULL);
-
-  screen = thunar_util_parse_parent (parent, &window);
-  gtk_mount_operation_set_screen (GTK_MOUNT_OPERATION (mount_operation), screen);
-  gtk_mount_operation_set_parent (GTK_MOUNT_OPERATION (mount_operation), window);
-
-  return mount_operation;
 }
 
 
@@ -473,7 +456,7 @@ thunar_browser_poke_file_internal (ThunarBrowser                *browser,
           poke_data = thunar_browser_poke_file_data_new (browser, location, source,
                                                          file, func, location_func, user_data);
 
-          mount_operation = thunar_browser_mount_operation_new (widget);
+          mount_operation = thunar_gtk_mount_operation_new (widget);
 
           g_file_mount_mountable (thunar_file_get_file (file),
                                   G_MOUNT_MOUNT_NONE, mount_operation, NULL,
@@ -488,7 +471,7 @@ thunar_browser_poke_file_internal (ThunarBrowser                *browser,
       poke_data = thunar_browser_poke_file_data_new (browser, location, source,
                                                      file, func, location_func, user_data);
 
-      mount_operation = thunar_browser_mount_operation_new (widget);
+      mount_operation = thunar_gtk_mount_operation_new (widget);
 
       g_file_mount_enclosing_volume (thunar_file_get_file (file),
                                      G_MOUNT_MOUNT_NONE, mount_operation, NULL,
@@ -659,7 +642,7 @@ thunar_browser_poke_device (ThunarBrowser              *browser,
     {
       poke_data = thunar_browser_poke_device_data_new (browser, device, func, user_data);
 
-      mount_operation = thunar_browser_mount_operation_new (widget);
+      mount_operation = thunar_gtk_mount_operation_new (widget);
 
       thunar_device_mount (device,
                            mount_operation,

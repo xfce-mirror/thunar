@@ -1863,7 +1863,6 @@ thunar_shortcuts_view_eject (ThunarShortcutsView *view)
   GtkTreeIter       iter;
   ThunarDevice     *device;
   GMountOperation  *mount_operation;
-  GtkWidget        *window;
   GtkTreeModel     *child_model;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
@@ -1877,8 +1876,7 @@ thunar_shortcuts_view_eject (ThunarShortcutsView *view)
       _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
 
       /* prepare a mount operation */
-      window = gtk_widget_get_toplevel (GTK_WIDGET (view));
-      mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
+      mount_operation = thunar_gtk_mount_operation_new (GTK_WIDGET (view));
 
       /* start the spinner */
       child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
@@ -2007,7 +2005,6 @@ thunar_shortcuts_view_unmount (ThunarShortcutsView *view)
   GtkTreeIter       iter;
   ThunarDevice     *device;
   GMountOperation  *mount_operation;
-  GtkWidget        *window;
   GtkTreeModel     *child_model;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
@@ -2021,8 +2018,7 @@ thunar_shortcuts_view_unmount (ThunarShortcutsView *view)
       _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
 
       /* prepare a mount operation */
-      window = gtk_widget_get_toplevel (GTK_WIDGET (view));
-      mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
+      mount_operation = thunar_gtk_mount_operation_new (GTK_WIDGET (view));
 
       /* start the spinner */
       child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));

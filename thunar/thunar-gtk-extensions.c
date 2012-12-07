@@ -29,6 +29,7 @@
 
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -248,3 +249,25 @@ thunar_gtk_widget_set_tooltip (GtkWidget   *widget,
 
 
 
+/**
+ * thunar_gtk_mount_operation_new:
+ * @parent : a #GtkWindow or non-toplevel widget.
+ *
+ * Create a mount operation with some defaults.
+ **/
+GMountOperation *
+thunar_gtk_mount_operation_new (gpointer parent)
+{
+  GMountOperation *operation;
+  GdkScreen       *screen;
+  GtkWindow       *window = NULL;
+
+  screen = thunar_util_parse_parent (parent, &window);
+
+  operation = gtk_mount_operation_new (window);
+  g_mount_operation_set_password_save (G_MOUNT_OPERATION (operation), G_PASSWORD_SAVE_FOR_SESSION);
+  if (window == NULL && screen != NULL)
+    gtk_mount_operation_set_screen (GTK_MOUNT_OPERATION (operation), screen);
+
+  return operation;
+}
