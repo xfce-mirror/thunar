@@ -86,6 +86,7 @@ enum
   ZOOM_IN,
   ZOOM_OUT,
   ZOOM_RESET,
+  TAB_CHANGE,
   LAST_SIGNAL,
 };
 
@@ -110,6 +111,8 @@ static void     thunar_window_toggle_menubar_deactivate   (GtkWidget            
 static gboolean thunar_window_zoom_in                     (ThunarWindow           *window);
 static gboolean thunar_window_zoom_out                    (ThunarWindow           *window);
 static gboolean thunar_window_zoom_reset                  (ThunarWindow           *window);
+static gboolean thunar_window_tab_change                  (ThunarWindow           *window,
+                                                           gint                    nth);
 static void     thunar_window_realize                     (GtkWidget              *widget);
 static void     thunar_window_unrealize                   (GtkWidget              *widget);
 static gboolean thunar_window_configure_event             (GtkWidget              *widget,
@@ -256,6 +259,8 @@ struct _ThunarWindowClass
   gboolean (*zoom_in)         (ThunarWindow *window);
   gboolean (*zoom_out)        (ThunarWindow *window);
   gboolean (*zoom_reset)      (ThunarWindow *window);
+  gboolean (*tab_change)      (ThunarWindow *window,
+                               gint          idx);
 };
 
 struct _ThunarWindow
@@ -391,6 +396,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
   GtkWidgetClass *gtkwidget_class;
   GtkBindingSet  *binding_set;
   GObjectClass   *gobject_class;
+  guint           i;
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_window_dispose;
@@ -410,6 +416,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
   klass->zoom_in = thunar_window_zoom_in;
   klass->zoom_out = thunar_window_zoom_out;
   klass->zoom_reset = thunar_window_zoom_reset;
+  klass->tab_change = thunar_window_tab_change;
 
   /**
    * ThunarWindow:current-directory:
@@ -584,6 +591,24 @@ thunar_window_class_init (ThunarWindowClass *klass)
                   _thunar_marshal_BOOLEAN__VOID,
                   G_TYPE_BOOLEAN, 0);
 
+  /**
+   * ThunarWindow::tab-chage:
+   * @window : a #ThunarWindow instance.
+   * @idx    : tab index,
+   *
+   * Emitted whenever the user uses a Alt+N combination to
+   * switch tabs.
+   **/
+  window_signals[TAB_CHANGE] =
+    g_signal_new (I_("tab-change"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                  G_STRUCT_OFFSET (ThunarWindowClass, tab_change),
+                  g_signal_accumulator_true_handled, NULL,
+                  _thunar_marshal_BOOLEAN__INT,
+                  G_TYPE_BOOLEAN, 1,
+                  G_TYPE_INT);
+
   /* setup the key bindings for the windows */
   binding_set = gtk_binding_set_by_class (klass);
   gtk_binding_entry_add_signal (binding_set, GDK_BackSpace, 0, "back", 0);
@@ -594,6 +619,13 @@ thunar_window_class_init (ThunarWindowClass *klass)
   gtk_binding_entry_add_signal (binding_set, GDK_KP_Subtract, GDK_CONTROL_MASK, "zoom-out", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_KP_0, GDK_CONTROL_MASK, "zoom-reset", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_KP_Insert, GDK_CONTROL_MASK, "zoom-reset", 0);
+
+  /* setup the key bindings for Alt+N */
+  for (i = 0; i < 10; i++)
+    {
+      gtk_binding_entry_add_signal (binding_set, GDK_0 + i, GDK_MOD1_MASK,
+                                    "tab-change", 1, G_TYPE_UINT, i - 1);
+    }
 }
 
 
@@ -1228,6 +1260,21 @@ thunar_window_zoom_reset (ThunarWindow *window)
     }
 
   return FALSE;
+}
+
+
+
+static gboolean
+thunar_window_tab_change (ThunarWindow *window,
+                          gint          nth)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  /* Alt+0 is 10th tab */
+  gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook),
+                                 nth == -1 ? 8 : nth);
+
+  return TRUE;
 }
 
 
