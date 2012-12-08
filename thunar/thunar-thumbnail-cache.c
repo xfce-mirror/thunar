@@ -174,8 +174,10 @@ thunar_thumbnail_cache_finalize (GObject *object)
   /* release the cache lock */
   _thumbnail_cache_unlock (cache);
 
-#if !GLIB_CHECK_VERSION (2, 32, 0)
   /* release the mutex itself */
+#if GLIB_CHECK_VERSION (2, 32, 0)
+  g_mutex_clear (&cache->lock);
+#else
   g_mutex_free (cache->lock);
 #endif
 #endif

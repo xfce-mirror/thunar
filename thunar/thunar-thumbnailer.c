@@ -320,8 +320,10 @@ thunar_thumbnailer_finalize (GObject *object)
   /* release the thumbnailer lock */
   _thumbnailer_unlock (thumbnailer);
 
-#if !GLIB_CHECK_VERSION (2, 32, 0)
-  /* release the mutex */
+/* release the mutex */
+#if GLIB_CHECK_VERSION (2, 32, 0)
+  g_mutex_clear (&thumbnailer->lock);
+#else
   g_mutex_free (thumbnailer->lock);
 #endif
 #endif
