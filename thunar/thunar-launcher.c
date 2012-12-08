@@ -1075,9 +1075,11 @@ thunar_launcher_update_idle_destroy (gpointer data)
 
 
 static void
-thunar_launcher_update_check (ThunarLauncher *launcher)
+thunar_launcher_update_check (ThunarLauncher *launcher,
+                              GtkWidget      *menu)
 {
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+  _thunar_return_if_fail (menu == NULL || GTK_IS_MENU (menu));
 
   /* check if the menu is in a dirty state */
   if (launcher->launcher_idle_id != 0)
@@ -1090,6 +1092,11 @@ thunar_launcher_update_check (ThunarLauncher *launcher)
 
       /* ui update */
       gtk_ui_manager_ensure_update (launcher->ui_manager);
+
+      /* make sure the menu is positioned correctly after the
+       * interface update */
+      if (menu != NULL)
+        gtk_menu_reposition (GTK_MENU (menu));
     }
 }
 
@@ -1108,7 +1115,7 @@ thunar_launcher_update (ThunarLauncher *launcher)
   instant_update = (proxies == NULL);
   for (lp = proxies; lp != NULL; lp = lp->next)
     {
-      menu = gtk_widget_get_toplevel (lp->data);
+      menu = gtk_widget_get_ancestor (lp->data, GTK_TYPE_MENU);
       if (G_LIKELY (menu != NULL))
         {
           /* instant update if a menu is visible */
@@ -1328,7 +1335,7 @@ thunar_launcher_action_open (GtkAction      *action,
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
   /* force update if still dirty */
-  thunar_launcher_update_check (launcher);
+  thunar_launcher_update_check (launcher, NULL);
   if (!gtk_action_get_sensitive (action))
     return;
 
@@ -1370,7 +1377,7 @@ thunar_launcher_action_open_with_other (GtkAction      *action,
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
   /* force update if still dirty */
-  thunar_launcher_update_check (launcher);
+  thunar_launcher_update_check (launcher, NULL);
   if (!gtk_action_get_visible (action))
     return;
 
@@ -1392,7 +1399,7 @@ thunar_launcher_action_open_in_new_window (GtkAction      *action,
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
   /* force update if still dirty */
-  thunar_launcher_update_check (launcher);
+  thunar_launcher_update_check (launcher, NULL);
   if (!gtk_action_get_visible (action))
     return;
 
@@ -1413,7 +1420,7 @@ thunar_launcher_action_open_in_new_tab (GtkAction      *action,
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
   /* force update if still dirty */
-  thunar_launcher_update_check (launcher);
+  thunar_launcher_update_check (launcher, NULL);
   if (!gtk_action_get_visible (action))
     return;
 
