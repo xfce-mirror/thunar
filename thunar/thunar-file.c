@@ -3502,6 +3502,7 @@ thunar_file_get_icon_name (ThunarFile          *file,
   const gchar         *special_names[] = { NULL, "folder", NULL };
   guint                i;
   const gchar         *special_dir;
+  GFileInfo           *fileinfo;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (GTK_IS_ICON_THEME (icon_theme), NULL);
@@ -3539,17 +3540,47 @@ thunar_file_get_icon_name (ThunarFile          *file,
               g_free (path);
             }
         }
-      else if (g_file_has_uri_scheme (file->gfile, "trash")
-               && !thunar_file_has_parent (file))
+      else if (!thunar_file_has_parent (file))
         {
-          special_names[0] = thunar_file_get_item_count (file) > 0 ? "user-trash-full" : "user-trash";
-          special_names[1] = "user-trash";
+          if (g_file_has_uri_scheme (file->gfile, "trash"))
+            {
+              special_names[0] = thunar_file_get_item_count (file) > 0 ? "user-trash-full" : "user-trash";
+              special_names[1] = "user-trash";
+            }
+          else if (g_file_has_uri_scheme (file->gfile, "recent"))
+            {
+              special_names[0] = "document-open-recent";
+            }
+          else if (g_file_has_uri_scheme (file->gfile, "computer"))
+            {
+              special_names[0] = "computer";
+            }
         }
 
       if (*special_names != NULL)
         {
           names = special_names;
           goto check_names;
+        }
+    }
+  else if (thunar_file_is_mountable (file))
+    {
+      /* query the icon (computer:// backend) */
+      fileinfo = g_file_query_info (file->gfile,
+                                    G_FILE_ATTRIBUTE_STANDARD_ICON,
+                                    G_FILE_QUERY_INFO_NONE, NULL, NULL);
+      if (G_LIKELY (fileinfo != NULL))
+        {
+          /* take the icon from the info */
+          icon = g_file_info_get_icon (fileinfo);
+          if (G_LIKELY (icon != NULL))
+            g_object_ref (icon);
+
+          /* release */
+          g_object_unref (G_OBJECT (fileinfo));
+
+          if (G_LIKELY (icon != NULL))
+            goto check_icon;
         }
     }
 
@@ -3561,6 +3592,8 @@ thunar_file_get_icon_name (ThunarFile          *file,
   icon = g_content_type_get_icon (thunar_file_get_content_type (file));
   if (G_LIKELY (icon != NULL))
     {
+      check_icon:
+
       if (G_IS_THEMED_ICON (icon))
         {
           names = g_themed_icon_get_names (G_THEMED_ICON (icon));

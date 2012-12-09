@@ -1233,8 +1233,7 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
     }
 
   /* append the remove menu item */
-  if (group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS
-      || group == THUNAR_SHORTCUT_GROUP_NETWORK_BOOKMARKS)
+  if (group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
     {
       /* append a menu separator */
       item = gtk_separator_menu_item_new ();

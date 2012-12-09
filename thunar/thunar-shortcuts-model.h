@@ -65,8 +65,7 @@ typedef enum
                                        | THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
 #define THUNAR_SHORTCUT_GROUP_NETWORK (THUNAR_SHORTCUT_GROUP_NETWORK_HEADER \
                                        | THUNAR_SHORTCUT_GROUP_NETWORK_DEFAULT \
-                                       | THUNAR_SHORTCUT_GROUP_NETWORK_MOUNTS \
-                                       | THUNAR_SHORTCUT_GROUP_NETWORK_BOOKMARKS)
+                                       | THUNAR_SHORTCUT_GROUP_NETWORK_MOUNTS)
 #define THUNAR_SHORTCUT_GROUP_HEADER  (THUNAR_SHORTCUT_GROUP_DEVICES_HEADER \
                                        | THUNAR_SHORTCUT_GROUP_PLACES_HEADER \
                                        | THUNAR_SHORTCUT_GROUP_NETWORK_HEADER)
@@ -83,13 +82,12 @@ enum _ThunarShortcutGroup
   THUNAR_SHORTCUT_GROUP_PLACES_HEADER      = (1 << 4),  /* places header */
   THUNAR_SHORTCUT_GROUP_PLACES_DEFAULT     = (1 << 5),  /* home and desktop */
   THUNAR_SHORTCUT_GROUP_PLACES_TRASH       = (1 << 6),  /* trash */
-  THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS   = (1 << 7),  /* local bookmarks */
+  THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS   = (1 << 7),  /* gtk-bookmarks */
 
   /* THUNAR_SHORTCUT_GROUP_NETWORK */
   THUNAR_SHORTCUT_GROUP_NETWORK_HEADER     = (1 << 8),  /* network header */
   THUNAR_SHORTCUT_GROUP_NETWORK_DEFAULT    = (1 << 9),  /* browse network */
   THUNAR_SHORTCUT_GROUP_NETWORK_MOUNTS     = (1 << 10), /* remote ThunarDevices */
-  THUNAR_SHORTCUT_GROUP_NETWORK_BOOKMARKS  = (1 << 11), /* remote bookmarks */
 };
 
 
