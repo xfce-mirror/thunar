@@ -167,6 +167,7 @@ struct _ThunarLauncherPokeData
 {
   GList *files;
   GList *resolved_files;
+  guint  directories_in_tabs : 1;
 };
 
 
@@ -1287,8 +1288,17 @@ thunar_launcher_poke_files_finish (ThunarBrowser *browser,
       /* check if we have any directories to process */
       if (G_LIKELY (directories != NULL))
         {
-          /* open new windows for all directories */
-          thunar_launcher_open_windows (THUNAR_LAUNCHER (browser), directories);
+          if (poke_data->directories_in_tabs)
+            {
+              /* open new tabs */
+              for (lp = directories; lp != NULL; lp = lp->next)
+                thunar_navigator_open_new_tab (THUNAR_NAVIGATOR (browser), lp->data);
+            }
+          else
+            {
+              /* open new windows for all directories */
+              thunar_launcher_open_windows (THUNAR_LAUNCHER (browser), directories);
+            }
           g_list_free (directories);
         }
 
@@ -1395,6 +1405,8 @@ static void
 thunar_launcher_action_open_in_new_window (GtkAction      *action,
                                            ThunarLauncher *launcher)
 {
+  ThunarLauncherPokeData *poke_data;
+
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
@@ -1404,7 +1416,8 @@ thunar_launcher_action_open_in_new_window (GtkAction      *action,
     return;
 
   /* open the selected directories in new windows */
-  thunar_launcher_open_windows (launcher, launcher->selected_files);
+  poke_data = thunar_launcher_poke_data_new (launcher->selected_files);
+  thunar_launcher_poke_files (launcher, poke_data);
 }
 
 
@@ -1413,8 +1426,7 @@ static void
 thunar_launcher_action_open_in_new_tab (GtkAction      *action,
                                         ThunarLauncher *launcher)
 {
-  GList *lp;
-  GList *selected_files;
+  ThunarLauncherPokeData *poke_data;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
@@ -1425,14 +1437,9 @@ thunar_launcher_action_open_in_new_tab (GtkAction      *action,
     return;
 
   /* open all selected directories in a new tab */
-  selected_files = thunar_g_file_list_copy (launcher->selected_files);
-  for (lp = selected_files; lp != NULL; lp = lp->next)
-    {
-      if (thunar_file_is_directory (lp->data))
-        thunar_navigator_open_new_tab (THUNAR_NAVIGATOR (launcher), lp->data);
-      g_object_unref (G_OBJECT (lp->data));
-    }
-  g_list_free (selected_files);
+  poke_data = thunar_launcher_poke_data_new (launcher->selected_files);
+  poke_data->directories_in_tabs = TRUE;
+  thunar_launcher_poke_files (launcher, poke_data);
 }
 
 
@@ -1506,6 +1513,7 @@ thunar_launcher_poke_data_new (GList *files)
   data = g_slice_new0 (ThunarLauncherPokeData);
   data->files = thunar_g_file_list_copy (files);
   data->resolved_files = NULL;
+  data->directories_in_tabs = FALSE;
 
   return data;
 }
