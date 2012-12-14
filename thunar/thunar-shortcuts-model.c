@@ -1808,7 +1808,8 @@ thunar_shortcuts_model_iter_for_file (ThunarShortcutsModel *model,
         }
 
       /* but maybe we have a mounted(!) volume with a matching mount point */
-      if (shortcut->device != NULL)
+      if (shortcut->device != NULL
+          && !thunar_device_get_hidden (shortcut->device))
         {
           mount_point = thunar_device_get_root (shortcut->device);
           if (mount_point != NULL)

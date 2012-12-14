@@ -410,7 +410,6 @@ gboolean
 thunar_device_can_eject (const ThunarDevice *device)
 {
   gboolean  can_eject = FALSE;
-  GMount   *volume_mount;
   GDrive   *drive;
 
   _thunar_return_val_if_fail (THUNAR_IS_DEVICE (device), FALSE);
@@ -423,21 +422,10 @@ thunar_device_can_eject (const ThunarDevice *device)
           can_eject = g_drive_can_eject (drive) || g_drive_can_stop (drive);
           g_object_unref (drive);
         }
-
-      if (!can_eject)
+      else
         {
           /* check if the volume can eject */
           can_eject = g_volume_can_eject (device->device);
-          if (!can_eject)
-            {
-              /* check if the mount can eject/unmount */
-              volume_mount = g_volume_get_mount (device->device);
-              if (volume_mount != NULL)
-                {
-                  can_eject = g_mount_can_eject (volume_mount) || g_mount_can_unmount (volume_mount);
-                  g_object_unref (volume_mount);
-                }
-            }
         }
     }
   else if (G_IS_MOUNT (device->device))

@@ -1055,6 +1055,9 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   gboolean             is_header;
   GFile               *mount_point;
   GtkTreeModel        *shortcuts_model;
+  gboolean             can_mount;
+  gboolean             can_unmount;
+  gboolean             can_eject;
 
   /* check if this is an item menu or a header menu */
   gtk_tree_model_get (model, iter, THUNAR_SHORTCUTS_MODEL_COLUMN_IS_HEADER, &is_header, -1);
@@ -1105,6 +1108,13 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   switch (group)
     {
       case THUNAR_SHORTCUT_GROUP_DEVICES_VOLUMES:
+        can_mount = thunar_device_can_mount (device);
+        can_unmount = thunar_device_can_unmount (device);
+        can_eject = thunar_device_can_eject (device);
+
+        if (!can_mount && !can_unmount && !can_eject)
+          break;
+
         /* append a menu separator */
         item = gtk_separator_menu_item_new ();
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
@@ -1112,19 +1122,19 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
 
         /* append the "Mount" item */
         item = gtk_image_menu_item_new_with_mnemonic (_("_Mount"));
-        gtk_widget_set_visible (item, thunar_device_can_mount (device));
+        gtk_widget_set_visible (item, can_mount);
         g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_mount), view);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 
         /* append the "Unmount" item */
         item = gtk_image_menu_item_new_with_mnemonic (_("_Unmount"));
-        gtk_widget_set_visible (item, thunar_device_can_unmount (device));
+        gtk_widget_set_visible (item, can_unmount);
         g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_unmount), view);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 
         /* append the "Disconnect" (eject + safely remove drive) item */
         item = gtk_image_menu_item_new_with_mnemonic (_("_Eject"));
-        gtk_widget_set_visible (item, thunar_device_can_eject (device));
+        gtk_widget_set_visible (item, can_eject);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
         g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_eject), view);
         break;

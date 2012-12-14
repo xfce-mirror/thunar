@@ -351,67 +351,6 @@ thunar_device_monitor_update_hidden (gpointer key,
 
 
 
-#ifdef HAVE_GIO_UNIX
-static gboolean
-thunar_device_monitor_mount_is_internal (GMount *mount)
-{
-  const gchar *point_mount_path;
-  gboolean     is_internal = FALSE;
-  GFile       *root;
-  GList       *lp;
-  GList       *mount_points;
-  gchar       *mount_path;
-
-  _thunar_return_val_if_fail (G_IS_MOUNT (mount), FALSE);
-
-  /* determine the mount path */
-  root = g_mount_get_root (mount);
-  mount_path = g_file_get_path (root);
-  g_object_unref (root);
-
-  /* assume non-internal if we cannot determine the path */
-  if (mount_path == NULL)
-    return FALSE;
-
-  if (g_unix_is_mount_path_system_internal (mount_path))
-    {
-      /* mark as internal */
-      is_internal = TRUE;
-    }
-  else
-    {
-      /* get a list of all mount points */
-      mount_points = g_unix_mount_points_get (NULL);
-
-      /* search for the mount point associated with the mount entry */
-      for (lp = mount_points; !is_internal && lp != NULL; lp = lp->next)
-        {
-          point_mount_path = g_unix_mount_point_get_mount_path (lp->data);
-
-          /* check if this is the mount point we are looking for */
-          if (g_strcmp0 (mount_path, point_mount_path) == 0)
-            {
-              /* mark as internal if the user cannot mount this device */
-              if (!g_unix_mount_point_is_user_mountable (lp->data))
-                is_internal = TRUE;
-            }
-
-          /* free the mount point, we no longer need it */
-          g_unix_mount_point_free (lp->data);
-        }
-
-      /* free the mount point list */
-      g_list_free (mount_points);
-    }
-
-  g_free (mount_path);
-
-  return is_internal;
-}
-#endif
-
-
-
 static gboolean
 thunar_device_monitor_volume_is_visible (GVolume *volume)
 {
@@ -419,7 +358,6 @@ thunar_device_monitor_volume_is_visible (GVolume *volume)
   gboolean         can_mount = FALSE;
   gboolean         can_unmount = FALSE;
   gboolean         is_removable = FALSE;
-  gboolean         is_internal = FALSE;
   GDrive          *drive;
   GMount          *mount;
 
@@ -429,20 +367,12 @@ thunar_device_monitor_volume_is_visible (GVolume *volume)
   mount = g_volume_get_mount (volume);
   if (mount != NULL)
     {
-#ifdef HAVE_GIO_UNIX
-      is_internal = thunar_device_monitor_mount_is_internal (mount);
-#endif
-
       /* check if the volume can be unmounted */
       can_unmount = g_mount_can_unmount (mount);
 
       /* release the mount */
       g_object_unref (mount);
     }
-
-  /* don't show internal volumes */
-  if (is_internal)
-    return FALSE;
 
   /* check if the volume can be ejected */
   can_eject = g_volume_can_eject (volume);
