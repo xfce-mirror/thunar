@@ -136,6 +136,8 @@ static guint              file_signals[LAST_SIGNAL];
 #define FLAG_UNSET(file,flag)                G_STMT_START{ ((file)->flags &= ~(flag)); }G_STMT_END
 #define FLAG_IS_SET(file,flag)               (((file)->flags & (flag)) != 0)
 
+#define DEFAULT_CONTENT_TYPE "application/octet-stream"
+
 
 
 typedef enum
@@ -827,6 +829,7 @@ thunar_file_info_reload (ThunarFile   *file,
   const gchar *display_name;
   gboolean     is_secure = FALSE;
   gchar       *casefold;
+  gchar       *path;
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (file->info == NULL || G_IS_FILE_INFO (file->info));
@@ -850,6 +853,16 @@ thunar_file_info_reload (ThunarFile   *file,
   /* determine the basename */
   file->basename = g_file_get_basename (file->gfile);
   _thunar_assert (file->basename != NULL);
+
+  /* problematic files with content type reading */
+  if (strcmp (file->basename, "kmsg") == 0
+      && g_file_is_native (file->gfile))
+    {
+      path = g_file_get_path (file->gfile);
+      if (g_strcmp0 (path, "/proc/kmsg") == 0)
+        file->content_type = g_strdup (DEFAULT_CONTENT_TYPE);
+      g_free (path);
+    }
 
   /* check if this file is a desktop entry */
   if (thunar_file_is_desktop_file (file, &is_secure) && is_secure)
@@ -2257,9 +2270,7 @@ thunar_file_get_content_type (ThunarFile *file)
         {
           /* async load the content-type */
           info = g_file_query_info (file->gfile,
-                                    thunar_file_is_readable (file) ?
-                                        G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE :
-                                        G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
+                                    G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
                                     G_FILE_QUERY_INFO_NONE,
                                     NULL, &err);
 
@@ -2281,7 +2292,7 @@ thunar_file_get_content_type (ThunarFile *file)
 
           /* always provide a fallback */
           if (file->content_type == NULL)
-            file->content_type = g_strdup ("application/octet-stream");
+            file->content_type = g_strdup (DEFAULT_CONTENT_TYPE);
         }
 
       bailout:
