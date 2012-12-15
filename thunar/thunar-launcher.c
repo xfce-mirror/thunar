@@ -1051,13 +1051,13 @@ thunar_launcher_update_idle (gpointer data)
 
       /* FIXME Add desktop actions here. Unfortunately they are not supported by
        * GIO, so we'll have to roll our own thing here */
+    }
 
-      /* schedule an update of the "Send To" menu */
-      if (G_LIKELY (launcher->sendto_idle_id == 0))
-        {
-          launcher->sendto_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_launcher_sendto_idle,
-                                                      launcher, thunar_launcher_sendto_idle_destroy);
-        }
+  /* schedule an update of the "Send To" menu */
+  if (G_LIKELY (launcher->sendto_idle_id == 0))
+    {
+      launcher->sendto_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_launcher_sendto_idle,
+                                                  launcher, thunar_launcher_sendto_idle_destroy);
     }
 
   GDK_THREADS_LEAVE ();
