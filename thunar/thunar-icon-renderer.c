@@ -309,10 +309,9 @@ thunar_icon_renderer_get_size (GtkCellRenderer *renderer,
 
 
 static void
-thunar_icon_renderer_mask_selected (cairo_t   *cr,
-                                    GtkWidget *widget)
+thunar_icon_renderer_color_selected (cairo_t   *cr,
+                                     GtkWidget *widget)
 {
-
   cairo_pattern_t *source;
   GtkStateType     state;
 
@@ -322,6 +321,26 @@ thunar_icon_renderer_mask_selected (cairo_t   *cr,
   state = gtk_widget_has_focus (widget) ? GTK_STATE_SELECTED : GTK_STATE_ACTIVE;
   gdk_cairo_set_source_color (cr, &widget->style->base[state]);
   cairo_set_operator (cr, CAIRO_OPERATOR_MULTIPLY);
+
+  cairo_mask (cr, source);
+
+  cairo_pattern_destroy (source);
+  cairo_restore (cr);
+}
+
+
+
+static void
+thunar_icon_renderer_color_lighten (cairo_t   *cr,
+                                    GtkWidget *widget)
+{
+  cairo_pattern_t *source;
+
+  cairo_save (cr);
+
+  source = cairo_pattern_reference (cairo_get_source (cr));
+  cairo_set_source_rgb (cr, .15, .15, .15);
+  cairo_set_operator (cr, CAIRO_OPERATOR_COLOR_DODGE);
 
   cairo_mask (cr, source);
 
@@ -359,7 +378,8 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   cairo_t                *cr;
   gdouble                 alpha;
   gint                    emblem_size;
-  gboolean                mask_selected;
+  gboolean                color_selected;
+  gboolean                color_lighten;
 
   if (G_UNLIKELY (icon_renderer->file == NULL))
     return;
@@ -405,7 +425,9 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   icon_area.x = cell_area->x + (cell_area->width - icon_area.width) / 2;
   icon_area.y = cell_area->y + (cell_area->height - icon_area.height) / 2;
 
-  mask_selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0 && icon_renderer->follow_state;
+  /* bools for cairo transformations */
+  color_selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0 && icon_renderer->follow_state;
+  color_lighten = (flags & GTK_CELL_RENDERER_PRELIT) != 0 && icon_renderer->follow_state;
 
   /* create the context */
   cr = gdk_cairo_create (window);
@@ -431,14 +453,6 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
         }
       g_object_unref (G_OBJECT (clipboard));
 
-      /* colorize the icon if we should follow the selection state */
-      if ((flags & GTK_CELL_RENDERER_PRELIT) != 0 && icon_renderer->follow_state)
-        {
-          temp = exo_gdk_pixbuf_spotlight (icon);
-          g_object_unref (G_OBJECT (icon));
-          icon = temp;
-        }
-
       /* check if we should render an insensitive icon */
       if (G_UNLIKELY (gtk_widget_get_state (widget) == GTK_STATE_INSENSITIVE || !renderer->sensitive))
         {
@@ -463,9 +477,13 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
       gdk_cairo_rectangle (cr, &draw_area);
       cairo_paint_with_alpha (cr, alpha);
 
+      /* paint the lighten mask */
+      if (color_lighten)
+        thunar_icon_renderer_color_lighten (cr, widget);
+
       /* paint the selected mask */
-      if (mask_selected)
-        thunar_icon_renderer_mask_selected (cr, widget);
+      if (color_selected)
+        thunar_icon_renderer_color_selected (cr, widget);
     }
 
   /* release the file's icon */
@@ -552,9 +570,13 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
                   gdk_cairo_rectangle (cr, &draw_area);
                   cairo_paint (cr);
 
+                  /* paint the lighten mask */
+                  if (color_lighten)
+                    thunar_icon_renderer_color_lighten (cr, widget);
+
                   /* paint the selected mask */
-                  if (mask_selected)
-                    thunar_icon_renderer_mask_selected (cr, widget);
+                  if (color_selected)
+                    thunar_icon_renderer_color_selected (cr, widget);
                 }
 
               /* release the emblem */
