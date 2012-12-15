@@ -309,6 +309,29 @@ thunar_icon_renderer_get_size (GtkCellRenderer *renderer,
 
 
 static void
+thunar_icon_renderer_mask_selected (cairo_t   *cr,
+                                    GtkWidget *widget)
+{
+
+  cairo_pattern_t *source;
+  GtkStateType     state;
+
+  cairo_save (cr);
+
+  source = cairo_pattern_reference (cairo_get_source (cr));
+  state = gtk_widget_has_focus (widget) ? GTK_STATE_SELECTED : GTK_STATE_ACTIVE;
+  gdk_cairo_set_source_color (cr, &widget->style->base[state]);
+  cairo_set_operator (cr, CAIRO_OPERATOR_MULTIPLY);
+
+  cairo_mask (cr, source);
+
+  cairo_pattern_destroy (source);
+  cairo_restore (cr);
+}
+
+
+
+static void
 thunar_icon_renderer_render (GtkCellRenderer     *renderer,
                              GdkWindow           *window,
                              GtkWidget           *widget,
@@ -326,7 +349,6 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   GdkRectangle            emblem_area;
   GdkRectangle            icon_area;
   GdkRectangle            draw_area;
-  GtkStateType            state;
   GdkPixbuf              *emblem;
   GdkPixbuf              *icon;
   GdkPixbuf              *temp;
@@ -337,6 +359,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   cairo_t                *cr;
   gdouble                 alpha;
   gint                    emblem_size;
+  gboolean                mask_selected;
 
   if (G_UNLIKELY (icon_renderer->file == NULL))
     return;
@@ -382,6 +405,8 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   icon_area.x = cell_area->x + (cell_area->width - icon_area.width) / 2;
   icon_area.y = cell_area->y + (cell_area->height - icon_area.height) / 2;
 
+  mask_selected = (flags & GTK_CELL_RENDERER_SELECTED) != 0 && icon_renderer->follow_state;
+
   /* create the context */
   cr = gdk_cairo_create (window);
 
@@ -407,22 +432,11 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
       g_object_unref (G_OBJECT (clipboard));
 
       /* colorize the icon if we should follow the selection state */
-      if ((flags & (GTK_CELL_RENDERER_SELECTED | GTK_CELL_RENDERER_PRELIT)) != 0 && icon_renderer->follow_state)
+      if ((flags & GTK_CELL_RENDERER_PRELIT) != 0 && icon_renderer->follow_state)
         {
-          if ((flags & GTK_CELL_RENDERER_SELECTED) != 0)
-            {
-              state = gtk_widget_has_focus (widget) ? GTK_STATE_SELECTED : GTK_STATE_ACTIVE;
-              temp = exo_gdk_pixbuf_colorize (icon, &widget->style->base[state]);
-              g_object_unref (G_OBJECT (icon));
-              icon = temp;
-            }
-
-          if ((flags & GTK_CELL_RENDERER_PRELIT) != 0)
-            {
-              temp = exo_gdk_pixbuf_spotlight (icon);
-              g_object_unref (G_OBJECT (icon));
-              icon = temp;
-            }
+          temp = exo_gdk_pixbuf_spotlight (icon);
+          g_object_unref (G_OBJECT (icon));
+          icon = temp;
         }
 
       /* check if we should render an insensitive icon */
@@ -448,6 +462,10 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
       thunar_gdk_cairo_set_source_pixbuf (cr, icon, icon_area.x, icon_area.y);
       gdk_cairo_rectangle (cr, &draw_area);
       cairo_paint_with_alpha (cr, alpha);
+
+      /* paint the selected mask */
+      if (mask_selected)
+        thunar_icon_renderer_mask_selected (cr, widget);
     }
 
   /* release the file's icon */
@@ -533,6 +551,10 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
                   thunar_gdk_cairo_set_source_pixbuf (cr, emblem, emblem_area.x, emblem_area.y);
                   gdk_cairo_rectangle (cr, &draw_area);
                   cairo_paint (cr);
+
+                  /* paint the selected mask */
+                  if (mask_selected)
+                    thunar_icon_renderer_mask_selected (cr, widget);
                 }
 
               /* release the emblem */
