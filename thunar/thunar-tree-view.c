@@ -976,9 +976,18 @@ thunar_tree_view_row_activated (GtkTreeView       *tree_view,
 
   /* toggle the expanded state of the activated row... */
   if (gtk_tree_view_row_expanded (tree_view, path))
-    gtk_tree_view_collapse_row (tree_view, path);
+    {
+      gtk_tree_view_collapse_row (tree_view, path);
+    }
   else
-    gtk_tree_view_expand_row (tree_view, path, FALSE);
+    {
+      /* expand the row, but open it if mounted */
+      if (gtk_tree_view_expand_row (tree_view, path, FALSE))
+        {
+          /* ...open the selected folder */
+          thunar_tree_view_action_open (THUNAR_TREE_VIEW (tree_view));
+        }
+    }
 }
 
 
