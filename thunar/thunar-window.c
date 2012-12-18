@@ -1456,6 +1456,9 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   /* integrate the standard view action in the ui */
   thunar_component_set_ui_manager (THUNAR_COMPONENT (page), window->ui_manager);
 
+  /* update the actions */
+  thunar_standard_view_selection_changed (THUNAR_STANDARD_VIEW (page));
+
   gtk_widget_grab_focus (page);
 }
 

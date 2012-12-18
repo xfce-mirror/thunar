@@ -1017,7 +1017,6 @@ thunar_standard_view_realize (GtkWidget *widget)
   /* we need update the selection state based on the clipboard content */
   g_signal_connect_swapped (G_OBJECT (standard_view->clipboard), "changed",
                             G_CALLBACK (thunar_standard_view_selection_changed), standard_view);
-  thunar_standard_view_selection_changed (standard_view);
 
   /* determine the icon factory for the screen on which we are realized */
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
