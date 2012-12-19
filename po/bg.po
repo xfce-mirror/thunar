@@ -18,8 +18,9 @@ msgstr ""
 "Language: bg\n"
 
 #: ../thunar/main.c:62
+#, fuzzy
 msgid "Open the bulk rename dialog"
-msgstr "Отвори диалог за масово преименуване"
+msgstr "Стартиране в режим \"Демон\" /Не се поддържа/"
 
 #: ../thunar/main.c:64
 msgid "Run in daemon mode"
@@ -30,98 +31,118 @@ msgid "Run in daemon mode (not supported)"
 msgstr ""
 
 #: ../thunar/main.c:70
+#, fuzzy
 msgid "Quit a running Thunar instance"
-msgstr ""
+msgstr "Подреди избраните по низходящ ред"
 
 #: ../thunar/main.c:72
+#, fuzzy
 msgid "Quit a running Thunar instance (not supported)"
-msgstr ""
+msgstr "Невъзможно е да се осъществи това действие"
 
 #: ../thunar/main.c:74
+#, fuzzy
 msgid "Print version information and exit"
-msgstr "Отпечатай информацията за версията о излез"
+msgstr "Не може да се отвори \"%s\""
 
 #. setup application name
 #: ../thunar/main.c:128
+#, fuzzy
 msgid "Thunar"
-msgstr "Файлов мениджър /Thunar/"
+msgstr "Не може да се отвори \"%s\": %s"
 
 #. initialize Gtk+
 #: ../thunar/main.c:145
+#, fuzzy
 msgid "[FILES...]"
-msgstr "[файлове...]"
+msgstr "Не може да бъде преименуван \"%s\""
 
 #: ../thunar/main.c:152
-#, c-format
+#, c-format, fuzzy
 msgid "Thunar: Failed to open display: %s\n"
-msgstr "Файлов мениджър /Thunar/ : Неуспех при показване : %s\n"
+msgstr "Нова папка"
 
 #. yep, there's an error, so print it
 #: ../thunar/main.c:157
-#, c-format
+#, c-format, fuzzy
 msgid "Thunar: %s\n"
-msgstr "Файлов мениджър /Thunar/ : %s\n"
+msgstr "Създай нова директория"
 
 #: ../thunar/main.c:168
+#, fuzzy
 msgid "The Thunar development team. All rights reserved."
-msgstr "Екипът по разработката на Thunar. Всички права са запазени."
+msgstr "Нов файл"
 
 #: ../thunar/main.c:169
+#, fuzzy
 msgid "Written by Benedikt Meurer <benny@xfce.org>."
-msgstr "Написано от Benedikt Meurer <benny@xfce.org>."
+msgstr "Създай нов файл"
 
 #: ../thunar/main.c:170
-#, c-format
+#, c-format, fuzzy
 msgid "Please report bugs to <%s>."
-msgstr "Моля, докладвайте грешките в <%s>."
+msgstr "Създаване на документ от шаблон"
 
 #: ../thunar/thunar-abstract-icon-view.c:115
+#, fuzzy
 msgid "Arran_ge Items"
-msgstr "Подреди изброените"
+msgstr "Копиране на файлове ..."
 
 #: ../thunar/thunar-abstract-icon-view.c:120
+#, fuzzy
 msgid "Sort By _Name"
-msgstr "Подреди по имена"
+msgstr "Копираране на файловете в \"%s\"..."
 
 #: ../thunar/thunar-abstract-icon-view.c:120
+#, fuzzy
 msgid "Keep items sorted by their name"
-msgstr "Запази изброените, сортирани по техните имена"
+msgstr "Създаване на символни връзки в \"%s\"..."
 
 #: ../thunar/thunar-abstract-icon-view.c:121
+#, fuzzy
 msgid "Sort By _Size"
-msgstr "Подреди по размер"
+msgstr "Премести файловете в \"%s\"..."
 
 #: ../thunar/thunar-abstract-icon-view.c:121
+#, fuzzy
 msgid "Keep items sorted by their size"
-msgstr "Запази изброените, подредени по техният размер"
+msgstr "Сигурни ли сте, че искате да изтриете \"%s\"?"
 
 #: ../thunar/thunar-abstract-icon-view.c:122
+#, fuzzy
 msgid "Sort By _Type"
-msgstr "Подреди по вид"
+msgstr[0] "Сигурен ли сте, че искате да изтриете избраните файлове ?"
+msgstr[1] "Сигурен ли сте, че искате да изтриете %u избрани файлове ?"
 
 #: ../thunar/thunar-abstract-icon-view.c:122
+#, fuzzy
 msgid "Keep items sorted by their type"
-msgstr "Запази изброените, подредени по вид"
+msgstr "Ако изтриете файловете, те ще бъдат изгубени завинаги !"
 
 #: ../thunar/thunar-abstract-icon-view.c:123
+#, fuzzy
 msgid "Sort By Modification _Date"
-msgstr "Подреди по дата на промяна"
+msgstr "Изтриване на файлове..."
 
 #: ../thunar/thunar-abstract-icon-view.c:123
+#, fuzzy
 msgid "Keep items sorted by their modification date"
-msgstr "Запази изброените, подредени по дата на промяна "
+msgstr "Преместване на файловете в кошчето... "
 
 #: ../thunar/thunar-abstract-icon-view.c:128
+#, fuzzy
 msgid "_Ascending"
-msgstr "Възходящ ред"
+msgstr "Създаване на файлове..."
 
 #: ../thunar/thunar-abstract-icon-view.c:128
+#, fuzzy
 msgid "Sort items in ascending order"
-msgstr "Подреди изброените по възходящ ред"
+msgstr "Създаване на директории"
 
 #: ../thunar/thunar-abstract-icon-view.c:129
+#, fuzzy
 msgid "_Descending"
-msgstr "Низходящ ред"
+msgstr "Искате ли да премахнете всички файлове и папки от кошчето ?"
 
 #: ../thunar/thunar-abstract-icon-view.c:129
 msgid "Sort items in descending order"
@@ -246,117 +267,129 @@ msgstr ""
 #: ../thunar/thunar-application.c:1947 ../thunar/thunar-location-buttons.c:171
 #: ../thunar/thunar-shortcuts-view.c:875 ../thunar/thunar-tree-view.c:1145
 #: ../thunar/thunar-window.c:297 ../plugins/thunar-tpa/thunar-tpa.c:189
+#, fuzzy
 msgid "_Empty Trash"
-msgstr ""
+msgstr "Изпразни кошчето "
 
 #: ../thunar/thunar-application.c:1951
+#, fuzzy
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
-msgstr ""
+msgstr "Ако изберете да изпразните кошчето, всички неща вътре ще бъдат безвъзвратно изгубени. Моля, обърнете внимание, че може да ги изтриете отделно !"
 
 #: ../thunar/thunar-application.c:1968
+#, fuzzy
 msgid "Emptying the Trash..."
-msgstr ""
+msgstr "Изпразване на кошчето"
 
 #: ../thunar/thunar-application.c:2014
-#, c-format
+#, c-format, fuzzy
 msgid "Failed to determine the original path for \"%s\""
-msgstr ""
+msgstr "Не можа да се открие оригиналният път към \"%s\""
 
 #. display an error dialog
 #: ../thunar/thunar-application.c:2031
-#, c-format
+#, c-format, fuzzy
 msgid "Could not restore \"%s\""
-msgstr ""
+msgstr "Неуспешно възстановяване на \"%s\""
 
 #: ../thunar/thunar-application.c:2039
+#, fuzzy
 msgid "Restoring files..."
-msgstr ""
+msgstr "Възстановяване на файловете ..."
 
 #: ../thunar/thunar-chooser-button.c:309 ../thunar/thunar-chooser-dialog.c:464
-#, c-format
+#, c-format, fuzzy
 msgid "Failed to set default application for \"%s\""
-msgstr ""
+msgstr "Не може да бъде открита програма по подразбиране за \"%s\""
 
 #: ../thunar/thunar-chooser-button.c:440
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "The selected application is used to open this and other files of type \"%s\"."
-msgstr ""
+msgstr "Избраната програма е използвана да отваря  този и други файлове от типа \"%s\". "
 
 #: ../thunar/thunar-chooser-button.c:492
+#, fuzzy
 msgid "No application selected"
-msgstr ""
+msgstr "Няма избрана програма"
 
 #: ../thunar/thunar-chooser-button.c:505
+#, fuzzy
 msgid "Other Application..."
-msgstr ""
+msgstr "Друга програма..."
 
 #: ../thunar/thunar-chooser-dialog.c:185 ../thunar/thunar-launcher.c:171
+#, fuzzy
 msgid "Open With"
-msgstr ""
+msgstr "Отвори с"
 
 #. create the "Custom command" expand
 #: ../thunar/thunar-chooser-dialog.c:256
+#, fuzzy
 msgid "Use a _custom command:"
-msgstr ""
+msgstr "Използвай действие по подразбиране"
 
 #: ../thunar/thunar-chooser-dialog.c:257
+#, fuzzy
 msgid ""
 "Use a custom command for an application that is not available from the above "
 "application list."
-msgstr ""
+msgstr "Използвай действие по подразбиране за програма, която не е налична в списъка."
 
 #. create the "Custom command" button
 #: ../thunar/thunar-chooser-dialog.c:276
+#, fuzzy
 msgid "_Browse..."
-msgstr ""
+msgstr "Търсене... "
 
 #. create the "Use as default for this kind of file" button
 #: ../thunar/thunar-chooser-dialog.c:282
+#, fuzzy
 msgid "Use as _default for this kind of file"
-msgstr ""
+msgstr "Използвай по подразбиране за подобни файлове"
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:437
-#, c-format
+#, c-format, fuzzy
 msgid "Failed to add new application \"%s\""
-msgstr ""
+msgstr "Неуспех при добавяне на нова програма \"%s\""
 
 #: ../thunar/thunar-chooser-dialog.c:491
-#, c-format
+#, c-format, fuzzy
 msgid "Failed to execute application \"%s\""
-msgstr ""
+msgstr "Неуспех при изпълнение на програма \"%s\""
 
 #. append the "Remove Launcher" item
 #: ../thunar/thunar-chooser-dialog.c:563
+#, fuzzy
 msgid "_Remove Launcher"
-msgstr ""
+msgstr "Премахване на стартер"
 
 #. update the header label
 #: ../thunar/thunar-chooser-dialog.c:647
-#, c-format
+#, c-format, fuzzy
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
-msgstr ""
+msgstr "Отвори <i>%s</i> и други файлове от типа \"%s\" с :"
 
 #: ../thunar/thunar-chooser-dialog.c:655
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Browse the file system to select an application to open files of type \"%s\"."
-msgstr ""
+msgstr "Потърси във факловата система програма, която да отваря файлове от типа \"%s\"."
 
 #: ../thunar/thunar-chooser-dialog.c:661
-#, c-format
+#, c-format, fuzzy
 msgid ""
 "Change the default application for files of type \"%s\" to the selected "
 "application."
-msgstr ""
+msgstr "Промени програмата по подразбиране за файлове от типа \"%s\" на избраната програма"
 
 #: ../thunar/thunar-chooser-dialog.c:707
-#, c-format
+#, c-format, fuzzy
 msgid "Are you sure that you want to remove \"%s\"?"
-msgstr ""
+msgstr "Сигурен ли сте, че искате да премахнете \"%s\"?"
 
 #: ../thunar/thunar-chooser-dialog.c:713
 msgid ""
