@@ -35,6 +35,7 @@
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-location-button.h>
 #include <thunar/thunar-pango-extensions.h>
+#include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 
 
@@ -217,8 +218,9 @@ thunar_location_button_class_init (ThunarLocationButtonClass *klass)
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
                   0, NULL, NULL,
-                  g_cclosure_marshal_VOID__VOID,
-                  G_TYPE_NONE, 0);
+                  g_cclosure_marshal_VOID__BOOLEAN,
+                  G_TYPE_NONE, 1,
+                  G_TYPE_BOOLEAN);
 
   /**
    * ThunarLocationButton::context-menu:
@@ -573,6 +575,8 @@ thunar_location_button_button_release_event (GtkWidget            *button,
                                              ThunarLocationButton *location_button)
 {
   ThunarApplication *application;
+  ThunarPreferences *preferences;
+  gboolean           open_in_tab;
 
   _thunar_return_val_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button), FALSE);
 
@@ -585,10 +589,22 @@ thunar_location_button_button_release_event (GtkWidget            *button,
       /* verify that we still have a valid file */
       if (G_LIKELY (location_button->file != NULL))
         {
-          /* open a new window for the folder */
-          application = thunar_application_get ();
-          thunar_application_open_window (application, location_button->file, gtk_widget_get_screen (GTK_WIDGET (location_button)), NULL);
-          g_object_unref (G_OBJECT (application));
+          preferences = thunar_preferences_get ();
+          g_object_get (preferences, "misc-middle-click-in-tab", &open_in_tab, NULL);
+          g_object_unref (preferences);
+
+          if (open_in_tab)
+            {
+              /* open in tab */
+              g_signal_emit (G_OBJECT (location_button), location_button_signals[CLICKED], 0, TRUE);
+            }
+          else
+            {
+              /* open a new window for the folder */
+              application = thunar_application_get ();
+              thunar_application_open_window (application, location_button->file, gtk_widget_get_screen (GTK_WIDGET (location_button)), NULL);
+              g_object_unref (G_OBJECT (application));
+            }
         }
     }
 
@@ -990,7 +1006,7 @@ void
 thunar_location_button_clicked (ThunarLocationButton *location_button)
 {
   _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
-  g_signal_emit (G_OBJECT (location_button), location_button_signals[CLICKED], 0);
+  g_signal_emit (G_OBJECT (location_button), location_button_signals[CLICKED], 0, FALSE);
 }
 
 

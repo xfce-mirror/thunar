@@ -108,6 +108,7 @@ static void           thunar_location_buttons_scroll_left               (GtkWidg
 static void           thunar_location_buttons_scroll_right              (GtkWidget                  *button,
                                                                          ThunarLocationButtons      *buttons);
 static void           thunar_location_buttons_clicked                   (ThunarLocationButton       *button,
+                                                                         gboolean                    open_in_tab,
                                                                          ThunarLocationButtons      *buttons);
 static void           thunar_location_buttons_context_menu              (ThunarLocationButton       *button,
                                                                          GdkEventButton             *event,
@@ -1114,6 +1115,7 @@ thunar_location_buttons_scroll_right (GtkWidget             *button,
 
 static void
 thunar_location_buttons_clicked (ThunarLocationButton  *button,
+                                 gboolean               open_in_tab,
                                  ThunarLocationButtons *buttons)
 {
   ThunarFile *directory;
@@ -1124,6 +1126,13 @@ thunar_location_buttons_clicked (ThunarLocationButton  *button,
 
   /* determine the directory associated with the clicked button */
   directory = thunar_location_button_get_file (button);
+
+  /* open in tab */
+  if (open_in_tab)
+    {
+      thunar_navigator_open_new_tab (THUNAR_NAVIGATOR (buttons), directory);
+      return;
+    }
 
   /* disconnect from previous current directory (if any) */
   if (G_LIKELY (buttons->current_directory != NULL))
