@@ -293,7 +293,7 @@ error0:
 
       /* check if the name was requested successfully */
       if (!thunar_dbus_service_has_connection (dbus_service))
-        goto dbus_name_failed;
+        thunar_application_set_daemon (application, FALSE);
 #endif
     }
   else
@@ -310,7 +310,6 @@ error0:
   gtk_main ();
 
 #ifdef HAVE_DBUS
-  dbus_name_failed:
   if (dbus_service != NULL)
     g_object_unref (G_OBJECT (dbus_service));
 #endif
