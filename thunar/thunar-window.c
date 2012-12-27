@@ -1797,6 +1797,7 @@ thunar_window_install_location_bar (ThunarWindow *window,
       window->location_bar = g_object_new (type, "ui-manager", window->ui_manager, NULL);
       exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->location_bar), "current-directory");
       g_signal_connect_swapped (G_OBJECT (window->location_bar), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
+      g_signal_connect_swapped (G_OBJECT (window->location_bar), "open-new-tab", G_CALLBACK (thunar_window_notebook_insert), window);
 
       /* connect the location widget to the view (if any) */
       if (G_LIKELY (window->view != NULL))

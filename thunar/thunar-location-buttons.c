@@ -122,6 +122,8 @@ static void           thunar_location_buttons_action_empty_trash        (GtkActi
                                                                          ThunarLocationButtons      *buttons);
 static void           thunar_location_buttons_action_open               (GtkAction                  *action,
                                                                          ThunarLocationButtons      *buttons);
+static void           thunar_location_buttons_action_open_in_new_tab    (GtkAction                  *action,
+                                                                         ThunarLocationButtons      *buttons);
 static void           thunar_location_buttons_action_open_in_new_window (GtkAction                  *action,
                                                                          ThunarLocationButtons      *buttons);
 static void           thunar_location_buttons_action_paste_into_folder  (GtkAction                  *action,
@@ -166,6 +168,7 @@ static const GtkActionEntry action_entries[] =
   { "location-buttons-down-folder", NULL, "Down Folder", "<alt>Down", NULL, G_CALLBACK (thunar_location_buttons_action_down_folder), },
   { "location-buttons-context-menu", NULL, "Context Menu", NULL, "", NULL, },
   { "location-buttons-open", GTK_STOCK_OPEN, N_("_Open"), "", NULL, G_CALLBACK (thunar_location_buttons_action_open), },
+  { "location-buttons-open-in-new-tab", NULL, N_("Open in New Tab"), "", NULL, G_CALLBACK (thunar_location_buttons_action_open_in_new_tab), },
   { "location-buttons-open-in-new-window", NULL, N_("Open in New Window"), "", NULL, G_CALLBACK (thunar_location_buttons_action_open_in_new_window), },
   { "location-buttons-create-folder", NULL, N_("Create _Folder..."), "", NULL, G_CALLBACK (thunar_location_buttons_action_create_folder), },
   { "location-buttons-empty-trash", NULL, N_("_Empty Trash"), "", N_("Delete all files and folders in the Trash"), G_CALLBACK (thunar_location_buttons_action_empty_trash), },
@@ -1226,6 +1229,11 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
           thunar_gtk_action_set_tooltip (action, _("Open \"%s\" in a new window"), display_name);
           g_object_set_data_full (G_OBJECT (action), I_("thunar-file"), g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
 
+          /* setup the "Open in New Tab" action */
+          action = gtk_action_group_get_action (buttons->action_group, "location-buttons-open-in-new-tab");
+          thunar_gtk_action_set_tooltip (action, _("Open \"%s\" in a new tab"), display_name);
+          g_object_set_data_full (G_OBJECT (action), I_("thunar-file"), g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
+
           /* setup the "Create Folder..." action */
           action = gtk_action_group_get_action (buttons->action_group, "location-buttons-create-folder");
           thunar_gtk_action_set_tooltip (action, _("Create a new folder in \"%s\""), display_name);
@@ -1363,6 +1371,26 @@ thunar_location_buttons_action_open (GtkAction             *action,
     {
       /* open the folder in this window */
       thunar_navigator_change_directory (THUNAR_NAVIGATOR (buttons), directory);
+    }
+}
+
+
+
+static void
+thunar_location_buttons_action_open_in_new_tab (GtkAction             *action,
+                                                ThunarLocationButtons *buttons)
+{
+  ThunarFile *directory;
+
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+
+  /* determine the directory for the action */
+  directory = g_object_get_data (G_OBJECT (action), "thunar-file");
+  if (G_LIKELY (directory != NULL))
+    {
+      /* open tab in thsi window */
+      thunar_navigator_open_new_tab (THUNAR_NAVIGATOR (buttons), directory);
     }
 }
 
