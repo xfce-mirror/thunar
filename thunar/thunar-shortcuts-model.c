@@ -1182,6 +1182,9 @@ thunar_shortcuts_model_remove_shortcut (ThunarShortcutsModel *model,
       /* the shortcuts list was changed, so write the gtk bookmarks file */
       if (needs_save)
         thunar_shortcuts_model_save (model);
+
+      /* update header visibility */
+      thunar_shortcuts_model_header_visibility (model);
     }
 }
 
