@@ -2553,14 +2553,16 @@ static void
 thunar_standard_view_action_select_by_pattern (GtkAction          *action,
                                                ThunarStandardView *standard_view)
 {
-  GtkWidget *window;
-  GtkWidget *dialog;
-  GtkWidget *hbox;
-  GtkWidget *label;
-  GtkWidget *entry;
-  GList     *paths;
-  GList     *lp;
-  gint       response;
+  GtkWidget   *window;
+  GtkWidget   *dialog;
+  GtkWidget   *hbox;
+  GtkWidget   *label;
+  GtkWidget   *entry;
+  GList       *paths;
+  GList       *lp;
+  gint         response;
+  const gchar *pattern;
+  gchar       *pattern_extended = NULL;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
@@ -2585,7 +2587,8 @@ thunar_standard_view_action_select_by_pattern (GtkAction          *action,
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  entry = g_object_new (GTK_TYPE_ENTRY, "activates-default", TRUE, NULL);
+  entry = gtk_entry_new ();
+  gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
   gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 0);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), entry);
   gtk_widget_show (entry);
@@ -2593,8 +2596,19 @@ thunar_standard_view_action_select_by_pattern (GtkAction          *action,
   response = gtk_dialog_run (GTK_DIALOG (dialog));
   if (response == GTK_RESPONSE_OK)
     {
-      /* select all files that match the entered pattern */
-      paths = thunar_list_model_get_paths_for_pattern (standard_view->model, gtk_entry_get_text (GTK_ENTRY (entry)));
+      /* get entered pattern */
+      pattern = gtk_entry_get_text (GTK_ENTRY (entry));
+      if (pattern != NULL
+          && strchr (pattern, '*') == NULL
+          && strchr (pattern, '?') == NULL)
+        {
+          /* make file matching pattern */
+          pattern_extended = g_strdup_printf ("*%s*", pattern);
+          pattern = pattern_extended;
+        }
+
+      /* select all files that match pattern */
+      paths = thunar_list_model_get_paths_for_pattern (standard_view->model, pattern);
       THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->unselect_all (standard_view);
 
       /* set the cursor and scroll to the first selected item */
@@ -2607,6 +2621,7 @@ thunar_standard_view_action_select_by_pattern (GtkAction          *action,
           gtk_tree_path_free (lp->data);
         }
       g_list_free (paths);
+      g_free (pattern_extended);
     }
 
   gtk_widget_destroy (dialog);
