@@ -115,9 +115,9 @@ static gboolean           thunar_shortcuts_model_drag_data_get      (GtkTreeDrag
 static gboolean           thunar_shortcuts_model_drag_data_delete   (GtkTreeDragSource         *source,
                                                                      GtkTreePath               *path);
 static void               thunar_shortcuts_model_header_visibility  (ThunarShortcutsModel      *model);
+static void               thunar_shortcuts_model_shortcut_devices   (ThunarShortcutsModel      *model);
 static void               thunar_shortcuts_model_shortcut_places    (ThunarShortcutsModel      *model);
 static void               thunar_shortcuts_model_shortcut_network   (ThunarShortcutsModel      *model);
-static gboolean           thunar_shortcuts_model_devices_load       (gpointer                   data);
 static gboolean           thunar_shortcuts_model_get_hidden         (ThunarShortcutsModel      *model,
                                                                      ThunarShortcut            *shortcut);
 static void               thunar_shortcuts_model_add_shortcut       (ThunarShortcutsModel      *model,
@@ -173,7 +173,6 @@ struct _ThunarShortcutsModel
   gchar               **hidden_bookmarks;
 
   ThunarDeviceMonitor  *device_monitor;
-  guint                 devices_monitor_idle_id;
 
   gint64                bookmarks_time;
   GFile                *bookmarks_file;
@@ -273,7 +272,7 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
                    G_OBJECT (model), "hidden-bookmarks");
 
   /* load volumes */
-  model->devices_monitor_idle_id = g_idle_add_full (G_PRIORITY_DEFAULT, thunar_shortcuts_model_devices_load, model, NULL);
+  thunar_shortcuts_model_shortcut_devices (model);
 
   /* add network */
   thunar_shortcuts_model_shortcut_network (model);
@@ -298,10 +297,6 @@ thunar_shortcuts_model_finalize (GObject *object)
   /* stop bookmark load idle */
   if (model->bookmarks_idle_id != 0)
     g_source_remove (model->bookmarks_idle_id);
-
-  /* stop device monitor loading */
-  if (model->devices_monitor_idle_id != 0)
-    g_source_remove (model->devices_monitor_idle_id);
 
   /* free all shortcuts */
   g_list_foreach (model->shortcuts, (GFunc) thunar_shortcut_free, model);
@@ -877,15 +872,12 @@ thunar_shortcuts_model_header_visibility (ThunarShortcutsModel *model)
 
 
 
-static gboolean
-thunar_shortcuts_model_devices_load (gpointer data)
+static void
+thunar_shortcuts_model_shortcut_devices (ThunarShortcutsModel *model)
 {
-  ThunarShortcutsModel *model = THUNAR_SHORTCUTS_MODEL (data);
-  ThunarShortcut       *shortcut;
-  GList                *devices;
-  GList                *lp;
-
-  GDK_THREADS_ENTER ();
+  ThunarShortcut *shortcut;
+  GList          *devices;
+  GList          *lp;
 
   /* add the devices heading */
   shortcut = g_slice_new0 (ThunarShortcut);
@@ -914,18 +906,12 @@ thunar_shortcuts_model_devices_load (gpointer data)
     }
   g_list_free (devices);
 
-  GDK_THREADS_LEAVE ();
-
   /* monitor for changes */
   g_signal_connect (model->device_monitor, "device-added", G_CALLBACK (thunar_shortcuts_model_device_added), model);
   g_signal_connect (model->device_monitor, "device-removed", G_CALLBACK (thunar_shortcuts_model_device_removed), model);
   g_signal_connect (model->device_monitor, "device-changed", G_CALLBACK (thunar_shortcuts_model_device_changed), model);
 
   thunar_shortcuts_model_header_visibility (model);
-
-  model->devices_monitor_idle_id = 0;
-
-  return FALSE;
 }
 
 
