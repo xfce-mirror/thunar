@@ -75,10 +75,12 @@ struct _ThunarSessionClientClass
 struct _ThunarSessionClient
 {
   GObject __parent__;
+
   gchar  *path;
   gchar  *id;
 
   guint   trash_load_idle;
+  guint   trash_checks;
 
 #ifdef HAVE_LIBSM
   SmcConn connection;
@@ -279,8 +281,7 @@ thunar_session_client_restore_trash (gpointer data)
   ThunarSessionClient *session_client = THUNAR_SESSION_CLIENT (data);
   GFile               *trash;
   ThunarFile          *directory;
-
-  session_client->trash_load_idle = 0;
+  guint32              item_count = 0;
 
   /* make sure the trash is loaded */
   trash = thunar_g_file_new_for_trash ();
@@ -288,9 +289,24 @@ thunar_session_client_restore_trash (gpointer data)
   g_object_unref (trash);
 
   if (G_LIKELY (directory != NULL))
-    thunar_file_reload (directory);
+    {
+      thunar_file_reload (directory);
+      item_count = thunar_file_get_item_count (directory);
+    }
 
-  return FALSE;
+  /* continue checking for 15 seconds or files are found */
+  return (session_client->trash_checks++ < 5 && item_count == 0);
+}
+
+
+
+static void
+thunar_session_client_restore_finised (gpointer data)
+{
+  ThunarSessionClient *session_client = THUNAR_SESSION_CLIENT (data);
+
+  session_client->trash_load_idle = 0;
+  session_client->trash_checks = 0;
 }
 
 
@@ -342,7 +358,12 @@ thunar_session_client_restore (ThunarSessionClient *session_client)
       if (thunar_window_set_directories (THUNAR_WINDOW (window), uris, active_tab))
         {
           /* add idle to make sure the trash status is up2date (bug #9513) */
-          session_client->trash_load_idle = g_timeout_add_seconds (2, thunar_session_client_restore_trash, session_client);
+          if (session_client->trash_load_idle == 0)
+            {
+              session_client->trash_load_idle =
+                  g_timeout_add_seconds_full (G_PRIORITY_DEFAULT_IDLE, 3, thunar_session_client_restore_trash,
+                                              session_client, thunar_session_client_restore_finised);
+            }
         }
       else
         {
