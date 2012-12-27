@@ -691,10 +691,15 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
                 gtk_tree_selection_select_path (selection, path);
             }
           gtk_tree_path_free (path);
-        }
 
-      /* open the context menu */
-      thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (details_view), event->button, event->time);
+          /* queue the menu popup */
+          thunar_standard_view_queue_popup (THUNAR_STANDARD_VIEW (details_view), event);
+        }
+      else
+        {
+          /* open the context menu */
+          thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (details_view), event->button, event->time);
+        }
 
       return TRUE;
     }
