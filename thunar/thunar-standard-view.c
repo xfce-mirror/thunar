@@ -206,6 +206,12 @@ static GClosure            *thunar_standard_view_new_files_closure          (Thu
                                                                              GtkWidget                *source_view);
 static void                 thunar_standard_view_new_files                  (ThunarStandardView       *standard_view,
                                                                              GList                    *path_list);
+static gboolean             thunar_standard_view_button_release_event       (GtkWidget                *view,
+                                                                             GdkEventButton           *event,
+                                                                             ThunarStandardView       *standard_view);
+static gboolean             thunar_standard_view_motion_notify_event        (GtkWidget                *view,
+                                                                             GdkEventMotion           *event,
+                                                                             ThunarStandardView       *standard_view);
 static gboolean             thunar_standard_view_key_press_event            (GtkWidget                *view,
                                                                              GdkEventKey              *event,
                                                                              ThunarStandardView       *standard_view);
@@ -272,6 +278,8 @@ static void                 thunar_standard_view_sort_column_changed        (Gtk
 static void                 thunar_standard_view_loading_unbound            (gpointer                  user_data);
 static gboolean             thunar_standard_view_drag_scroll_timer          (gpointer                  user_data);
 static void                 thunar_standard_view_drag_scroll_timer_destroy  (gpointer                  user_data);
+static gboolean             thunar_standard_view_drag_timer                 (gpointer                  user_data);
+static void                 thunar_standard_view_drag_timer_destroy         (gpointer                  user_data);
 static void                 thunar_standard_view_finished_thumbnailing      (ThunarThumbnailer        *thumbnailer,
                                                                              guint                     request,
                                                                              ThunarStandardView       *standard_view);
@@ -332,6 +340,7 @@ struct _ThunarStandardViewPrivate
   /* right-click drag/popup support */
   GList                  *drag_g_file_list;
   guint                   drag_scroll_timer_id;
+  guint                   drag_timer_id;
   gint                    drag_x;
   gint                    drag_y;
 
@@ -807,6 +816,10 @@ thunar_standard_view_dispose (GObject *object)
   /* be sure to cancel any pending drag autoscroll timer */
   if (G_UNLIKELY (standard_view->priv->drag_scroll_timer_id != 0))
     g_source_remove (standard_view->priv->drag_scroll_timer_id);
+
+  /* be sure to cancel any pending drag timer */
+  if (G_UNLIKELY (standard_view->priv->drag_timer_id != 0))
+    g_source_remove (standard_view->priv->drag_timer_id);
 
   /* reset the UI manager property */
   thunar_component_set_ui_manager (THUNAR_COMPONENT (standard_view), NULL);
@@ -2921,6 +2934,56 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
 
 
 static gboolean
+thunar_standard_view_button_release_event (GtkWidget          *view,
+                                           GdkEventButton     *event,
+                                           ThunarStandardView *standard_view)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
+  _thunar_return_val_if_fail (standard_view->priv->drag_timer_id != 0, FALSE);
+
+  /* cancel the pending drag timer */
+  g_source_remove (standard_view->priv->drag_timer_id);
+
+  /* fire up the context menu */
+  thunar_standard_view_context_menu (standard_view, 0, event->time);
+
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_standard_view_motion_notify_event (GtkWidget          *view,
+                                          GdkEventMotion     *event,
+                                          ThunarStandardView *standard_view)
+{
+  GdkDragContext *context;
+  GtkTargetList  *target_list;
+
+  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
+  _thunar_return_val_if_fail (standard_view->priv->drag_timer_id != 0, FALSE);
+
+  /* check if we passed the DnD threshold */
+  if (gtk_drag_check_threshold (view, standard_view->priv->drag_x, standard_view->priv->drag_y, event->x, event->y))
+    {
+      /* cancel the drag timer, as we won't popup the menu anymore */
+      g_source_remove (standard_view->priv->drag_timer_id);
+
+      /* allocate the drag context (preferred action is to ask the user) */
+      target_list = gtk_target_list_new (drag_targets, G_N_ELEMENTS (drag_targets));
+      context = gtk_drag_begin (view, target_list, GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_ASK, 3, (GdkEvent *) event);
+      context->suggested_action = GDK_ACTION_ASK;
+      gtk_target_list_unref (target_list);
+
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
+
+
+static gboolean
 thunar_standard_view_scroll_event (GtkWidget          *view,
                                    GdkEventScroll     *event,
                                    ThunarStandardView *standard_view)
@@ -3769,6 +3832,34 @@ thunar_standard_view_drag_scroll_timer_destroy (gpointer user_data)
 
 
 
+static gboolean
+thunar_standard_view_drag_timer (gpointer user_data)
+{
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (user_data);
+
+  /* fire up the context menu */
+  GDK_THREADS_ENTER ();
+  thunar_standard_view_context_menu (standard_view, 3, gtk_get_current_event_time ());
+  GDK_THREADS_LEAVE ();
+
+  return FALSE;
+}
+
+
+
+static void
+thunar_standard_view_drag_timer_destroy (gpointer user_data)
+{
+  /* unregister the motion notify and button release event handlers (thread-safe) */
+  g_signal_handlers_disconnect_by_func (GTK_BIN (user_data)->child, thunar_standard_view_button_release_event, user_data);
+  g_signal_handlers_disconnect_by_func (GTK_BIN (user_data)->child, thunar_standard_view_motion_notify_event, user_data);
+
+  /* reset the drag timer source id */
+  THUNAR_STANDARD_VIEW (user_data)->priv->drag_timer_id = 0;
+}
+
+
+
 static void
 thunar_standard_view_finished_thumbnailing (ThunarThumbnailer  *thumbnailer,
                                             guint               request,
@@ -4053,6 +4144,60 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view,
 
   /* release the additional reference on the view */
   g_object_unref (G_OBJECT (standard_view));
+}
+
+
+
+/**
+ * thunar_standard_view_queue_popup:
+ * @standard_view : a #ThunarStandardView.
+ * @event         : the right click event.
+ *
+ * Schedules a context menu popup in response to
+ * a right-click button event. Right-click events
+ * need to be handled in a special way, as the
+ * user may also start a drag using the right
+ * mouse button and therefore this function
+ * schedules a timer, which - once expired -
+ * opens the context menu. If the user moves
+ * the mouse prior to expiration, a right-click
+ * drag (with #GDK_ACTION_ASK) will be started
+ * instead.
+ **/
+void
+thunar_standard_view_queue_popup (ThunarStandardView *standard_view,
+                                  GdkEventButton     *event)
+{
+  GtkSettings *settings;
+  GtkWidget   *view;
+  gint         delay;
+
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (event != NULL);
+
+  /* check if we have already scheduled a drag timer */
+  if (G_LIKELY (standard_view->priv->drag_timer_id == 0))
+    {
+      /* remember the new coordinates */
+      standard_view->priv->drag_x = event->x;
+      standard_view->priv->drag_y = event->y;
+
+      /* figure out the real view */
+      view = GTK_BIN (standard_view)->child;
+
+      /* we use the menu popup delay here, note that we onyl use this to
+       * allow higher values! see bug #3549 */
+      settings = gtk_settings_get_for_screen (gtk_widget_get_screen (view));
+      g_object_get (G_OBJECT (settings), "gtk-menu-popup-delay", &delay, NULL);
+
+      /* schedule the timer */
+      standard_view->priv->drag_timer_id = g_timeout_add_full (G_PRIORITY_LOW, MAX (225, delay), thunar_standard_view_drag_timer,
+                                                               standard_view, thunar_standard_view_drag_timer_destroy);
+
+      /* register the motion notify and the button release events on the real view */
+      g_signal_connect (G_OBJECT (view), "button-release-event", G_CALLBACK (thunar_standard_view_button_release_event), standard_view);
+      g_signal_connect (G_OBJECT (view), "motion-notify-event", G_CALLBACK (thunar_standard_view_motion_notify_event), standard_view);
+    }
 }
 
 
