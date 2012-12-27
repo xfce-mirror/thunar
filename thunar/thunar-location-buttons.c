@@ -163,6 +163,10 @@ struct _ThunarLocationButtons
 
 
 
+static GQuark thunar_file_quark = 0;
+
+
+
 static const GtkActionEntry action_entries[] =
 {
   { "location-buttons-down-folder", NULL, "Down Folder", "<alt>Down", NULL, G_CALLBACK (thunar_location_buttons_action_down_folder), },
@@ -227,6 +231,8 @@ thunar_location_buttons_class_init (ThunarLocationButtonsClass *klass)
                                                              _("The amount of space between the path buttons"),
                                                              0, G_MAXINT, 3,
                                                              G_PARAM_READABLE));
+
+  thunar_file_quark = g_quark_from_static_string ("button-thunar-file");
 }
 
 
@@ -1221,23 +1227,23 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
           /* setup the "Open" action */
           action = gtk_action_group_get_action (buttons->action_group, "location-buttons-open");
           thunar_gtk_action_set_tooltip (action, _("Open \"%s\" in this window"), display_name);
-          g_object_set_data_full (G_OBJECT (action), I_("thunar-file"), g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
+          g_object_set_qdata_full (G_OBJECT (action), thunar_file_quark, g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
           gtk_action_set_sensitive (action, (file != buttons->current_directory));
 
           /* setup the "Open in New Window" action */
           action = gtk_action_group_get_action (buttons->action_group, "location-buttons-open-in-new-window");
           thunar_gtk_action_set_tooltip (action, _("Open \"%s\" in a new window"), display_name);
-          g_object_set_data_full (G_OBJECT (action), I_("thunar-file"), g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
+          g_object_set_qdata_full (G_OBJECT (action), thunar_file_quark, g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
 
           /* setup the "Open in New Tab" action */
           action = gtk_action_group_get_action (buttons->action_group, "location-buttons-open-in-new-tab");
           thunar_gtk_action_set_tooltip (action, _("Open \"%s\" in a new tab"), display_name);
-          g_object_set_data_full (G_OBJECT (action), I_("thunar-file"), g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
+          g_object_set_qdata_full (G_OBJECT (action), thunar_file_quark, g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
 
           /* setup the "Create Folder..." action */
           action = gtk_action_group_get_action (buttons->action_group, "location-buttons-create-folder");
           thunar_gtk_action_set_tooltip (action, _("Create a new folder in \"%s\""), display_name);
-          g_object_set_data_full (G_OBJECT (action), I_("thunar-file"), g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
+          g_object_set_qdata_full (G_OBJECT (action), thunar_file_quark, g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
           gtk_action_set_sensitive (action, thunar_file_is_writable (file));
           gtk_action_set_visible (action, !thunar_file_is_trashed (file));
 
@@ -1249,13 +1255,13 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
           /* setup the "Paste Into Folder" action */
           action = gtk_action_group_get_action (buttons->action_group, "location-buttons-paste-into-folder");
           thunar_gtk_action_set_tooltip (action, _("Move or copy files previously selected by a Cut or Copy command into \"%s\""), display_name);
-          g_object_set_data_full (G_OBJECT (action), I_("thunar-file"), g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
+          g_object_set_qdata_full (G_OBJECT (action), thunar_file_quark, g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
           gtk_action_set_sensitive (action, thunar_clipboard_manager_get_can_paste (clipboard));
 
           /* setup the "Properties..." action */
           action = gtk_action_group_get_action (buttons->action_group, "location-buttons-properties");
           thunar_gtk_action_set_tooltip (action, _("View the properties of the folder \"%s\""), display_name);
-          g_object_set_data_full (G_OBJECT (action), I_("thunar-file"), g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
+          g_object_set_qdata_full (G_OBJECT (action), thunar_file_quark, g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
 
           /* run the menu on the screen on the buttons' screen */
           menu = gtk_ui_manager_get_widget (buttons->ui_manager, "/location-buttons-context-menu");
@@ -1283,7 +1289,7 @@ thunar_location_buttons_action_create_folder (GtkAction             *action,
   _thunar_return_if_fail (GTK_IS_ACTION (action));
 
   /* determine the directory for the action */
-  directory = g_object_get_data (G_OBJECT (action), "thunar-file");
+  directory = g_object_get_qdata (G_OBJECT (action), thunar_file_quark);
   if (G_UNLIKELY (directory == NULL))
     return;
 
@@ -1366,7 +1372,7 @@ thunar_location_buttons_action_open (GtkAction             *action,
   _thunar_return_if_fail (GTK_IS_ACTION (action));
 
   /* determine the directory for the action */
-  directory = g_object_get_data (G_OBJECT (action), "thunar-file");
+  directory = g_object_get_qdata (G_OBJECT (action), thunar_file_quark);
   if (G_LIKELY (directory != NULL && thunar_file_is_directory (directory)))
     {
       /* open the folder in this window */
@@ -1386,7 +1392,7 @@ thunar_location_buttons_action_open_in_new_tab (GtkAction             *action,
   _thunar_return_if_fail (GTK_IS_ACTION (action));
 
   /* determine the directory for the action */
-  directory = g_object_get_data (G_OBJECT (action), "thunar-file");
+  directory = g_object_get_qdata (G_OBJECT (action), thunar_file_quark);
   if (G_LIKELY (directory != NULL))
     {
       /* open tab in thsi window */
@@ -1407,7 +1413,7 @@ thunar_location_buttons_action_open_in_new_window (GtkAction             *action
   _thunar_return_if_fail (GTK_IS_ACTION (action));
 
   /* determine the directory for the action */
-  directory = g_object_get_data (G_OBJECT (action), "thunar-file");
+  directory = g_object_get_qdata (G_OBJECT (action), thunar_file_quark);
   if (G_LIKELY (directory != NULL))
     {
       /* open a new window for the directory */
@@ -1430,7 +1436,7 @@ thunar_location_buttons_action_paste_into_folder (GtkAction             *action,
   _thunar_return_if_fail (GTK_IS_ACTION (action));
 
   /* determine the directory for the action */
-  directory = g_object_get_data (G_OBJECT (action), "thunar-file");
+  directory = g_object_get_qdata (G_OBJECT (action), thunar_file_quark);
   if (G_LIKELY (directory != NULL))
     {
       /* paste files from the clipboard to the folder represented by this button */
@@ -1454,7 +1460,7 @@ thunar_location_buttons_action_properties (GtkAction             *action,
   _thunar_return_if_fail (GTK_IS_ACTION (action));
 
   /* determine the directory for the action */
-  directory = g_object_get_data (G_OBJECT (action), "thunar-file");
+  directory = g_object_get_qdata (G_OBJECT (action), thunar_file_quark);
   if (G_LIKELY (directory != NULL))
     {
       /* determine the toplevel window */
