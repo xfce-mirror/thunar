@@ -1,6 +1,6 @@
 # $Id$
 
-INCLUDES =								\
+AM_CPPFLAGS =								\
 	-I$(top_builddir)						\
 	-I$(top_builddir)/plugins					\
 	-I$(top_srcdir)							\

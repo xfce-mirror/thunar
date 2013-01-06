@@ -1,6 +1,6 @@
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:
 
-INCLUDES =								\
+AM_CPPFLAGS =								\
 	-I$(top_builddir)						\
 	-I$(top_srcdir)							\
 	-DBINDIR=\"$(bindir)\"						\
