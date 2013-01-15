@@ -199,6 +199,7 @@ thunar_uca_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
   GList               *lp;
   gchar               *tooltip;
   gchar               *label;
+  gchar               *unique_id;
   gchar               *name;
   GIcon               *gicon;
 
@@ -213,10 +214,11 @@ thunar_uca_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
                               THUNAR_UCA_MODEL_COLUMN_NAME, &label,
                               THUNAR_UCA_MODEL_COLUMN_GICON, &gicon,
                               THUNAR_UCA_MODEL_COLUMN_DESCRIPTION, &tooltip,
+                              THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID, &unique_id,
                               -1);
 
           /* generate a unique action name */
-          name = g_strdup_printf ("ThunarUca::action-%d", ++uca_provider->last_action_id);
+          name = g_strdup_printf ("uca-action-%s", unique_id);
 
           /* create the new action with the given parameters */
           action = gtk_action_new (name, label, tooltip, NULL);
@@ -246,6 +248,7 @@ thunar_uca_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
           g_free (tooltip);
           g_free (label);
           g_free (name);
+          g_free (unique_id);
 
           if (gicon != NULL)
             g_object_unref (G_OBJECT (gicon));

@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2011 Jannis Pohlmann <jannis@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -809,6 +810,7 @@ thunar_uca_editor_save (ThunarUcaEditor *uca_editor,
 
   thunar_uca_model_update (uca_model, iter,
                            gtk_entry_get_text (GTK_ENTRY (uca_editor->name_entry)),
+                           NULL, /* don't touch the unique id */
                            gtk_entry_get_text (GTK_ENTRY (uca_editor->description_entry)),
                            thunar_uca_editor_get_icon_name (uca_editor),
                            gtk_entry_get_text (GTK_ENTRY (uca_editor->command_entry)),

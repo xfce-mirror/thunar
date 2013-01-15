@@ -1,7 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ * Copyright (c) 2009-2012 Jannis Pohlmann <jannis@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -75,6 +75,7 @@ typedef enum
   PARSER_ACTION,
   PARSER_ICON,
   PARSER_NAME,
+  PARSER_UNIQUE_ID,
   PARSER_COMMAND,
   PARSER_STARTUP_NOTIFY,
   PARSER_PATTERNS,
@@ -162,6 +163,7 @@ struct _ThunarUcaModelItem
 {
   gchar         *name;
   gchar         *description;
+  gchar         *unique_id;
   gchar         *icon_name;
   GIcon         *gicon;
   gchar         *command;
@@ -170,7 +172,7 @@ struct _ThunarUcaModelItem
   ThunarUcaTypes types;
 
   /* derived attributes */
-  gboolean       multiple_selection : 1;
+  guint          multiple_selection : 1;
 };
 
 typedef XFCE_GENERIC_STACK(ParserState) ParserStack;
@@ -183,6 +185,7 @@ typedef struct
   GString        *name;
   gboolean        name_use;
   guint           name_match;
+  GString        *unique_id;
   GString        *icon_name;
   GString        *command;
   GString        *patterns;
@@ -190,6 +193,7 @@ typedef struct
   gboolean        startup_notify;
   gboolean        description_use;
   guint           description_match;
+  gboolean        unique_id_generated;
   ThunarUcaTypes  types;
 } Parser;
 
@@ -319,6 +323,9 @@ thunar_uca_model_get_column_type (GtkTreeModel *tree_model,
     case THUNAR_UCA_MODEL_COLUMN_NAME:
       return G_TYPE_STRING;
 
+    case THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID:
+      return G_TYPE_STRING;
+
     case THUNAR_UCA_MODEL_COLUMN_DESCRIPTION:
       return G_TYPE_STRING;
 
@@ -427,6 +434,10 @@ thunar_uca_model_get_value (GtkTreeModel *tree_model,
 
     case THUNAR_UCA_MODEL_COLUMN_ICON_NAME:
       g_value_set_static_string (value, item->icon_name);
+      break;
+
+    case THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID:
+      g_value_set_static_string (value, item->unique_id);
       break;
 
     case THUNAR_UCA_MODEL_COLUMN_COMMAND:
@@ -570,11 +581,13 @@ thunar_uca_model_load_from_file (ThunarUcaModel *uca_model,
   parser.model = uca_model;
   parser.locale = g_strdup (setlocale (LC_MESSAGES, NULL));
   parser.name = g_string_new (NULL);
+  parser.unique_id = g_string_new (NULL);
   parser.icon_name = g_string_new (NULL);
   parser.command = g_string_new (NULL);
   parser.patterns = g_string_new (NULL);
   parser.description = g_string_new (NULL);
   parser.startup_notify = FALSE;
+  parser.unique_id_generated = FALSE;
   xfce_stack_push (parser.stack, PARSER_START);
 
   /* parse the file */
@@ -588,10 +601,16 @@ thunar_uca_model_load_from_file (ThunarUcaModel *uca_model,
   g_string_free (parser.patterns, TRUE);
   g_string_free (parser.command, TRUE);
   g_string_free (parser.icon_name, TRUE);
+  g_string_free (parser.unique_id, TRUE);
   g_string_free (parser.name, TRUE);
   g_free (parser.locale);
   xfce_stack_free (parser.stack);
   g_free (content);
+
+  /* save model to store new ids */
+  if (succeed
+      && parser.unique_id_generated)
+    succeed = thunar_uca_model_save (uca_model, error);
 
   return succeed;
 }
@@ -606,6 +625,7 @@ thunar_uca_model_item_reset (ThunarUcaModelItem *item)
   g_free (item->description);
   g_free (item->command);
   g_free (item->name);
+  g_free (item->unique_id);
   g_free (item->icon_name);
 
   if (item->gicon != NULL)
@@ -656,6 +676,7 @@ start_element_handler (GMarkupParseContext *context,
           parser->startup_notify = FALSE;
           g_string_truncate (parser->icon_name, 0);
           g_string_truncate (parser->name, 0);
+          g_string_truncate (parser->unique_id, 0);
           g_string_truncate (parser->command, 0);
           g_string_truncate (parser->patterns, 0);
           g_string_truncate (parser->description, 0);
@@ -694,6 +715,11 @@ start_element_handler (GMarkupParseContext *context,
             g_string_truncate (parser->name, 0);
 
           xfce_stack_push (parser->stack, PARSER_NAME);
+        }
+      else if (strcmp (element_name, "unique-id") == 0)
+        {
+          g_string_truncate (parser->unique_id, 0);
+          xfce_stack_push (parser->stack, PARSER_UNIQUE_ID);
         }
       else if (strcmp (element_name, "icon") == 0)
         {
@@ -818,12 +844,17 @@ end_element_handler (GMarkupParseContext *context,
           thunar_uca_model_append (parser->model, &iter);
           thunar_uca_model_update (parser->model, &iter,
                                    parser->name->str,
+                                   parser->unique_id->str,
                                    parser->description->str,
                                    parser->icon_name->str,
                                    parser->command->str,
                                    parser->startup_notify,
                                    parser->patterns->str,
                                    parser->types);
+
+          /* check if a new id should've been generated */
+          if (exo_str_is_empty (parser->unique_id->str))
+            parser->unique_id_generated = TRUE;
         }
       else
         goto unknown_element;
@@ -831,6 +862,11 @@ end_element_handler (GMarkupParseContext *context,
 
     case PARSER_NAME:
       if (strcmp (element_name, "name") != 0)
+        goto unknown_element;
+      break;
+
+    case PARSER_UNIQUE_ID:
+      if (strcmp (element_name, "unique-id") != 0)
         goto unknown_element;
       break;
 
@@ -919,6 +955,10 @@ text_handler (GMarkupParseContext *context,
         g_string_append_len (parser->name, text, text_len);
       break;
 
+    case PARSER_UNIQUE_ID:
+      g_string_append_len (parser->unique_id, text, text_len);
+      break;
+
     case PARSER_ICON:
       g_string_append_len (parser->icon_name, text, text_len);
       break;
@@ -939,6 +979,19 @@ text_handler (GMarkupParseContext *context,
     default:
       break;
     }
+}
+
+
+
+static gchar *
+thunar_uca_model_get_unique_id (void)
+{
+  static guint counter = 0;
+
+  /* produce a "<timestamp>-<counter>" string */
+  return g_strdup_printf ("%" G_GINT64_FORMAT "-%d",
+                          g_get_real_time (),
+                          ++counter);
 }
 
 
@@ -1048,6 +1101,7 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
   gint                i, m, n;
 
   g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), NULL);
+  g_return_val_if_fail (file_infos != NULL, NULL);
 
   /* special case to avoid overhead */
   if (G_UNLIKELY (uca_model->items == NULL))
@@ -1243,6 +1297,7 @@ thunar_uca_model_remove (ThunarUcaModel *uca_model,
  * @uca_model          : a #ThunarUcaModel.
  * @iter               : the #GtkTreeIter of the item to update.
  * @name               : the name of the item.
+ * @unique_id          : a unique ID for the item.
  * @description        : the description of the item.
  * @icon               : the icon for the item.
  * @command            : the command of the item.
@@ -1255,6 +1310,7 @@ void
 thunar_uca_model_update (ThunarUcaModel *uca_model,
                          GtkTreeIter    *iter,
                          const gchar    *name,
+                         const gchar    *unique_id,
                          const gchar    *description,
                          const gchar    *icon,
                          const gchar    *command,
@@ -1284,6 +1340,15 @@ thunar_uca_model_update (ThunarUcaModel *uca_model,
     item->description = g_strdup (description);
   item->types = types;
   item->startup_notify = startup_notify;
+
+  /* set the unique id once */
+  if (item->unique_id == NULL)
+    {
+      if (G_LIKELY (unique_id != NULL && *unique_id != '\0'))
+        item->unique_id = g_strdup (unique_id);
+      else
+        item->unique_id = thunar_uca_model_get_unique_id ();
+    }
 
   /* setup the patterns */
   item->patterns = g_strsplit ((patterns != NULL && *patterns != '\0') ? patterns : "*", ";", -1);
@@ -1368,11 +1433,13 @@ thunar_uca_model_save (ThunarUcaModel *uca_model,
       patterns = g_strjoinv (";", item->patterns);
       escaped = g_markup_printf_escaped ("\t<icon>%s</icon>\n"
                                          "\t<name>%s</name>\n"
+                                         "\t<unique-id>%s</unique-id>\n"
                                          "\t<command>%s</command>\n"
                                          "\t<description>%s</description>\n"
                                          "\t<patterns>%s</patterns>\n",
                                          (item->icon_name != NULL) ? item->icon_name : "",
                                          (item->name != NULL) ? item->name : "",
+                                         (item->unique_id != NULL) ? item->unique_id : "",
                                          (item->command != NULL) ? item->command : "",
                                          (item->description != NULL) ? item->description : "",
                                          patterns);

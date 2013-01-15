@@ -2,7 +2,7 @@
 <!DOCTYPE actions [
   <!ELEMENT actions (action)+>
 
-  <!ELEMENT action (icon|patterns|name|command|description|directories|audio-files|image-files|other-files|text-files|video-files)*>
+  <!ELEMENT action (icon|patterns|name|unique-id|command|description|directories|audio-files|image-files|other-files|text-files|video-files)*>
 
   <!ELEMENT icon (#PCDATA)>
   <!ELEMENT command (#PCDATA)>
@@ -10,6 +10,8 @@
 
   <!ELEMENT name (#PCDATA)>
   <!ATTLIST name xml:lang CDATA #IMPLIED>
+
+  <!ELEMENT unique-id (#PCDATA)>
 
   <!ELEMENT description (#PCDATA)>
   <!ATTLIST description xml:lang CDATA #IMPLIED>

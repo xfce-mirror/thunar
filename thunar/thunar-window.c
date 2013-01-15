@@ -227,6 +227,9 @@ static void     thunar_window_menu_item_selected          (GtkWidget            
                                                            ThunarWindow           *window);
 static void     thunar_window_menu_item_deselected        (GtkWidget              *menu_item,
                                                            ThunarWindow           *window);
+static void     thunar_window_update_custom_actions       (ThunarView             *view,
+                                                           GParamSpec             *pspec,
+                                                           ThunarWindow           *window);
 static void     thunar_window_notify_loading              (ThunarView             *view,
                                                            GParamSpec             *pspec,
                                                            ThunarWindow           *window);
@@ -296,6 +299,10 @@ struct _ThunarWindow
   /* closures for the menu_item_selected()/menu_item_deselected() callbacks */
   GClosure               *menu_item_selected_closure;
   GClosure               *menu_item_deselected_closure;
+
+  /* custom menu actions for the file menu */
+  GtkActionGroup         *custom_actions;
+  guint                   custom_merge_id;
 
   GtkWidget              *table;
   GtkWidget              *menubar;
@@ -984,6 +991,10 @@ thunar_window_finalize (GObject *object)
   g_signal_handlers_disconnect_matched (window->ui_manager, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
   g_object_unref (window->ui_manager);
 
+  /* release the custom actions */
+  if (window->custom_actions != NULL)
+    g_object_unref (window->custom_actions);
+
   g_object_unref (window->action_group);
   g_object_unref (window->icon_factory);
   g_object_unref (window->launcher);
@@ -1502,6 +1513,7 @@ thunar_window_notebook_page_added (GtkWidget    *notebook,
 
   /* connect signals */
   g_signal_connect (G_OBJECT (page), "notify::loading", G_CALLBACK (thunar_window_notify_loading), window);
+  g_signal_connect (G_OBJECT (page), "notify::selected-files", G_CALLBACK (thunar_window_update_custom_actions), window);
   g_signal_connect_swapped (G_OBJECT (page), "start-open-location", G_CALLBACK (thunar_window_start_open_location), window);
   g_signal_connect_swapped (G_OBJECT (page), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
   g_signal_connect_swapped (G_OBJECT (page), "open-new-tab", G_CALLBACK (thunar_window_notebook_insert), window);
@@ -3302,6 +3314,114 @@ thunar_window_menu_item_deselected (GtkWidget    *menu_item,
       /* drop the last tooltip from the statusbar */
       id = gtk_statusbar_get_context_id (GTK_STATUSBAR (window->statusbar), "Menu tooltip");
       gtk_statusbar_pop (GTK_STATUSBAR (window->statusbar), id);
+    }
+}
+
+
+
+static void
+thunar_window_update_custom_actions (ThunarView   *view,
+                                     GParamSpec   *pspec,
+                                     ThunarWindow *window)
+{
+  ThunarFile *folder;
+  GList      *selected_files;
+  GList      *actions = NULL;
+  GList      *lp;
+  GList      *providers;
+  GList      *tmp;
+
+  _thunar_return_if_fail (THUNAR_IS_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* leave if the signal is emitted from a non-active tab */
+  if (!gtk_widget_get_realized (GTK_WIDGET (window))
+      || window->view != GTK_WIDGET (view))
+    return;
+
+  /* load the menu provides from the provider factory */
+  providers = thunarx_provider_factory_list_providers (window->provider_factory,
+                                                       THUNARX_TYPE_MENU_PROVIDER);
+  if (G_LIKELY (providers != NULL))
+    {
+      /* grab a reference to the current directory of the window */
+      folder = thunar_window_get_current_directory (window);
+
+      /* get a list of selected files */
+      selected_files = thunar_component_get_selected_files (THUNAR_COMPONENT (view));
+
+      /* load the actions offered by the menu providers */
+      for (lp = providers; lp != NULL; lp = lp->next)
+        {
+          if (G_LIKELY (selected_files != NULL))
+            {
+              tmp = thunarx_menu_provider_get_file_actions (lp->data,
+                                                            GTK_WIDGET (window),
+                                                            selected_files);
+            }
+          else if (G_LIKELY (folder != NULL))
+            {
+              tmp = thunarx_menu_provider_get_folder_actions (lp->data,
+                                                              GTK_WIDGET (window),
+                                                              THUNARX_FILE_INFO (folder));
+            }
+          else
+            {
+              tmp = NULL;
+            }
+
+          actions = g_list_concat (actions, tmp);
+          g_object_unref (G_OBJECT (lp->data));
+        }
+      g_list_free (providers);
+    }
+
+  /* remove previously inserted menu actions from the UI manager */
+  if (window->custom_merge_id != 0)
+    {
+      gtk_ui_manager_remove_ui (window->ui_manager, window->custom_merge_id);
+      gtk_ui_manager_ensure_update (window->ui_manager);
+      window->custom_merge_id = 0;
+    }
+
+  /* drop any previous custom action group */
+  if (window->custom_actions != NULL)
+    {
+      gtk_ui_manager_remove_action_group (window->ui_manager, window->custom_actions);
+      g_object_unref (window->custom_actions);
+      window->custom_actions = NULL;
+    }
+
+  /* add the actions specified by the menu providers */
+  if (G_LIKELY (actions != NULL))
+    {
+      /* allocate the action group and the merge id for the custom actions */
+      window->custom_actions = gtk_action_group_new ("ThunarActions");
+      window->custom_merge_id = gtk_ui_manager_new_merge_id (window->ui_manager);
+      gtk_ui_manager_insert_action_group (window->ui_manager, window->custom_actions, -1);
+
+      /* add the actions to the UI manager */
+      for (lp = actions; lp != NULL; lp = lp->next)
+        {
+          /* add the action to the action group */
+          gtk_action_group_add_action_with_accel (window->custom_actions,
+                                                  GTK_ACTION (lp->data),
+                                                  NULL);
+
+          /* add to the file context menu */
+          gtk_ui_manager_add_ui (window->ui_manager,
+                                 window->custom_merge_id,
+                                 "/main-menu/file-menu/placeholder-custom-actions",
+                                 gtk_action_get_name (GTK_ACTION (lp->data)),
+                                 gtk_action_get_name (GTK_ACTION (lp->data)),
+                                 GTK_UI_MANAGER_MENUITEM, FALSE);
+
+          /* release the reference on the action */
+          g_object_unref (G_OBJECT (lp->data));
+        }
+
+      /* cleanup */
+      g_list_free (actions);
     }
 }
 
