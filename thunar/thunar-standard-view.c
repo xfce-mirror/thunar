@@ -1996,8 +1996,9 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
             {
               gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, lp->data);
               file = thunar_list_model_get_file (standard_view->model, &iter);
-              files = g_list_append (files, file);
+              files = g_list_prepend (files, file);
             }
+          files = g_list_reverse (files);
         }
       else
         {
