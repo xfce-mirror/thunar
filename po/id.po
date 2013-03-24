@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-23 12:57+0000\n"
+"POT-Creation-Date: 2013-03-23 23:39+0000\n"
 "PO-Revision-Date: 2010-12-19 18:35+0700\n"
 "Last-Translator: Andhika Padmawan <andhika.padmawan@gmail.com>\n"
 "Language-Team: Indonesian <translation-team-id@lists.sourceforge.net>\n"
@@ -725,7 +725,10 @@ msgstr "dengan berkas berikut?"
 msgid ""
 "The desktop file \"%s\" is in an insecure location and not marked as "
 "executable. If you do not trust this program, click Cancel."
-msgstr "Berkas destop \"%s\" tidak berada di lokasi yang aman dan tidak ditandai sebagai yang dapat dieksekusi. Jika Anda tidak mengetahui program ini, klik Batal."
+msgstr ""
+"Berkas destop \"%s\" tidak berada di lokasi yang aman dan tidak ditandai "
+"sebagai yang dapat dieksekusi. Jika Anda tidak mengetahui program ini, klik "
+"Batal."
 
 #: ../thunar/thunar-dialogs.c:777
 msgid "_Launch Anyway"
@@ -1025,7 +1028,9 @@ msgstr "Anda ingin melewatinya?"
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
-msgstr "Tidak cukup ruang pada lokasi tujuan. Jika diperlukan, cobalah untuk menghapus beberapa berkas pada lokasi tersebut."
+msgstr ""
+"Tidak cukup ruang pada lokasi tujuan. Jika diperlukan, cobalah untuk "
+"menghapus beberapa berkas pada lokasi tersebut."
 
 #. * CASE 1: nothing selected or atleast one directory in the selection
 #. **
@@ -1870,7 +1875,6 @@ msgid "_Name:"
 msgstr "_Nama:"
 
 #: ../thunar/thunar-properties-dialog.c:291
-#, fuzzy
 msgid "Names:"
 msgstr "Nama:"
 
@@ -2157,34 +2161,31 @@ msgstr[0] "Tambah folder terpilih ke jalan pintas panel sisi"
 #. append the "Mount" item
 #. append the "Mount" menu action
 #: ../thunar/thunar-shortcuts-view.c:1124 ../thunar/thunar-tree-view.c:1147
-#, fuzzy
 msgid "_Mount"
-msgstr "_Volume Kait"
+msgstr "_Pasang Kait Divais"
 
 #. append the "Unmount" item
 #. append the "Unmount" menu action
 #: ../thunar/thunar-shortcuts-view.c:1130 ../thunar/thunar-tree-view.c:1153
-#, fuzzy
 msgid "_Unmount"
-msgstr "_Lepas Mount Volume"
+msgstr "_Lepas Kait Divais"
 
 #. append the "Disconnect" (eject + safely remove drive) item
 #. append the "Eject" menu action
 #: ../thunar/thunar-shortcuts-view.c:1136 ../thunar/thunar-tree-view.c:1159
 msgid "_Eject"
-msgstr ""
+msgstr "_Keluarkan Divais"
 
 #. append the "Disconnect" item
 #: ../thunar/thunar-shortcuts-view.c:1153
-#, fuzzy
 msgid "Create _Shortcut"
-msgstr "Ganti _nama Jalan Pintas"
+msgstr "Buat Pinta_san"
 
 #. append the "Disconnect" item
 #. append the "Mount Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:1174 ../thunar/thunar-tree-view.c:1168
 msgid "Disconn_ect"
-msgstr ""
+msgstr "Pu_tuskan"
 
 #: ../thunar/thunar-shortcuts-view.c:1253
 msgid "_Remove Shortcut"
@@ -2239,15 +2240,13 @@ msgstr[0] "%u item, keseluruhan %s"
 #. TRANSLATORS: this is shows if during the deep count size
 #. * directories were not accessible
 #: ../thunar/thunar-size-label.c:385
-#, fuzzy
 msgid "(some contents unreadable)"
-msgstr "Tampilkan isi lebih detail"
+msgstr "(beberapa konten tidak dapat dibaca)"
 
 #. nothing was readable, so permission was denied
 #: ../thunar/thunar-size-label.c:396
-#, fuzzy
 msgid "Permission denied"
-msgstr "Hak Akses"
+msgstr "Izin ditolak"
 
 #: ../thunar/thunar-standard-view.c:395
 msgid "Folder Context Menu"
@@ -2279,9 +2278,8 @@ msgstr ""
 
 #. append the "Move to Tash" menu action
 #: ../thunar/thunar-standard-view.c:401 ../thunar/thunar-tree-view.c:1272
-#, fuzzy
 msgid "Mo_ve to Trash"
-msgstr "_Kosongkan Kotak Sampah"
+msgstr "Pin_dahkan ke Kotak Sampah"
 
 #. append the "Delete" menu action
 #: ../thunar/thunar-standard-view.c:402 ../thunar/thunar-tree-view.c:1284
@@ -2314,11 +2312,12 @@ msgstr "Pilih semua berkas yang cocok dengan pola tertentu"
 
 #: ../thunar/thunar-standard-view.c:406
 msgid "_Invert Selection"
-msgstr ""
+msgstr "Ba_lik Seleksi"
 
 #: ../thunar/thunar-standard-view.c:406
+#, fuzzy
 msgid "Select all and only the items that are not currently selected"
-msgstr ""
+msgstr "Seleksi semua item yang sebelumnya tidak dipilih"
 
 #: ../thunar/thunar-standard-view.c:407
 msgid "Du_plicate"
@@ -2400,16 +2399,14 @@ msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Siapkan berkas terpilih untuk disalin menggunakan perintah Rekat"
 
 #: ../thunar/thunar-standard-view.c:4324
-#, fuzzy
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
-msgstr[0] "Kirim berkas terpilih ke \"%s\""
+msgstr[0] "Pindahkan berkas terpilih ke Kotak Sampah"
 
 #: ../thunar/thunar-standard-view.c:4332
-#, fuzzy
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
-msgstr[0] "Hapus berkas terpilih"
+msgstr[0] "Hapus permanen berkas terpilih"
 
 #: ../thunar/thunar-standard-view.c:4346
 msgid "Duplicate the selected file"
@@ -2441,12 +2438,12 @@ msgstr "_Berkas Kosong"
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
 "destination"
-msgstr ""
+msgstr "Terjadi galat saat menyalin ke \"%s\". Diperlukan ruang tambahan sebanyak %s untuk menyalin ke lokasi ini."
 
 #: ../thunar/thunar-transfer-job.c:744
 #, c-format
 msgid "Error while copying to \"%s\": The destination is read-only"
-msgstr ""
+msgstr "Terjadi galat saat menyalin ke \"%s\". Lokasi tersebut hanya dapat dibaca saja."
 
 #: ../thunar/thunar-transfer-job.c:787
 msgid "Collecting files..."
@@ -2487,27 +2484,27 @@ msgstr ""
 "penyalinan..."
 
 #: ../thunar/thunar-transfer-job.c:1084
-#, fuzzy, c-format
+#, c-format
 msgid "%s of %s"
-msgstr "salinan dari %s"
+msgstr "%s dari %s"
 
 #: ../thunar/thunar-transfer-job.c:1104
-#, fuzzy, c-format
+#, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
-msgstr[0] "%lu jam tersisa"
+msgstr[0] "%lu jam tersisa (%s/dtk)"
 
 #: ../thunar/thunar-transfer-job.c:1112
-#, fuzzy, c-format
+#, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
-msgstr[0] "%lu menit tersisa"
+msgstr[0] "%lu menit tersisa (%s/dtk)"
 
 #: ../thunar/thunar-transfer-job.c:1119
-#, fuzzy, c-format
+#, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
-msgstr[0] "%lu detik lagi"
+msgstr[0] "%lu detik tersisa (%s/dtk)"
 
 #: ../thunar/thunar-trash-action.c:105
 msgid "T_rash"
@@ -2576,19 +2573,16 @@ msgid "%x at %X"
 msgstr "%x pada %X"
 
 #: ../thunar/thunar-window.c:348
-#, fuzzy
 msgid "New _Tab"
-msgstr "Nama Baru"
+msgstr "_Tab Baru"
 
 #: ../thunar/thunar-window.c:348
-#, fuzzy
 msgid "Open a new tab for the displayed location"
-msgstr "Buka jendela baru Thunar untuk lokasi yang ditampilkan"
+msgstr "Buka tab baru untuk menampilkan lokas"
 
 #: ../thunar/thunar-window.c:349
-#, fuzzy
 msgid "New _Window"
-msgstr "Buka _Jendela Baru"
+msgstr "_Jendela Baru"
 
 #: ../thunar/thunar-window.c:349
 msgid "Open a new Thunar window for the displayed location"
@@ -2596,12 +2590,11 @@ msgstr "Buka jendela baru Thunar untuk lokasi yang ditampilkan"
 
 #: ../thunar/thunar-window.c:352
 msgid "Detac_h Tab"
-msgstr ""
+msgstr "Pisa_hkan Tab"
 
 #: ../thunar/thunar-window.c:352
-#, fuzzy
 msgid "Open current folder in a new window"
-msgstr "Buka \"%s\" di jendela baru"
+msgstr "Tampilkan folder ini di jendela baru"
 
 #: ../thunar/thunar-window.c:353
 msgid "Close _All Windows"
@@ -2612,19 +2605,16 @@ msgid "Close all Thunar windows"
 msgstr "Tutup semua jendela Thunar"
 
 #: ../thunar/thunar-window.c:354
-#, fuzzy
 msgid "C_lose Tab"
-msgstr "_Tutup"
+msgstr "Tutup Ta_b"
 
 #: ../thunar/thunar-window.c:354
-#, fuzzy
 msgid "Close this folder"
-msgstr "Tutup jendela ini"
+msgstr "Tutup folder ini"
 
 #: ../thunar/thunar-window.c:355
-#, fuzzy
 msgid "_Close Window"
-msgstr "Tutup _Semua Jendela"
+msgstr "Tutup Jendel_a"
 
 #: ../thunar/thunar-window.c:355
 msgid "Close this window"
@@ -2715,14 +2705,12 @@ msgid "Browse the file system"
 msgstr "Ramban sistem berkas"
 
 #: ../thunar/thunar-window.c:370
-#, fuzzy
 msgid "B_rowse Network"
-msgstr "Ramban jaringan"
+msgstr "_Ramban Jaringan"
 
 #: ../thunar/thunar-window.c:370
-#, fuzzy
 msgid "Browse local network connections"
-msgstr "Ramban jaringan"
+msgstr "Ramban jaringan terkoneksi"
 
 #: ../thunar/thunar-window.c:371
 msgid "T_emplates"
@@ -2806,12 +2794,11 @@ msgstr "Ganti tingkat keterlihatan batang status jendela ini"
 
 #: ../thunar/thunar-window.c:386
 msgid "_Menubar"
-msgstr ""
+msgstr "Panel _Menu"
 
 #: ../thunar/thunar-window.c:386
-#, fuzzy
 msgid "Change the visibility of this window's menubar"
-msgstr "Ganti tingkat keterlihatan batang status jendela ini"
+msgstr "Tampilkan panel menu jendela ini"
 
 #. * add view options
 #. 
@@ -2846,14 +2833,13 @@ msgstr ""
 "Peringatan, anda menggunakan akun root, anda dapat membahayakan sistem anda."
 
 #: ../thunar/thunar-window.c:1747
-#, fuzzy
 msgid "Close tab"
-msgstr "_Tutup"
+msgstr "Tutup tab"
 
 #: ../thunar/thunar-window.c:2011
-#, fuzzy, c-format
+#, c-format
 msgid "Open the location \"%s\""
-msgstr "Buka Lokasi"
+msgstr "Buka lokasi \"s\""
 
 #: ../thunar/thunar-window.c:2209
 #, c-format
@@ -2867,7 +2853,7 @@ msgstr "Gagal membuka folder induk"
 #: ../thunar/thunar-window.c:2857
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
-msgstr ""
+msgstr "Tidak ditemukan direktori bernama \"s\" . Apakah Anda ingin membuatnya?"
 
 #. display the "About Templates" dialog
 #: ../thunar/thunar-window.c:2939
@@ -2984,12 +2970,11 @@ msgstr "Program untuk dieksekusi, kemungkinan dengan argumen."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:197
 msgid "Working Directory:"
-msgstr ""
+msgstr "Direktori Kerja:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:204
-#, fuzzy
 msgid "The working directory for the program."
-msgstr "Direktori kerja harus merupakan alamat absolut"
+msgstr "Direktori untuk digunakan oleh aplikasi."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:219
 msgid "URL:"
@@ -3645,7 +3630,6 @@ msgid "_Other Files"
 msgstr "Berkas _Lain"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:446
-#, fuzzy
 msgid ""
 "This page lists the conditions under which the\n"
 "action will appear in the file managers context\n"
