@@ -347,9 +347,10 @@ thunar_history_error_not_found (GFile    *goto_file,
                                 gpointer  parent)
 {
   gchar  *parse_name;
-  GError *error;
+  GError *error = NULL;
 
-  g_set_error_literal (&error, G_FILE_ERROR, G_FILE_ERROR_EXIST, _("The item will be removed from the history"));
+  g_set_error_literal (&error, G_FILE_ERROR, G_FILE_ERROR_EXIST,
+                       _("The item will be removed from the history"));
 
   parse_name = g_file_get_parse_name (goto_file);
   thunar_dialogs_show_error (parent, error, _("Could not find \"%s\""), parse_name);
