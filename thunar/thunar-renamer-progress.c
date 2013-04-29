@@ -53,7 +53,9 @@ struct _ThunarRenamerProgress
   GtkWidget   *bar;
 
   GList       *pairs_done;
+  guint        n_pairs_done;
   GList       *pairs_todo;
+  guint        n_pairs_todo;
   gboolean     pairs_undo;  /* whether we're undoing previous changes */
 
   /* internal main loop for the _rename() method */
@@ -134,10 +136,11 @@ thunar_renamer_progress_next_idle (gpointer user_data)
   GtkWidget             *message;
   GError                *error = NULL;
   gchar                 *oldname;
-  gchar                 *text;
+  gchar                  text[128];
   gint                   response;
-  gint                   n_done;
-  gint                   n_todo;
+  guint                  n_done;
+  guint                  n_total;
+  GList                 *first;
 
   GDK_THREADS_ENTER ();
 
@@ -145,20 +148,24 @@ thunar_renamer_progress_next_idle (gpointer user_data)
   if (G_LIKELY (renamer_progress->pairs_todo != NULL))
     {
       /* pop the first pair from the todo list */
-      pair = g_list_first (renamer_progress->pairs_todo)->data;
-      renamer_progress->pairs_todo = g_list_remove (renamer_progress->pairs_todo, pair);
+      first = g_list_first (renamer_progress->pairs_todo);
+      pair = first->data;
+      renamer_progress->pairs_todo = g_list_delete_link (renamer_progress->pairs_todo, first);
+
+      /* update item count */
+      renamer_progress->n_pairs_todo--;
+      _thunar_assert (g_list_length (renamer_progress->pairs_todo) == renamer_progress->n_pairs_todo);
 
       /* determine the done/todo items */
-      n_done = g_list_length (renamer_progress->pairs_done) + 1;
-      n_todo = g_list_length (renamer_progress->pairs_todo);
+      n_done = renamer_progress->n_pairs_done + 1;
+      n_total = n_done + renamer_progress->n_pairs_todo;
 
       /* update the progress bar text */
-      text = g_strdup_printf ("%d/%d", n_done, n_todo + n_done);
+      g_snprintf (text, sizeof (text), "%d/%d", n_done, n_total);
       gtk_progress_bar_set_text (GTK_PROGRESS_BAR (renamer_progress->bar), text);
-      g_free (text);
 
       /* update the progress bar fraction */
-      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (renamer_progress->bar), CLAMP ((gdouble) n_done / MAX (n_todo + n_done, 1), 0.0, 1.0));
+      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (renamer_progress->bar), CLAMP ((gdouble) n_done / MAX (n_total, 1), 0.0, 1.0));
 
       /* remember the old file name (for undo) */
       oldname = g_strdup (thunar_file_get_display_name (pair->file));
@@ -217,6 +224,9 @@ thunar_renamer_progress_next_idle (gpointer user_data)
               thunar_renamer_pair_list_free (renamer_progress->pairs_todo);
               renamer_progress->pairs_todo = renamer_progress->pairs_done;
               renamer_progress->pairs_done = NULL;
+
+              renamer_progress->n_pairs_done = 0;
+              renamer_progress->n_pairs_todo = g_list_length (renamer_progress->pairs_todo);
             }
           else if (response != GTK_RESPONSE_ACCEPT)
             {
@@ -243,7 +253,11 @@ thunar_renamer_progress_next_idle (gpointer user_data)
           pair->name = oldname;
 
           /* move the pair to the list of completed pairs */
-          renamer_progress->pairs_done = g_list_append (renamer_progress->pairs_done, pair);
+          renamer_progress->pairs_done = g_list_prepend (renamer_progress->pairs_done, pair);
+
+          /* update counter */
+          renamer_progress->n_pairs_done++;
+          _thunar_assert (g_list_length (renamer_progress->pairs_done) == renamer_progress->n_pairs_done);
         }
     }
 
@@ -349,6 +363,7 @@ thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
   /* set the pairs on the todo list */
   thunar_renamer_pair_list_free (renamer_progress->pairs_todo);
   renamer_progress->pairs_todo = thunar_renamer_pair_list_copy (pairs);
+  renamer_progress->n_pairs_todo = g_list_length (renamer_progress->pairs_todo);
 
   /* schedule the idle source */
   renamer_progress->next_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_renamer_progress_next_idle,

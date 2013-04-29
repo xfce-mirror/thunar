@@ -789,7 +789,7 @@ thunar_renamer_dialog_response (GtkDialog *dialog,
 
               /* check if this row should be renamed */
               if (G_LIKELY (name != NULL && *name != '\0'))
-                pair_list = g_list_append (pair_list, thunar_renamer_pair_new (file, name));
+                pair_list = g_list_prepend (pair_list, thunar_renamer_pair_new (file, name));
 
               /* cleanup */
               g_object_unref (file);
