@@ -34,6 +34,7 @@
 #include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-list-model.h>
+#include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-user.h>
 
@@ -2135,26 +2136,31 @@ gchar*
 thunar_list_model_get_statusbar_text (ThunarListModel *store,
                                       GList           *selected_items)
 {
-  const gchar   *content_type;
-  const gchar   *original_path;
-  GtkTreeIter    iter;
-  ThunarFile    *file;
-  guint64        size;
-  guint64        size_summary;
-  gint           folder_count;
-  gint           non_folder_count;
-  GList         *lp;
-  gchar         *fspace_string;
-  gchar         *display_name;
-  gchar         *size_string;
-  gchar         *text;
-  gchar         *folder_text;
-  gchar         *non_folder_text;
-  gchar         *s;
-  gchar         *description;
-  GSequenceIter *row;
-  GSequenceIter *end;
-  gint           nrows;
+  const gchar       *content_type;
+  const gchar       *original_path;
+  GtkTreeIter        iter;
+  ThunarFile        *file;
+  guint64            size;
+  guint64            size_summary;
+  gint               folder_count;
+  gint               non_folder_count;
+  GList             *lp;
+  gchar             *absolute_path;
+  gchar             *fspace_string;
+  gchar             *display_name;
+  gchar             *size_string;
+  gchar             *text;
+  gchar             *folder_text;
+  gchar             *non_folder_text;
+  gchar             *s;
+  gint               height;
+  gint               width;
+  gchar             *description;
+  GSequenceIter     *row;
+  GSequenceIter     *end;
+  gint               nrows;
+  ThunarPreferences *preferences;
+  gboolean           show_image_size;
 
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
 
@@ -2266,6 +2272,31 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
           g_free (display_name);
           g_free (text);
           text = s;
+        }
+      else if (thunar_file_is_local (file)
+               && thunar_file_is_regular (file)
+               && g_str_has_prefix (content_type, "image/")) /* bug #2913 */
+        {
+          /* check if the size should be visible in the statusbar, disabled by
+           * default to avoid high i/o  */
+          preferences = thunar_preferences_get ();
+          g_object_get (preferences, "misc-image-size-in-statusbar", &show_image_size, NULL);
+          g_object_unref (preferences);
+
+          if (show_image_size)
+            {
+              /* check if we can determine the dimension of this file (only for image files) */
+              absolute_path = g_file_get_path (thunar_file_get_file (file));
+              if (absolute_path != NULL
+                  && gdk_pixbuf_get_file_info (absolute_path, &width, &height) != NULL)
+                {
+                  /* append the image dimensions to the statusbar text */
+                  s = g_strdup_printf ("%s, %s %dx%d", text, _("Image Size:"), width, height);
+                  g_free (text);
+                  text = s;
+                }
+              g_free (absolute_path);
+            }
         }
     }
   else
