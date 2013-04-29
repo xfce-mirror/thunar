@@ -529,6 +529,7 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
   gchar          *disk_usage;
   guint32         trash_items;
   gchar          *trash_string;
+  gchar          *parse_name;
 
   _thunar_return_if_fail (iter->stamp == THUNAR_SHORTCUTS_MODEL (tree_model)->stamp);
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (tree_model));
@@ -614,7 +615,11 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
             file = NULL;
 
           if (G_LIKELY (file != NULL))
-            shortcut->tooltip = g_file_get_parse_name (file);
+            {
+              parse_name = g_file_get_parse_name (file);
+              shortcut->tooltip = g_markup_escape_text (parse_name, -1);
+              g_free (parse_name);
+            }
         }
 
       g_value_set_static_string (value, shortcut->tooltip);
