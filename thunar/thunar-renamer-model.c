@@ -730,15 +730,23 @@ static gboolean
 trm_same_directory (ThunarFile *a,
                     ThunarFile *b)
 {
-  GFile *parent_a;
-  GFile *parent_b;
+  GFile    *parent_a;
+  GFile    *parent_b;
+  gboolean  result;
 
   /* determine the parent paths for both files */
   parent_a = g_file_get_parent (thunar_file_get_file (a));
   parent_b = g_file_get_parent (thunar_file_get_file (b));
 
   /* check if both files have the same parent */
-  return (parent_a != NULL && parent_b != NULL && g_file_equal (parent_a, parent_b));
+  result = (parent_a != NULL && parent_b != NULL && g_file_equal (parent_a, parent_b));
+
+  if (parent_a != NULL)
+    g_object_unref (parent_a);
+  if (parent_b != NULL)
+    g_object_unref (parent_b);
+
+  return result;
 }
 
 
