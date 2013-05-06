@@ -6,8 +6,7 @@ SUBDIRS =								\
 	reference
 
 doc_DATA =								\
-	README.gtkrc							\
-	README.thunarrc
+	README.gtkrc
 
 man_MANS =								\
 	Thunar.1
