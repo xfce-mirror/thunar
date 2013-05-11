@@ -292,6 +292,7 @@ thunar_session_client_restore_trash (gpointer data)
     {
       thunar_file_reload (directory);
       item_count = thunar_file_get_item_count (directory);
+      g_object_unref (directory);
     }
 
   /* continue checking for 15 seconds or files are found */

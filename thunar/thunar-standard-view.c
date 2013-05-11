@@ -1553,7 +1553,10 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
                 {
                   file = thunar_file_cache_lookup (first_file);
                   if (G_LIKELY (file != NULL))
-                    thunar_view_scroll_to_file (THUNAR_VIEW (standard_view), file, FALSE, TRUE, 0.0f, 0.0f);
+                    {
+                      thunar_view_scroll_to_file (THUNAR_VIEW (standard_view), file, FALSE, TRUE, 0.0f, 0.0f);
+                      g_object_unref (file);
+                    }
                 }
             }
         }
@@ -2927,7 +2930,7 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
           thunar_component_set_selected_files (THUNAR_COMPONENT (standard_view), file_list);
 
           /* release the file list */
-          g_list_free (file_list);
+          g_list_free_full (file_list, g_object_unref);
 
           /* grab the focus to the view widget */
           gtk_widget_grab_focus (GTK_BIN (standard_view)->child);

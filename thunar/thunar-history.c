@@ -647,6 +647,8 @@ thunar_history_show_menu (GtkAction     *action,
               image = gtk_image_new_from_pixbuf (icon);
               g_object_unref (G_OBJECT (icon));
             }
+
+          g_object_unref (file);
         }
 
       if (image == NULL)

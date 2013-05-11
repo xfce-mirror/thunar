@@ -2276,6 +2276,7 @@ thunar_tree_view_new_files (ThunarJob      *job,
     {
       /* change to the newly created folder */
       thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), file);
+      g_object_unref (file);
     }
 }
 

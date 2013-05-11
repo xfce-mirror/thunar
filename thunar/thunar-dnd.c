@@ -179,7 +179,7 @@ thunar_dnd_ask (GtkWidget    *widget,
 
   /* cleanup */
   g_object_unref (G_OBJECT (factory));
-  g_list_free (file_list);
+  g_list_free_full (file_list, g_object_unref);
 
   return dnd_action;
 }

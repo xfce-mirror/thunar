@@ -672,6 +672,8 @@ thunar_file_monitor_update (GFile             *path,
         default:
           break;
         }
+
+      g_object_unref (file);
     }
 }
 
@@ -1107,8 +1109,8 @@ thunar_file_get (GFile   *gfile,
   file = thunar_file_cache_lookup (gfile);
   if (G_UNLIKELY (file != NULL))
     {
-      /* take a reference for the caller */
-      g_object_ref (file);
+      /* return the file, it already has an additional ref set
+       * in thunar_file_cache_lookup */
     }
   else
     {
@@ -1173,8 +1175,8 @@ thunar_file_get_with_info (GFile     *gfile,
   file = thunar_file_cache_lookup (gfile);
   if (G_UNLIKELY (file != NULL))
     {
-      /* take a reference for the caller */
-      g_object_ref (file);
+      /* return the file, it already has an additional ref set
+       * in thunar_file_cache_lookup */
     }
   else
     {
@@ -1266,6 +1268,7 @@ thunar_file_get_async (GFile            *location,
     {
       /* call the return function with the file from the cache */
       (func) (location, file, NULL, user_data);
+      g_object_unref (file);
     }
   else
     {
@@ -1954,6 +1957,9 @@ thunar_file_accepts_drop (ThunarFile     *file,
                   suggested_action = GDK_ACTION_COPY;
                   break;
                 }
+
+              if (ofile != NULL)
+                g_object_unref (ofile);
             }
         }
     }
@@ -3878,7 +3884,8 @@ thunar_file_same_filesystem (const ThunarFile *file_a,
  * Consider using thunar_file_get() instead.
  *
  * Return value: the #ThunarFile for @file in the internal
- *               cache, or %NULL.
+ *               cache, or %NULL. If you are done with the
+ *               file, use g_object_unref to release.
  **/
 ThunarFile *
 thunar_file_cache_lookup (const GFile *file)
@@ -3900,6 +3907,14 @@ thunar_file_cache_lookup (const GFile *file)
 
   cached_file = g_hash_table_lookup (file_cache, file);
 
+  if (cached_file != NULL)
+    {
+      /* take a reference to avoid too-early releases outside the
+       * file_cache_mutex, resuling in destroyed files being used
+       * in running code */
+      g_object_ref (cached_file);
+    }
+
   G_UNLOCK (file_cache_mutex);
 
   return cached_file;
@@ -3919,6 +3934,7 @@ thunar_file_cached_display_name (const GFile *file)
     {
       /* determine the display name of the file */
       display_name = g_strdup (thunar_file_get_display_name (cached_file));
+      g_object_unref (cached_file);
     }
   else
     {
