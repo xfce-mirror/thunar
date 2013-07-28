@@ -2227,6 +2227,9 @@ thunar_standard_view_current_directory_changed (ThunarFile         *current_dire
   /* update tab label and tooltip */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_DISPLAY_NAME]);
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_TOOLTIP_TEXT]);
+
+  /* directory is possibly moved, schedule a thumbnail update */
+  thunar_standard_view_schedule_thumbnail_timeout (standard_view);
 }
 
 
