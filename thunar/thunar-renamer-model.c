@@ -33,6 +33,7 @@
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-renamer-model.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -819,10 +820,8 @@ thunar_renamer_model_process_item (ThunarRenamerModel     *renamer_model,
   /* determine the current display name of the file */
   display_name = thunar_file_get_display_name (item->file);
 
-  /* determine the last dot in the filename */
-  dot = strrchr (display_name, '.');
-  if (G_UNLIKELY (dot == display_name || (dot != NULL && dot[1] == '\0')))
-    dot = NULL;
+  /* determine the extension in the filename */
+  dot = thunar_util_str_get_extension (display_name);
 
   /* if we don't have a dot, then no "Suffix only" rename can take place */
   if (G_LIKELY (dot != NULL || renamer_model->mode != THUNAR_RENAMER_MODE_SUFFIX))

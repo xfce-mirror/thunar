@@ -62,6 +62,113 @@
 
 
 
+/**
+ * thunar_util_strrchr_offset:
+ * @str:    haystack
+ * @offset: pointer offset in @str
+ * @c:      search needle
+ *
+ * Return the last occurrence of the character @c in
+ * the string @str starting at @offset.
+ *
+ * There are also Glib functions for this like g_strrstr_len
+ * and g_utf8_strrchr, but these work internally the same
+ * as this function (tho, less efficient).
+ *
+ * Return value: pointer in @str or NULL.
+ **/
+static inline gchar *
+thunar_util_strrchr_offset (const gchar *str,
+                            const gchar *offset,
+                            gchar        c)
+{
+  const gchar *p;
+
+  for (p = offset; p > str; p--)
+    if (*p == c)
+      return (gchar *) p;
+
+  return NULL;
+}
+
+
+
+/**
+ * thunar_util_str_get_extension
+ * @filename : an UTF-8 filename
+ *
+ * Returns a pointer to the extension in @filename.
+ *
+ * This is an improved version of g_utf8_strrchr with
+ * improvements to recognize compound extensions like
+ * ".tar.gz" and ".desktop.in.in".
+ *
+ * Return value: pointer to the extension in @filename
+ *               or NULL.
+**/
+gchar *
+thunar_util_str_get_extension (const gchar *filename)
+{
+  static const gchar *compressed[] = { "gz", "bz2", "lzma", "lrz", "rpm", "lzo", "xz", "z" };
+  gchar              *dot;
+  gchar              *ext;
+  guint               i;
+  gchar              *dot2;
+  gsize               len;
+  gboolean            is_in;
+
+  /* check if there is an possible extension part in the name */
+  dot = strrchr (filename, '.');
+  if (dot == NULL || dot[1] == '\0')
+    return NULL;
+
+  /* skip the . */
+  ext = dot + 1;
+
+  /* check if this looks like a compression mime-type */
+  for (i = 0; i < G_N_ELEMENTS (compressed); i++)
+    {
+      if (strcasecmp (ext, compressed[i]) == 0)
+        {
+          /* look for a possible container part (tar, psd, epsf) */
+          dot2 = thunar_util_strrchr_offset (filename, dot - 1, '.');
+          if (dot2 != NULL)
+            {
+              /* check the 2nd part range, keep it between 2 and 5 chars */
+              len = dot - dot2 - 1;
+              if (len >= 2 && len <= 5)
+                dot = dot2;
+            }
+
+          /* that's it for compression types */
+          return dot;
+        }
+    }
+
+  /* for coders, .in are quite common, so check for those too
+   * with a max of 3 rounds (2x .in and the possibly final extension) */
+  if (strcasecmp (ext, "in") == 0)
+    {
+      for (i = 0, is_in = TRUE; is_in && i < 3; i++)
+        {
+          dot2 = thunar_util_strrchr_offset (filename, dot - 1, '.');
+          /* the extension before .in could be long. check that it's at least 2 chars */
+          len = dot - dot2 - 1;
+          if (dot2 == NULL || len < 2)
+            break;
+
+          /* continue if another .in was found */
+          is_in = dot - dot2 == 3 && strncasecmp (dot2, ".in", 3) == 0;
+
+          dot = dot2;
+        }
+    }
+
+  return dot;
+}
+
+
+
 void
 thunar_util_load_bookmarks (GFile               *bookmarks_file,
                             ThunarBookmarksFunc  foreach_func,

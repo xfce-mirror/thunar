@@ -329,7 +329,7 @@ thunar_create_dialog_set_filename (ThunarCreateDialog *dialog,
   gtk_entry_set_text (GTK_ENTRY (dialog->entry), filename);
 
   /* check if filename contains a dot */
-  dot = g_utf8_strrchr (filename, -1, '.');
+  dot = thunar_util_str_get_extension (filename);
   if (G_LIKELY (dot != NULL))
     {
       /* grab focus to the entry first, else

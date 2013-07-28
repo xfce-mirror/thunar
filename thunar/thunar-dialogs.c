@@ -137,8 +137,8 @@ thunar_dialogs_show_rename_file (gpointer    parent,
   /* check if we don't have a directory here */
   if (!thunar_file_is_directory (file))
     {
-      /* check if the filename contains a dot */
-      text = g_utf8_strrchr (filename, -1, '.');
+      /* check if the filename contains an extension */
+      text = thunar_util_str_get_extension (filename);
       if (G_LIKELY (text != NULL))
         {
           /* grab focus to the entry first, else the selection will be altered later */

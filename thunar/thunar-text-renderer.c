@@ -34,6 +34,7 @@
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-text-renderer.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -756,7 +757,7 @@ thunar_text_renderer_grab_focus (GtkWidget          *entry,
   text = gtk_entry_get_text (GTK_ENTRY (entry));
 
   /* lookup the last dot in the text */
-  dot = strrchr (text, '.');
+  dot = thunar_util_str_get_extension (text);
   if (G_LIKELY (dot != NULL))
     {
       /* determine the UTF-8 char offset */

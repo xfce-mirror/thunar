@@ -56,6 +56,7 @@
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-size-label.h>
 #include <thunar/thunar-thumbnailer.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -913,7 +914,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
       gtk_widget_grab_focus (dialog->name_entry);
 
       /* select the pre-dot part of the name */
-      str = strrchr (name, '.');
+      str = thunar_util_str_get_extension (name);
       if (G_LIKELY (str != NULL))
         {
           /* calculate the offset */
@@ -1260,9 +1261,6 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 
       /* update the properties for a dialog showing 1 file */
       thunar_properties_dialog_update_single (dialog);
-
-      /* place the initial focus on the name entry widget */
-      gtk_widget_grab_focus (dialog->name_entry);
     }
   else
     {
