@@ -59,6 +59,8 @@
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-view.h>
 
+#define ACCEL_MAP_PATH "Thunar/accels.scm"
+
 
 
 /* Prototype for the Thunar job launchers */
@@ -85,6 +87,8 @@ static void           thunar_application_set_property           (GObject        
                                                                  guint                   prop_id,
                                                                  const GValue           *value,
                                                                  GParamSpec             *pspec);
+static void           thunar_application_accel_map_changed      (ThunarApplication      *application);
+static gboolean       thunar_application_accel_map_save         (gpointer                user_data);
 static void           thunar_application_collect_and_launch     (ThunarApplication      *application,
                                                                  gpointer                parent,
                                                                  const gchar            *icon_name,
@@ -141,6 +145,9 @@ struct _ThunarApplication
   ThunarThumbnailer     *thumbnailer;
 
   gboolean               daemon;
+
+  guint                  accel_map_save_id;
+  GtkAccelMap           *accel_map;
 
   guint                  show_dialogs_timer_id;
 
@@ -220,13 +227,18 @@ thunar_application_init (ThunarApplication *application)
   application->progress_dialog = NULL;
 
   /* check if we have a saved accel map */
-  path = xfce_resource_lookup (XFCE_RESOURCE_CONFIG, "Thunar/accels.scm");
+  path = xfce_resource_lookup (XFCE_RESOURCE_CONFIG, ACCEL_MAP_PATH);
   if (G_LIKELY (path != NULL))
     {
       /* load the accel map */
       gtk_accel_map_load (path);
       g_free (path);
     }
+
+  /* watch for changes */
+  application->accel_map = gtk_accel_map_get ();
+  g_signal_connect_swapped (G_OBJECT (application->accel_map), "changed",
+      G_CALLBACK (thunar_application_accel_map_changed), application);
 
 #ifdef HAVE_GUDEV
   /* establish connection with udev */
@@ -245,20 +257,20 @@ static void
 thunar_application_finalize (GObject *object)
 {
   ThunarApplication *application = THUNAR_APPLICATION (object);
-  gchar             *path;
   GList             *lp;
 
   /* unqueue all files waiting to be processed */
   thunar_g_file_list_free (application->files_to_launch);
 
   /* save the current accel map */
-  path = xfce_resource_save_location (XFCE_RESOURCE_CONFIG, "Thunar/accels.scm", TRUE);
-  if (G_LIKELY (path != NULL))
+  if (G_UNLIKELY (application->accel_map_save_id != 0))
     {
-      /* save the accel map */
-      gtk_accel_map_save (path);
-      g_free (path);
+      g_source_remove (application->accel_map_save_id);
+      thunar_application_accel_map_save (application);
     }
+
+  if (application->accel_map != NULL)
+    g_object_unref (G_OBJECT (application->accel_map));
 
 #ifdef HAVE_GUDEV
   /* cancel any pending volman watch source */
@@ -344,6 +356,49 @@ thunar_application_set_property (GObject      *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+}
+
+
+
+static gboolean
+thunar_application_accel_map_save (gpointer user_data)
+{
+  ThunarApplication *application = THUNAR_APPLICATION (user_data);
+  gchar             *path;
+
+  _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
+
+  application->accel_map_save_id = 0;
+
+  /* save the current accel map */
+  path = xfce_resource_save_location (XFCE_RESOURCE_CONFIG, ACCEL_MAP_PATH, TRUE);
+  if (G_LIKELY (path != NULL))
+    {
+      /* save the accel map */
+      gtk_accel_map_save (path);
+      g_free (path);
+    }
+
+  return FALSE;
+}
+
+
+
+static void
+thunar_application_accel_map_changed (ThunarApplication *application)
+{
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+
+  /* stop pending save */
+  if (application->accel_map_save_id != 0)
+    {
+      g_source_remove (application->accel_map_save_id);
+      application->accel_map_save_id = 0;
+    }
+
+  /* schedule new save */
+  application->accel_map_save_id =
+      g_timeout_add_seconds (10, thunar_application_accel_map_save, application);
 }
 
 
