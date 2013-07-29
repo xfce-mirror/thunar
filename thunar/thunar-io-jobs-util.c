@@ -28,19 +28,7 @@
 #include <thunar/thunar-io-jobs-util.h>
 #include <thunar/thunar-job.h>
 #include <thunar/thunar-private.h>
-
-
-
-static const gchar *duplicate_names[4][2] = 
-{
-  /* Copy/link name for n <= 3 */
-  { N_("copy of %s"),         N_("link to %s"),         },
-  { N_("another copy of %s"), N_("another link to %s"), },
-  { N_("third copy of %s"),   N_("third link to %s"),   },
-
-  /* Fallback copy/link name for n >= 4 */
-  { N_("%uth copy of %s"),    N_("%uth link to %s"),    },
-};
+#include <thunar/thunar-util.h>
 
 
 
@@ -54,14 +42,10 @@ static const gchar *duplicate_names[4][2] =
  *
  * Determines the #GFile for the next copy/link of/to @file.
  *
- * Copies of a file called X are named:
- *   n  = 1: "copy of X"
- *   n  = 2: "another copy of X"
- *   n  = 3: "third copy of X"
- *   n >= 4: "@n<!---->th copy of X"
+ * Copies of a file called X are named "X (copy 1)"
  *
- * Links follow the same naming scheme, except that they use
- * "link to X" instead of "copy of X". 
+ * Links follow have a bit different scheme, since the first link
+ * is renamed to "link to #" and after that "link Y to X".
  *
  * If there are errors or the job was cancelled, the return value
  * will be %NULL and @error will be set.
@@ -76,13 +60,14 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob *job,
                                          guint      n,
                                          GError   **error)
 {
-  GFileInfo *info;
-  GError    *err = NULL;
-  GFile     *duplicate_file = NULL;
-  GFile     *parent_file = NULL;
-  gchar     *display_name;
-  gint       type_index;
-  gint       name_index;
+  GFileInfo   *info;
+  GError      *err = NULL;
+  GFile       *duplicate_file = NULL;
+  GFile       *parent_file = NULL;
+  const gchar *old_display_name;
+  gchar       *display_name;
+  gchar       *file_basename;
+  gchar       *dot;
   
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), NULL);
   _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
@@ -106,22 +91,37 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob *job,
       return NULL;
     }
 
-  /* determine the type index (copy = 0, link = 1) */
-  type_index = (copy ? 0 : 1);
-
-  /* make sure the name index is not out of bounds */
-  name_index = MIN (n-1, G_N_ELEMENTS (duplicate_names)-1);
-  
-  /* generate the display name for the nth copy/link of the source file */
-  if (name_index < (gint) G_N_ELEMENTS (duplicate_names)-1)
+  old_display_name = g_file_info_get_display_name (info);
+  if (copy)
     {
-      display_name = g_strdup_printf (gettext (duplicate_names[name_index][type_index]),
-                                      g_file_info_get_display_name (info));
+      /* get file extension */
+      dot = thunar_util_str_get_extension (old_display_name);
+      if (dot != NULL)
+        {
+          file_basename = g_strndup (old_display_name, dot - old_display_name);
+          /* I18N: put " (copy #) between basename and extension */
+          display_name = g_strdup_printf (_("%s (copy %u)%s"), file_basename, n, dot);
+          g_free(file_basename);
+        }
+      else
+        {
+          /* I18N: put " (copy #)" after filename (for files without extension) */
+          display_name = g_strdup_printf (_("%s (copy %u)"), old_display_name, n);
+        }
     }
   else
     {
-      display_name = g_strdup_printf (gettext (duplicate_names[name_index][type_index]),
-                                      n, g_file_info_get_display_name (info));
+      /* create name for link */
+      if (n == 1)
+        {
+          /* I18N: name for first link to basename */
+          display_name = g_strdup_printf (_("link to %s"), old_display_name);
+        }
+      else
+        {
+          /* I18N: name for nth link to basename */
+          display_name = g_strdup_printf (_("link %u to %s"), n, old_display_name);
+        }
     }
 
   /* create the GFile for the copy/link */
