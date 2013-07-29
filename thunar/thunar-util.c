@@ -119,7 +119,9 @@ thunar_util_str_get_extension (const gchar *filename)
 
   /* check if there is an possible extension part in the name */
   dot = strrchr (filename, '.');
-  if (dot == NULL || dot[1] == '\0')
+  if (dot == NULL
+      || dot == filename
+      || dot[1] == '\0')
     return NULL;
 
   /* skip the . */
@@ -132,7 +134,8 @@ thunar_util_str_get_extension (const gchar *filename)
         {
           /* look for a possible container part (tar, psd, epsf) */
           dot2 = thunar_util_strrchr_offset (filename, dot - 1, '.');
-          if (dot2 != NULL)
+          if (dot2 != NULL
+              && dot2 != filename)
             {
               /* check the 2nd part range, keep it between 2 and 5 chars */
               len = dot - dot2 - 1;
@@ -154,7 +157,9 @@ thunar_util_str_get_extension (const gchar *filename)
           dot2 = thunar_util_strrchr_offset (filename, dot - 1, '.');
           /* the extension before .in could be long. check that it's at least 2 chars */
           len = dot - dot2 - 1;
-          if (dot2 == NULL || len < 2)
+          if (dot2 == NULL
+              || dot2 == filename
+              || len < 2)
             break;
 
           /* continue if another .in was found */
