@@ -4,12 +4,14 @@
 # 
 # Translators:
 # Ivica  Kolić <ikoli@yahoo.com>, 2013
+# luka_m, 2013
+# luka_m, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-07-30 00:30+0200\n"
-"PO-Revision-Date: 2013-08-29 00:11+0000\n"
+"PO-Revision-Date: 2013-10-18 19:36+0000\n"
 "Last-Translator: Ivica  Kolić <ikoli@yahoo.com>\n"
 "Language-Team: Croatian (http://www.transifex.com/projects/p/xfce/language/hr/)\n"
 "MIME-Version: 1.0\n"
@@ -20,15 +22,15 @@ msgstr ""
 
 #: ../thunar/main.c:62
 msgid "Open the bulk rename dialog"
-msgstr ""
+msgstr "Otvori dijalog za grupno preimenovanje"
 
 #: ../thunar/main.c:64
 msgid "Run in daemon mode"
-msgstr ""
+msgstr "Pokreni kao pozadinski program"
 
 #: ../thunar/main.c:66
 msgid "Run in daemon mode (not supported)"
-msgstr ""
+msgstr "Pokreni kao pozadinski program (nije podržano)"
 
 #: ../thunar/main.c:70
 msgid "Quit a running Thunar instance"
@@ -78,7 +80,7 @@ msgstr "Prijavite probleme u <%s>."
 
 #: ../thunar/thunar-abstract-icon-view.c:117
 msgid "Arran_ge Items"
-msgstr ""
+msgstr "Sortira_j stavke"
 
 #: ../thunar/thunar-abstract-icon-view.c:122
 msgid "Sort By _Name"
@@ -368,7 +370,7 @@ msgid ""
 "This will remove the application launcher that appears in the file context menu, but will not uninstall the application itself.\n"
 "\n"
 "You can only remove application launchers that were created using the custom command box in the \"Open With\" dialog of the file manager."
-msgstr ""
+msgstr "Ovo će ukloniti pokretač aplikacija koji se javlja u kontekstnom izborniku, ali neće deinstalirati samu aplikaciju. "
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:729
@@ -432,7 +434,7 @@ msgstr "Nisam uspio ukloniti \"%s\"."
 #. tell the user that we cannot paste
 #: ../thunar/thunar-clipboard-manager.c:354
 msgid "There is nothing on the clipboard to paste"
-msgstr ""
+msgstr "Nema ničega iz međuspremnika za zalijepiti."
 
 #: ../thunar/thunar-column-editor.c:121
 msgid "Configure Columns in the Detailed List View"
@@ -447,7 +449,7 @@ msgstr "Vidljivi stupci"
 msgid ""
 "Choose the order of information to appear in the\n"
 "detailed list view."
-msgstr ""
+msgstr "Odaberite red prikazivanja informacija za pogled detaljne liste."
 
 #. create the "Move Up" button
 #: ../thunar/thunar-column-editor.c:193
@@ -699,7 +701,7 @@ msgstr "Zamjeni dijalog dio2|sa slijedećom datotekom?"
 msgid ""
 "The desktop file \"%s\" is in an insecure location and not marked as "
 "executable. If you do not trust this program, click Cancel."
-msgstr ""
+msgstr "Datoteka \"%s\" na radnoj površini je na nesigurnom mjestu te nije označena kao izvršna datoteka. Ako ne vjerujete ovom programu, odaberite Odustani."
 
 #: ../thunar/thunar-dialogs.c:777
 msgid "_Launch Anyway"
@@ -797,17 +799,17 @@ msgstr "Datotečni sustav"
 #: ../thunar/thunar-file.c:1421
 #, c-format
 msgid "The root folder has no parent"
-msgstr ""
+msgstr "Korijenska mapa nema roditelja"
 
 #: ../thunar/thunar-file.c:1506 ../thunar/thunar-file.c:1778
 #, c-format
 msgid "Failed to parse the desktop file: %s"
-msgstr ""
+msgstr "Ne mogu obraditi desktop datoteku: %s"
 
 #. if the .desktop file is not secure, ask user what to do
 #: ../thunar/thunar-file.c:1518
 msgid "Untrusted application launcher"
-msgstr ""
+msgstr "Nesigurni pokretač programa"
 
 #: ../thunar/thunar-file.c:1543
 #, c-format
@@ -817,7 +819,7 @@ msgstr "Exec polje nije specificirano"
 #. if the .desktop file is not secure, ask user what to do
 #: ../thunar/thunar-file.c:1552
 msgid "Untrusted link launcher"
-msgstr ""
+msgstr "Nesigurni pokretač poveznica"
 
 #: ../thunar/thunar-file.c:1568
 #, c-format
@@ -832,18 +834,18 @@ msgstr "Neispravna datoteka radne površine"
 #: ../thunar/thunar-gio-extensions.c:317
 #, c-format
 msgid "%s on %s"
-msgstr ""
+msgstr "%s na %s"
 
 #. free disk space string
 #: ../thunar/thunar-gio-extensions.c:427
 #, c-format
 msgid "%s of %s (%d%% used)"
-msgstr ""
+msgstr "%s od %s (%d%% iskorišteno)"
 
 #. extend history tooltip with function of the button
 #: ../thunar/thunar-history-action.c:372
 msgid "Right-click or pull down to show history"
-msgstr ""
+msgstr "Kliknite desnom tipkom ili povucite dolje za prikaz povijesti"
 
 #. create the "back" action
 #: ../thunar/thunar-history.c:163
@@ -930,13 +932,13 @@ msgstr "Nisam mogao promijeniti dozvole \"%s\": %s"
 #: ../thunar/thunar-io-jobs-util.c:103
 #, c-format
 msgid "%s (copy %u)%s"
-msgstr ""
+msgstr "%s (kopija %u)%s"
 
 #. I18N: put " (copy #)" after filename (for files without extension)
 #: ../thunar/thunar-io-jobs-util.c:109
 #, c-format
 msgid "%s (copy %u)"
-msgstr ""
+msgstr "%s (kopija %u)"
 
 #. I18N: name for first link to basename
 #: ../thunar/thunar-io-jobs-util.c:118 ../thunar/thunar-list-model.c:725
@@ -950,7 +952,7 @@ msgstr "poveznica za %s"
 #: ../thunar/thunar-io-jobs-util.c:123
 #, c-format
 msgid "link %u to %s"
-msgstr ""
+msgstr "poveznica %u ka %s"
 
 #: ../thunar/thunar-job.c:254
 #, c-format
@@ -1021,9 +1023,9 @@ msgstr "Neuspjeh u otvaranju datoteke \"%s\""
 #, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Neuspješno otvaranje %d datoteke"
+msgstr[1] "Neuspješno otvaranje %d datoteke"
+msgstr[2] "Neuspješno otvaranje %d datoteka"
 
 #: ../thunar/thunar-launcher.c:721
 msgid "Are you sure you want to open all folders?"
@@ -1033,51 +1035,51 @@ msgstr "Jeste li sigurni da želite otvoriti sve mape?"
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Ovo će otvoriti %d zaseban prozor upravitelja datotekama."
+msgstr[1] "Ovo će otvoriti %d zasebnih prozora upravitelja datotekama."
+msgstr[2] "Ovo će otvoriti %d zasebnih prozora upravitelja datotekama."
 
 #: ../thunar/thunar-launcher.c:727
 #, c-format
 msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Otvori %d novi prozor."
+msgstr[1] "Otvori %d novih prozora."
+msgstr[2] "Otvori %d novih prozora."
 
 #. turn "Open New Window" into "Open in n New Windows"
 #: ../thunar/thunar-launcher.c:826
 #, c-format
 msgid "Open in %d New _Window"
 msgid_plural "Open in %d New _Windows"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Otvori u %d novom _prozoru."
+msgstr[1] "Otvori u %d novih _prozora."
+msgstr[2] "Otvori u %d novih _prozora."
 
 #: ../thunar/thunar-launcher.c:827
 #, c-format
 msgid "Open the selected directory in %d new window"
 msgid_plural "Open the selected directories in %d new windows"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Otvori označenu mapu u %d novom prozoru"
+msgstr[1] "Otvori označenu mape u %d novih prozora"
+msgstr[2] "Otvori označenu mape u %d novih prozora"
 
 #. turn "Open in New Tab" into "Open in x New Tabs"
 #: ../thunar/thunar-launcher.c:838
 #, c-format
 msgid "Open in %d New _Tab"
 msgid_plural "Open in %d New _Tabs"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Otvori u %d novoj _kartici"
+msgstr[1] "Otvori u %d novih _kartica"
+msgstr[2] "Otvori u %d novih _kartica"
 
 #: ../thunar/thunar-launcher.c:839
 #, c-format
 msgid "Open the selected directory in %d new tab"
 msgid_plural "Open the selected directories in %d new tabs"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Otvori označenu mapu u %d novoj _kartici"
+msgstr[1] "Otvori označene mape u %d novih _kartica"
+msgstr[2] "Otvori označene mape u %d nove _kartice"
 
 #: ../thunar/thunar-launcher.c:854
 msgid "Open the selected directory in a new window"
@@ -1095,9 +1097,9 @@ msgstr "Otvori odabrani direktorij"
 #: ../thunar/thunar-launcher.c:885
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Otvori označenu datoteku"
+msgstr[1] "Otvori označene datoteke"
+msgstr[2] "Otvori označene datoteke"
 
 #: ../thunar/thunar-launcher.c:930
 msgid "_Execute"
@@ -1106,9 +1108,9 @@ msgstr "_Izvrši"
 #: ../thunar/thunar-launcher.c:931
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Izvrši označenu datoteku"
+msgstr[1] "Izvrši označene datoteke"
+msgstr[2] "Izvrši označene datoteke"
 
 #. turn the "Open" action into "Open With DEFAULT"
 #: ../thunar/thunar-launcher.c:937
@@ -1120,9 +1122,9 @@ msgstr "_Otvori pomoću \"%s\""
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Koristi \"%s\" za otvaranje označene datoteke"
+msgstr[1] "Koristi \"%s\" za otvaranje označenih datoteka"
+msgstr[2] "Koristi \"%s\" za otvaranje označenih datoteka"
 
 #: ../thunar/thunar-launcher.c:961
 msgid "_Open With Other Application..."
@@ -1135,9 +1137,9 @@ msgstr "_Otvori pomoću zadanih programa"
 #: ../thunar/thunar-launcher.c:971
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Otvori označenu datoteku sa zadanom aplikacijom"
+msgstr[1] "Otvori označene datoteke sa zadanim aplikacijama"
+msgstr[2] "Otvori označene datoteke sa zadanim aplikacijama"
 
 #: ../thunar/thunar-launcher.c:1023
 #, c-format
@@ -1153,49 +1155,49 @@ msgstr "Nisam uspio montirati \"%s\""
 #: ../thunar/thunar-launcher.c:1697
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Radna površina (Izradi poveznicu)"
+msgstr[1] "Radna površina (Izradi poveznice)"
+msgstr[2] "Radna površina (Izradi poveznice)"
 
 #: ../thunar/thunar-launcher.c:1698
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Izradi poveznicu na označenu datoteku na radnoj površini "
+msgstr[1] "Izradi poveznice na označene datoteke na radnoj površini "
+msgstr[2] "Izradi poveznice na označene datoteke na radnoj površini "
 
 #: ../thunar/thunar-launcher.c:1732 ../thunar/thunar-launcher.c:1784
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Pošalji označenu datoteku na \"%s\""
+msgstr[1] "Pošalji označene datoteke na \"%s\""
+msgstr[2] "Pošalji označene datoteke na \"%s\""
 
 #: ../thunar/thunar-list-model.c:2198
 #, c-format
 msgid "%d item (%s), Free space: %s"
 msgid_plural "%d items (%s), Free space: %s"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%d stavka (%s), slobodan prostor: %s"
+msgstr[1] "%d stavke (%s), slobodan prostor: %s"
+msgstr[2] "%d stavki (%s), slobodan prostor: %s"
 
 #. just the standard text
 #: ../thunar/thunar-list-model.c:2205
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%d stavka, prazan prostor: %s"
+msgstr[1] "%d stavke, prazan prostor: %s"
+msgstr[2] "%d stavki, prazan prostor: %s"
 
 #: ../thunar/thunar-list-model.c:2214
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%d stavka"
+msgstr[1] "%d stavke"
+msgstr[2] "%d stavki"
 
 #: ../thunar/thunar-list-model.c:2230
 #, c-format
@@ -1215,7 +1217,7 @@ msgstr "\"%s\" prečac"
 #: ../thunar/thunar-list-model.c:2245
 #, c-format
 msgid "\"%s\" mountable"
-msgstr ""
+msgstr "\"%s\" se može montirati"
 
 #. I18N, first %s is the display name of the file, 2nd the file size, 3rd the
 #. content type
@@ -1251,26 +1253,26 @@ msgstr "Veličina slike:"
 #, c-format
 msgid "%d other item selected (%s)"
 msgid_plural "%d other items selected (%s)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%d stavka također označena (%s)"
+msgstr[1] "%d druge stavke označeno (%s)"
+msgstr[2] "%d drugih stavki označeno (%s)"
 
 #. only non-folders are selected
 #: ../thunar/thunar-list-model.c:2340
 #, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%d stavka označena (%s)"
+msgstr[1] "%d stavke označene (%s)"
+msgstr[2] "%d stavki označeno (%s)"
 
 #: ../thunar/thunar-list-model.c:2354
 #, c-format
 msgid "%d folder selected"
 msgid_plural "%d folders selected"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%d mapa označena"
+msgstr[1] "%d mape označene"
+msgstr[2] "%d mapa označeno"
 
 #. This is marked for translation in case a localizer
 #. * needs to change ", " to something else. The comma
@@ -1319,7 +1321,7 @@ msgstr "Razmak"
 
 #: ../thunar/thunar-location-buttons.c:232
 msgid "The amount of space between the path buttons"
-msgstr ""
+msgstr "Količina prostora između dugmadi putanje"
 
 #: ../thunar/thunar-location-buttons.c:1238
 #, c-format
@@ -1445,7 +1447,7 @@ msgstr "Dopusti da se ova datoteka _pokreće kao program"
 msgid ""
 "Allowing untrusted programs to run\n"
 "presents a security risk to your system."
-msgstr ""
+msgstr "Dopustiti pokretanje nepouzdanim programima predstavlja sigurnosni rizik za Vaš sustav."
 
 #: ../thunar/thunar-permissions-chooser.c:369
 msgid ""
@@ -1497,7 +1499,7 @@ msgstr "Ako odaberete ovu opciju vaš izbor će biti zapamćen i nećete biti po
 
 #: ../thunar/thunar-permissions-chooser.c:914
 msgid "Mixed file owners"
-msgstr ""
+msgstr "Različiti vlasnici datoteke"
 
 #: ../thunar/thunar-permissions-chooser.c:914
 msgid "Unknown file owner"
@@ -1524,7 +1526,7 @@ msgstr "Čitaj i piši"
 
 #: ../thunar/thunar-permissions-chooser.c:999
 msgid "Varying (no change)"
-msgstr ""
+msgstr "Promjenljivo (bez promjene)"
 
 #: ../thunar/thunar-permissions-chooser.c:1131
 msgid "Correct folder permissions automatically?"
@@ -1539,7 +1541,7 @@ msgid ""
 "The folder permissions will be reset to a consistent state. Only users "
 "allowed to read the contents of this folder will be allowed to enter the "
 "folder afterwards."
-msgstr ""
+msgstr "Dopuštenja će mape biti vraćena na konzistentno stanje. Poslije toga će samo korisnicima koji imaju dopuštenje čitanja sadržaja mape biti omogućeno ući u mapu."
 
 #: ../thunar/thunar-preferences-dialog.c:225
 msgid "File Manager Preferences"
@@ -1574,7 +1576,7 @@ msgstr "Zbijena lista"
 
 #: ../thunar/thunar-preferences-dialog.c:273
 msgid "Last Active View"
-msgstr ""
+msgstr "Posljednji aktivan prikaz"
 
 #: ../thunar/thunar-preferences-dialog.c:281
 msgid "Show thumbnails:"
@@ -1609,7 +1611,7 @@ msgstr "_Tekst pored ikona"
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
-msgstr ""
+msgstr "Odaberite ovu opciju kako biste tekst ikona postavili pokraj ikone umjesto ispod ikone."
 
 #: ../thunar/thunar-preferences-dialog.c:330
 msgid "Date"
@@ -1624,7 +1626,7 @@ msgstr "_Format:"
 #. 
 #: ../thunar/thunar-preferences-dialog.c:363
 msgid "Side Pane"
-msgstr ""
+msgstr "Bočni stupac"
 
 #: ../thunar/thunar-preferences-dialog.c:373
 msgid "Shortcuts Pane"
@@ -1671,18 +1673,18 @@ msgstr "Vrlo velika"
 
 #: ../thunar/thunar-preferences-dialog.c:404
 msgid "Show Icon _Emblems"
-msgstr ""
+msgstr "Prikaz amblema _ikona"
 
 #: ../thunar/thunar-preferences-dialog.c:406
 msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties "
 "dialog."
-msgstr ""
+msgstr "Odaberite ovu opciju za prikaz amblema ikona u oknu za prečace za sve mape kojima su amblemi postavljeni u dijalogu svojstava mape."
 
 #: ../thunar/thunar-preferences-dialog.c:415
 msgid "Tree Pane"
-msgstr ""
+msgstr "Okno sa stablom"
 
 #: ../thunar/thunar-preferences-dialog.c:427
 msgid "Icon _Size:"
@@ -1690,13 +1692,13 @@ msgstr "Veličina _ikone:"
 
 #: ../thunar/thunar-preferences-dialog.c:446
 msgid "Show Icon E_mblems"
-msgstr ""
+msgstr "Prikaz amblema i_kona"
 
 #: ../thunar/thunar-preferences-dialog.c:448
 msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
-msgstr ""
+msgstr "Odaberite ovu opciju za prikaz amblema ikona u oknu sa stablom za sve mape kojima su amblemi postavljeni u dijalogu svojstava mape."
 
 #. Behavior
 #. 
@@ -1716,7 +1718,7 @@ msgstr "_Jedan klik za aktiviranje stavki"
 msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
-msgstr ""
+msgstr "Odredite od_godu prije nego li je stavka automatski\nodabrana dok je pokazivač miša na njoj:"
 
 #: ../thunar/thunar-preferences-dialog.c:511
 msgid ""
@@ -1725,7 +1727,7 @@ msgid ""
 "disable this behavior by moving the slider to the left-most position. This "
 "behavior may be useful when single clicks activate items, and you want only "
 "to select the item without activating it."
-msgstr ""
+msgstr "Kad je aktivacija jednostrukim klikom uključena, držanje pokazivača miša nad stavkom će automatski odabrati stavku nakon odabrane odgode. Možete onemogućiti ovo ponašanje pomicanjem klizača na krajnje-lijevu poziciju. Ovo ponašanje može biti korisno kad jednostruki klik aktivira stavke, a želite označiti stavku bez da ju aktivirate. "
 
 #: ../thunar/thunar-preferences-dialog.c:529
 msgid "Disabled"
@@ -1797,7 +1799,7 @@ msgstr "Omogući _upravljanje particijama"
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives\n"
 "and media (i.e. how cameras should be handled)."
-msgstr ""
+msgstr "<a href=\"volman-config:\">Konfiguracija</a> upravljanja uklonjivim uređajima\ni medijima (npr. kako rukovati kamerama)."
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
@@ -1807,16 +1809,16 @@ msgstr "Prikaz postavki upravljanja particijama nije uspio."
 
 #: ../thunar/thunar-progress-dialog.c:94
 msgid "File Operation Progress"
-msgstr ""
+msgstr "Napredak datotečne operacije"
 
 #. build the tooltip text
 #: ../thunar/thunar-progress-dialog.c:299
 #, c-format
 msgid "%d file operation running"
 msgid_plural "%d file operations running"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%d datotečna operacija u tijeku"
+msgstr[1] "%d datotečne operacije u tijeku"
+msgstr[2] "%d datotečnih operacija u tijeku"
 
 #. update the status text
 #: ../thunar/thunar-progress-view.c:354
@@ -1848,7 +1850,7 @@ msgstr "_Otvori pomoću:"
 
 #: ../thunar/thunar-properties-dialog.c:347
 msgid "Link Target:"
-msgstr ""
+msgstr "Meta poveznice:"
 
 #: ../thunar/thunar-properties-dialog.c:379
 msgid "Location:"
@@ -1866,7 +1868,7 @@ msgstr "Pristupljeno:"
 
 #: ../thunar/thunar-properties-dialog.c:470
 msgid "Volume:"
-msgstr ""
+msgstr "Volumen:"
 
 #: ../thunar/thunar-properties-dialog.c:494
 msgid "Free Space:"
@@ -1876,7 +1878,7 @@ msgstr "Slobodan prostor:"
 #. 
 #: ../thunar/thunar-properties-dialog.c:519
 msgid "Emblems"
-msgstr ""
+msgstr "Amblemi"
 
 #. allocate the icon chooser
 #. allocate the chooser dialog
@@ -1889,7 +1891,7 @@ msgstr "Odaberi ikonu za \"%s\""
 #: ../thunar/thunar-properties-dialog.c:784
 #, c-format
 msgid "Failed to change icon of \"%s\""
-msgstr ""
+msgstr "Neuspjela promjena ikone za \"%s\""
 
 #. update the properties dialog title
 #: ../thunar/thunar-properties-dialog.c:883
@@ -1912,7 +1914,7 @@ msgstr "Svojstva"
 
 #: ../thunar/thunar-properties-dialog.c:1204
 msgid "mixed"
-msgstr ""
+msgstr "razno"
 
 #: ../thunar/thunar-renamer-dialog.c:190 ../thunar/thunar-window.c:347
 msgid "_File"
@@ -1924,7 +1926,7 @@ msgstr "_Pošalji za"
 
 #: ../thunar/thunar-renamer-dialog.c:192 ../thunar/thunar-standard-view.c:394
 msgid "File Context Menu"
-msgstr ""
+msgstr "Konteksni izbornik datoteka"
 
 #: ../thunar/thunar-renamer-dialog.c:193
 msgid "_Add Files..."
@@ -1948,7 +1950,7 @@ msgstr "_O programu"
 
 #: ../thunar/thunar-renamer-dialog.c:196
 msgid "Display information about Thunar Bulk Rename"
-msgstr ""
+msgstr "Prikaži informacije o Thunarovom grupnom preimenovanju "
 
 #: ../thunar/thunar-renamer-dialog.c:197 ../thunar/thunar-standard-view.c:397
 msgid "View the properties of the selected file"
@@ -1989,7 +1991,7 @@ msgid ""
 "No renamer modules were found on your system. Please check your\n"
 "installation or contact your system administrator. If you install Thunar\n"
 "from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
-msgstr ""
+msgstr "Nijedan modul za preimenovanje nije pronađen na sustavu. Molim provjerite\nsvoju instalaciju ili kontaktirajte Vašeg administratora. Ukoliko ste instalirali Thunar\nkompilacijom iz izvornog koda, provjerite jeste li uključili \"Simple Builtin Renamers\" dodatak."
 
 #. tell the user that we failed
 #: ../thunar/thunar-renamer-dialog.c:954
@@ -2017,32 +2019,32 @@ msgstr "Video datoteke"
 #: ../thunar/thunar-renamer-dialog.c:1216
 #: ../Thunar-bulk-rename.desktop.in.in.h:1
 msgid "Bulk Rename"
-msgstr ""
+msgstr "Grupno preimenovanje"
 
 #: ../thunar/thunar-renamer-dialog.c:1217
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
-msgstr ""
+msgstr "Thunarovo grupno preimenovanje je snažan i proširiv \nalat za preimenovanje više datoteka odjednom. "
 
 #: ../thunar/thunar-renamer-dialog.c:1690
 msgid "Remove File"
 msgid_plural "Remove Files"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Ukloni datoteku"
+msgstr[1] "Ukloni datoteke"
+msgstr[2] "Ukloni datoteke"
 
 #: ../thunar/thunar-renamer-dialog.c:1692
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Ukloni odabranu datoteku iz liste datoteka za preimenovanje"
+msgstr[1] "Ukloni odabrane datoteke iz liste datoteka za preimenovanje"
+msgstr[2] "Ukloni odabrane datoteke iz liste datoteka za preimenovanje"
 
 #. change title to reflect the standalone status
 #: ../thunar/thunar-renamer-dialog.c:1827
 msgid "Bulk Rename - Rename Multiple Files"
-msgstr ""
+msgstr "Grupno preimenovanje - preimenovanje više datoteka odjednom"
 
 #: ../thunar/thunar-renamer-progress.c:185
 #, c-format
@@ -2058,7 +2060,7 @@ msgstr "Možete odabrati preskakanje ove datoteke i nastaviti sa preimenovanjem 
 
 #: ../thunar/thunar-renamer-progress.c:197
 msgid "_Revert Changes"
-msgstr ""
+msgstr "_Vrati promjene"
 
 #: ../thunar/thunar-renamer-progress.c:198
 #: ../thunar/thunar-renamer-progress.c:207
@@ -2102,16 +2104,16 @@ msgstr "MJESTA"
 #: ../thunar/thunar-shortcuts-pane.c:393
 msgid "Side Pane (Create Shortcut)"
 msgid_plural "Side Pane (Create Shortcuts)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Bočno okno (izradi prečac)"
+msgstr[1] "Bočno okno (izradi prečace)"
+msgstr[2] "Bočno okno (izradi prečace)"
 
 #: ../thunar/thunar-shortcuts-pane.c:395
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Dodaj označenu mapu među prečace bočnog okna"
+msgstr[1] "Dodaj označene mape među prečace bočnog okna"
+msgstr[2] "Dodaj označene mape među prečace bočnog okna"
 
 #. append the "Mount" item
 #. append the "Mount" menu action
@@ -2190,15 +2192,15 @@ msgstr "Prekinuto računanje"
 #, c-format
 msgid "%u item, totalling %s"
 msgid_plural "%u items, totalling %s"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%u stavka, ukupno %s"
+msgstr[1] "%u stavke, ukupno %s"
+msgstr[2] "%u stavki, ukupno %s"
 
 #. TRANSLATORS: this is shows if during the deep count size
 #. * directories were not accessible
 #: ../thunar/thunar-size-label.c:385
 msgid "(some contents unreadable)"
-msgstr ""
+msgstr "(dio sadržaja nečitljiv)"
 
 #. nothing was readable, so permission was denied
 #: ../thunar/thunar-size-label.c:396
@@ -2207,7 +2209,7 @@ msgstr "Dozvola odbijena"
 
 #: ../thunar/thunar-standard-view.c:395
 msgid "Folder Context Menu"
-msgstr ""
+msgstr "Konteksni izbornik mapa"
 
 #: ../thunar/thunar-standard-view.c:396
 msgid "Create an empty folder within the current folder"
@@ -2329,7 +2331,7 @@ msgstr "_Uzorak"
 #. invalid
 #: ../thunar/thunar-standard-view.c:3162
 msgid "Invalid filename provided by XDS drag site"
-msgstr ""
+msgstr "Neispravno ime datoteke iz XDS izvora"
 
 #. display an error dialog to the user
 #: ../thunar/thunar-standard-view.c:3343
@@ -2345,23 +2347,23 @@ msgstr "Neuspješno otvaranje direktorija \"%s\""
 #: ../thunar/thunar-standard-view.c:4310
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Pripremite označenu datoteku za premještanje naredbom Zalijepi"
+msgstr[1] "Pripremite označene datoteke za premještanje naredbom Zalijepi"
+msgstr[2] "Pripremite označene datoteke za premještanje naredbom Zalijepi"
 
 #: ../thunar/thunar-standard-view.c:4318
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Pripremite označenu datoteku za kopiranje naredbom Zalijepi"
+msgstr[1] "Pripremite označene datoteke za kopiranje naredbom Zalijepi"
+msgstr[2] "Pripremite označene datoteke za kopiranje naredbom Zalijepi"
 
 #: ../thunar/thunar-standard-view.c:4330
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Premjestite označenu datoteku u Smeće"
+msgstr[1] "Premjestite označene datoteke u Smeće"
+msgstr[2] "Premjestite označene datoteke u Smeće"
 
 #: ../thunar/thunar-standard-view.c:4338
 msgid "Permanently delete the selected file"
@@ -2373,30 +2375,30 @@ msgstr[2] "Trajno izbriši odabrane datoteke"
 #: ../thunar/thunar-standard-view.c:4352
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Dupliciraj označenu datoteku"
+msgstr[1] "Dupliciraj svaku označenu datoteku"
+msgstr[2] "Dupliciraj svaku označenu datoteku"
 
 #: ../thunar/thunar-standard-view.c:4361
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Izradi simboličku poveznicu za označenu datoteku"
+msgstr[1] "Izradi simboličku poveznicu za svaku označenu datoteku"
+msgstr[2] "Izradi simboličku poveznicu za svaku označenu datoteku"
 
 #: ../thunar/thunar-standard-view.c:4369
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Preimenuj označenu datoteku"
+msgstr[1] "Preimenuj označene datoteke"
+msgstr[2] "Preimenuj označene datoteke"
 
 #: ../thunar/thunar-standard-view.c:4377
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Obnovi označenu datoteku"
+msgstr[1] "Obnovi označene datoteke"
+msgstr[2] "Obnovi označene datoteke"
 
 #. add the "Empty File" item
 #: ../thunar/thunar-templates-action.c:473
@@ -2452,31 +2454,31 @@ msgstr "Ne mogu premjestiti \"%s\" izravno. Prikupljanje datoteka za kopiranje .
 #: ../thunar/thunar-transfer-job.c:1084
 #, c-format
 msgid "%s of %s"
-msgstr ""
+msgstr "%s od %s"
 
 #: ../thunar/thunar-transfer-job.c:1104
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%lu sat preostao (%s/s)"
+msgstr[1] "%lu sata preostalo (%s/s)"
+msgstr[2] "%lu sati preostalo (%s/s)"
 
 #: ../thunar/thunar-transfer-job.c:1112
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%lu minuta preostala (%s/s)"
+msgstr[1] "%lu minute preostalo (%s/s)"
+msgstr[2] "%lu minuta preostalo (%s/s)"
 
 #: ../thunar/thunar-transfer-job.c:1119
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%lu sekunda preostala (%s/s)"
+msgstr[1] "%lu sekunde preostalo (%s/s)"
+msgstr[2] "%lu sekundi preostalo (%s/s)"
 
 #: ../thunar/thunar-trash-action.c:105
 msgid "T_rash"
@@ -2562,7 +2564,7 @@ msgstr "Otvori novi Thunar prozor za prikazanu lokaciju"
 
 #: ../thunar/thunar-window.c:352
 msgid "Detac_h Tab"
-msgstr ""
+msgstr "Odvo_ji karticu"
 
 #: ../thunar/thunar-window.c:352
 msgid "Open current folder in a new window"
@@ -2614,15 +2616,15 @@ msgstr "_Ponovno učitaj"
 
 #: ../thunar/thunar-window.c:360
 msgid "_Location Selector"
-msgstr ""
+msgstr "_Izbornik lokacije"
 
 #: ../thunar/thunar-window.c:361
 msgid "_Side Pane"
-msgstr ""
+msgstr "_Bočni Stupac"
 
 #: ../thunar/thunar-window.c:362
 msgid "Zoom I_n"
-msgstr ""
+msgstr "_Uvećaj"
 
 #: ../thunar/thunar-window.c:362
 msgid "Show the contents in more detail"
@@ -2630,7 +2632,7 @@ msgstr "Pokaži sadržaj sa više detalja"
 
 #: ../thunar/thunar-window.c:363
 msgid "Zoom _Out"
-msgstr ""
+msgstr "_Smanji"
 
 #: ../thunar/thunar-window.c:363
 msgid "Show the contents in less detail"
@@ -2650,11 +2652,11 @@ msgstr "_Idi"
 
 #: ../thunar/thunar-window.c:366
 msgid "Open _Parent"
-msgstr ""
+msgstr "Otvori _roditelja"
 
 #: ../thunar/thunar-window.c:366
 msgid "Open the parent folder"
-msgstr ""
+msgstr "Otvori roditeljsku mapu"
 
 #: ../thunar/thunar-window.c:367
 msgid "_Home"
@@ -2682,7 +2684,7 @@ msgstr "P_regledaj mrežu"
 
 #: ../thunar/thunar-window.c:370
 msgid "Browse local network connections"
-msgstr ""
+msgstr "Pregledaj lokalne mrežne veze"
 
 #: ../thunar/thunar-window.c:371
 msgid "T_emplates"
@@ -2722,15 +2724,15 @@ msgstr "Pokaži _skrivene datoteke"
 
 #: ../thunar/thunar-window.c:380
 msgid "Toggles the display of hidden files in the current window"
-msgstr ""
+msgstr "Prikaz sakrivenih datoteka u trenutnom prozoru"
 
 #: ../thunar/thunar-window.c:381
 msgid "_Pathbar Style"
-msgstr ""
+msgstr "_Stil adresne trake"
 
 #: ../thunar/thunar-window.c:381
 msgid "Modern approach with buttons that correspond to folders"
-msgstr ""
+msgstr "Suvremeni pristup s dugmadi koja korespondiraju sa mapama"
 
 #: ../thunar/thunar-window.c:382
 msgid "_Toolbar Style"
@@ -2746,7 +2748,7 @@ msgstr "_Prečaci"
 
 #: ../thunar/thunar-window.c:383
 msgid "Toggles the visibility of the shortcuts pane"
-msgstr ""
+msgstr "Vidljivost okna s prečacima"
 
 #: ../thunar/thunar-window.c:384
 msgid "_Tree"
@@ -2754,7 +2756,7 @@ msgstr "_Stablo"
 
 #: ../thunar/thunar-window.c:384
 msgid "Toggles the visibility of the tree pane"
-msgstr ""
+msgstr "Vidljivost okna sa stablom"
 
 #: ../thunar/thunar-window.c:385
 msgid "St_atusbar"
@@ -2770,17 +2772,17 @@ msgstr "_Traka izbornika"
 
 #: ../thunar/thunar-window.c:386
 msgid "Change the visibility of this window's menubar"
-msgstr ""
+msgstr "Vidljivost izborničke trake u prozoru"
 
 #. * add view options
 #. 
 #: ../thunar/thunar-window.c:764
 msgid "View as _Icons"
-msgstr ""
+msgstr "Pogled kao _ikone"
 
 #: ../thunar/thunar-window.c:764
 msgid "Display folder content in an icon view"
-msgstr ""
+msgstr "Prikaz sadržaja mape u pogledu ikona"
 
 #: ../thunar/thunar-window.c:771
 msgid "View as _Detailed List"
@@ -2819,7 +2821,7 @@ msgstr "Neuspjelo pokretanje \"%s\""
 
 #: ../thunar/thunar-window.c:2763
 msgid "Failed to open parent folder"
-msgstr ""
+msgstr "Neuspjeh u otvaranju roditeljske mape"
 
 #: ../thunar/thunar-window.c:2858
 #, c-format
@@ -2849,7 +2851,7 @@ msgstr "Ne _prikazuj ponovo ovu poruku"
 #. display an error to the user
 #: ../thunar/thunar-window.c:3011
 msgid "Failed to open the file system root folder"
-msgstr ""
+msgstr "Neuspjeh u otvaranju korijenske mape sustava"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:3046
@@ -2891,7 +2893,7 @@ msgstr ""
 
 #: ../thunarx/thunarx-provider-plugin.c:72
 msgid "Resident"
-msgstr ""
+msgstr "Rezident"
 
 #: ../thunarx/thunarx-provider-plugin.c:73
 msgid "Don't unload the plugin from memory"
@@ -2899,15 +2901,15 @@ msgstr ""
 
 #: ../thunarx/thunarx-renamer.c:130
 msgid "Help URL"
-msgstr ""
+msgstr "URL za pomoć"
 
 #: ../thunarx/thunarx-renamer.c:131
 msgid "The URL to the documentation of the renamer"
-msgstr ""
+msgstr "URL dokumentacije alata za preimenovanje"
 
 #: ../thunarx/thunarx-renamer.c:146
 msgid "The user visible name of the renamer"
-msgstr ""
+msgstr "Korisnički vidljivo ime preimenovanja"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:152
 msgid "Description:"
@@ -2951,7 +2953,7 @@ msgstr "Komentar:"
 msgid ""
 "Tooltip for the entry, for example \"View sites on the Internet\" in case of"
 " Firefox. Should not be redundant with the name or the description."
-msgstr ""
+msgstr "Tooltip za ovaj unos, npr. \"Prikaži stranice na Internetu\" u slučaju Firefoxa. Ne bi smjelo biti redundantno s imenom ili opisom."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:268
 msgid "Options:"
@@ -2991,7 +2993,7 @@ msgstr "Neuspjelo spremanje  \"%s\"."
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:47
 msgid "Date Taken:"
-msgstr ""
+msgstr "Datum nastanka slike:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:48
 msgid "Camera Brand:"
@@ -3011,27 +3013,27 @@ msgstr "Program ekspozicije:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:52
 msgid "Aperture Value:"
-msgstr ""
+msgstr "Promjer optičke leće: "
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:53
 msgid "Metering Mode:"
-msgstr ""
+msgstr "Način mjerenja:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:54
 msgid "Flash Fired:"
-msgstr ""
+msgstr "Bljeskalica korištena:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:55
 msgid "Focal Length:"
-msgstr ""
+msgstr "Žarišna duljina:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:56
 msgid "Shutter Speed:"
-msgstr ""
+msgstr "Brzina zatvarača:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:57
 msgid "ISO Speed Ratings:"
-msgstr ""
+msgstr "ISO razred brine:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:58
 msgid "Software:"
@@ -3050,9 +3052,9 @@ msgstr "Tip slike"
 #, c-format
 msgid "%dx%d pixel"
 msgid_plural "%dx%d pixels"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%dx%d piksel"
+msgstr[1] "%dx%d piksela"
+msgstr[2] "%dx%d piksela"
 
 #: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:117
 msgid "Con_vert to:"
@@ -3072,12 +3074,12 @@ msgid ""
 "For example, %Y will be substituted with the year, %m with the month and %d "
 "with the day. See the documentation of the date utility for additional "
 "information."
-msgstr ""
+msgstr "Format opisuje kako će se datum i vrijeme dodati u ime datoteke. Npr., %Y će biti zamijenjeno  s godinom, %m s mjesecom i %d s danom. Pogledajte dokumentaciju alata za datume za dodatne informacije."
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:243
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:197
 msgid "_At position:"
-msgstr ""
+msgstr "_Na poziciju:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:592
 msgid "Insert Date / Time"
@@ -3170,7 +3172,7 @@ msgstr "Umetni / Prebriši"
 
 #: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:184
 msgid "_Number Format:"
-msgstr ""
+msgstr "_Format broja:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:214
 msgid "_Start With:"
@@ -3208,14 +3210,14 @@ msgstr "Unesite tekst za traženje u imenima datoteka"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:222
 msgid "Regular _Expression"
-msgstr ""
+msgstr "Regularni _izraz"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:224
 msgid ""
 "If you enable this option, the pattern will be treated as a regular "
 "expression and matched using the Perl-compatible regular expressions (PCRE)."
 " Check the documentation for details about the regular expression syntax."
-msgstr ""
+msgstr "Uključite li ovu opciju, uzorak će se tretirati kao regularni izraz i prepoznavati Perl-kompatibilnim regularnim izrazima (PCRE). Provjerite dokumentaciju za detalje oko sintakse regularnih izraza. "
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:231
 msgid "Replace _With:"
@@ -3228,19 +3230,19 @@ msgstr "Unesite tekst koji se može koristiti kao zamjena za gornji uzorak."
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:251
 msgid "C_ase Sensitive Search"
-msgstr ""
+msgstr "P_retraga osjetljiva na veliko i malo slovo"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:253
 msgid ""
 "If you enable this option, the pattern will be searched in a case-sensitive "
 "manner. The default is to use a case-insensitive search."
-msgstr ""
+msgstr "Uključite li ovu opciju, uzorak će biti pretraživan uzimajući u obzir veliko i malo slovo. Uobičajena pretraga ne uzima u obzir veliko i malo slovo."
 
 #. setup a tooltip with the error message
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:610
 #, c-format
 msgid "Invalid regular expression, at character position %ld: %s"
-msgstr ""
+msgstr "Neispravan regularan izraz na poziciji %ld: %s"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:660
 msgid "Search & Replace"
@@ -3271,13 +3273,13 @@ msgstr "Kada šaljete datoteku elektroničkom poštom možete odabrati slanje da
 #, c-format
 msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Poslati %d datoteku kao komprimiranu arhivu?"
+msgstr[1] "Poslati %d datoteke kao komprimiranu arhivu?"
+msgstr[2] "Poslati %d datoteka kao komprimiranu arhivu?"
 
 #: ../plugins/thunar-sendto-email/main.c:219
 msgid "Send as _archive"
-msgstr ""
+msgstr "Pošalji kao _arhivu"
 
 #: ../plugins/thunar-sendto-email/main.c:221
 msgid ""
@@ -3285,7 +3287,7 @@ msgid ""
 "files directly, attaching multiple files to an email, or send all files "
 "compressed into a single archive file and attach the archive. It is highly "
 "recommended to send multiple large files as archive."
-msgstr ""
+msgstr "Prilikom slanja više datoteka emailom, možete birati između izravnog slanja, dodavanja većeg broja datoteka emailu kao privitak, ili slanja arhive koja sadrži sve datoteke u privitku. Vrlo je preporučljivo slati veći broj datoteka kao arhivu. "
 
 #. allocate the progress dialog
 #. setup the label
@@ -3315,9 +3317,9 @@ msgstr "Ne mogu stvoriti simboličku poveznicu za \"%s \""
 #, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Neuspješno komprimiranje %d datoteke."
+msgstr[1] "Neuspješno komprimiranje %d datoteke."
+msgstr[2] "Neuspješno komprimiranje %d datoteka."
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:656
@@ -3343,7 +3345,7 @@ msgstr "Smeće sadrži datoteke"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:1
 msgid "Trash Applet"
-msgstr ""
+msgstr "Programčić Smeće"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:2
 msgid "Display the trash can"
@@ -3357,7 +3359,7 @@ msgstr "Prilagođene radnje"
 msgid ""
 "You can configure custom actions that will appear in the\n"
 "file managers context menus for certain kinds of files."
-msgstr ""
+msgstr "Možete konfigurirati posebne radnje koje će se prikazivati u kontekstualnim \nizbornicima upravitelja datoteka za određene tipove datoteka."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:173
 msgid "Add a new custom action."
@@ -3410,7 +3412,7 @@ msgstr "Osnovno"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:137
 msgid "The name of the action that will be displayed in the context menu."
-msgstr ""
+msgstr "Naziv radnje koja će se prikazivati u kontekstualnom izborniku."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:150
 msgid "_Description:"
@@ -3420,7 +3422,7 @@ msgstr "_Opis:"
 msgid ""
 "The description of the action that will be displayed as tooltip in the "
 "statusbar when selecting the item from the context menu."
-msgstr ""
+msgstr "Opis radnje koja će se prikazivati kao tooltip u traci stanja prilikom odabira stavke iz kontekstualnog izbornika."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:168
 msgid "_Command:"
@@ -3434,7 +3436,7 @@ msgid ""
 "case letters (e.g. %F, %D, %N) are used, the action will be applicable even "
 "if more than one item is selected. Else the action will only be applicable "
 "if exactly one item is selected."
-msgstr ""
+msgstr "Naredba (zajedno s nužnim parametrima) za izvršenje radnje. Pogledajte niže legendu parametara za popis dopuštenih parametarskih varijabli, koje će biti zamijenjene  stvarnim vrijednostima prilikom pokretanja naredba. Korištenjem velikih slova (npr. %F, %D, %N), radnje će biti primjenjive čak čak i ako je više no jedna stavka označena. Inače će radnje biti primjenjive samo ako je točno jedna stavka označena."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:188
 msgid ""
@@ -3443,14 +3445,14 @@ msgstr "Pretaži datotečni sustav za odabir programa koji će se koristiti za o
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:204
 msgid "Use Startup Notification"
-msgstr ""
+msgstr "Koristite obavijest pokretanja"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:205
 msgid ""
 "Enable this option if you want a waiting cursor to be shown while the action"
 " is launched. This is also highly recommended if you have focus stealing "
 "prevention enabled in your window manager."
-msgstr ""
+msgstr "Uključite ovu opciju želite li da se prikazuje pokazivač za čekanje dok se radnja pokreće. Ovo je također vrlo preporučljivo  ako imate uključenu obranu od krađe fokusa u Vašem upravitelju prozora."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:211
 msgid "_Icon:"
@@ -3466,13 +3468,13 @@ msgstr "Bez ikona"
 msgid ""
 "Click this button to select an icon file that will be displayed in the "
 "context menu in addition to the action name chosen above."
-msgstr ""
+msgstr "Kliknite na ovo za odabir datoteke ikone koja će se prikazivati u kontekstualnom izborniku uz ime radnje koje ste gore odabrali."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:251
 msgid ""
 "The following command parameters will be\n"
 "substituted when launching the action:"
-msgstr ""
+msgstr "Idući parametri naredbi će biti zamijenjeni \nprilikom pokretanja radnje:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:289
 msgid "the path to the first selected file"
@@ -3480,17 +3482,17 @@ msgstr "putanja do prve odabrane datoteke"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:301
 msgid "the paths to all selected files"
-msgstr ""
+msgstr "putovi do svih odabranih datoteka"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:313
 #, c-format
 msgid "directory containing the file that is passed in %f"
-msgstr ""
+msgstr "mapa koja sadrži datoteku proslijeđenu u %f"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:325
 #, c-format
 msgid "directories containing the files that are passed in %F"
-msgstr ""
+msgstr "mape koje sadrže datoteke proslijeđene u %F"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:337
 msgid "the first selected filename (without path)"
@@ -3514,7 +3516,7 @@ msgid ""
 "should be displayed for a selected file. If you specify more than one "
 "pattern here, the list items must be separated with semicolons (e.g. "
 "*.txt;*.doc)."
-msgstr ""
+msgstr "Upišite popis uzoraka koji će se koristiti za odrediti hoće li se ova radnja prikazivati za odabranu datoteku. Za upis više od jednog uzorka, koristiti točku sa zarezom kao razgodak (npr. *.txt;*.odt)"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:395
 msgid "Appears if selection contains:"
@@ -3556,22 +3558,22 @@ msgid ""
 "or folder. Additionally, you can specify that the\n"
 "action should only appear for certain kinds of\n"
 "files."
-msgstr ""
+msgstr "Ova stranica navodi uvjete pod kojima će se \nradnja prikazivati u kontekstualnom izborniku\nupravitelja datotekama. Uzorci imena datoteka\nu ovom opisu se unose s točkom sa zarezom\nkao razgotkom (npr. *.txt;*.odt). Kako bi radnja\nbila prikazana u kontekstualnom izborniku\ndatoteke ili mape, barem jedan od uzoraka \nmora odgovarati imenu datoteke ili mape. \nDodatno, možete odrediti da se radnja \nprikazuje samo za određene vrste datoteka."
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:815
 #, c-format
 msgid "Unknown element <%s>"
-msgstr ""
+msgstr "Nepoznat element <%s>"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:833
 #, c-format
 msgid "End element handler called while in root context"
-msgstr ""
+msgstr "Rukovatelj za kraj elementa pozvan u korijenskom kontekstu"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:937
 #, c-format
 msgid "Unknown closing element <%s>"
-msgstr ""
+msgstr "Nepoznati zatvarajući element <%s>"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:1409
 #, c-format
@@ -3590,7 +3592,7 @@ msgstr "Konfiguriraj p_rilagođene radnje..."
 #: ../plugins/thunar-uca/thunar-uca-provider.c:178
 msgid ""
 "Setup custom actions that will appear in the file managers context menus"
-msgstr ""
+msgstr "Postavite posebne radnje koje će se prikazivati u izbornicima upravitelja datoteka"
 
 #: ../plugins/thunar-uca/thunar-uca-provider.c:417
 #, c-format
