@@ -1,24 +1,23 @@
-# Hungarian translation of Thunar
-# Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2012, Free Software Foundation, Inc.
-# This file is distributed under the same license as the Thunar package.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
 # 
-# SZERVÁC Attila <sas@321.hu>, 2005-2009.
-# Gabor Kelemen <kelemeng at gnome dot hu>, 2009, 2010, 2012.
-# Imre Benedek <nucleo at indamail dot hu>, 2012.
+# Translators:
+# Gabor Kelemen <kelemeng at gnome dot hu>, 2009-2010,2012
+# Imre Benedek <nucleo at indamail dot hu>, 2012
 msgid ""
 msgstr ""
-"Project-Id-Version: thunar\n"
+"Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-20 19:00+0000\n"
-"PO-Revision-Date: 2012-11-26 03:24+0100\n"
-"Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
-"Language-Team: Hungarian <gnome-hu-list at gnome dot org>\n"
+"POT-Creation-Date: 2013-07-30 00:30+0200\n"
+"PO-Revision-Date: 2013-11-19 12:46+0000\n"
+"Last-Translator: Xfce <transifex@xfce.org>\n"
+"Language-Team: Hungarian (http://www.transifex.com/projects/p/xfce/language/hu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
+"Language: hu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: KBabel 1.11.4\n"
 
 #: ../thunar/main.c:62
 msgid "Open the bulk rename dialog"
@@ -131,88 +130,86 @@ msgid "Sort items in descending order"
 msgstr "Rendezés csökkenő sorrendbe"
 
 #. display an error message to the user
-#: ../thunar/thunar-application.c:396
+#: ../thunar/thunar-application.c:451
 msgid "Failed to launch operation"
 msgstr "A művelet indítása meghiúsult"
 
 #. tell the user that we were unable to launch the file specified
-#: ../thunar/thunar-application.c:1113 ../thunar/thunar-application.c:1239
+#: ../thunar/thunar-application.c:1168 ../thunar/thunar-application.c:1294
 #: ../thunar/thunar-launcher.c:1216 ../thunar/thunar-location-entry.c:402
 #: ../thunar/thunar-location-entry.c:430
 #: ../thunar/thunar-shortcuts-view.c:1630
-#: ../thunar/thunar-shortcuts-view.c:1658 ../thunar/thunar-window.c:2235
+#: ../thunar/thunar-shortcuts-view.c:1658 ../thunar/thunar-window.c:2236
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "„%s” megnyitása meghiúsult"
 
-#: ../thunar/thunar-application.c:1243
+#: ../thunar/thunar-application.c:1298
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "„%s” megnyitása meghiúsult: %s"
 
 #. display an error message
-#: ../thunar/thunar-application.c:1307
-#: ../thunar/thunar-properties-dialog.c:671
-#: ../thunar/thunar-standard-view.c:2739 ../thunar/thunar-tree-view.c:1760
+#: ../thunar/thunar-application.c:1362
+#: ../thunar/thunar-properties-dialog.c:672
+#: ../thunar/thunar-standard-view.c:2746 ../thunar/thunar-tree-view.c:1760
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "„%s” átnevezése meghiúsult"
 
-#: ../thunar/thunar-application.c:1409
+#: ../thunar/thunar-application.c:1464
 #: ../thunar/thunar-location-buttons.c:1308
-#: ../thunar/thunar-standard-view.c:2289 ../thunar/thunar-tree-view.c:1622
+#: ../thunar/thunar-standard-view.c:2296 ../thunar/thunar-tree-view.c:1622
 msgid "New Folder"
 msgstr "Új mappa"
 
-#: ../thunar/thunar-application.c:1410
+#: ../thunar/thunar-application.c:1465
 #: ../thunar/thunar-location-buttons.c:1309
-#: ../thunar/thunar-standard-view.c:2290 ../thunar/thunar-tree-view.c:1623
+#: ../thunar/thunar-standard-view.c:2297 ../thunar/thunar-tree-view.c:1623
 msgid "Create New Folder"
 msgstr "Új mappa létrehozása"
 
-#: ../thunar/thunar-application.c:1414
+#: ../thunar/thunar-application.c:1469
 msgid "New File"
 msgstr "Új fájl"
 
-#: ../thunar/thunar-application.c:1415
+#: ../thunar/thunar-application.c:1470
 msgid "Create New File"
 msgstr "Új fájl létrehozása"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-application.c:1472 ../thunar/thunar-standard-view.c:2334
+#: ../thunar/thunar-application.c:1527 ../thunar/thunar-standard-view.c:2341
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Dokumentum létrehozása a(z) „%s” sablonból"
 
-#: ../thunar/thunar-application.c:1536
+#: ../thunar/thunar-application.c:1591
 msgid "Copying files..."
 msgstr "Fájlok másolása…"
 
-#: ../thunar/thunar-application.c:1572
+#: ../thunar/thunar-application.c:1627
 #, c-format
 msgid "Copying files to \"%s\"..."
 msgstr "Fájlok másolása ide: „%s”…"
 
-#: ../thunar/thunar-application.c:1618
+#: ../thunar/thunar-application.c:1673
 #, c-format
 msgid "Creating symbolic links in \"%s\"..."
 msgstr "Szimbolikus linkek létrehozása itt: „%s”…"
 
-#: ../thunar/thunar-application.c:1671
+#: ../thunar/thunar-application.c:1726
 #, c-format
 msgid "Moving files into \"%s\"..."
 msgstr "Fájlok áthelyezése ide: „%s”…"
 
-#: ../thunar/thunar-application.c:1753
+#: ../thunar/thunar-application.c:1808
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
-msgstr ""
-"Biztos, hogy véglegesen törölni\n"
-"kívánja a következőt: „%s”?"
+msgstr "Biztos, hogy véglegesen törölni\nkívánja a következőt: „%s”?"
 
-#: ../thunar/thunar-application.c:1758
+#: ../thunar/thunar-application.c:1813
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -220,69 +217,63 @@ msgid ""
 msgid_plural ""
 "Are you sure that you want to permanently\n"
 "delete the %u selected files?"
-msgstr[0] ""
-"Biztos, hogy véglegesen törölni\n"
-"kívánja a kijelölt fájlt?"
-msgstr[1] ""
-"Biztos, hogy véglegesen törölni\n"
-"kívánja a kijelölt %u fájlt?"
+msgstr[0] "Biztos, hogy véglegesen törölni\nkívánja a kijelölt fájlt?"
+msgstr[1] "Biztos, hogy véglegesen törölni\nkívánja a kijelölt %u fájlt?"
 
-#: ../thunar/thunar-application.c:1778
+#: ../thunar/thunar-application.c:1833
 msgid "If you delete a file, it is permanently lost."
 msgstr "Ha törli a fájlt, az véglegesen elvész."
 
-#: ../thunar/thunar-application.c:1788
+#: ../thunar/thunar-application.c:1843
 msgid "Deleting files..."
 msgstr "Fájlok törlése…"
 
-#: ../thunar/thunar-application.c:1823
+#: ../thunar/thunar-application.c:1878
 msgid "Moving files into the trash..."
 msgstr "Fájlok áthelyezése a Kukába…"
 
-#: ../thunar/thunar-application.c:1869
+#: ../thunar/thunar-application.c:1924
 msgid "Creating files..."
 msgstr "Fájlok létrehozása…"
 
-#: ../thunar/thunar-application.c:1908
+#: ../thunar/thunar-application.c:1963
 msgid "Creating directories..."
 msgstr "Könyvtárak létrehozása…"
 
-#: ../thunar/thunar-application.c:1947
+#: ../thunar/thunar-application.c:2002
 msgid "Remove all files and folders from the Trash?"
 msgstr "Eltávolít minden fájlt és mappát a Kukából?"
 
 #. append the "Empty Trash" menu action
 #. prepare the menu item
-#: ../thunar/thunar-application.c:1953 ../thunar/thunar-location-buttons.c:179
+#: ../thunar/thunar-application.c:2008 ../thunar/thunar-location-buttons.c:179
 #: ../thunar/thunar-shortcuts-view.c:1191 ../thunar/thunar-tree-view.c:1183
 #: ../thunar/thunar-window.c:351 ../plugins/thunar-tpa/thunar-tpa.c:189
 msgid "_Empty Trash"
 msgstr "_Kuka ürítése"
 
-#: ../thunar/thunar-application.c:1957
+#: ../thunar/thunar-application.c:2012
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
-msgstr ""
-"Ha a Kuka kiürítését választja, minden elem véglegesen elvész. Ne feledje, "
-"hogy egyenként is törölheti őket."
+msgstr "Ha a Kuka kiürítését választja, minden elem véglegesen elvész. Ne feledje, hogy egyenként is törölheti őket."
 
-#: ../thunar/thunar-application.c:1974
+#: ../thunar/thunar-application.c:2029
 msgid "Emptying the Trash..."
 msgstr "A Kuka ürítése…"
 
-#: ../thunar/thunar-application.c:2020
+#: ../thunar/thunar-application.c:2075
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "„%s” eredeti útvonalának meghatározása meghiúsult"
 
 #. display an error dialog
-#: ../thunar/thunar-application.c:2037
+#: ../thunar/thunar-application.c:2092
 #, c-format
 msgid "Could not restore \"%s\""
 msgstr "„%s” visszaállítása meghiúsult"
 
-#: ../thunar/thunar-application.c:2045
+#: ../thunar/thunar-application.c:2100
 msgid "Restoring files..."
 msgstr "Fájlok visszaállítása…"
 
@@ -294,10 +285,9 @@ msgstr "„%s” alapértelmezett alkalmazásának beállítása meghiúsult"
 #: ../thunar/thunar-chooser-button.c:440
 #, c-format
 msgid ""
-"The selected application is used to open this and other files of type \"%s\"."
-msgstr ""
-"A kiválasztott alkalmazás kerül felhasználásra ezen fájl és más „%s” típusú "
-"fájok megnyitására."
+"The selected application is used to open this and other files of type "
+"\"%s\"."
+msgstr "A kiválasztott alkalmazás kerül felhasználásra ezen fájl és más „%s” típusú fájok megnyitására."
 
 #: ../thunar/thunar-chooser-button.c:495
 msgid "No application selected"
@@ -318,11 +308,9 @@ msgstr "Egyé_ni parancs használata:"
 
 #: ../thunar/thunar-chooser-dialog.c:258
 msgid ""
-"Use a custom command for an application that is not available from the above "
-"application list."
-msgstr ""
-"Egyéni parancs megadása a fenti alkalmazáslistában nem szereplő alkalmazás "
-"használatához."
+"Use a custom command for an application that is not available from the above"
+" application list."
+msgstr "Egyéni parancs megadása a fenti alkalmazáslistában nem szereplő alkalmazás használatához."
 
 #. create the "Custom command" button
 #: ../thunar/thunar-chooser-dialog.c:277
@@ -359,19 +347,16 @@ msgstr "<i>%s</i> és más „%s” típusú fájlok megnyitása ezzel:"
 #: ../thunar/thunar-chooser-dialog.c:656
 #, c-format
 msgid ""
-"Browse the file system to select an application to open files of type \"%s\"."
-msgstr ""
-"A fájlrendszer tallózása „%s” típusú fájlok megnyitására szolgáló alkalmazás "
-"kiválasztásához."
+"Browse the file system to select an application to open files of type "
+"\"%s\"."
+msgstr "A fájlrendszer tallózása „%s” típusú fájlok megnyitására szolgáló alkalmazás kiválasztásához."
 
 #: ../thunar/thunar-chooser-dialog.c:662
 #, c-format
 msgid ""
 "Change the default application for files of type \"%s\" to the selected "
 "application."
-msgstr ""
-"Az alapértelmezett alkalmazás módosítása „%s” típusú alkalmazásokhoz a "
-"kiválasztottra."
+msgstr "Az alapértelmezett alkalmazás módosítása „%s” típusú alkalmazásokhoz a kiválasztottra."
 
 #: ../thunar/thunar-chooser-dialog.c:708
 #, c-format
@@ -380,17 +365,10 @@ msgstr "Biztos, hogy el kívánja távolítani a következőt: „%s”?"
 
 #: ../thunar/thunar-chooser-dialog.c:714
 msgid ""
-"This will remove the application launcher that appears in the file context "
-"menu, but will not uninstall the application itself.\n"
+"This will remove the application launcher that appears in the file context menu, but will not uninstall the application itself.\n"
 "\n"
-"You can only remove application launchers that were created using the custom "
-"command box in the \"Open With\" dialog of the file manager."
-msgstr ""
-"Ez eltávolítja a fájl helyi menüjében megjelenő alkalmazásindítót, de nem "
-"távolítja el magát az alkalmazást.\n"
-"\n"
-"Csak a fájlkezelő „Megnyitás ezzel” ablakának egyéni parancs mezőjében "
-"megadott alkalmazásindítók törölhetők."
+"You can only remove application launchers that were created using the custom command box in the \"Open With\" dialog of the file manager."
+msgstr "Ez eltávolítja a fájl helyi menüjében megjelenő alkalmazásindítót, de nem távolítja el magát az alkalmazást.\n\nCsak a fájlkezelő „Megnyitás ezzel” ablakának egyéni parancs mezőjében megadott alkalmazásindítók törölhetők."
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:729
@@ -469,9 +447,7 @@ msgstr "Látható oszlopok"
 msgid ""
 "Choose the order of information to appear in the\n"
 "detailed list view."
-msgstr ""
-"Válassza ki a részletes lista nézetben megjelenő\n"
-"információk sorrendjét."
+msgstr "Válassza ki a részletes lista nézetben megjelenő\ninformációk sorrendjét."
 
 #. create the "Move Up" button
 #: ../thunar/thunar-column-editor.c:193
@@ -509,11 +485,7 @@ msgid ""
 "needed to ensure the text is fully visible. If you dis-\n"
 "able this behavior below the file manager will always\n"
 "use the user defined column widths."
-msgstr ""
-"Alapértelmezésben az oszlopok automatikusan megnyúlnak, hogy\n"
-"a szöveg teljesen látható legyen. Ha ezt a viselkedést\n"
-"lentebb letiltja, a fájlkezelő mindig a felhasználó\n"
-"által beállított oszlopszélességeket fogja használni."
+msgstr "Alapértelmezésben az oszlopok automatikusan megnyúlnak, hogy\na szöveg teljesen látható legyen. Ha ezt a viselkedést\nlentebb letiltja, a fájlkezelő mindig a felhasználó\náltal beállított oszlopszélességeket fogja használni."
 
 #. create the "Automatically expand columns as needed" button
 #: ../thunar/thunar-column-editor.c:261
@@ -523,9 +495,9 @@ msgstr "_Oszlopok szükség szerinti automatikus széthúzása"
 #. the file_time is invalid
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:858 ../thunar/thunar-list-model.c:679
-#: ../thunar/thunar-list-model.c:707
-#: ../thunar/thunar-permissions-chooser.c:229 ../thunar/thunar-util.c:334
+#: ../thunar/thunar-column-model.c:858 ../thunar/thunar-list-model.c:680
+#: ../thunar/thunar-list-model.c:708
+#: ../thunar/thunar-permissions-chooser.c:229 ../thunar/thunar-util.c:446
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:503
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:285
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:286
@@ -620,9 +592,7 @@ msgstr "Átne_vezés"
 
 #: ../thunar/thunar-dialogs.c:264
 msgid "translator-credits"
-msgstr ""
-"Benedek Imre <nucleo at indamail dot hu>\n"
-"Kelemen Gábor <kelemeng at gnome dot hu>"
+msgstr "Benedek Imre <nucleo at indamail dot hu>\nKelemen Gábor <kelemeng at gnome dot hu>"
 
 #: ../thunar/thunar-dialogs.c:425
 msgid "_Yes"
@@ -703,12 +673,12 @@ msgstr "Lecseréli ezt a meglévő fájlt:"
 #. Fourth box (size, volume, free space)
 #. 
 #: ../thunar/thunar-dialogs.c:618 ../thunar/thunar-dialogs.c:649
-#: ../thunar/thunar-properties-dialog.c:456
+#: ../thunar/thunar-properties-dialog.c:457
 msgid "Size:"
 msgstr "Méret:"
 
 #: ../thunar/thunar-dialogs.c:618 ../thunar/thunar-dialogs.c:649
-#: ../thunar/thunar-properties-dialog.c:417
+#: ../thunar/thunar-properties-dialog.c:418
 msgid "Modified:"
 msgstr "Módosítva:"
 
@@ -729,9 +699,7 @@ msgstr "a következő fájlra?"
 msgid ""
 "The desktop file \"%s\" is in an insecure location and not marked as "
 "executable. If you do not trust this program, click Cancel."
-msgstr ""
-"A(z) „%s” asztali fájl veszélyes helyen van, és nincs végrehajthatónak "
-"jelölve. Ha nem bízik meg a programban, kattintson a Mégse gombra."
+msgstr "A(z) „%s” asztali fájl veszélyes helyen van, és nincs végrehajthatónak jelölve. Ha nem bízik meg a programban, kattintson a Mégse gombra."
 
 #: ../thunar/thunar-dialogs.c:777
 msgid "_Launch Anyway"
@@ -801,7 +769,7 @@ msgstr "Tulajdonos"
 
 #. Permissions chooser
 #. 
-#: ../thunar/thunar-enum-types.c:98 ../thunar/thunar-properties-dialog.c:528
+#: ../thunar/thunar-enum-types.c:98 ../thunar/thunar-properties-dialog.c:529
 msgid "Permissions"
 msgstr "Jogosultságok"
 
@@ -821,42 +789,42 @@ msgstr "Fájl"
 msgid "File Name"
 msgstr "Fájlnév"
 
-#: ../thunar/thunar-file.c:929 ../thunar/thunar-gio-extensions.c:236
-#: ../thunar/thunar-shortcuts-model.c:891 ../thunar/thunar-window.c:369
+#: ../thunar/thunar-file.c:983 ../thunar/thunar-gio-extensions.c:236
+#: ../thunar/thunar-shortcuts-model.c:896 ../thunar/thunar-window.c:369
 msgid "File System"
 msgstr "Fájlrendszer"
 
-#: ../thunar/thunar-file.c:1366
+#: ../thunar/thunar-file.c:1421
 #, c-format
 msgid "The root folder has no parent"
 msgstr "A gyökérmappának nincs szülője"
 
-#: ../thunar/thunar-file.c:1451 ../thunar/thunar-file.c:1726
+#: ../thunar/thunar-file.c:1506 ../thunar/thunar-file.c:1778
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "Az asztali fájl feldolgozása meghiúsult: %s"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1463
+#: ../thunar/thunar-file.c:1518
 msgid "Untrusted application launcher"
 msgstr "Nem biztonságos alkalmazásindító"
 
-#: ../thunar/thunar-file.c:1488
+#: ../thunar/thunar-file.c:1543
 #, c-format
 msgid "No Exec field specified"
 msgstr "Nincs megadva Exec mező"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1497
+#: ../thunar/thunar-file.c:1552
 msgid "Untrusted link launcher"
 msgstr "Nem biztonságos linkindító"
 
-#: ../thunar/thunar-file.c:1513
+#: ../thunar/thunar-file.c:1568
 #, c-format
 msgid "No URL field specified"
 msgstr "Nincs megadva URL mező"
 
-#: ../thunar/thunar-file.c:1518
+#: ../thunar/thunar-file.c:1573
 msgid "Invalid desktop file"
 msgstr "Érvénytelen desktop fájl"
 
@@ -895,11 +863,11 @@ msgstr "Előre"
 msgid "Go to the next visited folder"
 msgstr "Az ez után megnyitott mappába lépés"
 
-#: ../thunar/thunar-history.c:352
+#: ../thunar/thunar-history.c:353
 msgid "The item will be removed from the history"
 msgstr "Az elem eltávolításra kerül az előzményekből"
 
-#: ../thunar/thunar-history.c:355
+#: ../thunar/thunar-history.c:356
 #, c-format
 msgid "Could not find \"%s\""
 msgstr "„%s” nem található"
@@ -958,49 +926,31 @@ msgstr "„%s” csoportjának módosítása meghiúsult: %s"
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "„%s” jogainak módosítása meghiúsult: %s"
 
-#. Copy/link name for n <= 3
-#: ../thunar/thunar-io-jobs-util.c:37
+#. I18N: put " (copy #) between basename and extension
+#: ../thunar/thunar-io-jobs-util.c:103
 #, c-format
-msgid "copy of %s"
-msgstr "%s másolata"
+msgid "%s (copy %u)%s"
+msgstr ""
 
-#: ../thunar/thunar-io-jobs-util.c:37 ../thunar/thunar-list-model.c:724
-#: ../thunar/thunar-list-model.c:1549 ../thunar/thunar-list-model.c:1560
-#: ../thunar/thunar-properties-dialog.c:935
+#. I18N: put " (copy #)" after filename (for files without extension)
+#: ../thunar/thunar-io-jobs-util.c:109
+#, c-format
+msgid "%s (copy %u)"
+msgstr ""
+
+#. I18N: name for first link to basename
+#: ../thunar/thunar-io-jobs-util.c:118 ../thunar/thunar-list-model.c:725
+#: ../thunar/thunar-list-model.c:1550 ../thunar/thunar-list-model.c:1561
+#: ../thunar/thunar-properties-dialog.c:936
 #, c-format
 msgid "link to %s"
 msgstr "link erre: %s"
 
-#: ../thunar/thunar-io-jobs-util.c:38
+#. I18N: name for nth link to basename
+#: ../thunar/thunar-io-jobs-util.c:123
 #, c-format
-msgid "another copy of %s"
-msgstr "%s újabb másolata"
-
-#: ../thunar/thunar-io-jobs-util.c:38
-#, c-format
-msgid "another link to %s"
-msgstr "újabb link erre: %s"
-
-#: ../thunar/thunar-io-jobs-util.c:39
-#, c-format
-msgid "third copy of %s"
-msgstr "%s harmadik másolata"
-
-#: ../thunar/thunar-io-jobs-util.c:39
-#, c-format
-msgid "third link to %s"
-msgstr "harmadik link erre: %s"
-
-#. Fallback copy/link name for n >= 4
-#: ../thunar/thunar-io-jobs-util.c:42
-#, c-format
-msgid "%uth copy of %s"
-msgstr "%2$s %1$u. másolata"
-
-#: ../thunar/thunar-io-jobs-util.c:42
-#, c-format
-msgid "%uth link to %s"
-msgstr "%u. link erre: %s"
+msgid "link %u to %s"
+msgstr ""
 
 #: ../thunar/thunar-job.c:254
 #, c-format
@@ -1008,10 +958,7 @@ msgid ""
 "The file \"%s\" already exists. Would you like to replace it?\n"
 "\n"
 "If you replace an existing file, its contents will be overwritten."
-msgstr ""
-"A fájl („%s”) már létezik. Le akarja cserélni?\n"
-"\n"
-"Ha lecseréli a meglévő fájlt, a tartalma felülíródik."
+msgstr "A fájl („%s”) már létezik. Le akarja cserélni?\n\nHa lecseréli a meglévő fájlt, a tartalma felülíródik."
 
 #: ../thunar/thunar-job.c:334
 msgid "Do you want to overwrite it?"
@@ -1029,9 +976,7 @@ msgstr "Kihagyja?"
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
-msgstr ""
-"Nincs elegendő hely a célon. Próbáljon meg fájlokat eltávolítani, hogy "
-"helyet nyerjen."
+msgstr "Nincs elegendő hely a célon. Próbáljon meg fájlokat eltávolítani, hogy helyet nyerjen."
 
 #. * CASE 1: nothing selected or atleast one directory in the selection
 #. **
@@ -1213,7 +1158,7 @@ msgid_plural "Send the selected files to \"%s\""
 msgstr[0] "A kijelölt fájl küldése: „%s”"
 msgstr[1] "A kijelölt fájlok küldése: „%s”"
 
-#: ../thunar/thunar-list-model.c:2192
+#: ../thunar/thunar-list-model.c:2198
 #, c-format
 msgid "%d item (%s), Free space: %s"
 msgid_plural "%d items (%s), Free space: %s"
@@ -1221,49 +1166,49 @@ msgstr[0] "%d elem (%s), szabad hely: %s"
 msgstr[1] "%d elem (%s), szabad hely: %s"
 
 #. just the standard text
-#: ../thunar/thunar-list-model.c:2199
+#: ../thunar/thunar-list-model.c:2205
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
 msgstr[0] "%d elem, szabad hely: %s"
 msgstr[1] "%d elem, szabad hely: %s"
 
-#: ../thunar/thunar-list-model.c:2208
+#: ../thunar/thunar-list-model.c:2214
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d elem"
 msgstr[1] "%d elem"
 
-#: ../thunar/thunar-list-model.c:2224
+#: ../thunar/thunar-list-model.c:2230
 #, c-format
 msgid "\"%s\" broken link"
 msgstr "„%s” törött link"
 
-#: ../thunar/thunar-list-model.c:2229
+#: ../thunar/thunar-list-model.c:2235
 #, c-format
 msgid "\"%s\" (%s) link to %s"
 msgstr "„%s” (%s) link erre: %s"
 
-#: ../thunar/thunar-list-model.c:2235
+#: ../thunar/thunar-list-model.c:2241
 #, c-format
 msgid "\"%s\" shortcut"
 msgstr "„%s” indítóikon"
 
-#: ../thunar/thunar-list-model.c:2239
+#: ../thunar/thunar-list-model.c:2245
 #, c-format
 msgid "\"%s\" mountable"
 msgstr "„%s” csatolható"
 
 #. I18N, first %s is the display name of the file, 2nd the file size, 3rd the
 #. content type
-#: ../thunar/thunar-list-model.c:2246
+#: ../thunar/thunar-list-model.c:2252
 #, c-format
 msgid "\"%s\" (%s) %s"
 msgstr "„%s” (%s) %s"
 
 #. I18N, first %s is the display name of the file, second the content type
-#: ../thunar/thunar-list-model.c:2255
+#: ../thunar/thunar-list-model.c:2261
 #, c-format
 msgid "\"%s\" %s"
 msgstr "„%s” %s"
@@ -1274,12 +1219,18 @@ msgstr "„%s” %s"
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
 #. 
-#: ../thunar/thunar-list-model.c:2265 ../thunar/thunar-properties-dialog.c:364
+#: ../thunar/thunar-list-model.c:2271 ../thunar/thunar-properties-dialog.c:365
 msgid "Original Path:"
 msgstr "Eredeti hely:"
 
+#. append the image dimensions to the statusbar text
+#: ../thunar/thunar-list-model.c:2294
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:149
+msgid "Image Size:"
+msgstr "Képméret:"
+
 #. item count if there are also folders in the selection
-#: ../thunar/thunar-list-model.c:2302
+#: ../thunar/thunar-list-model.c:2333
 #, c-format
 msgid "%d other item selected (%s)"
 msgid_plural "%d other items selected (%s)"
@@ -1287,14 +1238,14 @@ msgstr[0] "%d más elem kijelölve (%s)"
 msgstr[1] "%d más elem kijelölve (%s)"
 
 #. only non-folders are selected
-#: ../thunar/thunar-list-model.c:2309
+#: ../thunar/thunar-list-model.c:2340
 #, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
 msgstr[0] "%d elem kijelölve (%s)"
 msgstr[1] "%d elem kijelölve (%s)"
 
-#: ../thunar/thunar-list-model.c:2323
+#: ../thunar/thunar-list-model.c:2354
 #, c-format
 msgid "%d folder selected"
 msgid_plural "%d folders selected"
@@ -1305,7 +1256,7 @@ msgstr[1] "%d mappa kijelölve"
 #. * needs to change ", " to something else. The comma
 #. * is between the message about the number of folders
 #. * and the number of items in the selection
-#: ../thunar/thunar-list-model.c:2342
+#: ../thunar/thunar-list-model.c:2373
 #, c-format
 msgid "%s, %s"
 msgstr "%s, %s"
@@ -1374,9 +1325,7 @@ msgstr "Új mappa létrehozása itt: „%s”"
 #, c-format
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into \"%s\""
-msgstr ""
-"Egy korábbi Kivágás vagy Másolás paranccsal kijelölt fájlok áthelyezése vagy "
-"másolása ide: „%s”"
+msgstr "Egy korábbi Kivágás vagy Másolás paranccsal kijelölt fájlok áthelyezése vagy másolása ide: „%s”"
 
 #: ../thunar/thunar-location-buttons.c:1272
 #, c-format
@@ -1407,11 +1356,9 @@ msgstr "Eszköz leválasztása"
 #: ../thunar/thunar-notify.c:169
 #, c-format
 msgid ""
-"The device \"%s\" is being unmounted by the system. Please do not remove the "
-"media or disconnect the drive"
-msgstr ""
-"A(z) „%s” eszköz leválasztása a rendszerről. Ne távolítsa el az "
-"adathordozót, és ne kapcsolja le a meghajtót"
+"The device \"%s\" is being unmounted by the system. Please do not remove the"
+" media or disconnect the drive"
+msgstr "A(z) „%s” eszköz leválasztása a rendszerről. Ne távolítsa el az adathordozót, és ne kapcsolja le a meghajtót"
 
 #: ../thunar/thunar-notify.c:175 ../thunar/thunar-notify.c:214
 msgid "Writing data to device"
@@ -1420,11 +1367,9 @@ msgstr "Adatok eszközre írása"
 #: ../thunar/thunar-notify.c:176 ../thunar/thunar-notify.c:215
 #, c-format
 msgid ""
-"There is data that needs to be written to the device \"%s\" before it can be "
-"removed. Please do not remove the media or disconnect the drive"
-msgstr ""
-"Adatokat kell a(z) „%s” eszközre írni annak eltávolítása előtt. Ne távolítsa "
-"el az adathordozót, és ne kapcsolja le a meghajtót"
+"There is data that needs to be written to the device \"%s\" before it can be"
+" removed. Please do not remove the media or disconnect the drive"
+msgstr "Adatokat kell a(z) „%s” eszközre írni annak eltávolítása előtt. Ne távolítsa el az adathordozót, és ne kapcsolja le a meghajtót"
 
 #: ../thunar/thunar-notify.c:208
 msgid "Ejecting device"
@@ -1480,17 +1425,13 @@ msgstr "A fájl f_uttatható programként"
 msgid ""
 "Allowing untrusted programs to run\n"
 "presents a security risk to your system."
-msgstr ""
-"A nem megbízható programok futtatása\n"
-"biztonsági kockázatot jelent a rendszeren."
+msgstr "A nem megbízható programok futtatása\nbiztonsági kockázatot jelent a rendszeren."
 
 #: ../thunar/thunar-permissions-chooser.c:369
 msgid ""
 "The folder permissions are inconsistent, you\n"
 "may not be able to work with files in this folder."
-msgstr ""
-"A mappa jogosultságai nem konzisztensek, lehet\n"
-"hogy nem fog tudni dolgozni a mappa fájljaival."
+msgstr "A mappa jogosultságai nem konzisztensek, lehet\nhogy nem fog tudni dolgozni a mappa fájljaival."
 
 #: ../thunar/thunar-permissions-chooser.c:382
 msgid "Correct _folder permissions..."
@@ -1521,9 +1462,7 @@ msgstr "Rekurzívan alkalmazza?"
 msgid ""
 "Do you want to apply your changes recursively to\n"
 "all files and subfolders below the selected folder?"
-msgstr ""
-"Szeretné a változtatásokat rekurzívan, a kijelölt\n"
-"mappában lévő minden fájlra és mappára alkalmazni?"
+msgstr "Szeretné a változtatásokat rekurzívan, a kijelölt\nmappában lévő minden fájlra és mappára alkalmazni?"
 
 #: ../thunar/thunar-permissions-chooser.c:551
 msgid "Do _not ask me again"
@@ -1534,9 +1473,7 @@ msgid ""
 "If you select this option your choice will be remembered and you won't be "
 "asked again. You can use the preferences dialog to alter your choice "
 "afterwards."
-msgstr ""
-"A választás megjegyzése, így a kérdés nem jelenik meg többször. Ezt a "
-"döntést a beállítások ablakban változtathatja meg."
+msgstr "A választás megjegyzése, így a kérdés nem jelenik meg többször. Ezt a döntést a beállítások ablakban változtathatja meg."
 
 #: ../thunar/thunar-permissions-chooser.c:914
 msgid "Mixed file owners"
@@ -1582,9 +1519,7 @@ msgid ""
 "The folder permissions will be reset to a consistent state. Only users "
 "allowed to read the contents of this folder will be allowed to enter the "
 "folder afterwards."
-msgstr ""
-"A mappa jogosultságai vissza lesznek állítva konzisztens állapotba. Ezután "
-"csak a mappa olvasására jogosult felhasználók nyithatják majd meg a mappát."
+msgstr "A mappa jogosultságai vissza lesznek állítva konzisztens állapotba. Ezután csak a mappa olvasására jogosult felhasználók nyithatják majd meg a mappát."
 
 #: ../thunar/thunar-preferences-dialog.c:225
 msgid "File Manager Preferences"
@@ -1642,10 +1577,9 @@ msgid "Sort _folders before files"
 msgstr "_Mappák mindig a fájlok előtt"
 
 #: ../thunar/thunar-preferences-dialog.c:299
-msgid "Select this option to list folders before files when you sort a folder."
-msgstr ""
-"Válassza ezt a lehetőséget, ha rendezésnél a mappákat a fájlok előtt "
-"szeretné találni."
+msgid ""
+"Select this option to list folders before files when you sort a folder."
+msgstr "Válassza ezt a lehetőséget, ha rendezésnél a mappákat a fájlok előtt szeretné találni."
 
 #: ../thunar/thunar-preferences-dialog.c:319
 msgid "_Text beside icons"
@@ -1655,8 +1589,7 @@ msgstr "Szö_veg az ikon mellett"
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
-msgstr ""
-"Az elemek ikonfeliratai az ikon mellett, ne az ikon alatt jelenjenek meg."
+msgstr "Az elemek ikonfeliratai az ikon mellett, ne az ikon alatt jelenjenek meg."
 
 #: ../thunar/thunar-preferences-dialog.c:330
 msgid "Date"
@@ -1723,10 +1656,9 @@ msgstr "Ikon_matricák megjelenítése"
 #: ../thunar/thunar-preferences-dialog.c:406
 msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
-"folders for which emblems have been defined in the folders properties dialog."
-msgstr ""
-"Ikonmatricák megjelenítése a könyvjelzők ablaktáblán minden mappához, "
-"amelyek tulajdonságok ablakában matricák lettek megadva."
+"folders for which emblems have been defined in the folders properties "
+"dialog."
+msgstr "Ikonmatricák megjelenítése a könyvjelzők ablaktáblán minden mappához, amelyek tulajdonságok ablakában matricák lettek megadva."
 
 #: ../thunar/thunar-preferences-dialog.c:415
 msgid "Tree Pane"
@@ -1744,9 +1676,7 @@ msgstr "Ikonmatri_cák megjelenítése"
 msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
-msgstr ""
-"Ikonmatricák megjelenítése a fa ablaktáblán minden mappához, amelyek "
-"tulajdonságok ablakában matricák lettek megadva."
+msgstr "Ikonmatricák megjelenítése a fa ablaktáblán minden mappához, amelyek tulajdonságok ablakában matricák lettek megadva."
 
 #. Behavior
 #. 
@@ -1766,9 +1696,7 @@ msgstr "Elemek _aktiválása egy kattintással"
 msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
-msgstr ""
-"Adja meg az elem kijelölése előtti _késleltetést,\n"
-"amikor az egérmutató rámutat:"
+msgstr "Adja meg az elem kijelölése előtti _késleltetést,\namikor az egérmutató rámutat:"
 
 #: ../thunar/thunar-preferences-dialog.c:511
 msgid ""
@@ -1777,12 +1705,7 @@ msgid ""
 "disable this behavior by moving the slider to the left-most position. This "
 "behavior may be useful when single clicks activate items, and you want only "
 "to select the item without activating it."
-msgstr ""
-"Az egy kattintásos aktiválás engedélyezésekor az egérmutatóval egy elemre "
-"mutatva a kiválasztott késleltetés után az elem automatikusan kijelölésre "
-"kerül. Ez a viselkedés a csúszka balra mozgatásával kikapcsolható. Akkor "
-"lehet hasznos, ha az elemeket aktiválás nélkül akarja kijelölni egy "
-"kattintásos aktiválás mellett."
+msgstr "Az egy kattintásos aktiválás engedélyezésekor az egérmutatóval egy elemre mutatva a kiválasztott késleltetés után az elem automatikusan kijelölésre kerül. Ez a viselkedés a csúszka balra mozgatásával kikapcsolható. Akkor lehet hasznos, ha az elemeket aktiválás nélkül akarja kijelölni egy kattintásos aktiválás mellett."
 
 #: ../thunar/thunar-preferences-dialog.c:529
 msgid "Disabled"
@@ -1827,10 +1750,7 @@ msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
-msgstr ""
-"Mappa jogosultságainak módosításakor a\n"
-"módosításokat a mappa tartalmára is alkalmazhatja.\n"
-"Alább kiválaszthatja az alapértelmezett viselkedést:"
+msgstr "Mappa jogosultságainak módosításakor a\nmódosításokat a mappa tartalmára is alkalmazhatja.\nAlább kiválaszthatja az alapértelmezett viselkedést:"
 
 #: ../thunar/thunar-preferences-dialog.c:611
 msgid "Ask everytime"
@@ -1857,9 +1777,7 @@ msgstr "_Kötetkezelés engedélyezése"
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives\n"
 "and media (i.e. how cameras should be handled)."
-msgstr ""
-"<a href=\"volman-config:\">Állítsa be</a> az eltávolítható meghajtók\n"
-"és adathordozók (például fényképezőgépek) kezelését."
+msgstr "<a href=\"volman-config:\">Állítsa be</a> az eltávolítható meghajtók\nés adathordozók (például fényképezőgépek) kezelését."
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
@@ -1884,94 +1802,94 @@ msgstr[1] "%d fájlművelet fut"
 msgid "Cancelling..."
 msgstr "Megszakítás…"
 
-#: ../thunar/thunar-properties-dialog.c:241
+#: ../thunar/thunar-properties-dialog.c:242
 msgid "General"
 msgstr "Általános"
 
-#: ../thunar/thunar-properties-dialog.c:264
+#: ../thunar/thunar-properties-dialog.c:265
 #: ../plugins/thunar-uca/thunar-uca-editor.c:132
 msgid "_Name:"
 msgstr "_Név:"
 
-#: ../thunar/thunar-properties-dialog.c:291
+#: ../thunar/thunar-properties-dialog.c:292
 msgid "Names:"
 msgstr "Nevek:"
 
 #. Second box (kind, open with, link target)
 #. 
-#: ../thunar/thunar-properties-dialog.c:311
+#: ../thunar/thunar-properties-dialog.c:312
 msgid "Kind:"
 msgstr "Típus:"
 
-#: ../thunar/thunar-properties-dialog.c:332
+#: ../thunar/thunar-properties-dialog.c:333
 msgid "_Open With:"
 msgstr "Megnyitás _ezzel:"
 
-#: ../thunar/thunar-properties-dialog.c:346
+#: ../thunar/thunar-properties-dialog.c:347
 msgid "Link Target:"
 msgstr "Link célja:"
 
-#: ../thunar/thunar-properties-dialog.c:378
+#: ../thunar/thunar-properties-dialog.c:379
 msgid "Location:"
 msgstr "Hely:"
 
 #. Third box (deleted, modified, accessed)
 #. 
-#: ../thunar/thunar-properties-dialog.c:403
+#: ../thunar/thunar-properties-dialog.c:404
 msgid "Deleted:"
 msgstr "Törölve:"
 
-#: ../thunar/thunar-properties-dialog.c:431
+#: ../thunar/thunar-properties-dialog.c:432
 msgid "Accessed:"
 msgstr "Elérés:"
 
-#: ../thunar/thunar-properties-dialog.c:469
+#: ../thunar/thunar-properties-dialog.c:470
 msgid "Volume:"
 msgstr "Kötet:"
 
-#: ../thunar/thunar-properties-dialog.c:493
+#: ../thunar/thunar-properties-dialog.c:494
 msgid "Free Space:"
 msgstr "Szabad hely:"
 
 #. Emblem chooser
 #. 
-#: ../thunar/thunar-properties-dialog.c:518
+#: ../thunar/thunar-properties-dialog.c:519
 msgid "Emblems"
 msgstr "Matricák"
 
 #. allocate the icon chooser
 #. allocate the chooser dialog
-#: ../thunar/thunar-properties-dialog.c:757
+#: ../thunar/thunar-properties-dialog.c:758
 #: ../plugins/thunar-uca/thunar-uca-editor.c:609
 #, c-format
 msgid "Select an Icon for \"%s\""
 msgstr "Válassza ki „%s” ikonját"
 
-#: ../thunar/thunar-properties-dialog.c:783
+#: ../thunar/thunar-properties-dialog.c:784
 #, c-format
 msgid "Failed to change icon of \"%s\""
 msgstr "„%s” ikonjának módosítása meghiúsult"
 
 #. update the properties dialog title
-#: ../thunar/thunar-properties-dialog.c:882
+#: ../thunar/thunar-properties-dialog.c:883
 #, c-format
 msgid "%s - Properties"
 msgstr "%s – Tulajdonságok"
 
-#: ../thunar/thunar-properties-dialog.c:933
+#: ../thunar/thunar-properties-dialog.c:934
 msgid "broken link"
 msgstr "törött link"
 
-#: ../thunar/thunar-properties-dialog.c:944
+#: ../thunar/thunar-properties-dialog.c:945
 msgid "unknown"
 msgstr "ismeretlen"
 
 #. update the properties dialog title
-#: ../thunar/thunar-properties-dialog.c:1103
+#: ../thunar/thunar-properties-dialog.c:1104
 msgid "Properties"
 msgstr "Tulajdonságok"
 
-#: ../thunar/thunar-properties-dialog.c:1203
+#: ../thunar/thunar-properties-dialog.c:1204
 msgid "mixed"
 msgstr "vegyes"
 
@@ -2036,7 +1954,8 @@ msgid "New Name"
 msgstr "Új név"
 
 #: ../thunar/thunar-renamer-dialog.c:501
-msgid "Click here to view the documentation for the selected rename operation."
+msgid ""
+"Click here to view the documentation for the selected rename operation."
 msgstr "A kiválasztott átnevezési művelet dokumentációjának megjelenítése."
 
 #. TRANSLATORS: You can test this string by temporarily removing thunar-sbr.*
@@ -2049,10 +1968,7 @@ msgid ""
 "No renamer modules were found on your system. Please check your\n"
 "installation or contact your system administrator. If you install Thunar\n"
 "from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
-msgstr ""
-"Nem találhatók átnevező modulok a rendszeren. Ellenőrizze a\n"
-"telepítést vagy keresse meg a rendszergazdát. Ha a Thunart forrásból\n"
-"telepítette, engedélyezze a „Simple Builtin Renamers” bővítményt."
+msgstr "Nem találhatók átnevező modulok a rendszeren. Ellenőrizze a\ntelepítést vagy keresse meg a rendszergazdát. Ha a Thunart forrásból\ntelepítette, engedélyezze a „Simple Builtin Renamers” bővítményt."
 
 #. tell the user that we failed
 #: ../thunar/thunar-renamer-dialog.c:954
@@ -2086,9 +2002,7 @@ msgstr "Csoportos átnevező"
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
-msgstr ""
-"A Thunar csoportos átnevező hatékony és bővíthető\n"
-"eszköz több fájl egyidejű átnevezésére."
+msgstr "A Thunar csoportos átnevező hatékony és bővíthető\neszköz több fájl egyidejű átnevezésére."
 
 #: ../thunar/thunar-renamer-dialog.c:1690
 msgid "Remove File"
@@ -2107,61 +2021,57 @@ msgstr[1] "A kiválasztott fájlok eltávolítása az átnevezendő fájlok list
 msgid "Bulk Rename - Rename Multiple Files"
 msgstr "Csoportos átnevező – Több fájl átnevezése"
 
-#: ../thunar/thunar-renamer-progress.c:178
+#: ../thunar/thunar-renamer-progress.c:185
 #, c-format
 msgid "Failed to rename \"%s\" to \"%s\"."
 msgstr "„%s” átnevezése meghiúsult erre: „%s”."
 
-#: ../thunar/thunar-renamer-progress.c:185
+#: ../thunar/thunar-renamer-progress.c:192
 msgid ""
-"You can either choose to skip this file and continue to rename the remaining "
-"files, or revert the previously renamed files to their previous names, or "
+"You can either choose to skip this file and continue to rename the remaining"
+" files, or revert the previously renamed files to their previous names, or "
 "cancel the operation without reverting previous changes."
-msgstr ""
-"Kihagyhatja ezt a fájlt és folytathatja a többi fájl átnevezésével, vagy "
-"visszaállíthatja a már átnevezett fájlok korábbi neveit, vagy megszakíthatja "
-"a műveletet a korábbi módosítások visszavonása nélkül."
+msgstr "Kihagyhatja ezt a fájlt és folytathatja a többi fájl átnevezésével, vagy visszaállíthatja a már átnevezett fájlok korábbi neveit, vagy megszakíthatja a műveletet a korábbi módosítások visszavonása nélkül."
 
-#: ../thunar/thunar-renamer-progress.c:190
+#: ../thunar/thunar-renamer-progress.c:197
 msgid "_Revert Changes"
 msgstr "Módosítások _visszavonása"
 
-#: ../thunar/thunar-renamer-progress.c:191
-#: ../thunar/thunar-renamer-progress.c:200
+#: ../thunar/thunar-renamer-progress.c:198
+#: ../thunar/thunar-renamer-progress.c:207
 msgid "_Skip This File"
 msgstr "_Fájl kihagyása"
 
-#: ../thunar/thunar-renamer-progress.c:197
+#: ../thunar/thunar-renamer-progress.c:204
 msgid ""
 "Do you want to skip this file and continue to rename the remaining files?"
-msgstr ""
-"Ki szeretné hagyni ezt a fájlt és a többi fájl átnevezésével folytatni?"
+msgstr "Ki szeretné hagyni ezt a fájlt és a többi fájl átnevezésével folytatni?"
 
-#: ../thunar/thunar-shortcuts-model.c:596
+#: ../thunar/thunar-shortcuts-model.c:597
 #: ../plugins/thunar-tpa/thunar-tpa.c:310
 msgid "Trash is empty"
 msgstr "A Kuka üres"
 
-#: ../thunar/thunar-shortcuts-model.c:600
+#: ../thunar/thunar-shortcuts-model.c:601
 #, c-format
 msgid "Trash contains %d file"
 msgid_plural "Trash contains %d files"
 msgstr[0] "A Kuka %d fájlt tartalmaz"
 msgstr[1] "A Kuka %d fájlt tartalmaz"
 
-#: ../thunar/thunar-shortcuts-model.c:885
+#: ../thunar/thunar-shortcuts-model.c:890
 msgid "DEVICES"
 msgstr "ESZKÖZÖK"
 
-#: ../thunar/thunar-shortcuts-model.c:927
+#: ../thunar/thunar-shortcuts-model.c:932
 msgid "NETWORK"
 msgstr "HÁLÓZAT"
 
-#: ../thunar/thunar-shortcuts-model.c:933
+#: ../thunar/thunar-shortcuts-model.c:938
 msgid "Browse Network"
 msgstr "Hálózat tallózása"
 
-#: ../thunar/thunar-shortcuts-model.c:954
+#: ../thunar/thunar-shortcuts-model.c:959
 msgid "PLACES"
 msgstr "HELYEK"
 
@@ -2292,9 +2202,7 @@ msgstr "_Beillesztés"
 
 #: ../thunar/thunar-standard-view.c:400
 msgid "Move or copy files previously selected by a Cut or Copy command"
-msgstr ""
-"Egy Kivágás vagy Másolás parancs által kiválasztott fájlok áthelyezése vagy "
-"másolása"
+msgstr "Egy Kivágás vagy Másolás parancs által kiválasztott fájlok áthelyezése vagy másolása"
 
 #. append the "Move to Tash" menu action
 #: ../thunar/thunar-standard-view.c:401 ../thunar/thunar-tree-view.c:1272
@@ -2310,9 +2218,7 @@ msgstr "_Törlés"
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
-msgstr ""
-"Egy Kivágás vagy Másolás parancs által kiválasztott fájlok áthelyezése vagy "
-"másolása a kijelölt mappába"
+msgstr "Egy Kivágás vagy Másolás parancs által kiválasztott fájlok áthelyezése vagy másolása a kijelölt mappába"
 
 #: ../thunar/thunar-standard-view.c:404
 msgid "Select _all Files"
@@ -2342,7 +2248,7 @@ msgstr "Minden elem kijelölése, amely pillanatnyilag nincs kijelölve"
 msgid "Du_plicate"
 msgstr "Kettő_zés"
 
-#: ../thunar/thunar-standard-view.c:408 ../thunar/thunar-standard-view.c:4352
+#: ../thunar/thunar-standard-view.c:408 ../thunar/thunar-standard-view.c:4359
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "_Link létrehozása"
@@ -2362,96 +2268,95 @@ msgstr "_Helyreállítás"
 msgid "Create _Document"
 msgstr "_Dokumentum létrehozása"
 
-#: ../thunar/thunar-standard-view.c:1628
+#: ../thunar/thunar-standard-view.c:1631
 msgid "Loading folder contents..."
 msgstr "Mappatartalom betöltése…"
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2195 ../thunar/thunar-window.c:2787
+#: ../thunar/thunar-standard-view.c:2199 ../thunar/thunar-window.c:2788
 msgid "Failed to open the home folder"
 msgstr "A saját mappa megnyitása meghiúsult"
 
-#: ../thunar/thunar-standard-view.c:2245
+#: ../thunar/thunar-standard-view.c:2252
 msgid "New Empty File"
 msgstr "Új üres fájl"
 
-#: ../thunar/thunar-standard-view.c:2246
+#: ../thunar/thunar-standard-view.c:2253
 msgid "New Empty File..."
 msgstr "Új üres fájl…"
 
-#: ../thunar/thunar-standard-view.c:2571
+#: ../thunar/thunar-standard-view.c:2578
 msgid "Select by Pattern"
 msgstr "Kijelölés minta alapján"
 
-#: ../thunar/thunar-standard-view.c:2577
+#: ../thunar/thunar-standard-view.c:2584
 msgid "_Select"
 msgstr "_Kijelölés"
 
-#: ../thunar/thunar-standard-view.c:2586
+#: ../thunar/thunar-standard-view.c:2593
 msgid "_Pattern:"
 msgstr "_Minta:"
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: ../thunar/thunar-standard-view.c:3155
+#: ../thunar/thunar-standard-view.c:3162
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Az XDS húzási hely érvénytelen fájlnevet adott meg"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:3336
+#: ../thunar/thunar-standard-view.c:3343
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "A hivatkozás létrehozása meghiúsult erre az URL-címre: „%s”"
 
-#: ../thunar/thunar-standard-view.c:3729 ../thunar/thunar-window.c:2882
+#: ../thunar/thunar-standard-view.c:3736 ../thunar/thunar-window.c:2883
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "A(z) „%s” könyvtár megnyitása meghiúsult"
 
-#: ../thunar/thunar-standard-view.c:4303
+#: ../thunar/thunar-standard-view.c:4310
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "A kijelölt fájl előkészítése áthelyezésre a Beillesztés paranccsal"
-msgstr[1] ""
-"A kijelölt fájlok előkészítése áthelyezésre a Beillesztés paranccsal"
+msgstr[1] "A kijelölt fájlok előkészítése áthelyezésre a Beillesztés paranccsal"
 
-#: ../thunar/thunar-standard-view.c:4311
+#: ../thunar/thunar-standard-view.c:4318
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "A kijelölt fájl előkészítése másolásra a Beillesztés paranccsal"
 msgstr[1] "A kijelölt fájlok előkészítése másolásra a Beillesztés paranccsal"
 
-#: ../thunar/thunar-standard-view.c:4323
+#: ../thunar/thunar-standard-view.c:4330
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "A kijelölt fájl áthelyezése a Kukába"
 msgstr[1] "A kijelölt fájlok áthelyezése a Kukába"
 
-#: ../thunar/thunar-standard-view.c:4331
+#: ../thunar/thunar-standard-view.c:4338
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "A kijelölt fájl végleges törlése"
 msgstr[1] "A kijelölt fájlok végleges törlése"
 
-#: ../thunar/thunar-standard-view.c:4345
+#: ../thunar/thunar-standard-view.c:4352
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "A kijelölt fájl megkettőzése"
 msgstr[1] "Minden kijelölt fájl megkettőzése"
 
-#: ../thunar/thunar-standard-view.c:4354
+#: ../thunar/thunar-standard-view.c:4361
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Szimbolikus link létrehozása a kijelölt fájlra"
 msgstr[1] "Szimbolikus linkek létrehozása a kijelölt fájlokra"
 
-#: ../thunar/thunar-standard-view.c:4362
+#: ../thunar/thunar-standard-view.c:4369
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "A kijelölt fájl átnevezése"
 msgstr[1] "A kijelölt fájlok átnevezése"
 
-#: ../thunar/thunar-standard-view.c:4370
+#: ../thunar/thunar-standard-view.c:4377
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
 msgstr[0] "A kijelölt fájl visszaállítása"
@@ -2487,11 +2392,9 @@ msgstr "Kísérlet „%s” visszaállítására"
 #: ../thunar/thunar-transfer-job.c:847
 #, c-format
 msgid ""
-"The folder \"%s\" does not exist anymore but is required to restore the file "
-"\"%s\" from the trash"
-msgstr ""
-"A(z) „%s” mappa már nem létezik, de szükséges a(z) „%s” fájl "
-"visszaállításához a Kukából"
+"The folder \"%s\" does not exist anymore but is required to restore the file"
+" \"%s\" from the trash"
+msgstr "A(z) „%s” mappa már nem létezik, de szükséges a(z) „%s” fájl visszaállításához a Kukából"
 
 #: ../thunar/thunar-transfer-job.c:872
 #, c-format
@@ -2558,46 +2461,46 @@ msgstr "_Beillesztés a mappába"
 msgid "P_roperties..."
 msgstr "T_ulajdonságok…"
 
-#: ../thunar/thunar-util.c:160
+#: ../thunar/thunar-util.c:272
 #, c-format
 msgid "Invalid path"
 msgstr "Érvénytelen útvonal"
 
-#: ../thunar/thunar-util.c:194
+#: ../thunar/thunar-util.c:306
 #, c-format
 msgid "Unknown user \"%s\""
 msgstr "Ismeretlen felhasználó („%s”)"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:283
+#: ../thunar/thunar-util.c:395
 msgid "Today"
 msgstr "Ma"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:288
+#: ../thunar/thunar-util.c:400
 #, c-format
 msgid "Today at %X"
 msgstr "Ma, %X"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:296
+#: ../thunar/thunar-util.c:408
 msgid "Yesterday"
 msgstr "Tegnap"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:301
+#: ../thunar/thunar-util.c:413
 #, c-format
 msgid "Yesterday at %X"
 msgstr "Tegnap, %X"
 
 #. Days from last week
-#: ../thunar/thunar-util.c:309
+#: ../thunar/thunar-util.c:421
 #, c-format
 msgid "%A at %X"
 msgstr "%A, %X"
 
 #. Any other date
-#: ../thunar/thunar-util.c:314
+#: ../thunar/thunar-util.c:426
 #, c-format
 msgid "%x at %X"
 msgstr "%x, %X"
@@ -2690,7 +2593,6 @@ msgstr "A tartalom részletesebb megjelenítése"
 msgid "Zoom _Out"
 msgstr "_Kicsinyítés"
 
-# FIXME: jobb ötletek?
 #: ../thunar/thunar-window.c:363
 msgid "Show the contents in less detail"
 msgstr "A tartalom vázlatosabb megjelenítése"
@@ -2866,81 +2768,69 @@ msgstr "Figyelem, a root fiókot használja, így árthat is a rendszerének."
 msgid "Close tab"
 msgstr "Lap bezárása"
 
-#: ../thunar/thunar-window.c:2011
+#: ../thunar/thunar-window.c:2012
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "„%s” megnyitása"
 
-#: ../thunar/thunar-window.c:2209
+#: ../thunar/thunar-window.c:2210
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "„%s” indítása meghiúsult"
 
-#: ../thunar/thunar-window.c:2762
+#: ../thunar/thunar-window.c:2763
 msgid "Failed to open parent folder"
 msgstr "A szülőmappa megnyitása meghiúsult"
 
-#: ../thunar/thunar-window.c:2857
+#: ../thunar/thunar-window.c:2858
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "A(z) „%s” könyvtár nem létezik. Létrehozza?"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:2939
+#: ../thunar/thunar-window.c:2940
 msgid "About Templates"
 msgstr "Sablonok névjegye"
 
-#: ../thunar/thunar-window.c:2961
+#: ../thunar/thunar-window.c:2962
 msgid "All files in this folder will appear in the \"Create Document\" menu."
-msgstr ""
-"Ezen mappa minden fájlja megjelenik a „Dokumentum létrehozása” menüben."
+msgstr "Ezen mappa minden fájlja megjelenik a „Dokumentum létrehozása” menüben."
 
-#: ../thunar/thunar-window.c:2968
+#: ../thunar/thunar-window.c:2969
 msgid ""
-"If you frequently create certain kinds  of documents, make a copy of one and "
-"put it in this folder. Thunar will add an entry for this document in the "
-"\"Create Document\" menu.\n"
+"If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
-"You can then select the entry from the \"Create Document\" menu and a copy "
-"of the document will be created in the directory you are viewing."
-msgstr ""
-"Ha gyakran hoz létre bizonyos típusú dokumentumokat, akkor készítsen "
-"másolatot az egyikről és helyezze ebbe a mappába. A Thunar felvesz egy erre "
-"a dokumentumra mutató bejegyzést a „Dokumentum létrehozása” menübe.\n"
-"\n"
-"Ezután kiválaszthatja a „Dokumentum létrehozása” menü elemét és az éppen "
-"megjelenített könyvtárban létrejön a dokumentum egy másolata."
+"You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
+msgstr "Ha gyakran hoz létre bizonyos típusú dokumentumokat, akkor készítsen másolatot az egyikről és helyezze ebbe a mappába. A Thunar felvesz egy erre a dokumentumra mutató bejegyzést a „Dokumentum létrehozása” menübe.\n\nEzután kiválaszthatja a „Dokumentum létrehozása” menü elemét és az éppen megjelenített könyvtárban létrejön a dokumentum egy másolata."
 
-#: ../thunar/thunar-window.c:2980
+#: ../thunar/thunar-window.c:2981
 msgid "Do _not display this message again"
 msgstr "_Ne jelenítse meg újra ezt az üzenetet"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3010
+#: ../thunar/thunar-window.c:3011
 msgid "Failed to open the file system root folder"
 msgstr "A fájlrendszer gyökérmappájának megnyitása meghiúsult"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3045
+#: ../thunar/thunar-window.c:3046
 msgid "Failed to display the contents of the trash can"
 msgstr "A Kuka tartalmának megjelenítése meghiúsult"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3080
+#: ../thunar/thunar-window.c:3081
 msgid "Failed to browse the network"
 msgstr "A hálózat tallózása meghiúsult"
 
-#: ../thunar/thunar-window.c:3164
+#: ../thunar/thunar-window.c:3165
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
-msgstr ""
-"A Thunar egy gyors és egyszerűen használható\n"
-"fájlkezelő az Xfce asztali környezethez."
+msgstr "A Thunar egy gyors és egyszerűen használható\nfájlkezelő az Xfce asztali környezethez."
 
 #. set window title
-#: ../thunar/thunar-window.c:3218 ../Thunar.desktop.in.in.h:2
-#: ../thunar/thunar-settings.desktop.in.h:2
+#: ../thunar/thunar-window.c:3219 ../Thunar.desktop.in.in.h:3
+#: ../thunar/thunar-settings.desktop.in.h:1
 msgid "File Manager"
 msgstr "Fájlkezelő"
 
@@ -3020,11 +2910,9 @@ msgstr "Megjegyzés:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:248
 msgid ""
-"Tooltip for the entry, for example \"View sites on the Internet\" in case of "
-"Firefox. Should not be redundant with the name or the description."
-msgstr ""
-"A bejegyzés buboréksúgója, például „Internetes oldalak megjelenítése” a "
-"Firefox esetén. Ne ismételje meg a nevet vagy a leírást."
+"Tooltip for the entry, for example \"View sites on the Internet\" in case of"
+" Firefox. Should not be redundant with the name or the description."
+msgstr "A bejegyzés buboréksúgója, például „Internetes oldalak megjelenítése” a Firefox esetén. Ne ismételje meg a nevet vagy a leírást."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:268
 msgid "Options:"
@@ -3039,10 +2927,7 @@ msgid ""
 "Select this option to enable startup notification when the command is run "
 "from the file manager or the menu. Not every application supports startup "
 "notification."
-msgstr ""
-"Válassza ezt a lehetőséget indítási értesítés használatához a parancs "
-"fájlkezelőből vagy a menüből való futtatásakor. Nem minden alkalmazás "
-"támogatja az indítási értesítést."
+msgstr "Válassza ezt a lehetőséget indítási értesítés használatához a parancs fájlkezelőből vagy a menüből való futtatásakor. Nem minden alkalmazás támogatja az indítási értesítést."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:282
 msgid "Run in _terminal"
@@ -3050,8 +2935,7 @@ msgstr "_Terminálban fusson"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:283
 msgid "Select this option to run the command in a terminal window."
-msgstr ""
-"Válassza ezt a lehetőséget a parancs terminálablakban való futtatásához."
+msgstr "Válassza ezt a lehetőséget a parancs terminálablakban való futtatásához."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:356
 msgid "Launcher"
@@ -3122,10 +3006,6 @@ msgstr "Kép"
 msgid "Image Type:"
 msgstr "Képtípus:"
 
-#: ../plugins/thunar-apr/thunar-apr-image-page.c:149
-msgid "Image Size:"
-msgstr "Képméret:"
-
 #. update the "Image Size" label
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:243
 #, c-format
@@ -3152,10 +3032,7 @@ msgid ""
 "For example, %Y will be substituted with the year, %m with the month and %d "
 "with the day. See the documentation of the date utility for additional "
 "information."
-msgstr ""
-"A formátum leírja a fájlnévbe beszúrandó dátum- és időrészeket. A %Y például "
-"az évvel, a %m a hónappal, a %d pedig a nappal lesz helyettesítve. További "
-"információkért lásd a dátum segédprogram dokumentációját."
+msgstr "A formátum leírja a fájlnévbe beszúrandó dátum- és időrészeket. A %Y például az évvel, a %m a hónappal, a %d pedig a nappal lesz helyettesítve. További információkért lásd a dátum segédprogram dokumentációját."
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:243
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:197
@@ -3296,12 +3173,9 @@ msgstr "Reg_uláris kifejezés"
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:224
 msgid ""
 "If you enable this option, the pattern will be treated as a regular "
-"expression and matched using the Perl-compatible regular expressions (PCRE). "
-"Check the documentation for details about the regular expression syntax."
-msgstr ""
-"A minta reguláris kifejezésként lesz értelmezve és Perl-kompatibilis "
-"reguláris kifejezések (PCRE) használatával illesztve. A reguláris "
-"kifejezések szintaxisával kapcsolatos részletekért nézze meg a dokumentációt."
+"expression and matched using the Perl-compatible regular expressions (PCRE)."
+" Check the documentation for details about the regular expression syntax."
+msgstr "A minta reguláris kifejezésként lesz értelmezve és Perl-kompatibilis reguláris kifejezések (PCRE) használatával illesztve. A reguláris kifejezések szintaxisával kapcsolatos részletekért nézze meg a dokumentációt."
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:231
 msgid "Replace _With:"
@@ -3320,9 +3194,7 @@ msgstr "Kis- és _nagybetűk"
 msgid ""
 "If you enable this option, the pattern will be searched in a case-sensitive "
 "manner. The default is to use a case-insensitive search."
-msgstr ""
-"A minta kis- és nagybetűérzékenyen lesz keresve. Az alapértelmezett keresés "
-"nem különbözteti meg kis- és nagybetűket."
+msgstr "A minta kis- és nagybetűérzékenyen lesz keresve. Az alapértelmezett keresés nem különbözteti meg kis- és nagybetűket."
 
 #. setup a tooltip with the error message
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:610
@@ -3351,12 +3223,9 @@ msgstr "Küldés _tömörítve"
 #: ../plugins/thunar-sendto-email/main.c:202
 msgid ""
 "When sending a file via email, you can either choose to send the file "
-"directly, as is, or compress the file before attaching it to an email. It is "
-"highly recommended to compress large files before sending them."
-msgstr ""
-"Fájl e-mailben való küldésekor választhat a fájl közvetlen, változatlan "
-"formában történő küldése és az e-mailhez csatolás előtti tömörítése között. "
-"Nagy fájlok küldésekor javasolt a tömörítés."
+"directly, as is, or compress the file before attaching it to an email. It is"
+" highly recommended to compress large files before sending them."
+msgstr "Fájl e-mailben való küldésekor választhat a fájl közvetlen, változatlan formában történő küldése és az e-mailhez csatolás előtti tömörítése között. Nagy fájlok küldésekor javasolt a tömörítés."
 
 #: ../plugins/thunar-sendto-email/main.c:213
 #, c-format
@@ -3375,10 +3244,7 @@ msgid ""
 "files directly, attaching multiple files to an email, or send all files "
 "compressed into a single archive file and attach the archive. It is highly "
 "recommended to send multiple large files as archive."
-msgstr ""
-"Több fájl e-mailben való küldésekor választhat a fájlok közvetlen küldése "
-"(az e-mailhez több fájl csatolása) és az e-mailhez csatolás előtti egyetlen "
-"fájlba tömörítése között. Több nagy fájl küldésekor javasolt a tömörítés."
+msgstr "Több fájl e-mailben való küldésekor választhat a fájlok közvetlen küldése (az e-mailhez több fájl csatolása) és az e-mailhez csatolás előtti egyetlen fájlba tömörítése között. Több nagy fájl küldésekor javasolt a tömörítés."
 
 #. allocate the progress dialog
 #. setup the label
@@ -3434,12 +3300,12 @@ msgid "Trash contains files"
 msgstr "A Kuka fájlokat tartalmaz"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:1
-msgid "Display the trash can"
-msgstr "A Kuka megjelenítése"
-
-#: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:2
 msgid "Trash Applet"
 msgstr "Kuka kisalkalmazás"
+
+#: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:2
+msgid "Display the trash can"
+msgstr "A Kuka megjelenítése"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:116
 msgid "Custom Actions"
@@ -3449,9 +3315,7 @@ msgstr "Egyéni műveletek"
 msgid ""
 "You can configure custom actions that will appear in the\n"
 "file managers context menus for certain kinds of files."
-msgstr ""
-"Beállíthat egyéni műveleteket, amelyek a fájlkezelő helyi\n"
-"menüjében jelennek meg bizonyos fájltípusok esetén."
+msgstr "Beállíthat egyéni műveleteket, amelyek a fájlkezelő helyi\nmenüjében jelennek meg bizonyos fájltípusok esetén."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:173
 msgid "Add a new custom action."
@@ -3490,9 +3354,7 @@ msgstr "A művelet lemezre mentése meghiúsult."
 msgid ""
 "Are you sure that you want to delete\n"
 "action \"%s\"?"
-msgstr ""
-"Biztos, hogy törli a(z) „%s”\n"
-"műveletet?"
+msgstr "Biztos, hogy törli a(z) „%s”\nműveletet?"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:437
 msgid "If you delete a custom action, it is permanently lost."
@@ -3516,9 +3378,7 @@ msgstr "_Leírás:"
 msgid ""
 "The description of the action that will be displayed as tooltip in the "
 "statusbar when selecting the item from the context menu."
-msgstr ""
-"A művelet leírása, amely használati utasításként fog megjelenni az "
-"állapotsoron az elem kiválasztásakor a helyi menüből."
+msgstr "A művelet leírása, amely használati utasításként fog megjelenni az állapotsoron az elem kiválasztásakor a helyi menüből."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:168
 msgid "_Command:"
@@ -3532,18 +3392,12 @@ msgid ""
 "case letters (e.g. %F, %D, %N) are used, the action will be applicable even "
 "if more than one item is selected. Else the action will only be applicable "
 "if exactly one item is selected."
-msgstr ""
-"A műveletet végrehajtó parancs a szükséges paraméterekkel. A támogatott "
-"paraméterváltozók listájáért, amelyek a parancs indításakor kerülnek "
-"helyettesítésre, lásd a lenti paraméterleírást. Nagybetűk (például %F, %D, "
-"%N) használatakor a művelet több elem kijelölése esetén is alkalmazható "
-"lesz. Ellenkező esetben a művelet csak akkor lesz alkalmazható, ha pontosan "
-"egy elemet jelölt ki."
+msgstr "A műveletet végrehajtó parancs a szükséges paraméterekkel. A támogatott paraméterváltozók listájáért, amelyek a parancs indításakor kerülnek helyettesítésre, lásd a lenti paraméterleírást. Nagybetűk (például %F, %D, %N) használatakor a művelet több elem kijelölése esetén is alkalmazható lesz. Ellenkező esetben a művelet csak akkor lesz alkalmazható, ha pontosan egy elemet jelölt ki."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:188
-msgid "Browse the file system to select an application to use for this action."
-msgstr ""
-"A fájlrendszer tallózása a művelethez használandó alkalmazás kiválasztásához."
+msgid ""
+"Browse the file system to select an application to use for this action."
+msgstr "A fájlrendszer tallózása a művelethez használandó alkalmazás kiválasztásához."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:204
 msgid "Use Startup Notification"
@@ -3551,12 +3405,10 @@ msgstr "Indítási értesítés használata"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:205
 msgid ""
-"Enable this option if you want a waiting cursor to be shown while the action "
-"is launched. This is also highly recommended if you have focus stealing "
+"Enable this option if you want a waiting cursor to be shown while the action"
+" is launched. This is also highly recommended if you have focus stealing "
 "prevention enabled in your window manager."
-msgstr ""
-"Várakozási kurzor megjelenítése a művelet indításakor. Határozottan "
-"javasolt, ha az ablakkezelőben engedélyezett a fókuszlopás megakadályozása."
+msgstr "Várakozási kurzor megjelenítése a művelet indításakor. Határozottan javasolt, ha az ablakkezelőben engedélyezett a fókuszlopás megakadályozása."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:211
 msgid "_Icon:"
@@ -3572,17 +3424,13 @@ msgstr "Nincs ikon"
 msgid ""
 "Click this button to select an icon file that will be displayed in the "
 "context menu in addition to the action name chosen above."
-msgstr ""
-"A fent kiválasztott műveletnév mellett a helyi menüben megjelenítendő ikon "
-"kiválasztása."
+msgstr "A fent kiválasztott műveletnév mellett a helyi menüben megjelenítendő ikon kiválasztása."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:251
 msgid ""
 "The following command parameters will be\n"
 "substituted when launching the action:"
-msgstr ""
-"A művelet indításakor a következő\n"
-"parancsparaméterek lesznek behelyettesítve:"
+msgstr "A művelet indításakor a következő\nparancsparaméterek lesznek behelyettesítve:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:289
 msgid "the path to the first selected file"
@@ -3622,12 +3470,9 @@ msgstr "_Fájlminta:"
 msgid ""
 "Enter a list of patterns that will be used to determine whether this action "
 "should be displayed for a selected file. If you specify more than one "
-"pattern here, the list items must be separated with semicolons (e.g. *.txt;*."
-"doc)."
-msgstr ""
-"Adja meg a minták listáját, amelyek alapján eldől, a művelet megjelenjen-e a "
-"kijelölt fájlhoz. Ha itt több mintát ad meg, akkor a listát pontosvesszőkkel "
-"kell elválasztani (például: *.txt;*.doc)."
+"pattern here, the list items must be separated with semicolons (e.g. "
+"*.txt;*.doc)."
+msgstr "Adja meg a minták listáját, amelyek alapján eldől, a művelet megjelenjen-e a kijelölt fájlhoz. Ha itt több mintát ad meg, akkor a listát pontosvesszőkkel kell elválasztani (például: *.txt;*.doc)."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:395
 msgid "Appears if selection contains:"
@@ -3669,15 +3514,7 @@ msgid ""
 "or folder. Additionally, you can specify that the\n"
 "action should only appear for certain kinds of\n"
 "files."
-msgstr ""
-"Ez az oldal azokat a feltételeket sorolja fel, amelyek\n"
-"fennállásakor a művelet megjelenik a fájlkezelő helyi\n"
-"menüiben. A fájlminták egyszerű fájlminták pontosvesszőkkel\n"
-"elválasztott listájaként kell megadni (például: *.txt;*.doc).\n"
-"Ahhoz, hogy a művelet megjelenjen egy fájl vagy mappa helyi\n"
-"menüjében, ezen minták legalább egyikének illeszkednie kell\n"
-"a fájl vagy mappa nevére. Ezen kívül megadhatja, hogy a\n"
-"művelet csak bizonyos típusú fájlokhoz jelenjen meg."
+msgstr "Ez az oldal azokat a feltételeket sorolja fel, amelyek\nfennállásakor a művelet megjelenik a fájlkezelő helyi\nmenüiben. A fájlminták egyszerű fájlminták pontosvesszőkkel\nelválasztott listájaként kell megadni (például: *.txt;*.doc).\nAhhoz, hogy a művelet megjelenjen egy fájl vagy mappa helyi\nmenüjében, ezen minták legalább egyikének illeszkednie kell\na fájl vagy mappa nevére. Ezen kívül megadhatja, hogy a\nművelet csak bizonyos típusú fájlokhoz jelenjen meg."
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:815
 #, c-format
@@ -3719,44 +3556,37 @@ msgid "Failed to launch action \"%s\"."
 msgstr "A művelet („%s”) indítása meghiúsult."
 
 #: ../plugins/thunar-uca/uca.xml.in.h:1
-msgid "Example for a custom action"
-msgstr "Példa egyéni műveletre"
-
-#: ../plugins/thunar-uca/uca.xml.in.h:2
 msgid "Open Terminal Here"
 msgstr "Terminál nyitása itt"
+
+#: ../plugins/thunar-uca/uca.xml.in.h:2
+msgid "Example for a custom action"
+msgstr "Példa egyéni műveletre"
 
 #: ../plugins/thunar-wallpaper/twp-provider.c:173
 msgid "Set as wallpaper"
 msgstr "Beállítás háttérképként"
 
 #: ../Thunar.desktop.in.in.h:1
-msgid "Browse the filesystem with the file manager"
-msgstr "A fájlrendszer böngészése a fájlkezelővel"
-
-#: ../Thunar.desktop.in.in.h:3
 msgid "Thunar File Manager"
 msgstr "Thunar fájlkezelő"
 
-#: ../Thunar-folder-handler.desktop.in.in.h:1
-msgid "Open Folder"
-msgstr "Mappa megnyitása"
+#: ../Thunar.desktop.in.in.h:2
+msgid "Browse the filesystem with the file manager"
+msgstr "A fájlrendszer böngészése a fájlkezelővel"
 
-#: ../Thunar-folder-handler.desktop.in.in.h:2
+#: ../Thunar-folder-handler.desktop.in.in.h:1
 msgid "Open Folder with Thunar"
 msgstr "Mappa megnyitása a Thunarral"
 
-#: ../Thunar-folder-handler.desktop.in.in.h:3
+#: ../Thunar-folder-handler.desktop.in.in.h:2
 msgid "Open the specified folders in Thunar"
 msgstr "A megadott mappák megnyitása a Thunarban"
 
-#: ../thunar/thunar-settings.desktop.in.h:1
+#: ../Thunar-folder-handler.desktop.in.in.h:3
+msgid "Open Folder"
+msgstr "Mappa megnyitása"
+
+#: ../thunar/thunar-settings.desktop.in.h:2
 msgid "Configure the Thunar file manager"
 msgstr "A Thunar fájlkezelő beállítása"
-
-#~ msgid ""
-#~ "Select this option to display previewable files within a folder as "
-#~ "automatically generated thumbnail icons."
-#~ msgstr ""
-#~ "Az előnézet készítésére alkalmas fájlok megjelenítése a mappákban "
-#~ "automatikusan előállított bélyegképekként."
