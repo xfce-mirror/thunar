@@ -27,6 +27,7 @@
 
 #include <gdk/gdkx.h>
 #include <X11/Xlib.h>
+#include <X11/Xatom.h>
 
 #include <glib/gi18n.h>
 
@@ -45,6 +46,7 @@ static GList *twp_provider_get_file_actions     (ThunarxMenuProvider      *menu_
                                                  GList                    *files);
 static void   twp_action_set_wallpaper          (GtkAction                *action,
                                                  gpointer                  user_data);
+static gint   twp_get_active_workspace_number   (GdkScreen *screen);
 
 
 typedef enum
@@ -217,15 +219,22 @@ twp_action_set_wallpaper (GtkAction *action,
   gint             screen_nr = 0;
   gint             n_monitors;
   gint             monitor_nr = 0;
+  gint             workspace;
   GdkScreen       *screen;
   gchar           *image_path_prop;
   gchar           *image_show_prop;
   gchar           *image_style_prop;
+  gchar           *monitor_name;
   gchar           *file_uri;
   gchar           *escaped_file_name;
   gchar           *file_name = NULL;
   gchar           *hostname = NULL;
   gchar           *command;
+
+  if (n_screens > 1)
+    screen = gdk_display_get_default_screen (display);
+  else
+    screen = gdk_display_get_screen (display, 0);
 
   if (desktop_type != DESKTOP_TYPE_NONE)
     {
@@ -239,10 +248,6 @@ twp_action_set_wallpaper (GtkAction *action,
 
           return;
         }
-      if (n_screens > 1)
-        screen = gdk_display_get_default_screen (display);
-      else
-        screen = gdk_display_get_screen (display, 0);
 
       n_monitors = gdk_screen_get_n_monitors (screen);
       if (n_monitors > 1)
@@ -252,12 +257,17 @@ twp_action_set_wallpaper (GtkAction *action,
       g_free(file_uri);
     }
 
+  workspace = twp_get_active_workspace_number (screen);
+
+  monitor_name = gdk_screen_get_monitor_plug_name (screen, monitor_nr);
+
   escaped_file_name = g_shell_quote (file_name);
 
   switch (desktop_type)
     {
       case DESKTOP_TYPE_XFCE:
         g_debug ("set on xfce");
+        /* This is the format for xfdesktop before 4.11 */
         image_path_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-path", screen_nr, monitor_nr);
         image_show_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-show", screen_nr, monitor_nr);
         image_style_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-style", screen_nr, monitor_nr);
@@ -276,6 +286,34 @@ twp_action_set_wallpaper (GtkAction *action,
 
         g_free(image_path_prop);
         g_free(image_show_prop);
+        g_free(image_style_prop);
+
+        /* This is the format for xfdesktop post 4.11. A workspace number is
+         * added and the monitor is referred to name. We set both formats so
+         * that it works as the user expects. */
+        if (monitor_name)
+          {
+            image_path_prop = g_strdup_printf("/backdrop/screen%d/monitor%s/workspace%d/last-image", screen_nr, monitor_name, workspace);
+            image_style_prop = g_strdup_printf("/backdrop/screen%d/monitor%s/workspace%d/image-style", screen_nr, monitor_name, workspace);
+          }
+        else
+          {
+            /* gdk_screen_get_monitor_plug_name can return NULL, in those
+             * instances we fallback to monitor number but still include the
+             * workspace number */
+            image_path_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/workspace%d/last-image", screen_nr, monitor_nr, workspace);
+            image_style_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/workspace%d/image-style", screen_nr, monitor_nr, workspace);
+          }
+
+        command = g_strdup_printf ("xfconf-query -c xfce4-desktop -p %s --create -t string -s %s", image_path_prop, escaped_file_name);
+        g_spawn_command_line_async (command, NULL);
+        g_free (command);
+
+        command = g_strdup_printf ("xfconf-query -c xfce4-desktop -p %s --create -t int -s 3", image_style_prop);
+        g_spawn_command_line_async (command, NULL);
+        g_free (command);
+
+        g_free(image_path_prop);
         g_free(image_style_prop);
         break;
 
@@ -302,6 +340,69 @@ twp_action_set_wallpaper (GtkAction *action,
         break;
     }
 
+  g_free (monitor_name);
   g_free (escaped_file_name);
-  g_free(file_name);
+  g_free (file_name);
+}
+
+/* Taken from xfce_spawn_get_active_workspace_number in xfce-spawn.c apart of
+ * the libxfce4ui library.
+ * http://git.xfce.org/xfce/libxfce4ui/tree/libxfce4ui/xfce-spawn.c#n193
+ */
+static gint
+twp_get_active_workspace_number (GdkScreen *screen)
+{
+  GdkWindow *root;
+  gulong     bytes_after_ret = 0;
+  gulong     nitems_ret = 0;
+  guint     *prop_ret = NULL;
+  Atom       _NET_CURRENT_DESKTOP;
+  Atom       _WIN_WORKSPACE;
+  Atom       type_ret = None;
+  gint       format_ret;
+  gint       ws_num = 0;
+
+  gdk_error_trap_push ();
+
+  root = gdk_screen_get_root_window (screen);
+
+  /* determine the X atom values */
+  _NET_CURRENT_DESKTOP = XInternAtom (GDK_WINDOW_XDISPLAY (root), "_NET_CURRENT_DESKTOP", False);
+  _WIN_WORKSPACE = XInternAtom (GDK_WINDOW_XDISPLAY (root), "_WIN_WORKSPACE", False);
+
+  if (XGetWindowProperty (GDK_WINDOW_XDISPLAY (root),
+                          gdk_x11_get_default_root_xwindow(),
+                          _NET_CURRENT_DESKTOP, 0, 32, False, XA_CARDINAL,
+                          &type_ret, &format_ret, &nitems_ret, &bytes_after_ret,
+                          (gpointer) &prop_ret) != Success)
+    {
+      if (XGetWindowProperty (GDK_WINDOW_XDISPLAY (root),
+                              gdk_x11_get_default_root_xwindow(),
+                              _WIN_WORKSPACE, 0, 32, False, XA_CARDINAL,
+                              &type_ret, &format_ret, &nitems_ret, &bytes_after_ret,
+                              (gpointer) &prop_ret) != Success)
+        {
+          if (G_UNLIKELY (prop_ret != NULL))
+            {
+              XFree (prop_ret);
+              prop_ret = NULL;
+            }
+        }
+    }
+
+  if (G_LIKELY (prop_ret != NULL))
+    {
+      if (G_LIKELY (type_ret != None && format_ret != 0))
+        ws_num = *prop_ret;
+      XFree (prop_ret);
+    }
+
+#if GTK_CHECK_VERSION (3, 0, 0)
+  gdk_error_trap_pop_ignored ();
+#else
+  if (gdk_error_trap_pop () != 0)
+    return 0;
+#endif
+
+  return ws_num;
 }
