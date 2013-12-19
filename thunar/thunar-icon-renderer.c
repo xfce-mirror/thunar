@@ -315,17 +315,51 @@ thunar_icon_renderer_color_selected (cairo_t   *cr,
   cairo_pattern_t *source;
   GtkStateType     state;
 
+#ifdef CAIRO_BUG_72551_FIXED
   cairo_save (cr);
 
   source = cairo_pattern_reference (cairo_get_source (cr));
   state = gtk_widget_has_focus (widget) ? GTK_STATE_SELECTED : GTK_STATE_ACTIVE;
   gdk_cairo_set_source_color (cr, &widget->style->base[state]);
   cairo_set_operator (cr, CAIRO_OPERATOR_MULTIPLY);
+  cairo_mask (cr, source);
+#else /* fallback for RENDER error */
 
   /* CAIRO_OPERATOR_MULTIPLY */
   /* causes libx11 error: error_code 2 request_code 155 minor_code 8 */
   /* with x11 1.0.3, xrender 0.9.1, cairo 1.12.2 */
   /* cairo_mask (cr, source); */
+
+  cairo_surface_t *target, *image_surface;
+  cairo_t         *image_cr;
+  double           x1, y1, x2, y2;
+
+  cairo_save (cr);
+
+  /* copy xlib surface to an image surface */
+  cairo_clip_extents(cr, &x1, &y1, &x2, &y2);
+  target = cairo_get_target (cr);
+  image_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, x2, y2);
+  image_cr = cairo_create (image_surface);
+  cairo_set_source_surface(image_cr, target, 0, 0);
+  cairo_set_operator(image_cr, CAIRO_OPERATOR_SOURCE);
+  cairo_paint(image_cr);
+
+  /* render on the image surface */
+  source = cairo_pattern_reference (cairo_get_source (cr));
+  state = gtk_widget_has_focus (widget) ? GTK_STATE_SELECTED : GTK_STATE_ACTIVE;
+  gdk_cairo_set_source_color (image_cr, &widget->style->base[state]);
+  cairo_set_operator (image_cr, CAIRO_OPERATOR_MULTIPLY);
+  cairo_mask (image_cr, source);
+
+  /* copy the image surface back to xlib one and clean up */
+  cairo_set_source_surface (cr, image_surface, 0, 0);
+  cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+  cairo_paint(cr);
+
+  cairo_destroy (image_cr);
+  cairo_surface_destroy (image_surface);
+#endif
 
   cairo_pattern_destroy (source);
   cairo_restore (cr);
