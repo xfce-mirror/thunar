@@ -35,7 +35,11 @@
 
 #include <thunar-tpa/thunar-tpa-bindings.h>
 
-
+#ifdef LIBXFCE4PANEL_CHECK_VERSION
+#if LIBXFCE4PANEL_CHECK_VERSION (4,9,0)
+#define HAS_PANEL_49
+#endif
+#endif
 
 typedef struct _ThunarTpaClass ThunarTpaClass;
 typedef struct _ThunarTpa      ThunarTpa;
@@ -56,7 +60,7 @@ void            thunar_tpa_register_type       (XfcePanelTypeModule *type_module
 static void     thunar_tpa_finalize            (GObject             *object);
 static void     thunar_tpa_construct           (XfcePanelPlugin     *panel_plugin);
 
-#if defined (LIBXFCE4PANEL_CHECK_VERSION) && LIBXFCE4PANEL_CHECK_VERSION (4,9,0)
+#ifdef HAS_PANEL_49
 static gboolean thunar_tpa_size_changed        (XfcePanelPlugin     *panel_plugin,
                                                 gint                 size);
 #endif
@@ -154,10 +158,8 @@ thunar_tpa_class_init (ThunarTpaClass *klass)
   plugin_class = XFCE_PANEL_PLUGIN_CLASS (klass);
   plugin_class->construct = thunar_tpa_construct;
 
-#ifdef LIBXFCE4PANEL_CHECK_VERSION
-#if LIBXFCE4PANEL_CHECK_VERSION (4, 9, 0)
+#ifdef HAS_PANEL_49
   plugin_class->size_changed = thunar_tpa_size_changed;
-#endif
 #endif
 }
 
@@ -244,11 +246,9 @@ thunar_tpa_construct (XfcePanelPlugin *panel_plugin)
 {
   ThunarTpa *plugin = THUNAR_TPA (panel_plugin);
 
-#ifdef LIBXFCE4PANEL_CHECK_VERSION
-#if LIBXFCE4PANEL_CHECK_VERSION (4, 9, 0)
+#ifdef HAS_PANEL_49
   /* make the plugin fit a single row */
   xfce_panel_plugin_set_small (panel_plugin, TRUE);
-#endif
 #endif
 
   /* add the "Empty Trash" menu item */
@@ -260,8 +260,7 @@ thunar_tpa_construct (XfcePanelPlugin *panel_plugin)
 
 
 
-#ifdef LIBXFCE4PANEL_CHECK_VERSION
-#if LIBXFCE4PANEL_CHECK_VERSION (4, 9, 0)
+#ifdef HAS_PANEL_49
 static gboolean
 thunar_tpa_size_changed (XfcePanelPlugin *panel_plugin,
                          gint             size)
@@ -274,7 +273,6 @@ thunar_tpa_size_changed (XfcePanelPlugin *panel_plugin,
 
   return TRUE;
 }
-#endif
 #endif
 
 
