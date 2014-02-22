@@ -2773,14 +2773,15 @@ thunar_file_is_executable (const ThunarFile *file)
           /* check for .exe, .bar or .com */
           can_execute = g_content_type_can_be_executable (content_type);
 #else
-          /* check if the content type is save to execute, we don't use
-           * g_content_type_can_be_executable() for unix because it also returns
-           * true for "text/plain" and we don't want that */
+          /* Check if the content type is safe to execute, we don't
+           * use g_content_type_can_be_executable() for unix because
+           * it also returns true for "text/plain" and we don't want
+           * that. Also do not execute x-shellscripts by default, it
+           * is safer to open them in an editor or run them in a
+           * terminal, usually they require parameters. */
           if (g_content_type_is_a (content_type, "application/x-executable")
-              || g_content_type_is_a (content_type, "application/x-shellscript"))
-            {
+              && ! g_content_type_is_a (content_type, "application/x-shellscript"))
               can_execute = TRUE;
-            }
 #endif
         }
     }
