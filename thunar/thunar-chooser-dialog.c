@@ -281,7 +281,7 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
 
   /* create the "Use as default for this kind of file" button */
   dialog->default_button = gtk_check_button_new_with_mnemonic (_("Use as _default for this kind of file"));
-  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->default_button), TRUE);
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->default_button), FALSE);
   exo_binding_new (G_OBJECT (dialog), "open", G_OBJECT (dialog->default_button), "visible");
   gtk_box_pack_start (GTK_BOX (box), dialog->default_button, FALSE, FALSE, 0);
   gtk_widget_show (dialog->default_button);
