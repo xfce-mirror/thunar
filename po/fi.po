@@ -4,13 +4,14 @@
 # 
 # Translators:
 # Jiri Grönroos <jiri.gronroos@iki.fi>, 2013
+# Juhani Numminen <juhaninumminen0@gmail.com>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-07-30 00:30+0200\n"
-"PO-Revision-Date: 2013-11-11 20:50+0000\n"
-"Last-Translator: Jiri Grönroos <jiri.gronroos@iki.fi>\n"
+"PO-Revision-Date: 2014-02-24 14:25+0000\n"
+"Last-Translator: Juhani Numminen <juhaninumminen0@gmail.com>\n"
 "Language-Team: Finnish (http://www.transifex.com/projects/p/xfce/language/fi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -670,7 +671,6 @@ msgid "ReplaceDialogPart1|Do you want to replace the existing file"
 msgstr "Korvataanko olemassaoleva tiedosto?"
 
 #. Fourth box (size, volume, free space)
-#. 
 #: ../thunar/thunar-dialogs.c:618 ../thunar/thunar-dialogs.c:649
 #: ../thunar/thunar-properties-dialog.c:457
 msgid "Size:"
@@ -698,7 +698,7 @@ msgstr "seuraavalla tiedostolla?"
 msgid ""
 "The desktop file \"%s\" is in an insecure location and not marked as "
 "executable. If you do not trust this program, click Cancel."
-msgstr ""
+msgstr "Käynnistin ”%s” ei ole turvallisessa sijainnissa eikä sitä ole merkitty suoritettavaksi. Jos et luota tähän ohjelmaan, valitse Peruuta."
 
 #: ../thunar/thunar-dialogs.c:777
 msgid "_Launch Anyway"
@@ -767,7 +767,6 @@ msgid "Owner"
 msgstr "Omistaja"
 
 #. Permissions chooser
-#. 
 #: ../thunar/thunar-enum-types.c:98 ../thunar/thunar-properties-dialog.c:529
 msgid "Permissions"
 msgstr "Käyttöoikeudet"
@@ -806,7 +805,7 @@ msgstr "Desktop-tiedoston jäsennys epäonnistui: %s"
 #. if the .desktop file is not secure, ask user what to do
 #: ../thunar/thunar-file.c:1518
 msgid "Untrusted application launcher"
-msgstr ""
+msgstr "Ei-luotettu sovelluskäynnistin"
 
 #: ../thunar/thunar-file.c:1543
 #, c-format
@@ -816,7 +815,7 @@ msgstr "Exec-kenttää ei ole määritetty."
 #. if the .desktop file is not secure, ask user what to do
 #: ../thunar/thunar-file.c:1552
 msgid "Untrusted link launcher"
-msgstr ""
+msgstr "Ei-luotettu linkin käynnistin"
 
 #: ../thunar/thunar-file.c:1568
 #, c-format
@@ -831,7 +830,7 @@ msgstr "Desktop-tiedosto ei kelpaa."
 #: ../thunar/thunar-gio-extensions.c:317
 #, c-format
 msgid "%s on %s"
-msgstr ""
+msgstr "%s koneella %s"
 
 #. free disk space string
 #: ../thunar/thunar-gio-extensions.c:427
@@ -869,7 +868,7 @@ msgstr "Tämä kohde poistetaan historiasta"
 #: ../thunar/thunar-history.c:356
 #, c-format
 msgid "Could not find \"%s\""
-msgstr ""
+msgstr "Kohdetta ”%s” ei löytynyt"
 
 #: ../thunar/thunar-icon-view.c:164
 msgid "Icon based directory listing"
@@ -929,13 +928,13 @@ msgstr "Kohteen \"%s\" käyttöoikeuksien muutos epäonnistui: %s"
 #: ../thunar/thunar-io-jobs-util.c:103
 #, c-format
 msgid "%s (copy %u)%s"
-msgstr ""
+msgstr "%s (kopio %u)%s"
 
 #. I18N: put " (copy #)" after filename (for files without extension)
 #: ../thunar/thunar-io-jobs-util.c:109
 #, c-format
 msgid "%s (copy %u)"
-msgstr ""
+msgstr "%s (kopio %u)"
 
 #. I18N: name for first link to basename
 #: ../thunar/thunar-io-jobs-util.c:118 ../thunar/thunar-list-model.c:725
@@ -949,7 +948,7 @@ msgstr "linkki kohteeseen %s"
 #: ../thunar/thunar-io-jobs-util.c:123
 #, c-format
 msgid "link %u to %s"
-msgstr ""
+msgstr "linkki %u kohteeseen %s"
 
 #: ../thunar/thunar-job.c:254
 #, c-format
@@ -975,7 +974,7 @@ msgstr "Haluatko ohittaa sen?"
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
-msgstr ""
+msgstr "Kohteessa ei ole tarpeeksi tilaa. Koeta poistaa tiedostoja."
 
 #. * CASE 1: nothing selected or atleast one directory in the selection
 #. **
@@ -1210,14 +1209,13 @@ msgstr "\"%s\" (%s) %s"
 #: ../thunar/thunar-list-model.c:2261
 #, c-format
 msgid "\"%s\" %s"
-msgstr ""
+msgstr "”%s” %s"
 
 #. TRANSLATORS: Try to come up with a short translation of "Original Path"
 #. (which is the path
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#. 
 #: ../thunar/thunar-list-model.c:2271 ../thunar/thunar-properties-dialog.c:365
 msgid "Original Path:"
 msgstr "Alkuperäinen polku:"
@@ -1233,8 +1231,8 @@ msgstr "Kuvan koko:"
 #, c-format
 msgid "%d other item selected (%s)"
 msgid_plural "%d other items selected (%s)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d muu kohde valittu (%s)"
+msgstr[1] "%d muuta kohdetta valittu (%s)"
 
 #. only non-folders are selected
 #: ../thunar/thunar-list-model.c:2340
@@ -1258,7 +1256,7 @@ msgstr[1] "%d kansiota valittu"
 #: ../thunar/thunar-list-model.c:2373
 #, c-format
 msgid "%s, %s"
-msgstr ""
+msgstr "%s, %s"
 
 #. append the "Open in New Tab" menu action
 #: ../thunar/thunar-location-buttons.c:176
@@ -1434,7 +1432,7 @@ msgstr "Kansion käyttöoikeudet eivät ole yhtäläiset,\net voi ehkä käyttä
 
 #: ../thunar/thunar-permissions-chooser.c:382
 msgid "Correct _folder permissions..."
-msgstr ""
+msgstr "K_orjaa kansion käyttöoikeudet…"
 
 #: ../thunar/thunar-permissions-chooser.c:383
 msgid "Click here to automatically fix the folder permissions."
@@ -1476,7 +1474,7 @@ msgstr "Tämä asetus saa sovelluksen muistamaan valintasi, eikä asiaa kysytä 
 
 #: ../thunar/thunar-permissions-chooser.c:914
 msgid "Mixed file owners"
-msgstr ""
+msgstr "Tiedostoilla eri omistajia"
 
 #: ../thunar/thunar-permissions-chooser.c:914
 msgid "Unknown file owner"
@@ -1503,7 +1501,7 @@ msgstr "Luku ja kirjoitus"
 
 #: ../thunar/thunar-permissions-chooser.c:999
 msgid "Varying (no change)"
-msgstr ""
+msgstr "Vaihteleva (ei muutosta)"
 
 #: ../thunar/thunar-permissions-chooser.c:1131
 msgid "Correct folder permissions automatically?"
@@ -1511,7 +1509,7 @@ msgstr "Korjataanko kansion käyttöoikeudet automaattisesti?"
 
 #: ../thunar/thunar-permissions-chooser.c:1133
 msgid "Correct _folder permissions"
-msgstr ""
+msgstr "K_orjaa kansion käyttöoikeudet"
 
 #: ../thunar/thunar-permissions-chooser.c:1135
 msgid ""
@@ -1525,7 +1523,6 @@ msgid "File Manager Preferences"
 msgstr "Tiedostonhallinnan asetukset"
 
 #. Display
-#. 
 #: ../thunar/thunar-preferences-dialog.c:242
 msgid "Display"
 msgstr "Näkymät"
@@ -1600,7 +1597,6 @@ msgid "_Format:"
 msgstr "_Muoto:"
 
 #. Side Pane
-#. 
 #: ../thunar/thunar-preferences-dialog.c:363
 msgid "Side Pane"
 msgstr "Sivupaneeli"
@@ -1678,7 +1674,6 @@ msgid ""
 msgstr "Valitse tämä näyttääksesi kansiopuupaneelissa kuvakkeiden tunnuskuvat kaikille kansioille, joille on sellaisia kansion ominaisuusdialogissa asetettu."
 
 #. Behavior
-#. 
 #: ../thunar/thunar-preferences-dialog.c:457
 msgid "Behavior"
 msgstr "Käytös"
@@ -1735,7 +1730,6 @@ msgid "Open folder in new _tab"
 msgstr "Avaa kansio uudessa _välilehdessä"
 
 #. Advanced
-#. 
 #: ../thunar/thunar-preferences-dialog.c:581
 msgid "Advanced"
 msgstr "Lisäasetukset"
@@ -1815,7 +1809,6 @@ msgid "Names:"
 msgstr "Nimet:"
 
 #. Second box (kind, open with, link target)
-#. 
 #: ../thunar/thunar-properties-dialog.c:312
 msgid "Kind:"
 msgstr "Tyyppi:"
@@ -1833,7 +1826,6 @@ msgid "Location:"
 msgstr "Sijainti:"
 
 #. Third box (deleted, modified, accessed)
-#. 
 #: ../thunar/thunar-properties-dialog.c:404
 msgid "Deleted:"
 msgstr "Poistettu:"
@@ -1851,7 +1843,6 @@ msgid "Free Space:"
 msgstr "Vapaata tilaa:"
 
 #. Emblem chooser
-#. 
 #: ../thunar/thunar-properties-dialog.c:519
 msgid "Emblems"
 msgstr "Tunnuskuvat"
@@ -1961,7 +1952,6 @@ msgstr "Napsauta tästä nähdäksesi valitun nimeämistoiminnon dokumentaation.
 #. from $libdir/thunarx-2/,
 #. *              and opening the multi rename dialog by selecting multiple
 #. files and pressing F2.
-#. 
 #: ../thunar/thunar-renamer-dialog.c:611
 msgid ""
 "No renamer modules were found on your system. Please check your\n"
@@ -2102,7 +2092,7 @@ msgstr "_Irrota liitos"
 #. append the "Eject" menu action
 #: ../thunar/thunar-shortcuts-view.c:1136 ../thunar/thunar-tree-view.c:1159
 msgid "_Eject"
-msgstr ""
+msgstr "_Poista asemasta"
 
 #. append the "Disconnect" item
 #: ../thunar/thunar-shortcuts-view.c:1153
@@ -2113,7 +2103,7 @@ msgstr "Luo _pikakuvake"
 #. append the "Mount Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:1174 ../thunar/thunar-tree-view.c:1168
 msgid "Disconn_ect"
-msgstr ""
+msgstr "_Irrota"
 
 #: ../thunar/thunar-shortcuts-view.c:1253
 msgid "_Remove Shortcut"
@@ -2170,7 +2160,7 @@ msgstr[1] "%u kohdetta, yhteensä %s"
 #. * directories were not accessible
 #: ../thunar/thunar-size-label.c:385
 msgid "(some contents unreadable)"
-msgstr ""
+msgstr "(jotakin sisältöä ei voi lukea)"
 
 #. nothing was readable, so permission was denied
 #: ../thunar/thunar-size-label.c:396
@@ -2522,7 +2512,7 @@ msgstr "Avaa uusi Thunar-ikkuna nykyisessä sijainnissa."
 
 #: ../thunar/thunar-window.c:352
 msgid "Detac_h Tab"
-msgstr ""
+msgstr "_Irrota välilehti"
 
 #: ../thunar/thunar-window.c:352
 msgid "Open current folder in a new window"
@@ -2733,7 +2723,6 @@ msgid "Change the visibility of this window's menubar"
 msgstr "Muuta ikkunan valikkopalkin näkyvyyttä"
 
 #. * add view options
-#. 
 #: ../thunar/thunar-window.c:764
 msgid "View as _Icons"
 msgstr "Näytä _kuvakkeet"
@@ -2889,11 +2878,11 @@ msgstr "Suoritettava sovellus, mahdollisesti määritteineen."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:197
 msgid "Working Directory:"
-msgstr ""
+msgstr "Työkansio:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:204
 msgid "The working directory for the program."
-msgstr ""
+msgstr "Ohjelman työkansio."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:219
 msgid "URL:"
@@ -3360,7 +3349,6 @@ msgid "If you delete a custom action, it is permanently lost."
 msgstr "Mukautetun toiminnon poistoa ei voi peruuttaa."
 
 #. Basic
-#. 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:123
 msgid "Basic"
 msgstr "Perustiedot"
