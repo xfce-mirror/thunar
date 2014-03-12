@@ -77,7 +77,7 @@ thunar_g_file_new_for_bookmarks (void)
   gchar *filename;
   GFile *bookmarks;
 
-  filename = g_build_filename (xfce_get_homedir (), ".gtk-bookmarks", NULL);
+  filename = g_build_filename (g_get_user_config_dir (), "gtk-3.0", "bookmarks", NULL);
   bookmarks = g_file_new_for_path (filename);
   g_free (filename);
 

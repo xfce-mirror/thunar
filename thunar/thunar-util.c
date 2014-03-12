@@ -196,6 +196,15 @@ thunar_util_load_bookmarks (GFile               *bookmarks_file,
 
   /* append the GTK+ bookmarks (if any) */
   fp = fopen (bookmarks_path, "r");
+  g_free (bookmarks_path);
+
+  if (G_UNLIKELY (fp == NULL))
+    {
+      bookmarks_path = g_build_filename (g_get_home_dir (), ".gtk-bookmarks", NULL);
+      fp = fopen(bookmarks_path, "r");
+      g_free(bookmarks_path);
+    }
+
   if (G_LIKELY (fp != NULL))
     {
       while (fgets (line, sizeof (line), fp) != NULL)
@@ -231,7 +240,6 @@ thunar_util_load_bookmarks (GFile               *bookmarks_file,
       fclose (fp);
     }
 
-  g_free (bookmarks_path);
 }
 
 

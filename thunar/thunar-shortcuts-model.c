@@ -1364,6 +1364,7 @@ thunar_shortcuts_model_save (ThunarShortcutsModel *model)
   gchar          *uri;
   GList          *lp;
   GError         *err = NULL;
+  GFile          *parent = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
 
@@ -1388,6 +1389,22 @@ thunar_shortcuts_model_save (ThunarShortcutsModel *model)
           g_free (uri);
         }
     }
+
+  /* create folder if it does not exist */
+  parent = g_file_get_parent (model->bookmarks_file);
+  if (!g_file_make_directory_with_parents (parent, NULL, &err))
+    {
+       if (g_error_matches (err, G_IO_ERROR, G_IO_ERROR_EXISTS))
+         {
+           g_clear_error (&err);
+         }
+       else
+         {
+           g_warning ("Failed to create bookmarks folder: %s", err->message);
+           g_error_free (err);
+         }
+    }
+  g_clear_object (&parent);
 
   /* write data to the disk */
   bookmarks_path = g_file_get_path (model->bookmarks_file);
