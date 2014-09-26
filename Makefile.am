@@ -66,6 +66,14 @@ desktop_in_files = $(desktop_in_in_files:.desktop.in.in=.desktop.in)
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
 
+#
+# .appdata
+#
+@INTLTOOL_XML_RULE@
+appdatadir = $(datadir)/appdata
+appdata_DATA = $(appdata_in_files:.xml.in=.xml)
+appdata_in_files = thunar.appdata.xml.in
+
 if HAVE_DBUS
 servicedir = $(datadir)/dbus-1/services
 service_in_files = org.xfce.FileManager.service.in org.xfce.Thunar.service.in
@@ -82,7 +90,10 @@ EXTRA_DIST =								\
 	intltool-merge.in						\
 	intltool-update.in						\
 	$(desktop_in_in_files)						\
-	$(service_in_files)
+	$(service_in_files)						\
+	$(appdata_in_files)
+
+CLEANFILES		= $(appdata_DATA)
 
 DISTCLEANFILES =							\
 	ThunarBulkRename						\
