@@ -3999,6 +3999,7 @@ thunar_file_list_get_applications (GList *file_list)
   GList       *next;
   GList       *ap;
   GList       *lp;
+  GAppInfo    *default_application;
   const gchar *previous_type = NULL;
   const gchar *current_type;
 
@@ -4017,7 +4018,25 @@ thunar_file_list_get_applications (GList *file_list)
 
       /* determine the list of applications that can open this file */
       if (G_UNLIKELY (current_type != NULL))
-        list = g_app_info_get_all_for_type (current_type);
+        {
+          list = g_app_info_get_all_for_type (current_type);
+
+          /* move any default application in front of the list */
+          default_application = g_app_info_get_default_for_type (current_type, FALSE);
+          if (G_LIKELY (default_application != NULL))
+            {
+              for (ap = list; ap != NULL; ap = ap->next)
+                {
+                  if (g_app_info_equal (ap->data, default_application))
+                    {
+                      g_object_unref (ap->data);
+                      list = g_list_delete_link (list, ap);
+                      break;
+                    }
+                }
+              list = g_list_prepend (list, default_application);
+            }
+        }
       else
         list = NULL;
 
