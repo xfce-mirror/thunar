@@ -3351,8 +3351,34 @@ thunar_file_get_thumbnail_path (ThunarFile *file)
           basename = g_strconcat (g_checksum_get_string (checksum), ".png", NULL);
           g_checksum_free (checksum);
 
-          file->thumbnail_path = g_build_filename (xfce_get_homedir (), ".thumbnails", 
-                                                   "normal", basename, NULL);
+          /* The thumbnail is in the format/location
+           * $XDG_CACHE_HOME/thumbnails/(nromal|large)/MD5_Hash_Of_URI.png
+           * for version 0.8.0 if XDG_CACHE_HOME is defined, otherwise
+           * /homedir/.thumbnails/(normal|large)/MD5_Hash_Of_URI.png
+           * will be used, which is also always used for versions prior
+           * to 0.7.0.
+           */
+
+          /* build and check if the thumbnail is in the new location */
+          file->thumbnail_path = g_build_path ("/", g_get_user_cache_dir(),
+                                               "thumbnails", "normal",
+                                               basename, NULL);
+
+          if (!g_file_test(file->thumbnail_path, G_FILE_TEST_EXISTS))
+            {
+              /* Fallback to old version */
+              g_free(file->thumbnail_path);
+
+              file->thumbnail_path = g_build_filename (xfce_get_homedir (), ".thumbnails",
+                                                       "normal", basename, NULL);
+
+              if(!g_file_test(file->thumbnail_path, G_FILE_TEST_EXISTS))
+              {
+                /* Thumbnail doesn't exist in either spot */
+                g_free(file->thumbnail_path);
+                file->thumbnail_path = NULL;
+              }
+            }
 
           g_free (basename);
         }
