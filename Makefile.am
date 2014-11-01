@@ -82,6 +82,15 @@ service_DATA = $(service_in_files:.service.in=.service)
 	$(AM_V_GEN) $(SED) -e "s,\@bindir\@,$(bindir),g" < $< > $@
 endif
 
+polkit_policydir = $(datadir)/polkit-1/actions
+polkit_in_in_files =			\
+	org.xfce.thunar.policy.in.in
+polkit_in_files = $(polkit_in_in_files:.policy.in.in=.policy.in)
+%.policy.in: %.policy.in.in
+	sed -e "s,\@bindir\@,$(bindir),g" < $< > $@
+polkit_policy_DATA = $(polkit_in_files:.policy.in=.policy)
+@INTLTOOL_POLICY_RULE@
+
 EXTRA_DIST =								\
 	FAQ								\
 	HACKING								\
@@ -91,7 +100,8 @@ EXTRA_DIST =								\
 	intltool-update.in						\
 	$(desktop_in_in_files)						\
 	$(service_in_files)						\
-	$(appdata_in_files)
+	$(appdata_in_files)						\
+	$(polkit_in_in_files)
 
 CLEANFILES		= $(appdata_DATA)
 
@@ -102,7 +112,9 @@ DISTCLEANFILES =							\
 	intltool-update							\
 	$(desktop_in_files)						\
 	$(desktop_DATA)							\
-	$(service_DATA)
+	$(service_DATA)							\
+	$(polkit_in_files)						\
+	$(polkit_policy_DATA)
 
 DISTCHECK_CONFIGURE_FLAGS =						\
 	--enable-gtk-doc						\
