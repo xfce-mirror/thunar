@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-02 00:30+0100\n"
-"PO-Revision-Date: 2014-11-02 21:43+0000\n"
+"PO-Revision-Date: 2014-11-03 02:15+0000\n"
 "Last-Translator: Tobias Bannert\n"
 "Language-Team: German (http://www.transifex.com/projects/p/thunar/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -137,7 +137,7 @@ msgstr "Objekte in absteigender Richtung sortieren"
 #. display an error message to the user
 #: ../thunar/thunar-application.c:451
 msgid "Failed to launch operation"
-msgstr "Die Operation konnte nicht gestartet werden"
+msgstr "Der Vorgang konnte nicht gestartet werden"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1168 ../thunar/thunar-application.c:1294
@@ -147,12 +147,12 @@ msgstr "Die Operation konnte nicht gestartet werden"
 #: ../thunar/thunar-shortcuts-view.c:1658 ../thunar/thunar-window.c:2236
 #, c-format
 msgid "Failed to open \"%s\""
-msgstr "Konnte »%s« nicht öffnen"
+msgstr "»%s« konnte nicht geöffnet werden"
 
 #: ../thunar/thunar-application.c:1298
 #, c-format
 msgid "Failed to open \"%s\": %s"
-msgstr "Konnte »%s« nicht öffnen: %s"
+msgstr "»%s« konnte nicht geöffnet werden: %s"
 
 #. display an error message
 #: ../thunar/thunar-application.c:1362
@@ -255,13 +255,13 @@ msgstr "Alle Dateien und Ordner aus dem Papierkorb entfernen?"
 #: ../thunar/thunar-shortcuts-view.c:1191 ../thunar/thunar-tree-view.c:1183
 #: ../thunar/thunar-window.c:351 ../plugins/thunar-tpa/thunar-tpa.c:191
 msgid "_Empty Trash"
-msgstr "Papierkorb l_eeren"
+msgstr "_Papierkorb leeren"
 
 #: ../thunar/thunar-application.c:2012
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
-msgstr "Wenn Sie den Papierkorb leeren, werden darin enthaltene Objekte dauerhaft gelöscht. Beachten Sie, dass Sie auch einzelne Objekte löschen können."
+msgstr "Wenn Sie den Papierkorb leeren, werden darin enthaltene Objekte dauerhaft gelöscht. Bitte beachten Sie, dass Sie auch einzelne Objekte löschen können."
 
 #: ../thunar/thunar-application.c:2029
 msgid "Emptying the Trash..."
@@ -285,7 +285,7 @@ msgstr "Dateien werden wiederhergestellt …"
 #: ../thunar/thunar-chooser-button.c:309 ../thunar/thunar-chooser-dialog.c:465
 #, c-format
 msgid "Failed to set default application for \"%s\""
-msgstr "Die Standardanwendung für »%s« konnte nicht gesetzt werden"
+msgstr "Die Standardanwendung für »%s« konnte nicht eingestellt werden"
 
 #: ../thunar/thunar-chooser-button.c:440
 #, c-format
@@ -820,7 +820,7 @@ msgstr "Das Exec-Feld fehlt oder ist leer"
 #. if the .desktop file is not secure, ask user what to do
 #: ../thunar/thunar-file.c:1552
 msgid "Untrusted link launcher"
-msgstr "Nicht vertrauenswürdiger Link-Starter"
+msgstr "Nicht vertrauenswürdiger Verknüpfungstarter"
 
 #: ../thunar/thunar-file.c:1568
 #, c-format
@@ -1785,15 +1785,15 @@ msgstr "Die Einstellungen der Datenträgerverwaltung konnten nicht geöffnet wer
 
 #: ../thunar/thunar-progress-dialog.c:94
 msgid "File Operation Progress"
-msgstr "Fortschritt der Dateioperation"
+msgstr "Dateivorgangsfortschritt"
 
 #. build the tooltip text
 #: ../thunar/thunar-progress-dialog.c:299
 #, c-format
 msgid "%d file operation running"
 msgid_plural "%d file operations running"
-msgstr[0] "%d Dateioperation wird ausgeführt"
-msgstr[1] "%d Dateioperationen werden ausgeführt"
+msgstr[0] "%d Dateivorgang wird ausgeführt"
+msgstr[1] "%d Dateivorgänge werden ausgeführt"
 
 #. update the status text
 #: ../thunar/thunar-progress-view.c:354
@@ -2240,7 +2240,7 @@ msgstr "Alle Objekte auswählen, die derzeit nicht markiert sind"
 
 #: ../thunar/thunar-standard-view.c:407
 msgid "Du_plicate"
-msgstr "_Duplizieren"
+msgstr "Ver_doppeln"
 
 #: ../thunar/thunar-standard-view.c:408 ../thunar/thunar-standard-view.c:4359
 msgid "Ma_ke Link"
@@ -2335,8 +2335,8 @@ msgstr[1] "Die ausgewählten Dateien dauerhaft löschen"
 #: ../thunar/thunar-standard-view.c:4352
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
-msgstr[0] "Die ausgewählte Datei duplizieren"
-msgstr[1] "Die ausgewählten Dateien duplizieren"
+msgstr[0] "Die ausgewählte Datei verdoppeln"
+msgstr[1] "Die ausgewählten Dateien verdoppeln"
 
 #: ../thunar/thunar-standard-view.c:4361
 msgid "Create a symbolic link for the selected file"
@@ -2681,7 +2681,7 @@ msgstr "Verborgene Dateien im momentan geöffneten Fenster anzeigen/verbergen"
 
 #: ../thunar/thunar-window.c:381
 msgid "_Pathbar Style"
-msgstr "_Pfadleisten-Stil"
+msgstr "_Pfadleistenstil"
 
 #: ../thunar/thunar-window.c:381
 msgid "Modern approach with buttons that correspond to folders"
@@ -2689,7 +2689,7 @@ msgstr "Moderner Ansatz mit Knöpfen, die Ordnern entsprechen"
 
 #: ../thunar/thunar-window.c:382
 msgid "_Toolbar Style"
-msgstr "_Werkzeugleisten-Stil"
+msgstr "_Werkzeugleistenstil"
 
 #: ../thunar/thunar-window.c:382
 msgid "Traditional approach with location bar and navigation buttons"
@@ -2936,7 +2936,7 @@ msgstr "Starter"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:358
 msgid "Link"
-msgstr "Link"
+msgstr "Verknüpfung"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:600
 #, c-format
@@ -3596,8 +3596,8 @@ msgstr ""
 #. to. This isn't a good idea, but is common on single user systems.
 #: ../org.xfce.thunar.policy.in.in.h:6
 msgid "Run Thunar as root"
-msgstr ""
+msgstr "Thunar als Systemverwalter starten"
 
 #: ../org.xfce.thunar.policy.in.in.h:7
 msgid "Authentication is required to run Thunar as root."
-msgstr ""
+msgstr "Legitimierung wird benötigt, um Thunar als Systemverwalter zu starten."
