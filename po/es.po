@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-30 00:30+0200\n"
-"PO-Revision-Date: 2014-09-08 16:08+0000\n"
+"POT-Creation-Date: 2014-11-02 00:30+0100\n"
+"PO-Revision-Date: 2014-11-03 05:24+0000\n"
 "Last-Translator: Pablo Roberto Francisco Lezaeta Reyes <prflr88@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/thunar/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -253,7 +253,7 @@ msgstr "¿Quiere eliminar todos los archivos y carpetas de la papelera?"
 #. prepare the menu item
 #: ../thunar/thunar-application.c:2008 ../thunar/thunar-location-buttons.c:179
 #: ../thunar/thunar-shortcuts-view.c:1191 ../thunar/thunar-tree-view.c:1183
-#: ../thunar/thunar-window.c:351 ../plugins/thunar-tpa/thunar-tpa.c:189
+#: ../thunar/thunar-window.c:351 ../plugins/thunar-tpa/thunar-tpa.c:191
 msgid "_Empty Trash"
 msgstr "_Vaciar la papelera"
 
@@ -502,7 +502,7 @@ msgstr "_Expandir automáticamente las columnas según se necesite"
 #. tell the user that we're unable to determine the file info
 #: ../thunar/thunar-column-model.c:858 ../thunar/thunar-list-model.c:680
 #: ../thunar/thunar-list-model.c:708
-#: ../thunar/thunar-permissions-chooser.c:229 ../thunar/thunar-util.c:446
+#: ../thunar/thunar-permissions-chooser.c:229 ../thunar/thunar-util.c:454
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:503
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:285
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:286
@@ -2042,7 +2042,7 @@ msgid ""
 msgstr "¿Quiere omitir este archivo y continuar renombrando los siguientes archivos?"
 
 #: ../thunar/thunar-shortcuts-model.c:597
-#: ../plugins/thunar-tpa/thunar-tpa.c:310
+#: ../plugins/thunar-tpa/thunar-tpa.c:308
 msgid "Trash is empty"
 msgstr "La papelera está vacía"
 
@@ -2455,46 +2455,46 @@ msgstr "_Pegar en la carpeta"
 msgid "P_roperties..."
 msgstr "P_ropiedades…"
 
-#: ../thunar/thunar-util.c:272
+#: ../thunar/thunar-util.c:280
 #, c-format
 msgid "Invalid path"
 msgstr "Ruta no válida"
 
-#: ../thunar/thunar-util.c:306
+#: ../thunar/thunar-util.c:314
 #, c-format
 msgid "Unknown user \"%s\""
 msgstr "Usuario «%s» desconocido"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:395
+#: ../thunar/thunar-util.c:403
 msgid "Today"
 msgstr "Hoy"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:400
+#: ../thunar/thunar-util.c:408
 #, c-format
 msgid "Today at %X"
 msgstr "Hoy a las %X"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:408
+#: ../thunar/thunar-util.c:416
 msgid "Yesterday"
 msgstr "Ayer"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:413
+#: ../thunar/thunar-util.c:421
 #, c-format
 msgid "Yesterday at %X"
 msgstr "Ayer a las %X"
 
 #. Days from last week
-#: ../thunar/thunar-util.c:421
+#: ../thunar/thunar-util.c:429
 #, c-format
 msgid "%A at %X"
 msgstr "%A a las %X"
 
 #. Any other date
-#: ../thunar/thunar-util.c:426
+#: ../thunar/thunar-util.c:434
 #, c-format
 msgid "%x at %X"
 msgstr "%x a las %X"
@@ -3280,15 +3280,15 @@ msgid "Mail Recipient"
 msgstr "Destinatario de correo-e"
 
 #. tell the user that we failed to connect to the trash
-#: ../plugins/thunar-tpa/thunar-tpa.c:295
-#: ../plugins/thunar-tpa/thunar-tpa.c:336
-#: ../plugins/thunar-tpa/thunar-tpa.c:358
-#: ../plugins/thunar-tpa/thunar-tpa.c:385
+#: ../plugins/thunar-tpa/thunar-tpa.c:293
+#: ../plugins/thunar-tpa/thunar-tpa.c:334
+#: ../plugins/thunar-tpa/thunar-tpa.c:356
+#: ../plugins/thunar-tpa/thunar-tpa.c:383
 msgid "Failed to connect to the Trash"
 msgstr "No se pudo conectar con la papelera"
 
 #. tell the user whether the trash is full or empty
-#: ../plugins/thunar-tpa/thunar-tpa.c:310
+#: ../plugins/thunar-tpa/thunar-tpa.c:308
 msgid "Trash contains files"
 msgstr "La papelera contiene archivos"
 
@@ -3555,7 +3555,7 @@ msgstr "Abrir un terminal aquí"
 msgid "Example for a custom action"
 msgstr "Ejemplo de una acción personalizada"
 
-#: ../plugins/thunar-wallpaper/twp-provider.c:173
+#: ../plugins/thunar-wallpaper/twp-provider.c:175
 msgid "Set as wallpaper"
 msgstr "Establecer como fondo de escritorio"
 
@@ -3582,3 +3582,22 @@ msgstr "Abrir carpeta"
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "Configure the Thunar file manager"
 msgstr "Configure el gestor de archivos Thunar"
+
+#: ../thunar.appdata.xml.in.h:1
+msgid ""
+"Thunar is a file browser specifically designed for the XFCE Desktop, but "
+"also can serve as an alternate file browser for other Desktop environments. "
+"It has a simple, clean two-pane design for browsing all your files."
+msgstr "Thunar es un administrador de archivos diseñado especialmente para el entorno de escritorio Xfce, pero, además puede funcionar como un administrador de archivos alternativo para cualquier otro entorno de escritorio. Tiene un simple y limpio diseño de paneles dobles para la navegación de archivos."
+
+#. SECURITY:
+#. - A normal active user can run thunar without elevated rights. They
+#. may wish to modify files they normally do not have read/write access
+#. to. This isn't a good idea, but is common on single user systems.
+#: ../org.xfce.thunar.policy.in.in.h:6
+msgid "Run Thunar as root"
+msgstr "Iniciar Thunar como administrador (root)"
+
+#: ../org.xfce.thunar.policy.in.in.h:7
+msgid "Authentication is required to run Thunar as root."
+msgstr "Es necesario autentificarse para iniciar Thunar como administrador (root)."
