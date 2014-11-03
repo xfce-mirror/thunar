@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-02 00:30+0100\n"
-"PO-Revision-Date: 2014-11-03 02:15+0000\n"
+"PO-Revision-Date: 2014-11-03 19:15+0000\n"
 "Last-Translator: Tobias Bannert\n"
 "Language-Team: German (http://www.transifex.com/projects/p/thunar/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -703,7 +703,7 @@ msgstr "mit dieser ersetzen?"
 msgid ""
 "The desktop file \"%s\" is in an insecure location and not marked as "
 "executable. If you do not trust this program, click Cancel."
-msgstr "Die Desktopdatei »%s« befindet sich in an einem unsicheren Ort und ist nicht als ausführbar gekennzeichnet. Vertrauen Sie dem Programm nicht, klicken Sie auf Abbrechen."
+msgstr "Die Schreibtischdatei »%s« befindet sich in an einem unsicheren Ort und ist nicht als ausführbar gekennzeichnet. Vertrauen Sie dem Programm nicht, klicken Sie auf Abbrechen."
 
 #: ../thunar/thunar-dialogs.c:777
 msgid "_Launch Anyway"
@@ -730,7 +730,7 @@ msgstr "Hierher verknü_pfen"
 #: ../thunar/thunar-dnd.c:254 ../thunar/thunar-launcher.c:567
 #, c-format
 msgid "Failed to execute file \"%s\""
-msgstr "Konnte »%s« nicht umbenennen"
+msgstr "»%s« konnte nicht umbenannt werden"
 
 #: ../thunar/thunar-enum-types.c:45
 msgid "Name only"
@@ -805,7 +805,7 @@ msgstr "Das Basisverzeichnis hat keinen übergeordneten Ordner"
 #: ../thunar/thunar-file.c:1506 ../thunar/thunar-file.c:1778
 #, c-format
 msgid "Failed to parse the desktop file: %s"
-msgstr "Die Desktopdatei »%s« konnte nicht geparst werden"
+msgstr "Die Schreibtischdatei »%s« konnte nicht analysiert werden"
 
 #. if the .desktop file is not secure, ask user what to do
 #: ../thunar/thunar-file.c:1518
@@ -825,11 +825,11 @@ msgstr "Nicht vertrauenswürdiger Verknüpfungstarter"
 #: ../thunar/thunar-file.c:1568
 #, c-format
 msgid "No URL field specified"
-msgstr "Das URL-Feld fehlt oder ist leer"
+msgstr "Das Adressfeld fehlt oder ist leer"
 
 #: ../thunar/thunar-file.c:1573
 msgid "Invalid desktop file"
-msgstr "Ungültige Desktopdatei"
+msgstr "Ungültige Schreibtischdatei"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
 #: ../thunar/thunar-gio-extensions.c:317
@@ -886,7 +886,7 @@ msgstr "Symbolansicht"
 #: ../thunar/thunar-io-jobs.c:180 ../thunar/thunar-io-jobs.c:334
 #, c-format
 msgid "The file \"%s\" already exists"
-msgstr "Die Datei »%s« existiert bereits"
+msgstr "Die Datei »%s« ist bereits vorhanden"
 
 #: ../thunar/thunar-io-jobs.c:203
 #, c-format
@@ -901,7 +901,7 @@ msgstr "Der Ordner »%s« konnte nicht erstellt werden: %s"
 #. tell the user that we're preparing to unlink the files
 #: ../thunar/thunar-io-jobs.c:423
 msgid "Preparing..."
-msgstr "Vorbereiten …"
+msgstr "Vorbereitung läuft …"
 
 #: ../thunar/thunar-io-jobs.c:496
 #, c-format
@@ -961,7 +961,7 @@ msgid ""
 "The file \"%s\" already exists. Would you like to replace it?\n"
 "\n"
 "If you replace an existing file, its contents will be overwritten."
-msgstr "Die Datei »%s« existiert bereits. Wollen Sie sie ersetzen?\n\nFalls Sie eine existierende Datei ersetzen, wird deren Inhalt überschrieben."
+msgstr "Die Datei »%s« ist bereits vorhanden. Wollen Sie sie ersetzen?\n\nFalls Sie eine vorhandene Datei ersetzen, wird deren Inhalt überschrieben."
 
 #: ../thunar/thunar-job.c:334
 msgid "Do you want to overwrite it?"
@@ -997,7 +997,7 @@ msgstr "Ö_ffnen"
 #: ../thunar/thunar-launcher.c:178 ../thunar/thunar-launcher.c:859
 #: ../thunar/thunar-tree-view.c:1124
 msgid "Open in New _Tab"
-msgstr "In neuem _Tab öffnen"
+msgstr "In neuem _Reiter öffnen"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:179 ../thunar/thunar-launcher.c:853
@@ -1035,8 +1035,8 @@ msgstr "Sind Sie sicher, dass alle Ordner geöffnet werden sollen?"
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
-msgstr[0] "Es wird %d separates Dateiverwaltungsfenster geöffnet."
-msgstr[1] "Es werden %d separate Dateiverwaltungsfenster geöffnet."
+msgstr[0] "Es wird %d neues Dateiverwaltungsfenster geöffnet."
+msgstr[1] "Es werden %d neue Dateiverwaltungsfenster geöffnet."
 
 #: ../thunar/thunar-launcher.c:727
 #, c-format
@@ -1072,8 +1072,8 @@ msgstr[1] "In %d neuen Rei_tern öffnen"
 #, c-format
 msgid "Open the selected directory in %d new tab"
 msgid_plural "Open the selected directories in %d new tabs"
-msgstr[0] "Den ausgewählten Ordner in %d neuen Tabs anzeigen"
-msgstr[1] "Die ausgewählten Ordner in %d neuen Tabs anzeigen"
+msgstr[0] "Den ausgewählten Ordner in %d neuen Reiter anzeigen"
+msgstr[1] "Die ausgewählten Ordner in %d neuen Reitern anzeigen"
 
 #: ../thunar/thunar-launcher.c:854
 msgid "Open the selected directory in a new window"
@@ -1081,7 +1081,7 @@ msgstr "Den ausgewählten Ordner in neuem Fenster anzeigen"
 
 #: ../thunar/thunar-launcher.c:860
 msgid "Open the selected directory in a new tab"
-msgstr "Den ausgewählten Ordner in neuem Tab anzeigen"
+msgstr "Den ausgewählten Ordner in neuem Reiter anzeigen"
 
 #. set tooltip that makes sence
 #: ../thunar/thunar-launcher.c:864
@@ -1151,7 +1151,7 @@ msgstr[1] "Schreibtisch (Verknüpfungen erstellen)"
 #: ../thunar/thunar-launcher.c:1698
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
-msgstr[0] "Eine symbolische Verknüpfung für die ausgewählte Datei auf dem Schreibtischerstellen"
+msgstr[0] "Eine symbolische Verknüpfung für die ausgewählte Datei auf dem Schreibtisch erstellen"
 msgstr[1] "Eine symbolische Verknüpfung für jede ausgewählte Datei auf dem Schreibtisch erstellen"
 
 #: ../thunar/thunar-launcher.c:1732 ../thunar/thunar-launcher.c:1784
@@ -1316,7 +1316,7 @@ msgstr "Ordner »%s« in einem neuen Fenster darstellen"
 #: ../thunar/thunar-location-buttons.c:1249
 #, c-format
 msgid "Open \"%s\" in a new tab"
-msgstr "\"%s\" in einem neuen Reiter öffnen."
+msgstr "»%s« in einem neuen Reiter öffnen."
 
 #: ../thunar/thunar-location-buttons.c:1254
 #, c-format
@@ -1360,11 +1360,11 @@ msgstr "Gerät wird ausgehängt"
 msgid ""
 "The device \"%s\" is being unmounted by the system. Please do not remove the"
 " media or disconnect the drive"
-msgstr "Das Gerät »%s« wird vom System ausgehängt. Bitte entfernen Sie das Medium nicht oder trennen die Verbindung"
+msgstr "Das Gerät »%s« wird vom System ausgehängt. Bitte das Medium nicht entfernen oder die Verbindung trennen"
 
 #: ../thunar/thunar-notify.c:175 ../thunar/thunar-notify.c:214
 msgid "Writing data to device"
-msgstr "Daten werden auf Gerät geschrieben"
+msgstr "Daten werden auf das Gerät geschrieben"
 
 #: ../thunar/thunar-notify.c:176 ../thunar/thunar-notify.c:215
 #, c-format
@@ -1380,7 +1380,7 @@ msgstr "Gerät wird ausgeworfen"
 #: ../thunar/thunar-notify.c:209
 #, c-format
 msgid "The device \"%s\" is being ejected. This may take some time"
-msgstr "Das Gerät »%s« wird ausgeworfen. Dies kann einige Zeit dauern."
+msgstr "Das Gerät »%s« wird ausgeworfen. Das kann einige Zeit dauern."
 
 #: ../thunar/thunar-misc-jobs.c:74
 #, c-format
@@ -1405,11 +1405,11 @@ msgstr "_Zugriff:"
 
 #: ../thunar/thunar-permissions-chooser.c:261
 msgid "Gro_up:"
-msgstr "Gr_uppe:"
+msgstr "_Gruppe:"
 
 #: ../thunar/thunar-permissions-chooser.c:280
 msgid "Acce_ss:"
-msgstr "_Zugriff:"
+msgstr "Z_ugriff:"
 
 #: ../thunar/thunar-permissions-chooser.c:304
 msgid "O_thers:"
@@ -3588,7 +3588,7 @@ msgid ""
 "Thunar is a file browser specifically designed for the XFCE Desktop, but "
 "also can serve as an alternate file browser for other Desktop environments. "
 "It has a simple, clean two-pane design for browsing all your files."
-msgstr ""
+msgstr "Thunar ist eine Dateiverwaltung speziell für den XFCE-Schreibtisch entwickelt, kann aber auch als alternativer Dateinavigator für andere Arbeitsumgebungen benutzt werden. Er hat eine einfache, aufgeräumte Zweifensteransicht zum Durchsuchen aller Ihrer Dateien."
 
 #. SECURITY:
 #. - A normal active user can run thunar without elevated rights. They
