@@ -5,13 +5,14 @@
 # Translators:
 # ByungHyun Choi <byunghyun.choi@debianusers.org>, 2006
 # Seong-ho Cho <darkcircle.0426@gmail.com>, 2011-2014
+# Sungjin Kang <potopro@gmail.com>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-30 00:30+0200\n"
-"PO-Revision-Date: 2014-08-24 09:41+0000\n"
-"Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
+"POT-Creation-Date: 2014-11-05 18:30+0100\n"
+"PO-Revision-Date: 2014-11-11 15:37+0000\n"
+"Last-Translator: Sungjin Kang <potopro@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/projects/p/thunar/language/ko/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -247,7 +248,7 @@ msgstr "휴지통을 비우시렵니까?"
 #. prepare the menu item
 #: ../thunar/thunar-application.c:2008 ../thunar/thunar-location-buttons.c:179
 #: ../thunar/thunar-shortcuts-view.c:1191 ../thunar/thunar-tree-view.c:1183
-#: ../thunar/thunar-window.c:351 ../plugins/thunar-tpa/thunar-tpa.c:189
+#: ../thunar/thunar-window.c:351 ../plugins/thunar-tpa/thunar-tpa.c:191
 msgid "_Empty Trash"
 msgstr "휴지통 비우기(_E)"
 
@@ -496,7 +497,7 @@ msgstr "필요시 자동으로 항목 확장(_E)"
 #. tell the user that we're unable to determine the file info
 #: ../thunar/thunar-column-model.c:858 ../thunar/thunar-list-model.c:680
 #: ../thunar/thunar-list-model.c:708
-#: ../thunar/thunar-permissions-chooser.c:229 ../thunar/thunar-util.c:446
+#: ../thunar/thunar-permissions-chooser.c:229 ../thunar/thunar-util.c:454
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:503
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:285
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:286
@@ -2013,7 +2014,7 @@ msgid ""
 msgstr "이 파일을 취소하고 나머지 파일의 이름 바꾸기를 계속 하시렵니까?"
 
 #: ../thunar/thunar-shortcuts-model.c:597
-#: ../plugins/thunar-tpa/thunar-tpa.c:310
+#: ../plugins/thunar-tpa/thunar-tpa.c:308
 msgid "Trash is empty"
 msgstr "휴지통이 비었습니다"
 
@@ -2410,46 +2411,46 @@ msgstr "폴더 안에 붙여넣기(_P)"
 msgid "P_roperties..."
 msgstr "속성(_R)..."
 
-#: ../thunar/thunar-util.c:272
+#: ../thunar/thunar-util.c:280
 #, c-format
 msgid "Invalid path"
 msgstr "잘못된 경로"
 
-#: ../thunar/thunar-util.c:306
+#: ../thunar/thunar-util.c:314
 #, c-format
 msgid "Unknown user \"%s\""
 msgstr "알려지지 않은 사용자 \"%s\" 입니다"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:395
+#: ../thunar/thunar-util.c:403
 msgid "Today"
 msgstr "오늘"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:400
+#: ../thunar/thunar-util.c:408
 #, c-format
 msgid "Today at %X"
 msgstr "오늘(%X)"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:408
+#: ../thunar/thunar-util.c:416
 msgid "Yesterday"
 msgstr "어제"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:413
+#: ../thunar/thunar-util.c:421
 #, c-format
 msgid "Yesterday at %X"
 msgstr "어제(%X)"
 
 #. Days from last week
-#: ../thunar/thunar-util.c:421
+#: ../thunar/thunar-util.c:429
 #, c-format
 msgid "%A at %X"
 msgstr "%A(%X)"
 
 #. Any other date
-#: ../thunar/thunar-util.c:426
+#: ../thunar/thunar-util.c:434
 #, c-format
 msgid "%x at %X"
 msgstr "%x(%X)"
@@ -3232,15 +3233,15 @@ msgid "Mail Recipient"
 msgstr "메일 수신자"
 
 #. tell the user that we failed to connect to the trash
-#: ../plugins/thunar-tpa/thunar-tpa.c:295
-#: ../plugins/thunar-tpa/thunar-tpa.c:336
-#: ../plugins/thunar-tpa/thunar-tpa.c:358
-#: ../plugins/thunar-tpa/thunar-tpa.c:385
+#: ../plugins/thunar-tpa/thunar-tpa.c:293
+#: ../plugins/thunar-tpa/thunar-tpa.c:334
+#: ../plugins/thunar-tpa/thunar-tpa.c:356
+#: ../plugins/thunar-tpa/thunar-tpa.c:383
 msgid "Failed to connect to the Trash"
 msgstr "휴지통 연결에 실패했습니다"
 
 #. tell the user whether the trash is full or empty
-#: ../plugins/thunar-tpa/thunar-tpa.c:310
+#: ../plugins/thunar-tpa/thunar-tpa.c:308
 msgid "Trash contains files"
 msgstr "휴지통에 파일이 있습니다"
 
@@ -3507,7 +3508,7 @@ msgstr "이 위치에서 터미널 열기"
 msgid "Example for a custom action"
 msgstr "사용자 정의 동작 에제"
 
-#: ../plugins/thunar-wallpaper/twp-provider.c:173
+#: ../plugins/thunar-wallpaper/twp-provider.c:175
 msgid "Set as wallpaper"
 msgstr "바탕 화면으로 설정"
 
@@ -3534,3 +3535,22 @@ msgstr "폴더 열기"
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "Configure the Thunar file manager"
 msgstr "투나 파일 관리자 설정"
+
+#: ../thunar.appdata.xml.in.h:1
+msgid ""
+"Thunar is a file browser specifically designed for the Xfce Desktop, but "
+"also can serve as an alternate file browser for other Desktop environments. "
+"It has a simple, clean two-pane design for browsing all your files."
+msgstr "Thunar는 Xfce 데스크탑을 위해 특별히 설계된 파일 브라우저이지만, 다른 데스크탑 환경에서 대체 파일 브라우저로 사용가능합니다. 모든 파일을 브라우징 할 수있는 간단한 두개의 패널 디자인으로 구성되어있습니다."
+
+#. SECURITY:
+#. - A normal active user can run thunar without elevated rights. They
+#. may wish to modify files they normally do not have read/write access
+#. to. This isn't a good idea, but is common on single user systems.
+#: ../org.xfce.thunar.policy.in.in.h:6
+msgid "Run Thunar as root"
+msgstr "Root 권한으로 Thunar 작동"
+
+#: ../org.xfce.thunar.policy.in.in.h:7
+msgid "Authentication is required to run Thunar as root."
+msgstr "Root 권한으로 Thunar를 작동하려면 인증이 필요합니다."
