@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-05 18:30+0100\n"
-"PO-Revision-Date: 2014-11-08 14:50+0000\n"
+"PO-Revision-Date: 2014-11-14 15:53+0000\n"
 "Last-Translator: Tobias Bannert\n"
 "Language-Team: German (http://www.transifex.com/projects/p/thunar/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -1962,7 +1962,7 @@ msgid ""
 "No renamer modules were found on your system. Please check your\n"
 "installation or contact your system administrator. If you install Thunar\n"
 "from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
-msgstr "Es wurden keine Module zum Umbenennen von Dateien auf Ihrem System gefunden.\nÜberpüfen Sie bitte Ihre Installation oder setzen Sie sich mit Ihrem System-\nAdministrator in Verbindung. Falls Sie Thunar aus den Quellen installiert\nhaben, stellen Sie sicher, dass das Plugin »Einfaches Umbenennen« aktiviert\nist."
+msgstr "Es wurden keine Module zum Umbenennen von Dateien auf Ihrem System gefunden.\nBitte überprüfen Sie Ihre Installation oder setzen Sie sich mit Ihrem System-\nverwalter in Verbindung. Falls Sie Thunar aus den Quellen installiert haben,\nstellen Sie bitte sicher, dass die Erweiterung »Einfaches Umbenennen«\naktiviert ist."
 
 #. tell the user that we failed
 #: ../thunar/thunar-renamer-dialog.c:954
@@ -1976,7 +1976,7 @@ msgstr "Die umzubenennenden Dateien auswählen"
 
 #: ../thunar/thunar-renamer-dialog.c:1073
 msgid "Audio Files"
-msgstr "Audiodateien"
+msgstr "Tondateien"
 
 #: ../thunar/thunar-renamer-dialog.c:1078
 msgid "Image Files"
@@ -2025,7 +2025,7 @@ msgid ""
 "You can either choose to skip this file and continue to rename the remaining"
 " files, or revert the previously renamed files to their previous names, or "
 "cancel the operation without reverting previous changes."
-msgstr "Sie können entweder diese Datei überspringen und mit der Umbenennung der restlichen Dateien fortfahren, oder die bisher durchgeführten Umbenennungen rückgängig machen, oder die Umbenennung abbrechen ohne vorherige Änderungen rückgängig zu machen."
+msgstr "Sie können entweder diese Datei überspringen und mit der Umbenennung der restlichen Dateien fortfahren, oder die bisher durchgeführten Umbenennungen rückgängig machen oder die Umbenennung abbrechen ohne vorherige Änderungen rückgängig zu machen."
 
 #: ../thunar/thunar-renamer-progress.c:197
 msgid "_Revert Changes"
@@ -2393,13 +2393,13 @@ msgstr "Der Ordner »%s« ist nicht mehr vorhanden, wird aber benötigt, um die 
 #: ../thunar/thunar-transfer-job.c:872
 #, c-format
 msgid "Failed to restore the folder \"%s\""
-msgstr "Konnte Ordner »%s« nicht wiederherstellen"
+msgstr "Ordner »%s« konnte nicht wiederhergestellt werden"
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:892
 #, c-format
 msgid "Trying to move \"%s\""
-msgstr "Versuche, die Datei »%s« zu verschieben…"
+msgstr "Datei »%s« wird versucht zu verschieben"
 
 #. update progress information
 #: ../thunar/thunar-transfer-job.c:922
@@ -2435,7 +2435,7 @@ msgstr[1] "%lu Sekunden verbleibend (%s/s)"
 
 #: ../thunar/thunar-trash-action.c:105
 msgid "T_rash"
-msgstr "Papie_rkorb"
+msgstr "_Papierkorb"
 
 #: ../thunar/thunar-trash-action.c:166
 msgid "Display the contents of the trash can"
@@ -2601,11 +2601,11 @@ msgstr "Den Inhalt in normaler Größe anzeigen"
 
 #: ../thunar/thunar-window.c:365
 msgid "_Go"
-msgstr "_Gehe zu"
+msgstr "_Gehen zu"
 
 #: ../thunar/thunar-window.c:366
 msgid "Open _Parent"
-msgstr "_Eltern-Ordner öffnen"
+msgstr "_Elternordner öffnen"
 
 #: ../thunar/thunar-window.c:366
 msgid "Open the parent folder"
@@ -2625,7 +2625,7 @@ msgstr "Schreibtisch"
 
 #: ../thunar/thunar-window.c:368
 msgid "Go to the desktop folder"
-msgstr "Den Schreibtisch-Ordner öffnen"
+msgstr "Den Schreibtischordner öffnen"
 
 #: ../thunar/thunar-window.c:369
 msgid "Browse the file system"
@@ -2755,7 +2755,7 @@ msgstr "Ordnerinhalte in der Listenansicht darstellen"
 #. add the label with the root warning
 #: ../thunar/thunar-window.c:844
 msgid "Warning, you are using the root account, you may harm your system."
-msgstr "Achtung, Sie arbeiten mit Administratorrechten und können Ihr System beschädigen."
+msgstr "Achtung, Sie arbeiten mit dem Konto des Systemverwalters und können Ihr System beschädigen."
 
 #: ../thunar/thunar-window.c:1747
 msgid "Close tab"
@@ -2773,12 +2773,12 @@ msgstr "»%s« konnte nicht ausgeführt werden"
 
 #: ../thunar/thunar-window.c:2763
 msgid "Failed to open parent folder"
-msgstr "Der Eltern-Ordner konnte nicht geöffnet werden"
+msgstr "Der Elternordner konnte nicht geöffnet werden"
 
 #: ../thunar/thunar-window.c:2858
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
-msgstr "Das Verzeichnis »%s« existiert nicht. Soll es erstellt werden?"
+msgstr "Das Verzeichnis »%s« ist nicht vorhanden. Soll es erstellt werden?"
 
 #. display the "About Templates" dialog
 #: ../thunar/thunar-window.c:2940
@@ -2803,7 +2803,7 @@ msgstr "Diese Meldung in Zukunft _nicht mehr anzeigen"
 #. display an error to the user
 #: ../thunar/thunar-window.c:3011
 msgid "Failed to open the file system root folder"
-msgstr "Das Stammverzeichnis konnte nicht geöffnet werden"
+msgstr "Das Basisverzeichnis konnte nicht geöffnet werden"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:3046
@@ -2849,19 +2849,19 @@ msgstr "resident"
 
 #: ../thunarx/thunarx-provider-plugin.c:73
 msgid "Don't unload the plugin from memory"
-msgstr "Plugin nicht aus dem Speicher entfernen"
+msgstr "Erweiterung nicht aus dem Speicher entfernen"
 
 #: ../thunarx/thunarx-renamer.c:130
 msgid "Help URL"
-msgstr "URL der Hilfe"
+msgstr "Adresse der Hilfe"
 
 #: ../thunarx/thunarx-renamer.c:131
 msgid "The URL to the documentation of the renamer"
-msgstr "Die URL der Dokumentation des Umbenennungs-Moduls"
+msgstr "Die Adresse der Dokumentation des Umbenennungsmoduls"
 
 #: ../thunarx/thunarx-renamer.c:146
 msgid "The user visible name of the renamer"
-msgstr "Der angezeigte Name des Umbenennungs-Moduls"
+msgstr "Der angezeigte Name des Umbenennungsmoduls"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:152
 msgid "Description:"
@@ -2871,7 +2871,7 @@ msgstr "Beschreibung:"
 msgid ""
 "The generic name of the entry, for example \"Web Browser\" in case of "
 "Firefox."
-msgstr "Der allgemeine Name für den Eintrag, zum Beispiel »Webbrowser« für Firefox."
+msgstr "Der allgemeine Name für den Eintrag, zum Beispiel »Internet-Browser« für Firefox."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:175
 msgid "Command:"
@@ -2879,7 +2879,7 @@ msgstr "Befehl:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:182
 msgid "The program to execute, possibly with arguments."
-msgstr "Der auszuführende Befehl, möglicherweise mit Befehlszeilen-Parametern."
+msgstr "Der auszuführende Befehl, möglicherweise mit Befehlszeilenparametern."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:197
 msgid "Working Directory:"
@@ -2895,7 +2895,7 @@ msgstr "Adresse:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:226
 msgid "The URL to access."
-msgstr "Die Adresse einer Webseite oder einer ähnlichen Resource."
+msgstr "Die Adresse einer Internetseite oder einer ähnlichen Resource."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:241
 msgid "Comment:"
@@ -2920,7 +2920,7 @@ msgid ""
 "Select this option to enable startup notification when the command is run "
 "from the file manager or the menu. Not every application supports startup "
 "notification."
-msgstr "Diese Option auswählen, um eine visuelle Startbenachrichtigung zu erhalten, wenn der Befehl aus der Dateiverwaltung oder dem Menü heraus gestartet wird. Nicht jede Anwendung unterstützt Startbenachrichtigung."
+msgstr "Diese Option auswählen, um eine visuelle Startbenachrichtigung zu erhalten, wenn der Befehl aus der Dateiverwaltung oder dem Menü heraus gestartet wird. Nicht jede Anwendung unterstützt Startbenachrichtigungen."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:282
 msgid "Run in _terminal"
@@ -2989,7 +2989,7 @@ msgstr "ISO-Geschw.:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:58
 msgid "Software:"
-msgstr "Software:"
+msgstr "Anwendung:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:114
 msgid "Image"
@@ -3139,7 +3139,7 @@ msgstr "Nummerieren"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:175
 msgid "Remove _From Position:"
-msgstr "_Entferne Zeichen ab Position:"
+msgstr "Zeichen _entferne ab Position:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:210
 msgid "_To Position:"
@@ -3273,7 +3273,7 @@ msgstr[1] "%d Dateien konnten nicht komprimiert werden"
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:656
 msgid "Failed to compose new email"
-msgstr "Konnte neue E-Mail nicht erstellen"
+msgstr "Neue E-Mail konnte nicht erstellt werden"
 
 #: ../plugins/thunar-sendto-email/thunar-sendto-email.desktop.in.in.h:1
 msgid "Mail Recipient"
@@ -3285,7 +3285,7 @@ msgstr "E-Mail-Empfänger"
 #: ../plugins/thunar-tpa/thunar-tpa.c:356
 #: ../plugins/thunar-tpa/thunar-tpa.c:383
 msgid "Failed to connect to the Trash"
-msgstr "Konnte keine Verbindung zum Papierkorb-Dienst aufbauen"
+msgstr "Zum Papierkorbdienst konnte nicht verbunden werden"
 
 #. tell the user whether the trash is full or empty
 #: ../plugins/thunar-tpa/thunar-tpa.c:308
@@ -3294,7 +3294,7 @@ msgstr "Objekte im Papierkorb vorhanden"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:1
 msgid "Trash Applet"
-msgstr "Papierkorb-Applet"
+msgstr "Papierkorbregler"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.h:2
 msgid "Display the trash can"
@@ -3400,7 +3400,7 @@ msgid ""
 "Enable this option if you want a waiting cursor to be shown while the action"
 " is launched. This is also highly recommended if you have focus stealing "
 "prevention enabled in your window manager."
-msgstr "Aktivieren Sie dies, wenn Sie einen wartenden Zeiger dargstellt möchten, während die Aktion gestartet wird. Dies wird auch wärmstens empfohlen, wenn der Fokusverlust aktiv von der Fensterverwaltung verhindert wird."
+msgstr "Diese Option aktivieren, wenn ein wartender Mauszeiger dargestellt werden soll, während die Aktion gestartet wird. Das ist auch sehr empfehlenswert, wenn der Fokusverlust aktiv von der Fensterverwaltung verhindert wird."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:211
 msgid "_Icon:"
@@ -3464,7 +3464,7 @@ msgid ""
 "should be displayed for a selected file. If you specify more than one "
 "pattern here, the list items must be separated with semicolons (e.g. "
 "*.txt;*.doc)."
-msgstr "Geben Sie eine Liste von Mustern ein, die verwendet werden soll, um zu bestimmen, ob diese Aktion für die ausgewählte Datei angezeigt werden soll. Falls Sie mehrere Muster angeben, müssen die Elemente mit Strichpunkten getrennt werden (z.B. *.txt;*.doc)."
+msgstr "Bitte eine Liste von Mustern eingeben, die verwendet werden soll, um zu bestimmen, ob diese Aktion für die ausgewählte Datei angezeigt werden soll. Falls Sie mehrere Muster angeben, müssen die Elemente mit Strichpunkten getrennt werden (z.B. *.txt;*.doc)."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:395
 msgid "Appears if selection contains:"
@@ -3476,7 +3476,7 @@ msgstr "_Ordner"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:412
 msgid "_Audio Files"
-msgstr "_Audiodateien"
+msgstr "_Tondateien"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:416
 msgid "_Image Files"
@@ -3526,7 +3526,7 @@ msgstr "Unbekanntes schließendes Element <%s>"
 #: ../plugins/thunar-uca/thunar-uca-model.c:1409
 #, c-format
 msgid "Failed to determine save location for uca.xml"
-msgstr "Konnte den Speicherort für »uca.xml« nicht bestimmen"
+msgstr "Der Speicherort für »uca.xml« konnte nicht bestimmt werden"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:1528
 #, c-format
