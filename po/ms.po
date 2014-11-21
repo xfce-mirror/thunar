@@ -8,10 +8,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-30 00:30+0200\n"
-"PO-Revision-Date: 2014-04-02 15:58+0000\n"
+"POT-Creation-Date: 2014-11-05 18:30+0100\n"
+"PO-Revision-Date: 2014-11-21 00:38+0000\n"
 "Last-Translator: abuyop <abuyop@gmail.com>\n"
-"Language-Team: Malay (http://www.transifex.com/projects/p/xfce/language/ms/)\n"
+"Language-Team: Malay (http://www.transifex.com/projects/p/thunar/language/ms/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -246,7 +246,7 @@ msgstr "Alih semua fail dan folder dari Tong Sampah?"
 #. prepare the menu item
 #: ../thunar/thunar-application.c:2008 ../thunar/thunar-location-buttons.c:179
 #: ../thunar/thunar-shortcuts-view.c:1191 ../thunar/thunar-tree-view.c:1183
-#: ../thunar/thunar-window.c:351 ../plugins/thunar-tpa/thunar-tpa.c:189
+#: ../thunar/thunar-window.c:351 ../plugins/thunar-tpa/thunar-tpa.c:191
 msgid "_Empty Trash"
 msgstr "_Kosongkan Tong Sampah"
 
@@ -495,7 +495,7 @@ msgstr "K_embangkan lajur secara automatik jika diperlukan"
 #. tell the user that we're unable to determine the file info
 #: ../thunar/thunar-column-model.c:858 ../thunar/thunar-list-model.c:680
 #: ../thunar/thunar-list-model.c:708
-#: ../thunar/thunar-permissions-chooser.c:229 ../thunar/thunar-util.c:446
+#: ../thunar/thunar-permissions-chooser.c:229 ../thunar/thunar-util.c:454
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:503
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:285
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:286
@@ -2012,7 +2012,7 @@ msgid ""
 msgstr "Anda mahu langkau fail ini dan terus namakan semula fail berbaki?"
 
 #: ../thunar/thunar-shortcuts-model.c:597
-#: ../plugins/thunar-tpa/thunar-tpa.c:310
+#: ../plugins/thunar-tpa/thunar-tpa.c:308
 msgid "Trash is empty"
 msgstr "Tong sampah adalah kosong"
 
@@ -2409,46 +2409,46 @@ msgstr "_Tampal Ke Dalam Folder"
 msgid "P_roperties..."
 msgstr "Si_fat..."
 
-#: ../thunar/thunar-util.c:272
+#: ../thunar/thunar-util.c:280
 #, c-format
 msgid "Invalid path"
 msgstr "Laluan tidak sah"
 
-#: ../thunar/thunar-util.c:306
+#: ../thunar/thunar-util.c:314
 #, c-format
 msgid "Unknown user \"%s\""
 msgstr "Pengguna \"%s\" tidak diketahui"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:395
+#: ../thunar/thunar-util.c:403
 msgid "Today"
 msgstr "Hari Ini"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:400
+#: ../thunar/thunar-util.c:408
 #, c-format
 msgid "Today at %X"
 msgstr "Hari ini pada %X"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:408
+#: ../thunar/thunar-util.c:416
 msgid "Yesterday"
 msgstr "Semalam"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:413
+#: ../thunar/thunar-util.c:421
 #, c-format
 msgid "Yesterday at %X"
 msgstr "Semalam pada %X"
 
 #. Days from last week
-#: ../thunar/thunar-util.c:421
+#: ../thunar/thunar-util.c:429
 #, c-format
 msgid "%A at %X"
 msgstr "%A pada %X"
 
 #. Any other date
-#: ../thunar/thunar-util.c:426
+#: ../thunar/thunar-util.c:434
 #, c-format
 msgid "%x at %X"
 msgstr "%x pada %X"
@@ -3231,15 +3231,15 @@ msgid "Mail Recipient"
 msgstr "Penerima Mel"
 
 #. tell the user that we failed to connect to the trash
-#: ../plugins/thunar-tpa/thunar-tpa.c:295
-#: ../plugins/thunar-tpa/thunar-tpa.c:336
-#: ../plugins/thunar-tpa/thunar-tpa.c:358
-#: ../plugins/thunar-tpa/thunar-tpa.c:385
+#: ../plugins/thunar-tpa/thunar-tpa.c:293
+#: ../plugins/thunar-tpa/thunar-tpa.c:334
+#: ../plugins/thunar-tpa/thunar-tpa.c:356
+#: ../plugins/thunar-tpa/thunar-tpa.c:383
 msgid "Failed to connect to the Trash"
 msgstr "Gagal menyambung ke Tong Sampah"
 
 #. tell the user whether the trash is full or empty
-#: ../plugins/thunar-tpa/thunar-tpa.c:310
+#: ../plugins/thunar-tpa/thunar-tpa.c:308
 msgid "Trash contains files"
 msgstr "Tong sampah mengandungi fail"
 
@@ -3506,7 +3506,7 @@ msgstr "Buka Terminal Di Sini"
 msgid "Example for a custom action"
 msgstr "Contoh bagi tindakan suai"
 
-#: ../plugins/thunar-wallpaper/twp-provider.c:173
+#: ../plugins/thunar-wallpaper/twp-provider.c:175
 msgid "Set as wallpaper"
 msgstr "Tetapkan sebagai kertas dinding"
 
@@ -3533,3 +3533,22 @@ msgstr "Buka Folder"
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "Configure the Thunar file manager"
 msgstr "Konfigur pengurus fail Thunar"
+
+#: ../thunar.appdata.xml.in.h:1
+msgid ""
+"Thunar is a file browser specifically designed for the Xfce Desktop, but "
+"also can serve as an alternate file browser for other Desktop environments. "
+"It has a simple, clean two-pane design for browsing all your files."
+msgstr "Thunar ialah pelayar fail yang direka khusus untuk Desktop Xfce, tetapi juga bertindak sebagai pelayar fail alternatif untuk persekitaran Desktop lain. Ia mempunyai rekabentuk ringkas, dengan dua-anak-tetingkap yang kemas unntuk pelayaran semua fail anda."
+
+#. SECURITY:
+#. - A normal active user can run thunar without elevated rights. They
+#. may wish to modify files they normally do not have read/write access
+#. to. This isn't a good idea, but is common on single user systems.
+#: ../org.xfce.thunar.policy.in.in.h:6
+msgid "Run Thunar as root"
+msgstr "Jalankan Thunar sebagai root"
+
+#: ../org.xfce.thunar.policy.in.in.h:7
+msgid "Authentication is required to run Thunar as root."
+msgstr "Pengesahihan diperlukan untuk jalankan Thunar sebagai root."
