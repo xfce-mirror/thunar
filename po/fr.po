@@ -8,6 +8,7 @@
 # jc1 <jc1.quebecos@gmail.com>, 2013
 # jc1 <jc1.quebecos@gmail.com>, 2013
 # Jean-Philippe Fleury <contact@jpfleury.net>, 2011
+# Louis Moureaux <m_louis30@yahoo.com>, 2014
 # Mike Massonnet <mmassonnet@xfce.org>, 2008
 # Patrick Douart <patrick.2@laposte.net>, 2009
 # Pierre D <pedwo51@gmail.com>, 2013
@@ -19,8 +20,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-30 00:30+0200\n"
-"PO-Revision-Date: 2014-08-21 17:11+0000\n"
+"POT-Creation-Date: 2014-11-05 18:30+0100\n"
+"PO-Revision-Date: 2014-11-24 18:49+0000\n"
 "Last-Translator: Urien Desterres <urien.desterres@gmail.com>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/thunar/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -85,7 +86,7 @@ msgstr "Écrit par Benedikt Meurer <benny@xfce.org>."
 #: ../thunar/main.c:172
 #, c-format
 msgid "Please report bugs to <%s>."
-msgstr "Veuillez envoyer vos rapports de bogues à <%s>."
+msgstr "Veuillez signaler les bogues à <%s>."
 
 #: ../thunar/thunar-abstract-icon-view.c:117
 msgid "Arran_ge Items"
@@ -152,12 +153,12 @@ msgstr "Impossible de lancer l'opération"
 #: ../thunar/thunar-shortcuts-view.c:1658 ../thunar/thunar-window.c:2236
 #, c-format
 msgid "Failed to open \"%s\""
-msgstr "Impossible d'ouvrir « %s »"
+msgstr "Impossible d’ouvrir « %s »"
 
 #: ../thunar/thunar-application.c:1298
 #, c-format
 msgid "Failed to open \"%s\": %s"
-msgstr "Impossible d'ouvrir « %s » : %s"
+msgstr "Impossible d’ouvrir « %s » : %s"
 
 #. display an error message
 #: ../thunar/thunar-application.c:1362
@@ -232,7 +233,7 @@ msgstr[1] "Êtes-vous certain de vouloir supprimer de manière\npermanente les %
 
 #: ../thunar/thunar-application.c:1833
 msgid "If you delete a file, it is permanently lost."
-msgstr "Si vous supprimez ce fichier, il sera définitivement perdu."
+msgstr "Si vous supprimez un fichier, il sera définitivement perdu."
 
 #: ../thunar/thunar-application.c:1843
 msgid "Deleting files..."
@@ -258,7 +259,7 @@ msgstr "Supprimer tous les fichiers et dossiers de la corbeille ?"
 #. prepare the menu item
 #: ../thunar/thunar-application.c:2008 ../thunar/thunar-location-buttons.c:179
 #: ../thunar/thunar-shortcuts-view.c:1191 ../thunar/thunar-tree-view.c:1183
-#: ../thunar/thunar-window.c:351 ../plugins/thunar-tpa/thunar-tpa.c:189
+#: ../thunar/thunar-window.c:351 ../plugins/thunar-tpa/thunar-tpa.c:191
 msgid "_Empty Trash"
 msgstr "_Vider la corbeille"
 
@@ -507,7 +508,7 @@ msgstr "Élargir automatiquement les colonnes si nécessaire"
 #. tell the user that we're unable to determine the file info
 #: ../thunar/thunar-column-model.c:858 ../thunar/thunar-list-model.c:680
 #: ../thunar/thunar-list-model.c:708
-#: ../thunar/thunar-permissions-chooser.c:229 ../thunar/thunar-util.c:446
+#: ../thunar/thunar-permissions-chooser.c:229 ../thunar/thunar-util.c:454
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:503
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:285
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:286
@@ -2047,7 +2048,7 @@ msgid ""
 msgstr "Voulez-vous ignorer ce fichier et continuer à renommer les fichiers restants ?"
 
 #: ../thunar/thunar-shortcuts-model.c:597
-#: ../plugins/thunar-tpa/thunar-tpa.c:310
+#: ../plugins/thunar-tpa/thunar-tpa.c:308
 msgid "Trash is empty"
 msgstr "Corbeille vide"
 
@@ -2460,46 +2461,46 @@ msgstr "C_oller dans le dossier"
 msgid "P_roperties..."
 msgstr "P_ropriétés..."
 
-#: ../thunar/thunar-util.c:272
+#: ../thunar/thunar-util.c:280
 #, c-format
 msgid "Invalid path"
 msgstr "Chemin invalide"
 
-#: ../thunar/thunar-util.c:306
+#: ../thunar/thunar-util.c:314
 #, c-format
 msgid "Unknown user \"%s\""
 msgstr "Utilisateur inconnu « %s »"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:395
+#: ../thunar/thunar-util.c:403
 msgid "Today"
 msgstr "Aujourd'hui"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:400
+#: ../thunar/thunar-util.c:408
 #, c-format
 msgid "Today at %X"
 msgstr "Aujourd'hui à %X"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:408
+#: ../thunar/thunar-util.c:416
 msgid "Yesterday"
 msgstr "Hier"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:413
+#: ../thunar/thunar-util.c:421
 #, c-format
 msgid "Yesterday at %X"
 msgstr "Hier à %X"
 
 #. Days from last week
-#: ../thunar/thunar-util.c:421
+#: ../thunar/thunar-util.c:429
 #, c-format
 msgid "%A at %X"
 msgstr "%A de %X"
 
 #. Any other date
-#: ../thunar/thunar-util.c:426
+#: ../thunar/thunar-util.c:434
 #, c-format
 msgid "%x at %X"
 msgstr "%x à %X"
@@ -3285,15 +3286,15 @@ msgid "Mail Recipient"
 msgstr "Destinataire courriel"
 
 #. tell the user that we failed to connect to the trash
-#: ../plugins/thunar-tpa/thunar-tpa.c:295
-#: ../plugins/thunar-tpa/thunar-tpa.c:336
-#: ../plugins/thunar-tpa/thunar-tpa.c:358
-#: ../plugins/thunar-tpa/thunar-tpa.c:385
+#: ../plugins/thunar-tpa/thunar-tpa.c:293
+#: ../plugins/thunar-tpa/thunar-tpa.c:334
+#: ../plugins/thunar-tpa/thunar-tpa.c:356
+#: ../plugins/thunar-tpa/thunar-tpa.c:383
 msgid "Failed to connect to the Trash"
 msgstr "Impossible de se connecter à la corbeille"
 
 #. tell the user whether the trash is full or empty
-#: ../plugins/thunar-tpa/thunar-tpa.c:310
+#: ../plugins/thunar-tpa/thunar-tpa.c:308
 msgid "Trash contains files"
 msgstr "La corbeille contient des fichiers"
 
@@ -3560,9 +3561,9 @@ msgstr "Ouvrir un terminal ici"
 msgid "Example for a custom action"
 msgstr "Exemple d'une action personnalisée"
 
-#: ../plugins/thunar-wallpaper/twp-provider.c:173
+#: ../plugins/thunar-wallpaper/twp-provider.c:175
 msgid "Set as wallpaper"
-msgstr "Définir comme fond d'écran"
+msgstr "Définir comme fond d’écran"
 
 #: ../Thunar.desktop.in.in.h:1
 msgid "Thunar File Manager"
@@ -3587,3 +3588,22 @@ msgstr "Ouvrir un dossier"
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "Configure the Thunar file manager"
 msgstr "Configurer le gestionnaire de fichiers Thunar"
+
+#: ../thunar.appdata.xml.in.h:1
+msgid ""
+"Thunar is a file browser specifically designed for the Xfce Desktop, but "
+"also can serve as an alternate file browser for other Desktop environments. "
+"It has a simple, clean two-pane design for browsing all your files."
+msgstr "Thunar est un gestionnaire de fichiers conçu spécifiquement pour le bureau Xfce, mais peut aussi servir comme gestionnaire de fichiers alternatif pour d'autres environnements de bureau. Il a une interface à deux panneaux simple et épurée pour parcourir tous vos fichiers."
+
+#. SECURITY:
+#. - A normal active user can run thunar without elevated rights. They
+#. may wish to modify files they normally do not have read/write access
+#. to. This isn't a good idea, but is common on single user systems.
+#: ../org.xfce.thunar.policy.in.in.h:6
+msgid "Run Thunar as root"
+msgstr "Lancer Thunar en tant que root"
+
+#: ../org.xfce.thunar.policy.in.in.h:7
+msgid "Authentication is required to run Thunar as root."
+msgstr "Une authentification est requise pour lancer Thunar en tant que root."
