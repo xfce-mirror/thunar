@@ -103,7 +103,7 @@ thunar_delayed_exit_check (gpointer user_data)
       /* don't call this function again */
       return FALSE;
     }
-  
+
 }
 
 
@@ -139,7 +139,7 @@ main (int argc, char **argv)
   if (!g_thread_supported ())
     g_thread_init (NULL);
 #endif
-    
+
   /* get the startup notification id */
   startup_id = g_getenv ("DESKTOP_STARTUP_ID");
 
@@ -302,7 +302,7 @@ error0:
        * schedule an idle source which repeatedly checks whether we are done
        * processing. Once we're done, it'll make the application quit if there
        * are no open windows */
-      g_idle_add_full (G_PRIORITY_LOW, thunar_delayed_exit_check, 
+      g_idle_add_full (G_PRIORITY_LOW, thunar_delayed_exit_check,
                        g_object_ref (application), g_object_unref);
     }
 
