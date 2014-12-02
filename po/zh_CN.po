@@ -8,14 +8,18 @@
 # Chris K. Zhang <plutino@gmail.com>, 2009
 # Hunt Xu <huntxu@live.cn>, 2008-2010,2012
 # kangkang <kanger@gmail.com>, 2006
+# mhuntxu <mhuntxu@gmail.com>, 2014
+# 周潇波 <zhouxiaobo.500@gmail.com>, 2014
+# 周潇波 <zhouxiaobo.500@gmail.com>, 2014
+# 玉堂白鹤 <yjwork@qq.com>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-30 00:30+0200\n"
-"PO-Revision-Date: 2013-09-21 12:17+0000\n"
-"Last-Translator: Hunt Xu <mhuntxu@gmail.com>\n"
-"Language-Team: Chinese (China) (http://www.transifex.com/projects/p/xfce/language/zh_CN/)\n"
+"POT-Creation-Date: 2014-11-05 18:30+0100\n"
+"PO-Revision-Date: 2014-12-02 13:48+0000\n"
+"Last-Translator: 玉堂白鹤 <yjwork@qq.com>\n"
+"Language-Team: Chinese (China) (http://www.transifex.com/projects/p/thunar/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -102,11 +106,11 @@ msgstr "项目按其大小排列"
 
 #: ../thunar/thunar-abstract-icon-view.c:124
 msgid "Sort By _Type"
-msgstr "按类型排列(_T)"
+msgstr "按文件类型排列(_T)"
 
 #: ../thunar/thunar-abstract-icon-view.c:124
 msgid "Keep items sorted by their type"
-msgstr "项目按其类型排列"
+msgstr "项目按其文件类型排列"
 
 #: ../thunar/thunar-abstract-icon-view.c:125
 msgid "Sort By Modification _Date"
@@ -118,15 +122,15 @@ msgstr "项目按其修改时间排列"
 
 #: ../thunar/thunar-abstract-icon-view.c:130
 msgid "_Ascending"
-msgstr "上升的(_A)"
+msgstr "升序(_A)"
 
 #: ../thunar/thunar-abstract-icon-view.c:130
 msgid "Sort items in ascending order"
-msgstr "项目按升序的顺序排列"
+msgstr "按升序顺序排列项目"
 
 #: ../thunar/thunar-abstract-icon-view.c:131
 msgid "_Descending"
-msgstr "下降的(_D)"
+msgstr "降序(_D)"
 
 #: ../thunar/thunar-abstract-icon-view.c:131
 msgid "Sort items in descending order"
@@ -250,7 +254,7 @@ msgstr "移除回收站中的所有文件和文件夹吗？"
 #. prepare the menu item
 #: ../thunar/thunar-application.c:2008 ../thunar/thunar-location-buttons.c:179
 #: ../thunar/thunar-shortcuts-view.c:1191 ../thunar/thunar-tree-view.c:1183
-#: ../thunar/thunar-window.c:351 ../plugins/thunar-tpa/thunar-tpa.c:189
+#: ../thunar/thunar-window.c:351 ../plugins/thunar-tpa/thunar-tpa.c:191
 msgid "_Empty Trash"
 msgstr "清空回收站(_E)"
 
@@ -434,7 +438,7 @@ msgstr "无法移除 “%s”。"
 #. tell the user that we cannot paste
 #: ../thunar/thunar-clipboard-manager.c:354
 msgid "There is nothing on the clipboard to paste"
-msgstr "剪贴板中没有东西可以粘贴"
+msgstr "剪贴板中没有内容可以粘贴"
 
 #: ../thunar/thunar-column-editor.c:121
 msgid "Configure Columns in the Detailed List View"
@@ -499,7 +503,7 @@ msgstr "按需求自动扩展栏(_E)"
 #. tell the user that we're unable to determine the file info
 #: ../thunar/thunar-column-model.c:858 ../thunar/thunar-list-model.c:680
 #: ../thunar/thunar-list-model.c:708
-#: ../thunar/thunar-permissions-chooser.c:229 ../thunar/thunar-util.c:446
+#: ../thunar/thunar-permissions-chooser.c:229 ../thunar/thunar-util.c:454
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:503
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:285
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:286
@@ -673,7 +677,6 @@ msgid "ReplaceDialogPart1|Do you want to replace the existing file"
 msgstr "您要替换已存在的文件吗？"
 
 #. Fourth box (size, volume, free space)
-#. 
 #: ../thunar/thunar-dialogs.c:618 ../thunar/thunar-dialogs.c:649
 #: ../thunar/thunar-properties-dialog.c:457
 msgid "Size:"
@@ -686,15 +689,15 @@ msgstr "修改:"
 
 #: ../thunar/thunar-dialogs.c:628
 msgid "ReplaceDialogPart2|with the following link?"
-msgstr "用以下链接？"
+msgstr "使用以下链接吗？"
 
 #: ../thunar/thunar-dialogs.c:630
 msgid "ReplaceDialogPart2|with the following folder?"
-msgstr "用以下文件夹？"
+msgstr "使用以下文件夹吗？"
 
 #: ../thunar/thunar-dialogs.c:632
 msgid "ReplaceDialogPart2|with the following file?"
-msgstr "用以下文件？"
+msgstr "使用以下文件吗？"
 
 #: ../thunar/thunar-dialogs.c:760
 #, c-format
@@ -770,7 +773,6 @@ msgid "Owner"
 msgstr "所有者"
 
 #. Permissions chooser
-#. 
 #: ../thunar/thunar-enum-types.c:98 ../thunar/thunar-properties-dialog.c:529
 msgid "Permissions"
 msgstr "权限"
@@ -840,7 +842,7 @@ msgstr "%2$s 上的 %1$s"
 #: ../thunar/thunar-gio-extensions.c:427
 #, c-format
 msgid "%s of %s (%d%% used)"
-msgstr "剩余 %s，总共 %s (%d%% 已用)"
+msgstr "可用空间 %s，总空间 %s (%d%% 已用)"
 
 #. extend history tooltip with function of the button
 #: ../thunar/thunar-history-action.c:372
@@ -1203,7 +1205,6 @@ msgstr "\"%s\" %s"
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#. 
 #: ../thunar/thunar-list-model.c:2271 ../thunar/thunar-properties-dialog.c:365
 msgid "Original Path:"
 msgstr "原路径:"
@@ -1508,7 +1509,6 @@ msgid "File Manager Preferences"
 msgstr "文件管理器首选项"
 
 #. Display
-#. 
 #: ../thunar/thunar-preferences-dialog.c:242
 msgid "Display"
 msgstr "显示"
@@ -1583,7 +1583,6 @@ msgid "_Format:"
 msgstr "格式(_F):"
 
 #. Side Pane
-#. 
 #: ../thunar/thunar-preferences-dialog.c:363
 msgid "Side Pane"
 msgstr "侧边栏"
@@ -1661,7 +1660,6 @@ msgid ""
 msgstr "选择此项后，如果在文件夹属性对话框中已定义了文件夹的徽标，则这些图标徽标会在树形栏里显示。"
 
 #. Behavior
-#. 
 #: ../thunar/thunar-preferences-dialog.c:457
 msgid "Behavior"
 msgstr "行为"
@@ -1718,7 +1716,6 @@ msgid "Open folder in new _tab"
 msgstr "在新标签中打开文件夹(_T)"
 
 #. Advanced
-#. 
 #: ../thunar/thunar-preferences-dialog.c:581
 msgid "Advanced"
 msgstr "高级"
@@ -1759,7 +1756,7 @@ msgstr "启用卷管理(_V)"
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives\n"
 "and media (i.e. how cameras should be handled)."
-msgstr "<a href=\"volman-config:\">配置</a> 可移动驱动器\n和介质的管理(比如应如何处理照相机)。"
+msgstr "<a href=\"volman-config:\">配置</a> 可移动驱动器\n和介质的管理(比如应如何处理相机)。"
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
@@ -1797,7 +1794,6 @@ msgid "Names:"
 msgstr "名称:"
 
 #. Second box (kind, open with, link target)
-#. 
 #: ../thunar/thunar-properties-dialog.c:312
 msgid "Kind:"
 msgstr "种类:"
@@ -1815,7 +1811,6 @@ msgid "Location:"
 msgstr "位置:"
 
 #. Third box (deleted, modified, accessed)
-#. 
 #: ../thunar/thunar-properties-dialog.c:404
 msgid "Deleted:"
 msgstr "已删除:"
@@ -1833,7 +1828,6 @@ msgid "Free Space:"
 msgstr "可用空间:"
 
 #. Emblem chooser
-#. 
 #: ../thunar/thunar-properties-dialog.c:519
 msgid "Emblems"
 msgstr "徽标"
@@ -1943,7 +1937,6 @@ msgstr "在此点击查看选中的重命名操作的文档。"
 #. from $libdir/thunarx-2/,
 #. *              and opening the multi rename dialog by selecting multiple
 #. files and pressing F2.
-#. 
 #: ../thunar/thunar-renamer-dialog.c:611
 msgid ""
 "No renamer modules were found on your system. Please check your\n"
@@ -1967,7 +1960,7 @@ msgstr "音频文件"
 
 #: ../thunar/thunar-renamer-dialog.c:1078
 msgid "Image Files"
-msgstr "图片文件"
+msgstr "图像文件"
 
 #: ../thunar/thunar-renamer-dialog.c:1083
 msgid "Video Files"
@@ -2027,7 +2020,7 @@ msgid ""
 msgstr "您要跳过此文件并继续重命名剩下的文件吗？"
 
 #: ../thunar/thunar-shortcuts-model.c:597
-#: ../plugins/thunar-tpa/thunar-tpa.c:310
+#: ../plugins/thunar-tpa/thunar-tpa.c:308
 msgid "Trash is empty"
 msgstr "回收站是空的"
 
@@ -2205,7 +2198,7 @@ msgstr "选中此窗口中的所有文件"
 
 #: ../thunar/thunar-standard-view.c:405
 msgid "Select _by Pattern..."
-msgstr "按类型选择(_B)..."
+msgstr "按文件类型选择(_B)..."
 
 #: ../thunar/thunar-standard-view.c:405
 msgid "Select all files that match a certain pattern"
@@ -2424,46 +2417,46 @@ msgstr "粘贴至文件夹(_P)"
 msgid "P_roperties..."
 msgstr "属性(_R)..."
 
-#: ../thunar/thunar-util.c:272
+#: ../thunar/thunar-util.c:280
 #, c-format
 msgid "Invalid path"
 msgstr "无效路径"
 
-#: ../thunar/thunar-util.c:306
+#: ../thunar/thunar-util.c:314
 #, c-format
 msgid "Unknown user \"%s\""
 msgstr "未知用户 “%s”"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:395
+#: ../thunar/thunar-util.c:403
 msgid "Today"
 msgstr "今天"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:400
+#: ../thunar/thunar-util.c:408
 #, c-format
 msgid "Today at %X"
 msgstr "今天 %X"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:408
+#: ../thunar/thunar-util.c:416
 msgid "Yesterday"
 msgstr "昨天"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:413
+#: ../thunar/thunar-util.c:421
 #, c-format
 msgid "Yesterday at %X"
 msgstr "昨天 %X"
 
 #. Days from last week
-#: ../thunar/thunar-util.c:421
+#: ../thunar/thunar-util.c:429
 #, c-format
 msgid "%A at %X"
 msgstr "%A %X"
 
 #. Any other date
-#: ../thunar/thunar-util.c:426
+#: ../thunar/thunar-util.c:434
 #, c-format
 msgid "%x at %X"
 msgstr "%x %X"
@@ -2534,7 +2527,7 @@ msgstr "视图(_V)"
 
 #: ../thunar/thunar-window.c:359
 msgid "_Reload"
-msgstr "重载(_R)"
+msgstr "刷新(_R)"
 
 #: ../thunar/thunar-window.c:360
 msgid "_Location Selector"
@@ -2697,7 +2690,6 @@ msgid "Change the visibility of this window's menubar"
 msgstr "更改此窗口菜单栏的显示状态"
 
 #. * add view options
-#. 
 #: ../thunar/thunar-window.c:764
 msgid "View as _Icons"
 msgstr "以图标查看(_I)"
@@ -2919,11 +2911,11 @@ msgstr "拍摄日期:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:48
 msgid "Camera Brand:"
-msgstr "照相机商标:"
+msgstr "相机商标:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:49
 msgid "Camera Model:"
-msgstr "照相机型号:"
+msgstr "相机型号:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:50
 msgid "Exposure Time:"
@@ -3079,7 +3071,7 @@ msgstr "当前"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:139
 msgid "Date Picture Taken"
-msgstr "照片拍摄日期"
+msgstr "相片拍摄日期"
 
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:179
 #: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:258
@@ -3187,7 +3179,7 @@ msgid ""
 "When sending a file via email, you can either choose to send the file "
 "directly, as is, or compress the file before attaching it to an email. It is"
 " highly recommended to compress large files before sending them."
-msgstr "通过电子邮件发送文件时，您可直接发送此文件，照原样；也可把文件压缩后作为邮件附件发送。强烈推荐将大文件压缩后发送。"
+msgstr "通过电子邮件发送文件时，您可直接发送此文件，也可把文件压缩后作为邮件附件发送。强烈推荐您将大文件压缩后再发送。"
 
 #: ../plugins/thunar-sendto-email/main.c:213
 #, c-format
@@ -3247,15 +3239,15 @@ msgid "Mail Recipient"
 msgstr "邮件收件人"
 
 #. tell the user that we failed to connect to the trash
-#: ../plugins/thunar-tpa/thunar-tpa.c:295
-#: ../plugins/thunar-tpa/thunar-tpa.c:336
-#: ../plugins/thunar-tpa/thunar-tpa.c:358
-#: ../plugins/thunar-tpa/thunar-tpa.c:385
+#: ../plugins/thunar-tpa/thunar-tpa.c:293
+#: ../plugins/thunar-tpa/thunar-tpa.c:334
+#: ../plugins/thunar-tpa/thunar-tpa.c:356
+#: ../plugins/thunar-tpa/thunar-tpa.c:383
 msgid "Failed to connect to the Trash"
 msgstr "无法与回收站连接"
 
 #. tell the user whether the trash is full or empty
-#: ../plugins/thunar-tpa/thunar-tpa.c:310
+#: ../plugins/thunar-tpa/thunar-tpa.c:308
 msgid "Trash contains files"
 msgstr "回收站内有文件"
 
@@ -3321,7 +3313,6 @@ msgid "If you delete a custom action, it is permanently lost."
 msgstr "如果您删除了自定义动作，它会永远消失。"
 
 #. Basic
-#. 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:123
 msgid "Basic"
 msgstr "基本"
@@ -3523,7 +3514,7 @@ msgstr "在此打开终端"
 msgid "Example for a custom action"
 msgstr "自定义动作示例"
 
-#: ../plugins/thunar-wallpaper/twp-provider.c:173
+#: ../plugins/thunar-wallpaper/twp-provider.c:175
 msgid "Set as wallpaper"
 msgstr "设为壁纸"
 
@@ -3550,3 +3541,22 @@ msgstr "打开文件夹"
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "Configure the Thunar file manager"
 msgstr "配置 Thunar 文件管理器"
+
+#: ../thunar.appdata.xml.in.h:1
+msgid ""
+"Thunar is a file browser specifically designed for the Xfce Desktop, but "
+"also can serve as an alternate file browser for other Desktop environments. "
+"It has a simple, clean two-pane design for browsing all your files."
+msgstr "Thunar 是一个专门针对 Xfce 桌面环境设计的文件浏览器，但它也能作为其他桌面环境的替代文件浏览器。它有一个简洁的双栏式设计让您浏览所有的文件。"
+
+#. SECURITY:
+#. - A normal active user can run thunar without elevated rights. They
+#. may wish to modify files they normally do not have read/write access
+#. to. This isn't a good idea, but is common on single user systems.
+#: ../org.xfce.thunar.policy.in.in.h:6
+msgid "Run Thunar as root"
+msgstr "以 root 身份运行 Thunar"
+
+#: ../org.xfce.thunar.policy.in.in.h:7
+msgid "Authentication is required to run Thunar as root."
+msgstr "以 root 身份运行 Thunar 需要进行身份验证。"
