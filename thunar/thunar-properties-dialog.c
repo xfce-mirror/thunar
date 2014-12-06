@@ -138,6 +138,8 @@ struct _ThunarPropertiesDialog
   GtkWidget              *deleted_label;
   GtkWidget              *modified_label;
   GtkWidget              *accessed_label;
+  GtkWidget              *freespace_vbox;
+  GtkWidget              *freespace_bar;
   GtkWidget              *freespace_label;
   GtkWidget              *volume_image;
   GtkWidget              *volume_label;
@@ -493,18 +495,26 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   label = gtk_label_new (_("Free Space:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
-  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.0f);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);
 
+  dialog->freespace_vbox = gtk_vbox_new (FALSE, 4);
+  gtk_table_attach (GTK_TABLE (table), dialog->freespace_vbox, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  exo_binding_new (G_OBJECT (dialog->freespace_vbox), "visible", G_OBJECT (label), "visible");
+  gtk_widget_show (dialog->freespace_vbox);
+
   dialog->freespace_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->freespace_label), TRUE);
-  exo_binding_new (G_OBJECT (dialog->freespace_label), "visible", G_OBJECT (label), "visible");
-  gtk_table_attach (GTK_TABLE (table), dialog->freespace_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_box_pack_start (GTK_BOX (dialog->freespace_vbox), dialog->freespace_label, TRUE, TRUE, 0);
   gtk_widget_show (dialog->freespace_label);
 
-  ++row;
+  dialog->freespace_bar = g_object_new (GTK_TYPE_PROGRESS_BAR, NULL);
+  gtk_box_pack_start (GTK_BOX (dialog->freespace_vbox), dialog->freespace_bar, TRUE, TRUE, 0);
+  gtk_widget_set_size_request (dialog->freespace_bar, -1, 10);
+  gtk_widget_show (dialog->freespace_bar);
 
+  ++row;
 
   spacer = g_object_new (GTK_TYPE_ALIGNMENT, "height-request", 12, NULL);
   gtk_table_attach (GTK_TABLE (table), spacer, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
@@ -858,6 +868,9 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   ThunarFile        *file;
   ThunarFile        *parent_file;
   gboolean           show_chooser;
+  guint64            fs_free;
+  guint64            fs_size;
+  gdouble            fs_fraction = 0.0;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (g_list_length (dialog->files) == 1);
@@ -1037,20 +1050,27 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   if (thunar_file_is_directory (file))
     {
       fs_string = thunar_g_file_get_free_space_string (thunar_file_get_file (file));
+      if (thunar_g_file_get_free_space (thunar_file_get_file (file), &fs_free, &fs_size)
+          && fs_size > 0)
+        {
+          /* free disk space fraction */
+          fs_fraction = ((fs_size - fs_free) * 100 / fs_size);
+        }
       if (fs_string != NULL)
         {
           gtk_label_set_text (GTK_LABEL (dialog->freespace_label), fs_string);
-          gtk_widget_show (dialog->freespace_label);
+          gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (dialog->freespace_bar), fs_fraction / 100);
+          gtk_widget_show (dialog->freespace_vbox);
           g_free (fs_string);
         }
       else
         {
-          gtk_widget_hide (dialog->freespace_label);
+          gtk_widget_hide (dialog->freespace_vbox);
         }
     }
   else
     {
-      gtk_widget_hide (dialog->freespace_label);
+      gtk_widget_hide (dialog->freespace_vbox);
     }
 
   /* update the volume */
@@ -1107,7 +1127,7 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
   gtk_widget_hide (dialog->deleted_label);
   gtk_widget_hide (dialog->modified_label);
   gtk_widget_hide (dialog->accessed_label);
-  gtk_widget_hide (dialog->freespace_label);
+  gtk_widget_hide (dialog->freespace_vbox);
   gtk_widget_hide (dialog->origin_label);
   gtk_widget_hide (dialog->openwith_chooser);
   gtk_widget_hide (dialog->link_label);
