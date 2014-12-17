@@ -89,6 +89,7 @@ enum
   PROP_MISC_TAB_CLOSE_MIDDLE_CLICK,
   PROP_MISC_TEXT_BESIDE_ICONS,
   PROP_MISC_THUMBNAIL_MODE,
+  PROP_MISC_FILE_SIZE_BINARY,
   PROP_SHORTCUTS_ICON_EMBLEMS,
   PROP_SHORTCUTS_ICON_SIZE,
   PROP_TREE_ICON_EMBLEMS,
@@ -674,6 +675,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          THUNAR_TYPE_THUMBNAIL_MODE,
                          THUNAR_THUMBNAIL_MODE_ONLY_LOCAL,
                          EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-file-size-binary:
+   *
+   * Show file size in binary format instead of decimal.
+   **/
+  preferences_props[PROP_MISC_FILE_SIZE_BINARY] =
+      g_param_spec_boolean ("misc-file-size-binary",
+                            "MiscFileSizeBinary",
+                            NULL,
+                            FALSE,
+                            EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:shortcuts-icon-emblems:

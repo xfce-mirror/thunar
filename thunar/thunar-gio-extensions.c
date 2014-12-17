@@ -34,6 +34,7 @@
 
 #include <thunar/thunar-file.h>
 #include <thunar/thunar-gio-extensions.h>
+#include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
 
@@ -410,19 +411,25 @@ thunar_g_file_get_free_space (GFile   *file,
 gchar *
 thunar_g_file_get_free_space_string (GFile *file)
 {
-  gchar   *fs_free_str;
-  gchar   *fs_size_str;
-  guint64  fs_free;
-  guint64  fs_size;
-  gchar   *fs_string = NULL;
+  gchar             *fs_free_str;
+  gchar             *fs_size_str;
+  guint64            fs_free;
+  guint64            fs_size;
+  gchar             *fs_string = NULL;
+  ThunarPreferences *preferences;
+  gboolean           file_size_binary;
 
   _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
+
+  preferences = thunar_preferences_get ();
+  g_object_get (preferences, "misc-file-size-binary", &file_size_binary, NULL);
+  g_object_unref (preferences);
 
   if (thunar_g_file_get_free_space (file, &fs_free, &fs_size)
       && fs_size > 0)
     {
-      fs_free_str = g_format_size (fs_free);
-      fs_size_str = g_format_size (fs_size);
+      fs_free_str = g_format_size_full (fs_free, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+      fs_size_str = g_format_size_full (fs_size, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
       /* free disk space string */
       fs_string = g_strdup_printf (_("%s of %s (%d%% used)"),
                                    fs_free_str, fs_size_str,

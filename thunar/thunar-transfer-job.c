@@ -30,6 +30,7 @@
 #include <thunar/thunar-io-scan-directory.h>
 #include <thunar/thunar-io-jobs-util.h>
 #include <thunar/thunar-job.h>
+#include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-thumbnail-cache.h>
 #include <thunar/thunar-transfer-job.h>
@@ -672,16 +673,22 @@ static gboolean
 thunar_transfer_job_veryify_destination (ThunarTransferJob  *transfer_job,
                                          GError            **error)
 {
-  GFileInfo *filesystem_info;
-  guint64     free_space;
-  GFile     *dest;
-  GFileInfo *dest_info;
-  gchar     *dest_name = NULL;
-  gchar     *base_name;
-  gboolean   succeed = TRUE;
-  gchar     *size_string;
+  GFileInfo         *filesystem_info;
+  guint64             free_space;
+  GFile             *dest;
+  GFileInfo         *dest_info;
+  gchar             *dest_name = NULL;
+  gchar             *base_name;
+  gboolean           succeed = TRUE;
+  gchar             *size_string;
+  ThunarPreferences *preferences;
+  gboolean           file_size_binary;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (transfer_job), FALSE);
+
+  preferences = thunar_preferences_get ();
+  g_object_get (preferences, "misc-file-size-binary", &file_size_binary, NULL);
+  g_object_unref (preferences);
 
   /* no target file list */
   if (transfer_job->target_file_list == NULL)
@@ -729,7 +736,7 @@ thunar_transfer_job_veryify_destination (ThunarTransferJob  *transfer_job,
       free_space = g_file_info_get_attribute_uint64 (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
       if (transfer_job->total_size > free_space)
         {
-          size_string = g_format_size (transfer_job->total_size - free_space);
+          size_string = g_format_size_full (transfer_job->total_size - free_space, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
           succeed = thunar_job_ask_no_size (THUNAR_JOB (transfer_job),
                                              _("Error while copying to \"%s\": %s more space is "
                                                "required to copy to the destination"),
@@ -1068,19 +1075,25 @@ thunar_transfer_job_new (GList                *source_node_list,
 gchar *
 thunar_transfer_job_get_status (ThunarTransferJob *job)
 {
-  gchar   *total_size_str;
-  gchar   *total_progress_str;
-  gchar   *transfer_rate_str;
-  GString *status;
-  gulong   remaining_time;
+  gchar             *total_size_str;
+  gchar             *total_progress_str;
+  gchar             *transfer_rate_str;
+  GString           *status;
+  gulong             remaining_time;
+  ThunarPreferences *preferences;
+  gboolean           file_size_binary;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), NULL);
+
+  preferences = thunar_preferences_get ();
+  g_object_get (preferences, "misc-file-size-binary", &file_size_binary, NULL);
+  g_object_unref (preferences);
 
   status = g_string_sized_new (100);
 
   /* transfer status like "22.6MB of 134.1MB" */
-  total_size_str = g_format_size (job->total_size);
-  total_progress_str = g_format_size (job->total_progress);
+  total_size_str = g_format_size_full (job->total_size, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+  total_progress_str = g_format_size_full (job->total_progress, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
   g_string_append_printf (status, _("%s of %s"), total_progress_str, total_size_str);
   g_free (total_size_str);
   g_free (total_progress_str);
@@ -1090,7 +1103,7 @@ thunar_transfer_job_get_status (ThunarTransferJob *job)
       && (job->last_update_time - job->start_time) > MINIMUM_TRANSFER_TIME)
     {
       /* remaining time based on the transfer speed */
-      transfer_rate_str = g_format_size (job->transfer_rate);
+      transfer_rate_str = g_format_size_full (job->transfer_rate, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
       remaining_time = (job->total_size - job->total_progress) / job->transfer_rate;
 
       if (remaining_time > 0)

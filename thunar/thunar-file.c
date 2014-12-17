@@ -67,6 +67,7 @@
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-icon-factory.h>
+#include <thunar/thunar-preferences.h>
 
 
 
@@ -2160,8 +2161,16 @@ thunar_file_get_mode_string (const ThunarFile *file)
 gchar *
 thunar_file_get_size_string (const ThunarFile *file)
 {
+  ThunarPreferences *preferences;
+  gboolean           file_size_binary;
+
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return g_format_size (thunar_file_get_size (file));
+
+  preferences = thunar_preferences_get ();
+  g_object_get (preferences, "misc-file-size-binary", &file_size_binary, NULL);
+  g_object_unref (preferences);
+
+  return g_format_size_full (thunar_file_get_size (file), file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
 }
 
 

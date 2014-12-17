@@ -30,10 +30,11 @@
 #include <locale.h>
 #endif
 
+#include <thunar/thunar-deep-count-job.h>
 #include <thunar/thunar-gtk-extensions.h>
+#include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-size-label.h>
-#include <thunar/thunar-deep-count-job.h>
 
 
 
@@ -264,12 +265,18 @@ thunar_size_label_button_press_event (GtkWidget       *ebox,
 static void
 thunar_size_label_files_changed (ThunarSizeLabel *size_label)
 {
-  gchar   *size_string;
-  guint64  size;
+  gchar             *size_string;
+  guint64            size;
+  ThunarPreferences *preferences;
+  gboolean           file_size_binary;
 
   _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
   _thunar_return_if_fail (size_label->files != NULL);
   _thunar_return_if_fail (THUNAR_IS_FILE (size_label->files->data));
+
+  preferences = thunar_preferences_get ();
+  g_object_get (preferences, "misc-file-size-binary", &file_size_binary, NULL);
+  g_object_unref (preferences);
 
   /* cancel the pending job (if any) */
   if (G_UNLIKELY (size_label->job != NULL))
@@ -308,7 +315,7 @@ thunar_size_label_files_changed (ThunarSizeLabel *size_label)
       size = thunar_file_get_size (THUNAR_FILE (size_label->files->data));
 
       /* setup the new label */
-      size_string = g_format_size_full (size, G_FORMAT_SIZE_LONG_FORMAT);
+      size_string = g_format_size_full (size, file_size_binary ? G_FORMAT_SIZE_LONG_FORMAT | G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_LONG_FORMAT);
       gtk_label_set_text (GTK_LABEL (size_label->label), size_string);
       g_free (size_string);
     }
@@ -359,14 +366,20 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
                                  guint               unreadable_directory_count,
                                  ThunarSizeLabel    *size_label)
 {
-  gchar *size_string;
-  gchar *text;
-  guint  n;
-  gchar *unreable_text;
+  gchar             *size_string;
+  gchar             *text;
+  guint              n;
+  gchar             *unreable_text;
+  ThunarPreferences *preferences;
+  gboolean           file_size_binary;
 
   _thunar_return_if_fail (THUNAR_IS_DEEP_COUNT_JOB (job));
   _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
   _thunar_return_if_fail (size_label->job == job);
+
+  preferences = thunar_preferences_get ();
+  g_object_get (preferences, "misc-file-size-binary", &file_size_binary, NULL);
+  g_object_unref (preferences);
 
   /* determine the total number of items */
   n = file_count + directory_count + unreadable_directory_count;
@@ -374,7 +387,7 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
   if (G_LIKELY (n > unreadable_directory_count))
     {
       /* update the label */
-      size_string = g_format_size (total_size);
+      size_string = g_format_size_full (total_size, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
       text = g_strdup_printf (ngettext ("%u item, totalling %s", "%u items, totalling %s", n), n, size_string);
       g_free (size_string);
       

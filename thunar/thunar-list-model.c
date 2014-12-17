@@ -2161,8 +2161,13 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
   gint               nrows;
   ThunarPreferences *preferences;
   gboolean           show_image_size;
+  gboolean           file_size_binary;
 
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
+
+  preferences = thunar_preferences_get ();
+  g_object_get (preferences, "misc-file-size-binary", &file_size_binary, NULL);
+  g_object_unref (preferences);
 
   if (selected_items == NULL)
     {
@@ -2176,7 +2181,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
           && thunar_g_file_get_free_space (thunar_file_get_file (file), &size, NULL)))
         {
           /* humanize the free space */
-          fspace_string = g_format_size (size);
+          fspace_string = g_format_size_full (size, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
           size_summary = 0;
 
           row = g_sequence_get_begin_iter (store->rows);
@@ -2194,7 +2199,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
           if (size_summary > 0)
             {
               /* generate a text which includes the size of all items in the folder */
-              size_string = g_format_size (size_summary);
+              size_string = g_format_size_full (size_summary, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
               text = g_strdup_printf (ngettext ("%d item (%s), Free space: %s", "%d items (%s), Free space: %s", nrows),
                                       nrows, size_string, fspace_string);
               g_free (size_string);
@@ -2326,7 +2331,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
      /* text for the items in the folder */
      if (non_folder_count > 0)
         {
-          size_string = g_format_size (size_summary);
+          size_string = g_format_size_full (size_summary, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
           if (folder_count > 0)
             {
               /* item count if there are also folders in the selection */
