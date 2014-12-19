@@ -300,7 +300,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_table_attach (GTK_TABLE (table), button, 0, 2, 2, 3, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (button);
 
-  button = gtk_check_button_new_with_mnemonic (_("Show file size in binary"));
+  button = gtk_check_button_new_with_mnemonic (_("Show file size in binary format"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-file-size-binary", G_OBJECT (button), "active");
   gtk_widget_set_tooltip_text (button, _("Select this option to show file size in binary format instead of decimal."));
   gtk_table_attach (GTK_TABLE (table), button, 0, 2, 3, 4, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
