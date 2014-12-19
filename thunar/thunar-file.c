@@ -67,7 +67,6 @@
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-icon-factory.h>
-#include <thunar/thunar-preferences.h>
 
 
 
