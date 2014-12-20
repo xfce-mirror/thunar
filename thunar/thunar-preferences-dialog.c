@@ -254,7 +254,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
 
-  table = gtk_table_new (3, 2, FALSE);
+  table = gtk_table_new (4, 3, FALSE);
   gtk_table_set_row_spacings (GTK_TABLE (table), 6);
   gtk_table_set_col_spacings (GTK_TABLE (table), 12);
   gtk_container_set_border_width (GTK_CONTAINER (table), 12);
@@ -298,6 +298,12 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-folders-first", G_OBJECT (button), "active");
   gtk_widget_set_tooltip_text (button, _("Select this option to list folders before files when you sort a folder."));
   gtk_table_attach (GTK_TABLE (table), button, 0, 2, 2, 3, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (button);
+
+  button = gtk_check_button_new_with_mnemonic (_("Show file size in binary format"));
+  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-file-size-binary", G_OBJECT (button), "active");
+  gtk_widget_set_tooltip_text (button, _("Select this option to show file size in binary format instead of decimal."));
+  gtk_table_attach (GTK_TABLE (table), button, 0, 2, 3, 4, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (button);
 
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);

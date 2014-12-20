@@ -50,6 +50,7 @@ enum
   PROP_FOLDERS_FIRST,
   PROP_NUM_FILES,
   PROP_SHOW_HIDDEN,
+  PROP_FILE_SIZE_BINARY,
   N_PROPERTIES
 };
 
@@ -184,6 +185,9 @@ static void               thunar_list_model_set_date_style        (ThunarListMod
 static gint               thunar_list_model_get_num_files         (ThunarListModel        *store);
 static gboolean           thunar_list_model_get_folders_first     (ThunarListModel        *store);
 
+static gboolean           thunar_list_model_get_file_size_binary  (ThunarListModel        *store);
+static void               thunar_list_model_set_file_size_binary  (ThunarListModel        *store,
+                                                                   gboolean                file_size_binary);
 
 struct _ThunarListModelClass
 {
@@ -210,6 +214,7 @@ struct _ThunarListModel
   GSList         *hidden;
   ThunarFolder   *folder;
   gboolean        show_hidden : 1;
+  gboolean        file_size_binary : 1;
   ThunarDateStyle date_style;
 
   /* Use the shared ThunarFileMonitor instance, so we
@@ -325,6 +330,18 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
       g_param_spec_boolean ("show-hidden",
                             "show-hidden",
                             "show-hidden",
+                            FALSE,
+                            EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarListModel::misc-file-size-binary:
+   *
+   * Tells whether to format file size in binary.
+   **/
+  list_model_props[PROP_FILE_SIZE_BINARY] =
+      g_param_spec_boolean ("file-size-binary",
+                            "file-size-binary",
+                            "file-size-binary",
                             FALSE,
                             EXO_PARAM_READWRITE);
 
@@ -479,6 +496,10 @@ thunar_list_model_get_property (GObject    *object,
       g_value_set_boolean (value, thunar_list_model_get_show_hidden (store));
       break;
 
+    case PROP_FILE_SIZE_BINARY:
+      g_value_set_boolean (value, thunar_list_model_get_file_size_binary (store));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -515,6 +536,10 @@ thunar_list_model_set_property (GObject      *object,
 
     case PROP_SHOW_HIDDEN:
       thunar_list_model_set_show_hidden (store, g_value_get_boolean (value));
+      break;
+
+    case PROP_FILE_SIZE_BINARY:
+      thunar_list_model_set_file_size_binary (store, g_value_get_boolean (value));
       break;
 
     default:
@@ -716,7 +741,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
 
     case THUNAR_COLUMN_SIZE:
       g_value_init (value, G_TYPE_STRING);
-      g_value_take_string (value, thunar_file_get_size_string (file));
+      g_value_take_string (value, thunar_file_get_size_string_formatted (file, THUNAR_LIST_MODEL (model)->file_size_binary));
       break;
 
     case THUNAR_COLUMN_TYPE:
@@ -1966,6 +1991,57 @@ thunar_list_model_set_show_hidden (ThunarListModel *store,
 
 
 /**
+ * thunar_list_model_get_file_size_binary:
+ * @store : a valid #ThunarListModel object.
+ *
+ * Returns %TRUE if the file size should be formatted
+ * as binary.
+ *
+ * Return value: %TRUE if file size format is binary.
+ **/
+static gboolean
+thunar_list_model_get_file_size_binary (ThunarListModel *store)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), FALSE);
+  return store->file_size_binary;
+}
+
+
+
+/**
+ * thunar_list_model_set_file_size_binary:
+ * @store            : a valid #ThunarListModel object.
+ * @file_size_binary : %TRUE to format file size as binary.
+ *
+ * If @file_size_binary is %TRUE the file size should be
+ * formatted as binary.
+ **/
+static void
+thunar_list_model_set_file_size_binary (ThunarListModel *store,
+                                        gboolean         file_size_binary)
+{
+  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
+
+  /* normalize the setting */
+  file_size_binary = !!file_size_binary;
+
+  /* check if we have a new setting */
+  if (store->file_size_binary != file_size_binary)
+    {
+      /* apply the new setting */
+      store->file_size_binary = file_size_binary;
+
+      /* resort the model with the new setting */
+      thunar_list_model_sort (store);
+
+      /* notify listeners */
+      g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_FILE_SIZE_BINARY]);
+    }
+}
+
+
+
+/**
  * thunar_list_model_get_file:
  * @store : a #ThunarListModel.
  * @iter  : a valid #GtkTreeIter for @store.
@@ -2161,8 +2237,11 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
   gint               nrows;
   ThunarPreferences *preferences;
   gboolean           show_image_size;
+  gboolean           file_size_binary;
 
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
+
+  file_size_binary = thunar_list_model_get_file_size_binary(store);
 
   if (selected_items == NULL)
     {
@@ -2176,7 +2255,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
           && thunar_g_file_get_free_space (thunar_file_get_file (file), &size, NULL)))
         {
           /* humanize the free space */
-          fspace_string = g_format_size (size);
+          fspace_string = g_format_size_full (size, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
           size_summary = 0;
 
           row = g_sequence_get_begin_iter (store->rows);
@@ -2194,7 +2273,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
           if (size_summary > 0)
             {
               /* generate a text which includes the size of all items in the folder */
-              size_string = g_format_size (size_summary);
+              size_string = g_format_size_full (size_summary, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
               text = g_strdup_printf (ngettext ("%d item (%s), Free space: %s", "%d items (%s), Free space: %s", nrows),
                                       nrows, size_string, fspace_string);
               g_free (size_string);
@@ -2231,7 +2310,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
         }
       else if (G_UNLIKELY (thunar_file_is_symlink (file)))
         {
-          size_string = thunar_file_get_size_string (file);
+          size_string = thunar_file_get_size_string_formatted (file, file_size_binary);
           text = g_strdup_printf (_("\"%s\" (%s) link to %s"), thunar_file_get_display_name (file),
                                   size_string, thunar_file_get_symlink_target (file));
           g_free (size_string);
@@ -2247,7 +2326,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       else if (thunar_file_is_regular (file))
         {
           description = g_content_type_get_description (content_type);
-          size_string = thunar_file_get_size_string (file);
+          size_string = thunar_file_get_size_string_formatted (file, file_size_binary);
           /* I18N, first %s is the display name of the file, 2nd the file size, 3rd the content type */
           text = g_strdup_printf (_("\"%s\" (%s) %s"), thunar_file_get_display_name (file),
                                   size_string, description);
@@ -2326,7 +2405,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
      /* text for the items in the folder */
      if (non_folder_count > 0)
         {
-          size_string = g_format_size (size_summary);
+          size_string = g_format_size_full (size_summary, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
           if (folder_count > 0)
             {
               /* item count if there are also folders in the selection */

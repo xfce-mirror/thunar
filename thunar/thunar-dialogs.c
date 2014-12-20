@@ -519,6 +519,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gchar             *size_string;
   gchar             *text;
   gint               response;
+  gboolean           file_size_binary;
 
   _thunar_return_val_if_fail (parent == NULL || GTK_IS_WINDOW (parent), THUNAR_JOB_RESPONSE_CANCEL);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (src_file), THUNAR_JOB_RESPONSE_CANCEL);
@@ -527,6 +528,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   /* determine the style used to format dates */
   preferences = thunar_preferences_get ();
   g_object_get (G_OBJECT (preferences), "misc-date-style", &date_style, NULL);
+  g_object_get (G_OBJECT (preferences), "misc-file-size-binary", &file_size_binary, NULL);
   g_object_unref (G_OBJECT (preferences));
 
   /* setup the confirmation dialog */
@@ -613,7 +615,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   g_object_unref (G_OBJECT (icon));
   gtk_widget_show (image);
 
-  size_string = thunar_file_get_size_string (dst_file);
+  size_string = thunar_file_get_size_string_formatted (dst_file, file_size_binary);
   date_string = thunar_file_get_date_string (dst_file, THUNAR_FILE_DATE_MODIFIED, date_style);
   text = g_strdup_printf ("%s %s\n%s %s", _("Size:"), size_string, _("Modified:"), date_string);
   label = gtk_label_new (text);
@@ -644,7 +646,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   g_object_unref (G_OBJECT (icon));
   gtk_widget_show (image);
 
-  size_string = thunar_file_get_size_string (src_file);
+  size_string = thunar_file_get_size_string_formatted (src_file, file_size_binary);
   date_string = thunar_file_get_date_string (src_file, THUNAR_FILE_DATE_MODIFIED, date_style);
   text = g_strdup_printf ("%s %s\n%s %s", _("Size:"), size_string, _("Modified:"), date_string);
   label = gtk_label_new (text);
