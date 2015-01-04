@@ -53,7 +53,8 @@ AM_CPPFLAGS =	 							\
 	$(GTK_DOC_EXTRA_CFLAGS)
 
 GTKDOC_LIBS =  								\
-	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la
+	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la    \
+	$(GTK_LIBS)
 
 include $(top_srcdir)/gtk-doc.make
 
