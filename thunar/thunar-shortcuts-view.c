@@ -430,7 +430,7 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
   if (gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (widget), event->x, event->y, &path, NULL, NULL, NULL))
     {
       /* check if we should popup the context menu */
-      if (G_UNLIKELY (event->button == 3 && event->type == GDK_BUTTON_PRESS))
+      if (G_UNLIKELY (event->button == 3))
         {
           /* determine the iterator for the path */
           if (gtk_tree_model_get_iter (model, &iter, path))
@@ -442,14 +442,12 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
               result = TRUE;
             }
         }
-      else if ((event->button == 1 || event->button == 2)
-               && event->type == GDK_BUTTON_PRESS
-               && (event->state & gtk_accelerator_get_default_mod_mask ()) == 0)
+      else if (event->button == 1 || event->button == 2)
         {
           /* check if we clicked the eject button area */
           column_width = gtk_tree_view_column_get_width (gtk_tree_view_get_column (GTK_TREE_VIEW (view), 0));
           gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &icon_width, &icon_height);
-          if (event->x >= column_width - icon_width - 3)
+          if (event->button == 1 && event->x >= column_width - icon_width - 3)
             {
               /* check if that shortcut actually has an eject button */
               model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
@@ -460,6 +458,8 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
                     view->pressed_eject_button = 1;
                 }
             }
+          else
+              gtk_tree_view_set_cursor (GTK_TREE_VIEW (widget), path, NULL, FALSE);
 
           /* remember the button as pressed and handle it in the release handler */
           view->pressed_button = event->button;
@@ -503,6 +503,11 @@ thunar_shortcuts_view_button_release_event (GtkWidget      *widget,
         {
           /* button 2 opens in a new window or tab */
           g_object_get (view->preferences, "misc-middle-click-in-tab", &in_tab, NULL);
+
+          /* holding ctrl inverts the action */
+          if ((event->state & GDK_CONTROL_MASK) != 0)
+            in_tab = !in_tab;
+
           thunar_shortcuts_view_open (view, in_tab ? OPEN_IN_TAB : OPEN_IN_WINDOW);
         }
     }

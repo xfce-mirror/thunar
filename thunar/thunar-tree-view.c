@@ -715,9 +715,10 @@ thunar_tree_view_button_press_event (GtkWidget      *widget,
             }
         }
       else if ((event->button == 1 || event->button == 2)
-               && event->type == GDK_BUTTON_PRESS
-               && (event->state & gtk_accelerator_get_default_mod_mask ()) == 0)
+               && event->type == GDK_BUTTON_PRESS)
         {
+          gtk_tree_view_set_cursor (GTK_TREE_VIEW (widget), path, NULL, FALSE);
+
           /* remember the button as pressed and handled it in the release handler */
           view->pressed_button = event->button;
         }
@@ -749,6 +750,10 @@ thunar_tree_view_button_release_event (GtkWidget      *widget,
       else if (G_UNLIKELY (event->button == 2))
         {
           g_object_get (view->preferences, "misc-middle-click-in-tab", &in_tab, NULL);
+          /* holding ctrl inverts the action */
+          if ((event->state & GDK_CONTROL_MASK) != 0)
+            in_tab = !in_tab;
+
           if (in_tab)
             thunar_tree_view_action_open_in_new_tab (view);
           else
