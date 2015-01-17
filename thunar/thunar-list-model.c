@@ -1,4 +1,4 @@
-/* $Id$ */
+/* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
  * Copyright (c) 2004-2007 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2009-2011 Jannis Pohlmann <jannis@xfce.org>
