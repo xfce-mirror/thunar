@@ -309,7 +309,7 @@ twp_action_set_wallpaper (GtkAction *action,
         g_spawn_command_line_async (command, NULL);
         g_free (command);
 
-        command = g_strdup_printf ("xfconf-query -c xfce4-desktop -p %s --create -t int -s 3", image_style_prop);
+        command = g_strdup_printf ("xfconf-query -c xfce4-desktop -p %s --create -t int -s 5", image_style_prop);
         g_spawn_command_line_async (command, NULL);
         g_free (command);
 
