@@ -431,7 +431,7 @@ thunar_g_file_get_free_space_string (GFile *file)
       fs_free_str = g_format_size_full (fs_free, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
       fs_size_str = g_format_size_full (fs_size, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
       /* free disk space string */
-      fs_string = g_strdup_printf (_("%s of %s (%d%% used)"),
+      fs_string = g_strdup_printf (_("%s of %s free (%d%% used)"),
                                    fs_free_str, fs_size_str,
                                    (gint) ((fs_size - fs_free) * 100 / fs_size));
       g_free (fs_free_str);

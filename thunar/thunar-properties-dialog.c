@@ -493,7 +493,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   ++row;
 
-  label = gtk_label_new (_("Free Space:"));
+  label = gtk_label_new (_("Usage:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.0f);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
