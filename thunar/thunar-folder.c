@@ -555,7 +555,7 @@ thunar_folder_finished (ExoJob       *job,
 
   /* add us to the file alteration monitor */
   folder->monitor = g_file_monitor_directory (thunar_file_get_file (folder->corresponding_file),
-                                              G_FILE_MONITOR_NONE, NULL, NULL);
+                                              G_FILE_MONITOR_SEND_MOVED, NULL, NULL);
   if (G_LIKELY (folder->monitor != NULL))
     g_signal_connect (folder->monitor, "changed", G_CALLBACK (thunar_folder_monitor), folder);
 
@@ -741,6 +741,11 @@ thunar_folder_monitor (GFileMonitor     *monitor,
           /* update/destroy the file */
           if (event_type == G_FILE_MONITOR_EVENT_DELETED)
             thunar_file_destroy (lp->data);
+          else if (event_type == G_FILE_MONITOR_EVENT_MOVED)
+            {
+              thunar_file_destroy (lp->data);
+              thunar_file_reload (folder->corresponding_file);
+            }
           else
             {
 #if DEBUG_FILE_CHANGES
