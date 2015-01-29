@@ -322,10 +322,7 @@ thunar_icon_renderer_color_selected (cairo_t   *cr,
   gdk_cairo_set_source_color (cr, &widget->style->base[state]);
   cairo_set_operator (cr, CAIRO_OPERATOR_MULTIPLY);
 
-  /* CAIRO_OPERATOR_MULTIPLY */
-  /* causes libx11 error: error_code 2 request_code 155 minor_code 8 */
-  /* with x11 1.0.3, xrender 0.9.1, cairo 1.12.2 */
-  /* cairo_mask (cr, source); */
+  cairo_mask (cr, source);
 
   cairo_pattern_destroy (source);
   cairo_restore (cr);
@@ -343,11 +340,7 @@ thunar_icon_renderer_color_lighten (cairo_t   *cr,
 
   source = cairo_pattern_reference (cairo_get_source (cr));
   cairo_set_source_rgb (cr, .15, .15, .15);
-  /* CAIRO_OPERATOR_COLOR_DODGE */
-  /* causes libx11 error: error_code 2 request_code 155 minor_code 8 */
-  /* with x11 1.0.3, xrender 0.9.1, cairo 1.12.2 */
-  /* cairo_set_operator (cr, CAIRO_OPERATOR_COLOR_DODGE); */
-  cairo_set_operator (cr, CAIRO_OPERATOR_ADD);
+  cairo_set_operator (cr, CAIRO_OPERATOR_COLOR_DODGE);
 
   cairo_mask (cr, source);
 
