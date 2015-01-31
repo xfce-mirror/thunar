@@ -97,6 +97,8 @@ static gboolean                 thunar_tree_view_button_press_event           (G
                                                                                GdkEventButton          *event);
 static gboolean                 thunar_tree_view_button_release_event         (GtkWidget               *widget,
                                                                                GdkEventButton          *event);
+static gboolean                 thunar_tree_view_key_press_event              (GtkWidget               *widget,
+                                                                               GdkEventKey             *event);
 static void                     thunar_tree_view_drag_data_received           (GtkWidget               *widget,
                                                                                GdkDragContext          *context,
                                                                                gint                     x,
@@ -431,6 +433,9 @@ thunar_tree_view_init (ThunarTreeView *view)
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
   gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
   gtk_tree_selection_set_select_function (selection, thunar_tree_view_selection_func, view, NULL);
+
+  /* custom keyboard handler for better navigation */
+  g_signal_connect (GTK_WIDGET (view), "key_press_event", G_CALLBACK (thunar_tree_view_key_press_event), NULL);
 
   /* enable drop support for the tree view */
   gtk_drag_dest_set (GTK_WIDGET (view), 0, drop_targets, G_N_ELEMENTS (drop_targets),
@@ -768,6 +773,106 @@ thunar_tree_view_button_release_event (GtkWidget      *widget,
   return (*GTK_WIDGET_CLASS (thunar_tree_view_parent_class)->button_release_event) (widget, event);
 }
 
+static gboolean
+thunar_tree_view_key_press_event(GtkWidget   *widget,
+                                 GdkEventKey *event)
+{
+  ThunarTreeView *tree_view = THUNAR_TREE_VIEW (widget);
+  gboolean stopPropagation = FALSE;
+  GtkTreePath *path;
+
+  /* Get path of currently highlighted item */
+  gtk_tree_view_get_cursor(GTK_TREE_VIEW (tree_view), &path, NULL);
+
+  switch (event->keyval)
+    {
+    case GDK_KEY_Up:
+    case GDK_KP_Up:
+    case GDK_KEY_Down:
+    case GDK_KP_Down:
+      /* the default actions works good, but we want to update the right pane */
+      GTK_WIDGET_CLASS (thunar_tree_view_parent_class)->key_press_event (widget, event);
+
+      /* sync with new tree view selection */
+      gtk_tree_path_free (path);
+      gtk_tree_view_get_cursor (GTK_TREE_VIEW (tree_view), &path, NULL);
+
+      /* The top-level desktop entry is a bit problematic; opening it
+         will usually cause expansion of the home directory where the
+         desktop folder resides. This breaks navigation and is bad for
+         user experience, so do not open the top-level desktop entry
+         automatically.
+       */
+      if (gtk_tree_path_get_depth (path) == 1)
+        {
+          ThunarFile *file;
+          GFile *desktop;
+          GFile *selected;
+
+          file = thunar_tree_view_get_selected_file (tree_view);
+          if (file)
+            {
+              desktop = thunar_g_file_new_for_desktop ();
+              selected = thunar_file_get_file (file);
+
+              /* open only non-desktop top-level items */
+              if (! g_file_equal (desktop, selected))
+                  thunar_tree_view_action_open (tree_view);
+
+              g_object_unref (G_OBJECT (file));
+              g_object_unref (desktop);
+            }
+        }
+      else
+          thunar_tree_view_action_open (tree_view);
+
+      stopPropagation = TRUE;
+      break;
+
+    case GDK_KEY_Left:
+    case GDK_KP_Left:
+      /* if branch is expanded then collapse it */
+      if (gtk_tree_view_row_expanded (GTK_TREE_VIEW (tree_view), path))
+          gtk_tree_view_collapse_row (GTK_TREE_VIEW (tree_view), path);
+
+      else /* if branch is already collapsed then move to parent */
+          if (gtk_tree_path_up (path))
+              gtk_tree_view_set_cursor (GTK_TREE_VIEW (tree_view), path, NULL, FALSE);
+      thunar_tree_view_action_open (tree_view);
+
+      stopPropagation = TRUE;
+      break;
+
+    case GDK_KEY_Right:
+    case GDK_KP_Right:
+      /* if branch is not expanded then expand it */
+      if (!gtk_tree_view_row_expanded (GTK_TREE_VIEW (tree_view), path))
+          gtk_tree_view_expand_row (GTK_TREE_VIEW (tree_view), path, FALSE);
+
+      else /* if branch is already expanded then move to first child */
+        {
+          gtk_tree_path_down (path);
+          gtk_tree_view_set_cursor (GTK_TREE_VIEW (tree_view), path, NULL, FALSE);
+          thunar_tree_view_action_open (tree_view);
+        }
+
+      stopPropagation = TRUE;
+      break;
+
+    case GDK_space:
+    case GDK_Return:
+    case GDK_KP_Enter:
+      thunar_tree_view_open_selection (tree_view);
+      stopPropagation = TRUE;
+      break;
+    }
+
+  gtk_tree_path_free (path);
+  if (stopPropagation)
+      gtk_widget_grab_focus (widget);
+
+  return stopPropagation;
+}
 
 
 static void
