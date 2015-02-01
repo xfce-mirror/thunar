@@ -47,13 +47,6 @@ enum
   PROP_UI_MANAGER,
 };
 
-/* Signal identifiers */
-enum
-{
-  RESET,
-  LAST_SIGNAL,
-};
-
 
 
 static void        thunar_location_entry_component_init           (ThunarComponentIface     *iface);
