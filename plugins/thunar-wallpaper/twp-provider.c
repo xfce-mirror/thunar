@@ -31,6 +31,8 @@
 
 #include <glib/gi18n.h>
 
+#include <xfconf/xfconf.h>
+
 #include "twp-provider.h"
 
 
@@ -59,7 +61,6 @@ typedef enum
 
 
 static DesktopType desktop_type = DESKTOP_TYPE_NONE;
-static gboolean    _has_xfconf_query = FALSE;
 static gboolean    _has_gconftool = FALSE;
 
 
@@ -104,13 +105,6 @@ static void
 twp_provider_init (TwpProvider *twp_provider)
 {
   gchar *program;
-
-  program = g_find_program_in_path ("xfconf-query");
-  if (G_LIKELY (program != NULL))
-    {
-      _has_xfconf_query = TRUE;
-      g_free (program);
-    }
 
   program = g_find_program_in_path ("gconftool-2");
   if (G_LIKELY (program != NULL))
@@ -186,8 +180,7 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
 
   if ((XGetSelectionOwner(GDK_DISPLAY(), xfce_selection_atom)))
     {
-      if (_has_xfconf_query)
-          desktop_type = DESKTOP_TYPE_XFCE;
+        desktop_type = DESKTOP_TYPE_XFCE;
     }
   else
     {
@@ -230,6 +223,9 @@ twp_action_set_wallpaper (GtkAction *action,
   gchar           *file_name = NULL;
   gchar           *hostname = NULL;
   gchar           *command;
+  XfconfChannel   *channel;
+  gboolean         is_single_workspace;
+  gint             current_image_style;
 
   if (n_screens > 1)
     screen = gdk_display_get_default_screen (display);
@@ -267,26 +263,39 @@ twp_action_set_wallpaper (GtkAction *action,
     {
       case DESKTOP_TYPE_XFCE:
         g_debug ("set on xfce");
+
+        channel = xfconf_channel_get ("xfce4-desktop");
+
         /* This is the format for xfdesktop before 4.11 */
         image_path_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-path", screen_nr, monitor_nr);
         image_show_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-show", screen_nr, monitor_nr);
         image_style_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-style", screen_nr, monitor_nr);
 
-        command = g_strdup_printf ("xfconf-query -c xfce4-desktop -p %s --create -t string -s %s", image_path_prop, escaped_file_name);
-        g_spawn_command_line_async (command, NULL);
-        g_free (command);
+        /* Set the wallpaper and ensure that it's set to show */
+        xfconf_channel_set_string (channel, image_path_prop, escaped_file_name);
+        xfconf_channel_set_bool (channel, image_show_prop, TRUE);
 
-        command = g_strdup_printf ("xfconf-query -c xfce4-desktop -p %s --create -t bool -s true", image_show_prop);
-        g_spawn_command_line_async (command, NULL);
-        g_free (command);
-
-        command = g_strdup_printf ("xfconf-query -c xfce4-desktop -p %s --create -t int -s 0", image_style_prop);
-        g_spawn_command_line_async (command, NULL);
-        g_free (command);
+        /* If there isn't a wallpaper style set, then set one */
+        current_image_style = xfconf_channel_get_int (channel, image_style_prop, -1);
+        if (current_image_style == -1)
+          {
+            xfconf_channel_set_int (channel, image_style_prop, 0);
+          }
 
         g_free(image_path_prop);
         g_free(image_show_prop);
         g_free(image_style_prop);
+
+
+        /* Xfdesktop 4.11+ has a concept of a single-workspace-mode where
+         * the same workspace is used for everything but additionally allows
+         * the user to use any current workspace as the single active
+         * workspace, we'll need to check if it is enabled and use that. */
+        is_single_workspace = xfconf_channel_get_bool (channel, "/backdrop/single-workspace-mode", FALSE);
+        if (is_single_workspace)
+          {
+            workspace = xfconf_channel_get_int (channel, "/backdrop/single-workspace-number", 0);
+          }
 
         /* This is the format for xfdesktop post 4.11. A workspace number is
          * added and the monitor is referred to name. We set both formats so
@@ -305,13 +314,14 @@ twp_action_set_wallpaper (GtkAction *action,
             image_style_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/workspace%d/image-style", screen_nr, monitor_nr, workspace);
           }
 
-        command = g_strdup_printf ("xfconf-query -c xfce4-desktop -p %s --create -t string -s %s", image_path_prop, escaped_file_name);
-        g_spawn_command_line_async (command, NULL);
-        g_free (command);
+        xfconf_channel_set_string (channel, image_path_prop, escaped_file_name);
 
-        command = g_strdup_printf ("xfconf-query -c xfce4-desktop -p %s --create -t int -s 5", image_style_prop);
-        g_spawn_command_line_async (command, NULL);
-        g_free (command);
+        /* If there isn't a wallpaper style set, then set one */
+        current_image_style = xfconf_channel_get_int (channel, image_style_prop, -1);
+        if (current_image_style == -1)
+          {
+            xfconf_channel_set_int (channel, image_style_prop, 5);
+          }
 
         g_free(image_path_prop);
         g_free(image_style_prop);

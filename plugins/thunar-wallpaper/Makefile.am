@@ -20,6 +20,7 @@ thunar_wallpaper_plugin_la_CFLAGS =					\
 	$(GLIB_CFLAGS)							\
 	$(GTK_CFLAGS)							\
 	$(LIBX11_CFLAGS)						\
+	$(XFCONF_CFLAGS)						\
 	$(PLATFORM_CFLAGS)
 
 thunar_wallpaper_plugin_la_LDFLAGS =					\
@@ -35,6 +36,7 @@ thunar_wallpaper_plugin_la_LIBADD =					\
 	$(EXO_LIBS)							\
 	$(GLIB_LIBS)							\
 	$(GTK_LIBS)							\
+	$(XFCONF_LIBS)						\
 	$(LIBX11_LIBS)
 
 thunar_wallpaper_plugin_la_DEPENDENCIES =				\
