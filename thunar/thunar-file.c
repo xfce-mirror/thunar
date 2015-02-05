@@ -1229,6 +1229,22 @@ thunar_file_get_with_info (GFile     *gfile,
     {
       /* return the file, it already has an additional ref set
        * in thunar_file_cache_lookup */
+
+      /* The file might have changed while being cached.
+       * Use the info to update the file */
+
+      /* reset the file */
+      thunar_file_info_clear (file);
+
+      /* set the passed info */
+      file->info = g_object_ref (info);
+
+      /* update the file from the information */
+      thunar_file_info_reload (file, NULL);
+
+      /* update the mounted info */
+      if (not_mounted)
+        FLAG_UNSET (file, THUNAR_FILE_FLAG_IS_MOUNTED);
     }
   else
     {
