@@ -272,7 +272,7 @@ twp_action_set_wallpaper (GtkAction *action,
         image_style_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-style", screen_nr, monitor_nr);
 
         /* Set the wallpaper and ensure that it's set to show */
-        xfconf_channel_set_string (channel, image_path_prop, escaped_file_name);
+        xfconf_channel_set_string (channel, image_path_prop, file_name);
         xfconf_channel_set_bool (channel, image_show_prop, TRUE);
 
         /* If there isn't a wallpaper style set, then set one */
@@ -314,7 +314,7 @@ twp_action_set_wallpaper (GtkAction *action,
             image_style_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/workspace%d/image-style", screen_nr, monitor_nr, workspace);
           }
 
-        xfconf_channel_set_string (channel, image_path_prop, escaped_file_name);
+        xfconf_channel_set_string (channel, image_path_prop, file_name);
 
         /* If there isn't a wallpaper style set, then set one */
         current_image_style = xfconf_channel_get_int (channel, image_style_prop, -1);
