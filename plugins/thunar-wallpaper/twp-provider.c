@@ -290,8 +290,9 @@ twp_action_set_wallpaper (GtkAction *action,
         /* Xfdesktop 4.11+ has a concept of a single-workspace-mode where
          * the same workspace is used for everything but additionally allows
          * the user to use any current workspace as the single active
-         * workspace, we'll need to check if it is enabled and use that. */
-        is_single_workspace = xfconf_channel_get_bool (channel, "/backdrop/single-workspace-mode", FALSE);
+         * workspace, we'll need to check if it is enabled (which by default
+         * it is) and use that. */
+        is_single_workspace = xfconf_channel_get_bool (channel, "/backdrop/single-workspace-mode", TRUE);
         if (is_single_workspace)
           {
             workspace = xfconf_channel_get_int (channel, "/backdrop/single-workspace-number", 0);
