@@ -23,7 +23,17 @@ bin_PROGRAMS =								\
 
 thunar_built_sources =							\
 	thunar-marshal.c						\
-	thunar-marshal.h
+	thunar-marshal.h						\
+	thunar-abstract-icon-view-ui.h					\
+	thunar-details-view-ui.h					\
+	thunar-launcher-ui.h						\
+	thunar-location-buttons-ui.h					\
+	thunar-shortcuts-pane-ui.h					\
+	thunar-renamer-dialog-ui.h					\
+	thunar-standard-view-ui.h					\
+	thunar-thumbnail-frame.c					\
+	thunar-window-ui.h
+
 
 thunar_SOURCES =							\
 	$(thunar_include_HEADERS)					\
@@ -32,7 +42,6 @@ thunar_SOURCES =							\
 	main.c								\
 	thunar-abstract-dialog.c					\
 	thunar-abstract-dialog.h					\
-	thunar-abstract-icon-view-ui.h					\
 	thunar-abstract-icon-view.c					\
 	thunar-abstract-icon-view.h					\
 	thunar-application.c						\
@@ -59,7 +68,6 @@ thunar_SOURCES =							\
 	thunar-create-dialog.h						\
 	thunar-deep-count-job.h						\
 	thunar-deep-count-job.c						\
-	thunar-details-view-ui.h					\
 	thunar-details-view.c						\
 	thunar-details-view.h						\
 	thunar-dialogs.c						\
@@ -114,7 +122,6 @@ thunar_SOURCES =							\
 	thunar-job.h							\
 	thunar-launcher.c						\
 	thunar-launcher.h						\
-	thunar-launcher-ui.h						\
 	thunar-list-model.c						\
 	thunar-list-model.h						\
 	thunar-location-bar.c						\
@@ -123,7 +130,6 @@ thunar_SOURCES =							\
 	thunar-location-button.h					\
 	thunar-location-buttons.c					\
 	thunar-location-buttons.h					\
-	thunar-location-buttons-ui.h					\
 	thunar-location-dialog.c					\
 	thunar-location-dialog.h					\
 	thunar-location-entry.c						\
@@ -153,7 +159,6 @@ thunar_SOURCES =							\
 	thunar-properties-dialog.h					\
 	thunar-renamer-dialog.c						\
 	thunar-renamer-dialog.h						\
-	thunar-renamer-dialog-ui.h					\
 	thunar-renamer-model.c						\
 	thunar-renamer-model.h						\
 	thunar-renamer-pair.c						\
@@ -170,7 +175,6 @@ thunar_SOURCES =							\
 	thunar-shortcuts-model.h					\
 	thunar-shortcuts-pane.c						\
 	thunar-shortcuts-pane.h						\
-	thunar-shortcuts-pane-ui.h					\
 	thunar-shortcuts-view.c						\
 	thunar-shortcuts-view.h						\
 	thunar-side-pane.c						\
@@ -181,7 +185,6 @@ thunar_SOURCES =							\
 	thunar-size-label.h						\
 	thunar-standard-view.c						\
 	thunar-standard-view.h						\
-	thunar-standard-view-ui.h					\
 	thunar-statusbar.c						\
 	thunar-statusbar.h						\
 	thunar-stock.c							\
@@ -194,7 +197,6 @@ thunar_SOURCES =							\
 	thunar-thumbnail-cache.h					\
 	thunar-thumbnailer.c						\
 	thunar-thumbnailer.h						\
-	thunar-thumbnail-frame.c					\
 	thunar-thumbnail-frame.h					\
 	thunar-transfer-job.c						\
 	thunar-transfer-job.h						\
@@ -213,8 +215,7 @@ thunar_SOURCES =							\
 	thunar-view.c							\
 	thunar-view.h							\
 	thunar-window.c							\
-	thunar-window.h							\
-	thunar-window-ui.h
+	thunar-window.h
 
 thunar_CFLAGS =								\
 	$(EXO_CFLAGS)							\
@@ -301,28 +302,10 @@ CLEANFILES =								\
 
 DISTCLEANFILES +=							\
 	$(thunar_built_sources)						\
-	stamp-thunar-marshal.h						\
-	thunar-abstract-icon-view-ui.h					\
-	thunar-details-view-ui.h					\
-	thunar-launcher-ui.h						\
-	thunar-location-buttons-ui.h					\
-	thunar-shortcuts-pane-ui.h					\
-	thunar-renamer-dialog-ui.h					\
-	thunar-standard-view-ui.h					\
-	thunar-thumbnail-frame.c					\
-	thunar-window-ui.h
+	stamp-thunar-marshal.h
 
 BUILT_SOURCES =								\
-	$(thunar_built_sources)						\
-	thunar-abstract-icon-view-ui.h					\
-	thunar-details-view-ui.h					\
-	thunar-launcher-ui.h						\
-	thunar-location-buttons-ui.h					\
-	thunar-shortcuts-pane-ui.h					\
-	thunar-renamer-dialog-ui.h					\
-	thunar-standard-view-ui.h					\
-	thunar-thumbnail-frame.c					\
-	thunar-window-ui.h
+	$(thunar_built_sources)
 
 if HAVE_DBUS
 thunar-dbus-service-infos.h: $(srcdir)/thunar-dbus-service-infos.xml Makefile
