@@ -647,7 +647,7 @@ thunar_properties_dialog_response (GtkDialog *dialog,
     {
       xfce_dialog_show_help (GTK_WINDOW (dialog), "thunar",
                              "working-with-files-and-folders",
-                             "file-properties");
+                             "file_properties");
     }
   else if (GTK_DIALOG_CLASS (thunar_properties_dialog_parent_class)->response != NULL)
     {

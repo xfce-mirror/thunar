@@ -306,7 +306,7 @@ thunar_column_editor_help_clicked (GtkWidget          *button,
   xfce_dialog_show_help (GTK_WINDOW (gtk_widget_get_toplevel (button)),
                          "thunar",
                          "the-file-manager-window",
-                         "visible-columns-in-the-detailed-list-view");
+                         "customizing_the_appearance");
 }
 
 
