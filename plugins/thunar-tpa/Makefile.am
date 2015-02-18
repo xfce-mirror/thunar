@@ -35,7 +35,7 @@ libthunar_tpa_la_LDFLAGS =						\
 	-export-symbols-regex '^xfce_panel_module_(preinit|init|construct)' \
 	$(PLATFORM_LDFLAGS)
 
-desktopdir = $(datadir)/xfce4/panel-plugins
+desktopdir = $(datadir)/xfce4/panel/plugins
 desktop_in_files = thunar-tpa.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
