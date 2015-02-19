@@ -238,7 +238,7 @@ thunar_dbus_service_class_init (ThunarDBusServiceClass *klass)
   /**
    * ThunarDBusService::trash-changed:
    * @dbus_service : a #ThunarDBusService.
-   * @full         : %TRUE if the trash bin now contains atleast
+   * @full         : %TRUE if the trash bin now contains at least
    *                 one item, %FALSE otherwise.
    *
    * This signal is emitted whenever the state of the trash bin
@@ -875,11 +875,11 @@ thunar_dbus_service_launch_files (ThunarDBusService *dbus_service,
       return FALSE;
     }
 
-  /* verify that atleast one filename is given */
+  /* verify that at least one filename is given */
   if (G_UNLIKELY (filenames == NULL || *filenames == NULL))
     {
       /* LaunchFiles() invoked with an empty filename list */
-      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Atleast one filename must be specified"));
+      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("At least one filename must be specified"));
       return FALSE;
     }
 
