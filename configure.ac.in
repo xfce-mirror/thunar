@@ -2,6 +2,7 @@
 #-
 # Copyright (c) 2004-2007 Benedikt Meurer <benny@xfce.org>
 # Copyright (c) 2009-2011 Jannis Pohlmann <jannis@xfce.org>
+# Copyright (c) 2004-2015 Xfce Development Team <xfce4-dev@xfce.org>
 #
 # This program is free software; you can redistribute it and/or 
 # modify it under the terms of the GNU General Public License as
@@ -39,17 +40,17 @@ m4_define([thunar_debug_default], [ifelse(thunar_version_tag(), [git], [yes], [m
 dnl ***************************
 dnl *** Initialize autoconf ***
 dnl ***************************
-AC_COPYRIGHT([Copyright (c) 2004-2012 The Thunar development team. All rights reserved.])
+AC_COPYRIGHT([Copyright (c) 2004-2015 The Thunar development team. All rights reserved.])
 AC_INIT([Thunar], [thunar_version], [http://bugzilla.xfce.org/], [Thunar])
 AC_PREREQ([2.60])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_TARGET()
-AC_REVISION([$Id$])
+AC_REVISION([thunar_version_build])
 
 dnl ***************************
 dnl *** Initialize automake ***
 dnl ***************************
-AM_INIT_AUTOMAKE([1.8 dist-bzip2 tar-ustar no-dist-gzip])
+AM_INIT_AUTOMAKE([1.11 dist-bzip2 tar-ustar no-dist-gzip])
 AC_CONFIG_HEADERS([config.h])
 AM_MAINTAINER_MODE()
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
@@ -79,7 +80,7 @@ m4_ifdef([AC_PROG_SED], [AC_PROG_SED], [AC_CHECK_PROG(SED, sed, sed)])
 dnl **************************
 dnl *** Initialize libtool ***
 dnl **************************
-LT_PREREQ([2.2.6])
+LT_PREREQ([2.4])
 LT_INIT([disable-static])
 
 dnl **************************************
