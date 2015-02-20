@@ -678,6 +678,12 @@ thunar_properties_dialog_rename_error (ExoJob                 *job,
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (g_list_length (dialog->files) == 1);
 
+  /* reset the entry display name to the original name, so the focus
+     out event does not trigger the rename again by calling
+     thunar_properties_dialog_name_activate */
+  gtk_entry_set_text (GTK_ENTRY (dialog->name_entry),
+                      thunar_file_get_display_name (THUNAR_FILE (dialog->files->data)));
+
   /* display an error message */
   thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to rename \"%s\""),
                              thunar_file_get_display_name (THUNAR_FILE (dialog->files->data)));
