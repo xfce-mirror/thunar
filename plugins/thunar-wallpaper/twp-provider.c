@@ -132,6 +132,7 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
   GtkWidget *action = NULL;
   GFile     *location;
   GList     *actions = NULL;
+  gchar     *mime_type;
   gchar      selection_name[100];
   Atom       xfce_selection_atom;
   Atom       nautilus_selection_atom;
@@ -158,10 +159,14 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
 
       if (!thunarx_file_info_is_directory (files->data))
         {
-          if (thunarx_file_info_has_mime_type (files->data, "image/jpeg")
-              ||thunarx_file_info_has_mime_type (files->data, "image/png")
-              ||thunarx_file_info_has_mime_type (files->data, "image/svg+xml")
-              ||thunarx_file_info_has_mime_type (files->data, "image/svg+xml-compressed"))
+          /* get the mime type of the file */
+          mime_type = thunarx_file_info_get_mime_type (files->data);
+
+          if (g_str_has_prefix (mime_type, "image/")
+              && (thunarx_file_info_has_mime_type (files->data, "image/jpeg")
+                  || thunarx_file_info_has_mime_type (files->data, "image/png")
+                  || thunarx_file_info_has_mime_type (files->data, "image/svg+xml")
+                  || thunarx_file_info_has_mime_type (files->data, "image/svg+xml-compressed")))
             {
               action = g_object_new (GTK_TYPE_ACTION,
                                      "name", "Twp::setwallpaper",
@@ -172,6 +177,7 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
 
               actions = g_list_append (actions, action);
             }
+          g_free(mime_type);
         }
     }
 
