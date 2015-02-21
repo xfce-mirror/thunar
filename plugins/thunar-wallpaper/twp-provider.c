@@ -29,7 +29,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 
-#include <glib/gi18n.h>
+#include <glib/gi18n-lib.h>
 
 #include <xfconf/xfconf.h>
 
