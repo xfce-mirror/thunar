@@ -29,7 +29,7 @@
 #include <thunar/thunar-misc-jobs.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-templates-action.h>
-
+#include <thunar/thunar-util.h>
 
 
 /* Signal identifiers */
@@ -321,6 +321,8 @@ thunar_templates_action_files_ready (ThunarJob             *job,
   GList             *items = NULL;
   GList             *parent_menus = NULL;
   GList             *pp;
+  gchar             *label;
+  gchar             *dot;
 
   /* determine the menu to add the items and submenus to */
   menu = g_object_get_data (G_OBJECT (job), "menu");
@@ -363,14 +365,22 @@ thunar_templates_action_files_ready (ThunarJob             *job,
         }
       else
         {
+          /* generate a label by stripping off the extension */
+          label = g_strdup (thunar_file_get_display_name (file));
+          dot = thunar_util_str_get_extension (label);
+          if (dot)
+            *dot = '\0';
+
           /* allocate a new menu item */
-          item = gtk_image_menu_item_new_with_label (thunar_file_get_display_name (file));
+          item = gtk_image_menu_item_new_with_label (label);
           g_object_set_data_full (G_OBJECT (item), I_("thunar-file"), 
                                   g_object_ref (file), g_object_unref);
           g_signal_connect (item, "activate", G_CALLBACK (item_activated), 
                             templates_action);
           gtk_menu_shell_append (GTK_MENU_SHELL (parent_menu), item);
           gtk_widget_show (item);
+
+          g_free(label);
         }
 
       /* determine the icon for this file/directory */
