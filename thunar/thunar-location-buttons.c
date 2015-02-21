@@ -1079,6 +1079,9 @@ thunar_location_buttons_scroll_right (GtkWidget             *button,
         break;
       }
 
+  if (G_UNLIKELY (right_button == NULL))
+      return;
+
   /* find the last visible button on the 'left' end */
   for (lp = g_list_last (buttons->list); lp != NULL; lp = lp->prev)
     if (gtk_widget_get_child_visible (GTK_WIDGET (lp->data)))

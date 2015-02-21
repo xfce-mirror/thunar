@@ -392,7 +392,7 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   GtkTreeIter          iter;
   const gchar         *content_type;
   const gchar         *exec;
-  GAppInfo            *app_info;
+  GAppInfo            *app_info = NULL;
   gboolean             succeed = TRUE;
   GError              *error = NULL;
   gchar               *path;
