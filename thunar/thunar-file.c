@@ -1978,6 +1978,10 @@ thunar_file_accepts_drop (ThunarFile     *file,
               /* determine the cached version of the source file */
               ofile = thunar_file_cache_lookup (lp->data);
 
+              /* fallback to non-cached version */
+              if (ofile == NULL)
+                ofile = thunar_file_get (lp->data, NULL);
+
               /* we have only move if we know the source and both the source and the target
                * are on the same disk, and the source file is owned by the current user.
                */
