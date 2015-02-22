@@ -688,10 +688,11 @@ static gboolean
 thunar_tree_view_button_press_event (GtkWidget      *widget,
                                      GdkEventButton *event)
 {
-  ThunarTreeView *view = THUNAR_TREE_VIEW (widget);
-  GtkTreePath    *path;
-  GtkTreeIter     iter;
-  gboolean        result;
+  ThunarTreeView    *view = THUNAR_TREE_VIEW (widget);
+  GtkTreeViewColumn *column;
+  GtkTreePath       *path;
+  GtkTreeIter        iter;
+  gboolean           result;
 
   /* reset the pressed button state */
   view->pressed_button = -1;
@@ -704,7 +705,7 @@ thunar_tree_view_button_press_event (GtkWidget      *widget,
   result = (*GTK_WIDGET_CLASS (thunar_tree_view_parent_class)->button_press_event) (widget, event);
 
   /* resolve the path at the cursor position */
-  if (gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (widget), event->x, event->y, &path, NULL, NULL, NULL))
+  if (gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (widget), event->x, event->y, &path, &column, NULL, NULL))
     {
       /* check if we should popup the context menu */
       if (G_UNLIKELY (event->button == 3 && event->type == GDK_BUTTON_PRESS))
@@ -722,7 +723,12 @@ thunar_tree_view_button_press_event (GtkWidget      *widget,
       else if ((event->button == 1 || event->button == 2)
                && event->type == GDK_BUTTON_PRESS)
         {
-          gtk_tree_view_set_cursor (GTK_TREE_VIEW (widget), path, NULL, FALSE);
+          GdkRectangle rect;
+          gtk_tree_view_get_cell_area (GTK_TREE_VIEW (widget), path, column, &rect);
+
+          /* set cursor only when the user did not click the expander */
+          if (rect.x <= event->x && event->x <= (rect.x + rect.width))
+              gtk_tree_view_set_cursor (GTK_TREE_VIEW (widget), path, NULL, FALSE);
 
           /* remember the button as pressed and handled it in the release handler */
           view->pressed_button = event->button;
