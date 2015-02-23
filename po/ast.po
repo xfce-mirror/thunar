@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-29 00:30+0100\n"
-"PO-Revision-Date: 2015-01-29 20:01+0000\n"
+"POT-Creation-Date: 2015-02-19 18:30+0100\n"
+"PO-Revision-Date: 2015-02-23 00:09+0000\n"
 "Last-Translator: enolp <enolp@softastur.org>\n"
 "Language-Team: Asturian (http://www.transifex.com/projects/p/thunar/language/ast/)\n"
 "MIME-Version: 1.0\n"
@@ -137,10 +137,10 @@ msgstr "Fallu al llanzar la operación"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1168 ../thunar/thunar-application.c:1294
-#: ../thunar/thunar-launcher.c:1222 ../thunar/thunar-location-entry.c:402
-#: ../thunar/thunar-location-entry.c:430
-#: ../thunar/thunar-shortcuts-view.c:1630
-#: ../thunar/thunar-shortcuts-view.c:1658 ../thunar/thunar-window.c:2236
+#: ../thunar/thunar-launcher.c:1222 ../thunar/thunar-location-entry.c:395
+#: ../thunar/thunar-location-entry.c:423
+#: ../thunar/thunar-shortcuts-view.c:1635
+#: ../thunar/thunar-shortcuts-view.c:1663 ../thunar/thunar-window.c:2236
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "Fallu al abrir \"%s\""
@@ -153,20 +153,20 @@ msgstr "Fallu al abrir \"%s\": %s"
 #. display an error message
 #: ../thunar/thunar-application.c:1362
 #: ../thunar/thunar-properties-dialog.c:682
-#: ../thunar/thunar-standard-view.c:2747 ../thunar/thunar-tree-view.c:1767
+#: ../thunar/thunar-standard-view.c:2747 ../thunar/thunar-tree-view.c:1877
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Fallu al renomar \"%s\""
 
 #: ../thunar/thunar-application.c:1464
 #: ../thunar/thunar-location-buttons.c:1308
-#: ../thunar/thunar-standard-view.c:2297 ../thunar/thunar-tree-view.c:1629
+#: ../thunar/thunar-standard-view.c:2297 ../thunar/thunar-tree-view.c:1739
 msgid "New Folder"
 msgstr "Carpeta nueva"
 
 #: ../thunar/thunar-application.c:1465
 #: ../thunar/thunar-location-buttons.c:1309
-#: ../thunar/thunar-standard-view.c:2298 ../thunar/thunar-tree-view.c:1630
+#: ../thunar/thunar-standard-view.c:2298 ../thunar/thunar-tree-view.c:1740
 msgid "Create New Folder"
 msgstr "Crear carpeta nueva"
 
@@ -248,7 +248,7 @@ msgstr "¿Desaniciar tolos ficheros y carpetes de la Papelera?"
 #. append the "Empty Trash" menu action
 #. prepare the menu item
 #: ../thunar/thunar-application.c:2008 ../thunar/thunar-location-buttons.c:179
-#: ../thunar/thunar-shortcuts-view.c:1191 ../thunar/thunar-tree-view.c:1184
+#: ../thunar/thunar-shortcuts-view.c:1196 ../thunar/thunar-tree-view.c:1294
 #: ../thunar/thunar-window.c:351 ../plugins/thunar-tpa/thunar-tpa.c:191
 msgid "_Empty Trash"
 msgstr "_Balerar papelera"
@@ -369,7 +369,7 @@ msgid ""
 "This will remove the application launcher that appears in the file context menu, but will not uninstall the application itself.\n"
 "\n"
 "You can only remove application launchers that were created using the custom command box in the \"Open With\" dialog of the file manager."
-msgstr "Esto desaniciará'l llanzador d'aplicaciones qu'apaez nel menú de contestu, pero nun se desintalará l'aplicación.\n\nNamái pues desaniciar el llanzador d'aplicaciones que se creó usando la caxa de comandu personalizáu nel diálogu \"Abrir con\" del alministrador de ficheros."
+msgstr "Esto desaniciará'l llanzador d'aplicaciones qu'apaez nel menú de contestu, pero nun se desintalará l'aplicación.\n\nNamái pues desaniciar el llanzador d'aplicaciones que se creó usando la caxa de comandu personalizáu nel diálogu \"Abrir con\" del xestor de ficheros."
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:729
@@ -486,7 +486,7 @@ msgid ""
 "needed to ensure the text is fully visible. If you dis-\n"
 "able this behavior below the file manager will always\n"
 "use the user defined column widths."
-msgstr "Por defeutu, les columnes espardiránse automáticamente si\nye necesario p'asegurar que'l testu se vea dafechu. Si\ndesactives esti comportamientu abaxo, l'alministrador de \nficheros usará siempres l'anchor especificáu pol usuariu."
+msgstr "Por defeutu, les columnes espardiránse automáticamente si\nye necesario p'asegurar que'l testu se vea dafechu. Si\ndesactives esti comportamientu abaxo, el xestor de \nficheros usará siempres l'anchor especificáu pol usuariu."
 
 #. create the "Automatically expand columns as needed" button
 #: ../thunar/thunar-column-editor.c:261
@@ -540,9 +540,9 @@ msgid "The working directory must be an absolute path"
 msgstr "El direutoriu de trabayu tien de ser un camín absolutu"
 
 #. LaunchFiles() invoked with an empty filename list
-#: ../thunar/thunar-dbus-service.c:882
+#: ../thunar/thunar-dbus-service.c:882 ../thunar/thunar-dbus-service.c:1249
 #, c-format
-msgid "Atleast one filename must be specified"
+msgid "At least one filename must be specified"
 msgstr "Tien d'especificase polo menos un nome de ficheru"
 
 #: ../thunar/thunar-dbus-service.c:1027
@@ -559,11 +559,6 @@ msgstr "El númberu de fontes y oxetivos de nomes de ficheru tien de ser el mesm
 #, c-format
 msgid "A destination directory must be specified"
 msgstr "Tien d'especificase un direutoriu de destín"
-
-#: ../thunar/thunar-dbus-service.c:1249
-#, c-format
-msgid "At least one filename must be specified"
-msgstr "Tien d'especificase polo menos un nome de ficheru"
 
 #: ../thunar/thunar-details-view.c:134
 msgid "Configure _Columns..."
@@ -793,37 +788,37 @@ msgstr "Nome de ficheru"
 msgid "File System"
 msgstr "Sistema de ficheros"
 
-#: ../thunar/thunar-file.c:1421
+#: ../thunar/thunar-file.c:1437
 #, c-format
 msgid "The root folder has no parent"
 msgstr "La carpeta raigañu nun tien pá"
 
-#: ../thunar/thunar-file.c:1506 ../thunar/thunar-file.c:1778
+#: ../thunar/thunar-file.c:1522 ../thunar/thunar-file.c:1794
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "Fallu al procesar el ficheru d'escritoriu: %s"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1518
+#: ../thunar/thunar-file.c:1534
 msgid "Untrusted application launcher"
 msgstr "Llanzador d'aplicación non confiable"
 
-#: ../thunar/thunar-file.c:1543
+#: ../thunar/thunar-file.c:1559
 #, c-format
 msgid "No Exec field specified"
 msgstr "Campu Exec non especificáu"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1552
+#: ../thunar/thunar-file.c:1568
 msgid "Untrusted link launcher"
 msgstr "Llanzador d'enllaz non confiable"
 
-#: ../thunar/thunar-file.c:1568
+#: ../thunar/thunar-file.c:1584
 #, c-format
 msgid "No URL field specified"
 msgstr "Campu URL non especificáu"
 
-#: ../thunar/thunar-file.c:1573
+#: ../thunar/thunar-file.c:1589
 msgid "Invalid desktop file"
 msgstr "Ficheru d'escritoriu non válidu"
 
@@ -985,19 +980,19 @@ msgstr "Nun hai espaciu abondo nel destín. Prueba a desaniciar ficheros pa llib
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:177 ../thunar/thunar-launcher.c:819
 #: ../thunar/thunar-location-buttons.c:175
-#: ../thunar/thunar-shortcuts-view.c:1087 ../thunar/thunar-tree-view.c:1114
+#: ../thunar/thunar-shortcuts-view.c:1092 ../thunar/thunar-tree-view.c:1224
 msgid "_Open"
 msgstr "_Abrir"
 
 #. append the "Open in New Tab" menu action
 #: ../thunar/thunar-launcher.c:178 ../thunar/thunar-launcher.c:860
-#: ../thunar/thunar-tree-view.c:1125
+#: ../thunar/thunar-tree-view.c:1235
 msgid "Open in New _Tab"
 msgstr "Abrir nuna llingüe_ta nueva"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:179 ../thunar/thunar-launcher.c:854
-#: ../thunar/thunar-tree-view.c:1132
+#: ../thunar/thunar-tree-view.c:1242
 msgid "Open in New _Window"
 msgstr "Abrir nuna _ventana nueva"
 
@@ -1031,8 +1026,8 @@ msgstr "¿De xuru que quies abrir toles carpetes?"
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
-msgstr[0] "Esto abrirá %d ventana distinta pal alministrador de ficheros."
-msgstr[1] "Esto abrirá %d ventanes diferentes pal alministrador de ficheros."
+msgstr[0] "Esto abrirá %d ventana distinta pal xestor de ficheros."
+msgstr[1] "Esto abrirá %d ventanes diferentes pal xestor de ficheros."
 
 #: ../thunar/thunar-launcher.c:727
 #, c-format
@@ -1132,8 +1127,8 @@ msgstr[1] "Abrir los ficheros esbillaos coles aplicaciones por defeutu"
 msgid "Open With \"%s\""
 msgstr "Abrir con \"%s\""
 
-#: ../thunar/thunar-launcher.c:1586 ../thunar/thunar-shortcuts-view.c:1689
-#: ../thunar/thunar-shortcuts-view.c:1926 ../thunar/thunar-tree-view.c:1966
+#: ../thunar/thunar-launcher.c:1586 ../thunar/thunar-shortcuts-view.c:1694
+#: ../thunar/thunar-shortcuts-view.c:1931 ../thunar/thunar-tree-view.c:2076
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Fallu al montar \"%s\""
@@ -1261,19 +1256,19 @@ msgstr "%s, %s"
 
 #. append the "Open in New Tab" menu action
 #: ../thunar/thunar-location-buttons.c:176
-#: ../thunar/thunar-shortcuts-view.c:1097
+#: ../thunar/thunar-shortcuts-view.c:1102
 msgid "Open in New Tab"
 msgstr "Abrir nuna llingüeta nueva"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-location-buttons.c:177
-#: ../thunar/thunar-shortcuts-view.c:1103
+#: ../thunar/thunar-shortcuts-view.c:1108
 msgid "Open in New Window"
 msgstr "Abrir nuna ventana nueva"
 
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-location-buttons.c:178
-#: ../thunar/thunar-standard-view.c:396 ../thunar/thunar-tree-view.c:1200
+#: ../thunar/thunar-standard-view.c:396 ../thunar/thunar-tree-view.c:1310
 msgid "Create _Folder..."
 msgstr "Crear _carpeta..."
 
@@ -1338,11 +1333,11 @@ msgstr "Abrir allugamientu"
 msgid "_Location:"
 msgstr "_Allugamientu:"
 
-#: ../thunar/thunar-location-entry.c:202 ../thunar/thunar-window.c:359
+#: ../thunar/thunar-location-entry.c:195 ../thunar/thunar-window.c:359
 msgid "Reload the current folder"
 msgstr "Anovar la carpeta d'anguaño"
 
-#: ../thunar/thunar-location-entry.c:395
+#: ../thunar/thunar-location-entry.c:388
 #, c-format
 msgid "File does not exist"
 msgstr "El ficheru nun esiste"
@@ -1521,7 +1516,7 @@ msgstr "Los permisos de la carpeta reiniciaránse a un estáu consistente. Namá
 
 #: ../thunar/thunar-preferences-dialog.c:225
 msgid "File Manager Preferences"
-msgstr "Preferencies del alministrador de ficheros"
+msgstr "Preferencies del xestor de ficheros"
 
 #. Display
 #: ../thunar/thunar-preferences-dialog.c:242
@@ -2088,58 +2083,58 @@ msgstr[1] "Amestar les carpetes esbillaes al panel llateral d'accesos direutos"
 
 #. append the "Mount" item
 #. append the "Mount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1124 ../thunar/thunar-tree-view.c:1148
+#: ../thunar/thunar-shortcuts-view.c:1129 ../thunar/thunar-tree-view.c:1258
 msgid "_Mount"
 msgstr "_Montar"
 
 #. append the "Unmount" item
 #. append the "Unmount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1130 ../thunar/thunar-tree-view.c:1154
+#: ../thunar/thunar-shortcuts-view.c:1135 ../thunar/thunar-tree-view.c:1264
 msgid "_Unmount"
 msgstr "_Desmontar"
 
 #. append the "Disconnect" (eject + safely remove drive) item
 #. append the "Eject" menu action
-#: ../thunar/thunar-shortcuts-view.c:1136 ../thunar/thunar-tree-view.c:1160
+#: ../thunar/thunar-shortcuts-view.c:1141 ../thunar/thunar-tree-view.c:1270
 msgid "_Eject"
 msgstr "_Espulsar"
 
 #. append the "Disconnect" item
-#: ../thunar/thunar-shortcuts-view.c:1153
+#: ../thunar/thunar-shortcuts-view.c:1158
 msgid "Create _Shortcut"
 msgstr "Crear acce_su direutu"
 
 #. append the "Disconnect" item
 #. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:1174 ../thunar/thunar-tree-view.c:1169
+#: ../thunar/thunar-shortcuts-view.c:1179 ../thunar/thunar-tree-view.c:1279
 msgid "Disconn_ect"
 msgstr "Descon_eutar"
 
-#: ../thunar/thunar-shortcuts-view.c:1253
+#: ../thunar/thunar-shortcuts-view.c:1258
 msgid "_Remove Shortcut"
 msgstr "Desanicia_r accesu direutu"
 
 #. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:1267
+#: ../thunar/thunar-shortcuts-view.c:1272
 msgid "Re_name Shortcut"
 msgstr "Re_nomar accesu direutu"
 
-#: ../thunar/thunar-shortcuts-view.c:1556
+#: ../thunar/thunar-shortcuts-view.c:1561
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "El camín \"%s\" nun apunta a dengún direutoriu"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1576
+#: ../thunar/thunar-shortcuts-view.c:1581
 msgid "Failed to add new shortcut"
 msgstr "Fallu al amestar un accesu direutu nuevu"
 
-#: ../thunar/thunar-shortcuts-view.c:1853 ../thunar/thunar-tree-view.c:1834
+#: ../thunar/thunar-shortcuts-view.c:1858 ../thunar/thunar-tree-view.c:1944
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Fallu al espulsar \"%s\""
 
-#: ../thunar/thunar-shortcuts-view.c:1995 ../thunar/thunar-tree-view.c:1889
+#: ../thunar/thunar-shortcuts-view.c:2000 ../thunar/thunar-tree-view.c:1999
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Fallu al desmontar \"%s\""
@@ -2186,12 +2181,12 @@ msgid "Create an empty folder within the current folder"
 msgstr "Crear una carpeta balera dientro la carpeta actual"
 
 #. append the "Cut" menu action
-#: ../thunar/thunar-standard-view.c:398 ../thunar/thunar-tree-view.c:1227
+#: ../thunar/thunar-standard-view.c:398 ../thunar/thunar-tree-view.c:1337
 msgid "Cu_t"
 msgstr "Cor_tar"
 
 #. append the "Copy" menu action
-#: ../thunar/thunar-standard-view.c:399 ../thunar/thunar-tree-view.c:1238
+#: ../thunar/thunar-standard-view.c:399 ../thunar/thunar-tree-view.c:1348
 msgid "_Copy"
 msgstr "_Copiar"
 
@@ -2204,12 +2199,12 @@ msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr "Mover o copiar ficheros esbillaos enantes col comandu cortar o copiar"
 
 #. append the "Move to Tash" menu action
-#: ../thunar/thunar-standard-view.c:401 ../thunar/thunar-tree-view.c:1279
+#: ../thunar/thunar-standard-view.c:401 ../thunar/thunar-tree-view.c:1389
 msgid "Mo_ve to Trash"
 msgstr "Mo_ver a la Papelera"
 
 #. append the "Delete" menu action
-#: ../thunar/thunar-standard-view.c:402 ../thunar/thunar-tree-view.c:1291
+#: ../thunar/thunar-standard-view.c:402 ../thunar/thunar-tree-view.c:1401
 msgid "_Delete"
 msgstr "_Desaniciar"
 
@@ -2254,7 +2249,7 @@ msgstr[0] "Criar un en_llaz"
 msgstr[1] "Criar en_llaces"
 
 #. append the "Rename" menu action
-#: ../thunar/thunar-standard-view.c:409 ../thunar/thunar-tree-view.c:1314
+#: ../thunar/thunar-standard-view.c:409 ../thunar/thunar-tree-view.c:1424
 msgid "_Rename..."
 msgstr "_Renomar..."
 
@@ -2451,12 +2446,12 @@ msgid "Loading..."
 msgstr "Cargando..."
 
 #. append the "Paste Into Folder" menu action
-#: ../thunar/thunar-tree-view.c:1254
+#: ../thunar/thunar-tree-view.c:1364
 msgid "_Paste Into Folder"
 msgstr "_Apegar na carpeta"
 
 #. append the "Properties" menu action
-#: ../thunar/thunar-tree-view.c:1373
+#: ../thunar/thunar-tree-view.c:1483
 msgid "P_roperties..."
 msgstr "P_ropiedaes"
 
@@ -2824,13 +2819,13 @@ msgstr "Fallu al restolar la rede"
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
-msgstr "Thunar ye un alministrador de ficheros rápidu\ny cenciellu d'usar pal entornu d'escritoriu Xfce"
+msgstr "Thunar ye un xestor de ficheros rápidu\ny cenciellu d'usar pal entornu d'escritoriu Xfce"
 
 #. set window title
 #: ../thunar/thunar-window.c:3219 ../Thunar.desktop.in.in.h:3
 #: ../thunar/thunar-settings.desktop.in.h:1
 msgid "File Manager"
-msgstr "Alministrador de ficheros"
+msgstr "Xestor de ficheros"
 
 #: ../thunarx/thunarx-property-page.c:102
 msgid "Label"
@@ -2925,7 +2920,7 @@ msgid ""
 "Select this option to enable startup notification when the command is run "
 "from the file manager or the menu. Not every application supports startup "
 "notification."
-msgstr "Esbilla esta opción p'habilitar la notificación d'arranque cuando'l comandu tea executáu dende l'alministrador de ficheros o dende esti menú. Non toles aplicaciones la sofiten"
+msgstr "Esbilla esta opción p'habilitar la notificación d'arranque cuando'l comandu tea executáu dende'l xestor de ficheros o dende esti menú. Non toles aplicaciones la sofiten"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:282
 msgid "Run in _terminal"
@@ -3313,7 +3308,7 @@ msgstr "Aiciones personalizaes"
 msgid ""
 "You can configure custom actions that will appear in the\n"
 "file managers context menus for certain kinds of files."
-msgstr "Pues configurar aiciones personalizaes qu'apaecerán nel\nmenú contestual del alministrador de ficheros pa cierta triba de ficheros."
+msgstr "Pues configurar aiciones personalizaes qu'apaecerán nel\nmenú contestual del xestor de ficheros pa cierta triba de ficheros."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:173
 msgid "Add a new custom action."
@@ -3405,7 +3400,7 @@ msgid ""
 "Enable this option if you want a waiting cursor to be shown while the action"
 " is launched. This is also highly recommended if you have focus stealing "
 "prevention enabled in your window manager."
-msgstr "Habilita esta opción si quies un mur n'espera p'amosase entrín l'aición s'executa. Esto tamién encamiéntase si tienes habilitada la prevención del robu de focu nel to alministrador de ventanes."
+msgstr "Habilita esta opción si quies un mur n'espera p'amosase entrín l'aición s'executa. Esto tamién encamiéntase si tienes habilitada la prevención del robu de focu nel to xestor de ventanes."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:211
 msgid "_Icon:"
@@ -3511,7 +3506,7 @@ msgid ""
 "or folder. Additionally, you can specify that the\n"
 "action should only appear for certain kinds of\n"
 "files."
-msgstr "Esta páxina llista les condiciones baxo les que\nl'aición apaecerá nos menús de contestu de\nlos alministradores de ficheros. Los patrones\nde ficheru especifíquense como una llista\nd'unos patrones de ficheru simples separtaos\ncon puntos y comes (exem. *.txt;*.doc). Pa\nqu'una aición apaeza nel menú de contestu\nd'un ficheru o carpeta, tien de concasar polo\nmenos el nome del ficheru o carpeta. Arriendes\nd'eso, pues especificar que l'aición solo puea\napaecer pa cierta triba de ficheros."
+msgstr "Esta páxina llista les condiciones baxo les que\nl'aición apaecerá nos menús de contestu de\nlos xestores de ficheros. Los patrones de\nficheru especifíquense como una llista d'unos\npatrones de ficheru simples separtaos por\npuntos y comes (exem. *.txt;*.doc). Pa qu'una\naición apaeza nel menú de contestu d'un\nficheru o carpeta, tien de concasar polo menos\nel nome del ficheru o carpeta. Arriendes d'eso,\npues especificar que l'aición solo puea apaecer\npa cierta triba de ficheros."
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:815
 #, c-format
@@ -3545,7 +3540,7 @@ msgstr "C_onfigurar aiciones personalizaes..."
 #: ../plugins/thunar-uca/thunar-uca-provider.c:178
 msgid ""
 "Setup custom actions that will appear in the file managers context menus"
-msgstr "Configurar aiciones personalizaes qu'apaecerán nos menús contestuales de los alministradores de ficheros"
+msgstr "Configurar aiciones personalizaes qu'apaecerán nos menús contestuales de los xestores de ficheros"
 
 #: ../plugins/thunar-uca/thunar-uca-provider.c:417
 #, c-format
@@ -3560,17 +3555,17 @@ msgstr "Abrir la terminal equí"
 msgid "Example for a custom action"
 msgstr "Exemplu d'una aición personalizada"
 
-#: ../plugins/thunar-wallpaper/twp-provider.c:175
+#: ../plugins/thunar-wallpaper/twp-provider.c:169
 msgid "Set as wallpaper"
 msgstr "Afitar como fondu d'escritoriu"
 
 #: ../Thunar.desktop.in.in.h:1
 msgid "Thunar File Manager"
-msgstr "Alministrador de ficheros Thunar"
+msgstr "Xestor de ficheros Thunar"
 
 #: ../Thunar.desktop.in.in.h:2
 msgid "Browse the filesystem with the file manager"
-msgstr "Restolar el sistema de ficheros col alministrador de ficheros"
+msgstr "Restolar el sistema de ficheros col xestor de ficheros"
 
 #: ../Thunar-folder-handler.desktop.in.in.h:1
 msgid "Open Folder with Thunar"
@@ -3586,7 +3581,7 @@ msgstr "Abrir carpeta"
 
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "Configure the Thunar file manager"
-msgstr "Configure l'alministrador de ficheros Thunar"
+msgstr "Configura'l xestor de ficheros Thunar"
 
 #: ../thunar.appdata.xml.in.h:1
 msgid ""
