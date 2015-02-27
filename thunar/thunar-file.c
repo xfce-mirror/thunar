@@ -63,6 +63,7 @@
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-preferences.h>
 #include <thunar/thunar-user.h>
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-dialogs.h>
@@ -2755,8 +2756,10 @@ thunar_file_is_ancestor (const ThunarFile *file,
 gboolean
 thunar_file_is_executable (const ThunarFile *file)
 {
-  gboolean     can_execute = FALSE;
-  const gchar *content_type;
+  ThunarPreferences *preferences;
+  gboolean           can_execute = FALSE;
+  gboolean           exec_shell_scripts = FALSE;
+  const gchar       *content_type;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
@@ -2769,20 +2772,21 @@ thunar_file_is_executable (const ThunarFile *file)
       content_type = thunar_file_get_content_type (THUNAR_FILE (file));
       if (G_LIKELY (content_type != NULL))
         {
-#ifdef G_OS_WIN32
-          /* check for .exe, .bar or .com */
           can_execute = g_content_type_can_be_executable (content_type);
-#else
-          /* Check if the content type is safe to execute, we don't
-           * use g_content_type_can_be_executable() for unix because
-           * it also returns true for "text/plain" and we don't want
-           * that. Also do not execute x-shellscripts by default, it
-           * is safer to open them in an editor or run them in a
-           * terminal, usually they require parameters. */
-          if (g_content_type_is_a (content_type, "application/x-executable")
-              && ! g_content_type_is_a (content_type, "application/x-shellscript"))
-              can_execute = TRUE;
-#endif
+
+          if (can_execute)
+            {
+              /* check if the shell scripts should be executed or opened by default */
+              preferences = thunar_preferences_get ();
+              g_object_get (preferences, "misc-exec-shell-scripts-by-default", &exec_shell_scripts, NULL);
+              g_object_unref (preferences);
+
+              /* do never execute plain text files which are not shell scripts but marked executable */
+              if (g_strcmp0 (content_type, "text/plain") == 0)
+                  can_execute = FALSE;
+              else if (g_content_type_is_a (content_type, "text/plain") && ! exec_shell_scripts)
+                  can_execute = FALSE;
+            }
         }
     }
 
