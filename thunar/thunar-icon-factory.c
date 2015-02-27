@@ -599,7 +599,7 @@ static GdkPixbuf*
 thunar_icon_factory_load_fallback (ThunarIconFactory *factory,
                                    gint               size)
 {
-  return thunar_icon_factory_lookup_icon (factory, GTK_STOCK_FILE, size, FALSE);
+  return thunar_icon_factory_lookup_icon (factory, "text-x-generic", size, FALSE);
 }
 
 

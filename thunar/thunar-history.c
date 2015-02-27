@@ -661,7 +661,7 @@ thunar_history_show_menu (GtkAction     *action,
           else if (thunar_g_file_is_root (lp->data))
             icon_name = "drive-harddisk";
           else
-            icon_name = GTK_STOCK_DIRECTORY;
+            icon_name = "folder";
 
           image = gtk_image_new_from_icon_name (icon_name, GTK_ICON_SIZE_MENU);
         }

@@ -895,7 +895,7 @@ thunar_shortcuts_model_shortcut_devices (ThunarShortcutsModel *model)
   shortcut->group = THUNAR_SHORTCUT_GROUP_DEVICES_FILESYSTEM;
   shortcut->name = g_strdup (_("File System"));
   shortcut->file = thunar_file_get_for_uri ("file:///", NULL);
-  shortcut->gicon = g_themed_icon_new (GTK_STOCK_HARDDISK);
+  shortcut->gicon = g_themed_icon_new ("drive-harddisk");
   shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
   thunar_shortcuts_model_add_shortcut (model, shortcut);
 
@@ -937,7 +937,7 @@ thunar_shortcuts_model_shortcut_network (ThunarShortcutsModel *model)
   shortcut->group = THUNAR_SHORTCUT_GROUP_NETWORK_DEFAULT;
   shortcut->name = g_strdup (_("Browse Network"));
   shortcut->location = g_file_new_for_uri ("network://");
-  shortcut->gicon = g_themed_icon_new (GTK_STOCK_NETWORK);
+  shortcut->gicon = g_themed_icon_new ("network-workgroup");
   shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
   thunar_shortcuts_model_add_shortcut (model, shortcut);
 }
@@ -969,7 +969,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
       shortcut = g_slice_new0 (ThunarShortcut);
       shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_DEFAULT;
       shortcut->file = file;
-      shortcut->gicon = g_themed_icon_new (GTK_STOCK_HOME);
+      shortcut->gicon = g_themed_icon_new ("go-home");
       shortcut->sort_id = 0;
       shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
       thunar_shortcuts_model_add_shortcut (model, shortcut);
