@@ -170,7 +170,7 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
             {
               action = g_object_new (GTK_TYPE_ACTION,
                                      "name", "Twp::setwallpaper",
-                                     "icon-name", "background",
+                                     "icon-name", "preferences-desktop-wallpaper",
                                      "label", _("Set as wallpaper"),
                                      NULL);
               g_signal_connect (action, "activate", G_CALLBACK (twp_action_set_wallpaper), files->data);
