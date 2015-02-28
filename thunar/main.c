@@ -185,8 +185,10 @@ main (int argc, char **argv)
     }
 
 #ifdef HAVE_GIO_UNIX
+#if !GLIB_CHECK_VERSION (2, 42, 0)
   /* set desktop environment for app infos */
   g_desktop_app_info_set_desktop_env ("XFCE");
+#endif
 #endif
 
   /* register additional transformation functions */
