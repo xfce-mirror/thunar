@@ -3723,11 +3723,12 @@ thunar_file_get_icon_name (ThunarFile          *file,
     }
 
   /* store new name, fallback to legacy names, or empty string to avoid recursion */
+  g_free (file->icon_name);
   if (G_LIKELY (icon_name != NULL))
     file->icon_name = icon_name;
   else if (file->kind == G_FILE_TYPE_DIRECTORY
            && gtk_icon_theme_has_icon (icon_theme, "folder"))
-    icon_name = g_strdup ("folder");
+    file->icon_name = g_strdup ("folder");
   else
     file->icon_name = g_strdup ("");
 
