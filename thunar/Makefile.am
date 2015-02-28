@@ -314,17 +314,19 @@ thunar-dbus-service-infos.h: $(srcdir)/thunar-dbus-service-infos.xml Makefile
 thunar-thumbnailer-proxy.h: $(srcdir)/thunar-thumbnailer-dbus.xml Makefile
 	$(AM_V_GEN) ( \
 		dbus-binding-tool --mode=glib-client \
-			$(srcdir)/thunar-thumbnailer-dbus.xml > thunar-thumbnailer-proxy.h \
-		&& $(SED) -i -e 's/org_freedesktop_thumbnails_Thumbnailer1/thunar_thumbnailer_proxy/g' \
-			thunar-thumbnailer-proxy.h \
+			$(srcdir)/thunar-thumbnailer-dbus.xml > thunar-thumbnailer-proxy.h.tmp \
+		&& $(SED) -e 's/org_freedesktop_thumbnails_Thumbnailer1/thunar_thumbnailer_proxy/g' \
+			thunar-thumbnailer-proxy.h.tmp > thunar-thumbnailer-proxy.h \
+		&& $(RM) thunar-thumbnailer-proxy.h.tmp \
 	)
 
 thunar-thumbnail-cache-proxy.h: $(srcdir)/thunar-thumbnail-cache-dbus.xml Makefile
 	$(AM_V_GEN) ( \
 		dbus-binding-tool --mode=glib-client \
-			$(srcdir)/thunar-thumbnail-cache-dbus.xml > thunar-thumbnail-cache-proxy.h \
-		&& $(SED) -i -e 's/org_freedesktop_thumbnails_Cache1/thunar_thumbnail_cache_proxy/g' \
-			thunar-thumbnail-cache-proxy.h \
+			$(srcdir)/thunar-thumbnail-cache-dbus.xml > thunar-thumbnail-cache-proxy.h.tmp \
+		&& $(SED) -e 's/org_freedesktop_thumbnails_Cache1/thunar_thumbnail_cache_proxy/g' \
+			thunar-thumbnail-cache-proxy.h.tmp > thunar-thumbnail-cache-proxy.h \
+		&& $(RM) thunar-thumbnail-cache-proxy.h.tmp \
 	)
 endif
 
