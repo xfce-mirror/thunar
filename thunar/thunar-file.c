@@ -3592,7 +3592,7 @@ thunar_file_get_icon_name_for_state (const gchar         *icon_name,
 const gchar *
 thunar_file_get_icon_name (ThunarFile          *file,
                            ThunarFileIconState  icon_state,
-                           GtkIconTheme       *icon_theme)
+                           GtkIconTheme        *icon_theme)
 {
   GFile               *icon_file;
   GIcon               *icon = NULL;
@@ -3663,9 +3663,10 @@ thunar_file_get_icon_name (ThunarFile          *file,
           goto check_names;
         }
     }
-  else if (thunar_file_is_mountable (file))
+  else if (thunar_file_is_mountable (file)
+           || g_file_has_uri_scheme (file->gfile, "network"))
     {
-      /* query the icon (computer:// backend) */
+      /* query the icon (computer:// and network:// backend) */
       fileinfo = g_file_query_info (file->gfile,
                                     G_FILE_ATTRIBUTE_STANDARD_ICON,
                                     G_FILE_QUERY_INFO_NONE, NULL, NULL);
@@ -3693,7 +3694,6 @@ thunar_file_get_icon_name (ThunarFile          *file,
   if (G_LIKELY (icon != NULL))
     {
       check_icon:
-
       if (G_IS_THEMED_ICON (icon))
         {
           names = g_themed_icon_get_names (G_THEMED_ICON (icon));
