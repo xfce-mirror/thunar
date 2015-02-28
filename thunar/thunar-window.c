@@ -3697,9 +3697,16 @@ thunar_window_set_current_directory (ThunarWindow *window,
       /* create a new view if the window is new */
       if (gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook)) == 0)
         {
-          /* determine the last selected view if we don't have a valid default */
-          g_object_get (G_OBJECT (window->preferences), "last-view", &type_name, NULL);
+          /* determine the default view */
+          g_object_get (G_OBJECT (window->preferences), "default-view", &type_name, NULL);
           type = g_type_from_name (type_name);
+
+          /* determine the last selected view if the last selected view preference is not selected */
+          if (g_type_is_a (type, G_TYPE_NONE))
+            {
+              g_object_get (G_OBJECT (window->preferences), "last-view", &type_name, NULL);
+              type = g_type_from_name (type_name);
+            }
 
           /* activate the selected view */
           action = gtk_action_group_get_action (window->action_group, "view-as-icons");
