@@ -283,6 +283,7 @@ static void                 thunar_standard_view_drag_timer_destroy         (gpo
 static void                 thunar_standard_view_finished_thumbnailing      (ThunarThumbnailer        *thumbnailer,
                                                                              guint                     request,
                                                                              ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_thumbnailing_destroyed     (gpointer                  data);
 static void                 thunar_standard_view_cancel_thumbnailing        (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_schedule_thumbnail_timeout (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_schedule_thumbnail_idle    (ThunarStandardView       *standard_view);
@@ -3897,17 +3898,25 @@ thunar_standard_view_finished_thumbnailing (ThunarThumbnailer  *thumbnailer,
 
 
 static void
+thunar_standard_view_thumbnailing_destroyed (gpointer data)
+{
+  ThunarStandardView *standard_view = data;
+
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  standard_view->priv->thumbnail_source_id = 0;
+}
+
+
+
+static void
 thunar_standard_view_cancel_thumbnailing (ThunarStandardView *standard_view)
 {
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* check if we have a pending thumbnail timeout/idle handler */
   if (standard_view->priv->thumbnail_source_id > 0)
-    {
-      /* cancel this handler */
-      g_source_remove (standard_view->priv->thumbnail_source_id);
-      standard_view->priv->thumbnail_source_id = 0;
-    }
+    g_source_remove (standard_view->priv->thumbnail_source_id);
 
   /* check if we have a pending thumbnail request */
   if (standard_view->priv->thumbnail_request > 0)
@@ -3940,8 +3949,10 @@ thunar_standard_view_schedule_thumbnail_timeout (ThunarStandardView *standard_vi
   thunar_standard_view_cancel_thumbnailing (standard_view);
 
   /* schedule the timeout handler */
+  g_assert (standard_view->priv->thumbnail_source_id == 0);
   standard_view->priv->thumbnail_source_id =
-    g_timeout_add (175, thunar_standard_view_request_thumbnails_lazy, standard_view);
+    g_timeout_add_full (G_PRIORITY_DEFAULT, 175, thunar_standard_view_request_thumbnails_lazy,
+                        standard_view, thunar_standard_view_thumbnailing_destroyed);
 }
 
 
@@ -3965,8 +3976,10 @@ thunar_standard_view_schedule_thumbnail_idle (ThunarStandardView *standard_view)
   thunar_standard_view_cancel_thumbnailing (standard_view);
 
   /* schedule the timeout or idle handler */
+  g_assert (standard_view->priv->thumbnail_source_id == 0);
   standard_view->priv->thumbnail_source_id =
-    g_idle_add (thunar_standard_view_request_thumbnails, standard_view);
+    g_idle_add_full (G_PRIORITY_DEFAULT_IDLE, thunar_standard_view_request_thumbnails,
+                     standard_view, thunar_standard_view_thumbnailing_destroyed);
 }
 
 
@@ -4040,9 +4053,6 @@ thunar_standard_view_request_thumbnails_real (ThunarStandardView *standard_view,
       gtk_tree_path_free (start_path);
       gtk_tree_path_free (end_path);
     }
-
-  /* reset the timeout or idle handler ID */
-  standard_view->priv->thumbnail_source_id = 0;
 
   return FALSE;
 }
