@@ -561,7 +561,7 @@ thunar_launcher_execute_files (ThunarLauncher *launcher,
     {
       working_directory = thunar_file_get_file (launcher->current_directory);
 
-      if (!thunar_file_execute (lp->data, working_directory, launcher->widget, NULL, &error))
+      if (!thunar_file_execute (lp->data, working_directory, launcher->widget, NULL, NULL, &error))
         {
           /* display an error message to the user */
           thunar_dialogs_show_error (launcher->widget, error, _("Failed to execute file \"%s\""), thunar_file_get_display_name (lp->data));

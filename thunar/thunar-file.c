@@ -1476,6 +1476,7 @@ thunar_file_check_loaded (ThunarFile *file)
  *                      in @file_list.
  * @parent            : %NULL, a #GdkScreen or #GtkWidget.
  * @file_list         : the list of #GFile<!---->s to supply to @file on execution.
+ * @startup_id        : startup id for the new window (send over for dbus) or %NULL.
  * @error             : return location for errors or %NULL.
  *
  * Tries to execute @file on the specified @screen. If @file is executable
@@ -1489,6 +1490,7 @@ thunar_file_execute (ThunarFile  *file,
                      GFile       *working_directory,
                      gpointer     parent,
                      GList       *file_list,
+                     const gchar *startup_id,
                      GError     **error)
 {
   gboolean    snotify = FALSE;
@@ -1507,6 +1509,7 @@ thunar_file_execute (ThunarFile  *file,
   gchar      *exec;
   gchar      *directory = NULL;
   gboolean    is_secure = FALSE;
+  guint32     stimestamp = 0;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -1630,10 +1633,34 @@ thunar_file_execute (ThunarFile  *file,
             }
         }
 
+      /* check if a startup id was passed (launch request over dbus) */
+      if (startup_id != NULL && *startup_id != '\0')
+        {
+          /* parse startup_id string and extract timestamp
+           * format: <unique>_TIME<timestamp>) */
+          gchar *time_str = g_strrstr (startup_id, "_TIME");
+          if (time_str != NULL)
+            {
+              gchar *end;
+
+              /* ignore the "_TIME" part */
+              time_str += 5;
+
+              stimestamp = strtoul (time_str, &end, 0);
+              if (end == time_str)
+                stimestamp = 0;
+            }
+        }
+      else
+        {
+          /* use current event time */
+          stimestamp = gtk_get_current_event_time ();
+        }
+
       /* execute the command */
       result = xfce_spawn_on_screen (thunar_util_parse_parent (parent, NULL), 
                                      directory, argv, NULL, G_SPAWN_SEARCH_PATH,
-                                     snotify, gtk_get_current_event_time (), icon_name, error);
+                                     snotify, stimestamp, icon_name, error);
     }
 
   /* clean up */
@@ -1698,7 +1725,7 @@ thunar_file_launch (ThunarFile  *file,
 
   /* check if we should execute the file */
   if (thunar_file_is_executable (file))
-    return thunar_file_execute (file, NULL, parent, NULL, error);
+    return thunar_file_execute (file, NULL, parent, NULL, NULL, error);
 
   /* determine the default application to open the file */
   /* TODO We should probably add a cancellable argument to thunar_file_launch() */
