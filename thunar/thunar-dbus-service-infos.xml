@@ -31,7 +31,7 @@
     <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="thunar_dbus_service" />
 
     <!--
-      DisplayChooserDialog (uri : STRING, open : BOOLEAN, display : STRING) : VOID
+      DisplayChooserDialog (uri : STRING, open : BOOLEAN, display : STRING, startup_id : STRING) : VOID
 
       uri        : either a file:-URI or an absolute path.
       open       : TRUE to let the user open the file identified by the
@@ -56,7 +56,7 @@
 
 
     <!--
-      DisplayFolder (uri : STRING, display : STRING) : VOID
+      DisplayFolder (uri : STRING, display : STRING, startup_id : STRING) : VOID
 
       uri        : either a file:-URI or an absolute path.
       display    : the screen on which to display the folder or ""
@@ -72,7 +72,7 @@
 
 
     <!--
-      DisplayFolderAndSelect (uri : STRING, filename : STRING, display : STRING) : VOID
+      DisplayFolderAndSelect (uri : STRING, filename : STRING, display : STRING, startup_id : STRING) : VOID
 
       uri        : either a file:-URI or an absolute path.
       filename   : the name of the file in the folder which should
@@ -99,7 +99,7 @@
 
 
     <!--
-      DisplayFileProperties (uri : STRING, display : STRING) : VOID
+      DisplayFileProperties (uri : STRING, display : STRING, startup_id : STRING) : VOID
 
       uri        : either a file:-URI or an absolute path.
       display    : the screen on which to display the file properties
@@ -152,7 +152,7 @@
 
 
     <!--
-      DisplayPreferencesDialog (display : STRING) : VOID
+      DisplayPreferencesDialog (display : STRING, startup_id : STRING) : VOID
 
       display    : the screen on which to display the preferences dialog
                    or "" to use the default screen of the file manager.
@@ -294,9 +294,9 @@
     </method>
 
     <!--
-      RenameFile (uri : STRING, display : STRING, startup_id : STRING) : VOID
+      RenameFile (filename : STRING, display : STRING, startup_id : STRING) : VOID
 
-      uri        : a URI to rename. This may be either a file:-URI or an absolute path.
+      filename   : a URI to rename. This may be either a file:-URI or an absolute path.
       display    : the screen on which to launch the filenames or ""
                    to use the default screen of the file manager.
       startup_id : the DESKTOP_STARTUP_ID environment variable for properly
@@ -309,7 +309,7 @@
     </method>
 
     <!--
-      CreateFile (working_directory : content_type : STRING, STRING, display : STRING, startup_id : STRING) : VOID
+      CreateFile (parent_directory : STRING, content_type : STRING, display : STRING, startup_id : STRING) : VOID
 
       parent_directory : the parent directory in which the file will be created.
       content_type     : content type of the file to be created (text/plain assumed 
@@ -327,7 +327,7 @@
     </method>
 
     <!--
-      CreateFileFromTemplate(working_directory : STRING, template_uri : STRING, display : STRING, start_id : STRING) : VOID
+      CreateFileFromTemplate(parent_directory : STRING, template_uri : STRING, display : STRING, startup_id : STRING) : VOID
 
       parent_directory : the parent directory in which the file will be created.
       template_uri     : the URI or absolute path to the template file.
@@ -355,7 +355,7 @@
     <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="thunar_dbus_service" />
 
     <!--
-      DisplayTrash (display : STRING) : VOID
+      DisplayTrash (display : STRING, startup_id : STRING) : VOID
 
       display    : the screen on which to display the trash folder
                    contents or "" to use the default screen of the
@@ -372,7 +372,7 @@
     </method>
 
     <!--
-      EmptyTrash (display : STRING) : VOID
+      EmptyTrash (display : STRING, startup_id : STRING) : VOID
 
       display    : the screen on which to display the confirmation of
                    the operation and the progress status or "" to use
@@ -388,7 +388,7 @@
     </method>
 
     <!--
-      MoveToTrash (uris : ARRAY OF STRING, display : STRING) : VOID
+      MoveToTrash (filenames : ARRAY OF STRING, display : STRING, startup_id : STRING) : VOID
 
       filenames  : an array of file:-URIs or absolute paths for the files
                    that should be moved to the trash can.
