@@ -3405,7 +3405,7 @@ const gchar *
 thunar_file_get_thumbnail_path (ThunarFile *file)
 {
   GChecksum *checksum;
-  gchar     *basename;
+  gchar     *filename;
   gchar     *uri;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
@@ -3423,7 +3423,7 @@ thunar_file_get_thumbnail_path (ThunarFile *file)
           g_checksum_update (checksum, (const guchar *) uri, strlen (uri));
           g_free (uri);
 
-          basename = g_strconcat (g_checksum_get_string (checksum), ".png", NULL);
+          filename = g_strconcat (g_checksum_get_string (checksum), ".png", NULL);
           g_checksum_free (checksum);
 
           /* The thumbnail is in the format/location
@@ -3437,7 +3437,7 @@ thunar_file_get_thumbnail_path (ThunarFile *file)
           /* build and check if the thumbnail is in the new location */
           file->thumbnail_path = g_build_path ("/", g_get_user_cache_dir(),
                                                "thumbnails", "normal",
-                                               basename, NULL);
+                                               filename, NULL);
 
           if (!g_file_test(file->thumbnail_path, G_FILE_TEST_EXISTS))
             {
@@ -3445,7 +3445,7 @@ thunar_file_get_thumbnail_path (ThunarFile *file)
               g_free(file->thumbnail_path);
 
               file->thumbnail_path = g_build_filename (xfce_get_homedir (), ".thumbnails",
-                                                       "normal", basename, NULL);
+                                                       "normal", filename, NULL);
 
               if(!g_file_test(file->thumbnail_path, G_FILE_TEST_EXISTS))
               {
@@ -3455,7 +3455,7 @@ thunar_file_get_thumbnail_path (ThunarFile *file)
               }
             }
 
-          g_free (basename);
+          g_free (filename);
         }
     }
 
