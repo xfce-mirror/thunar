@@ -714,6 +714,9 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
    */
   g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::num-files", G_CALLBACK (thunar_standard_view_update_statusbar_text), standard_view);
 
+  /* be sure to update the statusbar text whenever the file-size-binary property changes */
+  g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::file-size-binary", G_CALLBACK (thunar_standard_view_update_statusbar_text), standard_view);
+
   /* connect to size allocation signals for generating thumbnail requests */
   g_signal_connect_after (G_OBJECT (standard_view), "size-allocate",
                           G_CALLBACK (thunar_standard_view_size_allocate), NULL);

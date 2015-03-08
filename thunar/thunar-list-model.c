@@ -185,9 +185,7 @@ static void               thunar_list_model_set_date_style        (ThunarListMod
 static gint               thunar_list_model_get_num_files         (ThunarListModel        *store);
 static gboolean           thunar_list_model_get_folders_first     (ThunarListModel        *store);
 
-static gboolean           thunar_list_model_get_file_size_binary  (ThunarListModel        *store);
-static void               thunar_list_model_set_file_size_binary  (ThunarListModel        *store,
-                                                                   gboolean                file_size_binary);
+
 
 struct _ThunarListModelClass
 {
@@ -1999,7 +1997,7 @@ thunar_list_model_set_show_hidden (ThunarListModel *store,
  *
  * Return value: %TRUE if file size format is binary.
  **/
-static gboolean
+gboolean
 thunar_list_model_get_file_size_binary (ThunarListModel *store)
 {
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), FALSE);
@@ -2016,7 +2014,7 @@ thunar_list_model_get_file_size_binary (ThunarListModel *store)
  * If @file_size_binary is %TRUE the file size should be
  * formatted as binary.
  **/
-static void
+void
 thunar_list_model_set_file_size_binary (ThunarListModel *store,
                                         gboolean         file_size_binary)
 {

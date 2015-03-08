@@ -65,6 +65,7 @@ enum
 {
   PROP_0,
   PROP_FILES,
+  PROP_FILE_SIZE_BINARY,
 };
 
 /* Signal identifiers */
@@ -119,6 +120,7 @@ struct _ThunarPropertiesDialog
   ThunarPreferences      *preferences;
 
   GList                  *files;
+  gboolean                file_size_binary;
 
   ThunarThumbnailer      *thumbnailer;
   guint                   thumbnail_request;
@@ -184,6 +186,19 @@ thunar_properties_dialog_class_init (ThunarPropertiesDialogClass *klass)
                                                         EXO_PARAM_READWRITE));
 
   /**
+   * ThunarPropertiesDialog:file_size_binary:
+   *
+   * Whether the file size should be shown in binary or decimal.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_FILE_SIZE_BINARY,
+                                   g_param_spec_boolean ("file-size-binary",
+                                                         "FileSizeBinary",
+                                                         NULL,
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
+
+  /**
    * ThunarPropertiesDialog::reload:
    * @dialog : a #ThunarPropertiesDialog.
    *
@@ -218,9 +233,14 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   guint      row = 0;
   GtkWidget *image;
 
-  /* acquire a reference on the preferences and monitor the "misc-date-style" setting */
+  /* acquire a reference on the preferences and monitor the
+     "misc-date-style" and "misc-file-size-binary" settings */
   dialog->preferences = thunar_preferences_get ();
   g_signal_connect_swapped (G_OBJECT (dialog->preferences), "notify::misc-date-style",
+                            G_CALLBACK (thunar_properties_dialog_reload), dialog);
+  exo_binding_new (G_OBJECT (dialog->preferences), "misc-file-size-binary",
+                   G_OBJECT (dialog), "file-size-binary");
+  g_signal_connect_swapped (G_OBJECT (dialog->preferences), "notify::misc-file-size-binary",
                             G_CALLBACK (thunar_properties_dialog_reload), dialog);
 
   /* create a new thumbnailer */
@@ -605,6 +625,10 @@ thunar_properties_dialog_get_property (GObject    *object,
       g_value_set_boxed (value, thunar_properties_dialog_get_files (dialog));
       break;
 
+    case PROP_FILE_SIZE_BINARY:
+      g_value_set_boolean (value, dialog->file_size_binary);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -625,6 +649,10 @@ thunar_properties_dialog_set_property (GObject      *object,
     {
     case PROP_FILES:
       thunar_properties_dialog_set_files (dialog, g_value_get_boxed (value));
+      break;
+
+    case PROP_FILE_SIZE_BINARY:
+      dialog->file_size_binary = g_value_get_boolean (value);
       break;
 
     default:
@@ -1055,7 +1083,8 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   /* update the free space (only for folders) */
   if (thunar_file_is_directory (file))
     {
-      fs_string = thunar_g_file_get_free_space_string (thunar_file_get_file (file));
+      fs_string = thunar_g_file_get_free_space_string (thunar_file_get_file (file),
+                                                       dialog->file_size_binary);
       if (thunar_g_file_get_free_space (thunar_file_get_file (file), &fs_free, &fs_size)
           && fs_size > 0)
         {

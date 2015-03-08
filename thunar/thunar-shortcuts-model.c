@@ -62,7 +62,8 @@ typedef struct _ThunarShortcut ThunarShortcut;
 enum
 {
   PROP_0,
-  PROP_HIDDEN_BOOKMARKS
+  PROP_HIDDEN_BOOKMARKS,
+  PROP_FILE_SIZE_BINARY
 };
 
 
@@ -171,6 +172,7 @@ struct _ThunarShortcutsModel
 
   ThunarPreferences    *preferences;
   gchar               **hidden_bookmarks;
+  gboolean              file_size_binary;
 
   ThunarDeviceMonitor  *device_monitor;
 
@@ -226,6 +228,19 @@ thunar_shortcuts_model_class_init (ThunarShortcutsModelClass *klass)
                                                        NULL,
                                                        G_TYPE_STRV,
                                                        EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPropertiesDialog:file_size_binary:
+   *
+   * Whether the file size should be shown in binary or decimal.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_FILE_SIZE_BINARY,
+                                   g_param_spec_boolean ("file-size-binary",
+                                                         "FileSizeBinary",
+                                                         NULL,
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
 }
 
 
@@ -271,6 +286,10 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
   exo_binding_new (G_OBJECT (model->preferences), "hidden-bookmarks",
                    G_OBJECT (model), "hidden-bookmarks");
 
+  /* binary file size */
+  exo_binding_new (G_OBJECT (model->preferences), "misc-file-size-binary",
+                   G_OBJECT (model), "file-size-binary");
+
   /* load volumes */
   thunar_shortcuts_model_shortcut_devices (model);
 
@@ -301,6 +320,9 @@ thunar_shortcuts_model_finalize (GObject *object)
   /* free all shortcuts */
   g_list_foreach (model->shortcuts, (GFunc) thunar_shortcut_free, model);
   g_list_free (model->shortcuts);
+
+  /* disconnect from the preferences */
+  g_object_unref (model->preferences);
 
   /* free hidden list */
   g_strfreev (model->hidden_bookmarks);
@@ -336,6 +358,10 @@ thunar_shortcuts_model_get_property (GObject    *object,
     {
     case PROP_HIDDEN_BOOKMARKS:
       g_value_set_boxed (value, model->hidden_bookmarks);
+      break;
+
+    case PROP_FILE_SIZE_BINARY:
+      g_value_set_boolean (value, model->file_size_binary);
       break;
 
     default:
@@ -392,6 +418,10 @@ thunar_shortcuts_model_set_property (GObject      *object,
 
       /* update header visibility */
       thunar_shortcuts_model_header_visibility (model);
+      break;
+
+    case PROP_FILE_SIZE_BINARY:
+      model->file_size_binary = g_value_get_boolean (value);
       break;
 
     default:
@@ -530,6 +560,7 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
   guint32         trash_items;
   gchar          *trash_string;
   gchar          *parse_name;
+  gboolean        file_size_binary;
 
   _thunar_return_if_fail (iter->stamp == THUNAR_SHORTCUTS_MODEL (tree_model)->stamp);
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (tree_model));
@@ -583,7 +614,8 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
 
           if (file != NULL)
             {
-              disk_usage = thunar_g_file_get_free_space_string (file);
+              file_size_binary = THUNAR_SHORTCUTS_MODEL (tree_model)->file_size_binary;
+              disk_usage = thunar_g_file_get_free_space_string (file, file_size_binary);
               g_object_unref (file);
               g_value_take_string (value, disk_usage);
             }

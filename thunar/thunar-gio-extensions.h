@@ -55,7 +55,8 @@ gboolean  thunar_g_file_get_free_space           (GFile                *file,
                                                   guint64              *fs_free_return,
                                                   guint64              *fs_size_return);
 
-gchar    *thunar_g_file_get_free_space_string    (GFile                *file);
+gchar    *thunar_g_file_get_free_space_string    (GFile                *file,
+                                                  gboolean              file_size_binary);
 
 /**
  * THUNAR_TYPE_G_FILE_LIST:

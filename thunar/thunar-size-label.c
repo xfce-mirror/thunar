@@ -43,6 +43,7 @@ enum
 {
   PROP_0,
   PROP_FILES,
+  PROP_FILE_SIZE_BINARY
 };
 
 
@@ -87,8 +88,10 @@ struct _ThunarSizeLabel
   GtkHBox             __parent__;
 
   ThunarDeepCountJob *job;
+  ThunarPreferences  *preferences;
 
   GList              *files;
+  gboolean            file_size_binary;
 
   GtkWidget          *label;
   GtkWidget          *spinner;
@@ -121,6 +124,19 @@ thunar_size_label_class_init (ThunarSizeLabelClass *klass)
                                    g_param_spec_boxed ("files", "files", "files",
                                                        THUNARX_TYPE_FILE_INFO_LIST,
                                                        EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPropertiesDialog:file_size_binary:
+   *
+   * Whether the file size should be shown in binary or decimal.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_FILE_SIZE_BINARY,
+                                   g_param_spec_boolean ("file-size-binary",
+                                                         "FileSizeBinary",
+                                                         NULL,
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
 }
 
 
@@ -130,6 +146,12 @@ thunar_size_label_init (ThunarSizeLabel *size_label)
 {
   GtkWidget *ebox;
 
+  /* binary file size */
+  size_label->preferences = thunar_preferences_get ();
+  exo_binding_new (G_OBJECT (size_label->preferences), "misc-file-size-binary",
+                   G_OBJECT (size_label), "file-size-binary");
+  g_signal_connect_swapped (G_OBJECT (size_label->preferences), "notify::misc-file-size-binary",
+                            G_CALLBACK (thunar_size_label_files_changed), size_label);
   gtk_widget_push_composite_child ();
 
   /* configure the box */
@@ -177,6 +199,10 @@ thunar_size_label_finalize (GObject *object)
   /* reset the file property */
   thunar_size_label_set_files (size_label, NULL);
 
+  /* disconnect from the preferences */
+  g_signal_handlers_disconnect_by_func (size_label->preferences, thunar_size_label_files_changed, size_label);
+  g_object_unref (size_label->preferences);
+
   (*G_OBJECT_CLASS (thunar_size_label_parent_class)->finalize) (object);
 }
 
@@ -194,6 +220,10 @@ thunar_size_label_get_property (GObject    *object,
     {
     case PROP_FILES:
       g_value_set_boxed (value, thunar_size_label_get_files (size_label));
+      break;
+
+    case PROP_FILE_SIZE_BINARY:
+      g_value_set_boolean (value, size_label->file_size_binary);
       break;
 
     default:
@@ -216,6 +246,10 @@ thunar_size_label_set_property (GObject      *object,
     {
     case PROP_FILES:
       thunar_size_label_set_files (size_label, g_value_get_boxed (value));
+      break;
+
+    case PROP_FILE_SIZE_BINARY:
+      size_label->file_size_binary = g_value_get_boolean (value);
       break;
 
     default:
@@ -267,16 +301,10 @@ thunar_size_label_files_changed (ThunarSizeLabel *size_label)
 {
   gchar             *size_string;
   guint64            size;
-  ThunarPreferences *preferences;
-  gboolean           file_size_binary;
 
   _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
   _thunar_return_if_fail (size_label->files != NULL);
   _thunar_return_if_fail (THUNAR_IS_FILE (size_label->files->data));
-
-  preferences = thunar_preferences_get ();
-  g_object_get (preferences, "misc-file-size-binary", &file_size_binary, NULL);
-  g_object_unref (preferences);
 
   /* cancel the pending job (if any) */
   if (G_UNLIKELY (size_label->job != NULL))
@@ -315,7 +343,7 @@ thunar_size_label_files_changed (ThunarSizeLabel *size_label)
       size = thunar_file_get_size (THUNAR_FILE (size_label->files->data));
 
       /* setup the new label */
-      size_string = g_format_size_full (size, file_size_binary ? G_FORMAT_SIZE_LONG_FORMAT | G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_LONG_FORMAT);
+      size_string = g_format_size_full (size, size_label->file_size_binary ? G_FORMAT_SIZE_LONG_FORMAT | G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_LONG_FORMAT);
       gtk_label_set_text (GTK_LABEL (size_label->label), size_string);
       g_free (size_string);
     }
@@ -370,16 +398,10 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
   gchar             *text;
   guint              n;
   gchar             *unreable_text;
-  ThunarPreferences *preferences;
-  gboolean           file_size_binary;
 
   _thunar_return_if_fail (THUNAR_IS_DEEP_COUNT_JOB (job));
   _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
   _thunar_return_if_fail (size_label->job == job);
-
-  preferences = thunar_preferences_get ();
-  g_object_get (preferences, "misc-file-size-binary", &file_size_binary, NULL);
-  g_object_unref (preferences);
 
   /* determine the total number of items */
   n = file_count + directory_count + unreadable_directory_count;
@@ -387,7 +409,7 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
   if (G_LIKELY (n > unreadable_directory_count))
     {
       /* update the label */
-      size_string = g_format_size_full (total_size, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+      size_string = g_format_size_full (total_size, size_label->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
       text = g_strdup_printf (ngettext ("%u item, totalling %s", "%u items, totalling %s", n), n, size_string);
       g_free (size_string);
       

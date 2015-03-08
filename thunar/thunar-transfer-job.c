@@ -42,9 +42,28 @@
 
 
 
+/* Property identifiers */
+enum
+{
+  PROP_0,
+  PROP_FILE_SIZE_BINARY,
+};
+
+
+
 typedef struct _ThunarTransferNode ThunarTransferNode;
 
 
+
+static void     thunar_transfer_job_get_property (GObject    *object,
+                                                  guint       prop_id,
+                                                  GValue     *value,
+                                                  GParamSpec *pspec);
+
+static void     thunar_transfer_job_set_property (GObject      *object,
+                                                  guint         prop_id,
+                                                  const GValue *value,
+                                                  GParamSpec   *pspec);
 
 static void     thunar_transfer_job_finalize     (GObject                *object);
 static gboolean thunar_transfer_job_execute      (ExoJob                 *job,
@@ -74,6 +93,9 @@ struct _ThunarTransferJob
   guint64               total_progress;
   guint64               file_progress;
   guint64               transfer_rate;
+
+  ThunarPreferences    *preferences;
+  gboolean              file_size_binary;
 };
 
 struct _ThunarTransferNode
@@ -97,9 +119,24 @@ thunar_transfer_job_class_init (ThunarTransferJobClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_transfer_job_finalize;
+  gobject_class->get_property = thunar_transfer_job_get_property;
+  gobject_class->set_property = thunar_transfer_job_set_property;
 
   exojob_class = EXO_JOB_CLASS (klass);
   exojob_class->execute = thunar_transfer_job_execute;
+
+  /**
+   * ThunarPropertiesDialog:file_size_binary:
+   *
+   * Whether the file size should be shown in binary or decimal.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_FILE_SIZE_BINARY,
+                                   g_param_spec_boolean ("file-size-binary",
+                                                         "FileSizeBinary",
+                                                         NULL,
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
 }
 
 
@@ -107,6 +144,10 @@ thunar_transfer_job_class_init (ThunarTransferJobClass *klass)
 static void
 thunar_transfer_job_init (ThunarTransferJob *job)
 {
+  job->preferences = thunar_preferences_get ();
+  exo_binding_new (G_OBJECT (job->preferences), "misc-file-size-binary",
+                   G_OBJECT (job), "file-size-binary");
+
   job->type = 0;
   job->source_node_list = NULL;
   job->target_file_list = NULL;
@@ -130,7 +171,53 @@ thunar_transfer_job_finalize (GObject *object)
 
   thunar_g_file_list_free (job->target_file_list);
 
+  g_object_unref (job->preferences);
+
   (*G_OBJECT_CLASS (thunar_transfer_job_parent_class)->finalize) (object);
+}
+
+
+
+static void
+thunar_transfer_job_get_property (GObject     *object,
+                                  guint        prop_id,
+                                  GValue      *value,
+                                  GParamSpec  *pspec)
+{
+  ThunarTransferJob *job = THUNAR_TRANSFER_JOB (object);
+
+  switch (prop_id)
+    {
+    case PROP_FILE_SIZE_BINARY:
+      g_value_set_boolean (value, job->file_size_binary);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+
+
+static void
+thunar_transfer_job_set_property (GObject      *object,
+                                  guint         prop_id,
+                                  const GValue *value,
+                                  GParamSpec   *pspec)
+{
+  ThunarTransferJob *job = THUNAR_TRANSFER_JOB (object);
+
+  switch (prop_id)
+    {
+    case PROP_FILE_SIZE_BINARY:
+      job->file_size_binary = g_value_get_boolean (value);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
 }
 
 
@@ -670,25 +757,19 @@ retry_remove:
 
 
 static gboolean
-thunar_transfer_job_veryify_destination (ThunarTransferJob  *transfer_job,
-                                         GError            **error)
+thunar_transfer_job_verify_destination (ThunarTransferJob  *transfer_job,
+                                        GError            **error)
 {
   GFileInfo         *filesystem_info;
-  guint64             free_space;
+  guint64            free_space;
   GFile             *dest;
   GFileInfo         *dest_info;
   gchar             *dest_name = NULL;
   gchar             *base_name;
   gboolean           succeed = TRUE;
   gchar             *size_string;
-  ThunarPreferences *preferences;
-  gboolean           file_size_binary;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (transfer_job), FALSE);
-
-  preferences = thunar_preferences_get ();
-  g_object_get (preferences, "misc-file-size-binary", &file_size_binary, NULL);
-  g_object_unref (preferences);
 
   /* no target file list */
   if (transfer_job->target_file_list == NULL)
@@ -736,7 +817,8 @@ thunar_transfer_job_veryify_destination (ThunarTransferJob  *transfer_job,
       free_space = g_file_info_get_attribute_uint64 (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
       if (transfer_job->total_size > free_space)
         {
-          size_string = g_format_size_full (transfer_job->total_size - free_space, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+          size_string = g_format_size_full (transfer_job->total_size - free_space,
+                                            transfer_job->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
           succeed = thunar_job_ask_no_size (THUNAR_JOB (transfer_job),
                                              _("Error while copying to \"%s\": %s more space is "
                                                "required to copy to the destination"),
@@ -954,7 +1036,7 @@ thunar_transfer_job_execute (ExoJob  *job,
   if (G_LIKELY (err == NULL))
     {
       /* check destination */
-      if (!thunar_transfer_job_veryify_destination (transfer_job, &err))
+      if (!thunar_transfer_job_verify_destination (transfer_job, &err))
         {
           if (err != NULL)
             {
@@ -1080,20 +1162,14 @@ thunar_transfer_job_get_status (ThunarTransferJob *job)
   gchar             *transfer_rate_str;
   GString           *status;
   gulong             remaining_time;
-  ThunarPreferences *preferences;
-  gboolean           file_size_binary;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), NULL);
-
-  preferences = thunar_preferences_get ();
-  g_object_get (preferences, "misc-file-size-binary", &file_size_binary, NULL);
-  g_object_unref (preferences);
 
   status = g_string_sized_new (100);
 
   /* transfer status like "22.6MB of 134.1MB" */
-  total_size_str = g_format_size_full (job->total_size, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
-  total_progress_str = g_format_size_full (job->total_progress, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+  total_size_str = g_format_size_full (job->total_size, job->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+  total_progress_str = g_format_size_full (job->total_progress, job->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
   g_string_append_printf (status, _("%s of %s"), total_progress_str, total_size_str);
   g_free (total_size_str);
   g_free (total_progress_str);
@@ -1103,7 +1179,7 @@ thunar_transfer_job_get_status (ThunarTransferJob *job)
       && (job->last_update_time - job->start_time) > MINIMUM_TRANSFER_TIME)
     {
       /* remaining time based on the transfer speed */
-      transfer_rate_str = g_format_size_full (job->transfer_rate, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+      transfer_rate_str = g_format_size_full (job->transfer_rate, job->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
       remaining_time = (job->total_size - job->total_progress) / job->transfer_rate;
 
       if (remaining_time > 0)
