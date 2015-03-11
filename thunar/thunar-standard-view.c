@@ -989,7 +989,6 @@ thunar_standard_view_set_property (GObject      *object,
     case PROP_LOADING:
       thunar_standard_view_set_loading (standard_view, g_value_get_boolean (value));
       break;
-      break;
 
     case PROP_SELECTED_FILES:
       thunar_component_set_selected_files (THUNAR_COMPONENT (object), g_value_get_boxed (value));
