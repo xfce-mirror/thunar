@@ -11,14 +11,14 @@
 # Hunt Xu <mhuntxu@gmail.com>, 2014
 # 周潇波 <zhouxiaobo.500@gmail.com>, 2014
 # 周潇波 <zhouxiaobo.500@gmail.com>, 2014-2015
-# 玉堂白鹤 <yjwork@qq.com>, 2014
+# 玉堂白鹤 <yjwork@qq.com>, 2014-2015
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-29 00:30+0100\n"
-"PO-Revision-Date: 2015-01-29 13:56+0000\n"
-"Last-Translator: 周潇波 <zhouxiaobo.500@gmail.com>\n"
+"POT-Creation-Date: 2015-02-19 18:30+0100\n"
+"PO-Revision-Date: 2015-03-11 06:00+0000\n"
+"Last-Translator: 玉堂白鹤 <yjwork@qq.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/projects/p/thunar/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -143,10 +143,10 @@ msgstr "无法启动操作"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1168 ../thunar/thunar-application.c:1294
-#: ../thunar/thunar-launcher.c:1222 ../thunar/thunar-location-entry.c:402
-#: ../thunar/thunar-location-entry.c:430
-#: ../thunar/thunar-shortcuts-view.c:1630
-#: ../thunar/thunar-shortcuts-view.c:1658 ../thunar/thunar-window.c:2236
+#: ../thunar/thunar-launcher.c:1222 ../thunar/thunar-location-entry.c:395
+#: ../thunar/thunar-location-entry.c:423
+#: ../thunar/thunar-shortcuts-view.c:1635
+#: ../thunar/thunar-shortcuts-view.c:1663 ../thunar/thunar-window.c:2236
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "无法打开 \"%s\""
@@ -159,20 +159,20 @@ msgstr "无法打开 \"%s\": %s"
 #. display an error message
 #: ../thunar/thunar-application.c:1362
 #: ../thunar/thunar-properties-dialog.c:682
-#: ../thunar/thunar-standard-view.c:2747 ../thunar/thunar-tree-view.c:1767
+#: ../thunar/thunar-standard-view.c:2747 ../thunar/thunar-tree-view.c:1877
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "无法重命名 “%s”"
 
 #: ../thunar/thunar-application.c:1464
 #: ../thunar/thunar-location-buttons.c:1308
-#: ../thunar/thunar-standard-view.c:2297 ../thunar/thunar-tree-view.c:1629
+#: ../thunar/thunar-standard-view.c:2297 ../thunar/thunar-tree-view.c:1739
 msgid "New Folder"
 msgstr "新建文件夹"
 
 #: ../thunar/thunar-application.c:1465
 #: ../thunar/thunar-location-buttons.c:1309
-#: ../thunar/thunar-standard-view.c:2298 ../thunar/thunar-tree-view.c:1630
+#: ../thunar/thunar-standard-view.c:2298 ../thunar/thunar-tree-view.c:1740
 msgid "Create New Folder"
 msgstr "创建新文件夹"
 
@@ -253,7 +253,7 @@ msgstr "移除回收站中的所有文件和文件夹吗？"
 #. append the "Empty Trash" menu action
 #. prepare the menu item
 #: ../thunar/thunar-application.c:2008 ../thunar/thunar-location-buttons.c:179
-#: ../thunar/thunar-shortcuts-view.c:1191 ../thunar/thunar-tree-view.c:1184
+#: ../thunar/thunar-shortcuts-view.c:1196 ../thunar/thunar-tree-view.c:1294
 #: ../thunar/thunar-window.c:351 ../plugins/thunar-tpa/thunar-tpa.c:191
 msgid "_Empty Trash"
 msgstr "清空回收站(_E)"
@@ -545,9 +545,9 @@ msgid "The working directory must be an absolute path"
 msgstr "工作目录必须是绝对路径"
 
 #. LaunchFiles() invoked with an empty filename list
-#: ../thunar/thunar-dbus-service.c:882
+#: ../thunar/thunar-dbus-service.c:882 ../thunar/thunar-dbus-service.c:1249
 #, c-format
-msgid "Atleast one filename must be specified"
+msgid "At least one filename must be specified"
 msgstr "至少要指定一个文件名"
 
 #: ../thunar/thunar-dbus-service.c:1027
@@ -564,11 +564,6 @@ msgstr "源文件名和目标文件名的数目必须一致"
 #, c-format
 msgid "A destination directory must be specified"
 msgstr "至少要指定一个目标目录"
-
-#: ../thunar/thunar-dbus-service.c:1249
-#, c-format
-msgid "At least one filename must be specified"
-msgstr "至少要指定一个文件名"
 
 #: ../thunar/thunar-details-view.c:134
 msgid "Configure _Columns..."
@@ -798,37 +793,37 @@ msgstr "文件名"
 msgid "File System"
 msgstr "文件系统"
 
-#: ../thunar/thunar-file.c:1421
+#: ../thunar/thunar-file.c:1437
 #, c-format
 msgid "The root folder has no parent"
 msgstr "根目录没有父目录"
 
-#: ../thunar/thunar-file.c:1506 ../thunar/thunar-file.c:1778
+#: ../thunar/thunar-file.c:1522 ../thunar/thunar-file.c:1794
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "无法解析 desktop 文件: %s"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1518
+#: ../thunar/thunar-file.c:1534
 msgid "Untrusted application launcher"
 msgstr "未信任的程序启动器"
 
-#: ../thunar/thunar-file.c:1543
+#: ../thunar/thunar-file.c:1559
 #, c-format
 msgid "No Exec field specified"
 msgstr "未指定 Exec 域"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1552
+#: ../thunar/thunar-file.c:1568
 msgid "Untrusted link launcher"
 msgstr "未信任的链接启动器"
 
-#: ../thunar/thunar-file.c:1568
+#: ../thunar/thunar-file.c:1584
 #, c-format
 msgid "No URL field specified"
 msgstr "未指定 URL 域"
 
-#: ../thunar/thunar-file.c:1573
+#: ../thunar/thunar-file.c:1589
 msgid "Invalid desktop file"
 msgstr "无效的桌面文件"
 
@@ -842,7 +837,7 @@ msgstr "%2$s 上的 %1$s"
 #: ../thunar/thunar-gio-extensions.c:434
 #, c-format
 msgid "%s of %s free (%d%% used)"
-msgstr "%s中剩余 %s (%d%% 已使用)"
+msgstr "剩余 %s，总计 %s (%d%% 已使用)"
 
 #. extend history tooltip with function of the button
 #: ../thunar/thunar-history-action.c:372
@@ -990,19 +985,19 @@ msgstr "目标位置上空间不足。请尝试删除一些文件以保证空间
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:177 ../thunar/thunar-launcher.c:819
 #: ../thunar/thunar-location-buttons.c:175
-#: ../thunar/thunar-shortcuts-view.c:1087 ../thunar/thunar-tree-view.c:1114
+#: ../thunar/thunar-shortcuts-view.c:1092 ../thunar/thunar-tree-view.c:1224
 msgid "_Open"
 msgstr "打开(_O)"
 
 #. append the "Open in New Tab" menu action
 #: ../thunar/thunar-launcher.c:178 ../thunar/thunar-launcher.c:860
-#: ../thunar/thunar-tree-view.c:1125
+#: ../thunar/thunar-tree-view.c:1235
 msgid "Open in New _Tab"
 msgstr "在新标签中打开(_T)"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:179 ../thunar/thunar-launcher.c:854
-#: ../thunar/thunar-tree-view.c:1132
+#: ../thunar/thunar-tree-view.c:1242
 msgid "Open in New _Window"
 msgstr "在新窗口中打开(_W)"
 
@@ -1126,8 +1121,8 @@ msgstr[0] "用默认的应用程序打开选中的文件"
 msgid "Open With \"%s\""
 msgstr "用 “%s” 打开"
 
-#: ../thunar/thunar-launcher.c:1586 ../thunar/thunar-shortcuts-view.c:1689
-#: ../thunar/thunar-shortcuts-view.c:1926 ../thunar/thunar-tree-view.c:1966
+#: ../thunar/thunar-launcher.c:1586 ../thunar/thunar-shortcuts-view.c:1694
+#: ../thunar/thunar-shortcuts-view.c:1931 ../thunar/thunar-tree-view.c:2076
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "无法挂载 “%s”"
@@ -1246,19 +1241,19 @@ msgstr "%s，%s"
 
 #. append the "Open in New Tab" menu action
 #: ../thunar/thunar-location-buttons.c:176
-#: ../thunar/thunar-shortcuts-view.c:1097
+#: ../thunar/thunar-shortcuts-view.c:1102
 msgid "Open in New Tab"
 msgstr "在新标签中打开"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-location-buttons.c:177
-#: ../thunar/thunar-shortcuts-view.c:1103
+#: ../thunar/thunar-shortcuts-view.c:1108
 msgid "Open in New Window"
 msgstr "在新窗口中打开"
 
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-location-buttons.c:178
-#: ../thunar/thunar-standard-view.c:396 ../thunar/thunar-tree-view.c:1200
+#: ../thunar/thunar-standard-view.c:396 ../thunar/thunar-tree-view.c:1310
 msgid "Create _Folder..."
 msgstr "创建文件夹(_F)..."
 
@@ -1323,11 +1318,11 @@ msgstr "打开位置"
 msgid "_Location:"
 msgstr "位置(_L):"
 
-#: ../thunar/thunar-location-entry.c:202 ../thunar/thunar-window.c:359
+#: ../thunar/thunar-location-entry.c:195 ../thunar/thunar-window.c:359
 msgid "Reload the current folder"
 msgstr "重载当前文件夹"
 
-#: ../thunar/thunar-location-entry.c:395
+#: ../thunar/thunar-location-entry.c:388
 #, c-format
 msgid "File does not exist"
 msgstr "文件不存在"
@@ -2067,58 +2062,58 @@ msgstr[0] "将选中的文件夹添加到快捷方式侧边栏"
 
 #. append the "Mount" item
 #. append the "Mount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1124 ../thunar/thunar-tree-view.c:1148
+#: ../thunar/thunar-shortcuts-view.c:1129 ../thunar/thunar-tree-view.c:1258
 msgid "_Mount"
 msgstr "挂载(_M)"
 
 #. append the "Unmount" item
 #. append the "Unmount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1130 ../thunar/thunar-tree-view.c:1154
+#: ../thunar/thunar-shortcuts-view.c:1135 ../thunar/thunar-tree-view.c:1264
 msgid "_Unmount"
 msgstr "卸载(_U)"
 
 #. append the "Disconnect" (eject + safely remove drive) item
 #. append the "Eject" menu action
-#: ../thunar/thunar-shortcuts-view.c:1136 ../thunar/thunar-tree-view.c:1160
+#: ../thunar/thunar-shortcuts-view.c:1141 ../thunar/thunar-tree-view.c:1270
 msgid "_Eject"
 msgstr "弹出(_E)"
 
 #. append the "Disconnect" item
-#: ../thunar/thunar-shortcuts-view.c:1153
+#: ../thunar/thunar-shortcuts-view.c:1158
 msgid "Create _Shortcut"
 msgstr "创建快捷方式(_S)"
 
 #. append the "Disconnect" item
 #. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:1174 ../thunar/thunar-tree-view.c:1169
+#: ../thunar/thunar-shortcuts-view.c:1179 ../thunar/thunar-tree-view.c:1279
 msgid "Disconn_ect"
 msgstr "断开连接(_E)"
 
-#: ../thunar/thunar-shortcuts-view.c:1253
+#: ../thunar/thunar-shortcuts-view.c:1258
 msgid "_Remove Shortcut"
 msgstr "移除快捷方式(_R)"
 
 #. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:1267
+#: ../thunar/thunar-shortcuts-view.c:1272
 msgid "Re_name Shortcut"
 msgstr "重命名快捷方式(_N)"
 
-#: ../thunar/thunar-shortcuts-view.c:1556
+#: ../thunar/thunar-shortcuts-view.c:1561
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "路径 “%s” 没有指向某个目录"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1576
+#: ../thunar/thunar-shortcuts-view.c:1581
 msgid "Failed to add new shortcut"
 msgstr "无法添加新的快捷方式"
 
-#: ../thunar/thunar-shortcuts-view.c:1853 ../thunar/thunar-tree-view.c:1834
+#: ../thunar/thunar-shortcuts-view.c:1858 ../thunar/thunar-tree-view.c:1944
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "无法弹出 “%s”"
 
-#: ../thunar/thunar-shortcuts-view.c:1995 ../thunar/thunar-tree-view.c:1889
+#: ../thunar/thunar-shortcuts-view.c:2000 ../thunar/thunar-tree-view.c:1999
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "无法卸载 \"%s\""
@@ -2164,12 +2159,12 @@ msgid "Create an empty folder within the current folder"
 msgstr "在当前文件夹内创建一个空文件夹"
 
 #. append the "Cut" menu action
-#: ../thunar/thunar-standard-view.c:398 ../thunar/thunar-tree-view.c:1227
+#: ../thunar/thunar-standard-view.c:398 ../thunar/thunar-tree-view.c:1337
 msgid "Cu_t"
 msgstr "剪切(_T)"
 
 #. append the "Copy" menu action
-#: ../thunar/thunar-standard-view.c:399 ../thunar/thunar-tree-view.c:1238
+#: ../thunar/thunar-standard-view.c:399 ../thunar/thunar-tree-view.c:1348
 msgid "_Copy"
 msgstr "复制(_C)"
 
@@ -2182,12 +2177,12 @@ msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr "使用剪切或复制命令来移动或复制先前选中的文件"
 
 #. append the "Move to Tash" menu action
-#: ../thunar/thunar-standard-view.c:401 ../thunar/thunar-tree-view.c:1279
+#: ../thunar/thunar-standard-view.c:401 ../thunar/thunar-tree-view.c:1389
 msgid "Mo_ve to Trash"
 msgstr "移至回收站(_V)"
 
 #. append the "Delete" menu action
-#: ../thunar/thunar-standard-view.c:402 ../thunar/thunar-tree-view.c:1291
+#: ../thunar/thunar-standard-view.c:402 ../thunar/thunar-tree-view.c:1401
 msgid "_Delete"
 msgstr "删除(_D)"
 
@@ -2231,7 +2226,7 @@ msgid_plural "Ma_ke Links"
 msgstr[0] "建立链接(_K)"
 
 #. append the "Rename" menu action
-#: ../thunar/thunar-standard-view.c:409 ../thunar/thunar-tree-view.c:1314
+#: ../thunar/thunar-standard-view.c:409 ../thunar/thunar-tree-view.c:1424
 msgid "_Rename..."
 msgstr "重命名(_R)..."
 
@@ -2417,12 +2412,12 @@ msgid "Loading..."
 msgstr "正在载入..."
 
 #. append the "Paste Into Folder" menu action
-#: ../thunar/thunar-tree-view.c:1254
+#: ../thunar/thunar-tree-view.c:1364
 msgid "_Paste Into Folder"
 msgstr "粘贴至文件夹(_P)"
 
 #. append the "Properties" menu action
-#: ../thunar/thunar-tree-view.c:1373
+#: ../thunar/thunar-tree-view.c:1483
 msgid "P_roperties..."
 msgstr "属性(_R)..."
 
@@ -3523,7 +3518,7 @@ msgstr "在此打开终端"
 msgid "Example for a custom action"
 msgstr "自定义动作示例"
 
-#: ../plugins/thunar-wallpaper/twp-provider.c:175
+#: ../plugins/thunar-wallpaper/twp-provider.c:169
 msgid "Set as wallpaper"
 msgstr "设为壁纸"
 
