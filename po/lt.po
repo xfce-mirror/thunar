@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-02-19 18:30+0100\n"
-"PO-Revision-Date: 2015-03-11 22:44+0000\n"
+"PO-Revision-Date: 2015-03-13 22:55+0000\n"
 "Last-Translator: Moo\n"
 "Language-Team: Lithuanian (http://www.transifex.com/projects/p/thunar/language/lt/)\n"
 "MIME-Version: 1.0\n"
@@ -802,7 +802,7 @@ msgstr "Nepavyko apdoroti darbastalio failo: %s"
 #. if the .desktop file is not secure, ask user what to do
 #: ../thunar/thunar-file.c:1534
 msgid "Untrusted application launcher"
-msgstr ""
+msgstr "Nepatikimas programos leistukas"
 
 #: ../thunar/thunar-file.c:1559
 #, c-format
@@ -812,7 +812,7 @@ msgstr "Nenurodytas Exec laukas"
 #. if the .desktop file is not secure, ask user what to do
 #: ../thunar/thunar-file.c:1568
 msgid "Untrusted link launcher"
-msgstr ""
+msgstr "Nepatikimas nuorodos leistukas"
 
 #: ../thunar/thunar-file.c:1584
 #, c-format
@@ -925,13 +925,13 @@ msgstr "Nepavyko pakeisti „%s“ leidimų: %s"
 #: ../thunar/thunar-io-jobs-util.c:103
 #, c-format
 msgid "%s (copy %u)%s"
-msgstr ""
+msgstr "%s (kopija %u)%s"
 
 #. I18N: put " (copy #)" after filename (for files without extension)
 #: ../thunar/thunar-io-jobs-util.c:109
 #, c-format
 msgid "%s (copy %u)"
-msgstr ""
+msgstr "%s (kopija %u)"
 
 #. I18N: name for first link to basename
 #: ../thunar/thunar-io-jobs-util.c:118 ../thunar/thunar-list-model.c:750
@@ -1070,9 +1070,9 @@ msgstr[2] "Atverti %d Naujų Kor_telių"
 #, c-format
 msgid "Open the selected directory in %d new tab"
 msgid_plural "Open the selected directories in %d new tabs"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Atverti pasirinktą katalogą %d naujoje kortelėje"
+msgstr[1] "Atverti pasirinktą katalogą %d naujose kortelėse"
+msgstr[2] "Atverti pasirinktą katalogą %d naujų kortelių"
 
 #: ../thunar/thunar-launcher.c:855
 msgid "Open the selected directory in a new window"
@@ -1579,7 +1579,7 @@ msgstr "Niekada"
 
 #: ../thunar/thunar-preferences-dialog.c:288
 msgid "Local Files Only"
-msgstr ""
+msgstr "Tik vietinių failų"
 
 #: ../thunar/thunar-preferences-dialog.c:289
 msgid "Always"
@@ -1745,15 +1745,15 @@ msgstr "Aktyvuoti _dviem pelės mygtuko paspaudimais"
 
 #: ../thunar/thunar-preferences-dialog.c:563
 msgid "Middle Click"
-msgstr ""
+msgstr "Vidurinio Pelės Mygtuko Paspaudimas"
 
 #: ../thunar/thunar-preferences-dialog.c:573
 msgid "Open folder in new _window"
-msgstr "Atverti aplanką naujame _lange"
+msgstr "Atveria aplanką naujame _lange"
 
 #: ../thunar/thunar-preferences-dialog.c:578
 msgid "Open folder in new _tab"
-msgstr "Atverti aplanką naujoje kor_telėje"
+msgstr "Atveria aplanką naujoje kor_telėje"
 
 #. Advanced
 #: ../thunar/thunar-preferences-dialog.c:587
@@ -2354,16 +2354,16 @@ msgstr[2] "Paruošti pasirinktus failus kopijavimui naudojantis „Kopijuoti“ 
 #: ../thunar/thunar-standard-view.c:4331
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Perkelti pasirinktą failą į Šiukšlinę"
+msgstr[1] "Perkelti pasirinktus failus į Šiukšlinę"
+msgstr[2] "Perkelti pasirinktų failų į Šiukšlinę"
 
 #: ../thunar/thunar-standard-view.c:4339
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Negrįžtamai ištrinti pasirinktą failą"
+msgstr[1] "Negrįžtamai ištrinti pasirinktus failus"
+msgstr[2] "Negrįžtamai ištrinti pasirinktų failų"
 
 #: ../thunar/thunar-standard-view.c:4353
 msgid "Duplicate the selected file"
@@ -2408,7 +2408,7 @@ msgstr ""
 #: ../thunar/thunar-transfer-job.c:751
 #, c-format
 msgid "Error while copying to \"%s\": The destination is read-only"
-msgstr ""
+msgstr "Klaida, kopijuojant į \"%s\": Paskirties vieta yra tik skaitymui"
 
 #: ../thunar/thunar-transfer-job.c:794
 msgid "Collecting files..."
@@ -2453,25 +2453,25 @@ msgstr ""
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Liko %lu valanda (%s/sek.)"
+msgstr[1] "Liko %lu valandos (%s/sek.)"
+msgstr[2] "Liko %lu valandų (%s/sek.)"
 
 #: ../thunar/thunar-transfer-job.c:1125
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Liko %lu minutė (%s/sek.)"
+msgstr[1] "Liko %lu minutės (%s/sek.)"
+msgstr[2] "Liko %lu minučių (%s/sek.)"
 
 #: ../thunar/thunar-transfer-job.c:1132
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Liko %lu sekundė (%s/sek.)"
+msgstr[1] "Liko %lu sekundės (%s/sek.)"
+msgstr[2] "Liko %lu sekundžių (%s/sek.)"
 
 #: ../thunar/thunar-trash-action.c:105
 msgid "T_rash"
@@ -2549,7 +2549,7 @@ msgstr ""
 
 #: ../thunar/thunar-window.c:349
 msgid "New _Window"
-msgstr ""
+msgstr "Naujas la_ngas"
 
 #: ../thunar/thunar-window.c:349
 msgid "Open a new Thunar window for the displayed location"
@@ -2557,7 +2557,7 @@ msgstr "Atverti naują Thunar langą rodomai vietai"
 
 #: ../thunar/thunar-window.c:352
 msgid "Detac_h Tab"
-msgstr ""
+msgstr "Atka_binti kortelę"
 
 #: ../thunar/thunar-window.c:352
 msgid "Open current folder in a new window"
@@ -2573,7 +2573,7 @@ msgstr "Uždaryti visus Thunar langus"
 
 #: ../thunar/thunar-window.c:354
 msgid "C_lose Tab"
-msgstr ""
+msgstr "Užvert_i kortelę"
 
 #: ../thunar/thunar-window.c:354
 msgid "Close this folder"
@@ -2581,7 +2581,7 @@ msgstr "Užverti šį aplanką"
 
 #: ../thunar/thunar-window.c:355
 msgid "_Close Window"
-msgstr ""
+msgstr "Užverti _langą"
 
 #: ../thunar/thunar-window.c:355
 msgid "Close this window"
@@ -2661,7 +2661,7 @@ msgstr "Eiti į pradžios aplanką"
 
 #: ../thunar/thunar-window.c:368
 msgid "Desktop"
-msgstr ""
+msgstr "Darbalaukis"
 
 #: ../thunar/thunar-window.c:368
 msgid "Go to the desktop folder"
@@ -2765,7 +2765,7 @@ msgstr ""
 
 #: ../thunar/thunar-window.c:386
 msgid "Change the visibility of this window's menubar"
-msgstr ""
+msgstr "Keisti šio lango meniu juostos matomumą"
 
 #. * add view options
 #: ../thunar/thunar-window.c:764
@@ -2799,7 +2799,7 @@ msgstr "Atsargiai, Jūs naudojatės administratoriaus paskyra, dėl to galite pa
 
 #: ../thunar/thunar-window.c:1747
 msgid "Close tab"
-msgstr ""
+msgstr "Užverti kortelę"
 
 #: ../thunar/thunar-window.c:2012
 #, c-format
@@ -2818,7 +2818,7 @@ msgstr "Nepavyko atverti aukštesnio aplanko"
 #: ../thunar/thunar-window.c:2858
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
-msgstr ""
+msgstr "Katalogo \"%s\" nėra. Ar norite jį sukurti?"
 
 #. display the "About Templates" dialog
 #: ../thunar/thunar-window.c:2940
