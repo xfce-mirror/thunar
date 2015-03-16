@@ -698,6 +698,7 @@ thunar_folder_monitor (GFileMonitor     *monitor,
 {
   ThunarFolder *folder = THUNAR_FOLDER (user_data);
   ThunarFile   *file;
+  ThunarFile   *other_parent;
   GList        *lp;
   GList         list;
   gboolean      restart = FALSE;
@@ -738,12 +739,40 @@ thunar_folder_monitor (GFileMonitor     *monitor,
         }
       else if (lp != NULL)
         {
-          /* update/destroy the file */
           if (event_type == G_FILE_MONITOR_EVENT_DELETED)
-            thunar_file_destroy (lp->data);
+            {
+              /* destroy the file */
+              thunar_file_destroy (lp->data);
+            }
+
           else if (event_type == G_FILE_MONITOR_EVENT_MOVED)
             {
+              /* destroy the old file and update the new one */
               thunar_file_destroy (lp->data);
+              file = thunar_file_get(other_file, NULL);
+              if (file != NULL && THUNAR_IS_FILE (file))
+                {
+                  thunar_file_reload (file);
+
+                  /* if source and target folders are different, also tell
+                     the target folder to reload for the changes */
+                  if (thunar_file_has_parent (file))
+                    {
+                      other_parent = thunar_file_get_parent (file, NULL);
+                      if (other_parent &&
+                          !g_file_equal (thunar_file_get_file(folder->corresponding_file),
+                                         thunar_file_get_file(other_parent)))
+                        {
+                          thunar_file_reload (other_parent);
+                          g_object_unref (other_parent);
+                        }
+                    }
+
+                  /* drop reference on the other file */
+                  g_object_unref (file);
+                }
+
+              /* reload the folder of the source file */
               thunar_file_reload (folder->corresponding_file);
             }
           else
