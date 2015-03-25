@@ -682,22 +682,36 @@ thunar_file_monitor_update (GFile             *path,
 
 
 static void
-thunar_file_monitor_moved (ThunarFile *file,
-                           GFile      *renamed_file)
+thunar_file_move_thumbnail_cache_file (GFile *old_file,
+                                       GFile *new_file)
 {
   ThunarApplication    *application;
   ThunarThumbnailCache *thumbnail_cache;
-  GFile                *previous_file;
+
+  _thunar_return_if_fail (G_IS_FILE (old_file));
+  _thunar_return_if_fail (G_IS_FILE (new_file));
+
+  application = thunar_application_get ();
+  thumbnail_cache = thunar_application_get_thumbnail_cache (application);
+  thunar_thumbnail_cache_move_file (thumbnail_cache, old_file, new_file);
+
+  g_object_unref (thumbnail_cache);
+  g_object_unref (application);
+}
+
+
+
+static void
+thunar_file_monitor_moved (ThunarFile *file,
+                           GFile      *renamed_file)
+{
+  GFile *previous_file;
 
   /* ref the old location */
   previous_file = g_object_ref (G_OBJECT (file->gfile));
 
   /* notify the thumbnail cache that we can now also move the thumbnail */
-  application = thunar_application_get ();
-  thumbnail_cache = thunar_application_get_thumbnail_cache (application);
-  thunar_thumbnail_cache_move_file (thumbnail_cache, previous_file, renamed_file);
-  g_object_unref (thumbnail_cache);
-  g_object_unref (application);
+  thunar_file_move_thumbnail_cache_file (previous_file, renamed_file);
 
   /* set the new file */
   file->gfile = g_object_ref (G_OBJECT (renamed_file));
@@ -792,6 +806,9 @@ thunar_file_monitor (GFileMonitor     *monitor,
 
           if (!other_file)
               return;
+
+          /* notify the thumbnail cache that we can now also move the thumbnail */
+          thunar_file_move_thumbnail_cache_file (event_path, other_path);
 
           /* reload the containing target folder */
           thunar_file_reload_parent (other_file);
