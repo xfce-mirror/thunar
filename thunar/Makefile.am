@@ -290,7 +290,7 @@ install-exec-hook:
 	-( cd $(DESTDIR)$(bindir) ; test -x Thunar || ln -sf thunar Thunar )
 
 clean-local:
-	rm -f *.core core core.*
+	rm -f *.core core core.* *.o
 
 DISTCLEANFILES =							\
 	thunar-settings.desktop
