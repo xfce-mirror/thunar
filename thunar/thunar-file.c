@@ -724,6 +724,32 @@ thunar_file_monitor_moved (ThunarFile *file,
 
 
 
+void
+thunar_file_reload_parent (ThunarFile *file)
+{
+  ThunarFile *parent = NULL;
+
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  if (thunar_file_has_parent (file))
+    {
+      GFile *parent_file;
+
+      /* only reload file if it is in cache */
+      parent_file = g_file_get_parent (file->gfile);
+      parent = thunar_file_cache_lookup (parent_file);
+      g_object_unref (parent_file);
+    }
+
+  if (parent)
+    {
+      thunar_file_reload (parent);
+      g_object_unref (parent);
+    }
+}
+
+
+
 static void
 thunar_file_monitor (GFileMonitor     *monitor,
                      GFile            *path,
