@@ -752,32 +752,54 @@ thunar_file_reload_parent (ThunarFile *file)
 
 static void
 thunar_file_monitor (GFileMonitor     *monitor,
-                     GFile            *path,
+                     GFile            *event_path,
                      GFile            *other_path,
                      GFileMonitorEvent event_type,
                      gpointer          user_data)
 {
   ThunarFile *file = THUNAR_FILE (user_data);
+  ThunarFile *other_file;
 
   _thunar_return_if_fail (G_IS_FILE_MONITOR (monitor));
+  _thunar_return_if_fail (G_IS_FILE (event_path));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  if (G_UNLIKELY (!G_IS_FILE (path)
-      || !g_file_equal (path, file->gfile)))
-    return;
-
-  if (event_type == G_FILE_MONITOR_EVENT_MOVED)
+  if (g_file_equal (event_path, file->gfile))
     {
-      if (G_IS_FILE (other_path))
-        thunar_file_monitor_moved (file, other_path);
+      /* the event occurred for the monitored ThunarFile */
+      if (event_type == G_FILE_MONITOR_EVENT_MOVED)
+        {
+          thunar_file_monitor_moved (file, other_path);
+          return;
+        }
+
+      if (G_LIKELY (event_path))
+          thunar_file_monitor_update (event_path, event_type);
+    }
+  else
+    {
+      /* The event did not occur for the monitored ThunarFile, but for
+         a file that is contained in ThunarFile which is actually a
+         directory. */
+      if (event_type == G_FILE_MONITOR_EVENT_MOVED)
+        {
+          /* reload the target file if cached */
+          other_file = thunar_file_cache_lookup (other_path);
+          if (other_file)
+              thunar_file_reload (other_file);
+          else
+              other_file = thunar_file_get (other_path, NULL);
+
+          if (!other_file)
+              return;
+
+          /* reload the containing target folder */
+          thunar_file_reload_parent (other_file);
+
+          g_object_unref (other_file);
+        }
       return;
     }
-
-  if (G_LIKELY (G_IS_FILE (path)))
-    thunar_file_monitor_update (path, event_type);
-
-  if (G_UNLIKELY (G_IS_FILE (other_path)))
-    thunar_file_monitor_update (other_path, event_type);
 }
 
 
