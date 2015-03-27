@@ -194,7 +194,7 @@ struct _ThunarShortcut
   gint                 sort_id;
 
   guint                busy : 1;
-  guint                busy_pule;
+  guint                busy_pulse;
 
   GFile               *location;
   ThunarFile          *file;
@@ -708,7 +708,7 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
 
     case THUNAR_SHORTCUTS_MODEL_COLUMN_BUSY_PULSE:
       g_value_init (value, G_TYPE_UINT);
-      g_value_set_uint (value, shortcut->busy_pule);
+      g_value_set_uint (value, shortcut->busy_pulse);
       break;
 
     default:
@@ -1704,9 +1704,9 @@ thunar_shortcuts_model_busy_timeout (gpointer data)
         continue;
 
       /* loop the pulse of the shortcut */
-      shortcut->busy_pule++;
-      if (shortcut->busy_pule >= SPINNER_NUM_STEPS)
-        shortcut->busy_pule = 0;
+      shortcut->busy_pulse++;
+      if (shortcut->busy_pulse >= SPINNER_NUM_STEPS)
+        shortcut->busy_pulse = 0;
 
       /* generate an iterator for the path */
       GTK_TREE_ITER_INIT (iter, model->stamp, lp);
