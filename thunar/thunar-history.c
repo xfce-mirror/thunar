@@ -401,7 +401,7 @@ thunar_history_go_back (ThunarHistory  *history,
     }
 
   /* add all the items of the back list to the "forward" list until
-   * the atarget file is reached  */
+   * the target file is reached  */
   for (lp = history->back_list; lp != NULL; lp = lnext)
     {
       lnext = lp->next;
@@ -411,7 +411,7 @@ thunar_history_go_back (ThunarHistory  *history,
           if (directory != NULL)
             history->current_directory = g_object_ref (directory);
 
-          /* remove the new dirctory from the list */
+          /* remove the new directory from the list */
           g_object_unref (lp->data);
           history->back_list = g_slist_delete_link (history->back_list, lp);
 

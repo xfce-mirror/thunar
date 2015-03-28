@@ -891,7 +891,7 @@ thunar_file_info_reload (ThunarFile   *file,
 
   if (G_LIKELY (file->info != NULL))
     {
-      /* this is requesed so often, cache it */
+      /* this is requested so often, cache it */
       file->kind = g_file_info_get_file_type (file->info);
 
       if (file->kind == G_FILE_TYPE_MOUNTABLE)

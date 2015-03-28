@@ -356,11 +356,11 @@ struct _ThunarStandardViewPrivate
    */
   GClosure               *new_files_closure;
 
-  /* the "new-files" path list that was remember in the closure callback
+  /* the "new-files" path list that was remembered in the closure callback
    * if the view is currently being loaded and as such the folder may
    * not have all "new-files" at hand. This list is used when the
    * folder tells that it's ready loading and the view will try again
-   * to select exactly this files.
+   * to select exactly these files.
    */
   GList                  *new_files_path_list;
 
@@ -1521,7 +1521,7 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
   /* apply the new state */
   standard_view->loading = loading;
 
-  /* block or unblock the insert signal to avoid queuing thumbnail reloads */
+  /* block or unblock the insert signal to avoid queueing thumbnail reloads */
   if (loading)
     g_signal_handler_block (standard_view->model, standard_view->priv->row_changed_id);
   else
@@ -1597,10 +1597,10 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
   /* check if we're done loading and a thumbnail timeout or idle was requested */
   if (!loading && standard_view->priv->thumbnailing_scheduled)
     {
-      /* we've just finished loading. it will probably the user some time to
+      /* We've just finished loading. It will probably take the user some time to
        * understand the contents of the folder before he will start interacting
-       * with the view. so here we can safely schedule an idle function instead
-       * of a timeout */
+       * with the view. So here we can safely schedule an idle function instead
+       * of a timeout. */
       thunar_standard_view_schedule_thumbnail_idle (standard_view);
       standard_view->priv->thumbnailing_scheduled = FALSE;
     }
@@ -2951,7 +2951,7 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
         }
     }
 
-  /* when performing dnd between 2 views, we force a review on the source as well */
+  /* when performing dnd between 2 views, we force a reload on the source as well */
   source_view = g_object_get_data (G_OBJECT (standard_view), I_("source-view"));
   if (THUNAR_IS_VIEW (source_view))
     thunar_view_reload (THUNAR_VIEW (source_view));
@@ -4227,7 +4227,7 @@ thunar_standard_view_queue_popup (ThunarStandardView *standard_view,
       /* figure out the real view */
       view = GTK_BIN (standard_view)->child;
 
-      /* we use the menu popup delay here, note that we onyl use this to
+      /* we use the menu popup delay here, note that we only use this to
        * allow higher values! see bug #3549 */
       settings = gtk_settings_get_for_screen (gtk_widget_get_screen (view));
       g_object_get (G_OBJECT (settings), "gtk-menu-popup-delay", &delay, NULL);
