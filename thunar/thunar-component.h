@@ -48,13 +48,15 @@ struct _ThunarComponentIface
 
 GType         thunar_component_get_type           (void) G_GNUC_CONST;
 
-GList        *thunar_component_get_selected_files (ThunarComponent *component);
-void          thunar_component_set_selected_files (ThunarComponent *component,
-                                                   GList           *selected_files);
+GList        *thunar_component_get_selected_files  (ThunarComponent *component);
+void          thunar_component_set_selected_files  (ThunarComponent *component,
+                                                    GList           *selected_files);
 
-GtkUIManager *thunar_component_get_ui_manager     (ThunarComponent *component);
-void          thunar_component_set_ui_manager     (ThunarComponent *component,
-                                                   GtkUIManager    *ui_manager);
+void          thunar_component_restore_selection   (ThunarComponent *component);
+
+GtkUIManager *thunar_component_get_ui_manager      (ThunarComponent *component);
+void          thunar_component_set_ui_manager      (ThunarComponent *component,
+                                                    GtkUIManager    *ui_manager);
 
 G_END_DECLS;
 

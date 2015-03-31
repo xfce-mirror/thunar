@@ -3670,6 +3670,10 @@ thunar_standard_view_row_changed (ThunarListModel    *model,
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (standard_view->model == model);
 
+  /* the order of the paths might have changed, but the selection
+     stayed the same, so restore the selection of the proper files */
+  thunar_component_restore_selection (THUNAR_COMPONENT (standard_view));
+
   if (standard_view->priv->thumbnail_request != 0)
     return;
 
@@ -3747,17 +3751,14 @@ static void
 thunar_standard_view_sort_column_changed (GtkTreeSortable    *tree_sortable,
                                           ThunarStandardView *standard_view)
 {
-  ThunarComponent *component;
   GtkSortType      sort_order;
   gint             sort_column;
-  GList           *selected_files;
 
   _thunar_return_if_fail (GTK_IS_TREE_SORTABLE (tree_sortable));
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
-  component = THUNAR_COMPONENT (standard_view);
-
-  selected_files = thunar_g_file_list_copy (thunar_component_get_selected_files (component));
+  /* keep the currently selected files selected after the change */
+  thunar_component_restore_selection (THUNAR_COMPONENT (standard_view));
 
   /* determine the new sort column and sort order */
   if (gtk_tree_sortable_get_sort_column_id (tree_sortable, &sort_column, &sort_order))
@@ -3768,9 +3769,6 @@ thunar_standard_view_sort_column_changed (GtkTreeSortable    *tree_sortable,
                     "last-sort-order", sort_order,
                     NULL);
     }
-
-  thunar_component_set_selected_files (component, selected_files);
-  thunar_g_file_list_free (selected_files);
 }
 
 
