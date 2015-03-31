@@ -3747,11 +3747,17 @@ static void
 thunar_standard_view_sort_column_changed (GtkTreeSortable    *tree_sortable,
                                           ThunarStandardView *standard_view)
 {
-  GtkSortType sort_order;
-  gint        sort_column;
+  ThunarComponent *component;
+  GtkSortType      sort_order;
+  gint             sort_column;
+  GList           *selected_files;
 
   _thunar_return_if_fail (GTK_IS_TREE_SORTABLE (tree_sortable));
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  component = THUNAR_COMPONENT (standard_view);
+
+  selected_files = thunar_g_file_list_copy (thunar_component_get_selected_files (component));
 
   /* determine the new sort column and sort order */
   if (gtk_tree_sortable_get_sort_column_id (tree_sortable, &sort_column, &sort_order))
@@ -3762,6 +3768,9 @@ thunar_standard_view_sort_column_changed (GtkTreeSortable    *tree_sortable,
                     "last-sort-order", sort_order,
                     NULL);
     }
+
+  thunar_component_set_selected_files (component, selected_files);
+  thunar_g_file_list_free (selected_files);
 }
 
 
