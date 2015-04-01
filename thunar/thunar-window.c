@@ -2686,6 +2686,7 @@ thunar_window_action_view_changed (GtkRadioAction *action,
   ThunarFile *file = NULL;
   ThunarFile *current_directory = NULL;
   GtkWidget  *old_view;
+  GList      *selected_files = NULL;
 
   /* drop the previous view (if any) */
   old_view = window->view;
@@ -2699,6 +2700,9 @@ thunar_window_action_view_changed (GtkRadioAction *action,
       current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (window->view));
       if (current_directory != NULL)
         g_object_ref (current_directory);
+
+      /* remember the file selection */
+      selected_files = thunar_g_file_list_copy (thunar_component_get_selected_files (THUNAR_COMPONENT (old_view)));
 
       /* update the UI (else GtkUIManager will crash on merging) */
       gtk_ui_manager_ensure_update (window->ui_manager);
@@ -2731,6 +2735,10 @@ thunar_window_action_view_changed (GtkRadioAction *action,
   /* destroy the old view */
   if (old_view != NULL)
     gtk_widget_destroy (old_view);
+
+  /* restore the file selection */
+  thunar_component_set_selected_files (THUNAR_COMPONENT (window->view), selected_files);
+  thunar_g_file_list_free (selected_files);
 
   /* remember the setting */
   if (gtk_widget_get_visible (GTK_WIDGET (window)))
