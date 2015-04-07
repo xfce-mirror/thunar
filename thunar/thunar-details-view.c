@@ -659,8 +659,10 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
                                         ThunarDetailsView *details_view)
 {
   GtkTreeSelection  *selection;
-  GtkTreePath       *path;
+  GtkTreePath       *path = NULL;
   GtkTreeIter        iter;
+  GtkTreeViewColumn *column;
+  GtkTreeViewColumn *first_column;
   ThunarFile        *file;
   GtkAction         *action;
   ThunarPreferences *preferences;
@@ -671,40 +673,84 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
   if (G_UNLIKELY (event->window != gtk_tree_view_get_bin_window (tree_view)))
     return FALSE;
 
-  /* we unselect all selected items if the user clicks on an empty
-   * area of the treeview and no modifier key is active.
-   */
+  /* get the current selection */
+  selection = gtk_tree_view_get_selection (tree_view);
+
+  /* get the first column of the tree view */
+  first_column = gtk_tree_view_get_column (tree_view, 0);
+
+  /* unselect all selected items if the user clicks on an empty area
+   * of the treeview and no modifier key is active */
   if ((event->state & gtk_accelerator_get_default_mod_mask ()) == 0
-      && !gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y, NULL, NULL, NULL, NULL))
-    {
-      selection = gtk_tree_view_get_selection (tree_view);
+      && !gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y, &path, &column, NULL, NULL))
       gtk_tree_selection_unselect_all (selection);
+
+  /* if the user clicked on a row with the left button */
+  if (path != NULL && event->type == GDK_BUTTON_PRESS && event->button == 1)
+    {
+      GtkTreePath       *cursor_path;
+
+      /* grab the tree view */
+      gtk_widget_grab_focus (GTK_WIDGET (tree_view));
+
+      gtk_tree_view_get_cursor (tree_view, &cursor_path, NULL);
+      if (cursor_path != NULL)
+        {
+          gtk_tree_path_free (cursor_path);
+
+          if (column != first_column)
+            gtk_tree_selection_unselect_all (selection);
+
+          /* do not start rubber banding from the first column */
+          if (!gtk_tree_selection_path_is_selected (selection, path)
+              && column == first_column)
+            {
+              /* the clicked row does not have the focus and is not
+               * selected, so make it the new selection (start) */
+              gtk_tree_selection_unselect_all (selection);
+              gtk_tree_selection_select_path (selection, path);
+
+              gtk_tree_path_free (path);
+
+              /* return FALSE to not abort dragging */
+              return FALSE;
+            }
+          gtk_tree_path_free (path);
+        }
     }
 
   /* open the context menu on right clicks */
   if (event->type == GDK_BUTTON_PRESS && event->button == 3)
     {
-      selection = gtk_tree_view_get_selection (tree_view);
-      if (gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y, &path, NULL, NULL, NULL))
-        {
-          /* select the path on which the user clicked if not selected yet */
-          if (!gtk_tree_selection_path_is_selected (selection, path))
-            {
-              /* only select an item if Control is not pressed, else we
-               * use this to popup the current directory actionW */
-              gtk_tree_selection_unselect_all (selection);
-              if ((event->state & GDK_CONTROL_MASK) == 0)
-                gtk_tree_selection_select_path (selection, path);
-            }
-          gtk_tree_path_free (path);
-
-          /* queue the menu popup */
-          thunar_standard_view_queue_popup (THUNAR_STANDARD_VIEW (details_view), event);
-        }
-      else
+      if (path == NULL)
         {
           /* open the context menu */
           thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (details_view), event->button, event->time);
+        }
+      else
+        {
+          if (column != first_column)
+            {
+              /* if the clicked path is not selected, unselect all other paths */
+              if (!gtk_tree_selection_path_is_selected (selection, path))
+                gtk_tree_selection_unselect_all (selection);
+
+              /* queue the menu popup */
+              thunar_standard_view_queue_popup (THUNAR_STANDARD_VIEW (details_view), event);
+            }
+          else
+            {
+              /* select the clicked path if necessary */
+              if (!gtk_tree_selection_path_is_selected (selection, path))
+                {
+                  gtk_tree_selection_unselect_all (selection);
+                  gtk_tree_selection_select_path (selection, path);
+                }
+
+              /* show the context menu */
+              thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (details_view), event->button, event->time);
+            }
+          gtk_tree_path_free (path);
         }
 
       return TRUE;
@@ -715,7 +761,6 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
       if (gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y, &path, NULL, NULL, NULL))
         {
           /* select only the path to the item on which the user clicked */
-          selection = gtk_tree_view_get_selection (tree_view);
           gtk_tree_selection_unselect_all (selection);
           gtk_tree_selection_select_path (selection, path);
 
