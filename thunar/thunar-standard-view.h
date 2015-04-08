@@ -21,6 +21,7 @@
 #define __THUNAR_STANDARD_VIEW_H__
 
 #include <thunar/thunar-clipboard-manager.h>
+#include <thunar/thunar-history.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-list-model.h>
 #include <thunar/thunar-preferences.h>
@@ -151,6 +152,12 @@ void  thunar_standard_view_queue_popup        (ThunarStandardView *standard_view
                                                GdkEventButton     *event);
 
 void  thunar_standard_view_selection_changed  (ThunarStandardView *standard_view);
+
+
+void  thunar_standard_view_set_history            (ThunarStandardView *standard_view,
+                                                   ThunarHistory      *history);
+
+ThunarHistory *thunar_standard_view_copy_history  (ThunarStandardView *standard_view);
 
 G_END_DECLS;
 

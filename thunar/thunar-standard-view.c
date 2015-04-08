@@ -4406,3 +4406,34 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_SELECTED_FILES]);
 }
 
+
+
+void
+thunar_standard_view_set_history (ThunarStandardView *standard_view,
+                                  ThunarHistory      *history)
+{
+  ThunarFile *file;
+
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (history == NULL || THUNAR_IS_HISTORY (history));
+
+  /* set the new history */
+  g_object_unref (standard_view->priv->history);
+  standard_view->priv->history = history;
+
+  /* connect callback */
+  g_signal_connect_swapped (G_OBJECT (history), "change-directory", G_CALLBACK (thunar_navigator_change_directory), standard_view);
+
+  /* make the history use the action group of this view */
+  g_object_set (G_OBJECT (history), "action-group", standard_view->action_group, NULL);
+}
+
+
+
+ThunarHistory *
+thunar_standard_view_copy_history (ThunarStandardView *standard_view)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), NULL);
+
+  return thunar_history_copy (standard_view->priv->history, NULL);
+}

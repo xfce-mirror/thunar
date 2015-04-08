@@ -36,6 +36,9 @@ typedef struct _ThunarHistory      ThunarHistory;
 
 GType           thunar_history_get_type         (void) G_GNUC_CONST;
 
+ThunarHistory  *thunar_history_copy             (ThunarHistory       *history,
+                                                 GtkActionGroup      *action_group);
+
 ThunarFile     *thunar_history_peek_back        (ThunarHistory       *history);
 ThunarFile     *thunar_history_peek_forward     (ThunarHistory       *history);
 

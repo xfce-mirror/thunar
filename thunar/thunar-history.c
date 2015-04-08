@@ -740,6 +740,44 @@ thunar_history_set_action_group (ThunarHistory  *history,
 
 
 
+ThunarHistory *
+thunar_history_copy (ThunarHistory  *history,
+                     GtkActionGroup *action_group)
+{
+  ThunarHistory *copy;
+  GSList        *lp;
+
+  _thunar_return_val_if_fail (history == NULL || THUNAR_IS_HISTORY (history), NULL);
+  _thunar_return_val_if_fail (action_group == NULL || GTK_IS_ACTION_GROUP (action_group), NULL);
+
+  if (G_UNLIKELY (history == NULL))
+    return NULL;
+
+  copy = g_object_new (THUNAR_TYPE_HISTORY, NULL);
+
+  /* take a ref on the current directory */
+  copy->current_directory = g_object_ref (history->current_directory);
+
+  /* set the action group */
+  thunar_history_set_action_group (copy, action_group);
+
+  /* copy the back list */
+  for (lp = history->back_list; lp != NULL; lp = lp->next)
+      copy->back_list = g_slist_append (copy->back_list, g_object_ref (G_OBJECT (lp->data)));
+
+  /* copy the forward list */
+  for (lp = history->forward_list; lp != NULL; lp = lp->next)
+      copy->forward_list = g_slist_append (copy->forward_list, g_object_ref (G_OBJECT (lp->data)));
+
+  /* update the sensitivity of the actions */
+  gtk_action_set_sensitive (copy->action_back, (copy->back_list != NULL));
+  gtk_action_set_sensitive (copy->action_forward, (copy->forward_list != NULL));
+
+  return copy;
+}
+
+
+
 /**
  * thunar_file_history_peek_back:
  * @history : a #ThunarHistory.
