@@ -2321,20 +2321,30 @@ thunar_window_action_open_new_window (GtkAction    *action,
                                       ThunarWindow *window)
 {
   ThunarApplication *application;
+  ThunarHistory     *history;
+  ThunarWindow      *new_window;
   ThunarFile        *start_file;
-  GtkWidget         *new_window;
 
   /* popup a new window */
   application = thunar_application_get ();
-  new_window = thunar_application_open_window (application, window->current_directory,
-                                               gtk_widget_get_screen (GTK_WIDGET (window)), NULL);
+  new_window = THUNAR_WINDOW (thunar_application_open_window (application, window->current_directory,
+                                                              gtk_widget_get_screen (GTK_WIDGET (window)), NULL));
   g_object_unref (G_OBJECT (application));
 
+  /* if we have no origin view we are done */
+  if (window->view == NULL)
+    return;
+
+  /* let the view of the new window inherit the history of the origin view */
+  history = thunar_standard_view_copy_history (THUNAR_STANDARD_VIEW (window->view));
+  if (history != NULL)
+    thunar_standard_view_set_history (THUNAR_STANDARD_VIEW (new_window->view), history);
+
   /* determine the first visible file in the current window */
-  if (window->view != NULL && thunar_view_get_visible_range (THUNAR_VIEW (window->view), &start_file, NULL))
+  if (thunar_view_get_visible_range (THUNAR_VIEW (window->view), &start_file, NULL))
     {
       /* scroll the new window to the same file */
-      thunar_window_scroll_to_file (THUNAR_WINDOW (new_window), start_file, FALSE, TRUE, 0.1f, 0.1f);
+      thunar_window_scroll_to_file (new_window, start_file, FALSE, TRUE, 0.1f, 0.1f);
 
       /* release the file reference */
       g_object_unref (G_OBJECT (start_file));
