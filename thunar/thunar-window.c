@@ -43,6 +43,7 @@
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
+#include <thunar/thunar-history.h>
 #include <thunar/thunar-icon-view.h>
 #include <thunar/thunar-launcher.h>
 #include <thunar/thunar-location-buttons.h>
@@ -2683,10 +2684,11 @@ thunar_window_action_view_changed (GtkRadioAction *action,
                                    GtkRadioAction *current,
                                    ThunarWindow   *window)
 {
-  ThunarFile *file = NULL;
-  ThunarFile *current_directory = NULL;
-  GtkWidget  *old_view;
-  GList      *selected_files = NULL;
+  ThunarFile     *file = NULL;
+  ThunarFile     *current_directory = NULL;
+  ThunarHistory  *history = NULL;
+  GtkWidget      *old_view;
+  GList          *selected_files = NULL;
 
   /* drop the previous view (if any) */
   old_view = window->view;
@@ -2703,6 +2705,9 @@ thunar_window_action_view_changed (GtkRadioAction *action,
 
       /* remember the file selection */
       selected_files = thunar_g_file_list_copy (thunar_component_get_selected_files (THUNAR_COMPONENT (old_view)));
+
+      /* get a copy of the history */
+      history = thunar_standard_view_copy_history (THUNAR_STANDARD_VIEW (old_view));
 
       /* update the UI (else GtkUIManager will crash on merging) */
       gtk_ui_manager_ensure_update (window->ui_manager);
@@ -2743,6 +2748,10 @@ thunar_window_action_view_changed (GtkRadioAction *action,
   /* remember the setting */
   if (gtk_widget_get_visible (GTK_WIDGET (window)))
     g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (window->view_type), NULL);
+
+  /* use the copy of the old history if available */
+  if (history != NULL)
+    thunar_standard_view_set_history (THUNAR_STANDARD_VIEW (window->view), history);
 
   /* release the file references */
   if (G_UNLIKELY (file != NULL))
