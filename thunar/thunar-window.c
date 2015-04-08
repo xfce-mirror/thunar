@@ -1707,13 +1707,14 @@ static void
 thunar_window_notebook_insert (ThunarWindow *window,
                                ThunarFile   *directory)
 {
-  GtkWidget  *view;
-  gint        page_num;
-  GtkWidget  *label;
-  GtkWidget  *label_box;
-  GtkWidget  *button;
-  GtkWidget  *icon;
-  GtkRcStyle *style;
+  ThunarHistory  *history = NULL;
+  GtkWidget      *view;
+  gint            page_num;
+  GtkWidget      *label;
+  GtkWidget      *label_box;
+  GtkWidget      *button;
+  GtkWidget      *icon;
+  GtkRcStyle     *style;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_IS_FILE (directory));
@@ -1723,9 +1724,17 @@ thunar_window_notebook_insert (ThunarWindow *window,
   if (directory == NULL)
     return;
 
+  /* save the history of the origin view */
+  if (THUNAR_IS_STANDARD_VIEW (window->view))
+    history = thunar_standard_view_copy_history (THUNAR_STANDARD_VIEW (window->view));
+
   /* allocate and setup a new view */
   view = g_object_new (window->view_type, "current-directory", directory, NULL);
   gtk_widget_show (view);
+
+  /* use the history of the origin view if available */
+  if (history != NULL)
+    thunar_standard_view_set_history (THUNAR_STANDARD_VIEW (view), history);
 
   label_box = gtk_hbox_new (FALSE, 0);
 
