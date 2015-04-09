@@ -3933,6 +3933,24 @@ thunar_file_reload (ThunarFile *file)
 
  
 /**
+ * thunar_file_reload_idle:
+ * @file : a #ThunarFile instance.
+ *
+ * Schedules a reload of the @file by calling thunar_file_reload
+ * when idle.
+ *
+ **/
+void
+thunar_file_reload_idle (ThunarFile *file)
+{
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  g_idle_add ((GSourceFunc) thunar_file_reload, file);
+}
+
+
+
+/**
  * thunar_file_destroy:
  * @file : a #ThunarFile instance.
  *

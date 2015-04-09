@@ -564,11 +564,25 @@ void
 thunar_job_new_files (ThunarJob   *job,
                       const GList *file_list)
 {
+  ThunarFile  *file;
+  const GList *lp;
+
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
 
   /* check if we have any files */
   if (G_LIKELY (file_list != NULL))
     {
+      /* schedule a reload of cached files when idle */
+      for (lp = file_list; lp != NULL; lp = lp->next)
+        {
+          file = thunar_file_cache_lookup (lp->data);
+          if (file != NULL)
+            {
+              thunar_file_reload_idle (file);
+              g_object_unref (file);
+            }
+        }
+
       /* emit the "new-files" signal */
       exo_job_emit (EXO_JOB (job), job_signals[NEW_FILES], 0, file_list);
     }
