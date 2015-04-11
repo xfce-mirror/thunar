@@ -3435,7 +3435,10 @@ thunar_window_update_custom_actions (ThunarView   *view,
       /* allocate the action group and the merge id for the custom actions */
       window->custom_actions = gtk_action_group_new ("ThunarActions");
       window->custom_merge_id = gtk_ui_manager_new_merge_id (window->ui_manager);
-      gtk_ui_manager_insert_action_group (window->ui_manager, window->custom_actions, -1);
+
+      /* insert the new action group and make sure the UI manager gets updated */
+      gtk_ui_manager_insert_action_group (window->ui_manager, window->custom_actions, 0);
+      gtk_ui_manager_ensure_update (window->ui_manager);
 
       /* add the actions to the UI manager */
       for (lp = actions; lp != NULL; lp = lp->next)
