@@ -2479,6 +2479,10 @@ thunar_window_action_reload (GtkAction    *action,
 
   /* force the view to reload */
   g_signal_emit (G_OBJECT (window), window_signals[RELOAD], 0, &result);
+
+  /* update the location bar to show the current directory */
+  if (window->location_bar != NULL)
+    g_object_notify (G_OBJECT (window->location_bar), "current-directory");
 }
 
 
