@@ -42,7 +42,8 @@ ThunarFile   *thunar_folder_get_corresponding_file (const ThunarFolder *folder);
 GList        *thunar_folder_get_files              (const ThunarFolder *folder);
 gboolean      thunar_folder_get_loading            (const ThunarFolder *folder);
 
-void          thunar_folder_reload                 (ThunarFolder       *folder);
+void          thunar_folder_reload                 (ThunarFolder       *folder,
+                                                    gboolean            reload_info);
 
 G_END_DECLS;
 

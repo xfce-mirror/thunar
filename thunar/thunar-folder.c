@@ -109,6 +109,7 @@ struct _ThunarFolder
   ThunarFile        *corresponding_file;
   GList             *new_files;
   GList             *files;
+  gboolean           reload_info;
 
   GList             *content_type_ptr;
   guint              content_type_idle_id;
@@ -248,6 +249,7 @@ thunar_folder_init (ThunarFolder *folder)
   g_signal_connect (G_OBJECT (folder->file_monitor), "file-destroyed", G_CALLBACK (thunar_folder_file_destroyed), folder);
 
   folder->monitor = NULL;
+  folder->reload_info = FALSE;
 }
 
 
@@ -545,6 +547,18 @@ thunar_folder_finished (ExoJob       *job,
         }
     }
 
+  /* schedule a reload of the file information of all files if requested */
+  if (folder->reload_info)
+    {
+      for (lp = folder->files; lp != NULL; lp = lp->next)
+        thunar_file_reload_idle (lp->data);
+
+      /* reload folder information too */
+      thunar_file_reload_idle (folder->corresponding_file);
+
+      folder->reload_info = FALSE;
+    }
+
   /* we did it, the folder is loaded */
   g_signal_handlers_disconnect_matched (folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
   g_object_unref (folder->job);
@@ -578,7 +592,7 @@ thunar_folder_file_changed (ThunarFileMonitor *file_monitor,
   if (G_UNLIKELY (folder->corresponding_file == file))
     {
       /* ...and if so, reload the folder */
-      thunar_folder_reload (folder);
+      thunar_folder_reload (folder, FALSE);
     }
 }
 
@@ -855,7 +869,7 @@ thunar_folder_get_for_file (ThunarFile *file)
       g_object_set_qdata (G_OBJECT (file), thunar_folder_quark, folder);
 
       /* schedule the loading of the folder */
-      thunar_folder_reload (folder);
+      thunar_folder_reload (folder, FALSE);
     }
 
   return folder;
@@ -923,14 +937,19 @@ thunar_folder_get_loading (const ThunarFolder *folder)
 /**
  * thunar_folder_reload:
  * @folder : a #ThunarFolder instance.
+ * @reload_info : reload all information for the files too
  *
  * Tells the @folder object to reread the directory
  * contents from the underlying media.
  **/
 void
-thunar_folder_reload (ThunarFolder *folder)
+thunar_folder_reload (ThunarFolder *folder,
+                      gboolean      reload_info)
 {
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
+
+  /* reload file info too? */
+  folder->reload_info = reload_info;
 
   /* stop metadata collector */
   if (folder->content_type_idle_id != 0)

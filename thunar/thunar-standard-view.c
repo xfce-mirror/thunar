@@ -1714,7 +1714,7 @@ thunar_standard_view_reload (ThunarView *view,
   /* determine the folder for the view model */
   folder = thunar_list_model_get_folder (standard_view->model);
   if (G_LIKELY (folder != NULL))
-    thunar_folder_reload (folder);
+    thunar_folder_reload (folder, reload_info);
 
   /* schedule thumbnail reload update */
   if (!standard_view->priv->thumbnailing_scheduled)
@@ -3286,7 +3286,7 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
                     {
                       /* reload the folder corresponding to the file */
                       folder = thunar_folder_get_for_file (file);
-                      thunar_folder_reload (folder);
+                      thunar_folder_reload (folder, FALSE);
                       g_object_unref (G_OBJECT (folder));
                     }
 
