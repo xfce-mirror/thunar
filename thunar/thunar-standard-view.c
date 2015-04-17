@@ -139,7 +139,8 @@ static ThunarZoomLevel      thunar_standard_view_get_zoom_level             (Thu
 static void                 thunar_standard_view_set_zoom_level             (ThunarView               *view,
                                                                              ThunarZoomLevel           zoom_level);
 static void                 thunar_standard_view_reset_zoom_level           (ThunarView               *view);
-static void                 thunar_standard_view_reload                     (ThunarView               *view);
+static void                 thunar_standard_view_reload                     (ThunarView               *view,
+                                                                             gboolean                  reload_info);
 static gboolean             thunar_standard_view_get_visible_range          (ThunarView               *view,
                                                                              ThunarFile              **start_file,
                                                                              ThunarFile              **end_file);
@@ -1704,7 +1705,8 @@ thunar_standard_view_reset_zoom_level (ThunarView *view)
 
 
 static void
-thunar_standard_view_reload (ThunarView *view)
+thunar_standard_view_reload (ThunarView *view,
+                             gboolean    reload_info)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
   ThunarFolder       *folder;
@@ -2954,7 +2956,7 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
   /* when performing dnd between 2 views, we force a reload on the source as well */
   source_view = g_object_get_data (G_OBJECT (standard_view), I_("source-view"));
   if (THUNAR_IS_VIEW (source_view))
-    thunar_view_reload (THUNAR_VIEW (source_view));
+    thunar_view_reload (THUNAR_VIEW (source_view), FALSE);
 }
 
 
