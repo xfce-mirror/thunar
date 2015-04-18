@@ -104,7 +104,8 @@ static void     thunar_window_set_property                (GObject              
                                                            const GValue           *value,
                                                            GParamSpec             *pspec);
 static gboolean thunar_window_back                        (ThunarWindow           *window);
-static gboolean thunar_window_reload                      (ThunarWindow           *window);
+static gboolean thunar_window_reload                      (ThunarWindow           *window,
+                                                           gboolean                reload_info);
 static gboolean thunar_window_toggle_sidepane             (ThunarWindow           *window);
 static gboolean thunar_window_toggle_menubar              (ThunarWindow           *window);
 static void     thunar_window_toggle_menubar_deactivate   (GtkWidget              *menubar,
@@ -257,7 +258,8 @@ struct _ThunarWindowClass
 
   /* internal action signals */
   gboolean (*back)            (ThunarWindow *window);
-  gboolean (*reload)          (ThunarWindow *window);
+  gboolean (*reload)          (ThunarWindow *window,
+                               gboolean      reload_info);
   gboolean (*toggle_sidepane) (ThunarWindow *window);
   gboolean (*toggle_menubar)  (ThunarWindow *window);
   gboolean (*zoom_in)         (ThunarWindow *window);
@@ -514,8 +516,9 @@ thunar_window_class_init (ThunarWindowClass *klass)
                   G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
                   G_STRUCT_OFFSET (ThunarWindowClass, reload),
                   g_signal_accumulator_true_handled, NULL,
-                  _thunar_marshal_BOOLEAN__VOID,
-                  G_TYPE_BOOLEAN, 0);
+                  _thunar_marshal_BOOLEAN__BOOLEAN,
+                  G_TYPE_BOOLEAN, 1,
+                  G_TYPE_BOOLEAN);
 
   /**
    * ThunarWindow::toggle-sidepane:
@@ -1130,14 +1133,15 @@ thunar_window_back (ThunarWindow *window)
 
 
 static gboolean
-thunar_window_reload (ThunarWindow *window)
+thunar_window_reload (ThunarWindow *window,
+                      gboolean      reload_info)
 {
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   /* force the view to reload */
   if (G_LIKELY (window->view != NULL))
     {
-      thunar_view_reload (THUNAR_VIEW (window->view));
+      thunar_view_reload (THUNAR_VIEW (window->view), reload_info);
       return TRUE;
     }
 
@@ -2478,7 +2482,7 @@ thunar_window_action_reload (GtkAction    *action,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* force the view to reload */
-  g_signal_emit (G_OBJECT (window), window_signals[RELOAD], 0, &result);
+  g_signal_emit (G_OBJECT (window), window_signals[RELOAD], 0, TRUE, &result);
 
   /* update the location bar to show the current directory */
   if (window->location_bar != NULL)

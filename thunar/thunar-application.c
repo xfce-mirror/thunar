@@ -497,7 +497,7 @@ thunar_application_launch_finished (ThunarJob  *job,
 
   /* the job completed, refresh the interface
    * directly to make it feel snappy */
-  thunar_view_reload (view);
+  thunar_view_reload (view, FALSE);
 }
 
 

@@ -682,22 +682,36 @@ thunar_file_monitor_update (GFile             *path,
 
 
 static void
-thunar_file_monitor_moved (ThunarFile *file,
-                           GFile      *renamed_file)
+thunar_file_move_thumbnail_cache_file (GFile *old_file,
+                                       GFile *new_file)
 {
   ThunarApplication    *application;
   ThunarThumbnailCache *thumbnail_cache;
-  GFile                *previous_file;
+
+  _thunar_return_if_fail (G_IS_FILE (old_file));
+  _thunar_return_if_fail (G_IS_FILE (new_file));
+
+  application = thunar_application_get ();
+  thumbnail_cache = thunar_application_get_thumbnail_cache (application);
+  thunar_thumbnail_cache_move_file (thumbnail_cache, old_file, new_file);
+
+  g_object_unref (thumbnail_cache);
+  g_object_unref (application);
+}
+
+
+
+static void
+thunar_file_monitor_moved (ThunarFile *file,
+                           GFile      *renamed_file)
+{
+  GFile *previous_file;
 
   /* ref the old location */
   previous_file = g_object_ref (G_OBJECT (file->gfile));
 
   /* notify the thumbnail cache that we can now also move the thumbnail */
-  application = thunar_application_get ();
-  thumbnail_cache = thunar_application_get_thumbnail_cache (application);
-  thunar_thumbnail_cache_move_file (thumbnail_cache, previous_file, renamed_file);
-  g_object_unref (thumbnail_cache);
-  g_object_unref (application);
+  thunar_file_move_thumbnail_cache_file (previous_file, renamed_file);
 
   /* set the new file */
   file->gfile = g_object_ref (G_OBJECT (renamed_file));
@@ -724,34 +738,85 @@ thunar_file_monitor_moved (ThunarFile *file,
 
 
 
+void
+thunar_file_reload_parent (ThunarFile *file)
+{
+  ThunarFile *parent = NULL;
+
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  if (thunar_file_has_parent (file))
+    {
+      GFile *parent_file;
+
+      /* only reload file if it is in cache */
+      parent_file = g_file_get_parent (file->gfile);
+      parent = thunar_file_cache_lookup (parent_file);
+      g_object_unref (parent_file);
+    }
+
+  if (parent)
+    {
+      thunar_file_reload (parent);
+      g_object_unref (parent);
+    }
+}
+
+
+
 static void
 thunar_file_monitor (GFileMonitor     *monitor,
-                     GFile            *path,
+                     GFile            *event_path,
                      GFile            *other_path,
                      GFileMonitorEvent event_type,
                      gpointer          user_data)
 {
   ThunarFile *file = THUNAR_FILE (user_data);
+  ThunarFile *other_file;
 
   _thunar_return_if_fail (G_IS_FILE_MONITOR (monitor));
+  _thunar_return_if_fail (G_IS_FILE (event_path));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  if (G_UNLIKELY (!G_IS_FILE (path)
-      || !g_file_equal (path, file->gfile)))
-    return;
-
-  if (event_type == G_FILE_MONITOR_EVENT_MOVED)
+  if (g_file_equal (event_path, file->gfile))
     {
-      if (G_IS_FILE (other_path))
-        thunar_file_monitor_moved (file, other_path);
+      /* the event occurred for the monitored ThunarFile */
+      if (event_type == G_FILE_MONITOR_EVENT_MOVED)
+        {
+          thunar_file_monitor_moved (file, other_path);
+          return;
+        }
+
+      if (G_LIKELY (event_path))
+          thunar_file_monitor_update (event_path, event_type);
+    }
+  else
+    {
+      /* The event did not occur for the monitored ThunarFile, but for
+         a file that is contained in ThunarFile which is actually a
+         directory. */
+      if (event_type == G_FILE_MONITOR_EVENT_MOVED)
+        {
+          /* reload the target file if cached */
+          other_file = thunar_file_cache_lookup (other_path);
+          if (other_file)
+              thunar_file_reload (other_file);
+          else
+              other_file = thunar_file_get (other_path, NULL);
+
+          if (!other_file)
+              return;
+
+          /* notify the thumbnail cache that we can now also move the thumbnail */
+          thunar_file_move_thumbnail_cache_file (event_path, other_path);
+
+          /* reload the containing target folder */
+          thunar_file_reload_parent (other_file);
+
+          g_object_unref (other_file);
+        }
       return;
     }
-
-  if (G_LIKELY (G_IS_FILE (path)))
-    thunar_file_monitor_update (path, event_type);
-
-  if (G_UNLIKELY (G_IS_FILE (other_path)))
-    thunar_file_monitor_update (other_path, event_type);
 }
 
 
@@ -1230,22 +1295,6 @@ thunar_file_get_with_info (GFile     *gfile,
     {
       /* return the file, it already has an additional ref set
        * in thunar_file_cache_lookup */
-
-      /* The file might have changed while being cached.
-       * Use the info to update the file */
-
-      /* reset the file */
-      thunar_file_info_clear (file);
-
-      /* set the passed info */
-      file->info = g_object_ref (info);
-
-      /* update the file from the information */
-      thunar_file_info_reload (file, NULL);
-
-      /* update the mounted info */
-      if (not_mounted)
-        FLAG_UNSET (file, THUNAR_FILE_FLAG_IS_MOUNTED);
     }
   else
     {
@@ -3883,6 +3932,24 @@ thunar_file_reload (ThunarFile *file)
 
 
  
+/**
+ * thunar_file_reload_idle:
+ * @file : a #ThunarFile instance.
+ *
+ * Schedules a reload of the @file by calling thunar_file_reload
+ * when idle.
+ *
+ **/
+void
+thunar_file_reload_idle (ThunarFile *file)
+{
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  g_idle_add ((GSourceFunc) thunar_file_reload, file);
+}
+
+
+
 /**
  * thunar_file_destroy:
  * @file : a #ThunarFile instance.

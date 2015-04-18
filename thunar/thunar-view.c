@@ -253,15 +253,18 @@ thunar_view_reset_zoom_level (ThunarView *view)
 /**
  * thunar_view_reload:
  * @view : a #ThunarView instance.
+ * @reload_info : whether to reload file info for all files too
  *
  * Tells @view to reread the currently displayed folder
- * contents from the underlying media.
+ * contents from the underlying media. If reload_info is
+ * TRUE, it will reload information for all files too.
  **/
 void
-thunar_view_reload (ThunarView *view)
+thunar_view_reload (ThunarView *view,
+                    gboolean    reload_info)
 {
   _thunar_return_if_fail (THUNAR_IS_VIEW (view));
-  (*THUNAR_VIEW_GET_IFACE (view)->reload) (view);
+  (*THUNAR_VIEW_GET_IFACE (view)->reload) (view, reload_info);
 }
 
 
