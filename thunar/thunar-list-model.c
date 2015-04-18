@@ -1679,7 +1679,7 @@ thunar_list_model_set_case_sensitive (ThunarListModel *store,
       g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_CASE_SENSITIVE]);
 
       /* emit a "changed" signal for each row, so the display is
-         reloaded with the new case sensitive size setting */
+         reloaded with the new case-sensitive setting */
       gtk_tree_model_foreach (GTK_TREE_MODEL (store),
                               (GtkTreeModelForeachFunc) gtk_tree_model_row_changed,
                               NULL);
