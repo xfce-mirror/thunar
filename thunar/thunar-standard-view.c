@@ -263,6 +263,7 @@ static void                 thunar_standard_view_drag_end                   (Gtk
 static void                 thunar_standard_view_row_deleted                (ThunarListModel          *model,
                                                                              GtkTreePath              *path,
                                                                              ThunarStandardView       *standard_view);
+static gboolean             thunar_standard_view_restore_selection_idle     (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_row_changed                (ThunarListModel          *model,
                                                                              GtkTreePath              *path,
                                                                              GtkTreeIter              *iter,
@@ -373,6 +374,7 @@ struct _ThunarStandardViewPrivate
 
   /* selected_files support */
   GList                  *selected_files;
+  guint                   restore_selection_idle_id;
 
   /* support for generating thumbnails */
   ThunarThumbnailer      *thumbnailer;
@@ -903,6 +905,10 @@ thunar_standard_view_finalize (GObject *object)
   /* disconnect from the list model */
   g_signal_handlers_disconnect_matched (G_OBJECT (standard_view->model), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, standard_view);
   g_object_unref (G_OBJECT (standard_view->model));
+
+  /* remove selection restore timeout */
+  if (standard_view->priv->restore_selection_idle_id != 0)
+    g_source_remove (standard_view->priv->restore_selection_idle_id);
 
   /* free the statusbar text (if any) */
   if (standard_view->priv->statusbar_text_idle_id != 0)
@@ -3657,6 +3663,18 @@ thunar_standard_view_row_deleted (ThunarListModel    *model,
 
 
 
+static gboolean
+thunar_standard_view_restore_selection_idle (ThunarStandardView *standard_view)
+{
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  thunar_component_restore_selection (THUNAR_COMPONENT (standard_view));
+  standard_view->priv->restore_selection_idle_id = 0;
+  return FALSE;
+}
+
+
+
 static void
 thunar_standard_view_row_changed (ThunarListModel    *model,
                                   GtkTreePath        *path,
@@ -3671,8 +3689,13 @@ thunar_standard_view_row_changed (ThunarListModel    *model,
   _thunar_return_if_fail (standard_view->model == model);
 
   /* the order of the paths might have changed, but the selection
-     stayed the same, so restore the selection of the proper files */
-  thunar_component_restore_selection (THUNAR_COMPONENT (standard_view));
+   * stayed the same, so restore the selection of the proper files
+   * after letting row changes accumulate a bit */
+  if (standard_view->priv->restore_selection_idle_id == 0)
+    standard_view->priv->restore_selection_idle_id =
+      g_timeout_add (50,
+                     (GSourceFunc) thunar_standard_view_restore_selection_idle,
+                     standard_view);
 
   if (standard_view->priv->thumbnail_request != 0)
     return;
