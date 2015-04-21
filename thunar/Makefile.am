@@ -224,7 +224,6 @@ thunar_CFLAGS =								\
 	$(GUDEV_CFLAGS)							\
 	$(LIBNOTIFY_CFLAGS)						\
 	$(LIBSM_CFLAGS)							\
-	$(LIBSTARTUP_NOTIFICATION_CFLAGS)				\
 	$(LIBXFCE4UI_CFLAGS)						\
 	$(XFCONF_CFLAGS)						\
 	$(PLATFORM_CFLAGS)
@@ -242,7 +241,6 @@ thunar_LDADD =								\
 	$(GUDEV_LIBS)							\
 	$(LIBNOTIFY_LIBS)						\
 	$(LIBSM_LIBS)							\
-	$(LIBSTARTUP_NOTIFICATION_LIBS)					\
 	$(LIBXFCE4UI_LIBS)						\
 	$(XFCONF_LIBS)
 

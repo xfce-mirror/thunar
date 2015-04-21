@@ -168,14 +168,6 @@ dnl **********************************
 XDT_CHECK_OPTIONAL_PACKAGE([DBUS], [dbus-glib-1],
                            [0.34], [dbus], [D-BUS support])
 
-dnl *************************************************
-dnl *** Optional support for startup notification ***
-dnl *************************************************
-XDT_CHECK_OPTIONAL_PACKAGE([LIBSTARTUP_NOTIFICATION],
-                           [libstartup-notification-1.0],
-                           [0.4], [startup-notification],
-                           [startup notification library])
-
 dnl ***************************************************************
 dnl *** Optional support for GUDev (required for thunar-volman) ***
 dnl ***************************************************************
@@ -283,11 +275,6 @@ if test x"$GIO_UNIX_FOUND" = x"yes"; then
 echo "* GIO UNIX features:                  yes"
 else
 echo "* GIO UNIX features:                  no"
-fi
-if test x"$LIBSTARTUP_NOTIFICATION_FOUND" = x"yes"; then
-echo "* Startup Notification:               yes"
-else
-echo "* Startup Notification:               no"
 fi
 if test x"$GUDEV_FOUND" = x"yes"; then
 echo "* GUDev (required for thunar-volman): yes"
