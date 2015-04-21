@@ -4437,8 +4437,6 @@ void
 thunar_standard_view_set_history (ThunarStandardView *standard_view,
                                   ThunarHistory      *history)
 {
-  ThunarFile *file;
-
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (history == NULL || THUNAR_IS_HISTORY (history));
 
