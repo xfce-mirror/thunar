@@ -981,7 +981,8 @@ thunar_shortcuts_view_context_menu_visibility (ThunarShortcutsView *view,
 
   /* process all items below the header */
   child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
-  gtk_tree_model_get_iter_first (GTK_TREE_MODEL (child_model), &iter);
+  if (!gtk_tree_model_get_iter_first (GTK_TREE_MODEL (child_model), &iter))
+      return;
   path = gtk_tree_model_get_path (child_model, &iter);
   do
     {
