@@ -1288,7 +1288,7 @@ thunar_dbus_service_unlink_files (ThunarDBusService  *dbus_service,
         }
 
       /* check if we succeeded */
-      if (err == NULL)
+      if (err == NULL && file_list != NULL)
         {
           /* tell the application to move the specified files to the trash */
           application = thunar_application_get ();
