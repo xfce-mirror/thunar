@@ -3668,7 +3668,7 @@ thunar_standard_view_row_deleted (ThunarListModel    *model,
 static gboolean
 thunar_standard_view_restore_selection_idle (ThunarStandardView *standard_view)
 {
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
   thunar_component_restore_selection (THUNAR_COMPONENT (standard_view));
   standard_view->priv->restore_selection_idle_id = 0;
