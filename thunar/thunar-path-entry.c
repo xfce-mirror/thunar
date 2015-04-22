@@ -387,7 +387,7 @@ thunar_path_entry_button_press_event (GtkWidget      *widget,
       /* consume the event */
       path_entry->drag_button = event->button;
       path_entry->drag_x = event->x;
-      path_entry->drag_x = event->y;
+      path_entry->drag_y = event->y;
       return TRUE;
     }
 
