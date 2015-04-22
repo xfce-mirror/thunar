@@ -1080,7 +1080,7 @@ thunar_location_buttons_scroll_right (GtkWidget             *button,
       }
 
   if (G_UNLIKELY (right_button == NULL))
-      return;
+    return;
 
   /* find the last visible button on the 'left' end */
   for (lp = g_list_last (buttons->list); lp != NULL; lp = lp->prev)
@@ -1100,6 +1100,9 @@ thunar_location_buttons_scroll_right (GtkWidget             *button,
       space_available = (GTK_WIDGET (buttons)->allocation.x + GTK_WIDGET (buttons)->allocation.width - border_width)
                       - (buttons->right_slider->allocation.x + buttons->right_slider->allocation.width);
     }
+
+  if (G_UNLIKELY (left_button == NULL))
+    return;
 
   /* We have space_available extra space that's not being used.  We
    * need space_needed space to make the button fit.  So we walk down
