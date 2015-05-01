@@ -67,7 +67,7 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob *job,
   const gchar *old_display_name;
   gchar       *display_name;
   gchar       *file_basename;
-  gchar       *dot;
+  gchar       *dot = NULL;
   
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), NULL);
   _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
@@ -80,7 +80,8 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob *job,
     return NULL;
 
   /* query the source file info / display name */
-  info = g_file_query_info (file, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME, 
+  info = g_file_query_info (file, G_FILE_ATTRIBUTE_STANDARD_TYPE ","
+                            G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
                             G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
                             exo_job_get_cancellable (EXO_JOB (job)), &err);
 
@@ -94,8 +95,10 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob *job,
   old_display_name = g_file_info_get_display_name (info);
   if (copy)
     {
-      /* get file extension */
-      dot = thunar_util_str_get_extension (old_display_name);
+      /* get file extension if file is not a directory */
+      if (g_file_info_get_file_type (info) != G_FILE_TYPE_DIRECTORY)
+        dot = thunar_util_str_get_extension (old_display_name);
+
       if (dot != NULL)
         {
           file_basename = g_strndup (old_display_name, dot - old_display_name);
