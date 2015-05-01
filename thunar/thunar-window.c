@@ -603,7 +603,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
                   G_TYPE_BOOLEAN, 0);
 
   /**
-   * ThunarWindow::tab-chage:
+   * ThunarWindow::tab-change:
    * @window : a #ThunarWindow instance.
    * @idx    : tab index,
    *
@@ -1289,7 +1289,7 @@ thunar_window_tab_change (ThunarWindow *window,
 
   /* Alt+0 is 10th tab */
   gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook),
-                                 nth == -1 ? 8 : nth);
+                                 nth == -1 ? 9 : nth);
 
   return TRUE;
 }
