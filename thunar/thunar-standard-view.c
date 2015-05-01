@@ -264,13 +264,18 @@ static void                 thunar_standard_view_drag_end                   (Gtk
 static void                 thunar_standard_view_row_deleted                (ThunarListModel          *model,
                                                                              GtkTreePath              *path,
                                                                              ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_select_after_row_deleted   (ThunarListModel          *model,
+                                                                             GtkTreePath              *path,
+                                                                             ThunarStandardView       *standard_view);
 static gboolean             thunar_standard_view_restore_selection_idle     (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_row_changed                (ThunarListModel          *model,
                                                                              GtkTreePath              *path,
                                                                              GtkTreeIter              *iter,
                                                                              ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_select_after_row_deleted   (ThunarListModel          *model,
+static void                 thunar_standard_view_rows_reordered             (ThunarListModel          *tree_model,
                                                                              GtkTreePath              *path,
+                                                                             GtkTreeIter              *iter,
+                                                                             gpointer                  new_order,
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_error                      (ThunarListModel          *model,
                                                                              const GError             *error,
@@ -691,8 +696,9 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   /* setup the list model */
   standard_view->model = thunar_list_model_new ();
   g_signal_connect (G_OBJECT (standard_view->model), "row-deleted", G_CALLBACK (thunar_standard_view_row_deleted), standard_view);
-  standard_view->priv->row_changed_id = g_signal_connect (G_OBJECT (standard_view->model), "row-changed", G_CALLBACK (thunar_standard_view_row_changed), standard_view);
   g_signal_connect_after (G_OBJECT (standard_view->model), "row-deleted", G_CALLBACK (thunar_standard_view_select_after_row_deleted), standard_view);
+  standard_view->priv->row_changed_id = g_signal_connect (G_OBJECT (standard_view->model), "row-changed", G_CALLBACK (thunar_standard_view_row_changed), standard_view);
+  g_signal_connect (G_OBJECT (standard_view->model), "rows-reordered", G_CALLBACK (thunar_standard_view_rows_reordered), standard_view);
   g_signal_connect (G_OBJECT (standard_view->model), "error", G_CALLBACK (thunar_standard_view_error), standard_view);
   exo_binding_new (G_OBJECT (standard_view->preferences), "misc-case-sensitive", G_OBJECT (standard_view->model), "case-sensitive");
   exo_binding_new (G_OBJECT (standard_view->preferences), "misc-date-style", G_OBJECT (standard_view->model), "date-style");
@@ -3678,15 +3684,13 @@ thunar_standard_view_restore_selection_idle (ThunarStandardView *standard_view)
 
 
 static void
-thunar_standard_view_row_changed (ThunarListModel    *model,
-                                  GtkTreePath        *path,
-                                  GtkTreeIter        *iter,
-                                  ThunarStandardView *standard_view)
+thunar_standard_view_rows_reordered (ThunarListModel    *tree_model,
+                                     GtkTreePath        *path,
+                                     GtkTreeIter        *iter,
+                                     gpointer            new_order,
+                                     ThunarStandardView *standard_view)
 {
-  ThunarFile *file;
-
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
-  _thunar_return_if_fail (path != NULL);
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (standard_view->model == model);
 
@@ -3698,6 +3702,22 @@ thunar_standard_view_row_changed (ThunarListModel    *model,
       g_timeout_add (50,
                      (GSourceFunc) thunar_standard_view_restore_selection_idle,
                      standard_view);
+}
+
+
+
+static void
+thunar_standard_view_row_changed (ThunarListModel    *model,
+                                  GtkTreePath        *path,
+                                  GtkTreeIter        *iter,
+                                  ThunarStandardView *standard_view)
+{
+  ThunarFile *file;
+
+  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
+  _thunar_return_if_fail (path != NULL);
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (standard_view->model == model);
 
   if (standard_view->priv->thumbnail_request != 0)
     return;
