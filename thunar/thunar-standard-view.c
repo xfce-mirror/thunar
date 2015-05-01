@@ -3674,10 +3674,30 @@ thunar_standard_view_row_deleted (ThunarListModel    *model,
 static gboolean
 thunar_standard_view_restore_selection_idle (ThunarStandardView *standard_view)
 {
+  GtkAdjustment *hadjustment;
+  GtkAdjustment *vadjustment;
+  gdouble        h, v, hl, hu, vl, vu;
+
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
+  /* save the current scroll position and limits */
+  hadjustment = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (standard_view));
+  vadjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (standard_view));
+  g_object_get (G_OBJECT (hadjustment), "value", &h, "lower", &hl, "upper", &hu, NULL);
+  g_object_get (G_OBJECT (vadjustment), "value", &v, "lower", &vl, "upper", &vu, NULL);
+
+  /* keep the current scroll position by setting the limits to the current value */
+  g_object_set (G_OBJECT (hadjustment), "lower", h, "upper", h, NULL);
+  g_object_set (G_OBJECT (vadjustment), "lower", v, "upper", v, NULL);
+
+  /* restore the selection */
   thunar_component_restore_selection (THUNAR_COMPONENT (standard_view));
   standard_view->priv->restore_selection_idle_id = 0;
+
+  /* unfreeze the scroll position */
+  g_object_set (G_OBJECT (hadjustment), "value", h, "lower", hl, "upper", hu, NULL);
+  g_object_set (G_OBJECT (vadjustment), "value", v, "lower", vl, "upper", vu, NULL);
+
   return FALSE;
 }
 
