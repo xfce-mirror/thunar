@@ -2153,26 +2153,29 @@ thunar_standard_view_update_statusbar_text (ThunarStandardView *standard_view)
 
 
 
-static void
-thunar_standard_view_current_directory_destroy (ThunarFile         *current_directory,
-                                                ThunarStandardView *standard_view)
+/*
+ * Find a fallback directory we can navigate to if the directory gets
+ * deleted. It first tries the parent folders, and finally if none can
+ * be found, the home folder. If the home folder cannot be accessed,
+ * the error will be stored for use by the caller.
+ */
+static ThunarFile *
+thunar_standard_view_get_fallback_directory (ThunarFile *directory,
+                                             GError     *error)
 {
   ThunarFile *new_directory = NULL;
   GFile      *path;
   GFile      *tmp;
-  GError     *error = NULL;
 
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-  _thunar_return_if_fail (THUNAR_IS_FILE (current_directory));
-  _thunar_return_if_fail (standard_view->priv->current_directory == current_directory);
+  _thunar_return_if_fail (THUNAR_IS_FILE (directory));
 
-  /* determine the path of the current directory */
-  path = g_object_ref (thunar_file_get_file (current_directory));
+  /* determine the path of the directory */
+  path = g_object_ref (thunar_file_get_file (directory));
 
   /* try to find a parent directory that still exists */
   while (new_directory == NULL)
     {
-      /* check whether the current directory exists */
+      /* check whether the directory exists */
       if (g_file_query_exists (path, NULL))
         {
           /* it does, try to load the file */
@@ -2210,26 +2213,43 @@ thunar_standard_view_current_directory_destroy (ThunarFile         *current_dire
       path = thunar_g_file_new_for_home ();
       new_directory = thunar_file_get (path, &error);
       g_object_unref (path);
-
-      if (G_UNLIKELY (new_directory == NULL))
-        {
-          /* display an error to the user */
-          thunar_dialogs_show_error (GTK_WIDGET (standard_view), error, _("Failed to open the home folder"));
-          g_error_free (error);
-        }
     }
 
-  if (G_LIKELY (new_directory != NULL))
+  return new_directory;
+}
+
+
+
+static void
+thunar_standard_view_current_directory_destroy (ThunarFile         *current_directory,
+                                                ThunarStandardView *standard_view)
+{
+  GtkWidget  *window;
+  ThunarFile *new_directory = NULL;
+  GError     *error = NULL;
+
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (THUNAR_IS_FILE (current_directory));
+  _thunar_return_if_fail (standard_view->priv->current_directory == current_directory);
+
+  /* get a fallback directory (parents or home) we can navigate to */
+  new_directory = thunar_standard_view_get_fallback_directory (current_directory, error);
+  if (G_UNLIKELY (new_directory == NULL))
     {
-      /* enter the new folder */
-      thunar_navigator_change_directory (THUNAR_NAVIGATOR (standard_view), new_directory);
-
-      /* if the view is not active, do this on our own */
-      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (standard_view), new_directory);
-
-      /* release the file reference */
-      g_object_unref (new_directory);
+      /* display an error to the user */
+      thunar_dialogs_show_error (GTK_WIDGET (standard_view), error, _("Failed to open the home folder"));
+      g_error_free (error);
+      return;
     }
+
+  /* let the parent window update all active and inactive views (tabs) */
+  window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
+  thunar_window_update_directories (THUNAR_WINDOW (window),
+                                    current_directory,
+                                    new_directory);
+
+  /* release the reference to the new directory */
+  g_object_unref (new_directory);
 }
 
 

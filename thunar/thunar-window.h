@@ -53,6 +53,9 @@ gchar         **thunar_window_get_directories       (ThunarWindow   *window,
 gboolean        thunar_window_set_directories       (ThunarWindow   *window,
                                                      gchar         **uris,
                                                      gint            active_page);
+void            thunar_window_update_directories    (ThunarWindow *window,
+                                                     ThunarFile   *old_directory,
+                                                     ThunarFile   *new_directory);
 
 G_END_DECLS;
 

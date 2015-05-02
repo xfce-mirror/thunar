@@ -1790,6 +1790,50 @@ thunar_window_notebook_insert (ThunarWindow *window,
 
 
 
+void
+thunar_window_update_directories (ThunarWindow *window,
+                                  ThunarFile   *old_directory,
+                                  ThunarFile   *new_directory)
+{
+  GtkWidget  *view;
+  ThunarFile *directory;
+  gint        n;
+  gint        n_pages;
+  gint        active_page;
+
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (THUNAR_IS_FILE (old_directory));
+  _thunar_return_if_fail (THUNAR_IS_FILE (new_directory));
+
+  n_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook));
+  if (G_UNLIKELY (n_pages == 0))
+    return;
+
+  active_page = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook));
+
+  for (n = 0; n < n_pages; n++)
+    {
+      /* get the view */
+      view = gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook), n);
+      if (! THUNAR_IS_NAVIGATOR (view))
+        continue;
+
+      /* get the directory of the view */
+      directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (view));
+      if (! THUNAR_IS_FILE (directory))
+        continue;
+
+      /* if it matches the old directory, change to the new one */
+      if (directory == old_directory)
+        if (n == active_page)
+          thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), new_directory);
+        else
+          thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (view), new_directory);
+    }
+}
+
+
+
 static void
 thunar_window_install_location_bar (ThunarWindow *window,
                                     GType         type)
