@@ -770,6 +770,7 @@ thunar_tree_view_button_release_event (GtkWidget      *widget,
           else
             thunar_tree_view_action_open_in_new_window (view);
         }
+      gtk_widget_grab_focus (widget);
     }
 
   /* reset the pressed button state */
