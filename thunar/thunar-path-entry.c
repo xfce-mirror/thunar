@@ -538,6 +538,7 @@ thunar_path_entry_changed (GtkEditable *editable)
   ThunarFolder       *folder;
   GtkTreeModel       *model;
   const gchar        *text;
+  gchar              *escaped_text;
   ThunarFile         *current_folder;
   ThunarFile         *current_file;
   GFile              *folder_path = NULL;
@@ -558,7 +559,9 @@ thunar_path_entry_changed (GtkEditable *editable)
   if (G_UNLIKELY (exo_str_looks_like_an_uri (text)))
     {
       /* try to parse the URI text */
-      file_path = g_file_new_for_uri (text);
+      escaped_text = g_uri_escape_string (text, G_URI_RESERVED_CHARS_ALLOWED_IN_PATH, TRUE);
+      file_path = g_file_new_for_uri (escaped_text);
+      g_free (escaped_text);
 
       /* use the same file if the text assumes we're in a directory */
       if (g_str_has_suffix (text, "/"))
@@ -1082,7 +1085,7 @@ thunar_path_entry_check_completion_idle (gpointer user_data)
 
   GDK_THREADS_ENTER ();
 
-  /* check if the user entered atleast part of a filename */
+  /* check if the user entered at least part of a filename */
   text = gtk_entry_get_text (GTK_ENTRY (path_entry));
   if (*text != '\0' && text[strlen (text) - 1] != '/')
     {
@@ -1195,6 +1198,8 @@ thunar_path_entry_set_current_file (ThunarPathEntry *path_entry,
     }
 
   unescaped = g_uri_unescape_string (text, NULL);
+  if (unescaped == NULL)
+    unescaped = g_strdup (text);
   g_free (text);
 
   /* setup the entry text */
