@@ -1154,10 +1154,11 @@ void
 thunar_path_entry_set_current_file (ThunarPathEntry *path_entry,
                                     ThunarFile      *current_file)
 {
-  GFile *file;
-  gchar *text;
-  gchar *unescaped;
-  gchar *tmp;
+  GFile    *file;
+  gchar    *text;
+  gchar    *unescaped;
+  gchar    *tmp;
+  gboolean  is_uri = FALSE;
 
   _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
   _thunar_return_if_fail (current_file == NULL || THUNAR_IS_FILE (current_file));
@@ -1178,12 +1179,16 @@ thunar_path_entry_set_current_file (ThunarPathEntry *path_entry,
 
           /* if there is no local path, use the URI (which always works) */
           if (text == NULL)
-            text = g_file_get_uri (file);
+            {
+              text = g_file_get_uri (file);
+              is_uri = TRUE;
+            }
         }
       else
         {
           /* not a native file, use the URI */
           text = g_file_get_uri (file);
+          is_uri = TRUE;
         }
 
       /* if the file is a directory, end with a / to avoid loading the parent
@@ -1197,8 +1202,9 @@ thunar_path_entry_set_current_file (ThunarPathEntry *path_entry,
         }
     }
 
-  unescaped = g_uri_unescape_string (text, NULL);
-  if (unescaped == NULL)
+  if (is_uri)
+    unescaped = g_uri_unescape_string (text, NULL);
+  else
     unescaped = g_strdup (text);
   g_free (text);
 
