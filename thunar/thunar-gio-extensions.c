@@ -264,6 +264,7 @@ thunar_g_file_get_display_name_remote (GFile *mount_point)
   gchar       *parse_name;
   const gchar *p;
   const gchar *path;
+  gchar       *unescaped;
   gchar       *hostname;
   gchar       *display_name = NULL;
   const gchar *skip;
@@ -314,9 +315,13 @@ thunar_g_file_get_display_name_remote (GFile *mount_point)
               path = "/";
             }
 
-          /* TRANSLATORS: this will result in "<path> on <hostname>" */
-          display_name = g_strdup_printf (_("%s on %s"), path, hostname);
+          /* unescape the path so that spaces and other characters are shown correctly */
+          unescaped = g_uri_unescape_string (path, NULL);
 
+          /* TRANSLATORS: this will result in "<path> on <hostname>" */
+          display_name = g_strdup_printf (_("%s on %s"), unescaped, hostname);
+
+          g_free (unescaped);
           g_free (hostname);
         }
 
