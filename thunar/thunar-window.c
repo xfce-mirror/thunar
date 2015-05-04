@@ -1825,10 +1825,12 @@ thunar_window_update_directories (ThunarWindow *window,
 
       /* if it matches the old directory, change to the new one */
       if (directory == old_directory)
-        if (n == active_page)
-          thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), new_directory);
-        else
-          thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (view), new_directory);
+        {
+          if (n == active_page)
+            thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), new_directory);
+          else
+            thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (view), new_directory);
+        }
     }
 }
 
