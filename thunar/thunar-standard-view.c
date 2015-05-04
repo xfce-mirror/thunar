@@ -272,7 +272,7 @@ static void                 thunar_standard_view_row_changed                (Thu
                                                                              GtkTreePath              *path,
                                                                              GtkTreeIter              *iter,
                                                                              ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_rows_reordered             (ThunarListModel          *tree_model,
+static void                 thunar_standard_view_rows_reordered             (ThunarListModel          *model,
                                                                              GtkTreePath              *path,
                                                                              GtkTreeIter              *iter,
                                                                              gpointer                  new_order,
@@ -3724,7 +3724,7 @@ thunar_standard_view_restore_selection_idle (ThunarStandardView *standard_view)
 
 
 static void
-thunar_standard_view_rows_reordered (ThunarListModel    *tree_model,
+thunar_standard_view_rows_reordered (ThunarListModel    *model,
                                      GtkTreePath        *path,
                                      GtkTreeIter        *iter,
                                      gpointer            new_order,
