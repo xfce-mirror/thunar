@@ -459,7 +459,7 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
                 }
             }
           else
-              gtk_tree_view_set_cursor (GTK_TREE_VIEW (widget), path, NULL, FALSE);
+            gtk_tree_view_set_cursor (GTK_TREE_VIEW (widget), path, gtk_tree_view_get_column (GTK_TREE_VIEW (view), 0), FALSE);
 
           /* remember the button as pressed and handle it in the release handler */
           view->pressed_button = event->button;
@@ -1359,6 +1359,7 @@ thunar_shortcuts_view_renamed (GtkCellRenderer     *renderer,
                                ThunarShortcutsView *view)
 {
   GtkTreeModel *model;
+  GtkTreePath  *path;
   GtkTreeIter   iter;
   GtkTreeModel *child_model;
   GtkTreeIter   child_iter;
@@ -1373,6 +1374,11 @@ thunar_shortcuts_view_renamed (GtkCellRenderer     *renderer,
       child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
       gtk_tree_model_filter_convert_iter_to_child_iter (GTK_TREE_MODEL_FILTER (model), &child_iter, &iter);
       thunar_shortcuts_model_rename (THUNAR_SHORTCUTS_MODEL (child_model), &child_iter, text);
+
+      /* unset the cell focus and only focus the column to avoid the weird-looking double selection */
+      path = gtk_tree_model_get_path (model, &iter);
+      gtk_tree_view_set_cursor (GTK_TREE_VIEW (view), path, gtk_tree_view_get_column (GTK_TREE_VIEW (view), 0), FALSE);
+      gtk_tree_path_free (path);
     }
 }
 
