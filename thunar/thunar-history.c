@@ -347,12 +347,22 @@ thunar_history_error_not_found (GFile    *goto_file,
                                 gpointer  parent)
 {
   gchar  *parse_name;
+  gchar  *path;
   GError *error = NULL;
 
   g_set_error_literal (&error, G_FILE_ERROR, G_FILE_ERROR_EXIST,
                        _("The item will be removed from the history"));
 
-  parse_name = g_file_get_parse_name (goto_file);
+  path = g_file_get_path (goto_file);
+  if (path == NULL)
+    {
+      path = g_file_get_uri (goto_file);
+      parse_name = g_uri_unescape_string (path, NULL);
+      g_free (path);
+    }
+  else
+    parse_name = g_file_get_parse_name (goto_file);
+
   thunar_dialogs_show_error (parent, error, _("Could not find \"%s\""), parse_name);
   g_free (parse_name);
 
