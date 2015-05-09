@@ -805,7 +805,7 @@ thunar_tree_view_key_press_event(GtkWidget   *widget,
       /* sync with new tree view selection */
       gtk_tree_path_free (path);
       gtk_tree_view_get_cursor (GTK_TREE_VIEW (tree_view), &path, NULL);
-      thunar_tree_view_action_open (tree_view);
+      thunar_tree_view_open_selection (tree_view);
 
       stopPropagation = TRUE;
       break;
@@ -819,7 +819,7 @@ thunar_tree_view_key_press_event(GtkWidget   *widget,
       else /* if branch is already collapsed then move to parent */
         if (gtk_tree_path_get_depth (path) > 1 && gtk_tree_path_up (path))
           gtk_tree_view_set_cursor (GTK_TREE_VIEW (tree_view), path, NULL, FALSE);
-      thunar_tree_view_action_open (tree_view);
+      thunar_tree_view_open_selection (tree_view);
 
       stopPropagation = TRUE;
       break;
@@ -829,7 +829,6 @@ thunar_tree_view_key_press_event(GtkWidget   *widget,
       /* if branch is not expanded then expand it */
       if (!gtk_tree_view_row_expanded (GTK_TREE_VIEW (tree_view), path))
         gtk_tree_view_expand_row (GTK_TREE_VIEW (tree_view), path, FALSE);
-
       else /* if branch is already expanded then move to first child */
         {
           gtk_tree_path_down (path);
