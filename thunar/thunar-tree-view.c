@@ -805,35 +805,7 @@ thunar_tree_view_key_press_event(GtkWidget   *widget,
       /* sync with new tree view selection */
       gtk_tree_path_free (path);
       gtk_tree_view_get_cursor (GTK_TREE_VIEW (tree_view), &path, NULL);
-
-      /* The top-level desktop entry is a bit problematic; opening it
-         will usually cause expansion of the home directory where the
-         desktop folder resides. This breaks navigation and is bad for
-         user experience, so do not open the top-level desktop entry
-         automatically.
-       */
-      if (gtk_tree_path_get_depth (path) == 1)
-        {
-          ThunarFile *file;
-          GFile *desktop;
-          GFile *selected;
-
-          file = thunar_tree_view_get_selected_file (tree_view);
-          if (file)
-            {
-              desktop = thunar_g_file_new_for_desktop ();
-              selected = thunar_file_get_file (file);
-
-              /* open only non-desktop top-level items */
-              if (! g_file_equal (desktop, selected))
-                  thunar_tree_view_action_open (tree_view);
-
-              g_object_unref (G_OBJECT (file));
-              g_object_unref (desktop);
-            }
-        }
-      else
-          thunar_tree_view_action_open (tree_view);
+      thunar_tree_view_action_open (tree_view);
 
       stopPropagation = TRUE;
       break;
