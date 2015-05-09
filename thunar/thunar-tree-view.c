@@ -196,6 +196,8 @@ static void                     thunar_tree_view_mount_data_free              (T
 static gboolean                 thunar_tree_view_get_show_hidden              (ThunarTreeView          *view);
 static void                     thunar_tree_view_set_show_hidden              (ThunarTreeView          *view,
                                                                                gboolean                 show_hidden);
+static GtkTreePath             *thunar_tree_view_get_preferred_toplevel_path  (ThunarTreeView          *view,
+                                                                               ThunarFile              *file);
 
 
 
@@ -2488,6 +2490,8 @@ thunar_tree_view_cursor_idle (gpointer user_data)
   GtkTreePath    *ancestor = NULL;
   GtkTreePath    *parent;
   GtkTreePath    *path;
+  GtkTreeIter     iter;
+  ThunarFile     *file;
   gboolean        done = TRUE;
 
   GDK_THREADS_ENTER ();
@@ -2495,18 +2499,35 @@ thunar_tree_view_cursor_idle (gpointer user_data)
   /* verify that we still have a current directory */
   if (G_LIKELY (view->current_directory != NULL))
     {
-      /* determine the current cursor (fallback to root node) */
+      /* use the current cursor to limit the search to only the top-level of the selected node */
       gtk_tree_view_get_cursor (GTK_TREE_VIEW (view), &path, NULL);
-      if (G_UNLIKELY (path == NULL))
+
+      /* if we have a path from the cursor but the current directory does not match it,
+       * unset it so that the correct toplevel item will be selected later */
+      if (path)
+        {
+          gtk_tree_model_get_iter (GTK_TREE_MODEL (view->model), &iter, path);
+          gtk_tree_model_get (GTK_TREE_MODEL (view->model), &iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file, -1);
+          if (file != view->current_directory)
+            {
+              gtk_tree_path_free (path);
+              path = NULL;
+            }
+          if (file)
+            g_object_unref (file);
+        }
+
+      /* no cursor set, get the preferred toplevel path for the current directory */
+      if (path == NULL)
+        path = thunar_tree_view_get_preferred_toplevel_path (view, view->current_directory);
+
+      /* fallback to a newly created root node */
+      if (path == NULL)
         path = gtk_tree_path_new_first ();
 
       /* look for the closest ancestor in the whole tree, starting from the current path */
       for (; gtk_tree_path_get_depth (path) > 0; gtk_tree_path_up (path))
         {
-          /* be sure to start from the first path at that level */
-          while (gtk_tree_path_prev (path))
-            ;
-
           /* try to find the closest ancestor relative to the current path */
           if (thunar_tree_view_find_closest_ancestor (view, path, &ancestor, &done))
             {
@@ -2765,6 +2786,118 @@ thunar_tree_view_set_show_hidden (ThunarTreeView *view,
       /* notify listeners */
       g_object_notify (G_OBJECT (view), "show-hidden");
     }
+}
+
+
+
+/**
+ * thunar_tree_view_get_preferred_toplevel_path:
+ * @view        : a #ThunarTreeView.
+ * @file        : the #ThunarFile we want the toplevel path for
+ *
+ * Searches for the best-matching toplevel path in the
+ * following order:
+ *   1) any mounted device or network resource
+ *   2) the user's desktop directory
+ *   3) the user's home directory
+ *   4) the root filesystem
+ *
+ * Returns the #GtkTreePath for the matching toplevel item,
+ * or %NULL if not found.
+ **/
+static GtkTreePath *
+thunar_tree_view_get_preferred_toplevel_path (ThunarTreeView *view,
+                                              ThunarFile     *file)
+{
+  GtkTreeModel *model = GTK_TREE_MODEL (view->model);
+  GtkTreePath  *path = NULL;
+  GtkTreeIter   iter;
+  ThunarFile   *toplevel_file;
+  GFile        *desktop;
+  GFile        *home;
+  GFile        *root;
+  GFile        *best_match;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+
+  /* check whether the root node is available */
+  if (!gtk_tree_model_get_iter_first (model, &iter))
+    return NULL;
+
+  /* get GFiles for special toplevel items */
+  desktop = thunar_g_file_new_for_desktop ();
+  home = thunar_g_file_new_for_home ();
+  root = thunar_g_file_new_for_root ();
+
+  /* we prefer certain toplevel items to others */
+  if (thunar_file_is_gfile_ancestor (file, desktop))
+    best_match = desktop;
+  else if (thunar_file_is_gfile_ancestor (file, home))
+    best_match = home;
+  else if (thunar_file_is_gfile_ancestor (file, root))
+    best_match = root;
+  else
+    best_match = NULL;
+
+  /* loop over all top-level nodes to find the best-matching top-level item */
+  do
+    {
+      gtk_tree_model_get (model, &iter, THUNAR_TREE_MODEL_COLUMN_FILE, &toplevel_file, -1);
+      /* this toplevel item has no file, so continue with the next */
+      if (toplevel_file == NULL)
+        continue;
+
+      /* if the file matches the toplevel item exactly, we are done */
+      if (g_file_equal (thunar_file_get_file (file),
+                        thunar_file_get_file (toplevel_file)))
+        {
+          gtk_tree_path_free (path);
+          path = gtk_tree_model_get_path (model, &iter);
+          g_object_unref (toplevel_file);
+          break;
+        }
+
+      if (thunar_file_is_ancestor (file, toplevel_file))
+        {
+          /* the toplevel item could be a mounted device or network
+           * and we prefer this to everything else */
+          if (!g_file_equal (thunar_file_get_file (toplevel_file), desktop) &&
+              !g_file_equal (thunar_file_get_file (toplevel_file), home) &&
+              !g_file_equal (thunar_file_get_file (toplevel_file), root))
+            {
+              gtk_tree_path_free (path);
+              g_object_unref (toplevel_file);
+              path = gtk_tree_model_get_path (model, &iter);
+              break;
+            }
+
+          /* continue if the toplevel item is already the best match */
+          if (best_match != NULL &&
+              g_file_equal (thunar_file_get_file (toplevel_file), best_match))
+            {
+              gtk_tree_path_free (path);
+              g_object_unref (toplevel_file);
+              path = gtk_tree_model_get_path (model, &iter);
+              continue;
+            }
+
+          /* remember this ancestor if we do not already have one */
+          if (path == NULL)
+            {
+              gtk_tree_path_free (path);
+              path = gtk_tree_model_get_path (model, &iter);
+            }
+        }
+      g_object_unref (toplevel_file);
+    }
+  while (gtk_tree_model_iter_next (model, &iter));
+
+  /* cleanup */
+  g_object_unref (root);
+  g_object_unref (home);
+  g_object_unref (desktop);
+
+  return path;
 }
 
 
