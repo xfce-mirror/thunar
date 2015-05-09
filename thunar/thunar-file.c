@@ -3727,6 +3727,10 @@ thunar_file_get_icon_name (ThunarFile          *file,
               special_names[0] = thunar_file_get_item_count (file) > 0 ? "user-trash-full" : "user-trash";
               special_names[1] = "user-trash";
             }
+          else if (g_file_has_uri_scheme (file->gfile, "network"))
+            {
+              special_names[0] = "network-workgroup";
+            }
           else if (g_file_has_uri_scheme (file->gfile, "recent"))
             {
               special_names[0] = "document-open-recent";
