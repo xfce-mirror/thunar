@@ -2147,7 +2147,7 @@ thunar_tree_view_action_open (ThunarTreeView *view)
       if (thunar_device_is_mounted (device))
         thunar_tree_view_open_selection (view);
       else
-        thunar_tree_view_mount (view, TRUE, OPEN_IN_TAB);
+        thunar_tree_view_mount (view, TRUE, OPEN_IN_VIEW);
 
       g_object_unref (device);
     }
