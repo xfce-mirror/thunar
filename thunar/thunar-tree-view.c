@@ -233,6 +233,11 @@ struct _ThunarTreeView
    */
   GClosure               *new_files_closure;
 
+  /* sometimes we want to keep the cursor on a certain item to allow
+   * more intuitive navigation, even though the main view shows another path
+   */
+  GtkTreePath            *select_path;
+
   /* the currently pressed mouse button, set in the
    * button-press-event handler if the associated
    * button-release-event should activate.
@@ -471,6 +476,10 @@ thunar_tree_view_finalize (GObject *object)
   /* be sure to cancel the expand timer source */
   if (G_UNLIKELY (view->expand_timer_id != 0))
     g_source_remove (view->expand_timer_id);
+
+  /* free path remembered for selection */
+  if (view->select_path != NULL)
+      gtk_tree_path_free (view->select_path);
 
   /* reset the current-directory property */
   thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (view), NULL);
@@ -832,11 +841,13 @@ thunar_tree_view_key_press_event(GtkWidget   *widget,
                                   THUNAR_TREE_MODEL_COLUMN_DEVICE, &device, -1);
 
             if (device != NULL)
-              {
-                if (thunar_device_is_mounted (device) && thunar_device_can_unmount (device))
+              if (thunar_device_is_mounted (device) && thunar_device_can_unmount (device))
+                {
+                  /* mark this path for selection after unmounting */
+                  view->select_path = gtk_tree_path_copy(path);
                   thunar_tree_view_action_unmount (view);
-                g_object_unref (G_OBJECT (device));
-              }
+                  g_object_unref (G_OBJECT (device));
+                }
           }
       thunar_tree_view_open_selection (view);
 
@@ -2487,8 +2498,16 @@ thunar_tree_view_cursor_idle (gpointer user_data)
 
   GDK_THREADS_ENTER ();
 
+  /* for easier navigation, we sometimes want to force/keep selection of a certain path */
+  if (view->select_path != NULL)
+    {
+      gtk_tree_view_set_cursor (GTK_TREE_VIEW (view), view->select_path, NULL, FALSE);
+      gtk_tree_path_free (view->select_path);
+      view->select_path = NULL;
+    }
+
   /* verify that we still have a current directory */
-  if (G_LIKELY (view->current_directory != NULL))
+  else if (G_LIKELY (view->current_directory != NULL))
     {
       /* use the current cursor to limit the search to only the top-level of the selected node */
       gtk_tree_view_get_cursor (GTK_TREE_VIEW (view), &path, NULL);
