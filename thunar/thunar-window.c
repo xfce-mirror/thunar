@@ -538,11 +538,11 @@ thunar_window_class_init (ThunarWindowClass *klass)
                   G_TYPE_BOOLEAN, 0);
 
   /**
-   * ThunarWindow::toggle-sidepane:
+   * ThunarWindow::toggle-menubar:
    * @window : a #ThunarWindow instance.
    *
    * Emitted whenever the user toggles the visibility of the
-   * sidepane. This is an internal signal used to bind the
+   * menubar. This is an internal signal used to bind the
    * action to keys.
    **/
   window_signals[TOGGLE_MENUBAR] =
