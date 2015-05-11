@@ -708,9 +708,16 @@ thunar_tree_view_button_press_event (GtkWidget      *widget,
   /* reset the pressed button state */
   view->pressed_button = -1;
 
-  /* completely ignore double middle clicks */
-  if (event->type == GDK_2BUTTON_PRESS && event->button == 2)
-    return TRUE;
+  if (event->button == 2)
+    {
+      /* completely ignore double middle clicks */
+      if (event->type == GDK_2BUTTON_PRESS)
+        return TRUE;
+
+      /* remember the current selection as we want to restore it later */
+      gtk_tree_path_free (view->select_path);
+      gtk_tree_view_get_cursor(GTK_TREE_VIEW (view), &(view->select_path), NULL);
+    }
 
   /* let the widget process the event first (handles focussing and scrolling) */
   result = (*GTK_WIDGET_CLASS (thunar_tree_view_parent_class)->button_press_event) (widget, event);
@@ -731,17 +738,16 @@ thunar_tree_view_button_press_event (GtkWidget      *widget,
               result = TRUE;
             }
         }
-      else if ((event->button == 1 || event->button == 2)
-               && event->type == GDK_BUTTON_PRESS)
+      else if ((event->button == 1 || event->button == 2) && event->type == GDK_BUTTON_PRESS)
         {
           GdkRectangle rect;
           gtk_tree_view_get_cell_area (GTK_TREE_VIEW (widget), path, column, &rect);
 
           /* set cursor only when the user did not click the expander */
           if (rect.x <= event->x && event->x <= (rect.x + rect.width))
-              gtk_tree_view_set_cursor (GTK_TREE_VIEW (widget), path, NULL, FALSE);
+            gtk_tree_view_set_cursor (GTK_TREE_VIEW (widget), path, NULL, FALSE);
 
-          /* remember the button as pressed and handled it in the release handler */
+          /* remember the button as pressed and handle it in the release handler */
           view->pressed_button = event->button;
         }
 
@@ -772,6 +778,7 @@ thunar_tree_view_button_release_event (GtkWidget      *widget,
       else if (G_UNLIKELY (event->button == 2))
         {
           g_object_get (view->preferences, "misc-middle-click-in-tab", &in_tab, NULL);
+
           /* holding ctrl inverts the action */
           if ((event->state & GDK_CONTROL_MASK) != 0)
             in_tab = !in_tab;
@@ -780,6 +787,14 @@ thunar_tree_view_button_release_event (GtkWidget      *widget,
             thunar_tree_view_action_open_in_new_tab (view);
           else
             thunar_tree_view_action_open_in_new_window (view);
+
+          /* set the cursor back to the previously selected item */
+          if (view->select_path != NULL)
+            {
+              gtk_tree_view_set_cursor (GTK_TREE_VIEW (view), view->select_path, NULL, FALSE);
+              gtk_tree_path_free (view->select_path);
+              view->select_path = NULL;
+            }
         }
       gtk_widget_grab_focus (widget);
     }
@@ -790,6 +805,8 @@ thunar_tree_view_button_release_event (GtkWidget      *widget,
   /* call the parent's release event handler */
   return (*GTK_WIDGET_CLASS (thunar_tree_view_parent_class)->button_release_event) (widget, event);
 }
+
+
 
 static gboolean
 thunar_tree_view_key_press_event(GtkWidget   *widget,
