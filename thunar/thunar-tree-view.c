@@ -700,6 +700,8 @@ thunar_tree_view_button_press_event (GtkWidget      *widget,
                                      GdkEventButton *event)
 {
   ThunarTreeView    *view = THUNAR_TREE_VIEW (widget);
+  ThunarDevice      *device;
+  ThunarFile        *file;
   GtkTreeViewColumn *column;
   GtkTreePath       *path;
   GtkTreeIter        iter;
@@ -722,11 +724,15 @@ thunar_tree_view_button_press_event (GtkWidget      *widget,
   /* let the widget process the event first (handles focussing and scrolling) */
   result = (*GTK_WIDGET_CLASS (thunar_tree_view_parent_class)->button_press_event) (widget, event);
 
+  /* for the following part, we'll only handle single button presses */
+  if (event->type != GDK_BUTTON_PRESS)
+    return result;
+
   /* resolve the path at the cursor position */
   if (gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (widget), event->x, event->y, &path, &column, NULL, NULL))
     {
       /* check if we should popup the context menu */
-      if (G_UNLIKELY (event->button == 3 && event->type == GDK_BUTTON_PRESS))
+      if (G_UNLIKELY (event->button == 3))
         {
           /* determine the iterator for the path */
           if (gtk_tree_model_get_iter (GTK_TREE_MODEL (view->model), &iter, path))
@@ -738,7 +744,7 @@ thunar_tree_view_button_press_event (GtkWidget      *widget,
               result = TRUE;
             }
         }
-      else if ((event->button == 1 || event->button == 2) && event->type == GDK_BUTTON_PRESS)
+      else if (event->button == 1)
         {
           GdkRectangle rect;
           gtk_tree_view_get_cell_area (GTK_TREE_VIEW (widget), path, column, &rect);
@@ -749,6 +755,31 @@ thunar_tree_view_button_press_event (GtkWidget      *widget,
 
           /* remember the button as pressed and handle it in the release handler */
           view->pressed_button = event->button;
+        }
+      else if (event->button == 2)
+        {
+          /* only open the item if it is mounted (otherwise opening and selecting it won't work correctly) */
+          gtk_tree_path_free (path);
+          gtk_tree_view_get_cursor (GTK_TREE_VIEW (view), &path, NULL);
+          if (path != NULL && gtk_tree_model_get_iter (GTK_TREE_MODEL (view->model), &iter, path))
+            gtk_tree_model_get (GTK_TREE_MODEL (view->model), &iter,
+                                THUNAR_TREE_MODEL_COLUMN_FILE, &file,
+                                THUNAR_TREE_MODEL_COLUMN_DEVICE, &device, -1);
+
+          if ((device != NULL && thunar_device_is_mounted (device)) ||
+              (file != NULL && thunar_file_is_mounted (file)))
+            {
+              view->pressed_button = event->button;
+            }
+          else
+            {
+              gtk_tree_path_free (view->select_path);
+              view->select_path = NULL;
+            }
+          if (device)
+            g_object_unref (device);
+          if (file)
+            g_object_unref (file);
         }
 
       /* release the path */
