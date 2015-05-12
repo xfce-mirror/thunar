@@ -526,9 +526,12 @@ thunar_g_app_info_launch (GAppInfo          *info,
                           GAppLaunchContext *context,
                           GError           **error)
 {
-  gboolean result = FALSE;
-  gchar   *new_path = NULL;
-  gchar   *old_path = NULL;
+  ThunarFile   *file;
+  GList        *lp;
+  const gchar  *content_type;
+  gboolean      result = FALSE;
+  gchar        *new_path = NULL;
+  gchar        *old_path = NULL;
 
   _thunar_return_val_if_fail (G_IS_APP_INFO (info), FALSE);
   _thunar_return_val_if_fail (working_directory == NULL || G_IS_FILE (working_directory), FALSE);
@@ -553,6 +556,25 @@ thunar_g_app_info_launch (GAppInfo          *info,
 
   /* launch the paths with the specified app info */
   result = g_app_info_launch (info, path_list, context, error);
+
+  /* if successful, remember the application as last used for the file types */
+  if (result == TRUE)
+    {
+      for (lp = path_list; lp != NULL; lp = lp->next)
+        {
+          file = thunar_file_get (lp->data, NULL);
+          if (file != NULL)
+            {
+              content_type = thunar_file_get_content_type (file);
+
+              /* emit "changed" on the file if we successfully changed the last used application */
+              if (g_app_info_set_as_last_used_for_type (info, content_type, NULL))
+                thunar_file_changed (file);
+
+              g_object_unref (file);
+            }
+        }
+    }
 
   /* check if we need to reset the working directory to the one Thunar was
    * opened from */
