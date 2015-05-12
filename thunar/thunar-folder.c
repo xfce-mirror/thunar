@@ -755,8 +755,18 @@ thunar_folder_monitor (GFileMonitor     *monitor,
         {
           if (event_type == G_FILE_MONITOR_EVENT_DELETED)
             {
+              ThunarFile *destroyed;
+
               /* destroy the file */
               thunar_file_destroy (lp->data);
+
+              /* if the file has not been destroyed by now, reload it to invalidate it */
+              destroyed = thunar_file_cache_lookup (event_file);
+              if (destroyed != NULL)
+                {
+                  thunar_file_reload (destroyed);
+                  g_object_unref (destroyed);
+                }
             }
 
           else if (event_type == G_FILE_MONITOR_EVENT_MOVED)
