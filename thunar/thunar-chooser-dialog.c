@@ -456,12 +456,12 @@ thunar_chooser_dialog_response (GtkDialog *widget,
       /* remember the application as default for these kind of file */
       succeed = g_app_info_set_as_default_for_type (app_info, content_type, &error);
 
-      /* verify that we were successfull */
+      /* verify that we were successful */
       if (G_UNLIKELY (!succeed))
         {
           /* display an error to the user */
-          thunar_dialogs_show_error (GTK_WIDGET (dialog), 
-                                     error, 
+          thunar_dialogs_show_error (GTK_WIDGET (dialog),
+                                     error,
                                      _("Failed to set default application for \"%s\""),
                                      thunar_file_get_display_name (dialog->file));
 
@@ -472,6 +472,15 @@ thunar_chooser_dialog_response (GtkDialog *widget,
       /* emit "changed" on the file if we successfully changed the default application */
       if (G_LIKELY (succeed))
         thunar_file_changed (dialog->file);
+    }
+  else
+    {
+      /* simply try to set the app as last used for this type (we do not show any errors here) */
+      if (g_app_info_set_as_last_used_for_type (app_info, content_type, NULL))
+        {
+          /* emit "changed" on the file if we successfully changed the default application */
+          thunar_file_changed (dialog->file);
+        }
     }
 
   /* check if we should also execute the application */
