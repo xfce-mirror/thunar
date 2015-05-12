@@ -661,6 +661,7 @@ thunar_file_monitor_update (GFile             *path,
       switch (event_type)
         {
         case G_FILE_MONITOR_EVENT_CREATED:
+        case G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED:
         case G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT:
         case G_FILE_MONITOR_EVENT_PRE_UNMOUNT:
         case G_FILE_MONITOR_EVENT_DELETED:
