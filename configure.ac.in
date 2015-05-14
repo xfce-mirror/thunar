@@ -180,21 +180,10 @@ dnl **************************************
 XDT_CHECK_OPTIONAL_PACKAGE([LIBNOTIFY], [libnotify], [0.4.0], [notifications],
                            [Mount notification support], [yes])
 
-dnl *************************
-dnl *** Check for gtk-doc ***
-dnl *************************
-GTK_DOC_CHECK([1.0])
-
 dnl ***********************************
 dnl *** Check for debugging support ***
 dnl ***********************************
 XDT_FEATURE_DEBUG([thunar_debug_default])
-
-dnl *************************************
-dnl *** Compensate for broken gtk-doc ***
-dnl *************************************
-XDT_SUPPORTED_FLAGS([GTK_DOC_EXTRA_CFLAGS], [-Wno-sign-compare])
-AC_SUBST([GTK_DOC_EXTRA_CFLAGS])
 
 dnl **************************************
 dnl *** Check for linker optimizations ***
@@ -233,9 +222,6 @@ Makefile
 docs/Makefile
 docs/design/Makefile
 docs/papers/Makefile
-docs/reference/Makefile
-docs/reference/thunarx/Makefile
-docs/reference/thunarx/version.xml
 examples/Makefile
 examples/tex-open-terminal/Makefile
 icons/Makefile

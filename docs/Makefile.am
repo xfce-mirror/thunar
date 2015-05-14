@@ -1,9 +1,6 @@
-# $Id$
-
 SUBDIRS =								\
 	design								\
-	papers								\
-	reference
+	papers
 
 doc_DATA =								\
 	README.gtkrc
