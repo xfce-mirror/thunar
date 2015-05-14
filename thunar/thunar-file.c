@@ -3952,6 +3952,27 @@ thunar_file_reload_idle (ThunarFile *file)
 
 
 /**
+ * thunar_file_reload_idle_timeout:
+ * @file    : a #ThunarFile instance.
+ * @timeout : the timeout in ms after which the reload should happen
+ *
+ * Schedules a reload of the @file by calling thunar_file_reload in
+ * idle after @timeout milliseconds have passed.
+ *
+ **/
+void
+thunar_file_reload_idle_timeout (ThunarFile *file,
+                                 guint timeout)
+{
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  g_timeout_add_full (G_PRIORITY_DEFAULT_IDLE, timeout,
+                      (GSourceFunc) thunar_file_reload, file, NULL);
+}
+
+
+
+/**
  * thunar_file_destroy:
  * @file : a #ThunarFile instance.
  *

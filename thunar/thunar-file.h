@@ -241,6 +241,8 @@ void              thunar_file_unwatch                    (ThunarFile            
 
 void              thunar_file_reload                     (ThunarFile              *file);
 void              thunar_file_reload_idle                (ThunarFile              *file);
+void              thunar_file_reload_idle_timeout        (ThunarFile              *file,
+                                                          guint                    timeout);
 void              thunar_file_reload_parent              (ThunarFile              *file);
 
 void              thunar_file_destroy                    (ThunarFile              *file);
