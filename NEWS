@@ -1,3 +1,32 @@
+1.6.9
+=====
+- Fix ThunarBulkRename script not supporting spaces (bug #9713) (Harald Judt)
+- Use "Name" column for drag & drop instead of first column (bug #11905) (Harald Judt)
+- Update the path entry icon when current file changes (Harald Judt)
+- Revert changes for restoring the trash in the session client (bug #9513) (Harald Judt)
+- Fix loading the trash bin status at startup (bug #9513) (Harald Judt)
+- Turn off building gtk-docs API reference (Harald Judt)
+- Fix cppcheck warning about uninitialized variable (Harald Judt)
+- Disable "Set as default application" by default in the chooser dialog (bug #10548) (Harald Judt)
+- Remember chosen application in the chooser dialog as last used (Harald Judt)
+- Remember the last used application when opening files (Harald Judt)
+- Fix reload when file is replaced with directory of the same name (Harald Judt)
+- Do listen for G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED (bug #11896) (Harald Judt)
+- Fix comments for toggle-menubar (Harald Judt)
+- Allow opening by middle-click in tree view only for mounted devices and resources (Harald Judt)
+- Keep selection in original tree view when middle-clicking for new tab/window (Harald Judt)
+- Keep path selected after unmounting a device via KEY_Left (Harald Judt)
+- Unmount device if collapsing a collapsed device tree with KEY_Left in the tree view (Harald Judt)
+- Fix wrong network icon shown in tree view (Harald Judt)
+- Fix tree view opening mounted devices in new tab (Harald Judt)
+- Use only open selection instead of open action with KEY_Up and KEY_Down (Harald Judt)
+- Fix assertion when hitting KEY_Left on a top-level item in the tree view (Harald Judt)
+- Revert workaround for desktop toplevel item in the tree view (Harald Judt)
+- Always select the proper toplevel item in the thunar tree view (Harald Judt)
+- Unescape URI in history error message (Harald Judt)
+- Remove unmounted files from history when going back or forward (Harald Judt)
+- Translation updates: Basque, French, Galician
+
 1.6.8
 =====
 - Watch for CHANGES_DONE_HINT instead of CHANGED and ATTRIBUTE_CHANGED (bug #8377) (Harald Judt)
