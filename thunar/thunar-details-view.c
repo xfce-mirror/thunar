@@ -662,7 +662,7 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
   GtkTreePath       *path = NULL;
   GtkTreeIter        iter;
   GtkTreeViewColumn *column;
-  GtkTreeViewColumn *first_column;
+  GtkTreeViewColumn *name_column;
   ThunarFile        *file;
   GtkAction         *action;
   ThunarPreferences *preferences;
@@ -676,8 +676,8 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
   /* get the current selection */
   selection = gtk_tree_view_get_selection (tree_view);
 
-  /* get the first column of the tree view */
-  first_column = gtk_tree_view_get_column (tree_view, 0);
+  /* get the column showing the filenames */
+  name_column = details_view->columns[THUNAR_COLUMN_NAME];
 
   /* unselect all selected items if the user clicks on an empty area
    * of the treeview and no modifier key is active */
@@ -698,12 +698,12 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
         {
           gtk_tree_path_free (cursor_path);
 
-          if (column != first_column)
+          if (column != name_column)
             gtk_tree_selection_unselect_all (selection);
 
-          /* do not start rubber banding from the first column */
+          /* do not start rubber banding from the name column */
           if (!gtk_tree_selection_path_is_selected (selection, path)
-              && column == first_column)
+              && column == name_column)
             {
               /* the clicked row does not have the focus and is not
                * selected, so make it the new selection (start) */
@@ -729,7 +729,7 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
         }
       else
         {
-          if (column != first_column)
+          if (column != name_column)
             {
               /* if the clicked path is not selected, unselect all other paths */
               if (!gtk_tree_selection_path_is_selected (selection, path))
