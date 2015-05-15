@@ -87,6 +87,7 @@ static void     thunar_path_entry_drag_data_get                 (GtkWidget      
                                                                  guint                 timestamp);
 static void     thunar_path_entry_activate                      (GtkEntry             *entry);
 static void     thunar_path_entry_changed                       (GtkEditable          *editable);
+static void     thunar_path_entry_update_icon                   (ThunarPathEntry      *path_entry);
 static void     thunar_path_entry_do_insert_text                (GtkEditable          *editable,
                                                                  const gchar          *new_text,
                                                                  gint                  new_text_length,
@@ -545,10 +546,7 @@ thunar_path_entry_changed (GtkEditable *editable)
   GFile              *file_path = NULL;
   gchar              *folder_part = NULL;
   gchar              *file_part = NULL;
-  GdkPixbuf          *icon = NULL;
-  GtkIconTheme       *icon_theme;
   gboolean            update_icon = FALSE;
-  gint                icon_size;
 
   /* check if we should ignore this event */
   if (G_UNLIKELY (path_entry->in_change))
@@ -648,44 +646,7 @@ thunar_path_entry_changed (GtkEditable *editable)
     }
 
   if (update_icon)
-    {
-      if (path_entry->icon_factory == NULL)
-        {
-          icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (path_entry)));
-          path_entry->icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
-        }
-
-      gtk_widget_style_get (GTK_WIDGET (path_entry), "icon-size", &icon_size, NULL);
-
-      if (G_UNLIKELY (path_entry->current_file != NULL))
-        {
-          icon = thunar_icon_factory_load_file_icon (path_entry->icon_factory,
-                                                     path_entry->current_file,
-                                                     THUNAR_FILE_ICON_STATE_DEFAULT,
-                                                     icon_size);
-        }
-      else if (G_LIKELY (path_entry->current_folder != NULL))
-        {
-          icon = thunar_icon_factory_load_file_icon (path_entry->icon_factory,
-                                                     path_entry->current_folder,
-                                                     THUNAR_FILE_ICON_STATE_DEFAULT,
-                                                     icon_size);
-        }
-
-      if (icon != NULL)
-        {
-          gtk_entry_set_icon_from_pixbuf (GTK_ENTRY (path_entry),
-                                          GTK_ENTRY_ICON_PRIMARY,
-                                          icon);
-          g_object_unref (icon);
-        }
-      else
-        {
-          gtk_entry_set_icon_from_icon_name (GTK_ENTRY (path_entry),
-                                             GTK_ENTRY_ICON_PRIMARY,
-                                             GTK_STOCK_DIALOG_ERROR);
-        }
-    }
+    thunar_path_entry_update_icon (path_entry);
 
   /* cleanup */
   if (G_LIKELY (current_folder != NULL))
@@ -696,6 +657,52 @@ thunar_path_entry_changed (GtkEditable *editable)
     g_object_unref (folder_path);
   if (G_LIKELY (file_path != NULL))
     g_object_unref (file_path);
+}
+
+
+static void
+thunar_path_entry_update_icon (ThunarPathEntry *path_entry)
+{
+  GdkPixbuf          *icon = NULL;
+  GtkIconTheme       *icon_theme;
+  gint                icon_size;
+
+  if (path_entry->icon_factory == NULL)
+    {
+      icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (path_entry)));
+      path_entry->icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
+    }
+
+  gtk_widget_style_get (GTK_WIDGET (path_entry), "icon-size", &icon_size, NULL);
+
+  if (G_UNLIKELY (path_entry->current_file != NULL))
+    {
+      icon = thunar_icon_factory_load_file_icon (path_entry->icon_factory,
+                                                 path_entry->current_file,
+                                                 THUNAR_FILE_ICON_STATE_DEFAULT,
+                                                 icon_size);
+    }
+  else if (G_LIKELY (path_entry->current_folder != NULL))
+    {
+      icon = thunar_icon_factory_load_file_icon (path_entry->icon_factory,
+                                                 path_entry->current_folder,
+                                                 THUNAR_FILE_ICON_STATE_DEFAULT,
+                                                 icon_size);
+    }
+
+  if (icon != NULL)
+    {
+      gtk_entry_set_icon_from_pixbuf (GTK_ENTRY (path_entry),
+                                      GTK_ENTRY_ICON_PRIMARY,
+                                      icon);
+      g_object_unref (icon);
+    }
+  else
+    {
+      gtk_entry_set_icon_from_icon_name (GTK_ENTRY (path_entry),
+                                         GTK_ENTRY_ICON_PRIMARY,
+                                         GTK_STOCK_DIALOG_ERROR);
+    }
 }
 
 
@@ -1211,6 +1218,9 @@ thunar_path_entry_set_current_file (ThunarPathEntry *path_entry,
   /* setup the entry text */
   gtk_entry_set_text (GTK_ENTRY (path_entry), unescaped);
   g_free (unescaped);
+
+  /* update the icon */
+  thunar_path_entry_update_icon (path_entry);
 
   gtk_editable_set_position (GTK_EDITABLE (path_entry), -1);
 
