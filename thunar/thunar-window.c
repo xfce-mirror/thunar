@@ -625,7 +625,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
   gtk_binding_entry_add_signal (binding_set, GDK_BackSpace, 0, "back", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_F5, 0, "reload", 1, G_TYPE_BOOLEAN, TRUE);
   gtk_binding_entry_add_signal (binding_set, GDK_F9, 0, "toggle-sidepane", 0);
-  gtk_binding_entry_add_signal (binding_set, GDK_Alt_L, 0, "toggle-menubar", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_F10, 0, "toggle-menubar", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_KP_Add, GDK_CONTROL_MASK, "zoom-in", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_KP_Subtract, GDK_CONTROL_MASK, "zoom-out", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_KP_0, GDK_CONTROL_MASK, "zoom-reset", 0);
@@ -1199,8 +1199,6 @@ thunar_window_toggle_sidepane (ThunarWindow *window)
 static gboolean
 thunar_window_toggle_menubar (ThunarWindow *window)
 {
-  GtkAction *action;
-
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   if (!gtk_widget_get_visible (window->menubar))
@@ -1208,13 +1206,6 @@ thunar_window_toggle_menubar (ThunarWindow *window)
       /* temporarily show menu bar */
       gtk_widget_show (window->menubar);
       return TRUE;
-    }
-  else
-    {
-      /* or hide it again */
-      action = gtk_action_group_get_action (window->action_group, "view-menubar");
-      if (!gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action)))
-        gtk_widget_hide (window->menubar);
     }
 
   return FALSE;
