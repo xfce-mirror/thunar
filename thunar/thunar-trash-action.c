@@ -88,6 +88,9 @@ thunar_trash_action_init (ThunarTrashAction *trash_action)
 
       /* initially update the stock icon */
       thunar_trash_action_changed (trash_action, trash_action->trash_bin);
+
+      /* schedule a reload in idle (fix for bug #9513) */
+      thunar_file_reload_idle (trash_action->trash_bin);
     }
 }
 
