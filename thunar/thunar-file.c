@@ -3910,8 +3910,12 @@ thunar_file_unwatch (ThunarFile *file)
  *
  * You must be able to handle the case that @file is
  * destroyed during the reload call.
+ *
+ * Return value: As this function can be used as a callback function
+ * for thunar_file_reload_idle, it will always return FALSE to prevent
+ * being called repeatedly.
  **/
-void
+gboolean
 thunar_file_reload (ThunarFile *file)
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
@@ -3923,12 +3927,13 @@ thunar_file_reload (ThunarFile *file)
     {
       /* destroy the file if we cannot query any file information */
       thunar_file_destroy (file);
-      return;
+      return FALSE;
     }
 
   /* ... and tell others */
   thunar_file_changed (file);
-  
+
+  return FALSE;
 }
 
 

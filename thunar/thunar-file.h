@@ -239,7 +239,7 @@ const gchar      *thunar_file_get_icon_name              (ThunarFile            
 void              thunar_file_watch                      (ThunarFile              *file);
 void              thunar_file_unwatch                    (ThunarFile              *file);
 
-void              thunar_file_reload                     (ThunarFile              *file);
+gboolean          thunar_file_reload                     (ThunarFile              *file);
 void              thunar_file_reload_idle                (ThunarFile              *file);
 void              thunar_file_reload_parent              (ThunarFile              *file);
 
