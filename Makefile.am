@@ -31,6 +31,8 @@ SUBDIRS =								\
 
 distclean-local:
 	rm -rf *.cache *~
+	find . -type f -name Makefile -delete
+	find . -type f -name Makefile.in -delete
 
 distuninstallcheck_listfiles = 						\
 	find . -type f -print | grep -v ./share/icons/hicolor/icon-theme.cache
