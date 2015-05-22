@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 #
-# $Id$
-#
 # Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>
 #
 # This program is free software; you can redistribute it and/or modify it

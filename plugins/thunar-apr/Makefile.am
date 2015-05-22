@@ -1,5 +1,3 @@
-# $Id$
-
 AM_CPPFLAGS =								\
 	-I$(top_builddir)						\
 	-I$(top_builddir)/plugins					\
@@ -50,7 +48,7 @@ thunar_apr_la_LIBADD =							\
 
 thunar_apr_la_DEPENDENCIES =						\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la
-	
+
 
 EXTRA_DIST =								\
 	README

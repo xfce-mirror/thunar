@@ -1,5 +1,3 @@
-# $Id$
-
 iconsdir = $(datadir)/icons/hicolor/scalable/apps
 icons_DATA =								\
 	Thunar.svg

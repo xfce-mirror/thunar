@@ -1,5 +1,3 @@
-# $Id$
-
 SUBDIRS =								\
 	tex-open-terminal
 

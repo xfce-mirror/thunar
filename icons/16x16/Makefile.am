@@ -1,5 +1,3 @@
-# $Id$
-
 appsdir = $(datadir)/icons/hicolor/16x16/apps
 apps_DATA =								\
 	Thunar.png

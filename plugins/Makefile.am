@@ -1,5 +1,3 @@
-# $Id$
-
 if THUNAR_PLUGIN_APR
 THUNAR_APR_SUBDIRS = thunar-apr
 endif

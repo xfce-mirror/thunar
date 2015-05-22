@@ -1,5 +1,3 @@
-# $Id$
-
 EXTRA_DIST =								\
 	mime.xmi							\
 	overview.xmi

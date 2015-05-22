@@ -1,5 +1,3 @@
-# $Id$
-
 pixmapsdir = $(datadir)/pixmaps/Thunar
 pixmaps_DATA =								\
 	Thunar-about-logo.png

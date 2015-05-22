@@ -1,5 +1,3 @@
-dnl $Id$
-dnl
 dnl Copyright (c) 2004-2006
 dnl         The Thunar development team. All rights reserved.
 dnl

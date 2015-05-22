@@ -1,5 +1,3 @@
-# $Id$
-
 AUTOMAKE_OPTIONS = 1.8
 
 # The name of the module.
