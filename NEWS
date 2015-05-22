@@ -1,3 +1,12 @@
+1.6.10
+======
+- Do not track thunar/thunar-marshal.{c,h}
+- Remove Makefile and Makefile.in files when running distclean
+- Remove subversion $Id$ tags
+- Really fix trash state at startup (bug #9513 and #11913)
+- Use proper return type for thunar_file_reload (bug #11913)
+- Revert "Fix loading the trash bin status at startup (bug #9513)"
+
 1.6.9
 =====
 - Fix ThunarBulkRename script not supporting spaces (bug #9713) (Harald Judt)
