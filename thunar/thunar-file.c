@@ -795,13 +795,15 @@ thunar_file_monitor (GFileMonitor     *monitor,
       if (event_type == G_FILE_MONITOR_EVENT_MOVED)
         {
           /* reload the target file if cached */
+          if (other_path == NULL)
+            return;
           other_file = thunar_file_cache_lookup (other_path);
           if (other_file)
               thunar_file_reload (other_file);
           else
               other_file = thunar_file_get (other_path, NULL);
 
-          if (!other_file)
+          if (other_file == NULL)
               return;
 
           /* notify the thumbnail cache that we can now also move the thumbnail */
