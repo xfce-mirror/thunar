@@ -182,9 +182,9 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
     }
 
   g_snprintf(selection_name, 100, XFDESKTOP_SELECTION_FMT, xscreen);
-  xfce_selection_atom = XInternAtom (gdk_display, selection_name, False);
+  xfce_selection_atom = XInternAtom (gdk_x11_get_default_xdisplay(), selection_name, False);
 
-  if ((XGetSelectionOwner(GDK_DISPLAY(), xfce_selection_atom)))
+  if ((XGetSelectionOwner(gdk_x11_get_default_xdisplay(), xfce_selection_atom)))
     {
         desktop_type = DESKTOP_TYPE_XFCE;
     }
@@ -192,8 +192,8 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
     {
       /* FIXME: This is wrong, nautilus WINDOW_ID is not a selection */
       g_snprintf(selection_name, 100, NAUTILUS_SELECTION_FMT);
-      nautilus_selection_atom = XInternAtom (gdk_display, selection_name, False);
-      if((XGetSelectionOwner(GDK_DISPLAY(), nautilus_selection_atom)))
+      nautilus_selection_atom = XInternAtom (gdk_x11_get_default_xdisplay(), selection_name, False);
+      if((XGetSelectionOwner(gdk_x11_get_default_xdisplay(), nautilus_selection_atom)))
       {
           if (_has_gconftool)
               desktop_type = DESKTOP_TYPE_NAUTILUS;
