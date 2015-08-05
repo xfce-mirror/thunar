@@ -110,7 +110,6 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
   gtk_dialog_add_button (GTK_DIALOG (uca_chooser), GTK_STOCK_HELP, GTK_RESPONSE_HELP);
   gtk_dialog_add_button (GTK_DIALOG (uca_chooser), GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
   gtk_dialog_set_default_response (GTK_DIALOG (uca_chooser), GTK_RESPONSE_CLOSE);
-  gtk_dialog_set_has_separator (GTK_DIALOG (uca_chooser), FALSE);
   gtk_window_set_default_size (GTK_WINDOW (uca_chooser), 500, 350);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (uca_chooser), TRUE);
   gtk_window_set_title (GTK_WINDOW (uca_chooser), _("Custom Actions"));

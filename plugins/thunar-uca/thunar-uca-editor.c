@@ -108,7 +108,6 @@ thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
   gtk_dialog_add_button (GTK_DIALOG (uca_editor), GTK_STOCK_OK, GTK_RESPONSE_OK);
   gtk_dialog_set_alternative_button_order (GTK_DIALOG (uca_editor), GTK_RESPONSE_OK, GTK_RESPONSE_CANCEL, -1);
   gtk_dialog_set_default_response (GTK_DIALOG (uca_editor), GTK_RESPONSE_OK);
-  gtk_dialog_set_has_separator (GTK_DIALOG (uca_editor), FALSE);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (uca_editor), TRUE);
   gtk_window_set_resizable (GTK_WINDOW (uca_editor), FALSE);
 
