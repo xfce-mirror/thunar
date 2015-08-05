@@ -874,7 +874,6 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect (G_OBJECT (window->notebook), "popup-menu", G_CALLBACK (thunar_window_notebook_popup_menu), window);
   g_signal_connect (G_OBJECT (window->notebook), "create-window", G_CALLBACK (thunar_window_notebook_create_window), window);
   gtk_notebook_set_show_border (GTK_NOTEBOOK (window->notebook), FALSE);
-  gtk_notebook_set_homogeneous_tabs (GTK_NOTEBOOK (window->notebook), TRUE);
   gtk_notebook_set_scrollable (GTK_NOTEBOOK (window->notebook), TRUE);
   gtk_container_set_border_width (GTK_CONTAINER (window->notebook), 0);
   gtk_notebook_set_group_name (GTK_NOTEBOOK (window->notebook), "thunar-tabs");
