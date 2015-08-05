@@ -68,9 +68,9 @@ static void
 thunar_compact_view_init (ThunarCompactView *compact_view)
 {
  /* initialize the icon view properties */
-  exo_icon_view_set_margin (EXO_ICON_VIEW (GTK_BIN (compact_view)->child), 3);
-  exo_icon_view_set_layout_mode (EXO_ICON_VIEW (GTK_BIN (compact_view)->child), EXO_ICON_VIEW_LAYOUT_COLS);
-  exo_icon_view_set_orientation (EXO_ICON_VIEW (GTK_BIN (compact_view)->child), GTK_ORIENTATION_HORIZONTAL);
+  exo_icon_view_set_margin (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (compact_view))), 3);
+  exo_icon_view_set_layout_mode (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (compact_view))), EXO_ICON_VIEW_LAYOUT_COLS);
+  exo_icon_view_set_orientation (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (compact_view))), GTK_ORIENTATION_HORIZONTAL);
 
   /* setup the icon renderer */
   g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (compact_view)->icon_renderer),

@@ -410,6 +410,10 @@ thunar_text_renderer_get_size (GtkCellRenderer *renderer,
   gint                text_length;
   gint                text_width;
   gint                text_height;
+  gint                renderer_xpad;
+  gint                renderer_ypad;
+  gfloat              renderer_xalign;
+  gfloat              renderer_yalign;
 
   /* setup the new widget */
   thunar_text_renderer_set_widget (text_renderer, widget);
@@ -446,24 +450,27 @@ thunar_text_renderer_get_size (GtkCellRenderer *renderer,
     }
 
   /* update width/height */
+  gtk_cell_renderer_get_padding (renderer, &renderer_xpad, &renderer_ypad);
+  gtk_cell_renderer_get_alignment (renderer, &renderer_xalign, &renderer_yalign);
+
   if (G_LIKELY (width != NULL))
-    *width = text_width + 2 * renderer->xpad;
+    *width = text_width + 2 * renderer_xpad;
   if (G_LIKELY (height != NULL))
-    *height = text_height + 2 * renderer->ypad;
+    *height = text_height + 2 * renderer_ypad;
 
   /* update the x/y offsets */
   if (G_LIKELY (cell_area != NULL))
     {
       if (G_LIKELY (x_offset != NULL))
         {
-          *x_offset = ((gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL) ? (1.0 - renderer->xalign) : renderer->xalign)
-                    * (cell_area->width - text_width - (2 * renderer->xpad));
+          *x_offset = ((gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL) ? (1.0 - renderer_xalign) : renderer_xalign)
+                    * (cell_area->width - text_width - (2 * renderer_xpad));
           *x_offset = MAX (*x_offset, 0);
         }
 
       if (G_LIKELY (y_offset != NULL))
         {
-          *y_offset = renderer->yalign * (cell_area->height - text_height - (2 * renderer->ypad));
+          *y_offset = renderer_yalign * (cell_area->height - text_height - (2 * renderer_ypad));
           *y_offset = MAX (*y_offset, 0);
         }
     }
@@ -487,6 +494,13 @@ thunar_text_renderer_render (GtkCellRenderer     *renderer,
   gint                x_offset;
   gint                y_offset;
   PangoRectangle      rect;
+  gint                renderer_xpad;
+  gint                renderer_ypad;
+  gfloat              renderer_xalign;
+  gfloat              renderer_yalign;
+
+  gtk_cell_renderer_get_padding (renderer, &renderer_xpad, &renderer_ypad);
+  gtk_cell_renderer_get_alignment (renderer, &renderer_xalign, &renderer_yalign);
 
   /* setup the new widget */
   thunar_text_renderer_set_widget (text_renderer, widget);
@@ -543,12 +557,12 @@ thunar_text_renderer_render (GtkCellRenderer     *renderer,
     }
 
   /* calculate the real x-offset */
-  x_offset = ((gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL) ? (1.0 - renderer->xalign) : renderer->xalign)
-           * (cell_area->width - rect.width - (2 * renderer->xpad));
+  x_offset = ((gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL) ? (1.0 - renderer_xalign) : renderer_xalign)
+           * (cell_area->width - rect.width - (2 * renderer_xpad));
   x_offset = MAX (x_offset, 0);
 
   /* calculate the real y-offset */
-  y_offset = renderer->yalign * (cell_area->height - rect.height - (2 * renderer->ypad));
+  y_offset = renderer_yalign * (cell_area->height - rect.height - (2 * renderer_ypad));
   y_offset = MAX (y_offset, 0);
 
   /* render the state indicator */
@@ -573,7 +587,7 @@ thunar_text_renderer_render (GtkCellRenderer     *renderer,
       cairo_curve_to (cr, x0 + 5, y1, x0, y1, x0, y1 - 5);
       cairo_line_to (cr, x0, y0 + 5);
       cairo_curve_to (cr, x0, y0 + 5, x0, y0, x0 + 5, y0);
-      gdk_cairo_set_source_color (cr, &widget->style->base[state]);
+      gdk_cairo_set_source_color (cr, &gtk_widget_get_style (widget)->base[state]);
       cairo_fill (cr);
       cairo_destroy (cr);
     }
@@ -581,7 +595,7 @@ thunar_text_renderer_render (GtkCellRenderer     *renderer,
   /* draw the focus indicator */
   if (text_renderer->follow_state && (flags & GTK_CELL_RENDERER_FOCUSED) != 0)
     {
-      gtk_paint_focus (widget->style, window, gtk_widget_get_state (widget), NULL, widget, "icon_view",
+      gtk_paint_focus (gtk_widget_get_style (widget), window, gtk_widget_get_state (widget), NULL, widget, "icon_view",
                        cell_area->x + x_offset, cell_area->y + y_offset, rect.width, rect.height);
     }
 
@@ -595,10 +609,10 @@ thunar_text_renderer_render (GtkCellRenderer     *renderer,
     }
 
   /* draw the text */
-  gtk_paint_layout (widget->style, window, state, TRUE,
+  gtk_paint_layout (gtk_widget_get_style (widget), window, state, TRUE,
                     expose_area, widget, "cellrenderertext",
-                    cell_area->x + x_offset + renderer->xpad - rect.x,
-                    cell_area->y + y_offset + renderer->ypad - rect.y,
+                    cell_area->x + x_offset + renderer_xpad - rect.x,
+                    cell_area->y + y_offset + renderer_ypad - rect.y,
                     text_renderer->layout);
 }
 
@@ -614,9 +628,16 @@ thunar_text_renderer_start_editing (GtkCellRenderer     *renderer,
                                     GtkCellRendererState flags)
 {
   ThunarTextRenderer *text_renderer = THUNAR_TEXT_RENDERER (renderer);
+  GtkCellRendererMode renderer_mode;
+  gfloat              renderer_xalign;
+
+  g_object_get (G_OBJECT (renderer),
+                "mode", &renderer_mode,
+                "xalign", &renderer_xalign,
+                NULL);
 
   /* verify that we are editable */
-  if (renderer->mode != GTK_CELL_RENDERER_MODE_EDITABLE)
+  if (renderer_mode != GTK_CELL_RENDERER_MODE_EDITABLE)
     return NULL;
 
   /* allocate a new text entry widget to be used for editing */
@@ -624,7 +645,7 @@ thunar_text_renderer_start_editing (GtkCellRenderer     *renderer,
                                        "has-frame", FALSE,
                                        "text", text_renderer->text,
                                        "visible", TRUE,
-                                       "xalign", renderer->xalign,
+                                       "xalign", renderer_xalign,
                                        NULL);
 
   /* select the whole text */
@@ -696,7 +717,7 @@ thunar_text_renderer_set_widget (ThunarTextRenderer *text_renderer,
       pango_layout_set_single_paragraph_mode (text_renderer->layout, TRUE);
 
       /* calculate the average character dimensions */
-      metrics = pango_context_get_metrics (context, widget->style->font_desc, pango_context_get_language (context));
+      metrics = pango_context_get_metrics (context, gtk_widget_get_style (widget)->font_desc, pango_context_get_language (context));
       text_renderer->char_width = PANGO_PIXELS (pango_font_metrics_get_approximate_char_width (metrics));
       text_renderer->char_height = PANGO_PIXELS (pango_font_metrics_get_ascent (metrics) + pango_font_metrics_get_descent (metrics));
       pango_font_metrics_unref (metrics);
@@ -725,6 +746,9 @@ thunar_text_renderer_editing_done (GtkCellEditable    *editable,
 {
   const gchar *path;
   const gchar *text;
+  gboolean     editing_canceled;
+
+  g_object_get (G_OBJECT (editable), "editing-canceled", &editing_canceled, NULL);
 
   /* disconnect our signals from the cell editable */
   g_signal_handlers_disconnect_by_func (G_OBJECT (editable), thunar_text_renderer_editing_done, text_renderer);
@@ -732,10 +756,10 @@ thunar_text_renderer_editing_done (GtkCellEditable    *editable,
   g_signal_handlers_disconnect_by_func (G_OBJECT (editable), thunar_text_renderer_populate_popup, text_renderer);
 
   /* let the GtkCellRenderer class do it's part of the job */
-  gtk_cell_renderer_stop_editing (GTK_CELL_RENDERER (text_renderer), GTK_ENTRY (editable)->editing_canceled);
+  gtk_cell_renderer_stop_editing (GTK_CELL_RENDERER (text_renderer), editing_canceled);
 
   /* inform whoever is interested that we have new text (if not cancelled) */
-  if (G_LIKELY (!GTK_ENTRY (editable)->editing_canceled))
+  if (G_LIKELY (!editing_canceled))
     {
       text = gtk_entry_get_text (GTK_ENTRY (editable));
       path = g_object_get_data (G_OBJECT (editable), "thunar-text-renderer-path");

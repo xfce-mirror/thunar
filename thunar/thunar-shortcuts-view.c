@@ -591,8 +591,8 @@ thunar_shortcuts_view_drag_data_received (GtkWidget        *widget,
   if (G_LIKELY (!view->drop_data_ready))
     {
       /* extract the URI list from the selection data (if valid) */
-      if (info == TEXT_URI_LIST && selection_data->format == 8 && selection_data->length > 0)
-        view->drop_file_list = thunar_g_file_list_new_from_string ((const gchar *) selection_data->data);
+      if (info == TEXT_URI_LIST && gtk_selection_data_get_format (selection_data) == 8 && gtk_selection_data_get_length (selection_data) > 0)
+        view->drop_file_list = thunar_g_file_list_new_from_string ((const gchar *) gtk_selection_data_get_data (selection_data));
 
       /* reset the state */
       view->drop_data_ready = TRUE;
@@ -793,11 +793,11 @@ thunar_shortcuts_view_drag_motion (GtkWidget      *widget,
   else if (target == gdk_atom_intern_static_string ("GTK_TREE_MODEL_ROW"))
     {
       /* check the action that should be performed */
-      if (context->suggested_action == GDK_ACTION_LINK || (context->actions & GDK_ACTION_LINK) != 0)
+      if (gdk_drag_context_get_suggested_action (context) == GDK_ACTION_LINK || (gdk_drag_context_get_actions (context) & GDK_ACTION_LINK) != 0)
         action = GDK_ACTION_LINK;
-      else if (context->suggested_action == GDK_ACTION_COPY || (context->actions & GDK_ACTION_COPY) != 0)
+      else if (gdk_drag_context_get_suggested_action (context) == GDK_ACTION_COPY || (gdk_drag_context_get_actions (context) & GDK_ACTION_COPY) != 0)
         action = GDK_ACTION_COPY;
-      else if (context->suggested_action == GDK_ACTION_MOVE || (context->actions & GDK_ACTION_MOVE) != 0)
+      else if (gdk_drag_context_get_suggested_action (context) == GDK_ACTION_MOVE || (gdk_drag_context_get_actions (context) & GDK_ACTION_MOVE) != 0)
         action = GDK_ACTION_MOVE;
       else
         return FALSE;
@@ -1457,11 +1457,11 @@ thunar_shortcuts_view_compute_drop_actions (ThunarShortcutsView     *view,
   if (G_UNLIKELY (actions == 0))
     {
       /* check the action that should be performed */
-      if (context->suggested_action == GDK_ACTION_LINK || (context->actions & GDK_ACTION_LINK) != 0)
+      if (gdk_drag_context_get_suggested_action (context) == GDK_ACTION_LINK || (gdk_drag_context_get_actions (context) & GDK_ACTION_LINK) != 0)
         actions = GDK_ACTION_LINK;
-      else if (context->suggested_action == GDK_ACTION_COPY || (context->actions & GDK_ACTION_COPY) != 0)
+      else if (gdk_drag_context_get_suggested_action (context) == GDK_ACTION_COPY || (gdk_drag_context_get_actions (context) & GDK_ACTION_COPY) != 0)
         actions = GDK_ACTION_COPY;
-      else if (context->suggested_action == GDK_ACTION_MOVE || (context->actions & GDK_ACTION_MOVE) != 0)
+      else if (gdk_drag_context_get_suggested_action (context) == GDK_ACTION_MOVE || (gdk_drag_context_get_actions (context) & GDK_ACTION_MOVE) != 0)
         actions = GDK_ACTION_MOVE;
       else
         return 0;

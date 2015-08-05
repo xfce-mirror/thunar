@@ -385,12 +385,12 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   /* add the toolbar to the dialog */
   toolbar = gtk_ui_manager_get_widget (renamer_dialog->ui_manager, "/toolbar");
   exo_binding_new (G_OBJECT (renamer_dialog), "standalone", G_OBJECT (toolbar), "visible");
-  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (renamer_dialog)->vbox), toolbar, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (renamer_dialog))), toolbar, FALSE, FALSE, 0);
 
   /* create the main vbox */
   mbox = gtk_vbox_new (FALSE, 12);
   gtk_container_set_border_width (GTK_CONTAINER (mbox), 6);
-  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (renamer_dialog)->vbox), mbox, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (renamer_dialog))), mbox, TRUE, TRUE, 0);
   gtk_widget_show (mbox);
 
   /* create the scrolled window for the tree view */
@@ -1346,7 +1346,7 @@ thunar_renamer_dialog_drag_data_received (GtkWidget           *tree_view,
   _thunar_return_if_fail (GTK_IS_TREE_VIEW (tree_view));
 
   /* we only accept text/uri-list drops with format 8 and atleast one byte of data */
-  if (info == TARGET_TEXT_URI_LIST && selection_data->format == 8 && selection_data->length > 0)
+  if (info == TARGET_TEXT_URI_LIST && gtk_selection_data_get_format (selection_data) == 8 && gtk_selection_data_get_length (selection_data) > 0)
     {
       /* determine the renamer model */
       model = gtk_tree_view_get_model (GTK_TREE_VIEW (tree_view));
@@ -1368,7 +1368,7 @@ thunar_renamer_dialog_drag_data_received (GtkWidget           *tree_view,
         }
 
       /* determine the file list from the selection_data */
-      file_list = thunar_g_file_list_new_from_string ((const gchar *) selection_data->data);
+      file_list = thunar_g_file_list_new_from_string ((const gchar *) gtk_selection_data_get_data (selection_data));
 
       /* add all paths to the model */
       for (lp = file_list; lp != NULL; lp = lp->next)
@@ -1423,7 +1423,7 @@ thunar_renamer_dialog_drag_leave (GtkWidget           *tree_view,
       /* we use the tree view parent (the scrolled window),
        * as the drag_highlight doesn't work for tree views.
        */
-      gtk_drag_unhighlight (tree_view->parent);
+      gtk_drag_unhighlight (gtk_widget_get_parent (tree_view));
       renamer_dialog->drag_highlighted = FALSE;
     }
 }
@@ -1467,7 +1467,7 @@ thunar_renamer_dialog_drag_motion (GtkWidget           *tree_view,
           /* we use the tree view parent (the scrolled window),
            * as the drag_highlight doesn't work for tree views.
            */
-          gtk_drag_unhighlight (tree_view->parent);
+          gtk_drag_unhighlight (gtk_widget_get_parent (tree_view));
           renamer_dialog->drag_highlighted = FALSE;
         }
 
@@ -1507,7 +1507,7 @@ thunar_renamer_dialog_drag_motion (GtkWidget           *tree_view,
   else if (!renamer_dialog->drag_highlighted)
     {
       /* highlight the parent */
-      gtk_drag_highlight (tree_view->parent);
+      gtk_drag_highlight (gtk_widget_get_parent (tree_view));
       renamer_dialog->drag_highlighted = TRUE;
     }
 

@@ -161,8 +161,7 @@ static void
 thunar_icon_renderer_init (ThunarIconRenderer *icon_renderer)
 {
   /* use 1px padding */
-  GTK_CELL_RENDERER (icon_renderer)->xpad = 1;
-  GTK_CELL_RENDERER (icon_renderer)->ypad = 1;
+  gtk_cell_renderer_set_padding (GTK_CELL_RENDERER (icon_renderer), 1, 1);
 }
 
 
@@ -274,20 +273,27 @@ thunar_icon_renderer_get_size (GtkCellRenderer *renderer,
                                gint            *height)
 {
   ThunarIconRenderer *icon_renderer = THUNAR_ICON_RENDERER (renderer);
+  float xalign;
+  float yalign;
+  int xpad;
+  int ypad;
+
+  gtk_cell_renderer_get_alignment (renderer, &xalign, &yalign);
+  gtk_cell_renderer_get_padding (renderer, &xpad, &ypad);
 
   if (rectangle != NULL)
     {
       if (x_offset != NULL)
         {
-          *x_offset = ((gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL) ? 1.0 - renderer->xalign : renderer->xalign)
+          *x_offset = ((gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL) ? 1.0 - xalign : xalign)
                     * (rectangle->width - icon_renderer->size);
-          *x_offset = MAX (*x_offset, 0) + renderer->xpad;
+          *x_offset = MAX (*x_offset, 0) + xpad;
         }
 
       if (y_offset != NULL)
         {
-          *y_offset = renderer->yalign * (rectangle->height - icon_renderer->size);
-          *y_offset = MAX (*y_offset, 0) + renderer->ypad;
+          *y_offset = yalign * (rectangle->height - icon_renderer->size);
+          *y_offset = MAX (*y_offset, 0) + ypad;
         }
     }
   else
@@ -300,10 +306,10 @@ thunar_icon_renderer_get_size (GtkCellRenderer *renderer,
     }
 
   if (G_LIKELY (width != NULL))
-    *width = (gint) renderer->xpad * 2 + icon_renderer->size;
+    *width = (gint) xpad * 2 + icon_renderer->size;
 
   if (G_LIKELY (height != NULL))
-    *height = (gint) renderer->ypad * 2 + icon_renderer->size;
+    *height = (gint) ypad * 2 + icon_renderer->size;
 }
 
 
@@ -319,7 +325,7 @@ thunar_icon_renderer_color_selected (cairo_t   *cr,
 
   source = cairo_pattern_reference (cairo_get_source (cr));
   state = gtk_widget_has_focus (widget) ? GTK_STATE_SELECTED : GTK_STATE_ACTIVE;
-  gdk_cairo_set_source_color (cr, &widget->style->base[state]);
+  gdk_cairo_set_source_color (cr, &gtk_widget_get_style (widget)->base[state]);
   cairo_set_operator (cr, CAIRO_OPERATOR_MULTIPLY);
 
   cairo_mask (cr, source);
@@ -380,13 +386,16 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   gint                    emblem_size;
   gboolean                color_selected;
   gboolean                color_lighten;
+  gboolean                is_expanded;
 
   if (G_UNLIKELY (icon_renderer->file == NULL))
     return;
 
+  g_object_get (renderer, "is-expanded", &is_expanded, NULL);
+
   /* determine the icon state */
   icon_state = (icon_renderer->drop_file != icon_renderer->file)
-             ? renderer->is_expanded
+             ? is_expanded
               ? THUNAR_FILE_ICON_STATE_OPEN
               : THUNAR_FILE_ICON_STATE_DEFAULT
              : THUNAR_FILE_ICON_STATE_DROP;
@@ -454,7 +463,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
       g_object_unref (G_OBJECT (clipboard));
 
       /* check if we should render an insensitive icon */
-      if (G_UNLIKELY (gtk_widget_get_state (widget) == GTK_STATE_INSENSITIVE || !renderer->sensitive))
+      if (G_UNLIKELY (gtk_widget_get_state (widget) == GTK_STATE_INSENSITIVE || !gtk_cell_renderer_get_sensitive (renderer)))
         {
           /* allocate an icon source */
           icon_source = gtk_icon_source_new ();
@@ -463,7 +472,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
           gtk_icon_source_set_size (icon_source, GTK_ICON_SIZE_SMALL_TOOLBAR);
 
           /* render the insensitive icon */
-          temp = gtk_style_render_icon (widget->style, icon_source, gtk_widget_get_direction (widget),
+          temp = gtk_style_render_icon (gtk_widget_get_style (widget), icon_source, gtk_widget_get_direction (widget),
                                         GTK_STATE_INSENSITIVE, -1, widget, "gtkcellrendererpixbuf");
           g_object_unref (G_OBJECT (icon));
           icon = temp;

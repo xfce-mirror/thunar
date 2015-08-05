@@ -123,13 +123,13 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   /* add the "Help" button */
   button = gtk_button_new_from_stock (GTK_STOCK_HELP);
   g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (thunar_column_editor_help_clicked), column_editor);
-  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (column_editor)->action_area), button, FALSE, FALSE, 0);
-  gtk_button_box_set_child_secondary (GTK_BUTTON_BOX (GTK_DIALOG (column_editor)->action_area), button, TRUE);
+  gtk_box_pack_start (GTK_BOX (gtk_dialog_get_action_area (GTK_DIALOG (column_editor))), button, FALSE, FALSE, 0);
+  gtk_button_box_set_child_secondary (GTK_BUTTON_BOX (gtk_dialog_get_action_area (GTK_DIALOG (column_editor))), button, TRUE);
   gtk_widget_show (button);
 
   vbox = gtk_vbox_new (FALSE, 6);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 6);
-  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (column_editor)->vbox), vbox, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (column_editor))), vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
 
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);

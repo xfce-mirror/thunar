@@ -1333,9 +1333,12 @@ thunar_window_configure_event (GtkWidget         *widget,
                                GdkEventConfigure *event)
 {
   ThunarWindow *window = THUNAR_WINDOW (widget);
+  GtkAllocation widget_allocation;
+
+  gtk_widget_get_allocation (widget, &widget_allocation);
 
   /* check if we have a new dimension here */
-  if (widget->allocation.width != event->width || widget->allocation.height != event->height)
+  if (widget_allocation.width != event->width || widget_allocation.height != event->height)
     {
       /* drop any previous timer source */
       if (window->save_geometry_timer_id != 0)
@@ -3028,7 +3031,7 @@ thunar_window_action_open_templates (GtkAction    *action,
 
       hbox = gtk_hbox_new (FALSE, 6);
       gtk_container_set_border_width (GTK_CONTAINER (hbox), 8);
-      gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), hbox, TRUE, TRUE, 0);
+      gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), hbox, TRUE, TRUE, 0);
       gtk_widget_show (hbox);
 
       image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_INFO, GTK_ICON_SIZE_DIALOG);
@@ -3529,12 +3532,12 @@ thunar_window_notify_loading (ThunarView   *view,
       if (thunar_view_get_loading (view))
         {
           cursor = gdk_cursor_new (GDK_WATCH);
-          gdk_window_set_cursor (GTK_WIDGET (window)->window, cursor);
+          gdk_window_set_cursor (gtk_widget_get_window (GTK_WIDGET (window)), cursor);
           gdk_cursor_unref (cursor);
         }
       else
         {
-          gdk_window_set_cursor (GTK_WIDGET (window)->window, NULL);
+          gdk_window_set_cursor (gtk_widget_get_window (GTK_WIDGET (window)), NULL);
         }
     }
 }
@@ -3655,7 +3658,7 @@ thunar_window_save_geometry_timer (gpointer user_data)
       if (gtk_widget_get_visible (GTK_WIDGET (window)))
         {
           /* determine the current state of the window */
-          state = gdk_window_get_state (GTK_WIDGET (window)->window);
+          state = gdk_window_get_state (gtk_widget_get_window (GTK_WIDGET (window)));
 
           /* don't save geometry for maximized or fullscreen windows */
           if ((state & (GDK_WINDOW_STATE_MAXIMIZED | GDK_WINDOW_STATE_FULLSCREEN)) == 0)

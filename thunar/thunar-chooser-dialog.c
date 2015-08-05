@@ -189,7 +189,7 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
 
   /* create the main widget box */
   vbox = g_object_new (GTK_TYPE_VBOX, "border-width", 6, "spacing", 12, NULL);
-  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), vbox, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
 
   /* create the header box */
@@ -953,7 +953,7 @@ thunar_chooser_dialog_expand (ThunarChooserDialog *dialog)
 
   /* reset the cursor */
   if (G_LIKELY (gtk_widget_get_realized (GTK_WIDGET (dialog))))
-    gdk_window_set_cursor (GTK_WIDGET (dialog)->window, NULL);
+    gdk_window_set_cursor (gtk_widget_get_window (GTK_WIDGET (dialog)), NULL);
 
   /* grab focus to the tree view widget */
   if (G_LIKELY (gtk_widget_get_realized (dialog->tree_view)))

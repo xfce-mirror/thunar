@@ -321,6 +321,7 @@ thunar_templates_action_files_ready (ThunarJob             *job,
   GList             *items = NULL;
   GList             *parent_menus = NULL;
   GList             *pp;
+  GList             *menu_children = NULL;
   gchar             *label;
   gchar             *dot;
 
@@ -403,8 +404,9 @@ thunar_templates_action_files_ready (ThunarJob             *job,
     {
       /* determine the submenu for this directory item */
       submenu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (lp->data));
+      menu_children = gtk_container_get_children (GTK_CONTAINER (submenu));
 
-      if (GTK_MENU_SHELL (submenu)->children == NULL)
+      if (menu_children == NULL)
         {
           /* the directory submenu is empty, destroy it */
           gtk_widget_destroy (lp->data);
@@ -421,6 +423,7 @@ thunar_templates_action_files_ready (ThunarJob             *job,
   g_list_free (dirs);
   g_list_free (items);
   g_list_free (parent_menus);
+  g_list_free (menu_children);
 
   /* release the icon factory */
   g_object_unref (icon_factory);
@@ -438,6 +441,7 @@ thunar_templates_action_load_error (ThunarJob             *job,
 {
   GtkWidget *item;
   GtkWidget *menu;
+  GList     *menu_children = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
   _thunar_return_if_fail (error != NULL);
@@ -447,7 +451,7 @@ thunar_templates_action_load_error (ThunarJob             *job,
   menu = g_object_get_data (G_OBJECT (job), "menu");
 
   /* check if any items were added to the menu */
-  if (G_LIKELY (menu != NULL && GTK_MENU_SHELL (menu)->children == NULL))
+  if (G_LIKELY (menu != NULL && (menu_children = gtk_container_get_children( GTK_CONTAINER (menu))) == NULL))
     {
       /* tell the user that no templates were found */
       item = gtk_menu_item_new_with_label (error->message);
@@ -455,6 +459,8 @@ thunar_templates_action_load_error (ThunarJob             *job,
       gtk_widget_set_sensitive (item, FALSE);
       gtk_widget_show (item);
     }
+
+  g_list_free (menu_children);
 }
 
 

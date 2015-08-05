@@ -440,7 +440,7 @@ thunar_details_view_get_selected_items (ThunarStandardView *standard_view)
 
   _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view), NULL);
 
-  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (GTK_BIN (standard_view)->child));
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))));
   return gtk_tree_selection_get_selected_rows (selection, NULL);
 }
 
@@ -453,7 +453,7 @@ thunar_details_view_select_all (ThunarStandardView *standard_view)
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view));
 
-  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (GTK_BIN (standard_view)->child));
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))));
   gtk_tree_selection_select_all (selection);
 }
 
@@ -466,7 +466,7 @@ thunar_details_view_unselect_all (ThunarStandardView *standard_view)
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view));
 
-  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (GTK_BIN (standard_view)->child));
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))));
   gtk_tree_selection_unselect_all (selection);
 }
 
@@ -495,7 +495,7 @@ thunar_details_view_selection_invert (ThunarStandardView *standard_view)
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view));
 
-  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (GTK_BIN (standard_view)->child));
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))));
 
   /* block updates */
   g_signal_handlers_block_by_func (selection, thunar_standard_view_selection_changed, standard_view);
@@ -530,7 +530,7 @@ thunar_details_view_select_path (ThunarStandardView *standard_view,
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view));
 
-  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (GTK_BIN (standard_view)->child));
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))));
   gtk_tree_selection_select_path (selection, path);
 }
 
@@ -547,17 +547,17 @@ thunar_details_view_set_cursor (ThunarStandardView *standard_view,
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view));
 
   /* make sure the name renderer is editable */
-  mode = standard_view->name_renderer->mode;
-  standard_view->name_renderer->mode = GTK_CELL_RENDERER_MODE_EDITABLE;
+  g_object_get ( G_OBJECT (standard_view->name_renderer), "mode", &mode, NULL);
+  g_object_set ( G_OBJECT (standard_view->name_renderer), "mode", GTK_CELL_RENDERER_MODE_EDITABLE, NULL);
 
   /* tell the tree view to start editing the given row */
-  column = gtk_tree_view_get_column (GTK_TREE_VIEW (GTK_BIN (standard_view)->child), 0);
-  gtk_tree_view_set_cursor_on_cell (GTK_TREE_VIEW (GTK_BIN (standard_view)->child),
+  column = gtk_tree_view_get_column (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), 0);
+  gtk_tree_view_set_cursor_on_cell (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))),
                                     path, column, standard_view->name_renderer,
                                     start_editing);
 
   /* reset the name renderer mode */
-  standard_view->name_renderer->mode = mode;
+  g_object_set (G_OBJECT (standard_view->name_renderer), "mode", mode, NULL);
 }
 
 
@@ -574,8 +574,8 @@ thunar_details_view_scroll_to_path (ThunarStandardView *standard_view,
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view));
 
   /* tell the tree view to scroll to the given row */
-  column = gtk_tree_view_get_column (GTK_TREE_VIEW (GTK_BIN (standard_view)->child), 0);
-  gtk_tree_view_scroll_to_cell (GTK_TREE_VIEW (GTK_BIN (standard_view)->child), path, column, use_align, row_align, col_align);
+  column = gtk_tree_view_get_column (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), 0);
+  gtk_tree_view_scroll_to_cell (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), path, column, use_align, row_align, col_align);
 }
 
 
@@ -589,7 +589,7 @@ thunar_details_view_get_path_at_pos (ThunarStandardView *standard_view,
 
   _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view), NULL);
 
-  if (gtk_tree_view_get_dest_row_at_pos (GTK_TREE_VIEW (GTK_BIN (standard_view)->child), x, y, &path, NULL))
+  if (gtk_tree_view_get_dest_row_at_pos (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), x, y, &path, NULL))
     return path;
 
   return NULL;
@@ -604,7 +604,7 @@ thunar_details_view_get_visible_range (ThunarStandardView *standard_view,
 {
   _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view), FALSE);
 
-  return gtk_tree_view_get_visible_range (GTK_TREE_VIEW (GTK_BIN (standard_view)->child), start_path, end_path);
+  return gtk_tree_view_get_visible_range (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), start_path, end_path);
 }
 
 
@@ -614,7 +614,7 @@ thunar_details_view_highlight_path (ThunarStandardView *standard_view,
                                     GtkTreePath        *path)
 {
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view));
-  gtk_tree_view_set_drag_dest_row (GTK_TREE_VIEW (GTK_BIN (standard_view)->child), path, GTK_TREE_VIEW_DROP_INTO_OR_AFTER);
+  gtk_tree_view_set_drag_dest_row (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), path, GTK_TREE_VIEW_DROP_INTO_OR_AFTER);
 }
 
 
@@ -880,7 +880,7 @@ thunar_details_view_columns_changed (ThunarColumnModel *column_model,
       /* change the order of the column relative to its predecessor */
       if (G_LIKELY (column > 0))
         {
-          gtk_tree_view_move_column_after (GTK_TREE_VIEW (GTK_BIN (details_view)->child),
+          gtk_tree_view_move_column_after (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (details_view))),
                                            details_view->columns[column_order[column]],
                                            details_view->columns[column_order[column - 1]]);
         }
@@ -986,7 +986,7 @@ thunar_details_view_set_fixed_columns (ThunarDetailsView *details_view,
       /* for fixed columns mode, we can enable the fixed height
        * mode to improve the performance of the GtkTreeVeiw.
        */
-      gtk_tree_view_set_fixed_height_mode (GTK_TREE_VIEW (GTK_BIN (details_view)->child), fixed_columns);
+      gtk_tree_view_set_fixed_height_mode (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (details_view))), fixed_columns);
 
       /* notify listeners */
       g_object_notify (G_OBJECT (details_view), "fixed-columns");

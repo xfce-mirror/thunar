@@ -116,7 +116,7 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
 
   hbox = gtk_hbox_new (FALSE, 3);
   gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
-  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (uca_chooser)->vbox), hbox, FALSE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (uca_chooser))), hbox, FALSE, TRUE, 0);
   gtk_widget_show (hbox);
 
   image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_INFO, GTK_ICON_SIZE_DND);
@@ -131,7 +131,7 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
 
   hbox = gtk_hbox_new (FALSE, 3);
   gtk_container_set_border_width (GTK_CONTAINER (hbox), 6);
-  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (uca_chooser)->vbox), hbox, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (uca_chooser))), hbox, TRUE, TRUE, 0);
   gtk_widget_show (hbox);
 
   swin = gtk_scrolled_window_new (NULL, NULL);

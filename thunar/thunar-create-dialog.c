@@ -146,7 +146,7 @@ thunar_create_dialog_init (ThunarCreateDialog *dialog)
   gtk_window_set_default_size (GTK_WINDOW (dialog), 300, -1);
 
   table = g_object_new (GTK_TYPE_TABLE, "border-width", 6, "column-spacing", 6, "row-spacing", 3, NULL);
-  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), table, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), table, TRUE, TRUE, 0);
   gtk_widget_show (table);
 
   dialog->image = g_object_new (GTK_TYPE_IMAGE, "xpad", 6, "ypad", 6, NULL);

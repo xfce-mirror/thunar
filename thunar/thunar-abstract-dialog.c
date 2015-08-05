@@ -69,7 +69,7 @@ thunar_abstract_dialog_close (GtkDialog *dialog)
     {
       /* send a delete event to the dialog */
       event = gdk_event_new (GDK_DELETE);
-      event->any.window = g_object_ref (GTK_WIDGET (dialog)->window);
+      event->any.window = g_object_ref (gtk_widget_get_window (GTK_WIDGET (dialog)));
       event->any.send_event = TRUE;
       gtk_main_do_event (event);
       gdk_event_free (event);

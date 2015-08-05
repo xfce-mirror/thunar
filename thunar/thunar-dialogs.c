@@ -107,7 +107,7 @@ thunar_dialogs_show_rename_file (gpointer    parent,
     gtk_window_set_screen (GTK_WINDOW (dialog), screen);
 
   table = g_object_new (GTK_TYPE_TABLE, "border-width", 6, "column-spacing", 6, "row-spacing", 3, NULL);
-  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), table, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), table, TRUE, TRUE, 0);
   gtk_widget_show (table);
 
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (dialog));
@@ -567,7 +567,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
                         "row-spacing", 6,
                         "column-spacing", 5,
                         NULL);
-  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), table, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), table, TRUE, TRUE, 0);
   gtk_widget_show (table);
 
   image = gtk_image_new_from_icon_name ("stock_folder-copy", GTK_ICON_SIZE_BUTTON);

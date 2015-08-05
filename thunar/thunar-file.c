@@ -2024,13 +2024,13 @@ thunar_file_accepts_drop (ThunarFile     *file,
     return 0;
 
   /* default to whatever GTK+ thinks for the suggested action */
-  suggested_action = context->suggested_action;
+  suggested_action = gdk_drag_context_get_suggested_action (context);
 
   /* check if we have a writable directory here or an executable file */
   if (thunar_file_is_directory (file) && thunar_file_is_writable (file))
     {
       /* determine the possible actions */
-      actions = context->actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_ASK);
+      actions = gdk_drag_context_get_actions (context) & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_ASK);
 
       /* cannot create symbolic links in the trash or copy to the trash */
       if (thunar_file_is_trashed (file))
@@ -2108,7 +2108,7 @@ thunar_file_accepts_drop (ThunarFile     *file,
   else if (thunar_file_is_executable (file))
     {
       /* determine the possible actions */
-      actions = context->actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_PRIVATE);
+      actions = gdk_drag_context_get_actions (context) & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_PRIVATE);
     }
   else
     return 0;

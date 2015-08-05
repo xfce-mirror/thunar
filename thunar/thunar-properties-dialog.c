@@ -257,7 +257,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   dialog->notebook = gtk_notebook_new ();
   gtk_container_set_border_width (GTK_CONTAINER (dialog->notebook), 6);
-  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), dialog->notebook, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), dialog->notebook, TRUE, TRUE, 0);
   gtk_widget_show (dialog->notebook);
 
   table = gtk_table_new (16, 2, FALSE);

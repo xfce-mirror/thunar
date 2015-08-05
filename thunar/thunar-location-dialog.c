@@ -59,7 +59,7 @@ thunar_location_dialog_init (ThunarLocationDialog *location_dialog)
   GtkWidget *hbox;
   GtkWidget *label;
 
-  gtk_box_set_spacing (GTK_BOX (GTK_DIALOG (location_dialog)->vbox), 2);
+  gtk_box_set_spacing (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (location_dialog))), 2);
   gtk_container_set_border_width (GTK_CONTAINER (location_dialog), 5);
   gtk_window_set_default_size (GTK_WINDOW (location_dialog), 350, -1);
   gtk_window_set_title (GTK_WINDOW (location_dialog), _("Open Location"));
@@ -73,7 +73,7 @@ thunar_location_dialog_init (ThunarLocationDialog *location_dialog)
                        "border-width", 5,
                        "spacing", 12,
                        NULL);
-  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (location_dialog)->vbox), hbox, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (location_dialog))), hbox, FALSE, FALSE, 0);
   gtk_widget_show (hbox);
 
   label = gtk_label_new_with_mnemonic (_("_Location:"));

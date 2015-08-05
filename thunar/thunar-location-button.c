@@ -485,12 +485,12 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
   custom_icon = thunar_file_get_custom_icon (file);
   if (custom_icon != NULL)
     {
-      gtk_drag_source_set_icon_name (GTK_BIN (location_button)->child, custom_icon);
+      gtk_drag_source_set_icon_name (gtk_bin_get_child (GTK_BIN (location_button)), custom_icon);
     }
   else
     {
       icon_name = thunar_file_get_icon_name (file, location_button->file_icon_state, icon_theme);
-      gtk_drag_source_set_icon_name (GTK_BIN (location_button)->child, icon_name);
+      gtk_drag_source_set_icon_name (gtk_bin_get_child (GTK_BIN (location_button)), icon_name);
     }
 }
 
@@ -693,8 +693,8 @@ thunar_location_button_drag_data_received (GtkWidget            *button,
   if (G_LIKELY (!location_button->drop_data_ready))
     {
       /* extract the URI list from the selection data (if valid) */
-      if (selection_data->format == 8 && selection_data->length > 0)
-        location_button->drop_file_list = thunar_g_file_list_new_from_string ((const gchar *) selection_data->data);
+      if (gtk_selection_data_get_format (selection_data) == 8 && gtk_selection_data_get_length (selection_data) > 0)
+        location_button->drop_file_list = thunar_g_file_list_new_from_string ((const gchar *) gtk_selection_data_get_data (selection_data));
 
       /* reset the state */
       location_button->drop_data_ready = TRUE;
@@ -711,9 +711,9 @@ thunar_location_button_drag_data_received (GtkWidget            *button,
       if (G_LIKELY ((actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK)) != 0))
         {
           /* as the user what to do with the drop data */
-          action = (context->action == GDK_ACTION_ASK)
+          action = (gdk_drag_context_get_selected_action (context) == GDK_ACTION_ASK)
                  ? thunar_dnd_ask (button, location_button->file, location_button->drop_file_list, timestamp, actions)
-                 : context->action;
+                 : gdk_drag_context_get_selected_action (context);
 
           /* perform the requested action */
           if (G_LIKELY (action != 0))

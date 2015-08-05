@@ -301,11 +301,11 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
   gchar                       *data;
 
   /* check whether the retrieval worked */
-  if (G_LIKELY (selection_data->length > 0))
+  if (G_LIKELY (gtk_selection_data_get_length (selection_data) > 0))
     {
       /* be sure the selection data is zero-terminated */
-      data = (gchar *) selection_data->data;
-      data[selection_data->length] = '\0';
+      data = (gchar *) gtk_selection_data_get_data (selection_data);
+      data[gtk_selection_data_get_length (selection_data)] = '\0';
 
       /* check whether to copy or move */
       if (g_ascii_strncasecmp (data, "copy\n", 5) == 0)
@@ -472,7 +472,7 @@ thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
     case TARGET_GNOME_COPIED_FILES:
       prefix = manager->files_cutted ? "cut\n" : "copy\n";
       str = thunar_clipboard_manager_g_file_list_to_string (file_list, prefix, FALSE, &len);
-      gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) str, len);
+      gtk_selection_data_set (selection_data, gtk_selection_data_get_target (selection_data), 8, (guchar *) str, len);
       g_free (str);
       break;
 

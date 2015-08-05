@@ -113,7 +113,7 @@ thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
 
   notebook = gtk_notebook_new ();
   gtk_container_set_border_width (GTK_CONTAINER (notebook), 6);
-  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (uca_editor)->vbox), notebook, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (uca_editor))), notebook, TRUE, TRUE, 0);
   gtk_widget_show (notebook);
 
   /*
@@ -654,8 +654,8 @@ thunar_uca_editor_set_icon_name (ThunarUcaEditor *uca_editor,
   g_return_if_fail (THUNAR_UCA_IS_EDITOR (uca_editor));
 
   /* drop the previous button child */
-  if (GTK_BIN (uca_editor->icon_button)->child != NULL)
-    gtk_widget_destroy (GTK_BIN (uca_editor->icon_button)->child);
+  if (gtk_bin_get_child (GTK_BIN (uca_editor->icon_button)) != NULL)
+    gtk_widget_destroy (gtk_bin_get_child (GTK_BIN (uca_editor->icon_button)));
 
   /* setup the icon button */
   if (icon_name != NULL)

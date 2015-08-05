@@ -362,11 +362,11 @@ thunar_path_entry_focus (GtkWidget       *widget,
   if ((direction == GTK_DIR_TAB_FORWARD) && (gtk_widget_has_focus (widget)) && !control_pressed)
     {
       /* if we don't have a completion and the cursor is at the end of the line, we just insert the common prefix */
-      if (!path_entry->has_completion && gtk_editable_get_position (GTK_EDITABLE (path_entry)) == GTK_ENTRY (path_entry)->text_length)
+      if (!path_entry->has_completion && gtk_editable_get_position (GTK_EDITABLE (path_entry)) == gtk_entry_get_text_length (GTK_ENTRY (path_entry)))
         thunar_path_entry_common_prefix_append (path_entry, FALSE);
 
       /* place the cursor at the end */
-      gtk_editable_set_position (GTK_EDITABLE (path_entry), GTK_ENTRY (path_entry)->text_length);
+      gtk_editable_set_position (GTK_EDITABLE (path_entry), gtk_entry_get_text_length (GTK_ENTRY (path_entry)));
 
       return TRUE;
     }
@@ -469,11 +469,11 @@ thunar_path_entry_key_press_event (GtkWidget   *widget,
   if (G_UNLIKELY (event->keyval == GDK_Tab && (event->state & GDK_CONTROL_MASK) == 0))
     {
       /* if we don't have a completion and the cursor is at the end of the line, we just insert the common prefix */
-      if (!path_entry->has_completion && gtk_editable_get_position (GTK_EDITABLE (path_entry)) == GTK_ENTRY (path_entry)->text_length)
+      if (!path_entry->has_completion && gtk_editable_get_position (GTK_EDITABLE (path_entry)) == gtk_entry_get_text_length (GTK_ENTRY (path_entry)))
         thunar_path_entry_common_prefix_append (path_entry, FALSE);
 
       /* place the cursor at the end */
-      gtk_editable_set_position (GTK_EDITABLE (path_entry), GTK_ENTRY (path_entry)->text_length);
+      gtk_editable_set_position (GTK_EDITABLE (path_entry), gtk_entry_get_text_length (GTK_ENTRY (path_entry)));
 
       /* emit "changed", so the completion window is popped up */
       g_signal_emit_by_name (G_OBJECT (path_entry), "changed", 0);
