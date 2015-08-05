@@ -631,7 +631,7 @@ thunar_sbr_replace_renamer_pcre_update (ThunarSbrReplaceRenamer *replace_renamer
   else
     {
       /* check if the entry is realized */
-      if (GTK_WIDGET_REALIZED (replace_renamer->pattern_entry))
+      if (gtk_widget_get_realized (replace_renamer->pattern_entry))
         {
           /* reset background/text color */
           gtk_widget_modify_base (replace_renamer->pattern_entry, GTK_STATE_NORMAL, NULL);
