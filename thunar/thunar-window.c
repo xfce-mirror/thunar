@@ -3358,7 +3358,7 @@ thunar_window_menu_item_selected (GtkWidget    *menu_item,
   if (G_LIKELY (window->statusbar != NULL))
     {
       /* determine the action for the menu item */
-      action = gtk_widget_get_action (menu_item);
+      action = gtk_activatable_get_related_action (GTK_ACTIVATABLE (menu_item));
       if (G_UNLIKELY (action == NULL))
         return;
 
