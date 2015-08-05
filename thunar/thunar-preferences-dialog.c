@@ -27,6 +27,7 @@
 #include <thunar/thunar-details-view.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-enum-types.h>
+#include <thunar/thunar-gdk-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-view.h>
 #include <thunar/thunar-pango-extensions.h>
