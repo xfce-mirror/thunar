@@ -229,7 +229,7 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
       ||  shortcuts_icon_renderer->device != NULL))
     {
       /* load the volume icon */
-      icon_theme = gtk_icon_theme_get_for_screen (gdk_drawable_get_screen (window));
+      icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
 
       /* look up the icon info */
       if (shortcuts_icon_renderer->gicon != NULL)

@@ -392,7 +392,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
              : THUNAR_FILE_ICON_STATE_DROP;
 
   /* load the main icon */
-  icon_theme = gtk_icon_theme_get_for_screen (gdk_drawable_get_screen (window));
+  icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
   icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
   icon = thunar_icon_factory_load_file_icon (icon_factory, icon_renderer->file, icon_state, icon_renderer->size);
   if (G_UNLIKELY (icon == NULL))
