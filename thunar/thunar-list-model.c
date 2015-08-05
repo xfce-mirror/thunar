@@ -1091,7 +1091,7 @@ thunar_list_model_sort (ThunarListModel *store)
     new_order[g_sequence_iter_get_position (old_order[n])] = n;
 
   /* tell the view about the new item order */
-  path = gtk_tree_path_new_root ();
+  path = gtk_tree_path_new_first ();
   gtk_tree_model_rows_reordered (GTK_TREE_MODEL (store), path, NULL, new_order);
   gtk_tree_path_free (path);
 
@@ -1168,7 +1168,7 @@ thunar_list_model_file_changed (ThunarFileMonitor *file_monitor,
                 }
 
               /* tell the view about the new item order */
-              path = gtk_tree_path_new_root ();
+              path = gtk_tree_path_new_first ();
               gtk_tree_model_rows_reordered (GTK_TREE_MODEL (store), path, NULL, new_order);
               gtk_tree_path_free (path);
 
