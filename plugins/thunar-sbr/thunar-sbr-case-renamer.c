@@ -118,10 +118,10 @@ thunar_sbr_case_renamer_init (ThunarSbrCaseRenamer *case_renamer)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  combo = gtk_combo_box_new_text ();
+  combo = gtk_combo_box_text_new ();
   klass = g_type_class_ref (THUNAR_SBR_TYPE_CASE_RENAMER_MODE);
   for (n = 0; n < klass->n_values; ++n)
-    gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _(klass->values[n].value_nick));
+    gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(klass->values[n].value_nick));
   exo_mutual_binding_new (G_OBJECT (case_renamer), "mode", G_OBJECT (combo), "active");
   gtk_box_pack_start (GTK_BOX (hbox), combo, FALSE, FALSE, 0);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);

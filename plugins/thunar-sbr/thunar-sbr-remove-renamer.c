@@ -198,10 +198,10 @@ thunar_sbr_remove_renamer_init (ThunarSbrRemoveRenamer *remove_renamer)
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
 
-  combo = gtk_combo_box_new_text ();
+  combo = gtk_combo_box_text_new ();
   klass = g_type_class_ref (THUNAR_SBR_TYPE_OFFSET_MODE);
   for (n = 0; n < klass->n_values; ++n)
-    gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _(klass->values[n].value_nick));
+    gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(klass->values[n].value_nick));
   exo_mutual_binding_new (G_OBJECT (remove_renamer), "start-offset-mode", G_OBJECT (combo), "active");
   gtk_table_attach (GTK_TABLE (table), combo, 2, 3, 0, 1, GTK_FILL, 0, 0, 0);
   g_type_class_unref (klass);
@@ -233,10 +233,10 @@ thunar_sbr_remove_renamer_init (ThunarSbrRemoveRenamer *remove_renamer)
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
 
-  combo = gtk_combo_box_new_text ();
+  combo = gtk_combo_box_text_new ();
   klass = g_type_class_ref (THUNAR_SBR_TYPE_OFFSET_MODE);
   for (n = 0; n < klass->n_values; ++n)
-    gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _(klass->values[n].value_nick));
+    gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(klass->values[n].value_nick));
   exo_mutual_binding_new (G_OBJECT (remove_renamer), "end-offset-mode", G_OBJECT (combo), "active");
   gtk_table_attach (GTK_TABLE (table), combo, 2, 3, 1, 2, GTK_FILL, 0, 0, 0);
   g_type_class_unref (klass);

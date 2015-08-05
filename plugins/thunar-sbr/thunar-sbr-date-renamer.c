@@ -196,10 +196,10 @@ thunar_sbr_date_renamer_init (ThunarSbrDateRenamer *date_renamer)
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
-  combo = gtk_combo_box_new_text ();
+  combo = gtk_combo_box_text_new ();
   klass = g_type_class_ref (THUNAR_SBR_TYPE_DATE_MODE);
   for (n = 0; n < klass->n_values; ++n)
-    gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _(klass->values[n].value_nick));
+    gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(klass->values[n].value_nick));
   exo_mutual_binding_new (G_OBJECT (date_renamer), "mode", G_OBJECT (combo), "active");
   gtk_box_pack_start (GTK_BOX (hbox), combo, FALSE, FALSE, 0);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
@@ -258,10 +258,10 @@ thunar_sbr_date_renamer_init (ThunarSbrDateRenamer *date_renamer)
   adjustment = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (spinner));
   exo_mutual_binding_new (G_OBJECT (date_renamer), "offset", G_OBJECT (adjustment), "value");
 
-  combo = gtk_combo_box_new_text ();
+  combo = gtk_combo_box_text_new ();
   klass = g_type_class_ref (THUNAR_SBR_TYPE_OFFSET_MODE);
   for (n = 0; n < klass->n_values; ++n)
-    gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _(klass->values[n].value_nick));
+    gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(klass->values[n].value_nick));
   exo_mutual_binding_new (G_OBJECT (date_renamer), "offset-mode", G_OBJECT (combo), "active");
   gtk_box_pack_start (GTK_BOX (hbox), combo, FALSE, FALSE, 0);
   g_type_class_unref (klass);
