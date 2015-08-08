@@ -135,10 +135,9 @@ thunar_emblem_chooser_init (ThunarEmblemChooser *chooser)
   gtk_widget_show (viewport);
 
   /* setup the wrap table */
-  chooser->table = g_object_new (EXO_TYPE_WRAP_TABLE,
-                                 "border-width", 6,
+  chooser->table = g_object_new (GTK_TYPE_FLOW_BOX,
                                  "homogeneous", TRUE,
-                                 "col-spacing", 12,
+                                 "column-spacing", 12,
                                  "row-spacing", 12,
                                  NULL);
   gtk_container_add (GTK_CONTAINER (viewport), chooser->table);
@@ -314,6 +313,7 @@ thunar_emblem_chooser_file_changed (ThunarEmblemChooser *chooser)
   GList       *file_emblems;
   GList       *children;
   GList       *lp, *li;
+  GObject     *child;
   guint       *count;
   guint        n_files = 0;
 
@@ -344,22 +344,26 @@ thunar_emblem_chooser_file_changed (ThunarEmblemChooser *chooser)
   children = gtk_container_get_children (GTK_CONTAINER (chooser->table));
   for (lp = children; lp != NULL; lp = lp->next)
     {
-      emblem_name = g_object_get_data (G_OBJECT (lp->data), I_("thunar-emblem"));
+      child = G_OBJECT (lp->data);
+      if (GTK_IS_FLOW_BOX_CHILD (child))
+        child = G_OBJECT (gtk_bin_get_child (GTK_BIN (child)));
+
+      emblem_name = g_object_get_data (child, I_("thunar-emblem"));
       count = g_hash_table_lookup (emblem_names, emblem_name);
 
-      g_signal_handlers_block_by_func (lp->data, thunar_emblem_chooser_button_toggled, chooser);
+      g_signal_handlers_block_by_func (child, thunar_emblem_chooser_button_toggled, chooser);
 
       if (count == NULL || *count == n_files)
         {
-          gtk_toggle_button_set_inconsistent (GTK_TOGGLE_BUTTON (lp->data), FALSE);
-          gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lp->data), count != NULL);
+          gtk_toggle_button_set_inconsistent (GTK_TOGGLE_BUTTON (child), FALSE);
+          gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (child), count != NULL);
         }
       else
         {
-          gtk_toggle_button_set_inconsistent (GTK_TOGGLE_BUTTON (lp->data), TRUE);
+          gtk_toggle_button_set_inconsistent (GTK_TOGGLE_BUTTON (child), TRUE);
         }
 
-      g_signal_handlers_unblock_by_func (lp->data, thunar_emblem_chooser_button_toggled, chooser);
+      g_signal_handlers_unblock_by_func (child, thunar_emblem_chooser_button_toggled, chooser);
     }
   g_list_free (children);
 

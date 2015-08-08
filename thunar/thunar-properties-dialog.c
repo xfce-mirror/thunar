@@ -216,8 +216,8 @@ thunar_properties_dialog_class_init (ThunarPropertiesDialogClass *klass)
 
   /* setup the key bindings for the properties dialog */
   binding_set = gtk_binding_set_by_class (klass);
-  gtk_binding_entry_add_signal (binding_set, GDK_F5, 0, "reload", 0);
-  gtk_binding_entry_add_signal (binding_set, GDK_r, GDK_CONTROL_MASK, "reload", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KEY_F5, 0, "reload", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KEY_r, GDK_CONTROL_MASK, "reload", 0);
 }
 
 

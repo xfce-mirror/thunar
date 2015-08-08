@@ -268,7 +268,7 @@ tse_progress (const gchar *working_directory,
 
   /* allocate the progress dialog */
   dialog = gtk_dialog_new_with_buttons (_("Compressing files..."),
-                                        NULL, GTK_DIALOG_NO_SEPARATOR,
+                                        NULL, 0,
                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                         NULL);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_CANCEL);

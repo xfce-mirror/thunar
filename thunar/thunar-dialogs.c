@@ -94,7 +94,6 @@ thunar_dialogs_show_rename_file (gpointer    parent,
   dialog = gtk_dialog_new_with_buttons (title,
                                         window,
                                         GTK_DIALOG_MODAL
-                                        | GTK_DIALOG_NO_SEPARATOR
                                         | GTK_DIALOG_DESTROY_WITH_PARENT,
                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                         _("_Rename"), GTK_RESPONSE_OK,
@@ -539,7 +538,6 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   dialog = gtk_dialog_new_with_buttons (_("Confirm to replace files"),
                                         parent,
                                         GTK_DIALOG_MODAL
-                                        | GTK_DIALOG_NO_SEPARATOR
                                         | GTK_DIALOG_DESTROY_WITH_PARENT,
                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                         _("S_kip All"), THUNAR_JOB_RESPONSE_NO_ALL,

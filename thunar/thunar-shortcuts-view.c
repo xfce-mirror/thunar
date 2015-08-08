@@ -533,10 +533,10 @@ thunar_shortcuts_view_key_release_event (GtkWidget   *widget,
   /* work nicer with keyboard navigation */
   switch (event->keyval)
     {
-    case GDK_Up:
-    case GDK_Down:
-    case GDK_KP_Up:
-    case GDK_KP_Down:
+    case GDK_KEY_Up:
+    case GDK_KEY_Down:
+    case GDK_KEY_KP_Up:
+    case GDK_KEY_KP_Down:
       thunar_shortcuts_view_open (view, OPEN_IN_VIEW);
 
       /* keep focus on us */

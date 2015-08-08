@@ -36,7 +36,7 @@ enum
 
 
 static void     thunar_renamer_progress_finalize          (GObject                    *object);
-static void     thunar_renamer_progress_destroy           (GtkObject                  *object);
+static void     thunar_renamer_progress_destroy           (GtkWidget                  *object);
 static gboolean thunar_renamer_progress_next_idle         (gpointer                    user_data);
 static void     thunar_renamer_progress_next_idle_destroy (gpointer                    user_data);
 
@@ -72,14 +72,14 @@ G_DEFINE_TYPE (ThunarRenamerProgress, thunar_renamer_progress, GTK_TYPE_ALIGNMEN
 static void
 thunar_renamer_progress_class_init (ThunarRenamerProgressClass *klass)
 {
-  GtkObjectClass *gtkobject_class;
+  GtkWidgetClass *gtkwidget_class;
   GObjectClass   *gobject_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_renamer_progress_finalize;
 
-  gtkobject_class = GTK_OBJECT_CLASS (klass);
-  gtkobject_class->destroy = thunar_renamer_progress_destroy;
+  gtkwidget_class = GTK_WIDGET_CLASS (klass);
+  gtkwidget_class->destroy = thunar_renamer_progress_destroy;
 }
 
 
@@ -115,14 +115,14 @@ thunar_renamer_progress_finalize (GObject *object)
 
 
 static void
-thunar_renamer_progress_destroy (GtkObject *object)
+thunar_renamer_progress_destroy (GtkWidget *object)
 {
   ThunarRenamerProgress *renamer_progress = THUNAR_RENAMER_PROGRESS (object);
 
   /* exit the internal main loop on destroy */
   thunar_renamer_progress_cancel (renamer_progress);
 
-  (*GTK_OBJECT_CLASS (thunar_renamer_progress_parent_class)->destroy) (object);
+  (*GTK_WIDGET_CLASS (thunar_renamer_progress_parent_class)->destroy) (object);
 }
 
 

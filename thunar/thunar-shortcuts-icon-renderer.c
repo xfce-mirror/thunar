@@ -53,11 +53,10 @@ static void thunar_shortcuts_icon_renderer_set_property (GObject                
                                                          const GValue                     *value,
                                                          GParamSpec                       *pspec);
 static void thunar_shortcuts_icon_renderer_render       (GtkCellRenderer                  *renderer,
-                                                         GdkWindow                        *window,
+                                                         cairo_t                          *cr,
                                                          GtkWidget                        *widget,
-                                                         GdkRectangle                     *background_area,
-                                                         GdkRectangle                     *cell_area,
-                                                         GdkRectangle                     *expose_area,
+                                                         const GdkRectangle               *background_area,
+                                                         const GdkRectangle               *cell_area,
                                                          GtkCellRendererState              flags);
 
 
@@ -205,23 +204,25 @@ thunar_shortcuts_icon_renderer_set_property (GObject      *object,
 
 static void
 thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
-                                       GdkWindow           *window,
+                                       cairo_t             *cr,
                                        GtkWidget           *widget,
-                                       GdkRectangle        *background_area,
-                                       GdkRectangle        *cell_area,
-                                       GdkRectangle        *expose_area,
+                                       const GdkRectangle  *background_area,
+                                       const GdkRectangle  *cell_area,
                                        GtkCellRendererState flags)
 {
   ThunarShortcutsIconRenderer *shortcuts_icon_renderer = THUNAR_SHORTCUTS_ICON_RENDERER (renderer);
   GtkIconTheme                *icon_theme;
   GdkRectangle                 draw_area;
   GdkRectangle                 icon_area;
+  GdkRectangle                 clip_area;
   GtkIconInfo                 *icon_info;
   GdkPixbuf                   *icon = NULL;
   GdkPixbuf                   *temp;
   GIcon                       *gicon;
-  cairo_t                     *cr;
   gdouble                      alpha;
+
+  if (!gdk_cairo_get_clip_rectangle (cr, &clip_area))
+    return;
 
   /* check if we have a volume set */
   if (G_UNLIKELY (shortcuts_icon_renderer->gicon != NULL
@@ -278,14 +279,12 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
           icon_area.y = cell_area->y + (cell_area->height - icon_area.height) / 2;
 
           /* check whether the icon is affected by the expose event */
-          if (gdk_rectangle_intersect (expose_area, &icon_area, &draw_area))
+          if (gdk_rectangle_intersect (&clip_area, &icon_area, &draw_area))
             {
               /* render the invalid parts of the icon */
-              cr = gdk_cairo_create (window);
               thunar_gdk_cairo_set_source_pixbuf (cr, icon, icon_area.x, icon_area.y);
               gdk_cairo_rectangle (cr, &draw_area);
               cairo_paint_with_alpha (cr, alpha);
-              cairo_destroy (cr);
             }
 
           /* cleanup */
@@ -295,8 +294,8 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
   else
     {
       /* fallback to the default icon renderering */
-      (*GTK_CELL_RENDERER_CLASS (thunar_shortcuts_icon_renderer_parent_class)->render) (renderer, window, widget, background_area,
-                                                                                        cell_area, expose_area, flags);
+      (*GTK_CELL_RENDERER_CLASS (thunar_shortcuts_icon_renderer_parent_class)->render) (renderer, cr, widget, background_area,
+                                                                                        cell_area, flags);
     }
 }
 

@@ -51,7 +51,6 @@
 #include <thunar/thunar-standard-view-ui.h>
 #include <thunar/thunar-templates-action.h>
 #include <thunar/thunar-history.h>
-#include <thunar/thunar-text-renderer.h>
 #include <thunar/thunar-thumbnailer.h>
 
 #if defined(GDK_WINDOWING_X11)
@@ -117,8 +116,8 @@ static void                 thunar_standard_view_set_property               (GOb
 static void                 thunar_standard_view_realize                    (GtkWidget                *widget);
 static void                 thunar_standard_view_unrealize                  (GtkWidget                *widget);
 static void                 thunar_standard_view_grab_focus                 (GtkWidget                *widget);
-static gboolean             thunar_standard_view_expose_event               (GtkWidget                *widget,
-                                                                             GdkEventExpose           *event);
+static gboolean             thunar_standard_view_draw                       (GtkWidget                *widget,
+                                                                             cairo_t                  *cr);
 static GList               *thunar_standard_view_get_selected_files         (ThunarComponent          *component);
 static void                 thunar_standard_view_set_selected_files         (ThunarComponent          *component,
                                                                              GList                    *selected_files);
@@ -468,7 +467,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   gtkwidget_class->realize = thunar_standard_view_realize;
   gtkwidget_class->unrealize = thunar_standard_view_unrealize;
   gtkwidget_class->grab_focus = thunar_standard_view_grab_focus;
-  gtkwidget_class->expose_event = thunar_standard_view_expose_event;
+  gtkwidget_class->draw = thunar_standard_view_draw;
 
   klass->delete_selected_files = thunar_standard_view_delete_selected_files;
   klass->connect_ui_manager = (gpointer) exo_noop;
@@ -586,11 +585,11 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
 
   /* setup the key bindings for the standard views */
   binding_set = gtk_binding_set_by_class (klass);
-  gtk_binding_entry_add_signal (binding_set, GDK_BackSpace, GDK_CONTROL_MASK, "delete-selected-files", 0);
-  gtk_binding_entry_add_signal (binding_set, GDK_Delete, 0, "delete-selected-files", 0);
-  gtk_binding_entry_add_signal (binding_set, GDK_Delete, GDK_SHIFT_MASK, "delete-selected-files", 0);
-  gtk_binding_entry_add_signal (binding_set, GDK_KP_Delete, 0, "delete-selected-files", 0);
-  gtk_binding_entry_add_signal (binding_set, GDK_KP_Delete, GDK_SHIFT_MASK, "delete-selected-files", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KEY_BackSpace, GDK_CONTROL_MASK, "delete-selected-files", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KEY_Delete, 0, "delete-selected-files", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KEY_Delete, GDK_SHIFT_MASK, "delete-selected-files", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Delete, 0, "delete-selected-files", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Delete, GDK_SHIFT_MASK, "delete-selected-files", 0);
 }
 
 
@@ -711,9 +710,14 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   exo_binding_new (G_OBJECT (standard_view), "zoom-level", G_OBJECT (standard_view->icon_renderer), "size");
 
   /* setup the name renderer */
-  standard_view->name_renderer = thunar_text_renderer_new ();
+  standard_view->name_renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
+                                               "alignment", PANGO_ALIGN_CENTER,
+                                               "xalign", 0.5,
+                                               FALSE);
   g_object_ref_sink (G_OBJECT (standard_view->name_renderer));
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (standard_view->name_renderer), "follow-prelit");
+
+  /* TODO: prelit underline
+  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (standard_view->name_renderer), "follow-prelit");*/
 
   /* be sure to update the selection whenever the folder changes */
   g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::folder", G_CALLBACK (thunar_standard_view_selection_changed), standard_view);
@@ -1094,33 +1098,32 @@ thunar_standard_view_grab_focus (GtkWidget *widget)
 
 
 static gboolean
-thunar_standard_view_expose_event (GtkWidget      *widget,
-                                   GdkEventExpose *event)
+thunar_standard_view_draw (GtkWidget      *widget,
+                           cairo_t        *cr)
 {
   gboolean result = FALSE;
-  cairo_t *cr;
   GtkAllocation a;
 
   /* let the scrolled window do it's work */
-  result = (*GTK_WIDGET_CLASS (thunar_standard_view_parent_class)->expose_event) (widget, event);
+  cairo_save (cr);
+  result = (*GTK_WIDGET_CLASS (thunar_standard_view_parent_class)->draw) (widget, cr);
+  cairo_restore (cr);
 
   /* render the folder drop shadow */
   if (G_UNLIKELY (THUNAR_STANDARD_VIEW (widget)->priv->drop_highlight))
     {
       gtk_widget_get_allocation (widget, &a);
 
-      gtk_paint_shadow (gtk_widget_get_style (widget), gtk_widget_get_window (widget),
+      gtk_paint_shadow (gtk_widget_get_style (widget), cr,
                         GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-                        NULL, widget, "dnd",
+                        widget, "dnd",
                         a.x, a.y, a.width, a.height);
 
       /* the cairo version looks better here, so we use it if possible */
-      cr = gdk_cairo_create (gtk_widget_get_window (widget));
       cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
       cairo_set_line_width (cr, 1.0);
       cairo_rectangle (cr, a.x + 0.5, a.y + 0.5, a.width - 1, a.height - 1);
       cairo_stroke (cr);
-      cairo_destroy (cr);
     }
 
   return result;
@@ -2613,7 +2616,6 @@ thunar_standard_view_action_select_by_pattern (GtkAction          *action,
   dialog = gtk_dialog_new_with_buttons (_("Select by Pattern"),
                                         GTK_WINDOW (window),
                                         GTK_DIALOG_MODAL
-                                        | GTK_DIALOG_NO_SEPARATOR
                                         | GTK_DIALOG_DESTROY_WITH_PARENT,
                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                         _("_Select"), GTK_RESPONSE_OK,
@@ -3121,10 +3123,10 @@ thunar_standard_view_key_press_event (GtkWidget          *view,
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
   /* need to catch "/" and "~" first, as the views would otherwise start interactive search */
-  if ((event->keyval == GDK_slash || event->keyval == GDK_asciitilde || event->keyval == GDK_dead_tilde) && !(event->state & (~GDK_SHIFT_MASK & gtk_accelerator_get_default_mod_mask ())))
+  if ((event->keyval == GDK_KEY_slash || event->keyval == GDK_KEY_asciitilde || event->keyval == GDK_KEY_dead_tilde) && !(event->state & (~GDK_SHIFT_MASK & gtk_accelerator_get_default_mod_mask ())))
     {
       /* popup the location selector (in whatever way) */
-      if (event->keyval == GDK_dead_tilde)
+      if (event->keyval == GDK_KEY_dead_tilde)
         g_signal_emit (G_OBJECT (standard_view), standard_view_signals[START_OPEN_LOCATION], 0, "~");
       else
         g_signal_emit (G_OBJECT (standard_view), standard_view_signals[START_OPEN_LOCATION], 0, event->string);
@@ -3897,7 +3899,7 @@ thunar_standard_view_drag_scroll_timer (gpointer user_data)
     {
       /* determine pointer location and window geometry */
       gdk_window_get_pointer (gtk_widget_get_window (gtk_bin_get_child (GTK_BIN (standard_view))), &x, &y, NULL);
-      gdk_window_get_geometry (gtk_widget_get_window (gtk_bin_get_child (GTK_BIN (standard_view))), NULL, NULL, &w, &h, NULL);
+      gdk_window_get_geometry (gtk_widget_get_window (gtk_bin_get_child (GTK_BIN (standard_view))), NULL, NULL, &w, &h);
 
       /* check if we are near the edge (vertical) */
       offset = y - (2 * 20);

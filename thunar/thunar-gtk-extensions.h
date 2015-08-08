@@ -51,6 +51,8 @@ void             thunar_gtk_widget_set_tooltip                (GtkWidget        
 
 GMountOperation *thunar_gtk_mount_operation_new               (gpointer            parent);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+
 static inline int
 thunar_gtk_widget_get_allocation_x (GtkWidget *widget)
 {
@@ -110,6 +112,8 @@ thunar_gtk_widget_get_requisition_height (GtkWidget *widget)
 
     return requisition.height;
 }
+
+G_GNUC_END_IGNORE_DEPRECATIONS
 
 G_END_DECLS;
 

@@ -104,7 +104,6 @@ static void
 thunar_statusbar_init (ThunarStatusbar *statusbar)
 {
   statusbar->context_id = gtk_statusbar_get_context_id (GTK_STATUSBAR (statusbar), "Main text");
-  gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (statusbar), TRUE);
 }
 
 

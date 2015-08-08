@@ -515,7 +515,6 @@ thunar_permissions_chooser_ask_recursive (ThunarPermissionsChooser *chooser)
       /* allocate the question dialog */
       dialog = gtk_dialog_new_with_buttons (_("Question"), GTK_WINDOW (toplevel),
                                             GTK_DIALOG_DESTROY_WITH_PARENT
-                                            | GTK_DIALOG_NO_SEPARATOR
                                             | GTK_DIALOG_MODAL,
                                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                                             GTK_STOCK_NO, GTK_RESPONSE_NO,

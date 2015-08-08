@@ -60,7 +60,7 @@ enum
 
 
 
-static void     thunar_path_entry_editable_init                 (GtkEditableClass     *iface);
+static void     thunar_path_entry_editable_init                 (GtkEditableInterface *iface);
 static void     thunar_path_entry_finalize                      (GObject              *object);
 static void     thunar_path_entry_get_property                  (GObject              *object,  
                                                                  guint                 prop_id,
@@ -72,10 +72,14 @@ static void     thunar_path_entry_set_property                  (GObject        
                                                                  GParamSpec           *pspec);
 static gboolean thunar_path_entry_focus                         (GtkWidget            *widget,
                                                                  GtkDirectionType      direction);
-static gboolean thunar_path_entry_button_press_event            (GtkWidget            *widget,
-                                                                 GdkEventButton       *event);
-static gboolean thunar_path_entry_button_release_event          (GtkWidget            *widget,
-                                                                 GdkEventButton       *event);
+static void     thunar_path_entry_icon_press_event              (GtkEntry            *entry,
+                                                                 GtkEntryIconPosition icon_pos,
+                                                                 GdkEventButton      *event,
+                                                                 gpointer             userdata);
+static void     thunar_path_entry_icon_release_event            (GtkEntry            *entry,
+                                                                 GtkEntryIconPosition icon_pos,
+                                                                 GdkEventButton      *event,
+                                                                 gpointer             user_data);
 static gboolean thunar_path_entry_motion_notify_event           (GtkWidget            *widget,
                                                                  GdkEventMotion       *event);
 static gboolean thunar_path_entry_key_press_event               (GtkWidget            *widget,
@@ -149,7 +153,7 @@ static const GtkTargetEntry drag_targets[] =
 
 
 
-static GtkEditableClass *thunar_path_entry_editable_parent_iface;
+static GtkEditableInterface *thunar_path_entry_editable_parent_iface;
 
 
 
@@ -172,8 +176,6 @@ thunar_path_entry_class_init (ThunarPathEntryClass *klass)
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->focus = thunar_path_entry_focus;
-  gtkwidget_class->button_press_event = thunar_path_entry_button_press_event;
-  gtkwidget_class->button_release_event = thunar_path_entry_button_release_event;
   gtkwidget_class->motion_notify_event = thunar_path_entry_motion_notify_event;
   gtkwidget_class->drag_data_get = thunar_path_entry_drag_data_get;
 
@@ -208,7 +210,7 @@ thunar_path_entry_class_init (ThunarPathEntryClass *klass)
 
 
 static void
-thunar_path_entry_editable_init (GtkEditableClass *iface)
+thunar_path_entry_editable_init (GtkEditableInterface *iface)
 {
   thunar_path_entry_editable_parent_iface = g_type_interface_peek_parent (iface);
 
@@ -266,6 +268,10 @@ thunar_path_entry_init (ThunarPathEntry *path_entry)
   /* clear the auto completion whenever the cursor is moved manually or the selection is changed manually */
   g_signal_connect (G_OBJECT (path_entry), "notify::cursor-position", G_CALLBACK (thunar_path_entry_clear_completion), NULL);
   g_signal_connect (G_OBJECT (path_entry), "notify::selection-bound", G_CALLBACK (thunar_path_entry_clear_completion), NULL);
+
+  /* connect the icon signals */
+  g_signal_connect (G_OBJECT (path_entry), "icon-press", G_CALLBACK (thunar_path_entry_icon_press_event), NULL);
+  g_signal_connect (G_OBJECT (path_entry), "icon-release", G_CALLBACK (thunar_path_entry_icon_release_event), NULL);
 }
 
 
@@ -376,42 +382,38 @@ thunar_path_entry_focus (GtkWidget       *widget,
 
 
 
-static gboolean
-thunar_path_entry_button_press_event (GtkWidget      *widget,
-                                      GdkEventButton *event)
+static void
+thunar_path_entry_icon_press_event (GtkEntry            *entry,
+                                    GtkEntryIconPosition icon_pos,
+                                    GdkEventButton      *event,
+                                    gpointer             userdata)
 {
-  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
+  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (entry);
 
-  if (event->button == 1
-      && event->window == gtk_entry_get_icon_window (GTK_ENTRY (widget), GTK_ENTRY_ICON_PRIMARY))
+  if (event->button == 1 && icon_pos == GTK_ENTRY_ICON_PRIMARY)
     {
       /* consume the event */
       path_entry->drag_button = event->button;
       path_entry->drag_x = event->x;
       path_entry->drag_y = event->y;
-      return TRUE;
     }
-
-  return (*GTK_WIDGET_CLASS (thunar_path_entry_parent_class)->button_press_event) (widget, event);
 }
 
 
 
-static gboolean
-thunar_path_entry_button_release_event (GtkWidget      *widget,
-                                        GdkEventButton *event)
+static void
+thunar_path_entry_icon_release_event (GtkEntry            *entry,
+                                      GtkEntryIconPosition icon_pos,
+                                      GdkEventButton      *event,
+                                      gpointer             user_data)
 {
-  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
+  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (entry);
 
-  if (event->button == path_entry->drag_button
-      && event->window == gtk_entry_get_icon_window (GTK_ENTRY (widget), GTK_ENTRY_ICON_PRIMARY))
+  if (event->button == path_entry->drag_button && icon_pos == GTK_ENTRY_ICON_PRIMARY)
     {
       /* reset the drag button state */
       path_entry->drag_button = 0;
-      return TRUE;
     }
-
-  return (*GTK_WIDGET_CLASS (thunar_path_entry_parent_class)->button_release_event) (widget, event);
 }
 
 
@@ -428,7 +430,7 @@ thunar_path_entry_motion_notify_event (GtkWidget      *widget,
 
   if (path_entry->drag_button > 0
       && path_entry->current_file != NULL
-      && event->window == gtk_entry_get_icon_window (GTK_ENTRY (widget), GTK_ENTRY_ICON_PRIMARY)
+      /*FIXME && event->window == gtk_entry_get_icon_window (GTK_ENTRY (widget), GTK_ENTRY_ICON_PRIMARY)*/
       && gtk_drag_check_threshold (widget, path_entry->drag_x, path_entry->drag_y, event->x, event->y))
     {
       /* create the drag context */
@@ -466,7 +468,7 @@ thunar_path_entry_key_press_event (GtkWidget   *widget,
   ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
 
   /* check if we have a tab key press here and control is not pressed */
-  if (G_UNLIKELY (event->keyval == GDK_Tab && (event->state & GDK_CONTROL_MASK) == 0))
+  if (G_UNLIKELY (event->keyval == GDK_KEY_Tab && (event->state & GDK_CONTROL_MASK) == 0))
     {
       /* if we don't have a completion and the cursor is at the end of the line, we just insert the common prefix */
       if (!path_entry->has_completion && gtk_editable_get_position (GTK_EDITABLE (path_entry)) == gtk_entry_get_text_length (GTK_ENTRY (path_entry)))

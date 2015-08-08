@@ -28,7 +28,6 @@
 #include <thunar/thunar-details-view-ui.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-private.h>
-#include <thunar/thunar-text-renderer.h>
 #include <thunar/thunar-preferences.h>
 
 
@@ -237,11 +236,11 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                           G_CALLBACK (thunar_details_view_row_changed), details_view);
 
   /* allocate the shared right-aligned text renderer */
-  right_aligned_renderer = g_object_new (THUNAR_TYPE_TEXT_RENDERER, "xalign", 1.0f, NULL);
+  right_aligned_renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT, "xalign", 1.0f, NULL);
   g_object_ref_sink (G_OBJECT (right_aligned_renderer));
 
   /* allocate the shared left-aligned text renderer */
-  left_aligned_renderer = g_object_new (THUNAR_TYPE_TEXT_RENDERER, "xalign", 0.0f, NULL);
+  left_aligned_renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT, "xalign", 0.0f, NULL);
   g_object_ref_sink (G_OBJECT (left_aligned_renderer));
 
   /* allocate the tree view columns */
@@ -809,7 +808,7 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
                                      ThunarDetailsView *details_view)
 {
   /* popup context menu if "Menu" or "<Shift>F10" is pressed */
-  if (event->keyval == GDK_Menu || ((event->state & GDK_SHIFT_MASK) != 0 && event->keyval == GDK_F10))
+  if (event->keyval == GDK_KEY_Menu || ((event->state & GDK_SHIFT_MASK) != 0 && event->keyval == GDK_KEY_F10))
     {
       thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (details_view), 0, event->time);
       return TRUE;

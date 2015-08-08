@@ -358,11 +358,11 @@ thunar_tree_view_class_init (ThunarTreeViewClass *klass)
 
   /* setup the key bindings for the tree view */
   binding_set = gtk_binding_set_by_class (klass);
-  gtk_binding_entry_add_signal (binding_set, GDK_BackSpace, GDK_CONTROL_MASK, "delete-selected-files", 0);
-  gtk_binding_entry_add_signal (binding_set, GDK_Delete, 0, "delete-selected-files", 0);
-  gtk_binding_entry_add_signal (binding_set, GDK_Delete, GDK_SHIFT_MASK, "delete-selected-files", 0);
-  gtk_binding_entry_add_signal (binding_set, GDK_KP_Delete, 0, "delete-selected-files", 0);
-  gtk_binding_entry_add_signal (binding_set, GDK_KP_Delete, GDK_SHIFT_MASK, "delete-selected-files", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KEY_BackSpace, GDK_CONTROL_MASK, "delete-selected-files", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KEY_Delete, 0, "delete-selected-files", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KEY_Delete, GDK_SHIFT_MASK, "delete-selected-files", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Delete, 0, "delete-selected-files", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Delete, GDK_SHIFT_MASK, "delete-selected-files", 0);
 }
 
 
@@ -855,9 +855,9 @@ thunar_tree_view_key_press_event(GtkWidget   *widget,
   switch (event->keyval)
     {
     case GDK_KEY_Up:
-    case GDK_KP_Up:
+    case GDK_KEY_KP_Up:
     case GDK_KEY_Down:
-    case GDK_KP_Down:
+    case GDK_KEY_KP_Down:
       /* the default actions works good, but we want to update the right pane */
       GTK_WIDGET_CLASS (thunar_tree_view_parent_class)->key_press_event (widget, event);
 
@@ -870,7 +870,7 @@ thunar_tree_view_key_press_event(GtkWidget   *widget,
       break;
 
     case GDK_KEY_Left:
-    case GDK_KP_Left:
+    case GDK_KEY_KP_Left:
       /* if branch is expanded then collapse it */
       if (gtk_tree_view_row_expanded (GTK_TREE_VIEW (view), path))
         gtk_tree_view_collapse_row (GTK_TREE_VIEW (view), path);
@@ -903,7 +903,7 @@ thunar_tree_view_key_press_event(GtkWidget   *widget,
       break;
 
     case GDK_KEY_Right:
-    case GDK_KP_Right:
+    case GDK_KEY_KP_Right:
       /* if branch is not expanded then expand it */
       if (!gtk_tree_view_row_expanded (GTK_TREE_VIEW (view), path))
         gtk_tree_view_expand_row (GTK_TREE_VIEW (view), path, FALSE);
@@ -917,9 +917,9 @@ thunar_tree_view_key_press_event(GtkWidget   *widget,
       stopPropagation = TRUE;
       break;
 
-    case GDK_space:
-    case GDK_Return:
-    case GDK_KP_Enter:
+    case GDK_KEY_space:
+    case GDK_KEY_Return:
+    case GDK_KEY_KP_Enter:
       thunar_tree_view_open_selection (view);
       stopPropagation = TRUE;
       break;
@@ -2653,7 +2653,7 @@ thunar_tree_view_drag_scroll_timer (gpointer user_data)
     {
       /* determine pointer location and window geometry */
       gdk_window_get_pointer (gtk_widget_get_window (GTK_WIDGET (view)), NULL, &y, NULL);
-      gdk_window_get_geometry (gtk_widget_get_window (GTK_WIDGET (view)), NULL, NULL, NULL, &h, NULL);
+      gdk_window_get_geometry (gtk_widget_get_window (GTK_WIDGET (view)), NULL, NULL, NULL, &h);
 
       /* check if we are near the edge */
       offset = y - (2 * 20);

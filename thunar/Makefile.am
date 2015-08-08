@@ -191,8 +191,6 @@ thunar_SOURCES =							\
 	thunar-stock.h							\
 	thunar-templates-action.c					\
 	thunar-templates-action.h					\
-	thunar-text-renderer.c						\
-	thunar-text-renderer.h						\
 	thunar-thumbnail-cache.c					\
 	thunar-thumbnail-cache.h					\
 	thunar-thumbnailer.c						\

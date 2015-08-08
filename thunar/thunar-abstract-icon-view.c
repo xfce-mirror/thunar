@@ -224,7 +224,8 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
                                  "file", THUNAR_COLUMN_FILE);
 
   /* add the name renderer */
-  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer), "follow-state", TRUE, NULL);
+  /*FIXME text prelit*/
+  /*g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer), "follow-state", TRUE, NULL);*/
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer, TRUE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer,
                                  "text", THUNAR_COLUMN_NAME);
@@ -695,7 +696,7 @@ thunar_abstract_icon_view_key_press_event (ExoIconView            *view,
                                            ThunarAbstractIconView *abstract_icon_view)
 {
   /* popup context menu if "Menu" or "<Shift>F10" is pressed */
-  if (event->keyval == GDK_Menu || ((event->state & GDK_SHIFT_MASK) != 0 && event->keyval == GDK_F10))
+  if (event->keyval == GDK_KEY_Menu || ((event->state & GDK_SHIFT_MASK) != 0 && event->keyval == GDK_KEY_F10))
     {
       thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (abstract_icon_view), 0, event->time);
       return TRUE;

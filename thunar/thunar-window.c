@@ -622,19 +622,19 @@ thunar_window_class_init (ThunarWindowClass *klass)
 
   /* setup the key bindings for the windows */
   binding_set = gtk_binding_set_by_class (klass);
-  gtk_binding_entry_add_signal (binding_set, GDK_BackSpace, 0, "back", 0);
-  gtk_binding_entry_add_signal (binding_set, GDK_F5, 0, "reload", 1, G_TYPE_BOOLEAN, TRUE);
-  gtk_binding_entry_add_signal (binding_set, GDK_F9, 0, "toggle-sidepane", 0);
-  gtk_binding_entry_add_signal (binding_set, GDK_F10, 0, "toggle-menubar", 0);
-  gtk_binding_entry_add_signal (binding_set, GDK_KP_Add, GDK_CONTROL_MASK, "zoom-in", 0);
-  gtk_binding_entry_add_signal (binding_set, GDK_KP_Subtract, GDK_CONTROL_MASK, "zoom-out", 0);
-  gtk_binding_entry_add_signal (binding_set, GDK_KP_0, GDK_CONTROL_MASK, "zoom-reset", 0);
-  gtk_binding_entry_add_signal (binding_set, GDK_KP_Insert, GDK_CONTROL_MASK, "zoom-reset", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KEY_BackSpace, 0, "back", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KEY_F5, 0, "reload", 1, G_TYPE_BOOLEAN, TRUE);
+  gtk_binding_entry_add_signal (binding_set, GDK_KEY_F9, 0, "toggle-sidepane", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KEY_F10, 0, "toggle-menubar", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Add, GDK_CONTROL_MASK, "zoom-in", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Subtract, GDK_CONTROL_MASK, "zoom-out", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_0, GDK_CONTROL_MASK, "zoom-reset", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KEY_KP_Insert, GDK_CONTROL_MASK, "zoom-reset", 0);
 
   /* setup the key bindings for Alt+N */
   for (i = 0; i < 10; i++)
     {
-      gtk_binding_entry_add_signal (binding_set, GDK_0 + i, GDK_MOD1_MASK,
+      gtk_binding_entry_add_signal (binding_set, GDK_KEY_0 + i, GDK_MOD1_MASK,
                                     "tab-change", 1, G_TYPE_UINT, i - 1);
     }
 }
@@ -3022,8 +3022,7 @@ thunar_window_action_open_templates (GtkAction    *action,
     {
       /* display the "About Templates" dialog */
       dialog = gtk_dialog_new_with_buttons (_("About Templates"), GTK_WINDOW (window),
-                                            GTK_DIALOG_DESTROY_WITH_PARENT
-                                            | GTK_DIALOG_NO_SEPARATOR,
+                                            GTK_DIALOG_DESTROY_WITH_PARENT,
                                             GTK_STOCK_OK, GTK_RESPONSE_OK,
                                             NULL);
 

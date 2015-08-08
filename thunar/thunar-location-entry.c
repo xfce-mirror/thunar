@@ -143,7 +143,7 @@ thunar_location_entry_class_init (ThunarLocationEntryClass *klass)
 
   /* setup the key bindings for the location entry */
   binding_set = gtk_binding_set_by_class (klass);
-  gtk_binding_entry_add_signal (binding_set, GDK_Escape, 0, "reset", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KEY_Escape, 0, "reset", 0);
 }
 
 

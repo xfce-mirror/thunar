@@ -73,8 +73,12 @@ static ThunarFile    *thunar_location_buttons_get_current_directory     (ThunarN
 static void           thunar_location_buttons_set_current_directory     (ThunarNavigator            *navigator,
                                                                          ThunarFile                 *current_directory);
 static void           thunar_location_buttons_unmap                     (GtkWidget                  *widget);
-static void           thunar_location_buttons_size_request              (GtkWidget                  *widget,
-                                                                         GtkRequisition             *requisition);
+static void           thunar_location_buttons_get_preferred_width       (GtkWidget                  *widget,
+                                                                         gint                       *minimum,
+                                                                         gint                       *natural);
+static void           thunar_location_buttons_get_preferred_height      (GtkWidget                  *widget,
+                                                                         gint                       *minimum,
+                                                                         gint                       *natural);
 static void           thunar_location_buttons_size_allocate             (GtkWidget                  *widget,
                                                                          GtkAllocation              *allocation);
 static void           thunar_location_buttons_state_changed             (GtkWidget                  *widget,
@@ -204,7 +208,8 @@ thunar_location_buttons_class_init (ThunarLocationButtonsClass *klass)
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->unmap = thunar_location_buttons_unmap;
-  gtkwidget_class->size_request = thunar_location_buttons_size_request;
+  gtkwidget_class->get_preferred_width = thunar_location_buttons_get_preferred_width;
+  gtkwidget_class->get_preferred_height = thunar_location_buttons_get_preferred_height;
   gtkwidget_class->size_allocate = thunar_location_buttons_size_allocate;
   gtkwidget_class->state_changed = thunar_location_buttons_state_changed;
   gtkwidget_class->grab_notify = thunar_location_buttons_grab_notify;
@@ -541,39 +546,50 @@ thunar_location_buttons_unmap (GtkWidget *widget)
 
 
 static void
-thunar_location_buttons_size_request (GtkWidget      *widget,
-                                      GtkRequisition *requisition)
+thunar_location_buttons_get_preferred_width (GtkWidget  *widget,
+                                             gint       *minimum,
+                                             gint       *natural)
 {
   ThunarLocationButtons *buttons = THUNAR_LOCATION_BUTTONS (widget);
-  GtkRequisition         child_requisition;
+  gint                   width = 0, height = 0, child_width = 0, child_height = 0;
   GList                 *lp;
-  gint                   spacing;
-
-  gtk_widget_style_get (GTK_WIDGET (buttons),
-                        "spacing", &spacing,
-                        NULL);
-
-  requisition->width = 0;
-  requisition->height = 0;
 
   /* calculate the size of the biggest button */
   for (lp = buttons->list; lp != NULL; lp = lp->next)
     {
-      gtk_widget_size_request (GTK_WIDGET (lp->data), &child_requisition);
-      requisition->width = MAX (child_requisition.width, requisition->width);
-      requisition->height = MAX (child_requisition.height, requisition->height);
+      gtk_widget_get_preferred_width (GTK_WIDGET (lp->data), &child_width, NULL);
+      gtk_widget_get_preferred_height (GTK_WIDGET (lp->data), &child_height, NULL);
+      width = MAX (width, child_width);
+      height = MAX (height, child_height);
     }
 
   /* add space for the sliders if we have more than one path */
-  buttons->slider_width = MIN (requisition->height * 2 / 3 + 5, requisition->height);
+  buttons->slider_width = MIN (height * 2 / 3 + 5, height);
   if (buttons->list != NULL && buttons->list->next != NULL)
-    requisition->width += (spacing + buttons->slider_width) * 2;
+    width += (buttons->slider_width) * 2;
 
-  gtk_widget_size_request (buttons->left_slider, &child_requisition);
-  gtk_widget_size_request (buttons->right_slider, &child_requisition);
+  *minimum = *natural = width;
+}
 
-  requisition->width += gtk_container_get_border_width (GTK_CONTAINER (widget)) * 2;
-  requisition->height += gtk_container_get_border_width (GTK_CONTAINER (widget)) * 2;
+
+
+static void
+thunar_location_buttons_get_preferred_height (GtkWidget *widget,
+                                              gint      *minimum,
+                                              gint      *natural)
+{
+  ThunarLocationButtons *buttons = THUNAR_LOCATION_BUTTONS (widget);
+  gint                   height = 0, child_height = 0;
+  GList                 *lp;
+
+  /* calculate the size of the biggest button */
+  for (lp = buttons->list; lp != NULL; lp = lp->next)
+    {
+      gtk_widget_get_preferred_height (GTK_WIDGET (lp->data), &child_height, NULL);
+      height = MAX (height, child_height);
+    }
+
+  *minimum = *natural = height;
 }
 
 
