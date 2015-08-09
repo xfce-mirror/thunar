@@ -34,7 +34,6 @@
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-path-entry.h>
 #include <thunar/thunar-private.h>
-#include <thunar/thunar-shortcuts-model.h>
 
 
 
