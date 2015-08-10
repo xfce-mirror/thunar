@@ -107,8 +107,8 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
   GtkWidget         *vbox;
 
   /* configure the dialog window */
-  gtk_dialog_add_button (GTK_DIALOG (uca_chooser), GTK_STOCK_HELP, GTK_RESPONSE_HELP);
-  gtk_dialog_add_button (GTK_DIALOG (uca_chooser), GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
+  gtk_dialog_add_button (GTK_DIALOG (uca_chooser), _("_Help"), GTK_RESPONSE_HELP);
+  gtk_dialog_add_button (GTK_DIALOG (uca_chooser), _("_Close"), GTK_RESPONSE_CLOSE);
   gtk_dialog_set_default_response (GTK_DIALOG (uca_chooser), GTK_RESPONSE_CLOSE);
   gtk_window_set_default_size (GTK_WINDOW (uca_chooser), 500, 350);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (uca_chooser), TRUE);
@@ -119,7 +119,7 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (uca_chooser))), hbox, FALSE, TRUE, 0);
   gtk_widget_show (hbox);
 
-  image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_INFO, GTK_ICON_SIZE_DND);
+  image = gtk_image_new_from_icon_name ("dialog-information", GTK_ICON_SIZE_DND);
   gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
   gtk_widget_show (image);
 
@@ -174,7 +174,7 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
   g_signal_connect_swapped (G_OBJECT (uca_chooser->add_button), "clicked", G_CALLBACK (thunar_uca_chooser_add_clicked), uca_chooser);
   gtk_widget_show (uca_chooser->add_button);
 
-  image = gtk_image_new_from_stock (GTK_STOCK_ADD, GTK_ICON_SIZE_BUTTON);
+  image = gtk_image_new_from_icon_name ("list-add-symbolic", GTK_ICON_SIZE_BUTTON);
   gtk_container_add (GTK_CONTAINER (uca_chooser->add_button), image);
   gtk_widget_show (image);
 
@@ -184,7 +184,7 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
   g_signal_connect_swapped (G_OBJECT (uca_chooser->edit_button), "clicked", G_CALLBACK (thunar_uca_chooser_edit_clicked), uca_chooser);
   gtk_widget_show (uca_chooser->edit_button);
 
-  image = gtk_image_new_from_stock (GTK_STOCK_EDIT, GTK_ICON_SIZE_BUTTON);
+  image = gtk_image_new_from_icon_name ("emblem-system-symbolic", GTK_ICON_SIZE_BUTTON);
   gtk_container_add (GTK_CONTAINER (uca_chooser->edit_button), image);
   gtk_widget_show (image);
 
@@ -194,7 +194,7 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
   g_signal_connect_swapped (G_OBJECT (uca_chooser->delete_button), "clicked", G_CALLBACK (thunar_uca_chooser_delete_clicked), uca_chooser);
   gtk_widget_show (uca_chooser->delete_button);
 
-  image = gtk_image_new_from_stock (GTK_STOCK_DELETE, GTK_ICON_SIZE_BUTTON);
+  image = gtk_image_new_from_icon_name ("list-remove-symbolic", GTK_ICON_SIZE_BUTTON);
   gtk_container_add (GTK_CONTAINER (uca_chooser->delete_button), image);
   gtk_widget_show (image);
 
@@ -204,7 +204,7 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
   g_signal_connect_swapped (G_OBJECT (uca_chooser->up_button), "clicked", G_CALLBACK (thunar_uca_chooser_up_clicked), uca_chooser);
   gtk_widget_show (uca_chooser->up_button);
 
-  image = gtk_image_new_from_stock (GTK_STOCK_GO_UP, GTK_ICON_SIZE_BUTTON);
+  image = gtk_image_new_from_icon_name ("go-up-symbolic", GTK_ICON_SIZE_BUTTON);
   gtk_container_add (GTK_CONTAINER (uca_chooser->up_button), image);
   gtk_widget_show (image);
 
@@ -214,7 +214,7 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
   g_signal_connect_swapped (G_OBJECT (uca_chooser->down_button), "clicked", G_CALLBACK (thunar_uca_chooser_down_clicked), uca_chooser);
   gtk_widget_show (uca_chooser->down_button);
 
-  image = gtk_image_new_from_stock (GTK_STOCK_GO_DOWN, GTK_ICON_SIZE_BUTTON);
+  image = gtk_image_new_from_icon_name ("go-down-symbolic", GTK_ICON_SIZE_BUTTON);
   gtk_container_add (GTK_CONTAINER (uca_chooser->down_button), image);
   gtk_widget_show (image);
 
@@ -232,7 +232,7 @@ thunar_uca_chooser_key_press_event (GtkWidget   *widget,
                                     GdkEventKey *event)
 {
   /* close chooser window on Esc key press */
-  if (G_UNLIKELY (event->keyval == GDK_Escape))
+  if (G_UNLIKELY (event->keyval == GDK_KEY_Escape))
     {
       gtk_dialog_response (GTK_DIALOG (widget), GTK_RESPONSE_CLOSE);
       return TRUE;
@@ -434,8 +434,8 @@ thunar_uca_chooser_delete_clicked (ThunarUcaChooser *uca_chooser)
                                        GTK_BUTTONS_NONE,
                                        _("Are you sure that you want to delete\naction \"%s\"?"), name);
       gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("If you delete a custom action, it is permanently lost."));
-      gtk_dialog_add_buttons (GTK_DIALOG (dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                              GTK_STOCK_DELETE, GTK_RESPONSE_YES, NULL);
+      gtk_dialog_add_buttons (GTK_DIALOG (dialog), _("_Cancel"), GTK_RESPONSE_CANCEL,
+                              _("_Delete"), GTK_RESPONSE_YES, NULL);
       gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
       g_free (name);
       response = gtk_dialog_run (GTK_DIALOG (dialog));

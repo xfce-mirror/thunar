@@ -250,8 +250,8 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   dialog->provider_factory = thunarx_provider_factory_get_default ();
 
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
-                          GTK_STOCK_HELP, GTK_RESPONSE_HELP,
-                          GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
+                          _("_Help"), GTK_RESPONSE_HELP,
+                          _("_Close"), GTK_RESPONSE_CLOSE,
                           NULL);
   gtk_window_set_default_size (GTK_WINDOW (dialog), 500, 550);
 
@@ -801,8 +801,8 @@ thunar_properties_dialog_icon_button_clicked (GtkWidget              *button,
   /* allocate the icon chooser */
   title = g_strdup_printf (_("Select an Icon for \"%s\""), thunar_file_get_display_name (file));
   chooser = exo_icon_chooser_dialog_new (title, GTK_WINDOW (dialog),
-                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                         GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
+                                         _("_Cancel"), GTK_RESPONSE_CANCEL,
+                                         _("_OK"), GTK_RESPONSE_ACCEPT,
                                          NULL);
   gtk_dialog_set_alternative_button_order (GTK_DIALOG (chooser), GTK_RESPONSE_ACCEPT, GTK_RESPONSE_CANCEL, -1);
   gtk_dialog_set_default_response (GTK_DIALOG (chooser), GTK_RESPONSE_ACCEPT);

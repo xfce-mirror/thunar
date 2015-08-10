@@ -95,7 +95,7 @@ thunar_dialogs_show_rename_file (gpointer    parent,
                                         window,
                                         GTK_DIALOG_MODAL
                                         | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                        _("_Cancel"), GTK_RESPONSE_CANCEL,
                                         _("_Rename"), GTK_RESPONSE_OK,
                                         NULL);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
@@ -539,7 +539,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
                                         parent,
                                         GTK_DIALOG_MODAL
                                         | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                        _("_Cancel"), GTK_RESPONSE_CANCEL,
                                         _("S_kip All"), THUNAR_JOB_RESPONSE_NO_ALL,
                                         _("_Skip"), THUNAR_JOB_RESPONSE_NO,
                                         _("Replace _All"), THUNAR_JOB_RESPONSE_YES_ALL,
@@ -726,7 +726,7 @@ thunar_dialogs_show_job_error (GtkWindow *parent,
                                     "%s", primary->str);
   if (G_LIKELY (*secondary->str != '\0'))
     gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s", secondary->str);
-  gtk_dialog_add_button (GTK_DIALOG (message), GTK_STOCK_CLOSE, GTK_RESPONSE_CANCEL);
+  gtk_dialog_add_button (GTK_DIALOG (message), _("_Close"), GTK_RESPONSE_CANCEL);
   gtk_dialog_run (GTK_DIALOG (message));
   gtk_widget_destroy (message);
 
@@ -781,7 +781,7 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
   gtk_dialog_add_button (GTK_DIALOG (dialog), _("_Launch Anyway"), GTK_RESPONSE_OK);
   if (thunar_file_is_chmodable (file))
     gtk_dialog_add_button (GTK_DIALOG (dialog), _("Mark _Executable"), GTK_RESPONSE_APPLY);
-  gtk_dialog_add_button (GTK_DIALOG (dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+  gtk_dialog_add_button (GTK_DIALOG (dialog), _("_Cancel"), GTK_RESPONSE_CANCEL);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_CANCEL);
   if (screen != NULL && window == NULL)
     gtk_window_set_screen (GTK_WINDOW (dialog), screen);

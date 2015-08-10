@@ -1280,25 +1280,21 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
   menu = gtk_menu_new ();
 
   /* append the "Open" menu action */
-  item = gtk_image_menu_item_new_with_mnemonic (_("_Open"));
+  item = gtk_menu_item_new_with_mnemonic (_("_Open"));
   g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_open), view);
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_set_sensitive (item, (file != NULL || device != NULL));
   gtk_widget_show (item);
-
-  /* set the stock icon */
-  image = gtk_image_new_from_stock (GTK_STOCK_OPEN, GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
   
   /* append the "Open in New Tab" menu action */
-  item = gtk_image_menu_item_new_with_mnemonic (_("Open in New _Tab"));
+  item = gtk_menu_item_new_with_mnemonic (_("Open in New _Tab"));
   g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_open_in_new_tab), view);
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_set_sensitive (item, (file != NULL || device != NULL));
   gtk_widget_show (item);
 
   /* append the "Open in New Window" menu action */
-  item = gtk_image_menu_item_new_with_mnemonic (_("Open in New _Window"));
+  item = gtk_menu_item_new_with_mnemonic (_("Open in New _Window"));
   g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_open_in_new_window), view);
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_set_sensitive (item, (file != NULL || device != NULL));
@@ -1314,19 +1310,19 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
       if (thunar_device_get_kind (device) == THUNAR_DEVICE_KIND_VOLUME)
         {
           /* append the "Mount" menu action */
-          item = gtk_image_menu_item_new_with_mnemonic (_("_Mount"));
+          item = gtk_menu_item_new_with_mnemonic (_("_Mount"));
           gtk_widget_set_visible (item, thunar_device_can_mount (device));
           g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_mount), view);
           gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 
           /* append the "Unmount" menu action */
-          item = gtk_image_menu_item_new_with_mnemonic (_("_Unmount"));
+          item = gtk_menu_item_new_with_mnemonic (_("_Unmount"));
           gtk_widget_set_visible (item, thunar_device_can_unmount (device));
           g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_unmount), view);
           gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 
           /* append the "Eject" menu action */
-          item = gtk_image_menu_item_new_with_mnemonic (_("_Eject"));
+          item = gtk_menu_item_new_with_mnemonic (_("_Eject"));
           g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_eject), view);
           gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
           gtk_widget_set_sensitive (item, thunar_device_can_eject (device));
@@ -1335,7 +1331,7 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
       else
         {
           /* append the "Mount Volume" menu action */
-          item = gtk_image_menu_item_new_with_mnemonic (_("Disconn_ect"));
+          item = gtk_menu_item_new_with_mnemonic (_("Disconn_ect"));
           gtk_widget_set_sensitive (item, thunar_device_can_eject (device));
           g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_eject), view);
           gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
@@ -1350,7 +1346,7 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
   else if (G_UNLIKELY (file != NULL && thunar_file_is_trashed (file) && thunar_file_is_root (file)))
     {
       /* append the "Empty Trash" menu action */
-      item = gtk_image_menu_item_new_with_mnemonic (_("_Empty Trash"));
+      item = gtk_menu_item_new_with_mnemonic (_("_Empty Trash"));
       gtk_widget_set_sensitive (item, (thunar_file_get_item_count (file) > 0));
       g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_empty_trash), view);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
@@ -1366,18 +1362,12 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
   if (G_LIKELY (file != NULL && !thunar_file_is_trashed (file)))
     {
       /* append the "Create Folder" menu action */
-      item = gtk_image_menu_item_new_with_mnemonic (_("Create _Folder..."));
+      item = gtk_menu_item_new_with_mnemonic (_("Create _Folder..."));
       gtk_widget_set_sensitive (item, thunar_file_is_writable (file));
       g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_create_folder), view);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
       
-      /* set the stock icon */
-      icon = g_themed_icon_new ("folder-new");
-      image = gtk_image_new_from_gicon (icon, GTK_ICON_SIZE_MENU);
-      gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-      g_object_unref (icon);
-
       /* append a separator item */
       item = gtk_separator_menu_item_new ();
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
@@ -1393,26 +1383,18 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
           parent_file = thunar_file_get_parent (file, NULL);
 
           /* append the "Cut" menu action */
-          item = gtk_image_menu_item_new_with_mnemonic (_("Cu_t"));
+          item = gtk_menu_item_new_with_mnemonic (_("Cu_t"));
           g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_cut), view);
           gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
           gtk_widget_set_sensitive (item, (parent_file != NULL && thunar_file_is_writable (parent_file)));
           gtk_widget_show (item);
 
-          /* set the stock icon */
-          image = gtk_image_new_from_stock (GTK_STOCK_CUT, GTK_ICON_SIZE_MENU);
-          gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-
           /* append the "Copy" menu action */
-          item = gtk_image_menu_item_new_with_mnemonic (_("_Copy"));
+          item = gtk_menu_item_new_with_mnemonic (_("_Copy"));
           g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_copy), view);
           gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
           gtk_widget_set_sensitive (item, (parent_file != NULL));
           gtk_widget_show (item);
-
-          /* set the stock icon */
-          image = gtk_image_new_from_stock (GTK_STOCK_COPY, GTK_ICON_SIZE_MENU);
-          gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
 
           /* cleanup */
           if (G_LIKELY (parent_file != NULL))
@@ -1420,15 +1402,11 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
         }
 
       /* append the "Paste Into Folder" menu action */
-      item = gtk_image_menu_item_new_with_mnemonic (_("_Paste Into Folder"));
+      item = gtk_menu_item_new_with_mnemonic (_("_Paste Into Folder"));
       g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_paste_into_folder), view);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_set_sensitive (item, (thunar_file_is_writable (file) && thunar_clipboard_manager_get_can_paste (view->clipboard)));
       gtk_widget_show (item);
-
-      /* set the stock icon */
-      image = gtk_image_new_from_stock (GTK_STOCK_PASTE, GTK_ICON_SIZE_MENU);
-      gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
 
       /* "Delete" and "Rename" don't make much sense for devices */
       if (G_LIKELY (device == NULL))
@@ -1445,27 +1423,19 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
               && thunar_file_can_be_trashed (file))
             {
               /* append the "Move to Tash" menu action */
-              item = gtk_image_menu_item_new_with_mnemonic (_("Mo_ve to Trash"));
+              item = gtk_menu_item_new_with_mnemonic (_("Mo_ve to Trash"));
               g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_move_to_trash), view);
               gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
               gtk_widget_set_sensitive (item, (parent_file != NULL && thunar_file_is_writable (parent_file)));
               gtk_widget_show (item);
-
-              /* set the stock icon */
-              image = gtk_image_new_from_stock (THUNAR_STOCK_TRASH_FULL, GTK_ICON_SIZE_MENU);
-              gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
             }
 
           /* append the "Delete" menu action */
-          item = gtk_image_menu_item_new_with_mnemonic (_("_Delete"));
+          item = gtk_menu_item_new_with_mnemonic (_("_Delete"));
           g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_delete), view);
           gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
           gtk_widget_set_sensitive (item, (parent_file != NULL && thunar_file_is_writable (parent_file)));
           gtk_widget_show (item);
-
-          /* set the stock icon */
-          image = gtk_image_new_from_stock (GTK_STOCK_DELETE, GTK_ICON_SIZE_MENU);
-          gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
 
           /* cleanup */
           if (G_LIKELY (parent_file != NULL))
@@ -1480,7 +1450,7 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
               gtk_widget_show (item);
 
               /* append the "Rename" menu action */
-              item = gtk_image_menu_item_new_with_mnemonic (_("_Rename..."));
+              item = gtk_menu_item_new_with_mnemonic (_("_Rename..."));
               g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_rename), view);
               gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
               gtk_widget_set_sensitive (item, thunar_file_is_writable (file));
@@ -1539,15 +1509,11 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
     }
 
   /* append the "Properties" menu action */
-  item = gtk_image_menu_item_new_with_mnemonic (_("P_roperties..."));
+  item = gtk_menu_item_new_with_mnemonic (_("P_roperties..."));
   g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_properties), view);
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_set_sensitive (item, (file != NULL));
   gtk_widget_show (item);
-
-  /* set the stock icon */
-  image = gtk_image_new_from_stock (GTK_STOCK_PROPERTIES, GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
 
   /* run the menu on the view's screen (taking over the floating reference on the menu) */
   thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (view), NULL, NULL, (event != NULL) ? event->button : 0,

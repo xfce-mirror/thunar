@@ -195,7 +195,7 @@ tse_ask_compress (GList *infos)
           message = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
                                             _("Send \"%s\" as compressed archive?"), 
                                             g_file_info_get_display_name (tse_data->info));
-          gtk_dialog_add_button (GTK_DIALOG (message), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+          gtk_dialog_add_button (GTK_DIALOG (message), _("_Cancel"), GTK_RESPONSE_CANCEL);
           gtk_dialog_add_button (GTK_DIALOG (message), _("Send _directly"), TSE_RESPONSE_PLAIN);
           gtk_dialog_add_button (GTK_DIALOG (message), _("Send com_pressed"), TSE_RESPONSE_COMPRESS);
           gtk_dialog_set_default_response (GTK_DIALOG (message), TSE_RESPONSE_COMPRESS);
@@ -214,7 +214,7 @@ tse_ask_compress (GList *infos)
                                                       "Send %d files as compressed archive?",
                                                       n_infos),
                                             n_infos);
-          gtk_dialog_add_button (GTK_DIALOG (message), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+          gtk_dialog_add_button (GTK_DIALOG (message), _("_Cancel"), GTK_RESPONSE_CANCEL);
           gtk_dialog_add_button (GTK_DIALOG (message), _("Send _directly"), TSE_RESPONSE_PLAIN);
           gtk_dialog_add_button (GTK_DIALOG (message), _("Send as _archive"), TSE_RESPONSE_COMPRESS);
           gtk_dialog_set_default_response (GTK_DIALOG (message), TSE_RESPONSE_COMPRESS);
@@ -269,7 +269,7 @@ tse_progress (const gchar *working_directory,
   /* allocate the progress dialog */
   dialog = gtk_dialog_new_with_buttons (_("Compressing files..."),
                                         NULL, 0,
-                                        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                        _("_Cancel"), GTK_RESPONSE_CANCEL,
                                         NULL);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_CANCEL);
   gtk_window_set_default_size (GTK_WINDOW (dialog), 300, -1);

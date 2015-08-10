@@ -233,9 +233,9 @@ thunar_history_action_toolbar_configured (GtkWidget *tool_item,
 
   icon = gtk_bin_get_child (GTK_BIN (toggle_button));
   action = g_object_get_data (G_OBJECT (toggle_button), I_("thunar-history-action"));
-  gtk_image_set_from_stock (GTK_IMAGE (icon),
-                            gtk_action_get_stock_id (action),
-                            gtk_tool_item_get_icon_size (GTK_TOOL_ITEM (tool_item)));
+  gtk_image_set_from_icon_name (GTK_IMAGE (icon),
+                                gtk_action_get_icon_name (action),
+                                gtk_tool_item_get_icon_size (GTK_TOOL_ITEM (tool_item)));
 }
 
 
@@ -260,7 +260,7 @@ thunar_history_action_create_tool_item (GtkAction *action)
   gtk_button_set_focus_on_click (GTK_BUTTON (button), FALSE);
   gtk_widget_show (button);
 
-  icon = gtk_image_new_from_stock (gtk_action_get_stock_id (action),
+  icon = gtk_image_new_from_icon_name (gtk_action_get_icon_name (action),
       gtk_tool_item_get_icon_size (GTK_TOOL_ITEM (tool_item)));
   gtk_container_add (GTK_CONTAINER (button), icon);
   gtk_widget_show (icon);
@@ -350,7 +350,7 @@ thunar_history_action_show_menu (GtkWidget           *toggle_button,
  * @name     : the name for the action.
  * @label    : the label for the action.
  * @tooltip  : the tooltip for the action.
- * @stock_id : the stock-id for the action.
+ * @iconname : the icon name for the action.
  *
  * Allocates a new #ThunarHistoryAction with the specified
  * parameters.
@@ -361,7 +361,7 @@ GtkAction*
 thunar_history_action_new (const gchar *name,
                            const gchar *label,
                            const gchar *tooltip,
-                           const gchar *stock_id)
+                           const gchar *iconname)
 {
   gchar     *fulltip;
   GtkAction *action;
@@ -375,7 +375,7 @@ thunar_history_action_new (const gchar *name,
                          "name", name,
                          "label", label,
                          "tooltip", fulltip,
-                         "stock-id", stock_id,
+                         "icon-name", iconname,
                          NULL);
 
   g_free (fulltip);

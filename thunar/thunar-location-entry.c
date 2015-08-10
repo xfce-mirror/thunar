@@ -189,7 +189,7 @@ thunar_location_entry_init (ThunarLocationEntry *location_entry)
 
   /* put reload button in entry */
   gtk_entry_set_icon_from_icon_name (GTK_ENTRY (location_entry->path_entry),
-                                     GTK_ENTRY_ICON_SECONDARY, "view-refresh");
+                                     GTK_ENTRY_ICON_SECONDARY, "view-refresh-symbolic");
   gtk_entry_set_icon_tooltip_text (GTK_ENTRY (location_entry->path_entry),
                                    GTK_ENTRY_ICON_SECONDARY, _("Reload the current folder"));
   g_signal_connect (G_OBJECT (location_entry->path_entry), "icon-release",

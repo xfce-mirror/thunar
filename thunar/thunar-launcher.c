@@ -174,7 +174,7 @@ struct _ThunarLauncherPokeData
 
 static const GtkActionEntry action_entries[] =
 {
-  { "open", GTK_STOCK_OPEN, N_ ("_Open"), "<control>O", NULL, G_CALLBACK (thunar_launcher_action_open), },
+  { "open", "document-open", N_ ("_Open"), "<control>O", NULL, G_CALLBACK (thunar_launcher_action_open), },
   { "open-in-new-tab", NULL, N_ ("Open in New _Tab"), "<control><shift>P", NULL, G_CALLBACK (thunar_launcher_action_open_in_new_tab), },
   { "open-in-new-window", NULL, N_ ("Open in New _Window"), "<control><shift>O", NULL, G_CALLBACK (thunar_launcher_action_open_in_new_window), },
   { "open-with-other", NULL, N_ ("Open With Other _Application..."), NULL, N_ ("Choose another application with which to open the selected file"), G_CALLBACK (thunar_launcher_action_open_with_other), },
@@ -725,7 +725,7 @@ thunar_launcher_open_windows (ThunarLauncher *launcher,
                                                           n),
                                                 n);
       label = g_strdup_printf (ngettext ("Open %d New Window", "Open %d New Windows", n), n);
-      gtk_dialog_add_button (GTK_DIALOG (dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+      gtk_dialog_add_button (GTK_DIALOG (dialog), _("_Cancel"), GTK_RESPONSE_CANCEL);
       gtk_dialog_add_button (GTK_DIALOG (dialog), label, GTK_RESPONSE_YES);
       gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
       response = gtk_dialog_run (GTK_DIALOG (dialog));
@@ -817,7 +817,7 @@ thunar_launcher_update_idle (gpointer data)
 
       /* Prepare "Open" label and icon */
       gtk_action_set_label (launcher->action_open, _("_Open"));
-      gtk_action_set_stock_id (launcher->action_open, GTK_STOCK_OPEN);
+      gtk_action_set_icon_name (launcher->action_open, "document-open");
 
       if (n_selected_files == n_directories && n_directories >= 1)
         {
@@ -929,7 +929,7 @@ thunar_launcher_update_idle (gpointer data)
           /* turn the "Open" action into "Execute" */
           g_object_set (G_OBJECT (launcher->action_open),
                         "label", _("_Execute"),
-                        "stock-id", GTK_STOCK_EXECUTE,
+                        "icon-name", "system-run",
                         "tooltip", ngettext ("Execute the selected file", "Execute the selected files", n_selected_files),
                         NULL);
         }

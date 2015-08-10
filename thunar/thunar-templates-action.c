@@ -486,15 +486,11 @@ thunar_templates_action_load_finished (ThunarJob             *job,
       gtk_widget_show (item);
 
       /* add the "Empty File" item */
-      item = gtk_image_menu_item_new_with_mnemonic (_("_Empty File"));
+      item = gtk_menu_item_new_with_mnemonic (_("_Empty File"));
       g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (item_activated), 
                         templates_action);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
-
-      /* add the icon for the emtpy file item */
-      image = gtk_image_new_from_stock (GTK_STOCK_FILE, GTK_ICON_SIZE_MENU);
-      gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
     }
 
   g_signal_handlers_disconnect_matched (job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL,

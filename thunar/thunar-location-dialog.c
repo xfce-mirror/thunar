@@ -64,9 +64,9 @@ thunar_location_dialog_init (ThunarLocationDialog *location_dialog)
   gtk_window_set_default_size (GTK_WINDOW (location_dialog), 350, -1);
   gtk_window_set_title (GTK_WINDOW (location_dialog), _("Open Location"));
 
-  gtk_dialog_add_button (GTK_DIALOG (location_dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+  gtk_dialog_add_button (GTK_DIALOG (location_dialog), _("_Cancel"), GTK_RESPONSE_CANCEL);
 
-  open_button = gtk_dialog_add_button (GTK_DIALOG (location_dialog), GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT);
+  open_button = gtk_dialog_add_button (GTK_DIALOG (location_dialog), _("_Open"), GTK_RESPONSE_ACCEPT);
   gtk_window_set_default (GTK_WINDOW (location_dialog), open_button);
 
   hbox = g_object_new (GTK_TYPE_HBOX,

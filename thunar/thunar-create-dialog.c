@@ -138,7 +138,7 @@ thunar_create_dialog_init (ThunarCreateDialog *dialog)
 
   /* configure the dialog itself */
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
-                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                          _("_Cancel"), GTK_RESPONSE_CANCEL,
                           _("C_reate"), GTK_RESPONSE_OK,
                           NULL);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);

@@ -231,10 +231,6 @@ thunar_progress_view_init (ThunarProgressView *view)
   gtk_widget_set_can_focus (button, FALSE);
   gtk_widget_show (button);
 
-  image = gtk_image_new_from_stock (GTK_STOCK_CANCEL, GTK_ICON_SIZE_BUTTON);
-  gtk_container_add (GTK_CONTAINER (button), image);
-  gtk_widget_show (image);
-
   /* connect the view title to the action label */
   exo_binding_new (G_OBJECT (view), "title", G_OBJECT (label), "label");
 }

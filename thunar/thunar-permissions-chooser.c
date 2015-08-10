@@ -347,7 +347,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_table_attach (GTK_TABLE (chooser->table), hbox, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (hbox);
 
-  image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_LARGE_TOOLBAR);
+  image = gtk_image_new_from_icon_name ("dialog-warning", GTK_ICON_SIZE_LARGE_TOOLBAR);
   gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
   gtk_widget_show (image);
 
@@ -362,7 +362,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_table_attach (GTK_TABLE (chooser->table), hbox, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (hbox);
 
-  image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_LARGE_TOOLBAR);
+  image = gtk_image_new_from_icon_name ("dialog-warning", GTK_ICON_SIZE_LARGE_TOOLBAR);
   gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
   gtk_widget_show (image);
 
@@ -400,10 +400,6 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   g_signal_connect_swapped (G_OBJECT (button), "clicked", G_CALLBACK (thunar_permissions_chooser_job_cancel), chooser);
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
-
-  image = gtk_image_new_from_stock (GTK_STOCK_CANCEL, GTK_ICON_SIZE_MENU);
-  gtk_container_add (GTK_CONTAINER (button), image);
-  gtk_widget_show (image);
 }
 
 
@@ -516,9 +512,9 @@ thunar_permissions_chooser_ask_recursive (ThunarPermissionsChooser *chooser)
       dialog = gtk_dialog_new_with_buttons (_("Question"), GTK_WINDOW (toplevel),
                                             GTK_DIALOG_DESTROY_WITH_PARENT
                                             | GTK_DIALOG_MODAL,
-                                            GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                            GTK_STOCK_NO, GTK_RESPONSE_NO,
-                                            GTK_STOCK_YES, GTK_RESPONSE_YES,
+                                            _("_Cancel"), GTK_RESPONSE_CANCEL,
+                                            _("_No"), GTK_RESPONSE_NO,
+                                            _("_Yes"), GTK_RESPONSE_YES,
                                             NULL);
       gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
 
@@ -527,7 +523,7 @@ thunar_permissions_chooser_ask_recursive (ThunarPermissionsChooser *chooser)
       gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), hbox, TRUE, TRUE, 0);
       gtk_widget_show (hbox);
 
-      image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
+      image = gtk_image_new_from_icon_name ("dialog-question", GTK_ICON_SIZE_DIALOG);
       gtk_misc_set_alignment (GTK_MISC (image), 0.5f, 0.0f);
       gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
       gtk_widget_show (image);
@@ -1128,7 +1124,7 @@ thunar_permissions_chooser_fixperm_clicked (ThunarPermissionsChooser *chooser,
                                    GTK_MESSAGE_QUESTION,
                                    GTK_BUTTONS_NONE,
                                    _("Correct folder permissions automatically?"));
-  gtk_dialog_add_button (GTK_DIALOG (dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+  gtk_dialog_add_button (GTK_DIALOG (dialog), _("_Cancel"), GTK_RESPONSE_CANCEL);
   gtk_dialog_add_button (GTK_DIALOG (dialog), _("Correct _folder permissions"), GTK_RESPONSE_OK);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
   gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("The folder permissions will be reset to a consistent state. Only users "

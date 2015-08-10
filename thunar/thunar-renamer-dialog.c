@@ -190,11 +190,11 @@ static const GtkActionEntry action_entries[] =
   { "file-menu", NULL, N_ ("_File"), NULL, },
   { "sendto-menu", NULL, N_ ("_Send To"), NULL, },
   { "file-context-menu", NULL, N_ ("File Context Menu"), NULL, },
-  { "add-files", GTK_STOCK_ADD, N_ ("_Add Files..."), NULL, N_ ("Include additional files in the list of files to be renamed"), G_CALLBACK (thunar_renamer_dialog_action_add_files), },
-  { "remove-files", GTK_STOCK_REMOVE, NULL, NULL, NULL, G_CALLBACK (thunar_renamer_dialog_action_remove_files), },
-  { "clear", GTK_STOCK_CLEAR, N_ ("Clear"), NULL, N_ ("Clear the file list below"), G_CALLBACK (thunar_renamer_dialog_action_clear), },
-  { "about", GTK_STOCK_ABOUT, N_ ("_About"), NULL, N_ ("Display information about Thunar Bulk Rename"), G_CALLBACK (thunar_renamer_dialog_action_about), },
-  { "properties", GTK_STOCK_PROPERTIES, N_ ("_Properties..."), "<alt>Return", N_ ("View the properties of the selected file"), G_CALLBACK (thunar_renamer_dialog_action_properties), },
+  { "add-files", "list-add", N_ ("_Add Files..."), NULL, N_ ("Include additional files in the list of files to be renamed"), G_CALLBACK (thunar_renamer_dialog_action_add_files), },
+  { "remove-files", "list-remove", NULL, NULL, NULL, G_CALLBACK (thunar_renamer_dialog_action_remove_files), },
+  { "clear", "edit-clear", N_ ("Clear"), NULL, N_ ("Clear the file list below"), G_CALLBACK (thunar_renamer_dialog_action_clear), },
+  { "about", "help-about", N_ ("_About"), NULL, N_ ("Display information about Thunar Bulk Rename"), G_CALLBACK (thunar_renamer_dialog_action_about), },
+  { "properties", "document-properties", N_ ("_Properties..."), "<alt>Return", N_ ("View the properties of the selected file"), G_CALLBACK (thunar_renamer_dialog_action_properties), },
 };
 
 /* Target types for dropping to the tree view */
@@ -352,8 +352,8 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   gtk_window_set_title (GTK_WINDOW (renamer_dialog), _("Rename Multiple Files"));
 
   /* add the Cancel/Close buttons */
-  renamer_dialog->cancel_button = gtk_dialog_add_button (GTK_DIALOG (renamer_dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
-  renamer_dialog->close_button = gtk_dialog_add_button (GTK_DIALOG (renamer_dialog), GTK_STOCK_CLOSE, GTK_RESPONSE_DELETE_EVENT);
+  renamer_dialog->cancel_button = gtk_dialog_add_button (GTK_DIALOG (renamer_dialog), _("_Cancel"), GTK_RESPONSE_CANCEL);
+  renamer_dialog->close_button = gtk_dialog_add_button (GTK_DIALOG (renamer_dialog), _("_Close"), GTK_RESPONSE_DELETE_EVENT);
   gtk_widget_hide (renamer_dialog->close_button);
 
   /* add the "Rename Files" button */
@@ -503,7 +503,7 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
       gtk_box_pack_start (GTK_BOX (rbox), button, FALSE, FALSE, 0);
       gtk_widget_show (button);
 
-      image = gtk_image_new_from_stock (GTK_STOCK_HELP, GTK_ICON_SIZE_BUTTON);
+      image = gtk_image_new_from_icon_name ("help-browser", GTK_ICON_SIZE_BUTTON);
       gtk_container_add (GTK_CONTAINER (button), image);
       gtk_widget_show (image);
 
@@ -601,7 +601,7 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
       gtk_container_add (GTK_CONTAINER (frame), hbox);
       gtk_widget_show (hbox);
 
-      image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_DIALOG);
+      image = gtk_image_new_from_icon_name ("dialog-error", GTK_ICON_SIZE_DIALOG);
       gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
       gtk_widget_show (image);
 
@@ -1057,8 +1057,8 @@ thunar_renamer_dialog_action_add_files (GtkAction           *action,
   chooser = gtk_file_chooser_dialog_new (_("Select files to rename"),
                                          GTK_WINDOW (renamer_dialog),
                                          GTK_FILE_CHOOSER_ACTION_OPEN,
-                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                         GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+                                         _("_Cancel"), GTK_RESPONSE_CANCEL,
+                                         _("_Open"), GTK_RESPONSE_ACCEPT,
                                          NULL);
   gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER (chooser), TRUE);
   gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (chooser), TRUE);

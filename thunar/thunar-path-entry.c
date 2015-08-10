@@ -703,7 +703,7 @@ thunar_path_entry_update_icon (ThunarPathEntry *path_entry)
     {
       gtk_entry_set_icon_from_icon_name (GTK_ENTRY (path_entry),
                                          GTK_ENTRY_ICON_PRIMARY,
-                                         GTK_STOCK_DIALOG_ERROR);
+                                         "dialog-error-symbolic");
     }
 }
 

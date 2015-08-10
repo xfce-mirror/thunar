@@ -227,8 +227,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   /* add "Help" and "Close" buttons */
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
-                          GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
-                          GTK_STOCK_HELP, GTK_RESPONSE_HELP,
+                          _("_Close"), GTK_RESPONSE_CLOSE,
+                          _("_Help"), GTK_RESPONSE_HELP,
                           NULL);
 
   notebook = gtk_notebook_new ();

@@ -160,13 +160,13 @@ static void
 thunar_history_init (ThunarHistory *history)
 {
   /* create the "back" action */
-  history->action_back = thunar_history_action_new ("back", _("Back"), _("Go to the previous visited folder"), GTK_STOCK_GO_BACK);
+  history->action_back = thunar_history_action_new ("back", _("Back"), _("Go to the previous visited folder"), "go-previous-symbolic");
   g_signal_connect (G_OBJECT (history->action_back), "activate", G_CALLBACK (thunar_history_action_back), history);
   g_signal_connect (G_OBJECT (history->action_back), "show-menu", G_CALLBACK (thunar_history_show_menu), history);
   gtk_action_set_sensitive (history->action_back, FALSE);
 
   /* create the "forward" action */
-  history->action_forward = thunar_history_action_new ("forward", _("Forward"), _("Go to the next visited folder"), GTK_STOCK_GO_FORWARD);
+  history->action_forward = thunar_history_action_new ("forward", _("Forward"), _("Go to the next visited folder"), "go-next-symbolic");
   g_signal_connect (G_OBJECT (history->action_forward), "activate", G_CALLBACK (thunar_history_action_forward), history);
   g_signal_connect (G_OBJECT (history->action_forward), "show-menu", G_CALLBACK (thunar_history_show_menu), history);
   gtk_action_set_sensitive (history->action_forward, FALSE);

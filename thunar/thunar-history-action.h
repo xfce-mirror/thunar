@@ -39,7 +39,7 @@ GType      thunar_history_action_get_type (void) G_GNUC_CONST;
 GtkAction *thunar_history_action_new      (const gchar *name,
                                            const gchar *label,
                                            const gchar *tooltip,
-                                           const gchar *stock_id) G_GNUC_MALLOC;
+                                           const gchar *icon_name) G_GNUC_MALLOC;
 
 G_END_DECLS;
 

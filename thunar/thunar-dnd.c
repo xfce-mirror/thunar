@@ -170,7 +170,7 @@ thunar_dnd_ask (GtkWidget    *widget,
     }
 
   /* append the cancel item */
-  item = gtk_image_menu_item_new_from_stock (GTK_STOCK_CANCEL, NULL);
+  item = gtk_menu_item_new_with_mnemonic (_("_Cancel"));
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show (item);
 

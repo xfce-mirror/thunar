@@ -366,8 +366,8 @@ static GtkActionEntry action_entries[] =
   { "zoom-out", "zoom-out", N_ ("Zoom _Out"), "<control>minus", N_ ("Show the contents in less detail"), G_CALLBACK (thunar_window_action_zoom_out), },
   { "zoom-reset", "zoom-original", N_ ("Normal Si_ze"), "<control>0", N_ ("Show the contents at the normal size"), G_CALLBACK (thunar_window_action_zoom_reset), },
   { "go-menu", NULL, N_ ("_Go"), NULL, },
-  { "open-parent", "go-up", N_ ("Open _Parent"), "<alt>Up", N_ ("Open the parent folder"), G_CALLBACK (thunar_window_action_go_up), },
-  { "open-home", "go-home", N_ ("_Home"), "<alt>Home", N_ ("Go to the home folder"), G_CALLBACK (thunar_window_action_open_home), },
+  { "open-parent", "go-up-symbolic", N_ ("Open _Parent"), "<alt>Up", N_ ("Open the parent folder"), G_CALLBACK (thunar_window_action_go_up), },
+  { "open-home", "go-home-symbolic", N_ ("_Home"), "<alt>Home", N_ ("Go to the home folder"), G_CALLBACK (thunar_window_action_open_home), },
   { "open-desktop", THUNAR_STOCK_DESKTOP, N_ ("Desktop"), NULL, N_ ("Go to the desktop folder"), G_CALLBACK (thunar_window_action_open_desktop), },
   { "open-file-system", "drive-harddisk", N_ ("File System"), NULL, N_ ("Browse the file system"), G_CALLBACK (thunar_window_action_open_file_system), },
   { "open-network", "network-workgroup", N_("B_rowse Network"), NULL, N_ ("Browse local network connections"), G_CALLBACK (thunar_window_action_open_network), },
@@ -1770,7 +1770,7 @@ thunar_window_notebook_insert (ThunarWindow *window,
   gtk_widget_modify_style (button, style);
   g_object_unref (G_OBJECT (style));
 
-  icon = gtk_image_new_from_stock (GTK_STOCK_CLOSE, GTK_ICON_SIZE_MENU);
+  icon = gtk_image_new_from_icon_name ("window-close", GTK_ICON_SIZE_MENU);
   gtk_container_add (GTK_CONTAINER (button), icon);
   gtk_widget_show (icon);
 
@@ -3023,7 +3023,7 @@ thunar_window_action_open_templates (GtkAction    *action,
       /* display the "About Templates" dialog */
       dialog = gtk_dialog_new_with_buttons (_("About Templates"), GTK_WINDOW (window),
                                             GTK_DIALOG_DESTROY_WITH_PARENT,
-                                            GTK_STOCK_OK, GTK_RESPONSE_OK,
+                                            _("_OK"), GTK_RESPONSE_OK,
                                             NULL);
 
       gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
@@ -3033,7 +3033,7 @@ thunar_window_action_open_templates (GtkAction    *action,
       gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), hbox, TRUE, TRUE, 0);
       gtk_widget_show (hbox);
 
-      image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_INFO, GTK_ICON_SIZE_DIALOG);
+      image = gtk_image_new_from_icon_name ("dialog-information", GTK_ICON_SIZE_DIALOG);
       gtk_misc_set_alignment (GTK_MISC (image), 0.5f, 0.0f);
       gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
       gtk_widget_show (image);

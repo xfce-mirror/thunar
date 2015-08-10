@@ -115,13 +115,13 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
                          column_editor, NULL, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 
   /* setup the dialog */
-  gtk_dialog_add_button (GTK_DIALOG (column_editor), GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
+  gtk_dialog_add_button (GTK_DIALOG (column_editor), _("_Close"), GTK_RESPONSE_CLOSE);
   gtk_dialog_set_default_response (GTK_DIALOG (column_editor), GTK_RESPONSE_CLOSE);
   gtk_window_set_resizable (GTK_WINDOW (column_editor), FALSE);
   gtk_window_set_title (GTK_WINDOW (column_editor), _("Configure Columns in the Detailed List View"));
 
   /* add the "Help" button */
-  button = gtk_button_new_from_stock (GTK_STOCK_HELP);
+  button = gtk_button_new_with_mnemonic (_("_Help"));
   g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (thunar_column_editor_help_clicked), column_editor);
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_action_area (GTK_DIALOG (column_editor))), button, FALSE, FALSE, 0);
   gtk_button_box_set_child_secondary (GTK_BUTTON_BOX (gtk_dialog_get_action_area (GTK_DIALOG (column_editor))), button, TRUE);
@@ -195,7 +195,8 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   gtk_table_attach (GTK_TABLE (table), column_editor->up_button, 1, 2, 1, 2, GTK_FILL, 0, 0, 0);
   gtk_widget_show (column_editor->up_button);
 
-  image = gtk_image_new_from_stock (GTK_STOCK_GO_UP, GTK_ICON_SIZE_BUTTON);
+  image = gtk_image_new_from_icon_name ("go-up-symbolic", GTK_ICON_SIZE_BUTTON);
+  gtk_button_set_always_show_image (GTK_BUTTON (column_editor->up_button), TRUE);
   gtk_button_set_image (GTK_BUTTON (column_editor->up_button), image);
   gtk_widget_show (image);
 
@@ -205,7 +206,8 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   gtk_table_attach (GTK_TABLE (table), column_editor->down_button, 1, 2, 2, 3, GTK_FILL, 0, 0, 0);
   gtk_widget_show (column_editor->down_button);
 
-  image = gtk_image_new_from_stock (GTK_STOCK_GO_DOWN, GTK_ICON_SIZE_BUTTON);
+  image = gtk_image_new_from_icon_name ("go-down-symbolic", GTK_ICON_SIZE_BUTTON);
+  gtk_button_set_always_show_image (GTK_BUTTON (column_editor->down_button), TRUE);
   gtk_button_set_image (GTK_BUTTON (column_editor->down_button), image);
   gtk_widget_show (image);
 

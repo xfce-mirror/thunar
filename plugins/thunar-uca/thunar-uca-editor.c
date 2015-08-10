@@ -104,8 +104,8 @@ thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
   GtkWidget      *vbox;
 
   /* configure the dialog properties */
-  gtk_dialog_add_button (GTK_DIALOG (uca_editor), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
-  gtk_dialog_add_button (GTK_DIALOG (uca_editor), GTK_STOCK_OK, GTK_RESPONSE_OK);
+  gtk_dialog_add_button (GTK_DIALOG (uca_editor), _("_Cancel"), GTK_RESPONSE_CANCEL);
+  gtk_dialog_add_button (GTK_DIALOG (uca_editor), _("_OK"), GTK_RESPONSE_OK);
   gtk_dialog_set_alternative_button_order (GTK_DIALOG (uca_editor), GTK_RESPONSE_OK, GTK_RESPONSE_CANCEL, -1);
   gtk_dialog_set_default_response (GTK_DIALOG (uca_editor), GTK_RESPONSE_OK);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (uca_editor), TRUE);
@@ -189,7 +189,7 @@ thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
   g_signal_connect_swapped (G_OBJECT (button), "clicked", G_CALLBACK (thunar_uca_editor_command_clicked), uca_editor);
   gtk_widget_show (button);
 
-  image = gtk_image_new_from_stock (GTK_STOCK_OPEN, GTK_ICON_SIZE_BUTTON);
+  image = gtk_image_new_from_icon_name ("document-open", GTK_ICON_SIZE_BUTTON);
   gtk_container_add (GTK_CONTAINER (button), image);
   gtk_widget_show (image);
 
@@ -238,7 +238,7 @@ thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
   gtk_table_attach (GTK_TABLE (table), hbox, 0, 2, 6, 7, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (hbox);
 
-  image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_INFO, GTK_ICON_SIZE_DND);
+  image = gtk_image_new_from_icon_name ("dialog-information", GTK_ICON_SIZE_DND);
   gtk_misc_set_alignment (GTK_MISC (image), 0.5f, 0.0f);
   gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
   gtk_widget_show (image);
@@ -437,7 +437,7 @@ thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
   gtk_table_attach (GTK_TABLE (table), hbox, 0, 2, 5, 6, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (hbox);
 
-  image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_INFO, GTK_ICON_SIZE_DND);
+  image = gtk_image_new_from_icon_name ("dialog-information", GTK_ICON_SIZE_DND);
   gtk_misc_set_alignment (GTK_MISC (image), 0.5f, 0.0f);
   gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
   gtk_widget_show (image);
@@ -473,8 +473,8 @@ thunar_uca_editor_command_clicked (ThunarUcaEditor *uca_editor)
   chooser = gtk_file_chooser_dialog_new (_("Select an Application"),
                                          GTK_WINDOW (uca_editor),
                                          GTK_FILE_CHOOSER_ACTION_OPEN,
-                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                         GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+                                         _("_Cancel"), GTK_RESPONSE_CANCEL,
+                                         _("_Open"), GTK_RESPONSE_ACCEPT,
                                          NULL);
   gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER (chooser), TRUE);
 
@@ -607,8 +607,8 @@ thunar_uca_editor_icon_clicked (ThunarUcaEditor *uca_editor)
   /* allocate the chooser dialog */
   title = g_strdup_printf (_("Select an Icon for \"%s\""), name);
   chooser = exo_icon_chooser_dialog_new (title, GTK_WINDOW (uca_editor),
-                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                         GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
+                                         _("_Cancel"), GTK_RESPONSE_CANCEL,
+                                         _("_OK"), GTK_RESPONSE_ACCEPT,
                                          NULL);
   gtk_dialog_set_alternative_button_order (GTK_DIALOG (chooser), GTK_RESPONSE_ACCEPT, GTK_RESPONSE_CANCEL, -1);
   gtk_dialog_set_default_response (GTK_DIALOG (chooser), GTK_RESPONSE_ACCEPT);

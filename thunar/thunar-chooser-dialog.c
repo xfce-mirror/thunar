@@ -287,10 +287,10 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
   gtk_widget_show (dialog->default_button);
 
   /* add the "Cancel" button */
-  dialog->cancel_button = gtk_dialog_add_button (GTK_DIALOG (dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+  dialog->cancel_button = gtk_dialog_add_button (GTK_DIALOG (dialog), _("_Cancel"), GTK_RESPONSE_CANCEL);
 
   /* add the "Ok"/"Open" button */
-  dialog->accept_button = gtk_dialog_add_button (GTK_DIALOG (dialog), GTK_STOCK_OK, GTK_RESPONSE_ACCEPT);
+  dialog->accept_button = gtk_dialog_add_button (GTK_DIALOG (dialog), _("_OK"), GTK_RESPONSE_ACCEPT);
   gtk_dialog_set_response_sensitive (GTK_DIALOG (dialog), GTK_RESPONSE_ACCEPT, FALSE);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_ACCEPT);
 
@@ -571,14 +571,11 @@ thunar_chooser_dialog_context_menu (ThunarChooserDialog *dialog,
   menu = gtk_menu_new ();
 
   /* append the "Remove Launcher" item */
-  item = gtk_image_menu_item_new_with_mnemonic (_("_Remove Launcher"));
+  item = gtk_menu_item_new_with_mnemonic (_("_Remove Launcher"));
   gtk_widget_set_sensitive (item, g_app_info_can_delete (app_info));
   g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_chooser_dialog_action_remove), dialog);
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show (item);
-
-  image = gtk_image_new_from_stock (GTK_STOCK_REMOVE, GTK_ICON_SIZE_MENU);
-  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
 
   /* run the menu on the dialog's screen (takes over the floating of menu) */
   thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (dialog), NULL, NULL, button, timestamp);
@@ -716,8 +713,8 @@ thunar_chooser_dialog_action_remove (ThunarChooserDialog *dialog)
                                         GTK_BUTTONS_NONE,
                                         _("Are you sure that you want to remove \"%s\"?"), name);
       gtk_dialog_add_buttons (GTK_DIALOG (message),
-                              GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                              GTK_STOCK_REMOVE, GTK_RESPONSE_YES,
+                              _("_Cancel"), GTK_RESPONSE_CANCEL,
+                              _("_Remove"), GTK_RESPONSE_YES,
                               NULL);
       gtk_dialog_set_default_response (GTK_DIALOG (message), GTK_RESPONSE_YES);
       gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), _("This will remove the application launcher that appears in the file "
@@ -764,8 +761,8 @@ thunar_chooser_dialog_browse_clicked (GtkWidget           *button,
   chooser = gtk_file_chooser_dialog_new (_("Select an Application"),
                                          GTK_WINDOW (dialog),
                                          GTK_FILE_CHOOSER_ACTION_OPEN,
-                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                         GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+                                         _("_Cancel"), GTK_RESPONSE_CANCEL,
+                                         _("_Open"), GTK_RESPONSE_ACCEPT,
                                          NULL);
   gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER (chooser), TRUE);
 
@@ -1166,7 +1163,7 @@ thunar_chooser_dialog_set_open (ThunarChooserDialog *dialog,
   dialog->open = open;
 
   /* change the accept button label text */
-  gtk_button_set_label (GTK_BUTTON (dialog->accept_button), open ? GTK_STOCK_OPEN : GTK_STOCK_OK);
+  gtk_button_set_label (GTK_BUTTON (dialog->accept_button), open ? _("_Open") : _("_OK"));
 
   /* notify listeners */
   g_object_notify (G_OBJECT (dialog), "open");
