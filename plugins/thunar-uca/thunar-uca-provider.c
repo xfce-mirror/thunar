@@ -159,8 +159,12 @@ static void
 manage_actions (GtkWindow *window)
 {
   GtkWidget *dialog;
+  gboolean   use_header_bar = FALSE;
 
-  dialog = g_object_new (THUNAR_UCA_TYPE_CHOOSER, NULL);
+  g_object_get (gtk_settings_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (window))),
+                "gtk-dialogs-use-header", &use_header_bar, NULL);
+
+  dialog = g_object_new (THUNAR_UCA_TYPE_CHOOSER, "use-header-bar", use_header_bar, NULL);
   gtk_window_set_transient_for (GTK_WINDOW (dialog), window);
   gtk_widget_show (dialog);
 }
@@ -435,8 +439,6 @@ thunar_uca_provider_child_watch (ThunarUcaProvider *uca_provider,
 
   g_return_if_fail (THUNAR_UCA_IS_PROVIDER (uca_provider));
 
-  GDK_THREADS_ENTER ();
-
   /* verify that we still have a valid child_watch_path */
   if (G_LIKELY (uca_provider->child_watch_path != NULL))
     {
@@ -457,8 +459,6 @@ thunar_uca_provider_child_watch (ThunarUcaProvider *uca_provider,
     }
 
   thunar_uca_provider_child_watch_destroy (uca_provider, NULL);
-
-  GDK_THREADS_LEAVE ();
 }
 
 

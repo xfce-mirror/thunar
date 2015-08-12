@@ -153,8 +153,6 @@ struct _ThunarUcaModel
 {
   GObject __parent__;
 
-  GtkIconFactory *icon_factory;
-
   GList          *items;
   gint            stamp;
 };
@@ -254,12 +252,6 @@ thunar_uca_model_init (ThunarUcaModel *uca_model)
   GError *error = NULL;
   gchar  *filename;
 
-  /* allocate a new icon factory for our action icons
-   * and add it to the default icon factories
-   */
-  uca_model->icon_factory = gtk_icon_factory_new ();
-  gtk_icon_factory_add_default (uca_model->icon_factory);
-
   /* generate a unique stamp */
   uca_model->stamp = g_random_int ();
 
@@ -285,10 +277,6 @@ static void
 thunar_uca_model_finalize (GObject *object)
 {
   ThunarUcaModel *uca_model = THUNAR_UCA_MODEL (object);
-
-  /* drop our icon factory */
-  gtk_icon_factory_remove_default (uca_model->icon_factory);
-  g_object_unref (G_OBJECT (uca_model->icon_factory));
 
   /* release all items */
   g_list_free_full (uca_model->items, thunar_uca_model_item_free);

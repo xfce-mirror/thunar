@@ -26,7 +26,8 @@ thunar_uca_la_SOURCES =							\
 	thunar-uca-private.c						\
 	thunar-uca-private.h						\
 	thunar-uca-provider.c						\
-	thunar-uca-provider.h
+	thunar-uca-provider.h						\
+	thunar-uca.gresource.c
 
 thunar_uca_la_CFLAGS =							\
 	$(EXO_CFLAGS)							\
@@ -50,6 +51,17 @@ thunar_uca_la_LIBADD =							\
 
 thunar_uca_la_DEPENDENCIES =						\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la
+
+thunar_uca_templates =							\
+	thunar-uca-ui.xml
+
+GLIB_COMPILE_RESOURCES = $(shell $(PKG_CONFIG) --variable=glib_compile_resources gio-2.0)
+
+resource_files = $(shell $(GLIB_COMPILE_RESOURCES) --sourcedir=$(srcdir) --generate-dependencies $(srcdir)/thunar-uca.gresource.xml)
+
+thunar-uca.gresource.c: thunar-uca.gresource.xml $(resource_files)
+	$(AM_V_GEN) $(GLIB_COMPILE_RESOURCES) $< \
+		--target=$@ --sourcedir=$(srcdir) --generate-source
 
 defaultsdir = $(sysconfdir)/xdg/Thunar
 defaults_in_files = uca.xml.in
