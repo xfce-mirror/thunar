@@ -38,15 +38,9 @@ GType       thunar_location_button_get_type   (void) G_GNUC_CONST;
 
 GtkWidget  *thunar_location_button_new        (void) G_GNUC_MALLOC;
 
-gboolean    thunar_location_button_get_active (ThunarLocationButton *location_button);
-void        thunar_location_button_set_active (ThunarLocationButton *location_button,
-                                               gboolean              active);
-
 ThunarFile *thunar_location_button_get_file   (ThunarLocationButton *location_button);
 void        thunar_location_button_set_file   (ThunarLocationButton *location_button,
                                                ThunarFile           *file);
-
-void        thunar_location_button_clicked    (ThunarLocationButton *location_button);
 
 G_END_DECLS;
 
