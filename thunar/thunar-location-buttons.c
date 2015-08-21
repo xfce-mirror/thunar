@@ -466,6 +466,17 @@ thunar_location_buttons_get_current_directory (ThunarNavigator *navigator)
 
 
 
+static inline gboolean
+eglible_for_fake_root (ThunarFile *file)
+{
+  /* use 'Home' as fake root button */
+  return thunar_file_is_home (file);
+
+  /* TODO: mounted devices */
+}
+
+
+
 static void
 thunar_location_buttons_set_current_directory (ThunarNavigator *navigator,
                                                ThunarFile      *current_directory)
@@ -473,8 +484,8 @@ thunar_location_buttons_set_current_directory (ThunarNavigator *navigator,
   ThunarLocationButtons *buttons = THUNAR_LOCATION_BUTTONS (navigator);
   ThunarFile            *file_parent;
   ThunarFile            *file;
-  GtkWidget             *button;
-  GList                 *lp;
+  GtkWidget             *button, *parent_button = NULL;
+  GList                 *lp, *lp_parent = NULL;
 
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
 
@@ -487,11 +498,52 @@ thunar_location_buttons_set_current_directory (ThunarNavigator *navigator,
     if (thunar_location_button_get_file (lp->data) == current_directory)
       break;
 
+  /* check if we maybe have the parent as a button */
+  if (!lp && current_directory)
+    {
+      file_parent = thunar_file_get_parent (current_directory, NULL);
+      if (file_parent)
+        {
+            for (lp_parent = buttons->list; lp_parent != NULL; lp_parent = lp_parent->next)
+                if (thunar_location_button_get_file (lp_parent->data) == file_parent)
+                break;
+
+            g_object_unref (file_parent);
+        }
+    }
+
   /* if we already have a button for that directory, just activate it */
   if (G_UNLIKELY (lp != NULL))
     {
       /* fake a "clicked" event for that button */
       gtk_button_clicked (GTK_BUTTON (lp->data));
+    }
+  else if (G_LIKELY (lp_parent != NULL))
+    {
+      /* remove all existing children below that button */
+      parent_button = lp_parent->data;
+      while (buttons->list->data != parent_button)
+        gtk_container_remove (GTK_CONTAINER (buttons), buttons->list->data);
+
+      /* clear the first scrolled button */
+      buttons->first_scrolled_button = NULL;
+
+      /* set the new directory */
+      g_object_unref (buttons->current_directory);
+      buttons->current_directory = g_object_ref (current_directory);
+
+      /* add a new button */
+      button = thunar_location_buttons_make_button (buttons, current_directory);
+      buttons->list = g_list_prepend (buttons->list, button);
+      gtk_container_add (GTK_CONTAINER (buttons), button);
+      gtk_widget_show (button);
+
+      /* check for fake root */
+      if (eglible_for_fake_root (current_directory))
+        buttons->fake_root_button = buttons->list;
+
+      /* synthesize a click */
+      gtk_button_clicked (GTK_BUTTON (buttons->list->data));
     }
   else
     {
@@ -524,7 +576,7 @@ thunar_location_buttons_set_current_directory (ThunarNavigator *navigator,
               gtk_widget_show (button);
 
               /* use 'Home' as fake root button */
-              if (thunar_file_is_home (file))
+              if (!buttons->fake_root_button && eglible_for_fake_root (file))
                 buttons->fake_root_button = g_list_last (buttons->list);
 
               /* continue with the parent (if any) */
@@ -688,18 +740,7 @@ thunar_location_buttons_get_path_for_child (GtkContainer *container,
 static void
 thunar_location_buttons_child_ordering_changed (ThunarLocationButtons *location_buttons)
 {
-  GList *lp;
-
-  if (gtk_widget_get_visible (location_buttons->left_slider) &&
-      gtk_widget_get_child_visible (location_buttons->left_slider))
-    gtk_widget_reset_style (location_buttons->right_slider);
-
-  if (gtk_widget_get_visible (location_buttons->right_slider) &&
-      gtk_widget_get_child_visible (location_buttons->right_slider))
-    gtk_widget_reset_style (location_buttons->right_slider);
-
-  for (lp = location_buttons->list; lp; lp = lp->next)
-    gtk_widget_reset_style (GTK_WIDGET (lp->data));
+  gtk_widget_reset_style (GTK_WIDGET (location_buttons));
 }
 
 
@@ -791,7 +832,7 @@ thunar_location_buttons_size_allocate (GtkWidget     *widget,
 
       while (first_button->next != NULL && !reached_end)
         {
-          child = first_button->data;
+          child = first_button->next->data;
 
           gtk_widget_get_preferred_size (GTK_WIDGET (child), &child_requisition, NULL);
 
@@ -997,6 +1038,9 @@ thunar_location_buttons_remove (GtkContainer *container,
         g_list_free (lp);
         return;
       }
+
+  /* fallback case */
+  thunar_location_buttons_remove_1 (container, widget);
 }
 
 

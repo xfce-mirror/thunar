@@ -84,6 +84,8 @@ static gboolean       thunar_location_button_button_press_event     (GtkWidget  
                                                                      GdkEventButton             *event);
 static gboolean       thunar_location_button_button_release_event   (GtkWidget                  *button,
                                                                      GdkEventButton             *event);
+static void           thunar_location_button_map                    (GtkWidget                  *button);
+static void           thunar_location_button_style_updated          (GtkWidget                  *button);
 static gboolean       thunar_location_button_drag_drop              (GtkWidget                  *button,
                                                                      GdkDragContext             *context,
                                                                      gint                        x,
@@ -126,6 +128,7 @@ struct _ThunarLocationButton
 
   GtkWidget          *image;
   GtkWidget          *label;
+  GtkWidget          *bold_label;
 
   /* the current icon state (i.e. accepting drops) */
   ThunarFileIconState file_icon_state;
@@ -167,6 +170,10 @@ thunar_location_button_class_init (ThunarLocationButtonClass *klass)
   gobject_class->finalize = thunar_location_button_finalize;
   gobject_class->get_property = thunar_location_button_get_property;
   gobject_class->set_property = thunar_location_button_set_property;
+
+  gtkwidget_class = GTK_WIDGET_CLASS (klass);
+  gtkwidget_class->map = thunar_location_button_map;
+  gtkwidget_class->style_updated = thunar_location_button_style_updated;
 
   /**
    * ThunarLocationButton:file:
@@ -250,6 +257,12 @@ thunar_location_button_init (ThunarLocationButton *button)
   button->label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.5f, "yalign", 0.5f, NULL);
   gtk_box_pack_start (GTK_BOX (hbox), button->label, TRUE, TRUE, 0);
   gtk_widget_show (button->label);
+
+  /* create the bold label */
+  button->bold_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.5f, "yalign", 0.5f, NULL);
+  gtk_box_pack_start (GTK_BOX (hbox), button->bold_label, TRUE, TRUE, 0);
+  gtk_label_set_attributes (GTK_LABEL (button->bold_label), thunar_pango_attr_list_bold ());
+  /* but don't show it, as it is only a fake to retrieve the bold size */
 }
 
 
@@ -318,6 +331,26 @@ thunar_location_button_set_property (GObject      *object,
 
 
 
+static void
+thunar_location_button_map (GtkWidget *button)
+{
+  GTK_WIDGET_CLASS (thunar_location_button_parent_class)->map (button);
+
+  thunar_location_button_apply_label_size (THUNAR_LOCATION_BUTTON (button));
+}
+
+
+
+static void
+thunar_location_button_style_updated (GtkWidget *button)
+{
+  GTK_WIDGET_CLASS (thunar_location_button_parent_class)->style_updated (button);
+
+  thunar_location_button_apply_label_size (THUNAR_LOCATION_BUTTON (button));
+}
+
+
+
 static GdkDragAction
 thunar_location_button_get_dest_actions (ThunarLocationButton *location_button,
                                          GdkDragContext       *context,
@@ -346,22 +379,20 @@ static void
 thunar_location_button_file_changed (ThunarLocationButton *location_button,
                                      ThunarFile           *file)
 {
-  ThunarIconFactory *icon_factory;
   GtkIconTheme      *icon_theme;
-  GtkSettings       *settings;
-  GdkPixbuf         *icon;
-  const gchar       *icon_name;
+  gchar             *icon_name;
+  const gchar       *dnd_icon_name;
   gint               height;
   gint               width;
   gint               size;
-  const gchar       *custom_icon;
 
   _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
   _thunar_return_if_fail (location_button->file == file);
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  /* determine the icon theme for the widget */
+  /* Retrieve the icon theme */
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (location_button)));
+  /* TODO: listen for icon theme changes */
 
   /* update and show the label widget (hide for the local root folder) */
   if (thunar_file_is_local (file) && thunar_file_is_root (file)) 
@@ -375,7 +406,8 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
       gtk_label_set_text (GTK_LABEL (location_button->label), thunar_file_get_display_name (file));
 
       /* set the label's size request in such a way that a bold label will not change the button size */
-      thunar_location_button_apply_label_size (location_button);
+      if (gtk_widget_get_mapped (GTK_WIDGET (location_button)))
+        thunar_location_button_apply_label_size (location_button);
 
       gtk_widget_show (location_button->label);
     }
@@ -383,24 +415,17 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
   /* the image is only visible for certain special paths */
   if (thunar_file_is_home (file) || thunar_file_is_desktop (file) || thunar_file_is_root (file))
     {
-      /* determine the icon size for menus (to be compatible with GtkPathBar) */
-      if (gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &width, &height))
-        size = MAX (width, height);
-      else
-        size = 16;
+      icon_name = g_strdup_printf ("%s-symbolic", thunar_file_get_icon_name (file,
+                                                                             location_button->file_icon_state,
+                                                                             icon_theme));
 
       /* update the icon for the image */
-      icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
-      icon = thunar_icon_factory_load_file_icon (icon_factory, file, location_button->file_icon_state, size);
-      if (G_LIKELY (icon != NULL))
-        {
-          gtk_image_set_from_pixbuf (GTK_IMAGE (location_button->image), icon);
-          g_object_unref (G_OBJECT (icon));
-        }
-      g_object_unref (G_OBJECT (icon_factory));
+      gtk_image_set_from_icon_name (GTK_IMAGE (location_button->image), icon_name, GTK_ICON_SIZE_BUTTON);
 
       /* show the image widget */
       gtk_widget_show (location_button->image);
+
+      g_free (icon_name);
     }
   else
     {
@@ -409,15 +434,15 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
     }
 
   /* setup the DnD icon for the button */
-  custom_icon = thunar_file_get_custom_icon (file);
-  if (custom_icon != NULL)
+  dnd_icon_name = thunar_file_get_custom_icon (file);
+  if (dnd_icon_name != NULL)
     {
-      gtk_drag_source_set_icon_name (GTK_WIDGET (location_button), custom_icon);
+      gtk_drag_source_set_icon_name (GTK_WIDGET (location_button), dnd_icon_name);
     }
   else
     {
-      icon_name = thunar_file_get_icon_name (file, location_button->file_icon_state, icon_theme);
-      gtk_drag_source_set_icon_name (GTK_WIDGET (location_button), icon_name);
+      dnd_icon_name = thunar_file_get_icon_name (file, location_button->file_icon_state, icon_theme);
+      gtk_drag_source_set_icon_name (GTK_WIDGET (location_button), dnd_icon_name);
     }
 }
 
@@ -440,24 +465,20 @@ thunar_location_button_file_destroy (ThunarLocationButton *location_button,
 static void
 thunar_location_button_apply_label_size (ThunarLocationButton *location_button)
 {
+#if 0
   GtkRequisition normal_size;
   GtkRequisition bold_size;
   gint           width, height;
-  PangoAttrList *original_attrs;
+  const gchar   *text;
 
-  original_attrs = pango_attr_list_ref (gtk_label_get_attributes (GTK_LABEL (location_button->label)));
+  text = gtk_label_get_text (GTK_LABEL (location_button->label));
 
   /* determine the normal size */
-  gtk_label_set_attributes (GTK_LABEL (location_button->label), NULL);
   gtk_widget_get_preferred_size (location_button->label, NULL, &normal_size);
 
   /* determine the bold size */
-  gtk_label_set_attributes (GTK_LABEL (location_button->label), thunar_pango_attr_list_bold());
-  gtk_widget_get_preferred_size (location_button->label, NULL, &bold_size);
-
-  /* restore original attributes */
-  gtk_label_set_attributes (GTK_LABEL (location_button->label), original_attrs);
-  pango_attr_list_unref (original_attrs);
+  gtk_label_set_text (GTK_LABEL (location_button->bold_label), text);
+  gtk_widget_get_preferred_size (location_button->bold_label, NULL, &bold_size);
 
   /* request the maximum of the pixel sizes, to make sure
    * the button always requests the same size, no matter if
@@ -471,6 +492,9 @@ thunar_location_button_apply_label_size (ThunarLocationButton *location_button)
       /* if the size is too big, enable ellipsizing */
       gtk_label_set_ellipsize (GTK_LABEL (location_button->label), PANGO_ELLIPSIZE_MIDDLE);
       gtk_widget_set_size_request (GTK_WIDGET (location_button->label), THUNAR_LOCATION_BUTTON_MAX_WIDTH, height);
+
+      /* and set a tooltip */
+      gtk_widget_set_tooltip_text (location_button->label, text);
     }
   else
     {
@@ -478,7 +502,9 @@ thunar_location_button_apply_label_size (ThunarLocationButton *location_button)
        * is actually off by 1 or 2 pixels and the label will ellipsize unnecessarily
        * TODO: check what we did wrong */
       gtk_widget_set_size_request (GTK_WIDGET (location_button->label), width, height);
+      gtk_widget_set_tooltip_text (location_button->label, NULL);
     }
+#endif
 }
 
 
