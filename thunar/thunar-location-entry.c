@@ -42,15 +42,11 @@ enum
 {
   PROP_0,
   PROP_CURRENT_DIRECTORY,
-  PROP_SELECTED_FILES,
-  PROP_UI_MANAGER,
 };
 
 
 
-static void        thunar_location_entry_component_init           (ThunarComponentIface     *iface);
 static void        thunar_location_entry_navigator_init           (ThunarNavigatorIface     *iface);
-static void        thunar_location_entry_location_bar_init        (ThunarLocationBarIface   *iface);
 static void        thunar_location_entry_finalize                 (GObject                  *object);
 static void        thunar_location_entry_get_property             (GObject                  *object,
                                                                    guint                     prop_id,
@@ -63,10 +59,6 @@ static void        thunar_location_entry_set_property             (GObject      
 static ThunarFile *thunar_location_entry_get_current_directory    (ThunarNavigator          *navigator);
 static void        thunar_location_entry_set_current_directory    (ThunarNavigator          *navigator,
                                                                    ThunarFile               *current_directory);
-static void        thunar_location_entry_component_set_ui_manager (ThunarComponent          *component,
-                                                                   GtkUIManager             *ui_manager);
-static gboolean    thunar_location_entry_accept_focus             (ThunarLocationBar        *location_bar,
-                                                                   const gchar              *initial_text);
 static void        thunar_location_entry_activate                 (GtkWidget                *path_entry,
                                                                    ThunarLocationEntry      *location_entry);
 static gboolean    thunar_location_entry_reset                    (ThunarLocationEntry      *location_entry);
@@ -74,6 +66,7 @@ static void        thunar_location_entry_reload                   (GtkEntry     
                                                                    GtkEntryIconPosition      icon_pos,
                                                                    GdkEvent                 *event,
                                                                    ThunarLocationEntry      *location_entry);
+static void        thunar_location_entry_emit_edit_done           (ThunarLocationEntry      *entry);
 
 
 
@@ -83,6 +76,10 @@ struct _ThunarLocationEntryClass
 
   /* internal action signals */
   gboolean (*reset) (ThunarLocationEntry *location_entry);
+
+  /* externally visible signals */
+  void (*reload_requested) (void);
+  void (*edit_done) (void);
 };
 
 struct _ThunarLocationEntry
@@ -91,16 +88,13 @@ struct _ThunarLocationEntry
 
   ThunarFile   *current_directory;
   GtkWidget    *path_entry;
-  GtkUIManager *ui_manager;
 };
 
 
 
 G_DEFINE_TYPE_WITH_CODE (ThunarLocationEntry, thunar_location_entry, GTK_TYPE_HBOX,
   G_IMPLEMENT_INTERFACE (THUNAR_TYPE_BROWSER, NULL)
-  G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR, thunar_location_entry_navigator_init)
-  G_IMPLEMENT_INTERFACE (THUNAR_TYPE_COMPONENT, thunar_location_entry_component_init)
-  G_IMPLEMENT_INTERFACE (THUNAR_TYPE_LOCATION_BAR, thunar_location_entry_location_bar_init))
+  G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR, thunar_location_entry_navigator_init))
 
 
 
@@ -120,10 +114,6 @@ thunar_location_entry_class_init (ThunarLocationEntryClass *klass)
   /* override ThunarNavigator's properties */
   g_object_class_override_property (gobject_class, PROP_CURRENT_DIRECTORY, "current-directory");
 
-  /* override ThunarComponent's properties */
-  g_object_class_override_property (gobject_class, PROP_SELECTED_FILES, "selected-files");
-  g_object_class_override_property (gobject_class, PROP_UI_MANAGER, "ui-manager");
-
   /**
    * ThunarLocationEntry::reset:
    * @location_entry : a #ThunarLocationEntry.
@@ -140,22 +130,40 @@ thunar_location_entry_class_init (ThunarLocationEntryClass *klass)
                 _thunar_marshal_BOOLEAN__VOID,
                 G_TYPE_BOOLEAN, 0);
 
+  /**
+   * ThunarLocationEntry::reload-requested:
+   * @location_entry : a #ThunarLocationEntry.
+   *
+   * Emitted by @location_entry whenever the user clicked a "reload" button
+   **/
+  g_signal_new ("reload-requested",
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                G_STRUCT_OFFSET (ThunarLocationEntryClass, reload_requested),
+                NULL, NULL,
+                NULL,
+                G_TYPE_NONE, 0);
+
+  /**
+   * ThunarLocationEntry::edit-done:
+   * @location_entry : a #ThunarLocationEntry.
+   *
+   * Emitted by @location_entry whenever the user finished or aborted an edit
+   * operation by either changing to a directory, pressing Escape or moving the
+   * focus away from the entry.
+   **/
+  g_signal_new ("edit-done",
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                G_STRUCT_OFFSET (ThunarLocationEntryClass, edit_done),
+                NULL, NULL,
+                NULL,
+                G_TYPE_NONE, 0);
+
   /* setup the key bindings for the location entry */
   binding_set = gtk_binding_set_by_class (klass);
   gtk_binding_entry_add_signal (binding_set, GDK_KEY_Escape, 0, "reset", 0);
 }
-
-
-
-static void
-thunar_location_entry_component_init (ThunarComponentIface *iface)
-{
-  iface->get_selected_files = (gpointer) exo_noop_null;
-  iface->set_selected_files = (gpointer) exo_noop;
-  iface->get_ui_manager = (gpointer) exo_noop_null;
-  iface->set_ui_manager = thunar_location_entry_component_set_ui_manager;
-}
-
 
 
 static void
@@ -163,15 +171,6 @@ thunar_location_entry_navigator_init (ThunarNavigatorIface *iface)
 {
   iface->get_current_directory = thunar_location_entry_get_current_directory;
   iface->set_current_directory = thunar_location_entry_set_current_directory;
-}
-
-
-
-static void
-thunar_location_entry_location_bar_init (ThunarLocationBarIface *iface)
-{
-  iface->accept_focus = thunar_location_entry_accept_focus;
-  iface->is_standalone = (gpointer) exo_noop_false;
 }
 
 
@@ -194,6 +193,9 @@ thunar_location_entry_init (ThunarLocationEntry *location_entry)
                                    GTK_ENTRY_ICON_SECONDARY, _("Reload the current folder"));
   g_signal_connect (G_OBJECT (location_entry->path_entry), "icon-release",
                     G_CALLBACK (thunar_location_entry_reload), location_entry);
+
+  /* make sure the edit-done signal is emitted upon moving the focus somewhere else */
+  g_signal_connect_swapped (location_entry->path_entry, "focus-out-event", G_CALLBACK (thunar_location_entry_emit_edit_done), location_entry);
 }
 
 
@@ -201,10 +203,6 @@ thunar_location_entry_init (ThunarLocationEntry *location_entry)
 static void
 thunar_location_entry_finalize (GObject *object)
 {
-  /* disconnect from the selected files and the UI manager */
-  thunar_component_set_selected_files (THUNAR_COMPONENT (object), NULL);
-  thunar_component_set_ui_manager (THUNAR_COMPONENT (object), NULL);
-
   /* disconnect from the current directory */
   thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), NULL);
 
@@ -223,14 +221,6 @@ thunar_location_entry_get_property (GObject    *object,
     {
     case PROP_CURRENT_DIRECTORY:
       g_value_set_object (value, thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (object)));
-      break;
-
-    case PROP_SELECTED_FILES:
-      g_value_set_boxed (value, thunar_component_get_selected_files (THUNAR_COMPONENT (object)));
-      break;
-
-    case PROP_UI_MANAGER:
-      g_value_set_object (value, thunar_component_get_ui_manager (THUNAR_COMPONENT (object)));
       break;
 
     default:
@@ -255,14 +245,6 @@ thunar_location_entry_set_property (GObject      *object,
       thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
       thunar_path_entry_set_working_directory (THUNAR_PATH_ENTRY (entry->path_entry), 
                                                entry->current_directory);
-      break;
-
-    case PROP_SELECTED_FILES:
-      thunar_component_set_selected_files (THUNAR_COMPONENT (object), g_value_get_boxed (value));
-      break;
-
-    case PROP_UI_MANAGER:
-      thunar_component_set_ui_manager (THUNAR_COMPONENT (object), g_value_get_object (value));
       break;
 
     default:
@@ -304,30 +286,10 @@ thunar_location_entry_set_current_directory (ThunarNavigator *navigator,
 
 
 
-static void
-thunar_location_entry_component_set_ui_manager (ThunarComponent *component,
-                                                GtkUIManager    *ui_manager)
+void
+thunar_location_entry_accept_focus (ThunarLocationEntry *location_entry,
+                                    const gchar         *initial_text)
 {
-  ThunarLocationEntry *location_entry = THUNAR_LOCATION_ENTRY (component);
-
-  if (location_entry->ui_manager != NULL)
-    {
-      g_object_unref (location_entry->ui_manager);
-      location_entry->ui_manager = NULL;
-    }
-
-  if (ui_manager != NULL)
-    location_entry->ui_manager = g_object_ref (ui_manager);
-}
-
-
-
-static gboolean
-thunar_location_entry_accept_focus (ThunarLocationBar *location_bar,
-                                    const gchar       *initial_text)
-{
-  ThunarLocationEntry *location_entry = THUNAR_LOCATION_ENTRY (location_bar);
-
   /* give the keyboard focus to the path entry */
   gtk_widget_grab_focus (location_entry->path_entry);
 
@@ -345,8 +307,6 @@ thunar_location_entry_accept_focus (ThunarLocationBar *location_bar,
       /* select the whole path in the path entry */
       gtk_editable_select_region (GTK_EDITABLE (location_entry->path_entry), 0, -1);
     }
-
-  return TRUE;
 }
 
 
@@ -441,6 +401,8 @@ thunar_location_entry_activate (GtkWidget           *path_entry,
     {
       thunar_browser_poke_file (THUNAR_BROWSER (location_entry), file, path_entry,
                                 thunar_location_entry_poke_file_finish, NULL);
+
+      thunar_location_entry_emit_edit_done (location_entry);
     }
 }
 
@@ -454,6 +416,8 @@ thunar_location_entry_reset (ThunarLocationEntry *location_entry)
 
   /* ...and select the whole text again */
   gtk_editable_select_region (GTK_EDITABLE (location_entry->path_entry), 0, -1);
+
+  thunar_location_entry_emit_edit_done (location_entry);
 
   return TRUE;
 }
@@ -470,11 +434,18 @@ thunar_location_entry_reload (GtkEntry            *entry,
 
   _thunar_return_if_fail (THUNAR_IS_LOCATION_ENTRY (location_entry));
 
-  if (icon_pos == GTK_ENTRY_ICON_SECONDARY
-      && location_entry->ui_manager != NULL)
+  if (icon_pos == GTK_ENTRY_ICON_SECONDARY)
     {
-      action = gtk_ui_manager_get_action (location_entry->ui_manager, "/main-menu/view-menu/reload");
-      _thunar_return_if_fail (GTK_IS_ACTION (action));
-      gtk_action_activate (action);
+      g_signal_emit_by_name (location_entry, "reload-requested");
     }
 }
+
+
+
+static void
+thunar_location_entry_emit_edit_done (ThunarLocationEntry *entry)
+{
+    g_signal_emit_by_name (entry, "edit-done");
+}
+
+

@@ -465,7 +465,6 @@ thunar_location_button_file_destroy (ThunarLocationButton *location_button,
 static void
 thunar_location_button_apply_label_size (ThunarLocationButton *location_button)
 {
-#if 0
   GtkRequisition normal_size;
   GtkRequisition bold_size;
   gint           width, height;
@@ -504,7 +503,6 @@ thunar_location_button_apply_label_size (ThunarLocationButton *location_button)
       gtk_widget_set_size_request (GTK_WIDGET (location_button->label), width, height);
       gtk_widget_set_tooltip_text (location_button->label, NULL);
     }
-#endif
 }
 
 

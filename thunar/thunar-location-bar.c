@@ -1,6 +1,6 @@
 /* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2015 Jonas Kümmerlin <rgcjonas@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -23,83 +23,325 @@
 
 #include <thunar/thunar-location-bar.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-navigator.h>
+#include <thunar/thunar-location-entry.h>
+#include <thunar/thunar-location-buttons.h>
+#include <thunar/thunar-preferences.h>
 
 
-
-GType
-thunar_location_bar_get_type (void)
+struct _ThunarLocationBarClass
 {
-  static volatile gsize type__volatile = 0;
-  GType                 type;
+  GtkBinClass __parent__;
 
-  if (g_once_init_enter (&type__volatile))
+  /* signals */
+  void (*reload_requested) (void);
+  void (*entry_done) (void);
+};
+
+struct _ThunarLocationBar
+{
+  GtkBin __parent__;
+
+  ThunarFile *current_directory;
+};
+
+
+
+enum
+{
+  PROP_0,
+  PROP_CURRENT_DIRECTORY,
+};
+
+
+static void         thunar_location_bar_navigator_init             (ThunarNavigatorIface *iface);
+static void         thunar_location_bar_get_property               (GObject              *object,
+                                                                    guint                 prop_id,
+                                                                    GValue               *value,
+                                                                    GParamSpec           *pspec);
+static void         thunar_location_bar_set_property               (GObject              *object,
+                                                                    guint                 prop_id,
+                                                                    const GValue         *value,
+                                                                    GParamSpec           *pspec);
+static ThunarFile  *thunar_location_bar_get_current_directory      (ThunarNavigator      *navigator);
+static void         thunar_location_bar_set_current_directory      (ThunarNavigator      *navigator,
+                                                                    ThunarFile           *current_directory);
+static GtkWidget   *thunar_location_bar_install_widget             (ThunarLocationBar    *bar,
+                                                                    GType                 type);
+static void         thunar_location_bar_reload_requested           (ThunarLocationBar    *bar);
+static gboolean     thunar_location_bar_settings_changed           (ThunarLocationBar    *bar);
+static void         thunar_location_bar_on_enry_edit_done          (ThunarLocationEntry  *entry,
+                                                                    ThunarLocationBar    *bar);
+
+
+
+G_DEFINE_TYPE_WITH_CODE (ThunarLocationBar, thunar_location_bar, GTK_TYPE_BIN,
+                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR, thunar_location_bar_navigator_init));
+
+
+
+GtkWidget *
+thunar_location_bar_new (void)
+{
+  return gtk_widget_new (THUNAR_TYPE_LOCATION_BAR, NULL);
+}
+
+
+
+static void
+thunar_location_bar_class_init (ThunarLocationBarClass *klass)
+{
+  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+
+  gobject_class->get_property = thunar_location_bar_get_property;
+  gobject_class->set_property = thunar_location_bar_set_property;
+
+  klass->reload_requested = exo_noop;
+
+  /* Override ThunarNavigator's properties */
+  g_object_class_override_property (gobject_class, PROP_CURRENT_DIRECTORY, "current-directory");
+
+  /* install signals */
+
+  /**
+   * ThunarLocationBar::reload-requested:
+   * @location_bar : a #ThunarLocationBar.
+   *
+   * Emitted by @location_bar whenever the user clicked a "reload" button
+   **/
+  g_signal_new ("reload-requested",
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                G_STRUCT_OFFSET (ThunarLocationBarClass, reload_requested),
+                NULL, NULL,
+                NULL,
+                G_TYPE_NONE, 0);
+
+  /**
+   * ThunarLocationBar::entry-done:
+   * @location_bar : a #ThunarLocationBar.
+   *
+   * Emitted by @location_bar exactly once after an entry has been requested using
+   * #thunar_location_bar_request_entry and the user has finished editing the entry.
+   **/
+  g_signal_new ("entry-done",
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                G_STRUCT_OFFSET (ThunarLocationBarClass, entry_done),
+                NULL, NULL,
+                NULL,
+                G_TYPE_NONE, 0);
+}
+
+
+
+static void
+thunar_location_bar_init (ThunarLocationBar *bar)
+{
+  ThunarPreferences *preferences = thunar_preferences_get ();
+
+  bar->current_directory = NULL;
+
+  thunar_location_bar_settings_changed (bar);
+
+  g_signal_connect_object (preferences, "notify::last-location-bar", G_CALLBACK (thunar_location_bar_settings_changed), bar, G_CONNECT_SWAPPED);
+}
+
+
+
+static void
+thunar_location_bar_navigator_init (ThunarNavigatorIface *iface)
+{
+  iface->set_current_directory = thunar_location_bar_set_current_directory;
+  iface->get_current_directory = thunar_location_bar_get_current_directory;
+}
+
+
+
+static void
+thunar_location_bar_get_property (GObject              *object,
+                                  guint                 prop_id,
+                                  GValue               *value,
+                                  GParamSpec           *pspec)
+{
+  switch (prop_id)
     {
-      type = g_type_register_static_simple (G_TYPE_INTERFACE,
-                                            I_("ThunarLocationBar"),
-                                            sizeof (ThunarLocationBarIface),
-                                            NULL,
-                                            0,
-                                            NULL,
-                                            0);
+    case PROP_CURRENT_DIRECTORY:
+      g_value_set_object (value, thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (object)));
+      break;
 
-      g_type_interface_add_prerequisite (type, THUNAR_TYPE_COMPONENT);
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
 
-      g_once_init_leave (&type__volatile, type);
+
+
+static void thunar_location_bar_set_property   (GObject              *object,
+                                                guint                 prop_id,
+                                                const GValue         *value,
+                                                GParamSpec           *pspec)
+{
+  switch (prop_id)
+    {
+    case PROP_CURRENT_DIRECTORY:
+      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+
+
+static ThunarFile *
+thunar_location_bar_get_current_directory (ThunarNavigator *navigator)
+{
+  return THUNAR_LOCATION_BAR (navigator)->current_directory;
+}
+
+
+
+static void
+thunar_location_bar_set_current_directory (ThunarNavigator      *navigator,
+                                           ThunarFile           *current_directory)
+{
+  ThunarLocationBar *bar = THUNAR_LOCATION_BAR (navigator);
+  GtkWidget         *child;
+
+  if (bar->current_directory) g_object_unref (bar->current_directory);
+  bar->current_directory = current_directory;
+
+  if (current_directory) g_object_ref (current_directory);
+
+  if ((child = gtk_bin_get_child (GTK_BIN (bar))) && THUNAR_IS_NAVIGATOR (child))
+    thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (child), current_directory);
+
+  g_object_notify (G_OBJECT (bar), "current-directory");
+}
+
+
+
+static void
+thunar_location_bar_reload_requested (ThunarLocationBar *bar)
+{
+  g_signal_emit_by_name (bar, "reload-requested");
+}
+
+
+
+static GtkWidget *
+thunar_location_bar_install_widget (ThunarLocationBar    *bar,
+                                    GType                 type)
+{
+  GtkWidget *widget, *child;
+
+  /* check if the the right type is already installed */
+  if ((child = gtk_bin_get_child (GTK_BIN (bar))) && G_TYPE_CHECK_INSTANCE_TYPE (child, type))
+    return child;
+
+  widget = gtk_widget_new (type, "current-directory", bar->current_directory, NULL);
+
+  /* forward signals */
+  g_signal_connect_swapped (widget, "change-directory", G_CALLBACK (thunar_navigator_change_directory), THUNAR_NAVIGATOR (bar));
+  g_signal_connect_swapped (widget, "open-new-tab", G_CALLBACK (thunar_navigator_open_new_tab), THUNAR_NAVIGATOR (bar));
+
+  if (type == THUNAR_TYPE_LOCATION_ENTRY)
+    {
+      g_signal_connect_swapped (widget, "reload-requested", G_CALLBACK (thunar_location_bar_reload_requested), bar);
+    }
+  else if (type == THUNAR_TYPE_LOCATION_BUTTONS)
+    {
+      g_signal_connect_swapped (widget, "entry-requested", G_CALLBACK (thunar_location_bar_request_entry), bar);
     }
 
-  return type__volatile;
+  if ((child = gtk_bin_get_child (GTK_BIN (bar))))
+    gtk_widget_destroy (child);
+
+  gtk_container_add (GTK_CONTAINER (bar), widget);
+  gtk_widget_show (widget);
+
+  return widget;
+}
+
+
+
+static void
+thunar_location_bar_on_enry_edit_done (ThunarLocationEntry *entry,
+                                       ThunarLocationBar   *bar)
+{
+  g_signal_handlers_disconnect_by_func (entry, thunar_location_bar_on_enry_edit_done, bar);
+
+  g_object_ref (bar);
+  g_idle_add_full (G_PRIORITY_HIGH_IDLE, (GSourceFunc)thunar_location_bar_settings_changed, bar, g_object_unref);
+
+  g_signal_emit_by_name (bar, "entry-done");
 }
 
 
 
 /**
- * thunar_location_bar_accept_focus:
- * @location_bar : a #ThunarLocationBar.
- * @initial_text : the inital text for @location_bar if
- *                 focus is accepted, or %NULL if the
- *                 text of @location_bar shouldn't be
- *                 altered.
+ * thunar_location_bar_request_entry
+ * @bar          : The #ThunarLocationBar
+ * @initial_text : The initial text to be placed inside the entry, or NULL to
+ *                 use the path of the current directory.
  *
- * If the implementation of the #ThunarLocationBar interface
- * supports entering a location into a text widget, then the
- * text widget will be focused and the method will return
- * %TRUE. The #ThunarLocationEntry is an example for such
- * an implementation.
- *
- * Else if the implementation offers no way to enter a new
- * location as text, it will simply return %FALSE here. The
- * #ThunarLocationButtons class is an example for such an
- * implementation.
- *
- * Return value: %TRUE if the @location_bar gave focus to
- *               a text entry widget provided by @location_bar,
- *               else %FALSE.
- **/
-gboolean
-thunar_location_bar_accept_focus (ThunarLocationBar *location_bar,
-                                  const gchar       *initial_text)
+ * Makes the location bar display an entry with the given text and places the cursor
+ * accordingly. If the currently displayed location widget is a path bar, it will be
+ * temporarily swapped for an entry widget and swapped back once the user completed
+ * (or aborted) the input.
+ */
+void
+thunar_location_bar_request_entry (ThunarLocationBar *bar,
+                                   const gchar       *initial_text)
 {
-  _thunar_return_val_if_fail (THUNAR_IS_LOCATION_BAR (location_bar), FALSE);
-  return (*THUNAR_LOCATION_BAR_GET_IFACE (location_bar)->accept_focus) (location_bar, initial_text);
+  GtkWidget *child;
+
+  child = gtk_bin_get_child (GTK_BIN (bar));
+
+  _thunar_return_if_fail (child != NULL && GTK_IS_WIDGET (child));
+
+  if (THUNAR_IS_LOCATION_ENTRY (child))
+    {
+      /* already have an entry */
+      thunar_location_entry_accept_focus (THUNAR_LOCATION_ENTRY (child), initial_text);
+    }
+  else
+    {
+      /* not an entry => temporarily replace it */
+      child = thunar_location_bar_install_widget (bar, THUNAR_TYPE_LOCATION_ENTRY);
+      thunar_location_entry_accept_focus (THUNAR_LOCATION_ENTRY (child), initial_text);
+    }
+
+  g_signal_connect (child, "edit-done", G_CALLBACK (thunar_location_bar_on_enry_edit_done), bar);
 }
 
 
 
-/**
- * thunar_location_bar_is_standalone:
- * @location_bar : a #ThunarLocationBar.
- *
- * Returns %TRUE if @location_bar should not be placed in the location
- * toolbar, but should be treated as a standalone component, which is
- * placed near to the view pane. Else, if %FALSE is returned, the
- * @location_bar will be placed into the location toolbar.
- *
- * Return value: %FALSE to embed @location_bar into the location toolbar,
- *               %TRUE to treat it as a standalone component.
- **/
-gboolean
-thunar_location_bar_is_standalone (ThunarLocationBar *location_bar)
+static gboolean
+thunar_location_bar_settings_changed (ThunarLocationBar *bar)
 {
-  _thunar_return_val_if_fail (THUNAR_IS_LOCATION_BAR (location_bar), FALSE);
-  return (*THUNAR_LOCATION_BAR_GET_IFACE (location_bar)->is_standalone) (location_bar);
+  gchar *last_location_bar;
+  GType  type;
+
+  g_object_get (thunar_preferences_get(), "last-location-bar", &last_location_bar, NULL);
+
+  /* validate it */
+  if (!strcmp (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS)))
+    type = THUNAR_TYPE_LOCATION_BUTTONS;
+  else if (!strcmp (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_ENTRY)))
+    type = THUNAR_TYPE_LOCATION_ENTRY;
+  else
+    type = THUNAR_TYPE_LOCATION_ENTRY; /* fallback */
+
+  g_free (last_location_bar);
+
+  thunar_location_bar_install_widget (bar, type);
+
+  return FALSE;
 }
+
+

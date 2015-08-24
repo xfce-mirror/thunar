@@ -47,7 +47,6 @@
 #include <thunar/thunar-icon-view.h>
 #include <thunar/thunar-launcher.h>
 #include <thunar/thunar-location-buttons.h>
-#include <thunar/thunar-location-dialog.h>
 #include <thunar/thunar-location-entry.h>
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-pango-extensions.h>
@@ -146,8 +145,8 @@ static void     thunar_window_notebook_insert             (ThunarWindow         
 static void     thunar_window_merge_custom_preferences    (ThunarWindow           *window);
 static gboolean thunar_window_bookmark_merge              (gpointer                user_data);
 static void     thunar_window_merge_go_actions            (ThunarWindow           *window);
-static void     thunar_window_install_location_bar        (ThunarWindow           *window,
-                                                           GType                   type);
+static void     thunar_window_update_location_bar_visible (ThunarWindow           *window);
+static void     thunar_window_handle_reload_request       (ThunarWindow           *window);
 static void     thunar_window_install_sidepane            (ThunarWindow           *window,
                                                            GType                   type);
 static void     thunar_window_start_open_location         (ThunarWindow           *window,
@@ -711,6 +710,8 @@ thunar_window_init (ThunarWindow *window)
   gint            last_window_height;
   gboolean        last_window_maximized;
   gboolean        last_statusbar_visible;
+  GtkToolItem    *tool_item;
+  gboolean        small_icons;
   GtkRcStyle     *style;
 
   /* unset the view type */
@@ -733,6 +734,7 @@ thunar_window_init (ThunarWindow *window)
                 "last-location-bar", &last_location_bar,
                 "last-side-pane", &last_side_pane,
                 "last-statusbar-visible", &last_statusbar_visible,
+                "misc-small-toolbar-icons", &small_icons,
                 NULL);
 
   /* connect to the volume monitor */
@@ -885,20 +887,44 @@ thunar_window_init (ThunarWindow *window)
   gtk_widget_modify_style (window->notebook, style);
   g_object_unref (G_OBJECT (style));
 
-  /* determine the selected location selector */
-  if (exo_str_is_equal (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS)))
-    type = THUNAR_TYPE_LOCATION_BUTTONS;
-  else if (exo_str_is_equal (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_ENTRY)))
-    type = THUNAR_TYPE_LOCATION_ENTRY;
-  else
-    type = G_TYPE_NONE;
-  g_free (last_location_bar);
+  /* allocate the new location bar widget */
+  window->location_bar = thunar_location_bar_new ();
+  g_object_bind_property (G_OBJECT (window), "current-directory", G_OBJECT (window->location_bar), "current-directory", G_BINDING_SYNC_CREATE);
+  g_signal_connect_swapped (G_OBJECT (window->location_bar), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
+  g_signal_connect_swapped (G_OBJECT (window->location_bar), "open-new-tab", G_CALLBACK (thunar_window_notebook_insert), window);
+  g_signal_connect_swapped (G_OBJECT (window->location_bar), "reload-requested", G_CALLBACK (thunar_window_handle_reload_request), window);
+  g_signal_connect_swapped (G_OBJECT (window->location_bar), "entry-done", G_CALLBACK (thunar_window_update_location_bar_visible), window);
+
+  /* setup the toolbar for the location bar */
+  window->location_toolbar = gtk_ui_manager_get_widget (window->ui_manager, "/location-toolbar");
+  gtk_toolbar_set_style (GTK_TOOLBAR (window->location_toolbar), GTK_TOOLBAR_ICONS);
+  gtk_toolbar_set_icon_size (GTK_TOOLBAR (window->location_toolbar),
+                              small_icons ? GTK_ICON_SIZE_SMALL_TOOLBAR : GTK_ICON_SIZE_LARGE_TOOLBAR);
+  gtk_table_attach (GTK_TABLE (window->table), window->location_toolbar, 0, 1, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+
+  /* add the location bar tool item */
+  tool_item = gtk_tool_item_new ();
+  gtk_tool_item_set_expand (tool_item, TRUE);
+  gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), tool_item, -1);
+  gtk_widget_show (GTK_WIDGET (tool_item));
+
+  /* add the location bar itself */
+  gtk_container_add (GTK_CONTAINER (tool_item), window->location_bar);
+
+  /* display the new location bar widget */
+  gtk_widget_show (window->location_bar);
 
   /* activate the selected location selector */
   action = gtk_action_group_get_action (window->action_group, "view-location-selector-pathbar");
-  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), (type == THUNAR_TYPE_LOCATION_BUTTONS));
+  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), !strcmp(last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS)));
   action = gtk_action_group_get_action (window->action_group, "view-location-selector-toolbar");
-  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), (type == THUNAR_TYPE_LOCATION_ENTRY));
+  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), !strcmp(last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_ENTRY)));
+
+  g_free (last_location_bar);
+
+  /* setup setting the location bar visibility on-demand */
+  g_signal_connect_swapped (G_OBJECT (window->preferences), "notify::last-location-bar", G_CALLBACK (thunar_window_update_location_bar_visible), window);
+  thunar_window_update_location_bar_visible (window);
 
   /* determine the selected side pane (FIXME: Should probably be last-shortcuts-visible and last-tree-visible preferences) */
   if (exo_str_is_equal (last_side_pane, g_type_name (THUNAR_TYPE_SHORTCUTS_PANE)))
@@ -1444,14 +1470,6 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   thunar_window_binding_create (window, page, "selected-files", window->launcher, "selected-files", G_BINDING_SYNC_CREATE);
   thunar_window_binding_create (window, page, "zoom-level", window, "zoom-level", G_BINDING_SYNC_CREATE | G_BINDING_BIDIRECTIONAL);
 
-  /* connect to the location bar (if any) */
-  if (G_LIKELY (window->location_bar != NULL))
-    {
-      thunar_window_binding_create (window, page, "selected-files",
-                                    window->location_bar, "selected-files",
-                                    G_BINDING_SYNC_CREATE);
-    }
-
   /* connect to the sidepane (if any) */
   if (G_LIKELY (window->sidepane != NULL))
     {
@@ -1839,79 +1857,29 @@ thunar_window_update_directories (ThunarWindow *window,
 
 
 static void
-thunar_window_install_location_bar (ThunarWindow *window,
-                                    GType         type)
+thunar_window_update_location_bar_visible (ThunarWindow *window)
 {
-  GtkToolItem *item;
-  gboolean     small_icons;
+  gchar *last_location_bar = NULL;
 
-  _thunar_return_if_fail (type == G_TYPE_NONE || g_type_is_a (type, THUNAR_TYPE_LOCATION_BAR));
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  g_object_get (window->preferences, "last-location-bar", &last_location_bar, NULL);
 
-  /* drop the previous location bar (if any) */
-  if (G_UNLIKELY (window->location_bar != NULL))
-    {
-      /* check if it was toolbar'ed (and thereby need to be disconnected from the toolbar) */
-      if (!thunar_location_bar_is_standalone (THUNAR_LOCATION_BAR (window->location_bar)))
-        {
-          /* disconnect the toolbar from the window */
-          gtk_container_remove (GTK_CONTAINER (window->table), window->location_toolbar);
-          window->location_toolbar = NULL;
-        }
+  if (strcmp (last_location_bar, g_type_name (G_TYPE_NONE)))
+    gtk_widget_show (window->location_toolbar);
+  else
+    gtk_widget_hide (window->location_toolbar);
 
-      /* destroy the location bar */
-      gtk_widget_destroy (window->location_bar);
-      window->location_bar = NULL;
-    }
+  g_free (last_location_bar);
+}
 
-  /* check if we have a new location bar */
-  if (G_LIKELY (type != G_TYPE_NONE))
-    {
-      /* allocate the new location bar widget */
-      window->location_bar = g_object_new (type, "ui-manager", window->ui_manager, NULL);
-      exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->location_bar), "current-directory");
-      g_signal_connect_swapped (G_OBJECT (window->location_bar), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
-      g_signal_connect_swapped (G_OBJECT (window->location_bar), "open-new-tab", G_CALLBACK (thunar_window_notebook_insert), window);
 
-      /* connect the location widget to the view (if any) */
-      if (G_LIKELY (window->view != NULL))
-        thunar_window_binding_create (window, window->view, "selected-files", window->location_bar, "selected-files", G_BINDING_SYNC_CREATE);
 
-      /* check if the location bar should be placed into a toolbar */
-      if (!thunar_location_bar_is_standalone (THUNAR_LOCATION_BAR (window->location_bar)))
-        {
-          /* setup the toolbar for the location bar */
-          window->location_toolbar = gtk_ui_manager_get_widget (window->ui_manager, "/location-toolbar");
-          g_object_get (G_OBJECT (window->preferences), "misc-small-toolbar-icons", &small_icons, NULL);
-          gtk_toolbar_set_style (GTK_TOOLBAR (window->location_toolbar), GTK_TOOLBAR_ICONS);
-          gtk_toolbar_set_icon_size (GTK_TOOLBAR (window->location_toolbar),
-                                     small_icons ? GTK_ICON_SIZE_SMALL_TOOLBAR : GTK_ICON_SIZE_LARGE_TOOLBAR);
-          gtk_table_attach (GTK_TABLE (window->table), window->location_toolbar, 0, 1, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
-          gtk_widget_show (window->location_toolbar);
+static void
+thunar_window_handle_reload_request (ThunarWindow *window)
+{
+  gboolean result;
 
-          /* add the location bar tool item (destroyed with the location bar) */
-          item = gtk_tool_item_new ();
-          gtk_tool_item_set_expand (item, TRUE);
-          g_signal_connect_object (G_OBJECT (window->location_bar), "destroy", G_CALLBACK (gtk_widget_destroy), item, G_CONNECT_SWAPPED);
-          gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), item, -1);
-          gtk_widget_show (GTK_WIDGET (item));
-
-          /* add the location bar itself */
-          gtk_container_add (GTK_CONTAINER (item), window->location_bar);
-        }
-      else
-        {
-          /* it's a standalone location bar, just place it above the view */
-          gtk_table_attach (GTK_TABLE (window->view_box), window->location_bar, 0, 1, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 6);
-        }
-
-      /* display the new location bar widget */
-      gtk_widget_show (window->location_bar);
-    }
-
-  /* remember the setting */
-  if (gtk_widget_get_visible (GTK_WIDGET (window)))
-    g_object_set (G_OBJECT (window->preferences), "last-location-bar", g_type_name (type), NULL);
+  /* force the view to reload */
+  g_signal_emit (G_OBJECT (window), window_signals[RELOAD], 0, TRUE, &result);
 }
 
 
@@ -2311,49 +2279,9 @@ thunar_window_start_open_location (ThunarWindow *window,
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  /* bring up the "Open Location"-dialog if the window has no location bar or the location bar
-   * in the window does not support text entry by the user.
-   */
-  if (window->location_bar == NULL || !thunar_location_bar_accept_focus (THUNAR_LOCATION_BAR (window->location_bar), initial_text))
-    {
-      /* allocate the "Open Location" dialog */
-      dialog = thunar_location_dialog_new ();
-      gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
-      gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
-      gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
-      thunar_location_dialog_set_working_directory (THUNAR_LOCATION_DIALOG (dialog),
-                                                    thunar_window_get_current_directory (window));
-      thunar_location_dialog_set_selected_file (THUNAR_LOCATION_DIALOG (dialog),
-                                                thunar_window_get_current_directory (window));
-
-      /* setup the initial text (if any) */
-      if (G_UNLIKELY (initial_text != NULL))
-        {
-          /* show, grab focus, set text and move cursor to the end */
-          gtk_widget_show_now (dialog);
-          gtk_widget_grab_focus (THUNAR_LOCATION_DIALOG (dialog)->entry);
-          gtk_entry_set_text (GTK_ENTRY (THUNAR_LOCATION_DIALOG (dialog)->entry), initial_text);
-          gtk_editable_set_position (GTK_EDITABLE (THUNAR_LOCATION_DIALOG (dialog)->entry), -1);
-        }
-
-      /* run the dialog */
-      if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
-        {
-          /* be sure to hide the location dialog first */
-          gtk_widget_hide (dialog);
-
-          /* check if we have a new directory or a file to launch */
-          selected_file = thunar_location_dialog_get_selected_file (THUNAR_LOCATION_DIALOG (dialog));
-          if (selected_file != NULL)
-            {
-              thunar_browser_poke_file (THUNAR_BROWSER (window), selected_file, window,
-                                        thunar_window_poke_file_finish, NULL);
-            }
-        }
-
-      /* destroy the dialog */
-      gtk_widget_destroy (dialog);
-    }
+  /* temporary show the location toolbar, even if it is normally hidden */
+  gtk_widget_show (window->location_toolbar);
+  thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text);
 }
 
 
@@ -2543,8 +2471,8 @@ static void
 thunar_window_action_pathbar_changed (GtkToggleAction *action,
                                       ThunarWindow    *window)
 {
-  GtkAction *other_action;
-  GType      type;
+  GtkAction   *other_action;
+  GType        type;
 
   _thunar_return_if_fail (GTK_IS_TOGGLE_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
@@ -2552,8 +2480,8 @@ thunar_window_action_pathbar_changed (GtkToggleAction *action,
   /* determine the new type of location bar */
   type = gtk_toggle_action_get_active (action) ? THUNAR_TYPE_LOCATION_BUTTONS : G_TYPE_NONE;
 
-  /* install the new location bar */
-  thunar_window_install_location_bar (window, type);
+  /* update the preferences */
+  g_object_set (window->preferences, "last-location-bar", g_type_name (type), NULL);
 
   /* check if we actually installed anything */
   if (G_LIKELY (type != G_TYPE_NONE))
@@ -2581,8 +2509,8 @@ thunar_window_action_toolbar_changed (GtkToggleAction *action,
   /* determine the new type of location bar */
   type = gtk_toggle_action_get_active (action) ? THUNAR_TYPE_LOCATION_ENTRY : G_TYPE_NONE;
 
-  /* install the new location bar */
-  thunar_window_install_location_bar (window, type);
+  /* update the preferences */
+  g_object_set (window->preferences, "last-location-bar", g_type_name (type), NULL);
 
   /* check if we actually installed anything */
   if (G_LIKELY (type != G_TYPE_NONE))

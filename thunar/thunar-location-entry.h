@@ -36,6 +36,8 @@ typedef struct _ThunarLocationEntry      ThunarLocationEntry;
 
 GType      thunar_location_entry_get_type (void) G_GNUC_CONST;
 
+void       thunar_location_entry_accept_focus (ThunarLocationEntry *entry, const gchar *initial_text);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_LOCATION_ENTRY_H__ */

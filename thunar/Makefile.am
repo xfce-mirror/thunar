@@ -27,7 +27,6 @@ thunar_built_sources =							\
 	thunar-abstract-icon-view-ui.h					\
 	thunar-details-view-ui.h					\
 	thunar-launcher-ui.h						\
-	thunar-location-buttons-ui.h					\
 	thunar-shortcuts-pane-ui.h					\
 	thunar-renamer-dialog-ui.h					\
 	thunar-standard-view-ui.h					\
@@ -130,8 +129,6 @@ thunar_SOURCES =							\
 	thunar-location-button.h					\
 	thunar-location-buttons.c					\
 	thunar-location-buttons.h					\
-	thunar-location-dialog.c					\
-	thunar-location-dialog.h					\
 	thunar-location-entry.c						\
 	thunar-location-entry.h						\
 	thunar-misc-jobs.c						\
@@ -333,9 +330,6 @@ thunar-details-view-ui.h: Makefile $(srcdir)/thunar-details-view-ui.xml
 
 thunar-launcher-ui.h: Makefile $(srcdir)/thunar-launcher-ui.xml
 	$(AM_V_GEN) exo-csource --strip-comments --strip-content --static --name=thunar_launcher_ui $(srcdir)/thunar-launcher-ui.xml > thunar-launcher-ui.h
-
-thunar-location-buttons-ui.h: Makefile $(srcdir)/thunar-location-buttons-ui.xml
-	$(AM_V_GEN) exo-csource --strip-comments --strip-content --static --name=thunar_location_buttons_ui $(srcdir)/thunar-location-buttons-ui.xml > thunar-location-buttons-ui.h
 
 thunar-shortcuts-pane-ui.h: Makefile $(srcdir)/thunar-shortcuts-pane-ui.xml
 	$(AM_V_GEN) exo-csource --strip-comments --strip-content --static --name=thunar_shortcuts_pane_ui $(srcdir)/thunar-shortcuts-pane-ui.xml > thunar-shortcuts-pane-ui.h

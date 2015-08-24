@@ -24,29 +24,20 @@
 
 G_BEGIN_DECLS;
 
-typedef struct _ThunarLocationBarIface ThunarLocationBarIface;
+typedef struct _ThunarLocationBarClass ThunarLocationBarClass;
 typedef struct _ThunarLocationBar      ThunarLocationBar;
 
 #define THUNAR_TYPE_LOCATION_BAR            (thunar_location_bar_get_type ())
 #define THUNAR_LOCATION_BAR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_LOCATION_BAR, ThunarLocationBar))
 #define THUNAR_IS_LOCATION_BAR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_LOCATION_BAR))
-#define THUNAR_LOCATION_BAR_GET_IFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNAR_TYPE_LOCATION_BAR, ThunarLocationBarIface))
+#define THUNAR_LOCATION_BAR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_LOCATION_BAR, ThunarLocationBarClass))
 
-struct _ThunarLocationBarIface
-{
-  GTypeInterface __parent__;
 
-  /* virtual methods */
-  gboolean (*accept_focus)  (ThunarLocationBar *location_bar,
-                             const gchar       *initial_text);
-  gboolean (*is_standalone) (ThunarLocationBar *location_bar);
-};
+GType      thunar_location_bar_get_type      (void) G_GNUC_CONST;
 
-GType    thunar_location_bar_get_type     (void) G_GNUC_CONST;
+GtkWidget *thunar_location_bar_new           (void);
 
-gboolean thunar_location_bar_accept_focus  (ThunarLocationBar *location_bar,
-                                            const gchar       *initial_text);
-gboolean thunar_location_bar_is_standalone (ThunarLocationBar *location_bar);
+void       thunar_location_bar_request_entry (ThunarLocationBar *bar, const gchar *initial_text);
 
 G_END_DECLS;
 
