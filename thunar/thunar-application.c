@@ -37,6 +37,8 @@
 #include <time.h>
 #endif
 
+#include <stdlib.h>
+
 #ifdef HAVE_GUDEV
 #include <gudev/gudev.h>
 #endif
@@ -58,8 +60,29 @@
 #include <thunar/thunar-thumbnailer.h>
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-view.h>
+#include <thunar/thunar-session-client.h>
 
 #define ACCEL_MAP_PATH "Thunar/accels.scm"
+
+
+
+/* option values */
+static gboolean opt_version = FALSE;
+/* the sm-client-id option is only honored while starting the primary instance,
+ * and will be silently ignored on every other invocation */
+static gchar   *opt_sm_client_id = NULL;
+
+/* option entries */
+static const GOptionEntry option_entries[] =
+{
+  { "bulk-rename", 'B', 0, G_OPTION_ARG_NONE, NULL, N_ ("Open the bulk rename dialog"), NULL, },
+  { "daemon", 0, 0, G_OPTION_ARG_NONE, NULL, N_ ("Run in daemon mode"), NULL, },
+  { "sm-client-id", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_STRING, &opt_sm_client_id, NULL, NULL, },
+  { "quit", 'q', 0, G_OPTION_ARG_NONE, NULL, N_ ("Quit a running Thunar instance"), NULL, },
+  { "version", 'V', 0, G_OPTION_ARG_NONE, &opt_version, N_ ("Print version information and exit"), NULL, },
+  { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, NULL, NULL, NULL, },
+  { NULL, },
+};
 
 
 
@@ -87,6 +110,13 @@ static void           thunar_application_set_property           (GObject        
                                                                  guint                   prop_id,
                                                                  const GValue           *value,
                                                                  GParamSpec             *pspec);
+static void           thunar_application_startup                (GApplication           *application);
+static void           thunar_application_shutdown               (GApplication           *application);
+static void           thunar_application_activate               (GApplication           *application);
+static int            thunar_application_handle_local_options   (GApplication           *application,
+                                                                 GVariantDict           *options);
+static int            thunar_application_command_line           (GApplication           *application,
+                                                                 GApplicationCommandLine *command_line);
 static void           thunar_application_accel_map_changed      (ThunarApplication      *application);
 static gboolean       thunar_application_accel_map_save         (gpointer                user_data);
 static void           thunar_application_collect_and_launch     (ThunarApplication      *application,
@@ -130,16 +160,17 @@ static void           thunar_application_process_files          (ThunarApplicati
 
 struct _ThunarApplicationClass
 {
-  GObjectClass __parent__;
+  GtkApplicationClass __parent__;
 };
 
 struct _ThunarApplication
 {
-  GObject                __parent__;
+  GtkApplication         __parent__;
+
+  ThunarSessionClient   *session_client;
 
   ThunarPreferences     *preferences;
   GtkWidget             *progress_dialog;
-  GList                 *windows;
 
   ThunarThumbnailCache  *thumbnail_cache;
   ThunarThumbnailer     *thumbnailer;
@@ -170,7 +201,7 @@ static GQuark thunar_application_file_quark;
 
 
 
-G_DEFINE_TYPE_EXTENDED (ThunarApplication, thunar_application, G_TYPE_OBJECT, 0,
+G_DEFINE_TYPE_EXTENDED (ThunarApplication, thunar_application, GTK_TYPE_APPLICATION, 0,
                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_BROWSER, NULL))
 
 
@@ -178,7 +209,8 @@ G_DEFINE_TYPE_EXTENDED (ThunarApplication, thunar_application, G_TYPE_OBJECT, 0,
 static void
 thunar_application_class_init (ThunarApplicationClass *klass)
 {
-  GObjectClass *gobject_class;
+  GObjectClass        *gobject_class = G_OBJECT_CLASS (klass);
+  GApplicationClass   *gapplication_class = G_APPLICATION_CLASS (klass);
  
   /* pre-allocate the required quarks */
   thunar_application_screen_quark = 
@@ -188,10 +220,15 @@ thunar_application_class_init (ThunarApplicationClass *klass)
   thunar_application_file_quark =
     g_quark_from_static_string ("thunar-application-file");
 
-  gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_application_finalize;
   gobject_class->get_property = thunar_application_get_property;
   gobject_class->set_property = thunar_application_set_property;
+
+  gapplication_class->startup              = thunar_application_startup;
+  gapplication_class->activate             = thunar_application_activate;
+  gapplication_class->shutdown             = thunar_application_shutdown;
+  gapplication_class->handle_local_options = thunar_application_handle_local_options;
+  gapplication_class->command_line         = thunar_application_command_line;
 
   /**
    * ThunarApplication:daemon:
@@ -215,6 +252,24 @@ thunar_application_class_init (ThunarApplicationClass *klass)
 static void
 thunar_application_init (ThunarApplication *application)
 {
+  /* we do most initialization in GApplication::startup since it is only needed
+   * in the primary instance anyways */
+
+  application->files_to_launch = NULL;
+  application->progress_dialog = NULL;
+  application->preferences     = NULL;
+
+  g_application_set_flags (G_APPLICATION (application), G_APPLICATION_HANDLES_COMMAND_LINE);
+  g_application_add_main_option_entries (G_APPLICATION (application), option_entries);
+}
+
+
+
+static void
+thunar_application_startup (GApplication *gapp)
+{
+  ThunarApplication *application = THUNAR_APPLICATION (gapp);
+
 #ifdef HAVE_GUDEV
   static const gchar *subsystems[] = { "block", "input", "usb", NULL };
 #endif
@@ -223,9 +278,7 @@ thunar_application_init (ThunarApplication *application)
   /* initialize the application */
   application->preferences = thunar_preferences_get ();
 
-  application->files_to_launch = NULL;
-  application->progress_dialog = NULL;
-
+  /* TODO: how do accel maps integrate with GAction/GMenu? */
   /* check if we have a saved accel map */
   path = xfce_resource_lookup (XFCE_RESOURCE_CONFIG, ACCEL_MAP_PATH);
   if (G_LIKELY (path != NULL))
@@ -246,17 +299,22 @@ thunar_application_init (ThunarApplication *application)
 
   /* connect to the client in order to be notified when devices are plugged in
    * or disconnected from the computer */
-  g_signal_connect (application->udev_client, "uevent", 
+  g_signal_connect (application->udev_client, "uevent",
                     G_CALLBACK (thunar_application_uevent), application);
 #endif
+
+  /* connect to the session manager */
+  application->session_client = thunar_session_client_new (opt_sm_client_id);
+
+  G_APPLICATION_CLASS (thunar_application_parent_class)->startup (gapp);
 }
 
 
 
 static void
-thunar_application_finalize (GObject *object)
+thunar_application_shutdown (GApplication *gapp)
 {
-  ThunarApplication *application = THUNAR_APPLICATION (object);
+  ThunarApplication *application = THUNAR_APPLICATION (gapp);
   GList             *lp;
 
   /* unqueue all files waiting to be processed */
@@ -276,7 +334,7 @@ thunar_application_finalize (GObject *object)
   /* cancel any pending volman watch source */
   if (G_UNLIKELY (application->volman_watch_id != 0))
     g_source_remove (application->volman_watch_id);
-  
+
   /* cancel any pending volman idle source */
   if (G_UNLIKELY (application->volman_idle_id != 0))
     g_source_remove (application->volman_idle_id);
@@ -296,22 +354,138 @@ thunar_application_finalize (GObject *object)
   if (application->thumbnailer != NULL)
     g_object_unref (application->thumbnailer);
 
-  /* drop the open windows (this includes the progress dialog) */
-  for (lp = application->windows; lp != NULL; lp = lp->next)
-    {
-      g_signal_handlers_disconnect_by_func (G_OBJECT (lp->data), G_CALLBACK (thunar_application_window_destroyed), application);
-      gtk_widget_destroy (GTK_WIDGET (lp->data));
-    }
-  g_list_free (application->windows);
-
   /* release the thumbnail cache */
   if (application->thumbnail_cache != NULL)
     g_object_unref (G_OBJECT (application->thumbnail_cache));
 
   /* disconnect from the preferences */
   g_object_unref (G_OBJECT (application->preferences));
-  
+
+  /* disconnect from the session manager */
+  g_object_unref (G_OBJECT (application->session_client));
+
+  G_APPLICATION_CLASS (thunar_application_parent_class)->shutdown (gapp);
+}
+
+
+
+static void
+thunar_application_finalize (GObject *object)
+{
+  ThunarApplication *application = THUNAR_APPLICATION (object);
+
+  /* rule of thumb: what gets initialized in GApplication::startup is cleaned up
+   * in GApplication::shutdown. Therefore, this method doesn't do very much */
+
   (*G_OBJECT_CLASS (thunar_application_parent_class)->finalize) (object);
+}
+
+
+
+static int
+thunar_application_handle_local_options (GApplication *gapp,
+                                         GVariantDict *options)
+{
+  /* check if we should print version information */
+  if (G_UNLIKELY (opt_version))
+    {
+      g_print ("%s %s (Xfce %s)\n\n", PACKAGE_NAME, PACKAGE_VERSION, xfce_version_string ());
+      g_print ("%s\n", "Copyright (c) 2004-2015");
+      g_print ("\t%s\n\n", _("The Thunar development team. All rights reserved."));
+      g_print ("%s\n\n", _("Written by Benedikt Meurer <benny@xfce.org>."));
+      g_print (_("Please report bugs to <%s>."), PACKAGE_BUGREPORT);
+      g_print ("\n");
+      return EXIT_SUCCESS;
+    }
+
+  /* continue processing on the primary instance */
+  return -1;
+}
+
+
+
+static int
+thunar_application_command_line (GApplication            *gapp,
+                                 GApplicationCommandLine *command_line)
+{
+  ThunarApplication *application  = THUNAR_APPLICATION (gapp);
+  gboolean           bulk_rename  = FALSE;
+  gboolean           daemon       = FALSE;
+  gboolean           quit         = FALSE;
+  GStrv              filenames    = NULL;
+  const char        *cwd          = g_application_command_line_get_cwd (command_line);
+  GVariantDict      *options_dict = g_application_command_line_get_options_dict (command_line);
+  GError            *error        = NULL;
+  gchar             *cwd_list[]   = { (gchar *)".", NULL };
+
+  /* retrieve arguments */
+  g_variant_dict_lookup (options_dict, "bulk-rename", "b", &bulk_rename);
+  g_variant_dict_lookup (options_dict, "quit", "b", &quit);
+  g_variant_dict_lookup (options_dict, "daemon", "b", &daemon);
+  g_variant_dict_lookup (options_dict, G_OPTION_REMAINING, "^aay", &filenames);
+
+  /* FIXME: --quit should be named --suicide */
+  if (G_UNLIKELY (quit))
+    {
+        g_debug ("quitting");
+        g_application_quit (gapp);
+        goto out;
+    }
+
+  /* check whether we should daemonize */
+  if (G_UNLIKELY (daemon))
+    {
+        thunar_application_set_daemon (application, TRUE);
+    }
+
+  /* check if we should open the bulk rename dialog */
+  if (G_UNLIKELY (bulk_rename))
+    {
+      /* try to open the bulk rename dialog */
+      if (!thunar_application_bulk_rename (application, cwd, filenames, TRUE, NULL, NULL, &error))
+        {
+          /* FIXME? */
+          g_application_command_line_printerr (command_line, "Thunar: Failed to open bulk rename: %s\n", error->message);
+        }
+    }
+  else if (filenames != NULL)
+    {
+      if (!thunar_application_process_filenames (application, cwd, filenames, NULL, NULL, &error))
+        {
+          /* we failed to process the filenames or the bulk rename failed */
+          g_application_command_line_printerr (command_line, "Thunar: %s\n", error->message);
+        }
+    }
+  else if (!daemon)
+    {
+      if (!thunar_application_process_filenames (application, cwd, cwd_list, NULL, NULL, &error))
+        {
+          /* we failed to process the filenames or the bulk rename failed */
+          g_application_command_line_printerr (command_line, "Thunar: %s\n", error->message);
+        }
+    }
+
+out:
+  /* cleanup */
+  g_strfreev (filenames);
+
+  if (error)
+    {
+      g_error_free (error);
+      return EXIT_FAILURE;
+    }
+  else
+    return EXIT_SUCCESS;
+}
+
+
+
+static void
+thunar_application_activate (GApplication *gapp)
+{
+  /* TODO */
+
+  G_APPLICATION_CLASS (thunar_application_parent_class)->activate (gapp);
 }
 
 
@@ -570,38 +744,13 @@ thunar_application_launch (ThunarApplication *application,
       if (G_LIKELY (application->show_dialogs_timer_id == 0))
         {
           application->show_dialogs_timer_id = 
-            g_timeout_add_full (G_PRIORITY_DEFAULT, 750, thunar_application_show_dialogs,
-                                application, thunar_application_show_dialogs_destroy);
+            gdk_threads_add_timeout_full (G_PRIORITY_DEFAULT, 750, thunar_application_show_dialogs,
+                                          application, thunar_application_show_dialogs_destroy);
         }
     }
 
   /* drop our reference on the job */
   g_object_unref (job);
-}
-
-
-
-static void
-thunar_application_window_destroyed (GtkWidget         *window,
-                                     ThunarApplication *application)
-{
-  _thunar_return_if_fail (GTK_IS_WINDOW (window));
-  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
-  _thunar_return_if_fail (g_list_find (application->windows, window) != NULL);
-
-  /* take a ref on the thumbnailer in daemon mode, this way we don't
-   * need to build the content-type / scheme match table
-   */
-  if (application->thumbnailer == NULL && application->daemon)
-    application->thumbnailer = thunar_thumbnailer_get ();
-
-  application->windows = g_list_remove (application->windows, window);
-
-  /* terminate the application if we don't have any more
-   * windows and we are not in daemon mode.
-   */
-  if (G_UNLIKELY (application->windows == NULL && !application->daemon))
-    gtk_main_quit ();
 }
 
 
@@ -682,8 +831,6 @@ thunar_application_volman_idle (gpointer user_data)
   gchar            **argv;
   GPid               pid;
 
-  GDK_THREADS_ENTER ();
-
   /* check if volume management is enabled (otherwise, we don't spawn anything, but clear the list here) */
   g_object_get (G_OBJECT (application->preferences), "misc-volume-management", &misc_volume_management, NULL);
   if (G_LIKELY (misc_volume_management))
@@ -730,8 +877,6 @@ thunar_application_volman_idle (gpointer user_data)
       application->volman_udis = NULL;
     }
 
-  GDK_THREADS_LEAVE ();
-
   /* keep the idle source alive as long as no handler is
    * active and we have pending UDIs that must be handled
    */
@@ -756,20 +901,16 @@ thunar_application_volman_watch (GPid     pid,
 {
   ThunarApplication *application = THUNAR_APPLICATION (user_data);
 
-  GDK_THREADS_ENTER ();
-
   /* check if the idle source isn't active, but we have pending UDIs */
   if (application->volman_idle_id == 0 && application->volman_udis != NULL)
     {
       /* schedule a new handler using the idle source, which invokes the handler */
-      application->volman_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_application_volman_idle,
-                                                     application, thunar_application_volman_idle_destroy);
+      application->volman_idle_id = gdk_threads_add_idle_full (G_PRIORITY_LOW, thunar_application_volman_idle,
+                                                               application, thunar_application_volman_idle_destroy);
     }
 
   /* be sure to close the pid handle */
   g_spawn_close_pid (pid);
-
-  GDK_THREADS_LEAVE ();
 }
 
 
@@ -788,13 +929,9 @@ thunar_application_show_dialogs (gpointer user_data)
 {
   ThunarApplication *application = THUNAR_APPLICATION (user_data);
 
-  GDK_THREADS_ENTER ();
-
   /* show the progress dialog */
   if (application->progress_dialog != NULL)
     gtk_window_present (GTK_WINDOW (application->progress_dialog));
-
-  GDK_THREADS_LEAVE ();
 
   return FALSE;
 }
@@ -822,19 +959,12 @@ thunar_application_show_dialogs_destroy (gpointer user_data)
 ThunarApplication*
 thunar_application_get (void)
 {
-  static ThunarApplication *application = NULL;
+  GApplication *default_app = g_application_get_default ();
 
-  if (G_UNLIKELY (application == NULL))
-    {
-      application = g_object_new (THUNAR_TYPE_APPLICATION, NULL);
-      g_object_add_weak_pointer (G_OBJECT (application), (gpointer) &application);
-    }
+  if (default_app)
+    return THUNAR_APPLICATION (g_object_ref (default_app));
   else
-    {
-      g_object_ref (G_OBJECT (application));
-    }
-
-  return application;
+    return g_object_ref_sink (g_object_new (THUNAR_TYPE_APPLICATION, "application-id", "org.xfce.Thunar", NULL));
 }
 
 
@@ -873,6 +1003,11 @@ thunar_application_set_daemon (ThunarApplication *application,
     {
       application->daemon = daemonize;
       g_object_notify (G_OBJECT (application), "daemon");
+
+      if (daemonize)
+        g_application_hold (G_APPLICATION (application));
+      else
+        g_application_release (G_APPLICATION (application));
     }
 }
 
@@ -891,16 +1026,17 @@ thunar_application_set_daemon (ThunarApplication *application,
 GList*
 thunar_application_get_windows (ThunarApplication *application)
 {
-  GList *windows = NULL;
-  GList *lp;
+  GList *gtk_windows, *thunar_windows = NULL, *lp;
 
   _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), NULL);
 
-  for (lp = application->windows; lp != NULL; lp = lp->next)
-    if (G_LIKELY (THUNAR_IS_WINDOW (lp->data)))
-      windows = g_list_prepend (windows, lp->data);
+  gtk_windows = gtk_application_get_windows (GTK_APPLICATION (application));
 
-  return windows;
+  for (lp = gtk_windows; lp != NULL; lp = lp->next)
+    if (G_LIKELY (THUNAR_IS_WINDOW (lp->data)))
+      thunar_windows = g_list_prepend (thunar_windows, lp->data);
+
+  return thunar_windows;
 }
 
 
@@ -916,7 +1052,9 @@ gboolean
 thunar_application_has_windows (ThunarApplication *application)
 {
   _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
-  return (application->windows != NULL);
+
+  /* FIXME: this is possible inconsisitent with thunar_application_get_windows() */
+  return gtk_application_get_windows (GTK_APPLICATION (application)) != NULL;
 }
 
 
@@ -942,21 +1080,17 @@ thunar_application_take_window (ThunarApplication *application,
 
   _thunar_return_if_fail (GTK_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
-  _thunar_return_if_fail (g_list_find (application->windows, window) == NULL);
 
   /* only windows without a parent get a new window group */
-  if (gtk_window_get_transient_for (window) == NULL)
+  if (gtk_window_get_transient_for (window) == NULL && !gtk_window_has_group (window))
     {
       group = gtk_window_group_new ();
       gtk_window_group_add_window (group, window);
       g_object_weak_ref (G_OBJECT (window), (GWeakNotify) g_object_unref, group);
     }
 
-  /* connect to the "destroy" signal */
-  g_signal_connect (G_OBJECT (window), "destroy", G_CALLBACK (thunar_application_window_destroyed), application);
-
-  /* add the window to our internal list */
-  application->windows = g_list_prepend (application->windows, window);
+  /* add the ourselves to the window */
+  gtk_window_set_application (window, GTK_APPLICATION (application));
 }
 
 
@@ -1056,12 +1190,16 @@ thunar_application_bulk_rename (ThunarApplication *application,
   gboolean    result = FALSE;
   GList      *file_list = NULL;
   gchar      *filename;
+  gchar      *empty_strv[] = { NULL };
   gint        n;
 
   _thunar_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
   _thunar_return_val_if_fail (working_directory != NULL, FALSE);
+
+  if (!filenames)
+    filenames = empty_strv;
 
   /* determine the file for the working directory */
   current_directory = thunar_file_get_for_uri (working_directory, error);
@@ -1196,6 +1334,9 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
   /* unset the startup id */
   if (startup_id != NULL)
     g_object_set_qdata (G_OBJECT (file), thunar_application_startup_id_quark, NULL);
+
+  /* release the application */
+  g_application_release (G_APPLICATION (application));
 }
 
 
@@ -1217,6 +1358,9 @@ thunar_application_process_files (ThunarApplication *application)
 
   /* retrieve the screen we need to launch the file on */
   screen = g_object_get_qdata (G_OBJECT (file), thunar_application_screen_quark);
+
+  /* make sure to hold a reference to the application while file processing is going on */
+  g_application_hold (G_APPLICATION (application));
 
   /* resolve the file and/or mount its enclosing volume 
    * before handling it in the callback */
@@ -1328,15 +1472,6 @@ thunar_application_process_filenames (ThunarApplication *application,
   g_list_free (file_list);
 
   return TRUE;
-}
-
-
-
-gboolean
-thunar_application_is_processing (ThunarApplication *application)
-{
-  _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
-  return application->files_to_launch != NULL;
 }
 
 

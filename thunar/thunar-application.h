@@ -73,8 +73,6 @@ gboolean              thunar_application_process_filenames          (ThunarAppli
                                                                      const gchar       *startup_id,
                                                                      GError           **error);
 
-gboolean              thunar_application_is_processing              (ThunarApplication *application);
-
 void                  thunar_application_rename_file                (ThunarApplication *application,
                                                                      ThunarFile        *file,
                                                                      GdkScreen         *screen,
