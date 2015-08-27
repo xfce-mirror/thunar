@@ -70,6 +70,9 @@ defaults_DATA = $(defaults_in_files:.xml.in=.xml)
 
 EXTRA_DIST =								\
 	README								\
+	thunar-uca.gresource.xml					\
+	thunar-uca-editor.ui						\
+	thunar-uca-chooser.ui						\
 	$(defaults_in_files)
 
 CLEANFILES =								\
