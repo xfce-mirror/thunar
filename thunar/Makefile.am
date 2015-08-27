@@ -377,7 +377,6 @@ EXTRA_DIST =								\
 	thunar-dbus-service-infos.xml					\
 	thunar-details-view-ui.xml					\
 	thunar-launcher-ui.xml						\
-	thunar-location-buttons-ui.xml					\
 	thunar-marshal.list						\
 	thunar-renamer-dialog-ui.xml					\
 	thunar-standard-view-ui.xml					\

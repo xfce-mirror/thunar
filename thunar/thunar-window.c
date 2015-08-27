@@ -923,7 +923,7 @@ thunar_window_init (ThunarWindow *window)
   g_free (last_location_bar);
 
   /* setup setting the location bar visibility on-demand */
-  g_signal_connect_swapped (G_OBJECT (window->preferences), "notify::last-location-bar", G_CALLBACK (thunar_window_update_location_bar_visible), window);
+  g_signal_connect_object (G_OBJECT (window->preferences), "notify::last-location-bar", G_CALLBACK (thunar_window_update_location_bar_visible), window, G_CONNECT_SWAPPED);
   thunar_window_update_location_bar_visible (window);
 
   /* determine the selected side pane (FIXME: Should probably be last-shortcuts-visible and last-tree-visible preferences) */
