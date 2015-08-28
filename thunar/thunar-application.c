@@ -61,6 +61,7 @@
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-view.h>
 #include <thunar/thunar-session-client.h>
+#include <thunar/thunar-dbus-service.h>
 
 #define ACCEL_MAP_PATH "Thunar/accels.scm"
 
@@ -117,6 +118,10 @@ static int            thunar_application_handle_local_options   (GApplication   
                                                                  GVariantDict           *options);
 static int            thunar_application_command_line           (GApplication           *application,
                                                                  GApplicationCommandLine *command_line);
+static gboolean       thunar_application_dbus_register          (GApplication           *application,
+                                                                 GDBusConnection        *connection,
+                                                                 const gchar            *object_path,
+                                                                 GError                **error);
 static void           thunar_application_accel_map_changed      (ThunarApplication      *application);
 static gboolean       thunar_application_accel_map_save         (gpointer                user_data);
 static void           thunar_application_collect_and_launch     (ThunarApplication      *application,
@@ -175,6 +180,8 @@ struct _ThunarApplication
   ThunarThumbnailCache  *thumbnail_cache;
   ThunarThumbnailer     *thumbnailer;
 
+  ThunarDBusService     *dbus_service;
+
   gboolean               daemon;
 
   guint                  accel_map_save_id;
@@ -229,6 +236,7 @@ thunar_application_class_init (ThunarApplicationClass *klass)
   gapplication_class->shutdown             = thunar_application_shutdown;
   gapplication_class->handle_local_options = thunar_application_handle_local_options;
   gapplication_class->command_line         = thunar_application_command_line;
+  gapplication_class->dbus_register        = thunar_application_dbus_register;
 
   /**
    * ThunarApplication:daemon:
@@ -364,6 +372,9 @@ thunar_application_shutdown (GApplication *gapp)
   /* disconnect from the session manager */
   g_object_unref (G_OBJECT (application->session_client));
 
+  /* remove the dbus service */
+  g_clear_pointer (&application->dbus_service, g_object_unref);
+
   G_APPLICATION_CLASS (thunar_application_parent_class)->shutdown (gapp);
 }
 
@@ -476,6 +487,24 @@ out:
     }
   else
     return EXIT_SUCCESS;
+}
+
+
+
+static gboolean
+thunar_application_dbus_register (GApplication           *gapp,
+                                  GDBusConnection        *connection,
+                                  const gchar            *object_path,
+                                  GError                **error)
+{
+    ThunarApplication *application = THUNAR_APPLICATION (gapp);
+
+    if (application->dbus_service) /* WTF? */
+        return TRUE;
+
+    application->dbus_service = g_object_new (THUNAR_TYPE_DBUS_SERVICE, NULL);
+
+    return thunar_dbus_service_export_on_connection (application->dbus_service, connection, error);
 }
 
 

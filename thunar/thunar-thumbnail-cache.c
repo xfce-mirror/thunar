@@ -22,12 +22,7 @@
 #include <config.h>
 #endif
 
-#ifdef HAVE_DBUS
-#include <dbus/dbus.h>
-#include <dbus/dbus-glib.h>
-
 #include <thunar/thunar-thumbnail-cache-proxy.h>
-#endif
 
 #include <glib.h>
 #include <glib-object.h>
@@ -51,6 +46,13 @@ static void thunar_thumbnail_cache_finalize (GObject *object);
 
 
 
+enum
+{
+  THUNAR_THUMBNAIL_CACHE_PROXY_AVAILABLE,
+  THUNAR_THUMBNAIL_CACHE_PROXY_WAITING,
+  THUNAR_THUMBNAIL_CACHE_PROXY_FAILED
+};
+
 struct _ThunarThumbnailCacheClass
 {
   GObjectClass __parent__;
@@ -60,8 +62,8 @@ struct _ThunarThumbnailCache
 {
   GObject     __parent__;
 
-#ifdef HAVE_DBUS
-  DBusGProxy *cache_proxy;
+  ThunarThumbnailCacheDBus *cache_proxy;
+  int                       proxy_state;
 
   GList      *move_source_queue;
   GList      *move_target_queue;
@@ -81,7 +83,6 @@ struct _ThunarThumbnailCache
   GMutex      lock;
 #else
   GMutex     *lock;
-#endif
 #endif
 };
 
@@ -106,41 +107,8 @@ thunar_thumbnail_cache_class_init (ThunarThumbnailCacheClass *klass)
 
 
 static void
-thunar_thumbnail_cache_init (ThunarThumbnailCache *cache)
-{
-#ifdef HAVE_DBUS
-  DBusGConnection *connection;
-
-  /* try to connect to D-Bus */
-  connection = dbus_g_bus_get (DBUS_BUS_SESSION, NULL);
-  if (connection != NULL)
-    {
-      /* create a proxy for the thumbnail cache service */
-      cache->cache_proxy =
-        dbus_g_proxy_new_for_name (connection,
-                                   "org.freedesktop.thumbnails.Cache1",
-                                   "/org/freedesktop/thumbnails/Cache1",
-                                   "org.freedesktop.thumbnails.Cache1");
-
-      /* release the D-Bus connection */
-      dbus_g_connection_unref (connection);
-    }
-
-/* create a new mutex for accessing the cache from different threads */
-#if GLIB_CHECK_VERSION (2, 32, 0)
-  g_mutex_init (&cache->lock);
-#else
-  cache->lock = g_mutex_new ();
-#endif
-#endif
-}
-
-
-
-static void
 thunar_thumbnail_cache_finalize (GObject *object)
 {
-#ifdef HAVE_DBUS
   ThunarThumbnailCache *cache = THUNAR_THUMBNAIL_CACHE (object);
 
   /* acquire a cache lock */
@@ -181,28 +149,32 @@ thunar_thumbnail_cache_finalize (GObject *object)
 #else
   g_mutex_free (cache->lock);
 #endif
-#endif
 
   (*G_OBJECT_CLASS (thunar_thumbnail_cache_parent_class)->finalize) (object);
 }
 
 
 
-#ifdef HAVE_DBUS
 static void
-thunar_thumbnail_cache_move_copy_async_reply (DBusGProxy *proxy,
-                                              GError     *error,
-                                              gpointer    user_data)
+thunar_thumbnail_cache_copy_async_reply (ThunarThumbnailCacheDBus *proxy,
+                                         GAsyncResult             *res,
+                                         gpointer                  user_data)
 {
   GList      *li;
   ThunarFile *file;
+  GError     *error;
 
-  _thunar_return_if_fail (DBUS_IS_G_PROXY (proxy));
+  _thunar_return_if_fail (THUNAR_IS_THUMBNAIL_CACHE_DBUS (proxy));
+
+  if (!thunar_thumbnail_cache_dbus_call_copy_finish (proxy, res, &error))
+    {
+      g_printerr ("ThunarThumbnailCache: failed to call Copy(): %s\n", error->message);
+    }
+  g_clear_error (&error);
 
   for (li = user_data; li != NULL; li = li->next)
     {
       file = thunar_file_cache_lookup (G_FILE (li->data));
-      g_object_unref (G_OBJECT (li->data));
 
       if (G_LIKELY (file != NULL))
         {
@@ -212,7 +184,41 @@ thunar_thumbnail_cache_move_copy_async_reply (DBusGProxy *proxy,
         }
     }
 
-  g_list_free (user_data);
+  g_list_free_full (user_data, g_object_unref);
+}
+
+
+
+static void
+thunar_thumbnail_cache_move_async_reply (ThunarThumbnailCacheDBus *proxy,
+                                         GAsyncResult             *res,
+                                         gpointer                  user_data)
+{
+  GList      *li;
+  ThunarFile *file;
+  GError     *error;
+
+  _thunar_return_if_fail (THUNAR_IS_THUMBNAIL_CACHE_DBUS (proxy));
+
+  if (!thunar_thumbnail_cache_dbus_call_move_finish (proxy, res, &error))
+    {
+      g_printerr ("ThunarThumbnailCache: failed to call Move(): %s\n", error->message);
+    }
+  g_clear_error (&error);
+
+  for (li = user_data; li != NULL; li = li->next)
+    {
+      file = thunar_file_cache_lookup (G_FILE (li->data));
+
+      if (G_LIKELY (file != NULL))
+        {
+          /* if visible, let the view know there might be a thumb */
+          thunar_file_changed (file);
+          g_object_unref (file);
+        }
+    }
+
+  g_list_free_full (user_data, g_object_unref);
 }
 
 
@@ -228,10 +234,11 @@ thunar_thumbnail_cache_move_async (ThunarThumbnailCache *cache,
   _thunar_return_if_fail (target_uris != NULL);
 
   /* request a thumbnail cache update asynchronously */
-  thunar_thumbnail_cache_proxy_move_async (cache->cache_proxy,
-                                           source_uris, target_uris,
-                                           thunar_thumbnail_cache_move_copy_async_reply,
-                                           user_data);
+  thunar_thumbnail_cache_dbus_call_move (cache->cache_proxy,
+                                         source_uris, target_uris,
+                                         NULL,
+                                         (GAsyncReadyCallback)thunar_thumbnail_cache_move_async_reply,
+                                         user_data);
 }
 
 
@@ -247,20 +254,11 @@ thunar_thumbnail_cache_copy_async (ThunarThumbnailCache *cache,
   _thunar_return_if_fail (target_uris != NULL);
 
   /* request a thumbnail cache update asynchronously */
-  thunar_thumbnail_cache_proxy_copy_async (cache->cache_proxy,
-                                           source_uris, target_uris,
-                                           thunar_thumbnail_cache_move_copy_async_reply,
-                                           user_data);
-}
-
-
-
-static void
-thunar_thumbnail_cache_delete_async_reply (DBusGProxy *proxy,
-                                           GError     *error,
-                                           gpointer    user_data)
-{
-  _thunar_return_if_fail (DBUS_IS_G_PROXY (proxy));
+  thunar_thumbnail_cache_dbus_call_copy (cache->cache_proxy,
+                                         source_uris, target_uris,
+                                         NULL,
+                                         (GAsyncReadyCallback)thunar_thumbnail_cache_copy_async_reply,
+                                         user_data);
 }
 
 
@@ -273,19 +271,8 @@ thunar_thumbnail_cache_delete_async (ThunarThumbnailCache *cache,
   _thunar_return_if_fail (uris != NULL);
 
   /* request a thumbnail cache update asynchronously */
-  thunar_thumbnail_cache_proxy_delete_async (cache->cache_proxy, uris,
-                                             thunar_thumbnail_cache_delete_async_reply,
-                                             NULL);
-}
-
-
-
-static void
-thunar_thumbnail_cache_cleanup_async_reply (DBusGProxy *proxy,
-                                            GError     *error,
-                                            gpointer    user_data)
-{
-  _thunar_return_if_fail (DBUS_IS_G_PROXY (proxy));
+  thunar_thumbnail_cache_dbus_call_delete (cache->cache_proxy, uris,
+                                           NULL, NULL, NULL);
 }
 
 
@@ -298,10 +285,9 @@ thunar_thumbnail_cache_cleanup_async (ThunarThumbnailCache *cache,
   _thunar_return_if_fail (base_uris != NULL);
 
   /* request a thumbnail cache update asynchronously */
-  thunar_thumbnail_cache_proxy_cleanup_async (cache->cache_proxy,
-                                              (const gchar **)base_uris, 0,
-                                              thunar_thumbnail_cache_cleanup_async_reply,
-                                              NULL);
+  thunar_thumbnail_cache_dbus_call_cleanup (cache->cache_proxy,
+                                            (const gchar **)base_uris, 0,
+                                            NULL, NULL, NULL);
 }
 
 
@@ -538,7 +524,6 @@ thunar_thumbnail_cache_process_cleanup_queue (ThunarThumbnailCache *cache)
 
   return FALSE;
 }
-#endif /* HAVE_DBUS */
 
 
 
@@ -559,12 +544,20 @@ thunar_thumbnail_cache_move_file (ThunarThumbnailCache *cache,
   _thunar_return_if_fail (G_IS_FILE (source_file));
   _thunar_return_if_fail (G_IS_FILE (target_file));
 
-#ifdef HAVE_DBUS
   /* acquire a cache lock */
   _thumbnail_cache_lock (cache);
 
   /* check if we have a valid proxy for the cache service */
-  if (cache->cache_proxy != NULL)
+  if (cache->proxy_state != THUNAR_THUMBNAIL_CACHE_PROXY_FAILED)
+    {
+      /* add the files to the move queue */
+      cache->move_source_queue = g_list_prepend (cache->move_source_queue,
+                                                 g_object_ref (source_file));
+      cache->move_target_queue = g_list_prepend (cache->move_target_queue,
+                                                 g_object_ref (target_file));
+    }
+
+  if (cache->proxy_state == THUNAR_THUMBNAIL_CACHE_PROXY_AVAILABLE)
     {
       /* cancel any pending timeout to process the move queue */
       if (cache->move_queue_idle_id > 0)
@@ -572,12 +565,6 @@ thunar_thumbnail_cache_move_file (ThunarThumbnailCache *cache,
           g_source_remove (cache->move_queue_idle_id);
           cache->move_queue_idle_id = 0;
         }
-
-      /* add the files to the move queue */
-      cache->move_source_queue = g_list_prepend (cache->move_source_queue,
-                                                 g_object_ref (source_file));
-      cache->move_target_queue = g_list_prepend (cache->move_target_queue,
-                                                 g_object_ref (target_file));
 
       /* process the move queue in a 250ms timeout */
       cache->move_queue_idle_id =
@@ -587,7 +574,6 @@ thunar_thumbnail_cache_move_file (ThunarThumbnailCache *cache,
 
   /* release the cache lock */
   _thumbnail_cache_unlock (cache);
-#endif
 }
 
 
@@ -601,12 +587,20 @@ thunar_thumbnail_cache_copy_file (ThunarThumbnailCache *cache,
   _thunar_return_if_fail (G_IS_FILE (source_file));
   _thunar_return_if_fail (G_IS_FILE (target_file));
 
-#ifdef HAVE_DBUS
   /* acquire a cache lock */
   _thumbnail_cache_lock (cache);
 
   /* check if we have a valid proxy for the cache service */
-  if (cache->cache_proxy != NULL)
+  if (cache->proxy_state != THUNAR_THUMBNAIL_CACHE_PROXY_FAILED)
+    {
+      /* add the files to the copy queues */
+      cache->copy_source_queue = g_list_prepend (cache->copy_source_queue,
+                                                 g_object_ref (source_file));
+      cache->copy_target_queue = g_list_prepend (cache->copy_target_queue,
+                                                 g_object_ref (target_file));
+    }
+
+  if (cache->proxy_state == THUNAR_THUMBNAIL_CACHE_PROXY_AVAILABLE)
     {
       /* cancel any pending timeout to process the copy queue */
       if (cache->copy_queue_idle_id > 0)
@@ -614,12 +608,6 @@ thunar_thumbnail_cache_copy_file (ThunarThumbnailCache *cache,
           g_source_remove (cache->copy_queue_idle_id);
           cache->copy_queue_idle_id = 0;
         }
-
-      /* add the files to the copy queues */
-      cache->copy_source_queue = g_list_prepend (cache->copy_source_queue,
-                                                 g_object_ref (source_file));
-      cache->copy_target_queue = g_list_prepend (cache->copy_target_queue,
-                                                 g_object_ref (target_file));
 
       /* process the copy queue in a 250ms timeout */
       cache->copy_queue_idle_id =
@@ -629,7 +617,6 @@ thunar_thumbnail_cache_copy_file (ThunarThumbnailCache *cache,
 
   /* release the cache lock */
   _thumbnail_cache_unlock (cache);
-#endif
 }
 
 
@@ -641,12 +628,17 @@ thunar_thumbnail_cache_delete_file (ThunarThumbnailCache *cache,
   _thunar_return_if_fail (THUNAR_IS_THUMBNAIL_CACHE (cache));
   _thunar_return_if_fail (G_IS_FILE (file));
 
-#ifdef HAVE_DBUS
   /* acquire a cache lock */
   _thumbnail_cache_lock (cache);
 
   /* check if we have a valid proxy for the cache service */
-  if (cache->cache_proxy)
+  if (cache->proxy_state != THUNAR_THUMBNAIL_CACHE_PROXY_FAILED)
+    {
+      /* add the file to the delete queue */
+      cache->delete_queue = g_list_prepend (cache->delete_queue, g_object_ref (file));
+    }
+
+  if (cache->proxy_state == THUNAR_THUMBNAIL_CACHE_PROXY_AVAILABLE)
     {
       /* cancel any pending timeout to process the delete queue */
       if (cache->delete_queue_idle_id > 0)
@@ -654,9 +646,6 @@ thunar_thumbnail_cache_delete_file (ThunarThumbnailCache *cache,
           g_source_remove (cache->delete_queue_idle_id);
           cache->delete_queue_idle_id = 0;
         }
-
-      /* add the file to the delete queue */
-      cache->delete_queue = g_list_prepend (cache->delete_queue, g_object_ref (file));
 
       /* process the delete queue in a 250ms timeout */
       cache->delete_queue_idle_id =
@@ -666,7 +655,6 @@ thunar_thumbnail_cache_delete_file (ThunarThumbnailCache *cache,
 
   /* release the cache lock */
   _thumbnail_cache_unlock (cache);
-#endif
 }
 
 
@@ -678,12 +666,17 @@ thunar_thumbnail_cache_cleanup_file (ThunarThumbnailCache *cache,
   _thunar_return_if_fail (THUNAR_IS_THUMBNAIL_CACHE (cache));
   _thunar_return_if_fail (G_IS_FILE (file));
 
-#ifdef HAVE_DBUS
   /* acquire a cache lock */
   _thumbnail_cache_lock (cache);
 
   /* check if we have a valid proxy for the cache service */
-  if (cache->cache_proxy)
+  if (cache->proxy_state != THUNAR_THUMBNAIL_CACHE_PROXY_FAILED)
+    {
+      /* add the file to the cleanup queue */
+      cache->cleanup_queue = g_list_prepend (cache->cleanup_queue, g_object_ref (file));
+    }
+
+  if (cache->proxy_state == THUNAR_THUMBNAIL_CACHE_PROXY_AVAILABLE)
     {
       /* cancel any pending timeout to process the cleanup queue */
       if (cache->cleanup_queue_idle_id > 0)
@@ -691,9 +684,6 @@ thunar_thumbnail_cache_cleanup_file (ThunarThumbnailCache *cache,
           g_source_remove (cache->cleanup_queue_idle_id);
           cache->cleanup_queue_idle_id = 0;
         }
-
-      /* add the file to the cleanup queue */
-      cache->cleanup_queue = g_list_prepend (cache->cleanup_queue, g_object_ref (file));
 
       /* process the cleanup queue in a 250ms timeout */
       cache->cleanup_queue_idle_id =
@@ -703,5 +693,89 @@ thunar_thumbnail_cache_cleanup_file (ThunarThumbnailCache *cache,
 
   /* release the cache lock */
   _thumbnail_cache_unlock (cache);
-#endif
 }
+
+
+
+static void
+thunar_thumbnail_cache_proxy_created (GObject      *source,
+                                      GAsyncResult *res,
+                                      gpointer      userdata)
+{
+  ThunarThumbnailCache     *cache = THUNAR_THUMBNAIL_CACHE (userdata);
+  ThunarThumbnailCacheDBus *proxy;
+  GError                   *error = NULL;
+
+  _thumbnail_cache_lock (cache);
+
+  if ((proxy = thunar_thumbnail_cache_dbus_proxy_new_for_bus_finish (res, &error)))
+    {
+      cache->cache_proxy = proxy;
+      cache->proxy_state = THUNAR_THUMBNAIL_CACHE_PROXY_AVAILABLE;
+    }
+  else
+    {
+      cache->proxy_state = THUNAR_THUMBNAIL_CACHE_PROXY_FAILED;
+
+      g_printerr ("ThunarThumbnailCache: Couldn't connect to bus service: %s\n", error->message);
+    }
+
+  g_clear_error (&error);
+
+  /* process the move queue in a 250ms timeout */
+  if (cache->move_source_queue)
+      cache->move_queue_idle_id =
+        g_timeout_add_full (G_PRIORITY_DEFAULT_IDLE, 250, thunar_thumbnail_cache_process_move_queue,
+                            cache, thunar_thumbnail_cache_process_move_queue_destroy);
+
+  /* process the copy queue in a 250ms timeout */
+  if (cache->copy_source_queue)
+      cache->copy_queue_idle_id =
+        g_timeout_add_full (G_PRIORITY_DEFAULT_IDLE, 500, thunar_thumbnail_cache_process_copy_queue,
+                            cache, thunar_thumbnail_cache_process_copy_queue_destroy);
+
+  /* process the delete queue in a 250ms timeout */
+  if (cache->delete_queue)
+      cache->delete_queue_idle_id =
+        g_timeout_add (500, (GSourceFunc) thunar_thumbnail_cache_process_delete_queue,
+                       cache);
+
+  /* process the cleanup queue in a 250ms timeout */
+  if (cache->cleanup_queue)
+      cache->cleanup_queue_idle_id =
+        g_timeout_add (1000, (GSourceFunc) thunar_thumbnail_cache_process_cleanup_queue,
+                       cache);
+
+  _thumbnail_cache_unlock (cache);
+
+  /* drop additional reference */
+  g_object_unref (cache);
+}
+
+
+
+static void
+thunar_thumbnail_cache_init (ThunarThumbnailCache *cache)
+{
+  /* create a new mutex for accessing the cache from different threads */
+#if GLIB_CHECK_VERSION (2, 32, 0)
+  g_mutex_init (&cache->lock);
+#else
+  cache->lock = g_mutex_new ();
+#endif
+
+  /* add an additional reference to keep us alive while tre proxy initializes */
+  g_object_ref (cache);
+
+  /* try to connect to D-Bus */
+  cache->proxy_state = THUNAR_THUMBNAIL_CACHE_PROXY_WAITING;
+  thunar_thumbnail_cache_dbus_proxy_new_for_bus (G_BUS_TYPE_SESSION,
+                                                 0,
+                                                 "org.freedesktop.thumbnails.Cache1",
+                                                 "/org/freedesktop/thumbnails/Cache1",
+                                                 NULL,
+                                                 thunar_thumbnail_cache_proxy_created,
+                                                 cache);
+}
+
+

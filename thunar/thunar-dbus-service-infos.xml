@@ -26,7 +26,7 @@
     File Managers.
   -->
   <interface name="org.xfce.FileManager">
-    <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="thunar_dbus_service" />
+    <annotation name="org.gtk.GDBus.C.Name" value="DBusFileManager" />
 
     <!--
       DisplayChooserDialog (uri : STRING, open : BOOLEAN, display : STRING, startup_id : STRING) : VOID
@@ -350,7 +350,7 @@
     Managers that support a trash bin.
   -->
   <interface name="org.xfce.Trash">
-    <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="thunar_dbus_service" />
+    <annotation name="org.gtk.GDBus.C.Name" value="DBusTrash" />
 
     <!--
       DisplayTrash (display : STRING, startup_id : STRING) : VOID
@@ -441,7 +441,7 @@
     do not use this interface, but use org.xfce.FileManager instead.
   -->
   <interface name="org.xfce.Thunar">
-    <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="thunar_dbus_service" />
+    <annotation name="org.gtk.GDBus.C.Name" value="DBusThunar" />
 
     <!--
       BulkRename (working_directory : STRING, filenames : ARRAY OF STRING, standalone : BOOLEAN, display : STRING, startup_id : STRING) : VOID

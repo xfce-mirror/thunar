@@ -78,13 +78,11 @@ appdatadir = $(datadir)/appdata
 appdata_DATA = $(appdata_in_files:.xml.in=.xml)
 appdata_in_files = thunar.appdata.xml.in
 
-if HAVE_DBUS
 servicedir = $(datadir)/dbus-1/services
 service_in_files = org.xfce.FileManager.service.in org.xfce.Thunar.service.in
 service_DATA = $(service_in_files:.service.in=.service)
 %.service: %.service.in
 	$(AM_V_GEN) $(SED) -e "s,\@bindir\@,$(bindir),g" < $< > $@
-endif
 
 polkit_policydir = $(datadir)/polkit-1/actions
 polkit_in_in_files =			\

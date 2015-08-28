@@ -36,7 +36,9 @@ typedef struct _ThunarDBusService      ThunarDBusService;
 
 GType    thunar_dbus_service_get_type       (void) G_GNUC_CONST;
 
-gboolean thunar_dbus_service_has_connection (ThunarDBusService *dbus_service);
+gboolean thunar_dbus_service_export_on_connection (ThunarDBusService *service,
+                                                   GDBusConnection   *connection,
+                                                   GError           **error);
 
 G_END_DECLS;
 

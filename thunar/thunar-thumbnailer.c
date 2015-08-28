@@ -23,13 +23,7 @@
 #include <config.h>
 #endif
 
-#ifdef HAVE_DBUS
-#include <dbus/dbus.h>
-#include <dbus/dbus-glib.h>
-
 #include <thunar/thunar-thumbnailer-proxy.h>
-#endif
-
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-thumbnailer.h>
@@ -47,15 +41,19 @@
  *
  * Please note that all D-Bus calls are performed asynchronously.
  *
+ * The proxy and the supported file types are intialized asynchronously, but
+ * this is nearly completely transparent to the calling code because all requests
+ * that arrive beforehand will be cached and sent out as soon as the initialization
+ * is completed.
  *
- * When a request call is sent out, an internal request ID is created and
- * associated with the corresponding DBusGProxyCall.
+ * When a request call is sent out, an internal request ID is created and tied
+ * to the dbus call. While the call is running, an additional reference is held
+ * to the thumbnailer so it cannot be finalized.
  *
  * The D-Bus reply handler then checks if there was an delivery error or
  * not. If the request method was sent successfully, the handle returned by the
  * D-Bus thumbnailer is associated bidirectionally with the internal request ID via
- * the request and handle values in the job structure. In both cases, the
- * association of the internal request ID with the DBusGProxyCall is set to NULL.
+ * the request and handle values in the job structure.
  *
  *
  * Ready / Error
@@ -76,7 +74,6 @@
 
 
 
-#ifdef HAVE_DBUS
 typedef enum
 {
   THUNAR_THUMBNAILER_IDLE_ERROR,
@@ -85,9 +82,17 @@ typedef enum
 
 
 
+typedef enum
+{
+  THUNAR_THUMBNAILER_PROXY_WAITING = 0,
+  THUNAR_THUMBNAILER_PROXY_AVAILABLE,
+  THUNAR_THUMBNAILER_PROXY_FAILED
+} ThunarThumbnailerProxyState;
+
+
+
 typedef struct _ThunarThumbnailerJob  ThunarThumbnailerJob;
 typedef struct _ThunarThumbnailerIdle ThunarThumbnailerIdle;
-#endif
 
 /* Signal identifiers */
 enum
@@ -99,21 +104,19 @@ enum
 
 
 static void                   thunar_thumbnailer_finalize               (GObject                    *object);
-#ifdef HAVE_DBUS
-static void                   thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer          *thumbnailer,
-                                                                         DBusGConnection            *connection);
+static void                   thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer          *thumbnailer);
 static gboolean               thunar_thumbnailer_file_is_supported      (ThunarThumbnailer          *thumbnailer,
                                                                          ThunarFile                 *file);
-static void                   thunar_thumbnailer_thumbnailer_finished   (DBusGProxy                 *proxy,
+static void                   thunar_thumbnailer_thumbnailer_finished   (GDBusProxy                 *proxy,
                                                                          guint                       handle,
                                                                          ThunarThumbnailer          *thumbnailer);
-static void                   thunar_thumbnailer_thumbnailer_error      (DBusGProxy                 *proxy,
+static void                   thunar_thumbnailer_thumbnailer_error      (GDBusProxy                 *proxy,
                                                                          guint                       handle,
                                                                          const gchar               **uris,
                                                                          gint                        code,
                                                                          const gchar                *message,
                                                                          ThunarThumbnailer          *thumbnailer);
-static void                   thunar_thumbnailer_thumbnailer_ready      (DBusGProxy                 *proxy,
+static void                   thunar_thumbnailer_thumbnailer_ready      (GDBusProxy                 *proxy,
                                                                          guint32                     handle,
                                                                          const gchar               **uris,
                                                                          ThunarThumbnailer          *thumbnailer);
@@ -126,7 +129,6 @@ static void                   thunar_thumbnailer_idle                   (ThunarT
                                                                          const gchar               **uris);
 static gboolean               thunar_thumbnailer_idle_func              (gpointer                    user_data);
 static void                   thunar_thumbnailer_idle_free              (gpointer                    data);
-#endif
 
 #if GLIB_CHECK_VERSION (2, 32, 0)
 #define _thumbnailer_lock(thumbnailer)    g_mutex_lock (&((thumbnailer)->lock))
@@ -149,9 +151,9 @@ struct _ThunarThumbnailer
 {
   GObject __parent__;
 
-#ifdef HAVE_DBUS
   /* proxies to communicate with D-Bus services */
-  DBusGProxy *thumbnailer_proxy;
+  ThunarThumbnailerDBus      *thumbnailer_proxy;
+  ThunarThumbnailerProxyState proxy_state;
 
   /* running jobs */
   GSList     *jobs;
@@ -170,10 +172,8 @@ struct _ThunarThumbnailer
 
   /* IDs of idle functions */
   GSList     *idles;
-#endif
 };
 
-#ifdef HAVE_DBUS
 struct _ThunarThumbnailerJob
 {
   ThunarThumbnailer *thumbnailer;
@@ -181,14 +181,17 @@ struct _ThunarThumbnailerJob
   /* if this job is cancelled */
   guint              cancelled : 1;
 
+  guint              lazy_checks : 1;
+
+  /* data is saved here in case the queueing is delayed */
+  /* If this is NULL, the request has been sent off. */
+  GList             *files; /* element type: ThunarFile */
+
   /* request number returned by ThunarThumbnailer */
   guint              request;
 
   /* handle returned by the tumbler dbus service */
   guint              handle;
-
-  /* dbus call to get the handle */
-  DBusGProxyCall    *handle_call;
 };
 
 struct _ThunarThumbnailerIdle
@@ -198,8 +201,6 @@ struct _ThunarThumbnailerIdle
   guint                       id;
   gchar                     **uris;
 };
-#endif
-
 
 
 static guint thumbnailer_signals[LAST_SIGNAL];
@@ -238,27 +239,213 @@ thunar_thumbnailer_class_init (ThunarThumbnailerClass *klass)
 
 
 static void
+thunar_thumbnailer_free_job (ThunarThumbnailerJob *job)
+{
+  if (job->files)
+    g_list_free_full (job->files, g_object_unref);
+
+  if (job->thumbnailer && job->thumbnailer->thumbnailer_proxy && job->handle)
+    thunar_thumbnailer_dbus_call_dequeue (job->thumbnailer->thumbnailer_proxy, job->handle, NULL, NULL, NULL);
+
+  g_slice_free (ThunarThumbnailerJob, job);
+}
+
+
+
+static void
+thunar_thumbnailer_queue_async_reply (GObject      *proxy,
+                                      GAsyncResult *res,
+                                      gpointer      user_data)
+{
+  ThunarThumbnailerJob *job = user_data;
+  ThunarThumbnailer    *thumbnailer = THUNAR_THUMBNAILER (job->thumbnailer);
+  GError               *error = NULL;
+  int                   handle;
+
+  _thunar_return_if_fail (THUNAR_IS_THUMBNAILER_DBUS (proxy));
+  _thunar_return_if_fail (job != NULL);
+  _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
+
+  _thumbnailer_lock (thumbnailer);
+
+  thunar_thumbnailer_dbus_call_queue_finish (THUNAR_THUMBNAILER_DBUS (proxy), &handle, res, &error);
+
+  if (job->cancelled)
+    {
+      /* job is cancelled while there was no handle jet, so dequeue it now */
+      thunar_thumbnailer_dbus_call_dequeue (THUNAR_THUMBNAILER_DBUS (proxy), handle, NULL, NULL, NULL);
+
+      /* cleanup */
+      thumbnailer->jobs = g_slist_remove (thumbnailer->jobs, job);
+      thunar_thumbnailer_free_job (job);
+    }
+  else if (error == NULL)
+    {
+      /* store the handle returned by tumbler */
+      job->handle = handle;
+    }
+  else
+    {
+      g_printerr ("ThunarThumbnailer: Queue failed: %s\n", error->message);
+    }
+
+  _thumbnailer_unlock (thumbnailer);
+  g_clear_error (&error);
+
+  /* remove the additional reference we held during the call */
+  g_object_unref (thumbnailer);
+}
+
+
+
+/* NOTE: assumes that the lock is held by the caller */
+gboolean
+thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
+                              ThunarThumbnailerJob *job)
+{
+  gboolean               success = FALSE;
+  const gchar          **mime_hints;
+  gchar                **uris;
+  GList                 *lp;
+  GList                 *supported_files = NULL;
+  guint                  n;
+  guint                  n_items = 0;
+  ThunarFileThumbState   thumb_state;
+  const gchar           *thumbnail_path;
+  gint                   request_no;
+
+  if (thumbnailer->proxy_state == THUNAR_THUMBNAILER_PROXY_WAITING)
+    {
+      /* all pending jobs will be queued automatically once the proxy is available */
+      return TRUE;
+    }
+  else if (thumbnailer->proxy_state == THUNAR_THUMBNAILER_PROXY_FAILED)
+    {
+      /* the job has no chance to be completed - ever */
+      return FALSE;
+    }
+
+  /* collect all supported files from the list that are neither in the
+   * about to be queued (wait queue), nor already queued, nor already
+   * processed (and awaiting to be refreshed) */
+  for (lp = job->files; lp != NULL; lp = lp->next)
+    {
+      /* the icon factory only loads icons for regular files */
+      if (!thunar_file_is_regular (lp->data))
+        {
+          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE);
+          continue;
+        }
+
+      /* get the current thumb state */
+      thumb_state = thunar_file_get_thumb_state (lp->data);
+
+      if (job->lazy_checks)
+        {
+          /* in lazy mode, don't both for files that have already
+           * been loaded or are not supported */
+          if (thumb_state == THUNAR_FILE_THUMB_STATE_NONE
+              || thumb_state == THUNAR_FILE_THUMB_STATE_READY)
+            continue;
+        }
+
+      /* check if the file is supported, assume it is when the state was ready previously */
+      if (thumb_state == THUNAR_FILE_THUMB_STATE_READY
+          || thunar_thumbnailer_file_is_supported (thumbnailer, lp->data))
+        {
+          supported_files = g_list_prepend (supported_files, lp->data);
+          n_items++;
+        }
+      else
+        {
+          /* still a regular file, but the type is now known to tumbler but
+           * maybe the application created a thumbnail */
+          thumbnail_path = thunar_file_get_thumbnail_path (lp->data);
+
+          /* test if a thumbnail can be found */
+          if (thumbnail_path != NULL && g_file_test (thumbnail_path, G_FILE_TEST_EXISTS))
+            thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_READY);
+          else
+            thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE);
+        }
+    }
+
+  /* check if we have any supported files */
+  if (n_items > 0)
+    {
+      /* allocate arrays for URIs and mime hints */
+      uris = g_new0 (gchar *, n_items + 1);
+      mime_hints = g_new0 (const gchar *, n_items + 1);
+
+      /* fill URI and MIME hint arrays with items from the wait queue */
+      for (lp = supported_files, n = 0; lp != NULL; lp = lp->next, ++n)
+        {
+          /* set the thumbnail state to loading */
+          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_LOADING);
+
+          /* save URI and MIME hint in the arrays */
+          uris[n] = thunar_file_dup_uri (lp->data);
+          mime_hints[n] = thunar_file_get_content_type (lp->data);
+        }
+
+      /* NULL-terminate both arrays */
+      uris[n] = NULL;
+      mime_hints[n] = NULL;
+
+      /* queue a thumbnail request for the URIs from the wait queue */
+      /* compute the next request ID, making sure it's never 0 */
+      request_no = thumbnailer->last_request + 1;
+      request_no = MAX (request_no, 1);
+
+      /* remember the ID for the next request */
+      thumbnailer->last_request = request_no;
+
+      /* save the request number */
+      job->request = request_no;
+
+      /* increase the reference count while the dbus call is running */
+      g_object_ref (thumbnailer);
+
+      /* queue the request - asynchronously, of course */
+      thunar_thumbnailer_dbus_call_queue (thumbnailer->thumbnailer_proxy,
+                                          (const gchar *const *)uris,
+                                          (const gchar *const *)mime_hints,
+                                          "normal", "foreground", 0,
+                                          NULL,
+                                          thunar_thumbnailer_queue_async_reply,
+                                          job);
+
+      /* free mime hints array */
+      g_free (mime_hints);
+      g_strfreev (uris);
+
+      /* free the list of supported files */
+      g_list_free (supported_files);
+
+      /* free the list of files passed in */
+      g_list_free_full (job->files, g_object_unref);
+      job->files = NULL;
+
+      /* we assume success if we've come so far */
+      success = TRUE;
+    }
+
+  return success;
+}
+
+
+
+static void
 thunar_thumbnailer_init (ThunarThumbnailer *thumbnailer)
 {
-#ifdef HAVE_DBUS
-  DBusGConnection *connection;
-
-#if GLIB_CHECK_VERSION (2, 32, 0)
+  #if GLIB_CHECK_VERSION (2, 32, 0)
   g_mutex_init (&thumbnailer->lock);
 #else
   thumbnailer->lock = g_mutex_new ();
 #endif
 
-  /* try to connect to D-Bus */
-  connection = dbus_g_bus_get (DBUS_BUS_SESSION, NULL);
-
   /* initialize the proxies */
-  thunar_thumbnailer_init_thumbnailer_proxy (thumbnailer, connection);
-
-  /* release the D-Bus connection if we have one */
-  if (connection != NULL)
-    dbus_g_connection_unref (connection);
-#endif
+  thunar_thumbnailer_init_thumbnailer_proxy (thumbnailer);
 }
 
 
@@ -266,7 +453,6 @@ thunar_thumbnailer_init (ThunarThumbnailer *thumbnailer)
 static void
 thunar_thumbnailer_finalize (GObject *object)
 {
-#ifdef HAVE_DBUS
   ThunarThumbnailer     *thumbnailer = THUNAR_THUMBNAILER (object);
   ThunarThumbnailerIdle *idle;
   ThunarThumbnailerJob  *job;
@@ -292,22 +478,7 @@ thunar_thumbnailer_finalize (GObject *object)
   g_slist_free (thumbnailer->idles);
 
   /* remove all jobs */
-  for (lp = thumbnailer->jobs; lp != NULL; lp = lp->next)
-    {
-      job = lp->data;
-
-      if (thumbnailer->thumbnailer_proxy != NULL)
-        {
-          if (job->handle_call != NULL)
-            dbus_g_proxy_cancel_call (thumbnailer->thumbnailer_proxy, job->handle_call);
-
-          if (job->handle != 0)
-            thunar_thumbnailer_proxy_dequeue (thumbnailer->thumbnailer_proxy, job->handle, NULL);
-        }
-
-      g_slice_free (ThunarThumbnailerJob, job);
-    }
-  g_slist_free (thumbnailer->jobs);
+  g_slist_free_full (thumbnailer->jobs, (GDestroyNotify)thunar_thumbnailer_free_job);
 
   /* release the thumbnailer proxy */
   if (thumbnailer->thumbnailer_proxy != NULL)
@@ -326,66 +497,8 @@ thunar_thumbnailer_finalize (GObject *object)
 #else
   g_mutex_free (thumbnailer->lock);
 #endif
-#endif
 
   (*G_OBJECT_CLASS (thunar_thumbnailer_parent_class)->finalize) (object);
-}
-
-
-
-#ifdef HAVE_DBUS
-static void
-thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer *thumbnailer,
-                                           DBusGConnection   *connection)
-{
-  /* we can't have a proxy without a D-Bus connection */
-  if (connection == NULL)
-    {
-      thumbnailer->thumbnailer_proxy = NULL;
-      return;
-    }
-
-  /* create the thumbnailer proxy */
-  thumbnailer->thumbnailer_proxy =
-    dbus_g_proxy_new_for_name (connection,
-                               "org.freedesktop.thumbnails.Thumbnailer1",
-                               "/org/freedesktop/thumbnails/Thumbnailer1",
-                               "org.freedesktop.thumbnails.Thumbnailer1");
-
-  /* TODO this should actually be VOID:UINT,BOXED,INT,STRING */
-  dbus_g_object_register_marshaller (_thunar_marshal_VOID__UINT_BOXED_UINT_STRING,
-                                     G_TYPE_NONE,
-                                     G_TYPE_UINT,
-                                     G_TYPE_STRV,
-                                     G_TYPE_UINT,
-                                     G_TYPE_STRING,
-                                     G_TYPE_INVALID);
-
-  dbus_g_object_register_marshaller ((GClosureMarshal) _thunar_marshal_VOID__UINT_BOXED,
-                                     G_TYPE_NONE,
-                                     G_TYPE_UINT,
-                                     G_TYPE_STRV,
-                                     G_TYPE_INVALID);
-
-  dbus_g_proxy_add_signal (thumbnailer->thumbnailer_proxy, "Error",
-                           G_TYPE_UINT, G_TYPE_STRV, G_TYPE_UINT, G_TYPE_STRING,
-                           G_TYPE_INVALID);
-  dbus_g_proxy_add_signal (thumbnailer->thumbnailer_proxy, "Finished",
-                           G_TYPE_UINT, G_TYPE_INVALID);
-  dbus_g_proxy_add_signal (thumbnailer->thumbnailer_proxy, "Ready",
-                           G_TYPE_UINT, G_TYPE_STRV, G_TYPE_INVALID);
-  dbus_g_proxy_add_signal (thumbnailer->thumbnailer_proxy, "Started",
-                           G_TYPE_UINT, G_TYPE_INVALID);
-
-  dbus_g_proxy_connect_signal (thumbnailer->thumbnailer_proxy, "Error",
-                               G_CALLBACK (thunar_thumbnailer_thumbnailer_error),
-                               thumbnailer, NULL);
-  dbus_g_proxy_connect_signal (thumbnailer->thumbnailer_proxy, "Finished",
-                               G_CALLBACK (thunar_thumbnailer_thumbnailer_finished),
-                               thumbnailer, NULL);
-  dbus_g_proxy_connect_signal (thumbnailer->thumbnailer_proxy, "Ready",
-                               G_CALLBACK (thunar_thumbnailer_thumbnailer_ready),
-                               thumbnailer, NULL);
 }
 
 
@@ -426,31 +539,39 @@ thunar_thumbnailer_file_sort_schemes (gpointer mime_type,
 
 
 static void
-thunar_thumbnailer_get_supported_types (ThunarThumbnailer *thumbnailer)
+thunar_thumbnailer_received_supported_types (ThunarThumbnailerDBus  *proxy,
+                                             GAsyncResult           *result,
+                                             ThunarThumbnailer      *thumbnailer)
 {
   guint       n;
   gchar     **schemes = NULL;
   gchar     **types = NULL;
   GPtrArray  *schemes_array;
+  GSList     *lp = NULL;
+  GError     *error = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
-  _thunar_return_if_fail (DBUS_IS_G_PROXY (thumbnailer->thumbnailer_proxy));
-  _thunar_return_if_fail (!_thumbnailer_trylock (thumbnailer));
+  _thunar_return_if_fail (THUNAR_IS_THUMBNAILER_DBUS (proxy));
 
-  /* leave if there already is a hash table */
-  if (thumbnailer->supported != NULL)
-    return;
+  _thumbnailer_lock (thumbnailer);
 
-  /* prepare table */
-  thumbnailer->supported = g_hash_table_new_full (g_str_hash, g_str_equal,
-                                                  g_free,
-                                                  (GDestroyNotify) g_ptr_array_unref);
 
-  /* request the supported types from the thumbnailer D-Bus service. We only do
-   * this once, so using a non-async call should be ok */
-  thunar_thumbnailer_proxy_get_supported (thumbnailer->thumbnailer_proxy,
-                                          &schemes, &types,
-                                          NULL);
+  if (!thunar_thumbnailer_dbus_call_get_supported_finish (proxy, &schemes, &types, result, &error))
+    {
+      g_slist_free_full (thumbnailer->jobs, (GDestroyNotify)thunar_thumbnailer_free_job);
+      thumbnailer->jobs = NULL;
+
+      g_printerr ("ThunarThumbnailer: Failed to retrieve supported types: %s\n", error->message);
+      g_clear_error (&error);
+
+      thumbnailer->proxy_state = THUNAR_THUMBNAILER_PROXY_FAILED;
+      g_object_unref (proxy);
+
+      _thumbnailer_unlock (thumbnailer);
+
+      g_object_unref (thumbnailer);
+      return;
+    }
 
   if (G_LIKELY (schemes != NULL && types != NULL))
     {
@@ -482,10 +603,112 @@ thunar_thumbnailer_get_supported_types (ThunarThumbnailer *thumbnailer)
       /* sort array to optimize for local files */
       g_hash_table_foreach (thumbnailer->supported, thunar_thumbnailer_file_sort_schemes, NULL);
     }
+
+  thumbnailer->proxy_state = THUNAR_THUMBNAILER_PROXY_AVAILABLE;
+  thumbnailer->thumbnailer_proxy = proxy;
+
+  /* now start delayed jobs */
+  for (lp = thumbnailer->jobs; lp; lp = lp->next)
+    {
+      if (!thunar_thumbnailer_begin_job (thumbnailer, lp->data))
+        {
+          thunar_thumbnailer_free_job (lp->data);
+          lp->data = NULL;
+        }
+    }
+  thumbnailer->jobs = g_slist_remove_all (thumbnailer->jobs, NULL);
+
+  g_clear_error (&error);
+
+  _thumbnailer_unlock (thumbnailer);
+
+  g_object_unref (thumbnailer);
 }
 
 
 
+static void
+thunar_thumbnailer_proxy_created (GObject       *object,
+                                  GAsyncResult  *result,
+                                  gpointer       userdata)
+{
+  ThunarThumbnailer     *thumbnailer = THUNAR_THUMBNAILER (userdata);
+  GError                *error = NULL;
+  ThunarThumbnailerDBus *proxy;
+
+  proxy = thunar_thumbnailer_dbus_proxy_new_finish (result, &error);
+
+  if (!proxy)
+    {
+      _thumbnailer_lock (thumbnailer);
+
+      thumbnailer->proxy_state = THUNAR_THUMBNAILER_PROXY_FAILED;
+      g_printerr ("ThunarThumbnailer: failed to create proxy: %s", error->message);
+      g_clear_error (&error);
+
+      g_slist_free_full (thumbnailer->jobs, (GDestroyNotify)thunar_thumbnailer_free_job);
+      thumbnailer->jobs = NULL;
+
+      _thumbnailer_unlock (thumbnailer);
+
+      g_object_unref (thumbnailer);
+
+      return;
+    }
+
+  /* setup signals */
+  g_signal_connect (proxy, "error",
+                    G_CALLBACK (thunar_thumbnailer_thumbnailer_error), thumbnailer);
+  g_signal_connect (proxy, "finished",
+                    G_CALLBACK (thunar_thumbnailer_thumbnailer_finished), thumbnailer);
+  g_signal_connect (proxy, "ready",
+                    G_CALLBACK (thunar_thumbnailer_thumbnailer_ready), thumbnailer);
+
+  /* begin retrieving supported file types */
+
+  _thumbnailer_lock (thumbnailer);
+
+  /* prepare table */
+  g_clear_pointer (&thumbnailer->supported, g_hash_table_unref);
+  thumbnailer->supported = g_hash_table_new_full (g_str_hash, g_str_equal,
+                                                  g_free,
+                                                  (GDestroyNotify) g_ptr_array_unref);
+
+  /* request the supported types from the thumbnailer D-Bus service. */
+  thunar_thumbnailer_dbus_call_get_supported (proxy, NULL,
+                                              (GAsyncReadyCallback)thunar_thumbnailer_received_supported_types,
+                                              thumbnailer);
+
+  _thumbnailer_unlock (thumbnailer);
+}
+
+
+
+static void
+thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer *thumbnailer)
+{
+  GError *error = NULL;
+
+  _thumbnailer_lock (thumbnailer);
+
+  thumbnailer->thumbnailer_proxy = NULL;
+  thumbnailer->proxy_state = THUNAR_THUMBNAILER_PROXY_WAITING;
+
+  /* create the thumbnailer proxy */
+  thunar_thumbnailer_dbus_proxy_new_for_bus (G_BUS_TYPE_SESSION,
+                                             G_DBUS_PROXY_FLAGS_GET_INVALIDATED_PROPERTIES,
+                                             "org.freedesktop.thumbnails.Thumbnailer1",
+                                             "/org/freedesktop/thumbnails/Thumbnailer1",
+                                             NULL,
+                                             (GAsyncReadyCallback)thunar_thumbnailer_proxy_created,
+                                             thumbnailer);
+
+  _thumbnailer_unlock (thumbnailer);
+}
+
+
+
+/* NOTE: assumes the lock is being held by the caller*/
 static gboolean
 thunar_thumbnailer_file_is_supported (ThunarThumbnailer *thumbnailer,
                                       ThunarFile        *file)
@@ -498,9 +721,8 @@ thunar_thumbnailer_file_is_supported (ThunarThumbnailer *thumbnailer,
 
   _thunar_return_val_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  _thunar_return_val_if_fail (DBUS_IS_G_PROXY (thumbnailer->thumbnailer_proxy), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_THUMBNAILER_DBUS (thumbnailer->thumbnailer_proxy), FALSE);
   _thunar_return_val_if_fail (thumbnailer->supported != NULL, FALSE);
-  _thunar_return_val_if_fail (!_thumbnailer_trylock (thumbnailer), FALSE);
 
   /* determine the content type of the passed file */
   content_type = thunar_file_get_content_type (file);
@@ -529,14 +751,14 @@ thunar_thumbnailer_file_is_supported (ThunarThumbnailer *thumbnailer,
 
 
 static void
-thunar_thumbnailer_thumbnailer_error (DBusGProxy        *proxy,
+thunar_thumbnailer_thumbnailer_error (GDBusProxy        *proxy,
                                       guint              handle,
                                       const gchar      **uris,
                                       gint               code,
                                       const gchar       *message,
                                       ThunarThumbnailer *thumbnailer)
 {
-  _thunar_return_if_fail (DBUS_IS_G_PROXY (proxy));
+  _thunar_return_if_fail (G_IS_DBUS_PROXY (proxy));
   _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
 
   /* check if we have any ready URIs */
@@ -549,12 +771,12 @@ thunar_thumbnailer_thumbnailer_error (DBusGProxy        *proxy,
 
 
 static void
-thunar_thumbnailer_thumbnailer_ready (DBusGProxy        *proxy,
+thunar_thumbnailer_thumbnailer_ready (GDBusProxy        *proxy,
                                       guint32            handle,
                                       const gchar      **uris,
                                       ThunarThumbnailer *thumbnailer)
 {
-  _thunar_return_if_fail (DBUS_IS_G_PROXY (proxy));
+  _thunar_return_if_fail (G_IS_DBUS_PROXY (proxy));
   _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
 
   thunar_thumbnailer_idle (thumbnailer,
@@ -566,15 +788,17 @@ thunar_thumbnailer_thumbnailer_ready (DBusGProxy        *proxy,
 
 
 static void
-thunar_thumbnailer_thumbnailer_finished (DBusGProxy        *proxy,
+thunar_thumbnailer_thumbnailer_finished (GDBusProxy        *proxy,
                                          guint              handle,
                                          ThunarThumbnailer *thumbnailer)
 {
   ThunarThumbnailerJob *job;
   GSList               *lp;
 
-  _thunar_return_if_fail (DBUS_IS_G_PROXY (proxy));
+  _thunar_return_if_fail (G_IS_DBUS_PROXY (proxy));
   _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
+
+  _thumbnailer_lock (thumbnailer);
 
   for (lp = thumbnailer->jobs; lp != NULL; lp = lp->next)
     {
@@ -589,94 +813,14 @@ thunar_thumbnailer_thumbnailer_finished (DBusGProxy        *proxy,
           g_signal_emit (G_OBJECT (thumbnailer), thumbnailer_signals[REQUEST_FINISHED], 0, job->request);
 
           /* remove job from the list */
-          _thumbnailer_lock (thumbnailer);
           thumbnailer->jobs = g_slist_delete_link (thumbnailer->jobs, lp);
-          _thumbnailer_unlock (thumbnailer);
 
-          g_slice_free (ThunarThumbnailerJob, job);
+          thunar_thumbnailer_free_job (job);
           break;
         }
     }
-}
-
-
-
-static void
-thunar_thumbnailer_queue_async_reply (DBusGProxy *proxy,
-                                      guint       handle,
-                                      GError     *error,
-                                      gpointer    user_data)
-{
-  ThunarThumbnailerJob *job = user_data;
-  ThunarThumbnailer    *thumbnailer = THUNAR_THUMBNAILER (job->thumbnailer);
-
-  _thunar_return_if_fail (DBUS_IS_G_PROXY (proxy));
-  _thunar_return_if_fail (job != NULL);
-  _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
-
-  _thumbnailer_lock (thumbnailer);
-
-  /* the queue call is finished, we can forget about its proxy call */
-  job->handle_call = NULL;
-
-  if (job->cancelled)
-    {
-      /* job is cancelled while there was no handle jet, so dequeue it now */
-      thunar_thumbnailer_proxy_dequeue (proxy, handle, NULL);
-
-      /* cleanup */
-      thumbnailer->jobs = g_slist_remove (thumbnailer->jobs, job);
-      g_slice_free (ThunarThumbnailerJob, job);
-    }
-  else if (error == NULL)
-    {
-      /* store the handle returned by tumbler */
-      job->handle = handle;
-    }
 
   _thumbnailer_unlock (thumbnailer);
-}
-
-
-
-static guint
-thunar_thumbnailer_queue_async (ThunarThumbnailer *thumbnailer,
-                                gchar            **uris,
-                                const gchar      **mime_hints)
-{
-  ThunarThumbnailerJob *job;
-  guint                 request_no;
-
-  _thunar_return_val_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer), 0);
-  _thunar_return_val_if_fail (uris != NULL, 0);
-  _thunar_return_val_if_fail (mime_hints != NULL, 0);
-  _thunar_return_val_if_fail (DBUS_IS_G_PROXY (thumbnailer->thumbnailer_proxy), 0);
-  _thunar_return_val_if_fail (!_thumbnailer_trylock (thumbnailer), 0);
-
-  /* compute the next request ID, making sure it's never 0 */
-  request_no = thumbnailer->last_request + 1;
-  request_no = MAX (request_no, 1);
-
-  /* remember the ID for the next request */
-  thumbnailer->last_request = request_no;
-
-  /* allocate a new struct to follow this job until finished */
-  job = g_slice_new0 (ThunarThumbnailerJob);
-  job->thumbnailer = thumbnailer;
-  job->request = request_no;
-
-  /* store the job */
-  thumbnailer->jobs = g_slist_prepend (thumbnailer->jobs, job);
-
-  /* queue thumbnails for the given URIs asynchronously */
-  job->handle_call = thunar_thumbnailer_proxy_queue_async (thumbnailer->thumbnailer_proxy,
-                                                           (const gchar **)uris, mime_hints,
-                                                           "normal", "foreground", 0,
-                                                           thunar_thumbnailer_queue_async_reply,
-                                                           job);
-
-  /* return the request ID used for this request */
-  return request_no;
 }
 
 
@@ -694,6 +838,8 @@ thunar_thumbnailer_idle (ThunarThumbnailer          *thumbnailer,
   /* leave if there are no uris */
   if (G_UNLIKELY (uris == NULL))
     return;
+
+  _thumbnailer_lock (thumbnailer);
 
   /* look for the job so we don't emit unknown handles, the reason
    * we do this is when you have multiple windows opened, you don't
@@ -715,9 +861,7 @@ thunar_thumbnailer_idle (ThunarThumbnailer          *thumbnailer,
           idle->uris = g_strdupv ((gchar **)uris);
 
           /* remember the idle struct because we might have to remove it in finalize() */
-          _thumbnailer_lock (thumbnailer);
           thumbnailer->idles = g_slist_prepend (thumbnailer->idles, idle);
-          _thumbnailer_unlock (thumbnailer);
 
           /* call the idle function when we have the time */
           idle->id = g_idle_add_full (G_PRIORITY_LOW,
@@ -727,6 +871,8 @@ thunar_thumbnailer_idle (ThunarThumbnailer          *thumbnailer,
           break;
         }
     }
+
+  _thumbnailer_unlock (thumbnailer);
 }
 
 
@@ -802,7 +948,6 @@ thunar_thumbnailer_idle_free (gpointer data)
   /* free the struct */
   g_slice_free (ThunarThumbnailerIdle, idle);
 }
-#endif /* HAVE_DBUS */
 
 
 
@@ -827,12 +972,8 @@ thunar_thumbnailer_get (void)
       thumbnailer = g_object_new (THUNAR_TYPE_THUMBNAILER, NULL);
       g_object_add_weak_pointer (G_OBJECT (thumbnailer), (gpointer) &thumbnailer);
     }
-  else
-    {
-      g_object_ref (G_OBJECT (thumbnailer));
-    }
 
-  return thumbnailer;
+  return g_object_ref_sink (thumbnailer);
 }
 
 
@@ -865,125 +1006,34 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
                                 guint             *request)
 {
   gboolean               success = FALSE;
-#ifdef HAVE_DBUS
-  const gchar          **mime_hints;
-  gchar                **uris;
-  GList                 *lp;
-  GList                 *supported_files = NULL;
-  guint                  n;
-  guint                  n_items = 0;
-  ThunarFileThumbState   thumb_state;
-  const gchar           *thumbnail_path;
-#endif
+  ThunarThumbnailerJob  *job = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer), FALSE);
   _thunar_return_val_if_fail (files != NULL, FALSE);
 
-#ifdef HAVE_DBUS
   /* acquire the thumbnailer lock */
   _thumbnailer_lock (thumbnailer);
 
-  if (thumbnailer->thumbnailer_proxy == NULL)
+  /* allocate a job */
+  job = g_slice_new0 (ThunarThumbnailerJob);
+  job->thumbnailer = thumbnailer;
+  job->files = g_list_copy_deep (files, (GCopyFunc)g_object_ref, NULL);
+  job->lazy_checks = lazy_checks ? 1 : 0;
+
+  success = thunar_thumbnailer_begin_job (thumbnailer, job);
+  if (success)
     {
-      /* release the lock and abort */
-      _thumbnailer_unlock (thumbnailer);
-      return FALSE;
+      thumbnailer->jobs = g_slist_prepend (thumbnailer->jobs, job);
+      if (*request)
+        *request = job->request;
+    }
+  else
+    {
+      thunar_thumbnailer_free_job (job);
     }
 
-  /* make sure there is a hash table with supported files */
-  thunar_thumbnailer_get_supported_types (thumbnailer);
-
-  /* collect all supported files from the list that are neither in the
-   * about to be queued (wait queue), nor already queued, nor already
-   * processed (and awaiting to be refreshed) */
-  for (lp = files; lp != NULL; lp = lp->next)
-    {
-      /* the icon factory only loads icons for regular files */
-      if (!thunar_file_is_regular (lp->data))
-        {
-          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE);
-          continue;
-        }
-
-      /* get the current thumb state */
-      thumb_state = thunar_file_get_thumb_state (lp->data);
-
-      if (lazy_checks)
-        {
-          /* in lazy mode, don't both for files that have already
-           * been loaded or are not supported */
-          if (thumb_state == THUNAR_FILE_THUMB_STATE_NONE
-              || thumb_state == THUNAR_FILE_THUMB_STATE_READY)
-            continue;
-        }
-
-      /* check if the file is supported, assume it is when the state was ready previously */
-      if (thumb_state == THUNAR_FILE_THUMB_STATE_READY
-          || thunar_thumbnailer_file_is_supported (thumbnailer, lp->data))
-        {
-          supported_files = g_list_prepend (supported_files, lp->data);
-          n_items++;
-        }
-      else
-        {
-          /* still a regular file, but the type is now known to tumbler but
-           * maybe the application created a thumbnail */
-          thumbnail_path = thunar_file_get_thumbnail_path (lp->data);
-
-          /* test if a thumbnail can be found */
-          if (thumbnail_path != NULL && g_file_test (thumbnail_path, G_FILE_TEST_EXISTS))
-            thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_READY);
-          else
-            thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE);
-        }
-    }
-
-  /* release the thumbnailer lock */
+  /* release the lock */
   _thumbnailer_unlock (thumbnailer);
-
-  /* check if we have any supported files */
-  if (n_items > 0)
-    {
-      /* allocate arrays for URIs and mime hints */
-      uris = g_new0 (gchar *, n_items + 1);
-      mime_hints = g_new0 (const gchar *, n_items + 1);
-
-      /* fill URI and MIME hint arrays with items from the wait queue */
-      for (lp = supported_files, n = 0; lp != NULL; lp = lp->next, ++n)
-        {
-          /* set the thumbnail state to loading */
-          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_LOADING);
-
-          /* save URI and MIME hint in the arrays */
-          uris[n] = thunar_file_dup_uri (lp->data);
-          mime_hints[n] = thunar_file_get_content_type (lp->data);
-        }
-
-      /* NULL-terminate both arrays */
-      uris[n] = NULL;
-      mime_hints[n] = NULL;
-
-      _thumbnailer_lock (thumbnailer);
-
-      /* queue a thumbnail request for the URIs from the wait queue */
-      if (request != NULL)
-        *request = thunar_thumbnailer_queue_async (thumbnailer, uris, mime_hints);
-      else
-        thunar_thumbnailer_queue_async (thumbnailer, uris, mime_hints);
-
-      _thumbnailer_unlock (thumbnailer);
-
-      /* free mime hints array */
-      g_free (mime_hints);
-      g_strfreev (uris);
-
-      /* free the list of supported files */
-      g_list_free (supported_files);
-
-      /* we assume success if we've come so far */
-      success = TRUE;
-    }
-#endif /* HAVE_DBUS */
 
   return success;
 }
@@ -994,14 +1044,11 @@ void
 thunar_thumbnailer_dequeue (ThunarThumbnailer *thumbnailer,
                             guint              request)
 {
-#ifdef HAVE_DBUS
   ThunarThumbnailerJob *job;
   GSList               *lp;
-#endif
 
   _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
 
-#ifdef HAVE_DBUS
   /* acquire the thumbnailer lock */
   _thumbnailer_lock (thumbnailer);
 
@@ -1017,13 +1064,10 @@ thunar_thumbnailer_dequeue (ThunarThumbnailer *thumbnailer,
 
           if (job->handle != 0)
             {
-              /* dequeue the tumbler request */
-              if (thumbnailer->thumbnailer_proxy != NULL)
-                thunar_thumbnailer_proxy_dequeue (thumbnailer->thumbnailer_proxy, job->handle, NULL);
-
               /* remove job */
               thumbnailer->jobs = g_slist_delete_link (thumbnailer->jobs, lp);
-              g_slice_free (ThunarThumbnailerJob, job);
+
+              thunar_thumbnailer_free_job (job);
             }
 
           break;
@@ -1032,5 +1076,4 @@ thunar_thumbnailer_dequeue (ThunarThumbnailer *thumbnailer,
 
   /* release the thumbnailer lock */
   _thumbnailer_unlock (thumbnailer);
-#endif
 }

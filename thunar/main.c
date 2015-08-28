@@ -36,8 +36,6 @@
 #include <xfconf/xfconf.h>
 
 #include <thunar/thunar-application.h>
-#include <thunar/thunar-dbus-client.h>
-#include <thunar/thunar-dbus-service.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-notify.h>

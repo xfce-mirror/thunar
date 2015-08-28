@@ -31,6 +31,12 @@ thunar_built_sources =							\
 	thunar-renamer-dialog-ui.h					\
 	thunar-standard-view-ui.h					\
 	thunar-thumbnail-frame.c					\
+	thunar-dbus-service-infos.h					\
+	thunar-dbus-service-infos.c					\
+	thunar-thumbnailer-proxy.c					\
+	thunar-thumbnailer-proxy.h					\
+	thunar-thumbnail-cache-proxy.h 					\
+	thunar-thumbnail-cache-proxy.c					\
 	thunar-window-ui.h
 
 
@@ -65,6 +71,8 @@ thunar_SOURCES =							\
 	thunar-component.h						\
 	thunar-create-dialog.c						\
 	thunar-create-dialog.h						\
+	thunar-dbus-service.c						\
+	thunar-dbus-service.h						\
 	thunar-deep-count-job.h						\
 	thunar-deep-count-job.c						\
 	thunar-details-view.c						\
@@ -238,28 +246,6 @@ thunar_LDADD =								\
 thunar_DEPENDENCIES =							\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la
 
-if HAVE_DBUS
-thunar_built_sources +=							\
-	thunar-dbus-service-infos.h					\
-	thunar-thumbnail-cache-proxy.h					\
-	thunar-thumbnailer-proxy.h
-
-thunar_dbus_sources =							\
-	thunar-dbus-client.c						\
-	thunar-dbus-client.h						\
-	thunar-dbus-service.c						\
-	thunar-dbus-service.h						\
-	thunar-thumbnail-cache-proxy.h					\
-	thunar-thumbnailer-proxy.h
-
-thunar_CFLAGS +=							\
-	-DDBUS_API_SUBJECT_TO_CHANGE					\
-	$(DBUS_CFLAGS)
-
-thunar_LDADD +=								\
-	$(DBUS_LIBS)
-endif
-
 if HAVE_GIO_UNIX
 thunar_CFLAGS +=							\
 	$(GIO_UNIX_CFLAGS)
@@ -296,28 +282,14 @@ DISTCLEANFILES +=							\
 BUILT_SOURCES =								\
 	$(thunar_built_sources)
 
-if HAVE_DBUS
-thunar-dbus-service-infos.h: $(srcdir)/thunar-dbus-service-infos.xml Makefile
-	$(AM_V_GEN) dbus-binding-tool --prefix=thunar_dbus_service --mode=glib-server $(srcdir)/thunar-dbus-service-infos.xml > thunar-dbus-service-infos.h
+thunar-dbus-service-infos.h thunar-dbus-service-infos.c: $(srcdir)/thunar-dbus-service-infos.xml Makefile
+	$(AM_V_GEN) gdbus-codegen --c-namespace Thunar --generate-c-code=thunar-dbus-service-infos $(srcdir)/thunar-dbus-service-infos.xml
 
-thunar-thumbnailer-proxy.h: $(srcdir)/thunar-thumbnailer-dbus.xml Makefile
-	$(AM_V_GEN) ( \
-		dbus-binding-tool --mode=glib-client \
-			$(srcdir)/thunar-thumbnailer-dbus.xml > thunar-thumbnailer-proxy.h.tmp \
-		&& $(SED) -e 's/org_freedesktop_thumbnails_Thumbnailer1/thunar_thumbnailer_proxy/g' \
-			thunar-thumbnailer-proxy.h.tmp > thunar-thumbnailer-proxy.h \
-		&& $(RM) thunar-thumbnailer-proxy.h.tmp \
-	)
+thunar-thumbnailer-proxy.h thunar-thumbnailer-proxy.c: $(srcdir)/thunar-thumbnailer-dbus.xml Makefile
+	$(AM_V_GEN) gdbus-codegen --c-namespace Thunar --generate-c-code thunar-thumbnailer-proxy $(srcdir)/thunar-thumbnailer-dbus.xml
 
-thunar-thumbnail-cache-proxy.h: $(srcdir)/thunar-thumbnail-cache-dbus.xml Makefile
-	$(AM_V_GEN) ( \
-		dbus-binding-tool --mode=glib-client \
-			$(srcdir)/thunar-thumbnail-cache-dbus.xml > thunar-thumbnail-cache-proxy.h.tmp \
-		&& $(SED) -e 's/org_freedesktop_thumbnails_Cache1/thunar_thumbnail_cache_proxy/g' \
-			thunar-thumbnail-cache-proxy.h.tmp > thunar-thumbnail-cache-proxy.h \
-		&& $(RM) thunar-thumbnail-cache-proxy.h.tmp \
-	)
-endif
+thunar-thumbnail-cache-proxy.h thunar-thumbnail-cache-proxy.c: $(srcdir)/thunar-thumbnail-cache-dbus.xml Makefile
+	$(AM_V_GEN) gdbus-codegen --c-namespace Thunar --generate-c-code thunar-thumbnail-cache-proxy $(srcdir)/thunar-thumbnail-cache-dbus.xml
 
 thunar-thumbnail-frame.c: $(srcdir)/thunar-thumbnail-frame.png Makefile
 	$(AM_V_GEN) (echo "#include <thunar/thunar-thumbnail-frame.h>" && gdk-pixbuf-csource --extern --raw --stream --name=thunar_thumbnail_frame $(srcdir)/thunar-thumbnail-frame.png) > thunar-thumbnail-frame.c
