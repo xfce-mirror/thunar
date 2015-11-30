@@ -2167,7 +2167,7 @@ thunar_standard_view_get_fallback_directory (ThunarFile *directory,
   GFile      *path;
   GFile      *tmp;
 
-  _thunar_return_if_fail (THUNAR_IS_FILE (directory));
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (directory), NULL);
 
   /* determine the path of the directory */
   path = g_object_ref (thunar_file_get_file (directory));
