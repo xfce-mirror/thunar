@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-07-02 23:03+0200\n"
-"PO-Revision-Date: 2016-03-28 12:55+0000\n"
+"PO-Revision-Date: 2016-03-29 07:24+0000\n"
 "Last-Translator: Robin van der Vliet <info@robinvandervliet.nl>\n"
 "Language-Team: Esperanto (http://www.transifex.com/xfce/thunar/language/eo/)\n"
 "MIME-Version: 1.0\n"
@@ -209,7 +209,7 @@ msgstr "Movante dosierojn enen \"%s\"..."
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
-msgstr "Ĉu vi certas, ke vi volas\npor ĉiam forviŝi \"%s\"?"
+msgstr "Ĉu vi certas, ke vi volas\npor ĉiam forigi \"%s\"?"
 
 #: ../thunar/thunar-application.c:1759
 #, c-format
@@ -219,16 +219,16 @@ msgid ""
 msgid_plural ""
 "Are you sure that you want to permanently\n"
 "delete the %u selected files?"
-msgstr[0] "Ĉu vi estas certa definitive forviŝi\nla elektitan dosieron?"
-msgstr[1] "Ĉu vi estas certa definitive forviŝi\nla %u elektitajn dosierojn?"
+msgstr[0] "Ĉu vi estas certa definitive forigi\nla elektitan dosieron?"
+msgstr[1] "Ĉu vi estas certa definitive forigi\nla %u elektitajn dosierojn?"
 
 #: ../thunar/thunar-application.c:1779
 msgid "If you delete a file, it is permanently lost."
-msgstr "Se vi forviŝas dosieron, ĝi malaperos por ĉiam."
+msgstr "Se vi forigas dosieron, ĝi malaperos por ĉiam."
 
 #: ../thunar/thunar-application.c:1789
 msgid "Deleting files..."
-msgstr "Forviŝas dosierojn..."
+msgstr "Forigas dosierojn..."
 
 #: ../thunar/thunar-application.c:1824
 msgid "Moving files into the trash..."
@@ -244,7 +244,7 @@ msgstr "Kreas dosierujojn..."
 
 #: ../thunar/thunar-application.c:1941
 msgid "Remove all files and folders from the Trash?"
-msgstr "Ĉu elforviŝi ĉiujn dosier(uj)ojn el la Forviŝujo?"
+msgstr "Ĉu forigi ĉiujn dosierojn kaj dosierujojn el la rubujo?"
 
 #. append the "Empty Trash" menu action
 #. prepare the menu item
@@ -258,7 +258,7 @@ msgstr "_Malplenigi la rubujon"
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
-msgstr "Elektante malplenigi la rubujon, la tuta enhavo malprovizore perdiĝos.Bonvolu rimarki ke vi povas ilin aparte elforviŝi."
+msgstr "Elektante malplenigi la rubujon, la tuta enhavo malprovizore perdiĝos. Rimarku, ke vi povas forigi ilin aparte."
 
 #: ../thunar/thunar-application.c:1968
 msgid "Emptying the Trash..."
@@ -277,7 +277,7 @@ msgstr "Ne povis restaŭri \"%s\""
 
 #: ../thunar/thunar-application.c:2039
 msgid "Restoring files..."
-msgstr "Malforviŝas dosierojn..."
+msgstr "Malforigas dosierojn..."
 
 #: ../thunar/thunar-chooser-button.c:309 ../thunar/thunar-chooser-dialog.c:464
 #, c-format
@@ -338,7 +338,7 @@ msgstr "Fiakis lanĉi la aplikaĵo \"%s\""
 #. append the "Remove Launcher" item
 #: ../thunar/thunar-chooser-dialog.c:563
 msgid "_Remove Launcher"
-msgstr "_Forviŝu lanĉilon"
+msgstr "_Forigi lanĉilon"
 
 #. update the header label
 #: ../thunar/thunar-chooser-dialog.c:647
@@ -363,20 +363,20 @@ msgstr "Ŝanĝu la kutiman aplikaĵon por dosieroj de tipo \"%s\" al la elektita
 #: ../thunar/thunar-chooser-dialog.c:707
 #, c-format
 msgid "Are you sure that you want to remove \"%s\"?"
-msgstr "Ĉu vi estas certa, ke vi volas forviŝi \"%s\"?"
+msgstr "Ĉu vi estas certa, ke vi volas forigi \"%s\"?"
 
 #: ../thunar/thunar-chooser-dialog.c:713
 msgid ""
 "This will remove the application launcher that appears in the file context menu, but will not uninstall the application itself.\n"
 "\n"
 "You can only remove application launchers that were created using the custom command box in the \"Open With\" dialog of the file manager."
-msgstr "Via ago forviŝos lanĉilon de aplikaĵo, kiu aperas en la dosiera kunteksta menuo, sed la ago ne malinstalos la aplikaĵon mem.\n\nVi povas forviŝi nur lanĉilon de aplikaĵo, kiu estis kreita per \"Malfermu per\" dialogo de la dosier-administrilo."
+msgstr "Via ago forigos lanĉilon de aplikaĵo, kiu aperas en la dosiera kunteksta menuo, sed la ago ne malinstalos la aplikaĵon mem.\n\nVi povas forviŝi nur lanĉilon de aplikaĵo, kiu estis kreita per \"Malfermi per\"-dialogo de la dosier-administrilo."
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:728
 #, c-format
 msgid "Failed to remove \"%s\""
-msgstr "Ne sukcesis forviŝi \"%s\""
+msgstr "Ne sukcesis forigi \"%s\""
 
 #: ../thunar/thunar-chooser-dialog.c:754
 #: ../plugins/thunar-uca/thunar-uca-editor.c:473
@@ -1171,7 +1171,7 @@ msgstr "Kreu _Dosierujon..."
 
 #: ../thunar/thunar-location-buttons.c:171 ../thunar/thunar-window.c:297
 msgid "Delete all files and folders in the Trash"
-msgstr "Ĉu elviŝi ĉiujn dosier(uj)ojn el la Forviŝujo?"
+msgstr "Ĉu forigi ĉiujn dosierojn kaj dosierujojn el la rubujo?"
 
 #: ../thunar/thunar-location-buttons.c:172
 #: ../thunar/thunar-standard-view.c:365
@@ -1702,7 +1702,7 @@ msgstr "Celo de la Ligilo:"
 #. Third box (deleted, modified, accessed)
 #: ../thunar/thunar-properties-dialog.c:365
 msgid "Deleted:"
-msgstr "_Forviŝita"
+msgstr "Forigita:"
 
 #: ../thunar/thunar-properties-dialog.c:393
 msgid "Accessed:"
@@ -1862,8 +1862,8 @@ msgstr "Amasa Renomilo de Thunar estas potenca kaj dilatebla\nilo por unuage ren
 #: ../thunar/thunar-renamer-dialog.c:1645
 msgid "Remove File"
 msgid_plural "Remove Files"
-msgstr[0] "Forviŝu dosieron"
-msgstr[1] "Forviŝu dosierojn"
+msgstr[0] "Forigi dosieron"
+msgstr[1] "Forigi dosierojn"
 
 #: ../thunar/thunar-renamer-dialog.c:1647
 msgid "Remove the selected file from the list of files to be renamed"
@@ -1927,7 +1927,7 @@ msgstr "E_lŝovu volumon"
 #. append the remove menu item
 #: ../thunar/thunar-shortcuts-view.c:932
 msgid "_Remove Shortcut"
-msgstr "_Forviŝu la Rapidligilon"
+msgstr "_Forigi la rapidligilon"
 
 #. append the rename menu item
 #: ../thunar/thunar-shortcuts-view.c:947
@@ -2006,7 +2006,7 @@ msgstr "Movu aŭ kopiu dosierojn kiuj estis selektitaj per komandoj Eltondu aŭ 
 #. append the "Delete" menu action
 #: ../thunar/thunar-standard-view.c:364 ../thunar/thunar-tree-view.c:1229
 msgid "_Delete"
-msgstr "_Forviŝu"
+msgstr "_Forigi"
 
 #: ../thunar/thunar-standard-view.c:365
 msgid ""
@@ -2110,8 +2110,8 @@ msgstr[1] "Preparu la elektitajn dosierojn por esti kopiataj per la komando Algl
 #: ../thunar/thunar-standard-view.c:3716
 msgid "Delete the selected file"
 msgid_plural "Delete the selected files"
-msgstr[0] "Forviŝu la elektitan dosieron"
-msgstr[1] "Forviŝu la elektitajn dosierojn"
+msgstr[0] "Forigi la elektitan dosieron"
+msgstr[1] "Forigi la elektitajn dosierojn"
 
 #: ../thunar/thunar-standard-view.c:3730
 msgid "Duplicate the selected file"
@@ -3044,7 +3044,7 @@ msgstr "Redaktu la selektitan agon."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:193
 msgid "Delete the currently selected action."
-msgstr "Forviŝu la selektitan agon."
+msgstr "Forigi la elektitan agon."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:203
 msgid "Move the currently selected action up by one row."
