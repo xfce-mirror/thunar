@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-02-19 18:30+0100\n"
-"PO-Revision-Date: 2016-05-03 10:30+0000\n"
+"PO-Revision-Date: 2016-05-03 10:46+0000\n"
 "Last-Translator: Любомир Василев\n"
 "Language-Team: Bulgarian (http://www.transifex.com/xfce/thunar/language/bg/)\n"
 "MIME-Version: 1.0\n"
@@ -813,16 +813,16 @@ msgstr "Липсва полето „Exec“"
 #. if the .desktop file is not secure, ask user what to do
 #: ../thunar/thunar-file.c:1568
 msgid "Untrusted link launcher"
-msgstr "Стартер на непроверена връзка"
+msgstr "Стартер на несигурна връзка"
 
 #: ../thunar/thunar-file.c:1584
 #, c-format
 msgid "No URL field specified"
-msgstr "Не е посочен URL"
+msgstr "Липсва полето „URL“"
 
 #: ../thunar/thunar-file.c:1589
 msgid "Invalid desktop file"
-msgstr "Невалиден десктоп файл"
+msgstr "Грешен файл за работен плот"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
 #: ../thunar/thunar-gio-extensions.c:318
@@ -839,7 +839,7 @@ msgstr "%s от %s свободно (%d%% заето)"
 #. extend history tooltip with function of the button
 #: ../thunar/thunar-history-action.c:372
 msgid "Right-click or pull down to show history"
-msgstr "За да се покаже историята, кликнете с десен бутон или плъзнете надолу"
+msgstr "За да се покаже историята, щракнете с десен бутон или плъзнете надолу"
 
 #. create the "back" action
 #: ../thunar/thunar-history.c:163
@@ -848,7 +848,7 @@ msgstr "Назад"
 
 #: ../thunar/thunar-history.c:163
 msgid "Go to the previous visited folder"
-msgstr "Отиди в предишната посетена папка"
+msgstr "Към предишната посетена папка"
 
 #. create the "forward" action
 #: ../thunar/thunar-history.c:169
@@ -857,7 +857,7 @@ msgstr "Напред"
 
 #: ../thunar/thunar-history.c:169
 msgid "Go to the next visited folder"
-msgstr "Отиди в следващата посетена папка"
+msgstr "Към следващата посетена папка"
 
 #: ../thunar/thunar-history.c:353
 msgid "The item will be removed from the history"
@@ -866,15 +866,15 @@ msgstr "Елементът ще бъде премахнат от история�
 #: ../thunar/thunar-history.c:356
 #, c-format
 msgid "Could not find \"%s\""
-msgstr "Неуспех при намиране на „%s“"
+msgstr "Неуспешно откриване на „%s“"
 
 #: ../thunar/thunar-icon-view.c:164
 msgid "Icon based directory listing"
-msgstr "Представяне във вид на икони"
+msgstr "Извеждане на съдържанието на папките като иконки"
 
 #: ../thunar/thunar-icon-view.c:165
 msgid "Icon view"
-msgstr "Преглед като икони"
+msgstr "Преглед като иконки"
 
 #: ../thunar/thunar-io-jobs.c:180 ../thunar/thunar-io-jobs.c:334
 #, c-format
@@ -884,27 +884,27 @@ msgstr "Файлът „%s“ вече съществува"
 #: ../thunar/thunar-io-jobs.c:203
 #, c-format
 msgid "Failed to create empty file \"%s\": %s"
-msgstr "Неуспех при създаване на празен файл „%s“: %s"
+msgstr "Неуспех при създаването на празен файл „%s“: %s"
 
 #: ../thunar/thunar-io-jobs.c:357
 #, c-format
 msgid "Failed to create directory \"%s\": %s"
-msgstr "Неуспех при създаване на папка „%s“: %s"
+msgstr "Неуспех при създаването на папката „%s“: %s"
 
 #. tell the user that we're preparing to unlink the files
 #: ../thunar/thunar-io-jobs.c:423
 msgid "Preparing..."
-msgstr "Подготовка..."
+msgstr "Подготовка…"
 
 #: ../thunar/thunar-io-jobs.c:496
 #, c-format
 msgid "Could not delete file \"%s\": %s"
-msgstr "Неуспех при изтриване на файл „%s“: %s"
+msgstr "Неуспех при изтриването на файла „%s“: %s"
 
 #: ../thunar/thunar-io-jobs.c:597
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
-msgstr "Не може да бъде създадена символна връзка към „%s“, защото това не е локален файл"
+msgstr "Не може да бъде създадена символна връзка към „%s“, защото това не е местен файл"
 
 #. generate a useful error message
 #: ../thunar/thunar-io-jobs.c:956
@@ -926,13 +926,13 @@ msgstr "Не могат да бъдат сменени правата на „%s
 #: ../thunar/thunar-io-jobs-util.c:103
 #, c-format
 msgid "%s (copy %u)%s"
-msgstr "%s (копиране %u)%s"
+msgstr "%s (копие %u)%s"
 
 #. I18N: put " (copy #)" after filename (for files without extension)
 #: ../thunar/thunar-io-jobs-util.c:109
 #, c-format
 msgid "%s (copy %u)"
-msgstr "%s (копиране %u)"
+msgstr "%s (копие %u)"
 
 #. I18N: name for first link to basename
 #: ../thunar/thunar-io-jobs-util.c:118 ../thunar/thunar-list-model.c:750
@@ -946,7 +946,7 @@ msgstr "връзка към %s"
 #: ../thunar/thunar-io-jobs-util.c:123
 #, c-format
 msgid "link %u to %s"
-msgstr "връзка %u до %s"
+msgstr "връзка %u към %s"
 
 #: ../thunar/thunar-job.c:254
 #, c-format
@@ -954,7 +954,7 @@ msgid ""
 "The file \"%s\" already exists. Would you like to replace it?\n"
 "\n"
 "If you replace an existing file, its contents will be overwritten."
-msgstr "Файлът „%s“ вече съществува. Искате ли да го замените?\n\nАко замените съществуващият файл, съдържанието му ще бъде презаписано."
+msgstr "Файлът „%s“ вече съществува. Искате ли да го замените?\n\nАко замените съществуващия файл, съдържанието му ще бъде презаписано."
 
 #: ../thunar/thunar-job.c:334
 msgid "Do you want to overwrite it?"
@@ -984,33 +984,33 @@ msgstr "Няма достатъчно място. Опитайте да изтр
 #: ../thunar/thunar-location-buttons.c:175
 #: ../thunar/thunar-shortcuts-view.c:1092 ../thunar/thunar-tree-view.c:1224
 msgid "_Open"
-msgstr "Отваряне"
+msgstr "_Отваряне"
 
 #. append the "Open in New Tab" menu action
 #: ../thunar/thunar-launcher.c:178 ../thunar/thunar-launcher.c:860
 #: ../thunar/thunar-tree-view.c:1235
 msgid "Open in New _Tab"
-msgstr "Отваряне в нов раздел"
+msgstr "Отваряне в нов _раздел"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:179 ../thunar/thunar-launcher.c:854
 #: ../thunar/thunar-tree-view.c:1242
 msgid "Open in New _Window"
-msgstr "Отваряне в нов прозорец"
+msgstr "Отваряне в нов _прозорец"
 
 #: ../thunar/thunar-launcher.c:180 ../thunar/thunar-launcher.c:182
 msgid "Open With Other _Application..."
-msgstr "Отваряне с друга програма..."
+msgstr "Отваряне с _друго приложение…"
 
 #: ../thunar/thunar-launcher.c:180 ../thunar/thunar-launcher.c:182
 #: ../thunar/thunar-launcher.c:968
 msgid "Choose another application with which to open the selected file"
-msgstr "Изберете друга програма с която да отворите избраният файл"
+msgstr "Изберете друго приложение, с което да отворите избрания файл"
 
 #: ../thunar/thunar-launcher.c:676
 #, c-format
 msgid "Failed to open file \"%s\""
-msgstr "Неуспех при отваряне на файл „%s“"
+msgstr "Неуспешно отваряне на файла „%s“"
 
 #. we can just tell that n files failed to open
 #: ../thunar/thunar-launcher.c:682
@@ -1028,8 +1028,8 @@ msgstr "Наистина ли искате да отворите всички п
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
-msgstr[0] "Това ще отвори %d отделен прозорец на файловият мениджър."
-msgstr[1] "Това ще отвори %d отделни прозореца на файловият мениджър."
+msgstr[0] "Това ще отвори %d отделен прозорец на файловия мениджър."
+msgstr[1] "Това ще отвори %d отделни прозореца на файловия мениджър."
 
 #: ../thunar/thunar-launcher.c:727
 #, c-format
@@ -1043,65 +1043,65 @@ msgstr[1] "Отваряне на %d нови прозореца"
 #, c-format
 msgid "Open in %d New _Window"
 msgid_plural "Open in %d New _Windows"
-msgstr[0] "Отваряне в %d нов прозорец"
-msgstr[1] "Отваряне в %d нови прозореца"
+msgstr[0] "Отваряне в %d нов _прозорец"
+msgstr[1] "Отваряне в %d нови _прозореца"
 
 #: ../thunar/thunar-launcher.c:828
 #, c-format
 msgid "Open the selected directory in %d new window"
 msgid_plural "Open the selected directories in %d new windows"
-msgstr[0] "Отваряне на избраната директория в %d нов прозорец"
-msgstr[1] "Отваряне на избраните директории в %d нови прозореца"
+msgstr[0] "Отваряне на избраната папка в %d нов прозорец"
+msgstr[1] "Отваряне на избраните папки в %d нови прозореца"
 
 #. turn "Open in New Tab" into "Open in x New Tabs"
 #: ../thunar/thunar-launcher.c:839
 #, c-format
 msgid "Open in %d New _Tab"
 msgid_plural "Open in %d New _Tabs"
-msgstr[0] "Отваряне в %d нов раздел"
-msgstr[1] "Отваряне в %d нови раздела"
+msgstr[0] "Отваряне в %d нов _раздел"
+msgstr[1] "Отваряне в %d нови _раздела"
 
 #: ../thunar/thunar-launcher.c:840
 #, c-format
 msgid "Open the selected directory in %d new tab"
 msgid_plural "Open the selected directories in %d new tabs"
-msgstr[0] "Отваряне на избраната директория в %d нов раздел"
-msgstr[1] "Отваряне на избраните директории в %d нови раздела"
+msgstr[0] "Отваряне на избраната папка в %d нов раздел"
+msgstr[1] "Отваряне на избраните папки в %d нови раздела"
 
 #: ../thunar/thunar-launcher.c:855
 msgid "Open the selected directory in a new window"
-msgstr "Отваряне на избраната директория в нов прозорец"
+msgstr "Отваряне на избраната папка в нов прозорец"
 
 #: ../thunar/thunar-launcher.c:861
 msgid "Open the selected directory in a new tab"
-msgstr "Отваряне на избраната директория в нов раздел"
+msgstr "Отваряне на избраната папка в нов раздел"
 
 #. set tooltip that makes sence
 #: ../thunar/thunar-launcher.c:865
 msgid "Open the selected directory"
-msgstr "Отваряне на избраната директория"
+msgstr "Отваряне на избраната папка"
 
 #: ../thunar/thunar-launcher.c:886
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
-msgstr[0] "Отваряне на избраният файл"
+msgstr[0] "Отваряне на избрания файл"
 msgstr[1] "Отваряне на избраните файлове"
 
 #: ../thunar/thunar-launcher.c:931
 msgid "_Execute"
-msgstr "Изпълнение"
+msgstr "_Изпълнение"
 
 #: ../thunar/thunar-launcher.c:933
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
-msgstr[0] "Изпълнение на избраният файл"
+msgstr[0] "Изпълнение на избрания файл"
 msgstr[1] "Изпълнение на избраните файлове"
 
 #. turn the "Open" action into "Open With DEFAULT"
 #: ../thunar/thunar-launcher.c:939
 #, c-format
 msgid "_Open With \"%s\""
-msgstr "Отваряне с „%s“"
+msgstr "_Отваряне с „%s“"
 
 #: ../thunar/thunar-launcher.c:940 ../thunar/thunar-launcher.c:1030
 #, c-format
@@ -1112,16 +1112,16 @@ msgstr[1] "Използване на „%s“ за отваряне на изб�
 
 #: ../thunar/thunar-launcher.c:967
 msgid "_Open With Other Application..."
-msgstr "Отваряне с друга програма..."
+msgstr "_Отваряне с друга програма…"
 
 #: ../thunar/thunar-launcher.c:976
 msgid "_Open With Default Applications"
-msgstr "Отваряне с програма по подразбиране"
+msgstr "_Отваряне с програмите по подразбиране"
 
 #: ../thunar/thunar-launcher.c:977
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
-msgstr[0] "Отваряне на избраният файл с програмата по подразбиране"
+msgstr[0] "Отваряне на избрания файл с програмата по подразбиране"
 msgstr[1] "Отваряне на избраните файлове с програмите по подразбиране"
 
 #: ../thunar/thunar-launcher.c:1029
@@ -1133,41 +1133,41 @@ msgstr "Отваряне с „%s“"
 #: ../thunar/thunar-shortcuts-view.c:1931 ../thunar/thunar-tree-view.c:2076
 #, c-format
 msgid "Failed to mount \"%s\""
-msgstr "Неуспех при монтирането на „%s“"
+msgstr "Неуспешно монтиране на „%s“"
 
 #: ../thunar/thunar-launcher.c:1703
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
-msgstr[0] "Работен плот (Създаване на връзка)"
-msgstr[1] "Работен плот (Създаване на връзки)"
+msgstr[0] "Работен плот (създаване на връзка)"
+msgstr[1] "Работен плот (създаване на връзки)"
 
 #: ../thunar/thunar-launcher.c:1704
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
-msgstr[0] "Създаване на връзка към избраният файл на работният плот"
-msgstr[1] "Създаване на връзки към избраните файлове на работният плот"
+msgstr[0] "Създаване на връзка към избрания файл на работния плот"
+msgstr[1] "Създаване на връзки към избраните файлове на работния плот"
 
 #: ../thunar/thunar-launcher.c:1738 ../thunar/thunar-launcher.c:1790
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
-msgstr[0] "Изпращане на избраният файл към „%s“"
+msgstr[0] "Изпращане на избрания файл към „%s“"
 msgstr[1] "Изпращане на избраните файлове към „%s“"
 
 #: ../thunar/thunar-list-model.c:2277
 #, c-format
 msgid "%d item (%s), Free space: %s"
 msgid_plural "%d items (%s), Free space: %s"
-msgstr[0] "%d елемент (%s), Свободно място: %s"
-msgstr[1] "%d елемента (%s), Свободно място: %s"
+msgstr[0] "%d елемент (%s), свободно място: %s"
+msgstr[1] "%d елемента (%s), свободно място: %s"
 
 #. just the standard text
 #: ../thunar/thunar-list-model.c:2284
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
-msgstr[0] "%d елемент, Свободно място: %s"
-msgstr[1] "%d елемента, Свободно място: %s"
+msgstr[0] "%d елемент, свободно място: %s"
+msgstr[1] "%d елемента, свободно място: %s"
 
 #: ../thunar/thunar-list-model.c:2293
 #, c-format
@@ -1179,35 +1179,35 @@ msgstr[1] "%d елемента"
 #: ../thunar/thunar-list-model.c:2309
 #, c-format
 msgid "\"%s\" broken link"
-msgstr "„%s“ повредена връзка"
+msgstr "„%s“ — повредена връзка"
 
 #: ../thunar/thunar-list-model.c:2314
 #, c-format
 msgid "\"%s\" (%s) link to %s"
-msgstr "„%s“ (%s) връзка към %s"
+msgstr "„%s“ (%s) — връзка към %s"
 
 #: ../thunar/thunar-list-model.c:2320
 #, c-format
 msgid "\"%s\" shortcut"
-msgstr "„%s“ пряк път"
+msgstr "„%s“ — пряк път"
 
 #: ../thunar/thunar-list-model.c:2324
 #, c-format
 msgid "\"%s\" mountable"
-msgstr "„%s“ монтиране"
+msgstr "„%s“ — монтируем"
 
 #. I18N, first %s is the display name of the file, 2nd the file size, 3rd the
 #. content type
 #: ../thunar/thunar-list-model.c:2331
 #, c-format
 msgid "\"%s\" (%s) %s"
-msgstr "„%s“ (%s) %s"
+msgstr "„%s“ (%s) — %s"
 
 #. I18N, first %s is the display name of the file, second the content type
 #: ../thunar/thunar-list-model.c:2340
 #, c-format
 msgid "\"%s\" %s"
-msgstr "„%s“ %s"
+msgstr "„%s“ — %s"
 
 #. TRANSLATORS: Try to come up with a short translation of "Original Path"
 #. (which is the path
@@ -1222,7 +1222,7 @@ msgstr "Оригинален път:"
 #: ../thunar/thunar-list-model.c:2373
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:149
 msgid "Image Size:"
-msgstr "Размер на изображение:"
+msgstr "Размер на изображението:"
 
 #. item count if there are also folders in the selection
 #: ../thunar/thunar-list-model.c:2412
@@ -1272,11 +1272,11 @@ msgstr "Отваряне в нов прозорец"
 #: ../thunar/thunar-location-buttons.c:178
 #: ../thunar/thunar-standard-view.c:396 ../thunar/thunar-tree-view.c:1310
 msgid "Create _Folder..."
-msgstr "Създаване на папка..."
+msgstr "Създаване на _папка…"
 
 #: ../thunar/thunar-location-buttons.c:179 ../thunar/thunar-window.c:351
 msgid "Delete all files and folders in the Trash"
-msgstr "Изтриване на всички файлове и папки от Кошчето"
+msgstr "Изтриване на всички файлове и папки от кошчето"
 
 #: ../thunar/thunar-location-buttons.c:180
 #: ../thunar/thunar-standard-view.c:403
@@ -1286,15 +1286,15 @@ msgstr "Поставяне в папка"
 #: ../thunar/thunar-location-buttons.c:181
 #: ../thunar/thunar-renamer-dialog.c:197 ../thunar/thunar-standard-view.c:397
 msgid "_Properties..."
-msgstr "Свойства..."
+msgstr "_Свойства…"
 
 #: ../thunar/thunar-location-buttons.c:231
 msgid "Spacing"
-msgstr "Интервал"
+msgstr "Отстояние"
 
 #: ../thunar/thunar-location-buttons.c:232
 msgid "The amount of space between the path buttons"
-msgstr "Размер на интервалите между бутоните в лентата за пътя"
+msgstr "Разстояние между бутоните в лентата за пътя"
 
 #: ../thunar/thunar-location-buttons.c:1238
 #, c-format
@@ -1320,12 +1320,12 @@ msgstr "Създаване на нова папка в „%s“"
 #, c-format
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into \"%s\""
-msgstr "Преместваме или копиране на избраните файлове с командите Отрязване или Копиране в „%s“"
+msgstr "Преместваме или копиране на файловете, избрани с командите Отрязване или Копиране, в „%s“"
 
 #: ../thunar/thunar-location-buttons.c:1272
 #, c-format
 msgid "View the properties of the folder \"%s\""
-msgstr "Преглед на свойствата на папка „%s“"
+msgstr "Преглед на свойствата на папката „%s“"
 
 #: ../thunar/thunar-location-dialog.c:65
 msgid "Open Location"
@@ -1333,7 +1333,7 @@ msgstr "Отваряне на местоположение"
 
 #: ../thunar/thunar-location-dialog.c:79
 msgid "_Location:"
-msgstr "Местоположение:"
+msgstr "_Местоположение:"
 
 #: ../thunar/thunar-location-entry.c:195 ../thunar/thunar-window.c:359
 msgid "Reload the current folder"
@@ -1346,25 +1346,25 @@ msgstr "Файлът не съществува"
 
 #: ../thunar/thunar-notify.c:168
 msgid "Unmounting device"
-msgstr "Немонтирано устройство"
+msgstr "Демонтиране на устройство"
 
 #: ../thunar/thunar-notify.c:169
 #, c-format
 msgid ""
 "The device \"%s\" is being unmounted by the system. Please do not remove the"
 " media or disconnect the drive"
-msgstr "Устройството „%s“ се монтира. Моля, не го отстранявайте до приключването на операцията."
+msgstr "Устройството „%s“ се демонтира. Моля, не го отстранявайте до приключването на операцията."
 
 #: ../thunar/thunar-notify.c:175 ../thunar/thunar-notify.c:214
 msgid "Writing data to device"
-msgstr "Записване на данните на устройството"
+msgstr "Записване на данни на устройството"
 
 #: ../thunar/thunar-notify.c:176 ../thunar/thunar-notify.c:215
 #, c-format
 msgid ""
 "There is data that needs to be written to the device \"%s\" before it can be"
 " removed. Please do not remove the media or disconnect the drive"
-msgstr "Има данни, които трябва да бъдат записани на устройството „%s“, преди да бъде извадено. Не го изваждайте до пълното приключване на операцията."
+msgstr "Има данни, които трябва да бъдат записани на устройството „%s“, преди то да бъде извадено. Не го изваждайте до пълното приключване на операцията."
 
 #: ../thunar/thunar-notify.c:208
 msgid "Ejecting device"
@@ -1382,11 +1382,11 @@ msgstr "Няма инсталирани шаблони"
 
 #: ../thunar/thunar-path-entry.c:202
 msgid "Icon size"
-msgstr "Размер на икона"
+msgstr "Размер на иконките"
 
 #: ../thunar/thunar-path-entry.c:203
 msgid "The icon size for the path entry"
-msgstr "Размер на икона за лентата на местоположението"
+msgstr "Размер на иконките в лентата на местоположението"
 
 #: ../thunar/thunar-permissions-chooser.c:219
 msgid "Owner:"
@@ -1394,19 +1394,19 @@ msgstr "Собственик:"
 
 #: ../thunar/thunar-permissions-chooser.c:237
 msgid "_Access:"
-msgstr "Достъп:"
+msgstr "_Достъп:"
 
 #: ../thunar/thunar-permissions-chooser.c:261
 msgid "Gro_up:"
-msgstr "Група:"
+msgstr "_Група:"
 
 #: ../thunar/thunar-permissions-chooser.c:280
 msgid "Acce_ss:"
-msgstr "Достъп:"
+msgstr "До_стъп:"
 
 #: ../thunar/thunar-permissions-chooser.c:304
 msgid "O_thers:"
-msgstr "Други:"
+msgstr "Д_руги:"
 
 #: ../thunar/thunar-permissions-chooser.c:328
 msgid "Program:"
@@ -1414,7 +1414,7 @@ msgstr "Програма:"
 
 #: ../thunar/thunar-permissions-chooser.c:334
 msgid "Allow this file to _run as a program"
-msgstr "Разрешаване на този файл да стартира като програма"
+msgstr "Разрешаване на този файл да се _изпълнява като програма"
 
 #: ../thunar/thunar-permissions-chooser.c:354
 msgid ""
