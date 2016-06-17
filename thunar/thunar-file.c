@@ -221,6 +221,22 @@ G_DEFINE_TYPE_WITH_CODE (ThunarFile, thunar_file, G_TYPE_OBJECT,
     G_IMPLEMENT_INTERFACE (THUNARX_TYPE_FILE_INFO, thunar_file_info_init))
 
 
+static GWeakRef*
+weak_ref_new (GObject *obj)
+{
+  GWeakRef *ref;
+  ref = g_slice_new (GWeakRef);
+  g_weak_ref_init (ref, obj);
+  return ref;
+}
+
+static void
+weak_ref_free (GWeakRef *ref)
+{
+  g_weak_ref_clear (ref);
+  g_slice_free (GWeakRef, ref);
+}
+
 
 #ifdef G_ENABLE_DEBUG
 #ifdef HAVE_ATEXIT
@@ -236,7 +252,7 @@ thunar_file_atexit_foreach (gpointer key,
   gchar *uri;
 
   uri = g_file_get_uri (key);
-  g_print ("--> %s (%u)\n", uri, G_OBJECT (value)->ref_count);
+  g_print ("--> %s\n", uri);
   if (G_OBJECT (key)->ref_count > 2)
     g_print ("    GFile (%u)\n", G_OBJECT (key)->ref_count - 2);
   g_free (uri);
@@ -278,7 +294,7 @@ thunar_file_cache_dump_foreach (gpointer gfile,
   gchar *name;
 
   name = g_file_get_parse_name (G_FILE (gfile));
-  g_print ("    %s (%u)\n", name, G_OBJECT (value)->ref_count);
+  g_print ("    %s\n", name);
   g_free (name);
 }
 
@@ -729,7 +745,9 @@ thunar_file_monitor_moved (ThunarFile *file,
   g_object_unref (previous_file);
 
   /* insert the new entry */
-  g_hash_table_insert (file_cache, g_object_ref (file->gfile), file);
+  g_hash_table_insert (file_cache,
+                       g_object_ref (file->gfile),
+                       weak_ref_new (G_OBJECT (file)));
 
   G_UNLOCK (file_cache_mutex);
 }
@@ -1122,11 +1140,9 @@ thunar_file_get_async_finish (GObject      *object,
 
   /* insert the file into the cache */
   G_LOCK (file_cache_mutex);
-#ifdef G_ENABLE_DEBUG
-  /* check if there is no instance created in the meantime */
-  _thunar_assert (g_hash_table_lookup (file_cache, file->gfile) == NULL);
-#endif
-  g_hash_table_insert (file_cache, g_object_ref (file->gfile), file);
+  g_hash_table_insert (file_cache,
+                       g_object_ref (file->gfile),
+                       weak_ref_new (G_OBJECT (file)));
   G_UNLOCK (file_cache_mutex);
 
   /* pass the loaded file and possible errors to the return function */
@@ -1248,7 +1264,9 @@ thunar_file_get (GFile   *gfile,
           G_LOCK (file_cache_mutex);
 
           /* insert the file into the cache */
-          g_hash_table_insert (file_cache, g_object_ref (file->gfile), file);
+          g_hash_table_insert (file_cache,
+                               g_object_ref (file->gfile),
+                               weak_ref_new (G_OBJECT (file)));
 
           /* done inserting in the cache */
           G_UNLOCK (file_cache_mutex);
@@ -1325,7 +1343,9 @@ thunar_file_get_with_info (GFile     *gfile,
       G_LOCK (file_cache_mutex);
 
       /* insert the file into the cache */
-      g_hash_table_insert (file_cache, g_object_ref (file->gfile), file);
+      g_hash_table_insert (file_cache,
+                           g_object_ref (file->gfile),
+                           weak_ref_new (G_OBJECT (file)));
 
       /* done inserting in the cache */
       G_UNLOCK (file_cache_mutex);
@@ -4096,6 +4116,7 @@ thunar_file_same_filesystem (const ThunarFile *file_a,
 ThunarFile *
 thunar_file_cache_lookup (const GFile *file)
 {
+  GWeakRef   *ref;
   ThunarFile *cached_file;
 
   _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
@@ -4108,18 +4129,15 @@ thunar_file_cache_lookup (const GFile *file)
       file_cache = g_hash_table_new_full (g_file_hash, 
                                           (GEqualFunc) g_file_equal, 
                                           (GDestroyNotify) g_object_unref, 
-                                          NULL);
+                                          (GDestroyNotify) weak_ref_free);
     }
 
-  cached_file = g_hash_table_lookup (file_cache, file);
+  ref = g_hash_table_lookup (file_cache, file);
 
-  if (cached_file != NULL)
-    {
-      /* take a reference to avoid too-early releases outside the
-       * file_cache_mutex, resuling in destroyed files being used
-       * in running code */
-      g_object_ref (cached_file);
-    }
+  if (ref == NULL)
+    cached_file = NULL;
+  else
+    cached_file = g_weak_ref_get (ref);
 
   G_UNLOCK (file_cache_mutex);
 
