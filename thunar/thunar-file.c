@@ -3920,7 +3920,7 @@ thunar_file_unwatch (ThunarFile *file)
 gboolean
 thunar_file_reload (ThunarFile *file)
 {
-  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
   /* clear file pxmap cache */
   thunar_icon_factory_clear_pixmap_cache (file);
