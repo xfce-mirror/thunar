@@ -276,6 +276,9 @@ thunar_folder_finalize (GObject *object)
 {
   ThunarFolder *folder = THUNAR_FOLDER (object);
 
+  if (folder->corresponding_file)
+    thunar_file_unwatch (folder->corresponding_file);
+
   /* disconnect from the ThunarFileMonitor instance */
   g_signal_handlers_disconnect_matched (folder->file_monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
   g_object_unref (folder->file_monitor);
@@ -356,7 +359,11 @@ thunar_folder_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_CORRESPONDING_FILE:
+      if (folder->corresponding_file)
+        thunar_file_unwatch (folder->corresponding_file);
       folder->corresponding_file = g_value_dup_object (value);
+      if (folder->corresponding_file)
+        thunar_file_watch (folder->corresponding_file);
       break;
 
     case PROP_LOADING:

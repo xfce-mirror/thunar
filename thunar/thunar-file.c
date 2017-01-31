@@ -121,6 +121,7 @@ static gboolean           thunar_file_same_filesystem          (const ThunarFile
 
 G_LOCK_DEFINE_STATIC (file_cache_mutex);
 G_LOCK_DEFINE_STATIC (file_content_type_mutex);
+G_LOCK_DEFINE_STATIC (file_rename_mutex);
 
 
 
@@ -780,7 +781,9 @@ thunar_file_monitor (GFileMonitor     *monitor,
       /* the event occurred for the monitored ThunarFile */
       if (event_type == G_FILE_MONITOR_EVENT_MOVED)
         {
+          G_LOCK (file_rename_mutex);
           thunar_file_monitor_moved (file, other_path);
+          G_UNLOCK (file_rename_mutex);
           return;
         }
 
@@ -797,6 +800,9 @@ thunar_file_monitor (GFileMonitor     *monitor,
           /* reload the target file if cached */
           if (other_path == NULL)
             return;
+
+          G_LOCK (file_rename_mutex);
+
           other_file = thunar_file_cache_lookup (other_path);
           if (other_file)
               thunar_file_reload (other_file);
@@ -813,11 +819,12 @@ thunar_file_monitor (GFileMonitor     *monitor,
           thunar_file_reload_parent (other_file);
 
           g_object_unref (other_file);
+
+          G_UNLOCK (file_rename_mutex);
         }
       return;
     }
 }
-
 
 
 static void
@@ -1928,6 +1935,7 @@ thunar_file_rename (ThunarFile   *file,
     }
   else
     {
+      G_LOCK (file_rename_mutex);
       /* try to rename the file */
       renamed_file = g_file_set_display_name (file->gfile, name, cancellable, error);
 
@@ -1944,11 +1952,12 @@ thunar_file_rename (ThunarFile   *file,
               /* emit the file changed signal */
               thunar_file_changed (file);
             }
-
+          G_UNLOCK (file_rename_mutex);
           return TRUE;
         }
       else
         {
+          G_UNLOCK (file_rename_mutex);
           return FALSE;
         }
     }
