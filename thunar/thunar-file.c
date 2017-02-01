@@ -1859,6 +1859,8 @@ thunar_file_rename (ThunarFile   *file,
   const gchar * const  *languages;
   guint                 i;
   gboolean              name_set = FALSE;
+  gchar                *locale_name;
+  gchar                *dot;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (g_utf8_validate (name, -1, NULL), FALSE);
@@ -1889,12 +1891,19 @@ thunar_file_rename (ThunarFile   *file,
               if (g_ascii_strcasecmp (languages[i], "C") == 0)
                 continue;
 
+              /* strip off .desktop extension for the locale name */
+              locale_name = g_strdup (name);
+              dot = thunar_util_str_get_extension (locale_name);
+              if (G_LIKELY (dot != NULL))
+                *dot = '\0';
+
               /* change the translated Name field of the desktop entry */
               g_key_file_set_locale_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
                                             G_KEY_FILE_DESKTOP_KEY_NAME,
-                                            languages[i], name);
+                                            languages[i], locale_name);
 
               /* done */
+              g_free (locale_name);
               name_set = TRUE;
             }
         }
