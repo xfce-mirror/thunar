@@ -1024,10 +1024,10 @@ thunar_file_info_reload (ThunarFile   *file,
                                                              G_KEY_FILE_DESKTOP_KEY_NAME,
                                                              NULL, NULL);
           
-         
+
           /* concat .desktop extension to the display_name */
           if (!exo_str_is_empty (locale_display_name))
-            file->display_name = g_strconcat(locale_display_name, ".desktop", NULL);        
+            file->display_name = g_strconcat(locale_display_name, ".desktop", NULL);
           g_free(locale_display_name);
 
           /* drop the name if it's empty or has invalid encoding */
