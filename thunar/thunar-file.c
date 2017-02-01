@@ -949,6 +949,7 @@ thunar_file_info_reload (ThunarFile   *file,
   gboolean     is_secure = FALSE;
   gchar       *casefold;
   gchar       *path;
+  gchar       *locale_display_name;
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (file->info == NULL || G_IS_FILE_INFO (file->info));
@@ -1018,11 +1019,17 @@ thunar_file_info_reload (ThunarFile   *file,
 
           /* read the display name from the .desktop file (will be overwritten later
            * if it's undefined here) */
-          file->display_name = g_key_file_get_locale_string (key_file,
+          locale_display_name = g_key_file_get_locale_string (key_file,
                                                              G_KEY_FILE_DESKTOP_GROUP,
                                                              G_KEY_FILE_DESKTOP_KEY_NAME,
                                                              NULL, NULL);
           
+         
+          /* concat .desktop extension to the display_name */
+          if (!exo_str_is_empty (locale_display_name))
+            file->display_name = g_strconcat(locale_display_name, ".desktop", NULL);        
+          g_free(locale_display_name);
+
           /* drop the name if it's empty or has invalid encoding */
           if (exo_str_is_empty (file->display_name)
               || !g_utf8_validate (file->display_name, -1, NULL))
