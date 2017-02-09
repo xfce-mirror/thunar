@@ -3988,6 +3988,28 @@ thunar_file_reload_idle (ThunarFile *file)
 
 
 /**
+ * thunar_file_reload_idle_unref:
+ * @file : a #ThunarFile instance.
+ *
+ * Schedules a reload of the @file by calling thunar_file_reload
+ * when idle. When scheduled function returns @file object will be
+ * unreferenced.
+ *
+ **/
+void
+thunar_file_reload_idle_unref (ThunarFile *file)
+{
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  g_idle_add_full (G_PRIORITY_DEFAULT_IDLE,
+                   (GSourceFunc) thunar_file_reload,
+                   file,
+                   (GDestroyNotify) g_object_unref);
+}
+
+
+
+/**
  * thunar_file_destroy:
  * @file : a #ThunarFile instance.
  *

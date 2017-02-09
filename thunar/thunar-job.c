@@ -578,8 +578,7 @@ thunar_job_new_files (ThunarJob   *job,
           file = thunar_file_cache_lookup (lp->data);
           if (file != NULL)
             {
-              thunar_file_reload_idle (file);
-              g_object_unref (file);
+              thunar_file_reload_idle_unref (file);
             }
         }
 
