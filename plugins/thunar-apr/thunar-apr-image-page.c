@@ -56,6 +56,8 @@ static const struct
   { N_ ("Shutter Speed:"),     EXIF_TAG_SHUTTER_SPEED_VALUE, },
   { N_ ("ISO Speed Ratings:"), EXIF_TAG_ISO_SPEED_RATINGS,   },
   { N_ ("Software:"),          EXIF_TAG_SOFTWARE,            },
+  { N_ ("Description:"),       EXIF_TAG_IMAGE_DESCRIPTION,   },
+  { N_ ("Comment:"),           EXIF_TAG_USER_COMMENT,        },
 };
 #endif
 
