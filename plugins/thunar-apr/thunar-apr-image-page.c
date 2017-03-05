@@ -38,24 +38,23 @@ static void thunar_apr_image_page_file_changed  (ThunarAprAbstractPage    *abstr
 
 
 #ifdef HAVE_EXIF
-static const struct
+static const
+ExifTag TAIP_EXIF[] =
 {
-  const gchar *name;
-  ExifTag      tag;
-} TAIP_EXIF[] =
-{
-  { N_ ("Date Taken:"),        EXIF_TAG_DATE_TIME_ORIGINAL,  },
-  { N_ ("Camera Brand:"),      EXIF_TAG_MAKE,                },
-  { N_ ("Camera Model:"),      EXIF_TAG_MODEL,               },
-  { N_ ("Exposure Time:"),     EXIF_TAG_EXPOSURE_TIME,       },
-  { N_ ("Exposure Program:"),  EXIF_TAG_EXPOSURE_PROGRAM,    },
-  { N_ ("Aperture Value:"),    EXIF_TAG_APERTURE_VALUE,      },
-  { N_ ("Metering Mode:"),     EXIF_TAG_METERING_MODE,       },
-  { N_ ("Flash Fired:"),       EXIF_TAG_FLASH,               },
-  { N_ ("Focal Length:"),      EXIF_TAG_FOCAL_LENGTH,        },
-  { N_ ("Shutter Speed:"),     EXIF_TAG_SHUTTER_SPEED_VALUE, },
-  { N_ ("ISO Speed Ratings:"), EXIF_TAG_ISO_SPEED_RATINGS,   },
-  { N_ ("Software:"),          EXIF_TAG_SOFTWARE,            },
+  EXIF_TAG_DATE_TIME_ORIGINAL,
+  EXIF_TAG_MAKE,
+  EXIF_TAG_MODEL,
+  EXIF_TAG_EXPOSURE_TIME,
+  EXIF_TAG_EXPOSURE_PROGRAM,
+  EXIF_TAG_APERTURE_VALUE,
+  EXIF_TAG_METERING_MODE,
+  EXIF_TAG_FLASH,
+  EXIF_TAG_FOCAL_LENGTH,
+  EXIF_TAG_SHUTTER_SPEED_VALUE,
+  EXIF_TAG_ISO_SPEED_RATINGS,
+  EXIF_TAG_SOFTWARE,
+  EXIF_TAG_IMAGE_DESCRIPTION,
+  EXIF_TAG_USER_COMMENT,
 };
 #endif
 
@@ -173,7 +172,9 @@ thunar_apr_image_page_init (ThunarAprImagePage *image_page)
   /* add labels for the Exif info */
   for (n = 0; n < G_N_ELEMENTS (TAIP_EXIF); ++n)
     {
-      label = gtk_label_new (_(TAIP_EXIF[n].name));
+      const gchar *exif_title = exif_tag_get_title ( TAIP_EXIF[n] );
+
+      label = gtk_label_new ( exif_title );
       gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
       gtk_label_set_attributes (GTK_LABEL (label), attr_list);
       gtk_table_attach (GTK_TABLE (table), label, 0, 1, n + 3, n + 4, GTK_FILL, GTK_FILL, 0, 3);
@@ -257,7 +258,7 @@ thunar_apr_image_page_file_changed (ThunarAprAbstractPage *abstract_page,
               for (n = 0; n < G_N_ELEMENTS (TAIP_EXIF); ++n)
                 {
                   /* lookup the entry for the tag */
-                  exif_entry = exif_data_get_entry (exif_data, TAIP_EXIF[n].tag);
+                  exif_entry = exif_data_get_entry (exif_data, TAIP_EXIF[n]);
                   if (G_LIKELY (exif_entry != NULL))
                     {
                       /* determine the value */
