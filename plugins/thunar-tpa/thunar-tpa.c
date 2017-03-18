@@ -170,7 +170,7 @@ thunar_tpa_init (ThunarTpa *plugin)
   gtk_widget_show (plugin->button);
 
   /* setup the image for the trash plugin */
-  plugin->image = xfce_panel_image_new_from_source ("user-trash");
+  plugin->image = gtk_image_new_from_icon_name ("user-trash", GTK_ICON_SIZE_BUTTON);
   gtk_container_add (GTK_CONTAINER (plugin->button), plugin->image);
   gtk_widget_show (plugin->image);
 
@@ -249,11 +249,19 @@ static gboolean
 thunar_tpa_size_changed (XfcePanelPlugin *panel_plugin,
                          gint             size)
 {
-  g_return_val_if_fail (panel_plugin != NULL, FALSE);
+  ThunarTpa *plugin = THUNAR_TPA (panel_plugin);
+  gint       image_size;
 
   /* make the plugin fit a single row */
   size /= xfce_panel_plugin_get_nrows (panel_plugin);
   gtk_widget_set_size_request (GTK_WIDGET (panel_plugin), size, size);
+
+#if LIBXFCE4PANEL_CHECK_VERSION (4,13,0)
+  image_size = xfce_panel_plugin_get_icon_size (panel_plugin, GTK_WIDGET (plugin->button));
+#else
+  image_size = size - 2; // fall-back for older panel versions
+#endif
+  gtk_image_set_pixel_size (GTK_IMAGE (plugin->image), image_size);
 
   return TRUE;
 }
@@ -278,7 +286,7 @@ thunar_tpa_error (ThunarTpa *plugin,
   g_free (tooltip);
 
   /* setup an error plugin */
-  xfce_panel_image_set_from_source (XFCE_PANEL_IMAGE (plugin->image), "stock_dialog-error");
+  gtk_image_set_from_icon_name (GTK_IMAGE (plugin->image), "stock_dialog-error", GTK_ICON_SIZE_BUTTON);
 }
 
 
@@ -291,7 +299,7 @@ thunar_tpa_state (ThunarTpa *plugin,
   gtk_widget_set_tooltip_text (plugin->button, full ? _("Trash contains files") : _("Trash is empty"));
 
   /* setup the appropriate plugin */
-  xfce_panel_image_set_from_source (XFCE_PANEL_IMAGE (plugin->image), full ? "user-trash-full" : "user-trash");
+  gtk_image_set_from_icon_name (GTK_IMAGE (plugin->image), full ? "user-trash-full" : "user-trash", GTK_ICON_SIZE_BUTTON);
 
   /* sensitivity of the menu item */
   gtk_widget_set_sensitive (plugin->mi, full);
