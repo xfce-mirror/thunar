@@ -827,16 +827,16 @@ thunar_file_monitor (GFileMonitor     *monitor,
           else
               other_file = thunar_file_get (other_path, NULL);
 
-          if (other_file == NULL)
-              return;
+          if (other_file != NULL)
+            {
+              /* notify the thumbnail cache that we can now also move the thumbnail */
+              thunar_file_move_thumbnail_cache_file (event_path, other_path);
 
-          /* notify the thumbnail cache that we can now also move the thumbnail */
-          thunar_file_move_thumbnail_cache_file (event_path, other_path);
+              /* reload the containing target folder */
+              thunar_file_reload_parent (other_file);
 
-          /* reload the containing target folder */
-          thunar_file_reload_parent (other_file);
-
-          g_object_unref (other_file);
+              g_object_unref (other_file);
+            }
 
           G_UNLOCK (file_rename_mutex);
         }
