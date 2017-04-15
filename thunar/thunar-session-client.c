@@ -170,7 +170,7 @@ thunar_session_client_connect (ThunarSessionClient *session_client,
     return FALSE;
 
   /* tell GDK about our new session id */
-  gdk_set_sm_client_id (id);
+  gdk_x11_set_sm_client_id (id);
 
   /* remember the returned client id */
   if (g_mem_is_system_malloc ())
