@@ -52,6 +52,7 @@
 #include <thunar/thunar-templates-action.h>
 #include <thunar/thunar-history.h>
 #include <thunar/thunar-thumbnailer.h>
+#include <thunar/thunar-util.h>
 
 #if defined(GDK_WINDOWING_X11)
 #include <gdk/gdkx.h>
@@ -3280,6 +3281,8 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
   gint          n = 0;
   GtkWidget    *source_widget;
   GtkWidget    *source_view = NULL;
+  GdkScreen    *screen;
+  char         *display = NULL;
 
   /* check if we don't already know the drop data */
   if (G_LIKELY (!standard_view->priv->drop_data_ready))
@@ -3374,10 +3377,16 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
                       argv[n++] = working_directory;
                       argv[n++] = NULL;
 
+                      screen = gtk_widget_get_screen (GTK_WIDGET (view));
+
+                      if (screen != NULL)
+                        display = gdk_screen_make_display_name (screen);
+
                       /* try to run exo-desktop-item-edit */
-                      succeed = gdk_spawn_on_screen (gtk_widget_get_screen (view), working_directory, argv, NULL,
-                                                     G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH,
-                                                     NULL, NULL, &pid, &error);
+                      succeed = g_spawn_async (working_directory, argv, NULL,
+                                               G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH,
+                                               thunar_setup_display_cb, display, &pid, &error);
+
                       if (G_UNLIKELY (!succeed))
                         {
                           /* display an error dialog to the user */
@@ -3392,6 +3401,7 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
                         }
 
                       /* cleanup */
+                      g_free (display);
                       g_object_unref (G_OBJECT (file));
                     }
                 }

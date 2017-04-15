@@ -53,6 +53,8 @@ time_t     thunar_util_time_from_rfc3339        (const gchar    *date_string) G_
 
 gchar     *thunar_util_change_working_directory (const gchar    *new_directory) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
+void       thunar_setup_display_cb              (gpointer data);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_UTIL_H__ */

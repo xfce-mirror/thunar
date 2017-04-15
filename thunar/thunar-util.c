@@ -603,3 +603,9 @@ thunar_util_change_working_directory (const gchar *new_directory)
 
   return old_directory;
 }
+
+void
+thunar_setup_display_cb (gpointer data)
+{
+  g_setenv ("DISPLAY", (char *) data, TRUE);
+}

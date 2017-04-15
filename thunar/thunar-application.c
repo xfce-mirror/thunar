@@ -859,6 +859,7 @@ thunar_application_volman_idle (gpointer user_data)
   GError            *err = NULL;
   gchar            **argv;
   GPid               pid;
+  char              *display = NULL;
 
   /* check if volume management is enabled (otherwise, we don't spawn anything, but clear the list here) */
   g_object_get (G_OBJECT (application->preferences), "misc-volume-management", &misc_volume_management, NULL);
@@ -880,8 +881,11 @@ thunar_application_volman_idle (gpointer user_data)
           /* locate the currently active screen (the one with the pointer) */
           screen = xfce_gdk_screen_get_active (NULL);
 
+          if (screen != NULL)
+            display = gdk_screen_make_display_name (screen);
+
           /* try to spawn the volman on the active screen */
-          if (gdk_spawn_on_screen (screen, NULL, argv, NULL, G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH, NULL, NULL, &pid, &err))
+          if (g_spawn_async (NULL, argv, NULL, G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH, thunar_setup_display_cb, display, &pid, &err))
             {
               /* add a child watch for the volman handler */
               application->volman_watch_id = g_child_watch_add_full (G_PRIORITY_LOW, pid, thunar_application_volman_watch,
@@ -895,6 +899,7 @@ thunar_application_volman_idle (gpointer user_data)
             }
 
           /* cleanup */
+          g_free (display);
           g_strfreev (argv);
         }
 

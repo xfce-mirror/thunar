@@ -698,8 +698,10 @@ thunar_preferences_dialog_response (GtkDialog *dialog,
 static void
 thunar_preferences_dialog_configure (ThunarPreferencesDialog *dialog)
 {
-  GError *err = NULL;
-  gchar  *argv[3];
+  GError    *err = NULL;
+  gchar     *argv[3];
+  GdkScreen *screen;
+  char      *display = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_PREFERENCES_DIALOG (dialog));
 
@@ -708,13 +710,20 @@ thunar_preferences_dialog_configure (ThunarPreferencesDialog *dialog)
   argv[1] = (gchar *) "--configure";
   argv[2] = NULL;
 
+  screen = gtk_widget_get_screen (GTK_WIDGET (dialog));
+
+  if (screen != NULL)
+    display = gdk_screen_make_display_name (screen);
+
   /* invoke the configuration interface of thunar-volman */
-  if (!gdk_spawn_on_screen (gtk_widget_get_screen (GTK_WIDGET (dialog)), NULL, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, &err))
+  if (!g_spawn_async (NULL, argv, NULL, G_SPAWN_SEARCH_PATH, thunar_setup_display_cb, display, NULL, &err))
     {
       /* tell the user that we failed to come up with the thunar-volman configuration dialog */
       thunar_dialogs_show_error (dialog, err, _("Failed to display the volume management settings"));
       g_error_free (err);
     }
+
+  g_free (display);
 }
 
 
