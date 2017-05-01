@@ -162,7 +162,7 @@ thunar_thumbnail_cache_copy_async_reply (ThunarThumbnailCacheDBus *proxy,
 {
   GList      *li;
   ThunarFile *file;
-  GError     *error;
+  GError     *error = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_THUMBNAIL_CACHE_DBUS (proxy));
 
@@ -196,7 +196,7 @@ thunar_thumbnail_cache_move_async_reply (ThunarThumbnailCacheDBus *proxy,
 {
   GList      *li;
   ThunarFile *file;
-  GError     *error;
+  GError     *error = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_THUMBNAIL_CACHE_DBUS (proxy));
 
