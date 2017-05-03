@@ -25,9 +25,9 @@ libthunarx_include_HEADERS =						\
 	$(libthunarx_headers)
 
 lib_LTLIBRARIES =							\
-	libthunarx-2.la
+	libthunarx-3.la
 
-libthunarx_2_la_SOURCES =						\
+libthunarx_3_la_SOURCES =						\
 	$(libthunarx_headers)						\
 	thunarx-config.c						\
 	thunarx-file-info.c						\
@@ -44,28 +44,28 @@ libthunarx_2_la_SOURCES =						\
 	thunarx-renamer.c						\
 	thunarx-renamer-provider.c
 
-libthunarx_2_la_CFLAGS =						\
+libthunarx_3_la_CFLAGS =						\
 	$(GLIB_CFLAGS)							\
 	$(GIO_CFLAGS)							\
 	$(GTK_CFLAGS)							\
 	$(GMODULE_CFLAGS)						\
 	$(PLATFORM_CFLAGS)
 
-libthunarx_2_la_LDFLAGS =						\
+libthunarx_3_la_LDFLAGS =						\
 	-export-dynamic							\
 	-export-symbols-regex "^[^_].*"					\
 	-no-undefined							\
 	-version-info $(THUNARX_VERINFO)				\
 	$(PLATFORM_LDFLAGS)
 
-libthunarx_2_la_LIBADD =						\
+libthunarx_3_la_LIBADD =						\
 	$(GLIB_LIBS)							\
 	$(GMODULE_LIBS)							\
 	$(GIO_LIBS)							\
 	$(GTK_LIBS)
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = thunarx-2.pc
+pkgconfig_DATA = thunarx-3.pc
 
 EXTRA_DIST =								\
 	abicheck.sh							\
