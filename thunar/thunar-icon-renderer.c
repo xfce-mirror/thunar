@@ -357,7 +357,6 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   GtkIconTheme           *icon_theme;
   GdkRectangle            emblem_area;
   GdkRectangle            icon_area;
-  GdkRectangle            draw_area;
   GdkRectangle            clip_area;
   GdkPixbuf              *emblem;
   GdkPixbuf              *icon;
@@ -426,7 +425,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   color_lighten = (flags & GTK_CELL_RENDERER_PRELIT) != 0 && icon_renderer->follow_state;
 
   /* check whether the icon is affected by the expose event */
-  if (gdk_rectangle_intersect (&clip_area, &icon_area, &draw_area))
+  if (gdk_rectangle_intersect (&clip_area, &icon_area, NULL))
     {
       /* use a translucent icon to represent cutted and hidden files to the user */
       clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (widget));
@@ -467,7 +466,6 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
 
       /* render the invalid parts of the icon */
       thunar_gdk_cairo_set_source_pixbuf (cr, icon, icon_area.x, icon_area.y);
-      gdk_cairo_rectangle (cr, &draw_area);
       cairo_paint_with_alpha (cr, alpha);
 
       /* paint the lighten mask */
@@ -556,11 +554,10 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
                 }
 
               /* render the emblem */
-              if (gdk_rectangle_intersect (&clip_area, &emblem_area, &draw_area))
+              if (gdk_rectangle_intersect (&clip_area, &emblem_area, NULL))
                 {
                   /* render the invalid parts of the icon */
                   thunar_gdk_cairo_set_source_pixbuf (cr, emblem, emblem_area.x, emblem_area.y);
-                  gdk_cairo_rectangle (cr, &draw_area);
                   cairo_paint (cr);
 
                   /* paint the lighten mask */

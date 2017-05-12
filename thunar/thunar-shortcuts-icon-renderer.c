@@ -212,7 +212,6 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
 {
   ThunarShortcutsIconRenderer *shortcuts_icon_renderer = THUNAR_SHORTCUTS_ICON_RENDERER (renderer);
   GtkIconTheme                *icon_theme;
-  GdkRectangle                 draw_area;
   GdkRectangle                 icon_area;
   GdkRectangle                 clip_area;
   GtkIconInfo                 *icon_info;
@@ -279,11 +278,10 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
           icon_area.y = cell_area->y + (cell_area->height - icon_area.height) / 2;
 
           /* check whether the icon is affected by the expose event */
-          if (gdk_rectangle_intersect (&clip_area, &icon_area, &draw_area))
+          if (gdk_rectangle_intersect (&clip_area, &icon_area, NULL))
             {
               /* render the invalid parts of the icon */
               thunar_gdk_cairo_set_source_pixbuf (cr, icon, icon_area.x, icon_area.y);
-              gdk_cairo_rectangle (cr, &draw_area);
               cairo_paint_with_alpha (cr, alpha);
             }
 
