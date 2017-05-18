@@ -198,6 +198,8 @@ struct _ThunarApplication
 #endif
 
   GList                 *files_to_launch;
+
+  guint                  dbus_owner_id;
 };
 
 
@@ -273,6 +275,23 @@ thunar_application_init (ThunarApplication *application)
 
 
 
+/* TODO: [GTK3 Port] Check if there's a cleaner way to register */
+/* this extra dbus name (besides org.xfce.Thunar) */
+static void
+thunar_dbus_init (ThunarApplication *application)
+{
+    application->dbus_owner_id = g_bus_own_name (G_BUS_TYPE_SESSION,
+                               "org.xfce.FileManager",
+                               G_BUS_NAME_OWNER_FLAGS_NONE,
+                               NULL,
+                               NULL,
+                               NULL,
+                               application,
+                               NULL);
+}
+
+
+
 static void
 thunar_application_startup (GApplication *gapp)
 {
@@ -313,6 +332,8 @@ thunar_application_startup (GApplication *gapp)
 
   /* connect to the session manager */
   application->session_client = thunar_session_client_new (opt_sm_client_id);
+
+  thunar_dbus_init (application);
 
   G_APPLICATION_CLASS (thunar_application_parent_class)->startup (gapp);
 }
