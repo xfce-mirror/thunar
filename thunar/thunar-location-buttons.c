@@ -65,8 +65,6 @@ static ThunarFile    *thunar_location_buttons_get_current_directory     (ThunarN
 static void           thunar_location_buttons_set_current_directory     (ThunarNavigator            *navigator,
                                                                          ThunarFile                 *current_directory);
 static void           thunar_location_buttons_unmap                     (GtkWidget                  *widget);
-static void           thunar_location_buttons_on_filler_enter           (GtkWidget                  *filler);
-static void           thunar_location_buttons_on_filler_leave           (GtkWidget                  *filler);
 static void           thunar_location_buttons_on_filler_clicked         (ThunarLocationButtons      *buttons);
 static void           thunar_location_buttons_get_preferred_width       (GtkWidget                  *widget,
                                                                          gint                       *minimum,
@@ -258,7 +256,7 @@ thunar_location_buttons_on_filler_clicked (ThunarLocationButtons *buttons)
 static void
 thunar_location_buttons_init (ThunarLocationButtons *buttons)
 {
-  GtkWidget       *arrow;
+  GtkWidget       *icon;
   GList           *list, *lp;
   GtkStyleContext *context;
 
@@ -278,9 +276,9 @@ thunar_location_buttons_init (ThunarLocationButtons *buttons)
   gtk_container_add (GTK_CONTAINER (buttons), buttons->left_slider);
   gtk_widget_show (buttons->left_slider);
 
-  arrow = gtk_image_new_from_icon_name ("pan-start-symbolic", GTK_ICON_SIZE_BUTTON);
-  gtk_container_add (GTK_CONTAINER (buttons->left_slider), arrow);
-  gtk_widget_show (arrow);
+  icon = gtk_image_new_from_icon_name ("pan-start-symbolic", GTK_ICON_SIZE_BUTTON);
+  gtk_container_add (GTK_CONTAINER (buttons->left_slider), icon);
+  gtk_widget_show (icon);
 
   buttons->right_slider = gtk_button_new ();
   g_signal_connect (G_OBJECT (buttons->right_slider), "button-press-event", G_CALLBACK (thunar_location_buttons_slider_button_press), buttons);
@@ -289,23 +287,17 @@ thunar_location_buttons_init (ThunarLocationButtons *buttons)
   gtk_container_add (GTK_CONTAINER (buttons), buttons->right_slider);
   gtk_widget_show (buttons->right_slider);
 
-  arrow = gtk_image_new_from_icon_name ("pan-end-symbolic", GTK_ICON_SIZE_BUTTON);
-  gtk_container_add (GTK_CONTAINER (buttons->right_slider), arrow);
-  gtk_widget_show (arrow);
+  icon = gtk_image_new_from_icon_name ("pan-end-symbolic", GTK_ICON_SIZE_BUTTON);
+  gtk_container_add (GTK_CONTAINER (buttons->right_slider), icon);
+  gtk_widget_show (icon);
 
   buttons->filler_widget = gtk_button_new ();
   g_signal_connect_swapped (buttons->filler_widget, "clicked", G_CALLBACK (thunar_location_buttons_on_filler_clicked), buttons);
-  g_signal_connect (buttons->filler_widget, "enter-notify-event", G_CALLBACK (thunar_location_buttons_on_filler_enter), buttons);
-  g_signal_connect (buttons->filler_widget, "leave-notify-event", G_CALLBACK (thunar_location_buttons_on_filler_leave), buttons);
-  g_signal_connect (buttons->filler_widget, "unmap", G_CALLBACK (thunar_location_buttons_on_filler_leave), buttons);
 
-  context = gtk_widget_get_style_context (buttons->filler_widget);
-  list = gtk_style_context_list_classes (context);
-  for (lp = list; lp != NULL; lp = lp->next)
-    gtk_style_context_remove_class (context, lp->data);
-  g_list_free (list);
-
-  gtk_style_context_add_class (context, "entry");
+  icon = gtk_image_new_from_icon_name ("gtk-edit", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_set_halign (icon, GTK_ALIGN_END);
+  gtk_container_add (GTK_CONTAINER (buttons->filler_widget), icon);
+  gtk_widget_show (icon);
 
   gtk_container_add (GTK_CONTAINER (buttons), buttons->filler_widget);
   gtk_widget_show (buttons->filler_widget);
@@ -317,32 +309,6 @@ thunar_location_buttons_init (ThunarLocationButtons *buttons)
                                GTK_STYLE_CLASS_LINKED);
   gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (buttons)),
                                "path-bar");
-}
-
-
-
-static void
-thunar_location_buttons_on_filler_enter (GtkWidget *filler)
-{
-  GdkCursor *cursor;
-  GdkWindow *window;
-
-  window = gtk_widget_get_window (filler);
-  cursor = gdk_cursor_new_for_display (gdk_window_get_display (window), GDK_XTERM);
-
-  gdk_window_set_cursor (window, cursor);
-}
-
-
-
-static void
-thunar_location_buttons_on_filler_leave (GtkWidget *filler)
-{
-  GdkWindow *window;
-
-  window = gtk_widget_get_window (filler);
-
-  gdk_window_set_cursor (window, NULL);
 }
 
 
