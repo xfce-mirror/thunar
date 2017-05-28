@@ -867,6 +867,9 @@ thunar_location_buttons_size_allocate (GtkWidget     *widget,
 
   if (need_sliders || buttons->fake_root_button != NULL)
     {
+      /* to avoid warnings in gtk >= 3.20 */
+      gtk_widget_get_preferred_width (buttons->left_slider, &width, NULL);
+
       child_allocation.width = buttons->slider_width;
       child_allocation.x = left_slider_offset + allocation->x;
       gtk_widget_size_allocate (buttons->left_slider, &child_allocation);
