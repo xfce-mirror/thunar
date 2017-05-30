@@ -58,8 +58,14 @@ thunar_compact_view_class_init (ThunarCompactViewClass *klass)
   thunarstandard_view_class->zoom_level_property_name = "last-compact-view-zoom-level";
 
   /* override ThunarAbstractIconView default row spacing */
-  gtk_rc_parse_string ("style\"thunar-compact-view-style\"{ThunarCompactView::row-spacing=0}\n"
-                       "class\"ThunarCompactView\"style\"thunar-compact-view-style\"\n");
+  gtk_widget_class_install_style_property(gtkwidget_class, g_param_spec_int (
+          "row-spacing",                //name
+          "row-spacing",                //nick
+          "space between rows in px",   //blurb
+          0,                            //min
+          100,                          //max
+          0,                            //default
+          G_PARAM_READWRITE));         //flags
 }
 
 

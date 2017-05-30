@@ -90,11 +90,14 @@ thunar_statusbar_class_init (ThunarStatusbarClass *klass)
 
   if (!style_initialized)
     {
-      gtk_rc_parse_string ("style \"thunar-statusbar-internal\" {\n"
-                           "  GtkStatusbar::shadow-type = GTK_SHADOW_NONE\n"
-                           "}\n"
-                           "class \"ThunarStatusbar\" "
-                           "style \"thunar-statusbar-internal\"\n");
+      gtk_widget_class_install_style_property(gobject_class, g_param_spec_int (
+              "shadow-type",                //name
+              "shadow-type",                //nick
+              "the type of the shadow",     //blurb
+              GTK_SHADOW_NONE,              //min
+              GTK_SHADOW_ETCHED_OUT,        //max
+              GTK_SHADOW_NONE,              //default
+              G_PARAM_READWRITE));         //flags
     }
 }
 
