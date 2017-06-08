@@ -289,6 +289,7 @@ thunar_dbus_service_init (ThunarDBusService *dbus_service)
                             "handle-display-chooser-dialog", thunar_dbus_service_display_chooser_dialog,
                             "handle-display-folder", thunar_dbus_service_display_folder,
                             "handle-display-folder-and-select", thunar_dbus_service_display_folder_and_select,
+                            "handle-display-file-properties", thunar_dbus_service_display_file_properties,
                             "handle-launch", thunar_dbus_service_launch,
                             "handle-execute", thunar_dbus_service_execute,
                             "handle-display-preferences-dialog", thunar_dbus_service_display_preferences_dialog,
@@ -312,8 +313,7 @@ thunar_dbus_service_init (ThunarDBusService *dbus_service)
 
   connect_signals_multiple (dbus_service->thunar, dbus_service,
                             "handle-bulk-rename", thunar_dbus_service_bulk_rename,
-                            "handle-terminate",
-                            thunar_dbus_service_terminate,
+                            "handle-terminate", thunar_dbus_service_terminate,
                             NULL);
 }
 
