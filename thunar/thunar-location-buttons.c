@@ -400,8 +400,8 @@ thunar_location_buttons_set_current_directory (ThunarNavigator *navigator,
   ThunarLocationButtons *buttons = THUNAR_LOCATION_BUTTONS (navigator);
   ThunarFile            *file_parent;
   ThunarFile            *file;
-  GtkWidget             *button, *parent_button = NULL;
-  GList                 *lp, *lp_parent = NULL;
+  GtkWidget             *button;
+  GList                 *lp;
 
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
 
@@ -411,96 +411,52 @@ thunar_location_buttons_set_current_directory (ThunarNavigator *navigator,
 
   /* check if we already have a button for that directory */
   for (lp = buttons->list; lp != NULL; lp = lp->next)
-    if (thunar_location_button_get_file (lp->data) == current_directory)
-      break;
-
-  /* check if we maybe have the parent as a button */
-  if (!lp && current_directory)
     {
-      file_parent = thunar_file_get_parent (current_directory, NULL);
-      if (file_parent)
+      if (thunar_location_button_get_file (lp->data) == current_directory)
         {
-            for (lp_parent = buttons->list; lp_parent != NULL; lp_parent = lp_parent->next)
-                if (thunar_location_button_get_file (lp_parent->data) == file_parent)
-                break;
-
-            g_object_unref (file_parent);
+          /* fake a "clicked" event for that button */
+          gtk_button_clicked (GTK_BUTTON (lp->data));
+          return;
         }
     }
 
-  /* if we already have a button for that directory, just activate it */
-  if (G_UNLIKELY (lp != NULL))
+  if (G_LIKELY (buttons->current_directory != NULL))
     {
-      /* fake a "clicked" event for that button */
-      gtk_button_clicked (GTK_BUTTON (lp->data));
-    }
-  else if (G_LIKELY (lp_parent != NULL))
-    {
-      /* remove all existing children below that button */
-      parent_button = lp_parent->data;
-      while (buttons->list->data != parent_button)
+      /* remove all buttons */
+      g_object_unref (G_OBJECT (buttons->current_directory));
+
+      while (buttons->list != NULL)
         gtk_container_remove (GTK_CONTAINER (buttons), buttons->list->data);
 
-      /* clear the first scrolled button */
+      /* clear the first scrolled and fake root buttons */
       buttons->first_scrolled_button = NULL;
-
-      /* set the new directory */
-      g_object_unref (buttons->current_directory);
-      buttons->current_directory = g_object_ref (current_directory);
-
-      /* add a new button */
-      button = thunar_location_buttons_make_button (buttons, current_directory);
-      buttons->list = g_list_prepend (buttons->list, button);
-      gtk_container_add (GTK_CONTAINER (buttons), button);
-      gtk_widget_show (button);
-
-      /* check for fake root */
-      if (eglible_for_fake_root (current_directory))
-        buttons->fake_root_button = buttons->list;
-
-      /* synthesize a click */
-      gtk_button_clicked (GTK_BUTTON (buttons->list->data));
+      buttons->fake_root_button = NULL;
     }
-  else
+
+  buttons->current_directory = current_directory;
+
+  /* regenerate the button list */
+  if (G_LIKELY (current_directory != NULL))
     {
-      /* regenerate the button list */
-      if (G_LIKELY (buttons->current_directory != NULL))
+      g_object_ref (G_OBJECT (current_directory));
+
+      /* add the new buttons */
+      for (file = current_directory; file != NULL; file = file_parent)
         {
-          g_object_unref (G_OBJECT (buttons->current_directory));
+          button = thunar_location_buttons_make_button (buttons, file);
+          buttons->list = g_list_append (buttons->list, button);
+          gtk_container_add (GTK_CONTAINER (buttons), button);
+          gtk_widget_show (button);
 
-          /* remove all buttons */
-          while (buttons->list != NULL)
-            gtk_container_remove (GTK_CONTAINER (buttons), buttons->list->data);
+          /* use 'Home' as fake root button */
+          if (!buttons->fake_root_button && eglible_for_fake_root (file))
+            buttons->fake_root_button = g_list_last (buttons->list);
 
-          /* clear the first scrolled and fake root buttons */
-          buttons->first_scrolled_button = NULL;
-          buttons->fake_root_button = NULL;
-        }
+          /* continue with the parent (if any) */
+          file_parent = thunar_file_get_parent (file, NULL);
 
-      buttons->current_directory = current_directory;
-
-      if (G_LIKELY (current_directory != NULL))
-        {
-          g_object_ref (G_OBJECT (current_directory));
-
-          /* add the new buttons */
-          for (file = current_directory; file != NULL; file = file_parent)
-            {
-              button = thunar_location_buttons_make_button (buttons, file);
-              buttons->list = g_list_append (buttons->list, button);
-              gtk_container_add (GTK_CONTAINER (buttons), button);
-              gtk_widget_show (button);
-
-              /* use 'Home' as fake root button */
-              if (!buttons->fake_root_button && eglible_for_fake_root (file))
-                buttons->fake_root_button = g_list_last (buttons->list);
-
-              /* continue with the parent (if any) */
-              file_parent = thunar_file_get_parent (file, NULL);
-
-              if (G_LIKELY (file != current_directory))
-                g_object_unref (G_OBJECT (file));
-            }
+          if (G_LIKELY (file != current_directory))
+            g_object_unref (G_OBJECT (file));
         }
     }
 

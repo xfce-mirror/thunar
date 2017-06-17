@@ -43,6 +43,9 @@ struct _ThunarLocationBar
   GtkBin __parent__;
 
   ThunarFile *current_directory;
+
+  GtkWidget  *locationEntry;
+  GtkWidget  *locationButtons;
 };
 
 
@@ -55,6 +58,7 @@ enum
 
 
 static void         thunar_location_bar_navigator_init             (ThunarNavigatorIface *iface);
+static void         thunar_location_bar_finalize                   (GObject              *object);
 static void         thunar_location_bar_get_property               (GObject              *object,
                                                                     guint                 prop_id,
                                                                     GValue               *value,
@@ -95,6 +99,7 @@ thunar_location_bar_class_init (ThunarLocationBarClass *klass)
 
   gobject_class->get_property = thunar_location_bar_get_property;
   gobject_class->set_property = thunar_location_bar_set_property;
+  gobject_class->finalize = thunar_location_bar_finalize;
 
   klass->reload_requested = exo_noop;
 
@@ -141,10 +146,32 @@ thunar_location_bar_init (ThunarLocationBar *bar)
   ThunarPreferences *preferences = thunar_preferences_get ();
 
   bar->current_directory = NULL;
+  bar->locationEntry = NULL;
+  bar->locationButtons = NULL;
 
   thunar_location_bar_settings_changed (bar);
 
   g_signal_connect_object (preferences, "notify::last-location-bar", G_CALLBACK (thunar_location_bar_settings_changed), bar, G_CONNECT_SWAPPED);
+}
+
+
+
+static void
+thunar_location_bar_finalize (GObject *object)
+{
+  ThunarLocationBar *bar = THUNAR_LOCATION_BAR (object);
+
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BAR (bar));
+
+  if (bar->locationEntry)
+    g_object_unref (bar->locationEntry);
+  if (bar->locationButtons)
+    g_object_unref (bar->locationButtons);
+
+  /* release from the current_directory */
+  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (bar), NULL);
+
+  (*G_OBJECT_CLASS (thunar_location_bar_parent_class)->finalize) (object);
 }
 
 
@@ -237,34 +264,46 @@ static GtkWidget *
 thunar_location_bar_install_widget (ThunarLocationBar    *bar,
                                     GType                 type)
 {
-  GtkWidget *widget, *child;
+  GtkWidget *installedWidget, *child;
 
   /* check if the the right type is already installed */
   if ((child = gtk_bin_get_child (GTK_BIN (bar))) && G_TYPE_CHECK_INSTANCE_TYPE (child, type))
     return child;
 
-  widget = gtk_widget_new (type, "current-directory", bar->current_directory, NULL);
-
-  /* forward signals */
-  g_signal_connect_swapped (widget, "change-directory", G_CALLBACK (thunar_navigator_change_directory), THUNAR_NAVIGATOR (bar));
-  g_signal_connect_swapped (widget, "open-new-tab", G_CALLBACK (thunar_navigator_open_new_tab), THUNAR_NAVIGATOR (bar));
-
   if (type == THUNAR_TYPE_LOCATION_ENTRY)
     {
-      g_signal_connect_swapped (widget, "reload-requested", G_CALLBACK (thunar_location_bar_reload_requested), bar);
+      if (bar->locationEntry == NULL)
+        {
+          bar->locationEntry = gtk_widget_new (THUNAR_TYPE_LOCATION_ENTRY, "current-directory", NULL, NULL);
+          g_object_ref (bar->locationEntry);
+          g_signal_connect_swapped (bar->locationEntry, "reload-requested", G_CALLBACK (thunar_location_bar_reload_requested), bar);
+          g_signal_connect_swapped (bar->locationEntry, "change-directory", G_CALLBACK (thunar_navigator_change_directory), THUNAR_NAVIGATOR (bar));
+          g_signal_connect_swapped (bar->locationEntry, "open-new-tab", G_CALLBACK (thunar_navigator_open_new_tab), THUNAR_NAVIGATOR (bar));
+        }
+      installedWidget = bar->locationEntry;
     }
-  else if (type == THUNAR_TYPE_LOCATION_BUTTONS)
+  else
     {
-      g_signal_connect_swapped (widget, "entry-requested", G_CALLBACK (thunar_location_bar_request_entry), bar);
+      if (bar->locationButtons == NULL)
+        {
+          bar->locationButtons = gtk_widget_new (THUNAR_TYPE_LOCATION_BUTTONS, "current-directory", NULL, NULL);
+          g_object_ref (bar->locationButtons);
+          g_signal_connect_swapped (bar->locationButtons, "entry-requested", G_CALLBACK (thunar_location_bar_request_entry), bar);
+          g_signal_connect_swapped (bar->locationButtons, "change-directory", G_CALLBACK (thunar_navigator_change_directory), THUNAR_NAVIGATOR (bar));
+          g_signal_connect_swapped (bar->locationButtons, "open-new-tab", G_CALLBACK (thunar_navigator_open_new_tab), THUNAR_NAVIGATOR (bar));
+        }
+      installedWidget = bar->locationButtons;
     }
+
+  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (installedWidget), bar->current_directory);
 
   if ((child = gtk_bin_get_child (GTK_BIN (bar))))
-    gtk_widget_destroy (child);
+    gtk_container_remove (GTK_CONTAINER (bar), child);
 
-  gtk_container_add (GTK_CONTAINER (bar), widget);
-  gtk_widget_show (widget);
+  gtk_container_add (GTK_CONTAINER (bar), installedWidget);
+  gtk_widget_show (installedWidget);
 
-  return widget;
+  return installedWidget;
 }
 
 
