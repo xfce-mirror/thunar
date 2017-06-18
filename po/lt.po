@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-02-19 18:30+0100\n"
-"PO-Revision-Date: 2017-04-13 13:43+0000\n"
+"PO-Revision-Date: 2017-06-17 23:10+0000\n"
 "Last-Translator: Moo\n"
 "Language-Team: Lithuanian (http://www.transifex.com/xfce/thunar/language/lt/)\n"
 "MIME-Version: 1.0\n"
@@ -240,7 +240,7 @@ msgstr "Kuriami failai..."
 
 #: ../thunar/thunar-application.c:1963
 msgid "Creating directories..."
-msgstr "Kuriami aplankai..."
+msgstr "Kuriami katalogai..."
 
 #: ../thunar/thunar-application.c:2002
 msgid "Remove all files and folders from the Trash?"
@@ -509,7 +509,7 @@ msgstr "Nežinoma"
 
 #: ../thunar/thunar-compact-view.c:102
 msgid "Compact directory listing"
-msgstr "Talpus aplankų sąrašas"
+msgstr "Talpus katalogų sąrašas"
 
 #: ../thunar/thunar-compact-view.c:103
 msgid "Compact view"
@@ -538,7 +538,7 @@ msgstr "Klaidingas failo „%s“ pavadinimas"
 #: ../thunar/thunar-dbus-service.c:874
 #, c-format
 msgid "The working directory must be an absolute path"
-msgstr "Kelias iki darbinio aplanko privalo būti absoliutus"
+msgstr "Kelias iki darbinio katalogo privalo būti absoliutus"
 
 #. LaunchFiles() invoked with an empty filename list
 #: ../thunar/thunar-dbus-service.c:882 ../thunar/thunar-dbus-service.c:1249
@@ -559,7 +559,7 @@ msgstr "Šaltinio ir paskirties failų turi būti tiek pat"
 #: ../thunar/thunar-dbus-service.c:1046
 #, c-format
 msgid "A destination directory must be specified"
-msgstr "Turi būti nurodytas paskirties aplankas"
+msgstr "Privalo būti nurodytas paskirties katalogas"
 
 #: ../thunar/thunar-details-view.c:134
 msgid "Configure _Columns..."
@@ -571,7 +571,7 @@ msgstr "Tvarkyti stulpelius išsamaus sąrašo rodinyje"
 
 #: ../thunar/thunar-details-view.c:392
 msgid "Detailed directory listing"
-msgstr "Išsamus aplankų sąrašas"
+msgstr "Išsamus katalogų sąrašas"
 
 #: ../thunar/thunar-details-view.c:393
 msgid "Details view"
@@ -869,7 +869,7 @@ msgstr "Nepavyko rasti \"%s\""
 
 #: ../thunar/thunar-icon-view.c:164
 msgid "Icon based directory listing"
-msgstr "Piktogramomis paremtas aplankų sąrašo kūrimas"
+msgstr "Piktogramomis paremtas katalogų sąrašo kūrimas"
 
 #: ../thunar/thunar-icon-view.c:165
 msgid "Icon view"
@@ -888,7 +888,7 @@ msgstr "Nepavyko sukurti tuščio failo „%s“: %s"
 #: ../thunar/thunar-io-jobs.c:357
 #, c-format
 msgid "Failed to create directory \"%s\": %s"
-msgstr "Nepavyko sukurti aplanko „%s“: %s"
+msgstr "Nepavyko sukurti katalogo „%s“: %s"
 
 #. tell the user that we're preparing to unlink the files
 #: ../thunar/thunar-io-jobs.c:423
@@ -1053,9 +1053,9 @@ msgstr[2] "Atverti %d naujų _langų"
 #, c-format
 msgid "Open the selected directory in %d new window"
 msgid_plural "Open the selected directories in %d new windows"
-msgstr[0] "Atverti pasirinktą aplanką %d naujame lange"
-msgstr[1] "Atverti pasirinktus aplankus %d naujuose languose"
-msgstr[2] "Atverti pasirinktus aplankus %d naujų langų"
+msgstr[0] "Atverti pasirinktą katalogą %d naujame lange"
+msgstr[1] "Atverti pasirinktus katalogus %d naujuose languose"
+msgstr[2] "Atverti pasirinktus katalogus %d naujų langų"
 
 #. turn "Open in New Tab" into "Open in x New Tabs"
 #: ../thunar/thunar-launcher.c:839
@@ -1076,7 +1076,7 @@ msgstr[2] "Atverti pasirinktą katalogą %d naujų kortelių"
 
 #: ../thunar/thunar-launcher.c:855
 msgid "Open the selected directory in a new window"
-msgstr "Atverti pasirinktą aplanką naujame lange"
+msgstr "Atverti pasirinktą katalogą naujame lange"
 
 #: ../thunar/thunar-launcher.c:861
 msgid "Open the selected directory in a new tab"
@@ -2149,7 +2149,7 @@ msgstr "Per_vadinti nuorodą"
 #: ../thunar/thunar-shortcuts-view.c:1561
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
-msgstr "Kelias „%s“ nenurodo į aplanką"
+msgstr "Kelias „%s“ nenurodo į katalogą"
 
 #. display an error message to the user
 #: ../thunar/thunar-shortcuts-view.c:1581
@@ -2335,7 +2335,7 @@ msgstr "Nepavyko sukurti nuorodos į URL „%s“"
 #: ../thunar/thunar-standard-view.c:3737 ../thunar/thunar-window.c:2883
 #, c-format
 msgid "Failed to open directory \"%s\""
-msgstr "Nepavyko atverti „%s“ aplanko"
+msgstr "Nepavyko atverti „%s“ katalogo"
 
 #: ../thunar/thunar-standard-view.c:4311
 msgid "Prepare the selected file to be moved with a Paste command"
@@ -2834,7 +2834,7 @@ msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
-msgstr "Jei dažnai kuriate tam tikrus dokumentus, sukelkite jų kopijas į šį aplanką. Pagal čia esančius failus, Thunar automatiškai sukels nuorodas į dokumento kūrimo meniu.\n\nTuomet, pasirinkus atitinkamą nuorodą iš meniu „Sukurti dokumentą“, dokumento kopija atvertame aplanke bus sukurta automatiškai."
+msgstr "Jei dažnai kuriate tam tikrus dokumentus, sukelkite jų kopijas į šį aplanką. Pagal čia esančius failus, Thunar automatiškai sukels nuorodas į dokumento kūrimo meniu.\n\nTuomet, pasirinkus atitinkamą nuorodą iš meniu „Sukurti dokumentą“, dokumento kopija atvertame kataloge bus sukurta automatiškai."
 
 #: ../thunar/thunar-window.c:2981
 msgid "Do _not display this message again"
@@ -3296,7 +3296,7 @@ msgstr "ZIP komanda nutraukta dėl klaidos %d"
 
 #: ../plugins/thunar-sendto-email/main.c:408
 msgid "Failed to create temporary directory"
-msgstr "Nepavyko sukurti laikinojo aplanko"
+msgstr "Nepavyko sukurti laikinojo katalogo"
 
 #: ../plugins/thunar-sendto-email/main.c:470
 #: ../plugins/thunar-sendto-email/main.c:481
@@ -3478,12 +3478,12 @@ msgstr "keliai iki visų pasirinktų failų"
 #: ../plugins/thunar-uca/thunar-uca-editor.c:313
 #, c-format
 msgid "directory containing the file that is passed in %f"
-msgstr "aplankas, kuriame yra failas, perduotas kaip %f parametras"
+msgstr "katalogas, kuriame yra failas, perduotas kaip %f parametras"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:325
 #, c-format
 msgid "directories containing the files that are passed in %F"
-msgstr "aplankai kuriuose yra failai perduoti kaip %F"
+msgstr "katalogai, kuriuose yra failai perduoti kaip %F"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:337
 msgid "the first selected filename (without path)"
@@ -3515,7 +3515,7 @@ msgstr "Rodomas jei pasirinkime yra:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:408
 msgid "_Directories"
-msgstr "_Aplankai"
+msgstr "_Katalogai"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:412
 msgid "_Audio Files"
