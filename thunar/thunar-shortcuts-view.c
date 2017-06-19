@@ -305,6 +305,7 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
                            "weight", PANGO_WEIGHT_BOLD,
                            "xpad", 6,
                            "ypad", 6,
+                           "ellipsize", PANGO_ELLIPSIZE_END,
                            NULL);
   gtk_tree_view_column_pack_start (column, renderer, FALSE);
   gtk_tree_view_column_set_attributes (column, renderer,
