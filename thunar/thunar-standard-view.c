@@ -635,6 +635,8 @@ thunar_standard_view_view_init (ThunarViewIface *iface)
 static void
 thunar_standard_view_init (ThunarStandardView *standard_view)
 {
+  GtkCssProvider *provider;
+
   standard_view->priv = THUNAR_STANDARD_VIEW_GET_PRIVATE (standard_view);
 
   /* allocate the scroll_to_files mapping (directory GFile -> first visible child GFile) */
@@ -734,6 +736,16 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   /* connect to size allocation signals for generating thumbnail requests */
   g_signal_connect_after (G_OBJECT (standard_view), "size-allocate",
                           G_CALLBACK (thunar_standard_view_size_allocate), NULL);
+
+  /* remove extra border between side pane and view */
+  provider = gtk_css_provider_new ();
+
+  gtk_css_provider_load_from_data (provider, ".frame { border-left-width: 0px; }", -1, NULL);
+  gtk_style_context_add_provider (
+    GTK_STYLE_CONTEXT (gtk_widget_get_style_context (standard_view)),
+    GTK_STYLE_PROVIDER (provider),
+    GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+  g_object_unref (provider);
 }
 
 

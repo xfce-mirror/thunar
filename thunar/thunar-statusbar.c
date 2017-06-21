@@ -90,14 +90,13 @@ thunar_statusbar_class_init (ThunarStatusbarClass *klass)
 
   if (!style_initialized)
     {
-      gtk_widget_class_install_style_property(gobject_class, g_param_spec_int (
-              "shadow-type",                //name
-              "shadow-type",                //nick
-              "the type of the shadow",     //blurb
-              GTK_SHADOW_NONE,              //min
-              GTK_SHADOW_ETCHED_OUT,        //max
-              GTK_SHADOW_NONE,              //default
-              G_PARAM_READWRITE));         //flags
+    	  gtk_widget_class_install_style_property (gobject_class, g_param_spec_enum (
+	          "shadow-type",                //name
+	          "shadow-type",                //nick
+	          "type of shadow",             //blurb
+	          gtk_shadow_type_get_type(),   //type
+	          GTK_SHADOW_NONE,              //default
+	          G_PARAM_READWRITE ));         //flags
     }
 }
 
@@ -107,6 +106,10 @@ static void
 thunar_statusbar_init (ThunarStatusbar *statusbar)
 {
   statusbar->context_id = gtk_statusbar_get_context_id (GTK_STATUSBAR (statusbar), "Main text");
+
+  /* make the status thinner */
+  gtk_widget_set_margin_top (statusbar, 0);
+  gtk_widget_set_margin_bottom (statusbar, 0);
 }
 
 
