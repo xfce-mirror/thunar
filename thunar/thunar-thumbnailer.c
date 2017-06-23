@@ -931,7 +931,7 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
           thumbnail_path = thunar_file_get_thumbnail_path (lp->data);
 
           /* test if a thumbnail can be found */
-          if (g_file_test (thumbnail_path, G_FILE_TEST_EXISTS))
+          if (thumbnail_path != NULL && g_file_test (thumbnail_path, G_FILE_TEST_EXISTS))
             thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_READY);
           else
             thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE);
