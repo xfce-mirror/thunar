@@ -974,6 +974,7 @@ thunar_file_info_reload (ThunarFile   *file,
   gboolean     is_secure = FALSE;
   gchar       *casefold;
   gchar       *path;
+  gchar       *locale_display_name;
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (file->info == NULL || G_IS_FILE_INFO (file->info));
@@ -1043,11 +1044,17 @@ thunar_file_info_reload (ThunarFile   *file,
 
           /* read the display name from the .desktop file (will be overwritten later
            * if it's undefined here) */
-          file->display_name = g_key_file_get_locale_string (key_file,
+          locale_display_name = g_key_file_get_locale_string (key_file,
                                                              G_KEY_FILE_DESKTOP_GROUP,
                                                              G_KEY_FILE_DESKTOP_KEY_NAME,
                                                              NULL, NULL);
           
+
+          /* concat .desktop extension to the display_name */
+          if (!exo_str_is_empty (locale_display_name))
+            file->display_name = g_strconcat(locale_display_name, ".desktop", NULL);
+          g_free(locale_display_name);
+
           /* drop the name if it's empty or has invalid encoding */
           if (exo_str_is_empty (file->display_name)
               || !g_utf8_validate (file->display_name, -1, NULL))
@@ -1879,6 +1886,8 @@ thunar_file_rename (ThunarFile   *file,
   const gchar * const  *languages;
   guint                 i;
   gboolean              name_set = FALSE;
+  gchar                *locale_name;
+  gchar                *dot;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (g_utf8_validate (name, -1, NULL), FALSE);
@@ -1909,12 +1918,19 @@ thunar_file_rename (ThunarFile   *file,
               if (g_ascii_strcasecmp (languages[i], "C") == 0)
                 continue;
 
+              /* strip off .desktop extension for the locale name */
+              locale_name = g_strdup (name);
+              dot = thunar_util_str_get_extension (locale_name);
+              if (G_LIKELY (dot != NULL))
+                *dot = '\0';
+
               /* change the translated Name field of the desktop entry */
               g_key_file_set_locale_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
                                             G_KEY_FILE_DESKTOP_KEY_NAME,
-                                            languages[i], name);
+                                            languages[i], locale_name);
 
               /* done */
+              g_free (locale_name);
               name_set = TRUE;
             }
         }
