@@ -38,6 +38,7 @@
 #endif
 
 #include <stdlib.h>
+#include <glib-unix.h>
 
 #ifdef HAVE_GUDEV
 #include <gudev/gudev.h>
@@ -114,6 +115,7 @@ static void           thunar_application_set_property           (GObject        
 static void           thunar_application_startup                (GApplication           *application);
 static void           thunar_application_shutdown               (GApplication           *application);
 static void           thunar_application_activate               (GApplication           *application);
+static gboolean       thunar_application_handle_hangup_signal   (gpointer                user_data);
 static int            thunar_application_handle_local_options   (GApplication           *application,
                                                                  GVariantDict           *options);
 static int            thunar_application_command_line           (GApplication           *application,
@@ -269,6 +271,11 @@ thunar_application_init (ThunarApplication *application)
   application->progress_dialog = NULL;
   application->preferences     = NULL;
 
+#ifndef G_OS_WIN32
+  /* required in order to have no 8 second-delay on session-logout in daemon-mode */
+  g_unix_signal_add (SIGHUP, thunar_application_handle_hangup_signal, application);
+#endif
+
   g_application_set_flags (G_APPLICATION (application), G_APPLICATION_HANDLES_COMMAND_LINE);
   g_application_add_main_option_entries (G_APPLICATION (application), option_entries);
 }
@@ -410,6 +417,16 @@ thunar_application_finalize (GObject *object)
    * in GApplication::shutdown. Therefore, this method doesn't do very much */
 
   (*G_OBJECT_CLASS (thunar_application_parent_class)->finalize) (object);
+}
+
+
+
+static gboolean
+thunar_application_handle_hangup_signal (gpointer user_data)
+{
+  ThunarApplication *application = THUNAR_APPLICATION (user_data);
+  thunar_application_set_daemon (application, FALSE);
+  return FALSE;
 }
 
 
