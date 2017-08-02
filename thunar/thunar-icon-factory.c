@@ -495,7 +495,7 @@ thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
       else
         {
           /* check if the icon theme contains an icon of that name */
-          icon_info = gtk_icon_theme_lookup_icon (factory->icon_theme, name, size, 0);
+          icon_info = gtk_icon_theme_lookup_icon (factory->icon_theme, name, size, GTK_ICON_LOOKUP_FORCE_SIZE);
           if (G_LIKELY (icon_info != NULL))
             {
               /* try to load the pixbuf from the icon info */
