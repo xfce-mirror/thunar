@@ -494,6 +494,10 @@ thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
         }
       else
         {
+          /* FIXME: is there a better approach? */
+          if (g_strcmp0 (name, "inode-directory") == 0)
+            name = "folder";
+
           /* check if the icon theme contains an icon of that name */
           icon_info = gtk_icon_theme_lookup_icon (factory->icon_theme, name, size, GTK_ICON_LOOKUP_FORCE_SIZE);
           if (G_LIKELY (icon_info != NULL))
