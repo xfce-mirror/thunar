@@ -338,8 +338,8 @@ thunar_session_client_die (SmcConn              connection,
   _thunar_return_if_fail (THUNAR_IS_SESSION_CLIENT (session_client));
   _thunar_return_if_fail (session_client->connection == connection);
 
-  /* terminate the application */
-  gtk_main_quit ();
+  ThunarApplication* application = thunar_application_get ();
+  thunar_application_quit (application);
 }
 
 

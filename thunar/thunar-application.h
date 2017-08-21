@@ -42,6 +42,8 @@ GType                 thunar_application_get_type                   (void) G_GNU
 
 ThunarApplication    *thunar_application_get                        (void);
 
+void                  thunar_application_quit                       (ThunarApplication *application);
+
 gboolean              thunar_application_get_daemon                 (ThunarApplication *application);
 void                  thunar_application_set_daemon                 (ThunarApplication *application,
                                                                      gboolean           daemon);
