@@ -550,7 +550,6 @@ thunar_chooser_dialog_context_menu (ThunarChooserDialog *dialog,
   GtkTreeSelection *selection;
   GtkTreeModel     *model;
   GtkTreeIter       iter;
-  GtkWidget        *image;
   GtkWidget        *item;
   GtkWidget        *menu;
   GAppInfo         *app_info;

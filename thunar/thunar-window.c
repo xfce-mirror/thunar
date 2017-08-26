@@ -2274,9 +2274,6 @@ static void
 thunar_window_start_open_location (ThunarWindow *window,
                                    const gchar  *initial_text)
 {
-  ThunarFile *selected_file;
-  GtkWidget  *dialog;
-
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* temporary show the location toolbar, even if it is normally hidden */

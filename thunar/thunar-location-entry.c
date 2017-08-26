@@ -432,8 +432,6 @@ thunar_location_entry_reload (GtkEntry            *entry,
                               GdkEvent            *event,
                               ThunarLocationEntry *location_entry)
 {
-  GtkAction *action;
-
   _thunar_return_if_fail (THUNAR_IS_LOCATION_ENTRY (location_entry));
 
   if (icon_pos == GTK_ENTRY_ICON_SECONDARY)

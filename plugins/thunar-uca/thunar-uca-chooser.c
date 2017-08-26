@@ -117,7 +117,6 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
   GtkTreeViewColumn *column;
   GtkCellRenderer   *renderer;
   ThunarUcaModel    *uca_model;
-  GtkWidget         *button;
   gboolean           have_header_bar;
 
   /* Initialize the template for this instance */

@@ -257,8 +257,6 @@ static void
 thunar_location_buttons_init (ThunarLocationButtons *buttons)
 {
   GtkWidget       *icon;
-  GList           *list, *lp;
-  GtkStyleContext *context;
 
   /* setup the action group for the location buttons */
   buttons->action_group = gtk_action_group_new ("ThunarLocationButtons");
@@ -1114,8 +1112,6 @@ static void
 thunar_location_buttons_scroll_right (GtkWidget             *button,
                                       ThunarLocationButtons *buttons)
 {
-  GtkTextDirection direction;
-
   if (G_UNLIKELY (buttons->ignore_click))
     {
       buttons->ignore_click = FALSE;
@@ -1217,8 +1213,8 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
   GtkAction              *action;
   GtkWidget              *menu, *item;
 
-  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
-  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTON (button));
+  _thunar_return_val_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_LOCATION_BUTTON (button), FALSE);
 
   /* determine the file for the button */
   file = thunar_location_button_get_file (button);

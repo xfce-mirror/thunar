@@ -111,7 +111,6 @@ static void           thunar_application_set_property           (GObject        
                                                                  guint                   prop_id,
                                                                  const GValue           *value,
                                                                  GParamSpec             *pspec);
-static void           thunar_application_init                   (ThunarApplication      *application);
 static void           thunar_application_dbus_acquired_cb       (GDBusConnection        *conn,
                                                                  const gchar            *name,
                                                                  gpointer                user_data);
@@ -153,8 +152,6 @@ static void           thunar_application_launch                 (ThunarApplicati
                                                                  GList                  *source_path_list,
                                                                  GList                  *target_path_list,
                                                                  GClosure               *new_files_closure);
-static void           thunar_application_window_destroyed       (GtkWidget              *window,
-                                                                 ThunarApplication      *application);
 #ifdef HAVE_GUDEV
 static void           thunar_application_uevent                 (GUdevClient            *client,
                                                                  const gchar            *action,
@@ -386,7 +383,6 @@ static void
 thunar_application_shutdown (GApplication *gapp)
 {
   ThunarApplication *application = THUNAR_APPLICATION (gapp);
-  GList             *lp;
 
   /* unqueue all files waiting to be processed */
   thunar_g_file_list_free (application->files_to_launch);
@@ -446,8 +442,6 @@ thunar_application_shutdown (GApplication *gapp)
 static void
 thunar_application_finalize (GObject *object)
 {
-  ThunarApplication *application = THUNAR_APPLICATION (object);
-
   /* rule of thumb: what gets initialized in GApplication::startup is cleaned up
    * in GApplication::shutdown. Therefore, this method doesn't do very much */
 

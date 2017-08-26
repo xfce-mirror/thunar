@@ -120,9 +120,6 @@ static void                   thunar_thumbnailer_thumbnailer_ready      (GDBusPr
                                                                          guint32                     handle,
                                                                          const gchar               **uris,
                                                                          ThunarThumbnailer          *thumbnailer);
-static guint                  thunar_thumbnailer_queue_async            (ThunarThumbnailer          *thumbnailer,
-                                                                         gchar                     **uris,
-                                                                         const gchar               **mime_hints);
 static void                   thunar_thumbnailer_idle                   (ThunarThumbnailer          *thumbnailer,
                                                                          guint                       handle,
                                                                          ThunarThumbnailerIdleType   type,
@@ -260,7 +257,7 @@ thunar_thumbnailer_queue_async_reply (GObject      *proxy,
   ThunarThumbnailerJob *job = user_data;
   ThunarThumbnailer    *thumbnailer = THUNAR_THUMBNAILER (job->thumbnailer);
   GError               *error = NULL;
-  int                   handle;
+  guint                 handle;
 
   _thunar_return_if_fail (THUNAR_IS_THUMBNAILER_DBUS (proxy));
   _thunar_return_if_fail (job != NULL);
@@ -299,7 +296,7 @@ thunar_thumbnailer_queue_async_reply (GObject      *proxy,
 
 
 /* NOTE: assumes that the lock is held by the caller */
-gboolean
+static gboolean
 thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
                               ThunarThumbnailerJob *job)
 {
@@ -455,7 +452,6 @@ thunar_thumbnailer_finalize (GObject *object)
 {
   ThunarThumbnailer     *thumbnailer = THUNAR_THUMBNAILER (object);
   ThunarThumbnailerIdle *idle;
-  ThunarThumbnailerJob  *job;
   GSList                *lp;
 
   /* acquire the thumbnailer lock */
@@ -687,8 +683,6 @@ thunar_thumbnailer_proxy_created (GObject       *object,
 static void
 thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer *thumbnailer)
 {
-  GError *error = NULL;
-
   _thumbnailer_lock (thumbnailer);
 
   thumbnailer->thumbnailer_proxy = NULL;

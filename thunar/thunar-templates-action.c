@@ -469,7 +469,6 @@ static void
 thunar_templates_action_load_finished (ThunarJob             *job,
                                        ThunarTemplatesAction *templates_action)
 {
-  GtkWidget *image;
   GtkWidget *item;
   GtkWidget *menu;
 

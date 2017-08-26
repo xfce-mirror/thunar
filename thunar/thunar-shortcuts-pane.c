@@ -186,7 +186,7 @@ thunar_shortcuts_pane_init (ThunarShortcutsPane *shortcuts_pane)
 
   gtk_css_provider_load_from_data (provider, ".frame { border-right-width: 0px; }", -1, NULL);
   gtk_style_context_add_provider (
-    GTK_STYLE_CONTEXT (gtk_widget_get_style_context (shortcuts_pane)),
+    GTK_STYLE_CONTEXT (gtk_widget_get_style_context (GTK_WIDGET (shortcuts_pane))),
     GTK_STYLE_PROVIDER (provider),
     GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
   g_object_unref (provider);

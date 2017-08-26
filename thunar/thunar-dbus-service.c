@@ -469,7 +469,6 @@ thunar_dbus_service_display_folder (ThunarDBusFileManager  *object,
   g_object_unref (G_OBJECT (screen));
   g_object_unref (G_OBJECT (file));
 
-out:
   if (error)
     g_dbus_method_invocation_take_error (invocation, error);
   else
@@ -788,7 +787,6 @@ thunar_dbus_service_empty_trash (ThunarDBusTrash        *object,
       g_object_unref (G_OBJECT (screen));
     }
 
-out:
   if (error)
     g_dbus_method_invocation_take_error (invocation, error);
   else
@@ -852,7 +850,6 @@ thunar_dbus_service_move_to_trash (ThunarDBusTrash        *object,
     }
 
   /* check if we failed */
-out:
   if (err)
     g_dbus_method_invocation_take_error (invocation, err);
   else
@@ -878,7 +875,6 @@ thunar_dbus_service_query_trash (ThunarDBusTrash        *object,
       full = (thunar_file_get_item_count (dbus_service->trash_bin) > 0);
     }
 
-out:
   if (error)
     g_dbus_method_invocation_take_error (invocation, error);
   else
@@ -925,7 +921,6 @@ thunar_dbus_service_bulk_rename (ThunarDBusThunar  *object,
   /* release the cwd */
   g_free (cwd);
 
-out:
   if (error)
     g_dbus_method_invocation_take_error (invocation, error);
   else
