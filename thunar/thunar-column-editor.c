@@ -224,7 +224,7 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   gtk_widget_show (column_editor->hide_button);
 
   /* create the horiz separator */
-  separator = gtk_hseparator_new ();
+  separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
   gtk_table_attach (GTK_TABLE (table), separator, 1, 2, 5, 6, GTK_FILL, 0, 0, 0);
   gtk_widget_show (separator);
 

@@ -852,7 +852,7 @@ thunar_window_init (ThunarWindow *window)
       gtk_widget_show (label);
     }
 
-  window->paned = gtk_hpaned_new ();
+  window->paned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
   gtk_container_set_border_width (GTK_CONTAINER (window->paned), 0);
   gtk_table_attach (GTK_TABLE (window->table), window->paned, 0, 1, 4, 5, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
   gtk_widget_show (window->paned);

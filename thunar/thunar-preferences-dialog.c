@@ -513,7 +513,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_box_pack_start (GTK_BOX (ibox), align, FALSE, FALSE, 0);
   gtk_widget_show (align);
 
-  range = gtk_hscale_new_with_range (0.0, 2000.0, 100.0);
+  range = gtk_scale_new_with_range (GTK_ORIENTATION_HORIZONTAL, 0.0, 2000.0, 100.0);
   gtk_scale_set_draw_value (GTK_SCALE (range), FALSE);
   gtk_widget_set_tooltip_text (range, _("When single-click activation is enabled, pausing the mouse pointer over an item "
                                         "will automatically select that item after the chosen delay. You can disable this "
