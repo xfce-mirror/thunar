@@ -269,7 +269,7 @@ thunar_shortcuts_view_class_init (ThunarShortcutsViewClass *klass)
 static void
 thunar_shortcuts_view_init (ThunarShortcutsView *view)
 {
-  GtkTreeViewColumn *column;
+  GtkTreeViewColumn *column, *column_eject;
   GtkCellRenderer   *renderer;
   GtkTreeSelection  *selection;
 
@@ -291,10 +291,14 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
                          "reorderable", FALSE,
                          "resizable", FALSE,
+                         "expand", TRUE,
                          "sizing", GTK_TREE_VIEW_COLUMN_AUTOSIZE,
                          "spacing", 2,
                          NULL);
   gtk_tree_view_append_column (GTK_TREE_VIEW (view), column);
+
+  column_eject = gtk_tree_view_column_new ();
+  gtk_tree_view_append_column (GTK_TREE_VIEW (view), column_eject);
 
   /* queue a resize on the column whenever the icon size is changed */
   view->queue_resize_signal_id = g_signal_connect_swapped (G_OBJECT (view->preferences), "notify::shortcuts-icon-size",
@@ -350,8 +354,8 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
 
   /* spinner to indicate (un)mount/eject delay */
   renderer = gtk_cell_renderer_spinner_new ();
-  gtk_tree_view_column_pack_start (column, renderer, FALSE);
-  gtk_tree_view_column_set_attributes (column, renderer,
+  gtk_tree_view_column_pack_start (column_eject, renderer, FALSE);
+  gtk_tree_view_column_set_attributes (column_eject, renderer,
                                        "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_BUSY,
                                        "active", THUNAR_SHORTCUTS_MODEL_COLUMN_BUSY,
                                        "pulse", THUNAR_SHORTCUTS_MODEL_COLUMN_BUSY_PULSE,
@@ -360,8 +364,8 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   /* allocate icon renderer for the eject symbol */
   renderer = gtk_cell_renderer_pixbuf_new ();
   g_object_set (renderer, "mode", GTK_CELL_RENDERER_MODE_ACTIVATABLE, "icon-name", "media-eject", NULL);
-  gtk_tree_view_column_pack_start (column, renderer, FALSE);
-  gtk_tree_view_column_set_attributes (column, renderer,
+  gtk_tree_view_column_pack_start (column_eject, renderer, FALSE);
+  gtk_tree_view_column_set_attributes (column_eject, renderer,
                                        "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_CAN_EJECT,
                                        NULL);
 
@@ -450,7 +454,7 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
           /* check if we clicked the eject button area */
           column_width = gtk_tree_view_column_get_width (gtk_tree_view_get_column (GTK_TREE_VIEW (view), 0));
           gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &icon_width, &icon_height);
-          if (event->button == 1 && event->x >= column_width - icon_width - 3)
+          if (event->button == 1 && event->x > column_width)
             {
               /* check if that shortcut actually has an eject button */
               model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
