@@ -7,10 +7,10 @@
   <requires lib="gtk+" version="3.12"/>
   <template class="ThunarUcaEditor" parent="GtkDialog">
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">FIXME</property>
+    <property name="title" translatable="yes">Edit Action</property>
     <property name="modal">True</property>
-    <property name="default_width">450</property>
-    <property name="default_height">500</property>
+    <property name="default_width">400</property>
+    <property name="default_height">450</property>
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
@@ -193,6 +193,7 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="tooltip_text" translatable="yes">Click this button to select an icon file that will be displayed in the context menu in addition to the action name chosen above.</property>
+                    <property name="halign">start</property>
                     <signal name="clicked" handler="thunar_uca_editor_icon_clicked" swapped="yes"/>
                   </object>
                   <packing>
@@ -223,6 +224,7 @@
                     <property name="can_focus">False</property>
                     <property name="row_spacing">3</property>
                     <property name="column_spacing">6</property>
+                    <property name="valign">start</property>
                     <child>
                       <object class="GtkImage" id="image2">
                         <property name="visible">True</property>
