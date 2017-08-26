@@ -99,7 +99,7 @@ struct _ThunarSizeLabel
 
 
 
-G_DEFINE_TYPE (ThunarSizeLabel, thunar_size_label, GTK_TYPE_HBOX)
+G_DEFINE_TYPE (ThunarSizeLabel, thunar_size_label, GTK_TYPE_BOX)
 
 
 
@@ -145,6 +145,8 @@ static void
 thunar_size_label_init (ThunarSizeLabel *size_label)
 {
   GtkWidget *ebox;
+
+  gtk_orientable_set_orientation (GTK_ORIENTABLE (size_label), GTK_ORIENTATION_HORIZONTAL);
 
   /* binary file size */
   size_label->preferences = thunar_preferences_get ();

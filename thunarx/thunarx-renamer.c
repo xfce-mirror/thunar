@@ -88,7 +88,7 @@ static guint renamer_signals[LAST_SIGNAL];
 
 
 
-G_DEFINE_ABSTRACT_TYPE (ThunarxRenamer, thunarx_renamer, GTK_TYPE_VBOX)
+G_DEFINE_ABSTRACT_TYPE (ThunarxRenamer, thunarx_renamer, GTK_TYPE_BOX)
 
 
 
@@ -176,7 +176,8 @@ thunarx_renamer_init (ThunarxRenamer *renamer)
   /* grab a pointer on the private data */
   renamer->priv = THUNARX_RENAMER_GET_PRIVATE (renamer);
 
-  /* initialize the GtkVBox to sane defaults */
+  /* initialize the GtkBox to sane defaults */
+  gtk_orientable_set_orientation (GTK_ORIENTABLE (renamer), GTK_ORIENTATION_VERTICAL);
   gtk_container_set_border_width (GTK_CONTAINER (renamer), 12);
   gtk_box_set_homogeneous (GTK_BOX (renamer), FALSE);
   gtk_box_set_spacing (GTK_BOX (renamer), 6);

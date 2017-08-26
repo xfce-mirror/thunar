@@ -110,7 +110,7 @@ thunar_sbr_case_renamer_init (ThunarSbrCaseRenamer *case_renamer)
   GtkWidget      *hbox;
   guint           n;
 
-  hbox = gtk_hbox_new (FALSE, 12);
+  hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
   gtk_box_pack_start (GTK_BOX (case_renamer), hbox, FALSE, FALSE, 0);
   gtk_widget_show (hbox);
 

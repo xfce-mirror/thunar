@@ -127,7 +127,7 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   gtk_button_box_set_child_secondary (GTK_BUTTON_BOX (gtk_dialog_get_action_area (GTK_DIALOG (column_editor))), button, TRUE);
   gtk_widget_show (button);
 
-  vbox = gtk_vbox_new (FALSE, 6);
+  vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 6);
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (column_editor))), vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);

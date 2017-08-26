@@ -177,7 +177,7 @@ thunar_sbr_number_renamer_init (ThunarSbrNumberRenamer *number_renamer)
   GtkWidget      *hbox;
   guint           n;
 
-  hbox = gtk_hbox_new (FALSE, 12);
+  hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
   gtk_box_pack_start (GTK_BOX (number_renamer), hbox, FALSE, FALSE, 0);
   gtk_widget_show (hbox);
 
@@ -223,7 +223,7 @@ thunar_sbr_number_renamer_init (ThunarSbrNumberRenamer *number_renamer)
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
 
-  hbox = gtk_hbox_new (FALSE, 12);
+  hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
   gtk_box_pack_end (GTK_BOX (number_renamer), hbox, FALSE, FALSE, 0);
   gtk_widget_show (hbox);
 

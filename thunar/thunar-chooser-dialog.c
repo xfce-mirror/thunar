@@ -188,12 +188,12 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
   gtk_window_set_title (GTK_WINDOW (dialog), _("Open With"));
 
   /* create the main widget box */
-  vbox = g_object_new (GTK_TYPE_VBOX, "border-width", 6, "spacing", 12, NULL);
+  vbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "border-width", 6, "spacing", 12, NULL);
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), vbox, TRUE, TRUE, 0);
   gtk_widget_show (vbox);
 
   /* create the header box */
-  header = gtk_hbox_new (FALSE, 6);
+  header = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
   gtk_box_pack_start (GTK_BOX (vbox), header, FALSE, FALSE, 0);
   gtk_widget_show (header);
 
@@ -211,7 +211,7 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
   gtk_widget_show (dialog->header_label);
 
   /* create the view box */
-  box = gtk_vbox_new (FALSE, 6);
+  box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   gtk_box_pack_start (GTK_BOX (vbox), box, TRUE, TRUE, 0);
   gtk_widget_show (box);
 
@@ -263,7 +263,7 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
   gtk_widget_show (dialog->custom_expander);
 
   /* create the "Custom command" box */
-  hbox = gtk_hbox_new (FALSE, 2);
+  hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 2);
   gtk_container_add (GTK_CONTAINER (dialog->custom_expander), hbox);
   gtk_widget_show (hbox);
 

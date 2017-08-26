@@ -93,7 +93,7 @@ struct _ThunarLocationEntry
 
 
 
-G_DEFINE_TYPE_WITH_CODE (ThunarLocationEntry, thunar_location_entry, GTK_TYPE_HBOX,
+G_DEFINE_TYPE_WITH_CODE (ThunarLocationEntry, thunar_location_entry, GTK_TYPE_BOX,
   G_IMPLEMENT_INTERFACE (THUNAR_TYPE_BROWSER, NULL)
   G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR, thunar_location_entry_navigator_init))
 
@@ -180,6 +180,7 @@ static void
 thunar_location_entry_init (ThunarLocationEntry *location_entry)
 {
   gtk_box_set_spacing (GTK_BOX (location_entry), 0);
+  gtk_orientable_set_orientation (GTK_ORIENTABLE (location_entry), GTK_ORIENTATION_HORIZONTAL);
 
   location_entry->path_entry = thunar_path_entry_new ();
   exo_binding_new (G_OBJECT (location_entry), "current-directory", G_OBJECT (location_entry->path_entry), "current-file");

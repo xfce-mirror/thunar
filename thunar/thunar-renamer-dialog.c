@@ -388,7 +388,7 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (renamer_dialog))), toolbar, FALSE, FALSE, 0);
 
   /* create the main vbox */
-  mbox = gtk_vbox_new (FALSE, 12);
+  mbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (mbox), 6);
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (renamer_dialog))), mbox, TRUE, TRUE, 0);
   gtk_widget_show (mbox);
@@ -450,12 +450,12 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   gtk_tree_view_append_column (GTK_TREE_VIEW (renamer_dialog->tree_view), column);
 
   /* create the vbox for the renamer parameters */
-  vbox = gtk_vbox_new (FALSE, 6);
+  vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   gtk_box_pack_start (GTK_BOX (mbox), vbox, FALSE, FALSE, 0);
   gtk_widget_show (vbox);
 
   /* create the hbox for the renamer selection */
-  rbox = gtk_hbox_new (FALSE, 3);
+  rbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 3);
   gtk_box_pack_start (GTK_BOX (vbox), rbox, FALSE, FALSE, 0);
   gtk_widget_show (rbox);
 
@@ -596,7 +596,7 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
       gtk_widget_set_sensitive (swin, FALSE);
 
       /* display an error to the user */
-      hbox = gtk_hbox_new (FALSE, 12);
+      hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
       gtk_container_set_border_width (GTK_CONTAINER (hbox), 12);
       gtk_container_add (GTK_CONTAINER (frame), hbox);
       gtk_widget_show (hbox);

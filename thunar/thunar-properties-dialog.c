@@ -272,7 +272,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   /*
      First box (icon, name) for 1 file
    */
-  dialog->single_box = gtk_hbox_new (FALSE, 6);
+  dialog->single_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
   gtk_table_attach (GTK_TABLE (table), dialog->single_box, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
 
   dialog->icon_button = gtk_button_new ();
@@ -303,7 +303,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   /*
      First box (icon, name) for multiple files
    */
-  box = gtk_hbox_new (FALSE, 6);
+  box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
   gtk_table_attach (GTK_TABLE (table), box, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
   exo_binding_new_with_negation (G_OBJECT (dialog->single_box), "visible", G_OBJECT (box), "visible");
 
@@ -495,7 +495,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);
 
-  box = gtk_hbox_new (FALSE, 6);
+  box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
   exo_binding_new (G_OBJECT (box), "visible", G_OBJECT (label), "visible");
   gtk_table_attach (GTK_TABLE (table), box, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (box);
@@ -519,7 +519,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);
 
-  dialog->freespace_vbox = gtk_vbox_new (FALSE, 4);
+  dialog->freespace_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
   gtk_table_attach (GTK_TABLE (table), dialog->freespace_vbox, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
   exo_binding_new (G_OBJECT (dialog->freespace_vbox), "visible", G_OBJECT (label), "visible");
   gtk_widget_show (dialog->freespace_vbox);

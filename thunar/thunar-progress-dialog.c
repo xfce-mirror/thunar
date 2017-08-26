@@ -104,11 +104,11 @@ thunar_progress_dialog_init (ThunarProgressDialog *dialog)
   g_signal_connect (dialog, "delete-event", 
                     G_CALLBACK (thunar_progress_dialog_closed), dialog);
 
-  dialog->vbox = gtk_vbox_new (FALSE, 0);
+  dialog->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
   gtk_container_add (GTK_CONTAINER (dialog), dialog->vbox);
   gtk_widget_show (dialog->vbox);
 
-  dialog->content_box = gtk_vbox_new (FALSE, 12);
+  dialog->content_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
   gtk_container_set_border_width (GTK_CONTAINER (dialog->content_box), 8);
   gtk_container_add (GTK_CONTAINER (dialog->vbox), dialog->content_box);
   gtk_widget_show (dialog->content_box);

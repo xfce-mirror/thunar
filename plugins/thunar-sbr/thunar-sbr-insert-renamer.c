@@ -199,7 +199,7 @@ thunar_sbr_insert_renamer_init (ThunarSbrInsertRenamer *insert_renamer)
   gtk_table_attach (GTK_TABLE (table), label, 0, 2, 1, 2, GTK_FILL, 0, 0, 0);
   gtk_widget_show (label);
 
-  hbox = gtk_hbox_new (FALSE, 12);
+  hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
   gtk_table_attach (GTK_TABLE (table), hbox, 2, 3, 1, 2, GTK_FILL, 0, 0, 0);
   gtk_widget_show (hbox);
 

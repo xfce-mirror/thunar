@@ -102,7 +102,7 @@ struct _ThunarProgressView
 
 
 
-G_DEFINE_TYPE (ThunarProgressView, thunar_progress_view, GTK_TYPE_VBOX)
+G_DEFINE_TYPE (ThunarProgressView, thunar_progress_view, GTK_TYPE_BOX)
 
 
 
@@ -179,11 +179,13 @@ thunar_progress_view_init (ThunarProgressView *view)
   GtkWidget *vbox3;
   GtkWidget *hbox;
 
-  vbox = gtk_vbox_new (FALSE, 6);
+  gtk_orientable_set_orientation (GTK_ORIENTABLE (view), GTK_ORIENTATION_VERTICAL);
+
+  vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   gtk_container_add (GTK_CONTAINER (view), vbox);
   gtk_widget_show (vbox);
 
-  hbox = gtk_hbox_new (FALSE, 12);
+  hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
   gtk_widget_show (hbox);
 
@@ -192,7 +194,7 @@ thunar_progress_view_init (ThunarProgressView *view)
   exo_binding_new (G_OBJECT (view), "icon-name", G_OBJECT (image), "icon-name");
   gtk_widget_show (image);
 
-  vbox2 = gtk_vbox_new (FALSE, 6);
+  vbox2 = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
   gtk_box_pack_start (GTK_BOX (hbox), vbox2, TRUE, TRUE, 0);
   gtk_widget_show (vbox2);
 
@@ -207,11 +209,11 @@ thunar_progress_view_init (ThunarProgressView *view)
   gtk_box_pack_start (GTK_BOX (vbox2), view->message_label, TRUE, TRUE, 0);
   gtk_widget_show (view->message_label);
 
-  hbox = gtk_hbox_new (FALSE, 6);
+  hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
   gtk_widget_show (hbox);
 
-  vbox3 = gtk_vbox_new (FALSE, 3);
+  vbox3 = gtk_box_new (GTK_ORIENTATION_VERTICAL, 3);
   gtk_box_pack_start (GTK_BOX (hbox), vbox3, TRUE, TRUE, 0);
   gtk_widget_show (vbox3);
 
