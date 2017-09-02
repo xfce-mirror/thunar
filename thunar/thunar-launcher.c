@@ -655,7 +655,7 @@ thunar_launcher_open_paths (GAppInfo       *app_info,
   screen = (launcher->widget != NULL) ? gtk_widget_get_screen (launcher->widget) : NULL;
 
   /* create launch context */
-  context = gdk_app_launch_context_new ();
+  context = gdk_display_get_app_launch_context (gdk_screen_get_display (screen));
   gdk_app_launch_context_set_screen (context, screen);
   gdk_app_launch_context_set_timestamp (context, gtk_get_current_event_time ());
   gdk_app_launch_context_set_icon (context, g_app_info_get_icon (app_info));

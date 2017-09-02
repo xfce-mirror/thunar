@@ -469,7 +469,7 @@ thunar_emblem_chooser_create_button (ThunarEmblemChooser *chooser,
 
   g_object_unref (G_OBJECT (icon));
 done:
-  gtk_icon_info_free (info);
+  g_object_unref (info);
   return button;
 }
 

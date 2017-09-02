@@ -1830,7 +1830,7 @@ thunar_file_launch (ThunarFile  *file,
   path_list.next = path_list.prev = NULL;
 
   /* create a launch context */
-  context = gdk_app_launch_context_new ();
+  context = gdk_display_get_app_launch_context (gdk_screen_get_display (screen));
   gdk_app_launch_context_set_screen (context, screen);
   gdk_app_launch_context_set_timestamp (context, gtk_get_current_event_time ());
 

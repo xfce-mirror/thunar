@@ -939,7 +939,7 @@ thunar_application_volman_idle (gpointer user_data)
           screen = xfce_gdk_screen_get_active (NULL);
 
           if (screen != NULL)
-            display = gdk_screen_make_display_name (screen);
+            display = g_strdup (gdk_display_get_name (gdk_screen_get_display (screen)));
 
           /* try to spawn the volman on the active screen */
           if (g_spawn_async (NULL, argv, NULL, G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH, thunar_setup_display_cb, display, &pid, &err))

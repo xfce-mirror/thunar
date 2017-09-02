@@ -506,7 +506,7 @@ thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
               pixbuf = gtk_icon_info_load_icon (icon_info, NULL);
 
               /* cleanup */
-              gtk_icon_info_free (icon_info);
+              g_object_unref (icon_info);
             }
         }
 
@@ -848,7 +848,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
                 {
                   /* try to load the pixbuf from the icon info */
                   icon = gtk_icon_info_load_icon (icon_info, NULL);
-                  gtk_icon_info_free (icon_info);
+                  g_object_unref (icon_info);
                 }
             }
           else if (G_IS_LOADABLE_ICON (gicon))

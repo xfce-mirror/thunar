@@ -399,6 +399,7 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   gchar               *name;
   gchar               *s;
   GList                list;
+  GdkScreen           *screen;
 
   /* no special processing for non-accept responses */
   if (G_UNLIKELY (response != GTK_RESPONSE_ACCEPT))
@@ -487,8 +488,9 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   if (G_LIKELY (succeed && dialog->open))
     {
       /* create launch context */
-      context = gdk_app_launch_context_new ();
-      gdk_app_launch_context_set_screen (context, gtk_widget_get_screen (GTK_WIDGET (dialog)));
+      screen = gtk_widget_get_screen (GTK_WIDGET (dialog));
+      context = gdk_display_get_app_launch_context (gdk_screen_get_display (screen));
+      gdk_app_launch_context_set_screen (context, screen);
       gdk_app_launch_context_set_timestamp (context, gtk_get_current_event_time ());
 
       /* create fake file list */

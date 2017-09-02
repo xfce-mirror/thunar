@@ -3392,7 +3392,7 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
                       screen = gtk_widget_get_screen (GTK_WIDGET (view));
 
                       if (screen != NULL)
-                        display = gdk_screen_make_display_name (screen);
+                        display = g_strdup (gdk_display_get_name (gdk_screen_get_display (screen)));
 
                       /* try to run exo-desktop-item-edit */
                       succeed = g_spawn_async (working_directory, argv, NULL,

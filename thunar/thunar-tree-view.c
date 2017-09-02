@@ -2665,7 +2665,7 @@ thunar_tree_view_drag_scroll_timer (gpointer user_data)
       if (G_UNLIKELY (offset != 0))
         {
           /* determine the vertical adjustment */
-          vadjustment = gtk_tree_view_get_vadjustment (GTK_TREE_VIEW (view));
+          vadjustment = gtk_scrollable_get_vadjustment (GTK_SCROLLABLE (view));
 
           /* determine the new value */
           value = CLAMP (gtk_adjustment_get_value (vadjustment) + 2 * offset, gtk_adjustment_get_lower (vadjustment), gtk_adjustment_get_upper (vadjustment) - gtk_adjustment_get_page_size (vadjustment));

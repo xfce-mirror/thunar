@@ -3456,9 +3456,9 @@ thunar_window_notify_loading (ThunarView   *view,
       /* setup the proper cursor */
       if (thunar_view_get_loading (view))
         {
-          cursor = gdk_cursor_new (GDK_WATCH);
+          cursor = gdk_cursor_new_for_display (gtk_widget_get_display (GTK_WIDGET (view)), GDK_WATCH);
           gdk_window_set_cursor (gtk_widget_get_window (GTK_WIDGET (window)), cursor);
-          gdk_cursor_unref (cursor);
+          g_object_unref (cursor);
         }
       else
         {

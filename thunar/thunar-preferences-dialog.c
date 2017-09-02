@@ -708,7 +708,7 @@ thunar_preferences_dialog_configure (ThunarPreferencesDialog *dialog)
   screen = gtk_widget_get_screen (GTK_WIDGET (dialog));
 
   if (screen != NULL)
-    display = gdk_screen_make_display_name (screen);
+    display = g_strdup (gdk_display_get_name (gdk_screen_get_display (screen)));
 
   /* invoke the configuration interface of thunar-volman */
   if (!g_spawn_async (NULL, argv, NULL, G_SPAWN_SEARCH_PATH, thunar_setup_display_cb, display, NULL, &err))
