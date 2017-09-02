@@ -906,6 +906,7 @@ thunar_window_init (ThunarWindow *window)
   tool_item = gtk_tool_item_new ();
   gtk_tool_item_set_expand (tool_item, TRUE);
   gtk_toolbar_insert (GTK_TOOLBAR (window->location_toolbar), tool_item, -1);
+  gtk_toolbar_set_show_arrow (GTK_TOOLBAR (window->location_toolbar), FALSE);
   gtk_widget_show (GTK_WIDGET (tool_item));
 
   /* add the location bar itself */
