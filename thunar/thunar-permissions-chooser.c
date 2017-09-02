@@ -219,7 +219,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_widget_show (chooser->table);
 
   label = gtk_label_new (_("Owner:"));
-  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_table_attach (GTK_TABLE (chooser->table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
@@ -229,7 +229,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_widget_show (hbox);
 
   chooser->user_label = gtk_label_new (_("Unknown"));
-  gtk_misc_set_alignment (GTK_MISC (chooser->user_label), 0.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (chooser->user_label), 0.0f);
   gtk_box_pack_start (GTK_BOX (hbox), chooser->user_label, TRUE, TRUE, 0);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), chooser->user_label);
   gtk_widget_show (chooser->user_label);
@@ -237,7 +237,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   row += 1;
 
   label = gtk_label_new_with_mnemonic (_("_Access:"));
-  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_table_attach (GTK_TABLE (chooser->table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
@@ -254,14 +254,14 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
 
   row += 1;
 
-  separator = gtk_alignment_new (0.0f, 0.0f, 0.0f, 0.0f);
+  separator = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
   gtk_table_attach (GTK_TABLE (chooser->table), separator, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 6);
   gtk_widget_show (separator);
 
   row += 1;
 
   label = gtk_label_new_with_mnemonic (_("Gro_up:"));
-  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_table_attach (GTK_TABLE (chooser->table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
@@ -280,7 +280,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   row += 1;
 
   label = gtk_label_new_with_mnemonic (_("Acce_ss:"));
-  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_table_attach (GTK_TABLE (chooser->table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
@@ -297,14 +297,14 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
 
   row += 1;
 
-  separator = gtk_alignment_new (0.0f, 0.0f, 0.0f, 0.0f);
+  separator = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
   gtk_table_attach (GTK_TABLE (chooser->table), separator, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 6);
   gtk_widget_show (separator);
 
   row += 1;
 
   label = gtk_label_new_with_mnemonic (_("O_thers:"));
-  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_table_attach (GTK_TABLE (chooser->table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
@@ -321,14 +321,14 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
 
   row += 1;
 
-  separator = gtk_alignment_new (0.0f, 0.0f, 0.0f, 0.0f);
+  separator = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
   gtk_table_attach (GTK_TABLE (chooser->table), separator, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 6);
   gtk_widget_show (separator);
 
   row += 1;
 
   label = gtk_label_new (_("Program:"));
-  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_table_attach (GTK_TABLE (chooser->table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
@@ -354,7 +354,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_widget_show (image);
 
   label = gtk_label_new (_("Allowing untrusted programs to run\npresents a security risk to your system."));
-  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_small_italic ());
   gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
   gtk_widget_show (label);
@@ -369,7 +369,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_widget_show (image);
 
   chooser->fixperm_label = gtk_label_new (_("The folder permissions are inconsistent, you\nmay not be able to work with files in this folder."));
-  gtk_misc_set_alignment (GTK_MISC (chooser->fixperm_label), 0.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (chooser->fixperm_label), 0.0f);
   gtk_label_set_attributes (GTK_LABEL (chooser->fixperm_label), thunar_pango_attr_list_small_italic ());
   exo_binding_new (G_OBJECT (chooser->fixperm_label), "visible", G_OBJECT (hbox), "visible");
   gtk_box_pack_start (GTK_BOX (hbox), chooser->fixperm_label, TRUE, TRUE, 0);
@@ -526,7 +526,8 @@ thunar_permissions_chooser_ask_recursive (ThunarPermissionsChooser *chooser)
       gtk_widget_show (hbox);
 
       image = gtk_image_new_from_icon_name ("dialog-question", GTK_ICON_SIZE_DIALOG);
-      gtk_misc_set_alignment (GTK_MISC (image), 0.5f, 0.0f);
+      gtk_widget_set_halign (image, GTK_ALIGN_CENTER);
+      gtk_widget_set_valign (image, GTK_ALIGN_START);
       gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
       gtk_widget_show (image);
 
@@ -535,13 +536,13 @@ thunar_permissions_chooser_ask_recursive (ThunarPermissionsChooser *chooser)
       gtk_widget_show (vbox);
 
       label = gtk_label_new (_("Apply recursively?"));
-      gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+      gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
       gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_big_bold ());
       gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
       gtk_widget_show (label);
 
       label = gtk_label_new (_("Do you want to apply your changes recursively to\nall files and subfolders below the selected folder?"));
-      gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+      gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
       gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, TRUE, 0);
       gtk_widget_show (label);
 

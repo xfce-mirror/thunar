@@ -65,7 +65,7 @@ struct _ThunarRenamerProgress
 
 
 
-G_DEFINE_TYPE (ThunarRenamerProgress, thunar_renamer_progress, GTK_TYPE_ALIGNMENT)
+G_DEFINE_TYPE (ThunarRenamerProgress, thunar_renamer_progress, GTK_TYPE_BOX)
 
 
 
@@ -87,9 +87,10 @@ thunar_renamer_progress_class_init (ThunarRenamerProgressClass *klass)
 static void
 thunar_renamer_progress_init (ThunarRenamerProgress *renamer_progress)
 {
-  gtk_alignment_set (GTK_ALIGNMENT (renamer_progress), 0.5f, 0.5f, 1.0f, 0.0f);
+  gtk_orientable_set_orientation (GTK_ORIENTABLE (renamer_progress), GTK_ORIENTATION_HORIZONTAL);
 
   renamer_progress->bar = gtk_progress_bar_new ();
+  gtk_widget_set_hexpand (renamer_progress->bar, TRUE);
   gtk_container_add (GTK_CONTAINER (renamer_progress), renamer_progress->bar);
   gtk_widget_show (renamer_progress->bar);
 }

@@ -279,10 +279,11 @@ tse_progress (const gchar *working_directory,
   gtk_container_set_border_width (GTK_CONTAINER (hbox), 8);
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), hbox, TRUE, TRUE, 0);
   gtk_widget_show (hbox);
-  
+
   /* setup the image */
   image = gtk_image_new_from_icon_name ("gnome-package", GTK_ICON_SIZE_DIALOG);
-  gtk_misc_set_alignment (GTK_MISC (image), 0.5f, 0.0f);
+  gtk_widget_set_halign (image, GTK_ALIGN_CENTER);
+  gtk_widget_set_valign (image, GTK_ALIGN_START);
   gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
   gtk_widget_show (image);
 
@@ -293,7 +294,7 @@ tse_progress (const gchar *working_directory,
 
   /* setup the label */
   label = gtk_label_new (_("Compressing files..."));
-  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 

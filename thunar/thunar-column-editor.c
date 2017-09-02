@@ -150,7 +150,7 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
 
   /* create the top label for the column editor dialog */
   label = gtk_label_new (_("Choose the order of information to appear in the\ndetailed list view."));
-  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_table_attach (GTK_TABLE (table), label, 0, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
@@ -255,7 +255,7 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
                            "needed to ensure the text is fully visible. If you dis-\n"
                            "able this behavior below the file manager will always\n"
                            "use the user defined column widths."));
-  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 

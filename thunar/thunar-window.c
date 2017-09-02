@@ -1766,7 +1766,7 @@ thunar_window_notebook_insert (ThunarWindow *window,
   exo_binding_new (G_OBJECT (view), "display-name", G_OBJECT (label), "label");
   exo_binding_new (G_OBJECT (view), "tooltip-text", G_OBJECT (label), "tooltip-text");
   gtk_widget_set_has_tooltip (label, TRUE);
-  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_misc_set_padding (GTK_MISC (label), 3, 3);
   gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
   gtk_label_set_single_line_mode (GTK_LABEL (label), TRUE);
@@ -2959,7 +2959,8 @@ thunar_window_action_open_templates (GtkAction    *action,
       gtk_widget_show (hbox);
 
       image = gtk_image_new_from_icon_name ("dialog-information", GTK_ICON_SIZE_DIALOG);
-      gtk_misc_set_alignment (GTK_MISC (image), 0.5f, 0.0f);
+      gtk_widget_set_halign (image, GTK_ALIGN_CENTER);
+      gtk_widget_set_valign (image, GTK_ALIGN_START);
       gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
       gtk_widget_show (image);
 
@@ -2968,7 +2969,7 @@ thunar_window_action_open_templates (GtkAction    *action,
       gtk_widget_show (vbox);
 
       label = gtk_label_new (_("All files in this folder will appear in the \"Create Document\" menu."));
-      gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+      gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
       gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_big_bold ());
       gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
       gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
@@ -2981,7 +2982,7 @@ thunar_window_action_open_templates (GtkAction    *action,
                              "You can then select the entry from the \"Create Document\" "
                              "menu and a copy of the document will be created in the "
                              "directory you are viewing."));
-      gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+      gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
       gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
       gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, TRUE, 0);
       gtk_widget_show (label);

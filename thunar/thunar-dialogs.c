@@ -121,7 +121,7 @@ thunar_dialogs_show_rename_file (gpointer    parent,
   gtk_widget_show (image);
 
   label = gtk_label_new (_("Enter the new name:"));
-  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_table_attach (GTK_TABLE (table), label, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
@@ -569,7 +569,8 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gtk_widget_show (table);
 
   image = gtk_image_new_from_icon_name ("stock_folder-copy", GTK_ICON_SIZE_BUTTON);
-  gtk_misc_set_alignment (GTK_MISC (image), 0.5f, 0.0f);
+  gtk_widget_set_halign (image, GTK_ALIGN_CENTER);
+  gtk_widget_set_valign (image, GTK_ALIGN_START);
   gtk_misc_set_padding (GTK_MISC (image), 6, 6);
   gtk_table_attach (GTK_TABLE (table), image, 0, 1, 0, 1, GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
   gtk_widget_show (image);
@@ -591,7 +592,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
     }
 
   label = gtk_label_new (text);
-  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_big ());
   gtk_table_attach (GTK_TABLE (table), label, 1, 3, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
@@ -605,7 +606,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
     text = g_strdup_printf (Q_("ReplaceDialogPart1|Do you want to replace the existing file"));
 
   label = gtk_label_new (text);
-  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_table_attach (GTK_TABLE (table), label, 1, 3, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
   g_free (text);
@@ -621,7 +622,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   date_string = thunar_file_get_date_string (dst_file, THUNAR_FILE_DATE_MODIFIED, date_style);
   text = g_strdup_printf ("%s %s\n%s %s", _("Size:"), size_string, _("Modified:"), date_string);
   label = gtk_label_new (text);
-  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_table_attach (GTK_TABLE (table), label, 2, 3, 2, 3, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
   g_free (size_string);
@@ -636,7 +637,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
     text = g_strdup_printf (Q_("ReplaceDialogPart2|with the following file?"));
 
   label = gtk_label_new (text);
-  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_table_attach (GTK_TABLE (table), label, 1, 3, 3, 4, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
   g_free (text);
@@ -652,7 +653,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   date_string = thunar_file_get_date_string (src_file, THUNAR_FILE_DATE_MODIFIED, date_style);
   text = g_strdup_printf ("%s %s\n%s %s", _("Size:"), size_string, _("Modified:"), date_string);
   label = gtk_label_new (text);
-  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_table_attach (GTK_TABLE (table), label, 2, 3, 4, 5, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
   g_free (size_string);

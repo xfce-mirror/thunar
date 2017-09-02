@@ -150,7 +150,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (table);
 
   label = gtk_label_new (_("Description:"));
-  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), attr_list);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);
@@ -173,7 +173,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   g_object_unref (G_OBJECT (relation));
 
   label = gtk_label_new (_("Command:"));
-  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), attr_list);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);
@@ -195,7 +195,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   g_object_unref (G_OBJECT (relation));
 
   label = gtk_label_new (_("Working Directory:"));
-  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), attr_list);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 2, 3, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);
@@ -217,7 +217,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   g_object_unref (G_OBJECT (relation));
 
   label = gtk_label_new (_("URL:"));
-  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), attr_list);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 3, 4, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);
@@ -239,7 +239,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   g_object_unref (G_OBJECT (relation));
 
   label = gtk_label_new (_("Comment:"));
-  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), attr_list);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 4, 5, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);
@@ -266,7 +266,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_table_set_row_spacing (GTK_TABLE (table), 4, 24);
 
   label = gtk_label_new (_("Options:"));
-  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), attr_list);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 6, 7, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);

@@ -129,14 +129,14 @@ thunar_apr_image_page_init (ThunarAprImagePage *image_page)
   gtk_widget_show (table);
 
   label = gtk_label_new (_("Image Type:"));
-  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), attr_list);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);
 
   image_page->type_label = gtk_label_new ("");
   gtk_label_set_selectable (GTK_LABEL (image_page->type_label), TRUE);
-  gtk_misc_set_alignment (GTK_MISC (image_page->type_label), 0.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (image_page->type_label), 0.0f);
   gtk_label_set_ellipsize (GTK_LABEL (image_page->type_label), PANGO_ELLIPSIZE_END);
   gtk_table_attach (GTK_TABLE (table), image_page->type_label, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (image_page->type_label);
@@ -149,14 +149,14 @@ thunar_apr_image_page_init (ThunarAprImagePage *image_page)
   g_object_unref (G_OBJECT (relation));
 
   label = gtk_label_new (_("Image Size:"));
-  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), attr_list);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);
 
   image_page->dimensions_label = gtk_label_new ("");
   gtk_label_set_selectable (GTK_LABEL (image_page->dimensions_label), TRUE);
-  gtk_misc_set_alignment (GTK_MISC (image_page->dimensions_label), 0.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (image_page->dimensions_label), 0.0f);
   gtk_label_set_ellipsize (GTK_LABEL (image_page->dimensions_label), PANGO_ELLIPSIZE_END);
   gtk_table_attach (GTK_TABLE (table), image_page->dimensions_label, 1, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (image_page->dimensions_label);
@@ -176,14 +176,14 @@ thunar_apr_image_page_init (ThunarAprImagePage *image_page)
   for (n = 0; n < G_N_ELEMENTS (TAIP_EXIF); ++n)
     {
       label = gtk_label_new (_(TAIP_EXIF[n].name));
-      gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+      gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
       gtk_label_set_attributes (GTK_LABEL (label), attr_list);
       gtk_table_attach (GTK_TABLE (table), label, 0, 1, n + 3, n + 4, GTK_FILL, GTK_FILL, 0, 3);
       gtk_widget_show (label);
 
       image_page->exif_labels[n] = gtk_label_new ("");
       gtk_label_set_selectable (GTK_LABEL (image_page->exif_labels[n]), TRUE);
-      gtk_misc_set_alignment (GTK_MISC (image_page->exif_labels[n]), 0.0f, 0.5f);
+      gtk_label_set_xalign (GTK_LABEL (image_page->exif_labels[n]), 0.0f);
       gtk_label_set_ellipsize (GTK_LABEL (image_page->exif_labels[n]), PANGO_ELLIPSIZE_END);
       gtk_table_attach (GTK_TABLE (table), image_page->exif_labels[n], 1, 2, n + 3, n + 4, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
       gtk_widget_show (image_page->exif_labels[n]);

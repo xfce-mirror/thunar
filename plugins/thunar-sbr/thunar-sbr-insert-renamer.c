@@ -195,7 +195,7 @@ thunar_sbr_insert_renamer_init (ThunarSbrInsertRenamer *insert_renamer)
   g_object_unref (G_OBJECT (relation));
 
   label = gtk_label_new_with_mnemonic (_("_At position:"));
-  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_table_attach (GTK_TABLE (table), label, 0, 2, 1, 2, GTK_FILL, 0, 0, 0);
   gtk_widget_show (label);
 

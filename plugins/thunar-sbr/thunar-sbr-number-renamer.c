@@ -256,7 +256,7 @@ thunar_sbr_number_renamer_init (ThunarSbrNumberRenamer *number_renamer)
   gtk_widget_show (entry);
 
   label = gtk_label_new_with_mnemonic (_("_Text:"));
-  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_box_pack_end (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), entry);
   gtk_widget_show (label);

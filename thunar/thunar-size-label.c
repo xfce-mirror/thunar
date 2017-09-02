@@ -174,7 +174,7 @@ thunar_size_label_init (ThunarSizeLabel *size_label)
 
   /* add the label widget */
   size_label->label = gtk_label_new (_("Calculating..."));
-  gtk_misc_set_alignment (GTK_MISC (size_label->label), 0.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (size_label->label), 0.0f);
   gtk_label_set_selectable (GTK_LABEL (size_label->label), TRUE);
   gtk_label_set_ellipsize (GTK_LABEL (size_label->label), PANGO_ELLIPSIZE_MIDDLE);
   gtk_box_pack_start (GTK_BOX (size_label), size_label->label, TRUE, TRUE, 0);

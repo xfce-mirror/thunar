@@ -204,7 +204,7 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
 
   /* create the header label */
   dialog->header_label = gtk_label_new ("");
-  gtk_misc_set_alignment (GTK_MISC (dialog->header_label), 0.0f, 0.5f);
+  gtk_label_set_xalign (GTK_LABEL (dialog->header_label), 0.0f);
   gtk_label_set_line_wrap (GTK_LABEL (dialog->header_label), TRUE);
   gtk_widget_set_size_request (dialog->header_label, 350, -1);
   gtk_box_pack_start (GTK_BOX (header), dialog->header_label, FALSE, FALSE, 0);
