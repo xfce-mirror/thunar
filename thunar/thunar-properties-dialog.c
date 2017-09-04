@@ -226,7 +226,7 @@ static void
 thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 {
   GtkWidget *chooser;
-  GtkWidget *table;
+  GtkWidget *grid;
   GtkWidget *label;
   GtkWidget *box;
   GtkWidget *spacer;
@@ -260,20 +260,21 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), dialog->notebook, TRUE, TRUE, 0);
   gtk_widget_show (dialog->notebook);
 
-  table = gtk_table_new (16, 2, FALSE);
+  grid = gtk_grid_new ();
   label = gtk_label_new (_("General"));
-  gtk_table_set_col_spacings (GTK_TABLE (table), 12);
-  gtk_container_set_border_width (GTK_CONTAINER (table), 6);
-  gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), table, label);
+  gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
+  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
+  gtk_container_set_border_width (GTK_CONTAINER (grid), 6);
+  gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), grid, label);
   gtk_widget_show (label);
-  gtk_widget_show (table);
+  gtk_widget_show (grid);
 
 
   /*
      First box (icon, name) for 1 file
    */
   dialog->single_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
-  gtk_table_attach (GTK_TABLE (table), dialog->single_box, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
+  gtk_grid_attach (GTK_GRID (grid), dialog->single_box, 0, row, 1, 1);
 
   dialog->icon_button = gtk_button_new ();
   g_signal_connect (G_OBJECT (dialog->icon_button), "clicked", G_CALLBACK (thunar_properties_dialog_icon_button_clicked), dialog);
@@ -294,7 +295,8 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), dialog->name_entry);
   g_signal_connect (G_OBJECT (dialog->name_entry), "activate", G_CALLBACK (thunar_properties_dialog_name_activate), dialog);
   g_signal_connect (G_OBJECT (dialog->name_entry), "focus-out-event", G_CALLBACK (thunar_properties_dialog_name_focus_out_event), dialog);
-  gtk_table_attach (GTK_TABLE (table), dialog->name_entry, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_set_hexpand (dialog->name_entry, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), dialog->name_entry, 1, row, 1, 1);
   exo_binding_new (G_OBJECT (dialog->single_box), "visible", G_OBJECT (dialog->name_entry), "visible");
 
   ++row;
@@ -304,7 +306,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
      First box (icon, name) for multiple files
    */
   box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
-  gtk_table_attach (GTK_TABLE (table), box, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
+  gtk_grid_attach (GTK_GRID (grid), box, 0, row, 1, 1);
   exo_binding_new_with_negation (G_OBJECT (dialog->single_box), "visible", G_OBJECT (box), "visible");
 
   image = gtk_image_new_from_icon_name ("text-x-generic", GTK_ICON_SIZE_DIALOG);
@@ -319,7 +321,8 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   dialog->names_label = gtk_label_new ("");
   gtk_label_set_xalign (GTK_LABEL (dialog->names_label), 0.0f);
-  gtk_table_attach (GTK_TABLE (table), dialog->names_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_set_hexpand (dialog->names_label, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), dialog->names_label, 1, row, 1, 1);
   gtk_label_set_ellipsize (GTK_LABEL (dialog->names_label), PANGO_ELLIPSIZE_END);
   gtk_label_set_selectable (GTK_LABEL (dialog->names_label), TRUE);
   exo_binding_new (G_OBJECT (box), "visible", G_OBJECT (dialog->names_label), "visible");
@@ -334,14 +337,15 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   label = gtk_label_new (_("Kind:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   dialog->kind_ebox = gtk_event_box_new ();
   gtk_event_box_set_above_child (GTK_EVENT_BOX (dialog->kind_ebox), TRUE);
   gtk_event_box_set_visible_window (GTK_EVENT_BOX (dialog->kind_ebox), FALSE);
   exo_binding_new (G_OBJECT (dialog->kind_ebox), "visible", G_OBJECT (label), "visible");
-  gtk_table_attach (GTK_TABLE (table), dialog->kind_ebox, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_set_hexpand (dialog->kind_ebox, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), dialog->kind_ebox, 1, row, 1, 1);
   gtk_widget_show (dialog->kind_ebox);
 
   dialog->kind_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
@@ -355,13 +359,14 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   label = gtk_label_new_with_mnemonic (_("_Open With:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   dialog->openwith_chooser = thunar_chooser_button_new ();
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), dialog->openwith_chooser);
   exo_binding_new (G_OBJECT (dialog->openwith_chooser), "visible", G_OBJECT (label), "visible");
-  gtk_table_attach (GTK_TABLE (table), dialog->openwith_chooser, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_set_hexpand (dialog->openwith_chooser, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), dialog->openwith_chooser, 1, row, 1, 1);
   gtk_widget_show (dialog->openwith_chooser);
 
   ++row;
@@ -369,13 +374,14 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   label = gtk_label_new (_("Link Target:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   dialog->link_label = g_object_new (GTK_TYPE_LABEL, "ellipsize", PANGO_ELLIPSIZE_START, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->link_label), TRUE);
   exo_binding_new (G_OBJECT (dialog->link_label), "visible", G_OBJECT (label), "visible");
-  gtk_table_attach (GTK_TABLE (table), dialog->link_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_set_hexpand (dialog->link_label, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), dialog->link_label, 1, row, 1, 1);
   gtk_widget_show (dialog->link_label);
 
   ++row;
@@ -387,13 +393,14 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   label = gtk_label_new (_("Original Path:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   dialog->origin_label = g_object_new (GTK_TYPE_LABEL, "ellipsize", PANGO_ELLIPSIZE_START, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->origin_label), TRUE);
   exo_binding_new (G_OBJECT (dialog->origin_label), "visible", G_OBJECT (label), "visible");
-  gtk_table_attach (GTK_TABLE (table), dialog->origin_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_set_hexpand (dialog->origin_label, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), dialog->origin_label, 1, row, 1, 1);
   gtk_widget_show (dialog->origin_label);
 
   ++row;
@@ -401,20 +408,21 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   label = gtk_label_new (_("Location:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   dialog->location_label = g_object_new (GTK_TYPE_LABEL, "ellipsize", PANGO_ELLIPSIZE_START, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->location_label), TRUE);
   exo_binding_new (G_OBJECT (dialog->location_label), "visible", G_OBJECT (label), "visible");
-  gtk_table_attach (GTK_TABLE (table), dialog->location_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_set_hexpand (dialog->location_label, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), dialog->location_label, 1, row, 1, 1);
   gtk_widget_show (dialog->location_label);
 
   ++row;
 
 
   spacer = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "height-request", 12, NULL);
-  gtk_table_attach (GTK_TABLE (table), spacer, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
+  gtk_grid_attach (GTK_GRID (grid), spacer, 0, row, 2, 1);
   gtk_widget_show (spacer);
 
   ++row;
@@ -426,13 +434,14 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   label = gtk_label_new (_("Deleted:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   dialog->deleted_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->deleted_label), TRUE);
   exo_binding_new (G_OBJECT (dialog->deleted_label), "visible", G_OBJECT (label), "visible");
-  gtk_table_attach (GTK_TABLE (table), dialog->deleted_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_set_hexpand (dialog->deleted_label, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), dialog->deleted_label, 1, row, 1, 1);
   gtk_widget_show (dialog->deleted_label);
 
   ++row;
@@ -440,13 +449,14 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   label = gtk_label_new (_("Modified:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   dialog->modified_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->modified_label), TRUE);
   exo_binding_new (G_OBJECT (dialog->modified_label), "visible", G_OBJECT (label), "visible");
-  gtk_table_attach (GTK_TABLE (table), dialog->modified_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_set_hexpand (dialog->modified_label, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), dialog->modified_label, 1, row, 1, 1);
   gtk_widget_show (dialog->modified_label);
 
   ++row;
@@ -454,20 +464,21 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   label = gtk_label_new (_("Accessed:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   dialog->accessed_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->accessed_label), TRUE);
   exo_binding_new (G_OBJECT (dialog->accessed_label), "visible", G_OBJECT (label), "visible");
-  gtk_table_attach (GTK_TABLE (table), dialog->accessed_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_set_hexpand (dialog->accessed_label, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), dialog->accessed_label, 1, row, 1, 1);
   gtk_widget_show (dialog->accessed_label);
 
   ++row;
 
 
   spacer = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "height-request", 12, NULL);
-  gtk_table_attach (GTK_TABLE (table), spacer, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
+  gtk_grid_attach (GTK_GRID (grid), spacer, 0, row, 2, 1);
   exo_binding_new (G_OBJECT (dialog->accessed_label), "visible", G_OBJECT (spacer), "visible");
 
   ++row;
@@ -479,12 +490,13 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   label = gtk_label_new (_("Size:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   label = thunar_size_label_new ();
   exo_binding_new (G_OBJECT (dialog), "files", G_OBJECT (label), "files");
-  gtk_table_attach (GTK_TABLE (table), label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_set_hexpand (label, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), label, 1, row, 1, 1);
   gtk_widget_show (label);
 
   ++row;
@@ -492,12 +504,13 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   label = gtk_label_new (_("Volume:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
   exo_binding_new (G_OBJECT (box), "visible", G_OBJECT (label), "visible");
-  gtk_table_attach (GTK_TABLE (table), box, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_set_hexpand (box, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), box, 1, row, 1, 1);
   gtk_widget_show (box);
 
   dialog->volume_image = gtk_image_new ();
@@ -517,11 +530,12 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_yalign (GTK_LABEL (label), 0.0f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   dialog->freespace_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
-  gtk_table_attach (GTK_TABLE (table), dialog->freespace_vbox, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_set_hexpand (dialog->freespace_vbox, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), dialog->freespace_vbox, 1, row, 1, 1);
   exo_binding_new (G_OBJECT (dialog->freespace_vbox), "visible", G_OBJECT (label), "visible");
   gtk_widget_show (dialog->freespace_vbox);
 
@@ -538,7 +552,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   ++row;
 
   spacer = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "height-request", 12, NULL);
-  gtk_table_attach (GTK_TABLE (table), spacer, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
+  gtk_grid_attach (GTK_GRID (grid), spacer, 0, row, 2, 1);
   gtk_widget_show (spacer);
 
   ++row;

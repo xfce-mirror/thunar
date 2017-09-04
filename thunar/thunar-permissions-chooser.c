@@ -134,8 +134,8 @@ struct _ThunarPermissionsChooser
 
   GList      *files;
 
-  /* the main table widget, which contains everything but the job control stuff */
-  GtkWidget  *table;
+  /* the main grid widget, which contains everything but the job control stuff */
+  GtkWidget  *grid;
 
   GtkWidget  *user_label;
   GtkWidget  *group_combo;
@@ -212,20 +212,22 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   /* allocate the shared renderer for the various combo boxes */
   renderer_text = gtk_cell_renderer_text_new ();
 
-  chooser->table = gtk_table_new (2, 2, FALSE);
-  gtk_table_set_col_spacings (GTK_TABLE (chooser->table), 12);
-  gtk_table_set_row_spacings (GTK_TABLE (chooser->table), 6);
-  gtk_box_pack_start (GTK_BOX (chooser), chooser->table, TRUE, TRUE, 0);
-  gtk_widget_show (chooser->table);
+  chooser->grid = gtk_grid_new ();
+  gtk_grid_set_column_spacing (GTK_GRID (chooser->grid), 12);
+  gtk_grid_set_row_spacing (GTK_GRID (chooser->grid), 6);
+  gtk_container_set_border_width (GTK_CONTAINER (chooser->grid), 10);
+  gtk_box_pack_start (GTK_BOX (chooser), chooser->grid, TRUE, TRUE, 0);
+  gtk_widget_show (chooser->grid);
 
   label = gtk_label_new (_("Owner:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
-  gtk_table_attach (GTK_TABLE (chooser->table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_grid_attach (GTK_GRID (chooser->grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
-  gtk_table_attach (GTK_TABLE (chooser->table), hbox, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 6);
+  gtk_widget_set_hexpand (hbox, TRUE);
+  gtk_grid_attach (GTK_GRID (chooser->grid), hbox, 1, row, 1, 1);
   gtk_widget_show (hbox);
 
   chooser->user_label = gtk_label_new (_("Unknown"));
@@ -239,7 +241,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   label = gtk_label_new_with_mnemonic (_("_Access:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
-  gtk_table_attach (GTK_TABLE (chooser->table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_grid_attach (GTK_GRID (chooser->grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   chooser->access_combos[2] = gtk_combo_box_new ();
@@ -248,14 +250,15 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (chooser->access_combos[2]), renderer_text, "text", 0);
   exo_binding_new (G_OBJECT (chooser), "mutable", G_OBJECT (chooser->access_combos[2]), "sensitive");
   g_signal_connect_swapped (G_OBJECT (chooser->access_combos[2]), "changed", G_CALLBACK (thunar_permissions_chooser_access_changed), chooser);
-  gtk_table_attach (GTK_TABLE (chooser->table), chooser->access_combos[2], 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_set_hexpand (chooser->access_combos[2], TRUE);
+  gtk_grid_attach (GTK_GRID (chooser->grid), chooser->access_combos[2], 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), chooser->access_combos[2]);
   gtk_widget_show (chooser->access_combos[2]);
 
   row += 1;
 
   separator = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
-  gtk_table_attach (GTK_TABLE (chooser->table), separator, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 6);
+  gtk_grid_attach (GTK_GRID (chooser->grid), separator, 0, row, 2, 1);
   gtk_widget_show (separator);
 
   row += 1;
@@ -263,7 +266,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   label = gtk_label_new_with_mnemonic (_("Gro_up:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
-  gtk_table_attach (GTK_TABLE (chooser->table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_grid_attach (GTK_GRID (chooser->grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   chooser->group_combo = gtk_combo_box_new ();
@@ -273,7 +276,8 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_combo_box_set_row_separator_func (GTK_COMBO_BOX (chooser->group_combo), thunar_permissions_chooser_row_separator, NULL, NULL);
   exo_binding_new (G_OBJECT (chooser), "mutable", G_OBJECT (chooser->group_combo), "sensitive");
   g_signal_connect_swapped (G_OBJECT (chooser->group_combo), "changed", G_CALLBACK (thunar_permissions_chooser_group_changed), chooser);
-  gtk_table_attach (GTK_TABLE (chooser->table), chooser->group_combo, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_set_hexpand (chooser->group_combo, TRUE);
+  gtk_grid_attach (GTK_GRID (chooser->grid), chooser->group_combo, 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), chooser->group_combo);
   gtk_widget_show (chooser->group_combo);
 
@@ -282,7 +286,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   label = gtk_label_new_with_mnemonic (_("Acce_ss:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
-  gtk_table_attach (GTK_TABLE (chooser->table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_grid_attach (GTK_GRID (chooser->grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   chooser->access_combos[1] = gtk_combo_box_new ();
@@ -291,14 +295,15 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (chooser->access_combos[1]), renderer_text, "text", 0);
   exo_binding_new (G_OBJECT (chooser), "mutable", G_OBJECT (chooser->access_combos[1]), "sensitive");
   g_signal_connect_swapped (G_OBJECT (chooser->access_combos[1]), "changed", G_CALLBACK (thunar_permissions_chooser_access_changed), chooser);
-  gtk_table_attach (GTK_TABLE (chooser->table), chooser->access_combos[1], 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_set_hexpand (chooser->access_combos[1], TRUE);
+  gtk_grid_attach (GTK_GRID (chooser->grid), chooser->access_combos[1], 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), chooser->access_combos[1]);
   gtk_widget_show (chooser->access_combos[1]);
 
   row += 1;
 
   separator = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
-  gtk_table_attach (GTK_TABLE (chooser->table), separator, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 6);
+  gtk_grid_attach (GTK_GRID (chooser->grid), separator, 0, row, 2, 1);
   gtk_widget_show (separator);
 
   row += 1;
@@ -306,7 +311,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   label = gtk_label_new_with_mnemonic (_("O_thers:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
-  gtk_table_attach (GTK_TABLE (chooser->table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_grid_attach (GTK_GRID (chooser->grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   chooser->access_combos[0] = gtk_combo_box_new ();
@@ -315,14 +320,15 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (chooser->access_combos[0]), renderer_text, "text", 0);
   exo_binding_new (G_OBJECT (chooser), "mutable", G_OBJECT (chooser->access_combos[0]), "sensitive");
   g_signal_connect_swapped (G_OBJECT (chooser->access_combos[0]), "changed", G_CALLBACK (thunar_permissions_chooser_access_changed), chooser);
-  gtk_table_attach (GTK_TABLE (chooser->table), chooser->access_combos[0], 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_set_hexpand (chooser->access_combos[0], TRUE);
+  gtk_grid_attach (GTK_GRID (chooser->grid), chooser->access_combos[0], 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), chooser->access_combos[0]);
   gtk_widget_show (chooser->access_combos[0]);
 
   row += 1;
 
   separator = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
-  gtk_table_attach (GTK_TABLE (chooser->table), separator, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 6);
+  gtk_grid_attach (GTK_GRID (chooser->grid), separator, 0, row, 2, 1);
   gtk_widget_show (separator);
 
   row += 1;
@@ -330,14 +336,14 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   label = gtk_label_new (_("Program:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
-  gtk_table_attach (GTK_TABLE (chooser->table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_grid_attach (GTK_GRID (chooser->grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   chooser->program_button = gtk_check_button_new_with_mnemonic (_("Allow this file to _run as a program"));
   exo_binding_new (G_OBJECT (chooser->program_button), "visible", G_OBJECT (label), "visible");
   exo_binding_new (G_OBJECT (chooser), "mutable", G_OBJECT (chooser->program_button), "sensitive");
   g_signal_connect_swapped (G_OBJECT (chooser->program_button), "toggled", G_CALLBACK (thunar_permissions_chooser_program_toggled), chooser);
-  gtk_table_attach (GTK_TABLE (chooser->table), chooser->program_button, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_grid_attach (GTK_GRID (chooser->grid), chooser->program_button, 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), chooser->program_button);
   gtk_widget_show (chooser->program_button);
 
@@ -346,7 +352,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
   exo_binding_new (G_OBJECT (chooser), "mutable", G_OBJECT (hbox), "sensitive");
   exo_binding_new (G_OBJECT (chooser->program_button), "visible", G_OBJECT (hbox), "visible");
-  gtk_table_attach (GTK_TABLE (chooser->table), hbox, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_grid_attach (GTK_GRID (chooser->grid), hbox, 1, row, 1, 1);
   gtk_widget_show (hbox);
 
   image = gtk_image_new_from_icon_name ("dialog-warning", GTK_ICON_SIZE_LARGE_TOOLBAR);
@@ -361,7 +367,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
   exo_binding_new (G_OBJECT (chooser), "mutable", G_OBJECT (hbox), "sensitive");
-  gtk_table_attach (GTK_TABLE (chooser->table), hbox, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_grid_attach (GTK_GRID (chooser->grid), hbox, 1, row, 1, 1);
   gtk_widget_show (hbox);
 
   image = gtk_image_new_from_icon_name ("dialog-warning", GTK_ICON_SIZE_LARGE_TOOLBAR);
@@ -378,7 +384,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   row += 1;
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
-  gtk_table_attach (GTK_TABLE (chooser->table), hbox, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_grid_attach (GTK_GRID (chooser->grid), hbox, 1, row, 1, 1);
   gtk_widget_show (hbox);
 
   chooser->fixperm_button = gtk_button_new_with_mnemonic (_("Correct _folder permissions..."));
@@ -1218,7 +1224,7 @@ thunar_permissions_chooser_job_cancel (ThunarPermissionsChooser *chooser)
   gtk_widget_hide (chooser->job_progress);
 
   /* make the remaining widgets sensitive again */
-  gtk_widget_set_sensitive (chooser->table, TRUE);
+  gtk_widget_set_sensitive (chooser->grid, TRUE);
 }
 
 
@@ -1301,7 +1307,7 @@ thunar_permissions_chooser_job_start (ThunarPermissionsChooser *chooser,
   gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (chooser->job_progress), 0.0);
 
   /* make the majority of widgets insensitive if doing recursively */
-  gtk_widget_set_sensitive (chooser->table, !recursive);
+  gtk_widget_set_sensitive (chooser->grid, !recursive);
 }
 
 

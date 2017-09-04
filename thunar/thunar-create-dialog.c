@@ -132,7 +132,7 @@ static void
 thunar_create_dialog_init (ThunarCreateDialog *dialog)
 {
   GtkWidget *label;
-  GtkWidget *table;
+  GtkWidget *grid;
 
   dialog->content_type = NULL;
 
@@ -145,21 +145,25 @@ thunar_create_dialog_init (ThunarCreateDialog *dialog)
   gtk_dialog_set_response_sensitive (GTK_DIALOG (dialog), GTK_RESPONSE_OK, FALSE);
   gtk_window_set_default_size (GTK_WINDOW (dialog), 300, -1);
 
-  table = g_object_new (GTK_TYPE_TABLE, "border-width", 6, "column-spacing", 6, "row-spacing", 3, NULL);
-  gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), table, TRUE, TRUE, 0);
-  gtk_widget_show (table);
+  grid = gtk_grid_new ();
+  gtk_grid_set_column_spacing (GTK_GRID (grid), 6);
+  gtk_grid_set_row_spacing (GTK_GRID (grid), 3);
+  gtk_container_set_border_width (GTK_CONTAINER (grid), 6);
+  gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), grid, TRUE, TRUE, 0);
+  gtk_widget_show (grid);
 
   dialog->image = g_object_new (GTK_TYPE_IMAGE, "xpad", 6, "ypad", 6, NULL);
-  gtk_table_attach (GTK_TABLE (table), dialog->image, 0, 1, 0, 2, GTK_FILL, GTK_FILL, 0, 0); 
+  gtk_grid_attach (GTK_GRID (grid), dialog->image, 0, 0, 1, 2);
   gtk_widget_show (dialog->image);
 
-  label = g_object_new (GTK_TYPE_LABEL, "label", _("Enter the new name:"), "xalign", 0.0f, NULL);
-  gtk_table_attach (GTK_TABLE (table), label, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  label = g_object_new (GTK_TYPE_LABEL, "label", _("Enter the new name:"), "xalign", 0.0f, "hexpand", TRUE, NULL);
+  gtk_grid_attach (GTK_GRID (grid), label, 1, 0, 1, 1);
   gtk_widget_show (label);
 
-  dialog->entry = g_object_new (GTK_TYPE_ENTRY, "activates-default", TRUE, NULL);
+  dialog->entry = g_object_new (GTK_TYPE_ENTRY, "activates-default", TRUE, "hexpand", TRUE, NULL);
   g_signal_connect (G_OBJECT (dialog->entry), "changed", G_CALLBACK (thunar_create_dialog_text_changed), dialog);
-  gtk_table_attach (GTK_TABLE (table), dialog->entry, 1, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_set_valign (dialog->entry, GTK_ALIGN_CENTER);
+  gtk_grid_attach (GTK_GRID (grid), dialog->entry, 1, 1, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), dialog->entry);
   gtk_widget_show (dialog->entry);
 }

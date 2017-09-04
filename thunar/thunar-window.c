@@ -306,7 +306,7 @@ struct _ThunarWindow
   GtkActionGroup         *custom_actions;
   guint                   custom_merge_id;
 
-  GtkWidget              *table;
+  GtkWidget              *grid;
   GtkWidget              *menubar;
   GtkWidget              *spinner;
   GtkWidget              *paned;
@@ -812,12 +812,13 @@ thunar_window_init (ThunarWindow *window)
   if (G_UNLIKELY (last_window_maximized))
     gtk_window_maximize (GTK_WINDOW (window));
 
-  window->table = gtk_table_new (6, 1, FALSE);
-  gtk_container_add (GTK_CONTAINER (window), window->table);
-  gtk_widget_show (window->table);
+  window->grid = gtk_grid_new ();
+  gtk_container_add (GTK_CONTAINER (window), window->grid);
+  gtk_widget_show (window->grid);
 
   window->menubar = gtk_ui_manager_get_widget (window->ui_manager, "/main-menu");
-  gtk_table_attach (GTK_TABLE (window->table), window->menubar, 0, 1, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_set_hexpand (window->menubar, TRUE);
+  gtk_grid_attach (GTK_GRID (window->grid), window->menubar, 0, 0, 1, 1);
 
   /* update menubar visibiliy */
   action = gtk_action_group_get_action (window->action_group, "view-menubar");
@@ -843,7 +844,8 @@ thunar_window_init (ThunarWindow *window)
       /* add the bar for the root warning */
       infobar = gtk_info_bar_new ();
       gtk_info_bar_set_message_type (GTK_INFO_BAR (infobar), GTK_MESSAGE_WARNING);
-      gtk_table_attach (GTK_TABLE (window->table), infobar, 0, 1, 2, 3, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+      gtk_widget_set_hexpand (infobar, TRUE);
+      gtk_grid_attach (GTK_GRID (window->grid), infobar, 0, 2, 1, 1);
       gtk_widget_show (infobar);
 
       /* add the label with the root warning */
@@ -854,7 +856,9 @@ thunar_window_init (ThunarWindow *window)
 
   window->paned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
   gtk_container_set_border_width (GTK_CONTAINER (window->paned), 0);
-  gtk_table_attach (GTK_TABLE (window->table), window->paned, 0, 1, 4, 5, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+  gtk_widget_set_hexpand (window->paned, TRUE);
+  gtk_widget_set_vexpand (window->paned, TRUE);
+  gtk_grid_attach (GTK_GRID (window->grid), window->paned, 0, 4, 1, 1);
   gtk_widget_show (window->paned);
 
   /* determine the last separator position and apply it to the paned view */
@@ -862,13 +866,15 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect_swapped (window->paned, "accept-position", G_CALLBACK (thunar_window_save_paned), window);
   g_signal_connect_swapped (window->paned, "button-release-event", G_CALLBACK (thunar_window_save_paned), window);
 
-  window->view_box = gtk_table_new (3, 1, FALSE);
+  window->view_box = gtk_grid_new ();
   gtk_paned_pack2 (GTK_PANED (window->paned), window->view_box, TRUE, FALSE);
   gtk_widget_show (window->view_box);
 
   /* tabs */
   window->notebook = gtk_notebook_new ();
-  gtk_table_attach (GTK_TABLE (window->view_box), window->notebook, 0, 1, 1, 2, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+  gtk_widget_set_hexpand (window->notebook, TRUE);
+  gtk_widget_set_vexpand (window->notebook, TRUE);
+  gtk_grid_attach (GTK_GRID (window->view_box), window->notebook, 0, 1, 1, 1);
   g_signal_connect (G_OBJECT (window->notebook), "switch-page", G_CALLBACK (thunar_window_notebook_switch_page), window);
   g_signal_connect (G_OBJECT (window->notebook), "page-added", G_CALLBACK (thunar_window_notebook_page_added), window);
   g_signal_connect (G_OBJECT (window->notebook), "page-removed", G_CALLBACK (thunar_window_notebook_page_removed), window);
@@ -900,7 +906,8 @@ thunar_window_init (ThunarWindow *window)
   gtk_toolbar_set_style (GTK_TOOLBAR (window->location_toolbar), GTK_TOOLBAR_ICONS);
   gtk_toolbar_set_icon_size (GTK_TOOLBAR (window->location_toolbar),
                               small_icons ? GTK_ICON_SIZE_SMALL_TOOLBAR : GTK_ICON_SIZE_LARGE_TOOLBAR);
-  gtk_table_attach (GTK_TABLE (window->table), window->location_toolbar, 0, 1, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_set_hexpand (window->location_toolbar, TRUE);
+  gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 1, 1, 1);
 
   /* add the location bar tool item */
   tool_item = gtk_tool_item_new ();
@@ -2598,7 +2605,8 @@ thunar_window_action_statusbar_changed (GtkToggleAction *action,
     {
       /* setup a new statusbar */
       window->statusbar = thunar_statusbar_new ();
-      gtk_table_attach (GTK_TABLE (window->view_box), window->statusbar, 0, 1, 2, 3, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+      gtk_widget_set_hexpand (window->statusbar, TRUE);
+      gtk_grid_attach (GTK_GRID (window->view_box), window->statusbar, 0, 2, 1, 1);
       gtk_widget_show (window->statusbar);
 
       /* connect to the view (if any) */

@@ -100,7 +100,7 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   GtkWidget         *frame;
   GtkWidget         *image;
   GtkWidget         *label;
-  GtkWidget         *table;
+  GtkWidget         *grid;
   GtkWidget         *vbox;
   GtkWidget         *swin;
 
@@ -141,24 +141,27 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
 
-  table = gtk_table_new (8, 2, FALSE);
-  gtk_table_set_row_spacings (GTK_TABLE (table), 6);
-  gtk_table_set_col_spacings (GTK_TABLE (table), 6);
-  gtk_container_set_border_width (GTK_CONTAINER (table), 12);
-  gtk_container_add (GTK_CONTAINER (frame), table);
-  gtk_widget_show (table);
+  grid = gtk_grid_new ();
+  gtk_grid_set_column_spacing (GTK_GRID (grid), 6);
+  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
+  gtk_container_set_border_width (GTK_CONTAINER (grid), 12);
+  gtk_container_add (GTK_CONTAINER (frame), grid);
+  gtk_widget_show (grid);
 
   /* create the top label for the column editor dialog */
   label = gtk_label_new (_("Choose the order of information to appear in the\ndetailed list view."));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_set_hexpand (label, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 2, 1);
   gtk_widget_show (label);
 
   /* create the scrolled window for the tree view */
   swin = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (swin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (swin), GTK_SHADOW_IN);
-  gtk_table_attach (GTK_TABLE (table), swin, 0, 1, 1, 7, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+  gtk_widget_set_hexpand (swin, TRUE);
+  gtk_widget_set_vexpand (swin, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), swin, 0, 1, 1, 6);
   gtk_widget_show (swin);
 
   /* create the tree view */
@@ -192,7 +195,7 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   /* create the "Move Up" button */
   column_editor->up_button = gtk_button_new_with_mnemonic (_("Move _Up"));
   g_signal_connect (G_OBJECT (column_editor->up_button), "clicked", G_CALLBACK (thunar_column_editor_move_up), column_editor);
-  gtk_table_attach (GTK_TABLE (table), column_editor->up_button, 1, 2, 1, 2, GTK_FILL, 0, 0, 0);
+  gtk_grid_attach (GTK_GRID (grid), column_editor->up_button, 1, 1, 1, 1);
   gtk_widget_show (column_editor->up_button);
 
   image = gtk_image_new_from_icon_name ("go-up-symbolic", GTK_ICON_SIZE_BUTTON);
@@ -203,7 +206,7 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   /* create the "Move Down" button */
   column_editor->down_button = gtk_button_new_with_mnemonic (_("Move Dow_n"));
   g_signal_connect (G_OBJECT (column_editor->down_button), "clicked", G_CALLBACK (thunar_column_editor_move_down), column_editor);
-  gtk_table_attach (GTK_TABLE (table), column_editor->down_button, 1, 2, 2, 3, GTK_FILL, 0, 0, 0);
+  gtk_grid_attach (GTK_GRID (grid), column_editor->down_button, 1, 2, 1, 1);
   gtk_widget_show (column_editor->down_button);
 
   image = gtk_image_new_from_icon_name ("go-down-symbolic", GTK_ICON_SIZE_BUTTON);
@@ -214,24 +217,24 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   /* create the "Show" button */
   column_editor->show_button = gtk_button_new_with_mnemonic (_("_Show"));
   g_signal_connect (G_OBJECT (column_editor->show_button), "clicked", G_CALLBACK (thunar_column_editor_toggle_visibility), column_editor);
-  gtk_table_attach (GTK_TABLE (table), column_editor->show_button, 1, 2, 3, 4, GTK_FILL, 0, 0, 0);
+  gtk_grid_attach (GTK_GRID (grid), column_editor->show_button, 1, 3, 1, 1);
   gtk_widget_show (column_editor->show_button);
 
   /* create the "Hide" button */
   column_editor->hide_button = gtk_button_new_with_mnemonic (_("Hi_de"));
   g_signal_connect (G_OBJECT (column_editor->hide_button), "clicked", G_CALLBACK (thunar_column_editor_toggle_visibility), column_editor);
-  gtk_table_attach (GTK_TABLE (table), column_editor->hide_button, 1, 2, 4, 5, GTK_FILL, 0, 0, 0);
+  gtk_grid_attach (GTK_GRID (grid), column_editor->hide_button, 1, 4, 1, 1);
   gtk_widget_show (column_editor->hide_button);
 
   /* create the horiz separator */
   separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
-  gtk_table_attach (GTK_TABLE (table), separator, 1, 2, 5, 6, GTK_FILL, 0, 0, 0);
+  gtk_grid_attach (GTK_GRID (grid), separator, 1, 5, 1, 1);
   gtk_widget_show (separator);
 
   /* create the "Use Default" button */
   button = gtk_button_new_with_mnemonic (_("Use De_fault"));
   g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (thunar_column_editor_use_defaults), column_editor);
-  gtk_table_attach (GTK_TABLE (table), button, 1, 2, 6, 7, GTK_FILL, 0, 0, 0);
+  gtk_grid_attach (GTK_GRID (grid), button, 1, 6, 1, 1);
   gtk_widget_show (button);
 
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
@@ -243,12 +246,12 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
 
-  table = gtk_table_new (2, 1, FALSE);
-  gtk_table_set_row_spacings (GTK_TABLE (table), 6);
-  gtk_table_set_col_spacings (GTK_TABLE (table), 6);
-  gtk_container_set_border_width (GTK_CONTAINER (table), 12);
-  gtk_container_add (GTK_CONTAINER (frame), table);
-  gtk_widget_show (table);
+  grid = gtk_grid_new ();
+  gtk_grid_set_column_spacing (GTK_GRID (grid), 6);
+  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
+  gtk_container_set_border_width (GTK_CONTAINER (grid), 12);
+  gtk_container_add (GTK_CONTAINER (frame), grid);
+  gtk_widget_show (grid);
 
   /* create the label that explains the column sizing option */
   label = gtk_label_new (_("By default columns will be automatically expanded if\n"
@@ -256,13 +259,13 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
                            "able this behavior below the file manager will always\n"
                            "use the user defined column widths."));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
   gtk_widget_show (label);
 
   /* create the "Automatically expand columns as needed" button */
   button = gtk_check_button_new_with_mnemonic (_("Automatically _expand columns as needed"));
   exo_mutual_binding_new_with_negation (G_OBJECT (column_editor->preferences), "last-details-view-fixed-columns", G_OBJECT (button), "active");
-  gtk_table_attach (GTK_TABLE (table), button, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 1, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), button);
   gtk_widget_show (button);
 

@@ -163,18 +163,18 @@ thunar_sbr_remove_renamer_init (ThunarSbrRemoveRenamer *remove_renamer)
   AtkObject      *object;
   GtkWidget      *combo;
   GtkWidget      *label;
-  GtkWidget      *table;
+  GtkWidget      *grid;
   guint           n;
 
-  table = gtk_table_new (2, 3, FALSE);
-  gtk_table_set_row_spacings (GTK_TABLE (table), 6);
-  gtk_table_set_col_spacings (GTK_TABLE (table), 12);
-  gtk_box_pack_start (GTK_BOX (remove_renamer), table, TRUE, TRUE, 0);
-  gtk_widget_show (table);
+  grid = gtk_grid_new ();
+  gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
+  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
+  gtk_box_pack_start (GTK_BOX (remove_renamer), grid, TRUE, TRUE, 0);
+  gtk_widget_show (grid);
 
   label = gtk_label_new_with_mnemonic (_("Remove _From Position:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
   gtk_widget_show (label);
 
   remove_renamer->start_spinner = gtk_spin_button_new_with_range (0u, G_MAXUINT, 1u);
@@ -184,7 +184,7 @@ thunar_sbr_remove_renamer_init (ThunarSbrRemoveRenamer *remove_renamer)
   gtk_spin_button_set_digits (GTK_SPIN_BUTTON (remove_renamer->start_spinner), 0);
   gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (remove_renamer->start_spinner), TRUE);
   gtk_spin_button_set_snap_to_ticks (GTK_SPIN_BUTTON (remove_renamer->start_spinner), TRUE);
-  gtk_table_attach (GTK_TABLE (table), remove_renamer->start_spinner, 1, 2, 0, 1, GTK_FILL, 0, 0, 0);
+  gtk_grid_attach (GTK_GRID (grid), remove_renamer->start_spinner, 1, 0, 1, 1);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), remove_renamer->start_spinner);
   gtk_widget_show (remove_renamer->start_spinner);
 
@@ -203,13 +203,13 @@ thunar_sbr_remove_renamer_init (ThunarSbrRemoveRenamer *remove_renamer)
   for (n = 0; n < klass->n_values; ++n)
     gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(klass->values[n].value_nick));
   exo_mutual_binding_new (G_OBJECT (remove_renamer), "start-offset-mode", G_OBJECT (combo), "active");
-  gtk_table_attach (GTK_TABLE (table), combo, 2, 3, 0, 1, GTK_FILL, 0, 0, 0);
+  gtk_grid_attach (GTK_GRID (grid), combo, 2, 0, 1, 1);
   g_type_class_unref (klass);
   gtk_widget_show (combo);
 
   label = gtk_label_new_with_mnemonic (_("_To Position:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, 1, 1, 1);
   gtk_widget_show (label);
 
   remove_renamer->end_spinner = gtk_spin_button_new_with_range (0u, G_MAXUINT, 1u);
@@ -219,7 +219,7 @@ thunar_sbr_remove_renamer_init (ThunarSbrRemoveRenamer *remove_renamer)
   gtk_spin_button_set_digits (GTK_SPIN_BUTTON (remove_renamer->end_spinner), 0);
   gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (remove_renamer->end_spinner), TRUE);
   gtk_spin_button_set_snap_to_ticks (GTK_SPIN_BUTTON (remove_renamer->end_spinner), TRUE);
-  gtk_table_attach (GTK_TABLE (table), remove_renamer->end_spinner, 1, 2, 1, 2, GTK_FILL, 0, 0, 0);
+  gtk_grid_attach (GTK_GRID (grid), remove_renamer->end_spinner, 1, 1, 1, 1);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), remove_renamer->end_spinner);
   gtk_widget_show (remove_renamer->end_spinner);
 
@@ -238,7 +238,7 @@ thunar_sbr_remove_renamer_init (ThunarSbrRemoveRenamer *remove_renamer)
   for (n = 0; n < klass->n_values; ++n)
     gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(klass->values[n].value_nick));
   exo_mutual_binding_new (G_OBJECT (remove_renamer), "end-offset-mode", G_OBJECT (combo), "active");
-  gtk_table_attach (GTK_TABLE (table), combo, 2, 3, 1, 2, GTK_FILL, 0, 0, 0);
+  gtk_grid_attach (GTK_GRID (grid), combo, 2, 1, 1, 1);
   g_type_class_unref (klass);
   gtk_widget_show (combo);
 }

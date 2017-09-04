@@ -157,33 +157,34 @@ thunar_sbr_insert_renamer_init (ThunarSbrInsertRenamer *insert_renamer)
   GtkWidget      *combo;
   GtkWidget      *entry;
   GtkWidget      *label;
-  GtkWidget      *table;
+  GtkWidget      *grid;
   GtkWidget      *hbox;
   guint           n;
 
-  table = gtk_table_new (2, 3, FALSE);
-  gtk_table_set_row_spacings (GTK_TABLE (table), 6);
-  gtk_table_set_col_spacings (GTK_TABLE (table), 12);
-  gtk_box_pack_start (GTK_BOX (insert_renamer), table, TRUE, TRUE, 0);
-  gtk_widget_show (table);
+  grid = gtk_grid_new ();
+  gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
+  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
+  gtk_box_pack_start (GTK_BOX (insert_renamer), grid, TRUE, TRUE, 0);
+  gtk_widget_show (grid);
 
   combo = gtk_combo_box_text_new ();
   klass = g_type_class_ref (THUNAR_SBR_TYPE_INSERT_MODE);
   for (n = 0; n < klass->n_values; ++n)
     gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(klass->values[n].value_nick));
   exo_mutual_binding_new (G_OBJECT (insert_renamer), "mode", G_OBJECT (combo), "active");
-  gtk_table_attach (GTK_TABLE (table), combo, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
+  gtk_grid_attach (GTK_GRID (grid), combo, 0, 0, 1, 1);
   g_type_class_unref (klass);
   gtk_widget_show (combo);
 
   label = gtk_label_new_with_mnemonic (_("_Text:"));
-  gtk_table_attach (GTK_TABLE (table), label, 1, 2, 0, 1, GTK_FILL, 0, 0, 0);
+  gtk_grid_attach (GTK_GRID (grid), label, 1, 0, 1, 1);
   gtk_widget_show (label);
 
   entry = gtk_entry_new ();
   gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
   exo_mutual_binding_new (G_OBJECT (entry), "text", G_OBJECT (insert_renamer), "text");
-  gtk_table_attach (GTK_TABLE (table), entry, 2, 3, 0, 1, GTK_EXPAND | GTK_FILL, 0, 0, 0);
+  gtk_widget_set_hexpand (entry, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), entry, 2, 0, 1, 1);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), entry);
   gtk_widget_show (entry);
 
@@ -196,11 +197,11 @@ thunar_sbr_insert_renamer_init (ThunarSbrInsertRenamer *insert_renamer)
 
   label = gtk_label_new_with_mnemonic (_("_At position:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 2, 1, 2, GTK_FILL, 0, 0, 0);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, 1, 2, 1);
   gtk_widget_show (label);
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
-  gtk_table_attach (GTK_TABLE (table), hbox, 2, 3, 1, 2, GTK_FILL, 0, 0, 0);
+  gtk_grid_attach (GTK_GRID (grid), hbox, 2, 1, 1, 1);
   gtk_widget_show (hbox);
 
   spinner = gtk_spin_button_new_with_range (0u, G_MAXUINT, 1u);
