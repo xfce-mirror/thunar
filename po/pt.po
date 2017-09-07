@@ -5,15 +5,15 @@
 # Translators:
 # Bruno Guerreiro <american.jesus.pt@gmail.com>, 2016
 # José Vieira <jvieira33@sapo.pt>, 2017
-# Nuno Miguel <nunomgue@gmail.com>, 2014-2016
+# Nuno Miguel <nunomgue@gmail.com>, 2014-2017
 # Sérgio Marques <smarquespt@gmail.com>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-08-26 06:30+0200\n"
-"PO-Revision-Date: 2017-09-05 14:13+0000\n"
-"Last-Translator: José Vieira <jvieira33@sapo.pt>\n"
+"PO-Revision-Date: 2017-09-07 16:05+0000\n"
+"Last-Translator: Nuno Miguel <nunomgue@gmail.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/xfce/thunar/language/pt/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -97,17 +97,17 @@ msgstr "Mostra informação da versão e sai"
 #: ../thunar/thunar-application.c:290
 #, c-format
 msgid "Acquired the session message bus '%s'\n"
-msgstr "Adquirido o transferidor de mensagens (bus) '%s'\n"
+msgstr "Adquirido o bus de sessão de mensagens '%s'\n"
 
 #: ../thunar/thunar-application.c:300
 #, c-format
 msgid "Acquired the name '%s' on the session message bus\n"
-msgstr "Foi adquirido o nome  '%s' no transferidor de mensagens (bus) \n"
+msgstr "Foi adquirido o nome  '%s' no bus de sessão de mensagens\n"
 
 #: ../thunar/thunar-application.c:311
 #, c-format
 msgid "Name '%s' lost on the message dbus, exiting."
-msgstr "O nome '%s' foi perdido no transferidor de mensagens do ambiente de trabalho (dbus); a sair."
+msgstr "O nome '%s' foi perdido na mensagem do dbus, a sair."
 
 #: ../thunar/thunar-application.c:462
 msgid "The Thunar development team. All rights reserved."
@@ -188,7 +188,7 @@ msgstr "A copiar ficheiros para \"%s\"..."
 #: ../thunar/thunar-application.c:1916
 #, c-format
 msgid "Creating symbolic links in \"%s\"..."
-msgstr "A criar ligações simbólicas (atalhos) em \"%s\"..."
+msgstr "A criar ligações simbólicas em \"%s\"..."
 
 #: ../thunar/thunar-application.c:1969
 #, c-format
@@ -348,7 +348,7 @@ msgstr "_Navegar..."
 #. create the "Use as default for this kind of file" button
 #: ../thunar/thunar-chooser-dialog.c:283
 msgid "Use as _default for this kind of file"
-msgstr "Utilizar como pré-_definição para este tipo de ficheiro"
+msgstr "Utilizar como por omissão para este tipo de ficheiro"
 
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:293
@@ -547,7 +547,7 @@ msgstr "Ocu_ltar"
 #. create the "Use Default" button
 #: ../thunar/thunar-column-editor.c:232
 msgid "Use De_fault"
-msgstr "Usar pré-_definição"
+msgstr "Usar por omissão"
 
 #: ../thunar/thunar-column-editor.c:241
 msgid "Column Sizing"
@@ -565,7 +565,7 @@ msgstr "Por omissão, as colunas serão automaticamente expandidas,\ncaso necess
 #. create the "Automatically expand columns as needed" button
 #: ../thunar/thunar-column-editor.c:263
 msgid "Automatically _expand columns as needed"
-msgstr "_Expandir automaticamente as colunas (se necessário)"
+msgstr "_Expandir automaticamente as colunas se necessário"
 
 #. the file_time is invalid
 #. reset page title
@@ -908,7 +908,7 @@ msgstr "%s em %s"
 #: ../thunar/thunar-gio-extensions.c:433
 #, c-format
 msgid "%s of %s free (%d%% used)"
-msgstr "%s livres de %s (%d%% em uso)"
+msgstr "%s de %s livres (%d%% em uso)"
 
 #. extend history tooltip with function of the button
 #: ../thunar/thunar-history-action.c:372
@@ -978,7 +978,7 @@ msgstr "Incapaz de apagar o ficheiro \"%s\": %s"
 #: ../thunar/thunar-io-jobs.c:597
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
-msgstr "Incapaz de criar a ligação simbólica (atalho) a \"%s\" por não ser um ficheiro local"
+msgstr "Incapaz de criar a ligação simbólica a \"%s\" por não ser um ficheiro local"
 
 #. generate a useful error message
 #: ../thunar/thunar-io-jobs.c:956
@@ -1032,21 +1032,21 @@ msgstr "O ficheiro \"%s\" já existe. Substituir?\n\nSe substituir um ficheiro e
 
 #: ../thunar/thunar-job.c:334
 msgid "Do you want to overwrite it?"
-msgstr "Substituir?"
+msgstr "Pretende substituir?"
 
 #: ../thunar/thunar-job.c:388
 msgid "Do you want to create it?"
-msgstr "Criar?"
+msgstr "Pretende criá-lo?"
 
 #: ../thunar/thunar-job.c:490
 msgid "Do you want to skip it?"
-msgstr "Ignorar?"
+msgstr "Pretende ignorar?"
 
 #: ../thunar/thunar-job.c:539
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
-msgstr "Não existe espaço livre suficiente no destino. Tente remover alguns ficheiros."
+msgstr "Não existe espaço livre suficiente no destino. Tente remover alguns ficheiros para criar espaço."
 
 #. append the "Open in New Tab" menu action
 #: ../thunar/thunar-launcher.c:178 ../thunar/thunar-launcher.c:860
@@ -1374,7 +1374,7 @@ msgstr "Criar nova pasta em \"%s\""
 #, c-format
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into \"%s\""
-msgstr "Mover ou copiar para \"%s\" os ficheiros previamente selecionados pelos comandos Cortar ou Copiar"
+msgstr "Mover ou copiar para \"%s\" os ficheiros previamente selecionados pelos comandos cortar ou copiar"
 
 #: ../thunar/thunar-location-buttons.c:1284
 #, c-format
@@ -1399,7 +1399,7 @@ msgstr "A desmontar dispositivo"
 msgid ""
 "The device \"%s\" is being unmounted by the system. Please do not remove the"
 " media or disconnect the drive"
-msgstr "O dispositivo \"%s\" está a ser desmontado pelo sistema. Por favor não remova ou desligue a unidade."
+msgstr "O dispositivo \"%s\" está a ser desmontado pelo sistema. Por favor não remova ou desligue a unidade"
 
 #: ../thunar/thunar-notify.c:175 ../thunar/thunar-notify.c:214
 msgid "Writing data to device"
@@ -1833,7 +1833,7 @@ msgstr "Ocorreu um erro ao mostrar as definições da gestão de discos"
 
 #: ../thunar/thunar-progress-dialog.c:94
 msgid "File Operation Progress"
-msgstr "Operação de ficheiro a decorrer"
+msgstr "Progresso de operação de ficheiro"
 
 #. build the tooltip text
 #: ../thunar/thunar-progress-dialog.c:299
@@ -2244,7 +2244,7 @@ msgstr "Co_lar"
 
 #: ../thunar/thunar-standard-view.c:409
 msgid "Move or copy files previously selected by a Cut or Copy command"
-msgstr "Mover/copiar ficheiros previamente selecionados pelos comandos Cortar ou Copiar"
+msgstr "Mover/copiar ficheiros previamente selecionados pelos comandos cortar ou copiar"
 
 #. append the "Move to Tash" menu action
 #: ../thunar/thunar-standard-view.c:410 ../thunar/thunar-tree-view.c:1449
@@ -2385,7 +2385,7 @@ msgstr[1] "Duplicar ficheiros selecionados"
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Criar ligação simbólica para o ficheiro selecionado"
-msgstr[1] "Criar ligação simbólica (atalho) para os ficheiros selecionados"
+msgstr[1] "Criar ligação simbólica para os ficheiros selecionados"
 
 #: ../thunar/thunar-standard-view.c:4499
 msgid "Rename the selected file"
@@ -3471,7 +3471,7 @@ msgstr "Í_cone:"
 msgid ""
 "Click this button to select an icon file that will be displayed in the "
 "context menu in addition to the action name chosen above."
-msgstr "Clique aqui para selecionar um ícone (um ficheiro de ícone) que será mostrado no menu de contexto para além do nome da ação escolhido acima."
+msgstr "Clique aqui para selecionar um ícone que será mostrado no menu de contexto para além do nome da ação escolhido acima."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:15
 msgid ""
