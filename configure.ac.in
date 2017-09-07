@@ -137,6 +137,11 @@ dnl *** Check for X11 ***
 dnl *********************
 XDT_CHECK_LIBX11_REQUIRE()
 
+dnl *************************
+dnl *** Check for gtk-doc ***
+dnl *************************
+GTK_DOC_CHECK([1.9])
+
 dnl ***********************************
 dnl *** Check for required packages ***
 dnl ***********************************
@@ -216,6 +221,9 @@ Makefile
 docs/Makefile
 docs/design/Makefile
 docs/papers/Makefile
+docs/reference/Makefile
+docs/reference/thunarx/Makefile
+docs/reference/thunarx/version.xml
 examples/Makefile
 examples/tex-open-terminal/Makefile
 icons/Makefile

@@ -1,6 +1,7 @@
 SUBDIRS =								\
 	design								\
-	papers
+	papers								\
+	reference
 
 doc_DATA =								\
 	README.gtkrc
