@@ -512,7 +512,19 @@ thunar_g_file_list_to_stringv (GList *list)
   uris = g_new0 (gchar *, g_list_length (list) + 1);
 
   for (lp = list, n = 0; lp != NULL; lp = lp->next)
-    uris[n++] = g_file_get_uri (G_FILE (lp->data));
+    {
+      /* Prefer native paths for interoperability. */
+      gchar *path = g_file_get_path (G_FILE (lp->data));
+      if (path == NULL)
+        {
+          uris[n++] = g_file_get_uri (G_FILE (lp->data));
+        }
+      else
+        {
+          uris[n++] = g_filename_to_uri (path, NULL, NULL);
+          g_free(path);
+        }
+    }
 
   return uris;
 }
