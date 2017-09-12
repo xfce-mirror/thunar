@@ -173,7 +173,23 @@ thunar_session_client_connect (ThunarSessionClient *session_client,
   /* tell GDK about our new session id */
   gdk_x11_set_sm_client_id (id);
 
-  session_client->id = id;
+  /* remember the returned client id */
+#if GLIB_CHECK_VERSION (2, 46, 0)
+    /* just use the memory */
+    session_client->id = id;
+#else
+  if (g_mem_is_system_malloc ())
+    {
+      /* just use the memory */
+      session_client->id = id;
+    }
+  else
+    {
+      /* use GLib memory management */
+      session_client->id = g_strdup (id);
+      free (id);
+    }
+#endif
 
   /* determine the session file path */
   spec = g_strconcat ("sessions/Thunar-", session_client->id, NULL);
