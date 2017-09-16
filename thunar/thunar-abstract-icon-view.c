@@ -509,7 +509,7 @@ thunar_abstract_icon_view_button_press_event (ExoIconView            *view,
            * to make sure that the folder context menu is opened.
            */
           exo_icon_view_unselect_all (view);
-      
+
           /* open the context menu */
           thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (abstract_icon_view), event->button, event->time);
         }
@@ -621,10 +621,9 @@ thunar_abstract_icon_view_draw (ExoIconView            *view,
                                 cairo_t                *cr,
                                 ThunarAbstractIconView *abstract_icon_view)
 {
-  GtkIconSet *stock_icon_set;
   GtkAction  *action = NULL;
-  GdkPixbuf  *stock_icon = NULL;
-  gchar      *stock_id;
+  GdkPixbuf  *gesture_icon = NULL;
+  gchar      *icon_name;
   GdkColor    bg;
   gint        x, y;
 
@@ -643,39 +642,34 @@ thunar_abstract_icon_view_draw (ExoIconView            *view,
   action = thunar_abstract_icon_view_gesture_action (abstract_icon_view);
   if (G_LIKELY (action != NULL))
     {
-      /* determine the stock abstract_icon for the action */
-      g_object_get (G_OBJECT (action), "stock-id", &stock_id, NULL);
+      /* get the icon-name for the action */
+      g_object_get (G_OBJECT (action), "icon-name", &icon_name, NULL);
 
-      /* lookup the abstract_icon set for the stock abstract_icon */
-      stock_icon_set = gtk_style_lookup_icon_set (gtk_widget_get_style (GTK_WIDGET (view)), stock_id);
-      if (G_LIKELY (stock_icon_set != NULL))
-        {
-          stock_icon = gtk_icon_set_render_icon (stock_icon_set, gtk_widget_get_style (GTK_WIDGET (view)),
-                                                 gtk_widget_get_direction (GTK_WIDGET (view)),
-                                                 gtk_action_is_sensitive (action) ? 0 : GTK_STATE_INSENSITIVE,
-                                                 GTK_ICON_SIZE_DND, GTK_WIDGET (view), NULL);
-        }
-
+      gesture_icon = gtk_icon_theme_load_icon (gtk_icon_theme_get_default(),
+                                               icon_name,
+                                               32,
+                                               GTK_ICON_LOOKUP_FORCE_SIZE,
+                                               NULL);
       /* draw the rendered icon */
-      if (G_LIKELY (stock_icon != NULL))
+      if (G_LIKELY (gesture_icon != NULL))
         {
           /* x/y position of the icon */
-          x = abstract_icon_view->priv->gesture_start_x - gdk_pixbuf_get_width (stock_icon) / 2;
-          y = abstract_icon_view->priv->gesture_start_y - gdk_pixbuf_get_height (stock_icon) / 2;
+          x = abstract_icon_view->priv->gesture_start_x - gdk_pixbuf_get_width (gesture_icon) / 2;
+          y = abstract_icon_view->priv->gesture_start_y - gdk_pixbuf_get_height (gesture_icon) / 2;
 
-          /* render the stock abstract_icon into the abstract_icon view window */
-          gdk_cairo_set_source_pixbuf (cr, stock_icon, x, y);
+          /* render the icon into the abstract_icon view window */
+          gdk_cairo_set_source_pixbuf (cr, gesture_icon, x, y);
           cairo_rectangle (cr, x, y,
-                           gdk_pixbuf_get_width (stock_icon),
-                           gdk_pixbuf_get_height (stock_icon));
+                           gdk_pixbuf_get_width (gesture_icon),
+                           gdk_pixbuf_get_height (gesture_icon));
           cairo_fill (cr);
 
           /* release the stock abstract_icon */
-          g_object_unref (G_OBJECT (stock_icon));
+          g_object_unref (G_OBJECT (gesture_icon));
         }
 
       /* release the stock id */
-      g_free (stock_id);
+      g_free (icon_name);
     }
 
   return FALSE;
@@ -791,4 +785,3 @@ thunar_abstract_icon_view_zoom_level_changed (ThunarAbstractIconView *abstract_i
                                       THUNAR_STANDARD_VIEW (abstract_icon_view)->icon_renderer,
                                       NULL, NULL, NULL);
 }
-
