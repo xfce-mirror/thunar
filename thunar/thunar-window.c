@@ -1896,6 +1896,8 @@ static void
 thunar_window_install_sidepane (ThunarWindow *window,
                                 GType         type)
 {
+  GtkStyleContext *context;
+
   _thunar_return_if_fail (type == G_TYPE_NONE || g_type_is_a (type, THUNAR_TYPE_SIDE_PANE));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
@@ -1917,6 +1919,8 @@ thunar_window_install_sidepane (ThunarWindow *window,
       exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->sidepane), "current-directory");
       g_signal_connect_swapped (G_OBJECT (window->sidepane), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
       g_signal_connect_swapped (G_OBJECT (window->sidepane), "open-new-tab", G_CALLBACK (thunar_window_notebook_insert), window);
+      context = gtk_widget_get_style_context (window->sidepane);
+      gtk_style_context_add_class (context, "sidebar");
       gtk_paned_pack1 (GTK_PANED (window->paned), window->sidepane, FALSE, FALSE);
       gtk_widget_show (window->sidepane);
 
