@@ -37,6 +37,16 @@ typedef struct _ThunarxPreferencesProvider      ThunarxPreferencesProvider;
 #define THUNARX_IS_PREFERENCES_PROVIDER(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_PREFERENCES_PROVIDER))
 #define THUNARX_PREFERENCES_PROVIDER_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNARX_TYPE_PREFERENCES_PROVIDER, ThunarxPreferencesProviderIface))
 
+/**
+ * ThunarxPreferencesProviderIface:
+ * @get_actions: See thunarx_preferences_provider_get_actions().
+ *
+ * Interface with virtual methods implementation by extensions that
+ * want to install preferences actions in the file managers menu.
+ * Providers don't need to implement all of the virtual methods listed
+ * in the interface.
+ */
+
 struct _ThunarxPreferencesProviderIface
 {
   /*< private >*/

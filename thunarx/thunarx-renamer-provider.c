@@ -25,7 +25,16 @@
 #include <thunarx/thunarx-renamer-provider.h>
 #include <thunarx/thunarx-private.h>
 
-
+/**
+ * SECTION: thunarx-renamer-provider
+ * @short_description: The interface to extensions that provide additional bulk renamers
+ * @title: ThunarxRenamerProvider
+ * @include: thunarx/thunarx.h
+ *
+ * The <interface>ThunarxRenamerProvider</interface> interface is implemented by
+ * extensions which provide additional bulk renamers that should be used by the
+ * bulk rename dialog in Thunar.
+ */
 
 GType
 thunarx_renamer_provider_get_type (void)

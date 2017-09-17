@@ -43,7 +43,16 @@ static GList   *thunarx_provider_factory_load_modules   (ThunarxProviderFactory 
 static gboolean thunarx_provider_factory_timer          (gpointer                     user_data);
 static void     thunarx_provider_factory_timer_destroy  (gpointer                     user_data);
 
-
+/**
+ * SECTION: thunarx-provider-factory
+ * @short_description: The provider factory support for applications
+ * @title: ThunarxProviderFactory
+ * @include: thunarx/thunarx.h
+ *
+ * The #ThunarxProviderFactory class allows applications to use Thunar plugins. It handles
+ * the loading of the installed extensions and instantiates providers for the application.
+ * For example, Thunar uses this class to access the installed extensions.
+ */
 
 typedef struct
 {

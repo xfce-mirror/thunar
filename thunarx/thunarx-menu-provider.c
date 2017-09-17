@@ -26,6 +26,32 @@
 #include <thunarx/thunarx-private.h>
 
 
+/**
+ * SECTION: thunarx-menu-provider
+ * @short_description: The interface to extensions that provide additional menu items
+ * @title: ThunarxMenuProvider
+ * @include: thunarx/thunarx.h
+ *
+ * The <interface>ThunarxMenuProvider</interface> interface is implemented by
+ * extensions which provide additional menu items that should be displayed in
+ * the file or folder context menus for certain types of files.
+ *
+ * Extensions that implement this interface should do its best to respond as
+ * fast as possible to method invokations by the file manager. That said, when
+ * the file manager calls the thunarx_menu_provider_get_file_actions() or the
+ * thunarx_menu_provider_get_folder_actions() method, the implementation in the
+ * extension should use only the thunarx_file_info_has_mime_type() and
+ * thunarx_file_info_is_directory() methods to determine the actions that should
+ * be added to the file manager's context menu. Don't perform any complicated I/O
+ * to determine the action list, as that would block the whole file manager process.
+ *
+ * The <link linkend="GtkAction">GtkAction</link>s returned from the
+ * thunarx_menu_provider_get_file_actions() and thunarx_menu_provider_get_folder_actions()
+ * methods must be namespaced with the module to avoid collision with internal file manager
+ * actions and actions provided by other extensions. For example, the menu action provided
+ * by the <systemitem class="library">ThunarOpenTerminal</systemitem> extension should be
+ * called <literal>ThunarOpenTerminal::open-terminal</literal>.
+ */
 
 GType
 thunarx_menu_provider_get_type (void)

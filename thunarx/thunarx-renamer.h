@@ -42,6 +42,20 @@ typedef struct _ThunarxRenamer        ThunarxRenamer;
 #define THUNARX_IS_RENAMER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNARX_TYPE_RENAMER))
 #define THUNARX_RENAMER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNARX_TYPE_RENAMER, ThunarxRenamerClass))
 
+/**
+ * ThunarxRenamerClass:
+ * @process: 	see thunarx_renamer_process().
+ * @load:    	see thunarx_renamer_load().
+ * @save:    	see thunarx_renamer_save().
+ * @get_actions: 	see thunarx_renamer_get_actions().
+ * @changed: 	see thunarx_renamer_changed().
+ *
+ * Abstract base class with virtual methods implemented by extensions
+ * that provide additional bulk renamers for the integrated bulk
+ * rename module in Thunar.
+ *
+ */
+
 struct _ThunarxRenamerClass
 {
   /*< private >*/
@@ -103,7 +117,7 @@ void         thunarx_renamer_set_name     (ThunarxRenamer   *renamer,
 gchar       *thunarx_renamer_process      (ThunarxRenamer   *renamer,
                                            ThunarxFileInfo  *file,
                                            const gchar      *text,
-                                           guint             index) G_GNUC_MALLOC;
+                                           guint             idx) G_GNUC_MALLOC;
 
 void         thunarx_renamer_load         (ThunarxRenamer   *renamer,
                                            GHashTable       *settings);

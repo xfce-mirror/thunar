@@ -66,6 +66,25 @@ typedef struct _ThunarxFileInfo      ThunarxFileInfo;
 #define THUNARX_IS_FILE_INFO(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_FILE_INFO))
 #define THUNARX_FILE_INFO_GET_IFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNARX_TYPE_FILE_INFO, ThunarxFileInfoIface))
 
+/**
+ * ThunarxFileInfoIface:
+ * @get_name: See thunarx_file_info_get_name().
+ * @get_uri: See thunarx_file_info_get_uri().
+ * @get_parent_uri: See thunarx_file_info_get_parent_uri().
+ * @get_uri_scheme: See thunarx_file_info_get_uri_scheme().
+ * @get_mime_type: See thunarx_file_info_get_mime_type().
+ * @has_mime_type: See thunarx_file_info_has_mime_type().
+ * @is_directory: See thunarx_file_info_is_directory().
+ * @get_file_info: See thunarx_file_info_get_file_info().
+ * @get_filesystem_info: See thunarx_filesystem_info_get_filesystem_info().
+ * @get_location: See thunarx_location_get_location().
+ * @changed: See thunarx_file_info_changed().
+ * @renamed: See thunarx_file_info_renamed().
+ *
+ * Interface with virtual methods implemented by the file manager and accessible
+ * from the extensions.
+ */
+
 struct _ThunarxFileInfoIface
 {
   /*< private >*/

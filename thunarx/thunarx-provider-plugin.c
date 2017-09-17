@@ -31,7 +31,16 @@
 
 static void thunarx_provider_plugin_class_init (gpointer klass);
 
-
+/**
+ * SECTION: thunarx-provider-plugin
+ * @short_description: The interface to the plugin type registration
+ * @title: ThunarxProviderPlugin
+ * @include: thunarx/thunarx.h
+ *
+ * #ThunarxProviderPlugin is the interface to the file manager's type plugin loader implementation. It
+ * provides methods to extensions - also called <emphasis>provider plugins</emphasis> - to register dynamic
+ * types and control certain aspects of the plugin (see thunarx_provider_plugin_set_resident()).
+ */
 
 GType
 thunarx_provider_plugin_get_type (void)

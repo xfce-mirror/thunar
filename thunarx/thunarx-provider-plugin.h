@@ -35,6 +35,19 @@ typedef struct _ThunarxProviderPlugin      ThunarxProviderPlugin;
 #define THUNARX_IS_PROVIDER_PLUGIN(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_PROVIDER_PLUGIN))
 #define THUNARX_PROVIDER_PLUGIN_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNARX_TYPE_PROVIDER_PLUGIN, ThunarxProviderPluginIface))
 
+/**
+ * ThunarxProviderPluginIface:
+ * @get_resident: see thunarx_provider_plugin_get_resident().
+ * @set_resident: see thunarx_provider_plugin_set_resident().
+ * @register_type: see thunarx_provider_plugin_register_type().
+ * @add_interface: see thunarx_provider_plugin_add_interface().
+ * @register_enum: see thunarx_provider_plugin_register_enum().
+ * @register_flags: see thunarx_provider_plugin_register_flags().
+ *
+ * Interface with virtual methods implemented by the file manager and
+ * accessible from the extensions.
+ */
+
 struct _ThunarxProviderPluginIface
 {
   /*< private >*/

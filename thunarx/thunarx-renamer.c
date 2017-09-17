@@ -49,6 +49,32 @@ enum
 };
 
 
+/**
+ * SECTION: thunarx-renamer
+ * @short_description: The abstract base class for bulk renamers
+ * @title: ThunarxRenamer
+ * @include: thunarx/thunarx.h
+ * @image: bulk-rename.png
+ *
+ * The abstract base class <type>ThunarxRenamer</type> is implemented by
+ * extensions which provide additional bulk renamers that should be used in
+ * the bulk rename dialog.
+ *
+ * Derived classes must override the thunarx_renamer_process() method, which
+ * is called by the bulk rename dialog for every file to generate a new name. For
+ * example, the <type>ThunarSbrReplaceRenamer</type> class included in the
+ * <literal>thunar-sbr</literal> plugin (which is part of the Thunar distribution)
+ * provides a bulk renamer, named <emphasis>Search &amp; Replace</emphasis>,
+ * which allows the user to rename multiple files by searching for a pattern in
+ * each file name and, if the pattern is found, replacing it with the specified
+ * replacement text.
+ *
+ * The active <type>ThunarxRenamer</type>s user interface is displayed in a frame
+ * below the file list, as shown in the screenshot above. Derived classes should try
+ * to limit the number of widgets displayed in the main user interface. For example,
+ * if you have more than six settings, you should consider adding an <guibutton>Advanced</guibutton>,
+ * button which opens a dialog with the additional settings.
+ */
 
 static void     thunarx_renamer_finalize          (GObject                *object);
 static GObject *thunarx_renamer_constructor       (GType                   type,

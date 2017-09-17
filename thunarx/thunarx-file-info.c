@@ -40,6 +40,15 @@ enum
 
 static guint file_info_signals[LAST_SIGNAL];
 
+/**
+ * SECTION: thunarx-file-info
+ * @short_description: Abstraction of a file handled within the file manager
+ * @title: ThunarxFileInfo
+ * @include: thunarx/thunarx.h
+ *
+ * The <interface>ThunarxFileInfo</interface> interface provides extensions with
+ * a way to access information about a file handled within the file manager.
+ */
 
 
 GType

@@ -25,7 +25,18 @@
 #include <thunarx/thunarx-private.h>
 #include <thunarx/thunarx-property-page-provider.h>
 
-
+/**
+ * SECTION: thunarx-property-page-provider
+ * @short_description: The interface to extensions that provide additional property pages
+ * @title: ThunarxPropertyPageProvider
+ * @include: thunarx/thunarx.h
+ *
+ * To add a property page to the file properties dialog, extensions must implement the
+ * <type>ThunarxPropertyPageProvider</type> interface. This interface has only one virtual
+ * method, <function>get_pages</function>, that is passed a list of <link
+ * linkend="ThunarxFileInfo"><type>ThunarxFileInfo</type></link> objects and returns a list
+ * of <link linkend="ThunarxPropertyPage"><type>ThunarxPropertyPage</type></link> objects.
+ */
 
 GType
 thunarx_property_page_provider_get_type (void)

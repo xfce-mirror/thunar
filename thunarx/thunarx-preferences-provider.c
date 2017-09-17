@@ -25,7 +25,29 @@
 #include <thunarx/thunarx-preferences-provider.h>
 #include <thunarx/thunarx-private.h>
 
-
+/**
+ * SECTION: thunarx-preferences-provider
+ * @short_description: The interface to extensions that provide preferences
+ * @title: ThunarxPreferencesProvider
+ * @include: thunarx/thunarx.h
+ *
+ * The ThunarxPreferencesProvider interface is implemented by extensions that
+ * want to register additional actions in the preferences menu of the file
+ * manager. In general this should only be done by extensions that are closely
+ * tied to the file manager (for example, the <literal>thunar-uca</literal> is
+ * such an extension, while an extension that just adds <guimenuitem>Compress
+ * file</guimenuitem> and <guimenuitem>Uncompress file</guimenuitem> to the
+ * context menu of compressed files should not add their own preferences to
+ * the file manager menu, because it should use desktop-wide settings for
+ * archive managers instead).
+ *
+ * The <link linkend="GtkAction"><type>GtkAction</type></link>s returned from the
+ * thunarx_preferences_provider_get_actions() method must be namespaced with the
+ * model to avoid collision with internal file manager actions and actions provided
+ * by other extensions. For example, the preferences action provided by the
+ * <literal>thunar-uca</literal> extension is called
+ * <literal>ThunarUca::manage-actions</literal>.
+ */
 
 GType
 thunarx_preferences_provider_get_type (void)

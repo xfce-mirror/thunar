@@ -39,6 +39,18 @@ typedef struct _ThunarxMenuProvider      ThunarxMenuProvider;
 #define THUNARX_IS_MENU_PROVIDER(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_MENU_PROVIDER))
 #define THUNARX_MENU_PROVIDER_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNARX_TYPE_MENU_PROVIDER, ThunarxMenuProviderIface))
 
+/**
+ * ThunarxMenuProviderIface:
+ * @get_file_actions: See thunarx_menu_provider_get_file_actions().
+ * @get_folder_actions: See thunarx_menu_provider_get_folder_actions().
+ * @get_dnd_actions: See thunarx_menu_provider_get_dnd_actions().
+ *
+ * Interface with virtual methods implemented by extensions that provide
+ * additional menu items for the file manager's context menus.
+ * Providers don't need to implement all of the virtual methods listed in
+ * the interface.
+ */
+
 struct _ThunarxMenuProviderIface
 {
   /*< private >*/

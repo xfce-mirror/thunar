@@ -31,7 +31,30 @@
 
 #define THUNARX_PROPERTY_PAGE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), THUNARX_TYPE_PROPERTY_PAGE, ThunarxPropertyPagePrivate))
 
-
+/**
+ * SECTION: thunarx-property-page
+ * @short_description: The base class for pages added to the properties dialog
+ * @title: ThunarxPropertyPage
+ * @include: thunarx/thunarx.h
+ *
+ * The class for pages that can be added to Thunar's file properties dialog
+ * by extensions implementing the #ThunarxPropertyPageProvider interface. The
+ * pages returned by extensions from thunarx_property_page_provider_get_pages()
+ * method are instances of this class or a derived class. Note that extensions
+ * do not need to subclass #ThunarxPropertyPage, but may also instantiate it
+ * directly and add widgets to it, but I strongly suggest to create a subclass
+ * as it usually leads to better modularization and thereby better maintainability
+ * in the code.
+ *
+ * To pick up the #TagPage example from the thunarx_property_page_provider_get_pages()
+ * description again, you'd create a new class #TagPage, that inherits #ThunarxPropertyPage
+ * (using the #THUNARX_DEFINE_TYPE macro), which provides several user interface elements
+ * in the property, and defines atleast one property named <literal>"file"</literal>, which
+ * is the #ThunarxFileInfo whose tags are displayed in the property page. For example, the
+ * <filename>tag-page.h</filename> header file would look like this (this is really just
+ * an example of the suggested way to implement property pages, you may of course choose
+ * a different way)
+ */
 
 /* Property identifiers */
 enum
