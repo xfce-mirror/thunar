@@ -3,9 +3,9 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# OSWorld <michal.olber@osworld.pl>, 2014
+# Michał Olber <michal@olber.pl>, 2014
 # Piotr Maliński <riklaunim@gmail.com>, 2006
-# Piotr Sokół <psokol@jabster.pl>, 2009,2011-2012
+# Piotr Sokół <psokol.l10n@gmail.com>, 2009,2011-2012
 # Szymon Kałasz <szymon_maestro@gazeta.pl>, 2007
 # Tomasz Michał Łukaszewski <T.Lukaszewski@aster.pl>, 2006
 msgid ""
@@ -13,14 +13,14 @@ msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-07-02 23:03+0200\n"
-"PO-Revision-Date: 2014-06-01 18:05+0000\n"
-"Last-Translator: OSWorld <michal.olber@osworld.pl>\n"
-"Language-Team: Polish (http://www.transifex.com/projects/p/thunar/language/pl/)\n"
+"PO-Revision-Date: 2017-09-19 18:02+0000\n"
+"Last-Translator: Michał Olber <michal@olber.pl>\n"
+"Language-Team: Polish (http://www.transifex.com/xfce/thunar/language/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: pl\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 
 #: ../thunar/main.c:62
 msgid "Open the bulk rename dialog"
@@ -222,6 +222,7 @@ msgid_plural ""
 msgstr[0] "Usunąć trwale zaznaczony element?"
 msgstr[1] "Usunąć trwale %u zaznaczone elementy?"
 msgstr[2] "Usunąć trwale %u zaznaczonych elementów?"
+msgstr[3] "Usunąć trwale %u zaznaczonych elementów?"
 
 #: ../thunar/thunar-application.c:1779
 msgid "If you delete a file, it is permanently lost."
@@ -976,6 +977,7 @@ msgid_plural "Failed to open %d files"
 msgstr[0] "Nie udało się otworzyć %d pliku"
 msgstr[1] "Nie udało się otworzyć %d plików"
 msgstr[2] "Nie udało się otworzyć %d plików"
+msgstr[3] "Nie udało się otworzyć %d plików"
 
 #: ../thunar/thunar-launcher.c:692
 msgid "Are you sure you want to open all folders?"
@@ -988,6 +990,7 @@ msgid_plural "This will open %d separate file manager windows."
 msgstr[0] "Zostanie otwarte dodatkowe okno."
 msgstr[1] "Zostaną otwarte %d dodatkowe okna."
 msgstr[2] "Zostanie otwartych %d dodatkowych okien."
+msgstr[3] "Zostanie otwartych %d dodatkowych okien."
 
 #: ../thunar/thunar-launcher.c:698
 #, c-format
@@ -996,6 +999,7 @@ msgid_plural "Open %d New Windows"
 msgstr[0] "Otwórz w nowym oknie"
 msgstr[1] "Otwórz w %d nowych oknach"
 msgstr[2] "Otwórz w %d nowych oknach"
+msgstr[3] "Otwórz w %d nowych oknach"
 
 #. turn "Open" into "Open in n New Windows"
 #: ../thunar/thunar-launcher.c:790
@@ -1005,6 +1009,7 @@ msgid_plural "Open in %d New Windows"
 msgstr[0] "Otwórz w nowym oknie"
 msgstr[1] "Otwórz w %d nowych oknach"
 msgstr[2] "Otwórz w %d nowych oknach"
+msgstr[3] "Otwórz w %d nowych oknach"
 
 #: ../thunar/thunar-launcher.c:791
 #, c-format
@@ -1013,6 +1018,7 @@ msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] "Otwórz wybrany katalog w %d nowym oknie"
 msgstr[1] "Otwórz wybrane katalogi w %d nowych oknach"
 msgstr[2] "Otwórz wybrane katalogi w %d nowych oknach"
+msgstr[3] "Otwórz wybrane katalogi w %d nowych oknach"
 
 #: ../thunar/thunar-launcher.c:811
 msgid "_Open in New Window"
@@ -1024,6 +1030,7 @@ msgid_plural "Open the selected files"
 msgstr[0] "Otwiera zaznaczony plik"
 msgstr[1] "Otwiera zaznaczone pliki"
 msgstr[2] "Otwiera zaznaczone pliki"
+msgstr[3] "Otwiera zaznaczone pliki"
 
 #: ../thunar/thunar-launcher.c:863
 msgid "_Execute"
@@ -1035,6 +1042,7 @@ msgid_plural "Execute the selected files"
 msgstr[0] "Uruchom zaznaczony plik"
 msgstr[1] "Uruchom zaznaczone pliki"
 msgstr[2] "Uruchom zaznaczone pliki"
+msgstr[3] "Uruchom zaznaczone pliki"
 
 #. turn the "Open" action into "Open With DEFAULT"
 #: ../thunar/thunar-launcher.c:870
@@ -1049,6 +1057,7 @@ msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "Otwiera zaznaczony plik za pomocą „%s”"
 msgstr[1] "Otwiera zaznaczone pliki za pomocą „%s”"
 msgstr[2] "Otwiera zaznaczone pliki za pomocą „%s”"
+msgstr[3] "Otwiera zaznaczone pliki za pomocą „%s”"
 
 #: ../thunar/thunar-launcher.c:894
 msgid "_Open With Other Application..."
@@ -1064,6 +1073,7 @@ msgid_plural "Open the selected files with the default applications"
 msgstr[0] "Otwiera zaznaczony plik za pomocą domyślnego programu"
 msgstr[1] "Otwiera zaznaczone pliki za pomocą domyślnych programów"
 msgstr[2] "Otwiera zaznaczone pliki za pomocą domyślnych programów"
+msgstr[3] "Otwiera zaznaczone pliki za pomocą domyślnych programów"
 
 #: ../thunar/thunar-launcher.c:956
 #, c-format
@@ -1083,6 +1093,7 @@ msgid_plural "Desktop (Create Links)"
 msgstr[0] "Pulpit (utwórz dowiązanie)"
 msgstr[1] "Pulpit (utwórz dowiązania)"
 msgstr[2] "Pulpit (utwórz dowiązania)"
+msgstr[3] "Pulpit (utwórz dowiązania)"
 
 #: ../thunar/thunar-launcher.c:1494
 msgid "Create a link to the selected file on the desktop"
@@ -1090,6 +1101,7 @@ msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "Tworzy dowiązanie do zaznaczonego pliku na pulpicie"
 msgstr[1] "Tworzy dowiązania do zaznaczonych plików na pulpicie"
 msgstr[2] "Tworzy dowiązania do zaznaczonych plików na pulpicie"
+msgstr[3] "Tworzy dowiązania do zaznaczonych plików na pulpicie"
 
 #: ../thunar/thunar-launcher.c:1531 ../thunar/thunar-launcher.c:1574
 #, c-format
@@ -1098,6 +1110,7 @@ msgid_plural "Send the selected files to \"%s\""
 msgstr[0] "Wysyła zaznaczony plik do „%s”"
 msgstr[1] "Wyślij zaznaczone pliki do „%s”"
 msgstr[2] "Wyślij zaznaczone pliki do „%s”"
+msgstr[3] "Wyślij zaznaczone pliki do „%s”"
 
 #. generate a text which includes the size of all items in the folder
 #: ../thunar/thunar-list-model.c:2316
@@ -1107,6 +1120,7 @@ msgid_plural "%d items (%s), Free space: %s"
 msgstr[0] "%d element (%s), wolna przestrzeń: %s"
 msgstr[1] "%d elementy (%s), wolna przestrzeń: %s"
 msgstr[2] "%d elementów (%s), wolna przestrzeń: %s"
+msgstr[3] "%d elementów (%s), wolna przestrzeń: %s"
 
 #. just the standard text
 #: ../thunar/thunar-list-model.c:2325
@@ -1116,6 +1130,7 @@ msgid_plural "%d items, Free space: %s"
 msgstr[0] "%d element, wolna przestrzeń: %s"
 msgstr[1] "%d elementy, wolna przestrzeń: %s"
 msgstr[2] "%d elementów, wolna przestrzeń: %s"
+msgstr[3] "%d elementów, wolna przestrzeń: %s"
 
 #: ../thunar/thunar-list-model.c:2333
 #, c-format
@@ -1124,6 +1139,7 @@ msgid_plural "%d items"
 msgstr[0] "%d element"
 msgstr[1] "%d elementy"
 msgstr[2] "%d elementów"
+msgstr[3] "%d elementów"
 
 #: ../thunar/thunar-list-model.c:2352
 #, c-format
@@ -1172,6 +1188,7 @@ msgid_plural "%d items selected (%s)"
 msgstr[0] "%d zaznaczony element (%s)"
 msgstr[1] "%d zaznaczone elementy (%s)"
 msgstr[2] "%d zaznaczonych elementów (%s)"
+msgstr[3] "%d zaznaczonych elementów (%s)"
 
 #: ../thunar/thunar-list-model.c:2425
 #, c-format
@@ -1180,6 +1197,7 @@ msgid_plural "%d items selected"
 msgstr[0] "%d zaznaczony element"
 msgstr[1] "%d zaznaczone elementy"
 msgstr[2] "%d zaznaczonych elementów"
+msgstr[3] "%d zaznaczonych elementów"
 
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-location-buttons.c:170
@@ -1671,6 +1689,7 @@ msgid_plural "%d file operations running"
 msgstr[0] "Trwa %d operacja plikowa"
 msgstr[1] "Trwają %d operacje plikowe"
 msgstr[2] "Trwa %d operacji plikowych"
+msgstr[3] "Trwa %d operacji plikowych"
 
 #: ../thunar/thunar-progress-view.c:342
 msgid "Cancelling..."
@@ -1683,6 +1702,7 @@ msgid_plural "%lu hours remaining"
 msgstr[0] "pozostała %lu godzina"
 msgstr[1] "pozostały %lu godziny"
 msgstr[2] "pozostało %lu godzin"
+msgstr[3] "pozostało %lu godzin"
 
 #: ../thunar/thunar-progress-view.c:491
 #, c-format
@@ -1691,6 +1711,7 @@ msgid_plural "%lu minutes remaining"
 msgstr[0] "pozostała %lu minuta"
 msgstr[1] "pozostały %lu minuty"
 msgstr[2] "pozostało %lu minut"
+msgstr[3] "pozostało %lu minut"
 
 #: ../thunar/thunar-progress-view.c:496
 #, c-format
@@ -1699,6 +1720,7 @@ msgid_plural "%lu seconds remaining"
 msgstr[0] "pozostała %lu sekunda"
 msgstr[1] "pozostały %lu sekundy"
 msgstr[2] "pozostało %lu sekund"
+msgstr[3] "pozostało %lu sekund"
 
 #: ../thunar/thunar-properties-dialog.c:237
 msgid "General"
@@ -1887,6 +1909,7 @@ msgid_plural "Remove Files"
 msgstr[0] "Usuń plik"
 msgstr[1] "Usuń pliki"
 msgstr[2] "Usuń pliki"
+msgstr[3] "Usuń pliki"
 
 #: ../thunar/thunar-renamer-dialog.c:1647
 msgid "Remove the selected file from the list of files to be renamed"
@@ -1894,6 +1917,7 @@ msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] "Usuwa zaznaczony plik z listy plików przeznaczonych do zmiany nazwy"
 msgstr[1] "Usuwa zaznaczone pliki z listy plików przeznaczonych do zmiany nazwy"
 msgstr[2] "Usuwa zaznaczone pliki z listy plików przeznaczonych do zmiany nazwy"
+msgstr[3] "Usuwa zaznaczone pliki z listy plików przeznaczonych do zmiany nazwy"
 
 #. change title to reflect the standalone status
 #: ../thunar/thunar-renamer-dialog.c:1798
@@ -1932,6 +1956,7 @@ msgid_plural "Side Pane (Create Shortcuts)"
 msgstr[0] "Panel boczny (dodaj zakładkę)"
 msgstr[1] "Panel boczny (dodaj zakładki)"
 msgstr[2] "Panel boczny (dodaj zakładki)"
+msgstr[3] "Panel boczny (dodaj zakładki)"
 
 #: ../thunar/thunar-shortcuts-pane.c:362
 msgid "Add the selected folder to the shortcuts side pane"
@@ -1939,6 +1964,7 @@ msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "Dodaje zakładkę do zaznaczonego katalogu"
 msgstr[1] "Dodaje zakładki do zaznaczonych katalogów"
 msgstr[2] "Dodaje zakładki do zaznaczonych katalogów"
+msgstr[3] "Dodaje zakładki do zaznaczonych katalogów"
 
 #. append the "Mount Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:851 ../thunar/thunar-tree-view.c:1121
@@ -2003,6 +2029,7 @@ msgid_plural "%u items, totalling %s"
 msgstr[0] "%u element, %s"
 msgstr[1] "%u elementy, łącznie %s"
 msgstr[2] "%u elementów, łącznie %s"
+msgstr[3] "%u elementów, łącznie %s"
 
 #: ../thunar/thunar-standard-view.c:358
 msgid "Folder Context Menu"
@@ -2067,6 +2094,7 @@ msgid_plural "Ma_ke Links"
 msgstr[0] "Utwórz _dowiązanie"
 msgstr[1] "Utwórz _dowiązania"
 msgstr[2] "Utwórz _dowiązania"
+msgstr[3] "Utwórz _dowiązania"
 
 #. append the "Rename" menu action
 #: ../thunar/thunar-standard-view.c:370 ../thunar/thunar-tree-view.c:1253
@@ -2129,6 +2157,7 @@ msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Przygotowuje zaznaczony plik do przeniesienia za pomocą polecenia „Wklej”"
 msgstr[1] "Przygotowuje zaznaczone pliki do przeniesienia za pomocą polecenia „Wklej”"
 msgstr[2] "Przygotowuje zaznaczone pliki do przeniesienia za pomocą polecenia „Wklej”"
+msgstr[3] "Przygotowuje zaznaczone pliki do przeniesienia za pomocą polecenia „Wklej”"
 
 #: ../thunar/thunar-standard-view.c:3705
 msgid "Prepare the selected file to be copied with a Paste command"
@@ -2136,6 +2165,7 @@ msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Przygotowuje zaznaczony plik do skopiowania za pomocą polecenia „Wklej”"
 msgstr[1] "Przygotowuje zaznaczone pliki do skopiowania za pomocą polecenia „Wklej”"
 msgstr[2] "Przygotowuje zaznaczone pliki do skopiowania za pomocą polecenia „Wklej”"
+msgstr[3] "Przygotowuje zaznaczone pliki do skopiowania za pomocą polecenia „Wklej”"
 
 #: ../thunar/thunar-standard-view.c:3716
 msgid "Delete the selected file"
@@ -2143,6 +2173,7 @@ msgid_plural "Delete the selected files"
 msgstr[0] "Usuwa zaznaczony plik"
 msgstr[1] "Usuwa zaznaczone pliki"
 msgstr[2] "Usuwa zaznaczone pliki"
+msgstr[3] "Usuwa zaznaczone pliki"
 
 #: ../thunar/thunar-standard-view.c:3730
 msgid "Duplicate the selected file"
@@ -2150,6 +2181,7 @@ msgid_plural "Duplicate each selected file"
 msgstr[0] "Duplikuje zaznaczony plik"
 msgstr[1] "Duplikuje zaznaczone pliki"
 msgstr[2] "Duplikuje zaznaczone pliki"
+msgstr[3] "Duplikuje zaznaczone pliki"
 
 #: ../thunar/thunar-standard-view.c:3739
 msgid "Create a symbolic link for the selected file"
@@ -2157,6 +2189,7 @@ msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Tworzy dowiązanie do zaznaczonego pliku"
 msgstr[1] "Tworzy dowiązania do zaznaczonych plików"
 msgstr[2] "Tworzy dowiązania do zaznaczonych plików"
+msgstr[3] "Tworzy dowiązania do zaznaczonych plików"
 
 #: ../thunar/thunar-standard-view.c:3747
 msgid "Rename the selected file"
@@ -2164,6 +2197,7 @@ msgid_plural "Rename the selected files"
 msgstr[0] "Zmienia nazwę zaznaczonego pliku"
 msgstr[1] "Zmienia nazwy zaznaczonych plików"
 msgstr[2] "Zmienia nazwy zaznaczonych plików"
+msgstr[3] "Zmienia nazwy zaznaczonych plików"
 
 #: ../thunar/thunar-standard-view.c:3755
 msgid "Restore the selected file"
@@ -2171,6 +2205,7 @@ msgid_plural "Restore the selected files"
 msgstr[0] "Przenosi zaznaczony plik do jego pierwotnego położenia"
 msgstr[1] "Przenosi zaznaczone pliki do ich pierwotnych położeń"
 msgstr[2] "Przenosi zaznaczone pliki do ich pierwotnych położeń"
+msgstr[3] "Przenosi zaznaczone pliki do ich pierwotnych położeń"
 
 #. add the "Empty File" item
 #: ../thunar/thunar-templates-action.c:482
@@ -2766,6 +2801,7 @@ msgid_plural "%dx%d pixels"
 msgstr[0] "%dx%d piksel"
 msgstr[1] "%dx%d pikseli"
 msgstr[2] "%dx%d pikseli"
+msgstr[3] "%dx%d pikseli"
 
 #: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:117
 msgid "Con_vert to:"
@@ -2983,6 +3019,7 @@ msgid_plural "Send %d files as compressed archive?"
 msgstr[0] "Wysłać %d plik w skompresowanym archiwum?"
 msgstr[1] "Wysłać %d pliki w skompresowanym archiwum?"
 msgstr[2] "Wysłać %d plików w skompresowanym archiwum?"
+msgstr[3] "Wysłać %d plików w skompresowanym archiwum?"
 
 #: ../plugins/thunar-sendto-email/main.c:219
 msgid "Send as _archive"
@@ -3027,6 +3064,7 @@ msgid_plural "Failed to compress %d files"
 msgstr[0] "Nie udało się skompresować %d pliku"
 msgstr[1] "Nie udało się skompresować %d plików"
 msgstr[2] "Nie udało się skompresować %d plików"
+msgstr[3] "Nie udało się skompresować %d plików"
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:656
