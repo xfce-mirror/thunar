@@ -12,14 +12,14 @@ msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-07-02 23:03+0200\n"
-"PO-Revision-Date: 2015-02-08 13:35+0000\n"
+"PO-Revision-Date: 2017-09-19 18:02+0000\n"
 "Last-Translator: Sergey Alyoshin <alyoshin.s@gmail.com>\n"
-"Language-Team: Russian (http://www.transifex.com/projects/p/thunar/language/ru/)\n"
+"Language-Team: Russian (http://www.transifex.com/xfce/thunar/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: ru\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
 #: ../thunar/main.c:62
 msgid "Open the bulk rename dialog"
@@ -221,6 +221,7 @@ msgid_plural ""
 msgstr[0] "Вы уверены, что хотите навсегда\r\nудалить %u выбранный файл?"
 msgstr[1] "Вы уверены, что хотите навсегда\r\nудалить %u выбранных файла?"
 msgstr[2] "Вы уверены, что хотите навсегда\r\nудалить %u выбранных файлов?"
+msgstr[3] "Вы уверены, что хотите навсегда\r\nудалить %u выбранных файлов?"
 
 #: ../thunar/thunar-application.c:1779
 msgid "If you delete a file, it is permanently lost."
@@ -975,6 +976,7 @@ msgid_plural "Failed to open %d files"
 msgstr[0] "Не удалось открыть %d файл"
 msgstr[1] "Не удалось открыть %d файла"
 msgstr[2] "Не удалось открыть %d файлов"
+msgstr[3] "Не удалось открыть %d файлов"
 
 #: ../thunar/thunar-launcher.c:692
 msgid "Are you sure you want to open all folders?"
@@ -987,6 +989,7 @@ msgid_plural "This will open %d separate file manager windows."
 msgstr[0] "Это откроет %d отдельное окно."
 msgstr[1] "Это откроет %d отдельных окна."
 msgstr[2] "Это откроет %d отдельных окон."
+msgstr[3] "Это откроет %d отдельных окон."
 
 #: ../thunar/thunar-launcher.c:698
 #, c-format
@@ -995,6 +998,7 @@ msgid_plural "Open %d New Windows"
 msgstr[0] "Открыть %d новое окно"
 msgstr[1] "Открыть %d новых окна"
 msgstr[2] "Открыть %d новых окон"
+msgstr[3] "Открыть %d новых окон"
 
 #. turn "Open" into "Open in n New Windows"
 #: ../thunar/thunar-launcher.c:790
@@ -1004,6 +1008,7 @@ msgid_plural "Open in %d New Windows"
 msgstr[0] "Открыть в %d новом окне"
 msgstr[1] "Открыть в %d новых окнах"
 msgstr[2] "Открыть в %d новых окнах"
+msgstr[3] "Открыть в %d новых окнах"
 
 #: ../thunar/thunar-launcher.c:791
 #, c-format
@@ -1012,6 +1017,7 @@ msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] "Открыть выбранную папку в %d новом окне"
 msgstr[1] "Открыть выбранные папки в %d новых окнах"
 msgstr[2] "Открыть выбранные папки в %d новых окнах"
+msgstr[3] "Открыть выбранные папки в %d новых окнах"
 
 #: ../thunar/thunar-launcher.c:811
 msgid "_Open in New Window"
@@ -1023,6 +1029,7 @@ msgid_plural "Open the selected files"
 msgstr[0] "Открыть выбранный файл"
 msgstr[1] "Открыть выбранные файлы"
 msgstr[2] "Открыть выбранные файлы"
+msgstr[3] "Открыть выбранные файлы"
 
 #: ../thunar/thunar-launcher.c:863
 msgid "_Execute"
@@ -1034,6 +1041,7 @@ msgid_plural "Execute the selected files"
 msgstr[0] "Запустить выбранный файл"
 msgstr[1] "Запустить выбранные файлы"
 msgstr[2] "Запустить выбранные файлы"
+msgstr[3] "Запустить выбранные файлы"
 
 #. turn the "Open" action into "Open With DEFAULT"
 #: ../thunar/thunar-launcher.c:870
@@ -1048,6 +1056,7 @@ msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "Использовать «%s», чтобы открыть выбранный файл"
 msgstr[1] "Использовать «%s», чтобы открыть выбранные файлы"
 msgstr[2] "Использовать «%s», чтобы открыть выбранные файлы"
+msgstr[3] "Использовать «%s», чтобы открыть выбранные файлы"
 
 #: ../thunar/thunar-launcher.c:894
 msgid "_Open With Other Application..."
@@ -1063,6 +1072,7 @@ msgid_plural "Open the selected files with the default applications"
 msgstr[0] "Открыть выбранный файл в приложении по умолчанию"
 msgstr[1] "Открыть выбранные файлы в приложении по умолчанию"
 msgstr[2] "Открыть выбранные файлы в приложении по умолчанию"
+msgstr[3] "Открыть выбранные файлы в приложении по умолчанию"
 
 #: ../thunar/thunar-launcher.c:956
 #, c-format
@@ -1082,6 +1092,7 @@ msgid_plural "Desktop (Create Links)"
 msgstr[0] "Рабочий стол (Создать ссылку)"
 msgstr[1] "Рабочий стол (Создать ссылки)"
 msgstr[2] "Рабочий стол (Создать ссылки)"
+msgstr[3] "Рабочий стол (Создать ссылки)"
 
 #: ../thunar/thunar-launcher.c:1494
 msgid "Create a link to the selected file on the desktop"
@@ -1089,6 +1100,7 @@ msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "Создать на рабочем столе ссылку для выбранного файла"
 msgstr[1] "Создать на рабочем столе ссылки для выбранных файлов"
 msgstr[2] "Создать на рабочем столе ссылки для выбранных файлов"
+msgstr[3] "Создать на рабочем столе ссылки для выбранных файлов"
 
 #: ../thunar/thunar-launcher.c:1531 ../thunar/thunar-launcher.c:1574
 #, c-format
@@ -1097,6 +1109,7 @@ msgid_plural "Send the selected files to \"%s\""
 msgstr[0] "Отправить выбранный файл в «%s»"
 msgstr[1] "Отправить выбранные файлы в «%s»"
 msgstr[2] "Отправить выбранные файлы в «%s»"
+msgstr[3] "Отправить выбранные файлы в «%s»"
 
 #. generate a text which includes the size of all items in the folder
 #: ../thunar/thunar-list-model.c:2316
@@ -1106,6 +1119,7 @@ msgid_plural "%d items (%s), Free space: %s"
 msgstr[0] "%d объект (%s), свободного места: %s"
 msgstr[1] "%d объекта (%s), свободного места: %s"
 msgstr[2] "%d объектов (%s), свободного места: %s"
+msgstr[3] "%d объектов (%s), свободного места: %s"
 
 #. just the standard text
 #: ../thunar/thunar-list-model.c:2325
@@ -1115,6 +1129,7 @@ msgid_plural "%d items, Free space: %s"
 msgstr[0] "%d объект, свободного места: %s"
 msgstr[1] "%d объекта, свободного места: %s"
 msgstr[2] "%d объектов, свободного места: %s"
+msgstr[3] "%d объектов, свободного места: %s"
 
 #: ../thunar/thunar-list-model.c:2333
 #, c-format
@@ -1123,6 +1138,7 @@ msgid_plural "%d items"
 msgstr[0] "%d объект"
 msgstr[1] "%d объекта"
 msgstr[2] "%d объектов"
+msgstr[3] "%d объектов"
 
 #: ../thunar/thunar-list-model.c:2352
 #, c-format
@@ -1171,6 +1187,7 @@ msgid_plural "%d items selected (%s)"
 msgstr[0] "выбран %d объект (%s)"
 msgstr[1] "выбрано %d объекта (%s)"
 msgstr[2] "выбрано %d объектов (%s)"
+msgstr[3] "выбрано %d объектов (%s)"
 
 #: ../thunar/thunar-list-model.c:2425
 #, c-format
@@ -1179,6 +1196,7 @@ msgid_plural "%d items selected"
 msgstr[0] "выбран %d объект"
 msgstr[1] "выбрано %d объекта"
 msgstr[2] "выбрано %d объектов"
+msgstr[3] "выбрано %d объектов"
 
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-location-buttons.c:170
@@ -1670,6 +1688,7 @@ msgid_plural "%d file operations running"
 msgstr[0] "Выполняется %d файловая операция"
 msgstr[1] "Выполняются %d файловые операции"
 msgstr[2] "Выполняется %d файловых операций"
+msgstr[3] "Выполняется %d файловых операций"
 
 #: ../thunar/thunar-progress-view.c:342
 msgid "Cancelling..."
@@ -1682,6 +1701,7 @@ msgid_plural "%lu hours remaining"
 msgstr[0] "остаётся %lu час"
 msgstr[1] "(остаётся %lu часа)"
 msgstr[2] "(остаётся %lu часов)"
+msgstr[3] "(остаётся %lu часов)"
 
 #: ../thunar/thunar-progress-view.c:491
 #, c-format
@@ -1690,6 +1710,7 @@ msgid_plural "%lu minutes remaining"
 msgstr[0] "остаётся %lu минут"
 msgstr[1] "(остаётся %lu минуты)"
 msgstr[2] "(остаётся %lu минут)"
+msgstr[3] "(остаётся %lu минут)"
 
 #: ../thunar/thunar-progress-view.c:496
 #, c-format
@@ -1698,6 +1719,7 @@ msgid_plural "%lu seconds remaining"
 msgstr[0] "остаётся %lu секунд"
 msgstr[1] "(остаётся %lu секунды)"
 msgstr[2] "(остаётся %lu секунд)"
+msgstr[3] "(остаётся %lu секунд)"
 
 #: ../thunar/thunar-properties-dialog.c:237
 msgid "General"
@@ -1886,6 +1908,7 @@ msgid_plural "Remove Files"
 msgstr[0] "Убрать файл"
 msgstr[1] "Убрать файлы"
 msgstr[2] "Убрать файлы"
+msgstr[3] "Убрать файлы"
 
 #: ../thunar/thunar-renamer-dialog.c:1647
 msgid "Remove the selected file from the list of files to be renamed"
@@ -1893,6 +1916,7 @@ msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] "Убрать выбранный файл из списка для переименования"
 msgstr[1] "Убрать выбранные файлы из списка для переименования"
 msgstr[2] "Убрать выбранные файлы из списка для переименования"
+msgstr[3] "Убрать выбранные файлы из списка для переименования"
 
 #. change title to reflect the standalone status
 #: ../thunar/thunar-renamer-dialog.c:1798
@@ -1931,6 +1955,7 @@ msgid_plural "Side Pane (Create Shortcuts)"
 msgstr[0] "Боковая панель (создать закладку)"
 msgstr[1] "Боковая панель (создать закладки)"
 msgstr[2] "Боковая панель (создать закладки)"
+msgstr[3] "Боковая панель (создать закладки)"
 
 #: ../thunar/thunar-shortcuts-pane.c:362
 msgid "Add the selected folder to the shortcuts side pane"
@@ -1938,6 +1963,7 @@ msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "Добавить выбранную папку в закладки на боковой панели"
 msgstr[1] "Добавить выбранные папки в закладки на боковой панели"
 msgstr[2] "Добавить выбранные папки в закладки на боковой панели"
+msgstr[3] "Добавить выбранные папки в закладки на боковой панели"
 
 #. append the "Mount Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:851 ../thunar/thunar-tree-view.c:1121
@@ -2002,6 +2028,7 @@ msgid_plural "%u items, totalling %s"
 msgstr[0] "%u элемент, вычисление объёма %s"
 msgstr[1] "%u элемента, вычисление объёма %s"
 msgstr[2] "%u элементов, вычисление объёма %s"
+msgstr[3] "%u элементов, вычисление объёма %s"
 
 #: ../thunar/thunar-standard-view.c:358
 msgid "Folder Context Menu"
@@ -2066,6 +2093,7 @@ msgid_plural "Ma_ke Links"
 msgstr[0] "Создать _ссылку"
 msgstr[1] "Создать _ссылки"
 msgstr[2] "Создать _ссылки"
+msgstr[3] "Создать _ссылки"
 
 #. append the "Rename" menu action
 #: ../thunar/thunar-standard-view.c:370 ../thunar/thunar-tree-view.c:1253
@@ -2128,6 +2156,7 @@ msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Подготовить выбранный файл для перемещения командой Вставить"
 msgstr[1] "Подготовить выбранные файлы для перемещения командой Вставить"
 msgstr[2] "Подготовить выбранные файлы для перемещения командой Вставить"
+msgstr[3] "Подготовить выбранные файлы для перемещения командой Вставить"
 
 #: ../thunar/thunar-standard-view.c:3705
 msgid "Prepare the selected file to be copied with a Paste command"
@@ -2135,6 +2164,7 @@ msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Подготовить выбранный файл для копирования командой Вставить"
 msgstr[1] "Подготовить выбранные файлы для копирования командой Вставить"
 msgstr[2] "Подготовить выбранные файлы для копирования командой Вставить"
+msgstr[3] "Подготовить выбранные файлы для копирования командой Вставить"
 
 #: ../thunar/thunar-standard-view.c:3716
 msgid "Delete the selected file"
@@ -2142,6 +2172,7 @@ msgid_plural "Delete the selected files"
 msgstr[0] "Удалить выбранный файл"
 msgstr[1] "Удалить выбранные файлы"
 msgstr[2] "Удалить выбранные файлы"
+msgstr[3] "Удалить выбранные файлы"
 
 #: ../thunar/thunar-standard-view.c:3730
 msgid "Duplicate the selected file"
@@ -2149,6 +2180,7 @@ msgid_plural "Duplicate each selected file"
 msgstr[0] "Создать копию выбранного файла"
 msgstr[1] "Создать копию каждого выбранного файла"
 msgstr[2] "Создать копию каждого выбранного файла"
+msgstr[3] "Создать копию каждого выбранного файла"
 
 #: ../thunar/thunar-standard-view.c:3739
 msgid "Create a symbolic link for the selected file"
@@ -2156,6 +2188,7 @@ msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Создать символическую ссылку для выбранного файла"
 msgstr[1] "Создать символическую ссылку для каждого выбранного файла"
 msgstr[2] "Создать символическую ссылку для каждого выбранного файла"
+msgstr[3] "Создать символическую ссылку для каждого выбранного файла"
 
 #: ../thunar/thunar-standard-view.c:3747
 msgid "Rename the selected file"
@@ -2163,6 +2196,7 @@ msgid_plural "Rename the selected files"
 msgstr[0] "Переименовать выбранный файл"
 msgstr[1] "Переименовать выбранные файлы"
 msgstr[2] "Переименовать выбранные файлы"
+msgstr[3] "Переименовать выбранные файлы"
 
 #: ../thunar/thunar-standard-view.c:3755
 msgid "Restore the selected file"
@@ -2170,6 +2204,7 @@ msgid_plural "Restore the selected files"
 msgstr[0] "Восстановить выбранный файл"
 msgstr[1] "Восстановить выбранные файлы"
 msgstr[2] "Восстановить выбранные файлы"
+msgstr[3] "Восстановить выбранные файлы"
 
 #. add the "Empty File" item
 #: ../thunar/thunar-templates-action.c:482
@@ -2765,6 +2800,7 @@ msgid_plural "%dx%d pixels"
 msgstr[0] "%dx%d точек"
 msgstr[1] "%dx%d точек"
 msgstr[2] "%dx%d точек"
+msgstr[3] "%dx%d точек"
 
 #: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:117
 msgid "Con_vert to:"
@@ -2982,6 +3018,7 @@ msgid_plural "Send %d files as compressed archive?"
 msgstr[0] "Отправить %d файл в виде архива?"
 msgstr[1] "Отправить %d файла в виде архива?"
 msgstr[2] "Отправить %d файлов в виде архива?"
+msgstr[3] "Отправить %d файлов в виде архива?"
 
 #: ../plugins/thunar-sendto-email/main.c:219
 msgid "Send as _archive"
@@ -3026,6 +3063,7 @@ msgid_plural "Failed to compress %d files"
 msgstr[0] "Не удалось сжать %d файл"
 msgstr[1] "Не удалось сжать %d файла"
 msgstr[2] "Не удалось сжать %d файлов"
+msgstr[3] "Не удалось сжать %d файлов"
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:656
