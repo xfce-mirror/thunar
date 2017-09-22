@@ -307,6 +307,14 @@ thunar_location_buttons_init (ThunarLocationButtons *buttons)
                                GTK_STYLE_CLASS_LINKED);
   gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (buttons)),
                                "path-bar");
+
+  /* add sub-buttons to css class which matches all buttons in the path-bar */
+  gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (buttons->left_slider)),
+                               "path-bar-button");
+  gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (buttons->right_slider)),
+                               "path-bar-button");
+  gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (buttons->filler_widget)),
+                               "path-bar-button");
 }
 
 

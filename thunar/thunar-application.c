@@ -132,6 +132,7 @@ static gboolean       thunar_application_dbus_register          (GApplication   
                                                                  GDBusConnection        *connection,
                                                                  const gchar            *object_path,
                                                                  GError                **error);
+static void           thunar_application_load_css               (void);
 static void           thunar_application_accel_map_changed      (ThunarApplication      *application);
 static gboolean       thunar_application_accel_map_save         (gpointer                user_data);
 static void           thunar_application_collect_and_launch     (ThunarApplication      *application,
@@ -375,6 +376,8 @@ thunar_application_startup (GApplication *gapp)
   thunar_application_dbus_init (application);
 
   G_APPLICATION_CLASS (thunar_application_parent_class)->startup (gapp);
+
+  thunar_application_load_css ();
 }
 
 
@@ -562,6 +565,24 @@ thunar_application_dbus_register (GApplication           *gapp,
     application->dbus_service = g_object_new (THUNAR_TYPE_DBUS_SERVICE, NULL);
 
     return thunar_dbus_service_export_on_connection (application->dbus_service, connection, error);
+}
+
+
+
+static void
+thunar_application_load_css (void)
+{
+  GtkCssProvider *css_provider;
+  GdkScreen *screen;
+
+  css_provider = gtk_css_provider_new ();
+
+  /* For the pathbar-buttons any margin looks ugly, so we overwrite "margin-right" of the used theme with 0.                                */
+  /* The method "gtk_widget_set_margin_right" cannot be used since style-margin is prioritized over default widget-margin by gtk3. */
+  gtk_css_provider_load_from_data (css_provider, " .path-bar-button { margin-right: 0; }", -1, NULL);
+  screen = gdk_screen_get_default ();
+  gtk_style_context_add_provider_for_screen (screen, GTK_STYLE_PROVIDER (css_provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+  g_object_unref (css_provider);
 }
 
 

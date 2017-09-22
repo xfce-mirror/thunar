@@ -263,6 +263,9 @@ thunar_location_button_init (ThunarLocationButton *button)
   gtk_box_pack_start (GTK_BOX (hbox), button->bold_label, TRUE, TRUE, 0);
   gtk_label_set_attributes (GTK_LABEL (button->bold_label), thunar_pango_attr_list_bold ());
   /* but don't show it, as it is only a fake to retrieve the bold size */
+
+  /* add widget to css class which matches all buttons in the path-bar */
+  gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (button)), "path-bar-button");
 }
 
 
