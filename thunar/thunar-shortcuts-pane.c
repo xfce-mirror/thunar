@@ -163,8 +163,6 @@ thunar_shortcuts_pane_side_pane_init (ThunarSidePaneIface *iface)
 static void
 thunar_shortcuts_pane_init (ThunarShortcutsPane *shortcuts_pane)
 {
-  GtkCssProvider *provider;
-
   /* setup the action group for the shortcuts actions */
   shortcuts_pane->action_group = gtk_action_group_new ("ThunarShortcutsPane");
   gtk_action_group_set_translation_domain (shortcuts_pane->action_group, GETTEXT_PACKAGE);
@@ -181,15 +179,8 @@ thunar_shortcuts_pane_init (ThunarShortcutsPane *shortcuts_pane)
   gtk_container_add (GTK_CONTAINER (shortcuts_pane), shortcuts_pane->view);
   gtk_widget_show (shortcuts_pane->view);
 
-  /* remove extra border between side pane and view */
-  provider = gtk_css_provider_new ();
-
-  gtk_css_provider_load_from_data (provider, ".frame { border-right-width: 0px; }", -1, NULL);
-  gtk_style_context_add_provider (
-    GTK_STYLE_CONTEXT (gtk_widget_get_style_context (GTK_WIDGET (shortcuts_pane))),
-    GTK_STYLE_PROVIDER (provider),
-    GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-  g_object_unref (provider);
+  /* add widget to css class */
+  gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (shortcuts_pane)), "shortcuts-pane");
 
   /* connect the "shortcut-activated" signal */
   g_signal_connect_swapped (G_OBJECT (shortcuts_pane->view), "shortcut-activated", G_CALLBACK (thunar_navigator_change_directory), shortcuts_pane);

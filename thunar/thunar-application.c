@@ -577,9 +577,12 @@ thunar_application_load_css (void)
 
   css_provider = gtk_css_provider_new ();
 
-  /* For the pathbar-buttons any margin looks ugly, so we overwrite "margin-right" of the used theme with 0.                                */
-  /* The method "gtk_widget_set_margin_right" cannot be used since style-margin is prioritized over default widget-margin by gtk3. */
-  gtk_css_provider_load_from_data (css_provider, " .path-bar-button { margin-right: 0; }", -1, NULL);
+                                                 /* For the pathbar-buttons any margin looks ugly*/
+  gtk_css_provider_load_from_data (css_provider, ".path-bar-button { margin-right: 0; }"
+
+                                                 /* remove extra border between side pane and view */
+                                                 ".shortcuts-pane { border-right-width: 0px; }"
+                                                 ".standard-view { border-left-width: 0px; }", -1, NULL);
   screen = gdk_screen_get_default ();
   gtk_style_context_add_provider_for_screen (screen, GTK_STYLE_PROVIDER (css_provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
   g_object_unref (css_provider);
