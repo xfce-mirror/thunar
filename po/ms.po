@@ -1,17 +1,17 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
-# Translators:
-# abuyop <abuyop@gmail.com>, 2013-2015
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Thunar\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-29 00:30+0100\n"
-"PO-Revision-Date: 2015-02-09 15:06+0000\n"
-"Last-Translator: abuyop <abuyop@gmail.com>\n"
-"Language-Team: Malay (http://www.transifex.com/projects/p/thunar/language/ms/)\n"
+"POT-Creation-Date: 2017-09-04 23:34+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Xfce Bot <transifex@xfce.org>, 2017\n"
+"Language-Team: Malay (https://www.transifex.com/xfce/teams/16840/ms/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -135,10 +135,10 @@ msgstr "Gagal lancarkan operasi"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1168 ../thunar/thunar-application.c:1294
-#: ../thunar/thunar-launcher.c:1222 ../thunar/thunar-location-entry.c:402
-#: ../thunar/thunar-location-entry.c:430
-#: ../thunar/thunar-shortcuts-view.c:1630
-#: ../thunar/thunar-shortcuts-view.c:1658 ../thunar/thunar-window.c:2236
+#: ../thunar/thunar-launcher.c:1222 ../thunar/thunar-location-entry.c:395
+#: ../thunar/thunar-location-entry.c:423
+#: ../thunar/thunar-shortcuts-view.c:1655
+#: ../thunar/thunar-shortcuts-view.c:1683 ../thunar/thunar-window.c:2296
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "Gagal membuka \"%s\""
@@ -150,21 +150,21 @@ msgstr "Gagal membuka \"%s\": %s"
 
 #. display an error message
 #: ../thunar/thunar-application.c:1362
-#: ../thunar/thunar-properties-dialog.c:682
-#: ../thunar/thunar-standard-view.c:2747 ../thunar/thunar-tree-view.c:1767
+#: ../thunar/thunar-properties-dialog.c:716
+#: ../thunar/thunar-standard-view.c:2784 ../thunar/thunar-tree-view.c:1936
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Gagal namakan semula \"%s\""
 
 #: ../thunar/thunar-application.c:1464
-#: ../thunar/thunar-location-buttons.c:1308
-#: ../thunar/thunar-standard-view.c:2297 ../thunar/thunar-tree-view.c:1629
+#: ../thunar/thunar-location-buttons.c:1314
+#: ../thunar/thunar-standard-view.c:2334 ../thunar/thunar-tree-view.c:1798
 msgid "New Folder"
 msgstr "Folder Baharu"
 
 #: ../thunar/thunar-application.c:1465
-#: ../thunar/thunar-location-buttons.c:1309
-#: ../thunar/thunar-standard-view.c:2298 ../thunar/thunar-tree-view.c:1630
+#: ../thunar/thunar-location-buttons.c:1315
+#: ../thunar/thunar-standard-view.c:2335 ../thunar/thunar-tree-view.c:1799
 msgid "Create New Folder"
 msgstr "Cipta Folder Baharu"
 
@@ -177,7 +177,7 @@ msgid "Create New File"
 msgstr "Cipta Fail Baharu"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-application.c:1527 ../thunar/thunar-standard-view.c:2342
+#: ../thunar/thunar-application.c:1527 ../thunar/thunar-standard-view.c:2379
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Cipta Dokumen dari templat \"%s\""
@@ -206,7 +206,9 @@ msgstr "Mengalih fail ke dalam \"%s\"..."
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
-msgstr "Anda pasti ingin memadam\n\"%s\" secara kekal?"
+msgstr ""
+"Anda pasti ingin memadam\n"
+"\"%s\" secara kekal?"
 
 #: ../thunar/thunar-application.c:1813
 #, c-format
@@ -216,7 +218,9 @@ msgid ""
 msgid_plural ""
 "Are you sure that you want to permanently\n"
 "delete the %u selected files?"
-msgstr[0] "Anda pasti mahu memadam %u fail\nterpilih secara kekal?"
+msgstr[0] ""
+"Anda pasti mahu memadam %u fail\n"
+"terpilih secara kekal?"
 
 #: ../thunar/thunar-application.c:1833
 msgid "If you delete a file, it is permanently lost."
@@ -245,8 +249,8 @@ msgstr "Alih semua fail dan folder dari Tong Sampah?"
 #. append the "Empty Trash" menu action
 #. prepare the menu item
 #: ../thunar/thunar-application.c:2008 ../thunar/thunar-location-buttons.c:179
-#: ../thunar/thunar-shortcuts-view.c:1191 ../thunar/thunar-tree-view.c:1184
-#: ../thunar/thunar-window.c:351 ../plugins/thunar-tpa/thunar-tpa.c:191
+#: ../thunar/thunar-shortcuts-view.c:1199 ../thunar/thunar-tree-view.c:1353
+#: ../thunar/thunar-window.c:354 ../plugins/thunar-tpa/thunar-tpa.c:178
 msgid "_Empty Trash"
 msgstr "_Kosongkan Tong Sampah"
 
@@ -254,7 +258,9 @@ msgstr "_Kosongkan Tong Sampah"
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
-msgstr "Jika anda pilih untuk mengosongkan Tong Sampah, semua item di dalamnya akan kekal hilang. Perhatian anda juga boleh memadamnya secara berasingan."
+msgstr ""
+"Jika anda pilih untuk mengosongkan Tong Sampah, semua item di dalamnya akan "
+"kekal hilang. Perhatian anda juga boleh memadamnya secara berasingan."
 
 #: ../thunar/thunar-application.c:2029
 msgid "Emptying the Trash..."
@@ -285,7 +291,9 @@ msgstr "Gagal tetapkan aplikasi lalai untuk \"%s\""
 msgid ""
 "The selected application is used to open this and other files of type "
 "\"%s\"."
-msgstr "Aplikasi terpilih digunakan untuk membuka ini dan lain-lain jenis fail \"%s\"."
+msgstr ""
+"Aplikasi terpilih digunakan untuk membuka ini dan lain-lain jenis fail "
+"\"%s\"."
 
 #: ../thunar/thunar-chooser-button.c:495
 msgid "No application selected"
@@ -308,7 +316,9 @@ msgstr "Guna perintah _suai:"
 msgid ""
 "Use a custom command for an application that is not available from the above"
 " application list."
-msgstr "Guna perintah suai untuk aplikasi yang tidak tersedia dari senarai aplikasi di atas."
+msgstr ""
+"Guna perintah suai untuk aplikasi yang tidak tersedia dari senarai aplikasi "
+"di atas."
 
 #. create the "Custom command" button
 #: ../thunar/thunar-chooser-dialog.c:277
@@ -326,86 +336,89 @@ msgstr "Guna sebagai _lalai untuk jenis fail ini"
 msgid "Failed to add new application \"%s\""
 msgstr "Gagal menambah aplikasi baharu \"%s\""
 
-#: ../thunar/thunar-chooser-dialog.c:493
+#: ../thunar/thunar-chooser-dialog.c:502
 #, c-format
 msgid "Failed to execute application \"%s\""
 msgstr "Gagal melakukan aplikasi \"%s\""
 
 #. append the "Remove Launcher" item
-#: ../thunar/thunar-chooser-dialog.c:565
+#: ../thunar/thunar-chooser-dialog.c:574
 msgid "_Remove Launcher"
 msgstr "_Buang Pelancar"
 
 #. update the header label
-#: ../thunar/thunar-chooser-dialog.c:648
+#: ../thunar/thunar-chooser-dialog.c:657
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
 msgstr "Buka <i>%s</i> dan lain-lain fail jenis \"%s\" dengan:"
 
-#: ../thunar/thunar-chooser-dialog.c:656
+#: ../thunar/thunar-chooser-dialog.c:665
 #, c-format
 msgid ""
 "Browse the file system to select an application to open files of type "
 "\"%s\"."
 msgstr "Layar sistem fail untuk pilih aplikasi bagi membuka fail jenis \"%s\"."
 
-#: ../thunar/thunar-chooser-dialog.c:662
+#: ../thunar/thunar-chooser-dialog.c:671
 #, c-format
 msgid ""
 "Change the default application for files of type \"%s\" to the selected "
 "application."
 msgstr "Ubah aplikasi lalai untuk jenis \"%s\" bagi aplikasi terpilih."
 
-#: ../thunar/thunar-chooser-dialog.c:708
+#: ../thunar/thunar-chooser-dialog.c:717
 #, c-format
 msgid "Are you sure that you want to remove \"%s\"?"
 msgstr "Anda pasti ingin membuang \"%s\"?"
 
-#: ../thunar/thunar-chooser-dialog.c:714
+#: ../thunar/thunar-chooser-dialog.c:723
 msgid ""
 "This will remove the application launcher that appears in the file context menu, but will not uninstall the application itself.\n"
 "\n"
 "You can only remove application launchers that were created using the custom command box in the \"Open With\" dialog of the file manager."
-msgstr "Ini akan membuang pelancar aplikasi yang muncul di dalam menu konteks fail, tetapi tidak akan menyahpasang aplikasi tersebut.\n\nAnda hanya boleh membuang pelancar aplikasi yang telah dicipta menggunakan kotak perintah suai di dalam dialog pengurus fail \"Buka Dengan\"."
+msgstr ""
+"Ini akan membuang pelancar aplikasi yang muncul di dalam menu konteks fail, tetapi tidak akan menyahpasang aplikasi tersebut.\n"
+"\n"
+"Anda hanya boleh membuang pelancar aplikasi yang telah dicipta menggunakan kotak perintah suai di dalam dialog pengurus fail \"Buka Dengan\"."
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:729
+#: ../thunar/thunar-chooser-dialog.c:738
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "Gagal membuang \"%s\""
 
-#: ../thunar/thunar-chooser-dialog.c:755
+#: ../thunar/thunar-chooser-dialog.c:764
 #: ../plugins/thunar-uca/thunar-uca-editor.c:474
 msgid "Select an Application"
 msgstr "Pilih satu Aplikasi"
 
-#: ../thunar/thunar-chooser-dialog.c:765
+#: ../thunar/thunar-chooser-dialog.c:774
 #: ../thunar/thunar-renamer-dialog.c:1068
 #: ../plugins/thunar-uca/thunar-uca-editor.c:484
 msgid "All Files"
 msgstr "Semua Fail"
 
-#: ../thunar/thunar-chooser-dialog.c:770
+#: ../thunar/thunar-chooser-dialog.c:779
 #: ../plugins/thunar-uca/thunar-uca-editor.c:489
 msgid "Executable Files"
 msgstr "Fail Boleh Laku"
 
-#: ../thunar/thunar-chooser-dialog.c:785
+#: ../thunar/thunar-chooser-dialog.c:794
 #: ../plugins/thunar-uca/thunar-uca-editor.c:504
 msgid "Perl Scripts"
 msgstr "Skrip Perl"
 
-#: ../thunar/thunar-chooser-dialog.c:791
+#: ../thunar/thunar-chooser-dialog.c:800
 #: ../plugins/thunar-uca/thunar-uca-editor.c:510
 msgid "Python Scripts"
 msgstr "Skrip Python"
 
-#: ../thunar/thunar-chooser-dialog.c:797
+#: ../thunar/thunar-chooser-dialog.c:806
 #: ../plugins/thunar-uca/thunar-uca-editor.c:516
 msgid "Ruby Scripts"
 msgstr "Skrip Ruby"
 
-#: ../thunar/thunar-chooser-dialog.c:803
+#: ../thunar/thunar-chooser-dialog.c:812
 #: ../plugins/thunar-uca/thunar-uca-editor.c:522
 msgid "Shell Scripts"
 msgstr "Skrip Shell"
@@ -445,7 +458,9 @@ msgstr "Lajur Tampak"
 msgid ""
 "Choose the order of information to appear in the\n"
 "detailed list view."
-msgstr "Pilih tertib maklumat yang muncul di dalam paparan\nsenarai terperinci."
+msgstr ""
+"Pilih tertib maklumat yang muncul di dalam paparan\n"
+"senarai terperinci."
 
 #. create the "Move Up" button
 #: ../thunar/thunar-column-editor.c:193
@@ -483,7 +498,12 @@ msgid ""
 "needed to ensure the text is fully visible. If you dis-\n"
 "able this behavior below the file manager will always\n"
 "use the user defined column widths."
-msgstr "Secara lalai lajur akan dikembangkan secara automatik\njika diperlukan untuk memastikan teks sepenuhnya\ntampak. Jika anda lumpuhkan kelakuan ini dibawah\npengurus fail akan sentiasa guna lebar lajur yang di\ntakrif oleh pengguna."
+msgstr ""
+"Secara lalai lajur akan dikembangkan secara automatik\n"
+"jika diperlukan untuk memastikan teks sepenuhnya\n"
+"tampak. Jika anda lumpuhkan kelakuan ini dibawah\n"
+"pengurus fail akan sentiasa guna lebar lajur yang di\n"
+"takrif oleh pengguna."
 
 #. create the "Automatically expand columns as needed" button
 #: ../thunar/thunar-column-editor.c:261
@@ -493,12 +513,12 @@ msgstr "K_embangkan lajur secara automatik jika diperlukan"
 #. the file_time is invalid
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:858 ../thunar/thunar-list-model.c:705
-#: ../thunar/thunar-list-model.c:733
+#: ../thunar/thunar-column-model.c:858 ../thunar/thunar-list-model.c:703
+#: ../thunar/thunar-list-model.c:731
 #: ../thunar/thunar-permissions-chooser.c:229 ../thunar/thunar-util.c:454
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:503
-#: ../plugins/thunar-apr/thunar-apr-image-page.c:285
-#: ../plugins/thunar-apr/thunar-apr-image-page.c:286
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:287
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:288
 #: ../plugins/thunar-uca/thunar-uca-editor.c:606
 msgid "Unknown"
 msgstr "Tidak diketahui"
@@ -525,56 +545,51 @@ msgstr "Masukkan nama baharu:"
 msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "Tidak dapat tukar nama fail \"%s\" ke pengekodan setempat"
 
-#: ../thunar/thunar-dbus-service.c:485
+#: ../thunar/thunar-dbus-service.c:486
 #, c-format
 msgid "Invalid filename \"%s\""
 msgstr "Nama fail \"%s\" tidak sah"
 
 #. LaunchFiles() invoked without a valid working directory
-#: ../thunar/thunar-dbus-service.c:874
+#: ../thunar/thunar-dbus-service.c:875
 #, c-format
 msgid "The working directory must be an absolute path"
 msgstr "Direktori kerja mestilah laluan mutlak"
 
 #. LaunchFiles() invoked with an empty filename list
-#: ../thunar/thunar-dbus-service.c:882
-#, c-format
-msgid "Atleast one filename must be specified"
-msgstr "Sekurang-kurangnya satu nama fail mesti dinyatakan"
-
-#: ../thunar/thunar-dbus-service.c:1027
-#, c-format
-msgid "At least one source filename must be specified"
-msgstr "Sekurang-kurangnya satu nama fail sumber mesti dinyatakan"
-
-#: ../thunar/thunar-dbus-service.c:1037
-#, c-format
-msgid "The number of source and target filenames must be the same"
-msgstr "Bilangan nama fail sumber dan sasaran mestilah sama"
-
-#: ../thunar/thunar-dbus-service.c:1046
-#, c-format
-msgid "A destination directory must be specified"
-msgstr "Satu direktori destinasi mesti dinyatakan"
-
-#: ../thunar/thunar-dbus-service.c:1249
+#: ../thunar/thunar-dbus-service.c:883 ../thunar/thunar-dbus-service.c:1250
 #, c-format
 msgid "At least one filename must be specified"
 msgstr "Sekurang-kurangnya satu nama fail mesti dinyatakan"
 
-#: ../thunar/thunar-details-view.c:134
+#: ../thunar/thunar-dbus-service.c:1028
+#, c-format
+msgid "At least one source filename must be specified"
+msgstr "Sekurang-kurangnya satu nama fail sumber mesti dinyatakan"
+
+#: ../thunar/thunar-dbus-service.c:1038
+#, c-format
+msgid "The number of source and target filenames must be the same"
+msgstr "Bilangan nama fail sumber dan sasaran mestilah sama"
+
+#: ../thunar/thunar-dbus-service.c:1047
+#, c-format
+msgid "A destination directory must be specified"
+msgstr "Satu direktori destinasi mesti dinyatakan"
+
+#: ../thunar/thunar-details-view.c:138
 msgid "Configure _Columns..."
 msgstr "Konfigur _Lajur..."
 
-#: ../thunar/thunar-details-view.c:134
+#: ../thunar/thunar-details-view.c:138
 msgid "Configure the columns in the detailed list view"
 msgstr "Konfigur lajur di dalam paparan senarai terperinci"
 
-#: ../thunar/thunar-details-view.c:392
+#: ../thunar/thunar-details-view.c:399
 msgid "Detailed directory listing"
 msgstr "Penyenaraian direktori terperinci"
 
-#: ../thunar/thunar-details-view.c:393
+#: ../thunar/thunar-details-view.c:400
 msgid "Details view"
 msgstr "Paparan terperinci"
 
@@ -592,117 +607,125 @@ msgstr "_Nama semula"
 msgid "translator-credits"
 msgstr "Abuyop <abuyop@gmail.com>"
 
-#: ../thunar/thunar-dialogs.c:425
+#: ../thunar/thunar-dialogs.c:429
 msgid "_Yes"
 msgstr "_Ya"
 
-#: ../thunar/thunar-dialogs.c:429
+#: ../thunar/thunar-dialogs.c:433
 msgid "Yes to _all"
 msgstr "Ya untuk se_mua"
 
-#: ../thunar/thunar-dialogs.c:433
+#: ../thunar/thunar-dialogs.c:437
 msgid "_No"
 msgstr "_Tidak"
 
-#: ../thunar/thunar-dialogs.c:437
+#: ../thunar/thunar-dialogs.c:441
 msgid "N_o to all"
 msgstr "T_idak untuk semua"
 
-#: ../thunar/thunar-dialogs.c:441
+#: ../thunar/thunar-dialogs.c:445
 msgid "_Retry"
 msgstr "_Cuba lagi"
 
-#: ../thunar/thunar-dialogs.c:445
+#: ../thunar/thunar-dialogs.c:449
 msgid "Copy _Anyway"
 msgstr "Salin _Jua"
 
-#: ../thunar/thunar-dialogs.c:468
+#: ../thunar/thunar-dialogs.c:472
 msgid "_Cancel"
 msgstr "_Batal"
 
 #. setup the confirmation dialog
-#: ../thunar/thunar-dialogs.c:535
+#: ../thunar/thunar-dialogs.c:539
 msgid "Confirm to replace files"
 msgstr "Sahkan penggantian fail"
 
-#: ../thunar/thunar-dialogs.c:541
+#: ../thunar/thunar-dialogs.c:545
 msgid "S_kip All"
 msgstr "Lan_gkau Semua"
 
-#: ../thunar/thunar-dialogs.c:542
+#: ../thunar/thunar-dialogs.c:546
 msgid "_Skip"
 msgstr "Lan_gkau"
 
-#: ../thunar/thunar-dialogs.c:543
+#: ../thunar/thunar-dialogs.c:547
 msgid "Replace _All"
 msgstr "Ganti Se_mua"
 
-#: ../thunar/thunar-dialogs.c:544
+#: ../thunar/thunar-dialogs.c:548
 msgid "_Replace"
 msgstr "_Ganti"
 
-#: ../thunar/thunar-dialogs.c:577
+#: ../thunar/thunar-dialogs.c:581
 #, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
 msgstr "Folder ini sudah mengandungi pautan simbolik \"%s\"."
 
-#: ../thunar/thunar-dialogs.c:582
+#: ../thunar/thunar-dialogs.c:586
 #, c-format
 msgid "This folder already contains a folder \"%s\"."
 msgstr "Folder ini sudah mengandungi folder \"%s\"."
 
-#: ../thunar/thunar-dialogs.c:587
+#: ../thunar/thunar-dialogs.c:591
 #, c-format
 msgid "This folder already contains a file \"%s\"."
 msgstr "Folder ini sudah mengandungi fail \"%s\"."
 
-#: ../thunar/thunar-dialogs.c:599
+#: ../thunar/thunar-dialogs.c:603
+#, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the link"
 msgstr "ReplaceDialogPart1|Anda mahu ganti pautan"
 
-#: ../thunar/thunar-dialogs.c:601
+#: ../thunar/thunar-dialogs.c:605
+#, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the existing folder"
 msgstr "ReplaceDialogPart1|Anda mahu ganti folder sedia ada"
 
-#: ../thunar/thunar-dialogs.c:603
+#: ../thunar/thunar-dialogs.c:607
+#, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
 msgstr "ReplaceDialogPart1|Anda mahu ganti fail sedia ada"
 
 #. Fourth box (size, volume, free space)
-#: ../thunar/thunar-dialogs.c:620 ../thunar/thunar-dialogs.c:651
-#: ../thunar/thunar-properties-dialog.c:459
+#: ../thunar/thunar-dialogs.c:624 ../thunar/thunar-dialogs.c:655
+#: ../thunar/thunar-properties-dialog.c:479
 msgid "Size:"
 msgstr "Saiz:"
 
-#: ../thunar/thunar-dialogs.c:620 ../thunar/thunar-dialogs.c:651
-#: ../thunar/thunar-properties-dialog.c:420
+#: ../thunar/thunar-dialogs.c:624 ../thunar/thunar-dialogs.c:655
+#: ../thunar/thunar-properties-dialog.c:440
 msgid "Modified:"
 msgstr "Diubahsuai:"
 
-#: ../thunar/thunar-dialogs.c:630
+#: ../thunar/thunar-dialogs.c:634
+#, c-format
 msgid "ReplaceDialogPart2|with the following link?"
 msgstr "ReplaceDialogPart2|dengan pautan berikut?"
 
-#: ../thunar/thunar-dialogs.c:632
+#: ../thunar/thunar-dialogs.c:636
+#, c-format
 msgid "ReplaceDialogPart2|with the following folder?"
 msgstr "ReplaceDialogPart2|dengan folder berikut?"
 
-#: ../thunar/thunar-dialogs.c:634
+#: ../thunar/thunar-dialogs.c:638
+#, c-format
 msgid "ReplaceDialogPart2|with the following file?"
 msgstr "ReplaceDialogPart2|dengan fail berikut?"
 
-#: ../thunar/thunar-dialogs.c:762
+#: ../thunar/thunar-dialogs.c:766
 #, c-format
 msgid ""
 "The desktop file \"%s\" is in an insecure location and not marked as "
 "executable. If you do not trust this program, click Cancel."
-msgstr "Fail desktop \"%s\" berada di dalam lokasi tidak selamat dan tidak ditanda sebagai boleh laku. Jika anda tidak percayai program ini, klik Batal."
+msgstr ""
+"Fail desktop \"%s\" berada di dalam lokasi tidak selamat dan tidak ditanda "
+"sebagai boleh laku. Jika anda tidak percayai program ini, klik Batal."
 
-#: ../thunar/thunar-dialogs.c:779
+#: ../thunar/thunar-dialogs.c:783
 msgid "_Launch Anyway"
 msgstr "_Lancar Jua"
 
-#: ../thunar/thunar-dialogs.c:781
+#: ../thunar/thunar-dialogs.c:785
 msgid "Mark _Executable"
 msgstr "Tanda sebagai _Boleh Laku"
 
@@ -765,7 +788,7 @@ msgid "Owner"
 msgstr "Pemilik"
 
 #. Permissions chooser
-#: ../thunar/thunar-enum-types.c:98 ../thunar/thunar-properties-dialog.c:539
+#: ../thunar/thunar-enum-types.c:98 ../thunar/thunar-properties-dialog.c:559
 msgid "Permissions"
 msgstr "Keizinan"
 
@@ -785,53 +808,53 @@ msgstr "Fail"
 msgid "File Name"
 msgstr "Nama Fail"
 
-#: ../thunar/thunar-file.c:983 ../thunar/thunar-gio-extensions.c:237
-#: ../thunar/thunar-shortcuts-model.c:896 ../thunar/thunar-window.c:369
+#: ../thunar/thunar-file.c:1073 ../thunar/thunar-gio-extensions.c:237
+#: ../thunar/thunar-shortcuts-model.c:928 ../thunar/thunar-window.c:372
 msgid "File System"
 msgstr "Sistem Fail"
 
-#: ../thunar/thunar-file.c:1421
+#: ../thunar/thunar-file.c:1513
 #, c-format
 msgid "The root folder has no parent"
 msgstr "Folder root tidak mempunyai induk"
 
-#: ../thunar/thunar-file.c:1506 ../thunar/thunar-file.c:1778
+#: ../thunar/thunar-file.c:1601 ../thunar/thunar-file.c:1897
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "Gagal menghurai fail desktop: %s"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1518
+#: ../thunar/thunar-file.c:1613
 msgid "Untrusted application launcher"
 msgstr "Pelancar aplikasi tidak dipercayai"
 
-#: ../thunar/thunar-file.c:1543
+#: ../thunar/thunar-file.c:1638
 #, c-format
 msgid "No Exec field specified"
 msgstr "Tiada medan Exec dinyatakan"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1552
+#: ../thunar/thunar-file.c:1647
 msgid "Untrusted link launcher"
 msgstr "Pelancar pautan tidak dipercayai"
 
-#: ../thunar/thunar-file.c:1568
+#: ../thunar/thunar-file.c:1663
 #, c-format
 msgid "No URL field specified"
 msgstr "Tiada medan URL dinyatakan"
 
-#: ../thunar/thunar-file.c:1573
+#: ../thunar/thunar-file.c:1668
 msgid "Invalid desktop file"
 msgstr "Fail dekstop tidak sah"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: ../thunar/thunar-gio-extensions.c:318
+#: ../thunar/thunar-gio-extensions.c:322
 #, c-format
 msgid "%s on %s"
 msgstr "%s pada %s"
 
 #. free disk space string
-#: ../thunar/thunar-gio-extensions.c:434
+#: ../thunar/thunar-gio-extensions.c:433
 #, c-format
 msgid "%s of %s free (%d%% used)"
 msgstr "%s dari %s bebas (%d%% digunakan)"
@@ -859,11 +882,11 @@ msgstr "Maju"
 msgid "Go to the next visited folder"
 msgstr "Pergi ke folder dilawati berikutnya"
 
-#: ../thunar/thunar-history.c:353
+#: ../thunar/thunar-history.c:354
 msgid "The item will be removed from the history"
 msgstr "Item akan dibuang dari sejarah"
 
-#: ../thunar/thunar-history.c:356
+#: ../thunar/thunar-history.c:366
 #, c-format
 msgid "Could not find \"%s\""
 msgstr "Tidak dapat cari \"%s\""
@@ -904,7 +927,8 @@ msgstr "Tidak dapat padam fail \"%s\": %s"
 #: ../thunar/thunar-io-jobs.c:597
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
-msgstr "Tidak dapat cipta pautan simbolik ke \"%s\" kerana ia bukanlah fail setempat"
+msgstr ""
+"Tidak dapat cipta pautan simbolik ke \"%s\" kerana ia bukanlah fail setempat"
 
 #. generate a useful error message
 #: ../thunar/thunar-io-jobs.c:956
@@ -923,27 +947,27 @@ msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "Gagal menukar keizinan \"%s\": %s"
 
 #. I18N: put " (copy #) between basename and extension
-#: ../thunar/thunar-io-jobs-util.c:103
+#: ../thunar/thunar-io-jobs-util.c:106
 #, c-format
 msgid "%s (copy %u)%s"
 msgstr "%s (salinan %u)%s"
 
 #. I18N: put " (copy #)" after filename (for files without extension)
-#: ../thunar/thunar-io-jobs-util.c:109
+#: ../thunar/thunar-io-jobs-util.c:112
 #, c-format
 msgid "%s (copy %u)"
 msgstr "%s (salinan %u)"
 
 #. I18N: name for first link to basename
-#: ../thunar/thunar-io-jobs-util.c:118 ../thunar/thunar-list-model.c:750
-#: ../thunar/thunar-list-model.c:1575 ../thunar/thunar-list-model.c:1586
-#: ../thunar/thunar-properties-dialog.c:949
+#: ../thunar/thunar-io-jobs-util.c:121 ../thunar/thunar-list-model.c:748
+#: ../thunar/thunar-list-model.c:1573 ../thunar/thunar-list-model.c:1584
+#: ../thunar/thunar-properties-dialog.c:983
 #, c-format
 msgid "link to %s"
 msgstr "paut ke %s"
 
 #. I18N: name for nth link to basename
-#: ../thunar/thunar-io-jobs-util.c:123
+#: ../thunar/thunar-io-jobs-util.c:126
 #, c-format
 msgid "link %u to %s"
 msgstr "paut %u ke %s"
@@ -954,7 +978,10 @@ msgid ""
 "The file \"%s\" already exists. Would you like to replace it?\n"
 "\n"
 "If you replace an existing file, its contents will be overwritten."
-msgstr "Fail \"%s\" sudah wujud. Anda mahu gantikannya?\n\nJika anda ganti fail sedia ada, kandungannya akan ditulis-ganti."
+msgstr ""
+"Fail \"%s\" sudah wujud. Anda mahu gantikannya?\n"
+"\n"
+"Jika anda ganti fail sedia ada, kandungannya akan ditulis-ganti."
 
 #: ../thunar/thunar-job.c:334
 msgid "Do you want to overwrite it?"
@@ -972,7 +999,9 @@ msgstr "Anda mahu langkau ia?"
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
-msgstr "Ruang dalam destinasi tidak mencukupi. Cuba buang fail untuk dapatkan lagi ruang."
+msgstr ""
+"Ruang dalam destinasi tidak mencukupi. Cuba buang fail untuk dapatkan lagi "
+"ruang."
 
 #. * CASE 1: nothing selected or atleast one directory in the selection
 #. **
@@ -982,19 +1011,19 @@ msgstr "Ruang dalam destinasi tidak mencukupi. Cuba buang fail untuk dapatkan la
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:177 ../thunar/thunar-launcher.c:819
 #: ../thunar/thunar-location-buttons.c:175
-#: ../thunar/thunar-shortcuts-view.c:1087 ../thunar/thunar-tree-view.c:1114
+#: ../thunar/thunar-shortcuts-view.c:1095 ../thunar/thunar-tree-view.c:1283
 msgid "_Open"
 msgstr "_Buka"
 
 #. append the "Open in New Tab" menu action
 #: ../thunar/thunar-launcher.c:178 ../thunar/thunar-launcher.c:860
-#: ../thunar/thunar-tree-view.c:1125
+#: ../thunar/thunar-tree-view.c:1294
 msgid "Open in New _Tab"
 msgstr "Buka dalam _Tab Baharu"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:179 ../thunar/thunar-launcher.c:854
-#: ../thunar/thunar-tree-view.c:1132
+#: ../thunar/thunar-tree-view.c:1301
 msgid "Open in New _Window"
 msgstr "Buka dalam _Tetinkap Baharu"
 
@@ -1118,8 +1147,8 @@ msgstr[0] "Buka fail terpilih dengan aplikasi lalai"
 msgid "Open With \"%s\""
 msgstr "Buka Dengan \"%s\""
 
-#: ../thunar/thunar-launcher.c:1586 ../thunar/thunar-shortcuts-view.c:1689
-#: ../thunar/thunar-shortcuts-view.c:1926 ../thunar/thunar-tree-view.c:1966
+#: ../thunar/thunar-launcher.c:1586 ../thunar/thunar-shortcuts-view.c:1714
+#: ../thunar/thunar-shortcuts-view.c:1951 ../thunar/thunar-tree-view.c:2135
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Gagal melekap \"%s\""
@@ -1140,54 +1169,54 @@ msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
 msgstr[0] "Hantar fail terpilih ke \"%s\""
 
-#: ../thunar/thunar-list-model.c:2277
+#: ../thunar/thunar-list-model.c:2293
 #, c-format
 msgid "%d item (%s), Free space: %s"
 msgid_plural "%d items (%s), Free space: %s"
 msgstr[0] "%d item (%s), Ruang bebas: %s"
 
 #. just the standard text
-#: ../thunar/thunar-list-model.c:2284
+#: ../thunar/thunar-list-model.c:2300
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
 msgstr[0] "%d item, Ruang bebas: %s"
 
-#: ../thunar/thunar-list-model.c:2293
+#: ../thunar/thunar-list-model.c:2309
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d item"
 
-#: ../thunar/thunar-list-model.c:2309
+#: ../thunar/thunar-list-model.c:2325
 #, c-format
 msgid "\"%s\" broken link"
 msgstr "\"%s\" pautan rosak"
 
-#: ../thunar/thunar-list-model.c:2314
+#: ../thunar/thunar-list-model.c:2330
 #, c-format
 msgid "\"%s\" (%s) link to %s"
 msgstr "\"%s\" (%s) dipaut ke %s"
 
-#: ../thunar/thunar-list-model.c:2320
+#: ../thunar/thunar-list-model.c:2336
 #, c-format
 msgid "\"%s\" shortcut"
 msgstr "Pintasan \"%s\""
 
-#: ../thunar/thunar-list-model.c:2324
+#: ../thunar/thunar-list-model.c:2340
 #, c-format
 msgid "\"%s\" mountable"
 msgstr "Boleh lekap \"%s\""
 
 #. I18N, first %s is the display name of the file, 2nd the file size, 3rd the
 #. content type
-#: ../thunar/thunar-list-model.c:2331
+#: ../thunar/thunar-list-model.c:2347
 #, c-format
 msgid "\"%s\" (%s) %s"
 msgstr "\"%s\" (%s) %s"
 
 #. I18N, first %s is the display name of the file, second the content type
-#: ../thunar/thunar-list-model.c:2340
+#: ../thunar/thunar-list-model.c:2356
 #, c-format
 msgid "\"%s\" %s"
 msgstr "\"%s\" %s"
@@ -1197,31 +1226,31 @@ msgstr "\"%s\" %s"
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: ../thunar/thunar-list-model.c:2350 ../thunar/thunar-properties-dialog.c:367
+#: ../thunar/thunar-list-model.c:2366 ../thunar/thunar-properties-dialog.c:387
 msgid "Original Path:"
 msgstr "Laluan Asal:"
 
 #. append the image dimensions to the statusbar text
-#: ../thunar/thunar-list-model.c:2373
-#: ../plugins/thunar-apr/thunar-apr-image-page.c:149
+#: ../thunar/thunar-list-model.c:2389
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:151
 msgid "Image Size:"
 msgstr "Saiz Imej:"
 
 #. item count if there are also folders in the selection
-#: ../thunar/thunar-list-model.c:2412
+#: ../thunar/thunar-list-model.c:2428
 #, c-format
 msgid "%d other item selected (%s)"
 msgid_plural "%d other items selected (%s)"
 msgstr[0] "%d item lain terpilih (%s)"
 
 #. only non-folders are selected
-#: ../thunar/thunar-list-model.c:2419
+#: ../thunar/thunar-list-model.c:2435
 #, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
 msgstr[0] "%d item terpilih (%s)"
 
-#: ../thunar/thunar-list-model.c:2433
+#: ../thunar/thunar-list-model.c:2449
 #, c-format
 msgid "%d folder selected"
 msgid_plural "%d folders selected"
@@ -1231,40 +1260,40 @@ msgstr[0] "%d folder terpilih"
 #. * needs to change ", " to something else. The comma
 #. * is between the message about the number of folders
 #. * and the number of items in the selection
-#: ../thunar/thunar-list-model.c:2452
+#: ../thunar/thunar-list-model.c:2468
 #, c-format
 msgid "%s, %s"
 msgstr "%s, %s"
 
 #. append the "Open in New Tab" menu action
 #: ../thunar/thunar-location-buttons.c:176
-#: ../thunar/thunar-shortcuts-view.c:1097
+#: ../thunar/thunar-shortcuts-view.c:1105
 msgid "Open in New Tab"
 msgstr "Buka dalam Tab Baharu"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-location-buttons.c:177
-#: ../thunar/thunar-shortcuts-view.c:1103
+#: ../thunar/thunar-shortcuts-view.c:1111
 msgid "Open in New Window"
 msgstr "Buka dalam Tetingkap Baharu"
 
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-location-buttons.c:178
-#: ../thunar/thunar-standard-view.c:396 ../thunar/thunar-tree-view.c:1200
+#: ../thunar/thunar-standard-view.c:405 ../thunar/thunar-tree-view.c:1369
 msgid "Create _Folder..."
 msgstr "Cipta _Folder..."
 
-#: ../thunar/thunar-location-buttons.c:179 ../thunar/thunar-window.c:351
+#: ../thunar/thunar-location-buttons.c:179 ../thunar/thunar-window.c:354
 msgid "Delete all files and folders in the Trash"
 msgstr "Padam semua fail dan folder dalam Tong Sampah"
 
 #: ../thunar/thunar-location-buttons.c:180
-#: ../thunar/thunar-standard-view.c:403
+#: ../thunar/thunar-standard-view.c:412
 msgid "Paste Into Folder"
 msgstr "Tampal Ke Dalam Folder"
 
 #: ../thunar/thunar-location-buttons.c:181
-#: ../thunar/thunar-renamer-dialog.c:197 ../thunar/thunar-standard-view.c:397
+#: ../thunar/thunar-renamer-dialog.c:197 ../thunar/thunar-standard-view.c:406
 msgid "_Properties..."
 msgstr "Si_fat..."
 
@@ -1276,33 +1305,35 @@ msgstr "Jarak"
 msgid "The amount of space between the path buttons"
 msgstr "Amaun ruang diantara butang laluan"
 
-#: ../thunar/thunar-location-buttons.c:1238
+#: ../thunar/thunar-location-buttons.c:1244
 #, c-format
 msgid "Open \"%s\" in this window"
 msgstr "Buka \"%s\" dalam tetingkap ini"
 
-#: ../thunar/thunar-location-buttons.c:1244
+#: ../thunar/thunar-location-buttons.c:1250
 #, c-format
 msgid "Open \"%s\" in a new window"
 msgstr "Buka \"%s\" dalam tetingkap baharu"
 
-#: ../thunar/thunar-location-buttons.c:1249
+#: ../thunar/thunar-location-buttons.c:1255
 #, c-format
 msgid "Open \"%s\" in a new tab"
 msgstr "Buka \"%s\" dalam tab baharu"
 
-#: ../thunar/thunar-location-buttons.c:1254
+#: ../thunar/thunar-location-buttons.c:1260
 #, c-format
 msgid "Create a new folder in \"%s\""
 msgstr "Cipt folder baharu dalam \"%s\""
 
-#: ../thunar/thunar-location-buttons.c:1266
+#: ../thunar/thunar-location-buttons.c:1272
 #, c-format
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into \"%s\""
-msgstr "Alih atau salin fail dipilih terdahulu dengan perintah Potong atau salin ke dalam \"%s\""
+msgstr ""
+"Alih atau salin fail dipilih terdahulu dengan perintah Potong atau salin ke "
+"dalam \"%s\""
 
-#: ../thunar/thunar-location-buttons.c:1272
+#: ../thunar/thunar-location-buttons.c:1278
 #, c-format
 msgid "View the properties of the folder \"%s\""
 msgstr "Lihat sifat bagi folder \"%s\""
@@ -1315,11 +1346,11 @@ msgstr "Buka Lokasi"
 msgid "_Location:"
 msgstr "_Lokasi:"
 
-#: ../thunar/thunar-location-entry.c:202 ../thunar/thunar-window.c:359
+#: ../thunar/thunar-location-entry.c:195 ../thunar/thunar-window.c:362
 msgid "Reload the current folder"
 msgstr "Muat semula folder semasa"
 
-#: ../thunar/thunar-location-entry.c:395
+#: ../thunar/thunar-location-entry.c:388
 #, c-format
 msgid "File does not exist"
 msgstr "Fail tidak wujud"
@@ -1333,7 +1364,9 @@ msgstr "Menyahlekap peranti"
 msgid ""
 "The device \"%s\" is being unmounted by the system. Please do not remove the"
 " media or disconnect the drive"
-msgstr "Peranti \"%s\" sedang dinyahlekap oleh sistem. Sila jangan keluarkan media atau tanggalkan pemacu"
+msgstr ""
+"Peranti \"%s\" sedang dinyahlekap oleh sistem. Sila jangan keluarkan media "
+"atau tanggalkan pemacu"
 
 #: ../thunar/thunar-notify.c:175 ../thunar/thunar-notify.c:214
 msgid "Writing data to device"
@@ -1344,7 +1377,9 @@ msgstr "Menulis data ke peranti"
 msgid ""
 "There is data that needs to be written to the device \"%s\" before it can be"
 " removed. Please do not remove the media or disconnect the drive"
-msgstr "Terdapat data yang perlu ditulis ke peranti \"%s\" sebelum ia boleh dikeluarkan. Sila jangan keluarkan media atau tanggalkan pemacu"
+msgstr ""
+"Terdapat data yang perlu ditulis ke peranti \"%s\" sebelum ia boleh "
+"dikeluarkan. Sila jangan keluarkan media atau tanggalkan pemacu"
 
 #: ../thunar/thunar-notify.c:208
 msgid "Ejecting device"
@@ -1360,11 +1395,11 @@ msgstr "Peranti \"%s\" sedang dilenting. Ia mengambil sedikit masa"
 msgid "No templates installed"
 msgstr "Tiada templat dipasang"
 
-#: ../thunar/thunar-path-entry.c:202
+#: ../thunar/thunar-path-entry.c:203
 msgid "Icon size"
 msgstr "Saiz ikon"
 
-#: ../thunar/thunar-path-entry.c:203
+#: ../thunar/thunar-path-entry.c:204
 msgid "The icon size for the path entry"
 msgstr "Saiz ikon bagi masukan laluan"
 
@@ -1400,13 +1435,19 @@ msgstr "Benarkan fail ini di_jalankan sebagai program"
 msgid ""
 "Allowing untrusted programs to run\n"
 "presents a security risk to your system."
-msgstr "Membenarkan program tidak dipercayai\nberjalan menimbulkn risiko keselamatan\npada sistem anda."
+msgstr ""
+"Membenarkan program tidak dipercayai\n"
+"berjalan menimbulkn risiko keselamatan\n"
+"pada sistem anda."
 
 #: ../thunar/thunar-permissions-chooser.c:369
 msgid ""
 "The folder permissions are inconsistent, you\n"
 "may not be able to work with files in this folder."
-msgstr "Keizinan folder adalah tidak konsisten, anda\ntidak boleh bekerja dengan fail di dalam\nfolder ini."
+msgstr ""
+"Keizinan folder adalah tidak konsisten, anda\n"
+"tidak boleh bekerja dengan fail di dalam\n"
+"folder ini."
 
 #: ../thunar/thunar-permissions-chooser.c:382
 msgid "Correct _folder permissions..."
@@ -1437,7 +1478,10 @@ msgstr "Laksana secara rekursif?"
 msgid ""
 "Do you want to apply your changes recursively to\n"
 "all files and subfolders below the selected folder?"
-msgstr "Anda mahu laksana perubahan yang anda buat\nsecara rekursif ke semua fail dan folder dibawah\nfolder terpilih?"
+msgstr ""
+"Anda mahu laksana perubahan yang anda buat\n"
+"secara rekursif ke semua fail dan folder dibawah\n"
+"folder terpilih?"
 
 #: ../thunar/thunar-permissions-chooser.c:551
 msgid "Do _not ask me again"
@@ -1448,7 +1492,10 @@ msgid ""
 "If you select this option your choice will be remembered and you won't be "
 "asked again. You can use the preferences dialog to alter your choice "
 "afterwards."
-msgstr "Jika anda pilih pilihan ini pilihan anda akan diingati dan anda tidak akan ditanya lagi. Anda boleh guna dialog keutamaan untuk mengubah pilihan anda selepas ini."
+msgstr ""
+"Jika anda pilih pilihan ini pilihan anda akan diingati dan anda tidak akan "
+"ditanya lagi. Anda boleh guna dialog keutamaan untuk mengubah pilihan anda "
+"selepas ini."
 
 #: ../thunar/thunar-permissions-chooser.c:914
 msgid "Mixed file owners"
@@ -1494,7 +1541,10 @@ msgid ""
 "The folder permissions will be reset to a consistent state. Only users "
 "allowed to read the contents of this folder will be allowed to enter the "
 "folder afterwards."
-msgstr "Keizinan folder akan ditetap semula ke keadaan konsisten. Hanya pengguna dibenarkan baca kandungan folder ini akan dibenarkan memasuki folder selepas itu."
+msgstr ""
+"Keizinan folder akan ditetap semula ke keadaan konsisten. Hanya pengguna "
+"dibenarkan baca kandungan folder ini akan dibenarkan memasuki folder selepas"
+" itu."
 
 #: ../thunar/thunar-preferences-dialog.c:225
 msgid "File Manager Preferences"
@@ -1553,7 +1603,9 @@ msgstr "Isih _folder sebelum fail"
 #: ../thunar/thunar-preferences-dialog.c:299
 msgid ""
 "Select this option to list folders before files when you sort a folder."
-msgstr "Pilih pilihan ini untuk senaraikan folder sebelum fail bila anda mengisih folder."
+msgstr ""
+"Pilih pilihan ini untuk senaraikan folder sebelum fail bila anda mengisih "
+"folder."
 
 #: ../thunar/thunar-preferences-dialog.c:303
 msgid "Show file size in binary format"
@@ -1562,7 +1614,9 @@ msgstr "Tunjuk saiz fail dalam format binari"
 #: ../thunar/thunar-preferences-dialog.c:305
 msgid ""
 "Select this option to show file size in binary format instead of decimal."
-msgstr "Pilih pilihan ini untuk tunjuk saiz fail dalam format binari selain dari desimal."
+msgstr ""
+"Pilih pilihan ini untuk tunjuk saiz fail dalam format binari selain dari "
+"desimal."
 
 #: ../thunar/thunar-preferences-dialog.c:325
 msgid "_Text beside icons"
@@ -1572,7 +1626,9 @@ msgstr "_Teks disebelah ikon"
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
-msgstr "Pilih pilihan ini untuk ganti kapsyen ikon untuk item disebelah ikon berbanding dibawah ikon."
+msgstr ""
+"Pilih pilihan ini untuk ganti kapsyen ikon untuk item disebelah ikon "
+"berbanding dibawah ikon."
 
 #: ../thunar/thunar-preferences-dialog.c:336
 msgid "Date"
@@ -1640,7 +1696,10 @@ msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties "
 "dialog."
-msgstr "Pilih pilihan ini untuk papar lambang ikon di dalam anak tetingkap pintasan untuk semua folder yang mana lambang telah ditakrif dalam dialog sifat folder."
+msgstr ""
+"Pilih pilihan ini untuk papar lambang ikon di dalam anak tetingkap pintasan "
+"untuk semua folder yang mana lambang telah ditakrif dalam dialog sifat "
+"folder."
 
 #: ../thunar/thunar-preferences-dialog.c:421
 msgid "Tree Pane"
@@ -1658,7 +1717,10 @@ msgstr "Tunjuk _Lambang Ikon"
 msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
-msgstr "Pilih pilihan ini untuk papar lambang ikon dalam anak tetingkap pepohon untuk semua folder yang mana lambang telah ditakrif dalam dialog sifat folder."
+msgstr ""
+"Pilih pilihan ini untuk papar lambang ikon dalam anak tetingkap pepohon "
+"untuk semua folder yang mana lambang telah ditakrif dalam dialog sifat "
+"folder."
 
 #. Behavior
 #: ../thunar/thunar-preferences-dialog.c:463
@@ -1677,7 +1739,9 @@ msgstr "Klik _sekali untuk aktifkan item"
 msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
-msgstr "Nyatakan l_engahan sebelum satu item dipilih\nbila penuding tetikus terjeda diatasnya:"
+msgstr ""
+"Nyatakan l_engahan sebelum satu item dipilih\n"
+"bila penuding tetikus terjeda diatasnya:"
 
 #: ../thunar/thunar-preferences-dialog.c:517
 msgid ""
@@ -1686,7 +1750,12 @@ msgid ""
 "disable this behavior by moving the slider to the left-most position. This "
 "behavior may be useful when single clicks activate items, and you want only "
 "to select the item without activating it."
-msgstr "Bila pengaktifan sekali-klik dibenarkan, menjedakan penuding tetikus diatas satu item akan pilih secara automatik item tersebut selepas lengahan dipilih. Anda boleh lumpuhkan kelakuan ini dengan mengalih pelungsur ke kedudukan paling-kiri. Kelakuan ini mungkin berguna bil sekali klik aktifkan item, dan anda hanya mahu pilih item tanpa mengaktifkannya."
+msgstr ""
+"Bila pengaktifan sekali-klik dibenarkan, menjedakan penuding tetikus diatas "
+"satu item akan pilih secara automatik item tersebut selepas lengahan "
+"dipilih. Anda boleh lumpuhkan kelakuan ini dengan mengalih pelungsur ke "
+"kedudukan paling-kiri. Kelakuan ini mungkin berguna bil sekali klik aktifkan"
+" item, dan anda hanya mahu pilih item tanpa mengaktifkannya."
 
 #: ../thunar/thunar-preferences-dialog.c:535
 msgid "Disabled"
@@ -1730,7 +1799,10 @@ msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
-msgstr "Bila menukar keizinan folder, anda juga boleh\nlaksanakan perubahan pada kandungan folder.\nPilih kelakuan lalai dibawah:"
+msgstr ""
+"Bila menukar keizinan folder, anda juga boleh\n"
+"laksanakan perubahan pada kandungan folder.\n"
+"Pilih kelakuan lalai dibawah:"
 
 #: ../thunar/thunar-preferences-dialog.c:617
 msgid "Ask everytime"
@@ -1757,7 +1829,9 @@ msgstr "Benarkan Pengurusan _Volum"
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives\n"
 "and media (i.e. how cameras should be handled)."
-msgstr "<a href=\"volman-config:\">Konfigur</a> pengurusan pemacu dan media boleh\ntanggal (iaitu bagaimanakah kamera patut dikendalikan)."
+msgstr ""
+"<a href=\"volman-config:\">Konfigur</a> pengurusan pemacu dan media boleh\n"
+"tanggal (iaitu bagaimanakah kamera patut dikendalikan)."
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
@@ -1781,103 +1855,103 @@ msgstr[0] "%d operasi fail berjalan"
 msgid "Cancelling..."
 msgstr "Dibatalkan..."
 
-#: ../thunar/thunar-properties-dialog.c:244
+#: ../thunar/thunar-properties-dialog.c:264
 msgid "General"
 msgstr "Am"
 
-#: ../thunar/thunar-properties-dialog.c:267
+#: ../thunar/thunar-properties-dialog.c:287
 #: ../plugins/thunar-uca/thunar-uca-editor.c:132
 msgid "_Name:"
 msgstr "_Nama:"
 
-#: ../thunar/thunar-properties-dialog.c:294
+#: ../thunar/thunar-properties-dialog.c:314
 msgid "Names:"
 msgstr "Nama:"
 
 #. Second box (kind, open with, link target)
-#: ../thunar/thunar-properties-dialog.c:314
+#: ../thunar/thunar-properties-dialog.c:334
 msgid "Kind:"
 msgstr "Jenis:"
 
-#: ../thunar/thunar-properties-dialog.c:335
+#: ../thunar/thunar-properties-dialog.c:355
 msgid "_Open With:"
 msgstr "_Buka Dengan:"
 
-#: ../thunar/thunar-properties-dialog.c:349
+#: ../thunar/thunar-properties-dialog.c:369
 msgid "Link Target:"
 msgstr "Sasaran Pautan:"
 
-#: ../thunar/thunar-properties-dialog.c:381
+#: ../thunar/thunar-properties-dialog.c:401
 msgid "Location:"
 msgstr "Lokasi:"
 
 #. Third box (deleted, modified, accessed)
-#: ../thunar/thunar-properties-dialog.c:406
+#: ../thunar/thunar-properties-dialog.c:426
 msgid "Deleted:"
 msgstr "Dipadam:"
 
-#: ../thunar/thunar-properties-dialog.c:434
+#: ../thunar/thunar-properties-dialog.c:454
 msgid "Accessed:"
 msgstr "Dicapai:"
 
-#: ../thunar/thunar-properties-dialog.c:472
+#: ../thunar/thunar-properties-dialog.c:492
 msgid "Volume:"
 msgstr "Volum:"
 
-#: ../thunar/thunar-properties-dialog.c:496
+#: ../thunar/thunar-properties-dialog.c:516
 msgid "Usage:"
 msgstr "Penggunaan:"
 
 #. Emblem chooser
-#: ../thunar/thunar-properties-dialog.c:529
+#: ../thunar/thunar-properties-dialog.c:549
 msgid "Emblems"
 msgstr "Lambang"
 
 #. allocate the icon chooser
 #. allocate the chooser dialog
-#: ../thunar/thunar-properties-dialog.c:768
+#: ../thunar/thunar-properties-dialog.c:802
 #: ../plugins/thunar-uca/thunar-uca-editor.c:609
 #, c-format
 msgid "Select an Icon for \"%s\""
 msgstr "Pilih satu Ikon untuk \"%s\""
 
-#: ../thunar/thunar-properties-dialog.c:794
+#: ../thunar/thunar-properties-dialog.c:828
 #, c-format
 msgid "Failed to change icon of \"%s\""
 msgstr "Gagal menukar ikon \"%s\""
 
 #. update the properties dialog title
-#: ../thunar/thunar-properties-dialog.c:896
+#: ../thunar/thunar-properties-dialog.c:930
 #, c-format
 msgid "%s - Properties"
 msgstr "%s - Sifat"
 
-#: ../thunar/thunar-properties-dialog.c:947
+#: ../thunar/thunar-properties-dialog.c:981
 msgid "broken link"
 msgstr "pautan rosak"
 
-#: ../thunar/thunar-properties-dialog.c:958
+#: ../thunar/thunar-properties-dialog.c:992
 msgid "unknown"
 msgstr "tidak diketahui"
 
 #. update the properties dialog title
-#: ../thunar/thunar-properties-dialog.c:1124
+#: ../thunar/thunar-properties-dialog.c:1159
 msgid "Properties"
 msgstr "Sifat"
 
-#: ../thunar/thunar-properties-dialog.c:1224
+#: ../thunar/thunar-properties-dialog.c:1259
 msgid "mixed"
 msgstr "bercampur"
 
-#: ../thunar/thunar-renamer-dialog.c:190 ../thunar/thunar-window.c:347
+#: ../thunar/thunar-renamer-dialog.c:190 ../thunar/thunar-window.c:350
 msgid "_File"
 msgstr "_Fail"
 
-#: ../thunar/thunar-renamer-dialog.c:191 ../thunar/thunar-window.c:350
+#: ../thunar/thunar-renamer-dialog.c:191 ../thunar/thunar-window.c:353
 msgid "_Send To"
 msgstr "_Hantar Ke"
 
-#: ../thunar/thunar-renamer-dialog.c:192 ../thunar/thunar-standard-view.c:394
+#: ../thunar/thunar-renamer-dialog.c:192 ../thunar/thunar-standard-view.c:403
 msgid "File Context Menu"
 msgstr "Menu Konteks Fail"
 
@@ -1897,7 +1971,7 @@ msgstr "Kosongkan"
 msgid "Clear the file list below"
 msgstr "Kosongkan senarai fail dibawah"
 
-#: ../thunar/thunar-renamer-dialog.c:196 ../thunar/thunar-window.c:375
+#: ../thunar/thunar-renamer-dialog.c:196 ../thunar/thunar-window.c:378
 msgid "_About"
 msgstr "Perih_al"
 
@@ -1905,7 +1979,7 @@ msgstr "Perih_al"
 msgid "Display information about Thunar Bulk Rename"
 msgstr "Papar maklumat mengenai Nama Semula Kelompok Thunar"
 
-#: ../thunar/thunar-renamer-dialog.c:197 ../thunar/thunar-standard-view.c:397
+#: ../thunar/thunar-renamer-dialog.c:197 ../thunar/thunar-standard-view.c:406
 msgid "View the properties of the selected file"
 msgstr "Lihat sifat bagi fail terpilih"
 
@@ -1923,7 +1997,9 @@ msgstr "_Nama Semula Fail"
 #: ../thunar/thunar-renamer-dialog.c:363
 msgid ""
 "Click here to actually rename the files listed above to their new names."
-msgstr "Klik di sini untuk benar-benar namakan semula fail tersenarai diatas nama baharu mereka:"
+msgstr ""
+"Klik di sini untuk benar-benar namakan semula fail tersenarai diatas nama "
+"baharu mereka:"
 
 #: ../thunar/thunar-renamer-dialog.c:438
 msgid "New Name"
@@ -1932,7 +2008,9 @@ msgstr "Nama Baharu"
 #: ../thunar/thunar-renamer-dialog.c:501
 msgid ""
 "Click here to view the documentation for the selected rename operation."
-msgstr "Klik di sini untuk melihat dokumentasi bagi operasi nama semula yang dipilih."
+msgstr ""
+"Klik di sini untuk melihat dokumentasi bagi operasi nama semula yang "
+"dipilih."
 
 #. TRANSLATORS: You can test this string by temporarily removing thunar-sbr.*
 #. from $libdir/thunarx-2/,
@@ -1943,7 +2021,11 @@ msgid ""
 "No renamer modules were found on your system. Please check your\n"
 "installation or contact your system administrator. If you install Thunar\n"
 "from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
-msgstr "Tiada modul penama semula ditemui dalam sistem anda. Sila semak\npemasangan anda atau hubungi pentadbir sistem anda. Jika anda\nmemasang Thunar dari sumber, benarkan pemalam \"Simple Builtin\nRenamers\"."
+msgstr ""
+"Tiada modul penama semula ditemui dalam sistem anda. Sila semak\n"
+"pemasangan anda atau hubungi pentadbir sistem anda. Jika anda\n"
+"memasang Thunar dari sumber, benarkan pemalam \"Simple Builtin\n"
+"Renamers\"."
 
 #. tell the user that we failed
 #: ../thunar/thunar-renamer-dialog.c:954
@@ -1977,7 +2059,10 @@ msgstr "Nama Semula Kelompok"
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
-msgstr "Nama Semula Kelompok Thunar adalah alat yang\nhebat untuk menamakan semula fail berbilang\nsecara serentak."
+msgstr ""
+"Nama Semula Kelompok Thunar adalah alat yang\n"
+"hebat untuk menamakan semula fail berbilang\n"
+"secara serentak."
 
 #: ../thunar/thunar-renamer-dialog.c:1690
 msgid "Remove File"
@@ -2004,7 +2089,10 @@ msgid ""
 "You can either choose to skip this file and continue to rename the remaining"
 " files, or revert the previously renamed files to their previous names, or "
 "cancel the operation without reverting previous changes."
-msgstr "Anda boleh sama ada pilih untuk langkau fail ini dan terus namakan semula fail berbaki, atau kembali ke fail bernama terdahulu ke nama mereka sebelum ini, atau batalkan operasi tanpa kembali ke perubahan terdahulu."
+msgstr ""
+"Anda boleh sama ada pilih untuk langkau fail ini dan terus namakan semula "
+"fail berbaki, atau kembali ke fail bernama terdahulu ke nama mereka sebelum "
+"ini, atau batalkan operasi tanpa kembali ke perubahan terdahulu."
 
 #: ../thunar/thunar-renamer-progress.c:197
 msgid "_Revert Changes"
@@ -2020,30 +2108,30 @@ msgid ""
 "Do you want to skip this file and continue to rename the remaining files?"
 msgstr "Anda mahu langkau fail ini dan terus namakan semula fail berbaki?"
 
-#: ../thunar/thunar-shortcuts-model.c:597
-#: ../plugins/thunar-tpa/thunar-tpa.c:308
+#: ../thunar/thunar-shortcuts-model.c:629
+#: ../plugins/thunar-tpa/thunar-tpa.c:299
 msgid "Trash is empty"
 msgstr "Tong sampah adalah kosong"
 
-#: ../thunar/thunar-shortcuts-model.c:601
+#: ../thunar/thunar-shortcuts-model.c:633
 #, c-format
 msgid "Trash contains %d file"
 msgid_plural "Trash contains %d files"
 msgstr[0] "Tong sampah mengandungi %d fail"
 
-#: ../thunar/thunar-shortcuts-model.c:890
+#: ../thunar/thunar-shortcuts-model.c:922
 msgid "DEVICES"
 msgstr "PERANTI"
 
-#: ../thunar/thunar-shortcuts-model.c:932
+#: ../thunar/thunar-shortcuts-model.c:964
 msgid "NETWORK"
 msgstr "RANGKAIAN"
 
-#: ../thunar/thunar-shortcuts-model.c:938
+#: ../thunar/thunar-shortcuts-model.c:970
 msgid "Browse Network"
 msgstr "Layar Rangkaian"
 
-#: ../thunar/thunar-shortcuts-model.c:959
+#: ../thunar/thunar-shortcuts-model.c:991
 msgid "PLACES"
 msgstr "TEMPAT"
 
@@ -2059,78 +2147,78 @@ msgstr[0] "Tambah folder terpilih ke anak tetingkap sisi pintasan"
 
 #. append the "Mount" item
 #. append the "Mount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1124 ../thunar/thunar-tree-view.c:1148
+#: ../thunar/thunar-shortcuts-view.c:1132 ../thunar/thunar-tree-view.c:1317
 msgid "_Mount"
 msgstr "L_ekap"
 
 #. append the "Unmount" item
 #. append the "Unmount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1130 ../thunar/thunar-tree-view.c:1154
+#: ../thunar/thunar-shortcuts-view.c:1138 ../thunar/thunar-tree-view.c:1323
 msgid "_Unmount"
 msgstr "_Nyahlekap"
 
 #. append the "Disconnect" (eject + safely remove drive) item
 #. append the "Eject" menu action
-#: ../thunar/thunar-shortcuts-view.c:1136 ../thunar/thunar-tree-view.c:1160
+#: ../thunar/thunar-shortcuts-view.c:1144 ../thunar/thunar-tree-view.c:1329
 msgid "_Eject"
 msgstr "_Lenting"
 
 #. append the "Disconnect" item
-#: ../thunar/thunar-shortcuts-view.c:1153
+#: ../thunar/thunar-shortcuts-view.c:1161
 msgid "Create _Shortcut"
 msgstr "Cipta _Pintasan"
 
 #. append the "Disconnect" item
 #. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:1174 ../thunar/thunar-tree-view.c:1169
+#: ../thunar/thunar-shortcuts-view.c:1182 ../thunar/thunar-tree-view.c:1338
 msgid "Disconn_ect"
 msgstr "P_utuskan"
 
-#: ../thunar/thunar-shortcuts-view.c:1253
+#: ../thunar/thunar-shortcuts-view.c:1261
 msgid "_Remove Shortcut"
 msgstr "_Buang Pintasan"
 
 #. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:1267
+#: ../thunar/thunar-shortcuts-view.c:1275
 msgid "Re_name Shortcut"
 msgstr "_Nama Semula Pintasan"
 
-#: ../thunar/thunar-shortcuts-view.c:1556
+#: ../thunar/thunar-shortcuts-view.c:1581
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "Laluan \"%s\" tidak merujuk ke direktori"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1576
+#: ../thunar/thunar-shortcuts-view.c:1601
 msgid "Failed to add new shortcut"
 msgstr "Gagal menambah pintasan baharu"
 
-#: ../thunar/thunar-shortcuts-view.c:1853 ../thunar/thunar-tree-view.c:1834
+#: ../thunar/thunar-shortcuts-view.c:1878 ../thunar/thunar-tree-view.c:2003
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Gagal melenting \"%s\""
 
-#: ../thunar/thunar-shortcuts-view.c:1995 ../thunar/thunar-tree-view.c:1889
+#: ../thunar/thunar-shortcuts-view.c:2020 ../thunar/thunar-tree-view.c:2058
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Gagal menyahlekap \"%s\""
 
-#: ../thunar/thunar-size-label.c:142
+#: ../thunar/thunar-size-label.c:164
 msgid "Click here to stop calculating the total size of the folder."
 msgstr "Klik di sini untuk henti mengira jumlah saiz folder."
 
 #. add the label widget
 #. tell the user that we started calculation
-#: ../thunar/thunar-size-label.c:152 ../thunar/thunar-size-label.c:301
+#: ../thunar/thunar-size-label.c:174 ../thunar/thunar-size-label.c:329
 msgid "Calculating..."
 msgstr "Mengira..."
 
 #. tell the user that the operation was canceled
-#: ../thunar/thunar-size-label.c:254
+#: ../thunar/thunar-size-label.c:288
 msgid "Calculation aborted"
 msgstr "Pengiraan dihenti paksa"
 
-#: ../thunar/thunar-size-label.c:391
+#: ../thunar/thunar-size-label.c:413
 #, c-format
 msgid "%u item, totalling %s"
 msgid_plural "%u items, totalling %s"
@@ -2138,269 +2226,276 @@ msgstr[0] "%u item, berjumlah %s"
 
 #. TRANSLATORS: this is shows if during the deep count size
 #. * directories were not accessible
-#: ../thunar/thunar-size-label.c:398
+#: ../thunar/thunar-size-label.c:420
 msgid "(some contents unreadable)"
 msgstr "(sesetengah kandungan tidak boleh dibaca)"
 
 #. nothing was readable, so permission was denied
-#: ../thunar/thunar-size-label.c:409
+#: ../thunar/thunar-size-label.c:431
 msgid "Permission denied"
 msgstr "Keizinan dinafikan"
 
-#: ../thunar/thunar-standard-view.c:395
+#: ../thunar/thunar-standard-view.c:404
 msgid "Folder Context Menu"
 msgstr "Menu Konteks Folder"
 
-#: ../thunar/thunar-standard-view.c:396
+#: ../thunar/thunar-standard-view.c:405
 msgid "Create an empty folder within the current folder"
 msgstr "Cipta folder kosong di dalam folder semasa"
 
 #. append the "Cut" menu action
-#: ../thunar/thunar-standard-view.c:398 ../thunar/thunar-tree-view.c:1227
+#: ../thunar/thunar-standard-view.c:407 ../thunar/thunar-tree-view.c:1396
 msgid "Cu_t"
 msgstr "Po_tong"
 
 #. append the "Copy" menu action
-#: ../thunar/thunar-standard-view.c:399 ../thunar/thunar-tree-view.c:1238
+#: ../thunar/thunar-standard-view.c:408 ../thunar/thunar-tree-view.c:1407
 msgid "_Copy"
 msgstr "_Salin"
 
-#: ../thunar/thunar-standard-view.c:400
+#: ../thunar/thunar-standard-view.c:409
 msgid "_Paste"
 msgstr "_Tampal"
 
-#: ../thunar/thunar-standard-view.c:400
+#: ../thunar/thunar-standard-view.c:409
 msgid "Move or copy files previously selected by a Cut or Copy command"
-msgstr "Alih atau salin fail dipilih terdahulu dengan perintah Potong atau Salin"
+msgstr ""
+"Alih atau salin fail dipilih terdahulu dengan perintah Potong atau Salin"
 
 #. append the "Move to Tash" menu action
-#: ../thunar/thunar-standard-view.c:401 ../thunar/thunar-tree-view.c:1279
+#: ../thunar/thunar-standard-view.c:410 ../thunar/thunar-tree-view.c:1448
 msgid "Mo_ve to Trash"
 msgstr "A_lih ke Tong Sampah"
 
 #. append the "Delete" menu action
-#: ../thunar/thunar-standard-view.c:402 ../thunar/thunar-tree-view.c:1291
+#: ../thunar/thunar-standard-view.c:411 ../thunar/thunar-tree-view.c:1460
 msgid "_Delete"
 msgstr "Pa_dam"
 
-#: ../thunar/thunar-standard-view.c:403
+#: ../thunar/thunar-standard-view.c:412
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
-msgstr "Alih atau salin fail dipilih terdahulu dengan perintah Potong atau Salin ke dalam folder terpilih"
+msgstr ""
+"Alih atau salin fail dipilih terdahulu dengan perintah Potong atau Salin ke "
+"dalam folder terpilih"
 
-#: ../thunar/thunar-standard-view.c:404
+#: ../thunar/thunar-standard-view.c:413
 msgid "Select _all Files"
 msgstr "Pilih semu_a Fail"
 
-#: ../thunar/thunar-standard-view.c:404
+#: ../thunar/thunar-standard-view.c:413
 msgid "Select all files in this window"
 msgstr "Pilih semua fail di dalam tetingkap ini"
 
-#: ../thunar/thunar-standard-view.c:405
+#: ../thunar/thunar-standard-view.c:414
 msgid "Select _by Pattern..."
 msgstr "Pilih _mengikut Corak..."
 
-#: ../thunar/thunar-standard-view.c:405
+#: ../thunar/thunar-standard-view.c:414
 msgid "Select all files that match a certain pattern"
 msgstr "Pilih semua fail yang sepadan dengan corak tertentu"
 
-#: ../thunar/thunar-standard-view.c:406
+#: ../thunar/thunar-standard-view.c:415
 msgid "_Invert Selection"
 msgstr "_Songsangkan Pemilihan"
 
-#: ../thunar/thunar-standard-view.c:406
+#: ../thunar/thunar-standard-view.c:415
 msgid "Select all and only the items that are not currently selected"
 msgstr "Pilih semua dan hanya item yang belum dipilih ketika ini"
 
-#: ../thunar/thunar-standard-view.c:407
+#: ../thunar/thunar-standard-view.c:416
 msgid "Du_plicate"
 msgstr "Gan_da Duakan"
 
-#: ../thunar/thunar-standard-view.c:408 ../thunar/thunar-standard-view.c:4360
+#: ../thunar/thunar-standard-view.c:417 ../thunar/thunar-standard-view.c:4464
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "_Jadikan Pautan"
 
 #. append the "Rename" menu action
-#: ../thunar/thunar-standard-view.c:409 ../thunar/thunar-tree-view.c:1314
+#: ../thunar/thunar-standard-view.c:418 ../thunar/thunar-tree-view.c:1483
 msgid "_Rename..."
 msgstr "_Nama Semula..."
 
-#: ../thunar/thunar-standard-view.c:410
+#: ../thunar/thunar-standard-view.c:419
 msgid "_Restore"
 msgstr "P_ulih"
 
 #. add the "Create Document" sub menu action
-#: ../thunar/thunar-standard-view.c:675
+#: ../thunar/thunar-standard-view.c:684
 msgid "Create _Document"
 msgstr "Cipta _Dokumen"
 
-#: ../thunar/thunar-standard-view.c:1632
+#: ../thunar/thunar-standard-view.c:1648
 msgid "Loading folder contents..."
 msgstr "Memuatkan kandungan folder..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2200 ../thunar/thunar-window.c:2788
+#: ../thunar/thunar-standard-view.c:2240 ../thunar/thunar-window.c:2870
 msgid "Failed to open the home folder"
 msgstr "Gagal membuka folder rumah"
 
-#: ../thunar/thunar-standard-view.c:2253
+#: ../thunar/thunar-standard-view.c:2290
 msgid "New Empty File"
 msgstr "Fail Kosong Baharu"
 
-#: ../thunar/thunar-standard-view.c:2254
+#: ../thunar/thunar-standard-view.c:2291
 msgid "New Empty File..."
 msgstr "Fail Kosong Baharu..."
 
-#: ../thunar/thunar-standard-view.c:2579
+#: ../thunar/thunar-standard-view.c:2616
 msgid "Select by Pattern"
 msgstr "Pilih mengikut Corak"
 
-#: ../thunar/thunar-standard-view.c:2585
+#: ../thunar/thunar-standard-view.c:2622
 msgid "_Select"
 msgstr "P_ilih"
 
-#: ../thunar/thunar-standard-view.c:2594
+#: ../thunar/thunar-standard-view.c:2631
 msgid "_Pattern:"
 msgstr "_Corak:"
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: ../thunar/thunar-standard-view.c:3163
+#: ../thunar/thunar-standard-view.c:3200
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Nama fail tidak sah disedia oleh laman seret XDS"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:3344
+#: ../thunar/thunar-standard-view.c:3381
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Gagal mencipta pautan untuk URL \"%s\""
 
-#: ../thunar/thunar-standard-view.c:3737 ../thunar/thunar-window.c:2883
+#: ../thunar/thunar-standard-view.c:3829 ../thunar/thunar-window.c:2965
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Gagal membuka direktori \"%s\""
 
-#: ../thunar/thunar-standard-view.c:4311
+#: ../thunar/thunar-standard-view.c:4415
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Sediakan fail terpilih untuk dialih dengan perintah Tampal"
 
-#: ../thunar/thunar-standard-view.c:4319
+#: ../thunar/thunar-standard-view.c:4423
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Sediakan fail terpilih untuk disalin dengan perintah Tampal"
 
-#: ../thunar/thunar-standard-view.c:4331
+#: ../thunar/thunar-standard-view.c:4435
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "Alih fail terpilih ke dalam Tong Sampah"
 
-#: ../thunar/thunar-standard-view.c:4339
+#: ../thunar/thunar-standard-view.c:4443
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "Padan fail terpilih secara kekal"
 
-#: ../thunar/thunar-standard-view.c:4353
+#: ../thunar/thunar-standard-view.c:4457
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Ganda duakan setiap fail terpilih"
 
-#: ../thunar/thunar-standard-view.c:4362
+#: ../thunar/thunar-standard-view.c:4466
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Cipta pautan simbolik bagi setiap fail terpilih"
 
-#: ../thunar/thunar-standard-view.c:4370
+#: ../thunar/thunar-standard-view.c:4474
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Nama semula fail terpilih"
 
-#: ../thunar/thunar-standard-view.c:4378
+#: ../thunar/thunar-standard-view.c:4482
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
 msgstr[0] "Pulihkan fail terpilih"
 
 #. add the "Empty File" item
-#: ../thunar/thunar-templates-action.c:473
+#: ../thunar/thunar-templates-action.c:483
 msgid "_Empty File"
 msgstr "Fail _Kosong"
 
-#: ../thunar/thunar-transfer-job.c:741
+#: ../thunar/thunar-transfer-job.c:823
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
 "destination"
-msgstr "Ralat ketika menyalin ke \"%s\": %s lebih ruang diperlukan untuk disalin ke destinasi"
+msgstr ""
+"Ralat ketika menyalin ke \"%s\": %s lebih ruang diperlukan untuk disalin ke "
+"destinasi"
 
-#: ../thunar/thunar-transfer-job.c:751
+#: ../thunar/thunar-transfer-job.c:833
 #, c-format
 msgid "Error while copying to \"%s\": The destination is read-only"
 msgstr "Ralat ketika menyalin ke \"%s\": Destinasi adalah baca-sahaja"
 
-#: ../thunar/thunar-transfer-job.c:794
+#: ../thunar/thunar-transfer-job.c:876
 msgid "Collecting files..."
 msgstr "Mengutip fail..."
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:826
+#: ../thunar/thunar-transfer-job.c:908
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "Cuba memulihkan \"%s\""
 
-#: ../thunar/thunar-transfer-job.c:854
+#: ../thunar/thunar-transfer-job.c:936
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
-msgstr "Folder \"%s\" tidak lagi wujud tetapi diperlukan untuk memulihkan fail \"%s\" dari tong sampah"
+msgstr ""
+"Folder \"%s\" tidak lagi wujud tetapi diperlukan untuk memulihkan fail "
+"\"%s\" dari tong sampah"
 
-#: ../thunar/thunar-transfer-job.c:879
+#: ../thunar/thunar-transfer-job.c:961
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Gagal memulihkan folder \"%s\""
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:899
+#: ../thunar/thunar-transfer-job.c:981
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Cuba mengalih \"%s\""
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:929
+#: ../thunar/thunar-transfer-job.c:1011
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "Tidak dapat alih \"%s\" secara terus. Mengutip fail untuk disalin..."
 
-#: ../thunar/thunar-transfer-job.c:1097
+#: ../thunar/thunar-transfer-job.c:1173
 #, c-format
 msgid "%s of %s"
 msgstr "%s dari %s"
 
-#: ../thunar/thunar-transfer-job.c:1117
+#: ../thunar/thunar-transfer-job.c:1193
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "%lu jam berbaki (%s/saat)"
 
-#: ../thunar/thunar-transfer-job.c:1125
+#: ../thunar/thunar-transfer-job.c:1201
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "%lu minit berbaki (%s/saat)"
 
-#: ../thunar/thunar-transfer-job.c:1132
+#: ../thunar/thunar-transfer-job.c:1208
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
 msgstr[0] "%lu saat berbaki (%s/saat)"
 
-#: ../thunar/thunar-trash-action.c:105
+#: ../thunar/thunar-trash-action.c:108
 msgid "T_rash"
 msgstr "T_ong Sampah"
 
-#: ../thunar/thunar-trash-action.c:166
+#: ../thunar/thunar-trash-action.c:169
 msgid "Display the contents of the trash can"
 msgstr "Papar kandungan tong sampah"
 
@@ -2409,12 +2504,12 @@ msgid "Loading..."
 msgstr "Memuatkan..."
 
 #. append the "Paste Into Folder" menu action
-#: ../thunar/thunar-tree-view.c:1254
+#: ../thunar/thunar-tree-view.c:1423
 msgid "_Paste Into Folder"
 msgstr "_Tampal Ke Dalam Folder"
 
 #. append the "Properties" menu action
-#: ../thunar/thunar-tree-view.c:1373
+#: ../thunar/thunar-tree-view.c:1542
 msgid "P_roperties..."
 msgstr "Si_fat..."
 
@@ -2462,330 +2557,336 @@ msgstr "%A pada %X"
 msgid "%x at %X"
 msgstr "%x pada %X"
 
-#: ../thunar/thunar-window.c:348
+#: ../thunar/thunar-window.c:351
 msgid "New _Tab"
 msgstr "_Tab Baharu"
 
-#: ../thunar/thunar-window.c:348
+#: ../thunar/thunar-window.c:351
 msgid "Open a new tab for the displayed location"
 msgstr "Buka tab baharu untuk lokasi yang dipaparkan"
 
-#: ../thunar/thunar-window.c:349
+#: ../thunar/thunar-window.c:352
 msgid "New _Window"
 msgstr "T_etingkap Baharu"
 
-#: ../thunar/thunar-window.c:349
+#: ../thunar/thunar-window.c:352
 msgid "Open a new Thunar window for the displayed location"
 msgstr "Buka satu tetingkap Thunar baharu untuk lokasi yang dipaparkan"
 
-#: ../thunar/thunar-window.c:352
+#: ../thunar/thunar-window.c:355
 msgid "Detac_h Tab"
 msgstr "Tan_ggalkan Tab"
 
-#: ../thunar/thunar-window.c:352
+#: ../thunar/thunar-window.c:355
 msgid "Open current folder in a new window"
 msgstr "Buka folder semasa dalam tetingkap baharu"
 
-#: ../thunar/thunar-window.c:353
+#: ../thunar/thunar-window.c:356
 msgid "Close _All Windows"
 msgstr "Tutup Semu_a Tetingkap"
 
-#: ../thunar/thunar-window.c:353
+#: ../thunar/thunar-window.c:356
 msgid "Close all Thunar windows"
 msgstr "Tutup semua tetingkap Thunar"
 
-#: ../thunar/thunar-window.c:354
+#: ../thunar/thunar-window.c:357
 msgid "C_lose Tab"
 msgstr "T_utup Tab"
 
-#: ../thunar/thunar-window.c:354
+#: ../thunar/thunar-window.c:357
 msgid "Close this folder"
 msgstr "Tutup folder ini"
 
-#: ../thunar/thunar-window.c:355
+#: ../thunar/thunar-window.c:358
 msgid "_Close Window"
 msgstr "_Tutup Tetingkap"
 
-#: ../thunar/thunar-window.c:355
+#: ../thunar/thunar-window.c:358
 msgid "Close this window"
 msgstr "Tutup tetingkap ini"
 
-#: ../thunar/thunar-window.c:356
+#: ../thunar/thunar-window.c:359
 msgid "_Edit"
 msgstr "S_unting"
 
-#: ../thunar/thunar-window.c:357
+#: ../thunar/thunar-window.c:360
 msgid "Pr_eferences..."
 msgstr "K_eutamaan..."
 
-#: ../thunar/thunar-window.c:357
+#: ../thunar/thunar-window.c:360
 msgid "Edit Thunars Preferences"
 msgstr "Sunting Keutamaan Thunar"
 
-#: ../thunar/thunar-window.c:358
+#: ../thunar/thunar-window.c:361
 msgid "_View"
 msgstr "_Lihat"
 
-#: ../thunar/thunar-window.c:359
+#: ../thunar/thunar-window.c:362
 msgid "_Reload"
 msgstr "_Muat Semula"
 
-#: ../thunar/thunar-window.c:360
+#: ../thunar/thunar-window.c:363
 msgid "_Location Selector"
 msgstr "Pemilih L_okasi"
 
-#: ../thunar/thunar-window.c:361
+#: ../thunar/thunar-window.c:364
 msgid "_Side Pane"
 msgstr "Anak Tetingkap _Sisi"
 
-#: ../thunar/thunar-window.c:362
+#: ../thunar/thunar-window.c:365
 msgid "Zoom I_n"
 msgstr "Zum _Masuk"
 
-#: ../thunar/thunar-window.c:362
+#: ../thunar/thunar-window.c:365
 msgid "Show the contents in more detail"
 msgstr "Tunjuk kandungan dengan lebih terperinci"
 
-#: ../thunar/thunar-window.c:363
+#: ../thunar/thunar-window.c:366
 msgid "Zoom _Out"
 msgstr "Zum _Keluar"
 
-#: ../thunar/thunar-window.c:363
+#: ../thunar/thunar-window.c:366
 msgid "Show the contents in less detail"
 msgstr "Tunjuk kandungan dengan kurang perincian"
 
-#: ../thunar/thunar-window.c:364
+#: ../thunar/thunar-window.c:367
 msgid "Normal Si_ze"
 msgstr "Sai_z Biasa"
 
-#: ../thunar/thunar-window.c:364
+#: ../thunar/thunar-window.c:367
 msgid "Show the contents at the normal size"
 msgstr "Tunjuk kandungan pada saiz biasa"
 
-#: ../thunar/thunar-window.c:365
+#: ../thunar/thunar-window.c:368
 msgid "_Go"
 msgstr "Per_gi"
 
-#: ../thunar/thunar-window.c:366
+#: ../thunar/thunar-window.c:369
 msgid "Open _Parent"
 msgstr "Buka _Induk"
 
-#: ../thunar/thunar-window.c:366
+#: ../thunar/thunar-window.c:369
 msgid "Open the parent folder"
 msgstr "Buka folder induk"
 
-#: ../thunar/thunar-window.c:367
+#: ../thunar/thunar-window.c:370
 msgid "_Home"
 msgstr "_Rumah"
 
-#: ../thunar/thunar-window.c:367
+#: ../thunar/thunar-window.c:370
 msgid "Go to the home folder"
 msgstr "Pergi ke folder rumah"
 
-#: ../thunar/thunar-window.c:368
+#: ../thunar/thunar-window.c:371
 msgid "Desktop"
 msgstr "Desktop"
 
-#: ../thunar/thunar-window.c:368
+#: ../thunar/thunar-window.c:371
 msgid "Go to the desktop folder"
 msgstr "Pergi ke folder desktop"
 
-#: ../thunar/thunar-window.c:369
+#: ../thunar/thunar-window.c:372
 msgid "Browse the file system"
 msgstr "Layar sistem fail"
 
-#: ../thunar/thunar-window.c:370
+#: ../thunar/thunar-window.c:373
 msgid "B_rowse Network"
 msgstr "La_yar Rangkaian"
 
-#: ../thunar/thunar-window.c:370
+#: ../thunar/thunar-window.c:373
 msgid "Browse local network connections"
 msgstr "Layar sambungan rangkaian setempat"
 
-#: ../thunar/thunar-window.c:371
+#: ../thunar/thunar-window.c:374
 msgid "T_emplates"
 msgstr "T_emplat"
 
-#: ../thunar/thunar-window.c:371
+#: ../thunar/thunar-window.c:374
 msgid "Go to the templates folder"
 msgstr "Pergi ke folder templat"
 
-#: ../thunar/thunar-window.c:372
+#: ../thunar/thunar-window.c:375
 msgid "_Open Location..."
 msgstr "_Buka Lokasi..."
 
-#: ../thunar/thunar-window.c:372
+#: ../thunar/thunar-window.c:375
 msgid "Specify a location to open"
 msgstr "Tentukan lokasi untuk dibuka"
 
-#: ../thunar/thunar-window.c:373
+#: ../thunar/thunar-window.c:376
 msgid "_Help"
 msgstr "_Bantuan"
 
-#: ../thunar/thunar-window.c:374
+#: ../thunar/thunar-window.c:377
 msgid "_Contents"
 msgstr "_Kandungan"
 
-#: ../thunar/thunar-window.c:374
+#: ../thunar/thunar-window.c:377
 msgid "Display Thunar user manual"
 msgstr "Papar panduan pengguna Thunar"
 
-#: ../thunar/thunar-window.c:375
+#: ../thunar/thunar-window.c:378
 msgid "Display information about Thunar"
 msgstr "Papar maklumat mengenai Thunar"
 
-#: ../thunar/thunar-window.c:380
+#: ../thunar/thunar-window.c:383
 msgid "Show _Hidden Files"
 msgstr "Tunjuk Fail Ter_sembunyi"
 
-#: ../thunar/thunar-window.c:380
+#: ../thunar/thunar-window.c:383
 msgid "Toggles the display of hidden files in the current window"
 msgstr "Togol papar fail tersembunyi dalam tetingkap semasa"
 
-#: ../thunar/thunar-window.c:381
+#: ../thunar/thunar-window.c:384
 msgid "_Pathbar Style"
 msgstr "Ga_ya Palang Laluan"
 
-#: ../thunar/thunar-window.c:381
+#: ../thunar/thunar-window.c:384
 msgid "Modern approach with buttons that correspond to folders"
 msgstr "Pendekatan modern dengan butang yang berkaitan dengan folder"
 
-#: ../thunar/thunar-window.c:382
+#: ../thunar/thunar-window.c:385
 msgid "_Toolbar Style"
 msgstr "Gaya Palang Ala_t"
 
-#: ../thunar/thunar-window.c:382
+#: ../thunar/thunar-window.c:385
 msgid "Traditional approach with location bar and navigation buttons"
 msgstr "Pendekatan tradisional dengan palang lokasi dan butang navigasi"
 
-#: ../thunar/thunar-window.c:383
+#: ../thunar/thunar-window.c:386
 msgid "_Shortcuts"
 msgstr "P_intasan"
 
-#: ../thunar/thunar-window.c:383
+#: ../thunar/thunar-window.c:386
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "Togol ketampakan anak tetingkap pintasan"
 
-#: ../thunar/thunar-window.c:384
+#: ../thunar/thunar-window.c:387
 msgid "_Tree"
 msgstr "P_epohon"
 
-#: ../thunar/thunar-window.c:384
+#: ../thunar/thunar-window.c:387
 msgid "Toggles the visibility of the tree pane"
 msgstr "Togol ketampakan anak tetingkap pepohon"
 
-#: ../thunar/thunar-window.c:385
+#: ../thunar/thunar-window.c:388
 msgid "St_atusbar"
 msgstr "Palang St_atus"
 
-#: ../thunar/thunar-window.c:385
+#: ../thunar/thunar-window.c:388
 msgid "Change the visibility of this window's statusbar"
 msgstr "Ubah ketampakan palang status tetingkap"
 
-#: ../thunar/thunar-window.c:386
+#: ../thunar/thunar-window.c:389
 msgid "_Menubar"
 msgstr "Palang _Menu"
 
-#: ../thunar/thunar-window.c:386
+#: ../thunar/thunar-window.c:389
 msgid "Change the visibility of this window's menubar"
 msgstr "Ubah ketampakan palang menu tetingkap"
 
 #. * add view options
-#: ../thunar/thunar-window.c:764
+#: ../thunar/thunar-window.c:768
 msgid "View as _Icons"
 msgstr "Lihat sebagai _Ikon"
 
-#: ../thunar/thunar-window.c:764
+#: ../thunar/thunar-window.c:768
 msgid "Display folder content in an icon view"
 msgstr "Papar kandungan folder dalam paparan ikon"
 
-#: ../thunar/thunar-window.c:771
+#: ../thunar/thunar-window.c:775
 msgid "View as _Detailed List"
 msgstr "Lihat sebagai Senarai Te_rperinci"
 
-#: ../thunar/thunar-window.c:771
+#: ../thunar/thunar-window.c:775
 msgid "Display folder content in a detailed list view"
 msgstr "Papar kandungan folder dalam paparan senarai terperinci"
 
-#: ../thunar/thunar-window.c:778
+#: ../thunar/thunar-window.c:782
 msgid "View as _Compact List"
 msgstr "Lihat sebagai Senarai Pa_dat"
 
-#: ../thunar/thunar-window.c:778
+#: ../thunar/thunar-window.c:782
 msgid "Display folder content in a compact list view"
 msgstr "Papar kandungan folder dalam paparan senarai padat"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:844
+#: ../thunar/thunar-window.c:848
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr "Amaran, anda sedang guna akaun root, ia dapat merosakkan sistem anda."
 
-#: ../thunar/thunar-window.c:1747
+#: ../thunar/thunar-window.c:1761
 msgid "Close tab"
 msgstr "Tutup tab"
 
-#: ../thunar/thunar-window.c:2012
+#: ../thunar/thunar-window.c:2072
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Buka lokasi \"%s\""
 
-#: ../thunar/thunar-window.c:2210
+#: ../thunar/thunar-window.c:2270
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Gagal lancarkan \"%s\""
 
-#: ../thunar/thunar-window.c:2763
+#: ../thunar/thunar-window.c:2845
 msgid "Failed to open parent folder"
 msgstr "Gagal buka folder induk"
 
-#: ../thunar/thunar-window.c:2858
+#: ../thunar/thunar-window.c:2940
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Direktori \"%s\" tidak wujud. Anda mahu cipta ia?"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:2940
+#: ../thunar/thunar-window.c:3022
 msgid "About Templates"
 msgstr "Perihal Templat"
 
-#: ../thunar/thunar-window.c:2962
+#: ../thunar/thunar-window.c:3044
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Semua fail dalam folder ini akan muncul dalam menu \"Cipta Dokumen\"."
 
-#: ../thunar/thunar-window.c:2969
+#: ../thunar/thunar-window.c:3051
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
-msgstr "Jika anda kerap mencipta beberapa jenis dokumen, buat satu salinan dan letak ia di dalam folder ini. Thunar akan menambah satu masukan untuk dokumen ini di dalam menu \"Cipta Dokumen\".\n\nKemudian, anda boleh memilih masukan dari menu \"Cipta Dokumen\" dan salinan dokumen akan dicipta di dalam direktori yang sedang dibuka."
+msgstr ""
+"Jika anda kerap mencipta beberapa jenis dokumen, buat satu salinan dan letak ia di dalam folder ini. Thunar akan menambah satu masukan untuk dokumen ini di dalam menu \"Cipta Dokumen\".\n"
+"\n"
+"Kemudian, anda boleh memilih masukan dari menu \"Cipta Dokumen\" dan salinan dokumen akan dicipta di dalam direktori yang sedang dibuka."
 
-#: ../thunar/thunar-window.c:2981
+#: ../thunar/thunar-window.c:3063
 msgid "Do _not display this message again"
 msgstr "_Jangan papar mesej ini lagi"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3011
+#: ../thunar/thunar-window.c:3093
 msgid "Failed to open the file system root folder"
 msgstr "Gagal membuka folder root sistem fail"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3046
+#: ../thunar/thunar-window.c:3128
 msgid "Failed to display the contents of the trash can"
 msgstr "Gagal memapar kandungan tong sampah"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3081
+#: ../thunar/thunar-window.c:3163
 msgid "Failed to browse the network"
 msgstr "Gagal melayar rangkaian"
 
-#: ../thunar/thunar-window.c:3165
+#: ../thunar/thunar-window.c:3247
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
-msgstr "Thunar merupakan pengurus fail yang pantas\ndan mudah diguna untuk Persekitaran\nDesktop Xfce."
+msgstr ""
+"Thunar merupakan pengurus fail yang pantas\n"
+"dan mudah diguna untuk Persekitaran\n"
+"Desktop Xfce."
 
 #. set window title
-#: ../thunar/thunar-window.c:3219 ../Thunar.desktop.in.in.h:3
+#: ../thunar/thunar-window.c:3301 ../Thunar.desktop.in.in.h:3
 #: ../thunar/thunar-settings.desktop.in.h:1
 msgid "File Manager"
 msgstr "Pengurus Fail"
@@ -2827,6 +2928,7 @@ msgid "The user visible name of the renamer"
 msgstr "Nama tampak pengguna bagi penama semula"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:152
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:59
 msgid "Description:"
 msgstr "Keterangan:"
 
@@ -2861,6 +2963,7 @@ msgid "The URL to access."
 msgstr "URL untuk dicapai."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:241
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:60
 msgid "Comment:"
 msgstr "Ulasan:"
 
@@ -2868,7 +2971,9 @@ msgstr "Ulasan:"
 msgid ""
 "Tooltip for the entry, for example \"View sites on the Internet\" in case of"
 " Firefox. Should not be redundant with the name or the description."
-msgstr "Tip alat untuk masukan, contohnya \"Lihat laman di Internet\" bagi kes FIrefox. Seharusnya tidak sama dengan nama atau keterangan."
+msgstr ""
+"Tip alat untuk masukan, contohnya \"Lihat laman di Internet\" bagi kes "
+"FIrefox. Seharusnya tidak sama dengan nama atau keterangan."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:268
 msgid "Options:"
@@ -2883,7 +2988,10 @@ msgid ""
 "Select this option to enable startup notification when the command is run "
 "from the file manager or the menu. Not every application supports startup "
 "notification."
-msgstr "Pilih pilihan ini untuk benarkan pemberitahuan permulaan bila perintah dijalankan dari pengurus fail atau menu. Tidak semua aplikasi menyokong pemberitahuan permulaan."
+msgstr ""
+"Pilih pilihan ini untuk benarkan pemberitahuan permulaan bila perintah "
+"dijalankan dari pengurus fail atau menu. Tidak semua aplikasi menyokong "
+"pemberitahuan permulaan."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:282
 msgid "Run in _terminal"
@@ -2954,16 +3062,16 @@ msgstr "Penarafan Kelajuan ISO:"
 msgid "Software:"
 msgstr "Perisian:"
 
-#: ../plugins/thunar-apr/thunar-apr-image-page.c:114
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:116
 msgid "Image"
 msgstr "Imej"
 
-#: ../plugins/thunar-apr/thunar-apr-image-page.c:129
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:131
 msgid "Image Type:"
 msgstr "Jenis Imej:"
 
 #. update the "Image Size" label
-#: ../plugins/thunar-apr/thunar-apr-image-page.c:243
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:245
 #, c-format
 msgid "%dx%d pixel"
 msgid_plural "%dx%d pixels"
@@ -2987,7 +3095,11 @@ msgid ""
 "For example, %Y will be substituted with the year, %m with the month and %d "
 "with the day. See the documentation of the date utility for additional "
 "information."
-msgstr "Format ini menerangkan bahagian tarikh dan masa untuk dimasukkan ke dalam nama fail. Sebagai contoh, %Y akan digantikan dengan tahun, %m dengan bulan dan %d dengan hari. Lihat dokumentasi utiliti tarikh untuk mendapatkan maklumat tambahan."
+msgstr ""
+"Format ini menerangkan bahagian tarikh dan masa untuk dimasukkan ke dalam "
+"nama fail. Sebagai contoh, %Y akan digantikan dengan tahun, %m dengan bulan "
+"dan %d dengan hari. Lihat dokumentasi utiliti tarikh untuk mendapatkan "
+"maklumat tambahan."
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:243
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:197
@@ -3130,7 +3242,10 @@ msgid ""
 "If you enable this option, the pattern will be treated as a regular "
 "expression and matched using the Perl-compatible regular expressions (PCRE)."
 " Check the documentation for details about the regular expression syntax."
-msgstr "Jika anda benarkan pilihan ini, corak akan dianggap sebagai ungkapan nalar dan dipadankan menggunakan ungkapan nalar serasi-Perl (PCRE). Semak dokumentasi untuk perincian mengenai sintaks ungkapan nalar."
+msgstr ""
+"Jika anda benarkan pilihan ini, corak akan dianggap sebagai ungkapan nalar "
+"dan dipadankan menggunakan ungkapan nalar serasi-Perl (PCRE). Semak "
+"dokumentasi untuk perincian mengenai sintaks ungkapan nalar."
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:231
 msgid "Replace _With:"
@@ -3139,7 +3254,8 @@ msgstr "Ganti _Dengan:"
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:239
 msgid ""
 "Enter the text that should be used as replacement for the pattern above."
-msgstr "Masukkan teks yang seharusnya diguna sebagai pengganti untuk corak diatas."
+msgstr ""
+"Masukkan teks yang seharusnya diguna sebagai pengganti untuk corak diatas."
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:251
 msgid "C_ase Sensitive Search"
@@ -3149,7 +3265,9 @@ msgstr "Gelintar Sensitif K_ata"
 msgid ""
 "If you enable this option, the pattern will be searched in a case-sensitive "
 "manner. The default is to use a case-insensitive search."
-msgstr "Jika anda benarkan pilihan ini, corak akan digelintar dalam bentuk sensitif-kata. Lalai guna gelintar tak-sensitif-kata."
+msgstr ""
+"Jika anda benarkan pilihan ini, corak akan digelintar dalam bentuk sensitif-"
+"kata. Lalai guna gelintar tak-sensitif-kata."
 
 #. setup a tooltip with the error message
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:610
@@ -3180,7 +3298,10 @@ msgid ""
 "When sending a file via email, you can either choose to send the file "
 "directly, as is, or compress the file before attaching it to an email. It is"
 " highly recommended to compress large files before sending them."
-msgstr "Bila menghantar fail melalui emel, anda boleh sama ada hantar fail secara terus, atau mampatkan fail sebelum dilampirkan ke dalam emel. Adalah sangat disarankan memampatkan fail bersaiz besar sebelum menghantarnya."
+msgstr ""
+"Bila menghantar fail melalui emel, anda boleh sama ada hantar fail secara "
+"terus, atau mampatkan fail sebelum dilampirkan ke dalam emel. Adalah sangat "
+"disarankan memampatkan fail bersaiz besar sebelum menghantarnya."
 
 #: ../plugins/thunar-sendto-email/main.c:213
 #, c-format
@@ -3198,7 +3319,11 @@ msgid ""
 "files directly, attaching multiple files to an email, or send all files "
 "compressed into a single archive file and attach the archive. It is highly "
 "recommended to send multiple large files as archive."
-msgstr "Bila menghantar fail berbilang melalui emel, anda boleh sama ada hantar fail secara terus, melampirkan fail berbilang ke dalam emel, atau semua fail yang dimampat menjadi satu fail arkib dan lampirkan arkib tersebut. Adalah sangat disarankan menghantar fail besar berbilang sebagai arkib."
+msgstr ""
+"Bila menghantar fail berbilang melalui emel, anda boleh sama ada hantar fail"
+" secara terus, melampirkan fail berbilang ke dalam emel, atau semua fail "
+"yang dimampat menjadi satu fail arkib dan lampirkan arkib tersebut. Adalah "
+"sangat disarankan menghantar fail besar berbilang sebagai arkib."
 
 #. allocate the progress dialog
 #. setup the label
@@ -3240,15 +3365,15 @@ msgid "Mail Recipient"
 msgstr "Penerima Mel"
 
 #. tell the user that we failed to connect to the trash
-#: ../plugins/thunar-tpa/thunar-tpa.c:293
-#: ../plugins/thunar-tpa/thunar-tpa.c:334
-#: ../plugins/thunar-tpa/thunar-tpa.c:356
-#: ../plugins/thunar-tpa/thunar-tpa.c:383
+#: ../plugins/thunar-tpa/thunar-tpa.c:284
+#: ../plugins/thunar-tpa/thunar-tpa.c:325
+#: ../plugins/thunar-tpa/thunar-tpa.c:347
+#: ../plugins/thunar-tpa/thunar-tpa.c:374
 msgid "Failed to connect to the Trash"
 msgstr "Gagal menyambung ke Tong Sampah"
 
 #. tell the user whether the trash is full or empty
-#: ../plugins/thunar-tpa/thunar-tpa.c:308
+#: ../plugins/thunar-tpa/thunar-tpa.c:299
 msgid "Trash contains files"
 msgstr "Tong sampah mengandungi fail"
 
@@ -3268,7 +3393,9 @@ msgstr "Tindakan Suai"
 msgid ""
 "You can configure custom actions that will appear in the\n"
 "file managers context menus for certain kinds of files."
-msgstr "Anda boleh konfigur tindakan suai yang akan muncul dalam\nmenu konteks pengurus fail untuk jenis fail tertentu."
+msgstr ""
+"Anda boleh konfigur tindakan suai yang akan muncul dalam\n"
+"menu konteks pengurus fail untuk jenis fail tertentu."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:173
 msgid "Add a new custom action."
@@ -3307,7 +3434,9 @@ msgstr "Gagal menyimpan tindakan ke dalam cakera."
 msgid ""
 "Are you sure that you want to delete\n"
 "action \"%s\"?"
-msgstr "Anda pasti mahu memadam tindakan\n\"%s\"?"
+msgstr ""
+"Anda pasti mahu memadam tindakan\n"
+"\"%s\"?"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:437
 msgid "If you delete a custom action, it is permanently lost."
@@ -3330,7 +3459,9 @@ msgstr "_Keterangan:"
 msgid ""
 "The description of the action that will be displayed as tooltip in the "
 "statusbar when selecting the item from the context menu."
-msgstr "Keterangan tindakan yang akan dipapar sebagai tip alat dalam palang status bila memilih item dari menu konteks."
+msgstr ""
+"Keterangan tindakan yang akan dipapar sebagai tip alat dalam palang status "
+"bila memilih item dari menu konteks."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:168
 msgid "_Command:"
@@ -3344,12 +3475,19 @@ msgid ""
 "case letters (e.g. %F, %D, %N) are used, the action will be applicable even "
 "if more than one item is selected. Else the action will only be applicable "
 "if exactly one item is selected."
-msgstr "Perintah (termasuklah parameter yang perlu) untuk membuat tindakan. Rujuk petunjuk parameter perintah dibawah untuk dapatkan senarai pembolehubah parameter yang disokong, yang akan diganti bila melancarkan perintah. Jika huruf besar (contohnya %F, %D, %N) digunakan, tindakan akan boleh dilaksana walaupun lebih dari satu item terpilih. Jika tidak tindakan hanya boleh dilaksana jika hanya satu item terpilih."
+msgstr ""
+"Perintah (termasuklah parameter yang perlu) untuk membuat tindakan. Rujuk "
+"petunjuk parameter perintah dibawah untuk dapatkan senarai pembolehubah "
+"parameter yang disokong, yang akan diganti bila melancarkan perintah. Jika "
+"huruf besar (contohnya %F, %D, %N) digunakan, tindakan akan boleh dilaksana "
+"walaupun lebih dari satu item terpilih. Jika tidak tindakan hanya boleh "
+"dilaksana jika hanya satu item terpilih."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:188
 msgid ""
 "Browse the file system to select an application to use for this action."
-msgstr "Layar sistem fail untuk pilih aplikasi yang diguna untuk tindakan ini."
+msgstr ""
+"Layar sistem fail untuk pilih aplikasi yang diguna untuk tindakan ini."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:204
 msgid "Use Startup Notification"
@@ -3360,7 +3498,10 @@ msgid ""
 "Enable this option if you want a waiting cursor to be shown while the action"
 " is launched. This is also highly recommended if you have focus stealing "
 "prevention enabled in your window manager."
-msgstr "Benarkan pilihan ini jika anda mahu kursor menunggu ditunjukkan ketika tindakan dilancar. Ia juga sangat disarankan jika anda telah benarkan halangan pencurian fokus dalam pengurus tetingkap anda."
+msgstr ""
+"Benarkan pilihan ini jika anda mahu kursor menunggu ditunjukkan ketika "
+"tindakan dilancar. Ia juga sangat disarankan jika anda telah benarkan "
+"halangan pencurian fokus dalam pengurus tetingkap anda."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:211
 msgid "_Icon:"
@@ -3376,13 +3517,17 @@ msgstr "Tiada ikon"
 msgid ""
 "Click this button to select an icon file that will be displayed in the "
 "context menu in addition to the action name chosen above."
-msgstr "Klik butang ini untuk pilih satu fail ikon yang akan dipapar dalam menu konteks selain dari nama tindakan pilihan diatas."
+msgstr ""
+"Klik butang ini untuk pilih satu fail ikon yang akan dipapar dalam menu "
+"konteks selain dari nama tindakan pilihan diatas."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:251
 msgid ""
 "The following command parameters will be\n"
 "substituted when launching the action:"
-msgstr "Parameter perintah berikut akan diganti bila\nmelancar tindakan:"
+msgstr ""
+"Parameter perintah berikut akan diganti bila\n"
+"melancar tindakan:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:289
 msgid "the path to the first selected file"
@@ -3424,7 +3569,11 @@ msgid ""
 "should be displayed for a selected file. If you specify more than one "
 "pattern here, the list items must be separated with semicolons (e.g. "
 "*.txt;*.doc)."
-msgstr "Masukkan senarai corak yang akan digunakan untuk menentukan sama ada tindakan patut dipapar untuk fail terpilih. Jika anda nyatakan lebih dari satu corak di sini, senarai item mesti dipisahkan dengan tanda koma bertitik (contohnya *.txt;*.doc)."
+msgstr ""
+"Masukkan senarai corak yang akan digunakan untuk menentukan sama ada "
+"tindakan patut dipapar untuk fail terpilih. Jika anda nyatakan lebih dari "
+"satu corak di sini, senarai item mesti dipisahkan dengan tanda koma bertitik"
+" (contohnya *.txt;*.doc)."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:395
 msgid "Appears if selection contains:"
@@ -3466,7 +3615,18 @@ msgid ""
 "or folder. Additionally, you can specify that the\n"
 "action should only appear for certain kinds of\n"
 "files."
-msgstr "Halaman ini senaraikan syarat dimana tindakan\nakan muncul dalam menu konteks pengurus\nfail. Corak fail dinyatakan sebagai senarai bagi\ncorak fail ringkas yang terpisah dengan tanda\ntitik bertindih (contohnya *.txt;*.doc). Bagi\nsatu tindakan yang muncul di dalam menu\nkonteks sesebuah fail atau folder, sekurang-\nkurangnya satu dari corak ini mesti sepadan\ndengan nama bagi fail ataupun folder. Selain\nitu, anda juga boleh nyatakan tindakah seharus\nnya muncul dalam jenis-jenis fail tertentu."
+msgstr ""
+"Halaman ini senaraikan syarat dimana tindakan\n"
+"akan muncul dalam menu konteks pengurus\n"
+"fail. Corak fail dinyatakan sebagai senarai bagi\n"
+"corak fail ringkas yang terpisah dengan tanda\n"
+"titik bertindih (contohnya *.txt;*.doc). Bagi\n"
+"satu tindakan yang muncul di dalam menu\n"
+"konteks sesebuah fail atau folder, sekurang-\n"
+"kurangnya satu dari corak ini mesti sepadan\n"
+"dengan nama bagi fail ataupun folder. Selain\n"
+"itu, anda juga boleh nyatakan tindakah seharus\n"
+"nya muncul dalam jenis-jenis fail tertentu."
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:815
 #, c-format
@@ -3500,7 +3660,8 @@ msgstr "Konfigur tindakan s_uai..."
 #: ../plugins/thunar-uca/thunar-uca-provider.c:178
 msgid ""
 "Setup custom actions that will appear in the file managers context menus"
-msgstr "Sediakan tindakan suai yang akan muncul dalam menu konteks pengurus fail"
+msgstr ""
+"Sediakan tindakan suai yang akan muncul dalam menu konteks pengurus fail"
 
 #: ../plugins/thunar-uca/thunar-uca-provider.c:417
 #, c-format
@@ -3515,7 +3676,7 @@ msgstr "Buka Terminal Di Sini"
 msgid "Example for a custom action"
 msgstr "Contoh bagi tindakan suai"
 
-#: ../plugins/thunar-wallpaper/twp-provider.c:175
+#: ../plugins/thunar-wallpaper/twp-provider.c:174
 msgid "Set as wallpaper"
 msgstr "Tetapkan sebagai kertas dinding"
 
@@ -3548,7 +3709,11 @@ msgid ""
 "Thunar is a file browser specifically designed for the Xfce Desktop, but "
 "also can serve as an alternate file browser for other Desktop environments. "
 "It has a simple, clean two-pane design for browsing all your files."
-msgstr "Thunar ialah pelayar fail yang direka khusus untuk Desktop Xfce, tetapi juga bertindak sebagai pelayar fail alternatif untuk persekitaran Desktop lain. Ia mempunyai rekabentuk ringkas, dengan dua-anak-tetingkap yang kemas unntuk pelayaran semua fail anda."
+msgstr ""
+"Thunar ialah pelayar fail yang direka khusus untuk Desktop Xfce, tetapi juga"
+" bertindak sebagai pelayar fail alternatif untuk persekitaran Desktop lain. "
+"Ia mempunyai rekabentuk ringkas, dengan dua-anak-tetingkap yang kemas unntuk"
+" pelayaran semua fail anda."
 
 #. SECURITY:
 #. - A normal active user can run thunar without elevated rights. They
