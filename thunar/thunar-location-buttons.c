@@ -283,7 +283,7 @@ thunar_location_buttons_init (ThunarLocationButtons *buttons)
   g_signal_connect (G_OBJECT (buttons->right_slider), "button-release-event", G_CALLBACK (thunar_location_buttons_slider_button_release), buttons);
   g_signal_connect (G_OBJECT (buttons->right_slider), "clicked", G_CALLBACK (thunar_location_buttons_scroll_right), buttons);
   gtk_container_add (GTK_CONTAINER (buttons), buttons->right_slider);
-  gtk_widget_show (buttons->right_slider);
+  gtk_widget_hide (buttons->right_slider);
 
   icon = gtk_image_new_from_icon_name ("pan-end-symbolic", GTK_ICON_SIZE_BUTTON);
   gtk_container_add (GTK_CONTAINER (buttons->right_slider), icon);
