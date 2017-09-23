@@ -287,6 +287,9 @@ install-exec-hook:
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	-( cd $(DESTDIR)$(bindir) ; test -x Thunar || ln -sf thunar Thunar )
 
+uninstall-local:
+	-( cd $(DESTDIR)$(bindir) ; test -h Thunar && rm -f Thunar )
+
 clean-local:
 	rm -f *.core core core.* *.o
 
