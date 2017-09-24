@@ -159,7 +159,7 @@ struct _ThunarLocationButtons
 
   GList             *list;
   GList             *fake_root_button;
-  gint               scroll_count;
+  guint              scroll_count;
 
   guint              scroll_timeout_id;
 };
@@ -715,7 +715,7 @@ thunar_location_buttons_size_allocate (GtkWidget     *widget,
 
       if (G_UNLIKELY (buttons->scroll_count != 0))
         {
-          for (scroll_index = buttons->scroll_count; scroll_index < 0 ; scroll_index++)
+          for (scroll_index = 0; scroll_index < buttons->scroll_count ; scroll_index++)
             last_button = last_button->next;
         }
 
@@ -1109,7 +1109,7 @@ thunar_location_buttons_scroll_left (GtkWidget             *button,
       {
         if (lp->prev == buttons->fake_root_button)
           buttons->fake_root_button = NULL;
-        buttons->scroll_count --;
+        buttons->scroll_count ++;
         break;
       }
 }
@@ -1127,8 +1127,8 @@ thunar_location_buttons_scroll_right (GtkWidget             *button,
     }
 
   gtk_widget_queue_resize (GTK_WIDGET (buttons));
-  if ( buttons->scroll_count < 0 )
-    buttons->scroll_count++;
+  if ( buttons->scroll_count > 0 )
+    buttons->scroll_count--;
 }
 
 
