@@ -693,26 +693,27 @@ view_index2type (gint idx)
 static void
 thunar_window_init (ThunarWindow *window)
 {
-  GtkRadioAction *radio_action;
-  GtkAccelGroup  *accel_group;
-  GtkWidget      *label;
-  GtkWidget      *infobar;
-  GtkWidget      *item;
-  GtkAction      *action;
-  gboolean        last_show_hidden;
-  gboolean        last_menubar_visible;
-  GSList         *group;
-  gchar          *last_location_bar;
-  gchar          *last_side_pane;
-  GType           type;
-  gint            last_separator_position;
-  gint            last_window_width;
-  gint            last_window_height;
-  gboolean        last_window_maximized;
-  gboolean        last_statusbar_visible;
-  GtkToolItem    *tool_item;
-  gboolean        small_icons;
-  GtkRcStyle     *style;
+  GtkRadioAction  *radio_action;
+  GtkAccelGroup   *accel_group;
+  GtkWidget       *label;
+  GtkWidget       *infobar;
+  GtkWidget       *item;
+  GtkAction       *action;
+  gboolean         last_show_hidden;
+  gboolean         last_menubar_visible;
+  GSList          *group;
+  gchar           *last_location_bar;
+  gchar           *last_side_pane;
+  GType            type;
+  gint             last_separator_position;
+  gint             last_window_width;
+  gint             last_window_height;
+  gboolean         last_window_maximized;
+  gboolean         last_statusbar_visible;
+  GtkToolItem     *tool_item;
+  gboolean         small_icons;
+  GtkRcStyle      *style;
+  GtkStyleContext *context;
 
   /* unset the view type */
   window->view_type = G_TYPE_NONE;
@@ -811,6 +812,10 @@ thunar_window_init (ThunarWindow *window)
   /* restore the maxized state of the window */
   if (G_UNLIKELY (last_window_maximized))
     gtk_window_maximize (GTK_WINDOW (window));
+
+  /* add thunar style class for easier theming */
+  context = gtk_widget_get_style_context (GTK_WIDGET (window));
+  gtk_style_context_add_class (context, "thunar");
 
   window->grid = gtk_grid_new ();
   gtk_container_add (GTK_CONTAINER (window), window->grid);
