@@ -645,7 +645,7 @@ thunar_location_buttons_size_allocate (GtkWidget     *widget,
   gint                   required_width_total = 0;
   gint                   border_width;
   gint                   temp_width;
-  gint                   scroll_index;
+  guint                  scroll_index;
   gboolean               need_reorder = FALSE;
 
   gtk_widget_set_allocation (widget, allocation);
