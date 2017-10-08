@@ -9,6 +9,7 @@ libthunarx_headers =							\
 	thunarx.h							\
 	thunarx-config.h						\
 	thunarx-file-info.h						\
+	thunarx-menu-item.h						\
 	thunarx-menu-provider.h						\
 	thunarx-preferences-provider.h					\
 	thunarx-property-page.h						\
@@ -31,6 +32,7 @@ libthunarx_3_la_SOURCES =						\
 	$(libthunarx_headers)						\
 	thunarx-config.c						\
 	thunarx-file-info.c						\
+	thunarx-menu-item.c						\
 	thunarx-menu-provider.c						\
 	thunarx-preferences-provider.c					\
 	thunarx-private.c						\

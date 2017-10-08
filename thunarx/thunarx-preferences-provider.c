@@ -41,7 +41,7 @@
  * the file manager menu, because it should use desktop-wide settings for
  * archive managers instead).
  *
- * The <link linkend="GtkAction"><type>GtkAction</type></link>s returned from the
+ * The <link linkend="ThunarxMenuItem"><type>ThunarxMenuItem</type></link>s returned from the
  * thunarx_preferences_provider_get_actions() method must be namespaced with the
  * model to avoid collision with internal file manager actions and actions provided
  * by other extensions. For example, the preferences action provided by the
@@ -80,7 +80,7 @@ thunarx_preferences_provider_get_type (void)
  * @provider : a #ThunarxPreferencesProvider.
  * @window   : the #GtkWindow within which the actions will be used.
  *
- * Returns the list of #GtkAction<!---->s that @provider has to offer
+ * Returns the list of #ThunarxMenuItem<!---->s that @provider has to offer
  * as preferences within @window. These actions will usually be added
  * to the builtin list of preferences in the "Edit" menu of the file
  * manager's @window.
@@ -97,7 +97,7 @@ thunarx_preferences_provider_get_type (void)
  * g_list_free_full (list, g_object_unref);
  * </programlisting></informalexample>
  *
- * Return value: the list of #GtkAction<!---->s that @provider has
+ * Return value: the list of #ThunarxMenuItem<!---->s that @provider has
  *               to offer as preferences within @window.
  **/
 GList*

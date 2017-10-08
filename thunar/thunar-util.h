@@ -24,6 +24,8 @@
 
 #include <thunar/thunar-enum-types.h>
 
+#include <thunarx/thunarx-menu-item.h>
+
 G_BEGIN_DECLS;
 
 typedef void (*ThunarBookmarksFunc) (GFile       *file,
@@ -54,6 +56,9 @@ time_t     thunar_util_time_from_rfc3339        (const gchar    *date_string) G_
 gchar     *thunar_util_change_working_directory (const gchar    *new_directory) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 void       thunar_setup_display_cb              (gpointer data);
+
+GtkAction *thunar_util_action_from_menu_item    (ThunarxMenuItem *item,
+                                                 GtkWidget       *parent_widget) G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS;
 

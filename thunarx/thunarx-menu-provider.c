@@ -45,7 +45,7 @@
  * be added to the file manager's context menu. Don't perform any complicated I/O
  * to determine the action list, as that would block the whole file manager process.
  *
- * The <link linkend="GtkAction">GtkAction</link>s returned from the
+ * The <link linkend="ThunarxMenuItem">ThunarxMenuItem</link>s returned from the
  * thunarx_menu_provider_get_file_actions() and thunarx_menu_provider_get_folder_actions()
  * methods must be namespaced with the module to avoid collision with internal file manager
  * actions and actions provided by other extensions. For example, the menu action provided
@@ -85,11 +85,11 @@ thunarx_menu_provider_get_type (void)
  * @window   : the #GtkWindow within which the actions will be used.
  * @files    : the list of #ThunarxFileInfo<!---->s to which the actions will be applied.
  *
- * Returns the list of #GtkAction<!---->s that @provider has to offer for
+ * Returns the list of #ThunarxMenuItem<!---->s that @provider has to offer for
  * @files.
  *
  * As a special note, this method automatically takes a reference on the
- * @provider for every #GtkAction object returned from the real implementation
+ * @provider for every #ThunarxMenuItem object returned from the real implementation
  * of this method in @provider. This is to make sure that the extension stays
  * in memory for atleast the time that the actions are used. If the extension
  * wants to stay in memory for a longer time, it'll need to take care of this
@@ -102,7 +102,7 @@ thunarx_menu_provider_get_type (void)
  * g_list_free_full (list, g_object_unref);
  * </programlisting></informalexample>
  *
- * Return value: the list of #GtkAction<!---->s that @provider has to offer
+ * Return value: the list of #ThunarxMenuItem<!---->s that @provider has to offer
  *               for @files.
  **/
 GList*
@@ -140,11 +140,11 @@ thunarx_menu_provider_get_file_actions (ThunarxMenuProvider *provider,
  * @window   : the #GtkWindow within which the actions will be used.
  * @folder   : the folder to which the actions should will be applied.
  *
- * Returns the list of #GtkAction<!---->s that @provider has to offer for
+ * Returns the list of #ThunarxMenuItem<!---->s that @provider has to offer for
  * @folder.
  *
  * As a special note, this method automatically takes a reference on the
- * @provider for every #GtkAction object returned from the real implementation
+ * @provider for every #ThunarxMenuItem object returned from the real implementation
  * of this method in @provider. This is to make sure that the extension stays
  * in memory for atleast the time that the actions are used. If the extension
  * wants to stay in memory for a longer time, it'll need to take care of this
@@ -157,7 +157,7 @@ thunarx_menu_provider_get_file_actions (ThunarxMenuProvider *provider,
  * g_list_free_full (list, g_object_unref);
  * </programlisting></informalexample>
  *
- * Return value: the list of #GtkAction<!---->s that @provider has to offer
+ * Return value: the list of #ThunarxMenuItem<!---->s that @provider has to offer
  *               for @folder.
  **/
 GList*
@@ -198,13 +198,13 @@ thunarx_menu_provider_get_folder_actions (ThunarxMenuProvider *provider,
  * @files    : the list of #ThunarxFileInfo<!---->s for the files that are 
  *             being dropped to @folder in @window.
  *
- * Returns the list of #GtkAction<!---->s that @provider has to offer for
+ * Returns the list of #ThunarxMenuItem<!---->s that @provider has to offer for
  * dropping the @files into the @folder. For example, the thunar-archive-plugin
  * provides <guilabel>Extract Here</guilabel> actions when dropping archive
  * files into a folder that is writable by the user.
  *
  * As a special note, this method automatically takes a reference on the
- * @provider for every #GtkAction object returned from the real implementation
+ * @provider for every #ThunarxMenuItem object returned from the real implementation
  * of this method in @provider. This is to make sure that the extension stays
  * in memory for atleast the time that the actions are used. If the extension
  * wants to stay in memory for a longer time, it'll need to take care of this
@@ -217,7 +217,7 @@ thunarx_menu_provider_get_folder_actions (ThunarxMenuProvider *provider,
  * g_list_free_full (list, g_object_unref);
  * </programlisting></informalexample>
  *
- * Return value: the list of #GtkAction<!---->s that @provider has to offer
+ * Return value: the list of #ThunarxMenuItem<!---->s that @provider has to offer
  *               for dropping @files to @folder.
  *
  * Since: 0.4.1

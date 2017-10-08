@@ -41,7 +41,7 @@ static GList *tex_open_terminal_get_file_actions   (ThunarxMenuProvider      *pr
 static GList *tex_open_terminal_get_folder_actions (ThunarxMenuProvider      *provider,
                                                     GtkWidget                *window,
                                                     ThunarxFileInfo          *folder);
-static void   tex_open_terminal_activated          (GtkAction                *action,
+static void   tex_open_terminal_activated          (ThunarxMenuItem          *item,
                                                     GtkWidget                *window);
 
 
@@ -110,10 +110,10 @@ tex_open_terminal_get_folder_actions (ThunarxMenuProvider *provider,
                                       GtkWidget           *window,
                                       ThunarxFileInfo     *folder)
 {
-  GtkAction *action = NULL;
-  gchar     *scheme;
-  gchar     *path;
-  gchar     *uri;
+  ThunarxMenuItem *item = NULL;
+  gchar           *scheme;
+  gchar           *path;
+  gchar           *uri;
 
   /* determine the uri scheme of the folder and check if we support it */
   scheme = thunarx_file_info_get_uri_scheme (folder);
@@ -127,33 +127,33 @@ tex_open_terminal_get_folder_actions (ThunarxMenuProvider *provider,
       /* check if we have a valid path here */
       if (G_LIKELY (path != NULL))
         {
-          action = gtk_action_new ("TexOpenTerminal::open-terminal-here", "Open Terminal Here", "Open Terminal in this folder", NULL);
-          g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (tex_open_terminal_activated), window);
-          g_object_set_data_full (G_OBJECT (action), "open-terminal-here-path", path, g_free);
+          item = thunarx_menu_item_new ("TexOpenTerminal::open-terminal-here", "Open Terminal Here", "Open Terminal in this folder", "utilities-terminal");
+          g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (tex_open_terminal_activated), window);
+          g_object_set_data_full (G_OBJECT (item), "open-terminal-here-path", path, g_free);
         }
     }
   g_free (scheme);
 
-  return (action != NULL) ? g_list_prepend (NULL, action) : NULL;
+  return (item != NULL) ? g_list_prepend (NULL, item) : NULL;
 }
 
 
 
 static void
-tex_open_terminal_activated (GtkAction *action,
-                             GtkWidget *window)
+tex_open_terminal_activated (ThunarxMenuItem *item,
+                             GtkWidget       *window)
 {
   const gchar *path;
   GError      *error = NULL;
   gchar       *command;
 
   /* determine the folder path */
-  path = g_object_get_data (G_OBJECT (action), "open-terminal-here-path");
+  path = g_object_get_data (G_OBJECT (item), "open-terminal-here-path");
   if (G_UNLIKELY (path == NULL))
     return;
   
   /* build up the command line for the terminal */
-  command = g_strdup_printf ("Terminal --working-directory \"%s\"", path);
+  command = g_strdup_printf ("exo-open --launch TerminalEmulator --working-directory \"%s\"", path);
 
   /* try to run the terminal command */
   if (!xfce_spawn_command_line_on_screen (gtk_widget_get_screen (window), command, FALSE, FALSE, &error))
@@ -166,5 +166,3 @@ tex_open_terminal_activated (GtkAction *action,
   /* cleanup */
   g_free (command);
 }
-
-

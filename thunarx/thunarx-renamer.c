@@ -627,13 +627,13 @@ thunarx_renamer_save (ThunarxRenamer *renamer,
  * @window  : a #GtkWindow or %NULL.
  * @files   : a #GList of #ThunarxFileInfo<!---->s.
  *
- * Returns the list of #GtkAction<!---->s provided by @renamer for
+ * Returns the list of #ThunarxMenuItem<!---->s provided by @renamer for
  * the given list of @files. By default, this method returns %NULL
  * (the empty list), but derived classes may override this method
  * to provide additional actions for files in the bulk renamer
  * dialog list.
  * 
- * The returned #GtkAction<!---->s will be displayed in the file's
+ * The returned #ThunarxMenuItem<!---->s will be displayed in the file's
  * context menu of the bulk renamer dialog, when this @renamer is
  * active. For example, an ID3-Tag based renamer may add an action
  * "Edit Tags" to the context menus of supported media files and,
@@ -670,16 +670,16 @@ thunarx_renamer_save (ThunarxRenamer *renamer,
  * </programlisting></informalexample>
  *
  * As a special note, this method automatically takes a reference on the
- * @renamer for every #GtkAction object returned from the real implementation
+ * @renamer for every #ThunarxMenuItem object returned from the real implementation
  * of this method in @renamer. This is to make sure that the extension stays
  * in memory for atleast the time that the actions are used.
  *
- * The #GtkAction<!---->s returned from this method must be namespaced with
+ * The #ThunarxMenuItem<!---->s returned from this method must be namespaced with
  * the module to avoid collision with internal file manager actions and
  * actions provided by other extensions. For example, the menu action
  * provided by the ID3-Tag renamer mentioned above, should be named
  * <literal>TagRenamer::edit-tags</literal> (if <literal>TagRenamer</literal>
- * is the class name). For additional information about the way #GtkAction<!---->s
+ * is the class name). For additional information about the way #ThunarxMenuItem<!---->s
  * should be returned from extensions and the way they are used, read the
  * description of the #ThunarxMenuProvider interface or read the introduction
  * provided with this reference manual.
@@ -692,7 +692,7 @@ thunarx_renamer_save (ThunarxRenamer *renamer,
  * forget to release the weak reference if @window survived the lifetime
  * of your action (which is likely to be the case in most situations).
  *
- * Return value: the list of #GtkAction<!---->s provided by @renamer
+ * Return value: the list of #ThunarxMenuItem<!---->s provided by @renamer
  *               for the given list of @files.
  **/
 GList*

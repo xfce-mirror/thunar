@@ -1944,9 +1944,11 @@ thunar_window_install_sidepane (ThunarWindow *window,
 static void
 thunar_window_merge_custom_preferences (ThunarWindow *window)
 {
-  GList *providers;
-  GList *actions;
-  GList *ap, *pp;
+  GList           *providers;
+  GList           *actions;
+  GList           *ap, *pp;
+  GtkAction       *action;
+  ThunarxMenuItem *item;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (window->custom_preferences_merge_id == 0);
@@ -1966,18 +1968,21 @@ thunar_window_merge_custom_preferences (ThunarWindow *window)
           for (ap = actions; ap != NULL; ap = ap->next)
             {
               /* add the action to the action group */
-              gtk_action_group_add_action (window->action_group, GTK_ACTION (ap->data));
+              item = THUNARX_MENU_ITEM (ap->data);
+              action = thunar_util_action_from_menu_item (item, GTK_WIDGET (window));
+              gtk_action_group_add_action (window->action_group, action);
 
               /* add the action to the UI manager */
               gtk_ui_manager_add_ui (window->ui_manager,
                                      window->custom_preferences_merge_id,
                                      "/main-menu/edit-menu/placeholder-custom-preferences",
-                                     gtk_action_get_name (GTK_ACTION (ap->data)),
-                                     gtk_action_get_name (GTK_ACTION (ap->data)),
+                                     gtk_action_get_name (GTK_ACTION (action)),
+                                     gtk_action_get_name (GTK_ACTION (action)),
                                      GTK_UI_MANAGER_MENUITEM, FALSE);
 
-              /* release the reference on the action */
-              g_object_unref (G_OBJECT (ap->data));
+              /* release the references on item and action */
+              g_object_unref (G_OBJECT (item));
+              g_object_unref (G_OBJECT (action));
             }
 
           /* release the reference on the provider */
@@ -3352,12 +3357,14 @@ thunar_window_update_custom_actions (ThunarView   *view,
                                      GParamSpec   *pspec,
                                      ThunarWindow *window)
 {
-  ThunarFile *folder;
-  GList      *selected_files;
-  GList      *actions = NULL;
-  GList      *lp;
-  GList      *providers;
-  GList      *tmp;
+  ThunarFile      *folder;
+  GList           *selected_files;
+  GList           *actions = NULL;
+  GList           *lp;
+  GList           *providers;
+  GList           *tmp;
+  GtkAction       *action;
+  ThunarxMenuItem *item;
 
   _thunar_return_if_fail (THUNAR_IS_VIEW (view));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
@@ -3434,21 +3441,28 @@ thunar_window_update_custom_actions (ThunarView   *view,
       /* add the actions to the UI manager */
       for (lp = actions; lp != NULL; lp = lp->next)
         {
+          if (G_UNLIKELY (lp->data == NULL))
+            continue;
+
+          item = THUNARX_MENU_ITEM (lp->data);
+          action = thunar_util_action_from_menu_item (item, GTK_WIDGET (window));
+
           /* add the action to the action group */
           gtk_action_group_add_action_with_accel (window->custom_actions,
-                                                  GTK_ACTION (lp->data),
+                                                  action,
                                                   NULL);
 
           /* add to the file context menu */
           gtk_ui_manager_add_ui (window->ui_manager,
                                  window->custom_merge_id,
                                  "/main-menu/file-menu/placeholder-custom-actions",
-                                 gtk_action_get_name (GTK_ACTION (lp->data)),
-                                 gtk_action_get_name (GTK_ACTION (lp->data)),
+                                 gtk_action_get_name (GTK_ACTION (action)),
+                                 gtk_action_get_name (GTK_ACTION (action)),
                                  GTK_UI_MANAGER_MENUITEM, FALSE);
 
-          /* release the reference on the action */
-          g_object_unref (G_OBJECT (lp->data));
+          /* release the references on item and action */
+          g_object_unref (item);
+          g_object_unref (action);
         }
 
       /* cleanup */

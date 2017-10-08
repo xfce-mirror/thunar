@@ -54,6 +54,7 @@
 #include <glib/gwin32.h>
 #endif
 
+#include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
 
@@ -608,4 +609,67 @@ void
 thunar_setup_display_cb (gpointer data)
 {
   g_setenv ("DISPLAY", (char *) data, TRUE);
+}
+
+
+
+static void
+extension_action_callback (GtkAction *action,
+                           gpointer callback_data)
+{
+  thunarx_menu_item_activate (THUNARX_MENU_ITEM (callback_data));
+}
+
+
+
+GtkAction *
+thunar_util_action_from_menu_item (ThunarxMenuItem *item,
+                                   GtkWidget       *parent_widget)
+{
+  gchar *name, *label, *tooltip, *icon_name;
+  gboolean           sensitive, priority;
+  GtkAction         *action;
+  GdkPixbuf         *icon;
+  GtkIconTheme      *icon_theme;
+  ThunarIconFactory *icon_factory;
+
+  g_object_get (G_OBJECT (item),
+                "name", &name,
+                "label", &label,
+                "tooltip", &tooltip,
+                "icon", &icon_name,
+                "sensitive", &sensitive,
+                "priority", &priority,
+                NULL);
+
+  action = gtk_action_new (name, label, tooltip, NULL);
+
+  if (icon_name != NULL && parent_widget != NULL)
+    {
+      icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (parent_widget));
+      icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
+      icon = thunar_icon_factory_load_icon (icon_factory, icon_name, GTK_ICON_SIZE_MENU, TRUE, FALSE);
+      if (icon != NULL)
+      {
+        gtk_action_set_gicon (action, G_ICON (icon));
+        g_object_unref (icon);
+      }
+
+      g_object_unref (G_OBJECT (icon_factory));
+  }
+
+  gtk_action_set_sensitive (action, sensitive);
+  g_object_set (action, "is-important", priority, NULL);
+
+  g_signal_connect_data (action, "activate",
+                         G_CALLBACK (extension_action_callback),
+                         g_object_ref (item),
+                         (GClosureNotify)g_object_unref, 0);
+
+  g_free (name);
+  g_free (label);
+  g_free (tooltip);
+  g_free (icon_name);
+
+  return action;
 }

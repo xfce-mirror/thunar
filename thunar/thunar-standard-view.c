@@ -1994,14 +1994,16 @@ static void
 thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
                                            GList              *selected_items)
 {
-  GtkTreeIter iter;
-  ThunarFile *file = NULL;
-  GtkWidget  *window;
-  GList      *providers;
-  GList      *actions = NULL;
-  GList      *files = NULL;
-  GList      *tmp;
-  GList      *lp;
+  GtkTreeIter      iter;
+  ThunarFile      *file = NULL;
+  GtkWidget       *window;
+  GList           *providers;
+  GList           *actions = NULL;
+  GList           *files = NULL;
+  GList           *tmp;
+  GList           *lp;
+  GtkAction       *action;
+  ThunarxMenuItem *item;
 
   /* we cannot add anything if we aren't connected to any UI manager */
   if (G_UNLIKELY (standard_view->ui_manager == NULL))
@@ -2077,8 +2079,11 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
       /* add the actions to the UI manager */
       for (lp = actions; lp != NULL; lp = lp->next)
         {
+          item = THUNARX_MENU_ITEM (lp->data);
+          action = thunar_util_action_from_menu_item (item, GTK_WIDGET (window));
+
           /* add the action to the action group */
-          gtk_action_group_add_action (standard_view->priv->custom_actions, GTK_ACTION (lp->data));
+          gtk_action_group_add_action (standard_view->priv->custom_actions, action);
 
           /* add the action to the UI manager */
           if (G_LIKELY (selected_items != NULL))
@@ -2087,8 +2092,8 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
               gtk_ui_manager_add_ui (standard_view->ui_manager,
                                      standard_view->priv->custom_merge_id,
                                      "/file-context-menu/placeholder-custom-actions",
-                                     gtk_action_get_name (GTK_ACTION (lp->data)),
-                                     gtk_action_get_name (GTK_ACTION (lp->data)),
+                                     gtk_action_get_name (GTK_ACTION (action)),
+                                     gtk_action_get_name (GTK_ACTION (action)),
                                      GTK_UI_MANAGER_MENUITEM, FALSE);
             }
           else
@@ -2097,13 +2102,14 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
               gtk_ui_manager_add_ui (standard_view->ui_manager,
                                      standard_view->priv->custom_merge_id,
                                      "/folder-context-menu/placeholder-custom-actions",
-                                     gtk_action_get_name (GTK_ACTION (lp->data)),
-                                     gtk_action_get_name (GTK_ACTION (lp->data)),
+                                     gtk_action_get_name (GTK_ACTION (action)),
+                                     gtk_action_get_name (GTK_ACTION (action)),
                                      GTK_UI_MANAGER_MENUITEM, FALSE);
             }
 
-          /* release the reference on the action */
-          g_object_unref (G_OBJECT (lp->data));
+          /* release the reference on item and action */
+          g_object_unref (item);
+          g_object_unref (action);
         }
 
       /* be sure to update the UI manager to avoid flickering */
