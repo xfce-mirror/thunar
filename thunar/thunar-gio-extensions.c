@@ -237,6 +237,11 @@ thunar_g_file_get_display_name (GFile *file)
           display_name = g_strdup (_("File System"));
           g_free (base_name);
         }
+      else if (strcmp (base_name, "Trash") == 0)
+        {
+          display_name = g_strdup (_("Trash"));
+          g_free (base_name);
+        }
       else if (g_utf8_validate (base_name, -1, NULL))
        {
          display_name = base_name;

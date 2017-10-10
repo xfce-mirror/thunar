@@ -1036,6 +1036,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
         {
           shortcut = g_slice_new0 (ThunarShortcut);
           shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_TRASH;
+          shortcut->name = g_strdup (_("Trash"));
           shortcut->file = file;
           shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
           thunar_shortcuts_model_add_shortcut (model, shortcut);
