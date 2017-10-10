@@ -1071,6 +1071,8 @@ thunar_file_info_reload (ThunarFile   *file,
             {
               if (strcmp (display_name, "/") == 0)
                 file->display_name = g_strdup (_("File System"));
+              else if (strcmp (display_name, "Trash") == 0)
+                file->display_name = g_strdup (_("Trash"));
               else
                 file->display_name = g_strdup (display_name);
             }
