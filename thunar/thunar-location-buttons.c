@@ -283,7 +283,7 @@ thunar_location_buttons_init (ThunarLocationButtons *buttons)
   g_signal_connect (G_OBJECT (buttons->right_slider), "button-release-event", G_CALLBACK (thunar_location_buttons_slider_button_release), buttons);
   g_signal_connect (G_OBJECT (buttons->right_slider), "clicked", G_CALLBACK (thunar_location_buttons_scroll_right), buttons);
   gtk_container_add (GTK_CONTAINER (buttons), buttons->right_slider);
-  gtk_widget_hide (buttons->right_slider);
+  gtk_widget_show (buttons->right_slider);
 
   icon = gtk_image_new_from_icon_name ("pan-end-symbolic", GTK_ICON_SIZE_BUTTON);
   gtk_container_add (GTK_CONTAINER (buttons->right_slider), icon);
@@ -557,13 +557,7 @@ thunar_location_buttons_get_path_for_child (GtkContainer *container,
         * list is stored in innermost-to-outermost path order!
         */
       visible_children = NULL;
-
-      if (gtk_widget_get_visible (path_bar->right_slider) &&
-          gtk_widget_get_child_visible (path_bar->right_slider))
-        {
-          visible_children = g_list_prepend (visible_children, path_bar->right_slider);
-        }
-
+      visible_children = g_list_prepend (visible_children, path_bar->right_slider);
       visible_children = g_list_prepend (visible_children, path_bar->filler_widget);
 
       for (l = path_bar->list; l; l = l->next)
@@ -573,11 +567,7 @@ thunar_location_buttons_get_path_for_child (GtkContainer *container,
             visible_children = g_list_prepend (visible_children, l->data);
         }
 
-      if (gtk_widget_get_visible (path_bar->left_slider) &&
-          gtk_widget_get_child_visible (path_bar->left_slider))
-        {
-          visible_children = g_list_prepend (visible_children, path_bar->left_slider);
-        }
+      visible_children = g_list_prepend (visible_children, path_bar->left_slider);
 
       if (gtk_widget_get_direction (GTK_WIDGET (path_bar)) == GTK_TEXT_DIR_RTL)
         {
@@ -660,11 +650,11 @@ thunar_location_buttons_size_allocate (GtkWidget     *widget,
   available_space.width = allocation->width - 2 * border_width;
   available_space.height = MAX (1, allocation->height - 2 * border_width );
 
-  first_slider_allocation.width = 0; /* default 0 is "not used" */
+  first_slider_allocation.width = buttons->slider_width;
   first_slider_allocation.height = available_space.height;
   first_slider_allocation.y = available_space.y;
 
-  second_slider_allocation.width = 0; /* default 0 is "not used" */
+  second_slider_allocation.width = buttons->slider_width;
   second_slider_allocation.height = available_space.height;
   second_slider_allocation.y = available_space.y;
 
@@ -680,17 +670,13 @@ thunar_location_buttons_size_allocate (GtkWidget     *widget,
     }
 
   gtk_widget_get_preferred_width (buttons->filler_widget, &filler_allocation.width, NULL);
-  required_width_total += filler_allocation.width;
+  required_width_total += buttons->slider_width * 2 + filler_allocation.width;
   filler_allocation.height = available_space.height;
   filler_allocation.y = available_space.y;
 
-  /* check if we need to display the left slider and set default for first button */
+  /* set default for first button */
   if (G_LIKELY (buttons->fake_root_button != NULL))
-    {
-      required_width_total += buttons->slider_width;
       first_button = buttons->fake_root_button;
-      first_slider_allocation.width = buttons->slider_width;
-    }
 
   for (lp = buttons->list; lp != NULL; lp = lp->next)
     {
@@ -701,15 +687,12 @@ thunar_location_buttons_size_allocate (GtkWidget     *widget,
     }
 
   if ( required_width_total <= available_space.width  )
-  {
+    {
       /* reset the scroll position */
       buttons->scroll_count = 0;
-  }
+    }
   else
-  {
-      /* we need to display both sliders */
-      first_slider_allocation.width = buttons->slider_width;
-      second_slider_allocation.width = buttons->slider_width;
+    {
       /* reset calculation for required_width_total .. we need to cut off some folders */
       required_width_total = first_slider_allocation.width + second_slider_allocation.width + filler_allocation.width;
 
@@ -730,7 +713,7 @@ thunar_location_buttons_size_allocate (GtkWidget     *widget,
             }
           required_width_total += temp_width;
         }
-  }
+    }
 
   /* hide buttons before first_button */
   for (lp = first_button->next; lp != NULL; lp = lp->next)
@@ -782,39 +765,13 @@ thunar_location_buttons_size_allocate (GtkWidget     *widget,
   if (G_UNLIKELY (direction == GTK_TEXT_DIR_RTL))
     filler_allocation.x -= filler_allocation.width;
   gtk_widget_size_allocate (GTK_WIDGET (buttons->filler_widget), &filler_allocation);
-  gtk_widget_set_child_visible (GTK_WIDGET (buttons->filler_widget), TRUE);
 
-  /* first slider */
-  if (first_slider_allocation.width != 0)
-    {
-      gtk_widget_get_preferred_width (GTK_WIDGET (buttons->left_slider), &temp_width, NULL); //to dont get gtk warning
-      gtk_widget_size_allocate (buttons->left_slider, &first_slider_allocation);
-      need_reorder |= gtk_widget_get_child_visible (GTK_WIDGET (buttons->left_slider)) == FALSE;
-      gtk_widget_set_child_visible (GTK_WIDGET (buttons->left_slider), TRUE);
-      gtk_widget_show_all (buttons->left_slider);
-      thunar_location_buttons_update_sliders (buttons);
-    }
-  else
-    {
-      need_reorder |= gtk_widget_get_child_visible (buttons->left_slider) == TRUE;
-      gtk_widget_set_child_visible (buttons->left_slider, FALSE);
-    }
-
-  /* second slider */
-  if (second_slider_allocation.width != 0)
-    {
-      gtk_widget_get_preferred_width (GTK_WIDGET (buttons->right_slider), &temp_width, NULL); //to dont get gtk warning
-      gtk_widget_size_allocate (buttons->right_slider, &second_slider_allocation);
-      need_reorder |= gtk_widget_get_child_visible (GTK_WIDGET (buttons->right_slider)) == FALSE;
-      gtk_widget_set_child_visible (GTK_WIDGET (buttons->right_slider), TRUE);
-      gtk_widget_show_all (buttons->right_slider);
-      thunar_location_buttons_update_sliders (buttons);
-    }
-  else
-    {
-      need_reorder |= gtk_widget_get_child_visible (buttons->right_slider) == TRUE;
-      gtk_widget_set_child_visible (buttons->right_slider, FALSE);
-    }
+  /* allocate the sliders */
+  gtk_widget_get_preferred_width (GTK_WIDGET (buttons->left_slider), &temp_width, NULL); //to dont get gtk warnings
+  gtk_widget_get_preferred_width (GTK_WIDGET (buttons->right_slider), &temp_width, NULL);
+  gtk_widget_size_allocate (buttons->left_slider, &first_slider_allocation);
+  gtk_widget_size_allocate (buttons->right_slider, &second_slider_allocation);
+  thunar_location_buttons_update_sliders (buttons);
 
   if (need_reorder)
     thunar_location_buttons_child_ordering_changed (buttons);
