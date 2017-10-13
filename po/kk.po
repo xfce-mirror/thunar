@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-04 23:34+0200\n"
+"POT-Creation-Date: 2017-10-10 06:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Xfce Bot <transifex@xfce.org>, 2017\n"
+"Last-Translator: Baurzhan Muftakhidinov <baurthefirst@gmail.com>, 2017\n"
 "Language-Team: Kazakh (https://www.transifex.com/xfce/teams/16840/kk/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -813,48 +813,53 @@ msgstr "Файл аты"
 msgid "File System"
 msgstr "Файлдық жүйе"
 
-#: ../thunar/thunar-file.c:1513
+#: ../thunar/thunar-file.c:1075 ../thunar/thunar-gio-extensions.c:242
+#: ../thunar/thunar-shortcuts-model.c:1039
+msgid "Trash"
+msgstr "Қоқыс шелегі"
+
+#: ../thunar/thunar-file.c:1515
 #, c-format
 msgid "The root folder has no parent"
 msgstr "Түбірлік буманың аталық бумасы жоқ"
 
-#: ../thunar/thunar-file.c:1601 ../thunar/thunar-file.c:1897
+#: ../thunar/thunar-file.c:1603 ../thunar/thunar-file.c:1899
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "desktop файлын өңдеу қатемен аяқталды: %s"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1613
+#: ../thunar/thunar-file.c:1615
 msgid "Untrusted application launcher"
 msgstr "Сенімсіз қолданба жөнелткіші"
 
-#: ../thunar/thunar-file.c:1638
+#: ../thunar/thunar-file.c:1640
 #, c-format
 msgid "No Exec field specified"
 msgstr "Exec өрісі көрсетілмеген"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1647
+#: ../thunar/thunar-file.c:1649
 msgid "Untrusted link launcher"
 msgstr "Сенімсіз сілтеме жөнелткіші"
 
-#: ../thunar/thunar-file.c:1663
+#: ../thunar/thunar-file.c:1665
 #, c-format
 msgid "No URL field specified"
 msgstr "URL өрісі көрсетілмеген"
 
-#: ../thunar/thunar-file.c:1668
+#: ../thunar/thunar-file.c:1670
 msgid "Invalid desktop file"
 msgstr "Қате desktop файлы"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: ../thunar/thunar-gio-extensions.c:322
+#: ../thunar/thunar-gio-extensions.c:327
 #, c-format
 msgid "%s on %s"
 msgstr "%s, орналасқан жері %s"
 
 #. free disk space string
-#: ../thunar/thunar-gio-extensions.c:433
+#: ../thunar/thunar-gio-extensions.c:438
 #, c-format
 msgid "%s of %s free (%d%% used)"
 msgstr "%s бос, барлығы %s (%d%% қолдануда)"
