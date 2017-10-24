@@ -3,6 +3,7 @@
                "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
 
 <!ENTITY ThunarxFileInfo SYSTEM "xml/thunarx-file-info.xml">
+<!ENTITY ThunarxMenuItem SYSTEM "xml/thunarx-menu-item.xml">
 <!ENTITY ThunarxMenuProvider SYSTEM "xml/thunarx-menu-provider.xml">
 <!ENTITY ThunarxPreferencesProvider SYSTEM "xml/thunarx-preferences-provider.xml">
 <!ENTITY ThunarxPropertyPage SYSTEM "xml/thunarx-property-page.xml">
@@ -160,7 +161,7 @@
           items to the file views, the <link
           linkend="ThunarxPropertyPageProvider"><type>ThunarxPropertyPageProvider</type></link> for adding pages to the
           file properties dialog, the <link
-          linkend="ThunarxPreferencesProvider"><type>ThunarxPreferencesProvider</type></link> for adding actions to the
+          linkend="ThunarxPreferencesProvider"><type>ThunarxPreferencesProvider</type></link> for adding items to the
           preferences section of the main menu, and the <link
           linkend="ThunarxRenamerProvider"><type>ThunarxRenamerProvider</type></link> for adding renamers to the bulk
           rename dialog.
@@ -192,7 +193,7 @@
         <para>
           Most objects created by the extensions need names, e.g. the <link linkend="ThunarxMenuItem"><type>ThunarxMenuItem</type></link>s
           returned from the <link linkend="ThunarxMenuProvider"><type>ThunarxMenuProvider</type></link>s. These names must be
-          namespaced with the name of the extension. For example the main action returned from the
+          namespaced with the name of the extension. For example the main item returned from the
           <application>TexOpenTerminal</application> extension (which can be found in the <filename
           role="directory">examples/tex-open-terminal</filename> subdirectory of the Thunar distribution) should be called
           <literal>TexOpenTerminal::open-terminal</literal>. The namespace must be global among the providers exported by
@@ -450,6 +451,7 @@ thunar_extension_initialize (ThunarxProviderPlugin *plugin)
     </para>
 
     &ThunarxFileInfo;
+    &ThunarxMenuItem;
     &ThunarxPropertyPage;
     &ThunarxProviderPlugin;
     &ThunarxRenamer;
@@ -469,7 +471,7 @@ thunar_extension_initialize (ThunarxProviderPlugin *plugin)
       library that describe the functionality provided by a certain extension. For
       example, when the file manager pops up the file context menu, it'll first lookup
       all extensions that implement the interface <interface>ThunarxMenuProvider</interface>
-      ask those extensions for the list of additional actions.
+      ask those extensions for the list of additional menu items.
     </para>
 
     <para>
