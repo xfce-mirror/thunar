@@ -35,6 +35,7 @@
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-browser.h>
+#include <thunar/thunar-device-monitor.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-dnd.h>
 #include <thunar/thunar-gio-extensions.h>
@@ -44,8 +45,8 @@
 #include <thunar/thunar-shortcuts-icon-renderer.h>
 #include <thunar/thunar-shortcuts-model.h>
 #include <thunar/thunar-shortcuts-view.h>
-#include <thunar/thunar-device-monitor.h>
 #include <thunar/thunar-stock.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -1063,7 +1064,7 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   gboolean             mutable;
   ThunarDevice        *device;
   GList               *providers, *lp;
-  GList               *actions = NULL, *tmp;
+  GList               *items = NULL, *tmp;
   ThunarShortcutGroup  group;
   gboolean             is_header;
   GFile               *mount_point;
@@ -1071,6 +1072,7 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   gboolean             can_mount;
   gboolean             can_unmount;
   gboolean             can_eject;
+  GtkAction           *action;
 
   /* check if this is an item menu or a header menu */
   gtk_tree_model_get (model, iter, THUNAR_SHORTCUTS_MODEL_COLUMN_IS_HEADER, &is_header, -1);
@@ -1222,16 +1224,16 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
           /* determine the toplevel window we belong to */
           window = gtk_widget_get_toplevel (GTK_WIDGET (view));
 
-          /* load the actions offered by the menu providers */
+          /* load the menu items offered by the menu providers */
           for (lp = providers; lp != NULL; lp = lp->next)
             {
-              tmp = thunarx_menu_provider_get_folder_actions (lp->data, window, THUNARX_FILE_INFO (file));
-              actions = g_list_concat (actions, tmp);
+              tmp = thunarx_menu_provider_get_folder_menu_items (lp->data, window, THUNARX_FILE_INFO (file));
+              items = g_list_concat (items, tmp);
               g_object_unref (G_OBJECT (lp->data));
             }
           g_list_free (providers);
 
-          if (actions != NULL)
+          if (items != NULL)
             {
               /* append a menu separator */
               item = gtk_separator_menu_item_new ();
@@ -1239,19 +1241,22 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
               gtk_widget_show (item);
             }
 
-          /* add the actions to the menu */
-          for (lp = actions; lp != NULL; lp = lp->next)
+          /* add the menu items to the menu */
+          for (lp = items; lp != NULL; lp = lp->next)
             {
-              item = gtk_action_create_menu_item (GTK_ACTION (lp->data));
+              action = thunar_util_action_from_menu_item (G_OBJECT (lp->data), window);
+
+              item = gtk_action_create_menu_item (action);
               gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
               gtk_widget_show (item);
 
-              /* release the reference on the action */
+              /* release the reference on the menu item and action */
               g_object_unref (G_OBJECT (lp->data));
+              g_object_unref (G_OBJECT (action));
             }
 
           /* cleanup */
-          g_list_free (actions);
+          g_list_free (items);
         }
     }
 

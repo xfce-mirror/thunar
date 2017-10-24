@@ -34,15 +34,15 @@
 
 
 
-static void   tex_open_terminal_menu_provider_init (ThunarxMenuProviderIface *iface);
-static GList *tex_open_terminal_get_file_actions   (ThunarxMenuProvider      *provider,
-                                                    GtkWidget                *window,
-                                                    GList                    *files);
-static GList *tex_open_terminal_get_folder_actions (ThunarxMenuProvider      *provider,
-                                                    GtkWidget                *window,
-                                                    ThunarxFileInfo          *folder);
-static void   tex_open_terminal_activated          (ThunarxMenuItem          *item,
-                                                    GtkWidget                *window);
+static void   tex_open_terminal_menu_provider_init    (ThunarxMenuProviderIface *iface);
+static GList *tex_open_terminal_get_file_menu_items   (ThunarxMenuProvider      *provider,
+                                                       GtkWidget                *window,
+                                                       GList                    *files);
+static GList *tex_open_terminal_get_folder_menu_items (ThunarxMenuProvider      *provider,
+                                                       GtkWidget                *window,
+                                                       ThunarxFileInfo          *folder);
+static void   tex_open_terminal_activated             (ThunarxMenuItem          *item,
+                                                       GtkWidget                *window);
 
 
 
@@ -85,20 +85,20 @@ tex_open_terminal_init (TexOpenTerminal *open_terminal)
 static void
 tex_open_terminal_menu_provider_init (ThunarxMenuProviderIface *iface)
 {
-  iface->get_file_actions = tex_open_terminal_get_file_actions;
-  iface->get_folder_actions = tex_open_terminal_get_folder_actions;
+  iface->get_file_menu_items = tex_open_terminal_get_file_menu_items;
+  iface->get_folder_menu_items = tex_open_terminal_get_folder_menu_items;
 }
 
 
 
 static GList*
-tex_open_terminal_get_file_actions (ThunarxMenuProvider *provider,
-                                    GtkWidget           *window,
-                                    GList               *files)
+tex_open_terminal_get_file_menu_items (ThunarxMenuProvider *provider,
+                                       GtkWidget           *window,
+                                       GList               *files)
 {
   /* check if we have a directory here */
   if (G_LIKELY (files != NULL && files->next == NULL && thunarx_file_info_is_directory (files->data)))
-    return tex_open_terminal_get_folder_actions (provider, window, files->data);
+    return tex_open_terminal_get_folder_menu_items (provider, window, files->data);
 
   return NULL;
 }
@@ -106,9 +106,9 @@ tex_open_terminal_get_file_actions (ThunarxMenuProvider *provider,
 
 
 static GList*
-tex_open_terminal_get_folder_actions (ThunarxMenuProvider *provider,
-                                      GtkWidget           *window,
-                                      ThunarxFileInfo     *folder)
+tex_open_terminal_get_folder_menu_items (ThunarxMenuProvider *provider,
+                                         GtkWidget           *window,
+                                         ThunarxFileInfo     *folder)
 {
   ThunarxMenuItem *item = NULL;
   gchar           *scheme;

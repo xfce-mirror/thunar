@@ -43,6 +43,7 @@
 #include <thunar/thunar-renamer-dialog-ui.h>
 #include <thunar/thunar-renamer-model.h>
 #include <thunar/thunar-renamer-progress.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -847,9 +848,10 @@ thunar_renamer_dialog_context_menu (ThunarRenamerDialog *renamer_dialog,
   GtkActionGroup *renamer_actions = NULL;
   ThunarxRenamer *renamer;
   GtkWidget      *menu;
-  GList          *actions = NULL;
+  GList          *items = NULL;
   GList          *lp;
   gint            renamer_merge_id = 0;
+  GtkAction      *action;
 
   _thunar_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
 
@@ -860,40 +862,43 @@ thunar_renamer_dialog_context_menu (ThunarRenamerDialog *renamer_dialog,
   renamer = thunar_renamer_model_get_renamer (renamer_dialog->model);
   if (G_LIKELY (renamer != NULL))
     {
-      /* determine the actions provided by the active renamer */
-      actions = thunarx_renamer_get_actions (renamer, GTK_WINDOW (renamer_dialog), renamer_dialog->selected_files);
+      /* determine the menu items provided by the active renamer */
+      items = thunarx_renamer_get_menu_items (renamer, GTK_WINDOW (renamer_dialog), renamer_dialog->selected_files);
     }
 
-  /* check if we have any renamer actions */
-  if (G_UNLIKELY (actions != NULL))
+  /* check if we have any renamer menu items */
+  if (G_UNLIKELY (items != NULL))
     {
-      /* allocate a new action group and the merge id for the custom actions */
+      /* allocate a new action group and the merge id for the custom items */
       renamer_actions = gtk_action_group_new ("thunar-renamer-dialog-renamer-actions");
       renamer_merge_id = gtk_ui_manager_new_merge_id (renamer_dialog->ui_manager);
       gtk_ui_manager_insert_action_group (renamer_dialog->ui_manager, renamer_actions, -1);
 
-      /* add the actions to the UI manager */
-      for (lp = actions; lp != NULL; lp = lp->next)
+      /* add the items to the UI manager */
+      for (lp = items; lp != NULL; lp = lp->next)
         {
+          action = thunar_util_action_from_menu_item (G_OBJECT (lp->data), GTK_WIDGET (renamer_dialog));
+
           /* add the action to the action group */
-          gtk_action_group_add_action (renamer_actions, GTK_ACTION (lp->data));
+          gtk_action_group_add_action (renamer_actions, action);
 
           /* add the action to the UI manager */
           gtk_ui_manager_add_ui (renamer_dialog->ui_manager, renamer_merge_id,
                                  "/file-context-menu/placeholder-renamer-actions",
-                                 gtk_action_get_name (GTK_ACTION (lp->data)),
-                                 gtk_action_get_name (GTK_ACTION (lp->data)),
+                                 gtk_action_get_name (action),
+                                 gtk_action_get_name (action),
                                  GTK_UI_MANAGER_MENUITEM, FALSE);
 
-          /* release the reference on the action */
+          /* release the reference on the menu item and action */
           g_object_unref (G_OBJECT (lp->data));
+          g_object_unref (G_OBJECT (action));
         }
 
       /* be sure to update the UI manager to avoid flickering */
       gtk_ui_manager_ensure_update (renamer_dialog->ui_manager);
 
       /* cleanup */
-      g_list_free (actions);
+      g_list_free (items);
     }
 
   /* run the menu on the dialog's screen */

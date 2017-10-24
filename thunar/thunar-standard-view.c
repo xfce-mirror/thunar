@@ -40,7 +40,7 @@
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
-#include <thunar/thunar-stock.h>
+#include <thunar/thunar-history.h>
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-private.h>
@@ -49,8 +49,8 @@
 #include <thunar/thunar-simple-job.h>
 #include <thunar/thunar-standard-view.h>
 #include <thunar/thunar-standard-view-ui.h>
+#include <thunar/thunar-stock.h>
 #include <thunar/thunar-templates-action.h>
-#include <thunar/thunar-history.h>
 #include <thunar/thunar-thumbnailer.h>
 #include <thunar/thunar-util.h>
 
@@ -1998,12 +1998,11 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
   ThunarFile      *file = NULL;
   GtkWidget       *window;
   GList           *providers;
-  GList           *actions = NULL;
+  GList           *items = NULL;
   GList           *files = NULL;
   GList           *tmp;
   GList           *lp;
   GtkAction       *action;
-  ThunarxMenuItem *item;
 
   /* we cannot add anything if we aren't connected to any UI manager */
   if (G_UNLIKELY (standard_view->ui_manager == NULL))
@@ -2033,16 +2032,16 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
           file = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
         }
 
-      /* load the actions offered by the menu providers */
+      /* load the menu items offered by the menu providers */
       for (lp = providers; lp != NULL; lp = lp->next)
         {
           if (G_LIKELY (files != NULL))
-            tmp = thunarx_menu_provider_get_file_actions (lp->data, window, files);
+            tmp = thunarx_menu_provider_get_file_menu_items (lp->data, window, files);
           else if (G_LIKELY (file != NULL))
-            tmp = thunarx_menu_provider_get_folder_actions (lp->data, window, THUNARX_FILE_INFO (file));
+            tmp = thunarx_menu_provider_get_folder_menu_items (lp->data, window, THUNARX_FILE_INFO (file));
           else
             tmp = NULL;
-          actions = g_list_concat (actions, tmp);
+          items = g_list_concat (items, tmp);
           g_object_unref (G_OBJECT (lp->data));
         }
       g_list_free (providers);
@@ -2069,18 +2068,17 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
     }
 
   /* add the actions specified by the menu providers */
-  if (G_LIKELY (actions != NULL))
+  if (G_LIKELY (items != NULL))
     {
       /* allocate the action group and the merge id for the custom actions */
       standard_view->priv->custom_actions = gtk_action_group_new ("thunar-standard-view-custom-actions");
       standard_view->priv->custom_merge_id = gtk_ui_manager_new_merge_id (standard_view->ui_manager);
       gtk_ui_manager_insert_action_group (standard_view->ui_manager, standard_view->priv->custom_actions, -1);
 
-      /* add the actions to the UI manager */
-      for (lp = actions; lp != NULL; lp = lp->next)
+      /* add the menu items to the UI manager */
+      for (lp = items; lp != NULL; lp = lp->next)
         {
-          item = THUNARX_MENU_ITEM (lp->data);
-          action = thunar_util_action_from_menu_item (item, GTK_WIDGET (window));
+          action = thunar_util_action_from_menu_item (G_OBJECT (lp->data), window);
 
           /* add the action to the action group */
           gtk_action_group_add_action (standard_view->priv->custom_actions, action);
@@ -2108,15 +2106,15 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
             }
 
           /* release the reference on item and action */
-          g_object_unref (item);
-          g_object_unref (action);
+          g_object_unref (G_OBJECT (lp->data));
+          g_object_unref (G_OBJECT (action));
         }
 
       /* be sure to update the UI manager to avoid flickering */
       gtk_ui_manager_ensure_update (standard_view->ui_manager);
 
       /* cleanup */
-      g_list_free (actions);
+      g_list_free (items);
     }
 }
 

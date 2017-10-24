@@ -623,8 +623,8 @@ extension_action_callback (GtkAction *action,
 
 
 GtkAction *
-thunar_util_action_from_menu_item (ThunarxMenuItem *item,
-                                   GtkWidget       *parent_widget)
+thunar_util_action_from_menu_item (GObject   *item,
+                                   GtkWidget *parent_widget)
 {
   gchar *name, *label, *tooltip, *icon_name;
   gboolean           sensitive, priority;
@@ -632,6 +632,8 @@ thunar_util_action_from_menu_item (ThunarxMenuItem *item,
   GdkPixbuf         *icon;
   GtkIconTheme      *icon_theme;
   ThunarIconFactory *icon_factory;
+
+  g_return_val_if_fail (THUNARX_IS_MENU_ITEM (item), NULL);
 
   g_object_get (G_OBJECT (item),
                 "name", &name,
@@ -650,13 +652,13 @@ thunar_util_action_from_menu_item (ThunarxMenuItem *item,
       icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
       icon = thunar_icon_factory_load_icon (icon_factory, icon_name, GTK_ICON_SIZE_MENU, TRUE, FALSE);
       if (icon != NULL)
-      {
-        gtk_action_set_gicon (action, G_ICON (icon));
-        g_object_unref (icon);
-      }
+        {
+          gtk_action_set_gicon (action, G_ICON (icon));
+          g_object_unref (icon);
+        }
 
       g_object_unref (G_OBJECT (icon_factory));
-  }
+    }
 
   gtk_action_set_sensitive (action, sensitive);
   g_object_set (action, "is-important", priority, NULL);
@@ -664,7 +666,7 @@ thunar_util_action_from_menu_item (ThunarxMenuItem *item,
   g_signal_connect_data (action, "activate",
                          G_CALLBACK (extension_action_callback),
                          g_object_ref (item),
-                         (GClosureNotify)g_object_unref, 0);
+                         (GClosureNotify) g_object_unref, 0);
 
   g_free (name);
   g_free (label);

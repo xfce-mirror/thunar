@@ -39,12 +39,12 @@
 static void   thunar_uca_provider_menu_provider_init        (ThunarxMenuProviderIface         *iface);
 static void   thunar_uca_provider_preferences_provider_init (ThunarxPreferencesProviderIface  *iface);
 static void   thunar_uca_provider_finalize                  (GObject                          *object);
-static GList *thunar_uca_provider_get_actions               (ThunarxPreferencesProvider       *preferences_provider,
+static GList *thunar_uca_provider_get_menu_items            (ThunarxPreferencesProvider       *preferences_provider,
                                                              GtkWidget                        *window);
-static GList *thunar_uca_provider_get_file_actions          (ThunarxMenuProvider              *menu_provider,
+static GList *thunar_uca_provider_get_file_menu_items       (ThunarxMenuProvider              *menu_provider,
                                                              GtkWidget                        *window,
                                                              GList                            *files);
-static GList *thunar_uca_provider_get_folder_actions        (ThunarxMenuProvider              *menu_provider,
+static GList *thunar_uca_provider_get_folder_menu_items     (ThunarxMenuProvider              *menu_provider,
                                                              GtkWidget                        *window,
                                                              ThunarxFileInfo                  *folder);
 static void   thunar_uca_provider_activated                 (ThunarUcaProvider                *uca_provider,
@@ -113,8 +113,8 @@ thunar_uca_provider_class_init (ThunarUcaProviderClass *klass)
 static void
 thunar_uca_provider_menu_provider_init (ThunarxMenuProviderIface *iface)
 {
-  iface->get_file_actions = thunar_uca_provider_get_file_actions;
-  iface->get_folder_actions = thunar_uca_provider_get_folder_actions;
+  iface->get_file_menu_items = thunar_uca_provider_get_file_menu_items;
+  iface->get_folder_menu_items = thunar_uca_provider_get_folder_menu_items;
 }
 
 
@@ -122,7 +122,7 @@ thunar_uca_provider_menu_provider_init (ThunarxMenuProviderIface *iface)
 static void
 thunar_uca_provider_preferences_provider_init (ThunarxPreferencesProviderIface *iface)
 {
-  iface->get_actions = thunar_uca_provider_get_actions;
+  iface->get_menu_items = thunar_uca_provider_get_menu_items;
 }
 
 
@@ -156,7 +156,7 @@ thunar_uca_provider_finalize (GObject *object)
 
 
 static void
-manage_actions (GtkWindow *window)
+manage_menu_items (GtkWindow *window)
 {
   GtkWidget *dialog;
   gboolean   use_header_bar = FALSE;
@@ -172,15 +172,15 @@ manage_actions (GtkWindow *window)
 
 
 static GList*
-thunar_uca_provider_get_actions (ThunarxPreferencesProvider *preferences_provider,
-                                 GtkWidget                  *window)
+thunar_uca_provider_get_menu_items (ThunarxPreferencesProvider *preferences_provider,
+                                    GtkWidget                  *window)
 {
   ThunarxMenuItem *item;
   GClosure        *closure;
 
   item = thunarx_menu_item_new ("ThunarUca::manage-actions", _("Configure c_ustom actions..."),
                                 _("Setup custom actions that will appear in the file managers context menus"), NULL);
-  closure = g_cclosure_new_object_swap (G_CALLBACK (manage_actions), G_OBJECT (window));
+  closure = g_cclosure_new_object_swap (G_CALLBACK (manage_menu_items), G_OBJECT (window));
   g_signal_connect_closure (G_OBJECT (item), "activate", closure, TRUE);
 
   return g_list_prepend (NULL, item);
@@ -189,16 +189,16 @@ thunar_uca_provider_get_actions (ThunarxPreferencesProvider *preferences_provide
 
 
 static GList*
-thunar_uca_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
-                                      GtkWidget           *window,
-                                      GList               *files)
+thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
+                                         GtkWidget           *window,
+                                         GList               *files)
 {
   GtkTreeRowReference *row;
   ThunarUcaProvider   *uca_provider = THUNAR_UCA_PROVIDER (menu_provider);
   ThunarUcaContext    *uca_context = NULL;
   GtkTreeIter          iter;
   ThunarxMenuItem     *item;
-  GList               *actions = NULL;
+  GList               *items = NULL;
   GList               *paths;
   GList               *lp;
   gchar               *tooltip;
@@ -228,7 +228,7 @@ thunar_uca_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
           if (gicon != NULL)
             icon_name = g_icon_to_string (gicon);
 
-          /* create the new action with the given parameters */
+          /* create the new menu item with the given parameters */
           item = thunarx_menu_item_new (name, label, tooltip, icon_name);
 
           /* grab a tree row reference on the given path */
@@ -248,8 +248,8 @@ thunar_uca_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
                                  g_object_ref (G_OBJECT (uca_provider)), (GClosureNotify) g_object_unref,
                                  G_CONNECT_SWAPPED);
 
-          /* add the action to the return list */
-          actions = g_list_prepend (actions, item);
+          /* add the menu item to the return list */
+          items = g_list_prepend (items, item);
 
           /* cleanup */
           g_free (tooltip);
@@ -267,17 +267,17 @@ thunar_uca_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
     }
   g_list_free (paths);
 
-  return actions;
+  return items;
 }
 
 
 
 static GList*
-thunar_uca_provider_get_folder_actions (ThunarxMenuProvider *menu_provider,
-                                        GtkWidget           *window,
-                                        ThunarxFileInfo     *folder)
+thunar_uca_provider_get_folder_menu_items (ThunarxMenuProvider *menu_provider,
+                                           GtkWidget           *window,
+                                           ThunarxFileInfo     *folder)
 {
-  GList *actions;
+  GList *items;
   GList  files;
   GList *lp;
 
@@ -286,14 +286,14 @@ thunar_uca_provider_get_folder_actions (ThunarxMenuProvider *menu_provider,
   files.next = NULL;
   files.prev = NULL;
 
-  /* ...and use the get_file_actions() method */
-  actions = thunarx_menu_provider_get_file_actions (menu_provider, window, &files);
+  /* ...and use the get_file_menu_items() method */
+  items = thunarx_menu_provider_get_file_menu_items (menu_provider, window, &files);
 
-  /* mark the actions, so we can properly detect the working directory */
-  for (lp = actions; lp != NULL; lp = lp->next)
+  /* mark the menu items, so we can properly detect the working directory */
+  for (lp = items; lp != NULL; lp = lp->next)
     g_object_set_qdata (G_OBJECT (lp->data), thunar_uca_folder_quark, GUINT_TO_POINTER (TRUE));
 
-  return actions;
+  return items;
 }
 
 
@@ -334,7 +334,7 @@ thunar_uca_provider_activated (ThunarUcaProvider *uca_provider,
   gtk_tree_model_get_iter (GTK_TREE_MODEL (uca_provider->model), &iter, path);
   gtk_tree_path_free (path);
 
-  /* determine the files and the window for the action */
+  /* determine the files and the window for the menu item */
   uca_context = g_object_get_qdata (G_OBJECT (item), thunar_uca_context_quark);
   window = thunar_uca_context_get_window (uca_context);
   files = thunar_uca_context_get_files (uca_context);
@@ -357,7 +357,7 @@ thunar_uca_provider_activated (ThunarUcaProvider *uca_provider,
           filename = g_filename_from_uri (uri, NULL, NULL);
           if (G_LIKELY (filename != NULL))
             {
-              /* if this is a folder action, we just use the filename as working directory */
+              /* if this is a folder menu item, we just use the filename as working directory */
               if (g_object_get_qdata (G_OBJECT (item), thunar_uca_folder_quark) != NULL)
                 {
                   working_directory = filename;

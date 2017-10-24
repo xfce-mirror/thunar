@@ -1945,10 +1945,9 @@ static void
 thunar_window_merge_custom_preferences (ThunarWindow *window)
 {
   GList           *providers;
-  GList           *actions;
+  GList           *items;
   GList           *ap, *pp;
   GtkAction       *action;
-  ThunarxMenuItem *item;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (window->custom_preferences_merge_id == 0);
@@ -1960,16 +1959,15 @@ thunar_window_merge_custom_preferences (ThunarWindow *window)
       /* allocate a new merge id from the UI manager */
       window->custom_preferences_merge_id = gtk_ui_manager_new_merge_id (window->ui_manager);
 
-      /* add actions from all providers */
+      /* add menu items from all providers */
       for (pp = providers; pp != NULL; pp = pp->next)
         {
-          /* determine the available actions for the provider */
-          actions = thunarx_preferences_provider_get_actions (THUNARX_PREFERENCES_PROVIDER (pp->data), GTK_WIDGET (window));
-          for (ap = actions; ap != NULL; ap = ap->next)
+          /* determine the available menu items for the provider */
+          items = thunarx_preferences_provider_get_menu_items (THUNARX_PREFERENCES_PROVIDER (pp->data), GTK_WIDGET (window));
+          for (ap = items; ap != NULL; ap = ap->next)
             {
               /* add the action to the action group */
-              item = THUNARX_MENU_ITEM (ap->data);
-              action = thunar_util_action_from_menu_item (item, GTK_WIDGET (window));
+              action = thunar_util_action_from_menu_item (G_OBJECT (ap->data), GTK_WIDGET (window));
               gtk_action_group_add_action (window->action_group, action);
 
               /* add the action to the UI manager */
@@ -1980,8 +1978,8 @@ thunar_window_merge_custom_preferences (ThunarWindow *window)
                                      gtk_action_get_name (GTK_ACTION (action)),
                                      GTK_UI_MANAGER_MENUITEM, FALSE);
 
-              /* release the references on item and action */
-              g_object_unref (G_OBJECT (item));
+              /* release the references on menu item and action */
+              g_object_unref (G_OBJECT (ap->data));
               g_object_unref (G_OBJECT (action));
             }
 
@@ -1989,7 +1987,7 @@ thunar_window_merge_custom_preferences (ThunarWindow *window)
           g_object_unref (G_OBJECT (pp->data));
 
           /* release the action list */
-          g_list_free (actions);
+          g_list_free (items);
         }
 
       /* release the provider list */
@@ -3359,12 +3357,11 @@ thunar_window_update_custom_actions (ThunarView   *view,
 {
   ThunarFile      *folder;
   GList           *selected_files;
-  GList           *actions = NULL;
+  GList           *items = NULL;
   GList           *lp;
   GList           *providers;
   GList           *tmp;
   GtkAction       *action;
-  ThunarxMenuItem *item;
 
   _thunar_return_if_fail (THUNAR_IS_VIEW (view));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
@@ -3390,22 +3387,22 @@ thunar_window_update_custom_actions (ThunarView   *view,
         {
           if (G_LIKELY (selected_files != NULL))
             {
-              tmp = thunarx_menu_provider_get_file_actions (lp->data,
-                                                            GTK_WIDGET (window),
-                                                            selected_files);
+              tmp = thunarx_menu_provider_get_file_menu_items (lp->data,
+                                                               GTK_WIDGET (window),
+                                                               selected_files);
             }
           else if (G_LIKELY (folder != NULL))
             {
-              tmp = thunarx_menu_provider_get_folder_actions (lp->data,
-                                                              GTK_WIDGET (window),
-                                                              THUNARX_FILE_INFO (folder));
+              tmp = thunarx_menu_provider_get_folder_menu_items (lp->data,
+                                                                 GTK_WIDGET (window),
+                                                                 THUNARX_FILE_INFO (folder));
             }
           else
             {
               tmp = NULL;
             }
 
-          actions = g_list_concat (actions, tmp);
+          items = g_list_concat (items, tmp);
           g_object_unref (G_OBJECT (lp->data));
         }
       g_list_free (providers);
@@ -3428,7 +3425,7 @@ thunar_window_update_custom_actions (ThunarView   *view,
     }
 
   /* add the actions specified by the menu providers */
-  if (G_LIKELY (actions != NULL))
+  if (G_LIKELY (items != NULL))
     {
       /* allocate the action group and the merge id for the custom actions */
       window->custom_actions = gtk_action_group_new ("ThunarActions");
@@ -3438,14 +3435,13 @@ thunar_window_update_custom_actions (ThunarView   *view,
       gtk_ui_manager_insert_action_group (window->ui_manager, window->custom_actions, 0);
       gtk_ui_manager_ensure_update (window->ui_manager);
 
-      /* add the actions to the UI manager */
-      for (lp = actions; lp != NULL; lp = lp->next)
+      /* add the menu items to the UI manager */
+      for (lp = items; lp != NULL; lp = lp->next)
         {
           if (G_UNLIKELY (lp->data == NULL))
             continue;
 
-          item = THUNARX_MENU_ITEM (lp->data);
-          action = thunar_util_action_from_menu_item (item, GTK_WIDGET (window));
+          action = thunar_util_action_from_menu_item (G_OBJECT (lp->data), GTK_WIDGET (window));
 
           /* add the action to the action group */
           gtk_action_group_add_action_with_accel (window->custom_actions,
@@ -3460,13 +3456,13 @@ thunar_window_update_custom_actions (ThunarView   *view,
                                  gtk_action_get_name (GTK_ACTION (action)),
                                  GTK_UI_MANAGER_MENUITEM, FALSE);
 
-          /* release the references on item and action */
-          g_object_unref (item);
-          g_object_unref (action);
+          /* release the references on menu item and action */
+          g_object_unref (G_OBJECT (lp->data));
+          g_object_unref (G_OBJECT (action));
         }
 
       /* cleanup */
-      g_list_free (actions);
+      g_list_free (items);
     }
 }
 

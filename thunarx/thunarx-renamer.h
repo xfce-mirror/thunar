@@ -44,11 +44,11 @@ typedef struct _ThunarxRenamer        ThunarxRenamer;
 
 /**
  * ThunarxRenamerClass:
- * @process: 	see thunarx_renamer_process().
- * @load:    	see thunarx_renamer_load().
- * @save:    	see thunarx_renamer_save().
- * @get_actions: 	see thunarx_renamer_get_actions().
- * @changed: 	see thunarx_renamer_changed().
+ * @process:        see thunarx_renamer_process().
+ * @load:           see thunarx_renamer_load().
+ * @save:           see thunarx_renamer_save().
+ * @get_menu_items: see thunarx_renamer_get_menu_items().
+ * @changed:        see thunarx_renamer_changed().
  *
  * Abstract base class with virtual methods implemented by extensions
  * that provide additional bulk renamers for the integrated bulk
@@ -64,19 +64,19 @@ struct _ThunarxRenamerClass
   /*< public >*/
 
   /* virtual methods */
-  gchar *(*process)     (ThunarxRenamer  *renamer,
-                         ThunarxFileInfo *file,
-                         const gchar     *text,
-                         guint            index);
+  gchar *(*process)        (ThunarxRenamer  *renamer,
+                            ThunarxFileInfo *file,
+                            const gchar     *text,
+                            guint            index);
 
-  void   (*load)        (ThunarxRenamer  *renamer,
-                         GHashTable      *settings);
-  void   (*save)        (ThunarxRenamer  *renamer,
-                         GHashTable      *settings);
+  void   (*load)           (ThunarxRenamer  *renamer,
+                            GHashTable      *settings);
+  void   (*save)           (ThunarxRenamer  *renamer,
+                            GHashTable      *settings);
 
-  GList *(*get_actions) (ThunarxRenamer  *renamer,
-                         GtkWindow       *window,
-                         GList           *files);
+  GList *(*get_menu_items) (ThunarxRenamer  *renamer,
+                            GtkWindow       *window,
+                            GList           *files);
 
   /*< private >*/
   void (*reserved0) (void);
@@ -104,31 +104,31 @@ struct _ThunarxRenamer
   ThunarxRenamerPrivate *priv;
 };
 
-GType        thunarx_renamer_get_type     (void) G_GNUC_CONST;
+GType        thunarx_renamer_get_type       (void) G_GNUC_CONST;
 
-const gchar *thunarx_renamer_get_help_url (ThunarxRenamer   *renamer);
-void         thunarx_renamer_set_help_url (ThunarxRenamer   *renamer,
-                                           const gchar      *help_url);
+const gchar *thunarx_renamer_get_help_url   (ThunarxRenamer   *renamer);
+void         thunarx_renamer_set_help_url   (ThunarxRenamer   *renamer,
+                                             const gchar      *help_url);
 
-const gchar *thunarx_renamer_get_name     (ThunarxRenamer   *renamer);
-void         thunarx_renamer_set_name     (ThunarxRenamer   *renamer,
-                                           const gchar      *name);
+const gchar *thunarx_renamer_get_name       (ThunarxRenamer   *renamer);
+void         thunarx_renamer_set_name       (ThunarxRenamer   *renamer,
+                                             const gchar      *name);
 
-gchar       *thunarx_renamer_process      (ThunarxRenamer   *renamer,
-                                           ThunarxFileInfo  *file,
-                                           const gchar      *text,
-                                           guint             idx) G_GNUC_MALLOC;
+gchar       *thunarx_renamer_process        (ThunarxRenamer   *renamer,
+                                             ThunarxFileInfo  *file,
+                                             const gchar      *text,
+                                             guint             idx) G_GNUC_MALLOC;
 
-void         thunarx_renamer_load         (ThunarxRenamer   *renamer,
-                                           GHashTable       *settings);
-void         thunarx_renamer_save         (ThunarxRenamer   *renamer,
-                                           GHashTable       *settings);
+void         thunarx_renamer_load           (ThunarxRenamer   *renamer,
+                                             GHashTable       *settings);
+void         thunarx_renamer_save           (ThunarxRenamer   *renamer,
+                                             GHashTable       *settings);
 
-GList       *thunarx_renamer_get_actions  (ThunarxRenamer   *renamer,
-                                           GtkWindow        *window,
-                                           GList            *files) G_GNUC_MALLOC;
+GList       *thunarx_renamer_get_menu_items (ThunarxRenamer   *renamer,
+                                             GtkWindow        *window,
+                                             GList            *files) G_GNUC_MALLOC;
 
-void         thunarx_renamer_changed      (ThunarxRenamer   *renamer);
+void         thunarx_renamer_changed        (ThunarxRenamer   *renamer);
 
 G_END_DECLS;
 

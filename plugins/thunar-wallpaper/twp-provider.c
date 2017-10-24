@@ -43,7 +43,7 @@
 
 static void   twp_menu_provider_init            (ThunarxMenuProviderIface *iface);
 static void   twp_provider_finalize             (GObject                  *object);
-static GList *twp_provider_get_file_actions     (ThunarxMenuProvider      *menu_provider,
+static GList *twp_provider_get_file_menu_items  (ThunarxMenuProvider      *menu_provider,
                                                  GtkWidget                *window,
                                                  GList                    *files);
 static void   twp_action_set_wallpaper          (ThunarxMenuItem          *item,
@@ -87,7 +87,7 @@ THUNARX_DEFINE_TYPE_WITH_CODE (TwpProvider, twp_provider, G_TYPE_OBJECT,
 static void
 twp_menu_provider_init (ThunarxMenuProviderIface *iface)
 {
-  iface->get_file_actions = twp_provider_get_file_actions;
+  iface->get_file_menu_items = twp_provider_get_file_menu_items;
 }
 
 
@@ -125,13 +125,13 @@ twp_provider_finalize (GObject *object)
 
 
 static GList*
-twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
-                               GtkWidget           *window,
-                               GList               *files)
+twp_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
+                                  GtkWidget           *window,
+                                  GList               *files)
 {
   ThunarxMenuItem *item = NULL;
   GFile           *location;
-  GList           *actions = NULL;
+  GList           *items = NULL;
   gchar           *mime_type;
   gchar            selection_name[100];
   Atom             xfce_selection_atom;
@@ -171,7 +171,7 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
               item = thunarx_menu_item_new ("Twp::setwallpaper", _("Set as wallpaper"), NULL, "preferences-desktop-wallpaper");
               g_signal_connect (item, "activate", G_CALLBACK (twp_action_set_wallpaper), files->data);
 
-              actions = g_list_append (actions, item);
+              items = g_list_append (items, item);
             }
           g_free(mime_type);
         }
@@ -196,7 +196,7 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
       }
     }
 
-  return actions;
+  return items;
 }
 
 static void

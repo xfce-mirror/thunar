@@ -41,9 +41,9 @@ typedef struct _ThunarxMenuProvider      ThunarxMenuProvider;
 
 /**
  * ThunarxMenuProviderIface:
- * @get_file_actions: See thunarx_menu_provider_get_file_actions().
- * @get_folder_actions: See thunarx_menu_provider_get_folder_actions().
- * @get_dnd_actions: See thunarx_menu_provider_get_dnd_actions().
+ * @get_file_menu_items: See thunarx_menu_provider_get_file_menu_items().
+ * @get_folder_menu_items: See thunarx_menu_provider_get_folder_menu_items().
+ * @get_dnd_menu_items: See thunarx_menu_provider_get_dnd_menu_items().
  *
  * Interface with virtual methods implemented by extensions that provide
  * additional menu items for the file manager's context menus.
@@ -57,18 +57,18 @@ struct _ThunarxMenuProviderIface
   GTypeInterface __parent__;
 
   /*< public >*/
-  GList *(*get_file_actions)    (ThunarxMenuProvider *provider,
-                                 GtkWidget           *window,
-                                 GList               *files);
+  GList *(*get_file_menu_items)    (ThunarxMenuProvider *provider,
+                                    GtkWidget           *window,
+                                    GList               *files);
 
-  GList *(*get_folder_actions)  (ThunarxMenuProvider *provider,
-                                 GtkWidget           *window,
-                                 ThunarxFileInfo     *folder);
+  GList *(*get_folder_menu_items)  (ThunarxMenuProvider *provider,
+                                    GtkWidget           *window,
+                                    ThunarxFileInfo     *folder);
 
-  GList *(*get_dnd_actions)     (ThunarxMenuProvider *provider,
-                                 GtkWidget           *window,
-                                 ThunarxFileInfo     *folder,
-                                 GList               *files);
+  GList *(*get_dnd_menu_items)     (ThunarxMenuProvider *provider,
+                                    GtkWidget           *window,
+                                    ThunarxFileInfo     *folder,
+                                    GList               *files);
 
   /*< private >*/
   void (*reserved1) (void);
@@ -78,18 +78,18 @@ struct _ThunarxMenuProviderIface
 
 GType  thunarx_menu_provider_get_type           (void) G_GNUC_CONST;
 
-GList *thunarx_menu_provider_get_file_actions   (ThunarxMenuProvider *provider,
-                                                 GtkWidget           *window,
-                                                 GList               *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+GList *thunarx_menu_provider_get_file_menu_items   (ThunarxMenuProvider *provider,
+                                                    GtkWidget           *window,
+                                                    GList               *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
-GList *thunarx_menu_provider_get_folder_actions (ThunarxMenuProvider *provider,
-                                                 GtkWidget           *window,
-                                                 ThunarxFileInfo     *folder) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+GList *thunarx_menu_provider_get_folder_menu_items (ThunarxMenuProvider *provider,
+                                                    GtkWidget           *window,
+                                                    ThunarxFileInfo     *folder) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
-GList *thunarx_menu_provider_get_dnd_actions    (ThunarxMenuProvider *provider,
-                                                 GtkWidget           *window,
-                                                 ThunarxFileInfo     *folder,
-                                                 GList               *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+GList *thunarx_menu_provider_get_dnd_menu_items    (ThunarxMenuProvider *provider,
+                                                    GtkWidget           *window,
+                                                    ThunarxFileInfo     *folder,
+                                                    GList               *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS;
 

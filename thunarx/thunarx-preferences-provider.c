@@ -32,7 +32,7 @@
  * @include: thunarx/thunarx.h
  *
  * The ThunarxPreferencesProvider interface is implemented by extensions that
- * want to register additional actions in the preferences menu of the file
+ * want to register additional items in the preferences menu of the file
  * manager. In general this should only be done by extensions that are closely
  * tied to the file manager (for example, the <literal>thunar-uca</literal> is
  * such an extension, while an extension that just adds <guimenuitem>Compress
@@ -41,12 +41,12 @@
  * the file manager menu, because it should use desktop-wide settings for
  * archive managers instead).
  *
- * The <link linkend="ThunarxMenuItem"><type>ThunarxMenuItem</type></link>s returned from the
- * thunarx_preferences_provider_get_actions() method must be namespaced with the
- * model to avoid collision with internal file manager actions and actions provided
- * by other extensions. For example, the preferences action provided by the
- * <literal>thunar-uca</literal> extension is called
- * <literal>ThunarUca::manage-actions</literal>.
+ * The name of <link linkend="ThunarxMenuItem"><type>ThunarxMenuItem</type></link>s
+ * returned from the thunarx_preferences_provider_get_menu items() method must be
+ * namespaced with the model to avoid collision with internal file manager menu items
+ * and menu items provided by other extensions. For example, the preferences menu item
+ * provided by the <literal>thunar-uca</literal> extension is called
+ * <literal>ThunarUca::manage-menu-items</literal>.
  */
 
 GType
@@ -76,22 +76,22 @@ thunarx_preferences_provider_get_type (void)
 
 
 /**
- * thunarx_preferences_provider_get_actions:
+ * thunarx_preferences_provider_get_menu_items:
  * @provider : a #ThunarxPreferencesProvider.
- * @window   : the #GtkWindow within which the actions will be used.
+ * @window   : the #GtkWindow within which the menu items will be used.
  *
  * Returns the list of #ThunarxMenuItem<!---->s that @provider has to offer
- * as preferences within @window. These actions will usually be added
+ * as preferences within @window. These menu items will usually be added
  * to the builtin list of preferences in the "Edit" menu of the file
  * manager's @window.
  *
  * Plugin writers that implement this interface should make sure to
- * choose descriptive action names and tooltips, and not to crowd the
+ * choose descriptive names and tooltips, and not to crowd the
  * "Edit" menu too much. That said, think twice before implementing
- * this interface, as too many preference actions will render the
+ * this interface, as too many preference menu items will render the
  * file manager useless over time!
  *
- * The caller is responsible to free the returned list of actions using
+ * The caller is responsible to free the returned list of menu items using
  * something like this when no longer needed:
  * <informalexample><programlisting>
  * g_list_free_full (list, g_object_unref);
@@ -101,26 +101,26 @@ thunarx_preferences_provider_get_type (void)
  *               to offer as preferences within @window.
  **/
 GList*
-thunarx_preferences_provider_get_actions (ThunarxPreferencesProvider *provider,
-                                          GtkWidget                  *window)
+thunarx_preferences_provider_get_menu_items (ThunarxPreferencesProvider *provider,
+                                             GtkWidget                  *window)
 {
-  GList *actions;
+  GList *items;
 
   g_return_val_if_fail (THUNARX_IS_PREFERENCES_PROVIDER (provider), NULL);
   g_return_val_if_fail (GTK_IS_WINDOW (window), NULL);
 
-  if (THUNARX_PREFERENCES_PROVIDER_GET_IFACE (provider)->get_actions != NULL)
+  if (THUNARX_PREFERENCES_PROVIDER_GET_IFACE (provider)->get_menu_items != NULL)
     {
-      /* query the actions from the implementation */
-      actions = (*THUNARX_PREFERENCES_PROVIDER_GET_IFACE (provider)->get_actions) (provider, window);
+      /* query the menu items from the implementation */
+      items = (*THUNARX_PREFERENCES_PROVIDER_GET_IFACE (provider)->get_menu_items) (provider, window);
 
-      /* take a reference on the provider for each action */
-      thunarx_object_list_take_reference (actions, provider);
+      /* take a reference on the provider for each menu item */
+      thunarx_object_list_take_reference (items, provider);
     }
   else
     {
-      actions = NULL;
+      items = NULL;
     }
 
-  return actions;
+  return items;
 }

@@ -15,55 +15,80 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
+
 #include <glib/gi18n-lib.h>
 
-#include "thunarx-menu-item.h"
+#include <thunarx/thunarx-private.h>
+#include <thunarx/thunarx-menu-item.h>
 
+
+
+#define THUNARX_MENU_ITEM_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), THUNARX_TYPE_MENU_ITEM, ThunarxMenuItemPrivate))
+
+/**
+ * SECTION: thunarx-menu-item
+ * @short_description: The base class for menu items added to the context menus
+ * @title: ThunarxMenuItem
+ * @include: thunarx/thunarx.h
+ *
+ * The class for menu items that can be added to Thunar's context menus
+ * by extensions implementing the #ThunarxMenuProvider, #ThunarxPreferencesProvider
+ * or #ThunarxRenamerProvider interfaces. The items returned by extensions from
+ * *_get_menu_items() methods are instances of this class or a derived class.
+ */
+
+/* Signal identifiers */
 enum
 {
-    ACTIVATE,
-    LAST_SIGNAL
+  ACTIVATE,
+  LAST_SIGNAL
 };
 
+/* Property identifiers */
 enum
 {
-    PROP_0,
-    PROP_NAME,
-    PROP_LABEL,
-    PROP_TOOLTIP,
-    PROP_ICON,
-    PROP_SENSITIVE,
-    PROP_PRIORITY,
-    PROP_MENU,
-    LAST_PROP
+  PROP_0,
+  PROP_NAME,
+  PROP_LABEL,
+  PROP_TOOLTIP,
+  PROP_ICON,
+  PROP_SENSITIVE,
+  PROP_PRIORITY,
+  PROP_MENU,
+  LAST_PROP
 };
 
 
-static void        thunarx_menu_item_finalize         (GObject    *object);
-static void        thunarx_menu_item_get_property     (GObject    *object,
-                                                       guint       param_id,
-                                                       GValue     *value,
-                                                       GParamSpec *pspec);
-static void        thunarx_menu_item_set_property     (GObject      *object,
-                                                       guint         param_id,
-                                                       const GValue *value,
-                                                       GParamSpec   *pspec);
 
-struct _ThunarxMenuItemDetails
+static void thunarx_menu_item_get_property (GObject      *object,
+                                            guint         param_id,
+                                            GValue       *value,
+                                            GParamSpec   *pspec);
+static void thunarx_menu_item_set_property (GObject      *object,
+                                            guint         param_id,
+                                            const GValue *value,
+                                            GParamSpec   *pspec);
+static void thunarx_menu_item_finalize     (GObject      *object);
+
+
+
+struct _ThunarxMenuItemPrivate
 {
-    char *name;
-    char *label;
-    char *tooltip;
-    char *icon;
-    gboolean sensitive;
-    gboolean priority;
+  gchar   *name;
+  gchar   *label;
+  gchar   *tooltip;
+  gchar   *icon;
+  gboolean sensitive;
+  gboolean priority;
 };
+
+
 
 static guint signals[LAST_SIGNAL];
 
-static GObjectClass *parent_class = NULL;
 
 
 G_DEFINE_TYPE (ThunarxMenuItem, thunarx_menu_item, G_TYPE_OBJECT)
@@ -71,67 +96,71 @@ G_DEFINE_TYPE (ThunarxMenuItem, thunarx_menu_item, G_TYPE_OBJECT)
 
 
 static void
-thunarx_menu_item_class_init (ThunarxMenuItemClass *class)
+thunarx_menu_item_class_init (ThunarxMenuItemClass *klass)
 {
-    parent_class = g_type_class_peek_parent (class);
+  GObjectClass *gobject_class;
 
-    G_OBJECT_CLASS (class)->finalize = thunarx_menu_item_finalize;
-    G_OBJECT_CLASS (class)->get_property = thunarx_menu_item_get_property;
-    G_OBJECT_CLASS (class)->set_property = thunarx_menu_item_set_property;
+  /* add our private data to the class type */
+  g_type_class_add_private (klass, sizeof (ThunarxMenuItemPrivate));
 
-    signals[ACTIVATE] =
-        g_signal_new ("activate",
-                      G_TYPE_FROM_CLASS (class),
-                      G_SIGNAL_RUN_LAST,
-                      G_STRUCT_OFFSET (ThunarxMenuItemClass,
-                                       activate),
-                      NULL, NULL,
-                      g_cclosure_marshal_VOID__VOID,
-                      G_TYPE_NONE, 0);
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = thunarx_menu_item_finalize;
+  gobject_class->get_property = thunarx_menu_item_get_property;
+  gobject_class->set_property = thunarx_menu_item_set_property;
 
-    g_object_class_install_property (G_OBJECT_CLASS (class),
-                                     PROP_NAME,
-                                     g_param_spec_string ("name",
-                                                          "Name",
-                                                          "Name of the item",
-                                                          NULL,
-                                                          G_PARAM_CONSTRUCT_ONLY | G_PARAM_WRITABLE | G_PARAM_READABLE));
-    g_object_class_install_property (G_OBJECT_CLASS (class),
-                                     PROP_LABEL,
-                                     g_param_spec_string ("label",
-                                                          "Label",
-                                                          "Label to display to the user",
-                                                          NULL,
-                                                          G_PARAM_READWRITE));
-    g_object_class_install_property (G_OBJECT_CLASS (class),
-                                     PROP_TOOLTIP,
-                                     g_param_spec_string ("tooltip",
-                                                          "Tooltip",
-                                                          "Tooltip for the menu item",
-                                                          NULL,
-                                                          G_PARAM_READWRITE));
-    g_object_class_install_property (G_OBJECT_CLASS (class),
-                                     PROP_ICON,
-                                     g_param_spec_string ("icon",
-                                                          "Icon",
-                                                          "Name of the icon to display in the menu item",
-                                                          NULL,
-                                                          G_PARAM_READWRITE));
+  signals[ACTIVATE] =
+      g_signal_new ("activate",
+                    G_TYPE_FROM_CLASS (klass),
+                    G_SIGNAL_RUN_LAST,
+                    G_STRUCT_OFFSET (ThunarxMenuItemClass,
+                                     activate),
+                    NULL, NULL,
+                    g_cclosure_marshal_VOID__VOID,
+                    G_TYPE_NONE, 0);
 
-    g_object_class_install_property (G_OBJECT_CLASS (class),
-                                     PROP_SENSITIVE,
-                                     g_param_spec_boolean ("sensitive",
-                                                           "Sensitive",
-                                                           "Whether the menu item is sensitive",
-                                                           TRUE,
-                                                           G_PARAM_READWRITE));
-    g_object_class_install_property (G_OBJECT_CLASS (class),
-                                     PROP_PRIORITY,
-                                     g_param_spec_boolean ("priority",
-                                                           "Priority",
-                                                           "Show priority text in toolbars",
-                                                           TRUE,
-                                                           G_PARAM_READWRITE));
+  g_object_class_install_property (gobject_class,
+                                   PROP_NAME,
+                                   g_param_spec_string ("name",
+                                                        "Name",
+                                                        "Name of the item",
+                                                        NULL,
+                                                        G_PARAM_CONSTRUCT_ONLY | G_PARAM_WRITABLE | G_PARAM_READABLE));
+  g_object_class_install_property (gobject_class,
+                                   PROP_LABEL,
+                                   g_param_spec_string ("label",
+                                                        "Label",
+                                                        "Label to display to the user",
+                                                        NULL,
+                                                        G_PARAM_READWRITE));
+  g_object_class_install_property (gobject_class,
+                                   PROP_TOOLTIP,
+                                   g_param_spec_string ("tooltip",
+                                                        "Tooltip",
+                                                        "Tooltip for the menu item",
+                                                        NULL,
+                                                        G_PARAM_READWRITE));
+  g_object_class_install_property (gobject_class,
+                                   PROP_ICON,
+                                   g_param_spec_string ("icon",
+                                                        "Icon",
+                                                        "Name of the icon to display in the menu item",
+                                                        NULL,
+                                                        G_PARAM_READWRITE));
+
+  g_object_class_install_property (gobject_class,
+                                   PROP_SENSITIVE,
+                                   g_param_spec_boolean ("sensitive",
+                                                         "Sensitive",
+                                                         "Whether the menu item is sensitive",
+                                                         TRUE,
+                                                         G_PARAM_READWRITE));
+  g_object_class_install_property (gobject_class,
+                                   PROP_PRIORITY,
+                                   g_param_spec_boolean ("priority",
+                                                         "Priority",
+                                                         "Show priority text in toolbars",
+                                                         TRUE,
+                                                         G_PARAM_READWRITE));
 }
 
 
@@ -139,8 +168,118 @@ thunarx_menu_item_class_init (ThunarxMenuItemClass *class)
 static void
 thunarx_menu_item_init (ThunarxMenuItem *item)
 {
-    item->details = g_new0 (ThunarxMenuItemDetails, 1);
-    item->details->sensitive = TRUE;
+  item->priv = THUNARX_MENU_ITEM_GET_PRIVATE (item);
+  item->priv->sensitive = TRUE;
+  item->priv->priority = FALSE;
+}
+
+
+
+static void
+thunarx_menu_item_get_property (GObject    *object,
+                                guint       param_id,
+                                GValue     *value,
+                                GParamSpec *pspec)
+{
+  ThunarxMenuItem *item = THUNARX_MENU_ITEM (object);
+
+  switch (param_id)
+    {
+      case PROP_NAME:
+        g_value_set_string (value, item->priv->name);
+        break;
+
+      case PROP_LABEL:
+        g_value_set_string (value, item->priv->label);
+        break;
+
+      case PROP_TOOLTIP:
+        g_value_set_string (value, item->priv->tooltip);
+        break;
+
+      case PROP_ICON:
+        g_value_set_string (value, item->priv->icon);
+        break;
+
+      case PROP_SENSITIVE:
+        g_value_set_boolean (value, item->priv->sensitive);
+        break;
+
+      case PROP_PRIORITY:
+        g_value_set_boolean (value, item->priv->priority);
+        break;
+
+      default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
+        break;
+     }
+}
+
+
+
+static void
+thunarx_menu_item_set_property (GObject      *object,
+                                guint         param_id,
+                                const GValue *value,
+                                GParamSpec   *pspec)
+{
+  ThunarxMenuItem *item = THUNARX_MENU_ITEM (object);
+
+  switch (param_id)
+    {
+      case PROP_NAME:
+        g_free (item->priv->name);
+        item->priv->name = g_strdup (g_value_get_string (value));
+        g_object_notify (object, "name");
+        break;
+
+      case PROP_LABEL:
+        g_free (item->priv->label);
+        item->priv->label = g_strdup (g_value_get_string (value));
+        g_object_notify (object, "label");
+        break;
+
+      case PROP_TOOLTIP:
+        g_free (item->priv->tooltip);
+        item->priv->tooltip = g_strdup (g_value_get_string (value));
+        g_object_notify (object, "tooltip");
+        break;
+
+      case PROP_ICON:
+        g_free (item->priv->icon);
+        item->priv->icon = g_strdup (g_value_get_string (value));
+        g_object_notify (object, "icon");
+        break;
+
+      case PROP_SENSITIVE:
+        item->priv->sensitive = g_value_get_boolean (value);
+        g_object_notify (object, "sensitive");
+        break;
+
+      case PROP_PRIORITY:
+        item->priv->priority = g_value_get_boolean (value);
+        g_object_notify (object, "priority");
+        break;
+
+      default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
+        break;
+    }
+}
+
+
+
+static void
+thunarx_menu_item_finalize (GObject *object)
+{
+  ThunarxMenuItem *item = THUNARX_MENU_ITEM (object);
+
+  g_free (item->priv->name);
+  g_free (item->priv->label);
+  g_free (item->priv->tooltip);
+  g_free (item->priv->icon);
+
+  (*G_OBJECT_CLASS (thunarx_menu_item_parent_class)->finalize) (object);
 }
 
 
@@ -157,24 +296,20 @@ thunarx_menu_item_init (ThunarxMenuItem *item)
  * Returns: a newly created #ThunarxMenuItem
  */
 ThunarxMenuItem *
-thunarx_menu_item_new (const char *name,
-                       const char *label,
-                       const char *tooltip,
-                       const char *icon)
+thunarx_menu_item_new (const gchar *name,
+                       const gchar *label,
+                       const gchar *tooltip,
+                       const gchar *icon)
 {
-    ThunarxMenuItem *item;
+  g_return_val_if_fail (name != NULL, NULL);
+  g_return_val_if_fail (label != NULL, NULL);
 
-    g_return_val_if_fail (name != NULL, NULL);
-    g_return_val_if_fail (label != NULL, NULL);
-
-    item = g_object_new (THUNARX_TYPE_MENU_ITEM,
-                         "name", name,
-                         "label", label,
-                         "tooltip", tooltip,
-                         "icon", icon,
-                         NULL);
-
-    return item;
+  return g_object_new (THUNARX_TYPE_MENU_ITEM,
+                       "name", name,
+                       "label", label,
+                       "tooltip", tooltip,
+                       "icon", icon,
+                       NULL);
 }
 
 
@@ -183,155 +318,42 @@ thunarx_menu_item_new (const char *name,
  * thunarx_menu_item_activate:
  * @item: pointer to a #ThunarxMenuItem instance
  *
- * emits the activate signal.
+ * Emits the activate signal.
  */
 void
 thunarx_menu_item_activate (ThunarxMenuItem *item)
 {
-    g_signal_emit (item, signals[ACTIVATE], 0);
+  g_signal_emit (item, signals[ACTIVATE], 0);
 }
 
 
 
-static void
-thunarx_menu_item_get_property (GObject    *object,
-                                 guint       param_id,
-                                 GValue     *value,
-                                 GParamSpec *pspec)
+/**
+ * thunarx_menu_item_get_sensitive:
+ * @item: pointer to a #ThunarxMenuItem instance
+ *
+ * Returns whether the menu item is sensitive.
+ */
+gboolean
+thunarx_menu_item_get_sensitive (ThunarxMenuItem *item)
 {
-    ThunarxMenuItem *item;
-
-    item = THUNARX_MENU_ITEM (object);
-
-    switch (param_id)
-    {
-        case PROP_NAME:
-        {
-            g_value_set_string (value, item->details->name);
-        }
-        break;
-
-        case PROP_LABEL:
-        {
-            g_value_set_string (value, item->details->label);
-        }
-        break;
-
-        case PROP_TOOLTIP:
-        {
-            g_value_set_string (value, item->details->tooltip);
-        }
-        break;
-
-        case PROP_ICON:
-        {
-            g_value_set_string (value, item->details->icon);
-        }
-        break;
-
-        case PROP_SENSITIVE:
-        {
-            g_value_set_boolean (value, item->details->sensitive);
-        }
-        break;
-
-        case PROP_PRIORITY:
-        {
-            g_value_set_boolean (value, item->details->priority);
-        }
-        break;
-
-        default:
-        {
-            G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
-        }
-        break;
-    }
+  g_return_val_if_fail (THUNARX_IS_MENU_ITEM (item), FALSE);
+  return item->priv->sensitive;
 }
 
 
 
-static void
-thunarx_menu_item_set_property (GObject      *object,
-                                guint         param_id,
-                                const GValue *value,
-                                GParamSpec   *pspec)
+/**
+ * thunarx_menu_item_set_sensitive:
+ * @item: pointer to a #ThunarxMenuItem instance
+ * @sensitive: %TRUE to make the menu item sensitive
+ *
+ * Sets the ::sensitive property of the menu item to @sensitive.
+ */
+void
+thunarx_menu_item_set_sensitive (ThunarxMenuItem *item,
+                                 gboolean         sensitive)
 {
-    ThunarxMenuItem *item;
-
-    item = THUNARX_MENU_ITEM (object);
-
-    switch (param_id)
-    {
-        case PROP_NAME:
-        {
-            g_free (item->details->name);
-            item->details->name = g_strdup (g_value_get_string (value));
-            g_object_notify (object, "name");
-        }
-        break;
-
-        case PROP_LABEL:
-        {
-            g_free (item->details->label);
-            item->details->label = g_strdup (g_value_get_string (value));
-            g_object_notify (object, "label");
-        }
-        break;
-
-        case PROP_TOOLTIP:
-        {
-            g_free (item->details->tooltip);
-            item->details->tooltip = g_strdup (g_value_get_string (value));
-            g_object_notify (object, "tooltip");
-        }
-        break;
-
-        case PROP_ICON:
-        {
-            g_free (item->details->icon);
-            item->details->icon = g_strdup (g_value_get_string (value));
-            g_object_notify (object, "icon");
-        }
-        break;
-
-        case PROP_SENSITIVE:
-        {
-            item->details->sensitive = g_value_get_boolean (value);
-            g_object_notify (object, "sensitive");
-        }
-        break;
-
-        case PROP_PRIORITY:
-        {
-            item->details->priority = g_value_get_boolean (value);
-            g_object_notify (object, "priority");
-        }
-        break;
-
-        default:
-        {
-            G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
-        }
-        break;
-    }
-}
-
-
-
-static void
-thunarx_menu_item_finalize (GObject *object)
-{
-    ThunarxMenuItem *item;
-
-    item = THUNARX_MENU_ITEM (object);
-
-    g_free (item->details->name);
-    g_free (item->details->label);
-    g_free (item->details->tooltip);
-    g_free (item->details->icon);
-
-    g_free (item->details);
-
-    G_OBJECT_CLASS (parent_class)->finalize (object);
+  g_return_if_fail (THUNARX_IS_MENU_ITEM (item));
+  item->priv->sensitive = sensitive;
 }

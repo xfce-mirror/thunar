@@ -30,6 +30,7 @@
 #include <thunar/thunar-dnd.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -81,9 +82,10 @@ thunar_dnd_ask (GtkWidget    *widget,
   GtkWidget              *item;
   GList                  *file_list = NULL;
   GList                  *providers = NULL;
-  GList                  *actions = NULL;
+  GList                  *items = NULL;
   GList                  *lp;
   guint                   n;
+  GtkAction              *action;
 
   _thunar_return_val_if_fail (thunar_file_is_directory (folder), 0);
   _thunar_return_val_if_fail (GTK_IS_WIDGET (widget), 0);
@@ -138,28 +140,33 @@ thunar_dnd_ask (GtkWidget    *widget,
           /* load the menu providers from the provider factory */
           providers = thunarx_provider_factory_list_providers (factory, THUNARX_TYPE_MENU_PROVIDER);
 
-          /* load the dnd actions offered by the menu providers */
+          /* load the dnd menu items offered by the menu providers */
           for (lp = providers; lp != NULL; lp = lp->next)
             {
-              /* merge the actions from this provider */
-              actions = g_list_concat (actions, thunarx_menu_provider_get_dnd_actions (lp->data, window, THUNARX_FILE_INFO (folder), file_list));
+              /* merge the menu items from this provider */
+              items = g_list_concat (items, thunarx_menu_provider_get_dnd_menu_items (lp->data, window, THUNARX_FILE_INFO (folder), file_list));
               g_object_unref (G_OBJECT (lp->data));
             }
           g_list_free (providers);
 
-          /* check if we have atleast one action */
-          if (G_UNLIKELY (actions != NULL))
+          /* check if we have at least one item */
+          if (G_UNLIKELY (items != NULL))
             {
-              /* add menu items for all actions */
-              for (lp = actions; lp != NULL; lp = lp->next)
+              /* add menu items for all items */
+              for (lp = items; lp != NULL; lp = lp->next)
                 {
+                  action = thunar_util_action_from_menu_item (G_OBJECT (lp->data), window);
+
                   /* add a menu item for the action */
-                  item = gtk_action_create_menu_item (lp->data);
+                  item = gtk_action_create_menu_item (action);
                   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-                  g_object_unref (G_OBJECT (lp->data));
                   gtk_widget_show (item);
+
+                  /* release the reference on the menu item and action */
+                  g_object_unref (G_OBJECT (lp->data));
+                  g_object_unref (G_OBJECT (action));
                 }
-              g_list_free (actions);
+              g_list_free (items);
 
               /* append another separator */
               item = gtk_separator_menu_item_new ();

@@ -76,29 +76,29 @@ enum
  * button which opens a dialog with the additional settings.
  */
 
-static void     thunarx_renamer_finalize          (GObject                *object);
-static GObject *thunarx_renamer_constructor       (GType                   type,
-                                                   guint                   n_construct_properties,
-                                                   GObjectConstructParam  *construct_properties);
-static void     thunarx_renamer_get_property      (GObject                *object,
-                                                   guint                   prop_id,
-                                                   GValue                 *value,
-                                                   GParamSpec             *pspec);
-static void     thunarx_renamer_set_property      (GObject                *object,
-                                                   guint                   prop_id,
-                                                   const GValue           *value,
-                                                   GParamSpec             *pspec);
-static gchar   *thunarx_renamer_real_process      (ThunarxRenamer         *renamer,
-                                                   ThunarxFileInfo        *file,
-                                                   const gchar            *text,
-                                                   guint                   num);
-static void     thunarx_renamer_real_load         (ThunarxRenamer         *renamer,
-                                                   GHashTable             *settings);
-static void     thunarx_renamer_real_save         (ThunarxRenamer         *renamer,
-                                                   GHashTable             *settings);
-static GList   *thunarx_renamer_real_get_actions  (ThunarxRenamer         *renamer,
-                                                   GtkWindow              *window,
-                                                   GList                  *files);
+static void     thunarx_renamer_finalize             (GObject                *object);
+static GObject *thunarx_renamer_constructor          (GType                   type,
+                                                      guint                   n_construct_properties,
+                                                      GObjectConstructParam  *construct_properties);
+static void     thunarx_renamer_get_property         (GObject                *object,
+                                                      guint                   prop_id,
+                                                      GValue                 *value,
+                                                      GParamSpec             *pspec);
+static void     thunarx_renamer_set_property         (GObject                *object,
+                                                      guint                   prop_id,
+                                                      const GValue           *value,
+                                                      GParamSpec             *pspec);
+static gchar   *thunarx_renamer_real_process         (ThunarxRenamer         *renamer,
+                                                      ThunarxFileInfo        *file,
+                                                      const gchar            *text,
+                                                      guint                   num);
+static void     thunarx_renamer_real_load            (ThunarxRenamer         *renamer,
+                                                      GHashTable             *settings);
+static void     thunarx_renamer_real_save            (ThunarxRenamer         *renamer,
+                                                      GHashTable             *settings);
+static GList   *thunarx_renamer_real_get_menu_items  (ThunarxRenamer         *renamer,
+                                                      GtkWindow              *window,
+                                                      GList                  *files);
 
 
 
@@ -135,7 +135,7 @@ thunarx_renamer_class_init (ThunarxRenamerClass *klass)
   klass->process = thunarx_renamer_real_process;
   klass->load = thunarx_renamer_real_load;
   klass->save = thunarx_renamer_real_save;
-  klass->get_actions = thunarx_renamer_real_get_actions;
+  klass->get_menu_items = thunarx_renamer_real_get_menu_items;
 
   /**
    * ThunarxRenamer:help-url:
@@ -406,9 +406,9 @@ thunarx_renamer_real_save (ThunarxRenamer *renamer,
 
 
 static GList*
-thunarx_renamer_real_get_actions (ThunarxRenamer *renamer,
-                                  GtkWindow      *window,
-                                  GList          *files)
+thunarx_renamer_real_get_menu_items (ThunarxRenamer *renamer,
+                                     GtkWindow      *window,
+                                     GList          *files)
 {
   /* return an empty list, derived classes may override this method */
   return NULL;
@@ -622,7 +622,7 @@ thunarx_renamer_save (ThunarxRenamer *renamer,
 
 
 /**
- * thunarx_renamer_get_actions:
+ * thunarx_renamer_get_menu_items:
  * @renamer : a #ThunarxRenamer.
  * @window  : a #GtkWindow or %NULL.
  * @files   : a #GList of #ThunarxFileInfo<!---->s.
@@ -630,12 +630,12 @@ thunarx_renamer_save (ThunarxRenamer *renamer,
  * Returns the list of #ThunarxMenuItem<!---->s provided by @renamer for
  * the given list of @files. By default, this method returns %NULL
  * (the empty list), but derived classes may override this method
- * to provide additional actions for files in the bulk renamer
+ * to provide additional items for files in the bulk renamer
  * dialog list.
  * 
  * The returned #ThunarxMenuItem<!---->s will be displayed in the file's
  * context menu of the bulk renamer dialog, when this @renamer is
- * active. For example, an ID3-Tag based renamer may add an action
+ * active. For example, an ID3-Tag based renamer may add an menu item
  * "Edit Tags" to the context menus of supported media files and,
  * when activated, display a dialog (which should be transient and
  * modal for @window, if not %NULL), which allows the users to edit
@@ -643,24 +643,24 @@ thunarx_renamer_save (ThunarxRenamer *renamer,
  *
  * Derived classes that override this method should always check
  * first if all the #ThunarxFileInfo<!---->s in the list of @files
- * are supported, and only return actions that can be performed on
+ * are supported, and only return menu items that can be performed on
  * this specific list of @files. For example, the ID3-Tag renamer
  * mentioned above, should first check whether all items in @files
  * are actually audio files. The thunarx_file_info_has_mime_type()
  * of the #ThunarxFileInfo interface can be used to easily test
  * whether a file in the @files list is of a certain MIME type.
  *
- * Some actions may only work properly if only a single file ist
+ * Some menu items may only work properly if only a single file is
  * selected (for example, the ID3-Tag renamer will probably only
  * supporting editing one file at a time). In this case you have
  * basicly two options: Either you can return %NULL here if @files
- * does not contain exactly one item, or you can return the actions
+ * does not contain exactly one item, or you can return the menu items
  * as usual, but make them insensitive, using:
  * <informalexample><programlisting>
- * gtk_action_set_sensitive (action, FALSE);
+ * thunarx_menu_item_set_sensitive (item, FALSE);
  * </programlisting></informalexample>
  * The latter has the advantage that the user will still notice the
- * existance of the action and probably realize that it can only be
+ * existance of the menu item and probably realize that it can only be
  * applied to a single item at once.
  *
  * The caller is responsible to free the returned list using something
@@ -672,11 +672,11 @@ thunarx_renamer_save (ThunarxRenamer *renamer,
  * As a special note, this method automatically takes a reference on the
  * @renamer for every #ThunarxMenuItem object returned from the real implementation
  * of this method in @renamer. This is to make sure that the extension stays
- * in memory for atleast the time that the actions are used.
+ * in memory for at least the time that the menu items are used.
  *
- * The #ThunarxMenuItem<!---->s returned from this method must be namespaced with
- * the module to avoid collision with internal file manager actions and
- * actions provided by other extensions. For example, the menu action
+ * The name of #ThunarxMenuItem<!---->s returned from this method must be namespaced with
+ * the module to avoid collision with internal file manager menu items and
+ * menu items provided by other extensions. For example, the menu item
  * provided by the ID3-Tag renamer mentioned above, should be named
  * <literal>TagRenamer::edit-tags</literal> (if <literal>TagRenamer</literal>
  * is the class name). For additional information about the way #ThunarxMenuItem<!---->s
@@ -690,28 +690,28 @@ thunarx_renamer_save (ThunarxRenamer *renamer,
  * Instead, if @window is not %NULL, add a weak reference using the
  * g_object_weak_ref() or g_object_add_weak_pointer() method. But don't
  * forget to release the weak reference if @window survived the lifetime
- * of your action (which is likely to be the case in most situations).
+ * of your menu item (which is likely to be the case in most situations).
  *
  * Return value: the list of #ThunarxMenuItem<!---->s provided by @renamer
  *               for the given list of @files.
  **/
 GList*
-thunarx_renamer_get_actions (ThunarxRenamer *renamer,
-                             GtkWindow      *window,
-                             GList          *files)
+thunarx_renamer_get_menu_items (ThunarxRenamer *renamer,
+                                GtkWindow      *window,
+                                GList          *files)
 {
-  GList *actions;
+  GList *items;
 
   g_return_val_if_fail (THUNARX_IS_RENAMER (renamer), NULL);
   g_return_val_if_fail (window == NULL || GTK_IS_WINDOW (window), NULL);
 
-  /* query the actions from the implementation */
-  actions = (*THUNARX_RENAMER_GET_CLASS (renamer)->get_actions) (renamer, window, files);
+  /* query the menu items from the implementation */
+  items = (*THUNARX_RENAMER_GET_CLASS (renamer)->get_menu_items) (renamer, window, files);
 
-  /* take a reference on the renamer for each action */
-  thunarx_object_list_take_reference (actions, renamer);
+  /* take a reference on the renamer for each menu item */
+  thunarx_object_list_take_reference (items, renamer);
 
-  return actions;
+  return items;
 }
 
 

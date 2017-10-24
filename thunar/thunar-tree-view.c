@@ -28,6 +28,7 @@
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-create-dialog.h>
+#include <thunar/thunar-device.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-dnd.h>
 #include <thunar/thunar-gio-extensions.h>
@@ -42,7 +43,7 @@
 #include <thunar/thunar-simple-job.h>
 #include <thunar/thunar-tree-model.h>
 #include <thunar/thunar-tree-view.h>
-#include <thunar/thunar-device.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -1264,7 +1265,8 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
   GtkWidget    *window;
   GIcon        *icon;
   GList        *providers, *lp;
-  GList        *actions = NULL, *tmp;
+  GList        *items = NULL, *tmp;
+  GtkAction    *action;
 
   /* verify that we're connected to the clipboard manager */
   if (G_UNLIKELY (view->clipboard == NULL))
@@ -1504,28 +1506,31 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
               /* determine the toplevel window we belong to */
               window = gtk_widget_get_toplevel (GTK_WIDGET (view));
 
-              /* load the actions offered by the menu providers */
+              /* load the menu items offered by the menu providers */
               for (lp = providers; lp != NULL; lp = lp->next)
                 {
-                  tmp = thunarx_menu_provider_get_folder_actions (lp->data, window, THUNARX_FILE_INFO (file));
-                  actions = g_list_concat (actions, tmp);
+                  tmp = thunarx_menu_provider_get_folder_menu_items (lp->data, window, THUNARX_FILE_INFO (file));
+                  items = g_list_concat (items, tmp);
                   g_object_unref (G_OBJECT (lp->data));
                 }
               g_list_free (providers);
 
-              /* add the actions to the menu */
-              for (lp = actions; lp != NULL; lp = lp->next)
+              /* add the menu items to the menu */
+              for (lp = items; lp != NULL; lp = lp->next)
                 {
-                  item = gtk_action_create_menu_item (GTK_ACTION (lp->data));
+                  action = thunar_util_action_from_menu_item (G_OBJECT (lp->data), window);
+
+                  item = gtk_action_create_menu_item (action);
                   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
                   gtk_widget_show (item);
 
-                  /* release the reference on the action */
+                  /* release the reference on the menu item and action */
                   g_object_unref (G_OBJECT (lp->data));
+                  g_object_unref (G_OBJECT (action));
                 }
 
               /* add a separator to the end of the menu */
-              if (G_LIKELY (lp != actions))
+              if (G_LIKELY (lp != items))
                 {
                   /* append a menu separator */
                   item = gtk_separator_menu_item_new ();
@@ -1534,7 +1539,7 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
                 }
 
               /* cleanup */
-              g_list_free (actions);
+              g_list_free (items);
             }
         }
     }
