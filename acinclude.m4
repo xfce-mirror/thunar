@@ -57,8 +57,7 @@ AC_ARG_ENABLE([tpa-plugin], AC_HELP_STRING([--disable-tpa-plugin], [Don't build 
 if test x"$ac_bm_thunar_plugin_tpa" = x"yes"; then
   XDT_CHECK_PACKAGE([LIBXFCE4PANEL], [libxfce4panel-1.0], [4.9.0],
   [
-    dnl # Can only build thunar-tpa if D-BUS was found previously
-    ac_bm_thunar_plugin_tpa=$DBUS_FOUND
+    ac_bm_thunar_plugin_tpa=yes
   ],
   [
     dnl # Cannot build thunar-tpa if xfce4-panel is not installed
