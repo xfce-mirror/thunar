@@ -54,9 +54,9 @@
 #include <glib/gwin32.h>
 #endif
 
-#include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
+#include <thunarx/thunarx.h>
 
 #include <glib.h>
 #include <glib/gstdio.h>
@@ -623,15 +623,11 @@ extension_action_callback (GtkAction *action,
 
 
 GtkAction *
-thunar_util_action_from_menu_item (GObject   *item,
-                                   GtkWidget *parent_widget)
+thunar_util_action_from_menu_item (GObject   *item)
 {
   gchar *name, *label, *tooltip, *icon_name;
-  gboolean           sensitive, priority;
-  GtkAction         *action;
-  GdkPixbuf         *icon;
-  GtkIconTheme      *icon_theme;
-  ThunarIconFactory *icon_factory;
+  gboolean  sensitive, priority;
+  GtkAction *action;
 
   g_return_val_if_fail (THUNARX_IS_MENU_ITEM (item), NULL);
 
@@ -646,18 +642,9 @@ thunar_util_action_from_menu_item (GObject   *item,
 
   action = gtk_action_new (name, label, tooltip, NULL);
 
-  if (icon_name != NULL && parent_widget != NULL)
+  if (icon_name != NULL)
     {
-      icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (parent_widget));
-      icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
-      icon = thunar_icon_factory_load_icon (icon_factory, icon_name, GTK_ICON_SIZE_MENU, TRUE, FALSE);
-      if (icon != NULL)
-        {
-          gtk_action_set_gicon (action, G_ICON (icon));
-          g_object_unref (icon);
-        }
-
-      g_object_unref (G_OBJECT (icon_factory));
+      gtk_action_set_icon_name (action, icon_name);
     }
 
   gtk_action_set_sensitive (action, sensitive);

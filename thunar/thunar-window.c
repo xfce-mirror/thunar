@@ -1967,7 +1967,7 @@ thunar_window_merge_custom_preferences (ThunarWindow *window)
           for (ap = items; ap != NULL; ap = ap->next)
             {
               /* add the action to the action group */
-              action = thunar_util_action_from_menu_item (G_OBJECT (ap->data), GTK_WIDGET (window));
+              action = thunar_util_action_from_menu_item (G_OBJECT (ap->data));
               gtk_action_group_add_action (window->action_group, action);
 
               /* add the action to the UI manager */
@@ -3441,7 +3441,7 @@ thunar_window_update_custom_actions (ThunarView   *view,
           if (G_UNLIKELY (lp->data == NULL))
             continue;
 
-          action = thunar_util_action_from_menu_item (G_OBJECT (lp->data), GTK_WIDGET (window));
+          action = thunar_util_action_from_menu_item (G_OBJECT (lp->data));
 
           /* add the action to the action group */
           gtk_action_group_add_action_with_accel (window->custom_actions,

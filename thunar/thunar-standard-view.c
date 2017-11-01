@@ -2078,7 +2078,7 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
       /* add the menu items to the UI manager */
       for (lp = items; lp != NULL; lp = lp->next)
         {
-          action = thunar_util_action_from_menu_item (G_OBJECT (lp->data), window);
+          action = thunar_util_action_from_menu_item (G_OBJECT (lp->data));
 
           /* add the action to the action group */
           gtk_action_group_add_action (standard_view->priv->custom_actions, action);

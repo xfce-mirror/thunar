@@ -79,8 +79,7 @@ static GdkPixbuf *thunar_icon_factory_load_from_file        (ThunarIconFactory  
 static GdkPixbuf *thunar_icon_factory_lookup_icon           (ThunarIconFactory        *factory,
                                                              const gchar              *name,
                                                              gint                      size,
-                                                             gboolean                  wants_default,
-                                                             gboolean                  force_size);
+                                                             gboolean                  wants_default);
 static guint      thunar_icon_key_hash                      (gconstpointer             data);
 static gboolean   thunar_icon_key_equal                     (gconstpointer             a,
                                                              gconstpointer             b);
@@ -469,8 +468,7 @@ static GdkPixbuf*
 thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
                                  const gchar       *name,
                                  gint               size,
-                                 gboolean           wants_default,
-                                 gboolean           force_size)
+                                 gboolean           wants_default)
 {
   ThunarIconKey  lookup_key;
   ThunarIconKey *key;
@@ -501,8 +499,7 @@ thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
             name = "folder";
 
           /* check if the icon theme contains an icon of that name */
-          icon_info = gtk_icon_theme_lookup_icon (factory->icon_theme, name, size,
-                                                  force_size ? GTK_ICON_LOOKUP_FORCE_SIZE : 0);
+          icon_info = gtk_icon_theme_lookup_icon (factory->icon_theme, name, size, GTK_ICON_LOOKUP_FORCE_SIZE);
           if (G_LIKELY (icon_info != NULL))
             {
               /* try to load the pixbuf from the icon info */
@@ -606,7 +603,7 @@ static GdkPixbuf*
 thunar_icon_factory_load_fallback (ThunarIconFactory *factory,
                                    gint               size)
 {
-  return thunar_icon_factory_lookup_icon (factory, "text-x-generic", size, FALSE, TRUE);
+  return thunar_icon_factory_lookup_icon (factory, "text-x-generic", size, FALSE);
 }
 
 
@@ -752,8 +749,7 @@ GdkPixbuf*
 thunar_icon_factory_load_icon (ThunarIconFactory        *factory,
                                const gchar              *name,
                                gint                      size,
-                               gboolean                  wants_default,
-                               gboolean                  force_size)
+                               gboolean                  wants_default)
 {
   _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
   _thunar_return_val_if_fail (size > 0, NULL);
@@ -771,7 +767,7 @@ thunar_icon_factory_load_icon (ThunarIconFactory        *factory,
     }
 
   /* lookup the icon */
-  return thunar_icon_factory_lookup_icon (factory, name, size, wants_default, force_size);
+  return thunar_icon_factory_lookup_icon (factory, name, size, wants_default);
 }
 
 
@@ -823,7 +819,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
   if (custom_icon != NULL)
     {
       /* try to load the icon */
-      icon = thunar_icon_factory_lookup_icon (factory, custom_icon, icon_size, FALSE, TRUE);
+      icon = thunar_icon_factory_lookup_icon (factory, custom_icon, icon_size, FALSE);
       if (G_LIKELY (icon != NULL))
         return icon;
     }
@@ -897,7 +893,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
   if (G_LIKELY (icon == NULL))
     {
       icon_name = thunar_file_get_icon_name (file, icon_state, factory->icon_theme);
-      icon = thunar_icon_factory_load_icon (factory, icon_name, icon_size, TRUE, TRUE);
+      icon = thunar_icon_factory_load_icon (factory, icon_name, icon_size, TRUE);
     }
 
   if (G_LIKELY (icon != NULL))

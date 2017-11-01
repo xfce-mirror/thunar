@@ -55,8 +55,7 @@ gchar     *thunar_util_change_working_directory (const gchar    *new_directory) 
 
 void       thunar_setup_display_cb              (gpointer data);
 
-GtkAction *thunar_util_action_from_menu_item    (GObject        *item,
-                                                 GtkWidget      *parent_widget) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+GtkAction *thunar_util_action_from_menu_item    (GObject        *item) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS;
 

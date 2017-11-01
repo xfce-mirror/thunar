@@ -155,7 +155,7 @@ thunar_dnd_ask (GtkWidget    *widget,
               /* add menu items for all items */
               for (lp = items; lp != NULL; lp = lp->next)
                 {
-                  action = thunar_util_action_from_menu_item (G_OBJECT (lp->data), window);
+                  action = thunar_util_action_from_menu_item (G_OBJECT (lp->data));
 
                   /* add a menu item for the action */
                   item = gtk_action_create_menu_item (action);

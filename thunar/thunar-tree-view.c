@@ -1518,7 +1518,7 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
               /* add the menu items to the menu */
               for (lp = items; lp != NULL; lp = lp->next)
                 {
-                  action = thunar_util_action_from_menu_item (G_OBJECT (lp->data), window);
+                  action = thunar_util_action_from_menu_item (G_OBJECT (lp->data));
 
                   item = gtk_action_create_menu_item (action);
                   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
