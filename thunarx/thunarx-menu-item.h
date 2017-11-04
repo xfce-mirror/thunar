@@ -61,7 +61,7 @@ void              thunarx_menu_item_activate      (ThunarxMenuItem *item);
 
 gboolean          thunarx_menu_item_get_sensitive (ThunarxMenuItem *item);
 void              thunarx_menu_item_set_sensitive (ThunarxMenuItem *item,
-                                                   gboolean         sensitive)
+                                                   gboolean         sensitive);
 
 G_END_DECLS;
 
