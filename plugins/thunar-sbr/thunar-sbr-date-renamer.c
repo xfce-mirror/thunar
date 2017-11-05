@@ -457,7 +457,7 @@ thunar_sbr_get_time (ThunarxFileInfo   *file,
       /* get the time from the info */
       if (mode == THUNAR_SBR_DATE_MODE_ATIME)
         {
-          file_time = g_file_info_get_attribute_uint64 (file_info, 
+          file_time = g_file_info_get_attribute_uint64 (file_info,
                                                         G_FILE_ATTRIBUTE_TIME_ACCESS);
         }
       else

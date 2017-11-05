@@ -193,7 +193,7 @@ tse_ask_compress (GList *infos)
           /* ask the user whether to compress the file */
           tse_data = (TseData *) infos->data;
           message = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
-                                            _("Send \"%s\" as compressed archive?"), 
+                                            _("Send \"%s\" as compressed archive?"),
                                             g_file_info_get_display_name (tse_data->info));
           gtk_dialog_add_button (GTK_DIALOG (message), _("_Cancel"), GTK_RESPONSE_CANCEL);
           gtk_dialog_add_button (GTK_DIALOG (message), _("Send _directly"), TSE_RESPONSE_PLAIN);
@@ -429,7 +429,7 @@ tse_compress (GList  *infos,
       tse_data = (TseData *) infos->data;
       parent = g_file_get_parent (tse_data->file);
 
-      /* we assume the parent exists because we only allow non-root 
+      /* we assume the parent exists because we only allow non-root
        * files as TseData in main () */
       g_assert (parent != NULL);
 
@@ -594,10 +594,10 @@ main (int argc, char **argv)
         }
 
       /* try to determine the info */
-      info = g_file_query_info (file, 
+      info = g_file_query_info (file,
                                 G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME ","
                                 G_FILE_ATTRIBUTE_STANDARD_SIZE ","
-                                G_FILE_ATTRIBUTE_STANDARD_TYPE, 
+                                G_FILE_ATTRIBUTE_STANDARD_TYPE,
                                 G_FILE_QUERY_INFO_NONE, NULL, &error);
 
       /* check if we failed */

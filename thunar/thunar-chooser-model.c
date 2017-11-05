@@ -96,11 +96,11 @@ thunar_chooser_model_class_init (ThunarChooserModelClass *klass)
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_CONTENT_TYPE,
-                                   g_param_spec_string ("content-type", 
-                                                        "content-type", 
+                                   g_param_spec_string ("content-type",
+                                                        "content-type",
                                                         "content-type",
                                                         NULL,
-                                                        G_PARAM_CONSTRUCT_ONLY | 
+                                                        G_PARAM_CONSTRUCT_ONLY |
                                                         EXO_PARAM_READWRITE));
 }
 
@@ -120,8 +120,8 @@ thunar_chooser_model_init (ThunarChooserModel *model)
   };
 
   /* register the column types */
-  gtk_tree_store_set_column_types (GTK_TREE_STORE (model), 
-                                   G_N_ELEMENTS (column_types), 
+  gtk_tree_store_set_column_types (GTK_TREE_STORE (model),
+                                   G_N_ELEMENTS (column_types),
                                    column_types);
 }
 
@@ -242,7 +242,7 @@ thunar_chooser_model_append (ThunarChooserModel *model,
           inserted_infos = TRUE;
         }
     }
-  
+
   if (!inserted_infos)
     {
       /* tell the user that we don't have any applications for this category */
@@ -294,9 +294,9 @@ thunar_chooser_model_reload (ThunarChooserModel *model)
 
   /* append them as recommended */
   recommended = g_list_sort (recommended, sort_app_infos);
-  thunar_chooser_model_append (model, 
-                               _("Recommended Applications"), 
-                               "preferences-desktop-default-applications", 
+  thunar_chooser_model_append (model,
+                               _("Recommended Applications"),
+                               "preferences-desktop-default-applications",
                                recommended);
 
   all = g_app_info_get_all ();
@@ -385,9 +385,9 @@ thunar_chooser_model_remove (ThunarChooserModel *model,
   _thunar_return_val_if_fail (gtk_tree_store_iter_is_valid (GTK_TREE_STORE (model), iter), FALSE);
 
   /* determine the app info for the iter */
-  gtk_tree_model_get (GTK_TREE_MODEL (model), 
-                      iter, 
-                      THUNAR_CHOOSER_MODEL_COLUMN_APPLICATION, &app_info, 
+  gtk_tree_model_get (GTK_TREE_MODEL (model),
+                      iter,
+                      THUNAR_CHOOSER_MODEL_COLUMN_APPLICATION, &app_info,
                       -1);
 
   if (G_UNLIKELY (app_info == NULL))

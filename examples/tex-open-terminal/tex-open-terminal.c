@@ -151,7 +151,7 @@ tex_open_terminal_activated (ThunarxMenuItem *item,
   path = g_object_get_data (G_OBJECT (item), "open-terminal-here-path");
   if (G_UNLIKELY (path == NULL))
     return;
-  
+
   /* build up the command line for the terminal */
   command = g_strdup_printf ("exo-open --launch TerminalEmulator --working-directory \"%s\"", path);
 

@@ -195,7 +195,7 @@ thunarx_menu_provider_get_folder_menu_items (ThunarxMenuProvider *provider,
  * @provider : a #ThunarxMenuProvider.
  * @window   : the #GtkWindow within which the menu items will be used.
  * @folder   : the folder into which the @files are being dropped
- * @files    : the list of #ThunarxFileInfo<!---->s for the files that are 
+ * @files    : the list of #ThunarxFileInfo<!---->s for the files that are
  *             being dropped to @folder in @window.
  *
  * Returns the list of #ThunarxMenuItem<!---->s that @provider has to offer for

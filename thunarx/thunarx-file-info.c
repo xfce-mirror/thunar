@@ -68,7 +68,7 @@ thunarx_file_info_get_type (void)
                                             0);
 
       g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
-      
+
       /**
        * ThunarxFileInfo::changed:
        * @file_info : a #ThunarxFileInfo.
@@ -299,8 +299,8 @@ thunarx_file_info_is_directory (ThunarxFileInfo *file_info)
  *
  * Returns the #GFileInfo associated with @file_info,
  * which includes additional information about the @file_info
- * as queried from GIO earlier. The caller is responsible to free the 
- * returned #GFileInfo object using g_object_unref() when 
+ * as queried from GIO earlier. The caller is responsible to free the
+ * returned #GFileInfo object using g_object_unref() when
  * no longer needed.
  *
  * Return value: the #GFileInfo object associated with @file_info,
@@ -320,12 +320,12 @@ thunarx_file_info_get_file_info (ThunarxFileInfo *file_info)
  * @file_info : a #ThunarxFileInfo.
  *
  * Returns the #GFileInfo which includes additional information about
- * the filesystem @file_info resides on. The caller is responsible to 
- * free the returned #GFileInfo object using g_object_unref() when 
+ * the filesystem @file_info resides on. The caller is responsible to
+ * free the returned #GFileInfo object using g_object_unref() when
  * no longer needed.
  *
  * Return value: the #GFileInfo containing information about the
- *               filesystem of @file_info or %NULL if no filesystem 
+ *               filesystem of @file_info or %NULL if no filesystem
  *               information is available. It MUST be released using
  *               g_object_unref().
  **/

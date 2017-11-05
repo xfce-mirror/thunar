@@ -52,7 +52,7 @@ thunar_io_scan_directory (ThunarJob          *job,
   const gchar     *namespace;
   ThunarFile      *thunar_file;
   gboolean         is_mounted;
-  
+
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), NULL);
   _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, NULL);
@@ -61,8 +61,8 @@ thunar_io_scan_directory (ThunarJob          *job,
   if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
     return NULL;
 
-  /* don't recurse when we are scanning prior to unlinking and the current 
-   * file/dir is in the trash. In GVfs, only the top-level directories in 
+  /* don't recurse when we are scanning prior to unlinking and the current
+   * file/dir is in the trash. In GVfs, only the top-level directories in
    * the trash can be modified and deleted directly. See
    * http://bugzilla.xfce.org/show_bug.cgi?id=7147
    * for more information */
@@ -108,7 +108,7 @@ thunar_io_scan_directory (ThunarJob          *job,
     {
       /* query info of the child */
       info = g_file_enumerator_next_file (enumerator,
-                                          exo_job_get_cancellable (EXO_JOB (job)), 
+                                          exo_job_get_cancellable (EXO_JOB (job)),
                                           &err);
 
       if (G_UNLIKELY (info == NULL))
@@ -150,10 +150,10 @@ thunar_io_scan_directory (ThunarJob          *job,
           && is_mounted
           && g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
         {
-          child_files = thunar_io_scan_directory (job, child_file, flags, recursively, 
+          child_files = thunar_io_scan_directory (job, child_file, flags, recursively,
                                                   unlinking, return_thunar_files, &err);
 
-          /* prepend children to the file list to make sure they're 
+          /* prepend children to the file list to make sure they're
            * processed first (required for unlinking) */
           files = g_list_concat (child_files, files);
         }
@@ -177,6 +177,6 @@ thunar_io_scan_directory (ThunarJob          *job,
       thunar_g_file_list_free (files);
       return NULL;
     }
-  
+
   return files;
 }

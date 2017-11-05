@@ -101,7 +101,7 @@ thunar_trash_action_constructed (GObject *object)
 {
   ThunarTrashAction *trash_action = THUNAR_TRASH_ACTION (object);
   const gchar       *label;
-  
+
   if (trash_action->trash_bin != NULL)
     label = thunar_file_get_display_name (trash_action->trash_bin);
   else
@@ -145,7 +145,7 @@ thunar_trash_action_changed (ThunarTrashAction *trash_action,
   thunar_icon_factory_clear_pixmap_cache (trash_bin);
 
   /* adjust the stock icon appropriately */
-  if (thunar_file_get_item_count (trash_bin) > 0) 
+  if (thunar_file_get_item_count (trash_bin) > 0)
     g_object_set (G_OBJECT (trash_action), "stock-id", THUNAR_STOCK_TRASH_FULL, NULL);
   else
     g_object_set (G_OBJECT (trash_action), "stock-id", THUNAR_STOCK_TRASH_EMPTY, NULL);

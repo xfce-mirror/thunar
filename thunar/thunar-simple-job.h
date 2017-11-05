@@ -28,7 +28,7 @@ G_BEGIN_DECLS
 /**
  * ThunarSimpleJobFunc:
  * @job            : a #ThunarJob.
- * @param_values   : a #GArray of the #GValue<!---->s passed to 
+ * @param_values   : a #GArray of the #GValue<!---->s passed to
  *                   thunar_simple_job_launch().
  * @error          : return location for errors.
  *

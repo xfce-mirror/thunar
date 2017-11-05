@@ -122,7 +122,7 @@ thunar_simple_job_execute (ExoJob  *job,
     {
       g_assert (err != NULL || exo_job_is_cancelled (job));
 
-      /* set error if the job was cancelled. otherwise just propagate 
+      /* set error if the job was cancelled. otherwise just propagate
        * the results of the processing function */
       if (exo_job_set_error_if_cancelled (job, error))
         {

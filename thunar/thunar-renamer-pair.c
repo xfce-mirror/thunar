@@ -142,7 +142,7 @@ thunar_renamer_pair_list_copy (GList *renamer_pair_list)
 
   return result;
 }
- 
+
 
 
 /**

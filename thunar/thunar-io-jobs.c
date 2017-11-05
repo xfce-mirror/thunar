@@ -50,13 +50,13 @@ _tij_collect_nofollow (ThunarJob *job,
   GList  *lp;
 
   /* recursively collect the files */
-  for (lp = base_file_list; 
-       err == NULL && lp != NULL && !exo_job_is_cancelled (EXO_JOB (job)); 
+  for (lp = base_file_list;
+       err == NULL && lp != NULL && !exo_job_is_cancelled (EXO_JOB (job));
        lp = lp->next)
     {
       /* try to scan the directory */
-      child_file_list = thunar_io_scan_directory (job, lp->data, 
-                                                  G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, 
+      child_file_list = thunar_io_scan_directory (job, lp->data,
+                                                  G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
                                                   TRUE, unlinking, FALSE, &err);
 
       /* prepend the new files to the existing list */
@@ -98,7 +98,7 @@ _thunar_io_jobs_create (ThunarJob  *job,
   gchar             *display_name;
   GFile             *template_file;
   GFileInputStream  *template_stream = NULL;
-  
+
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
   _thunar_return_val_if_fail (param_values->len == 2, FALSE);
@@ -124,8 +124,8 @@ _thunar_io_jobs_create (ThunarJob  *job,
     }
 
   /* iterate over all files in the list */
-  for (lp = file_list; 
-       err == NULL && lp != NULL && !exo_job_is_cancelled (EXO_JOB (job)); 
+  for (lp = file_list;
+       err == NULL && lp != NULL && !exo_job_is_cancelled (EXO_JOB (job));
        lp = lp->next)
     {
       g_assert (G_IS_FILE (lp->data));
@@ -135,8 +135,8 @@ _thunar_io_jobs_create (ThunarJob  *job,
 
 again:
       /* try to create the file */
-      stream = g_file_create (lp->data, 
-                              G_FILE_CREATE_NONE, 
+      stream = g_file_create (lp->data,
+                              G_FILE_CREATE_NONE,
                               exo_job_get_cancellable (EXO_JOB (job)),
                               &err);
 
@@ -176,8 +176,8 @@ again:
                 }
 
               /* ask the user whether he wants to overwrite the existing file */
-              response = thunar_job_ask_overwrite (THUNAR_JOB (job), 
-                                                   _("The file \"%s\" already exists"), 
+              response = thunar_job_ask_overwrite (THUNAR_JOB (job),
+                                                   _("The file \"%s\" already exists"),
                                                    display_name);
 
               /* check if we should overwrite */
@@ -187,11 +187,11 @@ again:
                   if (g_file_delete (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err))
                     goto again;
                 }
-              
+
               /* clean up */
               g_free (display_name);
             }
-          else 
+          else
             {
               /* determine display name of the file */
               base_name = g_file_get_basename (lp->data);
@@ -199,7 +199,7 @@ again:
               g_free (base_name);
 
               /* ask the user whether to skip/retry this path (cancels the job if not) */
-              response = thunar_job_ask_skip (THUNAR_JOB (job), 
+              response = thunar_job_ask_skip (THUNAR_JOB (job),
                                               _("Failed to create empty file \"%s\": %s"),
                                               display_name, err->message);
               g_free (display_name);
@@ -283,7 +283,7 @@ _thunar_io_jobs_mkdir (ThunarJob  *job,
   /* we know the total list of files to process */
   thunar_job_set_total_files (THUNAR_JOB (job), file_list);
 
-  for (lp = file_list; 
+  for (lp = file_list;
        err == NULL && lp != NULL && !exo_job_is_cancelled (EXO_JOB (job));
        lp = lp->next)
     {
@@ -330,7 +330,7 @@ again:
                 }
 
               /* ask the user whether he wants to overwrite the existing file */
-              response = thunar_job_ask_overwrite (THUNAR_JOB (job), 
+              response = thunar_job_ask_overwrite (THUNAR_JOB (job),
                                                    _("The file \"%s\" already exists"),
                                                    display_name);
 
@@ -353,7 +353,7 @@ again:
               g_free (base_name);
 
               /* ask the user whether to skip/retry this path (cancels the job if not) */
-              response = thunar_job_ask_skip (THUNAR_JOB (job), 
+              response = thunar_job_ask_skip (THUNAR_JOB (job),
                                               _("Failed to create directory \"%s\": %s"),
                                               display_name, err->message);
               g_free (display_name);
@@ -381,7 +381,7 @@ again:
 
   /* emit the "new-files" signal with the given file list */
   thunar_job_new_files (THUNAR_JOB (job), file_list);
-  
+
   return TRUE;
 }
 
@@ -465,10 +465,10 @@ again:
       else
         {
           /* query the file info for the display name */
-          info = g_file_query_info (lp->data, 
+          info = g_file_query_info (lp->data,
                                     G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
-                                    G_FILE_QUERY_INFO_NONE, 
-                                    exo_job_get_cancellable (EXO_JOB (job)), 
+                                    G_FILE_QUERY_INFO_NONE,
+                                    exo_job_get_cancellable (EXO_JOB (job)),
                                     NULL);
 
           /* abort if the job was cancelled */
@@ -492,8 +492,8 @@ again:
             }
 
           /* ask the user whether he wants to skip this file */
-          response = thunar_job_ask_skip (THUNAR_JOB (job), 
-                                          _("Could not delete file \"%s\": %s"), 
+          response = thunar_job_ask_skip (THUNAR_JOB (job),
+                                          _("Could not delete file \"%s\": %s"),
                                           display_name, err->message);
           g_free (display_name);
 
@@ -539,9 +539,9 @@ thunar_io_jobs_move_files (GList *source_file_list,
   _thunar_return_val_if_fail (target_file_list != NULL, NULL);
   _thunar_return_val_if_fail (g_list_length (source_file_list) == g_list_length (target_file_list), NULL);
 
-  job = thunar_transfer_job_new (source_file_list, target_file_list, 
+  job = thunar_transfer_job_new (source_file_list, target_file_list,
                                  THUNAR_TRANSFER_JOB_MOVE);
-  
+
   return THUNAR_JOB (exo_job_launch (EXO_JOB (job)));
 }
 
@@ -606,7 +606,7 @@ _thunar_io_jobs_link_file (ThunarJob *job,
       if (!g_file_equal (source_file, target_file))
         {
           /* try to create the symlink */
-          if (g_file_make_symbolic_link (target_file, source_path, 
+          if (g_file_make_symbolic_link (target_file, source_path,
                                          exo_job_get_cancellable (EXO_JOB (job)),
                                          &err))
             {
@@ -639,7 +639,7 @@ _thunar_io_jobs_link_file (ThunarJob *job,
                       /* return the real target file */
                       return duplicate_file;
                     }
-                  
+
                   /* release the duplicate file, we no longer need it */
                   g_object_unref (duplicate_file);
                 }
@@ -668,7 +668,7 @@ _thunar_io_jobs_link_file (ThunarJob *job,
           /* try to delete the file */
           if (response == THUNAR_JOB_RESPONSE_YES)
             {
-              /* try to remove the target file. if not possible, err will be set and 
+              /* try to remove the target file. if not possible, err will be set and
                * the while loop will be aborted */
               g_file_delete (target_file, exo_job_get_cancellable (EXO_JOB (job)), &err);
             }
@@ -740,16 +740,16 @@ _thunar_io_jobs_link (ThunarJob  *job,
           /* queue the file for the folder update unless it was skipped */
           if (sp->data != real_target_file)
             {
-              new_files_list = thunar_g_file_list_prepend (new_files_list, 
+              new_files_list = thunar_g_file_list_prepend (new_files_list,
                                                            real_target_file);
 
               /* notify the thumbnail cache that we need to copy the original
                * thumbnail for the symlink to have one too */
-              thunar_thumbnail_cache_copy_file (thumbnail_cache, sp->data, 
+              thunar_thumbnail_cache_copy_file (thumbnail_cache, sp->data,
                                                 real_target_file);
 
             }
-  
+
           /* release the real target file */
           g_object_unref (real_target_file);
         }
@@ -863,7 +863,7 @@ thunar_io_jobs_restore_files (GList *source_file_list,
   _thunar_return_val_if_fail (target_file_list != NULL, NULL);
   _thunar_return_val_if_fail (g_list_length (source_file_list) == g_list_length (target_file_list), NULL);
 
-  job = thunar_transfer_job_new (source_file_list, target_file_list, 
+  job = thunar_transfer_job_new (source_file_list, target_file_list,
                                  THUNAR_TRANSFER_JOB_MOVE);
 
   return THUNAR_JOB (exo_job_launch (EXO_JOB (job)));
@@ -920,7 +920,7 @@ _thunar_io_jobs_chown (ThunarJob  *job,
       thunar_job_processing_file (THUNAR_JOB (job), lp);
 
       /* try to query information about the file */
-      info = g_file_query_info (lp->data, 
+      info = g_file_query_info (lp->data,
                                 G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
                                 G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
                                 exo_job_get_cancellable (EXO_JOB (job)),
@@ -953,11 +953,11 @@ retry_chown:
       if (err != NULL && !exo_job_is_cancelled (EXO_JOB (job)))
         {
           /* generate a useful error message */
-          message = G_LIKELY (uid >= 0) ? _("Failed to change the owner of \"%s\": %s") 
+          message = G_LIKELY (uid >= 0) ? _("Failed to change the owner of \"%s\": %s")
                                         : _("Failed to change the group of \"%s\": %s");
 
           /* ask the user whether to skip/retry this file */
-          response = thunar_job_ask_skip (THUNAR_JOB (job), message, 
+          response = thunar_job_ask_skip (THUNAR_JOB (job), message,
                                           g_file_info_get_display_name (info),
                                           err->message);
 
@@ -1062,7 +1062,7 @@ _thunar_io_jobs_chmod (ThunarJob  *job,
       thunar_job_processing_file (THUNAR_JOB (job), lp);
 
       /* try to query information about the file */
-      info = g_file_query_info (lp->data, 
+      info = g_file_query_info (lp->data,
                                 G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME ","
                                 G_FILE_ATTRIBUTE_STANDARD_TYPE ","
                                 G_FILE_ATTRIBUTE_UNIX_MODE,
@@ -1089,7 +1089,7 @@ retry_chown:
       /* determine the current mode */
       old_mode = g_file_info_get_attribute_uint32 (info, G_FILE_ATTRIBUTE_UNIX_MODE);
 
-      /* generate the new mode, taking the old mode (which contains file type 
+      /* generate the new mode, taking the old mode (which contains file type
        * information) into account */
       new_mode = ((old_mode & ~mask) | mode) & 07777;
 
@@ -1108,7 +1108,7 @@ retry_chown:
         {
           /* ask the user whether to skip/retry this file */
           response = thunar_job_ask_skip (job,
-                                          _("Failed to change the permissions of \"%s\": %s"), 
+                                          _("Failed to change the permissions of \"%s\": %s"),
                                           g_file_info_get_display_name (info),
                                           err->message);
 
@@ -1190,7 +1190,7 @@ _thunar_io_jobs_ls (ThunarJob  *job,
 
   /* collect directory contents (non-recursively) */
   file_list = thunar_io_scan_directory (job, directory,
-                                        G_FILE_QUERY_INFO_NONE, 
+                                        G_FILE_QUERY_INFO_NONE,
                                         FALSE, FALSE, TRUE, &err);
 
   /* abort on errors or cancellation */
@@ -1216,7 +1216,7 @@ _thunar_io_jobs_ls (ThunarJob  *job,
           thunar_g_file_list_free (file_list);
         }
     }
-  
+
   /* there should be no errors here */
   _thunar_assert (err == NULL);
 
@@ -1236,7 +1236,7 @@ ThunarJob *
 thunar_io_jobs_list_directory (GFile *directory)
 {
   _thunar_return_val_if_fail (G_IS_FILE (directory), NULL);
-  
+
   return thunar_simple_job_launch (_thunar_io_jobs_ls, 1, G_TYPE_FILE, directory);
 }
 
@@ -1284,8 +1284,8 @@ _thunar_io_jobs_rename (ThunarJob  *job,
   /* try to rename the file */
   if (thunar_file_rename (file, display_name, exo_job_get_cancellable (EXO_JOB (job)), TRUE, &err))
     {
-      exo_job_send_to_mainloop (EXO_JOB (job), 
-                                (GSourceFunc) _thunar_io_jobs_rename_notify, 
+      exo_job_send_to_mainloop (EXO_JOB (job),
+                                (GSourceFunc) _thunar_io_jobs_rename_notify,
                                 g_object_ref (file), g_object_unref);
     }
 
@@ -1308,7 +1308,7 @@ thunar_io_jobs_rename_file (ThunarFile  *file,
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (g_utf8_validate (display_name, -1, NULL), NULL);
 
-  return thunar_simple_job_launch (_thunar_io_jobs_rename, 2, 
-                                   THUNAR_TYPE_FILE, file, 
+  return thunar_simple_job_launch (_thunar_io_jobs_rename, 2,
+                                   THUNAR_TYPE_FILE, file,
                                    G_TYPE_STRING, display_name);
 }

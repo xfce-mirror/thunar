@@ -153,7 +153,7 @@ thunar_sendto_model_load (ThunarSendtoModel *sendto_model)
           if (G_LIKELY (app_info != NULL))
             {
               /* add to our handler list, sorted by their desktop-ids (reverse order) */
-              sendto_model->handlers = g_list_insert_sorted (sendto_model->handlers, 
+              sendto_model->handlers = g_list_insert_sorted (sendto_model->handlers,
                                                              G_APP_INFO (app_info),
                                                              (GCompareFunc) g_app_info_compare);
 
@@ -233,8 +233,8 @@ thunar_sendto_model_get_default (void)
  * thunar_sendto_model_get_matching:
  * @sendto_model : a #ThunarSendtoModel.
  * @files        : a #GList of #ThunarFile<!---->s.
- * 
- * Returns the list of #GAppInfo<!---->s for the "Send To" targets that 
+ *
+ * Returns the list of #GAppInfo<!---->s for the "Send To" targets that
  * support the specified @files.
  *
  * The returned list is owned by the caller and must be freed when no

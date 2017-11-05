@@ -232,7 +232,7 @@ thunar_progress_view_init (ThunarProgressView *view)
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, TRUE, 0);
   gtk_widget_set_can_focus (button, FALSE);
   gtk_widget_show (button);
-  
+
   image = gtk_image_new_from_icon_name ("process-stop", GTK_ICON_SIZE_BUTTON);
   gtk_container_add (GTK_CONTAINER (button), image);
   gtk_widget_show (image);

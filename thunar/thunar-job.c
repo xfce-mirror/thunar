@@ -2,18 +2,18 @@
 /*-
  * Copyright (c) 2009-2011 Jannis Pohlmann <jannis@xfce.org>
  *
- * This program is free software; you can redistribute it and/or 
+ * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of 
+ * published by the Free Software Foundation; either version 2 of
  * the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public 
- * License along with this program; if not, write to the Free 
+ * You should have received a copy of the GNU General Public
+ * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
@@ -148,7 +148,7 @@ thunar_job_class_init (ThunarJobClass *klass)
                   G_STRUCT_OFFSET (ThunarJobClass, ask_replace),
                   _thunar_job_ask_accumulator, NULL,
                   _thunar_marshal_FLAGS__OBJECT_OBJECT,
-                  THUNAR_TYPE_JOB_RESPONSE, 
+                  THUNAR_TYPE_JOB_RESPONSE,
                   2, THUNAR_TYPE_FILE, THUNAR_TYPE_FILE);
 
   /**
@@ -157,9 +157,9 @@ thunar_job_class_init (ThunarJobClass *klass)
    * @file_list : a list of #ThunarFile<!---->s.
    *
    * This signal is used by #ThunarJob<!---->s returned by
-   * the thunar_io_jobs_list_directory() function whenever 
-   * there's a bunch of #ThunarFile<!---->s ready. This signal 
-   * is garantied to be never emitted with an @file_list 
+   * the thunar_io_jobs_list_directory() function whenever
+   * there's a bunch of #ThunarFile<!---->s ready. This signal
+   * is garantied to be never emitted with an @file_list
    * parameter of %NULL.
    *
    * To allow some further optimizations on the handler-side,
@@ -225,7 +225,7 @@ thunar_job_finalize (GObject *object)
 
 
 
-static ThunarJobResponse 
+static ThunarJobResponse
 thunar_job_real_ask (ThunarJob        *job,
                      const gchar      *message,
                      ThunarJobResponse choices)
@@ -239,7 +239,7 @@ thunar_job_real_ask (ThunarJob        *job,
 
 
 
-static ThunarJobResponse 
+static ThunarJobResponse
 thunar_job_real_ask_replace (ThunarJob  *job,
                              ThunarFile *source_file,
                              ThunarFile *target_file)
@@ -284,13 +284,13 @@ _thunar_job_ask_valist (ThunarJob        *job,
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), THUNAR_JOB_RESPONSE_CANCEL);
   _thunar_return_val_if_fail (g_utf8_validate (format, -1, NULL), THUNAR_JOB_RESPONSE_CANCEL);
-  
+
   /* generate the dialog message */
   text = g_strdup_vprintf (format, var_args);
-  message = (question != NULL) 
-            ? g_strconcat (text, ".\n\n", question, NULL) 
+  message = (question != NULL)
+            ? g_strconcat (text, ".\n\n", question, NULL)
             : g_strconcat (text, ".", NULL);
-  g_free (text);  
+  g_free (text);
 
   /* send the question and wait for the answer */
   exo_job_emit (EXO_JOB (job), job_signals[ASK], 0, message, choices, &response);
@@ -332,7 +332,7 @@ thunar_job_ask_overwrite (ThunarJob   *job,
   va_start (var_args, format);
   response = _thunar_job_ask_valist (job, format, var_args,
                                      _("Do you want to overwrite it?"),
-                                     THUNAR_JOB_RESPONSE_YES 
+                                     THUNAR_JOB_RESPONSE_YES
                                      | THUNAR_JOB_RESPONSE_YES_ALL
                                      | THUNAR_JOB_RESPONSE_NO
                                      | THUNAR_JOB_RESPONSE_NO_ALL
@@ -386,7 +386,7 @@ thunar_job_ask_create (ThunarJob   *job,
   va_start (var_args, format);
   response = _thunar_job_ask_valist (job, format, var_args,
                                      _("Do you want to create it?"),
-                                     THUNAR_JOB_RESPONSE_YES 
+                                     THUNAR_JOB_RESPONSE_YES
                                      | THUNAR_JOB_RESPONSE_CANCEL);
   va_end (var_args);
 
@@ -405,7 +405,7 @@ thunar_job_ask_create (ThunarJob   *job,
 
 
 
-ThunarJobResponse 
+ThunarJobResponse
 thunar_job_ask_replace (ThunarJob *job,
                         GFile     *source_path,
                         GFile     *target_path,
@@ -443,7 +443,7 @@ thunar_job_ask_replace (ThunarJob *job,
       return THUNAR_JOB_RESPONSE_NO;
     }
 
-  exo_job_emit (EXO_JOB (job), job_signals[ASK_REPLACE], 0, 
+  exo_job_emit (EXO_JOB (job), job_signals[ASK_REPLACE], 0,
                 source_file, target_file, &response);
 
   g_object_unref (source_file);
@@ -465,14 +465,14 @@ thunar_job_ask_replace (ThunarJob *job,
 
 
 
-ThunarJobResponse 
+ThunarJobResponse
 thunar_job_ask_skip (ThunarJob   *job,
                      const gchar *format,
                      ...)
 {
   ThunarJobResponse response;
   va_list           var_args;
-  
+
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), THUNAR_JOB_RESPONSE_CANCEL);
   _thunar_return_val_if_fail (format != NULL, THUNAR_JOB_RESPONSE_CANCEL);
 
@@ -488,7 +488,7 @@ thunar_job_ask_skip (ThunarJob   *job,
   va_start (var_args, format);
   response = _thunar_job_ask_valist (job, format, var_args,
                                      _("Do you want to skip it?"),
-                                     THUNAR_JOB_RESPONSE_YES 
+                                     THUNAR_JOB_RESPONSE_YES
                                      | THUNAR_JOB_RESPONSE_YES_ALL
                                      | THUNAR_JOB_RESPONSE_CANCEL
                                      | THUNAR_JOB_RESPONSE_RETRY);

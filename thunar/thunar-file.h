@@ -168,7 +168,7 @@ gchar            *thunar_file_get_date_string            (const ThunarFile      
                                                           ThunarDateStyle         date_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 gchar            *thunar_file_get_mode_string            (const ThunarFile       *file) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 gchar            *thunar_file_get_size_string            (const ThunarFile       *file) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-gchar            *thunar_file_get_size_string_formatted  (const ThunarFile       *file, 
+gchar            *thunar_file_get_size_string_formatted  (const ThunarFile       *file,
                                                           const gboolean          file_size_binary);
 
 GVolume          *thunar_file_get_volume                 (const ThunarFile       *file);
@@ -194,9 +194,9 @@ gboolean          thunar_file_is_mountable               (const ThunarFile      
 gboolean          thunar_file_is_local                   (const ThunarFile       *file);
 gboolean          thunar_file_is_parent                  (const ThunarFile       *file,
                                                           const ThunarFile       *child);
-gboolean          thunar_file_is_gfile_ancestor          (const ThunarFile       *file, 
+gboolean          thunar_file_is_gfile_ancestor          (const ThunarFile       *file,
                                                           GFile                  *ancestor);
-gboolean          thunar_file_is_ancestor                (const ThunarFile       *file, 
+gboolean          thunar_file_is_ancestor                (const ThunarFile       *file,
                                                           const ThunarFile       *ancestor);
 gboolean          thunar_file_is_executable              (const ThunarFile       *file);
 gboolean          thunar_file_is_writable                (const ThunarFile       *file);
@@ -228,7 +228,7 @@ gboolean          thunar_file_set_custom_icon            (ThunarFile            
 
 const gchar     *thunar_file_get_thumbnail_path          (ThunarFile              *file);
 ThunarFileThumbState thunar_file_get_thumb_state         (const ThunarFile        *file);
-void             thunar_file_set_thumb_state             (ThunarFile              *file, 
+void             thunar_file_set_thumb_state             (ThunarFile              *file,
                                                           ThunarFileThumbState     state);
 GIcon            *thunar_file_get_preview_icon           (const ThunarFile        *file);
 GFilesystemPreviewType thunar_file_get_preview_type      (const ThunarFile *file);

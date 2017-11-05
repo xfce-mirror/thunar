@@ -151,7 +151,7 @@ thunar_gdk_cairo_create_surface (const GdkPixbuf *pixbuf)
  * @display_name : a fully qualified display name.
  * @error        : return location for errors or %NULL.
  *
- * Opens the screen referenced by the @display_name. Returns a 
+ * Opens the screen referenced by the @display_name. Returns a
  * reference on the #GdkScreen for @display_name or %NULL if
  * @display_name couldn't be opened.
  *

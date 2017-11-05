@@ -3,18 +3,18 @@
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
  *
- * This program is free software; you can redistribute it and/or 
+ * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of 
+ * published by the Free Software Foundation; either version 2 of
  * the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public 
- * License along with this program; if not, write to the Free 
+ * You should have received a copy of the GNU General Public
+ * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
@@ -245,7 +245,7 @@ thunar_location_entry_set_property (GObject      *object,
     {
     case PROP_CURRENT_DIRECTORY:
       thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
-      thunar_path_entry_set_working_directory (THUNAR_PATH_ENTRY (entry->path_entry), 
+      thunar_path_entry_set_working_directory (THUNAR_PATH_ENTRY (entry->path_entry),
                                                entry->current_directory);
       break;
 
@@ -339,7 +339,7 @@ thunar_location_entry_open_or_launch (ThunarLocationEntry *location_entry,
           /* be sure to reset the current file of the path entry */
           if (G_LIKELY (location_entry->current_directory != NULL))
             {
-              thunar_path_entry_set_current_file (THUNAR_PATH_ENTRY (location_entry->path_entry), 
+              thunar_path_entry_set_current_file (THUNAR_PATH_ENTRY (location_entry->path_entry),
                                                   location_entry->current_directory);
             }
         }
@@ -352,8 +352,8 @@ thunar_location_entry_open_or_launch (ThunarLocationEntry *location_entry,
   /* check if we need to display an error dialog */
   if (error != NULL)
     {
-      thunar_dialogs_show_error (location_entry->path_entry, error, 
-                                 _("Failed to open \"%s\""), 
+      thunar_dialogs_show_error (location_entry->path_entry, error,
+                                 _("Failed to open \"%s\""),
                                  thunar_file_get_display_name (file));
       g_error_free (error);
     }
@@ -374,14 +374,14 @@ thunar_location_entry_poke_file_finish (ThunarBrowser *browser,
   if (error == NULL)
     {
       /* try to open or launch the target file */
-      thunar_location_entry_open_or_launch (THUNAR_LOCATION_ENTRY (browser), 
+      thunar_location_entry_open_or_launch (THUNAR_LOCATION_ENTRY (browser),
                                             target_file);
     }
   else
     {
       /* display an error explaining why we couldn't open/mount the file */
       thunar_dialogs_show_error (THUNAR_LOCATION_ENTRY (browser)->path_entry,
-                                 error, _("Failed to open \"%s\""), 
+                                 error, _("Failed to open \"%s\""),
                                  thunar_file_get_display_name (file));
     }
 }

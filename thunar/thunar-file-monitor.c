@@ -130,7 +130,7 @@ thunar_file_monitor_get_default (void)
     {
       /* allocate the default monitor */
       file_monitor_default = g_object_new (THUNAR_TYPE_FILE_MONITOR, NULL);
-      g_object_add_weak_pointer (G_OBJECT (file_monitor_default), 
+      g_object_add_weak_pointer (G_OBJECT (file_monitor_default),
                                  (gpointer) &file_monitor_default);
     }
   else

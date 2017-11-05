@@ -3,18 +3,18 @@
  * Copyright (c) 2006-2007 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
  *
- * This program is free software; you can redistribute it and/or 
+ * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of 
+ * published by the Free Software Foundation; either version 2 of
  * the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public 
- * License along with this program; if not, write to the Free 
+ * You should have received a copy of the GNU General Public
+ * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
@@ -320,7 +320,7 @@ thunar_util_expand_filename (const gchar  *filename,
           /* use the homedir of the specified user */
           replacement = passwd->pw_dir;
         }
-    
+
       /* generate the filename */
       return g_build_filename (replacement, slash, NULL);
     }
@@ -328,12 +328,12 @@ thunar_util_expand_filename (const gchar  *filename,
     {
       /* examine the remainder of the filename */
       remainder = filename + 1;
-      
+
       /* transform working directory into a filename string */
       if (G_LIKELY (working_directory != NULL))
         {
           pwd = g_file_get_path (working_directory);
-    
+
           /* if we only have the slash then we want the working directory only */
           if (G_UNLIKELY (*remainder == '\0'))
             return pwd;
@@ -554,15 +554,15 @@ thunar_util_time_from_rfc3339 (const gchar *date_string)
   tm.tm_year = val - 1900;
   date_string++;
   tm.tm_mon = strtoul (date_string, (gchar **) &date_string, 10) - 1;
-  
+
   if (G_UNLIKELY (*date_string++ != '-'))
     return 0;
-  
+
   tm.tm_mday = strtoul (date_string, (gchar **) &date_string, 10);
 
   if (G_UNLIKELY (*date_string++ != 'T'))
     return 0;
-  
+
   val = strtoul (date_string, (gchar **) &date_string, 10);
   if (G_UNLIKELY (*date_string != ':'))
     return 0;
@@ -571,10 +571,10 @@ thunar_util_time_from_rfc3339 (const gchar *date_string)
   tm.tm_hour = val;
   date_string++;
   tm.tm_min = strtoul (date_string, (gchar **) &date_string, 10);
-  
+
   if (G_UNLIKELY (*date_string++ != ':'))
     return 0;
-  
+
   tm.tm_sec = strtoul (date_string, (gchar **) &date_string, 10);
 #endif /* !HAVE_STRPTIME */
 

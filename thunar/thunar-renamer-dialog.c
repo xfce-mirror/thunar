@@ -1479,7 +1479,7 @@ thunar_renamer_dialog_drag_motion (GtkWidget           *tree_view,
       /* we cannot handle the drop */
       return FALSE;
     }
-      
+
   /* compute the drop position */
   if (gtk_tree_view_get_dest_row_at_pos (GTK_TREE_VIEW (tree_view), x, y, &path, &position))
     {
@@ -1538,10 +1538,10 @@ thunar_renamer_dialog_drag_drop (GtkWidget           *tree_view,
   GtkTreeViewDropPosition  drop_pos;
   gint                     position = -1;
   GList                   *rows;
-  
+
   _thunar_return_val_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog), FALSE);
   _thunar_return_val_if_fail (GTK_IS_TREE_VIEW (tree_view), FALSE);
-  
+
   /* determine the drop target */
   target = gtk_drag_dest_find_target (tree_view, context, NULL);
   if (G_LIKELY (target == gdk_atom_intern_static_string ("text/uri-list")))
@@ -1589,7 +1589,7 @@ thunar_renamer_dialog_drag_drop (GtkWidget           *tree_view,
 
   return TRUE;
 }
-                                  
+
 
 
 static void

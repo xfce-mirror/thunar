@@ -255,7 +255,7 @@ thunar_job_response_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-	    static const GFlagsValue values[] = 
+	    static const GFlagsValue values[] =
       {
 	      { THUNAR_JOB_RESPONSE_YES,     "THUNAR_JOB_RESPONSE_YES",     "yes"     },
 	      { THUNAR_JOB_RESPONSE_YES_ALL, "THUNAR_JOB_RESPONSE_YES_ALL", "yes-all" },
@@ -280,9 +280,9 @@ thunar_file_mode_get_type (void)
 {
 	static GType type = G_TYPE_INVALID;
 
-	if (type == G_TYPE_INVALID) 
+	if (type == G_TYPE_INVALID)
     {
-	    static const GFlagsValue values[] = 
+	    static const GFlagsValue values[] =
       {
 	      { THUNAR_FILE_MODE_SUID,      "THUNAR_FILE_MODE_SUID",      "suid"      },
 	      { THUNAR_FILE_MODE_SGID,      "THUNAR_FILE_MODE_SGID",      "sgid"      },
@@ -301,7 +301,7 @@ thunar_file_mode_get_type (void)
 	      { THUNAR_FILE_MODE_OTH_EXEC,  "THUNAR_FILE_MODE_OTH_EXEC",  "oth-exec"  },
 	      { 0,                          NULL,                         NULL        }
 	    };
-	    
+
       type = g_flags_register_static ("ThunarFileMode", values);
     }
 	return type;

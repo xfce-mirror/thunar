@@ -334,7 +334,7 @@ thunarx_renamer_real_load (ThunarxRenamer *renamer,
 
       /* determine the key for the parameter */
       key = thunarx_param_spec_get_option_name (specs[n]);
-      
+
       /* check if we have a value for that key */
       setting = g_hash_table_lookup (settings, key);
       if (G_LIKELY (setting != NULL))
@@ -632,7 +632,7 @@ thunarx_renamer_save (ThunarxRenamer *renamer,
  * (the empty list), but derived classes may override this method
  * to provide additional items for files in the bulk renamer
  * dialog list.
- * 
+ *
  * The returned #ThunarxMenuItem<!---->s will be displayed in the file's
  * context menu of the bulk renamer dialog, when this @renamer is
  * active. For example, an ID3-Tag based renamer may add an menu item

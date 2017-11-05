@@ -41,7 +41,7 @@ void                    thunar_sbr_remove_renamer_register_type         (Thunarx
 ThunarSbrRemoveRenamer *thunar_sbr_remove_renamer_new                   (void) G_GNUC_MALLOC;
 
 guint                   thunar_sbr_remove_renamer_get_end_offset        (ThunarSbrRemoveRenamer *remove_renamer);
-void                    thunar_sbr_remove_renamer_set_end_offset        (ThunarSbrRemoveRenamer *remove_renamer,  
+void                    thunar_sbr_remove_renamer_set_end_offset        (ThunarSbrRemoveRenamer *remove_renamer,
                                                                          guint                   end_offset);
 
 ThunarSbrOffsetMode     thunar_sbr_remove_renamer_get_end_offset_mode   (ThunarSbrRemoveRenamer *remove_renamer);
@@ -49,7 +49,7 @@ void                    thunar_sbr_remove_renamer_set_end_offset_mode   (ThunarS
                                                                          ThunarSbrOffsetMode     end_offset_mode);
 
 guint                   thunar_sbr_remove_renamer_get_start_offset      (ThunarSbrRemoveRenamer *remove_renamer);
-void                    thunar_sbr_remove_renamer_set_start_offset      (ThunarSbrRemoveRenamer *remove_renamer,  
+void                    thunar_sbr_remove_renamer_set_start_offset      (ThunarSbrRemoveRenamer *remove_renamer,
                                                                          guint                   start_offset);
 
 ThunarSbrOffsetMode     thunar_sbr_remove_renamer_get_start_offset_mode (ThunarSbrRemoveRenamer *remove_renamer);

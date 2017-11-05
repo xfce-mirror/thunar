@@ -182,12 +182,12 @@ item_activated (GtkWidget             *item,
   file = g_object_get_data (G_OBJECT (item), I_("thunar-file"));
   if (G_UNLIKELY (file != NULL))
     {
-      g_signal_emit (G_OBJECT (templates_action), 
+      g_signal_emit (G_OBJECT (templates_action),
                      templates_action_signals[CREATE_TEMPLATE], 0, file);
     }
   else
     {
-      g_signal_emit (G_OBJECT (templates_action), 
+      g_signal_emit (G_OBJECT (templates_action),
                      templates_action_signals[CREATE_EMPTY_FILE], 0);
     }
 }
@@ -212,8 +212,8 @@ find_parent_menu (ThunarFile *file,
     return NULL;
 
   /* iterate over all dirs and menu items */
-  for (lp = g_list_first (dirs), ip = g_list_first (items); 
-       parent_menu == NULL && lp != NULL && ip != NULL; 
+  for (lp = g_list_first (dirs), ip = g_list_first (items);
+       parent_menu == NULL && lp != NULL && ip != NULL;
        lp = lp->next, ip = ip->next)
     {
       /* check if the current dir/item is the parent of our file */
@@ -247,14 +247,14 @@ compare_files (ThunarFile *a,
   /* check whether the files are equal */
   if (g_file_equal (file_a, file_b))
     return 0;
-  
+
   /* directories always come first */
-  if (thunar_file_get_kind (a) == G_FILE_TYPE_DIRECTORY 
+  if (thunar_file_get_kind (a) == G_FILE_TYPE_DIRECTORY
       && thunar_file_get_kind (b) != G_FILE_TYPE_DIRECTORY)
     {
       return -1;
     }
-  else if (thunar_file_get_kind (a) != G_FILE_TYPE_DIRECTORY 
+  else if (thunar_file_get_kind (a) != G_FILE_TYPE_DIRECTORY
            && thunar_file_get_kind (b) == G_FILE_TYPE_DIRECTORY)
     {
       return 1;
@@ -335,14 +335,14 @@ thunar_templates_action_files_ready (ThunarJob             *job,
   /* get the icon factory */
   icon_factory = thunar_icon_factory_get_default ();
 
-  /* sort items so that directories come before files and ancestors come 
+  /* sort items so that directories come before files and ancestors come
    * before descendants */
   files = g_list_sort (files, (GCompareFunc) compare_files);
 
   for (lp = g_list_first (files); lp != NULL; lp = lp->next)
     {
       file = lp->data;
-      
+
       /* determine the parent menu for this file/directory */
       parent_menu = find_parent_menu (file, dirs, items);
       parent_menu = parent_menu == NULL ? menu : parent_menu;
@@ -358,7 +358,7 @@ thunar_templates_action_files_ready (ThunarJob             *job,
           item = gtk_image_menu_item_new_with_label (thunar_file_get_display_name (file));
           gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu);
 
-          /* prepend the directory, its item and the parent menu it should 
+          /* prepend the directory, its item and the parent menu it should
            * later be added to to the respective lists */
           dirs = g_list_prepend (dirs, file);
           items = g_list_prepend (items, item);
@@ -374,9 +374,9 @@ thunar_templates_action_files_ready (ThunarJob             *job,
 
           /* allocate a new menu item */
           item = gtk_image_menu_item_new_with_label (label);
-          g_object_set_data_full (G_OBJECT (item), I_("thunar-file"), 
+          g_object_set_data_full (G_OBJECT (item), I_("thunar-file"),
                                   g_object_ref (file), g_object_unref);
-          g_signal_connect (item, "activate", G_CALLBACK (item_activated), 
+          g_signal_connect (item, "activate", G_CALLBACK (item_activated),
                             templates_action);
           gtk_menu_shell_append (GTK_MENU_SHELL (parent_menu), item);
           gtk_widget_show (item);
@@ -398,8 +398,8 @@ thunar_templates_action_files_ready (ThunarJob             *job,
     }
 
   /* add all non-empty directory items to their parent menu */
-  for (lp = items, pp = parent_menus; 
-       lp != NULL && pp != NULL; 
+  for (lp = items, pp = parent_menus;
+       lp != NULL && pp != NULL;
        lp = lp->next, pp = pp->next)
     {
       /* determine the submenu for this directory item */
@@ -486,7 +486,7 @@ thunar_templates_action_load_finished (ThunarJob             *job,
 
       /* add the "Empty File" item */
       item = gtk_menu_item_new_with_mnemonic (_("_Empty File"));
-      g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (item_activated), 
+      g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (item_activated),
                         templates_action);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
@@ -519,13 +519,13 @@ thunar_templates_action_menu_shown (GtkWidget             *menu,
                                  (gpointer) &templates_action->job);
 
       g_signal_connect (templates_action->job, "files-ready",
-                        G_CALLBACK (thunar_templates_action_files_ready), 
+                        G_CALLBACK (thunar_templates_action_files_ready),
                         templates_action);
       g_signal_connect (templates_action->job, "error",
-                        G_CALLBACK (thunar_templates_action_load_error), 
+                        G_CALLBACK (thunar_templates_action_load_error),
                         templates_action);
       g_signal_connect (templates_action->job, "finished",
-                        G_CALLBACK (thunar_templates_action_load_finished), 
+                        G_CALLBACK (thunar_templates_action_load_finished),
                         templates_action);
     }
 }

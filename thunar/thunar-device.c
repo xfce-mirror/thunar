@@ -248,7 +248,7 @@ thunar_device_operation_finish (GObject      *object,
 {
   ThunarDeviceOperation *op = user_data;
   GError                *error = NULL;
-  
+
   _thunar_return_if_fail (G_IS_OBJECT (object));
   _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
 

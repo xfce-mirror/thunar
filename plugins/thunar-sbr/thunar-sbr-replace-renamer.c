@@ -618,7 +618,7 @@ thunar_sbr_replace_renamer_pcre_update (ThunarSbrReplaceRenamer *replace_renamer
       /* check if the entry is realized */
       if (gtk_widget_get_realized (replace_renamer->pattern_entry))
         {
-          /* if GTK+ wouldn't be that stupid with style properties and 
+          /* if GTK+ wouldn't be that stupid with style properties and
            * type plugins, this would be themable, but unfortunately
            * GTK+ is totally broken, and so it's hardcoded.
            */

@@ -70,7 +70,7 @@ _thunar_misc_jobs_load_templates (ThunarJob  *job,
 
   if (files == NULL || exo_job_is_cancelled (EXO_JOB (job)))
     {
-      g_set_error (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND, 
+      g_set_error (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND,
                    _("No templates installed"));
 
       return FALSE;

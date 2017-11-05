@@ -1287,7 +1287,7 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_set_sensitive (item, (file != NULL || device != NULL));
   gtk_widget_show (item);
-  
+
   /* set the icon */
   image = gtk_image_new_from_icon_name ("document-open", GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
@@ -1373,7 +1373,7 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
       g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_create_folder), view);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
-      
+
       /* set the icon */
       icon = g_themed_icon_new ("folder-new");
       image = gtk_image_new_from_gicon (icon, GTK_ICON_SIZE_MENU);
@@ -2150,11 +2150,11 @@ thunar_tree_view_mount_finish (ThunarDevice *device,
             case OPEN_IN_WINDOW:
               thunar_tree_view_open_selection_in_new_window (data->view);
               break;
-            
+
             case OPEN_IN_TAB:
               thunar_tree_view_open_selection_in_new_tab (data->view);
               break;
-            
+
             default:
               thunar_tree_view_open_selection (data->view);
               break;

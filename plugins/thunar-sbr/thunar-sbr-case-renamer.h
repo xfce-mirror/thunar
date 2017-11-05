@@ -40,7 +40,7 @@ void                      thunar_sbr_case_renamer_register_type (ThunarxProvider
 
 ThunarSbrCaseRenamer     *thunar_sbr_case_renamer_new           (void) G_GNUC_MALLOC;
 
-ThunarSbrCaseRenamerMode  thunar_sbr_case_renamer_get_mode      (ThunarSbrCaseRenamer    *case_renamer); 
+ThunarSbrCaseRenamerMode  thunar_sbr_case_renamer_get_mode      (ThunarSbrCaseRenamer    *case_renamer);
 void                      thunar_sbr_case_renamer_set_mode      (ThunarSbrCaseRenamer    *case_renamer,
                                                                  ThunarSbrCaseRenamerMode mode);
 

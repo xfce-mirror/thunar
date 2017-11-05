@@ -1130,13 +1130,13 @@ thunar_dbus_service_transfer_files (ThunarDBusTransferMode transfer_mode,
   /* verify that at least one file to transfer is given */
   if (source_filenames == NULL || *source_filenames == NULL)
     {
-      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, 
+      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL,
                    _("At least one source filename must be specified"));
       return FALSE;
     }
 
   /* verify that the target filename is set / enough target filenames are given */
-  if (transfer_mode == THUNAR_DBUS_TRANSFER_MODE_COPY_TO) 
+  if (transfer_mode == THUNAR_DBUS_TRANSFER_MODE_COPY_TO)
     {
       if (g_strv_length ((gchar **)source_filenames) != g_strv_length ((gchar **)target_filenames))
         {
@@ -1204,23 +1204,23 @@ thunar_dbus_service_transfer_files (ThunarDBusTransferMode transfer_mode,
           switch (transfer_mode)
             {
             case THUNAR_DBUS_TRANSFER_MODE_COPY_TO:
-              thunar_application_copy_to (application, screen, 
-                                          source_file_list, target_file_list, 
+              thunar_application_copy_to (application, screen,
+                                          source_file_list, target_file_list,
                                           NULL);
               break;
             case THUNAR_DBUS_TRANSFER_MODE_COPY_INTO:
-              thunar_application_copy_into (application, screen, 
-                                            source_file_list, target_file_list->data, 
+              thunar_application_copy_into (application, screen,
+                                            source_file_list, target_file_list->data,
                                             NULL);
               break;
             case THUNAR_DBUS_TRANSFER_MODE_MOVE_INTO:
-              thunar_application_move_into (application, screen, 
-                                            source_file_list, target_file_list->data, 
+              thunar_application_move_into (application, screen,
+                                            source_file_list, target_file_list->data,
                                             NULL);
               break;
             case THUNAR_DBUS_TRANSFER_MODE_LINK_INTO:
-              thunar_application_link_into (application, screen, 
-                                            source_file_list, target_file_list->data, 
+              thunar_application_link_into (application, screen,
+                                            source_file_list, target_file_list->data,
                                             NULL);
               break;
             }

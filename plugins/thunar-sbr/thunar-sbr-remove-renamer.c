@@ -383,7 +383,7 @@ thunar_sbr_remove_renamer_update (ThunarSbrRemoveRenamer *remove_renamer)
                    ? remove_renamer->start_offset : (G_MAXUINT - remove_renamer->start_offset);
       if (G_UNLIKELY (start_offset >= end_offset))
         {
-          /* if GTK+ wouldn't be that stupid with style properties and 
+          /* if GTK+ wouldn't be that stupid with style properties and
            * type plugins, this would be themable, but unfortunately
            * GTK+ is totally broken, and so it's hardcoded.
            */
@@ -454,7 +454,7 @@ thunar_sbr_remove_renamer_get_end_offset (ThunarSbrRemoveRenamer *remove_renamer
  * Sets the end offset of @remove_renamer to @end_offset.
  **/
 void
-thunar_sbr_remove_renamer_set_end_offset (ThunarSbrRemoveRenamer *remove_renamer,  
+thunar_sbr_remove_renamer_set_end_offset (ThunarSbrRemoveRenamer *remove_renamer,
                                           guint                   end_offset)
 {
   g_return_if_fail (THUNAR_SBR_IS_REMOVE_RENAMER (remove_renamer));
@@ -546,7 +546,7 @@ thunar_sbr_remove_renamer_get_start_offset (ThunarSbrRemoveRenamer *remove_renam
  * Sets the start offset of @remove_renamer to @start_offset.
  **/
 void
-thunar_sbr_remove_renamer_set_start_offset (ThunarSbrRemoveRenamer *remove_renamer,  
+thunar_sbr_remove_renamer_set_start_offset (ThunarSbrRemoveRenamer *remove_renamer,
                                             guint                   start_offset)
 {
   g_return_if_fail (THUNAR_SBR_IS_REMOVE_RENAMER (remove_renamer));

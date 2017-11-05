@@ -493,7 +493,7 @@ thunar_sbr_number_renamer_update (ThunarSbrNumberRenamer *number_renamer)
       /* check if the "start" value is valid */
       if (G_UNLIKELY (invalid))
         {
-          /* if GTK+ wouldn't be that stupid with style properties and 
+          /* if GTK+ wouldn't be that stupid with style properties and
            * type plugins, this would be themable, but unfortunately
            * GTK+ is totally broken, and so it's hardcoded.
            */

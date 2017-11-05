@@ -499,9 +499,9 @@ thunar_chooser_dialog_response (GtkDialog *widget,
       if (!g_app_info_launch (app_info, &list, G_APP_LAUNCH_CONTEXT (context), &error))
         {
           /* display an error to the user */
-          thunar_dialogs_show_error (GTK_WIDGET (dialog), 
-                                     error, 
-                                     _("Failed to execute application \"%s\""), 
+          thunar_dialogs_show_error (GTK_WIDGET (dialog),
+                                     error,
+                                     _("Failed to execute application \"%s\""),
                                      g_app_info_get_name (app_info));
 
           /* release the error */

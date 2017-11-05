@@ -3,18 +3,18 @@
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
  *
- * This program is free software; you can redistribute it and/or 
+ * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of 
+ * published by the Free Software Foundation; either version 2 of
  * the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public 
- * License along with this program; if not, write to the Free 
+ * You should have received a copy of the GNU General Public
+ * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
@@ -62,11 +62,11 @@ enum
 
 static void     thunar_path_entry_editable_init                 (GtkEditableInterface *iface);
 static void     thunar_path_entry_finalize                      (GObject              *object);
-static void     thunar_path_entry_get_property                  (GObject              *object,  
+static void     thunar_path_entry_get_property                  (GObject              *object,
                                                                  guint                 prop_id,
                                                                  GValue               *value,
                                                                  GParamSpec           *pspec);
-static void     thunar_path_entry_set_property                  (GObject              *object,  
+static void     thunar_path_entry_set_property                  (GObject              *object,
                                                                  guint                 prop_id,
                                                                  const GValue         *value,
                                                                  GParamSpec           *pspec);
@@ -310,7 +310,7 @@ thunar_path_entry_finalize (GObject *object)
 
 
 static void
-thunar_path_entry_get_property (GObject    *object,  
+thunar_path_entry_get_property (GObject    *object,
                                 guint       prop_id,
                                 GValue     *value,
                                 GParamSpec *pspec)
@@ -332,7 +332,7 @@ thunar_path_entry_get_property (GObject    *object,
 
 
 static void
-thunar_path_entry_set_property (GObject      *object,  
+thunar_path_entry_set_property (GObject      *object,
                                 guint         prop_id,
                                 const GValue *value,
                                 GParamSpec   *pspec)
@@ -841,7 +841,7 @@ thunar_path_entry_common_prefix_lookup (ThunarPathEntry *path_entry,
   model = gtk_entry_completion_get_model (gtk_entry_get_completion (GTK_ENTRY (path_entry)));
   if (gtk_tree_model_get_iter_first (model, &iter))
     {
-      do 
+      do
         {
           /* determine the real file name for the iter */
           gtk_tree_model_get (model, &iter, THUNAR_COLUMN_FILE_NAME, &name, -1);
@@ -854,7 +854,7 @@ thunar_path_entry_common_prefix_lookup (ThunarPathEntry *path_entry,
                 {
                   /* remember the prefix */
                   *prefix_return = g_strdup (name);
-                  
+
                   /* determine the file for the iter */
                   gtk_tree_model_get (model, &iter, THUNAR_COLUMN_FILE, file_return, -1);
                 }
@@ -966,7 +966,7 @@ thunar_path_entry_match_selected (GtkEntryCompletion *completion,
 
   /* determine the file for the iterator */
   gtk_tree_model_get (model, iter, THUNAR_COLUMN_FILE, &file, -1);
-  
+
   /* determine the real name for the file */
   gtk_tree_model_get (model, iter, THUNAR_COLUMN_FILE_NAME, &real_name, -1);
 
@@ -1119,7 +1119,7 @@ thunar_path_entry_check_completion_idle_destroy (gpointer user_data)
 
 /**
  * thunar_path_entry_new:
- * 
+ *
  * Allocates a new #ThunarPathEntry instance.
  *
  * Return value: the newly allocated #ThunarPathEntry.

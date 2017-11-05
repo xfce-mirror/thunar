@@ -68,7 +68,7 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob *job,
   gchar       *display_name;
   gchar       *file_basename;
   gchar       *dot = NULL;
-  
+
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), NULL);
   _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (0 < n, NULL);

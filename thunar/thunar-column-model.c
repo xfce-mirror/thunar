@@ -44,7 +44,7 @@ static void               thunar_column_model_tree_model_init         (GtkTreeMo
 static void               thunar_column_model_finalize                (GObject                *object);
 static GtkTreeModelFlags  thunar_column_model_get_flags               (GtkTreeModel           *tree_model);
 static gint               thunar_column_model_get_n_columns           (GtkTreeModel           *tree_model);
-static GType              thunar_column_model_get_column_type         (GtkTreeModel           *tree_model,  
+static GType              thunar_column_model_get_column_type         (GtkTreeModel           *tree_model,
                                                                        gint                    idx);
 static gboolean           thunar_column_model_get_iter                (GtkTreeModel           *tree_model,
                                                                        GtkTreeIter            *iter,
@@ -233,7 +233,7 @@ thunar_column_model_get_n_columns (GtkTreeModel *tree_model)
 
 
 static GType
-thunar_column_model_get_column_type (GtkTreeModel *tree_model,  
+thunar_column_model_get_column_type (GtkTreeModel *tree_model,
                                      gint          idx)
 {
   switch (idx)

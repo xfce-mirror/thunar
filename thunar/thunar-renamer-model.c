@@ -1015,7 +1015,7 @@ thunar_renamer_model_cmp_array (gconstpointer pointer_a,
 {
   const SortTuple *a = pointer_a;
   const SortTuple *b = pointer_b;
-  
+
   if (G_UNLIKELY (a->position == b->position))
     /* return the sort order for the 'moved' items in the list */
     return a->offset - b->offset;
@@ -1333,7 +1333,7 @@ thunar_renamer_model_insert (ThunarRenamerModel *renamer_model,
  * @tree_paths    : the list of #GtkTreePath that need to be moved to
  *                  @position.
  * @position      : the new position for the list of paths.
- * 
+ *
  * Reorder the treepaths in the model to their new postion in the list
  * and sends an update to the treeview to reorder the list.
  **/
@@ -1424,7 +1424,7 @@ thunar_renamer_model_reorder (ThunarRenamerModel *renamer_model,
 
   /* invalidate all items */
   thunar_renamer_model_invalidate_all (renamer_model);
-  
+
   /* cleanup if we used the heap */
   if (G_UNLIKELY (n_items >= 500))
     g_free (sort_array);

@@ -67,7 +67,7 @@ thunar_navigator_get_type (void)
 
       type = g_type_register_static (G_TYPE_INTERFACE, I_("ThunarNavigator"), &info, 0);
       g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
-    
+
       g_once_init_leave (&type__volatile, type);
     }
 

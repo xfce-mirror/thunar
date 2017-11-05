@@ -120,7 +120,7 @@ thunarx_provider_plugin_get_resident (const ThunarxProviderPlugin *plugin)
  * no longer needed. If this method is invoked with a @resident value
  * of %TRUE then the application will never try to unload @plugin.
  *
- * This method has no effect unless called from the 
+ * This method has no effect unless called from the
  * %thunar_extension_initialize method of the @plugin.
  **/
 void
@@ -147,7 +147,7 @@ thunarx_provider_plugin_set_resident (ThunarxProviderPlugin *plugin,
  * and the resulting #GType identifier returned.
  *
  * When reregistering a type (typically because a module is unloaded then reloaded, and reinitialized), module and
- * @type_parent must be the same as they were previously. 
+ * @type_parent must be the same as they were previously.
  *
  * Return value: the new or existing type id.
  **/
@@ -202,7 +202,7 @@ thunarx_provider_plugin_add_interface (ThunarxProviderPlugin *plugin,
  * @const_static_values : an array of #GEnumValue structs for the possible enumeration values.
  *                        The array is terminated by a struct with all members being %0.
  *
- * Looks up or registers an enumeration that is implemented with a particular type @plugin. If a type 
+ * Looks up or registers an enumeration that is implemented with a particular type @plugin. If a type
  * with name @name was previously registered, the #GType identifier for the type is returned,
  * otherwise the type is newly registered, and the resulting #GType identifier returned.
  *
@@ -235,7 +235,7 @@ thunarx_provider_plugin_register_enum (ThunarxProviderPlugin *plugin,
  * qname was previously registered, the #GType identifier for the type is returned, otherwise the type is newly
  * registered, and the resulting #GType identifier returned.
  *
- * As long as any instances of the type exist, the type @plugin will not be unloaded. 
+ * As long as any instances of the type exist, the type @plugin will not be unloaded.
  *
  * Return value: the new or existing type id.
  **/

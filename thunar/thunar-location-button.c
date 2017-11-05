@@ -132,7 +132,7 @@ struct _ThunarLocationButton
 
   /* the current icon state (i.e. accepting drops) */
   ThunarFileIconState file_icon_state;
-  
+
   /* enter folders using DnD */
   guint               enter_timeout_id;
 
@@ -395,7 +395,7 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
   /* TODO: listen for icon theme changes */
 
   /* update and show the label widget (hide for the local root folder) */
-  if (thunar_file_is_local (file) && thunar_file_is_root (file)) 
+  if (thunar_file_is_local (file) && thunar_file_is_root (file))
     {
       /* hide the label would otherwise show up */
       gtk_widget_hide (location_button->label);

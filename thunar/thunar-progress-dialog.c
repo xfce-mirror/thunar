@@ -2,18 +2,18 @@
 /*-
  * Copyright (c) 2009-2010 Jannis Pohlmann <jannis@xfce.org>
  *
- * This program is free software; you can redistribute it and/or 
+ * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of 
+ * published by the Free Software Foundation; either version 2 of
  * the License, or (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public 
- * License along with this program; if not, write to the Free 
+ * You should have received a copy of the GNU General Public
+ * License along with this program; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
@@ -38,7 +38,7 @@ static void     thunar_progress_dialog_dispose            (GObject              
 static void     thunar_progress_dialog_finalize           (GObject              *object);
 static void     thunar_progress_dialog_shown              (ThunarProgressDialog *dialog);
 static gboolean thunar_progress_dialog_closed             (ThunarProgressDialog *dialog);
-static gboolean thunar_progress_dialog_toggled            (ThunarProgressDialog *dialog, 
+static gboolean thunar_progress_dialog_toggled            (ThunarProgressDialog *dialog,
                                                            GdkEventButton       *button,
                                                            GtkStatusIcon        *status_icon);
 static void     thunar_progress_dialog_update_status_icon (ThunarProgressDialog *dialog);
@@ -98,10 +98,10 @@ thunar_progress_dialog_init (ThunarProgressDialog *dialog)
   gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), FALSE);
   gtk_window_set_type_hint (GTK_WINDOW (dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 
-  g_signal_connect_swapped (dialog, "show", 
+  g_signal_connect_swapped (dialog, "show",
                             G_CALLBACK (thunar_progress_dialog_shown), dialog);
 
-  g_signal_connect (dialog, "delete-event", 
+  g_signal_connect (dialog, "delete-event",
                     G_CALLBACK (thunar_progress_dialog_closed), dialog);
 
   dialog->vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
@@ -188,7 +188,7 @@ thunar_progress_dialog_toggled (ThunarProgressDialog *dialog,
   _thunar_return_val_if_fail (GTK_IS_STATUS_ICON (status_icon), FALSE);
 
   /* check if the window is visible and has the focus */
-  if (gtk_widget_get_visible (GTK_WIDGET (dialog)) 
+  if (gtk_widget_get_visible (GTK_WIDGET (dialog))
       && gtk_window_is_active (GTK_WINDOW (dialog)))
     {
       /* remember the position of the dialog */
@@ -259,7 +259,7 @@ thunar_progress_dialog_job_finished (ThunarProgressDialog *dialog,
       gtk_widget_destroy (dialog->scrollwin);
     }
 
-  /* check if we have less than SCROLLVIEW_THRESHOLD views 
+  /* check if we have less than SCROLLVIEW_THRESHOLD views
    * and need to shrink the window */
   if (n_views < SCROLLVIEW_THRESHOLD)
     {
@@ -296,9 +296,9 @@ thunar_progress_dialog_update_status_icon (ThunarProgressDialog *dialog)
   n_views = g_list_length (dialog->views);
 
   /* build the tooltip text */
-  tooltip_text = g_strdup_printf (ngettext ("%d file operation running", 
+  tooltip_text = g_strdup_printf (ngettext ("%d file operation running",
                                             "%d file operations running",
-                                            n_views), 
+                                            n_views),
                                             n_views);
 
   /* update the tooltip */
@@ -347,13 +347,13 @@ thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
   /* add the view to the list of known views */
   dialog->views = g_list_prepend (dialog->views, view);
 
-  /* check if we need to wrap the views in a scroll window (starting 
+  /* check if we need to wrap the views in a scroll window (starting
    * at SCROLLVIEW_THRESHOLD parallel operations */
   if (g_list_length (dialog->views) == SCROLLVIEW_THRESHOLD)
     {
       /* create a scrolled window and add it to the dialog */
       dialog->scrollwin = gtk_scrolled_window_new (NULL, NULL);
-      gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (dialog->scrollwin), 
+      gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (dialog->scrollwin),
                                       GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
       gtk_container_add (GTK_CONTAINER (dialog->vbox), dialog->scrollwin);
       gtk_widget_show (dialog->scrollwin);
@@ -369,7 +369,7 @@ thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
       gtk_widget_reparent (dialog->content_box, viewport);
     }
 
-  g_signal_connect_swapped (view, "need-attention", 
+  g_signal_connect_swapped (view, "need-attention",
                             G_CALLBACK (thunar_progress_dialog_view_needs_attention), dialog);
 
   g_signal_connect_swapped (view, "finished",

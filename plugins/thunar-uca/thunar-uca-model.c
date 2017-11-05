@@ -988,9 +988,9 @@ thunar_uca_model_get_unique_id (void)
  * thunar_uca_model_get_default:
  *
  * Returns a reference to the default shared
- * #ThunarUcaModel instance. The caller is 
+ * #ThunarUcaModel instance. The caller is
  * responsible to free the returned instance
- * using g_object_unref() when no longer 
+ * using g_object_unref() when no longer
  * needed.
  *
  * Return value: a reference to the default

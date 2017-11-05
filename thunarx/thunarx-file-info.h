@@ -33,7 +33,7 @@
 G_BEGIN_DECLS;
 
 /**
- * File information namespaces available in the #GFileInfo returned by 
+ * File information namespaces available in the #GFileInfo returned by
  * thunarx_file_info_get_file_info().
  **/
 #define THUNARX_FILE_INFO_NAMESPACE \

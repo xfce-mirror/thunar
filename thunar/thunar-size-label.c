@@ -414,7 +414,7 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
       size_string = g_format_size_full (total_size, size_label->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
       text = g_strdup_printf (ngettext ("%u item, totalling %s", "%u items, totalling %s", n), n, size_string);
       g_free (size_string);
-      
+
       if (unreadable_directory_count > 0)
         {
           /* TRANSLATORS: this is shows if during the deep count size
@@ -423,7 +423,7 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
           g_free (text);
           text = unreable_text;
         }
-      
+
       gtk_label_set_text (GTK_LABEL (size_label->label), text);
       g_free (text);
     }

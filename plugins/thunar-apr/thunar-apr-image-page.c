@@ -62,7 +62,7 @@ static const struct
 #endif
 
 
-  
+
 struct _ThunarAprImagePageClass
 {
   ThunarAprAbstractPageClass __parent__;
@@ -97,7 +97,7 @@ thunar_apr_image_page_class_init (ThunarAprImagePageClass *klass)
 }
 
 
-  
+
 static void
 thunar_apr_image_page_init (ThunarAprImagePage *image_page)
 {

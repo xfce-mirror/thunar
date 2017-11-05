@@ -1283,9 +1283,9 @@ thunar_location_buttons_action_create_folder (GtkAction             *action,
     return;
 
   /* ask the user to enter a name for the new folder */
-  name = thunar_show_create_dialog (GTK_WIDGET (buttons), 
-                                    "inode/directory", 
-                                    _("New Folder"), 
+  name = thunar_show_create_dialog (GTK_WIDGET (buttons),
+                                    "inode/directory",
+                                    _("New Folder"),
                                     _("Create New Folder"));
   if (G_LIKELY (name != NULL))
     {
