@@ -1125,10 +1125,13 @@ thunar_location_buttons_clicked (ThunarLocationButton  *button,
   /* check if the button is visible on the button bar */
   if (!gtk_widget_get_child_visible (GTK_WIDGET (button)))
     {
-      buttons->scroll_count = 0;
-      /* scroll left till the button is visible */
-      while(!gtk_widget_get_child_visible (GTK_WIDGET (button)) && buttons->scroll_count < g_list_length(buttons->list) )
-          thunar_location_buttons_scroll_left (buttons->left_slider, buttons);
+// ##########
+// FIXME: The auto-scroll feature currently is disabled, since on horizontal small windows it can produce graphical glitches and even seg.faults. To be fixed.
+// ##########
+//      buttons->scroll_count = 0;
+//      /* scroll left till the button is visible */
+//      while(!gtk_widget_get_child_visible (GTK_WIDGET (button)) && buttons->scroll_count < g_list_length(buttons->list) )
+//          thunar_location_buttons_scroll_left (buttons->left_slider, buttons);
     }
 
   /* update all buttons */
