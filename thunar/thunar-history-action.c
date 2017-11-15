@@ -90,11 +90,7 @@ thunar_history_action_popup_delayed (gpointer data)
   ThunarHistoryAction *history_action;
 
   history_action = g_object_get_data (G_OBJECT (button), I_("thunar-history-action"));
-
-  GDK_THREADS_ENTER ();
   thunar_history_action_show_menu (button, history_action, 3, 0);
-  GDK_THREADS_LEAVE ();
-
   history_action->popup_delay = 0;
 
   return FALSE;
