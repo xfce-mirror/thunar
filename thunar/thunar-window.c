@@ -49,6 +49,7 @@
 #include <thunar/thunar-location-buttons.h>
 #include <thunar/thunar-location-entry.h>
 #include <thunar/thunar-marshal.h>
+#include <thunar/thunar-menu-util.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-preferences-dialog.h>
 #include <thunar/thunar-preferences.h>
@@ -1946,8 +1947,7 @@ thunar_window_merge_custom_preferences (ThunarWindow *window)
 {
   GList           *providers;
   GList           *items;
-  GList           *ap, *pp;
-  GtkAction       *action;
+  GList           *pp;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (window->custom_preferences_merge_id == 0);
@@ -1964,24 +1964,12 @@ thunar_window_merge_custom_preferences (ThunarWindow *window)
         {
           /* determine the available menu items for the provider */
           items = thunarx_preferences_provider_get_menu_items (THUNARX_PREFERENCES_PROVIDER (pp->data), GTK_WIDGET (window));
-          for (ap = items; ap != NULL; ap = ap->next)
-            {
-              /* add the action to the action group */
-              action = thunar_util_action_from_menu_item (G_OBJECT (ap->data));
-              gtk_action_group_add_action (window->action_group, action);
 
-              /* add the action to the UI manager */
-              gtk_ui_manager_add_ui (window->ui_manager,
-                                     window->custom_preferences_merge_id,
-                                     "/main-menu/edit-menu/placeholder-custom-preferences",
-                                     gtk_action_get_name (GTK_ACTION (action)),
-                                     gtk_action_get_name (GTK_ACTION (action)),
-                                     GTK_UI_MANAGER_MENUITEM, FALSE);
-
-              /* release the references on menu item and action */
-              g_object_unref (G_OBJECT (ap->data));
-              g_object_unref (G_OBJECT (action));
-            }
+          thunar_menu_util_add_items_to_ui_manager (window->ui_manager,
+                                                    window->action_group,
+                                                    window->custom_preferences_merge_id,
+                                                    "/main-menu/edit-menu/placeholder-custom-preferences",
+                                                    items);
 
           /* release the reference on the provider */
           g_object_unref (G_OBJECT (pp->data));
@@ -3361,7 +3349,6 @@ thunar_window_update_custom_actions (ThunarView   *view,
   GList           *lp;
   GList           *providers;
   GList           *tmp;
-  GtkAction       *action;
 
   _thunar_return_if_fail (THUNAR_IS_VIEW (view));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
@@ -3436,30 +3423,11 @@ thunar_window_update_custom_actions (ThunarView   *view,
       gtk_ui_manager_ensure_update (window->ui_manager);
 
       /* add the menu items to the UI manager */
-      for (lp = items; lp != NULL; lp = lp->next)
-        {
-          if (G_UNLIKELY (lp->data == NULL))
-            continue;
-
-          action = thunar_util_action_from_menu_item (G_OBJECT (lp->data));
-
-          /* add the action to the action group */
-          gtk_action_group_add_action_with_accel (window->custom_actions,
-                                                  action,
-                                                  NULL);
-
-          /* add to the file context menu */
-          gtk_ui_manager_add_ui (window->ui_manager,
-                                 window->custom_merge_id,
-                                 "/main-menu/file-menu/placeholder-custom-actions",
-                                 gtk_action_get_name (GTK_ACTION (action)),
-                                 gtk_action_get_name (GTK_ACTION (action)),
-                                 GTK_UI_MANAGER_MENUITEM, FALSE);
-
-          /* release the references on menu item and action */
-          g_object_unref (G_OBJECT (lp->data));
-          g_object_unref (G_OBJECT (action));
-        }
+      thunar_menu_util_add_items_to_ui_manager (window->ui_manager,
+                                                window->custom_actions,
+                                                window->custom_merge_id,
+                                                "/main-menu/file-menu/placeholder-custom-actions",
+                                                items);
 
       /* cleanup */
       g_list_free (items);

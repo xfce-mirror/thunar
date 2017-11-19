@@ -35,6 +35,7 @@
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-job.h>
 #include <thunar/thunar-marshal.h>
+#include <thunar/thunar-menu-util.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-stock.h>
@@ -43,7 +44,6 @@
 #include <thunar/thunar-simple-job.h>
 #include <thunar/thunar-tree-model.h>
 #include <thunar/thunar-tree-view.h>
-#include <thunar/thunar-util.h>
 
 
 
@@ -1266,7 +1266,6 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
   GIcon        *icon;
   GList        *providers, *lp;
   GList        *items = NULL, *tmp;
-  GtkAction    *action;
 
   /* verify that we're connected to the clipboard manager */
   if (G_UNLIKELY (view->clipboard == NULL))
@@ -1516,18 +1515,7 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
               g_list_free (providers);
 
               /* add the menu items to the menu */
-              for (lp = items; lp != NULL; lp = lp->next)
-                {
-                  action = thunar_util_action_from_menu_item (G_OBJECT (lp->data));
-
-                  item = gtk_action_create_menu_item (action);
-                  gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-                  gtk_widget_show (item);
-
-                  /* release the reference on the menu item and action */
-                  g_object_unref (G_OBJECT (lp->data));
-                  g_object_unref (G_OBJECT (action));
-                }
+              thunar_menu_util_add_items_to_menu (menu, items);
 
               /* add a separator to the end of the menu */
               if (G_LIKELY (lp != items))

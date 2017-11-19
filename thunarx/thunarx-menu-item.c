@@ -23,6 +23,7 @@
 
 #include <thunarx/thunarx-private.h>
 #include <thunarx/thunarx-menu-item.h>
+#include <thunarx/thunarx-menu.h>
 
 
 
@@ -77,12 +78,13 @@ static void thunarx_menu_item_finalize     (GObject      *object);
 
 struct _ThunarxMenuItemPrivate
 {
-  gchar   *name;
-  gchar   *label;
-  gchar   *tooltip;
-  gchar   *icon;
-  gboolean sensitive;
-  gboolean priority;
+  gchar       *name;
+  gchar       *label;
+  gchar       *tooltip;
+  gchar       *icon;
+  gboolean     sensitive;
+  gboolean     priority;
+  ThunarxMenu *menu;
 };
 
 
@@ -146,7 +148,6 @@ thunarx_menu_item_class_init (ThunarxMenuItemClass *klass)
                                                         "Name of the icon to display in the menu item",
                                                         NULL,
                                                         G_PARAM_READWRITE));
-
   g_object_class_install_property (gobject_class,
                                    PROP_SENSITIVE,
                                    g_param_spec_boolean ("sensitive",
@@ -161,6 +162,13 @@ thunarx_menu_item_class_init (ThunarxMenuItemClass *klass)
                                                          "Show priority text in toolbars",
                                                          TRUE,
                                                          G_PARAM_READWRITE));
+  g_object_class_install_property (gobject_class,
+                                   PROP_MENU,
+                                   g_param_spec_object ("menu",
+                                                        "Menu",
+                                                        "The menu belonging to this item. May be null.",
+                                                        THUNARX_TYPE_MENU,
+                                                        G_PARAM_READWRITE));
 }
 
 
@@ -171,6 +179,7 @@ thunarx_menu_item_init (ThunarxMenuItem *item)
   item->priv = THUNARX_MENU_ITEM_GET_PRIVATE (item);
   item->priv->sensitive = TRUE;
   item->priv->priority = FALSE;
+  item->priv->menu = NULL;
 }
 
 
@@ -207,6 +216,10 @@ thunarx_menu_item_get_property (GObject    *object,
 
       case PROP_PRIORITY:
         g_value_set_boolean (value, item->priv->priority);
+        break;
+
+      case PROP_MENU:
+        g_value_set_object (value, item->priv->menu);
         break;
 
       default:
@@ -261,6 +274,13 @@ thunarx_menu_item_set_property (GObject      *object,
         g_object_notify (object, "priority");
         break;
 
+      case PROP_MENU:
+        if (item->priv->menu)
+          g_object_unref (item->priv->menu);
+        item->priv->menu = g_object_ref (g_value_get_object (value));
+        g_object_notify (object, "menu");
+        break;
+
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, param_id, pspec);
         break;
@@ -278,6 +298,9 @@ thunarx_menu_item_finalize (GObject *object)
   g_free (item->priv->label);
   g_free (item->priv->tooltip);
   g_free (item->priv->icon);
+
+  if (item->priv->menu)
+    g_object_unref (item->priv->menu);
 
   (*G_OBJECT_CLASS (thunarx_menu_item_parent_class)->finalize) (object);
 }
@@ -356,4 +379,38 @@ thunarx_menu_item_set_sensitive (ThunarxMenuItem *item,
 {
   g_return_if_fail (THUNARX_IS_MENU_ITEM (item));
   item->priv->sensitive = sensitive;
+}
+
+
+
+/**
+ * thunarx_menu_item_set_menu:
+ * @item: pointer to a #ThunarxMenuItem instance
+ * @menu: pointer to a #ThunarxMenu instance
+ *
+ * Attaches @menu to menu item.
+ */
+void
+thunarx_menu_item_set_menu (ThunarxMenuItem *item,
+                            ThunarxMenu     *menu)
+{
+  g_return_if_fail (THUNARX_IS_MENU_ITEM (item));
+  g_return_if_fail (THUNARX_IS_MENU (menu));
+
+  g_object_set (item, "menu", THUNARX_MENU (menu), NULL);
+}
+
+
+
+/**
+ * thunarx_menu_item_list_free:
+ * @items: (element-type ThunarxMenuItem): a list of #ThunarxMenuItem
+ */
+void
+thunarx_menu_item_list_free (GList *items)
+{
+  g_return_if_fail (items != NULL);
+
+  g_list_foreach (items, (GFunc)g_object_unref, NULL);
+  g_list_free (items);
 }

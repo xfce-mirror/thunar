@@ -23,46 +23,6 @@
 #ifndef __THUNARX_MENU_ITEM_H__
 #define __THUNARX_MENU_ITEM_H__
 
-#include <glib-object.h>
-
-G_BEGIN_DECLS;
-
-typedef struct _ThunarxMenuItemPrivate ThunarxMenuItemPrivate;
-typedef struct _ThunarxMenuItemClass   ThunarxMenuItemClass;
-typedef struct _ThunarxMenuItem        ThunarxMenuItem;
-
-#define THUNARX_TYPE_MENU_ITEM            (thunarx_menu_item_get_type ())
-#define THUNARX_MENU_ITEM(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNARX_TYPE_MENU_ITEM, ThunarxMenuItem))
-#define THUNARX_MENU_ITEM_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNARX_TYPE_MENU_ITEM, ThunarxMenuItemClass))
-#define THUNARX_IS_MENU_ITEM(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNARX_TYPE_MENU_ITEM))
-#define THUNARX_IS_MENU_ITEM_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), THUNARX_TYPE_MENU_ITEM))
-#define THUNARX_MENU_ITEM_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj), THUNARX_TYPE_MENU_ITEM))
-
-struct _ThunarxMenuItemClass {
-  GObjectClass __parent__;
-  void (*activate) (ThunarxMenuItem *item);
-};
-
-struct _ThunarxMenuItem {
-  GObject __parent__;
-
-  /*< private >*/
-  ThunarxMenuItemPrivate *priv;
-};
-
-GType             thunarx_menu_item_get_type      (void) G_GNUC_CONST;
-
-ThunarxMenuItem  *thunarx_menu_item_new           (const gchar     *name,
-                                                   const gchar     *label,
-                                                   const gchar     *tip,
-                                                   const gchar     *icon) G_GNUC_MALLOC;
-
-void              thunarx_menu_item_activate      (ThunarxMenuItem *item);
-
-gboolean          thunarx_menu_item_get_sensitive (ThunarxMenuItem *item);
-void              thunarx_menu_item_set_sensitive (ThunarxMenuItem *item,
-                                                   gboolean         sensitive);
-
-G_END_DECLS;
+#include "thunarx-menu.h"
 
 #endif /* !__THUNARX_MENU_ITEM_H__ */

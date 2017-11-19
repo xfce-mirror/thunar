@@ -40,13 +40,13 @@
 #include <thunar/thunar-dnd.h>
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
+#include <thunar/thunar-menu-util.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-shortcuts-icon-renderer.h>
 #include <thunar/thunar-shortcuts-model.h>
 #include <thunar/thunar-shortcuts-view.h>
 #include <thunar/thunar-stock.h>
-#include <thunar/thunar-util.h>
 
 
 
@@ -1072,7 +1072,6 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   gboolean             can_mount;
   gboolean             can_unmount;
   gboolean             can_eject;
-  GtkAction           *action;
 
   /* check if this is an item menu or a header menu */
   gtk_tree_model_get (model, iter, THUNAR_SHORTCUTS_MODEL_COLUMN_IS_HEADER, &is_header, -1);
@@ -1242,18 +1241,7 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
             }
 
           /* add the menu items to the menu */
-          for (lp = items; lp != NULL; lp = lp->next)
-            {
-              action = thunar_util_action_from_menu_item (G_OBJECT (lp->data));
-
-              item = gtk_action_create_menu_item (action);
-              gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-              gtk_widget_show (item);
-
-              /* release the reference on the menu item and action */
-              g_object_unref (G_OBJECT (lp->data));
-              g_object_unref (G_OBJECT (action));
-            }
+          thunar_menu_util_add_items_to_menu (menu, items);
 
           /* cleanup */
           g_list_free (items);

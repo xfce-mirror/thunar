@@ -46,12 +46,20 @@ thunarx_file_info_list_get_type
 thunarx_file_info_list_copy
 thunarx_file_info_list_free
 
+/* ThunarxMenu methods */
+thunarx_menu_get_type G_GNUC_CONST
+thunarx_menu_new G_GNUC_MALLOC
+thunarx_menu_append_item
+thunarx_menu_get_items
+
 /* ThunarxMenuItem methods */
 thunarx_menu_item_get_type G_GNUC_CONST
 thunarx_menu_item_new G_GNUC_MALLOC
 thunarx_menu_item_activate
 thunarx_menu_item_get_sensitive
 thunarx_menu_item_set_sensitive
+thunarx_menu_item_set_menu
+thunarx_menu_item_list_free
 
 /* ThunarxMenuProvider methods */
 thunarx_menu_provider_get_type G_GNUC_CONST

@@ -56,7 +56,6 @@
 
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
-#include <thunarx/thunarx.h>
 
 #include <glib.h>
 #include <glib/gstdio.h>
@@ -609,56 +608,4 @@ void
 thunar_setup_display_cb (gpointer data)
 {
   g_setenv ("DISPLAY", (char *) data, TRUE);
-}
-
-
-
-static void
-extension_action_callback (GtkAction *action,
-                           gpointer callback_data)
-{
-  thunarx_menu_item_activate (THUNARX_MENU_ITEM (callback_data));
-}
-
-
-
-GtkAction *
-thunar_util_action_from_menu_item (GObject   *item)
-{
-  gchar *name, *label, *tooltip, *icon_name;
-  gboolean  sensitive, priority;
-  GtkAction *action;
-
-  g_return_val_if_fail (THUNARX_IS_MENU_ITEM (item), NULL);
-
-  g_object_get (G_OBJECT (item),
-                "name", &name,
-                "label", &label,
-                "tooltip", &tooltip,
-                "icon", &icon_name,
-                "sensitive", &sensitive,
-                "priority", &priority,
-                NULL);
-
-  action = gtk_action_new (name, label, tooltip, NULL);
-
-  if (icon_name != NULL)
-    {
-      gtk_action_set_icon_name (action, icon_name);
-    }
-
-  gtk_action_set_sensitive (action, sensitive);
-  g_object_set (action, "is-important", priority, NULL);
-
-  g_signal_connect_data (action, "activate",
-                         G_CALLBACK (extension_action_callback),
-                         g_object_ref (item),
-                         (GClosureNotify) g_object_unref, 0);
-
-  g_free (name);
-  g_free (label);
-  g_free (tooltip);
-  g_free (icon_name);
-
-  return action;
 }

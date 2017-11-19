@@ -29,8 +29,8 @@
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-dnd.h>
 #include <thunar/thunar-gtk-extensions.h>
+#include <thunar/thunar-menu-util.h>
 #include <thunar/thunar-private.h>
-#include <thunar/thunar-util.h>
 
 
 
@@ -85,7 +85,6 @@ thunar_dnd_ask (GtkWidget    *widget,
   GList                  *items = NULL;
   GList                  *lp;
   guint                   n;
-  GtkAction              *action;
 
   _thunar_return_val_if_fail (thunar_file_is_directory (folder), 0);
   _thunar_return_val_if_fail (GTK_IS_WIDGET (widget), 0);
@@ -153,19 +152,7 @@ thunar_dnd_ask (GtkWidget    *widget,
           if (G_UNLIKELY (items != NULL))
             {
               /* add menu items for all items */
-              for (lp = items; lp != NULL; lp = lp->next)
-                {
-                  action = thunar_util_action_from_menu_item (G_OBJECT (lp->data));
-
-                  /* add a menu item for the action */
-                  item = gtk_action_create_menu_item (action);
-                  gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-                  gtk_widget_show (item);
-
-                  /* release the reference on the menu item and action */
-                  g_object_unref (G_OBJECT (lp->data));
-                  g_object_unref (G_OBJECT (action));
-                }
+              thunar_menu_util_add_items_to_menu (menu, items);
               g_list_free (items);
 
               /* append another separator */

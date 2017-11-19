@@ -37,13 +37,13 @@
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-launcher.h>
+#include <thunar/thunar-menu-util.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-renamer-dialog.h>
 #include <thunar/thunar-renamer-dialog-ui.h>
 #include <thunar/thunar-renamer-model.h>
 #include <thunar/thunar-renamer-progress.h>
-#include <thunar/thunar-util.h>
 
 
 
@@ -849,9 +849,7 @@ thunar_renamer_dialog_context_menu (ThunarRenamerDialog *renamer_dialog,
   ThunarxRenamer *renamer;
   GtkWidget      *menu;
   GList          *items = NULL;
-  GList          *lp;
   gint            renamer_merge_id = 0;
-  GtkAction      *action;
 
   _thunar_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
 
@@ -875,24 +873,8 @@ thunar_renamer_dialog_context_menu (ThunarRenamerDialog *renamer_dialog,
       gtk_ui_manager_insert_action_group (renamer_dialog->ui_manager, renamer_actions, -1);
 
       /* add the items to the UI manager */
-      for (lp = items; lp != NULL; lp = lp->next)
-        {
-          action = thunar_util_action_from_menu_item (G_OBJECT (lp->data));
-
-          /* add the action to the action group */
-          gtk_action_group_add_action (renamer_actions, action);
-
-          /* add the action to the UI manager */
-          gtk_ui_manager_add_ui (renamer_dialog->ui_manager, renamer_merge_id,
-                                 "/file-context-menu/placeholder-renamer-actions",
-                                 gtk_action_get_name (action),
-                                 gtk_action_get_name (action),
-                                 GTK_UI_MANAGER_MENUITEM, FALSE);
-
-          /* release the reference on the menu item and action */
-          g_object_unref (G_OBJECT (lp->data));
-          g_object_unref (G_OBJECT (action));
-        }
+      thunar_menu_util_add_items_to_ui_manager (renamer_dialog->ui_manager, renamer_actions, renamer_merge_id,
+                                                "/file-context-menu/placeholder-renamer-actions", items);
 
       /* be sure to update the UI manager to avoid flickering */
       gtk_ui_manager_ensure_update (renamer_dialog->ui_manager);

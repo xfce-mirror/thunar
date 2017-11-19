@@ -3,6 +3,7 @@
                "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
 
 <!ENTITY ThunarxFileInfo SYSTEM "xml/thunarx-file-info.xml">
+<!ENTITY ThunarxMenu SYSTEM "xml/thunarx-menu.xml">
 <!ENTITY ThunarxMenuItem SYSTEM "xml/thunarx-menu-item.xml">
 <!ENTITY ThunarxMenuProvider SYSTEM "xml/thunarx-menu-provider.xml">
 <!ENTITY ThunarxPreferencesProvider SYSTEM "xml/thunarx-preferences-provider.xml">
@@ -451,6 +452,7 @@ thunar_extension_initialize (ThunarxProviderPlugin *plugin)
     </para>
 
     &ThunarxFileInfo;
+    &ThunarxMenu;
     &ThunarxMenuItem;
     &ThunarxPropertyPage;
     &ThunarxProviderPlugin;

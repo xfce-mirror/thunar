@@ -31,6 +31,26 @@ thunarx_file_info_list_get_type
 </SECTION>
 
 <SECTION>
+<FILE>thunarx-menu</FILE>
+<TITLE>ThunarxMenu</TITLE>
+ThunarxMenu
+thunarx_menu_new
+thunarx_menu_append_item
+thunarx_menu_get_items
+<SUBSECTION Standard>
+ThunarxMenuClass
+THUNARX_TYPE_MENU
+THUNARX_MENU
+THUNARX_MENU_CLASS
+THUNARX_IS_MENU
+THUNARX_IS_MENU_CLASS
+THUNARX_MENU_GET_CLASS
+<SUBSECTION Private>
+ThunarxMenuPrivate
+thunarx_menu_get_type
+</SECTION>
+
+<SECTION>
 <FILE>thunarx-menu-item</FILE>
 <TITLE>ThunarxMenuItem</TITLE>
 ThunarxMenuItem
@@ -38,6 +58,8 @@ thunarx_menu_item_new
 thunarx_menu_item_activate
 thunarx_menu_item_get_sensitive
 thunarx_menu_item_set_sensitive
+thunarx_menu_item_set_menu
+thunarx_menu_item_list_free
 <SUBSECTION Standard>
 ThunarxMenuItemClass
 THUNARX_TYPE_MENU_ITEM
