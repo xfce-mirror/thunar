@@ -298,19 +298,21 @@ thunar_icon_renderer_get_preferred_height (GtkCellRenderer *renderer,
 
 
 
-
 static void
 thunar_icon_renderer_color_selected (cairo_t   *cr,
                                      GtkWidget *widget)
 {
   cairo_pattern_t *source;
-  GtkStateType     state;
+  GtkStateFlags    state;
+  GdkRGBA          color;
+  GtkStyleContext *context = gtk_widget_get_style_context (widget);
 
   cairo_save (cr);
 
   source = cairo_pattern_reference (cairo_get_source (cr));
-  state = gtk_widget_has_focus (widget) ? GTK_STATE_SELECTED : GTK_STATE_ACTIVE;
-  gdk_cairo_set_source_color (cr, &gtk_widget_get_style (widget)->base[state]);
+  state = gtk_widget_has_focus (widget) ? GTK_STATE_FLAG_SELECTED : GTK_STATE_FLAG_ACTIVE;
+  gtk_style_context_get (context, state, GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &color, NULL);
+  gdk_cairo_set_source_rgba (cr, &color);
   cairo_set_operator (cr, CAIRO_OPERATOR_MULTIPLY);
 
   cairo_mask (cr, source);
