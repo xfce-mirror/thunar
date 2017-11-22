@@ -320,6 +320,10 @@ thunar_application_dbus_name_lost_cb (GDBusConnection *connection,
 static void
 thunar_application_dbus_init (ThunarApplication *application)
 {
+    /* Do not atempt to register if running as root */
+    if (geteuid() == 0)
+      return;
+
     application->dbus_owner_id = g_bus_own_name (G_BUS_TYPE_SESSION,
                                "org.xfce.FileManager",
                                G_BUS_NAME_OWNER_FLAGS_NONE,
