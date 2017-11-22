@@ -27,7 +27,7 @@
 
 #include <glib-object.h>
 
-G_BEGIN_DECLS;
+G_BEGIN_DECLS
 
 #define I_(string) (g_intern_static_string ((string)))
 
@@ -38,6 +38,6 @@ void   thunarx_object_list_take_reference (GList      *object_list,
 G_GNUC_INTERNAL
 gchar *thunarx_param_spec_get_option_name (GParamSpec *pspec) G_GNUC_MALLOC;
 
-G_END_DECLS;
+G_END_DECLS
 
 #endif /* !__THUNARX_PRIVATE_H__ */

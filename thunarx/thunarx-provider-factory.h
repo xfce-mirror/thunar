@@ -27,7 +27,7 @@
 
 #include <glib-object.h>
 
-G_BEGIN_DECLS;
+G_BEGIN_DECLS
 
 typedef struct _ThunarxProviderFactoryClass ThunarxProviderFactoryClass;
 typedef struct _ThunarxProviderFactory      ThunarxProviderFactory;
@@ -46,6 +46,6 @@ ThunarxProviderFactory *thunarx_provider_factory_get_default    (void);
 GList                  *thunarx_provider_factory_list_providers (ThunarxProviderFactory *factory,
                                                                  GType                   type) G_GNUC_MALLOC;
 
-G_END_DECLS;
+G_END_DECLS
 
 #endif /* !__THUNARX_PROVIDER_FACTORY_H__ */

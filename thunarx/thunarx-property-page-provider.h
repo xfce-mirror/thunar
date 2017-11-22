@@ -27,7 +27,7 @@
 
 #include <thunarx/thunarx-property-page.h>
 
-G_BEGIN_DECLS;
+G_BEGIN_DECLS
 
 typedef struct _ThunarxPropertyPageProviderIface ThunarxPropertyPageProviderIface;
 typedef struct _ThunarxPropertyPageProvider      ThunarxPropertyPageProvider;
@@ -66,6 +66,6 @@ GType  thunarx_property_page_provider_get_type  (void) G_GNUC_CONST;
 GList *thunarx_property_page_provider_get_pages (ThunarxPropertyPageProvider *provider,
                                                  GList                       *files);
 
-G_END_DECLS;
+G_END_DECLS
 
 #endif /* !__THUNARX_PROPERTY_PAGE_PROVIDER_H__ */

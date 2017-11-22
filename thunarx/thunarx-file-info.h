@@ -30,12 +30,12 @@
 
 #include <thunarx/thunarx-config.h>
 
-G_BEGIN_DECLS;
+G_BEGIN_DECLS
 
-/**
+/*
  * File information namespaces available in the #GFileInfo returned by
  * thunarx_file_info_get_file_info().
- **/
+ */
 #define THUNARX_FILE_INFO_NAMESPACE \
   "access::*," \
   "id::filesystem," \
@@ -51,10 +51,10 @@ G_BEGIN_DECLS;
 
 
 
-/**
+/*
  * Filesystem information namespaces available in the #GFileInfo
  * returned by thunarx_file_info_get_filesystem_info().
- **/
+ */
 #define THUNARX_FILESYSTEM_INFO_NAMESPACE \
   "filesystem::*"
 
@@ -158,6 +158,6 @@ GType      thunarx_file_info_list_get_type       (void) G_GNUC_CONST;
 GList     *thunarx_file_info_list_copy           (GList           *file_infos);
 void       thunarx_file_info_list_free           (GList           *file_infos);
 
-G_END_DECLS;
+G_END_DECLS
 
 #endif /* !__THUNARX_FILE_INFO_H__ */

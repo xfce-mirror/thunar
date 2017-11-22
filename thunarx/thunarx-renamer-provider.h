@@ -27,7 +27,7 @@
 
 #include <thunarx/thunarx-renamer.h>
 
-G_BEGIN_DECLS;
+G_BEGIN_DECLS
 
 typedef struct _ThunarxRenamerProviderIface ThunarxRenamerProviderIface;
 typedef struct _ThunarxRenamerProvider      ThunarxRenamerProvider;
@@ -65,6 +65,6 @@ GType  thunarx_renamer_provider_get_type     (void) G_GNUC_CONST;
 
 GList *thunarx_renamer_provider_get_renamers (ThunarxRenamerProvider *provider) G_GNUC_MALLOC;
 
-G_END_DECLS;
+G_END_DECLS
 
 #endif /* !__THUNARX_RENAMER_PROVIDER_H__ */

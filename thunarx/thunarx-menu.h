@@ -25,7 +25,7 @@
 
 #include <glib-object.h>
 
-G_BEGIN_DECLS;
+G_BEGIN_DECLS
 
 /* ThunarxMenu types */
 typedef struct _ThunarxMenuPrivate ThunarxMenuPrivate;
@@ -110,6 +110,6 @@ void              thunarx_menu_item_list_free     (GList           *items);
 void              thunarx_menu_item_set_menu      (ThunarxMenuItem *item,
                                                    ThunarxMenu     *menu);
 
-G_END_DECLS;
+G_END_DECLS
 
 #endif /* !__THUNARX_MENU_H__ */

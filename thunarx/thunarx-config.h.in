@@ -27,7 +27,7 @@
 
 #include <glib-object.h>
 
-G_BEGIN_DECLS;
+G_BEGIN_DECLS
 
 #define THUNARX_MAJOR_VERSION @THUNAR_VERSION_MAJOR@
 #define THUNARX_MINOR_VERSION @THUNAR_VERSION_MINOR@
@@ -58,6 +58,6 @@ const gchar *thunarx_check_version (guint required_major,
 #endif /* __GNUC__ */
 #endif /* !defined(G_GNUC_WARN_UNUSED_RESULT) */
 
-G_END_DECLS;
+G_END_DECLS
 
 #endif /* !__THUNARX_CONFIG_H__ */

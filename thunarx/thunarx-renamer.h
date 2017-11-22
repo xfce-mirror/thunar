@@ -29,7 +29,7 @@
 
 #include <thunarx/thunarx-file-info.h>
 
-G_BEGIN_DECLS;
+G_BEGIN_DECLS
 
 typedef struct _ThunarxRenamerPrivate ThunarxRenamerPrivate;
 typedef struct _ThunarxRenamerClass   ThunarxRenamerClass;
@@ -130,6 +130,6 @@ GList       *thunarx_renamer_get_menu_items (ThunarxRenamer   *renamer,
 
 void         thunarx_renamer_changed        (ThunarxRenamer   *renamer);
 
-G_END_DECLS;
+G_END_DECLS
 
 #endif /* !__THUNARX_RENAMER_H__ */

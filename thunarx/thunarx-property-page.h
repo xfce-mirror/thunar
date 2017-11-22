@@ -27,7 +27,7 @@
 
 #include <gtk/gtk.h>
 
-G_BEGIN_DECLS;
+G_BEGIN_DECLS
 
 typedef struct _ThunarxPropertyPagePrivate ThunarxPropertyPagePrivate;
 typedef struct _ThunarxPropertyPageClass   ThunarxPropertyPageClass;
@@ -72,6 +72,6 @@ GtkWidget   *thunarx_property_page_get_label_widget      (ThunarxPropertyPage *p
 void         thunarx_property_page_set_label_widget      (ThunarxPropertyPage *property_page,
                                                           GtkWidget           *label_widget);
 
-G_END_DECLS;
+G_END_DECLS
 
 #endif /* !__THUNARX_PROPERTY_PAGE_H__ */

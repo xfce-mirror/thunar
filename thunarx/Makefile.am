@@ -75,6 +75,8 @@ EXTRA_DIST =								\
 	abicheck.sh							\
 	thunarx.symbols
 
+CLEANFILES = $(NULL)
+
 ##
 ## Rules to auto-generate built sources
 ##
@@ -96,5 +98,30 @@ endif
 
 # required for gtk-doc
 dist-hook: all
+
+-include $(INTROSPECTION_MAKEFILE)
+#AM_DEFAULT_VERBOSITY = 1
+
+INTROSPECTION_GIRS =
+INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir) -I.. -DTHUNARX_COMPILATION
+INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
+
+if HAVE_INTROSPECTION
+Thunarx-3.0.gir: libthunarx-3.la
+Thunarx_3_0_gir_INCLUDES = GObject-2.0 Gtk-3.0
+Thunarx_3_0_gir_CFLAGS = $(INCLUDES)
+Thunarx_3_0_gir_LIBS = libthunarx-3.la
+Thunarx_3_0_gir_FILES = $(libthunarx_headers)
+INTROSPECTION_GIRS += Thunarx-3.0.gir
+
+girdir = $(datadir)/gir-1.0/
+gir_DATA = $(INTROSPECTION_GIRS)
+
+typelibdir = $(libdir)/girepository-1.0/
+typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
+
+CLEANFILES += $(gir_DATA) $(typelib_DATA)
+
+endif
 
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:

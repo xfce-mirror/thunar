@@ -156,6 +156,11 @@ XDT_CHECK_PACKAGE([LIBXFCE4UTIL], [libxfce4util-1.0], [4.12.0])
 XDT_CHECK_PACKAGE([LIBXFCE4UI], [libxfce4ui-2], [4.12.0])
 XDT_CHECK_PACKAGE([XFCONF], [libxfconf-0], [4.12.0])
 
+dnl ******************************
+dnl *** GObject Instrospection ***
+dnl ******************************
+GOBJECT_INTROSPECTION_CHECK([1.30.0])
+
 dnl ********************************************
 dnl *** Check for session management support ***
 dnl ********************************************

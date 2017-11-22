@@ -27,7 +27,7 @@
 
 #include <gtk/gtk.h>
 
-G_BEGIN_DECLS;
+G_BEGIN_DECLS
 
 typedef struct _ThunarxPreferencesProviderIface ThunarxPreferencesProviderIface;
 typedef struct _ThunarxPreferencesProvider      ThunarxPreferencesProvider;
@@ -69,6 +69,6 @@ GType  thunarx_preferences_provider_get_type    (void) G_GNUC_CONST;
 GList *thunarx_preferences_provider_get_menu_items (ThunarxPreferencesProvider *provider,
                                                     GtkWidget                  *window);
 
-G_END_DECLS;
+G_END_DECLS
 
 #endif /* !__THUNARX_PREFERENCES_PROVIDER_H__ */

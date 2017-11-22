@@ -29,7 +29,7 @@
 
 #include <thunarx/thunarx-file-info.h>
 
-G_BEGIN_DECLS;
+G_BEGIN_DECLS
 
 typedef struct _ThunarxMenuProviderIface ThunarxMenuProviderIface;
 typedef struct _ThunarxMenuProvider      ThunarxMenuProvider;
@@ -91,6 +91,6 @@ GList *thunarx_menu_provider_get_dnd_menu_items    (ThunarxMenuProvider *provide
                                                     ThunarxFileInfo     *folder,
                                                     GList               *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
-G_END_DECLS;
+G_END_DECLS
 
 #endif /* !__THUNARX_MENU_PROVIDER_H__ */
