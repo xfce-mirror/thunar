@@ -304,7 +304,7 @@ thunar_icon_renderer_color_selected (cairo_t   *cr,
 {
   cairo_pattern_t *source;
   GtkStateFlags    state;
-  GdkRGBA          color;
+  GdkRGBA          *color;
   GtkStyleContext *context = gtk_widget_get_style_context (widget);
 
   cairo_save (cr);
@@ -312,7 +312,8 @@ thunar_icon_renderer_color_selected (cairo_t   *cr,
   source = cairo_pattern_reference (cairo_get_source (cr));
   state = gtk_widget_has_focus (widget) ? GTK_STATE_FLAG_SELECTED : GTK_STATE_FLAG_ACTIVE;
   gtk_style_context_get (context, state, GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &color, NULL);
-  gdk_cairo_set_source_rgba (cr, &color);
+  gdk_cairo_set_source_rgba (cr, color);
+  gdk_rgba_free (color);
   cairo_set_operator (cr, CAIRO_OPERATOR_MULTIPLY);
 
   cairo_mask (cr, source);
