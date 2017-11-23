@@ -471,13 +471,13 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
         }
       g_object_unref (G_OBJECT (clipboard));
 
-      /* check if we should render an insensitive icon */
-      if (G_UNLIKELY (gtk_widget_get_state_flags (widget) == GTK_STATE_FLAG_INSENSITIVE || !gtk_cell_renderer_get_sensitive (renderer)))
-        thunar_icon_renderer_color_insensitive(cr,widget);
-
       /* render the invalid parts of the icon */
       thunar_gdk_cairo_set_source_pixbuf (cr, icon, icon_area.x, icon_area.y);
       cairo_paint_with_alpha (cr, alpha);
+
+      /* check if we should render an insensitive icon */
+      if (G_UNLIKELY (gtk_widget_get_state_flags (widget) == GTK_STATE_FLAG_INSENSITIVE || !gtk_cell_renderer_get_sensitive (renderer)))
+        thunar_icon_renderer_color_insensitive(cr,widget);
 
       /* paint the lighten mask */
       if (color_lighten)
