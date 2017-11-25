@@ -103,8 +103,16 @@ dist-hook: all
 #AM_DEFAULT_VERBOSITY = 1
 
 INTROSPECTION_GIRS =
-INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir) -I.. -DTHUNARX_COMPILATION
-INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
+INTROSPECTION_SCANNER_ARGS = \
+	--add-include-path=$(srcdir) \
+	--add-include-path=$(prefix)/share/gir-1.0 \
+	-I$(srcdir)/.. \
+	--warn-all \
+	-DTHUNARX_COMPILATION
+INTROSPECTION_COMPILER_ARGS = \
+	--includedir=$(srcdir) \
+	--includedir=$(prefix)/share/gir-1.0 \
+	--includedir=.
 
 if HAVE_INTROSPECTION
 Thunarx-3.0.gir: libthunarx-3.la

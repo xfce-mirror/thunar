@@ -103,7 +103,8 @@ EXTRA_DIST =								\
 	$(desktop_in_in_files)						\
 	$(service_in_files)						\
 	$(appdata_in_files)						\
-	$(polkit_in_in_files)
+	$(polkit_in_in_files)					\
+	m4/introspection.m4
 
 CLEANFILES		= $(appdata_DATA)
 
