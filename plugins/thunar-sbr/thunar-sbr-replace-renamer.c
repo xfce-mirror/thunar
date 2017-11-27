@@ -569,8 +569,6 @@ static void
 thunar_sbr_replace_renamer_pcre_update (ThunarSbrReplaceRenamer *replace_renamer)
 {
   const gchar *error_message = NULL;
-  GdkColor     back;
-  GdkColor     text;
   gchar       *tooltip;
   gchar       *message;
   glong        offset;
@@ -618,16 +616,8 @@ thunar_sbr_replace_renamer_pcre_update (ThunarSbrReplaceRenamer *replace_renamer
       /* check if the entry is realized */
       if (gtk_widget_get_realized (replace_renamer->pattern_entry))
         {
-          /* if GTK+ wouldn't be that stupid with style properties and
-           * type plugins, this would be themable, but unfortunately
-           * GTK+ is totally broken, and so it's hardcoded.
-           */
-          gdk_color_parse ("#ff6666", &back);
-          gdk_color_parse ("White", &text);
-
-          /* setup a red background/text color to indicate the error */
-          gtk_widget_modify_base (replace_renamer->pattern_entry, GTK_STATE_NORMAL, &back);
-          gtk_widget_modify_text (replace_renamer->pattern_entry, GTK_STATE_NORMAL, &text);
+          /* highlight invalid input by using theme-specific colors */
+          gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (replace_renamer->pattern_entry)), "error");
         }
     }
   else
@@ -635,9 +625,8 @@ thunar_sbr_replace_renamer_pcre_update (ThunarSbrReplaceRenamer *replace_renamer
       /* check if the entry is realized */
       if (gtk_widget_get_realized (replace_renamer->pattern_entry))
         {
-          /* reset background/text color */
-          gtk_widget_modify_base (replace_renamer->pattern_entry, GTK_STATE_NORMAL, NULL);
-          gtk_widget_modify_text (replace_renamer->pattern_entry, GTK_STATE_NORMAL, NULL);
+          /* stop highlight of invalid input if any */
+          gtk_style_context_remove_class (gtk_widget_get_style_context (GTK_WIDGET (replace_renamer->pattern_entry)), "error");
         }
 
       /* reset to default tooltip */

@@ -368,10 +368,8 @@ thunar_sbr_remove_renamer_process (ThunarxRenamer  *renamer,
 static void
 thunar_sbr_remove_renamer_update (ThunarSbrRemoveRenamer *remove_renamer)
 {
-  GdkColor back;
-  GdkColor text;
-  guint    start_offset;
-  guint    end_offset;
+  guint start_offset;
+  guint end_offset;
 
   /* check if the renamer is realized */
   if (gtk_widget_get_realized (GTK_WIDGET (remove_renamer)))
@@ -381,28 +379,17 @@ thunar_sbr_remove_renamer_update (ThunarSbrRemoveRenamer *remove_renamer)
                  ? remove_renamer->end_offset : (G_MAXUINT - remove_renamer->end_offset);
       start_offset = (remove_renamer->start_offset_mode == THUNAR_SBR_OFFSET_MODE_LEFT)
                    ? remove_renamer->start_offset : (G_MAXUINT - remove_renamer->start_offset);
+
+      /* highlight invalid input by using theme specific colors */
       if (G_UNLIKELY (start_offset >= end_offset))
         {
-          /* if GTK+ wouldn't be that stupid with style properties and
-           * type plugins, this would be themable, but unfortunately
-           * GTK+ is totally broken, and so it's hardcoded.
-           */
-          gdk_color_parse ("#ff6666", &back);
-          gdk_color_parse ("White", &text);
-
-          /* setup a red background/text color to indicate the error */
-          gtk_widget_modify_base (remove_renamer->end_spinner, GTK_STATE_NORMAL, &back);
-          gtk_widget_modify_text (remove_renamer->end_spinner, GTK_STATE_NORMAL, &text);
-          gtk_widget_modify_base (remove_renamer->start_spinner, GTK_STATE_NORMAL, &back);
-          gtk_widget_modify_text (remove_renamer->start_spinner, GTK_STATE_NORMAL, &text);
+          gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (remove_renamer->start_spinner)), "error");
+          gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (remove_renamer->end_spinner)), "error");
         }
       else
         {
-          /* reset background/text colors */
-          gtk_widget_modify_base (remove_renamer->end_spinner, GTK_STATE_NORMAL, NULL);
-          gtk_widget_modify_text (remove_renamer->end_spinner, GTK_STATE_NORMAL, NULL);
-          gtk_widget_modify_base (remove_renamer->start_spinner, GTK_STATE_NORMAL, NULL);
-          gtk_widget_modify_text (remove_renamer->start_spinner, GTK_STATE_NORMAL, NULL);
+          gtk_style_context_remove_class (gtk_widget_get_style_context (GTK_WIDGET (remove_renamer->start_spinner)), "error");
+          gtk_style_context_remove_class (gtk_widget_get_style_context (GTK_WIDGET (remove_renamer->end_spinner)), "error");
         }
     }
 

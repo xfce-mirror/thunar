@@ -467,10 +467,8 @@ thunar_sbr_number_renamer_process (ThunarxRenamer  *renamer,
 static void
 thunar_sbr_number_renamer_update (ThunarSbrNumberRenamer *number_renamer)
 {
-  gboolean invalid = TRUE;
-  GdkColor back;
-  GdkColor text;
-  gchar   *endp;
+  gboolean  invalid = TRUE;
+  gchar    *endp;
 
   /* check whether "start" is valid for the "mode" */
   if (number_renamer->mode < THUNAR_SBR_NUMBER_MODE_ABC)
@@ -490,26 +488,11 @@ thunar_sbr_number_renamer_update (ThunarSbrNumberRenamer *number_renamer)
   /* check if the start entry is realized */
   if (gtk_widget_get_realized (number_renamer->start_entry))
     {
-      /* check if the "start" value is valid */
+      /* highlight invalid input by using theme specific colors */
       if (G_UNLIKELY (invalid))
-        {
-          /* if GTK+ wouldn't be that stupid with style properties and
-           * type plugins, this would be themable, but unfortunately
-           * GTK+ is totally broken, and so it's hardcoded.
-           */
-          gdk_color_parse ("#ff6666", &back);
-          gdk_color_parse ("White", &text);
-
-          /* setup a red background/text color to indicate the error */
-          gtk_widget_modify_base (number_renamer->start_entry, GTK_STATE_NORMAL, &back);
-          gtk_widget_modify_text (number_renamer->start_entry, GTK_STATE_NORMAL, &text);
-        }
+          gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (number_renamer->start_entry)), "error");
       else
-        {
-          /* reset background/text color */
-          gtk_widget_modify_base (number_renamer->start_entry, GTK_STATE_NORMAL, NULL);
-          gtk_widget_modify_text (number_renamer->start_entry, GTK_STATE_NORMAL, NULL);
-        }
+          gtk_style_context_remove_class (gtk_widget_get_style_context (GTK_WIDGET (number_renamer->start_entry)), "error");
     }
 
   /* notify everybody that we have a new state */
