@@ -1781,7 +1781,10 @@ thunar_window_notebook_insert (ThunarWindow *window,
   exo_binding_new (G_OBJECT (view), "tooltip-text", G_OBJECT (label), "tooltip-text");
   gtk_widget_set_has_tooltip (label, TRUE);
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
-  gtk_misc_set_padding (GTK_MISC (label), 3, 3);
+  gtk_widget_set_margin_start (GTK_WIDGET(label), 3);
+  gtk_widget_set_margin_end (GTK_WIDGET(label), 3);
+  gtk_widget_set_margin_top (GTK_WIDGET(label), 3);
+  gtk_widget_set_margin_bottom (GTK_WIDGET(label), 3);
   gtk_label_set_ellipsize (GTK_LABEL (label), PANGO_ELLIPSIZE_END);
   gtk_label_set_single_line_mode (GTK_LABEL (label), TRUE);
   gtk_box_pack_start (GTK_BOX (label_box), label, TRUE, TRUE, 0);

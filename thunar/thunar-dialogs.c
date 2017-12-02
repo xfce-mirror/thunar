@@ -118,7 +118,10 @@ thunar_dialogs_show_rename_file (gpointer    parent,
   g_object_unref (G_OBJECT (icon_factory));
 
   image = gtk_image_new_from_pixbuf (icon);
-  gtk_misc_set_padding (GTK_MISC (image), 6, 6);
+  gtk_widget_set_margin_start (GTK_WIDGET(image), 6);
+  gtk_widget_set_margin_end (GTK_WIDGET(image), 6);
+  gtk_widget_set_margin_top (GTK_WIDGET(image), 6);
+  gtk_widget_set_margin_bottom (GTK_WIDGET(image), 6);
   gtk_grid_attach (GTK_GRID (grid), image, 0, 0, 1, 2);
   g_object_unref (G_OBJECT (icon));
   gtk_widget_show (image);
@@ -573,7 +576,10 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   image = gtk_image_new_from_icon_name ("stock_folder-copy", GTK_ICON_SIZE_BUTTON);
   gtk_widget_set_halign (image, GTK_ALIGN_CENTER);
   gtk_widget_set_valign (image, GTK_ALIGN_START);
-  gtk_misc_set_padding (GTK_MISC (image), 6, 6);
+  gtk_widget_set_margin_start (GTK_WIDGET(image), 6);
+  gtk_widget_set_margin_end (GTK_WIDGET(image), 6);
+  gtk_widget_set_margin_top (GTK_WIDGET(image), 6);
+  gtk_widget_set_margin_bottom (GTK_WIDGET(image), 6);
   gtk_widget_set_vexpand (image, TRUE);
   gtk_grid_attach (GTK_GRID (grid), image, 0, 0, 1, 1);
   gtk_widget_show (image);
@@ -618,7 +624,10 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
 
   icon = thunar_icon_factory_load_file_icon (icon_factory, dst_file, THUNAR_FILE_ICON_STATE_DEFAULT, 48);
   image = gtk_image_new_from_pixbuf (icon);
-  gtk_misc_set_padding (GTK_MISC (image), 6, 6);
+  gtk_widget_set_margin_start (GTK_WIDGET(image), 6);
+  gtk_widget_set_margin_end (GTK_WIDGET(image), 6);
+  gtk_widget_set_margin_top (GTK_WIDGET(image), 6);
+  gtk_widget_set_margin_bottom (GTK_WIDGET(image), 6);
   gtk_grid_attach (GTK_GRID (grid), image, 1, 2, 1, 1);
   g_object_unref (G_OBJECT (icon));
   gtk_widget_show (image);
@@ -651,7 +660,10 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
 
   icon = thunar_icon_factory_load_file_icon (icon_factory, src_file, THUNAR_FILE_ICON_STATE_DEFAULT, 48);
   image = gtk_image_new_from_pixbuf (icon);
-  gtk_misc_set_padding (GTK_MISC (image), 6, 6);
+  gtk_widget_set_margin_start (GTK_WIDGET(image), 6);
+  gtk_widget_set_margin_end (GTK_WIDGET(image), 6);
+  gtk_widget_set_margin_top (GTK_WIDGET(image), 6);
+  gtk_widget_set_margin_bottom (GTK_WIDGET(image), 6);
   gtk_grid_attach (GTK_GRID (grid), image, 1, 4, 1, 1);
   g_object_unref (G_OBJECT (icon));
   gtk_widget_show (image);
