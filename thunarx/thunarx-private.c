@@ -37,7 +37,12 @@ static GQuark thunarx_object_list_quark = 0;
 
 
 
-/* takes a reference on target for each object in object_list */
+/**
+ * thunarx_object_list_take_reference:
+ * @object_list: (element-type GObject): a #GList of #GObject<!---->s.
+ * 
+ * takes a reference on target for each object in object_list
+ **/
 void
 thunarx_object_list_take_reference (GList   *object_list,
                                     gpointer target)
@@ -87,4 +92,3 @@ thunarx_param_spec_get_option_name (GParamSpec *pspec)
 
   return name;
 }
-

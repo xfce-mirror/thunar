@@ -81,9 +81,10 @@ thunarx_menu_provider_get_type (void)
 
 /**
  * thunarx_menu_provider_get_file_menu_items:
- * @provider : a #ThunarxMenuProvider.
- * @window   : the #GtkWindow within which the menu items will be used.
- * @files    : the list of #ThunarxFileInfo<!---->s to which the menu items will be applied.
+ * @provider: a #ThunarxMenuProvider.
+ * @window: the #GtkWindow within which the menu items will be used.
+ * @files: (element-type ThunarxFileInfo): the list of #ThunarxFileInfo<!---->s
+ *         to which the menu items will be applied.
  *
  * Returns the list of #ThunarxMenuItem<!---->s that @provider has to offer for
  * @files.
@@ -102,8 +103,8 @@ thunarx_menu_provider_get_type (void)
  * g_list_free_full (list, g_object_unref);
  * </programlisting></informalexample>
  *
- * Return value: the list of #ThunarxMenuItem<!---->s that @provider has to offer
- *               for @files.
+ * Returns: (transfer full) (element-type ThunarxMenuItem): the list of #ThunarxMenuItem<!---->s
+ *          that @provider has to offer for @files.
  **/
 GList*
 thunarx_menu_provider_get_file_menu_items (ThunarxMenuProvider *provider,
@@ -157,8 +158,8 @@ thunarx_menu_provider_get_file_menu_items (ThunarxMenuProvider *provider,
  * g_list_free_full (list, g_object_unref);
  * </programlisting></informalexample>
  *
- * Return value: the list of #ThunarxMenuItem<!---->s that @provider has to offer
- *               for @folder.
+ * Returns: (transfer full) (element-type ThunarxMenuItem): the list of #ThunarxMenuItem<!---->s
+ *          that @provider has to offer for @folder.
  **/
 GList*
 thunarx_menu_provider_get_folder_menu_items (ThunarxMenuProvider *provider,
@@ -192,11 +193,11 @@ thunarx_menu_provider_get_folder_menu_items (ThunarxMenuProvider *provider,
 
 /**
  * thunarx_menu_provider_get_dnd_menu_items:
- * @provider : a #ThunarxMenuProvider.
- * @window   : the #GtkWindow within which the menu items will be used.
- * @folder   : the folder into which the @files are being dropped
- * @files    : the list of #ThunarxFileInfo<!---->s for the files that are
- *             being dropped to @folder in @window.
+ * @provider: a #ThunarxMenuProvider.
+ * @window: the #GtkWindow within which the menu items will be used.
+ * @folder: the folder into which the @files are being dropped
+ * @files: (element-type ThunarxFileInfo): the list of #ThunarxFileInfo<!---->s
+ *         for the files that are being dropped to @folder in @window.
  *
  * Returns the list of #ThunarxMenuItem<!---->s that @provider has to offer for
  * dropping the @files into the @folder. For example, the thunar-archive-plugin
@@ -217,8 +218,8 @@ thunarx_menu_provider_get_folder_menu_items (ThunarxMenuProvider *provider,
  * g_list_free_full (list, g_object_unref);
  * </programlisting></informalexample>
  *
- * Return value: the list of #ThunarxMenuItem<!---->s that @provider has to offer
- *               for dropping @files to @folder.
+ * Returns: (transfer full) (element-type ThunarxMenuItem): the list of #ThunarxMenuItem<!---->s
+ *          that @provider has to offer for dropping @files to @folder.
  *
  * Since: 0.4.1
  **/

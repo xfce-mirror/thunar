@@ -90,7 +90,7 @@ thunarx_renamer_provider_get_type (void)
  * g_list_free_full (list, g_object_unref);
  * </programlisting></informalexample>
  *
- * Return value: the list of #ThunarxRenamer<!---->s provided by the
+ * Returns: (transfer full) (element-type ThunarxRenamer): the list of #ThunarxRenamer<!---->s provided by the
  *               specified @provider.
  **/
 GList*

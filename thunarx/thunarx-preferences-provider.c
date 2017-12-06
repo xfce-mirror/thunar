@@ -97,8 +97,9 @@ thunarx_preferences_provider_get_type (void)
  * g_list_free_full (list, g_object_unref);
  * </programlisting></informalexample>
  *
- * Return value: the list of #ThunarxMenuItem<!---->s that @provider has
- *               to offer as preferences within @window.
+ * Returns: (transfer full) (element-type ThunarxMenuItem): the list of
+ *          #ThunarxMenuItem<!---->s that @provider has to offer as preferences
+ *          within @window.
  **/
 GList*
 thunarx_preferences_provider_get_menu_items (ThunarxPreferencesProvider *provider,

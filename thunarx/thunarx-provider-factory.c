@@ -251,8 +251,8 @@ thunarx_provider_factory_timer_destroy (gpointer user_data)
  * The caller is responsible to free the returned object
  * using g_object_unref() when no longer needed.
  *
- * Return value: a reference to the default
- *               #ThunarxProviderFactory instance.
+ * Returns: (transfer full): a reference to the default #ThunarxProviderFactory
+ *          instance.
  **/
 ThunarxProviderFactory*
 thunarx_provider_factory_get_default (void)
@@ -289,7 +289,7 @@ thunarx_provider_factory_get_default (void)
  * g_list_free_full (list, g_object_unref);
  * </programlisting></informalexample>
  *
- * Return value: the of providers for @type.
+ * Returns: (transfer full) (element-type GObject): the of providers for @type.
  **/
 GList*
 thunarx_provider_factory_list_providers (ThunarxProviderFactory *factory,

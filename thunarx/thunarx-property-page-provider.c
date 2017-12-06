@@ -66,8 +66,9 @@ thunarx_property_page_provider_get_type (void)
 
 /**
  * thunarx_property_page_provider_get_pages:
- * @provider : a #ThunarxPropertyPageProvider.
- * @files    : the list of #ThunarxFileInfo<!---->s for which a properties dialog will be displayed.
+ * @provider: a #ThunarxPropertyPageProvider.
+ * @files: (element-type ThunarxFileInfo): the list of #ThunarxFileInfo<!---->s
+ *         for which a properties dialog will be displayed.
  *
  * Returns the list of #ThunarxPropertyPage<!---->s that @provider has to offer for @files.
  *
@@ -108,8 +109,8 @@ thunarx_property_page_provider_get_type (void)
  * g_list_free_full (list, g_object_unref);
  * </programlisting></informalexample>
  *
- * Return value: the list of #ThunarxPropertyPage<!---->s that @provider has to offer
- *               for @files.
+ * Returns: (transfer full) (element-type ThunarxPropertyPage): the list of
+ *          #ThunarxPropertyPage<!---->s that @provider has to offer for @files.
  **/
 GList*
 thunarx_property_page_provider_get_pages (ThunarxPropertyPageProvider *provider,

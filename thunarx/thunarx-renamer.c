@@ -522,7 +522,7 @@ thunarx_renamer_set_name (ThunarxRenamer *renamer,
  *            determined.
  * @text    : the part of the filename to which the
  *            @renamer should be applied.
- * @idx     : the index of the file in the list, used
+ * @index   : the index of the file in the list, used
  *            for renamers that work on numbering.
  *
  * Determines the replacement for @text (which is the relevant
@@ -538,12 +538,12 @@ gchar*
 thunarx_renamer_process (ThunarxRenamer  *renamer,
                          ThunarxFileInfo *file,
                          const gchar     *text,
-                         guint            idx)
+                         guint            index)
 {
   g_return_val_if_fail (THUNARX_IS_FILE_INFO (file), NULL);
   g_return_val_if_fail (THUNARX_IS_RENAMER (renamer), NULL);
   g_return_val_if_fail (g_utf8_validate (text, -1, NULL), NULL);
-  return (*THUNARX_RENAMER_GET_CLASS (renamer)->process) (renamer, file, text, idx);
+  return (*THUNARX_RENAMER_GET_CLASS (renamer)->process) (renamer, file, text, index);
 }
 
 
@@ -623,9 +623,9 @@ thunarx_renamer_save (ThunarxRenamer *renamer,
 
 /**
  * thunarx_renamer_get_menu_items:
- * @renamer : a #ThunarxRenamer.
- * @window  : a #GtkWindow or %NULL.
- * @files   : a #GList of #ThunarxFileInfo<!---->s.
+ * @renamer: a #ThunarxRenamer.
+ * @window: a #GtkWindow or %NULL.
+ * @files: (element-type ThunarxFileInfo): a #GList of #ThunarxFileInfo<!---->s.
  *
  * Returns the list of #ThunarxMenuItem<!---->s provided by @renamer for
  * the given list of @files. By default, this method returns %NULL
@@ -692,8 +692,9 @@ thunarx_renamer_save (ThunarxRenamer *renamer,
  * forget to release the weak reference if @window survived the lifetime
  * of your menu item (which is likely to be the case in most situations).
  *
- * Return value: the list of #ThunarxMenuItem<!---->s provided by @renamer
- *               for the given list of @files.
+ * Returns: (transfer full) (element-type ThunarxMenuItem): the list of
+ *          #ThunarxMenuItem<!---->s provided by @renamer for the given list of
+ *          @files.
  **/
 GList*
 thunarx_renamer_get_menu_items (ThunarxRenamer *renamer,

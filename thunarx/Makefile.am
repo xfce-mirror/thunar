@@ -43,7 +43,6 @@ libthunarx_3_la_SOURCES =						\
 	thunarx-property-page-provider.c				\
 	thunarx-provider-factory.c					\
 	thunarx-provider-module.c					\
-	thunarx-provider-module.h					\
 	thunarx-provider-plugin.c					\
 	thunarx-renamer.c						\
 	thunarx-renamer-provider.c
@@ -119,7 +118,7 @@ Thunarx-3.0.gir: libthunarx-3.la
 Thunarx_3_0_gir_INCLUDES = GObject-2.0 Gtk-3.0
 Thunarx_3_0_gir_CFLAGS = $(INCLUDES)
 Thunarx_3_0_gir_LIBS = libthunarx-3.la
-Thunarx_3_0_gir_FILES = $(libthunarx_headers)
+Thunarx_3_0_gir_FILES = $(libthunarx_3_la_SOURCES)
 INTROSPECTION_GIRS += Thunarx-3.0.gir
 
 girdir = $(datadir)/gir-1.0/

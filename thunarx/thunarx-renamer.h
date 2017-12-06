@@ -117,7 +117,7 @@ void         thunarx_renamer_set_name       (ThunarxRenamer   *renamer,
 gchar       *thunarx_renamer_process        (ThunarxRenamer   *renamer,
                                              ThunarxFileInfo  *file,
                                              const gchar      *text,
-                                             guint             idx) G_GNUC_MALLOC;
+                                             guint             index) G_GNUC_MALLOC;
 
 void         thunarx_renamer_load           (ThunarxRenamer   *renamer,
                                              GHashTable       *settings);

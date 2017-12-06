@@ -309,7 +309,7 @@ thunarx_property_page_set_label (ThunarxPropertyPage *property_page,
  * Returns the label widget for the @property_page. See
  * thunarx_property_page_set_label_widget().
  *
- * return value: the label widget or %NULL if there is none.
+ * Returns: (transfer none): the label widget or %NULL if there is none.
  **/
 GtkWidget*
 thunarx_property_page_get_label_widget (ThunarxPropertyPage *property_page)
