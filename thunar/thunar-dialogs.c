@@ -311,7 +311,7 @@ thunar_dialogs_show_error (gpointer      parent,
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
 
   /* do not display error dialog for already handled errors */
-  if (error->code == G_IO_ERROR_FAILED_HANDLED)
+  if (error && error->code == G_IO_ERROR_FAILED_HANDLED)
     return;
 
   /* parse the parent pointer */
