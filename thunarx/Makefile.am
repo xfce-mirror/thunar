@@ -9,13 +9,14 @@ libthunarx_headers =							\
 	thunarx.h							\
 	thunarx-config.h						\
 	thunarx-file-info.h						\
-	thunarx-menu.h						\
+	thunarx-menu.h							\
 	thunarx-menu-item.h						\
 	thunarx-menu-provider.h						\
 	thunarx-preferences-provider.h					\
 	thunarx-property-page.h						\
 	thunarx-property-page-provider.h				\
 	thunarx-provider-factory.h					\
+	thunarx-provider-module.h					\
 	thunarx-provider-plugin.h					\
 	thunarx-renamer.h						\
 	thunarx-renamer-provider.h
