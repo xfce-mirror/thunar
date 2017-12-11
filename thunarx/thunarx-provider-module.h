@@ -37,13 +37,10 @@ typedef struct _ThunarxProviderModule      ThunarxProviderModule;
 #define THUNARX_IS_PROVIDER_MODULE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNARX_TYPE_PROVIDER_MODULE))
 #define THUNARX_PROVIDER_MODULE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNARX_TYPE_PROVIDER_MODULE, ThunarxProviderModuleClass))
 
-G_GNUC_INTERNAL
 GType                  thunarx_provider_module_get_type   (void) G_GNUC_CONST;
 
-G_GNUC_INTERNAL
 ThunarxProviderModule *thunarx_provider_module_new        (const gchar                 *filename) G_GNUC_MALLOC;
 
-G_GNUC_INTERNAL
 void                   thunarx_provider_module_list_types (const ThunarxProviderModule *module,
                                                            const GType                **types,
                                                            gint                        *n_types);
