@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-04 23:34+0200\n"
+"POT-Creation-Date: 2017-10-10 06:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Davidmp <medipas@gmail.com>, 2017\n"
 "Language-Team: Catalan (https://www.transifex.com/xfce/teams/16840/ca/)\n"
@@ -823,48 +823,53 @@ msgstr "Nom de fitxer"
 msgid "File System"
 msgstr "Sistema de fitxers"
 
-#: ../thunar/thunar-file.c:1513
+#: ../thunar/thunar-file.c:1075 ../thunar/thunar-gio-extensions.c:242
+#: ../thunar/thunar-shortcuts-model.c:1039
+msgid "Trash"
+msgstr "Paperera"
+
+#: ../thunar/thunar-file.c:1515
 #, c-format
 msgid "The root folder has no parent"
 msgstr "La carpeta arrel no té pare"
 
-#: ../thunar/thunar-file.c:1601 ../thunar/thunar-file.c:1897
+#: ../thunar/thunar-file.c:1603 ../thunar/thunar-file.c:1899
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "No s'ha pogut analitzar el fitxer d'escriptori: «%s»"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1613
+#: ../thunar/thunar-file.c:1615
 msgid "Untrusted application launcher"
 msgstr "El llançador d'aplicacions no està validat"
 
-#: ../thunar/thunar-file.c:1638
+#: ../thunar/thunar-file.c:1640
 #, c-format
 msgid "No Exec field specified"
 msgstr "No heu especificat el camp Exec"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1647
+#: ../thunar/thunar-file.c:1649
 msgid "Untrusted link launcher"
 msgstr "El llançador d'enllaç no està validat"
 
-#: ../thunar/thunar-file.c:1663
+#: ../thunar/thunar-file.c:1665
 #, c-format
 msgid "No URL field specified"
 msgstr "No heu especificat el camp URL"
 
-#: ../thunar/thunar-file.c:1668
+#: ../thunar/thunar-file.c:1670
 msgid "Invalid desktop file"
 msgstr "El nom de l'escriptori no és vàlid"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: ../thunar/thunar-gio-extensions.c:322
+#: ../thunar/thunar-gio-extensions.c:327
 #, c-format
 msgid "%s on %s"
 msgstr "%s a %s"
 
 #. free disk space string
-#: ../thunar/thunar-gio-extensions.c:433
+#: ../thunar/thunar-gio-extensions.c:438
 #, c-format
 msgid "%s of %s free (%d%% used)"
 msgstr "%s de %s (%d%% utilitzat)"
@@ -3042,7 +3047,7 @@ msgstr "Opcions:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:274
 msgid "Use _startup notification"
-msgstr "U_sa notificació d'engegada"
+msgstr "Utilitza la notificació d'_engegada"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:275
 msgid ""
