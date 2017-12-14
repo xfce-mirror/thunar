@@ -65,7 +65,7 @@ thunarx_property_page_provider_get_type (void)
 
 
 /**
- * thunarx_property_page_provider_get_pages:
+ * thunarx_property_page_provider_get_pages: (skip)
  * @provider: a #ThunarxPropertyPageProvider.
  * @files: (element-type ThunarxFileInfo): the list of #ThunarxFileInfo<!---->s
  *         for which a properties dialog will be displayed.

@@ -80,7 +80,7 @@ thunarx_menu_provider_get_type (void)
 
 
 /**
- * thunarx_menu_provider_get_file_menu_items:
+ * thunarx_menu_provider_get_file_menu_items: (skip)
  * @provider: a #ThunarxMenuProvider.
  * @window: the #GtkWindow within which the menu items will be used.
  * @files: (element-type ThunarxFileInfo): the list of #ThunarxFileInfo<!---->s
@@ -136,7 +136,7 @@ thunarx_menu_provider_get_file_menu_items (ThunarxMenuProvider *provider,
 
 
 /**
- * thunarx_menu_provider_get_folder_menu_items:
+ * thunarx_menu_provider_get_folder_menu_items: (skip)
  * @provider : a #ThunarxMenuProvider.
  * @window   : the #GtkWindow within which the menu items will be used.
  * @folder   : the folder to which the menu items should will be applied.
@@ -192,7 +192,7 @@ thunarx_menu_provider_get_folder_menu_items (ThunarxMenuProvider *provider,
 
 
 /**
- * thunarx_menu_provider_get_dnd_menu_items:
+ * thunarx_menu_provider_get_dnd_menu_items: (skip)
  * @provider: a #ThunarxMenuProvider.
  * @window: the #GtkWindow within which the menu items will be used.
  * @folder: the folder into which the @files are being dropped

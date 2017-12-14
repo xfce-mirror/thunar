@@ -63,7 +63,7 @@ thunarx_renamer_provider_get_type (void)
 
 
 /**
- * thunarx_renamer_provider_get_renamers:
+ * thunarx_renamer_provider_get_renamers: (skip)
  * @provider : a #ThunarxRenamerProvider.
  *
  * Returns the list of #ThunarxRenamer<!---->s provided by the

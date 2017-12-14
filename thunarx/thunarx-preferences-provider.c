@@ -76,7 +76,7 @@ thunarx_preferences_provider_get_type (void)
 
 
 /**
- * thunarx_preferences_provider_get_menu_items:
+ * thunarx_preferences_provider_get_menu_items: (skip)
  * @provider : a #ThunarxPreferencesProvider.
  * @window   : the #GtkWindow within which the menu items will be used.
  *
