@@ -722,7 +722,15 @@ thunar_list_model_get_value (GtkTreeModel *model,
           /* determine sane display name for the owner */
           name = thunar_user_get_name (user);
           real_name = thunar_user_get_real_name (user);
-          str = G_LIKELY (real_name != NULL) ? g_strdup_printf ("%s (%s)", real_name, name) : g_strdup (name);
+          if(G_LIKELY (real_name != NULL))
+            {
+              if(strcmp (name, real_name) == 0)
+                str = g_strdup (name);
+              else
+                str = g_strdup_printf ("%s (%s)", real_name, name);
+            }
+          else
+            str = g_strdup (name);
           g_value_take_string (value, str);
           g_object_unref (G_OBJECT (user));
         }
