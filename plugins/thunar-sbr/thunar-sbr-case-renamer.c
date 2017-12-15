@@ -242,7 +242,7 @@ thunar_sbr_case_renamer_process (ThunarxRenamer  *renamer,
     case THUNAR_SBR_CASE_RENAMER_MODE_CAMEL:
       return tscr_utf8_strcase (text, TRUE);
 
-   case THUNAR_SBR_CASE_RENAMER_MODE_SENTENCE:
+   case THUNAR_SBR_CASE_RENAMER_MODE_FIRST_UPPER:
       return tscr_utf8_strcase (text, FALSE);
 
     default:

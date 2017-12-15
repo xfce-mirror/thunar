@@ -29,10 +29,10 @@ G_BEGIN_DECLS;
 
 /**
  * ThunarSbrCaseRenamerMode:
- * @THUNAR_SBR_CASE_RENAMER_MODE_LOWER    : convert to lower case.
- * @THUNAR_SBR_CASE_RENAMER_MODE_UPPER    : convert to upper case.
- * @THUNAR_SBR_CASE_RENAMER_MODE_CAMEL    : convert to camel case.
- * @THUNAR_SBR_CASE_RENAMER_MODE_SENTENCE : convert to sentence case.
+ * @THUNAR_SBR_CASE_RENAMER_MODE_LOWER       : convert to lower case.
+ * @THUNAR_SBR_CASE_RENAMER_MODE_UPPER       : convert to upper case.
+ * @THUNAR_SBR_CASE_RENAMER_MODE_CAMEL       : convert to camel case.
+ * @THUNAR_SBR_CASE_RENAMER_MODE_FIRST_UPPER : convert to First character uppercase.
  *
  * The operation mode for the #ThunarSbrCaseRenamer.
  **/
@@ -41,7 +41,7 @@ typedef enum
   THUNAR_SBR_CASE_RENAMER_MODE_LOWER,
   THUNAR_SBR_CASE_RENAMER_MODE_UPPER,
   THUNAR_SBR_CASE_RENAMER_MODE_CAMEL,
-  THUNAR_SBR_CASE_RENAMER_MODE_SENTENCE,
+  THUNAR_SBR_CASE_RENAMER_MODE_FIRST_UPPER,
 } ThunarSbrCaseRenamerMode;
 
 GType thunar_sbr_case_renamer_mode_get_type (void) G_GNUC_CONST;

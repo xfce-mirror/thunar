@@ -90,11 +90,11 @@ thunar_sbr_register_enum_types (ThunarxProviderPlugin *plugin)
 {
   static const GEnumValue case_renamer_mode_values[] =
   {
-    { THUNAR_SBR_CASE_RENAMER_MODE_LOWER,    "THUNAR_SBR_CASE_RENAMER_MODE_LOWER",    N_ ("lowercase"),     },
-    { THUNAR_SBR_CASE_RENAMER_MODE_UPPER,    "THUNAR_SBR_CASE_RENAMER_MODE_UPPER",    N_ ("UPPERCASE"),     },
-    { THUNAR_SBR_CASE_RENAMER_MODE_CAMEL,    "THUNAR_SBR_CASE_RENAMER_MODE_CAMEL",    N_ ("Camelcase")    , },
-    { THUNAR_SBR_CASE_RENAMER_MODE_SENTENCE, "THUNAR_SBR_CASE_RENAMER_MODE_SENTENCE", N_ ("Sentence case"), },
-    { 0,                                     NULL,                                    NULL,                 },
+    { THUNAR_SBR_CASE_RENAMER_MODE_LOWER,       "THUNAR_SBR_CASE_RENAMER_MODE_LOWER",       N_ ("lowercase"),                 },
+    { THUNAR_SBR_CASE_RENAMER_MODE_UPPER,       "THUNAR_SBR_CASE_RENAMER_MODE_UPPER",       N_ ("UPPERCASE"),                 },
+    { THUNAR_SBR_CASE_RENAMER_MODE_CAMEL,       "THUNAR_SBR_CASE_RENAMER_MODE_CAMEL",       N_ ("Camelcase"),                 },
+    { THUNAR_SBR_CASE_RENAMER_MODE_FIRST_UPPER, "THUNAR_SBR_CASE_RENAMER_MODE_FIRST_UPPER", N_ ("First character uppercase"), },
+    { 0,                                        NULL,                                       NULL,                             },
   };
 
   static const GEnumValue insert_mode_values[] =
