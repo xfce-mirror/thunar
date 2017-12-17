@@ -87,9 +87,10 @@ thunar_dialog_ask_terminate_old_daemon_activate (GtkApplication* app, gpointer u
 
   window = gtk_application_window_new (app);
   dialog = gtk_message_dialog_new (GTK_WINDOW (window), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
-          _("Thunar cannot be launched because an older instance of thunar is still running.\n"
-            "Would you like to terminate the old thunar instance and start this instance?\n\n"
-            "Before accepting please make sure there are no pending operations (e.g. file copying) as terminating them may leave your files corrupted."));
+          _("Thunar could not be launched because an older instance of thunar is still running.\n"
+            "Would you like to terminate the old thunar instance now?\n\n"
+            "Before accepting please make sure there are no pending operations (e.g. file copying) as terminating them may leave your files corrupted.\n\n"
+            "Please restart thunar afterwards."));
   result = gtk_dialog_run (GTK_DIALOG (dialog));
   if (result == GTK_RESPONSE_YES)
     thunar_terminate_running_thunar ();
@@ -160,6 +161,9 @@ main (int argc, char **argv)
   /* use the Thunar icon as default for new windows */
   gtk_window_set_default_icon_name ("Thunar");
 
+  /* do further processing inside gapplication */
+  g_application_run (G_APPLICATION (application), argc, argv);
+
   /* Workaround to bypass "silent fail" if new thunar version is installed while an old version still runs as daemon */
   /* FIXME: "g_application_register" and the following logic can be removed as soon as g_application/gdbus provides a way to prevent this error */
   g_application_register (G_APPLICATION (application), NULL, &error);
@@ -169,9 +173,6 @@ main (int argc, char **argv)
           thunar_dialog_ask_terminate_old_daemon ();
       g_error_free (error);
     }
-
-  /* do further processing inside gapplication */
-  g_application_run (G_APPLICATION (application), argc, argv);
 
   /* release the application reference */
   g_object_unref (G_OBJECT (application));
