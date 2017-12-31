@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-12-18 00:30+0100\n"
-"PO-Revision-Date: 2017-12-30 12:59+0000\n"
+"PO-Revision-Date: 2017-12-31 04:58+0000\n"
 "Last-Translator: Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>\n"
 "Language-Team: Catalan (http://www.transifex.com/xfce/thunar/language/ca/)\n"
 "MIME-Version: 1.0\n"
@@ -33,7 +33,7 @@ msgid ""
 "Before accepting please make sure there are no pending operations (e.g. file copying) as terminating them may leave your files corrupted.\n"
 "\n"
 "Please restart thunar afterwards."
-msgstr "No s'ha pogut iniciar thunar perquè encara s'està executant una instància anterior de thunar.\nVoleu finalitzar la instància anterior thunar ara?\nAbans d'acceptar, assegureu-vos que no hi hagi cap operació pendent (p. ex., la còpia de fitxers), ja que la seva finalització pot deixar malmesos els vostres fitxers.\n\nSi us plau, més endavant reinicieu thunar."
+msgstr "No s'ha pogut iniciar thunar perquè encara hi ha una instància anterior de thunar en execució.\nVoleu finalitzar ara la instància anterior de thunar?\n\nAbans d'acceptar, assegureu-vos que no hi hagi cap operació pendent (p. ex., la còpia de fitxers), ja que la seva finalització pot deixar malmesos els vostres fitxers.\n\nSi us plau, més endavant reinicieu thunar."
 
 #. setup application name
 #: ../thunar/main.c:126
@@ -322,7 +322,7 @@ msgstr "S'estan restaurant els fitxers..."
 #: ../thunar/thunar-chooser-button.c:309 ../thunar/thunar-chooser-dialog.c:466
 #, c-format
 msgid "Failed to set default application for \"%s\""
-msgstr "No s'ha pogut especificar l'aplicació per defecte per «%s»"
+msgstr "No s'ha pogut establir l'aplicació per defecte per «%s»"
 
 #: ../thunar/thunar-chooser-button.c:440
 #, c-format
@@ -1579,7 +1579,7 @@ msgid ""
 "The folder permissions will be reset to a consistent state. Only users "
 "allowed to read the contents of this folder will be allowed to enter the "
 "folder afterwards."
-msgstr "Els permisos de la carpeta es reiniciaran i es deixaran correctament. Després d'això només els usuaris amb permís de lectura tindran accés a la carpeta."
+msgstr "Els permisos de la carpeta es restabliran a un estat coherent. Després d'això només els usuaris amb permís de lectura tindran accés a la carpeta."
 
 #: ../thunar/thunar-preferences-dialog.c:225
 msgid "File Manager Preferences"
@@ -1848,7 +1848,7 @@ msgstr "<a href=\"volman-config:\">Configura</a> la gestió de les unitats i els
 #. configuration dialog
 #: ../thunar/thunar-preferences-dialog.c:733
 msgid "Failed to display the volume management settings"
-msgstr "No s'han pogut mostrar els paràmetres del gestor de volums"
+msgstr "No s'han pogut mostrar els ajusts del gestor de volums"
 
 #: ../thunar/thunar-progress-dialog.c:94
 msgid "File Operation Progress"
@@ -2930,7 +2930,7 @@ msgstr "Descripció:"
 msgid ""
 "The generic name of the entry, for example \"Web Browser\" in case of "
 "Firefox."
-msgstr "El nom genèric per l'entrada, per exemple «Navegador web» per Firefox."
+msgstr "El nom genèric de l'entrada, per exemple «Navegador web» per Firefox."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:177
 msgid "Command:"
@@ -3464,7 +3464,7 @@ msgid ""
 "case letters (e.g. %F, %D, %N) are used, the action will be applicable even "
 "if more than one item is selected. Else the action will only be applicable "
 "if exactly one item is selected."
-msgstr "Les ordres (incloent-hi els seus paràmetres necessaris) per dur a terme l'acció. Vegeu llistat dels paràmetres de l'ordre i un llistat de les variables vàlides. Les variables seran substituïdes en llançar l'ordre. Si s'utilitzen variables en majúscules (com per exemple %F, %D, %N) l'acció s'aplicarà encara que s'hagi seleccionat més d'un element. En cas contrari, és a dir amb minúscules, l'acció únicament es durà a terme si s'ha seleccionat exactament un element."
+msgstr "L'ordre (incloent-hi els seus paràmetres necessaris) per dur a terme l'acció. Consulteu la llegenda dels paràmetres de l'ordre a sota per una llista de les variables admeses dels paràmetres, les quals seran substituïdes en llançar l'ordre. Quan s'utilitzen les variables en majúscules (p. ex. %F, %D, %N) l'acció s'aplicarà encara que s'hagi seleccionat més d'un element. En cas contrari, és a dir amb minúscules, l'acció únicament es durà a terme si s'ha seleccionat exactament un element."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:9
 msgid ""
@@ -3538,7 +3538,7 @@ msgid ""
 "should be displayed for a selected file. If you specify more than one "
 "pattern here, the list items must be separated with semicolons (e.g. "
 "*.txt;*.doc)."
-msgstr "Introduïu una llista dels patrons que s'utilitzaran per determinar si aquesta acció s'hauria de mostrar per a un fitxer seleccionat. Si especifiqueu més d'un patró, la llista s'hauria de separar amb punts i comes (per exemple: *.txt; *.doc)."
+msgstr "Introduïu una llista dels patrons que s'utilitzaran per determinar si aquesta acció s'hauria de mostrar per a un fitxer seleccionat. Si especifiqueu més d'un patró, la llista s'hauria de separar amb punts i comes (p. ex. *.txt; *.doc)."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:27
 msgid "*"
@@ -3580,7 +3580,7 @@ msgid ""
 "action to appear in the context menu of a file or folder, at least one of "
 "these patterns must match the name of the file or folder. Additionally, you "
 "can specify that the action should only appear for certain kinds of files."
-msgstr "Aquesta pàgina llista les condicions sota les quals les accions apareixeran als menús contextuals del gestor de fitxers. Els patrons dels fitxers s'especifiquen com una llista de patrons de fitxers separats per punts i comes, (per exemple *.txt; *.doc). Perquè una acció aparegui al menú contextual d'un fitxer o una carpeta, com a mínim un d'aquests patrons ha de coincidir amb el nom del fitxer o de la carpeta. A més a més, podeu especificar que l'acció només aparegui segons el tipus de fitxer."
+msgstr "Aquesta pàgina llista les condicions sota les quals les accions apareixeran als menús contextuals del gestor de fitxers. Els patrons dels fitxers s'especifiquen com una llista de patrons de fitxers separats per punts i comes, (p. ex. *.txt; *.doc). Perquè una acció aparegui al menú contextual d'un fitxer o una carpeta, com a mínim un d'aquests patrons ha de coincidir amb el nom del fitxer o de la carpeta. A més a més, podeu especificar que l'acció només aparegui segons el tipus de fitxer."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:36
 msgid "Appearance Conditions"
@@ -3618,7 +3618,7 @@ msgstr "Mou l'acció seleccionada una fila avall."
 
 #: ../plugins/thunar-wallpaper/twp-provider.c:171
 msgid "Set as wallpaper"
-msgstr "Posa com a fons d'escriptori"
+msgstr "Estableix com a fons d'escriptori"
 
 #: ../Thunar.desktop.in.in.h:1
 msgid "Thunar File Manager"
