@@ -59,18 +59,17 @@ static void     thunar_tpa_error               (ThunarTpa           *plugin,
                                                 GError              *error);
 static void     thunar_tpa_state               (ThunarTpa           *plugin,
                                                 gboolean             full);
-static void     thunar_tpa_display_trash_reply (DBusGProxy          *proxy,
-                                                GError              *error,
+static void     thunar_tpa_display_trash_reply (GObject             *source_object,
+                                                GAsyncResult        *result,
                                                 gpointer             user_data);
-static void     thunar_tpa_empty_trash_reply   (DBusGProxy          *proxy,
-                                                GError              *error,
+static void     thunar_tpa_empty_trash_reply   (GObject             *source_object,
+                                                GAsyncResult        *result,
                                                 gpointer             user_data);
-static void     thunar_tpa_move_to_trash_reply (DBusGProxy          *proxy,
-                                                GError              *error,
+static void     thunar_tpa_move_to_trash_reply (GObject             *source_object,
+                                                GAsyncResult        *result,
                                                 gpointer             user_data);
-static void     thunar_tpa_query_trash_reply   (DBusGProxy          *proxy,
-                                                gboolean             full,
-                                                GError              *error,
+static void     thunar_tpa_query_trash_reply   (GObject             *source_object,
+                                                GAsyncResult        *result,
                                                 gpointer             user_data);
 static void     thunar_tpa_drag_data_received  (GtkWidget           *button,
                                                 GdkDragContext      *context,
@@ -86,9 +85,9 @@ static gboolean thunar_tpa_enter_notify_event  (GtkWidget           *button,
 static gboolean thunar_tpa_leave_notify_event  (GtkWidget           *button,
                                                 GdkEventCrossing    *event,
                                                 ThunarTpa           *plugin);
-static void     thunar_tpa_trash_changed       (DBusGProxy          *proxy,
+static void     thunar_tpa_on_trash_changed    (thunarTPATrash      *proxy,
                                                 gboolean             full,
-                                                ThunarTpa           *plugin);
+                                                gpointer             user_data);
 static void     thunar_tpa_display_trash       (ThunarTpa           *plugin);
 static void     thunar_tpa_empty_trash         (ThunarTpa           *plugin);
 static gboolean thunar_tpa_move_to_trash       (ThunarTpa           *plugin,
@@ -111,11 +110,11 @@ struct _ThunarTpa
   GtkWidget      *image;
   GtkWidget      *mi;
 
-  DBusGProxy     *proxy;
-  DBusGProxyCall *display_trash_call;
-  DBusGProxyCall *empty_trash_call;
-  DBusGProxyCall *move_to_trash_call;
-  DBusGProxyCall *query_trash_call;
+  thunarTPATrash *proxy;
+  GCancellable   *cancellable_display_trash;
+  GCancellable   *cancellable_empty_trash;
+  GCancellable   *cancellable_move_to_trash;
+  GCancellable   *cancellable_query_trash;
 };
 
 /* Target types for dropping to the trash can */
@@ -134,7 +133,7 @@ static const GtkTargetEntry drop_targets[] =
 /* define the plugin */
 XFCE_PANEL_DEFINE_PLUGIN (ThunarTpa, thunar_tpa)
 
-
+/* Hint: For debugging the plugin run the panel with "PANEL_DEBUG=1 xfce4-panel" */
 
 static void
 thunar_tpa_class_init (ThunarTpaClass *klass)
@@ -155,8 +154,7 @@ thunar_tpa_class_init (ThunarTpaClass *klass)
 static void
 thunar_tpa_init (ThunarTpa *plugin)
 {
-  DBusGConnection *connection;
-  GError          *err = NULL;
+  GError *error = NULL;
 
   /* setup the button for the trash plugin */
   plugin->button = xfce_create_panel_button ();
@@ -179,49 +177,37 @@ thunar_tpa_init (ThunarTpa *plugin)
   g_signal_connect_swapped (G_OBJECT (plugin->mi), "activate", G_CALLBACK (thunar_tpa_empty_trash), plugin);
   gtk_widget_show (plugin->mi);
 
-  /* try to connect to the D-BUS session daemon */
-  connection = dbus_g_bus_get (DBUS_BUS_SESSION, &err);
-  if (G_UNLIKELY (connection == NULL))
-    {
-      /* we failed to connect, display an error plugin/tooltip */
-      thunar_tpa_error (plugin, err);
-      g_error_free (err);
-    }
-  else
-    {
-      /* grab a proxy for the /org/xfce/FileManager object on org.xfce.FileManager */
-      plugin->proxy = dbus_g_proxy_new_for_name (connection, "org.xfce.FileManager", "/org/xfce/FileManager", "org.xfce.Trash");
+  plugin->cancellable_display_trash = g_cancellable_new ();
+  plugin->cancellable_empty_trash   = g_cancellable_new ();
+  plugin->cancellable_move_to_trash = g_cancellable_new ();
+  plugin->cancellable_query_trash   = g_cancellable_new ();
 
-      /* connect to the "TrashChanged" signal */
-      dbus_g_proxy_add_signal (plugin->proxy, "TrashChanged", G_TYPE_BOOLEAN, G_TYPE_INVALID);
-      dbus_g_proxy_connect_signal (plugin->proxy, "TrashChanged", G_CALLBACK (thunar_tpa_trash_changed), plugin, NULL);
-    }
+  plugin->proxy = thunar_tpa_trash_proxy_new_for_bus_sync (G_BUS_TYPE_SESSION, G_DBUS_PROXY_FLAGS_NONE, "org.xfce.FileManager", "/org/xfce/FileManager", NULL, &error);
+
+  if(error != NULL)
+    thunar_tpa_error (plugin, error);
+
+  g_signal_connect (plugin->proxy, "trash_changed", G_CALLBACK (thunar_tpa_on_trash_changed), plugin);
 }
-
-
 
 static void
 thunar_tpa_finalize (GObject *object)
 {
   ThunarTpa *plugin = THUNAR_TPA (object);
 
+  /* cancel any pending calls */
+  if (G_LIKELY (plugin->cancellable_display_trash != NULL))
+    g_cancellable_cancel (plugin->cancellable_display_trash);
+  if (G_LIKELY (plugin->cancellable_empty_trash != NULL))
+    g_cancellable_cancel (plugin->cancellable_empty_trash);
+  if (G_LIKELY (plugin->cancellable_move_to_trash != NULL))
+    g_cancellable_cancel (plugin->cancellable_move_to_trash);
+  if (G_LIKELY (plugin->cancellable_query_trash != NULL))
+    g_cancellable_cancel (plugin->cancellable_query_trash);
+
   /* release the proxy object */
   if (G_LIKELY (plugin->proxy != NULL))
-    {
-      /* cancel any pending calls */
-      if (G_UNLIKELY (plugin->display_trash_call != NULL))
-        dbus_g_proxy_cancel_call (plugin->proxy, plugin->display_trash_call);
-      if (G_UNLIKELY (plugin->empty_trash_call != NULL))
-        dbus_g_proxy_cancel_call (plugin->proxy, plugin->empty_trash_call);
-      if (G_UNLIKELY (plugin->move_to_trash_call != NULL))
-        dbus_g_proxy_cancel_call (plugin->proxy, plugin->move_to_trash_call);
-      if (G_UNLIKELY (plugin->query_trash_call != NULL))
-        dbus_g_proxy_cancel_call (plugin->proxy, plugin->query_trash_call);
-
-      /* disconnect the signal and release the proxy */
-      dbus_g_proxy_disconnect_signal (plugin->proxy, "TrashChanged", G_CALLBACK (thunar_tpa_trash_changed), plugin);
       g_object_unref (G_OBJECT (plugin->proxy));
-    }
 
   (*G_OBJECT_CLASS (thunar_tpa_parent_class)->finalize) (object);
 }
@@ -308,17 +294,16 @@ thunar_tpa_state (ThunarTpa *plugin,
 
 
 static void
-thunar_tpa_display_trash_reply (DBusGProxy *proxy,
-                                GError     *error,
-                                gpointer    user_data)
+thunar_tpa_display_trash_reply (GObject      *source_object,
+                                GAsyncResult *result,
+                                gpointer      user_data)
 {
-  ThunarTpa *plugin = THUNAR_TPA (user_data);
+  thunarTPATrash *proxy   = THUNAR_TPA_TRASH (source_object);
+  gboolean        success = FALSE;
+  GError         *error   = NULL;
 
-  /* reset the call */
-  plugin->display_trash_call = NULL;
-
-  /* check if we failed */
-  if (G_UNLIKELY (error != NULL))
+  success =  thunar_tpa_trash_call_display_trash_finish (proxy, result, &error);
+  if (G_UNLIKELY (success != TRUE))
     {
       /* display an error message to the user */
       g_strstrip (error->message);
@@ -330,81 +315,81 @@ thunar_tpa_display_trash_reply (DBusGProxy *proxy,
 
 
 static void
-thunar_tpa_empty_trash_reply (DBusGProxy *proxy,
-                              GError     *error,
-                              gpointer    user_data)
+thunar_tpa_empty_trash_reply (GObject      *source_object,
+                              GAsyncResult *result,
+                              gpointer      user_data)
 {
-  ThunarTpa *plugin = THUNAR_TPA (user_data);
+  thunarTPATrash *proxy   = THUNAR_TPA_TRASH (source_object);
+  ThunarTpa      *plugin  = THUNAR_TPA (user_data);
+  gboolean        success = FALSE;
+  GError         *error   = NULL;
 
-  /* reset the call */
-  plugin->empty_trash_call = NULL;
-
-  /* check if we failed */
-  if (G_UNLIKELY (error != NULL))
-    {
-      /* display an error message to the user */
-      g_strstrip (error->message);
-      xfce_dialog_show_error (NULL, error, "%s.", _("Failed to connect to the Trash"));
-      g_error_free (error);
-    }
-  else
+  success = thunar_tpa_trash_call_empty_trash_finish (proxy, result, &error);
+  if (G_LIKELY (success))
     {
       /* query the new state of the trash */
       thunar_tpa_query_trash (plugin);
     }
-}
-
-
-
-static void
-thunar_tpa_move_to_trash_reply (DBusGProxy *proxy,
-                                GError     *error,
-                                gpointer    user_data)
-{
-  ThunarTpa *plugin = THUNAR_TPA (user_data);
-
-  /* reset the call */
-  plugin->move_to_trash_call = NULL;
-
-  /* check if we failed */
-  if (G_UNLIKELY (error != NULL))
+  else
     {
       /* display an error message to the user */
       g_strstrip (error->message);
       xfce_dialog_show_error (NULL, error, "%s.", _("Failed to connect to the Trash"));
       g_error_free (error);
     }
-  else
+}
+
+
+
+static void
+thunar_tpa_move_to_trash_reply (GObject      *source_object,
+                                GAsyncResult *result,
+                                gpointer      user_data)
+{
+  thunarTPATrash *proxy   = THUNAR_TPA_TRASH (source_object);
+  ThunarTpa      *plugin  = THUNAR_TPA (user_data);
+  gboolean        success = FALSE;
+  GError         *error   = NULL;
+
+  success = thunar_tpa_trash_call_move_to_trash_finish (proxy, result, &error);
+  if (G_LIKELY (success))
     {
       /* query the new state of the trash */
       thunar_tpa_query_trash (plugin);
+    }
+  else
+    {
+      /* display an error message to the user */
+      g_strstrip (error->message);
+      xfce_dialog_show_error (NULL, error, "%s.", _("Failed to connect to the Trash"));
+      g_error_free (error);
     }
 }
 
 
 
 static void
-thunar_tpa_query_trash_reply (DBusGProxy *proxy,
-                              gboolean    full,
-                              GError     *error,
-                              gpointer    user_data)
+thunar_tpa_query_trash_reply (GObject      *source_object,
+                              GAsyncResult *result,
+                              gpointer      user_data)
 {
-  ThunarTpa *plugin = THUNAR_TPA (user_data);
+  thunarTPATrash *proxy   = THUNAR_TPA_TRASH (source_object);
+  ThunarTpa      *plugin  = THUNAR_TPA (user_data);
+  gboolean        success = FALSE;
+  GError         *error   = NULL;
+  gboolean        full;
 
-  /* reset the call */
-  plugin->query_trash_call = NULL;
-
-  /* check if we failed */
-  if (G_UNLIKELY (error != NULL))
+  success = thunar_tpa_trash_call_query_trash_finish (proxy, &full, result, &error);
+  if(G_LIKELY (success))
+    {
+      /* update the tooltip/plugin accordingly */
+      thunar_tpa_state (plugin, full);
+    }
+  else
     {
       /* setup an error tooltip/plugin */
       thunar_tpa_error (plugin, error);
       g_error_free (error);
-    }
-  else
-    {
-      /* update the tooltip/plugin accordingly */
-      thunar_tpa_state (plugin, full);
     }
 }
 
@@ -477,10 +462,12 @@ thunar_tpa_leave_notify_event (GtkWidget        *button,
 
 
 static void
-thunar_tpa_trash_changed (DBusGProxy *proxy,
-                          gboolean    full,
-                          ThunarTpa  *plugin)
+thunar_tpa_on_trash_changed (thunarTPATrash *proxy,
+                                   gboolean  full,
+                                   gpointer  user_data)
 {
+  ThunarTpa *plugin = THUNAR_TPA (user_data);
+
   g_return_if_fail (THUNAR_IS_TPA (plugin));
   g_return_if_fail (plugin->proxy == proxy);
 
@@ -502,15 +489,15 @@ thunar_tpa_display_trash (ThunarTpa *plugin)
   /* check if we are connected to the bus */
   if (G_LIKELY (plugin->proxy != NULL))
     {
-      /* cancel any pending call */
-      if (G_UNLIKELY (plugin->display_trash_call != NULL))
-        dbus_g_proxy_cancel_call (plugin->proxy, plugin->display_trash_call);
+      /* cancel any pending call and reset the cancellable */
+      g_cancellable_cancel (plugin->cancellable_display_trash);
+      g_cancellable_reset (plugin->cancellable_display_trash);
 
       /* schedule a new call */
       screen = gtk_widget_get_screen (GTK_WIDGET (plugin));
       display_name = g_strdup (gdk_display_get_name (gdk_screen_get_display (screen)));
       startup_id = g_strdup_printf ("_TIME%d", gtk_get_current_event_time ());
-      plugin->display_trash_call = org_xfce_Trash_display_trash_async (plugin->proxy, display_name, startup_id, thunar_tpa_display_trash_reply, plugin);
+      thunar_tpa_trash_call_display_trash (plugin->proxy, display_name, startup_id, plugin->cancellable_display_trash, thunar_tpa_display_trash_reply, plugin);
       g_free (startup_id);
       g_free (display_name);
     }
@@ -530,15 +517,15 @@ thunar_tpa_empty_trash (ThunarTpa *plugin)
   /* check if we are connected to the bus */
   if (G_LIKELY (plugin->proxy != NULL))
     {
-      /* cancel any pending call */
-      if (G_UNLIKELY (plugin->empty_trash_call != NULL))
-        dbus_g_proxy_cancel_call (plugin->proxy, plugin->empty_trash_call);
+      /* cancel any pending call and reset the cancellable */
+      g_cancellable_cancel (plugin->cancellable_empty_trash);
+      g_cancellable_reset (plugin->cancellable_empty_trash);
 
       /* schedule a new call */
       screen = gtk_widget_get_screen (GTK_WIDGET (plugin));
       display_name = g_strdup (gdk_display_get_name (gdk_screen_get_display (screen)));
       startup_id = g_strdup_printf ("_TIME%d", gtk_get_current_event_time ());
-      plugin->empty_trash_call = org_xfce_Trash_empty_trash_async (plugin->proxy, display_name, startup_id, thunar_tpa_empty_trash_reply, plugin);
+      thunar_tpa_trash_call_empty_trash (plugin->proxy, display_name, startup_id, plugin->cancellable_empty_trash, thunar_tpa_empty_trash_reply, plugin);
       g_free (startup_id);
       g_free (display_name);
     }
@@ -561,15 +548,15 @@ thunar_tpa_move_to_trash (ThunarTpa    *plugin,
   if (G_UNLIKELY (plugin->proxy == NULL))
     return FALSE;
 
-  /* cancel any pending call */
-  if (G_UNLIKELY (plugin->move_to_trash_call != NULL))
-    dbus_g_proxy_cancel_call (plugin->proxy, plugin->move_to_trash_call);
+  /* cancel any pending call and reset the cancellable */
+  g_cancellable_cancel (plugin->cancellable_move_to_trash);
+  g_cancellable_reset (plugin->cancellable_move_to_trash);
 
   /* schedule a new call */
   screen = gtk_widget_get_screen (GTK_WIDGET (plugin));
   display_name = g_strdup (gdk_display_get_name (gdk_screen_get_display (screen)));
   startup_id = g_strdup_printf ("_TIME%d", gtk_get_current_event_time ());
-  plugin->move_to_trash_call = org_xfce_Trash_move_to_trash_async (plugin->proxy, uri_list, display_name, startup_id, thunar_tpa_move_to_trash_reply, plugin);
+  thunar_tpa_trash_call_move_to_trash (plugin->proxy, uri_list, display_name, startup_id, plugin->cancellable_move_to_trash, thunar_tpa_move_to_trash_reply, plugin);
   g_free (startup_id);
   g_free (display_name);
 
@@ -586,11 +573,11 @@ thunar_tpa_query_trash (ThunarTpa *plugin)
   /* check if we are connected to the bus */
   if (G_LIKELY (plugin->proxy != NULL))
     {
-      /* cancel any pending call */
-      if (G_UNLIKELY (plugin->query_trash_call != NULL))
-        dbus_g_proxy_cancel_call (plugin->proxy, plugin->query_trash_call);
+      /* cancel any pending call and reset the cancellable */
+      g_cancellable_cancel (plugin->cancellable_query_trash);
+      g_cancellable_reset (plugin->cancellable_query_trash);
 
       /* schedule a new call */
-      plugin->query_trash_call = org_xfce_Trash_query_trash_async (plugin->proxy, thunar_tpa_query_trash_reply, plugin);
+      thunar_tpa_trash_call_query_trash (plugin->proxy, plugin->cancellable_query_trash, thunar_tpa_query_trash_reply,plugin);
     }
 }

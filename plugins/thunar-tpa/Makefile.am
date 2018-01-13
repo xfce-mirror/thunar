@@ -12,6 +12,7 @@ plugin_LTLIBRARIES =							\
 
 libthunar_tpa_la_SOURCES =						\
 	thunar-tpa.c							\
+	thunar-tpa-bindings.c
 	thunar-tpa-bindings.h
 
 libthunar_tpa_la_CFLAGS =						\
@@ -47,7 +48,7 @@ DISTCLEANFILES =							\
 	thunar-tpa-bindings.h
 
 thunar-tpa-bindings.h: $(srcdir)/thunar-tpa-bindings.xml Makefile
-	$(AM_V_GEN) dbus-binding-tool --prefix=thunar_tpa_dbus --mode=glib-client $(srcdir)/thunar-tpa-bindings.xml > thunar-tpa-bindings.h
+	$(AM_V_GEN) gdbus-codegen --generate-c-code thunar-tpa-bindings --c-namespace thunarTPA --interface-prefix org.xfce. $(srcdir)/thunar-tpa-bindings.xml
 endif
 
 EXTRA_DIST =								\
