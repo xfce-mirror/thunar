@@ -407,7 +407,6 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   gtk_tree_view_set_fixed_height_mode (GTK_TREE_VIEW (renamer_dialog->tree_view), TRUE);
   gtk_tree_view_set_enable_search (GTK_TREE_VIEW (renamer_dialog->tree_view), TRUE);
   gtk_tree_view_set_rubber_banding (GTK_TREE_VIEW (renamer_dialog->tree_view), TRUE);
-  gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (renamer_dialog->tree_view), TRUE);
   g_signal_connect (G_OBJECT (renamer_dialog->tree_view), "button-press-event", G_CALLBACK (thunar_renamer_dialog_button_press_event), renamer_dialog);
   g_signal_connect (G_OBJECT (renamer_dialog->tree_view), "popup-menu", G_CALLBACK (thunar_renamer_dialog_popup_menu), renamer_dialog);
   g_signal_connect (G_OBJECT (renamer_dialog->tree_view), "row-activated", G_CALLBACK (thunar_renamer_dialog_row_activated), renamer_dialog);

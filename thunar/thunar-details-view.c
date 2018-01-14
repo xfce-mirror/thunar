@@ -223,7 +223,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   gtk_widget_show (tree_view);
 
   /* configure general aspects of the details view */
-  gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (tree_view), TRUE);
   gtk_tree_view_set_enable_search (GTK_TREE_VIEW (tree_view), TRUE);
 
   /* enable rubberbanding (if supported) */
