@@ -173,11 +173,6 @@ thunar_gdk_screen_open (const gchar *display_name,
   GdkScreen   *screen = NULL;
   GSList      *displays;
   GSList      *dp;
-  gulong       n;
-  gchar       *period;
-  gchar       *name;
-  gchar       *end;
-  gint         num = 0;
 
   _thunar_return_val_if_fail (display_name != NULL, NULL);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, NULL);
@@ -186,25 +181,12 @@ thunar_gdk_screen_open (const gchar *display_name,
   if (G_UNLIKELY (*display_name == '\0'))
     return g_object_ref (gdk_screen_get_default ());
 
-  /* extract the display part of the name */
-  name = g_strdup (display_name);
-  period = strrchr (name, '.');
-  if (period != NULL)
-    {
-      errno = 0;
-      *period++ = '\0';
-      end = period;
-      n = strtoul (period, &end, 0);
-      if (errno == 0 && period != end)
-        num = n;
-    }
-
   /* check if we already have that display */
   displays = gdk_display_manager_list_displays (gdk_display_manager_get ());
   for (dp = displays; dp != NULL; dp = dp->next)
     {
       other_name = gdk_display_get_name (dp->data);
-      if (strncmp (other_name, name, strlen (name)) == 0)
+      if (strncmp (other_name, display_name, strlen (display_name)) == 0)
         {
           display = dp->data;
           break;
@@ -219,15 +201,11 @@ thunar_gdk_screen_open (const gchar *display_name,
   /* try to locate the screen on the display */
   if (display != NULL)
     {
-      if (num >= 0 && num < gdk_display_get_n_screens (display))
-        screen = gdk_display_get_screen (display, num);
+      screen = gdk_display_get_default_screen (display);
 
       if (screen != NULL)
         g_object_ref (G_OBJECT (screen));
     }
-
-  /* release the name buffer */
-  g_free (name);
 
   /* check if we were successfull here */
   if (G_UNLIKELY (screen == NULL))

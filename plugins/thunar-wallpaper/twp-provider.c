@@ -62,6 +62,7 @@ typedef enum
 
 static DesktopType desktop_type = DESKTOP_TYPE_NONE;
 static gboolean    _has_gconftool = FALSE;
+static GtkWidget   *main_window = NULL;
 
 
 
@@ -137,8 +138,9 @@ twp_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
   Atom             xfce_selection_atom;
   Atom             nautilus_selection_atom;
   GdkScreen       *gdk_screen = gdk_screen_get_default();
-  gint             xscreen = gdk_screen_get_number(gdk_screen);
+  gint             xscreen = gdk_x11_screen_get_screen_number(gdk_screen);
 
+  main_window = window;
   desktop_type = DESKTOP_TYPE_NONE;
 
   /* we can only set a single wallpaper */
@@ -205,16 +207,16 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
 {
   ThunarxFileInfo *file_info = user_data;
   GdkDisplay      *display = gdk_display_get_default();
-  gint             n_screens = gdk_display_get_n_screens (display);
   gint             screen_nr = 0;
   gint             n_monitors;
   gint             monitor_nr = 0;
   gint             workspace;
   GdkScreen       *screen;
+  GdkMonitor      *monitor;
   gchar           *image_path_prop;
   gchar           *image_show_prop;
   gchar           *image_style_prop;
-  gchar           *monitor_name;
+  const char      *monitor_name;
   gchar           *file_uri;
   gchar           *escaped_file_name;
   gchar           *file_name = NULL;
@@ -224,10 +226,7 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
   gboolean         is_single_workspace;
   gint             current_image_style;
 
-  if (n_screens > 1)
-    screen = gdk_display_get_default_screen (display);
-  else
-    screen = gdk_display_get_screen (display, 0);
+  screen = gdk_display_get_default_screen (display);
 
   if (desktop_type != DESKTOP_TYPE_NONE)
     {
@@ -242,18 +241,22 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
           return;
         }
 
-      n_monitors = gdk_screen_get_n_monitors (screen);
-      if (n_monitors > 1)
-        {
-          /* ? */
-        }
-      g_free(file_uri);
+      g_free (file_uri);
     }
 
   workspace = twp_get_active_workspace_number (screen);
+  n_monitors = gdk_display_get_n_monitors (display);
 
-  monitor_name = gdk_screen_get_monitor_plug_name (screen, monitor_nr);
+  if (n_monitors > 1 && main_window)
+    {
+      monitor = gdk_display_get_monitor_at_window (display, gtk_widget_get_window (main_window));
+    }
+  else
+    {
+      monitor = gdk_display_get_monitor (display, monitor_nr);
+    }
 
+  monitor_name = gdk_monitor_get_model (monitor);
   escaped_file_name = g_shell_quote (file_name);
 
   switch (desktop_type)
@@ -348,7 +351,6 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
         break;
     }
 
-  g_free (monitor_name);
   g_free (escaped_file_name);
   g_free (file_name);
 }
@@ -405,12 +407,7 @@ twp_get_active_workspace_number (GdkScreen *screen)
       XFree (prop_ret);
     }
 
-#if GTK_CHECK_VERSION (3, 0, 0)
   gdk_error_trap_pop_ignored ();
-#else
-  if (gdk_error_trap_pop () != 0)
-    return 0;
-#endif
 
   return ws_num;
 }
