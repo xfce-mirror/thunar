@@ -24,6 +24,8 @@
 
 #include <gtk/gtk.h>
 
+#include <libxfce4ui/libxfce4ui.h>
+
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-progress-dialog.h>
 #include <thunar/thunar-progress-view.h>
@@ -253,7 +255,7 @@ thunar_progress_dialog_job_finished (ThunarProgressDialog *dialog,
   if (n_views == SCROLLVIEW_THRESHOLD-1)
     {
       /* reparent the content box */
-      gtk_widget_reparent (dialog->content_box, dialog->vbox);
+      xfce_widget_reparent (dialog->content_box, dialog->vbox);
 
       /* destroy the scroll win */
       gtk_widget_destroy (dialog->scrollwin);
@@ -366,7 +368,7 @@ thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
       gtk_widget_show (viewport);
 
       /* move the content box into the viewport */
-      gtk_widget_reparent (dialog->content_box, viewport);
+      xfce_widget_reparent (dialog->content_box, viewport);
     }
 
   g_signal_connect_swapped (view, "need-attention",
