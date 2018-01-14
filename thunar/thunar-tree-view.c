@@ -1454,7 +1454,7 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
               gtk_widget_show (item);
 
               /* set the icon */
-              image = gtk_image_new_from_stock (THUNAR_STOCK_TRASH_FULL, GTK_ICON_SIZE_MENU);
+              image = gtk_image_new_from_icon_name ("user-trash-full", GTK_ICON_SIZE_MENU);
               gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
             }
 
