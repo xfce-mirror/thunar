@@ -86,7 +86,6 @@ static gboolean thunar_tpa_leave_notify_event  (GtkWidget           *button,
                                                 GdkEventCrossing    *event,
                                                 ThunarTpa           *plugin);
 static void     thunar_tpa_on_trash_changed    (thunarTPATrash      *proxy,
-                                                gboolean             full,
                                                 gpointer             user_data);
 static void     thunar_tpa_display_trash       (ThunarTpa           *plugin);
 static void     thunar_tpa_empty_trash         (ThunarTpa           *plugin);
@@ -463,16 +462,15 @@ thunar_tpa_leave_notify_event (GtkWidget        *button,
 
 static void
 thunar_tpa_on_trash_changed (thunarTPATrash *proxy,
-                                   gboolean  full,
-                                   gpointer  user_data)
+                             gpointer        user_data)
 {
   ThunarTpa *plugin = THUNAR_TPA (user_data);
 
   g_return_if_fail (THUNAR_IS_TPA (plugin));
   g_return_if_fail (plugin->proxy == proxy);
 
-  /* change the status plugin/tooltip appropriately */
-  thunar_tpa_state (plugin, full);
+  /* update the state of the trash plugin */
+  thunar_tpa_query_trash (plugin);
 }
 
 
