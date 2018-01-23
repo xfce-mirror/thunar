@@ -40,12 +40,14 @@ desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 
 if MAINTAINER_MODE
 BUILT_SOURCES =								\
+	thunar-tpa-bindings.c					\
 	thunar-tpa-bindings.h
 
 DISTCLEANFILES =							\
+	thunar-tpa-bindings.c					\
 	thunar-tpa-bindings.h
 
-thunar-tpa-bindings.h: $(srcdir)/thunar-tpa-bindings.xml Makefile
+thunar-tpa-bindings.c thunar-tpa-bindings.h: $(srcdir)/thunar-tpa-bindings.xml Makefile
 	$(AM_V_GEN) gdbus-codegen --generate-c-code thunar-tpa-bindings --c-namespace thunarTPA --interface-prefix org.xfce. $(srcdir)/thunar-tpa-bindings.xml
 endif
 
