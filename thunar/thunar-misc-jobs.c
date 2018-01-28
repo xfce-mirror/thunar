@@ -61,7 +61,7 @@ _thunar_misc_jobs_load_templates (ThunarJob  *job,
     {
       /* load the ThunarFiles */
       files = thunar_io_scan_directory (job, templates_dir,
-                                        G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                        G_FILE_QUERY_INFO_NONE, /* symlink ok */
                                         TRUE, FALSE, TRUE, NULL);
     }
 
