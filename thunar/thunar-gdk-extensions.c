@@ -75,7 +75,7 @@ thunar_gdk_cairo_create_surface (const GdkPixbuf *pixbuf)
 
   /* prepare pixel data and surface */
   cairo_stride = cairo_format_stride_for_width (format, width);
-  cairo_pixels = g_malloc (height * cairo_stride);
+  cairo_pixels = g_malloc_n (height * cairo_stride);
   surface = cairo_image_surface_create_for_data (cairo_pixels, format,
                                                  width, height, cairo_stride);
   cairo_surface_set_user_data (surface, &cairo_key, cairo_pixels, g_free);
