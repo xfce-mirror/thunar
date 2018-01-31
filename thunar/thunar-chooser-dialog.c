@@ -391,13 +391,11 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   GtkTreeModel        *model;
   GtkTreeIter          iter;
   const gchar         *content_type;
-  const gchar         *exec;
   GAppInfo            *app_info = NULL;
   gboolean             succeed = TRUE;
   GError              *error = NULL;
   gchar               *path;
   gchar               *name;
-  gchar               *s;
   GList                list;
   GdkScreen           *screen;
 
@@ -417,26 +415,20 @@ thunar_chooser_dialog_response (GtkDialog *widget,
     }
   else
     {
-      /* determine the command line for the custom command */
-      exec = gtk_entry_get_text (GTK_ENTRY (dialog->custom_entry));
+      /* Wrap the path into double quotes in order to support spaces in file/folder names */
+      path = g_strconcat ("\"", gtk_entry_get_text (GTK_ENTRY (dialog->custom_entry)), "\"", NULL);
 
-      /* determine the path for the custom command */
-      path = g_strdup (exec);
-      s = strchr (path, ' ');
-      if (G_UNLIKELY (s != NULL))
-        *s = '\0';
-
-      /* determine the name from the path of the custom command */
+      /* determine the name of the custom command */
       name = g_path_get_basename (path);
 
       /* try to add an application for the custom command */
-      app_info = g_app_info_create_from_commandline (exec, name, G_APP_INFO_CREATE_NONE, &error);
+      app_info = g_app_info_create_from_commandline (path, name, G_APP_INFO_CREATE_NONE, &error);
 
       /* verify the application */
       if (G_UNLIKELY (app_info == NULL))
         {
           /* display an error to the user */
-          thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to add new application \"%s\""), name);
+          thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to add new application \"%s\""), path);
 
           /* release the error */
           g_error_free (error);
