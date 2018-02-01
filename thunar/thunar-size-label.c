@@ -176,7 +176,7 @@ thunar_size_label_init (ThunarSizeLabel *size_label)
   size_label->label = gtk_label_new (_("Calculating..."));
   gtk_label_set_xalign (GTK_LABEL (size_label->label), 0.0f);
   gtk_label_set_selectable (GTK_LABEL (size_label->label), TRUE);
-  gtk_label_set_ellipsize (GTK_LABEL (size_label->label), PANGO_ELLIPSIZE_MIDDLE);
+  gtk_label_set_line_wrap (GTK_LABEL (size_label->label), TRUE);
   gtk_box_pack_start (GTK_BOX (size_label), size_label->label, TRUE, TRUE, 0);
   gtk_widget_show (size_label->label);
 
@@ -411,7 +411,7 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
   if (G_LIKELY (n > unreadable_directory_count))
     {
       /* update the label */
-      size_string = g_format_size_full (total_size, size_label->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+      size_string = g_format_size_full (total_size, G_FORMAT_SIZE_LONG_FORMAT | (size_label->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT));
       text = g_strdup_printf (ngettext ("%u item, totalling %s", "%u items, totalling %s", n), n, size_string);
       g_free (size_string);
 
