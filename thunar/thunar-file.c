@@ -2297,6 +2297,25 @@ thunar_file_get_size_string (const ThunarFile *file)
 
 
 /**
+ * thunar_file_get_size_in_bytes_string:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the size in bytes of the file as text.
+ * You'll need to free the result using g_free()
+ * if you're done with it.
+ *
+ * Return value: the size of @file in a human readable format.
+ **/
+gchar *
+thunar_file_get_size_in_bytes_string (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  return g_strdup_printf ("%'"G_GUINT64_FORMAT, thunar_file_get_size (file));
+}
+
+
+
+/**
  * thunar_file_get_size_string_formatted:
  * @file             : a #ThunarFile instance.
  * @file_size_binary : indicates if file size format

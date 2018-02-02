@@ -279,7 +279,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
       else
         {
           /* size is right aligned, everything else is left aligned */
-          renderer = (column == THUNAR_COLUMN_SIZE) ? right_aligned_renderer : left_aligned_renderer;
+          renderer = (column == THUNAR_COLUMN_SIZE || column == THUNAR_COLUMN_SIZE_IN_BYTES) ? right_aligned_renderer : left_aligned_renderer;
 
           /* add the renderer */
           gtk_tree_view_column_pack_start (details_view->columns[column], renderer, TRUE);

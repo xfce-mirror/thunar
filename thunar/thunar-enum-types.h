@@ -80,6 +80,7 @@ GType thunar_date_style_get_type (void) G_GNUC_CONST;
  * @THUNAR_COLUMN_OWNER         : owner's name.
  * @THUNAR_COLUMN_PERMISSIONS   : permissions bits.
  * @THUNAR_COLUMN_SIZE          : file size.
+ * @THUNAR_COLUMN_SIZE_IN_BYTES : file size in bytes.
  * @THUNAR_COLUMN_TYPE          : file type (i.e. 'plain text document').
  * @THUNAR_COLUMN_FILE          : #ThunarFile object.
  * @THUNAR_COLUMN_FILE_NAME     : real file name.
@@ -98,6 +99,7 @@ typedef enum
   THUNAR_COLUMN_OWNER,
   THUNAR_COLUMN_PERMISSIONS,
   THUNAR_COLUMN_SIZE,
+  THUNAR_COLUMN_SIZE_IN_BYTES,
   THUNAR_COLUMN_TYPE,
 
   /* special internal columns */

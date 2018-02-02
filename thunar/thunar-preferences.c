@@ -221,7 +221,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
       g_param_spec_string ("last-details-view-column-order",
                            "LastDetailsViewColumnOrder",
                            NULL,
-                           "THUNAR_COLUMN_NAME,THUNAR_COLUMN_SIZE,THUNAR_COLUMN_TYPE,THUNAR_COLUMN_DATE_MODIFIED",
+                           "THUNAR_COLUMN_NAME,THUNAR_COLUMN_SIZE,THUNAR_COLUMN_SIZE_IN_BYTES,THUNAR_COLUMN_TYPE,THUNAR_COLUMN_DATE_MODIFIED",
                            EXO_PARAM_READWRITE);
 
   /**

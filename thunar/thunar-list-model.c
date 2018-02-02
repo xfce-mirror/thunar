@@ -172,6 +172,9 @@ static gint               sort_by_permissions                     (const ThunarF
 static gint               sort_by_size                            (const ThunarFile       *a,
                                                                    const ThunarFile       *b,
                                                                    gboolean                case_sensitive);
+static gint               sort_by_size_in_bytes                   (const ThunarFile       *a,
+                                                                   const ThunarFile       *b,
+                                                                   gboolean                case_sensitive);
 static gint               sort_by_type                            (const ThunarFile       *a,
                                                                    const ThunarFile       *b,
                                                                    gboolean                case_sensitive);
@@ -594,6 +597,9 @@ thunar_list_model_get_column_type (GtkTreeModel *model,
     case THUNAR_COLUMN_SIZE:
       return G_TYPE_STRING;
 
+    case THUNAR_COLUMN_SIZE_IN_BYTES:
+      return G_TYPE_STRING;
+
     case THUNAR_COLUMN_TYPE:
       return G_TYPE_STRING;
 
@@ -748,6 +754,11 @@ thunar_list_model_get_value (GtkTreeModel *model,
     case THUNAR_COLUMN_SIZE:
       g_value_init (value, G_TYPE_STRING);
       g_value_take_string (value, thunar_file_get_size_string_formatted (file, THUNAR_LIST_MODEL (model)->file_size_binary));
+      break;
+
+    case THUNAR_COLUMN_SIZE_IN_BYTES:
+      g_value_init (value, G_TYPE_STRING);
+      g_value_take_string (value, thunar_file_get_size_in_bytes_string (file));
       break;
 
     case THUNAR_COLUMN_TYPE:
@@ -909,6 +920,8 @@ thunar_list_model_get_sort_column_id (GtkTreeSortable *sortable,
     *sort_column_id = THUNAR_COLUMN_PERMISSIONS;
   else if (store->sort_func == sort_by_size)
     *sort_column_id = THUNAR_COLUMN_SIZE;
+  else if (store->sort_func == sort_by_size_in_bytes)
+    *sort_column_id = THUNAR_COLUMN_SIZE_IN_BYTES;
   else if (store->sort_func == sort_by_date_accessed)
     *sort_column_id = THUNAR_COLUMN_DATE_ACCESSED;
   else if (store->sort_func == sort_by_date_modified)
@@ -977,6 +990,10 @@ thunar_list_model_set_sort_column_id (GtkTreeSortable *sortable,
 
     case THUNAR_COLUMN_SIZE:
       store->sort_func = sort_by_size;
+      break;
+
+    case THUNAR_COLUMN_SIZE_IN_BYTES:
+      store->sort_func = sort_by_size_in_bytes;
       break;
 
     case THUNAR_COLUMN_TYPE:
@@ -1558,6 +1575,16 @@ sort_by_size (const ThunarFile *a,
     return 1;
 
   return thunar_file_compare_by_name (a, b, case_sensitive);
+}
+
+
+
+static gint
+sort_by_size_in_bytes (const ThunarFile *a,
+                       const ThunarFile *b,
+                       gboolean          case_sensitive)
+{
+  return sort_by_size (a, b, case_sensitive);
 }
 
 
