@@ -65,7 +65,7 @@ desktop_in_in_files = 							\
 	Thunar-bulk-rename.desktop.in.in				\
 	Thunar-folder-handler.desktop.in.in
 desktop_in_files = $(desktop_in_in_files:.desktop.in.in=.desktop.in)
-%.desktop.in: %.desktop.in.in
+%.desktop.in: %.desktop.in.in Makefile
 	$(AM_V_GEN) $(SED) -e "s,\@HELPERDIR\@,$(HELPER_PATH_PREFIX),g" < $< > $@
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
@@ -81,14 +81,19 @@ appdata_in_files = thunar.appdata.xml.in
 servicedir = $(datadir)/dbus-1/services
 service_in_files = org.xfce.FileManager.service.in org.xfce.Thunar.service.in
 service_DATA = $(service_in_files:.service.in=.service)
-%.service: %.service.in
+
+systemd_userdir = $(prefix)/lib/systemd/user
+systemd_user_in_files = thunar.service.in
+systemd_user_DATA = $(systemd_user_in_files:.service.in=.service)
+
+%.service: %.service.in Makefile
 	$(AM_V_GEN) $(SED) -e "s,\@bindir\@,$(bindir),g" < $< > $@
 
 polkit_policydir = $(datadir)/polkit-1/actions
 polkit_in_in_files =			\
 	org.xfce.thunar.policy.in.in
 polkit_in_files = $(polkit_in_in_files:.policy.in.in=.policy.in)
-%.policy.in: %.policy.in.in
+%.policy.in: %.policy.in.in Makefile
 	sed -e "s,\@bindir\@,$(bindir),g" < $< > $@
 polkit_policy_DATA = $(polkit_in_files:.policy.in=.policy)
 @INTLTOOL_POLICY_RULE@
@@ -102,6 +107,7 @@ EXTRA_DIST =								\
 	intltool-update.in						\
 	$(desktop_in_in_files)						\
 	$(service_in_files)						\
+	$(systemd_user_in_files)					\
 	$(appdata_in_files)						\
 	$(polkit_in_in_files)					\
 	m4/introspection.m4
@@ -116,6 +122,7 @@ DISTCLEANFILES =							\
 	$(desktop_in_files)						\
 	$(desktop_DATA)							\
 	$(service_DATA)							\
+	$(systemd_user_DATA)						\
 	$(polkit_in_files)						\
 	$(polkit_policy_DATA)
 
