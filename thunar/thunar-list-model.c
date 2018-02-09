@@ -2324,8 +2324,8 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
           if (size_summary > 0)
             {
               /* generate a text which includes the size of all items in the folder */
-              size_string = g_format_size_full (size_summary, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
-              text = g_strdup_printf (ngettext ("%d item (%s), Free space: %s", "%d items (%s), Free space: %s", nrows),
+              size_string = g_format_size_full (size_summary, G_FORMAT_SIZE_LONG_FORMAT | (file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT));
+              text = g_strdup_printf (ngettext ("%d item: %s, Free space: %s", "%d items: %s, Free space: %s", nrows),
                                       nrows, size_string, fspace_string);
               g_free (size_string);
             }
@@ -2357,29 +2357,29 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
 
       if (G_UNLIKELY (content_type != NULL && g_str_equal (content_type, "inode/symlink")))
         {
-          text = g_strdup_printf (_("\"%s\" broken link"), thunar_file_get_display_name (file));
+          text = g_strdup_printf (_("\"%s\": broken link"), thunar_file_get_display_name (file));
         }
       else if (G_UNLIKELY (thunar_file_is_symlink (file)))
         {
-          size_string = thunar_file_get_size_string_formatted (file, file_size_binary);
-          text = g_strdup_printf (_("\"%s\" (%s) link to %s"), thunar_file_get_display_name (file),
+          size_string = thunar_file_get_size_string_long (file, file_size_binary);
+          text = g_strdup_printf (_("\"%s\": %s link to %s"), thunar_file_get_display_name (file),
                                   size_string, thunar_file_get_symlink_target (file));
           g_free (size_string);
         }
       else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_SHORTCUT))
         {
-          text = g_strdup_printf (_("\"%s\" shortcut"), thunar_file_get_display_name (file));
+          text = g_strdup_printf (_("\"%s\": shortcut"), thunar_file_get_display_name (file));
         }
       else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_MOUNTABLE))
         {
-          text = g_strdup_printf (_("\"%s\" mountable"), thunar_file_get_display_name (file));
+          text = g_strdup_printf (_("\"%s\": mountable"), thunar_file_get_display_name (file));
         }
       else if (thunar_file_is_regular (file))
         {
           description = g_content_type_get_description (content_type);
-          size_string = thunar_file_get_size_string_formatted (file, file_size_binary);
+          size_string = thunar_file_get_size_string_long (file, file_size_binary);
           /* I18N, first %s is the display name of the file, 2nd the file size, 3rd the content type */
-          text = g_strdup_printf (_("\"%s\" (%s) %s"), thunar_file_get_display_name (file),
+          text = g_strdup_printf (_("\"%s\": %s %s"), thunar_file_get_display_name (file),
                                   size_string, description);
           g_free (description);
           g_free (size_string);
@@ -2388,7 +2388,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
         {
           description = g_content_type_get_description (content_type);
           /* I18N, first %s is the display name of the file, second the content type */
-          text = g_strdup_printf (_("\"%s\" %s"), thunar_file_get_display_name (file), description);
+          text = g_strdup_printf (_("\"%s\": %s"), thunar_file_get_display_name (file), description);
           g_free (description);
         }
 
@@ -2456,19 +2456,19 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
      /* text for the items in the folder */
      if (non_folder_count > 0)
         {
-          size_string = g_format_size_full (size_summary, file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+          size_string = g_format_size_full (size_summary, G_FORMAT_SIZE_LONG_FORMAT | (file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT));
           if (folder_count > 0)
             {
               /* item count if there are also folders in the selection */
-              non_folder_text = g_strdup_printf (ngettext ("%d other item selected (%s)",
-                                                           "%d other items selected (%s)",
+              non_folder_text = g_strdup_printf (ngettext ("%d other item selected: %s",
+                                                           "%d other items selected: %s",
                                                            non_folder_count), non_folder_count, size_string);
             }
           else
             {
               /* only non-folders are selected */
-              non_folder_text = g_strdup_printf (ngettext ("%d item selected (%s)",
-                                                           "%d items selected (%s)",
+              non_folder_text = g_strdup_printf (ngettext ("%d item selected: %s",
+                                                           "%d items selected: %s",
                                                            non_folder_count), non_folder_count, size_string);
             }
           g_free (size_string);
