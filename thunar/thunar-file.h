@@ -171,6 +171,8 @@ gchar            *thunar_file_get_size_string            (const ThunarFile      
 gchar            *thunar_file_get_size_in_bytes_string   (const ThunarFile       *file) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 gchar            *thunar_file_get_size_string_formatted  (const ThunarFile       *file,
                                                           const gboolean          file_size_binary);
+gchar            *thunar_file_get_size_string_long       (const ThunarFile       *file,
+                                                          const gboolean          file_size_binary);
 
 GVolume          *thunar_file_get_volume                 (const ThunarFile       *file);
 

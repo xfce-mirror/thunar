@@ -2304,7 +2304,7 @@ thunar_file_get_size_string (const ThunarFile *file)
  * You'll need to free the result using g_free()
  * if you're done with it.
  *
- * Return value: the size of @file in a human readable format.
+ * Return value: the size of @file in bytes.
  **/
 gchar *
 thunar_file_get_size_in_bytes_string (const ThunarFile *file)
@@ -2334,6 +2334,30 @@ thunar_file_get_size_string_formatted (const ThunarFile *file, const gboolean fi
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   return g_format_size_full (thunar_file_get_size (file),
                              file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT);
+}
+
+
+
+/**
+ * thunar_file_get_size_string_long:
+ * @file             : a #ThunarFile instance.
+ * @file_size_binary : indicates if file size format
+ *                     should be binary or not.
+ *
+ * Returns the size of the file as text in a human readable
+ * format in decimal or binary format, including the exact
+ * size in bytes. You'll need to free the result using
+ * g_free() if you're done with it.
+ *
+ * Return value: the size of @file in a human readable
+ *               format, including size in bytes.
+ **/
+gchar *
+thunar_file_get_size_string_long (const ThunarFile *file, const gboolean file_size_binary)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  return g_format_size_full (thunar_file_get_size (file),
+                             G_FORMAT_SIZE_LONG_FORMAT | (file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT));
 }
 
 

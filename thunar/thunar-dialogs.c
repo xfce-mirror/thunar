@@ -632,7 +632,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   g_object_unref (G_OBJECT (icon));
   gtk_widget_show (image);
 
-  size_string = thunar_file_get_size_string_formatted (dst_file, file_size_binary);
+  size_string = thunar_file_get_size_string_long (dst_file, file_size_binary);
   date_string = thunar_file_get_date_string (dst_file, THUNAR_FILE_DATE_MODIFIED, date_style);
   text = g_strdup_printf ("%s %s\n%s %s", _("Size:"), size_string, _("Modified:"), date_string);
   label = gtk_label_new (text);
@@ -668,7 +668,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   g_object_unref (G_OBJECT (icon));
   gtk_widget_show (image);
 
-  size_string = thunar_file_get_size_string_formatted (src_file, file_size_binary);
+  size_string = thunar_file_get_size_string_long (src_file, file_size_binary);
   date_string = thunar_file_get_date_string (src_file, THUNAR_FILE_DATE_MODIFIED, date_style);
   text = g_strdup_printf ("%s %s\n%s %s", _("Size:"), size_string, _("Modified:"), date_string);
   label = gtk_label_new (text);
