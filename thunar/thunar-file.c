@@ -2852,25 +2852,31 @@ gboolean
 thunar_file_is_gfile_ancestor (const ThunarFile *file,
                                GFile            *ancestor)
 {
-  gboolean is_ancestor = FALSE;
   GFile   *current = NULL;
   GFile   *tmp;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (G_IS_FILE (file->gfile), FALSE);
   _thunar_return_val_if_fail (G_IS_FILE (ancestor), FALSE);
 
-  for (current = g_object_ref (file->gfile);
-       is_ancestor == FALSE && current != NULL;
-       tmp = g_file_get_parent (current), g_object_unref (current), current = tmp)
+  current = g_object_ref (file->gfile);
+  while(TRUE)
     {
+      tmp = g_file_get_parent (current);
+      g_object_unref (current);
+      current = tmp;
+
+      if (current == NULL) /* parent of root is NULL */
+        return FALSE;
+
       if (G_UNLIKELY (g_file_equal (current, ancestor)))
-        is_ancestor = TRUE;
+        {
+          g_object_unref (current);
+          return TRUE;
+        }
     }
 
-  if (current != NULL)
-    g_object_unref (current);
-
-  return is_ancestor;
+  return FALSE;
 }
 
 
