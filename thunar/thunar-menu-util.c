@@ -87,6 +87,7 @@ thunar_menu_util_add_items_to_ui_manager (GtkUIManager   *ui_manager,
   GtkAction       *action;
   ThunarxMenu     *menu;
   char            *subpath;
+  char            *action_path;
   GList           *children;
 
   /* add the menu items to the UI manager */
@@ -103,6 +104,14 @@ thunar_menu_util_add_items_to_ui_manager (GtkUIManager   *ui_manager,
                              gtk_action_get_name (GTK_ACTION (action)),
                              gtk_action_get_name (GTK_ACTION (action)),
                              (menu != NULL) ? GTK_UI_MANAGER_MENU : GTK_UI_MANAGER_MENUITEM, FALSE);
+
+      /* TODO: Receive action path from plugin as generic data as below or create a property in ThunarxMenuItem? */
+      action_path = g_object_steal_data (G_OBJECT (lp->data), "action_path");
+      if (action_path)
+        {
+          gtk_action_set_accel_path (action, action_path);
+          g_free (action_path);
+        }
 
       /* add submenu items if any */
       if (menu != NULL) {

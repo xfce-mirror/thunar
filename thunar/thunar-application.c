@@ -349,21 +349,6 @@ thunar_application_startup (GApplication *gapp)
   /* initialize the application */
   application->preferences = thunar_preferences_get ();
 
-  /* TODO: how do accel maps integrate with GAction/GMenu? */
-  /* check if we have a saved accel map */
-  path = xfce_resource_lookup (XFCE_RESOURCE_CONFIG, ACCEL_MAP_PATH);
-  if (G_LIKELY (path != NULL))
-    {
-      /* load the accel map */
-      gtk_accel_map_load (path);
-      g_free (path);
-    }
-
-  /* watch for changes */
-  application->accel_map = gtk_accel_map_get ();
-  g_signal_connect_swapped (G_OBJECT (application->accel_map), "changed",
-      G_CALLBACK (thunar_application_accel_map_changed), application);
-
 #ifdef HAVE_GUDEV
   /* establish connection with udev */
   application->udev_client = g_udev_client_new (subsystems);
@@ -380,6 +365,21 @@ thunar_application_startup (GApplication *gapp)
   thunar_application_dbus_init (application);
 
   G_APPLICATION_CLASS (thunar_application_parent_class)->startup (gapp);
+
+  /* TODO: how do accel maps integrate with GAction/GMenu? Using GtkAction for now */
+  /* check if we have a saved accel map */
+  path = xfce_resource_lookup (XFCE_RESOURCE_CONFIG, ACCEL_MAP_PATH);
+  if (G_LIKELY (path != NULL))
+    {
+      /* load the accel map */
+      gtk_accel_map_load (path);
+      g_free (path);
+    }
+
+  /* watch for changes */
+  application->accel_map = gtk_accel_map_get ();
+  g_signal_connect_swapped (G_OBJECT (application->accel_map), "changed",
+      G_CALLBACK (thunar_application_accel_map_changed), application);
 
   thunar_application_load_css ();
 }

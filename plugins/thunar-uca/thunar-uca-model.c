@@ -838,7 +838,8 @@ end_element_handler (GMarkupParseContext *context,
                                    parser->command->str,
                                    parser->startup_notify,
                                    parser->patterns->str,
-                                   parser->types);
+                                   parser->types,
+                                   0, 0);
 
           /* check if a new id should've been generated */
           if (exo_str_is_empty (parser->unique_id->str))
@@ -1307,11 +1308,14 @@ thunar_uca_model_update (ThunarUcaModel *uca_model,
                          const gchar    *command,
                          gboolean        startup_notify,
                          const gchar    *patterns,
-                         ThunarUcaTypes  types)
+                         ThunarUcaTypes  types,
+                         guint           accel_key,
+                         GdkModifierType accel_mods)
 {
   ThunarUcaModelItem *item;
   GtkTreePath        *path;
   guint               n, m;
+  gchar              *accel_path;
 
   g_return_if_fail (THUNAR_UCA_IS_MODEL (uca_model));
   g_return_if_fail (iter->stamp == uca_model->stamp);
@@ -1362,6 +1366,14 @@ thunar_uca_model_update (ThunarUcaModel *uca_model,
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (uca_model), iter);
   gtk_tree_model_row_changed (GTK_TREE_MODEL (uca_model), path, iter);
   gtk_tree_path_free (path);
+
+  /* update accelerator */
+  if (accel_key > 0)
+    {
+      accel_path = g_strdup_printf ("<Actions>/ThunarActions/uca-action-%s", item->unique_id);
+      gtk_accel_map_change_entry (accel_path, accel_key, accel_mods, TRUE);
+      g_free (accel_path);
+    }
 }
 
 

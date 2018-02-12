@@ -248,6 +248,10 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
                                  g_object_ref (G_OBJECT (uca_provider)), (GClosureNotify) g_object_unref,
                                  G_CONNECT_SWAPPED);
 
+          /* set the action path */
+          g_object_set_data (G_OBJECT (item), "action_path",
+                             g_strconcat ("<Actions>/ThunarActions/", name, NULL));
+
           /* add the menu item to the return list */
           items = g_list_prepend (items, item);
 

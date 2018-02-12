@@ -155,6 +155,67 @@
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkLabel" id="shortcut_label">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">_Shortcut:</property>
+                    <property name="use_underline">True</property>
+                    <property name="xalign">0</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="box2">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkButton" id="shortcut_button">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="tooltip_text" translatable="yes">The shortcut for the action.</property>
+                        <property name="hexpand">True</property>
+                        <signal name="clicked" handler="thunar_uca_editor_shortcut_clicked" swapped="yes"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="shortcut_clear_button">
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">True</property>
+                        <property name="tooltip_text" translatable="yes">Clear the shortcut for this action.</property>
+                        <signal name="clicked" handler="thunar_uca_editor_shortcut_clear_clicked" swapped="yes"/>
+                        <child>
+                          <object class="GtkImage" id="image2">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="icon_name">edit-clear</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <style>
+                      <class name="linked"/>
+                    </style>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">3</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkCheckButton" id="sn_button">
                     <property name="label" translatable="yes">Use Startup Notification</property>
                     <property name="visible">True</property>
@@ -165,7 +226,7 @@
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
-                    <property name="top_attach">3</property>
+                    <property name="top_attach">4</property>
                   </packing>
                 </child>
                 <child>
@@ -183,7 +244,7 @@
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">4</property>
+                    <property name="top_attach">5</property>
                   </packing>
                 </child>
                 <child>
@@ -198,11 +259,11 @@
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
-                    <property name="top_attach">4</property>
+                    <property name="top_attach">5</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="box2">
+                  <object class="GtkBox" id="box3">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
@@ -214,7 +275,7 @@
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">5</property>
+                    <property name="top_attach">6</property>
                     <property name="width">2</property>
                   </packing>
                 </child>
@@ -226,7 +287,7 @@
                     <property name="column_spacing">6</property>
                     <property name="valign">start</property>
                     <child>
-                      <object class="GtkImage" id="image2">
+                      <object class="GtkImage" id="image3">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="icon_name">dialog-information</property>
@@ -441,7 +502,7 @@
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">6</property>
+                    <property name="top_attach">7</property>
                     <property name="width">2</property>
                   </packing>
                 </child>
@@ -615,12 +676,12 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="box3">
+                  <object class="GtkBox" id="box4">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="margin_top">12</property>
                     <child>
-                      <object class="GtkImage" id="image3">
+                      <object class="GtkImage" id="image4">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>

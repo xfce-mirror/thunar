@@ -96,7 +96,9 @@ void            thunar_uca_model_update         (ThunarUcaModel         *uca_mod
                                                  const gchar            *command,
                                                  gboolean                startup_notify,
                                                  const gchar            *patterns,
-                                                 ThunarUcaTypes          types);
+                                                 ThunarUcaTypes          types,
+                                                 guint                   accel_key,
+                                                 GdkModifierType         accel_mods);
 
 gboolean        thunar_uca_model_save           (ThunarUcaModel         *uca_model,
                                                  GError                **error);
