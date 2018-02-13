@@ -168,6 +168,7 @@ thunar_gtk_menu_run (GtkMenu            *menu,
   loop = g_main_loop_new (NULL, FALSE);
   signal_id = g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
   gtk_menu_popup (menu, NULL, NULL, func, data, button, activate_time);
+  gtk_menu_reposition (menu);
   gtk_grab_add (GTK_WIDGET (menu));
   g_main_loop_run (loop);
   g_signal_handler_disconnect (G_OBJECT (menu), signal_id);
