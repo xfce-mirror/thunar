@@ -21,6 +21,7 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-history-action.h>
 #include <thunar/thunar-private.h>
 
@@ -28,9 +29,7 @@
 
 static GtkWidget *thunar_history_action_create_tool_item  (GtkAction                *action);
 static void       thunar_history_action_show_menu         (GtkWidget                *tool_item,
-                                                           ThunarHistoryAction      *history_action,
-                                                           guint button,
-                                                           guint32 timestamp);
+                                                           ThunarHistoryAction      *history_action);
 
 
 
@@ -90,7 +89,7 @@ thunar_history_action_popup_delayed (gpointer data)
   ThunarHistoryAction *history_action;
 
   history_action = g_object_get_data (G_OBJECT (button), I_("thunar-history-action"));
-  thunar_history_action_show_menu (button, history_action, 3, 0);
+  thunar_history_action_show_menu (button, history_action);
   history_action->popup_delay = 0;
 
   return FALSE;
@@ -122,8 +121,7 @@ thunar_history_action_button_press_event (GtkWidget      *toggle_button,
   else if (event->button == 3)
     {
       /* directy show the menu */
-      thunar_history_action_show_menu (toggle_button, history_action,
-                                       event->button, event->time);
+      thunar_history_action_show_menu (toggle_button, history_action);
     }
 
   return FALSE;
@@ -191,8 +189,7 @@ thunar_history_action_leave_notify_event (GtkWidget           *toggle_button,
           && event->x < alloc.width
           && event->y >= alloc.height)
         {
-          thunar_history_action_show_menu (toggle_button, history_action,
-                                           3, event->time);
+          thunar_history_action_show_menu (toggle_button, history_action);
         }
     }
 
@@ -280,26 +277,6 @@ thunar_history_action_create_tool_item (GtkAction *action)
 
 
 static void
-thunar_history_action_position_menu (GtkMenu  *menu,
-                                     gint     *x,
-                                     gint     *y,
-                                     gboolean *push_in,
-                                     gpointer  user_data)
-{
-  GtkWidget     *button = GTK_WIDGET (user_data);
-  GtkAllocation  alloc;
-
-  gdk_window_get_origin (gtk_widget_get_window (button), x, y);
-
-  gtk_widget_get_allocation (button, &alloc);
-  *x += alloc.x;
-  *y += alloc.y + alloc.height;
-  *push_in = FALSE;
-}
-
-
-
-static void
 thunar_history_action_menu_deactivate (GtkWidget *toggle_button)
 {
   /* untoggle the button */
@@ -310,9 +287,7 @@ thunar_history_action_menu_deactivate (GtkWidget *toggle_button)
 
 static void
 thunar_history_action_show_menu (GtkWidget           *toggle_button,
-                                 ThunarHistoryAction *history_action,
-                                 guint                button,
-                                 guint32              timestamp)
+                                 ThunarHistoryAction *history_action)
 {
   GtkWidget *menu;
 
@@ -331,12 +306,8 @@ thunar_history_action_show_menu (GtkWidget           *toggle_button,
   /* toggle the button */
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle_button), TRUE);
 
-  /* show menu */
-  gtk_menu_popup (GTK_MENU (menu),
-                  NULL, NULL,
-                  thunar_history_action_position_menu, toggle_button,
-                  button,
-                  timestamp ? timestamp : gtk_get_current_event_time ());
+  /* run the menu (takes over the floating of menu) */
+  thunar_gtk_menu_run (GTK_MENU (menu));
 }
 
 

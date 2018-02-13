@@ -79,9 +79,7 @@ static void        thunar_renamer_dialog_realize               (GtkWidget       
 static void        thunar_renamer_dialog_unrealize             (GtkWidget                *widget);
 static void        thunar_renamer_dialog_response              (GtkDialog                *dialog,
                                                                 gint                      response);
-static void        thunar_renamer_dialog_context_menu          (ThunarRenamerDialog      *renamer_dialog,
-                                                                guint                     button,
-                                                                guint32                   timestamp);
+static void        thunar_renamer_dialog_context_menu          (ThunarRenamerDialog      *renamer_dialog);
 static void        thunar_renamer_dialog_help                  (ThunarRenamerDialog      *renamer_dialog);
 static void        thunar_renamer_dialog_save                  (ThunarRenamerDialog      *renamer_dialog);
 static void        thunar_renamer_dialog_action_add_files      (GtkAction                *action,
@@ -840,9 +838,7 @@ thunar_renamer_dialog_response (GtkDialog *dialog,
 
 
 static void
-thunar_renamer_dialog_context_menu (ThunarRenamerDialog *renamer_dialog,
-                                    guint                button,
-                                    guint32              timestamp)
+thunar_renamer_dialog_context_menu (ThunarRenamerDialog *renamer_dialog)
 {
   GtkActionGroup *renamer_actions = NULL;
   ThunarxRenamer *renamer;
@@ -882,9 +878,9 @@ thunar_renamer_dialog_context_menu (ThunarRenamerDialog *renamer_dialog,
       g_list_free (items);
     }
 
-  /* run the menu on the dialog's screen */
+  /* run the menu (takes over the floating of menu) */
   menu = gtk_ui_manager_get_widget (renamer_dialog->ui_manager, "/file-context-menu");
-  thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (renamer_dialog), NULL, NULL, button, timestamp);
+  thunar_gtk_menu_run (GTK_MENU (menu));
 
   /* remove the previously merge items from the UI manager */
   if (G_UNLIKELY (renamer_merge_id != 0))
@@ -1299,7 +1295,7 @@ thunar_renamer_dialog_button_press_event (GtkWidget           *tree_view,
         }
 
       /* popup the context menu */
-      thunar_renamer_dialog_context_menu (renamer_dialog, event->button, event->time);
+      thunar_renamer_dialog_context_menu (renamer_dialog);
 
       /* we handled the event */
       return TRUE;
@@ -1606,7 +1602,7 @@ thunar_renamer_dialog_popup_menu (GtkWidget           *tree_view,
   _thunar_return_val_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog), FALSE);
 
   /* popup the context menu */
-  thunar_renamer_dialog_context_menu (renamer_dialog, 0, gtk_get_current_event_time ());
+  thunar_renamer_dialog_context_menu (renamer_dialog);
 
   /* we handled the event */
   return TRUE;

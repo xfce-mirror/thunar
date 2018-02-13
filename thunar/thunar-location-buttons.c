@@ -1301,8 +1301,8 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
       g_object_set_qdata_full (G_OBJECT (action), thunar_file_quark, g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), gtk_action_create_menu_item (action));
 
-      /* run the menu on the screen on the buttons' screen */
-      thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (buttons), NULL, NULL, 0, gtk_get_current_event_time ());
+      /* run the menu (takes over the floating of menu) */
+      thunar_gtk_menu_run (GTK_MENU (menu));
 
       /* cleanup */
       g_object_unref (buttons);

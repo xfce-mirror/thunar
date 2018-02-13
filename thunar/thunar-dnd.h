@@ -27,7 +27,6 @@ G_BEGIN_DECLS;
 GdkDragAction thunar_dnd_ask     (GtkWidget    *widget,
                                   ThunarFile   *folder,
                                   GList        *path_list,
-                                  guint         time,
                                   GdkDragAction actions);
 
 gboolean      thunar_dnd_perform (GtkWidget    *widget,

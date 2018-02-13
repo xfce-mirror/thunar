@@ -643,7 +643,7 @@ thunar_shortcuts_view_drag_data_received (GtkWidget        *widget,
                         {
                           /* ask the user what to do with the drop data */
                           if (G_UNLIKELY (action == GDK_ACTION_ASK))
-                            action = thunar_dnd_ask (widget, file, view->drop_file_list, timestamp, actions);
+                            action = thunar_dnd_ask (widget, file, view->drop_file_list, actions);
 
                           /* perform the requested action */
                           if (G_LIKELY (action != 0))
@@ -1041,10 +1041,8 @@ thunar_shortcuts_view_context_menu_visibility (ThunarShortcutsView *view,
 
   gtk_tree_path_free (path);
 
-  /* run the menu on the view's screen (taking over the floating reference on menu) */
-  thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (view), NULL, NULL,
-                       (event != NULL) ? event->button : 0,
-                       (event != NULL) ? event->time : gtk_get_current_event_time ());
+  /* run the menu (taking over the floating reference on menu) */
+  thunar_gtk_menu_run (GTK_MENU (menu));
 }
 
 
@@ -1288,9 +1286,8 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
     g_object_unref (G_OBJECT (device));
   gtk_tree_path_free (path);
 
-  /* run the menu on the view's screen (taking over the floating reference on menu) */
-  thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (view), NULL, NULL, (event != NULL) ? event->button : 0,
-                       (event != NULL) ? event->time : gtk_get_current_event_time ());
+  /* run the menu (taking over the floating reference on menu) */
+  thunar_gtk_menu_run (GTK_MENU (menu));
 }
 
 

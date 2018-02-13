@@ -511,7 +511,7 @@ thunar_abstract_icon_view_button_press_event (ExoIconView            *view,
           exo_icon_view_unselect_all (view);
 
           /* open the context menu */
-          thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (abstract_icon_view), event->button, event->time);
+          thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (abstract_icon_view));
         }
 
       return TRUE;
@@ -685,7 +685,7 @@ thunar_abstract_icon_view_key_press_event (ExoIconView            *view,
   /* popup context menu if "Menu" or "<Shift>F10" is pressed */
   if (event->keyval == GDK_KEY_Menu || ((event->state & GDK_SHIFT_MASK) != 0 && event->keyval == GDK_KEY_F10))
     {
-      thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (abstract_icon_view), 0, event->time);
+      thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (abstract_icon_view));
       return TRUE;
     }
 

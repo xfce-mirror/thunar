@@ -1602,16 +1602,13 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
 
 
 static void
-thunar_window_notebook_popup_menu_real (ThunarWindow *window,
-                                        guint32       timestamp,
-                                        gint          button)
+thunar_window_notebook_popup_menu_real (ThunarWindow *window)
 {
   GtkWidget *menu;
 
-  /* run the menu on the view's screen (figuring out whether to use the file or the folder context menu) */
+  /* run the menu (figuring out whether to use the file or the folder context menu) */
   menu = gtk_ui_manager_get_widget (window->ui_manager, "/tab-context-menu");
-  thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (window),
-                       NULL, NULL, button, timestamp);
+  thunar_gtk_menu_run (GTK_MENU (menu));
 }
 
 
@@ -1666,7 +1663,7 @@ thunar_window_notebook_button_press_event (GtkWidget      *notebook,
           gtk_notebook_set_current_page (GTK_NOTEBOOK (notebook), page_num);
 
           /* show the tab menu */
-          thunar_window_notebook_popup_menu_real (window, event->time, event->button);
+          thunar_window_notebook_popup_menu_real (window);
         }
 
       return TRUE;
@@ -1681,7 +1678,7 @@ static gboolean
 thunar_window_notebook_popup_menu (GtkWidget    *notebook,
                                    ThunarWindow *window)
 {
-  thunar_window_notebook_popup_menu_real (window, gtk_get_current_event_time (), 0);
+  thunar_window_notebook_popup_menu_real (window);
   return TRUE;
 }
 

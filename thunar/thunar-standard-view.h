@@ -144,9 +144,7 @@ struct _ThunarStandardView
 
 GType thunar_standard_view_get_type           (void) G_GNUC_CONST;
 
-void  thunar_standard_view_context_menu       (ThunarStandardView *standard_view,
-                                               guint               button,
-                                               guint32             time);
+void  thunar_standard_view_context_menu       (ThunarStandardView *standard_view);
 
 void  thunar_standard_view_queue_popup        (ThunarStandardView *standard_view,
                                                GdkEventButton     *event);

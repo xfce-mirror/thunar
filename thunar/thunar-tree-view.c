@@ -132,7 +132,6 @@ static void                     thunar_tree_view_row_collapsed                (G
                                                                                GtkTreePath             *path);
 static gboolean                 thunar_tree_view_delete_selected_files        (ThunarTreeView          *view);
 static void                     thunar_tree_view_context_menu                 (ThunarTreeView          *view,
-                                                                               GdkEventButton          *event,
                                                                                GtkTreeModel            *model,
                                                                                GtkTreeIter             *iter);
 static GdkDragAction            thunar_tree_view_get_dest_actions             (ThunarTreeView          *view,
@@ -739,7 +738,7 @@ thunar_tree_view_button_press_event (GtkWidget      *widget,
           if (gtk_tree_model_get_iter (GTK_TREE_MODEL (view->model), &iter, path))
             {
               /* popup the context menu */
-              thunar_tree_view_context_menu (view, event, GTK_TREE_MODEL (view->model), &iter);
+              thunar_tree_view_context_menu (view, GTK_TREE_MODEL (view->model), &iter);
 
               /* we effectively handled the event */
               result = TRUE;
@@ -973,7 +972,7 @@ thunar_tree_view_drag_data_received (GtkWidget        *widget,
         {
           /* ask the user what to do with the drop data */
           action = (gdk_drag_context_get_selected_action (context) == GDK_ACTION_ASK)
-                 ? thunar_dnd_ask (GTK_WIDGET (view), file, view->drop_file_list, timestamp, actions)
+                 ? thunar_dnd_ask (GTK_WIDGET (view), file, view->drop_file_list, actions)
                  : gdk_drag_context_get_selected_action (context);
 
           /* perform the requested action */
@@ -1121,7 +1120,7 @@ thunar_tree_view_popup_menu (GtkWidget *widget)
   if (gtk_tree_selection_get_selected (selection, &model, &iter))
     {
       /* popup the context menu */
-      thunar_tree_view_context_menu (view, NULL, model, &iter);
+      thunar_tree_view_context_menu (view, model, &iter);
       return TRUE;
     }
   else if (GTK_WIDGET_CLASS (thunar_tree_view_parent_class)->popup_menu != NULL)
@@ -1252,7 +1251,6 @@ thunar_tree_view_delete_selected_files (ThunarTreeView *view)
 
 static void
 thunar_tree_view_context_menu (ThunarTreeView *view,
-                               GdkEventButton *event,
                                GtkTreeModel   *model,
                                GtkTreeIter    *iter)
 {
@@ -1543,9 +1541,8 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
   image = gtk_image_new_from_icon_name ("document-properties", GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
 
-  /* run the menu on the view's screen (taking over the floating reference on the menu) */
-  thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (view), NULL, NULL, (event != NULL) ? event->button : 0,
-                       (event != NULL) ? event->time : gtk_get_current_event_time ());
+  /* run the menu (taking over the floating reference on the menu) */
+  thunar_gtk_menu_run (GTK_MENU (menu));
 
   /* cleanup */
   if (G_UNLIKELY (device != NULL))

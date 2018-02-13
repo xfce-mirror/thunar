@@ -35,12 +35,7 @@ void             thunar_gtk_action_group_set_action_sensitive (GtkActionGroup   
 void             thunar_gtk_label_set_a11y_relation           (GtkLabel           *label,
                                                                GtkWidget          *widget);
 
-void             thunar_gtk_menu_run                          (GtkMenu            *menu,
-                                                               gpointer            parent,
-                                                               GtkMenuPositionFunc func,
-                                                               gpointer            data,
-                                                               guint               button,
-                                                               guint32             activate_time);
+void             thunar_gtk_menu_run                          (GtkMenu            *menu);
 
 GtkAction       *thunar_gtk_ui_manager_get_action_by_name     (GtkUIManager       *ui_manager,
                                                                const gchar        *action_name);

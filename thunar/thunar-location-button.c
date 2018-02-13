@@ -673,7 +673,7 @@ thunar_location_button_drag_data_received (GtkWidget            *button,
         {
           /* as the user what to do with the drop data */
           action = (gdk_drag_context_get_selected_action (context) == GDK_ACTION_ASK)
-                 ? thunar_dnd_ask (button, location_button->file, location_button->drop_file_list, timestamp, actions)
+                 ? thunar_dnd_ask (button, location_button->file, location_button->drop_file_list, actions)
                  : gdk_drag_context_get_selected_action (context);
 
           /* perform the requested action */

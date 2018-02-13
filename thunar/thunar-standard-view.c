@@ -2994,7 +2994,7 @@ thunar_standard_view_button_release_event (GtkWidget          *view,
   g_source_remove (standard_view->priv->drag_timer_id);
 
   /* fire up the context menu */
-  thunar_standard_view_context_menu (standard_view, 0, event->time);
+  thunar_standard_view_context_menu (standard_view);
 
   return TRUE;
 }
@@ -3407,7 +3407,7 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
             {
               /* ask the user what to do with the drop data */
               action = (gdk_drag_context_get_selected_action (context) == GDK_ACTION_ASK)
-                     ? thunar_dnd_ask (GTK_WIDGET (standard_view), file, standard_view->priv->drop_file_list, timestamp, actions)
+                     ? thunar_dnd_ask (GTK_WIDGET (standard_view), file, standard_view->priv->drop_file_list, actions)
                      : gdk_drag_context_get_selected_action (context);
 
               /* perform the requested action */
@@ -3959,7 +3959,7 @@ thunar_standard_view_drag_timer (gpointer user_data)
 
   /* fire up the context menu */
   GDK_THREADS_ENTER ();
-  thunar_standard_view_context_menu (standard_view, 3, gtk_get_current_event_time ());
+  thunar_standard_view_context_menu (standard_view);
   GDK_THREADS_LEAVE ();
 
   return FALSE;
@@ -4241,18 +4241,13 @@ thunar_standard_view_size_allocate (ThunarStandardView *standard_view,
 /**
  * thunar_standard_view_context_menu:
  * @standard_view : a #ThunarStandardView instance.
- * @button        : the mouse button which triggered the context menu or %0 if
- *                  the event wasn't triggered by a pointer device.
- * @timestamp     : the event time.
  *
  * Invoked by derived classes (and only by derived classes!) whenever the user
  * requests to open a context menu, e.g. by right-clicking on a file/folder or by
  * using one of the context menu shortcuts.
  **/
 void
-thunar_standard_view_context_menu (ThunarStandardView *standard_view,
-                                   guint               button,
-                                   guint32             timestamp)
+thunar_standard_view_context_menu (ThunarStandardView *standard_view)
 {
   GtkWidget *menu;
   GList     *selected_items;
@@ -4267,9 +4262,9 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view,
   /* grab an additional reference on the view */
   g_object_ref (G_OBJECT (standard_view));
 
-  /* run the menu on the view's screen (figuring out whether to use the file or the folder context menu) */
+  /* run the menu (figuring out whether to use the file or the folder context menu) */
   menu = gtk_ui_manager_get_widget (standard_view->ui_manager, (selected_items != NULL) ? "/file-context-menu" : "/folder-context-menu");
-  thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (standard_view), NULL, NULL, button, timestamp);
+  thunar_gtk_menu_run (GTK_MENU (menu));
 
   /* release the additional reference on the view */
   g_object_unref (G_OBJECT (standard_view));

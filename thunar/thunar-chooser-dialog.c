@@ -68,9 +68,7 @@ static gboolean    thunar_chooser_dialog_selection_func      (GtkTreeSelection  
                                                               GtkTreePath              *path,
                                                               gboolean                  path_currently_selected,
                                                               gpointer                  user_data);
-static gboolean    thunar_chooser_dialog_context_menu        (ThunarChooserDialog      *dialog,
-                                                              guint                     button,
-                                                              guint32                   time);
+static gboolean    thunar_chooser_dialog_context_menu        (ThunarChooserDialog      *dialog);
 static void        thunar_chooser_dialog_update_accept       (ThunarChooserDialog      *dialog);
 static void        thunar_chooser_dialog_update_header       (ThunarChooserDialog      *dialog);
 static void        thunar_chooser_dialog_action_remove       (ThunarChooserDialog      *dialog);
@@ -537,9 +535,7 @@ thunar_chooser_dialog_selection_func (GtkTreeSelection *selection,
 
 
 static gboolean
-thunar_chooser_dialog_context_menu (ThunarChooserDialog *dialog,
-                                    guint                button,
-                                    guint32              timestamp)
+thunar_chooser_dialog_context_menu (ThunarChooserDialog *dialog)
 {
   GtkTreeSelection *selection;
   GtkTreeModel     *model;
@@ -570,8 +566,8 @@ thunar_chooser_dialog_context_menu (ThunarChooserDialog *dialog,
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show (item);
 
-  /* run the menu on the dialog's screen (takes over the floating of menu) */
-  thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (dialog), NULL, NULL, button, timestamp);
+  /* run the menu (takes over the floating of menu) */
+  thunar_gtk_menu_run (GTK_MENU (menu));
 
   /* clean up */
   g_object_unref (app_info);
@@ -880,7 +876,7 @@ thunar_chooser_dialog_button_press_event (GtkWidget           *tree_view,
           gtk_tree_path_free (path);
 
           /* ...and popup the context menu */
-          return thunar_chooser_dialog_context_menu (dialog, event->button, event->time);
+          return thunar_chooser_dialog_context_menu (dialog);
         }
     }
 
@@ -961,7 +957,7 @@ thunar_chooser_dialog_popup_menu (GtkWidget           *tree_view,
   _thunar_return_val_if_fail (GTK_IS_TREE_VIEW (tree_view), FALSE);
 
   /* popup the context menu */
-  return thunar_chooser_dialog_context_menu (dialog, 0, gtk_get_current_event_time ());
+  return thunar_chooser_dialog_context_menu (dialog);
 }
 
 
