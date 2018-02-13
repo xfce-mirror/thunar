@@ -131,6 +131,23 @@ thunar_g_file_is_home (GFile *file)
 
 
 
+gboolean
+thunar_g_file_is_trash (GFile *file)
+{
+  char *uri;
+  gboolean is_trash = FALSE;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+
+  uri = g_file_get_uri (file);
+  is_trash = g_strcmp0 (uri, "trash:///") == 0;
+  g_free (uri);
+
+  return is_trash;
+}
+
+
+
 GKeyFile *
 thunar_g_file_query_key_file (GFile              *file,
                               GCancellable       *cancellable,
@@ -233,24 +250,15 @@ thunar_g_file_get_display_name (GFile *file)
   if (G_LIKELY (base_name != NULL))
     {
       if (strcmp (base_name, "/") == 0)
-        {
-          display_name = g_strdup (_("File System"));
-          g_free (base_name);
-        }
-      else if (strcmp (base_name, "Trash") == 0)
-        {
-          display_name = g_strdup (_("Trash"));
-          g_free (base_name);
-        }
+        display_name = g_strdup (_("File System"));
+      else if (thunar_g_file_is_trash (file))
+        display_name = g_strdup (_("Trash"));
       else if (g_utf8_validate (base_name, -1, NULL))
-       {
-         display_name = base_name;
-       }
-     else
-       {
-         display_name = g_uri_escape_string (base_name, G_URI_RESERVED_CHARS_ALLOWED_IN_PATH, TRUE);
-         g_free (base_name);
-       }
+        display_name = g_strdup (base_name);
+      else
+        display_name = g_uri_escape_string (base_name, G_URI_RESERVED_CHARS_ALLOWED_IN_PATH, TRUE);
+
+      g_free (base_name);
    }
  else
    {

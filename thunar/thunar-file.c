@@ -1067,21 +1067,21 @@ thunar_file_info_reload (ThunarFile   *file,
   /* determine the display name */
   if (file->display_name == NULL)
     {
-      if (G_LIKELY (file->info != NULL))
+      if (G_UNLIKELY (thunar_g_file_is_trash (file->gfile)))
+        file->display_name = g_strdup (_("Trash"));
+      else if (G_LIKELY (file->info != NULL))
         {
           display_name = g_file_info_get_display_name (file->info);
           if (G_LIKELY (display_name != NULL))
             {
               if (strcmp (display_name, "/") == 0)
                 file->display_name = g_strdup (_("File System"));
-              else if (strcmp (display_name, "Trash") == 0)
-                file->display_name = g_strdup (_("Trash"));
               else
                 file->display_name = g_strdup (display_name);
             }
         }
 
-      /* faccl back to a name for the gfile */
+      /* fall back to a name for the gfile */
       if (file->display_name == NULL)
         file->display_name = thunar_g_file_get_display_name (file->gfile);
     }
