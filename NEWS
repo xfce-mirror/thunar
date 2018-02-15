@@ -1,3 +1,34 @@
+1.7.1
+=====
+- Do not translate "Trash" files and folders (Bug #14211)
+- Regression: Context menu misplaced (bug #14216)
+- Crash in thunar_file_is_gfile_ancestor (bug #14202)
+- Add a systemd user unit for the two D-Bus session services (bug #12236)
+- Add setting to show file sizes in bytes (bug #11690) fix for statusbar
+- Add setting to show file sizes in bytes (bug #11690) fix for overwrite confirmation dialog
+- Add setting to show file size in bytes in detailed view (Bug #11690)
+- Show exact size in bytes in directory properties dialog (bug #12858)
+- Thunar's "open with" custom command doesn't escape the path (bug #10883)
+- Fix potential buffer overflow (bug #12444)
+- Thunar fails to scan for file templates if the Templates directory is a symbolic link ( bug #12032 )
+- missing codegen for "make dist" in thunar-tpa (bug #14190)
+- Ported thunar-tpa to gdbus (bug #14038)
+- fixed bug - no bool argument available for dbus signal "TrashChanged"
+- Bump gtk to 3.22
+- Prevent crash after updating thunar if old thunar deamon is still running
+- Only show additional "real_name" of user in detailed_view if it is different from "name" (bug #13648)
+- Change inappropriate word "Sentence" in upper-/lowercase renamer (bug #9483)
+- Skip functions not meant to be introspectable (Bug #14045)
+- Fix for failing GObject introspection build. Followup of (Bug #14070)
+- thunarx-provider-module.h missing inside tar.bz2 file created by "make dist" (Bug #14070)
+- Fix crash on unavailable file move copy (Bug #14056)
+- Provide missing g-i annotations (Bug #14045)
+- Use e.g. instead of i.e. (Bug #14035)
+- Translation updates:Arabic, Bulgarian, Catalan, Chinese (China), Chinese (Taiwan), Croatian, Czech,
+  Danish, Dutch, English (United Kingdom), Esperanto, Finnish, French, Galician, German, Hebrew, Japanese,
+  Kazakh, Korean, Lithuanian, Malay, Polish, Portuguese, Portuguese (Brazil), Romanian, Russian, Serbian,
+  Slovak, Spanish, Thai, Turkish, Ukrainian
+
 1.7.0
 =====
 - GTK3 Port
@@ -17,6 +48,15 @@
   Romanian, Russian, Serbian, Slovak, Spanish, Swedish, Telugu, Thai, Turkish,
   Ukrainian, Urdu, Urdu (Pakistan), Uyghur, Vietnamese
 
+1.6.14
+======
+- Do not translate "Trash" files and folders (Bug #14211)
+- Crash in thunar_file_is_gfile_ancestor (bug #14202)
+- Fix potential buffer overflow (Bug #12444)
+- Fix crash on unavailable file move copy (Bug #14056)
+- Translation updates: Arabic, Belarusian, Catalan, English (United Kingdom),
+  Finnish, Galician, Malay, Romanian, Serbian, Slovak, Thai
+  
 1.6.13
 ======
 - Handle cases when file watch is not supported (Bug #13881)
