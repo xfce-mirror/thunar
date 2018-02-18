@@ -4257,7 +4257,6 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view)
   /* merge the custom menu actions for the selected items */
   selected_items = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
   thunar_standard_view_merge_custom_actions (standard_view, selected_items);
-  g_list_free_full (selected_items, (GDestroyNotify) gtk_tree_path_free);
 
   /* grab an additional reference on the view */
   g_object_ref (G_OBJECT (standard_view));
@@ -4265,6 +4264,8 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view)
   /* run the menu (figuring out whether to use the file or the folder context menu) */
   menu = gtk_ui_manager_get_widget (standard_view->ui_manager, (selected_items != NULL) ? "/file-context-menu" : "/folder-context-menu");
   thunar_gtk_menu_run (GTK_MENU (menu));
+
+  g_list_free_full (selected_items, (GDestroyNotify) gtk_tree_path_free);
 
   /* release the additional reference on the view */
   g_object_unref (G_OBJECT (standard_view));
