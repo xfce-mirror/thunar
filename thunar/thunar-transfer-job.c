@@ -856,6 +856,7 @@ thunar_transfer_job_execute (ExoJob  *job,
   ThunarJobResponse     response;
   ThunarTransferJob    *transfer_job = THUNAR_TRANSFER_JOB (job);
   GFileInfo            *info;
+  GFileCopyFlags        flags;
   gboolean              parent_exists;
   GError               *err = NULL;
   GList                *new_files_list = NULL;
@@ -900,10 +901,15 @@ thunar_transfer_job_execute (ExoJob  *job,
       if (G_UNLIKELY (info == NULL))
         break;
 
+      flags = G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_NO_FALLBACK_FOR_MOVE | G_FILE_COPY_ALL_METADATA;
+
       /* check if we are moving a file out of the trash */
       if (transfer_job->type == THUNAR_TRANSFER_JOB_MOVE
           && thunar_g_file_is_trashed (node->source_file))
         {
+          /* Using this flag when moving filled folders out of trash leaves a copy in trash and pops up a warning */
+          flags &= ~G_FILE_COPY_NO_FALLBACK_FOR_MOVE;
+
           /* update progress information */
           exo_job_info_message (job, _("Trying to restore \"%s\""),
                                 g_file_info_get_display_name (info));
@@ -982,8 +988,7 @@ thunar_transfer_job_execute (ExoJob  *job,
                                 g_file_info_get_display_name (info));
 
           if (g_file_move (node->source_file, tp->data,
-                           G_FILE_COPY_NOFOLLOW_SYMLINKS
-                           | G_FILE_COPY_NO_FALLBACK_FOR_MOVE,
+                           flags,
                            exo_job_get_cancellable (job),
                            NULL, NULL, &err))
             {
