@@ -3344,50 +3344,51 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
                   if (G_LIKELY (file != NULL))
                     {
                       /* determine the absolute path to the target directory */
-                      working_directory = thunar_file_dup_uri (file);
-
-                      /* prepare the basic part of the command */
-                      argv[n++] = "exo-desktop-item-edit";
-                      argv[n++] = "--type=Link";
-                      argv[n++] = "--url";
-                      argv[n++] = bits[0];
-                      argv[n++] = "--name";
-                      argv[n++] = bits[1];
-
-                      /* determine the toplevel window */
-                      toplevel = gtk_widget_get_toplevel (view);
-                      if (toplevel != NULL && gtk_widget_is_toplevel (toplevel))
+                      working_directory = g_file_get_path (thunar_file_get_file (file));
+                      if (G_LIKELY (working_directory != NULL))
                         {
+                          /* prepare the basic part of the command */
+                          argv[n++] = "exo-desktop-item-edit";
+                          argv[n++] = "--type=Link";
+                          argv[n++] = "--url";
+                          argv[n++] = bits[0];
+                          argv[n++] = "--name";
+                          argv[n++] = bits[1];
+
+                          /* determine the toplevel window */
+                          toplevel = gtk_widget_get_toplevel (view);
+                          if (toplevel != NULL && gtk_widget_is_toplevel (toplevel))
+                            {
 #if defined(GDK_WINDOWING_X11)
-                          /* on X11, we can supply the parent window id here */
-                          argv[n++] = "--xid";
-                          argv[n++] = g_newa (gchar, 32);
-                          g_snprintf (argv[n - 1], 32, "%ld", (glong) GDK_WINDOW_XID (toplevel->window));
+                              /* on X11, we can supply the parent window id here */
+                              argv[n++] = "--xid";
+                              argv[n++] = g_newa (gchar, 32);
+                              g_snprintf (argv[n - 1], 32, "%ld", (glong) GDK_WINDOW_XID (toplevel->window));
 #endif
-                        }
+                            }
 
-                      /* terminate the parameter list */
-                      argv[n++] = "--create-new";
-                      argv[n++] = working_directory;
-                      argv[n++] = NULL;
+                          /* terminate the parameter list */
+                          argv[n++] = "--create-new";
+                          argv[n++] = working_directory;
+                          argv[n++] = NULL;
 
-                      /* try to run exo-desktop-item-edit */
-                      succeed = gdk_spawn_on_screen (gtk_widget_get_screen (view), working_directory, argv, NULL,
-                                                     G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH,
-                                                     NULL, NULL, &pid, &error);
-                      if (G_UNLIKELY (!succeed))
-                        {
-                          /* display an error dialog to the user */
-                          thunar_dialogs_show_error (standard_view, error, _("Failed to create a link for the URL \"%s\""), bits[0]);
-                          g_free (working_directory);
-                          g_error_free (error);
+                          /* try to run exo-desktop-item-edit */
+                          succeed = gdk_spawn_on_screen (gtk_widget_get_screen (view), working_directory, argv, NULL,
+                                                         G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH,
+                                                         NULL, NULL, &pid, &error);
+                          if (G_UNLIKELY (!succeed))
+                            {
+                              /* display an error dialog to the user */
+                              thunar_dialogs_show_error (standard_view, error, _("Failed to create a link for the URL \"%s\""), bits[0]);
+                              g_free (working_directory);
+                              g_error_free (error);
+                            }
+                          else
+                            {
+                              /* reload the directory when the command terminates */
+                              g_child_watch_add_full (G_PRIORITY_LOW, pid, tsv_reload_directory, working_directory, g_free);
+                            }
                         }
-                      else
-                        {
-                          /* reload the directory when the command terminates */
-                          g_child_watch_add_full (G_PRIORITY_LOW, pid, tsv_reload_directory, working_directory, g_free);
-                        }
-
                       /* cleanup */
                       g_object_unref (G_OBJECT (file));
                     }
