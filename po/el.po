@@ -9,14 +9,14 @@
 # Stathis Kamperis <ekamperi@auth.gr>, 2006
 # Stavros Giannouris <stavrosg@hellug.gr>, 2007-2009
 # Stephanos Papanikolopoulos <spapanik21@gmail.com>, 2018
-# Πέτρος Σαμαράς <psamaras1@gmail.com>, 2017
+# Πέτρος Σαμαράς <psamaras1@gmail.com>, 2017-2018
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-02-09 12:30+0100\n"
-"PO-Revision-Date: 2018-02-23 17:01+0000\n"
-"Last-Translator: Stephanos Papanikolopoulos <spapanik21@gmail.com>\n"
+"PO-Revision-Date: 2018-02-27 00:22+0000\n"
+"Last-Translator: Πέτρος Σαμαράς <psamaras1@gmail.com>\n"
 "Language-Team: Greek (http://www.transifex.com/xfce/thunar/language/el/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -32,7 +32,7 @@ msgid ""
 "Before accepting please make sure there are no pending operations (e.g. file copying) as terminating them may leave your files corrupted.\n"
 "\n"
 "Please restart thunar afterwards."
-msgstr ""
+msgstr "Ο Thunar δεν μπόρεσε να ξεκινήσει γιατί μια παλιότερη διεργασία του τρέχει ακόμη.\nΘα θέλατε να τερματίσετε την παλιά διεργασία του thunar τώρα;\n\nΠροτού δεχτείτε, παρακαλούμε να σιγουρευτείτε ότι δεν υπάρχουν κάποιες εκκρεμείς λειτουργίες (π.χ. αντιγραφή αρχείων) γιατί η διακοπή της λειτουργίας τους μπορεί να αφήσει τα αρχεία σας κατεστραμμένα.\n\nPlease restart thunar afterwards."
 
 #. setup application name
 #: ../thunar/main.c:126
@@ -1242,8 +1242,8 @@ msgstr[1] "Αποστολή επιλεγμένων αρχείων στο \"%s\""
 #, c-format
 msgid "%d item: %s, Free space: %s"
 msgid_plural "%d items: %s, Free space: %s"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d αντικείμενο: %s, Ελεύθερος χώρος: %s"
+msgstr[1] "%d αντικείμενα: %s, Ελεύθερος χώρος: %s"
 
 #. just the standard text
 #: ../thunar/thunar-list-model.c:2335
@@ -1263,35 +1263,35 @@ msgstr[1] "%d αντικείμενα"
 #: ../thunar/thunar-list-model.c:2360
 #, c-format
 msgid "\"%s\": broken link"
-msgstr ""
+msgstr "\"%s\": σπασμένος δεσμός"
 
 #: ../thunar/thunar-list-model.c:2365
 #, c-format
 msgid "\"%s\": %s link to %s"
-msgstr ""
+msgstr "\"%s\": %s δεσμός προς το %s"
 
 #: ../thunar/thunar-list-model.c:2371
 #, c-format
 msgid "\"%s\": shortcut"
-msgstr ""
+msgstr "\"%s\": συντόμευση"
 
 #: ../thunar/thunar-list-model.c:2375
 #, c-format
 msgid "\"%s\": mountable"
-msgstr ""
+msgstr "\"%s\": προσαρτήσιμο"
 
 #. I18N, first %s is the display name of the file, 2nd the file size, 3rd the
 #. content type
 #: ../thunar/thunar-list-model.c:2382
 #, c-format
 msgid "\"%s\": %s %s"
-msgstr ""
+msgstr "\"%s\": %s %s"
 
 #. I18N, first %s is the display name of the file, second the content type
 #: ../thunar/thunar-list-model.c:2391
 #, c-format
 msgid "\"%s\": %s"
-msgstr ""
+msgstr "\"%s\": %s"
 
 #. TRANSLATORS: Try to come up with a short translation of "Original Path"
 #. (which is the path
@@ -1313,16 +1313,16 @@ msgstr "Μέγεθος εικόνας:"
 #, c-format
 msgid "%d other item selected: %s"
 msgid_plural "%d other items selected: %s"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d ακόμη επιλεγμένο αντικείμενο %s"
+msgstr[1] "%d ακόμη επιλεγμένα αντικείμενα %s"
 
 #. only non-folders are selected
 #: ../thunar/thunar-list-model.c:2470
 #, c-format
 msgid "%d item selected: %s"
 msgid_plural "%d items selected: %s"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d επιλεγμένο αντικείμενο: %s"
+msgstr[1] "%d επιλεγμένα αντικείμενα %s"
 
 #: ../thunar/thunar-list-model.c:2484
 #, c-format
@@ -1845,7 +1845,7 @@ msgstr "Ενεργοποίηση διαχείρισης _τόμων"
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives\n"
 "and media (e.g., how cameras should be handled)."
-msgstr ""
+msgstr "<a href=\"volman-config:\">Ρύθμιση</a> της διαχείρισης αφαιρούμενων δίσκων\n και μέσων (π.χ. οι ψηφιακές φωτ.μηχανές)."
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
@@ -3113,7 +3113,7 @@ msgstr "Camelcase"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:96
 msgid "First character uppercase"
-msgstr ""
+msgstr "Πρώτος χαρακτήρας με κεφαλαίο"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:102
 msgid "Insert"
