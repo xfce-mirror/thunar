@@ -607,11 +607,12 @@ thunar_thumbnailer_queue_async_reply (DBusGProxy *proxy,
                                       GError     *error,
                                       gpointer    user_data)
 {
+  _thunar_return_if_fail (DBUS_IS_G_PROXY (proxy));
+  _thunar_return_if_fail (user_data != NULL);
+
   ThunarThumbnailerJob *job = user_data;
   ThunarThumbnailer    *thumbnailer = THUNAR_THUMBNAILER (job->thumbnailer);
 
-  _thunar_return_if_fail (DBUS_IS_G_PROXY (proxy));
-  _thunar_return_if_fail (job != NULL);
   _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
 
   _thumbnailer_lock (thumbnailer);
