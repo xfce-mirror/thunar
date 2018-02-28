@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-04 23:34+0200\n"
+"POT-Creation-Date: 2017-10-10 06:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Xfce Bot <transifex@xfce.org>, 2017\n"
+"Last-Translator: iman salmani <i.salmani13802000@gmail.com>, 2018\n"
 "Language-Team: Persian (Iran) (https://www.transifex.com/xfce/teams/16840/fa_IR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -808,48 +808,53 @@ msgstr "نام پرونده"
 msgid "File System"
 msgstr "سیستم پرونده‌ها"
 
-#: ../thunar/thunar-file.c:1513
+#: ../thunar/thunar-file.c:1075 ../thunar/thunar-gio-extensions.c:242
+#: ../thunar/thunar-shortcuts-model.c:1039
+msgid "Trash"
+msgstr ""
+
+#: ../thunar/thunar-file.c:1515
 #, c-format
 msgid "The root folder has no parent"
 msgstr "پوشه‌ی ریشه والدی ندارد"
 
-#: ../thunar/thunar-file.c:1601 ../thunar/thunar-file.c:1897
+#: ../thunar/thunar-file.c:1603 ../thunar/thunar-file.c:1899
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "تجزیه‌ی پرونده‌ی میز کار با شکست روبرو شد: %s"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1613
+#: ../thunar/thunar-file.c:1615
 msgid "Untrusted application launcher"
 msgstr ""
 
-#: ../thunar/thunar-file.c:1638
+#: ../thunar/thunar-file.c:1640
 #, c-format
 msgid "No Exec field specified"
 msgstr ""
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1647
+#: ../thunar/thunar-file.c:1649
 msgid "Untrusted link launcher"
 msgstr ""
 
-#: ../thunar/thunar-file.c:1663
+#: ../thunar/thunar-file.c:1665
 #, c-format
 msgid "No URL field specified"
 msgstr ""
 
-#: ../thunar/thunar-file.c:1668
+#: ../thunar/thunar-file.c:1670
 msgid "Invalid desktop file"
 msgstr "پرونده رومیزی نادرست"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: ../thunar/thunar-gio-extensions.c:322
+#: ../thunar/thunar-gio-extensions.c:327
 #, c-format
 msgid "%s on %s"
 msgstr "%s به روی %s"
 
 #. free disk space string
-#: ../thunar/thunar-gio-extensions.c:433
+#: ../thunar/thunar-gio-extensions.c:438
 #, c-format
 msgid "%s of %s free (%d%% used)"
 msgstr "%s از %s آزاد است (%d%% استفاده شده)"
@@ -1508,7 +1513,7 @@ msgstr "خواندنی و نوشتنی"
 
 #: ../thunar/thunar-permissions-chooser.c:999
 msgid "Varying (no change)"
-msgstr ""
+msgstr "تغییر (بدونه تغییر)"
 
 #: ../thunar/thunar-permissions-chooser.c:1131
 msgid "Correct folder permissions automatically?"
@@ -1582,7 +1587,7 @@ msgstr "مرتب کردن پوشه‌ها قبل از پرونده‌ها"
 #: ../thunar/thunar-preferences-dialog.c:299
 msgid ""
 "Select this option to list folders before files when you sort a folder."
-msgstr ""
+msgstr "این گزینه را انتخاب کنید تا پوشه‌ها قبل از پرونده‌ها فهرست شوند."
 
 #: ../thunar/thunar-preferences-dialog.c:303
 msgid "Show file size in binary format"
@@ -2244,7 +2249,7 @@ msgstr ""
 
 #: ../thunar/thunar-standard-view.c:416
 msgid "Du_plicate"
-msgstr ""
+msgstr "تکثیر"
 
 #: ../thunar/thunar-standard-view.c:417 ../thunar/thunar-standard-view.c:4464
 msgid "Ma_ke Link"
@@ -2258,7 +2263,7 @@ msgstr "تغییر نام..."
 
 #: ../thunar/thunar-standard-view.c:419
 msgid "_Restore"
-msgstr ""
+msgstr "برگرداندن"
 
 #. add the "Create Document" sub menu action
 #: ../thunar/thunar-standard-view.c:684
@@ -2845,7 +2850,7 @@ msgstr ""
 
 #: ../thunarx/thunarx-renamer.c:130
 msgid "Help URL"
-msgstr ""
+msgstr "نشانی اینترنتی برای کمک گرفتن"
 
 #: ../thunarx/thunarx-renamer.c:131
 msgid "The URL to the documentation of the renamer"
@@ -2943,11 +2948,11 @@ msgstr ""
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:48
 msgid "Camera Brand:"
-msgstr ""
+msgstr "مارک دوربین:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:49
 msgid "Camera Model:"
-msgstr ""
+msgstr "مدل دوربین:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:50
 msgid "Exposure Time:"
@@ -3556,7 +3561,7 @@ msgstr "مدیر پرونده‌های تونار"
 
 #: ../Thunar.desktop.in.in.h:2
 msgid "Browse the filesystem with the file manager"
-msgstr ""
+msgstr "گشتن در سیستم پرونده ها با مدیر پرونده"
 
 #: ../Thunar-folder-handler.desktop.in.in.h:1
 msgid "Open Folder with Thunar"
@@ -3564,7 +3569,7 @@ msgstr "پوشه را با تونار باز کن"
 
 #: ../Thunar-folder-handler.desktop.in.in.h:2
 msgid "Open the specified folders in Thunar"
-msgstr ""
+msgstr "باز کردن پوشه‌های مشخص‌شده در تونار"
 
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open Folder"
@@ -3572,7 +3577,7 @@ msgstr "بازکردن پوشه"
 
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "Configure the Thunar file manager"
-msgstr ""
+msgstr "پیکربندی مدیر پرونده تونار"
 
 #: ../thunar.appdata.xml.in.h:1
 msgid ""
@@ -3587,7 +3592,7 @@ msgstr ""
 #. to. This isn't a good idea, but is common on single user systems.
 #: ../org.xfce.thunar.policy.in.in.h:6
 msgid "Run Thunar as root"
-msgstr ""
+msgstr "اجرای تونار درحالت ریشه"
 
 #: ../org.xfce.thunar.policy.in.in.h:7
 msgid "Authentication is required to run Thunar as root."
