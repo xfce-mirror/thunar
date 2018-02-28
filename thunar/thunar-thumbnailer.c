@@ -254,13 +254,14 @@ thunar_thumbnailer_queue_async_reply (GObject      *proxy,
                                       GAsyncResult *res,
                                       gpointer      user_data)
 {
+  _thunar_return_if_fail (THUNAR_IS_THUMBNAILER_DBUS (proxy));
+  _thunar_return_if_fail (user_data != NULL);
+
   ThunarThumbnailerJob *job = user_data;
   ThunarThumbnailer    *thumbnailer = THUNAR_THUMBNAILER (job->thumbnailer);
   GError               *error = NULL;
   guint                 handle;
 
-  _thunar_return_if_fail (THUNAR_IS_THUMBNAILER_DBUS (proxy));
-  _thunar_return_if_fail (job != NULL);
   _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
 
   _thumbnailer_lock (thumbnailer);
