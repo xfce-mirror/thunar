@@ -780,7 +780,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
 
     case THUNAR_COLUMN_FILE_NAME:
       g_value_init (value, G_TYPE_STRING);
-      g_value_set_static_string (value, thunar_file_get_basename (file));
+      g_value_set_static_string (value, thunar_file_get_display_name (file));
       break;
 
     default:

@@ -1209,6 +1209,11 @@ thunar_path_entry_set_current_file (ThunarPathEntry *path_entry,
           g_free (text);
           text = tmp;
         }
+
+      // convert filename into valid UTF-8 string for display
+      tmp = text;
+      text = g_filename_display_name(tmp);
+      g_free (tmp);
     }
 
   if (is_uri)
