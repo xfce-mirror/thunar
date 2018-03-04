@@ -4,6 +4,7 @@
 # 
 # Translators:
 # Aputsiak Niels Janussen (Skjalden) <aj@isit.gl>, 2013-2016
+# Linuxbruger <y.z@live.dk>, 2018
 # Per Kongstad <p_kongstad@op.pl>, 2008-2009,2012,2015
 # scootergrisen, 2016-2018
 msgid ""
@@ -11,8 +12,8 @@ msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-02-09 12:30+0100\n"
-"PO-Revision-Date: 2018-02-12 22:11+0000\n"
-"Last-Translator: scootergrisen\n"
+"PO-Revision-Date: 2018-03-04 15:34+0000\n"
+"Last-Translator: Linuxbruger <y.z@live.dk>\n"
 "Language-Team: Danish (http://www.transifex.com/xfce/thunar/language/da/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -28,7 +29,7 @@ msgid ""
 "Before accepting please make sure there are no pending operations (e.g. file copying) as terminating them may leave your files corrupted.\n"
 "\n"
 "Please restart thunar afterwards."
-msgstr "Thunar kunne ikke startes da en ældre instans af thunar stadig kører.\nVil du afslutte den gamle thunar-instans nu?\n\nSørg venligst for at der ikke er nogen afventende handlinger inden du accepterer (f.eks. filkopiering), da det vil kunne ødelægge dine filer.\n\nGenstart venligst thunar bagefter."
+msgstr "Thunar kunne ikke startes fordi en ældre instans af thunar stadig kører.\nVil du afslutte den gamle thunar-instans nu?\n\nSørg venligst for at der ikke er nogen afventende handlinger inden du accepterer (f.eks. filkopiering), da det vil kunne ødelægge dine filer.\n\nGenstart venligst thunar bagefter."
 
 #. setup application name
 #: ../thunar/main.c:126
@@ -37,11 +38,11 @@ msgstr "Thunar"
 
 #: ../thunar/thunar-abstract-icon-view.c:117
 msgid "Arran_ge Items"
-msgstr "So_rtér elementer"
+msgstr "Sor_tér elementer"
 
 #: ../thunar/thunar-abstract-icon-view.c:122
 msgid "Sort By _Name"
-msgstr "Sortér efter _navn"
+msgstr "Sortér Efter _navn"
 
 #: ../thunar/thunar-abstract-icon-view.c:122
 msgid "Keep items sorted by their name"
@@ -49,27 +50,27 @@ msgstr "Hold elementer sorteret efter navn"
 
 #: ../thunar/thunar-abstract-icon-view.c:123
 msgid "Sort By _Size"
-msgstr "Sortér efter _størrelse"
+msgstr "Sortér Efter _Størrelse"
 
 #: ../thunar/thunar-abstract-icon-view.c:123
 msgid "Keep items sorted by their size"
-msgstr "Hold elementer sorteret efter størrelse"
+msgstr "Hold elementer sorteret efter deres størrelser"
 
 #: ../thunar/thunar-abstract-icon-view.c:124
 msgid "Sort By _Type"
-msgstr "Sortér efter _type"
+msgstr "Sortér Efter _Type"
 
 #: ../thunar/thunar-abstract-icon-view.c:124
 msgid "Keep items sorted by their type"
-msgstr "Hold elementer sorteret efter type"
+msgstr "Hold elementer sorteret efter deres type"
 
 #: ../thunar/thunar-abstract-icon-view.c:125
 msgid "Sort By Modification _Date"
-msgstr "Sortér efter ændrings_dato"
+msgstr "Sortér efter Modificerings_dato"
 
 #: ../thunar/thunar-abstract-icon-view.c:125
 msgid "Keep items sorted by their modification date"
-msgstr "Hold elementer sorteret efter ændringsdato"
+msgstr "Hold elementer sorteret efter deres modifikations-dato"
 
 #: ../thunar/thunar-abstract-icon-view.c:130
 msgid "_Ascending"
@@ -89,38 +90,38 @@ msgstr "Sortér elementer i faldende orden"
 
 #: ../thunar/thunar-application.c:79
 msgid "Open the bulk rename dialog"
-msgstr "Åbn dialogen til masseomdøbning"
+msgstr "Åbn masseomdøbnings-dialogen"
 
 #: ../thunar/thunar-application.c:80
 msgid "Run in daemon mode"
-msgstr "Kør i dæmon-tilstand"
+msgstr "Kør i daemon-tilstand"
 
 #: ../thunar/thunar-application.c:82
 msgid "Quit a running Thunar instance"
-msgstr "Afslut en igangværende Thunar-session"
+msgstr "Afslut en kørende Thunar-instans"
 
 #: ../thunar/thunar-application.c:83
 msgid "Print version information and exit"
-msgstr "Udskriv versionsinformation og afslut"
+msgstr "Udskriv versions-information og afslut"
 
 #: ../thunar/thunar-application.c:291
 #, c-format
 msgid "Acquired the session message bus '%s'\n"
-msgstr "Erhvervet sessionens meddelelsesbus '%s'\n"
+msgstr "Erhvervet sessionens meddelelses-bus '%s'\n"
 
 #: ../thunar/thunar-application.c:301
 #, c-format
 msgid "Acquired the name '%s' on the session message bus\n"
-msgstr "Erhvervet navnet '%s' på sessionens meddelelsesbus\n"
+msgstr "Erhvervet navnet '%s' på sessionens meddelelses-bus\n"
 
 #: ../thunar/thunar-application.c:312
 #, c-format
 msgid "Name '%s' lost on the message dbus, exiting."
-msgstr "Navnet '%s' blev tabt på meddelelses-dbus'en, afslutter."
+msgstr "Navnet '%s' tabt på meddelelses-dbus, afslutter."
 
 #: ../thunar/thunar-application.c:469
 msgid "The Thunar development team. All rights reserved."
-msgstr "Thunar's udviklingshold. Alle rettigheder forbeholdes."
+msgstr "Thunars udviklingshold. Alle rettigheder forbeholdes."
 
 #: ../thunar/thunar-application.c:470
 msgid "Written by Benedikt Meurer <benny@xfce.org>."
@@ -129,12 +130,12 @@ msgstr "Skrevet af Benedikt Meurer <benny@xfce.org>."
 #: ../thunar/thunar-application.c:471
 #, c-format
 msgid "Please report bugs to <%s>."
-msgstr "Rapportér venligst fejl til <%s>."
+msgstr "Venligst rapportér fejl til <%s>."
 
 #. display an error message to the user
 #: ../thunar/thunar-application.c:739
 msgid "Failed to launch operation"
-msgstr "Kunne ikke starte handling"
+msgstr "Fejlede med at køre operationen"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1442 ../thunar/thunar-application.c:1574
@@ -144,7 +145,7 @@ msgstr "Kunne ikke starte handling"
 #: ../thunar/thunar-shortcuts-view.c:1681 ../thunar/thunar-window.c:2277
 #, c-format
 msgid "Failed to open \"%s\""
-msgstr "Kunne ikke åbne \"%s\""
+msgstr "Fejlede med at åbne \"%s\""
 
 #: ../thunar/thunar-application.c:1578
 #, c-format
