@@ -315,7 +315,7 @@ thunar_uca_provider_activated (ThunarUcaProvider *uca_provider,
   gchar               *working_directory = NULL;
   gchar               *filename;
   gchar               *label;
-  gchar               *uri;
+  GFile               *location;
   gint                 argc;
   gchar               *icon_name = NULL;
   gboolean             startup_notify;
@@ -353,8 +353,8 @@ thunar_uca_provider_activated (ThunarUcaProvider *uca_provider,
       if (G_LIKELY (files != NULL))
         {
           /* determine the filename of the first selected file */
-          uri = thunarx_file_info_get_uri (files->data);
-          filename = g_filename_from_uri (uri, NULL, NULL);
+          location = thunarx_file_info_get_location (files->data);
+          filename = g_file_get_path (location);
           if (G_LIKELY (filename != NULL))
             {
               /* if this is a folder menu item, we just use the filename as working directory */
@@ -369,7 +369,7 @@ thunar_uca_provider_activated (ThunarUcaProvider *uca_provider,
                 }
             }
           g_free (filename);
-          g_free (uri);
+          g_object_unref (location);
         }
 
       /* build closre for child watch */

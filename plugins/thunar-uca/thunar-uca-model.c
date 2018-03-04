@@ -1087,6 +1087,7 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
   GList              *lp;
   gint                n_files;
   gint                i, m, n;
+  gchar              *path_test;
 
   g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), NULL);
   g_return_val_if_fail (file_infos != NULL, NULL);
@@ -1102,13 +1103,15 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
     {
       location = thunarx_file_info_get_location (lp->data);
 
-      if (!g_file_has_uri_scheme (location, "file"))
+      path_test = g_file_get_path (location);
+      if (path_test == NULL)
         {
           /* cannot handle non-local files */
           g_object_unref (location);
           g_free (files);
           return NULL;
         }
+      g_free (path_test);
 
       g_object_unref (location);
 
@@ -1504,6 +1507,7 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
   gchar              *quoted;
   gchar              *path;
   gchar              *uri;
+  GFile              *location;
 
   g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), FALSE);
   g_return_val_if_fail (iter->stamp == uca_model->stamp, FALSE);
@@ -1527,9 +1531,9 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
             case 'f':
               if (G_LIKELY (file_infos != NULL))
                 {
-                  uri = thunarx_file_info_get_uri (file_infos->data);
-                  path = g_filename_from_uri (uri, NULL, error);
-                  g_free (uri);
+                  location = thunarx_file_info_get_location (file_infos->data);
+                  path = g_file_get_path (location);
+                  g_object_unref (location);
 
                   if (G_UNLIKELY (path == NULL))
                     goto error;
@@ -1547,9 +1551,9 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
                   if (G_LIKELY (lp != file_infos))
                     g_string_append_c (command_line, ' ');
 
-                  uri = thunarx_file_info_get_uri (lp->data);
-                  path = g_filename_from_uri (uri, NULL, error);
-                  g_free (uri);
+                  location = thunarx_file_info_get_location (lp->data);
+                  path = g_file_get_path (location);
+                  g_object_unref (location);
 
                   if (G_UNLIKELY (path == NULL))
                     goto error;
@@ -1589,9 +1593,9 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
             case 'd':
               if (G_LIKELY (file_infos != NULL))
                 {
-                  uri = thunarx_file_info_get_uri (file_infos->data);
-                  path = g_filename_from_uri (uri, NULL, error);
-                  g_free (uri);
+                  location = thunarx_file_info_get_location (file_infos->data);
+                  path = g_file_get_path (location);
+                  g_object_unref (location);
 
                   if (G_UNLIKELY (path == NULL))
                     goto error;
@@ -1611,9 +1615,9 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
                   if (G_LIKELY (lp != file_infos))
                     g_string_append_c (command_line, ' ');
 
-                  uri = thunarx_file_info_get_uri (lp->data);
-                  path = g_filename_from_uri (uri, NULL, error);
-                  g_free (uri);
+                  location = thunarx_file_info_get_location (lp->data);
+                  path = g_file_get_path (location);
+                  g_object_unref (location);
 
                   if (G_UNLIKELY (path == NULL))
                     goto error;
