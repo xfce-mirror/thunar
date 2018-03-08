@@ -6,15 +6,15 @@
 # Ammuu5, 2017
 # Jiri Grönroos <jiri.gronroos@iki.fi>, 2013,2018
 # Juhani Numminen <juhaninumminen0@gmail.com>, 2014
-# Pasi Lallinaho <pasi@shimmerproject.org>, 2014-2015
+# Pasi Lallinaho <pasi@shimmerproject.org>, 2014-2015,2018
 # Tero Mononen <tero@mononen.eu>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-02-09 12:30+0100\n"
-"PO-Revision-Date: 2018-02-19 12:25+0000\n"
-"Last-Translator: Jiri Grönroos <jiri.gronroos@iki.fi>\n"
+"PO-Revision-Date: 2018-03-08 09:48+0000\n"
+"Last-Translator: Pasi Lallinaho <pasi@shimmerproject.org>\n"
 "Language-Team: Finnish (http://www.transifex.com/xfce/thunar/language/fi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -30,7 +30,7 @@ msgid ""
 "Before accepting please make sure there are no pending operations (e.g. file copying) as terminating them may leave your files corrupted.\n"
 "\n"
 "Please restart thunar afterwards."
-msgstr ""
+msgstr "Thunaria ei voitu käynnistää koska vanhempi instanssi on vielä käynnissä.\nHaluatko lopettaa vanhan instanssin nyt?\n\nEnnen hyväksymistä varmista ettei käynnissä ole toteutettavia operaatioita (esim. tiedostonsiirtoja) sillä lopettaminen voi jättää tiedostosi korruptoituneiksi.\n\nOle hyvä ja käynnistä Thunar myöhemmin uudelleen."
 
 #. setup application name
 #: ../thunar/main.c:126
@@ -108,17 +108,17 @@ msgstr "Tulosta versiotiedot ja poistu"
 #: ../thunar/thunar-application.c:291
 #, c-format
 msgid "Acquired the session message bus '%s'\n"
-msgstr ""
+msgstr "Saatiin istunnon viestintärajapinta '%s'\n"
 
 #: ../thunar/thunar-application.c:301
 #, c-format
 msgid "Acquired the name '%s' on the session message bus\n"
-msgstr ""
+msgstr "Saatiin nimi '%s' istunnon viestintärajapinnalta\n"
 
 #: ../thunar/thunar-application.c:312
 #, c-format
 msgid "Name '%s' lost on the message dbus, exiting."
-msgstr ""
+msgstr "Nimi '%s' menetettiin istunnon viestintärajapinnalla, poistutaan."
 
 #: ../thunar/thunar-application.c:469
 msgid "The Thunar development team. All rights reserved."
@@ -1266,30 +1266,30 @@ msgstr "\"%s\": rikkinäinen linkki"
 #: ../thunar/thunar-list-model.c:2365
 #, c-format
 msgid "\"%s\": %s link to %s"
-msgstr ""
+msgstr "\"%s\": %s linkki kohteeseen %s"
 
 #: ../thunar/thunar-list-model.c:2371
 #, c-format
 msgid "\"%s\": shortcut"
-msgstr ""
+msgstr "\"%s\": pikakuvake"
 
 #: ../thunar/thunar-list-model.c:2375
 #, c-format
 msgid "\"%s\": mountable"
-msgstr ""
+msgstr "\"1%s\": liitettävissä"
 
 #. I18N, first %s is the display name of the file, 2nd the file size, 3rd the
 #. content type
 #: ../thunar/thunar-list-model.c:2382
 #, c-format
 msgid "\"%s\": %s %s"
-msgstr ""
+msgstr "\"%s\": %s %s"
 
 #. I18N, first %s is the display name of the file, second the content type
 #: ../thunar/thunar-list-model.c:2391
 #, c-format
 msgid "\"%s\": %s"
-msgstr ""
+msgstr "\"%s\": %s"
 
 #. TRANSLATORS: Try to come up with a short translation of "Original Path"
 #. (which is the path
@@ -3111,7 +3111,7 @@ msgstr "SanatIsollaYhteen"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:96
 msgid "First character uppercase"
-msgstr ""
+msgstr "Ensimmäinen kirjain isolla"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:102
 msgid "Insert"
@@ -3581,7 +3581,7 @@ msgid ""
 "action to appear in the context menu of a file or folder, at least one of "
 "these patterns must match the name of the file or folder. Additionally, you "
 "can specify that the action should only appear for certain kinds of files."
-msgstr ""
+msgstr "Tämä sivu listaa edellytykset, jolloin toiminto näkyy tiedostonhallinnan kontekstivalikoissa. Tiedostosuodattimet määritetään yksinkertaisina tiedostosuodattimina puolipilkuin erotettuina (esim. *.txt,*.doc). Jotta toiminto näkyy tiedoston tai hakemiston kontekstivalikossa, vähintään yhden suodattimen tulee vastata tiedoston tai hakemiston nimeä. Voit lisäksi rajata toiminnon näkymään vain tietyntyyppisten tiedostojen valikossa."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:36
 msgid "Appearance Conditions"
