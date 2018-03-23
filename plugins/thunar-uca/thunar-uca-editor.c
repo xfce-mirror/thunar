@@ -351,10 +351,10 @@ thunar_uca_editor_validate_shortcut (XfceShortcutDialog  *dialog,
                 info.other_path :
                 command + 1; /* skip leading slash */
 
-      message = g_strdup_printf (_("This shorcut is currently used by: '%s'"),
+      message = g_strdup_printf (_("This keyboard shortcut is currently used by: '%s'"),
                                  command);
       xfce_dialog_show_warning (GTK_WINDOW (dialog), message,
-                                _("Keyboard shorcut already in use"));
+                                _("Keyboard shortcut already in use"));
       g_free (message);
     }
 

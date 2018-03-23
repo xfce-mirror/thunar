@@ -158,7 +158,7 @@
                   <object class="GtkLabel" id="shortcut_label">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">_Shortcut:</property>
+                    <property name="label" translatable="yes">Keyboard _Shortcut:</property>
                     <property name="use_underline">True</property>
                     <property name="xalign">0</property>
                   </object>
@@ -175,7 +175,7 @@
                       <object class="GtkButton" id="shortcut_button">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
-                        <property name="tooltip_text" translatable="yes">The shortcut for the action.</property>
+                        <property name="tooltip_text" translatable="yes">The keyboard shortcut for the action.</property>
                         <property name="hexpand">True</property>
                         <signal name="clicked" handler="thunar_uca_editor_shortcut_clicked" swapped="yes"/>
                       </object>
@@ -190,7 +190,7 @@
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
-                        <property name="tooltip_text" translatable="yes">Clear the shortcut for this action.</property>
+                        <property name="tooltip_text" translatable="yes">Clear the keyboard shortcut for this action.</property>
                         <signal name="clicked" handler="thunar_uca_editor_shortcut_clear_clicked" swapped="yes"/>
                         <child>
                           <object class="GtkImage" id="image2">
