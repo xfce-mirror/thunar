@@ -92,6 +92,9 @@ static void         thunar_abstract_icon_view_item_activated        (ExoIconView
 static void         thunar_abstract_icon_view_sort_column_changed   (GtkTreeSortable              *sortable,
                                                                      ThunarAbstractIconView       *abstract_icon_view);
 static void         thunar_abstract_icon_view_zoom_level_changed    (ThunarAbstractIconView       *abstract_icon_view);
+static void         thunar_abstract_icon_view_size_allocate         (ThunarAbstractIconView       *abstract_icon_view,
+                                                                     GtkAllocation                *allocation,
+                                                                     GtkWidget                    *view);
 
 
 
@@ -245,6 +248,11 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   g_signal_connect (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_icon_view)->model), "sort-column-changed",
                     G_CALLBACK (thunar_abstract_icon_view_sort_column_changed), abstract_icon_view);
   thunar_abstract_icon_view_sort_column_changed (GTK_TREE_SORTABLE (THUNAR_STANDARD_VIEW (abstract_icon_view)->model), abstract_icon_view);
+
+  /* update the icon view on size-allocate events */
+  g_signal_connect_after (G_OBJECT (abstract_icon_view), "size-allocate",
+                          G_CALLBACK (thunar_abstract_icon_view_size_allocate),
+                          view);
 }
 
 
@@ -784,4 +792,14 @@ thunar_abstract_icon_view_zoom_level_changed (ThunarAbstractIconView *abstract_i
   gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (gtk_bin_get_child (GTK_BIN (abstract_icon_view))),
                                       THUNAR_STANDARD_VIEW (abstract_icon_view)->icon_renderer,
                                       NULL, NULL, NULL);
+}
+
+
+
+static void
+thunar_abstract_icon_view_size_allocate (ThunarAbstractIconView *abstract_icon_view,
+                                         GtkAllocation          *allocation,
+                                         GtkWidget              *view)
+{
+  gtk_widget_queue_resize (view);
 }
