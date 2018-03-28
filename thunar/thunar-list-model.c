@@ -1159,11 +1159,7 @@ thunar_list_model_file_changed (ThunarFileMonitor *file_monitor,
           /* generate the iterator for this row */
           GTK_TREE_ITER_INIT (iter, store->stamp, row);
 
-          /* notify the view that it has to redraw the file */
           _thunar_assert (pos_before == g_sequence_iter_get_position (row));
-          path = gtk_tree_path_new_from_indices (pos_before, -1);
-          gtk_tree_model_row_changed (GTK_TREE_MODEL (store), path, &iter);
-          gtk_tree_path_free (path);
 
           /* check if the sorting changed */
           g_sequence_sort_changed (row, thunar_list_model_cmp_func, store);
@@ -1202,6 +1198,10 @@ thunar_list_model_file_changed (ThunarFileMonitor *file_monitor,
                 g_free (new_order);
             }
 
+          /* notify the view that it has to redraw the file */
+          path = gtk_tree_path_new_from_indices (pos_before, -1);
+          gtk_tree_model_row_changed (GTK_TREE_MODEL (store), path, &iter);
+          gtk_tree_path_free (path);
           break;
         }
 
