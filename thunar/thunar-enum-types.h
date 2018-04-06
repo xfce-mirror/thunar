@@ -166,7 +166,7 @@ GType thunar_thumbnail_mode_get_type (void) G_GNUC_CONST;
 
 /**
  * ThunarRecursivePermissionsMode:
- * @THUNAR_RECURSIVE_PERMISSIONS_ASK    : ask the user everytime permissions are changed.
+ * @THUNAR_RECURSIVE_PERMISSIONS_ASK    : ask the user every time permissions are changed.
  * @THUNAR_RECURSIVE_PERMISSIONS_ALWAYS : always apply the change recursively.
  * @THUNAR_RECURSIVE_PERMISSIONS_NEVER  : never apply the change recursively.
  *

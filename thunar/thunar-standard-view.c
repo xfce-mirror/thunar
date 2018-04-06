@@ -1435,7 +1435,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
       standard_view->priv->current_directory = NULL;
 
       /* resetting the folder for the model can take some time if the view has
-       * to update the selection everytime (i.e. closing a window with a lot of
+       * to update the selection every time (i.e. closing a window with a lot of
        * selected files), so we temporarily disconnect the model from the view.
        */
       g_object_set (G_OBJECT (gtk_bin_get_child (GTK_BIN (standard_view))), "model", NULL, NULL);

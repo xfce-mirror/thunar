@@ -623,7 +623,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_show (label);
 
   combo = gtk_combo_box_text_new ();
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Ask everytime"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Ask every time"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Apply to Folder Only"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Apply to Folder and Contents"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-recursive-permissions", G_OBJECT (combo), "active");

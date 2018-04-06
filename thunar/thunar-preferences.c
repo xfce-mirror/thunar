@@ -575,7 +575,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   /**
    * ThunarPreferences:misc-recursive-permissions:
    *
-   * Whether to apply permissions recursively everytime the
+   * Whether to apply permissions recursively every time the
    * permissions are altered by the user.
    **/
   preferences_props[PROP_MISC_RECURSIVE_PERMISSIONS] =
