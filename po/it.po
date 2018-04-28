@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-04-06 06:30+0200\n"
-"PO-Revision-Date: 2018-04-08 13:00+0000\n"
+"PO-Revision-Date: 2018-04-28 08:00+0000\n"
 "Last-Translator: Emanuele Petriglia <inbox@emanuelepetriglia.me>\n"
 "Language-Team: Italian (http://www.transifex.com/xfce/thunar/language/it/)\n"
 "MIME-Version: 1.0\n"
@@ -572,7 +572,7 @@ msgid ""
 "needed to ensure the text is fully visible. If you dis-\n"
 "able this behavior below the file manager will always\n"
 "use the user defined column widths."
-msgstr "Di norma, le colonne verranno espanse per\ngarantire che il testo sia completamente visibile.\nDisabilitando questo comportamento, il gestore di file \nuserà sempre colonne di lunghezza definita dall'utente."
+msgstr "Di norma, le colonne verranno espanse per\ngarantire che il testo sia completamente visibile.\nDisabilitando questo comportamento, il gestore dei file \nuserà sempre colonne di lunghezza definita dall'utente."
 
 #. create the "Automatically expand columns as needed" button
 #: ../thunar/thunar-column-editor.c:266
@@ -612,12 +612,12 @@ msgstr "Inserire il nuovo nome:"
 #: ../thunar/thunar-create-dialog.c:452
 #, c-format
 msgid "Cannot convert filename \"%s\" to the local encoding"
-msgstr "Impossibile convertire il nome del file «%s» nella codifica locale"
+msgstr "Impossibile convertire il nome del file \"%s\" nella codifica locale"
 
 #: ../thunar/thunar-dbus-service.c:502
 #, c-format
 msgid "Invalid filename \"%s\""
-msgstr "Nome del file «%s» non valido"
+msgstr "Nome del file \"%s\" non valido"
 
 #. LaunchFiles() invoked without a valid working directory
 #: ../thunar/thunar-dbus-service.c:951
@@ -674,7 +674,7 @@ msgstr "_Rinomina"
 
 #: ../thunar/thunar-dialogs.c:273
 msgid "translator-credits"
-msgstr "Roberto Pariset <robdebian@gmail.com>\nGianluca Foddis <gianluca.foddis@gmail.com>\nCristian Marchi <cri.penta@gmail.com>, 2010, 2013"
+msgstr "Emanuele Petriglia <inbox@emanuelepetriglia.me>\nRoberto Pariset <robdebian@gmail.com>\nGianluca Foddis <gianluca.foddis@gmail.com>\nCristian Marchi <cri.penta@gmail.com>"
 
 #: ../thunar/thunar-dialogs.c:438 ../thunar/thunar-permissions-chooser.c:525
 msgid "_Yes"
@@ -729,12 +729,12 @@ msgstr "Questa cartella contiene già un collegamento simbolico \"%s\"."
 #: ../thunar/thunar-dialogs.c:596
 #, c-format
 msgid "This folder already contains a folder \"%s\"."
-msgstr "Questa cartella contiene già una cartella «%s»."
+msgstr "Questa cartella contiene già una cartella \"%s\"."
 
 #: ../thunar/thunar-dialogs.c:601
 #, c-format
 msgid "This folder already contains a file \"%s\"."
-msgstr "Questa cartella contiene già un file «%s»."
+msgstr "Questa cartella contiene già un file \"%s\"."
 
 #: ../thunar/thunar-dialogs.c:614
 #, c-format
@@ -782,7 +782,7 @@ msgstr "con il seguente?"
 msgid ""
 "The desktop file \"%s\" is in an insecure location and not marked as "
 "executable. If you do not trust this program, click Cancel."
-msgstr "Il file desktop «%s» è in una posizione non sicura e non è marcato come eseguibile. Se non si è sicuri del programma, fare clic su «Annulla»."
+msgstr "Il file desktop \"%s\" è in una posizione non sicura e non è segnalato come eseguibile. Se non si è sicuri del programma, fare clic su «Annulla»."
 
 #: ../thunar/thunar-dialogs.c:804
 msgid "_Launch Anyway"
@@ -809,7 +809,7 @@ msgstr "Crea colle_gamento qui"
 #: ../thunar/thunar-dnd.c:246 ../thunar/thunar-launcher.c:567
 #, c-format
 msgid "Failed to execute file \"%s\""
-msgstr "Impossibile eseguire il file «%s»"
+msgstr "Impossibile eseguire il file \"%s\""
 
 #: ../thunar/thunar-enum-types.c:45
 msgid "Name only"
@@ -898,7 +898,7 @@ msgstr "Impossibile analizzare il file desktop: %s"
 #. if the .desktop file is not secure, ask user what to do
 #: ../thunar/thunar-file.c:1618
 msgid "Untrusted application launcher"
-msgstr "Avviatore di applicazioni non sicure"
+msgstr "Avviatore di applicazioni non sicuro"
 
 #: ../thunar/thunar-file.c:1643
 #, c-format
@@ -908,7 +908,7 @@ msgstr "Campo Exec non specificato"
 #. if the .desktop file is not secure, ask user what to do
 #: ../thunar/thunar-file.c:1652
 msgid "Untrusted link launcher"
-msgstr "Avviatore di collegamenti non sicuri"
+msgstr "Avviatore di collegamenti non sicuro"
 
 #: ../thunar/thunar-file.c:1668
 #, c-format
@@ -934,7 +934,7 @@ msgstr "%s di %s liberi (%d%% utilizzato)"
 #. extend history tooltip with function of the button
 #: ../thunar/thunar-history-action.c:339
 msgid "Right-click or pull down to show history"
-msgstr "Clic con il tasto destro per mostrare la cronologia"
+msgstr "Fare clic con il tasto destro del mouse per mostrare la cronologia"
 
 #. create the "back" action
 #: ../thunar/thunar-history.c:163
@@ -974,17 +974,17 @@ msgstr "Visualizzazione a icone"
 #: ../thunar/thunar-io-jobs.c:180 ../thunar/thunar-io-jobs.c:334
 #, c-format
 msgid "The file \"%s\" already exists"
-msgstr "Il file «%s» esiste già"
+msgstr "Il file \"%s\" è già esistente"
 
 #: ../thunar/thunar-io-jobs.c:203
 #, c-format
 msgid "Failed to create empty file \"%s\": %s"
-msgstr "Impossibile creare il file vuoto «%s»: %s"
+msgstr "Impossibile creare il file vuoto \"%s\": %s"
 
 #: ../thunar/thunar-io-jobs.c:357
 #, c-format
 msgid "Failed to create directory \"%s\": %s"
-msgstr "Impossibile creare la cartella «%s»: %s"
+msgstr "Impossibile creare la cartella \"%s\": %s"
 
 #. tell the user that we're preparing to unlink the files
 #: ../thunar/thunar-io-jobs.c:423
@@ -994,28 +994,28 @@ msgstr "Preparazione in corso..."
 #: ../thunar/thunar-io-jobs.c:496
 #, c-format
 msgid "Could not delete file \"%s\": %s"
-msgstr "Impossibile eliminare il file «%s»: %s"
+msgstr "Impossibile eliminare il file \"%s\": %s"
 
 #: ../thunar/thunar-io-jobs.c:597
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
-msgstr "Impossibile creare un collegamento simbolico a «%s» perché non è un file locale"
+msgstr "Impossibile creare un collegamento simbolico a \"%s\" perché non è un file locale"
 
 #. generate a useful error message
 #: ../thunar/thunar-io-jobs.c:956
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
-msgstr "Impossibile cambiare il proprietario di «%s»: %s"
+msgstr "Impossibile cambiare il proprietario di \"%s\": %s"
 
 #: ../thunar/thunar-io-jobs.c:957
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
-msgstr "Impossibile cambiare il gruppo di «%s»: %s"
+msgstr "Impossibile cambiare il gruppo di \"%s\": %s"
 
 #: ../thunar/thunar-io-jobs.c:1111
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
-msgstr "Impossibile cambiare i permessi di «%s»: %s"
+msgstr "Impossibile cambiare i permessi di \"%s\": %s"
 
 #. I18N: put " (copy #) between basename and extension
 #: ../thunar/thunar-io-jobs-util.c:106
@@ -1049,7 +1049,7 @@ msgid ""
 "The file \"%s\" already exists. Would you like to replace it?\n"
 "\n"
 "If you replace an existing file, its contents will be overwritten."
-msgstr "Il file «%s» esiste già. Sostituirlo?\n\nSostituendo un file esistente, il contenuto verrà sovrascritto."
+msgstr "Il file \"%s\" è già esistente. Sostituirlo?\n\nSostituendo un file esistente, il contenuto verrà sovrascritto."
 
 #: ../thunar/thunar-job.c:334
 msgid "Do you want to overwrite it?"
@@ -1067,7 +1067,7 @@ msgstr "Saltare?"
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
-msgstr "Non c'è abbastanza spazio nella destinazione. Rimuovere alcuni file per crearne."
+msgstr "Non c'è abbastanza spazio nella destinazione. Provare a rimuovere alcuni file per crearne."
 
 #. append the "Open in New Tab" menu action
 #: ../thunar/thunar-launcher.c:178 ../thunar/thunar-launcher.c:860
@@ -1093,7 +1093,7 @@ msgstr "Permette di scegliere un'altra applicazione con cui aprire il file selez
 #: ../thunar/thunar-launcher.c:676
 #, c-format
 msgid "Failed to open file \"%s\""
-msgstr "Impossibile aprire il file «%s»"
+msgstr "Impossibile aprire il file \"%s\""
 
 #. we can just tell that n files failed to open
 #: ../thunar/thunar-launcher.c:682
@@ -1101,7 +1101,7 @@ msgstr "Impossibile aprire il file «%s»"
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
 msgstr[0] "Impossibile aprire %d file."
-msgstr[1] "Impossibile aprire %d file."
+msgstr[1] "Impossibile aprire %d file"
 
 #: ../thunar/thunar-launcher.c:721
 msgid "Are you sure you want to open all folders?"
@@ -1111,8 +1111,8 @@ msgstr "Aprire davvero tutte le cartelle?"
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
-msgstr[0] "Questo aprirà %d finestra distinta del gestore di file."
-msgstr[1] "Verranno aperte %d finestre distinte del gestore di file."
+msgstr[0] "Verrà aperta %d finestra distinta del gestore dei file."
+msgstr[1] "Verranno aperte %d finestre distinte del gestore dei file."
 
 #: ../thunar/thunar-launcher.c:727
 #, c-format
@@ -1141,8 +1141,8 @@ msgstr[1] "Apre le cartelle selezionate in %d nuove finestre"
 #, c-format
 msgid "Open in %d New _Tab"
 msgid_plural "Open in %d New _Tabs"
-msgstr[0] "Apri in %d nuova sc_heda"
-msgstr[1] "Apri in %d nuove sc_hede"
+msgstr[0] "Apre in %d nuova sc_heda"
+msgstr[1] "Apre in %d nuove sc_hede"
 
 #: ../thunar/thunar-launcher.c:840
 #, c-format
@@ -1177,40 +1177,40 @@ msgstr "_Esegui"
 #: ../thunar/thunar-launcher.c:933
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
-msgstr[0] "Esegui il file selezionato"
-msgstr[1] "Esegui i file selezionati"
+msgstr[0] "Eseguire il file selezionato"
+msgstr[1] "Eseguire i file selezionati"
 
 #. turn the "Open" action into "Open With DEFAULT"
 #: ../thunar/thunar-launcher.c:939
 #, c-format
 msgid "_Open With \"%s\""
-msgstr "Apri co_n \"%s\""
+msgstr "Aprire co_n \"%s\""
 
 #: ../thunar/thunar-launcher.c:940 ../thunar/thunar-launcher.c:1030
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
-msgstr[0] "Usa \"%s\" per aprire il file selezionato"
-msgstr[1] "Usa \"%s\" per aprire i file selezionati"
+msgstr[0] "Usare\"%s\" per aprire il file selezionato"
+msgstr[1] "Usare \"%s\" per aprire i file selezionati"
 
 #: ../thunar/thunar-launcher.c:967
 msgid "_Open With Other Application..."
-msgstr "Apri con un'altra a_pplicazione..."
+msgstr "Aprire con un'altra a_pplicazione..."
 
 #: ../thunar/thunar-launcher.c:976
 msgid "_Open With Default Applications"
-msgstr "Apri con l'applicazione pre_definita"
+msgstr "Aprire con l'applicazione pre_definita"
 
 #: ../thunar/thunar-launcher.c:977
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
-msgstr[0] "Apre il file selezionato con l'applicazione predefinita"
-msgstr[1] "Apre i file selezionati con l'applicazione predefinita"
+msgstr[0] "Aprire il file selezionato con l'applicazione predefinita"
+msgstr[1] "Aprire i file selezionati con l'applicazione predefinita"
 
 #: ../thunar/thunar-launcher.c:1029
 #, c-format
 msgid "Open With \"%s\""
-msgstr "Apri con \"%s\""
+msgstr "Aprire con \"%s\""
 
 #: ../thunar/thunar-launcher.c:1586 ../thunar/thunar-shortcuts-view.c:1709
 #: ../thunar/thunar-shortcuts-view.c:1946 ../thunar/thunar-tree-view.c:2126
@@ -1343,19 +1343,19 @@ msgstr "%s, %s"
 #: ../thunar/thunar-location-buttons.c:185
 #: ../thunar/thunar-shortcuts-view.c:1109
 msgid "Open in New Tab"
-msgstr "Apre in una nuova scheda"
+msgstr "Aprire in una nuova scheda"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-location-buttons.c:186
 #: ../thunar/thunar-shortcuts-view.c:1115
 msgid "Open in New Window"
-msgstr "Apri in una nuova finestra"
+msgstr "Aprire in una nuova finestra"
 
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-location-buttons.c:187
 #: ../thunar/thunar-standard-view.c:406 ../thunar/thunar-tree-view.c:1368
 msgid "Create _Folder..."
-msgstr "Crea carte_lla..."
+msgstr "Creare carte_lla..."
 
 #: ../thunar/thunar-location-buttons.c:188 ../thunar/thunar-window.c:354
 msgid "Delete all files and folders in the Trash"
@@ -1374,22 +1374,22 @@ msgstr "_Proprietà..."
 #: ../thunar/thunar-location-buttons.c:1252
 #, c-format
 msgid "Open \"%s\" in this window"
-msgstr "Apri \"%s\" in questa finestra"
+msgstr "Apre \"%s\" in questa finestra"
 
 #: ../thunar/thunar-location-buttons.c:1259
 #, c-format
 msgid "Open \"%s\" in a new tab"
-msgstr "Apri \"%s\" in una nuova scheda"
+msgstr "Apre \"%s\" in una nuova scheda"
 
 #: ../thunar/thunar-location-buttons.c:1265
 #, c-format
 msgid "Open \"%s\" in a new window"
-msgstr "Apri \"%s\" in una nuova finestra"
+msgstr "Apre \"%s\" in una nuova finestra"
 
 #: ../thunar/thunar-location-buttons.c:1271
 #, c-format
 msgid "Create a new folder in \"%s\""
-msgstr "Crea nuova cartella in «%s»"
+msgstr "Crea nuova cartella in \"%s\""
 
 #: ../thunar/thunar-location-buttons.c:1289
 #, c-format
@@ -1400,7 +1400,7 @@ msgstr "Sposta o copia i file selezionati precedentemente da un comando di tagli
 #: ../thunar/thunar-location-buttons.c:1300
 #, c-format
 msgid "View the properties of the folder \"%s\""
-msgstr "Visualizza le proprietà della cartella «%s»"
+msgstr "Visualizza le proprietà della cartella \"%s\""
 
 #: ../thunar/thunar-location-entry.c:195 ../thunar/thunar-window.c:362
 msgid "Reload the current folder"
@@ -1420,7 +1420,7 @@ msgstr "Smontaggio del dispositivo in corso..."
 msgid ""
 "The device \"%s\" is being unmounted by the system. Please do not remove the"
 " media or disconnect the drive"
-msgstr "Il dispositivo «%s» sta per essere smontato dal sistema. Non rimuovere il supporto o disconnettere l'unità"
+msgstr "Il dispositivo \"%s\" sta per essere smontato dal sistema. Non rimuovere il supporto o disconnettere l'unità"
 
 #: ../thunar/thunar-notify.c:175 ../thunar/thunar-notify.c:214
 msgid "Writing data to device"
@@ -1431,7 +1431,7 @@ msgstr "Scrittura dei dati sul dispositivo in corso..."
 msgid ""
 "There is data that needs to be written to the device \"%s\" before it can be"
 " removed. Please do not remove the media or disconnect the drive"
-msgstr "Sono presenti dei dati che devono essere scritti sul dispositivo «%s» prima della sua rimozione. Non rimuovere il supporto o disconnettere l'unità"
+msgstr "Sono presenti dei dati che devono essere scritti sul dispositivo \"%s\" prima della sua rimozione. Non rimuovere il supporto o disconnettere l'unità"
 
 #: ../thunar/thunar-notify.c:208
 msgid "Ejecting device"
@@ -1440,7 +1440,7 @@ msgstr "Espulsione del dispositivo in corso..."
 #: ../thunar/thunar-notify.c:209
 #, c-format
 msgid "The device \"%s\" is being ejected. This may take some time"
-msgstr "Il dispositivo «%s» sta per essere espulso. Potrebbe volerci del tempo"
+msgstr "Il dispositivo \"%s\" sta per essere espulso. Potrebbe volerci del tempo"
 
 #: ../thunar/thunar-misc-jobs.c:74
 #, c-format
@@ -1535,7 +1535,7 @@ msgid ""
 "If you select this option your choice will be remembered and you won't be "
 "asked again. You can use the preferences dialog to alter your choice "
 "afterwards."
-msgstr "Selezionando questa opzione la scelta sarà ricordata e non verrà riproposta; in futuro sarà possibile modificare la scelta tramite la finestra delle preferenze"
+msgstr "Selezionando questa opzione la scelta sarà ricordata e non verrà riproposta; in futuro sarà possibile modificare la scelta tramite la finestra delle preferenze."
 
 #: ../thunar/thunar-permissions-chooser.c:918
 msgid "Mixed file owners"
@@ -1587,7 +1587,7 @@ msgstr "I permessi della cartella saranno ripristinati a uno stato consistente. 
 
 #: ../thunar/thunar-preferences-dialog.c:225
 msgid "File Manager Preferences"
-msgstr "Preferenze del gestore di file"
+msgstr "Preferenze del gestore dei file"
 
 #. Display
 #: ../thunar/thunar-preferences-dialog.c:242
