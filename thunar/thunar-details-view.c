@@ -266,7 +266,8 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                                                NULL);
 
           /* add the name renderer */
-          g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->name_renderer), "xalign", 0.0, NULL);
+          g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->name_renderer),
+                        "xalign", 0.0, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
           gtk_tree_view_column_pack_start (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->name_renderer, TRUE);
           gtk_tree_view_column_set_attributes (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->name_renderer,
                                                "text", THUNAR_COLUMN_NAME,
