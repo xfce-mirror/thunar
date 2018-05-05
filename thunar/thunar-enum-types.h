@@ -55,7 +55,7 @@ GType thunar_renamer_mode_get_type (void) G_GNUC_CONST;
  * @THUNAR_DATE_STYLE_LONG   : display date and time in a long manner.
  * @THUNAR_DATE_STYLE_ISO    : display date and time in ISO standard form.
  *
- * The style used to display dates (i.e. modification dates) to the user.
+ * The style used to display dates (e.g. modification dates) to the user.
  **/
 typedef enum
 {
@@ -75,13 +75,13 @@ GType thunar_date_style_get_type (void) G_GNUC_CONST;
  * @THUNAR_COLUMN_DATE_ACCESSED : last access time.
  * @THUNAR_COLUMN_DATE_MODIFIED : last modification time.
  * @THUNAR_COLUMN_GROUP         : group's name.
- * @THUNAR_COLUMN_MIME_TYPE     : mime type (i.e. "text/plain").
+ * @THUNAR_COLUMN_MIME_TYPE     : mime type (e.g. "text/plain").
  * @THUNAR_COLUMN_NAME          : display name.
  * @THUNAR_COLUMN_OWNER         : owner's name.
  * @THUNAR_COLUMN_PERMISSIONS   : permissions bits.
  * @THUNAR_COLUMN_SIZE          : file size.
  * @THUNAR_COLUMN_SIZE_IN_BYTES : file size in bytes.
- * @THUNAR_COLUMN_TYPE          : file type (i.e. 'plain text document').
+ * @THUNAR_COLUMN_TYPE          : file type (e.g. 'plain text document').
  * @THUNAR_COLUMN_FILE          : #ThunarFile object.
  * @THUNAR_COLUMN_FILE_NAME     : real file name.
  *
