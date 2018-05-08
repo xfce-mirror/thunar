@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-04 23:34+0200\n"
+"POT-Creation-Date: 2017-10-10 06:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Xfce Bot <transifex@xfce.org>, 2017\n"
+"Last-Translator: Mike Wortin <mikewortin@gmail.com>, 2018\n"
 "Language-Team: Esperanto (https://www.transifex.com/xfce/teams/16840/eo/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -189,17 +189,17 @@ msgstr "Kopias dosierojn..."
 #: ../thunar/thunar-application.c:1627
 #, c-format
 msgid "Copying files to \"%s\"..."
-msgstr ""
+msgstr "Kopias dosierojn al \"%s\"..."
 
 #: ../thunar/thunar-application.c:1673
 #, c-format
 msgid "Creating symbolic links in \"%s\"..."
-msgstr ""
+msgstr "Kreas limbolajn ligojn en \"%s\"..."
 
 #: ../thunar/thunar-application.c:1726
 #, c-format
 msgid "Moving files into \"%s\"..."
-msgstr ""
+msgstr "Movas dosierojn al \"%s\""
 
 #: ../thunar/thunar-application.c:1808
 #, c-format
@@ -278,7 +278,7 @@ msgstr "Ne sukcesis difini la pravojon de \"%s\""
 #: ../thunar/thunar-application.c:2092
 #, c-format
 msgid "Could not restore \"%s\""
-msgstr ""
+msgstr "Ne povis restaŭri \"%s\""
 
 #: ../thunar/thunar-application.c:2100
 msgid "Restoring files..."
@@ -342,7 +342,7 @@ msgstr "Ne sukcesis aldoni novan aplikaĵon \"%s\""
 #: ../thunar/thunar-chooser-dialog.c:502
 #, c-format
 msgid "Failed to execute application \"%s\""
-msgstr ""
+msgstr "Eraro de ekzekuti aplikon \"%s\""
 
 #. append the "Remove Launcher" item
 #: ../thunar/thunar-chooser-dialog.c:574
@@ -445,7 +445,7 @@ msgstr "Aliaj programoj"
 #: ../thunar/thunar-chooser-model.c:406
 #, c-format
 msgid "Failed to remove \"%s\"."
-msgstr ""
+msgstr "Malsukcesis forigi \"%s\""
 
 #. tell the user that we cannot paste
 #: ../thunar/thunar-clipboard-manager.c:354
@@ -564,22 +564,22 @@ msgstr "La labordosierujo devas esti vervojo"
 #: ../thunar/thunar-dbus-service.c:883 ../thunar/thunar-dbus-service.c:1250
 #, c-format
 msgid "At least one filename must be specified"
-msgstr ""
+msgstr "Almenaŭ unu dosiernomo devas esti specifan."
 
 #: ../thunar/thunar-dbus-service.c:1028
 #, c-format
 msgid "At least one source filename must be specified"
-msgstr ""
+msgstr "Almenaŭ unu fonta dosiernomo devas esti specifan."
 
 #: ../thunar/thunar-dbus-service.c:1038
 #, c-format
 msgid "The number of source and target filenames must be the same"
-msgstr ""
+msgstr "La numero de fontaj kaj celaj dosiernomoj devas esti la saman."
 
 #: ../thunar/thunar-dbus-service.c:1047
 #, c-format
 msgid "A destination directory must be specified"
-msgstr ""
+msgstr "Cela dosieraro devas esti specifis."
 
 #: ../thunar/thunar-details-view.c:138
 msgid "Configure _Columns..."
@@ -637,7 +637,7 @@ msgstr "_Reprovi"
 
 #: ../thunar/thunar-dialogs.c:449
 msgid "Copy _Anyway"
-msgstr ""
+msgstr "Kopii _Ĉiukaze"
 
 #: ../thunar/thunar-dialogs.c:472
 msgid "_Cancel"
@@ -646,23 +646,23 @@ msgstr "_Nuligu"
 #. setup the confirmation dialog
 #: ../thunar/thunar-dialogs.c:539
 msgid "Confirm to replace files"
-msgstr ""
+msgstr "Jesigi al remeti dosierojn"
 
 #: ../thunar/thunar-dialogs.c:545
 msgid "S_kip All"
-msgstr ""
+msgstr "S_alti Ĉio"
 
 #: ../thunar/thunar-dialogs.c:546
 msgid "_Skip"
-msgstr ""
+msgstr "_Salti"
 
 #: ../thunar/thunar-dialogs.c:547
 msgid "Replace _All"
-msgstr ""
+msgstr "Remetu _Ĉio"
 
 #: ../thunar/thunar-dialogs.c:548
 msgid "_Replace"
-msgstr ""
+msgstr "_Remeti"
 
 #: ../thunar/thunar-dialogs.c:581
 #, c-format
@@ -819,48 +819,53 @@ msgstr "Dosiera Nomo"
 msgid "File System"
 msgstr "Dosier-sistemo"
 
-#: ../thunar/thunar-file.c:1513
+#: ../thunar/thunar-file.c:1075 ../thunar/thunar-gio-extensions.c:242
+#: ../thunar/thunar-shortcuts-model.c:1039
+msgid "Trash"
+msgstr ""
+
+#: ../thunar/thunar-file.c:1515
 #, c-format
 msgid "The root folder has no parent"
 msgstr "La radika dosierujo ne havas patron"
 
-#: ../thunar/thunar-file.c:1601 ../thunar/thunar-file.c:1897
+#: ../thunar/thunar-file.c:1603 ../thunar/thunar-file.c:1899
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr ""
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1613
+#: ../thunar/thunar-file.c:1615
 msgid "Untrusted application launcher"
 msgstr ""
 
-#: ../thunar/thunar-file.c:1638
+#: ../thunar/thunar-file.c:1640
 #, c-format
 msgid "No Exec field specified"
 msgstr "Ne estas difinita variablo Exec en .desktop dosiero"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1647
+#: ../thunar/thunar-file.c:1649
 msgid "Untrusted link launcher"
 msgstr ""
 
-#: ../thunar/thunar-file.c:1663
+#: ../thunar/thunar-file.c:1665
 #, c-format
 msgid "No URL field specified"
 msgstr "URL variablo ne estas difinita en .desktop dosiero"
 
-#: ../thunar/thunar-file.c:1668
+#: ../thunar/thunar-file.c:1670
 msgid "Invalid desktop file"
 msgstr "Nevalida .desktop dosiero"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: ../thunar/thunar-gio-extensions.c:322
+#: ../thunar/thunar-gio-extensions.c:327
 #, c-format
 msgid "%s on %s"
 msgstr ""
 
 #. free disk space string
-#: ../thunar/thunar-gio-extensions.c:433
+#: ../thunar/thunar-gio-extensions.c:438
 #, c-format
 msgid "%s of %s free (%d%% used)"
 msgstr ""
