@@ -13,15 +13,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-06 06:30+0200\n"
-"PO-Revision-Date: 2018-04-11 10:47+0000\n"
+"POT-Creation-Date: 2018-05-06 00:30+0200\n"
+"PO-Revision-Date: 2018-05-21 10:01+0000\n"
 "Last-Translator: Elishai Eliyahu <e1907@mm.st>\n"
 "Language-Team: Hebrew (http://www.transifex.com/xfce/thunar/language/he/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: he\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;\n"
 
 #: ../thunar/main.c:90
 msgid ""
@@ -224,6 +224,8 @@ msgid_plural ""
 "delete the %u selected files?"
 msgstr[0] "האם אתה בטוח כי ברצונך למחוק\nלצמיתות את הקובץ הנבחר?"
 msgstr[1] "האם אתה בטוח כי ברצונך למחוק\nבאופן קבוע את %u הקבצים הנבחרים?"
+msgstr[2] "האם אתה בטוח כי ברצונך למחוק\nבאופן קבוע את %u הקבצים הנבחרים?"
+msgstr[3] "האם אתה בטוח כי ברצונך למחוק\nבאופן קבוע את %u הקבצים הנבחרים?"
 
 #. add the "Cancel" button
 #. append the cancel item
@@ -654,11 +656,11 @@ msgstr "הגדר עמודות..."
 msgid "Configure the columns in the detailed list view"
 msgstr "הגדר את העמודות בתצוגת הרשימה המפורטת"
 
-#: ../thunar/thunar-details-view.c:397
+#: ../thunar/thunar-details-view.c:398
 msgid "Detailed directory listing"
 msgstr "תרשים ספרייה מפורט"
 
-#: ../thunar/thunar-details-view.c:398
+#: ../thunar/thunar-details-view.c:399
 msgid "Details view"
 msgstr "תצוגת פרטים"
 
@@ -1102,6 +1104,8 @@ msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
 msgstr[0] "אירע כשל בפתיחת הקובץ"
 msgstr[1] "אירע כשל בפתיחת %d קבצים"
+msgstr[2] "אירע כשל בפתיחת %d קבצים"
+msgstr[3] "אירע כשל בפתיחת %d קבצים"
 
 #: ../thunar/thunar-launcher.c:721
 msgid "Are you sure you want to open all folders?"
@@ -1113,6 +1117,8 @@ msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
 msgstr[0] "פעולה זו תפתח חלון מנהל קבצים נפרד."
 msgstr[1] "פעולה זו תפתח %d חלונות מנהלי קבצים נפרדים."
+msgstr[2] "פעולה זו תפתח %d חלונות מנהלי קבצים נפרדים."
+msgstr[3] "פעולה זו תפתח %d חלונות מנהלי קבצים נפרדים."
 
 #: ../thunar/thunar-launcher.c:727
 #, c-format
@@ -1120,6 +1126,8 @@ msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
 msgstr[0] "פתח חלון חדש %d"
 msgstr[1] "פתח %d חלונות חדשים"
+msgstr[2] "פתח %d חלונות חדשים"
+msgstr[3] "פתח %d חלונות חדשים"
 
 #. turn "Open New Window" into "Open in n New Windows"
 #: ../thunar/thunar-launcher.c:827
@@ -1128,6 +1136,8 @@ msgid "Open in %d New _Window"
 msgid_plural "Open in %d New _Windows"
 msgstr[0] "פתח ב_חלון חדש %d"
 msgstr[1] "פתח בתוך %d חלונות חדשים"
+msgstr[2] "פתח בתוך %d חלונות חדשים"
+msgstr[3] "פתח בתוך %d חלונות חדשים"
 
 #: ../thunar/thunar-launcher.c:828
 #, c-format
@@ -1135,6 +1145,8 @@ msgid "Open the selected directory in %d new window"
 msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] "פתח את הספרייה שנבחרה באמצעות חלון חדש %d"
 msgstr[1] "פתח את הספריות שנבחרו באמצעות %d חלונות חדשים"
+msgstr[2] "פתח את הספריות שנבחרו באמצעות %d חלונות חדשים"
+msgstr[3] "פתח את הספריות שנבחרו באמצעות %d חלונות חדשים"
 
 #. turn "Open in New Tab" into "Open in x New Tabs"
 #: ../thunar/thunar-launcher.c:839
@@ -1143,6 +1155,8 @@ msgid "Open in %d New _Tab"
 msgid_plural "Open in %d New _Tabs"
 msgstr[0] "פתח ב_כרטיסייה חדשה %d"
 msgstr[1] "פתח בתוך %d _לשוניות חדשות"
+msgstr[2] "פתח בתוך %d _לשוניות חדשות"
+msgstr[3] "פתח בתוך %d _לשוניות חדשות"
 
 #: ../thunar/thunar-launcher.c:840
 #, c-format
@@ -1150,6 +1164,8 @@ msgid "Open the selected directory in %d new tab"
 msgid_plural "Open the selected directories in %d new tabs"
 msgstr[0] "פתח את הספרייה הנבחרת בתוך כרטיסייה אחת %d"
 msgstr[1] "פתח את הספריות הנבחרות בתוך %d לשוניות חדשות"
+msgstr[2] "פתח את הספריות הנבחרות בתוך %d לשוניות חדשות"
+msgstr[3] "פתח את הספריות הנבחרות בתוך %d לשוניות חדשות"
 
 #: ../thunar/thunar-launcher.c:855
 msgid "Open the selected directory in a new window"
@@ -1169,6 +1185,8 @@ msgid "Open the selected file"
 msgid_plural "Open the selected files"
 msgstr[0] "פתח את הקובץ הנבחר"
 msgstr[1] "פתח את הקבצים הנבחרים"
+msgstr[2] "פתח את הקבצים הנבחרים"
+msgstr[3] "פתח את הקבצים הנבחרים"
 
 #: ../thunar/thunar-launcher.c:931
 msgid "_Execute"
@@ -1179,6 +1197,8 @@ msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
 msgstr[0] "הפעל את הקובץ הנבחר"
 msgstr[1] "בצע את הקבצים הנבחרים"
+msgstr[2] "בצע את הקבצים הנבחרים"
+msgstr[3] "בצע את הקבצים הנבחרים"
 
 #. turn the "Open" action into "Open With DEFAULT"
 #: ../thunar/thunar-launcher.c:939
@@ -1192,6 +1212,8 @@ msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "פתח את הקובץ הנבחר בעזרת \"%s\""
 msgstr[1] "פתח את הקבצים הנבחרים בעזרת \"%s\""
+msgstr[2] "פתח את הקבצים הנבחרים בעזרת \"%s\""
+msgstr[3] "פתח את הקבצים הנבחרים בעזרת \"%s\""
 
 #: ../thunar/thunar-launcher.c:967
 msgid "_Open With Other Application..."
@@ -1206,6 +1228,8 @@ msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
 msgstr[0] "פתח את הקובץ שנבחר בעזרת יישום ברירת מחדל"
 msgstr[1] "פתח את הקבצים הנבחרים בעזרת יישומי ברירת מחדל"
+msgstr[2] "פתח את הקבצים הנבחרים בעזרת יישומי ברירת מחדל"
+msgstr[3] "פתח את הקבצים הנבחרים בעזרת יישומי ברירת מחדל"
 
 #: ../thunar/thunar-launcher.c:1029
 #, c-format
@@ -1223,12 +1247,16 @@ msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "שולחן עבודה (צור קישור)"
 msgstr[1] "שולחן עבודה (צור קישורים)"
+msgstr[2] "שולחן עבודה (צור קישורים)"
+msgstr[3] "שולחן עבודה (צור קישורים)"
 
 #: ../thunar/thunar-launcher.c:1704
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "צור קישור אל הקובץ הנבחר בשולחן העבודה"
 msgstr[1] "צור קישורים אל הקבצים הנבחרים בשולחן העבודה"
+msgstr[2] "צור קישורים אל הקבצים הנבחרים בשולחן העבודה"
+msgstr[3] "צור קישורים אל הקבצים הנבחרים בשולחן העבודה"
 
 #: ../thunar/thunar-launcher.c:1738 ../thunar/thunar-launcher.c:1790
 #, c-format
@@ -1236,6 +1264,8 @@ msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
 msgstr[0] "שלח את הקובץ הנבחר אל \"%s\""
 msgstr[1] "שלח את הקבצים הנבחרים אל \"%s\""
+msgstr[2] "שלח את הקבצים הנבחרים אל \"%s\""
+msgstr[3] "שלח את הקבצים הנבחרים אל \"%s\""
 
 #: ../thunar/thunar-list-model.c:2328
 #, c-format
@@ -1243,6 +1273,8 @@ msgid "%d item: %s, Free space: %s"
 msgid_plural "%d items: %s, Free space: %s"
 msgstr[0] "%dפריט: %s, נפח פנוי:%s"
 msgstr[1] "%dפריטים: %s, נפח פנוי: %s"
+msgstr[2] "%dפריטים: %s, נפח פנוי: %s"
+msgstr[3] "%dפריטים: %s, נפח פנוי: %s"
 
 #. just the standard text
 #: ../thunar/thunar-list-model.c:2335
@@ -1251,6 +1283,8 @@ msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
 msgstr[0] "פריט %d, מקום פנוי: %s"
 msgstr[1] "%d פריטים, מקום פנוי: %s"
+msgstr[2] "%d פריטים, מקום פנוי: %s"
+msgstr[3] "%d פריטים, מקום פנוי: %s"
 
 #: ../thunar/thunar-list-model.c:2344
 #, c-format
@@ -1258,6 +1292,8 @@ msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "פריט %d"
 msgstr[1] "%d פריטים"
+msgstr[2] "%d פריטים"
+msgstr[3] "%d פריטים"
 
 #: ../thunar/thunar-list-model.c:2360
 #, c-format
@@ -1314,6 +1350,8 @@ msgid "%d other item selected: %s"
 msgid_plural "%d other items selected: %s"
 msgstr[0] "%d נבחר פריט אחר: %s"
 msgstr[1] "%d נבחרו פריטים אחרים: %s"
+msgstr[2] "%d נבחרו פריטים אחרים: %s"
+msgstr[3] "%d נבחרו פריטים אחרים: %s"
 
 #. only non-folders are selected
 #: ../thunar/thunar-list-model.c:2470
@@ -1322,6 +1360,8 @@ msgid "%d item selected: %s"
 msgid_plural "%d items selected: %s"
 msgstr[0] "%d נבחר פריט: %s"
 msgstr[1] "%d נבחרו פריטים: %s"
+msgstr[2] "%d נבחרו פריטים: %s"
+msgstr[3] "%d נבחרו פריטים: %s"
 
 #: ../thunar/thunar-list-model.c:2484
 #, c-format
@@ -1329,6 +1369,8 @@ msgid "%d folder selected"
 msgid_plural "%d folders selected"
 msgstr[0] "תיקייה%d נבחרה"
 msgstr[1] "%d תיקיות נבחרו"
+msgstr[2] "%d תיקיות נבחרו"
+msgstr[3] "%d תיקיות נבחרו"
 
 #. This is marked for translation in case a localizer
 #. * needs to change ", " to something else. The comma
@@ -1844,9 +1886,9 @@ msgstr "אפשר _ניהול כרכים"
 
 #: ../thunar/thunar-preferences-dialog.c:665
 msgid ""
-"<a href=\"volman-config:\">Configure</a> the management of removable drives\n"
-"and media (e.g., how cameras should be handled)."
-msgstr "<a href=\"volman-config:\">הגדר</a> את הניהול של כוננים נשלפים\nומדיה (למשל, כיצד מצלמות מטופלות)."
+"<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
+"devices and media."
+msgstr "<a href=\"volman-config:\">הגדר</a> את הניהול של כוננים נשלפים,\nהתקנים ומדיה."
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
@@ -1865,6 +1907,8 @@ msgid "%d file operation running"
 msgid_plural "%d file operations running"
 msgstr[0] "פעולת קובץ %d מופעלת כעת"
 msgstr[1] "%d פעולות קובץ מופעלות כעת"
+msgstr[2] "%d פעולות קובץ מופעלות כעת"
+msgstr[3] "%d פעולות קובץ מופעלות כעת"
 
 #. update the status text
 #: ../thunar/thunar-progress-view.c:356
@@ -2074,12 +2118,16 @@ msgid "Remove File"
 msgid_plural "Remove Files"
 msgstr[0] "הסר קובץ"
 msgstr[1] "הסר קבצים"
+msgstr[2] "הסר קבצים"
+msgstr[3] "הסר קבצים"
 
 #: ../thunar/thunar-renamer-dialog.c:1674
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] "הסרת הקובץ הנבחר מרשימת הקבצים לשינוי שם"
 msgstr[1] "הסרת הקבצים הנבחרים מרשימת הקבצים לשינוי שם"
+msgstr[2] "הסרת הקבצים הנבחרים מרשימת הקבצים לשינוי שם"
+msgstr[3] "הסרת הקבצים הנבחרים מרשימת הקבצים לשינוי שם"
 
 #. change title to reflect the standalone status
 #: ../thunar/thunar-renamer-dialog.c:1809
@@ -2123,6 +2171,8 @@ msgid "Trash contains %d file"
 msgid_plural "Trash contains %d files"
 msgstr[0] "אשפה מכילה קובץ %d"
 msgstr[1] "אשפה מכילה %d קבצים"
+msgstr[2] "אשפה מכילה %d קבצים"
+msgstr[3] "אשפה מכילה %d קבצים"
 
 #: ../thunar/thunar-shortcuts-model.c:922
 msgid "DEVICES"
@@ -2145,12 +2195,16 @@ msgid "Side Pane (Create Shortcut)"
 msgid_plural "Side Pane (Create Shortcuts)"
 msgstr[0] "חלונית צד (צור קיצור)"
 msgstr[1] "חלונית צד (צור קיצורים)"
+msgstr[2] "חלונית צד (צור קיצורים)"
+msgstr[3] "חלונית צד (צור קיצורים)"
 
 #: ../thunar/thunar-shortcuts-pane.c:398
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "הוספת התיקייה הנבחרת לחלונית הצד של קיצורים"
 msgstr[1] "הוספת התיקיות הנבחרות לחלונית הצד של קיצורים"
+msgstr[2] "הוספת התיקיות הנבחרות לחלונית הצד של קיצורים"
+msgstr[3] "הוספת התיקיות הנבחרות לחלונית הצד של קיצורים"
 
 #. append the "Mount" item
 #. append the "Mount" menu action
@@ -2231,6 +2285,8 @@ msgid "%u item, totalling %s"
 msgid_plural "%u items, totalling %s"
 msgstr[0] "פריט %u, סך הכל %s"
 msgstr[1] "%u פריטים, סך הכל %s"
+msgstr[2] "%u פריטים, סך הכל %s"
+msgstr[3] "%u פריטים, סך הכל %s"
 
 #. TRANSLATORS: this is shows if during the deep count size
 #. * directories were not accessible
@@ -2313,6 +2369,8 @@ msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "צור _קישור"
 msgstr[1] "צור _קישורים"
+msgstr[2] "צור _קישורים"
+msgstr[3] "צור _קישורים"
 
 #. append the "Rename" menu action
 #: ../thunar/thunar-standard-view.c:419 ../thunar/thunar-tree-view.c:1483
@@ -2379,48 +2437,64 @@ msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "הכן את הקובץ הנבחר להיות מועבר בעזרת פקודת הדבק"
 msgstr[1] "הכן את הקבצים הנבחרים להיות מועברים בעזרת פקודת הדבק"
+msgstr[2] "הכן את הקבצים הנבחרים להיות מועברים בעזרת פקודת הדבק"
+msgstr[3] "הכן את הקבצים הנבחרים להיות מועברים בעזרת פקודת הדבק"
 
 #: ../thunar/thunar-standard-view.c:4423
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "הכן את הקובץ הנבחר להיות מועתק בעזרת פקודת הדבק"
 msgstr[1] "הכן את הקבצים הנבחרים להיות מועתקים בעזרת פקודת הדבק"
+msgstr[2] "הכן את הקבצים הנבחרים להיות מועתקים בעזרת פקודת הדבק"
+msgstr[3] "הכן את הקבצים הנבחרים להיות מועתקים בעזרת פקודת הדבק"
 
 #: ../thunar/thunar-standard-view.c:4435
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "העבר את הקובץ הנבחר לאשפה"
 msgstr[1] "העבר את הקבצים הנבחרים לאשפה"
+msgstr[2] "העבר את הקבצים הנבחרים לאשפה"
+msgstr[3] "העבר את הקבצים הנבחרים לאשפה"
 
 #: ../thunar/thunar-standard-view.c:4443
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "מחק באופן קבוע את הקובץ הנבחר"
 msgstr[1] "מחק באופן קבוע את הקבצים הנבחרים"
+msgstr[2] "מחק באופן קבוע את הקבצים הנבחרים"
+msgstr[3] "מחק באופן קבוע את הקבצים הנבחרים"
 
 #: ../thunar/thunar-standard-view.c:4457
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "שכפל את הקובץ שנבחר"
 msgstr[1] "שכפל כל קובץ שנבחר"
+msgstr[2] "שכפל כל קובץ שנבחר"
+msgstr[3] "שכפל כל קובץ שנבחר"
 
 #: ../thunar/thunar-standard-view.c:4466
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "צור קישור סמלי עבור הקובץ שנבחר"
 msgstr[1] "צור קישור סמלי עבור כל אחד מהקבצים שנבחרו"
+msgstr[2] "צור קישור סמלי עבור כל אחד מהקבצים שנבחרו"
+msgstr[3] "צור קישור סמלי עבור כל אחד מהקבצים שנבחרו"
 
 #: ../thunar/thunar-standard-view.c:4474
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "שנה את שם הקובץ הנבחר"
 msgstr[1] "שנה את שמות הקבצים הנבחרים"
+msgstr[2] "שנה את שמות הקבצים הנבחרים"
+msgstr[3] "שנה את שמות הקבצים הנבחרים"
 
 #: ../thunar/thunar-standard-view.c:4482
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
 msgstr[0] "שחזר את הקובץ הנבחר"
 msgstr[1] "שחזר את הקבצים הנבחרים"
+msgstr[2] "שחזר את הקבצים הנבחרים"
+msgstr[3] "שחזר את הקבצים הנבחרים"
 
 #. add the "Empty File" item
 #: ../thunar/thunar-templates-action.c:488
@@ -2484,6 +2558,8 @@ msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "נותרה שעה %lu (%s/שנייה)"
 msgstr[1] "נותרו %lu שעות (%s/שנייה)"
+msgstr[2] "נותרו %lu שעות (%s/שנייה)"
+msgstr[3] "נותרו %lu שעות (%s/שנייה)"
 
 #: ../thunar/thunar-transfer-job.c:1206
 #, c-format
@@ -2491,6 +2567,8 @@ msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "נותרה דקה %lu  (%s/שנייה)"
 msgstr[1] "נותרו %lu דקות (%s/שנייה)"
+msgstr[2] "נותרו %lu דקות (%s/שנייה)"
+msgstr[3] "נותרו %lu דקות (%s/שנייה)"
 
 #: ../thunar/thunar-transfer-job.c:1213
 #, c-format
@@ -2498,6 +2576,8 @@ msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
 msgstr[0] "נותרה שנייה %lu (%s/שנייה)"
 msgstr[1] "נותרו %lu שניות (%s/שנייה)"
+msgstr[2] "נותרו %lu שניות (%s/שנייה)"
+msgstr[3] "נותרו %lu שניות (%s/שנייה)"
 
 #: ../thunar/thunar-trash-action.c:108
 msgid "T_rash"
@@ -3070,6 +3150,8 @@ msgid "%dx%d pixel"
 msgid_plural "%dx%d pixels"
 msgstr[0] "פיקסל %d על %d"
 msgstr[1] "%d על %d פיקסלים"
+msgstr[2] "%d על %d פיקסלים"
+msgstr[3] "%d על %d פיקסלים"
 
 #: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:117
 msgid "Con_vert to:"
@@ -3290,6 +3372,8 @@ msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
 msgstr[0] "לשלוח קובץ %d בתור ארכיון דחוס?"
 msgstr[1] "לשלוח %d קבצים בתור ארכיון דחוס?"
+msgstr[2] "לשלוח %d קבצים בתור ארכיון דחוס?"
+msgstr[3] "לשלוח %d קבצים בתור ארכיון דחוס?"
 
 #: ../plugins/thunar-sendto-email/main.c:219
 msgid "Send as _archive"
@@ -3333,6 +3417,8 @@ msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
 msgstr[0] "אירע כשל בדחיסת קובץ %d "
 msgstr[1] "אירע כשל בדחיסת %d קבצים"
+msgstr[2] "אירע כשל בדחיסת %d קבצים"
+msgstr[3] "אירע כשל בדחיסת %d קבצים"
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:657
