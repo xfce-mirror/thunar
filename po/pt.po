@@ -5,15 +5,15 @@
 # Translators:
 # Bruno Guerreiro <american.jesus.pt@gmail.com>, 2016-2017
 # José Vieira <jvieira33@sapo.pt>, 2017-2018
-# Nuno Miguel <nunomgue@gmail.com>, 2014-2017
+# Nuno Miguel <nunomgue@gmail.com>, 2014-2018
 # Sérgio Marques <smarquespt@gmail.com>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-06 06:30+0200\n"
-"PO-Revision-Date: 2018-04-07 23:17+0000\n"
-"Last-Translator: José Vieira <jvieira33@sapo.pt>\n"
+"POT-Creation-Date: 2018-05-06 00:30+0200\n"
+"PO-Revision-Date: 2018-05-23 10:54+0000\n"
+"Last-Translator: Nuno Miguel <nunomgue@gmail.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/xfce/thunar/language/pt/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -29,7 +29,7 @@ msgid ""
 "Before accepting please make sure there are no pending operations (e.g. file copying) as terminating them may leave your files corrupted.\n"
 "\n"
 "Please restart thunar afterwards."
-msgstr "Não foi possível executar o Thunar porque ainda está em curso uma execução anterior.\nTerminar a execução anterior?\n\nAntes de aceitar certifique-se de que não há operações pendentes (p. ex. cópia de ficheiros), pois interrompê-las pode corromper os ficheiros em causa.\n\nReiniciar o Thunar quando não houver operações pendentes."
+msgstr "Não foi possível executar o Thunar porque ainda está carregada outra instância.\nTerminar a instância antiga agora?\n\nAntes de aceitar certifique-se de que não há operações pendentes (p. ex. cópia de ficheiros), pois interrompê-las pode corromper os ficheiros em causa.\n\nReinicie o Thunar após as operações."
 
 #. setup application name
 #: ../thunar/main.c:126
@@ -652,11 +652,11 @@ msgstr "Configurar _colunas..."
 msgid "Configure the columns in the detailed list view"
 msgstr "Configurar as colunas na vista de lista detalhada"
 
-#: ../thunar/thunar-details-view.c:397
+#: ../thunar/thunar-details-view.c:398
 msgid "Detailed directory listing"
 msgstr "Listagem de diretórios detalhada"
 
-#: ../thunar/thunar-details-view.c:398
+#: ../thunar/thunar-details-view.c:399
 msgid "Details view"
 msgstr "Vista detalhada"
 
@@ -1842,9 +1842,9 @@ msgstr "Ativar g_estão de discos"
 
 #: ../thunar/thunar-preferences-dialog.c:665
 msgid ""
-"<a href=\"volman-config:\">Configure</a> the management of removable drives\n"
-"and media (e.g., how cameras should be handled)."
-msgstr "<a href=\"volman-config:\">Configurar</a> gestão de unidades amovíveis\ne multimédia (exemplo: manipulação das máquinas fotográficas)."
+"<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
+"devices and media."
+msgstr "<a href=\"volman-config:\">Configurar</a> a gestão de unidades amovíveis,\ndispositivos e multimédia."
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
