@@ -47,7 +47,9 @@ struct _ThunarHistoryAction
 
 
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 G_DEFINE_TYPE (ThunarHistoryAction, thunar_history_action, GTK_TYPE_ACTION)
+G_GNUC_END_IGNORE_DEPRECATIONS
 
 
 
@@ -56,7 +58,9 @@ thunar_history_action_class_init (ThunarHistoryActionClass *klass)
 {
   GtkActionClass *gtkaction_class;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   gtkaction_class = GTK_ACTION_CLASS (klass);
+G_GNUC_END_IGNORE_DEPRECATIONS
   gtkaction_class->create_tool_item = thunar_history_action_create_tool_item;
 
   /**
@@ -148,8 +152,10 @@ thunar_history_action_button_release_event (GtkWidget      *toggle_button,
           g_source_remove (history_action->popup_delay);
           history_action->popup_delay = 0;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
           /* activate event */
           gtk_action_activate (GTK_ACTION (history_action));
+G_GNUC_END_IGNORE_DEPRECATIONS
         }
     }
   else
@@ -205,8 +211,10 @@ thunar_history_action_activate (GtkWidget           *toggle_button,
   _thunar_return_if_fail (GTK_IS_TOGGLE_BUTTON (toggle_button));
   _thunar_return_if_fail (THUNAR_IS_HISTORY_ACTION (history_action));
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* activate event (only key events trigger this function) */
   gtk_action_activate (GTK_ACTION (history_action));
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* activate, so the code deactivates a bit later... */
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (toggle_button), TRUE);
@@ -226,9 +234,11 @@ thunar_history_action_toolbar_configured (GtkWidget *tool_item,
 
   icon = gtk_bin_get_child (GTK_BIN (toggle_button));
   action = g_object_get_data (G_OBJECT (toggle_button), I_("thunar-history-action"));
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   gtk_image_set_from_icon_name (GTK_IMAGE (icon),
                                 gtk_action_get_icon_name (action),
                                 gtk_tool_item_get_icon_size (GTK_TOOL_ITEM (tool_item)));
+G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 
@@ -253,8 +263,10 @@ thunar_history_action_create_tool_item (GtkAction *action)
   gtk_button_set_focus_on_click (GTK_BUTTON (button), FALSE);
   gtk_widget_show (button);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   icon = gtk_image_new_from_icon_name (gtk_action_get_icon_name (action),
       gtk_tool_item_get_icon_size (GTK_TOOL_ITEM (tool_item)));
+G_GNUC_END_IGNORE_DEPRECATIONS
   gtk_container_add (GTK_CONTAINER (button), icon);
   gtk_widget_show (icon);
 

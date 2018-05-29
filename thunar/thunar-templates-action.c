@@ -71,7 +71,9 @@ static guint templates_action_signals[LAST_SIGNAL];
 
 
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 G_DEFINE_TYPE (ThunarTemplatesAction, thunar_templates_action, GTK_TYPE_ACTION)
+G_GNUC_END_IGNORE_DEPRECATIONS
 
 
 
@@ -84,8 +86,10 @@ thunar_templates_action_class_init (ThunarTemplatesActionClass *klass)
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_templates_action_finalize;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   gtkaction_class = GTK_ACTION_CLASS (klass);
   gtkaction_class->create_menu_item = thunar_templates_action_create_menu_item;
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /**
    * ThunarTemplatesAction::create-empty-file:
@@ -157,7 +161,9 @@ thunar_templates_action_create_menu_item (GtkAction *action)
   _thunar_return_val_if_fail (THUNAR_IS_TEMPLATES_ACTION (action), NULL);
 
   /* let GtkAction allocate the menu item */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   item = (*GTK_ACTION_CLASS (thunar_templates_action_parent_class)->create_menu_item) (action);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* associate an empty submenu with the item (will be filled when shown) */
   menu = gtk_menu_new ();

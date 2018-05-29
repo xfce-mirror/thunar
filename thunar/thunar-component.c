@@ -86,6 +86,7 @@ thunar_component_class_init (gpointer klass)
                                                            THUNARX_TYPE_FILE_INFO_LIST,
                                                            EXO_PARAM_READWRITE));
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /**
    * ThunarComponent:ui-manager:
    *
@@ -99,6 +100,7 @@ thunar_component_class_init (gpointer klass)
                                                             "ui-manager",
                                                             GTK_TYPE_UI_MANAGER,
                                                             EXO_PARAM_READWRITE));
+G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 
@@ -198,7 +200,9 @@ thunar_component_set_ui_manager (ThunarComponent *component,
                                  GtkUIManager    *ui_manager)
 {
   _thunar_return_if_fail (THUNAR_IS_COMPONENT (component));
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (ui_manager == NULL || GTK_IS_UI_MANAGER (ui_manager));
+G_GNUC_END_IGNORE_DEPRECATIONS
   (*THUNAR_COMPONENT_GET_IFACE (component)->set_ui_manager) (component, ui_manager);
 }
 

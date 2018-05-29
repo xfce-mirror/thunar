@@ -270,6 +270,7 @@ thunar_launcher_navigator_init (ThunarNavigatorIface *iface)
 static void
 thunar_launcher_init (ThunarLauncher *launcher)
 {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* setup the action group for the launcher actions */
   launcher->action_group = gtk_action_group_new ("ThunarLauncher");
   gtk_action_group_set_translation_domain (launcher->action_group, GETTEXT_PACKAGE);
@@ -281,6 +282,7 @@ thunar_launcher_init (ThunarLauncher *launcher)
   launcher->action_open_in_new_window = gtk_action_group_get_action (launcher->action_group, "open-in-new-window");
   launcher->action_open_in_new_tab = gtk_action_group_get_action (launcher->action_group, "open-in-new-tab");
   launcher->action_open_with_other_in_menu = gtk_action_group_get_action (launcher->action_group, "open-with-other-in-menu");
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* initialize and add our custom icon factory for the application/action icons */
   launcher->icon_factory = gtk_icon_factory_new ();
@@ -501,6 +503,7 @@ thunar_launcher_set_ui_manager (ThunarComponent *component,
   /* disconnect from the previous UI manager */
   if (G_UNLIKELY (launcher->ui_manager != NULL))
     {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       /* drop our action group from the previous UI manager */
       gtk_ui_manager_remove_action_group (launcher->ui_manager, launcher->action_group);
 
@@ -513,6 +516,7 @@ thunar_launcher_set_ui_manager (ThunarComponent *component,
 
       /* unmerge our ui controls from the previous UI manager */
       gtk_ui_manager_remove_ui (launcher->ui_manager, launcher->ui_merge_id);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
       /* drop the reference on the previous UI manager */
       g_object_unref (G_OBJECT (launcher->ui_manager));
@@ -527,11 +531,13 @@ thunar_launcher_set_ui_manager (ThunarComponent *component,
       /* we keep a reference on the new manager */
       g_object_ref (G_OBJECT (ui_manager));
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       /* add our action group to the new manager */
       gtk_ui_manager_insert_action_group (ui_manager, launcher->action_group, -1);
 
       /* merge our UI control items with the new manager */
       launcher->ui_merge_id = gtk_ui_manager_add_ui_from_string (ui_manager, thunar_launcher_ui, thunar_launcher_ui_length, &error);
+G_GNUC_END_IGNORE_DEPRECATIONS
       if (G_UNLIKELY (launcher->ui_merge_id == 0))
         {
           g_error ("Failed to merge ThunarLauncher menus: %s", error->message);
@@ -782,8 +788,10 @@ thunar_launcher_update_idle (gpointer data)
   /* drop the previous addons ui controls from the UI manager */
   if (G_LIKELY (launcher->ui_addons_merge_id != 0))
     {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       gtk_ui_manager_remove_ui (launcher->ui_manager, launcher->ui_addons_merge_id);
       gtk_ui_manager_ensure_update (launcher->ui_manager);
+G_GNUC_END_IGNORE_DEPRECATIONS
       launcher->ui_addons_merge_id = 0;
     }
 
@@ -815,9 +823,11 @@ thunar_launcher_update_idle (gpointer data)
        ** - "Open", "Open in n New Windows" and "Open in n New Tabs" actions
        **/
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       /* Prepare "Open" label and icon */
       gtk_action_set_label (launcher->action_open, _("_Open"));
       gtk_action_set_icon_name (launcher->action_open, "document-open");
+G_GNUC_END_IGNORE_DEPRECATIONS
 
       if (n_selected_files == n_directories && n_directories >= 1)
         {
@@ -861,10 +871,12 @@ thunar_launcher_update_idle (gpointer data)
                             "tooltip", _("Open the selected directory in a new tab"),
                             NULL);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
               /* set tooltip that makes sence */
               gtk_action_set_tooltip (launcher->action_open, _("Open the selected directory"));
+G_GNUC_END_IGNORE_DEPRECATIONS
             }
-
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
           /* Show Window/Tab action if there are only directories selected */
           gtk_action_set_visible (launcher->action_open_in_new_window, n_directories > 0);
           gtk_action_set_visible (launcher->action_open_in_new_tab, n_directories > 0);
@@ -872,9 +884,11 @@ thunar_launcher_update_idle (gpointer data)
           /* Show open if there is exactly 1 directory selected */
           gtk_action_set_visible (launcher->action_open, n_directories == 1);
           gtk_action_set_sensitive (launcher->action_open, TRUE);
+G_GNUC_END_IGNORE_DEPRECATIONS
         }
       else
         {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
           /* Hide New Window and Tab action */
           gtk_action_set_visible (launcher->action_open_in_new_window, FALSE);
           gtk_action_set_visible (launcher->action_open_in_new_tab, FALSE);
@@ -886,11 +900,14 @@ thunar_launcher_update_idle (gpointer data)
                                   ngettext ("Open the selected file",
                                             "Open the selected files",
                                             n_selected_files));
+G_GNUC_END_IGNORE_DEPRECATIONS
         }
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       /* hide the "Open With Other Application" actions */
       gtk_action_set_visible (launcher->action_open_with_other, FALSE);
       gtk_action_set_visible (launcher->action_open_with_other_in_menu, FALSE);
+G_GNUC_END_IGNORE_DEPRECATIONS
     }
   else
     {
@@ -900,6 +917,7 @@ thunar_launcher_update_idle (gpointer data)
        ** - No "Open in n New Windows" action
        **/
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       /* drop all previous addon actions from the action group */
       actions = gtk_action_group_list_actions (launcher->action_group);
       for (lp = actions; lp != NULL; lp = lp->next)
@@ -916,6 +934,7 @@ thunar_launcher_update_idle (gpointer data)
       /* hide the "Open in n New Windows/Tabs" action */
       gtk_action_set_visible (launcher->action_open_in_new_window, FALSE);
       gtk_action_set_visible (launcher->action_open_in_new_tab, FALSE);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
       /* determine the set of applications that work for all selected files */
       applications = thunar_file_list_get_applications (launcher->selected_files);
@@ -947,9 +966,11 @@ thunar_launcher_update_idle (gpointer data)
           g_free (tooltip);
           g_free (label);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
           /* load default application icon */
           gtk_action_set_stock_id (launcher->action_open, NULL);
           gtk_action_set_gicon (launcher->action_open, g_app_info_get_icon (applications->data));
+G_GNUC_END_IGNORE_DEPRECATIONS
 
           /* remember the default application for the "Open" action */
           g_object_set_qdata_full (G_OBJECT (launcher->action_open), thunar_launcher_handler_quark, applications->data, g_object_unref);
@@ -988,9 +1009,11 @@ thunar_launcher_update_idle (gpointer data)
           file_menu_path = "/main-menu/file-menu/placeholder-launcher/open-with-menu/placeholder-applications";
           context_menu_path = "/file-context-menu/placeholder-launcher/open-with-menu/placeholder-applications";
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
           /* show the "Open With Other Application" in the submenu and hide the toplevel one */
           gtk_action_set_visible (launcher->action_open_with_other, FALSE);
           gtk_action_set_visible (launcher->action_open_with_other_in_menu, (n_selected_files == 1));
+G_GNUC_END_IGNORE_DEPRECATIONS
         }
       else
         {
@@ -1001,6 +1024,7 @@ thunar_launcher_update_idle (gpointer data)
           /* add a separator if we have more than one additional application */
           if (G_LIKELY (applications != NULL))
             {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
               /* add separator after the DEFAULT/execute action */
               gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
                                      file_menu_path, "separator", NULL,
@@ -1008,11 +1032,14 @@ thunar_launcher_update_idle (gpointer data)
               gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
                                      context_menu_path, "separator", NULL,
                                      GTK_UI_MANAGER_SEPARATOR, FALSE);
+G_GNUC_END_IGNORE_DEPRECATIONS
             }
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
           /* show the toplevel "Open With Other Application" (if not already done by the "Open" action) */
           gtk_action_set_visible (launcher->action_open_with_other, !default_is_open_with_other && (n_selected_files == 1));
           gtk_action_set_visible (launcher->action_open_with_other_in_menu, FALSE);
+G_GNUC_END_IGNORE_DEPRECATIONS
         }
 
       /* add actions for all remaining applications */
@@ -1031,6 +1058,7 @@ thunar_launcher_update_idle (gpointer data)
                                                    "Use \"%s\" to open the selected files",
                                                    n_selected_files), g_app_info_get_name (lp->data));
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
               /* allocate a new action for the application */
               action = gtk_action_new (name, label, tooltip, NULL);
               gtk_action_set_gicon (action, g_app_info_get_icon (lp->data));
@@ -1044,6 +1072,7 @@ thunar_launcher_update_idle (gpointer data)
                                      context_menu_path, name, name,
                                      GTK_UI_MANAGER_MENUITEM, FALSE);
               g_object_unref (G_OBJECT (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
 
               /* cleanup */
               g_free (tooltip);
@@ -1097,8 +1126,10 @@ thunar_launcher_update_check (ThunarLauncher *launcher,
       /* force an update */
       thunar_launcher_update_idle (launcher);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       /* ui update */
       gtk_ui_manager_ensure_update (launcher->ui_manager);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
       /* make sure the menu is positioned correctly after the
        * interface update */
@@ -1118,7 +1149,9 @@ thunar_launcher_update (ThunarLauncher *launcher)
 
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   proxies = gtk_action_get_proxies (launcher->action_open);
+G_GNUC_END_IGNORE_DEPRECATIONS
   instant_update = (proxies == NULL);
   for (lp = proxies; lp != NULL; lp = lp->next)
     {
@@ -1146,13 +1179,14 @@ thunar_launcher_update (ThunarLauncher *launcher)
     }
   else
     {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       /* assume all actions are working */
       gtk_action_set_sensitive (launcher->action_open, TRUE);
       gtk_action_set_visible (launcher->action_open_with_other, TRUE);
       gtk_action_set_visible (launcher->action_open_in_new_window, TRUE);
       gtk_action_set_visible (launcher->action_open_in_new_tab, TRUE);
       gtk_action_set_visible (launcher->action_open_with_other_in_menu, TRUE);
-
+G_GNUC_END_IGNORE_DEPRECATIONS
       /* delayed update */
       launcher->launcher_idle_id = g_timeout_add_seconds_full (G_PRIORITY_LOW, 5, thunar_launcher_update_idle,
                                                                launcher, thunar_launcher_update_idle_destroy);
@@ -1347,13 +1381,17 @@ thunar_launcher_action_open (GtkAction      *action,
   GAppInfo               *app_info;
   GList                  *selected_paths;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
   /* force update if still dirty */
   thunar_launcher_update_check (launcher, NULL);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   if (!gtk_action_get_sensitive (action))
     return;
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* check if we have a mime handler associated with the action */
   app_info = g_object_get_qdata (G_OBJECT (action), thunar_launcher_handler_quark);
@@ -1389,13 +1427,17 @@ static void
 thunar_launcher_action_open_with_other (GtkAction      *action,
                                         ThunarLauncher *launcher)
 {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
   /* force update if still dirty */
   thunar_launcher_update_check (launcher, NULL);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   if (!gtk_action_get_visible (action))
     return;
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* verify that we have atleast one selected file */
   if (G_LIKELY (launcher->selected_files != NULL))
@@ -1413,13 +1455,17 @@ thunar_launcher_action_open_in_new_window (GtkAction      *action,
 {
   ThunarLauncherPokeData *poke_data;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
   /* force update if still dirty */
   thunar_launcher_update_check (launcher, NULL);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   if (!gtk_action_get_visible (action))
     return;
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* open the selected directories in new windows */
   poke_data = thunar_launcher_poke_data_new (launcher->selected_files);
@@ -1434,13 +1480,17 @@ thunar_launcher_action_open_in_new_tab (GtkAction      *action,
 {
   ThunarLauncherPokeData *poke_data;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
   /* force update if still dirty */
   thunar_launcher_update_check (launcher, NULL);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   if (!gtk_action_get_visible (action))
     return;
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* open all selected directories in a new tab */
   poke_data = thunar_launcher_poke_data_new (launcher->selected_files);
@@ -1458,7 +1508,9 @@ thunar_launcher_action_sendto_desktop (GtkAction      *action,
   GFile             *desktop_file;
   GList             *files;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
   /* determine the source files */
@@ -1605,7 +1657,9 @@ thunar_launcher_action_sendto_device (GtkAction      *action,
   ThunarDevice            *device;
   GList                   *files;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
   /* determine the source paths */
@@ -1697,8 +1751,10 @@ thunar_launcher_sendto_idle (gpointer user_data)
         linkable = !thunar_file_is_trashed (lp->data);
     }
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* update the "Desktop (Create Link)" sendto action */
   action = gtk_action_group_get_action (launcher->action_group, "sendto-desktop");
+G_GNUC_END_IGNORE_DEPRECATIONS
   g_object_set (G_OBJECT (action),
                 "label", ngettext ("Desktop (Create Link)", "Desktop (Create Links)", n_selected_files),
                 "tooltip", ngettext ("Create a link to the selected file on the desktop",
@@ -1710,6 +1766,7 @@ thunar_launcher_sendto_idle (gpointer user_data)
   /* re-add the content to "Send To" if we have any files */
   if (G_LIKELY (n_selected_files > 0))
     {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       /* drop all previous sendto actions from the action group */
       handlers = gtk_action_group_list_actions (launcher->action_group);
       for (lp = handlers; lp != NULL; lp = lp->next)
@@ -1720,6 +1777,7 @@ thunar_launcher_sendto_idle (gpointer user_data)
       /* allocate a new merge id from the UI manager (if not already done) */
       if (G_UNLIKELY (launcher->ui_addons_merge_id == 0))
         launcher->ui_addons_merge_id = gtk_ui_manager_new_merge_id (launcher->ui_manager);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
       /* determine the currently active devices */
       devices = thunar_device_monitor_get_devices (launcher->device_monitor);
@@ -1739,6 +1797,7 @@ thunar_launcher_sendto_idle (gpointer user_data)
                                                "Send the selected files to \"%s\"",
                                                n_selected_files), device_name);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
           /* allocate a new action for the device */
           action = gtk_action_new (name, device_name, tooltip, NULL);
           g_object_set_qdata_full (G_OBJECT (action), thunar_launcher_handler_quark, lp->data, g_object_unref);
@@ -1756,6 +1815,7 @@ thunar_launcher_sendto_idle (gpointer user_data)
               gtk_action_set_gicon (action, icon);
               g_object_unref (icon);
             }
+G_GNUC_END_IGNORE_DEPRECATIONS
 
           /* cleanup */
           g_free (name);
@@ -1772,6 +1832,7 @@ thunar_launcher_sendto_idle (gpointer user_data)
         {
           if (got_devices)
             {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
               /* add separator between the devices and actions action */
               gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
                                      file_menu_path, "separator", NULL,
@@ -1779,6 +1840,7 @@ thunar_launcher_sendto_idle (gpointer user_data)
               gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
                                      context_menu_path, "separator", NULL,
                                      GTK_UI_MANAGER_SEPARATOR, FALSE);
+G_GNUC_END_IGNORE_DEPRECATIONS
             }
 
           /* add all handlers to the user interface */
@@ -1791,6 +1853,7 @@ thunar_launcher_sendto_idle (gpointer user_data)
                                                    "Send the selected files to \"%s\"",
                                                    n_selected_files), label);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
               /* allocate a new action for the handler */
               action = gtk_action_new (name, label, tooltip, NULL);
               gtk_action_set_gicon (action, g_app_info_get_icon (lp->data));
@@ -1802,6 +1865,7 @@ thunar_launcher_sendto_idle (gpointer user_data)
               gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
                                      context_menu_path, name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
               g_object_unref (G_OBJECT (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
 
               /* cleanup */
               g_free (tooltip);

@@ -265,11 +265,13 @@ thunar_location_buttons_init (ThunarLocationButtons *buttons)
 {
   GtkWidget       *icon;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* setup the action group for the location buttons */
   buttons->action_group = gtk_action_group_new ("ThunarLocationButtons");
   gtk_action_group_set_accel_group (buttons->action_group, gtk_accel_group_new ());
   gtk_action_group_set_translation_domain (buttons->action_group, GETTEXT_PACKAGE);
   gtk_action_group_add_actions (buttons->action_group, action_entries, G_N_ELEMENTS (action_entries), buttons);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   gtk_widget_set_has_window (GTK_WIDGET (buttons), FALSE);
   gtk_widget_set_redraw_on_allocate (GTK_WIDGET (buttons), FALSE);
@@ -1247,6 +1249,7 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
       /* grab a reference on the clipboard manager for this display */
       clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (GTK_WIDGET (buttons)));
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       /* setup the "Open" action */
       action = gtk_action_group_get_action (buttons->action_group, "location-buttons-open");
       thunar_gtk_action_set_tooltip (action, _("Open \"%s\" in this window"), display_name);
@@ -1279,11 +1282,13 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
       gtk_action_set_visible (action, (thunar_file_is_root (file) && thunar_file_is_trashed (file)));
       gtk_action_set_sensitive (action, (thunar_file_get_size (file) > 0));
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), gtk_action_create_menu_item (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
 
       item = gtk_separator_menu_item_new ();
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       /* setup the "Paste Into Folder" action */
       action = gtk_action_group_get_action (buttons->action_group, "location-buttons-paste-into-folder");
       thunar_gtk_action_set_tooltip (action, _("Move or copy files previously selected by a Cut or Copy command into \"%s\""), display_name);
@@ -1300,6 +1305,7 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
       thunar_gtk_action_set_tooltip (action, _("View the properties of the folder \"%s\""), display_name);
       g_object_set_qdata_full (G_OBJECT (action), thunar_file_quark, g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), gtk_action_create_menu_item (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
 
       /* run the menu (takes over the floating of menu) */
       thunar_gtk_menu_run (GTK_MENU (menu));
@@ -1326,7 +1332,9 @@ thunar_location_buttons_action_create_folder (GtkAction             *action,
   gchar             *name;
 
   _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* determine the directory for the action */
   directory = g_object_get_qdata (G_OBJECT (action), thunar_file_quark);
@@ -1366,7 +1374,9 @@ thunar_location_buttons_action_down_folder (GtkAction             *action,
   GList *lp;
 
   _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* lookup the active button */
   for (lp = buttons->list; lp != NULL; lp = lp->next)
@@ -1392,7 +1402,9 @@ thunar_location_buttons_action_empty_trash (GtkAction             *action,
   ThunarApplication *application;
 
   _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* launch the operation */
   application = thunar_application_get ();
@@ -1409,7 +1421,9 @@ thunar_location_buttons_action_open (GtkAction             *action,
   ThunarFile *directory;
 
   _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* determine the directory for the action */
   directory = g_object_get_qdata (G_OBJECT (action), thunar_file_quark);
@@ -1429,7 +1443,9 @@ thunar_location_buttons_action_open_in_new_tab (GtkAction             *action,
   ThunarFile *directory;
 
   _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* determine the directory for the action */
   directory = g_object_get_qdata (G_OBJECT (action), thunar_file_quark);
@@ -1450,7 +1466,9 @@ thunar_location_buttons_action_open_in_new_window (GtkAction             *action
   ThunarFile        *directory;
 
   _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* determine the directory for the action */
   directory = g_object_get_qdata (G_OBJECT (action), thunar_file_quark);
@@ -1473,7 +1491,9 @@ thunar_location_buttons_action_paste_into_folder (GtkAction             *action,
   ThunarFile             *directory;
 
   _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* determine the directory for the action */
   directory = g_object_get_qdata (G_OBJECT (action), thunar_file_quark);
@@ -1497,7 +1517,9 @@ thunar_location_buttons_action_properties (GtkAction             *action,
   GtkWidget  *dialog;
 
   _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* determine the directory for the action */
   directory = g_object_get_qdata (G_OBJECT (action), thunar_file_quark);

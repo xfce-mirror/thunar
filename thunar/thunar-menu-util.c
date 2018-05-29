@@ -51,6 +51,7 @@ action_from_menu_item (GObject *item)
                 "priority", &priority,
                 NULL);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   action = gtk_action_new (name, label, tooltip, NULL);
 
   if (icon_name != NULL)
@@ -59,6 +60,7 @@ action_from_menu_item (GObject *item)
     }
 
   gtk_action_set_sensitive (action, sensitive);
+G_GNUC_END_IGNORE_DEPRECATIONS
   g_object_set (action, "is-important", priority, NULL);
 
   g_signal_connect_data (action, "activate",
@@ -90,6 +92,7 @@ thunar_menu_util_add_items_to_ui_manager (GtkUIManager   *ui_manager,
   char            *action_path;
   GList           *children;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* add the menu items to the UI manager */
   for (lp = items; lp != NULL; lp = lp->next)
     {
@@ -124,6 +127,7 @@ thunar_menu_util_add_items_to_ui_manager (GtkUIManager   *ui_manager,
         thunarx_menu_item_list_free (children);
         g_free (subpath);
       }
+G_GNUC_END_IGNORE_DEPRECATIONS
 
       /* release the reference on item and action */
       g_object_unref (G_OBJECT (lp->data));
@@ -149,7 +153,9 @@ thunar_menu_util_add_items_to_menu (GtkWidget *menu,
     {
       action = action_from_menu_item (G_OBJECT (lp->data));
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       item = gtk_action_create_menu_item (action);
+G_GNUC_END_IGNORE_DEPRECATIONS
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
 

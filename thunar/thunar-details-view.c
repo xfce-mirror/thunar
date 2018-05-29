@@ -204,10 +204,12 @@ thunar_details_view_init (ThunarDetailsView *details_view)
    */
   g_signal_connect (G_OBJECT (details_view), "notify::zoom-level", G_CALLBACK (thunar_details_view_zoom_level_changed), NULL);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* setup the details view actions */
   gtk_action_group_add_actions (THUNAR_STANDARD_VIEW (details_view)->action_group,
                                 action_entries, G_N_ELEMENTS (action_entries),
                                 GTK_WIDGET (details_view));
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* create the tree view to embed */
   tree_view = exo_tree_view_new ();
@@ -404,7 +406,6 @@ thunar_details_view_get_accessible (GtkWidget *widget)
 }
 
 
-
 static void
 thunar_details_view_connect_ui_manager (ThunarStandardView *standard_view,
                                         GtkUIManager       *ui_manager)
@@ -412,8 +413,10 @@ thunar_details_view_connect_ui_manager (ThunarStandardView *standard_view,
   ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (standard_view);
   GError            *error = NULL;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   details_view->ui_merge_id = gtk_ui_manager_add_ui_from_string (ui_manager, thunar_details_view_ui,
                                                                  thunar_details_view_ui_length, &error);
+G_GNUC_END_IGNORE_DEPRECATIONS
   if (G_UNLIKELY (details_view->ui_merge_id == 0))
     {
       g_error ("Failed to merge ThunarDetailsView menus: %s", error->message);
@@ -427,7 +430,9 @@ static void
 thunar_details_view_disconnect_ui_manager (ThunarStandardView *standard_view,
                                            GtkUIManager       *ui_manager)
 {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   gtk_ui_manager_remove_ui (ui_manager, THUNAR_DETAILS_VIEW (standard_view)->ui_merge_id);
+G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 
@@ -782,9 +787,11 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
 
               action = thunar_gtk_ui_manager_get_action_by_name (THUNAR_STANDARD_VIEW (details_view)->ui_manager, action_name);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
               /* emit the action */
               if (G_LIKELY (action != NULL))
                   gtk_action_activate (action);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
               /* release the file reference */
               g_object_unref (G_OBJECT (file));
@@ -835,10 +842,12 @@ thunar_details_view_row_activated (GtkTreeView       *tree_view,
   gtk_tree_selection_unselect_all (selection);
   gtk_tree_selection_select_path (selection, path);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* emit the "open" action */
   action = thunar_gtk_ui_manager_get_action_by_name (THUNAR_STANDARD_VIEW (details_view)->ui_manager, "open");
   if (G_LIKELY (action != NULL))
     gtk_action_activate (action);
+G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 
@@ -910,7 +919,9 @@ thunar_details_view_action_setup_columns (GtkAction         *action,
                                           ThunarDetailsView *details_view)
 {
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* popup the column editor dialog */
   thunar_show_column_editor (details_view);

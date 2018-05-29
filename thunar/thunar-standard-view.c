@@ -660,6 +660,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   gtk_scrolled_window_set_vadjustment (GTK_SCROLLED_WINDOW (standard_view), NULL);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (standard_view), GTK_SHADOW_IN);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* setup the action group for this view */
   standard_view->action_group = gtk_action_group_new ("ThunarStandardView");
   gtk_action_group_set_translation_domain (standard_view->action_group, GETTEXT_PACKAGE);
@@ -680,6 +681,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->action_make_link = gtk_action_group_get_action (standard_view->action_group, "make-link");
   standard_view->priv->action_rename = gtk_action_group_get_action (standard_view->action_group, "rename");
   standard_view->priv->action_restore = gtk_action_group_get_action (standard_view->action_group, "restore");
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* add the "Create Document" sub menu action */
   standard_view->priv->action_create_document = thunar_templates_action_new ("create-document", _("Create _Document"));
@@ -687,7 +689,9 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
                     G_CALLBACK (thunar_standard_view_action_create_empty_file), standard_view);
   g_signal_connect (G_OBJECT (standard_view->priv->action_create_document), "create-template",
                     G_CALLBACK (thunar_standard_view_action_create_template), standard_view);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   gtk_action_group_add_action (standard_view->action_group, standard_view->priv->action_create_document);
+G_GNUC_END_IGNORE_DEPRECATIONS
   g_object_unref (G_OBJECT (standard_view->priv->action_create_document));
 
   /* setup the history support */
@@ -1227,6 +1231,7 @@ thunar_standard_view_set_ui_manager (ThunarComponent *component,
   if (standard_view->ui_manager == ui_manager)
     return;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* disconnect from the previous UI manager */
   if (G_LIKELY (standard_view->ui_manager != NULL))
     {
@@ -1289,6 +1294,7 @@ thunar_standard_view_set_ui_manager (ThunarComponent *component,
       gtk_ui_manager_ensure_update (standard_view->ui_manager);
     }
 
+G_GNUC_END_IGNORE_DEPRECATIONS
   /* let others know that we have a new manager */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_UI_MANAGER]);
 }
@@ -1486,6 +1492,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
   /* check if the new directory is in the trash */
   trashed = thunar_file_is_trashed (current_directory);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* update the "Create Folder"/"Create Document" actions */
   gtk_action_set_visible (standard_view->priv->action_create_folder, !trashed);
   gtk_action_set_visible (standard_view->priv->action_create_document, !trashed);
@@ -1495,6 +1502,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 
   /* update the "Restore" action */
   gtk_action_set_visible (standard_view->priv->action_restore, trashed);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* schedule a thumbnail timeout */
   /* NOTE: quickly after this we always trigger a size allocate wich will handle this */
@@ -1841,7 +1849,9 @@ thunar_standard_view_scroll_to_file (ThunarView *view,
 static gboolean
 thunar_standard_view_delete_selected_files (ThunarStandardView *standard_view)
 {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   GtkAction       *action = GTK_ACTION (standard_view->priv->action_move_to_trash);
+G_GNUC_END_IGNORE_DEPRECATIONS
   const gchar     *accel_path;
   GtkAccelKey      key;
 
@@ -1857,19 +1867,25 @@ thunar_standard_view_delete_selected_files (ThunarStandardView *standard_view)
        * this function is never called. If a hardcoded key combination is
        * pressed and a custom accelerator is set, accel_key || accel_mods
        * are no 0. */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       accel_path = gtk_action_get_accel_path (action);
+G_GNUC_END_IGNORE_DEPRECATIONS
       if (accel_path != NULL
           && gtk_accel_map_lookup_entry (accel_path, &key)
           && (key.accel_key != 0 || key.accel_mods != 0))
         return FALSE;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       /* just emit the "activate" signal on the "move-trash" action */
       gtk_action_activate (action);
+G_GNUC_END_IGNORE_DEPRECATIONS
     }
   else
     {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       /* do a permanent delete */
       gtk_action_activate (GTK_ACTION (standard_view->priv->action_delete));
+G_GNUC_END_IGNORE_DEPRECATIONS
     }
 
   /* ...and we're done */
@@ -2055,15 +2071,19 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
   /* remove the previously determined menu actions from the UI manager */
   if (G_LIKELY (standard_view->priv->custom_merge_id != 0))
     {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       gtk_ui_manager_remove_ui (standard_view->ui_manager, standard_view->priv->custom_merge_id);
       gtk_ui_manager_ensure_update (standard_view->ui_manager);
+G_GNUC_END_IGNORE_DEPRECATIONS
       standard_view->priv->custom_merge_id = 0;
     }
 
   /* drop any previous custom action group */
   if (G_LIKELY (standard_view->priv->custom_actions != NULL))
     {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       gtk_ui_manager_remove_action_group (standard_view->ui_manager, standard_view->priv->custom_actions);
+G_GNUC_END_IGNORE_DEPRECATIONS
       g_object_unref (G_OBJECT (standard_view->priv->custom_actions));
       standard_view->priv->custom_actions = NULL;
     }
@@ -2071,10 +2091,12 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
   /* add the actions specified by the menu providers */
   if (G_LIKELY (items != NULL))
     {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       /* allocate the action group and the merge id for the custom actions */
       standard_view->priv->custom_actions = gtk_action_group_new ("thunar-standard-view-custom-actions");
       standard_view->priv->custom_merge_id = gtk_ui_manager_new_merge_id (standard_view->ui_manager);
       gtk_ui_manager_insert_action_group (standard_view->ui_manager, standard_view->priv->custom_actions, -1);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
       if (G_LIKELY (selected_items != NULL))
         {
@@ -2092,8 +2114,10 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
                                                 standard_view->priv->custom_merge_id,
                                                 path, items);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       /* be sure to update the UI manager to avoid flickering */
       gtk_ui_manager_ensure_update (standard_view->ui_manager);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
       /* cleanup */
       g_list_free (items);
@@ -2271,7 +2295,9 @@ thunar_standard_view_action_create_empty_file (GtkAction          *action,
   GList              path_list;
   gchar             *name;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* ask the user to enter a name for the new empty file */
@@ -2315,7 +2341,9 @@ thunar_standard_view_action_create_folder (GtkAction          *action,
   GList              path_list;
   gchar             *name;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* ask the user to enter a name for the new folder */
@@ -2361,7 +2389,9 @@ thunar_standard_view_action_create_template (GtkAction           *action,
   gchar             *name;
   gchar             *title;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
@@ -2414,7 +2444,9 @@ thunar_standard_view_action_properties (GtkAction          *action,
   GtkWidget  *toplevel;
   GtkWidget  *dialog;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* popup the files dialog */
@@ -2449,7 +2481,9 @@ static void
 thunar_standard_view_action_cut (GtkAction          *action,
                                  ThunarStandardView *standard_view)
 {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (standard_view->clipboard));
 
@@ -2462,7 +2496,9 @@ static void
 thunar_standard_view_action_copy (GtkAction          *action,
                                   ThunarStandardView *standard_view)
 {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (standard_view->clipboard));
 
@@ -2477,7 +2513,9 @@ thunar_standard_view_action_paste (GtkAction          *action,
 {
   ThunarFile *current_directory;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
@@ -2520,7 +2558,9 @@ thunar_standard_view_action_move_to_trash (GtkAction          *action,
   const gchar       *accel_path;
   GtkAccelKey        key;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* check if we should permanently delete the files (user holds shift) */
@@ -2529,7 +2569,9 @@ thunar_standard_view_action_move_to_trash (GtkAction          *action,
     {
       /* look if the user has set a custom accelerator (accel_key != 0)
        * that contains a shift modifier */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       accel_path = gtk_action_get_accel_path (action);
+G_GNUC_END_IGNORE_DEPRECATIONS
       if (accel_path != NULL
           && gtk_accel_map_lookup_entry (accel_path, &key)
           && key.accel_key != 0
@@ -2557,7 +2599,9 @@ thunar_standard_view_action_paste_into_folder (GtkAction          *action,
 {
   ThunarFile *file;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* determine the first selected file and verify that it's a folder */
@@ -2572,7 +2616,9 @@ static void
 thunar_standard_view_action_select_all_files (GtkAction          *action,
                                               ThunarStandardView *standard_view)
 {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* grab the focus to the view */
@@ -2599,7 +2645,9 @@ thunar_standard_view_action_select_by_pattern (GtkAction          *action,
   const gchar *pattern;
   gchar       *pattern_extended = NULL;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
@@ -2667,7 +2715,9 @@ static void
 thunar_standard_view_action_selection_invert (GtkAction          *action,
                                               ThunarStandardView *standard_view)
 {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* grab the focus to the view */
@@ -2688,7 +2738,9 @@ thunar_standard_view_action_duplicate (GtkAction          *action,
   GClosure          *new_files_closure;
   GList             *selected_files;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* determine the file for the current directory */
@@ -2725,7 +2777,9 @@ thunar_standard_view_action_make_link (GtkAction          *action,
   GClosure          *new_files_closure;
   GList             *selected_files;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* determine the file for the current directory */
@@ -2816,7 +2870,9 @@ thunar_standard_view_action_rename (GtkAction          *action,
   const gchar     *accel_path;
   GtkAccelKey      key;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* leave if no files are selected */
@@ -2829,7 +2885,9 @@ thunar_standard_view_action_rename (GtkAction          *action,
     {
       /* Check if the user defined a custom accelerator that includes the
        * shift button. If he or she has, we won't force the bulk renamer. */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       accel_path = gtk_action_get_accel_path (action);
+G_GNUC_END_IGNORE_DEPRECATIONS
       if (accel_path != NULL
           && gtk_accel_map_lookup_entry (accel_path, &key)
           && (key.accel_mods & GDK_SHIFT_MASK) != 0)
@@ -2872,7 +2930,9 @@ thunar_standard_view_action_restore (GtkAction          *action,
 {
   ThunarApplication *application;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* restore the selected files */
@@ -3081,6 +3141,7 @@ thunar_standard_view_button_press_event (GtkWidget          *view,
                                          GdkEventButton     *event,
                                          ThunarStandardView *standard_view)
 {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   GtkAction *action = NULL;
 
   if (G_LIKELY (event->type == GDK_BUTTON_PRESS))
@@ -3098,7 +3159,7 @@ thunar_standard_view_button_press_event (GtkWidget          *view,
           return TRUE;
         }
     }
-
+G_GNUC_END_IGNORE_DEPRECATIONS
   /* next please... */
   return FALSE;
 }
@@ -4263,8 +4324,10 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view)
   /* grab an additional reference on the view */
   g_object_ref (G_OBJECT (standard_view));
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* run the menu (figuring out whether to use the file or the folder context menu) */
   menu = gtk_ui_manager_get_widget (standard_view->ui_manager, (selected_items != NULL) ? "/file-context-menu" : "/folder-context-menu");
+G_GNUC_END_IGNORE_DEPRECATIONS
   thunar_gtk_menu_run (GTK_MENU (menu));
 
   g_list_free_full (selected_items, (GDestroyNotify) gtk_tree_path_free);
@@ -4401,6 +4464,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
                        && thunar_file_is_directory (selected_files->data)
                        && thunar_file_is_writable (selected_files->data);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* update the "Create Folder"/"Create Document" actions */
   gtk_action_set_sensitive (standard_view->priv->action_create_folder, !trashed && writable);
   gtk_action_set_sensitive (standard_view->priv->action_create_document, !trashed && writable);
@@ -4408,6 +4472,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   /* update the "Properties" action */
   gtk_action_set_sensitive (standard_view->priv->action_properties,
                             current_directory != NULL || n_selected_files > 0);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* update the "Cut" action */
   g_object_set (G_OBJECT (standard_view->priv->action_cut),
@@ -4425,8 +4490,10 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
                                      n_selected_files),
                 NULL);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* update the "Paste" action */
   gtk_action_set_sensitive (standard_view->priv->action_paste, writable && pastable);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* update the "Move to Trash" action */
   g_object_set (G_OBJECT (standard_view->priv->action_move_to_trash),

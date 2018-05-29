@@ -361,6 +361,7 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   gtk_dialog_set_default_response (GTK_DIALOG (renamer_dialog), GTK_RESPONSE_ACCEPT);
   gtk_widget_set_tooltip_text (button, _("Click here to actually rename the files listed above to their new names."));
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* setup the action group for this dialog */
   renamer_dialog->action_group = gtk_action_group_new ("ThunarRenamerDialog");
   gtk_action_group_set_translation_domain (renamer_dialog->action_group, GETTEXT_PACKAGE);
@@ -370,6 +371,7 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   renamer_dialog->ui_manager = gtk_ui_manager_new ();
   gtk_ui_manager_insert_action_group (renamer_dialog->ui_manager, renamer_dialog->action_group, 0);
   gtk_ui_manager_add_ui_from_string (renamer_dialog->ui_manager, thunar_renamer_dialog_ui, thunar_renamer_dialog_ui_length, NULL);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* connect the accelerators */
   accel_group = gtk_ui_manager_get_accel_group (renamer_dialog->ui_manager);
@@ -382,7 +384,9 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   exo_binding_new (G_OBJECT (renamer_dialog), "selected-files", G_OBJECT (renamer_dialog->launcher), "selected-files");
 
   /* add the toolbar to the dialog */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   toolbar = gtk_ui_manager_get_widget (renamer_dialog->ui_manager, "/toolbar");
+G_GNUC_END_IGNORE_DEPRECATIONS
   exo_binding_new (G_OBJECT (renamer_dialog), "standalone", G_OBJECT (toolbar), "visible");
   gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (renamer_dialog))), toolbar, FALSE, FALSE, 0);
 
@@ -859,6 +863,7 @@ thunar_renamer_dialog_context_menu (ThunarRenamerDialog *renamer_dialog)
       items = thunarx_renamer_get_menu_items (renamer, GTK_WINDOW (renamer_dialog), renamer_dialog->selected_files);
     }
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* check if we have any renamer menu items */
   if (G_UNLIKELY (items != NULL))
     {
@@ -896,6 +901,7 @@ thunar_renamer_dialog_context_menu (ThunarRenamerDialog *renamer_dialog)
       g_object_unref (G_OBJECT (renamer_actions));
     }
 
+G_GNUC_END_IGNORE_DEPRECATIONS
   /* release the additional reference on the dialog */
   g_object_unref (G_OBJECT (renamer_dialog));
 }
@@ -1032,7 +1038,9 @@ thunar_renamer_dialog_action_add_files (GtkAction           *action,
   GSList        *lp;
   gchar         *uri;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
 
   /* allocate the file chooser */
@@ -1138,7 +1146,9 @@ thunar_renamer_dialog_action_remove_files (GtkAction           *action,
   GList               *rows;
   GList               *lp;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
 
   /* determine the selected rows in the view */
@@ -1178,7 +1188,9 @@ static void
 thunar_renamer_dialog_action_clear (GtkAction           *action,
                                     ThunarRenamerDialog *renamer_dialog)
 {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
 
   /* just clear the list of files in the model */
@@ -1191,7 +1203,9 @@ static void
 thunar_renamer_dialog_action_about (GtkAction           *action,
                                     ThunarRenamerDialog *renamer_dialog)
 {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
 
   /* just popup the about dialog */
@@ -1208,7 +1222,9 @@ thunar_renamer_dialog_action_properties (GtkAction           *action,
 {
   GtkWidget *dialog;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
 
   /* popup the properties dialog */
@@ -1623,8 +1639,10 @@ thunar_renamer_dialog_row_activated (GtkTreeView         *tree_view,
 
   /* just activate the "open" action */
   action = thunar_gtk_ui_manager_get_action_by_name (renamer_dialog->ui_manager, "open");
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   if (G_LIKELY (action != NULL))
     gtk_action_activate (action);
+G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 
@@ -1666,6 +1684,7 @@ thunar_renamer_dialog_selection_changed (GtkTreeSelection    *selection,
     }
   g_list_free (rows);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* the "Remove Files" action is only sensitive if we have one or more files in the selection */
   action = gtk_action_group_get_action (renamer_dialog->action_group, "remove-files");
   g_object_set (G_OBJECT (action),
@@ -1679,6 +1698,7 @@ thunar_renamer_dialog_selection_changed (GtkTreeSelection    *selection,
   /* the "Properties" action is only sensitive if we have exactly one selected file */
   action = gtk_action_group_get_action (renamer_dialog->action_group, "properties");
   gtk_action_set_sensitive (action, n_selected_files > 0);
+  G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* notify listeners */
   g_object_notify (G_OBJECT (renamer_dialog), "selected-files");

@@ -49,7 +49,9 @@ struct _ThunarTrashAction
 
 
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 G_DEFINE_TYPE (ThunarTrashAction, thunar_trash_action, GTK_TYPE_ACTION)
+G_GNUC_END_IGNORE_DEPRECATIONS
 
 
 

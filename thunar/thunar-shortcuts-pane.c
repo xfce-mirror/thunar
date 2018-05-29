@@ -164,9 +164,11 @@ static void
 thunar_shortcuts_pane_init (ThunarShortcutsPane *shortcuts_pane)
 {
   /* setup the action group for the shortcuts actions */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   shortcuts_pane->action_group = gtk_action_group_new ("ThunarShortcutsPane");
   gtk_action_group_set_translation_domain (shortcuts_pane->action_group, GETTEXT_PACKAGE);
   gtk_action_group_add_actions (shortcuts_pane->action_group, action_entries, G_N_ELEMENTS (action_entries), shortcuts_pane);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* configure the GtkScrolledWindow */
   gtk_scrolled_window_set_hadjustment (GTK_SCROLLED_WINDOW (shortcuts_pane), NULL);
@@ -376,8 +378,10 @@ thunar_shortcuts_pane_set_selected_files (ThunarComponent *component,
     if (!thunar_file_is_directory (lp->data))
       break;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* change the visibility of the "shortcuts-add" action appropriately */
   action = gtk_action_group_get_action (shortcuts_pane->action_group, "sendto-shortcuts");
+G_GNUC_END_IGNORE_DEPRECATIONS
   if (lp == NULL && selected_files != NULL)
     {
       /* check if atleast one of the selected folders is not already present in the model */
@@ -402,8 +406,10 @@ thunar_shortcuts_pane_set_selected_files (ThunarComponent *component,
     }
   else
     {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       /* hide the action */
       gtk_action_set_visible (action, FALSE);
+G_GNUC_END_IGNORE_DEPRECATIONS
     }
 
   /* notify listeners */
@@ -430,11 +436,13 @@ thunar_shortcuts_pane_set_ui_manager (ThunarComponent *component,
   /* disconnect from the previous UI manager */
   if (G_UNLIKELY (shortcuts_pane->ui_manager != NULL))
     {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       /* drop our action group from the previous UI manager */
       gtk_ui_manager_remove_action_group (shortcuts_pane->ui_manager, shortcuts_pane->action_group);
 
       /* unmerge our ui controls from the previous UI manager */
       gtk_ui_manager_remove_ui (shortcuts_pane->ui_manager, shortcuts_pane->ui_merge_id);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
       /* drop our reference on the previous UI manager */
       g_object_unref (G_OBJECT (shortcuts_pane->ui_manager));
@@ -449,11 +457,13 @@ thunar_shortcuts_pane_set_ui_manager (ThunarComponent *component,
       /* we keep a reference on the new manager */
       g_object_ref (G_OBJECT (ui_manager));
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       /* add our action group to the new manager */
       gtk_ui_manager_insert_action_group (ui_manager, shortcuts_pane->action_group, -1);
 
       /* merge our UI control items with the new manager */
       shortcuts_pane->ui_merge_id = gtk_ui_manager_add_ui_from_string (ui_manager, thunar_shortcuts_pane_ui, thunar_shortcuts_pane_ui_length, &error);
+G_GNUC_END_IGNORE_DEPRECATIONS
       if (G_UNLIKELY (shortcuts_pane->ui_merge_id == 0))
         {
           g_error ("Failed to merge ThunarShortcutsPane menus: %s", error->message);
@@ -475,7 +485,9 @@ thunar_shortcuts_pane_action_shortcuts_add (GtkAction           *action,
   GtkTreeModel *child_model;
   GList        *lp;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (GTK_IS_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_PANE (shortcuts_pane));
 
   /* determine the shortcuts model for the view */

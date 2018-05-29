@@ -46,6 +46,7 @@ thunar_gtk_action_set_tooltip (GtkAction   *action,
                                const gchar *format,
                                ...)
 {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   va_list var_args;
   gchar  *tooltip;
 
@@ -62,6 +63,7 @@ thunar_gtk_action_set_tooltip (GtkAction   *action,
 
   /* release the tooltip */
   g_free (tooltip);
+G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 
@@ -80,6 +82,7 @@ thunar_gtk_action_group_set_action_sensitive (GtkActionGroup *action_group,
                                               const gchar    *action_name,
                                               gboolean        sensitive)
 {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   GtkAction *action;
 
   _thunar_return_if_fail (GTK_IS_ACTION_GROUP (action_group));
@@ -90,6 +93,7 @@ thunar_gtk_action_group_set_action_sensitive (GtkActionGroup *action_group,
 
   /* apply the sensitivity to the action */
   gtk_action_set_sensitive (action, sensitive);
+G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 
@@ -174,6 +178,7 @@ thunar_gtk_ui_manager_get_action_by_name (GtkUIManager *ui_manager,
   GtkAction *action;
   GList     *lp;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   _thunar_return_val_if_fail (GTK_IS_UI_MANAGER (ui_manager), NULL);
   _thunar_return_val_if_fail (action_name != NULL, NULL);
 
@@ -184,6 +189,7 @@ thunar_gtk_ui_manager_get_action_by_name (GtkUIManager *ui_manager,
       if (G_LIKELY (action != NULL))
         return action;
     }
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   return NULL;
 }

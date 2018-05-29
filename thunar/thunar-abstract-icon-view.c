@@ -230,6 +230,7 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer,
                                  "text", THUNAR_COLUMN_NAME);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* setup the abstract icon view actions */
   gtk_action_group_add_actions (THUNAR_STANDARD_VIEW (abstract_icon_view)->action_group,
                                 action_entries, G_N_ELEMENTS (action_entries),
@@ -240,6 +241,7 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   gtk_action_group_add_radio_actions (THUNAR_STANDARD_VIEW (abstract_icon_view)->action_group, order_action_entries,
                                       G_N_ELEMENTS (order_action_entries), GTK_SORT_ASCENDING,
                                       G_CALLBACK (thunar_abstract_icon_view_action_sort), abstract_icon_view);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* we need to listen to sort column changes to sync the menu items */
   g_signal_connect (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_icon_view)->model), "sort-column-changed",
@@ -280,8 +282,10 @@ thunar_abstract_icon_view_connect_ui_manager (ThunarStandardView *standard_view,
   ThunarAbstractIconView *abstract_icon_view = THUNAR_ABSTRACT_ICON_VIEW (standard_view);
   GError                 *error = NULL;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   abstract_icon_view->priv->ui_merge_id = gtk_ui_manager_add_ui_from_string (ui_manager, thunar_abstract_icon_view_ui,
                                                                              thunar_abstract_icon_view_ui_length, &error);
+G_GNUC_END_IGNORE_DEPRECATIONS
   if (G_UNLIKELY (abstract_icon_view->priv->ui_merge_id == 0))
     {
       g_error ("Failed to merge ThunarAbstractIconView menus: %s", error->message);
@@ -295,7 +299,9 @@ static void
 thunar_abstract_icon_view_disconnect_ui_manager (ThunarStandardView *standard_view,
                                                  GtkUIManager       *ui_manager)
 {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   gtk_ui_manager_remove_ui (ui_manager, THUNAR_ABSTRACT_ICON_VIEW (standard_view)->priv->ui_merge_id);
+G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 
@@ -415,6 +421,7 @@ thunar_abstract_icon_view_highlight_path (ThunarStandardView *standard_view,
 static GtkAction*
 thunar_abstract_icon_view_gesture_action (ThunarAbstractIconView *abstract_icon_view)
 {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   if (abstract_icon_view->priv->gesture_start_y - abstract_icon_view->priv->gesture_current_y > 40
       && ABS (abstract_icon_view->priv->gesture_start_x - abstract_icon_view->priv->gesture_current_x) < 40)
     {
@@ -435,6 +442,7 @@ thunar_abstract_icon_view_gesture_action (ThunarAbstractIconView *abstract_icon_
     {
       return gtk_ui_manager_get_action (THUNAR_STANDARD_VIEW (abstract_icon_view)->ui_manager, "/main-menu/view-menu/reload");
     }
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   return NULL;
 }
@@ -449,6 +457,7 @@ thunar_abstract_icon_view_action_sort (GtkAction          *action,
   GtkSortType order;
   gint        column;
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* query the new sort column id */
   action = gtk_action_group_get_action (standard_view->action_group, "sort-by-name");
   column = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
@@ -456,6 +465,7 @@ thunar_abstract_icon_view_action_sort (GtkAction          *action,
   /* query the new sort order */
   action = gtk_action_group_get_action (standard_view->action_group, "sort-ascending");
   order = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* apply the new settings */
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), column, order);
@@ -546,10 +556,12 @@ thunar_abstract_icon_view_button_press_event (ExoIconView            *view,
                   in_tab = !in_tab;
               action_name = in_tab ? "open-in-new-tab" : "open-in-new-window";
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
               /* emit the action */
               action = thunar_gtk_ui_manager_get_action_by_name (THUNAR_STANDARD_VIEW (abstract_icon_view)->ui_manager, action_name);
               if (G_LIKELY (action != NULL))
                   gtk_action_activate (action);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
               /* release the file reference */
               g_object_unref (G_OBJECT (file));
@@ -597,8 +609,10 @@ thunar_abstract_icon_view_button_release_event (ExoIconView            *view,
 
   /* run the selected action (if any) */
   action = thunar_abstract_icon_view_gesture_action (abstract_icon_view);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   if (G_LIKELY (action != NULL))
     gtk_action_activate (action);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* unregister the "expose-event" handler */
   g_signal_handler_disconnect (G_OBJECT (view), abstract_icon_view->priv->gesture_expose_id);
@@ -749,10 +763,12 @@ thunar_abstract_icon_view_item_activated (ExoIconView            *view,
   exo_icon_view_unselect_all (view);
   exo_icon_view_select_path (view, path);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* emit the "open" action */
   action = thunar_gtk_ui_manager_get_action_by_name (THUNAR_STANDARD_VIEW (abstract_icon_view)->ui_manager, "open");
   if (G_LIKELY (action != NULL))
     gtk_action_activate (action);
+G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 
@@ -767,6 +783,7 @@ thunar_abstract_icon_view_sort_column_changed (GtkTreeSortable        *sortable,
 
   if (gtk_tree_sortable_get_sort_column_id (sortable, &column, &order))
     {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       /* apply the new sort column */
       action = gtk_action_group_get_action (THUNAR_STANDARD_VIEW (abstract_icon_view)->action_group, "sort-by-name");
       gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), column);
@@ -774,6 +791,7 @@ thunar_abstract_icon_view_sort_column_changed (GtkTreeSortable        *sortable,
       /* apply the new sort order */
       action = gtk_action_group_get_action (THUNAR_STANDARD_VIEW (abstract_icon_view)->action_group, "sort-ascending");
       gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), order);
+G_GNUC_END_IGNORE_DEPRECATIONS
     }
 }
 
