@@ -725,13 +725,13 @@ thunar_file_monitor_moved (ThunarFile *file,
   GFile *previous_file;
 
   /* ref the old location */
-  previous_file = g_object_ref (G_OBJECT (file->gfile));
+  previous_file = G_FILE (g_object_ref (G_OBJECT (file->gfile)));
 
   /* notify the thumbnail cache that we can now also move the thumbnail */
   thunar_file_move_thumbnail_cache_file (previous_file, renamed_file);
 
   /* set the new file */
-  file->gfile = g_object_ref (G_OBJECT (renamed_file));
+  file->gfile = G_FILE (g_object_ref (G_OBJECT (renamed_file)));
 
   /* reload file information */
   thunar_file_load (file, NULL, NULL);

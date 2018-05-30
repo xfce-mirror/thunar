@@ -565,7 +565,7 @@ thunar_path_entry_changed (GtkEditable *editable)
 
       /* use the same file if the text assumes we're in a directory */
       if (g_str_has_suffix (text, "/"))
-        folder_path = g_object_ref (G_OBJECT (file_path));
+        folder_path = G_FILE (g_object_ref (G_OBJECT (file_path)));
       else
         folder_path = g_file_get_parent (file_path);
     }

@@ -1129,7 +1129,7 @@ thunar_tree_model_item_new_with_file (ThunarTreeModel *model,
   ThunarTreeModelItem *item;
 
   item = g_slice_new0 (ThunarTreeModelItem);
-  item->file = g_object_ref (G_OBJECT (file));
+  item->file = THUNAR_FILE (g_object_ref (G_OBJECT (file)));
   item->model = model;
 
   return item;
@@ -1145,7 +1145,7 @@ thunar_tree_model_item_new_with_device (ThunarTreeModel *model,
   GFile               *mount_point;
 
   item = g_slice_new0 (ThunarTreeModelItem);
-  item->device = g_object_ref (G_OBJECT (device));
+  item->device = THUNAR_DEVICE (g_object_ref (G_OBJECT (device)));
   item->model = model;
 
   /* check if the volume is mounted */

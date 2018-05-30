@@ -578,7 +578,7 @@ thunar_tree_view_set_current_directory (ThunarNavigator *navigator,
       if (!view->show_hidden)
         {
           /* look if the file or one of it's parents is hidden */
-          for (file = g_object_ref (G_OBJECT (view->current_directory)); file != NULL; file = file_parent)
+          for (file = THUNAR_FILE (g_object_ref (G_OBJECT (view->current_directory))); file != NULL; file = file_parent)
             {
               /* check if this file is hidden */
               if (thunar_file_is_hidden (file))
@@ -619,7 +619,7 @@ thunar_tree_view_set_current_directory (ThunarNavigator *navigator,
       if (!needs_refiltering && !view->show_hidden)
         {
           /* look if the file or one of it's parents is hidden */
-          for (file = g_object_ref (G_OBJECT (current_directory)); file != NULL; file = file_parent)
+          for (file = THUNAR_FILE (g_object_ref (G_OBJECT (current_directory))); file != NULL; file = file_parent)
             {
               /* check if this file is hidden */
               if (thunar_file_is_hidden (file))

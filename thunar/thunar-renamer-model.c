@@ -987,7 +987,7 @@ thunar_renamer_model_item_new (ThunarFile *file)
   ThunarRenamerModelItem *item;
 
   item = g_slice_new0 (ThunarRenamerModelItem);
-  item->file = g_object_ref (G_OBJECT (file));
+  item->file = THUNAR_FILE (g_object_ref (G_OBJECT (file)));
   item->date_changed = thunar_file_get_date (file, THUNAR_FILE_DATE_CHANGED);
   item->dirty = TRUE;
 

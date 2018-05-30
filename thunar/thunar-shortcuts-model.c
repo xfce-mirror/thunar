@@ -1955,7 +1955,7 @@ thunar_shortcuts_model_add (ThunarShortcutsModel *model,
     }
   else
     {
-      shortcut->location = g_object_ref (G_OBJECT (location));
+      shortcut->location = G_FILE (g_object_ref (G_OBJECT (location)));
       shortcut->gicon = g_themed_icon_new ("folder-remote");
     }
 

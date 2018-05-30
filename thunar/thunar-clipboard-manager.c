@@ -537,7 +537,7 @@ thunar_clipboard_manager_transfer_files (ThunarClipboardManager *manager,
   /* setup the new file list */
   for (lp = g_list_last (files), manager->files = NULL; lp != NULL; lp = lp->prev)
     {
-      file = g_object_ref (G_OBJECT (lp->data));
+      file = THUNAR_FILE (g_object_ref (G_OBJECT (lp->data)));
       manager->files = g_list_prepend (manager->files, file);
       g_signal_connect (G_OBJECT (file), "destroy", G_CALLBACK (thunar_clipboard_manager_file_destroyed), manager);
     }
@@ -593,7 +593,7 @@ thunar_clipboard_manager_get_for_display (GdkDisplay *display)
 
   /* allocate a new manager */
   manager = g_object_new (THUNAR_TYPE_CLIPBOARD_MANAGER, NULL);
-  manager->clipboard = g_object_ref (G_OBJECT (clipboard));
+  manager->clipboard = GTK_CLIPBOARD (g_object_ref (G_OBJECT (clipboard)));
   g_object_set_qdata (G_OBJECT (clipboard), thunar_clipboard_manager_quark, manager);
 
   /* listen for the "owner-change" signal on the clipboard */
@@ -715,7 +715,7 @@ thunar_clipboard_manager_paste_files (ThunarClipboardManager *manager,
 
   /* prepare the paste request */
   request = g_slice_new0 (ThunarClipboardPasteRequest);
-  request->manager = g_object_ref (G_OBJECT (manager));
+  request->manager = THUNAR_CLIPBOARD_MANAGER (g_object_ref (G_OBJECT (manager)));
   request->target_file = g_object_ref (target_file);
   request->widget = widget;
 

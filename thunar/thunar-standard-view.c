@@ -1810,7 +1810,7 @@ thunar_standard_view_scroll_to_file (ThunarView *view,
   if (thunar_view_get_loading (view))
     {
       /* remember a reference for the new file and settings */
-      standard_view->priv->scroll_to_file = g_object_ref (G_OBJECT (file));
+      standard_view->priv->scroll_to_file = THUNAR_FILE (g_object_ref (G_OBJECT (file)));
       standard_view->priv->scroll_to_select = select_file;
       standard_view->priv->scroll_to_use_align = use_align;
       standard_view->priv->scroll_to_row_align = row_align;
@@ -1919,7 +1919,7 @@ thunar_standard_view_get_dest_actions (ThunarStandardView *standard_view,
         {
           /* tell the caller about the file (if it's interested) */
           if (G_UNLIKELY (file_return != NULL))
-            *file_return = g_object_ref (G_OBJECT (file));
+            *file_return = THUNAR_FILE (g_object_ref (G_OBJECT (file)));
         }
     }
 

@@ -537,7 +537,7 @@ thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
                                                             thunar_icon_factory_sweep_timer_destroy);
     }
 
-  return g_object_ref (G_OBJECT (pixbuf));
+  return GDK_PIXBUF (g_object_ref (G_OBJECT (pixbuf)));
 }
 
 
@@ -669,7 +669,7 @@ thunar_icon_factory_get_for_icon_theme (GtkIconTheme *icon_theme)
     {
       /* allocate a new factory and connect it to the icon theme */
       factory = g_object_new (THUNAR_TYPE_ICON_FACTORY, NULL);
-      factory->icon_theme = g_object_ref (G_OBJECT (icon_theme));
+      factory->icon_theme = GTK_ICON_THEME (g_object_ref (G_OBJECT (icon_theme)));
       g_object_set_qdata (G_OBJECT (factory->icon_theme), thunar_icon_factory_quark, factory);
 
       /* connect the "show-thumbnails" property to the global preference */

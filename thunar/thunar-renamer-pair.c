@@ -71,7 +71,7 @@ thunar_renamer_pair_new (ThunarFile  *file,
   _thunar_return_val_if_fail (g_utf8_validate (name, -1, NULL), NULL);
 
   renamer_pair = g_slice_new (ThunarRenamerPair);
-  renamer_pair->file = g_object_ref (G_OBJECT (file));
+  renamer_pair->file = THUNAR_FILE (g_object_ref (G_OBJECT (file)));
   renamer_pair->name = g_strdup (name);
 
   return renamer_pair;

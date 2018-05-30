@@ -1430,7 +1430,7 @@ thunar_properties_dialog_set_files (ThunarPropertiesDialog *dialog,
   for (lp = dialog->files; lp != NULL; lp = lp->next)
     {
       _thunar_assert (THUNAR_IS_FILE (lp->data));
-      file = g_object_ref (G_OBJECT (lp->data));
+      file = THUNAR_FILE (g_object_ref (G_OBJECT (lp->data)));
 
       /* watch the file for changes */
       thunar_file_watch (file);

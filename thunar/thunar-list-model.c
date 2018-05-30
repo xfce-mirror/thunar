@@ -1272,7 +1272,7 @@ thunar_list_model_files_added (ThunarFolder    *folder,
   for (lp = files; lp != NULL; lp = lp->next)
     {
       /* take a reference on that file */
-      file = g_object_ref (G_OBJECT (lp->data));
+      file = THUNAR_FILE (g_object_ref (G_OBJECT (lp->data)));
       _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
       /* check if the file should be hidden */
