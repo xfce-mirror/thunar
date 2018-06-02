@@ -22,22 +22,23 @@ bin_PROGRAMS =								\
 	thunar
 
 thunar_built_sources =							\
-	thunar-marshal.c						\
-	thunar-marshal.h						\
-	thunar-abstract-icon-view-ui.h					\
+	thunar-marshal.c							\
+	thunar-marshal.h							\
+	thunar-abstract-icon-view-ui.h				\
 	thunar-details-view-ui.h					\
 	thunar-launcher-ui.h						\
 	thunar-shortcuts-pane-ui.h					\
 	thunar-renamer-dialog-ui.h					\
 	thunar-standard-view-ui.h					\
-	thunar-thumbnail-frame.c					\
 	thunar-dbus-service-infos.h					\
 	thunar-dbus-service-infos.c					\
 	thunar-thumbnailer-proxy.c					\
 	thunar-thumbnailer-proxy.h					\
-	thunar-thumbnail-cache-proxy.h 					\
-	thunar-thumbnail-cache-proxy.c					\
-	thunar-window-ui.h
+	thunar-thumbnail-cache-proxy.h				\
+	thunar-thumbnail-cache-proxy.c				\
+	thunar-window-ui.h							\
+	thunar-resources.h							\
+	thunar-resources.c
 
 
 thunar_SOURCES =							\
@@ -200,7 +201,6 @@ thunar_SOURCES =							\
 	thunar-thumbnail-cache.h					\
 	thunar-thumbnailer.c						\
 	thunar-thumbnailer.h						\
-	thunar-thumbnail-frame.h					\
 	thunar-transfer-job.c						\
 	thunar-transfer-job.h						\
 	thunar-trash-action.c						\
@@ -298,9 +298,6 @@ thunar-thumbnailer-proxy.h thunar-thumbnailer-proxy.c: $(srcdir)/thunar-thumbnai
 thunar-thumbnail-cache-proxy.h thunar-thumbnail-cache-proxy.c: $(srcdir)/thunar-thumbnail-cache-dbus.xml Makefile
 	$(AM_V_GEN) gdbus-codegen --c-namespace Thunar --generate-c-code thunar-thumbnail-cache-proxy $(srcdir)/thunar-thumbnail-cache-dbus.xml
 
-thunar-thumbnail-frame.c: $(srcdir)/thunar-thumbnail-frame.png Makefile
-	$(AM_V_GEN) (echo "#include <thunar/thunar-thumbnail-frame.h>" && gdk-pixbuf-csource --extern --raw --stream --name=thunar_thumbnail_frame $(srcdir)/thunar-thumbnail-frame.png) > thunar-thumbnail-frame.c
-
 thunar-abstract-icon-view-ui.h: Makefile $(srcdir)/thunar-abstract-icon-view-ui.xml
 	$(AM_V_GEN) exo-csource --strip-comments --strip-content --static --name=thunar_abstract_icon_view_ui $(srcdir)/thunar-abstract-icon-view-ui.xml > thunar-abstract-icon-view-ui.h
 
@@ -349,17 +346,24 @@ thunar-marshal.c: thunar-marshal.list Makefile
 		&& cp xgen-tmc thunar-marshal.c \
 		&& rm -f xgen-tmc \
 	)
+
+thunar-resources.c: thunar.gresource.xml
+	glib-compile-resources --target=$@ --sourcedir=$(srcdir) --generate-source --c-name thunar $(srcdir)/thunar.gresource.xml
+
+thunar-resources.h: thunar.gresource.xml
+	glib-compile-resources --target=$@ --sourcedir=$(srcdir) --generate-header --c-name thunar $(srcdir)/thunar.gresource.xml
 endif
 
 EXTRA_DIST =								\
-	thunar-abstract-icon-view-ui.xml				\
-	thunar-dbus-service-infos.xml					\
-	thunar-details-view-ui.xml					\
-	thunar-launcher-ui.xml						\
+	thunar-abstract-icon-view-ui.xml		\
+	thunar-dbus-service-infos.xml			\
+	thunar-details-view-ui.xml				\
+	thunar-launcher-ui.xml					\
 	thunar-marshal.list						\
-	thunar-renamer-dialog-ui.xml					\
-	thunar-standard-view-ui.xml					\
-	thunar-thumbnail-frame.png					\
-	thunar-window-ui.xml						\
+	thunar-renamer-dialog-ui.xml			\
+	thunar-standard-view-ui.xml				\
+	thunar-thumbnail-frame.png				\
+	thunar-window-ui.xml					\
 	thunar-settings							\
+	thunar.gresource.xml					\
 	$(desktop_in_files)

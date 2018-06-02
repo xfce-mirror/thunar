@@ -34,7 +34,6 @@
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
-#include <thunar/thunar-thumbnail-frame.h>
 #include <thunar/thunar-util.h>
 
 
@@ -400,6 +399,26 @@ thumbnail_needs_frame (const GdkPixbuf *thumbnail,
 
 
 static GdkPixbuf*
+thunar_icon_factory_get_thumbnail_frame (void)
+{
+  GInputStream *stream;
+  static GdkPixbuf *frame = NULL;
+
+  if (G_LIKELY (frame != NULL))
+     return frame;
+
+  stream = g_resources_open_stream ("/org/xfce/thunar/thumbnail-frame.png", 0, NULL);
+  if (G_UNLIKELY (stream != NULL)) {
+    frame = gdk_pixbuf_new_from_stream (stream, NULL, NULL);
+    g_object_unref (stream);
+  }
+
+  return frame;
+}
+
+
+
+static GdkPixbuf*
 thunar_icon_factory_load_from_file (ThunarIconFactory *factory,
                                     const gchar       *path,
                                     gint               size)
@@ -424,7 +443,7 @@ thunar_icon_factory_load_from_file (ThunarIconFactory *factory,
       /* check if we want to add a frame to the image (we really don't
        * want to do this for icons displayed in the details view).
        */
-      needs_frame = (strstr (path, G_DIR_SEPARATOR_S ".thumbnails" G_DIR_SEPARATOR_S) != NULL)
+      needs_frame = (strstr (path, G_DIR_SEPARATOR_S ".cache/thumbnails" G_DIR_SEPARATOR_S) != NULL)
                  && (size >= 32) && thumbnail_needs_frame (pixbuf, width, height);
 
       /* be sure to make framed thumbnails fit into the size */
@@ -452,10 +471,9 @@ thunar_icon_factory_load_from_file (ThunarIconFactory *factory,
       if (G_LIKELY (needs_frame))
         {
           /* add a frame to the thumbnail */
-          frame = gdk_pixbuf_new_from_inline (-1, thunar_thumbnail_frame, FALSE, NULL);
+          frame = thunar_icon_factory_get_thumbnail_frame ();
           tmp = exo_gdk_pixbuf_frame (pixbuf, frame, 4, 3, 5, 6);
           g_object_unref (G_OBJECT (pixbuf));
-          g_object_unref (G_OBJECT (frame));
           pixbuf = tmp;
         }
     }
