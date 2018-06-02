@@ -134,7 +134,9 @@ thunar_progress_dialog_finalize (GObject *object)
   /* destroy the status icon */
   if (dialog->status_icon != NULL)
     {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       gtk_status_icon_set_visible (dialog->status_icon, FALSE);
+G_GNUC_END_IGNORE_DEPRECATIONS
       g_object_unref (dialog->status_icon);
     }
 
@@ -154,7 +156,10 @@ thunar_progress_dialog_shown (ThunarProgressDialog *dialog)
   /* show the status icon */
   if (dialog->status_icon == NULL)
     {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       dialog->status_icon = gtk_status_icon_new_from_icon_name ("stock_folder-copy");
+G_GNUC_END_IGNORE_DEPRECATIONS
+
       thunar_progress_dialog_update_status_icon (dialog);
       g_signal_connect_swapped (dialog->status_icon, "button-press-event",
                                 G_CALLBACK (thunar_progress_dialog_toggled),
@@ -304,7 +309,9 @@ thunar_progress_dialog_update_status_icon (ThunarProgressDialog *dialog)
                                             n_views);
 
   /* update the tooltip */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   gtk_status_icon_set_tooltip_text (dialog->status_icon, tooltip_text);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* free the string */
   g_free (tooltip_text);
