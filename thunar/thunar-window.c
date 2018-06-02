@@ -715,7 +715,6 @@ thunar_window_init (ThunarWindow *window)
   gboolean         last_statusbar_visible;
   GtkToolItem     *tool_item;
   gboolean         small_icons;
-  GtkRcStyle      *style;
   GtkStyleContext *context;
 
   /* unset the view type */
@@ -901,12 +900,6 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   gtk_notebook_set_group_name (GTK_NOTEBOOK (window->notebook), "thunar-tabs");
   gtk_widget_show (window->notebook);
 
-  /* drop the notebook borders */
-  style = gtk_rc_style_new ();
-  style->xthickness = style->ythickness = 0;
-  gtk_widget_modify_style (window->notebook, style);
-  g_object_unref (G_OBJECT (style));
-
   /* allocate the new location bar widget */
   window->location_bar = thunar_location_bar_new ();
   g_object_bind_property (G_OBJECT (window), "current-directory", G_OBJECT (window->location_bar), "current-directory", G_BINDING_SYNC_CREATE);
@@ -919,6 +912,7 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* setup the toolbar for the location bar */
   window->location_toolbar = gtk_ui_manager_get_widget (window->ui_manager, "/location-toolbar");
 G_GNUC_END_IGNORE_DEPRECATIONS
+
   gtk_toolbar_set_style (GTK_TOOLBAR (window->location_toolbar), GTK_TOOLBAR_ICONS);
   gtk_toolbar_set_icon_size (GTK_TOOLBAR (window->location_toolbar),
                               small_icons ? GTK_ICON_SIZE_SMALL_TOOLBAR : GTK_ICON_SIZE_LARGE_TOOLBAR);
@@ -1786,7 +1780,6 @@ thunar_window_notebook_insert (ThunarWindow *window,
   GtkWidget      *label_box;
   GtkWidget      *button;
   GtkWidget      *icon;
-  GtkRcStyle     *style;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_IS_FILE (directory));
@@ -1832,12 +1825,6 @@ thunar_window_notebook_insert (ThunarWindow *window,
   gtk_widget_set_tooltip_text (button, _("Close tab"));
   g_signal_connect_swapped (G_OBJECT (button), "clicked", G_CALLBACK (gtk_widget_destroy), view);
   gtk_widget_show (button);
-
-  /* make button a bit smaller */
-  style = gtk_rc_style_new ();
-  style->xthickness = style->ythickness = 0;
-  gtk_widget_modify_style (button, style);
-  g_object_unref (G_OBJECT (style));
 
   icon = gtk_image_new_from_icon_name ("window-close", GTK_ICON_SIZE_MENU);
   gtk_container_add (GTK_CONTAINER (button), icon);
