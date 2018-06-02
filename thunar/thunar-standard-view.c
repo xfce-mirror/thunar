@@ -3079,7 +3079,12 @@ thunar_standard_view_motion_notify_event (GtkWidget          *view,
 
       /* allocate the drag context (preferred action is to ask the user) */
       target_list = gtk_target_list_new (drag_targets, G_N_ELEMENTS (drag_targets));
-      context = gtk_drag_begin (view, target_list, GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_ASK, 3, (GdkEvent *) event);
+      context = gtk_drag_begin_with_coordinates (view, target_list,
+                                                 GDK_ACTION_COPY |
+                                                 GDK_ACTION_MOVE |
+                                                 GDK_ACTION_LINK |
+                                                 GDK_ACTION_ASK,
+                                                 3, (GdkEvent *) event, -1, -1);
 
       /* FIXME
       gdk_drag_context_set_suggested_action (context, GDK_ACTION_ASK);

@@ -435,7 +435,11 @@ thunar_path_entry_motion_notify_event (GtkWidget      *widget,
     {
       /* create the drag context */
       target_list = gtk_target_list_new (drag_targets, G_N_ELEMENTS (drag_targets));
-      context = gtk_drag_begin (widget, target_list, GDK_ACTION_COPY | GDK_ACTION_LINK, path_entry->drag_button, (GdkEvent *) event);
+      context = gtk_drag_begin_with_coordinates (widget, target_list,
+                                                 GDK_ACTION_COPY |
+                                                 GDK_ACTION_LINK,
+                                                 path_entry->drag_button,
+                                                 (GdkEvent *) event, -1, -1);
       gtk_target_list_unref (target_list);
 
       /* setup the drag icon (atleast 24px) */
