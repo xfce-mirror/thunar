@@ -260,7 +260,7 @@ thunar_history_action_create_tool_item (GtkAction *action)
   gtk_container_add (GTK_CONTAINER (tool_item), button);
   gtk_button_set_relief (GTK_BUTTON (button),
       gtk_tool_item_get_relief_style (GTK_TOOL_ITEM (tool_item)));
-  gtk_button_set_focus_on_click (GTK_BUTTON (button), FALSE);
+  gtk_widget_set_focus_on_click (button, FALSE);
   gtk_widget_show (button);
 
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
