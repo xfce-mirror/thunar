@@ -913,8 +913,9 @@ thunar_renamer_dialog_help (ThunarRenamerDialog *renamer_dialog)
 {
   ThunarxRenamer *renamer;
   const gchar    *help_url = NULL;
-  GdkScreen      *screen;
   GError         *error = NULL;
+  gboolean        uri_launched = FALSE;
+
 
   _thunar_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
 
@@ -932,11 +933,13 @@ thunar_renamer_dialog_help (ThunarRenamerDialog *renamer_dialog)
     }
   else
     {
-      /* determine the dialog's screen */
-      screen = gtk_widget_get_screen (GTK_WIDGET (renamer_dialog));
-
       /* try to launch the specific URL */
-      if (!gtk_show_uri (screen, help_url, gtk_get_current_event_time (), &error))
+      uri_launched = gtk_show_uri_on_window (GTK_WINDOW (renamer_dialog),
+                                             help_url,
+                                             gtk_get_current_event_time (),
+                                             &error);
+
+      if (!uri_launched)
         {
           /* tell the user that we failed */
           thunar_dialogs_show_error (GTK_WIDGET (renamer_dialog), error, _("Failed to open the documentation browser"));
