@@ -371,11 +371,11 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   renamer_dialog->ui_manager = gtk_ui_manager_new ();
   gtk_ui_manager_insert_action_group (renamer_dialog->ui_manager, renamer_dialog->action_group, 0);
   gtk_ui_manager_add_ui_from_string (renamer_dialog->ui_manager, thunar_renamer_dialog_ui, thunar_renamer_dialog_ui_length, NULL);
-G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* connect the accelerators */
   accel_group = gtk_ui_manager_get_accel_group (renamer_dialog->ui_manager);
   gtk_window_add_accel_group (GTK_WINDOW (renamer_dialog), accel_group);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* setup the launcher support for this dialog */
   renamer_dialog->launcher = thunar_launcher_new ();
