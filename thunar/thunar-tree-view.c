@@ -38,7 +38,6 @@
 #include <thunar/thunar-menu-util.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
-#include <thunar/thunar-stock.h>
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-shortcuts-icon-renderer.h>
 #include <thunar/thunar-simple-job.h>

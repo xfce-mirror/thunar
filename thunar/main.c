@@ -40,7 +40,6 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-notify.h>
 #include <thunar/thunar-session-client.h>
-#include <thunar/thunar-stock.h>
 #include <thunar/thunar-preferences.h>
 
 
@@ -151,9 +150,6 @@ main (int argc, char **argv)
 
   /* register additional transformation functions */
   thunar_g_initialize_transformations ();
-
-  /* initialize the thunar stock items/icons */
-  thunar_stock_init ();
 
   /* acquire a reference on the global application */
   application = thunar_application_get ();

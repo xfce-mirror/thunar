@@ -194,8 +194,6 @@ thunar_SOURCES =							\
 	thunar-standard-view.h						\
 	thunar-statusbar.c						\
 	thunar-statusbar.h						\
-	thunar-stock.c							\
-	thunar-stock.h							\
 	thunar-templates-action.c					\
 	thunar-templates-action.h					\
 	thunar-thumbnail-cache.c					\

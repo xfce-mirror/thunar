@@ -50,7 +50,6 @@
 #include <thunar/thunar-simple-job.h>
 #include <thunar/thunar-standard-view.h>
 #include <thunar/thunar-standard-view-ui.h>
-#include <thunar/thunar-stock.h>
 #include <thunar/thunar-templates-action.h>
 #include <thunar/thunar-thumbnailer.h>
 #include <thunar/thunar-util.h>
@@ -408,7 +407,7 @@ static const GtkActionEntry action_entries[] =
   { "cut", "edit-cut", N_ ("Cu_t"), "<control>X", NULL, G_CALLBACK (thunar_standard_view_action_cut), },
   { "copy", "edit-copy", N_ ("_Copy"), "<control>C", NULL, G_CALLBACK (thunar_standard_view_action_copy), },
   { "paste", "edit-paste", N_ ("_Paste"), "<control>V", N_ ("Move or copy files previously selected by a Cut or Copy command"), G_CALLBACK (thunar_standard_view_action_paste), },
-  { "move-to-trash", THUNAR_STOCK_TRASH_FULL, N_ ("Mo_ve to Trash"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_move_to_trash), },
+  { "move-to-trash", "user-trash", N_ ("Mo_ve to Trash"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_move_to_trash), },
   { "delete", "edit-delete", N_ ("_Delete"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_delete), },
   { "paste-into-folder", "edit-paste", N_ ("Paste Into Folder"), NULL, N_ ("Move or copy files previously selected by a Cut or Copy command into the selected folder"), G_CALLBACK (thunar_standard_view_action_paste_into_folder), },
   { "select-all-files", NULL, N_ ("Select _all Files"), NULL, N_ ("Select all files in this window"), G_CALLBACK (thunar_standard_view_action_select_all_files), },

@@ -46,7 +46,6 @@
 #include <thunar/thunar-shortcuts-icon-renderer.h>
 #include <thunar/thunar-shortcuts-model.h>
 #include <thunar/thunar-shortcuts-view.h>
-#include <thunar/thunar-stock.h>
 
 
 
@@ -1184,7 +1183,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
         gtk_widget_show (item);
 
-        image = gtk_image_new_from_stock (THUNAR_STOCK_SHORTCUTS, GTK_ICON_SIZE_MENU);
+        image = gtk_image_new_from_icon_name ("stock_thunar-shortcuts", GTK_ICON_SIZE_MENU);
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
 G_GNUC_END_IGNORE_DEPRECATIONS

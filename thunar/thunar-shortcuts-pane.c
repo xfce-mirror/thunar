@@ -28,7 +28,6 @@
 #include <thunar/thunar-shortcuts-pane-ui.h>
 #include <thunar/thunar-shortcuts-view.h>
 #include <thunar/thunar-side-pane.h>
-#include <thunar/thunar-stock.h>
 
 
 
@@ -95,7 +94,7 @@ struct _ThunarShortcutsPane
 
 static const GtkActionEntry action_entries[] =
 {
-  { "sendto-shortcuts", THUNAR_STOCK_SHORTCUTS, "", NULL, NULL, G_CALLBACK (thunar_shortcuts_pane_action_shortcuts_add), },
+  { "sendto-shortcuts", "stock_thunar-shortcuts", "", NULL, NULL, G_CALLBACK (thunar_shortcuts_pane_action_shortcuts_add), },
 };
 
 

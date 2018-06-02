@@ -23,7 +23,6 @@
 #endif
 
 #include <thunar/thunar-file.h>
-#include <thunar/thunar-stock.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-trash-action.h>
 #include <thunar/thunar-icon-factory.h>
@@ -148,9 +147,9 @@ thunar_trash_action_changed (ThunarTrashAction *trash_action,
 
   /* adjust the stock icon appropriately */
   if (thunar_file_get_item_count (trash_bin) > 0)
-    g_object_set (G_OBJECT (trash_action), "stock-id", THUNAR_STOCK_TRASH_FULL, NULL);
+    g_object_set (G_OBJECT (trash_action), "icon-name", "user-trash-full", NULL);
   else
-    g_object_set (G_OBJECT (trash_action), "stock-id", THUNAR_STOCK_TRASH_EMPTY, NULL);
+    g_object_set (G_OBJECT (trash_action), "icon-name", "user-trash", NULL);
 }
 
 
@@ -169,7 +168,6 @@ thunar_trash_action_new (void)
   return g_object_new (THUNAR_TYPE_TRASH_ACTION,
                        "name", "open-trash",
                        "tooltip", _("Display the contents of the trash can"),
-                       "stock-id", THUNAR_STOCK_TRASH_FULL,
+                       "icon-name", "user-trash-full",
                        NULL);
 }
-

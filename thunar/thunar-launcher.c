@@ -40,7 +40,6 @@
 #include <thunar/thunar-launcher-ui.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-sendto-model.h>
-#include <thunar/thunar-stock.h>
 #include <thunar/thunar-device-monitor.h>
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-window.h>
@@ -181,7 +180,7 @@ static const GtkActionEntry action_entries[] =
   { "open-with-other", NULL, N_ ("Open With Other _Application..."), NULL, N_ ("Choose another application with which to open the selected file"), G_CALLBACK (thunar_launcher_action_open_with_other), },
   { "open-with-menu", NULL, N_ ("Open With"), NULL, NULL, NULL, },
   { "open-with-other-in-menu", NULL, N_ ("Open With Other _Application..."), NULL, N_ ("Choose another application with which to open the selected file"), G_CALLBACK (thunar_launcher_action_open_with_other), },
-  { "sendto-desktop", THUNAR_STOCK_DESKTOP, "", NULL, NULL, G_CALLBACK (thunar_launcher_action_sendto_desktop), },
+  { "sendto-desktop", "user-desktop", "", NULL, NULL, G_CALLBACK (thunar_launcher_action_sendto_desktop), },
 };
 
 static GQuark thunar_launcher_handler_quark;
