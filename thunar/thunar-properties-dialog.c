@@ -819,7 +819,6 @@ thunar_properties_dialog_icon_button_clicked (GtkWidget              *button,
                                          _("_Cancel"), GTK_RESPONSE_CANCEL,
                                          _("_OK"), GTK_RESPONSE_ACCEPT,
                                          NULL);
-  gtk_dialog_set_alternative_button_order (GTK_DIALOG (chooser), GTK_RESPONSE_ACCEPT, GTK_RESPONSE_CANCEL, -1);
   gtk_dialog_set_default_response (GTK_DIALOG (chooser), GTK_RESPONSE_ACCEPT);
   g_free (title);
 

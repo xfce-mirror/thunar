@@ -555,13 +555,6 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
                                         _("Replace _All"), THUNAR_JOB_RESPONSE_YES_ALL,
                                         _("_Replace"), THUNAR_JOB_RESPONSE_YES,
                                         NULL);
-  gtk_dialog_set_alternative_button_order (GTK_DIALOG (dialog),
-                                           THUNAR_JOB_RESPONSE_YES,
-                                           THUNAR_JOB_RESPONSE_YES_ALL,
-                                           THUNAR_JOB_RESPONSE_NO,
-                                           THUNAR_JOB_RESPONSE_NO_ALL,
-                                           GTK_RESPONSE_CANCEL,
-                                           -1);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), THUNAR_JOB_RESPONSE_YES);
 
   /* determine the icon factory to use */
