@@ -754,7 +754,7 @@ thunar_preferences_dialog_new (GtkWindow *parent)
   gint          root_x, root_y;
   gint          window_width, window_height;
   gint          dialog_width, dialog_height;
-  gint          monitor;
+  GdkMonitor *  monitor;
   GdkRectangle  geometry;
   GdkScreen    *screen;
 
@@ -774,8 +774,8 @@ thunar_preferences_dialog_new (GtkWindow *parent)
       gtk_window_get_size (GTK_WINDOW (dialog), &dialog_width, &dialog_height);
 
       /* get the monitor geometry of the monitor with the parent window */
-      monitor = gdk_screen_get_monitor_at_point (screen, root_x, root_y);
-      gdk_screen_get_monitor_geometry (screen, monitor, &geometry);
+      monitor = gdk_display_get_monitor_at_point (gdk_display_get_default (), root_x, root_y);
+      gdk_monitor_get_geometry (monitor, &geometry);
 
       /* center the dialog on the window and clamp on the monitor */
       root_x += (window_width - dialog_width) / 2;

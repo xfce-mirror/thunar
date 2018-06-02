@@ -1731,7 +1731,7 @@ thunar_window_notebook_create_window (GtkWidget    *notebook,
   GtkWidget         *new_window;
   ThunarApplication *application;
   gint               width, height;
-  gint               monitor_num;
+  GdkMonitor        *monitor;
   GdkScreen         *screen;
   GdkRectangle       geo;
 
@@ -1758,8 +1758,8 @@ thunar_window_notebook_create_window (GtkWidget    *notebook,
   if (x >= 0 && y >= 0)
     {
       /* get the monitor geometry */
-      monitor_num = gdk_screen_get_monitor_at_point (screen, x, y);
-      gdk_screen_get_monitor_geometry (screen, monitor_num, &geo);
+      monitor = gdk_display_get_monitor_at_point (gdk_display_get_default (), x, y);
+      gdk_monitor_get_geometry (monitor, &geo);
 
       /* calculate window position, but keep it on the current monitor */
       x = CLAMP (x - width / 2, geo.x, geo.x + geo.width - width);
