@@ -451,9 +451,7 @@ thunar_emblem_chooser_create_button (ThunarEmblemChooser *chooser,
     goto done;
 
   /* determine the display name for the emblem */
-  name = gtk_icon_info_get_display_name (info);
-  if (G_UNLIKELY (name == NULL))
-    name = (strncmp (emblem, "emblem-", 7) == 0) ? emblem + 7 : emblem;
+  name = (strncmp (emblem, "emblem-", 7) == 0) ? emblem + 7 : emblem;
 
   /* allocate the button */
   button = gtk_check_button_new ();
