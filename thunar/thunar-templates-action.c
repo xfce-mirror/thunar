@@ -361,7 +361,9 @@ thunar_templates_action_files_ready (ThunarJob             *job,
           gtk_menu_set_screen (GTK_MENU (submenu), gtk_widget_get_screen (menu));
 
           /* allocate a new menu item for the directory */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
           item = gtk_image_menu_item_new_with_label (thunar_file_get_display_name (file));
+G_GNUC_END_IGNORE_DEPRECATIONS
           gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu);
 
           /* prepend the directory, its item and the parent menu it should
@@ -379,7 +381,9 @@ thunar_templates_action_files_ready (ThunarJob             *job,
             *dot = '\0';
 
           /* allocate a new menu item */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
           item = gtk_image_menu_item_new_with_label (label);
+G_GNUC_END_IGNORE_DEPRECATIONS
           g_object_set_data_full (G_OBJECT (item), I_("thunar-file"),
                                   g_object_ref (file), g_object_unref);
           g_signal_connect (item, "activate", G_CALLBACK (item_activated),
@@ -397,7 +401,9 @@ thunar_templates_action_files_ready (ThunarJob             *job,
 
       /* allocate an image based on the icon */
       image = gtk_image_new_from_pixbuf (icon);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
       /* release the icon reference */
       g_object_unref (icon);

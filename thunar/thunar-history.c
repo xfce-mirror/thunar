@@ -655,7 +655,9 @@ G_GNUC_END_IGNORE_DEPRECATIONS
     {
       /* add an item for this file */
       display_name = g_object_get_qdata (G_OBJECT (lp->data), thunar_history_display_name_quark);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       item = gtk_image_menu_item_new_with_label (display_name);
+G_GNUC_END_IGNORE_DEPRECATIONS
       g_object_set_qdata (G_OBJECT (item), thunar_history_gfile_quark, lp->data);
       g_signal_connect (G_OBJECT (item), "activate", handler, history);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
@@ -695,7 +697,9 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
           image = gtk_image_new_from_icon_name (icon_name, GTK_ICON_SIZE_MENU);
         }
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+G_GNUC_END_IGNORE_DEPRECATIONS
     }
 
   /* release the icon factory */

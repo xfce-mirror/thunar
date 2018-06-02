@@ -97,7 +97,9 @@ thunar_dnd_ask (GtkWidget    *widget,
   for (n = 0; n < G_N_ELEMENTS (dnd_action_items); ++n)
     if (G_LIKELY ((dnd_actions & dnd_action_items[n]) != 0))
       {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         item = gtk_image_menu_item_new_with_mnemonic (_(dnd_action_names[n]));
+G_GNUC_END_IGNORE_DEPRECATIONS
         g_object_set_data (G_OBJECT (item), I_("dnd-action"), GUINT_TO_POINTER (dnd_action_items[n]));
         g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (dnd_action_selected), &dnd_action);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
@@ -107,7 +109,9 @@ thunar_dnd_ask (GtkWidget    *widget,
         if (G_LIKELY (dnd_action_icons[n] != NULL))
           {
             image = gtk_image_new_from_icon_name (dnd_action_icons[n], GTK_ICON_SIZE_MENU);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
             gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+G_GNUC_END_IGNORE_DEPRECATIONS
           }
       }
 

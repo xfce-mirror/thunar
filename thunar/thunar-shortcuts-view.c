@@ -1096,23 +1096,31 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   menu = gtk_menu_new ();
 
   /* append the "Open" menu action */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   item = gtk_image_menu_item_new_with_mnemonic (_("_Open"));
+G_GNUC_END_IGNORE_DEPRECATIONS
   g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_open_clicked), view);
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show (item);
 
   /* set the icon */
   image = gtk_image_new_from_icon_name ("document-open", GTK_ICON_SIZE_MENU);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* append the "Open in New Tab" menu action */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   item = gtk_image_menu_item_new_with_mnemonic (_("Open in New Tab"));
+G_GNUC_END_IGNORE_DEPRECATIONS
   g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_open_in_new_tab_clicked), view);
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show (item);
 
   /* append the "Open in New Window" menu action */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   item = gtk_image_menu_item_new_with_mnemonic (_("Open in New Window"));
+G_GNUC_END_IGNORE_DEPRECATIONS
   g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_open_in_new_window_clicked), view);
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show (item);
@@ -1133,19 +1141,25 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
         gtk_widget_show (item);
 
         /* append the "Mount" item */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         item = gtk_image_menu_item_new_with_mnemonic (_("_Mount"));
+G_GNUC_END_IGNORE_DEPRECATIONS
         gtk_widget_set_visible (item, can_mount);
         g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_mount), view);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 
         /* append the "Unmount" item */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         item = gtk_image_menu_item_new_with_mnemonic (_("_Unmount"));
+G_GNUC_END_IGNORE_DEPRECATIONS
         gtk_widget_set_visible (item, can_unmount);
         g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_unmount), view);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 
         /* append the "Disconnect" (eject + safely remove drive) item */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         item = gtk_image_menu_item_new_with_mnemonic (_("_Eject"));
+G_GNUC_END_IGNORE_DEPRECATIONS
         gtk_widget_set_visible (item, can_eject);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
         g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_eject), view);
@@ -1162,14 +1176,18 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
         shortcuts_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
 
         /* append the "Disconnect" item */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         item = gtk_image_menu_item_new_with_mnemonic (_("Create _Shortcut"));
+G_GNUC_END_IGNORE_DEPRECATIONS
         gtk_widget_set_sensitive (item, mount_point != NULL && !thunar_shortcuts_model_has_bookmark (THUNAR_SHORTCUTS_MODEL (shortcuts_model), mount_point));
         g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_create_shortcut), view);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
         gtk_widget_show (item);
 
         image = gtk_image_new_from_stock (THUNAR_STOCK_SHORTCUTS, GTK_ICON_SIZE_MENU);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
         if (mount_point != NULL)
           g_object_unref (mount_point);
@@ -1183,14 +1201,18 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
         gtk_widget_show (item);
 
         /* append the "Disconnect" item */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         item = gtk_image_menu_item_new_with_mnemonic (_("Disconn_ect"));
+G_GNUC_END_IGNORE_DEPRECATIONS
         gtk_widget_set_sensitive (item, thunar_device_can_eject (device));
         g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_eject), view);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
         gtk_widget_show (item);
 
         image = gtk_image_new_from_stock (GTK_STOCK_DISCONNECT, GTK_ICON_SIZE_MENU);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+G_GNUC_END_IGNORE_DEPRECATIONS
         break;
 
       case THUNAR_SHORTCUT_GROUP_PLACES_TRASH:
@@ -1200,7 +1222,9 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
         gtk_widget_show (item);
 
         /* append the "Empty Trash" menu action */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
         item = gtk_image_menu_item_new_with_mnemonic (_("_Empty Trash"));
+G_GNUC_END_IGNORE_DEPRECATIONS
         gtk_widget_set_sensitive (item, (thunar_file_get_item_count (file) > 0));
         g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_empty_trash), view);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
@@ -1254,7 +1278,9 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       item = gtk_image_menu_item_new_with_mnemonic (_("_Remove Shortcut"));
+G_GNUC_END_IGNORE_DEPRECATIONS
       g_object_set_data_full (G_OBJECT (item), I_("thunar-shortcuts-row"),
                               gtk_tree_row_reference_new (model, path),
                               (GDestroyNotify) gtk_tree_row_reference_free);
@@ -1265,10 +1291,14 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
 
       /* set the remove icon */
       image = gtk_image_new_from_icon_name ("list-remove", GTK_ICON_SIZE_MENU);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
       /* append the rename menu item */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       item = gtk_image_menu_item_new_with_mnemonic (_("Re_name Shortcut"));
+G_GNUC_END_IGNORE_DEPRECATIONS
       g_object_set_data_full (G_OBJECT (item), I_("thunar-shortcuts-row"),
                               gtk_tree_row_reference_new (model, path),
                               (GDestroyNotify) gtk_tree_row_reference_free);

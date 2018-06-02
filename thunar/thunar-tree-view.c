@@ -1280,7 +1280,9 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
   menu = gtk_menu_new ();
 
   /* append the "Open" menu action */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   item = gtk_image_menu_item_new_with_mnemonic (_("_Open"));
+G_GNUC_END_IGNORE_DEPRECATIONS
   g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_open), view);
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_set_sensitive (item, (file != NULL || device != NULL));
@@ -1288,7 +1290,9 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
 
   /* set the icon */
   image = gtk_image_new_from_icon_name ("document-open", GTK_ICON_SIZE_MENU);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* append the "Open in New Tab" menu action */
   item = gtk_menu_item_new_with_mnemonic (_("Open in New _Tab"));
@@ -1366,7 +1370,9 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
   if (G_LIKELY (file != NULL && !thunar_file_is_trashed (file)))
     {
       /* append the "Create Folder" menu action */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       item = gtk_image_menu_item_new_with_mnemonic (_("Create _Folder..."));
+G_GNUC_END_IGNORE_DEPRECATIONS
       gtk_widget_set_sensitive (item, thunar_file_is_writable (file));
       g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_create_folder), view);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
@@ -1375,7 +1381,9 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
       /* set the icon */
       icon = g_themed_icon_new ("folder-new");
       image = gtk_image_new_from_gicon (icon, GTK_ICON_SIZE_MENU);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+G_GNUC_END_IGNORE_DEPRECATIONS
       g_object_unref (icon);
 
       /* append a separator item */
@@ -1393,7 +1401,9 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
           parent_file = thunar_file_get_parent (file, NULL);
 
           /* append the "Cut" menu action */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
           item = gtk_image_menu_item_new_with_mnemonic (_("Cu_t"));
+G_GNUC_END_IGNORE_DEPRECATIONS
           g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_cut), view);
           gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
           gtk_widget_set_sensitive (item, (parent_file != NULL && thunar_file_is_writable (parent_file)));
@@ -1401,10 +1411,14 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
 
           /* set the icon */
           image = gtk_image_new_from_icon_name ("edit-cut", GTK_ICON_SIZE_MENU);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
           gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
           /* append the "Copy" menu action */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
           item = gtk_image_menu_item_new_with_mnemonic (_("_Copy"));
+G_GNUC_END_IGNORE_DEPRECATIONS
           g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_copy), view);
           gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
           gtk_widget_set_sensitive (item, (parent_file != NULL));
@@ -1412,7 +1426,9 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
 
           /* set the icon */
           image = gtk_image_new_from_icon_name ("edit-copy", GTK_ICON_SIZE_MENU);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
           gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
           /* cleanup */
           if (G_LIKELY (parent_file != NULL))
@@ -1420,7 +1436,9 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
         }
 
       /* append the "Paste Into Folder" menu action */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       item = gtk_image_menu_item_new_with_mnemonic (_("_Paste Into Folder"));
+G_GNUC_END_IGNORE_DEPRECATIONS
       g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_paste_into_folder), view);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_set_sensitive (item, (thunar_file_is_writable (file) && thunar_clipboard_manager_get_can_paste (view->clipboard)));
@@ -1428,7 +1446,9 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
 
       /* set the icon */
       image = gtk_image_new_from_icon_name ("edit-paste", GTK_ICON_SIZE_MENU);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
 
       /* "Delete" and "Rename" don't make much sense for devices */
@@ -1446,7 +1466,9 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
               && thunar_file_can_be_trashed (file))
             {
               /* append the "Move to Tash" menu action */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
               item = gtk_image_menu_item_new_with_mnemonic (_("Mo_ve to Trash"));
+G_GNUC_END_IGNORE_DEPRECATIONS
               g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_move_to_trash), view);
               gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
               gtk_widget_set_sensitive (item, (parent_file != NULL && thunar_file_is_writable (parent_file)));
@@ -1454,11 +1476,15 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
 
               /* set the icon */
               image = gtk_image_new_from_icon_name ("user-trash-full", GTK_ICON_SIZE_MENU);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
               gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+G_GNUC_END_IGNORE_DEPRECATIONS
             }
 
           /* append the "Delete" menu action */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
           item = gtk_image_menu_item_new_with_mnemonic (_("_Delete"));
+G_GNUC_END_IGNORE_DEPRECATIONS
           g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_delete), view);
           gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
           gtk_widget_set_sensitive (item, (parent_file != NULL && thunar_file_is_writable (parent_file)));
@@ -1466,7 +1492,9 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
 
           /* set the icon */
           image = gtk_image_new_from_icon_name ("edit-delete", GTK_ICON_SIZE_MENU);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
           gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
           /* cleanup */
           if (G_LIKELY (parent_file != NULL))
@@ -1532,7 +1560,9 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
     }
 
   /* append the "Properties" menu action */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   item = gtk_image_menu_item_new_with_mnemonic (_("P_roperties..."));
+G_GNUC_END_IGNORE_DEPRECATIONS
   g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_properties), view);
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_set_sensitive (item, (file != NULL));
@@ -1540,7 +1570,9 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
 
   /* set the icon */
   image = gtk_image_new_from_icon_name ("document-properties", GTK_ICON_SIZE_MENU);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* run the menu (taking over the floating reference on the menu) */
   thunar_gtk_menu_run (GTK_MENU (menu));
