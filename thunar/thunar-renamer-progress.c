@@ -23,6 +23,7 @@
 
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-renamer-progress.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -143,7 +144,7 @@ thunar_renamer_progress_next_idle (gpointer user_data)
   guint                  n_total;
   GList                 *first;
 
-  GDK_THREADS_ENTER ();
+THUNAR_THREADS_ENTER
 
   /* check if we have still pairs to go */
   if (G_LIKELY (renamer_progress->pairs_todo != NULL))
@@ -266,7 +267,7 @@ thunar_renamer_progress_next_idle (gpointer user_data)
   if (G_UNLIKELY (renamer_progress->pairs_todo == NULL))
     g_main_loop_quit (renamer_progress->next_idle_loop);
 
-  GDK_THREADS_LEAVE ();
+THUNAR_THREADS_LEAVE
 
   /* keep the idle source alive as long as we have anything to do */
   return (renamer_progress->pairs_todo != NULL);

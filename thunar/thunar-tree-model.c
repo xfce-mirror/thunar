@@ -37,6 +37,7 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-tree-model.h>
 #include <thunar/thunar-device-monitor.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -918,13 +919,13 @@ thunar_tree_model_cleanup_idle (gpointer user_data)
 {
   ThunarTreeModel *model = THUNAR_TREE_MODEL (user_data);
 
-  GDK_THREADS_ENTER ();
+THUNAR_THREADS_ENTER
 
   /* walk through the tree and release all the nodes with a ref count of 0 */
   g_node_traverse (model->root, G_PRE_ORDER, G_TRAVERSE_ALL, -1,
                    thunar_tree_model_node_traverse_cleanup, model);
 
-  GDK_THREADS_LEAVE ();
+THUNAR_THREADS_LEAVE
 
   return FALSE;
 }
@@ -1434,7 +1435,7 @@ thunar_tree_model_item_load_idle (gpointer user_data)
       _thunar_return_val_if_fail (node->children == NULL || G_NODE_HAS_DUMMY (node), FALSE);
 #endif
 
-  GDK_THREADS_ENTER ();
+THUNAR_THREADS_ENTER
 
   /* check if we don't have a file yet and this is a mounted volume */
   if (item->file == NULL && item->device != NULL && thunar_device_is_mounted (item->device))
@@ -1471,7 +1472,7 @@ thunar_tree_model_item_load_idle (gpointer user_data)
         }
     }
 
-  GDK_THREADS_LEAVE ();
+THUNAR_THREADS_LEAVE
 
   return FALSE;
 }

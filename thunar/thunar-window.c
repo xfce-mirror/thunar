@@ -2185,7 +2185,7 @@ thunar_window_bookmark_merge (gpointer user_data)
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  GDK_THREADS_ENTER ();
+THUNAR_THREADS_ENTER
 
   /* remove old actions */
   if (window->bookmark_items_actions_merge_id != 0)
@@ -2233,7 +2233,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
   window->bookmark_reload_idle_id = 0;
 
-  GDK_THREADS_LEAVE ();
+THUNAR_THREADS_LEAVE
 
   return FALSE;
 }
@@ -3627,10 +3627,10 @@ thunar_window_merge_idle (gpointer user_data)
   ThunarWindow *window = THUNAR_WINDOW (user_data);
 
   /* merge custom preferences from the providers */
-  GDK_THREADS_ENTER ();
+THUNAR_THREADS_ENTER
   thunar_window_merge_custom_preferences (window);
   thunar_window_merge_go_actions (window);
-  GDK_THREADS_LEAVE ();
+THUNAR_THREADS_LEAVE
 
   thunar_window_bookmark_merge (window);
 
@@ -3670,7 +3670,7 @@ thunar_window_save_geometry_timer (gpointer user_data)
   gint           width;
   gint           height;
 
-  GDK_THREADS_ENTER ();
+THUNAR_THREADS_ENTER
 
   /* check if we should remember the window geometry */
   g_object_get (G_OBJECT (window->preferences), "misc-remember-geometry", &remember_geometry, NULL);
@@ -3700,7 +3700,7 @@ thunar_window_save_geometry_timer (gpointer user_data)
         }
     }
 
-  GDK_THREADS_LEAVE ();
+THUNAR_THREADS_LEAVE
 
   return FALSE;
 }

@@ -214,7 +214,7 @@ thunarx_provider_factory_timer (gpointer user_data)
   ThunarxProviderInfo    *info;
   gint                    n;
 
-  GDK_THREADS_ENTER ();
+THUNAR_THREADS_ENTER
 
   /* drop all providers for which only we keep a reference */
   for (n = factory->n_infos; --n >= 0; )
@@ -227,7 +227,7 @@ thunarx_provider_factory_timer (gpointer user_data)
         }
     }
 
-  GDK_THREADS_LEAVE ();
+THUNAR_THREADS_LEAVE
 
   return TRUE;
 }

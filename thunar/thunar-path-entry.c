@@ -1092,7 +1092,7 @@ thunar_path_entry_check_completion_idle (gpointer user_data)
   ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (user_data);
   const gchar     *text;
 
-  GDK_THREADS_ENTER ();
+THUNAR_THREADS_ENTER
 
   /* check if the user entered at least part of a filename */
   text = gtk_entry_get_text (GTK_ENTRY (path_entry));
@@ -1102,7 +1102,7 @@ thunar_path_entry_check_completion_idle (gpointer user_data)
       thunar_path_entry_common_prefix_append (path_entry, TRUE);
     }
 
-  GDK_THREADS_LEAVE ();
+THUNAR_THREADS_LEAVE
 
   return FALSE;
 }

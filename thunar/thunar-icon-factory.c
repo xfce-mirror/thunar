@@ -35,6 +35,7 @@
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-thumbnail-frame.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -332,12 +333,12 @@ thunar_icon_factory_sweep_timer (gpointer user_data)
 
   _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), FALSE);
 
-  GDK_THREADS_ENTER ();
+THUNAR_THREADS_ENTER
 
   /* ditch all icons whose ref_count is 1 */
   g_hash_table_foreach_remove (factory->icon_cache, (GHRFunc) thunar_icon_check_sweep, factory);
 
-  GDK_THREADS_LEAVE ();
+THUNAR_THREADS_LEAVE
 
   return FALSE;
 }

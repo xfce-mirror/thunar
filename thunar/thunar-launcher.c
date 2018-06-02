@@ -42,6 +42,7 @@
 #include <thunar/thunar-sendto-model.h>
 #include <thunar/thunar-stock.h>
 #include <thunar/thunar-device-monitor.h>
+#include <thunar/thunar-util.h>
 #include <thunar/thunar-window.h>
 
 
@@ -783,7 +784,7 @@ thunar_launcher_update_idle (gpointer data)
   if (G_UNLIKELY (launcher->ui_manager == NULL))
     return FALSE;
 
-  GDK_THREADS_ENTER ();
+THUNAR_THREADS_ENTER
 
   /* drop the previous addons ui controls from the UI manager */
   if (G_LIKELY (launcher->ui_addons_merge_id != 0))
@@ -1095,7 +1096,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
                                                   launcher, thunar_launcher_sendto_idle_destroy);
     }
 
-  GDK_THREADS_LEAVE ();
+THUNAR_THREADS_LEAVE
 
   return FALSE;
 }
@@ -1739,7 +1740,7 @@ thunar_launcher_sendto_idle (gpointer user_data)
   if (launcher->ui_manager == NULL)
     return FALSE;
 
-  GDK_THREADS_ENTER ();
+THUNAR_THREADS_ENTER
 
   /* determine the number of selected files and check whether atleast one of these
    * files is located in the trash (to en-/disable the "sendto-desktop" action).
@@ -1877,7 +1878,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
         }
     }
 
-  GDK_THREADS_LEAVE ();
+THUNAR_THREADS_LEAVE
 
   return FALSE;
 }

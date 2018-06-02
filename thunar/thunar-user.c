@@ -51,6 +51,7 @@
 #include <exo/exo.h>
 
 #include <thunar/thunar-user.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -558,7 +559,7 @@ thunar_user_manager_flush_timer (gpointer user_data)
   ThunarUserManager *manager = THUNAR_USER_MANAGER (user_data);
   guint              size = 0;
 
-  GDK_THREADS_ENTER ();
+THUNAR_THREADS_ENTER
 
   /* drop all cached groups */
   size += g_hash_table_foreach_remove (manager->groups, (GHRFunc) gtk_true, NULL);
@@ -581,7 +582,7 @@ thunar_user_manager_flush_timer (gpointer user_data)
 #endif
     }
 
-  GDK_THREADS_LEAVE ();
+THUNAR_THREADS_LEAVE
 
   return TRUE;
 }

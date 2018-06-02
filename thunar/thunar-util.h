@@ -24,6 +24,16 @@
 
 #include <thunar/thunar-enum-types.h>
 
+#define THUNAR_THREADS_ENTER \
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS \
+  gdk_threads_enter(); \
+G_GNUC_END_IGNORE_DEPRECATIONS
+
+#define THUNAR_THREADS_LEAVE \
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS \
+  gdk_threads_leave (); \
+G_GNUC_END_IGNORE_DEPRECATIONS
+
 G_BEGIN_DECLS;
 
 typedef void (*ThunarBookmarksFunc) (GFile       *file,
