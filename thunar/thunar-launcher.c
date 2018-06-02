@@ -138,7 +138,6 @@ struct _ThunarLauncher
 
   guint                   launcher_idle_id;
 
-  GtkIconFactory         *icon_factory;
   GtkActionGroup         *action_group;
   GtkUIManager           *ui_manager;
   guint                   ui_merge_id;
@@ -284,10 +283,6 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   launcher->action_open_with_other_in_menu = gtk_action_group_get_action (launcher->action_group, "open-with-other-in-menu");
 G_GNUC_END_IGNORE_DEPRECATIONS
 
-  /* initialize and add our custom icon factory for the application/action icons */
-  launcher->icon_factory = gtk_icon_factory_new ();
-  gtk_icon_factory_add_default (launcher->icon_factory);
-
   /* setup the "Send To" support */
   launcher->sendto_model = thunar_sendto_model_get_default ();
 
@@ -330,10 +325,6 @@ thunar_launcher_finalize (GObject *object)
   /* be sure to cancel the launcher idle source */
   if (G_UNLIKELY (launcher->launcher_idle_id != 0))
     g_source_remove (launcher->launcher_idle_id);
-
-  /* drop our custom icon factory for the application/action icons */
-  gtk_icon_factory_remove_default (launcher->icon_factory);
-  g_object_unref (launcher->icon_factory);
 
   /* release the reference on the action group */
   g_object_unref (launcher->action_group);
