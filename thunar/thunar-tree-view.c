@@ -2633,6 +2633,9 @@ thunar_tree_view_drag_scroll_timer (gpointer user_data)
   GtkTreePath    *start_path;
   GtkTreePath    *end_path;
   GtkTreePath    *path;
+  GdkWindow      *window;
+  GdkSeat        *seat;
+  GdkDevice      *pointer;
   gfloat          value;
   gint            offset;
   gint            y, h;
@@ -2643,8 +2646,12 @@ thunar_tree_view_drag_scroll_timer (gpointer user_data)
   if (gtk_widget_get_realized (GTK_WIDGET (view)))
     {
       /* determine pointer location and window geometry */
-      gdk_window_get_pointer (gtk_widget_get_window (GTK_WIDGET (view)), NULL, &y, NULL);
-      gdk_window_get_geometry (gtk_widget_get_window (GTK_WIDGET (view)), NULL, NULL, NULL, &h);
+      window = gtk_widget_get_window (GTK_WIDGET (view));
+      seat = gdk_display_get_default_seat (gdk_display_get_default ());
+      pointer = gdk_seat_get_pointer (seat);
+
+      gdk_window_get_device_position (window, pointer, NULL, &y, NULL);
+      gdk_window_get_geometry (window, NULL, NULL, NULL, &h);
 
       /* check if we are near the edge */
       offset = y - (2 * 20);

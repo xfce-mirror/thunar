@@ -3949,6 +3949,9 @@ thunar_standard_view_drag_scroll_timer (gpointer user_data)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (user_data);
   GtkAdjustment      *adjustment;
+  GdkWindow          *window;
+  GdkSeat            *seat;
+  GdkDevice          *pointer;
   gfloat              value;
   gint                offset;
   gint                y, x;
@@ -3960,8 +3963,12 @@ thunar_standard_view_drag_scroll_timer (gpointer user_data)
   if (G_LIKELY (gtk_widget_get_realized (GTK_WIDGET (standard_view))))
     {
       /* determine pointer location and window geometry */
-      gdk_window_get_pointer (gtk_widget_get_window (gtk_bin_get_child (GTK_BIN (standard_view))), &x, &y, NULL);
-      gdk_window_get_geometry (gtk_widget_get_window (gtk_bin_get_child (GTK_BIN (standard_view))), NULL, NULL, &w, &h);
+      window = gtk_widget_get_window (gtk_bin_get_child (GTK_BIN (standard_view)));
+      seat = gdk_display_get_default_seat (gdk_display_get_default ());
+      pointer = gdk_seat_get_pointer (seat);
+
+      gdk_window_get_device_position (window, pointer, &x, &y, NULL);
+      gdk_window_get_geometry (window, NULL, NULL, &w, &h);
 
       /* check if we are near the edge (vertical) */
       offset = y - (2 * 20);
