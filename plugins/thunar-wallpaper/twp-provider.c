@@ -372,7 +372,7 @@ twp_get_active_workspace_number (GdkScreen *screen)
   gint       format_ret;
   gint       ws_num = 0;
 
-  gdk_error_trap_push ();
+  gdk_x11_display_error_trap_push (gdk_display_get_default ());
 
   root = gdk_screen_get_root_window (screen);
 
@@ -407,7 +407,7 @@ twp_get_active_workspace_number (GdkScreen *screen)
       XFree (prop_ret);
     }
 
-  gdk_error_trap_pop_ignored ();
+  gdk_x11_display_error_trap_pop_ignored (gdk_display_get_default ());
 
   return ws_num;
 }
