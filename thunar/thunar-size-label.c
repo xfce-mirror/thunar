@@ -154,7 +154,6 @@ thunar_size_label_init (ThunarSizeLabel *size_label)
                    G_OBJECT (size_label), "file-size-binary");
   g_signal_connect_swapped (G_OBJECT (size_label->preferences), "notify::misc-file-size-binary",
                             G_CALLBACK (thunar_size_label_files_changed), size_label);
-  gtk_widget_push_composite_child ();
 
   /* configure the box */
   gtk_box_set_spacing (GTK_BOX (size_label), 6);
@@ -179,8 +178,6 @@ thunar_size_label_init (ThunarSizeLabel *size_label)
   gtk_label_set_line_wrap (GTK_LABEL (size_label->label), TRUE);
   gtk_box_pack_start (GTK_BOX (size_label), size_label->label, TRUE, TRUE, 0);
   gtk_widget_show (size_label->label);
-
-  gtk_widget_pop_composite_child ();
 }
 
 
