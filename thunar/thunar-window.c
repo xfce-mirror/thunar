@@ -840,7 +840,9 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /* append the menu item for the spinner */
   item = gtk_menu_item_new ();
   gtk_widget_set_sensitive (GTK_WIDGET (item), FALSE);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   gtk_menu_item_set_right_justified (GTK_MENU_ITEM (item), TRUE);
+G_GNUC_END_IGNORE_DEPRECATIONS
   gtk_menu_shell_append (GTK_MENU_SHELL (window->menubar), item);
   gtk_widget_show (item);
 
