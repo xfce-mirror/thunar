@@ -74,9 +74,9 @@ desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 # .appdata
 #
 @INTLTOOL_XML_RULE@
-appdatadir = $(datadir)/appdata
+appdatadir = $(datadir)/metainfo
 appdata_DATA = $(appdata_in_files:.xml.in=.xml)
-appdata_in_files = thunar.appdata.xml.in
+appdata_in_files = org.xfce.thunar.appdata.xml.in
 
 servicedir = $(datadir)/dbus-1/services
 service_in_files = org.xfce.FileManager.service.in org.xfce.Thunar.service.in
