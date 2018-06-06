@@ -642,7 +642,6 @@ thunar_abstract_icon_view_draw (ExoIconView            *view,
   GtkAction  *action = NULL;
   GdkPixbuf  *gesture_icon = NULL;
   gchar      *icon_name;
-  GdkColor    bg;
   gint        x, y;
 
   _thunar_return_val_if_fail (EXO_IS_ICON_VIEW (view), FALSE);
@@ -652,8 +651,7 @@ thunar_abstract_icon_view_draw (ExoIconView            *view,
   _thunar_return_val_if_fail (abstract_icon_view->priv->gesture_release_id > 0, FALSE);
 
   /* shade the abstract_icon view content while performing mouse gestures */
-  bg = gtk_widget_get_style (GTK_WIDGET (view))->base[GTK_STATE_NORMAL];
-  cairo_set_source_rgba (cr, bg.red / 65535.0, bg.green / 65535.0, bg.blue / 65535.0, 0.7);
+  cairo_set_source_rgba (cr, 1, 1, 1, 0.7);
   cairo_paint (cr);
 
   /* determine the gesture action */
