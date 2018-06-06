@@ -1122,10 +1122,8 @@ thunar_standard_view_draw (GtkWidget      *widget,
     {
       gtk_widget_get_allocation (widget, &a);
 
-      gtk_paint_shadow (gtk_widget_get_style (widget), cr,
-                        GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-                        widget, "dnd",
-                        a.x, a.y, a.width, a.height);
+      gtk_render_frame (gtk_widget_get_style_context (widget),
+                        cr, a.x, a.y, a.width, a.height);
 
       /* the cairo version looks better here, so we use it if possible */
       cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
