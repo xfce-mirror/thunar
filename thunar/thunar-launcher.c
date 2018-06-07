@@ -806,279 +806,248 @@ G_GNUC_END_IGNORE_DEPRECATIONS
         }
     }
 
-  /* update the user interface depending on the current selection */
-  if (G_LIKELY (n_selected_files == 0 || n_directories > 0))
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+  /* Prepare "Open" label and icon */
+  gtk_action_set_label (launcher->action_open, _("_Open"));
+  gtk_action_set_icon_name (launcher->action_open, "document-open");
+G_GNUC_END_IGNORE_DEPRECATIONS
+
+  /* Only directories got selected */
+  if (n_selected_files == n_directories && n_directories >= 1)
     {
-      /** CASE 1: nothing selected or atleast one directory in the selection
-       **
-       ** - "Open", "Open in n New Windows" and "Open in n New Tabs" actions
-       **/
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      /* Prepare "Open" label and icon */
-      gtk_action_set_label (launcher->action_open, _("_Open"));
-      gtk_action_set_icon_name (launcher->action_open, "document-open");
-G_GNUC_END_IGNORE_DEPRECATIONS
-
-      if (n_selected_files == n_directories && n_directories >= 1)
+      if (n_directories > 1)
         {
-          if (n_directories > 1)
-            {
-              /* turn "Open New Window" into "Open in n New Windows" */
-              label = g_strdup_printf (ngettext ("Open in %d New _Window", "Open in %d New _Windows", n_directories), n_directories);
-              tooltip = g_strdup_printf (ngettext ("Open the selected directory in %d new window",
-                                                   "Open the selected directories in %d new windows",
-                                                   n_directories), n_directories);
-              g_object_set (G_OBJECT (launcher->action_open_in_new_window),
-                            "label", label,
-                            "tooltip", tooltip,
-                            NULL);
-              g_free (tooltip);
-              g_free (label);
-
-              /* turn "Open in New Tab" into "Open in x New Tabs" */
-              label = g_strdup_printf (ngettext ("Open in %d New _Tab", "Open in %d New _Tabs", n_directories), n_directories);
-              tooltip = g_strdup_printf (ngettext ("Open the selected directory in %d new tab",
-                                                   "Open the selected directories in %d new tabs",
-                                                   n_directories), n_directories);
-              g_object_set (G_OBJECT (launcher->action_open_in_new_tab),
-                            "label", label,
-                            "tooltip", tooltip,
-                            NULL);
-              g_free (tooltip);
-              g_free (label);
-            }
-          else if (n_directories == 1)
-            {
-              /* prepare "Open in New Window" */
-              g_object_set (G_OBJECT (launcher->action_open_in_new_window),
-                            "label", _("Open in New _Window"),
-                            "tooltip", _("Open the selected directory in a new window"),
-                            NULL);
-
-              /* prepare "Open in New Tab" */
-              g_object_set (G_OBJECT (launcher->action_open_in_new_tab),
-                            "label", _("Open in New _Tab"),
-                            "tooltip", _("Open the selected directory in a new tab"),
-                            NULL);
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-              /* set tooltip that makes sence */
-              gtk_action_set_tooltip (launcher->action_open, _("Open the selected directory"));
-G_GNUC_END_IGNORE_DEPRECATIONS
-            }
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-          /* Show Window/Tab action if there are only directories selected */
-          gtk_action_set_visible (launcher->action_open_in_new_window, n_directories > 0);
-          gtk_action_set_visible (launcher->action_open_in_new_tab, n_directories > 0);
-
-          /* Show open if there is exactly 1 directory selected */
-          gtk_action_set_visible (launcher->action_open, n_directories == 1);
-          gtk_action_set_sensitive (launcher->action_open, TRUE);
-G_GNUC_END_IGNORE_DEPRECATIONS
-        }
-      else
-        {
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-          /* Hide New Window and Tab action */
-          gtk_action_set_visible (launcher->action_open_in_new_window, FALSE);
-          gtk_action_set_visible (launcher->action_open_in_new_tab, FALSE);
-
-          /* Normal open action, because there are also directories included */
-          gtk_action_set_visible (launcher->action_open, TRUE);
-          gtk_action_set_sensitive (launcher->action_open, n_selected_files > 0);
-          gtk_action_set_tooltip (launcher->action_open,
-                                  ngettext ("Open the selected file",
-                                            "Open the selected files",
-                                            n_selected_files));
-G_GNUC_END_IGNORE_DEPRECATIONS
-        }
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      /* hide the "Open With Other Application" actions */
-      gtk_action_set_visible (launcher->action_open_with_other, FALSE);
-      gtk_action_set_visible (launcher->action_open_with_other_in_menu, FALSE);
-G_GNUC_END_IGNORE_DEPRECATIONS
-    }
-  else
-    {
-      /** CASE 2: one or more file in the selection
-       **
-       ** - "Execute" action if all selected files are executable
-       ** - No "Open in n New Windows" action
-       **/
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      /* drop all previous addon actions from the action group */
-      actions = gtk_action_group_list_actions (launcher->action_group);
-      for (lp = actions; lp != NULL; lp = lp->next)
-        if (strncmp (gtk_action_get_name (lp->data), "thunar-launcher-addon-", 22) == 0)
-          gtk_action_group_remove_action (launcher->action_group, lp->data);
-      g_list_free (actions);
-
-      /* allocate a new merge id from the UI manager */
-      launcher->ui_addons_merge_id = gtk_ui_manager_new_merge_id (launcher->ui_manager);
-
-      /* make the "Open" action sensitive */
-      gtk_action_set_sensitive (launcher->action_open, TRUE);
-
-      /* hide the "Open in n New Windows/Tabs" action */
-      gtk_action_set_visible (launcher->action_open_in_new_window, FALSE);
-      gtk_action_set_visible (launcher->action_open_in_new_tab, FALSE);
-G_GNUC_END_IGNORE_DEPRECATIONS
-
-      /* determine the set of applications that work for all selected files */
-      applications = thunar_file_list_get_applications (launcher->selected_files);
-
-      /* reset the desktop actions list */
-      actions = NULL;
-
-      /* check if we have only executable files in the selection */
-      if (G_UNLIKELY (n_executables == n_selected_files))
-        {
-          /* turn the "Open" action into "Execute" */
-          g_object_set (G_OBJECT (launcher->action_open),
-                        "label", _("_Execute"),
-                        "icon-name", "system-run",
-                        "tooltip", ngettext ("Execute the selected file", "Execute the selected files", n_selected_files),
-                        NULL);
-        }
-      else if (G_LIKELY (applications != NULL))
-        {
-          /* turn the "Open" action into "Open With DEFAULT" */
-          label = g_strdup_printf (_("_Open With \"%s\""), g_app_info_get_name (applications->data));
-          tooltip = g_strdup_printf (ngettext ("Use \"%s\" to open the selected file",
-                                               "Use \"%s\" to open the selected files",
-                                               n_selected_files), g_app_info_get_name (applications->data));
-          g_object_set (G_OBJECT (launcher->action_open),
+          /* turn "Open New Window" into "Open in n New Windows" */
+          label = g_strdup_printf (ngettext ("Open in %d New _Window", "Open in %d New _Windows", n_directories), n_directories);
+          tooltip = g_strdup_printf (ngettext ("Open the selected directory in %d new window",
+                                               "Open the selected directories in %d new windows",
+                                               n_directories), n_directories);
+          g_object_set (G_OBJECT (launcher->action_open_in_new_window),
                         "label", label,
                         "tooltip", tooltip,
                         NULL);
           g_free (tooltip);
           g_free (label);
 
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-          /* load default application icon */
-          gtk_action_set_stock_id (launcher->action_open, NULL);
-          gtk_action_set_gicon (launcher->action_open, g_app_info_get_icon (applications->data));
-G_GNUC_END_IGNORE_DEPRECATIONS
-
-          /* remember the default application for the "Open" action */
-          g_object_set_qdata_full (G_OBJECT (launcher->action_open), thunar_launcher_handler_quark, applications->data, g_object_unref);
-
-          /* FIXME Add the desktop actions for this application.
-           * Unfortunately this is not supported by GIO directly */
-
-          /* drop the default application from the list */
-          applications = g_list_delete_link (applications, applications);
-        }
-      else if (G_UNLIKELY (n_selected_files == 1))
-        {
-          /* turn the "Open" action into "Open With Other Application" */
-          g_object_set (G_OBJECT (launcher->action_open),
-                        "label", _("_Open With Other Application..."),
-                        "tooltip", _("Choose another application with which to open the selected file"),
+          /* turn "Open in New Tab" into "Open in x New Tabs" */
+          label = g_strdup_printf (ngettext ("Open in %d New _Tab", "Open in %d New _Tabs", n_directories), n_directories);
+          tooltip = g_strdup_printf (ngettext ("Open the selected directory in %d new tab",
+                                               "Open the selected directories in %d new tabs",
+                                               n_directories), n_directories);
+          g_object_set (G_OBJECT (launcher->action_open_in_new_tab),
+                        "label", label,
+                        "tooltip", tooltip,
                         NULL);
-          default_is_open_with_other = TRUE;
+          g_free (tooltip);
+          g_free (label);
         }
-      else
+      else if (n_directories == 1)
         {
-          /* we can only show a generic "Open" action */
-          g_object_set (G_OBJECT (launcher->action_open),
-                        "label", _("_Open With Default Applications"),
-                        "tooltip", ngettext ("Open the selected file with the default application",
-                                             "Open the selected files with the default applications", n_selected_files),
+          /* prepare "Open in New Window" */
+          g_object_set (G_OBJECT (launcher->action_open_in_new_window),
+                        "label", _("Open in New _Window"),
+                        "tooltip", _("Open the selected directory in a new window"),
                         NULL);
-        }
 
-      /* place the other applications in the "Open With" submenu if we have more than 2 other applications, or the
-       * default action for the file is "Execute", in which case the "Open With" actions aren't that relevant either
-       */
-      if (G_UNLIKELY (g_list_length (applications) > 2 || n_executables == n_selected_files))
-        {
-          /* determine the base paths for the actions */
-          file_menu_path = "/main-menu/file-menu/placeholder-launcher/open-with-menu/placeholder-applications";
-          context_menu_path = "/file-context-menu/placeholder-launcher/open-with-menu/placeholder-applications";
+          /* prepare "Open in New Tab" */
+          g_object_set (G_OBJECT (launcher->action_open_in_new_tab),
+                        "label", _("Open in New _Tab"),
+                        "tooltip", _("Open the selected directory in a new tab"),
+                        NULL);
 
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-          /* show the "Open With Other Application" in the submenu and hide the toplevel one */
-          gtk_action_set_visible (launcher->action_open_with_other, FALSE);
-          gtk_action_set_visible (launcher->action_open_with_other_in_menu, (n_selected_files == 1));
-G_GNUC_END_IGNORE_DEPRECATIONS
-        }
-      else
-        {
-          /* determine the base paths for the actions */
-          file_menu_path = "/main-menu/file-menu/placeholder-launcher/placeholder-applications";
-          context_menu_path = "/file-context-menu/placeholder-launcher/placeholder-applications";
-
-          /* add a separator if we have more than one additional application */
-          if (G_LIKELY (applications != NULL))
-            {
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-              /* add separator after the DEFAULT/execute action */
-              gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
-                                     file_menu_path, "separator", NULL,
-                                     GTK_UI_MANAGER_SEPARATOR, FALSE);
-              gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
-                                     context_menu_path, "separator", NULL,
-                                     GTK_UI_MANAGER_SEPARATOR, FALSE);
-G_GNUC_END_IGNORE_DEPRECATIONS
-            }
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-          /* show the toplevel "Open With Other Application" (if not already done by the "Open" action) */
-          gtk_action_set_visible (launcher->action_open_with_other, !default_is_open_with_other && (n_selected_files == 1));
-          gtk_action_set_visible (launcher->action_open_with_other_in_menu, FALSE);
-G_GNUC_END_IGNORE_DEPRECATIONS
+          /* set tooltip that makes sence */
+          gtk_action_set_tooltip (launcher->action_open, _("Open the selected directory"));
         }
 
-      /* add actions for all remaining applications */
-      if (G_LIKELY (applications != NULL))
-        {
-          /* process all applications and determine the desktop actions */
-          for (lp = applications, n = 0; lp != NULL; lp = lp->next, ++n)
-            {
-              /* FIXME Determine the desktop actions for this application.
-               * Unfortunately this is not supported by GIO directly. */
+      /* Show Window/Tab action if there are only directories selected */
+      gtk_action_set_visible (launcher->action_open_in_new_window, n_directories > 0);
+      gtk_action_set_visible (launcher->action_open_in_new_tab, n_directories > 0);
 
-              /* generate a unique label, unique id and tooltip for the application's action */
-              name = g_strdup_printf ("thunar-launcher-addon-application%d-%p", n, launcher);
-              label = g_strdup_printf (_("Open With \"%s\""), g_app_info_get_name (lp->data));
-              tooltip = g_strdup_printf (ngettext ("Use \"%s\" to open the selected file",
-                                                   "Use \"%s\" to open the selected files",
-                                                   n_selected_files), g_app_info_get_name (lp->data));
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-              /* allocate a new action for the application */
-              action = gtk_action_new (name, label, tooltip, NULL);
-              gtk_action_set_gicon (action, g_app_info_get_icon (lp->data));
-              gtk_action_group_add_action (launcher->action_group, action);
-              g_object_set_qdata_full (G_OBJECT (action), thunar_launcher_handler_quark, lp->data, g_object_unref);
-              g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_launcher_action_open), launcher);
-              gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
-                                     file_menu_path, name, name,
-                                     GTK_UI_MANAGER_MENUITEM, FALSE);
-              gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
-                                     context_menu_path, name, name,
-                                     GTK_UI_MANAGER_MENUITEM, FALSE);
-              g_object_unref (G_OBJECT (action));
-G_GNUC_END_IGNORE_DEPRECATIONS
-
-              /* cleanup */
-              g_free (tooltip);
-              g_free (label);
-              g_free (name);
-            }
-
-          /* cleanup */
-          g_list_free (applications);
-        }
-
-      /* FIXME Add desktop actions here. Unfortunately they are not supported by
-       * GIO, so we'll have to roll our own thing here */
+      /* Show open if there is exactly 1 directory selected */
+      gtk_action_set_visible (launcher->action_open, n_directories == 1);
+      gtk_action_set_sensitive (launcher->action_open, TRUE);
+    }
+  else /* not only directories got selected */
+    {
+      /* Hide New Window and Tab action */
+      gtk_action_set_visible (launcher->action_open_in_new_window, FALSE);
+      gtk_action_set_visible (launcher->action_open_in_new_tab, FALSE);
     }
 
+  /* drop all previous addon actions from the action group */
+  actions = gtk_action_group_list_actions (launcher->action_group);
+  for (lp = actions; lp != NULL; lp = lp->next)
+    if (strncmp (gtk_action_get_name (lp->data), "thunar-launcher-addon-", 22) == 0)
+      gtk_action_group_remove_action (launcher->action_group, lp->data);
+  g_list_free (actions);
+
+  /* allocate a new merge id from the UI manager */
+  launcher->ui_addons_merge_id = gtk_ui_manager_new_merge_id (launcher->ui_manager);
+
+  /* make the "Open" action sensitive */
+  gtk_action_set_sensitive (launcher->action_open, TRUE);
+G_GNUC_END_IGNORE_DEPRECATIONS
+
+  /* determine the set of applications that work for all selected files */
+  applications = thunar_file_list_get_applications (launcher->selected_files);
+
+  /* reset the desktop actions list */
+  actions = NULL;
+
+  /* check if we have only executable files in the selection */
+  if (G_UNLIKELY (n_executables == n_selected_files))
+    {
+      /* turn the "Open" action into "Execute" */
+      g_object_set (G_OBJECT (launcher->action_open),
+                    "label", _("_Execute"),
+                    "icon-name", "system-run",
+                    "tooltip", ngettext ("Execute the selected file", "Execute the selected files", n_selected_files),
+                    NULL);
+    }
+  else if (G_LIKELY (n_directories >= 1))
+    {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+      /* Normal open action, because there are also directories included */
+      gtk_action_set_visible (launcher->action_open, TRUE);
+      gtk_action_set_sensitive (launcher->action_open, n_selected_files > 0);
+      gtk_action_set_tooltip (launcher->action_open,
+                              ngettext ("Open the selected file",
+                                        "Open the selected files",
+                                        n_selected_files));
+G_GNUC_END_IGNORE_DEPRECATIONS
+    }
+  else if (G_LIKELY (applications != NULL))
+    {
+      /* turn the "Open" action into "Open With DEFAULT" */
+      label = g_strdup_printf (_("_Open With \"%s\""), g_app_info_get_name (applications->data));
+      tooltip = g_strdup_printf (ngettext ("Use \"%s\" to open the selected file",
+                                           "Use \"%s\" to open the selected files",
+                                           n_selected_files), g_app_info_get_name (applications->data));
+      g_object_set (G_OBJECT (launcher->action_open),
+                    "label", label,
+                    "tooltip", tooltip,
+                    NULL);
+      g_free (tooltip);
+      g_free (label);
+
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+      /* load default application icon */
+      gtk_action_set_stock_id (launcher->action_open, NULL);
+      gtk_action_set_gicon (launcher->action_open, g_app_info_get_icon (applications->data));
+G_GNUC_END_IGNORE_DEPRECATIONS
+
+      /* remember the default application for the "Open" action */
+      g_object_set_qdata_full (G_OBJECT (launcher->action_open), thunar_launcher_handler_quark, applications->data, g_object_unref);
+
+      /* FIXME Add the desktop actions for this application.
+       * Unfortunately this is not supported by GIO directly */
+
+      /* drop the default application from the list */
+      applications = g_list_delete_link (applications, applications);
+    }
+  else if (G_UNLIKELY (n_selected_files == 1))
+    {
+      /* turn the "Open" action into "Open With Other Application" */
+      g_object_set (G_OBJECT (launcher->action_open),
+                    "label", _("_Open With Other Application..."),
+                    "tooltip", _("Choose another application with which to open the selected file"),
+                    NULL);
+      default_is_open_with_other = TRUE;
+    }
+  else
+    {
+      /* we can only show a generic "Open" action */
+      g_object_set (G_OBJECT (launcher->action_open),
+                    "label", _("_Open With Default Applications"),
+                    "tooltip", ngettext ("Open the selected file with the default application",
+                                         "Open the selected files with the default applications", n_selected_files),
+                    NULL);
+    }
+
+  /* FIXME Add desktop actions here. Unfortunately they are not supported by
+   * GIO, so we'll have to roll our own thing here */
+
+  /* place the other applications in the "Open With" submenu if we have more than 2 other applications, or the
+   * default action for the file is "Execute", in which case the "Open With" actions aren't that relevant either
+   */
+  if (G_UNLIKELY (g_list_length (applications) > 2 || n_executables == n_selected_files) )
+    {
+      /* determine the base paths for the actions */
+      file_menu_path = "/main-menu/file-menu/placeholder-launcher/open-with-menu/placeholder-applications";
+      context_menu_path = "/file-context-menu/placeholder-launcher/open-with-menu/placeholder-applications";
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+      /* show the "Open With Other Application" in the submenu and hide the toplevel one */
+      gtk_action_set_visible (launcher->action_open_with_other, FALSE);
+      gtk_action_set_visible (launcher->action_open_with_other_in_menu, (n_selected_files == 1));
+G_GNUC_END_IGNORE_DEPRECATIONS
+    }
+  else
+    {
+      /* determine the base paths for the actions */
+      file_menu_path = "/main-menu/file-menu/placeholder-launcher/placeholder-applications";
+      context_menu_path = "/file-context-menu/placeholder-launcher/placeholder-applications";
+
+      /* add a separator if we have more than one additional application */
+      if (G_LIKELY (applications != NULL))
+        {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+          /* add separator after the DEFAULT/execute action */
+          gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
+                                 file_menu_path, "separator", NULL,
+                                 GTK_UI_MANAGER_SEPARATOR, FALSE);
+          gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
+                                 context_menu_path, "separator", NULL,
+                                 GTK_UI_MANAGER_SEPARATOR, FALSE);
+        }
+
+      /* show the toplevel "Open With Other Application" (if not already done by the "Open" action) */
+      gtk_action_set_visible (launcher->action_open_with_other, !default_is_open_with_other && (n_selected_files == 1));
+      gtk_action_set_visible (launcher->action_open_with_other_in_menu, FALSE);
+    }
+G_GNUC_END_IGNORE_DEPRECATIONS
+
+  /* add actions for all remaining applications */
+  if (G_LIKELY (applications != NULL))
+    {
+      /* process all applications and determine the desktop actions */
+      for (lp = applications, n = 0; lp != NULL; lp = lp->next, ++n)
+        {
+          /* FIXME Determine the desktop actions for this application.
+           * Unfortunately this is not supported by GIO directly. */
+
+          /* generate a unique label, unique id and tooltip for the application's action */
+          name = g_strdup_printf ("thunar-launcher-addon-application%d-%p", n, launcher);
+          label = g_strdup_printf (_("Open With \"%s\""), g_app_info_get_name (lp->data));
+          tooltip = g_strdup_printf (ngettext ("Use \"%s\" to open the selected file",
+                                               "Use \"%s\" to open the selected files",
+                                               n_selected_files), g_app_info_get_name (lp->data));
+
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+          /* allocate a new action for the application */
+          action = gtk_action_new (name, label, tooltip, NULL);
+          gtk_action_set_gicon (action, g_app_info_get_icon (lp->data));
+          gtk_action_group_add_action (launcher->action_group, action);
+          g_object_set_qdata_full (G_OBJECT (action), thunar_launcher_handler_quark, lp->data, g_object_unref);
+          g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_launcher_action_open), launcher);
+          gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
+                                 file_menu_path, name, name,
+                                 GTK_UI_MANAGER_MENUITEM, FALSE);
+          gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
+                                 context_menu_path, name, name,
+                                 GTK_UI_MANAGER_MENUITEM, FALSE);
+          g_object_unref (G_OBJECT (action));
+G_GNUC_END_IGNORE_DEPRECATIONS
+
+          /* cleanup */
+          g_free (tooltip);
+          g_free (label);
+          g_free (name);
+        }
+
+      /* cleanup */
+      g_list_free (applications);
+    }
   /* schedule an update of the "Send To" menu */
   if (G_LIKELY (launcher->sendto_idle_id == 0))
     {
