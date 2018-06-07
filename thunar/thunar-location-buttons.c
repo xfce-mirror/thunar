@@ -301,7 +301,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   buttons->filler_widget = gtk_button_new ();
   g_signal_connect_swapped (buttons->filler_widget, "clicked", G_CALLBACK (thunar_location_buttons_on_filler_clicked), buttons);
 
-  icon = gtk_image_new_from_icon_name ("gtk-edit", GTK_ICON_SIZE_BUTTON);
+  icon = gtk_image_new_from_icon_name ("document-edit-symbolic", GTK_ICON_SIZE_BUTTON);
   gtk_widget_set_halign (icon, GTK_ALIGN_END);
   gtk_container_add (GTK_CONTAINER (buttons->filler_widget), icon);
   gtk_widget_show (icon);
