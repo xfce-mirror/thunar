@@ -201,16 +201,17 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
   GList               *items = NULL;
   GList               *paths;
   GList               *lp;
-  gchar               *tooltip;
-  gchar               *label;
-  gchar               *unique_id;
-  gchar               *name;
-  gchar               *icon_name = NULL;
-  GIcon               *gicon = NULL;
 
   paths = thunar_uca_model_match (uca_provider->model, files);
   for (lp = g_list_last (paths); lp != NULL; lp = lp->prev)
     {
+      gchar *unique_id = NULL;
+      gchar *name = NULL;
+      gchar *label = NULL;
+      gchar *tooltip = NULL;
+      gchar *icon_name = NULL;
+      GIcon *gicon = NULL;
+
       /* try to lookup the tree iter for the specified tree path */
       if (gtk_tree_model_get_iter (GTK_TREE_MODEL (uca_provider->model), &iter, lp->data))
         {
