@@ -23,6 +23,8 @@
 #include <config.h>
 #endif
 
+#include <stdlib.h>
+
 #include <gio/gio.h>
 
 #include <gdk/gdkx.h>
@@ -180,6 +182,12 @@ twp_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
     }
 
   g_snprintf(selection_name, 100, XFDESKTOP_SELECTION_FMT, xscreen);
+
+  if(g_strcmp0 (getenv("XDG_SESSION_TYPE"),"wayland") == 0)
+    {
+      return items; // wayland crashes on "gdk_x11_get_default_xdisplay"
+    }
+
   xfce_selection_atom = XInternAtom (gdk_x11_get_default_xdisplay(), selection_name, False);
 
   if ((XGetSelectionOwner(gdk_x11_get_default_xdisplay(), xfce_selection_atom)))
