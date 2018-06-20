@@ -308,7 +308,7 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
                            "weight", PANGO_WEIGHT_BOLD,
                            "xpad", 6,
-                           "ypad", 6,
+                           "ypad", 4,
                            "ellipsize", PANGO_ELLIPSIZE_END,
                            NULL);
   gtk_tree_view_column_pack_start (column, renderer, FALSE);
