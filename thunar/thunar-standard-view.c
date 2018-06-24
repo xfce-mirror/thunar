@@ -77,6 +77,7 @@ enum
   PROP_STATUSBAR_TEXT,
   PROP_UI_MANAGER,
   PROP_ZOOM_LEVEL,
+  PROP_THUMBNAIL_DRAW_FRAMES,
   N_PROPERTIES
 };
 
@@ -515,6 +516,20 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                            NULL,
                            EXO_PARAM_READABLE);
 
+  /**
+   * ThunarStandardView:thumbnail-draw-frames:
+   *
+   * Whether to draw black frames around thumbnails.
+   * This looks neat, but will delay the first draw a bit.
+   * May have an impact on older systems, on folders with many pictures.
+   **/
+  standard_view_props[PROP_THUMBNAIL_DRAW_FRAMES] =
+      g_param_spec_boolean ("thumbnail-draw-frames",
+                            "thumbnail-draw-frames",
+                            "thumbnail-draw-frames",
+                            FALSE,
+                            EXO_PARAM_READWRITE);
+
   /* override ThunarComponent's properties */
   g_iface = g_type_default_interface_peek (THUNAR_TYPE_COMPONENT);
   standard_view_props[PROP_SELECTED_FILES] =
@@ -785,6 +800,9 @@ thunar_standard_view_constructor (GType                  type,
   exo_binding_new (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (view), "single-click");
   exo_binding_new (G_OBJECT (standard_view->preferences), "misc-single-click-timeout", G_OBJECT (view), "single-click-timeout");
 
+  /* apply the thumbnail frame preferences */
+  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-thumbnail-draw-frames", G_OBJECT (standard_view), "thumbnail-draw-frames");
+
   /* apply the default sort column and sort order */
   g_object_get (G_OBJECT (standard_view->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), sort_column, sort_order);
@@ -949,6 +967,7 @@ thunar_standard_view_get_property (GObject    *object,
                                    GParamSpec *pspec)
 {
   ThunarFile *current_directory;
+  gboolean thumbnail_draw_frames;
 
   switch (prop_id)
     {
@@ -992,6 +1011,11 @@ thunar_standard_view_get_property (GObject    *object,
       g_value_set_enum (value, thunar_view_get_zoom_level (THUNAR_VIEW (object)));
       break;
 
+    case PROP_THUMBNAIL_DRAW_FRAMES:
+      g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW(object)->icon_factory), "thumbnail-draw-frames", &thumbnail_draw_frames, NULL);
+      g_value_set_boolean (value, thumbnail_draw_frames);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -1032,6 +1056,11 @@ thunar_standard_view_set_property (GObject      *object,
 
     case PROP_ZOOM_LEVEL:
       thunar_view_set_zoom_level (THUNAR_VIEW (object), g_value_get_enum (value));
+      break;
+
+    case PROP_THUMBNAIL_DRAW_FRAMES:
+      g_object_set (G_OBJECT (standard_view->icon_factory), "thumbnail-draw-frames", g_value_get_boolean (value), NULL);
+      thunar_standard_view_reload(THUNAR_VIEW (object), TRUE);
       break;
 
     default:

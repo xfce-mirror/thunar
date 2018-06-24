@@ -49,6 +49,7 @@ enum
   PROP_0,
   PROP_ICON_THEME,
   PROP_THUMBNAIL_MODE,
+  PROP_THUMBNAIL_DRAW_FRAMES,
 };
 
 
@@ -105,6 +106,8 @@ struct _ThunarIconFactory
   GtkIconTheme        *icon_theme;
 
   ThunarThumbnailMode  thumbnail_mode;
+
+  gboolean             thumbnail_draw_frames;
 
   guint                sweep_timer_id;
 
@@ -182,6 +185,21 @@ thunar_icon_factory_class_init (ThunarIconFactoryClass *klass)
                                                       THUNAR_TYPE_THUMBNAIL_MODE,
                                                       THUNAR_THUMBNAIL_MODE_ONLY_LOCAL,
                                                       EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarIconFactory:thumbnail-draw-frames:
+   * 
+   * Whether to draw black frames around thumbnails.
+   * This looks neat, but will delay the first draw a bit.
+   * May have an impact on older systems, on folders with many pictures.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_THUMBNAIL_DRAW_FRAMES,
+                                   g_param_spec_boolean ("thumbnail-draw-frames",
+                                                         "thumbnail-draw-frames",
+                                                         "thumbnail-draw-frames",
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
 }
 
 
@@ -266,6 +284,10 @@ thunar_icon_factory_get_property (GObject    *object,
       g_value_set_enum (value, factory->thumbnail_mode);
       break;
 
+    case PROP_THUMBNAIL_DRAW_FRAMES:
+      g_value_set_boolean (value, factory->thumbnail_draw_frames);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -286,6 +308,10 @@ thunar_icon_factory_set_property (GObject      *object,
     {
     case PROP_THUMBNAIL_MODE:
       factory->thumbnail_mode = g_value_get_enum (value);
+      break;
+
+    case PROP_THUMBNAIL_DRAW_FRAMES:
+      factory->thumbnail_draw_frames = g_value_get_boolean (value);
       break;
 
     default:
@@ -432,6 +458,8 @@ thunar_icon_factory_load_from_file (ThunarIconFactory *factory,
   gint       width;
   gint       height;
 
+  _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
+
   /* try to load the image from the file */
   pixbuf = gdk_pixbuf_new_from_file (path, NULL);
   if (G_LIKELY (pixbuf != NULL))
@@ -440,14 +468,15 @@ thunar_icon_factory_load_from_file (ThunarIconFactory *factory,
       width = gdk_pixbuf_get_width (pixbuf);
       height = gdk_pixbuf_get_height (pixbuf);
 
-      /* check if we want to add a frame to the image (we really don't
-       * want to do this for icons displayed in the details view).
-       */
       needs_frame = FALSE;
-      /* Disabled for 1.8.0 release, will be made optional later
-       * needs_frame = (strstr (path, G_DIR_SEPARATOR_S ".cache/thumbnails" G_DIR_SEPARATOR_S) != NULL)
-       *         && (size >= 32) && thumbnail_needs_frame (pixbuf, width, height);
-       */
+      if (factory->thumbnail_draw_frames)
+        {
+          /* check if we want to add a frame to the image (we really don't
+           * want to do this for icons displayed in the details view).
+           * */
+          needs_frame = (strstr (path, G_DIR_SEPARATOR_S ".cache/thumbnails" G_DIR_SEPARATOR_S) != NULL)
+                && (size >= 32) && thumbnail_needs_frame (pixbuf, width, height);
+        }
 
       /* be sure to make framed thumbnails fit into the size */
       if (G_LIKELY (needs_frame))
