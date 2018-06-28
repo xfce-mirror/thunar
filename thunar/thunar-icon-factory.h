@@ -34,13 +34,6 @@ typedef struct _ThunarIconFactory      ThunarIconFactory;
 #define THUNAR_IS_ICON_FACTORY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_ICON_FACTORY))
 #define THUNAR_ICON_FACTORY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_ICON_FACTORY, ThunarIconFactoryClass))
 
-/**
- * THUNAR_THUMBNAIL_SIZE:
- * The icon size which is used for loading and storing
- * thumbnails in Thunar.
- **/
-#define THUNAR_THUMBNAIL_SIZE (128)
-
 
 
 GType                  thunar_icon_factory_get_type           (void) G_GNUC_CONST;

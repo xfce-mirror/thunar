@@ -209,7 +209,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          "LastCompactViewZoomLevel",
                          NULL,
                          THUNAR_TYPE_ZOOM_LEVEL,
-                         THUNAR_ZOOM_LEVEL_SMALLEST,
+                         THUNAR_ZOOM_LEVEL_25_PERCENT,
                          EXO_PARAM_READWRITE);
 
 
@@ -274,7 +274,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          "LastDetailsViewZoomLevel",
                          NULL,
                          THUNAR_TYPE_ZOOM_LEVEL,
-                         THUNAR_ZOOM_LEVEL_SMALLER,
+                         THUNAR_ZOOM_LEVEL_38_PERCENT,
                          EXO_PARAM_READWRITE);
 
   /**
@@ -287,7 +287,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          "LastIconViewZoomLevel",
                          NULL,
                          THUNAR_TYPE_ZOOM_LEVEL,
-                         THUNAR_ZOOM_LEVEL_NORMAL,
+                         THUNAR_ZOOM_LEVEL_100_PERCENT,
                          EXO_PARAM_READWRITE);
 
   /**
@@ -757,7 +757,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          "ShortcutsIconSize",
                          NULL,
                          THUNAR_TYPE_ICON_SIZE,
-                         THUNAR_ICON_SIZE_SMALLER,
+                         THUNAR_ICON_SIZE_24,
                          EXO_PARAM_READWRITE);
 
   /**
@@ -784,7 +784,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          "TreeIconSize",
                          NULL,
                          THUNAR_TYPE_ICON_SIZE,
-                         THUNAR_ICON_SIZE_SMALLEST,
+                         THUNAR_ICON_SIZE_16,
                          EXO_PARAM_READWRITE);
 
   /* install all properties */

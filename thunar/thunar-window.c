@@ -483,7 +483,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
                                                       "zoom-level",
                                                       "zoom-level",
                                                       THUNAR_TYPE_ZOOM_LEVEL,
-                                                      THUNAR_ZOOM_LEVEL_NORMAL,
+                                                      THUNAR_ZOOM_LEVEL_100_PERCENT,
                                                       EXO_PARAM_READWRITE));
 
   /**

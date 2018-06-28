@@ -729,6 +729,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   standard_view->icon_renderer = thunar_icon_renderer_new ();
   g_object_ref_sink (G_OBJECT (standard_view->icon_renderer));
   exo_binding_new (G_OBJECT (standard_view), "zoom-level", G_OBJECT (standard_view->icon_renderer), "size");
+  exo_binding_new (G_OBJECT (standard_view->icon_renderer), "size", G_OBJECT (standard_view->priv->thumbnailer), "thumbnail-size");
 
   /* setup the name renderer */
   standard_view->name_renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
@@ -1090,6 +1091,7 @@ thunar_standard_view_realize (GtkWidget *widget)
   /* determine the icon factory for the screen on which we are realized */
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
   standard_view->icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
+  exo_binding_new (G_OBJECT (standard_view->icon_renderer), "size", G_OBJECT (standard_view->icon_factory), "thumbnail-size");
 
   /* we need to redraw whenever the "thumbnail_mode" property is toggled */
   g_signal_connect_swapped (standard_view->icon_factory,
@@ -1726,12 +1728,20 @@ thunar_standard_view_set_zoom_level (ThunarView     *view,
                                      ThunarZoomLevel zoom_level)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
+  gboolean newThumbnailSize = FALSE;
 
   /* check if we have a new zoom-level here */
   if (G_LIKELY (standard_view->priv->zoom_level != zoom_level))
     {
+      if (thunar_zoom_level_to_thumbnail_size (zoom_level) != thunar_zoom_level_to_thumbnail_size (standard_view->priv->zoom_level))
+        newThumbnailSize = TRUE;
+
       standard_view->priv->zoom_level = zoom_level;
+
       g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_ZOOM_LEVEL]);
+
+      if (newThumbnailSize)
+        thunar_standard_view_reload (view, TRUE);
     }
 }
 

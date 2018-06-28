@@ -28,8 +28,12 @@
 
 
 
-static void thunar_icon_size_from_zoom_level (const GValue *src_value,
-                                              GValue       *dst_value);
+static void                thunar_icon_size_from_zoom_level     (const GValue   *src_value,
+                                                                 GValue         *dst_value);
+static void                thunar_thumbnail_size_from_icon_size (const GValue   *src_value,
+                                                                 GValue         *dst_value);
+static ThunarIconSize      thunar_zoom_level_to_icon_size       (ThunarZoomLevel zoom_level);
+static ThunarThumbnailSize thunar_icon_size_to_thumbnail_size   (ThunarIconSize  icon_size);
 
 
 
@@ -126,17 +130,34 @@ thunar_icon_size_get_type (void)
     {
       static const GEnumValue values[] =
       {
-        { THUNAR_ICON_SIZE_SMALLEST, "THUNAR_ICON_SIZE_SMALLEST", "smallest", },
-        { THUNAR_ICON_SIZE_SMALLER,  "THUNAR_ICON_SIZE_SMALLER",  "smaller",  },
-        { THUNAR_ICON_SIZE_SMALL,    "THUNAR_ICON_SIZE_SMALL",    "small",    },
-        { THUNAR_ICON_SIZE_NORMAL,   "THUNAR_ICON_SIZE_NORMAL",   "normal",   },
-        { THUNAR_ICON_SIZE_LARGE,    "THUNAR_ICON_SIZE_LARGE",    "large",    },
-        { THUNAR_ICON_SIZE_LARGER,   "THUNAR_ICON_SIZE_LARGER",   "larger",   },
-        { THUNAR_ICON_SIZE_LARGEST,  "THUNAR_ICON_SIZE_LARGEST",  "largest",  },
-        { 0,                         NULL,                        NULL,       },
+        { THUNAR_ICON_SIZE_16,   "THUNAR_ICON_SIZE_16",        "16px",   },
+        { THUNAR_ICON_SIZE_24,   "THUNAR_ICON_SIZE_24",        "24px",   },
+        { THUNAR_ICON_SIZE_32,   "THUNAR_ICON_SIZE_32",        "32px",   },
+        { THUNAR_ICON_SIZE_48,   "THUNAR_ICON_SIZE_48",        "48px",   },
+        { THUNAR_ICON_SIZE_64,   "THUNAR_ICON_SIZE_64",        "64px",   },
+        { THUNAR_ICON_SIZE_96,   "THUNAR_ICON_SIZE_96",        "96px",   },
+        { THUNAR_ICON_SIZE_128,  "THUNAR_ICON_SIZE_128",       "128px",  },
+        { THUNAR_ICON_SIZE_160,  "THUNAR_ICON_SIZE_160",       "160px",  },
+        { THUNAR_ICON_SIZE_192,  "THUNAR_ICON_SIZE_192",       "192px",  },
+        { THUNAR_ICON_SIZE_256,  "THUNAR_ICON_SIZE_256",       "256px",  },
+        /* Support of old type-strings for two thunar stable releases. Old strings will be transformed to new ones on write*/
+        { THUNAR_ICON_SIZE_16,   "THUNAR_ICON_SIZE_SMALLEST",  "16px",   },
+        { THUNAR_ICON_SIZE_24,   "THUNAR_ICON_SIZE_SMALLER",   "24px",   },
+        { THUNAR_ICON_SIZE_32,   "THUNAR_ICON_SIZE_SMALL",     "32px",   },
+        { THUNAR_ICON_SIZE_48,   "THUNAR_ICON_SIZE_NORMAL",    "48px",   },
+        { THUNAR_ICON_SIZE_64,   "THUNAR_ICON_SIZE_LARGE",     "64px",   },
+        { THUNAR_ICON_SIZE_96,   "THUNAR_ICON_SIZE_LARGER",    "96px",   },
+        { THUNAR_ICON_SIZE_128,  "THUNAR_ICON_SIZE_LARGEST",   "128px",  },
+        /* g_value_transform will pick the last value if nothing else matches. So we put the default there */
+        /* this is required here, because the names of the enum values have changed since the previous thunar-version*/
+        { THUNAR_ICON_SIZE_48,   "*",                          "*",      },
+        { 0,                     NULL,                         NULL,     },
       };
 
       type = g_enum_register_static (I_("ThunarIconSize"), values);
+
+      /* register transformation function for ThunarIconSize->ThunarThumbnailSize */
+      g_value_register_transform_func (type, THUNAR_TYPE_THUMBNAIL_SIZE, thunar_thumbnail_size_from_icon_size);
     }
 
   return type;
@@ -176,14 +197,28 @@ thunar_zoom_level_get_type (void)
     {
       static const GEnumValue values[] =
       {
-        { THUNAR_ZOOM_LEVEL_SMALLEST, "THUNAR_ZOOM_LEVEL_SMALLEST", "smallest", },
-        { THUNAR_ZOOM_LEVEL_SMALLER,  "THUNAR_ZOOM_LEVEL_SMALLER",  "smaller",  },
-        { THUNAR_ZOOM_LEVEL_SMALL,    "THUNAR_ZOOM_LEVEL_SMALL",    "small",    },
-        { THUNAR_ZOOM_LEVEL_NORMAL,   "THUNAR_ZOOM_LEVEL_NORMAL",   "normal",   },
-        { THUNAR_ZOOM_LEVEL_LARGE,    "THUNAR_ZOOM_LEVEL_LARGE",    "large",    },
-        { THUNAR_ZOOM_LEVEL_LARGER,   "THUNAR_ZOOM_LEVEL_LARGER",   "larger",   },
-        { THUNAR_ZOOM_LEVEL_LARGEST,  "THUNAR_ZOOM_LEVEL_LARGEST",  "largest",  },
-        { 0,                          NULL,                         NULL,       },
+        { THUNAR_ZOOM_LEVEL_25_PERCENT,  "THUNAR_ZOOM_LEVEL_25_PERCENT",    "25%",  },
+        { THUNAR_ZOOM_LEVEL_38_PERCENT,  "THUNAR_ZOOM_LEVEL_38_PERCENT",    "38%",  },
+        { THUNAR_ZOOM_LEVEL_50_PERCENT,  "THUNAR_ZOOM_LEVEL_50_PERCENT",    "50%",  },
+        { THUNAR_ZOOM_LEVEL_75_PERCENT,  "THUNAR_ZOOM_LEVEL_75_PERCENT",    "75%",  },
+        { THUNAR_ZOOM_LEVEL_100_PERCENT, "THUNAR_ZOOM_LEVEL_100_PERCENT",   "100%", },
+        { THUNAR_ZOOM_LEVEL_150_PERCENT, "THUNAR_ZOOM_LEVEL_150_PERCENT",   "150%", },
+        { THUNAR_ZOOM_LEVEL_200_PERCENT, "THUNAR_ZOOM_LEVEL_200_PERCENT",   "200%", },
+        { THUNAR_ZOOM_LEVEL_250_PERCENT, "THUNAR_ZOOM_LEVEL_250_PERCENT",   "250%", },
+        { THUNAR_ZOOM_LEVEL_300_PERCENT, "THUNAR_ZOOM_LEVEL_300_PERCENT",   "300%", },
+        { THUNAR_ZOOM_LEVEL_400_PERCENT, "THUNAR_ZOOM_LEVEL_400_PERCENT",   "400%", },
+        /* Support of old type-strings for two thunar stable releases. Old strings will be transformed to new ones on write*/
+        { THUNAR_ZOOM_LEVEL_25_PERCENT,  "THUNAR_ZOOM_LEVEL_SMALLEST",      "25%",  },
+        { THUNAR_ZOOM_LEVEL_38_PERCENT,  "THUNAR_ZOOM_LEVEL_SMALLER",       "38%",  },
+        { THUNAR_ZOOM_LEVEL_50_PERCENT,  "THUNAR_ZOOM_LEVEL_SMALL",         "50%",  },
+        { THUNAR_ZOOM_LEVEL_75_PERCENT,  "THUNAR_ZOOM_LEVEL_NORMAL",        "75%",  },
+        { THUNAR_ZOOM_LEVEL_100_PERCENT, "THUNAR_ZOOM_LEVEL_LARGE",         "100%", },
+        { THUNAR_ZOOM_LEVEL_150_PERCENT, "THUNAR_ZOOM_LEVEL_LARGER",        "150%", },
+        { THUNAR_ZOOM_LEVEL_200_PERCENT, "THUNAR_ZOOM_LEVEL_LARGEST",       "200%", },
+        /* g_value_transform will pick the last value if nothing else matches. So we put the default there */
+        /* this is required here, because the names of the enum values have changed since the previous thunar-version*/
+        { THUNAR_ZOOM_LEVEL_100_PERCENT, "*",                               "*",    },
+        { 0,                             NULL,                              NULL,   },
       };
 
       type = g_enum_register_static (I_("ThunarZoomLevel"), values);
@@ -193,6 +228,15 @@ thunar_zoom_level_get_type (void)
     }
 
   return type;
+}
+
+
+
+ThunarThumbnailSize
+thunar_zoom_level_to_thumbnail_size (ThunarZoomLevel zoom_level)
+{
+  ThunarIconSize icon_size = thunar_zoom_level_to_icon_size (zoom_level);
+  return thunar_icon_size_to_thumbnail_size (icon_size);
 }
 
 
@@ -220,6 +264,36 @@ thunar_thumbnail_mode_get_type (void)
 
 
 
+GType
+thunar_thumbnail_size_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GEnumValue values[] =
+      {
+        { THUNAR_THUMBNAIL_SIZE_NORMAL,  "THUNAR_THUMBNAIL_SIZE_NORMAL", "normal", },
+        { THUNAR_THUMBNAIL_SIZE_LARGE,   "THUNAR_THUMBNAIL_SIZE_LARGE",  "large",  },
+        { 0,                             NULL,                           NULL,     },
+      };
+
+      type = g_enum_register_static (I_("ThunarThumbnailSize"), values);
+    }
+
+  return type;
+}
+
+const char*
+thunar_thumbnail_size_get_nick (ThunarThumbnailSize thumbnail_size)
+{
+  GEnumValue *thumbnail_size_enum_value;
+
+  thumbnail_size_enum_value = g_enum_get_value (g_type_class_ref (THUNAR_TYPE_THUMBNAIL_SIZE), thumbnail_size);
+  return thumbnail_size_enum_value->value_nick;
+}
+
+
 /**
  * thunar_zoom_level_to_icon_size:
  * @zoom_level : a #ThunarZoomLevel.
@@ -233,14 +307,29 @@ thunar_zoom_level_to_icon_size (ThunarZoomLevel zoom_level)
 {
   switch (zoom_level)
     {
-    case THUNAR_ZOOM_LEVEL_SMALLEST: return THUNAR_ICON_SIZE_SMALLEST;
-    case THUNAR_ZOOM_LEVEL_SMALLER:  return THUNAR_ICON_SIZE_SMALLER;
-    case THUNAR_ZOOM_LEVEL_SMALL:    return THUNAR_ICON_SIZE_SMALL;
-    case THUNAR_ZOOM_LEVEL_NORMAL:   return THUNAR_ICON_SIZE_NORMAL;
-    case THUNAR_ZOOM_LEVEL_LARGE:    return THUNAR_ICON_SIZE_LARGE;
-    case THUNAR_ZOOM_LEVEL_LARGER:   return THUNAR_ICON_SIZE_LARGER;
-    default:                         return THUNAR_ICON_SIZE_LARGEST;
+    case THUNAR_ZOOM_LEVEL_25_PERCENT:  return THUNAR_ICON_SIZE_16;
+    case THUNAR_ZOOM_LEVEL_38_PERCENT:  return THUNAR_ICON_SIZE_24;
+    case THUNAR_ZOOM_LEVEL_50_PERCENT:  return THUNAR_ICON_SIZE_32;
+    case THUNAR_ZOOM_LEVEL_75_PERCENT:  return THUNAR_ICON_SIZE_48;
+    case THUNAR_ZOOM_LEVEL_100_PERCENT: return THUNAR_ICON_SIZE_64;
+    case THUNAR_ZOOM_LEVEL_150_PERCENT: return THUNAR_ICON_SIZE_96;
+    case THUNAR_ZOOM_LEVEL_200_PERCENT: return THUNAR_ICON_SIZE_128;
+    case THUNAR_ZOOM_LEVEL_250_PERCENT: return THUNAR_ICON_SIZE_160;
+    case THUNAR_ZOOM_LEVEL_300_PERCENT: return THUNAR_ICON_SIZE_192;
+    case THUNAR_ZOOM_LEVEL_400_PERCENT: return THUNAR_ICON_SIZE_256;
+    default:                            return THUNAR_ICON_SIZE_64; // default = 100 %zoom
     }
+}
+
+
+
+static ThunarThumbnailSize
+thunar_icon_size_to_thumbnail_size (ThunarIconSize icon_size)
+{
+  if (icon_size > THUNAR_ICON_SIZE_128)
+    return THUNAR_THUMBNAIL_SIZE_LARGE;
+
+  return THUNAR_THUMBNAIL_SIZE_NORMAL;
 }
 
 
@@ -250,6 +339,15 @@ thunar_icon_size_from_zoom_level (const GValue *src_value,
                                   GValue       *dst_value)
 {
   g_value_set_enum (dst_value, thunar_zoom_level_to_icon_size (g_value_get_enum (src_value)));
+}
+
+
+
+static void
+thunar_thumbnail_size_from_icon_size (const GValue *src_value,
+                                      GValue       *dst_value)
+{
+  g_value_set_enum (dst_value, thunar_icon_size_to_thumbnail_size (g_value_get_enum (src_value)));
 }
 
 

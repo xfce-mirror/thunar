@@ -72,8 +72,13 @@ transform_icon_size_to_index (const GValue *src_value,
 
   klass = g_type_class_ref (THUNAR_TYPE_ICON_SIZE);
   for (n = 0; n < klass->n_values; ++n)
-    if (klass->values[n].value == g_value_get_enum (src_value))
-      g_value_set_int (dst_value, n);
+    {
+      if (klass->values[n].value == g_value_get_enum (src_value))
+        {
+          g_value_set_int (dst_value, n);
+          break;
+        }
+    }
   g_type_class_unref (klass);
 
   return TRUE;
@@ -443,13 +448,16 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_show (label);
 
   combo = gtk_combo_box_text_new ();
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Very Small"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Smaller"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Small"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Normal"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Large"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Larger"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Very Large"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("16px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("24px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("32px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("48px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("64px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("96px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("128px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("160px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("192px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("256px"));
   exo_mutual_binding_new_full (G_OBJECT (dialog->preferences), "shortcuts-icon-size", G_OBJECT (combo), "active",
                                transform_icon_size_to_index, transform_index_to_icon_size, NULL, NULL);
   gtk_widget_set_hexpand (combo, TRUE);
@@ -487,13 +495,16 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_show (label);
 
   combo = gtk_combo_box_text_new ();
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Very Small"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Smaller"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Small"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Normal"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Large"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Larger"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Very Large"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("16px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("24px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("32px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("48px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("64px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("96px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("128px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("160px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("192px"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("256px"));
   exo_mutual_binding_new_full (G_OBJECT (dialog->preferences), "tree-icon-size", G_OBJECT (combo), "active",
                                transform_icon_size_to_index, transform_index_to_icon_size, NULL, NULL);
   gtk_widget_set_hexpand (combo, TRUE);
