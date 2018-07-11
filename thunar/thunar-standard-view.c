@@ -800,9 +800,6 @@ thunar_standard_view_constructor (GType                  type,
   exo_binding_new (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (view), "single-click");
   exo_binding_new (G_OBJECT (standard_view->preferences), "misc-single-click-timeout", G_OBJECT (view), "single-click-timeout");
 
-  /* apply the thumbnail frame preferences */
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-thumbnail-draw-frames", G_OBJECT (standard_view), "thumbnail-draw-frames");
-
   /* apply the default sort column and sort order */
   g_object_get (G_OBJECT (standard_view->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), sort_column, sort_order);
@@ -1098,6 +1095,10 @@ thunar_standard_view_realize (GtkWidget *widget)
                             "notify::thumbnail_mode",
                             G_CALLBACK (thunar_standard_view_thumbnail_mode_toggled),
                             standard_view);
+
+  /* apply the thumbnail frame preferences after icon_factory got initialized */
+  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-thumbnail-draw-frames", G_OBJECT (standard_view), "thumbnail-draw-frames");
+
 }
 
 
