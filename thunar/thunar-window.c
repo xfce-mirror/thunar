@@ -3443,14 +3443,18 @@ thunar_window_update_custom_actions (ThunarView   *view,
       || window->view != GTK_WIDGET (view))
     return;
 
+  /* grab a reference to the current directory of the window */
+  folder = thunar_window_get_current_directory (window);
+
+  /* leave if current directory is invalid */
+  if (!thunarx_file_info_is_directory (THUNARX_FILE_INFO (folder)))
+      return;
+
   /* load the menu provides from the provider factory */
   providers = thunarx_provider_factory_list_providers (window->provider_factory,
                                                        THUNARX_TYPE_MENU_PROVIDER);
   if (G_LIKELY (providers != NULL))
     {
-      /* grab a reference to the current directory of the window */
-      folder = thunar_window_get_current_directory (window);
-
       /* get a list of selected files */
       selected_files = thunar_component_get_selected_files (THUNAR_COMPONENT (view));
 
