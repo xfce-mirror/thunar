@@ -3447,7 +3447,8 @@ thunar_window_update_custom_actions (ThunarView   *view,
   folder = thunar_window_get_current_directory (window);
 
   /* leave if current directory is invalid */
-  if (!thunarx_file_info_is_directory (THUNARX_FILE_INFO (folder)))
+  if (folder != NULL &&
+      !thunarx_file_info_is_directory (THUNARX_FILE_INFO (folder)))
       return;
 
   /* load the menu provides from the provider factory */
