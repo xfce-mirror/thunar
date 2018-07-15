@@ -547,7 +547,7 @@ thunar_browser_poke_device_file_finish (GFile      *location,
   if (poke_data->func != NULL)
     {
       (poke_data->func) (poke_data->browser, poke_data->device, file, error,
-                         poke_data->user_data);
+                         poke_data->user_data, FALSE);
     }
 
   thunar_browser_poke_device_data_free (poke_data);
@@ -561,7 +561,8 @@ thunar_browser_poke_device_finish (ThunarDevice *device,
                                    gpointer      user_data)
 {
   PokeDeviceData *poke_data = user_data;
-  GFile          *mount_point;
+  GFile          *mount_point = NULL;
+  gboolean        cancelled = FALSE;
 
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
   _thunar_return_if_fail (user_data != NULL);
@@ -570,9 +571,15 @@ thunar_browser_poke_device_finish (ThunarDevice *device,
   _thunar_return_if_fail (device == poke_data->device);
 
   if (error == NULL)
-    {
-      mount_point = thunar_device_get_root (device);
+    mount_point = thunar_device_get_root (device);
 
+  if (mount_point == NULL)
+    {
+      /* mount_point is NULL when user dismisses the authentication dialog */
+      cancelled = TRUE;
+    }
+  else
+    {
       /* resolve the ThunarFile for the mount point asynchronously
        * and defer cleaning up the poke data until that has finished */
       thunar_file_get_async (mount_point, NULL,
@@ -580,17 +587,17 @@ thunar_browser_poke_device_finish (ThunarDevice *device,
                              poke_data);
 
       g_object_unref (mount_point);
-    }
-  else
-    {
-      if (poke_data->func != NULL)
-        {
-          (poke_data->func) (poke_data->browser, poke_data->device, NULL, (GError *) error,
-                             poke_data->user_data);
-        }
 
-      thunar_browser_poke_device_data_free (poke_data);
+      return;
     }
+
+    if (poke_data->func != NULL)
+      {
+        (poke_data->func) (poke_data->browser, poke_data->device, NULL,
+                           (GError *) error, poke_data->user_data, cancelled);
+      }
+
+    thunar_browser_poke_device_data_free (poke_data);
 }
 
 

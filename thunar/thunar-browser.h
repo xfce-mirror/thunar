@@ -44,7 +44,8 @@ typedef void (*ThunarBrowserPokeDeviceFunc)   (ThunarBrowser *browser,
                                                ThunarDevice  *volume,
                                                ThunarFile    *mount_point,
                                                GError        *error,
-                                               gpointer       user_data);
+                                               gpointer       user_data,
+                                               gboolean       cancelled);
 
 typedef void (*ThunarBrowserPokeLocationFunc) (ThunarBrowser *browser,
                                                GFile         *location,
