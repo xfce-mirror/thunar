@@ -75,6 +75,7 @@ enum
   PROP_MISC_VOLUME_MANAGEMENT,
   PROP_MISC_CASE_SENSITIVE,
   PROP_MISC_DATE_STYLE,
+  PROP_MISC_DATE_CUSTOM_STYLE,
   PROP_EXEC_SHELL_SCRIPTS_BY_DEFAULT,
   PROP_MISC_FOLDERS_FIRST,
   PROP_MISC_FULL_PATH_IN_TITLE,
@@ -492,6 +493,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          THUNAR_TYPE_DATE_STYLE,
                          THUNAR_DATE_STYLE_SIMPLE,
                          EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-date-custom-style:
+   *
+   * If 'custom' is selected as date format, this date-style will be used
+   **/
+  preferences_props[PROP_MISC_DATE_CUSTOM_STYLE] =
+      g_param_spec_string ("misc-date-custom-style",
+                           "MiscDateCustomStyle",
+                           NULL,
+                           "%Y-%m-%d %H:%M:%S",
+                           EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-execute-shell-scripts-by-default:

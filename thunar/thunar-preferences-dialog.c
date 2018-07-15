@@ -199,6 +199,23 @@ thunar_preferences_dialog_class_init (ThunarPreferencesDialogClass *klass)
 
 
 static void
+on_date_format_changed (GtkWidget *combo,
+                        GtkWidget *customFormat)
+{
+  GtkComboBox *combobox = GTK_COMBO_BOX (combo);
+
+  _thunar_return_if_fail (GTK_IS_COMBO_BOX (combobox));
+  _thunar_return_if_fail (GTK_IS_WIDGET (customFormat));
+
+  if (gtk_combo_box_get_active (combobox) == THUNAR_DATE_STYLE_CUSTOM)
+    gtk_widget_set_visible (customFormat, TRUE);
+  else
+    gtk_widget_set_visible (customFormat, FALSE);
+}
+
+
+
+static void
 thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 {
   ThunarDateStyle date_style;
@@ -206,6 +223,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   GtkWidget      *notebook;
   GtkWidget      *button;
   GtkWidget      *combo;
+  GtkWidget      *entry;
   GtkWidget      *frame;
   GtkWidget      *label;
   GtkWidget      *range;
@@ -362,12 +380,15 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_show (label);
 
   combo = gtk_combo_box_text_new ();
-  for (date_style = THUNAR_DATE_STYLE_SIMPLE; date_style <= THUNAR_DATE_STYLE_ISO; ++date_style)
+  for (date_style = THUNAR_DATE_STYLE_SIMPLE; date_style <= THUNAR_DATE_STYLE_DDMMYYYY; ++date_style)
     {
-      date = thunar_util_humanize_file_time (time (NULL), date_style);
+      date = thunar_util_humanize_file_time (time (NULL), date_style, NULL);
       gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), date);
       g_free (date);
     }
+
+  /* TRANSLATORS: custom date format */
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Custom"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-date-style", G_OBJECT (combo), "active");
   gtk_widget_set_hexpand (combo, TRUE);
   gtk_grid_attach (GTK_GRID (grid), combo, 1, 0, 1, 1);
@@ -375,6 +396,22 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
 
+  entry = gtk_entry_new ();
+  /* TRANSLATORS: Please do not translate the first column (specifiers), 'strftime' and of course '\n' */
+  gtk_widget_set_tooltip_text (entry, _("Custom date format to apply.\n\n"
+                                        "The most common specifiers are:\n"
+                                        "%d day of month\n"
+                                        "%m month\n"
+                                        "%Y year including century\n"
+                                        "%H hour\n"
+                                        "%M minute\n"
+                                        "%S second\n\n"
+                                        "For a complete list, check the man pages of 'strftime'"));
+  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-date-custom-style", G_OBJECT (entry), "text");
+  g_signal_connect (G_OBJECT (combo), "changed", G_CALLBACK (on_date_format_changed), entry);
+  gtk_grid_attach (GTK_GRID (grid), entry, 1, 1, 1, 1);
+  if (gtk_combo_box_get_active (GTK_COMBO_BOX (combo)) == THUNAR_DATE_STYLE_CUSTOM)
+    gtk_widget_set_visible (entry, TRUE);
 
   /*
      Side Pane

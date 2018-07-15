@@ -46,6 +46,7 @@ enum
   PROP_0,
   PROP_CASE_SENSITIVE,
   PROP_DATE_STYLE,
+  PROP_DATE_CUSTOM_STYLE,
   PROP_FOLDER,
   PROP_FOLDERS_FIRST,
   PROP_NUM_FILES,
@@ -185,6 +186,9 @@ static void               thunar_list_model_set_case_sensitive    (ThunarListMod
 static ThunarDateStyle    thunar_list_model_get_date_style        (ThunarListModel        *store);
 static void               thunar_list_model_set_date_style        (ThunarListModel        *store,
                                                                    ThunarDateStyle         date_style);
+static const char*        thunar_list_model_get_date_custom_style (ThunarListModel        *store);
+static void               thunar_list_model_set_date_custom_style (ThunarListModel        *store,
+                                                                   const char             *date_custom_style);
 static gint               thunar_list_model_get_num_files         (ThunarListModel        *store);
 static gboolean           thunar_list_model_get_folders_first     (ThunarListModel        *store);
 
@@ -217,6 +221,7 @@ struct _ThunarListModel
   gboolean        show_hidden : 1;
   gboolean        file_size_binary : 1;
   ThunarDateStyle date_style;
+  char           *date_custom_style;
 
   /* Use the shared ThunarFileMonitor instance, so we
    * do not need to connect "changed" handler to every
@@ -285,6 +290,18 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
                          THUNAR_TYPE_DATE_STYLE,
                          THUNAR_DATE_STYLE_SIMPLE,
                          EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarListModel:date-custom-style:
+   *
+   * The style used for custom format of dates.
+   **/
+  list_model_props[PROP_DATE_CUSTOM_STYLE] =
+      g_param_spec_string ("date-custom-style",
+                           "DateCustomStyle",
+                           NULL,
+                           "%Y-%m-%d %H:%M:%S",
+                           EXO_PARAM_READWRITE);
 
   /**
    * ThunarListModel:folder:
@@ -481,6 +498,10 @@ thunar_list_model_get_property (GObject    *object,
       g_value_set_enum (value, thunar_list_model_get_date_style (store));
       break;
 
+    case PROP_DATE_CUSTOM_STYLE:
+      g_value_set_string (value, thunar_list_model_get_date_custom_style (store));
+      break;
+
     case PROP_FOLDER:
       g_value_set_object (value, thunar_list_model_get_folder (store));
       break;
@@ -525,6 +546,10 @@ thunar_list_model_set_property (GObject      *object,
 
     case PROP_DATE_STYLE:
       thunar_list_model_set_date_style (store, g_value_get_enum (value));
+      break;
+
+    case PROP_DATE_CUSTOM_STYLE:
+      thunar_list_model_set_date_custom_style (store, g_value_get_string (value));
       break;
 
     case PROP_FOLDER:
@@ -686,13 +711,13 @@ thunar_list_model_get_value (GtkTreeModel *model,
     {
     case THUNAR_COLUMN_DATE_ACCESSED:
       g_value_init (value, G_TYPE_STRING);
-      str = thunar_file_get_date_string (file, THUNAR_FILE_DATE_ACCESSED, THUNAR_LIST_MODEL (model)->date_style);
+      str = thunar_file_get_date_string (file, THUNAR_FILE_DATE_ACCESSED, THUNAR_LIST_MODEL (model)->date_style, THUNAR_LIST_MODEL (model)->date_custom_style);
       g_value_take_string (value, str);
       break;
 
     case THUNAR_COLUMN_DATE_MODIFIED:
       g_value_init (value, G_TYPE_STRING);
-      str = thunar_file_get_date_string (file, THUNAR_FILE_DATE_MODIFIED, THUNAR_LIST_MODEL (model)->date_style);
+      str = thunar_file_get_date_string (file, THUNAR_FILE_DATE_MODIFIED, THUNAR_LIST_MODEL (model)->date_style, THUNAR_LIST_MODEL (model)->date_custom_style);
       g_value_take_string (value, str);
       break;
 
@@ -1762,6 +1787,51 @@ thunar_list_model_set_date_style (ThunarListModel *store,
 
       /* notify listeners */
       g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_DATE_STYLE]);
+
+      /* emit a "changed" signal for each row, so the display is reloaded with the new date style */
+      gtk_tree_model_foreach (GTK_TREE_MODEL (store), (GtkTreeModelForeachFunc) gtk_tree_model_row_changed, NULL);
+    }
+}
+
+
+
+/**
+ * thunar_list_model_get_date_custom_style:
+ * @store : a valid #ThunarListModel object.
+ *
+ * Return value: the style used to format customdates in the given @store.
+ **/
+static const char*
+thunar_list_model_get_date_custom_style (ThunarListModel *store)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), THUNAR_DATE_STYLE_SIMPLE);
+  return store->date_custom_style;
+}
+
+
+
+/**
+ * thunar_list_model_set_date_custom_style:
+ * @store             : a valid #ThunarListModel object.
+ * @date_custom_style : the style that should be used to format
+ *                      custom dates in the @store.
+ *
+ * Changes the style used to format custom dates in @store to the specified @date_custom_style.
+ **/
+static void
+thunar_list_model_set_date_custom_style (ThunarListModel *store,
+                                         const char      *date_custom_style)
+{
+  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
+
+  /* check if we have a new setting */
+  if (g_strcmp0 (store->date_custom_style, date_custom_style) != 0)
+    {
+      /* apply the new setting */
+      store->date_custom_style = g_strdup (date_custom_style);
+
+      /* notify listeners */
+      g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_DATE_CUSTOM_STYLE]);
 
       /* emit a "changed" signal for each row, so the display is reloaded with the new date style */
       gtk_tree_model_foreach (GTK_TREE_MODEL (store), (GtkTreeModelForeachFunc) gtk_tree_model_row_changed, NULL);

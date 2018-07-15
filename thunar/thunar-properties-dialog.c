@@ -908,6 +908,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   GVolume           *volume;
   GIcon             *gicon;
   glong              offset;
+  gchar             *date_custom_style;
   gchar             *date;
   gchar             *display_name;
   gchar             *fs_string;
@@ -939,6 +940,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
 
   /* determine the style used to format dates */
   g_object_get (G_OBJECT (dialog->preferences), "misc-date-style", &date_style, NULL);
+  g_object_get (G_OBJECT (dialog->preferences), "misc-date-custom-style", &date_custom_style, NULL);
 
   /* update the properties dialog title */
   str = g_strdup_printf (_("%s - Properties"), thunar_file_get_display_name (file));
@@ -1056,7 +1058,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
     }
 
   /* update the deleted time */
-  date = thunar_file_get_deletion_date (file, date_style);
+  date = thunar_file_get_deletion_date (file, date_style, date_custom_style);
   if (G_LIKELY (date != NULL))
     {
       gtk_label_set_text (GTK_LABEL (dialog->deleted_label), date);
@@ -1069,7 +1071,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
     }
 
   /* update the modified time */
-  date = thunar_file_get_date_string (file, THUNAR_FILE_DATE_MODIFIED, date_style);
+  date = thunar_file_get_date_string (file, THUNAR_FILE_DATE_MODIFIED, date_style, date_custom_style);
   if (G_LIKELY (date != NULL))
     {
       gtk_label_set_text (GTK_LABEL (dialog->modified_label), date);
@@ -1082,7 +1084,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
     }
 
   /* update the accessed time */
-  date = thunar_file_get_date_string (file, THUNAR_FILE_DATE_ACCESSED, date_style);
+  date = thunar_file_get_date_string (file, THUNAR_FILE_DATE_ACCESSED, date_style, date_custom_style);
   if (G_LIKELY (date != NULL))
     {
       gtk_label_set_text (GTK_LABEL (dialog->accessed_label), date);

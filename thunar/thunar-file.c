@@ -2187,6 +2187,7 @@ thunar_file_get_date (const ThunarFile  *file,
  * @file       : a #ThunarFile instance.
  * @date_type  : the kind of date you are interested to know about @file.
  * @date_style : the style used to format the date.
+ * @date_custom_style : custom style to apply, if @date_style is set to custom
  *
  * Tries to determine the @date_type of @file, and if @file supports the
  * given @date_type, it'll be formatted as string and returned. The
@@ -2198,9 +2199,10 @@ thunar_file_get_date (const ThunarFile  *file,
 gchar*
 thunar_file_get_date_string (const ThunarFile  *file,
                              ThunarFileDateType date_type,
-                             ThunarDateStyle    date_style)
+                             ThunarDateStyle    date_style,
+                             const gchar       *date_custom_style)
 {
-  return thunar_util_humanize_file_time (thunar_file_get_date (file, date_type), date_style);
+  return thunar_util_humanize_file_time (thunar_file_get_date (file, date_type), date_style, date_custom_style);
 }
 
 
@@ -3177,6 +3179,7 @@ thunar_file_get_display_name (const ThunarFile *file)
  * thunar_file_get_deletion_date:
  * @file       : a #ThunarFile instance.
  * @date_style : the style used to format the date.
+ * @date_custom_style : custom style to apply, if @date_style is set to custom
  *
  * Returns the deletion date of the @file if the @file
  * is located in the trash. Otherwise %NULL will be
@@ -3190,7 +3193,8 @@ thunar_file_get_display_name (const ThunarFile *file)
  **/
 gchar*
 thunar_file_get_deletion_date (const ThunarFile *file,
-                               ThunarDateStyle   date_style)
+                               ThunarDateStyle   date_style,
+                               const gchar      *date_custom_style)
 {
   const gchar *date;
   time_t       deletion_time;
@@ -3206,7 +3210,7 @@ thunar_file_get_deletion_date (const ThunarFile *file,
   deletion_time = thunar_util_time_from_rfc3339 (date);
 
   /* humanize the time value */
-  return thunar_util_humanize_file_time (deletion_time, date_style);
+  return thunar_util_humanize_file_time (deletion_time, date_style, date_custom_style);
 }
 
 
