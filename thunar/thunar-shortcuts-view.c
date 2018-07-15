@@ -1717,7 +1717,8 @@ thunar_shortcuts_view_poke_device_finish (ThunarBrowser *browser,
                                           ThunarDevice  *device,
                                           ThunarFile    *mount_point,
                                           GError        *error,
-                                          gpointer       user_data)
+                                          gpointer       user_data,
+                                          gboolean       cancelled)
 {
   gchar        *device_name;
   GtkTreeModel *model;
@@ -1726,7 +1727,11 @@ thunar_shortcuts_view_poke_device_finish (ThunarBrowser *browser,
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (browser));
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
 
-  if (error == NULL)
+  if (cancelled)
+    {
+      /* do nothing */
+    }
+  else if (error == NULL)
     {
       thunar_browser_poke_file (browser, mount_point, GTK_WIDGET (browser),
                                 thunar_shortcuts_view_poke_file_finish,
