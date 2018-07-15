@@ -357,8 +357,9 @@ thunar_util_expand_filename (const gchar  *filename,
 
 /**
  * thunar_util_humanize_file_time:
- * @file_time   : a #guint64 timestamp.
- * @date_format : the #ThunarDateFormat used to humanize the @file_time.
+ * @file_time         : a #guint64 timestamp.
+ * @date_style        : the #ThunarDateFormat used to humanize the @file_time.
+ * @date_custom_style : custom style to apply, if @date_style is set to custom
  *
  * Returns a human readable date representation of the specified
  * @file_time. The caller is responsible to free the returned
@@ -368,8 +369,9 @@ thunar_util_expand_filename (const gchar  *filename,
  *               according to the @date_format.
  **/
 gchar*
-thunar_util_humanize_file_time (guint64         file_time,
-                                ThunarDateStyle date_style)
+thunar_util_humanize_file_time (guint64          file_time,
+                                ThunarDateStyle  date_style,
+                                const gchar     *date_custom_style)
 {
   const gchar *date_format;
   struct tm   *tfile;
@@ -443,10 +445,25 @@ thunar_util_humanize_file_time (guint64         file_time,
           /* use long, date(1)-like format string */
           return exo_strdup_strftime ("%c", tfile);
         }
-      else /* if (date_style == THUNAR_DATE_STYLE_ISO) */
+      else if (date_style == THUNAR_DATE_STYLE_YYYYMMDD)
         {
-          /* use ISO date formatting */
           return exo_strdup_strftime ("%Y-%m-%d %H:%M:%S", tfile);
+        }
+      else if (date_style == THUNAR_DATE_STYLE_MMDDYYYY)
+        {
+          return exo_strdup_strftime ("%m-%d-%Y %H:%M:%S", tfile);
+        }
+      else if (date_style == THUNAR_DATE_STYLE_DDMMYYYY)
+        {
+          return exo_strdup_strftime ("%d-%m-%Y %H:%M:%S", tfile);
+        }
+      else /* if (date_style == THUNAR_DATE_STYLE_CUSTOM) */
+        {
+          if (date_custom_style == NULL)
+            return g_strdup ("");
+
+          /* use custom date formatting */
+          return exo_strdup_strftime (date_custom_style, tfile);
         }
     }
 

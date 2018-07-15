@@ -65,11 +65,16 @@ thunar_date_style_get_type (void)
     {
       static const GEnumValue values[] =
       {
-        { THUNAR_DATE_STYLE_SIMPLE, "THUNAR_DATE_STYLE_SIMPLE", "simple", },
-        { THUNAR_DATE_STYLE_SHORT,  "THUNAR_DATE_STYLE_SHORT",  "short",  },
-        { THUNAR_DATE_STYLE_LONG,   "THUNAR_DATE_STYLE_LONG",   "long",   },
-        { THUNAR_DATE_STYLE_ISO,    "THUNAR_DATE_STYLE_ISO",    "iso",   },
-        { 0,                        NULL,                       NULL,     },
+        { THUNAR_DATE_STYLE_SIMPLE,   "THUNAR_DATE_STYLE_SIMPLE",   "simple",   },
+        { THUNAR_DATE_STYLE_SHORT,    "THUNAR_DATE_STYLE_SHORT",    "short",    },
+        { THUNAR_DATE_STYLE_LONG,     "THUNAR_DATE_STYLE_LONG",     "long",     },
+        { THUNAR_DATE_STYLE_YYYYMMDD, "THUNAR_DATE_STYLE_YYYYMMDD", "yyyymmdd", },
+        { THUNAR_DATE_STYLE_MMDDYYYY, "THUNAR_DATE_STYLE_MMDDYYYY", "mmddyyyy", },
+        { THUNAR_DATE_STYLE_DDMMYYYY, "THUNAR_DATE_STYLE_DDMMYYYY", "ddmmyyyy", },
+        { THUNAR_DATE_STYLE_CUSTOM,   "THUNAR_DATE_STYLE_CUSTOM",   "custom",   },
+        /* to stay backward compartible*/
+        { THUNAR_DATE_STYLE_YYYYMMDD, "THUNAR_DATE_STYLE_ISO",      "iso",      },
+        { 0,                          NULL,                         NULL,       },
       };
 
       type = g_enum_register_static (I_("ThunarDateStyle"), values);

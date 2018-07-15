@@ -165,7 +165,8 @@ guint64           thunar_file_get_date                   (const ThunarFile      
 
 gchar            *thunar_file_get_date_string            (const ThunarFile       *file,
                                                           ThunarFileDateType      date_type,
-                                                          ThunarDateStyle         date_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+                                                          ThunarDateStyle         date_style,
+                                                          const gchar            *date_custom_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 gchar            *thunar_file_get_mode_string            (const ThunarFile       *file) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 gchar            *thunar_file_get_size_string            (const ThunarFile       *file) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 gchar            *thunar_file_get_size_in_bytes_string   (const ThunarFile       *file) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
@@ -212,7 +213,8 @@ gboolean          thunar_file_is_desktop_file            (const ThunarFile      
 const gchar      *thunar_file_get_display_name           (const ThunarFile       *file) G_GNUC_CONST;
 
 gchar            *thunar_file_get_deletion_date          (const ThunarFile       *file,
-                                                          ThunarDateStyle         date_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+                                                          ThunarDateStyle         date_style,
+                                                          const gchar            *date_custom_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 const gchar      *thunar_file_get_original_path          (const ThunarFile       *file);
 guint32           thunar_file_get_item_count             (const ThunarFile       *file);
 

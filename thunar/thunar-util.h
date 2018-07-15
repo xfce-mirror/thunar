@@ -54,7 +54,8 @@ gchar     *thunar_util_expand_filename          (const gchar    *filename,
                                                  GError        **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 gchar     *thunar_util_humanize_file_time       (guint64         file_time,
-                                                 ThunarDateStyle date_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+                                                 ThunarDateStyle date_style,
+                                                 const gchar    *date_custom_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 GdkScreen *thunar_util_parse_parent             (gpointer        parent,
                                                  GtkWindow     **window_return) G_GNUC_WARN_UNUSED_RESULT;
