@@ -121,7 +121,9 @@ g_app_info_compare (gpointer a,
 static void
 thunar_sendto_model_load (ThunarSendtoModel *sendto_model)
 {
+#ifdef HAVE_GIO_UNIX
   GDesktopAppInfo *app_info = NULL;
+#endif
   gchar          **specs;
   gchar           *path;
   guint            n;
@@ -146,9 +148,6 @@ thunar_sendto_model_load (ThunarSendtoModel *sendto_model)
 
 #ifdef HAVE_GIO_UNIX
           app_info = g_desktop_app_info_new_from_keyfile (key_file);
-#else
-          /* FIXME try to create the app info ourselves in a platform independent way */
-#endif
 
           if (G_LIKELY (app_info != NULL))
             {
@@ -165,6 +164,9 @@ thunar_sendto_model_load (ThunarSendtoModel *sendto_model)
               if (mime_types != NULL)
                 g_object_set_data_full (G_OBJECT (app_info), "mime-types", mime_types, (GDestroyNotify) g_strfreev);
             }
+#else
+          /* FIXME try to create the app info ourselves in a platform independent way */
+#endif
 
           g_key_file_free (key_file);
         }
