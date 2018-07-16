@@ -1141,6 +1141,7 @@ thunar_standard_view_draw (GtkWidget      *widget,
 {
   gboolean result = FALSE;
   GtkAllocation a;
+  GtkStyleContext *context;
 
   /* let the scrolled window do it's work */
   cairo_save (cr);
@@ -1152,14 +1153,12 @@ thunar_standard_view_draw (GtkWidget      *widget,
     {
       gtk_widget_get_allocation (widget, &a);
 
-      gtk_render_frame (gtk_widget_get_style_context (widget),
-                        cr, a.x, a.y, a.width, a.height);
+      context = gtk_widget_get_style_context (widget);
 
-      /* the cairo version looks better here, so we use it if possible */
-      cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
-      cairo_set_line_width (cr, 1.0);
-      cairo_rectangle (cr, a.x + 0.5, a.y + 0.5, a.width - 1, a.height - 1);
-      cairo_stroke (cr);
+      gtk_style_context_save (context);
+      gtk_style_context_set_state (context, GTK_STATE_FLAG_DROP_ACTIVE);
+      gtk_render_frame (context, cr, 0, 0, a.width, a.height);
+      gtk_style_context_restore (context);
     }
 
   return result;
