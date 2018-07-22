@@ -904,12 +904,19 @@ thunar_details_view_zoom_level_changed (ThunarDetailsView *details_view)
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
+  /* Disable fixed height optimization during resize, since it can mess up the row height */
+  if (details_view->fixed_columns)
+    gtk_tree_view_set_fixed_height_mode (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (details_view))), FALSE);
+
   /* determine the list of tree view columns */
   for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; ++column)
     {
       /* just queue a resize on this column */
       gtk_tree_view_column_queue_resize (details_view->columns[column]);
     }
+
+  if (details_view->fixed_columns)
+    gtk_tree_view_set_fixed_height_mode (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (details_view))), TRUE);
 }
 
 
