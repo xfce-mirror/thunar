@@ -901,12 +901,16 @@ static void
 thunar_details_view_zoom_level_changed (ThunarDetailsView *details_view)
 {
   ThunarColumn column;
+  gboolean     fixed_columns_used = FALSE;
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
-  /* Disable fixed height optimization during resize, since it can mess up the row height */
-  if (details_view->fixed_columns)
-    gtk_tree_view_set_fixed_height_mode (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (details_view))), FALSE);
+  if (details_view->fixed_columns == TRUE)
+    fixed_columns_used = TRUE;
+
+  /* Disable fixed column mode during resize, since it can generate graphical glitches */
+  if (fixed_columns_used)
+      thunar_details_view_set_fixed_columns (details_view, FALSE);
 
   /* determine the list of tree view columns */
   for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; ++column)
@@ -915,8 +919,13 @@ thunar_details_view_zoom_level_changed (ThunarDetailsView *details_view)
       gtk_tree_view_column_queue_resize (details_view->columns[column]);
     }
 
-  if (details_view->fixed_columns)
-    gtk_tree_view_set_fixed_height_mode (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (details_view))), TRUE);
+  if (fixed_columns_used)
+    {
+      thunar_details_view_set_fixed_columns (details_view, TRUE);
+
+      /* For unknown reason a reload is required to display the correct row-height (otherwise some rows will keep the old height )*/
+      thunar_standard_view_reload (THUNAR_VIEW (details_view), TRUE);
+    }
 }
 
 
@@ -978,6 +987,10 @@ thunar_details_view_set_fixed_columns (ThunarDetailsView *details_view,
       /* apply the new value */
       details_view->fixed_columns = fixed_columns;
 
+      /* disable in reverse order, otherwise graphical glitches can appear*/
+      if (!fixed_columns)
+        gtk_tree_view_set_fixed_height_mode (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (details_view))), FALSE);
+
       /* apply the new setting to all columns */
       for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; ++column)
         {
@@ -1001,9 +1014,9 @@ thunar_details_view_set_fixed_columns (ThunarDetailsView *details_view,
         }
 
       /* for fixed columns mode, we can enable the fixed height
-       * mode to improve the performance of the GtkTreeVeiw.
-       */
-      gtk_tree_view_set_fixed_height_mode (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (details_view))), fixed_columns);
+       * mode to improve the performance of the GtkTreeVeiw. */
+      if (fixed_columns)
+        gtk_tree_view_set_fixed_height_mode (GTK_TREE_VIEW (gtk_bin_get_child (GTK_BIN (details_view))), TRUE);
 
       /* notify listeners */
       g_object_notify (G_OBJECT (details_view), "fixed-columns");

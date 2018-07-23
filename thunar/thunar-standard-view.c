@@ -139,8 +139,6 @@ static ThunarZoomLevel      thunar_standard_view_get_zoom_level             (Thu
 static void                 thunar_standard_view_set_zoom_level             (ThunarView               *view,
                                                                              ThunarZoomLevel           zoom_level);
 static void                 thunar_standard_view_reset_zoom_level           (ThunarView               *view);
-static void                 thunar_standard_view_reload                     (ThunarView               *view,
-                                                                             gboolean                  reload_info);
 static gboolean             thunar_standard_view_get_visible_range          (ThunarView               *view,
                                                                              ThunarFile              **start_file,
                                                                              ThunarFile              **end_file);
@@ -1726,7 +1724,7 @@ thunar_standard_view_reset_zoom_level (ThunarView *view)
 
 
 
-static void
+void
 thunar_standard_view_reload (ThunarView *view,
                              gboolean    reload_info)
 {
