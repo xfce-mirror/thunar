@@ -1965,7 +1965,8 @@ thunar_shortcuts_view_poke_device_mount_finish (ThunarBrowser *browser,
                                                 ThunarDevice  *device,
                                                 ThunarFile    *mount_point,
                                                 GError        *error,
-                                                gpointer       ignored)
+                                                gpointer       ignored,
+                                                gboolean       cancelled)
 {
   gchar        *device_name;
   GtkTreeModel *model;
