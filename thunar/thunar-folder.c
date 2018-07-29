@@ -421,6 +421,8 @@ thunar_folder_files_ready (ThunarJob    *job,
 static gboolean
 thunar_folder_content_type_loader_idle (gpointer data)
 {
+  _thunar_return_val_if_fail (THUNAR_IS_FOLDER (data), FALSE);
+
   ThunarFolder *folder = THUNAR_FOLDER (data);
   GList        *lp;
 
@@ -447,6 +449,8 @@ thunar_folder_content_type_loader_idle (gpointer data)
 static void
 thunar_folder_content_type_loader_idle_destroyed (gpointer data)
 {
+  _thunar_return_if_fail (THUNAR_IS_FOLDER (data));
+
   THUNAR_FOLDER (data)->content_type_idle_id = 0;
 }
 
