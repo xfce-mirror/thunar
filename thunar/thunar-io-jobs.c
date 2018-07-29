@@ -454,6 +454,9 @@ _thunar_io_jobs_unlink (ThunarJob  *job,
       if (thunar_g_file_is_root (lp->data))
         continue;
 
+      /* update progress information */
+      thunar_job_processing_file (THUNAR_JOB (job), lp);
+
 again:
       /* try to delete the file */
       if (g_file_delete (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err))
