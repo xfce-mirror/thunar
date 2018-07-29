@@ -628,7 +628,7 @@ thunar_job_processing_file (ThunarJob *job,
       /* determine the number of files processed so far */
       for (lp = job->priv->total_files, n_processed = 0;
            lp != current_file;
-           lp = lp->next);
+           lp = lp->next, n_processed++);
 
       /* emit only if n_processed is a multiple of 8 */
       if ((n_processed % 8) == 0)
