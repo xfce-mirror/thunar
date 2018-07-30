@@ -148,8 +148,6 @@ void  thunar_standard_view_context_menu       (ThunarStandardView *standard_view
 
 void  thunar_standard_view_queue_popup        (ThunarStandardView *standard_view,
                                                GdkEventButton     *event);
-void  thunar_standard_view_reload             (ThunarView         *view,
-                                               gboolean            reload_info);
 
 void  thunar_standard_view_selection_changed  (ThunarStandardView *standard_view);
 

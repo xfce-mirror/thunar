@@ -897,6 +897,18 @@ thunar_details_view_columns_changed (ThunarColumnModel *column_model,
 
 
 
+static gboolean
+thunar_details_view_zoom_level_changed_reload_fixed_columns (gpointer data)
+{
+  ThunarDetailsView *details_view = data;
+  _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (details_view), FALSE);
+
+  thunar_details_view_set_fixed_columns (details_view, TRUE);
+  return FALSE;
+}
+
+
+
 static void
 thunar_details_view_zoom_level_changed (ThunarDetailsView *details_view)
 {
@@ -921,10 +933,8 @@ thunar_details_view_zoom_level_changed (ThunarDetailsView *details_view)
 
   if (fixed_columns_used)
     {
-      thunar_details_view_set_fixed_columns (details_view, TRUE);
-
-      /* For unknown reason a reload is required to display the correct row-height (otherwise some rows will keep the old height )*/
-      thunar_standard_view_reload (THUNAR_VIEW (details_view), TRUE);
+      /* Call when idle to ensure that gtk_tree_view_column_queue_resize got finished */
+      gdk_threads_add_idle (thunar_details_view_zoom_level_changed_reload_fixed_columns, details_view);
     }
 }
 
