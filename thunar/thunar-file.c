@@ -3537,7 +3537,7 @@ thunar_file_is_desktop (const ThunarFile *file)
 
 
 const gchar *
-thunar_file_get_thumbnail_path (ThunarFile *file)
+thunar_file_get_thumbnail_path (ThunarFile *file, ThunarThumbnailSize thumbnail_size)
 {
   GChecksum *checksum;
   gchar     *filename;
@@ -3571,7 +3571,7 @@ thunar_file_get_thumbnail_path (ThunarFile *file)
 
           /* build and check if the thumbnail is in the new location */
           file->thumbnail_path = g_build_path ("/", g_get_user_cache_dir(),
-                                               "thumbnails", "normal",
+                                               "thumbnails", thunar_thumbnail_size_get_nick (thumbnail_size),
                                                filename, NULL);
 
           if (!g_file_test(file->thumbnail_path, G_FILE_TEST_EXISTS))
@@ -3579,8 +3579,9 @@ thunar_file_get_thumbnail_path (ThunarFile *file)
               /* Fallback to old version */
               g_free(file->thumbnail_path);
 
-              file->thumbnail_path = g_build_filename (xfce_get_homedir (), ".thumbnails",
-                                                       "normal", filename, NULL);
+              file->thumbnail_path = g_build_filename (xfce_get_homedir (),
+                                                       ".thumbnails", thunar_thumbnail_size_get_nick (thumbnail_size),
+                                                       filename, NULL);
 
               if(!g_file_test(file->thumbnail_path, G_FILE_TEST_EXISTS))
               {

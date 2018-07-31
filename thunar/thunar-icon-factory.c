@@ -49,6 +49,7 @@ enum
   PROP_0,
   PROP_ICON_THEME,
   PROP_THUMBNAIL_MODE,
+  PROP_THUMBNAIL_SIZE,
 };
 
 
@@ -105,6 +106,8 @@ struct _ThunarIconFactory
   GtkIconTheme        *icon_theme;
 
   ThunarThumbnailMode  thumbnail_mode;
+
+  ThunarThumbnailSize  thumbnail_size;
 
   guint                sweep_timer_id;
 
@@ -182,6 +185,20 @@ thunar_icon_factory_class_init (ThunarIconFactoryClass *klass)
                                                       THUNAR_TYPE_THUMBNAIL_MODE,
                                                       THUNAR_THUMBNAIL_MODE_ONLY_LOCAL,
                                                       EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarIconFactory:thumbnail-size:
+   *
+   * Size of the thumbnails to load
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_THUMBNAIL_SIZE,
+                                   g_param_spec_enum ("thumbnail-size",
+                                                      "thumbnail-size",
+                                                      "thumbnail-size",
+                                                      THUNAR_TYPE_THUMBNAIL_SIZE,
+                                                      THUNAR_THUMBNAIL_SIZE_NORMAL,
+                                                      EXO_PARAM_READWRITE));
 }
 
 
@@ -190,6 +207,7 @@ static void
 thunar_icon_factory_init (ThunarIconFactory *factory)
 {
   factory->thumbnail_mode = THUNAR_THUMBNAIL_MODE_ONLY_LOCAL;
+  factory->thumbnail_size = THUNAR_THUMBNAIL_SIZE_NORMAL;
 
   /* connect emission hook for the "changed" signal on the GtkIconTheme class. We use the emission
    * hook way here, because that way we can make sure that the icon cache is definetly cleared
@@ -266,6 +284,10 @@ thunar_icon_factory_get_property (GObject    *object,
       g_value_set_enum (value, factory->thumbnail_mode);
       break;
 
+    case PROP_THUMBNAIL_SIZE:
+      g_value_set_enum (value, factory->thumbnail_size);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -286,6 +308,10 @@ thunar_icon_factory_set_property (GObject      *object,
     {
     case PROP_THUMBNAIL_MODE:
       factory->thumbnail_mode = g_value_get_enum (value);
+      break;
+
+    case PROP_THUMBNAIL_SIZE:
+      factory->thumbnail_size = g_value_get_enum (value);
       break;
 
     default:
@@ -355,14 +381,15 @@ thunar_icon_factory_sweep_timer_destroy (gpointer user_data)
 static inline gboolean
 thumbnail_needs_frame (const GdkPixbuf *thumbnail,
                        gint             width,
-                       gint             height)
+                       gint             height,
+                       gint             size)
 {
   const guchar *pixels;
   gint          rowstride;
   gint          n;
 
   /* don't add frames to small thumbnails */
-  if (width < THUNAR_THUMBNAIL_SIZE && height < THUNAR_THUMBNAIL_SIZE)
+  if (size < THUNAR_ICON_SIZE_64 )
     return FALSE;
 
   /* always add a frame to thumbnails w/o alpha channel */
@@ -431,6 +458,8 @@ thunar_icon_factory_load_from_file (ThunarIconFactory *factory,
   gint       max_height;
   gint       width;
   gint       height;
+
+  _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
 
   /* try to load the image from the file */
   pixbuf = gdk_pixbuf_new_from_file (path, NULL);
@@ -710,7 +739,7 @@ thunar_icon_factory_get_for_icon_theme (GtkIconTheme *icon_theme)
 
 
 /**
- * thunar_icon_factory_get_thumbnail_mode:
+ * thunar_icon_factory_get_show_thumbnail:
  * @factory       : a #ThunarIconFactory instance.
  * @file          : a #ThunarFile.
  *
@@ -900,7 +929,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
         {
           /* we have no preview icon but the thumbnail should be ready. determine
            * the filename of the thumbnail */
-          thumbnail_path = thunar_file_get_thumbnail_path (file);
+          thumbnail_path = thunar_file_get_thumbnail_path (file, factory->thumbnail_size);
 
           /* check if we have a valid path */
           if (thumbnail_path != NULL)

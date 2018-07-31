@@ -101,6 +101,12 @@ enum
   LAST_SIGNAL,
 };
 
+/* Property identifiers */
+enum
+{
+  PROP_0,
+  PROP_THUMBNAIL_SIZE,
+};
 
 
 static void                   thunar_thumbnailer_finalize               (GObject                    *object);
@@ -126,6 +132,14 @@ static void                   thunar_thumbnailer_idle                   (ThunarT
                                                                          const gchar               **uris);
 static gboolean               thunar_thumbnailer_idle_func              (gpointer                    user_data);
 static void                   thunar_thumbnailer_idle_free              (gpointer                    data);
+static void                   thunar_thumbnailer_get_property           (GObject                    *object,
+                                                                         guint                       prop_id,
+                                                                         GValue                     *value,
+                                                                         GParamSpec                 *pspec);
+static void                   thunar_thumbnailer_set_property           (GObject                    *object,
+                                                                         guint                       prop_id,
+                                                                         const GValue               *value,
+                                                                         GParamSpec                 *pspec);
 
 #if GLIB_CHECK_VERSION (2, 32, 0)
 #define _thumbnailer_lock(thumbnailer)    g_mutex_lock (&((thumbnailer)->lock))
@@ -166,6 +180,9 @@ struct _ThunarThumbnailer
 
   /* last ThunarThumbnailer request ID */
   guint       last_request;
+
+  /* size to use to store thumbnails */
+  ThunarThumbnailSize thumbnail_size;
 
   /* IDs of idle functions */
   GSList     *idles;
@@ -215,6 +232,8 @@ thunar_thumbnailer_class_init (ThunarThumbnailerClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_thumbnailer_finalize;
+  gobject_class->get_property = thunar_thumbnailer_get_property;
+  gobject_class->set_property = thunar_thumbnailer_set_property;
 
   /**
    * ThunarThumbnailer:request-finished:
@@ -231,9 +250,65 @@ thunar_thumbnailer_class_init (ThunarThumbnailerClass *klass)
                   0, NULL, NULL,
                   g_cclosure_marshal_VOID__UINT,
                   G_TYPE_NONE, 1, G_TYPE_UINT);
+
+  /**
+   * ThunarIconFactory:thumbnail-size:
+   *
+   * Size of the thumbnails to load
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_THUMBNAIL_SIZE,
+                                   g_param_spec_enum ("thumbnail-size",
+                                                      "thumbnail-size",
+                                                      "thumbnail-size",
+                                                      THUNAR_TYPE_THUMBNAIL_SIZE,
+                                                      THUNAR_THUMBNAIL_SIZE_NORMAL,
+                                                      EXO_PARAM_READWRITE));
 }
 
 
+
+static void
+thunar_thumbnailer_get_property (GObject    *object,
+                                 guint       prop_id,
+                                 GValue     *value,
+                                 GParamSpec *pspec)
+{
+  ThunarThumbnailer *thumbnailer = THUNAR_THUMBNAILER (object);
+
+  switch (prop_id)
+    {
+    case PROP_THUMBNAIL_SIZE:
+      g_value_set_enum (value, thumbnailer->thumbnail_size);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+
+
+static void
+thunar_thumbnailer_set_property (GObject      *object,
+                                 guint         prop_id,
+                                 const GValue *value,
+                                 GParamSpec   *pspec)
+{
+  ThunarThumbnailer *thumbnailer = THUNAR_THUMBNAILER (object);
+
+  switch (prop_id)
+    {
+    case PROP_THUMBNAIL_SIZE:
+      thumbnailer->thumbnail_size = g_value_get_enum (value);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
 
 static void
 thunar_thumbnailer_free_job (ThunarThumbnailerJob *job)
@@ -360,7 +435,7 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
         {
           /* still a regular file, but the type is now known to tumbler but
            * maybe the application created a thumbnail */
-          thumbnail_path = thunar_file_get_thumbnail_path (lp->data);
+          thumbnail_path = thunar_file_get_thumbnail_path (lp->data, thumbnailer->thumbnail_size);
 
           /* test if a thumbnail can be found */
           if (thumbnail_path != NULL && g_file_test (thumbnail_path, G_FILE_TEST_EXISTS))
@@ -410,7 +485,8 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
       thunar_thumbnailer_dbus_call_queue (thumbnailer->thumbnailer_proxy,
                                           (const gchar *const *)uris,
                                           (const gchar *const *)mime_hints,
-                                          "normal", "foreground", 0,
+                                          thunar_thumbnail_size_get_nick (thumbnailer->thumbnail_size),
+                                          "foreground", 0,
                                           NULL,
                                           thunar_thumbnailer_queue_async_reply,
                                           job);

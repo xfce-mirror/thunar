@@ -123,25 +123,20 @@ GType thunar_column_get_type (void) G_GNUC_CONST;
 
 /**
  * ThunarIconSize:
- * @THUNAR_ICON_SIZE_SMALLEST : icon size for #THUNAR_ZOOM_LEVEL_SMALLEST.
- * @THUNAR_ICON_SIZE_SMALLER  : icon size for #THUNAR_ZOOM_LEVEL_SMALLER.
- * @THUNAR_ICON_SIZE_SMALL    : icon size for #THUNAR_ZOOM_LEVEL_SMALL.
- * @THUNAR_ICON_SIZE_NORMAL   : icon size for #THUNAR_ZOOM_LEVEL_NORMAL.
- * @THUNAR_ICON_SIZE_LARGE    : icon size for #THUNAR_ZOOM_LEVEL_LARGE.
- * @THUNAR_ICON_SIZE_LARGER   : icon size for #THUNAR_ZOOM_LEVEL_LARGER.
- * @THUNAR_ICON_SIZE_LARGEST  : icon size for #THUNAR_ZOOM_LEVEL_LARGEST.
- *
  * Icon sizes matching the various #ThunarZoomLevel<!---->s.
  **/
 typedef enum
 {
-  THUNAR_ICON_SIZE_SMALLEST = 16,
-  THUNAR_ICON_SIZE_SMALLER  = 24,
-  THUNAR_ICON_SIZE_SMALL    = 32,
-  THUNAR_ICON_SIZE_NORMAL   = 48,
-  THUNAR_ICON_SIZE_LARGE    = 64,
-  THUNAR_ICON_SIZE_LARGER   = 96,
-  THUNAR_ICON_SIZE_LARGEST  = 128,
+  THUNAR_ICON_SIZE_16   =  16,
+  THUNAR_ICON_SIZE_24   =  24,
+  THUNAR_ICON_SIZE_32   =  32,
+  THUNAR_ICON_SIZE_48   =  48,
+  THUNAR_ICON_SIZE_64   =  64,
+  THUNAR_ICON_SIZE_96   =  96,
+  THUNAR_ICON_SIZE_128  = 128,
+  THUNAR_ICON_SIZE_160  = 160,
+  THUNAR_ICON_SIZE_192  = 192,
+  THUNAR_ICON_SIZE_256  = 256,
 } ThunarIconSize;
 
 GType thunar_icon_size_get_type (void) G_GNUC_CONST;
@@ -163,6 +158,23 @@ typedef enum
 } ThunarThumbnailMode;
 
 GType thunar_thumbnail_mode_get_type (void) G_GNUC_CONST;
+
+
+#define THUNAR_TYPE_THUMBNAIL_SIZE (thunar_thumbnail_size_get_type ())
+
+/**
+ * ThunarThumbnailSize:
+ * @THUNAR_THUMBNAIL_NORMAL      : max 128px x 128px
+ * @THUNAR_THUMBNAIL_LARGE       : max 256px x 256px
+ **/
+typedef enum
+{
+  THUNAR_THUMBNAIL_SIZE_NORMAL,
+  THUNAR_THUMBNAIL_SIZE_LARGE
+} ThunarThumbnailSize;
+
+GType       thunar_thumbnail_size_get_type (void)                               G_GNUC_CONST;
+const char* thunar_thumbnail_size_get_nick (ThunarThumbnailSize thumbnail_size) G_GNUC_CONST;
 
 
 #define THUNAR_TYPE_RECURSIVE_PERMISSIONS (thunar_recursive_permissions_get_type ())
@@ -189,32 +201,28 @@ GType thunar_recursive_permissions_get_type (void) G_GNUC_CONST;
 
 /**
  * ThunarZoomLevel:
- * @THUNAR_ZOOM_LEVEL_SMALLEST : smallest possible zoom level.
- * @THUNAR_ZOOM_LEVEL_SMALLER  : smaller zoom level.
- * @THUNAR_ZOOM_LEVEL_SMALL    : small zoom level.
- * @THUNAR_ZOOM_LEVEL_NORMAL   : the default zoom level.
- * @THUNAR_ZOOM_LEVEL_LARGE    : large zoom level.
- * @THUNAR_ZOOM_LEVEL_LARGER   : larger zoom level.
- * @THUNAR_ZOOM_LEVEL_LARGEST  : largest possible zoom level.
- *
  * Lists the various zoom levels supported by Thunar's
  * folder views.
  **/
 typedef enum
 {
-  THUNAR_ZOOM_LEVEL_SMALLEST,
-  THUNAR_ZOOM_LEVEL_SMALLER,
-  THUNAR_ZOOM_LEVEL_SMALL,
-  THUNAR_ZOOM_LEVEL_NORMAL,
-  THUNAR_ZOOM_LEVEL_LARGE,
-  THUNAR_ZOOM_LEVEL_LARGER,
-  THUNAR_ZOOM_LEVEL_LARGEST,
+  THUNAR_ZOOM_LEVEL_25_PERCENT,
+  THUNAR_ZOOM_LEVEL_38_PERCENT,
+  THUNAR_ZOOM_LEVEL_50_PERCENT,
+  THUNAR_ZOOM_LEVEL_75_PERCENT,
+  THUNAR_ZOOM_LEVEL_100_PERCENT,
+  THUNAR_ZOOM_LEVEL_150_PERCENT,
+  THUNAR_ZOOM_LEVEL_200_PERCENT,
+  THUNAR_ZOOM_LEVEL_250_PERCENT,
+  THUNAR_ZOOM_LEVEL_300_PERCENT,
+  THUNAR_ZOOM_LEVEL_400_PERCENT,
 
   /*< private >*/
   THUNAR_ZOOM_N_LEVELS,
 } ThunarZoomLevel;
 
-GType          thunar_zoom_level_get_type     (void) G_GNUC_CONST;
+GType               thunar_zoom_level_get_type            (void)                       G_GNUC_CONST;
+ThunarThumbnailSize thunar_zoom_level_to_thumbnail_size   (ThunarZoomLevel zoom_level) G_GNUC_CONST;
 
 
 #define THUNAR_TYPE_JOB_RESPONSE (thunar_job_response_get_type ())

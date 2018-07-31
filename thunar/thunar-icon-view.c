@@ -181,19 +181,19 @@ thunar_icon_view_zoom_level_changed (ThunarStandardView *standard_view)
   /* determine the "wrap-width" depending on the "zoom-level" */
   switch (thunar_view_get_zoom_level (THUNAR_VIEW (standard_view)))
     {
-    case THUNAR_ZOOM_LEVEL_SMALLEST:
+    case THUNAR_ZOOM_LEVEL_25_PERCENT:
       wrap_width = 48;
       break;
 
-    case THUNAR_ZOOM_LEVEL_SMALLER:
+    case THUNAR_ZOOM_LEVEL_38_PERCENT:
       wrap_width = 64;
       break;
 
-    case THUNAR_ZOOM_LEVEL_SMALL:
+    case THUNAR_ZOOM_LEVEL_50_PERCENT:
       wrap_width = 72;
       break;
 
-    case THUNAR_ZOOM_LEVEL_NORMAL:
+    case THUNAR_ZOOM_LEVEL_75_PERCENT:
       wrap_width = 112;
       break;
 

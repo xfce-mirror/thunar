@@ -119,7 +119,7 @@ thunar_view_class_init (gpointer klass)
                                                           "zoom-level",
                                                           "zoom-level",
                                                           THUNAR_TYPE_ZOOM_LEVEL,
-                                                          THUNAR_ZOOM_LEVEL_NORMAL,
+                                                          THUNAR_ZOOM_LEVEL_100_PERCENT,
                                                           EXO_PARAM_READWRITE));
 }
 
@@ -210,7 +210,7 @@ thunar_view_set_show_hidden (ThunarView *view,
 ThunarZoomLevel
 thunar_view_get_zoom_level (ThunarView *view)
 {
-  _thunar_return_val_if_fail (THUNAR_IS_VIEW (view), THUNAR_ZOOM_LEVEL_NORMAL);
+  _thunar_return_val_if_fail (THUNAR_IS_VIEW (view), THUNAR_ZOOM_LEVEL_100_PERCENT);
   return (*THUNAR_VIEW_GET_IFACE (view)->get_zoom_level) (view);
 }
 
