@@ -227,7 +227,8 @@ thunar_progress_view_init (ThunarProgressView *view)
   gtk_box_pack_start (GTK_BOX (vbox3), view->progress_label, FALSE, TRUE, 0);
   gtk_widget_show (view->progress_label);
 
-  button = gtk_button_new ();
+  button = gtk_button_new_from_icon_name ("process-stop", GTK_ICON_SIZE_BUTTON);
+  gtk_button_set_label (button, _("Cancel"));
   g_signal_connect_swapped (button, "clicked", G_CALLBACK (thunar_progress_view_cancel_job), view);
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, TRUE, 0);
   gtk_widget_set_can_focus (button, FALSE);
