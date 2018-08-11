@@ -362,6 +362,7 @@ static GtkActionEntry action_entries[] =
   { "view-location-selector-menu", NULL, N_ ("_Location Selector"), NULL, },
   { "view-side-pane-menu", NULL, N_ ("_Side Pane"), NULL, },
   { "zoom-in", "zoom-in-symbolic", N_ ("Zoom I_n"), "<control>plus", N_ ("Show the contents in more detail"), G_CALLBACK (thunar_window_action_zoom_in), },
+  { "zoom-in-alt", NULL, "zoom-in-alt", "<control>equal", NULL, G_CALLBACK (thunar_window_action_zoom_in), },
   { "zoom-out", "zoom-out-symbolic", N_ ("Zoom _Out"), "<control>minus", N_ ("Show the contents in less detail"), G_CALLBACK (thunar_window_action_zoom_out), },
   { "zoom-reset", "zoom-original-symbolic", N_ ("Normal Si_ze"), "<control>0", N_ ("Show the contents at the normal size"), G_CALLBACK (thunar_window_action_zoom_reset), },
   { "go-menu", NULL, N_ ("_Go"), NULL, },
