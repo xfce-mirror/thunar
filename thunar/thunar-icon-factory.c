@@ -903,66 +903,77 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
     }
 
   /* check if thumbnails are enabled and we can display a thumbnail for the item */
-  if (thunar_icon_factory_get_show_thumbnail (factory, file)
-      && thunar_file_is_regular (file))
+  if (thunar_icon_factory_get_show_thumbnail (factory, file))
     {
-      /* determine the preview icon first */
-      gicon = thunar_file_get_preview_icon (file);
-
-      /* check if we have a preview icon */
-      if (gicon != NULL)
-        {
-          if (G_IS_THEMED_ICON (gicon))
+	  if (thunar_file_is_directory (file))
+	    {
+          /* try to load the "folder.jpg" icon */
+          custom_icon = g_strconcat (g_file_get_path (thunar_file_get_file (file)), "/", "folder.jpg", NULL);
+          if (g_file_test(custom_icon, G_FILE_TEST_EXISTS))
             {
-              /* we have a themed preview icon, look it up using the icon theme */
-              icon_info =
-                gtk_icon_theme_lookup_by_gicon (factory->icon_theme,
-                                                gicon, icon_size,
-                                                GTK_ICON_LOOKUP_USE_BUILTIN
-                                                | GTK_ICON_LOOKUP_FORCE_SIZE);
-
-              /* check if the lookup succeeded */
-              if (icon_info != NULL)
-                {
-                  /* try to load the pixbuf from the icon info */
-                  icon = gtk_icon_info_load_icon (icon_info, NULL);
-                  g_object_unref (icon_info);
-                }
+              icon = thunar_icon_factory_lookup_icon (factory, custom_icon, icon_size, FALSE);
+              if (G_LIKELY (icon != NULL))
+                return icon;
             }
-          else if (G_IS_LOADABLE_ICON (gicon))
-            {
-              /* we have a loadable icon, try to open it for reading */
-              stream = g_loadable_icon_load (G_LOADABLE_ICON (gicon), icon_size,
-                                             NULL, NULL, NULL);
+        }else{
+          /* determine the preview icon first */
+          gicon = thunar_file_get_preview_icon (file);
 
-              /* check if we have a valid input stream */
-              if (stream != NULL)
+          /* check if we have a preview icon */
+          if (gicon != NULL)
+            {
+              if (G_IS_THEMED_ICON (gicon))
                 {
-                  /* load the pixbuf from the stream */
-                  icon = gdk_pixbuf_new_from_stream_at_scale (stream, icon_size,
-                                                              icon_size, TRUE,
-                                                              NULL, NULL);
+                  /* we have a themed preview icon, look it up using the icon theme */
+                  icon_info =
+                    gtk_icon_theme_lookup_by_gicon (factory->icon_theme,
+                                                    gicon, icon_size,
+                                                    GTK_ICON_LOOKUP_USE_BUILTIN
+                                                    | GTK_ICON_LOOKUP_FORCE_SIZE);
 
-                  /* destroy the stream */
-                  g_object_unref (stream);
+                  /* check if the lookup succeeded */
+                  if (icon_info != NULL)
+                    {
+                      /* try to load the pixbuf from the icon info */
+                      icon = gtk_icon_info_load_icon (icon_info, NULL);
+                      g_object_unref (icon_info);
+                    }
                 }
+              else if (G_IS_LOADABLE_ICON (gicon))
+                {
+                  /* we have a loadable icon, try to open it for reading */
+                  stream = g_loadable_icon_load (G_LOADABLE_ICON (gicon), icon_size,
+                                                 NULL, NULL, NULL);
+
+                  /* check if we have a valid input stream */
+                  if (stream != NULL)
+                    {
+                      /* load the pixbuf from the stream */
+                      icon = gdk_pixbuf_new_from_stream_at_scale (stream, icon_size,
+                                                                  icon_size, TRUE,
+                                                                  NULL, NULL);
+
+                      /* destroy the stream */
+                      g_object_unref (stream);
+                    }
+                }
+
+              /* return the icon if we have one */
+              if (icon != NULL)
+                return icon;
             }
-
-          /* return the icon if we have one */
-          if (icon != NULL)
-            return icon;
-        }
-      else
-        {
-          /* we have no preview icon but the thumbnail should be ready. determine
-           * the filename of the thumbnail */
-          thumbnail_path = thunar_file_get_thumbnail_path (file, factory->thumbnail_size);
-
-          /* check if we have a valid path */
-          if (thumbnail_path != NULL)
+          else
             {
-              /* try to load the thumbnail */
-              icon = thunar_icon_factory_load_from_file (factory, thumbnail_path, icon_size);
+              /* we have no preview icon but the thumbnail should be ready. determine
+               * the filename of the thumbnail */
+              thumbnail_path = thunar_file_get_thumbnail_path (file, factory->thumbnail_size);
+
+              /* check if we have a valid path */
+              if (thumbnail_path != NULL)
+                {
+                  /* try to load the thumbnail */
+                  icon = thunar_icon_factory_load_from_file (factory, thumbnail_path, icon_size);
+                }
             }
         }
     }
