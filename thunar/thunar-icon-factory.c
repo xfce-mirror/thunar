@@ -911,11 +911,12 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
           custom_icon = g_strconcat (g_file_get_path (thunar_file_get_file (file)), "/", "folder.jpg", NULL);
           if (custom_icon != NULL && g_file_test(custom_icon, G_FILE_TEST_EXISTS))
             {
-              icon = thunar_icon_factory_lookup_icon (factory, custom_icon, icon_size, FALSE);
+              icon = thunar_icon_factory_load_from_file (factory, custom_icon, icon_size, FALSE);
               if (G_LIKELY (icon != NULL))
                 return icon;
-            }
-        }else{
+        }
+	  else if (thunar_file_is_regular (file))
+        {
           /* determine the preview icon first */
           gicon = thunar_file_get_preview_icon (file);
 
