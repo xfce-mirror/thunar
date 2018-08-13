@@ -911,7 +911,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
           custom_icon = g_strconcat (g_file_get_path (thunar_file_get_file (file)), "/", "folder.jpg", NULL);
           if (custom_icon != NULL && g_file_test(custom_icon, G_FILE_TEST_EXISTS))
             {
-              icon = thunar_icon_factory_load_from_file (factory, custom_icon, icon_size, FALSE);
+              icon = thunar_icon_factory_load_from_file (factory, custom_icon, icon_size);
               if (G_LIKELY (icon != NULL))
                 return icon;
         }
