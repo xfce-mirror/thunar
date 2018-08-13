@@ -914,6 +914,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
               icon = thunar_icon_factory_load_from_file (factory, custom_icon, icon_size);
               if (G_LIKELY (icon != NULL))
                 return icon;
+            }
         }
 	  else if (thunar_file_is_regular (file))
         {
