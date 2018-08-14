@@ -462,7 +462,7 @@ thunar_dbus_service_display_folder (ThunarDBusFileManager  *object,
 
   /* popup a new window for the folder */
   application = thunar_application_get ();
-  thunar_application_open_window (application, file, screen, startup_id);
+  thunar_application_open_window (application, file, screen, startup_id, FALSE);
   g_object_unref (G_OBJECT (application));
 
   /* cleanup */
@@ -509,7 +509,7 @@ thunar_dbus_service_display_folder_and_select (ThunarDBusFileManager  *object,
 
   /* popup a new window for the folder */
   application = thunar_application_get ();
-  window = thunar_application_open_window (application, folder, screen, startup_id);
+  window = thunar_application_open_window (application, folder, screen, startup_id, FALSE);
   g_object_unref (application);
 
   /* determine the path for the filename relative to the folder */
@@ -745,7 +745,7 @@ thunar_dbus_service_display_trash (ThunarDBusTrash        *object,
     {
       /* tell the application to display the trash bin */
       application = thunar_application_get ();
-      thunar_application_open_window (application, dbus_service->trash_bin, screen, startup_id);
+      thunar_application_open_window (application, dbus_service->trash_bin, screen, startup_id, FALSE);
       g_object_unref (G_OBJECT (application));
 
       /* release the screen */

@@ -1476,7 +1476,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
     {
       /* open a new window for the directory */
       application = thunar_application_get ();
-      thunar_application_open_window (application, directory, gtk_widget_get_screen (GTK_WIDGET (buttons)), NULL);
+      thunar_application_open_window (application, directory, gtk_widget_get_screen (GTK_WIDGET (buttons)), NULL, TRUE);
       g_object_unref (G_OBJECT (application));
     }
 }

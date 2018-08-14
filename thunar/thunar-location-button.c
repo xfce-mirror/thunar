@@ -565,7 +565,7 @@ thunar_location_button_button_release_event (GtkWidget            *button,
             {
               /* open a new window for the folder */
               application = thunar_application_get ();
-              thunar_application_open_window (application, THUNAR_LOCATION_BUTTON (button)->file, gtk_widget_get_screen (button), NULL);
+              thunar_application_open_window (application, THUNAR_LOCATION_BUTTON (button)->file, gtk_widget_get_screen (button), NULL, TRUE);
               g_object_unref (G_OBJECT (application));
             }
         }

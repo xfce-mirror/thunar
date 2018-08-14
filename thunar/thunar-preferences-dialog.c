@@ -616,27 +616,30 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);
 
-  label = gtk_label_new (_("Middle Click"));
+  label = gtk_label_new (_("Tabs instead of new Windows"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
 
-  vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
-  gtk_container_add (GTK_CONTAINER (frame), vbox);
-  gtk_container_set_border_width (GTK_CONTAINER (vbox), 12);
-  gtk_widget_show (vbox);
+  grid = gtk_grid_new ();
+  gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
+  gtk_grid_set_row_spacing (GTK_GRID (grid), 2);
+  gtk_container_set_border_width (GTK_CONTAINER (grid), 12);
+  gtk_container_add (GTK_CONTAINER (frame), grid);
+  gtk_widget_show (grid);
 
-  button = gtk_radio_button_new_with_mnemonic_from_widget (NULL, _("Open folder in new _window"));
-  g_signal_connect (G_OBJECT (button), "toggled", G_CALLBACK (g_object_notify), "active");
-  gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, TRUE, 0);
-  gtk_widget_show (button);
-
-  button = gtk_radio_button_new_with_mnemonic_from_widget (GTK_RADIO_BUTTON (button), _("Open folder in new _tab"));
+  button = gtk_check_button_new_with_mnemonic (_("Open folders in new tabs on middle click"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-middle-click-in-tab", G_OBJECT (button), "active");
-  g_signal_connect (G_OBJECT (button), "toggled", G_CALLBACK (g_object_notify), "active");
-  gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, TRUE, 0);
+  gtk_widget_set_tooltip_text (button, _("Select this option to open a new tab on middle click instead of a new window"));
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 0, 1, 1);
   gtk_widget_show (button);
 
+  button = gtk_check_button_new_with_mnemonic (_("Open new thunar instances as tabs"));
+  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-open-new-window-as-tab", G_OBJECT (button), "active");
+  gtk_widget_set_tooltip_text (button, _("Select this option to open new thunar instances as tabs in an existing thunar window"));
+  gtk_widget_set_hexpand (button, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 1, 1, 1);
+  gtk_widget_show (button);
   /*
      Advanced
    */

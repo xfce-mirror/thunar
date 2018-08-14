@@ -2355,7 +2355,7 @@ thunar_tree_view_open_selection_in_new_window (ThunarTreeView *view)
       /* open a new window for the selected folder */
       application = thunar_application_get ();
       thunar_application_open_window (application, file,
-                                      gtk_widget_get_screen (GTK_WIDGET (view)), NULL);
+                                      gtk_widget_get_screen (GTK_WIDGET (view)), NULL, TRUE);
       g_object_unref (application);
       g_object_unref (file);
     }

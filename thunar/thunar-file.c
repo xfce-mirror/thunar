@@ -1798,7 +1798,7 @@ thunar_file_launch (ThunarFile  *file,
   if (thunar_file_is_directory (file))
     {
       application = thunar_application_get ();
-      thunar_application_open_window (application, file, screen, startup_id);
+      thunar_application_open_window (application, file, screen, startup_id, FALSE);
       g_object_unref (G_OBJECT (application));
       return TRUE;
     }

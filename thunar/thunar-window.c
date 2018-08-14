@@ -140,8 +140,6 @@ static gpointer thunar_window_notebook_create_window      (GtkWidget            
                                                            gint                    x,
                                                            gint                    y,
                                                            ThunarWindow           *window);
-static void     thunar_window_notebook_insert             (ThunarWindow           *window,
-                                                           ThunarFile             *directory);
 static void     thunar_window_merge_custom_preferences    (ThunarWindow           *window);
 static gboolean thunar_window_bookmark_merge              (gpointer                user_data);
 static void     thunar_window_merge_go_actions            (ThunarWindow           *window);
@@ -1743,7 +1741,7 @@ thunar_window_notebook_create_window (GtkWidget    *notebook,
   /* create new window */
   application = thunar_application_get ();
   screen = gtk_window_get_screen (GTK_WINDOW (window));
-  new_window = thunar_application_open_window (application, NULL, screen, NULL);
+  new_window = thunar_application_open_window (application, NULL, screen, NULL, TRUE);
   g_object_unref (application);
 
   /* make sure the new window has the same size */
@@ -1771,7 +1769,7 @@ thunar_window_notebook_create_window (GtkWidget    *notebook,
 
 
 
-static void
+void
 thunar_window_notebook_insert (ThunarWindow *window,
                                ThunarFile   *directory)
 {
@@ -2357,7 +2355,7 @@ thunar_window_action_open_new_window (GtkAction    *action,
   /* popup a new window */
   application = thunar_application_get ();
   new_window = THUNAR_WINDOW (thunar_application_open_window (application, window->current_directory,
-                                                              gtk_widget_get_screen (GTK_WIDGET (window)), NULL));
+                                                              gtk_widget_get_screen (GTK_WIDGET (window)), NULL, TRUE));
   g_object_unref (G_OBJECT (application));
 
   /* if we have no origin view we are done */
