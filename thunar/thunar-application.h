@@ -58,7 +58,8 @@ void                  thunar_application_take_window                (ThunarAppli
 GtkWidget            *thunar_application_open_window                (ThunarApplication *application,
                                                                      ThunarFile        *directory,
                                                                      GdkScreen         *screen,
-                                                                     const gchar       *startup_id);
+                                                                     const gchar       *startup_id,
+                                                                     gboolean           force_new_window);
 
 gboolean              thunar_application_bulk_rename                (ThunarApplication *application,
                                                                      const gchar       *working_directory,

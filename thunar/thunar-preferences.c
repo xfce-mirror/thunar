@@ -82,6 +82,7 @@ enum
   PROP_MISC_HORIZONTAL_WHEEL_NAVIGATES,
   PROP_MISC_IMAGE_SIZE_IN_STATUSBAR,
   PROP_MISC_MIDDLE_CLICK_IN_TAB,
+  PROP_MISC_OPEN_NEW_WINDOW_AS_TAB,
   PROP_MISC_RECURSIVE_PERMISSIONS,
   PROP_MISC_REMEMBER_GEOMETRY,
   PROP_MISC_SHOW_ABOUT_TEMPLATES,
@@ -582,6 +583,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   preferences_props[PROP_MISC_MIDDLE_CLICK_IN_TAB] =
       g_param_spec_boolean ("misc-middle-click-in-tab",
                             NULL,
+                            NULL,
+                            FALSE,
+                            EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-open-new-window-as_tab:
+   *
+   * %TRUE to open a new tab in an existing thunar instance. instead of a new window
+   * if a thunar windows already is present
+   **/
+  preferences_props[PROP_MISC_OPEN_NEW_WINDOW_AS_TAB] =
+      g_param_spec_boolean ("misc-open-new-window-as-tab",
+                            "MiscOpenNewWindowAsTab",
                             NULL,
                             FALSE,
                             EXO_PARAM_READWRITE);
