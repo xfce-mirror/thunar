@@ -932,7 +932,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
         {
           /* try to load the "folder.jpg" icon */
           custom_icon = thunar_icon_factory_check_folder_icon (file);
-          if (custom_icon != NULL && g_file_test(custom_icon, G_FILE_TEST_EXISTS))
+          if (custom_icon != NULL)
             {
               icon = thunar_icon_factory_load_from_file (factory, custom_icon, icon_size);
               if (G_LIKELY (icon != NULL))
