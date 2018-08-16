@@ -848,7 +848,30 @@ thunar_icon_factory_load_icon (ThunarIconFactory        *factory,
   return thunar_icon_factory_lookup_icon (factory, name, size, wants_default);
 }
 
-
+/**
+ * thunar_icon_factory_check_folder_icon:
+ * @file       : a #ThunarFile.
+ *
+ * Return value: gchar pointer containing full path to 
+ * ?folder.xxx image or NULL if no image found.
+ **/
+const gchar *
+thunar_icon_factory_check_folder_icon (ThunarFile        *file)
+{
+    const gchar       *folder_icon;    
+    const gchar       *path;    
+    
+    path = g_file_get_path (thunar_file_get_file (file));
+    
+    folder_icon = g_strconcat (path, "/", "folder.jpg", NULL);
+    if ( g_file_test(folder_icon, G_FILE_TEST_EXISTS)) 
+      return folder_icon;
+    folder_icon = g_strconcat (path, "/", ".folder.jpg", NULL);
+    if ( g_file_test(folder_icon, G_FILE_TEST_EXISTS)) 
+      return folder_icon; 
+    folder_icon = NULL;
+    return folder_icon;
+}
 
 /**
  * thunar_icon_factory_load_file_icon:
@@ -905,10 +928,10 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
   /* check if thumbnails are enabled and we can display a thumbnail for the item */
   if (thunar_icon_factory_get_show_thumbnail (factory, file))
     {
-	  if (thunar_file_is_directory (file))
-	    {
+      if (thunar_file_is_directory (file))
+        {
           /* try to load the "folder.jpg" icon */
-          custom_icon = g_strconcat (g_file_get_path (thunar_file_get_file (file)), "/", "folder.jpg", NULL);
+          custom_icon = thunar_icon_factory_check_folder_icon (file);
           if (custom_icon != NULL && g_file_test(custom_icon, G_FILE_TEST_EXISTS))
             {
               icon = thunar_icon_factory_load_from_file (factory, custom_icon, icon_size);
@@ -916,7 +939,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
                 return icon;
             }
         }
-	  else if (thunar_file_is_regular (file))
+      else if (thunar_file_is_regular (file))
         {
           /* determine the preview icon first */
           gicon = thunar_file_get_preview_icon (file);
