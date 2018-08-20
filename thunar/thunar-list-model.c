@@ -2366,7 +2366,9 @@ thunar_list_model_get_statusbar_text_for_files (GList    *files,
                                                folder_count), folder_count);
     }
 
-  if (folder_text == NULL)
+  if (folder_text == NULL && non_folder_text == NULL)
+    text = g_strdup_printf (_("0 items"));
+  else if (folder_text == NULL)
     text = non_folder_text;
   else if (non_folder_text == NULL)
     text = folder_text;
