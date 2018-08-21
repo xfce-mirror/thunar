@@ -604,7 +604,11 @@ thunar_uca_editor_load (ThunarUcaEditor *uca_editor,
   /* Resolve shortcut from accelerator */
   uca_editor->accel_path = g_strdup_printf ("<Actions>/ThunarActions/uca-action-%s", unique_id);
   if (gtk_accel_map_lookup_entry (uca_editor->accel_path, &key) && key.accel_key != 0)
-    accel_label = gtk_accelerator_get_label (key.accel_key, key.accel_mods);
+    {
+      accel_label = gtk_accelerator_get_label (key.accel_key, key.accel_mods);
+      uca_editor->accel_key = key.accel_key;
+      uca_editor->accel_mods = key.accel_mods;
+    }
 
   /* apply the new values */
   gtk_entry_set_text (GTK_ENTRY (uca_editor->description_entry), (description != NULL) ? description : "");
