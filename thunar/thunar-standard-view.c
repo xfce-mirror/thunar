@@ -4431,6 +4431,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   gboolean    pastable;
   gboolean    writable;
   gboolean    trashed;
+  gboolean    show_delete_action;
   GList      *lp, *selected_files;
   gint        n_selected_files = 0;
 
@@ -4473,6 +4474,8 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
   writable = (current_directory != NULL && thunar_file_is_writable (current_directory));
   trashed = (current_directory != NULL && thunar_file_is_trashed (current_directory));
+
+  g_object_get (G_OBJECT (standard_view->preferences), "misc-show-delete-action", &show_delete_action, NULL);
 
   /* check whether the clipboard contains data that can be pasted here */
   pastable = (standard_view->clipboard != NULL && thunar_clipboard_manager_get_can_paste (standard_view->clipboard));
@@ -4526,6 +4529,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /* update the "Delete" action */
   g_object_set (G_OBJECT (standard_view->priv->action_delete),
                 "sensitive", (n_selected_files > 0) && writable,
+                "visible", trashed || !thunar_g_vfs_is_uri_scheme_supported ("trash") || show_delete_action,
                 "tooltip", ngettext ("Permanently delete the selected file",
                                      "Permanently delete the selected files",
                                      n_selected_files),
