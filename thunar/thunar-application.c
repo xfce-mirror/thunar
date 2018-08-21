@@ -581,14 +581,16 @@ thunar_application_load_css (void)
 
   css_provider = gtk_css_provider_new ();
 
-                                                 /* For the pathbar-buttons any margin looks ugly*/
-  gtk_css_provider_load_from_data (css_provider, ".path-bar-button { margin-right: 0; }"
-
-                                                 /* remove extra border between side pane and view */
-                                                 /* also make border thicker during DnD */
-                                                 ".shortcuts-pane { border-right-width: 0px; }"
-                                                 ".standard-view { border-left-width: 0px; }"
-                                                 ".standard-view:drop(active) { border-width: 2px; }", -1, NULL);
+  gtk_css_provider_load_from_data (css_provider,
+    /* for the pathbar-buttons any margin looks ugly*/
+    ".path-bar-button { margin-right: 0; }"
+    /* remove extra border between side pane and view */
+    ".shortcuts-pane { border-right-width: 0px; }"
+    /* add missing top border to side pane */
+    ".shortcuts-pane { border-top-style: solid; }"
+    /* make border thicker during DnD */
+    ".standard-view { border-left-width: 0px; }"
+    ".standard-view:drop(active) { border-width: 2px; }", -1, NULL);
   screen = gdk_screen_get_default ();
   gtk_style_context_add_provider_for_screen (screen, GTK_STYLE_PROVIDER (css_provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
   g_object_unref (css_provider);
