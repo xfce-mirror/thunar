@@ -39,6 +39,7 @@
 #endif
 
 #include <thunar/thunar-enum-types.h>
+#include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
@@ -86,6 +87,7 @@ enum
   PROP_MISC_RECURSIVE_PERMISSIONS,
   PROP_MISC_REMEMBER_GEOMETRY,
   PROP_MISC_SHOW_ABOUT_TEMPLATES,
+  PROP_MISC_SHOW_DELETE_ACTION,
   PROP_MISC_SINGLE_CLICK,
   PROP_MISC_SINGLE_CLICK_TIMEOUT,
   PROP_MISC_SMALL_TOOLBAR_ICONS,
@@ -641,6 +643,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             "MiscShowAboutTemplates",
                             NULL,
                             TRUE,
+                            EXO_PARAM_READWRITE);
+
+ /**
+   * ThunarPreferences:misc-show-delete-action:
+   *
+   * Whether to display a "delete" action to permanently delete files and folders
+   * If trash is not supported, "delete" is displayed by default.
+   **/
+  preferences_props[PROP_MISC_SHOW_DELETE_ACTION] =
+      g_param_spec_boolean ("misc-show-delete-action",
+                            "MiscShowDeleteAction",
+                            NULL,
+                            !thunar_g_vfs_is_uri_scheme_supported ("trash"),
                             EXO_PARAM_READWRITE);
 
   /**
