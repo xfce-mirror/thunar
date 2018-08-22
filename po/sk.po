@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: sk\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"Plural-Forms: nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);\n"
 
 #: ../thunar/main.c:62
 msgid "Open the bulk rename dialog"
@@ -225,6 +225,9 @@ msgstr[1] ""
 "Naozaj chcete natrvalo odstrániť\n"
 "%u vybraný súbor?"
 msgstr[2] ""
+"Naozaj chcete natrvalo odstrániť\n"
+"%u vybrané súbory?"
+msgstr[3] ""
 "Naozaj chcete natrvalo odstrániť\n"
 "%u vybrané súbory?"
 
@@ -1068,6 +1071,7 @@ msgid_plural "Failed to open %d files"
 msgstr[0] "Nepodarilo sa otvoriť %d súbor"
 msgstr[1] "Nepodarilo sa otvoriť %d súbory"
 msgstr[2] "Nepodarilo sa otvoriť %d súborov"
+msgstr[3] "Nepodarilo sa otvoriť %d súborov"
 
 #: ../thunar/thunar-launcher.c:721
 msgid "Are you sure you want to open all folders?"
@@ -1080,6 +1084,7 @@ msgid_plural "This will open %d separate file manager windows."
 msgstr[0] "Týmto sa otvorí %d samostatné okno."
 msgstr[1] "Týmto sa otvoria %d samostatné okná."
 msgstr[2] "Týmto sa otvorí %d samostatných okien."
+msgstr[3] "Týmto sa otvorí %d samostatných okien."
 
 #: ../thunar/thunar-launcher.c:727
 #, c-format
@@ -1088,6 +1093,7 @@ msgid_plural "Open %d New Windows"
 msgstr[0] "Otvoriť %d nové okno"
 msgstr[1] "Otvoriť %d nové okná"
 msgstr[2] "Otvoriť %d nových okien"
+msgstr[3] "Otvoriť %d nových okien"
 
 #. turn "Open New Window" into "Open in n New Windows"
 #: ../thunar/thunar-launcher.c:827
@@ -1097,6 +1103,7 @@ msgid_plural "Open in %d New _Windows"
 msgstr[0] "Otvoriť v %d novom okne"
 msgstr[1] "Otvoriť v %d nových oknách"
 msgstr[2] "Otvoriť v %d nových oknách"
+msgstr[3] "Otvoriť v %d nových oknách"
 
 #: ../thunar/thunar-launcher.c:828
 #, c-format
@@ -1105,6 +1112,7 @@ msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] "Otvoriť vybraný adresár v %d novom okne"
 msgstr[1] "Otvoriť vybrané adresáre v %d nových oknách"
 msgstr[2] "Otvoriť vybrané adresáre v %d nových oknách"
+msgstr[3] "Otvoriť vybrané adresáre v %d nových oknách"
 
 #. turn "Open in New Tab" into "Open in x New Tabs"
 #: ../thunar/thunar-launcher.c:839
@@ -1114,6 +1122,7 @@ msgid_plural "Open in %d New _Tabs"
 msgstr[0] "Otvoriť v %d novej karte"
 msgstr[1] "Otvoriť v %d nových kartách"
 msgstr[2] "Otvoriť v %d nových kartách"
+msgstr[3] "Otvoriť v %d nových kartách"
 
 #: ../thunar/thunar-launcher.c:840
 #, c-format
@@ -1122,6 +1131,7 @@ msgid_plural "Open the selected directories in %d new tabs"
 msgstr[0] "Otvoriť vybraný adresár v %d novej karte"
 msgstr[1] "Otvoriť vybrané adresáre v %d nových kartách"
 msgstr[2] "Otvoriť vybrané adresáre v %d nových kartách"
+msgstr[3] "Otvoriť vybrané adresáre v %d nových kartách"
 
 #: ../thunar/thunar-launcher.c:855
 msgid "Open the selected directory in a new window"
@@ -1142,6 +1152,7 @@ msgid_plural "Open the selected files"
 msgstr[0] "Otvorí označené súbory"
 msgstr[1] "Otvorí označený súbor"
 msgstr[2] "Otvorí označené súbory"
+msgstr[3] "Otvorí označené súbory"
 
 #: ../thunar/thunar-launcher.c:931
 msgid "_Execute"
@@ -1153,6 +1164,7 @@ msgid_plural "Execute the selected files"
 msgstr[0] "Spustiť označené súbory"
 msgstr[1] "Spustiť označený súbor"
 msgstr[2] "Spustiť označené súbory"
+msgstr[3] "Spustiť označené súbory"
 
 #. turn the "Open" action into "Open With DEFAULT"
 #: ../thunar/thunar-launcher.c:939
@@ -1167,6 +1179,7 @@ msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "Na otvorenie súborov sa použije \"%s\""
 msgstr[1] "Na otvorenie súboru sa použije \"%s\""
 msgstr[2] "Na otvorenie súborov sa použije \"%s\""
+msgstr[3] "Na otvorenie súborov sa použije \"%s\""
 
 #: ../thunar/thunar-launcher.c:967
 msgid "_Open With Other Application..."
@@ -1182,6 +1195,7 @@ msgid_plural "Open the selected files with the default applications"
 msgstr[0] "Otvorí vybrané súbory predvolenou aplikáciou"
 msgstr[1] "Otvorí vybraný súbor predvolenou aplikáciou"
 msgstr[2] "Otvorí vybrané súbory predvolenou aplikáciou"
+msgstr[3] "Otvorí vybrané súbory predvolenou aplikáciou"
 
 #: ../thunar/thunar-launcher.c:1029
 #, c-format
@@ -1200,6 +1214,7 @@ msgid_plural "Desktop (Create Links)"
 msgstr[0] "Plocha (Vytvoriť odkazy)"
 msgstr[1] "Plocha (Vytvoriť odkaz)"
 msgstr[2] "Plocha (Vytvoriť odkazy)"
+msgstr[3] "Plocha (Vytvoriť odkazy)"
 
 #: ../thunar/thunar-launcher.c:1704
 msgid "Create a link to the selected file on the desktop"
@@ -1207,6 +1222,7 @@ msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "Vytvoriť odkazy na vybrané súbory na ploche"
 msgstr[1] "Vytvoriť odkaz na vybraný súbor na ploche"
 msgstr[2] "Vytvoriť odkazy na vybrané súbory na ploche"
+msgstr[3] "Vytvoriť odkazy na vybrané súbory na ploche"
 
 #: ../thunar/thunar-launcher.c:1738 ../thunar/thunar-launcher.c:1790
 #, c-format
@@ -1215,6 +1231,7 @@ msgid_plural "Send the selected files to \"%s\""
 msgstr[0] "Poslať vybrané súbory do \"%s\""
 msgstr[1] "Poslať vybraný súbor do \"%s\""
 msgstr[2] "Poslať vybrané súbory do \"%s\""
+msgstr[3] "Poslať vybrané súbory do \"%s\""
 
 #: ../thunar/thunar-list-model.c:2293
 #, c-format
@@ -1223,6 +1240,7 @@ msgid_plural "%d items (%s), Free space: %s"
 msgstr[0] "%d položka (%s), voľné miesto: %s"
 msgstr[1] "%d položky (%s), voľné miesto: %s"
 msgstr[2] "%d položiek (%s), voľné miesto: %s"
+msgstr[3] "%d položiek (%s), voľné miesto: %s"
 
 #. just the standard text
 #: ../thunar/thunar-list-model.c:2300
@@ -1232,6 +1250,7 @@ msgid_plural "%d items, Free space: %s"
 msgstr[0] "%d položka, voľné miesto: %s"
 msgstr[1] "%d položky, voľné miesto: %s"
 msgstr[2] "%d položiek, voľné miesto: %s"
+msgstr[3] "%d položiek, voľné miesto: %s"
 
 #: ../thunar/thunar-list-model.c:2309
 #, c-format
@@ -1240,6 +1259,7 @@ msgid_plural "%d items"
 msgstr[0] "%d položka"
 msgstr[1] "%d položky"
 msgstr[2] "%d položiek"
+msgstr[3] "%d položiek"
 
 #: ../thunar/thunar-list-model.c:2325
 #, c-format
@@ -1297,6 +1317,7 @@ msgid_plural "%d other items selected (%s)"
 msgstr[0] "%d ďalšia položka zvolená (%s)"
 msgstr[1] "%d ďalšie položky zvolené (%s)"
 msgstr[2] "%d ďalších položiek zvolených (%s)"
+msgstr[3] "%d ďalších položiek zvolených (%s)"
 
 #. only non-folders are selected
 #: ../thunar/thunar-list-model.c:2435
@@ -1306,6 +1327,7 @@ msgid_plural "%d items selected (%s)"
 msgstr[0] "%d vybraná položka (%s)"
 msgstr[1] "%d vybrané položky (%s)"
 msgstr[2] "%d vybraných položiek (%s)"
+msgstr[3] "%d vybraných položiek (%s)"
 
 #: ../thunar/thunar-list-model.c:2449
 #, c-format
@@ -1314,6 +1336,7 @@ msgid_plural "%d folders selected"
 msgstr[0] "%d vybraný priečinok"
 msgstr[1] "%d vybrané priečinky"
 msgstr[2] "%d vybraných priečinkov"
+msgstr[3] "%d vybraných priečinkov"
 
 #. This is marked for translation in case a localizer
 #. * needs to change ", " to something else. The comma
@@ -1901,6 +1924,7 @@ msgid_plural "%d file operations running"
 msgstr[0] "Prebieha %d operácia so súbormi"
 msgstr[1] "Prebiehajú %d operácie so súbormi"
 msgstr[2] "Prebieha %d operácií so súbormi"
+msgstr[3] "Prebieha %d operácií so súbormi"
 
 #. update the status text
 #: ../thunar/thunar-progress-view.c:354
@@ -2117,6 +2141,7 @@ msgid_plural "Remove Files"
 msgstr[0] "Odstrániť súbory"
 msgstr[1] "Odstrániť súbor"
 msgstr[2] "Odstrániť súbory"
+msgstr[3] "Odstrániť súbory"
 
 #: ../thunar/thunar-renamer-dialog.c:1692
 msgid "Remove the selected file from the list of files to be renamed"
@@ -2124,6 +2149,7 @@ msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] "Odstrániť vybrané súbory zo zoznamu na premenovanie"
 msgstr[1] "Odstrániť vybraný súbor zo zoznamu na premenovanie"
 msgstr[2] "Odstrániť vybrané súbory zo zoznamu na premenovanie"
+msgstr[3] "Odstrániť vybrané súbory zo zoznamu na premenovanie"
 
 #. change title to reflect the standalone status
 #: ../thunar/thunar-renamer-dialog.c:1827
@@ -2173,6 +2199,7 @@ msgid_plural "Trash contains %d files"
 msgstr[0] "Kôš obsahuje %d súbor"
 msgstr[1] "Kôš obsahuje %d súbory"
 msgstr[2] "Kôš obsahuje %d súborov"
+msgstr[3] "Kôš obsahuje %d súborov"
 
 #: ../thunar/thunar-shortcuts-model.c:922
 msgid "DEVICES"
@@ -2196,6 +2223,7 @@ msgid_plural "Side Pane (Create Shortcuts)"
 msgstr[0] "Bočný panel (Vytvoriť zástupcov)"
 msgstr[1] "Bočný panel (Vytvoriť zástupcu)"
 msgstr[2] "Bočný panel (Vytvoriť zástupcov)"
+msgstr[3] "Bočný panel (Vytvoriť zástupcov)"
 
 #: ../thunar/thunar-shortcuts-pane.c:395
 msgid "Add the selected folder to the shortcuts side pane"
@@ -2203,6 +2231,7 @@ msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "Pridať vybrané priečinky medzi záložky v bočnom paneli"
 msgstr[1] "Pridať vybraný priečinok medzi záložky v bočnom paneli"
 msgstr[2] "Pridať vybrané priečinky medzi záložky v bočnom paneli"
+msgstr[3] "Pridať vybrané priečinky medzi záložky v bočnom paneli"
 
 #. append the "Mount" item
 #. append the "Mount" menu action
@@ -2284,6 +2313,7 @@ msgid_plural "%u items, totalling %s"
 msgstr[0] "%u položka, celkom %s"
 msgstr[1] "%u položky, celkom %s"
 msgstr[2] "%u položiek, celkom %s"
+msgstr[3] "%u položiek, celkom %s"
 
 #. TRANSLATORS: this is shows if during the deep count size
 #. * directories were not accessible
@@ -2374,6 +2404,7 @@ msgid_plural "Ma_ke Links"
 msgstr[0] "Vytvoriť od_kazy"
 msgstr[1] "Vytvoriť od_kaz"
 msgstr[2] "Vytvoriť od_kazy"
+msgstr[3] "Vytvoriť od_kazy"
 
 #. append the "Rename" menu action
 #: ../thunar/thunar-standard-view.c:418 ../thunar/thunar-tree-view.c:1483
@@ -2441,6 +2472,7 @@ msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Vybrané súbory sa pripravia na presun príkazom Vložiť"
 msgstr[1] "Vybraný súbor sa pripraví na presun príkazom Vložiť"
 msgstr[2] "Vybrané súbory sa pripravia na presun príkazom Vložiť"
+msgstr[3] "Vybrané súbory sa pripravia na presun príkazom Vložiť"
 
 #: ../thunar/thunar-standard-view.c:4423
 msgid "Prepare the selected file to be copied with a Paste command"
@@ -2448,6 +2480,7 @@ msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Vybrané súbory sa pripravia na kopírovanie príkazom Vložiť"
 msgstr[1] "Vybraný súbor sa pripraví na kopírovanie príkazom Vložiť"
 msgstr[2] "Vybrané súbory sa pripravia na kopírovanie príkazom Vložiť"
+msgstr[3] "Vybrané súbory sa pripravia na kopírovanie príkazom Vložiť"
 
 #: ../thunar/thunar-standard-view.c:4435
 msgid "Move the selected file to the Trash"
@@ -2455,6 +2488,7 @@ msgid_plural "Move the selected files to the Trash"
 msgstr[0] "Presunúť zvolený súbor do koša"
 msgstr[1] "Presunúť zvolené súbory do koša"
 msgstr[2] "Presunúť zvolené súbory do koša"
+msgstr[3] "Presunúť zvolené súbory do koša"
 
 #: ../thunar/thunar-standard-view.c:4443
 msgid "Permanently delete the selected file"
@@ -2462,6 +2496,7 @@ msgid_plural "Permanently delete the selected files"
 msgstr[0] "Trvalo odstrániť zvolený súbor"
 msgstr[1] "Trvalo odstrániť zvolené súbory"
 msgstr[2] "Trvalo odstrániť zvolené súbory"
+msgstr[3] "Trvalo odstrániť zvolené súbory"
 
 #: ../thunar/thunar-standard-view.c:4457
 msgid "Duplicate the selected file"
@@ -2469,6 +2504,7 @@ msgid_plural "Duplicate each selected file"
 msgstr[0] "Duplikuje vybrané súbory"
 msgstr[1] "Duplikuje vybraný súbor"
 msgstr[2] "Duplikuje vybrané súbory"
+msgstr[3] "Duplikuje vybrané súbory"
 
 #: ../thunar/thunar-standard-view.c:4466
 msgid "Create a symbolic link for the selected file"
@@ -2476,6 +2512,7 @@ msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Vytvorí symbolický odkaz pre všetky vybrané súbory"
 msgstr[1] "Vytvorí symbolický odkaz pre vybraný súbor"
 msgstr[2] "Vytvorí symbolický odkaz pre vybrané súbory"
+msgstr[3] "Vytvorí symbolický odkaz pre vybrané súbory"
 
 #: ../thunar/thunar-standard-view.c:4474
 msgid "Rename the selected file"
@@ -2483,6 +2520,7 @@ msgid_plural "Rename the selected files"
 msgstr[0] "Premenovať vybrané súbory"
 msgstr[1] "Premenovať vybraný súbor"
 msgstr[2] "Premenovať vybrané súbory"
+msgstr[3] "Premenovať vybrané súbory"
 
 #: ../thunar/thunar-standard-view.c:4482
 msgid "Restore the selected file"
@@ -2490,6 +2528,7 @@ msgid_plural "Restore the selected files"
 msgstr[0] "Obnoviť vybrané súbory"
 msgstr[1] "Obnoviť vybraný súbor"
 msgstr[2] "Obnoviť vybrané súbory"
+msgstr[3] "Obnoviť vybrané súbory"
 
 #. add the "Empty File" item
 #: ../thunar/thunar-templates-action.c:483
@@ -2560,6 +2599,7 @@ msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "zostáva %lu hodina (%s/s)"
 msgstr[1] "zostávajú %lu hodiny (%s/s)"
 msgstr[2] "zostáva %lu hodín (%s/s)"
+msgstr[3] "zostáva %lu hodín (%s/s)"
 
 #: ../thunar/thunar-transfer-job.c:1201
 #, c-format
@@ -2568,6 +2608,7 @@ msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "zostáva %lu minúta (%s/s)"
 msgstr[1] "zostávajú %lu minúty (%s/s)"
 msgstr[2] "zostáva %lu minút (%s/s)"
+msgstr[3] "zostáva %lu minút (%s/s)"
 
 #: ../thunar/thunar-transfer-job.c:1208
 #, c-format
@@ -2576,6 +2617,7 @@ msgid_plural "%lu seconds remaining (%s/sec)"
 msgstr[0] "zostáva %lu sekunda (%s/s)"
 msgstr[1] "zostávajú %lu sekundy (%s/s)"
 msgstr[2] "zostáva %lu sekúnd (%s/s)"
+msgstr[3] "zostáva %lu sekúnd (%s/s)"
 
 #: ../thunar/thunar-trash-action.c:108
 msgid "T_rash"
@@ -3163,6 +3205,7 @@ msgid_plural "%dx%d pixels"
 msgstr[0] "%dx%d pixel"
 msgstr[1] "%dx%d pixely"
 msgstr[2] "%dx%d pixelov"
+msgstr[3] "%dx%d pixelov"
 
 #: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:117
 msgid "Con_vert to:"
@@ -3395,6 +3438,7 @@ msgid_plural "Send %d files as compressed archive?"
 msgstr[0] "Poslať %d súbor ako komprimovaný archív?"
 msgstr[1] "Poslať %d súbory ako komprimovaný archív?"
 msgstr[2] "Poslať %d súborov ako komprimovaný archív?"
+msgstr[3] "Poslať %d súborov ako komprimovaný archív?"
 
 #: ../plugins/thunar-sendto-email/main.c:219
 msgid "Send as _archive"
@@ -3443,6 +3487,7 @@ msgid_plural "Failed to compress %d files"
 msgstr[0] "Komprimovanie %d súboru zlyhalo"
 msgstr[1] "Komprimovanie %d súborov zlyhalo"
 msgstr[2] "Komprimovanie %d súborov zlyhalo"
+msgstr[3] "Komprimovanie %d súborov zlyhalo"
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:656
