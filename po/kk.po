@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: kk\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
 #: ../thunar/main.c:62
 msgid "Open the bulk rename dialog"
@@ -219,6 +219,9 @@ msgid_plural ""
 "Are you sure that you want to permanently\n"
 "delete the %u selected files?"
 msgstr[0] ""
+"Ерекшеленген %u файлды толығымен\n"
+"өшіруді шынымен қалайсыз ба?"
+msgstr[1] ""
 "Ерекшеленген %u файлды толығымен\n"
 "өшіруді шынымен қалайсыз ба?"
 
@@ -1053,6 +1056,7 @@ msgstr "\"%s\" файлын ашу сәтсіз"
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
 msgstr[0] "%d файлды ашу сәтсіз"
+msgstr[1] "%d файлды ашу сәтсіз"
 
 #: ../thunar/thunar-launcher.c:721
 msgid "Are you sure you want to open all folders?"
@@ -1064,12 +1068,15 @@ msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
 msgstr[0] ""
 "Бұл әрекет нәтижесінде файл басқарушысының %d жаңа терезесі ашылады."
+msgstr[1] ""
+"Бұл әрекет нәтижесінде файл басқарушысының %d жаңа терезесі ашылады."
 
 #: ../thunar/thunar-launcher.c:727
 #, c-format
 msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
 msgstr[0] "Жаңа %d терезені ашу"
+msgstr[1] "Жаңа %d терезені ашу"
 
 #. turn "Open New Window" into "Open in n New Windows"
 #: ../thunar/thunar-launcher.c:827
@@ -1077,12 +1084,14 @@ msgstr[0] "Жаңа %d терезені ашу"
 msgid "Open in %d New _Window"
 msgid_plural "Open in %d New _Windows"
 msgstr[0] "Жаңа %d _терезеде ашу"
+msgstr[1] "Жаңа %d _терезеде ашу"
 
 #: ../thunar/thunar-launcher.c:828
 #, c-format
 msgid "Open the selected directory in %d new window"
 msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] "Ерекшеленген бума(лар)ды жаңа %d терезеде ашу"
+msgstr[1] "Ерекшеленген бума(лар)ды жаңа %d терезеде ашу"
 
 #. turn "Open in New Tab" into "Open in x New Tabs"
 #: ../thunar/thunar-launcher.c:839
@@ -1090,12 +1099,14 @@ msgstr[0] "Ерекшеленген бума(лар)ды жаңа %d терез�
 msgid "Open in %d New _Tab"
 msgid_plural "Open in %d New _Tabs"
 msgstr[0] "Жаңа %d _бетте ашу"
+msgstr[1] "Жаңа %d _бетте ашу"
 
 #: ../thunar/thunar-launcher.c:840
 #, c-format
 msgid "Open the selected directory in %d new tab"
 msgid_plural "Open the selected directories in %d new tabs"
 msgstr[0] "Таңдалған бума(лар)ды жаңа %d бетте ашу"
+msgstr[1] "Таңдалған бума(лар)ды жаңа %d бетте ашу"
 
 #: ../thunar/thunar-launcher.c:855
 msgid "Open the selected directory in a new window"
@@ -1114,6 +1125,7 @@ msgstr "Таңдалған буманы ашу"
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
 msgstr[0] "Ерекшеленген файл(дар)ды ашу"
+msgstr[1] "Ерекшеленген файл(дар)ды ашу"
 
 #: ../thunar/thunar-launcher.c:931
 msgid "_Execute"
@@ -1123,6 +1135,7 @@ msgstr "Оры_ндау"
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
 msgstr[0] "Ерекшеленген файл(дар)ды орындау"
+msgstr[1] "Ерекшеленген файл(дар)ды орындау"
 
 #. turn the "Open" action into "Open With DEFAULT"
 #: ../thunar/thunar-launcher.c:939
@@ -1135,6 +1148,7 @@ msgstr "\"%s\" _көмегімен ашу "
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "Ерекшеленген файл(дар)ды ашу үшін \"%s\" қолдану"
+msgstr[1] "Ерекшеленген файл(дар)ды ашу үшін \"%s\" қолдану"
 
 #: ../thunar/thunar-launcher.c:967
 msgid "_Open With Other Application..."
@@ -1148,6 +1162,7 @@ msgstr "Бас_тапқы қолданбамен ашу"
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
 msgstr[0] "Ерекшеленген файл(дар)ды бастапқы қолданбамен ашу"
+msgstr[1] "Ерекшеленген файл(дар)ды бастапқы қолданбамен ашу"
 
 #: ../thunar/thunar-launcher.c:1029
 #, c-format
@@ -1164,23 +1179,27 @@ msgstr "\"%s\" тіркеу қатесі"
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "Жұмыс үстелі (Сілтеме жасау)"
+msgstr[1] "Жұмыс үстелі (Сілтеме жасау)"
 
 #: ../thunar/thunar-launcher.c:1704
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "Ерекшеленген файл(дар) үшін жұмыс үстелінде жарлықтарды жасау"
+msgstr[1] "Ерекшеленген файл(дар) үшін жұмыс үстелінде жарлықтарды жасау"
 
 #: ../thunar/thunar-launcher.c:1738 ../thunar/thunar-launcher.c:1790
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
 msgstr[0] "Ерекшелеген файл(дар)ды жіберу: \"%s\""
+msgstr[1] "Ерекшелеген файл(дар)ды жіберу: \"%s\""
 
 #: ../thunar/thunar-list-model.c:2293
 #, c-format
 msgid "%d item (%s), Free space: %s"
 msgid_plural "%d items (%s), Free space: %s"
 msgstr[0] "%d элемент (%s), Бос орын: %s"
+msgstr[1] "%d элемент (%s), Бос орын: %s"
 
 #. just the standard text
 #: ../thunar/thunar-list-model.c:2300
@@ -1188,12 +1207,14 @@ msgstr[0] "%d элемент (%s), Бос орын: %s"
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
 msgstr[0] "%d элемент, Бос орын: %s"
+msgstr[1] "%d элемент, Бос орын: %s"
 
 #: ../thunar/thunar-list-model.c:2309
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d элемент"
+msgstr[1] "%d элемент"
 
 #: ../thunar/thunar-list-model.c:2325
 #, c-format
@@ -1249,6 +1270,7 @@ msgstr "Сурет өлшемі:"
 msgid "%d other item selected (%s)"
 msgid_plural "%d other items selected (%s)"
 msgstr[0] "%d басқа элемент таңдалды (%s)"
+msgstr[1] "%d басқа элемент таңдалды (%s)"
 
 #. only non-folders are selected
 #: ../thunar/thunar-list-model.c:2435
@@ -1256,12 +1278,14 @@ msgstr[0] "%d басқа элемент таңдалды (%s)"
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
 msgstr[0] "%d элемент ерекшеленді (%s)"
+msgstr[1] "%d элемент ерекшеленді (%s)"
 
 #: ../thunar/thunar-list-model.c:2449
 #, c-format
 msgid "%d folder selected"
 msgid_plural "%d folders selected"
 msgstr[0] "%d бума таңдалды"
+msgstr[1] "%d бума таңдалды"
 
 #. This is marked for translation in case a localizer
 #. * needs to change ", " to something else. The comma
@@ -1849,6 +1873,7 @@ msgstr "Файлдармен әрекет үрдісі"
 msgid "%d file operation running"
 msgid_plural "%d file operations running"
 msgstr[0] "Файлдармен %d әрекет орындалуда"
+msgstr[1] "Файлдармен %d әрекет орындалуда"
 
 #. update the status text
 #: ../thunar/thunar-progress-view.c:354
@@ -2067,11 +2092,14 @@ msgstr ""
 msgid "Remove File"
 msgid_plural "Remove Files"
 msgstr[0] "Файл(дар)ды өшіру"
+msgstr[1] "Файл(дар)ды өшіру"
 
 #: ../thunar/thunar-renamer-dialog.c:1692
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] ""
+"Ерекшеленген файл(дар)ды аттары ауыстырылатын файлдар тізімінен өшіру"
+msgstr[1] ""
 "Ерекшеленген файл(дар)ды аттары ауыстырылатын файлдар тізімінен өшіру"
 
 #. change title to reflect the standalone status
@@ -2120,6 +2148,7 @@ msgstr "Қоқыс шелегі бос"
 msgid "Trash contains %d file"
 msgid_plural "Trash contains %d files"
 msgstr[0] "Қоқыс шелегінде %d  файл бар"
+msgstr[1] "Қоқыс шелегінде %d  файл бар"
 
 #: ../thunar/thunar-shortcuts-model.c:922
 msgid "DEVICES"
@@ -2141,11 +2170,13 @@ msgstr "ОРЫНДАР"
 msgid "Side Pane (Create Shortcut)"
 msgid_plural "Side Pane (Create Shortcuts)"
 msgstr[0] "Бүйір панелі (Жарлық жасау)"
+msgstr[1] "Бүйір панелі (Жарлық жасау)"
 
 #: ../thunar/thunar-shortcuts-pane.c:395
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "Ерекшеленген бума(лар)ды бүйір бетбелгілерге қосу"
+msgstr[1] "Ерекшеленген бума(лар)ды бүйір бетбелгілерге қосу"
 
 #. append the "Mount" item
 #. append the "Mount" menu action
@@ -2225,6 +2256,7 @@ msgstr "Есептеу тоқтатылды"
 msgid "%u item, totalling %s"
 msgid_plural "%u items, totalling %s"
 msgstr[0] "%u элемент, жалпы %s"
+msgstr[1] "%u элемент, жалпы %s"
 
 #. TRANSLATORS: this is shows if during the deep count size
 #. * directories were not accessible
@@ -2314,6 +2346,7 @@ msgstr "Көші_рмесін жасау"
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Сілте_ме(лер) жасау"
+msgstr[1] "Сілте_ме(лер) жасау"
 
 #. append the "Rename" menu action
 #: ../thunar/thunar-standard-view.c:418 ../thunar/thunar-tree-view.c:1483
@@ -2380,42 +2413,52 @@ msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] ""
 "Ерекшеленген файл(дар)ды Кірістіру командасы көмегімен жылжытуға дайындайды"
+msgstr[1] ""
+"Ерекшеленген файл(дар)ды Кірістіру командасы көмегімен жылжытуға дайындайды"
 
 #: ../thunar/thunar-standard-view.c:4423
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] ""
 "Ерекшеленген файл(дар)ды Кірістіру командасы көмегімен көшіруге дайындайды"
+msgstr[1] ""
+"Ерекшеленген файл(дар)ды Кірістіру командасы көмегімен көшіруге дайындайды"
 
 #: ../thunar/thunar-standard-view.c:4435
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "Таңдалған файл(дар)ды қоқыс шелегіне тастау"
+msgstr[1] "Таңдалған файл(дар)ды қоқыс шелегіне тастау"
 
 #: ../thunar/thunar-standard-view.c:4443
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "Таңдалған файл(дар)ды өшіру"
+msgstr[1] "Таңдалған файл(дар)ды өшіру"
 
 #: ../thunar/thunar-standard-view.c:4457
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Ерекшеленген файл(дар)дың көшірмесін жасау"
+msgstr[1] "Ерекшеленген файл(дар)дың көшірмесін жасау"
 
 #: ../thunar/thunar-standard-view.c:4466
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Ерекшеленген файл(дар)ға символдық сілтеме жасау"
+msgstr[1] "Ерекшеленген файл(дар)ға символдық сілтеме жасау"
 
 #: ../thunar/thunar-standard-view.c:4474
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Ерекшеленген файл(дар)дың атын ауыстыру"
+msgstr[1] "Ерекшеленген файл(дар)дың атын ауыстыру"
 
 #: ../thunar/thunar-standard-view.c:4482
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
 msgstr[0] "Ерекшеленген файл(дар)ды қалпына келтіру"
+msgstr[1] "Ерекшеленген файл(дар)ды қалпына келтіру"
 
 #. add the "Empty File" item
 #: ../thunar/thunar-templates-action.c:483
@@ -2481,18 +2524,21 @@ msgstr "%s, барлығы %s"
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "%lu сағат қалды (%s/сек)"
+msgstr[1] "%lu сағат қалды (%s/сек)"
 
 #: ../thunar/thunar-transfer-job.c:1201
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "%lu минут қалды (%s/сек)"
+msgstr[1] "%lu минут қалды (%s/сек)"
 
 #: ../thunar/thunar-transfer-job.c:1208
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
 msgstr[0] "%lu секунд қалды (%s/сек)"
+msgstr[1] "%lu секунд қалды (%s/сек)"
 
 #: ../thunar/thunar-trash-action.c:108
 msgid "T_rash"
@@ -3078,6 +3124,7 @@ msgstr "Сурет түрі:"
 msgid "%dx%d pixel"
 msgid_plural "%dx%d pixels"
 msgstr[0] "%dx%d пиксель"
+msgstr[1] "%dx%d пиксель"
 
 #: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:117
 msgid "Con_vert to:"
@@ -3308,6 +3355,7 @@ msgstr ""
 msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
 msgstr[0] "%d файлды сығылған архив түрінде жіберу керек пе?"
+msgstr[1] "%d файлды сығылған архив түрінде жіберу керек пе?"
 
 #: ../plugins/thunar-sendto-email/main.c:219
 msgid "Send as _archive"
@@ -3354,6 +3402,7 @@ msgstr "\"%s\" үшін символдық сілтемені жасау қат�
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
 msgstr[0] "%d файл(дар)ды сығу сәтсіз"
+msgstr[1] "%d файл(дар)ды сығу сәтсіз"
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:656
