@@ -10,14 +10,14 @@ msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-07-02 23:03+0200\n"
-"PO-Revision-Date: 2017-09-19 18:02+0000\n"
-"Last-Translator: Nick Schermer <nick@xfce.org>\n"
+"PO-Revision-Date: 2018-08-22 17:09+0000\n"
+"Last-Translator: Moo\n"
 "Language-Team: Lithuanian (http://www.transifex.com/xfce/thunar/language/lt/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: lt\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);\n"
 
 #: ../thunar/main.c:62
 msgid "Open the bulk rename dialog"
@@ -219,6 +219,7 @@ msgid_plural ""
 msgstr[0] "Ar tikrai norite negrįžtamai\ništrinti %u pažymėtą failą?"
 msgstr[1] "Ar tikrai norite negrįžtamai\ništrinti %u pažymėtus failus?"
 msgstr[2] "Ar tikrai norite negrįžtamai\ništrinti %u pažymėtų failų?"
+msgstr[3] "Ar tikrai norite negrįžtamai\ništrinti %u pažymėtų failų?"
 
 #: ../thunar/thunar-application.c:1779
 msgid "If you delete a file, it is permanently lost."
@@ -973,6 +974,7 @@ msgid_plural "Failed to open %d files"
 msgstr[0] "Nepavyko atverti %d failo"
 msgstr[1] "Nepavyko atverti %d failų"
 msgstr[2] "Nepavyko atverti %d failų"
+msgstr[3] "Nepavyko atverti %d failų"
 
 #: ../thunar/thunar-launcher.c:692
 msgid "Are you sure you want to open all folders?"
@@ -985,6 +987,7 @@ msgid_plural "This will open %d separate file manager windows."
 msgstr[0] "Atvers %d atskirą failų tvarkyklės langą"
 msgstr[1] "Atvers %d atskirus failų tvarkyklės langus"
 msgstr[2] "Atvers %d atskirų failų tvarkyklės langų"
+msgstr[3] "Atvers %d atskirų failų tvarkyklės langų"
 
 #: ../thunar/thunar-launcher.c:698
 #, c-format
@@ -993,6 +996,7 @@ msgid_plural "Open %d New Windows"
 msgstr[0] "Atverti %d naują langą"
 msgstr[1] "Atverti %d naujus langus"
 msgstr[2] "Atverti %d naujų langų"
+msgstr[3] "Atverti %d naujų langų"
 
 #. turn "Open" into "Open in n New Windows"
 #: ../thunar/thunar-launcher.c:790
@@ -1002,6 +1006,7 @@ msgid_plural "Open in %d New Windows"
 msgstr[0] "Atverti %d naujame lange"
 msgstr[1] "Atverti %d naujuose languose"
 msgstr[2] "Atverti %d naujų langų"
+msgstr[3] "Atverti %d naujų langų"
 
 #: ../thunar/thunar-launcher.c:791
 #, c-format
@@ -1010,6 +1015,7 @@ msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] "Atverti pasirinktą aplanką %d naujame lange"
 msgstr[1] "Atverti pasirinktus aplankus %d naujuose languose"
 msgstr[2] "Atverti pasirinktus aplankus %d naujų langų"
+msgstr[3] "Atverti pasirinktus aplankus %d naujų langų"
 
 #: ../thunar/thunar-launcher.c:811
 msgid "_Open in New Window"
@@ -1021,6 +1027,7 @@ msgid_plural "Open the selected files"
 msgstr[0] "Atverti pasirinktą failą"
 msgstr[1] "Atverti pasirinktus failus"
 msgstr[2] "Atverti pasirinktus failus"
+msgstr[3] "Atverti pasirinktus failus"
 
 #: ../thunar/thunar-launcher.c:863
 msgid "_Execute"
@@ -1032,6 +1039,7 @@ msgid_plural "Execute the selected files"
 msgstr[0] "Vykdyti pasirinktą failą"
 msgstr[1] "Vykdyti pasirinktus failus"
 msgstr[2] "Vykdyti pasirinktus failus"
+msgstr[3] "Vykdyti pasirinktus failus"
 
 #. turn the "Open" action into "Open With DEFAULT"
 #: ../thunar/thunar-launcher.c:870
@@ -1046,6 +1054,7 @@ msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "Naudoti „%s“ atveriant pasirinktą failą"
 msgstr[1] "Naudoti „%s“ atveriant pasirinktus failus"
 msgstr[2] "Naudoti „%s“ atveriant pasirinktus failus"
+msgstr[3] "Naudoti „%s“ atveriant pasirinktus failus"
 
 #: ../thunar/thunar-launcher.c:894
 msgid "_Open With Other Application..."
@@ -1061,6 +1070,7 @@ msgid_plural "Open the selected files with the default applications"
 msgstr[0] "Atverti pasirinktą failą su numatytąja programa"
 msgstr[1] "Atverti pasirinktus failus su numatytąja programa"
 msgstr[2] "Atverti pasirinktus failus su numatytąja programa"
+msgstr[3] "Atverti pasirinktus failus su numatytąja programa"
 
 #: ../thunar/thunar-launcher.c:956
 #, c-format
@@ -1080,6 +1090,7 @@ msgid_plural "Desktop (Create Links)"
 msgstr[0] "Darbalaukis (sukurti nuorodą)"
 msgstr[1] "Darbalaukis (sukurti nuorodas)"
 msgstr[2] "Darbalaukis (sukurti nuorodas)"
+msgstr[3] "Darbalaukis (sukurti nuorodas)"
 
 #: ../thunar/thunar-launcher.c:1494
 msgid "Create a link to the selected file on the desktop"
@@ -1087,6 +1098,7 @@ msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "Sukurti nuorodą pasirinktam failui darbalaukyje"
 msgstr[1] "Sukurti nuorodas pasirinktiems failams darbalaukyje"
 msgstr[2] "Sukurti nuorodas pasirinktiems failams darbalaukyje"
+msgstr[3] "Sukurti nuorodas pasirinktiems failams darbalaukyje"
 
 #: ../thunar/thunar-launcher.c:1531 ../thunar/thunar-launcher.c:1574
 #, c-format
@@ -1095,6 +1107,7 @@ msgid_plural "Send the selected files to \"%s\""
 msgstr[0] "Nusiųsti pasirinktą failą į „%s“"
 msgstr[1] "Nusiųsti pasirinktus failus į „%s“"
 msgstr[2] "Nusiųsti pasirinktus failus į „%s“"
+msgstr[3] "Nusiųsti pasirinktus failus į „%s“"
 
 #. generate a text which includes the size of all items in the folder
 #: ../thunar/thunar-list-model.c:2316
@@ -1104,6 +1117,7 @@ msgid_plural "%d items (%s), Free space: %s"
 msgstr[0] "%d elementas (%s), Laisvos vietos: %s"
 msgstr[1] "%d elementai (%s), Laisvos vietos: %s"
 msgstr[2] "%d elementų (%s), Laisvos vietos: %s"
+msgstr[3] "%d elementų (%s), Laisvos vietos: %s"
 
 #. just the standard text
 #: ../thunar/thunar-list-model.c:2325
@@ -1113,6 +1127,7 @@ msgid_plural "%d items, Free space: %s"
 msgstr[0] "%d elementas, Laisvos vietos: %s"
 msgstr[1] "%d elementai, Laisvos vietos: %s"
 msgstr[2] "%d elementų, Laisvos vietos: %s"
+msgstr[3] "%d elementų, Laisvos vietos: %s"
 
 #: ../thunar/thunar-list-model.c:2333
 #, c-format
@@ -1121,6 +1136,7 @@ msgid_plural "%d items"
 msgstr[0] "%d elementas"
 msgstr[1] "%d elementai"
 msgstr[2] "%d elementų"
+msgstr[3] "%d elementų"
 
 #: ../thunar/thunar-list-model.c:2352
 #, c-format
@@ -1169,6 +1185,7 @@ msgid_plural "%d items selected (%s)"
 msgstr[0] "pasirinktas %d elementas (%s)"
 msgstr[1] "pasirinkti %d elementai (%s)"
 msgstr[2] "pasirinkta %d elementų (%s)"
+msgstr[3] "pasirinkta %d elementų (%s)"
 
 #: ../thunar/thunar-list-model.c:2425
 #, c-format
@@ -1177,6 +1194,7 @@ msgid_plural "%d items selected"
 msgstr[0] "pasirinktas %d elementas"
 msgstr[1] "pasirinkti %d elementai"
 msgstr[2] "pasirinkta %d elementų"
+msgstr[3] "pasirinkta %d elementų"
 
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-location-buttons.c:170
@@ -1668,6 +1686,7 @@ msgid_plural "%d file operations running"
 msgstr[0] "%d failo operacijos eiga"
 msgstr[1] "%d failų operacijų eiga"
 msgstr[2] "%d failų operacijų eiga"
+msgstr[3] "%d failų operacijų eiga"
 
 #: ../thunar/thunar-progress-view.c:342
 msgid "Cancelling..."
@@ -1680,6 +1699,7 @@ msgid_plural "%lu hours remaining"
 msgstr[0] "liko %lu valanda"
 msgstr[1] "liko %lu valandos"
 msgstr[2] "liko %lu valandų"
+msgstr[3] "liko %lu valandų"
 
 #: ../thunar/thunar-progress-view.c:491
 #, c-format
@@ -1688,6 +1708,7 @@ msgid_plural "%lu minutes remaining"
 msgstr[0] "liko %lu minutė"
 msgstr[1] "liko %lu minutės"
 msgstr[2] "liko %lu minučių"
+msgstr[3] "liko %lu minučių"
 
 #: ../thunar/thunar-progress-view.c:496
 #, c-format
@@ -1696,6 +1717,7 @@ msgid_plural "%lu seconds remaining"
 msgstr[0] "liko %lu sekundė"
 msgstr[1] "liko %lu sekundės"
 msgstr[2] "liko %lu sekundžių"
+msgstr[3] "liko %lu sekundžių"
 
 #: ../thunar/thunar-properties-dialog.c:237
 msgid "General"
@@ -1884,6 +1906,7 @@ msgid_plural "Remove Files"
 msgstr[0] "Pašalinti failą"
 msgstr[1] "Pašalinti failus"
 msgstr[2] "Pašalinti failų"
+msgstr[3] "Pašalinti failų"
 
 #: ../thunar/thunar-renamer-dialog.c:1647
 msgid "Remove the selected file from the list of files to be renamed"
@@ -1891,6 +1914,7 @@ msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] "Pašalinti pažymėtą failą iš pervadinamų failų sąrašo."
 msgstr[1] "Pašalinti pažymėtus failus iš pervadinamų failų sąrašo."
 msgstr[2] "Pašalinti pažymėtus failus iš pervadinamų failų sąrašo."
+msgstr[3] "Pašalinti pažymėtus failus iš pervadinamų failų sąrašo."
 
 #. change title to reflect the standalone status
 #: ../thunar/thunar-renamer-dialog.c:1798
@@ -1929,6 +1953,7 @@ msgid_plural "Side Pane (Create Shortcuts)"
 msgstr[0] "Šoninis polangis (sukurti nuorodą)"
 msgstr[1] "Šoninis polangis (sukurti nuorodas)"
 msgstr[2] "Šoninis polangis (sukurti nuorodas)"
+msgstr[3] "Šoninis polangis (sukurti nuorodas)"
 
 #: ../thunar/thunar-shortcuts-pane.c:362
 msgid "Add the selected folder to the shortcuts side pane"
@@ -1936,6 +1961,7 @@ msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "Įkelti pasirinktą aplanką į šoninį nuorodų polangį"
 msgstr[1] "Įkelti pasirinktus aplankus į šoninį nuorodų polangį"
 msgstr[2] "Įkelti pasirinktus aplankus į šoninį nuorodų polangį"
+msgstr[3] "Įkelti pasirinktus aplankus į šoninį nuorodų polangį"
 
 #. append the "Mount Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:851 ../thunar/thunar-tree-view.c:1121
@@ -2000,6 +2026,7 @@ msgid_plural "%u items, totalling %s"
 msgstr[0] "%u elementas (viso %s)"
 msgstr[1] "%u elementai (viso %s)"
 msgstr[2] "%u elementų (viso %s)"
+msgstr[3] "%u elementų (viso %s)"
 
 #: ../thunar/thunar-standard-view.c:358
 msgid "Folder Context Menu"
@@ -2064,6 +2091,7 @@ msgid_plural "Ma_ke Links"
 msgstr[0] "Sukurti _nuorodą"
 msgstr[1] "Sukurti _nuorodas"
 msgstr[2] "Sukurti _nuorodas"
+msgstr[3] "Sukurti _nuorodas"
 
 #. append the "Rename" menu action
 #: ../thunar/thunar-standard-view.c:370 ../thunar/thunar-tree-view.c:1253
@@ -2126,6 +2154,7 @@ msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Paruošti pasirinktą failą perkėlimui naudojantis „Įdėti“ komanda"
 msgstr[1] "Paruošti pasirinktus failus perkėlimui naudojantis „Įdėti“ komanda"
 msgstr[2] "Paruošti pasirinktus failus perkėlimui naudojantis „Įdėti“ komanda"
+msgstr[3] "Paruošti pasirinktus failus perkėlimui naudojantis „Įdėti“ komanda"
 
 #: ../thunar/thunar-standard-view.c:3705
 msgid "Prepare the selected file to be copied with a Paste command"
@@ -2133,6 +2162,7 @@ msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Paruošti pasirinktą failą kopijavimui naudojantis „Kopijuoti“ komanda"
 msgstr[1] "Paruošti pasirinktus failus kopijavimui naudojantis „Kopijuoti“ komanda"
 msgstr[2] "Paruošti pasirinktus failus kopijavimui naudojantis „Kopijuoti“ komanda"
+msgstr[3] "Paruošti pasirinktus failus kopijavimui naudojantis „Kopijuoti“ komanda"
 
 #: ../thunar/thunar-standard-view.c:3716
 msgid "Delete the selected file"
@@ -2140,6 +2170,7 @@ msgid_plural "Delete the selected files"
 msgstr[0] "Ištrinti pasirinktą failą"
 msgstr[1] "Ištrinti pasirinktus failus"
 msgstr[2] "Ištrinti pasirinktus failus"
+msgstr[3] "Ištrinti pasirinktus failus"
 
 #: ../thunar/thunar-standard-view.c:3730
 msgid "Duplicate the selected file"
@@ -2147,6 +2178,7 @@ msgid_plural "Duplicate each selected file"
 msgstr[0] "Dubliuoti pasirinktą failą"
 msgstr[1] "Dubliuoti pasirinktus failus"
 msgstr[2] "Dubliuoti pasirinktus failus"
+msgstr[3] "Dubliuoti pasirinktus failus"
 
 #: ../thunar/thunar-standard-view.c:3739
 msgid "Create a symbolic link for the selected file"
@@ -2154,6 +2186,7 @@ msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Sukurti simbolinę nuorodą pasirinktam failui"
 msgstr[1] "Sukurti simbolinę nuorodą pasirinktiems failams"
 msgstr[2] "Sukurti simbolinę nuorodą pasirinktiems failams"
+msgstr[3] "Sukurti simbolinę nuorodą pasirinktiems failams"
 
 #: ../thunar/thunar-standard-view.c:3747
 msgid "Rename the selected file"
@@ -2161,6 +2194,7 @@ msgid_plural "Rename the selected files"
 msgstr[0] "Pervadinti pasirinktą failą"
 msgstr[1] "Pervadinti pasirinktus failus"
 msgstr[2] "Pervadinti pasirinktus failus"
+msgstr[3] "Pervadinti pasirinktus failus"
 
 #: ../thunar/thunar-standard-view.c:3755
 msgid "Restore the selected file"
@@ -2168,6 +2202,7 @@ msgid_plural "Restore the selected files"
 msgstr[0] "Atkurti pasirinktą failą"
 msgstr[1] "Atkurti pasirinktus failus"
 msgstr[2] "Atkurti pasirinktus failus"
+msgstr[3] "Atkurti pasirinktus failus"
 
 #. add the "Empty File" item
 #: ../thunar/thunar-templates-action.c:482
@@ -2763,6 +2798,7 @@ msgid_plural "%dx%d pixels"
 msgstr[0] "%dx%d taškų"
 msgstr[1] "%dx%d taškai"
 msgstr[2] "%dx%d taškų"
+msgstr[3] "%dx%d taškų"
 
 #: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:117
 msgid "Con_vert to:"
@@ -2980,6 +3016,7 @@ msgid_plural "Send %d files as compressed archive?"
 msgstr[0] "Ar siųsti %d failą kaip suspaustą archyvą?"
 msgstr[1] "Ar siųsti %d failus kaip suspaustą archyvą?"
 msgstr[2] "Ar siųsti %d failų kaip suspaustą archyvą?"
+msgstr[3] "Ar siųsti %d failų kaip suspaustą archyvą?"
 
 #: ../plugins/thunar-sendto-email/main.c:219
 msgid "Send as _archive"
@@ -3024,6 +3061,7 @@ msgid_plural "Failed to compress %d files"
 msgstr[0] "Nepavyko suspausti %d failo"
 msgstr[1] "Nepavyko suspausti %d failų"
 msgstr[2] "Nepavyko suspausti %d failų"
+msgstr[3] "Nepavyko suspausti %d failų"
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:656
