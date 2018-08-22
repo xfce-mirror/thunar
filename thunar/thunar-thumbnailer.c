@@ -405,8 +405,8 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
    * processed (and awaiting to be refreshed) */
   for (lp = job->files; lp != NULL; lp = lp->next)
     {
-      /* the icon factory only loads icons for regular files */
-      if (!thunar_file_is_regular (lp->data))
+      /* the icon factory only loads icons for regular files and folders */
+      if (!thunar_file_is_regular (lp->data) && !thunar_file_is_directory (lp->data))
         {
           thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE);
           continue;

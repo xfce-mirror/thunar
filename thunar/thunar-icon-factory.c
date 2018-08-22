@@ -904,7 +904,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
 
   /* check if thumbnails are enabled and we can display a thumbnail for the item */
   if (thunar_icon_factory_get_show_thumbnail (factory, file)
-      && thunar_file_is_regular (file))
+      && (thunar_file_is_regular (file) || thunar_file_is_directory (file)) )
     {
       /* determine the preview icon first */
       gicon = thunar_file_get_preview_icon (file);
