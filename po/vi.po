@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-09-04 23:34+0200\n"
+"POT-Creation-Date: 2017-10-10 06:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Xfce Bot <transifex@xfce.org>, 2017\n"
 "Language-Team: Vietnamese (https://www.transifex.com/xfce/teams/16840/vi/)\n"
@@ -812,48 +812,53 @@ msgstr "Tên file"
 msgid "File System"
 msgstr "File hệ thống"
 
-#: ../thunar/thunar-file.c:1513
+#: ../thunar/thunar-file.c:1075 ../thunar/thunar-gio-extensions.c:242
+#: ../thunar/thunar-shortcuts-model.c:1039
+msgid "Trash"
+msgstr ""
+
+#: ../thunar/thunar-file.c:1515
 #, c-format
 msgid "The root folder has no parent"
 msgstr "Thư mục gốc không có thư mục cha"
 
-#: ../thunar/thunar-file.c:1601 ../thunar/thunar-file.c:1897
+#: ../thunar/thunar-file.c:1603 ../thunar/thunar-file.c:1899
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "Cú pháp tập tin \"%s\" không đúng"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1613
+#: ../thunar/thunar-file.c:1615
 msgid "Untrusted application launcher"
 msgstr "Trình chạy ứng dụng không tin tưởng"
 
-#: ../thunar/thunar-file.c:1638
+#: ../thunar/thunar-file.c:1640
 #, c-format
 msgid "No Exec field specified"
 msgstr "Exec không xác định"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1647
+#: ../thunar/thunar-file.c:1649
 msgid "Untrusted link launcher"
 msgstr "Trình chạy liên kết không tin tưởng"
 
-#: ../thunar/thunar-file.c:1663
+#: ../thunar/thunar-file.c:1665
 #, c-format
 msgid "No URL field specified"
 msgstr "URL không xác định"
 
-#: ../thunar/thunar-file.c:1668
+#: ../thunar/thunar-file.c:1670
 msgid "Invalid desktop file"
 msgstr "Desktop file không hợp lệ"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: ../thunar/thunar-gio-extensions.c:322
+#: ../thunar/thunar-gio-extensions.c:327
 #, c-format
 msgid "%s on %s"
 msgstr "%s trên %s"
 
 #. free disk space string
-#: ../thunar/thunar-gio-extensions.c:433
+#: ../thunar/thunar-gio-extensions.c:438
 #, c-format
 msgid "%s of %s free (%d%% used)"
 msgstr ""
@@ -1888,7 +1893,7 @@ msgstr "Ổ đĩa"
 
 #: ../thunar/thunar-properties-dialog.c:516
 msgid "Usage:"
-msgstr ""
+msgstr "Cách sử dụng:"
 
 #. Emblem chooser
 #: ../thunar/thunar-properties-dialog.c:549
