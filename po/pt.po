@@ -882,7 +882,7 @@ msgstr "Voltar"
 
 #: ../thunar/thunar-history.c:163
 msgid "Go to the previous visited folder"
-msgstr "Ir para a pasta visitada anterior"
+msgstr "Ir para a pasta anterior"
 
 #. create the "forward" action
 #: ../thunar/thunar-history.c:169
@@ -891,7 +891,7 @@ msgstr "Avançar"
 
 #: ../thunar/thunar-history.c:169
 msgid "Go to the next visited folder"
-msgstr "Ir para a pasta visitada seguinte"
+msgstr "Ir para a pasta seguinte"
 
 #: ../thunar/thunar-history.c:354
 msgid "The item will be removed from the history"
@@ -1162,8 +1162,8 @@ msgstr "_Abrir com as aplicações pré-definidas"
 #: ../thunar/thunar-launcher.c:977
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
-msgstr[0] "Abrir ficheiro selecionado com a aplicação por omissão"
-msgstr[1] "Abrir ficheiros selecionados com as aplicações pré-definidas"
+msgstr[0] "Abrir o ficheiro selecionado com a aplicação pré-definida"
+msgstr[1] "Abrir os ficheiros selecionados com as aplicações pré-definidas"
 
 #: ../thunar/thunar-launcher.c:1029
 #, c-format
@@ -1185,17 +1185,15 @@ msgstr[1] "Ambiente de trabalho (criar ligações)"
 #: ../thunar/thunar-launcher.c:1704
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
-msgstr[0] ""
-"Criar, no ambiente de trabalho, uma ligação ao ficheiro selecionado"
-msgstr[1] ""
-"Criar, no ambiente de trabalho, ligações aos ficheiros selecionados"
+msgstr[0] "Criar no ambiente de trabalho uma ligação ao ficheiro selecionado"
+msgstr[1] "Criar no ambiente de trabalho ligações aos ficheiros selecionados"
 
 #: ../thunar/thunar-launcher.c:1738 ../thunar/thunar-launcher.c:1790
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
-msgstr[0] "Enviar ficheiro selecionado para \"%s\""
-msgstr[1] "Enviar ficheiros selecionados para \"%s\""
+msgstr[0] "Enviar o ficheiro selecionado para \"%s\""
+msgstr[1] "Enviar os ficheiros selecionados para \"%s\""
 
 #: ../thunar/thunar-list-model.c:2293
 #, c-format
@@ -1319,7 +1317,7 @@ msgstr "Criar p_asta..."
 
 #: ../thunar/thunar-location-buttons.c:179 ../thunar/thunar-window.c:354
 msgid "Delete all files and folders in the Trash"
-msgstr "Apagar todos os ficheiros e pastas do lixo"
+msgstr "Eliminar do lixo todos os ficheiros e pastas"
 
 #: ../thunar/thunar-location-buttons.c:180
 #: ../thunar/thunar-standard-view.c:412
@@ -1872,7 +1870,7 @@ msgstr "Ocorreu um erro ao mostrar as definições da gestão de discos"
 
 #: ../thunar/thunar-progress-dialog.c:94
 msgid "File Operation Progress"
-msgstr "Operação de ficheiro a decorrer"
+msgstr "Progresso da operação de ficheiro"
 
 #. build the tooltip text
 #: ../thunar/thunar-progress-dialog.c:299
@@ -1997,11 +1995,11 @@ msgstr "Incluir ficheiros adicionais na lista de ficheiros a serem renomeados"
 
 #: ../thunar/thunar-renamer-dialog.c:195
 msgid "Clear"
-msgstr "Limpar"
+msgstr "Apagar"
 
 #: ../thunar/thunar-renamer-dialog.c:195
 msgid "Clear the file list below"
-msgstr "Limpar lista de ficheiros abaixo"
+msgstr "Apagar a lista de ficheiros abaixo"
 
 #: ../thunar/thunar-renamer-dialog.c:196 ../thunar/thunar-window.c:378
 msgid "_About"
@@ -2051,7 +2049,7 @@ msgid ""
 "installation or contact your system administrator. If you install Thunar\n"
 "from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
 msgstr ""
-"Não foi encontrado o módulo para renomear ficheiros. Por favor verifique\n"
+"Não foram encontrados módulos de renomeação de ficheiros. Por favor verifique\n"
 "a instalação ou entre em contacto com o administrador de sistemas.\n"
 "Se compilou o Thunar, ative o suplemento \"Simple Builtin Renamers\"."
 
@@ -2264,7 +2262,7 @@ msgstr[1] "%u itens, totalizando %s"
 #. * directories were not accessible
 #: ../thunar/thunar-size-label.c:420
 msgid "(some contents unreadable)"
-msgstr "(algum conteúdo não legível)"
+msgstr "(algum conteúdo ilegível)"
 
 #. nothing was readable, so permission was denied
 #: ../thunar/thunar-size-label.c:431
@@ -2296,8 +2294,8 @@ msgstr "Co_lar"
 #: ../thunar/thunar-standard-view.c:409
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr ""
-"Mover/copiar ficheiros previamente selecionados pelos comandos Cortar ou "
-"Copiar"
+"Mover ou copiar ficheiros previamente selecionados, através dos comandos "
+"Cortar ou Copiar, respectivamente"
 
 #. append the "Move to Tash" menu action
 #: ../thunar/thunar-standard-view.c:410 ../thunar/thunar-tree-view.c:1448
@@ -2384,7 +2382,7 @@ msgstr "Novo ficheiro vazio..."
 
 #: ../thunar/thunar-standard-view.c:2616
 msgid "Select by Pattern"
-msgstr "Selecionar por padrão"
+msgstr "Selecionar por Padrão"
 
 #: ../thunar/thunar-standard-view.c:2622
 msgid "_Select"
@@ -2414,16 +2412,18 @@ msgstr "Ocorreu um erro ao abrir a pasta \"%s\""
 #: ../thunar/thunar-standard-view.c:4415
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
-msgstr[0] "Preparar ficheiro selecionado para ser movido com o comando Colar."
+msgstr[0] ""
+"Preparar o ficheiro selecionado para ser movido com o comando Colar."
 msgstr[1] ""
-"Preparar ficheiros selecionados para serem movidos com o comando Colar."
+"Preparar os ficheiros selecionados para serem movidos com o comando Colar."
 
 #: ../thunar/thunar-standard-view.c:4423
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
-msgstr[0] "Preparar ficheiro selecionado para ser copiado com o comando Colar"
+msgstr[0] ""
+"Preparar o ficheiro selecionado para ser copiado com o comando Colar"
 msgstr[1] ""
-"Preparar ficheiros selecionados para serem copiados com o comando Colar"
+"Preparar os ficheiros selecionados para serem copiados com o comando Colar"
 
 #: ../thunar/thunar-standard-view.c:4435
 msgid "Move the selected file to the Trash"
@@ -2822,7 +2822,7 @@ msgstr "Alterna a visibilidade do painel em árvore"
 
 #: ../thunar/thunar-window.c:388
 msgid "St_atusbar"
-msgstr "Barra de est_ado"
+msgstr "Barra de _estado"
 
 #: ../thunar/thunar-window.c:388
 msgid "Change the visibility of this window's statusbar"
@@ -2904,9 +2904,9 @@ msgid ""
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr ""
-"Se cria certos tipos de documentos com frequência, faça uma cópia de cada um deles e coloque-a nesta pasta. O Thunar irá criar uma entrada para este documento no menu \"Criar documento\".\n"
+"Se cria certos tipos de documentos com frequência, faça uma cópia de um deles e coloque-a nesta pasta. O Thunar irá criar uma entrada para este documento no menu \"Criar documento\".\n"
 "\n"
-"Pode então selecionar a entrada do menu \"Criar documento\" e uma cópia do documento será criada na pasta que está a visualizar."
+"Pode então selecionar a entrada do menu \"Criar documento\" e uma cópia do documento será criada na pasta que estiver a visualizar."
 
 #: ../thunar/thunar-window.c:3063
 msgid "Do _not display this message again"
@@ -2932,8 +2932,8 @@ msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr ""
-"O Thunar é um gestor de ficheiros rápido e\n"
-"fácil de usar para o ambiente de trabalho Xfce."
+"O Thunar é um gestor de ficheiros para o ambiente de trabalho Xfce, rápido e\n"
+"fácil de usar."
 
 #. set window title
 #: ../thunar/thunar-window.c:3301 ../Thunar.desktop.in.in.h:3
@@ -3351,9 +3351,9 @@ msgid ""
 "directly, as is, or compress the file before attaching it to an email. It is"
 " highly recommended to compress large files before sending them."
 msgstr ""
-"Ao enviar um ficheiro por correio, pode escolher entre enviar diretamente ou"
-" compactar antes de o anexar à mensagem. Se o ficheiro a enviar for muito "
-"grande, deve-o compactar."
+"Ao enviar um ficheiro por correio, pode optar entre anexá-lo diretamente à "
+"mensagem ou comprimí-lo antes de o anexar. É altamente recomendado enviar os"
+" ficheiros grandes em formato comprimido."
 
 #: ../plugins/thunar-sendto-email/main.c:213
 #, c-format
@@ -3373,10 +3373,10 @@ msgid ""
 "compressed into a single archive file and attach the archive. It is highly "
 "recommended to send multiple large files as archive."
 msgstr ""
-"Ao enviar vários ficheiros por correio, pode escolher entre enviar "
+"Ao enviar vários ficheiros por correio, pode optar entre enviá-los "
 "diretamente, anexando vários ficheiros à mensagem ou enviar todos os "
-"ficheiros compactados num único arquivo. Se os ficheiros a enviar forem "
-"muito grandes, devem ser compactados."
+"ficheiros comprimidos num único ficheiro de arquivo. É altamente recomendado"
+" enviar múltiplos ficheiros grandes como arquivo."
 
 #. allocate the progress dialog
 #. setup the label
@@ -3574,7 +3574,7 @@ msgid ""
 "Click this button to select an icon file that will be displayed in the "
 "context menu in addition to the action name chosen above."
 msgstr ""
-"Clique neste botão para selecionar um ícone que será mostrado no menu de "
+"Clicar neste botão para selecionar um ícone que será mostrado no menu de "
 "contexto para além do nome da ação escolhido acima."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:251
