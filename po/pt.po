@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-08-20 18:30+0200\n"
-"PO-Revision-Date: 2018-08-22 17:09+0000\n"
+"PO-Revision-Date: 2018-08-23 15:47+0000\n"
 "Last-Translator: José Vieira <jvieira33@sapo.pt>\n"
 "Language-Team: Portuguese (http://www.transifex.com/xfce/thunar/language/pt/)\n"
 "MIME-Version: 1.0\n"
@@ -1196,7 +1196,7 @@ msgstr "_Abrir com as aplicações pré-definidas"
 #: ../thunar/thunar-launcher.c:963
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
-msgstr[0] "Abrir o ficheiro selecionado com a aplicação por omissão"
+msgstr[0] "Abrir o ficheiro selecionado com a aplicação pré-definida"
 msgstr[1] "Abrir os ficheiros selecionados com as aplicações pré-definidas"
 
 #: ../thunar/thunar-launcher.c:1021
@@ -1233,20 +1233,20 @@ msgstr[1] "Enviar os ficheiros selecionados para \"%s\""
 #, c-format
 msgid "%d file: %s"
 msgid_plural "%d files: %s"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "ficheiro %d: %s"
+msgstr[1] "ficheiros %d: %s"
 
 #: ../thunar/thunar-list-model.c:2364
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "pasta %d"
+msgstr[1] "pastas %d"
 
 #: ../thunar/thunar-list-model.c:2370
 #, c-format
 msgid "0 items"
-msgstr ""
+msgstr "0 itens"
 
 #. This is marked for translation in case a localizer
 #. * needs to change ", " to something else. The comma
@@ -1261,7 +1261,7 @@ msgstr "%s, %s"
 #: ../thunar/thunar-list-model.c:2461
 #, c-format
 msgid "%s, Free space: %s"
-msgstr ""
+msgstr "%s, Espaço livre: %s"
 
 #: ../thunar/thunar-list-model.c:2486
 #, c-format
@@ -1314,7 +1314,7 @@ msgstr "Tamanho da imagem:"
 #: ../thunar/thunar-list-model.c:2568
 #, c-format
 msgid "Selection: %s"
-msgstr ""
+msgstr "Selecção: %s"
 
 #: ../thunar/thunar-location-buttons.c:185
 #: ../thunar/thunar-shortcuts-view.c:1113
@@ -1692,52 +1692,52 @@ msgstr "Tamanho dos í_cones:"
 #: ../thunar/thunar-preferences-dialog.c:451
 #: ../thunar/thunar-preferences-dialog.c:498
 msgid "16px"
-msgstr ""
+msgstr "16px"
 
 #: ../thunar/thunar-preferences-dialog.c:452
 #: ../thunar/thunar-preferences-dialog.c:499
 msgid "24px"
-msgstr ""
+msgstr "24px"
 
 #: ../thunar/thunar-preferences-dialog.c:453
 #: ../thunar/thunar-preferences-dialog.c:500
 msgid "32px"
-msgstr ""
+msgstr "32px"
 
 #: ../thunar/thunar-preferences-dialog.c:454
 #: ../thunar/thunar-preferences-dialog.c:501
 msgid "48px"
-msgstr ""
+msgstr "48px"
 
 #: ../thunar/thunar-preferences-dialog.c:455
 #: ../thunar/thunar-preferences-dialog.c:502
 msgid "64px"
-msgstr ""
+msgstr "64px"
 
 #: ../thunar/thunar-preferences-dialog.c:456
 #: ../thunar/thunar-preferences-dialog.c:503
 msgid "96px"
-msgstr ""
+msgstr "96px"
 
 #: ../thunar/thunar-preferences-dialog.c:457
 #: ../thunar/thunar-preferences-dialog.c:504
 msgid "128px"
-msgstr ""
+msgstr "128px"
 
 #: ../thunar/thunar-preferences-dialog.c:458
 #: ../thunar/thunar-preferences-dialog.c:505
 msgid "160px"
-msgstr ""
+msgstr "160px"
 
 #: ../thunar/thunar-preferences-dialog.c:459
 #: ../thunar/thunar-preferences-dialog.c:506
 msgid "192px"
-msgstr ""
+msgstr "192px"
 
 #: ../thunar/thunar-preferences-dialog.c:460
 #: ../thunar/thunar-preferences-dialog.c:507
 msgid "256px"
-msgstr ""
+msgstr "256px"
 
 #: ../thunar/thunar-preferences-dialog.c:469
 msgid "Show Icon _Emblems"
@@ -1814,26 +1814,26 @@ msgstr "_Dois cliques para ativar itens"
 
 #: ../thunar/thunar-preferences-dialog.c:626
 msgid "Tabs instead of new Windows"
-msgstr ""
+msgstr "Separadores em vez de novas janelas"
 
 #: ../thunar/thunar-preferences-dialog.c:638
 msgid "Open folders in new tabs on middle click"
-msgstr ""
+msgstr "Abrir pastas em novos separadores clicando com o botão do meio"
 
 #: ../thunar/thunar-preferences-dialog.c:640
 msgid ""
 "Select this option to open a new tab on middle click instead of a new window"
-msgstr ""
+msgstr "Seleccionar esta opção para abrir um novo separador com o botão do meio, em vez de uma nova janela"
 
 #: ../thunar/thunar-preferences-dialog.c:644
 msgid "Open new thunar instances as tabs"
-msgstr ""
+msgstr "Abrir novas visualizações do Thunar como separadores"
 
 #: ../thunar/thunar-preferences-dialog.c:646
 msgid ""
 "Select this option to open new thunar instances as tabs in an existing "
 "thunar window"
-msgstr ""
+msgstr "Seleccionar esta opção para abrir em novos separadores numa janela já aberta"
 
 #. Advanced
 #: ../thunar/thunar-preferences-dialog.c:653
@@ -2264,7 +2264,7 @@ msgstr[1] "%u itens, totalizando %s"
 #. * directories were not accessible
 #: ../thunar/thunar-size-label.c:419
 msgid "(some contents unreadable)"
-msgstr "(algum conteúdo não foi lido)"
+msgstr "(algum conteúdo ilegível)"
 
 #. nothing was readable, so permission was denied
 #: ../thunar/thunar-size-label.c:430
@@ -2327,7 +2327,7 @@ msgstr "_Inverter seleção"
 
 #: ../thunar/thunar-standard-view.c:416
 msgid "Select all and only the items that are not currently selected"
-msgstr "Selecionar todos os itens que não estão selecionados,  e apenas esses"
+msgstr "Selecionar todos os itens que não estão selecionados, e apenas esses"
 
 #: ../thunar/thunar-standard-view.c:417
 msgid "Du_plicate"
@@ -2372,7 +2372,7 @@ msgstr "Novo ficheiro vazio..."
 
 #: ../thunar/thunar-standard-view.c:2691
 msgid "Select by Pattern"
-msgstr "Selecionar por padrão"
+msgstr "Selecionar por Padrão"
 
 #: ../thunar/thunar-standard-view.c:2696
 msgid "_Select"
