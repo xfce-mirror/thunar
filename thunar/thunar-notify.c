@@ -238,7 +238,10 @@ thunar_notify_finish (ThunarDevice *device)
   notification = g_object_get_data (G_OBJECT (device), I_("thunar-notification"));
   if (notification != NULL)
     {
-      notify_notification_close (notification, NULL);
+      notify_notification_set_urgency (notification, NOTIFY_URGENCY_NORMAL);
+      notify_notification_set_timeout (notification, 2000);
+      notify_notification_show (notification, NULL);
+
       g_object_set_data (G_OBJECT (device), I_("thunar-notification"), NULL);
     }
 #endif
