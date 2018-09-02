@@ -264,7 +264,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   label = gtk_label_new (_("General"));
   gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
   gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
-  gtk_container_set_border_width (GTK_CONTAINER (grid), 6);
+  gtk_container_set_border_width (GTK_CONTAINER (grid), 12);
   gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), grid, label);
   gtk_widget_show (label);
   gtk_widget_show (grid);
