@@ -111,7 +111,7 @@ thunar_progress_dialog_init (ThunarProgressDialog *dialog)
   gtk_widget_show (dialog->vbox);
 
   dialog->content_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
-  gtk_container_set_border_width (GTK_CONTAINER (dialog->content_box), 8);
+  gtk_container_set_border_width (GTK_CONTAINER (dialog->content_box), 12);
   gtk_container_add (GTK_CONTAINER (dialog->vbox), dialog->content_box);
   gtk_widget_show (dialog->content_box);
 }
@@ -157,7 +157,7 @@ thunar_progress_dialog_shown (ThunarProgressDialog *dialog)
   if (dialog->status_icon == NULL)
     {
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      dialog->status_icon = gtk_status_icon_new_from_icon_name ("stock_folder-copy");
+      dialog->status_icon = gtk_status_icon_new_from_icon_name ("edit-copy");
 G_GNUC_END_IGNORE_DEPRECATIONS
 
       thunar_progress_dialog_update_status_icon (dialog);

@@ -1885,7 +1885,7 @@ thunar_application_copy_to (ThunarApplication *application,
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
   /* launch the operation */
-  thunar_application_launch (application, parent, "stock_folder-copy",
+  thunar_application_launch (application, parent, "edit-copy",
                              _("Copying files..."), thunar_io_jobs_copy_files,
                              source_file_list, target_file_list, new_files_closure);
 }
@@ -1926,7 +1926,7 @@ thunar_application_copy_into (ThunarApplication *application,
    g_free (display_name);
 
   /* collect the target files and launch the job */
-  thunar_application_collect_and_launch (application, parent, "stock_folder-copy",
+  thunar_application_collect_and_launch (application, parent, "edit-copy",
                                          title, thunar_io_jobs_copy_files,
                                          source_file_list, target_file,
                                          new_files_closure);
