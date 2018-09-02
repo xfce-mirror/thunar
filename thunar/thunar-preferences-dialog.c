@@ -263,7 +263,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
      Display
    */
   label = gtk_label_new (_("Display"));
-  vbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "border-width", 12, "spacing", 12, NULL);
+  vbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "border-width", 12, "spacing", 18, NULL);
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox, label);
   gtk_widget_show (label);
   gtk_widget_show (vbox);
@@ -280,7 +280,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   grid = gtk_grid_new ();
   gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
   gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
-  gtk_container_set_border_width (GTK_CONTAINER (grid), 12);
+  gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
+  gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
   gtk_container_add (GTK_CONTAINER (frame), grid);
   gtk_widget_show (grid);
 
@@ -345,7 +346,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   grid = gtk_grid_new ();
   gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
   gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
-  gtk_container_set_border_width (GTK_CONTAINER (grid), 12);
+  gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
+  gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
   gtk_container_add (GTK_CONTAINER (frame), grid);
   gtk_widget_show (grid);
 
@@ -369,7 +371,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   grid = gtk_grid_new ();
   gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
   gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
-  gtk_container_set_border_width (GTK_CONTAINER (grid), 12);
+  gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
+  gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
   gtk_container_add (GTK_CONTAINER (frame), grid);
   gtk_widget_show (grid);
 
@@ -415,7 +418,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
      Side Pane
    */
   label = gtk_label_new (_("Side Pane"));
-  vbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "border-width", 12, "spacing", 12, NULL);
+  vbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "border-width", 12, "spacing", 18, NULL);
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox, label);
   gtk_widget_show (label);
   gtk_widget_show (vbox);
@@ -432,7 +435,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   grid = gtk_grid_new ();
   gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
   gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
-  gtk_container_set_border_width (GTK_CONTAINER (grid), 12);
+  gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
+  gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
   gtk_container_add (GTK_CONTAINER (frame), grid);
   gtk_widget_show (grid);
 
@@ -479,7 +483,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   grid = gtk_grid_new ();
   gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
   gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
-  gtk_container_set_border_width (GTK_CONTAINER (grid), 12);
+  gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
+  gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
   gtk_container_add (GTK_CONTAINER (frame), grid);
   gtk_widget_show (grid);
 
@@ -519,7 +524,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
      Behavior
    */
   label = gtk_label_new (_("Behavior"));
-  vbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "border-width", 12, "spacing", 12, NULL);
+  vbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "border-width", 12, "spacing", 18, NULL);
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox, label);
   gtk_widget_show (label);
   gtk_widget_show (vbox);
@@ -536,7 +541,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   grid = gtk_grid_new ();
   gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
   gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
-  gtk_container_set_border_width (GTK_CONTAINER (grid), 12);
+  gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
+  gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
   gtk_container_add (GTK_CONTAINER (frame), grid);
   gtk_widget_show (grid);
 
@@ -549,8 +555,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   ibox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_hexpand (ibox, TRUE);
+  gtk_widget_set_margin_start (ibox, 12);
   gtk_widget_set_margin_bottom (ibox, 6);
-  gtk_widget_set_margin_start (ibox, 18);
   exo_binding_new (G_OBJECT (button), "active", G_OBJECT (ibox), "sensitive");
   gtk_widget_set_hexpand (ibox, TRUE);
   gtk_grid_attach (GTK_GRID (grid), ibox, 0, 1, 1, 1);
@@ -623,8 +629,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   grid = gtk_grid_new ();
   gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
-  gtk_grid_set_row_spacing (GTK_GRID (grid), 2);
-  gtk_container_set_border_width (GTK_CONTAINER (grid), 12);
+  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
+  gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
+  gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
   gtk_container_add (GTK_CONTAINER (frame), grid);
   gtk_widget_show (grid);
 
@@ -644,7 +651,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
      Advanced
    */
   label = gtk_label_new (_("Advanced"));
-  vbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "border-width", 12, "spacing", 12, NULL);
+  vbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "border-width", 12, "spacing", 18, NULL);
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox, label);
   gtk_widget_show (label);
   gtk_widget_show (vbox);
@@ -661,7 +668,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   grid = gtk_grid_new ();
   gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
   gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
-  gtk_container_set_border_width (GTK_CONTAINER (grid), 12);
+  gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
+  gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
   gtk_container_add (GTK_CONTAINER (frame), grid);
   gtk_widget_show (grid);
 
@@ -695,7 +703,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   grid = gtk_grid_new ();
   gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
   gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
-  gtk_container_set_border_width (GTK_CONTAINER (grid), 12);
+  gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
+  gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
   gtk_container_add (GTK_CONTAINER (frame), grid);
   gtk_widget_show (grid);
 
