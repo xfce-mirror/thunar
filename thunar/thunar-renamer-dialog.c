@@ -316,11 +316,11 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   GtkWidget              *frame;
   GtkWidget              *image;
   GtkWidget              *label;
-  GtkWidget              *hbox;
   GtkWidget              *mbox;
   GtkWidget              *rbox;
   GtkWidget              *vbox;
   GtkWidget              *swin;
+  GtkWidget              *infobar;
   XfceRc                 *rc;
   gchar                 **entries;
   GList                  *providers;
@@ -598,13 +598,13 @@ G_GNUC_END_IGNORE_DEPRECATIONS
       gtk_widget_set_sensitive (swin, FALSE);
 
       /* display an error to the user */
-      hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
-      gtk_container_set_border_width (GTK_CONTAINER (hbox), 12);
-      gtk_container_add (GTK_CONTAINER (frame), hbox);
-      gtk_widget_show (hbox);
+      infobar = gtk_info_bar_new ();
+      gtk_info_bar_set_message_type (GTK_INFO_BAR (infobar), GTK_MESSAGE_ERROR);
+      gtk_container_add (GTK_CONTAINER (frame), infobar);
+      gtk_widget_show (infobar);
 
       image = gtk_image_new_from_icon_name ("dialog-error", GTK_ICON_SIZE_DIALOG);
-      gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
+      gtk_container_add (GTK_CONTAINER (gtk_info_bar_get_content_area (GTK_INFO_BAR (infobar))), image);
       gtk_widget_show (image);
 
       /* TRANSLATORS: You can test this string by temporarily removing thunar-sbr.* from $libdir/thunarx-2/,
@@ -615,7 +615,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
                                "from source, be sure to enable the \"Simple Builtin Renamers\" plugin."));
       gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
       gtk_label_set_selectable (GTK_LABEL (label), TRUE);
-      gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
+      gtk_container_add (GTK_CONTAINER (gtk_info_bar_get_content_area (GTK_INFO_BAR (infobar))), label);
       gtk_widget_show (label);
     }
 
