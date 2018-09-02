@@ -217,6 +217,7 @@ thunar_sbr_date_renamer_init (ThunarSbrDateRenamer *date_renamer)
 
   entry = gtk_entry_new ();
   exo_mutual_binding_new (G_OBJECT (entry), "text", G_OBJECT (date_renamer), "format");
+  gtk_widget_set_hexpand (GTK_WIDGET (entry), TRUE);
   gtk_grid_attach (GTK_GRID (grid), entry, 3, 0, 1, 1);
   gtk_widget_set_tooltip_text (entry,
                                _("The format describes the date and time parts to insert "
