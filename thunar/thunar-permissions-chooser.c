@@ -215,7 +215,6 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   chooser->grid = gtk_grid_new ();
   gtk_grid_set_column_spacing (GTK_GRID (chooser->grid), 12);
   gtk_grid_set_row_spacing (GTK_GRID (chooser->grid), 6);
-  gtk_container_set_border_width (GTK_CONTAINER (chooser->grid), 10);
   gtk_box_pack_start (GTK_BOX (chooser), chooser->grid, TRUE, TRUE, 0);
   gtk_widget_show (chooser->grid);
 
