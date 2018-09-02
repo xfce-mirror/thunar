@@ -177,23 +177,21 @@ thunar_sbr_date_renamer_init (ThunarSbrDateRenamer *date_renamer)
   AtkRelationSet *relations;
   AtkRelation    *relation;
   AtkObject      *object;
-  GtkWidget      *vbox, *hbox;
+  GtkWidget      *grid, *hbox;
   GtkWidget      *label, *combo;
   GtkWidget      *spinner;
   GtkWidget      *entry;
   GtkAdjustment  *adjustment;
   guint           n;
 
-  vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
-  gtk_box_pack_start (GTK_BOX (date_renamer), vbox, TRUE, TRUE, 0);
-  gtk_widget_show (vbox);
-
-  hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
-  gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
-  gtk_widget_show (hbox);
+  grid = gtk_grid_new ();
+  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
+  gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
+  gtk_box_pack_start (GTK_BOX (date_renamer), grid, TRUE, TRUE, 0);
+  gtk_widget_show (grid);
 
   label = gtk_label_new_with_mnemonic (_("Insert _time:"));
-  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
   gtk_widget_show (label);
 
   combo = gtk_combo_box_text_new ();
@@ -201,7 +199,7 @@ thunar_sbr_date_renamer_init (ThunarSbrDateRenamer *date_renamer)
   for (n = 0; n < klass->n_values; ++n)
     gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(klass->values[n].value_nick));
   exo_mutual_binding_new (G_OBJECT (date_renamer), "mode", G_OBJECT (combo), "active");
-  gtk_box_pack_start (GTK_BOX (hbox), combo, FALSE, FALSE, 0);
+  gtk_grid_attach (GTK_GRID (grid), combo, 1, 0, 1, 1);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   g_type_class_unref (klass);
   gtk_widget_show (combo);
@@ -214,12 +212,12 @@ thunar_sbr_date_renamer_init (ThunarSbrDateRenamer *date_renamer)
   g_object_unref (G_OBJECT (relation));
 
   label = gtk_label_new_with_mnemonic (_("_Format:"));
-  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+  gtk_grid_attach (GTK_GRID (grid), label, 2, 0, 1, 1);
   gtk_widget_show (label);
 
   entry = gtk_entry_new ();
   exo_mutual_binding_new (G_OBJECT (entry), "text", G_OBJECT (date_renamer), "format");
-  gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 0);
+  gtk_grid_attach (GTK_GRID (grid), entry, 3, 0, 1, 1);
   gtk_widget_set_tooltip_text (entry,
                                _("The format describes the date and time parts to insert "
                                 "into the file name. For example, %Y will be substituted "
@@ -236,13 +234,13 @@ thunar_sbr_date_renamer_init (ThunarSbrDateRenamer *date_renamer)
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
 
-  hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
-  gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
-  gtk_widget_show (hbox);
-
   label = gtk_label_new_with_mnemonic (_("_At position:"));
-  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, 1, 1, 1);
   gtk_widget_show (label);
+
+  hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
+  gtk_grid_attach (GTK_GRID (grid), hbox, 1, 1, 3, 1);
+  gtk_widget_show (hbox);
 
   spinner = gtk_spin_button_new_with_range (0u, G_MAXUINT, 1u);
   gtk_entry_set_width_chars (GTK_ENTRY (spinner), 4);
