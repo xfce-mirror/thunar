@@ -154,7 +154,6 @@ thunar_uca_editor_constructed (GObject *object)
 
   /* Visual tweaks for header-bar mode only */
   g_object_set (gtk_dialog_get_content_area (GTK_DIALOG (editor)), "border-width", 0, NULL);
-  g_object_set (editor->notebook, "show-border", FALSE, NULL);
 }
 
 

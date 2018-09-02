@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.22.1 -->
 <!--
     For now, better don't edit this with glade, since glade insists upon inserting
     deprecated properties and otherwise messing with the file.
@@ -13,22 +14,34 @@
     <property name="default_height">450</property>
     <property name="destroy_with_parent">True</property>
     <property name="type_hint">dialog</property>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="vbox">
+        <property name="can_focus">False</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
         <child>
           <object class="GtkNotebook" id="notebook">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="border_width">6</property>
             <child>
               <object class="GtkGrid" id="grid1">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_start">12</property>
-                <property name="margin_end">12</property>
-                <property name="margin_top">12</property>
-                <property name="margin_bottom">12</property>
-                <property name="row_spacing">12</property>
-                <property name="column_spacing">6</property>
+                <property name="border_width">12</property>
+                <property name="row_spacing">6</property>
+                <property name="column_spacing">12</property>
                 <child>
                   <object class="GtkLabel" id="name_label">
                     <property name="visible">True</property>
@@ -175,6 +188,7 @@
                       <object class="GtkButton" id="shortcut_button">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
                         <property name="tooltip_text" translatable="yes">The keyboard shortcut for the action.</property>
                         <property name="hexpand">True</property>
                         <signal name="clicked" handler="thunar_uca_editor_shortcut_clicked" swapped="yes"/>
@@ -266,6 +280,7 @@
                   <object class="GtkBox" id="box3">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="vexpand">True</property>
                     <child>
                       <placeholder/>
                     </child>
@@ -283,15 +298,16 @@
                   <object class="GtkGrid" id="grid2">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="valign">start</property>
                     <property name="row_spacing">3</property>
                     <property name="column_spacing">6</property>
-                    <property name="valign">start</property>
                     <child>
                       <object class="GtkImage" id="image3">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="pixel_size">32</property>
                         <property name="icon_name">dialog-information</property>
-                        <property name="icon_size">6</property>
+                        <property name="icon_size">5</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -414,7 +430,6 @@
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">the path to the first selected file</property>
                         <property name="xalign">0</property>
-                        <property name="expand">true</property>
                         <attributes>
                           <attribute name="scale" value="0.8"/>
                         </attributes>
@@ -499,6 +514,24 @@
                         <property name="top_attach">6</property>
                       </packing>
                     </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
@@ -525,10 +558,7 @@
               <object class="GtkGrid" id="grid3">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_start">12</property>
-                <property name="margin_end">12</property>
-                <property name="margin_top">12</property>
-                <property name="margin_bottom">12</property>
+                <property name="border_width">12</property>
                 <property name="row_spacing">6</property>
                 <property name="column_spacing">12</property>
                 <child>
@@ -580,7 +610,8 @@
                   <object class="GtkGrid" id="grid4">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="margin_start">18</property>
+                    <property name="margin_start">12</property>
+                    <property name="row_spacing">6</property>
                     <property name="column_spacing">48</property>
                     <child>
                       <object class="GtkCheckButton" id="directories_button">
@@ -679,15 +710,16 @@
                   <object class="GtkBox" id="box4">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="margin_top">12</property>
                     <child>
                       <object class="GtkImage" id="image4">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">start</property>
                         <property name="valign">start</property>
+                        <property name="margin_right">6</property>
+                        <property name="pixel_size">32</property>
                         <property name="icon_name">dialog-information</property>
-                        <property name="icon_size">6</property>
+                        <property name="icon_size">5</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -709,6 +741,24 @@
                         <property name="fill">True</property>
                         <property name="position">1</property>
                       </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">4</property>
+                    <property name="width">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="box5">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="vexpand">True</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
                     </child>
                   </object>
                   <packing>
