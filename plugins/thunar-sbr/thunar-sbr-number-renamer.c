@@ -174,15 +174,17 @@ thunar_sbr_number_renamer_init (ThunarSbrNumberRenamer *number_renamer)
   GtkWidget      *combo;
   GtkWidget      *entry;
   GtkWidget      *label;
-  GtkWidget      *hbox;
+  GtkWidget      *grid;
   guint           n;
 
-  hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
-  gtk_box_pack_start (GTK_BOX (number_renamer), hbox, FALSE, FALSE, 0);
-  gtk_widget_show (hbox);
+  grid = gtk_grid_new ();
+  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
+  gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
+  gtk_box_pack_start (GTK_BOX (number_renamer), grid, FALSE, FALSE, 0);
+  gtk_widget_show (grid);
 
   label = gtk_label_new_with_mnemonic (_("_Number Format:"));
-  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
   gtk_widget_show (label);
 
   combo = gtk_combo_box_text_new ();
@@ -190,7 +192,7 @@ thunar_sbr_number_renamer_init (ThunarSbrNumberRenamer *number_renamer)
   for (n = 0; n < klass->n_values; ++n)
     gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(klass->values[n].value_nick));
   exo_mutual_binding_new (G_OBJECT (number_renamer), "mode", G_OBJECT (combo), "active");
-  gtk_box_pack_start (GTK_BOX (hbox), combo, FALSE, FALSE, 0);
+  gtk_grid_attach (GTK_GRID (grid), combo, 1, 0, 1, 1);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   g_type_class_unref (klass);
   gtk_widget_show (combo);
@@ -207,12 +209,13 @@ thunar_sbr_number_renamer_init (ThunarSbrNumberRenamer *number_renamer)
   gtk_entry_set_width_chars (GTK_ENTRY (number_renamer->start_entry), 3);
   gtk_entry_set_alignment (GTK_ENTRY (number_renamer->start_entry), 1.0f);
   gtk_entry_set_activates_default (GTK_ENTRY (number_renamer->start_entry), TRUE);
+  gtk_widget_set_hexpand (GTK_WIDGET (number_renamer->start_entry), TRUE);
   exo_mutual_binding_new (G_OBJECT (number_renamer->start_entry), "text", G_OBJECT (number_renamer), "start");
-  gtk_box_pack_end (GTK_BOX (hbox), number_renamer->start_entry, TRUE, TRUE, 0);
+  gtk_grid_attach (GTK_GRID (grid), number_renamer->start_entry, 3, 0, 1, 1);
   gtk_widget_show (number_renamer->start_entry);
 
   label = gtk_label_new_with_mnemonic (_("_Start With:"));
-  gtk_box_pack_end (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+  gtk_grid_attach (GTK_GRID (grid), label, 2, 0, 1, 1);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), number_renamer->start_entry);
   gtk_widget_show (label);
 
@@ -223,12 +226,8 @@ thunar_sbr_number_renamer_init (ThunarSbrNumberRenamer *number_renamer)
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
 
-  hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 12);
-  gtk_box_pack_end (GTK_BOX (number_renamer), hbox, FALSE, FALSE, 0);
-  gtk_widget_show (hbox);
-
   label = gtk_label_new_with_mnemonic (_("Text _Format:"));
-  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, 1, 1, 1);
   gtk_widget_show (label);
 
   combo = gtk_combo_box_text_new ();
@@ -236,7 +235,7 @@ thunar_sbr_number_renamer_init (ThunarSbrNumberRenamer *number_renamer)
   for (n = 0; n < klass->n_values; ++n)
     gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(klass->values[n].value_nick));
   exo_mutual_binding_new (G_OBJECT (number_renamer), "text-mode", G_OBJECT (combo), "active");
-  gtk_box_pack_start (GTK_BOX (hbox), combo, FALSE, FALSE, 0);
+  gtk_grid_attach (GTK_GRID (grid), combo, 1, 1, 1, 1);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   g_type_class_unref (klass);
   gtk_widget_show (combo);
@@ -252,12 +251,12 @@ thunar_sbr_number_renamer_init (ThunarSbrNumberRenamer *number_renamer)
   gtk_entry_set_width_chars (GTK_ENTRY (entry), 4);
   gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
   exo_mutual_binding_new (G_OBJECT (entry), "text", G_OBJECT (number_renamer), "text");
-  gtk_box_pack_end (GTK_BOX (hbox), entry, TRUE, TRUE, 0);
+  gtk_grid_attach (GTK_GRID (grid), entry, 3, 1, 1, 1);
   gtk_widget_show (entry);
 
   label = gtk_label_new_with_mnemonic (_("_Text:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
-  gtk_box_pack_end (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+  gtk_grid_attach (GTK_GRID (grid), label, 2, 1, 1, 1);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), entry);
   gtk_widget_show (label);
 
