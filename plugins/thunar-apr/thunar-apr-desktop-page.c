@@ -269,7 +269,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   g_object_unref (G_OBJECT (relation));
 
   /* add spacing between the entries and the options */
-  spacer = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "height-request", 24, NULL);
+  spacer = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "height-request", 12, NULL);
   gtk_grid_attach (GTK_GRID (grid), spacer, 0, 6, 2, 1);
   gtk_widget_show (spacer);
 
