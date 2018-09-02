@@ -189,7 +189,8 @@ thunar_progress_view_init (ThunarProgressView *view)
   gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
   gtk_widget_show (hbox);
 
-  image = g_object_new (GTK_TYPE_IMAGE, "icon-size", GTK_ICON_SIZE_BUTTON, NULL);
+  image = g_object_new (GTK_TYPE_IMAGE, "icon-size", GTK_ICON_SIZE_DND, NULL);
+  gtk_image_set_pixel_size (GTK_IMAGE(image), 32);
   gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, TRUE, 0);
   exo_binding_new (G_OBJECT (view), "icon-name", G_OBJECT (image), "icon-name");
   gtk_widget_show (image);
