@@ -236,6 +236,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   GtkWidget      *hbox;
   GtkWidget      *ibox;
   GtkWidget      *vbox;
+  GtkWidget      *infobar;
   gchar          *path;
   gchar          *date;
 
@@ -754,6 +755,35 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_set_hexpand (label, TRUE);
   gtk_grid_attach (GTK_GRID (grid), label, 0, 1, 1, 1);
   gtk_widget_show (label);
+
+  /* check the most important gvfs-backends, and inform if they are missing */
+  if (!thunar_g_vfs_is_uri_scheme_supported ("trash")    ||
+      !thunar_g_vfs_is_uri_scheme_supported ("computer") || /* support for removable media */
+      !thunar_g_vfs_is_uri_scheme_supported ("sftp") )
+    {
+      frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
+      gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
+      gtk_widget_show (frame);
+
+      label = gtk_label_new (_("Missing dependencies"));
+      gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+      gtk_frame_set_label_widget (GTK_FRAME (frame), label);
+      gtk_widget_show (label);
+
+      infobar = gtk_info_bar_new ();
+      gtk_container_set_border_width (GTK_CONTAINER (infobar), 12);
+      label = gtk_label_new (NULL);
+      gtk_label_set_markup (GTK_LABEL (label), _("It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
+                                                 "Important features including trash support,\n"
+                                                 "removable media and remote location browsing\n"
+                                                 "will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"));
+      vbox = gtk_info_bar_get_content_area (GTK_INFO_BAR (infobar));
+      gtk_container_add (GTK_CONTAINER (vbox), label);
+      gtk_info_bar_set_message_type (GTK_INFO_BAR (infobar), GTK_MESSAGE_WARNING);
+      gtk_widget_show (label);
+      gtk_widget_show (infobar);
+      gtk_container_add (GTK_CONTAINER (frame), infobar);
+    }
 
   /* cleanup */
   g_free (path);
