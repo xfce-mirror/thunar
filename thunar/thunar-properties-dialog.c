@@ -195,7 +195,7 @@ thunar_properties_dialog_class_init (ThunarPropertiesDialogClass *klass)
                                    g_param_spec_boolean ("file-size-binary",
                                                          "FileSizeBinary",
                                                          NULL,
-                                                         FALSE,
+                                                         TRUE,
                                                          EXO_PARAM_READWRITE));
 
   /**

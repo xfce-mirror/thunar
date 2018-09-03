@@ -239,7 +239,7 @@ thunar_shortcuts_model_class_init (ThunarShortcutsModelClass *klass)
                                    g_param_spec_boolean ("file-size-binary",
                                                          "FileSizeBinary",
                                                          NULL,
-                                                         FALSE,
+                                                         TRUE,
                                                          EXO_PARAM_READWRITE));
 }
 
