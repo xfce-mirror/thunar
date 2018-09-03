@@ -135,7 +135,7 @@ thunar_transfer_job_class_init (ThunarTransferJobClass *klass)
                                    g_param_spec_boolean ("file-size-binary",
                                                          "FileSizeBinary",
                                                          NULL,
-                                                         FALSE,
+                                                         TRUE,
                                                          EXO_PARAM_READWRITE));
 }
 

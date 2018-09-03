@@ -135,7 +135,7 @@ thunar_size_label_class_init (ThunarSizeLabelClass *klass)
                                    g_param_spec_boolean ("file-size-binary",
                                                          "FileSizeBinary",
                                                          NULL,
-                                                         FALSE,
+                                                         TRUE,
                                                          EXO_PARAM_READWRITE));
 }
 

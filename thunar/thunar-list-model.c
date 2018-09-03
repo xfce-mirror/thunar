@@ -360,7 +360,7 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
       g_param_spec_boolean ("file-size-binary",
                             "file-size-binary",
                             "file-size-binary",
-                            FALSE,
+                            TRUE,
                             EXO_PARAM_READWRITE);
 
   /* install properties */

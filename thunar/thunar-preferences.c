@@ -744,7 +744,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
       g_param_spec_boolean ("misc-file-size-binary",
                             "MiscFileSizeBinary",
                             NULL,
-                            FALSE,
+                            TRUE,
                             EXO_PARAM_READWRITE);
 
   /**
