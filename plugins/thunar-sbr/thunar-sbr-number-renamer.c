@@ -205,7 +205,7 @@ thunar_sbr_number_renamer_init (ThunarSbrNumberRenamer *number_renamer)
   g_object_unref (G_OBJECT (relation));
 
   number_renamer->start_entry = gtk_entry_new ();
-  gtk_entry_set_max_length (GTK_ENTRY (number_renamer->start_entry), 4);
+  gtk_entry_set_max_length (GTK_ENTRY (number_renamer->start_entry), 8);
   gtk_entry_set_width_chars (GTK_ENTRY (number_renamer->start_entry), 3);
   gtk_entry_set_alignment (GTK_ENTRY (number_renamer->start_entry), 1.0f);
   gtk_entry_set_activates_default (GTK_ENTRY (number_renamer->start_entry), TRUE);
@@ -414,6 +414,10 @@ thunar_sbr_number_renamer_process (ThunarxRenamer  *renamer,
 
     case THUNAR_SBR_NUMBER_MODE_000100020003:
       number = g_strdup_printf ("%04u", start + idx);
+      break;
+
+    case THUNAR_SBR_NUMBER_MODE_000010000200003:
+      number = g_strdup_printf ("%05u", start + idx);
       break;
 
     case THUNAR_SBR_NUMBER_MODE_ABC:
