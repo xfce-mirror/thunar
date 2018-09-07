@@ -106,12 +106,13 @@ thunar_sbr_register_enum_types (ThunarxProviderPlugin *plugin)
 
   static const GEnumValue number_mode_values[] =
   {
-    { THUNAR_SBR_NUMBER_MODE_123,           "THUNAR_SBR_NUMBER_MODE_123",          N_ ("1, 2, 3, ..."),          },
-    { THUNAR_SBR_NUMBER_MODE_010203,        "THUNAR_SBR_NUMBER_MODE_010203",       N_ ("01, 02, 03, ..."),       },
-    { THUNAR_SBR_NUMBER_MODE_001002003,     "THUNAR_SBR_NUMBER_MODE_001002003",    N_ ("001, 002, 003, ..."),    },
-    { THUNAR_SBR_NUMBER_MODE_000100020003,  "THUNAR_SBR_NUMBER_MODE_000100020003", N_ ("0001, 0002, 0003, ..."), },
-    { THUNAR_SBR_NUMBER_MODE_ABC,           "THUNAR_SBR_NUMBER_MODE_ABC",          N_ ("a, b, c, d, ..."),       },
-    { 0,                                    NULL,                                  NULL,                         },
+    { THUNAR_SBR_NUMBER_MODE_123,              "THUNAR_SBR_NUMBER_MODE_123",             N_ ("1, 2, 3, ..."),             },
+    { THUNAR_SBR_NUMBER_MODE_010203,           "THUNAR_SBR_NUMBER_MODE_010203",          N_ ("01, 02, 03, ..."),          },
+    { THUNAR_SBR_NUMBER_MODE_001002003,        "THUNAR_SBR_NUMBER_MODE_001002003",       N_ ("001, 002, 003, ..."),       },
+    { THUNAR_SBR_NUMBER_MODE_000100020003,     "THUNAR_SBR_NUMBER_MODE_000100020003",    N_ ("0001, 0002, 0003, ..."),    },
+    { THUNAR_SBR_NUMBER_MODE_000010000200003,  "THUNAR_SBR_NUMBER_MODE_000010000200003", N_ ("00001, 00002, 00003, ..."), },
+    { THUNAR_SBR_NUMBER_MODE_ABC,              "THUNAR_SBR_NUMBER_MODE_ABC",             N_ ("a, b, c, d, ..."),          },
+    { 0,                                        NULL,                                    NULL,                            },
   };
 
   static const GEnumValue offset_mode_values[] =
