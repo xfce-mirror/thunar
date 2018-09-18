@@ -36,7 +36,7 @@ extension_action_callback (GtkAction *action,
 static GtkAction *
 action_from_menu_item (GObject *item)
 {
-  gchar *name, *label, *tooltip, *icon_name;
+  gchar *name, *label, *tooltip, *icon_str;
   gboolean  sensitive, priority;
   GtkAction *action;
 
@@ -46,7 +46,7 @@ action_from_menu_item (GObject *item)
                 "name", &name,
                 "label", &label,
                 "tooltip", &tooltip,
-                "icon", &icon_name,
+                "icon", &icon_str,
                 "sensitive", &sensitive,
                 "priority", &priority,
                 NULL);
@@ -54,9 +54,15 @@ action_from_menu_item (GObject *item)
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   action = gtk_action_new (name, label, tooltip, NULL);
 
-  if (icon_name != NULL)
+  if (icon_str != NULL)
     {
-      gtk_action_set_icon_name (action, icon_name);
+      GIcon *icon = g_icon_new_for_string (icon_str, NULL);
+
+      if (icon)
+        {
+          gtk_action_set_gicon (action, icon);
+          g_object_unref (icon);
+        }
     }
 
   gtk_action_set_sensitive (action, sensitive);
@@ -71,7 +77,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   g_free (name);
   g_free (label);
   g_free (tooltip);
-  g_free (icon_name);
+  g_free (icon_str);
 
   return action;
 }

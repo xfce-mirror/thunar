@@ -145,7 +145,8 @@ thunarx_menu_item_class_init (ThunarxMenuItemClass *klass)
                                    PROP_ICON,
                                    g_param_spec_string ("icon",
                                                         "Icon",
-                                                        "Name of the icon to display in the menu item",
+                                                        "Textual representation of the icon (as returned "
+                                                        "by g_icon_to_string()) to display in the menu item",
                                                         NULL,
                                                         G_PARAM_READWRITE));
   g_object_class_install_property (gobject_class,
@@ -312,7 +313,9 @@ thunarx_menu_item_finalize (GObject *object)
  * @name: identifier for the menu item
  * @label: user-visible label of the menu item
  * @tooltip: tooltip of the menu item
- * @icon: path or name of the icon to display in the menu item
+ * @icon: textual representation of the icon to display in the menu
+ *        item, as returned by g_icon_to_string(). A path or icon name
+ *        are valid representations too.
  *
  * Creates a new menu item that can be added to the toolbar or to a contextual menu.
  *
