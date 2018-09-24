@@ -167,6 +167,10 @@ static void     thunar_window_action_preferences          (GtkAction            
                                                            ThunarWindow           *window);
 static void     thunar_window_action_reload               (GtkAction              *action,
                                                            ThunarWindow           *window);
+static void     switch_next_tab                           (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     switch_previous_tab                       (GtkAction              *action,
+                                                           ThunarWindow           *window);
 static void     thunar_window_action_pathbar_changed      (GtkToggleAction        *action,
                                                            ThunarWindow           *window);
 static void     thunar_window_action_toolbar_changed      (GtkToggleAction        *action,
@@ -350,6 +354,8 @@ static GtkActionEntry action_entries[] =
   { "sendto-menu", NULL, N_ ("_Send To"), NULL, },
   { "empty-trash", NULL, N_ ("_Empty Trash"), NULL, N_ ("Delete all files and folders in the Trash"), G_CALLBACK (thunar_window_action_empty_trash), },
   { "detach-tab", NULL, N_ ("Detac_h Tab"), NULL, N_ ("Open current folder in a new window"), G_CALLBACK (thunar_window_action_detach_tab), },
+  { "switch-previous-tab", "go-previous", N_ ("_Previous Tab"), "<control>Page_Up", N_ ("Switch to Previous Tab"), G_CALLBACK (switch_previous_tab), },
+  { "switch-next-tab", "go-next", N_ ("_Next Tab"), "<control>Page_Down", N_ ("Switch to Next Tab"), G_CALLBACK (switch_next_tab), },
   { "close-all-windows", NULL, N_ ("Close _All Windows"), "<control><shift>W", N_ ("Close all Thunar windows"), G_CALLBACK (thunar_window_action_close_all_windows), },
   { "close-tab", "window-close", N_ ("C_lose Tab"), "<control>W", N_ ("Close this folder"), G_CALLBACK (thunar_window_action_close_tab), },
   { "close-window", "application-exit", N_ ("_Close Window"), "<control>Q", N_ ("Close this window"), G_CALLBACK (thunar_window_action_close_window), },
@@ -1355,6 +1361,44 @@ thunar_window_tab_change (ThunarWindow *window,
                                  nth == -1 ? 9 : nth);
 
   return TRUE;
+}
+
+
+
+static void
+switch_next_tab (GtkAction    *action,
+                 ThunarWindow *window)
+{
+  gint current_page;
+  gint new_page;
+  gint pages;
+
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  current_page = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook));
+  pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook));
+  new_page = (current_page + 1) % pages;
+
+  gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook), new_page);
+}
+
+
+
+static void
+switch_previous_tab (GtkAction    *action,
+                     ThunarWindow *window)
+{
+  gint current_page;
+  gint new_page;
+  gint pages;
+
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  current_page = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook));
+  pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook));
+  new_page = (current_page - 1) % pages;
+
+  gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook), new_page);
 }
 
 
