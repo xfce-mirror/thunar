@@ -421,10 +421,12 @@ thunar_folder_files_ready (ThunarJob    *job,
 static gboolean
 thunar_folder_content_type_loader_idle (gpointer data)
 {
+  ThunarFolder *folder;
+  GList        *lp;
+
   _thunar_return_val_if_fail (THUNAR_IS_FOLDER (data), FALSE);
 
-  ThunarFolder *folder = THUNAR_FOLDER (data);
-  GList        *lp;
+  folder = THUNAR_FOLDER (data);
 
   /* load another files content type */
   for (lp = folder->content_type_ptr; lp != NULL; lp = lp->next)
