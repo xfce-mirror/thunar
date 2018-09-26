@@ -2020,7 +2020,7 @@ thunar_shortcuts_view_mount (ThunarShortcutsView *view)
           thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (child_model), device, TRUE);
 
           thunar_browser_poke_device (THUNAR_BROWSER (view), device, view,
-                                      thunar_shortcuts_view_poke_device_mount_finish,
+                                      (ThunarBrowserPokeDeviceFunc)thunar_shortcuts_view_poke_device_mount_finish,
                                       NULL);
           g_object_unref (device);
         }
