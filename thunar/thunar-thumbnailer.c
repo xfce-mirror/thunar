@@ -988,9 +988,8 @@ thunar_thumbnailer_idle_func (gpointer user_data)
             {
               _thunar_assert_not_reached ();
             }
+          g_object_unref (file);
         }
-
-      g_object_unref (file);
     }
 
   /* remove the idle struct */
