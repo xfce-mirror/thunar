@@ -1778,44 +1778,6 @@ thunar_tree_model_node_traverse_visible (GNode    *node,
 
 
 /**
- * thunar_tree_model_get_default:
- *
- * Returns the default, shared #ThunarTreeModel instance.
- *
- * The caller is responsible to free the returned instance
- * using g_object_unref() when no longer needed.
- *
- * Return value: a reference to the default #ThunarTreeModel.
- **/
-ThunarTreeModel*
-thunar_tree_model_get_default (void)
-{
-  static ThunarTreeModel *model = NULL;
-  ThunarPreferences      *preferences;
-
-  if (G_LIKELY (model == NULL))
-    {
-      /* allocate the shared model on-demand */
-      model = g_object_new (THUNAR_TYPE_TREE_MODEL, NULL);
-      g_object_add_weak_pointer (G_OBJECT (model), (gpointer) &model);
-
-      /* synchronize the the global "misc-case-sensitive" preference */
-      preferences = thunar_preferences_get ();
-      g_object_set_data_full (G_OBJECT (model), I_("thunar-preferences"), preferences, g_object_unref);
-      exo_binding_new (G_OBJECT (preferences), "misc-case-sensitive", G_OBJECT (model), "case-sensitive");
-    }
-  else
-    {
-      /* take a reference for the caller */
-      g_object_ref (G_OBJECT (model));
-    }
-
-  return model;
-}
-
-
-
-/**
  * thunar_tree_model_get_case_sensitive:
  * @model : a #ThunarTreeModel.
  *
