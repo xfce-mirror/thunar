@@ -59,8 +59,6 @@ typedef enum
 
 GType            thunar_tree_model_get_type           (void) G_GNUC_CONST;
 
-ThunarTreeModel *thunar_tree_model_get_default        (void);
-
 void             thunar_tree_model_set_visible_func   (ThunarTreeModel            *model,
                                                        ThunarTreeModelVisibleFunc  func,
                                                        gpointer                    data);
