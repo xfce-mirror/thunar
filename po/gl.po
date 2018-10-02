@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-08 06:30+0200\n"
-"PO-Revision-Date: 2018-09-08 19:09+0000\n"
+"POT-Creation-Date: 2018-09-27 06:30+0200\n"
+"PO-Revision-Date: 2018-10-02 10:14+0000\n"
 "Last-Translator: Daniel Muñiz Fontoira <dani@damufo.com>\n"
 "Language-Team: Galician (http://www.transifex.com/xfce/thunar/language/gl/)\n"
 "MIME-Version: 1.0\n"
@@ -143,7 +143,7 @@ msgstr "Non foi posíbel iniciar a operación"
 #: ../thunar/thunar-launcher.c:1216 ../thunar/thunar-location-entry.c:356
 #: ../thunar/thunar-location-entry.c:384
 #: ../thunar/thunar-shortcuts-view.c:1680
-#: ../thunar/thunar-shortcuts-view.c:1708 ../thunar/thunar-window.c:2316
+#: ../thunar/thunar-shortcuts-view.c:1708 ../thunar/thunar-window.c:2360
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "Non foi posíbel abrir «%s»"
@@ -286,7 +286,7 @@ msgstr "Desexa eliminar todos os ficheiros e cartafoles do Colector de lixo?"
 #. prepare the menu item
 #: ../thunar/thunar-application.c:2306 ../thunar/thunar-location-buttons.c:188
 #: ../thunar/thunar-shortcuts-view.c:1226 ../thunar/thunar-tree-view.c:1356
-#: ../thunar/thunar-window.c:351 ../plugins/thunar-tpa/thunar-tpa.c:175
+#: ../thunar/thunar-window.c:355 ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "_Baleirar o lixo"
 
@@ -363,7 +363,7 @@ msgstr "Usar de xeito predeterminado para este tipo de ficheiro"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:291
 #: ../thunar/thunar-chooser-dialog.c:1155
-#: ../thunar/thunar-properties-dialog.c:820 ../thunar/thunar-window.c:3034
+#: ../thunar/thunar-properties-dialog.c:820 ../thunar/thunar-window.c:3078
 #: ../plugins/thunar-uca/thunar-uca-editor.c:142
 #: ../plugins/thunar-uca/thunar-uca-editor.c:435
 msgid "_OK"
@@ -499,7 +499,7 @@ msgstr "Non hai nada no portarretallos que se poida pegar"
 #. setup the dialog
 #. add a regular close button, the header bar already provides one
 #: ../thunar/thunar-column-editor.c:120 ../thunar/thunar-dialogs.c:747
-#: ../thunar/thunar-preferences-dialog.c:252
+#: ../thunar/thunar-preferences-dialog.c:253
 #: ../thunar/thunar-properties-dialog.c:254
 #: ../thunar/thunar-renamer-dialog.c:355
 #: ../thunar/thunar-renamer-progress.c:215
@@ -513,8 +513,8 @@ msgstr "Configurar as columnas no modo de vista detallada"
 
 #. add the "Help" button
 #: ../thunar/thunar-column-editor.c:126
-#: ../thunar/thunar-preferences-dialog.c:253
-#: ../thunar/thunar-properties-dialog.c:253 ../thunar/thunar-window.c:374
+#: ../thunar/thunar-preferences-dialog.c:254
+#: ../thunar/thunar-properties-dialog.c:253 ../thunar/thunar-window.c:380
 msgid "_Help"
 msgstr "_Axuda"
 
@@ -874,7 +874,7 @@ msgid "Trash"
 msgstr "Papeleira"
 
 #: ../thunar/thunar-file.c:1078 ../thunar/thunar-gio-extensions.c:253
-#: ../thunar/thunar-shortcuts-model.c:928 ../thunar/thunar-window.c:370
+#: ../thunar/thunar-shortcuts-model.c:928 ../thunar/thunar-window.c:376
 msgid "File System"
 msgstr "Sistema de ficheiros"
 
@@ -1332,7 +1332,7 @@ msgstr "Abrir nunha nova xanela"
 msgid "Create _Folder..."
 msgstr "Crear carta_fol..."
 
-#: ../thunar/thunar-location-buttons.c:188 ../thunar/thunar-window.c:351
+#: ../thunar/thunar-location-buttons.c:188 ../thunar/thunar-window.c:355
 msgid "Delete all files and folders in the Trash"
 msgstr "Eliminar todos os ficheiros e cartafoles do Colector de lixo"
 
@@ -1377,7 +1377,7 @@ msgstr "Move ou copia ficheiros seleccionados previamente mediante as ordes Copi
 msgid "View the properties of the folder \"%s\""
 msgstr "Ver as propiedades do cartafol «%s»"
 
-#: ../thunar/thunar-location-entry.c:195 ../thunar/thunar-window.c:359
+#: ../thunar/thunar-location-entry.c:195 ../thunar/thunar-window.c:365
 msgid "Reload the current folder"
 msgstr "Actualizar o cartafol actual"
 
@@ -1560,109 +1560,109 @@ msgid ""
 "folder afterwards."
 msgstr "Os permisos do cartafol reaxustaranse a un estado consistente. Despois diso só os usuarios con permisos para ler o contido do cartafol poderán entrar nel."
 
-#: ../thunar/thunar-preferences-dialog.c:248
+#: ../thunar/thunar-preferences-dialog.c:249
 msgid "File Manager Preferences"
 msgstr "Preferencias do xestor de ficheiros"
 
 #. Display
-#: ../thunar/thunar-preferences-dialog.c:265
+#: ../thunar/thunar-preferences-dialog.c:266
 msgid "Display"
 msgstr "Visualización"
 
-#: ../thunar/thunar-preferences-dialog.c:275
+#: ../thunar/thunar-preferences-dialog.c:276
 msgid "Default View"
 msgstr "Vista predeterminada"
 
-#: ../thunar/thunar-preferences-dialog.c:288
+#: ../thunar/thunar-preferences-dialog.c:289
 msgid "View _new folders using:"
 msgstr "Ver os _novos cartafoles usando:"
 
-#: ../thunar/thunar-preferences-dialog.c:294
-#: ../thunar/thunar-preferences-dialog.c:348
+#: ../thunar/thunar-preferences-dialog.c:295
+#: ../thunar/thunar-preferences-dialog.c:349
 msgid "Icon View"
 msgstr "Vista de iconas"
 
-#: ../thunar/thunar-preferences-dialog.c:295
+#: ../thunar/thunar-preferences-dialog.c:296
 msgid "Detailed List View"
 msgstr "Vista de lista detallada"
 
-#: ../thunar/thunar-preferences-dialog.c:296
+#: ../thunar/thunar-preferences-dialog.c:297
 msgid "Compact List View"
 msgstr "Vista de lista compacta"
 
-#: ../thunar/thunar-preferences-dialog.c:297
+#: ../thunar/thunar-preferences-dialog.c:298
 msgid "Last Active View"
 msgstr "Última vista activa"
 
-#: ../thunar/thunar-preferences-dialog.c:306
+#: ../thunar/thunar-preferences-dialog.c:307
 msgid "Show thumbnails:"
 msgstr "Amosar miniaturas:"
 
-#: ../thunar/thunar-preferences-dialog.c:312
+#: ../thunar/thunar-preferences-dialog.c:313
 msgid "Never"
 msgstr "Nunca"
 
-#: ../thunar/thunar-preferences-dialog.c:313
+#: ../thunar/thunar-preferences-dialog.c:314
 msgid "Local Files Only"
 msgstr "Só en ficheiros locais"
 
-#: ../thunar/thunar-preferences-dialog.c:314
+#: ../thunar/thunar-preferences-dialog.c:315
 msgid "Always"
 msgstr "Sempre"
 
-#: ../thunar/thunar-preferences-dialog.c:323
+#: ../thunar/thunar-preferences-dialog.c:324
 msgid "Draw frames around thumbnails"
 msgstr "Debuxa cadros arredor das miniaturas"
 
-#: ../thunar/thunar-preferences-dialog.c:325
+#: ../thunar/thunar-preferences-dialog.c:326
 msgid "Select this option to draw black frames around thumbnails."
 msgstr "Seleccione esta opción para debuxar cadros negros arredor das miniaturas."
 
-#: ../thunar/thunar-preferences-dialog.c:330
+#: ../thunar/thunar-preferences-dialog.c:331
 msgid "Sort _folders before files"
 msgstr "Ordenar os cartafoles antes dos _ficheiros"
 
-#: ../thunar/thunar-preferences-dialog.c:332
+#: ../thunar/thunar-preferences-dialog.c:333
 msgid ""
 "Select this option to list folders before files when you sort a folder."
 msgstr "Seleccione esta opción para listar os cartafoles antes dos ficheiros, ao ordenar un cartafol."
 
-#: ../thunar/thunar-preferences-dialog.c:337
+#: ../thunar/thunar-preferences-dialog.c:338
 msgid "Show file size in binary format"
 msgstr "Amosar o ficheiro en formato binario"
 
-#: ../thunar/thunar-preferences-dialog.c:339
+#: ../thunar/thunar-preferences-dialog.c:340
 msgid ""
 "Select this option to show file size in binary format instead of decimal."
 msgstr "Seleccione esta opción para amosar o tamaño do ficheiro en formato binario no canto de decimal."
 
-#: ../thunar/thunar-preferences-dialog.c:361
+#: ../thunar/thunar-preferences-dialog.c:362
 msgid "_Text beside icons"
 msgstr "_Texto a carón das iconas"
 
-#: ../thunar/thunar-preferences-dialog.c:363
+#: ../thunar/thunar-preferences-dialog.c:364
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
 msgstr "Seleccione esta opción para situar o texto das iconas ao seu carón no canto de poñelas debaixo delas."
 
-#: ../thunar/thunar-preferences-dialog.c:373
+#: ../thunar/thunar-preferences-dialog.c:374
 msgid "Date"
 msgstr "Data"
 
-#: ../thunar/thunar-preferences-dialog.c:386
+#: ../thunar/thunar-preferences-dialog.c:387
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:214
 msgid "_Format:"
 msgstr "_Formato:"
 
 #. TRANSLATORS: custom date format
-#: ../thunar/thunar-preferences-dialog.c:399
+#: ../thunar/thunar-preferences-dialog.c:400
 msgid "Custom"
 msgstr "Personalizado"
 
 #. TRANSLATORS: Please do not translate the first column (specifiers),
 #. 'strftime' and of course '\n'
-#: ../thunar/thunar-preferences-dialog.c:409
+#: ../thunar/thunar-preferences-dialog.c:410
 msgid ""
 "Custom date format to apply.\n"
 "\n"
@@ -1678,117 +1678,117 @@ msgid ""
 msgstr "Formato de data personalizado para aplicar.\n\nOs especificadores máis comúns son:\n%d día do mes\n%m mes\n%Y ano incluíndo século\n%H hora\n%M minuto\n%S segundo\nPara unha lista completa, verifique as páxinas man de 'strftime'"
 
 #. Side Pane
-#: ../thunar/thunar-preferences-dialog.c:427
+#: ../thunar/thunar-preferences-dialog.c:428
 msgid "Side Pane"
 msgstr "Panel lateral"
 
-#: ../thunar/thunar-preferences-dialog.c:437
+#: ../thunar/thunar-preferences-dialog.c:438
 msgid "Shortcuts Pane"
 msgstr "Panel de atallos"
 
-#: ../thunar/thunar-preferences-dialog.c:450
+#: ../thunar/thunar-preferences-dialog.c:451
 msgid "_Icon Size:"
 msgstr "Tamaño das _iconas"
 
-#: ../thunar/thunar-preferences-dialog.c:455
-#: ../thunar/thunar-preferences-dialog.c:503
+#: ../thunar/thunar-preferences-dialog.c:456
+#: ../thunar/thunar-preferences-dialog.c:504
 msgid "16px"
 msgstr "16px"
 
-#: ../thunar/thunar-preferences-dialog.c:456
-#: ../thunar/thunar-preferences-dialog.c:504
+#: ../thunar/thunar-preferences-dialog.c:457
+#: ../thunar/thunar-preferences-dialog.c:505
 msgid "24px"
 msgstr "24px"
 
-#: ../thunar/thunar-preferences-dialog.c:457
-#: ../thunar/thunar-preferences-dialog.c:505
+#: ../thunar/thunar-preferences-dialog.c:458
+#: ../thunar/thunar-preferences-dialog.c:506
 msgid "32px"
 msgstr "32px"
 
-#: ../thunar/thunar-preferences-dialog.c:458
-#: ../thunar/thunar-preferences-dialog.c:506
+#: ../thunar/thunar-preferences-dialog.c:459
+#: ../thunar/thunar-preferences-dialog.c:507
 msgid "48px"
 msgstr "48px"
 
-#: ../thunar/thunar-preferences-dialog.c:459
-#: ../thunar/thunar-preferences-dialog.c:507
+#: ../thunar/thunar-preferences-dialog.c:460
+#: ../thunar/thunar-preferences-dialog.c:508
 msgid "64px"
 msgstr "64px"
 
-#: ../thunar/thunar-preferences-dialog.c:460
-#: ../thunar/thunar-preferences-dialog.c:508
+#: ../thunar/thunar-preferences-dialog.c:461
+#: ../thunar/thunar-preferences-dialog.c:509
 msgid "96px"
 msgstr "96px"
 
-#: ../thunar/thunar-preferences-dialog.c:461
-#: ../thunar/thunar-preferences-dialog.c:509
+#: ../thunar/thunar-preferences-dialog.c:462
+#: ../thunar/thunar-preferences-dialog.c:510
 msgid "128px"
 msgstr "128px"
 
-#: ../thunar/thunar-preferences-dialog.c:462
-#: ../thunar/thunar-preferences-dialog.c:510
+#: ../thunar/thunar-preferences-dialog.c:463
+#: ../thunar/thunar-preferences-dialog.c:511
 msgid "160px"
 msgstr "160px"
 
-#: ../thunar/thunar-preferences-dialog.c:463
-#: ../thunar/thunar-preferences-dialog.c:511
+#: ../thunar/thunar-preferences-dialog.c:464
+#: ../thunar/thunar-preferences-dialog.c:512
 msgid "192px"
 msgstr "192px"
 
-#: ../thunar/thunar-preferences-dialog.c:464
-#: ../thunar/thunar-preferences-dialog.c:512
+#: ../thunar/thunar-preferences-dialog.c:465
+#: ../thunar/thunar-preferences-dialog.c:513
 msgid "256px"
 msgstr "256px"
 
-#: ../thunar/thunar-preferences-dialog.c:473
+#: ../thunar/thunar-preferences-dialog.c:474
 msgid "Show Icon _Emblems"
 msgstr "Mostrar os _emblemas das iconas"
 
-#: ../thunar/thunar-preferences-dialog.c:475
+#: ../thunar/thunar-preferences-dialog.c:476
 msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties "
 "dialog."
 msgstr "Seleccione esta opción para amosar os emblemas das iconas no panel de atallos para todos os cartafoles para os que se definiron emblemas no diálogo de propiedades do cartafol."
 
-#: ../thunar/thunar-preferences-dialog.c:485
+#: ../thunar/thunar-preferences-dialog.c:486
 msgid "Tree Pane"
 msgstr "Panel arborescente"
 
-#: ../thunar/thunar-preferences-dialog.c:498
+#: ../thunar/thunar-preferences-dialog.c:499
 msgid "Icon _Size:"
 msgstr "Tamaño das _iconas"
 
-#: ../thunar/thunar-preferences-dialog.c:521
+#: ../thunar/thunar-preferences-dialog.c:522
 msgid "Show Icon E_mblems"
 msgstr "_Mostrar emblemas das iconas"
 
-#: ../thunar/thunar-preferences-dialog.c:523
+#: ../thunar/thunar-preferences-dialog.c:524
 msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
 msgstr "Seleccione esta opción para mostrar os emblemas das iconas no panel arborescente para todos os cartafoles para os que se definiron emblemas no diálogo de propiedades do cartafol."
 
 #. Behavior
-#: ../thunar/thunar-preferences-dialog.c:533
+#: ../thunar/thunar-preferences-dialog.c:534
 msgid "Behavior"
 msgstr "Comportamento"
 
-#: ../thunar/thunar-preferences-dialog.c:543
+#: ../thunar/thunar-preferences-dialog.c:544
 msgid "Navigation"
 msgstr "Navegación"
 
-#: ../thunar/thunar-preferences-dialog.c:556
+#: ../thunar/thunar-preferences-dialog.c:557
 msgid "_Single click to activate items"
 msgstr "Unha _soa pulsación para activar os elementos"
 
-#: ../thunar/thunar-preferences-dialog.c:572
+#: ../thunar/thunar-preferences-dialog.c:573
 msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
 msgstr "_Especifique o atraso antes de que un elemento\nsexa seleccionado cando o punteiro do rato se\ndeteña sobre el:"
 
-#: ../thunar/thunar-preferences-dialog.c:585
+#: ../thunar/thunar-preferences-dialog.c:586
 msgid ""
 "When single-click activation is enabled, pausing the mouse pointer over an "
 "item will automatically select that item after the chosen delay. You can "
@@ -1797,91 +1797,115 @@ msgid ""
 "to select the item without activating it."
 msgstr "Cando se activa a activación cunha soa pulsación, ao deter o punteiro do rato sobre un elemento, seleccionarase automaticamente dito elemento despois do tempo indicado. Pode desactivar este comportamento movendo a barra deslizante cara á esquerda de todo. Este comportamento pode ser útil cando unha soa pulsación activa os elementos e só desexa seleccionar o elemento sen activalo."
 
-#: ../thunar/thunar-preferences-dialog.c:604
+#: ../thunar/thunar-preferences-dialog.c:605
 msgid "Disabled"
 msgstr "Desactivado"
 
-#: ../thunar/thunar-preferences-dialog.c:610
+#: ../thunar/thunar-preferences-dialog.c:611
 msgid "Medium"
 msgstr "Medio"
 
-#: ../thunar/thunar-preferences-dialog.c:615
+#: ../thunar/thunar-preferences-dialog.c:616
 msgid "Long"
 msgstr "Longo"
 
-#: ../thunar/thunar-preferences-dialog.c:621
+#: ../thunar/thunar-preferences-dialog.c:622
 msgid "_Double click to activate items"
 msgstr "_Dobre pulsación para activar os elementos"
 
-#: ../thunar/thunar-preferences-dialog.c:632
+#: ../thunar/thunar-preferences-dialog.c:633
 msgid "Tabs instead of new Windows"
 msgstr "Lapelas no canto de novas xanelas"
 
-#: ../thunar/thunar-preferences-dialog.c:645
+#: ../thunar/thunar-preferences-dialog.c:646
 msgid "Open folders in new tabs on middle click"
 msgstr "Abrir os cartafoles en novas lapelas ao premer o botón do medio"
 
-#: ../thunar/thunar-preferences-dialog.c:647
+#: ../thunar/thunar-preferences-dialog.c:648
 msgid ""
 "Select this option to open a new tab on middle click instead of a new window"
 msgstr "Seleccione esta opción para abrir unha nova lapela no canto dunha nova xanela ao premer o botón do medio"
 
-#: ../thunar/thunar-preferences-dialog.c:651
+#: ../thunar/thunar-preferences-dialog.c:652
 msgid "Open new thunar instances as tabs"
 msgstr "Abrir as novas instancias de Thunar como lapelas"
 
-#: ../thunar/thunar-preferences-dialog.c:653
+#: ../thunar/thunar-preferences-dialog.c:654
 msgid ""
 "Select this option to open new thunar instances as tabs in an existing "
 "thunar window"
 msgstr "Seleccione esta opción para abrir novas instancias de Thunar como lapelas nunha xanela de Thunar existente"
 
+#: ../thunar/thunar-preferences-dialog.c:665
+msgid "Context Menu"
+msgstr "Menú contextual"
+
+#: ../thunar/thunar-preferences-dialog.c:677
+msgid "Show action to permanently delete files and folders"
+msgstr "Amosar acción para eliminar ficheiros e cartafoles de xeito permanente"
+
+#: ../thunar/thunar-preferences-dialog.c:679
+msgid "Select this option to show the 'Delete' action in the context menu"
+msgstr "Seleccione esta opción para amosar a acción \"Eliminar\" no menú contextual"
+
 #. Advanced
-#: ../thunar/thunar-preferences-dialog.c:660
+#: ../thunar/thunar-preferences-dialog.c:688
 msgid "Advanced"
 msgstr "Avanzado"
 
-#: ../thunar/thunar-preferences-dialog.c:670
+#: ../thunar/thunar-preferences-dialog.c:698
 msgid "Folder Permissions"
 msgstr "Permisos do cartafol"
 
-#: ../thunar/thunar-preferences-dialog.c:683
+#: ../thunar/thunar-preferences-dialog.c:711
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "Ao modificar os permisos dun cartafol, tamén\npode aplicar as modificacións ao que haxa dentro.\nSeleccione embaixo o comportamento predeterminado:"
 
-#: ../thunar/thunar-preferences-dialog.c:692
+#: ../thunar/thunar-preferences-dialog.c:720
 msgid "Ask every time"
 msgstr "Preguntar cada vez"
 
-#: ../thunar/thunar-preferences-dialog.c:693
+#: ../thunar/thunar-preferences-dialog.c:721
 msgid "Apply to Folder Only"
 msgstr "Aplicar só ao cartafol"
 
-#: ../thunar/thunar-preferences-dialog.c:694
+#: ../thunar/thunar-preferences-dialog.c:722
 msgid "Apply to Folder and Contents"
 msgstr "Aplicar ao cartafol e ao seu contido"
 
-#: ../thunar/thunar-preferences-dialog.c:705
+#: ../thunar/thunar-preferences-dialog.c:733
 msgid "Volume Management"
 msgstr "Xestión de volumes"
 
 #. add check button to enable/disable auto mounting
-#: ../thunar/thunar-preferences-dialog.c:722
+#: ../thunar/thunar-preferences-dialog.c:750
 msgid "Enable _Volume Management"
 msgstr "Activar a xestión de volumes"
 
-#: ../thunar/thunar-preferences-dialog.c:732
+#: ../thunar/thunar-preferences-dialog.c:760
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "<a href=\"volman-config:\">Configura</a> o manexo de unidades,\ndispositivos e soportes extraíbles."
 
+#: ../thunar/thunar-preferences-dialog.c:775
+msgid "Missing dependencies"
+msgstr "Faltan dependencias"
+
+#: ../thunar/thunar-preferences-dialog.c:783
+msgid ""
+"It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
+"Important features including trash support,\n"
+"removable media and remote location browsing\n"
+"will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
+msgstr ""
+
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: ../thunar/thunar-preferences-dialog.c:800
+#: ../thunar/thunar-preferences-dialog.c:857
 msgid "Failed to display the volume management settings"
 msgstr "Non foi posíbel mostrar a configuración da xestión de volumes"
 
@@ -1902,7 +1926,7 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #. update the status text
-#: ../thunar/thunar-progress-view.c:358
+#: ../thunar/thunar-progress-view.c:354
 msgid "Cancelling..."
 msgstr "Cancelando..."
 
@@ -1994,11 +2018,11 @@ msgstr "Propiedades"
 msgid "mixed"
 msgstr "mesturado"
 
-#: ../thunar/thunar-renamer-dialog.c:189 ../thunar/thunar-window.c:347
+#: ../thunar/thunar-renamer-dialog.c:189 ../thunar/thunar-window.c:351
 msgid "_File"
 msgstr "_Ficheiro"
 
-#: ../thunar/thunar-renamer-dialog.c:190 ../thunar/thunar-window.c:350
+#: ../thunar/thunar-renamer-dialog.c:190 ../thunar/thunar-window.c:354
 msgid "_Send To"
 msgstr "Enviar _a"
 
@@ -2022,7 +2046,7 @@ msgstr "Limpar"
 msgid "Clear the file list below"
 msgstr "Limpar a lista de abaixo"
 
-#: ../thunar/thunar-renamer-dialog.c:195 ../thunar/thunar-window.c:376
+#: ../thunar/thunar-renamer-dialog.c:195 ../thunar/thunar-window.c:382
 msgid "_About"
 msgstr "_Acerca de"
 
@@ -2334,7 +2358,7 @@ msgstr "Seleccionar todo, só os elementos que non están actualmente selecciona
 msgid "Du_plicate"
 msgstr "Du_plicar"
 
-#: ../thunar/thunar-standard-view.c:418 ../thunar/thunar-standard-view.c:4580
+#: ../thunar/thunar-standard-view.c:418 ../thunar/thunar-standard-view.c:4571
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Crear unha _ligazón"
@@ -2359,7 +2383,7 @@ msgid "Loading folder contents..."
 msgstr "Cargando o contido do cartafol..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2291 ../thunar/thunar-window.c:2876
+#: ../thunar/thunar-standard-view.c:2291 ../thunar/thunar-window.c:2920
 msgid "Failed to open the home folder"
 msgstr "Non foi posíbel abrir o cartafol persoal"
 
@@ -2385,64 +2409,64 @@ msgstr "_Patrón:"
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: ../thunar/thunar-standard-view.c:3296
+#: ../thunar/thunar-standard-view.c:3283
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Nome de ficheiro incorrecto proporcionado polo sitio XDS"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:3486
+#: ../thunar/thunar-standard-view.c:3473
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Non foi posíbel crear unha ligazón ao URL «%s»"
 
-#: ../thunar/thunar-standard-view.c:3936 ../thunar/thunar-window.c:2971
+#: ../thunar/thunar-standard-view.c:3923 ../thunar/thunar-window.c:3015
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Non foi posíbel abrir o directorio «%s»"
 
-#: ../thunar/thunar-standard-view.c:4529
+#: ../thunar/thunar-standard-view.c:4519
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Preparar o ficheiro seleccionado para mover mediante unha orde Pegar"
 msgstr[1] "Preparar os ficheiros seleccionados para mover mediante unha orde Pegar"
 
-#: ../thunar/thunar-standard-view.c:4537
+#: ../thunar/thunar-standard-view.c:4527
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Preparar o ficheiro seleccionado para copiar mediante unha orde Pegar"
 msgstr[1] "Preparar os ficheiros seleccionados para copiar mediante unha orde Pegar"
 
-#: ../thunar/thunar-standard-view.c:4551
+#: ../thunar/thunar-standard-view.c:4541
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "Mover o ficheiro seleccionado ó lixo"
 msgstr[1] "Mover os ficheiros seleccionados ao lixo"
 
-#: ../thunar/thunar-standard-view.c:4559
+#: ../thunar/thunar-standard-view.c:4550
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "Eliminar de xeito permanente o ficheiro seleccionado"
 msgstr[1] "Eliminar de xeito permanente os ficheiros seleccionados"
 
-#: ../thunar/thunar-standard-view.c:4573
+#: ../thunar/thunar-standard-view.c:4564
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Duplicar o ficheiro seleccionado"
 msgstr[1] "Duplicar cada ficheiro seleccionado"
 
-#: ../thunar/thunar-standard-view.c:4582
+#: ../thunar/thunar-standard-view.c:4573
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Crear unha ligazón simbólica para o ficheiro seleccionado"
 msgstr[1] "Crear unha ligazón simbólica para cada ficheiro seleccionado"
 
-#: ../thunar/thunar-standard-view.c:4590
+#: ../thunar/thunar-standard-view.c:4581
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Renomear o ficheiro seleccionado"
 msgstr[1] "Renomear os ficheiros seleccionados"
 
-#: ../thunar/thunar-standard-view.c:4598
+#: ../thunar/thunar-standard-view.c:4589
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
 msgstr[0] "Restaurar o ficheiro seleccionado"
@@ -2589,326 +2613,342 @@ msgstr "%A ás %X"
 msgid "%x at %X"
 msgstr "%x ás %X"
 
-#: ../thunar/thunar-window.c:348
+#: ../thunar/thunar-window.c:352
 msgid "New _Tab"
 msgstr "Nova _lapela"
 
-#: ../thunar/thunar-window.c:348
+#: ../thunar/thunar-window.c:352
 msgid "Open a new tab for the displayed location"
 msgstr "Abrir unha nova lapela para a localización amosada"
 
-#: ../thunar/thunar-window.c:349
+#: ../thunar/thunar-window.c:353
 msgid "New _Window"
 msgstr "Nova _xanela"
 
-#: ../thunar/thunar-window.c:349
+#: ../thunar/thunar-window.c:353
 msgid "Open a new Thunar window for the displayed location"
 msgstr "Abrir unha nova xanela de Thunar para a localización mostrada"
 
-#: ../thunar/thunar-window.c:352
+#: ../thunar/thunar-window.c:356
 msgid "Detac_h Tab"
 msgstr "Des_prender lapela"
 
-#: ../thunar/thunar-window.c:352
+#: ../thunar/thunar-window.c:356
 msgid "Open current folder in a new window"
 msgstr "Abrir o cartafol actual nunha nova xanela"
 
-#: ../thunar/thunar-window.c:353
+#: ../thunar/thunar-window.c:357
+msgid "_Previous Tab"
+msgstr ""
+
+#: ../thunar/thunar-window.c:357
+msgid "Switch to Previous Tab"
+msgstr ""
+
+#: ../thunar/thunar-window.c:358
+msgid "_Next Tab"
+msgstr ""
+
+#: ../thunar/thunar-window.c:358
+msgid "Switch to Next Tab"
+msgstr ""
+
+#: ../thunar/thunar-window.c:359
 msgid "Close _All Windows"
 msgstr "Pechar _todas as xanelas"
 
-#: ../thunar/thunar-window.c:353
+#: ../thunar/thunar-window.c:359
 msgid "Close all Thunar windows"
 msgstr "Pechar todas as xanelas de Thunar"
 
-#: ../thunar/thunar-window.c:354
+#: ../thunar/thunar-window.c:360
 msgid "C_lose Tab"
 msgstr "Pechar a _lapela"
 
-#: ../thunar/thunar-window.c:354
+#: ../thunar/thunar-window.c:360
 msgid "Close this folder"
 msgstr "Pechar este cartafol"
 
-#: ../thunar/thunar-window.c:355
+#: ../thunar/thunar-window.c:361
 msgid "_Close Window"
 msgstr "_Pechar xanela"
 
-#: ../thunar/thunar-window.c:355
+#: ../thunar/thunar-window.c:361
 msgid "Close this window"
 msgstr "Pechar esta xanela"
 
-#: ../thunar/thunar-window.c:356
+#: ../thunar/thunar-window.c:362
 msgid "_Edit"
 msgstr "_Editar"
 
-#: ../thunar/thunar-window.c:357
+#: ../thunar/thunar-window.c:363
 msgid "Pr_eferences..."
 msgstr "Pr_eferencias..."
 
-#: ../thunar/thunar-window.c:357
+#: ../thunar/thunar-window.c:363
 msgid "Edit Thunars Preferences"
 msgstr "Editar as preferencias de Thunar"
 
-#: ../thunar/thunar-window.c:358
+#: ../thunar/thunar-window.c:364
 msgid "_View"
 msgstr "_Ver"
 
-#: ../thunar/thunar-window.c:359
+#: ../thunar/thunar-window.c:365
 msgid "_Reload"
 msgstr "Actualiza_r"
 
-#: ../thunar/thunar-window.c:360
+#: ../thunar/thunar-window.c:366
 msgid "_Location Selector"
 msgstr "Selector de _localizacións"
 
-#: ../thunar/thunar-window.c:361
+#: ../thunar/thunar-window.c:367
 msgid "_Side Pane"
 msgstr "Panel _lateral"
 
-#: ../thunar/thunar-window.c:362
+#: ../thunar/thunar-window.c:368
 msgid "Zoom I_n"
 msgstr "A_mpliar"
 
-#: ../thunar/thunar-window.c:362
+#: ../thunar/thunar-window.c:368
 msgid "Show the contents in more detail"
 msgstr "Mostrar o contido con máis detalle"
 
-#: ../thunar/thunar-window.c:364
+#: ../thunar/thunar-window.c:370
 msgid "Zoom _Out"
 msgstr "Re_ducir"
 
-#: ../thunar/thunar-window.c:364
+#: ../thunar/thunar-window.c:370
 msgid "Show the contents in less detail"
 msgstr "Mostrar o contido con menos detalle"
 
-#: ../thunar/thunar-window.c:365
+#: ../thunar/thunar-window.c:371
 msgid "Normal Si_ze"
 msgstr "Tamaño nor_mal"
 
-#: ../thunar/thunar-window.c:365
+#: ../thunar/thunar-window.c:371
 msgid "Show the contents at the normal size"
 msgstr "Mostra o contido a tamaño normal"
 
-#: ../thunar/thunar-window.c:366
+#: ../thunar/thunar-window.c:372
 msgid "_Go"
 msgstr "_Ir"
 
-#: ../thunar/thunar-window.c:367
+#: ../thunar/thunar-window.c:373
 msgid "Open _Parent"
 msgstr "Abrir o cartafol su_perior"
 
-#: ../thunar/thunar-window.c:367
+#: ../thunar/thunar-window.c:373
 msgid "Open the parent folder"
 msgstr "Abre o cartafol superior"
 
-#: ../thunar/thunar-window.c:368
+#: ../thunar/thunar-window.c:374
 msgid "_Home"
 msgstr "Cartafol _persoal"
 
-#: ../thunar/thunar-window.c:368
+#: ../thunar/thunar-window.c:374
 msgid "Go to the home folder"
 msgstr "Ir ao cartafol persoal"
 
-#: ../thunar/thunar-window.c:369
+#: ../thunar/thunar-window.c:375
 msgid "Desktop"
 msgstr "Escritorio"
 
-#: ../thunar/thunar-window.c:369
+#: ../thunar/thunar-window.c:375
 msgid "Go to the desktop folder"
 msgstr "Ir ao cartafol do escritorio"
 
-#: ../thunar/thunar-window.c:370
+#: ../thunar/thunar-window.c:376
 msgid "Browse the file system"
 msgstr "Explorar o sistema de ficheiros"
 
-#: ../thunar/thunar-window.c:371
+#: ../thunar/thunar-window.c:377
 msgid "B_rowse Network"
 msgstr "Explora_r a rede"
 
-#: ../thunar/thunar-window.c:371
+#: ../thunar/thunar-window.c:377
 msgid "Browse local network connections"
 msgstr "Explorar as conexións da rede local"
 
-#: ../thunar/thunar-window.c:372
+#: ../thunar/thunar-window.c:378
 msgid "T_emplates"
 msgstr "Mod_elos"
 
-#: ../thunar/thunar-window.c:372
+#: ../thunar/thunar-window.c:378
 msgid "Go to the templates folder"
 msgstr "Ir ao cartafol de modelos"
 
-#: ../thunar/thunar-window.c:373
+#: ../thunar/thunar-window.c:379
 msgid "_Open Location..."
 msgstr "_Abrir localización..."
 
-#: ../thunar/thunar-window.c:373
+#: ../thunar/thunar-window.c:379
 msgid "Specify a location to open"
 msgstr "Especifique unha localización para abrir"
 
-#: ../thunar/thunar-window.c:375
+#: ../thunar/thunar-window.c:381
 msgid "_Contents"
 msgstr "_Contido"
 
-#: ../thunar/thunar-window.c:375
+#: ../thunar/thunar-window.c:381
 msgid "Display Thunar user manual"
 msgstr "Mostra o manual de usuario de Thunar"
 
-#: ../thunar/thunar-window.c:376
+#: ../thunar/thunar-window.c:382
 msgid "Display information about Thunar"
 msgstr "Mostra información sobre Thunar"
 
-#: ../thunar/thunar-window.c:381
+#: ../thunar/thunar-window.c:387
 msgid "Show _Hidden Files"
 msgstr "Mostrar os fic_heiros ocultos"
 
-#: ../thunar/thunar-window.c:381
+#: ../thunar/thunar-window.c:387
 msgid "Toggles the display of hidden files in the current window"
 msgstr "Troca a visibilidade na xanela actual dos ficheiros ocultos"
 
-#: ../thunar/thunar-window.c:382
+#: ../thunar/thunar-window.c:388
 msgid "_Pathbar Style"
 msgstr "Estilo da barra de _ruta"
 
-#: ../thunar/thunar-window.c:382
+#: ../thunar/thunar-window.c:388
 msgid "Modern approach with buttons that correspond to folders"
 msgstr "Enfoque moderno con botóns que corresponden a cartafoles"
 
-#: ../thunar/thunar-window.c:383
+#: ../thunar/thunar-window.c:389
 msgid "_Toolbar Style"
 msgstr "Es_tilo da barra de ferramentas"
 
-#: ../thunar/thunar-window.c:383
+#: ../thunar/thunar-window.c:389
 msgid "Traditional approach with location bar and navigation buttons"
 msgstr "Enfoque tradicional con barra de localización e botóns de navegación"
 
-#: ../thunar/thunar-window.c:384
+#: ../thunar/thunar-window.c:390
 msgid "_Shortcuts"
 msgstr "Atallo_s"
 
-#: ../thunar/thunar-window.c:384
+#: ../thunar/thunar-window.c:390
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "Troca a visibilidade do panel de atallos"
 
-#: ../thunar/thunar-window.c:385
+#: ../thunar/thunar-window.c:391
 msgid "_Tree"
 msgstr "_Árbore"
 
-#: ../thunar/thunar-window.c:385
+#: ../thunar/thunar-window.c:391
 msgid "Toggles the visibility of the tree pane"
 msgstr "Troca a visibilidade do panel arborescente"
 
-#: ../thunar/thunar-window.c:386
+#: ../thunar/thunar-window.c:392
 msgid "St_atusbar"
 msgstr "B_arra de estado"
 
-#: ../thunar/thunar-window.c:386
+#: ../thunar/thunar-window.c:392
 msgid "Change the visibility of this window's statusbar"
 msgstr "Cambia a visibilidade da barra de estado da xanela"
 
-#: ../thunar/thunar-window.c:387
+#: ../thunar/thunar-window.c:393
 msgid "_Menubar"
 msgstr "_Barra do menú"
 
-#: ../thunar/thunar-window.c:387
+#: ../thunar/thunar-window.c:393
 msgid "Change the visibility of this window's menubar"
 msgstr "Cambia a visibilidade da barra de menú da xanela"
 
 #. * add view options
-#: ../thunar/thunar-window.c:772
+#: ../thunar/thunar-window.c:778
 msgid "View as _Icons"
 msgstr "Ver como _iconas"
 
-#: ../thunar/thunar-window.c:772
+#: ../thunar/thunar-window.c:778
 msgid "Display folder content in an icon view"
 msgstr "Mostrar o contido do cartafol cunha vista de iconas"
 
-#: ../thunar/thunar-window.c:779
+#: ../thunar/thunar-window.c:785
 msgid "View as _Detailed List"
 msgstr "Ver como lista _detallada"
 
-#: ../thunar/thunar-window.c:779
+#: ../thunar/thunar-window.c:785
 msgid "Display folder content in a detailed list view"
 msgstr "Mostrar o contido do cartafol como unha lista detallada"
 
-#: ../thunar/thunar-window.c:786
+#: ../thunar/thunar-window.c:792
 msgid "View as _Compact List"
 msgstr "Ver como lista _compacta"
 
-#: ../thunar/thunar-window.c:786
+#: ../thunar/thunar-window.c:792
 msgid "Display folder content in a compact list view"
 msgstr "Mostrar o contido do cartafol como unha lista compacta"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:865
+#: ../thunar/thunar-window.c:871
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr "Advertencia, está usando a conta de root, podería danar o sistema."
 
-#: ../thunar/thunar-window.c:1825
+#: ../thunar/thunar-window.c:1869
 msgid "Close tab"
 msgstr "Pechar a lapela"
 
-#: ../thunar/thunar-window.c:2076
+#: ../thunar/thunar-window.c:2120
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Abrir a localización «%s»"
 
-#: ../thunar/thunar-window.c:2290
+#: ../thunar/thunar-window.c:2334
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Non foi posíbel iniciar «%s»"
 
-#: ../thunar/thunar-window.c:2851
+#: ../thunar/thunar-window.c:2895
 msgid "Failed to open parent folder"
 msgstr "Non foi posíbel abrir o cartafol superior"
 
-#: ../thunar/thunar-window.c:2946
+#: ../thunar/thunar-window.c:2990
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Non existe o cartafol «%s». Desexa crealo? "
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:3032
+#: ../thunar/thunar-window.c:3076
 msgid "About Templates"
 msgstr "Sobre os modelos"
 
-#: ../thunar/thunar-window.c:3054
+#: ../thunar/thunar-window.c:3098
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Todos os ficheiros deste cartafol aparecerán no menú «Crear documento»."
 
-#: ../thunar/thunar-window.c:3061
+#: ../thunar/thunar-window.c:3105
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Se crea frecuentemente certo tipo de documentos, faga unha copia dalgún e póñaa neste cartafol. Thunar engadirá unha entrada para ese documento no menú «Crear documento».\n\nLogo pode seleccionar a entrada no menú «Crear documento» e crearase unha copia do documento no directorio no que estea situado."
 
-#: ../thunar/thunar-window.c:3073
+#: ../thunar/thunar-window.c:3117
 msgid "Do _not display this message again"
 msgstr "_Non mostrar esta mensaxe de novo"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3103
+#: ../thunar/thunar-window.c:3147
 msgid "Failed to open the file system root folder"
 msgstr "Produciuse un erro ao abrir o cartafol raíz do sistema de ficheiros"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3140
+#: ../thunar/thunar-window.c:3184
 msgid "Failed to display the contents of the trash can"
 msgstr "Non foi posíbel mostrar o contido do contedor de lixo"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3177
+#: ../thunar/thunar-window.c:3221
 msgid "Failed to browse the network"
 msgstr "Produciuse un erro ao explorar a rede"
 
-#: ../thunar/thunar-window.c:3261
+#: ../thunar/thunar-window.c:3305
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "O Thunar é un xestor de ficheiros rápido e doado\nde usar para o ambiente de escritorio Xfce."
 
 #. set window title
-#: ../thunar/thunar-window.c:3319 ../Thunar.desktop.in.in.h:3
+#: ../thunar/thunar-window.c:3363 ../Thunar.desktop.in.in.h:3
 #: ../thunar/thunar-settings.desktop.in.h:1
 msgid "File Manager"
 msgstr "Xestor de ficheiros"
@@ -3553,12 +3593,12 @@ msgid ""
 msgstr "Os parámetros da seguinte orde substituiranse ao iniciar a acción:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:19
-msgid "the path to the first selected file"
-msgstr "a ruta ao primeiro ficheiro seleccionado"
+msgid "the path to the first selected file or directory"
+msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:20
-msgid "the paths to all selected files"
-msgstr "as rutas a todos os ficheiros seleccionados"
+msgid "the paths to all selected files and directories"
+msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:22
 #, no-c-format
