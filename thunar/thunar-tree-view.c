@@ -392,8 +392,13 @@ thunar_tree_view_init (ThunarTreeView *view)
   view->preferences = thunar_preferences_get ();
   g_signal_connect_swapped (G_OBJECT (view->preferences), "notify::tree-icon-emblems", G_CALLBACK (gtk_widget_queue_draw), view);
 
-  /* connect to the default tree model */
-  view->model = thunar_tree_model_get_default ();
+  /* Create a tree model for this tree view */
+  view->model = g_object_new (THUNAR_TYPE_TREE_MODEL, NULL);
+
+  /* synchronize the the global "misc-case-sensitive" preference */
+  g_object_set_data_full (G_OBJECT (view->model), I_("thunar-preferences"), view->preferences, g_object_unref);
+  exo_binding_new (G_OBJECT (view->preferences), "misc-case-sensitive", G_OBJECT (view->model), "case-sensitive");
+
   thunar_tree_model_set_visible_func (view->model, thunar_tree_view_visible_func, view);
   gtk_tree_view_set_model (GTK_TREE_VIEW (view), GTK_TREE_MODEL (view->model));
 
@@ -487,7 +492,7 @@ thunar_tree_view_finalize (GObject *object)
   /* release our reference on the preferences */
   g_object_unref (G_OBJECT (view->preferences));
 
-  /* disconnect from the default tree model */
+  /* free the tree model */
   g_object_unref (G_OBJECT (view->model));
 
   /* drop any existing "new-files" closure */
