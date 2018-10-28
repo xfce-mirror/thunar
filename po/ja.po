@@ -1845,26 +1845,27 @@ msgstr "ダブルクリックでアイテムをアクティブにする(_D)"
 
 #: ../thunar/thunar-preferences-dialog.c:626
 msgid "Tabs instead of new Windows"
-msgstr "新しいウィンドウの代わりにタブ"
+msgstr "新しいウィンドウの代わりにタブで開く"
 
 #: ../thunar/thunar-preferences-dialog.c:639
 msgid "Open folders in new tabs on middle click"
-msgstr "中央クリックでフォルダーを新しいタブで開く"
+msgstr "フォルダーを中央クリックしたとき新しいタブで開く"
 
 #: ../thunar/thunar-preferences-dialog.c:641
 msgid ""
 "Select this option to open a new tab on middle click instead of a new window"
-msgstr "新しいウィンドウを開く代わりに、中央クリックで新しいタブを開くには、このオプションを選択する"
+msgstr "このオプションを選択すると、中央クリックしたときに新しいウィンドウではなくタブで開きます"
 
 #: ../thunar/thunar-preferences-dialog.c:645
 msgid "Open new thunar instances as tabs"
-msgstr "新しい thunar インスタンスをダブとして開く"
+msgstr "新しい thunar インスタンスはタブにして開く"
 
 #: ../thunar/thunar-preferences-dialog.c:647
 msgid ""
 "Select this option to open new thunar instances as tabs in an existing "
 "thunar window"
-msgstr "既存の thunar ウィンドウにタブとして新しい thunar インスタンスを開く場合には、このオプションを選択する。"
+msgstr ""
+"このオプションを選択すると、新しい thunar インスタンスを開こうとしたときすでに thunar ウィンドウが存在していればそれのタブになります"
 
 #: ../thunar/thunar-preferences-dialog.c:658
 msgid "Context Menu"
@@ -1872,11 +1873,11 @@ msgstr "コンテキストメニュー"
 
 #: ../thunar/thunar-preferences-dialog.c:670
 msgid "Show action to permanently delete files and folders"
-msgstr "ファイルとフォルダを永久に削除するアクションを表示"
+msgstr "ファイルとフォルダーを完全に削除するアクションを表示する"
 
 #: ../thunar/thunar-preferences-dialog.c:672
 msgid "Select this option to show the 'Delete' action in the context menu"
-msgstr "コンテキストメニューにある「削除」アクションを表示する場合にはこのオプションを選択してください"
+msgstr "コンテキストメニューに '削除' アクションを表示する場合にはこのオプションを選択してください"
 
 #. Advanced
 #: ../thunar/thunar-preferences-dialog.c:681
@@ -1937,6 +1938,9 @@ msgid ""
 "removable media and remote location browsing\n"
 "will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
 msgstr ""
+"<a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> が有効になっていないようです。\n"
+"ゴミ箱サポート、リムーバブルメディアおよびリモートデータの参照など重要な機能は利用できません。\n"
+"<a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[詳細]</a>"
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
@@ -2670,7 +2674,7 @@ msgstr "前のタブに切り替え"
 
 #: ../thunar/thunar-window.c:358
 msgid "_Next Tab"
-msgstr "次のタブ(_T)"
+msgstr "次のタブ(_N)"
 
 #: ../thunar/thunar-window.c:358
 msgid "Switch to Next Tab"
@@ -3499,7 +3503,7 @@ msgstr "このキーボードショートカットは現在、次によって使
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:356
 msgid "Keyboard shortcut already in use"
-msgstr "キーボードショートカットは既に使用中です。"
+msgstr "キーボードショートカットはすでに使用中です。"
 
 #. setup a label to tell that no icon was selected
 #: ../plugins/thunar-uca/thunar-uca-editor.c:507
@@ -3630,15 +3634,15 @@ msgstr "このボタンをクリックすると、アイコンを選択できま
 msgid ""
 "The following command parameters will be substituted when launching the "
 "action:"
-msgstr "アクションを起動するときは、次のコマンドパラメーターが使用されます:"
+msgstr "アクションを起動するときは、次のコマンドパラメーターを使用できます:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:19
 msgid "the path to the first selected file or directory"
-msgstr ""
+msgstr "選択した最初のファイルまたはディレクトリのパス"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:20
 msgid "the paths to all selected files and directories"
-msgstr ""
+msgstr "選択したすべてのファイルおよびディレクトリのパス"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:22
 #, no-c-format
