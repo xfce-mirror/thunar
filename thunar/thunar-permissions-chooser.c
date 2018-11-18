@@ -358,9 +358,10 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
   gtk_widget_show (image);
 
-  label = gtk_label_new (_("Allowing untrusted programs to run\npresents a security risk to your system."));
+  label = gtk_label_new (_("Allowing untrusted programs to run presents a security risk to your system."));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_small_italic ());
+  gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
   gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
   gtk_widget_show (label);
 
@@ -373,9 +374,10 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
   gtk_widget_show (image);
 
-  chooser->fixperm_label = gtk_label_new (_("The folder permissions are inconsistent, you\nmay not be able to work with files in this folder."));
+  chooser->fixperm_label = gtk_label_new (_("The folder permissions are inconsistent, you may not be able to work with files in this folder."));
   gtk_label_set_xalign (GTK_LABEL (chooser->fixperm_label), 0.0f);
   gtk_label_set_attributes (GTK_LABEL (chooser->fixperm_label), thunar_pango_attr_list_small_italic ());
+  gtk_label_set_line_wrap (GTK_LABEL (chooser->fixperm_label), TRUE);
   exo_binding_new (G_OBJECT (chooser->fixperm_label), "visible", G_OBJECT (hbox), "visible");
   gtk_box_pack_start (GTK_BOX (hbox), chooser->fixperm_label, TRUE, TRUE, 0);
   gtk_widget_show (chooser->fixperm_label);
