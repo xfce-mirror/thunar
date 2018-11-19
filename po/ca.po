@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-27 06:30+0200\n"
-"PO-Revision-Date: 2018-10-24 19:04+0000\n"
+"POT-Creation-Date: 2018-11-19 00:30+0100\n"
+"PO-Revision-Date: 2018-11-19 10:28+0000\n"
 "Last-Translator: Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>\n"
 "Language-Team: Catalan (http://www.transifex.com/xfce/thunar/language/ca/)\n"
 "MIME-Version: 1.0\n"
@@ -159,20 +159,20 @@ msgstr "Ha fallat l'obriment de «%s»: %s"
 #. display an error message
 #: ../thunar/thunar-application.c:1660
 #: ../thunar/thunar-properties-dialog.c:731
-#: ../thunar/thunar-standard-view.c:2864 ../thunar/thunar-tree-view.c:1959
+#: ../thunar/thunar-standard-view.c:2864 ../thunar/thunar-tree-view.c:1964
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Ha fallat el canvi del nom de «%s»"
 
 #: ../thunar/thunar-application.c:1762
 #: ../thunar/thunar-location-buttons.c:1347
-#: ../thunar/thunar-standard-view.c:2389 ../thunar/thunar-tree-view.c:1821
+#: ../thunar/thunar-standard-view.c:2389 ../thunar/thunar-tree-view.c:1826
 msgid "New Folder"
 msgstr "Carpeta nova"
 
 #: ../thunar/thunar-application.c:1763
 #: ../thunar/thunar-location-buttons.c:1348
-#: ../thunar/thunar-standard-view.c:2390 ../thunar/thunar-tree-view.c:1822
+#: ../thunar/thunar-standard-view.c:2390 ../thunar/thunar-tree-view.c:1827
 msgid "Create New Folder"
 msgstr "Crea una carpeta nova"
 
@@ -237,8 +237,8 @@ msgstr[1] "Esteu segur que voleu suprimir permanentment\nels %u fitxers seleccio
 #: ../thunar/thunar-dialogs.c:98 ../thunar/thunar-dialogs.c:481
 #: ../thunar/thunar-dialogs.c:554 ../thunar/thunar-dialogs.c:802
 #: ../thunar/thunar-dnd.c:169 ../thunar/thunar-launcher.c:725
-#: ../thunar/thunar-permissions-chooser.c:522
-#: ../thunar/thunar-permissions-chooser.c:1135
+#: ../thunar/thunar-permissions-chooser.c:524
+#: ../thunar/thunar-permissions-chooser.c:1137
 #: ../thunar/thunar-properties-dialog.c:819
 #: ../thunar/thunar-renamer-dialog.c:354
 #: ../thunar/thunar-renamer-dialog.c:1053
@@ -256,7 +256,7 @@ msgid "_Cancel"
 msgstr "_Cancel·la"
 
 #: ../thunar/thunar-application.c:2127 ../thunar/thunar-standard-view.c:412
-#: ../thunar/thunar-tree-view.c:1485
+#: ../thunar/thunar-tree-view.c:1490
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:372
 msgid "_Delete"
 msgstr "_Suprimeix"
@@ -288,7 +288,7 @@ msgstr "Voleu suprimir tots els fitxers i les carpetes de la paperera?"
 #. append the "Empty Trash" menu action
 #. prepare the menu item
 #: ../thunar/thunar-application.c:2306 ../thunar/thunar-location-buttons.c:188
-#: ../thunar/thunar-shortcuts-view.c:1226 ../thunar/thunar-tree-view.c:1356
+#: ../thunar/thunar-shortcuts-view.c:1226 ../thunar/thunar-tree-view.c:1361
 #: ../thunar/thunar-window.c:355 ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "Buida la pap_erera"
@@ -441,7 +441,7 @@ msgstr "Seleccioneu una aplicació"
 #: ../thunar/thunar-chooser-dialog.c:1155 ../thunar/thunar-launcher.c:176
 #: ../thunar/thunar-launcher.c:811 ../thunar/thunar-location-buttons.c:184
 #: ../thunar/thunar-renamer-dialog.c:1054
-#: ../thunar/thunar-shortcuts-view.c:1099 ../thunar/thunar-tree-view.c:1283
+#: ../thunar/thunar-shortcuts-view.c:1099 ../thunar/thunar-tree-view.c:1288
 #: ../plugins/thunar-uca/thunar-uca-editor.c:177
 msgid "_Open"
 msgstr "_Obre"
@@ -672,7 +672,7 @@ msgstr "_Canvia el nom"
 msgid "translator-credits"
 msgstr "Adrián Laviós <registres@lavios.cat>, 2013.\nCarles Muñoz Gorriz <carlesmu@internautas.org>, 2006, 2008-2010, 2012-2013.\nPau Rul·lan Ferragut <paurullan@bulma.net>, 2005-2008.\nRobert Antoni Buj Gelonch <rbuj@fedoraproject.org>, 2016-2018.\nRoger Pueyo Centelles <transifex@rogerpueyo.com>, 2014."
 
-#: ../thunar/thunar-dialogs.c:438 ../thunar/thunar-permissions-chooser.c:524
+#: ../thunar/thunar-dialogs.c:438 ../thunar/thunar-permissions-chooser.c:526
 msgid "_Yes"
 msgstr "_Sí"
 
@@ -680,7 +680,7 @@ msgstr "_Sí"
 msgid "Yes to _all"
 msgstr "Sí _a tot"
 
-#: ../thunar/thunar-dialogs.c:446 ../thunar/thunar-permissions-chooser.c:523
+#: ../thunar/thunar-dialogs.c:446 ../thunar/thunar-permissions-chooser.c:525
 msgid "_No"
 msgstr "_No"
 
@@ -1067,13 +1067,13 @@ msgstr "No hi ha prou espai a la destinació. Intenteu suprimir fitxers per crea
 
 #. append the "Open in New Tab" menu action
 #: ../thunar/thunar-launcher.c:177 ../thunar/thunar-launcher.c:854
-#: ../thunar/thunar-tree-view.c:1297
+#: ../thunar/thunar-tree-view.c:1302
 msgid "Open in New _Tab"
 msgstr "Obre en una _pestanya nova"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:178 ../thunar/thunar-launcher.c:848
-#: ../thunar/thunar-tree-view.c:1304
+#: ../thunar/thunar-tree-view.c:1309
 msgid "Open in New _Window"
 msgstr "Obre en una _finestra nova"
 
@@ -1209,7 +1209,7 @@ msgid "Open With \"%s\""
 msgstr "Obre amb «%s»"
 
 #: ../thunar/thunar-launcher.c:1598 ../thunar/thunar-shortcuts-view.c:1744
-#: ../thunar/thunar-shortcuts-view.c:1982 ../thunar/thunar-tree-view.c:2158
+#: ../thunar/thunar-shortcuts-view.c:1982 ../thunar/thunar-tree-view.c:2163
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Ha fallat el muntatge de «%s»"
@@ -1331,7 +1331,7 @@ msgid "Open in New Window"
 msgstr "Obre en una finestra nova"
 
 #: ../thunar/thunar-location-buttons.c:187
-#: ../thunar/thunar-standard-view.c:406 ../thunar/thunar-tree-view.c:1373
+#: ../thunar/thunar-standard-view.c:406 ../thunar/thunar-tree-view.c:1378
 msgid "Create _Folder..."
 msgstr "Crea una _carpeta..."
 
@@ -1463,100 +1463,99 @@ msgstr "Pe_rmet que aquest fitxer s'executi com un programa"
 
 #: ../thunar/thunar-permissions-chooser.c:361
 msgid ""
-"Allowing untrusted programs to run\n"
-"presents a security risk to your system."
-msgstr "Permetre que els programes no fiables s'executin\nrepresenta un risc al vostre sistema."
+"Allowing untrusted programs to run presents a security risk to your system."
+msgstr "Permetre que programes no fiables s'executin representa un risc de seguretat al vostre sistema."
 
-#: ../thunar/thunar-permissions-chooser.c:376
+#: ../thunar/thunar-permissions-chooser.c:377
 msgid ""
-"The folder permissions are inconsistent, you\n"
-"may not be able to work with files in this folder."
-msgstr "Els permisos de la carpeta no són consistents. potser\nno podreu treballar amb els fitxers que conté aquesta\ncarpeta."
+"The folder permissions are inconsistent, you may not be able to work with "
+"files in this folder."
+msgstr "Els permisos de la carpeta no són consistents. potser no podreu treballar amb els fitxers que conté aquesta carpeta."
 
-#: ../thunar/thunar-permissions-chooser.c:389
+#: ../thunar/thunar-permissions-chooser.c:391
 msgid "Correct _folder permissions..."
 msgstr "Corregeix els permisos de la _carpeta..."
 
-#: ../thunar/thunar-permissions-chooser.c:390
+#: ../thunar/thunar-permissions-chooser.c:392
 msgid "Click here to automatically fix the folder permissions."
 msgstr "Feu clic aquí per a corregir automàticament els permisos de la carpeta."
 
-#: ../thunar/thunar-permissions-chooser.c:401
+#: ../thunar/thunar-permissions-chooser.c:403
 msgid "Please wait..."
 msgstr "Espereu..."
 
-#: ../thunar/thunar-permissions-chooser.c:406
+#: ../thunar/thunar-permissions-chooser.c:408
 msgid "Stop applying permissions recursively."
 msgstr "Atura l'aplicació recursiva dels permisos."
 
 #. allocate the question dialog
-#: ../thunar/thunar-permissions-chooser.c:519
+#: ../thunar/thunar-permissions-chooser.c:521
 msgid "Question"
 msgstr "Pregunta"
 
-#: ../thunar/thunar-permissions-chooser.c:543
+#: ../thunar/thunar-permissions-chooser.c:545
 msgid "Apply recursively?"
 msgstr "Voleu aplicar-ho de forma recursiva?"
 
-#: ../thunar/thunar-permissions-chooser.c:549
+#: ../thunar/thunar-permissions-chooser.c:551
 msgid ""
 "Do you want to apply your changes recursively to\n"
 "all files and subfolders below the selected folder?"
 msgstr "Voleu aplicar els canvis de forma recursiva a tots els\nfitxers i subcarpetes que estan sota la carpeta seleccionada?"
 
-#: ../thunar/thunar-permissions-chooser.c:554
+#: ../thunar/thunar-permissions-chooser.c:556
 msgid "Do _not ask me again"
 msgstr "_No m'ho tornis a preguntar"
 
-#: ../thunar/thunar-permissions-chooser.c:555
+#: ../thunar/thunar-permissions-chooser.c:557
 msgid ""
 "If you select this option your choice will be remembered and you won't be "
 "asked again. You can use the preferences dialog to alter your choice "
 "afterwards."
 msgstr "Si seleccioneu aquesta opció, es recordarà aquesta selecció i no se us tornarà a preguntar. Més tard, podeu utilitzar el diàleg de preferències per canviar la vostra selecció."
 
-#: ../thunar/thunar-permissions-chooser.c:917
+#: ../thunar/thunar-permissions-chooser.c:919
 msgid "Mixed file owners"
 msgstr "Propietaris de fitxer barrejats"
 
-#: ../thunar/thunar-permissions-chooser.c:917
+#: ../thunar/thunar-permissions-chooser.c:919
 msgid "Unknown file owner"
 msgstr "El propietari és desconegut"
 
-#: ../thunar/thunar-permissions-chooser.c:997
+#: ../thunar/thunar-permissions-chooser.c:999
 #: ../plugins/thunar-uca/thunar-uca-editor.c:411
 #: ../plugins/thunar-uca/thunar-uca-editor.c:617
 msgid "None"
 msgstr "Cap"
 
 #. 0000
-#: ../thunar/thunar-permissions-chooser.c:998
+#: ../thunar/thunar-permissions-chooser.c:1000
 msgid "Write only"
 msgstr "Només escriptura"
 
 #. 0002
-#: ../thunar/thunar-permissions-chooser.c:999
+#: ../thunar/thunar-permissions-chooser.c:1001
 msgid "Read only"
 msgstr "Només lectura"
 
 #. 0004
-#: ../thunar/thunar-permissions-chooser.c:1000
+#: ../thunar/thunar-permissions-chooser.c:1002
 msgid "Read & Write"
 msgstr "Lectura i escriptura"
 
-#: ../thunar/thunar-permissions-chooser.c:1002
+#: ../thunar/thunar-permissions-chooser.c:1004
 msgid "Varying (no change)"
 msgstr "Variant (sense canvis)"
 
-#: ../thunar/thunar-permissions-chooser.c:1134
+#: ../thunar/thunar-permissions-chooser.c:1136
 msgid "Correct folder permissions automatically?"
 msgstr "Voleu corregir automàticament els permisos de la carpeta?"
 
-#: ../thunar/thunar-permissions-chooser.c:1136
+#: ../thunar/thunar-permissions-chooser.c:1138
 msgid "Correct _folder permissions"
 msgstr "Corregeix els permisos de la _carpeta"
 
-#: ../thunar/thunar-permissions-chooser.c:1138
+#: ../thunar/thunar-permissions-chooser.c:1140
 msgid ""
 "The folder permissions will be reset to a consistent state. Only users "
 "allowed to read the contents of this folder will be allowed to enter the "
@@ -2215,17 +2214,17 @@ msgstr[0] "Afegeix la carpeta seleccionada al plafó lateral de dreceres"
 msgstr[1] "Afegeix les carpetes seleccionades al plafó lateral de dreceres"
 
 #. append the "Mount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1144 ../thunar/thunar-tree-view.c:1320
+#: ../thunar/thunar-shortcuts-view.c:1144 ../thunar/thunar-tree-view.c:1325
 msgid "_Mount"
 msgstr "_Munta"
 
 #. append the "Unmount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1152 ../thunar/thunar-tree-view.c:1326
+#: ../thunar/thunar-shortcuts-view.c:1152 ../thunar/thunar-tree-view.c:1331
 msgid "_Unmount"
 msgstr "Desm_unta"
 
 #. append the "Eject" menu action
-#: ../thunar/thunar-shortcuts-view.c:1160 ../thunar/thunar-tree-view.c:1332
+#: ../thunar/thunar-shortcuts-view.c:1160 ../thunar/thunar-tree-view.c:1337
 msgid "_Eject"
 msgstr "_Expulsa"
 
@@ -2234,7 +2233,7 @@ msgid "Create _Shortcut"
 msgstr "Crea una _drecera"
 
 #. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:1204 ../thunar/thunar-tree-view.c:1341
+#: ../thunar/thunar-shortcuts-view.c:1204 ../thunar/thunar-tree-view.c:1346
 msgid "Disconn_ect"
 msgstr "Descon_necta"
 
@@ -2256,12 +2255,12 @@ msgstr "El camí «%s» no fa referència a cap directori"
 msgid "Failed to add new shortcut"
 msgstr "Ha fallat l'afegiment de la drecera nova"
 
-#: ../thunar/thunar-shortcuts-view.c:1908 ../thunar/thunar-tree-view.c:2026
+#: ../thunar/thunar-shortcuts-view.c:1908 ../thunar/thunar-tree-view.c:2031
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Ha fallat l'expulsió de «%s»"
 
-#: ../thunar/thunar-shortcuts-view.c:2051 ../thunar/thunar-tree-view.c:2081
+#: ../thunar/thunar-shortcuts-view.c:2051 ../thunar/thunar-tree-view.c:2086
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Ha fallat el desmuntatge de «%s»"
@@ -2307,11 +2306,11 @@ msgstr "Carpeta del menú contextual"
 msgid "Create an empty folder within the current folder"
 msgstr "Crea una carpeta buida dins la carpeta actual"
 
-#: ../thunar/thunar-standard-view.c:408 ../thunar/thunar-tree-view.c:1404
+#: ../thunar/thunar-standard-view.c:408 ../thunar/thunar-tree-view.c:1409
 msgid "Cu_t"
 msgstr "Re_talla"
 
-#: ../thunar/thunar-standard-view.c:409 ../thunar/thunar-tree-view.c:1419
+#: ../thunar/thunar-standard-view.c:409 ../thunar/thunar-tree-view.c:1424
 msgid "_Copy"
 msgstr "_Copia"
 
@@ -2323,7 +2322,7 @@ msgstr "_Enganxa"
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr "Mou o copia els fitxers prèviament seleccionats per una ordre Retalla o Copia"
 
-#: ../thunar/thunar-standard-view.c:411 ../thunar/thunar-tree-view.c:1469
+#: ../thunar/thunar-standard-view.c:411 ../thunar/thunar-tree-view.c:1474
 msgid "Mo_ve to Trash"
 msgstr "_Mou a la paperera"
 
@@ -2368,7 +2367,7 @@ msgstr[0] "Crea l'_enllaç"
 msgstr[1] "Crea els _enllaços"
 
 #. append the "Rename" menu action
-#: ../thunar/thunar-standard-view.c:419 ../thunar/thunar-tree-view.c:1511
+#: ../thunar/thunar-standard-view.c:419 ../thunar/thunar-tree-view.c:1516
 msgid "_Rename..."
 msgstr "_Canvia el nom..."
 
@@ -2564,11 +2563,11 @@ msgstr "Mostra el contingut de la paperera"
 msgid "Loading..."
 msgstr "S'està carregant..."
 
-#: ../thunar/thunar-tree-view.c:1439
+#: ../thunar/thunar-tree-view.c:1444
 msgid "_Paste Into Folder"
 msgstr "Enganxa a la car_peta"
 
-#: ../thunar/thunar-tree-view.c:1563
+#: ../thunar/thunar-tree-view.c:1568
 msgid "P_roperties..."
 msgstr "P_ropietats..."
 
