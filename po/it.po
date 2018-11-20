@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-27 06:30+0200\n"
-"PO-Revision-Date: 2018-11-09 19:42+0000\n"
+"POT-Creation-Date: 2018-11-19 00:30+0100\n"
+"PO-Revision-Date: 2018-11-20 17:05+0000\n"
 "Last-Translator: Emanuele Petriglia <inbox@emanuelepetriglia.me>\n"
 "Language-Team: Italian (http://www.transifex.com/xfce/thunar/language/it/)\n"
 "MIME-Version: 1.0\n"
@@ -157,20 +157,20 @@ msgstr "Impossibile aprire \"%s\": %s"
 #. display an error message
 #: ../thunar/thunar-application.c:1660
 #: ../thunar/thunar-properties-dialog.c:731
-#: ../thunar/thunar-standard-view.c:2864 ../thunar/thunar-tree-view.c:1959
+#: ../thunar/thunar-standard-view.c:2864 ../thunar/thunar-tree-view.c:1964
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Impossibile rinominare \"%s\""
 
 #: ../thunar/thunar-application.c:1762
 #: ../thunar/thunar-location-buttons.c:1347
-#: ../thunar/thunar-standard-view.c:2389 ../thunar/thunar-tree-view.c:1821
+#: ../thunar/thunar-standard-view.c:2389 ../thunar/thunar-tree-view.c:1826
 msgid "New Folder"
 msgstr "Nuova cartella"
 
 #: ../thunar/thunar-application.c:1763
 #: ../thunar/thunar-location-buttons.c:1348
-#: ../thunar/thunar-standard-view.c:2390 ../thunar/thunar-tree-view.c:1822
+#: ../thunar/thunar-standard-view.c:2390 ../thunar/thunar-tree-view.c:1827
 msgid "Create New Folder"
 msgstr "Crea una nuova cartella"
 
@@ -235,8 +235,8 @@ msgstr[1] "Cancellare davvero in modo\npermanente i %u file selezionati?"
 #: ../thunar/thunar-dialogs.c:98 ../thunar/thunar-dialogs.c:481
 #: ../thunar/thunar-dialogs.c:554 ../thunar/thunar-dialogs.c:802
 #: ../thunar/thunar-dnd.c:169 ../thunar/thunar-launcher.c:725
-#: ../thunar/thunar-permissions-chooser.c:522
-#: ../thunar/thunar-permissions-chooser.c:1135
+#: ../thunar/thunar-permissions-chooser.c:524
+#: ../thunar/thunar-permissions-chooser.c:1137
 #: ../thunar/thunar-properties-dialog.c:819
 #: ../thunar/thunar-renamer-dialog.c:354
 #: ../thunar/thunar-renamer-dialog.c:1053
@@ -254,7 +254,7 @@ msgid "_Cancel"
 msgstr "A_nnulla"
 
 #: ../thunar/thunar-application.c:2127 ../thunar/thunar-standard-view.c:412
-#: ../thunar/thunar-tree-view.c:1485
+#: ../thunar/thunar-tree-view.c:1490
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:372
 msgid "_Delete"
 msgstr "Canc_ella"
@@ -286,7 +286,7 @@ msgstr "Rimuovere tutti i file e le cartelle dal cestino?"
 #. append the "Empty Trash" menu action
 #. prepare the menu item
 #: ../thunar/thunar-application.c:2306 ../thunar/thunar-location-buttons.c:188
-#: ../thunar/thunar-shortcuts-view.c:1226 ../thunar/thunar-tree-view.c:1356
+#: ../thunar/thunar-shortcuts-view.c:1226 ../thunar/thunar-tree-view.c:1361
 #: ../thunar/thunar-window.c:355 ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "_Svuota il cestino"
@@ -439,7 +439,7 @@ msgstr "Selezionare un'applicazione"
 #: ../thunar/thunar-chooser-dialog.c:1155 ../thunar/thunar-launcher.c:176
 #: ../thunar/thunar-launcher.c:811 ../thunar/thunar-location-buttons.c:184
 #: ../thunar/thunar-renamer-dialog.c:1054
-#: ../thunar/thunar-shortcuts-view.c:1099 ../thunar/thunar-tree-view.c:1283
+#: ../thunar/thunar-shortcuts-view.c:1099 ../thunar/thunar-tree-view.c:1288
 #: ../plugins/thunar-uca/thunar-uca-editor.c:177
 msgid "_Open"
 msgstr "_Apri"
@@ -670,7 +670,7 @@ msgstr "_Rinomina"
 msgid "translator-credits"
 msgstr "Emanuele Petriglia <inbox@emanuelepetriglia.me>\nRoberto Pariset <robdebian@gmail.com>\nGianluca Foddis <gianluca.foddis@gmail.com>\nCristian Marchi <cri.penta@gmail.com>"
 
-#: ../thunar/thunar-dialogs.c:438 ../thunar/thunar-permissions-chooser.c:524
+#: ../thunar/thunar-dialogs.c:438 ../thunar/thunar-permissions-chooser.c:526
 msgid "_Yes"
 msgstr "_Sì"
 
@@ -678,7 +678,7 @@ msgstr "_Sì"
 msgid "Yes to _all"
 msgstr "Sì _a tutti"
 
-#: ../thunar/thunar-dialogs.c:446 ../thunar/thunar-permissions-chooser.c:523
+#: ../thunar/thunar-dialogs.c:446 ../thunar/thunar-permissions-chooser.c:525
 msgid "_No"
 msgstr "N_o"
 
@@ -1065,13 +1065,13 @@ msgstr "Non c'è abbastanza spazio nella destinazione. Provare a rimuovere alcun
 
 #. append the "Open in New Tab" menu action
 #: ../thunar/thunar-launcher.c:177 ../thunar/thunar-launcher.c:854
-#: ../thunar/thunar-tree-view.c:1297
+#: ../thunar/thunar-tree-view.c:1302
 msgid "Open in New _Tab"
 msgstr "Apri in una nuova sc_heda"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:178 ../thunar/thunar-launcher.c:848
-#: ../thunar/thunar-tree-view.c:1304
+#: ../thunar/thunar-tree-view.c:1309
 msgid "Open in New _Window"
 msgstr "Apri in una nuova _finestra"
 
@@ -1207,7 +1207,7 @@ msgid "Open With \"%s\""
 msgstr "Aprire con \"%s\""
 
 #: ../thunar/thunar-launcher.c:1598 ../thunar/thunar-shortcuts-view.c:1744
-#: ../thunar/thunar-shortcuts-view.c:1982 ../thunar/thunar-tree-view.c:2158
+#: ../thunar/thunar-shortcuts-view.c:1982 ../thunar/thunar-tree-view.c:2163
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Impossibile montare \"%s\""
@@ -1329,7 +1329,7 @@ msgid "Open in New Window"
 msgstr "Aprire in una nuova finestra"
 
 #: ../thunar/thunar-location-buttons.c:187
-#: ../thunar/thunar-standard-view.c:406 ../thunar/thunar-tree-view.c:1373
+#: ../thunar/thunar-standard-view.c:406 ../thunar/thunar-tree-view.c:1378
 msgid "Create _Folder..."
 msgstr "Creare carte_lla…"
 
@@ -1461,100 +1461,99 @@ msgstr "Permetti di _eseguire il file come un programma"
 
 #: ../thunar/thunar-permissions-chooser.c:361
 msgid ""
-"Allowing untrusted programs to run\n"
-"presents a security risk to your system."
-msgstr "Permettere l'esecuzione a programmi non sicuri\nrappresenta un rischio per la sicurezza del sistema."
+"Allowing untrusted programs to run presents a security risk to your system."
+msgstr "Permettere l'esecuzione di programmi non sicuri rappresenta un rischio di sicurezza per il proprio sistema."
 
-#: ../thunar/thunar-permissions-chooser.c:376
+#: ../thunar/thunar-permissions-chooser.c:377
 msgid ""
-"The folder permissions are inconsistent, you\n"
-"may not be able to work with files in this folder."
-msgstr "I permessi della cartella sono inconsistenti, potrebbe\nnon essere possibile lavorare con i file di questa cartella."
+"The folder permissions are inconsistent, you may not be able to work with "
+"files in this folder."
+msgstr "I permessi della cartella sono inconsistenti, potrebbe non essere possibile lavorare con i file di questa cartella."
 
-#: ../thunar/thunar-permissions-chooser.c:389
+#: ../thunar/thunar-permissions-chooser.c:391
 msgid "Correct _folder permissions..."
 msgstr "Co_rreggi i permessi della cartella…"
 
-#: ../thunar/thunar-permissions-chooser.c:390
+#: ../thunar/thunar-permissions-chooser.c:392
 msgid "Click here to automatically fix the folder permissions."
 msgstr "Fare un clic qui per correggere automaticamente i permessi della cartella."
 
-#: ../thunar/thunar-permissions-chooser.c:401
+#: ../thunar/thunar-permissions-chooser.c:403
 msgid "Please wait..."
 msgstr "Attendere…"
 
-#: ../thunar/thunar-permissions-chooser.c:406
+#: ../thunar/thunar-permissions-chooser.c:408
 msgid "Stop applying permissions recursively."
 msgstr "Arresta l'applicazione ricorsiva dei permessi."
 
 #. allocate the question dialog
-#: ../thunar/thunar-permissions-chooser.c:519
+#: ../thunar/thunar-permissions-chooser.c:521
 msgid "Question"
 msgstr "Domanda"
 
-#: ../thunar/thunar-permissions-chooser.c:543
+#: ../thunar/thunar-permissions-chooser.c:545
 msgid "Apply recursively?"
 msgstr "Applicare ricorsivamente?"
 
-#: ../thunar/thunar-permissions-chooser.c:549
+#: ../thunar/thunar-permissions-chooser.c:551
 msgid ""
 "Do you want to apply your changes recursively to\n"
 "all files and subfolders below the selected folder?"
 msgstr "Applicare i cambiamenti ricorsivamente a\ntutti i file e sottocartelle contenuti nella cartella selezionata?"
 
-#: ../thunar/thunar-permissions-chooser.c:554
+#: ../thunar/thunar-permissions-chooser.c:556
 msgid "Do _not ask me again"
 msgstr "_Non chiedere di nuovo"
 
-#: ../thunar/thunar-permissions-chooser.c:555
+#: ../thunar/thunar-permissions-chooser.c:557
 msgid ""
 "If you select this option your choice will be remembered and you won't be "
 "asked again. You can use the preferences dialog to alter your choice "
 "afterwards."
 msgstr "Selezionando questa opzione la scelta sarà ricordata e non verrà riproposta; in futuro sarà possibile modificare la scelta tramite la finestra delle preferenze."
 
-#: ../thunar/thunar-permissions-chooser.c:917
+#: ../thunar/thunar-permissions-chooser.c:919
 msgid "Mixed file owners"
 msgstr "Diversi proprietari del file"
 
-#: ../thunar/thunar-permissions-chooser.c:917
+#: ../thunar/thunar-permissions-chooser.c:919
 msgid "Unknown file owner"
 msgstr "Proprietario del file sconosciuto"
 
-#: ../thunar/thunar-permissions-chooser.c:997
+#: ../thunar/thunar-permissions-chooser.c:999
 #: ../plugins/thunar-uca/thunar-uca-editor.c:411
 #: ../plugins/thunar-uca/thunar-uca-editor.c:617
 msgid "None"
 msgstr "Nessuno"
 
 #. 0000
-#: ../thunar/thunar-permissions-chooser.c:998
+#: ../thunar/thunar-permissions-chooser.c:1000
 msgid "Write only"
 msgstr "Sola scrittura"
 
 #. 0002
-#: ../thunar/thunar-permissions-chooser.c:999
+#: ../thunar/thunar-permissions-chooser.c:1001
 msgid "Read only"
 msgstr "Sola lettura"
 
 #. 0004
-#: ../thunar/thunar-permissions-chooser.c:1000
+#: ../thunar/thunar-permissions-chooser.c:1002
 msgid "Read & Write"
 msgstr "Lettura e scrittura"
 
-#: ../thunar/thunar-permissions-chooser.c:1002
+#: ../thunar/thunar-permissions-chooser.c:1004
 msgid "Varying (no change)"
 msgstr "Variabile (nessuna modifica)"
 
-#: ../thunar/thunar-permissions-chooser.c:1134
+#: ../thunar/thunar-permissions-chooser.c:1136
 msgid "Correct folder permissions automatically?"
 msgstr "Correggere i permessi della cartella automaticamente?"
 
-#: ../thunar/thunar-permissions-chooser.c:1136
+#: ../thunar/thunar-permissions-chooser.c:1138
 msgid "Correct _folder permissions"
 msgstr "Co_rreggi i permessi della cartella"
 
-#: ../thunar/thunar-permissions-chooser.c:1138
+#: ../thunar/thunar-permissions-chooser.c:1140
 msgid ""
 "The folder permissions will be reset to a consistent state. Only users "
 "allowed to read the contents of this folder will be allowed to enter the "
@@ -2213,17 +2212,17 @@ msgstr[0] "Aggiungi la cartella selezionata al pannello laterale delle scorciato
 msgstr[1] "Aggiungi le cartelle selezionate al pannello laterale delle scorciatoie"
 
 #. append the "Mount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1144 ../thunar/thunar-tree-view.c:1320
+#: ../thunar/thunar-shortcuts-view.c:1144 ../thunar/thunar-tree-view.c:1325
 msgid "_Mount"
 msgstr "_Monta"
 
 #. append the "Unmount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1152 ../thunar/thunar-tree-view.c:1326
+#: ../thunar/thunar-shortcuts-view.c:1152 ../thunar/thunar-tree-view.c:1331
 msgid "_Unmount"
 msgstr "_Smonta"
 
 #. append the "Eject" menu action
-#: ../thunar/thunar-shortcuts-view.c:1160 ../thunar/thunar-tree-view.c:1332
+#: ../thunar/thunar-shortcuts-view.c:1160 ../thunar/thunar-tree-view.c:1337
 msgid "_Eject"
 msgstr "_Espelli"
 
@@ -2232,7 +2231,7 @@ msgid "Create _Shortcut"
 msgstr "Crea _scorciatoia"
 
 #. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:1204 ../thunar/thunar-tree-view.c:1341
+#: ../thunar/thunar-shortcuts-view.c:1204 ../thunar/thunar-tree-view.c:1346
 msgid "Disconn_ect"
 msgstr "Disconn_etti"
 
@@ -2254,12 +2253,12 @@ msgstr "Il percorso \"%s\" non si riferisce a una cartella"
 msgid "Failed to add new shortcut"
 msgstr "Impossibile aggiungere la nuova scorciatoia"
 
-#: ../thunar/thunar-shortcuts-view.c:1908 ../thunar/thunar-tree-view.c:2026
+#: ../thunar/thunar-shortcuts-view.c:1908 ../thunar/thunar-tree-view.c:2031
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Impossibile espellere \"%s\""
 
-#: ../thunar/thunar-shortcuts-view.c:2051 ../thunar/thunar-tree-view.c:2081
+#: ../thunar/thunar-shortcuts-view.c:2051 ../thunar/thunar-tree-view.c:2086
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Impossibile smontare \"%s\""
@@ -2305,11 +2304,11 @@ msgstr "Menu contestuale della cartella"
 msgid "Create an empty folder within the current folder"
 msgstr "Crea una cartella vuota dentro la cartella corrente"
 
-#: ../thunar/thunar-standard-view.c:408 ../thunar/thunar-tree-view.c:1404
+#: ../thunar/thunar-standard-view.c:408 ../thunar/thunar-tree-view.c:1409
 msgid "Cu_t"
 msgstr "_Taglia"
 
-#: ../thunar/thunar-standard-view.c:409 ../thunar/thunar-tree-view.c:1419
+#: ../thunar/thunar-standard-view.c:409 ../thunar/thunar-tree-view.c:1424
 msgid "_Copy"
 msgstr "_Copia"
 
@@ -2321,7 +2320,7 @@ msgstr "_Incolla"
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr "Sposta o copia i file selezionati precedentemente da un comando di taglia o copia"
 
-#: ../thunar/thunar-standard-view.c:411 ../thunar/thunar-tree-view.c:1469
+#: ../thunar/thunar-standard-view.c:411 ../thunar/thunar-tree-view.c:1474
 msgid "Mo_ve to Trash"
 msgstr "Sposta nel _cestino"
 
@@ -2366,7 +2365,7 @@ msgstr[0] "Crea colle_gamento"
 msgstr[1] "Crea colle_gamenti"
 
 #. append the "Rename" menu action
-#: ../thunar/thunar-standard-view.c:419 ../thunar/thunar-tree-view.c:1511
+#: ../thunar/thunar-standard-view.c:419 ../thunar/thunar-tree-view.c:1516
 msgid "_Rename..."
 msgstr "_Rinomina..."
 
@@ -2562,11 +2561,11 @@ msgstr "Mostra il contenuto del cestino"
 msgid "Loading..."
 msgstr "Caricamento in corso..."
 
-#: ../thunar/thunar-tree-view.c:1439
+#: ../thunar/thunar-tree-view.c:1444
 msgid "_Paste Into Folder"
 msgstr "_Incolla nella cartella"
 
-#: ../thunar/thunar-tree-view.c:1563
+#: ../thunar/thunar-tree-view.c:1568
 msgid "P_roperties..."
 msgstr "P_roprietà..."
 
