@@ -12,6 +12,7 @@
 # erenturkay <turkay.eren@gmail.com>, 2007-2008
 # Fatih ERDEM <93.fatiherdem@gmail.com>, 2013
 # Gökmen Görgen <gkmngrgn@gmail.com>, 2008-2009
+# Muhammet Kara <muhammetk@gmail.com>, 2018
 # Necdet Yücel <necdetyucel@gmail.com>, 2013-2015,2017-2018
 # Recep, 2013
 # Türker SEZER <turkersezer@tsdesign.info>, 2007
@@ -20,8 +21,8 @@ msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-11-19 00:30+0100\n"
-"PO-Revision-Date: 2018-11-19 06:04+0000\n"
-"Last-Translator: Demiray Muhterem <mdemiray@msn.com>\n"
+"PO-Revision-Date: 2018-11-21 13:06+0000\n"
+"Last-Translator: Muhammet Kara <muhammetk@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/xfce/thunar/language/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -172,13 +173,13 @@ msgstr "\"%s\" yeniden adlandırılamadı"
 #: ../thunar/thunar-location-buttons.c:1347
 #: ../thunar/thunar-standard-view.c:2389 ../thunar/thunar-tree-view.c:1826
 msgid "New Folder"
-msgstr "Yeni Dizin"
+msgstr "Yeni Klasör"
 
 #: ../thunar/thunar-application.c:1763
 #: ../thunar/thunar-location-buttons.c:1348
 #: ../thunar/thunar-standard-view.c:2390 ../thunar/thunar-tree-view.c:1827
 msgid "Create New Folder"
-msgstr "Yeni Dizin Oluştur"
+msgstr "Yeni Klasör Oluştur"
 
 #: ../thunar/thunar-application.c:1767
 msgid "New File"
@@ -287,7 +288,7 @@ msgstr "Dizinler oluşturuluyor..."
 
 #: ../thunar/thunar-application.c:2300
 msgid "Remove all files and folders from the Trash?"
-msgstr "Çöpten tüm dosyaları ve dizinleri sil?"
+msgstr "Çöpten tüm dosyalar ve klasörler silinsin mi?"
 
 #. append the "Empty Trash" menu action
 #. prepare the menu item
@@ -724,17 +725,17 @@ msgstr "_Değiştir"
 #: ../thunar/thunar-dialogs.c:586
 #, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
-msgstr "Bu dizin zaten \"%s\" bağlantısını içeriyor."
+msgstr "Bu klasör zaten \"%s\" bağlantısını içeriyor."
 
 #: ../thunar/thunar-dialogs.c:591
 #, c-format
 msgid "This folder already contains a folder \"%s\"."
-msgstr "Bu dizin zaten \"%s\" dizinini içeriyor."
+msgstr "Bu klasör zaten \"%s\" klasörünü içeriyor."
 
 #: ../thunar/thunar-dialogs.c:596
 #, c-format
 msgid "This folder already contains a file \"%s\"."
-msgstr "Bu dizin zaten \"%s\" dosyasını içeriyor."
+msgstr "Bu klasör zaten \"%s\" dosyasını içeriyor."
 
 #: ../thunar/thunar-dialogs.c:609
 #, c-format
@@ -744,7 +745,7 @@ msgstr "ReplaceDialogPart1|Bağlantıyı değiştirmek istiyor musunuz?"
 #: ../thunar/thunar-dialogs.c:611
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the existing folder"
-msgstr "ReplaceDialogPart1|Var olan dizini değiştirmek istiyor musunuz?"
+msgstr "ReplaceDialogPart1|Var olan klasörü aşağıdaki klasörle"
 
 #: ../thunar/thunar-dialogs.c:613
 #, c-format
@@ -770,7 +771,7 @@ msgstr "ReplaceDialogPart2|aşağıdaki bağlantı ile?"
 #: ../thunar/thunar-dialogs.c:647
 #, c-format
 msgid "ReplaceDialogPart2|with the following folder?"
-msgstr "ReplaceDialogPart2|aşağıdaki dizin ile?"
+msgstr "ReplaceDialogPart2|değiştirmek istiyor musunuz?"
 
 #: ../thunar/thunar-dialogs.c:649
 #, c-format
@@ -1337,7 +1338,7 @@ msgstr "Yeni Pencerede Aç"
 #: ../thunar/thunar-location-buttons.c:187
 #: ../thunar/thunar-standard-view.c:406 ../thunar/thunar-tree-view.c:1378
 msgid "Create _Folder..."
-msgstr "Di_zin Oluştur..."
+msgstr "Klas_ör Oluştur..."
 
 #: ../thunar/thunar-location-buttons.c:188 ../thunar/thunar-window.c:355
 msgid "Delete all files and folders in the Trash"
@@ -1371,7 +1372,7 @@ msgstr "\"%s\" ögesini yeni pencerede aç"
 #: ../thunar/thunar-location-buttons.c:1274
 #, c-format
 msgid "Create a new folder in \"%s\""
-msgstr "\"%s\" içerisinde yeni dizin oluştur"
+msgstr "\"%s\" içerisinde yeni klasör oluştur"
 
 #: ../thunar/thunar-location-buttons.c:1294
 #, c-format
@@ -2308,7 +2309,7 @@ msgstr "Dizin Bağlam Menüsü"
 
 #: ../thunar/thunar-standard-view.c:406
 msgid "Create an empty folder within the current folder"
-msgstr "Geçerli dizin içinde boş dizin oluşur"
+msgstr "Geçerli klasör içinde boş bir klasör oluşur"
 
 #: ../thunar/thunar-standard-view.c:408 ../thunar/thunar-tree-view.c:1409
 msgid "Cu_t"
@@ -2919,14 +2920,14 @@ msgstr "Şablonlar Hakkında"
 
 #: ../thunar/thunar-window.c:3098
 msgid "All files in this folder will appear in the \"Create Document\" menu."
-msgstr "Bu dizindeki tüm dosyalar \"Belge Oluştur\" menüsünde görüntülenecek."
+msgstr "Bu klasördeki tüm dosyalar \"Belge Oluştur\" menüsünde görüntülenecek."
 
 #: ../thunar/thunar-window.c:3105
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
-msgstr "Bazı tip belgeleri sıklıkla oluşturuyorsanız, bu dizin içine bir kopya bırakın. Thunar, bu kopyayı \"Belge Oluştur\" menüsüne ekleyecektir.\n\nDaha sonra bu kopyayı bulunduğunuz dizine oluşturmak için \"Belge Oluştur\" menüsünü kullanabilirsiniz."
+msgstr "Bazı tip belgeleri sıklıkla oluşturuyorsanız, bu klasör içine bir kopya bırakın. Thunar, bu kopyayı \"Belge Oluştur\" menüsüne ekleyecektir.\n\nDaha sonra bu kopyayı bulunduğunuz dizinde oluşturmak için \"Belge Oluştur\" menüsünü kullanabilirsiniz."
 
 #: ../thunar/thunar-window.c:3117
 msgid "Do _not display this message again"
@@ -3730,15 +3731,15 @@ msgstr "Dosya yöneticisi ile gezin"
 
 #: ../Thunar-folder-handler.desktop.in.in.h:1
 msgid "Open Folder with Thunar"
-msgstr "Dizini Thunar'la Aç"
+msgstr "Klasörü Thunar'la Aç"
 
 #: ../Thunar-folder-handler.desktop.in.in.h:2
 msgid "Open the specified folders in Thunar"
-msgstr "Thunar içerisinde belirlenen dizinleri aç"
+msgstr "Thunar içerisinde belirlenen klasörleri aç"
 
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open Folder"
-msgstr "Dizin Aç"
+msgstr "Klasör Aç"
 
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "Configure the Thunar file manager"
