@@ -368,6 +368,7 @@ thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
       dialog->scrollwin = gtk_scrolled_window_new (NULL, NULL);
       gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (dialog->scrollwin),
                                       GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+      gtk_widget_set_vexpand (dialog->scrollwin, TRUE);
       gtk_container_add (GTK_CONTAINER (dialog->vbox), dialog->scrollwin);
       gtk_widget_show (dialog->scrollwin);
 
