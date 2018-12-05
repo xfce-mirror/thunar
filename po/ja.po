@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-27 06:30+0200\n"
-"PO-Revision-Date: 2018-10-28 07:59+0000\n"
-"Last-Translator: Masato HASHIMOTO <cabezon.hashimoto@gmail.com>\n"
+"POT-Creation-Date: 2018-11-19 00:30+0100\n"
+"PO-Revision-Date: 2018-12-05 14:43+0000\n"
+"Last-Translator: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>\n"
 "Language-Team: Japanese (http://www.transifex.com/xfce/thunar/language/ja/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -152,20 +152,20 @@ msgstr "\"%s\" を開けませんでした: %s"
 #. display an error message
 #: ../thunar/thunar-application.c:1660
 #: ../thunar/thunar-properties-dialog.c:731
-#: ../thunar/thunar-standard-view.c:2864 ../thunar/thunar-tree-view.c:1959
+#: ../thunar/thunar-standard-view.c:2864 ../thunar/thunar-tree-view.c:1964
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "\"%s\" の名前の変更に失敗しました。"
 
 #: ../thunar/thunar-application.c:1762
 #: ../thunar/thunar-location-buttons.c:1347
-#: ../thunar/thunar-standard-view.c:2389 ../thunar/thunar-tree-view.c:1821
+#: ../thunar/thunar-standard-view.c:2389 ../thunar/thunar-tree-view.c:1826
 msgid "New Folder"
 msgstr "新しいフォルダー"
 
 #: ../thunar/thunar-application.c:1763
 #: ../thunar/thunar-location-buttons.c:1348
-#: ../thunar/thunar-standard-view.c:2390 ../thunar/thunar-tree-view.c:1822
+#: ../thunar/thunar-standard-view.c:2390 ../thunar/thunar-tree-view.c:1827
 msgid "Create New Folder"
 msgstr "新しいフォルダーを作成します。"
 
@@ -229,8 +229,8 @@ msgstr[0] "選択した %u 個のファイルは完全に削除されます。\n
 #: ../thunar/thunar-dialogs.c:98 ../thunar/thunar-dialogs.c:481
 #: ../thunar/thunar-dialogs.c:554 ../thunar/thunar-dialogs.c:802
 #: ../thunar/thunar-dnd.c:169 ../thunar/thunar-launcher.c:725
-#: ../thunar/thunar-permissions-chooser.c:522
-#: ../thunar/thunar-permissions-chooser.c:1135
+#: ../thunar/thunar-permissions-chooser.c:524
+#: ../thunar/thunar-permissions-chooser.c:1137
 #: ../thunar/thunar-properties-dialog.c:819
 #: ../thunar/thunar-renamer-dialog.c:354
 #: ../thunar/thunar-renamer-dialog.c:1053
@@ -248,7 +248,7 @@ msgid "_Cancel"
 msgstr "キャンセル(_C)"
 
 #: ../thunar/thunar-application.c:2127 ../thunar/thunar-standard-view.c:412
-#: ../thunar/thunar-tree-view.c:1485
+#: ../thunar/thunar-tree-view.c:1490
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:372
 msgid "_Delete"
 msgstr "削除(_D)"
@@ -280,7 +280,7 @@ msgstr "ゴミ箱にあるファイルとフォルダーをすべて削除しま
 #. append the "Empty Trash" menu action
 #. prepare the menu item
 #: ../thunar/thunar-application.c:2306 ../thunar/thunar-location-buttons.c:188
-#: ../thunar/thunar-shortcuts-view.c:1226 ../thunar/thunar-tree-view.c:1356
+#: ../thunar/thunar-shortcuts-view.c:1226 ../thunar/thunar-tree-view.c:1361
 #: ../thunar/thunar-window.c:355 ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "ゴミ箱を空にする(_E)"
@@ -433,7 +433,7 @@ msgstr "アプリケーションを選択してください"
 #: ../thunar/thunar-chooser-dialog.c:1155 ../thunar/thunar-launcher.c:176
 #: ../thunar/thunar-launcher.c:811 ../thunar/thunar-location-buttons.c:184
 #: ../thunar/thunar-renamer-dialog.c:1054
-#: ../thunar/thunar-shortcuts-view.c:1099 ../thunar/thunar-tree-view.c:1283
+#: ../thunar/thunar-shortcuts-view.c:1099 ../thunar/thunar-tree-view.c:1288
 #: ../plugins/thunar-uca/thunar-uca-editor.c:177
 msgid "_Open"
 msgstr "開く(_O)"
@@ -664,7 +664,7 @@ msgstr "名前の変更(_R)"
 msgid "translator-credits"
 msgstr "Daichi Kawahata <daichi@xfce.org>\nNobuhiro Iwamatsu <iwamatsu@nigauri.org>\nMasato Hashimoto <hashimo@xfce.org>"
 
-#: ../thunar/thunar-dialogs.c:438 ../thunar/thunar-permissions-chooser.c:524
+#: ../thunar/thunar-dialogs.c:438 ../thunar/thunar-permissions-chooser.c:526
 msgid "_Yes"
 msgstr "はい(_Y)"
 
@@ -672,7 +672,7 @@ msgstr "はい(_Y)"
 msgid "Yes to _all"
 msgstr "すべてにはい(_A)"
 
-#: ../thunar/thunar-dialogs.c:446 ../thunar/thunar-permissions-chooser.c:523
+#: ../thunar/thunar-dialogs.c:446 ../thunar/thunar-permissions-chooser.c:525
 msgid "_No"
 msgstr "いいえ(_N)"
 
@@ -1059,13 +1059,13 @@ msgstr "移動/コピー先に十分な空き容量がありません。ファ�
 
 #. append the "Open in New Tab" menu action
 #: ../thunar/thunar-launcher.c:177 ../thunar/thunar-launcher.c:854
-#: ../thunar/thunar-tree-view.c:1297
+#: ../thunar/thunar-tree-view.c:1302
 msgid "Open in New _Tab"
 msgstr "新しいタブで開く(_T)"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:178 ../thunar/thunar-launcher.c:848
-#: ../thunar/thunar-tree-view.c:1304
+#: ../thunar/thunar-tree-view.c:1309
 msgid "Open in New _Window"
 msgstr "新しいウィンドウで開く(_W)"
 
@@ -1190,7 +1190,7 @@ msgid "Open With \"%s\""
 msgstr "%s で開く"
 
 #: ../thunar/thunar-launcher.c:1598 ../thunar/thunar-shortcuts-view.c:1744
-#: ../thunar/thunar-shortcuts-view.c:1982 ../thunar/thunar-tree-view.c:2158
+#: ../thunar/thunar-shortcuts-view.c:1982 ../thunar/thunar-tree-view.c:2163
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "\"%s\" のマウントに失敗しました"
@@ -1307,7 +1307,7 @@ msgid "Open in New Window"
 msgstr "新しいウィンドウで開く"
 
 #: ../thunar/thunar-location-buttons.c:187
-#: ../thunar/thunar-standard-view.c:406 ../thunar/thunar-tree-view.c:1373
+#: ../thunar/thunar-standard-view.c:406 ../thunar/thunar-tree-view.c:1378
 msgid "Create _Folder..."
 msgstr "フォルダーの作成(_F)..."
 
@@ -1439,100 +1439,99 @@ msgstr "プログラムとしての実行を許可する(_R)"
 
 #: ../thunar/thunar-permissions-chooser.c:361
 msgid ""
-"Allowing untrusted programs to run\n"
-"presents a security risk to your system."
-msgstr "信用の置けないプログラムの実行を許可すると\nセキュリティ上の危険をもたらします。"
+"Allowing untrusted programs to run presents a security risk to your system."
+msgstr "信用の置けないプログラムの実行を許可すると、セキュリティ上の危険をもたらします。"
 
-#: ../thunar/thunar-permissions-chooser.c:376
+#: ../thunar/thunar-permissions-chooser.c:377
 msgid ""
-"The folder permissions are inconsistent, you\n"
-"may not be able to work with files in this folder."
-msgstr "フォルダーのアクセス権が一貫していませんので、この\nフォルダーにあるファイルで作業できない可能性があります。"
+"The folder permissions are inconsistent, you may not be able to work with "
+"files in this folder."
+msgstr "フォルダーのアクセス権が一貫していませんので、このフォルダーにあるファイルで作業できない可能性があります。"
 
-#: ../thunar/thunar-permissions-chooser.c:389
+#: ../thunar/thunar-permissions-chooser.c:391
 msgid "Correct _folder permissions..."
 msgstr "フォルダーのアクセス権を直す(_F)..."
 
-#: ../thunar/thunar-permissions-chooser.c:390
+#: ../thunar/thunar-permissions-chooser.c:392
 msgid "Click here to automatically fix the folder permissions."
 msgstr "ここをクリックすると、フォルダーのアクセス権を自動的に直します。"
 
-#: ../thunar/thunar-permissions-chooser.c:401
+#: ../thunar/thunar-permissions-chooser.c:403
 msgid "Please wait..."
 msgstr "お待ちください..."
 
-#: ../thunar/thunar-permissions-chooser.c:406
+#: ../thunar/thunar-permissions-chooser.c:408
 msgid "Stop applying permissions recursively."
 msgstr "アクセス権を再帰的に変更していくのを止めます。"
 
 #. allocate the question dialog
-#: ../thunar/thunar-permissions-chooser.c:519
+#: ../thunar/thunar-permissions-chooser.c:521
 msgid "Question"
 msgstr "確認"
 
-#: ../thunar/thunar-permissions-chooser.c:543
+#: ../thunar/thunar-permissions-chooser.c:545
 msgid "Apply recursively?"
 msgstr "再帰的に変更しますか?"
 
-#: ../thunar/thunar-permissions-chooser.c:549
+#: ../thunar/thunar-permissions-chooser.c:551
 msgid ""
 "Do you want to apply your changes recursively to\n"
 "all files and subfolders below the selected folder?"
 msgstr "選択したフォルダーの中にあるすべてのファイルや\nサブフォルダーにも変更を適用しますか?"
 
-#: ../thunar/thunar-permissions-chooser.c:554
+#: ../thunar/thunar-permissions-chooser.c:556
 msgid "Do _not ask me again"
 msgstr "次回から確認しない(_N)"
 
-#: ../thunar/thunar-permissions-chooser.c:555
+#: ../thunar/thunar-permissions-chooser.c:557
 msgid ""
 "If you select this option your choice will be remembered and you won't be "
 "asked again. You can use the preferences dialog to alter your choice "
 "afterwards."
 msgstr "このオプションを選ぶと、あなたの選択は記憶され同じ質問を尋ねられる事はありません。今後これを変更するには設定ダイアログをご使用ください。"
 
-#: ../thunar/thunar-permissions-chooser.c:917
+#: ../thunar/thunar-permissions-chooser.c:919
 msgid "Mixed file owners"
 msgstr "複数の所有者が含まれています。"
 
-#: ../thunar/thunar-permissions-chooser.c:917
+#: ../thunar/thunar-permissions-chooser.c:919
 msgid "Unknown file owner"
 msgstr "不明なファイル所有者です。"
 
-#: ../thunar/thunar-permissions-chooser.c:997
+#: ../thunar/thunar-permissions-chooser.c:999
 #: ../plugins/thunar-uca/thunar-uca-editor.c:411
 #: ../plugins/thunar-uca/thunar-uca-editor.c:617
 msgid "None"
 msgstr "無し"
 
 #. 0000
-#: ../thunar/thunar-permissions-chooser.c:998
+#: ../thunar/thunar-permissions-chooser.c:1000
 msgid "Write only"
 msgstr "書込専用"
 
 #. 0002
-#: ../thunar/thunar-permissions-chooser.c:999
+#: ../thunar/thunar-permissions-chooser.c:1001
 msgid "Read only"
 msgstr "読込専用"
 
 #. 0004
-#: ../thunar/thunar-permissions-chooser.c:1000
+#: ../thunar/thunar-permissions-chooser.c:1002
 msgid "Read & Write"
 msgstr "読込と書込"
 
-#: ../thunar/thunar-permissions-chooser.c:1002
+#: ../thunar/thunar-permissions-chooser.c:1004
 msgid "Varying (no change)"
 msgstr "さまざま (変更しない)"
 
-#: ../thunar/thunar-permissions-chooser.c:1134
+#: ../thunar/thunar-permissions-chooser.c:1136
 msgid "Correct folder permissions automatically?"
 msgstr "フォルダーのアクセス権を自動的に直しますか?"
 
-#: ../thunar/thunar-permissions-chooser.c:1136
+#: ../thunar/thunar-permissions-chooser.c:1138
 msgid "Correct _folder permissions"
 msgstr "フォルダーのアクセス権を直す(_F)"
 
-#: ../thunar/thunar-permissions-chooser.c:1138
+#: ../thunar/thunar-permissions-chooser.c:1140
 msgid ""
 "The folder permissions will be reset to a consistent state. Only users "
 "allowed to read the contents of this folder will be allowed to enter the "
@@ -2185,17 +2184,17 @@ msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "選択したフォルダーを左のショートカットペインに追加します。"
 
 #. append the "Mount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1144 ../thunar/thunar-tree-view.c:1320
+#: ../thunar/thunar-shortcuts-view.c:1144 ../thunar/thunar-tree-view.c:1325
 msgid "_Mount"
 msgstr "マウント(_M)"
 
 #. append the "Unmount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1152 ../thunar/thunar-tree-view.c:1326
+#: ../thunar/thunar-shortcuts-view.c:1152 ../thunar/thunar-tree-view.c:1331
 msgid "_Unmount"
 msgstr "マウント解除(_U)"
 
 #. append the "Eject" menu action
-#: ../thunar/thunar-shortcuts-view.c:1160 ../thunar/thunar-tree-view.c:1332
+#: ../thunar/thunar-shortcuts-view.c:1160 ../thunar/thunar-tree-view.c:1337
 msgid "_Eject"
 msgstr "取り出し(_E)"
 
@@ -2204,7 +2203,7 @@ msgid "Create _Shortcut"
 msgstr "ショートカットの作成(_S)"
 
 #. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:1204 ../thunar/thunar-tree-view.c:1341
+#: ../thunar/thunar-shortcuts-view.c:1204 ../thunar/thunar-tree-view.c:1346
 msgid "Disconn_ect"
 msgstr "切断(_E)"
 
@@ -2226,12 +2225,12 @@ msgstr "パス \"%s\" はフォルダーを参照していません。"
 msgid "Failed to add new shortcut"
 msgstr "ショートカットの追加に失敗しました"
 
-#: ../thunar/thunar-shortcuts-view.c:1908 ../thunar/thunar-tree-view.c:2026
+#: ../thunar/thunar-shortcuts-view.c:1908 ../thunar/thunar-tree-view.c:2031
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "\"%s\" の取り出しに失敗しました"
 
-#: ../thunar/thunar-shortcuts-view.c:2051 ../thunar/thunar-tree-view.c:2081
+#: ../thunar/thunar-shortcuts-view.c:2051 ../thunar/thunar-tree-view.c:2086
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "\"%s\" のマウント解除に失敗しました"
@@ -2276,11 +2275,11 @@ msgstr "フォルダーのコンテキストメニュー"
 msgid "Create an empty folder within the current folder"
 msgstr "現在のフォルダーに空のフォルダーを作成します。"
 
-#: ../thunar/thunar-standard-view.c:408 ../thunar/thunar-tree-view.c:1404
+#: ../thunar/thunar-standard-view.c:408 ../thunar/thunar-tree-view.c:1409
 msgid "Cu_t"
 msgstr "切り取り(_T)"
 
-#: ../thunar/thunar-standard-view.c:409 ../thunar/thunar-tree-view.c:1419
+#: ../thunar/thunar-standard-view.c:409 ../thunar/thunar-tree-view.c:1424
 msgid "_Copy"
 msgstr "コピー(_C)"
 
@@ -2292,7 +2291,7 @@ msgstr "貼り付け(_P)"
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr "先に \"切り取り\" または \"コピー\" で選択されたファイルを \"移動\" または \"コピー\" します。"
 
-#: ../thunar/thunar-standard-view.c:411 ../thunar/thunar-tree-view.c:1469
+#: ../thunar/thunar-standard-view.c:411 ../thunar/thunar-tree-view.c:1474
 msgid "Mo_ve to Trash"
 msgstr "ゴミ箱に捨てる(_V)"
 
@@ -2336,7 +2335,7 @@ msgid_plural "Ma_ke Links"
 msgstr[0] "リンクの作成(_K)"
 
 #. append the "Rename" menu action
-#: ../thunar/thunar-standard-view.c:419 ../thunar/thunar-tree-view.c:1511
+#: ../thunar/thunar-standard-view.c:419 ../thunar/thunar-tree-view.c:1516
 msgid "_Rename..."
 msgstr "名前の変更(_R)..."
 
@@ -2521,11 +2520,11 @@ msgstr "ゴミ箱の中身を表示します。"
 msgid "Loading..."
 msgstr "読み込んでいます..."
 
-#: ../thunar/thunar-tree-view.c:1439
+#: ../thunar/thunar-tree-view.c:1444
 msgid "_Paste Into Folder"
 msgstr "フォルダーに貼り付け(_P)"
 
-#: ../thunar/thunar-tree-view.c:1563
+#: ../thunar/thunar-tree-view.c:1568
 msgid "P_roperties..."
 msgstr "プロパティ(_R)..."
 
