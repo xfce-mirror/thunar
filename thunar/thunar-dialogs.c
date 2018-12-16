@@ -43,6 +43,14 @@
 
 
 
+static void          thunar_dialogs_select_filename      (GtkWidget  *entry,
+                                                          ThunarFile *file);
+static gboolean      thunar_dialogs_entry_undo           (GtkWidget  *widget,
+                                                          GdkEvent   *event,
+                                                          ThunarFile *file);
+
+
+
 /**
  * thunar_dialogs_show_rename_file:
  * @parent : a #GtkWidget on which the error dialog should be shown, or a #GdkScreen
@@ -72,7 +80,6 @@ thunar_dialogs_show_rename_file (gpointer    parent,
   GtkWindow         *window;
   GdkPixbuf         *icon;
   GdkScreen         *screen;
-  glong              offset;
   gchar             *title;
   gint               response;
   PangoLayout       *layout;
@@ -142,24 +149,12 @@ thunar_dialogs_show_rename_file (gpointer    parent,
   /* setup the old filename */
   gtk_entry_set_text (GTK_ENTRY (entry), filename);
 
-  /* check if we don't have a directory here */
-  if (!thunar_file_is_directory (file))
-    {
-      /* check if the filename contains an extension */
-      text = thunar_util_str_get_extension (filename);
-      if (G_LIKELY (text != NULL))
-        {
-          /* grab focus to the entry first, else the selection will be altered later */
-          gtk_widget_grab_focus (entry);
+  /* allow reverting the filename with ctrl + z */
+  g_signal_connect (entry, "key-press-event",
+                    G_CALLBACK (thunar_dialogs_entry_undo), file);
 
-          /* determine the UTF-8 char offset */
-          offset = g_utf8_pointer_to_offset (filename, text);
-
-          /* select the text prior to the dot */
-          if (G_LIKELY (offset > 0))
-            gtk_editable_select_region (GTK_EDITABLE (entry), 0, offset);
-        }
-    }
+  /* select the filename without the extension */
+  thunar_dialogs_select_filename (entry, file);
 
   /* get the size the entry requires to render the full text */
   layout = gtk_entry_get_layout (GTK_ENTRY (entry));
@@ -854,4 +849,63 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
     }
 
   return (response == GTK_RESPONSE_OK);
+}
+
+
+
+static void thunar_dialogs_select_filename (GtkWidget  *entry,
+                                            ThunarFile *file)
+{
+  const gchar *filename;
+  const gchar *ext;
+  glong        offset;
+
+  /* check if we have a directory here */
+  if (thunar_file_is_directory (file))
+    {
+      gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
+      return;
+    }
+
+  filename = thunar_file_get_display_name (file);
+
+  /* check if the filename contains an extension */
+  ext = thunar_util_str_get_extension (filename);
+  if (G_UNLIKELY (ext == NULL))
+    return;
+
+  /* grab focus to the entry first, else the selection will be altered later */
+  gtk_widget_grab_focus (entry);
+
+  /* determine the UTF-8 char offset */
+  offset = g_utf8_pointer_to_offset (filename, ext);
+
+  /* select the text prior to the dot */
+  if (G_LIKELY (offset > 0))
+    gtk_editable_select_region (GTK_EDITABLE (entry), 0, offset);
+}
+
+
+
+static gboolean thunar_dialogs_entry_undo (GtkWidget  *widget,
+                                           GdkEvent   *event,
+                                           ThunarFile *file)
+{
+  guint           keyval;
+  GdkModifierType state;
+
+  if (G_UNLIKELY (!gdk_event_get_keyval (event, &keyval) &&
+                  !gdk_event_get_state (event, &state)))
+    return GDK_EVENT_PROPAGATE;
+
+  if ((state & GDK_CONTROL_MASK) != 0 && keyval == GDK_KEY_z)
+    {
+      gtk_entry_set_text (GTK_ENTRY (widget),
+                          thunar_file_get_display_name (file));
+      thunar_dialogs_select_filename (widget, file);
+
+      return GDK_EVENT_STOP;
+    }
+
+  return GDK_EVENT_PROPAGATE;
 }
