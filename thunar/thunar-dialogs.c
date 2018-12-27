@@ -894,7 +894,7 @@ static gboolean thunar_dialogs_entry_undo (GtkWidget  *widget,
   guint           keyval;
   GdkModifierType state;
 
-  if (G_UNLIKELY (!gdk_event_get_keyval (event, &keyval) &&
+  if (G_UNLIKELY (!gdk_event_get_keyval (event, &keyval) ||
                   !gdk_event_get_state (event, &state)))
     return GDK_EVENT_PROPAGATE;
 
