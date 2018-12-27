@@ -1238,12 +1238,8 @@ thunar_tree_model_item_files_added (ThunarTreeModelItem *item,
                                     GList               *files,
                                     ThunarFolder        *folder)
 {
-  ThunarTreeModelItem *child_item;
   ThunarTreeModel     *model = THUNAR_TREE_MODEL (item->model);
-  GtkTreePath         *child_path;
-  GtkTreeIter          child_iter;
   ThunarFile          *file;
-  GNode               *child_node;
   GNode               *node = NULL;
   GList               *lp;
 
@@ -1273,40 +1269,7 @@ thunar_tree_model_item_files_added (ThunarTreeModelItem *item,
         node = g_node_find (model->root, G_POST_ORDER, G_TRAVERSE_ALL, item);
       _thunar_return_if_fail (node != NULL);
 
-      /* allocate a new item for the file */
-      child_item = thunar_tree_model_item_new_with_file (model, file);
-
-      /* check if the node has only the dummy child */
-      if (G_UNLIKELY (G_NODE_HAS_DUMMY (node)))
-        {
-          /* replace the dummy node with the new node */
-          child_node = g_node_first_child (node);
-          child_node->data = child_item;
-
-          /* determine the tree iter for the child */
-          GTK_TREE_ITER_INIT (child_iter, model->stamp, child_node);
-
-          /* emit a "row-changed" for the new node */
-          child_path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &child_iter);
-          gtk_tree_model_row_changed (GTK_TREE_MODEL (model), child_path, &child_iter);
-          gtk_tree_path_free (child_path);
-        }
-      else
-        {
-          /* insert a new item for the child */
-          child_node = g_node_append_data (node, child_item);
-
-          /* determine the tree iter for the child */
-          GTK_TREE_ITER_INIT (child_iter, model->stamp, child_node);
-
-          /* emit a "row-inserted" for the new node */
-          child_path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &child_iter);
-          gtk_tree_model_row_inserted (GTK_TREE_MODEL (model), child_path, &child_iter);
-          gtk_tree_path_free (child_path);
-        }
-
-      /* add a dummy child node */
-      thunar_tree_model_node_insert_dummy (child_node, model);
+      thunar_tree_model_add_child (model, node, file);
     }
 
   /* sort the folders if any new ones were added */
@@ -1892,3 +1855,81 @@ thunar_tree_model_cleanup (ThunarTreeModel *model)
     }
 }
 
+
+
+/**
+ * thunar_tree_model_node_has_dummy:
+ * @model : a #ThunarTreeModel.
+ * @node : GNode to check
+ *
+ * Checks if node is a dummy node ( if it only has a dummy item )
+ *
+ * Return value: %TRUE if @node has a dummy item
+ **/
+gboolean
+thunar_tree_model_node_has_dummy (ThunarTreeModel *model,
+                                  GNode           *node)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_MODEL (model), TRUE);
+  return G_NODE_HAS_DUMMY(node);
+}
+
+
+
+/**
+ * thunar_tree_model_add_child:
+ * @model : a #ThunarTreeModel.
+ * @node : GNode to add a child
+ * @file : #ThunarFile to be added
+ *
+ * Creates a new #ThunarTreeModelItem as a child of @node and stores a reference to the passed @file
+ * Automatically creates/removes dummy items if required
+ **/
+void
+thunar_tree_model_add_child (ThunarTreeModel *model,
+                             GNode           *node,
+                             ThunarFile      *file)
+{
+  ThunarTreeModelItem *child_item;
+  GNode               *child_node;
+  GtkTreeIter          child_iter;
+  GtkTreePath         *child_path;
+
+  _thunar_return_if_fail (THUNAR_IS_TREE_MODEL (model));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  /* allocate a new item for the file */
+  child_item = thunar_tree_model_item_new_with_file (model, file);
+
+  /* check if the node has only the dummy child */
+  if (G_UNLIKELY (G_NODE_HAS_DUMMY (node)))
+    {
+      /* replace the dummy node with the new node */
+      child_node = g_node_first_child (node);
+      child_node->data = child_item;
+
+      /* determine the tree iter for the child */
+      GTK_TREE_ITER_INIT (child_iter, model->stamp, child_node);
+
+      /* emit a "row-changed" for the new node */
+      child_path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &child_iter);
+      gtk_tree_model_row_changed (GTK_TREE_MODEL (model), child_path, &child_iter);
+      gtk_tree_path_free (child_path);
+    }
+  else
+    {
+      /* insert a new item for the child */
+      child_node = g_node_append_data (node, child_item);
+
+      /* determine the tree iter for the child */
+      GTK_TREE_ITER_INIT (child_iter, model->stamp, child_node);
+
+      /* emit a "row-inserted" for the new node */
+      child_path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &child_iter);
+      gtk_tree_model_row_inserted (GTK_TREE_MODEL (model), child_path, &child_iter);
+      gtk_tree_path_free (child_path);
+    }
+
+  /* add a dummy to the new child */
+  thunar_tree_model_node_insert_dummy (child_node, model);
+}

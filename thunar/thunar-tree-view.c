@@ -140,10 +140,6 @@ static GdkDragAction            thunar_tree_view_get_dest_actions             (T
                                                                                gint                     y,
                                                                                guint                    time,
                                                                                ThunarFile             **file_return);
-static gboolean                 thunar_tree_view_find_closest_ancestor        (ThunarTreeView          *view,
-                                                                               GtkTreePath             *path,
-                                                                               GtkTreePath            **ancestor_return,
-                                                                               gboolean                *exact_return);
 static ThunarFile              *thunar_tree_view_get_selected_file            (ThunarTreeView          *view);
 static ThunarDevice            *thunar_tree_view_get_selected_device          (ThunarTreeView          *view);
 static void                     thunar_tree_view_action_copy                  (ThunarTreeView          *view);
@@ -1646,69 +1642,6 @@ thunar_tree_view_get_dest_actions (ThunarTreeView *view,
 
 
 
-static gboolean
-thunar_tree_view_find_closest_ancestor (ThunarTreeView *view,
-                                        GtkTreePath    *path,
-                                        GtkTreePath   **ancestor_return,
-                                        gboolean       *exact_return)
-{
-  GtkTreeModel *model = GTK_TREE_MODEL (view->model);
-  GtkTreePath  *child_path;
-  GtkTreeIter   child_iter;
-  GtkTreeIter   iter;
-  ThunarFile   *file;
-  gboolean      found = FALSE;
-
-  /* determine the iter for the current path */
-  if (!gtk_tree_model_get_iter (GTK_TREE_MODEL (view->model), &iter, path))
-    return FALSE;
-
-  /* process all items at this level */
-  do
-    {
-      /* check if the file for iter is an ancestor of the current directory */
-      gtk_tree_model_get (model, &iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file, -1);
-      if (G_UNLIKELY (file == NULL))
-        continue;
-
-      /* check if this is the file we're looking for */
-      if (G_UNLIKELY (file == view->current_directory))
-        {
-          /* we found the very best ancestor iter! */
-          *ancestor_return = gtk_tree_model_get_path (model, &iter);
-          *exact_return = TRUE;
-          found = TRUE;
-        }
-      else if (thunar_file_is_ancestor (view->current_directory, file))
-        {
-          /* check if we can find an even better ancestor below this node */
-          if (gtk_tree_model_iter_children (model, &child_iter, &iter))
-            {
-              child_path = gtk_tree_model_get_path (model, &child_iter);
-              found = thunar_tree_view_find_closest_ancestor (view, child_path, ancestor_return, exact_return);
-              gtk_tree_path_free (child_path);
-            }
-
-          /* maybe not exact, but still an ancestor */
-          if (G_UNLIKELY (!found))
-            {
-              /* we found an ancestor, not an exact match */
-              *ancestor_return = gtk_tree_model_get_path (model, &iter);
-              *exact_return = FALSE;
-              found = TRUE;
-            }
-        }
-
-      /* release the file reference */
-      g_object_unref (G_OBJECT (file));
-    }
-  while (!found && gtk_tree_model_iter_next (model, &iter));
-
-  return found;
-}
-
-
-
 static ThunarFile*
 thunar_tree_view_get_selected_file (ThunarTreeView *view)
 {
@@ -2542,12 +2475,14 @@ static gboolean
 thunar_tree_view_cursor_idle (gpointer user_data)
 {
   ThunarTreeView *view = THUNAR_TREE_VIEW (user_data);
-  GtkTreePath    *ancestor = NULL;
-  GtkTreePath    *parent;
   GtkTreePath    *path;
   GtkTreeIter     iter;
   ThunarFile     *file;
+  GtkTreeIter     child_iter;
+  ThunarFile     *file_in_tree;
   gboolean        done = TRUE;
+  GList          *lp;
+  GList          *path_as_list = NULL;
 
   GDK_THREADS_ENTER ();
 
@@ -2557,74 +2492,79 @@ thunar_tree_view_cursor_idle (gpointer user_data)
       gtk_tree_view_set_cursor (GTK_TREE_VIEW (view), view->select_path, NULL, FALSE);
       gtk_tree_path_free (view->select_path);
       view->select_path = NULL;
+      return done;
     }
 
   /* verify that we still have a current directory */
-  else if (G_LIKELY (view->current_directory != NULL))
-    {
-      /* use the current cursor to limit the search to only the top-level of the selected node */
-      gtk_tree_view_get_cursor (GTK_TREE_VIEW (view), &path, NULL);
+  if (G_UNLIKELY (view->current_directory == NULL))
+    return done;
 
-      /* if we have a path from the cursor but the current directory does not match it,
-       * unset it so that the correct toplevel item will be selected later */
-      if (path)
+  /* get the preferred toplevel path for the current directory */
+  path = thunar_tree_view_get_preferred_toplevel_path (view, view->current_directory);
+
+  /* fallback to a newly created root node */
+  if (path == NULL)
+    path = gtk_tree_path_new_first ();
+
+  gtk_tree_model_get_iter (GTK_TREE_MODEL (view->model), &iter, path);
+  gtk_tree_path_free (path);
+
+  /* collect all ThunarFiles in the path of current_directory in a List. root is on the very left side */
+  for (file = view->current_directory; file != NULL; file = thunar_file_get_parent (file, NULL))
+      path_as_list = g_list_prepend (path_as_list, file);
+
+  /* note that iter may start at e.g. $HOME where "path_as_list" usually starts at "/" */
+  /* So the first few iterations most times will do nothing */
+  for (lp = path_as_list; lp != NULL; lp = lp->next)
+    {
+      file = THUNAR_FILE (lp->data);
+
+      /* check if iter has only a dummy node (tree not fully loaded yet) */
+      if( thunar_tree_model_node_has_dummy (view->model, iter.user_data) )
         {
-          gtk_tree_model_get_iter (GTK_TREE_MODEL (view->model), &iter, path);
-          gtk_tree_model_get (GTK_TREE_MODEL (view->model), &iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file, -1);
-          if (file != view->current_directory)
-            {
-              gtk_tree_path_free (path);
-              path = NULL;
-            }
-          if (file)
-            g_object_unref (file);
+          done = FALSE;
+          break;
         }
 
-      /* no cursor set, get the preferred toplevel path for the current directory */
-      if (path == NULL)
-        path = thunar_tree_view_get_preferred_toplevel_path (view, view->current_directory);
-
-      /* fallback to a newly created root node */
-      if (path == NULL)
-        path = gtk_tree_path_new_first ();
-
-      /* look for the closest ancestor in the whole tree, starting from the current path */
-      for (; gtk_tree_path_get_depth (path) > 0; gtk_tree_path_up (path))
+      /* initialize child_iter */
+      if (!gtk_tree_model_iter_children (GTK_TREE_MODEL (view->model), &child_iter, &iter))
         {
-          /* try to find the closest ancestor relative to the current path */
-          if (thunar_tree_view_find_closest_ancestor (view, path, &ancestor, &done))
+          /* E.g. folders for which we dont have read permission dont have any child in the tree */
+          /* Make sure that missing read permissions are the problem */
+          if (!g_file_info_get_attribute_boolean (thunar_file_get_info (thunar_file_get_parent (file, NULL)), G_FILE_ATTRIBUTE_ACCESS_CAN_READ))
             {
-              /* expand to the best ancestor if not an exact match */
-              if (G_LIKELY (!done))
-                {
-                  /* just expand everything up to the row and its children */
-                  gtk_tree_view_expand_to_path (GTK_TREE_VIEW (view), ancestor);
-                }
-              else if (!gtk_tree_view_row_expanded (GTK_TREE_VIEW (view), ancestor))
-                {
-                  /* just expand everything up to the row, but not the children */
-                  parent = gtk_tree_path_copy (ancestor);
-                  if (gtk_tree_path_up (parent))
-                    gtk_tree_view_expand_to_path (GTK_TREE_VIEW (view), parent);
-                  gtk_tree_path_free (parent);
-                }
+              /* We know that there is a File. Lets just create the required tree-node */
+              thunar_tree_model_add_child (view->model, iter.user_data, file);
+              done = FALSE;
+            }
+          break;
+        }
 
-              /* place cursor on the ancestor */
-              gtk_tree_view_set_cursor (GTK_TREE_VIEW (view), ancestor, NULL, FALSE);
-
-              /* release the ancestor path */
-              gtk_tree_path_free (ancestor);
-
-              /* we did it */
+      /* loop on children to see if any folder matches  */
+      while (TRUE)
+        {
+          gtk_tree_model_get (GTK_TREE_MODEL (view->model), &child_iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file_in_tree, -1);
+          if (file == file_in_tree)
+            {
+              g_object_unref (file_in_tree);
+              path = gtk_tree_model_get_path (GTK_TREE_MODEL (view->model), &child_iter);
+              gtk_tree_view_expand_to_path (GTK_TREE_VIEW (view), path);
+              gtk_tree_view_set_cursor (GTK_TREE_VIEW (view), path, NULL, FALSE);
+              gtk_tree_path_free (path);
+              iter = child_iter; /* next tree level */
               break;
             }
-        }
+          if (file_in_tree)
+            g_object_unref (file_in_tree);
 
-      /* release the tree path */
-      gtk_tree_path_free (path);
+          if (!gtk_tree_model_iter_next (GTK_TREE_MODEL (view->model), &child_iter))
+            break;
+        }
     }
 
-  GDK_THREADS_LEAVE ();
+  g_list_free (path_as_list);
+
+GDK_THREADS_LEAVE();
 
   return !done;
 }
@@ -2866,7 +2806,7 @@ thunar_tree_view_set_show_hidden (ThunarTreeView *view,
  *   4) the root filesystem
  *
  * Returns the #GtkTreePath for the matching toplevel item,
- * or %NULL if not found.
+ * or %NULL if not found. The path should be freed with gtk_tree_path_free().
  **/
 static GtkTreePath *
 thunar_tree_view_get_preferred_toplevel_path (ThunarTreeView *view,
