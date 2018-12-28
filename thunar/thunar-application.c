@@ -359,12 +359,12 @@ thunar_application_startup (GApplication *gapp)
                     G_CALLBACK (thunar_application_uevent), application);
 #endif
 
-  /* connect to the session manager */
-  application->session_client = thunar_session_client_new (opt_sm_client_id);
-
   thunar_application_dbus_init (application);
 
   G_APPLICATION_CLASS (thunar_application_parent_class)->startup (gapp);
+
+  /* connect to the session manager */
+  application->session_client = thunar_session_client_new (opt_sm_client_id);
 
   /* TODO: how do accel maps integrate with GAction/GMenu? Using GtkAction for now */
   /* check if we have a saved accel map */
