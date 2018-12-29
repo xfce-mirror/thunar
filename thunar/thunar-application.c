@@ -1104,6 +1104,11 @@ thunar_application_quit (ThunarApplication *application)
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
   thunar_application_set_daemon(application, FALSE);
+
+  /* For some unknown reason we need to close all open thunar windows before quit */
+  /* Otherwise thunar will hangup on quit and thunar_application_shutdown will not be called */
+  thunar_application_close_all_windows (application);
+
   gtk_main_quit ();
 }
 
@@ -1149,6 +1154,28 @@ thunar_application_set_daemon (ThunarApplication *application,
       else
         g_application_release (G_APPLICATION (application));
     }
+}
+
+
+
+/**
+ * thunar_application_close_all_windows:
+ * @application : a #ThunarApplication.
+ *
+ * Closes all #ThunarWindows currently handled by @application.
+ **/
+void
+thunar_application_close_all_windows (ThunarApplication *application)
+{
+  GList *gtk_windows, *lp;
+
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+
+  gtk_windows = gtk_application_get_windows (GTK_APPLICATION (application));
+
+  for (lp = gtk_windows; lp != NULL; lp = lp->next)
+    if (G_LIKELY (THUNAR_IS_WINDOW (lp->data)))
+      gtk_window_close (lp->data);
 }
 
 

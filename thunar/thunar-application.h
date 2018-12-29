@@ -51,7 +51,7 @@ void                  thunar_application_set_daemon                 (ThunarAppli
 GList                *thunar_application_get_windows                (ThunarApplication *application);
 
 gboolean              thunar_application_has_windows                (ThunarApplication *application);
-
+void                  thunar_application_close_all_windows          (ThunarApplication *application);
 void                  thunar_application_take_window                (ThunarApplication *application,
                                                                      GtkWindow         *window);
 
