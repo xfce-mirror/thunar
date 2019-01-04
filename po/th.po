@@ -5,7 +5,7 @@
 # 
 # Translators:
 # Xfce Bot <transifex@xfce.org>, 2018
-# Theppitak Karoonboonyanan <theppitak@gmail.com>, 2018
+# Theppitak Karoonboonyanan <theppitak@gmail.com>, 2019
 # 
 #, fuzzy
 msgid ""
@@ -14,7 +14,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-09-27 06:31+0200\n"
 "PO-Revision-Date: 2018-08-19 09:02+0000\n"
-"Last-Translator: Theppitak Karoonboonyanan <theppitak@gmail.com>, 2018\n"
+"Last-Translator: Theppitak Karoonboonyanan <theppitak@gmail.com>, 2019\n"
 "Language-Team: Thai (https://www.transifex.com/xfce/teams/16840/th/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1243,14 +1243,14 @@ msgstr[0] "ส่งแฟ้มที่เลือกไปยัง \"%s\""
 #, c-format
 msgid "%d item: %s, Free space: %s"
 msgid_plural "%d items: %s, Free space: %s"
-msgstr[0] "%d รายการ: %s, พื้นที่ว่าง: %s"
+msgstr[0] "%d รายการ: %s, เนื้อที่ว่าง: %s"
 
 #. just the standard text
 #: ../thunar/thunar-list-model.c:2405
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
-msgstr[0] "%d รายการ, พื้นที่ว่าง: %s"
+msgstr[0] "%d รายการ, เนื้อที่ว่าง: %s"
 
 #: ../thunar/thunar-list-model.c:2414
 #, c-format
@@ -1311,20 +1311,20 @@ msgstr "ขนาดภาพ:"
 #, c-format
 msgid "%d other item selected: %s"
 msgid_plural "%d other items selected: %s"
-msgstr[0] "เลือกอีก %d รายการ: %s"
+msgstr[0] "มีเลือกอีก %d รายการ: %s"
 
 #. only non-folders are selected
 #: ../thunar/thunar-list-model.c:2540
 #, c-format
 msgid "%d item selected: %s"
 msgid_plural "%d items selected: %s"
-msgstr[0] "เลือก %d รายการ: %s"
+msgstr[0] "เลือกทั้งหมด %d รายการ: %s"
 
 #: ../thunar/thunar-list-model.c:2554
 #, c-format
 msgid "%d folder selected"
 msgid_plural "%d folders selected"
-msgstr[0] "เลือก %d โฟลเดอร์"
+msgstr[0] "เลือกทั้งหมด %d โฟลเดอร์"
 
 #. This is marked for translation in case a localizer
 #. * needs to change ", " to something else. The comma
@@ -1485,8 +1485,8 @@ msgid ""
 "Allowing untrusted programs to run\n"
 "presents a security risk to your system."
 msgstr ""
-"การอนุญาตให้โปรแกรมที่ไม่น่าเชื่อถือสามารถทำงานได้\n"
-"เป็นการสุ่มเสี่ยงเรื่องระบบรักษาความปลอดภัย"
+"การอนุญาตให้โปรแกรมที่ไม่น่าเชื่อถือทำงาน\n"
+"เป็นการสุ่มเสี่ยงด้านการรักษาความปลอดภัย"
 
 #: ../thunar/thunar-permissions-chooser.c:376
 msgid ""
@@ -1892,15 +1892,15 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:658
 msgid "Context Menu"
-msgstr ""
+msgstr "เมนูบริบท"
 
 #: ../thunar/thunar-preferences-dialog.c:670
 msgid "Show action to permanently delete files and folders"
-msgstr ""
+msgstr "แสดงคำสั่งสำหรับลบแฟ้มและโฟลเดอร์แบบถาวร"
 
 #: ../thunar/thunar-preferences-dialog.c:672
 msgid "Select this option to show the 'Delete' action in the context menu"
-msgstr ""
+msgstr "เลือกตัวเลือกนี้หากต้องการให้แสดงคำสั่ง 'ลบ' ในเมนูบริบท"
 
 #. Advanced
 #: ../thunar/thunar-preferences-dialog.c:681
@@ -1952,7 +1952,7 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:768
 msgid "Missing dependencies"
-msgstr ""
+msgstr "องค์ประกอบขาดหาย"
 
 #: ../thunar/thunar-preferences-dialog.c:776
 msgid ""
@@ -1961,6 +1961,10 @@ msgid ""
 "removable media and remote location browsing\n"
 "will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
 msgstr ""
+"ดูเหมือน <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> จะไม่ได้ติดตั้งไว้\n"
+"การทำงานที่สำคัญบางอย่าง ซึ่งรวมถึงการรองรับการใช้ถังขยะ,\n"
+"การใช้สื่อถอดเสียบ และการท่องดูแหล่งเก็บข้อมูลในเครือข่าย\n"
+"จะไม่สามารถใช้งานได้ <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[อ่านเพิ่มเติม]</a>"
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
@@ -2693,19 +2697,19 @@ msgstr "เปิดโฟลเดอร์ปัจจุบันในหน
 
 #: ../thunar/thunar-window.c:357
 msgid "_Previous Tab"
-msgstr ""
+msgstr "แท็บ_ก่อนหน้า"
 
 #: ../thunar/thunar-window.c:357
 msgid "Switch to Previous Tab"
-msgstr ""
+msgstr "สลับไปยังแท็บก่อนหน้า"
 
 #: ../thunar/thunar-window.c:358
 msgid "_Next Tab"
-msgstr ""
+msgstr "แท็บ_ถัดไป"
 
 #: ../thunar/thunar-window.c:358
 msgid "Switch to Next Tab"
-msgstr ""
+msgstr "สลับไปยังแท็บถัดไป"
 
 #: ../thunar/thunar-window.c:359
 msgid "Close _All Windows"
@@ -3272,7 +3276,7 @@ msgstr "0001, 0002, 0003, ..."
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:113
 msgid "00001, 00002, 00003, ..."
-msgstr ""
+msgstr "00001, 00002, 00003, ..."
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:114
 msgid "a, b, c, d, ..."
@@ -3683,11 +3687,11 @@ msgstr "พารามิเตอร์ต่อไปนี้สำหรั
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:19
 msgid "the path to the first selected file or directory"
-msgstr ""
+msgstr "พาธของแฟ้มหรือไดเรกทอรีแรกที่เลือก"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:20
 msgid "the paths to all selected files and directories"
-msgstr ""
+msgstr "พาธของแฟ้มและไดเรกทอรีที่เลือกทั้งหมด"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:22
 #, no-c-format
