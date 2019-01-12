@@ -616,6 +616,9 @@ thunar_device_monitor_mount_added (GVolumeMonitor      *volume_monitor,
       device = g_hash_table_lookup (monitor->devices, volume);
       if (device != NULL)
         {
+          /* reload the related ThunarFile */
+          thunar_device_reload_file (device);
+
           /* notify */
           g_signal_emit (G_OBJECT (monitor), device_monitor_signals[DEVICE_CHANGED], 0, device);
         }
