@@ -823,3 +823,33 @@ thunar_device_eject (ThunarDevice         *device,
       g_object_unref (G_OBJECT (mount));
     }
 }
+
+
+
+/**
+ * thunar_device_reload_file:
+ *
+ * Reload the related #ThunarFile of the #ThunarDevice
+ **/
+void
+thunar_device_reload_file (ThunarDevice *device)
+{
+  ThunarFile *file;
+  GFile      *mount_point;
+
+  _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
+
+  mount_point = thunar_device_get_root (device);
+
+  if (mount_point != NULL)
+    {
+      /* try to determine the file for the mount point */
+      file = thunar_file_get (mount_point, NULL);
+      if (file != NULL)
+        {
+          thunar_file_reload (file);
+          g_object_unref (file);
+        }
+      g_object_unref (mount_point);
+    }
+}
