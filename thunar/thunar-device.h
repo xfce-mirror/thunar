@@ -89,6 +89,8 @@ void                 thunar_device_eject            (ThunarDevice         *devic
                                                      ThunarDeviceCallback  callback,
                                                      gpointer              user_data);
 
+void                 thunar_device_reload_file      (ThunarDevice         *device);
+
 G_END_DECLS
 
 #endif /* !__THUNAR_DEVICE_H__ */
