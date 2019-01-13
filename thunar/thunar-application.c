@@ -208,7 +208,8 @@ struct _ThunarApplication
 
   GList                 *files_to_launch;
 
-  guint                  dbus_owner_id;
+  guint                  dbus_owner_id_xfce;
+  guint                  dbus_owner_id_fdo;
 };
 
 
@@ -324,14 +325,23 @@ thunar_application_dbus_init (ThunarApplication *application)
     if (geteuid() == 0)
       return;
 
-    application->dbus_owner_id = g_bus_own_name (G_BUS_TYPE_SESSION,
-                               "org.xfce.FileManager",
-                               G_BUS_NAME_OWNER_FLAGS_NONE,
-                               thunar_application_dbus_acquired_cb,
-                               thunar_application_name_acquired_cb,
-                               thunar_application_dbus_name_lost_cb,
-                               application,
-                               NULL);
+    application->dbus_owner_id_xfce = g_bus_own_name (G_BUS_TYPE_SESSION,
+                                      "org.xfce.FileManager",
+                                      G_BUS_NAME_OWNER_FLAGS_NONE,
+                                      thunar_application_dbus_acquired_cb,
+                                      thunar_application_name_acquired_cb,
+                                      thunar_application_dbus_name_lost_cb,
+                                      application,
+                                      NULL);
+
+    application->dbus_owner_id_fdo = g_bus_own_name (G_BUS_TYPE_SESSION,
+                                     "org.freedesktop.FileManager1",
+                                     G_BUS_NAME_OWNER_FLAGS_NONE,
+                                     thunar_application_dbus_acquired_cb,
+                                     thunar_application_name_acquired_cb,
+                                     thunar_application_dbus_name_lost_cb,
+                                     application,
+                                     NULL);
 }
 
 

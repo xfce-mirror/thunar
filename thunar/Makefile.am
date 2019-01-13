@@ -30,6 +30,8 @@ thunar_built_sources =							\
 	thunar-shortcuts-pane-ui.h					\
 	thunar-renamer-dialog-ui.h					\
 	thunar-standard-view-ui.h					\
+	thunar-dbus-freedesktop-interfaces.h		\
+	thunar-dbus-freedesktop-interfaces.c		\
 	thunar-dbus-service-infos.h					\
 	thunar-dbus-service-infos.c					\
 	thunar-thumbnailer-proxy.c					\
@@ -289,6 +291,9 @@ DISTCLEANFILES +=							\
 BUILT_SOURCES =								\
 	$(thunar_built_sources)
 
+thunar-dbus-freedesktop-interfaces.h thunar-dbus-freedesktop-interfaces.c: $(srcdir)/thunar-dbus-freedesktop-interfaces.xml Makefile
+	$(AM_V_GEN) gdbus-codegen --c-namespace Thunar --generate-c-code=thunar-dbus-freedesktop-interfaces $(srcdir)/thunar-dbus-freedesktop-interfaces.xml
+
 thunar-dbus-service-infos.h thunar-dbus-service-infos.c: $(srcdir)/thunar-dbus-service-infos.xml Makefile
 	$(AM_V_GEN) gdbus-codegen --c-namespace Thunar --generate-c-code=thunar-dbus-service-infos $(srcdir)/thunar-dbus-service-infos.xml
 
@@ -356,6 +361,7 @@ endif
 
 EXTRA_DIST =								\
 	thunar-abstract-icon-view-ui.xml		\
+	thunar-dbus-freedesktop-interfaces.xml	\
 	thunar-dbus-service-infos.xml			\
 	thunar-details-view-ui.xml				\
 	thunar-launcher-ui.xml					\
