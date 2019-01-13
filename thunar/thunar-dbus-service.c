@@ -47,6 +47,7 @@
 
 
 /* include generate dbus infos */
+#include <thunar/thunar-dbus-freedesktop-interfaces.h>
 #include <thunar/thunar-dbus-service-infos.h>
 
 
@@ -220,6 +221,21 @@ static gboolean thunar_dbus_service_terminate                   (ThunarDBusThuna
                                                                  GDBusMethodInvocation  *invocation,
                                                                  ThunarDBusService      *dbus_service);
 
+static gboolean thunar_dbus_freedesktop_show_folders            (ThunarOrgFreedesktopFileManager1 *object,
+                                                                 GDBusMethodInvocation            *invocation,
+                                                                 gchar                           **uris,
+                                                                 const gchar                      *startup_id,
+                                                                 ThunarDBusService                *dbus_service);
+static gboolean thunar_dbus_freedesktop_show_items              (ThunarOrgFreedesktopFileManager1 *object,
+                                                                 GDBusMethodInvocation            *invocation,
+                                                                 gchar                           **uris,
+                                                                 const gchar                      *startup_id,
+                                                                 ThunarDBusService                *dbus_service);
+static gboolean thunar_dbus_freedesktop_show_item_properties    (ThunarOrgFreedesktopFileManager1 *object,
+                                                                 GDBusMethodInvocation            *invocation,
+                                                                 gchar                           **uris,
+                                                                 const gchar                      *startup_id,
+                                                                 ThunarDBusService                *dbus_service);
 
 
 struct _ThunarDBusServiceClass
@@ -231,9 +247,10 @@ struct _ThunarDBusService
 {
   GObject __parent__;
 
-  ThunarDBusFileManager *file_manager;
-  ThunarDBusTrash       *trash;
-  ThunarDBusThunar      *thunar;
+  ThunarDBusFileManager            *file_manager;
+  ThunarDBusTrash                  *trash;
+  ThunarDBusThunar                 *thunar;
+  ThunarOrgFreedesktopFileManager1 *file_manager_fdo;
 
   ThunarFile      *trash_bin;
 };
@@ -281,9 +298,10 @@ static void connect_signals_multiple (gpointer object,
 static void
 thunar_dbus_service_init (ThunarDBusService *dbus_service)
 {
-  dbus_service->file_manager = thunar_dbus_file_manager_skeleton_new ();
-  dbus_service->trash        = thunar_dbus_trash_skeleton_new ();
-  dbus_service->thunar       = thunar_dbus_thunar_skeleton_new ();
+  dbus_service->file_manager      = thunar_dbus_file_manager_skeleton_new ();
+  dbus_service->trash             = thunar_dbus_trash_skeleton_new ();
+  dbus_service->thunar            = thunar_dbus_thunar_skeleton_new ();
+  dbus_service->file_manager_fdo  = thunar_org_freedesktop_file_manager1_skeleton_new ();
 
   connect_signals_multiple (dbus_service->file_manager, dbus_service,
                             "handle-display-chooser-dialog", thunar_dbus_service_display_chooser_dialog,
@@ -315,6 +333,12 @@ thunar_dbus_service_init (ThunarDBusService *dbus_service)
                             "handle-bulk-rename", thunar_dbus_service_bulk_rename,
                             "handle-terminate", thunar_dbus_service_terminate,
                             NULL);
+
+  connect_signals_multiple (dbus_service->file_manager_fdo, dbus_service,
+                            "handle-show-folders", thunar_dbus_freedesktop_show_folders,
+                            "handle-show-items", thunar_dbus_freedesktop_show_items,
+                            "handle-show-item-properties", thunar_dbus_freedesktop_show_item_properties,
+                            NULL);
 }
 
 
@@ -327,6 +351,7 @@ thunar_dbus_service_finalize (GObject *object)
   g_object_unref (dbus_service->file_manager);
   g_object_unref (dbus_service->trash);
   g_object_unref (dbus_service->thunar);
+  g_object_unref (dbus_service->file_manager_fdo);
 
   if (dbus_service->trash_bin)
     g_object_unref (dbus_service->trash_bin);
@@ -1475,6 +1500,145 @@ thunar_dbus_service_terminate (ThunarDBusThunar       *object,
 
 
 
+static gboolean
+thunar_dbus_freedesktop_show_folders (ThunarOrgFreedesktopFileManager1 *object,
+                                      GDBusMethodInvocation            *invocation,
+                                      gchar                           **uris,
+                                      const gchar                      *startup_id,
+                                      ThunarDBusService                *dbus_service)
+{
+  ThunarApplication *application;
+  GdkScreen         *screen;
+  gint               n;
+  GFile             *file;
+  ThunarFile        *thunar_file;
+
+  screen = gdk_screen_get_default ();
+  application = thunar_application_get ();
+
+  for (n = 0; uris[n] != NULL; ++n)
+    {
+      file = g_file_new_for_uri (uris[n]);
+      thunar_file = thunar_file_get (file, NULL);
+
+      g_object_unref (G_OBJECT (file));
+      if (thunar_file == NULL)
+        continue;
+
+      if (thunar_file_is_directory (thunar_file))
+        thunar_application_open_window (application, thunar_file, screen,
+                                        startup_id, FALSE);
+
+      g_object_unref (G_OBJECT (thunar_file));
+    }
+
+  g_object_unref (G_OBJECT (application));
+
+  thunar_org_freedesktop_file_manager1_complete_show_folders (object, invocation);
+
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_dbus_freedesktop_show_items (ThunarOrgFreedesktopFileManager1 *object,
+                                    GDBusMethodInvocation            *invocation,
+                                    gchar                           **uris,
+                                    const gchar                      *startup_id,
+                                    ThunarDBusService                *dbus_service)
+{
+  ThunarApplication *application;
+  GtkWidget         *window;
+  GdkScreen         *screen;
+  gint               n;
+  GFile             *file;
+  ThunarFile        *thunar_folder, *thunar_file = NULL;
+
+  screen = gdk_screen_get_default ();
+  application = thunar_application_get ();
+
+  for (n = 0; uris[n] != NULL; ++n)
+    {
+      file = g_file_new_for_uri (uris[n]);
+      thunar_folder = thunar_file_get (file, NULL);
+
+      g_object_unref (G_OBJECT (file));
+      if (thunar_folder == NULL)
+        continue;
+
+      if (G_LIKELY (thunar_file_has_parent (thunar_folder)))
+        {
+          thunar_file = thunar_folder;
+          thunar_folder = thunar_file_get_parent (thunar_folder, NULL);
+        }
+
+      window = thunar_application_open_window (application, thunar_folder,
+                                               screen, startup_id, FALSE);
+
+      if (G_LIKELY (thunar_file != NULL))
+        {
+          thunar_window_scroll_to_file (THUNAR_WINDOW (window), thunar_file,
+                                        TRUE, TRUE, 0.5f, 0.5f);
+          g_object_unref (G_OBJECT (thunar_file));
+        }
+
+      g_object_unref (G_OBJECT (thunar_folder));
+    }
+
+  g_object_unref (G_OBJECT (application));
+
+  thunar_org_freedesktop_file_manager1_complete_show_items (object, invocation);
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_dbus_freedesktop_show_item_properties (ThunarOrgFreedesktopFileManager1 *object,
+                                              GDBusMethodInvocation            *invocation,
+                                              gchar                           **uris,
+                                              const gchar                      *startup_id,
+                                              ThunarDBusService                *dbus_service)
+{
+  ThunarApplication *application;
+  GdkScreen         *screen;
+  gint               n;
+  GFile             *file;
+  GtkWidget         *dialog;
+  ThunarFile        *thunar_file;
+
+  screen = gdk_screen_get_default ();
+  application = thunar_application_get ();
+
+  for (n = 0; uris[n] != NULL; ++n)
+    {
+      file = g_file_new_for_uri (uris[n]);
+      thunar_file = thunar_file_get (file, NULL);
+
+      g_object_unref (G_OBJECT (file));
+      if (thunar_file == NULL)
+        continue;
+
+      dialog = thunar_properties_dialog_new (NULL);
+      gtk_window_set_screen (GTK_WINDOW (dialog), screen);
+      gtk_window_set_startup_id (GTK_WINDOW (dialog), startup_id);
+      thunar_properties_dialog_set_file (THUNAR_PROPERTIES_DIALOG (dialog),
+                                         thunar_file);
+      gtk_window_present (GTK_WINDOW (dialog));
+      thunar_application_take_window (application, GTK_WINDOW (dialog));
+
+      g_object_unref (G_OBJECT (thunar_file));
+    }
+
+  g_object_unref (G_OBJECT (application));
+
+  thunar_org_freedesktop_file_manager1_complete_show_item_properties (object, invocation);
+  return TRUE;
+}
+
+
+
 gboolean thunar_dbus_service_export_on_connection (ThunarDBusService *service,
                                                    GDBusConnection   *connection,
                                                    GError           **error)
@@ -1497,6 +1661,12 @@ gboolean thunar_dbus_service_export_on_connection (ThunarDBusService *service,
                                          error))
     goto fail;
 
+  if (!g_dbus_interface_skeleton_export (G_DBUS_INTERFACE_SKELETON (service->file_manager_fdo),
+                                         connection,
+                                         "/org/freedesktop/FileManager1",
+                                         error))
+    goto fail;
+
   return TRUE;
 
 fail:
@@ -1504,5 +1674,6 @@ fail:
   g_dbus_interface_skeleton_unexport_from_connection (G_DBUS_INTERFACE_SKELETON (service->file_manager), connection);
   g_dbus_interface_skeleton_unexport_from_connection (G_DBUS_INTERFACE_SKELETON (service->trash), connection);
   g_dbus_interface_skeleton_unexport_from_connection (G_DBUS_INTERFACE_SKELETON (service->thunar), connection);
+  g_dbus_interface_skeleton_unexport_from_connection (G_DBUS_INTERFACE_SKELETON (service->file_manager_fdo), connection);
   return FALSE;
 }
