@@ -2478,6 +2478,8 @@ thunar_tree_view_cursor_idle (gpointer user_data)
   GtkTreePath    *path;
   GtkTreeIter     iter;
   ThunarFile     *file;
+  ThunarFile     *parent;
+  GFileInfo      *parent_info;
   GtkTreeIter     child_iter;
   ThunarFile     *file_in_tree;
   gboolean        done = TRUE;
@@ -2526,18 +2528,28 @@ thunar_tree_view_cursor_idle (gpointer user_data)
           break;
         }
 
-      /* initialize child_iter */
+      /* Try to create missing children if there are none (this as well initializes child_iter if there are children) */
       if (!gtk_tree_model_iter_children (GTK_TREE_MODEL (view->model), &child_iter, &iter))
         {
-          /* E.g. folders for which we dont have read permission dont have any child in the tree */
-          /* Make sure that missing read permissions are the problem */
-          if (!g_file_info_get_attribute_boolean (thunar_file_get_info (thunar_file_get_parent (file, NULL)), G_FILE_ATTRIBUTE_ACCESS_CAN_READ))
+          done = FALSE;
+          parent = thunar_file_get_parent (file, NULL);
+          if (parent == NULL) /* e.g root has no parent .. skip it */
+            continue;
+
+          parent_info = thunar_file_get_info (parent);
+          if (parent_info != NULL)
             {
-              /* We know that there is a File. Lets just create the required tree-node */
-              thunar_tree_model_add_child (view->model, iter.user_data, file);
-              done = FALSE;
+              /* E.g. folders for which we do not have read permission dont have any child in the tree */
+              /* Make sure that missing read permissions are the problem */
+              if (!g_file_info_get_attribute_boolean (parent_info, G_FILE_ATTRIBUTE_ACCESS_CAN_READ))
+                {
+                  /* We KNOW that there is a File. Lets just create the required tree-node */
+                  thunar_tree_model_add_child (view->model, iter.user_data, file);
+                }
             }
-          break;
+          g_object_unref (parent);
+          break; /* we dont have a valid child_iter by now, so we cannot continue.                         */
+                 /* Since done is FALSE, the next iteration on thunar_tree_view_cursor_idle will go deeper */
         }
 
       /* loop on children to see if any folder matches  */
@@ -2562,6 +2574,13 @@ thunar_tree_view_cursor_idle (gpointer user_data)
         }
     }
 
+  /* tidy up */
+  for (lp = path_as_list; lp != NULL; lp = lp->next)
+    {
+      file = THUNAR_FILE (lp->data);
+      if (file != NULL && file != view->current_directory)
+        g_object_unref (file);
+    }
   g_list_free (path_as_list);
 
 GDK_THREADS_LEAVE();
