@@ -1,3 +1,22 @@
+1.8.3
+=====
+- Thunar sometimes mounts USB drives with root permission (Bug #14719)
+- FreeBSD -Thunar crash due to passing null to strcmp() (Bug #15059)
+- Add support for org.freedesktop.FileManager1 (Bug #12414)
+- Still 8sec delay on logout when there is an open thunar window (Bug #15008)
+- Thunar does not recover directories opened in a previous session (Bug #14969)
+- Thunar utilizes 100%CPU when the parent directory is not readable (Bug #14900)
+- Add support for CTRL+Z in rename dialog (Bug #14956)
+- Thunar rarely freezes when switching to tree-view (#14960)
+- Crash in tree-view when multiple windows are open (Bug #14714)
+- Improve description of UCA command parameters (Bug #14720)
+- Fixed some Warnings and GLib-GObject-CRITICAL messages
+- Translation updates: Albanian, Belarusian, Catalan, Chinese (China),
+Chinese (Taiwan), Croatian, Czech, English (Australia), Finnish, Galician,
+German, Greek, Hebrew, Hungarian, Icelandic, Italian, Japanese, Kazakh, Korean,
+Lithuanian, Malay, Norwegian Bokmål, Portuguese, Portuguese (Brazil), Romanian,
+Russian, Slovak, Spanish, Thai, Turkish
+
 1.8.2
 =====
 - Custom actions without an icon could caused the file manager to crash (Bug #14464)
@@ -119,6 +138,33 @@ Portuguese (Brazil), Russian, Serbian, Slovak, Spanish, Swedish, Turkish, Ukrain
   Occitan, Persian (Iran), Polish, Portuguese, Portuguese (Brazil), Punjabi,
   Romanian, Russian, Serbian, Slovak, Spanish, Swedish, Telugu, Thai, Turkish,
   Ukrainian, Urdu, Urdu (Pakistan), Uyghur, Vietnamese
+
+1.6.16
+======
+- Thunar sometimes mounts USB drives with root permission (Bug #14719)
+- FreeBSD -Thunar crash due to passing null to strcmp() (Bug #15059)
+- 100%CPU when the parent directory is not readable in tree-view (Bug #14900)
+- Add support for CTRL+Z in rename dialog (Bug #14956)
+- Thunar rarely freezes when switching to tree-view (#14960)
+- Crash in tree-view when multiple windows are open (Bug #14714)
+- Avoid segfault on file operations (Bug #14281)
+- Translation updates: Amharic, Asturian, Basque, Belarusian, Bengali, Catalan,
+Chinese (China), Chinese (Hong Kong SAR China), Chinese (Taiwan), Croatian,
+Czech, Danish, English (Australia), English (United Kingdom), Esperanto,
+Estonian, French, Galician, Greek, Icelandic, Italian, Kazakh, Latvian,
+Lithuanian, Norwegian Bokmål, Norwegian Nynorsk, Occitan, Persian (Iran),
+Portuguese, Punjabi, Russian, Slovak, Slovenian, Telugu, Thai, Turkish,
+Ukrainian, Urdu, Urdu (Pakistan), Uyghur, Vietnamese
+
+1.6.15
+======
+- Thunar confuses files (bug #12435)
+- Thunar User Configurable Actions do not work for remote locations (bug #7652), patch from (bug#7305)
+- replaced links to "http://thunar.xfce.org/" with "https://docs.xfce.org/xfce/thunar/Start/"
+- SIGSEGV when thumbnailer is under heavy load after opening many tabs (bug #13756)
+- Fixed creation of .desktop file when dropping URL into folder (bug #14239)
+- Restoring non-empty folders leaves copy in Trash (bug #13535)
+- Translation updates: Catalan, Persian (Iran), Portuguese, Swedish
 
 1.6.14
 ======
