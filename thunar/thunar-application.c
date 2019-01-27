@@ -117,7 +117,10 @@ static void           thunar_application_dbus_acquired_cb       (GDBusConnection
 static void           thunar_application_name_acquired_cb       (GDBusConnection        *connection,
                                                                  const gchar            *name,
                                                                  gpointer                user_data);
-static void           thunar_application_dbus_name_lost_cb      (GDBusConnection        *connection,
+static void           thunar_application_dbus_name_lost_crit_cb (GDBusConnection        *connection,
+                                                                 const gchar            *name,
+                                                                 gpointer                user_data);
+static void           thunar_application_dbus_name_lost_warn_cb (GDBusConnection        *connection,
                                                                  const gchar            *name,
                                                                  gpointer                user_data);
 static void           thunar_application_dbus_init              (ThunarApplication      *application);
@@ -305,13 +308,23 @@ thunar_application_name_acquired_cb (GDBusConnection *connection,
 
 
 static void
-thunar_application_dbus_name_lost_cb (GDBusConnection *connection,
+thunar_application_dbus_name_lost_crit_cb (GDBusConnection *connection,
                                       const gchar     *name,
                                       gpointer         user_data)
 {
   ThunarApplication *application = user_data;
   g_critical (_("Name '%s' lost on the message dbus, exiting."), name);
   g_application_quit (G_APPLICATION (application));
+}
+
+
+
+static void
+thunar_application_dbus_name_lost_warn_cb (GDBusConnection *connection,
+                                      const gchar     *name,
+                                      gpointer         user_data)
+{
+  g_warning (_("Name '%s' lost on the message dbus."), name);
 }
 
 
@@ -330,7 +343,7 @@ thunar_application_dbus_init (ThunarApplication *application)
                                       G_BUS_NAME_OWNER_FLAGS_NONE,
                                       thunar_application_dbus_acquired_cb,
                                       thunar_application_name_acquired_cb,
-                                      thunar_application_dbus_name_lost_cb,
+                                      thunar_application_dbus_name_lost_crit_cb,
                                       application,
                                       NULL);
 
@@ -339,7 +352,7 @@ thunar_application_dbus_init (ThunarApplication *application)
                                      G_BUS_NAME_OWNER_FLAGS_NONE,
                                      thunar_application_dbus_acquired_cb,
                                      thunar_application_name_acquired_cb,
-                                     thunar_application_dbus_name_lost_cb,
+                                     thunar_application_dbus_name_lost_warn_cb,
                                      application,
                                      NULL);
 }
