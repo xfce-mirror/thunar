@@ -81,7 +81,7 @@ appdata_in_files = org.xfce.thunar.appdata.xml.in
 servicedir = $(datadir)/dbus-1/services
 service_in_files = org.xfce.FileManager.service.in	\
 	org.xfce.Thunar.service.in						\
-	org.freedesktop.FileManager1.service.in
+	org.xfce.Thunar.FileManager1.service.in
 service_DATA = $(service_in_files:.service.in=.service)
 
 systemd_userdir = $(prefix)/lib/systemd/user
