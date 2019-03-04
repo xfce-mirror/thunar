@@ -117,22 +117,22 @@ msgstr "Inprimatu bertsio-informazioa eta irten"
 #: ../thunar/thunar-application.c:295
 #, c-format
 msgid "Acquired the session message bus '%s'\n"
-msgstr ""
+msgstr "Saioaren mezu busa eskuratua '%s'\n"
 
 #: ../thunar/thunar-application.c:305
 #, c-format
 msgid "Acquired the name '%s' on the session message bus\n"
-msgstr ""
+msgstr "'%s' izena eskuratua saioaren bus mezuan\n"
 
 #: ../thunar/thunar-application.c:316
 #, c-format
 msgid "Name '%s' lost on the message dbus, exiting."
-msgstr ""
+msgstr "'%s' izena dbus mezuetan galdu da, irteten."
 
 #: ../thunar/thunar-application.c:327
 #, c-format
 msgid "Name '%s' lost on the message dbus."
-msgstr ""
+msgstr "'%s' izena dbus mezuetan galdu da."
 
 #: ../thunar/thunar-application.c:492
 msgid "The Thunar development team. All rights reserved."
@@ -1058,13 +1058,13 @@ msgstr "Huts \"%s\"-ren baimenak aldatzerakoan: %s"
 #: ../thunar/thunar-io-jobs-util.c:106
 #, c-format
 msgid "%s (copy %u)%s"
-msgstr ""
+msgstr "%s (%u. kopia)%s"
 
 #. I18N: put " (copy #)" after filename (for files without extension)
 #: ../thunar/thunar-io-jobs-util.c:112
 #, c-format
 msgid "%s (copy %u)"
-msgstr ""
+msgstr "%s (%u. kopia)"
 
 #. I18N: name for first link to basename
 #: ../thunar/thunar-io-jobs-util.c:121 ../thunar/thunar-list-model.c:792
@@ -1283,8 +1283,8 @@ msgstr[1] "Hautaturiko fitxategiak \"%s\"-ra bidali"
 #, c-format
 msgid "%d item: %s, Free space: %s"
 msgid_plural "%d items: %s, Free space: %s"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Elementu %d: %s, leku librea: %s"
+msgstr[1] "%d elementu: %s, leku librea: %s"
 
 #. just the standard text
 #: ../thunar/thunar-list-model.c:2405
@@ -1354,16 +1354,16 @@ msgstr "Irudi tamaina:"
 #, c-format
 msgid "%d other item selected: %s"
 msgid_plural "%d other items selected: %s"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Beste elementu %d hautatuta: %s"
+msgstr[1] "Beste %d elementu hautatuta: %s"
 
 #. only non-folders are selected
 #: ../thunar/thunar-list-model.c:2540
 #, c-format
 msgid "%d item selected: %s"
 msgid_plural "%d items selected: %s"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Elementu %d hautatuta: %s"
+msgstr[1] "%d elementu hautatuta: %s"
 
 #: ../thunar/thunar-list-model.c:2554
 #, c-format
@@ -1929,16 +1929,20 @@ msgstr "Karpetak fitxa berrietan ireki erdiko klikarekin"
 msgid ""
 "Select this option to open a new tab on middle click instead of a new window"
 msgstr ""
+"Hautatu aukera hau erdiko klikarekin fitxa berri bat irekitzeko leho berri "
+"bat ireki beharrean"
 
 #: ../thunar/thunar-preferences-dialog.c:645
 msgid "Open new thunar instances as tabs"
-msgstr ""
+msgstr "Thunaren instantzia berriak fitxak bezala ireki"
 
 #: ../thunar/thunar-preferences-dialog.c:647
 msgid ""
 "Select this option to open new thunar instances as tabs in an existing "
 "thunar window"
 msgstr ""
+"Hautatu aukera hau thunaren instantzia berriak fitxak bezala irekitzeko "
+"existitzen den thunaren leiho batean"
 
 #: ../thunar/thunar-preferences-dialog.c:658
 msgid "Context Menu"
@@ -1946,11 +1950,11 @@ msgstr "Testuinguru menua"
 
 #: ../thunar/thunar-preferences-dialog.c:670
 msgid "Show action to permanently delete files and folders"
-msgstr ""
+msgstr "Erakutsi fitxategiak eta karpetak betirako ezabatzeko ekintza"
 
 #: ../thunar/thunar-preferences-dialog.c:672
 msgid "Select this option to show the 'Delete' action in the context menu"
-msgstr ""
+msgstr "Hautatu aukera hau testuinguru menuan 'Ezabatu' ekintza agertzeko"
 
 #. Advanced
 #: ../thunar/thunar-preferences-dialog.c:681
@@ -1997,10 +2001,12 @@ msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr ""
+"Unitate, gailu, eta medio aldagarrien kudeaketa\n"
+"<a href=\"volman-config:\">Konfiguratu</a>"
 
 #: ../thunar/thunar-preferences-dialog.c:768
 msgid "Missing dependencies"
-msgstr ""
+msgstr "Menpekotasunak faltan"
 
 #: ../thunar/thunar-preferences-dialog.c:776
 msgid ""
@@ -2009,6 +2015,10 @@ msgid ""
 "removable media and remote location browsing\n"
 "will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
 msgstr ""
+"Ematen du <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> ez dagoela eskuragarri.\n"
+"Zakarrontzia, gailu erauzgarriak eta urruneko kokapenak\n"
+"aztertzea bezalako ezaugarri garrantzitsuak ez dute\n"
+"funtzionatuko. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Gehiago irakurri]</a>"
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
@@ -2478,7 +2488,7 @@ msgstr "_Alderantzikatu hautapena"
 
 #: ../thunar/thunar-standard-view.c:415
 msgid "Select all and only the items that are not currently selected"
-msgstr ""
+msgstr "Hautatu une honetan hautatu gabe dauden elementuak"
 
 #: ../thunar/thunar-standard-view.c:416
 msgid "Du_plicate"
@@ -2763,7 +2773,7 @@ msgstr "Thunar leiho berri bat ireki bistarazitako kokapenarekin"
 
 #: ../thunar/thunar-window.c:356
 msgid "Detac_h Tab"
-msgstr ""
+msgstr "Fitxa askatu"
 
 #: ../thunar/thunar-window.c:356
 msgid "Open current folder in a new window"
@@ -2775,7 +2785,7 @@ msgstr "Aurreko fitxa"
 
 #: ../thunar/thunar-window.c:357
 msgid "Switch to Previous Tab"
-msgstr ""
+msgstr "Aldatu aurreko fitxara"
 
 #: ../thunar/thunar-window.c:358
 msgid "_Next Tab"
@@ -2783,7 +2793,7 @@ msgstr "Hurrengo fitxa"
 
 #: ../thunar/thunar-window.c:358
 msgid "Switch to Next Tab"
-msgstr ""
+msgstr "Aldatu hurrengo fitxara"
 
 #: ../thunar/thunar-window.c:359
 msgid "Close _All Windows"
@@ -3327,7 +3337,7 @@ msgstr "Gamelu-tamaina"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:96
 msgid "First character uppercase"
-msgstr ""
+msgstr "Lehen letra larria"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:102
 msgid "Insert"
@@ -3624,11 +3634,11 @@ msgstr "Ekintza pertsonalizatu bat ezabatuaz gero betirako galduko da."
 #: ../plugins/thunar-uca/thunar-uca-editor.c:353
 #, c-format
 msgid "This keyboard shortcut is currently used by: '%s'"
-msgstr ""
+msgstr "Teklatu lasterbide hau honetarako erabilia izaten hari da: '%s'"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:356
 msgid "Keyboard shortcut already in use"
-msgstr ""
+msgstr "Teklatu lasterbidea erabilia une honetan"
 
 #. setup a label to tell that no icon was selected
 #: ../plugins/thunar-uca/thunar-uca-editor.c:507
@@ -3729,15 +3739,15 @@ msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:10
 msgid "Keyboard _Shortcut:"
-msgstr ""
+msgstr "Teklatu lasterbidea:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:11
 msgid "The keyboard shortcut for the action."
-msgstr ""
+msgstr "Ekintzarako teklatu lasterbidea."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:12
 msgid "Clear the keyboard shortcut for this action."
-msgstr ""
+msgstr "Garbitu ekintza honetarako teklatu lasterbidea."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:13
 msgid "Use Startup Notification"
@@ -3769,15 +3779,15 @@ msgstr ""
 msgid ""
 "The following command parameters will be substituted when launching the "
 "action:"
-msgstr ""
+msgstr "Ekintza burutzerakoan hurrengo komando parametroak ordezkatuko dira:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:19
 msgid "the path to the first selected file or directory"
-msgstr ""
+msgstr "hautatutako lehen fitxategi edo karpetarako bidea"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:20
 msgid "the paths to all selected files and directories"
-msgstr ""
+msgstr "hautatutako fitxategi eta karpeta guztien bideak"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:22
 #, no-c-format
@@ -3857,6 +3867,13 @@ msgid ""
 "these patterns must match the name of the file or folder. Additionally, you "
 "can specify that the action should only appear for certain kinds of files."
 msgstr ""
+"Orri honek ekintza fitxategi kudeatzailearen testuinguru menuan agertzeko "
+"bete beharreko baldintzak zerrendatzen ditu. Fitxategi ereduak zerrenda "
+"batean zehaztuta daude puntu eta komaz bereizitako fitxategi eredu gisa "
+"(adib. *.txt;*.doc). Ekintza bat fitxategi edo karpeta baten testuinguru "
+"menuan agertzeko, fitxategiaren edo karpetaren izena gutxienez eredu "
+"hauetako batekin bat etorri behar du. Gainera, ekintza fitxategi mota zehatz"
+" batzuetan soilik agertzea zehaztu dezakezu."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:39
 msgid "Appearance Conditions"
