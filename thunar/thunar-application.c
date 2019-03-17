@@ -117,10 +117,7 @@ static void           thunar_application_dbus_acquired_cb       (GDBusConnection
 static void           thunar_application_name_acquired_cb       (GDBusConnection        *connection,
                                                                  const gchar            *name,
                                                                  gpointer                user_data);
-static void           thunar_application_dbus_name_lost_crit_cb (GDBusConnection        *connection,
-                                                                 const gchar            *name,
-                                                                 gpointer                user_data);
-static void           thunar_application_dbus_name_lost_warn_cb (GDBusConnection        *connection,
+static void           thunar_application_dbus_name_lost_cb      (GDBusConnection        *connection,
                                                                  const gchar            *name,
                                                                  gpointer                user_data);
 static void           thunar_application_dbus_init              (ThunarApplication      *application);
@@ -308,19 +305,7 @@ thunar_application_name_acquired_cb (GDBusConnection *connection,
 
 
 static void
-thunar_application_dbus_name_lost_crit_cb (GDBusConnection *connection,
-                                      const gchar     *name,
-                                      gpointer         user_data)
-{
-  ThunarApplication *application = user_data;
-  g_critical (_("Name '%s' lost on the message dbus, exiting."), name);
-  g_application_quit (G_APPLICATION (application));
-}
-
-
-
-static void
-thunar_application_dbus_name_lost_warn_cb (GDBusConnection *connection,
+thunar_application_dbus_name_lost_cb (GDBusConnection *connection,
                                       const gchar     *name,
                                       gpointer         user_data)
 {
@@ -330,20 +315,16 @@ thunar_application_dbus_name_lost_warn_cb (GDBusConnection *connection,
 
 
 /* TODO: [GTK3 Port] Check if there's a cleaner way to register */
-/* this extra dbus name (besides org.xfce.Thunar) */
+/* these extra dbus names (besides org.xfce.Thunar) */
 static void
 thunar_application_dbus_init (ThunarApplication *application)
 {
-    /* Do not atempt to register if running as root */
-    if (geteuid() == 0)
-      return;
-
     application->dbus_owner_id_xfce = g_bus_own_name (G_BUS_TYPE_SESSION,
                                       "org.xfce.FileManager",
                                       G_BUS_NAME_OWNER_FLAGS_NONE,
                                       thunar_application_dbus_acquired_cb,
                                       thunar_application_name_acquired_cb,
-                                      thunar_application_dbus_name_lost_crit_cb,
+                                      thunar_application_dbus_name_lost_cb,
                                       application,
                                       NULL);
 
@@ -352,7 +333,7 @@ thunar_application_dbus_init (ThunarApplication *application)
                                      G_BUS_NAME_OWNER_FLAGS_NONE,
                                      thunar_application_dbus_acquired_cb,
                                      thunar_application_name_acquired_cb,
-                                     thunar_application_dbus_name_lost_warn_cb,
+                                     thunar_application_dbus_name_lost_cb,
                                      application,
                                      NULL);
 }
