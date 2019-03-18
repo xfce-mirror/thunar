@@ -2510,6 +2510,7 @@ thunar_tree_view_cursor_idle (gpointer user_data)
 
   gtk_tree_model_get_iter (GTK_TREE_MODEL (view->model), &iter, path);
   gtk_tree_path_free (path);
+  path = NULL;
 
   /* collect all ThunarFiles in the path of current_directory in a List. root is on the very left side */
   for (file = view->current_directory; file != NULL; file = thunar_file_get_parent (file, NULL))
@@ -2558,11 +2559,11 @@ thunar_tree_view_cursor_idle (gpointer user_data)
           gtk_tree_model_get (GTK_TREE_MODEL (view->model), &child_iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file_in_tree, -1);
           if (file == file_in_tree)
             {
+              if (path != NULL)
+                gtk_tree_path_free (path);
               g_object_unref (file_in_tree);
+              /* always remember latest known path, so we can set the cursor to it */
               path = gtk_tree_model_get_path (GTK_TREE_MODEL (view->model), &child_iter);
-              gtk_tree_view_expand_to_path (GTK_TREE_VIEW (view), path);
-              gtk_tree_view_set_cursor (GTK_TREE_VIEW (view), path, NULL, FALSE);
-              gtk_tree_path_free (path);
               iter = child_iter; /* next tree level */
               break;
             }
@@ -2572,6 +2573,16 @@ thunar_tree_view_cursor_idle (gpointer user_data)
           if (!gtk_tree_model_iter_next (GTK_TREE_MODEL (view->model), &child_iter))
             break;
         }
+    }
+
+  if (path == NULL)
+    path = thunar_tree_view_get_preferred_toplevel_path (view, view->current_directory);
+
+  if (path != NULL)
+    {
+      gtk_tree_view_expand_to_path (GTK_TREE_VIEW (view), path);
+      gtk_tree_view_set_cursor (GTK_TREE_VIEW (view), path, NULL, FALSE);
+      gtk_tree_path_free (path);
     }
 
   /* tidy up */
