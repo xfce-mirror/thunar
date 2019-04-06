@@ -827,14 +827,25 @@ thunar_transfer_job_verify_destination (ThunarTransferJob  *transfer_job,
         }
     }
 
-  if (succeed && g_file_info_get_attribute_boolean (filesystem_info, G_FILE_ATTRIBUTE_FILESYSTEM_READONLY))
+  if (succeed)
     {
-      g_set_error (error, G_IO_ERROR, G_IO_ERROR_READ_ONLY,
-                   _("Error while copying to \"%s\": The destination is read-only"),
-                   dest_name);
+      dest_info = g_file_query_info (dest, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE, 0,
+                                     exo_job_get_cancellable (EXO_JOB (transfer_job)),
+                                     NULL);
 
-      /* meh */
-      succeed = FALSE;
+      if (dest_info != NULL)
+        {
+          if (!g_file_info_get_attribute_boolean (dest_info, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE))
+            {
+              g_set_error (error, G_IO_ERROR, G_IO_ERROR_READ_ONLY,
+                           _("Error while copying to \"%s\": The destination is read-only"),
+                           dest_name);
+
+              succeed = FALSE;
+            }
+
+          g_object_unref (G_OBJECT (dest_info));
+        }
     }
 
   g_object_unref (filesystem_info);
