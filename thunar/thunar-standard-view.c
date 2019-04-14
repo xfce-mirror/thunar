@@ -444,7 +444,8 @@ static GParamSpec *standard_view_props[N_PROPERTIES] = { NULL, };
 G_DEFINE_ABSTRACT_TYPE_WITH_CODE (ThunarStandardView, thunar_standard_view, GTK_TYPE_SCROLLED_WINDOW,
     G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR, thunar_standard_view_navigator_init)
     G_IMPLEMENT_INTERFACE (THUNAR_TYPE_COMPONENT, thunar_standard_view_component_init)
-    G_IMPLEMENT_INTERFACE (THUNAR_TYPE_VIEW, thunar_standard_view_view_init))
+    G_IMPLEMENT_INTERFACE (THUNAR_TYPE_VIEW, thunar_standard_view_view_init)
+    G_ADD_PRIVATE (ThunarStandardView))
 
 
 
@@ -455,8 +456,6 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   GtkBindingSet  *binding_set;
   GObjectClass   *gobject_class;
   gpointer        g_iface;
-
-  g_type_class_add_private (klass, sizeof (ThunarStandardViewPrivate));
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->constructor = thunar_standard_view_constructor;
@@ -650,7 +649,7 @@ thunar_standard_view_view_init (ThunarViewIface *iface)
 static void
 thunar_standard_view_init (ThunarStandardView *standard_view)
 {
-  standard_view->priv = THUNAR_STANDARD_VIEW_GET_PRIVATE (standard_view);
+  standard_view->priv = thunar_standard_view_get_instance_private (standard_view);
 
   /* allocate the scroll_to_files mapping (directory GFile -> first visible child GFile) */
   standard_view->priv->scroll_to_files = g_hash_table_new_full (g_file_hash, (GEqualFunc) g_file_equal, g_object_unref, g_object_unref);

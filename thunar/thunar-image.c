@@ -81,7 +81,7 @@ struct _ThunarImagePrivate
 
 
 
-G_DEFINE_TYPE (ThunarImage, thunar_image, GTK_TYPE_IMAGE);
+G_DEFINE_TYPE_WITH_PRIVATE (ThunarImage, thunar_image, GTK_TYPE_IMAGE);
 
 
 
@@ -89,8 +89,6 @@ static void
 thunar_image_class_init (ThunarImageClass *klass)
 {
   GObjectClass *gobject_class;
-
-  g_type_class_add_private (klass, sizeof (ThunarImagePrivate));
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_image_finalize;
@@ -110,7 +108,7 @@ thunar_image_class_init (ThunarImageClass *klass)
 static void
 thunar_image_init (ThunarImage *image)
 {
-  image->priv = THUNAR_IMAGE_GET_PRIVATE (image);
+  image->priv = thunar_image_get_instance_private (image);
   image->priv->file = NULL;
 
   image->priv->monitor = thunar_file_monitor_get_default ();

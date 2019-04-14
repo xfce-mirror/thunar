@@ -53,7 +53,7 @@ struct _ThunarxMenuPrivate
 
 
 
-G_DEFINE_TYPE (ThunarxMenu, thunarx_menu, G_TYPE_OBJECT)
+G_DEFINE_TYPE_WITH_PRIVATE (ThunarxMenu, thunarx_menu, G_TYPE_OBJECT)
 
 
 
@@ -61,9 +61,6 @@ static void
 thunarx_menu_class_init (ThunarxMenuClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* add our private data to the class type */
-  g_type_class_add_private (klass, sizeof (ThunarxMenuPrivate));
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunarx_menu_finalize;
@@ -74,7 +71,7 @@ thunarx_menu_class_init (ThunarxMenuClass *klass)
 static void
 thunarx_menu_init (ThunarxMenu *menu)
 {
-  menu->priv = THUNARX_MENU_GET_PRIVATE (menu);
+  menu->priv = thunarx_menu_get_instance_private (menu);
   menu->priv->items = NULL;
 }
 

@@ -93,7 +93,7 @@ static guint signals[LAST_SIGNAL];
 
 
 
-G_DEFINE_TYPE (ThunarxMenuItem, thunarx_menu_item, G_TYPE_OBJECT)
+G_DEFINE_TYPE_WITH_PRIVATE (ThunarxMenuItem, thunarx_menu_item, G_TYPE_OBJECT)
 
 
 
@@ -101,9 +101,6 @@ static void
 thunarx_menu_item_class_init (ThunarxMenuItemClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* add our private data to the class type */
-  g_type_class_add_private (klass, sizeof (ThunarxMenuItemPrivate));
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunarx_menu_item_finalize;
@@ -177,7 +174,7 @@ thunarx_menu_item_class_init (ThunarxMenuItemClass *klass)
 static void
 thunarx_menu_item_init (ThunarxMenuItem *item)
 {
-  item->priv = THUNARX_MENU_ITEM_GET_PRIVATE (item);
+  item->priv = thunarx_menu_item_get_instance_private (item);
   item->priv->sensitive = TRUE;
   item->priv->priority = FALSE;
   item->priv->menu = NULL;
