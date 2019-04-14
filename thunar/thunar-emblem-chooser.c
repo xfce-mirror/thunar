@@ -230,7 +230,9 @@ thunar_emblem_chooser_unrealize (GtkWidget *widget)
   ThunarEmblemChooser *chooser = THUNAR_EMBLEM_CHOOSER (widget);
 
   /* drop all check buttons */
-  gtk_container_foreach (GTK_CONTAINER (chooser->table), (GtkCallback) gtk_widget_destroy, NULL);
+  gtk_container_foreach (GTK_CONTAINER (chooser->table),
+                         (GtkCallback) (void (*)(void)) gtk_widget_destroy,
+                         NULL);
 
   /* release our reference on the icon theme */
   g_signal_handlers_disconnect_by_func (G_OBJECT (chooser->icon_theme), thunar_emblem_chooser_theme_changed, chooser);
@@ -276,7 +278,7 @@ thunar_emblem_chooser_button_toggled (GtkToggleButton     *button,
       if (gtk_toggle_button_get_active (button))
         {
           /* check if we need to add the new emblem */
-          if (g_list_find_custom (emblem_names, emblem_name, (GCompareFunc) strcmp) == NULL)
+          if (g_list_find_custom (emblem_names, emblem_name, (GCompareFunc) (void (*)(void)) strcmp) == NULL)
             {
               emblem_names = g_list_append (emblem_names, (gchar *) emblem_name);
               is_modified = TRUE;
@@ -284,7 +286,7 @@ thunar_emblem_chooser_button_toggled (GtkToggleButton     *button,
         }
       else
         {
-          delete_link = g_list_find_custom (emblem_names, emblem_name, (GCompareFunc) strcmp);
+          delete_link = g_list_find_custom (emblem_names, emblem_name, (GCompareFunc) (void (*)(void)) strcmp);
           if (delete_link != NULL)
             {
               emblem_names = g_list_delete_link (emblem_names, delete_link);
@@ -381,7 +383,9 @@ thunar_emblem_chooser_theme_changed (GtkIconTheme        *icon_theme,
   _thunar_return_if_fail (chooser->icon_theme == icon_theme);
 
   /* drop the current buttons */
-  gtk_container_foreach (GTK_CONTAINER (chooser->table), (GtkCallback) gtk_widget_destroy, NULL);
+  gtk_container_foreach (GTK_CONTAINER (chooser->table),
+                         (GtkCallback) (void (*)(void)) gtk_widget_destroy,
+                         NULL);
 
   /* create buttons for the new theme */
   thunar_emblem_chooser_create_buttons (chooser);
@@ -400,7 +404,7 @@ thunar_emblem_chooser_create_buttons (ThunarEmblemChooser *chooser)
   emblems = gtk_icon_theme_list_icons (chooser->icon_theme, "Emblems");
 
   /* sort the emblem list */
-  emblems = g_list_sort (emblems, (GCompareFunc) g_ascii_strcasecmp);
+  emblems = g_list_sort (emblems, (GCompareFunc) (void (*)(void)) g_ascii_strcasecmp);
 
   /* create buttons for the emblems */
   for (lp = emblems; lp != NULL; lp = lp->next)

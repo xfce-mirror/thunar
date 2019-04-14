@@ -318,7 +318,7 @@ thunar_shortcuts_model_finalize (GObject *object)
     g_source_remove (model->bookmarks_idle_id);
 
   /* free all shortcuts */
-  g_list_foreach (model->shortcuts, (GFunc) thunar_shortcut_free, model);
+  g_list_foreach (model->shortcuts, (GFunc) (void (*)(void)) thunar_shortcut_free, model);
   g_list_free (model->shortcuts);
 
   /* disconnect from the preferences */

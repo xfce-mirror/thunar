@@ -409,7 +409,7 @@ thunar_deep_count_job_new (GList               *files,
   job->files = g_list_copy (files);
   job->query_flags = flags;
 
-  g_list_foreach (job->files, (GFunc) g_object_ref, NULL);
+  g_list_foreach (job->files, (GFunc) (void (*)(void)) g_object_ref, NULL);
 
   return job;
 }

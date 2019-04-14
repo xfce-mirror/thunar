@@ -53,7 +53,7 @@ thunarx_provider_plugin_get_type (void)
       type = g_type_register_static_simple (G_TYPE_INTERFACE,
                                             I_("ThunarxProviderPlugin"),
                                             sizeof (ThunarxProviderPluginIface),
-                                            (GClassInitFunc) thunarx_provider_plugin_class_init,
+                                            (GClassInitFunc) (void (*)(void)) thunarx_provider_plugin_class_init,
                                             0,
                                             NULL,
                                             0);

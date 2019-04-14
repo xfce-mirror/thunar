@@ -908,7 +908,7 @@ thunar_application_uevent (GUdevClient       *client,
     {
       /* only insert the path if we don't have it already */
       if (g_slist_find_custom (application->volman_udis, sysfs_path,
-                               (GCompareFunc) g_utf8_collate) == NULL)
+                               (GCompareFunc) (void (*)(void)) g_utf8_collate) == NULL)
         {
           application->volman_udis = g_slist_prepend (application->volman_udis,
                                                       g_strdup (sysfs_path));
@@ -928,7 +928,7 @@ thunar_application_uevent (GUdevClient       *client,
     {
       /* look for the sysfs path in the list of pending paths */
       lp = g_slist_find_custom (application->volman_udis, sysfs_path,
-                                (GCompareFunc) g_utf8_collate);
+                                (GCompareFunc) (void (*)(void)) g_utf8_collate);
 
       if (G_LIKELY (lp != NULL))
         {

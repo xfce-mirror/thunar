@@ -246,7 +246,8 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
 
           /* connect the "activate" signal */
           g_signal_connect_data (G_OBJECT (item), "activate", G_CALLBACK (thunar_uca_provider_activated),
-                                 g_object_ref (G_OBJECT (uca_provider)), (GClosureNotify) g_object_unref,
+                                 g_object_ref (G_OBJECT (uca_provider)),
+                                 (GClosureNotify) (void (*)(void)) g_object_unref,
                                  G_CONNECT_SWAPPED);
 
           /* set the action path */

@@ -57,7 +57,7 @@ thunar_navigator_get_type (void)
         sizeof (ThunarNavigatorIface),
         (GBaseInitFunc) thunar_navigator_base_init,
         NULL,
-        (GClassInitFunc) thunar_navigator_class_init,
+        (GClassInitFunc) (void (*)(void)) thunar_navigator_class_init,
         NULL,
         NULL,
         0,

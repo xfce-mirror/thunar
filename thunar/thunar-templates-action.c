@@ -339,7 +339,7 @@ thunar_templates_action_set_files (GtkWidget             *menu,
 
   /* sort items so that directories come before files and ancestors come
    * before descendants */
-  files = g_list_sort (files, (GCompareFunc) compare_files);
+  files = g_list_sort (files, (GCompareFunc) (void (*)(void)) compare_files);
 
   for (lp = g_list_first (files); lp != NULL; lp = lp->next)
     {

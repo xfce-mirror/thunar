@@ -562,10 +562,14 @@ thunar_user_manager_flush_timer (gpointer user_data)
 THUNAR_THREADS_ENTER
 
   /* drop all cached groups */
-  size += g_hash_table_foreach_remove (manager->groups, (GHRFunc) gtk_true, NULL);
+  size += g_hash_table_foreach_remove (manager->groups,
+                                       (GHRFunc) (void (*)(void)) gtk_true,
+                                       NULL);
 
   /* drop all cached users */
-  size += g_hash_table_foreach_remove (manager->users, (GHRFunc) gtk_true, NULL);
+  size += g_hash_table_foreach_remove (manager->users,
+                                       (GHRFunc) (void (*)(void)) gtk_true,
+                                       NULL);
 
   /* reload groups and passwd files if we had cached entities */
   if (G_LIKELY (size > 0))
