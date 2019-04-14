@@ -1257,7 +1257,7 @@ thunar_application_take_window (ThunarApplication *application,
     {
       group = gtk_window_group_new ();
       gtk_window_group_add_window (group, window);
-      g_object_weak_ref (G_OBJECT (window), (GWeakNotify) g_object_unref, group);
+      g_object_weak_ref (G_OBJECT (window), (GWeakNotify) (void (*)(void)) g_object_unref, group);
     }
 
   /* add the ourselves to the window */
