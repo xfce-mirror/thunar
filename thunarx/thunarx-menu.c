@@ -27,8 +27,6 @@
 
 
 
-#define THUNARX_MENU_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), THUNARX_TYPE_MENU, ThunarxMenuPrivate))
-
 /**
  * SECTION: thunarx-menu
  * @short_description: The base class for submenus added to the context menus

@@ -29,8 +29,6 @@
 
 
 
-#define THUNARX_PROPERTY_PAGE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), THUNARX_TYPE_PROPERTY_PAGE, ThunarxPropertyPagePrivate))
-
 /**
  * SECTION: thunarx-property-page
  * @short_description: The base class for pages added to the properties dialog

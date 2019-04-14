@@ -60,10 +60,6 @@
 
 
 
-#define THUNAR_STANDARD_VIEW_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), THUNAR_TYPE_STANDARD_VIEW, ThunarStandardViewPrivate))
-
-
-
 /* Property identifiers */
 enum
 {
