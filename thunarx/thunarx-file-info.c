@@ -427,12 +427,12 @@ GList*
 thunarx_file_info_list_copy (GList *file_infos)
 {
 #if GLIB_CHECK_VERSION (2, 34, 0)
-  return g_list_copy_deep (file_infos, (GCopyFunc) g_object_ref, NULL);
+  return g_list_copy_deep (file_infos, (GCopyFunc) (void (*)(void)) g_object_ref, NULL);
 #else
   GList *copy;
 
   copy = g_list_copy (file_infos);
-  g_list_foreach (copy, (GFunc) g_object_ref, NULL);
+  g_list_foreach (copy, (GFunc) (void (*)(void)) g_object_ref, NULL);
 
   return copy;
 #endif

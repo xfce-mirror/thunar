@@ -387,7 +387,9 @@ thunar_icon_factory_sweep_timer (gpointer user_data)
 THUNAR_THREADS_ENTER
 
   /* ditch all icons whose ref_count is 1 */
-  g_hash_table_foreach_remove (factory->icon_cache, (GHRFunc) thunar_icon_check_sweep, factory);
+  g_hash_table_foreach_remove (factory->icon_cache,
+                               (GHRFunc) (void (*)(void)) thunar_icon_check_sweep,
+                               factory);
 
 THUNAR_THREADS_LEAVE
 

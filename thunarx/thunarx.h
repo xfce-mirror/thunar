@@ -69,12 +69,12 @@ type_name##_register_type (ThunarxProviderPlugin *thunarx_define_type_plugin) \
     sizeof (TypeName##Class), \
     NULL, \
     NULL, \
-    (GClassInitFunc) type_name##_class_intern_init, \
+    (GClassInitFunc) (void (*)(void)) type_name##_class_intern_init, \
     NULL, \
     NULL, \
     sizeof (TypeName), \
     0, \
-    (GInstanceInitFunc) type_name##_init, \
+    (GInstanceInitFunc) (void (*)(void)) type_name##_init, \
     NULL, \
   }; \
   thunarx_define_type_id = thunarx_provider_plugin_register_type (thunarx_define_type_plugin, TYPE_PARENT, \
@@ -87,7 +87,7 @@ type_name##_register_type (ThunarxProviderPlugin *thunarx_define_type_plugin) \
 { \
   static const GInterfaceInfo thunarx_implement_interface_info = \
   { \
-    (GInterfaceInitFunc) iface_init \
+    (GInterfaceInitFunc) (void (*)(void)) iface_init \
   }; \
   thunarx_provider_plugin_add_interface (thunarx_define_type_plugin, thunarx_define_type_id, TYPE_IFACE, &thunarx_implement_interface_info); \
 }

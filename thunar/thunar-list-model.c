@@ -1741,7 +1741,7 @@ thunar_list_model_set_case_sensitive (ThunarListModel *store,
       /* emit a "changed" signal for each row, so the display is
          reloaded with the new case-sensitive setting */
       gtk_tree_model_foreach (GTK_TREE_MODEL (store),
-                              (GtkTreeModelForeachFunc) gtk_tree_model_row_changed,
+                              (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed,
                               NULL);
     }
 }
@@ -1789,7 +1789,9 @@ thunar_list_model_set_date_style (ThunarListModel *store,
       g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_DATE_STYLE]);
 
       /* emit a "changed" signal for each row, so the display is reloaded with the new date style */
-      gtk_tree_model_foreach (GTK_TREE_MODEL (store), (GtkTreeModelForeachFunc) gtk_tree_model_row_changed, NULL);
+      gtk_tree_model_foreach (GTK_TREE_MODEL (store),
+                              (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed,
+                              NULL);
     }
 }
 
@@ -1834,7 +1836,9 @@ thunar_list_model_set_date_custom_style (ThunarListModel *store,
       g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_DATE_CUSTOM_STYLE]);
 
       /* emit a "changed" signal for each row, so the display is reloaded with the new date style */
-      gtk_tree_model_foreach (GTK_TREE_MODEL (store), (GtkTreeModelForeachFunc) gtk_tree_model_row_changed, NULL);
+      gtk_tree_model_foreach (GTK_TREE_MODEL (store),
+                              (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed,
+                              NULL);
     }
 }
 
@@ -1996,7 +2000,7 @@ thunar_list_model_set_folders_first (ThunarListModel *store,
   /* emit a "changed" signal for each row, so the display is
      reloaded with the new folders first setting */
   gtk_tree_model_foreach (GTK_TREE_MODEL (store),
-                          (GtkTreeModelForeachFunc) gtk_tree_model_row_changed,
+                          (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed,
                           NULL);
 }
 
@@ -2155,7 +2159,7 @@ thunar_list_model_set_file_size_binary (ThunarListModel *store,
       /* emit a "changed" signal for each row, so the display is
          reloaded with the new binary file size setting */
       gtk_tree_model_foreach (GTK_TREE_MODEL (store),
-                              (GtkTreeModelForeachFunc) gtk_tree_model_row_changed,
+                              (GtkTreeModelForeachFunc) (void (*)(void)) gtk_tree_model_row_changed,
                               NULL);
     }
 }

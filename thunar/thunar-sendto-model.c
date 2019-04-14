@@ -154,7 +154,7 @@ thunar_sendto_model_load (ThunarSendtoModel *sendto_model)
               /* add to our handler list, sorted by their desktop-ids (reverse order) */
               sendto_model->handlers = g_list_insert_sorted (sendto_model->handlers,
                                                              G_APP_INFO (app_info),
-                                                             (GCompareFunc) g_app_info_compare);
+                                                             (GCompareFunc) (void (*)(void)) g_app_info_compare);
 
               /* attach the mime-types to the object */
               mime_types = g_key_file_get_string_list (key_file,

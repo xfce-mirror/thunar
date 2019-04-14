@@ -1000,7 +1000,7 @@ thunar_io_jobs_change_group (GList    *files,
   _thunar_return_val_if_fail (files != NULL, NULL);
 
   /* files are released when the list if destroyed */
-  g_list_foreach (files, (GFunc) g_object_ref, NULL);
+  g_list_foreach (files, (GFunc) (void (*)(void)) g_object_ref, NULL);
 
   return thunar_simple_job_launch (_thunar_io_jobs_chown, 4,
                                    THUNAR_TYPE_G_FILE_LIST, files,
@@ -1155,7 +1155,7 @@ thunar_io_jobs_change_mode (GList         *files,
   _thunar_return_val_if_fail (files != NULL, NULL);
 
   /* files are released when the list if destroyed */
-  g_list_foreach (files, (GFunc) g_object_ref, NULL);
+  g_list_foreach (files, (GFunc) (void (*)(void)) g_object_ref, NULL);
 
   return thunar_simple_job_launch (_thunar_io_jobs_chmod, 6,
                                    THUNAR_TYPE_G_FILE_LIST, files,

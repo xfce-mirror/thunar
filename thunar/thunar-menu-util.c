@@ -72,7 +72,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   g_signal_connect_data (action, "activate",
                          G_CALLBACK (extension_action_callback),
                          g_object_ref (item),
-                         (GClosureNotify) g_object_unref, 0);
+                         (GClosureNotify) (void (*)(void)) g_object_unref, 0);
 
   g_free (name);
   g_free (label);

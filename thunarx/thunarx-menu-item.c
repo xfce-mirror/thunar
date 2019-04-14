@@ -414,6 +414,6 @@ thunarx_menu_item_list_free (GList *items)
 {
   g_return_if_fail (items != NULL);
 
-  g_list_foreach (items, (GFunc)g_object_unref, NULL);
+  g_list_foreach (items, (GFunc) (void (*)(void)) g_object_unref, NULL);
   g_list_free (items);
 }

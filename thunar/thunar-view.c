@@ -41,7 +41,7 @@ thunar_view_get_type (void)
       type = g_type_register_static_simple (G_TYPE_INTERFACE,
                                             I_("ThunarView"),
                                             sizeof (ThunarViewIface),
-                                            (GClassInitFunc) thunar_view_class_init,
+                                            (GClassInitFunc) (void (*)(void)) thunar_view_class_init,
                                             0,
                                             NULL,
                                             0);

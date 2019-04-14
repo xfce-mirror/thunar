@@ -138,7 +138,7 @@ thunarx_menu_get_items (ThunarxMenu *menu)
   g_return_val_if_fail (menu != NULL, NULL);
 
   items = g_list_copy (menu->priv->items);
-  g_list_foreach (items, (GFunc) g_object_ref, NULL);
+  g_list_foreach (items, (GFunc) (void (*)(void)) g_object_ref, NULL);
 
   return items;
 }

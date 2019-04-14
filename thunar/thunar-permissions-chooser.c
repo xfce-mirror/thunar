@@ -941,7 +941,7 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser)
       if (G_LIKELY (user != NULL))
         {
           groups = g_list_copy (thunar_user_get_groups (user));
-          g_list_foreach (groups, (GFunc) g_object_ref, NULL);
+          g_list_foreach (groups, (GFunc) (void (*)(void)) g_object_ref, NULL);
         }
     }
 

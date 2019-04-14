@@ -43,7 +43,7 @@ thunar_component_get_type (void)
       type = g_type_register_static_simple (G_TYPE_INTERFACE,
                                             I_("ThunarComponent"),
                                             sizeof (ThunarComponentIface),
-                                            (GClassInitFunc) thunar_component_class_init,
+                                            (GClassInitFunc) (void (*)(void)) thunar_component_class_init,
                                             0,
                                             NULL,
                                             0);

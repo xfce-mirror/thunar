@@ -1089,7 +1089,7 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
   /* allocate a job */
   job = g_slice_new0 (ThunarThumbnailerJob);
   job->thumbnailer = thumbnailer;
-  job->files = g_list_copy_deep (files, (GCopyFunc)g_object_ref, NULL);
+  job->files = g_list_copy_deep (files, (GCopyFunc) (void (*)(void)) g_object_ref, NULL);
   job->lazy_checks = lazy_checks ? 1 : 0;
 
   success = thunar_thumbnailer_begin_job (thumbnailer, job);
