@@ -38,10 +38,6 @@
 
 
 
-#define THUNAR_JOB_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), THUNAR_TYPE_JOB, ThunarJobPrivate))
-
-
-
 /* Signal identifiers */
 enum
 {

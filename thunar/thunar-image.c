@@ -33,10 +33,6 @@
 
 
 
-#define THUNAR_IMAGE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), THUNAR_TYPE_IMAGE, ThunarImagePrivate))
-
-
-
 /* Property identifiers */
 enum
 {

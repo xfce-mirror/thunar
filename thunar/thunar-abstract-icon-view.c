@@ -32,10 +32,6 @@
 
 
 
-#define THUNAR_ABSTRACT_ICON_VIEW_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), THUNAR_TYPE_ABSTRACT_ICON_VIEW, ThunarAbstractIconViewPrivate))
-
-
-
 static void         thunar_abstract_icon_view_style_set             (GtkWidget                    *widget,
                                                                      GtkStyle                     *previous_style);
 static void         thunar_abstract_icon_view_connect_ui_manager    (ThunarStandardView           *standard_view,

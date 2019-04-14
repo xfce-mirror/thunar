@@ -29,10 +29,6 @@
 
 
 
-#define THUNARX_RENAMER_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), THUNARX_TYPE_RENAMER, ThunarxRenamerPrivate))
-
-
-
 /* Property identifiers */
 enum
 {
@@ -197,7 +193,7 @@ static void
 thunarx_renamer_init (ThunarxRenamer *renamer)
 {
   /* grab a pointer on the private data */
-  renamer->priv = THUNARX_RENAMER_GET_PRIVATE (renamer);
+  renamer->priv = thunarx_renamer_get_instance_private (renamer);
 
   /* initialize the GtkBox to sane defaults */
   gtk_orientable_set_orientation (GTK_ORIENTABLE (renamer), GTK_ORIENTATION_VERTICAL);
