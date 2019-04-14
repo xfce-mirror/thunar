@@ -133,7 +133,7 @@ static const GtkRadioActionEntry order_action_entries[] =
 
 
 
-G_DEFINE_ABSTRACT_TYPE (ThunarAbstractIconView, thunar_abstract_icon_view, THUNAR_TYPE_STANDARD_VIEW)
+G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (ThunarAbstractIconView, thunar_abstract_icon_view, THUNAR_TYPE_STANDARD_VIEW)
 
 
 
@@ -142,9 +142,6 @@ thunar_abstract_icon_view_class_init (ThunarAbstractIconViewClass *klass)
 {
   ThunarStandardViewClass *thunarstandard_view_class;
   GtkWidgetClass          *gtkwidget_class;
-
-  /* add private data to the instance type */
-  g_type_class_add_private (klass, sizeof (ThunarAbstractIconViewPrivate));
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->style_set = thunar_abstract_icon_view_style_set;
@@ -198,7 +195,7 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   GtkWidget *view;
 
   /* connect private instance data */
-  abstract_icon_view->priv = THUNAR_ABSTRACT_ICON_VIEW_GET_PRIVATE (abstract_icon_view);
+  abstract_icon_view->priv = thunar_abstract_icon_view_get_instance_private (abstract_icon_view);
 
   /* stay informed about zoom-level changes, so we can force a re-layout on the abstract_icon view */
   g_signal_connect (G_OBJECT (abstract_icon_view), "notify::zoom-level", G_CALLBACK (thunar_abstract_icon_view_zoom_level_changed), NULL);

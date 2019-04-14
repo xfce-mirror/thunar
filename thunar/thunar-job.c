@@ -78,7 +78,7 @@ static guint job_signals[LAST_SIGNAL];
 
 
 
-G_DEFINE_ABSTRACT_TYPE (ThunarJob, thunar_job, EXO_TYPE_JOB)
+G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (ThunarJob, thunar_job, EXO_TYPE_JOB)
 
 
 
@@ -98,9 +98,6 @@ static void
 thunar_job_class_init (ThunarJobClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* add our private data for this class */
-  g_type_class_add_private (klass, sizeof (ThunarJobPrivate));
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_job_finalize;
@@ -209,7 +206,7 @@ thunar_job_class_init (ThunarJobClass *klass)
 static void
 thunar_job_init (ThunarJob *job)
 {
-  job->priv = THUNAR_JOB_GET_PRIVATE (job);
+  job->priv = thunar_job_get_instance_private (job);
   job->priv->earlier_ask_create_response = 0;
   job->priv->earlier_ask_overwrite_response = 0;
   job->priv->earlier_ask_skip_response = 0;

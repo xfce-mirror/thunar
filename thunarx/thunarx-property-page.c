@@ -85,7 +85,7 @@ struct _ThunarxPropertyPagePrivate
 
 
 
-G_DEFINE_TYPE (ThunarxPropertyPage, thunarx_property_page, GTK_TYPE_BIN)
+G_DEFINE_TYPE_WITH_PRIVATE (ThunarxPropertyPage, thunarx_property_page, GTK_TYPE_BIN)
 
 
 
@@ -94,9 +94,6 @@ thunarx_property_page_class_init (ThunarxPropertyPageClass *klass)
 {
   GtkWidgetClass *gtkwidget_class;
   GObjectClass   *gobject_class;
-
-  /* add our private data to the class type */
-  g_type_class_add_private (klass, sizeof (ThunarxPropertyPagePrivate));
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->get_property = thunarx_property_page_get_property;
@@ -137,7 +134,7 @@ thunarx_property_page_class_init (ThunarxPropertyPageClass *klass)
 static void
 thunarx_property_page_init (ThunarxPropertyPage *property_page)
 {
-  property_page->priv = THUNARX_PROPERTY_PAGE_GET_PRIVATE (property_page);
+  property_page->priv = thunarx_property_page_get_instance_private (property_page);
 }
 
 

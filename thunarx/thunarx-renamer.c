@@ -114,7 +114,7 @@ static guint renamer_signals[LAST_SIGNAL];
 
 
 
-G_DEFINE_ABSTRACT_TYPE (ThunarxRenamer, thunarx_renamer, GTK_TYPE_BOX)
+G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (ThunarxRenamer, thunarx_renamer, GTK_TYPE_BOX)
 
 
 
@@ -122,9 +122,6 @@ static void
 thunarx_renamer_class_init (ThunarxRenamerClass *klass)
 {
   GObjectClass *gobject_class;
-
-  /* add private data */
-  g_type_class_add_private (klass, sizeof (ThunarxRenamerPrivate));
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunarx_renamer_finalize;
