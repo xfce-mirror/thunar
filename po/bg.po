@@ -8,15 +8,15 @@
 # Kiril Kirilov <cybercop_montana@abv.bg>, 2012
 # Kiril Kirilov <cybercop_montana@abv.bg>, 2014-2015,2017-2019
 # Любомир Василев, 2014-2015
-# Красимир Беров, 2018
+# Красимир Беров, 2018-2019
 # Любомир Василев, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-28 00:30+0100\n"
-"PO-Revision-Date: 2019-01-28 13:18+0000\n"
-"Last-Translator: Kiril Kirilov <cybercop_montana@abv.bg>\n"
+"POT-Creation-Date: 2019-03-18 06:30+0100\n"
+"PO-Revision-Date: 2019-04-16 08:24+0000\n"
+"Last-Translator: Красимир Беров\n"
 "Language-Team: Bulgarian (http://www.transifex.com/xfce/thunar/language/bg/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -105,48 +105,43 @@ msgstr "Изключване на работещо копие на Thunar"
 
 #: ../thunar/thunar-application.c:83
 msgid "Print version information and exit"
-msgstr "Показване на информация за версията и изход"
+msgstr "Показване на сведения за изданието и излизане"
 
-#: ../thunar/thunar-application.c:295
+#: ../thunar/thunar-application.c:292
 #, c-format
 msgid "Acquired the session message bus '%s'\n"
 msgstr "Придобита шина за сесийни съобщения \"%s\"\n"
 
-#: ../thunar/thunar-application.c:305
+#: ../thunar/thunar-application.c:302
 #, c-format
 msgid "Acquired the name '%s' on the session message bus\n"
 msgstr "Придобито е името \"%s\" в шината на сесийните съобщения\n"
 
-#: ../thunar/thunar-application.c:316
-#, c-format
-msgid "Name '%s' lost on the message dbus, exiting."
-msgstr "Името \"%s\" е изгубено от съобщението на dbus, излизане."
-
-#: ../thunar/thunar-application.c:327
+#: ../thunar/thunar-application.c:312
 #, c-format
 msgid "Name '%s' lost on the message dbus."
 msgstr "Името \"%s\" е изгубено в съобщението на dbus."
 
-#: ../thunar/thunar-application.c:492
+#: ../thunar/thunar-application.c:473
 msgid "The Thunar development team. All rights reserved."
 msgstr "Екипът по разработка на Thunar. Всички права запазени."
 
-#: ../thunar/thunar-application.c:493
+#: ../thunar/thunar-application.c:474
 msgid "Written by Benedikt Meurer <benny@xfce.org>."
 msgstr "Автор: Бенедикт Моуре <benny@xfce.org>."
 
-#: ../thunar/thunar-application.c:494
+#: ../thunar/thunar-application.c:475
 #, c-format
 msgid "Please report bugs to <%s>."
 msgstr "Моля, докладвайте грешките на <%s>."
 
 #. display an error message to the user
-#: ../thunar/thunar-application.c:766
+#: ../thunar/thunar-application.c:747
 msgid "Failed to launch operation"
 msgstr "Неуспех при стартирането на операция"
 
 #. tell the user that we were unable to launch the file specified
-#: ../thunar/thunar-application.c:1519 ../thunar/thunar-application.c:1651
+#: ../thunar/thunar-application.c:1500 ../thunar/thunar-application.c:1632
 #: ../thunar/thunar-launcher.c:1216 ../thunar/thunar-location-entry.c:356
 #: ../thunar/thunar-location-entry.c:384
 #: ../thunar/thunar-shortcuts-view.c:1680
@@ -155,72 +150,72 @@ msgstr "Неуспех при стартирането на операция"
 msgid "Failed to open \"%s\""
 msgstr "Неуспех при отваряне на „%s“"
 
-#: ../thunar/thunar-application.c:1655
+#: ../thunar/thunar-application.c:1636
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "Неуспех при отваряне на „%s“: %s"
 
 #. display an error message
-#: ../thunar/thunar-application.c:1710
+#: ../thunar/thunar-application.c:1691
 #: ../thunar/thunar-properties-dialog.c:731
 #: ../thunar/thunar-standard-view.c:2864 ../thunar/thunar-tree-view.c:1897
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Неуспех при преименуване на „%s“"
 
-#: ../thunar/thunar-application.c:1812
+#: ../thunar/thunar-application.c:1793
 #: ../thunar/thunar-location-buttons.c:1347
 #: ../thunar/thunar-standard-view.c:2389 ../thunar/thunar-tree-view.c:1759
 msgid "New Folder"
 msgstr "Нова папка"
 
-#: ../thunar/thunar-application.c:1813
+#: ../thunar/thunar-application.c:1794
 #: ../thunar/thunar-location-buttons.c:1348
 #: ../thunar/thunar-standard-view.c:2390 ../thunar/thunar-tree-view.c:1760
 msgid "Create New Folder"
 msgstr "Създаване на нова папка"
 
-#: ../thunar/thunar-application.c:1817
+#: ../thunar/thunar-application.c:1798
 msgid "New File"
 msgstr "Нов файл"
 
-#: ../thunar/thunar-application.c:1818
+#: ../thunar/thunar-application.c:1799
 msgid "Create New File"
 msgstr "Създаване на нов файл"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-application.c:1875 ../thunar/thunar-standard-view.c:2436
+#: ../thunar/thunar-application.c:1856 ../thunar/thunar-standard-view.c:2436
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Създаване на документ от шаблон „%s“"
 
-#: ../thunar/thunar-application.c:1939
+#: ../thunar/thunar-application.c:1920
 msgid "Copying files..."
 msgstr "Копиране на файлове…"
 
-#: ../thunar/thunar-application.c:1975
+#: ../thunar/thunar-application.c:1956
 #, c-format
 msgid "Copying files to \"%s\"..."
 msgstr "Копиране на файлове в „%s“…"
 
-#: ../thunar/thunar-application.c:2021
+#: ../thunar/thunar-application.c:2002
 #, c-format
 msgid "Creating symbolic links in \"%s\"..."
 msgstr "Създаване на символни връзки в „%s“…"
 
-#: ../thunar/thunar-application.c:2074
+#: ../thunar/thunar-application.c:2055
 #, c-format
 msgid "Moving files into \"%s\"..."
 msgstr "Преместване на файловете в „%s“…"
 
-#: ../thunar/thunar-application.c:2156
+#: ../thunar/thunar-application.c:2137
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
 msgstr "Наистина ли искате да изтриете\nзавинаги „%s“?"
 
-#: ../thunar/thunar-application.c:2161
+#: ../thunar/thunar-application.c:2142
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -235,7 +230,7 @@ msgstr[1] "Наистина ли искате да изтриете завина
 #. append the cancel item
 #. add the Cancel/Close buttons
 #. configure the dialog properties
-#: ../thunar/thunar-application.c:2176 ../thunar/thunar-application.c:2355
+#: ../thunar/thunar-application.c:2157 ../thunar/thunar-application.c:2336
 #: ../thunar/thunar-chooser-dialog.c:288 ../thunar/thunar-chooser-dialog.c:705
 #: ../thunar/thunar-chooser-dialog.c:753 ../thunar/thunar-create-dialog.c:141
 #: ../thunar/thunar-dialogs.c:105 ../thunar/thunar-dialogs.c:476
@@ -259,66 +254,66 @@ msgstr[1] "Наистина ли искате да изтриете завина
 msgid "_Cancel"
 msgstr "_Отказ"
 
-#: ../thunar/thunar-application.c:2177 ../thunar/thunar-standard-view.c:412
+#: ../thunar/thunar-application.c:2158 ../thunar/thunar-standard-view.c:412
 #: ../thunar/thunar-tree-view.c:1486
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:372
 msgid "_Delete"
 msgstr "Изтриване"
 
-#: ../thunar/thunar-application.c:2181
+#: ../thunar/thunar-application.c:2162
 msgid "If you delete a file, it is permanently lost."
 msgstr "Ако изтриете файла, той ще бъде загубен завинаги."
 
-#: ../thunar/thunar-application.c:2191
+#: ../thunar/thunar-application.c:2172
 msgid "Deleting files..."
 msgstr "Изтриване на файлове…"
 
-#: ../thunar/thunar-application.c:2226
+#: ../thunar/thunar-application.c:2207
 msgid "Moving files into the trash..."
 msgstr "Преместване на файлове в кошчето…"
 
-#: ../thunar/thunar-application.c:2272
+#: ../thunar/thunar-application.c:2253
 msgid "Creating files..."
 msgstr "Създаване на файлове…"
 
-#: ../thunar/thunar-application.c:2311
+#: ../thunar/thunar-application.c:2292
 msgid "Creating directories..."
 msgstr "Създаване на папки…"
 
-#: ../thunar/thunar-application.c:2350
+#: ../thunar/thunar-application.c:2331
 msgid "Remove all files and folders from the Trash?"
 msgstr "Премахване на всички файлове и папки от кошчето?"
 
 #. append the "Empty Trash" menu action
 #. prepare the menu item
-#: ../thunar/thunar-application.c:2356 ../thunar/thunar-location-buttons.c:188
+#: ../thunar/thunar-application.c:2337 ../thunar/thunar-location-buttons.c:188
 #: ../thunar/thunar-shortcuts-view.c:1226 ../thunar/thunar-tree-view.c:1357
 #: ../thunar/thunar-window.c:355 ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "_Изпразване на кошчето"
 
-#: ../thunar/thunar-application.c:2360
+#: ../thunar/thunar-application.c:2341
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr "Ако изпразните кошчето, цялото му съдържание ще бъде загубено завинаги. Обърнете внимание, че можете да изтривате нещата вътре поотделно."
 
-#: ../thunar/thunar-application.c:2377
+#: ../thunar/thunar-application.c:2358
 msgid "Emptying the Trash..."
 msgstr "Изпразване на кошчето…"
 
-#: ../thunar/thunar-application.c:2423
+#: ../thunar/thunar-application.c:2404
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "Не може да бъде определено началното местоположение на „%s“"
 
 #. display an error dialog
-#: ../thunar/thunar-application.c:2440
+#: ../thunar/thunar-application.c:2421
 #, c-format
 msgid "Could not restore \"%s\""
 msgstr "Неуспех при възстановяването на „%s“"
 
-#: ../thunar/thunar-application.c:2448
+#: ../thunar/thunar-application.c:2429
 msgid "Restoring files..."
 msgstr "Възстановяване на файлове…"
 
@@ -516,7 +511,7 @@ msgstr "Затваряне"
 
 #: ../thunar/thunar-column-editor.c:123
 msgid "Configure Columns in the Detailed List View"
-msgstr "Настройка на колоните в режим на подробен списък"
+msgstr "Настройка на колоните при изглед като подробен списък"
 
 #. add the "Help" button
 #: ../thunar/thunar-column-editor.c:126
@@ -534,7 +529,7 @@ msgstr "Видими колони"
 msgid ""
 "Choose the order of information to appear in the\n"
 "detailed list view."
-msgstr "Изберете реда, в който да се извежда информацията\nв режима на подробен списък."
+msgstr "Изберете подредбата на данните в  изгледа\nкато подробен списък."
 
 #. create the "Move Up" button
 #: ../thunar/thunar-column-editor.c:198
@@ -594,11 +589,11 @@ msgstr "Неизвестно"
 
 #: ../thunar/thunar-compact-view.c:108
 msgid "Compact directory listing"
-msgstr "Компактно извеждане на съдържанието на папките"
+msgstr "Сбит списък на папките"
 
 #: ../thunar/thunar-compact-view.c:109
 msgid "Compact view"
-msgstr "Компактен изглед"
+msgstr "Сбит изглед"
 
 #: ../thunar/thunar-create-dialog.c:142
 msgid "C_reate"
@@ -652,11 +647,11 @@ msgstr "Настройка на колоните…"
 
 #: ../thunar/thunar-details-view.c:137
 msgid "Configure the columns in the detailed list view"
-msgstr "Настройка на колоните в режим на подробен списък"
+msgstr "Настройка на колоните при изглед като подробен списък"
 
 #: ../thunar/thunar-details-view.c:400
 msgid "Detailed directory listing"
-msgstr "Подробно извеждане на съдържанието на папките"
+msgstr "Подробен списък на папките"
 
 #: ../thunar/thunar-details-view.c:401
 msgid "Details view"
@@ -1594,7 +1589,7 @@ msgstr "Преглед като подробен списък"
 
 #: ../thunar/thunar-preferences-dialog.c:297
 msgid "Compact List View"
-msgstr "Преглед като компактен списък"
+msgstr "Преглед като сбит списък"
 
 #: ../thunar/thunar-preferences-dialog.c:298
 msgid "Last Active View"
@@ -2058,7 +2053,7 @@ msgstr "Относно"
 
 #: ../thunar/thunar-renamer-dialog.c:195
 msgid "Display information about Thunar Bulk Rename"
-msgstr "Показване на информация за Thunar Bulk Rename (Масово преименуване)"
+msgstr "Показване на сведения за „Преименуване наведнъж“ в Thunar"
 
 #: ../thunar/thunar-renamer-dialog.c:196 ../thunar/thunar-standard-view.c:407
 msgid "View the properties of the selected file"
@@ -2725,7 +2720,7 @@ msgstr "Намаляване"
 
 #: ../thunar/thunar-window.c:370
 msgid "Show the contents in less detail"
-msgstr "Показване на съдържанието с по- малко подробности"
+msgstr "Показване на съдържанието с по-малко подробности"
 
 #: ../thunar/thunar-window.c:371
 msgid "Normal Si_ze"
@@ -2801,7 +2796,7 @@ msgstr "Показване на потребителското ръководс�
 
 #: ../thunar/thunar-window.c:382
 msgid "Display information about Thunar"
-msgstr "Показване на информация за Thunar"
+msgstr "Показване на сведения за Thunar"
 
 #: ../thunar/thunar-window.c:387
 msgid "Show _Hidden Files"
@@ -2878,11 +2873,11 @@ msgstr "Показване на съдържанието на текущата �
 
 #: ../thunar/thunar-window.c:792
 msgid "View as _Compact List"
-msgstr "Преглед като компактен списък"
+msgstr "Преглед като сбит списък"
 
 #: ../thunar/thunar-window.c:792
 msgid "Display folder content in a compact list view"
-msgstr "Показване на съдържанието на текущата папка във вид на компактен списък"
+msgstr "Показване на съдържанието на текущата папка като сбит списък"
 
 #. add the label with the root warning
 #: ../thunar/thunar-window.c:871
@@ -3159,7 +3154,7 @@ msgid ""
 "For example, %Y will be substituted with the year, %m with the month and %d "
 "with the day. See the documentation of the date utility for additional "
 "information."
-msgstr "Този формат описва датата и времето, което да бъде зададено в името на файла. Например, вместо %Y да бъде поставена  година, вместо %m - месец, а вместо %d - ден. Допълнителна информация, можете да получите от документацията."
+msgstr "Този формат описва датата и времето, което да бъде зададено в името на файла. Например, вместо %Y да бъде поставена  година, вместо %m - месец, а вместо %d - ден. Прегледайте документацията на командата date за още възможности."
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:238
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:198
@@ -3306,7 +3301,7 @@ msgid ""
 "If you enable this option, the pattern will be treated as a regular "
 "expression and matched using the Perl-compatible regular expressions (PCRE)."
 " Check the documentation for details about the regular expression syntax."
-msgstr "Когато е включено, шаблонът ще бъде третиран като регулярен израз, и ще бъде претърсвано за съвпадение с регулярни изрази, съвместими с Perl (PCRE). Да се ​​запознаете с синтаксиса на регулярните изрази, обърнете се към документацията."
+msgstr "Когато е включено, образецът ще бъде използван като израз за намиране на съвпадения, и ще бъде претърсвано с изрази, съвместими с Perl (PCRE). Подробности относно синтаксиса ще намерите в документацията."
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:232
 msgid "Replace _With:"
