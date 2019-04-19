@@ -559,7 +559,7 @@ thunar_location_button_button_release_event (GtkWidget            *button,
           if (open_in_tab)
             {
               /* open in tab */
-              g_signal_emit_by_name (G_OBJECT (button), "location-button-clicked", 0, TRUE);
+              g_signal_emit_by_name (G_OBJECT (button), "location-button-clicked", TRUE);
             }
           else
             {
