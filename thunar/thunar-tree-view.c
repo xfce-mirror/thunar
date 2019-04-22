@@ -1475,7 +1475,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
               gtk_widget_show (item);
 
               /* set the icon */
-              image = gtk_image_new_from_icon_name ("user-trash-full", GTK_ICON_SIZE_MENU);
+              image = gtk_image_new_from_icon_name ("user-trash", GTK_ICON_SIZE_MENU);
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
               gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
 G_GNUC_END_IGNORE_DEPRECATIONS
