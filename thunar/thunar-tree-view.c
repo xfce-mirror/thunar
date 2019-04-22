@@ -1265,6 +1265,7 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
   GIcon        *icon;
   GList        *providers, *lp;
   GList        *items = NULL, *tmp;
+  gboolean      show_delete_action;
 
   /* verify that we're connected to the clipboard manager */
   if (G_UNLIKELY (view->clipboard == NULL))
@@ -1454,6 +1455,8 @@ G_GNUC_END_IGNORE_DEPRECATIONS
       /* "Delete" and "Rename" don't make much sense for devices */
       if (G_LIKELY (device == NULL))
         {
+          g_object_get (G_OBJECT (view->preferences), "misc-show-delete-action", &show_delete_action, NULL);
+
           /* determine the parent file (required to determine "Delete" sensitivity) */
           parent_file = thunar_file_get_parent (file, NULL);
 
@@ -1462,8 +1465,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
           gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
           gtk_widget_show (item);
 
-          if (thunar_g_vfs_is_uri_scheme_supported ("trash")
-              && thunar_file_can_be_trashed (file))
+          if (thunar_g_vfs_is_uri_scheme_supported ("trash"))
             {
               /* append the "Move to Tash" menu action */
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
@@ -1471,7 +1473,7 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 G_GNUC_END_IGNORE_DEPRECATIONS
               g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_move_to_trash), view);
               gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-              gtk_widget_set_sensitive (item, (parent_file != NULL && thunar_file_is_writable (parent_file)));
+              gtk_widget_set_sensitive (item, (parent_file != NULL && thunar_file_is_writable (parent_file) && thunar_file_can_be_trashed (file)));
               gtk_widget_show (item);
 
               /* set the icon */
@@ -1481,20 +1483,24 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 G_GNUC_END_IGNORE_DEPRECATIONS
             }
 
-          /* append the "Delete" menu action */
+          if (!thunar_g_vfs_is_uri_scheme_supported ("trash")
+              || show_delete_action || thunar_file_is_trashed (file))
+            {
+              /* append the "Delete" menu action */
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-          item = gtk_image_menu_item_new_with_mnemonic (_("_Delete"));
+              item = gtk_image_menu_item_new_with_mnemonic (_("_Delete"));
 G_GNUC_END_IGNORE_DEPRECATIONS
-          g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_delete), view);
-          gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-          gtk_widget_set_sensitive (item, (parent_file != NULL && thunar_file_is_writable (parent_file)));
-          gtk_widget_show (item);
+              g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_delete), view);
+              gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+              gtk_widget_set_sensitive (item, (parent_file != NULL && thunar_file_is_writable (parent_file)));
+              gtk_widget_show (item);
 
-          /* set the icon */
-          image = gtk_image_new_from_icon_name ("edit-delete", GTK_ICON_SIZE_MENU);
+              /* set the icon */
+              image = gtk_image_new_from_icon_name ("edit-delete", GTK_ICON_SIZE_MENU);
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-          gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+              gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
 G_GNUC_END_IGNORE_DEPRECATIONS
+            }
 
           /* cleanup */
           if (G_LIKELY (parent_file != NULL))
