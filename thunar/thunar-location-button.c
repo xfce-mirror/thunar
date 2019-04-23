@@ -444,6 +444,10 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
       dnd_icon_name = thunar_file_get_icon_name (file, location_button->file_icon_state, icon_theme);
       gtk_drag_source_set_icon_name (GTK_WIDGET (location_button), dnd_icon_name);
     }
+
+  /* recalculate the required size in case the filename changed */
+  gtk_widget_set_size_request (GTK_WIDGET (location_button->label), -1, -1);
+
 }
 
 
