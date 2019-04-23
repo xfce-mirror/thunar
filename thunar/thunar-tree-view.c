@@ -142,6 +142,8 @@ static GdkDragAction            thunar_tree_view_get_dest_actions             (T
                                                                                ThunarFile             **file_return);
 static ThunarFile              *thunar_tree_view_get_selected_file            (ThunarTreeView          *view);
 static ThunarDevice            *thunar_tree_view_get_selected_device          (ThunarTreeView          *view);
+static void                     thunar_tree_view_action_unlink_selected_folder(ThunarTreeView          *view,
+                                                                               gboolean                 permanently);
 static void                     thunar_tree_view_action_copy                  (ThunarTreeView          *view);
 static void                     thunar_tree_view_action_create_folder         (ThunarTreeView          *view);
 static void                     thunar_tree_view_action_cut                   (ThunarTreeView          *view);
@@ -1230,7 +1232,8 @@ thunar_tree_view_row_collapsed (GtkTreeView *tree_view,
 static gboolean
 thunar_tree_view_delete_selected_files (ThunarTreeView *view)
 {
-  GtkAccelKey key;
+  GtkAccelKey     key;
+  GdkModifierType state;
 
   _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW (view), FALSE);
 
@@ -1241,8 +1244,12 @@ thunar_tree_view_delete_selected_files (ThunarTreeView *view)
       && (key.accel_key != 0 || key.accel_mods != 0))
     return FALSE;
 
-  /* ask the user whether to delete the folder... */
-  thunar_tree_view_action_move_to_trash (view);
+  /* check if we should permanently delete the files (user holds shift or no gvfs available) */
+  if ((gtk_get_current_event_state (&state) && (state & GDK_SHIFT_MASK) != 0) ||
+      (gtk_get_current_event_state (&state) && !thunar_g_vfs_is_uri_scheme_supported ("trash")))
+    thunar_tree_view_action_delete (view);
+  else
+    thunar_tree_view_action_move_to_trash (view);
 
   /* ...and we're done */
   return TRUE;
@@ -1820,13 +1827,12 @@ thunar_tree_view_action_cut (ThunarTreeView *view)
 
 
 static void
-thunar_tree_view_action_move_to_trash (ThunarTreeView *view)
+thunar_tree_view_action_unlink_selected_folder (ThunarTreeView *view,
+                                                gboolean        permanently)
 {
   ThunarApplication *application;
   ThunarFile        *file;
   GList              file_list;
-  gboolean           permanently;
-  GdkModifierType    state;
 
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
@@ -1834,18 +1840,18 @@ thunar_tree_view_action_move_to_trash (ThunarTreeView *view)
   file = thunar_tree_view_get_selected_file (view);
   if (G_LIKELY (file != NULL))
     {
-      /* fake a file list */
-      file_list.data = file;
-      file_list.next = NULL;
-      file_list.prev = NULL;
+      if (thunar_file_can_be_trashed (file))
+        {
+          /* fake a file list */
+          file_list.data = file;
+          file_list.next = NULL;
+          file_list.prev = NULL;
 
-      /* check if we should permanently delete the files (user holds shift) */
-      permanently = (gtk_get_current_event_state (&state) && (state & GDK_SHIFT_MASK) != 0);
-
-      /* delete the file */
-      application = thunar_application_get ();
-      thunar_application_unlink_files (application, GTK_WIDGET (view), &file_list, permanently);
-      g_object_unref (G_OBJECT (application));
+          /* delete the file */
+          application = thunar_application_get ();
+          thunar_application_unlink_files (application, GTK_WIDGET (view), &file_list, permanently);
+          g_object_unref (G_OBJECT (application));
+        }
 
       /* release the file */
       g_object_unref (G_OBJECT (file));
@@ -1855,31 +1861,17 @@ thunar_tree_view_action_move_to_trash (ThunarTreeView *view)
 
 
 static void
+thunar_tree_view_action_move_to_trash (ThunarTreeView *view)
+{
+  thunar_tree_view_action_unlink_selected_folder (view, FALSE);
+}
+
+
+
+static void
 thunar_tree_view_action_delete (ThunarTreeView *view)
 {
-  ThunarApplication *application;
-  ThunarFile        *file;
-  GList              file_list;
-
-  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
-
-  /* determine the selected file */
-  file = thunar_tree_view_get_selected_file (view);
-  if (G_LIKELY (file != NULL))
-    {
-      /* fake a file list */
-      file_list.data = file;
-      file_list.next = NULL;
-      file_list.prev = NULL;
-
-      /* delete the file */
-      application = thunar_application_get ();
-      thunar_application_unlink_files (application, GTK_WIDGET (view), &file_list, TRUE);
-      g_object_unref (G_OBJECT (application));
-
-      /* release the file */
-      g_object_unref (G_OBJECT (file));
-    }
+  thunar_tree_view_action_unlink_selected_folder (view, TRUE);
 }
 
 
