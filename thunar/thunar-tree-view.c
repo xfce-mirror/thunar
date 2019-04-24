@@ -2478,11 +2478,10 @@ thunar_tree_view_cursor_idle (gpointer user_data)
   GtkTreePath    *path;
   GtkTreeIter     iter;
   ThunarFile     *file;
-  ThunarFile     *parent;
-  GFileInfo      *parent_info;
+  GFileInfo      *file_info;
   GtkTreeIter     child_iter;
   ThunarFile     *file_in_tree;
-  gboolean        done = TRUE;
+  gboolean        done = FALSE;
   GList          *lp;
   GList          *path_as_list = NULL;
 
@@ -2494,12 +2493,12 @@ thunar_tree_view_cursor_idle (gpointer user_data)
       gtk_tree_view_set_cursor (GTK_TREE_VIEW (view), view->select_path, NULL, FALSE);
       gtk_tree_path_free (view->select_path);
       view->select_path = NULL;
-      return done;
+      return TRUE;
     }
 
   /* verify that we still have a current directory */
   if (G_UNLIKELY (view->current_directory == NULL))
-    return done;
+    return TRUE;
 
   /* get the preferred toplevel path for the current directory */
   path = thunar_tree_view_get_preferred_toplevel_path (view, view->current_directory);
@@ -2516,63 +2515,74 @@ thunar_tree_view_cursor_idle (gpointer user_data)
   for (file = view->current_directory; file != NULL; file = thunar_file_get_parent (file, NULL))
       path_as_list = g_list_prepend (path_as_list, file);
 
-  /* note that iter may start at e.g. $HOME where "path_as_list" usually starts at "/" */
-  /* So the first few iterations most times will do nothing */
+  /* 1. skip files on path_as_list till we found the beginning of the tree (which e.g. may start at $HOME */
+  gtk_tree_model_get (GTK_TREE_MODEL (view->model), &iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file_in_tree, -1);
   for (lp = path_as_list; lp != NULL; lp = lp->next)
+    {
+      if (THUNAR_FILE (lp->data) == file_in_tree)
+          break;
+    }
+  if (file_in_tree)
+    g_object_unref (file_in_tree);
+
+  /* 2. loop on the remaining path_as_list */
+  for (; lp != NULL; lp = lp->next)
     {
       file = THUNAR_FILE (lp->data);
 
-      /* check if iter has only a dummy node (tree not fully loaded yet) */
+      /* 3 check if iter has only a dummy node (tree not fully loaded yet) */
       if( thunar_tree_model_node_has_dummy (view->model, iter.user_data) )
-        {
-          done = FALSE;
           break;
-        }
 
-      /* Try to create missing children if there are none (this as well initializes child_iter if there are children) */
-      if (!gtk_tree_model_iter_children (GTK_TREE_MODEL (view->model), &child_iter, &iter))
-        {
-          done = FALSE;
-          parent = thunar_file_get_parent (file, NULL);
-          if (parent == NULL) /* e.g root has no parent .. skip it */
-            continue;
-
-          parent_info = thunar_file_get_info (parent);
-          if (parent_info != NULL)
-            {
-              /* E.g. folders for which we do not have read permission dont have any child in the tree */
-              /* Make sure that missing read permissions are the problem */
-              if (!g_file_info_get_attribute_boolean (parent_info, G_FILE_ATTRIBUTE_ACCESS_CAN_READ))
-                {
-                  /* We KNOW that there is a File. Lets just create the required tree-node */
-                  thunar_tree_model_add_child (view->model, iter.user_data, file);
-                }
-            }
-          g_object_unref (parent);
-          break; /* we dont have a valid child_iter by now, so we cannot continue.                         */
-                 /* Since done is FALSE, the next iteration on thunar_tree_view_cursor_idle will go deeper */
-        }
-
-      /* loop on children to see if any folder matches  */
+      /* 4. Loop on all items of current tree-level to see if any folder matches the path we search */
       while (TRUE)
         {
-          gtk_tree_model_get (GTK_TREE_MODEL (view->model), &child_iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file_in_tree, -1);
+          gtk_tree_model_get (GTK_TREE_MODEL (view->model), &iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file_in_tree, -1);
           if (file == file_in_tree)
             {
               if (path != NULL)
                 gtk_tree_path_free (path);
               g_object_unref (file_in_tree);
               /* always remember latest known path, so we can set the cursor to it */
-              path = gtk_tree_model_get_path (GTK_TREE_MODEL (view->model), &child_iter);
-              iter = child_iter; /* next tree level */
+              path = gtk_tree_model_get_path (GTK_TREE_MODEL (view->model), &iter);
               break;
             }
           if (file_in_tree)
             g_object_unref (file_in_tree);
 
-          if (!gtk_tree_model_iter_next (GTK_TREE_MODEL (view->model), &child_iter))
+          if (!gtk_tree_model_iter_next (GTK_TREE_MODEL (view->model), &iter))
             break;
         }
+
+      /* 5. Did we already find the full path ?*/
+      if (lp->next == NULL)
+        {
+          done = TRUE;
+          break;
+        }
+
+      /* 6. Get all children of the current tree iter */
+      /* Try to create missing children on the tree if there are none */
+      if (!gtk_tree_model_iter_children (GTK_TREE_MODEL (view->model), &child_iter, &iter))
+        {
+          if (file == NULL) /* e.g root has no parent .. skip it */
+            continue;
+
+          file_info = thunar_file_get_info (file);
+          if (file_info != NULL)
+            {
+              /* E.g. folders for which we do not have read permission dont have any child in the tree */
+              /* Make sure that missing read permissions are the problem */
+              if (!g_file_info_get_attribute_boolean (file_info, G_FILE_ATTRIBUTE_ACCESS_CAN_READ))
+                {
+                  /* We KNOW that there is a File. Lets just create the required tree-node */
+                  thunar_tree_model_add_child (view->model, iter.user_data,  THUNAR_FILE (lp->next->data));
+                }
+            }
+          break; /* we dont have a valid child_iter by now, so we cannot continue.                         */
+                 /* Since done is FALSE, the next iteration on thunar_tree_view_cursor_idle will go deeper */
+        }
+      iter = child_iter; /* next tree level */
     }
 
   if (path == NULL)
