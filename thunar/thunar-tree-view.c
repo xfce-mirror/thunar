@@ -1359,7 +1359,8 @@ G_GNUC_END_IGNORE_DEPRECATIONS
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
     }
-  else if (G_UNLIKELY (file != NULL && thunar_file_is_trashed (file) && thunar_file_is_root (file)))
+
+  if (G_UNLIKELY (thunar_g_file_is_trash (thunar_file_get_file (file))))
     {
       /* append the "Empty Trash" menu action */
       item = gtk_menu_item_new_with_mnemonic (_("_Empty Trash"));
@@ -1373,35 +1374,34 @@ G_GNUC_END_IGNORE_DEPRECATIONS
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
     }
-
-  /* check if we have a non-trashed resource */
-  if (G_LIKELY (file != NULL && !thunar_file_is_trashed (file)))
+  else if (G_LIKELY (file != NULL))
     {
-      /* append the "Create Folder" menu action */
+      /* check if we have a non-trashed resource */
+      if (G_LIKELY (!thunar_file_is_trashed (file)))
+        {
+          /* append the "Create Folder" menu action */
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      item = gtk_image_menu_item_new_with_mnemonic (_("Create _Folder..."));
+          item = gtk_image_menu_item_new_with_mnemonic (_("Create _Folder..."));
 G_GNUC_END_IGNORE_DEPRECATIONS
-      gtk_widget_set_sensitive (item, thunar_file_is_writable (file));
-      g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_create_folder), view);
-      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-      gtk_widget_show (item);
+          gtk_widget_set_sensitive (item, thunar_file_is_writable (file));
+          g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_create_folder), view);
+          gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+          gtk_widget_show (item);
 
-      /* set the icon */
-      icon = g_themed_icon_new ("folder-new");
-      image = gtk_image_new_from_gicon (icon, GTK_ICON_SIZE_MENU);
+          /* set the icon */
+          icon = g_themed_icon_new ("folder-new");
+          image = gtk_image_new_from_gicon (icon, GTK_ICON_SIZE_MENU);
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+          gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
 G_GNUC_END_IGNORE_DEPRECATIONS
-      g_object_unref (icon);
+          g_object_unref (icon);
 
-      /* append a separator item */
-      item = gtk_separator_menu_item_new ();
-      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-      gtk_widget_show (item);
-    }
+          /* append a separator item */
+          item = gtk_separator_menu_item_new ();
+          gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+          gtk_widget_show (item);
+        }
 
-  if (G_LIKELY (file != NULL))
-    {
       /* "Cut" and "Copy" don't make much sense for devices */
       if (G_LIKELY (device == NULL))
         {
