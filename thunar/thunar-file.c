@@ -1054,22 +1054,6 @@ thunar_file_info_reload (ThunarFile   *file,
                     *p = '\0';
                 }
             }
-
-          /* read the display name from the .desktop file (will be overwritten later
-           * if it's undefined here) */
-          file->display_name = g_key_file_get_locale_string (key_file,
-                                                             G_KEY_FILE_DESKTOP_GROUP,
-                                                             G_KEY_FILE_DESKTOP_KEY_NAME,
-                                                             NULL, NULL);
-
-          /* drop the name if it's empty or has invalid encoding */
-          if (exo_str_is_empty (file->display_name)
-              || !g_utf8_validate (file->display_name, -1, NULL))
-            {
-              g_free (file->display_name);
-              file->display_name = NULL;
-            }
-
           /* free the key file */
           g_key_file_free (key_file);
         }
