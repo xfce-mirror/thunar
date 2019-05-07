@@ -50,21 +50,8 @@ static void   twp_action_set_wallpaper          (ThunarxMenuItem          *item,
                                                  gpointer                  user_data);
 static gint   twp_get_active_workspace_number   (GdkScreen *screen);
 
-
-typedef enum
-{
-  DESKTOP_TYPE_NONE,
-  DESKTOP_TYPE_XFCE,
-  DESKTOP_TYPE_NAUTILUS
-} DesktopType;
-
-
-
-static DesktopType desktop_type = DESKTOP_TYPE_NONE;
 static gboolean    _has_gconftool = FALSE;
 static GtkWidget   *main_window = NULL;
-
-
 
 struct _TwpProviderClass
 {
@@ -134,19 +121,8 @@ twp_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
   GFile           *location;
   GList           *items = NULL;
   gchar           *mime_type;
-  gchar            selection_name[100];
-  Atom             xfce_selection_atom;
-  Atom             nautilus_selection_atom;
-  GdkScreen       *gdk_screen = gdk_screen_get_default();
-  gint             xscreen = gdk_x11_screen_get_screen_number(gdk_screen);
-
-  if(g_strcmp0 (g_getenv ("XDG_SESSION_TYPE"), "wayland") == 0)
-    {
-      return items; // wayland crashes on "gdk_x11_get_default_xdisplay"
-    }
 
   main_window = window;
-  desktop_type = DESKTOP_TYPE_NONE;
 
   /* we can only set a single wallpaper */
   if (files->next == NULL)
@@ -184,25 +160,6 @@ twp_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
         }
     }
 
-  g_snprintf(selection_name, 100, XFDESKTOP_SELECTION_FMT, xscreen);
-  xfce_selection_atom = XInternAtom (gdk_x11_get_default_xdisplay(), selection_name, False);
-
-  if ((XGetSelectionOwner(gdk_x11_get_default_xdisplay(), xfce_selection_atom)))
-    {
-        desktop_type = DESKTOP_TYPE_XFCE;
-    }
-  else
-    {
-      /* FIXME: This is wrong, nautilus WINDOW_ID is not a selection */
-      g_snprintf(selection_name, 100, NAUTILUS_SELECTION_FMT);
-      nautilus_selection_atom = XInternAtom (gdk_x11_get_default_xdisplay(), selection_name, False);
-      if((XGetSelectionOwner(gdk_x11_get_default_xdisplay(), nautilus_selection_atom)))
-      {
-          if (_has_gconftool)
-              desktop_type = DESKTOP_TYPE_NAUTILUS;
-      }
-    }
-
   return items;
 }
 
@@ -230,24 +187,29 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
   XfconfChannel   *channel;
   gboolean         is_single_workspace;
   gint             current_image_style;
+  const gchar     *desktop_type = NULL;
 
   screen = gdk_display_get_default_screen (display);
 
-  if (desktop_type != DESKTOP_TYPE_NONE)
+  desktop_type = g_getenv ("XDG_CURRENT_DESKTOP");
+  if (desktop_type == NULL)
     {
-      file_uri = thunarx_file_info_get_uri (file_info);
-      file_name = g_filename_from_uri (file_uri, &hostname, NULL);
-      if (hostname != NULL)
-        {
-          g_free (hostname);
-          g_free (file_uri);
-          g_free (file_name);
-
-          return;
-        }
-
-      g_free (file_uri);
+      g_warning ("Failed to set wallpaper: $XDG_CURRENT_DESKTOP is not defined");
+      return;
     }
+
+  file_uri = thunarx_file_info_get_uri (file_info);
+  file_name = g_filename_from_uri (file_uri, &hostname, NULL);
+  if (hostname != NULL)
+    {
+      g_free (hostname);
+      g_free (file_uri);
+      g_free (file_name);
+
+      return;
+    }
+
+  g_free (file_uri);
 
   workspace = twp_get_active_workspace_number (screen);
   n_monitors = gdk_display_get_n_monitors (display);
@@ -264,96 +226,101 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
   monitor_name = gdk_monitor_get_model (monitor);
   escaped_file_name = g_shell_quote (file_name);
 
-  switch (desktop_type)
+  if (g_strcmp0 (desktop_type, "XFCE") == 0)
     {
-      case DESKTOP_TYPE_XFCE:
-        g_debug ("set on xfce");
+      g_debug ("set on xfce");
 
-        channel = xfconf_channel_get ("xfce4-desktop");
+      channel = xfconf_channel_get ("xfce4-desktop");
 
-        /* This is the format for xfdesktop before 4.11 */
-        image_path_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-path", screen_nr, monitor_nr);
-        image_show_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-show", screen_nr, monitor_nr);
-        image_style_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-style", screen_nr, monitor_nr);
+      /* This is the format for xfdesktop before 4.11 */
+      image_path_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-path", screen_nr, monitor_nr);
+      image_show_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-show", screen_nr, monitor_nr);
+      image_style_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-style", screen_nr, monitor_nr);
 
-        /* Set the wallpaper and ensure that it's set to show */
-        xfconf_channel_set_string (channel, image_path_prop, file_name);
-        xfconf_channel_set_bool (channel, image_show_prop, TRUE);
+      /* Set the wallpaper and ensure that it's set to show */
+      xfconf_channel_set_string (channel, image_path_prop, file_name);
+      xfconf_channel_set_bool (channel, image_show_prop, TRUE);
 
-        /* If there isn't a wallpaper style set, then set one */
-        current_image_style = xfconf_channel_get_int (channel, image_style_prop, -1);
-        if (current_image_style == -1)
-          {
-            xfconf_channel_set_int (channel, image_style_prop, 0);
-          }
+      /* If there isn't a wallpaper style set, then set one */
+      current_image_style = xfconf_channel_get_int (channel, image_style_prop, -1);
+      if (current_image_style == -1)
+        {
+          xfconf_channel_set_int (channel, image_style_prop, 0);
+        }
 
-        g_free(image_path_prop);
-        g_free(image_show_prop);
-        g_free(image_style_prop);
-
-
-        /* Xfdesktop 4.11+ has a concept of a single-workspace-mode where
-         * the same workspace is used for everything but additionally allows
-         * the user to use any current workspace as the single active
-         * workspace, we'll need to check if it is enabled (which by default
-         * it is) and use that. */
-        is_single_workspace = xfconf_channel_get_bool (channel, "/backdrop/single-workspace-mode", TRUE);
-        if (is_single_workspace)
-          {
-            workspace = xfconf_channel_get_int (channel, "/backdrop/single-workspace-number", 0);
-          }
-
-        /* This is the format for xfdesktop post 4.11. A workspace number is
-         * added and the monitor is referred to name. We set both formats so
-         * that it works as the user expects. */
-        if (monitor_name)
-          {
-            image_path_prop = g_strdup_printf("/backdrop/screen%d/monitor%s/workspace%d/last-image", screen_nr, monitor_name, workspace);
-            image_style_prop = g_strdup_printf("/backdrop/screen%d/monitor%s/workspace%d/image-style", screen_nr, monitor_name, workspace);
-          }
-        else
-          {
-            /* gdk_screen_get_monitor_plug_name can return NULL, in those
-             * instances we fallback to monitor number but still include the
-             * workspace number */
-            image_path_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/workspace%d/last-image", screen_nr, monitor_nr, workspace);
-            image_style_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/workspace%d/image-style", screen_nr, monitor_nr, workspace);
-          }
-
-        xfconf_channel_set_string (channel, image_path_prop, file_name);
-
-        /* If there isn't a wallpaper style set, then set one */
-        current_image_style = xfconf_channel_get_int (channel, image_style_prop, -1);
-        if (current_image_style == -1)
-          {
-            xfconf_channel_set_int (channel, image_style_prop, 5);
-          }
-
-        g_free(image_path_prop);
-        g_free(image_style_prop);
-        break;
-
-      case DESKTOP_TYPE_NAUTILUS:
-        g_debug ("set on gnome");
-        image_path_prop = g_strdup_printf("/desktop/gnome/background/picture_filename");
-        image_show_prop = g_strdup_printf("/desktop/gnome/background/draw_background");
-
-        command = g_strdup_printf ("gconftool-2 %s --set %s--type string", image_path_prop, escaped_file_name);
-        g_spawn_command_line_async (command, NULL);
-        g_free (command);
+      g_free(image_path_prop);
+      g_free(image_show_prop);
+      g_free(image_style_prop);
 
 
-        command = g_strdup_printf ("gconftool-2 %s --set true --type boolean", image_show_prop);
-        g_spawn_command_line_async (command, NULL);
-        g_free (command);
+      /* Xfdesktop 4.11+ has a concept of a single-workspace-mode where
+       * the same workspace is used for everything but additionally allows
+       * the user to use any current workspace as the single active
+       * workspace, we'll need to check if it is enabled (which by default
+       * it is) and use that. */
+      is_single_workspace = xfconf_channel_get_bool (channel, "/backdrop/single-workspace-mode", TRUE);
+      if (is_single_workspace)
+        {
+          workspace = xfconf_channel_get_int (channel, "/backdrop/single-workspace-number", 0);
+        }
 
-        g_free(image_path_prop);
-        g_free(image_show_prop);
-        break;
+      /* This is the format for xfdesktop post 4.11. A workspace number is
+       * added and the monitor is referred to name. We set both formats so
+       * that it works as the user expects. */
+      if (monitor_name)
+        {
+          image_path_prop = g_strdup_printf("/backdrop/screen%d/monitor%s/workspace%d/last-image", screen_nr, monitor_name, workspace);
+          image_style_prop = g_strdup_printf("/backdrop/screen%d/monitor%s/workspace%d/image-style", screen_nr, monitor_name, workspace);
+        }
+      else
+        {
+          /* gdk_screen_get_monitor_plug_name can return NULL, in those
+           * instances we fallback to monitor number but still include the
+           * workspace number */
+          image_path_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/workspace%d/last-image", screen_nr, monitor_nr, workspace);
+          image_style_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/workspace%d/image-style", screen_nr, monitor_nr, workspace);
+        }
 
-      default:
-        return;
-        break;
+      xfconf_channel_set_string (channel, image_path_prop, file_name);
+
+      /* If there isn't a wallpaper style set, then set one */
+      current_image_style = xfconf_channel_get_int (channel, image_style_prop, -1);
+      if (current_image_style == -1)
+        {
+          xfconf_channel_set_int (channel, image_style_prop, 5);
+        }
+
+      g_free(image_path_prop);
+      g_free(image_style_prop);
+    }
+  else if (g_strcmp0 (desktop_type, "GNOME") == 0)
+    {
+      if (_has_gconftool)
+        {
+          g_debug ("set on gnome");
+          image_path_prop = g_strdup_printf("/desktop/gnome/background/picture_filename");
+          image_show_prop = g_strdup_printf("/desktop/gnome/background/draw_background");
+
+          command = g_strdup_printf ("gconftool-2 %s --set %s--type string", image_path_prop, escaped_file_name);
+          g_spawn_command_line_async (command, NULL);
+          g_free (command);
+
+
+          command = g_strdup_printf ("gconftool-2 %s --set true --type boolean", image_show_prop);
+          g_spawn_command_line_async (command, NULL);
+          g_free (command);
+
+          g_free(image_path_prop);
+          g_free(image_show_prop);
+        }
+      else
+        {
+          g_warning ("Failed to set wallpaper: Missing package 'gconftool-2'");
+        }
+    }
+  else
+    {
+      g_warning (("Failed to set wallpaper: $XDG_CURRENT_DESKTOP Desktop type '%s' not supported by thunar wallpaper plugin."), desktop_type);
     }
 
   g_free (escaped_file_name);
