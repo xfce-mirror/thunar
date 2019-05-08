@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-28 00:30+0100\n"
+"POT-Creation-Date: 2019-03-19 00:30+0100\n"
 "PO-Revision-Date: 2018-08-19 09:02+0000\n"
 "Last-Translator: Jeff Huang <s8321414@gmail.com>, 2019\n"
 "Language-Team: Chinese (Taiwan) (https://www.transifex.com/xfce/teams/16840/zh_TW/)\n"
@@ -112,46 +112,41 @@ msgstr "退出一執行中的 Thunar 實體"
 msgid "Print version information and exit"
 msgstr "列印版本資訊後離開"
 
-#: ../thunar/thunar-application.c:295
+#: ../thunar/thunar-application.c:292
 #, c-format
 msgid "Acquired the session message bus '%s'\n"
 msgstr "取得工作階段訊息匯流排 '%s'\n"
 
-#: ../thunar/thunar-application.c:305
+#: ../thunar/thunar-application.c:302
 #, c-format
 msgid "Acquired the name '%s' on the session message bus\n"
 msgstr "在工作階段匯流排取得名稱 '%s'\n"
 
-#: ../thunar/thunar-application.c:316
-#, c-format
-msgid "Name '%s' lost on the message dbus, exiting."
-msgstr "在訊息 dbus 遺失名稱 '%s'，正在結束。"
-
-#: ../thunar/thunar-application.c:327
+#: ../thunar/thunar-application.c:312
 #, c-format
 msgid "Name '%s' lost on the message dbus."
 msgstr "在訊息 dbus 遺失名稱 '%s'。"
 
-#: ../thunar/thunar-application.c:492
+#: ../thunar/thunar-application.c:473
 msgid "The Thunar development team. All rights reserved."
 msgstr "Thunar 開發團隊。保留所有權利。"
 
-#: ../thunar/thunar-application.c:493
+#: ../thunar/thunar-application.c:474
 msgid "Written by Benedikt Meurer <benny@xfce.org>."
 msgstr "由 Benedikt Meurer 編寫 <benny@xfce.org>。"
 
-#: ../thunar/thunar-application.c:494
+#: ../thunar/thunar-application.c:475
 #, c-format
 msgid "Please report bugs to <%s>."
 msgstr "請將程式錯誤回報至 <%s>。"
 
 #. display an error message to the user
-#: ../thunar/thunar-application.c:766
+#: ../thunar/thunar-application.c:747
 msgid "Failed to launch operation"
 msgstr "操作無法啟動"
 
 #. tell the user that we were unable to launch the file specified
-#: ../thunar/thunar-application.c:1519 ../thunar/thunar-application.c:1651
+#: ../thunar/thunar-application.c:1500 ../thunar/thunar-application.c:1632
 #: ../thunar/thunar-launcher.c:1216 ../thunar/thunar-location-entry.c:356
 #: ../thunar/thunar-location-entry.c:384
 #: ../thunar/thunar-shortcuts-view.c:1680
@@ -160,65 +155,65 @@ msgstr "操作無法啟動"
 msgid "Failed to open \"%s\""
 msgstr "無法開啟「%s」"
 
-#: ../thunar/thunar-application.c:1655
+#: ../thunar/thunar-application.c:1636
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "無法開啟「%s」：%s"
 
 #. display an error message
-#: ../thunar/thunar-application.c:1710
+#: ../thunar/thunar-application.c:1691
 #: ../thunar/thunar-properties-dialog.c:731
 #: ../thunar/thunar-standard-view.c:2834 ../thunar/thunar-tree-view.c:1897
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "無法重新命名「%s」"
 
-#: ../thunar/thunar-application.c:1812
+#: ../thunar/thunar-application.c:1793
 #: ../thunar/thunar-location-buttons.c:1347
 #: ../thunar/thunar-standard-view.c:2359 ../thunar/thunar-tree-view.c:1759
 msgid "New Folder"
 msgstr "新資料夾"
 
-#: ../thunar/thunar-application.c:1813
+#: ../thunar/thunar-application.c:1794
 #: ../thunar/thunar-location-buttons.c:1348
 #: ../thunar/thunar-standard-view.c:2360 ../thunar/thunar-tree-view.c:1760
 msgid "Create New Folder"
 msgstr "建立新資料夾"
 
-#: ../thunar/thunar-application.c:1817
+#: ../thunar/thunar-application.c:1798
 msgid "New File"
 msgstr "新檔案"
 
-#: ../thunar/thunar-application.c:1818
+#: ../thunar/thunar-application.c:1799
 msgid "Create New File"
 msgstr "建立新檔案"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-application.c:1875 ../thunar/thunar-standard-view.c:2406
+#: ../thunar/thunar-application.c:1856 ../thunar/thunar-standard-view.c:2406
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "從「%s」模板建立文件"
 
-#: ../thunar/thunar-application.c:1939
+#: ../thunar/thunar-application.c:1920
 msgid "Copying files..."
 msgstr "正在複製檔案..."
 
-#: ../thunar/thunar-application.c:1975
+#: ../thunar/thunar-application.c:1956
 #, c-format
 msgid "Copying files to \"%s\"..."
 msgstr "正在複製檔案至「%s」..."
 
-#: ../thunar/thunar-application.c:2021
+#: ../thunar/thunar-application.c:2002
 #, c-format
 msgid "Creating symbolic links in \"%s\"..."
 msgstr "正在於「%s」內建立符號連結..."
 
-#: ../thunar/thunar-application.c:2074
+#: ../thunar/thunar-application.c:2055
 #, c-format
 msgid "Moving files into \"%s\"..."
 msgstr "正在將檔案移動至「%s」..."
 
-#: ../thunar/thunar-application.c:2156
+#: ../thunar/thunar-application.c:2137
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -227,7 +222,7 @@ msgstr ""
 "您確定要永久刪除\n"
 "所選的檔案「%s」？"
 
-#: ../thunar/thunar-application.c:2161
+#: ../thunar/thunar-application.c:2142
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -243,7 +238,7 @@ msgstr[0] ""
 #. append the cancel item
 #. add the Cancel/Close buttons
 #. configure the dialog properties
-#: ../thunar/thunar-application.c:2176 ../thunar/thunar-application.c:2355
+#: ../thunar/thunar-application.c:2157 ../thunar/thunar-application.c:2336
 #: ../thunar/thunar-chooser-dialog.c:288 ../thunar/thunar-chooser-dialog.c:705
 #: ../thunar/thunar-chooser-dialog.c:753 ../thunar/thunar-create-dialog.c:141
 #: ../thunar/thunar-dialogs.c:105 ../thunar/thunar-dialogs.c:476
@@ -267,66 +262,66 @@ msgstr[0] ""
 msgid "_Cancel"
 msgstr "取消(_C)"
 
-#: ../thunar/thunar-application.c:2177 ../thunar/thunar-standard-view.c:411
+#: ../thunar/thunar-application.c:2158 ../thunar/thunar-standard-view.c:411
 #: ../thunar/thunar-tree-view.c:1486
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:372
 msgid "_Delete"
 msgstr "刪除(_D)"
 
-#: ../thunar/thunar-application.c:2181
+#: ../thunar/thunar-application.c:2162
 msgid "If you delete a file, it is permanently lost."
 msgstr "如果您刪除了檔案，將再也找不回來。"
 
-#: ../thunar/thunar-application.c:2191
+#: ../thunar/thunar-application.c:2172
 msgid "Deleting files..."
 msgstr "刪除檔案中..."
 
-#: ../thunar/thunar-application.c:2226
+#: ../thunar/thunar-application.c:2207
 msgid "Moving files into the trash..."
 msgstr "正在將檔案移動至垃圾桶..."
 
-#: ../thunar/thunar-application.c:2272
+#: ../thunar/thunar-application.c:2253
 msgid "Creating files..."
 msgstr "建立檔案中..."
 
-#: ../thunar/thunar-application.c:2311
+#: ../thunar/thunar-application.c:2292
 msgid "Creating directories..."
 msgstr "建立目錄中..."
 
-#: ../thunar/thunar-application.c:2350
+#: ../thunar/thunar-application.c:2331
 msgid "Remove all files and folders from the Trash?"
 msgstr "將垃圾桶中所有檔案和資料夾清除？"
 
 #. append the "Empty Trash" menu action
 #. prepare the menu item
-#: ../thunar/thunar-application.c:2356 ../thunar/thunar-location-buttons.c:188
+#: ../thunar/thunar-application.c:2337 ../thunar/thunar-location-buttons.c:188
 #: ../thunar/thunar-shortcuts-view.c:1226 ../thunar/thunar-tree-view.c:1357
 #: ../thunar/thunar-window.c:355 ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "倒垃圾(_E)"
 
-#: ../thunar/thunar-application.c:2360
+#: ../thunar/thunar-application.c:2341
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr "如果您選擇要倒垃圾，所有垃圾桶中的東西會永遠遺失。提醒您：您也可以將它們個別刪除。"
 
-#: ../thunar/thunar-application.c:2377
+#: ../thunar/thunar-application.c:2358
 msgid "Emptying the Trash..."
 msgstr "正在倒垃圾..."
 
-#: ../thunar/thunar-application.c:2423
+#: ../thunar/thunar-application.c:2404
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "無法得知「%s」的原始路徑"
 
 #. display an error dialog
-#: ../thunar/thunar-application.c:2440
+#: ../thunar/thunar-application.c:2421
 #, c-format
 msgid "Could not restore \"%s\""
 msgstr "無法還原「%s」"
 
-#: ../thunar/thunar-application.c:2448
+#: ../thunar/thunar-application.c:2429
 msgid "Restoring files..."
 msgstr "正在還原檔案..."
 
