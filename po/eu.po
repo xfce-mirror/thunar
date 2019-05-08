@@ -8,16 +8,16 @@
 # Nick Schermer <nick@xfce.org>, 2018
 # Piarres Beobide <pi@beobide.net>, 2018
 # Sr Aldeano <sraldeano@gmail.com>, 2018
-# beriain <beriain@bitmessage.ch>, 2019
+# beriain, 2019
 # 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-28 00:30+0100\n"
+"POT-Creation-Date: 2019-03-19 00:30+0100\n"
 "PO-Revision-Date: 2018-08-19 09:02+0000\n"
-"Last-Translator: beriain <beriain@bitmessage.ch>, 2019\n"
+"Last-Translator: beriain, 2019\n"
 "Language-Team: Basque (https://www.transifex.com/xfce/teams/16840/eu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -114,46 +114,41 @@ msgstr "Itxi martxan dagoen thunar instantzia bat"
 msgid "Print version information and exit"
 msgstr "Inprimatu bertsio-informazioa eta irten"
 
-#: ../thunar/thunar-application.c:295
+#: ../thunar/thunar-application.c:292
 #, c-format
 msgid "Acquired the session message bus '%s'\n"
 msgstr "Saioaren mezu busa eskuratua '%s'\n"
 
-#: ../thunar/thunar-application.c:305
+#: ../thunar/thunar-application.c:302
 #, c-format
 msgid "Acquired the name '%s' on the session message bus\n"
 msgstr "'%s' izena eskuratua saioaren bus mezuan\n"
 
-#: ../thunar/thunar-application.c:316
-#, c-format
-msgid "Name '%s' lost on the message dbus, exiting."
-msgstr "'%s' izena dbus mezuetan galdu da, irteten."
-
-#: ../thunar/thunar-application.c:327
+#: ../thunar/thunar-application.c:312
 #, c-format
 msgid "Name '%s' lost on the message dbus."
 msgstr "'%s' izena dbus mezuetan galdu da."
 
-#: ../thunar/thunar-application.c:492
+#: ../thunar/thunar-application.c:473
 msgid "The Thunar development team. All rights reserved."
 msgstr "Thunar garapen taldea. Eskubide guztiak gordeak."
 
-#: ../thunar/thunar-application.c:493
+#: ../thunar/thunar-application.c:474
 msgid "Written by Benedikt Meurer <benny@xfce.org>."
 msgstr "Benedikt Meurer <benny@xfce.org>-ek idatzia."
 
-#: ../thunar/thunar-application.c:494
+#: ../thunar/thunar-application.c:475
 #, c-format
 msgid "Please report bugs to <%s>."
 msgstr "Mesedez eman arazoen berri: <%s>."
 
 #. display an error message to the user
-#: ../thunar/thunar-application.c:766
+#: ../thunar/thunar-application.c:747
 msgid "Failed to launch operation"
 msgstr "Huts eragiketa abiaraztean"
 
 #. tell the user that we were unable to launch the file specified
-#: ../thunar/thunar-application.c:1519 ../thunar/thunar-application.c:1651
+#: ../thunar/thunar-application.c:1500 ../thunar/thunar-application.c:1632
 #: ../thunar/thunar-launcher.c:1216 ../thunar/thunar-location-entry.c:356
 #: ../thunar/thunar-location-entry.c:384
 #: ../thunar/thunar-shortcuts-view.c:1680
@@ -162,65 +157,65 @@ msgstr "Huts eragiketa abiaraztean"
 msgid "Failed to open \"%s\""
 msgstr "Huts \"%s\" irekitzean"
 
-#: ../thunar/thunar-application.c:1655
+#: ../thunar/thunar-application.c:1636
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "Huts \"%s\" irekitzean: %s"
 
 #. display an error message
-#: ../thunar/thunar-application.c:1710
+#: ../thunar/thunar-application.c:1691
 #: ../thunar/thunar-properties-dialog.c:731
 #: ../thunar/thunar-standard-view.c:2834 ../thunar/thunar-tree-view.c:1897
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Huts \"%s\" berrizendatzean"
 
-#: ../thunar/thunar-application.c:1812
+#: ../thunar/thunar-application.c:1793
 #: ../thunar/thunar-location-buttons.c:1347
 #: ../thunar/thunar-standard-view.c:2359 ../thunar/thunar-tree-view.c:1759
 msgid "New Folder"
 msgstr "Karpeta berria"
 
-#: ../thunar/thunar-application.c:1813
+#: ../thunar/thunar-application.c:1794
 #: ../thunar/thunar-location-buttons.c:1348
 #: ../thunar/thunar-standard-view.c:2360 ../thunar/thunar-tree-view.c:1760
 msgid "Create New Folder"
 msgstr "Sortu karpeta berria"
 
-#: ../thunar/thunar-application.c:1817
+#: ../thunar/thunar-application.c:1798
 msgid "New File"
 msgstr "Fitxategi berria"
 
-#: ../thunar/thunar-application.c:1818
+#: ../thunar/thunar-application.c:1799
 msgid "Create New File"
 msgstr "Sortu fitxategi berria"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-application.c:1875 ../thunar/thunar-standard-view.c:2406
+#: ../thunar/thunar-application.c:1856 ../thunar/thunar-standard-view.c:2406
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Sortu dokumentua \"%s\" txantiloitik"
 
-#: ../thunar/thunar-application.c:1939
+#: ../thunar/thunar-application.c:1920
 msgid "Copying files..."
 msgstr "Fitxategiak kopiatzen..."
 
-#: ../thunar/thunar-application.c:1975
+#: ../thunar/thunar-application.c:1956
 #, c-format
 msgid "Copying files to \"%s\"..."
 msgstr "Fitxategiak \"%s\"-(e)ra kopiatzen..."
 
-#: ../thunar/thunar-application.c:2021
+#: ../thunar/thunar-application.c:2002
 #, c-format
 msgid "Creating symbolic links in \"%s\"..."
 msgstr "Lotura sinbolikoak sortzen \"%s\"-(e)n..."
 
-#: ../thunar/thunar-application.c:2074
+#: ../thunar/thunar-application.c:2055
 #, c-format
 msgid "Moving files into \"%s\"..."
 msgstr "Fitxategiak \"%s\"-(e)ra mugitzen..."
 
-#: ../thunar/thunar-application.c:2156
+#: ../thunar/thunar-application.c:2137
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -229,7 +224,7 @@ msgstr ""
 "Guztiz ziur al zaude \"%s\" betirako ezabatu nahi\n"
 "duzula?"
 
-#: ../thunar/thunar-application.c:2161
+#: ../thunar/thunar-application.c:2142
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -248,7 +243,7 @@ msgstr[1] ""
 #. append the cancel item
 #. add the Cancel/Close buttons
 #. configure the dialog properties
-#: ../thunar/thunar-application.c:2176 ../thunar/thunar-application.c:2355
+#: ../thunar/thunar-application.c:2157 ../thunar/thunar-application.c:2336
 #: ../thunar/thunar-chooser-dialog.c:288 ../thunar/thunar-chooser-dialog.c:705
 #: ../thunar/thunar-chooser-dialog.c:753 ../thunar/thunar-create-dialog.c:141
 #: ../thunar/thunar-dialogs.c:105 ../thunar/thunar-dialogs.c:476
@@ -272,45 +267,45 @@ msgstr[1] ""
 msgid "_Cancel"
 msgstr "_Utzi"
 
-#: ../thunar/thunar-application.c:2177 ../thunar/thunar-standard-view.c:411
+#: ../thunar/thunar-application.c:2158 ../thunar/thunar-standard-view.c:411
 #: ../thunar/thunar-tree-view.c:1486
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:372
 msgid "_Delete"
 msgstr "_Ezabatu"
 
-#: ../thunar/thunar-application.c:2181
+#: ../thunar/thunar-application.c:2162
 msgid "If you delete a file, it is permanently lost."
 msgstr "Fitxategi bat ezabatzen baduzu, betirako galduko da."
 
-#: ../thunar/thunar-application.c:2191
+#: ../thunar/thunar-application.c:2172
 msgid "Deleting files..."
 msgstr "Fitxategiak ezabatzen..."
 
-#: ../thunar/thunar-application.c:2226
+#: ../thunar/thunar-application.c:2207
 msgid "Moving files into the trash..."
 msgstr "Fitxategiak zakarrontzira mugitzen..."
 
-#: ../thunar/thunar-application.c:2272
+#: ../thunar/thunar-application.c:2253
 msgid "Creating files..."
 msgstr "Fitxategiak sortzen..."
 
-#: ../thunar/thunar-application.c:2311
+#: ../thunar/thunar-application.c:2292
 msgid "Creating directories..."
 msgstr "Direktorioak sortzen..."
 
-#: ../thunar/thunar-application.c:2350
+#: ../thunar/thunar-application.c:2331
 msgid "Remove all files and folders from the Trash?"
 msgstr "Zakarrontziko fitxategi eta direktorio guztiak ezabatu?"
 
 #. append the "Empty Trash" menu action
 #. prepare the menu item
-#: ../thunar/thunar-application.c:2356 ../thunar/thunar-location-buttons.c:188
+#: ../thunar/thunar-application.c:2337 ../thunar/thunar-location-buttons.c:188
 #: ../thunar/thunar-shortcuts-view.c:1226 ../thunar/thunar-tree-view.c:1357
 #: ../thunar/thunar-window.c:355 ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "_Hustu zakarrontzia"
 
-#: ../thunar/thunar-application.c:2360
+#: ../thunar/thunar-application.c:2341
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
@@ -318,22 +313,22 @@ msgstr ""
 "Zakarrontzia hustutzea erabaki ezkero bertako elementuak betirako galduko "
 "dira. Kontutan izan banaka ezaba ditzakezula."
 
-#: ../thunar/thunar-application.c:2377
+#: ../thunar/thunar-application.c:2358
 msgid "Emptying the Trash..."
 msgstr "Zakarrontzia hustutzen..."
 
-#: ../thunar/thunar-application.c:2423
+#: ../thunar/thunar-application.c:2404
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "Huts %s-(r)en jatorrizko kokalekua zehaztean"
 
 #. display an error dialog
-#: ../thunar/thunar-application.c:2440
+#: ../thunar/thunar-application.c:2421
 #, c-format
 msgid "Could not restore \"%s\""
 msgstr "Ezin da \"%s\" leheneratu"
 
-#: ../thunar/thunar-application.c:2448
+#: ../thunar/thunar-application.c:2429
 msgid "Restoring files..."
 msgstr "Fitxategiak leheneratzen..."
 
