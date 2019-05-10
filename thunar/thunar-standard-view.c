@@ -4468,6 +4468,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   ThunarFile *current_directory;
   gboolean    can_paste_into_folder;
   gboolean    restorable;
+  gboolean    trashable;
   gboolean    pastable;
   gboolean    writable;
   gboolean    trashed;
@@ -4491,6 +4492,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   /* determine the new list of selected files (replacing GtkTreePath's with ThunarFile's) */
   selected_files = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
   restorable = (selected_files != NULL);
+  trashable = (selected_files != NULL);
   for (lp = selected_files; lp != NULL; lp = lp->next, ++n_selected_files)
     {
       /* determine the iterator for the path */
@@ -4505,12 +4507,16 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
       /* enable "Restore" if we have only trashed files (atleast one file) */
       if (!thunar_file_is_trashed (lp->data))
         restorable = FALSE;
+
+      /* enable "Move to Trash" if files can be trashed */
+      if (!thunar_file_can_be_trashed (lp->data))
+        trashable = FALSE;
     }
 
   /* and setup the new selected files list */
   standard_view->priv->selected_files = selected_files;
 
-  /* check whether the folder displayed by the view is writable/in the trash */
+  /* check whether the folder displayed by the view is writable/in the trash/can be trashed */
   current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
   writable = (current_directory != NULL && thunar_file_is_writable (current_directory));
   trashed = (current_directory != NULL && thunar_file_is_trashed (current_directory));
@@ -4559,7 +4565,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* update the "Move to Trash" action */
   g_object_set (G_OBJECT (standard_view->priv->action_move_to_trash),
-                "sensitive", (n_selected_files > 0) && writable,
+                "sensitive", (n_selected_files > 0) && trashable,
                 "visible", !trashed && thunar_g_vfs_is_uri_scheme_supported ("trash"),
                 "tooltip", ngettext ("Move the selected file to the Trash",
                                      "Move the selected files to the Trash",
