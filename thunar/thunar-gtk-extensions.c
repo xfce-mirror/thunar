@@ -131,27 +131,53 @@ thunar_gtk_label_set_a11y_relation (GtkLabel  *label,
  * thunar_gtk_menu_run:
  * @menu : a #GtkMenu.
  *
- * A simple wrapper around gtk_menu_popup_at_pointer(), which takes care on the
- * menu and returns only after the @menu was deactivated.
- *
- * This method automatically takes over the floating reference of @menu if any and
- * releases it on return. That means if you created the menu via gtk_menu_new() you'll
- * not need to take care of destroying the menu later.
+ * Conveniance wrapper for thunar_gtk_menu_run_at_event_pointer, to run a menu for the current event
  **/
 void
 thunar_gtk_menu_run (GtkMenu *menu)
 {
-  GdkEvent  *event;
+  GdkEvent *event = gtk_get_current_event ();
+  thunar_gtk_menu_run_at_event (menu, event);
+  gdk_event_free (event);
+}
+
+
+
+/**
+ * thunar_gtk_menu_run_at_event:
+ * @menu  : a #GtkMenu.
+ * @event : a #GdkEvent which may be NULL if no previous event was stored.
+ *
+ * A simple wrapper around gtk_menu_popup_at_pointer(), which runs the @menu in a separate
+ * main loop and returns only after the @menu was deactivated.
+ *
+ * This method automatically takes over the floating reference of @menu if any and
+ * releases it on return. That means if you created the menu via gtk_menu_new() you'll
+ * not need to take care of destroying the menu later.
+ * 
+ **/
+void
+thunar_gtk_menu_run_at_event (GtkMenu *menu, GdkEvent *event)
+{
+  GMainLoop *loop;
+  gulong     signal_id;
 
   _thunar_return_if_fail (GTK_IS_MENU (menu));
 
   /* take over the floating reference on the menu */
   g_object_ref_sink (G_OBJECT (menu));
 
-  event = gtk_get_current_event ();
+  /* run an internal main loop */
+  loop = g_main_loop_new (NULL, FALSE);
+  signal_id = g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
   gtk_menu_popup_at_pointer (menu, event);
-  gdk_event_free (event);
   gtk_menu_reposition (menu);
+  gtk_grab_add (GTK_WIDGET (menu));
+  g_main_loop_run (loop);
+  g_main_loop_unref (loop);
+  gtk_grab_remove (GTK_WIDGET (menu));
+
+  g_signal_handler_disconnect (G_OBJECT (menu), signal_id);
 
   /* release the menu reference */
   g_object_unref (G_OBJECT (menu));

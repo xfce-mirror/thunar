@@ -349,6 +349,7 @@ struct _ThunarStandardViewPrivate
   GList                  *drag_g_file_list;
   guint                   drag_scroll_timer_id;
   guint                   drag_timer_id;
+  GdkEvent               *drag_timer_event;
   gint                    drag_x;
   gint                    drag_y;
 
@@ -848,6 +849,13 @@ thunar_standard_view_dispose (GObject *object)
   /* be sure to cancel any pending drag timer */
   if (G_UNLIKELY (standard_view->priv->drag_timer_id != 0))
     g_source_remove (standard_view->priv->drag_timer_id);
+
+  /* be sure to free any pending drag timer event */
+  if (G_UNLIKELY (standard_view->priv->drag_timer_event != NULL))
+    {
+      gdk_event_free (standard_view->priv->drag_timer_event);
+      standard_view->priv->drag_timer_event = NULL;
+    }
 
   /* reset the UI manager property */
   thunar_component_set_ui_manager (THUNAR_COMPONENT (standard_view), NULL);
@@ -3081,6 +3089,8 @@ thunar_standard_view_motion_notify_event (GtkWidget          *view,
     {
       /* cancel the drag timer, as we won't popup the menu anymore */
       g_source_remove (standard_view->priv->drag_timer_id);
+      gdk_event_free (standard_view->priv->drag_timer_event);
+      standard_view->priv->drag_timer_event = NULL;
 
       /* FIXME
        * - according to doc, the GdkWindow associated to the widget needs to enable the GDK_POINTER_MOTION_MASK mask to use this event.
@@ -4334,7 +4344,15 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* run the menu (figuring out whether to use the file or the folder context menu) */
   menu = gtk_ui_manager_get_widget (standard_view->ui_manager, (selected_items != NULL) ? "/file-context-menu" : "/folder-context-menu");
 G_GNUC_END_IGNORE_DEPRECATIONS
-  thunar_gtk_menu_run (GTK_MENU (menu));
+  /* if there is a drag_timer_event (long press), we use it */
+  if (standard_view->priv->drag_timer_event != NULL)
+    {
+      thunar_gtk_menu_run_at_event (GTK_MENU (menu), standard_view->priv->drag_timer_event);
+      gdk_event_free (standard_view->priv->drag_timer_event);
+      standard_view->priv->drag_timer_event = NULL;
+    }
+  else
+    thunar_gtk_menu_run (GTK_MENU (menu));
 
   g_list_free_full (selected_items, (GDestroyNotify) gtk_tree_path_free);
 
@@ -4389,6 +4407,8 @@ thunar_standard_view_queue_popup (ThunarStandardView *standard_view,
       /* schedule the timer */
       standard_view->priv->drag_timer_id = g_timeout_add_full (G_PRIORITY_LOW, MAX (225, delay), thunar_standard_view_drag_timer,
                                                                standard_view, thunar_standard_view_drag_timer_destroy);
+      /* store current event data */
+      standard_view->priv->drag_timer_event = gtk_get_current_event ();
 
       /* register the motion notify and the button release events on the real view */
       g_signal_connect (G_OBJECT (view), "button-release-event", G_CALLBACK (thunar_standard_view_button_release_event), standard_view);
