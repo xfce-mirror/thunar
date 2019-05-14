@@ -50,7 +50,7 @@ static void   twp_action_set_wallpaper          (ThunarxMenuItem          *item,
                                                  gpointer                  user_data);
 static gint   twp_get_active_workspace_number   (GdkScreen *screen);
 
-static gboolean    _has_gconftool = FALSE;
+static gboolean    _has_gsettings = FALSE;
 static GtkWidget   *main_window = NULL;
 
 struct _TwpProviderClass
@@ -94,10 +94,10 @@ twp_provider_init (TwpProvider *twp_provider)
 {
   gchar *program;
 
-  program = g_find_program_in_path ("gconftool-2");
+  program = g_find_program_in_path ("gsettings");
   if (G_LIKELY (program != NULL))
     {
-      _has_gconftool = TRUE;
+      _has_gsettings = TRUE;
       g_free (program);
     }
 }
@@ -209,8 +209,6 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
       return;
     }
 
-  g_free (file_uri);
-
   workspace = twp_get_active_workspace_number (screen);
   n_monitors = gdk_display_get_n_monitors (display);
 
@@ -295,27 +293,19 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
     }
   else if (g_strcmp0 (desktop_type, "GNOME") == 0)
     {
-      if (_has_gconftool)
+      if (_has_gsettings)
         {
           g_debug ("set on gnome");
-          image_path_prop = g_strdup_printf("/desktop/gnome/background/picture_filename");
-          image_show_prop = g_strdup_printf("/desktop/gnome/background/draw_background");
 
-          command = g_strdup_printf ("gconftool-2 %s --set %s--type string", image_path_prop, escaped_file_name);
+          command = g_strdup_printf ("gsettings set "
+                                     "org.gnome.desktop.background picture-uri "
+                                     "'%s'", file_uri);
           g_spawn_command_line_async (command, NULL);
           g_free (command);
-
-
-          command = g_strdup_printf ("gconftool-2 %s --set true --type boolean", image_show_prop);
-          g_spawn_command_line_async (command, NULL);
-          g_free (command);
-
-          g_free(image_path_prop);
-          g_free(image_show_prop);
         }
       else
         {
-          g_warning ("Failed to set wallpaper: Missing package 'gconftool-2'");
+          g_warning ("Failed to set wallpaper: Missing executable 'gsettings'");
         }
     }
   else
@@ -325,6 +315,7 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
 
   g_free (escaped_file_name);
   g_free (file_name);
+  g_free (file_uri);
 }
 
 /* Taken from xfce_spawn_get_active_workspace_number in xfce-spawn.c apart of
