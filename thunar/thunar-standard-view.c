@@ -3106,6 +3106,8 @@ thunar_standard_view_motion_notify_event (GtkWidget          *view,
                                           GdkEventMotion     *event,
                                           ThunarStandardView *standard_view)
 {
+  GtkTargetList  *target_list;
+
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
   _thunar_return_val_if_fail (standard_view->priv->drag_timer_id != 0, FALSE);
 
@@ -3117,10 +3119,16 @@ thunar_standard_view_motion_notify_event (GtkWidget          *view,
       gdk_event_free (standard_view->priv->drag_timer_event);
       standard_view->priv->drag_timer_event = NULL;
 
-      /* FIXME
-       * - according to doc, the GdkWindow associated to the widget needs to enable the GDK_POINTER_MOTION_MASK mask to use this event.
-       * We dont do that. So possibly this is dead code, which can be removed ?
-      */
+      /* allocate the drag context */
+      target_list = gtk_target_list_new (drag_targets, G_N_ELEMENTS (drag_targets));
+      gtk_drag_begin_with_coordinates (view, target_list,
+                                       GDK_ACTION_COPY |
+                                       GDK_ACTION_MOVE |
+                                       GDK_ACTION_LINK |
+                                       GDK_ACTION_ASK,
+                                       3, (GdkEvent *) event, -1, -1);
+      gtk_target_list_unref (target_list);
+
       return TRUE;
     }
 
