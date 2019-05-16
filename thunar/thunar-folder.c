@@ -571,9 +571,12 @@ thunar_folder_finished (ExoJob       *job,
     }
 
   /* we did it, the folder is loaded */
-  g_signal_handlers_disconnect_matched (folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
-  g_object_unref (folder->job);
-  folder->job = NULL;
+  if (G_LIKELY (folder->job != NULL))
+    {
+      g_signal_handlers_disconnect_matched (folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
+      g_object_unref (folder->job);
+      folder->job = NULL;
+    }
 
   /* restart the content type idle loader */
   thunar_folder_content_type_loader (folder);
