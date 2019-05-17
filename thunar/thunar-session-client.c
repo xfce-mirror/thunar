@@ -256,7 +256,7 @@ thunar_session_client_connect (ThunarSessionClient *session_client,
   prop_priority.type = SmCARD8;
   prop_priority.num_vals = G_N_ELEMENTS (value_priority);
   prop_priority.vals = &value_priority[0];
-  value_priority[0].value = "\30";
+  value_priority[0].value = "\36"; /* this is octal, 30 in decimal */
   value_priority[0].length = 1;
 
   /* setup the properties list */
