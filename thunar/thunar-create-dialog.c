@@ -156,7 +156,7 @@ thunar_create_dialog_init (ThunarCreateDialog *dialog)
   gtk_grid_attach (GTK_GRID (grid), dialog->image, 0, 0, 1, 2);
   gtk_widget_show (dialog->image);
 
-  label = g_object_new (GTK_TYPE_LABEL, "label", _("Enter the new name:"), "xalign", 0.0f, "hexpand", TRUE, NULL);
+  label = g_object_new (GTK_TYPE_LABEL, "label", _("Enter the name:"), "xalign", 0.0f, "hexpand", TRUE, NULL);
   gtk_grid_attach (GTK_GRID (grid), label, 1, 0, 1, 1);
   gtk_widget_show (label);
 
