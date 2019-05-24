@@ -1360,7 +1360,11 @@ G_GNUC_END_IGNORE_DEPRECATIONS
       gtk_widget_show (item);
     }
 
-  if (G_UNLIKELY (thunar_g_file_is_trash (thunar_file_get_file (file))))
+  if (G_UNLIKELY (file == NULL))
+    {
+      /* do nothing */
+    }
+  else if (G_UNLIKELY (thunar_g_file_is_trash (thunar_file_get_file (file))))
     {
       /* append the "Empty Trash" menu action */
       item = gtk_menu_item_new_with_mnemonic (_("_Empty Trash"));
@@ -1374,7 +1378,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
     }
-  else if (G_LIKELY (file != NULL))
+  else
     {
       /* check if we have a non-trashed resource */
       if (G_LIKELY (!thunar_file_is_trashed (file)))
