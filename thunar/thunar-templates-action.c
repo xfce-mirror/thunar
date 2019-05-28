@@ -472,6 +472,7 @@ static void
 thunar_templates_action_load_finished (GtkWidget             *menu,
                                        ThunarTemplatesAction *templates_action)
 {
+  GtkWidget *image;
   GtkWidget *item;
 
   _thunar_return_if_fail (THUNAR_IS_TEMPLATES_ACTION (templates_action));
@@ -484,11 +485,19 @@ thunar_templates_action_load_finished (GtkWidget             *menu,
       gtk_widget_show (item);
 
       /* add the "Empty File" item */
-      item = gtk_menu_item_new_with_mnemonic (_("_Empty File"));
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+      item = gtk_image_menu_item_new_with_mnemonic (_("_Empty File"));
+G_GNUC_END_IGNORE_DEPRECATIONS
       g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (item_activated),
                         templates_action);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
+
+      /* add the icon for the emtpy file item */
+      image = gtk_image_new_from_icon_name ("text-x-generic", GTK_ICON_SIZE_MENU);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+      gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+G_GNUC_END_IGNORE_DEPRECATIONS
     }
 }
 
