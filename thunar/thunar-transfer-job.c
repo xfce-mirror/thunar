@@ -827,26 +827,11 @@ thunar_transfer_job_verify_destination (ThunarTransferJob  *transfer_job,
         }
     }
 
-  if (succeed)
-    {
-      dest_info = g_file_query_info (dest, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE, 0,
-                                     exo_job_get_cancellable (EXO_JOB (transfer_job)),
-                                     NULL);
-
-      if (dest_info != NULL)
-        {
-          if (!g_file_info_get_attribute_boolean (dest_info, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE))
-            {
-              g_set_error (error, G_IO_ERROR, G_IO_ERROR_READ_ONLY,
-                           _("Error while copying to \"%s\": The destination is read-only"),
-                           dest_name);
-
-              succeed = FALSE;
-            }
-
-          g_object_unref (G_OBJECT (dest_info));
-        }
-    }
+  /* We used to check G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE here,
+   * but it's not completely reliable, especially on remote file systems.
+   * The downside is that operations on read-only files fail with a generic
+   * error message.
+   * More details: https://bugzilla.xfce.org/show_bug.cgi?id=15367#c16 */
 
   g_object_unref (filesystem_info);
   g_object_unref (G_OBJECT (dest));
