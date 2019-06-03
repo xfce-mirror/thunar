@@ -46,19 +46,6 @@ ChangeLog: Makefile
 
 dist-hook: ChangeLog
 
-thunar_scriptsdir = $(HELPER_PATH_PREFIX)/Thunar
-thunar_scripts_SCRIPTS =						\
-	ThunarBulkRename
-
-ThunarBulkRename: ThunarBulkRename.in Makefile
-	$(AM_V_GEN) (							\
-		rm -f ThunarBulkRename.gen ThunarBulkRename		\
-		&& $(SED) -e "s,\@bindir\@,$(bindir),g" 			\
-			< $(srcdir)/ThunarBulkRename.in			\
-			> ThunarBulkRename.gen				\
-		&& mv ThunarBulkRename.gen ThunarBulkRename 		\
-	)
-
 desktopdir = $(datadir)/applications
 desktop_in_in_files = 							\
 	Thunar.desktop.in.in						\
@@ -102,7 +89,6 @@ polkit_policy_DATA = $(polkit_in_files:.policy.in=.policy)
 EXTRA_DIST =								\
 	FAQ								\
 	HACKING								\
-	ThunarBulkRename.in						\
 	intltool-extract.in						\
 	intltool-merge.in						\
 	intltool-update.in						\
@@ -116,7 +102,6 @@ EXTRA_DIST =								\
 CLEANFILES		= $(appdata_DATA)
 
 DISTCLEANFILES =							\
-	ThunarBulkRename						\
 	intltool-extract						\
 	intltool-merge							\
 	intltool-update							\
