@@ -1822,7 +1822,7 @@ thunar_file_launch (ThunarFile  *file,
   /* HACK: check if we're not trying to launch another file manager again, possibly
    * ourselfs which will end in a loop */
   if (g_strcmp0 (g_app_info_get_id (app_info), "exo-file-manager.desktop") == 0
-      || g_strcmp0 (g_app_info_get_id (app_info), "Thunar.desktop") == 0
+      || g_strcmp0 (g_app_info_get_id (app_info), "thunar.desktop") == 0
       || g_strcmp0 (g_app_info_get_name (app_info), "exo-file-manager") == 0)
     {
       g_object_unref (G_OBJECT (app_info));
