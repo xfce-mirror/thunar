@@ -48,8 +48,8 @@ dist-hook: ChangeLog
 
 desktopdir = $(datadir)/applications
 desktop_in_in_files = 							\
-	Thunar.desktop.in.in						\
-	Thunar-bulk-rename.desktop.in.in
+	thunar.desktop.in.in						\
+	thunar-bulk-rename.desktop.in.in
 desktop_in_files = $(desktop_in_in_files:.desktop.in.in=.desktop.in)
 %.desktop.in: %.desktop.in.in Makefile
 	$(AM_V_GEN) $(SED) -e "s,\@HELPERDIR\@,$(HELPER_PATH_PREFIX),g" < $< > $@
