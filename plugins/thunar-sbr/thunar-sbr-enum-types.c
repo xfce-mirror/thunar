@@ -92,7 +92,7 @@ thunar_sbr_register_enum_types (ThunarxProviderPlugin *plugin)
   {
     { THUNAR_SBR_CASE_RENAMER_MODE_LOWER,       "THUNAR_SBR_CASE_RENAMER_MODE_LOWER",       N_ ("lowercase"),                 },
     { THUNAR_SBR_CASE_RENAMER_MODE_UPPER,       "THUNAR_SBR_CASE_RENAMER_MODE_UPPER",       N_ ("UPPERCASE"),                 },
-    { THUNAR_SBR_CASE_RENAMER_MODE_CAMEL,       "THUNAR_SBR_CASE_RENAMER_MODE_CAMEL",       N_ ("Camelcase"),                 },
+    { THUNAR_SBR_CASE_RENAMER_MODE_CAMEL,       "THUNAR_SBR_CASE_RENAMER_MODE_CAMEL",       N_ ("Title Case"),                 },
     { THUNAR_SBR_CASE_RENAMER_MODE_FIRST_UPPER, "THUNAR_SBR_CASE_RENAMER_MODE_FIRST_UPPER", N_ ("First character uppercase"), },
     { 0,                                        NULL,                                       NULL,                             },
   };
