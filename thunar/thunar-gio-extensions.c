@@ -552,11 +552,14 @@ thunar_g_app_info_launch (GAppInfo          *info,
                           GError           **error)
 {
   ThunarFile   *file;
+  GAppInfo     *default_app_info;
+  GList        *recommended_app_infos;
   GList        *lp;
   const gchar  *content_type;
   gboolean      result = FALSE;
   gchar        *new_path = NULL;
   gchar        *old_path = NULL;
+  gboolean      update_app_info = TRUE;
 
   _thunar_return_val_if_fail (G_IS_APP_INFO (info), FALSE);
   _thunar_return_val_if_fail (working_directory == NULL || G_IS_FILE (working_directory), FALSE);
@@ -588,16 +591,42 @@ thunar_g_app_info_launch (GAppInfo          *info,
       for (lp = path_list; lp != NULL; lp = lp->next)
         {
           file = thunar_file_get (lp->data, NULL);
-          if (file != NULL)
+          if (file == NULL)
+            continue;
+
+          update_app_info = TRUE;
+          content_type = thunar_file_get_content_type (file);
+
+          /* determine default application */
+          default_app_info = thunar_file_get_default_handler (file);
+          if (default_app_info != NULL)
             {
-              content_type = thunar_file_get_content_type (file);
-
-              /* emit "changed" on the file if we successfully changed the last used application */
-              if (g_app_info_set_as_last_used_for_type (info, content_type, NULL))
-                thunar_file_changed (file);
-
-              g_object_unref (file);
+              /* check if the application is the default one */
+              if (g_app_info_equal (info, default_app_info))
+                update_app_info = FALSE;
+              g_object_unref (default_app_info);
             }
+
+          if (update_app_info)
+            {
+              /* obtain list of last used applications */
+              recommended_app_infos = g_app_info_get_recommended_for_type (content_type);
+              if (recommended_app_infos != NULL)
+                {
+                  /* check if the application is already the last used one
+                   * by comparing it with the first entry in the list */
+                  if (g_app_info_equal (info, recommended_app_infos->data))
+                    update_app_info = FALSE;
+
+                  g_list_free (recommended_app_infos);
+                }
+            }
+
+          /* emit "changed" on the file if we successfully changed the last used application */
+          if (update_app_info && g_app_info_set_as_last_used_for_type (info, content_type, NULL))
+            thunar_file_changed (file);
+
+          g_object_unref (file);
         }
     }
 
