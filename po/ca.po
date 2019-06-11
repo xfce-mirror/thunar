@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-23 12:30+0200\n"
-"PO-Revision-Date: 2019-05-24 07:34+0000\n"
+"POT-Creation-Date: 2019-06-09 18:30+0200\n"
+"PO-Revision-Date: 2019-06-11 10:41+0000\n"
 "Last-Translator: Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>\n"
 "Language-Team: Catalan (http://www.transifex.com/xfce/thunar/language/ca/)\n"
 "MIME-Version: 1.0\n"
@@ -159,20 +159,20 @@ msgstr "Ha fallat l'obriment de «%s»: %s"
 #. display an error message
 #: ../thunar/thunar-application.c:1691
 #: ../thunar/thunar-properties-dialog.c:731
-#: ../thunar/thunar-standard-view.c:2867 ../thunar/thunar-tree-view.c:1895
+#: ../thunar/thunar-standard-view.c:2867 ../thunar/thunar-tree-view.c:1899
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Ha fallat el canvi del nom de «%s»"
 
 #: ../thunar/thunar-application.c:1793
 #: ../thunar/thunar-location-buttons.c:1347
-#: ../thunar/thunar-standard-view.c:2392 ../thunar/thunar-tree-view.c:1772
+#: ../thunar/thunar-standard-view.c:2392 ../thunar/thunar-tree-view.c:1776
 msgid "New Folder"
 msgstr "Carpeta nova"
 
 #: ../thunar/thunar-application.c:1794
 #: ../thunar/thunar-location-buttons.c:1348
-#: ../thunar/thunar-standard-view.c:2393 ../thunar/thunar-tree-view.c:1773
+#: ../thunar/thunar-standard-view.c:2393 ../thunar/thunar-tree-view.c:1777
 msgid "Create New Folder"
 msgstr "Crea una carpeta nova"
 
@@ -256,7 +256,7 @@ msgid "_Cancel"
 msgstr "_Cancel·la"
 
 #: ../thunar/thunar-application.c:2158 ../thunar/thunar-standard-view.c:409
-#: ../thunar/thunar-tree-view.c:1498
+#: ../thunar/thunar-tree-view.c:1502
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:372
 msgid "_Delete"
 msgstr "_Suprimeix"
@@ -288,7 +288,7 @@ msgstr "Voleu suprimir tots els fitxers i les carpetes de la paperera?"
 #. append the "Empty Trash" menu action
 #. prepare the menu item
 #: ../thunar/thunar-application.c:2337 ../thunar/thunar-location-buttons.c:188
-#: ../thunar/thunar-shortcuts-view.c:1226 ../thunar/thunar-tree-view.c:1366
+#: ../thunar/thunar-shortcuts-view.c:1226 ../thunar/thunar-tree-view.c:1370
 #: ../thunar/thunar-window.c:355 ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "Buida la pap_erera"
@@ -1213,7 +1213,7 @@ msgid "Open With \"%s\""
 msgstr "Obre amb «%s»"
 
 #: ../thunar/thunar-launcher.c:1598 ../thunar/thunar-shortcuts-view.c:1744
-#: ../thunar/thunar-shortcuts-view.c:1982 ../thunar/thunar-tree-view.c:2094
+#: ../thunar/thunar-shortcuts-view.c:1982 ../thunar/thunar-tree-view.c:2098
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Ha fallat el muntatge de «%s»"
@@ -1335,7 +1335,7 @@ msgid "Open in New Window"
 msgstr "Obre en una finestra nova"
 
 #: ../thunar/thunar-location-buttons.c:187
-#: ../thunar/thunar-standard-view.c:403 ../thunar/thunar-tree-view.c:1384
+#: ../thunar/thunar-standard-view.c:403 ../thunar/thunar-tree-view.c:1388
 msgid "Create _Folder..."
 msgstr "Crea una _carpeta..."
 
@@ -2061,7 +2061,7 @@ msgstr "Mostra les propietats del fitxer seleccionat"
 
 #: ../thunar/thunar-renamer-dialog.c:351
 #: ../thunar/thunar-renamer-dialog.c:1832
-#: ../Thunar-bulk-rename.desktop.in.in.h:2
+#: ../thunar-bulk-rename.desktop.in.in.h:2
 msgid "Rename Multiple Files"
 msgstr "Canvieu el nom de diversos fitxers"
 
@@ -2119,7 +2119,7 @@ msgstr "Fitxers de vídeo"
 
 #. just popup the about dialog
 #: ../thunar/thunar-renamer-dialog.c:1215
-#: ../Thunar-bulk-rename.desktop.in.in.h:1
+#: ../thunar-bulk-rename.desktop.in.in.h:1
 msgid "Bulk Rename"
 msgstr "Canvi de nom en bloc"
 
@@ -2254,12 +2254,12 @@ msgstr "El camí «%s» no fa referència a cap directori"
 msgid "Failed to add new shortcut"
 msgstr "Ha fallat l'afegiment de la drecera nova"
 
-#: ../thunar/thunar-shortcuts-view.c:1908 ../thunar/thunar-tree-view.c:1962
+#: ../thunar/thunar-shortcuts-view.c:1908 ../thunar/thunar-tree-view.c:1966
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Ha fallat l'expulsió de «%s»"
 
-#: ../thunar/thunar-shortcuts-view.c:2051 ../thunar/thunar-tree-view.c:2017
+#: ../thunar/thunar-shortcuts-view.c:2051 ../thunar/thunar-tree-view.c:2021
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Ha fallat el desmuntatge de «%s»"
@@ -2305,11 +2305,11 @@ msgstr "Carpeta del menú contextual"
 msgid "Create an empty folder within the current folder"
 msgstr "Crea una carpeta buida dins la carpeta actual"
 
-#: ../thunar/thunar-standard-view.c:405 ../thunar/thunar-tree-view.c:1413
+#: ../thunar/thunar-standard-view.c:405 ../thunar/thunar-tree-view.c:1417
 msgid "Cu_t"
 msgstr "Re_talla"
 
-#: ../thunar/thunar-standard-view.c:406 ../thunar/thunar-tree-view.c:1428
+#: ../thunar/thunar-standard-view.c:406 ../thunar/thunar-tree-view.c:1432
 msgid "_Copy"
 msgstr "_Copia"
 
@@ -2321,7 +2321,7 @@ msgstr "_Enganxa"
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr "Mou o copia els fitxers prèviament seleccionats per una ordre Retalla o Copia"
 
-#: ../thunar/thunar-standard-view.c:408 ../thunar/thunar-tree-view.c:1479
+#: ../thunar/thunar-standard-view.c:408 ../thunar/thunar-tree-view.c:1483
 msgid "Mo_ve to Trash"
 msgstr "_Mou a la paperera"
 
@@ -2359,14 +2359,14 @@ msgstr "Selecciona només tots els elements que no estan seleccionats actualment
 msgid "Du_plicate"
 msgstr "Du_plica"
 
-#: ../thunar/thunar-standard-view.c:415 ../thunar/thunar-standard-view.c:4594
+#: ../thunar/thunar-standard-view.c:415 ../thunar/thunar-standard-view.c:4600
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Crea l'_enllaç"
 msgstr[1] "Crea els _enllaços"
 
 #. append the "Rename" menu action
-#: ../thunar/thunar-standard-view.c:416 ../thunar/thunar-tree-view.c:1525
+#: ../thunar/thunar-standard-view.c:416 ../thunar/thunar-tree-view.c:1529
 msgid "_Rename..."
 msgstr "_Canvia el nom..."
 
@@ -2425,60 +2425,59 @@ msgstr "Ha fallat la creació de l'enllaç per a l'URL «%s»"
 msgid "Failed to open directory \"%s\""
 msgstr "Ha fallat l'obriment del directori «%s»"
 
-#: ../thunar/thunar-standard-view.c:4542
+#: ../thunar/thunar-standard-view.c:4548
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Prepara el fitxer seleccionat que es mourà amb l'ordre d'enganxar"
 msgstr[1] "Prepara els fitxers seleccionats que es mouran amb l'ordre d'enganxar"
 
-#: ../thunar/thunar-standard-view.c:4550
+#: ../thunar/thunar-standard-view.c:4556
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Prepara el fitxer seleccionat que es copiarà amb l'ordre d'enganxar"
 msgstr[1] "Prepara els fitxers seleccionats que es copiaran amb l'ordre d'enganxar"
 
-#: ../thunar/thunar-standard-view.c:4564
+#: ../thunar/thunar-standard-view.c:4570
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "Mou el fitxer seleccionat a la paperera"
 msgstr[1] "Mou els fitxers seleccionats a la paperera"
 
-#: ../thunar/thunar-standard-view.c:4573
+#: ../thunar/thunar-standard-view.c:4579
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "Suprimeix permanentment el fitxer seleccionat"
 msgstr[1] "Suprimeix permanentment els fitxers seleccionats"
 
-#: ../thunar/thunar-standard-view.c:4587
+#: ../thunar/thunar-standard-view.c:4593
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Duplica el fitxer seleccionat"
 msgstr[1] "Duplica cadascun dels fitxers seleccionats"
 
-#: ../thunar/thunar-standard-view.c:4596
+#: ../thunar/thunar-standard-view.c:4602
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Crea un enllaç simbòlic per al fitxer seleccionat"
 msgstr[1] "Crea un enllaç simbòlic per a cadascun dels fitxers seleccionats"
 
-#: ../thunar/thunar-standard-view.c:4604
+#: ../thunar/thunar-standard-view.c:4610
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Canvia el nom al fitxer seleccionat"
 msgstr[1] "Canvia el nom als fitxers seleccionats"
 
-#: ../thunar/thunar-standard-view.c:4612
+#: ../thunar/thunar-standard-view.c:4618
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
 msgstr[0] "Restaura el fitxer seleccionat"
 msgstr[1] "Restaura els fitxers seleccionats"
 
-#. add the "Empty File" item
-#: ../thunar/thunar-templates-action.c:487
+#: ../thunar/thunar-templates-action.c:489
 msgid "_Empty File"
 msgstr "Fitx_er buit"
 
-#: ../thunar/thunar-templates-action.c:530
+#: ../thunar/thunar-templates-action.c:539
 msgid "No templates installed"
 msgstr "No hi ha cap plantilla instal·lada"
 
@@ -2489,65 +2488,60 @@ msgid ""
 "destination"
 msgstr "S'ha produït un error mentre s'estava copiant a «%s»: A %s li cal més espai per copiar a la destinació."
 
-#: ../thunar/thunar-transfer-job.c:841
-#, c-format
-msgid "Error while copying to \"%s\": The destination is read-only"
-msgstr "S'ha produït un error mentre s'estava copiant a «%s»: La destinació és només de lectura"
-
-#: ../thunar/thunar-transfer-job.c:888
+#: ../thunar/thunar-transfer-job.c:873
 msgid "Collecting files..."
 msgstr "S'estan recollint els fitxers..."
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:925
+#: ../thunar/thunar-transfer-job.c:910
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "S'està intentant de restaurar «%s»"
 
-#: ../thunar/thunar-transfer-job.c:953
+#: ../thunar/thunar-transfer-job.c:938
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "La carpeta «%s» ja no existeix, però es necessita per restaurar el fitxer «%s» des de la paperera"
 
-#: ../thunar/thunar-transfer-job.c:978
+#: ../thunar/thunar-transfer-job.c:963
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Ha fallat la restauració de la carpeta «%s»"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:998
+#: ../thunar/thunar-transfer-job.c:983
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Intentant moure «%s»"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1027
+#: ../thunar/thunar-transfer-job.c:1012
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "No s'ha pogut moure directament «%s». S'estan recollint els fitxers per a copiar-los..."
 
-#: ../thunar/thunar-transfer-job.c:1189
+#: ../thunar/thunar-transfer-job.c:1174
 #, c-format
 msgid "%s of %s"
 msgstr "%s de %s"
 
-#: ../thunar/thunar-transfer-job.c:1209
+#: ../thunar/thunar-transfer-job.c:1194
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "falta %lu hora (%s/s)"
 msgstr[1] "falten %lu hores (%s/s)"
 
-#: ../thunar/thunar-transfer-job.c:1217
+#: ../thunar/thunar-transfer-job.c:1202
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "falta %lu minut (%s/s)"
 msgstr[1] "falten %lu minuts (%s/s)"
 
-#: ../thunar/thunar-transfer-job.c:1224
+#: ../thunar/thunar-transfer-job.c:1209
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
@@ -2566,11 +2560,11 @@ msgstr "Mostra el contingut de la paperera"
 msgid "Loading..."
 msgstr "S'està carregant..."
 
-#: ../thunar/thunar-tree-view.c:1448
+#: ../thunar/thunar-tree-view.c:1452
 msgid "_Paste Into Folder"
 msgstr "Enganxa a la car_peta"
 
-#: ../thunar/thunar-tree-view.c:1577
+#: ../thunar/thunar-tree-view.c:1581
 msgid "P_roperties..."
 msgstr "P_ropietats..."
 
@@ -2953,7 +2947,7 @@ msgid ""
 msgstr "Thunar és un gestor de fitxers senzill i ràpid\nper a l'entorn d'escriptori Xfce."
 
 #. set window title
-#: ../thunar/thunar-window.c:3363 ../Thunar.desktop.in.in.h:3
+#: ../thunar/thunar-window.c:3363 ../thunar.desktop.in.in.h:3
 #: ../thunar/thunar-settings.desktop.in.h:1
 msgid "File Manager"
 msgstr "Gestor de fitxers"
@@ -3178,8 +3172,8 @@ msgid "UPPERCASE"
 msgstr "MAJÚSCULES"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:95
-msgid "Camelcase"
-msgstr "CamelCase"
+msgid "Title Case"
+msgstr "Inicials en majúscules"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:96
 msgid "First character uppercase"
@@ -3719,25 +3713,13 @@ msgstr "Mou l'acció seleccionada una fila avall."
 msgid "Set as wallpaper"
 msgstr "Estableix com a fons d'escriptori"
 
-#: ../Thunar.desktop.in.in.h:1
+#: ../thunar.desktop.in.in.h:1
 msgid "Thunar File Manager"
 msgstr "Gestor de fitxers Thunar"
 
-#: ../Thunar.desktop.in.in.h:2
+#: ../thunar.desktop.in.in.h:2
 msgid "Browse the filesystem with the file manager"
 msgstr "Navegueu pel sistema de fitxers amb el gestor de fitxers"
-
-#: ../Thunar-folder-handler.desktop.in.in.h:1
-msgid "Open Folder with Thunar"
-msgstr "Obre la carpeta amb Thunar"
-
-#: ../Thunar-folder-handler.desktop.in.in.h:2
-msgid "Open the specified folders in Thunar"
-msgstr "Obre les carpetes especificades en Thunar"
-
-#: ../Thunar-folder-handler.desktop.in.in.h:3
-msgid "Open Folder"
-msgstr "Obre la carpeta"
 
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "Configure the Thunar file manager"
