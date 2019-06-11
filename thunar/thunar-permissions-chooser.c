@@ -257,6 +257,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   row += 1;
 
   separator = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+  g_object_set (separator, "margin", 4, NULL);
   gtk_grid_attach (GTK_GRID (chooser->grid), separator, 0, row, 2, 1);
   gtk_widget_show (separator);
 
@@ -282,7 +283,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
 
   row += 1;
 
-  label = gtk_label_new_with_mnemonic (_("Acce_ss:"));
+  label = gtk_label_new_with_mnemonic (_("Acc_ess:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_grid_attach (GTK_GRID (chooser->grid), label, 0, row, 1, 1);
@@ -302,12 +303,21 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   row += 1;
 
   separator = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+  g_object_set (separator, "margin", 4, NULL);
   gtk_grid_attach (GTK_GRID (chooser->grid), separator, 0, row, 2, 1);
   gtk_widget_show (separator);
 
   row += 1;
 
-  label = gtk_label_new_with_mnemonic (_("O_thers:"));
+  label = gtk_label_new (_("Others"));
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_grid_attach (GTK_GRID (chooser->grid), label, 0, row, 1, 1);
+  gtk_widget_show (label);
+
+  row += 1;
+
+  label = gtk_label_new_with_mnemonic (_("Acce_ss:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_grid_attach (GTK_GRID (chooser->grid), label, 0, row, 1, 1);
@@ -327,6 +337,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   row += 1;
 
   separator = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+  g_object_set (separator, "margin", 4, NULL);
   gtk_grid_attach (GTK_GRID (chooser->grid), separator, 0, row, 2, 1);
   gtk_widget_show (separator);
 
