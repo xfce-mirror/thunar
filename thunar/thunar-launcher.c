@@ -33,6 +33,7 @@
 #include <thunar/thunar-browser.h>
 #include <thunar/thunar-chooser-dialog.h>
 #include <thunar/thunar-dialogs.h>
+#include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
@@ -154,6 +155,8 @@ struct _ThunarLauncher
   ThunarDeviceMonitor    *device_monitor;
   ThunarSendtoModel      *sendto_model;
   guint                   sendto_idle_id;
+
+  ThunarFileMonitor      *file_monitor;
 };
 
 struct _ThunarLauncherMountData
@@ -290,6 +293,10 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   launcher->device_monitor = thunar_device_monitor_get ();
   g_signal_connect_swapped (launcher->device_monitor, "device-added", G_CALLBACK (thunar_launcher_update), launcher);
   g_signal_connect_swapped (launcher->device_monitor, "device-removed", G_CALLBACK (thunar_launcher_update), launcher);
+
+  /* update launcher actions when any monitored file changes */
+  launcher->file_monitor = thunar_file_monitor_get_default ();
+  g_signal_connect_swapped (launcher->file_monitor, "file-changed", G_CALLBACK (thunar_launcher_update), launcher);
 }
 
 
@@ -335,6 +342,10 @@ thunar_launcher_finalize (GObject *object)
 
   /* release the reference on the sendto model */
   g_object_unref (launcher->sendto_model);
+
+  /* disconnect from the file monitor */
+  g_signal_handlers_disconnect_by_func (launcher->file_monitor, thunar_launcher_update, launcher);
+  g_object_unref (launcher->file_monitor);
 
   (*G_OBJECT_CLASS (thunar_launcher_parent_class)->finalize) (object);
 }
