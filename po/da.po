@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-09 18:30+0200\n"
-"PO-Revision-Date: 2019-06-11 22:14+0000\n"
+"POT-Creation-Date: 2019-06-13 00:30+0200\n"
+"PO-Revision-Date: 2019-06-13 19:45+0000\n"
 "Last-Translator: scootergrisen\n"
 "Language-Team: Danish (http://www.transifex.com/xfce/thunar/language/da/)\n"
 "MIME-Version: 1.0\n"
@@ -140,7 +140,7 @@ msgstr "Kunne ikke starte handlingen"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1500 ../thunar/thunar-application.c:1632
-#: ../thunar/thunar-launcher.c:1216 ../thunar/thunar-location-entry.c:356
+#: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:356
 #: ../thunar/thunar-location-entry.c:384
 #: ../thunar/thunar-shortcuts-view.c:1680
 #: ../thunar/thunar-shortcuts-view.c:1708 ../thunar/thunar-window.c:2360
@@ -233,9 +233,9 @@ msgstr[1] "Er du sikker på, at du vil slette\nde %u valgte filer permanent?"
 #: ../thunar/thunar-chooser-dialog.c:753 ../thunar/thunar-create-dialog.c:141
 #: ../thunar/thunar-dialogs.c:105 ../thunar/thunar-dialogs.c:476
 #: ../thunar/thunar-dialogs.c:549 ../thunar/thunar-dialogs.c:797
-#: ../thunar/thunar-dnd.c:169 ../thunar/thunar-launcher.c:725
-#: ../thunar/thunar-permissions-chooser.c:524
-#: ../thunar/thunar-permissions-chooser.c:1137
+#: ../thunar/thunar-dnd.c:169 ../thunar/thunar-launcher.c:736
+#: ../thunar/thunar-permissions-chooser.c:535
+#: ../thunar/thunar-permissions-chooser.c:1148
 #: ../thunar/thunar-properties-dialog.c:819
 #: ../thunar/thunar-renamer-dialog.c:354
 #: ../thunar/thunar-renamer-dialog.c:1053
@@ -335,7 +335,7 @@ msgstr "Intet program valgt"
 msgid "Other Application..."
 msgstr "Andet program ..."
 
-#: ../thunar/thunar-chooser-dialog.c:186 ../thunar/thunar-launcher.c:180
+#: ../thunar/thunar-chooser-dialog.c:186 ../thunar/thunar-launcher.c:183
 msgid "Open With"
 msgstr "Åbn med"
 
@@ -435,8 +435,8 @@ msgstr "Vælg et program"
 #. change the accept button label text
 #. Prepare "Open" label and icon
 #: ../thunar/thunar-chooser-dialog.c:754
-#: ../thunar/thunar-chooser-dialog.c:1155 ../thunar/thunar-launcher.c:176
-#: ../thunar/thunar-launcher.c:811 ../thunar/thunar-location-buttons.c:184
+#: ../thunar/thunar-chooser-dialog.c:1155 ../thunar/thunar-launcher.c:179
+#: ../thunar/thunar-launcher.c:822 ../thunar/thunar-location-buttons.c:184
 #: ../thunar/thunar-renamer-dialog.c:1054
 #: ../thunar/thunar-shortcuts-view.c:1099 ../thunar/thunar-tree-view.c:1292
 #: ../plugins/thunar-uca/thunar-uca-editor.c:177
@@ -673,7 +673,7 @@ msgstr "Indtast det nye navn:"
 msgid "translator-credits"
 msgstr "Per Kongstad <p_kongstad@op.pl>\nscootergrisen\n\nDansk-gruppen\nWebsted http://dansk-gruppen.dk\nE-mail <dansk@dansk-gruppen.dk>"
 
-#: ../thunar/thunar-dialogs.c:433 ../thunar/thunar-permissions-chooser.c:526
+#: ../thunar/thunar-dialogs.c:433 ../thunar/thunar-permissions-chooser.c:537
 msgid "_Yes"
 msgstr "_Ja"
 
@@ -681,7 +681,7 @@ msgstr "_Ja"
 msgid "Yes to _all"
 msgstr "Ja til _alle"
 
-#: ../thunar/thunar-dialogs.c:441 ../thunar/thunar-permissions-chooser.c:525
+#: ../thunar/thunar-dialogs.c:441 ../thunar/thunar-permissions-chooser.c:536
 msgid "_No"
 msgstr "_Nej"
 
@@ -779,7 +779,7 @@ msgstr "ReplaceDialogPart2|med følgende fil?"
 msgid ""
 "The desktop file \"%s\" is in an insecure location and not marked as "
 "executable. If you do not trust this program, click Cancel."
-msgstr "Skrivebordsfilen \"%s\" er placeret et usikkert sted, og ikke markeret som eksekverbar. Klik på Annuller, hvis du ikke stoler på programmet."
+msgstr "Skrivebordsfilen \"%s\" er placeret et usikkert sted, og er ikke mærket som eksekverbar. Klik på Annuller, hvis du ikke stoler på programmet."
 
 #: ../thunar/thunar-dialogs.c:794
 msgid "_Launch Anyway"
@@ -803,7 +803,7 @@ msgstr "_Henvis hertil"
 
 #. display an error to the user
 #. display an error message to the user
-#: ../thunar/thunar-dnd.c:250 ../thunar/thunar-launcher.c:564
+#: ../thunar/thunar-dnd.c:250 ../thunar/thunar-launcher.c:575
 #, c-format
 msgid "Failed to execute file \"%s\""
 msgstr "Kunne ikke eksekvere filen \"%s\""
@@ -1067,51 +1067,51 @@ msgid ""
 msgstr "Der er ikke nok plads i målområdet. Prøv at fjerne filer for at frigøre plads."
 
 #. append the "Open in New Tab" menu action
-#: ../thunar/thunar-launcher.c:177 ../thunar/thunar-launcher.c:854
+#: ../thunar/thunar-launcher.c:180 ../thunar/thunar-launcher.c:865
 #: ../thunar/thunar-tree-view.c:1306
 msgid "Open in New _Tab"
 msgstr "Åbn i nyt _faneblad"
 
 #. append the "Open in New Window" menu action
-#: ../thunar/thunar-launcher.c:178 ../thunar/thunar-launcher.c:848
+#: ../thunar/thunar-launcher.c:181 ../thunar/thunar-launcher.c:859
 #: ../thunar/thunar-tree-view.c:1313
 msgid "Open in New _Window"
 msgstr "Åbn i nyt _vindue"
 
-#: ../thunar/thunar-launcher.c:179 ../thunar/thunar-launcher.c:181
+#: ../thunar/thunar-launcher.c:182 ../thunar/thunar-launcher.c:184
 msgid "Open With Other _Application..."
 msgstr "Åbn med et andet _program ..."
 
-#: ../thunar/thunar-launcher.c:179 ../thunar/thunar-launcher.c:181
-#: ../thunar/thunar-launcher.c:954
+#: ../thunar/thunar-launcher.c:182 ../thunar/thunar-launcher.c:184
+#: ../thunar/thunar-launcher.c:965
 msgid "Choose another application with which to open the selected file"
 msgstr "Vælg et andet program til at åbne den valgte fil"
 
-#: ../thunar/thunar-launcher.c:673
+#: ../thunar/thunar-launcher.c:684
 #, c-format
 msgid "Failed to open file \"%s\""
 msgstr "Kunne ikke åbne filen \"%s\""
 
 #. we can just tell that n files failed to open
-#: ../thunar/thunar-launcher.c:679
+#: ../thunar/thunar-launcher.c:690
 #, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
 msgstr[0] "Kunne ikke åbne %d fil"
 msgstr[1] "Kunne ikke åbne %d filer"
 
-#: ../thunar/thunar-launcher.c:718
+#: ../thunar/thunar-launcher.c:729
 msgid "Are you sure you want to open all folders?"
 msgstr "Er du sikker på, at du vil åbne alle mapperne?"
 
-#: ../thunar/thunar-launcher.c:720
+#: ../thunar/thunar-launcher.c:731
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
 msgstr[0] "Det vil åbne %d separat filhåndteringsvindue."
 msgstr[1] "Det vil åbne %d separate filhåndteringsvinduer."
 
-#: ../thunar/thunar-launcher.c:724
+#: ../thunar/thunar-launcher.c:735
 #, c-format
 msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
@@ -1119,14 +1119,14 @@ msgstr[0] "Åbn %d i nyt vindue"
 msgstr[1] "Åbn %d i nye vinduer"
 
 #. turn "Open New Window" into "Open in n New Windows"
-#: ../thunar/thunar-launcher.c:821
+#: ../thunar/thunar-launcher.c:832
 #, c-format
 msgid "Open in %d New _Window"
 msgid_plural "Open in %d New _Windows"
 msgstr[0] "Åbn i %d nyt _vindue"
 msgstr[1] "Åbn i %d nye _vinduer"
 
-#: ../thunar/thunar-launcher.c:822
+#: ../thunar/thunar-launcher.c:833
 #, c-format
 msgid "Open the selected directory in %d new window"
 msgid_plural "Open the selected directories in %d new windows"
@@ -1134,100 +1134,100 @@ msgstr[0] "Åbn den valgt mappe i %d nyt vindue"
 msgstr[1] "Åbn de valgte mapper i %d nye vinduer"
 
 #. turn "Open in New Tab" into "Open in x New Tabs"
-#: ../thunar/thunar-launcher.c:833
+#: ../thunar/thunar-launcher.c:844
 #, c-format
 msgid "Open in %d New _Tab"
 msgid_plural "Open in %d New _Tabs"
 msgstr[0] "Åbn i %d nyt _faneblad"
 msgstr[1] "Åbn i %d nye _faneblade"
 
-#: ../thunar/thunar-launcher.c:834
+#: ../thunar/thunar-launcher.c:845
 #, c-format
 msgid "Open the selected directory in %d new tab"
 msgid_plural "Open the selected directories in %d new tabs"
 msgstr[0] "Åbn den valgte mappe i %d nyt faneblad"
 msgstr[1] "Åbn de valgte mapper i %d nye faneblade"
 
-#: ../thunar/thunar-launcher.c:849
+#: ../thunar/thunar-launcher.c:860
 msgid "Open the selected directory in a new window"
 msgstr "Åbn den valgte mappe i et nyt vindue"
 
-#: ../thunar/thunar-launcher.c:855
+#: ../thunar/thunar-launcher.c:866
 msgid "Open the selected directory in a new tab"
 msgstr "Åbn den valgte mappe i et nyt faneblad"
 
 #. set tooltip that makes sence
-#: ../thunar/thunar-launcher.c:860
+#: ../thunar/thunar-launcher.c:871
 msgid "Open the selected directory"
 msgstr "Åbn den valgte mappe"
 
-#: ../thunar/thunar-launcher.c:903
+#: ../thunar/thunar-launcher.c:914
 msgid "_Execute"
 msgstr "_Eksekver"
 
-#: ../thunar/thunar-launcher.c:905
+#: ../thunar/thunar-launcher.c:916
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
 msgstr[0] "Eksekver den valgte fil"
 msgstr[1] "Eksekver de valgte filer"
 
-#: ../thunar/thunar-launcher.c:915
+#: ../thunar/thunar-launcher.c:926
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
 msgstr[0] "Åbn den valgte fil"
 msgstr[1] "Åbn de valgte filer"
 
 #. turn the "Open" action into "Open With DEFAULT"
-#: ../thunar/thunar-launcher.c:923
+#: ../thunar/thunar-launcher.c:934
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "_Åbn med \"%s\""
 
-#: ../thunar/thunar-launcher.c:924 ../thunar/thunar-launcher.c:1022
+#: ../thunar/thunar-launcher.c:935 ../thunar/thunar-launcher.c:1033
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "Brug \"%s\" til at åbne den valgt fil"
 msgstr[1] "Brug \"%s\" til at åbne de valgte filer"
 
-#: ../thunar/thunar-launcher.c:953
+#: ../thunar/thunar-launcher.c:964
 msgid "_Open With Other Application..."
 msgstr "_Åbn med et andet program ..."
 
-#: ../thunar/thunar-launcher.c:962
+#: ../thunar/thunar-launcher.c:973
 msgid "_Open With Default Applications"
 msgstr "_Åbn med standardprogrammer"
 
-#: ../thunar/thunar-launcher.c:963
+#: ../thunar/thunar-launcher.c:974
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
 msgstr[0] "Åbn den valgt fil med standardprogrammet"
 msgstr[1] "Åbn de valgte filer med standardprogrammerne"
 
-#: ../thunar/thunar-launcher.c:1021
+#: ../thunar/thunar-launcher.c:1032
 #, c-format
 msgid "Open With \"%s\""
 msgstr "Åbn med \"%s\""
 
-#: ../thunar/thunar-launcher.c:1598 ../thunar/thunar-shortcuts-view.c:1744
+#: ../thunar/thunar-launcher.c:1609 ../thunar/thunar-shortcuts-view.c:1744
 #: ../thunar/thunar-shortcuts-view.c:1982 ../thunar/thunar-tree-view.c:2098
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Kunne ikke montere \"%s\""
 
-#: ../thunar/thunar-launcher.c:1719
+#: ../thunar/thunar-launcher.c:1730
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "Skrivebord (opret henvisning)"
 msgstr[1] "Skrivebord (opret henvisninger)"
 
-#: ../thunar/thunar-launcher.c:1720
+#: ../thunar/thunar-launcher.c:1731
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "Opret en henvisning til den valgte fil på skrivebord"
 msgstr[1] "Opret henvisninger til de valgte filer på skrivebord"
 
-#: ../thunar/thunar-launcher.c:1756 ../thunar/thunar-launcher.c:1812
+#: ../thunar/thunar-launcher.c:1767 ../thunar/thunar-launcher.c:1823
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
@@ -1437,121 +1437,125 @@ msgstr "Ejer:"
 msgid "_Access:"
 msgstr "_Adgang:"
 
-#: ../thunar/thunar-permissions-chooser.c:265
+#: ../thunar/thunar-permissions-chooser.c:266
 msgid "Gro_up:"
 msgstr "Gr_uppe:"
 
-#: ../thunar/thunar-permissions-chooser.c:285
+#: ../thunar/thunar-permissions-chooser.c:286
+msgid "Acc_ess:"
+msgstr "A_dgang:"
+
+#: ../thunar/thunar-permissions-chooser.c:312
+msgid "Others"
+msgstr "Andre"
+
+#: ../thunar/thunar-permissions-chooser.c:320
 msgid "Acce_ss:"
 msgstr "Ad_gang:"
 
-#: ../thunar/thunar-permissions-chooser.c:310
-msgid "O_thers:"
-msgstr "A_ndre:"
-
-#: ../thunar/thunar-permissions-chooser.c:335
+#: ../thunar/thunar-permissions-chooser.c:346
 msgid "Program:"
 msgstr "Program:"
 
-#: ../thunar/thunar-permissions-chooser.c:341
+#: ../thunar/thunar-permissions-chooser.c:352
 msgid "Allow this file to _run as a program"
 msgstr "Tillad filen at _køre som et program"
 
-#: ../thunar/thunar-permissions-chooser.c:361
+#: ../thunar/thunar-permissions-chooser.c:372
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr "Tilladelse til kørsel af ikke-betroede programmer udgør en sikkerhedsrisiko for dit system."
 
-#: ../thunar/thunar-permissions-chooser.c:377
+#: ../thunar/thunar-permissions-chooser.c:388
 msgid ""
 "The folder permissions are inconsistent, you may not be able to work with "
 "files in this folder."
 msgstr "Mappetilladelserne er uoverensstemmende, du vil måske ikke kunne arbejde med filer i mappen."
 
-#: ../thunar/thunar-permissions-chooser.c:391
+#: ../thunar/thunar-permissions-chooser.c:402
 msgid "Correct _folder permissions..."
 msgstr "Ret _mappetilladelser ..."
 
-#: ../thunar/thunar-permissions-chooser.c:392
+#: ../thunar/thunar-permissions-chooser.c:403
 msgid "Click here to automatically fix the folder permissions."
 msgstr "Klik her for automatisk at rette mappetilladelserne."
 
-#: ../thunar/thunar-permissions-chooser.c:403
+#: ../thunar/thunar-permissions-chooser.c:414
 msgid "Please wait..."
 msgstr "Vent venligst ..."
 
-#: ../thunar/thunar-permissions-chooser.c:408
+#: ../thunar/thunar-permissions-chooser.c:419
 msgid "Stop applying permissions recursively."
 msgstr "Stop anvendelse af tilladelser rekursivt."
 
 #. allocate the question dialog
-#: ../thunar/thunar-permissions-chooser.c:521
+#: ../thunar/thunar-permissions-chooser.c:532
 msgid "Question"
 msgstr "Spørgsmål"
 
-#: ../thunar/thunar-permissions-chooser.c:545
+#: ../thunar/thunar-permissions-chooser.c:556
 msgid "Apply recursively?"
 msgstr "Anvend rekursivt?"
 
-#: ../thunar/thunar-permissions-chooser.c:551
+#: ../thunar/thunar-permissions-chooser.c:562
 msgid ""
 "Do you want to apply your changes recursively to\n"
 "all files and subfolders below the selected folder?"
 msgstr "Vil du anvende dine ændringer rekursivt på\nalle filer og undermapper i den valgte mappe?"
 
-#: ../thunar/thunar-permissions-chooser.c:556
+#: ../thunar/thunar-permissions-chooser.c:567
 msgid "Do _not ask me again"
 msgstr "Spørg mig _ikke igen"
 
-#: ../thunar/thunar-permissions-chooser.c:557
+#: ../thunar/thunar-permissions-chooser.c:568
 msgid ""
 "If you select this option your choice will be remembered and you won't be "
 "asked again. You can use the preferences dialog to alter your choice "
 "afterwards."
 msgstr "Hvis du vælger indstillingen, huskes dit valg, og du bliver ikke spurgt igen. Du kan bruge præferencer-dialogen til at ændre dine valg efterfølgende."
 
-#: ../thunar/thunar-permissions-chooser.c:919
+#: ../thunar/thunar-permissions-chooser.c:930
 msgid "Mixed file owners"
 msgstr "Blandede filejere"
 
-#: ../thunar/thunar-permissions-chooser.c:919
+#: ../thunar/thunar-permissions-chooser.c:930
 msgid "Unknown file owner"
 msgstr "Ukendt filejer"
 
-#: ../thunar/thunar-permissions-chooser.c:999
+#: ../thunar/thunar-permissions-chooser.c:1010
 #: ../plugins/thunar-uca/thunar-uca-editor.c:411
 #: ../plugins/thunar-uca/thunar-uca-editor.c:617
 msgid "None"
 msgstr "Ingen"
 
 #. 0000
-#: ../thunar/thunar-permissions-chooser.c:1000
+#: ../thunar/thunar-permissions-chooser.c:1011
 msgid "Write only"
 msgstr "Kun skrivning"
 
 #. 0002
-#: ../thunar/thunar-permissions-chooser.c:1001
+#: ../thunar/thunar-permissions-chooser.c:1012
 msgid "Read only"
 msgstr "Kun læsning"
 
 #. 0004
-#: ../thunar/thunar-permissions-chooser.c:1002
+#: ../thunar/thunar-permissions-chooser.c:1013
 msgid "Read & Write"
 msgstr "Læsning og skrivning"
 
-#: ../thunar/thunar-permissions-chooser.c:1004
+#: ../thunar/thunar-permissions-chooser.c:1015
 msgid "Varying (no change)"
 msgstr "Varierende (ingen ændring)"
 
-#: ../thunar/thunar-permissions-chooser.c:1136
+#: ../thunar/thunar-permissions-chooser.c:1147
 msgid "Correct folder permissions automatically?"
 msgstr "Ret mappetilladelser automatisk?"
 
-#: ../thunar/thunar-permissions-chooser.c:1138
+#: ../thunar/thunar-permissions-chooser.c:1149
 msgid "Correct _folder permissions"
 msgstr "Ret _mappetilladelser"
 
-#: ../thunar/thunar-permissions-chooser.c:1140
+#: ../thunar/thunar-permissions-chooser.c:1151
 msgid ""
 "The folder permissions will be reset to a consistent state. Only users "
 "allowed to read the contents of this folder will be allowed to enter the "
