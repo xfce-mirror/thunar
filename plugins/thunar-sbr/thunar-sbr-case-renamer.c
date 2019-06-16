@@ -184,7 +184,7 @@ thunar_sbr_case_renamer_set_property (GObject      *object,
 
 static gchar*
 tscr_utf8_strcase (const gchar *text,
-                   gboolean     camelcase)
+                   gboolean     title_case)
 {
   const gchar *t;
   gboolean     upper = TRUE;
@@ -199,8 +199,7 @@ tscr_utf8_strcase (const gchar *text,
     {
       /* check the next char */
       c = g_utf8_get_char (t);
-      if (camelcase
-          && g_unichar_isspace (c))
+      if (title_case && g_unichar_isspace (c))
         {
           upper = TRUE;
         }
@@ -239,7 +238,7 @@ thunar_sbr_case_renamer_process (ThunarxRenamer  *renamer,
     case THUNAR_SBR_CASE_RENAMER_MODE_UPPER:
       return g_utf8_strup (text, -1);
 
-    case THUNAR_SBR_CASE_RENAMER_MODE_CAMEL:
+    case THUNAR_SBR_CASE_RENAMER_MODE_TITLE:
       return tscr_utf8_strcase (text, TRUE);
 
    case THUNAR_SBR_CASE_RENAMER_MODE_FIRST_UPPER:
