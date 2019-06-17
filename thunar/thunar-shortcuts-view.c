@@ -837,6 +837,11 @@ thunar_shortcuts_view_drag_motion (GtkWidget      *widget,
       gtk_tree_view_set_drag_dest_row (GTK_TREE_VIEW (view), path, position);
       gtk_tree_path_free (path);
     }
+  else
+    {
+      /* remove highlight */
+      gtk_tree_view_set_drag_dest_row (GTK_TREE_VIEW (view), NULL, position);
+    }
 
   /* tell Gdk whether we can drop here */
   gdk_drag_status (context, action, timestamp);
@@ -1439,6 +1444,8 @@ thunar_shortcuts_view_compute_drop_actions (ThunarShortcutsView     *view,
   GtkTreeIter        iter;
   ThunarFile        *file;
   gint               cell_y;
+  GList             *lp;
+  guint              n;
 
   /* determine the shortcuts model */
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
@@ -1481,6 +1488,30 @@ thunar_shortcuts_view_compute_drop_actions (ThunarShortcutsView     *view,
   /* check if we cannot drop into the shortcut */
   if (G_UNLIKELY (actions == 0))
     {
+      /* check if any of the paths is not directory but only up to 100, if
+       * someone drags too many directories it may slowdown or even freeze
+       * Thunar while moving the cursor.
+       */
+      for (lp = view->drop_file_list, n = 0; lp != NULL && n < 100; lp = lp->next, ++n)
+        {
+          GFileInfo *info;
+          gboolean   is_directory;
+
+          info = g_file_query_info (lp->data,
+                                    G_FILE_ATTRIBUTE_STANDARD_TYPE,
+                                    G_FILE_QUERY_INFO_NONE,
+                                    NULL, NULL);
+
+          if (G_UNLIKELY (info == NULL))
+            return 0;
+
+          is_directory = g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY;
+          g_object_unref (info);
+
+          if (!is_directory)
+            return 0;
+        }
+
       /* check the action that should be performed */
       if (gdk_drag_context_get_suggested_action (context) == GDK_ACTION_LINK || (gdk_drag_context_get_actions (context) & GDK_ACTION_LINK) != 0)
         actions = GDK_ACTION_LINK;
