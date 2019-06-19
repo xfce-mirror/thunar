@@ -90,7 +90,7 @@ msgstr "Sortér efter _navn"
 
 #: ../thunar/thunar-abstract-icon-view.c:122
 msgid "Keep items sorted by their name"
-msgstr "Hold elementer sorteret efter navn"
+msgstr "Hold elementer sorteret efter deres navn"
 
 #: ../thunar/thunar-abstract-icon-view.c:123
 msgid "Sort By _Size"
@@ -98,7 +98,7 @@ msgstr "Sortér efter _størrelse"
 
 #: ../thunar/thunar-abstract-icon-view.c:123
 msgid "Keep items sorted by their size"
-msgstr "Hold elementer sorteret efter størrelse"
+msgstr "Hold elementer sorteret efter deres størrelse"
 
 #: ../thunar/thunar-abstract-icon-view.c:124
 msgid "Sort By _Type"
@@ -106,7 +106,7 @@ msgstr "Sortér efter _type"
 
 #: ../thunar/thunar-abstract-icon-view.c:124
 msgid "Keep items sorted by their type"
-msgstr "Hold elementer sorteret efter type"
+msgstr "Hold elementer sorteret efter deres type"
 
 #: ../thunar/thunar-abstract-icon-view.c:125
 msgid "Sort By Modification _Date"
@@ -114,7 +114,7 @@ msgstr "Sortér efter ændrings_dato"
 
 #: ../thunar/thunar-abstract-icon-view.c:125
 msgid "Keep items sorted by their modification date"
-msgstr "Hold elementer sorteret efter ændringsdato"
+msgstr "Hold elementer sorteret efter deres ændringsdato"
 
 #: ../thunar/thunar-abstract-icon-view.c:130
 msgid "_Ascending"
@@ -1577,9 +1577,9 @@ msgid ""
 "allowed to read the contents of this folder will be allowed to enter the "
 "folder afterwards."
 msgstr ""
-"Mappetilladelser vil blive nulstillet til en overensstemmende tilstand. Kun "
-"brugere med læsetilladelser i denne mappe vil efterfølgende have tilladelser"
-" til at tilgå denne mappe."
+"Mappetilladelserne nulstilles til en overensstemmende tilstand. Kun brugere,"
+" som har tilladelse til at læse mappens indhold, vil efterfølgende få adgang"
+" til mappen."
 
 #: ../thunar/thunar-preferences-dialog.c:225
 msgid "File Manager Preferences"
@@ -1784,11 +1784,11 @@ msgid ""
 "behavior may be useful when single clicks activate items, and you want only "
 "to select the item without activating it."
 msgstr ""
-"Når enkeltklik aktivering er aktiv, vil det at holde musen henover et "
-"element automatisk vælge dette efter den valgte forsinkelse. Du kan "
-"deaktivere denne funktion ved at flytte skydebaren til positionen længst til"
-" venstre. Denne funktion kan være brugbar, når enkeltklik aktiverer, og du "
-"kun ønsker at vælge et element, uden at aktivere det."
+"Når enkeltkliksaktivering er aktiveret, vil det at holde musemarkøren over "
+"et element, automatisk vælge elementet, efter den valgte forsinkelse. Du kan"
+" deaktiverer opførslen ved at flytte skyderen helt til venstre. Opførslen "
+"kan være nyttig, når enkeltklik aktiverer elementer, og du kun vil vælge "
+"elementet, uden at aktivere det."
 
 #: ../thunar/thunar-preferences-dialog.c:535
 msgid "Disabled"
@@ -2031,8 +2031,7 @@ msgstr "_Omdøb filer"
 #: ../thunar/thunar-renamer-dialog.c:363
 msgid ""
 "Click here to actually rename the files listed above to their new names."
-msgstr ""
-"Klik her for at udføre omdøbning af filer listet ovenfor til nye navne."
+msgstr "Klik her for at omdøbe filerne ovenfor, til deres nye navne."
 
 #: ../thunar/thunar-renamer-dialog.c:438
 msgid "New Name"
@@ -2121,9 +2120,10 @@ msgid ""
 " files, or revert the previously renamed files to their previous names, or "
 "cancel the operation without reverting previous changes."
 msgstr ""
-"Du kan vælge enten at udelade denne fil og forsætte med omdøbning af "
-"resterende filer, eller fortryde ændringer og vende tilbage til tidligere "
-"navne, eller annullere handling uden fortrydelse af ændringer."
+"Du kan enten vælge at springe filen over og fortsætte med at omdøbe de "
+"resterende filer, eller at tilbageføre de tidligere omdøbte filer til deres "
+"tidligere navne, eller at annullere handlingen uden at tilbageføre tidligere"
+" ændringer."
 
 #: ../thunar/thunar-renamer-progress.c:197
 msgid "_Revert Changes"
@@ -2137,7 +2137,7 @@ msgstr "_Udelad denne fil"
 #: ../thunar/thunar-renamer-progress.c:204
 msgid ""
 "Do you want to skip this file and continue to rename the remaining files?"
-msgstr "Udelad denne fil og forsæt med omdøbning af resterende filer?"
+msgstr "Udelad denne fil og fortsæt med omdøbning af resterende filer?"
 
 #: ../thunar/thunar-shortcuts-model.c:629
 #: ../plugins/thunar-tpa/thunar-tpa.c:299
@@ -2337,7 +2337,8 @@ msgstr "_Omvendt markering"
 
 #: ../thunar/thunar-standard-view.c:415
 msgid "Select all and only the items that are not currently selected"
-msgstr "Vælg alle de elementer som ikke er valgte"
+msgstr ""
+"Vælg alle, men kun de elementer som ikke er valgte på nuværende tidspunkt"
 
 #: ../thunar/thunar-standard-view.c:416
 msgid "Du_plicate"
@@ -2396,7 +2397,7 @@ msgstr "_Mønster:"
 #. invalid
 #: ../thunar/thunar-standard-view.c:3200
 msgid "Invalid filename provided by XDS drag site"
-msgstr "Ugyldigt filnavn givet af XDS-referenceside"
+msgstr "Ugyldigt filnavn leveret af XDS-slipsted"
 
 #. display an error dialog to the user
 #: ../thunar/thunar-standard-view.c:3381
@@ -2579,7 +2580,7 @@ msgstr "I dag"
 #: ../thunar/thunar-util.c:408
 #, c-format
 msgid "Today at %X"
-msgstr "I dag klokken %X"
+msgstr "I dag, klokken %X"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:416
@@ -2590,19 +2591,19 @@ msgstr "I går"
 #: ../thunar/thunar-util.c:421
 #, c-format
 msgid "Yesterday at %X"
-msgstr "I går klokken %X"
+msgstr "I går, klokken %X"
 
 #. Days from last week
 #: ../thunar/thunar-util.c:429
 #, c-format
 msgid "%A at %X"
-msgstr "%A klokken %X"
+msgstr "%A, klokken %X"
 
 #. Any other date
 #: ../thunar/thunar-util.c:434
 #, c-format
 msgid "%x at %X"
-msgstr "%x klokken %X"
+msgstr "%x, klokken %X"
 
 #: ../thunar/thunar-window.c:351
 msgid "New _Tab"
@@ -3076,7 +3077,7 @@ msgstr "Kameramodel:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:50
 msgid "Exposure Time:"
-msgstr "Eksponeringsstid:"
+msgstr "Eksponeringstid:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:51
 msgid "Exposure Program:"
@@ -3291,10 +3292,10 @@ msgid ""
 "expression and matched using the Perl-compatible regular expressions (PCRE)."
 " Check the documentation for details about the regular expression syntax."
 msgstr ""
-"Hvis denne indstilling aktiveres, vil dette mønster blive anvendt som et "
-"regulærtudtryk og sammenlignet ved anvendelse af Perl-kompatible regulære "
-"udtryk (PCRE). Kontrollér i dokumentationen for detaljer omkring regulær "
-"udtrykssyntaks."
+"Hvis du aktiverer indstillingen, vil mønsteret blive behandlet som et "
+"regulært udtryk og sammenlignet ved brug af de Perl-kompatible regulære "
+"udtryk (PCRE). Tjek dokumentationen for detaljer om syntaksen for regulære "
+"udtryk."
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:231
 msgid "Replace _With:"
@@ -3314,8 +3315,9 @@ msgid ""
 "If you enable this option, the pattern will be searched in a case-sensitive "
 "manner. The default is to use a case-insensitive search."
 msgstr ""
-"Hvis denne indstilling aktiveres vil mønsteret blive søgt versalfølsomt. "
-"Standard er anvendelse af ikke-versalfølsom søgning."
+"Hvis du aktiverer indstillingen, vil der blive søgt i mønsteret hvor der "
+"skelnes mellem store og små bogstaver. Standarden er at bruge en søgning "
+"hvor der ikke skelnes mellem store og små bogstaver."
 
 #. setup a tooltip with the error message
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:610
@@ -3347,9 +3349,9 @@ msgid ""
 "directly, as is, or compress the file before attaching it to an email. It is"
 " highly recommended to compress large files before sending them."
 msgstr ""
-"Ved fremsendelse af vedhæftet fil via e-mail, kan du vælge at sende fil "
-"direkte eller komprimere filen før vedhæftning til e-mail. Det anbefales "
-"kraftigt at komprimere store filer før afsendelse."
+"Når der sendes en fil via e-mail, kan du enten vælge at sende filen direkte "
+"som den er, eller komprimere filen inden den vedhæftes til en e-mail. Det "
+"anbefales kraftigt at komprimere store filer inden de sendes."
 
 #: ../plugins/thunar-sendto-email/main.c:213
 #, c-format
@@ -3369,10 +3371,10 @@ msgid ""
 "compressed into a single archive file and attach the archive. It is highly "
 "recommended to send multiple large files as archive."
 msgstr ""
-"Ved fremsendelse af flere vedhæftede filer via e-mail, kan du vælge enten at"
-" sende filer direkte, vedhæftende flere filer til e-mail eller sende alle "
-"filer komprimeret til et arkiv og vedhæfte dette. Det anbefales kraftigt at "
-"fremsende flere store filer som komprimeret arkiv."
+"Når der sendes flere filer via e-mail, kan du enten vælge at sende filerne "
+"direkte så flere filerne vedhæftes til en e-mail, eller sende alle filerne "
+"komprimeret i én arkivfil og vedhæfte arkivet. Det anbefales kraftigt at "
+"sende flere store filer som arkiv."
 
 #. allocate the progress dialog
 #. setup the label
@@ -3508,7 +3510,7 @@ msgid ""
 "The description of the action that will be displayed as tooltip in the "
 "statusbar when selecting the item from the context menu."
 msgstr ""
-"Beskrivelsen af handlingen vil blive vist som værktøjstips i statuslinjen, "
+"Beskrivelsen af handlingen, vil blive vist som værktøjstips i statuslinjen, "
 "når dette element bliver valgt fra genvejsmenuen."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:168
@@ -3663,15 +3665,12 @@ msgid ""
 "action should only appear for certain kinds of\n"
 "files."
 msgstr ""
-"Denne side lister betingelser for hvilke\n"
-"handlinger, der vil blive vist i filhåndteringernes\n"
-"genvejsmenuer. Filmønstre er specificeret som en\n"
-"liste af simple filmønstre adskilt af semikolonner\n"
-"(eks. *.txt;*.doc). For at en handling vises i\n"
-"genvejsmenu for fil eller mappe, skal mindst et\n"
-"mønster stemme overens med fil- eller mappe-\n"
-"navn. Du kan ekstra definere at handlingen kun vises\n"
-"for specielle filtyper."
+"Siden viser betingelserne, som handlingen vises under, i filhåndteringernes "
+"genvejsmenuer. Filmønstrene angives som en liste over simple filmønstre "
+"adskilt af semikoloner (f.eks. *.txt;*.doc). Mindst et af mønstrene skal "
+"matche navnet på filen eller mappen for at en handlingen vises i "
+"genvejsmenuen for en fil eller mappe. Du kan desuden angive at handlingen "
+"kun skal vises for bestemte typer af filer."
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:815
 #, c-format
