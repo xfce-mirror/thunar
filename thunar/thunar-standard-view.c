@@ -410,7 +410,7 @@ static const GtkActionEntry action_entries[] =
   { "paste-into-folder", "edit-paste", N_ ("Paste Into Folder"), NULL, N_ ("Move or copy files previously selected by a Cut or Copy command into the selected folder"), G_CALLBACK (thunar_standard_view_action_paste_into_folder), },
   { "select-all-files", NULL, N_ ("Select _all Files"), NULL, N_ ("Select all files in this window"), G_CALLBACK (thunar_standard_view_action_select_all_files), },
   { "select-by-pattern", NULL, N_ ("Select _by Pattern..."), "<control>S", N_ ("Select all files that match a certain pattern"), G_CALLBACK (thunar_standard_view_action_select_by_pattern), },
-  { "invert-selection", NULL, N_ ("_Invert Selection"), NULL, N_ ("Select all and only the items that are not currently selected"), G_CALLBACK (thunar_standard_view_action_selection_invert), },
+  { "invert-selection", NULL, N_ ("_Invert Selection"), NULL, N_ ("Select all files but not those currently selected"), G_CALLBACK (thunar_standard_view_action_selection_invert), },
   { "duplicate", NULL, N_ ("Du_plicate"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_duplicate), },
   { "make-link", NULL, N_ ("Ma_ke Link"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_make_link), },
   { "rename", NULL, N_ ("_Rename..."), "F2", NULL, G_CALLBACK (thunar_standard_view_action_rename), },
