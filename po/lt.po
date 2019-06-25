@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-13 00:30+0200\n"
-"PO-Revision-Date: 2019-06-13 08:08+0000\n"
+"POT-Creation-Date: 2019-06-25 00:30+0200\n"
+"PO-Revision-Date: 2019-06-25 18:19+0000\n"
 "Last-Translator: Moo\n"
 "Language-Team: Lithuanian (http://www.transifex.com/xfce/thunar/language/lt/)\n"
 "MIME-Version: 1.0\n"
@@ -140,8 +140,8 @@ msgstr "Nepavyko iškviesti operacijos"
 #: ../thunar/thunar-application.c:1500 ../thunar/thunar-application.c:1632
 #: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:356
 #: ../thunar/thunar-location-entry.c:384
-#: ../thunar/thunar-shortcuts-view.c:1680
-#: ../thunar/thunar-shortcuts-view.c:1708 ../thunar/thunar-window.c:2360
+#: ../thunar/thunar-shortcuts-view.c:1711
+#: ../thunar/thunar-shortcuts-view.c:1739 ../thunar/thunar-window.c:2360
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "Nepavyko atverti „%s“"
@@ -285,7 +285,7 @@ msgstr "Ar pašalinti visus failus ir aplankus iš šiukšlinės?"
 #. append the "Empty Trash" menu action
 #. prepare the menu item
 #: ../thunar/thunar-application.c:2337 ../thunar/thunar-location-buttons.c:188
-#: ../thunar/thunar-shortcuts-view.c:1226 ../thunar/thunar-tree-view.c:1370
+#: ../thunar/thunar-shortcuts-view.c:1231 ../thunar/thunar-tree-view.c:1370
 #: ../thunar/thunar-window.c:355 ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "_Išvalyti šiukšlinę"
@@ -438,7 +438,7 @@ msgstr "Pasirinkite programą"
 #: ../thunar/thunar-chooser-dialog.c:1155 ../thunar/thunar-launcher.c:179
 #: ../thunar/thunar-launcher.c:822 ../thunar/thunar-location-buttons.c:184
 #: ../thunar/thunar-renamer-dialog.c:1054
-#: ../thunar/thunar-shortcuts-view.c:1099 ../thunar/thunar-tree-view.c:1292
+#: ../thunar/thunar-shortcuts-view.c:1104 ../thunar/thunar-tree-view.c:1292
 #: ../plugins/thunar-uca/thunar-uca-editor.c:177
 msgid "_Open"
 msgstr "_Atverti"
@@ -1231,8 +1231,8 @@ msgstr[3] "Atverti pažymėtus failus naudojant numatytąją programą"
 msgid "Open With \"%s\""
 msgstr "Atverti naudojant „%s“"
 
-#: ../thunar/thunar-launcher.c:1609 ../thunar/thunar-shortcuts-view.c:1744
-#: ../thunar/thunar-shortcuts-view.c:1982 ../thunar/thunar-tree-view.c:2098
+#: ../thunar/thunar-launcher.c:1609 ../thunar/thunar-shortcuts-view.c:1775
+#: ../thunar/thunar-shortcuts-view.c:2013 ../thunar/thunar-tree-view.c:2098
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Nepavyko prijungti „%s“"
@@ -1354,12 +1354,12 @@ msgid "Selection: %s"
 msgstr "Žymėjimas: %s"
 
 #: ../thunar/thunar-location-buttons.c:185
-#: ../thunar/thunar-shortcuts-view.c:1113
+#: ../thunar/thunar-shortcuts-view.c:1118
 msgid "Open in New Tab"
 msgstr "Atverti naujoje kortelėje"
 
 #: ../thunar/thunar-location-buttons.c:186
-#: ../thunar/thunar-shortcuts-view.c:1121
+#: ../thunar/thunar-shortcuts-view.c:1126
 msgid "Open in New Window"
 msgstr "Atverti naujame lange"
 
@@ -2258,53 +2258,53 @@ msgstr[2] "Įkelti pasirinktus aplankus į šoninį nuorodų polangį"
 msgstr[3] "Įkelti pasirinktus aplankus į šoninį nuorodų polangį"
 
 #. append the "Mount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1144 ../thunar/thunar-tree-view.c:1329
+#: ../thunar/thunar-shortcuts-view.c:1149 ../thunar/thunar-tree-view.c:1329
 msgid "_Mount"
 msgstr "_Prijungti"
 
 #. append the "Unmount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1152 ../thunar/thunar-tree-view.c:1335
+#: ../thunar/thunar-shortcuts-view.c:1157 ../thunar/thunar-tree-view.c:1335
 msgid "_Unmount"
 msgstr "_Atjungti"
 
 #. append the "Eject" menu action
-#: ../thunar/thunar-shortcuts-view.c:1160 ../thunar/thunar-tree-view.c:1341
+#: ../thunar/thunar-shortcuts-view.c:1165 ../thunar/thunar-tree-view.c:1341
 msgid "_Eject"
 msgstr "_Išimti"
 
-#: ../thunar/thunar-shortcuts-view.c:1179
+#: ../thunar/thunar-shortcuts-view.c:1184
 msgid "Create _Shortcut"
 msgstr "_Sukurti nuorodą"
 
 #. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:1204 ../thunar/thunar-tree-view.c:1350
+#: ../thunar/thunar-shortcuts-view.c:1209 ../thunar/thunar-tree-view.c:1350
 msgid "Disconn_ect"
 msgstr "Atsijun_gti"
 
-#: ../thunar/thunar-shortcuts-view.c:1282
+#: ../thunar/thunar-shortcuts-view.c:1287
 msgid "_Remove Shortcut"
 msgstr "Ša_linti nuorodą"
 
-#: ../thunar/thunar-shortcuts-view.c:1300
+#: ../thunar/thunar-shortcuts-view.c:1305
 msgid "Re_name Shortcut"
 msgstr "Per_vadinti nuorodą"
 
-#: ../thunar/thunar-shortcuts-view.c:1606
+#: ../thunar/thunar-shortcuts-view.c:1637
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "Kelias „%s“ nenurodo į katalogą"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1626
+#: ../thunar/thunar-shortcuts-view.c:1657
 msgid "Failed to add new shortcut"
 msgstr "Nepavyko pridėti naujos nuorodos"
 
-#: ../thunar/thunar-shortcuts-view.c:1908 ../thunar/thunar-tree-view.c:1966
+#: ../thunar/thunar-shortcuts-view.c:1939 ../thunar/thunar-tree-view.c:1966
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Nepavyko išstumti „%s“"
 
-#: ../thunar/thunar-shortcuts-view.c:2051 ../thunar/thunar-tree-view.c:2021
+#: ../thunar/thunar-shortcuts-view.c:2082 ../thunar/thunar-tree-view.c:2021
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Nepavyko atjungti \"%s\""
@@ -2399,8 +2399,8 @@ msgid "_Invert Selection"
 msgstr "_Invertuoti žymėjimą"
 
 #: ../thunar/thunar-standard-view.c:413
-msgid "Select all and only the items that are not currently selected"
-msgstr "Žymėti visus ir tik tuos elementus, kurie šiuo metu nėra pažymėti"
+msgid "Select all files but not those currently selected"
+msgstr "Žymėti visus failus, išskyrus tuos, kurie šiuo metu yra pažymėti"
 
 #: ../thunar/thunar-standard-view.c:414
 msgid "Du_plicate"
@@ -3211,7 +3211,7 @@ msgstr[3] "%dx%d taškų"
 msgid "Con_vert to:"
 msgstr "Pa_versti į:"
 
-#: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:267
+#: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:266
 msgid "Uppercase / Lowercase"
 msgstr "Didžiosiomis / Mažosiomis"
 
