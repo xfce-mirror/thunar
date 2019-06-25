@@ -31,8 +31,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-13 00:30+0200\n"
-"PO-Revision-Date: 2019-06-14 15:41+0000\n"
+"POT-Creation-Date: 2019-06-25 00:30+0200\n"
+"PO-Revision-Date: 2019-06-25 18:54+0000\n"
 "Last-Translator: Yannick Le Guen <leguen.yannick@gmail.com>\n"
 "Language-Team: French (http://www.transifex.com/xfce/thunar/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -161,8 +161,8 @@ msgstr "Impossible de lancer l’opération"
 #: ../thunar/thunar-application.c:1500 ../thunar/thunar-application.c:1632
 #: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:356
 #: ../thunar/thunar-location-entry.c:384
-#: ../thunar/thunar-shortcuts-view.c:1680
-#: ../thunar/thunar-shortcuts-view.c:1708 ../thunar/thunar-window.c:2360
+#: ../thunar/thunar-shortcuts-view.c:1711
+#: ../thunar/thunar-shortcuts-view.c:1739 ../thunar/thunar-window.c:2360
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "Impossible d’ouvrir « %s »"
@@ -304,7 +304,7 @@ msgstr "Supprimer tous les fichiers et dossiers de la corbeille ?"
 #. append the "Empty Trash" menu action
 #. prepare the menu item
 #: ../thunar/thunar-application.c:2337 ../thunar/thunar-location-buttons.c:188
-#: ../thunar/thunar-shortcuts-view.c:1226 ../thunar/thunar-tree-view.c:1370
+#: ../thunar/thunar-shortcuts-view.c:1231 ../thunar/thunar-tree-view.c:1370
 #: ../thunar/thunar-window.c:355 ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "_Vider la corbeille"
@@ -457,7 +457,7 @@ msgstr "Sélectionner une application"
 #: ../thunar/thunar-chooser-dialog.c:1155 ../thunar/thunar-launcher.c:179
 #: ../thunar/thunar-launcher.c:822 ../thunar/thunar-location-buttons.c:184
 #: ../thunar/thunar-renamer-dialog.c:1054
-#: ../thunar/thunar-shortcuts-view.c:1099 ../thunar/thunar-tree-view.c:1292
+#: ../thunar/thunar-shortcuts-view.c:1104 ../thunar/thunar-tree-view.c:1292
 #: ../plugins/thunar-uca/thunar-uca-editor.c:177
 msgid "_Open"
 msgstr "_Ouvrir"
@@ -1228,8 +1228,8 @@ msgstr[1] "Ouvrir les fichiers sélectionnés avec les applications par défaut"
 msgid "Open With \"%s\""
 msgstr "Ouvrir avec « %s »"
 
-#: ../thunar/thunar-launcher.c:1609 ../thunar/thunar-shortcuts-view.c:1744
-#: ../thunar/thunar-shortcuts-view.c:1982 ../thunar/thunar-tree-view.c:2098
+#: ../thunar/thunar-launcher.c:1609 ../thunar/thunar-shortcuts-view.c:1775
+#: ../thunar/thunar-shortcuts-view.c:2013 ../thunar/thunar-tree-view.c:2098
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Impossible de monter « %s »"
@@ -1341,12 +1341,12 @@ msgid "Selection: %s"
 msgstr "Sélection : %s"
 
 #: ../thunar/thunar-location-buttons.c:185
-#: ../thunar/thunar-shortcuts-view.c:1113
+#: ../thunar/thunar-shortcuts-view.c:1118
 msgid "Open in New Tab"
 msgstr "Ouvrir dans un nouvel onglet"
 
 #: ../thunar/thunar-location-buttons.c:186
-#: ../thunar/thunar-shortcuts-view.c:1121
+#: ../thunar/thunar-shortcuts-view.c:1126
 msgid "Open in New Window"
 msgstr "Ouvrir dans une nouvelle fenêtre"
 
@@ -2233,53 +2233,53 @@ msgstr[0] "Ajouter le dossier sélectionné au panneau latéral des raccourcis"
 msgstr[1] "Ajouter les dossiers sélectionnés au panneau latéral des raccourcis"
 
 #. append the "Mount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1144 ../thunar/thunar-tree-view.c:1329
+#: ../thunar/thunar-shortcuts-view.c:1149 ../thunar/thunar-tree-view.c:1329
 msgid "_Mount"
 msgstr "_Monter"
 
 #. append the "Unmount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1152 ../thunar/thunar-tree-view.c:1335
+#: ../thunar/thunar-shortcuts-view.c:1157 ../thunar/thunar-tree-view.c:1335
 msgid "_Unmount"
 msgstr "_Démonter"
 
 #. append the "Eject" menu action
-#: ../thunar/thunar-shortcuts-view.c:1160 ../thunar/thunar-tree-view.c:1341
+#: ../thunar/thunar-shortcuts-view.c:1165 ../thunar/thunar-tree-view.c:1341
 msgid "_Eject"
 msgstr "Éj_ecter"
 
-#: ../thunar/thunar-shortcuts-view.c:1179
+#: ../thunar/thunar-shortcuts-view.c:1184
 msgid "Create _Shortcut"
 msgstr "Créer un _raccourci"
 
 #. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:1204 ../thunar/thunar-tree-view.c:1350
+#: ../thunar/thunar-shortcuts-view.c:1209 ../thunar/thunar-tree-view.c:1350
 msgid "Disconn_ect"
 msgstr "Déconn_ecter"
 
-#: ../thunar/thunar-shortcuts-view.c:1282
+#: ../thunar/thunar-shortcuts-view.c:1287
 msgid "_Remove Shortcut"
 msgstr "_Supprimer le raccourci"
 
-#: ../thunar/thunar-shortcuts-view.c:1300
+#: ../thunar/thunar-shortcuts-view.c:1305
 msgid "Re_name Shortcut"
 msgstr "_Renommer le raccourci"
 
-#: ../thunar/thunar-shortcuts-view.c:1606
+#: ../thunar/thunar-shortcuts-view.c:1637
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "Le chemin « %s » ne fait pas référence à un répertoire"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1626
+#: ../thunar/thunar-shortcuts-view.c:1657
 msgid "Failed to add new shortcut"
 msgstr "Impossible d’ajouter un nouveau raccourci"
 
-#: ../thunar/thunar-shortcuts-view.c:1908 ../thunar/thunar-tree-view.c:1966
+#: ../thunar/thunar-shortcuts-view.c:1939 ../thunar/thunar-tree-view.c:1966
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Impossible d’éjecter « %s »"
 
-#: ../thunar/thunar-shortcuts-view.c:2051 ../thunar/thunar-tree-view.c:2021
+#: ../thunar/thunar-shortcuts-view.c:2082 ../thunar/thunar-tree-view.c:2021
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Impossible de démonter « %s »"
@@ -2372,8 +2372,8 @@ msgid "_Invert Selection"
 msgstr "_Inverser la sélection"
 
 #: ../thunar/thunar-standard-view.c:413
-msgid "Select all and only the items that are not currently selected"
-msgstr "Sélectionner tous les éléments qui ne sont actuellement pas sélectionnés"
+msgid "Select all files but not those currently selected"
+msgstr "Sélectionner tous les fichiers sauf ceux actuellement sélectionnés"
 
 #: ../thunar/thunar-standard-view.c:414
 msgid "Du_plicate"
@@ -3158,7 +3158,7 @@ msgstr[1] "%dx%d pixels"
 msgid "Con_vert to:"
 msgstr "Con_vertir en :"
 
-#: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:267
+#: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:266
 msgid "Uppercase / Lowercase"
 msgstr "Majuscule / Minuscule"
 
