@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-13 00:30+0200\n"
-"PO-Revision-Date: 2019-06-13 06:14+0000\n"
+"POT-Creation-Date: 2019-06-25 00:30+0200\n"
+"PO-Revision-Date: 2019-06-25 17:28+0000\n"
 "Last-Translator: Kiril Kirilov <cybercop_montana@abv.bg>\n"
 "Language-Team: Bulgarian (http://www.transifex.com/xfce/thunar/language/bg/)\n"
 "MIME-Version: 1.0\n"
@@ -144,8 +144,8 @@ msgstr "Неуспех при стартирането на операция"
 #: ../thunar/thunar-application.c:1500 ../thunar/thunar-application.c:1632
 #: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:356
 #: ../thunar/thunar-location-entry.c:384
-#: ../thunar/thunar-shortcuts-view.c:1680
-#: ../thunar/thunar-shortcuts-view.c:1708 ../thunar/thunar-window.c:2360
+#: ../thunar/thunar-shortcuts-view.c:1711
+#: ../thunar/thunar-shortcuts-view.c:1739 ../thunar/thunar-window.c:2360
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "Неуспех при отваряне на „%s“"
@@ -287,7 +287,7 @@ msgstr "Премахване на всички файлове и папки от
 #. append the "Empty Trash" menu action
 #. prepare the menu item
 #: ../thunar/thunar-application.c:2337 ../thunar/thunar-location-buttons.c:188
-#: ../thunar/thunar-shortcuts-view.c:1226 ../thunar/thunar-tree-view.c:1370
+#: ../thunar/thunar-shortcuts-view.c:1231 ../thunar/thunar-tree-view.c:1370
 #: ../thunar/thunar-window.c:355 ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "_Изпразване на кошчето"
@@ -440,7 +440,7 @@ msgstr "Изберете програма"
 #: ../thunar/thunar-chooser-dialog.c:1155 ../thunar/thunar-launcher.c:179
 #: ../thunar/thunar-launcher.c:822 ../thunar/thunar-location-buttons.c:184
 #: ../thunar/thunar-renamer-dialog.c:1054
-#: ../thunar/thunar-shortcuts-view.c:1099 ../thunar/thunar-tree-view.c:1292
+#: ../thunar/thunar-shortcuts-view.c:1104 ../thunar/thunar-tree-view.c:1292
 #: ../plugins/thunar-uca/thunar-uca-editor.c:177
 msgid "_Open"
 msgstr "_Отваряне"
@@ -1211,8 +1211,8 @@ msgstr[1] "Отваряне на избраните файлове с прогр
 msgid "Open With \"%s\""
 msgstr "Отваряне с „%s“"
 
-#: ../thunar/thunar-launcher.c:1609 ../thunar/thunar-shortcuts-view.c:1744
-#: ../thunar/thunar-shortcuts-view.c:1982 ../thunar/thunar-tree-view.c:2098
+#: ../thunar/thunar-launcher.c:1609 ../thunar/thunar-shortcuts-view.c:1775
+#: ../thunar/thunar-shortcuts-view.c:2013 ../thunar/thunar-tree-view.c:2098
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Неуспешно монтиране на „%s“"
@@ -1324,12 +1324,12 @@ msgid "Selection: %s"
 msgstr "Селекция: %s"
 
 #: ../thunar/thunar-location-buttons.c:185
-#: ../thunar/thunar-shortcuts-view.c:1113
+#: ../thunar/thunar-shortcuts-view.c:1118
 msgid "Open in New Tab"
 msgstr "Отваряне в нов раздел"
 
 #: ../thunar/thunar-location-buttons.c:186
-#: ../thunar/thunar-shortcuts-view.c:1121
+#: ../thunar/thunar-shortcuts-view.c:1126
 msgid "Open in New Window"
 msgstr "Отваряне в нов прозорец"
 
@@ -2216,53 +2216,53 @@ msgstr[0] "Добавяне на избраната папка при преки
 msgstr[1] "Добавяне на избраните папки при преките пътища в страничният панел"
 
 #. append the "Mount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1144 ../thunar/thunar-tree-view.c:1329
+#: ../thunar/thunar-shortcuts-view.c:1149 ../thunar/thunar-tree-view.c:1329
 msgid "_Mount"
 msgstr "Монтиране"
 
 #. append the "Unmount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1152 ../thunar/thunar-tree-view.c:1335
+#: ../thunar/thunar-shortcuts-view.c:1157 ../thunar/thunar-tree-view.c:1335
 msgid "_Unmount"
 msgstr "Демонтиране"
 
 #. append the "Eject" menu action
-#: ../thunar/thunar-shortcuts-view.c:1160 ../thunar/thunar-tree-view.c:1341
+#: ../thunar/thunar-shortcuts-view.c:1165 ../thunar/thunar-tree-view.c:1341
 msgid "_Eject"
 msgstr "Изваждане"
 
-#: ../thunar/thunar-shortcuts-view.c:1179
+#: ../thunar/thunar-shortcuts-view.c:1184
 msgid "Create _Shortcut"
 msgstr "Създаване на пряк път"
 
 #. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:1204 ../thunar/thunar-tree-view.c:1350
+#: ../thunar/thunar-shortcuts-view.c:1209 ../thunar/thunar-tree-view.c:1350
 msgid "Disconn_ect"
 msgstr "Разкачване"
 
-#: ../thunar/thunar-shortcuts-view.c:1282
+#: ../thunar/thunar-shortcuts-view.c:1287
 msgid "_Remove Shortcut"
 msgstr "Премахване на пряк път"
 
-#: ../thunar/thunar-shortcuts-view.c:1300
+#: ../thunar/thunar-shortcuts-view.c:1305
 msgid "Re_name Shortcut"
 msgstr "_Преименуване на пряк път"
 
-#: ../thunar/thunar-shortcuts-view.c:1606
+#: ../thunar/thunar-shortcuts-view.c:1637
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "Пътят „%s“ не посочва директория"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1626
+#: ../thunar/thunar-shortcuts-view.c:1657
 msgid "Failed to add new shortcut"
 msgstr "Не може да бъде добавен нов пряк път"
 
-#: ../thunar/thunar-shortcuts-view.c:1908 ../thunar/thunar-tree-view.c:1966
+#: ../thunar/thunar-shortcuts-view.c:1939 ../thunar/thunar-tree-view.c:1966
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Неуспех при изваждането на „%s“"
 
-#: ../thunar/thunar-shortcuts-view.c:2051 ../thunar/thunar-tree-view.c:2021
+#: ../thunar/thunar-shortcuts-view.c:2082 ../thunar/thunar-tree-view.c:2021
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Неуспех при демонтирането на „%s“"
@@ -2355,8 +2355,8 @@ msgid "_Invert Selection"
 msgstr "Обръщане на селекцията"
 
 #: ../thunar/thunar-standard-view.c:413
-msgid "Select all and only the items that are not currently selected"
-msgstr "Избиране на всички неизбрани елементи"
+msgid "Select all files but not those currently selected"
+msgstr "Избиране на всички файлове, но без текущо избраните"
 
 #: ../thunar/thunar-standard-view.c:414
 msgid "Du_plicate"
@@ -3141,7 +3141,7 @@ msgstr[1] "%dx%d пиксела"
 msgid "Con_vert to:"
 msgstr "Преобразуване в:"
 
-#: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:267
+#: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:266
 msgid "Uppercase / Lowercase"
 msgstr "Главни букви / Малки букви"
 
