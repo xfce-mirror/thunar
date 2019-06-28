@@ -133,6 +133,22 @@ G_DEFINE_TYPE (ThunarFolder, thunar_folder, G_TYPE_OBJECT)
 
 
 static void
+thunar_folder_constructed (GObject *object)
+{
+  ThunarFolder *folder = THUNAR_FOLDER (object);
+
+  /* add us to the folder alteration monitor */
+  folder->monitor = g_file_monitor_directory (thunar_file_get_file (folder->corresponding_file),
+                                          G_FILE_MONITOR_SEND_MOVED, NULL, NULL);
+  if (G_LIKELY (folder->monitor != NULL))
+      g_signal_connect (folder->monitor, "changed", G_CALLBACK (thunar_folder_monitor), folder);
+
+  G_OBJECT_CLASS (thunar_folder_parent_class)->constructed (object);
+}
+
+
+
+static void
 thunar_folder_class_init (ThunarFolderClass *klass)
 {
   GObjectClass *gobject_class;
@@ -142,6 +158,7 @@ thunar_folder_class_init (ThunarFolderClass *klass)
   gobject_class->finalize = thunar_folder_finalize;
   gobject_class->get_property = thunar_folder_get_property;
   gobject_class->set_property = thunar_folder_set_property;
+  gobject_class->constructed = thunar_folder_constructed;
 
   klass->destroy = thunar_folder_real_destroy;
 
@@ -359,8 +376,6 @@ thunar_folder_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_CORRESPONDING_FILE:
-      if (folder->corresponding_file)
-        thunar_file_unwatch (folder->corresponding_file);
       folder->corresponding_file = g_value_dup_object (value);
       if (folder->corresponding_file)
         thunar_file_watch (folder->corresponding_file);
@@ -407,7 +422,6 @@ thunar_folder_files_ready (ThunarJob    *job,
 {
   _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
-  _thunar_return_val_if_fail (folder->monitor == NULL, FALSE);
 
   /* merge the list with the existing list of new files */
   folder->new_files = g_list_concat (folder->new_files, files);
@@ -483,7 +497,6 @@ thunar_folder_finished (ExoJob       *job,
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
   _thunar_return_if_fail (THUNAR_IS_FILE (folder->corresponding_file));
-  _thunar_return_if_fail (folder->monitor == NULL);
   _thunar_return_if_fail (folder->content_type_idle_id == 0);
 
   /* check if we need to merge new files with existing files */
@@ -580,12 +593,6 @@ thunar_folder_finished (ExoJob       *job,
 
   /* restart the content type idle loader */
   thunar_folder_content_type_loader (folder);
-
-  /* add us to the file alteration monitor */
-  folder->monitor = g_file_monitor_directory (thunar_file_get_file (folder->corresponding_file),
-                                              G_FILE_MONITOR_SEND_MOVED, NULL, NULL);
-  if (G_LIKELY (folder->monitor != NULL))
-    g_signal_connect (folder->monitor, "changed", G_CALLBACK (thunar_folder_monitor), folder);
 
   /* tell the consumers that we have loaded the directory */
   g_object_notify (G_OBJECT (folder), "loading");
@@ -734,7 +741,6 @@ thunar_folder_monitor (GFileMonitor     *monitor,
   _thunar_return_if_fail (G_IS_FILE_MONITOR (monitor));
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (folder->monitor == monitor);
-  _thunar_return_if_fail (folder->job == NULL);
   _thunar_return_if_fail (THUNAR_IS_FILE (folder->corresponding_file));
   _thunar_return_if_fail (G_IS_FILE (event_file));
 
@@ -812,9 +818,6 @@ thunar_folder_monitor (GFileMonitor     *monitor,
                       g_object_unref (file);
                     }
                 }
-
-              /* reload the folder of the source file */
-              thunar_file_reload (folder->corresponding_file);
             }
           else
             {
@@ -989,15 +992,6 @@ thunar_folder_reload (ThunarFolder *folder,
       g_signal_handlers_disconnect_matched (folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
       g_object_unref (folder->job);
       folder->job = NULL;
-    }
-
-  /* disconnect from the file alteration monitor */
-  if (G_UNLIKELY (folder->monitor != NULL))
-    {
-      g_signal_handlers_disconnect_matched (folder->monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
-      g_file_monitor_cancel (folder->monitor);
-      g_object_unref (folder->monitor);
-      folder->monitor = NULL;
     }
 
   /* reset the new_files list */
