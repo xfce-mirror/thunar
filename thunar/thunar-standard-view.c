@@ -4442,6 +4442,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   gboolean    pastable;
   gboolean    writable;
   gboolean    trashed;
+  gboolean    hide_trash_action;
   gboolean    show_delete_action;
   GList      *lp, *selected_files;
   gint        n_selected_files = 0;
@@ -4486,10 +4487,15 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   /* and setup the new selected files list */
   standard_view->priv->selected_files = selected_files;
 
-  /* check whether the folder displayed by the view is writable/in the trash/can be trashed */
+  /* check whether the folder displayed by the view is writable/in the trash */
   current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
   writable = (current_directory != NULL && thunar_file_is_writable (current_directory));
   trashed = (current_directory != NULL && thunar_file_is_trashed (current_directory));
+
+  /* if moving to trash is not applicable, replace it with the delete action */
+  hide_trash_action = trashed || !trashable || !thunar_g_vfs_is_uri_scheme_supported ("trash");
+  /* but only if the directory is writable -- keep "move to trash" otherwise */
+  hide_trash_action &= writable;
 
   g_object_get (G_OBJECT (standard_view->preferences), "misc-show-delete-action", &show_delete_action, NULL);
 
@@ -4535,8 +4541,8 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* update the "Move to Trash" action */
   g_object_set (G_OBJECT (standard_view->priv->action_move_to_trash),
-                "sensitive", (n_selected_files > 0) && trashable,
-                "visible", !trashed && thunar_g_vfs_is_uri_scheme_supported ("trash"),
+                "sensitive", (n_selected_files > 0) && writable,
+                "visible", !hide_trash_action,
                 "tooltip", ngettext ("Move the selected file to the Trash",
                                      "Move the selected files to the Trash",
                                      n_selected_files),
@@ -4545,7 +4551,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /* update the "Delete" action */
   g_object_set (G_OBJECT (standard_view->priv->action_delete),
                 "sensitive", (n_selected_files > 0) && writable,
-                "visible", trashed || !thunar_g_vfs_is_uri_scheme_supported ("trash") || show_delete_action,
+                "visible", hide_trash_action || show_delete_action,
                 "tooltip", ngettext ("Permanently delete the selected file",
                                      "Permanently delete the selected files",
                                      n_selected_files),
