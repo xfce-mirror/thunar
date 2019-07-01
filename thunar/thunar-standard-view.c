@@ -4522,10 +4522,9 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   writable = (current_directory != NULL && thunar_file_is_writable (current_directory));
   trashed = (current_directory != NULL && thunar_file_is_trashed (current_directory));
 
-  /* if moving to trash is not applicable, replace it with the delete action */
-  hide_trash_action = trashed || !trashable || !thunar_g_vfs_is_uri_scheme_supported ("trash");
-  /* but only if the directory is writable -- keep "move to trash" otherwise */
-  hide_trash_action &= writable;
+  /* if moving to trash is not applicable, replace it with the delete action
+   * but only if the directory is writable -- keep "move to trash" otherwise */
+  hide_trash_action = writable && (trashed || !trashable || !thunar_g_vfs_is_uri_scheme_supported ("trash"));
 
   g_object_get (G_OBJECT (standard_view->preferences), "misc-show-delete-action", &show_delete_action, NULL);
 
