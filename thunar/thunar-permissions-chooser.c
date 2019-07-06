@@ -1009,14 +1009,9 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser)
       g_object_unref (G_OBJECT (access_store));
     }
 
-  /* update the program setting based on the mode (only visible for regular files, allowed for execution) */
+  /* update the program setting based on the mode (only visible for regular files) */
   g_signal_handlers_block_by_func (G_OBJECT (chooser->program_button), thunar_permissions_chooser_program_toggled, chooser);
-  g_object_set (G_OBJECT (chooser->program_button), "visible", thunar_file_is_regular (file)
-      && (thunarx_file_info_has_mime_type (THUNARX_FILE_INFO (file), "application/x-executable")
-       || thunarx_file_info_has_mime_type (THUNARX_FILE_INFO (file), "application/x-shellscript")
-       || thunarx_file_info_has_mime_type (THUNARX_FILE_INFO (file), "application/x-desktop")
-       || thunarx_file_info_has_mime_type (THUNARX_FILE_INFO (file), "application/x-ms-dos-executable")
-       || thunarx_file_info_has_mime_type (THUNARX_FILE_INFO (file), "application/x-msi")), NULL);
+  g_object_set (G_OBJECT (chooser->program_button), "visible", thunar_file_is_regular (file), NULL);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (chooser->program_button), (mode & 0111) != 0);
   g_signal_handlers_unblock_by_func (G_OBJECT (chooser->program_button), thunar_permissions_chooser_program_toggled, chooser);
 
