@@ -1426,7 +1426,7 @@ thunar_uca_model_save (ThunarUcaModel *uca_model,
   fp = fdopen (fd, "w");
 
   /* write the header */
-  fprintf (fp, "<?xml encoding=\"UTF-8\" version=\"1.0\"?>\n<actions>\n");
+  fprintf (fp, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<actions>\n");
 
   /* write the model items */
   for (lp = uca_model->items; lp != NULL; lp = lp->next)
