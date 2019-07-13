@@ -104,7 +104,7 @@ te_string_append_quoted_uri (GString *string,
  * @error     : return location for errors or %NULL.
  *
  * Substitutes <literal>Exec</literal> parameter variables according
- * to the <ulink href="http://freedesktop.org/wiki/Standards_2fdesktop_2dentry_2dspec"
+ * to the <ulink href="https://freedesktop.org/wiki/Specifications/desktop-entry-spec"
  * type="http">Desktop Entry Specification</ulink> and returns the
  * parsed argument vector (in @argv) and the number of items placed
  * into @argv (in @argc).

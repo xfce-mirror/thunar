@@ -320,7 +320,7 @@ twp_action_set_wallpaper (ThunarxMenuItem *item,
 
 /* Taken from xfce_spawn_get_active_workspace_number in xfce-spawn.c apart of
  * the libxfce4ui library.
- * http://git.xfce.org/xfce/libxfce4ui/tree/libxfce4ui/xfce-spawn.c#n193
+ * https://git.xfce.org/xfce/libxfce4ui/tree/libxfce4ui/xfce-spawn.c#n193
  */
 static gint
 twp_get_active_workspace_number (GdkScreen *screen)

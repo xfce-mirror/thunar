@@ -64,7 +64,7 @@ thunar_io_scan_directory (ThunarJob          *job,
   /* don't recurse when we are scanning prior to unlinking and the current
    * file/dir is in the trash. In GVfs, only the top-level directories in
    * the trash can be modified and deleted directly. See
-   * http://bugzilla.xfce.org/show_bug.cgi?id=7147
+   * https://bugzilla.xfce.org/show_bug.cgi?id=7147
    * for more information */
   if (unlinking
       && thunar_g_file_is_trashed (file)
