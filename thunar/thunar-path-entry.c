@@ -614,7 +614,7 @@ thunar_path_entry_changed (GtkEditable *editable)
 
       /* set the new folder for the completion model, but disconnect the model from the
        * completion first, because GtkEntryCompletion has become very slow recently when
-       * updating the model being used (http://bugzilla.xfce.org/show_bug.cgi?id=1681).
+       * updating the model being used (https://bugzilla.xfce.org/show_bug.cgi?id=1681).
        */
       model = gtk_entry_completion_get_model (completion);
       g_object_ref (G_OBJECT (model));
@@ -905,7 +905,7 @@ thunar_path_entry_match_func (GtkEntryCompletion *completion,
   model = gtk_entry_completion_get_model (completion);
 
   /* leave if the model is null, we do this in thunar_path_entry_changed() to speed
-   * things up, but that causes http://bugzilla.xfce.org/show_bug.cgi?id=4847. */
+   * things up, but that causes https://bugzilla.xfce.org/show_bug.cgi?id=4847. */
   if (G_UNLIKELY (model == NULL))
     return FALSE;
 

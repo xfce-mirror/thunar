@@ -3391,7 +3391,7 @@ thunar_file_get_emblem_names (ThunarFile *file)
         : 0;
 
   /* we add "cant-read" if either (a) the file is not readable or (b) a directory, that lacks the
-   * x-bit, see http://bugzilla.xfce.org/show_bug.cgi?id=1408 for the details about this change.
+   * x-bit, see https://bugzilla.xfce.org/show_bug.cgi?id=1408 for the details about this change.
    */
   if (!thunar_file_is_readable (file)
       || (thunar_file_is_directory (file)

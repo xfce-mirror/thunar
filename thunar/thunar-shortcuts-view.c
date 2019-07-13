@@ -870,7 +870,7 @@ thunar_shortcuts_view_drag_leave (GtkWidget      *widget,
     }
 
   /* schedule a repaint to make sure the special drop icon for the target row
-   * is reset to its default (http://bugzilla.xfce.org/show_bug.cgi?id=2498).
+   * is reset to its default (https://bugzilla.xfce.org/show_bug.cgi?id=2498).
    */
   gtk_widget_queue_draw (widget);
 

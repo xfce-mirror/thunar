@@ -651,7 +651,7 @@ static inline gint
 view_type2index (GType type)
 {
   /* this necessary for platforms where sizeof(GType) != sizeof(gint),
-   * see http://bugzilla.xfce.org/show_bug.cgi?id=2726 for details.
+   * see https://bugzilla.xfce.org/show_bug.cgi?id=2726 for details.
    */
   if (sizeof (GType) == sizeof (gint))
     {
@@ -676,7 +676,7 @@ static inline GType
 view_index2type (gint idx)
 {
   /* this necessary for platforms where sizeof(GType) != sizeof(gint),
-   * see http://bugzilla.xfce.org/show_bug.cgi?id=2726 for details.
+   * see https://bugzilla.xfce.org/show_bug.cgi?id=2726 for details.
    */
   if (sizeof (GType) == sizeof (gint))
     {
