@@ -559,13 +559,15 @@ thunar_g_app_info_launch (GAppInfo          *info,
   gboolean      result = FALSE;
   gchar        *new_path = NULL;
   gchar        *old_path = NULL;
-  gboolean      update_app_info = TRUE;
+  gboolean      skip_app_info_update;
 
   _thunar_return_val_if_fail (G_IS_APP_INFO (info), FALSE);
   _thunar_return_val_if_fail (working_directory == NULL || G_IS_FILE (working_directory), FALSE);
   _thunar_return_val_if_fail (path_list != NULL, FALSE);
   _thunar_return_val_if_fail (G_IS_APP_LAUNCH_CONTEXT (context), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  skip_app_info_update = (g_object_get_data (G_OBJECT (info), "skip-app-info-update") != NULL);
 
   /* check if we want to set the working directory of the spawned app */
   if (working_directory != NULL)
@@ -590,11 +592,12 @@ thunar_g_app_info_launch (GAppInfo          *info,
     {
       for (lp = path_list; lp != NULL; lp = lp->next)
         {
+          gboolean update_app_info = !skip_app_info_update;
+
           file = thunar_file_get (lp->data, NULL);
           if (file == NULL)
             continue;
 
-          update_app_info = TRUE;
           content_type = thunar_file_get_content_type (file);
 
           /* determine default application */
