@@ -1772,6 +1772,7 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
           /* allocate a new action for the device */
           action = gtk_action_new (name, device_name, tooltip, NULL);
           g_object_set_qdata_full (G_OBJECT (action), thunar_launcher_handler_quark, lp->data, g_object_unref);
+          g_object_set_data (G_OBJECT (lp->data), "skip-app-info-update", GUINT_TO_POINTER (1));
           g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_launcher_action_sendto_device), launcher);
           gtk_action_group_add_action (launcher->action_group, action);
           gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
@@ -1829,6 +1830,7 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
               action = gtk_action_new (name, label, tooltip, NULL);
               gtk_action_set_gicon (action, g_app_info_get_icon (lp->data));
               g_object_set_qdata_full (G_OBJECT (action), thunar_launcher_handler_quark, lp->data, g_object_unref);
+              g_object_set_data (G_OBJECT (lp->data), "skip-app-info-update", GUINT_TO_POINTER (1));
               g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_launcher_action_open), launcher);
               gtk_action_group_add_action (launcher->action_group, action);
               gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
