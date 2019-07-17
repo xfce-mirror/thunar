@@ -8,6 +8,7 @@
 # Ammuu5, 2018
 # Pasi Lallinaho <pasi@shimmerproject.org>, 2019
 # Jiri Grönroos <jiri.gronroos@iki.fi>, 2019
+# Juhani Numminen <juhaninumminen0@gmail.com>, 2019
 # 
 #, fuzzy
 msgid ""
@@ -16,7 +17,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-06-09 18:30+0200\n"
 "PO-Revision-Date: 2018-08-19 09:02+0000\n"
-"Last-Translator: Jiri Grönroos <jiri.gronroos@iki.fi>, 2019\n"
+"Last-Translator: Juhani Numminen <juhaninumminen0@gmail.com>, 2019\n"
 "Language-Team: Finnish (https://www.transifex.com/xfce/teams/16840/fi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -274,7 +275,7 @@ msgstr "_Poista"
 
 #: ../thunar/thunar-application.c:2162
 msgid "If you delete a file, it is permanently lost."
-msgstr "Tiedoston poistoa ei voi peruuttaa."
+msgstr "Tiedoston poistoa ei voi perua."
 
 #: ../thunar/thunar-application.c:2172
 msgid "Deleting files..."
@@ -444,7 +445,7 @@ msgid ""
 "\n"
 "You can only remove application launchers that were created using the custom command box in the \"Open With\" dialog of the file manager."
 msgstr ""
-"Tämä poistaa sovelluksen käynnistimen tiedoston konteksivalikosta, mutta ei poista sovelluksen asennusta.\n"
+"Tämä poistaa sovelluksen käynnistimen tiedoston kontekstivalikosta, mutta ei poista sovelluksen asennusta.\n"
 "\n"
 "Voit poistaa käynnistimen ainoastaan, jos se on luotu tiedostonhallinnan \"Avaa sovelluksessa\" -dialogin mukautettu komento -laatikon avulla."
 
@@ -768,17 +769,17 @@ msgstr "Kansio sisältää jo tiedoston \"%s\"."
 #: ../thunar/thunar-dialogs.c:604
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the link"
-msgstr "Korvataanko linkki?"
+msgstr "Korvataanko linkki"
 
 #: ../thunar/thunar-dialogs.c:606
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the existing folder"
-msgstr "Korvataanko olemassaoleva kansio?"
+msgstr "Korvataanko olemassaoleva kansio"
 
 #: ../thunar/thunar-dialogs.c:608
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
-msgstr "Korvataanko olemassaoleva tiedosto?"
+msgstr "Korvataanko olemassaoleva tiedosto"
 
 #. Fourth box (size, volume, free space)
 #: ../thunar/thunar-dialogs.c:629 ../thunar/thunar-dialogs.c:665
@@ -813,7 +814,7 @@ msgid ""
 "executable. If you do not trust this program, click Cancel."
 msgstr ""
 "Käynnistin ”%s” ei ole turvallisessa sijainnissa eikä sitä ole merkitty "
-"suoritettavaksi. Jos et luota tähän ohjelmaan, valitse Peruuta."
+"suoritettavaksi. Jos et luota tähän ohjelmaan, valitse Peru."
 
 #: ../thunar/thunar-dialogs.c:794
 msgid "_Launch Anyway"
@@ -965,7 +966,8 @@ msgstr "%s/%s vapaana (%d%% käytetty)"
 #. extend history tooltip with function of the button
 #: ../thunar/thunar-history-action.c:351
 msgid "Right-click or pull down to show history"
-msgstr "Napsauta hiiren oikealla korvalla tai vedä alas nähdäksesi historian"
+msgstr ""
+"Napsauta hiiren oikealla painikkeella tai vedä alas nähdäksesi historian"
 
 #. create the "back" action
 #: ../thunar/thunar-history.c:165
@@ -1168,7 +1170,7 @@ msgstr[1] "Avaa %d uudessa _ikkunassa"
 msgid "Open the selected directory in %d new window"
 msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] "Avaa %d valittu kansio uudessa ikkunassa."
-msgstr[1] "Avaa %d valittua kansiota uusissa ikkunoissa."
+msgstr[1] "Avaa %d valittua kansiota uusissa ikkunoissa"
 
 #. turn "Open in New Tab" into "Open in x New Tabs"
 #: ../thunar/thunar-launcher.c:833
@@ -1437,7 +1439,7 @@ msgstr "Näytä kansion \"%s\" ominaisuudet."
 
 #: ../thunar/thunar-location-entry.c:195 ../thunar/thunar-window.c:365
 msgid "Reload the current folder"
-msgstr "Lataa nykyinen kansio uudelleen."
+msgstr "Lataa nykyinen kansio uudelleen"
 
 #: ../thunar/thunar-location-entry.c:349
 #, c-format
@@ -1562,7 +1564,7 @@ msgid ""
 "all files and subfolders below the selected folder?"
 msgstr ""
 "Asetetaanko muutokset myös kaikille valitun\n"
-"Kansion alikansioille ja tiedostoille?"
+"kansion alikansioille ja tiedostoille?"
 
 #: ../thunar/thunar-permissions-chooser.c:554
 msgid "Do _not ask me again"
@@ -1575,7 +1577,7 @@ msgid ""
 "afterwards."
 msgstr ""
 "Tämä asetus saa sovelluksen muistamaan valintasi, eikä asiaa kysytä sinulta "
-"enää. Voit muuttaa valintaasi jälkeenpäin asetusdialogin kautta."
+"enää. Voit muuttaa valintaasi jälkeenpäin asetusikkunan kautta."
 
 #: ../thunar/thunar-permissions-chooser.c:917
 msgid "Mixed file owners"
@@ -1741,17 +1743,17 @@ msgid ""
 "\n"
 "For a complete list, check the man pages of 'strftime'"
 msgstr ""
-"Mukautettu päivämääräformaatti.\n"
+"Mukautettu päivämäärämuoto.\n"
 "\n"
 "Tyypillisimmät tarkenteet ovat:\n"
 "%d päivä\n"
 "%m kuukausi\n"
-"%Y vuosi vuosituhannen kanssa\n"
+"%Y vuosi sisältäen vuosituhannen\n"
 "%H tunti\n"
 "%M minuutti\n"
 "%S sekunti\n"
 "\n"
-"Täydellisen listan löydät 'strftime' ohjesivuilta."
+"Täydellisen listan löydät 'strftime'-man-ohjesivuilta."
 
 #. Side Pane
 #: ../thunar/thunar-preferences-dialog.c:421
@@ -1769,52 +1771,52 @@ msgstr "_Kuvakkeen koko:"
 #: ../thunar/thunar-preferences-dialog.c:449
 #: ../thunar/thunar-preferences-dialog.c:497
 msgid "16px"
-msgstr "16px"
+msgstr "16 px"
 
 #: ../thunar/thunar-preferences-dialog.c:450
 #: ../thunar/thunar-preferences-dialog.c:498
 msgid "24px"
-msgstr "24px"
+msgstr "24 px"
 
 #: ../thunar/thunar-preferences-dialog.c:451
 #: ../thunar/thunar-preferences-dialog.c:499
 msgid "32px"
-msgstr "32px"
+msgstr "32 px"
 
 #: ../thunar/thunar-preferences-dialog.c:452
 #: ../thunar/thunar-preferences-dialog.c:500
 msgid "48px"
-msgstr "48px"
+msgstr "48 px"
 
 #: ../thunar/thunar-preferences-dialog.c:453
 #: ../thunar/thunar-preferences-dialog.c:501
 msgid "64px"
-msgstr "64px"
+msgstr "64 px"
 
 #: ../thunar/thunar-preferences-dialog.c:454
 #: ../thunar/thunar-preferences-dialog.c:502
 msgid "96px"
-msgstr "96px"
+msgstr "96 px"
 
 #: ../thunar/thunar-preferences-dialog.c:455
 #: ../thunar/thunar-preferences-dialog.c:503
 msgid "128px"
-msgstr "128px"
+msgstr "128 px"
 
 #: ../thunar/thunar-preferences-dialog.c:456
 #: ../thunar/thunar-preferences-dialog.c:504
 msgid "160px"
-msgstr "160px"
+msgstr "160 px"
 
 #: ../thunar/thunar-preferences-dialog.c:457
 #: ../thunar/thunar-preferences-dialog.c:505
 msgid "192px"
-msgstr "192px"
+msgstr "192 px"
 
 #: ../thunar/thunar-preferences-dialog.c:458
 #: ../thunar/thunar-preferences-dialog.c:506
 msgid "256px"
-msgstr "256px"
+msgstr "256 px"
 
 #: ../thunar/thunar-preferences-dialog.c:467
 msgid "Show Icon _Emblems"
@@ -1903,7 +1905,7 @@ msgstr "Aktivoi kohteet _kaksoisnapsautuksella"
 
 #: ../thunar/thunar-preferences-dialog.c:626
 msgid "Tabs instead of new Windows"
-msgstr "Välilehden uusien ikkunoiden sijaan"
+msgstr "Välilehdet uusien ikkunoiden sijaan"
 
 #: ../thunar/thunar-preferences-dialog.c:639
 msgid "Open folders in new tabs on middle click"
@@ -1939,7 +1941,7 @@ msgstr "Näytä toiminto tiedostojen ja kansioiden pysyvästi poistamiselle"
 #: ../thunar/thunar-preferences-dialog.c:672
 msgid "Select this option to show the 'Delete' action in the context menu"
 msgstr ""
-"Valitse tämä valinta näyttääksesi 'Poista' -toiminto kontekstivalikossa."
+"Valitse tämä valinta näyttääksesi 'Poista'-toiminto kontekstivalikossa."
 
 #. Advanced
 #: ../thunar/thunar-preferences-dialog.c:681
@@ -1956,7 +1958,7 @@ msgid ""
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr ""
-"Muuttaessasi Kansion käyttöoikeuksia voit\n"
+"Muuttaessasi kansion käyttöoikeuksia voit\n"
 "asettaa samat oikeudet myös sen sisällölle.\n"
 "Alta voit valita oletustoimintatavan."
 
@@ -2001,7 +2003,7 @@ msgid ""
 "will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
 msgstr ""
 "Näyttää siltä, että <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> ei ole saatavilla.\n"
-"Tärkeät ominaisuudet, kuten roskakori tuki,\n"
+"Tärkeät ominaisuudet, kuten roskakorituki,\n"
 "irrotettavat tietovälineet, ja etäsijainnin selaaminen\n"
 "eivät toimi. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Lue lisää]</a>"
 
@@ -2358,17 +2360,17 @@ msgstr "_Nimeä kirjanmerkki uudelleen"
 #: ../thunar/thunar-shortcuts-view.c:1606
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
-msgstr "Polku \"%s\" ei osoita kansioon."
+msgstr "Polku \"%s\" ei osoita kansioon"
 
 #. display an error message to the user
 #: ../thunar/thunar-shortcuts-view.c:1626
 msgid "Failed to add new shortcut"
-msgstr "Kirjanmerkin lisääminen epäonnistui."
+msgstr "Kirjanmerkin lisääminen epäonnistui"
 
 #: ../thunar/thunar-shortcuts-view.c:1908 ../thunar/thunar-tree-view.c:1966
 #, c-format
 msgid "Failed to eject \"%s\""
-msgstr "Kohteen \"%s\" irrottaminen epäonnistui."
+msgstr "Kohteen \"%s\" irrottaminen epäonnistui"
 
 #: ../thunar/thunar-shortcuts-view.c:2050 ../thunar/thunar-tree-view.c:2021
 #, c-format
@@ -2414,7 +2416,7 @@ msgstr "Kansion kontekstivalikko"
 
 #: ../thunar/thunar-standard-view.c:402
 msgid "Create an empty folder within the current folder"
-msgstr "Luo tyhjä kansio nykyiseen sijaintiin."
+msgstr "Luo tyhjä kansio nykyiseen sijaintiin"
 
 #: ../thunar/thunar-standard-view.c:404 ../thunar/thunar-tree-view.c:1417
 msgid "Cu_t"
@@ -3030,7 +3032,7 @@ msgstr "Tietoja asiakirjamalleista"
 
 #: ../thunar/thunar-window.c:3098
 msgid "All files in this folder will appear in the \"Create Document\" menu."
-msgstr "Kaikki tämän kansion tiedostot näkyvät \"Luo asiakirja\" -valikossa."
+msgstr "Kaikki tämän kansion tiedostot näkyvät \"Luo asiakirja\"-valikossa."
 
 #: ../thunar/thunar-window.c:3105
 msgid ""
@@ -3121,7 +3123,8 @@ msgstr "Kuvaus:"
 msgid ""
 "The generic name of the entry, for example \"Web Browser\" in case of "
 "Firefox."
-msgstr "Kohteen yleinen nimi, esimerkiksi Firefoxille tämä olisi \"Web-selain\"."
+msgstr ""
+"Kohteen yleinen nimi, esimerkiksi Firefoxille tämä olisi \"Verkkoselain\"."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:177
 msgid "Command:"
@@ -3305,7 +3308,7 @@ msgstr "SUURAAKKOSET"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:95
 msgid "Title Case"
-msgstr ""
+msgstr "Otsikkotyylin Kirjainkoko"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:96
 msgid "First character uppercase"
@@ -3394,7 +3397,7 @@ msgstr "_Aloita:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:229
 msgid "Text _Format:"
-msgstr "Tekstin _Muoto:"
+msgstr "Tekstin _muoto:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:518
 msgid "Numbering"
@@ -3932,5 +3935,4 @@ msgstr "Käynnistä Thunar pääkäyttäjän oikeuksin."
 
 #: ../org.xfce.thunar.policy.in.in.h:7
 msgid "Authentication is required to run Thunar as root."
-msgstr ""
-"Jotta Thunar voidaan käynnistää pääkäyttäjän oikeuksin, todennus tarvitaan."
+msgstr "Tunnistautuminen vaaditaan Thunarin suorittamiseksi pääkäyttäjänä."
