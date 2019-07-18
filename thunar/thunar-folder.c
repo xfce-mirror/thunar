@@ -136,12 +136,18 @@ static void
 thunar_folder_constructed (GObject *object)
 {
   ThunarFolder *folder = THUNAR_FOLDER (object);
+  GError       *error  = NULL;
 
   /* add us to the folder alteration monitor */
   folder->monitor = g_file_monitor_directory (thunar_file_get_file (folder->corresponding_file),
-                                          G_FILE_MONITOR_SEND_MOVED, NULL, NULL);
+                                          G_FILE_MONITOR_SEND_MOVED, NULL, &error);
   if (G_LIKELY (folder->monitor != NULL))
       g_signal_connect (folder->monitor, "changed", G_CALLBACK (thunar_folder_monitor), folder);
+  else
+    {
+      g_debug ("Could not create folder monitor: %s", error->message);
+      g_error_free (error);
+    }
 
   G_OBJECT_CLASS (thunar_folder_parent_class)->constructed (object);
 }
