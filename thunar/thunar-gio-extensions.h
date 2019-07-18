@@ -71,6 +71,7 @@ GType     thunar_g_file_list_get_type               (void);
 
 GList    *thunar_g_file_list_new_from_string        (const gchar       *string);
 gchar   **thunar_g_file_list_to_stringv             (GList             *list);
+GList    *thunar_g_file_list_get_parents            (GList             *list);
 
 /* deep copy jobs for GLists */
 #define   thunar_g_file_list_append(list,object)    g_list_append (list, g_object_ref (G_OBJECT (object)))

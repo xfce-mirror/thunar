@@ -138,7 +138,6 @@ thunar_folder_constructed (GObject *object)
   ThunarFolder *folder = THUNAR_FOLDER (object);
   GError       *error  = NULL;
 
-  /* add us to the folder alteration monitor */
   folder->monitor = g_file_monitor_directory (thunar_file_get_file (folder->corresponding_file),
                                           G_FILE_MONITOR_SEND_MOVED, NULL, &error);
   if (G_LIKELY (folder->monitor != NULL))
@@ -968,6 +967,23 @@ thunar_folder_get_loading (const ThunarFolder *folder)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), FALSE);
   return (folder->job != NULL);
+}
+
+
+
+/**
+ * thunar_folder_has_folder_monitor:
+ * @folder : a #ThunarFolder instance.
+ *
+ * Tells whether the @folder has a folder monitor running
+ *
+ * Return value: %TRUE if @folder has a folder monitor, else %FALSE.
+ **/
+gboolean
+thunar_folder_has_folder_monitor (const ThunarFolder *folder)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), FALSE);
+  return (folder->monitor != NULL);
 }
 
 

@@ -544,6 +544,53 @@ thunar_g_file_list_to_stringv (GList *list)
 
 
 
+/**
+ * thunar_g_file_list_get_parents:
+ * @list : a list of #GFile<!---->s.
+ *
+ * Collects all parent folders of the passed files
+ * If multiple files share the same parent, the parent will only be added once to the returned list.
+ * Each list element of the returned list needs to be freed with g_object_unref() after use.
+ *
+ * Return value: A list of #GFile<!---->s of all parent folders. Free the returned list with calling g_object_unref() on each element
+ **/
+GList*
+thunar_g_file_list_get_parents (GList *file_list)
+{
+  GList    *lp_file_list;
+  GList    *lp_parent_folder_list;
+  GFile    *parent_folder;
+  GList    *parent_folder_list = NULL;
+  gboolean  folder_already_added;
+
+  for (lp_file_list = file_list; lp_file_list != NULL; lp_file_list = lp_file_list->next)
+    {
+      if (!G_IS_FILE (lp_file_list->data))
+        continue;
+      parent_folder = g_file_get_parent (lp_file_list->data);
+      if (parent_folder == NULL)
+        continue;
+      folder_already_added = FALSE;
+      /* Check if the folder already is in our list */
+      for (lp_parent_folder_list = parent_folder_list; lp_parent_folder_list != NULL; lp_parent_folder_list = lp_parent_folder_list->next)
+        {
+          if (g_file_equal (lp_parent_folder_list->data, parent_folder))
+            {
+              folder_already_added = TRUE;
+              break;
+            }
+        }
+      /* Keep the reference for each folder added to parent_folder_list */
+      if (folder_already_added)
+        g_object_unref (parent_folder);
+      else
+        parent_folder_list = g_list_append (parent_folder_list, parent_folder);
+    }
+  return parent_folder_list;
+}
+
+
+
 gboolean
 thunar_g_app_info_launch (GAppInfo          *info,
                           GFile             *working_directory,
