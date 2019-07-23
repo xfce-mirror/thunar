@@ -6,6 +6,7 @@
 # Translators:
 # Xfce Bot <transifex@xfce.org>, 2017
 # Torkel Bjørnson-Langen, 2018
+# Kjell Cato Heskjestad <cato@heskjestad.xyz>, 2019
 # 
 #, fuzzy
 msgid ""
@@ -14,7 +15,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-10-10 06:30+0200\n"
 "PO-Revision-Date: 2017-09-04 20:27+0000\n"
-"Last-Translator: Torkel Bjørnson-Langen, 2018\n"
+"Last-Translator: Kjell Cato Heskjestad <cato@heskjestad.xyz>, 2019\n"
 "Language-Team: Norwegian Bokmål (https://www.transifex.com/xfce/teams/16840/nb/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -36,11 +37,11 @@ msgstr "Kjør i skjult modus (ikke støttet)"
 
 #: ../thunar/main.c:70
 msgid "Quit a running Thunar instance"
-msgstr "Avslutt en kjørende Thunar instans"
+msgstr "Avslutt en kjørende Thunar-instans"
 
 #: ../thunar/main.c:72
 msgid "Quit a running Thunar instance (not supported)"
-msgstr "Avslutt en kjørende Thunar instans (ikke støttet)"
+msgstr "Avslutt en kjørende Thunar-instans (ikke støttet)"
 
 #: ../thunar/main.c:74
 msgid "Print version information and exit"
@@ -203,7 +204,7 @@ msgstr "Lager symbolske lenker i «%s»..."
 #: ../thunar/thunar-application.c:1726
 #, c-format
 msgid "Moving files into \"%s\"..."
-msgstr "Flytter filer til \"%s\"..."
+msgstr "Flytter filer til «%s» ..."
 
 #: ../thunar/thunar-application.c:1808
 #, c-format
@@ -212,7 +213,7 @@ msgid ""
 "permanently delete \"%s\"?"
 msgstr ""
 "Er du sikker på at du vil \n"
-"slette permanent «%s»?"
+"slette «%s» permanent?"
 
 #: ../thunar/thunar-application.c:1813
 #, c-format
@@ -223,15 +224,15 @@ msgid_plural ""
 "Are you sure that you want to permanently\n"
 "delete the %u selected files?"
 msgstr[0] ""
-"Er du sikker på at du vil slette permanent\n"
-"den valgte filen?"
+"Er du sikker på at du vil slette\n"
+"den valgte filen permanent?"
 msgstr[1] ""
-"Er du sikker på at du vil slette permanent\n"
-" %u filer?"
+"Er du sikker på at du vil slette\n"
+" %u filer permanent?"
 
 #: ../thunar/thunar-application.c:1833
 msgid "If you delete a file, it is permanently lost."
-msgstr "Hvis du sletter en fil vil den være permanent borte."
+msgstr "Hvis du sletter en fil vil den forsvinne permanent."
 
 #: ../thunar/thunar-application.c:1843
 msgid "Deleting files..."
@@ -307,7 +308,7 @@ msgstr "Program er ikke valgt"
 
 #: ../thunar/thunar-chooser-button.c:508
 msgid "Other Application..."
-msgstr "Annen applikasjon..."
+msgstr "Annet program ..."
 
 #: ../thunar/thunar-chooser-dialog.c:188 ../thunar/thunar-launcher.c:181
 msgid "Open With"
@@ -345,7 +346,7 @@ msgstr "Klarte ikke å legge til nytt program «%s»"
 #: ../thunar/thunar-chooser-dialog.c:502
 #, c-format
 msgid "Failed to execute application \"%s\""
-msgstr "Klarte ikke kjøre applikasjon «%s»"
+msgstr "Klarte ikke kjøre programmet «%s»"
 
 #. append the "Remove Launcher" item
 #: ../thunar/thunar-chooser-dialog.c:574
@@ -384,9 +385,9 @@ msgid ""
 "\n"
 "You can only remove application launchers that were created using the custom command box in the \"Open With\" dialog of the file manager."
 msgstr ""
-"Dette vil fjerne snarveien som vises i filens kontekstmeny, men vil ikke fjerne selve applikasjonen.\n"
+"Dette vil fjerne snarveien som vises i filens kontekstmeny, men vil ikke fjerne selve programmet.\n"
 "\n"
-"Du kan bare fjerne snarveier som ble laget med «Egentilpasset kommando» under «Åpne med» menyvalget."
+"Du kan bare fjerne snarveier som ble laget med «Egentilpasset kommando» under menyvalget «Åpne med»."
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:738
@@ -445,7 +446,7 @@ msgstr "Andre programmer"
 #: ../thunar/thunar-chooser-model.c:406
 #, c-format
 msgid "Failed to remove \"%s\"."
-msgstr "Klarte ikke å fjerne \"%s\"."
+msgstr "Klarte ikke å fjerne «%s»."
 
 #. tell the user that we cannot paste
 #: ../thunar/thunar-clipboard-manager.c:354
@@ -581,7 +582,7 @@ msgstr "Antallet kilde og målfiler må være det samme"
 #: ../thunar/thunar-dbus-service.c:1047
 #, c-format
 msgid "A destination directory must be specified"
-msgstr "En målkatalog må angis"
+msgstr "Angi en målmappe"
 
 #: ../thunar/thunar-details-view.c:138
 msgid "Configure _Columns..."
@@ -668,7 +669,7 @@ msgstr "_Erstatt"
 #: ../thunar/thunar-dialogs.c:581
 #, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
-msgstr "Denne mappen inneholder allerede symbolsk link «%s»."
+msgstr "Denne mappen inneholder allerede den symbolske lenken «%s»."
 
 #: ../thunar/thunar-dialogs.c:586
 #, c-format
@@ -683,7 +684,7 @@ msgstr "Denne mappen inneholder allerede filen «%s»."
 #: ../thunar/thunar-dialogs.c:603
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the link"
-msgstr "Ønsker du å erstatte linken"
+msgstr "Ønsker du å erstatte lenken"
 
 #: ../thunar/thunar-dialogs.c:605
 #, c-format
@@ -727,16 +728,16 @@ msgid ""
 "The desktop file \"%s\" is in an insecure location and not marked as "
 "executable. If you do not trust this program, click Cancel."
 msgstr ""
-"Skrivebordsfilen \"%s\" er på en usikret plass, og ikke markert som kjørbar."
-" Hvis du ikke har tiltro til dette programmet, trykk Avbryt."
+"Skrivebordsfilen «%s» er på en usikret plass, og ikke markert som kjørbar. "
+"Hvis du ikke har tiltro til dette programmet, trykk Avbryt."
 
 #: ../thunar/thunar-dialogs.c:783
 msgid "_Launch Anyway"
-msgstr "_Kjør Uansett"
+msgstr "Kjør _likevel"
 
 #: ../thunar/thunar-dialogs.c:785
 msgid "Mark _Executable"
-msgstr "Merk _Kjørbar"
+msgstr "Merk _kjørbar"
 
 #: ../thunar/thunar-dnd.c:72
 msgid "_Copy here"
@@ -830,7 +831,7 @@ msgstr "Papirkurv"
 #: ../thunar/thunar-file.c:1515
 #, c-format
 msgid "The root folder has no parent"
-msgstr "Rotkatalogen har ingen overordnede"
+msgstr "Rotmappen har ingen overordnet mappe"
 
 #: ../thunar/thunar-file.c:1603 ../thunar/thunar-file.c:1899
 #, c-format
@@ -845,7 +846,7 @@ msgstr "Oppstarter for utiltrodde programmer"
 #: ../thunar/thunar-file.c:1640
 #, c-format
 msgid "No Exec field specified"
-msgstr "Exec felt er ikke spesifisert"
+msgstr "Exec-feltet er ikke spesifisert"
 
 #. if the .desktop file is not secure, ask user what to do
 #: ../thunar/thunar-file.c:1649
@@ -855,7 +856,7 @@ msgstr "Oppstarter for utiltrodde lenker"
 #: ../thunar/thunar-file.c:1665
 #, c-format
 msgid "No URL field specified"
-msgstr "URL felt er ikke spesifisert"
+msgstr "URL-feltet er ikke spesifisert"
 
 #: ../thunar/thunar-file.c:1670
 msgid "Invalid desktop file"
@@ -903,7 +904,7 @@ msgstr "Objektet vil fjernes fra historieloggen"
 #: ../thunar/thunar-history.c:366
 #, c-format
 msgid "Could not find \"%s\""
-msgstr "Fant ikke \"%s\""
+msgstr "Fant ikke «%s»"
 
 #: ../thunar/thunar-icon-view.c:164
 msgid "Icon based directory listing"
@@ -1003,7 +1004,7 @@ msgstr "Ønsker du å overskrive denne?"
 
 #: ../thunar/thunar-job.c:388
 msgid "Do you want to create it?"
-msgstr "Ønsker du å lage den"
+msgstr "Ønsker du å lage den?"
 
 #: ../thunar/thunar-job.c:490
 msgid "Do you want to skip it?"
@@ -1032,7 +1033,7 @@ msgstr "_Åpne"
 #: ../thunar/thunar-launcher.c:178 ../thunar/thunar-launcher.c:860
 #: ../thunar/thunar-tree-view.c:1294
 msgid "Open in New _Tab"
-msgstr "Åpne i Ny _Fane"
+msgstr "Åpne i ny _fane"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:179 ../thunar/thunar-launcher.c:854
@@ -1559,7 +1560,7 @@ msgstr "Varierende (ingen endring)"
 
 #: ../thunar/thunar-permissions-chooser.c:1131
 msgid "Correct folder permissions automatically?"
-msgstr "Kirriger mapperettigheter automatisk?"
+msgstr "Korriger mapperettigheter automatisk?"
 
 #: ../thunar/thunar-permissions-chooser.c:1133
 msgid "Correct _folder permissions"
@@ -1576,7 +1577,7 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:225
 msgid "File Manager Preferences"
-msgstr "Filebehandler Innstillinger"
+msgstr "Innstillinger for filbehandleren"
 
 #. Display
 #: ../thunar/thunar-preferences-dialog.c:242
@@ -1641,7 +1642,7 @@ msgstr "Vis filstørrelse i binærformat"
 msgid ""
 "Select this option to show file size in binary format instead of decimal."
 msgstr ""
-"Velg dette alternativet for å vise filstørresle i binærformat istedenfor "
+"Velg dette alternativet for å vise filstørrelse i binærformat istedenfor "
 "desimalnotasjon."
 
 #: ../thunar/thunar-preferences-dialog.c:325
@@ -1676,7 +1677,7 @@ msgstr "Snarveipanel"
 
 #: ../thunar/thunar-preferences-dialog.c:391
 msgid "_Icon Size:"
-msgstr "_Ikon størrelse:"
+msgstr "_Ikonstørrelse:"
 
 #: ../thunar/thunar-preferences-dialog.c:396
 #: ../thunar/thunar-preferences-dialog.c:438
@@ -1732,7 +1733,7 @@ msgstr "Trevisning"
 
 #: ../thunar/thunar-preferences-dialog.c:433
 msgid "Icon _Size:"
-msgstr "Ikon _størrelse"
+msgstr "Ikon_størrelse:"
 
 #: ../thunar/thunar-preferences-dialog.c:452
 msgid "Show Icon E_mblems"
@@ -1847,7 +1848,7 @@ msgstr "Enhetsbehandling"
 #. add check button to enable/disable auto mounting
 #: ../thunar/thunar-preferences-dialog.c:645
 msgid "Enable _Volume Management"
-msgstr "Aktiver _Enhetsbehandling"
+msgstr "Aktiver _enhetsbehandling"
 
 #: ../thunar/thunar-preferences-dialog.c:654
 msgid ""
@@ -1861,7 +1862,7 @@ msgstr ""
 #. configuration dialog
 #: ../thunar/thunar-preferences-dialog.c:714
 msgid "Failed to display the volume management settings"
-msgstr "Klarte ikke vise enhetsbehandling innstillinger"
+msgstr "Klarte ikke vise innstillinger for enhetsbehandling"
 
 #: ../thunar/thunar-progress-dialog.c:94
 msgid "File Operation Progress"
@@ -1878,7 +1879,7 @@ msgstr[1] "%d filoperasjoner aktive"
 #. update the status text
 #: ../thunar/thunar-progress-view.c:354
 msgid "Cancelling..."
-msgstr "Avbryter..."
+msgstr "Avbryter ..."
 
 #: ../thunar/thunar-properties-dialog.c:264
 msgid "General"
@@ -2608,7 +2609,7 @@ msgstr "Nytt _vindu"
 
 #: ../thunar/thunar-window.c:352
 msgid "Open a new Thunar window for the displayed location"
-msgstr "Åpne nytt Thunar vindu for viste plassering"
+msgstr "Åpne nytt Thunar-vindu for viste plassering"
 
 #: ../thunar/thunar-window.c:355
 msgid "Detac_h Tab"
@@ -2624,11 +2625,11 @@ msgstr "Lukk _alle vinduer"
 
 #: ../thunar/thunar-window.c:356
 msgid "Close all Thunar windows"
-msgstr "Lukk alle Thunar vinduer"
+msgstr "Lukk alle Thunar-vinduer"
 
 #: ../thunar/thunar-window.c:357
 msgid "C_lose Tab"
-msgstr "Lukk fane"
+msgstr "_Lukk fane"
 
 #: ../thunar/thunar-window.c:357
 msgid "Close this folder"
@@ -2648,7 +2649,7 @@ msgstr "_Rediger"
 
 #: ../thunar/thunar-window.c:360
 msgid "Pr_eferences..."
-msgstr "_Innstillinger"
+msgstr "_Innstillinger ..."
 
 #: ../thunar/thunar-window.c:360
 msgid "Edit Thunars Preferences"
@@ -2760,7 +2761,7 @@ msgstr "_Innhold"
 
 #: ../thunar/thunar-window.c:377
 msgid "Display Thunar user manual"
-msgstr "Vis Thunar brukerhåndbok"
+msgstr "Vis Thunars brukerhåndbok"
 
 #: ../thunar/thunar-window.c:378
 msgid "Display information about Thunar"
@@ -2776,7 +2777,7 @@ msgstr "Skifter visning av skjulte filer i nåværende vindu"
 
 #: ../thunar/thunar-window.c:384
 msgid "_Pathbar Style"
-msgstr "_Stilinje stil"
+msgstr "Vis som _stilinje"
 
 #: ../thunar/thunar-window.c:384
 msgid "Modern approach with buttons that correspond to folders"
@@ -2784,7 +2785,7 @@ msgstr "Moderne utseende med knapper som svarer til mappene"
 
 #: ../thunar/thunar-window.c:385
 msgid "_Toolbar Style"
-msgstr "_Verktøylijne stil"
+msgstr "Vis som _verktøylinje"
 
 #: ../thunar/thunar-window.c:385
 msgid "Traditional approach with location bar and navigation buttons"
@@ -2851,7 +2852,7 @@ msgstr "Vis mappeinnhold som kompakt listevisning"
 #: ../thunar/thunar-window.c:848
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr ""
-"Advarsel, du benytter rot brukeren. Dette er en risiko for systemet ditt."
+"Advarsel: Du benytter rotbrukeren. Dette er en risiko for systemet ditt."
 
 #: ../thunar/thunar-window.c:1761
 msgid "Close tab"
@@ -2874,7 +2875,7 @@ msgstr "Klarte ikke åpne overliggende mappe"
 #: ../thunar/thunar-window.c:2940
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
-msgstr "Mappen \"%s\" finnes ikke. Ønsker du å opprette den?"
+msgstr "Mappen «%s» finnes ikke. Ønsker du å opprette den?"
 
 #. display the "About Templates" dialog
 #: ../thunar/thunar-window.c:3022
@@ -2919,8 +2920,8 @@ msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr ""
-"Thunar er en filbehandler som  er rask og enkel i bruk\n"
-"for Xfce skrivebordsmiljøet."
+"Thunar er en filbehandler for skrivebordsmiljøet Xfce\n"
+"som er rask og enkel i bruk."
 
 #. set window title
 #: ../thunar/thunar-window.c:3301 ../Thunar.desktop.in.in.h:3
@@ -2958,7 +2959,7 @@ msgstr "Hjelpelink"
 
 #: ../thunarx/thunarx-renamer.c:131
 msgid "The URL to the documentation of the renamer"
-msgstr "Link til dokumnetasjon for modulen"
+msgstr "Link til dokumentasjon for modulen"
 
 #: ../thunarx/thunarx-renamer.c:146
 msgid "The user visible name of the renamer"
@@ -3014,11 +3015,11 @@ msgstr ""
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:268
 msgid "Options:"
-msgstr "Innstillinger"
+msgstr "Innstillinger:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:274
 msgid "Use _startup notification"
-msgstr "Bruk opp_startsnotifikasjon"
+msgstr "Bruk opp_startsvarsling"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:275
 msgid ""
@@ -3026,8 +3027,9 @@ msgid ""
 "from the file manager or the menu. Not every application supports startup "
 "notification."
 msgstr ""
-"Velg denne for å vise notifikasjon når kommandoen kjøres fra filbehandleren "
-"eller menyen. Ikke alle applikasjoner støtter oppstartsnotifikasjon"
+"Velg dette valget for å aktivere oppstartsvarsel når kommandoen kjøres fra "
+"filbehandleren eller fra menyen. Ikke alle programmer støtter "
+"oppstartsvarsel."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:282
 msgid "Run in _terminal"
@@ -3048,7 +3050,7 @@ msgstr "Lenke"
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:600
 #, c-format
 msgid "Failed to save \"%s\"."
-msgstr "Feilet å lagre «%s»."
+msgstr "Klarte ikke lagre «%s»."
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:47
 msgid "Date Taken:"
@@ -3092,7 +3094,7 @@ msgstr "Lukkertid"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:57
 msgid "ISO Speed Ratings:"
-msgstr "ISO verdi:"
+msgstr "ISO-verdi:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:58
 msgid "Software:"
@@ -3104,7 +3106,7 @@ msgstr "Bilde"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:131
 msgid "Image Type:"
-msgstr "Bilde type:"
+msgstr "Bildetype:"
 
 #. update the "Image Size" label
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:245
@@ -3208,7 +3210,7 @@ msgstr "Nummer - Tekst - Gammelt navn"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:128
 msgid "Text - Number"
-msgstr "Text - Nummer"
+msgstr "Tekstt - Nummer"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:129
 msgid "Number - Text"
@@ -3344,7 +3346,7 @@ msgstr ""
 msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
 msgstr[0] "Send %d fil som komprimert arkiv?"
-msgstr[1] "Send %d filer som komprimert akriv?"
+msgstr[1] "Send %d filer som komprimert arkiv?"
 
 #: ../plugins/thunar-sendto-email/main.c:219
 msgid "Send as _archive"
@@ -3373,34 +3375,34 @@ msgstr "Komprimerer filer..."
 #: ../plugins/thunar-sendto-email/main.c:320
 #, c-format
 msgid "ZIP command terminated with error %d"
-msgstr "ZIP kommando ble avsluttet med feilen %d"
+msgstr "ZIP-kommandoen avsluttet med feilen %d"
 
 #: ../plugins/thunar-sendto-email/main.c:408
 msgid "Failed to create temporary directory"
-msgstr "Klarte ikke å opprette temporær mappe"
+msgstr "Klarte ikke opprette midlertidig mappe"
 
 #: ../plugins/thunar-sendto-email/main.c:470
 #: ../plugins/thunar-sendto-email/main.c:481
 #, c-format
 msgid "Failed to create symbolic link for \"%s\""
-msgstr "Feilet å lage symbols link for «%s»"
+msgstr "Klarte ikke lage symbolsk lenke for «%s»"
 
 #. tell the user that we failed to compress the file(s)
 #: ../plugins/thunar-sendto-email/main.c:505
 #, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
-msgstr[0] "Feilet å komprimere %d filen"
-msgstr[1] "Feilet å komprimere %d filene"
+msgstr[0] "Klarte ikke komprimere %d fil"
+msgstr[1] "Klarte ikke komprimere %d filer"
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:656
 msgid "Failed to compose new email"
-msgstr "Feilet å komponere ny epost"
+msgstr "Klarte ikke sette sammen ny e-post"
 
 #: ../plugins/thunar-sendto-email/thunar-sendto-email.desktop.in.in.h:1
 msgid "Mail Recipient"
-msgstr "Epost mottaker"
+msgstr "E-postmottaker"
 
 #. tell the user that we failed to connect to the trash
 #: ../plugins/thunar-tpa/thunar-tpa.c:284
@@ -3408,7 +3410,7 @@ msgstr "Epost mottaker"
 #: ../plugins/thunar-tpa/thunar-tpa.c:347
 #: ../plugins/thunar-tpa/thunar-tpa.c:374
 msgid "Failed to connect to the Trash"
-msgstr "Feilet å kontakte papirkurven"
+msgstr "Klarte ikke koble til papirkurven"
 
 #. tell the user whether the trash is full or empty
 #: ../plugins/thunar-tpa/thunar-tpa.c:299
@@ -3529,7 +3531,7 @@ msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:204
 msgid "Use Startup Notification"
-msgstr "Bruk oppstartsvarsel"
+msgstr "Bruk oppstartsvarsling"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:205
 msgid ""
@@ -3599,7 +3601,7 @@ msgstr "Visningsbetingelser"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:371
 msgid "_File Pattern:"
-msgstr "_Filmønster"
+msgstr "_Filmønster:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:376
 msgid ""
@@ -3682,7 +3684,7 @@ msgstr "Ukjent avslutningselement <%s>"
 #: ../plugins/thunar-uca/thunar-uca-model.c:1409
 #, c-format
 msgid "Failed to determine save location for uca.xml"
-msgstr "Feilet å finne lagringslokasjon fo uca.xml"
+msgstr "Klarte ikke fastslå lagringsstedet til uca.xml"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:1528
 #, c-format
