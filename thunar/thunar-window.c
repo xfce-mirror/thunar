@@ -1428,10 +1428,13 @@ thunar_window_unrealize (GtkWidget *widget)
 
   /* disconnect from the clipboard manager */
   g_signal_handlers_disconnect_by_func (G_OBJECT (window->clipboard), gtk_widget_queue_draw, widget);
-  g_object_unref (G_OBJECT (window->clipboard));
 
   /* let the GtkWidget class unrealize the window */
   (*GTK_WIDGET_CLASS (thunar_window_parent_class)->unrealize) (widget);
+
+  /* drop the reference on the clipboard manager, we do this after letting the GtkWidget class
+   * unrealise the window to prevent the clipboard being disposed during the unrealize  */
+  g_object_unref (G_OBJECT (window->clipboard));
 }
 
 
