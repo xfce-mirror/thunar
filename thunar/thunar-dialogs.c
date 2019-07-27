@@ -260,7 +260,7 @@ thunar_dialogs_show_about (GtkWindow   *parent,
                          "program-name", title,
                          "translator-credits", _("translator-credits"),
                          "version", PACKAGE_VERSION,
-                         "website", "https://docs.xfce.org/xfce/thunar/start",
+                         "website", "https://docs.xfce.org/xfce/thunar/4.12/start",
                          NULL);
 
   /* cleanup */
