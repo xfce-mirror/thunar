@@ -2534,7 +2534,6 @@ THUNAR_THREADS_ENTER
 
   gtk_tree_model_get_iter (GTK_TREE_MODEL (view->model), &iter, path);
   gtk_tree_path_free (path);
-  path = NULL;
 
   /* collect all ThunarFiles in the path of current_directory in a List. root is on the very left side */
   for (file = view->current_directory; file != NULL; file = thunar_file_get_parent (file, NULL))
@@ -2565,11 +2564,7 @@ THUNAR_THREADS_ENTER
           gtk_tree_model_get (GTK_TREE_MODEL (view->model), &iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file_in_tree, -1);
           if (file == file_in_tree)
             {
-              if (path != NULL)
-                gtk_tree_path_free (path);
               g_object_unref (file_in_tree);
-              /* always remember latest known path, so we can set the cursor to it */
-              path = gtk_tree_model_get_path (GTK_TREE_MODEL (view->model), &iter);
               break;
             }
           if (file_in_tree)
@@ -2582,6 +2577,9 @@ THUNAR_THREADS_ENTER
       /* 5. Did we already find the full path ?*/
       if (lp->next == NULL)
         {
+          path = gtk_tree_model_get_path (GTK_TREE_MODEL (view->model), &iter);
+          gtk_tree_view_set_cursor (GTK_TREE_VIEW (view), path, NULL, FALSE);
+          gtk_tree_path_free (path);
           done = TRUE;
           break;
         }
@@ -2607,17 +2605,13 @@ THUNAR_THREADS_ENTER
           break; /* we dont have a valid child_iter by now, so we cannot continue.                         */
                  /* Since done is FALSE, the next iteration on thunar_tree_view_cursor_idle will go deeper */
         }
-      iter = child_iter; /* next tree level */
-    }
 
-  if (path == NULL)
-    path = thunar_tree_view_get_preferred_toplevel_path (view, view->current_directory);
-
-  if (path != NULL)
-    {
+      /* expand path up to the current tree level */
+      path = gtk_tree_model_get_path (GTK_TREE_MODEL (view->model), &iter);
       gtk_tree_view_expand_to_path (GTK_TREE_VIEW (view), path);
-      gtk_tree_view_set_cursor (GTK_TREE_VIEW (view), path, NULL, FALSE);
       gtk_tree_path_free (path);
+
+      iter = child_iter; /* next tree level */
     }
 
   /* tidy up */
