@@ -87,7 +87,7 @@ type_name##_register_type (ThunarxProviderPlugin *thunarx_define_type_plugin) \
 { \
   static const GInterfaceInfo thunarx_implement_interface_info = \
   { \
-    (GInterfaceInitFunc) (void (*)(void)) iface_init \
+    .interface_init = (GInterfaceInitFunc) (void (*)(void)) iface_init \
   }; \
   thunarx_provider_plugin_add_interface (thunarx_define_type_plugin, thunarx_define_type_id, TYPE_IFACE, &thunarx_implement_interface_info); \
 }
