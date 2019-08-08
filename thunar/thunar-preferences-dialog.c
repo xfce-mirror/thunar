@@ -229,6 +229,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   GtkWidget      *button;
   GtkWidget      *combo;
   GtkWidget      *entry;
+  GtkWidget      *image;
   GtkWidget      *frame;
   GtkWidget      *label;
   GtkWidget      *range;
@@ -248,11 +249,19 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
   gtk_window_set_title (GTK_WINDOW (dialog), _("File Manager Preferences"));
 
-  /* add "Help" and "Close" buttons */
-  gtk_dialog_add_buttons (GTK_DIALOG (dialog),
-                          _("_Close"), GTK_RESPONSE_CLOSE,
-                          _("_Help"), GTK_RESPONSE_HELP,
-                          NULL);
+  /* add the "Close" button */
+  button = gtk_button_new_with_mnemonic (_("_Close"));
+  image = gtk_image_new_from_icon_name ("window-close", GTK_ICON_SIZE_BUTTON);
+  gtk_button_set_image (GTK_BUTTON (button), image);
+  gtk_dialog_add_action_widget (GTK_DIALOG (dialog), button, GTK_RESPONSE_CLOSE);
+  gtk_widget_show (button);
+
+  /* add the "Help" button */
+  button = gtk_button_new_with_mnemonic (_("_Help"));
+  image = gtk_image_new_from_icon_name ("help-browser", GTK_ICON_SIZE_BUTTON);
+  gtk_button_set_image (GTK_BUTTON (button), image);
+  gtk_dialog_add_action_widget (GTK_DIALOG (dialog), button, GTK_RESPONSE_HELP);
+  gtk_widget_show (button);
 
   notebook = gtk_notebook_new ();
   gtk_container_set_border_width (GTK_CONTAINER (notebook), 6);
