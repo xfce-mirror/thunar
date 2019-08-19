@@ -94,6 +94,9 @@ enum
 
 static void     thunar_window_dispose                     (GObject                *object);
 static void     thunar_window_finalize                    (GObject                *object);
+static gboolean thunar_window_delete                      (GtkWidget *widget,
+                                                           GdkEvent  *event,
+                                                           gpointer   data);
 static void     thunar_window_get_property                (GObject                *object,
                                                            guint                   prop_id,
                                                            GValue                 *value,
@@ -744,6 +747,9 @@ thunar_window_init (ThunarWindow *window)
                 "misc-small-toolbar-icons", &small_icons,
                 NULL);
 
+  /* set up a handler to confirm exit when there are multiple tabs open  */
+  g_signal_connect (window, "delete-event", G_CALLBACK (thunar_window_delete), NULL);
+
   /* connect to the volume monitor */
   window->device_monitor = thunar_device_monitor_get ();
   g_signal_connect (window->device_monitor, "device-pre-unmount", G_CALLBACK (thunar_window_device_pre_unmount), window);
@@ -1081,6 +1087,83 @@ thunar_window_finalize (GObject *object)
   g_object_unref (window->preferences);
 
   (*G_OBJECT_CLASS (thunar_window_parent_class)->finalize) (object);
+}
+
+
+
+static gboolean thunar_window_delete( GtkWidget *widget,
+                                     GdkEvent  *event,
+                                     gpointer   data )
+{
+  GtkWidget *dialog, *grid, *label, *icon, *checkbutton;
+  GtkNotebook *notebook;
+  const gchar *title;
+  gchar *message, *markup;
+  gboolean confirm_close_multiple_tabs;
+  gint response, n_tabs;
+
+   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (widget),FALSE);
+
+  /* if we don't have muliple tabs then just exit */
+  notebook  = GTK_NOTEBOOK (THUNAR_WINDOW (widget)->notebook);
+  n_tabs = gtk_notebook_get_n_pages (GTK_NOTEBOOK (THUNAR_WINDOW (widget)->notebook));
+  if (n_tabs < 2)
+    return FALSE;
+
+  /* check if the user has disabled confirmation of closing multiple tabs, and just exit if so */
+  g_object_get (G_OBJECT (THUNAR_WINDOW (widget)->preferences),
+                "misc-confirm-close-multiple-tabs", &confirm_close_multiple_tabs,
+                NULL);
+  if(!confirm_close_multiple_tabs)
+    return FALSE;
+
+  /* ask the user for confirmation */
+  dialog = gtk_dialog_new_with_buttons (_("Warning"),
+                                        GTK_WINDOW (dialog),
+                                        GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        _("_Cancel"), GTK_RESPONSE_CANCEL,
+                                        _("Close T_ab"), GTK_RESPONSE_CLOSE,
+                                        _("Close _Window"), GTK_RESPONSE_YES,
+                                        NULL);
+  grid = gtk_grid_new ();
+  gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
+  gtk_widget_set_margin_start (grid, 12);
+  gtk_widget_set_margin_end (grid, 12);
+  gtk_widget_set_margin_top (grid, 12);
+  gtk_widget_set_margin_bottom (grid, 12);
+  gtk_container_add (GTK_CONTAINER (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), grid);
+
+  icon = gtk_image_new_from_icon_name ("dialog-warning", GTK_ICON_SIZE_DIALOG);
+  gtk_grid_attach (GTK_GRID (grid), icon, 0, 0, 1, 2);
+
+  title = _("Close all tabs?");
+  message = g_strdup_printf (_("This window has %d tabs open. Closing this window\n"
+                               "will also close all its tabs."), n_tabs);
+  markup = g_markup_printf_escaped ("<span weight='bold' size='larger'>%s</span>\n%s\n", title, message);
+  g_free (message);
+  label = gtk_label_new (NULL);
+  gtk_label_set_markup (GTK_LABEL (label), markup);
+  g_free (markup);
+  gtk_grid_attach (GTK_GRID (grid), label, 1, 0, 1, 1);
+
+  checkbutton = gtk_check_button_new_with_mnemonic (_("Do _not ask me again"));
+  gtk_grid_attach (GTK_GRID (grid), checkbutton, 1, 1, 1, 1);
+
+  gtk_widget_show_all (dialog);
+  response = gtk_dialog_run (GTK_DIALOG (dialog));
+
+  /* if the user requested not to be asked again, store this preference */
+  if (response != GTK_RESPONSE_CANCEL && gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbutton)))
+    g_object_set (G_OBJECT (THUNAR_WINDOW (widget)->preferences),
+                  "misc-confirm-close-multiple-tabs", FALSE, NULL);
+
+  gtk_widget_destroy (dialog);
+
+  if(response == GTK_RESPONSE_YES)
+    return FALSE;
+  if(response == GTK_RESPONSE_CLOSE)
+    gtk_notebook_remove_page (notebook,  gtk_notebook_get_current_page(notebook));
+  return TRUE;
 }
 
 

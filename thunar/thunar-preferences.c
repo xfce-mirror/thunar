@@ -96,6 +96,7 @@ enum
   PROP_MISC_THUMBNAIL_MODE,
   PROP_MISC_THUMBNAIL_DRAW_FRAMES,
   PROP_MISC_FILE_SIZE_BINARY,
+  PROP_MISC_CONFIRM_CLOSE_MULTIPLE_TABS,
   PROP_SHORTCUTS_ICON_EMBLEMS,
   PROP_SHORTCUTS_ICON_SIZE,
   PROP_TREE_ICON_EMBLEMS,
@@ -758,6 +759,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   preferences_props[PROP_MISC_FILE_SIZE_BINARY] =
       g_param_spec_boolean ("misc-file-size-binary",
                             "MiscFileSizeBinary",
+                            NULL,
+                            TRUE,
+                            EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-confirm-close-multiple-tabs:
+   *
+   * Ask the user for confirmation before closing a window with
+   * multiple tabs.
+   **/
+  preferences_props[PROP_MISC_CONFIRM_CLOSE_MULTIPLE_TABS] =
+      g_param_spec_boolean ("misc-confirm-close-multiple-tabs",
+                            "ConfirmCloseMultipleTabs",
                             NULL,
                             TRUE,
                             EXO_PARAM_READWRITE);
