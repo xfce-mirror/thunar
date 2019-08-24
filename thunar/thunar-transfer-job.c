@@ -923,6 +923,7 @@ thunar_transfer_job_execute (ExoJob  *job,
           if (exo_job_set_error_if_cancelled (job, &err))
             {
               g_object_unref (target_parent);
+              g_object_unref (info);
               break;
             }
 
@@ -946,6 +947,7 @@ thunar_transfer_job_execute (ExoJob  *job,
                 {
                   g_object_unref (target_parent);
                   g_free (parent_display_name);
+                  g_object_unref (info);
                   break;
                 }
 
@@ -966,6 +968,7 @@ thunar_transfer_job_execute (ExoJob  *job,
 
                   g_object_unref (target_parent);
                   g_free (parent_display_name);
+                  g_object_unref (info);
                   break;
                 }
 
