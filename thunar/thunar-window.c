@@ -377,6 +377,7 @@ static GtkActionEntry action_entries[] =
   { "open-network", "network-workgroup", N_("B_rowse Network"), NULL, N_ ("Browse local network connections"), G_CALLBACK (thunar_window_action_open_network), },
   { "open-templates", "text-x-generic-template", N_("T_emplates"), NULL, N_ ("Go to the templates folder"), G_CALLBACK (thunar_window_action_open_templates), },
   { "open-location", NULL, N_ ("_Open Location..."), "<control>L", N_ ("Specify a location to open"), G_CALLBACK (thunar_window_action_open_location), },
+  { "open-location-alt", NULL, "open-location-alt", "<alt>D", NULL, G_CALLBACK (thunar_window_action_open_location), },
   { "help-menu", NULL, N_ ("_Help"), NULL, },
   { "contents", "help-browser", N_ ("_Contents"), "F1", N_ ("Display Thunar user manual"), G_CALLBACK (thunar_window_action_contents), },
   { "about", "help-about", N_ ("_About"), NULL, N_ ("Display information about Thunar"), G_CALLBACK (thunar_window_action_about), },
