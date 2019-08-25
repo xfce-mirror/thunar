@@ -119,6 +119,31 @@ thunar_pango_attr_list_bold (void)
 
 
 /**
+ * thunar_pango_attr_disable_hyphens:
+ *
+ * Returns a #PangoAttrList for not inserting hyphens at intra-word line breaks.
+ * The returned list is owned by the callee and must
+ * not be freed or modified by the caller.
+ *
+ * Return value: a #PangoAttrList for not inserting hyphens at intra-word line
+ *               breaks.
+ **/
+PangoAttrList*
+thunar_pango_attr_disable_hyphens (void)
+{
+  static PangoAttrList *attr_list = NULL;
+
+#ifdef PANGO_VERSION_1_44
+  if (G_UNLIKELY (attr_list == NULL))
+    attr_list = thunar_pango_attr_list_wrap (pango_attr_insert_hyphens_new (FALSE), NULL);
+#endif
+
+  return attr_list;
+}
+
+
+
+/**
  * thunar_pango_attr_list_italic:
  *
  * Returns a #PangoAttrList for rendering italic text.
