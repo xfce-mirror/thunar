@@ -143,6 +143,33 @@ thunar_gtk_menu_run (GtkMenu *menu)
 
 
 
+#if GTK_CHECK_VERSION (3, 24, 8)
+static void
+moved_to_rect_cb (GdkWindow          *window,
+                  const GdkRectangle *flipped_rect,
+                  const GdkRectangle *final_rect,
+                  gboolean            flipped_x,
+                  gboolean            flipped_y,
+                  GtkMenu            *menu)
+{
+    g_signal_emit_by_name (menu, "popped-up", 0, flipped_rect, final_rect, flipped_x, flipped_y);
+    g_signal_stop_emission_by_name (window, "moved-to-rect");
+}
+
+
+
+static void
+popup_menu_realized (GtkWidget *menu,
+                     gpointer   user_data)
+{
+    GdkWindow *toplevel = gtk_widget_get_window (gtk_widget_get_toplevel (menu));
+    g_signal_handlers_disconnect_by_func (toplevel, moved_to_rect_cb, menu);
+    g_signal_connect (toplevel, "moved-to-rect", G_CALLBACK (moved_to_rect_cb), menu);
+}
+#endif
+
+
+
 /**
  * thunar_gtk_menu_run_at_event:
  * @menu  : a #GtkMenu.
@@ -157,7 +184,8 @@ thunar_gtk_menu_run (GtkMenu *menu)
  * 
  **/
 void
-thunar_gtk_menu_run_at_event (GtkMenu *menu, GdkEvent *event)
+thunar_gtk_menu_run_at_event (GtkMenu *menu,
+                              GdkEvent *event)
 {
   GMainLoop *loop;
   gulong     signal_id;
@@ -170,6 +198,13 @@ thunar_gtk_menu_run_at_event (GtkMenu *menu, GdkEvent *event)
   /* run an internal main loop */
   loop = g_main_loop_new (NULL, FALSE);
   signal_id = g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
+
+#if GTK_CHECK_VERSION (3, 24, 8)
+    /* Workaround for incorrect popup menus size */
+    g_signal_connect (G_OBJECT (menu), "realize", G_CALLBACK (popup_menu_realized), NULL);
+    gtk_widget_realize (GTK_WIDGET (menu));
+#endif
+
   gtk_menu_popup_at_pointer (menu, event);
   gtk_menu_reposition (menu);
   gtk_grab_add (GTK_WIDGET (menu));
