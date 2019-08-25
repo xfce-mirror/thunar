@@ -27,6 +27,7 @@ G_BEGIN_DECLS;
 PangoAttrList *thunar_pango_attr_list_big               (void) G_GNUC_CONST;
 PangoAttrList *thunar_pango_attr_list_big_bold          (void) G_GNUC_CONST;
 PangoAttrList *thunar_pango_attr_list_bold              (void) G_GNUC_CONST;
+PangoAttrList *thunar_pango_attr_disable_hyphens        (void) G_GNUC_CONST;
 PangoAttrList *thunar_pango_attr_list_italic            (void) G_GNUC_CONST;
 PangoAttrList *thunar_pango_attr_list_small_italic      (void) G_GNUC_CONST;
 PangoAttrList *thunar_pango_attr_list_small             (void) G_GNUC_CONST;

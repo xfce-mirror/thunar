@@ -44,6 +44,7 @@
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-menu-util.h>
+#include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-renamer-dialog.h>
@@ -729,6 +730,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* setup the name renderer */
   standard_view->name_renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
+                                               "attributes", thunar_pango_attr_disable_hyphens (),
                                                "alignment", PANGO_ALIGN_CENTER,
                                                "xalign", 0.5,
                                                FALSE);
