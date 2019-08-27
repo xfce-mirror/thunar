@@ -7,6 +7,7 @@
 # Xfce Bot <transifex@xfce.org>, 2018
 # وجدي أبو سلطان, 2018
 # clmmbs <msreywel@hotmail.com>, 2019
+# Oukiki Saleh <salehoukiki@gmail.com>, 2019
 # 
 #, fuzzy
 msgid ""
@@ -15,7 +16,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-06-09 18:30+0200\n"
 "PO-Revision-Date: 2018-08-19 09:02+0000\n"
-"Last-Translator: clmmbs <msreywel@hotmail.com>, 2019\n"
+"Last-Translator: Oukiki Saleh <salehoukiki@gmail.com>, 2019\n"
 "Language-Team: Arabic (https://www.transifex.com/xfce/teams/16840/ar/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -32,6 +33,10 @@ msgid ""
 "\n"
 "Please restart thunar afterwards."
 msgstr ""
+"لا يمكن إطلاق ثونار لأن حالة قديمة من ثونار لا تزال قيد التشغيل.هل ترغب في "
+"إنهاء حالة ثونار القديمة الآن ؟ قبل قبول الرجاء التأكد من عدم وجود عمليات "
+"معلقة (مثل نسخ الملفات) لأن إنهائها قد يترك ملفاتك تالفة.من فضلك أعد تشغيل "
+"ثونار بعد ذلك"
 
 #. setup application name
 #: ../thunar/main.c:125
@@ -1362,7 +1367,7 @@ msgstr[5] "%d عناصر"
 #: ../thunar/thunar-list-model.c:2434
 #, c-format
 msgid "\"%s\": broken link"
-msgstr ""
+msgstr "%sالمسار معطوب"
 
 #: ../thunar/thunar-list-model.c:2439
 #, c-format
@@ -1372,7 +1377,7 @@ msgstr ""
 #: ../thunar/thunar-list-model.c:2445
 #, c-format
 msgid "\"%s\": shortcut"
-msgstr ""
+msgstr "%s:اختصار"
 
 #: ../thunar/thunar-list-model.c:2449
 #, c-format
@@ -1987,13 +1992,13 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:645
 msgid "Open new thunar instances as tabs"
-msgstr ""
+msgstr "فتح في لسان جديد"
 
 #: ../thunar/thunar-preferences-dialog.c:647
 msgid ""
 "Select this option to open new thunar instances as tabs in an existing "
 "thunar window"
-msgstr ""
+msgstr "انتق هذا الخيارلفتح ثونار جديد في نافذة ثونار الحالية"
 
 #: ../thunar/thunar-preferences-dialog.c:658
 msgid "Context Menu"
@@ -2057,7 +2062,7 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:768
 msgid "Missing dependencies"
-msgstr ""
+msgstr "اعتماديات مفقودة"
 
 #: ../thunar/thunar-preferences-dialog.c:776
 msgid ""
@@ -2891,15 +2896,15 @@ msgstr ""
 
 #: ../thunar/thunar-window.c:357
 msgid "Switch to Previous Tab"
-msgstr ""
+msgstr "بدل إلى اللسان السابق"
 
 #: ../thunar/thunar-window.c:358
 msgid "_Next Tab"
-msgstr ""
+msgstr "اللسان التالي"
 
 #: ../thunar/thunar-window.c:358
 msgid "Switch to Next Tab"
-msgstr ""
+msgstr "بدل إلى اللسان التالي"
 
 #: ../thunar/thunar-window.c:359
 msgid "Close _All Windows"
@@ -3438,7 +3443,7 @@ msgstr "حروف كبيرة"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:95
 msgid "Title Case"
-msgstr ""
+msgstr "خانة العنوان"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:96
 msgid "First character uppercase"
