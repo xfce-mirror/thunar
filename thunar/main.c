@@ -44,74 +44,6 @@
 
 
 
-static void
-thunar_terminate_running_thunar (void)
-{
-  GDBusConnection *connection;
-  GDBusProxy      *proxy;
-  GError          *error;
-
-  error = NULL;
-  connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
-  g_assert_no_error (error);
-  proxy = g_dbus_proxy_new_sync (connection,
-                                 G_DBUS_PROXY_FLAGS_NONE,
-                                 NULL,
-                                 "org.xfce.Thunar",       /* bus name */
-                                 "/org/xfce/FileManager", /* object path */
-                                 "org.xfce.Thunar",       /* interface name */
-                                 NULL,
-                                 &error);
-  g_assert_no_error (error);
-  g_dbus_proxy_call_sync (proxy,
-                          "Terminate",                    /* method name */
-                          NULL,
-                          G_DBUS_CALL_FLAGS_NONE,
-                          -1,
-                          NULL,
-                          &error);
-  g_assert_no_error (error);
-  g_object_unref (proxy);
-  g_object_unref (connection);
-}
-
-
-
-static void
-thunar_dialog_ask_terminate_old_daemon_activate (GtkApplication* app, gpointer user_data)
-{
-  GtkWidget *window;
-  GtkWidget *dialog;
-  gint       result;
-
-  window = gtk_application_window_new (app);
-  dialog = gtk_message_dialog_new (GTK_WINDOW (window), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO,
-          _("Thunar could not be launched because an older instance of thunar is still running.\n"
-            "Would you like to terminate the old thunar instance now?\n\n"
-            "Before accepting please make sure there are no pending operations (e.g. file copying) as terminating them may leave your files corrupted.\n\n"
-            "Please restart thunar afterwards."));
-  result = gtk_dialog_run (GTK_DIALOG (dialog));
-  if (result == GTK_RESPONSE_YES)
-    thunar_terminate_running_thunar ();
-  gtk_widget_destroy (window);
-  g_application_quit (G_APPLICATION (app));
-}
-
-
-
-static void
-thunar_dialog_ask_terminate_old_daemon (void)
-{
-  GtkApplication *app;
-
-  app = gtk_application_new ("terminate.old.thunar.daemon", G_APPLICATION_FLAGS_NONE);
-  g_signal_connect (app, "activate", G_CALLBACK (thunar_dialog_ask_terminate_old_daemon_activate), NULL);
-  g_application_run (G_APPLICATION (app), 0, 0);
-  g_object_unref (app);
-}
-
-
-
 int
 main (int argc, char **argv)
 {
@@ -159,16 +91,6 @@ main (int argc, char **argv)
 
   /* do further processing inside gapplication */
   g_application_run (G_APPLICATION (application), argc, argv);
-
-  /* Workaround to bypass "silent fail" if new thunar version is installed while an old version still runs as daemon */
-  /* FIXME: "g_application_register" and the following logic can be removed as soon as g_application/gdbus provides a way to prevent this error */
-  g_application_register (G_APPLICATION (application), NULL, &error);
-  if (error != NULL)
-    {
-      if (error->code == G_DBUS_ERROR_UNKNOWN_METHOD && strstr (error->message, "GDBus.Error:org.freedesktop.DBus.Error.UnknownMethod: Method \"DescribeAll\" with signature \"\" on interface \"org.gtk.Actions"))
-          thunar_dialog_ask_terminate_old_daemon ();
-      g_error_free (error);
-    }
 
   /* release the application reference */
   g_object_unref (G_OBJECT (application));
