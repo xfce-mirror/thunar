@@ -163,12 +163,11 @@ tse_ask_compress (GList *infos)
       if (g_file_info_get_file_type (tse_data->info) == G_FILE_TYPE_DIRECTORY)
         return TSE_RESPONSE_COMPRESS;
 
+      /* determine the content type */
+      content_type = g_file_info_get_content_type (tse_data->info);
       /* check if the single file is already an archive */
       for (n = 0; n < G_N_ELEMENTS (TSE_MIME_TYPES); ++n)
         {
-          /* determine the content type */
-          content_type = g_file_info_get_content_type (tse_data->info);
-
           /* check if this mime type matches */
           if (content_type != NULL && g_content_type_is_a (content_type, TSE_MIME_TYPES[n]))
             {
@@ -183,7 +182,7 @@ tse_ask_compress (GList *infos)
     }
 
   /* check if the total size is larger than 200KiB, or we have more than
-   * one file, and atleast one of the files is not already an archive.
+   * one file, and at least one of the files is not already an archive.
    */
   if ((n_infos > 1 || total_size > 200 * 1024) && n_infos != n_archives)
     {
