@@ -608,7 +608,8 @@ main (int argc, char **argv)
       info = g_file_query_info (file,
                                 G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME ","
                                 G_FILE_ATTRIBUTE_STANDARD_SIZE ","
-                                G_FILE_ATTRIBUTE_STANDARD_TYPE,
+                                G_FILE_ATTRIBUTE_STANDARD_TYPE ","
+                                G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
                                 G_FILE_QUERY_INFO_NONE, NULL, &error);
 
       /* check if we failed */
