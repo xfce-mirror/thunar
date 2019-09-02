@@ -139,12 +139,36 @@ tse_error (GError      *error,
   g_free (primary_text);
 }
 
+/**
+ * Check if the single file is already an archive
+ **/
+static gboolean
+tse_file_is_archive (GFileInfo *file_info)
+{
+  const gchar *content_type;
+  guint        n;
+  /* determine the content type */
+  content_type = g_file_info_get_content_type (file_info);
+  if (content_type == NULL)
+  {
+    return FALSE;
+  }
+  for (n = 0; n < G_N_ELEMENTS (TSE_MIME_TYPES); ++n)
+  {
+    /* check if this mime type matches */
+    if (g_content_type_is_a (content_type, TSE_MIME_TYPES[n]))
+    {
+      /* yep, that's a match then */
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
 
 
 static gint
 tse_ask_compress (GList *infos)
 {
-  const gchar *content_type;
   TseData     *tse_data;
   GtkWidget   *message;
   guint64      total_size = 0;
@@ -152,7 +176,6 @@ tse_ask_compress (GList *infos)
   gint         response = TSE_RESPONSE_PLAIN;
   gint         n_archives = 0;
   gint         n_infos = 0;
-  guint        n;
 
   /* check the file infos */
   for (lp = infos; lp != NULL; lp = lp->next, ++n_infos)
@@ -163,19 +186,8 @@ tse_ask_compress (GList *infos)
       if (g_file_info_get_file_type (tse_data->info) == G_FILE_TYPE_DIRECTORY)
         return TSE_RESPONSE_COMPRESS;
 
-      /* determine the content type */
-      content_type = g_file_info_get_content_type (tse_data->info);
-      /* check if the single file is already an archive */
-      for (n = 0; n < G_N_ELEMENTS (TSE_MIME_TYPES); ++n)
-        {
-          /* check if this mime type matches */
-          if (content_type != NULL && g_content_type_is_a (content_type, TSE_MIME_TYPES[n]))
-            {
-              /* yep, that's a match then */
-              ++n_archives;
-              break;
-            }
-        }
+      if (tse_file_is_archive (tse_data->info))
+        ++n_archives;
 
       /* add file size to total */
       total_size += g_file_info_get_size (tse_data->info);
