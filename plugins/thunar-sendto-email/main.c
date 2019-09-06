@@ -76,8 +76,12 @@ struct _TseData
 
 /* well known archive types */
 static const char *TSE_MIME_TYPES[] = {
+  "application/x-7z-compressed",
+  "application/x-7z-compressed-tar",
   "application/x-ar",
   "application/x-arj",
+  "application/x-brotli",
+  "application/x-brotli-compressed-tar",
   "application/x-bzip",
   "application/x-bzip-compressed-tar",
   "application/x-compress",
@@ -87,9 +91,13 @@ static const char *TSE_MIME_TYPES[] = {
   "application/x-gzip",
   "application/x-lha",
   "application/x-lhz",
+  "application/x-lzma",
+  "application/x-lzma-compressed-tar",
   "application/x-rar",
   "application/x-rar-compressed",
   "application/x-tar",
+  "application/x-xz",
+  "application/x-xz-compressed-tar",
   "application/x-zip",
   "application/x-zip-compressed",
   "application/zip",
@@ -100,6 +108,8 @@ static const char *TSE_MIME_TYPES[] = {
   "application/x-lzop",
   "application/x-zoo",
   "application/x-cd-image",
+  "application/zstd",
+  "application/x-zstd-compressed-tar",
 };
 
 
