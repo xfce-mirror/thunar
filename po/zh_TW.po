@@ -5,7 +5,8 @@
 # 
 # Translators:
 # Xfce Bot <transifex@xfce.org>, 2017
-# Jeff Huang <s8321414@gmail.com>, 2017
+# 黃柏諺 <s8321414@gmail.com>, 2017
+# Walter Cheuk <wwycheuk@gmail.com>, 2019
 # 
 #, fuzzy
 msgid ""
@@ -14,7 +15,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-10-10 06:30+0200\n"
 "PO-Revision-Date: 2017-09-04 20:27+0000\n"
-"Last-Translator: Jeff Huang <s8321414@gmail.com>, 2017\n"
+"Last-Translator: Walter Cheuk <wwycheuk@gmail.com>, 2019\n"
 "Language-Team: Chinese (Taiwan) (https://www.transifex.com/xfce/teams/16840/zh_TW/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -110,11 +111,11 @@ msgstr "讓檔案保持依類型排序"
 
 #: ../thunar/thunar-abstract-icon-view.c:125
 msgid "Sort By Modification _Date"
-msgstr "依修改日期排序(_D)"
+msgstr "依最後修改日期排序(_D)"
 
 #: ../thunar/thunar-abstract-icon-view.c:125
 msgid "Keep items sorted by their modification date"
-msgstr "讓檔案保持依其修改日期排序"
+msgstr "讓檔案保持依其最後修改日期排序"
 
 #: ../thunar/thunar-abstract-icon-view.c:130
 msgid "_Ascending"
@@ -293,7 +294,7 @@ msgstr "無法為「%s」設定預設應用程式"
 msgid ""
 "The selected application is used to open this and other files of type "
 "\"%s\"."
-msgstr "選取的應用程式用來開啟本檔案和其它「%s」形式的檔案"
+msgstr "所選的應用程式會用來開啟本檔案和其他「%s」類型的檔案"
 
 #: ../thunar/thunar-chooser-button.c:495
 msgid "No application selected"
@@ -348,7 +349,7 @@ msgstr "移除啟動器(_R)"
 #: ../thunar/thunar-chooser-dialog.c:657
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
-msgstr "開啟 <i>%s</i> 和其它「%s」類型的檔案，使用： "
+msgstr "開啟 <i>%s</i> 和其他「%s」類型的檔案，使用： "
 
 #: ../thunar/thunar-chooser-dialog.c:665
 #, c-format
@@ -515,7 +516,7 @@ msgstr "依需求自動延展欄位(_E)"
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:288
 #: ../plugins/thunar-uca/thunar-uca-editor.c:606
 msgid "Unknown"
-msgstr "未知的"
+msgstr "不詳"
 
 #: ../thunar/thunar-compact-view.c:102
 msgid "Compact directory listing"
@@ -671,17 +672,17 @@ msgstr "此資料夾已經包含檔案「%s」。"
 #: ../thunar/thunar-dialogs.c:603
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the link"
-msgstr "ReplaceDialogPart1|您是否想將該連結取代"
+msgstr "是否將該連結取代"
 
 #: ../thunar/thunar-dialogs.c:605
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the existing folder"
-msgstr "ReplaceDialogPart1|您是否想將現存資料夾取代"
+msgstr "是否將現有資料夾取代"
 
 #: ../thunar/thunar-dialogs.c:607
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
-msgstr "ReplaceDialogPart1|您是否想將現存檔案取代"
+msgstr "是否將現有檔案取代"
 
 #. Fourth box (size, volume, free space)
 #: ../thunar/thunar-dialogs.c:624 ../thunar/thunar-dialogs.c:655
@@ -692,22 +693,22 @@ msgstr "大小："
 #: ../thunar/thunar-dialogs.c:624 ../thunar/thunar-dialogs.c:655
 #: ../thunar/thunar-properties-dialog.c:440
 msgid "Modified:"
-msgstr "修改時間："
+msgstr "最後修改日期："
 
 #: ../thunar/thunar-dialogs.c:634
 #, c-format
 msgid "ReplaceDialogPart2|with the following link?"
-msgstr "ReplaceDialogPart2|為以下連結？"
+msgstr "為以下連結？"
 
 #: ../thunar/thunar-dialogs.c:636
 #, c-format
 msgid "ReplaceDialogPart2|with the following folder?"
-msgstr "ReplaceDialogPart2|為以下資料夾？"
+msgstr "為以下資料夾？"
 
 #: ../thunar/thunar-dialogs.c:638
 #, c-format
 msgid "ReplaceDialogPart2|with the following file?"
-msgstr "ReplaceDialogPart2|為以下檔案？"
+msgstr "為以下檔案？"
 
 #: ../thunar/thunar-dialogs.c:766
 #, c-format
@@ -758,12 +759,12 @@ msgstr "檔名及副檔名"
 #: ../thunar/thunar-enum-types.c:92
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:136
 msgid "Date Accessed"
-msgstr "存取日期"
+msgstr "最後存取日期"
 
 #: ../thunar/thunar-enum-types.c:93
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:137
 msgid "Date Modified"
-msgstr "修改日期"
+msgstr "最後修改日期"
 
 #: ../thunar/thunar-enum-types.c:94
 msgid "Group"
@@ -857,7 +858,7 @@ msgstr "%s 於 %s"
 #: ../thunar/thunar-gio-extensions.c:438
 #, c-format
 msgid "%s of %s free (%d%% used)"
-msgstr "%s 的 %s 可用（%d%% 已使用）"
+msgstr "%s / %s 可用（已使用 %d%%）"
 
 #. extend history tooltip with function of the button
 #: ../thunar/thunar-history-action.c:372
@@ -978,13 +979,13 @@ msgid ""
 "\n"
 "If you replace an existing file, its contents will be overwritten."
 msgstr ""
-"檔案「%s」已經存在。您想要取而代之嗎？\n"
+"檔案「%s」已經存在。想要取而代之嗎？\n"
 "\n"
-"如果您要取代已經存在的檔案，其內容將被覆寫。"
+"如果要取代已經存在的檔案，其內容將被覆寫。"
 
 #: ../thunar/thunar-job.c:334
 msgid "Do you want to overwrite it?"
-msgstr "您想要覆寫它嗎？"
+msgstr "要覆寫它嗎？"
 
 #: ../thunar/thunar-job.c:388
 msgid "Do you want to create it?"
@@ -1016,22 +1017,22 @@ msgstr "開啟(_O)"
 #: ../thunar/thunar-launcher.c:178 ../thunar/thunar-launcher.c:860
 #: ../thunar/thunar-tree-view.c:1294
 msgid "Open in New _Tab"
-msgstr "在新分頁中開啟(_T)"
+msgstr "在新分頁開啟(_T)"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:179 ../thunar/thunar-launcher.c:854
 #: ../thunar/thunar-tree-view.c:1301
 msgid "Open in New _Window"
-msgstr "在新視窗中開啟(_W)"
+msgstr "在新視窗開啟(_W)"
 
 #: ../thunar/thunar-launcher.c:180 ../thunar/thunar-launcher.c:182
 msgid "Open With Other _Application..."
-msgstr "以其它應用程式開啟(_A)..."
+msgstr "以其他應用程式開啟(_A)..."
 
 #: ../thunar/thunar-launcher.c:180 ../thunar/thunar-launcher.c:182
 #: ../thunar/thunar-launcher.c:968
 msgid "Choose another application with which to open the selected file"
-msgstr "選擇其它應用程式來開啟選取的檔案"
+msgstr "選擇其他應用程式來開啟選取的檔案"
 
 #: ../thunar/thunar-launcher.c:676
 #, c-format
@@ -1047,7 +1048,7 @@ msgstr[0] "無法開啟 %d 個檔案"
 
 #: ../thunar/thunar-launcher.c:721
 msgid "Are you sure you want to open all folders?"
-msgstr "您真的要開啟所有的資料夾嗎？"
+msgstr "真的要開啟所有資料夾嗎？"
 
 #: ../thunar/thunar-launcher.c:723
 #, c-format
@@ -1066,34 +1067,34 @@ msgstr[0] "開啟 %d 個新視窗"
 #, c-format
 msgid "Open in %d New _Window"
 msgid_plural "Open in %d New _Windows"
-msgstr[0] "在 %d 個新視窗中開啟(_W)"
+msgstr[0] "在 %d 個新視窗開啟(_W)"
 
 #: ../thunar/thunar-launcher.c:828
 #, c-format
 msgid "Open the selected directory in %d new window"
 msgid_plural "Open the selected directories in %d new windows"
-msgstr[0] "在 %d 個新視窗中開啟所選取的目錄"
+msgstr[0] "在 %d 個新視窗開啟所選取的目錄"
 
 #. turn "Open in New Tab" into "Open in x New Tabs"
 #: ../thunar/thunar-launcher.c:839
 #, c-format
 msgid "Open in %d New _Tab"
 msgid_plural "Open in %d New _Tabs"
-msgstr[0] "在 %d 個新分頁中開啟(_T)"
+msgstr[0] "在 %d 個新分頁開啟(_T)"
 
 #: ../thunar/thunar-launcher.c:840
 #, c-format
 msgid "Open the selected directory in %d new tab"
 msgid_plural "Open the selected directories in %d new tabs"
-msgstr[0] "在 %d 個新分頁中開啟所選取的目錄"
+msgstr[0] "在 %d 個新分頁開啟所選取的目錄"
 
 #: ../thunar/thunar-launcher.c:855
 msgid "Open the selected directory in a new window"
-msgstr "在新視窗中開啟所選取的目錄"
+msgstr "在新視窗開啟所選取的目錄"
 
 #: ../thunar/thunar-launcher.c:861
 msgid "Open the selected directory in a new tab"
-msgstr "在新分頁中開啟所選取的目錄"
+msgstr "在新分頁開啟所選取的目錄"
 
 #. set tooltip that makes sence
 #: ../thunar/thunar-launcher.c:865
@@ -1128,7 +1129,7 @@ msgstr[0] "以「%s」開啟所選取的檔案"
 
 #: ../thunar/thunar-launcher.c:967
 msgid "_Open With Other Application..."
-msgstr "以其它應用程式開啟(_O)..."
+msgstr "以其他應用程式開啟(_O)..."
 
 #: ../thunar/thunar-launcher.c:976
 msgid "_Open With Default Applications"
@@ -1266,13 +1267,13 @@ msgstr "%s, %s"
 #: ../thunar/thunar-location-buttons.c:176
 #: ../thunar/thunar-shortcuts-view.c:1105
 msgid "Open in New Tab"
-msgstr "在新分頁中開啟"
+msgstr "在新分頁開啟"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-location-buttons.c:177
 #: ../thunar/thunar-shortcuts-view.c:1111
 msgid "Open in New Window"
-msgstr "在新視窗中開啟"
+msgstr "在新視窗開啟"
 
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-location-buttons.c:178
@@ -1305,17 +1306,17 @@ msgstr "路徑按鈕之間間隔的大小"
 #: ../thunar/thunar-location-buttons.c:1244
 #, c-format
 msgid "Open \"%s\" in this window"
-msgstr "在本視窗中開啟「%s」"
+msgstr "在本視窗開啟「%s」"
 
 #: ../thunar/thunar-location-buttons.c:1250
 #, c-format
 msgid "Open \"%s\" in a new window"
-msgstr "在新視窗中開啟「%s」"
+msgstr "在新視窗開啟「%s」"
 
 #: ../thunar/thunar-location-buttons.c:1255
 #, c-format
 msgid "Open \"%s\" in a new tab"
-msgstr "在新分頁中開啟「%s」"
+msgstr "在新分頁開啟「%s」"
 
 #: ../thunar/thunar-location-buttons.c:1260
 #, c-format
@@ -1400,7 +1401,7 @@ msgstr "擁有者："
 
 #: ../thunar/thunar-permissions-chooser.c:237
 msgid "_Access:"
-msgstr "存取(_A)："
+msgstr "存取權限(_A)："
 
 #: ../thunar/thunar-permissions-chooser.c:261
 msgid "Gro_up:"
@@ -1507,7 +1508,7 @@ msgstr "唯讀"
 #. 0004
 #: ../thunar/thunar-permissions-chooser.c:997
 msgid "Read & Write"
-msgstr "可讀寫"
+msgstr "讀寫"
 
 #: ../thunar/thunar-permissions-chooser.c:999
 msgid "Varying (no change)"
@@ -1747,11 +1748,11 @@ msgstr "中鍵點擊"
 
 #: ../thunar/thunar-preferences-dialog.c:573
 msgid "Open folder in new _window"
-msgstr "在新視窗中開啟資料夾(_W)"
+msgstr "在新視窗開啟資料夾(_W)"
 
 #: ../thunar/thunar-preferences-dialog.c:578
 msgid "Open folder in new _tab"
-msgstr "在新分頁中開啟資料夾(_T)"
+msgstr "在新分頁開啟資料夾(_T)"
 
 #. Advanced
 #: ../thunar/thunar-preferences-dialog.c:587
@@ -1860,7 +1861,7 @@ msgstr "刪除時間："
 
 #: ../thunar/thunar-properties-dialog.c:454
 msgid "Accessed:"
-msgstr "存取時間："
+msgstr "最後存取日期："
 
 #: ../thunar/thunar-properties-dialog.c:492
 msgid "Volume:"
@@ -1993,7 +1994,7 @@ msgstr ""
 #. tell the user that we failed
 #: ../thunar/thunar-renamer-dialog.c:954
 msgid "Failed to open the documentation browser"
-msgstr "無法開啟文件瀏覽器"
+msgstr "無法開啟說明文件瀏覽器"
 
 #. allocate the file chooser
 #: ../thunar/thunar-renamer-dialog.c:1057
@@ -2181,7 +2182,7 @@ msgstr "計算過程中斷"
 #, c-format
 msgid "%u item, totalling %s"
 msgid_plural "%u items, totalling %s"
-msgstr[0] "%u 項目，總共 %s"
+msgstr[0] "%u 個項目，總共 %s"
 
 #. TRANSLATORS: this is shows if during the deep count size
 #. * directories were not accessible
@@ -3606,7 +3607,7 @@ msgstr "以 Thunar 開啟資料夾"
 
 #: ../Thunar-folder-handler.desktop.in.in.h:2
 msgid "Open the specified folders in Thunar"
-msgstr "在 Thunar 中開啟指定的資料夾"
+msgstr "在 Thunar 開啟指定的資料夾"
 
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open Folder"
