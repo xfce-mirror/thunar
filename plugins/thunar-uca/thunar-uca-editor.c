@@ -655,7 +655,7 @@ thunar_uca_editor_save (ThunarUcaEditor *uca_editor,
                       -1);
 
   /* always clear the accelerator, it'll be updated in thunar_uca_model_update */
-  if (gtk_accel_map_lookup_entry (uca_editor->accel_path, &key) && key.accel_key != 0)
+  if (uca_editor->accel_path != NULL && gtk_accel_map_lookup_entry (uca_editor->accel_path, &key) && key.accel_key != 0)
     gtk_accel_map_change_entry (uca_editor->accel_path, 0, 0, TRUE);
 
   thunar_uca_model_update (uca_model, iter,
