@@ -1263,9 +1263,23 @@ thunar_uca_model_remove (ThunarUcaModel *uca_model,
 {
   ThunarUcaModelItem *item;
   GtkTreePath        *path;
+  gchar              *unique_id;
+  gchar              *accel_path;
+  GtkAccelKey         key;
 
   g_return_if_fail (THUNAR_UCA_IS_MODEL (uca_model));
   g_return_if_fail (iter->stamp == uca_model->stamp);
+
+  /* clear any accelerator associated to the item */
+  gtk_tree_model_get (GTK_TREE_MODEL (uca_model), iter,
+                      THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID, &unique_id, 
+                      -1);
+  accel_path = g_strdup_printf ("<Actions>/ThunarActions/uca-action-%s", unique_id);
+
+  if (gtk_accel_map_lookup_entry (accel_path, &key) && key.accel_key != 0)
+    gtk_accel_map_change_entry (accel_path, 0, 0, TRUE);
+
+  g_free (accel_path);
 
   /* determine the path for the item to remove */
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (uca_model), iter);
