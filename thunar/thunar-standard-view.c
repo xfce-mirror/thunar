@@ -159,8 +159,7 @@ static ThunarFile          *thunar_standard_view_get_drop_file              (Thu
                                                                              gint                      x,
                                                                              gint                      y,
                                                                              GtkTreePath             **path_return);
-static void                 thunar_standard_view_merge_custom_actions       (ThunarStandardView       *standard_view,
-                                                                             GList                    *selected_items);
+static void                 thunar_standard_view_merge_custom_actions       (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_update_statusbar_text      (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_current_directory_destroy  (ThunarFile               *current_directory,
                                                                              ThunarStandardView       *standard_view);
@@ -2050,8 +2049,7 @@ thunar_standard_view_get_drop_file (ThunarStandardView *standard_view,
 
 
 static void
-thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
-                                           GList              *selected_items)
+thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view)
 {
   GtkTreeIter      iter;
   ThunarFile      *file = NULL;
@@ -2061,6 +2059,7 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
   GList           *files = NULL;
   GList           *tmp;
   GList           *lp;
+  GList           *selected_items;
   gchar           *path;
 
   /* we cannot add anything if we aren't connected to any UI manager */
@@ -2069,6 +2068,9 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
 
   /* determine the toplevel window we belong to */
   window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
+
+  /* get the selected items */
+  selected_items = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
 
   /* load the menu providers from the provider factory */
   providers = thunarx_provider_factory_list_providers (standard_view->priv->provider_factory, THUNARX_TYPE_MENU_PROVIDER);
@@ -4368,15 +4370,12 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view)
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
-  /* merge the custom menu actions for the selected items */
-  selected_items = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
-  thunar_standard_view_merge_custom_actions (standard_view, selected_items);
-
   /* grab an additional reference on the view */
   g_object_ref (G_OBJECT (standard_view));
 
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* run the menu (figuring out whether to use the file or the folder context menu) */
+  selected_items = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   menu = gtk_ui_manager_get_widget (standard_view->ui_manager, (selected_items != NULL) ? "/file-context-menu" : "/folder-context-menu");
 G_GNUC_END_IGNORE_DEPRECATIONS
   /* if there is a drag_timer_event (long press), we use it */
@@ -4629,6 +4628,9 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* update the statusbar text */
   thunar_standard_view_update_statusbar_text (standard_view);
+
+  /* merge the custom actions */
+  thunar_standard_view_merge_custom_actions (standard_view);
 
   /* emit notification for "selected-files" */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_SELECTED_FILES]);
