@@ -553,6 +553,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
                                         _("_Replace"), THUNAR_JOB_RESPONSE_YES,
                                         NULL);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), THUNAR_JOB_RESPONSE_YES);
+  gtk_widget_set_halign (gtk_dialog_get_action_area (dialog), GTK_ALIGN_CENTER);
 
   /* determine the icon factory to use */
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (dialog));
