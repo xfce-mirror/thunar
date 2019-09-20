@@ -597,6 +597,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_big ());
   gtk_widget_set_hexpand (label, TRUE);
+  gtk_label_set_selectable(GTK_LABEL (label), TRUE);
   gtk_grid_attach (GTK_GRID (grid), label, 1, 0, 2, 1);
   gtk_widget_show (label);
   g_free (text);
