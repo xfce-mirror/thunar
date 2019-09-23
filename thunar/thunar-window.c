@@ -1120,7 +1120,7 @@ static gboolean thunar_window_delete( GtkWidget *widget,
 
   /* ask the user for confirmation */
   dialog = gtk_dialog_new_with_buttons (_("Warning"),
-                                        GTK_WINDOW (dialog),
+                                        GTK_WINDOW (widget),
                                         GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT,
                                         _("_Cancel"), GTK_RESPONSE_CANCEL,
                                         _("Close T_ab"), GTK_RESPONSE_CLOSE,
