@@ -108,8 +108,8 @@ thunar_apr_image_page_init (ThunarAprImagePage *image_page)
   AtkObject      *object;
   GtkWidget      *label;
   GtkWidget      *grid;
-  GtkWidget      *spacer;
 #ifdef HAVE_EXIF
+  GtkWidget      *spacer;
   guint           n;
 #endif
 
