@@ -1722,11 +1722,19 @@ thunar_standard_view_reload (ThunarView *view,
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
   ThunarFolder       *folder;
+  ThunarFile         *file;
 
   /* determine the folder for the view model */
   folder = thunar_list_model_get_folder (standard_view->model);
   if (G_LIKELY (folder != NULL))
-    thunar_folder_reload (folder, reload_info);
+    {
+      file = thunar_folder_get_corresponding_file (folder);
+
+      if (thunar_file_exists (file))
+          thunar_folder_reload (folder, reload_info);
+      else
+          thunar_standard_view_current_directory_destroy (file, standard_view);
+    }
 
   /* schedule thumbnail reload update */
   if (!standard_view->priv->thumbnailing_scheduled)
