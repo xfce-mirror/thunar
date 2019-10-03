@@ -1280,7 +1280,7 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       /* setup the "Empty Trash" action */
       action = gtk_action_group_get_action (buttons->action_group, "location-buttons-empty-trash");
       gtk_action_set_visible (action, (thunar_file_is_root (file) && thunar_file_is_trashed (file)));
-      gtk_action_set_sensitive (action, (thunar_file_get_size (file) > 0));
+      gtk_action_set_sensitive (action, (thunar_file_get_item_count (file) > 0));
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), gtk_action_create_menu_item (action));
 G_GNUC_END_IGNORE_DEPRECATIONS
 
