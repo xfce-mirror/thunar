@@ -304,6 +304,8 @@ thunar_dialogs_show_error (gpointer      parent,
   GdkScreen *screen;
   va_list    args;
   gchar     *primary_text;
+  GList     *children;
+  GList     *lp;
 
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
 
@@ -335,12 +337,19 @@ thunar_dialogs_show_error (gpointer      parent,
   if (G_LIKELY (error != NULL))
     gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s.", error->message);
 
+  children = gtk_container_get_children (GTK_CONTAINER (gtk_message_dialog_get_message_area (dialog)));
+
+  /* the assumption here is that all children are labels */
+  for (lp = children; lp != NULL; lp = lp->next)
+    gtk_label_set_line_wrap_mode (GTK_LABEL (lp->data), PANGO_WRAP_WORD_CHAR);
+
   /* display the dialog */
   gtk_dialog_run (GTK_DIALOG (dialog));
 
   /* cleanup */
   gtk_widget_destroy (dialog);
   g_free (primary_text);
+  g_list_free (children);
 }
 
 
