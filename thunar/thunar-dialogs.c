@@ -337,11 +337,13 @@ thunar_dialogs_show_error (gpointer      parent,
   if (G_LIKELY (error != NULL))
     gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s.", error->message);
 
-  children = gtk_container_get_children (GTK_CONTAINER (gtk_message_dialog_get_message_area (dialog)));
+  children = gtk_container_get_children (
+    GTK_CONTAINER (gtk_message_dialog_get_message_area (GTK_MESSAGE_DIALOG (dialog))));
 
-  /* the assumption here is that all children are labels */
+  /* enable wrap for labels */
   for (lp = children; lp != NULL; lp = lp->next)
-    gtk_label_set_line_wrap_mode (GTK_LABEL (lp->data), PANGO_WRAP_WORD_CHAR);
+    if (GTK_IS_LABEL (lp->data))
+      gtk_label_set_line_wrap_mode (GTK_LABEL (lp->data), PANGO_WRAP_WORD_CHAR);
 
   /* display the dialog */
   gtk_dialog_run (GTK_DIALOG (dialog));
