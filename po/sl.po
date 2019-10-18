@@ -112,12 +112,12 @@ msgstr "Natisni informacije o različici in izstopi"
 #: ../thunar/thunar-application.c:292
 #, c-format
 msgid "Acquired the session message bus '%s'\n"
-msgstr ""
+msgstr "Pridobljeno vodilo za sporočila seje '%s'\n"
 
 #: ../thunar/thunar-application.c:302
 #, c-format
 msgid "Acquired the name '%s' on the session message bus\n"
-msgstr ""
+msgstr "Acquired the name '%s' on the session message bus\n"
 
 #: ../thunar/thunar-application.c:312
 #, c-format
@@ -1772,6 +1772,9 @@ msgid ""
 "\n"
 "For a complete list, check the man pages of 'strftime'"
 msgstr ""
+"Uveljavljanje lastnega formata datuma.\n"
+"\n"
+"Najbolj pogosti določevalci so:"
 
 #. Side Pane
 #: ../thunar/thunar-preferences-dialog.c:430
@@ -1789,52 +1792,52 @@ msgstr "Velikost _ikon:"
 #: ../thunar/thunar-preferences-dialog.c:458
 #: ../thunar/thunar-preferences-dialog.c:506
 msgid "16px"
-msgstr ""
+msgstr "16px"
 
 #: ../thunar/thunar-preferences-dialog.c:459
 #: ../thunar/thunar-preferences-dialog.c:507
 msgid "24px"
-msgstr ""
+msgstr "24px"
 
 #: ../thunar/thunar-preferences-dialog.c:460
 #: ../thunar/thunar-preferences-dialog.c:508
 msgid "32px"
-msgstr ""
+msgstr "32px"
 
 #: ../thunar/thunar-preferences-dialog.c:461
 #: ../thunar/thunar-preferences-dialog.c:509
 msgid "48px"
-msgstr ""
+msgstr "48px"
 
 #: ../thunar/thunar-preferences-dialog.c:462
 #: ../thunar/thunar-preferences-dialog.c:510
 msgid "64px"
-msgstr ""
+msgstr "64px"
 
 #: ../thunar/thunar-preferences-dialog.c:463
 #: ../thunar/thunar-preferences-dialog.c:511
 msgid "96px"
-msgstr ""
+msgstr "96px"
 
 #: ../thunar/thunar-preferences-dialog.c:464
 #: ../thunar/thunar-preferences-dialog.c:512
 msgid "128px"
-msgstr ""
+msgstr "128px"
 
 #: ../thunar/thunar-preferences-dialog.c:465
 #: ../thunar/thunar-preferences-dialog.c:513
 msgid "160px"
-msgstr ""
+msgstr "160px"
 
 #: ../thunar/thunar-preferences-dialog.c:466
 #: ../thunar/thunar-preferences-dialog.c:514
 msgid "192px"
-msgstr ""
+msgstr "192px"
 
 #: ../thunar/thunar-preferences-dialog.c:467
 #: ../thunar/thunar-preferences-dialog.c:515
 msgid "256px"
-msgstr ""
+msgstr "256px"
 
 #: ../thunar/thunar-preferences-dialog.c:476
 msgid "Show Icon _Emblems"
@@ -1921,38 +1924,43 @@ msgstr "_Dvoklik za aktiviranje predmetov"
 
 #: ../thunar/thunar-preferences-dialog.c:635
 msgid "Tabs instead of new Windows"
-msgstr ""
+msgstr "Zavihki namesto novih oken"
 
 #: ../thunar/thunar-preferences-dialog.c:648
 msgid "Open folders in new tabs on middle click"
-msgstr ""
+msgstr "Odpre mape v novih zavihkih ob pritisku na srednjo tipko miške"
 
 #: ../thunar/thunar-preferences-dialog.c:650
 msgid ""
 "Select this option to open a new tab on middle click instead of a new window"
 msgstr ""
+"Izberite to možnost za odpiranje novega zavihka namesto okna, ob pritisku na"
+" srednjo tipko miške"
 
 #: ../thunar/thunar-preferences-dialog.c:654
 msgid "Open new thunar instances as tabs"
-msgstr ""
+msgstr "Odpri nove thunar instance kot zavihke"
 
 #: ../thunar/thunar-preferences-dialog.c:656
 msgid ""
 "Select this option to open new thunar instances as tabs in an existing "
 "thunar window"
 msgstr ""
+"Izberite to možnost za odpiranje novih instanc thunarja, kot zavihkov v "
+"obstoječem thunar oknu"
 
 #: ../thunar/thunar-preferences-dialog.c:667
 msgid "Context Menu"
-msgstr ""
+msgstr "Kontekstualni menu"
 
 #: ../thunar/thunar-preferences-dialog.c:679
 msgid "Show action to permanently delete files and folders"
-msgstr ""
+msgstr "Prikaži dejanje, ki za stalno izbriše datoteke in mape"
 
 #: ../thunar/thunar-preferences-dialog.c:681
 msgid "Select this option to show the 'Delete' action in the context menu"
 msgstr ""
+"Izberite to možnost za prikaz dejanja 'Izbriši' v kontekstualnem meniju"
 
 #. Advanced
 #: ../thunar/thunar-preferences-dialog.c:690
@@ -1999,10 +2007,12 @@ msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr ""
+"<a href=\"volman-config:\">Nastavite</a> urejanje odstranljivih pogonov,\n"
+"naprav in nosilcev."
 
 #: ../thunar/thunar-preferences-dialog.c:777
 msgid "Missing dependencies"
-msgstr ""
+msgstr "Manjkajoče odvisnosti"
 
 #: ../thunar/thunar-preferences-dialog.c:785
 msgid ""
@@ -2011,6 +2021,10 @@ msgid ""
 "removable media and remote location browsing\n"
 "will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
 msgstr ""
+"Videti je, da <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> ni na voljo.\n"
+"Pomembne funkcije, vključno s podporo smetem,\n"
+"odstranljivimi nosilci in brskanjem po oddaljenih lokacijah,\n"
+"ne bodo delovale. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Preberite več]</a>"
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
@@ -2549,7 +2563,7 @@ msgstr "_Vzorec:"
 #. invalid
 #: ../thunar/thunar-standard-view.c:3268
 msgid "Invalid filename provided by XDS drag site"
-msgstr ""
+msgstr "XDS vlečna stran je podala napačno ime"
 
 #. display an error dialog to the user
 #: ../thunar/thunar-standard-view.c:3458
@@ -2801,19 +2815,19 @@ msgstr "Odpri trenutno mapo v novem oknu"
 
 #: ../thunar/thunar-window.c:357
 msgid "_Previous Tab"
-msgstr ""
+msgstr "_Prejšnji zavihek"
 
 #: ../thunar/thunar-window.c:357
 msgid "Switch to Previous Tab"
-msgstr ""
+msgstr "Preklopi na prejšnji zavihek"
 
 #: ../thunar/thunar-window.c:358
 msgid "_Next Tab"
-msgstr ""
+msgstr "_Naslednji zavihek"
 
 #: ../thunar/thunar-window.c:358
 msgid "Switch to Next Tab"
-msgstr ""
+msgstr "Preklopi na naslednji zavihek"
 
 #: ../thunar/thunar-window.c:359
 msgid "Close _All Windows"
@@ -3351,11 +3365,11 @@ msgstr "VELIKE ČRKE"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:95
 msgid "Title Case"
-msgstr ""
+msgstr "Velikost črk naslova"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:96
 msgid "First character uppercase"
-msgstr ""
+msgstr "Prva črka z veliko"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:102
 msgid "Insert"
@@ -3383,7 +3397,7 @@ msgstr "0001, 0002, 0003, ..."
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:113
 msgid "00001, 00002, 00003, ..."
-msgstr ""
+msgstr "00001, 00002, 00003, ..."
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:114
 msgid "a, b, c, d, ..."
@@ -3655,11 +3669,11 @@ msgstr "Odstranjeno prilagojeno dejanje bo trajno izgubljeno."
 #: ../plugins/thunar-uca/thunar-uca-editor.c:353
 #, c-format
 msgid "This keyboard shortcut is currently used by: '%s'"
-msgstr ""
+msgstr "Ta bližnjica na tipkovnici je trenutno uporabljena s strani: '%s' "
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:356
 msgid "Keyboard shortcut already in use"
-msgstr ""
+msgstr "Bližnjica na tipkovnici je že v rabi"
 
 #. setup a label to tell that no icon was selected
 #: ../plugins/thunar-uca/thunar-uca-editor.c:507
@@ -3759,15 +3773,15 @@ msgstr "Prebrskaj datotečni sistem za izbiro programa za to dejanje."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:10
 msgid "Keyboard _Shortcut:"
-msgstr ""
+msgstr "_Bližnjica na tipkovnici"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:11
 msgid "The keyboard shortcut for the action."
-msgstr ""
+msgstr "Bližnjica na tipkovnici za to dejanje."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:12
 msgid "Clear the keyboard shortcut for this action."
-msgstr ""
+msgstr "Izbriši bližnjico na tipkovnici za to dejanje."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:13
 msgid "Use Startup Notification"
@@ -3798,15 +3812,15 @@ msgstr ""
 msgid ""
 "The following command parameters will be substituted when launching the "
 "action:"
-msgstr ""
+msgstr "Naslednji parametri ukaza bodo zamenjani, ko zaženete to dejanje:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:19
 msgid "the path to the first selected file or directory"
-msgstr ""
+msgstr "pot do prve izbrane datoteke ali direktorija"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:20
 msgid "the paths to all selected files and directories"
-msgstr ""
+msgstr "pot do vseh izbranih datotek in direktorijev"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:22
 #, no-c-format
@@ -3847,7 +3861,7 @@ msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:30
 msgid "*"
-msgstr ""
+msgstr "*"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:31
 msgid "Appears if selection contains:"
@@ -3886,6 +3900,12 @@ msgid ""
 "these patterns must match the name of the file or folder. Additionally, you "
 "can specify that the action should only appear for certain kinds of files."
 msgstr ""
+"Ta stran navaja pogoje, pod katerimi se bodo akcije pojavile v "
+"kontekstualnem meniju upravljalnika datotek. Vzorci datotek so določeni kot "
+"preprosti vzorci datotek, ki so ločeni s podpičji (npr. *.txt;*.doc). Da bi "
+"se dejanje pojavilo v kontekstualnem meniju datoteke ali mape, se mora vsaj "
+"eden od teh vzorcev ujemati z imenom datoteke ali mape. Poleg tega lahko "
+"določite, da se dejanje pojavi le za določeno vrsto datotek."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:39
 msgid "Appearance Conditions"
@@ -3900,6 +3920,8 @@ msgid ""
 "You can configure custom actions that will appear in the file managers "
 "context menus for certain kinds of files."
 msgstr ""
+"Dejanja lahko oblikujete po lastnih merilih, ta pa se bodo pojavila v "
+"kontekstualnem meniju upravljalnika datotek za določene vrste datotek."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.ui.h:3
 msgid "Add a new custom action."
@@ -3935,7 +3957,7 @@ msgstr "Brskajte po datotečnem sistemu z upravljalnikom datotek"
 
 #: ../thunar/thunar-settings.desktop.in.h:1
 msgid "File Manager Settings"
-msgstr ""
+msgstr "Nastavitve upravljalnika datotek"
 
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "Configure the Thunar file manager"
