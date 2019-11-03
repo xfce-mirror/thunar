@@ -191,6 +191,12 @@ thunar_gdk_screen_open (const gchar *display_name,
           display = dp->data;
           break;
         }
+      /* This second comparison will as well match the short notation, ":0" with the long notation ":0.0" */
+      if (strncmp (other_name, display_name, strlen (other_name)) == 0)
+        {
+          display = dp->data;
+          break;
+        }
     }
   g_slist_free (displays);
 
