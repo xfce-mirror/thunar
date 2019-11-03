@@ -96,6 +96,7 @@ _thunar_io_jobs_create (ThunarJob  *job,
   GList             *lp;
   gchar             *base_name;
   gchar             *display_name;
+  guint              n_processed = 0;
   GFile             *template_file;
   GFileInputStream  *template_stream = NULL;
 
@@ -126,12 +127,12 @@ _thunar_io_jobs_create (ThunarJob  *job,
   /* iterate over all files in the list */
   for (lp = file_list;
        err == NULL && lp != NULL && !exo_job_is_cancelled (EXO_JOB (job));
-       lp = lp->next)
+       lp = lp->next, n_processed++)
     {
       g_assert (G_IS_FILE (lp->data));
 
       /* update progress information */
-      thunar_job_processing_file (THUNAR_JOB (job), lp);
+      thunar_job_processing_file (THUNAR_JOB (job), lp, n_processed);
 
 again:
       /* try to create the file */
@@ -272,6 +273,7 @@ _thunar_io_jobs_mkdir (ThunarJob  *job,
   GList            *lp;
   gchar            *base_name;
   gchar            *display_name;
+  guint             n_processed = 0;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -285,12 +287,12 @@ _thunar_io_jobs_mkdir (ThunarJob  *job,
 
   for (lp = file_list;
        err == NULL && lp != NULL && !exo_job_is_cancelled (EXO_JOB (job));
-       lp = lp->next)
+       lp = lp->next,  n_processed++)
     {
       g_assert (G_IS_FILE (lp->data));
 
       /* update progress information */
-      thunar_job_processing_file (THUNAR_JOB (job), lp);
+      thunar_job_processing_file (THUNAR_JOB (job), lp, n_processed);
 
 again:
       /* try to create the directory */
@@ -410,6 +412,7 @@ _thunar_io_jobs_unlink (ThunarJob  *job,
   GList                *lp;
   gchar                *base_name;
   gchar                *display_name;
+  guint                 n_processed = 0;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -446,7 +449,9 @@ _thunar_io_jobs_unlink (ThunarJob  *job,
   g_object_unref (application);
 
   /* remove all the files */
-  for (lp = file_list; lp != NULL && !exo_job_is_cancelled (EXO_JOB (job)); lp = lp->next)
+  for (lp = file_list;
+       lp != NULL && !exo_job_is_cancelled (EXO_JOB (job));
+       lp = lp->next, n_processed++)
     {
       g_assert (G_IS_FILE (lp->data));
 
@@ -455,7 +460,7 @@ _thunar_io_jobs_unlink (ThunarJob  *job,
         continue;
 
       /* update progress information */
-      thunar_job_processing_file (THUNAR_JOB (job), lp);
+      thunar_job_processing_file (THUNAR_JOB (job), lp, n_processed);
 
 again:
       /* try to delete the file */
@@ -708,6 +713,7 @@ _thunar_io_jobs_link (ThunarJob  *job,
   GList                *sp;
   GList                *target_file_list;
   GList                *tp;
+  guint                 n_processed = 0;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -728,13 +734,13 @@ _thunar_io_jobs_link (ThunarJob  *job,
   /* process all files */
   for (sp = source_file_list, tp = target_file_list;
        err == NULL && sp != NULL && tp != NULL;
-       sp = sp->next, tp = tp->next)
+       sp = sp->next, tp = tp->next, n_processed++)
     {
       _thunar_assert (G_IS_FILE (sp->data));
       _thunar_assert (G_IS_FILE (tp->data));
 
       /* update progress information */
-      thunar_job_processing_file (THUNAR_JOB (job), sp);
+      thunar_job_processing_file (THUNAR_JOB (job), sp, n_processed);
 
       /* try to create the symbolic link */
       real_target_file = _thunar_io_jobs_link_file (job, sp->data, tp->data, &err);
@@ -888,6 +894,7 @@ _thunar_io_jobs_chown (ThunarJob  *job,
   GList            *lp;
   gint              uid;
   gint              gid;
+  guint             n_processed = 0;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (param_values != NULL, FALSE);
@@ -917,10 +924,10 @@ _thunar_io_jobs_chown (ThunarJob  *job,
   thunar_job_set_total_files (THUNAR_JOB (job), file_list);
 
   /* change the ownership of all files */
-  for (lp = file_list; lp != NULL && err == NULL; lp = lp->next)
+  for (lp = file_list; lp != NULL && err == NULL; lp = lp->next, n_processed++)
     {
       /* update progress information */
-      thunar_job_processing_file (THUNAR_JOB (job), lp);
+      thunar_job_processing_file (THUNAR_JOB (job), lp, n_processed);
 
       /* try to query information about the file */
       info = g_file_query_info (lp->data,
@@ -1022,6 +1029,7 @@ _thunar_io_jobs_chmod (ThunarJob  *job,
   GError           *err = NULL;
   GList            *file_list;
   GList            *lp;
+  guint             n_processed = 0;
   ThunarFileMode    dir_mask;
   ThunarFileMode    dir_mode;
   ThunarFileMode    file_mask;
@@ -1059,10 +1067,10 @@ _thunar_io_jobs_chmod (ThunarJob  *job,
   thunar_job_set_total_files (THUNAR_JOB (job), file_list);
 
   /* change the ownership of all files */
-  for (lp = file_list; lp != NULL && err == NULL; lp = lp->next)
+  for (lp = file_list; lp != NULL && err == NULL; lp = lp->next, n_processed++)
     {
       /* update progress information */
-      thunar_job_processing_file (THUNAR_JOB (job), lp);
+      thunar_job_processing_file (THUNAR_JOB (job), lp, n_processed);
 
       /* try to query information about the file */
       info = g_file_query_info (lp->data,

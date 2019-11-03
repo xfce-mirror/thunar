@@ -69,7 +69,8 @@ GType             thunar_job_get_type               (void) G_GNUC_CONST;
 void              thunar_job_set_total_files        (ThunarJob       *job,
                                                      GList           *total_files);
 void              thunar_job_processing_file        (ThunarJob       *job,
-                                                     GList           *current_file);
+                                                     GList           *current_file,
+                                                     guint            n_processed);
 
 ThunarJobResponse thunar_job_ask_create             (ThunarJob       *job,
                                                      const gchar     *format,
