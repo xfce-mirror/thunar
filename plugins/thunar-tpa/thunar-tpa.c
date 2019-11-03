@@ -156,7 +156,7 @@ thunar_tpa_init (ThunarTpa *plugin)
   GError *error = NULL;
 
   /* setup the button for the trash plugin */
-  plugin->button = xfce_create_panel_button ();
+  plugin->button = xfce_panel_create_button ();
   xfce_panel_plugin_add_action_widget (XFCE_PANEL_PLUGIN (plugin), plugin->button);
   gtk_drag_dest_set (plugin->button, GTK_DEST_DEFAULT_ALL, drop_targets, G_N_ELEMENTS (drop_targets), GDK_ACTION_MOVE);
   g_signal_connect_swapped (G_OBJECT (plugin->button), "clicked", G_CALLBACK (thunar_tpa_display_trash), plugin);
