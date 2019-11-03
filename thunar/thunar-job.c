@@ -66,6 +66,7 @@ struct _ThunarJobPrivate
   ThunarJobResponse earlier_ask_overwrite_response;
   ThunarJobResponse earlier_ask_skip_response;
   GList            *total_files;
+  guint             n_total_files;
 };
 
 
@@ -206,6 +207,7 @@ thunar_job_init (ThunarJob *job)
   job->priv->earlier_ask_create_response = 0;
   job->priv->earlier_ask_overwrite_response = 0;
   job->priv->earlier_ask_skip_response = 0;
+  job->priv->n_total_files = 0;
 }
 
 
@@ -591,22 +593,27 @@ thunar_job_set_total_files (ThunarJob *job,
   _thunar_return_if_fail (total_files != NULL);
 
   job->priv->total_files = total_files;
+  job->priv->n_total_files = g_list_length (total_files);
 }
 
 
 
 void
 thunar_job_processing_file (ThunarJob *job,
-                            GList     *current_file)
+                            GList     *current_file,
+                            guint      n_processed)
 {
   GList *lp;
   gchar *base_name;
   gchar *display_name;
-  guint  n_processed;
   guint  n_total;
 
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
   _thunar_return_if_fail (current_file != NULL);
+
+  /* emit only if n_processed is a multiple of 8 */
+  if ((n_processed % 8) != 0)
+    return;
 
   base_name = g_file_get_basename (current_file->data);
   display_name = g_filename_display_name (base_name);
@@ -616,20 +623,6 @@ thunar_job_processing_file (ThunarJob *job,
   g_free (display_name);
 
   /* verify that we have total files set */
-  if (G_LIKELY (job->priv->total_files != NULL))
-    {
-      /* determine the number of files processed so far */
-      for (lp = job->priv->total_files, n_processed = 0;
-           lp != current_file;
-           lp = lp->next, n_processed++);
-
-      /* emit only if n_processed is a multiple of 8 */
-      if ((n_processed % 8) == 0)
-        {
-          /* determine the total_number of files */
-          n_total = g_list_length (job->priv->total_files);
-
-          exo_job_percent (EXO_JOB (job), (n_processed * 100.0) / n_total);
-        }
-    }
+  if (G_LIKELY (job->priv->n_total_files > 0))
+    exo_job_percent (EXO_JOB (job), (n_processed * 100.0) / job->priv->n_total_files);
 }
