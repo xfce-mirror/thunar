@@ -603,10 +603,8 @@ thunar_job_processing_file (ThunarJob *job,
                             GList     *current_file,
                             guint      n_processed)
 {
-  GList *lp;
   gchar *base_name;
   gchar *display_name;
-  guint  n_total;
 
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
   _thunar_return_if_fail (current_file != NULL);
