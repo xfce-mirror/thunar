@@ -1,3 +1,53 @@
+1.8.10
+======
+   - Allow compilation with panel 4.15
+   - thunar-job: callee should keep track of the number of processed files 
+   (Bug #16117)
+   - Thunar does not show a context menu on right-click when started via 
+   trash-panel-plugin (Bug #16000)
+   - Make sure icon text is centered after unchecking "Text beside icons"
+   - Remove the vertical gap between icon and its label (Bug #16041)
+   - Fix icon view alignment (Bug #16107)
+   - Not possible to grab scrollbar on the very right pixels when Thunar 
+   is maximized (Bug #16050)
+   - Wrap text of error dialog
+   - Not possible to empty the trash via the pathbar context menu
+   - Crash on refresh if remote folder has been removed (Bug #15961)
+   - Center action buttons in conflict dialog window (Bug #15973) - 
+   Prevent usage of deprecated gtk_dialog_get_action_area
+   - Ensure user customizable action uses currently selected file path 
+   (Bug #15119)
+   - make filename label selectable in conflict dialog window
+   - Center action buttons in conflict dialog window (Bug #15973)
+   - Clear user customizable action shortcut when the action is deleted
+   - Prevent Gtk-CRITICAL when adding or modifying a user customizable 
+   action.
+   - Thunar SendTo Email: Add missing archive formats for archive 
+   detection (Bug #15917)
+   - sendto plugin: fix content type resolution. (Bug #15916)
+   - sendto plugin: extract function tse_file_is_archive (Bug #15916)
+   - sendto plugin: move g_file_info_get_content_type() call out of the 
+   cycle (Bug #15916)
+   - All glory to lowercase (Bug #15394)
+   - mismatched names between thunar.appdata.xml and thunar.desktop (Bug 
+   #15498)
+   - Replace text "Enter the new name:" by "Enter the name:" for file 
+   creation dialog (Bug #15423)
+   - Remove superfluous .desktop file "Thunar-folder-handler.desktop.in" 
+   (Bug #15467)
+   - Prevent unnecessary fallback copy-delete in file move when overwriting
+   - Fix possible memory leak
+   - Fix popup menus size (Bug #15832)
+   - Add Alt+D as alternative accelerator for Open Location (Bug #15828)
+   - Do not insert hyphens at intra-word line breaks (Bug #15856)
+- Translation Updates:
+  Albanian, Arabic, Belarusian, Bulgarian, Catalan, Chinese (Taiwan), 
+  Croatian, Danish, Dutch, English (United Kingdom), French, Galician, 
+  German, Hungarian, Italian, Japanese, Korean, Lithuanian, Malay, 
+  Norwegian Bokmål, Persian (Iran), Polish, Portuguese, Portuguese 
+  (Brazil), Russian, Serbian, Slovak, Slovenian, Spanish, Thai, Turkish, 
+  Ukrainian, 
+
 1.8.9
 ======
 - Remove 'auto-expand folders' from tree-view since it causes bad
