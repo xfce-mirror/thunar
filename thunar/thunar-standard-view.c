@@ -714,7 +714,9 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* setup the name renderer */
   standard_view->name_renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
+#if PANGO_VERSION_CHECK (1, 44, 0)
                                                "attributes", thunar_pango_attr_disable_hyphens (),
+#endif
                                                "alignment", PANGO_ALIGN_CENTER,
                                                "xalign", 0.5,
                                                FALSE);

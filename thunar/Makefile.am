@@ -229,6 +229,7 @@ thunar_CFLAGS =								\
 	$(LIBSM_CFLAGS)							\
 	$(LIBXFCE4UI_CFLAGS)						\
 	$(XFCONF_CFLAGS)						\
+	$(PANGO_CFLAGS)							\
 	$(PLATFORM_CFLAGS)
 
 thunar_LDFLAGS =							\
@@ -245,7 +246,8 @@ thunar_LDADD =								\
 	$(LIBNOTIFY_LIBS)						\
 	$(LIBSM_LIBS)							\
 	$(LIBXFCE4UI_LIBS)						\
-	$(XFCONF_LIBS)
+	$(XFCONF_LIBS)							\
+	$(PANGO_LIBS)
 
 thunar_DEPENDENCIES =							\
 	$(top_builddir)/thunarx/libthunarx-$(THUNARX_VERSION_API).la
