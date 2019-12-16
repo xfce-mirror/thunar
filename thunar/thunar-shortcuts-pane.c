@@ -66,6 +66,8 @@ static void          thunar_shortcuts_pane_set_ui_manager        (ThunarComponen
                                                                   GtkUIManager             *ui_manager);
 static void          thunar_shortcuts_pane_action_shortcuts_add  (GtkAction                *action,
                                                                   ThunarShortcutsPane      *shortcuts_pane);
+static void          thunar_shortcuts_pane_show_shortcuts_view_padding (GtkWidget          *widget);
+static void          thunar_shortcuts_pane_hide_shortcuts_view_padding (GtkWidget          *widget);
 
 
 
@@ -162,6 +164,8 @@ thunar_shortcuts_pane_side_pane_init (ThunarSidePaneIface *iface)
 static void
 thunar_shortcuts_pane_init (ThunarShortcutsPane *shortcuts_pane)
 {
+  GtkWidget *vscrollbar;
+
   /* setup the action group for the shortcuts actions */
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   shortcuts_pane->action_group = gtk_action_group_new ("ThunarShortcutsPane");
@@ -179,6 +183,14 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   shortcuts_pane->view = thunar_shortcuts_view_new ();
   gtk_container_add (GTK_CONTAINER (shortcuts_pane), shortcuts_pane->view);
   gtk_widget_show (shortcuts_pane->view);
+
+  vscrollbar = gtk_scrolled_window_get_vscrollbar (GTK_SCROLLED_WINDOW (shortcuts_pane));
+  g_signal_connect_swapped (G_OBJECT (vscrollbar), "map",
+                            G_CALLBACK (thunar_shortcuts_pane_show_shortcuts_view_padding),
+                            shortcuts_pane->view);
+  g_signal_connect_swapped (G_OBJECT (vscrollbar), "unmap",
+                            G_CALLBACK (thunar_shortcuts_pane_hide_shortcuts_view_padding),
+                            shortcuts_pane->view);
 
   /* add widget to css class */
   gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (shortcuts_pane)), "shortcuts-pane");
@@ -507,4 +519,20 @@ G_GNUC_END_IGNORE_DEPRECATIONS
       thunar_component_set_selected_files (THUNAR_COMPONENT (shortcuts_pane), lp);
       thunar_g_file_list_free (lp);
     }
+}
+
+
+
+static void
+thunar_shortcuts_pane_show_shortcuts_view_padding (GtkWidget *widget)
+{
+  thunar_shortcuts_view_toggle_padding (THUNAR_SHORTCUTS_VIEW (widget), TRUE);
+}
+
+
+
+static void
+thunar_shortcuts_pane_hide_shortcuts_view_padding (GtkWidget *widget)
+{
+  thunar_shortcuts_view_toggle_padding (THUNAR_SHORTCUTS_VIEW (widget), FALSE);
 }
