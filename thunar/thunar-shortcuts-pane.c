@@ -94,7 +94,7 @@ struct _ThunarShortcutsPane
 
 static const GtkActionEntry action_entries[] =
 {
-  { "sendto-shortcuts", "stock_thunar-shortcuts", "", NULL, NULL, G_CALLBACK (thunar_shortcuts_pane_action_shortcuts_add), },
+  { "sendto-shortcuts", "bookmark-new", "", NULL, NULL, G_CALLBACK (thunar_shortcuts_pane_action_shortcuts_add), },
 };
 
 
