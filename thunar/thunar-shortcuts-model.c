@@ -495,6 +495,9 @@ thunar_shortcuts_model_get_column_type (GtkTreeModel *tree_model,
 
     case THUNAR_SHORTCUTS_MODEL_COLUMN_BUSY_PULSE:
       return G_TYPE_UINT;
+
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_HIDDEN:
+      return G_TYPE_BOOLEAN;
     }
 
   _thunar_assert_not_reached ();
@@ -709,6 +712,11 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
     case THUNAR_SHORTCUTS_MODEL_COLUMN_BUSY_PULSE:
       g_value_init (value, G_TYPE_UINT);
       g_value_set_uint (value, shortcut->busy_pulse);
+      break;
+
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_HIDDEN:
+      g_value_init (value, G_TYPE_BOOLEAN);
+      g_value_set_boolean (value, FALSE);
       break;
 
     default:

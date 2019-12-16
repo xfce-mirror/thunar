@@ -41,6 +41,9 @@ GtkWidget *thunar_shortcuts_view_new             (void) G_GNUC_MALLOC;
 void       thunar_shortcuts_view_select_by_file  (ThunarShortcutsView *view,
                                                   ThunarFile           *file);
 
+void       thunar_shortcuts_view_toggle_padding  (ThunarShortcutsView *view,
+                                                  gboolean             enable);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_SHORTCUTS_VIEW_H__ */
