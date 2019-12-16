@@ -4,9 +4,8 @@ apps_DATA =								\
 
 stockdir = $(datadir)/icons/hicolor/16x16/stock/navigation
 stock_DATA =								\
-	stock_folder-copy.png						\
-	stock_folder-move.png						\
-	stock_thunar-shortcuts.png
+	stock_folder-copy.png					\
+	stock_folder-move.png
 
 EXTRA_DIST =								\
 	$(apps_DATA)							\
