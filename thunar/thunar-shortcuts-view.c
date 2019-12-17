@@ -362,7 +362,7 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
 
   /* allocate icon renderer for the eject symbol */
   renderer = gtk_cell_renderer_pixbuf_new ();
-  g_object_set (renderer, "mode", GTK_CELL_RENDERER_MODE_ACTIVATABLE, "icon-name", "media-eject", NULL);
+  g_object_set (renderer, "mode", GTK_CELL_RENDERER_MODE_ACTIVATABLE, "icon-name", "media-eject-symbolic", NULL);
   gtk_tree_view_column_pack_start (column, renderer, FALSE);
   gtk_tree_view_column_set_attributes (column, renderer,
                                        "visible", THUNAR_SHORTCUTS_MODEL_COLUMN_CAN_EJECT,
