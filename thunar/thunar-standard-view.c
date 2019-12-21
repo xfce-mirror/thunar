@@ -3156,12 +3156,29 @@ thunar_standard_view_scroll_event (GtkWidget          *view,
                                    GdkEventScroll     *event,
                                    ThunarStandardView *standard_view)
 {
-  GdkEventButton fake_event;
-  gboolean       misc_horizontal_wheel_navigates;
+  GdkEventButton     fake_event;
+  GdkScrollDirection scrolling_direction;
+  gboolean           misc_horizontal_wheel_navigates;
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
-  if (G_UNLIKELY (event->direction == GDK_SCROLL_LEFT || event->direction == GDK_SCROLL_RIGHT))
+  if (event->direction != GDK_SCROLL_SMOOTH)
+    scrolling_direction = event->direction;
+  else if (event->delta_y < 0)
+    scrolling_direction = GDK_SCROLL_UP;
+  else if (event->delta_y > 0)
+    scrolling_direction = GDK_SCROLL_DOWN;
+  else if (event->delta_x < 0)
+    scrolling_direction = GDK_SCROLL_LEFT;
+  else if (event->delta_x > 0)
+    scrolling_direction = GDK_SCROLL_RIGHT;
+  else
+    {
+      g_debug ("GDK_SCROLL_SMOOTH scrolling event with no delta happend");
+      return TRUE;
+    }
+
+  if (G_UNLIKELY (scrolling_direction == GDK_SCROLL_LEFT || scrolling_direction == GDK_SCROLL_RIGHT))
     {
       /* check if we should use the horizontal mouse wheel for navigation */
       g_object_get (G_OBJECT (standard_view->preferences), "misc-horizontal-wheel-navigates", &misc_horizontal_wheel_navigates, NULL);
@@ -3169,7 +3186,7 @@ thunar_standard_view_scroll_event (GtkWidget          *view,
         {
           /* create a fake event (8 == back, 9 forward) */
           fake_event.type = GDK_BUTTON_PRESS;
-          fake_event.button = event->direction == GDK_SCROLL_LEFT ? 8 : 9;
+          fake_event.button = scrolling_direction == GDK_SCROLL_LEFT ? 8 : 9;
 
           /* trigger a fake button press event */
           return thunar_standard_view_button_press_event (view, &fake_event, standard_view);
@@ -3177,10 +3194,10 @@ thunar_standard_view_scroll_event (GtkWidget          *view,
     }
 
   /* zoom-in/zoom-out on control+mouse wheel */
-  if ((event->state & GDK_CONTROL_MASK) != 0 && (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_DOWN))
+  if ((event->state & GDK_CONTROL_MASK) != 0 && (scrolling_direction == GDK_SCROLL_UP || scrolling_direction == GDK_SCROLL_DOWN))
     {
       thunar_view_set_zoom_level (THUNAR_VIEW (standard_view),
-          (event->direction == GDK_SCROLL_UP)
+          (scrolling_direction == GDK_SCROLL_UP)
           ? MIN (standard_view->priv->zoom_level + 1, THUNAR_ZOOM_N_LEVELS - 1)
           : MAX (standard_view->priv->zoom_level, 1) - 1);
       return TRUE;
