@@ -805,6 +805,7 @@ _thunar_io_jobs_trash (ThunarJob  *job,
 {
   ThunarThumbnailCache *thumbnail_cache;
   ThunarApplication    *application;
+  ThunarJobResponse     response;
   GError               *err = NULL;
   GList                *file_list;
   GList                *lp;
@@ -830,6 +831,19 @@ _thunar_io_jobs_trash (ThunarJob  *job,
 
       /* trash the file or folder */
       g_file_trash (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err);
+
+      if (err != NULL)
+        {
+          response = thunar_job_ask_delete (job, "%s", err->message);
+
+          g_clear_error (&err);
+
+          if (response == THUNAR_JOB_RESPONSE_CANCEL)
+            break;
+
+          if (response == THUNAR_JOB_RESPONSE_YES)
+            g_file_delete (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err);
+        }
 
       /* update the thumbnail cache */
       thunar_thumbnail_cache_cleanup_file (thumbnail_cache, lp->data);

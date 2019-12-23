@@ -78,6 +78,9 @@ ThunarJobResponse thunar_job_ask_create             (ThunarJob       *job,
 ThunarJobResponse thunar_job_ask_overwrite          (ThunarJob       *job,
                                                      const gchar     *format,
                                                      ...);
+ThunarJobResponse thunar_job_ask_delete             (ThunarJob       *job,
+                                                     const gchar     *format,
+                                                     ...);
 ThunarJobResponse thunar_job_ask_replace            (ThunarJob       *job,
                                                      GFile           *source_path,
                                                      GFile           *target_path,
