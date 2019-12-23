@@ -64,6 +64,7 @@ struct _ThunarJobPrivate
 {
   ThunarJobResponse earlier_ask_create_response;
   ThunarJobResponse earlier_ask_overwrite_response;
+  ThunarJobResponse earlier_ask_delete_response;
   ThunarJobResponse earlier_ask_skip_response;
   GList            *total_files;
   guint             n_total_files;
@@ -206,6 +207,7 @@ thunar_job_init (ThunarJob *job)
   job->priv = thunar_job_get_instance_private (job);
   job->priv->earlier_ask_create_response = 0;
   job->priv->earlier_ask_overwrite_response = 0;
+  job->priv->earlier_ask_delete_response = 0;
   job->priv->earlier_ask_skip_response = 0;
   job->priv->n_total_files = 0;
 }
@@ -336,6 +338,63 @@ thunar_job_ask_overwrite (ThunarJob   *job,
 
   /* remember response for later */
   job->priv->earlier_ask_overwrite_response = response;
+
+  /* translate response */
+  switch (response)
+    {
+    case THUNAR_JOB_RESPONSE_YES_ALL:
+      response = THUNAR_JOB_RESPONSE_YES;
+      break;
+
+    case THUNAR_JOB_RESPONSE_NO_ALL:
+      response = THUNAR_JOB_RESPONSE_NO;
+      break;
+
+    default:
+      break;
+    }
+
+  return response;
+}
+
+
+
+ThunarJobResponse
+thunar_job_ask_delete (ThunarJob   *job,
+                       const gchar *format,
+                       ...)
+{
+  ThunarJobResponse response;
+  va_list           var_args;
+
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), THUNAR_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (format != NULL, THUNAR_JOB_RESPONSE_CANCEL);
+
+  /* check if the user already cancelled the job */
+  if (G_UNLIKELY (exo_job_is_cancelled (EXO_JOB (job))))
+    return THUNAR_JOB_RESPONSE_CANCEL;
+
+  /* check if the user said "Delete All" earlier */
+  if (G_UNLIKELY (job->priv->earlier_ask_delete_response == THUNAR_JOB_RESPONSE_YES_ALL))
+    return THUNAR_JOB_RESPONSE_YES;
+
+  /* check if the user said "Delete None" earlier */
+  if (G_UNLIKELY (job->priv->earlier_ask_delete_response == THUNAR_JOB_RESPONSE_NO_ALL))
+    return THUNAR_JOB_RESPONSE_NO;
+
+  /* ask the user what he wants to do */
+  va_start (var_args, format);
+  response = _thunar_job_ask_valist (job, format, var_args,
+                                     _("Do you want to permanently delete it?"),
+                                     THUNAR_JOB_RESPONSE_YES
+                                     | THUNAR_JOB_RESPONSE_YES_ALL
+                                     | THUNAR_JOB_RESPONSE_NO
+                                     | THUNAR_JOB_RESPONSE_NO_ALL
+                                     | THUNAR_JOB_RESPONSE_CANCEL);
+  va_end (var_args);
+
+  /* remember response for later */
+  job->priv->earlier_ask_delete_response = response;
 
   /* translate response */
   switch (response)
