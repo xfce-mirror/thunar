@@ -213,6 +213,10 @@ thunar_column_model_finalize (GObject *object)
   g_signal_handlers_disconnect_matched (G_OBJECT (column_model->preferences), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, column_model);
   g_object_unref (G_OBJECT (column_model->preferences));
 
+  /* drop any running "save width" timer */
+  if (G_UNLIKELY (column_model->save_width_timer_id != 0))
+    g_source_remove (column_model->save_width_timer_id);
+
   (*G_OBJECT_CLASS (thunar_column_model_parent_class)->finalize) (object);
 }
 
