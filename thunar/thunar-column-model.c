@@ -86,6 +86,7 @@ static void               thunar_column_model_save_visible_columns    (ThunarCol
 static void               thunar_column_model_notify_visible_columns  (ThunarPreferences      *preferences,
                                                                        GParamSpec             *pspec,
                                                                        ThunarColumnModel      *column_model);
+static gboolean           thunar_column_model_set_column_width_timer  (gpointer                user_data);
 
 
 
@@ -113,6 +114,7 @@ struct _ThunarColumnModel
   ThunarColumn       order[THUNAR_N_VISIBLE_COLUMNS];
   gboolean           visible[THUNAR_N_VISIBLE_COLUMNS];
   gint               width[THUNAR_N_VISIBLE_COLUMNS];
+  guint              save_width_timer_id;
 };
 
 
@@ -720,6 +722,19 @@ thunar_column_model_notify_visible_columns (ThunarPreferences *preferences,
 
 
 
+static gboolean
+thunar_column_model_set_column_width_timer (gpointer user_data)
+{
+  ThunarColumnModel *column_model = THUNAR_COLUMN_MODEL (user_data);
+
+  thunar_column_model_save_column_widths (column_model);
+  column_model->save_width_timer_id = 0;
+
+  return FALSE;
+}
+
+
+
 /**
  * thunar_column_model_get_default:
  *
@@ -998,8 +1013,14 @@ thunar_column_model_set_column_width (ThunarColumnModel *column_model,
       /* apply the new value */
       column_model->width[column] = width;
 
-      /* store the settings */
-      thunar_column_model_save_column_widths (column_model);
+      /* store the settings... */
+      if (column_model->save_width_timer_id != 0)
+        g_source_remove (column_model->save_width_timer_id);
+
+      /* ... asynchronously and only once to not overload xfconf */
+      column_model->save_width_timer_id = g_timeout_add (1000,
+                                                         thunar_column_model_set_column_width_timer,
+                                                         column_model);
     }
 }
 
