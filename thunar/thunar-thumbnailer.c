@@ -141,15 +141,9 @@ static void                   thunar_thumbnailer_set_property           (GObject
                                                                          const GValue               *value,
                                                                          GParamSpec                 *pspec);
 
-#if GLIB_CHECK_VERSION (2, 32, 0)
 #define _thumbnailer_lock(thumbnailer)    g_mutex_lock (&((thumbnailer)->lock))
 #define _thumbnailer_unlock(thumbnailer)  g_mutex_unlock (&((thumbnailer)->lock))
 #define _thumbnailer_trylock(thumbnailer) g_mutex_trylock (&((thumbnailer)->lock))
-#else
-#define _thumbnailer_lock(thumbnailer)    g_mutex_lock ((thumbnailer)->lock)
-#define _thumbnailer_unlock(thumbnailer)  g_mutex_unlock ((thumbnailer)->lock)
-#define _thumbnailer_trylock(thumbnailer) g_mutex_trylock ((thumbnailer)->lock)
-#endif
 
 
 
@@ -169,11 +163,7 @@ struct _ThunarThumbnailer
   /* running jobs */
   GSList     *jobs;
 
-#if GLIB_CHECK_VERSION (2, 32, 0)
   GMutex      lock;
-#else
-  GMutex     *lock;
-#endif
 
   /* cached MIME types -> URI schemes for which thumbs can be generated */
   GHashTable *supported;
@@ -514,11 +504,7 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
 static void
 thunar_thumbnailer_init (ThunarThumbnailer *thumbnailer)
 {
-  #if GLIB_CHECK_VERSION (2, 32, 0)
   g_mutex_init (&thumbnailer->lock);
-#else
-  thumbnailer->lock = g_mutex_new ();
-#endif
 
   /* initialize the proxies */
   thunar_thumbnailer_init_thumbnailer_proxy (thumbnailer);
@@ -567,11 +553,7 @@ thunar_thumbnailer_finalize (GObject *object)
   _thumbnailer_unlock (thumbnailer);
 
 /* release the mutex */
-#if GLIB_CHECK_VERSION (2, 32, 0)
   g_mutex_clear (&thumbnailer->lock);
-#else
-  g_mutex_free (thumbnailer->lock);
-#endif
 
   (*G_OBJECT_CLASS (thunar_thumbnailer_parent_class)->finalize) (object);
 }
