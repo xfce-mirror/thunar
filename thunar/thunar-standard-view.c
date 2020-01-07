@@ -719,7 +719,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 #endif
                                                "alignment", PANGO_ALIGN_CENTER,
                                                "xalign", 0.5,
-                                               FALSE);
+                                               NULL);
   g_object_ref_sink (G_OBJECT (standard_view->name_renderer));
 
   /* TODO: prelit underline
