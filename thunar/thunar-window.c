@@ -1092,15 +1092,12 @@ thunar_window_finalize (GObject *object)
 
 
 
-static gboolean thunar_window_delete( GtkWidget *widget,
-                                     GdkEvent  *event,
-                                     gpointer   data )
+static gboolean thunar_window_delete (GtkWidget *widget,
+                                      GdkEvent  *event,
+                                      gpointer   data )
 {
-  GtkWidget *dialog, *grid, *label, *icon, *checkbutton;
   GtkNotebook *notebook;
-  const gchar *title;
-  gchar *message, *markup;
-  gboolean confirm_close_multiple_tabs;
+  gboolean confirm_close_multiple_tabs, do_not_ask_again;
   gint response, n_tabs;
 
    _thunar_return_val_if_fail (THUNAR_IS_WINDOW (widget),FALSE);
@@ -1119,46 +1116,13 @@ static gboolean thunar_window_delete( GtkWidget *widget,
     return FALSE;
 
   /* ask the user for confirmation */
-  dialog = gtk_dialog_new_with_buttons (_("Warning"),
-                                        GTK_WINDOW (widget),
-                                        GTK_DIALOG_MODAL|GTK_DIALOG_DESTROY_WITH_PARENT,
-                                        _("_Cancel"), GTK_RESPONSE_CANCEL,
-                                        _("Close T_ab"), GTK_RESPONSE_CLOSE,
-                                        _("Close _Window"), GTK_RESPONSE_YES,
-                                        NULL);
-  grid = gtk_grid_new ();
-  gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
-  gtk_widget_set_margin_start (grid, 12);
-  gtk_widget_set_margin_end (grid, 12);
-  gtk_widget_set_margin_top (grid, 12);
-  gtk_widget_set_margin_bottom (grid, 12);
-  gtk_container_add (GTK_CONTAINER (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), grid);
-
-  icon = gtk_image_new_from_icon_name ("dialog-warning", GTK_ICON_SIZE_DIALOG);
-  gtk_grid_attach (GTK_GRID (grid), icon, 0, 0, 1, 2);
-
-  title = _("Close all tabs?");
-  message = g_strdup_printf (_("This window has %d tabs open. Closing this window\n"
-                               "will also close all its tabs."), n_tabs);
-  markup = g_markup_printf_escaped ("<span weight='bold' size='larger'>%s</span>\n%s\n", title, message);
-  g_free (message);
-  label = gtk_label_new (NULL);
-  gtk_label_set_markup (GTK_LABEL (label), markup);
-  g_free (markup);
-  gtk_grid_attach (GTK_GRID (grid), label, 1, 0, 1, 1);
-
-  checkbutton = gtk_check_button_new_with_mnemonic (_("Do _not ask me again"));
-  gtk_grid_attach (GTK_GRID (grid), checkbutton, 1, 1, 1, 1);
-
-  gtk_widget_show_all (dialog);
-  response = gtk_dialog_run (GTK_DIALOG (dialog));
+  do_not_ask_again = FALSE;
+  response = xfce_dialog_confirm_close_tabs (GTK_WINDOW (widget), n_tabs, TRUE, &do_not_ask_again);
 
   /* if the user requested not to be asked again, store this preference */
-  if (response != GTK_RESPONSE_CANCEL && gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbutton)))
+  if (response != GTK_RESPONSE_CANCEL && do_not_ask_again)
     g_object_set (G_OBJECT (THUNAR_WINDOW (widget)->preferences),
                   "misc-confirm-close-multiple-tabs", FALSE, NULL);
-
-  gtk_widget_destroy (dialog);
 
   if(response == GTK_RESPONSE_YES)
     return FALSE;
