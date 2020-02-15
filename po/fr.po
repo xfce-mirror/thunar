@@ -31,8 +31,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-23 18:30+0100\n"
-"PO-Revision-Date: 2020-01-12 17:02+0000\n"
+"POT-Creation-Date: 2020-02-04 00:30+0100\n"
+"PO-Revision-Date: 2020-02-15 10:07+0000\n"
 "Last-Translator: Yannick Le Guen <leguen.yannick@gmail.com>\n"
 "Language-Team: French (http://www.transifex.com/xfce/thunar/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -152,7 +152,7 @@ msgstr "Impossible de lancer l’opération"
 #: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:356
 #: ../thunar/thunar-location-entry.c:384
 #: ../thunar/thunar-shortcuts-view.c:1719
-#: ../thunar/thunar-shortcuts-view.c:1747 ../thunar/thunar-window.c:2447
+#: ../thunar/thunar-shortcuts-view.c:1747 ../thunar/thunar-window.c:2411
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "Impossible d’ouvrir « %s »"
@@ -250,7 +250,7 @@ msgstr[1] "Voulez-vous vraiment supprimer de manière\npermanente les %u fichier
 #: ../thunar/thunar-renamer-dialog.c:1053
 #: ../thunar/thunar-renamer-progress.c:198
 #: ../thunar/thunar-renamer-progress.c:208
-#: ../thunar/thunar-standard-view.c:2712 ../thunar/thunar-window.c:1125
+#: ../thunar/thunar-standard-view.c:2712
 #: ../plugins/thunar-sendto-email/main.c:219
 #: ../plugins/thunar-sendto-email/main.c:238
 #: ../plugins/thunar-sendto-email/main.c:293
@@ -372,7 +372,7 @@ msgstr "Utiliser cette action par _défaut pour ce type de fichier"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:291
 #: ../thunar/thunar-chooser-dialog.c:1155
-#: ../thunar/thunar-properties-dialog.c:820 ../thunar/thunar-window.c:3165
+#: ../thunar/thunar-properties-dialog.c:820 ../thunar/thunar-window.c:3129
 #: ../plugins/thunar-uca/thunar-uca-editor.c:142
 #: ../plugins/thunar-uca/thunar-uca-editor.c:435
 msgid "_OK"
@@ -585,7 +585,7 @@ msgstr "Élargir _automatiquement les colonnes si nécessaire"
 #. the file_time is invalid
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:858 ../thunar/thunar-list-model.c:734
+#: ../thunar/thunar-column-model.c:877 ../thunar/thunar-list-model.c:734
 #: ../thunar/thunar-list-model.c:770
 #: ../thunar/thunar-permissions-chooser.c:232 ../thunar/thunar-util.c:471
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:513
@@ -642,7 +642,7 @@ msgstr "Au moins un fichier source doit être spécifié"
 #: ../thunar/thunar-dbus-service.c:1169
 #, c-format
 msgid "The number of source and target filenames must be the same"
-msgstr "Le nombre de fichiers sources et destinataires doit être le même"
+msgstr "Le nombre de noms de fichiers source et cible doit être le même"
 
 #: ../thunar/thunar-dbus-service.c:1178
 #, c-format
@@ -881,47 +881,47 @@ msgstr "Fichier"
 msgid "File Name"
 msgstr "Nom du fichier"
 
-#: ../thunar/thunar-file.c:1071 ../thunar/thunar-gio-extensions.c:255
+#: ../thunar/thunar-file.c:1083 ../thunar/thunar-gio-extensions.c:255
 #: ../thunar/thunar-shortcuts-model.c:1047
 msgid "Trash"
 msgstr "Corbeille"
 
-#: ../thunar/thunar-file.c:1078 ../thunar/thunar-gio-extensions.c:253
+#: ../thunar/thunar-file.c:1090 ../thunar/thunar-gio-extensions.c:253
 #: ../thunar/thunar-shortcuts-model.c:936 ../thunar/thunar-window.c:379
 msgid "File System"
 msgstr "Système de fichiers"
 
-#: ../thunar/thunar-file.c:1518
+#: ../thunar/thunar-file.c:1530
 #, c-format
 msgid "The root folder has no parent"
 msgstr "Le dossier racine n’a pas de parent"
 
-#: ../thunar/thunar-file.c:1606 ../thunar/thunar-file.c:1902
+#: ../thunar/thunar-file.c:1618 ../thunar/thunar-file.c:1914
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr "Impossible d’analyser le fichier desktop : « %s »"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1618
+#: ../thunar/thunar-file.c:1630
 msgid "Untrusted application launcher"
 msgstr "Lanceur d’application non fiable"
 
-#: ../thunar/thunar-file.c:1643
+#: ../thunar/thunar-file.c:1655
 #, c-format
 msgid "No Exec field specified"
 msgstr "Aucun champ Exec spécifié"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1652
+#: ../thunar/thunar-file.c:1664
 msgid "Untrusted link launcher"
 msgstr "Lanceur de lien non fiable"
 
-#: ../thunar/thunar-file.c:1668
+#: ../thunar/thunar-file.c:1680
 #, c-format
 msgid "No URL field specified"
 msgstr "Aucun URL spécifié"
 
-#: ../thunar/thunar-file.c:1673
+#: ../thunar/thunar-file.c:1685
 msgid "Invalid desktop file"
 msgstr "Fichier desktop non valide"
 
@@ -1516,7 +1516,7 @@ msgid ""
 "all files and subfolders below the selected folder?"
 msgstr "Voulez-vous appliquer vos changements récursivement\nà tous les fichiers et sous-dossiers du dossier sélectionné ?"
 
-#: ../thunar/thunar-permissions-chooser.c:567 ../thunar/thunar-window.c:1150
+#: ../thunar/thunar-permissions-chooser.c:567
 msgid "Do _not ask me again"
 msgstr "_Ne plus me poser cette question"
 
@@ -1889,7 +1889,7 @@ msgstr "Appliquer au dossier uniquement"
 
 #: ../thunar/thunar-preferences-dialog.c:731
 msgid "Apply to Folder and Contents"
-msgstr "Appliquer au dossier et son contenu"
+msgstr "Appliquer au dossier et à son contenu"
 
 #: ../thunar/thunar-preferences-dialog.c:742
 msgid "Volume Management"
@@ -2059,7 +2059,7 @@ msgstr "Effacer"
 
 #: ../thunar/thunar-renamer-dialog.c:194
 msgid "Clear the file list below"
-msgstr "Vider la liste de fichier ci-dessous"
+msgstr "Effacer la liste de fichiers ci-dessous"
 
 #: ../thunar/thunar-renamer-dialog.c:195 ../thunar/thunar-window.c:386
 msgid "_About"
@@ -2398,7 +2398,7 @@ msgid "Loading folder contents..."
 msgstr "Chargement du contenu du dossier…"
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2308 ../thunar/thunar-window.c:3007
+#: ../thunar/thunar-standard-view.c:2308 ../thunar/thunar-window.c:2971
 msgid "Failed to open the home folder"
 msgstr "Impossible d’ouvrir le dossier personnel"
 
@@ -2434,7 +2434,7 @@ msgstr "Le nom de fichier fourni par XDS est non valide"
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Impossible de créer un lien pour l’URL « %s »"
 
-#: ../thunar/thunar-standard-view.c:3967 ../thunar/thunar-window.c:3102
+#: ../thunar/thunar-standard-view.c:3967 ../thunar/thunar-window.c:3066
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Impossible d’ouvrir le répertoire « %s »"
@@ -2896,96 +2896,72 @@ msgstr "Afficher le contenu du dossier sous forme de liste compacte"
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr "Attention, vous utilisez le compte administrateur, vous risquez d’endommager votre système."
 
-#. ask the user for confirmation
-#: ../thunar/thunar-window.c:1122
-msgid "Warning"
-msgstr "Avertissement"
-
-#: ../thunar/thunar-window.c:1126
-msgid "Close T_ab"
-msgstr "Fermer l’_onglet"
-
-#: ../thunar/thunar-window.c:1127
-msgid "Close _Window"
-msgstr "Fermer la _fenêtre"
-
-#: ../thunar/thunar-window.c:1140
-msgid "Close all tabs?"
-msgstr "Fermer tous les onglets ?"
-
-#: ../thunar/thunar-window.c:1141
-#, c-format
-msgid ""
-"This window has %d tabs open. Closing this window\n"
-"will also close all its tabs."
-msgstr "Cette fenêtre a %d onglets ouverts. Fermer cette fenêtre\nfermera aussi tous ses onglets."
-
-#: ../thunar/thunar-window.c:1956
+#: ../thunar/thunar-window.c:1920
 msgid "Close tab"
 msgstr "Fermer l’onglet"
 
-#: ../thunar/thunar-window.c:2207
+#: ../thunar/thunar-window.c:2171
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Ouvrir l’emplacement « %s »"
 
-#: ../thunar/thunar-window.c:2421
+#: ../thunar/thunar-window.c:2385
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Impossible de lancer « %s »"
 
-#: ../thunar/thunar-window.c:2982
+#: ../thunar/thunar-window.c:2946
 msgid "Failed to open parent folder"
 msgstr "Impossible d’ouvrir le dossier parent"
 
-#: ../thunar/thunar-window.c:3077
+#: ../thunar/thunar-window.c:3041
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Le répertoire « %s » n’existe pas. Voulez-vous le créer ?"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:3163
+#: ../thunar/thunar-window.c:3127
 msgid "About Templates"
 msgstr "À propos des modèles"
 
-#: ../thunar/thunar-window.c:3185
+#: ../thunar/thunar-window.c:3149
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Tous les fichiers dans ce dossier apparaîtront dans le menu « Créer un document »"
 
-#: ../thunar/thunar-window.c:3192
+#: ../thunar/thunar-window.c:3156
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Si vous créez fréquemment un certain type\nde document, faites-en une copie dans ce dossier. Thunar ajoutera une entrée pour ce document dans le menu « Créer un document ».\n\nVous pouvez sélectionner cette entrée dans le menu « Créer un document » et une copie de ce document sera créée dans le dossier en cours."
 
-#: ../thunar/thunar-window.c:3204
+#: ../thunar/thunar-window.c:3168
 msgid "Do _not display this message again"
 msgstr "_Ne plus afficher ce message"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3234
+#: ../thunar/thunar-window.c:3198
 msgid "Failed to open the file system root folder"
 msgstr "Impossible d’ouvrir le dossier racine du système de fichiers"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3271
+#: ../thunar/thunar-window.c:3235
 msgid "Failed to display the contents of the trash can"
 msgstr "Impossible d’afficher le contenu de la corbeille"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3308
+#: ../thunar/thunar-window.c:3272
 msgid "Failed to browse the network"
 msgstr "Impossible de parcourir le réseau"
 
-#: ../thunar/thunar-window.c:3392
+#: ../thunar/thunar-window.c:3356
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar est un gestionnaire de fichiers rapide et facile\nd’utilisation pour l’environnement de bureau Xfce."
 
 #. set window title
-#: ../thunar/thunar-window.c:3450 ../thunar.desktop.in.in.h:3
+#: ../thunar/thunar-window.c:3414 ../thunar.desktop.in.in.h:3
 msgid "File Manager"
 msgstr "Gestionnaire de fichiers"
 
@@ -3435,8 +3411,8 @@ msgstr "Impossible de créer un lien symbolique pour « %s »"
 #, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
-msgstr[0] "Impossible de compresser le fichier %d"
-msgstr[1] "Impossible de compresser les fichiers %d"
+msgstr[0] "Impossible de compresser %d fichier"
+msgstr[1] "Impossible de compresser %d fichiers"
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:679
