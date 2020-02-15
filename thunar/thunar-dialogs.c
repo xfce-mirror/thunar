@@ -173,6 +173,10 @@ thunar_dialogs_show_rename_file (gpointer    parent,
   /* resize the dialog to make long names fit as much as possible */
   gtk_window_set_default_size (GTK_WINDOW (dialog), CLAMP (layout_width, 300, parent_width), -1);
 
+  /* automatically close the dialog when the file is destroyed */
+  g_signal_connect_swapped (G_OBJECT (file), "destroy",
+                            G_CALLBACK (gtk_widget_destroy), dialog);
+
   /* run the dialog */
   response = gtk_dialog_run (GTK_DIALOG (dialog));
   if (G_LIKELY (response == GTK_RESPONSE_OK))
@@ -192,7 +196,8 @@ thunar_dialogs_show_rename_file (gpointer    parent,
     }
 
   /* cleanup */
-  gtk_widget_destroy (dialog);
+  if (G_LIKELY (response != GTK_RESPONSE_NONE))
+    gtk_widget_destroy (dialog);
 
   return job;
 }
