@@ -893,13 +893,14 @@ thunar_path_entry_match_func (GtkEntryCompletion *completion,
                               GtkTreeIter        *iter,
                               gpointer            user_data)
 {
-  GtkTreeModel *model;
-  const gchar  *last_slash;
-  ThunarFile   *file;
-  gboolean      matched;
-  gchar        *text_normalized;
-  gchar        *name_normalized;
-  gchar        *name;
+  GtkTreeModel    *model;
+  ThunarPathEntry *path_entry;
+  const gchar     *last_slash;
+  ThunarFile      *file;
+  gboolean         matched;
+  gchar           *text_normalized;
+  gchar           *name_normalized;
+  gchar           *name;
 
   /* determine the model from the completion */
   model = gtk_entry_completion_get_model (completion);
@@ -907,6 +908,12 @@ thunar_path_entry_match_func (GtkEntryCompletion *completion,
   /* leave if the model is null, we do this in thunar_path_entry_changed() to speed
    * things up, but that causes https://bugzilla.xfce.org/show_bug.cgi?id=4847. */
   if (G_UNLIKELY (model == NULL))
+    return FALSE;
+
+  /* leave if the auto completion highlight was not cleared yet, to prevent
+   * https://bugzilla.xfce.org/show_bug.cgi?id=16267. */
+  path_entry = THUNAR_PATH_ENTRY (user_data);
+  if (G_UNLIKELY (path_entry->has_completion))
     return FALSE;
 
   /* determine the current text (UTF-8 normalized) */
