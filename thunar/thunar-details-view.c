@@ -93,6 +93,9 @@ static void         thunar_details_view_row_activated           (GtkTreeView    
                                                                  GtkTreePath            *path,
                                                                  GtkTreeViewColumn      *column,
                                                                  ThunarDetailsView      *details_view);
+static gboolean     thunar_details_view_select_cursor_row       (GtkTreeView            *tree_view,
+                                                                 gboolean                editing,
+                                                                 ThunarDetailsView      *details_view);
 static void         thunar_details_view_row_changed             (GtkTreeView            *tree_view,
                                                                  GtkTreePath            *path,
                                                                  GtkTreeViewColumn      *column,
@@ -221,6 +224,8 @@ G_GNUC_END_IGNORE_DEPRECATIONS
                     G_CALLBACK (thunar_details_view_key_press_event), details_view);
   g_signal_connect (G_OBJECT (tree_view), "row-activated",
                     G_CALLBACK (thunar_details_view_row_activated), details_view);
+  g_signal_connect (G_OBJECT (tree_view), "select-cursor-row",
+                    G_CALLBACK (thunar_details_view_select_cursor_row), details_view);
   gtk_container_add (GTK_CONTAINER (details_view), tree_view);
   gtk_widget_show (tree_view);
 
@@ -837,10 +842,34 @@ thunar_details_view_row_activated (GtkTreeView       *tree_view,
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
-  /* be sure to have only the double clicked item selected */
-  selection = gtk_tree_view_get_selection (tree_view);
-  gtk_tree_selection_unselect_all (selection);
-  gtk_tree_selection_select_path (selection, path);
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+  /* emit the "open" action */
+  action = thunar_gtk_ui_manager_get_action_by_name (THUNAR_STANDARD_VIEW (details_view)->ui_manager, "open");
+  if (G_LIKELY (action != NULL))
+    gtk_action_activate (action);
+G_GNUC_END_IGNORE_DEPRECATIONS
+}
+
+
+
+static gboolean
+thunar_details_view_select_cursor_row (GtkTreeView            *tree_view,
+                                       gboolean                editing,
+                                       ThunarDetailsView      *details_view)
+{
+  /* This function is a work-around to fix bug #2487. The default gtk handler for
+   * the "select-cursor-row" signal changes the selection to just the cursor row,
+   * which prevents multiple file selections being opened. Thus we bypass the gtk
+   * signal handler with g_signal_stop_emission_by_name, and emit the "open" action
+   * directly. A better long-term solution would be to fix exo to avoid using the
+   * default gtk signal handler there.
+   */
+
+  GtkAction        *action;
+
+  _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (details_view), FALSE);
+
+  g_signal_stop_emission_by_name(tree_view,"select-cursor-row");
 
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* emit the "open" action */
@@ -848,6 +877,8 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   if (G_LIKELY (action != NULL))
     gtk_action_activate (action);
 G_GNUC_END_IGNORE_DEPRECATIONS
+
+  return TRUE;
 }
 
 
