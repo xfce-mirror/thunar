@@ -837,7 +837,6 @@ thunar_details_view_row_activated (GtkTreeView       *tree_view,
                                    GtkTreeViewColumn *column,
                                    ThunarDetailsView *details_view)
 {
-  GtkTreeSelection *selection;
   GtkAction        *action;
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
