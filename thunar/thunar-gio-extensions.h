@@ -29,6 +29,7 @@ GFile    *thunar_g_file_new_for_home             (void);
 GFile    *thunar_g_file_new_for_root             (void);
 GFile    *thunar_g_file_new_for_trash            (void);
 GFile    *thunar_g_file_new_for_desktop          (void);
+GFile    *thunar_g_file_new_for_computer         (void);
 GFile    *thunar_g_file_new_for_bookmarks        (void);
 
 gboolean  thunar_g_file_is_root                  (GFile                *file);

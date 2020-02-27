@@ -201,6 +201,8 @@ static void     thunar_window_action_open_home            (GtkAction            
                                                            ThunarWindow           *window);
 static void     thunar_window_action_open_desktop         (GtkAction              *action,
                                                            ThunarWindow           *window);
+static void     thunar_window_action_open_computer        (GtkAction              *action,
+                                                           ThunarWindow           *window);
 static void     thunar_window_action_open_templates       (GtkAction              *action,
                                                            ThunarWindow           *window);
 static void     thunar_window_action_open_file_system     (GtkAction              *action,
@@ -376,6 +378,7 @@ static GtkActionEntry action_entries[] =
   { "open-parent", "go-up-symbolic", N_ ("Open _Parent"), "<alt>Up", N_ ("Open the parent folder"), G_CALLBACK (thunar_window_action_go_up), },
   { "open-home", "go-home-symbolic", N_ ("_Home"), "<alt>Home", N_ ("Go to the home folder"), G_CALLBACK (thunar_window_action_open_home), },
   { "open-desktop", "user-desktop", N_ ("Desktop"), NULL, N_ ("Go to the desktop folder"), G_CALLBACK (thunar_window_action_open_desktop), },
+  { "open-computer", "computer-symbolic", N_ ("Computer"), NULL, N_ ("Go to the computer folder"), G_CALLBACK (thunar_window_action_open_computer), },
   { "open-file-system", "drive-harddisk", N_ ("File System"), NULL, N_ ("Browse the file system"), G_CALLBACK (thunar_window_action_open_file_system), },
   { "open-network", "network-workgroup", N_("B_rowse Network"), NULL, N_ ("Browse local network connections"), G_CALLBACK (thunar_window_action_open_network), },
   { "open-templates", "text-x-generic-template", N_("T_emplates"), NULL, N_ ("Go to the templates folder"), G_CALLBACK (thunar_window_action_open_templates), },
@@ -3090,6 +3093,40 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   thunar_window_open_user_folder (action, window,
                                   G_USER_DIRECTORY_DESKTOP,
                                   "Desktop");
+}
+
+
+
+static void
+thunar_window_action_open_computer (GtkAction    *action,
+                                    ThunarWindow *window)
+{
+  GFile         *computer;
+  ThunarFile    *computer_file;
+  GError        *error = NULL;
+
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* determine the path to the computer directory */
+  computer = thunar_g_file_new_for_computer ();
+
+  /* determine the file for the computer directory */
+  computer_file = thunar_file_get (computer, &error);
+  if (G_UNLIKELY (computer_file == NULL))
+    {
+      /* display an error to the user */
+      thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to open the computer folder"));
+      g_error_free (error);
+    }
+  else
+    {
+      /* open the computer folder */
+      thunar_window_set_current_directory (window, computer_file);
+      g_object_unref (G_OBJECT (computer_file));
+    }
+
+  /* release our reference on the computer path */
+  g_object_unref (computer);
 }
 
 
