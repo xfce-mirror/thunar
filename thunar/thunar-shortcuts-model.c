@@ -990,6 +990,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
   ThunarShortcut *shortcut;
   GFile          *home;
   GFile          *desktop;
+  GFile          *computer;
   GFile          *trash;
   ThunarFile     *file;
 
@@ -1064,6 +1065,24 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
 
   /* read the Gtk+ bookmarks file */
   model->bookmarks_idle_id = g_idle_add_full (G_PRIORITY_DEFAULT, thunar_shortcuts_model_load, model, NULL);
+
+  /* get computer path */
+  computer = thunar_g_file_new_for_computer ();
+
+  /* add computer entry */
+  file = thunar_file_get (computer, NULL);
+  if (file != NULL)
+    {
+      shortcut = g_slice_new0 (ThunarShortcut);
+      shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_DEFAULT;
+      shortcut->name = g_strdup (_("Computer"));
+      shortcut->file = file;
+      shortcut->gicon = g_themed_icon_new ("computer");
+      shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
+      thunar_shortcuts_model_add_shortcut (model, shortcut);
+    }
+
+  g_object_unref (computer);
 }
 
 

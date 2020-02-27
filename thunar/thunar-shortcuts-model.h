@@ -63,7 +63,8 @@ typedef enum
 #define THUNAR_SHORTCUT_GROUP_PLACES  (THUNAR_SHORTCUT_GROUP_PLACES_HEADER \
                                        | THUNAR_SHORTCUT_GROUP_PLACES_DEFAULT \
                                        | THUNAR_SHORTCUT_GROUP_PLACES_TRASH \
-                                       | THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
+                                       | THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS \
+                                       | THUNAR_SHORTCUT_GROUP_PLACES_COMPUTER )
 #define THUNAR_SHORTCUT_GROUP_NETWORK (THUNAR_SHORTCUT_GROUP_NETWORK_HEADER \
                                        | THUNAR_SHORTCUT_GROUP_NETWORK_DEFAULT \
                                        | THUNAR_SHORTCUT_GROUP_NETWORK_MOUNTS)
@@ -84,6 +85,7 @@ enum _ThunarShortcutGroup
   THUNAR_SHORTCUT_GROUP_PLACES_DEFAULT     = (1 << 5),  /* home and desktop */
   THUNAR_SHORTCUT_GROUP_PLACES_TRASH       = (1 << 6),  /* trash */
   THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS   = (1 << 7),  /* gtk-bookmarks */
+  THUNAR_SHORTCUT_GROUP_PLACES_COMPUTER    = (1 << 11), /* computer */
 
   /* THUNAR_SHORTCUT_GROUP_NETWORK */
   THUNAR_SHORTCUT_GROUP_NETWORK_HEADER     = (1 << 8),  /* network header */
