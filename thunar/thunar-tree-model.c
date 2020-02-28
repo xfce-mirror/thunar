@@ -1075,12 +1075,26 @@ thunar_tree_model_device_added (ThunarDeviceMonitor *device_monitor,
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
   _thunar_return_if_fail (THUNAR_IS_TREE_MODEL (model));
 
+  /* lookup the last child of the root (the "File System" node) */
+  node = g_node_last_child (model->root);
+
+  /* determine the position for the new node in the item list */
+  for (node = node->prev; node != NULL; node = node->prev)
+    {
+      item = THUNAR_TREE_MODEL_ITEM (node->data);
+      if (item->device == NULL)
+        break;
+
+      /* sort devices by timestamp */
+      if (thunar_device_sort (item->device, device) < 0)
+        break;
+    }
+
   /* allocate a new item for the volume */
   item = thunar_tree_model_item_new_with_device (model, device);
 
-  /* insert before the last child of the root (the "File System" node) */
-  node = g_node_last_child (model->root);
-  node = g_node_insert_data_before (model->root, node, item);
+  /* insert the new node */
+  node = g_node_insert_data_after (model->root, node, item);
 
   /* determine the iterator for the new node */
   GTK_TREE_ITER_INIT (iter, model->stamp, node);
