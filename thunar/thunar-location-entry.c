@@ -62,6 +62,9 @@ static void        thunar_location_entry_set_current_directory    (ThunarNavigat
                                                                    ThunarFile               *current_directory);
 static void        thunar_location_entry_activate                 (GtkWidget                *path_entry,
                                                                    ThunarLocationEntry      *location_entry);
+static gboolean    thunar_location_entry_button_press_event       (GtkWidget                *path_entry,
+                                                                   GdkEventButton           *event,
+                                                                   ThunarLocationEntry      *location_entry);
 static gboolean    thunar_location_entry_reset                    (ThunarLocationEntry      *location_entry);
 static void        thunar_location_entry_reload                   (GtkEntry                 *entry,
                                                                    GtkEntryIconPosition      icon_pos,
@@ -89,6 +92,8 @@ struct _ThunarLocationEntry
 
   ThunarFile   *current_directory;
   GtkWidget    *path_entry;
+
+  gboolean      right_click_occurred;
 };
 
 
@@ -198,6 +203,11 @@ thunar_location_entry_init (ThunarLocationEntry *location_entry)
 
   /* make sure the edit-done signal is emitted upon moving the focus somewhere else */
   g_signal_connect_swapped (location_entry->path_entry, "focus-out-event", G_CALLBACK (thunar_location_entry_emit_edit_done), location_entry);
+
+  /* ...except if it is grabbed by the context menu */
+  location_entry->right_click_occurred = FALSE;
+  g_signal_connect (G_OBJECT (location_entry->path_entry), "button-press-event",
+                    G_CALLBACK (thunar_location_entry_button_press_event), location_entry);
 }
 
 
@@ -411,6 +421,24 @@ thunar_location_entry_activate (GtkWidget           *path_entry,
 
 
 static gboolean
+thunar_location_entry_button_press_event (GtkWidget           *path_entry,
+                                          GdkEventButton      *event,
+                                          ThunarLocationEntry *location_entry)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_LOCATION_ENTRY (location_entry), FALSE);
+
+  /* check if the context menu was triggered */
+  if (event->type == GDK_BUTTON_PRESS && event->button == 3)
+    {
+      location_entry->right_click_occurred = TRUE;
+    }
+
+  return FALSE;
+}
+
+
+
+static gboolean
 thunar_location_entry_reset (ThunarLocationEntry *location_entry)
 {
   /* just reset the path entry to our current directory... */
@@ -445,7 +473,13 @@ thunar_location_entry_reload (GtkEntry            *entry,
 static void
 thunar_location_entry_emit_edit_done (ThunarLocationEntry *entry)
 {
-    g_signal_emit_by_name (entry, "edit-done");
+  /* do not emit signal if the context menu was opened */
+  if (entry->right_click_occurred == FALSE)
+    {
+      g_signal_emit_by_name (entry, "edit-done");
+    }
+
+  entry->right_click_occurred = FALSE;
 }
 
 
