@@ -9,3 +9,17 @@ StartupNotify=true
 Type=Application
 Categories=System;Utility;Core;GTK;FileTools;FileManager;
 MimeType=inode/directory;
+Actions=open-home;open-computer;open-trash;
+
+[Desktop Action open-home]
+_Name=Home
+Exec=thunar %U
+
+[Desktop Action open-computer]
+_Name=Computer
+Exec=thunar computer:///
+
+[Desktop Action open-trash]
+_Name=Trash
+Exec=thunar trash:///
+
