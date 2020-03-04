@@ -2867,9 +2867,8 @@ thunar_tree_view_set_show_hidden (ThunarTreeView *view,
  * Searches for the best-matching toplevel path in the
  * following order:
  *   1) any mounted device or network resource
- *   2) the user's desktop directory
- *   3) the user's home directory
- *   4) the root filesystem
+ *   2) the user's home directory
+ *   3) the root filesystem
  *
  * Returns the #GtkTreePath for the matching toplevel item,
  * or %NULL if not found. The path should be freed with gtk_tree_path_free().
@@ -2882,7 +2881,6 @@ thunar_tree_view_get_preferred_toplevel_path (ThunarTreeView *view,
   GtkTreePath  *path = NULL;
   GtkTreeIter   iter;
   ThunarFile   *toplevel_file;
-  GFile        *desktop;
   GFile        *home;
   GFile        *root;
   GFile        *best_match;
@@ -2894,14 +2892,11 @@ thunar_tree_view_get_preferred_toplevel_path (ThunarTreeView *view,
     return NULL;
 
   /* get GFiles for special toplevel items */
-  desktop = thunar_g_file_new_for_desktop ();
   home = thunar_g_file_new_for_home ();
   root = thunar_g_file_new_for_root ();
 
   /* we prefer certain toplevel items to others */
-  if (thunar_file_is_gfile_ancestor (file, desktop))
-    best_match = desktop;
-  else if (thunar_file_is_gfile_ancestor (file, home))
+  if (thunar_file_is_gfile_ancestor (file, home))
     best_match = home;
   else if (thunar_file_is_gfile_ancestor (file, root))
     best_match = root;
@@ -2930,8 +2925,7 @@ thunar_tree_view_get_preferred_toplevel_path (ThunarTreeView *view,
         {
           /* the toplevel item could be a mounted device or network
            * and we prefer this to everything else */
-          if (!g_file_equal (thunar_file_get_file (toplevel_file), desktop) &&
-              !g_file_equal (thunar_file_get_file (toplevel_file), home) &&
+          if (!g_file_equal (thunar_file_get_file (toplevel_file), home) &&
               !g_file_equal (thunar_file_get_file (toplevel_file), root))
             {
               gtk_tree_path_free (path);
@@ -2964,7 +2958,6 @@ thunar_tree_view_get_preferred_toplevel_path (ThunarTreeView *view,
   /* cleanup */
   g_object_unref (root);
   g_object_unref (home);
-  g_object_unref (desktop);
 
   return path;
 }

@@ -281,7 +281,6 @@ thunar_tree_model_init (ThunarTreeModel *model)
 {
   ThunarTreeModelItem *item;
   ThunarFile          *file;
-  GFile               *desktop;
   GFile               *home;
   GFile               *computer;
   GList               *system_paths = NULL;
@@ -321,13 +320,6 @@ thunar_tree_model_init (ThunarTreeModel *model)
   /* add the home folder to the system paths */
   home = thunar_g_file_new_for_home ();
   system_paths = g_list_append (system_paths, g_object_ref (home));
-
-  /* append the user's desktop folder */
-  desktop = thunar_g_file_new_for_desktop ();
-  if (!g_file_equal (desktop, home))
-    system_paths = g_list_append (system_paths, desktop);
-  else
-    g_object_unref (desktop);
 
   /* append the trash icon if the trash is supported */
   if (thunar_g_vfs_is_uri_scheme_supported ("trash"))
