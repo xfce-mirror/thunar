@@ -97,6 +97,7 @@ enum
   PROP_MISC_THUMBNAIL_DRAW_FRAMES,
   PROP_MISC_FILE_SIZE_BINARY,
   PROP_MISC_CONFIRM_CLOSE_MULTIPLE_TABS,
+  PROP_MISC_WINDOW_ICON,
   PROP_SHORTCUTS_ICON_EMBLEMS,
   PROP_SHORTCUTS_ICON_SIZE,
   PROP_TREE_ICON_EMBLEMS,
@@ -761,6 +762,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             "MiscFileSizeBinary",
                             NULL,
                             TRUE,
+                            EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-change-window-icon:
+   *
+   * Whether to change the window icon to the folder's icon.
+   **/
+  preferences_props[PROP_MISC_WINDOW_ICON] =
+      g_param_spec_boolean ("misc-change-window-icon",
+                            "MiscChangeWindowIcon",
+                            NULL,
+                            FALSE,
                             EXO_PARAM_READWRITE);
 
   /**

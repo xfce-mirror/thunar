@@ -3426,6 +3426,7 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
   const gchar  *icon_name;
   gchar        *title;
   gboolean      show_full_path;
+  gboolean      change_window_icon;
   gchar        *parse_name = NULL;
   const gchar  *name;
 
@@ -3458,7 +3459,10 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   icon_name = thunar_file_get_icon_name (current_directory,
                                          THUNAR_FILE_ICON_STATE_DEFAULT,
                                          icon_theme);
-  gtk_window_set_icon_name (GTK_WINDOW (window), icon_name);
+
+  g_object_get (G_OBJECT (window->preferences), "misc-change-window-icon", &change_window_icon, NULL);
+  if (G_UNLIKELY (change_window_icon))
+    gtk_window_set_icon_name (GTK_WINDOW (window), icon_name);
 }
 
 
