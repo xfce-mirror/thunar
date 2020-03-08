@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-28 00:30+0100\n"
-"PO-Revision-Date: 2020-02-28 12:21+0000\n"
+"POT-Creation-Date: 2020-03-08 06:30+0100\n"
+"PO-Revision-Date: 2020-03-08 13:11+0000\n"
 "Last-Translator: Emanuele Petriglia <transifex@emanuelepetriglia.com>\n"
 "Language-Team: Italian (http://www.transifex.com/xfce/thunar/language/it/)\n"
 "MIME-Version: 1.0\n"
@@ -132,8 +132,8 @@ msgstr "Impossibile avviare l'operazione"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1508 ../thunar/thunar-application.c:1640
-#: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:356
-#: ../thunar/thunar-location-entry.c:384
+#: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:366
+#: ../thunar/thunar-location-entry.c:394
 #: ../thunar/thunar-shortcuts-view.c:1719
 #: ../thunar/thunar-shortcuts-view.c:1747 ../thunar/thunar-window.c:2414
 #, c-format
@@ -865,7 +865,7 @@ msgid "File Name"
 msgstr "Nome del file"
 
 #: ../thunar/thunar-file.c:1083 ../thunar/thunar-gio-extensions.c:263
-#: ../thunar/thunar-shortcuts-model.c:1048
+#: ../thunar/thunar-shortcuts-model.c:1048 ../thunar.desktop.in.in.h:6
 msgid "Trash"
 msgstr "Cestino"
 
@@ -1377,11 +1377,11 @@ msgstr "Sposta o copia i file selezionati precedentemente da un comando di tagli
 msgid "View the properties of the folder \"%s\""
 msgstr "Visualizza le proprietà della cartella \"%s\""
 
-#: ../thunar/thunar-location-entry.c:195 ../thunar/thunar-window.c:370
+#: ../thunar/thunar-location-entry.c:200 ../thunar/thunar-window.c:370
 msgid "Reload the current folder"
 msgstr "Aggiorna la cartella corrente"
 
-#: ../thunar/thunar-location-entry.c:349
+#: ../thunar/thunar-location-entry.c:359
 #, c-format
 msgid "File does not exist"
 msgstr "Il file non esiste"
@@ -2198,6 +2198,7 @@ msgid "PLACES"
 msgstr "POSIZIONI"
 
 #: ../thunar/thunar-shortcuts-model.c:1078 ../thunar/thunar-window.c:381
+#: ../thunar.desktop.in.in.h:5
 msgid "Computer"
 msgstr "Computer"
 
@@ -2557,7 +2558,7 @@ msgstr "C_estino"
 msgid "Display the contents of the trash can"
 msgstr "Mostra il contenuto del cestino"
 
-#: ../thunar/thunar-tree-model.c:620
+#: ../thunar/thunar-tree-model.c:617
 msgid "Loading..."
 msgstr "Caricamento in corso…"
 
@@ -2957,7 +2958,7 @@ msgid ""
 msgstr "Thunar è un gestore dei file veloce e facile\nda usare per l'ambiente grafico Xfce."
 
 #. set window title
-#: ../thunar/thunar-window.c:3451 ../thunar.desktop.in.in.h:3
+#: ../thunar/thunar-window.c:3452 ../thunar.desktop.in.in.h:3
 msgid "File Manager"
 msgstr "Gestore dei file"
 
@@ -3729,6 +3730,10 @@ msgstr "Il gestore dei file Thunar"
 #: ../thunar.desktop.in.in.h:2
 msgid "Browse the filesystem with the file manager"
 msgstr "Esplora il file system con il gestore dei file"
+
+#: ../thunar.desktop.in.in.h:4
+msgid "Home"
+msgstr "Home"
 
 #: ../thunar/thunar-settings.desktop.in.h:1
 msgid "File Manager Settings"
