@@ -378,7 +378,7 @@ static GtkActionEntry action_entries[] =
   { "open-parent", "go-up-symbolic", N_ ("Open _Parent"), "<alt>Up", N_ ("Open the parent folder"), G_CALLBACK (thunar_window_action_go_up), },
   { "open-home", "go-home-symbolic", N_ ("_Home"), "<alt>Home", N_ ("Go to the home folder"), G_CALLBACK (thunar_window_action_open_home), },
   { "open-desktop", "user-desktop", N_ ("Desktop"), NULL, N_ ("Go to the desktop folder"), G_CALLBACK (thunar_window_action_open_desktop), },
-  { "open-computer", "computer", N_ ("Computer"), NULL, N_ ("Go to the computer folder"), G_CALLBACK (thunar_window_action_open_computer), },
+  { "open-computer", "computer", N_ ("Computer"), NULL, N_ ("Browse all local and remote disks and folders accessible from this computer"), G_CALLBACK (thunar_window_action_open_computer), },
   { "open-file-system", "drive-harddisk", N_ ("File System"), NULL, N_ ("Browse the file system"), G_CALLBACK (thunar_window_action_open_file_system), },
   { "open-network", "network-workgroup", N_("B_rowse Network"), NULL, N_ ("Browse local network connections"), G_CALLBACK (thunar_window_action_open_network), },
   { "open-templates", "text-x-generic-template", N_("T_emplates"), NULL, N_ ("Go to the templates folder"), G_CALLBACK (thunar_window_action_open_templates), },
@@ -3107,25 +3107,25 @@ thunar_window_action_open_computer (GtkAction    *action,
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  /* determine the path to the computer directory */
+  /* determine the computer location */
   computer = thunar_g_file_new_for_computer ();
 
-  /* determine the file for the computer directory */
+  /* determine the file for this location */
   computer_file = thunar_file_get (computer, &error);
   if (G_UNLIKELY (computer_file == NULL))
     {
       /* display an error to the user */
-      thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to open the computer folder"));
+      thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to browse the computer"));
       g_error_free (error);
     }
   else
     {
-      /* open the computer folder */
+      /* open the computer location */
       thunar_window_set_current_directory (window, computer_file);
       g_object_unref (G_OBJECT (computer_file));
     }
 
-  /* release our reference on the computer path */
+  /* release our reference on the location itself */
   g_object_unref (computer);
 }
 
