@@ -1935,8 +1935,8 @@ thunar_shortcuts_model_drop_possible (ThunarShortcutsModel *model,
   if (shortcut->group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
     return TRUE;
 
-  /* we can drop at the end of the bookmarks (before network header) */
-  if (shortcut->group == THUNAR_SHORTCUT_GROUP_NETWORK_HEADER)
+  /* we can drop at the end of the bookmarks (before devices header) */
+  if (shortcut->group == THUNAR_SHORTCUT_GROUP_DEVICES_HEADER)
     return TRUE;
 
   return FALSE;
