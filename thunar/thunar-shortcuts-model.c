@@ -1960,6 +1960,8 @@ thunar_shortcuts_model_add (ThunarShortcutsModel *model,
 {
   ThunarShortcut *shortcut;
   GFile          *location;
+  GList          *lp;
+  guint           position = 0;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
   _thunar_return_if_fail (dst_path == NULL || gtk_tree_path_get_depth (dst_path) > 0);
@@ -1985,6 +1987,16 @@ thunar_shortcuts_model_add (ThunarShortcutsModel *model,
     {
       shortcut->location = G_FILE (g_object_ref (G_OBJECT (location)));
       shortcut->gicon = g_themed_icon_new ("folder-remote");
+    }
+
+  /* if no position was given, place the shortcut at the bottom */
+  if (dst_path == NULL)
+    {
+      for (lp = model->shortcuts; lp != NULL; lp = lp->next)
+        if (THUNAR_SHORTCUT (lp->data)->group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
+          position++;
+
+      shortcut->sort_id = ++position;
     }
 
   /* add the shortcut to the list at the given position */
