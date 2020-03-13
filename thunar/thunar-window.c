@@ -3623,7 +3623,8 @@ thunar_window_device_pre_unmount (ThunarDeviceMonitor *device_monitor,
     return;
 
   /* check if the file is the current directory or an ancestor of the current directory */
-  if (thunar_file_is_gfile_ancestor (window->current_directory, root_file))
+  if (g_file_equal (thunar_file_get_file (window->current_directory), root_file)
+      || thunar_file_is_gfile_ancestor (window->current_directory, root_file))
     {
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       /* change to the home folder */
