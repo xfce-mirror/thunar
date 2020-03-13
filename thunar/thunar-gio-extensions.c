@@ -65,14 +65,6 @@ thunar_g_file_new_for_trash (void)
 
 
 GFile *
-thunar_g_file_new_for_computer (void)
-{
-  return g_file_new_for_uri ("computer:///");
-}
-
-
-
-GFile *
 thunar_g_file_new_for_desktop (void)
 {
   return g_file_new_for_path (g_get_user_special_dir (G_USER_DIRECTORY_DESKTOP));

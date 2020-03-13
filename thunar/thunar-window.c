@@ -3108,7 +3108,7 @@ thunar_window_action_open_computer (GtkAction    *action,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* determine the computer location */
-  computer = thunar_g_file_new_for_computer ();
+  computer = g_file_new_for_uri ("computer://");
 
   /* determine the file for this location */
   computer_file = thunar_file_get (computer, &error);

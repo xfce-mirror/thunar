@@ -282,7 +282,6 @@ thunar_tree_model_init (ThunarTreeModel *model)
   ThunarTreeModelItem *item;
   ThunarFile          *file;
   GFile               *home;
-  GFile               *computer;
   GList               *system_paths = NULL;
   GList               *devices;
   GList               *lp;
@@ -313,9 +312,9 @@ thunar_tree_model_init (ThunarTreeModel *model)
   g_signal_connect (model->device_monitor, "device-removed", G_CALLBACK (thunar_tree_model_device_removed), model);
   g_signal_connect (model->device_monitor, "device-changed", G_CALLBACK (thunar_tree_model_device_changed), model);
 
-  /* add the computer folder to the system paths */
-  computer = thunar_g_file_new_for_computer ();
-  system_paths = g_list_append (system_paths, g_object_ref (computer));
+  /* append the computer icon if browsing the computer is supported */
+  if (thunar_g_vfs_is_uri_scheme_supported ("computer"))
+    system_paths = g_list_append (system_paths, g_file_new_for_uri ("computer://"));
 
   /* add the home folder to the system paths */
   home = thunar_g_file_new_for_home ();
@@ -332,7 +331,7 @@ thunar_tree_model_init (ThunarTreeModel *model)
   /* append the root file system */
   system_paths = g_list_append (system_paths, thunar_g_file_new_for_root ());
 
-  /* append the system defined nodes ('Home', 'Trash', 'File System') */
+  /* append the system defined nodes ('Computer', 'Home', 'Trash', 'Network', 'File System') */
   for (lp = system_paths; lp != NULL; lp = lp->next)
     {
       /* determine the file for the path */
