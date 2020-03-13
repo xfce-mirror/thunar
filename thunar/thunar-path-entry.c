@@ -818,6 +818,30 @@ thunar_path_entry_common_prefix_append (ThunarPathEntry *path_entry,
 
 
 
+static gboolean
+thunar_path_entry_has_prefix_casefolded (const gchar *string,
+                                         const gchar *prefix)
+{
+  gchar *string_casefolded;
+  gchar *prefix_casefolded;
+  gboolean has_prefix;
+
+  if (string == NULL || prefix == NULL)
+    return FALSE;
+
+  string_casefolded = g_utf8_casefold (string, -1);
+  prefix_casefolded = g_utf8_casefold (prefix, -1);
+
+  has_prefix = g_str_has_prefix (string_casefolded , prefix_casefolded);
+
+  g_free (string_casefolded);
+  g_free (prefix_casefolded);
+
+  return has_prefix;
+}
+
+
+
 static void
 thunar_path_entry_common_prefix_lookup (ThunarPathEntry *path_entry,
                                         gchar          **prefix_return,
@@ -851,7 +875,7 @@ thunar_path_entry_common_prefix_lookup (ThunarPathEntry *path_entry,
           gtk_tree_model_get (model, &iter, THUNAR_COLUMN_FILE_NAME, &name, -1);
 
           /* check if we have a valid prefix here */
-          if (g_str_has_prefix (name, text))
+          if (thunar_path_entry_has_prefix_casefolded (name, text))
             {
               /* check if we're the first to match */
               if (*prefix_return == NULL)
@@ -945,7 +969,7 @@ thunar_path_entry_match_func (GtkEntryCompletion *completion,
 
       /* check if we have a match here */
       if (name_normalized != NULL)
-        matched = g_str_has_prefix (name_normalized, last_slash);
+        matched = thunar_path_entry_has_prefix_casefolded (name_normalized, last_slash);
       else
         matched = FALSE;
 
