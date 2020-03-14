@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-28 00:30+0100\n"
-"PO-Revision-Date: 2020-03-01 17:29+0000\n"
+"POT-Creation-Date: 2020-03-14 00:30+0100\n"
+"PO-Revision-Date: 2020-03-14 15:01+0000\n"
 "Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/xfce/thunar/language/pt/)\n"
 "MIME-Version: 1.0\n"
@@ -130,8 +130,8 @@ msgstr "Ocorreu um erro ao iniciar a operação"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1508 ../thunar/thunar-application.c:1640
-#: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:356
-#: ../thunar/thunar-location-entry.c:384
+#: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:366
+#: ../thunar/thunar-location-entry.c:394
 #: ../thunar/thunar-shortcuts-view.c:1719
 #: ../thunar/thunar-shortcuts-view.c:1747 ../thunar/thunar-window.c:2414
 #, c-format
@@ -862,12 +862,12 @@ msgstr "Ficheiro"
 msgid "File Name"
 msgstr "Nome do ficheiro"
 
-#: ../thunar/thunar-file.c:1083 ../thunar/thunar-gio-extensions.c:263
-#: ../thunar/thunar-shortcuts-model.c:1048
+#: ../thunar/thunar-file.c:1083 ../thunar/thunar-gio-extensions.c:255
+#: ../thunar/thunar-shortcuts-model.c:1047 ../thunar.desktop.in.in.h:6
 msgid "Trash"
 msgstr "Lixo"
 
-#: ../thunar/thunar-file.c:1090 ../thunar/thunar-gio-extensions.c:261
+#: ../thunar/thunar-file.c:1090 ../thunar/thunar-gio-extensions.c:253
 #: ../thunar/thunar-shortcuts-model.c:936 ../thunar/thunar-window.c:382
 msgid "File System"
 msgstr "Sistema de ficheiros"
@@ -907,13 +907,13 @@ msgid "Invalid desktop file"
 msgstr "Ficheiro .desktop inválido"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: ../thunar/thunar-gio-extensions.c:343
+#: ../thunar/thunar-gio-extensions.c:335
 #, c-format
 msgid "%s on %s"
 msgstr "%s em %s"
 
 #. free disk space string
-#: ../thunar/thunar-gio-extensions.c:454
+#: ../thunar/thunar-gio-extensions.c:446
 #, c-format
 msgid "%s of %s free (%d%% used)"
 msgstr "%s de %s livres (%d%% em uso)"
@@ -1375,11 +1375,11 @@ msgstr "Mover ou copiar para \"%s\" os ficheiros previamente selecionados pelos 
 msgid "View the properties of the folder \"%s\""
 msgstr "Ver propriedades da pasta \"%s\""
 
-#: ../thunar/thunar-location-entry.c:195 ../thunar/thunar-window.c:370
+#: ../thunar/thunar-location-entry.c:200 ../thunar/thunar-window.c:370
 msgid "Reload the current folder"
 msgstr "Recarregar pasta atual"
 
-#: ../thunar/thunar-location-entry.c:349
+#: ../thunar/thunar-location-entry.c:359
 #, c-format
 msgid "File does not exist"
 msgstr "O ficheiro não existe"
@@ -2191,11 +2191,12 @@ msgstr "REDE"
 msgid "Browse Network"
 msgstr "Explorar rede"
 
-#: ../thunar/thunar-shortcuts-model.c:1000
+#: ../thunar/thunar-shortcuts-model.c:999
 msgid "PLACES"
 msgstr "LOCAIS"
 
-#: ../thunar/thunar-shortcuts-model.c:1078 ../thunar/thunar-window.c:381
+#: ../thunar/thunar-shortcuts-model.c:1073 ../thunar/thunar-window.c:381
+#: ../thunar.desktop.in.in.h:5
 msgid "Computer"
 msgstr "Computador"
 
@@ -2555,7 +2556,7 @@ msgstr "Li_xo"
 msgid "Display the contents of the trash can"
 msgstr "Mostrar conteúdo do caixote do lixo"
 
-#: ../thunar/thunar-tree-model.c:620
+#: ../thunar/thunar-tree-model.c:616
 msgid "Loading..."
 msgstr "A carregar..."
 
@@ -2756,8 +2757,9 @@ msgid "Go to the desktop folder"
 msgstr "Ir para a pasta da área de trabalho"
 
 #: ../thunar/thunar-window.c:381
-msgid "Go to the computer folder"
-msgstr "Ir para a pasta do computador"
+msgid ""
+"Browse all local and remote disks and folders accessible from this computer"
+msgstr "Navegue por todos os discos e locais remotos e pastas acessíveis a partir deste computador"
 
 #: ../thunar/thunar-window.c:382
 msgid "Browse the file system"
@@ -2910,8 +2912,8 @@ msgstr "O diretório \"%s\" não existe. Pretende criá-lo?"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:3118
-msgid "Failed to open the computer folder"
-msgstr "Ocorreu um erro ao abrir a pasta do computador"
+msgid "Failed to browse the computer"
+msgstr "Falha ao navegar no computador"
 
 #. display the "About Templates" dialog
 #: ../thunar/thunar-window.c:3164
@@ -2955,7 +2957,7 @@ msgid ""
 msgstr "O Thunar é um gestor de ficheiros rápido e\nfácil de usar para o ambiente de trabalho Xfce."
 
 #. set window title
-#: ../thunar/thunar-window.c:3451 ../thunar.desktop.in.in.h:3
+#: ../thunar/thunar-window.c:3452 ../thunar.desktop.in.in.h:3
 msgid "File Manager"
 msgstr "Gestor de ficheiros"
 
@@ -3727,6 +3729,10 @@ msgstr "Gestor de ficheiros Thunar"
 #: ../thunar.desktop.in.in.h:2
 msgid "Browse the filesystem with the file manager"
 msgstr "Explorar sistema de ficheiros com o gestor de ficheiros"
+
+#: ../thunar.desktop.in.in.h:4
+msgid "Home"
+msgstr "Pasta pessoal"
 
 #: ../thunar/thunar-settings.desktop.in.h:1
 msgid "File Manager Settings"
