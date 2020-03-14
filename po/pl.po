@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-28 00:30+0100\n"
-"PO-Revision-Date: 2020-02-28 10:25+0000\n"
+"POT-Creation-Date: 2020-03-14 00:30+0100\n"
+"PO-Revision-Date: 2020-03-14 06:23+0000\n"
 "Last-Translator: M_\n"
 "Language-Team: Polish (http://www.transifex.com/xfce/thunar/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -137,8 +137,8 @@ msgstr "Nie udało się wykonać operacji"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1508 ../thunar/thunar-application.c:1640
-#: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:356
-#: ../thunar/thunar-location-entry.c:384
+#: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:366
+#: ../thunar/thunar-location-entry.c:394
 #: ../thunar/thunar-shortcuts-view.c:1719
 #: ../thunar/thunar-shortcuts-view.c:1747 ../thunar/thunar-window.c:2414
 #, c-format
@@ -871,12 +871,12 @@ msgstr "Plik"
 msgid "File Name"
 msgstr "Nazwa pliku"
 
-#: ../thunar/thunar-file.c:1083 ../thunar/thunar-gio-extensions.c:263
-#: ../thunar/thunar-shortcuts-model.c:1048
+#: ../thunar/thunar-file.c:1083 ../thunar/thunar-gio-extensions.c:255
+#: ../thunar/thunar-shortcuts-model.c:1047 ../thunar.desktop.in.in.h:6
 msgid "Trash"
 msgstr "Kosz"
 
-#: ../thunar/thunar-file.c:1090 ../thunar/thunar-gio-extensions.c:261
+#: ../thunar/thunar-file.c:1090 ../thunar/thunar-gio-extensions.c:253
 #: ../thunar/thunar-shortcuts-model.c:936 ../thunar/thunar-window.c:382
 msgid "File System"
 msgstr "System plików"
@@ -916,13 +916,13 @@ msgid "Invalid desktop file"
 msgstr "Nieprawidłowy plik aktywatora"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: ../thunar/thunar-gio-extensions.c:343
+#: ../thunar/thunar-gio-extensions.c:335
 #, c-format
 msgid "%s on %s"
 msgstr "%s z %s"
 
 #. free disk space string
-#: ../thunar/thunar-gio-extensions.c:454
+#: ../thunar/thunar-gio-extensions.c:446
 #, c-format
 msgid "%s of %s free (%d%% used)"
 msgstr "wolne %s z %s (zajęte %d%%)"
@@ -1416,11 +1416,11 @@ msgstr "Przenosi lub kopiuje pliki wybrane poleceniem „Wytnij” lub „Skopiu
 msgid "View the properties of the folder \"%s\""
 msgstr "Wyświetla właściwości katalogu „%s”"
 
-#: ../thunar/thunar-location-entry.c:195 ../thunar/thunar-window.c:370
+#: ../thunar/thunar-location-entry.c:200 ../thunar/thunar-window.c:370
 msgid "Reload the current folder"
 msgstr "Ponownie odczytuje zawartość katalogu"
 
-#: ../thunar/thunar-location-entry.c:349
+#: ../thunar/thunar-location-entry.c:359
 #, c-format
 msgid "File does not exist"
 msgstr "Plik nie istnieje"
@@ -2240,11 +2240,12 @@ msgstr "SIEĆ"
 msgid "Browse Network"
 msgstr "Przeglądanie sieci"
 
-#: ../thunar/thunar-shortcuts-model.c:1000
+#: ../thunar/thunar-shortcuts-model.c:999
 msgid "PLACES"
 msgstr "POŁOŻENIA"
 
-#: ../thunar/thunar-shortcuts-model.c:1078 ../thunar/thunar-window.c:381
+#: ../thunar/thunar-shortcuts-model.c:1073 ../thunar/thunar-window.c:381
+#: ../thunar.desktop.in.in.h:5
 msgid "Computer"
 msgstr "Komputer"
 
@@ -2634,7 +2635,7 @@ msgstr "_Kosz"
 msgid "Display the contents of the trash can"
 msgstr "Wyświetla zawartość kosza"
 
-#: ../thunar/thunar-tree-model.c:620
+#: ../thunar/thunar-tree-model.c:616
 msgid "Loading..."
 msgstr "Wczytywanie..."
 
@@ -2835,8 +2836,9 @@ msgid "Go to the desktop folder"
 msgstr "Przechodzi do katalogu pulpitu"
 
 #: ../thunar/thunar-window.c:381
-msgid "Go to the computer folder"
-msgstr "Przechodzi do katalogu komputera"
+msgid ""
+"Browse all local and remote disks and folders accessible from this computer"
+msgstr "Przegląda wszystkie lokalne oraz zdalne dyski i foldery dostępne z tego komputera"
 
 #: ../thunar/thunar-window.c:382
 msgid "Browse the file system"
@@ -2989,8 +2991,8 @@ msgstr "Katalog „%s” nie istnieje. Utworzyć go?"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:3118
-msgid "Failed to open the computer folder"
-msgstr "Nie udało się otworzyć katalogu komputera"
+msgid "Failed to browse the computer"
+msgstr "Nie udało się przeglądać komputera"
 
 #. display the "About Templates" dialog
 #: ../thunar/thunar-window.c:3164
@@ -3034,7 +3036,7 @@ msgid ""
 msgstr "Zarządza zawartością sytemu plików, wyróżniając się\nszybkością działania i prostotą obsługi."
 
 #. set window title
-#: ../thunar/thunar-window.c:3451 ../thunar.desktop.in.in.h:3
+#: ../thunar/thunar-window.c:3452 ../thunar.desktop.in.in.h:3
 msgid "File Manager"
 msgstr "Menedżer plików"
 
@@ -3812,6 +3814,10 @@ msgstr "Menedżer plików Thunar"
 #: ../thunar.desktop.in.in.h:2
 msgid "Browse the filesystem with the file manager"
 msgstr "Przegląda system plików za pomocą menedżera plików"
+
+#: ../thunar.desktop.in.in.h:4
+msgid "Home"
+msgstr "Katalog użytkownika"
 
 #: ../thunar/thunar-settings.desktop.in.h:1
 msgid "File Manager Settings"
