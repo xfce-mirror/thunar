@@ -27,8 +27,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-28 00:30+0100\n"
-"PO-Revision-Date: 2020-02-28 09:34+0000\n"
+"POT-Creation-Date: 2020-03-14 00:30+0100\n"
+"PO-Revision-Date: 2020-03-14 17:03+0000\n"
 "Last-Translator: Toni Estévez <toni.estevez@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/xfce/thunar/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -145,8 +145,8 @@ msgstr "No se pudo ejecutar la operación"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1508 ../thunar/thunar-application.c:1640
-#: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:356
-#: ../thunar/thunar-location-entry.c:384
+#: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:366
+#: ../thunar/thunar-location-entry.c:394
 #: ../thunar/thunar-shortcuts-view.c:1719
 #: ../thunar/thunar-shortcuts-view.c:1747 ../thunar/thunar-window.c:2414
 #, c-format
@@ -358,7 +358,7 @@ msgstr "Usar una orden personalizada para una aplicación que no está disponibl
 #. create the "Custom command" button
 #: ../thunar/thunar-chooser-dialog.c:275
 msgid "_Browse..."
-msgstr "_Examinar…"
+msgstr "_Navegar…"
 
 #. create the "Use as default for this kind of file" button
 #: ../thunar/thunar-chooser-dialog.c:281
@@ -401,7 +401,7 @@ msgstr "Abrir <i>%s</i> y otros archivos del tipo «%s» con:"
 msgid ""
 "Browse the file system to select an application to open files of type "
 "\"%s\"."
-msgstr "Examine el sistema de archivos para elegir una aplicación que abra archivos del tipo «%s»."
+msgstr "Navegue por el sistema de archivos para elegir una aplicación para abrir archivos del tipo «%s»."
 
 #: ../thunar/thunar-chooser-dialog.c:657
 #, c-format
@@ -877,12 +877,12 @@ msgstr "Archivo"
 msgid "File Name"
 msgstr "Nombre de archivo"
 
-#: ../thunar/thunar-file.c:1083 ../thunar/thunar-gio-extensions.c:263
-#: ../thunar/thunar-shortcuts-model.c:1048
+#: ../thunar/thunar-file.c:1083 ../thunar/thunar-gio-extensions.c:255
+#: ../thunar/thunar-shortcuts-model.c:1047 ../thunar.desktop.in.in.h:6
 msgid "Trash"
 msgstr "Papelera"
 
-#: ../thunar/thunar-file.c:1090 ../thunar/thunar-gio-extensions.c:261
+#: ../thunar/thunar-file.c:1090 ../thunar/thunar-gio-extensions.c:253
 #: ../thunar/thunar-shortcuts-model.c:936 ../thunar/thunar-window.c:382
 msgid "File System"
 msgstr "Sistema de archivos"
@@ -922,13 +922,13 @@ msgid "Invalid desktop file"
 msgstr "Archivo de escritorio no válido"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: ../thunar/thunar-gio-extensions.c:343
+#: ../thunar/thunar-gio-extensions.c:335
 #, c-format
 msgid "%s on %s"
 msgstr "%s en %s"
 
 #. free disk space string
-#: ../thunar/thunar-gio-extensions.c:454
+#: ../thunar/thunar-gio-extensions.c:446
 #, c-format
 msgid "%s of %s free (%d%% used)"
 msgstr "%s de %s libres (%d %% en uso)"
@@ -1390,11 +1390,11 @@ msgstr "Mover o copiar archivos seleccionados previamente mediante cortar o copi
 msgid "View the properties of the folder \"%s\""
 msgstr "Ver las propiedades de la carpeta «%s»"
 
-#: ../thunar/thunar-location-entry.c:195 ../thunar/thunar-window.c:370
+#: ../thunar/thunar-location-entry.c:200 ../thunar/thunar-window.c:370
 msgid "Reload the current folder"
 msgstr "Recargar la carpeta actual"
 
-#: ../thunar/thunar-location-entry.c:349
+#: ../thunar/thunar-location-entry.c:359
 #, c-format
 msgid "File does not exist"
 msgstr "El archivo no existe"
@@ -2108,7 +2108,7 @@ msgstr "No se han encontrado módulos de cambio de nombre en su sistema.\nCompru
 #. tell the user that we failed
 #: ../thunar/thunar-renamer-dialog.c:945
 msgid "Failed to open the documentation browser"
-msgstr "No se pudo abrir el visor de documentación"
+msgstr "No se ha podido abrir el visor de la documentación"
 
 #. allocate the file chooser
 #: ../thunar/thunar-renamer-dialog.c:1050
@@ -2204,13 +2204,14 @@ msgstr "REDES"
 
 #: ../thunar/thunar-shortcuts-model.c:978
 msgid "Browse Network"
-msgstr "Buscar en la red"
+msgstr "Navegar por la red"
 
-#: ../thunar/thunar-shortcuts-model.c:1000
+#: ../thunar/thunar-shortcuts-model.c:999
 msgid "PLACES"
 msgstr "UBICACIONES"
 
-#: ../thunar/thunar-shortcuts-model.c:1078 ../thunar/thunar-window.c:381
+#: ../thunar/thunar-shortcuts-model.c:1073 ../thunar/thunar-window.c:381
+#: ../thunar.desktop.in.in.h:5
 msgid "Computer"
 msgstr "Equipo"
 
@@ -2570,7 +2571,7 @@ msgstr "_Papelera"
 msgid "Display the contents of the trash can"
 msgstr "Mostrar el contenido de la papelera"
 
-#: ../thunar/thunar-tree-model.c:620
+#: ../thunar/thunar-tree-model.c:616
 msgid "Loading..."
 msgstr "Cargando…"
 
@@ -2771,12 +2772,13 @@ msgid "Go to the desktop folder"
 msgstr "Ir a la carpeta del escritorio"
 
 #: ../thunar/thunar-window.c:381
-msgid "Go to the computer folder"
-msgstr "Ir a la carpeta del equipo"
+msgid ""
+"Browse all local and remote disks and folders accessible from this computer"
+msgstr "Navegar por los discos y carpetas locales y remotos accesibles desde este equipo"
 
 #: ../thunar/thunar-window.c:382
 msgid "Browse the file system"
-msgstr "Examinar el sistema de archivos"
+msgstr "Navegar por el sistema de archivos"
 
 #: ../thunar/thunar-window.c:383
 msgid "B_rowse Network"
@@ -2784,7 +2786,7 @@ msgstr "Bus_car en la red"
 
 #: ../thunar/thunar-window.c:383
 msgid "Browse local network connections"
-msgstr "Buscar conexiones en la red local"
+msgstr "Navegar por las conexiones de la red local"
 
 #: ../thunar/thunar-window.c:384
 msgid "T_emplates"
@@ -2925,8 +2927,8 @@ msgstr "La carpeta «%s» no existe. ¿Desea crearla?"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:3118
-msgid "Failed to open the computer folder"
-msgstr "Error al abrir la carpeta del equipo"
+msgid "Failed to browse the computer"
+msgstr "No se ha podido navegar por el equipo"
 
 #. display the "About Templates" dialog
 #: ../thunar/thunar-window.c:3164
@@ -2961,7 +2963,7 @@ msgstr "No se pudo mostrar los contenidos de la papelera"
 #. display an error to the user
 #: ../thunar/thunar-window.c:3309
 msgid "Failed to browse the network"
-msgstr "No se pudo navegar por la red"
+msgstr "No se ha podido navegar por la red"
 
 #: ../thunar/thunar-window.c:3393
 msgid ""
@@ -2970,7 +2972,7 @@ msgid ""
 msgstr "Thunar es un gestor de archivos rápido y\nfácil de usar para el entorno de escritorio Xfce"
 
 #. set window title
-#: ../thunar/thunar-window.c:3451 ../thunar.desktop.in.in.h:3
+#: ../thunar/thunar-window.c:3452 ../thunar.desktop.in.in.h:3
 msgid "File Manager"
 msgstr "Gestor de archivos"
 
@@ -3572,7 +3574,7 @@ msgstr "La orden (incluidos los parámetros necesarios) para realizar la acción
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:9
 msgid ""
 "Browse the file system to select an application to use for this action."
-msgstr "Examinar el sistema de archivos para seleccionar la aplicación que se usará para esta acción."
+msgstr "Navegue por el sistema de archivos para seleccionar una aplicación para esta acción."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:10
 msgid "Keyboard _Shortcut:"
@@ -3741,7 +3743,11 @@ msgstr "Gestor de archivos Thunar"
 
 #: ../thunar.desktop.in.in.h:2
 msgid "Browse the filesystem with the file manager"
-msgstr "Explore el sistema de archivos con el gestor de archivos"
+msgstr "Navegue por el sistema de archivos con el gestor de archivos"
+
+#: ../thunar.desktop.in.in.h:4
+msgid "Home"
+msgstr "Carpeta personal"
 
 #: ../thunar/thunar-settings.desktop.in.h:1
 msgid "File Manager Settings"
@@ -3756,7 +3762,7 @@ msgid ""
 "Thunar is a file browser specifically designed for the Xfce Desktop, but "
 "also can serve as an alternate file browser for other Desktop environments. "
 "It has a simple, clean two-pane design for browsing all your files."
-msgstr "Thunar es un gestor de archivos diseñado específicamente para el escritorio Xfce, pero puede usarse también en otros entornos de escritorio. Su interfaz de doble panel es sencilla y clara."
+msgstr "Thunar es un navegador de archivos diseñado específicamente para el escritorio Xfce, pero puede usarse también en otros entornos de escritorio. Su interfaz de doble panel es sencilla y clara."
 
 #. SECURITY:
 #. - A normal active user can run thunar without elevated rights. They
