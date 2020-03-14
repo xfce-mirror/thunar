@@ -1095,13 +1095,13 @@ thunar_tree_model_device_added (ThunarDeviceMonitor *device_monitor,
   /* determine the iterator for the new node */
   GTK_TREE_ITER_INIT (iter, model->stamp, node);
 
-  /* add the dummy node */
-  thunar_tree_model_node_insert_dummy (node, model);
-
   /* tell the view about the new node */
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
   gtk_tree_model_row_inserted (GTK_TREE_MODEL (model), path, &iter);
   gtk_tree_path_free (path);
+
+  /* add the dummy node */
+  thunar_tree_model_node_insert_dummy (node, model);
 }
 
 
