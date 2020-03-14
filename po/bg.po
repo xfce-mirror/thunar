@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-28 00:30+0100\n"
-"PO-Revision-Date: 2020-02-28 06:48+0000\n"
+"POT-Creation-Date: 2020-03-14 00:30+0100\n"
+"PO-Revision-Date: 2020-03-14 15:21+0000\n"
 "Last-Translator: Kiril Kirilov <cybercop_montana@abv.bg>\n"
 "Language-Team: Bulgarian (http://www.transifex.com/xfce/thunar/language/bg/)\n"
 "MIME-Version: 1.0\n"
@@ -132,8 +132,8 @@ msgstr "Неуспех при стартирането на операция"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1508 ../thunar/thunar-application.c:1640
-#: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:356
-#: ../thunar/thunar-location-entry.c:384
+#: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:366
+#: ../thunar/thunar-location-entry.c:394
 #: ../thunar/thunar-shortcuts-view.c:1719
 #: ../thunar/thunar-shortcuts-view.c:1747 ../thunar/thunar-window.c:2414
 #, c-format
@@ -864,12 +864,12 @@ msgstr "Файл"
 msgid "File Name"
 msgstr "Име на файл"
 
-#: ../thunar/thunar-file.c:1083 ../thunar/thunar-gio-extensions.c:263
-#: ../thunar/thunar-shortcuts-model.c:1048
+#: ../thunar/thunar-file.c:1083 ../thunar/thunar-gio-extensions.c:255
+#: ../thunar/thunar-shortcuts-model.c:1047 ../thunar.desktop.in.in.h:6
 msgid "Trash"
 msgstr "Кошче"
 
-#: ../thunar/thunar-file.c:1090 ../thunar/thunar-gio-extensions.c:261
+#: ../thunar/thunar-file.c:1090 ../thunar/thunar-gio-extensions.c:253
 #: ../thunar/thunar-shortcuts-model.c:936 ../thunar/thunar-window.c:382
 msgid "File System"
 msgstr "Файлова система"
@@ -909,13 +909,13 @@ msgid "Invalid desktop file"
 msgstr "Грешен файл за работен плот"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: ../thunar/thunar-gio-extensions.c:343
+#: ../thunar/thunar-gio-extensions.c:335
 #, c-format
 msgid "%s on %s"
 msgstr "%s на %s"
 
 #. free disk space string
-#: ../thunar/thunar-gio-extensions.c:454
+#: ../thunar/thunar-gio-extensions.c:446
 #, c-format
 msgid "%s of %s free (%d%% used)"
 msgstr "%s от %s свободно (%d%% заето)"
@@ -1377,11 +1377,11 @@ msgstr "Преместваме или копиране на файловете, 
 msgid "View the properties of the folder \"%s\""
 msgstr "Преглед на свойствата на папката „%s“"
 
-#: ../thunar/thunar-location-entry.c:195 ../thunar/thunar-window.c:370
+#: ../thunar/thunar-location-entry.c:200 ../thunar/thunar-window.c:370
 msgid "Reload the current folder"
 msgstr "Обновяване на текущата папка"
 
-#: ../thunar/thunar-location-entry.c:349
+#: ../thunar/thunar-location-entry.c:359
 #, c-format
 msgid "File does not exist"
 msgstr "Файлът не съществува"
@@ -2193,11 +2193,12 @@ msgstr "МРЕЖА"
 msgid "Browse Network"
 msgstr "Преглед на мрежата"
 
-#: ../thunar/thunar-shortcuts-model.c:1000
+#: ../thunar/thunar-shortcuts-model.c:999
 msgid "PLACES"
 msgstr "МЕСТА"
 
-#: ../thunar/thunar-shortcuts-model.c:1078 ../thunar/thunar-window.c:381
+#: ../thunar/thunar-shortcuts-model.c:1073 ../thunar/thunar-window.c:381
+#: ../thunar.desktop.in.in.h:5
 msgid "Computer"
 msgstr "Компютър"
 
@@ -2557,7 +2558,7 @@ msgstr "Кошче"
 msgid "Display the contents of the trash can"
 msgstr "Показване на съдържанието на кошчето"
 
-#: ../thunar/thunar-tree-model.c:620
+#: ../thunar/thunar-tree-model.c:616
 msgid "Loading..."
 msgstr "Зареждане..."
 
@@ -2758,8 +2759,9 @@ msgid "Go to the desktop folder"
 msgstr "Отиване в папката на работният плот"
 
 #: ../thunar/thunar-window.c:381
-msgid "Go to the computer folder"
-msgstr "Отиване в папката на компютъра"
+msgid ""
+"Browse all local and remote disks and folders accessible from this computer"
+msgstr "Преглеждане на всички локални и отдалечени дискове и папки, достъпни от този компютър"
 
 #: ../thunar/thunar-window.c:382
 msgid "Browse the file system"
@@ -2912,8 +2914,8 @@ msgstr "Директорията „%s“ не съществува. Искат�
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:3118
-msgid "Failed to open the computer folder"
-msgstr "Папката на компютъра не може да бъде отворена"
+msgid "Failed to browse the computer"
+msgstr "Компютърът не може да бъде прегледан"
 
 #. display the "About Templates" dialog
 #: ../thunar/thunar-window.c:3164
@@ -2957,7 +2959,7 @@ msgid ""
 msgstr "Thunar е бърз и лесен за ползване файлов мениджър\nза графична среда Xfce."
 
 #. set window title
-#: ../thunar/thunar-window.c:3451 ../thunar.desktop.in.in.h:3
+#: ../thunar/thunar-window.c:3452 ../thunar.desktop.in.in.h:3
 msgid "File Manager"
 msgstr "Файлов мениджър"
 
@@ -3729,6 +3731,10 @@ msgstr "Файлов мениджър Thunar"
 #: ../thunar.desktop.in.in.h:2
 msgid "Browse the filesystem with the file manager"
 msgstr "Преглед на файловата система с файловият мениджър"
+
+#: ../thunar.desktop.in.in.h:4
+msgid "Home"
+msgstr "Домашна папка"
 
 #: ../thunar/thunar-settings.desktop.in.h:1
 msgid "File Manager Settings"
