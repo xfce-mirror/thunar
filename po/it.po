@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-08 06:30+0100\n"
-"PO-Revision-Date: 2020-03-08 13:11+0000\n"
+"POT-Creation-Date: 2020-03-14 00:30+0100\n"
+"PO-Revision-Date: 2020-03-14 08:51+0000\n"
 "Last-Translator: Emanuele Petriglia <transifex@emanuelepetriglia.com>\n"
 "Language-Team: Italian (http://www.transifex.com/xfce/thunar/language/it/)\n"
 "MIME-Version: 1.0\n"
@@ -864,12 +864,12 @@ msgstr "File"
 msgid "File Name"
 msgstr "Nome del file"
 
-#: ../thunar/thunar-file.c:1083 ../thunar/thunar-gio-extensions.c:263
-#: ../thunar/thunar-shortcuts-model.c:1048 ../thunar.desktop.in.in.h:6
+#: ../thunar/thunar-file.c:1083 ../thunar/thunar-gio-extensions.c:255
+#: ../thunar/thunar-shortcuts-model.c:1047 ../thunar.desktop.in.in.h:6
 msgid "Trash"
 msgstr "Cestino"
 
-#: ../thunar/thunar-file.c:1090 ../thunar/thunar-gio-extensions.c:261
+#: ../thunar/thunar-file.c:1090 ../thunar/thunar-gio-extensions.c:253
 #: ../thunar/thunar-shortcuts-model.c:936 ../thunar/thunar-window.c:382
 msgid "File System"
 msgstr "File system"
@@ -909,13 +909,13 @@ msgid "Invalid desktop file"
 msgstr "File desktop non valido"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: ../thunar/thunar-gio-extensions.c:343
+#: ../thunar/thunar-gio-extensions.c:335
 #, c-format
 msgid "%s on %s"
 msgstr "%s su %s"
 
 #. free disk space string
-#: ../thunar/thunar-gio-extensions.c:454
+#: ../thunar/thunar-gio-extensions.c:446
 #, c-format
 msgid "%s of %s free (%d%% used)"
 msgstr "%s di %s liberi (%d%% utilizzato)"
@@ -2193,11 +2193,11 @@ msgstr "RETE"
 msgid "Browse Network"
 msgstr "Esplora la rete"
 
-#: ../thunar/thunar-shortcuts-model.c:1000
+#: ../thunar/thunar-shortcuts-model.c:999
 msgid "PLACES"
 msgstr "POSIZIONI"
 
-#: ../thunar/thunar-shortcuts-model.c:1078 ../thunar/thunar-window.c:381
+#: ../thunar/thunar-shortcuts-model.c:1073 ../thunar/thunar-window.c:381
 #: ../thunar.desktop.in.in.h:5
 msgid "Computer"
 msgstr "Computer"
@@ -2558,7 +2558,7 @@ msgstr "C_estino"
 msgid "Display the contents of the trash can"
 msgstr "Mostra il contenuto del cestino"
 
-#: ../thunar/thunar-tree-model.c:617
+#: ../thunar/thunar-tree-model.c:616
 msgid "Loading..."
 msgstr "Caricamento in corso…"
 
@@ -2759,8 +2759,9 @@ msgid "Go to the desktop folder"
 msgstr "Va alla cartella della Scrivania"
 
 #: ../thunar/thunar-window.c:381
-msgid "Go to the computer folder"
-msgstr "Vai alla cartella del computer"
+msgid ""
+"Browse all local and remote disks and folders accessible from this computer"
+msgstr "Esplora i dischi remoti e locali e le cartelle accessibili da questo computer"
 
 #: ../thunar/thunar-window.c:382
 msgid "Browse the file system"
@@ -2913,8 +2914,8 @@ msgstr "La cartella \"%s\" non esiste. Crearla?"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:3118
-msgid "Failed to open the computer folder"
-msgstr "Impossibile aprire la cartella del computer"
+msgid "Failed to browse the computer"
+msgstr "Impossibile esplorare il computer"
 
 #. display the "About Templates" dialog
 #: ../thunar/thunar-window.c:3164
