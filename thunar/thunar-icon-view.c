@@ -98,7 +98,7 @@ thunar_icon_view_init (ThunarIconView *icon_view)
 {
   /* setup the icon renderer */
   g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->icon_renderer),
-                "ypad", 0u,
+                "ypad", 1u,
                 NULL);
 
   /* setup the name renderer */
