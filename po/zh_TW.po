@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-28 00:30+0100\n"
-"PO-Revision-Date: 2020-03-01 03:48+0000\n"
+"POT-Creation-Date: 2020-03-14 00:30+0100\n"
+"PO-Revision-Date: 2020-03-15 03:20+0000\n"
 "Last-Translator: 黃柏諺 <s8321414@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/xfce/thunar/language/zh_TW/)\n"
 "MIME-Version: 1.0\n"
@@ -133,8 +133,8 @@ msgstr "操作無法啟動"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1508 ../thunar/thunar-application.c:1640
-#: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:356
-#: ../thunar/thunar-location-entry.c:384
+#: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:366
+#: ../thunar/thunar-location-entry.c:394
 #: ../thunar/thunar-shortcuts-view.c:1719
 #: ../thunar/thunar-shortcuts-view.c:1747 ../thunar/thunar-window.c:2414
 #, c-format
@@ -864,12 +864,12 @@ msgstr "檔案"
 msgid "File Name"
 msgstr "檔案名稱"
 
-#: ../thunar/thunar-file.c:1083 ../thunar/thunar-gio-extensions.c:263
-#: ../thunar/thunar-shortcuts-model.c:1048
+#: ../thunar/thunar-file.c:1083 ../thunar/thunar-gio-extensions.c:255
+#: ../thunar/thunar-shortcuts-model.c:1047 ../thunar.desktop.in.in.h:6
 msgid "Trash"
 msgstr "垃圾"
 
-#: ../thunar/thunar-file.c:1090 ../thunar/thunar-gio-extensions.c:261
+#: ../thunar/thunar-file.c:1090 ../thunar/thunar-gio-extensions.c:253
 #: ../thunar/thunar-shortcuts-model.c:936 ../thunar/thunar-window.c:382
 msgid "File System"
 msgstr "檔案系統"
@@ -909,13 +909,13 @@ msgid "Invalid desktop file"
 msgstr "無效的桌面檔案"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: ../thunar/thunar-gio-extensions.c:343
+#: ../thunar/thunar-gio-extensions.c:335
 #, c-format
 msgid "%s on %s"
 msgstr "%s 於 %s"
 
 #. free disk space string
-#: ../thunar/thunar-gio-extensions.c:454
+#: ../thunar/thunar-gio-extensions.c:446
 #, c-format
 msgid "%s of %s free (%d%% used)"
 msgstr "%s 可用，共 %s（已使用 %d%%）"
@@ -1361,11 +1361,11 @@ msgstr "將之前剪下或複製的檔案移動或複製到「%s」"
 msgid "View the properties of the folder \"%s\""
 msgstr "檢視資料夾「%s」的屬性"
 
-#: ../thunar/thunar-location-entry.c:195 ../thunar/thunar-window.c:370
+#: ../thunar/thunar-location-entry.c:200 ../thunar/thunar-window.c:370
 msgid "Reload the current folder"
 msgstr "重新整理目前的資料夾"
 
-#: ../thunar/thunar-location-entry.c:349
+#: ../thunar/thunar-location-entry.c:359
 #, c-format
 msgid "File does not exist"
 msgstr "沒有該檔案"
@@ -2173,11 +2173,12 @@ msgstr "網路"
 msgid "Browse Network"
 msgstr "瀏覽網路"
 
-#: ../thunar/thunar-shortcuts-model.c:1000
+#: ../thunar/thunar-shortcuts-model.c:999
 msgid "PLACES"
 msgstr "位置"
 
-#: ../thunar/thunar-shortcuts-model.c:1078 ../thunar/thunar-window.c:381
+#: ../thunar/thunar-shortcuts-model.c:1073 ../thunar/thunar-window.c:381
+#: ../thunar.desktop.in.in.h:5
 msgid "Computer"
 msgstr "電腦"
 
@@ -2522,7 +2523,7 @@ msgstr "垃圾桶(_R)"
 msgid "Display the contents of the trash can"
 msgstr "顯示垃圾桶的內容"
 
-#: ../thunar/thunar-tree-model.c:620
+#: ../thunar/thunar-tree-model.c:616
 msgid "Loading..."
 msgstr "載入中..."
 
@@ -2723,8 +2724,9 @@ msgid "Go to the desktop folder"
 msgstr "前往桌面資料夾"
 
 #: ../thunar/thunar-window.c:381
-msgid "Go to the computer folder"
-msgstr "到電腦資料夾"
+msgid ""
+"Browse all local and remote disks and folders accessible from this computer"
+msgstr "瀏覽可從此電腦存取的所有本機與遠端磁碟與資料夾"
 
 #: ../thunar/thunar-window.c:382
 msgid "Browse the file system"
@@ -2877,8 +2879,8 @@ msgstr "沒有「%s」目錄。要建立該目錄嗎？"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:3118
-msgid "Failed to open the computer folder"
-msgstr "無法打開電腦資料夾"
+msgid "Failed to browse the computer"
+msgstr "瀏覽電腦失敗"
 
 #. display the "About Templates" dialog
 #: ../thunar/thunar-window.c:3164
@@ -2922,7 +2924,7 @@ msgid ""
 msgstr "Thunar 是快速且易於使用的檔案管理員\n是附屬於 Xfce 桌面環境計畫的工具程式。"
 
 #. set window title
-#: ../thunar/thunar-window.c:3451 ../thunar.desktop.in.in.h:3
+#: ../thunar/thunar-window.c:3452 ../thunar.desktop.in.in.h:3
 msgid "File Manager"
 msgstr "檔案管理員"
 
@@ -3691,6 +3693,10 @@ msgstr "Thunar 檔案管理員"
 #: ../thunar.desktop.in.in.h:2
 msgid "Browse the filesystem with the file manager"
 msgstr "使用檔案管理員瀏覽檔案系統"
+
+#: ../thunar.desktop.in.in.h:4
+msgid "Home"
+msgstr "家目錄"
 
 #: ../thunar/thunar-settings.desktop.in.h:1
 msgid "File Manager Settings"
