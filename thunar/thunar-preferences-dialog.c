@@ -678,18 +678,41 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
       grid = gtk_grid_new ();
       gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
-      gtk_grid_set_row_spacing (GTK_GRID (grid), 2);
-      gtk_container_set_border_width (GTK_CONTAINER (grid), 12);
+      gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
+      gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
+      gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
       gtk_container_add (GTK_CONTAINER (frame), grid);
       gtk_widget_show (grid);
 
       button = gtk_check_button_new_with_mnemonic (_("Show action to permanently delete files and folders"));
       exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-show-delete-action", G_OBJECT (button), "active");
       gtk_widget_set_tooltip_text (button, _("Select this option to show the 'Delete' action in the context menu"));
-      gtk_widget_set_hexpand (button, TRUE);
       gtk_grid_attach (GTK_GRID (grid), button, 0, 0, 1, 1);
       gtk_widget_show (button);
     }
+
+  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
+  gtk_widget_show (frame);
+
+  label = gtk_label_new (_("Window icon"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_frame_set_label_widget (GTK_FRAME (frame), label);
+  gtk_widget_show (label);
+
+  grid = gtk_grid_new ();
+  gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
+  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
+  gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
+  gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
+  gtk_container_add (GTK_CONTAINER (frame), grid);
+  gtk_widget_show (grid);
+
+  button = gtk_check_button_new_with_mnemonic (_("Use current folder icon"));
+  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-change-window-icon", G_OBJECT (button), "active");
+  gtk_widget_set_tooltip_text (button, _("Select this option to use the current folder icon as window icon"));
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 0, 1, 1);
+  gtk_widget_show (button);
 
   /*
      Advanced

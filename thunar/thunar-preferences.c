@@ -773,7 +773,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
       g_param_spec_boolean ("misc-change-window-icon",
                             "MiscChangeWindowIcon",
                             NULL,
-                            FALSE,
+                            TRUE,
                             EXO_PARAM_READWRITE);
 
   /**

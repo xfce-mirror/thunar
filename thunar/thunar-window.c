@@ -255,6 +255,7 @@ static gboolean thunar_window_save_geometry_timer         (gpointer             
 static void     thunar_window_save_geometry_timer_destroy (gpointer                user_data);
 static void     thunar_window_set_zoom_level              (ThunarWindow           *window,
                                                            ThunarZoomLevel         zoom_level);
+static void     thunar_window_update_window_icon          (ThunarWindow           *window);
 
 
 
@@ -961,6 +962,9 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /* setup setting the location bar visibility on-demand */
   g_signal_connect_object (G_OBJECT (window->preferences), "notify::last-location-bar", G_CALLBACK (thunar_window_update_location_bar_visible), window, G_CONNECT_SWAPPED);
   thunar_window_update_location_bar_visible (window);
+
+  /* update window icon whenever preferences change */
+  g_signal_connect_object (G_OBJECT (window->preferences), "notify::misc-change-window-icon", G_CALLBACK (thunar_window_update_window_icon), window, G_CONNECT_SWAPPED);
 
   /* determine the selected side pane (FIXME: Should probably be last-shortcuts-visible and last-tree-visible preferences) */
   if (exo_str_is_equal (last_side_pane, g_type_name (THUNAR_TYPE_SHORTCUTS_PANE)))
@@ -2005,6 +2009,28 @@ thunar_window_update_location_bar_visible (ThunarWindow *window)
     gtk_widget_hide (window->location_toolbar);
 
   g_free (last_location_bar);
+}
+
+
+
+static void
+thunar_window_update_window_icon (ThunarWindow *window)
+{
+  gboolean      change_window_icon;
+  GtkIconTheme *icon_theme;
+  const gchar  *icon_name = "folder";
+
+  g_object_get (window->preferences, "misc-change-window-icon", &change_window_icon, NULL);
+
+  if (change_window_icon)
+    {
+      icon_theme = gtk_icon_theme_get_for_screen (gtk_window_get_screen (GTK_WINDOW (window)));
+      icon_name = thunar_file_get_icon_name (window->current_directory,
+                                             THUNAR_FILE_ICON_STATE_DEFAULT,
+                                             icon_theme);
+    }
+
+  gtk_window_set_icon_name (GTK_WINDOW (window), icon_name);
 }
 
 
@@ -3421,12 +3447,9 @@ static void
 thunar_window_current_directory_changed (ThunarFile   *current_directory,
                                          ThunarWindow *window)
 {
-  GtkIconTheme *icon_theme;
   GtkAction    *action;
-  const gchar  *icon_name;
   gchar        *title;
   gboolean      show_full_path;
-  gboolean      change_window_icon;
   gchar        *parse_name = NULL;
   const gchar  *name;
 
@@ -3455,14 +3478,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   g_free (parse_name);
 
   /* set window icon */
-  icon_theme = gtk_icon_theme_get_for_screen (gtk_window_get_screen (GTK_WINDOW (window)));
-  icon_name = thunar_file_get_icon_name (current_directory,
-                                         THUNAR_FILE_ICON_STATE_DEFAULT,
-                                         icon_theme);
-
-  g_object_get (G_OBJECT (window->preferences), "misc-change-window-icon", &change_window_icon, NULL);
-  if (G_UNLIKELY (change_window_icon))
-    gtk_window_set_icon_name (GTK_WINDOW (window), icon_name);
+  thunar_window_update_window_icon (window);
 }
 
 
