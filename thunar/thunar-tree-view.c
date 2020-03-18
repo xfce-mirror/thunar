@@ -1346,8 +1346,8 @@ G_GNUC_END_IGNORE_DEPRECATIONS
         }
       else
         {
-          /* append the "Disconnect" menu action */
-          item = gtk_menu_item_new_with_mnemonic (_("Disconn_ect"));
+          /* append the "Unmount" menu action */
+          item = gtk_menu_item_new_with_mnemonic (_("_Unmount"));
           gtk_widget_set_sensitive (item, thunar_device_can_eject (device));
           g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_eject), view);
           gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
