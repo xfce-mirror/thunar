@@ -17,8 +17,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-28 00:30+0100\n"
-"PO-Revision-Date: 2020-02-29 17:40+0000\n"
+"POT-Creation-Date: 2020-03-19 00:30+0100\n"
+"PO-Revision-Date: 2020-03-21 06:37+0000\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>\n"
 "Language-Team: Serbian (http://www.transifex.com/xfce/thunar/language/sr/)\n"
 "MIME-Version: 1.0\n"
@@ -117,7 +117,7 @@ msgstr "Име „%s“ је изгубљено у сабирници порук
 
 #: ../thunar/thunar-application.c:477
 msgid "The Thunar development team. All rights reserved."
-msgstr "Развојни тим Тунара. Сва права су задржана."
+msgstr "Развојна дружба Тунара. Сва права су задржана."
 
 #: ../thunar/thunar-application.c:478
 msgid "Written by Benedikt Meurer <benny@xfce.org>."
@@ -135,10 +135,10 @@ msgstr "Нисам успео да покренем радњу"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1508 ../thunar/thunar-application.c:1640
-#: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:356
-#: ../thunar/thunar-location-entry.c:384
-#: ../thunar/thunar-shortcuts-view.c:1719
-#: ../thunar/thunar-shortcuts-view.c:1747 ../thunar/thunar-window.c:2414
+#: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:366
+#: ../thunar/thunar-location-entry.c:394
+#: ../thunar/thunar-shortcuts-view.c:1696
+#: ../thunar/thunar-shortcuts-view.c:1724 ../thunar/thunar-window.c:2440
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "Нисам успео да отворим „%s“"
@@ -281,8 +281,8 @@ msgstr "Да ли да уклоним све ставке из смећа?"
 #. append the "Empty Trash" menu action
 #. prepare the menu item
 #: ../thunar/thunar-application.c:2348 ../thunar/thunar-location-buttons.c:188
-#: ../thunar/thunar-shortcuts-view.c:1239 ../thunar/thunar-tree-view.c:1370
-#: ../thunar/thunar-window.c:360 ../plugins/thunar-tpa/thunar-tpa.c:175
+#: ../thunar/thunar-shortcuts-view.c:1220 ../thunar/thunar-tree-view.c:1370
+#: ../thunar/thunar-window.c:361 ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "_Избаци смеће"
 
@@ -359,7 +359,7 @@ msgstr "Постави као по_дразумевано за овакву вр
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:291
 #: ../thunar/thunar-chooser-dialog.c:1155
-#: ../thunar/thunar-properties-dialog.c:820 ../thunar/thunar-window.c:3166
+#: ../thunar/thunar-properties-dialog.c:820 ../thunar/thunar-window.c:3192
 #: ../plugins/thunar-uca/thunar-uca-editor.c:142
 #: ../plugins/thunar-uca/thunar-uca-editor.c:435
 msgid "_OK"
@@ -511,7 +511,7 @@ msgstr "Подесите ступце у прегледу списка са по
 #. add the "Help" button
 #: ../thunar/thunar-column-editor.c:126
 #: ../thunar/thunar-preferences-dialog.c:260
-#: ../thunar/thunar-properties-dialog.c:253 ../thunar/thunar-window.c:387
+#: ../thunar/thunar-properties-dialog.c:253 ../thunar/thunar-window.c:388
 msgid "_Help"
 msgstr "_Помоћ"
 
@@ -868,13 +868,13 @@ msgstr "Датотека"
 msgid "File Name"
 msgstr "Име датотеке"
 
-#: ../thunar/thunar-file.c:1083 ../thunar/thunar-gio-extensions.c:263
-#: ../thunar/thunar-shortcuts-model.c:1048
+#: ../thunar/thunar-file.c:1083 ../thunar/thunar-gio-extensions.c:255
+#: ../thunar/thunar-shortcuts-model.c:1047 ../thunar.desktop.in.in.h:6
 msgid "Trash"
 msgstr "Смеће"
 
-#: ../thunar/thunar-file.c:1090 ../thunar/thunar-gio-extensions.c:261
-#: ../thunar/thunar-shortcuts-model.c:936 ../thunar/thunar-window.c:382
+#: ../thunar/thunar-file.c:1090 ../thunar/thunar-gio-extensions.c:253
+#: ../thunar/thunar-shortcuts-model.c:936 ../thunar/thunar-window.c:383
 msgid "File System"
 msgstr "Систем датотека"
 
@@ -913,13 +913,13 @@ msgid "Invalid desktop file"
 msgstr "Неисправна датотека радне површи"
 
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: ../thunar/thunar-gio-extensions.c:343
+#: ../thunar/thunar-gio-extensions.c:335
 #, c-format
 msgid "%s on %s"
 msgstr "%s на %s"
 
 #. free disk space string
-#: ../thunar/thunar-gio-extensions.c:454
+#: ../thunar/thunar-gio-extensions.c:446
 #, c-format
 msgid "%s of %s free (%d%% used)"
 msgstr "%s од %s слободно (%d%% заузето)"
@@ -1220,8 +1220,8 @@ msgstr[2] "Отвори означене датотеке подразумева
 msgid "Open With \"%s\""
 msgstr "Отвори помоћу „%s“"
 
-#: ../thunar/thunar-launcher.c:1609 ../thunar/thunar-shortcuts-view.c:1783
-#: ../thunar/thunar-shortcuts-view.c:2021 ../thunar/thunar-tree-view.c:2098
+#: ../thunar/thunar-launcher.c:1609 ../thunar/thunar-shortcuts-view.c:1760
+#: ../thunar/thunar-shortcuts-view.c:1998 ../thunar/thunar-tree-view.c:2098
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Нисам успео да прикачим „%s“"
@@ -1337,13 +1337,15 @@ msgstr "Величина слике:"
 msgid "Selection: %s"
 msgstr "Одабир: %s"
 
+#. append the "Open in New Tab" menu action
 #: ../thunar/thunar-location-buttons.c:185
-#: ../thunar/thunar-shortcuts-view.c:1126
+#: ../thunar/thunar-shortcuts-view.c:1125
 msgid "Open in New Tab"
 msgstr "Отвори у новом листу"
 
+#. append the "Open in New Window" menu action
 #: ../thunar/thunar-location-buttons.c:186
-#: ../thunar/thunar-shortcuts-view.c:1134
+#: ../thunar/thunar-shortcuts-view.c:1131
 msgid "Open in New Window"
 msgstr "Отвори у новом прозору"
 
@@ -1352,7 +1354,7 @@ msgstr "Отвори у новом прозору"
 msgid "Create _Folder..."
 msgstr "Направи _фасциклу..."
 
-#: ../thunar/thunar-location-buttons.c:188 ../thunar/thunar-window.c:360
+#: ../thunar/thunar-location-buttons.c:188 ../thunar/thunar-window.c:361
 msgid "Delete all files and folders in the Trash"
 msgstr "Избаци све датотеке и фасцикле из смећа"
 
@@ -1397,11 +1399,11 @@ msgstr "Убацује датотеке које су изабране наре�
 msgid "View the properties of the folder \"%s\""
 msgstr "Приказује особине фасцикле „%s“"
 
-#: ../thunar/thunar-location-entry.c:195 ../thunar/thunar-window.c:370
+#: ../thunar/thunar-location-entry.c:200 ../thunar/thunar-window.c:371
 msgid "Reload the current folder"
 msgstr "Поново учитава тренутну фасциклу"
 
-#: ../thunar/thunar-location-entry.c:349
+#: ../thunar/thunar-location-entry.c:359
 #, c-format
 msgid "File does not exist"
 msgstr "Датотека не постоји"
@@ -1858,62 +1860,74 @@ msgstr "Изаберите ову могућност за отварање но�
 msgid "Context Menu"
 msgstr "Приручни изборник"
 
-#: ../thunar/thunar-preferences-dialog.c:686
+#: ../thunar/thunar-preferences-dialog.c:687
 msgid "Show action to permanently delete files and folders"
 msgstr "Прикажи радњу за трајно брисање датотека и фасцикли"
 
-#: ../thunar/thunar-preferences-dialog.c:688
+#: ../thunar/thunar-preferences-dialog.c:689
 msgid "Select this option to show the 'Delete' action in the context menu"
 msgstr "Изаберите ову могућност за приказ радње „Бриши“ у приручном изборнику"
 
+#: ../thunar/thunar-preferences-dialog.c:698
+msgid "Window icon"
+msgstr "Сличица прозора"
+
+#: ../thunar/thunar-preferences-dialog.c:711
+msgid "Use current folder icon"
+msgstr "Користи тренутну сличицу фасцикле"
+
+#: ../thunar/thunar-preferences-dialog.c:713
+msgid "Select this option to use the current folder icon as window icon"
+msgstr "Изаберите ову могућност за приказ сличице фасцикле као сличице прозора"
+
 #. Advanced
-#: ../thunar/thunar-preferences-dialog.c:697
+#: ../thunar/thunar-preferences-dialog.c:720
 msgid "Advanced"
 msgstr "Напредно"
 
-#: ../thunar/thunar-preferences-dialog.c:707
+#: ../thunar/thunar-preferences-dialog.c:730
 msgid "Folder Permissions"
 msgstr "Овлашћења за фасциклу"
 
-#: ../thunar/thunar-preferences-dialog.c:720
+#: ../thunar/thunar-preferences-dialog.c:743
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "Када мењате овлашћења за фасциклу, можете их\nприменити на целокупан садржај фасцикле.\nОзначите подразумевани избор:"
 
-#: ../thunar/thunar-preferences-dialog.c:729
+#: ../thunar/thunar-preferences-dialog.c:752
 msgid "Ask every time"
 msgstr "Увек питај"
 
-#: ../thunar/thunar-preferences-dialog.c:730
+#: ../thunar/thunar-preferences-dialog.c:753
 msgid "Apply to Folder Only"
 msgstr "примени само на фасциклу"
 
-#: ../thunar/thunar-preferences-dialog.c:731
+#: ../thunar/thunar-preferences-dialog.c:754
 msgid "Apply to Folder and Contents"
 msgstr "примени на фасциклу и садржај"
 
-#: ../thunar/thunar-preferences-dialog.c:742
+#: ../thunar/thunar-preferences-dialog.c:765
 msgid "Volume Management"
 msgstr "Управљање уклоњивим уређајима"
 
 #. add check button to enable/disable auto mounting
-#: ../thunar/thunar-preferences-dialog.c:759
+#: ../thunar/thunar-preferences-dialog.c:782
 msgid "Enable _Volume Management"
 msgstr "_Омогући управљање уклоњивим уређајима"
 
-#: ../thunar/thunar-preferences-dialog.c:769
+#: ../thunar/thunar-preferences-dialog.c:792
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "<a href=\"volman-config:\">Подесите</a> управљање уклоњивим уређајима и\nмедијумима."
 
-#: ../thunar/thunar-preferences-dialog.c:784
+#: ../thunar/thunar-preferences-dialog.c:807
 msgid "Missing dependencies"
 msgstr "Недостајуће зависности"
 
-#: ../thunar/thunar-preferences-dialog.c:792
+#: ../thunar/thunar-preferences-dialog.c:815
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -1923,7 +1937,7 @@ msgstr "Изгледа да <a href=\"https://wiki.gnome.org/Projects/gvfs\">г�
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: ../thunar/thunar-preferences-dialog.c:866
+#: ../thunar/thunar-preferences-dialog.c:889
 msgid "Failed to display the volume management settings"
 msgstr "Нисам успео да прикажем подешавања за управљање уклоњивим уређајима"
 
@@ -2037,11 +2051,11 @@ msgstr "Особине"
 msgid "mixed"
 msgstr "мешано"
 
-#: ../thunar/thunar-renamer-dialog.c:189 ../thunar/thunar-window.c:356
+#: ../thunar/thunar-renamer-dialog.c:189 ../thunar/thunar-window.c:357
 msgid "_File"
 msgstr "_Датотека"
 
-#: ../thunar/thunar-renamer-dialog.c:190 ../thunar/thunar-window.c:359
+#: ../thunar/thunar-renamer-dialog.c:190 ../thunar/thunar-window.c:360
 msgid "_Send To"
 msgstr "По_шаљи на"
 
@@ -2065,7 +2079,7 @@ msgstr "Очисти"
 msgid "Clear the file list below"
 msgstr "Чисти приложени списак датотека"
 
-#: ../thunar/thunar-renamer-dialog.c:195 ../thunar/thunar-window.c:389
+#: ../thunar/thunar-renamer-dialog.c:195 ../thunar/thunar-window.c:390
 msgid "_About"
 msgstr "_О програму"
 
@@ -2217,11 +2231,12 @@ msgstr "МРЕЖА"
 msgid "Browse Network"
 msgstr "Разгледа мрежу"
 
-#: ../thunar/thunar-shortcuts-model.c:1000
+#: ../thunar/thunar-shortcuts-model.c:999
 msgid "PLACES"
 msgstr "МЕСТА"
 
-#: ../thunar/thunar-shortcuts-model.c:1078 ../thunar/thunar-window.c:381
+#: ../thunar/thunar-shortcuts-model.c:1073 ../thunar/thunar-window.c:382
+#: ../thunar.desktop.in.in.h:5
 msgid "Computer"
 msgstr "Рачунар"
 
@@ -2239,54 +2254,55 @@ msgstr[0] "Додај означену фасциклу у бочну површ
 msgstr[1] "Додај означене фасцикле у бочну површ"
 msgstr[2] "Додај означене фасцикле у бочну површ"
 
+#. append the "Mount" item
 #. append the "Mount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1157 ../thunar/thunar-tree-view.c:1329
+#: ../thunar/thunar-shortcuts-view.c:1152 ../thunar/thunar-tree-view.c:1329
 msgid "_Mount"
 msgstr "_Прикачи"
 
+#. append the "Unmount" item
 #. append the "Unmount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1165 ../thunar/thunar-tree-view.c:1335
+#: ../thunar/thunar-shortcuts-view.c:1158
+#: ../thunar/thunar-shortcuts-view.c:1206 ../thunar/thunar-tree-view.c:1335
+#: ../thunar/thunar-tree-view.c:1350
 msgid "_Unmount"
 msgstr "_Откачи"
 
+#. append the "Eject" (safely remove drive) item
 #. append the "Eject" menu action
-#: ../thunar/thunar-shortcuts-view.c:1173 ../thunar/thunar-tree-view.c:1341
+#: ../thunar/thunar-shortcuts-view.c:1164 ../thunar/thunar-tree-view.c:1341
 msgid "_Eject"
 msgstr "_Избаци"
 
-#: ../thunar/thunar-shortcuts-view.c:1192
+#: ../thunar/thunar-shortcuts-view.c:1182
 msgid "Create _Shortcut"
 msgstr "Направи пречицу"
 
-#. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:1217 ../thunar/thunar-tree-view.c:1350
-msgid "Disconn_ect"
-msgstr "Одспоји"
-
-#: ../thunar/thunar-shortcuts-view.c:1295
+#: ../thunar/thunar-shortcuts-view.c:1275
 msgid "_Remove Shortcut"
 msgstr "_Уклони пречицу"
 
-#: ../thunar/thunar-shortcuts-view.c:1313
+#. append the rename menu item
+#: ../thunar/thunar-shortcuts-view.c:1292
 msgid "Re_name Shortcut"
 msgstr "П_реименуј пречицу"
 
-#: ../thunar/thunar-shortcuts-view.c:1645
+#: ../thunar/thunar-shortcuts-view.c:1622
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "Путања „%s“ се не односи на фасциклу"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1665
+#: ../thunar/thunar-shortcuts-view.c:1642
 msgid "Failed to add new shortcut"
 msgstr "Нисам успео да додам нову пречицу"
 
-#: ../thunar/thunar-shortcuts-view.c:1947 ../thunar/thunar-tree-view.c:1966
+#: ../thunar/thunar-shortcuts-view.c:1924 ../thunar/thunar-tree-view.c:1966
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Нисам успео да избацим „%s“"
 
-#: ../thunar/thunar-shortcuts-view.c:2090 ../thunar/thunar-tree-view.c:2021
+#: ../thunar/thunar-shortcuts-view.c:2067 ../thunar/thunar-tree-view.c:2021
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Нисам успео да откачим „%s“"
@@ -2413,7 +2429,7 @@ msgid "Loading folder contents..."
 msgstr "Учитавам садржај фасцикле..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2308 ../thunar/thunar-window.c:2974
+#: ../thunar/thunar-standard-view.c:2308 ../thunar/thunar-window.c:3000
 msgid "Failed to open the home folder"
 msgstr "Нисам успео да отворим личну фасциклу"
 
@@ -2449,7 +2465,7 @@ msgstr "Неисправно име датотеке од стране ИксД�
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Нисам успео да направим везу до адресе „%s“"
 
-#: ../thunar/thunar-standard-view.c:3967 ../thunar/thunar-window.c:3069
+#: ../thunar/thunar-standard-view.c:3967 ../thunar/thunar-window.c:3095
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Нисам успео да отворим фасциклу „%s“"
@@ -2596,7 +2612,7 @@ msgstr "_Смеће"
 msgid "Display the contents of the trash can"
 msgstr "Приказује садржај канте за смеће"
 
-#: ../thunar/thunar-tree-model.c:620
+#: ../thunar/thunar-tree-model.c:616
 msgid "Loading..."
 msgstr "Учитавам..."
 
@@ -2652,351 +2668,352 @@ msgstr "%A у %X"
 msgid "%x at %X"
 msgstr "%x у %X"
 
-#: ../thunar/thunar-window.c:357
+#: ../thunar/thunar-window.c:358
 msgid "New _Tab"
 msgstr "Нови _лист"
 
-#: ../thunar/thunar-window.c:357
+#: ../thunar/thunar-window.c:358
 msgid "Open a new tab for the displayed location"
 msgstr "Отвара нови лист за приказану путању"
 
-#: ../thunar/thunar-window.c:358
+#: ../thunar/thunar-window.c:359
 msgid "New _Window"
 msgstr "Нови п_розор"
 
-#: ../thunar/thunar-window.c:358
+#: ../thunar/thunar-window.c:359
 msgid "Open a new Thunar window for the displayed location"
 msgstr "Отвара нови прозор Тунара за приказ ове путање"
 
-#: ../thunar/thunar-window.c:361
+#: ../thunar/thunar-window.c:362
 msgid "Detac_h Tab"
 msgstr "Одвој_и лист"
 
-#: ../thunar/thunar-window.c:361
+#: ../thunar/thunar-window.c:362
 msgid "Open current folder in a new window"
 msgstr "Отвори тренутну фасциклу у новом прозору"
 
-#: ../thunar/thunar-window.c:362
+#: ../thunar/thunar-window.c:363
 msgid "_Previous Tab"
 msgstr "_Претходни лист"
 
-#: ../thunar/thunar-window.c:362
+#: ../thunar/thunar-window.c:363
 msgid "Switch to Previous Tab"
 msgstr "Пређи на претходни лист"
 
-#: ../thunar/thunar-window.c:363
+#: ../thunar/thunar-window.c:364
 msgid "_Next Tab"
 msgstr "_Следећи лист"
 
-#: ../thunar/thunar-window.c:363
+#: ../thunar/thunar-window.c:364
 msgid "Switch to Next Tab"
 msgstr "Пређи на следећи лист"
 
-#: ../thunar/thunar-window.c:364
+#: ../thunar/thunar-window.c:365
 msgid "Close _All Windows"
 msgstr "Зат_вори све прозоре"
 
-#: ../thunar/thunar-window.c:364
+#: ../thunar/thunar-window.c:365
 msgid "Close all Thunar windows"
 msgstr "Затвара све прозоре Тунара"
 
-#: ../thunar/thunar-window.c:365
+#: ../thunar/thunar-window.c:366
 msgid "C_lose Tab"
 msgstr "_Затвори лист"
 
-#: ../thunar/thunar-window.c:365
+#: ../thunar/thunar-window.c:366
 msgid "Close this folder"
 msgstr "Затвори ову фасциклу"
 
-#: ../thunar/thunar-window.c:366
+#: ../thunar/thunar-window.c:367
 msgid "_Close Window"
 msgstr "Зат_вори прозор"
 
-#: ../thunar/thunar-window.c:366
+#: ../thunar/thunar-window.c:367
 msgid "Close this window"
 msgstr "Затвара овај прозор"
 
-#: ../thunar/thunar-window.c:367
+#: ../thunar/thunar-window.c:368
 msgid "_Edit"
 msgstr "_Уређивање"
 
-#: ../thunar/thunar-window.c:368
+#: ../thunar/thunar-window.c:369
 msgid "Pr_eferences..."
 msgstr "_Поставке..."
 
-#: ../thunar/thunar-window.c:368
+#: ../thunar/thunar-window.c:369
 msgid "Edit Thunars Preferences"
 msgstr "Уређује поставке за Тунара"
 
-#: ../thunar/thunar-window.c:369
+#: ../thunar/thunar-window.c:370
 msgid "_View"
 msgstr "П_реглед"
 
-#: ../thunar/thunar-window.c:370
+#: ../thunar/thunar-window.c:371
 msgid "_Reload"
 msgstr "_Освежи"
 
-#: ../thunar/thunar-window.c:371
+#: ../thunar/thunar-window.c:372
 msgid "_Location Selector"
 msgstr "Избор _места"
 
-#: ../thunar/thunar-window.c:372
+#: ../thunar/thunar-window.c:373
 msgid "_Side Pane"
 msgstr "_Бочна површ"
 
-#: ../thunar/thunar-window.c:373
+#: ../thunar/thunar-window.c:374
 msgid "Zoom I_n"
 msgstr "У_већај"
 
-#: ../thunar/thunar-window.c:373
+#: ../thunar/thunar-window.c:374
 msgid "Show the contents in more detail"
 msgstr "Приказује садржај фасцикле са више појединости"
 
-#: ../thunar/thunar-window.c:375
+#: ../thunar/thunar-window.c:376
 msgid "Zoom _Out"
 msgstr "У_мањи"
 
-#: ../thunar/thunar-window.c:375
+#: ../thunar/thunar-window.c:376
 msgid "Show the contents in less detail"
 msgstr "Приказује садржај фасцикле са мање појединости"
 
-#: ../thunar/thunar-window.c:376
+#: ../thunar/thunar-window.c:377
 msgid "Normal Si_ze"
 msgstr "Уо_бичајена величина"
 
-#: ../thunar/thunar-window.c:376
+#: ../thunar/thunar-window.c:377
 msgid "Show the contents at the normal size"
 msgstr "Приказује садржај у подразумеваној величини"
 
-#: ../thunar/thunar-window.c:377
+#: ../thunar/thunar-window.c:378
 msgid "_Go"
 msgstr "_Иди"
 
-#: ../thunar/thunar-window.c:378
+#: ../thunar/thunar-window.c:379
 msgid "Open _Parent"
 msgstr "Отвори _надфасциклу"
 
-#: ../thunar/thunar-window.c:378
+#: ../thunar/thunar-window.c:379
 msgid "Open the parent folder"
 msgstr "Отвара родитељску фасциклу"
 
-#: ../thunar/thunar-window.c:379
+#: ../thunar/thunar-window.c:380
 msgid "_Home"
 msgstr "_Лична фасцикла"
 
-#: ../thunar/thunar-window.c:379
+#: ../thunar/thunar-window.c:380
 msgid "Go to the home folder"
 msgstr "Отвара вашу личну фасциклу"
 
-#: ../thunar/thunar-window.c:380
+#: ../thunar/thunar-window.c:381
 msgid "Desktop"
 msgstr "Радна површ"
 
-#: ../thunar/thunar-window.c:380
+#: ../thunar/thunar-window.c:381
 msgid "Go to the desktop folder"
 msgstr "Иди у фасциклу радне површи"
 
-#: ../thunar/thunar-window.c:381
-msgid "Go to the computer folder"
-msgstr "Иди у фасциклу рачунара"
-
 #: ../thunar/thunar-window.c:382
+msgid ""
+"Browse all local and remote disks and folders accessible from this computer"
+msgstr "Прегледај све месне и удаљене дискове и фасцикле доступне са овог рачунара"
+
+#: ../thunar/thunar-window.c:383
 msgid "Browse the file system"
 msgstr "Разгледај систем датотека"
 
-#: ../thunar/thunar-window.c:383
+#: ../thunar/thunar-window.c:384
 msgid "B_rowse Network"
 msgstr "Разгледај мрежу"
 
-#: ../thunar/thunar-window.c:383
+#: ../thunar/thunar-window.c:384
 msgid "Browse local network connections"
 msgstr "Разгледај местне мрежне фасцикле"
 
-#: ../thunar/thunar-window.c:384
+#: ../thunar/thunar-window.c:385
 msgid "T_emplates"
 msgstr "_Обрасци"
 
-#: ../thunar/thunar-window.c:384
+#: ../thunar/thunar-window.c:385
 msgid "Go to the templates folder"
 msgstr "Иде у фасциклу са обрасцима"
 
-#: ../thunar/thunar-window.c:385
+#: ../thunar/thunar-window.c:386
 msgid "_Open Location..."
 msgstr "Отвори _место..."
 
-#: ../thunar/thunar-window.c:385
+#: ../thunar/thunar-window.c:386
 msgid "Specify a location to open"
 msgstr "Дозвољава да одредите место које желите да отворите"
 
-#: ../thunar/thunar-window.c:388
+#: ../thunar/thunar-window.c:389
 msgid "_Contents"
 msgstr "_Садржај"
 
-#: ../thunar/thunar-window.c:388
+#: ../thunar/thunar-window.c:389
 msgid "Display Thunar user manual"
 msgstr "Приказује Тунарово упутство за кориснике"
 
-#: ../thunar/thunar-window.c:389
+#: ../thunar/thunar-window.c:390
 msgid "Display information about Thunar"
 msgstr "Приказује податке о Тунару"
 
-#: ../thunar/thunar-window.c:394
+#: ../thunar/thunar-window.c:395
 msgid "Show _Hidden Files"
 msgstr "Прикажи _скривене датотеке"
 
-#: ../thunar/thunar-window.c:394
+#: ../thunar/thunar-window.c:395
 msgid "Toggles the display of hidden files in the current window"
 msgstr "Приказује скривене датотеке у тренутном прозору"
 
-#: ../thunar/thunar-window.c:395
+#: ../thunar/thunar-window.c:396
 msgid "_Pathbar Style"
 msgstr "Дугмићи фасцикли"
 
-#: ../thunar/thunar-window.c:395
+#: ../thunar/thunar-window.c:396
 msgid "Modern approach with buttons that correspond to folders"
 msgstr "Савремени приказ дугмића који одговарају фасциклама"
 
-#: ../thunar/thunar-window.c:396
+#: ../thunar/thunar-window.c:397
 msgid "_Toolbar Style"
 msgstr "Путоказ са путањом"
 
-#: ../thunar/thunar-window.c:396
+#: ../thunar/thunar-window.c:397
 msgid "Traditional approach with location bar and navigation buttons"
 msgstr "Уобичајени приказ са траком путање и путоказима за кретање"
 
-#: ../thunar/thunar-window.c:397
+#: ../thunar/thunar-window.c:398
 msgid "_Shortcuts"
 msgstr "_Пречице"
 
-#: ../thunar/thunar-window.c:397
+#: ../thunar/thunar-window.c:398
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "Одређује да ли је приказана површ са пречицама"
 
-#: ../thunar/thunar-window.c:398
+#: ../thunar/thunar-window.c:399
 msgid "_Tree"
 msgstr "_Гранање"
 
-#: ../thunar/thunar-window.c:398
+#: ../thunar/thunar-window.c:399
 msgid "Toggles the visibility of the tree pane"
 msgstr "Прекидач приказа површи са гранањем"
 
-#: ../thunar/thunar-window.c:399
+#: ../thunar/thunar-window.c:400
 msgid "St_atusbar"
 msgstr "Тра_ка стања"
 
-#: ../thunar/thunar-window.c:399
+#: ../thunar/thunar-window.c:400
 msgid "Change the visibility of this window's statusbar"
 msgstr "Одређује да ли је приказана трака стања"
 
-#: ../thunar/thunar-window.c:400
+#: ../thunar/thunar-window.c:401
 msgid "_Menubar"
 msgstr "_Трака изборника"
 
-#: ../thunar/thunar-window.c:400
+#: ../thunar/thunar-window.c:401
 msgid "Change the visibility of this window's menubar"
 msgstr "Одређује да ли је приказана трака изборника прозора"
 
 #. * add view options
-#: ../thunar/thunar-window.c:788
+#: ../thunar/thunar-window.c:789
 msgid "View as _Icons"
 msgstr "Приказ _сличица"
 
-#: ../thunar/thunar-window.c:788
+#: ../thunar/thunar-window.c:789
 msgid "Display folder content in an icon view"
 msgstr "Приказује садржај фасцикле у виду сличица"
 
-#: ../thunar/thunar-window.c:795
+#: ../thunar/thunar-window.c:796
 msgid "View as _Detailed List"
 msgstr "Приказ списка са појединостима"
 
-#: ../thunar/thunar-window.c:795
+#: ../thunar/thunar-window.c:796
 msgid "Display folder content in a detailed list view"
 msgstr "Приказује садржај фасцикле као списак са појединостима"
 
-#: ../thunar/thunar-window.c:802
+#: ../thunar/thunar-window.c:803
 msgid "View as _Compact List"
 msgstr "Приказ _сажетог списка"
 
-#: ../thunar/thunar-window.c:802
+#: ../thunar/thunar-window.c:803
 msgid "Display folder content in a compact list view"
 msgstr "Приказује садржај фасцикле у виду сажетог списка"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:881
+#: ../thunar/thunar-window.c:882
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr "Упозорење! Користећи налог руковаоца можете оштетити систем."
 
-#: ../thunar/thunar-window.c:1923
+#: ../thunar/thunar-window.c:1927
 msgid "Close tab"
 msgstr "Затвори лист"
 
-#: ../thunar/thunar-window.c:2174
+#: ../thunar/thunar-window.c:2200
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Отвори место „%s“"
 
-#: ../thunar/thunar-window.c:2388
+#: ../thunar/thunar-window.c:2414
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Нисам успео да покренем „%s“"
 
-#: ../thunar/thunar-window.c:2949
+#: ../thunar/thunar-window.c:2975
 msgid "Failed to open parent folder"
 msgstr "Нисам успео да отворим родитељску фасциклу"
 
-#: ../thunar/thunar-window.c:3044
+#: ../thunar/thunar-window.c:3070
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Фасцикла „%s“ не постоји. Да ли желите да је направите?"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3118
-msgid "Failed to open the computer folder"
-msgstr "Нисам успео да отворим фасциклу рачунара"
+#: ../thunar/thunar-window.c:3144
+msgid "Failed to browse the computer"
+msgstr "Нисам успео да прегледам рачунар"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:3164
+#: ../thunar/thunar-window.c:3190
 msgid "About Templates"
 msgstr "О обрасцима"
 
-#: ../thunar/thunar-window.c:3186
+#: ../thunar/thunar-window.c:3212
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Све датотеке из ове фасцикле ће се појавити у изборнику „Направи документ“."
 
-#: ../thunar/thunar-window.c:3193
+#: ../thunar/thunar-window.c:3219
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Уколико често радите са неким врстама докумената направите умножак једне и ставите је у ову фасциклу. Тунар ће додати унос за овај документ у изборнику „Направи документ“.\n\nКада изабрати ставку из изборника „Направи документ“ умножак документа ће бити направљена у фасцикли где се тренутно налазите."
 
-#: ../thunar/thunar-window.c:3205
+#: ../thunar/thunar-window.c:3231
 msgid "Do _not display this message again"
 msgstr "_Не приказуј поново ову поруку"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3235
+#: ../thunar/thunar-window.c:3261
 msgid "Failed to open the file system root folder"
 msgstr "Нисам успео да отворим корену фасциклу система датотека"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3272
+#: ../thunar/thunar-window.c:3298
 msgid "Failed to display the contents of the trash can"
 msgstr "Нисам успео да прикажем садржај смећа"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3309
+#: ../thunar/thunar-window.c:3335
 msgid "Failed to browse the network"
 msgstr "Нисам успео да разгледам мрежу"
 
-#: ../thunar/thunar-window.c:3393
+#: ../thunar/thunar-window.c:3419
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Тунар је брз и лаган разгледач датотека за\nсучеље ИксФЦЕ-а."
 
 #. set window title
-#: ../thunar/thunar-window.c:3451 ../thunar.desktop.in.in.h:3
+#: ../thunar/thunar-window.c:3475 ../thunar.desktop.in.in.h:3
 msgid "File Manager"
 msgstr "Разгледач датотека"
 
@@ -3771,6 +3788,10 @@ msgstr "Тунар управник датотека"
 #: ../thunar.desktop.in.in.h:2
 msgid "Browse the filesystem with the file manager"
 msgstr "Прегледај систем датотека управником датотека"
+
+#: ../thunar.desktop.in.in.h:4
+msgid "Home"
+msgstr "Лична фасцикла"
 
 #: ../thunar/thunar-settings.desktop.in.h:1
 msgid "File Manager Settings"
