@@ -197,7 +197,12 @@ thunar_dialogs_show_rename_file (gpointer    parent,
 
   /* cleanup */
   if (G_LIKELY (response != GTK_RESPONSE_NONE))
-    gtk_widget_destroy (dialog);
+    {
+      /* unregister handler */
+      g_signal_handlers_disconnect_by_func (G_OBJECT (file), gtk_widget_destroy, dialog);
+
+      gtk_widget_destroy (dialog);
+    }
 
   return job;
 }
