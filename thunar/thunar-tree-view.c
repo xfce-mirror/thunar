@@ -2866,9 +2866,10 @@ thunar_tree_view_set_show_hidden (ThunarTreeView *view,
  *
  * Searches for the best-matching toplevel path in the
  * following order:
- *   1) any mounted device or network resource
- *   2) the user's home directory
- *   3) the root filesystem
+ *   1) the currently active one
+ *   2) any mounted device or network resource
+ *   3) the user's home directory
+ *   4) the root filesystem
  *
  * Returns the #GtkTreePath for the matching toplevel item,
  * or %NULL if not found. The path should be freed with gtk_tree_path_free().
@@ -2890,6 +2891,35 @@ thunar_tree_view_get_preferred_toplevel_path (ThunarTreeView *view,
   /* check whether the root node is available */
   if (!gtk_tree_model_get_iter_first (model, &iter))
     return NULL;
+
+  /* get active toplevel path and check if we can use it */
+  gtk_tree_view_get_cursor (GTK_TREE_VIEW (view), &path, NULL);
+  if (path != NULL)
+    {
+      if (gtk_tree_path_get_depth (path) != 1)
+        while (gtk_tree_path_get_depth (path) > 1)
+          gtk_tree_path_up (path);
+
+      if (gtk_tree_model_get_iter (GTK_TREE_MODEL (view->model), &iter, path))
+        {
+          /* lookup file for the toplevel item */
+          gtk_tree_model_get (GTK_TREE_MODEL (view->model), &iter, THUNAR_TREE_MODEL_COLUMN_FILE, &toplevel_file, -1);
+          if (toplevel_file)
+            {
+              /* check if the toplevel file is an ancestor */
+              if (thunar_file_is_ancestor (file, toplevel_file))
+                {
+                  g_object_unref (toplevel_file);
+                  return path;
+                }
+
+              g_object_unref (toplevel_file);
+            }
+        }
+
+      gtk_tree_path_free (path);
+      path = NULL;
+    }
 
   /* get GFiles for special toplevel items */
   home = thunar_g_file_new_for_home ();
