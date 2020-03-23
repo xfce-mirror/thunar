@@ -557,13 +557,14 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
                                   GValue       *value)
 {
   ThunarShortcut *shortcut;
-  gboolean        can_eject;
   GFile          *file;
-  gchar          *disk_usage;
-  guint32         trash_items;
-  gchar          *trash_string;
-  gchar          *parse_name;
+  gboolean        can_eject;
   gboolean        file_size_binary;
+  gchar          *disk_usage;
+  gchar          *location;
+  gchar          *tooltip;
+  guint32         trash_items;
+  gchar          *parse_name;
 
   _thunar_return_if_fail (iter->stamp == THUNAR_SHORTCUTS_MODEL (tree_model)->stamp);
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (tree_model));
@@ -617,10 +618,22 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
 
           if (file != NULL)
             {
+              if (thunar_g_file_is_root (file))
+                location = g_strdup (_("Browse the file system"));
+              else
+                location = thunar_g_file_get_location (file);
+
               file_size_binary = THUNAR_SHORTCUTS_MODEL (tree_model)->file_size_binary;
               disk_usage = thunar_g_file_get_free_space_string (file, file_size_binary);
+
+              tooltip = g_strdup_printf ("%s\n%s", location, disk_usage);
+
+              g_value_take_string (value, tooltip);
+
+              g_free (location);
+              g_free (disk_usage);
+
               g_object_unref (file);
-              g_value_take_string (value, disk_usage);
             }
           break;
         }
@@ -633,27 +646,39 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
             }
           else
             {
-              trash_string = g_strdup_printf (ngettext ("Trash contains %d file",
-                                                        "Trash contains %d files",
-                                                        trash_items), trash_items);
-              g_value_take_string (value, trash_string);
+              tooltip = g_strdup_printf (ngettext ("Trash contains %d file",
+                                                   "Trash contains %d files",
+                                                   trash_items), trash_items);
+              g_value_take_string (value, tooltip);
             }
           break;
         }
       else if (shortcut->tooltip == NULL)
         {
-          if (shortcut->file != NULL)
-            file = thunar_file_get_file (shortcut->file);
-          else if (shortcut->location != NULL)
-            file = shortcut->location;
-          else
-            file = NULL;
-
-          if (G_LIKELY (file != NULL))
+          if (shortcut->device != NULL)
             {
-              parse_name = g_file_get_parse_name (file);
-              shortcut->tooltip = g_markup_escape_text (parse_name, -1);
-              g_free (parse_name);
+              file = thunar_device_get_root (shortcut->device);
+              if (G_LIKELY (file != NULL))
+                {
+                  shortcut->tooltip = g_file_get_uri (file);
+                  g_object_unref (file);
+                }
+            }
+          else
+            {
+              if (shortcut->file != NULL)
+                file = thunar_file_get_file (shortcut->file);
+              else if (shortcut->location != NULL)
+                file = shortcut->location;
+              else
+                file = NULL;
+
+              if (G_LIKELY (file != NULL))
+                {
+                  parse_name = g_file_get_parse_name (file);
+                  shortcut->tooltip = g_markup_escape_text (parse_name, -1);
+                  g_free (parse_name);
+                }
             }
         }
 
@@ -934,6 +959,7 @@ thunar_shortcuts_model_shortcut_devices (ThunarShortcutsModel *model)
   shortcut = g_slice_new0 (ThunarShortcut);
   shortcut->group = THUNAR_SHORTCUT_GROUP_DEVICES_FILESYSTEM;
   shortcut->name = g_strdup (_("File System"));
+  shortcut->tooltip = g_strdup (_("Browse the file system"));
   shortcut->file = thunar_file_get_for_uri ("file:///", NULL);
   shortcut->gicon = g_themed_icon_new ("drive-harddisk");
   shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
@@ -976,6 +1002,7 @@ thunar_shortcuts_model_shortcut_network (ThunarShortcutsModel *model)
   shortcut = g_slice_new0 (ThunarShortcut);
   shortcut->group = THUNAR_SHORTCUT_GROUP_NETWORK_DEFAULT;
   shortcut->name = g_strdup (_("Browse Network"));
+  shortcut->tooltip = g_strdup (_("Browse local network connections"));
   shortcut->location = g_file_new_for_uri ("network://");
   shortcut->gicon = g_themed_icon_new ("network-workgroup");
   shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
@@ -1008,6 +1035,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
     {
       shortcut = g_slice_new0 (ThunarShortcut);
       shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_DEFAULT;
+      shortcut->tooltip = g_strdup (_("Open the home folder"));
       shortcut->file = file;
       shortcut->gicon = g_themed_icon_new ("go-home");
       shortcut->sort_id = 0;
@@ -1024,6 +1052,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
         {
           shortcut = g_slice_new0 (ThunarShortcut);
           shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_DEFAULT;
+          shortcut->tooltip = g_strdup (_("Open the desktop folder"));
           shortcut->file = file;
           shortcut->sort_id =  1;
           shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
@@ -1071,6 +1100,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
       shortcut = g_slice_new0 (ThunarShortcut);
       shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_COMPUTER;
       shortcut->name = g_strdup (_("Computer"));
+      shortcut->tooltip = g_strdup (_("Browse the computer"));
       shortcut->location = g_file_new_for_uri ("computer://");
       shortcut->gicon = g_themed_icon_new ("computer");
       shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
