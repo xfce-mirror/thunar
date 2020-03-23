@@ -2690,12 +2690,14 @@ thunar_standard_view_action_select_by_pattern (GtkAction          *action,
 {
   GtkWidget   *window;
   GtkWidget   *dialog;
+  GtkWidget   *vbox;
   GtkWidget   *hbox;
   GtkWidget   *label;
   GtkWidget   *entry;
   GList       *paths;
   GList       *lp;
   gint         response;
+  gchar       *example_pattern;
   const gchar *pattern;
   gchar       *pattern_extended = NULL;
 
@@ -2715,8 +2717,12 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
   gtk_window_set_default_size (GTK_WINDOW (dialog), 290, -1);
 
+  vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
+  gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), vbox, TRUE, TRUE, 0);
+  gtk_widget_show (vbox);
+
   hbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_HORIZONTAL, "border-width", 6, "spacing", 10, NULL);
-  gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), hbox, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
   gtk_widget_show (hbox);
 
   label = gtk_label_new_with_mnemonic (_("_Pattern:"));
@@ -2728,6 +2734,19 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 0);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), entry);
   gtk_widget_show (entry);
+
+  hbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_HORIZONTAL, "margin-right", 6, "margin-bottom", 6, "spacing", 0, NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
+  gtk_widget_show (hbox);
+
+  label = gtk_label_new (NULL);
+  example_pattern = g_strdup_printf ("<b>%s</b> %s ",
+                                     _("Examples:"),
+                                     "*.png, file\?\?.txt, pict*.\?\?\?");
+  gtk_label_set_markup (GTK_LABEL (label), example_pattern);
+  g_free (example_pattern);
+  gtk_box_pack_end (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+  gtk_widget_show (label);
 
   response = gtk_dialog_run (GTK_DIALOG (dialog));
   if (response == GTK_RESPONSE_OK)
