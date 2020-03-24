@@ -584,9 +584,9 @@ thunar_device_sort (const ThunarDevice *device1,
   _thunar_return_val_if_fail (THUNAR_IS_DEVICE (device1), 0);
   _thunar_return_val_if_fail (THUNAR_IS_DEVICE (device2), 0);
 
-  /* sort volumes above mounts */
+  /* sort mounts above volumes */
   if (G_OBJECT_TYPE (device1->device) != G_OBJECT_TYPE (device2->device))
-    return G_IS_VOLUME (device1->device) ? 1 : -1;
+    return G_IS_MOUNT (device1->device) ? 1 : -1;
 
   /* sort by detect stamp */
   return device1->stamp > device2->stamp ? 1 : -1;

@@ -197,6 +197,8 @@ struct _ThunarTreeModel
   gpointer                    visible_data;
 
   GNode                      *root;
+  GNode                      *file_system;
+  GNode                      *network;
 
   guint                       cleanup_idle_id;
 };
@@ -305,6 +307,10 @@ thunar_tree_model_init (ThunarTreeModel *model)
   /* allocate the "virtual root node" */
   model->root = g_node_new (NULL);
 
+  /* inititalize references to certain toplevel nodes */
+  model->file_system = NULL;
+  model->network = NULL;
+
   /* connect to the volume monitor */
   model->device_monitor = thunar_device_monitor_get ();
   g_signal_connect (model->device_monitor, "device-added", G_CALLBACK (thunar_tree_model_device_added), model);
@@ -324,14 +330,14 @@ thunar_tree_model_init (ThunarTreeModel *model)
   if (thunar_g_vfs_is_uri_scheme_supported ("trash"))
     system_paths = g_list_append (system_paths, thunar_g_file_new_for_trash ());
 
+  /* append the root file system */
+  system_paths = g_list_append (system_paths, thunar_g_file_new_for_root ());
+
   /* append the network icon if browsing the network is supported */
   if (thunar_g_vfs_is_uri_scheme_supported ("network"))
     system_paths = g_list_append (system_paths, g_file_new_for_uri ("network://"));
 
-  /* append the root file system */
-  system_paths = g_list_append (system_paths, thunar_g_file_new_for_root ());
-
-  /* append the system defined nodes ('Computer', 'Home', 'Trash', 'Network', 'File System') */
+  /* append the system defined nodes ('Computer', 'Home', 'Trash', 'File System', 'Network') */
   for (lp = system_paths; lp != NULL; lp = lp->next)
     {
       /* determine the file for the path */
@@ -345,6 +351,15 @@ thunar_tree_model_init (ThunarTreeModel *model)
           /* create and append the new node */
           item = thunar_tree_model_item_new_with_file (model, file);
           node = g_node_append_data (model->root, item);
+
+          /* store reference to the "File System" node */
+          if (thunar_file_has_uri_scheme (file, "file") && thunar_file_is_root (file))
+            model->file_system = node;
+
+          /* store reference to the "Network" node */
+          if (thunar_file_has_uri_scheme (file, "network"))
+            model->network = node;
+
           g_object_unref (G_OBJECT (file));
 
           /* add the dummy node */
@@ -1071,18 +1086,25 @@ thunar_tree_model_device_added (ThunarDeviceMonitor *device_monitor,
   _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
   _thunar_return_if_fail (THUNAR_IS_TREE_MODEL (model));
 
-  /* lookup the last child of the root (the "File System" node) */
-  node = g_node_last_child (model->root);
+  /* check if the new node should be inserted after "File System" or "Network" */
+  if (model->network && thunar_device_get_kind (device) == THUNAR_DEVICE_KIND_MOUNT_REMOTE)
+    node = model->network;
+  else
+    node = model->file_system;
+
+  /* fallback to the last child of the root node */
+  if (node == NULL)
+    node = g_node_last_child (model->root);
 
   /* determine the position for the new node in the item list */
-  for (node = node->prev; node != NULL; node = node->prev)
+  for (; node->next != NULL; node = node->next)
     {
-      item = THUNAR_TREE_MODEL_ITEM (node->data);
+      item = THUNAR_TREE_MODEL_ITEM (node->next->data);
       if (item->device == NULL)
         break;
 
       /* sort devices by timestamp */
-      if (thunar_device_sort (item->device, device) < 0)
+      if (thunar_device_sort (item->device, device) > 0)
         break;
     }
 
