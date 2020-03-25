@@ -85,8 +85,6 @@ static gboolean     thunar_abstract_icon_view_motion_notify_event   (ExoIconView
 static void         thunar_abstract_icon_view_item_activated        (ExoIconView                  *view,
                                                                      GtkTreePath                  *path,
                                                                      ThunarAbstractIconView       *abstract_icon_view);
-static gboolean     thunar_abstract_icon_view_activate_cursor_item  (ExoIconView                  *view,
-                                                                     ThunarAbstractIconView       *abstract_icon_view);
 static void         thunar_abstract_icon_view_sort_column_changed   (GtkTreeSortable              *sortable,
                                                                      ThunarAbstractIconView       *abstract_icon_view);
 static void         thunar_abstract_icon_view_zoom_level_changed    (ThunarAbstractIconView       *abstract_icon_view);
@@ -204,8 +202,6 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   g_signal_connect (G_OBJECT (view), "button-press-event", G_CALLBACK (thunar_abstract_icon_view_button_press_event), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "key-press-event", G_CALLBACK (thunar_abstract_icon_view_key_press_event), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "item-activated", G_CALLBACK (thunar_abstract_icon_view_item_activated), abstract_icon_view);
-  g_signal_connect (G_OBJECT (view), "activate-cursor-item", G_CALLBACK (thunar_abstract_icon_view_activate_cursor_item),
-                    abstract_icon_view);
   g_signal_connect_swapped (G_OBJECT (view), "selection-changed", G_CALLBACK (thunar_standard_view_selection_changed), abstract_icon_view);
   gtk_container_add (GTK_CONTAINER (abstract_icon_view), view);
   gtk_widget_show (view);
@@ -496,14 +492,7 @@ thunar_abstract_icon_view_button_press_event (ExoIconView            *view,
   gboolean           in_tab;
   const gchar       *action_name;
 
-  if (event->type == GDK_BUTTON_PRESS && event->button == 1)
-    {
-      /* we don't unselect all other items if Control or Shift is active */
-      if ((event->state & GDK_CONTROL_MASK) == 0 && (event->state & GDK_SHIFT_MASK) == 0)
-        exo_icon_view_unselect_all (view);
-      return FALSE;
-    }
-  else if (event->type == GDK_BUTTON_PRESS && event->button == 3)
+  if (event->type == GDK_BUTTON_PRESS && event->button == 3)
     {
       /* open the context menu on right clicks */
       if (exo_icon_view_get_item_at_pos (view, event->x, event->y, &path, NULL))
@@ -761,31 +750,16 @@ thunar_abstract_icon_view_item_activated (ExoIconView            *view,
 
   _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
 
+  /* be sure to have only the double clicked item selected */
+  exo_icon_view_unselect_all (view);
+  exo_icon_view_select_path (view, path);
+
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* emit the "open" action */
   action = thunar_gtk_ui_manager_get_action_by_name (THUNAR_STANDARD_VIEW (abstract_icon_view)->ui_manager, "open");
   if (G_LIKELY (action != NULL))
     gtk_action_activate (action);
 G_GNUC_END_IGNORE_DEPRECATIONS
-}
-
-
-
-static gboolean
-thunar_abstract_icon_view_activate_cursor_item (ExoIconView            *view,
-                                                ThunarAbstractIconView *abstract_icon_view)
-{
-  GList *selected_items;
-
-  _thunar_return_val_if_fail (EXO_IS_ICON_VIEW (view), FALSE);
-  _thunar_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view), FALSE);
-
-  /* ensure that the cursor in the exo_icon_view so that any selected items do get activated */
-  selected_items = thunar_abstract_icon_view_get_selected_items (THUNAR_STANDARD_VIEW (abstract_icon_view));
-  if(selected_items != NULL)
-    exo_icon_view_set_cursor (view,selected_items->data, NULL, FALSE);
-
-  return TRUE;
 }
 
 
