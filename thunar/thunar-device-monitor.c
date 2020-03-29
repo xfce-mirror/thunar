@@ -576,8 +576,9 @@ thunar_device_monitor_mount_added (GVolumeMonitor      *volume_monitor,
       if (G_UNLIKELY (location == NULL))
         return;
 
-      /* skip ghoto locations, since those also have a volume */
-      if (g_file_has_uri_scheme (location, "gphoto2"))
+      /* skip gphoto and mtp locations, since those also have a volume */
+      if (g_file_has_uri_scheme (location, "gphoto2")
+          || g_file_has_uri_scheme (location, "mtp"))
         {
           g_object_unref (location);
           return;
