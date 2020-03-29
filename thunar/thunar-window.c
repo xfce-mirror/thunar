@@ -3233,6 +3233,8 @@ G_GNUC_END_IGNORE_DEPRECATIONS
       gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
       gtk_widget_show (button);
 
+      gtk_window_set_default_size (GTK_WINDOW (dialog), 600, -1);
+
       gtk_dialog_run (GTK_DIALOG (dialog));
       gtk_widget_destroy (dialog);
     }
