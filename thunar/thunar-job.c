@@ -68,6 +68,8 @@ struct _ThunarJobPrivate
   ThunarJobResponse earlier_ask_skip_response;
   GList            *total_files;
   guint             n_total_files;
+  gboolean          pausable;
+  gboolean          paused;
 };
 
 
@@ -210,6 +212,8 @@ thunar_job_init (ThunarJob *job)
   job->priv->earlier_ask_delete_response = 0;
   job->priv->earlier_ask_skip_response = 0;
   job->priv->n_total_files = 0;
+  job->priv->pausable = FALSE;
+  job->priv->paused = FALSE;
 }
 
 
@@ -653,6 +657,52 @@ thunar_job_set_total_files (ThunarJob *job,
 
   job->priv->total_files = total_files;
   job->priv->n_total_files = g_list_length (total_files);
+}
+
+
+
+void
+thunar_job_set_pausable (ThunarJob *job,
+                         gboolean   pausable)
+{
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+  job->priv->pausable = pausable;
+}
+
+
+
+gboolean
+thunar_job_is_pausable (ThunarJob *job)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
+  return job->priv->pausable;
+}
+
+
+
+void
+thunar_job_pause (ThunarJob *job)
+{
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+  job->priv->paused = TRUE;
+}
+
+
+
+void
+thunar_job_resume (ThunarJob *job)
+{
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+  job->priv->paused = FALSE;
+}
+
+
+
+gboolean
+thunar_job_is_paused (ThunarJob *job)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
+  return job->priv->paused;
 }
 
 

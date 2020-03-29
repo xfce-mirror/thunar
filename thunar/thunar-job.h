@@ -68,6 +68,12 @@ struct _ThunarJob
 GType             thunar_job_get_type               (void) G_GNUC_CONST;
 void              thunar_job_set_total_files        (ThunarJob       *job,
                                                      GList           *total_files);
+void              thunar_job_set_pausable           (ThunarJob       *job,
+                                                     gboolean         pausable);
+gboolean          thunar_job_is_pausable            (ThunarJob       *job);
+void              thunar_job_pause                  (ThunarJob       *job);
+void              thunar_job_resume                 (ThunarJob       *job);
+gboolean          thunar_job_is_paused              (ThunarJob       *job);
 void              thunar_job_processing_file        (ThunarJob       *job,
                                                      GList           *current_file,
                                                      guint            n_processed);

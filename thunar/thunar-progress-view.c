@@ -55,6 +55,8 @@ static void              thunar_progress_view_set_property (GObject            *
                                                             guint               prop_id,
                                                             const GValue       *value,
                                                             GParamSpec         *pspec);
+static void              thunar_progress_view_pause_job    (ThunarProgressView *view);
+static void              thunar_progress_view_unpause_job  (ThunarProgressView *view);
 static void              thunar_progress_view_cancel_job   (ThunarProgressView *view);
 static ThunarJobResponse thunar_progress_view_ask          (ThunarProgressView *view,
                                                             const gchar        *message,
@@ -95,6 +97,8 @@ struct _ThunarProgressView
   GtkWidget *progress_bar;
   GtkWidget *progress_label;
   GtkWidget *message_label;
+  GtkWidget *pause_button;
+  GtkWidget *unpause_button;
 
   gchar     *icon_name;
   gchar     *title;
@@ -173,7 +177,7 @@ thunar_progress_view_init (ThunarProgressView *view)
 {
   GtkWidget *image;
   GtkWidget *label;
-  GtkWidget *button;
+  GtkWidget *cancel_button;
   GtkWidget *vbox;
   GtkWidget *vbox2;
   GtkWidget *vbox3;
@@ -228,12 +232,26 @@ thunar_progress_view_init (ThunarProgressView *view)
   gtk_box_pack_start (GTK_BOX (vbox3), view->progress_label, FALSE, TRUE, 0);
   gtk_widget_show (view->progress_label);
 
-  button = gtk_button_new_from_icon_name ("process-stop", GTK_ICON_SIZE_BUTTON);
-  gtk_button_set_label (GTK_BUTTON (button), _("Cancel"));
-  g_signal_connect_swapped (button, "clicked", G_CALLBACK (thunar_progress_view_cancel_job), view);
-  gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, TRUE, 0);
-  gtk_widget_set_can_focus (button, FALSE);
-  gtk_widget_show (button);
+  view->pause_button = gtk_button_new_from_icon_name ("media-playback-pause", GTK_ICON_SIZE_BUTTON);
+  gtk_button_set_label (GTK_BUTTON (view->pause_button), _("Pause"));
+  g_signal_connect_swapped (view->pause_button, "clicked", G_CALLBACK (thunar_progress_view_pause_job), view);
+  gtk_box_pack_start (GTK_BOX (hbox), view->pause_button, FALSE, FALSE, 0);
+  gtk_widget_set_can_focus (view->pause_button, FALSE);
+  gtk_widget_hide (view->pause_button);
+
+  view->unpause_button = gtk_button_new_from_icon_name ("media-playback-start", GTK_ICON_SIZE_BUTTON);
+  gtk_button_set_label (GTK_BUTTON (view->unpause_button), _("Resume"));
+  g_signal_connect_swapped (view->unpause_button, "clicked", G_CALLBACK (thunar_progress_view_unpause_job), view);
+  gtk_box_pack_start (GTK_BOX (hbox), view->unpause_button, FALSE, FALSE, 0);
+  gtk_widget_set_can_focus (view->unpause_button, FALSE);
+  gtk_widget_hide (view->unpause_button);
+
+  cancel_button = gtk_button_new_from_icon_name ("process-stop", GTK_ICON_SIZE_BUTTON);
+  gtk_button_set_label (GTK_BUTTON (cancel_button), _("Cancel"));
+  g_signal_connect_swapped (cancel_button, "clicked", G_CALLBACK (thunar_progress_view_cancel_job), view);
+  gtk_box_pack_start (GTK_BOX (hbox), cancel_button, FALSE, FALSE, 0);
+  gtk_widget_set_can_focus (cancel_button, FALSE);
+  gtk_widget_show (cancel_button);
 
   /* connect the view title to the action label */
   exo_binding_new (G_OBJECT (view), "title", G_OBJECT (label), "label");
@@ -326,6 +344,46 @@ thunar_progress_view_set_property (GObject      *object,
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
+    }
+}
+
+
+
+static void
+thunar_progress_view_pause_job (ThunarProgressView *view)
+{
+  _thunar_return_if_fail (THUNAR_IS_PROGRESS_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_JOB (view->job));
+
+  if (view->job != NULL)
+    {
+      /* pause the job */
+      thunar_job_pause (view->job);
+
+      /* update the UI */
+      gtk_widget_hide (view->pause_button);
+      gtk_widget_show (view->unpause_button);
+      gtk_label_set_text (GTK_LABEL (view->progress_label), _("Paused"));
+    }
+}
+
+
+
+static void
+thunar_progress_view_unpause_job (ThunarProgressView *view)
+{
+  _thunar_return_if_fail (THUNAR_IS_PROGRESS_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_JOB (view->job));
+
+  if (view->job != NULL)
+    {
+      /* unpause the job */
+      thunar_job_resume (view->job);
+
+      /* update the UI */
+      gtk_widget_hide (view->unpause_button);
+      gtk_widget_show (view->pause_button);
+      gtk_label_set_text (GTK_LABEL (view->progress_label), _("Resuming..."));
     }
 }
 
@@ -564,6 +622,10 @@ thunar_progress_view_set_job (ThunarProgressView *view,
       g_signal_connect_swapped (job, "finished", G_CALLBACK (thunar_progress_view_finished), view);
       g_signal_connect_swapped (job, "info-message", G_CALLBACK (thunar_progress_view_info_message), view);
       g_signal_connect_swapped (job, "percent", G_CALLBACK (thunar_progress_view_percent), view);
+      if (thunar_job_is_pausable (job))
+        {
+          gtk_widget_show (view->pause_button);
+        }
     }
 
   g_object_notify (G_OBJECT (view), "job");

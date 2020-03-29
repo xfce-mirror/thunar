@@ -582,6 +582,7 @@ thunar_io_jobs_move_files (GList *source_file_list,
 
   job = thunar_transfer_job_new (source_file_list, target_file_list,
                                  THUNAR_TRANSFER_JOB_MOVE);
+  thunar_job_set_pausable (job, TRUE);
 
   return THUNAR_JOB (exo_job_launch (EXO_JOB (job)));
 }
@@ -600,6 +601,7 @@ thunar_io_jobs_copy_files (GList *source_file_list,
 
   job = thunar_transfer_job_new (source_file_list, target_file_list,
                                  THUNAR_TRANSFER_JOB_COPY);
+  thunar_job_set_pausable (job, TRUE);
 
   return THUNAR_JOB (exo_job_launch (EXO_JOB (job)));
 }

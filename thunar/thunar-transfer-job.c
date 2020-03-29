@@ -224,6 +224,18 @@ thunar_transfer_job_set_property (GObject      *object,
 
 
 static void
+thunar_transfer_job_check_pause (ThunarTransferJob *job)
+{
+  _thunar_return_if_fail (THUNAR_IS_TRANSFER_JOB (job));
+  while (thunar_job_is_paused (THUNAR_JOB (job)) && !exo_job_is_cancelled (EXO_JOB (job)))
+    {
+      g_usleep (500 * 1000); /* 500ms pause */
+    }
+}
+
+
+
+static void
 thunar_transfer_job_progress (goffset  current_num_bytes,
                               goffset  total_num_bytes,
                               gpointer user_data)
@@ -235,6 +247,8 @@ thunar_transfer_job_progress (goffset  current_num_bytes,
   guint64            transfer_rate;
 
   _thunar_return_if_fail (THUNAR_IS_TRANSFER_JOB (job));
+
+  thunar_transfer_job_check_pause (job);
 
   if (G_LIKELY (job->total_size > 0))
     {
@@ -316,6 +330,8 @@ thunar_transfer_job_collect_node (ThunarTransferJob  *job,
       /* add children to the transfer node */
       for (lp = file_list; err == NULL && lp != NULL; lp = lp->next)
         {
+          thunar_transfer_job_check_pause (job);
+
           /* allocate a new transfer node for the child */
           child_node = g_slice_new0 (ThunarTransferNode);
           child_node->source_file = g_object_ref (lp->data);
@@ -370,18 +386,21 @@ ttj_copy_file (ThunarTransferJob *job,
 
   if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
     return FALSE;
+  thunar_transfer_job_check_pause (job);
 
   source_type = g_file_query_file_type (source_file, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
                                         exo_job_get_cancellable (EXO_JOB (job)));
 
   if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
     return FALSE;
+  thunar_transfer_job_check_pause (job);
 
   target_type = g_file_query_file_type (target_file, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
                                         exo_job_get_cancellable (EXO_JOB (job)));
 
   if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
     return FALSE;
+  thunar_transfer_job_check_pause (job);
 
   /* check if the target is a symlink and we are in overwrite mode */
   if (target_type == G_FILE_TYPE_SYMBOLIC_LINK && (copy_flags & G_FILE_COPY_OVERWRITE) != 0)
@@ -517,6 +536,7 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
   /* various attempts to copy the file */
   while (err == NULL)
     {
+      thunar_transfer_job_check_pause (job);
       if (G_LIKELY (!g_file_equal (source_file, target_file)))
         {
           /* try to copy the file from source_file to the target_file */
@@ -655,6 +675,8 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
       exo_job_info_message (EXO_JOB (job), "%s", g_file_info_get_display_name (info));
 
 retry_copy:
+      thunar_transfer_job_check_pause (job);
+
       /* copy the item specified by this node (not recursively) */
       real_target_file = thunar_transfer_job_copy_file (job, node->source_file,
                                                         target_file, node->replace_confirmed, &err);
@@ -697,6 +719,8 @@ retry_copy:
                 }
 
 retry_remove:
+              thunar_transfer_job_check_pause (job);
+
               /* try to remove the source directory if we are on copy+remove fallback for move */
               if (job->type == THUNAR_TRANSFER_JOB_MOVE)
                 {
@@ -887,6 +911,8 @@ thunar_transfer_job_execute (ExoJob  *job,
        sp != NULL && tp != NULL && err == NULL;
        sp = snext, tp = tnext)
     {
+      thunar_transfer_job_check_pause (transfer_job);
+
       /* determine the next list items */
       snext = sp->next;
       tnext = tp->next;
