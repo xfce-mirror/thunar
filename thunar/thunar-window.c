@@ -3212,7 +3212,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
       label = gtk_label_new (_("All files in this folder will appear in the \"Create Document\" menu."));
       gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
       gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_big_bold ());
-      gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+      gtk_label_set_line_wrap (GTK_LABEL (label), FALSE);
       gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
       gtk_widget_show (label);
 
