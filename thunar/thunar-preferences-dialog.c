@@ -249,18 +249,30 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
   gtk_window_set_title (GTK_WINDOW (dialog), _("File Manager Preferences"));
 
+#if LIBXFCE4UI_CHECK_VERSION (4, 15, 1)
+  xfce_titled_dialog_create_action_area (XFCE_TITLED_DIALOG (dialog));
+#endif
+
   /* add the "Close" button */
   button = gtk_button_new_with_mnemonic (_("_Close"));
   image = gtk_image_new_from_icon_name ("window-close", GTK_ICON_SIZE_BUTTON);
   gtk_button_set_image (GTK_BUTTON (button), image);
+#if LIBXFCE4UI_CHECK_VERSION (4, 15, 1)
+  xfce_titled_dialog_add_action_widget (XFCE_TITLED_DIALOG (dialog), button, GTK_RESPONSE_CLOSE);
+#else
   gtk_dialog_add_action_widget (GTK_DIALOG (dialog), button, GTK_RESPONSE_CLOSE);
+#endif
   gtk_widget_show (button);
 
   /* add the "Help" button */
   button = gtk_button_new_with_mnemonic (_("_Help"));
   image = gtk_image_new_from_icon_name ("help-browser", GTK_ICON_SIZE_BUTTON);
   gtk_button_set_image (GTK_BUTTON (button), image);
+#if LIBXFCE4UI_CHECK_VERSION (4, 15, 1)
+  xfce_titled_dialog_add_action_widget (XFCE_TITLED_DIALOG (dialog), button, GTK_RESPONSE_HELP);
+#else
   gtk_dialog_add_action_widget (GTK_DIALOG (dialog), button, GTK_RESPONSE_HELP);
+#endif
   gtk_widget_show (button);
 
   notebook = gtk_notebook_new ();
