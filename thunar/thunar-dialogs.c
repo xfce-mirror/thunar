@@ -441,7 +441,7 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
     gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s", secondary->str);
 
   /* add the buttons based on the possible choices */
-  for (n = 6; n >= 0; --n)
+  for (n = THUNAR_JOB_RESPONSE_MAX_INT; n >= 0; --n)
     {
       /* check if the response is set */
       response = choices & (1 << n);
