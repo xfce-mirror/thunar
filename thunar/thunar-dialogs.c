@@ -441,7 +441,7 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
     gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s", secondary->str);
 
   /* add the buttons based on the possible choices */
-  for (n = 6; n >= 0; --n)
+  for (n = THUNAR_JOB_RESPONSE_MAX_INT; n >= 0; --n)
     {
       /* check if the response is set */
       response = choices & (1 << n);
@@ -456,6 +456,14 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
 
         case THUNAR_JOB_RESPONSE_YES_ALL:
           mnemonic = _("Yes to _all");
+          break;
+
+        case THUNAR_JOB_RESPONSE_RENAME:
+          mnemonic = _("Re_name");
+          break;
+
+        case THUNAR_JOB_RESPONSE_RENAME_ALL:
+          mnemonic = _("Rena_me all");
           break;
 
         case THUNAR_JOB_RESPONSE_NO:
@@ -563,6 +571,8 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   GtkWidget         *skip_button;
   GtkWidget         *replaceall_button;
   GtkWidget         *replace_button;
+  GtkWidget         *renameall_button;
+  GtkWidget         *rename_button;
   GdkPixbuf         *icon;
   gchar             *date_custom_style;
   gchar             *date_string;
@@ -610,24 +620,32 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   skip_button       = gtk_button_new_with_mnemonic (_("_Skip"));
   replaceall_button = gtk_button_new_with_mnemonic (_("Replace _All"));
   replace_button    = gtk_button_new_with_mnemonic (_("_Replace"));
+  renameall_button  = gtk_button_new_with_mnemonic (_("Rena_me All"));
+  rename_button     = gtk_button_new_with_mnemonic (_("Re_name"));
 
   g_signal_connect (cancel_button,      "clicked", G_CALLBACK (thunar_dialogs_show_job_ask_replace_callback), dialog);
   g_signal_connect (skipall_button,     "clicked", G_CALLBACK (thunar_dialogs_show_job_ask_replace_callback), dialog);
   g_signal_connect (skip_button,        "clicked", G_CALLBACK (thunar_dialogs_show_job_ask_replace_callback), dialog);
   g_signal_connect (replaceall_button,  "clicked", G_CALLBACK (thunar_dialogs_show_job_ask_replace_callback), dialog);
   g_signal_connect (replace_button,     "clicked", G_CALLBACK (thunar_dialogs_show_job_ask_replace_callback), dialog);
+  g_signal_connect (renameall_button,   "clicked", G_CALLBACK (thunar_dialogs_show_job_ask_replace_callback), dialog);
+  g_signal_connect (rename_button,      "clicked", G_CALLBACK (thunar_dialogs_show_job_ask_replace_callback), dialog);
 
   g_object_set_data (G_OBJECT (cancel_button),     "response-id", GINT_TO_POINTER (GTK_RESPONSE_CANCEL));
   g_object_set_data (G_OBJECT (skipall_button),    "response-id", GINT_TO_POINTER (THUNAR_JOB_RESPONSE_NO_ALL));
   g_object_set_data (G_OBJECT (skip_button),       "response-id", GINT_TO_POINTER (THUNAR_JOB_RESPONSE_NO));
   g_object_set_data (G_OBJECT (replaceall_button), "response-id", GINT_TO_POINTER (THUNAR_JOB_RESPONSE_YES_ALL));
   g_object_set_data (G_OBJECT (replace_button),    "response-id", GINT_TO_POINTER (THUNAR_JOB_RESPONSE_YES));
+  g_object_set_data (G_OBJECT (renameall_button),  "response-id", GINT_TO_POINTER (THUNAR_JOB_RESPONSE_RENAME_ALL));
+  g_object_set_data (G_OBJECT (rename_button),     "response-id", GINT_TO_POINTER (THUNAR_JOB_RESPONSE_RENAME));
 
   gtk_container_add (GTK_CONTAINER (button_box), cancel_button);
   gtk_container_add (GTK_CONTAINER (button_box), skipall_button);
   gtk_container_add (GTK_CONTAINER (button_box), skip_button);
   gtk_container_add (GTK_CONTAINER (button_box), replaceall_button);
   gtk_container_add (GTK_CONTAINER (button_box), replace_button);
+  gtk_container_add (GTK_CONTAINER (button_box), renameall_button);
+  gtk_container_add (GTK_CONTAINER (button_box), rename_button);
   gtk_container_add (GTK_CONTAINER (content_area), button_box);
   gtk_widget_set_halign (button_box, GTK_ALIGN_CENTER);
   gtk_box_set_spacing (GTK_BOX (button_box), 5);
