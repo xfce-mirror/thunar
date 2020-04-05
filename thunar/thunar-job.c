@@ -259,6 +259,8 @@ thunar_job_real_ask_replace (ThunarJob  *job,
   g_signal_emit (job, job_signals[ASK], 0, message,
                  THUNAR_JOB_RESPONSE_REPLACE
                  | THUNAR_JOB_RESPONSE_REPLACE_ALL
+                 | THUNAR_JOB_RESPONSE_RENAME
+                 | THUNAR_JOB_RESPONSE_RENAME_ALL
                  | THUNAR_JOB_RESPONSE_SKIP
                  | THUNAR_JOB_RESPONSE_SKIP_ALL
                  | THUNAR_JOB_RESPONSE_CANCEL,
@@ -484,6 +486,10 @@ thunar_job_ask_replace (ThunarJob *job,
   if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_REPLACE_ALL))
     return THUNAR_JOB_RESPONSE_REPLACE;
 
+  /* check if the user said "Rename All" earlier */
+  if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_RENAME_ALL))
+    return THUNAR_JOB_RESPONSE_RENAME;
+
   /* check if the user said "Overwrite None" earlier */
   if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_SKIP_ALL))
     return THUNAR_JOB_RESPONSE_SKIP;
@@ -513,6 +519,8 @@ thunar_job_ask_replace (ThunarJob *job,
   /* translate the response */
   if (response == THUNAR_JOB_RESPONSE_REPLACE_ALL)
     response = THUNAR_JOB_RESPONSE_REPLACE;
+  else if (response == THUNAR_JOB_RESPONSE_RENAME_ALL)
+    response = THUNAR_JOB_RESPONSE_RENAME;
   else if (response == THUNAR_JOB_RESPONSE_SKIP_ALL)
     response = THUNAR_JOB_RESPONSE_SKIP;
   else if (response == THUNAR_JOB_RESPONSE_CANCEL)

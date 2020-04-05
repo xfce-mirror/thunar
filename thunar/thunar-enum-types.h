@@ -240,6 +240,8 @@ ThunarThumbnailSize thunar_zoom_level_to_thumbnail_size   (ThunarZoomLevel zoom_
  * @THUNAR_JOB_RESPONSE_REPLACE_ALL :
  * @THUNAR_JOB_RESPONSE_SKIP        :
  * @THUNAR_JOB_RESPONSE_SKIP_ALL    :
+ * @THUNAR_JOB_RESPONSE_RENAME      :
+ * @THUNAR_JOB_RESPONSE_RENAME_ALL  :
  *
  * Possible responses for the ThunarJob::ask signal.
  **/
@@ -256,8 +258,10 @@ typedef enum /*< flags >*/
   THUNAR_JOB_RESPONSE_REPLACE_ALL = 1 << 8,
   THUNAR_JOB_RESPONSE_SKIP        = 1 << 9,
   THUNAR_JOB_RESPONSE_SKIP_ALL    = 1 << 10,
+  THUNAR_JOB_RESPONSE_RENAME      = 1 << 11,
+  THUNAR_JOB_RESPONSE_RENAME_ALL  = 1 << 12,
 } ThunarJobResponse;
-#define THUNAR_JOB_RESPONSE_MAX_INT 10
+#define THUNAR_JOB_RESPONSE_MAX_INT 12
 
 GType thunar_job_response_get_type (void) G_GNUC_CONST;
 
