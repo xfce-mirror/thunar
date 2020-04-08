@@ -43,8 +43,11 @@ enum
 {
   ASK,
   ASK_REPLACE,
+  ASK_JOBS,
   FILES_READY,
   NEW_FILES,
+  FROZEN,
+  UNFROZEN,
   LAST_SIGNAL,
 };
 
@@ -70,6 +73,7 @@ struct _ThunarJobPrivate
   guint             n_total_files;
   gboolean          pausable;
   gboolean          paused;
+  gboolean          frozen;
 };
 
 
@@ -199,6 +203,50 @@ thunar_job_class_init (ThunarJobClass *klass)
                   G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
                   g_cclosure_marshal_VOID__POINTER,
                   G_TYPE_NONE, 1, G_TYPE_POINTER);
+
+  /**
+   * ThunarJob::ask-jobs:
+   * @job      : a #ThunarJob.
+   *
+   * Emitted to ask the running job list.
+   *
+   * Return value: GList* of running jobs.
+   **/
+  job_signals[ASK_JOBS] =
+    g_signal_new (I_("ask-jobs"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS, 0,
+                  NULL, NULL,
+                  g_cclosure_marshal_generic,
+                  G_TYPE_POINTER, 0);
+
+  /**
+   * ThunarJob::frozen:
+   * @job       : a #ThunarJob.
+   *
+   * This signal is emitted by the @job right after the @job is being frozen.
+   **/
+  job_signals[FROZEN] =
+    g_signal_new (I_("frozen"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS, 0,
+                  NULL, NULL,
+                  g_cclosure_marshal_generic,
+                  G_TYPE_NONE, 0);
+
+  /**
+   * ThunarJob::unfrozen:
+   * @job       : a #ThunarJob.
+   *
+   * This signal is emitted by the @job right after the @job is being unfrozen.
+   **/
+  job_signals[UNFROZEN] =
+    g_signal_new (I_("unfrozen"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS, 0,
+                  NULL, NULL,
+                  g_cclosure_marshal_generic,
+                  G_TYPE_NONE, 0);
 }
 
 
@@ -214,6 +262,7 @@ thunar_job_init (ThunarJob *job)
   job->priv->n_total_files = 0;
   job->priv->pausable = FALSE;
   job->priv->paused = FALSE;
+  job->priv->frozen = FALSE;
 }
 
 
@@ -647,6 +696,19 @@ thunar_job_new_files (ThunarJob   *job,
 
 
 
+GList *
+thunar_job_ask_jobs (ThunarJob *job)
+{
+  GList* jobs = NULL;
+
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), NULL);
+
+  exo_job_emit (EXO_JOB (job), job_signals[ASK_JOBS], 0, &jobs);
+  return jobs;
+}
+
+
+
 void
 thunar_job_set_total_files (ThunarJob *job,
                             GList     *total_files)
@@ -698,11 +760,56 @@ thunar_job_resume (ThunarJob *job)
 
 
 
+void
+thunar_job_freeze (ThunarJob *job)
+{
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+  job->priv->frozen = TRUE;
+}
+
+
+
+void
+thunar_job_emit_frozen_signal (ThunarJob *job)
+{
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+  exo_job_emit (EXO_JOB (job), job_signals[FROZEN], 0);
+}
+
+
+
+void
+thunar_job_unfreeze (ThunarJob *job)
+{
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+  job->priv->frozen = FALSE;
+}
+
+
+
+void
+thunar_job_emit_unfrozen_signal (ThunarJob *job)
+{
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+  exo_job_emit (EXO_JOB (job), job_signals[UNFROZEN], 0);
+}
+
+
+
 gboolean
 thunar_job_is_paused (ThunarJob *job)
 {
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   return job->priv->paused;
+}
+
+
+
+gboolean
+thunar_job_is_frozen (ThunarJob *job)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
+  return job->priv->frozen;
 }
 
 
