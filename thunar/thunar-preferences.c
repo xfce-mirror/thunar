@@ -97,6 +97,8 @@ enum
   PROP_MISC_THUMBNAIL_DRAW_FRAMES,
   PROP_MISC_FILE_SIZE_BINARY,
   PROP_MISC_CONFIRM_CLOSE_MULTIPLE_TABS,
+  PROP_MISC_FREEZE_TRANSFER_ON_SAME_SOURCE_DEVICE,
+  PROP_MISC_FREEZE_TRANSFER_ON_SAME_TARGET_DEVICE,
   PROP_MISC_WINDOW_ICON,
   PROP_SHORTCUTS_ICON_EMBLEMS,
   PROP_SHORTCUTS_ICON_SIZE,
@@ -760,6 +762,32 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   preferences_props[PROP_MISC_FILE_SIZE_BINARY] =
       g_param_spec_boolean ("misc-file-size-binary",
                             "MiscFileSizeBinary",
+                            NULL,
+                            TRUE,
+                            EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-freeze-transfer-on-same-source-device:
+   *
+   * Freeze any copy/move jobs when another job is transfering from
+   * the same source device.
+   **/
+  preferences_props[PROP_MISC_FREEZE_TRANSFER_ON_SAME_SOURCE_DEVICE] =
+      g_param_spec_boolean ("misc-freeze-transfer-on-same-source-device",
+                            "MiscFreezeTransferOnSameSourceDevice",
+                            NULL,
+                            TRUE,
+                            EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-freeze-transfer-on-same-target-device:
+   *
+   * Freeze any copy/move jobs when another job is transfering to
+   * the same target device.
+   **/
+  preferences_props[PROP_MISC_FREEZE_TRANSFER_ON_SAME_TARGET_DEVICE] =
+      g_param_spec_boolean ("misc-freeze-transfer-on-same-target-device",
+                            "MiscFreezeTransferOnSameTargetDevice",
                             NULL,
                             TRUE,
                             EXO_PARAM_READWRITE);
