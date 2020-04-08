@@ -36,14 +36,15 @@ typedef struct _ThunarProgressDialog      ThunarProgressDialog;
 #define THUNAR_IS_PROGRESS_DIALOG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_PROGRESS_DIALOG))
 #define THUNAR_PROGRESS_DIALOG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_PROGRESS_DIALOG, ThunarProgressDialogClass))
 
-GType     thunar_progress_dialog_get_type  (void) G_GNUC_CONST;
+GType      thunar_progress_dialog_get_type  (void) G_GNUC_CONST;
 
-GtkWidget *thunar_progress_dialog_new      (void);
-void       thunar_progress_dialog_add_job  (ThunarProgressDialog *dialog,
-                                            ThunarJob            *job,
-                                            const gchar          *icon_name,
-                                            const gchar          *title);
-gboolean   thunar_progress_dialog_has_jobs (ThunarProgressDialog *dialog);
+GtkWidget *thunar_progress_dialog_new       (void);
+GList     *thunar_progress_dialog_list_jobs (ThunarProgressDialog *dialog);
+void       thunar_progress_dialog_add_job   (ThunarProgressDialog *dialog,
+                                             ThunarJob            *job,
+                                             const gchar          *icon_name,
+                                             const gchar          *title);
+gboolean   thunar_progress_dialog_has_jobs  (ThunarProgressDialog *dialog);
 
 G_END_DECLS;
 

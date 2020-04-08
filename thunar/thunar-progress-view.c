@@ -57,6 +57,7 @@ static void              thunar_progress_view_set_property (GObject            *
                                                             GParamSpec         *pspec);
 static void              thunar_progress_view_pause_job    (ThunarProgressView *view);
 static void              thunar_progress_view_unpause_job  (ThunarProgressView *view);
+static void              thunar_progress_view_unfreeze_job (ThunarProgressView *view);
 static void              thunar_progress_view_cancel_job   (ThunarProgressView *view);
 static ThunarJobResponse thunar_progress_view_ask          (ThunarProgressView *view,
                                                             const gchar        *message,
@@ -77,7 +78,10 @@ static void              thunar_progress_view_info_message (ThunarProgressView *
 static void              thunar_progress_view_percent      (ThunarProgressView *view,
                                                             gdouble             percent,
                                                             ExoJob             *job);
-static ThunarJob        *thunar_progress_view_get_job      (ThunarProgressView *view);
+static void              thunar_progress_view_frozen       (ThunarProgressView *view,
+                                                            ExoJob             *job);
+static void              thunar_progress_view_unfrozen     (ThunarProgressView *view,
+                                                            ExoJob             *job);
 static void              thunar_progress_view_set_job      (ThunarProgressView *view,
                                                             ThunarJob          *job);
 
@@ -99,6 +103,7 @@ struct _ThunarProgressView
   GtkWidget *message_label;
   GtkWidget *pause_button;
   GtkWidget *unpause_button;
+  GtkWidget *unfreeze_button;
 
   gchar     *icon_name;
   gchar     *title;
@@ -246,6 +251,13 @@ thunar_progress_view_init (ThunarProgressView *view)
   gtk_widget_set_can_focus (view->unpause_button, FALSE);
   gtk_widget_hide (view->unpause_button);
 
+  view->unfreeze_button = gtk_button_new_from_icon_name ("media-playback-start", GTK_ICON_SIZE_BUTTON);
+  gtk_button_set_label (GTK_BUTTON (view->unfreeze_button), _("Force"));
+  g_signal_connect_swapped (view->unfreeze_button, "clicked", G_CALLBACK (thunar_progress_view_unfreeze_job), view);
+  gtk_box_pack_start (GTK_BOX (hbox), view->unfreeze_button, FALSE, FALSE, 0);
+  gtk_widget_set_can_focus (view->unfreeze_button, FALSE);
+  gtk_widget_hide (view->unfreeze_button);
+
   cancel_button = gtk_button_new_from_icon_name ("process-stop", GTK_ICON_SIZE_BUTTON);
   gtk_button_set_label (GTK_BUTTON (cancel_button), _("Cancel"));
   g_signal_connect_swapped (cancel_button, "clicked", G_CALLBACK (thunar_progress_view_cancel_job), view);
@@ -389,6 +401,25 @@ thunar_progress_view_unpause_job (ThunarProgressView *view)
 
 
 
+  static void
+thunar_progress_view_unfreeze_job (ThunarProgressView *view)
+{
+  _thunar_return_if_fail (THUNAR_IS_PROGRESS_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_JOB (view->job));
+
+  if (view->job != NULL)
+    {
+      /* unfreeze the job */
+      thunar_job_unfreeze(view->job);
+      /* update the UI */
+      gtk_widget_hide (view->unfreeze_button);
+      gtk_widget_show (view->pause_button);
+      gtk_label_set_text (GTK_LABEL (view->progress_label), _("Unfreezing..."));
+    }
+}
+
+
+
 static void
 thunar_progress_view_cancel_job (ThunarProgressView *view)
 {
@@ -399,6 +430,12 @@ thunar_progress_view_cancel_job (ThunarProgressView *view)
     {
       /* cancel the job */
       exo_job_cancel (EXO_JOB (view->job));
+
+      /* don't listen to frozen/unfrozen states updates any more */
+      g_signal_handlers_disconnect_matched (view->job, G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+                                            thunar_progress_view_frozen, NULL);
+      g_signal_handlers_disconnect_matched (view->job, G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
+                                            thunar_progress_view_unfrozen, NULL);
 
       /* don't listen to percentage updates any more */
       g_signal_handlers_disconnect_matched (view->job, G_SIGNAL_MATCH_FUNC, 0, 0, NULL,
@@ -548,6 +585,44 @@ thunar_progress_view_percent (ThunarProgressView *view,
 
 
 
+static void
+thunar_progress_view_frozen (ThunarProgressView *view,
+                             ExoJob             *job)
+{
+  _thunar_return_if_fail (THUNAR_IS_PROGRESS_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+  _thunar_return_if_fail (view->job == THUNAR_JOB (job));
+
+  if (THUNAR_IS_TRANSFER_JOB (job))
+    {
+      /* update the UI */
+      gtk_widget_hide (view->pause_button);
+      gtk_widget_show (view->unfreeze_button);
+      gtk_label_set_text (GTK_LABEL (view->progress_label), _("Frozen by another job on same device"));
+    }
+}
+
+
+
+static void
+thunar_progress_view_unfrozen (ThunarProgressView *view,
+                               ExoJob             *job)
+{
+  _thunar_return_if_fail (THUNAR_IS_PROGRESS_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+  _thunar_return_if_fail (view->job == THUNAR_JOB (job));
+
+  if (THUNAR_IS_TRANSFER_JOB (job))
+    {
+      /* update the UI */
+      gtk_widget_hide (view->unfreeze_button);
+      gtk_widget_show (view->pause_button);
+      gtk_label_set_text (GTK_LABEL (view->progress_label), _("Unfreezing..."));
+    }
+}
+
+
+
 /**
  * thunar_progress_view_new_with_job:
  * @job : a #ThunarJob or %NULL.
@@ -574,7 +649,7 @@ thunar_progress_view_new_with_job (ThunarJob *job)
  *
  * Return value: the job associated with @view or %NULL.
  **/
-static ThunarJob *
+ThunarJob *
 thunar_progress_view_get_job (ThunarProgressView *view)
 {
   _thunar_return_val_if_fail (THUNAR_IS_PROGRESS_VIEW (view), NULL);
@@ -622,6 +697,8 @@ thunar_progress_view_set_job (ThunarProgressView *view,
       g_signal_connect_swapped (job, "finished", G_CALLBACK (thunar_progress_view_finished), view);
       g_signal_connect_swapped (job, "info-message", G_CALLBACK (thunar_progress_view_info_message), view);
       g_signal_connect_swapped (job, "percent", G_CALLBACK (thunar_progress_view_percent), view);
+      g_signal_connect_swapped (job, "frozen", G_CALLBACK (thunar_progress_view_frozen), view);
+      g_signal_connect_swapped (job, "unfrozen", G_CALLBACK (thunar_progress_view_unfrozen), view);
       if (thunar_job_is_pausable (job))
         {
           gtk_widget_show (view->pause_button);
