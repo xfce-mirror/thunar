@@ -823,6 +823,7 @@ thunar_application_launch (ThunarApplication *application,
   GdkScreen *screen;
   ThunarJob *job;
   GList     *parent_folder_list = NULL;
+  gboolean   has_jobs;
 
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
 
@@ -853,21 +854,19 @@ thunar_application_launch (ThunarApplication *application,
   if (screen != NULL)
     gtk_window_set_screen (GTK_WINDOW (dialog), screen);
 
-  if (thunar_progress_dialog_has_jobs (THUNAR_PROGRESS_DIALOG (dialog)))
-    {
-      /* add the job to the dialog */
-      thunar_progress_dialog_add_job (THUNAR_PROGRESS_DIALOG (dialog),
-                                      job, icon_name, title);
+  has_jobs = thunar_progress_dialog_has_jobs (THUNAR_PROGRESS_DIALOG (dialog));
 
+  /* add the job to the dialog */
+  thunar_progress_dialog_add_job (THUNAR_PROGRESS_DIALOG (dialog),
+                                  job, icon_name, title);
+
+  if (has_jobs)
+    {
       /* show the dialog immediately */
       thunar_application_show_dialogs (application);
     }
   else
     {
-      /* add the job to the dialog */
-      thunar_progress_dialog_add_job (THUNAR_PROGRESS_DIALOG (dialog),
-                                      job, icon_name, title);
-
       /* Set up a timer to show the dialog, to make sure we don't
        * just popup and destroy a dialog for a very short job.
        */
