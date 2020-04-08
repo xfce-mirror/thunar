@@ -237,6 +237,21 @@ thunar_progress_dialog_view_needs_attention (ThunarProgressDialog *dialog,
 
 
 
+static GList *
+thunar_progress_dialog_ask_jobs (ThunarProgressDialog *dialog,
+                                 ThunarJob            *job)
+{
+  GList *jobs = NULL;
+
+  _thunar_return_val_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), NULL);
+  jobs = thunar_progress_dialog_list_jobs (dialog);
+
+  return jobs;
+}
+
+
+
 static void
 thunar_progress_dialog_job_finished (ThunarProgressDialog *dialog,
                                      ThunarProgressView   *view)
@@ -334,6 +349,30 @@ thunar_progress_dialog_new (void)
 
 
 
+GList *
+thunar_progress_dialog_list_jobs (ThunarProgressDialog *dialog)
+{
+  GList              *jobs = NULL;
+  GList              *l;
+  ThunarProgressView *view;
+  ThunarJob          *job;
+
+  _thunar_return_val_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog), NULL);
+
+  for (l = dialog->views; l != NULL; l = l->next)
+    {
+      view = THUNAR_PROGRESS_VIEW (l->data);
+      job = thunar_progress_view_get_job (view);
+      if (job != NULL && !exo_job_is_cancelled (EXO_JOB (job)))
+        {
+          jobs = g_list_append (jobs, job);
+        }
+    }
+  return jobs;
+}
+
+
+
 void
 thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
                                 ThunarJob            *job,
@@ -392,6 +431,9 @@ thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
 
   g_signal_connect_swapped (view, "finished",
                             G_CALLBACK (thunar_progress_dialog_job_finished), dialog);
+
+  g_signal_connect_swapped (job, "ask-jobs",
+                            G_CALLBACK (thunar_progress_dialog_ask_jobs), dialog);
 
   if (dialog->status_icon != NULL)
     thunar_progress_dialog_update_status_icon (dialog);
