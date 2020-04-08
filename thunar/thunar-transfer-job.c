@@ -47,6 +47,8 @@ enum
 {
   PROP_0,
   PROP_FILE_SIZE_BINARY,
+  PROP_FREEZE_TRANSFER_ON_SAME_SOURCE_DEVICE,
+  PROP_FREEZE_TRANSFER_ON_SAME_TARGET_DEVICE,
 };
 
 
@@ -83,7 +85,9 @@ struct _ThunarTransferJob
 
   ThunarTransferJobType type;
   GList                *source_node_list;
+  guint32               source_device_id;
   GList                *target_file_list;
+  guint32               target_device_id;
 
   gint64                start_time;
   gint64                last_update_time;
@@ -96,6 +100,8 @@ struct _ThunarTransferJob
 
   ThunarPreferences    *preferences;
   gboolean              file_size_binary;
+  gboolean              freeze_on_same_source_device;
+  gboolean              freeze_on_same_target_device;
 };
 
 struct _ThunarTransferNode
@@ -139,6 +145,34 @@ thunar_transfer_job_class_init (ThunarTransferJobClass *klass)
                                                          NULL,
                                                          TRUE,
                                                          EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPropertiesDialog:freeze_on_same_source_device:
+   *
+   * Whether to freeze this job if another job is transfering
+   * from the same source device.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_FREEZE_TRANSFER_ON_SAME_SOURCE_DEVICE,
+                                   g_param_spec_boolean ("freeze-transfer-on-same-source-device",
+                                                         "FreezeTransferOnSameSourceDevice",
+                                                         NULL,
+                                                         TRUE,
+                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPropertiesDialog:freeze_on_same_target_device:
+   *
+   * Whether to freeze this job if another job is transfering
+   * to the same target device.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_FREEZE_TRANSFER_ON_SAME_TARGET_DEVICE,
+                                   g_param_spec_boolean ("freeze-transfer-on-same-target-device",
+                                                         "FreezeTransferOnSameTargetDevice",
+                                                         NULL,
+                                                         TRUE,
+                                                         EXO_PARAM_READWRITE));
 }
 
 
@@ -149,10 +183,16 @@ thunar_transfer_job_init (ThunarTransferJob *job)
   job->preferences = thunar_preferences_get ();
   exo_binding_new (G_OBJECT (job->preferences), "misc-file-size-binary",
                    G_OBJECT (job), "file-size-binary");
+  exo_binding_new (G_OBJECT (job->preferences), "misc-freeze-transfer-on-same-source-device",
+                   G_OBJECT (job), "freeze-transfer-on-same-source-device");
+  exo_binding_new (G_OBJECT (job->preferences), "misc-freeze-transfer-on-same-target-device",
+                   G_OBJECT (job), "freeze-transfer-on-same-target-device");
 
   job->type = 0;
   job->source_node_list = NULL;
+  job->source_device_id = 0;
   job->target_file_list = NULL;
+  job->target_device_id = 0;
   job->total_size = 0;
   job->total_progress = 0;
   job->file_progress = 0;
@@ -193,6 +233,12 @@ thunar_transfer_job_get_property (GObject     *object,
     case PROP_FILE_SIZE_BINARY:
       g_value_set_boolean (value, job->file_size_binary);
       break;
+    case PROP_FREEZE_TRANSFER_ON_SAME_SOURCE_DEVICE:
+      g_value_set_boolean (value, job->freeze_on_same_source_device);
+      break;
+    case PROP_FREEZE_TRANSFER_ON_SAME_TARGET_DEVICE:
+      g_value_set_boolean (value, job->freeze_on_same_target_device);
+      break;
 
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -214,6 +260,12 @@ thunar_transfer_job_set_property (GObject      *object,
     {
     case PROP_FILE_SIZE_BINARY:
       job->file_size_binary = g_value_get_boolean (value);
+      break;
+    case PROP_FREEZE_TRANSFER_ON_SAME_SOURCE_DEVICE:
+      job->freeze_on_same_source_device = g_value_get_boolean (value);
+      break;
+    case PROP_FREEZE_TRANSFER_ON_SAME_TARGET_DEVICE:
+      job->freeze_on_same_target_device = g_value_get_boolean (value);
       break;
 
     default:
@@ -1130,6 +1182,169 @@ thunar_transfer_job_move_file (ExoJob                *job,
 }
 
 
+static GList *
+thunar_transfer_job_filter_running_jobs (GList *jobs, ThunarJob *own_job)
+{
+  ThunarJob *job;
+  GList     *run_jobs = NULL;
+
+  _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (own_job), NULL);
+
+  for (; jobs != NULL; jobs = jobs->next)
+    {
+      job = jobs->data;
+      if (job == own_job)
+        continue;
+      if (!exo_job_is_cancelled (EXO_JOB (job)) && !thunar_job_is_paused (job) && !thunar_job_is_frozen (job))
+        {
+          run_jobs = g_list_append (run_jobs, job);
+        }
+    }
+
+  return run_jobs;
+}
+
+
+
+static gboolean
+thunar_transfer_job_device_id_in_job_source_list (guint32 device_id, GList *jobs)
+{
+  ThunarTransferJob *job;
+
+  for (; jobs != NULL; jobs = jobs->next)
+    {
+      if (THUNAR_IS_TRANSFER_JOB (jobs->data))
+        {
+          job = THUNAR_TRANSFER_JOB (jobs->data);
+          if (job->source_device_id != 0 && device_id == job->source_device_id)
+            return TRUE;
+        }
+    }
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_transfer_job_device_id_in_job_target_list (guint32 device_id, GList *jobs)
+{
+  ThunarTransferJob *job;
+
+  for (; device_id != 0 && jobs != NULL; jobs = jobs->next)
+    {
+      if (THUNAR_IS_TRANSFER_JOB (jobs->data))
+        {
+          job = THUNAR_TRANSFER_JOB (jobs->data);
+          if (job->target_device_id != 0 && device_id == job->target_device_id)
+            return TRUE;
+        }
+    }
+  return FALSE;
+}
+
+
+
+/**
+ * thunar_transfer_job_verify_devices:
+ * @job : a #ThunarTransferJob.
+ *
+ * Based on thunar setting, will block until all running jobs
+ * doing IO on the source files or target files devices are completed.
+ * The blocking could be forced by the user in the UI.
+ *
+ **/
+static void
+thunar_transfer_job_verify_devices (ThunarTransferJob *transfer_job)
+{
+  ThunarTransferNode *node;
+  GFile              *file;
+  GFileInfo          *file_info;
+  guint32             src_device_id = 0;
+  guint32             tgt_device_id = 0;
+
+  _thunar_return_if_fail (THUNAR_IS_TRANSFER_JOB (transfer_job));
+
+  /* no source node list nor target file list */
+  if (transfer_job->source_node_list == NULL || transfer_job->target_file_list == NULL)
+    return;
+
+  /* first source file */
+  node = transfer_job->source_node_list->data;
+  file = node->source_file;
+  /* query device id */
+  file_info = g_file_query_info (file,
+                                 G_FILE_ATTRIBUTE_UNIX_DEVICE,
+                                 G_FILE_QUERY_INFO_NONE,
+                                 exo_job_get_cancellable (EXO_JOB (transfer_job)),
+                                 NULL);
+  if (file_info != NULL)
+    {
+      src_device_id = g_file_info_get_attribute_uint32 (file_info, G_FILE_ATTRIBUTE_UNIX_DEVICE);
+      transfer_job->source_device_id = src_device_id;
+      g_object_unref (file_info);
+    }
+
+  /* first target file */
+  file = G_FILE (transfer_job->target_file_list->data);
+  /* query device id */
+  file_info = g_file_query_info (file,
+                                 G_FILE_ATTRIBUTE_UNIX_DEVICE,
+                                 G_FILE_QUERY_INFO_NONE,
+                                 exo_job_get_cancellable (EXO_JOB (transfer_job)),
+                                 NULL);
+  if (file_info != NULL)
+    {
+      tgt_device_id = g_file_info_get_attribute_uint32 (file_info, G_FILE_ATTRIBUTE_UNIX_DEVICE);
+      transfer_job->target_device_id = tgt_device_id;
+      g_object_unref (file_info);
+    }
+
+  if (transfer_job->freeze_on_same_source_device || transfer_job->freeze_on_same_target_device)
+    {
+      GList    *jobs = thunar_job_ask_jobs (THUNAR_JOB (transfer_job));
+      GList    *other_jobs = thunar_transfer_job_filter_running_jobs (jobs, THUNAR_JOB (transfer_job));
+      gboolean  been_frozen = FALSE;
+      while (
+        !exo_job_is_cancelled (EXO_JOB (transfer_job)) &&
+        (
+          (transfer_job->freeze_on_same_source_device && thunar_transfer_job_device_id_in_job_source_list (src_device_id, other_jobs)) ||
+          (transfer_job->freeze_on_same_target_device && thunar_transfer_job_device_id_in_job_target_list (tgt_device_id, other_jobs))
+        )
+      )
+        {
+          if (!thunar_job_is_frozen (THUNAR_JOB (transfer_job)))
+            {
+              if (been_frozen)
+                {
+                  /* cannot re-freeze. It means that the user force to unfreeze */
+                  break;
+                }
+              else
+                {
+                  /* first time here. The job needs to change to frozen state */
+                  been_frozen = TRUE;
+                  thunar_job_freeze (THUNAR_JOB (transfer_job));
+                  thunar_job_emit_frozen_signal (THUNAR_JOB (transfer_job));
+                }
+            }
+          g_usleep(500 * 1000);
+          g_list_free (g_steal_pointer (&jobs));
+          g_list_free (g_steal_pointer (&other_jobs));
+          jobs = thunar_job_ask_jobs (THUNAR_JOB (transfer_job));
+          other_jobs = thunar_transfer_job_filter_running_jobs (jobs, THUNAR_JOB (transfer_job));
+        }
+      g_list_free (g_steal_pointer (&jobs));
+      g_list_free (g_steal_pointer (&other_jobs));
+      if (thunar_job_is_frozen (THUNAR_JOB (transfer_job)))
+        {
+          thunar_job_unfreeze (THUNAR_JOB (transfer_job));
+          thunar_job_emit_unfrozen_signal (THUNAR_JOB (transfer_job));
+        }
+    }
+}
+
+
+
 static gboolean
 thunar_transfer_job_execute (ExoJob  *job,
                              GError **error)
@@ -1228,6 +1443,8 @@ thunar_transfer_job_execute (ExoJob  *job,
               return TRUE;
             }
         }
+
+      thunar_transfer_job_verify_devices (transfer_job);
 
       /* transfer starts now */
       transfer_job->start_time = g_get_real_time ();
