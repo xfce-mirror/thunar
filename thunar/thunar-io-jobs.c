@@ -22,7 +22,12 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_ERRNO_H
+#include <errno.h>
+#endif
+
 #include <gio/gio.h>
+#include <glib/gstdio.h>
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-enum-types.h>
@@ -79,6 +84,34 @@ _tij_collect_nofollow (ThunarJob *job,
     }
 
   return file_list;
+}
+
+
+
+static gboolean
+_tij_delete_file (GFile        *file,
+                  GCancellable *cancellable,
+                  GError      **error)
+{
+  gchar *path;
+
+  if (!g_file_is_native (file))
+    return g_file_delete (file, cancellable, error);
+
+  /* adapted from g_local_file_delete of gio/glocalfile.c */
+  path = g_file_get_path (file);
+
+  if (g_remove (path) == 0)
+    {
+      g_free (path);
+      return TRUE;
+    }
+
+  g_set_error (error, G_IO_ERROR, g_io_error_from_errno (errno),
+               _("Error removing file: %s"), g_strerror (errno));
+
+  g_free (path);
+  return FALSE;
 }
 
 
@@ -185,7 +218,7 @@ again:
               if (response == THUNAR_JOB_RESPONSE_YES)
                 {
                   /* try to remove the file. fail if not possible */
-                  if (g_file_delete (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err))
+                  if (_tij_delete_file (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err))
                     goto again;
                 }
 
@@ -340,7 +373,7 @@ again:
               if (response == THUNAR_JOB_RESPONSE_YES)
                 {
                   /* try to remove the file, fail if not possible */
-                  if (g_file_delete (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err))
+                  if (_tij_delete_file (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err))
                     goto again;
                 }
 
@@ -464,7 +497,7 @@ _thunar_io_jobs_unlink (ThunarJob  *job,
 
 again:
       /* try to delete the file */
-      if (g_file_delete (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err))
+      if (_tij_delete_file (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err))
         {
           /* notify the thumbnail cache that the corresponding thumbnail can also
            * be deleted now */
@@ -678,7 +711,7 @@ _thunar_io_jobs_link_file (ThunarJob *job,
             {
               /* try to remove the target file. if not possible, err will be set and
                * the while loop will be aborted */
-              g_file_delete (target_file, exo_job_get_cancellable (EXO_JOB (job)), &err);
+              _tij_delete_file (target_file, exo_job_get_cancellable (EXO_JOB (job)), &err);
             }
 
           /* tell the caller that we skipped this file if the user doesn't want to
@@ -842,7 +875,7 @@ _thunar_io_jobs_trash (ThunarJob  *job,
             break;
 
           if (response == THUNAR_JOB_RESPONSE_YES)
-            g_file_delete (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err);
+            _tij_delete_file (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err);
         }
 
       /* update the thumbnail cache */
