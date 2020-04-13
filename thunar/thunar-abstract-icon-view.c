@@ -104,6 +104,8 @@ struct _ThunarAbstractIconViewPrivate
   gulong gesture_expose_id;
   gulong gesture_motion_id;
   gulong gesture_release_id;
+
+  gboolean button_pressed;
 };
 
 
@@ -492,14 +494,9 @@ thunar_abstract_icon_view_button_press_event (ExoIconView            *view,
   gboolean           in_tab;
   const gchar       *action_name;
 
-  if (event->type == GDK_BUTTON_PRESS && event->button == 1)
-    {
-      /* we don't unselect all other items if Control or Shift is active */
-      if ((event->state & GDK_CONTROL_MASK) == 0 && (event->state & GDK_SHIFT_MASK) == 0)
-        exo_icon_view_unselect_all (view);
-      return FALSE;
-    }
-  else if (event->type == GDK_BUTTON_PRESS && event->button == 3)
+  abstract_icon_view->priv->button_pressed = TRUE;
+
+  if (event->type == GDK_BUTTON_PRESS && event->button == 3)
     {
       /* open the context menu on right clicks */
       if (exo_icon_view_get_item_at_pos (view, event->x, event->y, &path, NULL))
@@ -698,6 +695,8 @@ thunar_abstract_icon_view_key_press_event (ExoIconView            *view,
                                            GdkEventKey            *event,
                                            ThunarAbstractIconView *abstract_icon_view)
 {
+  abstract_icon_view->priv->button_pressed = FALSE;
+
   /* popup context menu if "Menu" or "<Shift>F10" is pressed */
   if (event->keyval == GDK_KEY_Menu || ((event->state & GDK_SHIFT_MASK) != 0 && event->keyval == GDK_KEY_F10))
     {
@@ -756,6 +755,13 @@ thunar_abstract_icon_view_item_activated (ExoIconView            *view,
   GtkAction *action;
 
   _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
+
+  /* be sure to have only the clicked item selected */
+  if (abstract_icon_view->priv->button_pressed)
+    {
+      exo_icon_view_unselect_all (view);
+      exo_icon_view_select_path (view, path);
+    }
 
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* emit the "open" action */

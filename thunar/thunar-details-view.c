@@ -131,6 +131,9 @@ struct _ThunarDetailsView
 
   /* the UI manager merge id for the details view */
   guint              ui_merge_id;
+
+  /* whether the most recent item activation used a mouse button press */
+  gboolean           button_pressed;
 };
 
 
@@ -700,6 +703,8 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
     {
       GtkTreePath       *cursor_path;
 
+      details_view->button_pressed = TRUE;
+
       /* grab the tree view */
       gtk_widget_grab_focus (GTK_WIDGET (tree_view));
 
@@ -819,6 +824,8 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
                                      GdkEventKey       *event,
                                      ThunarDetailsView *details_view)
 {
+  details_view->button_pressed = FALSE;
+
   /* popup context menu if "Menu" or "<Shift>F10" is pressed */
   if (event->keyval == GDK_KEY_Menu || ((event->state & GDK_SHIFT_MASK) != 0 && event->keyval == GDK_KEY_F10))
     {
@@ -837,9 +844,18 @@ thunar_details_view_row_activated (GtkTreeView       *tree_view,
                                    GtkTreeViewColumn *column,
                                    ThunarDetailsView *details_view)
 {
+  GtkTreeSelection *selection;
   GtkAction        *action;
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+
+  /* be sure to have only the clicked item selected */
+  if (details_view->button_pressed)
+    {
+      selection = gtk_tree_view_get_selection (tree_view);
+      gtk_tree_selection_unselect_all (selection);
+      gtk_tree_selection_select_path (selection, path);
+    }
 
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* emit the "open" action */
