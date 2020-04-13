@@ -85,8 +85,6 @@ static gboolean     thunar_abstract_icon_view_motion_notify_event   (ExoIconView
 static void         thunar_abstract_icon_view_item_activated        (ExoIconView                  *view,
                                                                      GtkTreePath                  *path,
                                                                      ThunarAbstractIconView       *abstract_icon_view);
-static gboolean     thunar_abstract_icon_view_activate_cursor_item  (ExoIconView                  *view,
-                                                                     ThunarAbstractIconView       *abstract_icon_view);
 static void         thunar_abstract_icon_view_sort_column_changed   (GtkTreeSortable              *sortable,
                                                                      ThunarAbstractIconView       *abstract_icon_view);
 static void         thunar_abstract_icon_view_zoom_level_changed    (ThunarAbstractIconView       *abstract_icon_view);
@@ -204,8 +202,6 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   g_signal_connect (G_OBJECT (view), "button-press-event", G_CALLBACK (thunar_abstract_icon_view_button_press_event), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "key-press-event", G_CALLBACK (thunar_abstract_icon_view_key_press_event), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "item-activated", G_CALLBACK (thunar_abstract_icon_view_item_activated), abstract_icon_view);
-  g_signal_connect (G_OBJECT (view), "activate-cursor-item", G_CALLBACK (thunar_abstract_icon_view_activate_cursor_item),
-                    abstract_icon_view);
   g_signal_connect_swapped (G_OBJECT (view), "selection-changed", G_CALLBACK (thunar_standard_view_selection_changed), abstract_icon_view);
   gtk_container_add (GTK_CONTAINER (abstract_icon_view), view);
   gtk_widget_show (view);
@@ -767,25 +763,6 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   if (G_LIKELY (action != NULL))
     gtk_action_activate (action);
 G_GNUC_END_IGNORE_DEPRECATIONS
-}
-
-
-
-static gboolean
-thunar_abstract_icon_view_activate_cursor_item (ExoIconView            *view,
-                                                ThunarAbstractIconView *abstract_icon_view)
-{
-  GList *selected_items;
-
-  _thunar_return_val_if_fail (EXO_IS_ICON_VIEW (view), FALSE);
-  _thunar_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view), FALSE);
-
-  /* ensure that the cursor in the exo_icon_view so that any selected items do get activated */
-  selected_items = thunar_abstract_icon_view_get_selected_items (THUNAR_STANDARD_VIEW (abstract_icon_view));
-  if(selected_items != NULL)
-    exo_icon_view_set_cursor (view,selected_items->data, NULL, FALSE);
-
-  return TRUE;
 }
 
 
