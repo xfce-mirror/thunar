@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-23 18:30+0100\n"
+"POT-Creation-Date: 2020-04-11 00:30+0200\n"
 "PO-Revision-Date: 2018-08-19 09:02+0000\n"
 "Last-Translator: Igor <f2404@yandex.ru>, 2019\n"
 "Language-Team: Russian (https://www.transifex.com/xfce/teams/16840/ru/)\n"
@@ -145,8 +145,8 @@ msgstr "Не удалось запустить операцию"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1500 ../thunar/thunar-application.c:1632
-#: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:356
-#: ../thunar/thunar-location-entry.c:384
+#: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:366
+#: ../thunar/thunar-location-entry.c:394
 #: ../thunar/thunar-shortcuts-view.c:1719
 #: ../thunar/thunar-shortcuts-view.c:1747 ../thunar/thunar-window.c:2364
 #, c-format
@@ -248,8 +248,8 @@ msgstr[3] ""
 #: ../thunar/thunar-application.c:2157 ../thunar/thunar-application.c:2336
 #: ../thunar/thunar-chooser-dialog.c:288 ../thunar/thunar-chooser-dialog.c:705
 #: ../thunar/thunar-chooser-dialog.c:753 ../thunar/thunar-create-dialog.c:141
-#: ../thunar/thunar-dialogs.c:105 ../thunar/thunar-dialogs.c:487
-#: ../thunar/thunar-dialogs.c:598 ../thunar/thunar-dialogs.c:856
+#: ../thunar/thunar-dialogs.c:105 ../thunar/thunar-dialogs.c:497
+#: ../thunar/thunar-dialogs.c:608 ../thunar/thunar-dialogs.c:866
 #: ../thunar/thunar-dnd.c:169 ../thunar/thunar-launcher.c:736
 #: ../thunar/thunar-permissions-chooser.c:522
 #: ../thunar/thunar-permissions-chooser.c:1130
@@ -527,8 +527,8 @@ msgstr "Буфер обмена пуст"
 #. setup the dialog
 #. add the "Close" button
 #. add a regular close button, the header bar already provides one
-#: ../thunar/thunar-column-editor.c:120 ../thunar/thunar-dialogs.c:801
-#: ../thunar/thunar-preferences-dialog.c:253
+#: ../thunar/thunar-column-editor.c:120 ../thunar/thunar-dialogs.c:811
+#: ../thunar/thunar-preferences-dialog.c:257
 #: ../thunar/thunar-properties-dialog.c:254
 #: ../thunar/thunar-renamer-dialog.c:355
 #: ../thunar/thunar-renamer-progress.c:215
@@ -542,7 +542,7 @@ msgstr "Настроить столбцы для просмотра в виде 
 
 #. add the "Help" button
 #: ../thunar/thunar-column-editor.c:126
-#: ../thunar/thunar-preferences-dialog.c:260
+#: ../thunar/thunar-preferences-dialog.c:268
 #: ../thunar/thunar-properties-dialog.c:253 ../thunar/thunar-window.c:381
 msgid "_Help"
 msgstr "_Справка"
@@ -610,7 +610,7 @@ msgstr "_Автоматически увеличивать ширину стол
 #. the file_time is invalid
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:858 ../thunar/thunar-list-model.c:734
+#: ../thunar/thunar-column-model.c:877 ../thunar/thunar-list-model.c:734
 #: ../thunar/thunar-list-model.c:770
 #: ../thunar/thunar-permissions-chooser.c:232 ../thunar/thunar-util.c:471
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:513
@@ -704,114 +704,114 @@ msgstr "_Переименовать"
 msgid "Enter the new name:"
 msgstr "Введите имя:"
 
-#: ../thunar/thunar-dialogs.c:268
+#: ../thunar/thunar-dialogs.c:278
 msgid "translator-credits"
 msgstr ""
 "Андрей Федосеев <andrey.fedoseev@gmail.com>\n"
 "Сергей Федосеев <fedoseev.sergey@gmail.com>\n"
 "Дмитрий Смирнов <other@igus.lv>"
 
-#: ../thunar/thunar-dialogs.c:444 ../thunar/thunar-permissions-chooser.c:524
+#: ../thunar/thunar-dialogs.c:454 ../thunar/thunar-permissions-chooser.c:524
 msgid "_Yes"
 msgstr "_Да"
 
-#: ../thunar/thunar-dialogs.c:448
+#: ../thunar/thunar-dialogs.c:458
 msgid "Yes to _all"
 msgstr "Да для _всех"
 
-#: ../thunar/thunar-dialogs.c:452 ../thunar/thunar-permissions-chooser.c:523
+#: ../thunar/thunar-dialogs.c:462 ../thunar/thunar-permissions-chooser.c:523
 msgid "_No"
 msgstr "_Нет"
 
-#: ../thunar/thunar-dialogs.c:456
+#: ../thunar/thunar-dialogs.c:466
 msgid "N_o to all"
 msgstr "Н_ет для всех"
 
-#: ../thunar/thunar-dialogs.c:460
+#: ../thunar/thunar-dialogs.c:470
 msgid "_Retry"
 msgstr "Попробовать _снова"
 
-#: ../thunar/thunar-dialogs.c:464
+#: ../thunar/thunar-dialogs.c:474
 msgid "Copy _Anyway"
 msgstr "_Всё равно копировать"
 
-#: ../thunar/thunar-dialogs.c:577
+#: ../thunar/thunar-dialogs.c:587
 msgid "Confirm to replace files"
 msgstr "Подтвердите замену файлов"
 
-#: ../thunar/thunar-dialogs.c:599
+#: ../thunar/thunar-dialogs.c:609
 msgid "S_kip All"
 msgstr "Пропустить _все"
 
-#: ../thunar/thunar-dialogs.c:600
+#: ../thunar/thunar-dialogs.c:610
 msgid "_Skip"
 msgstr "_Пропустить"
 
-#: ../thunar/thunar-dialogs.c:601
+#: ../thunar/thunar-dialogs.c:611
 msgid "Replace _All"
 msgstr "За_менить все"
 
-#: ../thunar/thunar-dialogs.c:602
+#: ../thunar/thunar-dialogs.c:612
 msgid "_Replace"
 msgstr "_Заменить"
 
-#: ../thunar/thunar-dialogs.c:639
+#: ../thunar/thunar-dialogs.c:649
 #, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
 msgstr "В этом каталоге уже есть ссылка «%s»."
 
-#: ../thunar/thunar-dialogs.c:644
+#: ../thunar/thunar-dialogs.c:654
 #, c-format
 msgid "This folder already contains a folder \"%s\"."
 msgstr "В этом каталоге уже есть каталог «%s»."
 
-#: ../thunar/thunar-dialogs.c:649
+#: ../thunar/thunar-dialogs.c:659
 #, c-format
 msgid "This folder already contains a file \"%s\"."
 msgstr "В этом каталоге уже есть файл «%s»."
 
-#: ../thunar/thunar-dialogs.c:663
+#: ../thunar/thunar-dialogs.c:673
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the link"
 msgstr "Вы хотите заменить существующую ссылку"
 
-#: ../thunar/thunar-dialogs.c:665
+#: ../thunar/thunar-dialogs.c:675
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the existing folder"
 msgstr "Вы хотите заменить существующий каталог"
 
-#: ../thunar/thunar-dialogs.c:667
+#: ../thunar/thunar-dialogs.c:677
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
 msgstr "Вы хотите заменить существующий файл"
 
 #. Fourth box (size, volume, free space)
-#: ../thunar/thunar-dialogs.c:688 ../thunar/thunar-dialogs.c:724
+#: ../thunar/thunar-dialogs.c:698 ../thunar/thunar-dialogs.c:734
 #: ../thunar/thunar-properties-dialog.c:490
 msgid "Size:"
 msgstr "Размер:"
 
-#: ../thunar/thunar-dialogs.c:688 ../thunar/thunar-dialogs.c:724
+#: ../thunar/thunar-dialogs.c:698 ../thunar/thunar-dialogs.c:734
 #: ../thunar/thunar-properties-dialog.c:449
 msgid "Modified:"
 msgstr "Изменён:"
 
-#: ../thunar/thunar-dialogs.c:699
+#: ../thunar/thunar-dialogs.c:709
 #, c-format
 msgid "ReplaceDialogPart2|with the following link?"
 msgstr "следующей ссылкой?"
 
-#: ../thunar/thunar-dialogs.c:701
+#: ../thunar/thunar-dialogs.c:711
 #, c-format
 msgid "ReplaceDialogPart2|with the following folder?"
 msgstr "следующим каталогом?"
 
-#: ../thunar/thunar-dialogs.c:703
+#: ../thunar/thunar-dialogs.c:713
 #, c-format
 msgid "ReplaceDialogPart2|with the following file?"
 msgstr "следующим файлом?"
 
-#: ../thunar/thunar-dialogs.c:836
+#: ../thunar/thunar-dialogs.c:846
 #, c-format
 msgid ""
 "The desktop file \"%s\" is in an insecure location and not marked as "
@@ -820,11 +820,11 @@ msgstr ""
 "Файл .desktop «%s» имеет небезопасное расположение и не отмечен как "
 "исполняемый. Если вы не доверяете этой программе, нажмите Отмена."
 
-#: ../thunar/thunar-dialogs.c:853
+#: ../thunar/thunar-dialogs.c:863
 msgid "_Launch Anyway"
 msgstr "_Запустить всё равно"
 
-#: ../thunar/thunar-dialogs.c:855
+#: ../thunar/thunar-dialogs.c:865
 msgid "Mark _Executable"
 msgstr "Сделать _исполняемым"
 
@@ -1007,48 +1007,53 @@ msgstr "Просмотр в виде значков"
 msgid "Icon view"
 msgstr "значки"
 
-#: ../thunar/thunar-io-jobs.c:181 ../thunar/thunar-io-jobs.c:336
+#: ../thunar/thunar-io-jobs.c:111
+#, c-format
+msgid "Error removing file: %s"
+msgstr ""
+
+#: ../thunar/thunar-io-jobs.c:214 ../thunar/thunar-io-jobs.c:369
 #, c-format
 msgid "The file \"%s\" already exists"
 msgstr "«%s» уже существует"
 
-#: ../thunar/thunar-io-jobs.c:204
+#: ../thunar/thunar-io-jobs.c:237
 #, c-format
 msgid "Failed to create empty file \"%s\": %s"
 msgstr "Не удалось создать пустой файл «%s»: %s"
 
-#: ../thunar/thunar-io-jobs.c:359
+#: ../thunar/thunar-io-jobs.c:392
 #, c-format
 msgid "Failed to create directory \"%s\": %s"
 msgstr "Не удалось создать каталог «%s»: %s"
 
 #. tell the user that we're preparing to unlink the files
-#: ../thunar/thunar-io-jobs.c:426
+#: ../thunar/thunar-io-jobs.c:459
 msgid "Preparing..."
 msgstr "Подготовка..."
 
-#: ../thunar/thunar-io-jobs.c:504
+#: ../thunar/thunar-io-jobs.c:537
 #, c-format
 msgid "Could not delete file \"%s\": %s"
 msgstr "Не удалось удалить файл «%s»: %s"
 
-#: ../thunar/thunar-io-jobs.c:605
+#: ../thunar/thunar-io-jobs.c:638
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
 msgstr "Невозможно создать ссылку на «%s», так как это не локальный файл"
 
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:980
+#: ../thunar/thunar-io-jobs.c:1013
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "Не удалось изменить владельца для «%s»: %s"
 
-#: ../thunar/thunar-io-jobs.c:981
+#: ../thunar/thunar-io-jobs.c:1014
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "Не удалось изменить группу для «%s»: %s"
 
-#: ../thunar/thunar-io-jobs.c:1136
+#: ../thunar/thunar-io-jobs.c:1169
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "Не удалось изменить права для «%s»: %s"
@@ -1486,11 +1491,11 @@ msgstr ""
 msgid "View the properties of the folder \"%s\""
 msgstr "Просмотреть свойства каталога «%s»"
 
-#: ../thunar/thunar-location-entry.c:195 ../thunar/thunar-window.c:365
+#: ../thunar/thunar-location-entry.c:200 ../thunar/thunar-window.c:365
 msgid "Reload the current folder"
 msgstr "Обновить текущий каталог"
 
-#: ../thunar/thunar-location-entry.c:349
+#: ../thunar/thunar-location-entry.c:359
 #, c-format
 msgid "File does not exist"
 msgstr "Файл не существует"
@@ -1683,78 +1688,78 @@ msgid "File Manager Preferences"
 msgstr "Настройки файлового менеджера"
 
 #. Display
-#: ../thunar/thunar-preferences-dialog.c:275
+#: ../thunar/thunar-preferences-dialog.c:287
 msgid "Display"
 msgstr "Отображение"
 
-#: ../thunar/thunar-preferences-dialog.c:285
+#: ../thunar/thunar-preferences-dialog.c:297
 msgid "Default View"
 msgstr "Режим просмотра по умолчанию"
 
-#: ../thunar/thunar-preferences-dialog.c:298
+#: ../thunar/thunar-preferences-dialog.c:310
 msgid "View _new folders using:"
 msgstr "Просматривать _новые каталоги используя:"
 
-#: ../thunar/thunar-preferences-dialog.c:304
-#: ../thunar/thunar-preferences-dialog.c:351
+#: ../thunar/thunar-preferences-dialog.c:316
+#: ../thunar/thunar-preferences-dialog.c:363
 msgid "Icon View"
 msgstr "Значки"
 
-#: ../thunar/thunar-preferences-dialog.c:305
+#: ../thunar/thunar-preferences-dialog.c:317
 msgid "Detailed List View"
 msgstr "Подробный список"
 
-#: ../thunar/thunar-preferences-dialog.c:306
+#: ../thunar/thunar-preferences-dialog.c:318
 msgid "Compact List View"
 msgstr "Компактный список"
 
-#: ../thunar/thunar-preferences-dialog.c:307
+#: ../thunar/thunar-preferences-dialog.c:319
 msgid "Last Active View"
 msgstr "Последний режим"
 
-#: ../thunar/thunar-preferences-dialog.c:316
+#: ../thunar/thunar-preferences-dialog.c:328
 msgid "Show thumbnails:"
 msgstr "Показывать эскизы:"
 
-#: ../thunar/thunar-preferences-dialog.c:322
+#: ../thunar/thunar-preferences-dialog.c:334
 msgid "Never"
 msgstr "Никогда"
 
-#: ../thunar/thunar-preferences-dialog.c:323
+#: ../thunar/thunar-preferences-dialog.c:335
 msgid "Local Files Only"
 msgstr "Только локальные файлы"
 
-#: ../thunar/thunar-preferences-dialog.c:324
+#: ../thunar/thunar-preferences-dialog.c:336
 msgid "Always"
 msgstr "Всегда"
 
-#: ../thunar/thunar-preferences-dialog.c:333
+#: ../thunar/thunar-preferences-dialog.c:345
 msgid "Sort _folders before files"
 msgstr "Отображать _каталоги перед файлами"
 
-#: ../thunar/thunar-preferences-dialog.c:335
+#: ../thunar/thunar-preferences-dialog.c:347
 msgid ""
 "Select this option to list folders before files when you sort a folder."
 msgstr ""
 "Используйте этот параметр, чтобы включить отображение каталогов перед "
 "файлами."
 
-#: ../thunar/thunar-preferences-dialog.c:340
+#: ../thunar/thunar-preferences-dialog.c:352
 msgid "Show file size in binary format"
 msgstr "Показать размер файлов в двоичном формате"
 
-#: ../thunar/thunar-preferences-dialog.c:342
+#: ../thunar/thunar-preferences-dialog.c:354
 msgid ""
 "Select this option to show file size in binary format instead of decimal."
 msgstr ""
 "Выберите эту опцию, чтобы показать размер файла в двоичном формате вместо "
 "десятичного."
 
-#: ../thunar/thunar-preferences-dialog.c:364
+#: ../thunar/thunar-preferences-dialog.c:376
 msgid "_Text beside icons"
 msgstr "_Текст рядом со значками"
 
-#: ../thunar/thunar-preferences-dialog.c:366
+#: ../thunar/thunar-preferences-dialog.c:378
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
@@ -1762,23 +1767,23 @@ msgstr ""
 "Включите этот параметр, чтобы подписи к значкам отображались рядом с ними. "
 "Если выключено, подписи будут отображаться под значками."
 
-#: ../thunar/thunar-preferences-dialog.c:376
+#: ../thunar/thunar-preferences-dialog.c:388
 msgid "Date"
 msgstr "Дата"
 
-#: ../thunar/thunar-preferences-dialog.c:389
+#: ../thunar/thunar-preferences-dialog.c:401
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:214
 msgid "_Format:"
 msgstr "_Формат:"
 
 #. TRANSLATORS: custom date format
-#: ../thunar/thunar-preferences-dialog.c:402
+#: ../thunar/thunar-preferences-dialog.c:414
 msgid "Custom"
 msgstr "Пользовательский формат"
 
 #. TRANSLATORS: Please do not translate the first column (specifiers),
 #. 'strftime' and of course '\n'
-#: ../thunar/thunar-preferences-dialog.c:412
+#: ../thunar/thunar-preferences-dialog.c:424
 msgid ""
 "Custom date format to apply.\n"
 "\n"
@@ -1805,73 +1810,73 @@ msgstr ""
 "Обратитесь к man-странице 'strftime' для полного списка"
 
 #. Side Pane
-#: ../thunar/thunar-preferences-dialog.c:430
+#: ../thunar/thunar-preferences-dialog.c:442
 msgid "Side Pane"
 msgstr "Боковая панель"
 
-#: ../thunar/thunar-preferences-dialog.c:440
+#: ../thunar/thunar-preferences-dialog.c:452
 msgid "Shortcuts Pane"
 msgstr "Панель закладок"
 
-#: ../thunar/thunar-preferences-dialog.c:453
+#: ../thunar/thunar-preferences-dialog.c:465
 msgid "_Icon Size:"
 msgstr "_Размер значков:"
 
-#: ../thunar/thunar-preferences-dialog.c:458
-#: ../thunar/thunar-preferences-dialog.c:506
+#: ../thunar/thunar-preferences-dialog.c:470
+#: ../thunar/thunar-preferences-dialog.c:518
 msgid "16px"
 msgstr "16 пикс"
 
-#: ../thunar/thunar-preferences-dialog.c:459
-#: ../thunar/thunar-preferences-dialog.c:507
+#: ../thunar/thunar-preferences-dialog.c:471
+#: ../thunar/thunar-preferences-dialog.c:519
 msgid "24px"
 msgstr "24 пикс"
 
-#: ../thunar/thunar-preferences-dialog.c:460
-#: ../thunar/thunar-preferences-dialog.c:508
+#: ../thunar/thunar-preferences-dialog.c:472
+#: ../thunar/thunar-preferences-dialog.c:520
 msgid "32px"
 msgstr "32 пикс"
 
-#: ../thunar/thunar-preferences-dialog.c:461
-#: ../thunar/thunar-preferences-dialog.c:509
+#: ../thunar/thunar-preferences-dialog.c:473
+#: ../thunar/thunar-preferences-dialog.c:521
 msgid "48px"
 msgstr "48 пикс"
 
-#: ../thunar/thunar-preferences-dialog.c:462
-#: ../thunar/thunar-preferences-dialog.c:510
+#: ../thunar/thunar-preferences-dialog.c:474
+#: ../thunar/thunar-preferences-dialog.c:522
 msgid "64px"
 msgstr "64 пикс"
 
-#: ../thunar/thunar-preferences-dialog.c:463
-#: ../thunar/thunar-preferences-dialog.c:511
+#: ../thunar/thunar-preferences-dialog.c:475
+#: ../thunar/thunar-preferences-dialog.c:523
 msgid "96px"
 msgstr "96 пикс"
 
-#: ../thunar/thunar-preferences-dialog.c:464
-#: ../thunar/thunar-preferences-dialog.c:512
+#: ../thunar/thunar-preferences-dialog.c:476
+#: ../thunar/thunar-preferences-dialog.c:524
 msgid "128px"
 msgstr "128 пикс"
 
-#: ../thunar/thunar-preferences-dialog.c:465
-#: ../thunar/thunar-preferences-dialog.c:513
+#: ../thunar/thunar-preferences-dialog.c:477
+#: ../thunar/thunar-preferences-dialog.c:525
 msgid "160px"
 msgstr "160 пикс"
 
-#: ../thunar/thunar-preferences-dialog.c:466
-#: ../thunar/thunar-preferences-dialog.c:514
+#: ../thunar/thunar-preferences-dialog.c:478
+#: ../thunar/thunar-preferences-dialog.c:526
 msgid "192px"
 msgstr "192 пикс"
 
-#: ../thunar/thunar-preferences-dialog.c:467
-#: ../thunar/thunar-preferences-dialog.c:515
+#: ../thunar/thunar-preferences-dialog.c:479
+#: ../thunar/thunar-preferences-dialog.c:527
 msgid "256px"
 msgstr "256 пикс"
 
-#: ../thunar/thunar-preferences-dialog.c:476
+#: ../thunar/thunar-preferences-dialog.c:488
 msgid "Show Icon _Emblems"
 msgstr "Показывать _эмблемы значков"
 
-#: ../thunar/thunar-preferences-dialog.c:478
+#: ../thunar/thunar-preferences-dialog.c:490
 msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties "
@@ -1880,19 +1885,19 @@ msgstr ""
 "Включите этот параметр, чтобы в панели закладок показывались эмблемы на "
 "значках."
 
-#: ../thunar/thunar-preferences-dialog.c:488
+#: ../thunar/thunar-preferences-dialog.c:500
 msgid "Tree Pane"
 msgstr "Дерево"
 
-#: ../thunar/thunar-preferences-dialog.c:501
+#: ../thunar/thunar-preferences-dialog.c:513
 msgid "Icon _Size:"
 msgstr "Размер _значков:"
 
-#: ../thunar/thunar-preferences-dialog.c:524
+#: ../thunar/thunar-preferences-dialog.c:536
 msgid "Show Icon E_mblems"
 msgstr "Показывать э_мблемы значков"
 
-#: ../thunar/thunar-preferences-dialog.c:526
+#: ../thunar/thunar-preferences-dialog.c:538
 msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
@@ -1901,19 +1906,19 @@ msgstr ""
 "дереве."
 
 #. Behavior
-#: ../thunar/thunar-preferences-dialog.c:536
+#: ../thunar/thunar-preferences-dialog.c:548
 msgid "Behavior"
 msgstr "Поведение"
 
-#: ../thunar/thunar-preferences-dialog.c:546
+#: ../thunar/thunar-preferences-dialog.c:558
 msgid "Navigation"
 msgstr "Навигация"
 
-#: ../thunar/thunar-preferences-dialog.c:559
+#: ../thunar/thunar-preferences-dialog.c:571
 msgid "_Single click to activate items"
 msgstr "_Одиночный щелчок активирует объект"
 
-#: ../thunar/thunar-preferences-dialog.c:575
+#: ../thunar/thunar-preferences-dialog.c:587
 msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
@@ -1921,7 +1926,7 @@ msgstr ""
 "Укажите _задержку перед тем, как объект будет выбран\n"
 "при удержании над ним указателя мыши:"
 
-#: ../thunar/thunar-preferences-dialog.c:588
+#: ../thunar/thunar-preferences-dialog.c:600
 msgid ""
 "When single-click activation is enabled, pausing the mouse pointer over an "
 "item will automatically select that item after the chosen delay. You can "
@@ -1935,42 +1940,42 @@ msgstr ""
 "активирует объекты, а вам нужно выбрать объект без его активации. Вы можете "
 "отключить этот режим, поместив ползунок в крайнюю левую позицию."
 
-#: ../thunar/thunar-preferences-dialog.c:607
+#: ../thunar/thunar-preferences-dialog.c:619
 msgid "Disabled"
 msgstr "Отключено"
 
-#: ../thunar/thunar-preferences-dialog.c:613
+#: ../thunar/thunar-preferences-dialog.c:625
 msgid "Medium"
 msgstr "Средняя"
 
-#: ../thunar/thunar-preferences-dialog.c:618
+#: ../thunar/thunar-preferences-dialog.c:630
 msgid "Long"
 msgstr "Большая"
 
-#: ../thunar/thunar-preferences-dialog.c:624
+#: ../thunar/thunar-preferences-dialog.c:636
 msgid "_Double click to activate items"
 msgstr "_Двойной щелчок активирует объект"
 
-#: ../thunar/thunar-preferences-dialog.c:635
+#: ../thunar/thunar-preferences-dialog.c:647
 msgid "Tabs instead of new Windows"
 msgstr "Вкладки вместо новых окон"
 
-#: ../thunar/thunar-preferences-dialog.c:648
+#: ../thunar/thunar-preferences-dialog.c:660
 msgid "Open folders in new tabs on middle click"
 msgstr "Открывать каталоги в новых вкладках по среднему щелчку"
 
-#: ../thunar/thunar-preferences-dialog.c:650
+#: ../thunar/thunar-preferences-dialog.c:662
 msgid ""
 "Select this option to open a new tab on middle click instead of a new window"
 msgstr ""
 "Отметьте этот параметр для открытия новой вкладки вместо нового окна по "
 "среднему щелчку"
 
-#: ../thunar/thunar-preferences-dialog.c:654
+#: ../thunar/thunar-preferences-dialog.c:666
 msgid "Open new thunar instances as tabs"
 msgstr "Открывать новые экземпляры thunar как вкладки"
 
-#: ../thunar/thunar-preferences-dialog.c:656
+#: ../thunar/thunar-preferences-dialog.c:668
 msgid ""
 "Select this option to open new thunar instances as tabs in an existing "
 "thunar window"
@@ -1978,30 +1983,30 @@ msgstr ""
 "Отметьте этот параметр для открытия новых экземпляров thunar в виде вкладок "
 "в существующем окне"
 
-#: ../thunar/thunar-preferences-dialog.c:667
+#: ../thunar/thunar-preferences-dialog.c:679
 msgid "Context Menu"
 msgstr "Контекстное меню"
 
-#: ../thunar/thunar-preferences-dialog.c:679
+#: ../thunar/thunar-preferences-dialog.c:691
 msgid "Show action to permanently delete files and folders"
 msgstr "Показывать действие для окончательного удаления файлов и каталогов"
 
-#: ../thunar/thunar-preferences-dialog.c:681
+#: ../thunar/thunar-preferences-dialog.c:693
 msgid "Select this option to show the 'Delete' action in the context menu"
 msgstr ""
 "Выберите этот параметр, чтобы показывать действие \"Удалить\" в контекстном "
 "меню"
 
 #. Advanced
-#: ../thunar/thunar-preferences-dialog.c:690
+#: ../thunar/thunar-preferences-dialog.c:702
 msgid "Advanced"
 msgstr "Дополнительно"
 
-#: ../thunar/thunar-preferences-dialog.c:700
+#: ../thunar/thunar-preferences-dialog.c:712
 msgid "Folder Permissions"
 msgstr "Права"
 
-#: ../thunar/thunar-preferences-dialog.c:713
+#: ../thunar/thunar-preferences-dialog.c:725
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
@@ -2011,28 +2016,28 @@ msgstr ""
 "применить изменения к его содержимому. Выберите\n"
 "поведение по умолчанию:"
 
-#: ../thunar/thunar-preferences-dialog.c:722
+#: ../thunar/thunar-preferences-dialog.c:734
 msgid "Ask every time"
 msgstr "Каждый раз спрашивать"
 
-#: ../thunar/thunar-preferences-dialog.c:723
+#: ../thunar/thunar-preferences-dialog.c:735
 msgid "Apply to Folder Only"
 msgstr "Применить только к самому каталогу"
 
-#: ../thunar/thunar-preferences-dialog.c:724
+#: ../thunar/thunar-preferences-dialog.c:736
 msgid "Apply to Folder and Contents"
 msgstr "Применить к каталогу и его содержимому"
 
-#: ../thunar/thunar-preferences-dialog.c:735
+#: ../thunar/thunar-preferences-dialog.c:747
 msgid "Volume Management"
 msgstr "Управление томами"
 
 #. add check button to enable/disable auto mounting
-#: ../thunar/thunar-preferences-dialog.c:752
+#: ../thunar/thunar-preferences-dialog.c:764
 msgid "Enable _Volume Management"
 msgstr "Включить управление _томами"
 
-#: ../thunar/thunar-preferences-dialog.c:762
+#: ../thunar/thunar-preferences-dialog.c:774
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
@@ -2040,11 +2045,11 @@ msgstr ""
 "<a href=\"volman-config:\">Настроить</a> управление съёмными носителями,\n"
 "устройствами и мультимедиа."
 
-#: ../thunar/thunar-preferences-dialog.c:777
+#: ../thunar/thunar-preferences-dialog.c:789
 msgid "Missing dependencies"
 msgstr "Отсутствующие зависимости"
 
-#: ../thunar/thunar-preferences-dialog.c:785
+#: ../thunar/thunar-preferences-dialog.c:797
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -2058,7 +2063,7 @@ msgstr ""
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: ../thunar/thunar-preferences-dialog.c:859
+#: ../thunar/thunar-preferences-dialog.c:871
 msgid "Failed to display the volume management settings"
 msgstr "Не удаётся открыть настройки менеджера томов"
 
