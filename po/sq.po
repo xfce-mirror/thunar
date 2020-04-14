@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-16 00:30+0100\n"
-"PO-Revision-Date: 2020-03-16 06:35+0000\n"
+"POT-Creation-Date: 2020-04-11 00:30+0200\n"
+"PO-Revision-Date: 2020-04-11 15:55+0000\n"
 "Last-Translator: Besnik <besnik@programeshqip.org>\n"
 "Language-Team: Albanian (http://www.transifex.com/xfce/thunar/language/sq/)\n"
 "MIME-Version: 1.0\n"
@@ -133,8 +133,8 @@ msgstr "S’u arrit të nisej operacioni"
 #: ../thunar/thunar-application.c:1508 ../thunar/thunar-application.c:1640
 #: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:366
 #: ../thunar/thunar-location-entry.c:394
-#: ../thunar/thunar-shortcuts-view.c:1719
-#: ../thunar/thunar-shortcuts-view.c:1747 ../thunar/thunar-window.c:2440
+#: ../thunar/thunar-shortcuts-view.c:1696
+#: ../thunar/thunar-shortcuts-view.c:1724 ../thunar/thunar-window.c:2440
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "S’u arrit të hapej \"%s\""
@@ -147,7 +147,7 @@ msgstr "S’u arrit të hapej \"%s\": %s"
 #. display an error message
 #: ../thunar/thunar-application.c:1699
 #: ../thunar/thunar-properties-dialog.c:731
-#: ../thunar/thunar-standard-view.c:2881 ../thunar/thunar-tree-view.c:1899
+#: ../thunar/thunar-standard-view.c:2900 ../thunar/thunar-tree-view.c:1899
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "S’u arrit të riemërtohej \"%s\""
@@ -222,8 +222,8 @@ msgstr[1] "Jeni i sigurt se doni të fshihen \npërgjithmonë %u kartelat e për
 #: ../thunar/thunar-application.c:2168 ../thunar/thunar-application.c:2347
 #: ../thunar/thunar-chooser-dialog.c:288 ../thunar/thunar-chooser-dialog.c:705
 #: ../thunar/thunar-chooser-dialog.c:753 ../thunar/thunar-create-dialog.c:141
-#: ../thunar/thunar-dialogs.c:105 ../thunar/thunar-dialogs.c:492
-#: ../thunar/thunar-dialogs.c:603 ../thunar/thunar-dialogs.c:861
+#: ../thunar/thunar-dialogs.c:105 ../thunar/thunar-dialogs.c:497
+#: ../thunar/thunar-dialogs.c:608 ../thunar/thunar-dialogs.c:866
 #: ../thunar/thunar-dnd.c:169 ../thunar/thunar-launcher.c:736
 #: ../thunar/thunar-permissions-chooser.c:535
 #: ../thunar/thunar-permissions-chooser.c:1143
@@ -232,7 +232,7 @@ msgstr[1] "Jeni i sigurt se doni të fshihen \npërgjithmonë %u kartelat e për
 #: ../thunar/thunar-renamer-dialog.c:1053
 #: ../thunar/thunar-renamer-progress.c:198
 #: ../thunar/thunar-renamer-progress.c:208
-#: ../thunar/thunar-standard-view.c:2712
+#: ../thunar/thunar-standard-view.c:2714
 #: ../plugins/thunar-sendto-email/main.c:219
 #: ../plugins/thunar-sendto-email/main.c:238
 #: ../plugins/thunar-sendto-email/main.c:293
@@ -276,7 +276,7 @@ msgstr "Të hiqen tërë kartelat dhe dosjet prej Hedhurinave?"
 #. append the "Empty Trash" menu action
 #. prepare the menu item
 #: ../thunar/thunar-application.c:2348 ../thunar/thunar-location-buttons.c:188
-#: ../thunar/thunar-shortcuts-view.c:1239 ../thunar/thunar-tree-view.c:1370
+#: ../thunar/thunar-shortcuts-view.c:1220 ../thunar/thunar-tree-view.c:1370
 #: ../thunar/thunar-window.c:361 ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "_Zbraz Hedhurina"
@@ -490,8 +490,8 @@ msgstr "Në të papastër s’ka gjë për t’u ngjitur"
 #. setup the dialog
 #. add the "Close" button
 #. add a regular close button, the header bar already provides one
-#: ../thunar/thunar-column-editor.c:120 ../thunar/thunar-dialogs.c:806
-#: ../thunar/thunar-preferences-dialog.c:253
+#: ../thunar/thunar-column-editor.c:120 ../thunar/thunar-dialogs.c:811
+#: ../thunar/thunar-preferences-dialog.c:257
 #: ../thunar/thunar-properties-dialog.c:254
 #: ../thunar/thunar-renamer-dialog.c:355
 #: ../thunar/thunar-renamer-progress.c:215
@@ -505,7 +505,7 @@ msgstr "Formësoni Shtyllat e Pamjes Listë e Hollësishme"
 
 #. add the "Help" button
 #: ../thunar/thunar-column-editor.c:126
-#: ../thunar/thunar-preferences-dialog.c:260
+#: ../thunar/thunar-preferences-dialog.c:268
 #: ../thunar/thunar-properties-dialog.c:253 ../thunar/thunar-window.c:388
 msgid "_Help"
 msgstr "_Ndihmë"
@@ -661,122 +661,122 @@ msgstr "_Riemërtoje"
 msgid "Enter the new name:"
 msgstr "Jepni emrin e ri:"
 
-#: ../thunar/thunar-dialogs.c:273
+#: ../thunar/thunar-dialogs.c:278
 msgid "translator-credits"
 msgstr "Besnik Bleta"
 
-#: ../thunar/thunar-dialogs.c:449 ../thunar/thunar-permissions-chooser.c:537
+#: ../thunar/thunar-dialogs.c:454 ../thunar/thunar-permissions-chooser.c:537
 msgid "_Yes"
 msgstr "_Po"
 
-#: ../thunar/thunar-dialogs.c:453
+#: ../thunar/thunar-dialogs.c:458
 msgid "Yes to _all"
 msgstr "Po për të _tëra"
 
-#: ../thunar/thunar-dialogs.c:457 ../thunar/thunar-permissions-chooser.c:536
+#: ../thunar/thunar-dialogs.c:462 ../thunar/thunar-permissions-chooser.c:536
 msgid "_No"
 msgstr "_Jo"
 
-#: ../thunar/thunar-dialogs.c:461
+#: ../thunar/thunar-dialogs.c:466
 msgid "N_o to all"
 msgstr "J_o për të tëra"
 
-#: ../thunar/thunar-dialogs.c:465
+#: ../thunar/thunar-dialogs.c:470
 msgid "_Retry"
 msgstr "_Riprovo"
 
-#: ../thunar/thunar-dialogs.c:469
+#: ../thunar/thunar-dialogs.c:474
 msgid "Copy _Anyway"
 msgstr "Kopjoje _Sido Qoftë"
 
-#: ../thunar/thunar-dialogs.c:582
+#: ../thunar/thunar-dialogs.c:587
 msgid "Confirm to replace files"
 msgstr "Ripohoni zëvendësimin e kartelave"
 
-#: ../thunar/thunar-dialogs.c:604
+#: ../thunar/thunar-dialogs.c:609
 msgid "S_kip All"
 msgstr "Anashkaloji Krejt"
 
-#: ../thunar/thunar-dialogs.c:605
+#: ../thunar/thunar-dialogs.c:610
 msgid "_Skip"
 msgstr "_Anashkaloje"
 
-#: ../thunar/thunar-dialogs.c:606
+#: ../thunar/thunar-dialogs.c:611
 msgid "Replace _All"
 msgstr "Zëvendësoji _Krejt"
 
-#: ../thunar/thunar-dialogs.c:607
+#: ../thunar/thunar-dialogs.c:612
 msgid "_Replace"
 msgstr "_Zëvendësoje"
 
-#: ../thunar/thunar-dialogs.c:644
+#: ../thunar/thunar-dialogs.c:649
 #, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
 msgstr "Kjo dosje përmban tashmë një lidhje simbolike \"%s\"."
 
-#: ../thunar/thunar-dialogs.c:649
+#: ../thunar/thunar-dialogs.c:654
 #, c-format
 msgid "This folder already contains a folder \"%s\"."
 msgstr "Kjo dosje përmban tashmë një dosje \"%s\"."
 
-#: ../thunar/thunar-dialogs.c:654
+#: ../thunar/thunar-dialogs.c:659
 #, c-format
 msgid "This folder already contains a file \"%s\"."
 msgstr "Kjo dosje përmban tashmë një kartelë \"%s\"."
 
-#: ../thunar/thunar-dialogs.c:668
+#: ../thunar/thunar-dialogs.c:673
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the link"
 msgstr "ReplaceDialogPart1|Doni të zëvendësohet lidhja"
 
-#: ../thunar/thunar-dialogs.c:670
+#: ../thunar/thunar-dialogs.c:675
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the existing folder"
 msgstr "ReplaceDialogPart1|Doni të zëvendësohet dosja ekzistuese"
 
-#: ../thunar/thunar-dialogs.c:672
+#: ../thunar/thunar-dialogs.c:677
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
 msgstr "ReplaceDialogPart1|Doni të zëvendësohet kartela ekzistuese"
 
 #. Fourth box (size, volume, free space)
-#: ../thunar/thunar-dialogs.c:693 ../thunar/thunar-dialogs.c:729
+#: ../thunar/thunar-dialogs.c:698 ../thunar/thunar-dialogs.c:734
 #: ../thunar/thunar-properties-dialog.c:490
 msgid "Size:"
 msgstr "Madhësi:"
 
-#: ../thunar/thunar-dialogs.c:693 ../thunar/thunar-dialogs.c:729
+#: ../thunar/thunar-dialogs.c:698 ../thunar/thunar-dialogs.c:734
 #: ../thunar/thunar-properties-dialog.c:449
 msgid "Modified:"
 msgstr "Ndryshuar më:"
 
-#: ../thunar/thunar-dialogs.c:704
+#: ../thunar/thunar-dialogs.c:709
 #, c-format
 msgid "ReplaceDialogPart2|with the following link?"
 msgstr "ReplaceDialogPart2|me lidhjen vijuese?"
 
-#: ../thunar/thunar-dialogs.c:706
+#: ../thunar/thunar-dialogs.c:711
 #, c-format
 msgid "ReplaceDialogPart2|with the following folder?"
 msgstr "ReplaceDialogPart2|me dosjen vijuese?"
 
-#: ../thunar/thunar-dialogs.c:708
+#: ../thunar/thunar-dialogs.c:713
 #, c-format
 msgid "ReplaceDialogPart2|with the following file?"
 msgstr "ReplaceDialogPart2|me kartelën vijuese?"
 
-#: ../thunar/thunar-dialogs.c:841
+#: ../thunar/thunar-dialogs.c:846
 #, c-format
 msgid ""
 "The desktop file \"%s\" is in an insecure location and not marked as "
 "executable. If you do not trust this program, click Cancel."
 msgstr "Kartela desktop \"%s\" gjendet në një vend të pasigurt dhe s’është e shënuar si e ekzekutueshme. Nëse s’i zini besë këtij programi, klikoni mbi “Anuloje”."
 
-#: ../thunar/thunar-dialogs.c:858
+#: ../thunar/thunar-dialogs.c:863
 msgid "_Launch Anyway"
 msgstr "_Nise Sido Qoftë"
 
-#: ../thunar/thunar-dialogs.c:860
+#: ../thunar/thunar-dialogs.c:865
 msgid "Mark _Executable"
 msgstr "Vëri Shenjë Si e _Ekzekutueshme"
 
@@ -864,12 +864,12 @@ msgid "File Name"
 msgstr "Emër Kartele"
 
 #: ../thunar/thunar-file.c:1083 ../thunar/thunar-gio-extensions.c:255
-#: ../thunar/thunar-shortcuts-model.c:1047 ../thunar.desktop.in.in.h:6
+#: ../thunar/thunar-shortcuts-model.c:1079 ../thunar.desktop.in.in.h:7
 msgid "Trash"
 msgstr "Hedhurina"
 
 #: ../thunar/thunar-file.c:1090 ../thunar/thunar-gio-extensions.c:253
-#: ../thunar/thunar-shortcuts-model.c:936 ../thunar/thunar-window.c:383
+#: ../thunar/thunar-shortcuts-model.c:961 ../thunar/thunar-window.c:383
 msgid "File System"
 msgstr "Sistem Kartelash"
 
@@ -959,48 +959,53 @@ msgstr "Shfaqje drejtorie me bazë ikonat"
 msgid "Icon view"
 msgstr "Pamje ikonash"
 
-#: ../thunar/thunar-io-jobs.c:181 ../thunar/thunar-io-jobs.c:336
+#: ../thunar/thunar-io-jobs.c:111
+#, c-format
+msgid "Error removing file: %s"
+msgstr "Gabim në heqje kartele: %s"
+
+#: ../thunar/thunar-io-jobs.c:214 ../thunar/thunar-io-jobs.c:369
 #, c-format
 msgid "The file \"%s\" already exists"
 msgstr "Ka tashmë një kartelë \"%s\""
 
-#: ../thunar/thunar-io-jobs.c:204
+#: ../thunar/thunar-io-jobs.c:237
 #, c-format
 msgid "Failed to create empty file \"%s\": %s"
 msgstr "S’u arrit të krijohej kartelë e zbrazët \"%s\": %s"
 
-#: ../thunar/thunar-io-jobs.c:359
+#: ../thunar/thunar-io-jobs.c:392
 #, c-format
 msgid "Failed to create directory \"%s\": %s"
 msgstr "S’u arrit të krijohej drejtorie \"%s\": %s"
 
 #. tell the user that we're preparing to unlink the files
-#: ../thunar/thunar-io-jobs.c:426
+#: ../thunar/thunar-io-jobs.c:459
 msgid "Preparing..."
 msgstr "Po përgatitet…"
 
-#: ../thunar/thunar-io-jobs.c:504
+#: ../thunar/thunar-io-jobs.c:537
 #, c-format
 msgid "Could not delete file \"%s\": %s"
 msgstr "S’u fshi dot kartela \"%s\":%s"
 
-#: ../thunar/thunar-io-jobs.c:605
+#: ../thunar/thunar-io-jobs.c:638
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
 msgstr "S’u krijua dot lidhja simbolike për te \"%s\", ngaqë s’është kartelë vendore"
 
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:980
+#: ../thunar/thunar-io-jobs.c:1013
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "S’u arrit të ndryshohej pronari për \"%s\": %s"
 
-#: ../thunar/thunar-io-jobs.c:981
+#: ../thunar/thunar-io-jobs.c:1014
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "S’u arrit të ndryshohej grupi për \"%s\":%s"
 
-#: ../thunar/thunar-io-jobs.c:1136
+#: ../thunar/thunar-io-jobs.c:1169
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "S’u arrit të ndryshoheshin lejet mbi \"%s\": %s"
@@ -1204,8 +1209,8 @@ msgstr[1] "Hapi kartelat e përzgjedhura me aplikacionet parazgjedhje"
 msgid "Open With \"%s\""
 msgstr "Hape Me \"%s\""
 
-#: ../thunar/thunar-launcher.c:1609 ../thunar/thunar-shortcuts-view.c:1783
-#: ../thunar/thunar-shortcuts-view.c:2021 ../thunar/thunar-tree-view.c:2098
+#: ../thunar/thunar-launcher.c:1609 ../thunar/thunar-shortcuts-view.c:1760
+#: ../thunar/thunar-shortcuts-view.c:1998 ../thunar/thunar-tree-view.c:2098
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "S’u arrit të montohej \"%s\""
@@ -1316,13 +1321,15 @@ msgstr "Madhësi Figure:"
 msgid "Selection: %s"
 msgstr "Përzgjedhje: %s"
 
+#. append the "Open in New Tab" menu action
 #: ../thunar/thunar-location-buttons.c:185
-#: ../thunar/thunar-shortcuts-view.c:1126
+#: ../thunar/thunar-shortcuts-view.c:1125
 msgid "Open in New Tab"
 msgstr "Hape në Skedë të Re"
 
+#. append the "Open in New Window" menu action
 #: ../thunar/thunar-location-buttons.c:186
-#: ../thunar/thunar-shortcuts-view.c:1134
+#: ../thunar/thunar-shortcuts-view.c:1131
 msgid "Open in New Window"
 msgstr "Hape në Dritare të Re"
 
@@ -1562,104 +1569,116 @@ msgid "File Manager Preferences"
 msgstr "Parapëlqime Përgjegjësi Kartelash"
 
 #. Display
-#: ../thunar/thunar-preferences-dialog.c:275
+#: ../thunar/thunar-preferences-dialog.c:287
 msgid "Display"
 msgstr "Shfaqje"
 
-#: ../thunar/thunar-preferences-dialog.c:285
+#: ../thunar/thunar-preferences-dialog.c:297
 msgid "Default View"
 msgstr "Pamje Parazgjedhje"
 
-#: ../thunar/thunar-preferences-dialog.c:298
+#: ../thunar/thunar-preferences-dialog.c:310
 msgid "View _new folders using:"
 msgstr "Shihni dosje të _reja duke përdorur:"
 
-#: ../thunar/thunar-preferences-dialog.c:304
-#: ../thunar/thunar-preferences-dialog.c:358
+#: ../thunar/thunar-preferences-dialog.c:316
+#: ../thunar/thunar-preferences-dialog.c:370
 msgid "Icon View"
 msgstr "Pamje Ikonë"
 
-#: ../thunar/thunar-preferences-dialog.c:305
+#: ../thunar/thunar-preferences-dialog.c:317
 msgid "Detailed List View"
 msgstr "Pamje Listë e Hollësishme"
 
-#: ../thunar/thunar-preferences-dialog.c:306
+#: ../thunar/thunar-preferences-dialog.c:318
 msgid "Compact List View"
 msgstr "Pamje Listë e Ngjeshur"
 
-#: ../thunar/thunar-preferences-dialog.c:307
+#: ../thunar/thunar-preferences-dialog.c:319
 msgid "Last Active View"
 msgstr "Pamje Aktivë Së Fundi"
 
-#: ../thunar/thunar-preferences-dialog.c:316
+#: ../thunar/thunar-preferences-dialog.c:328
 msgid "Show thumbnails:"
 msgstr "Shfaq miniatura:"
 
-#: ../thunar/thunar-preferences-dialog.c:322
+#: ../thunar/thunar-preferences-dialog.c:334
 msgid "Never"
 msgstr "Kurrë"
 
-#: ../thunar/thunar-preferences-dialog.c:323
+#: ../thunar/thunar-preferences-dialog.c:335
 msgid "Local Files Only"
 msgstr "Vetëm Kartelat Vendore"
 
-#: ../thunar/thunar-preferences-dialog.c:324
+#: ../thunar/thunar-preferences-dialog.c:336
 msgid "Always"
 msgstr "Përherë"
 
-#: ../thunar/thunar-preferences-dialog.c:333
+#: ../thunar/thunar-preferences-dialog.c:345
 msgid "Draw frames around thumbnails"
 msgstr "Vizato korniza përreth miniaturash"
 
-#: ../thunar/thunar-preferences-dialog.c:335
+#: ../thunar/thunar-preferences-dialog.c:347
 msgid "Select this option to draw black frames around thumbnails."
 msgstr "Përzgjidheni këtë mundësi që të vizatohen korniza të zeza përreth miniaturave."
 
-#: ../thunar/thunar-preferences-dialog.c:340
+#: ../thunar/thunar-preferences-dialog.c:352
 msgid "Sort _folders before files"
 msgstr "Rendit _dosjet përpara kartelave"
 
-#: ../thunar/thunar-preferences-dialog.c:342
+#: ../thunar/thunar-preferences-dialog.c:354
 msgid ""
 "Select this option to list folders before files when you sort a folder."
 msgstr "Përzgjidhni këtë mundësi për të renditur dosjet përpara kartelave, gjatë renditjes së një dosjeje."
 
-#: ../thunar/thunar-preferences-dialog.c:347
+#: ../thunar/thunar-preferences-dialog.c:359
 msgid "Show file size in binary format"
 msgstr "Shfaqe madhësinë e kartelave në format dyor"
 
-#: ../thunar/thunar-preferences-dialog.c:349
+#: ../thunar/thunar-preferences-dialog.c:361
 msgid ""
 "Select this option to show file size in binary format instead of decimal."
 msgstr "Përzgjidheni këtë mundësi që të shfaqet madhësia e kartelës në formatin dyor, në vend se dhjetor."
 
-#: ../thunar/thunar-preferences-dialog.c:371
+#: ../thunar/thunar-preferences-dialog.c:383
 msgid "_Text beside icons"
 msgstr "_Tekst në krah ikonash"
 
-#: ../thunar/thunar-preferences-dialog.c:373
+#: ../thunar/thunar-preferences-dialog.c:385
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
 msgstr "Përzgjidheni këtë mundësi për të vendosur përshkrime ikonash për objekte në krah të ikonave, në vend të vendosjes nën to."
 
-#: ../thunar/thunar-preferences-dialog.c:383
+#: ../thunar/thunar-preferences-dialog.c:395
+msgid "Window icon"
+msgstr "Ikonë dritareje"
+
+#: ../thunar/thunar-preferences-dialog.c:408
+msgid "Use current folder icon"
+msgstr "Përdor ikonën e dosjes së tanishme"
+
+#: ../thunar/thunar-preferences-dialog.c:410
+msgid "Select this option to use the current folder icon as window icon"
+msgstr "Përzgjidheni këtë mundësi që të përdoret ikona e dosjes së tanishme si ikonë dritareje"
+
+#: ../thunar/thunar-preferences-dialog.c:419
 msgid "Date"
 msgstr "Datë"
 
-#: ../thunar/thunar-preferences-dialog.c:396
+#: ../thunar/thunar-preferences-dialog.c:432
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:214
 msgid "_Format:"
 msgstr "_Format:"
 
 #. TRANSLATORS: custom date format
-#: ../thunar/thunar-preferences-dialog.c:409
+#: ../thunar/thunar-preferences-dialog.c:445
 msgid "Custom"
 msgstr "Vetjak"
 
 #. TRANSLATORS: Please do not translate the first column (specifiers),
 #. 'strftime' and of course '\n'
-#: ../thunar/thunar-preferences-dialog.c:419
+#: ../thunar/thunar-preferences-dialog.c:455
 msgid ""
 "Custom date format to apply.\n"
 "\n"
@@ -1675,117 +1694,117 @@ msgid ""
 msgstr "Format vetjak datash për t’u zbatuar.\n\nParametrat më të rëndomtë janë:\n%d ditë muaji\n%m muaj\n%Y vit, përfshi shekullin\n%H orë\n%M minuta\n%S sekonda\n\nPër një listë të plotë, shihni faqet man të 'strftime'"
 
 #. Side Pane
-#: ../thunar/thunar-preferences-dialog.c:437
+#: ../thunar/thunar-preferences-dialog.c:473
 msgid "Side Pane"
 msgstr "Menu Anësore"
 
-#: ../thunar/thunar-preferences-dialog.c:447
+#: ../thunar/thunar-preferences-dialog.c:483
 msgid "Shortcuts Pane"
 msgstr "Kuadrat Shkurtoresh"
 
-#: ../thunar/thunar-preferences-dialog.c:460
+#: ../thunar/thunar-preferences-dialog.c:496
 msgid "_Icon Size:"
 msgstr "Madhësi _Ikone:"
 
-#: ../thunar/thunar-preferences-dialog.c:465
-#: ../thunar/thunar-preferences-dialog.c:513
+#: ../thunar/thunar-preferences-dialog.c:501
+#: ../thunar/thunar-preferences-dialog.c:549
 msgid "16px"
 msgstr "16px"
 
-#: ../thunar/thunar-preferences-dialog.c:466
-#: ../thunar/thunar-preferences-dialog.c:514
+#: ../thunar/thunar-preferences-dialog.c:502
+#: ../thunar/thunar-preferences-dialog.c:550
 msgid "24px"
 msgstr "24px"
 
-#: ../thunar/thunar-preferences-dialog.c:467
-#: ../thunar/thunar-preferences-dialog.c:515
+#: ../thunar/thunar-preferences-dialog.c:503
+#: ../thunar/thunar-preferences-dialog.c:551
 msgid "32px"
 msgstr "32px"
 
-#: ../thunar/thunar-preferences-dialog.c:468
-#: ../thunar/thunar-preferences-dialog.c:516
+#: ../thunar/thunar-preferences-dialog.c:504
+#: ../thunar/thunar-preferences-dialog.c:552
 msgid "48px"
 msgstr "48px"
 
-#: ../thunar/thunar-preferences-dialog.c:469
-#: ../thunar/thunar-preferences-dialog.c:517
+#: ../thunar/thunar-preferences-dialog.c:505
+#: ../thunar/thunar-preferences-dialog.c:553
 msgid "64px"
 msgstr "64px"
 
-#: ../thunar/thunar-preferences-dialog.c:470
-#: ../thunar/thunar-preferences-dialog.c:518
+#: ../thunar/thunar-preferences-dialog.c:506
+#: ../thunar/thunar-preferences-dialog.c:554
 msgid "96px"
 msgstr "96px"
 
-#: ../thunar/thunar-preferences-dialog.c:471
-#: ../thunar/thunar-preferences-dialog.c:519
+#: ../thunar/thunar-preferences-dialog.c:507
+#: ../thunar/thunar-preferences-dialog.c:555
 msgid "128px"
 msgstr "128px"
 
-#: ../thunar/thunar-preferences-dialog.c:472
-#: ../thunar/thunar-preferences-dialog.c:520
+#: ../thunar/thunar-preferences-dialog.c:508
+#: ../thunar/thunar-preferences-dialog.c:556
 msgid "160px"
 msgstr "160px"
 
-#: ../thunar/thunar-preferences-dialog.c:473
-#: ../thunar/thunar-preferences-dialog.c:521
+#: ../thunar/thunar-preferences-dialog.c:509
+#: ../thunar/thunar-preferences-dialog.c:557
 msgid "192px"
 msgstr "192px"
 
-#: ../thunar/thunar-preferences-dialog.c:474
-#: ../thunar/thunar-preferences-dialog.c:522
+#: ../thunar/thunar-preferences-dialog.c:510
+#: ../thunar/thunar-preferences-dialog.c:558
 msgid "256px"
 msgstr "256px"
 
-#: ../thunar/thunar-preferences-dialog.c:483
+#: ../thunar/thunar-preferences-dialog.c:519
 msgid "Show Icon _Emblems"
 msgstr "Shfaq _Emblema Ikonash"
 
-#: ../thunar/thunar-preferences-dialog.c:485
+#: ../thunar/thunar-preferences-dialog.c:521
 msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties "
 "dialog."
 msgstr "Përzgjidheni këtë mundësi që të shfaqen emblema ikonash te kuadrati i shkurtoreve për krejt dosjet për të cilat emblemat mund të përcaktohen në dialogun e vetive të dosjeve."
 
-#: ../thunar/thunar-preferences-dialog.c:495
+#: ../thunar/thunar-preferences-dialog.c:531
 msgid "Tree Pane"
 msgstr "Kuadrati i Pemës"
 
-#: ../thunar/thunar-preferences-dialog.c:508
+#: ../thunar/thunar-preferences-dialog.c:544
 msgid "Icon _Size:"
 msgstr "_Madhësi Ikone:"
 
-#: ../thunar/thunar-preferences-dialog.c:531
+#: ../thunar/thunar-preferences-dialog.c:567
 msgid "Show Icon E_mblems"
 msgstr "Shfaq E_mblema Ikonash"
 
-#: ../thunar/thunar-preferences-dialog.c:533
+#: ../thunar/thunar-preferences-dialog.c:569
 msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
 msgstr "Përzgjidheni këtë mundësi që të shfaqni emblema ikonash në kuadratin e pemës për krejt dosjet për të cilat emblemat janë përcaktuar në dialogun e vetive të dosjeve."
 
 #. Behavior
-#: ../thunar/thunar-preferences-dialog.c:543
+#: ../thunar/thunar-preferences-dialog.c:579
 msgid "Behavior"
 msgstr "Sjellje"
 
-#: ../thunar/thunar-preferences-dialog.c:553
+#: ../thunar/thunar-preferences-dialog.c:589
 msgid "Navigation"
 msgstr "Lëvizje"
 
-#: ../thunar/thunar-preferences-dialog.c:566
+#: ../thunar/thunar-preferences-dialog.c:602
 msgid "_Single click to activate items"
 msgstr "Klikim _njësh për aktivizim objektesh"
 
-#: ../thunar/thunar-preferences-dialog.c:582
+#: ../thunar/thunar-preferences-dialog.c:618
 msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
 msgstr "Caktoni _vonesën pas së cilës një objekt bëhet\ni përzgjedhur, kur treguesi i miut ndalet mbi të:"
 
-#: ../thunar/thunar-preferences-dialog.c:595
+#: ../thunar/thunar-preferences-dialog.c:631
 msgid ""
 "When single-click activation is enabled, pausing the mouse pointer over an "
 "item will automatically select that item after the chosen delay. You can "
@@ -1794,117 +1813,105 @@ msgid ""
 "to select the item without activating it."
 msgstr "Kur është aktiv njëklikimi, ndalja e treguesit të miut sipër një objekti do ta përzgjedhë atë vetvetiu pas një vonese të zgjedhur. Mund ta çaktivizoni këtë sjellje duke e lëvizur rrëshqitësin në skajin e djathtë. Kjo sjellje mund të jetë e dobishme kur përmes njëklikimit aktivizohen objekte, dhe doni vetëm të përzgjidhni një objekt pa e aktivizuar atë."
 
-#: ../thunar/thunar-preferences-dialog.c:614
+#: ../thunar/thunar-preferences-dialog.c:650
 msgid "Disabled"
 msgstr "E çaktivizuar"
 
-#: ../thunar/thunar-preferences-dialog.c:620
+#: ../thunar/thunar-preferences-dialog.c:656
 msgid "Medium"
 msgstr "E mesme"
 
-#: ../thunar/thunar-preferences-dialog.c:625
+#: ../thunar/thunar-preferences-dialog.c:661
 msgid "Long"
 msgstr "E gjatë"
 
-#: ../thunar/thunar-preferences-dialog.c:631
+#: ../thunar/thunar-preferences-dialog.c:667
 msgid "_Double click to activate items"
 msgstr "_Dyklikoni për aktivizim objektesh"
 
-#: ../thunar/thunar-preferences-dialog.c:642
+#: ../thunar/thunar-preferences-dialog.c:678
 msgid "Tabs instead of new Windows"
 msgstr "Skeda, në vend se Dritare të reja"
 
-#: ../thunar/thunar-preferences-dialog.c:655
+#: ../thunar/thunar-preferences-dialog.c:691
 msgid "Open folders in new tabs on middle click"
 msgstr "Hapni dosje në skeda të reja, me klikim me të mesit"
 
-#: ../thunar/thunar-preferences-dialog.c:657
+#: ../thunar/thunar-preferences-dialog.c:693
 msgid ""
 "Select this option to open a new tab on middle click instead of a new window"
 msgstr "Përzgjidheni këtë mundësi për hapje të një skede të re, kur klikohet me të mesit, në vend se të një dritareje të re"
 
-#: ../thunar/thunar-preferences-dialog.c:661
+#: ../thunar/thunar-preferences-dialog.c:697
 msgid "Open new thunar instances as tabs"
 msgstr "Instanca të reja të Thunar-it hapi si skeda"
 
-#: ../thunar/thunar-preferences-dialog.c:663
+#: ../thunar/thunar-preferences-dialog.c:699
 msgid ""
 "Select this option to open new thunar instances as tabs in an existing "
 "thunar window"
 msgstr "Përzgjidheni këtë mundësi që instancat e reja të Thunar-it të hapen si skeda në një dritare Thunar ekzistuese"
 
-#: ../thunar/thunar-preferences-dialog.c:674
+#: ../thunar/thunar-preferences-dialog.c:710
 msgid "Context Menu"
 msgstr "Menu Konteksti"
 
-#: ../thunar/thunar-preferences-dialog.c:687
+#: ../thunar/thunar-preferences-dialog.c:722
 msgid "Show action to permanently delete files and folders"
 msgstr "Shfaq veprim për fshirje përgjithmonë kartelash dhe dosjesh"
 
-#: ../thunar/thunar-preferences-dialog.c:689
+#: ../thunar/thunar-preferences-dialog.c:724
 msgid "Select this option to show the 'Delete' action in the context menu"
 msgstr "Përzgjidheni këtë mundësi për të shfaqur te menuja e konteksteve veprimin “Fshije”"
 
-#: ../thunar/thunar-preferences-dialog.c:698
-msgid "Window icon"
-msgstr "Ikonë dritareje"
-
-#: ../thunar/thunar-preferences-dialog.c:711
-msgid "Use current folder icon"
-msgstr "Përdor ikonën e dosjes së tanishme"
-
-#: ../thunar/thunar-preferences-dialog.c:713
-msgid "Select this option to use the current folder icon as window icon"
-msgstr "Përzgjidheni këtë mundësi që të përdoret ikona e dosjes së tanishme si ikonë dritareje"
-
 #. Advanced
-#: ../thunar/thunar-preferences-dialog.c:720
+#: ../thunar/thunar-preferences-dialog.c:733
 msgid "Advanced"
 msgstr "Të mëtejshme"
 
-#: ../thunar/thunar-preferences-dialog.c:730
+#: ../thunar/thunar-preferences-dialog.c:743
 msgid "Folder Permissions"
 msgstr "Leje Dosjeje"
 
-#: ../thunar/thunar-preferences-dialog.c:743
+#: ../thunar/thunar-preferences-dialog.c:756
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "Kur ndryshohen lejet mbi një dosje, mund të\nzbatoni ndryshimet edhe te lënda e dosjes.\nPërzgjidhni më poshtë sjelljen parazgjedhje:"
 
-#: ../thunar/thunar-preferences-dialog.c:752
+#: ../thunar/thunar-preferences-dialog.c:765
 msgid "Ask every time"
 msgstr "Pyet çdo herë"
 
-#: ../thunar/thunar-preferences-dialog.c:753
+#: ../thunar/thunar-preferences-dialog.c:766
 msgid "Apply to Folder Only"
 msgstr "Zbatoje Vetëm te Dosje"
 
-#: ../thunar/thunar-preferences-dialog.c:754
+#: ../thunar/thunar-preferences-dialog.c:767
 msgid "Apply to Folder and Contents"
 msgstr "Zbatoje te Dosje dhe te Lëndë"
 
-#: ../thunar/thunar-preferences-dialog.c:765
+#: ../thunar/thunar-preferences-dialog.c:778
 msgid "Volume Management"
 msgstr "Administrim Vëllimesh"
 
 #. add check button to enable/disable auto mounting
-#: ../thunar/thunar-preferences-dialog.c:782
+#: ../thunar/thunar-preferences-dialog.c:795
 msgid "Enable _Volume Management"
 msgstr "Aktivizo Administrim _Vëllimesh"
 
-#: ../thunar/thunar-preferences-dialog.c:792
+#: ../thunar/thunar-preferences-dialog.c:805
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "<a href=\"volman-config:\">Formësoni</a> administrimin e disqeve, pajisjeve\ndhe mediave të heqshme."
 
-#: ../thunar/thunar-preferences-dialog.c:807
+#: ../thunar/thunar-preferences-dialog.c:820
 msgid "Missing dependencies"
 msgstr "Mungojnë varësi"
 
-#: ../thunar/thunar-preferences-dialog.c:815
+#: ../thunar/thunar-preferences-dialog.c:828
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -1914,7 +1921,7 @@ msgstr "Duket sikur <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> s�
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: ../thunar/thunar-preferences-dialog.c:889
+#: ../thunar/thunar-preferences-dialog.c:902
 msgid "Failed to display the volume management settings"
 msgstr "S’u arrit të shfaqeshin rregullimete për administrim vëllimesh"
 
@@ -2180,38 +2187,59 @@ msgid ""
 "Do you want to skip this file and continue to rename the remaining files?"
 msgstr "Doni të anashkalohet kjo kartelë dhe të vazhdohet me riemërtimin e kartelave të mbetura?"
 
-#: ../thunar/thunar-shortcuts-model.c:632
+#: ../thunar/thunar-shortcuts-model.c:622
+#: ../thunar/thunar-shortcuts-model.c:962 ../thunar/thunar-window.c:383
+msgid "Browse the file system"
+msgstr "Shfleto sistemin e kartelave"
+
+#: ../thunar/thunar-shortcuts-model.c:645
 #: ../plugins/thunar-tpa/thunar-tpa.c:284
 msgid "Trash is empty"
 msgstr "Hedhurina është e zbrazët"
 
-#: ../thunar/thunar-shortcuts-model.c:636
+#: ../thunar/thunar-shortcuts-model.c:649
 #, c-format
 msgid "Trash contains %d file"
 msgid_plural "Trash contains %d files"
 msgstr[0] "Hedhurinat përmbajnë %d kartelë"
 msgstr[1] "Hedhurinat përmbajnë %d kartela"
 
-#: ../thunar/thunar-shortcuts-model.c:930
+#: ../thunar/thunar-shortcuts-model.c:955
 msgid "DEVICES"
 msgstr "PAJISJE"
 
-#: ../thunar/thunar-shortcuts-model.c:972
+#: ../thunar/thunar-shortcuts-model.c:998
 msgid "NETWORK"
 msgstr "RRJET"
 
-#: ../thunar/thunar-shortcuts-model.c:978
+#: ../thunar/thunar-shortcuts-model.c:1006
 msgid "Browse Network"
 msgstr "Shfletoni Rrjetin"
 
-#: ../thunar/thunar-shortcuts-model.c:999
+#: ../thunar/thunar-shortcuts-model.c:1007 ../thunar/thunar-window.c:384
+msgid "Browse local network connections"
+msgstr "Shfleto lidhje rrjeti vendor"
+
+#: ../thunar/thunar-shortcuts-model.c:1029
 msgid "PLACES"
 msgstr "VENDE"
 
-#: ../thunar/thunar-shortcuts-model.c:1073 ../thunar/thunar-window.c:382
-#: ../thunar.desktop.in.in.h:5
+#: ../thunar/thunar-shortcuts-model.c:1041
+msgid "Open the home folder"
+msgstr "Hap dosjen shtëpi"
+
+#: ../thunar/thunar-shortcuts-model.c:1058
+msgid "Open the desktop folder"
+msgstr "Hap dosjen desktop"
+
+#: ../thunar/thunar-shortcuts-model.c:1105 ../thunar/thunar-window.c:382
+#: ../thunar.desktop.in.in.h:6
 msgid "Computer"
 msgstr "Kompjuter"
+
+#: ../thunar/thunar-shortcuts-model.c:1106
+msgid "Browse the computer"
+msgstr "Shfletoni në kompjuter"
 
 #: ../thunar/thunar-shortcuts-pane.c:411
 msgid "Side Pane (Create Shortcut)"
@@ -2225,54 +2253,55 @@ msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "Shto dosjen e përzgjedhur te kuadrati anësor i shkurtoreve"
 msgstr[1] "Shto dosjet e përzgjedhura te kuadrati anësor i shkurtoreve"
 
+#. append the "Mount" item
 #. append the "Mount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1157 ../thunar/thunar-tree-view.c:1329
+#: ../thunar/thunar-shortcuts-view.c:1152 ../thunar/thunar-tree-view.c:1329
 msgid "_Mount"
 msgstr "_Montoje"
 
+#. append the "Unmount" item
 #. append the "Unmount" menu action
-#: ../thunar/thunar-shortcuts-view.c:1165 ../thunar/thunar-tree-view.c:1335
+#: ../thunar/thunar-shortcuts-view.c:1158
+#: ../thunar/thunar-shortcuts-view.c:1206 ../thunar/thunar-tree-view.c:1335
+#: ../thunar/thunar-tree-view.c:1350
 msgid "_Unmount"
 msgstr "_Çmontoje"
 
+#. append the "Eject" (safely remove drive) item
 #. append the "Eject" menu action
-#: ../thunar/thunar-shortcuts-view.c:1173 ../thunar/thunar-tree-view.c:1341
+#: ../thunar/thunar-shortcuts-view.c:1164 ../thunar/thunar-tree-view.c:1341
 msgid "_Eject"
 msgstr "_Nxirre"
 
-#: ../thunar/thunar-shortcuts-view.c:1192
+#: ../thunar/thunar-shortcuts-view.c:1182
 msgid "Create _Shortcut"
 msgstr "Krijoni Shk_urtore"
 
-#. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:1217 ../thunar/thunar-tree-view.c:1350
-msgid "Disconn_ect"
-msgstr "_Shkëpute"
-
-#: ../thunar/thunar-shortcuts-view.c:1295
+#: ../thunar/thunar-shortcuts-view.c:1275
 msgid "_Remove Shortcut"
 msgstr "_Hiq Shkurtore"
 
-#: ../thunar/thunar-shortcuts-view.c:1313
+#. append the rename menu item
+#: ../thunar/thunar-shortcuts-view.c:1292
 msgid "Re_name Shortcut"
 msgstr "Ri_emërto Shkurtore"
 
-#: ../thunar/thunar-shortcuts-view.c:1645
+#: ../thunar/thunar-shortcuts-view.c:1622
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "Shtegu \"%s\" s’i referohet një drejtorie"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1665
+#: ../thunar/thunar-shortcuts-view.c:1642
 msgid "Failed to add new shortcut"
 msgstr "S’u arrit të shtohej shkurtore"
 
-#: ../thunar/thunar-shortcuts-view.c:1947 ../thunar/thunar-tree-view.c:1966
+#: ../thunar/thunar-shortcuts-view.c:1924 ../thunar/thunar-tree-view.c:1966
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "S’u arrit të nxirrje \"%s\""
 
-#: ../thunar/thunar-shortcuts-view.c:2090 ../thunar/thunar-tree-view.c:2021
+#: ../thunar/thunar-shortcuts-view.c:2067 ../thunar/thunar-tree-view.c:2021
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "S’u arrit të çmontohej \"%s\""
@@ -2372,7 +2401,7 @@ msgstr "Përzgjidhni krejt kartelat, pa ato që janë të përzgjedhura tani"
 msgid "Du_plicate"
 msgstr "_Përsëdyte"
 
-#: ../thunar/thunar-standard-view.c:415 ../thunar/thunar-standard-view.c:4633
+#: ../thunar/thunar-standard-view.c:415 ../thunar/thunar-standard-view.c:4652
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Kri_jo Lidhje"
@@ -2409,78 +2438,82 @@ msgstr "Kartelë e Re e Zbrazët"
 msgid "New Empty File..."
 msgstr "Kartelë e Re e Zbrazët…"
 
-#: ../thunar/thunar-standard-view.c:2708
+#: ../thunar/thunar-standard-view.c:2710
 msgid "Select by Pattern"
 msgstr "Përzgjidhni sipas Rregullsie"
 
-#: ../thunar/thunar-standard-view.c:2713
+#: ../thunar/thunar-standard-view.c:2715
 msgid "_Select"
 msgstr "_Përzgjidhni"
 
-#: ../thunar/thunar-standard-view.c:2722
+#: ../thunar/thunar-standard-view.c:2728
 msgid "_Pattern:"
 msgstr "_Rregullsi:"
 
+#: ../thunar/thunar-standard-view.c:2744
+msgid "Examples:"
+msgstr "Shembuj:"
+
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: ../thunar/thunar-standard-view.c:3327
+#: ../thunar/thunar-standard-view.c:3346
 msgid "Invalid filename provided by XDS drag site"
-msgstr ""
+msgstr "Emër i pavlefshëm kartele dhënë nga sajt XDS drag"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:3517
+#: ../thunar/thunar-standard-view.c:3536
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "S’u arrit të krijohej një lidhje për URL-në \"%s\""
 
-#: ../thunar/thunar-standard-view.c:3967 ../thunar/thunar-window.c:3095
+#: ../thunar/thunar-standard-view.c:3986 ../thunar/thunar-window.c:3095
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "S’u arrit të hapej drejtoria \"%s\""
 
-#: ../thunar/thunar-standard-view.c:4581
+#: ../thunar/thunar-standard-view.c:4600
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Përgatite kartelën e përzgjedhur të lëvizet me urdhrin Ngjit"
 msgstr[1] "Përgatiti kartelat e përzgjedhura të lëvizen me urdhrin Ngjit"
 
-#: ../thunar/thunar-standard-view.c:4589
+#: ../thunar/thunar-standard-view.c:4608
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Përgatite kartelën e përzgjedhur të kopjohet me urdhrin Ngjit"
 msgstr[1] "Përgatiti kartelat e përzgjedhura të kopjohet me urdhrin Ngjit"
 
-#: ../thunar/thunar-standard-view.c:4603
+#: ../thunar/thunar-standard-view.c:4622
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "Shpjere kartelën e përzgjedhur te Hedhurinat"
 msgstr[1] "Shpjeri kartelat e përzgjedhura te Hedhurinat"
 
-#: ../thunar/thunar-standard-view.c:4612
+#: ../thunar/thunar-standard-view.c:4631
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "Fshije përgjithmonë kartelën e përzgjedhur"
 msgstr[1] "Fshiji përgjithmonë kartelat e përzgjedhura"
 
-#: ../thunar/thunar-standard-view.c:4626
+#: ../thunar/thunar-standard-view.c:4645
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Përsëdyte kartelën e përzgjedhur"
 msgstr[1] "Përsëdyt çdo kartelë të përzgjedhur"
 
-#: ../thunar/thunar-standard-view.c:4635
+#: ../thunar/thunar-standard-view.c:4654
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Krijo një lidhje simbolike për kartelën e përzgjedhur"
 msgstr[1] "Krijo një lidhje simbolike për çdo kartelë të përzgjedhur"
 
-#: ../thunar/thunar-standard-view.c:4643
+#: ../thunar/thunar-standard-view.c:4662
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Riemërto kartelën e përzgjedhur"
 msgstr[1] "Riemërto kartelat e përzgjedhura"
 
-#: ../thunar/thunar-standard-view.c:4651
+#: ../thunar/thunar-standard-view.c:4670
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
 msgstr[0] "Rikthe kartelën e përzgjedhur"
@@ -2569,7 +2602,7 @@ msgstr "_Hedhurina"
 msgid "Display the contents of the trash can"
 msgstr "Shfaq lëndën e koshit të hedhurinave"
 
-#: ../thunar/thunar-tree-model.c:616
+#: ../thunar/thunar-tree-model.c:631
 msgid "Loading..."
 msgstr "Po ngarkohet…"
 
@@ -2774,17 +2807,9 @@ msgid ""
 "Browse all local and remote disks and folders accessible from this computer"
 msgstr "Shfletoni krejt disqet dhe dosjet vendore dhe të largëta ku mund të hyhet prej këtij kompjuteri"
 
-#: ../thunar/thunar-window.c:383
-msgid "Browse the file system"
-msgstr "Shfleto sistemin e kartelave"
-
 #: ../thunar/thunar-window.c:384
 msgid "B_rowse Network"
 msgstr "Shfleto R_rjetin"
-
-#: ../thunar/thunar-window.c:384
-msgid "Browse local network connections"
-msgstr "Shfleto lidhje rrjeti vendor"
 
 #: ../thunar/thunar-window.c:385
 msgid "T_emplates"
@@ -2949,28 +2974,28 @@ msgid "Do _not display this message again"
 msgstr "Mos e shfaq _sërish këtë mesazh"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3261
+#: ../thunar/thunar-window.c:3263
 msgid "Failed to open the file system root folder"
 msgstr "S’u arrit të hapej dosja rrënjë e sistemit të kartelave"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3298
+#: ../thunar/thunar-window.c:3300
 msgid "Failed to display the contents of the trash can"
 msgstr "S’u arrit të shfaqej lënda e koshit të hedhurinave"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3335
+#: ../thunar/thunar-window.c:3337
 msgid "Failed to browse the network"
 msgstr "S’u arrit të shfletohej rrjeti"
 
-#: ../thunar/thunar-window.c:3419
+#: ../thunar/thunar-window.c:3421
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar-i është një përgjegjës kartelash për Mjedisin\nDesktop Xfce, i shpejtë dhe i lehtë në përdorim."
 
 #. set window title
-#: ../thunar/thunar-window.c:3475 ../thunar.desktop.in.in.h:3
+#: ../thunar/thunar-window.c:3477 ../thunar.desktop.in.in.h:3
 msgid "File Manager"
 msgstr "Përgjegjës Kartelash"
 
@@ -3744,8 +3769,18 @@ msgid "Browse the filesystem with the file manager"
 msgstr "Shfletoni sistemin e kartelave me përgjegjësin e kartelave"
 
 #: ../thunar.desktop.in.in.h:4
+msgid ""
+"file "
+"manager;explorer;finder;browser;folders;directory;directories;partitions;drives;network;devices;rename;move;copy;delete;permissions;home;trash;"
+msgstr ""
+
+#: ../thunar.desktop.in.in.h:5
 msgid "Home"
 msgstr "Shtëpi"
+
+#: ../thunar-bulk-rename.desktop.in.in.h:3
+msgid "bulk;renamer;renaming;thunar;files;folders;directory;directories;"
+msgstr ""
 
 #: ../thunar/thunar-settings.desktop.in.h:1
 msgid "File Manager Settings"
@@ -3754,6 +3789,12 @@ msgstr "Rregullime Përgjegjësi Kartelash"
 #: ../thunar/thunar-settings.desktop.in.h:2
 msgid "Configure the Thunar file manager"
 msgstr "Formësoni përgjegjësin e kartelave Thunar"
+
+#: ../thunar/thunar-settings.desktop.in.h:3
+msgid ""
+"thunar;settings;preferences;configure;thumbnails;file size;date "
+"format;shortcuts pane;tree view;tabs;"
+msgstr ""
 
 #: ../org.xfce.thunar.appdata.xml.in.h:1
 msgid ""
