@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-06 12:30+0200\n"
-"PO-Revision-Date: 2020-04-08 18:08+0000\n"
+"POT-Creation-Date: 2020-04-11 00:30+0200\n"
+"PO-Revision-Date: 2020-04-12 18:23+0000\n"
 "Last-Translator: Pjotr <pjotrvertaalt@gmail.com>\n"
 "Language-Team: Dutch (http://www.transifex.com/xfce/thunar/language/nl/)\n"
 "MIME-Version: 1.0\n"
@@ -955,48 +955,53 @@ msgstr "Mappenlijstweergave gebaseerd op pictogrammen"
 msgid "Icon view"
 msgstr "Pictogramweergave"
 
-#: ../thunar/thunar-io-jobs.c:181 ../thunar/thunar-io-jobs.c:336
+#: ../thunar/thunar-io-jobs.c:111
+#, c-format
+msgid "Error removing file: %s"
+msgstr "Fout bij verwijderen van bestand: %s"
+
+#: ../thunar/thunar-io-jobs.c:214 ../thunar/thunar-io-jobs.c:369
 #, c-format
 msgid "The file \"%s\" already exists"
 msgstr "Het bestand '%s' bestaat al"
 
-#: ../thunar/thunar-io-jobs.c:204
+#: ../thunar/thunar-io-jobs.c:237
 #, c-format
 msgid "Failed to create empty file \"%s\": %s"
 msgstr "Kon leeg bestand '%s' niet maken: %s"
 
-#: ../thunar/thunar-io-jobs.c:359
+#: ../thunar/thunar-io-jobs.c:392
 #, c-format
 msgid "Failed to create directory \"%s\": %s"
 msgstr "Kon map '%s' niet maken: %s"
 
 #. tell the user that we're preparing to unlink the files
-#: ../thunar/thunar-io-jobs.c:426
+#: ../thunar/thunar-io-jobs.c:459
 msgid "Preparing..."
 msgstr "Voorbereiden..."
 
-#: ../thunar/thunar-io-jobs.c:504
+#: ../thunar/thunar-io-jobs.c:537
 #, c-format
 msgid "Could not delete file \"%s\": %s"
 msgstr "Kon bestand '%s' niet verwijderen: %s"
 
-#: ../thunar/thunar-io-jobs.c:605
+#: ../thunar/thunar-io-jobs.c:638
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
 msgstr "Kon geen symbolische koppeling maken naar '%s' omdat het geen lokaal bestand is"
 
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:980
+#: ../thunar/thunar-io-jobs.c:1013
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "Kon de eigenaar van '%s' niet veranderen: %s"
 
-#: ../thunar/thunar-io-jobs.c:981
+#: ../thunar/thunar-io-jobs.c:1014
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "Kon de groep van '%s' niet veranderen: %s"
 
-#: ../thunar/thunar-io-jobs.c:1136
+#: ../thunar/thunar-io-jobs.c:1169
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "Kon de rechten van '%s' niet veranderen: %s"
