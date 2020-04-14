@@ -27,9 +27,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-06 12:30+0200\n"
-"PO-Revision-Date: 2020-04-06 16:44+0000\n"
-"Last-Translator: Toni Estévez <toni.estevez@gmail.com>\n"
+"POT-Creation-Date: 2020-04-11 00:30+0200\n"
+"PO-Revision-Date: 2020-04-11 22:17+0000\n"
+"Last-Translator: Casper casper\n"
 "Language-Team: Spanish (http://www.transifex.com/xfce/thunar/language/es/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -973,48 +973,53 @@ msgstr "Listado de carpetas basado en iconos"
 msgid "Icon view"
 msgstr "Vista de iconos"
 
-#: ../thunar/thunar-io-jobs.c:181 ../thunar/thunar-io-jobs.c:336
+#: ../thunar/thunar-io-jobs.c:111
+#, c-format
+msgid "Error removing file: %s"
+msgstr "Error al eliminar el archivo: %s"
+
+#: ../thunar/thunar-io-jobs.c:214 ../thunar/thunar-io-jobs.c:369
 #, c-format
 msgid "The file \"%s\" already exists"
 msgstr "El archivo «%s» ya existe"
 
-#: ../thunar/thunar-io-jobs.c:204
+#: ../thunar/thunar-io-jobs.c:237
 #, c-format
 msgid "Failed to create empty file \"%s\": %s"
 msgstr "No se pudo crear el archivo vacío «%s»: %s"
 
-#: ../thunar/thunar-io-jobs.c:359
+#: ../thunar/thunar-io-jobs.c:392
 #, c-format
 msgid "Failed to create directory \"%s\": %s"
 msgstr "No se pudo crear la carpeta «%s»: %s"
 
 #. tell the user that we're preparing to unlink the files
-#: ../thunar/thunar-io-jobs.c:426
+#: ../thunar/thunar-io-jobs.c:459
 msgid "Preparing..."
 msgstr "Preparando…"
 
-#: ../thunar/thunar-io-jobs.c:504
+#: ../thunar/thunar-io-jobs.c:537
 #, c-format
 msgid "Could not delete file \"%s\": %s"
 msgstr "No se pudo eliminar el archivo «%s»: %s"
 
-#: ../thunar/thunar-io-jobs.c:605
+#: ../thunar/thunar-io-jobs.c:638
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
 msgstr "No se pudo crear un enlace simbólico a «%s» porque no es un archivo local"
 
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:980
+#: ../thunar/thunar-io-jobs.c:1013
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "No se pudo cambiar el propietario de «%s»: %s"
 
-#: ../thunar/thunar-io-jobs.c:981
+#: ../thunar/thunar-io-jobs.c:1014
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "No se pudo cambiar el grupo del archivo «%s»: %s"
 
-#: ../thunar/thunar-io-jobs.c:1136
+#: ../thunar/thunar-io-jobs.c:1169
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "No se pudo cambiar los permisos de «%s»: %s"
