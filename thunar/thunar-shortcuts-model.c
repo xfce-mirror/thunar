@@ -618,8 +618,10 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
 
           if (file != NULL)
             {
-              if (thunar_g_file_is_root (file))
+              if (g_file_has_uri_scheme (file, "file") && thunar_g_file_is_root (file))
                 location = g_strdup (_("Browse the file system"));
+              else if (!g_file_has_uri_scheme (file, "file"))
+                location = g_file_get_uri (file);
               else
                 location = thunar_g_file_get_location (file);
 
