@@ -628,7 +628,10 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
               file_size_binary = THUNAR_SHORTCUTS_MODEL (tree_model)->file_size_binary;
               disk_usage = thunar_g_file_get_free_space_string (file, file_size_binary);
 
-              tooltip = g_strdup_printf ("%s\n%s", location, disk_usage);
+              if (disk_usage)
+                tooltip = g_strdup_printf ("%s\n%s", location, disk_usage);
+              else
+                tooltip = g_strdup_printf ("%s", location);
 
               g_value_take_string (value, tooltip);
 
