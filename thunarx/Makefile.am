@@ -87,7 +87,7 @@ CLEANFILES = $(NULL)
 ## files as part of the dist tarball.
 ##
 if MAINTAINER_MODE
-CLEANFILES =								\
+CLEANFILES +=								\
 	actual-abi							\
 	expected-abi
 
