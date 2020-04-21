@@ -2889,10 +2889,6 @@ thunar_tree_view_get_preferred_toplevel_path (ThunarTreeView *view,
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
-  /* check whether the root node is available */
-  if (!gtk_tree_model_get_iter_first (model, &iter))
-    return NULL;
-
   /* get active toplevel path and check if we can use it */
   gtk_tree_view_get_cursor (GTK_TREE_VIEW (view), &path, NULL);
   if (path != NULL)
@@ -2921,6 +2917,10 @@ thunar_tree_view_get_preferred_toplevel_path (ThunarTreeView *view,
       gtk_tree_path_free (path);
       path = NULL;
     }
+
+  /* check whether the root node is available */
+  if (!gtk_tree_model_get_iter_first (model, &iter))
+    return NULL;
 
   /* get GFiles for special toplevel items */
   desktop = thunar_g_file_new_for_desktop ();
