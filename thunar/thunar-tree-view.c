@@ -2503,6 +2503,7 @@ thunar_tree_view_cursor_idle (gpointer user_data)
   GtkTreePath    *path;
   GtkTreeIter     iter;
   ThunarFile     *file;
+  ThunarFolder   *folder;
   GFileInfo      *file_info;
   GtkTreeIter     child_iter;
   ThunarFile     *file_in_tree;
@@ -2554,9 +2555,15 @@ THUNAR_THREADS_ENTER
     {
       file = THUNAR_FILE (lp->data);
 
-      /* 3 check if iter has only a dummy node (tree not fully loaded yet) */
-      if( thunar_tree_model_node_has_dummy (view->model, iter.user_data) )
+      /* 3. Check if the contents of the corresponding folder is still being loaded */
+      folder = thunar_folder_get_for_file (file);
+      if (folder != NULL && thunar_folder_get_loading (folder))
+        {
+          g_object_unref (folder);
           break;
+        }
+      if (folder)
+        g_object_unref (folder);
 
       /* 4. Loop on all items of current tree-level to see if any folder matches the path we search */
       while (TRUE)
