@@ -27,8 +27,10 @@
 #include <thunar/thunar-abstract-icon-view-ui.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
+#include <thunar/thunar-launcher.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-window.h>
 
 
 
@@ -491,10 +493,10 @@ thunar_abstract_icon_view_button_press_event (ExoIconView            *view,
   GtkTreePath       *path;
   GtkTreeIter        iter;
   ThunarFile        *file;
-  GtkAction         *action;
   ThunarPreferences *preferences;
   gboolean           in_tab;
-  const gchar       *action_name;
+  ThunarLauncher    *launcher;
+  GtkWidget         *window;
 
   abstract_icon_view->priv->button_pressed = TRUE;
 
@@ -543,25 +545,26 @@ thunar_abstract_icon_view_button_press_event (ExoIconView            *view,
           /* determine the file for the path */
           gtk_tree_model_get_iter (GTK_TREE_MODEL (THUNAR_STANDARD_VIEW (abstract_icon_view)->model), &iter, path);
           file = thunar_list_model_get_file (THUNAR_STANDARD_VIEW (abstract_icon_view)->model, &iter);
-          if (G_LIKELY (file != NULL) && thunar_file_is_directory (file))
+          if (G_LIKELY (file != NULL))
             {
-              /* lookup setting if we should open in a tab or a window */
-              preferences = thunar_preferences_get ();
-              g_object_get (preferences, "misc-middle-click-in-tab", &in_tab, NULL);
-              g_object_unref (preferences);
+              if (thunar_file_is_directory (file))
+                {
+                  /* lookup setting if we should open in a tab or a window */
+                  preferences = thunar_preferences_get ();
+                  g_object_get (preferences, "misc-middle-click-in-tab", &in_tab, NULL);
+                  g_object_unref (preferences);
 
-              /* holding ctrl inverts the action */
-              if ((event->state & GDK_CONTROL_MASK) != 0)
-                  in_tab = !in_tab;
-              action_name = in_tab ? "open-in-new-tab" : "open-in-new-window";
+                  /* holding ctrl inverts the action */
+                  if ((event->state & GDK_CONTROL_MASK) != 0)
+                      in_tab = !in_tab;
 
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-              /* emit the action */
-              action = thunar_gtk_ui_manager_get_action_by_name (THUNAR_STANDARD_VIEW (abstract_icon_view)->ui_manager, action_name);
-              if (G_LIKELY (action != NULL))
-                  gtk_action_activate (action);
-G_GNUC_END_IGNORE_DEPRECATIONS
-
+                  window = gtk_widget_get_toplevel (GTK_WIDGET (abstract_icon_view));
+                  launcher = thunar_window_get_launcher (THUNAR_WINDOW (window));
+                  if (in_tab)
+                    thunar_launcher_open_selected_folders_in_new_tabs (launcher);
+                  else
+                    thunar_launcher_open_selected_folders_in_new_windows (launcher);
+                }
               /* release the file reference */
               g_object_unref (G_OBJECT (file));
             }
@@ -754,7 +757,7 @@ thunar_abstract_icon_view_item_activated (ExoIconView            *view,
                                           GtkTreePath            *path,
                                           ThunarAbstractIconView *abstract_icon_view)
 {
-  GtkAction *action;
+  GtkWidget *window;
 
   _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
 
@@ -765,12 +768,8 @@ thunar_abstract_icon_view_item_activated (ExoIconView            *view,
       exo_icon_view_select_path (view, path);
     }
 
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* emit the "open" action */
-  action = thunar_gtk_ui_manager_get_action_by_name (THUNAR_STANDARD_VIEW (abstract_icon_view)->ui_manager, "open");
-  if (G_LIKELY (action != NULL))
-    gtk_action_activate (action);
-G_GNUC_END_IGNORE_DEPRECATIONS
+  window = gtk_widget_get_toplevel (GTK_WIDGET (abstract_icon_view));
+  thunar_launcher_activate_selected_files (thunar_window_get_launcher (THUNAR_WINDOW (window)), THUNAR_LAUNCHER_CHANGE_DIRECTORY, NULL);
 }
 
 
