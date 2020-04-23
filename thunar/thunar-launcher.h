@@ -1,6 +1,7 @@
 /* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2020 Alexander Schwinn <alexxcons@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -34,13 +35,44 @@ typedef struct _ThunarLauncher      ThunarLauncher;
 #define THUNAR_IS_LAUNCHER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_LAUNCHER))
 #define THUNAR_LAUNCHER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_LAUNCHER, ThunarLauncherClass))
 
-GType           thunar_launcher_get_type            (void) G_GNUC_CONST;
+/* #XfceGtkActionEntrys provided by this widget */
+typedef enum
+{
+  THUNAR_LAUNCHER_ACTION_OPEN,
+  THUNAR_LAUNCHER_ACTION_EXECUTE,
+  THUNAR_LAUNCHER_ACTION_OPEN_IN_TAB,
+  THUNAR_LAUNCHER_ACTION_OPEN_IN_WINDOW,
+  THUNAR_LAUNCHER_ACTION_OPEN_WITH_OTHER,
+  THUNAR_LAUNCHER_ACTION_SENDTO_MENU,
+  THUNAR_LAUNCHER_ACTION_SENDTO_DESKTOP,
+  THUNAR_LAUNCHER_ACTION_EMPTY_TRASH,
+} ThunarLauncherAction;
 
-ThunarLauncher *thunar_launcher_new                 (void) G_GNUC_MALLOC;
+typedef enum
+{
+  THUNAR_LAUNCHER_CHANGE_DIRECTORY,
+  THUNAR_LAUNCHER_OPEN_AS_NEW_TAB,
+  THUNAR_LAUNCHER_OPEN_AS_NEW_WINDOW
+} ThunarLauncherFolderOpenAction;
 
-void            thunar_launcher_set_widget          (ThunarLauncher       *launcher,
-                                                     GtkWidget            *widget);
-
+GType           thunar_launcher_get_type                             (void) G_GNUC_CONST;
+void            thunar_launcher_activate_selected_files              (ThunarLauncher                 *launcher,
+                                                                      ThunarLauncherFolderOpenAction  action,
+                                                                      GAppInfo                       *app_info);
+void            thunar_launcher_open_selected_folders                (ThunarLauncher                 *launcher,
+                                                                      gboolean                        open_in_tabs);
+void            thunar_launcher_set_widget                           (ThunarLauncher                 *launcher,
+                                                                      GtkWidget                      *widget);
+GtkWidget      *thunar_launcher_get_widget                           (ThunarLauncher                 *launcher);
+GtkWidget      *thunar_launcher_append_menu_item                     (ThunarLauncher                 *launcher,
+                                                                      GtkMenuShell                   *menu,
+                                                                      ThunarLauncherAction            action,
+                                                                      gboolean                        force);
+gboolean        thunar_launcher_append_open_section                  (ThunarLauncher                 *launcher,
+                                                                      GtkMenuShell                   *menu,
+                                                                      gboolean                        support_tabs,
+                                                                      gboolean                        support_change_directory,
+                                                                      gboolean                        force);
 G_END_DECLS;
 
 #endif /* !__THUNAR_LAUNCHER_H__ */

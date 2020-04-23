@@ -223,7 +223,7 @@ static void     thunar_window_action_show_hidden          (GtkToggleAction      
                                                            ThunarWindow           *window);
 static gboolean thunar_window_propagate_key_event         (GtkWindow              *window,
                                                            GdkEvent               *key_event,
-                                                           gpointer               user_data);
+                                                           gpointer                user_data);
 static void     thunar_window_current_directory_changed   (ThunarFile             *current_directory,
                                                            ThunarWindow           *window);
 static void     thunar_window_connect_proxy               (GtkUIManager           *manager,
@@ -259,6 +259,8 @@ static void     thunar_window_save_geometry_timer_destroy (gpointer             
 static void     thunar_window_set_zoom_level              (ThunarWindow           *window,
                                                            ThunarZoomLevel         zoom_level);
 static void     thunar_window_update_window_icon          (ThunarWindow           *window);
+static void     thunar_window_select_files                (ThunarWindow           *window,
+                                                           GList                  *path_list);
 
 
 
@@ -351,6 +353,9 @@ struct _ThunarWindow
    * see the toggle_sidepane() function.
    */
   GType                   toggle_sidepane_type;
+
+  /* Takes care to select a file after e.g. rename/create */
+  GClosure               *select_files_closure;
 };
 
 
@@ -824,10 +829,12 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   gtk_window_add_accel_group (GTK_WINDOW (window), accel_group);
 G_GNUC_END_IGNORE_DEPRECATIONS
 
-  /* setup the launcher support */
-  window->launcher = thunar_launcher_new ();
-  thunar_launcher_set_widget (window->launcher, GTK_WIDGET (window));
-  thunar_component_set_ui_manager (THUNAR_COMPONENT (window->launcher), window->ui_manager);
+  window->select_files_closure = g_cclosure_new_swap (G_CALLBACK (thunar_window_select_files), window, NULL);
+  g_closure_ref (window->select_files_closure);
+  g_closure_sink (window->select_files_closure);
+  window->launcher = g_object_new (THUNAR_TYPE_LAUNCHER, "widget", GTK_WIDGET (window),
+                                  "select-files-closure",  window->select_files_closure, NULL);
+
   exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->launcher), "current-directory");
   g_signal_connect_swapped (G_OBJECT (window->launcher), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
   g_signal_connect_swapped (G_OBJECT (window->launcher), "open-new-tab", G_CALLBACK (thunar_window_notebook_insert), window);
@@ -1000,6 +1007,22 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* schedule asynchronous menu action merging */
   window->merge_idle_id = g_idle_add_full (G_PRIORITY_LOW + 20, thunar_window_merge_idle, window, thunar_window_merge_idle_destroy);
+}
+
+
+
+/**
+ * thunar_window_select_files:
+ * @window            : a #ThunarWindow instance.
+ * @files_to_selected : a list of #GFile<!---->s
+ *
+ * Visually selects the files, given by the list
+ **/
+static void
+thunar_window_select_files (ThunarWindow *window,
+                            GList        *files_to_selected)
+{
+  // TODO: Select Files
 }
 
 
@@ -4138,4 +4161,20 @@ thunar_window_set_directories (ThunarWindow   *window,
 
   /* we succeeded if new pages have been opened */
   return gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook)) > 0;
+}
+
+
+
+/**
+ * thunar_window_get_launcher:
+ * @window : a #ThunarWindow instance.
+ *
+ * Return value: (transfer none): The single #ThunarLauncher of this #ThunarWindow
+ **/
+ThunarLauncher*
+thunar_window_get_launcher (ThunarWindow *window)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), NULL);
+
+  return window->launcher;
 }

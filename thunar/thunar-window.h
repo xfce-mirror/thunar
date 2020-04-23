@@ -22,6 +22,7 @@
 
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-folder.h>
+#include <thunar/thunar-launcher.h>
 
 G_BEGIN_DECLS;
 
@@ -58,6 +59,7 @@ void            thunar_window_update_directories    (ThunarWindow *window,
                                                      ThunarFile   *new_directory);
 void            thunar_window_notebook_insert       (ThunarWindow *window,
                                                      ThunarFile   *directory);
+ThunarLauncher* thunar_window_get_launcher          (ThunarWindow *window);
 
 G_END_DECLS;
 
