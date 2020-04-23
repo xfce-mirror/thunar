@@ -378,8 +378,7 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* setup the launcher support for this dialog */
-  renamer_dialog->launcher = thunar_launcher_new ();
-  thunar_launcher_set_widget (renamer_dialog->launcher, GTK_WIDGET (renamer_dialog));
+  renamer_dialog->launcher = g_object_new (THUNAR_TYPE_LAUNCHER, "widget", GTK_WIDGET (renamer_dialog), NULL);
   thunar_component_set_ui_manager (THUNAR_COMPONENT (renamer_dialog->launcher), renamer_dialog->ui_manager);
   exo_binding_new (G_OBJECT (renamer_dialog), "selected-files", G_OBJECT (renamer_dialog->launcher), "selected-files");
 

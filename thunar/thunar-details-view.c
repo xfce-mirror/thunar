@@ -26,9 +26,11 @@
 #include <thunar/thunar-column-editor.h>
 #include <thunar/thunar-details-view.h>
 #include <thunar/thunar-details-view-ui.h>
+#include <thunar/thunar-launcher.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-preferences.h>
+#include <thunar/thunar-window.h>
 
 
 
@@ -677,10 +679,10 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
   GtkTreeViewColumn *column;
   GtkTreeViewColumn *name_column;
   ThunarFile        *file;
-  GtkAction         *action;
   ThunarPreferences *preferences;
   gboolean           in_tab;
-  const gchar       *action_name;
+  ThunarLauncher    *launcher;
+  GtkWidget         *window;
 
   /* check if the event is for the bin window */
   if (G_UNLIKELY (event->window != gtk_tree_view_get_bin_window (tree_view)))
@@ -782,27 +784,26 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
           /* determine the file for the path */
           gtk_tree_model_get_iter (GTK_TREE_MODEL (THUNAR_STANDARD_VIEW (details_view)->model), &iter, path);
           file = thunar_list_model_get_file (THUNAR_STANDARD_VIEW (details_view)->model, &iter);
-          if (G_LIKELY (file != NULL) && thunar_file_is_directory (file))
+          if (G_LIKELY (file != NULL))
             {
-              /* lookup setting if we should open in a tab or a window */
-              preferences = thunar_preferences_get ();
-              g_object_get (preferences, "misc-middle-click-in-tab", &in_tab, NULL);
-              g_object_unref (preferences);
+              if (thunar_file_is_directory (file))
+                {
+                  /* lookup setting if we should open in a tab or a window */
+                  preferences = thunar_preferences_get ();
+                  g_object_get (preferences, "misc-middle-click-in-tab", &in_tab, NULL);
+                  g_object_unref (preferences);
 
-              /* holding ctrl inverts the action */
-              if ((event->state & GDK_CONTROL_MASK) != 0)
-                  in_tab = !in_tab;
+                  /* holding ctrl inverts the action */
+                  if ((event->state & GDK_CONTROL_MASK) != 0)
+                      in_tab = !in_tab;
 
-              action_name = in_tab ? "open-in-new-tab" : "open-in-new-window";
-
-              action = thunar_gtk_ui_manager_get_action_by_name (THUNAR_STANDARD_VIEW (details_view)->ui_manager, action_name);
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-              /* emit the action */
-              if (G_LIKELY (action != NULL))
-                  gtk_action_activate (action);
-G_GNUC_END_IGNORE_DEPRECATIONS
-
+                  window = gtk_widget_get_toplevel (GTK_WIDGET (details_view));
+                  launcher = thunar_window_get_launcher (THUNAR_WINDOW (window));
+                  if (in_tab)
+                    thunar_launcher_open_selected_folders_in_new_tabs (launcher);
+                  else
+                    thunar_launcher_open_selected_folders_in_new_windows (launcher);
+                }
               /* release the file reference */
               g_object_unref (G_OBJECT (file));
             }
@@ -845,7 +846,8 @@ thunar_details_view_row_activated (GtkTreeView       *tree_view,
                                    ThunarDetailsView *details_view)
 {
   GtkTreeSelection *selection;
-  GtkAction        *action;
+  ThunarLauncher   *launcher;
+  GtkWidget        *window;
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
@@ -857,12 +859,9 @@ thunar_details_view_row_activated (GtkTreeView       *tree_view,
       gtk_tree_selection_select_path (selection, path);
     }
 
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* emit the "open" action */
-  action = thunar_gtk_ui_manager_get_action_by_name (THUNAR_STANDARD_VIEW (details_view)->ui_manager, "open");
-  if (G_LIKELY (action != NULL))
-    gtk_action_activate (action);
-G_GNUC_END_IGNORE_DEPRECATIONS
+  window = gtk_widget_get_toplevel (GTK_WIDGET (details_view));
+  launcher = thunar_window_get_launcher (THUNAR_WINDOW (window));
+  thunar_launcher_activate_selected_files (launcher, THUNAR_LAUNCHER_CHANGE_DIRECTORY, NULL);
 }
 
 
@@ -880,18 +879,16 @@ thunar_details_view_select_cursor_row (GtkTreeView            *tree_view,
    * default gtk signal handler there.
    */
 
-  GtkAction        *action;
+  ThunarLauncher *launcher;
+  GtkWidget      *window;
 
   _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (details_view), FALSE);
 
   g_signal_stop_emission_by_name(tree_view,"select-cursor-row");
 
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* emit the "open" action */
-  action = thunar_gtk_ui_manager_get_action_by_name (THUNAR_STANDARD_VIEW (details_view)->ui_manager, "open");
-  if (G_LIKELY (action != NULL))
-    gtk_action_activate (action);
-G_GNUC_END_IGNORE_DEPRECATIONS
+  window = gtk_widget_get_toplevel (GTK_WIDGET (details_view));
+  launcher = thunar_window_get_launcher (THUNAR_WINDOW (window));
+  thunar_launcher_activate_selected_files (launcher, THUNAR_LAUNCHER_CHANGE_DIRECTORY, NULL);
 
   return TRUE;
 }
