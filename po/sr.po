@@ -17,9 +17,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-11 00:30+0200\n"
-"PO-Revision-Date: 2020-04-10 22:30+0000\n"
-"Last-Translator: Xfce Bot <transifex@xfce.org>\n"
+"POT-Creation-Date: 2020-04-18 22:20+0200\n"
+"PO-Revision-Date: 2020-04-22 20:39+0000\n"
+"Last-Translator: Саша Петровић <salepetronije@gmail.com>\n"
 "Language-Team: Serbian (http://www.transifex.com/xfce/thunar/language/sr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -636,19 +636,19 @@ msgstr "Број изворних и циљних датотека мора би
 msgid "A destination directory must be specified"
 msgstr "Морате одредити циљну фасциклу"
 
-#: ../thunar/thunar-details-view.c:140
+#: ../thunar/thunar-details-view.c:143
 msgid "Configure _Columns..."
 msgstr "Подеси _ступце..."
 
-#: ../thunar/thunar-details-view.c:140
+#: ../thunar/thunar-details-view.c:143
 msgid "Configure the columns in the detailed list view"
 msgstr "Подешава изглед стубаца у приказу списка са појединостима"
 
-#: ../thunar/thunar-details-view.c:405
+#: ../thunar/thunar-details-view.c:408
 msgid "Detailed directory listing"
 msgstr "Списак фасцикли са појединостима"
 
-#: ../thunar/thunar-details-view.c:406
+#: ../thunar/thunar-details-view.c:409
 msgid "Details view"
 msgstr "Приказ појединости"
 
@@ -967,7 +967,7 @@ msgstr "Приказ сличица"
 #: ../thunar/thunar-io-jobs.c:111
 #, c-format
 msgid "Error removing file: %s"
-msgstr ""
+msgstr "Десила се грешка приликом уклањања датотеке: %s"
 
 #: ../thunar/thunar-io-jobs.c:214 ../thunar/thunar-io-jobs.c:369
 #, c-format
@@ -994,23 +994,23 @@ msgstr "Припремам..."
 msgid "Could not delete file \"%s\": %s"
 msgstr "Нисам успео да обришем датотеку „%s“: %s"
 
-#: ../thunar/thunar-io-jobs.c:638
+#: ../thunar/thunar-io-jobs.c:640
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
 msgstr "Нисам успео да направим симболичку везу на „%s“ јер то није месна датотека"
 
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:1013
+#: ../thunar/thunar-io-jobs.c:1015
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "Нисам успео да променим власника за „%s“: %s"
 
-#: ../thunar/thunar-io-jobs.c:1014
+#: ../thunar/thunar-io-jobs.c:1016
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "Нисам успео да променим групу за „%s“: %s"
 
-#: ../thunar/thunar-io-jobs.c:1169
+#: ../thunar/thunar-io-jobs.c:1171
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "Нисам успео да променим овлашћења за „%s“: %s"
@@ -1041,7 +1041,7 @@ msgstr "веза до %s"
 msgid "link %u to %s"
 msgstr "веза %u до %s"
 
-#: ../thunar/thunar-job.c:251
+#: ../thunar/thunar-job.c:255
 #, c-format
 msgid ""
 "The file \"%s\" already exists. Would you like to replace it?\n"
@@ -1049,23 +1049,23 @@ msgid ""
 "If you replace an existing file, its contents will be overwritten."
 msgstr "Већ постоји датотека „%s“. Да ли желите да је замените?\n\nУколико је замените, њен садржај ће бити преписан."
 
-#: ../thunar/thunar-job.c:331
+#: ../thunar/thunar-job.c:335
 msgid "Do you want to overwrite it?"
 msgstr "Да ли желите да је замените?"
 
-#: ../thunar/thunar-job.c:388
+#: ../thunar/thunar-job.c:392
 msgid "Do you want to permanently delete it?"
 msgstr "Да ли је желите заувек  избрисати?"
 
-#: ../thunar/thunar-job.c:442
+#: ../thunar/thunar-job.c:446
 msgid "Do you want to create it?"
 msgstr "Да ли желите да је направите?"
 
-#: ../thunar/thunar-job.c:544
+#: ../thunar/thunar-job.c:548
 msgid "Do you want to skip it?"
 msgstr "Да ли желите да је прескочите?"
 
-#: ../thunar/thunar-job.c:593
+#: ../thunar/thunar-job.c:597
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
@@ -1959,12 +1959,28 @@ msgstr[0] "%d радња над датотекама је покренута"
 msgstr[1] "%d радње над датотекама су покренуте"
 msgstr[2] "%d радњи над датотекама је покренуто"
 
-#: ../thunar/thunar-progress-view.c:232
+#: ../thunar/thunar-progress-view.c:236
+msgid "Pause"
+msgstr ""
+
+#: ../thunar/thunar-progress-view.c:243
+msgid "Resume"
+msgstr ""
+
+#: ../thunar/thunar-progress-view.c:250
 msgid "Cancel"
 msgstr "Откажи"
 
+#: ../thunar/thunar-progress-view.c:366
+msgid "Paused"
+msgstr ""
+
+#: ../thunar/thunar-progress-view.c:386
+msgid "Resuming..."
+msgstr ""
+
 #. update the status text
-#: ../thunar/thunar-progress-view.c:354
+#: ../thunar/thunar-progress-view.c:412
 msgid "Cancelling..."
 msgstr "Отказујем..."
 
@@ -2564,53 +2580,53 @@ msgstr "Пра_зна датотека"
 msgid "No templates installed"
 msgstr "Нема уграђених образаца"
 
-#: ../thunar/thunar-transfer-job.c:828
+#: ../thunar/thunar-transfer-job.c:852
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
 "destination"
 msgstr "Грешка приликом умножавања на „%s“: %s простора више је потребно за умножавање на одредиште"
 
-#: ../thunar/thunar-transfer-job.c:879
+#: ../thunar/thunar-transfer-job.c:903
 msgid "Collecting files..."
 msgstr "Прикупљам датотеке..."
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:916
+#: ../thunar/thunar-transfer-job.c:942
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "Покушавам да вратим „%s“"
 
-#: ../thunar/thunar-transfer-job.c:945
+#: ../thunar/thunar-transfer-job.c:971
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "Више не постоји фасцикла „%s“ која је неопходна за враћање датотеке „%s“ из смећа"
 
-#: ../thunar/thunar-transfer-job.c:971
+#: ../thunar/thunar-transfer-job.c:997
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Нисам успео да вратим фасциклу „%s“"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:992
+#: ../thunar/thunar-transfer-job.c:1018
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Покушавам да преместим „%s“"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1064
+#: ../thunar/thunar-transfer-job.c:1090
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "Нисам успео да преместим „%s“ директно. Прикупљам датотеке за умножавање..."
 
-#: ../thunar/thunar-transfer-job.c:1225
+#: ../thunar/thunar-transfer-job.c:1251
 #, c-format
 msgid "%s of %s"
 msgstr "%s од %s"
 
-#: ../thunar/thunar-transfer-job.c:1245
+#: ../thunar/thunar-transfer-job.c:1271
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
@@ -2618,7 +2634,7 @@ msgstr[0] "Преостаје још %lu сат (%s/sec)"
 msgstr[1] "Преостају још %lu сата (%s/sec)"
 msgstr[2] "Преостаје још %lu сати (%s/sec)"
 
-#: ../thunar/thunar-transfer-job.c:1253
+#: ../thunar/thunar-transfer-job.c:1279
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
@@ -2626,7 +2642,7 @@ msgstr[0] "Преостаје још %lu минут (%s/sec)"
 msgstr[1] "Преостаје још %lu минута (%s/sec)"
 msgstr[2] "Преостаје још %lu минута (%s/sec)"
 
-#: ../thunar/thunar-transfer-job.c:1260
+#: ../thunar/thunar-transfer-job.c:1286
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
