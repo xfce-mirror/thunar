@@ -12,9 +12,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-11 00:30+0200\n"
-"PO-Revision-Date: 2020-04-10 22:30+0000\n"
-"Last-Translator: Xfce Bot <transifex@xfce.org>\n"
+"POT-Creation-Date: 2020-04-18 22:20+0200\n"
+"PO-Revision-Date: 2020-04-19 17:01+0000\n"
+"Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/xfce/thunar/language/pt/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -630,19 +630,19 @@ msgstr "O número de ficheiros na origem e no destino deve ser o mesmo"
 msgid "A destination directory must be specified"
 msgstr "Deve especificar, pelo menos, um diretório de destino"
 
-#: ../thunar/thunar-details-view.c:140
+#: ../thunar/thunar-details-view.c:143
 msgid "Configure _Columns..."
 msgstr "Configurar _colunas..."
 
-#: ../thunar/thunar-details-view.c:140
+#: ../thunar/thunar-details-view.c:143
 msgid "Configure the columns in the detailed list view"
 msgstr "Configurar as colunas na vista de lista detalhada"
 
-#: ../thunar/thunar-details-view.c:405
+#: ../thunar/thunar-details-view.c:408
 msgid "Detailed directory listing"
 msgstr "Listagem de diretórios detalhada"
 
-#: ../thunar/thunar-details-view.c:406
+#: ../thunar/thunar-details-view.c:409
 msgid "Details view"
 msgstr "Vista detalhada"
 
@@ -961,7 +961,7 @@ msgstr "Vista de ícones"
 #: ../thunar/thunar-io-jobs.c:111
 #, c-format
 msgid "Error removing file: %s"
-msgstr ""
+msgstr "Erro ao remover ficheiro: %s"
 
 #: ../thunar/thunar-io-jobs.c:214 ../thunar/thunar-io-jobs.c:369
 #, c-format
@@ -988,23 +988,23 @@ msgstr "A preparar..."
 msgid "Could not delete file \"%s\": %s"
 msgstr "Incapaz de apagar o ficheiro \"%s\": %s"
 
-#: ../thunar/thunar-io-jobs.c:638
+#: ../thunar/thunar-io-jobs.c:640
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
 msgstr "Incapaz de criar a ligação simbólica a \"%s\" por não ser um ficheiro local"
 
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:1013
+#: ../thunar/thunar-io-jobs.c:1015
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "Ocorreu um erro ao alterar o dono de \"%s\": %s"
 
-#: ../thunar/thunar-io-jobs.c:1014
+#: ../thunar/thunar-io-jobs.c:1016
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "Ocorreu um erro ao alterar o grupo de \"%s\": %s"
 
-#: ../thunar/thunar-io-jobs.c:1169
+#: ../thunar/thunar-io-jobs.c:1171
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "Ocorreu um erro ao alterar as permissões de \"%s\": %s"
@@ -1035,7 +1035,7 @@ msgstr "ligação a %s"
 msgid "link %u to %s"
 msgstr "ligação %u para %s"
 
-#: ../thunar/thunar-job.c:251
+#: ../thunar/thunar-job.c:255
 #, c-format
 msgid ""
 "The file \"%s\" already exists. Would you like to replace it?\n"
@@ -1043,23 +1043,23 @@ msgid ""
 "If you replace an existing file, its contents will be overwritten."
 msgstr "O ficheiro \"%s\" já existe. Substituir?\n\nSe substituir um ficheiro existente, o conteúdo será reescrito."
 
-#: ../thunar/thunar-job.c:331
+#: ../thunar/thunar-job.c:335
 msgid "Do you want to overwrite it?"
 msgstr "Substituir?"
 
-#: ../thunar/thunar-job.c:388
+#: ../thunar/thunar-job.c:392
 msgid "Do you want to permanently delete it?"
 msgstr "Eliminar permanentemente?"
 
-#: ../thunar/thunar-job.c:442
+#: ../thunar/thunar-job.c:446
 msgid "Do you want to create it?"
 msgstr "Criar?"
 
-#: ../thunar/thunar-job.c:544
+#: ../thunar/thunar-job.c:548
 msgid "Do you want to skip it?"
 msgstr "Ignorar?"
 
-#: ../thunar/thunar-job.c:593
+#: ../thunar/thunar-job.c:597
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
@@ -1936,12 +1936,28 @@ msgid_plural "%d file operations running"
 msgstr[0] "%d operação de ficheiro a decorrer"
 msgstr[1] "%d operações de ficheiro em execução"
 
-#: ../thunar/thunar-progress-view.c:232
+#: ../thunar/thunar-progress-view.c:236
+msgid "Pause"
+msgstr "Pausa"
+
+#: ../thunar/thunar-progress-view.c:243
+msgid "Resume"
+msgstr "Retomar"
+
+#: ../thunar/thunar-progress-view.c:250
 msgid "Cancel"
 msgstr "Cancelar"
 
+#: ../thunar/thunar-progress-view.c:366
+msgid "Paused"
+msgstr "Em pausa"
+
+#: ../thunar/thunar-progress-view.c:386
+msgid "Resuming..."
+msgstr "A retomar..."
+
 #. update the status text
-#: ../thunar/thunar-progress-view.c:354
+#: ../thunar/thunar-progress-view.c:412
 msgid "Cancelling..."
 msgstr "A cancelar..."
 
@@ -2526,67 +2542,67 @@ msgstr "Ficheiro _vazio"
 msgid "No templates installed"
 msgstr "Modelos não instalados"
 
-#: ../thunar/thunar-transfer-job.c:828
+#: ../thunar/thunar-transfer-job.c:852
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
 "destination"
 msgstr "Ocorreu um erro ao copiar para \"%s\": é preciso %s de espaço livre para copiar"
 
-#: ../thunar/thunar-transfer-job.c:879
+#: ../thunar/thunar-transfer-job.c:903
 msgid "Collecting files..."
 msgstr "Recolhendo ficheiros..."
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:916
+#: ../thunar/thunar-transfer-job.c:942
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "A tentar restaurar \"%s\""
 
-#: ../thunar/thunar-transfer-job.c:945
+#: ../thunar/thunar-transfer-job.c:971
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "A pasta \"%s\" não existe, mas é necessária para restaurar o ficheiro \"%s\" do lixo"
 
-#: ../thunar/thunar-transfer-job.c:971
+#: ../thunar/thunar-transfer-job.c:997
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Ocorreu um erro ao restaurar a pasta \"%s\""
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:992
+#: ../thunar/thunar-transfer-job.c:1018
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "A tentar mover \"%s\""
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1064
+#: ../thunar/thunar-transfer-job.c:1090
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "Incapaz de mover \"%s\" diretamente. Recolhendo ficheiros a copiar..."
 
-#: ../thunar/thunar-transfer-job.c:1225
+#: ../thunar/thunar-transfer-job.c:1251
 #, c-format
 msgid "%s of %s"
 msgstr "%s de %s"
 
-#: ../thunar/thunar-transfer-job.c:1245
+#: ../thunar/thunar-transfer-job.c:1271
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "resta %lu hora (%s/seg.)"
 msgstr[1] "restam %lu horas (%s/seg.)"
 
-#: ../thunar/thunar-transfer-job.c:1253
+#: ../thunar/thunar-transfer-job.c:1279
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "resta %lu minuto (%s/seg.)"
 msgstr[1] "restam %lu minutos (%s/seg.)"
 
-#: ../thunar/thunar-transfer-job.c:1260
+#: ../thunar/thunar-transfer-job.c:1286
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
@@ -3771,7 +3787,7 @@ msgstr "Explorar sistema de ficheiros com o gestor de ficheiros"
 msgid ""
 "file "
 "manager;explorer;finder;browser;folders;directory;directories;partitions;drives;network;devices;rename;move;copy;delete;permissions;home;trash;"
-msgstr ""
+msgstr "gestor de ficheiros;explorador;pesquisador;navegador;pastas;directório;directórios;partiçoes;unidades;rede;dispositivos;renomear;mover;copiar;eliminar;permissões;pasta pessoal;lixo;"
 
 #: ../thunar.desktop.in.in.h:5
 msgid "Home"
@@ -3779,7 +3795,7 @@ msgstr "Pasta pessoal"
 
 #: ../thunar-bulk-rename.desktop.in.in.h:3
 msgid "bulk;renamer;renaming;thunar;files;folders;directory;directories;"
-msgstr ""
+msgstr "em massa;renomeador;renomear;thunar;ficheiros;pastas;directório;directórios;"
 
 #: ../thunar/thunar-settings.desktop.in.h:1
 msgid "File Manager Settings"
@@ -3793,7 +3809,7 @@ msgstr "Configurar o gestor de ficheiros Thunar"
 msgid ""
 "thunar;settings;preferences;configure;thumbnails;file size;date "
 "format;shortcuts pane;tree view;tabs;"
-msgstr ""
+msgstr "thunar;definições;preferências;configurar;miniaturas;tamanho de ficheiro;formato de data;painel de atalhos;vista de árvore;separadores;"
 
 #: ../org.xfce.thunar.appdata.xml.in.h:1
 msgid ""
