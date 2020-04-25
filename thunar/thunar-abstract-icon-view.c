@@ -244,6 +244,8 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   thunar_abstract_icon_view_sort_column_changed (GTK_TREE_SORTABLE (THUNAR_STANDARD_VIEW (abstract_icon_view)->model), abstract_icon_view);
 
   /* update the icon view on size-allocate events */
+  /* TODO: issue not reproducible anymore as of gtk 3.24.18
+   * we can probably remove this in the future. */
   g_signal_connect_swapped (G_OBJECT (abstract_icon_view), "size-allocate",
                             G_CALLBACK (gtk_widget_queue_resize), view);
 }
