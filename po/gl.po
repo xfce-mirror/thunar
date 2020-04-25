@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-11 00:30+0200\n"
-"PO-Revision-Date: 2020-04-11 15:41+0000\n"
+"POT-Creation-Date: 2020-04-18 22:20+0200\n"
+"PO-Revision-Date: 2020-04-18 23:30+0000\n"
 "Last-Translator: Daniel Muñiz Fontoira <dani@damufo.com>\n"
 "Language-Team: Galician (http://www.transifex.com/xfce/thunar/language/gl/)\n"
 "MIME-Version: 1.0\n"
@@ -630,19 +630,19 @@ msgstr "O número de nomes de ficheiro orixe e destino debe ser igual"
 msgid "A destination directory must be specified"
 msgstr "Débese especificar un directorio destino"
 
-#: ../thunar/thunar-details-view.c:140
+#: ../thunar/thunar-details-view.c:143
 msgid "Configure _Columns..."
 msgstr "Configurar as _columnas..."
 
-#: ../thunar/thunar-details-view.c:140
+#: ../thunar/thunar-details-view.c:143
 msgid "Configure the columns in the detailed list view"
 msgstr "Configurar as columnas na vista como lista detallada"
 
-#: ../thunar/thunar-details-view.c:405
+#: ../thunar/thunar-details-view.c:408
 msgid "Detailed directory listing"
 msgstr "Lista de directorios detallada"
 
-#: ../thunar/thunar-details-view.c:406
+#: ../thunar/thunar-details-view.c:409
 msgid "Details view"
 msgstr "Vista de detalles"
 
@@ -988,23 +988,23 @@ msgstr "Preparando..."
 msgid "Could not delete file \"%s\": %s"
 msgstr "Non se puido eliminar o ficheiro «%s»: %s"
 
-#: ../thunar/thunar-io-jobs.c:638
+#: ../thunar/thunar-io-jobs.c:640
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
 msgstr "Non se puido crear unha ligazón simbólica a «%s» porque non é un ficheiro local"
 
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:1013
+#: ../thunar/thunar-io-jobs.c:1015
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "Produciuse un fallo ao cambiar o dono de «%s»: %s"
 
-#: ../thunar/thunar-io-jobs.c:1014
+#: ../thunar/thunar-io-jobs.c:1016
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "Produciuse un fallo ao cambiar o grupo de «%s»: %s"
 
-#: ../thunar/thunar-io-jobs.c:1169
+#: ../thunar/thunar-io-jobs.c:1171
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "Produciuse un fallo ao cambiar os permisos de «%s»: %s"
@@ -1035,7 +1035,7 @@ msgstr "ligazón a %s"
 msgid "link %u to %s"
 msgstr "ligazón %u a %s"
 
-#: ../thunar/thunar-job.c:251
+#: ../thunar/thunar-job.c:255
 #, c-format
 msgid ""
 "The file \"%s\" already exists. Would you like to replace it?\n"
@@ -1043,23 +1043,23 @@ msgid ""
 "If you replace an existing file, its contents will be overwritten."
 msgstr "O ficheiro «%s» xa existe. Desexa substituílo?\n\nSe substitúe un ficheiro hase sobrescribir o seu contido."
 
-#: ../thunar/thunar-job.c:331
+#: ../thunar/thunar-job.c:335
 msgid "Do you want to overwrite it?"
 msgstr "Desexa sobrescribilo?"
 
-#: ../thunar/thunar-job.c:388
+#: ../thunar/thunar-job.c:392
 msgid "Do you want to permanently delete it?"
 msgstr "Desexa eliminalo de xeito permanente?"
 
-#: ../thunar/thunar-job.c:442
+#: ../thunar/thunar-job.c:446
 msgid "Do you want to create it?"
 msgstr "Desexa crealo?"
 
-#: ../thunar/thunar-job.c:544
+#: ../thunar/thunar-job.c:548
 msgid "Do you want to skip it?"
 msgstr "Desexa saltalo?"
 
-#: ../thunar/thunar-job.c:593
+#: ../thunar/thunar-job.c:597
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
@@ -1936,12 +1936,28 @@ msgid_plural "%d file operations running"
 msgstr[0] "%d operación de ficheiro en execución"
 msgstr[1] "%d operacións de ficheiro en execución"
 
-#: ../thunar/thunar-progress-view.c:232
+#: ../thunar/thunar-progress-view.c:236
+msgid "Pause"
+msgstr "Interromper"
+
+#: ../thunar/thunar-progress-view.c:243
+msgid "Resume"
+msgstr "Retomar"
+
+#: ../thunar/thunar-progress-view.c:250
 msgid "Cancel"
 msgstr "Cancelar"
 
+#: ../thunar/thunar-progress-view.c:366
+msgid "Paused"
+msgstr "Interrompido"
+
+#: ../thunar/thunar-progress-view.c:386
+msgid "Resuming..."
+msgstr "Retomando..."
+
 #. update the status text
-#: ../thunar/thunar-progress-view.c:354
+#: ../thunar/thunar-progress-view.c:412
 msgid "Cancelling..."
 msgstr "Cancelando..."
 
@@ -2526,67 +2542,67 @@ msgstr "Ficheiro _baleiro"
 msgid "No templates installed"
 msgstr "Non hai ningún modelo instalado"
 
-#: ../thunar/thunar-transfer-job.c:828
+#: ../thunar/thunar-transfer-job.c:852
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
 "destination"
 msgstr "Produciuse un fallo mentres se copiaba a «%s»:  %s requírese máis espazo para copiar ao destino"
 
-#: ../thunar/thunar-transfer-job.c:879
+#: ../thunar/thunar-transfer-job.c:903
 msgid "Collecting files..."
 msgstr "Reunindo ficheiros..."
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:916
+#: ../thunar/thunar-transfer-job.c:942
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "Intentando restaurar «%s»"
 
-#: ../thunar/thunar-transfer-job.c:945
+#: ../thunar/thunar-transfer-job.c:971
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "O cartafol «%s» xa non existe, pero é necesario para restaurar o ficheiro «%s» desde as pepeleira"
 
-#: ../thunar/thunar-transfer-job.c:971
+#: ../thunar/thunar-transfer-job.c:997
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Produciuse un fallo ao restaurar o cartafol «%s»"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:992
+#: ../thunar/thunar-transfer-job.c:1018
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Intentando mover «%s»"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1064
+#: ../thunar/thunar-transfer-job.c:1090
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "Non se puido mover «%s» directamente. Recollendo os ficheiros para copialos..."
 
-#: ../thunar/thunar-transfer-job.c:1225
+#: ../thunar/thunar-transfer-job.c:1251
 #, c-format
 msgid "%s of %s"
 msgstr "%s de %s"
 
-#: ../thunar/thunar-transfer-job.c:1245
+#: ../thunar/thunar-transfer-job.c:1271
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "resta %lu hora (%s/sec)"
 msgstr[1] "restan %lu horas (%s/sec)"
 
-#: ../thunar/thunar-transfer-job.c:1253
+#: ../thunar/thunar-transfer-job.c:1279
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "resta %lu minuto (%s/sec)"
 msgstr[1] "restan %lu minutos (%s/sec)"
 
-#: ../thunar/thunar-transfer-job.c:1260
+#: ../thunar/thunar-transfer-job.c:1286
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
