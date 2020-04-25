@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-11 00:30+0200\n"
-"PO-Revision-Date: 2020-04-11 02:25+0000\n"
+"POT-Creation-Date: 2020-04-18 22:20+0200\n"
+"PO-Revision-Date: 2020-04-20 00:07+0000\n"
 "Last-Translator: 黃柏諺 <s8321414@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/xfce/thunar/language/zh_TW/)\n"
 "MIME-Version: 1.0\n"
@@ -632,19 +632,19 @@ msgstr "來源檔案名稱與目標檔案名稱的數目必須相同"
 msgid "A destination directory must be specified"
 msgstr "最少要指定一個目的地目錄"
 
-#: ../thunar/thunar-details-view.c:140
+#: ../thunar/thunar-details-view.c:143
 msgid "Configure _Columns..."
 msgstr "設定欄位(_C)..."
 
-#: ../thunar/thunar-details-view.c:140
+#: ../thunar/thunar-details-view.c:143
 msgid "Configure the columns in the detailed list view"
 msgstr "設定詳細清單檢視中的欄位"
 
-#: ../thunar/thunar-details-view.c:405
+#: ../thunar/thunar-details-view.c:408
 msgid "Detailed directory listing"
 msgstr "詳細目錄清單"
 
-#: ../thunar/thunar-details-view.c:406
+#: ../thunar/thunar-details-view.c:409
 msgid "Details view"
 msgstr "詳細檢視"
 
@@ -990,23 +990,23 @@ msgstr "準備中..."
 msgid "Could not delete file \"%s\": %s"
 msgstr "無法刪除檔案「%s」：%s"
 
-#: ../thunar/thunar-io-jobs.c:638
+#: ../thunar/thunar-io-jobs.c:640
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
 msgstr "無法建立連至「%s」的符號連結，因為它不是本地檔案"
 
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:1013
+#: ../thunar/thunar-io-jobs.c:1015
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "無法更改檔案「%s」的擁有者：%s"
 
-#: ../thunar/thunar-io-jobs.c:1014
+#: ../thunar/thunar-io-jobs.c:1016
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "無法更改檔案「%s」的群組：%s"
 
-#: ../thunar/thunar-io-jobs.c:1169
+#: ../thunar/thunar-io-jobs.c:1171
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "無法更改「%s」的權限設定：%s"
@@ -1037,7 +1037,7 @@ msgstr "%s 的連結"
 msgid "link %u to %s"
 msgstr "%2$s 的第 %1$u 份連結"
 
-#: ../thunar/thunar-job.c:251
+#: ../thunar/thunar-job.c:255
 #, c-format
 msgid ""
 "The file \"%s\" already exists. Would you like to replace it?\n"
@@ -1045,23 +1045,23 @@ msgid ""
 "If you replace an existing file, its contents will be overwritten."
 msgstr "已有「%s」檔案。要將之取代嗎？\n\n如果要取代已經有的檔案，其內容將被覆蓋。"
 
-#: ../thunar/thunar-job.c:331
+#: ../thunar/thunar-job.c:335
 msgid "Do you want to overwrite it?"
 msgstr "要將之覆蓋嗎？"
 
-#: ../thunar/thunar-job.c:388
+#: ../thunar/thunar-job.c:392
 msgid "Do you want to permanently delete it?"
 msgstr "您想要永久刪除它嗎？"
 
-#: ../thunar/thunar-job.c:442
+#: ../thunar/thunar-job.c:446
 msgid "Do you want to create it?"
 msgstr "要建立它嗎？"
 
-#: ../thunar/thunar-job.c:544
+#: ../thunar/thunar-job.c:548
 msgid "Do you want to skip it?"
 msgstr "要略過它嗎？"
 
-#: ../thunar/thunar-job.c:593
+#: ../thunar/thunar-job.c:597
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
@@ -1921,12 +1921,28 @@ msgid "%d file operation running"
 msgid_plural "%d file operations running"
 msgstr[0] "%d 項檔案操作執行中"
 
-#: ../thunar/thunar-progress-view.c:232
+#: ../thunar/thunar-progress-view.c:236
+msgid "Pause"
+msgstr "暫停"
+
+#: ../thunar/thunar-progress-view.c:243
+msgid "Resume"
+msgstr "繼續"
+
+#: ../thunar/thunar-progress-view.c:250
 msgid "Cancel"
 msgstr "取消"
 
+#: ../thunar/thunar-progress-view.c:366
+msgid "Paused"
+msgstr "已暫停"
+
+#: ../thunar/thunar-progress-view.c:386
+msgid "Resuming..."
+msgstr "正在繼續……"
+
 #. update the status text
-#: ../thunar/thunar-progress-view.c:354
+#: ../thunar/thunar-progress-view.c:412
 msgid "Cancelling..."
 msgstr "取消中..."
 
@@ -2496,65 +2512,65 @@ msgstr "空白檔案(_E)"
 msgid "No templates installed"
 msgstr "沒有安裝任何模板"
 
-#: ../thunar/thunar-transfer-job.c:828
+#: ../thunar/thunar-transfer-job.c:852
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
 "destination"
 msgstr "當複製至「%s」時發生錯誤：還需要 %s 的空間才能複製至目的地"
 
-#: ../thunar/thunar-transfer-job.c:879
+#: ../thunar/thunar-transfer-job.c:903
 msgid "Collecting files..."
 msgstr "收集檔案中..."
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:916
+#: ../thunar/thunar-transfer-job.c:942
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "正在嘗試還原「%s」"
 
-#: ../thunar/thunar-transfer-job.c:945
+#: ../thunar/thunar-transfer-job.c:971
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "「%s」資料夾不復存在，但若要從垃圾桶還原檔案「%s」便需要它。要再建立該資料夾嗎？"
 
-#: ../thunar/thunar-transfer-job.c:971
+#: ../thunar/thunar-transfer-job.c:997
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "無法還原資料夾「%s」"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:992
+#: ../thunar/thunar-transfer-job.c:1018
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "正在嘗試移動「%s」"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1064
+#: ../thunar/thunar-transfer-job.c:1090
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "無法直接移動「%s」。正在收集複製用的檔案..."
 
-#: ../thunar/thunar-transfer-job.c:1225
+#: ../thunar/thunar-transfer-job.c:1251
 #, c-format
 msgid "%s of %s"
 msgstr "%s / %s"
 
-#: ../thunar/thunar-transfer-job.c:1245
+#: ../thunar/thunar-transfer-job.c:1271
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "剩餘 %lu 小時 (%s/秒)"
 
-#: ../thunar/thunar-transfer-job.c:1253
+#: ../thunar/thunar-transfer-job.c:1279
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "剩餘 %lu 分鐘 (%s/秒)"
 
-#: ../thunar/thunar-transfer-job.c:1260
+#: ../thunar/thunar-transfer-job.c:1286
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
