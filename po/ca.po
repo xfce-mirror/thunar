@@ -15,9 +15,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-11 00:30+0200\n"
-"PO-Revision-Date: 2020-04-10 22:30+0000\n"
-"Last-Translator: Xfce Bot <transifex@xfce.org>\n"
+"POT-Creation-Date: 2020-04-18 22:20+0200\n"
+"PO-Revision-Date: 2020-04-19 01:24+0000\n"
+"Last-Translator: Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>\n"
 "Language-Team: Catalan (http://www.transifex.com/xfce/thunar/language/ca/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -633,19 +633,19 @@ msgstr "El nombre de fitxers d'origen i destí han de ser el mateix"
 msgid "A destination directory must be specified"
 msgstr "S'ha d'especificar un directori de destinació"
 
-#: ../thunar/thunar-details-view.c:140
+#: ../thunar/thunar-details-view.c:143
 msgid "Configure _Columns..."
 msgstr "Configura les _columnes..."
 
-#: ../thunar/thunar-details-view.c:140
+#: ../thunar/thunar-details-view.c:143
 msgid "Configure the columns in the detailed list view"
 msgstr "Configura les columnes per la vista detallada"
 
-#: ../thunar/thunar-details-view.c:405
+#: ../thunar/thunar-details-view.c:408
 msgid "Detailed directory listing"
 msgstr "Llistat detallat del directori"
 
-#: ../thunar/thunar-details-view.c:406
+#: ../thunar/thunar-details-view.c:409
 msgid "Details view"
 msgstr "Visualització dels detalls"
 
@@ -964,7 +964,7 @@ msgstr "Vista d'icones"
 #: ../thunar/thunar-io-jobs.c:111
 #, c-format
 msgid "Error removing file: %s"
-msgstr ""
+msgstr "Error en l'eliminació del fitxer: %s"
 
 #: ../thunar/thunar-io-jobs.c:214 ../thunar/thunar-io-jobs.c:369
 #, c-format
@@ -991,23 +991,23 @@ msgstr "S'està preparant..."
 msgid "Could not delete file \"%s\": %s"
 msgstr "No s'ha pogut eliminar el fitxer «%s»: %s"
 
-#: ../thunar/thunar-io-jobs.c:638
+#: ../thunar/thunar-io-jobs.c:640
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
 msgstr "No s'ha pogut crear l'enllaç simbòlic a «%s», ja que no és un fitxer local"
 
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:1013
+#: ../thunar/thunar-io-jobs.c:1015
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "Ha fallat el canvi del propietari de «%s»: %s"
 
-#: ../thunar/thunar-io-jobs.c:1014
+#: ../thunar/thunar-io-jobs.c:1016
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "Ha fallat el canvi del grup de «%s»: %s"
 
-#: ../thunar/thunar-io-jobs.c:1169
+#: ../thunar/thunar-io-jobs.c:1171
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "Ha fallat el canvi dels permisos de «%s»: %s"
@@ -1038,7 +1038,7 @@ msgstr "enllaç a %s"
 msgid "link %u to %s"
 msgstr "enllaç %u a %s"
 
-#: ../thunar/thunar-job.c:251
+#: ../thunar/thunar-job.c:255
 #, c-format
 msgid ""
 "The file \"%s\" already exists. Would you like to replace it?\n"
@@ -1046,23 +1046,23 @@ msgid ""
 "If you replace an existing file, its contents will be overwritten."
 msgstr "El fitxer «%s» ja existeix. Voleu substituir-lo?\n\nSi substituïu un fitxer existent, se sobreescriurà el seu contingut."
 
-#: ../thunar/thunar-job.c:331
+#: ../thunar/thunar-job.c:335
 msgid "Do you want to overwrite it?"
 msgstr "Voleu sobreescriure-ho?"
 
-#: ../thunar/thunar-job.c:388
+#: ../thunar/thunar-job.c:392
 msgid "Do you want to permanently delete it?"
 msgstr "Voleu suprimir-ho permanentment?"
 
-#: ../thunar/thunar-job.c:442
+#: ../thunar/thunar-job.c:446
 msgid "Do you want to create it?"
 msgstr "Voleu crear-lo?"
 
-#: ../thunar/thunar-job.c:544
+#: ../thunar/thunar-job.c:548
 msgid "Do you want to skip it?"
 msgstr "Voleu ometre-ho?"
 
-#: ../thunar/thunar-job.c:593
+#: ../thunar/thunar-job.c:597
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
@@ -1939,12 +1939,28 @@ msgid_plural "%d file operations running"
 msgstr[0] "S'està executant %d operació de fitxers"
 msgstr[1] "S'estan executant %d operacions de fitxers"
 
-#: ../thunar/thunar-progress-view.c:232
+#: ../thunar/thunar-progress-view.c:236
+msgid "Pause"
+msgstr "Pausa"
+
+#: ../thunar/thunar-progress-view.c:243
+msgid "Resume"
+msgstr "Continua"
+
+#: ../thunar/thunar-progress-view.c:250
 msgid "Cancel"
 msgstr "Cancel·la"
 
+#: ../thunar/thunar-progress-view.c:366
+msgid "Paused"
+msgstr "Pausat"
+
+#: ../thunar/thunar-progress-view.c:386
+msgid "Resuming..."
+msgstr "S'està continuant..."
+
 #. update the status text
-#: ../thunar/thunar-progress-view.c:354
+#: ../thunar/thunar-progress-view.c:412
 msgid "Cancelling..."
 msgstr "S'està cancel·lant..."
 
@@ -2529,67 +2545,67 @@ msgstr "Fitx_er buit"
 msgid "No templates installed"
 msgstr "No hi ha cap plantilla instal·lada"
 
-#: ../thunar/thunar-transfer-job.c:828
+#: ../thunar/thunar-transfer-job.c:852
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
 "destination"
 msgstr "S'ha produït un error mentre s'estava copiant a «%s»: A %s li cal més espai per copiar a la destinació."
 
-#: ../thunar/thunar-transfer-job.c:879
+#: ../thunar/thunar-transfer-job.c:903
 msgid "Collecting files..."
 msgstr "S'estan recollint els fitxers..."
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:916
+#: ../thunar/thunar-transfer-job.c:942
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "S'està intentant de restaurar «%s»"
 
-#: ../thunar/thunar-transfer-job.c:945
+#: ../thunar/thunar-transfer-job.c:971
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "La carpeta «%s» ja no existeix, però es necessita per restaurar el fitxer «%s» des de la paperera"
 
-#: ../thunar/thunar-transfer-job.c:971
+#: ../thunar/thunar-transfer-job.c:997
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Ha fallat la restauració de la carpeta «%s»"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:992
+#: ../thunar/thunar-transfer-job.c:1018
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Intentant moure «%s»"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1064
+#: ../thunar/thunar-transfer-job.c:1090
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "No s'ha pogut moure directament «%s». S'estan recollint els fitxers per a copiar-los..."
 
-#: ../thunar/thunar-transfer-job.c:1225
+#: ../thunar/thunar-transfer-job.c:1251
 #, c-format
 msgid "%s of %s"
 msgstr "%s de %s"
 
-#: ../thunar/thunar-transfer-job.c:1245
+#: ../thunar/thunar-transfer-job.c:1271
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "falta %lu hora (%s/s)"
 msgstr[1] "falten %lu hores (%s/s)"
 
-#: ../thunar/thunar-transfer-job.c:1253
+#: ../thunar/thunar-transfer-job.c:1279
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "falta %lu minut (%s/s)"
 msgstr[1] "falten %lu minuts (%s/s)"
 
-#: ../thunar/thunar-transfer-job.c:1260
+#: ../thunar/thunar-transfer-job.c:1286
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
