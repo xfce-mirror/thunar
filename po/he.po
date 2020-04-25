@@ -6,6 +6,7 @@
 # Bar Boko <bokodev@outlook.com>, 2016
 # Elishai Eliyahu <e1907@mm.st>, 2016-2020
 # GenghisKhan <genghiskhan@gmx.ca>, 2015-2016
+# Omer, 2020
 # Yaron Shahrabani <sh.yaron@gmail.com>, 2013-2014
 # Yo'av Moshe <bjesusATgmailDOTcom>, 2006
 # Yuval Tanny <tanai@int.gov.il>, 2006-2007
@@ -13,9 +14,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-11 00:30+0200\n"
-"PO-Revision-Date: 2020-04-10 22:30+0000\n"
-"Last-Translator: Xfce Bot <transifex@xfce.org>\n"
+"POT-Creation-Date: 2020-04-18 22:20+0200\n"
+"PO-Revision-Date: 2020-04-23 15:45+0000\n"
+"Last-Translator: Omer\n"
 "Language-Team: Hebrew (http://www.transifex.com/xfce/thunar/language/he/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -633,19 +634,19 @@ msgstr "מספר שמות קובצי המקור והיעד חייב להיות �
 msgid "A destination directory must be specified"
 msgstr "יש לציין ספריית יעד"
 
-#: ../thunar/thunar-details-view.c:140
+#: ../thunar/thunar-details-view.c:143
 msgid "Configure _Columns..."
 msgstr "הגדר עמודות..."
 
-#: ../thunar/thunar-details-view.c:140
+#: ../thunar/thunar-details-view.c:143
 msgid "Configure the columns in the detailed list view"
 msgstr "הגדר את העמודות בתצוגת הרשימה המפורטת"
 
-#: ../thunar/thunar-details-view.c:405
+#: ../thunar/thunar-details-view.c:408
 msgid "Detailed directory listing"
 msgstr "תרשים ספרייה מפורט"
 
-#: ../thunar/thunar-details-view.c:406
+#: ../thunar/thunar-details-view.c:409
 msgid "Details view"
 msgstr "תצוגת פרטים"
 
@@ -964,7 +965,7 @@ msgstr "תצוגת איקונים"
 #: ../thunar/thunar-io-jobs.c:111
 #, c-format
 msgid "Error removing file: %s"
-msgstr ""
+msgstr "נכשל במחיקת הקובץ: %s"
 
 #: ../thunar/thunar-io-jobs.c:214 ../thunar/thunar-io-jobs.c:369
 #, c-format
@@ -991,23 +992,23 @@ msgstr "כעת מכין..."
 msgid "Could not delete file \"%s\": %s"
 msgstr "לא ניתן למחוק את הקובץ \"%s\":‏ %s"
 
-#: ../thunar/thunar-io-jobs.c:638
+#: ../thunar/thunar-io-jobs.c:640
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
 msgstr "לא ניתן ליצור את הקישור הסימבולי אל \"%s\" מכיוון שאינו קובץ מקומי"
 
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:1013
+#: ../thunar/thunar-io-jobs.c:1015
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "ארע כשל בשינוי הבעלים של \"%s\":‏ %s"
 
-#: ../thunar/thunar-io-jobs.c:1014
+#: ../thunar/thunar-io-jobs.c:1016
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "ארע כשל בשינוי הקבוצה של \"%s\":‏ %s"
 
-#: ../thunar/thunar-io-jobs.c:1169
+#: ../thunar/thunar-io-jobs.c:1171
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "אירע כשל בשינוי ההרשאות של \"%s\":‏ %s"
@@ -1038,7 +1039,7 @@ msgstr "קישור אל %s"
 msgid "link %u to %s"
 msgstr "קישור של %u אל %s"
 
-#: ../thunar/thunar-job.c:251
+#: ../thunar/thunar-job.c:255
 #, c-format
 msgid ""
 "The file \"%s\" already exists. Would you like to replace it?\n"
@@ -1046,23 +1047,23 @@ msgid ""
 "If you replace an existing file, its contents will be overwritten."
 msgstr "הקובץ \"%s\" כבר קיים. האם ברצונך להחליף אותו?\n\nאם יוחלף קובץ קיים, תוכנו יוחלף."
 
-#: ../thunar/thunar-job.c:331
+#: ../thunar/thunar-job.c:335
 msgid "Do you want to overwrite it?"
 msgstr "האם ברצונך להחליף את זה?"
 
-#: ../thunar/thunar-job.c:388
+#: ../thunar/thunar-job.c:392
 msgid "Do you want to permanently delete it?"
 msgstr "האם ברצונך למחוק לצמיתות?"
 
-#: ../thunar/thunar-job.c:442
+#: ../thunar/thunar-job.c:446
 msgid "Do you want to create it?"
 msgstr "האם ברצונך ליצור את זה?"
 
-#: ../thunar/thunar-job.c:544
+#: ../thunar/thunar-job.c:548
 msgid "Do you want to skip it?"
 msgstr "האם ברצונך לדלג על זה?"
 
-#: ../thunar/thunar-job.c:593
+#: ../thunar/thunar-job.c:597
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
@@ -1973,12 +1974,28 @@ msgstr[1] "%d פעולות קובץ מופעלות כעת"
 msgstr[2] "%d פעולות קובץ מופעלות כעת"
 msgstr[3] "%d פעולות קובץ מופעלות כעת"
 
-#: ../thunar/thunar-progress-view.c:232
+#: ../thunar/thunar-progress-view.c:236
+msgid "Pause"
+msgstr ""
+
+#: ../thunar/thunar-progress-view.c:243
+msgid "Resume"
+msgstr ""
+
+#: ../thunar/thunar-progress-view.c:250
 msgid "Cancel"
 msgstr "ביטול"
 
+#: ../thunar/thunar-progress-view.c:366
+msgid "Paused"
+msgstr ""
+
+#: ../thunar/thunar-progress-view.c:386
+msgid "Resuming..."
+msgstr ""
+
 #. update the status text
-#: ../thunar/thunar-progress-view.c:354
+#: ../thunar/thunar-progress-view.c:412
 msgid "Cancelling..."
 msgstr "כעת מבטל..."
 
@@ -2593,53 +2610,53 @@ msgstr "קובץ _ריק"
 msgid "No templates installed"
 msgstr "אין תבניות מותקנות"
 
-#: ../thunar/thunar-transfer-job.c:828
+#: ../thunar/thunar-transfer-job.c:852
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
 "destination"
 msgstr "אירעה שגיאה בעת ההעתקה אל %s: נדרשים עוד %s על מנת להעתיק אל היעד"
 
-#: ../thunar/thunar-transfer-job.c:879
+#: ../thunar/thunar-transfer-job.c:903
 msgid "Collecting files..."
 msgstr "כעת אוסף קבצים..."
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:916
+#: ../thunar/thunar-transfer-job.c:942
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "כעת מנסה לשחזר את \"%s\""
 
-#: ../thunar/thunar-transfer-job.c:945
+#: ../thunar/thunar-transfer-job.c:971
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "התיקייה \"%s\" אינה קיימת עוד אך היא נדרשת לצורך שחזור הקובץ \"%s\" מהאשפה"
 
-#: ../thunar/thunar-transfer-job.c:971
+#: ../thunar/thunar-transfer-job.c:997
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "נכשל לשחזר את התיקייה \"%s\""
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:992
+#: ../thunar/thunar-transfer-job.c:1018
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "כעת מנסה להעביר את \"%s\""
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1064
+#: ../thunar/thunar-transfer-job.c:1090
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "לא ניתן להעביר את \"%s\" ישירות. הקבצים להעתקה נאספים..."
 
-#: ../thunar/thunar-transfer-job.c:1225
+#: ../thunar/thunar-transfer-job.c:1251
 #, c-format
 msgid "%s of %s"
 msgstr "%s מתוך %s"
 
-#: ../thunar/thunar-transfer-job.c:1245
+#: ../thunar/thunar-transfer-job.c:1271
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
@@ -2648,7 +2665,7 @@ msgstr[1] "נותרו %lu שעות (%s/שנייה)"
 msgstr[2] "נותרו %lu שעות (%s/שנייה)"
 msgstr[3] "נותרו %lu שעות (%s/שנייה)"
 
-#: ../thunar/thunar-transfer-job.c:1253
+#: ../thunar/thunar-transfer-job.c:1279
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
@@ -2657,7 +2674,7 @@ msgstr[1] "נותרו %lu דקות (%s/שנייה)"
 msgstr[2] "נותרו %lu דקות (%s/שנייה)"
 msgstr[3] "נותרו %lu דקות (%s/שנייה)"
 
-#: ../thunar/thunar-transfer-job.c:1260
+#: ../thunar/thunar-transfer-job.c:1286
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
