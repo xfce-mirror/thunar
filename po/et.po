@@ -32,6 +32,12 @@ msgid ""
 "\n"
 "Please restart thunar afterwards."
 msgstr ""
+"Thunari käivitamine ei õnnestunud kuna üks varem Thunari eksemplar veel töötab.\n"
+"Kas sa soovid selle vanema Thunari eksemplari sulgeda?\n"
+"\n"
+"Enne nõustumist palun kontrolli, et kõik pooleli olnud tegevused (näiteks failide kopeerimine) on lõpetatud. Selliste tegevuste katkestamine võib faile lõhkuda.\n"
+"\n"
+"Seejärel palun käivita Thunar uuesti."
 
 #. setup application name
 #: ../thunar/main.c:125
@@ -620,7 +626,7 @@ msgstr "_Loo"
 
 #: ../thunar/thunar-create-dialog.c:159
 msgid "Enter the name:"
-msgstr ""
+msgstr "Sisesta nimi:"
 
 #. display an error message
 #: ../thunar/thunar-create-dialog.c:452
@@ -695,7 +701,8 @@ msgid "translator-credits"
 msgstr ""
 "Peeter Vois <peeter.vois@proekspert.ee>, 2006.\n"
 "Mattias Põldaru <mahfiaz@gmail.com>, 2008, 2014.\n"
-"Kristjan Siimson <epost@ksiimson.se>, 2008."
+"Kristjan Siimson <epost@ksiimson.se>, 2008\n"
+"Priit Jõerüüt 2020."
 
 #: ../thunar/thunar-dialogs.c:454 ../thunar/thunar-permissions-chooser.c:524
 msgid "_Yes"
@@ -883,7 +890,7 @@ msgstr "Suurus"
 
 #: ../thunar/thunar-enum-types.c:109
 msgid "Size in Bytes"
-msgstr ""
+msgstr "Suurus baitides"
 
 #: ../thunar/thunar-enum-types.c:110
 msgid "Type"
@@ -951,7 +958,7 @@ msgstr "%s masinas %s"
 #: ../thunar/thunar-gio-extensions.c:446
 #, c-format
 msgid "%s of %s free (%d%% used)"
-msgstr ""
+msgstr "%s vaba %s'st (%d%% kasutusel)"
 
 #. extend history tooltip with function of the button
 #: ../thunar/thunar-history-action.c:351
@@ -996,7 +1003,7 @@ msgstr "Ikoonivaade"
 #: ../thunar/thunar-io-jobs.c:111
 #, c-format
 msgid "Error removing file: %s"
-msgstr ""
+msgstr "Viga faili kustutamisel: %s"
 
 #: ../thunar/thunar-io-jobs.c:214 ../thunar/thunar-io-jobs.c:369
 #, c-format
@@ -1088,7 +1095,7 @@ msgstr "Kas kirjutada see üle?"
 
 #: ../thunar/thunar-job.c:388
 msgid "Do you want to permanently delete it?"
-msgstr ""
+msgstr "Kas soovid ta püsivalt kustutada?"
 
 #: ../thunar/thunar-job.c:442
 msgid "Do you want to create it?"
@@ -1277,8 +1284,8 @@ msgstr[1] "Valitud failide saatmine kohta „%s”"
 #, c-format
 msgid "%d item: %s, Free space: %s"
 msgid_plural "%d items: %s, Free space: %s"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%dkirje: %s, vaba ruumi: %s"
+msgstr[1] "%d kirjet: %s, vaba ruumi: %s"
 
 #. just the standard text
 #: ../thunar/thunar-list-model.c:2409
@@ -1298,17 +1305,17 @@ msgstr[1] "%d kirjet"
 #: ../thunar/thunar-list-model.c:2434
 #, c-format
 msgid "\"%s\": broken link"
-msgstr ""
+msgstr "\"%s\": vigane viide"
 
 #: ../thunar/thunar-list-model.c:2439
 #, c-format
 msgid "\"%s\": %s link to %s"
-msgstr ""
+msgstr "\"%s\": %s viide asukohta %s"
 
 #: ../thunar/thunar-list-model.c:2445
 #, c-format
 msgid "\"%s\": shortcut"
-msgstr ""
+msgstr "\"%s\": otsetee"
 
 #: ../thunar/thunar-list-model.c:2449
 #, c-format
@@ -1320,13 +1327,13 @@ msgstr "\"%s\" on haagitav"
 #: ../thunar/thunar-list-model.c:2456
 #, c-format
 msgid "\"%s\": %s %s"
-msgstr ""
+msgstr "\"%s\": %s %s"
 
 #. I18N, first %s is the display name of the file, second the content type
 #: ../thunar/thunar-list-model.c:2465
 #, c-format
 msgid "\"%s\": %s"
-msgstr ""
+msgstr "\"%s\": %s"
 
 #. TRANSLATORS: Try to come up with a short translation of "Original Path"
 #. (which is the path
@@ -1348,16 +1355,16 @@ msgstr "Pildi suurus:"
 #, c-format
 msgid "%d other item selected: %s"
 msgid_plural "%d other items selected: %s"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d muu kirje valitud: %s"
+msgstr[1] "%d muud kirjet valitud: %s"
 
 #. only non-folders are selected
 #: ../thunar/thunar-list-model.c:2544
 #, c-format
 msgid "%d item selected: %s"
 msgid_plural "%d items selected: %s"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d kirje valitud: %s"
+msgstr[1] "%d kirjet valitud: %s"
 
 #: ../thunar/thunar-list-model.c:2558
 #, c-format
@@ -1692,12 +1699,14 @@ msgstr "Selle valiku puhul järjestatakse kaustad enne faile."
 
 #: ../thunar/thunar-preferences-dialog.c:352
 msgid "Show file size in binary format"
-msgstr ""
+msgstr "Kuva faili suurus kahendvormingus"
 
 #: ../thunar/thunar-preferences-dialog.c:354
 msgid ""
 "Select this option to show file size in binary format instead of decimal."
 msgstr ""
+"Selle eelistuse valimisel kuvatakse failide suurus kahendvormingus "
+"kümnendvormingu asemel."
 
 #: ../thunar/thunar-preferences-dialog.c:376
 msgid "_Text beside icons"
@@ -1769,52 +1778,52 @@ msgstr "_Ikooni suurus:"
 #: ../thunar/thunar-preferences-dialog.c:470
 #: ../thunar/thunar-preferences-dialog.c:518
 msgid "16px"
-msgstr ""
+msgstr "16px"
 
 #: ../thunar/thunar-preferences-dialog.c:471
 #: ../thunar/thunar-preferences-dialog.c:519
 msgid "24px"
-msgstr ""
+msgstr "24px"
 
 #: ../thunar/thunar-preferences-dialog.c:472
 #: ../thunar/thunar-preferences-dialog.c:520
 msgid "32px"
-msgstr ""
+msgstr "32px"
 
 #: ../thunar/thunar-preferences-dialog.c:473
 #: ../thunar/thunar-preferences-dialog.c:521
 msgid "48px"
-msgstr ""
+msgstr "48px"
 
 #: ../thunar/thunar-preferences-dialog.c:474
 #: ../thunar/thunar-preferences-dialog.c:522
 msgid "64px"
-msgstr ""
+msgstr "64px"
 
 #: ../thunar/thunar-preferences-dialog.c:475
 #: ../thunar/thunar-preferences-dialog.c:523
 msgid "96px"
-msgstr ""
+msgstr "96px"
 
 #: ../thunar/thunar-preferences-dialog.c:476
 #: ../thunar/thunar-preferences-dialog.c:524
 msgid "128px"
-msgstr ""
+msgstr "128px"
 
 #: ../thunar/thunar-preferences-dialog.c:477
 #: ../thunar/thunar-preferences-dialog.c:525
 msgid "160px"
-msgstr ""
+msgstr "160px"
 
 #: ../thunar/thunar-preferences-dialog.c:478
 #: ../thunar/thunar-preferences-dialog.c:526
 msgid "192px"
-msgstr ""
+msgstr "192px"
 
 #: ../thunar/thunar-preferences-dialog.c:479
 #: ../thunar/thunar-preferences-dialog.c:527
 msgid "256px"
-msgstr ""
+msgstr "256px"
 
 #: ../thunar/thunar-preferences-dialog.c:488
 msgid "Show Icon _Emblems"
@@ -1924,7 +1933,7 @@ msgid ""
 "Select this option to open new thunar instances as tabs in an existing "
 "thunar window"
 msgstr ""
-"Vali see eelistus, kui soovid uued thunari vaatad avada kaartidena "
+"Vali see eelistus, kui soovid uued Thunari vaated avada kaartidena "
 "olemasolevas aknas"
 
 #: ../thunar/thunar-preferences-dialog.c:679
@@ -1984,6 +1993,8 @@ msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr ""
+"<a href=\"volman-config:\">Seadista</a> eemaldavate andmekandjate, seadmete\n"
+"ja meedia haldamist."
 
 #: ../thunar/thunar-preferences-dialog.c:789
 msgid "Missing dependencies"
@@ -1996,6 +2007,10 @@ msgid ""
 "removable media and remote location browsing\n"
 "will not work. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Read more]</a>"
 msgstr ""
+"Tundub et <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> ei ole saadaval.\n"
+"Olulised funktsionaalsused nagu prügikast,\n"
+"eemaldatavad andmekandjad ja kaugketaste sirvimine\n"
+"ei tööta. <a href=\"https://docs.xfce.org/xfce/thunar/unix-filesystem#gnome_virtual_file_system\">[Lisateave]</a>"
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
@@ -2748,19 +2763,19 @@ msgstr "Selle kausta avamine uues aknas"
 
 #: ../thunar/thunar-window.c:357
 msgid "_Previous Tab"
-msgstr ""
+msgstr "_Eelmine kaart"
 
 #: ../thunar/thunar-window.c:357
 msgid "Switch to Previous Tab"
-msgstr ""
+msgstr "Vali eelmine kaart"
 
 #: ../thunar/thunar-window.c:358
 msgid "_Next Tab"
-msgstr ""
+msgstr "_Järgmine kaart"
 
 #: ../thunar/thunar-window.c:358
 msgid "Switch to Next Tab"
-msgstr ""
+msgstr "Vali järgmine kaart"
 
 #: ../thunar/thunar-window.c:359
 msgid "Close _All Windows"
@@ -3295,11 +3310,11 @@ msgstr "SUURTÄHED"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:95
 msgid "Title Case"
-msgstr ""
+msgstr "Iga Sõna Suure Algustähega"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:96
 msgid "First character uppercase"
-msgstr ""
+msgstr "Esimene sõna suure algustähega"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:102
 msgid "Insert"
@@ -3596,11 +3611,11 @@ msgstr "Kui sa kustutad kohandatud tegevuse, kaob see jäädavalt."
 #: ../plugins/thunar-uca/thunar-uca-editor.c:353
 #, c-format
 msgid "This keyboard shortcut is currently used by: '%s'"
-msgstr ""
+msgstr "See klaviatuuri kiirklahv on hetkel kasutusel: '%s'"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:356
 msgid "Keyboard shortcut already in use"
-msgstr ""
+msgstr "Hetkel kasutuses olevad klaviatuuri kiirklahvid"
 
 #. setup a label to tell that no icon was selected
 #: ../plugins/thunar-uca/thunar-uca-editor.c:507
@@ -3701,15 +3716,15 @@ msgstr "Failisüsteemi lehitsemine, et tegevuse jaoks rakendus leida."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:10
 msgid "Keyboard _Shortcut:"
-msgstr ""
+msgstr "Klaviatuuri kiirklahv:"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:11
 msgid "The keyboard shortcut for the action."
-msgstr ""
+msgstr "Klaviatuuri kiirklahvid selle tegevuse jaoks."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:12
 msgid "Clear the keyboard shortcut for this action."
-msgstr ""
+msgstr "Eemalda selle tegevuse jaoks seadiatatud klaviatuuri kiirklahv."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:13
 msgid "Use Startup Notification"
@@ -3891,6 +3906,9 @@ msgid ""
 "also can serve as an alternate file browser for other Desktop environments. "
 "It has a simple, clean two-pane design for browsing all your files."
 msgstr ""
+"Failihaldur Thunar on loodud Xfce töölaua jaoks, kuid sobib kasutamiseks "
+"alternatiivse failihaldurina ka muudes töölauakeskondades. Thunaril on "
+"lihtne kahe paaniga vaade kõikide sinu failide haldamise jaoks."
 
 #. SECURITY:
 #. - A normal active user can run thunar without elevated rights. They
@@ -3898,8 +3916,8 @@ msgstr ""
 #. to. This isn't a good idea, but is common on single user systems.
 #: ../org.xfce.thunar.policy.in.in.h:6
 msgid "Run Thunar as root"
-msgstr ""
+msgstr "Käivita Thunar juurkasutajana"
 
 #: ../org.xfce.thunar.policy.in.in.h:7
 msgid "Authentication is required to run Thunar as root."
-msgstr ""
+msgstr "Thunari käivitamiseks juurkasutajana on vajalik autentimine."
