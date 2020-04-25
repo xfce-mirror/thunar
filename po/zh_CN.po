@@ -21,8 +21,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-11 00:30+0200\n"
-"PO-Revision-Date: 2020-04-13 02:47+0000\n"
+"POT-Creation-Date: 2020-04-18 22:20+0200\n"
+"PO-Revision-Date: 2020-04-21 05:51+0000\n"
 "Last-Translator: 玉堂白鹤 <yjwork@qq.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/xfce/thunar/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
@@ -638,19 +638,19 @@ msgstr "源文件名和目标文件名的数目必须一致"
 msgid "A destination directory must be specified"
 msgstr "至少要指定一个目标目录"
 
-#: ../thunar/thunar-details-view.c:140
+#: ../thunar/thunar-details-view.c:143
 msgid "Configure _Columns..."
 msgstr "配置栏(_C)..."
 
-#: ../thunar/thunar-details-view.c:140
+#: ../thunar/thunar-details-view.c:143
 msgid "Configure the columns in the detailed list view"
 msgstr "配置详细列表视图中的栏"
 
-#: ../thunar/thunar-details-view.c:405
+#: ../thunar/thunar-details-view.c:408
 msgid "Detailed directory listing"
 msgstr "详细目录列表"
 
-#: ../thunar/thunar-details-view.c:406
+#: ../thunar/thunar-details-view.c:409
 msgid "Details view"
 msgstr "详细视图"
 
@@ -996,23 +996,23 @@ msgstr "正在准备..."
 msgid "Could not delete file \"%s\": %s"
 msgstr "未能删除文件 “%s”: %s"
 
-#: ../thunar/thunar-io-jobs.c:638
+#: ../thunar/thunar-io-jobs.c:640
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
 msgstr "因为 “%s” 不是本地文件，所以未能创建指向它的符号链接"
 
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:1013
+#: ../thunar/thunar-io-jobs.c:1015
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "无法更改 “%s” 的所有者: %s"
 
-#: ../thunar/thunar-io-jobs.c:1014
+#: ../thunar/thunar-io-jobs.c:1016
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "无法更改 “%s” 的群组: %s"
 
-#: ../thunar/thunar-io-jobs.c:1169
+#: ../thunar/thunar-io-jobs.c:1171
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "无法更改 “%s” 的权限: %s"
@@ -1043,7 +1043,7 @@ msgstr "%s 的链接"
 msgid "link %u to %s"
 msgstr "到 %2$s 的第 %1$u 个链接"
 
-#: ../thunar/thunar-job.c:251
+#: ../thunar/thunar-job.c:255
 #, c-format
 msgid ""
 "The file \"%s\" already exists. Would you like to replace it?\n"
@@ -1051,23 +1051,23 @@ msgid ""
 "If you replace an existing file, its contents will be overwritten."
 msgstr "文件 “%s” 已经存在。您要替换它吗？\n\n如果您替换已存在的文件，将改写它的内容。"
 
-#: ../thunar/thunar-job.c:331
+#: ../thunar/thunar-job.c:335
 msgid "Do you want to overwrite it?"
 msgstr "您要改写它吗？"
 
-#: ../thunar/thunar-job.c:388
+#: ../thunar/thunar-job.c:392
 msgid "Do you want to permanently delete it?"
 msgstr "您要永久删除它吗？"
 
-#: ../thunar/thunar-job.c:442
+#: ../thunar/thunar-job.c:446
 msgid "Do you want to create it?"
 msgstr "您要创建它吗？"
 
-#: ../thunar/thunar-job.c:544
+#: ../thunar/thunar-job.c:548
 msgid "Do you want to skip it?"
 msgstr "您要跳过它吗？"
 
-#: ../thunar/thunar-job.c:593
+#: ../thunar/thunar-job.c:597
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
@@ -1927,12 +1927,28 @@ msgid "%d file operation running"
 msgid_plural "%d file operations running"
 msgstr[0] "%d 个文件操作正在运行"
 
-#: ../thunar/thunar-progress-view.c:232
+#: ../thunar/thunar-progress-view.c:236
+msgid "Pause"
+msgstr "暂停"
+
+#: ../thunar/thunar-progress-view.c:243
+msgid "Resume"
+msgstr "恢复"
+
+#: ../thunar/thunar-progress-view.c:250
 msgid "Cancel"
 msgstr "取消"
 
+#: ../thunar/thunar-progress-view.c:366
+msgid "Paused"
+msgstr "已暂停"
+
+#: ../thunar/thunar-progress-view.c:386
+msgid "Resuming..."
+msgstr "正在恢复..."
+
 #. update the status text
-#: ../thunar/thunar-progress-view.c:354
+#: ../thunar/thunar-progress-view.c:412
 msgid "Cancelling..."
 msgstr "正在取消..."
 
@@ -2502,65 +2518,65 @@ msgstr "空文件(_E)"
 msgid "No templates installed"
 msgstr "未安装模板"
 
-#: ../thunar/thunar-transfer-job.c:828
+#: ../thunar/thunar-transfer-job.c:852
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
 "destination"
 msgstr "复制至 \"%s\" 时出错: 还需要 %s 的空间才能复制到目标位置"
 
-#: ../thunar/thunar-transfer-job.c:879
+#: ../thunar/thunar-transfer-job.c:903
 msgid "Collecting files..."
 msgstr "正在搜集文件..."
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:916
+#: ../thunar/thunar-transfer-job.c:942
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "正在尝试恢复 “%s”"
 
-#: ../thunar/thunar-transfer-job.c:945
+#: ../thunar/thunar-transfer-job.c:971
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "文件夹 “%s” 已经不再存在，但要从回收站中恢复此文件 “%s” 却需要它"
 
-#: ../thunar/thunar-transfer-job.c:971
+#: ../thunar/thunar-transfer-job.c:997
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "无法恢复文件夹 “%s”"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:992
+#: ../thunar/thunar-transfer-job.c:1018
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "正在尝试移动 “%s”"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1064
+#: ../thunar/thunar-transfer-job.c:1090
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "未能直接移动 “%s”。正在收集要复制的文件..."
 
-#: ../thunar/thunar-transfer-job.c:1225
+#: ../thunar/thunar-transfer-job.c:1251
 #, c-format
 msgid "%s of %s"
 msgstr "%s 的 %s"
 
-#: ../thunar/thunar-transfer-job.c:1245
+#: ../thunar/thunar-transfer-job.c:1271
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "剩余 %lu 小时 (每秒 %s)"
 
-#: ../thunar/thunar-transfer-job.c:1253
+#: ../thunar/thunar-transfer-job.c:1279
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "剩余 %lu 分钟 (每秒 %s)"
 
-#: ../thunar/thunar-transfer-job.c:1260
+#: ../thunar/thunar-transfer-job.c:1286
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
