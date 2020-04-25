@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-11 00:30+0200\n"
-"PO-Revision-Date: 2020-04-12 18:23+0000\n"
+"POT-Creation-Date: 2020-04-18 22:20+0200\n"
+"PO-Revision-Date: 2020-04-19 09:40+0000\n"
 "Last-Translator: Pjotr <pjotrvertaalt@gmail.com>\n"
 "Language-Team: Dutch (http://www.transifex.com/xfce/thunar/language/nl/)\n"
 "MIME-Version: 1.0\n"
@@ -340,7 +340,7 @@ msgstr "Gebruik een aangepaste opdracht voor een toepassing die niet beschikbaar
 #. create the "Custom command" button
 #: ../thunar/thunar-chooser-dialog.c:275
 msgid "_Browse..."
-msgstr "_Bladeren..."
+msgstr "_Verkennen..."
 
 #. create the "Use as default for this kind of file" button
 #: ../thunar/thunar-chooser-dialog.c:281
@@ -383,7 +383,7 @@ msgstr "Open <i>%s</i> en andere bestanden van het type '%s' met:"
 msgid ""
 "Browse the file system to select an application to open files of type "
 "\"%s\"."
-msgstr "Blader door het bestandssysteem om een toepassing te kiezen waarmee bestanden van het type '%s' geopend moeten worden."
+msgstr "Verken het bestandssysteem om een toepassing te kiezen waarmee bestanden van het type '%s' geopend moeten worden."
 
 #: ../thunar/thunar-chooser-dialog.c:657
 #, c-format
@@ -627,19 +627,19 @@ msgstr "Het aantal namen van bron- en doelbestanden moet hetzelfde zijn"
 msgid "A destination directory must be specified"
 msgstr "Er moet een bestemmingsmap worden aangegeven"
 
-#: ../thunar/thunar-details-view.c:140
+#: ../thunar/thunar-details-view.c:143
 msgid "Configure _Columns..."
 msgstr "Kolommen _configureren..."
 
-#: ../thunar/thunar-details-view.c:140
+#: ../thunar/thunar-details-view.c:143
 msgid "Configure the columns in the detailed list view"
 msgstr "Configureer de kolommen in de gedetailleerde lijstweergave"
 
-#: ../thunar/thunar-details-view.c:405
+#: ../thunar/thunar-details-view.c:408
 msgid "Detailed directory listing"
 msgstr "Gedetailleerde lijstweergave van de mappen"
 
-#: ../thunar/thunar-details-view.c:406
+#: ../thunar/thunar-details-view.c:409
 msgid "Details view"
 msgstr "Gedetailleerde weergave"
 
@@ -985,23 +985,23 @@ msgstr "Voorbereiden..."
 msgid "Could not delete file \"%s\": %s"
 msgstr "Kon bestand '%s' niet verwijderen: %s"
 
-#: ../thunar/thunar-io-jobs.c:638
+#: ../thunar/thunar-io-jobs.c:640
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
 msgstr "Kon geen symbolische koppeling maken naar '%s' omdat het geen lokaal bestand is"
 
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:1013
+#: ../thunar/thunar-io-jobs.c:1015
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "Kon de eigenaar van '%s' niet veranderen: %s"
 
-#: ../thunar/thunar-io-jobs.c:1014
+#: ../thunar/thunar-io-jobs.c:1016
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "Kon de groep van '%s' niet veranderen: %s"
 
-#: ../thunar/thunar-io-jobs.c:1169
+#: ../thunar/thunar-io-jobs.c:1171
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "Kon de rechten van '%s' niet veranderen: %s"
@@ -1032,7 +1032,7 @@ msgstr "koppeling naar %s"
 msgid "link %u to %s"
 msgstr "Koppel %u aan %s"
 
-#: ../thunar/thunar-job.c:251
+#: ../thunar/thunar-job.c:255
 #, c-format
 msgid ""
 "The file \"%s\" already exists. Would you like to replace it?\n"
@@ -1040,23 +1040,23 @@ msgid ""
 "If you replace an existing file, its contents will be overwritten."
 msgstr "Het bestand '%s' bestaat al. Wilt u dit bestand vervangen?\n\nAls u een bestaand bestand vervangt, dan zal de inhoud ervan worden overschreven."
 
-#: ../thunar/thunar-job.c:331
+#: ../thunar/thunar-job.c:335
 msgid "Do you want to overwrite it?"
 msgstr "Wilt u het overschrijven?"
 
-#: ../thunar/thunar-job.c:388
+#: ../thunar/thunar-job.c:392
 msgid "Do you want to permanently delete it?"
 msgstr "Wilt u het blijvend verwijderen?"
 
-#: ../thunar/thunar-job.c:442
+#: ../thunar/thunar-job.c:446
 msgid "Do you want to create it?"
 msgstr "Wilt u het maken?"
 
-#: ../thunar/thunar-job.c:544
+#: ../thunar/thunar-job.c:548
 msgid "Do you want to skip it?"
 msgstr "Wilt u het overslaan?"
 
-#: ../thunar/thunar-job.c:593
+#: ../thunar/thunar-job.c:597
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
@@ -1933,12 +1933,28 @@ msgid_plural "%d file operations running"
 msgstr[0] "%d bestandbewerking gaande"
 msgstr[1] "%d bestandbewerkingen gaande"
 
-#: ../thunar/thunar-progress-view.c:232
+#: ../thunar/thunar-progress-view.c:236
+msgid "Pause"
+msgstr "Pauzeren"
+
+#: ../thunar/thunar-progress-view.c:243
+msgid "Resume"
+msgstr "Hervatten"
+
+#: ../thunar/thunar-progress-view.c:250
 msgid "Cancel"
 msgstr "Afbreken"
 
+#: ../thunar/thunar-progress-view.c:366
+msgid "Paused"
+msgstr "Gepauzeerd"
+
+#: ../thunar/thunar-progress-view.c:386
+msgid "Resuming..."
+msgstr "Hervatten...."
+
 #. update the status text
-#: ../thunar/thunar-progress-view.c:354
+#: ../thunar/thunar-progress-view.c:412
 msgid "Cancelling..."
 msgstr "Afbreken...."
 
@@ -2186,7 +2202,7 @@ msgstr "Wilt u dit bestand overslaan en doorgaan met het hernoemen van de rester
 #: ../thunar/thunar-shortcuts-model.c:622
 #: ../thunar/thunar-shortcuts-model.c:962 ../thunar/thunar-window.c:383
 msgid "Browse the file system"
-msgstr "Blader door het bestandssysteem"
+msgstr "Verken het bestandssysteem"
 
 #: ../thunar/thunar-shortcuts-model.c:645
 #: ../plugins/thunar-tpa/thunar-tpa.c:284
@@ -2210,11 +2226,11 @@ msgstr "NETWERK"
 
 #: ../thunar/thunar-shortcuts-model.c:1006
 msgid "Browse Network"
-msgstr "Blader door het netwerk"
+msgstr "Verken het netwerk"
 
 #: ../thunar/thunar-shortcuts-model.c:1007 ../thunar/thunar-window.c:384
 msgid "Browse local network connections"
-msgstr "Blader door lokale netwerkverbindingen"
+msgstr "Verken lokale netwerkverbindingen"
 
 #: ../thunar/thunar-shortcuts-model.c:1029
 msgid "PLACES"
@@ -2523,67 +2539,67 @@ msgstr "L_eeg bestand"
 msgid "No templates installed"
 msgstr "Geen sjablonen geïnstalleerd"
 
-#: ../thunar/thunar-transfer-job.c:828
+#: ../thunar/thunar-transfer-job.c:852
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
 "destination"
 msgstr "Fout bij het kopiëren naar '%s': er is %s meer ruimte nodig om naar de bestemming te kopiëren"
 
-#: ../thunar/thunar-transfer-job.c:879
+#: ../thunar/thunar-transfer-job.c:903
 msgid "Collecting files..."
 msgstr "Bestanden verzamelen..."
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:916
+#: ../thunar/thunar-transfer-job.c:942
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "Aan het proberen om '%s' te herstellen"
 
-#: ../thunar/thunar-transfer-job.c:945
+#: ../thunar/thunar-transfer-job.c:971
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "De map '%s' bestaat niet meer, maar is nodig om het bestand '%s' terug te kunnen zetten uit de prullenbak. Wilt u deze map opnieuw aanmaken?"
 
-#: ../thunar/thunar-transfer-job.c:971
+#: ../thunar/thunar-transfer-job.c:997
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Kon map '%s' niet herstellen"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:992
+#: ../thunar/thunar-transfer-job.c:1018
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Aan het proberen om '%s' te verplaatsen"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1064
+#: ../thunar/thunar-transfer-job.c:1090
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "Kon '%s' niet rechtstreeks verplaatsen. Bestanden aan het verzamelen om te kopiëren..."
 
-#: ../thunar/thunar-transfer-job.c:1225
+#: ../thunar/thunar-transfer-job.c:1251
 #, c-format
 msgid "%s of %s"
 msgstr "%s van %s"
 
-#: ../thunar/thunar-transfer-job.c:1245
+#: ../thunar/thunar-transfer-job.c:1271
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "%lu uur te gaan (%s/sec)"
 msgstr[1] "%lu uren te gaan (%s/sec)"
 
-#: ../thunar/thunar-transfer-job.c:1253
+#: ../thunar/thunar-transfer-job.c:1279
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "%lu minuut te gaan (%s/sec)"
 msgstr[1] "%lu minuten te gaan (%s/sec)"
 
-#: ../thunar/thunar-transfer-job.c:1260
+#: ../thunar/thunar-transfer-job.c:1286
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
@@ -2982,7 +2998,7 @@ msgstr "Kon de inhoud van de prullenbak niet weergeven"
 #. display an error to the user
 #: ../thunar/thunar-window.c:3337
 msgid "Failed to browse the network"
-msgstr "Kon niet bladeren door het netwerk"
+msgstr "Kon het netwerk niet verkennen"
 
 #: ../thunar/thunar-window.c:3421
 msgid ""
@@ -3593,7 +3609,7 @@ msgstr "De opdracht (met de noodzakelijke variabelen) om de actie uit te voeren.
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:9
 msgid ""
 "Browse the file system to select an application to use for this action."
-msgstr "Blader door het bestandssysteem om een toepassing voor deze actie te selecteren."
+msgstr "Verken het bestandssysteem om een toepassing voor deze actie te selecteren."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.ui.h:10
 msgid "Keyboard _Shortcut:"
@@ -3762,7 +3778,7 @@ msgstr "Thunar bestandbeheerder"
 
 #: ../thunar.desktop.in.in.h:2
 msgid "Browse the filesystem with the file manager"
-msgstr "Blader met de bestandbeheerder door het bestandssysteem"
+msgstr "Verken het bestandssysteem met de bestandbeheerder"
 
 #: ../thunar.desktop.in.in.h:4
 msgid ""
@@ -3797,7 +3813,7 @@ msgid ""
 "Thunar is a file browser specifically designed for the Xfce Desktop, but "
 "also can serve as an alternate file browser for other Desktop environments. "
 "It has a simple, clean two-pane design for browsing all your files."
-msgstr "Thunar is een bestandbeheerder die specifiek is ontworpen voor de Xfce-werkomgeving, maar hij kan ook dienen als een alternatieve bestandbeheerder in andere werkomgevingen. Hij heeft een eenvoudig, helder dubbelpaneelontwerp om al uw bestanden te kunnen doorbladeren."
+msgstr "Thunar is een bestandbeheerder die specifiek is ontworpen voor de Xfce-werkomgeving, maar hij kan ook dienen als een alternatieve bestandbeheerder in andere werkomgevingen. Hij heeft een eenvoudig, helder dubbelpaneelontwerp om al uw bestanden te kunnen verkennen."
 
 #. SECURITY:
 #. - A normal active user can run thunar without elevated rights. They
