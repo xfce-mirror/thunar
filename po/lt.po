@@ -10,9 +10,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-11 00:30+0200\n"
-"PO-Revision-Date: 2020-04-10 22:30+0000\n"
-"Last-Translator: Xfce Bot <transifex@xfce.org>\n"
+"POT-Creation-Date: 2020-04-18 22:20+0200\n"
+"PO-Revision-Date: 2020-04-19 13:54+0000\n"
+"Last-Translator: Moo\n"
 "Language-Team: Lithuanian (http://www.transifex.com/xfce/thunar/language/lt/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -630,19 +630,19 @@ msgstr "Šaltinio ir paskirties failų turi būti tiek pat"
 msgid "A destination directory must be specified"
 msgstr "Privalo būti nurodytas paskirties katalogas"
 
-#: ../thunar/thunar-details-view.c:140
+#: ../thunar/thunar-details-view.c:143
 msgid "Configure _Columns..."
 msgstr "Konfigūruoti _stulpelius..."
 
-#: ../thunar/thunar-details-view.c:140
+#: ../thunar/thunar-details-view.c:143
 msgid "Configure the columns in the detailed list view"
 msgstr "Tvarkyti stulpelius išsamaus sąrašo rodinyje"
 
-#: ../thunar/thunar-details-view.c:405
+#: ../thunar/thunar-details-view.c:408
 msgid "Detailed directory listing"
 msgstr "Išsamus katalogų sąrašas"
 
-#: ../thunar/thunar-details-view.c:406
+#: ../thunar/thunar-details-view.c:409
 msgid "Details view"
 msgstr "Išsamus rodinys"
 
@@ -961,7 +961,7 @@ msgstr "Piktogramų rodinys"
 #: ../thunar/thunar-io-jobs.c:111
 #, c-format
 msgid "Error removing file: %s"
-msgstr ""
+msgstr "Klaida šalinant failą: %s"
 
 #: ../thunar/thunar-io-jobs.c:214 ../thunar/thunar-io-jobs.c:369
 #, c-format
@@ -988,23 +988,23 @@ msgstr "Ruošiama..."
 msgid "Could not delete file \"%s\": %s"
 msgstr "Nepavyko pašalinti failo „%s“: %s"
 
-#: ../thunar/thunar-io-jobs.c:638
+#: ../thunar/thunar-io-jobs.c:640
 #, c-format
 msgid "Could not create symbolic link to \"%s\" because it is not a local file"
 msgstr "Nepavyko sukurti simbolinės nuorodos į „%s“, nes tai ne vietinis failas"
 
 #. generate a useful error message
-#: ../thunar/thunar-io-jobs.c:1013
+#: ../thunar/thunar-io-jobs.c:1015
 #, c-format
 msgid "Failed to change the owner of \"%s\": %s"
 msgstr "Nepavyko pakeisti failo „%s“ savininko: %s"
 
-#: ../thunar/thunar-io-jobs.c:1014
+#: ../thunar/thunar-io-jobs.c:1016
 #, c-format
 msgid "Failed to change the group of \"%s\": %s"
 msgstr "Nepavyko pakeisti „%s“ failo grupės: %s"
 
-#: ../thunar/thunar-io-jobs.c:1169
+#: ../thunar/thunar-io-jobs.c:1171
 #, c-format
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "Nepavyko pakeisti „%s“ leidimų: %s"
@@ -1035,7 +1035,7 @@ msgstr "nuoroda į %s"
 msgid "link %u to %s"
 msgstr "%u-a nuoroda į %s"
 
-#: ../thunar/thunar-job.c:251
+#: ../thunar/thunar-job.c:255
 #, c-format
 msgid ""
 "The file \"%s\" already exists. Would you like to replace it?\n"
@@ -1043,23 +1043,23 @@ msgid ""
 "If you replace an existing file, its contents will be overwritten."
 msgstr "Failas „%s“ jau egzistuoja. Ar norėtumėte jį pakeisti?\n\nJei pakeisite failą, jo turinys bus perrašytas."
 
-#: ../thunar/thunar-job.c:331
+#: ../thunar/thunar-job.c:335
 msgid "Do you want to overwrite it?"
 msgstr "Ar norite perrašyti?"
 
-#: ../thunar/thunar-job.c:388
+#: ../thunar/thunar-job.c:392
 msgid "Do you want to permanently delete it?"
 msgstr "Ar norite negrįžtamai jį ištrinti?"
 
-#: ../thunar/thunar-job.c:442
+#: ../thunar/thunar-job.c:446
 msgid "Do you want to create it?"
 msgstr "Ar norite sukurti jį?"
 
-#: ../thunar/thunar-job.c:544
+#: ../thunar/thunar-job.c:548
 msgid "Do you want to skip it?"
 msgstr "Ar norite praleisti?"
 
-#: ../thunar/thunar-job.c:593
+#: ../thunar/thunar-job.c:597
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
@@ -1970,12 +1970,28 @@ msgstr[1] "%d failų operacijų eiga"
 msgstr[2] "%d failų operacijų eiga"
 msgstr[3] "%d failų operacijų eiga"
 
-#: ../thunar/thunar-progress-view.c:232
+#: ../thunar/thunar-progress-view.c:236
+msgid "Pause"
+msgstr "Pristabdyti"
+
+#: ../thunar/thunar-progress-view.c:243
+msgid "Resume"
+msgstr "Pratęsti"
+
+#: ../thunar/thunar-progress-view.c:250
 msgid "Cancel"
 msgstr "Atsisakyti"
 
+#: ../thunar/thunar-progress-view.c:366
+msgid "Paused"
+msgstr "Pristabdyta"
+
+#: ../thunar/thunar-progress-view.c:386
+msgid "Resuming..."
+msgstr "Pratęsiama..."
+
 #. update the status text
-#: ../thunar/thunar-progress-view.c:354
+#: ../thunar/thunar-progress-view.c:412
 msgid "Cancelling..."
 msgstr "Atšaukiama..."
 
@@ -2590,53 +2606,53 @@ msgstr "_Tuščias failas"
 msgid "No templates installed"
 msgstr "Nėra įdiegtų šablonų"
 
-#: ../thunar/thunar-transfer-job.c:828
+#: ../thunar/thunar-transfer-job.c:852
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
 "destination"
 msgstr "Klaida, kopijuojant į \"%s\": norint kopijuoti į paskirties vietą, reikia %s daugiau laisvos vietos"
 
-#: ../thunar/thunar-transfer-job.c:879
+#: ../thunar/thunar-transfer-job.c:903
 msgid "Collecting files..."
 msgstr "Renkami failai..."
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:916
+#: ../thunar/thunar-transfer-job.c:942
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "Bandoma atkurti „%s“"
 
-#: ../thunar/thunar-transfer-job.c:945
+#: ../thunar/thunar-transfer-job.c:971
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "Aplankas „%s“ nebeegzistuoja, bet prašoma atkurti „%s“ failą iš šiukšlinės. Ar norite sukurti aplanką iš naujo?"
 
-#: ../thunar/thunar-transfer-job.c:971
+#: ../thunar/thunar-transfer-job.c:997
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Nepavyko atkurti aplanko „%s“"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:992
+#: ../thunar/thunar-transfer-job.c:1018
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Bandoma perkelti „%s“"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1064
+#: ../thunar/thunar-transfer-job.c:1090
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "Perkelti „%s“ tiesiogiai nepavyko. Renkami duomenys kopijavimui..."
 
-#: ../thunar/thunar-transfer-job.c:1225
+#: ../thunar/thunar-transfer-job.c:1251
 #, c-format
 msgid "%s of %s"
 msgstr "%s iš %s"
 
-#: ../thunar/thunar-transfer-job.c:1245
+#: ../thunar/thunar-transfer-job.c:1271
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
@@ -2645,7 +2661,7 @@ msgstr[1] "Liko %lu valandos (%s/sek.)"
 msgstr[2] "Liko %lu valandų (%s/sek.)"
 msgstr[3] "Liko %lu valandų (%s/sek.)"
 
-#: ../thunar/thunar-transfer-job.c:1253
+#: ../thunar/thunar-transfer-job.c:1279
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
@@ -2654,7 +2670,7 @@ msgstr[1] "Liko %lu minutės (%s/sek.)"
 msgstr[2] "Liko %lu minučių (%s/sek.)"
 msgstr[3] "Liko %lu minučių (%s/sek.)"
 
-#: ../thunar/thunar-transfer-job.c:1260
+#: ../thunar/thunar-transfer-job.c:1286
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
