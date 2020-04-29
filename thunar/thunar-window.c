@@ -3450,7 +3450,6 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
                                          ThunarWindow *window)
 {
   GtkAction    *action;
-  gchar        *title;
   gboolean      show_full_path;
   gchar        *parse_name = NULL;
   const gchar  *name;
@@ -3474,9 +3473,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
     name = thunar_file_get_display_name (current_directory);
 
   /* set window title */
-  title = g_strdup_printf ("%s - %s", name, _("File Manager"));
-  gtk_window_set_title (GTK_WINDOW (window), title);
-  g_free (title);
+  gtk_window_set_title (GTK_WINDOW (window), name);
   g_free (parse_name);
 
   /* set window icon */
