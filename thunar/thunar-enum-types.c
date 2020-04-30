@@ -361,14 +361,18 @@ thunar_job_response_get_type (void)
     {
 	    static const GFlagsValue values[] =
       {
-	      { THUNAR_JOB_RESPONSE_YES,     "THUNAR_JOB_RESPONSE_YES",     "yes"     },
-	      { THUNAR_JOB_RESPONSE_YES_ALL, "THUNAR_JOB_RESPONSE_YES_ALL", "yes-all" },
-	      { THUNAR_JOB_RESPONSE_NO,      "THUNAR_JOB_RESPONSE_NO",      "no"      },
-	      { THUNAR_JOB_RESPONSE_CANCEL,  "THUNAR_JOB_RESPONSE_CANCEL",  "cancel"  },
-	      { THUNAR_JOB_RESPONSE_NO_ALL,  "THUNAR_JOB_RESPONSE_NO_ALL",  "no-all"  },
-	      { THUNAR_JOB_RESPONSE_RETRY,   "THUNAR_JOB_RESPONSE_RETRY",   "retry"   },
-	      { THUNAR_JOB_RESPONSE_FORCE,   "THUNAR_JOB_RESPONSE_FORCE",   "force"   },
-	      { 0,                           NULL,                          NULL      }
+	      { THUNAR_JOB_RESPONSE_YES,         "THUNAR_JOB_RESPONSE_YES",         "yes"         },
+	      { THUNAR_JOB_RESPONSE_YES_ALL,     "THUNAR_JOB_RESPONSE_YES_ALL",     "yes-all"     },
+	      { THUNAR_JOB_RESPONSE_NO,          "THUNAR_JOB_RESPONSE_NO",          "no"          },
+	      { THUNAR_JOB_RESPONSE_CANCEL,      "THUNAR_JOB_RESPONSE_CANCEL",      "cancel"      },
+	      { THUNAR_JOB_RESPONSE_NO_ALL,      "THUNAR_JOB_RESPONSE_NO_ALL",      "no-all"      },
+	      { THUNAR_JOB_RESPONSE_RETRY,       "THUNAR_JOB_RESPONSE_RETRY",       "retry"       },
+	      { THUNAR_JOB_RESPONSE_FORCE,       "THUNAR_JOB_RESPONSE_FORCE",       "force"       },
+	      { THUNAR_JOB_RESPONSE_REPLACE,     "THUNAR_JOB_RESPONSE_REPLACE",     "replace"     },
+	      { THUNAR_JOB_RESPONSE_REPLACE_ALL, "THUNAR_JOB_RESPONSE_REPLACE_ALL", "replace-all" },
+	      { THUNAR_JOB_RESPONSE_SKIP,        "THUNAR_JOB_RESPONSE_SKIP",        "skip"        },
+	      { THUNAR_JOB_RESPONSE_SKIP_ALL,    "THUNAR_JOB_RESPONSE_SKIP_ALL",    "skip-all"    },
+	      { 0,                               NULL,                              NULL          }
 	    };
 
 	    type = g_flags_register_static (I_("ThunarJobResponse"), values);

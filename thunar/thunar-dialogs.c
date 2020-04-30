@@ -458,6 +458,22 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
           mnemonic = _("Yes to _all");
           break;
 
+        case THUNAR_JOB_RESPONSE_REPLACE:
+          mnemonic = _("_Replace");
+          break;
+
+        case THUNAR_JOB_RESPONSE_REPLACE_ALL:
+          mnemonic = _("Replace _All");
+          break;
+
+        case THUNAR_JOB_RESPONSE_SKIP:
+          mnemonic = _("_Skip");
+          break;
+
+        case THUNAR_JOB_RESPONSE_SKIP_ALL:
+          mnemonic = _("S_kip All");
+          break;
+
         case THUNAR_JOB_RESPONSE_NO:
           mnemonic = _("_No");
           break;
@@ -588,7 +604,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gtk_window_set_transient_for (GTK_WINDOW (dialog), parent);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
   gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
-  gtk_dialog_set_default_response (GTK_DIALOG (dialog), THUNAR_JOB_RESPONSE_YES);
+  gtk_dialog_set_default_response (GTK_DIALOG (dialog), THUNAR_JOB_RESPONSE_REPLACE);
   content_area = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 
   /* determine the icon factory to use */
@@ -618,10 +634,10 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   g_signal_connect (replace_button,     "clicked", G_CALLBACK (thunar_dialogs_show_job_ask_replace_callback), dialog);
 
   g_object_set_data (G_OBJECT (cancel_button),     "response-id", GINT_TO_POINTER (GTK_RESPONSE_CANCEL));
-  g_object_set_data (G_OBJECT (skipall_button),    "response-id", GINT_TO_POINTER (THUNAR_JOB_RESPONSE_NO_ALL));
-  g_object_set_data (G_OBJECT (skip_button),       "response-id", GINT_TO_POINTER (THUNAR_JOB_RESPONSE_NO));
-  g_object_set_data (G_OBJECT (replaceall_button), "response-id", GINT_TO_POINTER (THUNAR_JOB_RESPONSE_YES_ALL));
-  g_object_set_data (G_OBJECT (replace_button),    "response-id", GINT_TO_POINTER (THUNAR_JOB_RESPONSE_YES));
+  g_object_set_data (G_OBJECT (skipall_button),    "response-id", GINT_TO_POINTER (THUNAR_JOB_RESPONSE_SKIP_ALL));
+  g_object_set_data (G_OBJECT (skip_button),       "response-id", GINT_TO_POINTER (THUNAR_JOB_RESPONSE_SKIP));
+  g_object_set_data (G_OBJECT (replaceall_button), "response-id", GINT_TO_POINTER (THUNAR_JOB_RESPONSE_REPLACE_ALL));
+  g_object_set_data (G_OBJECT (replace_button),    "response-id", GINT_TO_POINTER (THUNAR_JOB_RESPONSE_REPLACE));
 
   gtk_container_add (GTK_CONTAINER (button_box), cancel_button);
   gtk_container_add (GTK_CONTAINER (button_box), skipall_button);
