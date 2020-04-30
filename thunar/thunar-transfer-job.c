@@ -589,7 +589,7 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
 
           /* if necessary, ask the user whether to replace or rename the target file */
           if (replace_confirmed)
-            response = THUNAR_JOB_RESPONSE_YES;
+            response = THUNAR_JOB_RESPONSE_REPLACE;
           else if (rename_confirmed)
             response = THUNAR_JOB_RESPONSE_RENAME;
           else
@@ -600,7 +600,7 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
             break;
 
           /* add overwrite flag and retry if we should overwrite */
-          if (response == THUNAR_JOB_RESPONSE_YES)
+          if (response == THUNAR_JOB_RESPONSE_REPLACE)
             {
               copy_flags |= G_FILE_COPY_OVERWRITE;
               continue;
@@ -623,7 +623,7 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
 
           /* tell the caller we skipped the file if the user
            * doesn't want to retry/overwrite */
-          if (response == THUNAR_JOB_RESPONSE_NO)
+          if (response == THUNAR_JOB_RESPONSE_SKIP)
             return g_object_ref (source_file);
         }
     }
@@ -1068,7 +1068,7 @@ thunar_transfer_job_move_file (ExoJob                *job,
       response = thunar_job_ask_replace (THUNAR_JOB (job), node->source_file, tp->data, NULL);
 
       /* if the user chose to overwrite then try to do so */
-      if (response == THUNAR_JOB_RESPONSE_YES)
+      if (response == THUNAR_JOB_RESPONSE_REPLACE)
         {
           node->replace_confirmed = TRUE;
           move_successful = g_file_move (node->source_file,
@@ -1092,7 +1092,7 @@ thunar_transfer_job_move_file (ExoJob                *job,
           transfer_job->target_file_list= NULL;
           return FALSE;
         }
-      /* if the user chose not to replace or rename the file, so that response == THUNAR_JOB_RESPONSE_NO,
+      /* if the user chose not to replace or rename the file, so that response == THUNAR_JOB_RESPONSE_SKIP,
        * then *error will be NULL but move_successful will be FALSE, so that the source and target
        * files will be released and the matching list items will be dropped below
        */

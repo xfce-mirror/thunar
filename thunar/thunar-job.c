@@ -257,12 +257,12 @@ thunar_job_real_ask_replace (ThunarJob  *job,
                              thunar_file_get_display_name (source_file));
 
   g_signal_emit (job, job_signals[ASK], 0, message,
-                 THUNAR_JOB_RESPONSE_YES
-                 | THUNAR_JOB_RESPONSE_YES_ALL
+                 THUNAR_JOB_RESPONSE_REPLACE
+                 | THUNAR_JOB_RESPONSE_REPLACE_ALL
                  | THUNAR_JOB_RESPONSE_RENAME
                  | THUNAR_JOB_RESPONSE_RENAME_ALL
-                 | THUNAR_JOB_RESPONSE_NO
-                 | THUNAR_JOB_RESPONSE_NO_ALL
+                 | THUNAR_JOB_RESPONSE_SKIP
+                 | THUNAR_JOB_RESPONSE_SKIP_ALL
                  | THUNAR_JOB_RESPONSE_CANCEL,
                  &response);
 
@@ -324,21 +324,21 @@ thunar_job_ask_overwrite (ThunarJob   *job,
     return THUNAR_JOB_RESPONSE_CANCEL;
 
   /* check if the user said "Overwrite All" earlier */
-  if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_YES_ALL))
-    return THUNAR_JOB_RESPONSE_YES;
+  if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_REPLACE_ALL))
+    return THUNAR_JOB_RESPONSE_REPLACE;
 
   /* check if the user said "Overwrite None" earlier */
-  if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_NO_ALL))
-    return THUNAR_JOB_RESPONSE_NO;
+  if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_SKIP_ALL))
+    return THUNAR_JOB_RESPONSE_SKIP;
 
   /* ask the user what he wants to do */
   va_start (var_args, format);
   response = _thunar_job_ask_valist (job, format, var_args,
                                      _("Do you want to overwrite it?"),
-                                     THUNAR_JOB_RESPONSE_YES
-                                     | THUNAR_JOB_RESPONSE_YES_ALL
-                                     | THUNAR_JOB_RESPONSE_NO
-                                     | THUNAR_JOB_RESPONSE_NO_ALL
+                                     THUNAR_JOB_RESPONSE_REPLACE
+                                     | THUNAR_JOB_RESPONSE_REPLACE_ALL
+                                     | THUNAR_JOB_RESPONSE_SKIP
+                                     | THUNAR_JOB_RESPONSE_SKIP_ALL
                                      | THUNAR_JOB_RESPONSE_CANCEL);
   va_end (var_args);
 
@@ -348,12 +348,12 @@ thunar_job_ask_overwrite (ThunarJob   *job,
   /* translate response */
   switch (response)
     {
-    case THUNAR_JOB_RESPONSE_YES_ALL:
-      response = THUNAR_JOB_RESPONSE_YES;
+    case THUNAR_JOB_RESPONSE_REPLACE_ALL:
+      response = THUNAR_JOB_RESPONSE_REPLACE;
       break;
 
-    case THUNAR_JOB_RESPONSE_NO_ALL:
-      response = THUNAR_JOB_RESPONSE_NO;
+    case THUNAR_JOB_RESPONSE_SKIP_ALL:
+      response = THUNAR_JOB_RESPONSE_SKIP;
       break;
 
     default:
@@ -483,28 +483,28 @@ thunar_job_ask_replace (ThunarJob *job,
     return THUNAR_JOB_RESPONSE_CANCEL;
 
   /* check if the user said "Overwrite All" earlier */
-  if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_YES_ALL))
-    return THUNAR_JOB_RESPONSE_YES;
+  if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_REPLACE_ALL))
+    return THUNAR_JOB_RESPONSE_REPLACE;
 
   /* check if the user said "Rename All" earlier */
   if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_RENAME_ALL))
     return THUNAR_JOB_RESPONSE_RENAME;
 
   /* check if the user said "Overwrite None" earlier */
-  if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_NO_ALL))
-    return THUNAR_JOB_RESPONSE_NO;
+  if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_SKIP_ALL))
+    return THUNAR_JOB_RESPONSE_SKIP;
 
   source_file = thunar_file_get (source_path, error);
 
   if (G_UNLIKELY (source_file == NULL))
-    return THUNAR_JOB_RESPONSE_NO;
+    return THUNAR_JOB_RESPONSE_SKIP;
 
   target_file = thunar_file_get (target_path, error);
 
   if (G_UNLIKELY (target_file == NULL))
     {
       g_object_unref (source_file);
-      return THUNAR_JOB_RESPONSE_NO;
+      return THUNAR_JOB_RESPONSE_SKIP;
     }
 
   exo_job_emit (EXO_JOB (job), job_signals[ASK_REPLACE], 0,
@@ -517,12 +517,12 @@ thunar_job_ask_replace (ThunarJob *job,
   job->priv->earlier_ask_overwrite_response = response;
 
   /* translate the response */
-  if (response == THUNAR_JOB_RESPONSE_YES_ALL)
-    response = THUNAR_JOB_RESPONSE_YES;
+  if (response == THUNAR_JOB_RESPONSE_REPLACE_ALL)
+    response = THUNAR_JOB_RESPONSE_REPLACE;
   else if (response == THUNAR_JOB_RESPONSE_RENAME_ALL)
     response = THUNAR_JOB_RESPONSE_RENAME;
-  else if (response == THUNAR_JOB_RESPONSE_NO_ALL)
-    response = THUNAR_JOB_RESPONSE_NO;
+  else if (response == THUNAR_JOB_RESPONSE_SKIP_ALL)
+    response = THUNAR_JOB_RESPONSE_SKIP;
   else if (response == THUNAR_JOB_RESPONSE_CANCEL)
     exo_job_cancel (EXO_JOB (job));
 
@@ -547,15 +547,15 @@ thunar_job_ask_skip (ThunarJob   *job,
     return THUNAR_JOB_RESPONSE_CANCEL;
 
   /* check if the user said "Skip All" earlier */
-  if (G_UNLIKELY (job->priv->earlier_ask_skip_response == THUNAR_JOB_RESPONSE_YES_ALL))
-    return THUNAR_JOB_RESPONSE_YES;
+  if (G_UNLIKELY (job->priv->earlier_ask_skip_response == THUNAR_JOB_RESPONSE_SKIP_ALL))
+    return THUNAR_JOB_RESPONSE_SKIP;
 
   /* ask the user what he wants to do */
   va_start (var_args, format);
   response = _thunar_job_ask_valist (job, format, var_args,
                                      _("Do you want to skip it?"),
-                                     THUNAR_JOB_RESPONSE_YES
-                                     | THUNAR_JOB_RESPONSE_YES_ALL
+                                     THUNAR_JOB_RESPONSE_SKIP
+                                     | THUNAR_JOB_RESPONSE_SKIP_ALL
                                      | THUNAR_JOB_RESPONSE_CANCEL
                                      | THUNAR_JOB_RESPONSE_RETRY);
   va_end (var_args);
@@ -566,11 +566,11 @@ thunar_job_ask_skip (ThunarJob   *job,
   /* translate the response */
   switch (response)
     {
-    case THUNAR_JOB_RESPONSE_YES_ALL:
-      response = THUNAR_JOB_RESPONSE_YES;
+    case THUNAR_JOB_RESPONSE_SKIP_ALL:
+      response = THUNAR_JOB_RESPONSE_SKIP;
       break;
 
-    case THUNAR_JOB_RESPONSE_YES:
+    case THUNAR_JOB_RESPONSE_SKIP:
     case THUNAR_JOB_RESPONSE_CANCEL:
     case THUNAR_JOB_RESPONSE_RETRY:
       break;
