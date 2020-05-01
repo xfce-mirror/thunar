@@ -215,7 +215,7 @@ again:
                                                    display_name);
 
               /* check if we should overwrite */
-              if (response == THUNAR_JOB_RESPONSE_YES)
+              if (response == THUNAR_JOB_RESPONSE_REPLACE)
                 {
                   /* try to remove the file. fail if not possible */
                   if (_tij_delete_file (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err))
@@ -370,7 +370,7 @@ again:
                                                    display_name);
 
               /* check if we should overwrite it */
-              if (response == THUNAR_JOB_RESPONSE_YES)
+              if (response == THUNAR_JOB_RESPONSE_REPLACE)
                 {
                   /* try to remove the file, fail if not possible */
                   if (_tij_delete_file (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err))
@@ -709,7 +709,7 @@ _thunar_io_jobs_link_file (ThunarJob *job,
             break;
 
           /* try to delete the file */
-          if (response == THUNAR_JOB_RESPONSE_YES)
+          if (response == THUNAR_JOB_RESPONSE_REPLACE)
             {
               /* try to remove the target file. if not possible, err will be set and
                * the while loop will be aborted */
@@ -718,7 +718,7 @@ _thunar_io_jobs_link_file (ThunarJob *job,
 
           /* tell the caller that we skipped this file if the user doesn't want to
            * overwrite it */
-          if (response == THUNAR_JOB_RESPONSE_NO)
+          if (response == THUNAR_JOB_RESPONSE_SKIP)
             return g_object_ref (source_file);
         }
     }
