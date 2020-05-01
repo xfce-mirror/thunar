@@ -608,7 +608,6 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
           else if (response == THUNAR_JOB_RESPONSE_RENAME)
             {
               GFile *renamed_file;
-              rename_confirmed = TRUE;
               renamed_file = thunar_io_jobs_util_next_renamed_file (THUNAR_JOB (job),
                                                                     source_file,
                                                                     dest_file,
