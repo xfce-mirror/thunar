@@ -102,7 +102,7 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob *job,
       if (dot != NULL)
         {
           file_basename = g_strndup (old_display_name, dot - old_display_name);
-          /* I18N: put " (copy #) between basename and extension */
+          /* I18N: put " (copy #)" between basename and extension */
           display_name = g_strdup_printf (_("%s (copy %u)%s"), file_basename, n, dot);
           g_free(file_basename);
         }

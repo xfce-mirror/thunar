@@ -249,6 +249,7 @@ typedef enum /*< flags >*/
   THUNAR_JOB_RESPONSE_RETRY   = 1 << 5,
   THUNAR_JOB_RESPONSE_FORCE   = 1 << 6,
 } ThunarJobResponse;
+#define THUNAR_JOB_RESPONSE_MAX_INT 6
 
 GType thunar_job_response_get_type (void) G_GNUC_CONST;
 
