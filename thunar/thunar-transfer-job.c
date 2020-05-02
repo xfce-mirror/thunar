@@ -104,6 +104,7 @@ struct _ThunarTransferNode
   ThunarTransferNode *children;
   GFile              *source_file;
   gboolean            replace_confirmed;
+  gboolean            rename_confirmed;
 };
 
 
@@ -336,6 +337,7 @@ thunar_transfer_job_collect_node (ThunarTransferJob  *job,
           child_node = g_slice_new0 (ThunarTransferNode);
           child_node->source_file = g_object_ref (lp->data);
           child_node->replace_confirmed = node->replace_confirmed;
+          child_node->rename_confirmed = FALSE;
 
           /* hook the child node into the child list */
           child_node->next = node->children;
@@ -493,14 +495,15 @@ ttj_copy_file (ThunarTransferJob *job,
  * @source_file        : the source #GFile to copy.
  * @target_file        : the destination #GFile to copy to.
  * @replace_confirmed  : whether the user has already confirmed that this file should replace an existing one
+ * @rename_confirmed   : whether the user has already confirmed that this file should be renamed to a new unique file name
  * @error              : return location for errors or %NULL.
  *
  * Tries to copy @source_file to @target_file. The real destination is the
  * return value and may differ from @target_file (e.g. if you try to copy
  * the file "/foo/bar" into the same directory you'll end up with something
  * like "/foo/copy of bar" instead of "/foo/bar"). If an existing file would
- * be replaced, the user is asked to confirm this unless @replace_confirmed
- * is TRUE.
+ * be replaced, the user is asked to confirm replace or rename it unless
+ * @replace_confirmed or @rename_confirmed is TRUE.
  *
  * The return value is guaranteed to be %NULL on errors and @error will
  * always be set in those cases. If the file is skipped, the return value
@@ -517,12 +520,15 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
                                GFile             *source_file,
                                GFile             *target_file,
                                gboolean           replace_confirmed,
+                               gboolean           rename_confirmed,
                                GError           **error)
 {
   ThunarJobResponse response;
+  GFile            *dest_file = target_file;
   GFileCopyFlags    copy_flags = G_FILE_COPY_NOFOLLOW_SYMLINKS;
   GError           *err = NULL;
   gint              n;
+  gint              n_rename = 0;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), NULL);
   _thunar_return_val_if_fail (G_IS_FILE (source_file), NULL);
@@ -537,13 +543,13 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
   while (err == NULL)
     {
       thunar_transfer_job_check_pause (job);
-      if (G_LIKELY (!g_file_equal (source_file, target_file)))
+      if (G_LIKELY (!g_file_equal (source_file, dest_file)))
         {
-          /* try to copy the file from source_file to the target_file */
-          if (ttj_copy_file (job, source_file, target_file, copy_flags, TRUE, &err))
+          /* try to copy the file from source_file to the dest_file */
+          if (ttj_copy_file (job, source_file, dest_file, copy_flags, TRUE, &err))
             {
               /* return the real target file */
-              return g_object_ref (target_file);
+              return g_object_ref (dest_file);
             }
         }
       else
@@ -581,12 +587,14 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
           /* reset the error */
           g_clear_error (&err);
 
-          /* if necessary, ask the user whether to replace the target file */
+          /* if necessary, ask the user whether to replace or rename the target file */
           if (replace_confirmed)
             response = THUNAR_JOB_RESPONSE_REPLACE;
+          else if (rename_confirmed)
+            response = THUNAR_JOB_RESPONSE_RENAME;
           else
             response = thunar_job_ask_replace (THUNAR_JOB (job), source_file,
-                                               target_file, &err);
+                                               dest_file, &err);
 
           if (err != NULL)
             break;
@@ -596,6 +604,24 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
             {
               copy_flags |= G_FILE_COPY_OVERWRITE;
               continue;
+            }
+          else if (response == THUNAR_JOB_RESPONSE_RENAME)
+            {
+              GFile *renamed_file;
+              renamed_file = thunar_io_jobs_util_next_renamed_file (THUNAR_JOB (job),
+                                                                    source_file,
+                                                                    dest_file,
+                                                                    ++n_rename, &err);
+              if (renamed_file != NULL)
+                {
+                  if (err != NULL)
+                    g_object_unref (renamed_file);
+                  else
+                    {
+                      dest_file = renamed_file;
+                      rename_confirmed = TRUE;
+                    }
+                }
             }
 
           /* tell the caller we skipped the file if the user
@@ -681,6 +707,7 @@ retry_copy:
       real_target_file = thunar_transfer_job_copy_file (job, node->source_file,
                                                         target_file,
                                                         node->replace_confirmed,
+                                                        node->rename_confirmed,
                                                         &err);
       if (G_LIKELY (real_target_file != NULL))
         {
@@ -963,6 +990,44 @@ thunar_transfer_job_prepare_untrash_file (ExoJob     *job,
 
 
 static gboolean
+thunar_transfer_job_move_file_with_rename (ExoJob             *job,
+                                           ThunarTransferNode *node,
+                                           GList              *tp,
+                                           GFileCopyFlags      flags,
+                                           GError            **error)
+{
+  gboolean  move_rename_successful = FALSE;
+  gint      n_rename = 1;
+  GFile    *renamed_file;
+
+  node->rename_confirmed = TRUE;
+  while (TRUE)
+    {
+      g_clear_error (error);
+      renamed_file = thunar_io_jobs_util_next_renamed_file (THUNAR_JOB (job),
+                                                            node->source_file,
+                                                            tp->data,
+                                                            n_rename++, error);
+      if (renamed_file == NULL)
+          return FALSE;
+
+      /* Try to move it again to the new renamed file.
+       * Directly try to move, because it is racy to first check for file existence
+       * and then execute something based on the outcome of that. */
+      move_rename_successful = g_file_move (node->source_file,
+                                            renamed_file,
+                                            flags,
+                                            exo_job_get_cancellable (job),
+                                            NULL, NULL, error);
+      if (!move_rename_successful && !exo_job_is_cancelled (job) && ((*error)->code == G_IO_ERROR_EXISTS))
+        continue;
+
+      return move_rename_successful;
+    }
+}
+
+
+static gboolean
 thunar_transfer_job_move_file (ExoJob                *job,
                                GFileInfo             *info,
                                GList                 *sp,
@@ -986,7 +1051,7 @@ thunar_transfer_job_move_file (ExoJob                *job,
                                  move_flags,
                                  exo_job_get_cancellable (job),
                                  NULL, NULL, error);
-  /* if the file already exists, ask the user if they want to overwrite or skip it */
+  /* if the file already exists, ask the user if they want to overwrite, rename or skip it */
   if (!move_successful && (*error)->code == G_IO_ERROR_EXISTS)
     {
       g_clear_error (error);
@@ -1002,6 +1067,11 @@ thunar_transfer_job_move_file (ExoJob                *job,
                                          exo_job_get_cancellable (job),
                                          NULL, NULL, error);
         }
+      /* if the user chose to rename then try to do so */
+      else if (response == THUNAR_JOB_RESPONSE_RENAME)
+        {
+          move_successful = thunar_transfer_job_move_file_with_rename (job, node, tp, move_flags, error);
+        }
       /* if the user chose to cancel then abort all remaining file moves */
       else if (response == THUNAR_JOB_RESPONSE_CANCEL)
         {
@@ -1012,7 +1082,7 @@ thunar_transfer_job_move_file (ExoJob                *job,
           transfer_job->target_file_list= NULL;
           return FALSE;
         }
-      /* if the user chose not to replace the file, so that response == THUNAR_JOB_RESPONSE_SKIP,
+      /* if the user chose not to replace nor rename the file, so that response == THUNAR_JOB_RESPONSE_SKIP,
        * then *error will be NULL but move_successful will be FALSE, so that the source and target
        * files will be released and the matching list items will be dropped below
        */
@@ -1249,6 +1319,7 @@ thunar_transfer_job_new (GList                *source_node_list,
           node = g_slice_new0 (ThunarTransferNode);
           node->source_file = g_object_ref (sp->data);
           node->replace_confirmed = FALSE;
+          node->rename_confirmed = FALSE;
           job->source_node_list = g_list_append (job->source_node_list, node);
 
           /* append target file */
