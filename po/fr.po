@@ -32,8 +32,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-18 22:20+0200\n"
-"PO-Revision-Date: 2020-04-21 12:59+0000\n"
+"POT-Creation-Date: 2020-05-03 00:45+0200\n"
+"PO-Revision-Date: 2020-05-03 13:56+0000\n"
 "Last-Translator: Yannick Le Guen <leguen.yannick@gmail.com>\n"
 "Language-Team: French (http://www.transifex.com/xfce/thunar/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -241,8 +241,8 @@ msgstr[1] "Voulez-vous vraiment supprimer de manière\npermanente les %u fichier
 #: ../thunar/thunar-application.c:2168 ../thunar/thunar-application.c:2347
 #: ../thunar/thunar-chooser-dialog.c:288 ../thunar/thunar-chooser-dialog.c:705
 #: ../thunar/thunar-chooser-dialog.c:753 ../thunar/thunar-create-dialog.c:141
-#: ../thunar/thunar-dialogs.c:105 ../thunar/thunar-dialogs.c:497
-#: ../thunar/thunar-dialogs.c:608 ../thunar/thunar-dialogs.c:866
+#: ../thunar/thunar-dialogs.c:105 ../thunar/thunar-dialogs.c:521
+#: ../thunar/thunar-dialogs.c:634 ../thunar/thunar-dialogs.c:900
 #: ../thunar/thunar-dnd.c:169 ../thunar/thunar-launcher.c:736
 #: ../thunar/thunar-permissions-chooser.c:535
 #: ../thunar/thunar-permissions-chooser.c:1143
@@ -509,7 +509,7 @@ msgstr "Il n’y a rien à coller dans le presse-papiers"
 #. setup the dialog
 #. add the "Close" button
 #. add a regular close button, the header bar already provides one
-#: ../thunar/thunar-column-editor.c:120 ../thunar/thunar-dialogs.c:811
+#: ../thunar/thunar-column-editor.c:120 ../thunar/thunar-dialogs.c:845
 #: ../thunar/thunar-preferences-dialog.c:257
 #: ../thunar/thunar-properties-dialog.c:254
 #: ../thunar/thunar-renamer-dialog.c:355
@@ -692,110 +692,118 @@ msgstr "_Oui"
 msgid "Yes to _all"
 msgstr "Oui pour _tout"
 
-#: ../thunar/thunar-dialogs.c:462 ../thunar/thunar-permissions-chooser.c:536
-msgid "_No"
-msgstr "_Non"
-
-#: ../thunar/thunar-dialogs.c:466
-msgid "N_o to all"
-msgstr "N_on pour tout"
-
-#: ../thunar/thunar-dialogs.c:470
-msgid "_Retry"
-msgstr "_Réessayer"
-
-#: ../thunar/thunar-dialogs.c:474
-msgid "Copy _Anyway"
-msgstr "Copier _malgré tout"
-
-#: ../thunar/thunar-dialogs.c:587
-msgid "Confirm to replace files"
-msgstr "Confirmer le remplacement des fichiers"
-
-#: ../thunar/thunar-dialogs.c:609
-msgid "S_kip All"
-msgstr "Tout i_gnorer"
-
-#: ../thunar/thunar-dialogs.c:610
-msgid "_Skip"
-msgstr "_Ignorer"
-
-#: ../thunar/thunar-dialogs.c:611
-msgid "Replace _All"
-msgstr "_Tout remplacer"
-
-#: ../thunar/thunar-dialogs.c:612
+#: ../thunar/thunar-dialogs.c:462 ../thunar/thunar-dialogs.c:638
 msgid "_Replace"
 msgstr "_Remplacer"
 
-#: ../thunar/thunar-dialogs.c:649
+#: ../thunar/thunar-dialogs.c:466 ../thunar/thunar-dialogs.c:637
+msgid "Replace _All"
+msgstr "_Tout remplacer"
+
+#: ../thunar/thunar-dialogs.c:470 ../thunar/thunar-dialogs.c:636
+msgid "_Skip"
+msgstr "_Ignorer"
+
+#: ../thunar/thunar-dialogs.c:474 ../thunar/thunar-dialogs.c:635
+msgid "S_kip All"
+msgstr "Tout i_gnorer"
+
+#: ../thunar/thunar-dialogs.c:478 ../thunar/thunar-dialogs.c:640
+msgid "Re_name"
+msgstr "Re_nommer"
+
+#: ../thunar/thunar-dialogs.c:482 ../thunar/thunar-dialogs.c:639
+msgid "Rena_me All"
+msgstr "Tout reno_mmer"
+
+#: ../thunar/thunar-dialogs.c:486 ../thunar/thunar-permissions-chooser.c:536
+msgid "_No"
+msgstr "_Non"
+
+#: ../thunar/thunar-dialogs.c:490
+msgid "N_o to all"
+msgstr "N_on pour tout"
+
+#: ../thunar/thunar-dialogs.c:494
+msgid "_Retry"
+msgstr "_Réessayer"
+
+#: ../thunar/thunar-dialogs.c:498
+msgid "Copy _Anyway"
+msgstr "Copier _malgré tout"
+
+#: ../thunar/thunar-dialogs.c:613
+msgid "Confirm to replace files"
+msgstr "Confirmer le remplacement des fichiers"
+
+#: ../thunar/thunar-dialogs.c:683
 #, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
 msgstr "Ce dossier contient déjà un lien symbolique « %s »."
 
-#: ../thunar/thunar-dialogs.c:654
+#: ../thunar/thunar-dialogs.c:688
 #, c-format
 msgid "This folder already contains a folder \"%s\"."
 msgstr "Ce dossier contient déjà un dossier « %s »."
 
-#: ../thunar/thunar-dialogs.c:659
+#: ../thunar/thunar-dialogs.c:693
 #, c-format
 msgid "This folder already contains a file \"%s\"."
 msgstr "Ce dossier contient déjà un fichier « %s »."
 
-#: ../thunar/thunar-dialogs.c:673
+#: ../thunar/thunar-dialogs.c:707
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the link"
 msgstr "Voulez-vous remplacer le lien existant"
 
-#: ../thunar/thunar-dialogs.c:675
+#: ../thunar/thunar-dialogs.c:709
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the existing folder"
 msgstr "Voulez-vous remplacer le dossier existant"
 
-#: ../thunar/thunar-dialogs.c:677
+#: ../thunar/thunar-dialogs.c:711
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
 msgstr "Voulez-vous remplacer le fichier existant"
 
 #. Fourth box (size, volume, free space)
-#: ../thunar/thunar-dialogs.c:698 ../thunar/thunar-dialogs.c:734
+#: ../thunar/thunar-dialogs.c:732 ../thunar/thunar-dialogs.c:768
 #: ../thunar/thunar-properties-dialog.c:490
 msgid "Size:"
 msgstr "Taille :"
 
-#: ../thunar/thunar-dialogs.c:698 ../thunar/thunar-dialogs.c:734
+#: ../thunar/thunar-dialogs.c:732 ../thunar/thunar-dialogs.c:768
 #: ../thunar/thunar-properties-dialog.c:449
 msgid "Modified:"
 msgstr "Modifié :"
 
-#: ../thunar/thunar-dialogs.c:709
+#: ../thunar/thunar-dialogs.c:743
 #, c-format
 msgid "ReplaceDialogPart2|with the following link?"
 msgstr "par le lien suivant ?"
 
-#: ../thunar/thunar-dialogs.c:711
+#: ../thunar/thunar-dialogs.c:745
 #, c-format
 msgid "ReplaceDialogPart2|with the following folder?"
 msgstr "par le dossier suivant ?"
 
-#: ../thunar/thunar-dialogs.c:713
+#: ../thunar/thunar-dialogs.c:747
 #, c-format
 msgid "ReplaceDialogPart2|with the following file?"
 msgstr "par le fichier suivant ?"
 
-#: ../thunar/thunar-dialogs.c:846
+#: ../thunar/thunar-dialogs.c:880
 #, c-format
 msgid ""
 "The desktop file \"%s\" is in an insecure location and not marked as "
 "executable. If you do not trust this program, click Cancel."
 msgstr "Le fichier desktop « %s » est situé dans un emplacement non sécurisé et n’est pas marqué comme exécutable. Si vous n’avez pas confiance en ce programme, cliquez sur Annuler."
 
-#: ../thunar/thunar-dialogs.c:863
+#: ../thunar/thunar-dialogs.c:897
 msgid "_Launch Anyway"
 msgstr "_Lancer malgré tout"
 
-#: ../thunar/thunar-dialogs.c:865
+#: ../thunar/thunar-dialogs.c:899
 msgid "Mark _Executable"
 msgstr "Marquer _exécutable"
 
@@ -883,12 +891,12 @@ msgid "File Name"
 msgstr "Nom du fichier"
 
 #: ../thunar/thunar-file.c:1083 ../thunar/thunar-gio-extensions.c:255
-#: ../thunar/thunar-shortcuts-model.c:1079 ../thunar.desktop.in.in.h:7
+#: ../thunar/thunar-shortcuts-model.c:1084 ../thunar.desktop.in.in.h:7
 msgid "Trash"
 msgstr "Corbeille"
 
 #: ../thunar/thunar-file.c:1090 ../thunar/thunar-gio-extensions.c:253
-#: ../thunar/thunar-shortcuts-model.c:961 ../thunar/thunar-window.c:383
+#: ../thunar/thunar-shortcuts-model.c:966 ../thunar/thunar-window.c:383
 msgid "File System"
 msgstr "Système de fichiers"
 
@@ -1029,14 +1037,14 @@ msgstr "Impossible de changer le groupe de « %s » : %s"
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "Impossible de changer les permissions de « %s » : %s"
 
-#. I18N: put " (copy #) between basename and extension
-#: ../thunar/thunar-io-jobs-util.c:106
+#. I18N: put " (copy #)" between basename and extension
+#: ../thunar/thunar-io-jobs-util.c:106 ../thunar/thunar-io-jobs-util.c:212
 #, c-format
 msgid "%s (copy %u)%s"
 msgstr "%s (copie %u)%s"
 
 #. I18N: put " (copy #)" after filename (for files without extension)
-#: ../thunar/thunar-io-jobs-util.c:112
+#: ../thunar/thunar-io-jobs-util.c:112 ../thunar/thunar-io-jobs-util.c:218
 #, c-format
 msgid "%s (copy %u)"
 msgstr "%s (copie %u)"
@@ -1063,23 +1071,23 @@ msgid ""
 "If you replace an existing file, its contents will be overwritten."
 msgstr "Le fichier « %s » existe déjà. Voulez-vous le remplacer ?\n\nSi vous remplacez un fichier existant, son contenu sera écrasé."
 
-#: ../thunar/thunar-job.c:335
+#: ../thunar/thunar-job.c:337
 msgid "Do you want to overwrite it?"
 msgstr "Voulez-vous l’écraser ?"
 
-#: ../thunar/thunar-job.c:392
+#: ../thunar/thunar-job.c:394
 msgid "Do you want to permanently delete it?"
 msgstr "Voulez-vous le supprimer définitivement ?"
 
-#: ../thunar/thunar-job.c:446
+#: ../thunar/thunar-job.c:448
 msgid "Do you want to create it?"
 msgstr "Voulez-vous le créer ?"
 
-#: ../thunar/thunar-job.c:548
+#: ../thunar/thunar-job.c:556
 msgid "Do you want to skip it?"
 msgstr "Voulez-vous l’ignorer ?"
 
-#: ../thunar/thunar-job.c:597
+#: ../thunar/thunar-job.c:605
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
@@ -2223,56 +2231,56 @@ msgid ""
 msgstr "Voulez-vous ignorer ce fichier et continuer à renommer les fichiers restants ?"
 
 #: ../thunar/thunar-shortcuts-model.c:622
-#: ../thunar/thunar-shortcuts-model.c:962 ../thunar/thunar-window.c:383
+#: ../thunar/thunar-shortcuts-model.c:967 ../thunar/thunar-window.c:383
 msgid "Browse the file system"
 msgstr "Parcourir le système de fichiers"
 
-#: ../thunar/thunar-shortcuts-model.c:645
+#: ../thunar/thunar-shortcuts-model.c:650
 #: ../plugins/thunar-tpa/thunar-tpa.c:284
 msgid "Trash is empty"
 msgstr "La corbeille est vide"
 
-#: ../thunar/thunar-shortcuts-model.c:649
+#: ../thunar/thunar-shortcuts-model.c:654
 #, c-format
 msgid "Trash contains %d file"
 msgid_plural "Trash contains %d files"
 msgstr[0] "La corbeille contient %d fichier"
 msgstr[1] "La corbeille contient %d fichiers"
 
-#: ../thunar/thunar-shortcuts-model.c:955
+#: ../thunar/thunar-shortcuts-model.c:960
 msgid "DEVICES"
 msgstr "PÉRIPHÉRIQUES"
 
-#: ../thunar/thunar-shortcuts-model.c:998
+#: ../thunar/thunar-shortcuts-model.c:1003
 msgid "NETWORK"
 msgstr "RÉSEAU"
 
-#: ../thunar/thunar-shortcuts-model.c:1006
+#: ../thunar/thunar-shortcuts-model.c:1011
 msgid "Browse Network"
 msgstr "Parcourir le réseau"
 
-#: ../thunar/thunar-shortcuts-model.c:1007 ../thunar/thunar-window.c:384
+#: ../thunar/thunar-shortcuts-model.c:1012 ../thunar/thunar-window.c:384
 msgid "Browse local network connections"
 msgstr "Parcourir les connexions du réseau local"
 
-#: ../thunar/thunar-shortcuts-model.c:1029
+#: ../thunar/thunar-shortcuts-model.c:1034
 msgid "PLACES"
 msgstr "EMPLACEMENTS"
 
-#: ../thunar/thunar-shortcuts-model.c:1041
+#: ../thunar/thunar-shortcuts-model.c:1046
 msgid "Open the home folder"
 msgstr "Ouvrir le dossier personnel"
 
-#: ../thunar/thunar-shortcuts-model.c:1058
+#: ../thunar/thunar-shortcuts-model.c:1063
 msgid "Open the desktop folder"
 msgstr "Ouvrir le dossier du bureau"
 
-#: ../thunar/thunar-shortcuts-model.c:1105 ../thunar/thunar-window.c:382
+#: ../thunar/thunar-shortcuts-model.c:1110 ../thunar/thunar-window.c:382
 #: ../thunar.desktop.in.in.h:6
 msgid "Computer"
 msgstr "Ordinateur"
 
-#: ../thunar/thunar-shortcuts-model.c:1106
+#: ../thunar/thunar-shortcuts-model.c:1111
 msgid "Browse the computer"
 msgstr "Parcourir l’ordinateur"
 
@@ -2562,67 +2570,67 @@ msgstr "_Fichier vide"
 msgid "No templates installed"
 msgstr "Aucun modèle installé"
 
-#: ../thunar/thunar-transfer-job.c:852
+#: ../thunar/thunar-transfer-job.c:881
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
 "destination"
 msgstr "Erreur lors de la copie vers « %s » : %s d’espace supplémentaire est requis pour copier vers la destination."
 
-#: ../thunar/thunar-transfer-job.c:903
-msgid "Collecting files..."
-msgstr "Récupération des fichiers…"
-
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:942
+#: ../thunar/thunar-transfer-job.c:915
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "Essaie de restaurer « %s »"
 
-#: ../thunar/thunar-transfer-job.c:971
+#: ../thunar/thunar-transfer-job.c:944
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "Le dossier « %s » n’existe plus, mais il est nécessaire pour restaurer le fichier « %s » de la corbeille"
 
-#: ../thunar/thunar-transfer-job.c:997
+#: ../thunar/thunar-transfer-job.c:971
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Impossible de restaurer le dossier « %s »"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1018
+#: ../thunar/thunar-transfer-job.c:1046
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Essaie de déplacer « %s »"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1090
+#: ../thunar/thunar-transfer-job.c:1122
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "Impossible de déplacer « %s » directement. Collecte des fichiers pour être copiés…"
 
-#: ../thunar/thunar-transfer-job.c:1251
+#: ../thunar/thunar-transfer-job.c:1155
+msgid "Collecting files..."
+msgstr "Récupération des fichiers…"
+
+#: ../thunar/thunar-transfer-job.c:1354
 #, c-format
 msgid "%s of %s"
 msgstr "%s de %s"
 
-#: ../thunar/thunar-transfer-job.c:1271
+#: ../thunar/thunar-transfer-job.c:1374
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "%lu heure restante (%s/sec)"
 msgstr[1] "%lu heures restantes (%s/sec)"
 
-#: ../thunar/thunar-transfer-job.c:1279
+#: ../thunar/thunar-transfer-job.c:1382
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "%lu minute restante (%s/sec)"
 msgstr[1] "%lu minutes restantes (%s/sec)"
 
-#: ../thunar/thunar-transfer-job.c:1286
+#: ../thunar/thunar-transfer-job.c:1389
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
@@ -3028,11 +3036,6 @@ msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar est un gestionnaire de fichiers rapide et facile\nd’utilisation pour l’environnement de bureau Xfce."
-
-#. set window title
-#: ../thunar/thunar-window.c:3477 ../thunar.desktop.in.in.h:3
-msgid "File Manager"
-msgstr "Gestionnaire de fichiers"
 
 #: ../thunarx/thunarx-property-page.c:111
 msgid "Label"
@@ -3802,6 +3805,10 @@ msgstr "Gestionnaire de fichiers Thunar"
 #: ../thunar.desktop.in.in.h:2
 msgid "Browse the filesystem with the file manager"
 msgstr "Parcourir le système de fichiers avec le gestionnaire de fichiers"
+
+#: ../thunar.desktop.in.in.h:3
+msgid "File Manager"
+msgstr "Gestionnaire de fichiers"
 
 #: ../thunar.desktop.in.in.h:4
 msgid ""
