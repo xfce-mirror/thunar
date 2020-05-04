@@ -21,8 +21,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-18 22:20+0200\n"
-"PO-Revision-Date: 2020-04-21 05:51+0000\n"
+"POT-Creation-Date: 2020-05-03 00:45+0200\n"
+"PO-Revision-Date: 2020-05-04 14:12+0000\n"
 "Last-Translator: 玉堂白鹤 <yjwork@qq.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/xfce/thunar/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
@@ -229,8 +229,8 @@ msgstr[0] "您确定要永远删除选中的 %u 个文件吗？"
 #: ../thunar/thunar-application.c:2168 ../thunar/thunar-application.c:2347
 #: ../thunar/thunar-chooser-dialog.c:288 ../thunar/thunar-chooser-dialog.c:705
 #: ../thunar/thunar-chooser-dialog.c:753 ../thunar/thunar-create-dialog.c:141
-#: ../thunar/thunar-dialogs.c:105 ../thunar/thunar-dialogs.c:497
-#: ../thunar/thunar-dialogs.c:608 ../thunar/thunar-dialogs.c:866
+#: ../thunar/thunar-dialogs.c:105 ../thunar/thunar-dialogs.c:521
+#: ../thunar/thunar-dialogs.c:634 ../thunar/thunar-dialogs.c:900
 #: ../thunar/thunar-dnd.c:169 ../thunar/thunar-launcher.c:736
 #: ../thunar/thunar-permissions-chooser.c:535
 #: ../thunar/thunar-permissions-chooser.c:1143
@@ -497,7 +497,7 @@ msgstr "剪贴板中没有内容可以粘贴"
 #. setup the dialog
 #. add the "Close" button
 #. add a regular close button, the header bar already provides one
-#: ../thunar/thunar-column-editor.c:120 ../thunar/thunar-dialogs.c:811
+#: ../thunar/thunar-column-editor.c:120 ../thunar/thunar-dialogs.c:845
 #: ../thunar/thunar-preferences-dialog.c:257
 #: ../thunar/thunar-properties-dialog.c:254
 #: ../thunar/thunar-renamer-dialog.c:355
@@ -680,110 +680,118 @@ msgstr "是(_Y)"
 msgid "Yes to _all"
 msgstr "全部选是(_A)"
 
-#: ../thunar/thunar-dialogs.c:462 ../thunar/thunar-permissions-chooser.c:536
-msgid "_No"
-msgstr "否(_N)"
-
-#: ../thunar/thunar-dialogs.c:466
-msgid "N_o to all"
-msgstr "全部选否(_O)"
-
-#: ../thunar/thunar-dialogs.c:470
-msgid "_Retry"
-msgstr "重试(_R)"
-
-#: ../thunar/thunar-dialogs.c:474
-msgid "Copy _Anyway"
-msgstr "仍然复制(_A)"
-
-#: ../thunar/thunar-dialogs.c:587
-msgid "Confirm to replace files"
-msgstr "确认替换文件"
-
-#: ../thunar/thunar-dialogs.c:609
-msgid "S_kip All"
-msgstr "全部跳过(_K)"
-
-#: ../thunar/thunar-dialogs.c:610
-msgid "_Skip"
-msgstr "跳过(_S)"
-
-#: ../thunar/thunar-dialogs.c:611
-msgid "Replace _All"
-msgstr "全部替换(_A)"
-
-#: ../thunar/thunar-dialogs.c:612
+#: ../thunar/thunar-dialogs.c:462 ../thunar/thunar-dialogs.c:638
 msgid "_Replace"
 msgstr "替换(_R)"
 
-#: ../thunar/thunar-dialogs.c:649
+#: ../thunar/thunar-dialogs.c:466 ../thunar/thunar-dialogs.c:637
+msgid "Replace _All"
+msgstr "全部替换(_A)"
+
+#: ../thunar/thunar-dialogs.c:470 ../thunar/thunar-dialogs.c:636
+msgid "_Skip"
+msgstr "跳过(_S)"
+
+#: ../thunar/thunar-dialogs.c:474 ../thunar/thunar-dialogs.c:635
+msgid "S_kip All"
+msgstr "全部跳过(_K)"
+
+#: ../thunar/thunar-dialogs.c:478 ../thunar/thunar-dialogs.c:640
+msgid "Re_name"
+msgstr "重命名(_N)"
+
+#: ../thunar/thunar-dialogs.c:482 ../thunar/thunar-dialogs.c:639
+msgid "Rena_me All"
+msgstr "全部重命名(_M)"
+
+#: ../thunar/thunar-dialogs.c:486 ../thunar/thunar-permissions-chooser.c:536
+msgid "_No"
+msgstr "否(_N)"
+
+#: ../thunar/thunar-dialogs.c:490
+msgid "N_o to all"
+msgstr "全部选否(_O)"
+
+#: ../thunar/thunar-dialogs.c:494
+msgid "_Retry"
+msgstr "重试(_R)"
+
+#: ../thunar/thunar-dialogs.c:498
+msgid "Copy _Anyway"
+msgstr "仍然复制(_A)"
+
+#: ../thunar/thunar-dialogs.c:613
+msgid "Confirm to replace files"
+msgstr "确认替换文件"
+
+#: ../thunar/thunar-dialogs.c:683
 #, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
 msgstr "此文件夹已包含一个名为 “%s” 的符号链接。"
 
-#: ../thunar/thunar-dialogs.c:654
+#: ../thunar/thunar-dialogs.c:688
 #, c-format
 msgid "This folder already contains a folder \"%s\"."
 msgstr "此文件夹已包含一个名为 “%s” 的文件夹。"
 
-#: ../thunar/thunar-dialogs.c:659
+#: ../thunar/thunar-dialogs.c:693
 #, c-format
 msgid "This folder already contains a file \"%s\"."
 msgstr "此文件夹已包含一个名为 “%s” 的文件。"
 
-#: ../thunar/thunar-dialogs.c:673
+#: ../thunar/thunar-dialogs.c:707
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the link"
 msgstr "您要替换此链接吗？"
 
-#: ../thunar/thunar-dialogs.c:675
+#: ../thunar/thunar-dialogs.c:709
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the existing folder"
 msgstr "您要替换已存在的文件夹吗？"
 
-#: ../thunar/thunar-dialogs.c:677
+#: ../thunar/thunar-dialogs.c:711
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
 msgstr "您要替换已存在的文件吗？"
 
 #. Fourth box (size, volume, free space)
-#: ../thunar/thunar-dialogs.c:698 ../thunar/thunar-dialogs.c:734
+#: ../thunar/thunar-dialogs.c:732 ../thunar/thunar-dialogs.c:768
 #: ../thunar/thunar-properties-dialog.c:490
 msgid "Size:"
 msgstr "大小:"
 
-#: ../thunar/thunar-dialogs.c:698 ../thunar/thunar-dialogs.c:734
+#: ../thunar/thunar-dialogs.c:732 ../thunar/thunar-dialogs.c:768
 #: ../thunar/thunar-properties-dialog.c:449
 msgid "Modified:"
 msgstr "修改:"
 
-#: ../thunar/thunar-dialogs.c:709
+#: ../thunar/thunar-dialogs.c:743
 #, c-format
 msgid "ReplaceDialogPart2|with the following link?"
 msgstr "使用以下链接吗？"
 
-#: ../thunar/thunar-dialogs.c:711
+#: ../thunar/thunar-dialogs.c:745
 #, c-format
 msgid "ReplaceDialogPart2|with the following folder?"
 msgstr "使用以下文件夹吗？"
 
-#: ../thunar/thunar-dialogs.c:713
+#: ../thunar/thunar-dialogs.c:747
 #, c-format
 msgid "ReplaceDialogPart2|with the following file?"
 msgstr "使用以下文件吗？"
 
-#: ../thunar/thunar-dialogs.c:846
+#: ../thunar/thunar-dialogs.c:880
 #, c-format
 msgid ""
 "The desktop file \"%s\" is in an insecure location and not marked as "
 "executable. If you do not trust this program, click Cancel."
 msgstr "desktop 文件 \"%s\" 在一个不安全的位置，并且未被标记为可执行。如果您不信任这个程序，请点击取消。"
 
-#: ../thunar/thunar-dialogs.c:863
+#: ../thunar/thunar-dialogs.c:897
 msgid "_Launch Anyway"
 msgstr "仍然启动(_L)"
 
-#: ../thunar/thunar-dialogs.c:865
+#: ../thunar/thunar-dialogs.c:899
 msgid "Mark _Executable"
 msgstr "标记为可执行(_E)"
 
@@ -871,12 +879,12 @@ msgid "File Name"
 msgstr "文件名"
 
 #: ../thunar/thunar-file.c:1083 ../thunar/thunar-gio-extensions.c:255
-#: ../thunar/thunar-shortcuts-model.c:1079 ../thunar.desktop.in.in.h:7
+#: ../thunar/thunar-shortcuts-model.c:1084 ../thunar.desktop.in.in.h:7
 msgid "Trash"
 msgstr "回收站"
 
 #: ../thunar/thunar-file.c:1090 ../thunar/thunar-gio-extensions.c:253
-#: ../thunar/thunar-shortcuts-model.c:961 ../thunar/thunar-window.c:383
+#: ../thunar/thunar-shortcuts-model.c:966 ../thunar/thunar-window.c:383
 msgid "File System"
 msgstr "文件系统"
 
@@ -1017,14 +1025,14 @@ msgstr "无法更改 “%s” 的群组: %s"
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "无法更改 “%s” 的权限: %s"
 
-#. I18N: put " (copy #) between basename and extension
-#: ../thunar/thunar-io-jobs-util.c:106
+#. I18N: put " (copy #)" between basename and extension
+#: ../thunar/thunar-io-jobs-util.c:106 ../thunar/thunar-io-jobs-util.c:212
 #, c-format
 msgid "%s (copy %u)%s"
 msgstr "%s (复制 %u)%s"
 
 #. I18N: put " (copy #)" after filename (for files without extension)
-#: ../thunar/thunar-io-jobs-util.c:112
+#: ../thunar/thunar-io-jobs-util.c:112 ../thunar/thunar-io-jobs-util.c:218
 #, c-format
 msgid "%s (copy %u)"
 msgstr "%s (复制 %u)"
@@ -1051,23 +1059,23 @@ msgid ""
 "If you replace an existing file, its contents will be overwritten."
 msgstr "文件 “%s” 已经存在。您要替换它吗？\n\n如果您替换已存在的文件，将改写它的内容。"
 
-#: ../thunar/thunar-job.c:335
+#: ../thunar/thunar-job.c:337
 msgid "Do you want to overwrite it?"
 msgstr "您要改写它吗？"
 
-#: ../thunar/thunar-job.c:392
+#: ../thunar/thunar-job.c:394
 msgid "Do you want to permanently delete it?"
 msgstr "您要永久删除它吗？"
 
-#: ../thunar/thunar-job.c:446
+#: ../thunar/thunar-job.c:448
 msgid "Do you want to create it?"
 msgstr "您要创建它吗？"
 
-#: ../thunar/thunar-job.c:548
+#: ../thunar/thunar-job.c:556
 msgid "Do you want to skip it?"
 msgstr "您要跳过它吗？"
 
-#: ../thunar/thunar-job.c:597
+#: ../thunar/thunar-job.c:605
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
@@ -2192,55 +2200,55 @@ msgid ""
 msgstr "您要跳过此文件并继续重命名剩下的文件吗？"
 
 #: ../thunar/thunar-shortcuts-model.c:622
-#: ../thunar/thunar-shortcuts-model.c:962 ../thunar/thunar-window.c:383
+#: ../thunar/thunar-shortcuts-model.c:967 ../thunar/thunar-window.c:383
 msgid "Browse the file system"
 msgstr "浏览文件系统"
 
-#: ../thunar/thunar-shortcuts-model.c:645
+#: ../thunar/thunar-shortcuts-model.c:650
 #: ../plugins/thunar-tpa/thunar-tpa.c:284
 msgid "Trash is empty"
 msgstr "回收站是空的"
 
-#: ../thunar/thunar-shortcuts-model.c:649
+#: ../thunar/thunar-shortcuts-model.c:654
 #, c-format
 msgid "Trash contains %d file"
 msgid_plural "Trash contains %d files"
 msgstr[0] "回收站内有 %d 个文件"
 
-#: ../thunar/thunar-shortcuts-model.c:955
+#: ../thunar/thunar-shortcuts-model.c:960
 msgid "DEVICES"
 msgstr "设备"
 
-#: ../thunar/thunar-shortcuts-model.c:998
+#: ../thunar/thunar-shortcuts-model.c:1003
 msgid "NETWORK"
 msgstr "网络"
 
-#: ../thunar/thunar-shortcuts-model.c:1006
+#: ../thunar/thunar-shortcuts-model.c:1011
 msgid "Browse Network"
 msgstr "浏览网络"
 
-#: ../thunar/thunar-shortcuts-model.c:1007 ../thunar/thunar-window.c:384
+#: ../thunar/thunar-shortcuts-model.c:1012 ../thunar/thunar-window.c:384
 msgid "Browse local network connections"
 msgstr "浏览本地网络连接"
 
-#: ../thunar/thunar-shortcuts-model.c:1029
+#: ../thunar/thunar-shortcuts-model.c:1034
 msgid "PLACES"
 msgstr "位置"
 
-#: ../thunar/thunar-shortcuts-model.c:1041
+#: ../thunar/thunar-shortcuts-model.c:1046
 msgid "Open the home folder"
 msgstr "打开主文件夹"
 
-#: ../thunar/thunar-shortcuts-model.c:1058
+#: ../thunar/thunar-shortcuts-model.c:1063
 msgid "Open the desktop folder"
 msgstr "打开桌面文件夹"
 
-#: ../thunar/thunar-shortcuts-model.c:1105 ../thunar/thunar-window.c:382
+#: ../thunar/thunar-shortcuts-model.c:1110 ../thunar/thunar-window.c:382
 #: ../thunar.desktop.in.in.h:6
 msgid "Computer"
 msgstr "计算机"
 
-#: ../thunar/thunar-shortcuts-model.c:1106
+#: ../thunar/thunar-shortcuts-model.c:1111
 msgid "Browse the computer"
 msgstr "浏览此计算机"
 
@@ -2518,65 +2526,65 @@ msgstr "空文件(_E)"
 msgid "No templates installed"
 msgstr "未安装模板"
 
-#: ../thunar/thunar-transfer-job.c:852
+#: ../thunar/thunar-transfer-job.c:881
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
 "destination"
 msgstr "复制至 \"%s\" 时出错: 还需要 %s 的空间才能复制到目标位置"
 
-#: ../thunar/thunar-transfer-job.c:903
-msgid "Collecting files..."
-msgstr "正在搜集文件..."
-
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:942
+#: ../thunar/thunar-transfer-job.c:915
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "正在尝试恢复 “%s”"
 
-#: ../thunar/thunar-transfer-job.c:971
+#: ../thunar/thunar-transfer-job.c:944
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "文件夹 “%s” 已经不再存在，但要从回收站中恢复此文件 “%s” 却需要它"
 
-#: ../thunar/thunar-transfer-job.c:997
+#: ../thunar/thunar-transfer-job.c:971
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "无法恢复文件夹 “%s”"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1018
+#: ../thunar/thunar-transfer-job.c:1046
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "正在尝试移动 “%s”"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1090
+#: ../thunar/thunar-transfer-job.c:1122
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "未能直接移动 “%s”。正在收集要复制的文件..."
 
-#: ../thunar/thunar-transfer-job.c:1251
+#: ../thunar/thunar-transfer-job.c:1155
+msgid "Collecting files..."
+msgstr "正在搜集文件..."
+
+#: ../thunar/thunar-transfer-job.c:1354
 #, c-format
 msgid "%s of %s"
 msgstr "%s 的 %s"
 
-#: ../thunar/thunar-transfer-job.c:1271
+#: ../thunar/thunar-transfer-job.c:1374
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "剩余 %lu 小时 (每秒 %s)"
 
-#: ../thunar/thunar-transfer-job.c:1279
+#: ../thunar/thunar-transfer-job.c:1382
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "剩余 %lu 分钟 (每秒 %s)"
 
-#: ../thunar/thunar-transfer-job.c:1286
+#: ../thunar/thunar-transfer-job.c:1389
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
@@ -2981,11 +2989,6 @@ msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar 是 Xfce 桌面环境下的快速易用的\n文件管理器。"
-
-#. set window title
-#: ../thunar/thunar-window.c:3477 ../thunar.desktop.in.in.h:3
-msgid "File Manager"
-msgstr "文件管理器"
 
 #: ../thunarx/thunarx-property-page.c:111
 msgid "Label"
@@ -3752,6 +3755,10 @@ msgstr "Thunar 文件管理器"
 #: ../thunar.desktop.in.in.h:2
 msgid "Browse the filesystem with the file manager"
 msgstr "用文件管理器浏览文件系统"
+
+#: ../thunar.desktop.in.in.h:3
+msgid "File Manager"
+msgstr "文件管理器"
 
 #: ../thunar.desktop.in.in.h:4
 msgid ""
