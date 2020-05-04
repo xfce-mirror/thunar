@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-18 22:20+0200\n"
-"PO-Revision-Date: 2020-04-19 10:10+0000\n"
+"POT-Creation-Date: 2020-05-03 00:45+0200\n"
+"PO-Revision-Date: 2020-05-04 12:59+0000\n"
 "Last-Translator: scootergrisen\n"
 "Language-Team: Danish (http://www.transifex.com/xfce/thunar/language/da/)\n"
 "MIME-Version: 1.0\n"
@@ -221,8 +221,8 @@ msgstr[1] "Er du sikker på, at du vil slette\nde %u valgte filer permanent?"
 #: ../thunar/thunar-application.c:2168 ../thunar/thunar-application.c:2347
 #: ../thunar/thunar-chooser-dialog.c:288 ../thunar/thunar-chooser-dialog.c:705
 #: ../thunar/thunar-chooser-dialog.c:753 ../thunar/thunar-create-dialog.c:141
-#: ../thunar/thunar-dialogs.c:105 ../thunar/thunar-dialogs.c:497
-#: ../thunar/thunar-dialogs.c:608 ../thunar/thunar-dialogs.c:866
+#: ../thunar/thunar-dialogs.c:105 ../thunar/thunar-dialogs.c:521
+#: ../thunar/thunar-dialogs.c:634 ../thunar/thunar-dialogs.c:900
 #: ../thunar/thunar-dnd.c:169 ../thunar/thunar-launcher.c:736
 #: ../thunar/thunar-permissions-chooser.c:535
 #: ../thunar/thunar-permissions-chooser.c:1143
@@ -489,7 +489,7 @@ msgstr "Der er intet i udklipsholderen at indsætte"
 #. setup the dialog
 #. add the "Close" button
 #. add a regular close button, the header bar already provides one
-#: ../thunar/thunar-column-editor.c:120 ../thunar/thunar-dialogs.c:811
+#: ../thunar/thunar-column-editor.c:120 ../thunar/thunar-dialogs.c:845
 #: ../thunar/thunar-preferences-dialog.c:257
 #: ../thunar/thunar-properties-dialog.c:254
 #: ../thunar/thunar-renamer-dialog.c:355
@@ -672,110 +672,118 @@ msgstr "_Ja"
 msgid "Yes to _all"
 msgstr "Ja til _alle"
 
-#: ../thunar/thunar-dialogs.c:462 ../thunar/thunar-permissions-chooser.c:536
-msgid "_No"
-msgstr "_Nej"
-
-#: ../thunar/thunar-dialogs.c:466
-msgid "N_o to all"
-msgstr "N_ej til alle"
-
-#: ../thunar/thunar-dialogs.c:470
-msgid "_Retry"
-msgstr "_Prøv igen"
-
-#: ../thunar/thunar-dialogs.c:474
-msgid "Copy _Anyway"
-msgstr "Kopiér _alligevel"
-
-#: ../thunar/thunar-dialogs.c:587
-msgid "Confirm to replace files"
-msgstr "Bekræft erstatning af filer"
-
-#: ../thunar/thunar-dialogs.c:609
-msgid "S_kip All"
-msgstr "Spr_ing alle over"
-
-#: ../thunar/thunar-dialogs.c:610
-msgid "_Skip"
-msgstr "_Spring over"
-
-#: ../thunar/thunar-dialogs.c:611
-msgid "Replace _All"
-msgstr "_Erstat alle"
-
-#: ../thunar/thunar-dialogs.c:612
+#: ../thunar/thunar-dialogs.c:462 ../thunar/thunar-dialogs.c:638
 msgid "_Replace"
 msgstr "_Erstat"
 
-#: ../thunar/thunar-dialogs.c:649
+#: ../thunar/thunar-dialogs.c:466 ../thunar/thunar-dialogs.c:637
+msgid "Replace _All"
+msgstr "Erstat _alle"
+
+#: ../thunar/thunar-dialogs.c:470 ../thunar/thunar-dialogs.c:636
+msgid "_Skip"
+msgstr "_Spring over"
+
+#: ../thunar/thunar-dialogs.c:474 ../thunar/thunar-dialogs.c:635
+msgid "S_kip All"
+msgstr "Spr_ing alle over"
+
+#: ../thunar/thunar-dialogs.c:478 ../thunar/thunar-dialogs.c:640
+msgid "Re_name"
+msgstr "_Omdøb"
+
+#: ../thunar/thunar-dialogs.c:482 ../thunar/thunar-dialogs.c:639
+msgid "Rena_me All"
+msgstr "O_mdøb alle"
+
+#: ../thunar/thunar-dialogs.c:486 ../thunar/thunar-permissions-chooser.c:536
+msgid "_No"
+msgstr "_Nej"
+
+#: ../thunar/thunar-dialogs.c:490
+msgid "N_o to all"
+msgstr "N_ej til alle"
+
+#: ../thunar/thunar-dialogs.c:494
+msgid "_Retry"
+msgstr "_Prøv igen"
+
+#: ../thunar/thunar-dialogs.c:498
+msgid "Copy _Anyway"
+msgstr "Kopiér _alligevel"
+
+#: ../thunar/thunar-dialogs.c:613
+msgid "Confirm to replace files"
+msgstr "Bekræft erstatning af filer"
+
+#: ../thunar/thunar-dialogs.c:683
 #, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
 msgstr "Mappen indeholder allerede en symbolsk henvisning \"%s\"."
 
-#: ../thunar/thunar-dialogs.c:654
+#: ../thunar/thunar-dialogs.c:688
 #, c-format
 msgid "This folder already contains a folder \"%s\"."
 msgstr "Mappen indeholder allerede en mappe \"%s\"."
 
-#: ../thunar/thunar-dialogs.c:659
+#: ../thunar/thunar-dialogs.c:693
 #, c-format
 msgid "This folder already contains a file \"%s\"."
 msgstr "Mappen indeholder allerede en fil \"%s\"."
 
-#: ../thunar/thunar-dialogs.c:673
+#: ../thunar/thunar-dialogs.c:707
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the link"
 msgstr "ReplaceDialogPart1|Vil du erstatte henvisningen"
 
-#: ../thunar/thunar-dialogs.c:675
+#: ../thunar/thunar-dialogs.c:709
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the existing folder"
 msgstr "ReplaceDialogPart1|Vil du erstatte den eksisterende mappe"
 
-#: ../thunar/thunar-dialogs.c:677
+#: ../thunar/thunar-dialogs.c:711
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
 msgstr "ReplaceDialogPart1|Vil du erstatte den eksisterende fil"
 
 #. Fourth box (size, volume, free space)
-#: ../thunar/thunar-dialogs.c:698 ../thunar/thunar-dialogs.c:734
+#: ../thunar/thunar-dialogs.c:732 ../thunar/thunar-dialogs.c:768
 #: ../thunar/thunar-properties-dialog.c:490
 msgid "Size:"
 msgstr "Størrelse:"
 
-#: ../thunar/thunar-dialogs.c:698 ../thunar/thunar-dialogs.c:734
+#: ../thunar/thunar-dialogs.c:732 ../thunar/thunar-dialogs.c:768
 #: ../thunar/thunar-properties-dialog.c:449
 msgid "Modified:"
 msgstr "Ændret:"
 
-#: ../thunar/thunar-dialogs.c:709
+#: ../thunar/thunar-dialogs.c:743
 #, c-format
 msgid "ReplaceDialogPart2|with the following link?"
 msgstr "ReplaceDialogPart2|med følgende henvisning?"
 
-#: ../thunar/thunar-dialogs.c:711
+#: ../thunar/thunar-dialogs.c:745
 #, c-format
 msgid "ReplaceDialogPart2|with the following folder?"
 msgstr "ReplaceDialogPart2|med følgende mappe?"
 
-#: ../thunar/thunar-dialogs.c:713
+#: ../thunar/thunar-dialogs.c:747
 #, c-format
 msgid "ReplaceDialogPart2|with the following file?"
 msgstr "ReplaceDialogPart2|med følgende fil?"
 
-#: ../thunar/thunar-dialogs.c:846
+#: ../thunar/thunar-dialogs.c:880
 #, c-format
 msgid ""
 "The desktop file \"%s\" is in an insecure location and not marked as "
 "executable. If you do not trust this program, click Cancel."
 msgstr "Skrivebordsfilen \"%s\" er placeret et usikkert sted, og er ikke mærket som kørbar. Klik på Annuller, hvis du ikke stoler på programmet."
 
-#: ../thunar/thunar-dialogs.c:863
+#: ../thunar/thunar-dialogs.c:897
 msgid "_Launch Anyway"
 msgstr "_Start alligevel"
 
-#: ../thunar/thunar-dialogs.c:865
+#: ../thunar/thunar-dialogs.c:899
 msgid "Mark _Executable"
 msgstr "Mærk _kørbar"
 
@@ -863,12 +871,12 @@ msgid "File Name"
 msgstr "Filnavn"
 
 #: ../thunar/thunar-file.c:1083 ../thunar/thunar-gio-extensions.c:255
-#: ../thunar/thunar-shortcuts-model.c:1079 ../thunar.desktop.in.in.h:7
+#: ../thunar/thunar-shortcuts-model.c:1084 ../thunar.desktop.in.in.h:7
 msgid "Trash"
 msgstr "Papirkurv"
 
 #: ../thunar/thunar-file.c:1090 ../thunar/thunar-gio-extensions.c:253
-#: ../thunar/thunar-shortcuts-model.c:961 ../thunar/thunar-window.c:383
+#: ../thunar/thunar-shortcuts-model.c:966 ../thunar/thunar-window.c:383
 msgid "File System"
 msgstr "Filsystem"
 
@@ -1009,14 +1017,14 @@ msgstr "Kunne ikke skifte gruppen for \"%s\": %s"
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "Kunne ikke ændre tilladelserne for \"%s\": %s"
 
-#. I18N: put " (copy #) between basename and extension
-#: ../thunar/thunar-io-jobs-util.c:106
+#. I18N: put " (copy #)" between basename and extension
+#: ../thunar/thunar-io-jobs-util.c:106 ../thunar/thunar-io-jobs-util.c:212
 #, c-format
 msgid "%s (copy %u)%s"
 msgstr "%s (kopiér %u)%s"
 
 #. I18N: put " (copy #)" after filename (for files without extension)
-#: ../thunar/thunar-io-jobs-util.c:112
+#: ../thunar/thunar-io-jobs-util.c:112 ../thunar/thunar-io-jobs-util.c:218
 #, c-format
 msgid "%s (copy %u)"
 msgstr "%s (kopiér %u)"
@@ -1043,23 +1051,23 @@ msgid ""
 "If you replace an existing file, its contents will be overwritten."
 msgstr "Filen \"%s\" findes allerede. Vil du erstatte den?\n\nHvis du erstatter en eksisterende fil, vil indholdet blive overskrevet."
 
-#: ../thunar/thunar-job.c:335
+#: ../thunar/thunar-job.c:337
 msgid "Do you want to overwrite it?"
 msgstr "Vil du overskrive den?"
 
-#: ../thunar/thunar-job.c:392
+#: ../thunar/thunar-job.c:394
 msgid "Do you want to permanently delete it?"
 msgstr "Vil du slette den permanent?"
 
-#: ../thunar/thunar-job.c:446
+#: ../thunar/thunar-job.c:448
 msgid "Do you want to create it?"
 msgstr "Vil du oprette den?"
 
-#: ../thunar/thunar-job.c:548
+#: ../thunar/thunar-job.c:556
 msgid "Do you want to skip it?"
 msgstr "Vil du springe den over?"
 
-#: ../thunar/thunar-job.c:597
+#: ../thunar/thunar-job.c:605
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
@@ -2203,56 +2211,56 @@ msgid ""
 msgstr "Vil du springe filen over og fortsætte med at omdøbe de resterende filer?"
 
 #: ../thunar/thunar-shortcuts-model.c:622
-#: ../thunar/thunar-shortcuts-model.c:962 ../thunar/thunar-window.c:383
+#: ../thunar/thunar-shortcuts-model.c:967 ../thunar/thunar-window.c:383
 msgid "Browse the file system"
 msgstr "Gennemse filsystemet"
 
-#: ../thunar/thunar-shortcuts-model.c:645
+#: ../thunar/thunar-shortcuts-model.c:650
 #: ../plugins/thunar-tpa/thunar-tpa.c:284
 msgid "Trash is empty"
 msgstr "Papirkurven er tom"
 
-#: ../thunar/thunar-shortcuts-model.c:649
+#: ../thunar/thunar-shortcuts-model.c:654
 #, c-format
 msgid "Trash contains %d file"
 msgid_plural "Trash contains %d files"
 msgstr[0] "Papirkurven indeholder %d fil"
 msgstr[1] "Papirkurven indeholder %d filer"
 
-#: ../thunar/thunar-shortcuts-model.c:955
+#: ../thunar/thunar-shortcuts-model.c:960
 msgid "DEVICES"
 msgstr "ENHEDER"
 
-#: ../thunar/thunar-shortcuts-model.c:998
+#: ../thunar/thunar-shortcuts-model.c:1003
 msgid "NETWORK"
 msgstr "NETVÆRK"
 
-#: ../thunar/thunar-shortcuts-model.c:1006
+#: ../thunar/thunar-shortcuts-model.c:1011
 msgid "Browse Network"
 msgstr "Gennemse netværk"
 
-#: ../thunar/thunar-shortcuts-model.c:1007 ../thunar/thunar-window.c:384
+#: ../thunar/thunar-shortcuts-model.c:1012 ../thunar/thunar-window.c:384
 msgid "Browse local network connections"
 msgstr "Gennemse lokale netværksforbindelser"
 
-#: ../thunar/thunar-shortcuts-model.c:1029
+#: ../thunar/thunar-shortcuts-model.c:1034
 msgid "PLACES"
 msgstr "STEDER"
 
-#: ../thunar/thunar-shortcuts-model.c:1041
+#: ../thunar/thunar-shortcuts-model.c:1046
 msgid "Open the home folder"
 msgstr "Åbn hjemmemappen"
 
-#: ../thunar/thunar-shortcuts-model.c:1058
+#: ../thunar/thunar-shortcuts-model.c:1063
 msgid "Open the desktop folder"
 msgstr "Åbn skrivebordsmappen"
 
-#: ../thunar/thunar-shortcuts-model.c:1105 ../thunar/thunar-window.c:382
+#: ../thunar/thunar-shortcuts-model.c:1110 ../thunar/thunar-window.c:382
 #: ../thunar.desktop.in.in.h:6
 msgid "Computer"
 msgstr "Computer"
 
-#: ../thunar/thunar-shortcuts-model.c:1106
+#: ../thunar/thunar-shortcuts-model.c:1111
 msgid "Browse the computer"
 msgstr "Gennemse computeren"
 
@@ -2542,67 +2550,67 @@ msgstr "_Tom fil"
 msgid "No templates installed"
 msgstr "Der er ikke installeret nogen skabeloner"
 
-#: ../thunar/thunar-transfer-job.c:852
+#: ../thunar/thunar-transfer-job.c:881
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
 "destination"
 msgstr "Fejl ved kopiering til \"%s\": der kræves %s mere plads for at kopiere til målet"
 
-#: ../thunar/thunar-transfer-job.c:903
-msgid "Collecting files..."
-msgstr "Indsamler filer ..."
-
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:942
+#: ../thunar/thunar-transfer-job.c:915
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "Prøver at gendanne \"%s\""
 
-#: ../thunar/thunar-transfer-job.c:971
+#: ../thunar/thunar-transfer-job.c:944
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "Mappen \"%s\" findes ikke længere, men er krævet for at gendanne filen \"%s\" fra papirkurven"
 
-#: ../thunar/thunar-transfer-job.c:997
+#: ../thunar/thunar-transfer-job.c:971
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Kunne ikke gendanne mappen \"%s\""
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1018
+#: ../thunar/thunar-transfer-job.c:1046
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Prøver at flytte \"%s\""
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1090
+#: ../thunar/thunar-transfer-job.c:1122
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "Kunne ikke flytte \"%s\" direkte. Indsamler filer til kopiering ..."
 
-#: ../thunar/thunar-transfer-job.c:1251
+#: ../thunar/thunar-transfer-job.c:1155
+msgid "Collecting files..."
+msgstr "Indsamler filer ..."
+
+#: ../thunar/thunar-transfer-job.c:1354
 #, c-format
 msgid "%s of %s"
 msgstr "%s af %s"
 
-#: ../thunar/thunar-transfer-job.c:1271
+#: ../thunar/thunar-transfer-job.c:1374
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "%lu time tilbage (%s/sek.)"
 msgstr[1] "%lu timer tilbage (%s/sek.)"
 
-#: ../thunar/thunar-transfer-job.c:1279
+#: ../thunar/thunar-transfer-job.c:1382
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "%lu minut tilbage (%s/sek.)"
 msgstr[1] "%lu minutter tilbage (%s/sek.)"
 
-#: ../thunar/thunar-transfer-job.c:1286
+#: ../thunar/thunar-transfer-job.c:1389
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
@@ -3008,11 +3016,6 @@ msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar er en hurtig og letanvendelig\nfilhåndtering til Xfce-skrivebordsmiljøet."
-
-#. set window title
-#: ../thunar/thunar-window.c:3477 ../thunar.desktop.in.in.h:3
-msgid "File Manager"
-msgstr "Filhåndtering"
 
 #: ../thunarx/thunarx-property-page.c:111
 msgid "Label"
@@ -3782,6 +3785,10 @@ msgstr "Thunar Filhåndtering"
 #: ../thunar.desktop.in.in.h:2
 msgid "Browse the filesystem with the file manager"
 msgstr "Gennemse filsystemet med filhåndteringen"
+
+#: ../thunar.desktop.in.in.h:3
+msgid "File Manager"
+msgstr "Filhåndtering"
 
 #: ../thunar.desktop.in.in.h:4
 msgid ""
