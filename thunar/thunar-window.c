@@ -879,7 +879,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
       gtk_widget_show (infobar);
 
       /* add the label with the root warning */
-      label = gtk_label_new (_("Warning, you are using the root account, you may harm your system."));
+      label = gtk_label_new (_("Warning: you are using the root account. You may harm your system."));
       gtk_container_add (GTK_CONTAINER (gtk_info_bar_get_content_area (GTK_INFO_BAR (infobar))), label);
       gtk_widget_show (label);
     }
