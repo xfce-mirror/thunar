@@ -6,6 +6,7 @@
 # Ardit Dani <ardit.dani@gmail.com>, 2014
 # Arianit Kukaj <akukaj@msn.com>, 2019
 # Besnik Bleta <besnik@programeshqip.org>, 2018
+# Besnik Bleta <besnik@programeshqip.org>, 2020
 # Besnik Bleta <besnik@programeshqip.org>, 2018-2020
 # Erlin Hysenbelliu <erlinh91@gmail.com>, 2014
 # Xfce Bot <transifex@xfce.org>, 2018
@@ -13,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-18 22:20+0200\n"
-"PO-Revision-Date: 2020-04-19 08:03+0000\n"
+"POT-Creation-Date: 2020-05-07 12:45+0200\n"
+"PO-Revision-Date: 2020-05-08 07:08+0000\n"
 "Last-Translator: Besnik Bleta <besnik@programeshqip.org>\n"
 "Language-Team: Albanian (http://www.transifex.com/xfce/thunar/language/sq/)\n"
 "MIME-Version: 1.0\n"
@@ -222,8 +223,8 @@ msgstr[1] "Jeni i sigurt se doni të fshihen \npërgjithmonë %u kartelat e për
 #: ../thunar/thunar-application.c:2168 ../thunar/thunar-application.c:2347
 #: ../thunar/thunar-chooser-dialog.c:288 ../thunar/thunar-chooser-dialog.c:705
 #: ../thunar/thunar-chooser-dialog.c:753 ../thunar/thunar-create-dialog.c:141
-#: ../thunar/thunar-dialogs.c:105 ../thunar/thunar-dialogs.c:497
-#: ../thunar/thunar-dialogs.c:608 ../thunar/thunar-dialogs.c:866
+#: ../thunar/thunar-dialogs.c:105 ../thunar/thunar-dialogs.c:521
+#: ../thunar/thunar-dialogs.c:634 ../thunar/thunar-dialogs.c:900
 #: ../thunar/thunar-dnd.c:169 ../thunar/thunar-launcher.c:736
 #: ../thunar/thunar-permissions-chooser.c:535
 #: ../thunar/thunar-permissions-chooser.c:1143
@@ -490,7 +491,7 @@ msgstr "Në të papastër s’ka gjë për t’u ngjitur"
 #. setup the dialog
 #. add the "Close" button
 #. add a regular close button, the header bar already provides one
-#: ../thunar/thunar-column-editor.c:120 ../thunar/thunar-dialogs.c:811
+#: ../thunar/thunar-column-editor.c:120 ../thunar/thunar-dialogs.c:845
 #: ../thunar/thunar-preferences-dialog.c:257
 #: ../thunar/thunar-properties-dialog.c:254
 #: ../thunar/thunar-renamer-dialog.c:355
@@ -673,110 +674,118 @@ msgstr "_Po"
 msgid "Yes to _all"
 msgstr "Po për të _tëra"
 
-#: ../thunar/thunar-dialogs.c:462 ../thunar/thunar-permissions-chooser.c:536
-msgid "_No"
-msgstr "_Jo"
-
-#: ../thunar/thunar-dialogs.c:466
-msgid "N_o to all"
-msgstr "J_o për të tëra"
-
-#: ../thunar/thunar-dialogs.c:470
-msgid "_Retry"
-msgstr "_Riprovo"
-
-#: ../thunar/thunar-dialogs.c:474
-msgid "Copy _Anyway"
-msgstr "Kopjoje _Sido Qoftë"
-
-#: ../thunar/thunar-dialogs.c:587
-msgid "Confirm to replace files"
-msgstr "Ripohoni zëvendësimin e kartelave"
-
-#: ../thunar/thunar-dialogs.c:609
-msgid "S_kip All"
-msgstr "Anashkaloji Krejt"
-
-#: ../thunar/thunar-dialogs.c:610
-msgid "_Skip"
-msgstr "_Anashkaloje"
-
-#: ../thunar/thunar-dialogs.c:611
-msgid "Replace _All"
-msgstr "Zëvendësoji _Krejt"
-
-#: ../thunar/thunar-dialogs.c:612
+#: ../thunar/thunar-dialogs.c:462 ../thunar/thunar-dialogs.c:638
 msgid "_Replace"
 msgstr "_Zëvendësoje"
 
-#: ../thunar/thunar-dialogs.c:649
+#: ../thunar/thunar-dialogs.c:466 ../thunar/thunar-dialogs.c:637
+msgid "Replace _All"
+msgstr "Zëvendësoji _Krejt"
+
+#: ../thunar/thunar-dialogs.c:470 ../thunar/thunar-dialogs.c:636
+msgid "_Skip"
+msgstr "_Anashkaloje"
+
+#: ../thunar/thunar-dialogs.c:474 ../thunar/thunar-dialogs.c:635
+msgid "S_kip All"
+msgstr "Anashkaloji Krejt"
+
+#: ../thunar/thunar-dialogs.c:478 ../thunar/thunar-dialogs.c:640
+msgid "Re_name"
+msgstr "Ri_emërtoje"
+
+#: ../thunar/thunar-dialogs.c:482 ../thunar/thunar-dialogs.c:639
+msgid "Rena_me All"
+msgstr "Rie_mërtoji Krejt"
+
+#: ../thunar/thunar-dialogs.c:486 ../thunar/thunar-permissions-chooser.c:536
+msgid "_No"
+msgstr "_Jo"
+
+#: ../thunar/thunar-dialogs.c:490
+msgid "N_o to all"
+msgstr "J_o për të tëra"
+
+#: ../thunar/thunar-dialogs.c:494
+msgid "_Retry"
+msgstr "_Riprovo"
+
+#: ../thunar/thunar-dialogs.c:498
+msgid "Copy _Anyway"
+msgstr "Kopjoje _Sido Qoftë"
+
+#: ../thunar/thunar-dialogs.c:613
+msgid "Confirm to replace files"
+msgstr "Ripohoni zëvendësimin e kartelave"
+
+#: ../thunar/thunar-dialogs.c:683
 #, c-format
 msgid "This folder already contains a symbolic link \"%s\"."
 msgstr "Kjo dosje përmban tashmë një lidhje simbolike \"%s\"."
 
-#: ../thunar/thunar-dialogs.c:654
+#: ../thunar/thunar-dialogs.c:688
 #, c-format
 msgid "This folder already contains a folder \"%s\"."
 msgstr "Kjo dosje përmban tashmë një dosje \"%s\"."
 
-#: ../thunar/thunar-dialogs.c:659
+#: ../thunar/thunar-dialogs.c:693
 #, c-format
 msgid "This folder already contains a file \"%s\"."
 msgstr "Kjo dosje përmban tashmë një kartelë \"%s\"."
 
-#: ../thunar/thunar-dialogs.c:673
+#: ../thunar/thunar-dialogs.c:707
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the link"
 msgstr "ReplaceDialogPart1|Doni të zëvendësohet lidhja"
 
-#: ../thunar/thunar-dialogs.c:675
+#: ../thunar/thunar-dialogs.c:709
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the existing folder"
 msgstr "ReplaceDialogPart1|Doni të zëvendësohet dosja ekzistuese"
 
-#: ../thunar/thunar-dialogs.c:677
+#: ../thunar/thunar-dialogs.c:711
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
 msgstr "ReplaceDialogPart1|Doni të zëvendësohet kartela ekzistuese"
 
 #. Fourth box (size, volume, free space)
-#: ../thunar/thunar-dialogs.c:698 ../thunar/thunar-dialogs.c:734
+#: ../thunar/thunar-dialogs.c:732 ../thunar/thunar-dialogs.c:768
 #: ../thunar/thunar-properties-dialog.c:490
 msgid "Size:"
 msgstr "Madhësi:"
 
-#: ../thunar/thunar-dialogs.c:698 ../thunar/thunar-dialogs.c:734
+#: ../thunar/thunar-dialogs.c:732 ../thunar/thunar-dialogs.c:768
 #: ../thunar/thunar-properties-dialog.c:449
 msgid "Modified:"
 msgstr "Ndryshuar më:"
 
-#: ../thunar/thunar-dialogs.c:709
+#: ../thunar/thunar-dialogs.c:743
 #, c-format
 msgid "ReplaceDialogPart2|with the following link?"
 msgstr "ReplaceDialogPart2|me lidhjen vijuese?"
 
-#: ../thunar/thunar-dialogs.c:711
+#: ../thunar/thunar-dialogs.c:745
 #, c-format
 msgid "ReplaceDialogPart2|with the following folder?"
 msgstr "ReplaceDialogPart2|me dosjen vijuese?"
 
-#: ../thunar/thunar-dialogs.c:713
+#: ../thunar/thunar-dialogs.c:747
 #, c-format
 msgid "ReplaceDialogPart2|with the following file?"
 msgstr "ReplaceDialogPart2|me kartelën vijuese?"
 
-#: ../thunar/thunar-dialogs.c:846
+#: ../thunar/thunar-dialogs.c:880
 #, c-format
 msgid ""
 "The desktop file \"%s\" is in an insecure location and not marked as "
 "executable. If you do not trust this program, click Cancel."
 msgstr "Kartela desktop \"%s\" gjendet në një vend të pasigurt dhe s’është e shënuar si e ekzekutueshme. Nëse s’i zini besë këtij programi, klikoni mbi “Anuloje”."
 
-#: ../thunar/thunar-dialogs.c:863
+#: ../thunar/thunar-dialogs.c:897
 msgid "_Launch Anyway"
 msgstr "_Nise Sido Qoftë"
 
-#: ../thunar/thunar-dialogs.c:865
+#: ../thunar/thunar-dialogs.c:899
 msgid "Mark _Executable"
 msgstr "Vëri Shenjë Si e _Ekzekutueshme"
 
@@ -864,12 +873,12 @@ msgid "File Name"
 msgstr "Emër Kartele"
 
 #: ../thunar/thunar-file.c:1083 ../thunar/thunar-gio-extensions.c:255
-#: ../thunar/thunar-shortcuts-model.c:1079 ../thunar.desktop.in.in.h:7
+#: ../thunar/thunar-shortcuts-model.c:1084 ../thunar.desktop.in.in.h:7
 msgid "Trash"
 msgstr "Hedhurina"
 
 #: ../thunar/thunar-file.c:1090 ../thunar/thunar-gio-extensions.c:253
-#: ../thunar/thunar-shortcuts-model.c:961 ../thunar/thunar-window.c:383
+#: ../thunar/thunar-shortcuts-model.c:966 ../thunar/thunar-window.c:383
 msgid "File System"
 msgstr "Sistem Kartelash"
 
@@ -1010,14 +1019,14 @@ msgstr "S’u arrit të ndryshohej grupi për \"%s\":%s"
 msgid "Failed to change the permissions of \"%s\": %s"
 msgstr "S’u arrit të ndryshoheshin lejet mbi \"%s\": %s"
 
-#. I18N: put " (copy #) between basename and extension
-#: ../thunar/thunar-io-jobs-util.c:106
+#. I18N: put " (copy #)" between basename and extension
+#: ../thunar/thunar-io-jobs-util.c:106 ../thunar/thunar-io-jobs-util.c:212
 #, c-format
 msgid "%s (copy %u)%s"
 msgstr "%s (kopjo %u)%s"
 
 #. I18N: put " (copy #)" after filename (for files without extension)
-#: ../thunar/thunar-io-jobs-util.c:112
+#: ../thunar/thunar-io-jobs-util.c:112 ../thunar/thunar-io-jobs-util.c:218
 #, c-format
 msgid "%s (copy %u)"
 msgstr "%s (kopjo %u)"
@@ -1044,23 +1053,23 @@ msgid ""
 "If you replace an existing file, its contents will be overwritten."
 msgstr "Ka tashmë një kartelë \"%s\". Do të donit të zëvendësohet?\n\nNëse zëvendësoni një kartelë ekzistuese, lënda e saj do të mbishkruhet."
 
-#: ../thunar/thunar-job.c:335
+#: ../thunar/thunar-job.c:337
 msgid "Do you want to overwrite it?"
 msgstr "Doni të mbishkruhet?"
 
-#: ../thunar/thunar-job.c:392
+#: ../thunar/thunar-job.c:394
 msgid "Do you want to permanently delete it?"
 msgstr "Doni të fshihet përgjithmonë?"
 
-#: ../thunar/thunar-job.c:446
+#: ../thunar/thunar-job.c:448
 msgid "Do you want to create it?"
 msgstr "Doni të krijohet?"
 
-#: ../thunar/thunar-job.c:548
+#: ../thunar/thunar-job.c:556
 msgid "Do you want to skip it?"
 msgstr "Doni të anashkalohet?"
 
-#: ../thunar/thunar-job.c:597
+#: ../thunar/thunar-job.c:605
 msgid ""
 "There is not enough space on the destination. Try to remove files to make "
 "space."
@@ -2204,56 +2213,56 @@ msgid ""
 msgstr "Doni të anashkalohet kjo kartelë dhe të vazhdohet me riemërtimin e kartelave të mbetura?"
 
 #: ../thunar/thunar-shortcuts-model.c:622
-#: ../thunar/thunar-shortcuts-model.c:962 ../thunar/thunar-window.c:383
+#: ../thunar/thunar-shortcuts-model.c:967 ../thunar/thunar-window.c:383
 msgid "Browse the file system"
 msgstr "Shfleto sistemin e kartelave"
 
-#: ../thunar/thunar-shortcuts-model.c:645
+#: ../thunar/thunar-shortcuts-model.c:650
 #: ../plugins/thunar-tpa/thunar-tpa.c:284
 msgid "Trash is empty"
 msgstr "Hedhurina është e zbrazët"
 
-#: ../thunar/thunar-shortcuts-model.c:649
+#: ../thunar/thunar-shortcuts-model.c:654
 #, c-format
 msgid "Trash contains %d file"
 msgid_plural "Trash contains %d files"
 msgstr[0] "Hedhurinat përmbajnë %d kartelë"
 msgstr[1] "Hedhurinat përmbajnë %d kartela"
 
-#: ../thunar/thunar-shortcuts-model.c:955
+#: ../thunar/thunar-shortcuts-model.c:960
 msgid "DEVICES"
 msgstr "PAJISJE"
 
-#: ../thunar/thunar-shortcuts-model.c:998
+#: ../thunar/thunar-shortcuts-model.c:1003
 msgid "NETWORK"
 msgstr "RRJET"
 
-#: ../thunar/thunar-shortcuts-model.c:1006
+#: ../thunar/thunar-shortcuts-model.c:1011
 msgid "Browse Network"
 msgstr "Shfletoni Rrjetin"
 
-#: ../thunar/thunar-shortcuts-model.c:1007 ../thunar/thunar-window.c:384
+#: ../thunar/thunar-shortcuts-model.c:1012 ../thunar/thunar-window.c:384
 msgid "Browse local network connections"
 msgstr "Shfleto lidhje rrjeti vendor"
 
-#: ../thunar/thunar-shortcuts-model.c:1029
+#: ../thunar/thunar-shortcuts-model.c:1034
 msgid "PLACES"
 msgstr "VENDE"
 
-#: ../thunar/thunar-shortcuts-model.c:1041
+#: ../thunar/thunar-shortcuts-model.c:1046
 msgid "Open the home folder"
 msgstr "Hap dosjen shtëpi"
 
-#: ../thunar/thunar-shortcuts-model.c:1058
+#: ../thunar/thunar-shortcuts-model.c:1063
 msgid "Open the desktop folder"
 msgstr "Hap dosjen desktop"
 
-#: ../thunar/thunar-shortcuts-model.c:1105 ../thunar/thunar-window.c:382
+#: ../thunar/thunar-shortcuts-model.c:1110 ../thunar/thunar-window.c:382
 #: ../thunar.desktop.in.in.h:6
 msgid "Computer"
 msgstr "Kompjuter"
 
-#: ../thunar/thunar-shortcuts-model.c:1106
+#: ../thunar/thunar-shortcuts-model.c:1111
 msgid "Browse the computer"
 msgstr "Shfletoni në kompjuter"
 
@@ -2543,67 +2552,67 @@ msgstr "Kartelë e _Zbrazët"
 msgid "No templates installed"
 msgstr "Nuk ka gjedhe të instaluara"
 
-#: ../thunar/thunar-transfer-job.c:852
+#: ../thunar/thunar-transfer-job.c:881
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
 "destination"
 msgstr "Gabim teksa kopjohej te \"%s\": %s lypset më tepër hapësirë për ta kopjuar te vendmbërritja"
 
-#: ../thunar/thunar-transfer-job.c:903
-msgid "Collecting files..."
-msgstr "Po grumbullohen kartela…"
-
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:942
+#: ../thunar/thunar-transfer-job.c:915
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "Po provohet të rikthehet \"%s\""
 
-#: ../thunar/thunar-transfer-job.c:971
+#: ../thunar/thunar-transfer-job.c:944
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "Dosja \"%s\" s’ekziston më, por është e domosdoshme për rikthimin e kartelës \"%s\" prej hedhurinave"
 
-#: ../thunar/thunar-transfer-job.c:997
+#: ../thunar/thunar-transfer-job.c:971
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "S’u arrit të rikthehej dosja \"%s\""
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1018
+#: ../thunar/thunar-transfer-job.c:1046
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Po provohet të lëvizet \"%s\""
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1090
+#: ../thunar/thunar-transfer-job.c:1122
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "S’u lëviz dot \"%s\" drejtpërsëdrejti. Po grumbullohen kartelat për kopjim…"
 
-#: ../thunar/thunar-transfer-job.c:1251
+#: ../thunar/thunar-transfer-job.c:1155
+msgid "Collecting files..."
+msgstr "Po grumbullohen kartela…"
+
+#: ../thunar/thunar-transfer-job.c:1354
 #, c-format
 msgid "%s of %s"
 msgstr "%s e %s"
 
-#: ../thunar/thunar-transfer-job.c:1271
+#: ../thunar/thunar-transfer-job.c:1374
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "Edhe %lu orë (%s/s)"
 msgstr[1] "Edhe %lu orë (%s/s)"
 
-#: ../thunar/thunar-transfer-job.c:1279
+#: ../thunar/thunar-transfer-job.c:1382
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "Edhe %lu minutë (%s/s)"
 msgstr[1] "Edhe %lu minuta (%s/s)"
 
-#: ../thunar/thunar-transfer-job.c:1286
+#: ../thunar/thunar-transfer-job.c:1389
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
@@ -2938,8 +2947,8 @@ msgstr "Shfaqe lëndën e dosjes si pamje listë e ngjeshur"
 
 #. add the label with the root warning
 #: ../thunar/thunar-window.c:882
-msgid "Warning, you are using the root account, you may harm your system."
-msgstr "Kujdes, po përdorni llogarinë rrënjë, mund të dëmtoni sistemin tuaj."
+msgid "Warning: you are using the root account. You may harm your system."
+msgstr "Kujdes: po përdorni llogarinë rrënjë. Mund të dëmtoni sistemin tuaj."
 
 #: ../thunar/thunar-window.c:1927
 msgid "Close tab"
@@ -3009,11 +3018,6 @@ msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar-i është një përgjegjës kartelash për Mjedisin\nDesktop Xfce, i shpejtë dhe i lehtë në përdorim."
-
-#. set window title
-#: ../thunar/thunar-window.c:3477 ../thunar.desktop.in.in.h:3
-msgid "File Manager"
-msgstr "Përgjegjës Kartelash"
 
 #: ../thunarx/thunarx-property-page.c:111
 msgid "Label"
@@ -3783,6 +3787,10 @@ msgstr "Përgjegjësi i Kartelave Thunar"
 #: ../thunar.desktop.in.in.h:2
 msgid "Browse the filesystem with the file manager"
 msgstr "Shfletoni sistemin e kartelave me përgjegjësin e kartelave"
+
+#: ../thunar.desktop.in.in.h:3
+msgid "File Manager"
+msgstr "Përgjegjës Kartelash"
 
 #: ../thunar.desktop.in.in.h:4
 msgid ""
