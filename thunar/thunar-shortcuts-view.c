@@ -1822,7 +1822,7 @@ thunar_shortcuts_view_open (ThunarShortcutsView *view,
                           THUNAR_SHORTCUTS_MODEL_COLUMN_LOCATION, &location,
                           -1);
 
-      if (G_LIKELY (device != NULL))
+      if (G_LIKELY (THUNAR_IS_DEVICE (device)))
         {
           /* start the spinner */
           child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
@@ -1909,18 +1909,20 @@ thunar_shortcuts_view_create_shortcut (ThunarShortcutsView *view)
     {
       /* determine the device/mount for the shortcut at the given tree iterator */
       gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_DEVICE, &device, -1);
-      _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
 
-      /* add the mount point to the model */
-      mount_point = thunar_device_get_root (device);
-      if (mount_point != NULL)
+      if (G_LIKELY (THUNAR_IS_DEVICE (device)))
         {
-          shortcuts_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
-          thunar_shortcuts_model_add (THUNAR_SHORTCUTS_MODEL (shortcuts_model), NULL, mount_point);
-          g_object_unref (mount_point);
-        }
+          /* add the mount point to the model */
+          mount_point = thunar_device_get_root (device);
+          if (mount_point != NULL)
+            {
+              shortcuts_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
+              thunar_shortcuts_model_add (THUNAR_SHORTCUTS_MODEL (shortcuts_model), NULL, mount_point);
+              g_object_unref (mount_point);
+            }
 
-      g_object_unref (G_OBJECT (device));
+          g_object_unref (G_OBJECT (device));
+        }
     }
 }
 
@@ -1976,24 +1978,26 @@ thunar_shortcuts_view_eject (ThunarShortcutsView *view)
     {
       /* determine the device/mount for the shortcut at the given tree iterator */
       gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_DEVICE, &device, -1);
-      _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
 
-      /* prepare a mount operation */
-      mount_operation = thunar_gtk_mount_operation_new (GTK_WIDGET (view));
+      if (G_LIKELY (THUNAR_IS_DEVICE (device)))
+        {
+          /* prepare a mount operation */
+          mount_operation = thunar_gtk_mount_operation_new (GTK_WIDGET (view));
 
-      /* start the spinner */
-      child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
-      thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (child_model), device, TRUE);
+          /* start the spinner */
+          child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
+          thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (child_model), device, TRUE);
 
-      /* try to unmount */
-      thunar_device_eject (device,
-                           mount_operation,
-                           NULL,
-                           thunar_shortcuts_view_eject_finish,
-                           g_object_ref (view));
+          /* try to unmount */
+          thunar_device_eject (device,
+                               mount_operation,
+                               NULL,
+                               thunar_shortcuts_view_eject_finish,
+                               g_object_ref (view));
 
-      g_object_unref (G_OBJECT (device));
-      g_object_unref (G_OBJECT (mount_operation));
+          g_object_unref (G_OBJECT (device));
+          g_object_unref (G_OBJECT (mount_operation));
+        }
     }
 }
 
@@ -2052,7 +2056,7 @@ thunar_shortcuts_view_mount (ThunarShortcutsView *view)
       /* determine the file for the shortcut at the given tree iterator */
       gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_DEVICE, &device, -1);
 
-      if (G_LIKELY (device != NULL))
+      if (G_LIKELY (THUNAR_IS_DEVICE (device)))
         {
           /* start the spinner */
           child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
@@ -2118,24 +2122,26 @@ thunar_shortcuts_view_unmount (ThunarShortcutsView *view)
     {
       /* determine the device/mount for the shortcut at the given tree iterator */
       gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_DEVICE, &device, -1);
-      _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
 
-      /* prepare a mount operation */
-      mount_operation = thunar_gtk_mount_operation_new (GTK_WIDGET (view));
+      if (G_LIKELY (THUNAR_IS_DEVICE (device)))
+        {
+          /* prepare a mount operation */
+          mount_operation = thunar_gtk_mount_operation_new (GTK_WIDGET (view));
 
-      /* start the spinner */
-      child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
-      thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (child_model), device, TRUE);
+          /* start the spinner */
+          child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
+          thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (child_model), device, TRUE);
 
-      /* try to unmount */
-      thunar_device_unmount (device,
-                             mount_operation,
-                             NULL,
-                             thunar_shortcuts_view_unmount_finish,
-                             g_object_ref (view));
+          /* try to unmount */
+          thunar_device_unmount (device,
+                                 mount_operation,
+                                 NULL,
+                                 thunar_shortcuts_view_unmount_finish,
+                                 g_object_ref (view));
 
-      g_object_unref (G_OBJECT (device));
-      g_object_unref (G_OBJECT (mount_operation));
+          g_object_unref (G_OBJECT (device));
+          g_object_unref (G_OBJECT (mount_operation));
+        }
     }
 }
 
