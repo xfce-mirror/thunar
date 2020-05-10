@@ -346,8 +346,15 @@ thunar_thumbnailer_queue_async_reply (GObject      *proxy,
     }
   else if (error == NULL)
     {
-      /* store the handle returned by tumbler */
-      job->handle = handle;
+      if (handle == 0)
+        {
+          g_printerr ("ThunarThumbnailer: got 0 handle (Queue)\n");
+        }
+      else
+        {
+          /* store the handle returned by tumbler */
+          job->handle = handle;
+        }
     }
   else
     {
@@ -850,6 +857,12 @@ thunar_thumbnailer_thumbnailer_finished (GDBusProxy        *proxy,
   ThunarThumbnailerJob *job;
   GSList               *lp;
 
+  if (handle == 0)
+    {
+      g_printerr ("ThunarThumbnailer: got 0 handle (Finished)\n");
+      return;
+    }
+
   _thunar_return_if_fail (G_IS_DBUS_PROXY (proxy));
   _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
 
@@ -889,6 +902,12 @@ thunar_thumbnailer_idle (ThunarThumbnailer          *thumbnailer,
   GSList                *lp;
   ThunarThumbnailerIdle *idle;
   ThunarThumbnailerJob  *job;
+
+  if (handle == 0)
+    {
+      g_printerr ("ThunarThumbnailer: got 0 handle (Error or Ready)\n");
+      return;
+    }
 
   /* leave if there are no uris */
   if (G_UNLIKELY (uris == NULL))
