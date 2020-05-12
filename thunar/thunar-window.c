@@ -221,6 +221,9 @@ static void     thunar_window_action_about                (GtkAction            
                                                            ThunarWindow           *window);
 static void     thunar_window_action_show_hidden          (GtkToggleAction        *action,
                                                            ThunarWindow           *window);
+static gboolean thunar_window_propagate_key_event         (GtkWindow              *window,
+                                                           GdkEvent               *key_event,
+                                                           gpointer               user_data);
 static void     thunar_window_current_directory_changed   (ThunarFile             *current_directory,
                                                            ThunarWindow           *window);
 static void     thunar_window_connect_proxy               (GtkUIManager           *manager,
@@ -771,6 +774,10 @@ thunar_window_init (ThunarWindow *window)
   g_closure_ref (window->menu_item_deselected_closure);
   g_closure_sink (window->menu_item_deselected_closure);
   window->icon_factory = thunar_icon_factory_get_default ();
+
+  /* Catch key events before accelerators get processed */
+  g_signal_connect (window, "key-press-event", G_CALLBACK (thunar_window_propagate_key_event), NULL);
+  g_signal_connect (window, "key-release-event", G_CALLBACK (thunar_window_propagate_key_event), NULL);
 
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* setup the action group for this window */
@@ -3346,6 +3353,31 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* release our reference on the location itself */
   g_object_unref (network);
+}
+
+
+
+static gboolean
+thunar_window_propagate_key_event (GtkWindow* window,
+                                   GdkEvent  *key_event,
+                                   gpointer   user_data)
+{
+  GtkWidget* focused_widget;
+
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), GDK_EVENT_PROPAGATE);
+
+  focused_widget = gtk_window_get_focus (window);
+
+  /* Turn the accelerator priority around globally,
+   * so that the focused widget always gets the accels first.
+   * Implementing this cleanly while maintaining some wanted accels
+   * (like Ctrl+N and exo accels) is a lot of work. So we resort to
+   * only priorize GtkEditable, because that is the easiest way to
+   * fix the right-ahead problem. */
+  if (focused_widget != NULL && GTK_IS_EDITABLE (focused_widget))
+    return gtk_window_propagate_key_event (window, (GdkEventKey *) key_event);
+
+  return GDK_EVENT_PROPAGATE;
 }
 
 
