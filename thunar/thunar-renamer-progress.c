@@ -361,6 +361,7 @@ thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
   /* make sure to release the list of completed items first */
   thunar_renamer_pair_list_free (renamer_progress->pairs_done);
   renamer_progress->pairs_done = NULL;
+  renamer_progress->n_pairs_done = 0;
 
   /* set the pairs on the todo list */
   thunar_renamer_pair_list_free (renamer_progress->pairs_todo);
