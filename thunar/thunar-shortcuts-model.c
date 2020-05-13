@@ -957,7 +957,7 @@ thunar_shortcuts_model_shortcut_devices (ThunarShortcutsModel *model)
   /* add the devices heading */
   shortcut = g_slice_new0 (ThunarShortcut);
   shortcut->group = THUNAR_SHORTCUT_GROUP_DEVICES_HEADER;
-  shortcut->name = g_strdup (_("DEVICES"));
+  shortcut->name = g_strdup (_("Devices"));
   thunar_shortcuts_model_add_shortcut (model, shortcut);
 
   /* the filesystem entry */
@@ -1000,7 +1000,7 @@ thunar_shortcuts_model_shortcut_network (ThunarShortcutsModel *model)
   /* add the network heading */
   shortcut = g_slice_new0 (ThunarShortcut);
   shortcut->group = THUNAR_SHORTCUT_GROUP_NETWORK_HEADER;
-  shortcut->name = g_strdup (_("NETWORK"));
+  shortcut->name = g_strdup (_("Network"));
   thunar_shortcuts_model_add_shortcut (model, shortcut);
 
   /* append the browse network entry if it is supported */
@@ -1031,7 +1031,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
   /* add the places heading */
   shortcut = g_slice_new0 (ThunarShortcut);
   shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_HEADER;
-  shortcut->name = g_strdup (_("PLACES"));
+  shortcut->name = g_strdup (_("Places"));
   thunar_shortcuts_model_add_shortcut (model, shortcut);
 
   /* get home path */
