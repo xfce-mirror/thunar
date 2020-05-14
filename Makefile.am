@@ -89,6 +89,7 @@ polkit_policy_DATA = $(polkit_in_files:.policy.in=.policy)
 EXTRA_DIST =								\
 	FAQ								\
 	HACKING								\
+	README.md								\
 	intltool-extract.in						\
 	intltool-merge.in						\
 	intltool-update.in						\

@@ -35,7 +35,7 @@ tex_open_terminal_la_LDFLAGS =						\
 	$(PLATFORM_LDFLAGS)
 
 EXTRA_DIST =								\
-	README
+	README.md
 
 # Don't install/uninstall examples by default
 install:

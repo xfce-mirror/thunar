@@ -13,7 +13,7 @@ dnl # should be built and installed.
 dnl #
 AC_DEFUN([BM_THUNAR_PLUGIN_APR],
 [
-AC_ARG_ENABLE([apr-plugin], [AC_HELP_STRING([--disable-apr-plugin], [Don't build the thunar-apr plugin, see plugins/thunar-apr/README])],
+AC_ARG_ENABLE([apr-plugin], [AC_HELP_STRING([--disable-apr-plugin], [Don't build the thunar-apr plugin, see plugins/thunar-apr/README.md])],
   [ac_bm_thunar_plugin_apr=$enableval], [ac_bm_thunar_plugin_apr=yes])
 AC_MSG_CHECKING([whether to build the thunar-apr plugin])
 AM_CONDITIONAL([THUNAR_PLUGIN_APR], [test x"$ac_bm_thunar_plugin_apr" = x"yes"])
@@ -32,7 +32,7 @@ dnl # should be built and installed.
 dnl #
 AC_DEFUN([BM_THUNAR_PLUGIN_SBR],
 [
-AC_ARG_ENABLE([sbr-plugin], AC_HELP_STRING([--disable-sbr-plugin], [Don't build the thunar-sbr plugin, see plugins/thunar-sbr/README]),
+AC_ARG_ENABLE([sbr-plugin], AC_HELP_STRING([--disable-sbr-plugin], [Don't build the thunar-sbr plugin, see plugins/thunar-sbr/README.md]),
   [ac_bm_thunar_plugin_sbr=$enableval], [ac_bm_thunar_plugin_sbr=yes])
 AC_MSG_CHECKING([whether to build the thunar-sbr plugin])
 AM_CONDITIONAL([THUNAR_PLUGIN_SBR], [test x"$ac_bm_thunar_plugin_sbr" = x"yes"])
@@ -52,7 +52,7 @@ dnl # for the Xfce panel, not for Thunar).
 dnl #
 AC_DEFUN([BM_THUNAR_PLUGIN_TPA],
 [
-AC_ARG_ENABLE([tpa-plugin], AC_HELP_STRING([--disable-tpa-plugin], [Don't build the thunar-tpa plugin, see plugins/thunar-tpa/README]),
+AC_ARG_ENABLE([tpa-plugin], AC_HELP_STRING([--disable-tpa-plugin], [Don't build the thunar-tpa plugin, see plugins/thunar-tpa/README.md]),
   [ac_bm_thunar_plugin_tpa=$enableval], [ac_bm_thunar_plugin_tpa=yes])
 if test x"$ac_bm_thunar_plugin_tpa" = x"yes"; then
   XDT_CHECK_PACKAGE([LIBXFCE4PANEL], [libxfce4panel-2.0], [4.12.0],
@@ -80,7 +80,7 @@ dnl # should be built and installed.
 dnl #
 AC_DEFUN([BM_THUNAR_PLUGIN_UCA],
 [
-AC_ARG_ENABLE([uca-plugin], AC_HELP_STRING([--disable-uca-plugin], [Don't build the thunar-uca plugin, see plugins/thunar-uca/README]),
+AC_ARG_ENABLE([uca-plugin], AC_HELP_STRING([--disable-uca-plugin], [Don't build the thunar-uca plugin, see plugins/thunar-uca/README.md]),
   [ac_bm_thunar_plugin_uca=$enableval], [ac_bm_thunar_plugin_uca=yes])
 AC_MSG_CHECKING([whether to build the thunar-uca plugin])
 AM_CONDITIONAL([THUNAR_PLUGIN_UCA], [test x"$ac_bm_thunar_plugin_uca" = x"yes"])
@@ -94,7 +94,7 @@ dnl # should be built and installed.
 dnl #
 AC_DEFUN([BM_THUNAR_PLUGIN_WALLPAPER],
 [
-AC_ARG_ENABLE([wallpaper-plugin], AC_HELP_STRING([--disable-wallpaper-plugin], [Don't build the thunar-wallpaper plugin, see plugins/thunar-wallpaper/README]),
+AC_ARG_ENABLE([wallpaper-plugin], AC_HELP_STRING([--disable-wallpaper-plugin], [Don't build the thunar-wallpaper plugin, see plugins/thunar-wallpaper/README.md]),
   [ac_bm_thunar_plugin_wallpaper=$enableval], [ac_bm_thunar_plugin_wallpaper=yes])
 AC_MSG_CHECKING([whether to build the thunar-wallpaper plugin])
 AM_CONDITIONAL([THUNAR_PLUGIN_WALLPAPER], [test x"$ac_bm_thunar_plugin_wallpaper" = x"yes"])

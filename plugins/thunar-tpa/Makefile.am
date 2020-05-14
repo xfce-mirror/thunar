@@ -54,7 +54,7 @@ endif
 EXTRA_DIST =								\
 	$(desktop_in_files)						\
 	thunar-tpa-bindings.xml					\
-	README
+	README.md
 
 CLEANFILES =								\
 	$(desktop_DATA)

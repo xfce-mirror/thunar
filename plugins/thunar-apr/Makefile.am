@@ -51,6 +51,6 @@ thunar_apr_la_DEPENDENCIES =						\
 
 
 EXTRA_DIST =								\
-	README
+	README.md
 
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:
