@@ -2098,7 +2098,7 @@ thunar_tree_view_mount_finish (ThunarDevice *device,
       thunar_dialogs_show_error (GTK_WIDGET (data->view), error, _("Failed to mount \"%s\""), device_name);
       g_free (device_name);
     }
-  else
+  else if (thunar_device_is_mounted (device))
     {
       if (G_LIKELY (data->open_after_mounting))
         {
