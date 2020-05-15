@@ -9,15 +9,15 @@
 # Hsiu-Ming Chang <cges30901@gmail.com>, 2018-2020
 # Hydonsingore Cia <hydonsingore@educities.edu.tw>, 2006
 # 黃柏諺 <s8321414@gmail.com>, 2014-2015,2017-2019
-# Walter Cheuk <wwycheuk@gmail.com>, 2013,2019
+# Walter Cheuk <wwycheuk@gmail.com>, 2013,2019-2020
 # 黃柏諺 <s8321414@gmail.com>, 2019-2020
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-07 12:45+0200\n"
-"PO-Revision-Date: 2020-05-08 02:02+0000\n"
-"Last-Translator: 黃柏諺 <s8321414@gmail.com>\n"
+"POT-Creation-Date: 2020-05-14 00:45+0200\n"
+"PO-Revision-Date: 2020-05-15 09:25+0000\n"
+"Last-Translator: Walter Cheuk <wwycheuk@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/xfce/thunar/language/zh_TW/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -64,7 +64,7 @@ msgstr "依最後修改日期排序(_D)"
 
 #: ../thunar/thunar-abstract-icon-view.c:123
 msgid "Keep items sorted by their modification date"
-msgstr "讓檔案保持依其最後修改日期排序"
+msgstr "讓檔案保持依最後修改日期排序"
 
 #: ../thunar/thunar-abstract-icon-view.c:128
 msgid "_Ascending"
@@ -716,7 +716,7 @@ msgstr "無論如何都要複製(_A)"
 
 #: ../thunar/thunar-dialogs.c:613
 msgid "Confirm to replace files"
-msgstr "確認是否取代檔案"
+msgstr "確認取代檔案"
 
 #: ../thunar/thunar-dialogs.c:683
 #, c-format
@@ -731,22 +731,22 @@ msgstr "此資料夾已經包含資料夾「%s」。"
 #: ../thunar/thunar-dialogs.c:693
 #, c-format
 msgid "This folder already contains a file \"%s\"."
-msgstr "此資料夾已經包含檔案「%s」。"
+msgstr "此資料夾已經包含「%s」檔案"
 
 #: ../thunar/thunar-dialogs.c:707
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the link"
-msgstr "是否將該連結取代"
+msgstr "是否將該連結："
 
 #: ../thunar/thunar-dialogs.c:709
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the existing folder"
-msgstr "是否將現有資料夾取代"
+msgstr "是否將現有資料夾："
 
 #: ../thunar/thunar-dialogs.c:711
 #, c-format
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
-msgstr "是否將現有檔案取代"
+msgstr "是否將現有檔案："
 
 #. Fourth box (size, volume, free space)
 #: ../thunar/thunar-dialogs.c:732 ../thunar/thunar-dialogs.c:768
@@ -762,17 +762,17 @@ msgstr "最後修改日期："
 #: ../thunar/thunar-dialogs.c:743
 #, c-format
 msgid "ReplaceDialogPart2|with the following link?"
-msgstr "為以下連結？"
+msgstr "取代為以下連結？"
 
 #: ../thunar/thunar-dialogs.c:745
 #, c-format
 msgid "ReplaceDialogPart2|with the following folder?"
-msgstr "為以下資料夾？"
+msgstr "取代為以下資料夾？"
 
 #: ../thunar/thunar-dialogs.c:747
 #, c-format
 msgid "ReplaceDialogPart2|with the following file?"
-msgstr "為以下檔案？"
+msgstr "取代為以下檔案？"
 
 #: ../thunar/thunar-dialogs.c:880
 #, c-format
@@ -926,7 +926,7 @@ msgstr "%s 於 %s"
 #: ../thunar/thunar-gio-extensions.c:446
 #, c-format
 msgid "%s of %s free (%d%% used)"
-msgstr "%s 可用，共 %s（已使用 %d%%）"
+msgstr "可用空間 %s，總共 %s（已使用 %d%%）"
 
 #. extend history tooltip with function of the button
 #: ../thunar/thunar-history-action.c:351
@@ -1208,7 +1208,7 @@ msgid "Open With \"%s\""
 msgstr "以「%s」開啟"
 
 #: ../thunar/thunar-launcher.c:1609 ../thunar/thunar-shortcuts-view.c:1760
-#: ../thunar/thunar-shortcuts-view.c:1998 ../thunar/thunar-tree-view.c:2098
+#: ../thunar/thunar-shortcuts-view.c:2002 ../thunar/thunar-tree-view.c:2098
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "無法掛載「%s」"
@@ -1999,7 +1999,7 @@ msgstr "儲存裝置："
 
 #: ../thunar/thunar-properties-dialog.c:529
 msgid "Usage:"
-msgstr "使用量："
+msgstr "使用情況："
 
 #. Emblem chooser
 #: ../thunar/thunar-properties-dialog.c:564
@@ -2210,11 +2210,11 @@ msgid_plural "Trash contains %d files"
 msgstr[0] "垃圾桶內有 %d 個檔案"
 
 #: ../thunar/thunar-shortcuts-model.c:960
-msgid "DEVICES"
+msgid "Devices"
 msgstr "裝置"
 
 #: ../thunar/thunar-shortcuts-model.c:1003
-msgid "NETWORK"
+msgid "Network"
 msgstr "網路"
 
 #: ../thunar/thunar-shortcuts-model.c:1011
@@ -2226,7 +2226,7 @@ msgid "Browse local network connections"
 msgstr "瀏覽本地端網路連線"
 
 #: ../thunar/thunar-shortcuts-model.c:1034
-msgid "PLACES"
+msgid "Places"
 msgstr "位置"
 
 #: ../thunar/thunar-shortcuts-model.c:1046
@@ -2299,12 +2299,12 @@ msgstr "此路徑設定「%s」並未指向正確的資料夾"
 msgid "Failed to add new shortcut"
 msgstr "無法建立新捷徑"
 
-#: ../thunar/thunar-shortcuts-view.c:1924 ../thunar/thunar-tree-view.c:1966
+#: ../thunar/thunar-shortcuts-view.c:1926 ../thunar/thunar-tree-view.c:1966
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "無法退出「%s」"
 
-#: ../thunar/thunar-shortcuts-view.c:2067 ../thunar/thunar-tree-view.c:2021
+#: ../thunar/thunar-shortcuts-view.c:2071 ../thunar/thunar-tree-view.c:2021
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "無法卸載「%s」"
