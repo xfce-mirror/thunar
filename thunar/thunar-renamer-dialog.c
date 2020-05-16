@@ -39,7 +39,6 @@
 #include <thunar/thunar-launcher.h>
 #include <thunar/thunar-launcher.h>
 #include <thunar/thunar-menu.h>
-#include <thunar/thunar-menu-util.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-renamer-dialog.h>
@@ -878,11 +877,10 @@ thunar_renamer_dialog_append_menu_item (ThunarRenamerDialog *renamer_dialog,
 static void
 thunar_renamer_dialog_context_menu (ThunarRenamerDialog *renamer_dialog)
 {
-  GtkActionGroup *renamer_actions = NULL;
   ThunarxRenamer *renamer;
   ThunarMenu     *menu;
   GList          *items = NULL;
-  gint            renamer_merge_id = 0;
+  GList          *lp = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
 
@@ -902,41 +900,18 @@ thunar_renamer_dialog_context_menu (ThunarRenamerDialog *renamer_dialog)
                                          "tab-support-disabled", TRUE,
                                          "change_directory-support-disabled", TRUE, NULL);
   thunar_menu_add_sections (menu, THUNAR_MENU_SECTION_OPEN | THUNAR_MENU_SECTION_SENDTO);
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* check if we have any renamer menu items */
-  if (G_UNLIKELY (items != NULL))
+  if (G_LIKELY (renamer != NULL))
     {
-      /* allocate a new action group and the merge id for the custom items */
-      renamer_actions = gtk_action_group_new ("thunar-renamer-dialog-renamer-actions");
-      renamer_merge_id = gtk_ui_manager_new_merge_id (renamer_dialog->ui_manager);
-      gtk_ui_manager_insert_action_group (renamer_dialog->ui_manager, renamer_actions, -1);
-
-      /* add the items to the UI manager */
-      thunar_menu_util_add_items_to_ui_manager (renamer_dialog->ui_manager, renamer_actions, renamer_merge_id,
-                                                "/file-context-menu/placeholder-renamer-actions", items);
-
-      /* be sure to update the UI manager to avoid flickering */
-      gtk_ui_manager_ensure_update (renamer_dialog->ui_manager);
-
-      /* cleanup */
-      g_list_free (items);
+      /* determine the menu items provided by the active renamer */
+      items = thunarx_renamer_get_menu_items (renamer, GTK_WINDOW (renamer_dialog), renamer_dialog->selected_files);
+      if (items != NULL)
+        {
+          for(lp = items; lp != NULL; lp = lp->next)
+              thunar_gtk_menu_thunarx_menu_item_new (lp->data, GTK_MENU_SHELL (menu));
+          g_list_free (items);
+          xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+        }
     }
-
-  /* remove the previously merge items from the UI manager */
-  if (G_UNLIKELY (renamer_merge_id != 0))
-    {
-      gtk_ui_manager_remove_ui (renamer_dialog->ui_manager, renamer_merge_id);
-      gtk_ui_manager_ensure_update (renamer_dialog->ui_manager);
-    }
-
-  /* disconnect the previously created action group */
-  if (G_UNLIKELY (renamer_actions != NULL))
-    {
-      gtk_ui_manager_remove_action_group (renamer_dialog->ui_manager, renamer_actions);
-      g_object_unref (G_OBJECT (renamer_actions));
-    }
-
-G_GNUC_END_IGNORE_DEPRECATIONS
   thunar_renamer_dialog_append_menu_item (renamer_dialog, GTK_MENU_SHELL (menu), THUNAR_RENAMER_ACTION_ADD_FILES);
   thunar_renamer_dialog_append_menu_item (renamer_dialog, GTK_MENU_SHELL (menu), THUNAR_RENAMER_ACTION_REMOVE_FILES);
   xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
