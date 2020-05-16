@@ -136,7 +136,10 @@ static gpointer  thunar_window_notebook_create_window     (GtkWidget            
                                                            gint                    x,
                                                            gint                    y,
                                                            ThunarWindow           *window);
-static gboolean thunar_window_bookmark_merge              (gpointer                user_data);
+static void      thunar_window_bookmark_add_menu_item     (GFile                  *g_file,
+                                                           const gchar            *name,
+                                                           gint                    line_num,
+                                                           gpointer                user_data);
 static void      thunar_window_update_location_bar_visible(ThunarWindow           *window);
 static void      thunar_window_handle_reload_request      (ThunarWindow           *window);
 static void      thunar_window_install_sidepane           (ThunarWindow           *window,
@@ -182,7 +185,8 @@ static void      thunar_window_action_open_templates      (ThunarWindow         
 static void      thunar_window_action_open_file_system    (ThunarWindow           *window);
 static void      thunar_window_action_open_trash          (ThunarWindow           *window);
 static void      thunar_window_action_open_network        (ThunarWindow           *window);
-static void      thunar_window_action_open_bookmark       (GtkWidget              *menu_item);
+static void      thunar_window_action_open_bookmark       (ThunarWindow           *window,
+                                                           GtkWidget              *menu_item);
 static void      thunar_window_action_open_location       (ThunarWindow           *window);
 static void      thunar_window_action_contents            (ThunarWindow           *window);
 static void      thunar_window_action_about               (ThunarWindow           *window);
@@ -207,8 +211,6 @@ static void      thunar_window_device_pre_unmount         (ThunarDeviceMonitor  
 static void      thunar_window_device_changed             (ThunarDeviceMonitor    *device_monitor,
                                                            ThunarDevice           *device,
                                                            ThunarWindow           *window);
-static gboolean thunar_window_merge_idle                  (gpointer                user_data);
-static void     thunar_window_merge_idle_destroy          (gpointer                user_data);
 static gboolean  thunar_window_save_paned                 (ThunarWindow           *window);
 static gboolean  thunar_window_save_geometry_timer        (gpointer                user_data);
 static void      thunar_window_save_geometry_timer_destroy(gpointer                user_data);
@@ -245,9 +247,19 @@ static gboolean  thunar_window_button_press_event         (GtkWidget            
                                                            GdkEventButton         *event,
                                                            ThunarWindow           *window);
 static void      thunar_window_history_changed            (ThunarWindow           *window);
+static void      thunar_window_menu_add_bookmarks         (ThunarWindow           *window,
+                                                           GtkMenuShell           *view_menu);
 static gboolean  thunar_window_menu_item_hovered          (ThunarWindow           *window,
                                                            GdkEventCrossing       *event,
                                                            GtkWidget              *menu);
+static gboolean  thunar_window_check_uca_key_activation   (ThunarWindow           *window,
+                                                           GdkEventKey            *key_event,
+                                                           gpointer                user_data);
+static gboolean  thunar_window_check_bookmark_key_activation (ThunarWindow        *window,
+                                                              GdkEventKey         *key_event,
+                                                              gpointer             user_data);
+static void      thunar_window_set_current_directory_gfile   (ThunarWindow        *window,
+                                                              GFile               *current_directory);
 
 
 
@@ -274,15 +286,10 @@ struct _ThunarWindow
   ThunarxProviderFactory *provider_factory;
   GList                  *thunarx_preferences_providers;
 
-  /* UI manager merge ID for go menu actions */
-  guint                   go_items_actions_merge_id;
-
-  /* UI manager merge ID for the bookmark actions */
-  guint                   bookmark_items_actions_merge_id;
-  GtkActionGroup         *bookmark_action_group;
   GFile                  *bookmark_file;
   GFileMonitor           *bookmark_monitor;
-  guint                   bookmark_reload_idle_id;
+  GtkMenuShell           *view_menu;
+  GdkEventKey            *latest_key_event;
 
   ThunarClipboardManager *clipboard;
 
@@ -326,9 +333,6 @@ struct _ThunarWindow
 
   /* zoom-level support */
   ThunarZoomLevel         zoom_level;
-
-  /* menu merge idle source */
-  guint                   merge_idle_id;
 
   gboolean                show_hidden;
 
@@ -602,6 +606,83 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
 
 
+static gboolean
+thunar_window_check_uca_key_activation (ThunarWindow *window,
+                                        GdkEventKey  *key_event,
+                                        gpointer      user_data)
+{
+  if (thunar_launcher_check_uca_key_activation (window->launcher, key_event))
+    return GDK_EVENT_STOP;
+  return GDK_EVENT_PROPAGATE;
+}
+
+
+
+static gchar*
+thunar_window_bookmark_get_accel_path (GFile *bookmark_file)
+{
+  GChecksum    *checksum;
+  gchar        *uri;
+  gchar        *accel_path;
+  const gchar  *unique_name;
+
+  _thunar_return_val_if_fail (G_IS_FILE (bookmark_file), NULL);
+
+  /* create unique id based on the uri */
+  uri = g_file_get_uri (bookmark_file);
+  checksum = g_checksum_new (G_CHECKSUM_MD5);
+  g_checksum_update (checksum, (const guchar *) uri, strlen (uri));
+  unique_name = g_checksum_get_string (checksum);
+  accel_path = g_strconcat("<Actions>/ThunarBookmarks/", unique_name, NULL);
+
+  g_free (uri);
+  g_checksum_free (checksum);
+  return accel_path;
+}
+
+
+
+static void
+thunar_window_bookmark_check_key (GFile       *g_file,
+                                  const gchar *name,
+                                  gint         line_num,
+                                  gpointer     user_data)
+{
+  ThunarWindow *window = THUNAR_WINDOW (user_data);
+  gchar        *accel_path;
+  GtkAccelKey   key;
+
+  accel_path = thunar_window_bookmark_get_accel_path (g_file);
+  if (gtk_accel_map_lookup_entry (accel_path, &key) == TRUE)
+    {
+      if (window->latest_key_event->keyval == key.accel_key)
+        {
+          if ((window->latest_key_event->state & gtk_accelerator_get_default_mod_mask ()) == key.accel_mods)
+            thunar_window_set_current_directory_gfile (window, g_file);
+        }
+    }
+  g_free (accel_path);
+}
+
+
+
+static gboolean
+thunar_window_check_bookmark_key_activation (ThunarWindow *window,
+                                             GdkEventKey  *key_event,
+                                             gpointer      user_data)
+{
+  /* in order to access it inside the clalback */
+  window->latest_key_event = key_event;
+
+  /* load bookmark menu items from bookmark file */
+  thunar_util_load_bookmarks (window->bookmark_file,
+                              thunar_window_bookmark_check_key,
+                              window);
+  return GDK_EVENT_PROPAGATE;
+}
+
+
+
 static void
 thunar_window_init (ThunarWindow *window)
 {
@@ -611,7 +692,6 @@ thunar_window_init (ThunarWindow *window)
   gboolean         last_menubar_visible;
   gchar           *last_location_bar;
   gchar           *last_side_pane;
-  gchar           *last_view;
   GType            type;
   gint             last_separator_position;
   gint             last_window_width;
@@ -814,6 +894,10 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   g_signal_connect (G_OBJECT (window), "button-press-event", G_CALLBACK (thunar_window_button_press_event), G_OBJECT (window));
   window->signal_handler_id_history_changed = 0;
 
+  /* The UCA shortcuts and the bookmarks need to be checked 'by hand', since we dont want to permanently keep menu items for them */
+  g_signal_connect (window, "key-press-event", G_CALLBACK (thunar_window_check_uca_key_activation), NULL);
+  g_signal_connect (window, "key-press-event", G_CALLBACK (thunar_window_check_bookmark_key_activation), NULL);
+
   /* add the location bar to the toolbar */
   tool_item = gtk_tool_item_new ();
   gtk_tool_item_set_expand (tool_item, TRUE);
@@ -871,8 +955,9 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   g_type_ensure (THUNAR_TYPE_DETAILS_VIEW);
   g_type_ensure (THUNAR_TYPE_COMPACT_VIEW);
 
-  /* schedule asynchronous menu action merging */
-  window->merge_idle_id = g_idle_add_full (G_PRIORITY_LOW + 20, thunar_window_merge_idle, window, thunar_window_merge_idle_destroy);
+  /* load the bookmarks file and monitor */
+  window->bookmark_file = thunar_g_file_new_for_bookmarks ();
+  window->bookmark_monitor = g_file_monitor_file (window->bookmark_file, G_FILE_MONITOR_NONE, NULL, NULL);
 
   /* same is done for view in thunar_window_action_view_changed */
   thunar_side_pane_set_show_hidden (THUNAR_SIDE_PANE (window->sidepane), window->show_hidden);
@@ -1170,7 +1255,8 @@ thunar_window_create_go_menu (ThunarWindow     *window,
         }
     }
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_TEMPLATES), G_OBJECT (window), GTK_MENU_SHELL (submenu));
-
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
+  thunar_window_menu_add_bookmarks (window, GTK_MENU_SHELL (submenu));
   xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_FILE_SYSTEM), G_OBJECT (window), GTK_MENU_SHELL (submenu));
   xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
@@ -1217,30 +1303,6 @@ thunar_window_dispose (GObject *object)
   window->location_toolbar_item_back = NULL;
   window->location_toolbar_item_forward = NULL;
 
-  /* un-merge the go menu actions */
-  if (G_LIKELY (window->go_items_actions_merge_id != 0))
-    {
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      gtk_ui_manager_remove_ui (window->ui_manager, window->go_items_actions_merge_id);
-G_GNUC_END_IGNORE_DEPRECATIONS
-      window->go_items_actions_merge_id = 0;
-    }
-
-  /* un-merge the bookmark actions */
-  if (G_LIKELY (window->bookmark_items_actions_merge_id != 0))
-    {
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      gtk_ui_manager_remove_ui (window->ui_manager, window->bookmark_items_actions_merge_id);
-G_GNUC_END_IGNORE_DEPRECATIONS
-      window->bookmark_items_actions_merge_id = 0;
-    }
-
-  if (window->bookmark_reload_idle_id != 0)
-    {
-      g_source_remove (window->bookmark_reload_idle_id);
-      window->bookmark_reload_idle_id = 0;
-    }
-
   /* destroy the save geometry timer source */
   if (G_UNLIKELY (window->save_geometry_timer_id != 0))
     g_source_remove (window->save_geometry_timer_id);
@@ -1268,9 +1330,6 @@ thunar_window_finalize (GObject *object)
 
   g_object_unref (window->icon_factory);
   g_object_unref (window->launcher);
-
-  if (window->bookmark_action_group != NULL)
-    g_object_unref (window->bookmark_action_group);
 
   if (window->bookmark_file != NULL)
     g_object_unref (window->bookmark_file);
@@ -2223,217 +2282,85 @@ thunar_window_install_sidepane (ThunarWindow *window,
 
 
 static void
-thunar_window_bookmark_changed (ThunarWindow *window)
+thunar_window_menu_add_bookmarks (ThunarWindow *window,
+                                  GtkMenuShell *view_menu)
 {
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  if (window->bookmark_reload_idle_id == 0)
-    window->bookmark_reload_idle_id = g_idle_add (thunar_window_bookmark_merge, window);
+  /* in order to pass the view_menu into the callback */
+  window->view_menu = view_menu;
+
+  /* load bookmark menu items from bookmark file */
+  thunar_util_load_bookmarks (window->bookmark_file,
+                              thunar_window_bookmark_add_menu_item,
+                              window);
+  window->view_menu = NULL;
 }
 
 
 
 static void
-thunar_window_bookmark_release_file (gpointer data)
-{
-  ThunarFile *file = THUNAR_FILE (data);
-
-  /* stop watching */
-  thunar_file_unwatch (file);
-
-  /* disconnect changed and destroy signals */
-  g_signal_handlers_disconnect_matched (file,
-                                        G_SIGNAL_MATCH_FUNC, 0,
-                                        0, NULL,
-                                        G_CALLBACK (thunar_window_bookmark_changed),
-                                        NULL);
-
-  g_object_unref (file);
-}
-
-
-
-static void
-thunar_window_bookmark_merge_line (GFile       *file_path,
-                                   const gchar *name,
-                                   gint         line_num,
-                                   gpointer     user_data)
+thunar_window_bookmark_add_menu_item (GFile       *g_file,
+                                      const gchar *name,
+                                      gint         line_num,
+                                      gpointer     user_data)
 {
   ThunarWindow *window = THUNAR_WINDOW (user_data);
-  GtkAction    *action = NULL;
-  GChecksum    *checksum;
-  gchar        *uri;
-  ThunarFile   *file;
+  ThunarFile   *thunar_file;
   gchar        *parse_name;
+  gchar        *accel_path;
   gchar        *tooltip;
   gchar        *remote_name = NULL;
-  const gchar  *unique_name;
-  const gchar  *path;
   GtkIconTheme *icon_theme;
   const gchar  *icon_name;
+  GtkWidget    *menu_item;
 
-  _thunar_return_if_fail (G_IS_FILE (file_path));
+  _thunar_return_if_fail (G_IS_FILE (g_file));
   _thunar_return_if_fail (name == NULL || g_utf8_validate (name, -1, NULL));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  /* create unique id based on the uri */
-  uri = g_file_get_uri (file_path);
-  checksum = g_checksum_new (G_CHECKSUM_MD5);
-  g_checksum_update (checksum, (const guchar *) uri, strlen (uri));
-  unique_name = g_checksum_get_string (checksum);
-  g_free (uri);
-
-  parse_name = g_file_get_parse_name (file_path);
+  accel_path = thunar_window_bookmark_get_accel_path (g_file);
+  parse_name = g_file_get_parse_name (g_file);
   tooltip = g_strdup_printf (_("Open the location \"%s\""), parse_name);
   g_free (parse_name);
 
   icon_theme = gtk_icon_theme_get_for_screen (gtk_window_get_screen (GTK_WINDOW (window)));
 
-  if (g_file_has_uri_scheme (file_path, "file"))
+  if (g_file_has_uri_scheme (g_file, "file"))
     {
       /* try to open the file corresponding to the uri */
-      file = thunar_file_get (file_path, NULL);
-      if (G_UNLIKELY (file == NULL))
-        return;
-
-      /* make sure the file refers to a directory */
-      if (G_UNLIKELY (thunar_file_is_directory (file)))
+      thunar_file = thunar_file_get (g_file, NULL);
+      if (G_LIKELY (thunar_file != NULL))
         {
-          if (name == NULL)
-            name = thunar_file_get_display_name (file);
+          /* make sure the file refers to a directory */
+          if (G_UNLIKELY (thunar_file_is_directory (thunar_file)))
+            {
+              if (name == NULL)
+                name = thunar_file_get_display_name (thunar_file);
 
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-          action = gtk_action_new (unique_name, name, tooltip, NULL);
-          icon_name = thunar_file_get_icon_name (file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_theme);
-          gtk_action_set_icon_name (action, icon_name);
-G_GNUC_END_IGNORE_DEPRECATIONS
-          g_object_set_data_full (G_OBJECT (action), I_("thunar-file"), file,
-                                  thunar_window_bookmark_release_file);
-
-          /* watch the file */
-          thunar_file_watch (file);
-
-          g_signal_connect_swapped (G_OBJECT (file), "destroy",
-                                    G_CALLBACK (thunar_window_bookmark_changed), window);
-          g_signal_connect_swapped (G_OBJECT (file), "changed",
-                                    G_CALLBACK (thunar_window_bookmark_changed), window);
-        }
-      else
-        {
-          g_object_unref (file);
-        }
-
-      /* add to the local bookmarks */
-      path = "/main-menu/go-menu/placeholder-go-local-actions";
+              icon_name = thunar_file_get_icon_name (thunar_file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_theme);
+              menu_item = xfce_gtk_image_menu_item_new_from_icon_name (name, tooltip, accel_path, NULL, NULL, icon_name, window->view_menu);
+              g_signal_connect_swapped (G_OBJECT (menu_item), "activate",  G_CALLBACK (thunar_window_action_open_bookmark), G_OBJECT (window));
+              g_object_set_data_full (G_OBJECT (menu_item), I_("g-file"), g_object_ref(g_file), g_object_unref);
+           }
+        g_object_unref (thunar_file);
+      }
     }
   else
     {
       if (name == NULL)
         {
-          remote_name = thunar_g_file_get_display_name_remote (file_path);
+          remote_name = thunar_g_file_get_display_name_remote (g_file);
           name = remote_name;
         }
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      action = gtk_action_new (unique_name, name, tooltip, NULL);
-      gtk_action_set_icon_name (action, "folder-remote");
-G_GNUC_END_IGNORE_DEPRECATIONS
-      g_object_set_data_full (G_OBJECT (action), I_("location-file"),
-                              g_object_ref (file_path), g_object_unref);
-
+      menu_item = xfce_gtk_image_menu_item_new_from_icon_name (name, tooltip, accel_path, NULL, NULL, "folder-remote", window->view_menu);
+      g_signal_connect_swapped (G_OBJECT (menu_item), "activate",  G_CALLBACK (thunar_window_action_open_bookmark), G_OBJECT (window));
+      g_object_set_data_full (G_OBJECT (menu_item), I_("g-file"), g_object_ref (g_file), g_object_unref);
       g_free (remote_name);
-
-      /* add to the remote bookmarks */
-      path = "/main-menu/go-menu/placeholder-go-remote-actions";
     }
 
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  if (G_LIKELY (action != NULL))
-    {
-      if (gtk_action_group_get_action (window->bookmark_action_group, unique_name) == NULL)
-        {
-          /* connect action */
-          g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_window_action_open_bookmark), window);
-
-          /* insert the bookmark in the group */
-          gtk_action_group_add_action_with_accel (window->bookmark_action_group, action, NULL);
-
-          /* add the action to the UI manager */
-          gtk_ui_manager_add_ui (window->ui_manager,
-                                 window->bookmark_items_actions_merge_id,
-                                 path,
-                                 unique_name, unique_name,
-                                 GTK_UI_MANAGER_MENUITEM, FALSE);
-        }
-
-      g_object_unref (action);
-    }
-G_GNUC_END_IGNORE_DEPRECATIONS
-
-  g_checksum_free (checksum);
   g_free (tooltip);
-}
-
-
-
-static gboolean
-thunar_window_bookmark_merge (gpointer user_data)
-{
-  ThunarWindow *window = THUNAR_WINDOW (user_data);
-
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
-
-THUNAR_THREADS_ENTER
-
-  /* remove old actions */
-  if (window->bookmark_items_actions_merge_id != 0)
-    {
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      gtk_ui_manager_remove_ui (window->ui_manager, window->bookmark_items_actions_merge_id);
-      gtk_ui_manager_ensure_update (window->ui_manager);
-G_GNUC_END_IGNORE_DEPRECATIONS
-    }
-
-  /* drop old bookmarks action group */
-  if (window->bookmark_action_group != NULL)
-    {
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      gtk_ui_manager_remove_action_group (window->ui_manager, window->bookmark_action_group);
-G_GNUC_END_IGNORE_DEPRECATIONS
-      g_object_unref (window->bookmark_action_group);
-    }
-
-  /* lazy initialize the bookmarks */
-  if (window->bookmark_file == NULL)
-    {
-      window->bookmark_file = thunar_g_file_new_for_bookmarks ();
-      window->bookmark_monitor = g_file_monitor_file (window->bookmark_file, G_FILE_MONITOR_NONE, NULL, NULL);
-      if (G_LIKELY (window->bookmark_monitor != NULL))
-        {
-          g_signal_connect_swapped (window->bookmark_monitor, "changed",
-                                    G_CALLBACK (thunar_window_bookmark_changed), window);
-        }
-    }
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* generate a new merge id */
-  window->bookmark_items_actions_merge_id = gtk_ui_manager_new_merge_id (window->ui_manager);
-
-  /* create a new action group */
-  window->bookmark_action_group = gtk_action_group_new ("ThunarBookmarks");
-  gtk_ui_manager_insert_action_group (window->ui_manager, window->bookmark_action_group, -1);
-G_GNUC_END_IGNORE_DEPRECATIONS
-
-  /* collect bookmarks */
-  thunar_util_load_bookmarks (window->bookmark_file,
-                              thunar_window_bookmark_merge_line,
-                              window);
-
-  window->bookmark_reload_idle_id = 0;
-
-THUNAR_THREADS_LEAVE
-
-  return FALSE;
+  g_free (accel_path);
 }
 
 
@@ -3332,30 +3259,13 @@ thunar_window_poke_location_finish (ThunarBrowser *browser,
 
 
 static void
-thunar_window_action_open_bookmark (GtkWidget *menu_item)
+thunar_window_action_open_bookmark (ThunarWindow *window,
+                                    GtkWidget    *menu_item)
 {
-  ThunarFile *local_file;
-  GFile      *remote_file;
-  GtkWindow  *window;
+  GFile *bookmark_location;
 
-  /* try to open the local file */
-  local_file = g_object_get_data (G_OBJECT (menu_item), I_("thunar-file"));
-  window = g_object_get_data (G_OBJECT (menu_item), I_("thunar-window"));
-  if (local_file != NULL)
-    {
-      thunar_window_set_current_directory (THUNAR_WINDOW (window), local_file);
-      g_object_unref (local_file);
-      return;
-    }
-
-  /* try to poke remote files */
-  remote_file = g_object_get_data (G_OBJECT (menu_item), I_("location-file"));
-  if (remote_file != NULL)
-    {
-      thunar_browser_poke_location (THUNAR_BROWSER (window), remote_file, THUNAR_WINDOW (window),
-                                    thunar_window_poke_location_finish, NULL);
-      g_object_unref (remote_file);
-    }
+  bookmark_location = g_object_get_data (G_OBJECT (menu_item), I_("g-file"));
+  thunar_window_set_current_directory_gfile (THUNAR_WINDOW (window), bookmark_location);
 }
 
 
@@ -3579,26 +3489,6 @@ thunar_window_device_changed (ThunarDeviceMonitor *device_monitor,
 
 
 static gboolean
-thunar_window_merge_idle (gpointer user_data)
-{
-  ThunarWindow *window = THUNAR_WINDOW (user_data);
-
-  thunar_window_bookmark_merge (window);
-
-  return FALSE;
-}
-
-
-
-static void
-thunar_window_merge_idle_destroy (gpointer user_data)
-{
-  THUNAR_WINDOW (user_data)->merge_idle_id = 0;
-}
-
-
-
-static gboolean
 thunar_window_save_paned (ThunarWindow *window)
 {
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
@@ -3790,6 +3680,28 @@ thunar_window_set_current_directory (ThunarWindow *window,
    * state already while the folder view is loading.
    */
   g_object_notify (G_OBJECT (window), "current-directory");
+}
+
+
+
+static void
+thunar_window_set_current_directory_gfile (ThunarWindow *window,
+                                           GFile        *current_directory)
+{
+  ThunarFile *thunar_file;
+
+  /* remote files possibly need to be poked first */
+  if (g_file_has_uri_scheme (current_directory, "file"))
+    {
+      thunar_file = thunar_file_get (current_directory, NULL);
+      thunar_window_set_current_directory (THUNAR_WINDOW (window), thunar_file);
+      g_object_unref (thunar_file);
+    }
+  else
+    {
+      thunar_browser_poke_location (THUNAR_BROWSER (window), current_directory, THUNAR_WINDOW (window),
+                                    thunar_window_poke_location_finish, NULL);
+    }
 }
 
 
