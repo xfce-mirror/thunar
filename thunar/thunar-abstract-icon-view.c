@@ -36,10 +36,6 @@
 
 static void         thunar_abstract_icon_view_style_set             (GtkWidget                    *widget,
                                                                      GtkStyle                     *previous_style);
-static void         thunar_abstract_icon_view_connect_ui_manager    (ThunarStandardView           *standard_view,
-                                                                     GtkUIManager                 *ui_manager);
-static void         thunar_abstract_icon_view_disconnect_ui_manager (ThunarStandardView           *standard_view,
-                                                                     GtkUIManager                 *ui_manager);
 static GList       *thunar_abstract_icon_view_get_selected_items    (ThunarStandardView           *standard_view);
 static void         thunar_abstract_icon_view_select_all            (ThunarStandardView           *standard_view);
 static void         thunar_abstract_icon_view_unselect_all          (ThunarStandardView           *standard_view);
@@ -102,9 +98,6 @@ static void         thunar_abstract_icon_view_action_sort_descending(ThunarStand
 
 struct _ThunarAbstractIconViewPrivate
 {
-  /* the UI manager merge id for the abstract icon view */
-  gint ui_merge_id;
-
   GtkSortType sort_order;
   gint        sort_column;
 
@@ -150,8 +143,6 @@ thunar_abstract_icon_view_class_init (ThunarAbstractIconViewClass *klass)
   gtkwidget_class->style_set = thunar_abstract_icon_view_style_set;
 
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
-  thunarstandard_view_class->connect_ui_manager = thunar_abstract_icon_view_connect_ui_manager;
-  thunarstandard_view_class->disconnect_ui_manager = thunar_abstract_icon_view_disconnect_ui_manager;
   thunarstandard_view_class->get_selected_items = thunar_abstract_icon_view_get_selected_items;
   thunarstandard_view_class->select_all = thunar_abstract_icon_view_select_all;
   thunarstandard_view_class->unselect_all = thunar_abstract_icon_view_unselect_all;
@@ -265,37 +256,6 @@ thunar_abstract_icon_view_style_set (GtkWidget *widget,
 
   /* call the parent handler */
   (*GTK_WIDGET_CLASS (thunar_abstract_icon_view_parent_class)->style_set) (widget, previous_style);
-}
-
-
-
-static void
-thunar_abstract_icon_view_connect_ui_manager (ThunarStandardView *standard_view,
-                                              GtkUIManager       *ui_manager)
-{
-  ThunarAbstractIconView *abstract_icon_view = THUNAR_ABSTRACT_ICON_VIEW (standard_view);
-  GError                 *error = NULL;
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  abstract_icon_view->priv->ui_merge_id = gtk_ui_manager_add_ui_from_string (ui_manager, thunar_abstract_icon_view_ui,
-                                                                             thunar_abstract_icon_view_ui_length, &error);
-G_GNUC_END_IGNORE_DEPRECATIONS
-  if (G_UNLIKELY (abstract_icon_view->priv->ui_merge_id == 0))
-    {
-      g_error ("Failed to merge ThunarAbstractIconView menus: %s", error->message);
-      g_error_free (error);
-    }
-}
-
-
-
-static void
-thunar_abstract_icon_view_disconnect_ui_manager (ThunarStandardView *standard_view,
-                                                 GtkUIManager       *ui_manager)
-{
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  gtk_ui_manager_remove_ui (ui_manager, THUNAR_ABSTRACT_ICON_VIEW (standard_view)->priv->ui_merge_id);
-G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 
