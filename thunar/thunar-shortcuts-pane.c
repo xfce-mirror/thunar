@@ -25,7 +25,6 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-shortcuts-model.h>
 #include <thunar/thunar-shortcuts-pane.h>
-#include <thunar/thunar-shortcuts-pane-ui.h>
 #include <thunar/thunar-shortcuts-view.h>
 #include <thunar/thunar-side-pane.h>
 

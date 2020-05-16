@@ -24,12 +24,6 @@ bin_PROGRAMS =								\
 thunar_built_sources =							\
 	thunar-marshal.c							\
 	thunar-marshal.h							\
-	thunar-abstract-icon-view-ui.h				\
-	thunar-details-view-ui.h					\
-	thunar-launcher-ui.h						\
-	thunar-shortcuts-pane-ui.h					\
-	thunar-renamer-dialog-ui.h					\
-	thunar-standard-view-ui.h					\
 	thunar-dbus-freedesktop-interfaces.h		\
 	thunar-dbus-freedesktop-interfaces.c		\
 	thunar-dbus-service-infos.h					\
@@ -38,7 +32,6 @@ thunar_built_sources =							\
 	thunar-thumbnailer-proxy.h					\
 	thunar-thumbnail-cache-proxy.h				\
 	thunar-thumbnail-cache-proxy.c				\
-	thunar-window-ui.h							\
 	thunar-resources.h							\
 	thunar-resources.c
 
@@ -297,27 +290,6 @@ thunar-thumbnailer-proxy.h thunar-thumbnailer-proxy.c: $(srcdir)/thunar-thumbnai
 thunar-thumbnail-cache-proxy.h thunar-thumbnail-cache-proxy.c: $(srcdir)/thunar-thumbnail-cache-dbus.xml Makefile
 	$(AM_V_GEN) gdbus-codegen --c-namespace Thunar --generate-c-code thunar-thumbnail-cache-proxy $(srcdir)/thunar-thumbnail-cache-dbus.xml
 
-thunar-abstract-icon-view-ui.h: Makefile $(srcdir)/thunar-abstract-icon-view-ui.xml
-	$(AM_V_GEN) xdt-csource --strip-comments --strip-content --static --name=thunar_abstract_icon_view_ui $(srcdir)/thunar-abstract-icon-view-ui.xml > thunar-abstract-icon-view-ui.h
-
-thunar-details-view-ui.h: Makefile $(srcdir)/thunar-details-view-ui.xml
-	$(AM_V_GEN) xdt-csource --strip-comments --strip-content --static --name=thunar_details_view_ui $(srcdir)/thunar-details-view-ui.xml > thunar-details-view-ui.h
-
-thunar-launcher-ui.h: Makefile $(srcdir)/thunar-launcher-ui.xml
-	$(AM_V_GEN) xdt-csource --strip-comments --strip-content --static --name=thunar_launcher_ui $(srcdir)/thunar-launcher-ui.xml > thunar-launcher-ui.h
-
-thunar-shortcuts-pane-ui.h: Makefile $(srcdir)/thunar-shortcuts-pane-ui.xml
-	$(AM_V_GEN) xdt-csource --strip-comments --strip-content --static --name=thunar_shortcuts_pane_ui $(srcdir)/thunar-shortcuts-pane-ui.xml > thunar-shortcuts-pane-ui.h
-
-thunar-renamer-dialog-ui.h: Makefile $(srcdir)/thunar-renamer-dialog-ui.xml
-	$(AM_V_GEN) xdt-csource --strip-comments --strip-content --static --name=thunar_renamer_dialog_ui $(srcdir)/thunar-renamer-dialog-ui.xml > thunar-renamer-dialog-ui.h
-
-thunar-standard-view-ui.h: Makefile $(srcdir)/thunar-standard-view-ui.xml
-	$(AM_V_GEN) xdt-csource --strip-comments --strip-content --static --name=thunar_standard_view_ui $(srcdir)/thunar-standard-view-ui.xml > thunar-standard-view-ui.h
-
-thunar-window-ui.h: Makefile $(srcdir)/thunar-window-ui.xml
-	$(AM_V_GEN) xdt-csource --strip-comments --strip-content --static --name=thunar_window_ui $(srcdir)/thunar-window-ui.xml > thunar-window-ui.h
-
 thunar-marshal.h: stamp-thunar-marshal.h
 	@true
 
@@ -354,16 +326,10 @@ thunar-resources.h: thunar.gresource.xml
 endif
 
 EXTRA_DIST =								\
-	thunar-abstract-icon-view-ui.xml		\
 	thunar-dbus-freedesktop-interfaces.xml	\
 	thunar-dbus-service-infos.xml			\
-	thunar-details-view-ui.xml				\
-	thunar-launcher-ui.xml					\
 	thunar-marshal.list						\
-	thunar-renamer-dialog-ui.xml			\
-	thunar-standard-view-ui.xml				\
 	thunar-thumbnail-frame.png				\
-	thunar-window-ui.xml					\
 	thunar-settings							\
 	thunar.gresource.xml					\
 	$(desktop_in_files)
