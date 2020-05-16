@@ -3535,6 +3535,7 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view)
     }
   thunar_menu_hide_accel_labels (context_menu);
   gtk_widget_show_all (GTK_WIDGET (context_menu));
+  thunar_window_redirect_menu_tooltips_to_statusbar (THUNAR_WINDOW (window), GTK_MENU (context_menu));
 
   /* if there is a drag_timer_event (long press), we use it */
   if (standard_view->priv->drag_timer_event != NULL)
