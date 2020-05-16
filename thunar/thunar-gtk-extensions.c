@@ -31,6 +31,7 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
 
+#include <thunarx/thunarx.h>
 
 #include <libxfce4ui/libxfce4ui.h>
 
@@ -94,6 +95,65 @@ thunar_gtk_label_set_a11y_relation (GtkLabel  *label,
   relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
+}
+
+
+
+/**
+ * thunar_gtk_menu_thunarx_menu_item_new:
+ * @thunarx_menu_item   : a #ThunarxMenuItem
+ * @menu_to_append_item : #GtkMenuShell on which the item should be appended, or NULL
+ *
+ * method to create a #GtkMenuItem from a #ThunarxMenuItem and append it to the passed #GtkMenuShell
+ * This method will as well add all sub-items in case the passed #ThunarxMenuItem is a submenu
+ *
+ * Return value: (transfer full): The new #GtkImageMenuItem.
+ **/
+GtkWidget*
+thunar_gtk_menu_thunarx_menu_item_new (GObject      *thunarx_menu_item,
+                                       GtkMenuShell *menu_to_append_item)
+{
+  gchar        *name, *label_text, *tooltip_text, *icon_name, *accel_path;
+  gboolean      sensitive;
+  GtkWidget    *gtk_menu_item;
+  ThunarxMenu  *thunarx_menu;
+  GList        *children;
+  GList        *lp;
+  GtkWidget    *submenu;
+
+  g_return_val_if_fail (THUNARX_IS_MENU_ITEM (thunarx_menu_item), NULL);
+
+  g_object_get (G_OBJECT (thunarx_menu_item),
+                "name", &name,
+                "label", &label_text,
+                "tooltip", &tooltip_text,
+                "icon", &icon_name,
+                "sensitive", &sensitive,
+                "menu", &thunarx_menu,
+                NULL);
+
+  accel_path = g_strconcat ("<Actions>/ThunarActions/", name, NULL);
+  gtk_menu_item = xfce_gtk_image_menu_item_new_from_icon_name (label_text, tooltip_text, accel_path,
+                                                               G_CALLBACK (thunarx_menu_item_activate),
+                                                               G_OBJECT (thunarx_menu_item), icon_name, menu_to_append_item);
+
+  /* recursively add submenu items if any */
+  if (gtk_menu_item != NULL && thunarx_menu != NULL)
+  {
+    children = thunarx_menu_get_items (thunarx_menu);
+    submenu = gtk_menu_new ();
+    for (lp = children; lp != NULL; lp = lp->next)
+      thunar_gtk_menu_thunarx_menu_item_new (lp->data, GTK_MENU_SHELL (submenu));
+    gtk_menu_item_set_submenu (GTK_MENU_ITEM (gtk_menu_item), submenu);
+    thunarx_menu_item_list_free (children);
+  }
+  g_free (name);
+  g_free (accel_path);
+  g_free (label_text);
+  g_free (tooltip_text);
+  g_free (icon_name);
+
+  return gtk_menu_item;
 }
 
 

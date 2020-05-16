@@ -49,7 +49,6 @@
 #include <thunar/thunar-location-entry.h>
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-menu.h>
-#include <thunar/thunar-menu-util.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-preferences-dialog.h>
 #include <thunar/thunar-preferences.h>
@@ -137,7 +136,6 @@ static gpointer  thunar_window_notebook_create_window     (GtkWidget            
                                                            gint                    x,
                                                            gint                    y,
                                                            ThunarWindow           *window);
-static void     thunar_window_merge_custom_preferences    (ThunarWindow           *window);
 static gboolean thunar_window_bookmark_merge              (gpointer                user_data);
 static void      thunar_window_update_location_bar_visible(ThunarWindow           *window);
 static void      thunar_window_handle_reload_request      (ThunarWindow           *window);
@@ -199,9 +197,6 @@ static void      thunar_window_menu_item_selected         (ThunarWindow         
                                                            GtkWidget              *menu_item);
 static void      thunar_window_menu_item_deselected       (ThunarWindow           *window,
                                                            GtkWidget              *menu_item);
-static void     thunar_window_update_custom_actions       (ThunarView             *view,
-                                                           GParamSpec             *pspec,
-                                                           ThunarWindow           *window);
 static void      thunar_window_notify_loading             (ThunarView             *view,
                                                            GParamSpec             *pspec,
                                                            ThunarWindow           *window);
@@ -274,7 +269,7 @@ struct _ThunarWindow
 
   /* support for custom preferences actions */
   ThunarxProviderFactory *provider_factory;
-  guint                   custom_preferences_merge_id;
+  GList                  *thunarx_preferences_providers;
 
   /* UI manager merge ID for go menu actions */
   guint                   go_items_actions_merge_id;
@@ -292,15 +287,10 @@ struct _ThunarWindow
 
   ThunarIconFactory      *icon_factory;
 
-  GtkActionGroup         *action_group;
   GtkUIManager           *ui_manager;
 
   /* to be able to change folder on "device-pre-unmount" if required */
   ThunarDeviceMonitor    *device_monitor;
-
-  /* custom menu actions for the file menu */
-  GtkActionGroup         *custom_actions;
-  guint                   custom_merge_id;
 
   GtkWidget              *grid;
   GtkWidget              *menubar;
@@ -632,8 +622,9 @@ thunar_window_init (ThunarWindow *window)
   /* unset the view type */
   window->view_type = G_TYPE_NONE;
 
-  /* grab a reference on the provider factory */
+  /* grab a reference on the provider factory and load the providers*/
   window->provider_factory = thunarx_provider_factory_get_default ();
+  window->thunarx_preferences_providers = thunarx_provider_factory_list_providers (window->provider_factory, THUNARX_TYPE_PREFERENCES_PROVIDER);
 
   /* grab a reference on the preferences */
   window->preferences = thunar_preferences_get ();
@@ -988,6 +979,9 @@ thunar_window_create_edit_menu (ThunarWindow     *window,
                                 GtkWidget        *menu)
 {
   ThunarMenu      *submenu;
+  GtkWidget       *gtk_menu_item;
+  GList           *thunarx_menu_items;
+  GList           *pp, *lp;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
   _thunar_return_val_if_fail (GTK_IS_MENU_ITEM (menu), FALSE);
@@ -1012,6 +1006,26 @@ thunar_window_create_edit_menu (ThunarWindow     *window,
                                    | THUNAR_MENU_SECTION_RENAME
                                    | THUNAR_MENU_SECTION_RESTORE);
 
+  /* determine the available preferences providers */
+  if (G_LIKELY (window->thunarx_preferences_providers != NULL))
+    {
+      /* add menu items from all providers */
+      for (pp = window->thunarx_preferences_providers; pp != NULL; pp = pp->next)
+        {
+          /* determine the available menu items for the provider */
+          thunarx_menu_items = thunarx_preferences_provider_get_menu_items (THUNARX_PREFERENCES_PROVIDER (pp->data), GTK_WIDGET (window));
+          for (lp = thunarx_menu_items; lp != NULL; lp = lp->next)
+            {
+                gtk_menu_item = thunar_gtk_menu_thunarx_menu_item_new (lp->data, GTK_MENU_SHELL (submenu));
+
+                /* Each thunarx_menu_item will be destroyed together with its related gtk_menu_item */
+                g_signal_connect_swapped (G_OBJECT (gtk_menu_item), "destroy", G_CALLBACK (g_object_unref), lp->data);
+            }
+
+          /* release the list */
+          g_list_free (thunarx_menu_items);
+        }
+    }
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_PREFERENCES), G_OBJECT (window), GTK_MENU_SHELL (submenu));
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (menu), GTK_WIDGET (submenu));
   gtk_widget_show_all (GTK_WIDGET (submenu));
@@ -1248,11 +1262,6 @@ thunar_window_finalize (GObject *object)
   g_signal_handlers_disconnect_matched (window->ui_manager, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
   g_object_unref (window->ui_manager);
 
-  /* release the custom actions */
-  if (window->custom_actions != NULL)
-    g_object_unref (window->custom_actions);
-
-  g_object_unref (window->action_group);
   g_object_unref (window->icon_factory);
   g_object_unref (window->launcher);
 
@@ -2205,51 +2214,6 @@ thunar_window_install_sidepane (ThunarWindow *window,
   /* remember the setting */
   if (gtk_widget_get_visible (GTK_WIDGET (window)))
     g_object_set (G_OBJECT (window->preferences), "last-side-pane", g_type_name (type), NULL);
-}
-
-
-
-static void
-thunar_window_merge_custom_preferences (ThunarWindow *window)
-{
-  GList           *providers;
-  GList           *items;
-  GList           *pp;
-
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
-  _thunar_return_if_fail (window->custom_preferences_merge_id == 0);
-
-  /* determine the available preferences providers */
-  providers = thunarx_provider_factory_list_providers (window->provider_factory, THUNARX_TYPE_PREFERENCES_PROVIDER);
-  if (G_LIKELY (providers != NULL))
-    {
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      /* allocate a new merge id from the UI manager */
-      window->custom_preferences_merge_id = gtk_ui_manager_new_merge_id (window->ui_manager);
-G_GNUC_END_IGNORE_DEPRECATIONS
-
-      /* add menu items from all providers */
-      for (pp = providers; pp != NULL; pp = pp->next)
-        {
-          /* determine the available menu items for the provider */
-          items = thunarx_preferences_provider_get_menu_items (THUNARX_PREFERENCES_PROVIDER (pp->data), GTK_WIDGET (window));
-
-          thunar_menu_util_add_items_to_ui_manager (window->ui_manager,
-                                                    window->action_group,
-                                                    window->custom_preferences_merge_id,
-                                                    "/main-menu/edit-menu/placeholder-custom-preferences",
-                                                    items);
-
-          /* release the reference on the provider */
-          g_object_unref (G_OBJECT (pp->data));
-
-          /* release the action list */
-          g_list_free (items);
-        }
-
-      /* release the provider list */
-      g_list_free (providers);
-    }
 }
 
 
@@ -3531,111 +3495,6 @@ thunar_window_menu_item_deselected (ThunarWindow *window,
 
 
 static void
-thunar_window_update_custom_actions (ThunarView   *view,
-                                     GParamSpec   *pspec,
-                                     ThunarWindow *window)
-{
-  ThunarFile      *folder;
-  GList           *selected_files;
-  GList           *items = NULL;
-  GList           *lp;
-  GList           *providers;
-  GList           *tmp;
-
-  _thunar_return_if_fail (THUNAR_IS_VIEW (view));
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
-
-  /* leave if the signal is emitted from a non-active tab */
-  if (!gtk_widget_get_realized (GTK_WIDGET (window))
-      || window->view != GTK_WIDGET (view))
-    return;
-
-  /* grab a reference to the current directory of the window */
-  folder = thunar_window_get_current_directory (window);
-
-  /* leave if current directory is invalid */
-  if (folder != NULL &&
-      !thunarx_file_info_is_directory (THUNARX_FILE_INFO (folder)))
-      return;
-
-  /* load the menu provides from the provider factory */
-  providers = thunarx_provider_factory_list_providers (window->provider_factory,
-                                                       THUNARX_TYPE_MENU_PROVIDER);
-  if (G_LIKELY (providers != NULL))
-    {
-      /* get a list of selected files */
-      selected_files = thunar_component_get_selected_files (THUNAR_COMPONENT (view));
-
-      /* load the actions offered by the menu providers */
-      for (lp = providers; lp != NULL; lp = lp->next)
-        {
-          if (G_LIKELY (selected_files != NULL))
-            {
-              tmp = thunarx_menu_provider_get_file_menu_items (lp->data,
-                                                               GTK_WIDGET (window),
-                                                               selected_files);
-            }
-          else if (G_LIKELY (folder != NULL))
-            {
-              tmp = thunarx_menu_provider_get_folder_menu_items (lp->data,
-                                                                 GTK_WIDGET (window),
-                                                                 THUNARX_FILE_INFO (folder));
-            }
-          else
-            {
-              tmp = NULL;
-            }
-
-          items = g_list_concat (items, tmp);
-          g_object_unref (G_OBJECT (lp->data));
-        }
-      g_list_free (providers);
-    }
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* remove previously inserted menu actions from the UI manager */
-  if (window->custom_merge_id != 0)
-    {
-      gtk_ui_manager_remove_ui (window->ui_manager, window->custom_merge_id);
-      gtk_ui_manager_ensure_update (window->ui_manager);
-      window->custom_merge_id = 0;
-    }
-
-  /* drop any previous custom action group */
-  if (window->custom_actions != NULL)
-    {
-      gtk_ui_manager_remove_action_group (window->ui_manager, window->custom_actions);
-      g_object_unref (window->custom_actions);
-      window->custom_actions = NULL;
-    }
-
-  /* add the actions specified by the menu providers */
-  if (G_LIKELY (items != NULL))
-    {
-      /* allocate the action group and the merge id for the custom actions */
-      window->custom_actions = gtk_action_group_new ("ThunarActions");
-      window->custom_merge_id = gtk_ui_manager_new_merge_id (window->ui_manager);
-
-      /* insert the new action group and make sure the UI manager gets updated */
-      gtk_ui_manager_insert_action_group (window->ui_manager, window->custom_actions, 0);
-      gtk_ui_manager_ensure_update (window->ui_manager);
-
-      /* add the menu items to the UI manager */
-      thunar_menu_util_add_items_to_ui_manager (window->ui_manager,
-                                                window->custom_actions,
-                                                window->custom_merge_id,
-                                                "/main-menu/file-menu/placeholder-custom-actions",
-                                                items);
-
-      /* cleanup */
-      g_list_free (items);
-    }
-G_GNUC_END_IGNORE_DEPRECATIONS
-}
-
-
-
-static void
 thunar_window_notify_loading (ThunarView   *view,
                               GParamSpec   *pspec,
                               ThunarWindow *window)
@@ -3720,11 +3579,6 @@ static gboolean
 thunar_window_merge_idle (gpointer user_data)
 {
   ThunarWindow *window = THUNAR_WINDOW (user_data);
-
-  /* merge custom preferences from the providers */
-THUNAR_THREADS_ENTER
-  thunar_window_merge_custom_preferences (window);
-THUNAR_THREADS_LEAVE
 
   thunar_window_bookmark_merge (window);
 
