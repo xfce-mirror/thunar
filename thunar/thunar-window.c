@@ -69,7 +69,6 @@ enum
 {
   PROP_0,
   PROP_CURRENT_DIRECTORY,
-  PROP_UI_MANAGER,
   PROP_ZOOM_LEVEL,
 };
 
@@ -296,8 +295,6 @@ struct _ThunarWindow
 
   ThunarIconFactory      *icon_factory;
 
-  GtkUIManager           *ui_manager;
-
   /* to be able to change folder on "device-pre-unmount" if required */
   ThunarDeviceMonitor    *device_monitor;
 
@@ -459,23 +456,6 @@ thunar_window_class_init (ThunarWindowClass *klass)
                                                         "current-directory",
                                                         THUNAR_TYPE_FILE,
                                                         EXO_PARAM_READWRITE));
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /**
-   * ThunarWindow:ui-manager:
-   *
-   * The #GtkUIManager used for this #ThunarWindow. This property
-   * can only be read and is garantied to always contain a valid
-   * #GtkUIManager instance (thus it's never %NULL).
-   **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_UI_MANAGER,
-                                   g_param_spec_object ("ui-manager",
-                                                        "ui-manager",
-                                                        "ui-manager",
-                                                        GTK_TYPE_UI_MANAGER,
-                                                        EXO_PARAM_READABLE));
-G_GNUC_END_IGNORE_DEPRECATIONS
 
   /**
    * ThunarWindow:zoom-level:
@@ -661,9 +641,6 @@ thunar_window_init (ThunarWindow *window)
   g_closure_sink (window->select_files_closure);
   window->launcher = g_object_new (THUNAR_TYPE_LAUNCHER, "widget", GTK_WIDGET (window),
                                   "select-files-closure",  window->select_files_closure, NULL);
-
-  window->ui_manager = gtk_ui_manager_new ();
-  gtk_ui_manager_add_ui_from_string (window->ui_manager, thunar_window_ui, thunar_window_ui_length, NULL);
 
   exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->launcher), "current-directory");
   g_signal_connect_swapped (G_OBJECT (window->launcher), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
@@ -1229,10 +1206,6 @@ thunar_window_finalize (GObject *object)
   g_signal_handlers_disconnect_matched (window->device_monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
   g_object_unref (window->device_monitor);
 
-  /* disconnect from the ui manager */
-  g_signal_handlers_disconnect_matched (window->ui_manager, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
-  g_object_unref (window->ui_manager);
-
   g_object_unref (window->icon_factory);
   g_object_unref (window->launcher);
 
@@ -1312,10 +1285,6 @@ thunar_window_get_property (GObject    *object,
     {
     case PROP_CURRENT_DIRECTORY:
       g_value_set_object (value, thunar_window_get_current_directory (window));
-      break;
-
-    case PROP_UI_MANAGER:
-      g_value_set_object (value, window->ui_manager);
       break;
 
     case PROP_ZOOM_LEVEL:
@@ -1708,9 +1677,6 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   if (window->view_type != G_TYPE_NONE)
     g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (window->view_type), NULL);
 
-  /* integrate the standard view action in the ui */
-  thunar_component_set_ui_manager (THUNAR_COMPONENT (page), window->ui_manager);
-
   /* connect to the new history */
   history = thunar_standard_view_get_history (THUNAR_STANDARD_VIEW (window->view));
   if (history != NULL)
@@ -1719,7 +1685,7 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
       thunar_window_history_changed (window);
     }
 
-  /* update the actions */
+  /* update the selection */
   thunar_standard_view_selection_changed (THUNAR_STANDARD_VIEW (page));
 
   gtk_widget_grab_focus (page);
@@ -1812,9 +1778,6 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
 
   /* drop connected signals */
   g_signal_handlers_disconnect_matched (page, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
-
-  /* remove from the ui */
-  thunar_component_set_ui_manager (THUNAR_COMPONENT (page), NULL);
 
   n_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook));
   if (n_pages == 0)

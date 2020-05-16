@@ -37,7 +37,6 @@ enum
   PROP_CURRENT_DIRECTORY,
   PROP_SELECTED_FILES,
   PROP_SHOW_HIDDEN,
-  PROP_UI_MANAGER,
 };
 
 
@@ -61,9 +60,6 @@ static void          thunar_shortcuts_pane_set_current_directory (ThunarNavigato
 static GList        *thunar_shortcuts_pane_get_selected_files    (ThunarComponent          *component);
 static void          thunar_shortcuts_pane_set_selected_files    (ThunarComponent          *component,
                                                                   GList                    *selected_files);
-static GtkUIManager *thunar_shortcuts_pane_get_ui_manager        (ThunarComponent          *component);
-static void          thunar_shortcuts_pane_set_ui_manager        (ThunarComponent          *component,
-                                                                  GtkUIManager             *ui_manager);
 static void          thunar_shortcuts_pane_show_shortcuts_view_padding (GtkWidget          *widget);
 static void          thunar_shortcuts_pane_hide_shortcuts_view_padding (GtkWidget          *widget);
 
@@ -80,8 +76,6 @@ struct _ThunarShortcutsPane
 
   ThunarFile       *current_directory;
   GList            *selected_files;
-
-  GtkUIManager     *ui_manager;
 
   GtkWidget        *view;
 
@@ -113,7 +107,6 @@ thunar_shortcuts_pane_class_init (ThunarShortcutsPaneClass *klass)
 
   /* override ThunarComponent's properties */
   g_object_class_override_property (gobject_class, PROP_SELECTED_FILES, "selected-files");
-  g_object_class_override_property (gobject_class, PROP_UI_MANAGER, "ui-manager");
 
   /* override ThunarSidePane's properties */
   g_object_class_override_property (gobject_class, PROP_SHOW_HIDDEN, "show-hidden");
@@ -126,8 +119,6 @@ thunar_shortcuts_pane_component_init (ThunarComponentIface *iface)
 {
   iface->get_selected_files = thunar_shortcuts_pane_get_selected_files;
   iface->set_selected_files = thunar_shortcuts_pane_set_selected_files;
-  iface->get_ui_manager = thunar_shortcuts_pane_get_ui_manager;
-  iface->set_ui_manager = thunar_shortcuts_pane_set_ui_manager;
 }
 
 
@@ -191,7 +182,6 @@ thunar_shortcuts_pane_dispose (GObject *object)
 
   thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (shortcuts_pane), NULL);
   thunar_component_set_selected_files (THUNAR_COMPONENT (shortcuts_pane), NULL);
-  thunar_component_set_ui_manager (THUNAR_COMPONENT (shortcuts_pane), NULL);
 
   (*G_OBJECT_CLASS (thunar_shortcuts_pane_parent_class)->dispose) (object);
 }
@@ -226,10 +216,6 @@ thunar_shortcuts_pane_get_property (GObject    *object,
       g_value_set_boolean (value, thunar_side_pane_get_show_hidden (THUNAR_SIDE_PANE (object)));
       break;
 
-    case PROP_UI_MANAGER:
-      g_value_set_object (value, thunar_component_get_ui_manager (THUNAR_COMPONENT (object)));
-      break;
-
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -256,10 +242,6 @@ thunar_shortcuts_pane_set_property (GObject      *object,
 
     case PROP_SHOW_HIDDEN:
       thunar_side_pane_set_show_hidden (THUNAR_SIDE_PANE (object), g_value_get_boolean (value));
-      break;
-
-    case PROP_UI_MANAGER:
-      thunar_component_set_ui_manager (THUNAR_COMPONENT (object), g_value_get_object (value));
       break;
 
     default:
@@ -358,43 +340,6 @@ thunar_shortcuts_pane_set_selected_files (ThunarComponent *component,
 
   /* notify listeners */
   g_object_notify (G_OBJECT (shortcuts_pane), "selected-files");
-}
-
-
-
-static GtkUIManager*
-thunar_shortcuts_pane_get_ui_manager (ThunarComponent *component)
-{
-  return THUNAR_SHORTCUTS_PANE (component)->ui_manager;
-}
-
-
-
-static void
-thunar_shortcuts_pane_set_ui_manager (ThunarComponent *component,
-                                      GtkUIManager    *ui_manager)
-{
-  ThunarShortcutsPane *shortcuts_pane = THUNAR_SHORTCUTS_PANE (component);
-
-  /* disconnect from the previous UI manager */
-  if (G_UNLIKELY (shortcuts_pane->ui_manager != NULL))
-    {
-      /* drop our reference on the previous UI manager */
-      g_object_unref (G_OBJECT (shortcuts_pane->ui_manager));
-    }
-
-  /* activate the new UI manager */
-  shortcuts_pane->ui_manager = ui_manager;
-
-  /* connect to the new UI manager */
-  if (G_LIKELY (ui_manager != NULL))
-    {
-      /* we keep a reference on the new manager */
-      g_object_ref (G_OBJECT (ui_manager));
-    }
-
-  /* notify listeners */
-  g_object_notify (G_OBJECT (shortcuts_pane), "ui-manager");
 }
 
 
