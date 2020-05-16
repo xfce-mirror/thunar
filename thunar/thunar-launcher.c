@@ -68,7 +68,6 @@ enum
   PROP_0,
   PROP_CURRENT_DIRECTORY,
   PROP_SELECTED_FILES,
-  PROP_UI_MANAGER,
   PROP_WIDGET,
   PROP_SELECT_FILES_CLOSURE,
   N_PROPERTIES
@@ -94,9 +93,6 @@ static void                    thunar_launcher_set_current_directory      (Thuna
 static GList                  *thunar_launcher_get_selected_files         (ThunarComponent                *component);
 static void                    thunar_launcher_set_selected_files         (ThunarComponent                *component,
                                                                            GList                          *selected_files);
-static GtkUIManager           *thunar_launcher_get_ui_manager             (ThunarComponent          *component);
-static void                    thunar_launcher_set_ui_manager             (ThunarComponent          *component,
-                                                                           GtkUIManager             *ui_manager);
 static void                    thunar_launcher_execute_files              (ThunarLauncher                 *launcher,
                                                                            GList                          *files);
 static void                    thunar_launcher_open_file                  (ThunarLauncher                 *launcher,
@@ -171,8 +167,6 @@ struct _ThunarLauncher
 
   ThunarFile             *current_directory;
   GList                  *selected_files;
-
-  GtkUIManager           *ui_manager;
 
   gint                    n_selected_files;
   gint                    n_selected_directories;
@@ -306,10 +300,6 @@ thunar_launcher_class_init (ThunarLauncherClass *klass)
       g_param_spec_override ("selected-files",
                              g_object_interface_find_property (g_iface, "selected-files"));
 
-  launcher_props[PROP_UI_MANAGER] =
-      g_param_spec_override ("ui-manager",
-                             g_object_interface_find_property (g_iface, "ui-manager"));
-
   /* install properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, launcher_props);
 }
@@ -321,8 +311,6 @@ thunar_launcher_component_init (ThunarComponentIface *iface)
 {
   iface->get_selected_files = thunar_launcher_get_selected_files;
   iface->set_selected_files = thunar_launcher_set_selected_files;
-  iface->get_ui_manager = thunar_launcher_get_ui_manager;
-  iface->set_ui_manager = thunar_launcher_set_ui_manager;
 }
 
 
@@ -355,7 +343,6 @@ thunar_launcher_dispose (GObject *object)
 
   /* reset our properties */
   thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (launcher), NULL);
-  thunar_component_set_ui_manager (THUNAR_COMPONENT (launcher), NULL);
   thunar_launcher_set_widget (THUNAR_LAUNCHER (launcher), NULL);
 
   /* disconnect from the currently selected files */
@@ -400,10 +387,6 @@ thunar_launcher_get_property (GObject    *object,
       g_value_set_boxed (value, thunar_component_get_selected_files (THUNAR_COMPONENT (object)));
       break;
 
-    case PROP_UI_MANAGER:
-      g_value_set_object (value, thunar_component_get_ui_manager (THUNAR_COMPONENT (object)));
-      break;
-
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -428,10 +411,6 @@ thunar_launcher_set_property (GObject      *object,
 
     case PROP_SELECTED_FILES:
       thunar_component_set_selected_files (THUNAR_COMPONENT (object), g_value_get_boxed (value));
-      break;
-
-    case PROP_UI_MANAGER:
-      thunar_component_set_ui_manager (THUNAR_COMPONENT (object), g_value_get_object (value));
       break;
 
     case PROP_WIDGET:
@@ -586,43 +565,6 @@ thunar_launcher_set_selected_files (ThunarComponent *component,
     {
       launcher->parent_folder = NULL;
     }
-}
-
-
-
-static GtkUIManager*
-thunar_launcher_get_ui_manager (ThunarComponent *component)
-{
-  return THUNAR_LAUNCHER (component)->ui_manager;
-}
-
-
-
-static void
-thunar_launcher_set_ui_manager (ThunarComponent *component,
-                                GtkUIManager    *ui_manager)
-{
-  ThunarLauncher *launcher = THUNAR_LAUNCHER (component);
-
-  /* disconnect from the previous UI manager */
-  if (G_UNLIKELY (launcher->ui_manager != NULL))
-    {
-      /* drop the reference on the previous UI manager */
-      g_object_unref (G_OBJECT (launcher->ui_manager));
-    }
-
-  /* activate the new UI manager */
-  launcher->ui_manager = ui_manager;
-
-  /* connect to the new UI manager */
-  if (G_LIKELY (ui_manager != NULL))
-    {
-      /* we keep a reference on the new manager */
-      g_object_ref (G_OBJECT (ui_manager));
-    }
-
-  /* notify listeners */
-  g_object_notify_by_pspec (G_OBJECT (launcher), launcher_props[PROP_UI_MANAGER]);
 }
 
 

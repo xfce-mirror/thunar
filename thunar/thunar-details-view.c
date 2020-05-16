@@ -53,10 +53,6 @@ static void         thunar_details_view_set_property            (GObject        
                                                                  const GValue           *value,
                                                                  GParamSpec             *pspec);
 static AtkObject   *thunar_details_view_get_accessible          (GtkWidget              *widget);
-static void         thunar_details_view_connect_ui_manager      (ThunarStandardView     *standard_view,
-                                                                 GtkUIManager           *ui_manager);
-static void         thunar_details_view_disconnect_ui_manager   (ThunarStandardView     *standard_view,
-                                                                 GtkUIManager           *ui_manager);
 static GList       *thunar_details_view_get_selected_items      (ThunarStandardView     *standard_view);
 static void         thunar_details_view_select_all              (ThunarStandardView     *standard_view);
 static void         thunar_details_view_unselect_all            (ThunarStandardView     *standard_view);
@@ -136,9 +132,6 @@ struct _ThunarDetailsView
   /* whether to use fixed column widths */
   gboolean           fixed_columns;
 
-  /* the UI manager merge id for the details view */
-  guint              ui_merge_id;
-
   /* whether the most recent item activation used a mouse button press */
   gboolean           button_pressed;
 };
@@ -174,8 +167,6 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
   gtkwidget_class->get_accessible = thunar_details_view_get_accessible;
 
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
-  thunarstandard_view_class->connect_ui_manager = thunar_details_view_connect_ui_manager;
-  thunarstandard_view_class->disconnect_ui_manager = thunar_details_view_disconnect_ui_manager;
   thunarstandard_view_class->get_selected_items = thunar_details_view_get_selected_items;
   thunarstandard_view_class->select_all = thunar_details_view_select_all;
   thunarstandard_view_class->unselect_all = thunar_details_view_unselect_all;
@@ -418,36 +409,6 @@ thunar_details_view_get_accessible (GtkWidget *widget)
     }
 
   return object;
-}
-
-
-static void
-thunar_details_view_connect_ui_manager (ThunarStandardView *standard_view,
-                                        GtkUIManager       *ui_manager)
-{
-  ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (standard_view);
-  GError            *error = NULL;
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  details_view->ui_merge_id = gtk_ui_manager_add_ui_from_string (ui_manager, thunar_details_view_ui,
-                                                                 thunar_details_view_ui_length, &error);
-G_GNUC_END_IGNORE_DEPRECATIONS
-  if (G_UNLIKELY (details_view->ui_merge_id == 0))
-    {
-      g_error ("Failed to merge ThunarDetailsView menus: %s", error->message);
-      g_error_free (error);
-    }
-}
-
-
-
-static void
-thunar_details_view_disconnect_ui_manager (ThunarStandardView *standard_view,
-                                           GtkUIManager       *ui_manager)
-{
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  gtk_ui_manager_remove_ui (ui_manager, THUNAR_DETAILS_VIEW (standard_view)->ui_merge_id);
-G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 

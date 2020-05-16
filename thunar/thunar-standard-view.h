@@ -53,14 +53,6 @@ struct _ThunarStandardViewClass
 {
   GtkScrolledWindowClass __parent__;
 
-  /* Called by the ThunarStandardView class to let derived classes
-   * connect to and disconnect from the UI manager.
-   */
-  void       (*connect_ui_manager)      (ThunarStandardView *standard_view,
-                                         GtkUIManager       *ui_manager);
-  void       (*disconnect_ui_manager)   (ThunarStandardView *standard_view,
-                                         GtkUIManager       *ui_manager);
-
   /* Returns the list of currently selected GtkTreePath's, where
    * both the list and the items are owned by the caller. */
   GList       *(*get_selected_items)    (ThunarStandardView *standard_view);
@@ -144,8 +136,6 @@ struct _ThunarStandardView
   ThunarPreferences         *preferences;
 
   ThunarListModel           *model;
-
-  GtkUIManager              *ui_manager;
 
   ThunarIconFactory         *icon_factory;
   GtkCellRenderer           *icon_renderer;

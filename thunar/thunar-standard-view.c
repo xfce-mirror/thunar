@@ -70,7 +70,6 @@ enum
   PROP_SELECTED_FILES,
   PROP_SHOW_HIDDEN,
   PROP_STATUSBAR_TEXT,
-  PROP_UI_MANAGER,
   PROP_ZOOM_LEVEL,
   PROP_THUMBNAIL_DRAW_FRAMES,
   PROP_ACCEL_GROUP,
@@ -118,9 +117,6 @@ static gboolean             thunar_standard_view_draw                       (Gtk
 static GList               *thunar_standard_view_get_selected_files_component         (ThunarComponent          *component);
 static void                 thunar_standard_view_set_selected_files_component         (ThunarComponent          *component,
                                                                                        GList                    *selected_files);
-static GtkUIManager        *thunar_standard_view_get_ui_manager             (ThunarComponent          *component);
-static void                 thunar_standard_view_set_ui_manager             (ThunarComponent          *component,
-                                                                             GtkUIManager             *ui_manager);
 static ThunarFile          *thunar_standard_view_get_current_directory      (ThunarNavigator          *navigator);
 static void                 thunar_standard_view_set_current_directory      (ThunarNavigator          *navigator,
                                                                              ThunarFile               *current_directory);
@@ -397,8 +393,6 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   gtkwidget_class->draw = thunar_standard_view_draw;
 
   xfce_gtk_translate_action_entries (thunar_standard_view_action_entries, G_N_ELEMENTS (thunar_standard_view_action_entries));
-  klass->connect_ui_manager = (gpointer) exo_noop;
-  klass->disconnect_ui_manager = (gpointer) exo_noop;
 
   /**
    * ThunarStandardView:loading:
@@ -461,10 +455,6 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
       g_param_spec_override ("selected-files",
                              g_object_interface_find_property (g_iface, "selected-files"));
 
-  standard_view_props[PROP_UI_MANAGER] =
-      g_param_spec_override ("ui-manager",
-                             g_object_interface_find_property (g_iface, "ui-manager"));
-
   /* override ThunarNavigator's properties */
   g_iface = g_type_default_interface_peek (THUNAR_TYPE_NAVIGATOR);
   standard_view_props[PROP_CURRENT_DIRECTORY] =
@@ -524,8 +514,6 @@ thunar_standard_view_component_init (ThunarComponentIface *iface)
 {
   iface->get_selected_files = thunar_standard_view_get_selected_files_component;
   iface->set_selected_files = thunar_standard_view_set_selected_files_component;
-  iface->get_ui_manager = thunar_standard_view_get_ui_manager;
-  iface->set_ui_manager = thunar_standard_view_set_ui_manager;
 }
 
 
@@ -747,9 +735,6 @@ thunar_standard_view_dispose (GObject *object)
       standard_view->priv->drag_timer_event = NULL;
     }
 
-  /* reset the UI manager property */
-  thunar_component_set_ui_manager (THUNAR_COMPONENT (standard_view), NULL);
-
   /* disconnect from file */
   if (standard_view->priv->current_directory != NULL)
     {
@@ -885,10 +870,6 @@ thunar_standard_view_get_property (GObject    *object,
       g_value_set_static_string (value, thunar_view_get_statusbar_text (THUNAR_VIEW (object)));
       break;
 
-    case PROP_UI_MANAGER:
-      g_value_set_object (value, thunar_component_get_ui_manager (THUNAR_COMPONENT (object)));
-      break;
-
     case PROP_ZOOM_LEVEL:
       g_value_set_enum (value, thunar_view_get_zoom_level (THUNAR_VIEW (object)));
       break;
@@ -930,10 +911,6 @@ thunar_standard_view_set_property (GObject      *object,
 
     case PROP_SHOW_HIDDEN:
       thunar_view_set_show_hidden (THUNAR_VIEW (object), g_value_get_boolean (value));
-      break;
-
-    case PROP_UI_MANAGER:
-      thunar_component_set_ui_manager (THUNAR_COMPONENT (object), g_value_get_object (value));
       break;
 
     case PROP_ZOOM_LEVEL:
@@ -1118,61 +1095,6 @@ thunar_standard_view_set_selected_files_component (ThunarComponent *component,
           g_list_free_full (paths, (GDestroyNotify) gtk_tree_path_free);
         }
     }
-}
-
-
-
-static GtkUIManager*
-thunar_standard_view_get_ui_manager (ThunarComponent *component)
-{
-  return THUNAR_STANDARD_VIEW (component)->ui_manager;
-}
-
-
-
-static void
-thunar_standard_view_set_ui_manager (ThunarComponent *component,
-                                     GtkUIManager    *ui_manager)
-{
-  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (component);
-
-  /* leave if nothing changed */
-  if (standard_view->ui_manager == ui_manager)
-    return;
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* disconnect from the previous UI manager */
-  if (G_LIKELY (standard_view->ui_manager != NULL))
-    {
-      /* unmerge the ui controls from derived classes */
-      (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->disconnect_ui_manager) (standard_view, standard_view->ui_manager);
-
-      /* force update to remove all actions and proxies */
-      gtk_ui_manager_ensure_update (standard_view->ui_manager);
-
-      /* drop the reference on the previous UI manager */
-      g_object_unref (G_OBJECT (standard_view->ui_manager));
-    }
-
-  /* apply the new setting */
-  standard_view->ui_manager = ui_manager;
-
-  /* connect to the new manager (if any) */
-  if (G_LIKELY (ui_manager != NULL))
-    {
-      /* we keep a reference on the new manager */
-      g_object_ref (G_OBJECT (ui_manager));
-
-      /* merge the ui controls from derived classes */
-      (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->connect_ui_manager) (standard_view, ui_manager);
-
-      /* force update to avoid flickering */
-      gtk_ui_manager_ensure_update (standard_view->ui_manager);
-    }
-
-G_GNUC_END_IGNORE_DEPRECATIONS
-  /* let others know that we have a new manager */
-  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_UI_MANAGER]);
 }
 
 
