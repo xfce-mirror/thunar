@@ -201,8 +201,6 @@ thunar_SOURCES =							\
 	thunar-thumbnailer.h						\
 	thunar-transfer-job.c						\
 	thunar-transfer-job.h						\
-	thunar-trash-action.c						\
-	thunar-trash-action.h						\
 	thunar-tree-model.c						\
 	thunar-tree-model.h						\
 	thunar-tree-pane.c						\
