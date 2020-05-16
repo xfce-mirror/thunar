@@ -168,6 +168,7 @@ void           thunar_standard_view_queue_popup         (ThunarStandardView     
 void           thunar_standard_view_selection_changed   (ThunarStandardView       *standard_view);
 void           thunar_standard_view_set_history         (ThunarStandardView       *standard_view,
                                                          ThunarHistory            *history);
+ThunarHistory *thunar_standard_view_get_history         (ThunarStandardView       *standard_view);
 ThunarHistory *thunar_standard_view_copy_history        (ThunarStandardView       *standard_view);
 void           thunar_standard_view_append_menu_items   (ThunarStandardView       *standard_view,
                                                          GtkMenu                  *menu,
