@@ -24,7 +24,6 @@
 #include <gdk/gdkkeysyms.h>
 
 #include <thunar/thunar-abstract-icon-view.h>
-#include <thunar/thunar-abstract-icon-view-ui.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-launcher.h>

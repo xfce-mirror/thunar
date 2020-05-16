@@ -25,7 +25,6 @@
 
 #include <thunar/thunar-column-editor.h>
 #include <thunar/thunar-details-view.h>
-#include <thunar/thunar-details-view-ui.h>
 #include <thunar/thunar-launcher.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-private.h>
