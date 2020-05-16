@@ -164,8 +164,6 @@ struct _ThunarRenamerDialog
 
   ThunarLauncher      *launcher;
 
-  GtkUIManager        *ui_manager;
-
   GtkWidget           *cancel_button;
   GtkWidget           *close_button;
 
@@ -368,7 +366,6 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
 
   /* setup the launcher support for this dialog */
   renamer_dialog->launcher = g_object_new (THUNAR_TYPE_LAUNCHER, "widget", GTK_WIDGET (renamer_dialog), NULL);
-  thunar_component_set_ui_manager (THUNAR_COMPONENT (renamer_dialog->launcher), renamer_dialog->ui_manager);
   exo_binding_new (G_OBJECT (renamer_dialog), "selected-files", G_OBJECT (renamer_dialog->launcher), "selected-files");
 
   /* add the toolbar to the dialog */
@@ -642,8 +639,6 @@ thunar_renamer_dialog_finalize (GObject *object)
 
   /* release the launcher support */
   g_object_unref (G_OBJECT (renamer_dialog->launcher));
-
-  g_object_unref (G_OBJECT (renamer_dialog->ui_manager));
 
   /* release our bulk rename model */
   g_object_unref (G_OBJECT (renamer_dialog->model));
