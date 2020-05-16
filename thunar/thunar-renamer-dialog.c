@@ -43,7 +43,6 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-renamer-dialog.h>
-#include <thunar/thunar-renamer-dialog-ui.h>
 #include <thunar/thunar-renamer-model.h>
 #include <thunar/thunar-renamer-progress.h>
 
@@ -166,7 +165,6 @@ struct _ThunarRenamerDialog
 
   ThunarLauncher      *launcher;
 
-  GtkActionGroup      *action_group;
   GtkUIManager        *ui_manager;
 
   GtkWidget           *cancel_button;
@@ -188,20 +186,6 @@ struct _ThunarRenamerDialog
 
   /* TRUE while drop highlighting */
   gboolean             drag_highlighted;
-};
-
-
-
-static const GtkActionEntry action_entries[] =
-{
-  { "file-menu", NULL, N_ ("_File"), NULL, },
-  { "sendto-menu", NULL, N_ ("_Send To"), NULL, },
-  { "file-context-menu", NULL, N_ ("File Context Menu"), NULL, },
-  { "add-files", "list-add", N_ ("_Add Files..."), NULL, N_ ("Include additional files in the list of files to be renamed"), G_CALLBACK (NULL), },
-  { "remove-files", "list-remove", NULL, NULL, NULL, G_CALLBACK (NULL), },
-  { "clear", "edit-clear", N_ ("Clear"), NULL, N_ ("Clear the file list below"), G_CALLBACK (NULL), },
-  { "about", "help-about", N_ ("_About"), NULL, N_ ("Display information about Thunar Bulk Rename"), G_CALLBACK (NULL), },
-  { "properties", "document-properties", N_ ("_Properties..."), "<alt>Return", N_ ("View the properties of the selected file"), G_CALLBACK (NULL), },
 };
 
 
@@ -323,7 +307,6 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   GtkTreeViewColumn      *column;
   GtkTreeSelection       *selection;
   GtkCellRenderer        *renderer;
-  GtkAccelGroup          *accel_group;
   GtkSizeGroup           *size_group;
   const gchar            *active_str;
   GHashTable             *settings;
@@ -383,22 +366,6 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   exo_binding_new (G_OBJECT (renamer_dialog->model), "can-rename", G_OBJECT (button), "sensitive");
   gtk_dialog_set_default_response (GTK_DIALOG (renamer_dialog), GTK_RESPONSE_ACCEPT);
   gtk_widget_set_tooltip_text (button, _("Click here to actually rename the files listed above to their new names."));
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* setup the action group for this dialog */
-  renamer_dialog->action_group = gtk_action_group_new ("ThunarRenamerDialog");
-  gtk_action_group_set_translation_domain (renamer_dialog->action_group, GETTEXT_PACKAGE);
-  gtk_action_group_add_actions (renamer_dialog->action_group, action_entries, G_N_ELEMENTS (action_entries), GTK_WIDGET (renamer_dialog));
-
-  /* setup the UI manager for this dialog */
-  renamer_dialog->ui_manager = gtk_ui_manager_new ();
-  gtk_ui_manager_insert_action_group (renamer_dialog->ui_manager, renamer_dialog->action_group, 0);
-  gtk_ui_manager_add_ui_from_string (renamer_dialog->ui_manager, thunar_renamer_dialog_ui, thunar_renamer_dialog_ui_length, NULL);
-
-  /* connect the accelerators */
-  accel_group = gtk_ui_manager_get_accel_group (renamer_dialog->ui_manager);
-  gtk_window_add_accel_group (GTK_WINDOW (renamer_dialog), accel_group);
-G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* setup the launcher support for this dialog */
   renamer_dialog->launcher = g_object_new (THUNAR_TYPE_LAUNCHER, "widget", GTK_WIDGET (renamer_dialog), NULL);
@@ -677,8 +644,6 @@ thunar_renamer_dialog_finalize (GObject *object)
   /* release the launcher support */
   g_object_unref (G_OBJECT (renamer_dialog->launcher));
 
-  /* release the action group and the ui manager */
-  g_object_unref (G_OBJECT (renamer_dialog->action_group));
   g_object_unref (G_OBJECT (renamer_dialog->ui_manager));
 
   /* release our bulk rename model */
