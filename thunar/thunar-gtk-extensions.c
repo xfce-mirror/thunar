@@ -35,39 +35,6 @@
 
 #include <libxfce4ui/libxfce4ui.h>
 
-/**
- * thunar_gtk_action_set_tooltip:
- * @action : a #GtkAction.
- * @format : the format string for the tooltip.
- * @...    : the parameters for @format.
- *
- * Convenience function to set a tooltip for a #GtkAction.
- **/
-void
-thunar_gtk_action_set_tooltip (GtkAction   *action,
-                               const gchar *format,
-                               ...)
-{
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  va_list var_args;
-  gchar  *tooltip;
-
-  _thunar_return_if_fail (g_utf8_validate (format, -1, NULL));
-  _thunar_return_if_fail (GTK_IS_ACTION (action));
-
-  /* determine the tooltip */
-  va_start (var_args, format);
-  tooltip = g_strdup_vprintf (format, var_args);
-  va_end (var_args);
-
-  /* setup the tooltip for the action */
-  gtk_action_set_tooltip (action, tooltip);
-
-  /* release the tooltip */
-  g_free (tooltip);
-G_GNUC_END_IGNORE_DEPRECATIONS
-}
-
 
 
 /**
