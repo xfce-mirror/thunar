@@ -34,6 +34,12 @@ typedef struct _ThunarDetailsView      ThunarDetailsView;
 #define THUNAR_IS_DETAILS_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_DETAILS_VIEW))
 #define THUNAR_DETAILS_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_DETAILS_VIEW, ThunarDetailsViewClass))
 
+/* #XfceGtkActionEntrys provided by this widget */
+typedef enum
+{
+  THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS,
+} ThunarDetailsViewAction;
+
 GType      thunar_details_view_get_type          (void) G_GNUC_CONST;
 
 G_END_DECLS;

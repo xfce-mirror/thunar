@@ -105,11 +105,16 @@ static void         thunar_details_view_row_changed             (GtkTreeView    
 static void         thunar_details_view_columns_changed         (ThunarColumnModel      *column_model,
                                                                  ThunarDetailsView      *details_view);
 static void         thunar_details_view_zoom_level_changed      (ThunarDetailsView      *details_view);
-static void         thunar_details_view_action_setup_columns    (GtkAction              *action,
-                                                                 ThunarDetailsView      *details_view);
 static gboolean     thunar_details_view_get_fixed_columns       (ThunarDetailsView      *details_view);
 static void         thunar_details_view_set_fixed_columns       (ThunarDetailsView      *details_view,
                                                                  gboolean                fixed_columns);
+static void         thunar_details_view_connect_accelerators    (ThunarStandardView     *standard_view,
+                                                                 GtkAccelGroup          *accel_group);
+static void         thunar_details_view_disconnect_accelerators (ThunarStandardView     *standard_view,
+                                                                 GtkAccelGroup          *accel_group);
+static void         thunar_details_view_append_menu_items       (ThunarStandardView     *standard_view,
+                                                                 GtkMenu                *menu,
+                                                                 GtkAccelGroup          *accel_group);
 
 
 
@@ -140,10 +145,12 @@ struct _ThunarDetailsView
 
 
 
-static const GtkActionEntry action_entries[] =
+static XfceGtkActionEntry thunar_details_view_action_entries[] =
 {
-  { "setup-columns", NULL, N_ ("Configure _Columns..."), NULL, N_ ("Configure the columns in the detailed list view"), G_CALLBACK (thunar_details_view_action_setup_columns), },
+    { THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS, "<Actions>/ThunarStandardView/configure-columns", "", XFCE_GTK_MENU_ITEM , N_ ("Configure _Columns..."), N_("Configure the columns in the detailed list view"), NULL, G_CALLBACK (thunar_show_column_editor), },
 };
+
+#define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_details_view_action_entries,G_N_ELEMENTS(thunar_details_view_action_entries),id)
 
 
 
@@ -179,7 +186,12 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
   thunarstandard_view_class->get_path_at_pos = thunar_details_view_get_path_at_pos;
   thunarstandard_view_class->get_visible_range = thunar_details_view_get_visible_range;
   thunarstandard_view_class->highlight_path = thunar_details_view_highlight_path;
+  thunarstandard_view_class->append_menu_items = thunar_details_view_append_menu_items;
+  thunarstandard_view_class->connect_accelerators = thunar_details_view_connect_accelerators;
+  thunarstandard_view_class->disconnect_accelerators = thunar_details_view_disconnect_accelerators;
   thunarstandard_view_class->zoom_level_property_name = "last-details-view-zoom-level";
+
+  xfce_gtk_translate_action_entries (thunar_details_view_action_entries, G_N_ELEMENTS (thunar_details_view_action_entries));
 
   /**
    * ThunarDetailsView:fixed-columns:
@@ -211,13 +223,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
    * whenever the zoom-level changes, so we connect a handler here.
    */
   g_signal_connect (G_OBJECT (details_view), "notify::zoom-level", G_CALLBACK (thunar_details_view_zoom_level_changed), NULL);
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* setup the details view actions */
-  gtk_action_group_add_actions (THUNAR_STANDARD_VIEW (details_view)->action_group,
-                                action_entries, G_N_ELEMENTS (action_entries),
-                                GTK_WIDGET (details_view));
-G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* create the tree view to embed */
   tree_view = exo_tree_view_new ();
@@ -983,17 +988,69 @@ thunar_details_view_zoom_level_changed (ThunarDetailsView *details_view)
 
 
 
+/**
+ * thunar_details_view_connect_accelerators:
+ * @standard_view : a #ThunarStandardView.
+ * @accel_group   : a #GtkAccelGroup to be used used for new menu items
+ *
+ * Connects all accelerators and corresponding default keys of this widget to the global accelerator list
+ * The concrete implementation depends on the concrete widget which is implementing this view
+ **/
 static void
-thunar_details_view_action_setup_columns (GtkAction         *action,
-                                          ThunarDetailsView *details_view)
+thunar_details_view_connect_accelerators (ThunarStandardView *standard_view,
+                                          GtkAccelGroup      *accel_group)
 {
-  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  _thunar_return_if_fail (GTK_IS_ACTION (action));
-G_GNUC_END_IGNORE_DEPRECATIONS
+  ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (standard_view);
 
-  /* popup the column editor dialog */
-  thunar_show_column_editor (details_view);
+  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+
+  xfce_gtk_accel_map_add_entries (thunar_details_view_action_entries, G_N_ELEMENTS (thunar_details_view_action_entries));
+  xfce_gtk_accel_group_connect_action_entries (accel_group,
+                                               thunar_details_view_action_entries,
+                                               G_N_ELEMENTS (thunar_details_view_action_entries),
+                                               standard_view);
+}
+
+
+
+/**
+ * thunar_details_view_disconnect_accelerators:
+ * @standard_view : a #ThunarStandardView.
+ * @accel_group   : a #GtkAccelGroup to be disconnected
+ *
+ * Dont listen to the accel keys defined by the action entries any more
+ **/
+static void
+thunar_details_view_disconnect_accelerators (ThunarStandardView *standard_view,
+                                             GtkAccelGroup      *accel_group)
+{
+  /* Dont listen to the accel keys defined by the action entries any more */
+  xfce_gtk_accel_group_disconnect_action_entries (accel_group,
+                                                  thunar_details_view_action_entries,
+                                                  G_N_ELEMENTS (thunar_details_view_action_entries));
+}
+
+
+
+/**
+ * thunar_details_view_append_menu_items:
+ * @standard_view : a #ThunarStandardView.
+ * @menu          : the #GtkMenu to add the menu items.
+ * @accel_group   : a #GtkAccelGroup to be used used for new menu items
+ *
+ * Appends widget-specific menu items to a #GtkMenu and connects them to the passed #GtkAccelGroup
+ * Implements method 'append_menu_items' of #ThunarStandardView
+ **/
+static void
+thunar_details_view_append_menu_items (ThunarStandardView *standard_view,
+                                       GtkMenu            *menu,
+                                       GtkAccelGroup      *accel_group)
+{
+  ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (standard_view);
+
+  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS), G_OBJECT (details_view), GTK_MENU_SHELL (menu));
 }
 
 
