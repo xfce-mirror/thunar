@@ -268,7 +268,6 @@ struct _ThunarWindowClass
   GtkWindowClass __parent__;
 
   /* internal action signals */
-  gboolean (*back)            (ThunarWindow *window);
   gboolean (*reload)          (ThunarWindow *window,
                                gboolean      reload_info);
   gboolean (*zoom_in)         (ThunarWindow *window);
@@ -492,23 +491,6 @@ G_GNUC_END_IGNORE_DEPRECATIONS
                                                       THUNAR_TYPE_ZOOM_LEVEL,
                                                       THUNAR_ZOOM_LEVEL_100_PERCENT,
                                                       EXO_PARAM_READWRITE));
-
-  /**
-   * ThunarWindow::back:
-   * @window : a #ThunarWindow instance.
-   *
-   * Emitted whenever the user requests to go to the
-   * previous visited folder. This is an internal
-   * signal used to bind the action to keys.
-   **/
-  window_signals[BACK] =
-    g_signal_new (I_("back"),
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-                  G_STRUCT_OFFSET (ThunarWindowClass, back),
-                  g_signal_accumulator_true_handled, NULL,
-                  _thunar_marshal_BOOLEAN__VOID,
-                  G_TYPE_BOOLEAN, 0);
 
   /**
    * ThunarWindow::reload:
