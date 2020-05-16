@@ -145,9 +145,7 @@ struct _ThunarStandardView
 
   ThunarListModel           *model;
 
-  GtkActionGroup            *action_group;
   GtkUIManager              *ui_manager;
-  guint                      ui_merge_id;
 
   ThunarIconFactory         *icon_factory;
   GtkCellRenderer           *icon_renderer;
