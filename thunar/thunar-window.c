@@ -1158,6 +1158,16 @@ thunar_window_create_edit_menu (ThunarWindow     *window,
   thunar_menu_add_sections (submenu, THUNAR_MENU_SECTION_CUT
                                    | THUNAR_MENU_SECTION_COPY_PASTE
                                    | THUNAR_MENU_SECTION_TRASH_DELETE);
+  if (window->view != NULL)
+    {
+      thunar_standard_view_append_menu_item (THUNAR_STANDARD_VIEW (window->view),
+                                             GTK_MENU (submenu), THUNAR_STANDARD_VIEW_ACTION_SELECT_ALL_FILES);
+      thunar_standard_view_append_menu_item (THUNAR_STANDARD_VIEW (window->view),
+                                             GTK_MENU (submenu), THUNAR_STANDARD_VIEW_ACTION_SELECT_BY_PATTERN);
+      thunar_standard_view_append_menu_item (THUNAR_STANDARD_VIEW (window->view),
+                                             GTK_MENU (submenu), THUNAR_STANDARD_VIEW_ACTION_INVERT_SELECTION);
+    }
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
   thunar_menu_add_sections (submenu, THUNAR_MENU_SECTION_DUPLICATE
                                    | THUNAR_MENU_SECTION_MAKELINK
                                    | THUNAR_MENU_SECTION_RENAME
@@ -1217,6 +1227,9 @@ thunar_window_create_view_menu (ThunarWindow     *window,
   xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_SHOW_HIDDEN), G_OBJECT (window),
                                                    window->show_hidden, GTK_MENU_SHELL (submenu));
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
+  if (window->view != NULL)
+    thunar_standard_view_append_menu_items (THUNAR_STANDARD_VIEW (window->view), GTK_MENU (submenu), window->accel_group);
   xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
   thunar_window_append_menu_item (window, GTK_MENU_SHELL (submenu), THUNAR_WINDOW_ACTION_ZOOM_IN);
   thunar_window_append_menu_item (window, GTK_MENU_SHELL (submenu), THUNAR_WINDOW_ACTION_ZOOM_OUT);
