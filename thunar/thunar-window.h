@@ -118,6 +118,8 @@ void                      thunar_window_append_menu_item                    (Thu
                                                                              GtkMenuShell        *menu,
                                                                              ThunarWindowAction   action);
 ThunarLauncher*           thunar_window_get_launcher                        (ThunarWindow        *window);
+void                      thunar_window_redirect_menu_tooltips_to_statusbar (ThunarWindow        *window,
+                                                                             GtkMenu             *menu);
 const XfceGtkActionEntry* thunar_window_get_action_entry                    (ThunarWindow        *window,
                                                                              ThunarWindowAction   action);
 G_END_DECLS;
