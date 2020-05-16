@@ -31,7 +31,6 @@
 #endif
 
 #include <gdk/gdkkeysyms.h>
-#include <libxfce4ui/libxfce4ui.h>
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-browser.h>
@@ -366,56 +365,6 @@ struct _ThunarWindow
 
 
 
-static GtkActionEntry action_entries[] =
-{
-  { "file-menu", NULL, N_ ("_File"), NULL, },
-  { "new-tab", "tab-new", N_ ("New _Tab"), "<control>T", N_ ("Open a new tab for the displayed location"), G_CALLBACK (NULL), },
-  { "new-window", "window-new", N_ ("New _Window"), "<control>N", N_ ("Open a new Thunar window for the displayed location"), G_CALLBACK (NULL), },
-  { "sendto-menu", NULL, N_ ("_Send To"), NULL, },
-  { "empty-trash", NULL, N_ ("_Empty Trash"), NULL, N_ ("Delete all files and folders in the Trash"), G_CALLBACK (NULL), },
-  { "detach-tab", NULL, N_ ("Detac_h Tab"), NULL, N_ ("Open current folder in a new window"), G_CALLBACK (NULL), },
-  { "switch-previous-tab", "go-previous", N_ ("_Previous Tab"), "<control>Page_Up", N_ ("Switch to Previous Tab"), G_CALLBACK (NULL), },
-  { "switch-next-tab", "go-next", N_ ("_Next Tab"), "<control>Page_Down", N_ ("Switch to Next Tab"), G_CALLBACK (NULL), },
-  { "close-all-windows", NULL, N_ ("Close _All Windows"), "<control><shift>W", N_ ("Close all Thunar windows"), G_CALLBACK (NULL), },
-  { "close-tab", "window-close", N_ ("C_lose Tab"), "<control>W", N_ ("Close this folder"), G_CALLBACK (NULL), },
-  { "close-window", "application-exit", N_ ("_Close Window"), "<control>Q", N_ ("Close this window"), G_CALLBACK (NULL), },
-  { "edit-menu", NULL, N_ ("_Edit"), NULL, },
-  { "preferences", "preferences-system", N_ ("Pr_eferences..."), NULL, N_ ("Edit Thunars Preferences"), G_CALLBACK (NULL), },
-  { "view-menu", NULL, N_ ("_View"), NULL, },
-  { "reload", "view-refresh-symbolic", N_ ("_Reload"), "<control>R", N_ ("Reload the current folder"), G_CALLBACK (NULL), },
-  { "view-location-selector-menu", NULL, N_ ("_Location Selector"), NULL, },
-  { "view-side-pane-menu", NULL, N_ ("_Side Pane"), NULL, },
-  { "zoom-in", "zoom-in-symbolic", N_ ("Zoom I_n"), "<control>plus", N_ ("Show the contents in more detail"), G_CALLBACK (NULL), },
-  { "zoom-in-alt", NULL, "zoom-in-alt", "<control>equal", NULL, G_CALLBACK (NULL), },
-  { "zoom-out", "zoom-out-symbolic", N_ ("Zoom _Out"), "<control>minus", N_ ("Show the contents in less detail"), G_CALLBACK (NULL), },
-  { "zoom-reset", "zoom-original-symbolic", N_ ("Normal Si_ze"), "<control>0", N_ ("Show the contents at the normal size"), G_CALLBACK (NULL), },
-  { "go-menu", NULL, N_ ("_Go"), NULL, },
-  { "open-parent", "go-up-symbolic", N_ ("Open _Parent"), "<alt>Up", N_ ("Open the parent folder"), G_CALLBACK (NULL), },
-  { "open-home", "go-home-symbolic", N_ ("_Home"), "<alt>Home", N_ ("Go to the home folder"), G_CALLBACK (NULL), },
-  { "open-desktop", "user-desktop", N_ ("Desktop"), NULL, N_ ("Go to the desktop folder"), G_CALLBACK (NULL), },
-  { "open-computer", "computer", N_ ("Computer"), NULL, N_ ("Browse all local and remote disks and folders accessible from this computer"), G_CALLBACK (NULL), },
-  { "open-file-system", "drive-harddisk", N_ ("File System"), NULL, N_ ("Browse the file system"), G_CALLBACK (NULL), },
-  { "open-network", "network-workgroup", N_("B_rowse Network"), NULL, N_ ("Browse local network connections"), G_CALLBACK (NULL), },
-  { "open-templates", "text-x-generic-template", N_("T_emplates"), NULL, N_ ("Go to the templates folder"), G_CALLBACK (NULL), },
-  { "open-location", NULL, N_ ("_Open Location..."), "<control>L", N_ ("Specify a location to open"), G_CALLBACK (NULL), },
-  { "open-location-alt", NULL, "open-location-alt", "<alt>D", NULL, G_CALLBACK (NULL), },
-  { "help-menu", NULL, N_ ("_Help"), NULL, },
-  { "contents", "help-browser", N_ ("_Contents"), "F1", N_ ("Display Thunar user manual"), G_CALLBACK (NULL), },
-  { "about", "help-about", N_ ("_About"), NULL, N_ ("Display information about Thunar"), G_CALLBACK (NULL), },
-};
-
-static const GtkToggleActionEntry toggle_action_entries[] =
-{
-  { "show-hidden", NULL, N_ ("Show _Hidden Files"), "<control>H", N_ ("Toggles the display of hidden files in the current window"), G_CALLBACK (NULL), FALSE, },
-  { "view-location-selector-pathbar", NULL, N_ ("_Pathbar Style"), NULL, N_ ("Modern approach with buttons that correspond to folders"), G_CALLBACK (NULL), FALSE, },
-  { "view-location-selector-toolbar", NULL, N_ ("_Toolbar Style"), NULL, N_ ("Traditional approach with location bar and navigation buttons"), G_CALLBACK (NULL), FALSE, },
-  { "view-side-pane-shortcuts", NULL, N_ ("_Shortcuts"), "<control>B", N_ ("Toggles the visibility of the shortcuts pane"), G_CALLBACK (NULL), FALSE, },
-  { "view-side-pane-tree", NULL, N_ ("_Tree"), "<control>E", N_ ("Toggles the visibility of the tree pane"), G_CALLBACK (NULL), FALSE, },
-  { "view-statusbar", NULL, N_ ("St_atusbar"), NULL, N_ ("Change the visibility of this window's statusbar"), G_CALLBACK (NULL), FALSE, },
-  { "view-menubar", NULL, N_ ("_Menubar"), "<control>M", N_ ("Change the visibility of this window's menubar"), G_CALLBACK (NULL), TRUE, },
-};
-
-
 static XfceGtkActionEntry thunar_window_action_entries[] =
 {
     { THUNAR_WINDOW_ACTION_FILE_MENU,                      "<Actions>/ThunarWindow/file-menu",                       "",                     XFCE_GTK_MENU_ITEM,       N_ ("_File"),                  NULL, NULL, NULL,},
@@ -672,67 +621,13 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
 
 
-static inline gint
-view_type2index (GType type)
-{
-  /* this necessary for platforms where sizeof(GType) != sizeof(gint),
-   * see https://bugzilla.xfce.org/show_bug.cgi?id=2726 for details.
-   */
-  if (sizeof (GType) == sizeof (gint))
-    {
-      /* no need to map anything */
-      return (gint) type;
-    }
-  else
-    {
-      /* map from types to unique indices */
-      if (G_LIKELY (type == THUNAR_TYPE_COMPACT_VIEW))
-        return 0;
-      else if (type == THUNAR_TYPE_DETAILS_VIEW)
-        return 1;
-      else
-        return 2;
-    }
-}
-
-
-
-static inline GType
-view_index2type (gint idx)
-{
-  /* this necessary for platforms where sizeof(GType) != sizeof(gint),
-   * see https://bugzilla.xfce.org/show_bug.cgi?id=2726 for details.
-   */
-  if (sizeof (GType) == sizeof (gint))
-    {
-      /* no need to map anything */
-      return (GType) idx;
-    }
-  else
-    {
-      /* map from indices to unique types */
-      switch (idx)
-        {
-        case 0:  return THUNAR_TYPE_COMPACT_VIEW;
-        case 1:  return THUNAR_TYPE_DETAILS_VIEW;
-        default: return THUNAR_TYPE_ICON_VIEW;
-        }
-    }
-}
-
-
-
 static void
 thunar_window_init (ThunarWindow *window)
 {
-  GtkRadioAction  *radio_action;
-  GtkAccelGroup   *accel_group;
   GtkWidget       *label;
   GtkWidget       *infobar;
   GtkWidget       *item;
-  GtkAction       *action;
   gboolean         last_menubar_visible;
-  GSList          *group;
   gchar           *last_location_bar;
   gchar           *last_side_pane;
   gchar           *last_view;
@@ -802,50 +697,6 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect (window, "key-press-event", G_CALLBACK (thunar_window_propagate_key_event), NULL);
   g_signal_connect (window, "key-release-event", G_CALLBACK (thunar_window_propagate_key_event), NULL);
 
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* setup the action group for this window */
-  window->action_group = gtk_action_group_new ("ThunarWindow");
-  gtk_action_group_set_translation_domain (window->action_group, GETTEXT_PACKAGE);
-  gtk_action_group_add_actions (window->action_group, action_entries, G_N_ELEMENTS (action_entries), GTK_WIDGET (window));
-  gtk_action_group_add_toggle_actions (window->action_group, toggle_action_entries, G_N_ELEMENTS (toggle_action_entries), GTK_WIDGET (window));
-
-  /* initialize the "show-hidden" action using the last value from the preferences */
-  //action = gtk_action_group_get_action (window->action_group, "show-hidden");
-  //gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), last_show_hidden);
-
-  /*
-   * add view options
-   */
-  radio_action = gtk_radio_action_new ("view-as-icons", _("View as _Icons"), _("Display folder content in an icon view"),
-                                       NULL, view_type2index (THUNAR_TYPE_ICON_VIEW));
-  gtk_action_group_add_action_with_accel (window->action_group, GTK_ACTION (radio_action), "<control>1");
-  gtk_radio_action_set_group (radio_action, NULL);
-  group = gtk_radio_action_get_group (radio_action);
-  g_object_unref (G_OBJECT (radio_action));
-
-  radio_action = gtk_radio_action_new ("view-as-detailed-list", _("View as _Detailed List"), _("Display folder content in a detailed list view"),
-                                       NULL, view_type2index (THUNAR_TYPE_DETAILS_VIEW));
-  gtk_action_group_add_action_with_accel (window->action_group, GTK_ACTION (radio_action), "<control>2");
-  gtk_radio_action_set_group (radio_action, group);
-  group = gtk_radio_action_get_group (radio_action);
-  g_object_unref (G_OBJECT (radio_action));
-
-  radio_action = gtk_radio_action_new ("view-as-compact-list", _("View as _Compact List"), _("Display folder content in a compact list view"),
-                                       NULL, view_type2index (THUNAR_TYPE_COMPACT_VIEW));
-  gtk_action_group_add_action_with_accel (window->action_group, GTK_ACTION (radio_action), "<control>3");
-  gtk_radio_action_set_group (radio_action, group);
-  group = gtk_radio_action_get_group (radio_action);
-  g_object_unref (G_OBJECT (radio_action));
-
-  window->ui_manager = gtk_ui_manager_new ();
-  g_signal_connect (G_OBJECT (window->ui_manager), "connect-proxy", G_CALLBACK (thunar_window_connect_proxy), window);
-  g_signal_connect (G_OBJECT (window->ui_manager), "disconnect-proxy", G_CALLBACK (thunar_window_disconnect_proxy), window);
-  gtk_ui_manager_insert_action_group (window->ui_manager, window->action_group, 0);
-  gtk_ui_manager_add_ui_from_string (window->ui_manager, thunar_window_ui, thunar_window_ui_length, NULL);
-
-  accel_group = gtk_ui_manager_get_accel_group (window->ui_manager);
-  gtk_window_add_accel_group (GTK_WINDOW (window), accel_group);
-G_GNUC_END_IGNORE_DEPRECATIONS
 
   window->select_files_closure = g_cclosure_new_swap (G_CALLBACK (thunar_window_select_files), window, NULL);
   g_closure_ref (window->select_files_closure);
@@ -873,10 +724,6 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   gtk_container_add (GTK_CONTAINER (window), window->grid);
   gtk_widget_show (window->grid);
 
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  window->menubar = gtk_ui_manager_get_widget (window->ui_manager, "/main-menu");
-G_GNUC_END_IGNORE_DEPRECATIONS
-
   /* build the menubar */
   window->menubar = gtk_menu_bar_new ();
   item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_FILE_MENU), G_OBJECT (window), GTK_MENU_SHELL (window->menubar));
@@ -900,13 +747,6 @@ G_GNUC_END_IGNORE_DEPRECATIONS
     gtk_widget_hide (window->menubar);
   gtk_widget_set_hexpand (window->menubar, TRUE);
   gtk_grid_attach (GTK_GRID (window->grid), window->menubar, 0, 0, 1, 1);
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* update menubar visibiliy */
-  action = gtk_action_group_get_action (window->action_group, "view-menubar");
-  g_signal_connect (G_OBJECT (window->menubar), "deactivate", G_CALLBACK (NULL), window);
-  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), last_menubar_visible);
-G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* append the menu item for the spinner */
   item = gtk_menu_item_new ();
@@ -1009,14 +849,6 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /* display the toolbar */
   gtk_widget_show_all (window->location_toolbar);
 
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* activate the selected location selector */
-  action = gtk_action_group_get_action (window->action_group, "view-location-selector-pathbar");
-  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), !strcmp(last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS)));
-  action = gtk_action_group_get_action (window->action_group, "view-location-selector-toolbar");
-  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), !strcmp(last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_ENTRY)));
-G_GNUC_END_IGNORE_DEPRECATIONS
-
   g_free (last_location_bar);
 
   /* setup setting the location bar visibility on-demand */
@@ -1036,21 +868,15 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   thunar_window_install_sidepane (window, type);
   g_free (last_side_pane);
 
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* activate the selected side pane */
-  action = gtk_action_group_get_action (window->action_group, "view-side-pane-shortcuts");
-  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), (type == THUNAR_TYPE_SHORTCUTS_PANE));
-  action = gtk_action_group_get_action (window->action_group, "view-side-pane-tree");
-  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), (type == THUNAR_TYPE_TREE_PANE));
+  /* setup a new statusbar */
+  window->statusbar = thunar_statusbar_new ();
+  gtk_widget_set_hexpand (window->statusbar, TRUE);
+  gtk_grid_attach (GTK_GRID (window->view_box), window->statusbar, 0, 2, 1, 1);
+  if (last_statusbar_visible)
+    gtk_widget_show (window->statusbar);
 
-  /* check if we should display the statusbar by default */
-  action = gtk_action_group_get_action (window->action_group, "view-statusbar");
-  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), last_statusbar_visible);
-
-  /* connect signal */
-  action = gtk_action_group_get_action (window->action_group, "view-as-icons");
-G_GNUC_END_IGNORE_DEPRECATIONS
-  g_signal_connect (G_OBJECT (action), "changed", G_CALLBACK (thunar_window_action_view_changed), window);
+  if (G_LIKELY (window->view != NULL))
+    thunar_window_binding_create (window, window->view, "statusbar-text", window->statusbar, "text", G_BINDING_SYNC_CREATE);
 
   /* ensure that all the view types are registered */
   g_type_ensure (THUNAR_TYPE_ICON_VIEW);
@@ -1374,23 +1200,6 @@ thunar_window_dispose (GObject *object)
   /* indicate that history items are out of use */
   window->location_toolbar_item_back = NULL;
   window->location_toolbar_item_forward = NULL;
-
-  /* destroy the save geometry timer source */
-  if (G_UNLIKELY (window->save_geometry_timer_id != 0))
-    g_source_remove (window->save_geometry_timer_id);
-
-  /* destroy the merge idle source */
-  if (G_UNLIKELY (window->merge_idle_id != 0))
-    g_source_remove (window->merge_idle_id);
-
-  /* un-merge the custom preferences */
-  if (G_LIKELY (window->custom_preferences_merge_id != 0))
-    {
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      gtk_ui_manager_remove_ui (window->ui_manager, window->custom_preferences_merge_id);
-G_GNUC_END_IGNORE_DEPRECATIONS
-      window->custom_preferences_merge_id = 0;
-    }
 
   /* un-merge the go menu actions */
   if (G_LIKELY (window->go_items_actions_merge_id != 0))

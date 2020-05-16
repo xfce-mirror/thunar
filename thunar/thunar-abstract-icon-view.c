@@ -121,28 +121,6 @@ struct _ThunarAbstractIconViewPrivate
 };
 
 
-
-static const GtkActionEntry action_entries[] =
-{
-  { "arrange-items-menu", NULL, N_ ("Arran_ge Items"), NULL, NULL, NULL, },
-};
-
-static const GtkRadioActionEntry column_action_entries[] =
-{
-  { "sort-by-name", NULL, N_ ("Sort By _Name"), NULL, N_ ("Keep items sorted by their name"), THUNAR_COLUMN_NAME, },
-  { "sort-by-size", NULL, N_ ("Sort By _Size"), NULL, N_ ("Keep items sorted by their size"), THUNAR_COLUMN_SIZE, },
-  { "sort-by-type", NULL, N_ ("Sort By _Type"), NULL, N_ ("Keep items sorted by their type"), THUNAR_COLUMN_TYPE, },
-  { "sort-by-mtime", NULL, N_ ("Sort By Modification _Date"), NULL, N_ ("Keep items sorted by their modification date"), THUNAR_COLUMN_DATE_MODIFIED, },
-};
-
-static const GtkRadioActionEntry order_action_entries[] =
-{
-  { "sort-ascending", NULL, N_ ("_Ascending"), NULL, N_ ("Sort items in ascending order"), GTK_SORT_ASCENDING, },
-  { "sort-descending", NULL, N_ ("_Descending"), NULL, N_ ("Sort items in descending order"), GTK_SORT_DESCENDING, },
-};
-
-
-
 static XfceGtkActionEntry thunar_abstract_icon_view_action_entries[] =
 {
     { THUNAR_ABSTRACT_ICON_VIEW_ACTION_ARRANGE_ITEMS_MENU, "<Actions>/ThunarStandardView/arrange-items-menu",    "", XFCE_GTK_MENU_ITEM,       N_ ("Arran_ge Items"),             NULL,                                                NULL, G_CALLBACK (NULL),                                             },
@@ -256,19 +234,6 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer, TRUE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer,
                                  "text", THUNAR_COLUMN_NAME);
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* setup the abstract icon view actions */
-  gtk_action_group_add_actions (THUNAR_STANDARD_VIEW (abstract_icon_view)->action_group,
-                                action_entries, G_N_ELEMENTS (action_entries),
-                                GTK_WIDGET (abstract_icon_view));
-  gtk_action_group_add_radio_actions (THUNAR_STANDARD_VIEW (abstract_icon_view)->action_group, column_action_entries,
-                                      G_N_ELEMENTS (column_action_entries), THUNAR_COLUMN_NAME,
-                                      G_CALLBACK (NULL), abstract_icon_view);
-  gtk_action_group_add_radio_actions (THUNAR_STANDARD_VIEW (abstract_icon_view)->action_group, order_action_entries,
-                                      G_N_ELEMENTS (order_action_entries), GTK_SORT_ASCENDING,
-                                      G_CALLBACK (NULL), abstract_icon_view);
-G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* we need to listen to sort column changes to sync the menu items */
   g_signal_connect (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_icon_view)->model), "sort-column-changed",

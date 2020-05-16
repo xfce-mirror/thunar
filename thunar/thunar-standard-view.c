@@ -51,7 +51,6 @@
 #include <thunar/thunar-renamer-dialog.h>
 #include <thunar/thunar-simple-job.h>
 #include <thunar/thunar-standard-view.h>
-#include <thunar/thunar-standard-view-ui.h>
 #include <thunar/thunar-thumbnailer.h>
 #include <thunar/thunar-util.h>
 
@@ -275,20 +274,6 @@ struct _ThunarStandardViewPrivate
   /* current directory of the view */
   ThunarFile             *current_directory;
 
-  GtkAction              *action_create_folder;
-  GtkAction              *action_create_document;
-  GtkAction              *action_properties;
-  GtkAction              *action_cut;
-  GtkAction              *action_copy;
-  GtkAction              *action_paste;
-  GtkAction              *action_move_to_trash;
-  GtkAction              *action_delete;
-  GtkAction              *action_paste_into_folder;
-  GtkAction              *action_duplicate;
-  GtkAction              *action_make_link;
-  GtkAction              *action_rename;
-  GtkAction              *action_restore;
-
   /* history of the current view */
   ThunarHistory          *history;
 
@@ -354,28 +339,6 @@ struct _ThunarStandardViewPrivate
   GtkTreePath            *selection_before_delete;
 };
 
-
-
-static const GtkActionEntry action_entries[] =
-{
-  { "file-context-menu", NULL, N_ ("File Context Menu"), NULL, NULL, NULL, },
-  { "folder-context-menu", NULL, N_ ("Folder Context Menu"), NULL, NULL, NULL, },
-  { "create-folder", "folder-new", N_ ("Create _Folder..."), "<control><shift>N", N_ ("Create an empty folder within the current folder"), G_CALLBACK (NULL), },
-  { "properties", "document-properties", N_ ("_Properties..."), "<alt>Return", N_ ("View the properties of the selected file"), G_CALLBACK (NULL), },
-  { "cut", "edit-cut", N_ ("Cu_t"), "<control>X", NULL, G_CALLBACK (NULL), },
-  { "copy", "edit-copy", N_ ("_Copy"), "<control>C", NULL, G_CALLBACK (NULL), },
-  { "paste", "edit-paste", N_ ("_Paste"), "<control>V", N_ ("Move or copy files previously selected by a Cut or Copy command"), G_CALLBACK (NULL), },
-  { "move-to-trash", "user-trash", N_ ("Mo_ve to Trash"), NULL, NULL, G_CALLBACK (NULL), },
-  { "delete", "edit-delete", N_ ("_Delete"), NULL, NULL, G_CALLBACK (NULL), },
-  { "paste-into-folder", "edit-paste", N_ ("Paste Into Folder"), NULL, N_ ("Move or copy files previously selected by a Cut or Copy command into the selected folder"), G_CALLBACK (NULL), },
-  { "select-all-files", NULL, N_ ("Select _all Files"), NULL, N_ ("Select all files in this window"), G_CALLBACK (NULL), },
-  { "select-by-pattern", NULL, N_ ("Select _by Pattern..."), "<control>S", N_ ("Select all files that match a certain pattern"), G_CALLBACK (NULL), },
-  { "invert-selection", NULL, N_ ("_Invert Selection"), NULL, N_ ("Select all files but not those currently selected"), G_CALLBACK (NULL), },
-  { "duplicate", NULL, N_ ("Du_plicate"), NULL, NULL, G_CALLBACK (NULL), },
-  { "make-link", NULL, N_ ("Ma_ke Link"), NULL, NULL, G_CALLBACK (NULL), },
-  { "rename", NULL, N_ ("_Rename..."), "F2", NULL, G_CALLBACK (NULL), },
-  { "restore", NULL, N_ ("_Restore"), NULL, NULL, G_CALLBACK (NULL), },
-};
 static XfceGtkActionEntry thunar_standard_view_action_entries[] =
 {
     { THUNAR_STANDARD_VIEW_ACTION_SELECT_ALL_FILES,  "<Actions>/ThunarStandardView/select-all-files",   "<Primary>a", XFCE_GTK_MENU_ITEM, N_ ("Select _all Files"),     N_ ("Select all files in this window"),                   NULL, G_CALLBACK (thunar_standard_view_select_all_files), },
@@ -620,40 +583,6 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   gtk_scrolled_window_set_vadjustment (GTK_SCROLLED_WINDOW (standard_view), NULL);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (standard_view), GTK_SHADOW_IN);
 
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* setup the action group for this view */
-  standard_view->action_group = gtk_action_group_new ("ThunarStandardView");
-  gtk_action_group_set_translation_domain (standard_view->action_group, GETTEXT_PACKAGE);
-  gtk_action_group_add_actions (standard_view->action_group, action_entries,
-                                G_N_ELEMENTS (action_entries),
-                                GTK_WIDGET (standard_view));
-
-  /* lookup all actions to speed up access later */
-  standard_view->priv->action_create_folder = gtk_action_group_get_action (standard_view->action_group, "create-folder");
-  standard_view->priv->action_properties = gtk_action_group_get_action (standard_view->action_group, "properties");
-  standard_view->priv->action_cut = gtk_action_group_get_action (standard_view->action_group, "cut");
-  standard_view->priv->action_copy = gtk_action_group_get_action (standard_view->action_group, "copy");
-  standard_view->priv->action_paste = gtk_action_group_get_action (standard_view->action_group, "paste");
-  standard_view->priv->action_move_to_trash = gtk_action_group_get_action (standard_view->action_group, "move-to-trash");
-  standard_view->priv->action_delete = gtk_action_group_get_action (standard_view->action_group, "delete");
-  standard_view->priv->action_paste_into_folder = gtk_action_group_get_action (standard_view->action_group, "paste-into-folder");
-  standard_view->priv->action_duplicate = gtk_action_group_get_action (standard_view->action_group, "duplicate");
-  standard_view->priv->action_make_link = gtk_action_group_get_action (standard_view->action_group, "make-link");
-  standard_view->priv->action_rename = gtk_action_group_get_action (standard_view->action_group, "rename");
-  standard_view->priv->action_restore = gtk_action_group_get_action (standard_view->action_group, "restore");
-G_GNUC_END_IGNORE_DEPRECATIONS
-
-  /* add the "Create Document" sub menu action */
-  //standard_view->priv->action_create_document = thunar_templates_action_new ("create-document", _("Create _Document"));
-  g_signal_connect (G_OBJECT (standard_view->priv->action_create_document), "create-empty-file",
-                    G_CALLBACK (NULL), standard_view);
-  g_signal_connect (G_OBJECT (standard_view->priv->action_create_document), "create-template",
-                    G_CALLBACK (NULL), standard_view);
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  gtk_action_group_add_action (standard_view->action_group, standard_view->priv->action_create_document);
-G_GNUC_END_IGNORE_DEPRECATIONS
-  g_object_unref (G_OBJECT (standard_view->priv->action_create_document));
-
   /* setup the history support */
   standard_view->priv->history = g_object_new (THUNAR_TYPE_HISTORY, NULL);
   g_signal_connect_swapped (G_OBJECT (standard_view->priv->history), "change-directory", G_CALLBACK (thunar_navigator_change_directory), standard_view);
@@ -844,7 +773,6 @@ thunar_standard_view_finalize (GObject *object)
   /* some safety checks */
   _thunar_assert (standard_view->loading_binding == NULL);
   _thunar_assert (standard_view->icon_factory == NULL);
-  _thunar_assert (standard_view->ui_manager == NULL);
 
   /* Dont listen to the accel keys defined by the action entries any more */
   xfce_gtk_accel_group_disconnect_action_entries (standard_view->accel_group,
@@ -879,9 +807,6 @@ thunar_standard_view_finalize (GObject *object)
 
   /* release the reference on the icon renderer */
   g_object_unref (G_OBJECT (standard_view->icon_renderer));
-
-  /* release the reference on the action group */
-  g_object_unref (G_OBJECT (standard_view->action_group));
 
   /* drop any existing "new-files" closure */
   if (G_UNLIKELY (standard_view->priv->new_files_closure != NULL))
@@ -1211,7 +1136,6 @@ thunar_standard_view_set_ui_manager (ThunarComponent *component,
                                      GtkUIManager    *ui_manager)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (component);
-  GError             *error = NULL;
 
   /* leave if nothing changed */
   if (standard_view->ui_manager == ui_manager)
@@ -1221,14 +1145,8 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   /* disconnect from the previous UI manager */
   if (G_LIKELY (standard_view->ui_manager != NULL))
     {
-      /* drop our action group from the previous UI manager */
-      gtk_ui_manager_remove_action_group (standard_view->ui_manager, standard_view->action_group);
-
       /* unmerge the ui controls from derived classes */
       (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->disconnect_ui_manager) (standard_view, standard_view->ui_manager);
-
-      /* unmerge our ui controls from the previous UI manager */
-      gtk_ui_manager_remove_ui (standard_view->ui_manager, standard_view->ui_merge_id);
 
       /* force update to remove all actions and proxies */
       gtk_ui_manager_ensure_update (standard_view->ui_manager);
@@ -1245,18 +1163,6 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
     {
       /* we keep a reference on the new manager */
       g_object_ref (G_OBJECT (ui_manager));
-
-      /* add our action group to the new manager */
-      gtk_ui_manager_insert_action_group (ui_manager, standard_view->action_group, -1);
-
-      /* merge our UI control items with the new manager */
-      standard_view->ui_merge_id = gtk_ui_manager_add_ui_from_string (ui_manager, thunar_standard_view_ui,
-                                                                      thunar_standard_view_ui_length, &error);
-      if (G_UNLIKELY (standard_view->ui_merge_id == 0))
-        {
-          g_error ("Failed to merge ThunarStandardView menus: %s", error->message);
-          g_error_free (error);
-        }
 
       /* merge the ui controls from derived classes */
       (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->connect_ui_manager) (standard_view, ui_manager);
