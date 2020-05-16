@@ -42,7 +42,6 @@
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-io-scan-directory.h>
 #include <thunar/thunar-launcher.h>
-#include <thunar/thunar-launcher-ui.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-properties-dialog.h>

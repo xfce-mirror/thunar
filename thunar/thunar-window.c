@@ -57,7 +57,6 @@
 #include <thunar/thunar-statusbar.h>
 #include <thunar/thunar-tree-pane.h>
 #include <thunar/thunar-window.h>
-#include <thunar/thunar-window-ui.h>
 #include <thunar/thunar-device-monitor.h>
 
 #include <glib.h>
