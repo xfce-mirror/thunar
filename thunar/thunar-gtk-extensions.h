@@ -24,9 +24,6 @@
 
 G_BEGIN_DECLS;
 
-void             thunar_gtk_action_set_tooltip                (GtkAction          *action,
-                                                               const gchar        *format,
-                                                               ...) G_GNUC_PRINTF (2, 3);
 
 void             thunar_gtk_label_set_a11y_relation           (GtkLabel           *label,
                                                                GtkWidget          *widget);
