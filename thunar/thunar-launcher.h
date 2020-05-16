@@ -90,6 +90,10 @@ gboolean        thunar_launcher_append_open_section                  (ThunarLaun
                                                                       gboolean                        support_tabs,
                                                                       gboolean                        support_change_directory,
                                                                       gboolean                        force);
+gboolean        thunar_launcher_append_custom_actions                (ThunarLauncher                 *launcher,
+                                                                      GtkMenuShell                   *menu);
+gboolean        thunar_launcher_check_uca_key_activation             (ThunarLauncher                 *launcher,
+                                                                      GdkEventKey                    *key_event);
 G_END_DECLS;
 
 #endif /* !__THUNAR_LAUNCHER_H__ */
