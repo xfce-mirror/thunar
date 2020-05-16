@@ -28,21 +28,12 @@ void             thunar_gtk_action_set_tooltip                (GtkAction        
                                                                const gchar        *format,
                                                                ...) G_GNUC_PRINTF (2, 3);
 
-void             thunar_gtk_action_group_set_action_sensitive (GtkActionGroup     *action_group,
-                                                               const gchar        *action_name,
-                                                               gboolean            sensitive);
-
 void             thunar_gtk_label_set_a11y_relation           (GtkLabel           *label,
                                                                GtkWidget          *widget);
-
 void             thunar_gtk_menu_run                          (GtkMenu            *menu);
 
 void             thunar_gtk_menu_run_at_event                 (GtkMenu            *menu,
                                                                GdkEvent           *event);
-
-GtkAction       *thunar_gtk_ui_manager_get_action_by_name     (GtkUIManager       *ui_manager,
-                                                               const gchar        *action_name);
-
 void             thunar_gtk_widget_set_tooltip                (GtkWidget          *widget,
                                                                const gchar        *format,
                                                                ...) G_GNUC_PRINTF (2, 3);

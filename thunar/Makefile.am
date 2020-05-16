@@ -106,8 +106,6 @@ thunar_SOURCES =							\
 	thunar-gobject-extensions.h					\
 	thunar-gtk-extensions.c						\
 	thunar-gtk-extensions.h						\
-	thunar-history-action.c						\
-	thunar-history-action.h						\
 	thunar-history.c						\
 	thunar-history.h						\
 	thunar-ice.c							\

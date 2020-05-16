@@ -32,6 +32,7 @@
 #include <thunar/thunar-util.h>
 
 
+#include <libxfce4ui/libxfce4ui.h>
 
 /**
  * thunar_gtk_action_set_tooltip:
@@ -63,36 +64,6 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 
   /* release the tooltip */
   g_free (tooltip);
-G_GNUC_END_IGNORE_DEPRECATIONS
-}
-
-
-
-/**
- * thunar_gtk_action_group_set_action_sensitive:
- * @action_group : a #GtkActionGroup.
- * @action_name  : the name of a #GtkAction in @action_group.
- * @sensitive    : the new sensitivity.
- *
- * Convenience function to change the sensitivity of an action
- * in @action_group (whose name is @action_name) to @sensitive.
- **/
-void
-thunar_gtk_action_group_set_action_sensitive (GtkActionGroup *action_group,
-                                              const gchar    *action_name,
-                                              gboolean        sensitive)
-{
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  GtkAction *action;
-
-  _thunar_return_if_fail (GTK_IS_ACTION_GROUP (action_group));
-  _thunar_return_if_fail (action_name != NULL && *action_name != '\0');
-
-  /* query the action from the group */
-  action = gtk_action_group_get_action (action_group, action_name);
-
-  /* apply the sensitivity to the action */
-  gtk_action_set_sensitive (action, sensitive);
 G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
@@ -216,43 +187,6 @@ thunar_gtk_menu_run_at_event (GtkMenu *menu,
 
   /* release the menu reference */
   g_object_unref (G_OBJECT (menu));
-}
-
-
-
-/**
- * thunar_gtk_ui_manager_get_action_by_name:
- * @ui_manager  : a #GtkUIManager.
- * @action_name : the name of a #GtkAction in @ui_manager.
- *
- * Looks up the #GtkAction with the given @action_name in all
- * #GtkActionGroup<!---->s associated with @ui_manager. Returns
- * %NULL if no such #GtkAction exists in @ui_manager.
- *
- * Return value: the #GtkAction of the given @action_name in
- *               @ui_manager or %NULL.
- **/
-GtkAction*
-thunar_gtk_ui_manager_get_action_by_name (GtkUIManager *ui_manager,
-                                          const gchar  *action_name)
-{
-  GtkAction *action;
-  GList     *lp;
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  _thunar_return_val_if_fail (GTK_IS_UI_MANAGER (ui_manager), NULL);
-  _thunar_return_val_if_fail (action_name != NULL, NULL);
-
-  /* check all action groups associated with the ui manager */
-  for (lp = gtk_ui_manager_get_action_groups (ui_manager); lp != NULL; lp = lp->next)
-    {
-      action = gtk_action_group_get_action (lp->data, action_name);
-      if (G_LIKELY (action != NULL))
-        return action;
-    }
-G_GNUC_END_IGNORE_DEPRECATIONS
-
-  return NULL;
 }
 
 
