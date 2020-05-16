@@ -856,7 +856,7 @@ thunar_standard_view_finalize (GObject *object)
                                                G_N_ELEMENTS (thunar_standard_view_action_entries));
 
   /* as well disconnect accelerators of derived widgets */
-  //(*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->disconnect_accelerators) (standard_view, standard_view->accel_group);
+  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->disconnect_accelerators) (standard_view, standard_view->accel_group);
 
   /* release the thumbnailer */
   g_signal_handlers_disconnect_by_func (standard_view->priv->thumbnailer, thunar_standard_view_finished_thumbnailing, standard_view);
@@ -3660,6 +3660,7 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view)
                                             | THUNAR_MENU_SECTION_COPY_PASTE
                                             | THUNAR_MENU_SECTION_EMPTY_TRASH
                                             | THUNAR_MENU_SECTION_CUSTOM_ACTIONS);
+      thunar_standard_view_append_menu_items (standard_view, GTK_MENU (context_menu), NULL);
       xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (context_menu));
       thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_ZOOM
                                             | THUNAR_MENU_SECTION_PROPERTIES);
@@ -3827,6 +3828,27 @@ thunar_standard_view_copy_history (ThunarStandardView *standard_view)
 
 
 /**
+ * thunar_standard_view_append_menu_items:
+ * @standard_view : a #ThunarStandardView.
+ * @menu          : the #GtkMenu to add the menu items.
+ * @accel_group   : a #GtkAccelGroup to be used used for new menu items
+ *
+ * Appends widget-specific menu items to a #GtkMenu and connects them to the passed #GtkAccelGroup
+ * The concrete implementation depends on the concrete widget which is implementing this view
+ **/
+void
+thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
+                                        GtkMenu            *menu,
+                                        GtkAccelGroup      *accel_group)
+{
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->append_menu_items) (standard_view, menu, accel_group);
+}
+
+
+
+/**
  * thunar_standard_view_append_menu_item:
  * @standard_view  : Instance of a  #ThunarStandardView
  * @menu           : #GtkMenuShell to which the item should be added
@@ -3867,5 +3889,5 @@ thunar_standard_view_connect_accelerators (ThunarStandardView *standard_view)
                                                standard_view);
 
   /* as well append accelerators of derived widgets */
-  //(*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->connect_accelerators) (standard_view, standard_view->accel_group);
+  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->connect_accelerators) (standard_view, standard_view->accel_group);
 }
