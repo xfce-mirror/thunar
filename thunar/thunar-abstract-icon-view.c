@@ -62,7 +62,6 @@ static gboolean     thunar_abstract_icon_view_get_visible_range     (ThunarStand
                                                                      GtkTreePath                 **end_path);
 static void         thunar_abstract_icon_view_highlight_path        (ThunarStandardView           *standard_view,
                                                                      GtkTreePath                  *path);
-static GtkAction   *thunar_abstract_icon_view_gesture_action        (ThunarAbstractIconView       *abstract_icon_view);
 static void         thunar_abstract_icon_view_connect_accelerators  (ThunarStandardView           *standard_view,
                                                                      GtkAccelGroup                *accel_group);
 static void         thunar_abstract_icon_view_disconnect_accelerators(ThunarStandardView          *standard_view,
@@ -535,32 +534,32 @@ thunar_abstract_icon_view_append_menu_items (ThunarStandardView *standard_view,
 
 
 
-static GtkAction*
+static const XfceGtkActionEntry*
 thunar_abstract_icon_view_gesture_action (ThunarAbstractIconView *abstract_icon_view)
 {
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+  GtkWidget *window;
+
+  window = gtk_widget_get_toplevel (GTK_WIDGET (abstract_icon_view));
   if (abstract_icon_view->priv->gesture_start_y - abstract_icon_view->priv->gesture_current_y > 40
       && ABS (abstract_icon_view->priv->gesture_start_x - abstract_icon_view->priv->gesture_current_x) < 40)
     {
-      return gtk_ui_manager_get_action (THUNAR_STANDARD_VIEW (abstract_icon_view)->ui_manager, "/main-menu/go-menu/open-parent");
+      return thunar_window_get_action_entry (THUNAR_WINDOW (window), THUNAR_WINDOW_ACTION_OPEN_PARENT);
     }
   else if (abstract_icon_view->priv->gesture_start_x - abstract_icon_view->priv->gesture_current_x > 40
       && ABS (abstract_icon_view->priv->gesture_start_y - abstract_icon_view->priv->gesture_current_y) < 40)
     {
-      return gtk_ui_manager_get_action (THUNAR_STANDARD_VIEW (abstract_icon_view)->ui_manager, "/main-menu/go-menu/placeholder-go-history-actions/back");
+      return thunar_window_get_action_entry (THUNAR_WINDOW (window), THUNAR_WINDOW_ACTION_BACK);
     }
   else if (abstract_icon_view->priv->gesture_current_x - abstract_icon_view->priv->gesture_start_x > 40
       && ABS (abstract_icon_view->priv->gesture_start_y - abstract_icon_view->priv->gesture_current_y) < 40)
     {
-      return gtk_ui_manager_get_action (THUNAR_STANDARD_VIEW (abstract_icon_view)->ui_manager, "/main-menu/go-menu/placeholder-go-history-actions/forward");
+      return thunar_window_get_action_entry (THUNAR_WINDOW (window), THUNAR_WINDOW_ACTION_FORWARD);
     }
   else if (abstract_icon_view->priv->gesture_current_y - abstract_icon_view->priv->gesture_start_y > 40
       && ABS (abstract_icon_view->priv->gesture_start_x - abstract_icon_view->priv->gesture_current_x) < 40)
     {
-      return gtk_ui_manager_get_action (THUNAR_STANDARD_VIEW (abstract_icon_view)->ui_manager, "/main-menu/view-menu/reload");
+      return thunar_window_get_action_entry (THUNAR_WINDOW (window), THUNAR_WINDOW_ACTION_RELOAD);
     }
-G_GNUC_END_IGNORE_DEPRECATIONS
-
   return NULL;
 }
 
@@ -767,7 +766,8 @@ thunar_abstract_icon_view_button_release_event (ExoIconView            *view,
                                                 GdkEventButton         *event,
                                                 ThunarAbstractIconView *abstract_icon_view)
 {
-  GtkAction *action;
+  const XfceGtkActionEntry *action_entry;
+  GtkWidget                *window;
 
   _thunar_return_val_if_fail (EXO_IS_ICON_VIEW (view), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view), FALSE);
@@ -775,12 +775,12 @@ thunar_abstract_icon_view_button_release_event (ExoIconView            *view,
   _thunar_return_val_if_fail (abstract_icon_view->priv->gesture_motion_id > 0, FALSE);
   _thunar_return_val_if_fail (abstract_icon_view->priv->gesture_release_id > 0, FALSE);
 
-  /* run the selected action (if any) */
-  action = thunar_abstract_icon_view_gesture_action (abstract_icon_view);
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  if (G_LIKELY (action != NULL))
-    gtk_action_activate (action);
-G_GNUC_END_IGNORE_DEPRECATIONS
+  window = gtk_widget_get_toplevel (GTK_WIDGET (abstract_icon_view));
+
+  /* execute the related callback  (if any) */
+  action_entry = thunar_abstract_icon_view_gesture_action (abstract_icon_view);
+  if (G_LIKELY (action_entry != NULL))
+    ((void(*)(GtkWindow*))action_entry->callback)(GTK_WINDOW (window));
 
   /* unregister the "expose-event" handler */
   g_signal_handler_disconnect (G_OBJECT (view), abstract_icon_view->priv->gesture_expose_id);
@@ -807,10 +807,9 @@ thunar_abstract_icon_view_draw (ExoIconView            *view,
                                 cairo_t                *cr,
                                 ThunarAbstractIconView *abstract_icon_view)
 {
-  GtkAction  *action = NULL;
-  GdkPixbuf  *gesture_icon = NULL;
-  gchar      *icon_name;
-  gint        x, y;
+  const XfceGtkActionEntry *action_entry = NULL;
+  GdkPixbuf                *gesture_icon = NULL;
+  gint                      x, y;
 
   _thunar_return_val_if_fail (EXO_IS_ICON_VIEW (view), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view), FALSE);
@@ -823,14 +822,11 @@ thunar_abstract_icon_view_draw (ExoIconView            *view,
   cairo_paint (cr);
 
   /* determine the gesture action */
-  action = thunar_abstract_icon_view_gesture_action (abstract_icon_view);
-  if (G_LIKELY (action != NULL))
+  action_entry = thunar_abstract_icon_view_gesture_action (abstract_icon_view);
+  if (G_LIKELY (action_entry != NULL))
     {
-      /* get the icon-name for the action */
-      g_object_get (G_OBJECT (action), "icon-name", &icon_name, NULL);
-
       gesture_icon = gtk_icon_theme_load_icon (gtk_icon_theme_get_default(),
-                                               icon_name,
+                                               action_entry->menu_item_icon_name,
                                                32,
                                                GTK_ICON_LOOKUP_FORCE_SIZE,
                                                NULL);
@@ -851,9 +847,6 @@ thunar_abstract_icon_view_draw (ExoIconView            *view,
           /* release the stock abstract_icon */
           g_object_unref (G_OBJECT (gesture_icon));
         }
-
-      /* release the stock id */
-      g_free (icon_name);
     }
 
   return FALSE;
