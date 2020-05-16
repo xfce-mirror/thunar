@@ -37,6 +37,8 @@ void             thunar_gtk_menu_run_at_event                 (GtkMenu          
 void             thunar_gtk_widget_set_tooltip                (GtkWidget          *widget,
                                                                const gchar        *format,
                                                                ...) G_GNUC_PRINTF (2, 3);
+GtkWidget       *thunar_gtk_menu_thunarx_menu_item_new        (GObject            *thunarx_menu_item,
+                                                               GtkMenuShell       *menu_to_append_item);
 
 GMountOperation *thunar_gtk_mount_operation_new               (gpointer            parent);
 
