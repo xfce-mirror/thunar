@@ -172,16 +172,7 @@ struct _ThunarLauncher
   ThunarFile             *current_directory;
   GList                  *selected_files;
 
-  GtkActionGroup         *action_group;
   GtkUIManager           *ui_manager;
-  guint                   ui_merge_id;
-  guint                   ui_addons_merge_id;
-
-  GtkAction              *action_open;
-  GtkAction              *action_open_with_other;
-  GtkAction              *action_open_in_new_window;
-  GtkAction              *action_open_in_new_tab;
-  GtkAction              *action_open_with_other_in_menu;
 
   gint                    n_selected_files;
   gint                    n_selected_directories;
@@ -212,19 +203,6 @@ struct _ThunarLauncherPokeData
   GList                          *files_poked;
   GAppInfo                       *application_to_use;
   ThunarLauncherFolderOpenAction  folder_open_action;
-};
-
-
-
-static const GtkActionEntry action_entries[] =
-{
-  { "open", "document-open", N_ ("_Open"), "<control>O", NULL, G_CALLBACK (NULL), },
-  { "open-in-new-tab", NULL, N_ ("Open in New _Tab"), "<control><shift>P", NULL, G_CALLBACK (NULL), },
-  { "open-in-new-window", NULL, N_ ("Open in New _Window"), "<control><shift>O", NULL, G_CALLBACK (NULL), },
-  { "open-with-other", NULL, N_ ("Open With Other _Application..."), NULL, N_ ("Choose another application with which to open the selected file"), G_CALLBACK (NULL), },
-  { "open-with-menu", NULL, N_ ("Open With"), NULL, NULL, NULL, },
-  { "open-with-other-in-menu", NULL, N_ ("Open With Other _Application..."), NULL, N_ ("Choose another application with which to open the selected file"), G_CALLBACK (NULL), },
-  { "sendto-desktop", "user-desktop", "", NULL, NULL, G_CALLBACK (NULL), },
 };
 
 static GParamSpec *launcher_props[N_PROPERTIES] = { NULL, };
@@ -361,20 +339,6 @@ thunar_launcher_navigator_init (ThunarNavigatorIface *iface)
 static void
 thunar_launcher_init (ThunarLauncher *launcher)
 {
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* setup the action group for the launcher actions */
-  launcher->action_group = gtk_action_group_new ("ThunarLauncher");
-  gtk_action_group_set_translation_domain (launcher->action_group, GETTEXT_PACKAGE);
-  gtk_action_group_add_actions (launcher->action_group, action_entries, G_N_ELEMENTS (action_entries), launcher);
-
-  /* determine references to our actions */
-  launcher->action_open = gtk_action_group_get_action (launcher->action_group, "open");
-  launcher->action_open_with_other = gtk_action_group_get_action (launcher->action_group, "open-with-other");
-  launcher->action_open_in_new_window = gtk_action_group_get_action (launcher->action_group, "open-in-new-window");
-  launcher->action_open_in_new_tab = gtk_action_group_get_action (launcher->action_group, "open-in-new-tab");
-  launcher->action_open_with_other_in_menu = gtk_action_group_get_action (launcher->action_group, "open-with-other-in-menu");
-G_GNUC_END_IGNORE_DEPRECATIONS
-
   launcher->selected_files = NULL;
   launcher->select_files_closure = NULL;
 
@@ -414,9 +378,6 @@ thunar_launcher_finalize (GObject *object)
 
   /* release the preferences reference */
   g_object_unref (launcher->preferences);
-
-  /* release the reference on the action group */
-  g_object_unref (launcher->action_group);
 
   (*G_OBJECT_CLASS (thunar_launcher_parent_class)->finalize) (object);
 }
@@ -642,26 +603,10 @@ thunar_launcher_set_ui_manager (ThunarComponent *component,
                                 GtkUIManager    *ui_manager)
 {
   ThunarLauncher *launcher = THUNAR_LAUNCHER (component);
-  GError         *error = NULL;
 
   /* disconnect from the previous UI manager */
   if (G_UNLIKELY (launcher->ui_manager != NULL))
     {
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      /* drop our action group from the previous UI manager */
-      gtk_ui_manager_remove_action_group (launcher->ui_manager, launcher->action_group);
-
-      /* unmerge our addons ui controls from the previous UI manager */
-      if (G_LIKELY (launcher->ui_addons_merge_id != 0))
-        {
-          gtk_ui_manager_remove_ui (launcher->ui_manager, launcher->ui_addons_merge_id);
-          launcher->ui_addons_merge_id = 0;
-        }
-
-      /* unmerge our ui controls from the previous UI manager */
-      gtk_ui_manager_remove_ui (launcher->ui_manager, launcher->ui_merge_id);
-G_GNUC_END_IGNORE_DEPRECATIONS
-
       /* drop the reference on the previous UI manager */
       g_object_unref (G_OBJECT (launcher->ui_manager));
     }
@@ -674,22 +619,6 @@ G_GNUC_END_IGNORE_DEPRECATIONS
     {
       /* we keep a reference on the new manager */
       g_object_ref (G_OBJECT (ui_manager));
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      /* add our action group to the new manager */
-      gtk_ui_manager_insert_action_group (ui_manager, launcher->action_group, -1);
-
-      /* merge our UI control items with the new manager */
-      launcher->ui_merge_id = gtk_ui_manager_add_ui_from_string (ui_manager, thunar_launcher_ui, thunar_launcher_ui_length, &error);
-G_GNUC_END_IGNORE_DEPRECATIONS
-      if (G_UNLIKELY (launcher->ui_merge_id == 0))
-        {
-          g_error ("Failed to merge ThunarLauncher menus: %s", error->message);
-          g_error_free (error);
-        }
-
-      /* update the user interface */
-      //thunar_launcher_update (launcher);
     }
 
   /* notify listeners */

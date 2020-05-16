@@ -81,20 +81,11 @@ struct _ThunarShortcutsPane
   ThunarFile       *current_directory;
   GList            *selected_files;
 
-  GtkActionGroup   *action_group;
   GtkUIManager     *ui_manager;
-  guint             ui_merge_id;
 
   GtkWidget        *view;
 
   guint             idle_select_directory;
-};
-
-
-
-static const GtkActionEntry action_entries[] =
-{
-  { "sendto-shortcuts", "bookmark-new", "", NULL, NULL, G_CALLBACK (NULL), },
 };
 
 
@@ -164,13 +155,6 @@ thunar_shortcuts_pane_init (ThunarShortcutsPane *shortcuts_pane)
 {
   GtkWidget *vscrollbar;
 
-  /* setup the action group for the shortcuts actions */
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  shortcuts_pane->action_group = gtk_action_group_new ("ThunarShortcutsPane");
-  gtk_action_group_set_translation_domain (shortcuts_pane->action_group, GETTEXT_PACKAGE);
-  gtk_action_group_add_actions (shortcuts_pane->action_group, action_entries, G_N_ELEMENTS (action_entries), shortcuts_pane);
-G_GNUC_END_IGNORE_DEPRECATIONS
-
   /* configure the GtkScrolledWindow */
   gtk_scrolled_window_set_hadjustment (GTK_SCROLLED_WINDOW (shortcuts_pane), NULL);
   gtk_scrolled_window_set_vadjustment (GTK_SCROLLED_WINDOW (shortcuts_pane), NULL);
@@ -217,11 +201,6 @@ thunar_shortcuts_pane_dispose (GObject *object)
 static void
 thunar_shortcuts_pane_finalize (GObject *object)
 {
-  ThunarShortcutsPane *shortcuts_pane = THUNAR_SHORTCUTS_PANE (object);
-
-  /* release our action group */
-  g_object_unref (G_OBJECT (shortcuts_pane->action_group));
-
   (*G_OBJECT_CLASS (thunar_shortcuts_pane_parent_class)->finalize) (object);
 }
 
@@ -396,19 +375,10 @@ thunar_shortcuts_pane_set_ui_manager (ThunarComponent *component,
                                       GtkUIManager    *ui_manager)
 {
   ThunarShortcutsPane *shortcuts_pane = THUNAR_SHORTCUTS_PANE (component);
-  GError              *error = NULL;
 
   /* disconnect from the previous UI manager */
   if (G_UNLIKELY (shortcuts_pane->ui_manager != NULL))
     {
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      /* drop our action group from the previous UI manager */
-      gtk_ui_manager_remove_action_group (shortcuts_pane->ui_manager, shortcuts_pane->action_group);
-
-      /* unmerge our ui controls from the previous UI manager */
-      gtk_ui_manager_remove_ui (shortcuts_pane->ui_manager, shortcuts_pane->ui_merge_id);
-G_GNUC_END_IGNORE_DEPRECATIONS
-
       /* drop our reference on the previous UI manager */
       g_object_unref (G_OBJECT (shortcuts_pane->ui_manager));
     }
@@ -421,19 +391,6 @@ G_GNUC_END_IGNORE_DEPRECATIONS
     {
       /* we keep a reference on the new manager */
       g_object_ref (G_OBJECT (ui_manager));
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      /* add our action group to the new manager */
-      gtk_ui_manager_insert_action_group (ui_manager, shortcuts_pane->action_group, -1);
-
-      /* merge our UI control items with the new manager */
-      shortcuts_pane->ui_merge_id = gtk_ui_manager_add_ui_from_string (ui_manager, thunar_shortcuts_pane_ui, thunar_shortcuts_pane_ui_length, &error);
-G_GNUC_END_IGNORE_DEPRECATIONS
-      if (G_UNLIKELY (shortcuts_pane->ui_merge_id == 0))
-        {
-          g_error ("Failed to merge ThunarShortcutsPane menus: %s", error->message);
-          g_error_free (error);
-        }
     }
 
   /* notify listeners */
