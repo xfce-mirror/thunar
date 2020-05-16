@@ -142,8 +142,6 @@ thunar_SOURCES =							\
 	thunar-location-entry.h						\
 	thunar-menu.c						\
 	thunar-menu.h						\
-	thunar-menu-util.c						\
-	thunar-menu-util.h						\
 	thunar-notify.c							\
 	thunar-notify.h							\
 	thunar-navigator.c						\

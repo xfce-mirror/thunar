@@ -35,7 +35,6 @@
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-job.h>
 #include <thunar/thunar-marshal.h>
-#include <thunar/thunar-menu-util.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-properties-dialog.h>
@@ -1559,7 +1558,8 @@ G_GNUC_END_IGNORE_DEPRECATIONS
               g_list_free (providers);
 
               /* add the menu items to the menu */
-              thunar_menu_util_add_items_to_menu (menu, items);
+              for (lp = items; lp != NULL; lp = lp->next)
+                thunar_gtk_menu_thunarx_menu_item_new (lp->data, GTK_MENU_SHELL (menu));
 
               /* add a separator to the end of the menu */
               if (G_LIKELY (lp != items))

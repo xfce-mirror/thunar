@@ -40,7 +40,6 @@
 #include <thunar/thunar-dnd.h>
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
-#include <thunar/thunar-menu-util.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-shortcuts-icon-renderer.h>
@@ -1263,7 +1262,8 @@ G_GNUC_END_IGNORE_DEPRECATIONS
             }
 
           /* add the menu items to the menu */
-          thunar_menu_util_add_items_to_menu (menu, items);
+          for (lp = items; lp != NULL; lp = lp->next)
+            thunar_gtk_menu_thunarx_menu_item_new (lp->data, GTK_MENU_SHELL (menu));
 
           /* cleanup */
           g_list_free (items);

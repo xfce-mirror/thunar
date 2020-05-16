@@ -300,7 +300,8 @@ thunar_menu_add_sections (ThunarMenu         *menu,
 
   if (menu_sections & THUNAR_MENU_SECTION_CUSTOM_ACTIONS)
     {
-       // TODO
+      if (thunar_launcher_append_custom_actions (menu->launcher, GTK_MENU_SHELL (menu)))
+         xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
     }
 
   if (menu_sections & THUNAR_MENU_SECTION_ZOOM)
