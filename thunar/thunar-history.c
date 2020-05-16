@@ -22,12 +22,14 @@
 #endif
 
 #include <thunar/thunar-gobject-extensions.h>
-#include <thunar/thunar-history-action.h>
+#include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-history.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-navigator.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-dialogs.h>
+
+#include <libxfce4ui/libxfce4ui.h>
 
 
 
@@ -35,8 +37,14 @@
 enum
 {
   PROP_0,
-  PROP_ACTION_GROUP,
   PROP_CURRENT_DIRECTORY,
+};
+
+/* Signal identifiers */
+enum
+{
+  HISTORY_CHANGED,
+  LAST_SIGNAL,
 };
 
 
@@ -59,26 +67,12 @@ static void            thunar_history_go_back                (ThunarHistory     
                                                               GFile                *goto_file);
 static void            thunar_history_go_forward             (ThunarHistory        *history,
                                                               GFile                *goto_file);
-static void            thunar_history_action_back            (GtkAction            *action,
-                                                              ThunarHistory        *history);
 static void            thunar_history_action_back_nth        (GtkWidget            *item,
-                                                              ThunarHistory        *history);
-static void            thunar_history_action_forward         (GtkAction            *action,
                                                               ThunarHistory        *history);
 static void            thunar_history_action_forward_nth     (GtkWidget            *item,
                                                               ThunarHistory        *history);
-static void            thunar_history_show_menu              (GtkAction            *action,
-                                                              GtkWidget            *menu,
-                                                              ThunarHistory        *history);
-static GtkActionGroup *thunar_history_get_action_group       (const ThunarHistory  *history);
-static void            thunar_history_set_action_group       (ThunarHistory        *history,
-                                                              GtkActionGroup       *action_group);
 
 
-struct _ThunarHistoryClass
-{
-  GObjectClass __parent__;
-};
 
 struct _ThunarHistory
 {
@@ -86,16 +80,11 @@ struct _ThunarHistory
 
   ThunarFile     *current_directory;
 
-  GtkActionGroup *action_group;
-
-  GtkAction      *action_back;
-  GtkAction      *action_forward;
-
   GSList         *back_list;
   GSList         *forward_list;
 };
 
-
+static guint history_signals[LAST_SIGNAL];
 
 G_DEFINE_TYPE_WITH_CODE (ThunarHistory, thunar_history, G_TYPE_OBJECT,
     G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR, thunar_history_navigator_init))
@@ -121,22 +110,6 @@ thunar_history_class_init (ThunarHistoryClass *klass)
   thunar_history_display_name_quark = g_quark_from_static_string ("thunar-history-display-name");
   thunar_history_gfile_quark = g_quark_from_static_string ("thunar-history-gfile");
 
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /**
-   * ThunarHistory::action-group:
-   *
-   * The #GtkActionGroup to which the #ThunarHistory<!---->s
-   * actions "back" and "forward" should be connected.
-   **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_ACTION_GROUP,
-                                   g_param_spec_object ("action-group",
-                                                        "action-group",
-                                                        "action-group",
-                                                        GTK_TYPE_ACTION_GROUP,
-                                                        EXO_PARAM_READWRITE));
-G_GNUC_END_IGNORE_DEPRECATIONS
-
   /**
    * ThunarHistory::current-directory:
    *
@@ -145,6 +118,15 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   g_object_class_override_property (gobject_class,
                                     PROP_CURRENT_DIRECTORY,
                                     "current-directory");
+
+  history_signals[HISTORY_CHANGED] =
+    g_signal_new (I_("history-changed"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (ThunarHistoryClass, history_changed),
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__STRING,
+                  G_TYPE_NONE, 1, G_TYPE_STRING);
 }
 
 
@@ -161,21 +143,7 @@ thunar_history_navigator_init (ThunarNavigatorIface *iface)
 static void
 thunar_history_init (ThunarHistory *history)
 {
-  /* create the "back" action */
-  history->action_back = thunar_history_action_new ("back", _("Back"), _("Go to the previous visited folder"), "go-previous-symbolic");
-  g_signal_connect (G_OBJECT (history->action_back), "activate", G_CALLBACK (thunar_history_action_back), history);
-  g_signal_connect (G_OBJECT (history->action_back), "show-menu", G_CALLBACK (thunar_history_show_menu), history);
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  gtk_action_set_sensitive (history->action_back, FALSE);
-G_GNUC_END_IGNORE_DEPRECATIONS
 
-  /* create the "forward" action */
-  history->action_forward = thunar_history_action_new ("forward", _("Forward"), _("Go to the next visited folder"), "go-next-symbolic");
-  g_signal_connect (G_OBJECT (history->action_forward), "activate", G_CALLBACK (thunar_history_action_forward), history);
-  g_signal_connect (G_OBJECT (history->action_forward), "show-menu", G_CALLBACK (thunar_history_show_menu), history);
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  gtk_action_set_sensitive (history->action_forward, FALSE);
-G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 
@@ -188,9 +156,6 @@ thunar_history_dispose (GObject *object)
   /* disconnect from the current directory */
   thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (history), NULL);
 
-  /* disconnect from the action group */
-  thunar_history_set_action_group (history, NULL);
-
   (*G_OBJECT_CLASS (thunar_history_parent_class)->dispose) (object);
 }
 
@@ -200,14 +165,6 @@ static void
 thunar_history_finalize (GObject *object)
 {
   ThunarHistory *history = THUNAR_HISTORY (object);
-
-  /* disconnect from the "forward" action */
-  g_signal_handlers_disconnect_matched (G_OBJECT (history->action_forward), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, history);
-  g_object_unref (G_OBJECT (history->action_forward));
-
-  /* disconnect from the "back" action */
-  g_signal_handlers_disconnect_matched (G_OBJECT (history->action_back), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, history);
-  g_object_unref (G_OBJECT (history->action_back));
 
   /* release the "forward" and "back" lists */
   g_slist_free_full (history->forward_list, g_object_unref);
@@ -228,10 +185,6 @@ thunar_history_get_property (GObject    *object,
 
   switch (prop_id)
     {
-    case PROP_ACTION_GROUP:
-      g_value_set_object (value, thunar_history_get_action_group (history));
-      break;
-
     case PROP_CURRENT_DIRECTORY:
       g_value_set_object (value, thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (history)));
       break;
@@ -254,10 +207,6 @@ thunar_history_set_property (GObject      *object,
 
   switch (prop_id)
     {
-    case PROP_ACTION_GROUP:
-      thunar_history_set_action_group (history, g_value_get_object (value));
-      break;
-
     case PROP_CURRENT_DIRECTORY:
       thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (history), g_value_get_object (value));
       break;
@@ -320,9 +269,6 @@ thunar_history_set_current_directory (ThunarNavigator *navigator,
   else
     {
       /* clear the "forward" list */
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      gtk_action_set_sensitive (history->action_forward, FALSE);
-G_GNUC_END_IGNORE_DEPRECATIONS
       g_slist_free_full (history->forward_list, g_object_unref);
       history->forward_list = NULL;
 
@@ -331,9 +277,6 @@ G_GNUC_END_IGNORE_DEPRECATIONS
         {
           gfile = thunar_history_get_gfile (history->current_directory);
           history->back_list = g_slist_prepend (history->back_list, gfile);
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-          gtk_action_set_sensitive (history->action_back, TRUE);
-G_GNUC_END_IGNORE_DEPRECATIONS
 
           g_object_unref (history->current_directory);
         }
@@ -348,6 +291,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* notify listeners */
   g_object_notify (G_OBJECT (history), "current-directory");
+  g_signal_emit (G_OBJECT (history), history_signals[HISTORY_CHANGED], 0, history);
 }
 
 
@@ -406,8 +350,7 @@ thunar_history_go_back (ThunarHistory  *history,
           g_object_unref (lp->data);
           history->back_list = g_slist_delete_link (history->back_list, lp);
         }
-
-      goto update_actions;
+      return;
     }
 
   /* prepend the previous current directory to the "forward" list */
@@ -452,14 +395,6 @@ thunar_history_go_back (ThunarHistory  *history,
   /* tell the other modules to change the current directory */
   if (G_LIKELY (history->current_directory != NULL))
     thunar_navigator_change_directory (THUNAR_NAVIGATOR (history), history->current_directory);
-
-  update_actions:
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* update the sensitivity of the actions */
-  gtk_action_set_sensitive (history->action_back, (history->back_list != NULL));
-  gtk_action_set_sensitive (history->action_forward, (history->forward_list != NULL));
-G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 
@@ -489,8 +424,7 @@ thunar_history_go_forward (ThunarHistory  *history,
           g_object_unref (lp->data);
           history->forward_list = g_slist_delete_link (history->forward_list, lp);
         }
-
-      goto update_actions;
+      return;
     }
 
   /* prepend the previous current directory to the "back" list */
@@ -533,25 +467,13 @@ thunar_history_go_forward (ThunarHistory  *history,
   /* tell the other modules to change the current directory */
   if (G_LIKELY (history->current_directory != NULL))
     thunar_navigator_change_directory (THUNAR_NAVIGATOR (history), history->current_directory);
-
-  update_actions:
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* update the sensitivity of the actions */
-  gtk_action_set_sensitive (history->action_back, (history->back_list != NULL));
-  gtk_action_set_sensitive (history->action_forward, (history->forward_list != NULL));
-G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 
 
-static void
-thunar_history_action_back (GtkAction     *action,
-                            ThunarHistory *history)
+void
+thunar_history_action_back (ThunarHistory *history)
 {
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  _thunar_return_if_fail (GTK_IS_ACTION (action));
-G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_HISTORY (history));
 
   /* go back one step */
@@ -577,13 +499,9 @@ thunar_history_action_back_nth (GtkWidget     *item,
 
 
 
-static void
-thunar_history_action_forward (GtkAction     *action,
-                               ThunarHistory *history)
+void
+thunar_history_action_forward (ThunarHistory *history)
 {
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  _thunar_return_if_fail (GTK_IS_ACTION (action));
-G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_HISTORY (history));
 
   /* go forward one step */
@@ -609,15 +527,16 @@ thunar_history_action_forward_nth (GtkWidget     *item,
 
 
 
-static void
-thunar_history_show_menu (GtkAction     *action,
-                          GtkWidget     *menu,
-                          ThunarHistory *history)
+void
+thunar_history_show_menu (ThunarHistory         *history,
+                          ThunarHistoryMenuType  type,
+                          GtkWidget             *parent)
 {
   ThunarIconFactory *icon_factory;
   GtkIconTheme      *icon_theme;
   GCallback          handler;
   GtkWidget         *image;
+  GtkWidget         *menu;
   GtkWidget         *item;
   GdkPixbuf         *icon;
   GSList            *lp;
@@ -626,18 +545,17 @@ thunar_history_show_menu (GtkAction     *action,
   const gchar       *icon_name;
   gchar             *parse_name;
 
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  _thunar_return_if_fail (GTK_IS_ACTION (action));
-G_GNUC_END_IGNORE_DEPRECATIONS
-  _thunar_return_if_fail (GTK_IS_MENU_SHELL (menu));
+  _thunar_return_if_fail (GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_HISTORY (history));
 
+  menu = gtk_menu_new ();
+
   /* determine the icon factory to use to load the icons */
-  icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (menu));
+  icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (parent));
   icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
 
   /* check if we have "Back" or "Forward" here */
-  if (action == history->action_back)
+  if (type == THUNAR_HISTORY_MENU_BACK)
     {
       /* display the "back" list */
       lp = history->back_list;
@@ -653,20 +571,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /* add menu items for all list items */
   for (;lp != NULL; lp = lp->next)
     {
-      /* add an item for this file */
-      display_name = g_object_get_qdata (G_OBJECT (lp->data), thunar_history_display_name_quark);
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      item = gtk_image_menu_item_new_with_label (display_name);
-G_GNUC_END_IGNORE_DEPRECATIONS
-      g_object_set_qdata (G_OBJECT (item), thunar_history_gfile_quark, lp->data);
-      g_signal_connect (G_OBJECT (item), "activate", handler, history);
-      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-      gtk_widget_show (item);
-
       parse_name = g_file_get_parse_name (lp->data);
-      gtk_widget_set_tooltip_text (item, parse_name);
-      g_free (parse_name);
-
       file = thunar_file_cache_lookup (lp->data);
       image = NULL;
       if (file != NULL)
@@ -697,96 +602,37 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
           image = gtk_image_new_from_icon_name (icon_name, GTK_ICON_SIZE_MENU);
         }
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-G_GNUC_END_IGNORE_DEPRECATIONS
+
+      /* add an item for this file */
+      display_name = g_object_get_qdata (G_OBJECT (lp->data), thunar_history_display_name_quark);
+      item = xfce_gtk_image_menu_item_new (display_name, parse_name, NULL,
+                                           NULL, NULL, image, GTK_MENU_SHELL (menu));
+      g_object_set_qdata (G_OBJECT (item), thunar_history_gfile_quark, lp->data);
+      g_signal_connect (G_OBJECT (item), "activate", handler, history);
+
+      g_free (parse_name);
     }
 
+  gtk_widget_show_all (menu);
   /* release the icon factory */
   g_object_unref (G_OBJECT (icon_factory));
-}
 
-
-
-/**
- * thunar_history_get_action_group:
- * @history : a #ThunarHistory.
- *
- * Returns the #GtkActionGroup to which @history
- * is currently attached, or %NULL if @history is
- * not attached to any #GtkActionGroup right now.
- *
- * Return value: the #GtkActionGroup to which
- *               @history is currently attached.
- **/
-static GtkActionGroup*
-thunar_history_get_action_group (const ThunarHistory *history)
-{
-  _thunar_return_val_if_fail (THUNAR_IS_HISTORY (history), NULL);
-  return history->action_group;
-}
-
-
-
-/**
- * thunar_history_set_action_group:
- * @history      : a #ThunarHistory.
- * @action_group : a #GtkActionGroup or %NULL.
- *
- * Attaches @history to the specified @action_group,
- * and thereby registers the actions "back" and
- * "forward" provided by @history on the given
- * @action_group.
- **/
-static void
-thunar_history_set_action_group (ThunarHistory  *history,
-                                 GtkActionGroup *action_group)
-{
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  _thunar_return_if_fail (THUNAR_IS_HISTORY (history));
-  _thunar_return_if_fail (action_group == NULL || GTK_IS_ACTION_GROUP (action_group));
-
-  /* verify that we don't already use that action group */
-  if (G_UNLIKELY (history->action_group == action_group))
-    return;
-
-  /* disconnect from the previous action group */
-  if (G_UNLIKELY (history->action_group != NULL))
-    {
-      gtk_action_group_remove_action (history->action_group, history->action_back);
-      gtk_action_group_remove_action (history->action_group, history->action_forward);
-      g_object_unref (G_OBJECT (history->action_group));
-    }
-
-  /* activate the new action group */
-  history->action_group = action_group;
-
-  /* connect to the new action group */
-  if (G_LIKELY (action_group != NULL))
-    {
-      g_object_ref (G_OBJECT (action_group));
-      gtk_action_group_add_action_with_accel (action_group, history->action_back, "<alt>Left");
-      gtk_action_group_add_action_with_accel (action_group, history->action_forward, "<alt>Right");
-    }
-
-  /* notify listeners */
-  g_object_notify (G_OBJECT (history), "action-group");
-G_GNUC_END_IGNORE_DEPRECATIONS
+  /* run the menu (takes over the floating of menu) */
+  gtk_menu_popup_at_widget (GTK_MENU (menu), parent,
+                            GDK_GRAVITY_SOUTH_WEST,
+                            GDK_GRAVITY_NORTH_WEST,
+                            NULL);
 }
 
 
 
 ThunarHistory *
-thunar_history_copy (ThunarHistory  *history,
-                     GtkActionGroup *action_group)
+thunar_history_copy (ThunarHistory *history)
 {
   ThunarHistory *copy;
   GSList        *lp;
 
   _thunar_return_val_if_fail (history == NULL || THUNAR_IS_HISTORY (history), NULL);
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  _thunar_return_val_if_fail (action_group == NULL || GTK_IS_ACTION_GROUP (action_group), NULL);
-G_GNUC_END_IGNORE_DEPRECATIONS
 
   if (G_UNLIKELY (history == NULL))
     return NULL;
@@ -796,9 +642,6 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   /* take a ref on the current directory */
   copy->current_directory = g_object_ref (history->current_directory);
 
-  /* set the action group */
-  thunar_history_set_action_group (copy, action_group);
-
   /* copy the back list */
   for (lp = history->back_list; lp != NULL; lp = lp->next)
       copy->back_list = g_slist_append (copy->back_list, g_object_ref (G_OBJECT (lp->data)));
@@ -807,13 +650,40 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   for (lp = history->forward_list; lp != NULL; lp = lp->next)
       copy->forward_list = g_slist_append (copy->forward_list, g_object_ref (G_OBJECT (lp->data)));
 
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* update the sensitivity of the actions */
-  gtk_action_set_sensitive (copy->action_back, (copy->back_list != NULL));
-  gtk_action_set_sensitive (copy->action_forward, (copy->forward_list != NULL));
-G_GNUC_END_IGNORE_DEPRECATIONS
-
   return copy;
+}
+
+
+
+/**
+ * thunar_history_has_back:
+ * @history : a #ThunarHistory.
+ *
+ * Return value: TRUE if there is a backward history
+ **/
+gboolean
+thunar_history_has_back (ThunarHistory *history)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_HISTORY (history), FALSE);
+
+  return history->back_list != NULL;
+}
+
+
+
+
+/**
+ * thunar_history_has_forward:
+ * @history : a #ThunarHistory.
+ *
+ * Return value: TRUE if there is a forward history
+ **/
+gboolean
+thunar_history_has_forward (ThunarHistory *history)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_HISTORY (history), FALSE);
+
+  return history->forward_list != NULL;
 }
 
 

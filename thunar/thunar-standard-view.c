@@ -185,9 +185,6 @@ static gboolean             thunar_standard_view_key_press_event            (Gtk
 static gboolean             thunar_standard_view_scroll_event               (GtkWidget                *view,
                                                                              GdkEventScroll           *event,
                                                                              ThunarStandardView       *standard_view);
-static gboolean             thunar_standard_view_button_press_event         (GtkWidget                *view,
-                                                                             GdkEventButton           *event,
-                                                                             ThunarStandardView       *standard_view);
 static gboolean             thunar_standard_view_drag_drop                  (GtkWidget                *view,
                                                                              GdkDragContext           *context,
                                                                              gint                      x,
@@ -658,7 +655,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   g_object_unref (G_OBJECT (standard_view->priv->action_create_document));
 
   /* setup the history support */
-  standard_view->priv->history = g_object_new (THUNAR_TYPE_HISTORY, "action-group", standard_view->action_group, NULL);
+  standard_view->priv->history = g_object_new (THUNAR_TYPE_HISTORY, NULL);
   g_signal_connect_swapped (G_OBJECT (standard_view->priv->history), "change-directory", G_CALLBACK (thunar_navigator_change_directory), standard_view);
 
   /* setup the list model */
@@ -763,7 +760,6 @@ thunar_standard_view_constructor (GType                  type,
 
   /* setup support to navigate using a horizontal mouse wheel and the back and forward buttons */
   g_signal_connect (G_OBJECT (view), "scroll-event", G_CALLBACK (thunar_standard_view_scroll_event), object);
-  g_signal_connect (G_OBJECT (view), "button-press-event", G_CALLBACK (thunar_standard_view_button_press_event), object);
 
   /* need to catch certain keys for the internal view widget */
   g_signal_connect (G_OBJECT (view), "key-press-event", G_CALLBACK (thunar_standard_view_key_press_event), object);
@@ -2390,7 +2386,6 @@ thunar_standard_view_scroll_event (GtkWidget          *view,
                                    GdkEventScroll     *event,
                                    ThunarStandardView *standard_view)
 {
-  GdkEventButton     fake_event;
   GdkScrollDirection scrolling_direction;
   gboolean           misc_horizontal_wheel_navigates;
 
@@ -2418,12 +2413,10 @@ thunar_standard_view_scroll_event (GtkWidget          *view,
       g_object_get (G_OBJECT (standard_view->preferences), "misc-horizontal-wheel-navigates", &misc_horizontal_wheel_navigates, NULL);
       if (G_UNLIKELY (misc_horizontal_wheel_navigates))
         {
-          /* create a fake event (8 == back, 9 forward) */
-          fake_event.type = GDK_BUTTON_PRESS;
-          fake_event.button = scrolling_direction == GDK_SCROLL_LEFT ? 8 : 9;
-
-          /* trigger a fake button press event */
-          return thunar_standard_view_button_press_event (view, &fake_event, standard_view);
+          if (scrolling_direction == GDK_SCROLL_LEFT)
+            thunar_history_action_back (standard_view->priv->history);
+          else
+            thunar_history_action_forward (standard_view->priv->history);
         }
     }
 
@@ -2437,36 +2430,6 @@ thunar_standard_view_scroll_event (GtkWidget          *view,
       return TRUE;
     }
 
-  /* next please... */
-  return FALSE;
-}
-
-
-
-static gboolean
-thunar_standard_view_button_press_event (GtkWidget          *view,
-                                         GdkEventButton     *event,
-                                         ThunarStandardView *standard_view)
-{
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  GtkAction *action = NULL;
-
-  if (G_LIKELY (event->type == GDK_BUTTON_PRESS))
-    {
-      /* determine the appropriate action ("back" for button 8, "forward" for button 9) */
-      if (G_UNLIKELY (event->button == 8))
-        action = gtk_ui_manager_get_action (standard_view->ui_manager, "/main-menu/go-menu/placeholder-go-history-actions/back");
-      else if (G_UNLIKELY (event->button == 9))
-        action = gtk_ui_manager_get_action (standard_view->ui_manager, "/main-menu/go-menu/placeholder-go-history-actions/forward");
-
-      /* perform the action (if any) */
-      if (G_UNLIKELY (action != NULL))
-        {
-          gtk_action_activate (action);
-          return TRUE;
-        }
-    }
-G_GNUC_END_IGNORE_DEPRECATIONS
   /* next please... */
   return FALSE;
 }
@@ -3797,6 +3760,13 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 
 
 
+/**
+ * thunar_standard_view_set_history:
+ * @standard_view : a #ThunarStandardView instance.
+ * @history       : the #ThunarHistory to set.
+ *
+ * replaces the history of this #ThunarStandardView with the passed history
+ **/
 void
 thunar_standard_view_set_history (ThunarStandardView *standard_view,
                                   ThunarHistory      *history)
@@ -3810,19 +3780,41 @@ thunar_standard_view_set_history (ThunarStandardView *standard_view,
 
   /* connect callback */
   g_signal_connect_swapped (G_OBJECT (history), "change-directory", G_CALLBACK (thunar_navigator_change_directory), standard_view);
-
-  /* make the history use the action group of this view */
-  g_object_set (G_OBJECT (history), "action-group", standard_view->action_group, NULL);
 }
 
 
 
+/**
+ * thunar_standard_view_get_history:
+ * @standard_view : a #ThunarStandardView instance.
+ *
+ * returns the #ThunarHistory of this #ThunarStandardView
+ *
+ * Return value: (transfer none): The #ThunarHistory of this #ThunarStandardView
+ **/
+ThunarHistory*
+thunar_standard_view_get_history (ThunarStandardView *standard_view)
+{
+  return standard_view->priv->history;
+}
+
+
+
+/**
+ * thunar_standard_view_copy_history:
+ * @standard_view : a #ThunarStandardView instance.
+ *
+ * returns a copy of the #ThunarHistory of this #ThunarStandardView
+ * The caller has to release the passed history with g_object_unref() after use.
+ *
+ * Return value: (transfer full): A copy of the #ThunarHistory of this #ThunarStandardView
+ **/
 ThunarHistory *
 thunar_standard_view_copy_history (ThunarStandardView *standard_view)
 {
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), NULL);
 
-  return thunar_history_copy (standard_view->priv->history, NULL);
+  return thunar_history_copy (standard_view->priv->history);
 }
 
 
