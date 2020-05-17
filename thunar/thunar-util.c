@@ -281,11 +281,14 @@ thunar_util_expand_filename (const gchar  *filename,
       return NULL;
     }
 
-  /* check if we start with a '~' */
-  if (*filename == '~')
+  /* check if we start with a '~' or "$HOME" */
+  if (*filename == '~' || g_str_has_prefix (filename, "$HOME"))
     {
       /* examine the remainder of the filename */
-      remainder = filename + 1;
+      if (*filename == '~')
+        remainder = filename + 1;
+      else
+        remainder = filename + 5;
 
       /* if we have only the slash, then we want the home dir */
       if (G_UNLIKELY (*remainder == '\0'))
