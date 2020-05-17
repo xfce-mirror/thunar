@@ -33,6 +33,7 @@
 #include <gdk/gdkkeysyms.h>
 
 #include <thunar/thunar-application.h>
+#include <thunar/thunar-menu.h>
 #include <thunar/thunar-create-dialog.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-dnd.h>
@@ -3589,28 +3590,56 @@ thunar_standard_view_size_allocate (ThunarStandardView *standard_view,
 void
 thunar_standard_view_context_menu (ThunarStandardView *standard_view)
 {
-  GtkWidget *menu;
-  GList     *selected_items;
+  GtkWidget  *window;
+  ThunarMenu *context_menu;
+  GList      *selected_items;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* grab an additional reference on the view */
   g_object_ref (G_OBJECT (standard_view));
 
-  /* run the menu (figuring out whether to use the file or the folder context menu) */
   selected_items = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  menu = gtk_ui_manager_get_widget (standard_view->ui_manager, (selected_items != NULL) ? "/file-context-menu" : "/folder-context-menu");
-G_GNUC_END_IGNORE_DEPRECATIONS
+
+  window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
+
+  context_menu = g_object_new (THUNAR_TYPE_MENU, "menu-type", THUNAR_MENU_TYPE_CONTEXT,
+                                                 "launcher", thunar_window_get_launcher (THUNAR_WINDOW (window)), NULL);
+  if (selected_items != NULL)
+    {
+      thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_OPEN
+                                            | THUNAR_MENU_SECTION_SENDTO
+                                            | THUNAR_MENU_SECTION_CUT
+                                            | THUNAR_MENU_SECTION_COPY_PASTE
+                                            | THUNAR_MENU_SECTION_TRASH_DELETE
+                                            | THUNAR_MENU_SECTION_EMPTY_TRASH
+                                            | THUNAR_MENU_SECTION_RESTORE
+                                            | THUNAR_MENU_SECTION_RENAME
+                                            | THUNAR_MENU_SECTION_CUSTOM_ACTIONS
+                                            | THUNAR_MENU_SECTION_PROPERTIES);
+    }
+  else /* right click on some empty space */
+    {
+      thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_CREATE_NEW_FILES
+                                            | THUNAR_MENU_SECTION_COPY_PASTE
+                                            | THUNAR_MENU_SECTION_EMPTY_TRASH
+                                            | THUNAR_MENU_SECTION_CUSTOM_ACTIONS);
+      xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (context_menu));
+      thunar_menu_add_sections (context_menu, THUNAR_MENU_SECTION_ZOOM
+                                            | THUNAR_MENU_SECTION_PROPERTIES);
+    }
+  thunar_menu_hide_accel_labels (context_menu);
+  gtk_widget_show_all (GTK_WIDGET (context_menu));
+
   /* if there is a drag_timer_event (long press), we use it */
   if (standard_view->priv->drag_timer_event != NULL)
     {
-      thunar_gtk_menu_run_at_event (GTK_MENU (menu), standard_view->priv->drag_timer_event);
+      thunar_gtk_menu_run_at_event (GTK_MENU (context_menu), standard_view->priv->drag_timer_event);
       gdk_event_free (standard_view->priv->drag_timer_event);
       standard_view->priv->drag_timer_event = NULL;
     }
   else
-    thunar_gtk_menu_run (GTK_MENU (menu));
+    thunar_gtk_menu_run (GTK_MENU (context_menu));
 
   g_list_free_full (selected_items, (GDestroyNotify) gtk_tree_path_free);
 
