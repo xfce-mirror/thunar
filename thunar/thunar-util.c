@@ -281,14 +281,11 @@ thunar_util_expand_filename (const gchar  *filename,
       return NULL;
     }
 
-  /* check if we start with a '~' or "$HOME" */
-  if (*filename == '~' || g_str_has_prefix (filename, "$HOME"))
+  /* check if we start with a '~' */
+  if (*filename == '~')
     {
       /* examine the remainder of the filename */
-      if (*filename == '~')
-        remainder = filename + 1;
-      else
-        remainder = filename + 5;
+      remainder = filename + 1;
 
       /* if we have only the slash, then we want the home dir */
       if (G_UNLIKELY (*remainder == '\0'))
@@ -322,6 +319,24 @@ thunar_util_expand_filename (const gchar  *filename,
           /* use the homedir of the specified user */
           replacement = passwd->pw_dir;
         }
+
+      /* generate the filename */
+      return g_build_filename (replacement, slash, NULL);
+    }
+  else if (g_str_has_prefix (filename, "$HOME"))
+    {
+      /* examine the remainder of the filename */
+      remainder = filename + 5;
+
+      /* if we have only the slash, then we want the home dir */
+      if (G_UNLIKELY (*remainder == '\0'))
+        return g_strdup (g_getenv ("HOME"));
+
+      /* if there is more, then get the variable for replacement */
+      replacement = g_getenv ("HOME");
+
+      /* lookup the slash */
+      for (slash = remainder; *slash != '\0' && *slash != G_DIR_SEPARATOR; ++slash);
 
       /* generate the filename */
       return g_build_filename (replacement, slash, NULL);
