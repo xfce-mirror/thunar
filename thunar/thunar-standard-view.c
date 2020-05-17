@@ -74,6 +74,7 @@ enum
   PROP_UI_MANAGER,
   PROP_ZOOM_LEVEL,
   PROP_THUMBNAIL_DRAW_FRAMES,
+  PROP_ACCEL_GROUP,
   N_PROPERTIES
 };
 
@@ -164,12 +165,9 @@ static void                 thunar_standard_view_current_directory_changed  (Thu
 static GList               *thunar_standard_view_get_selected_files_view    (ThunarView               *view);
 static void                 thunar_standard_view_set_selected_files_view    (ThunarView               *view,
                                                                              GList                    *selected_files);
-static void                 thunar_standard_view_action_select_all_files    (GtkAction                *action,
-                                                                             ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_action_select_by_pattern   (GtkAction                *action,
-                                                                             ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_action_selection_invert    (GtkAction                *action,
-                                                                             ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_select_all_files           (ThunarView               *view);
+static void                 thunar_standard_view_select_by_pattern          (ThunarView               *view);
+static void                 thunar_standard_view_selection_invert           (ThunarView               *view);
 static GClosure            *thunar_standard_view_new_files_closure          (ThunarStandardView       *standard_view,
                                                                              GtkWidget                *source_view);
 static void                 thunar_standard_view_new_files                  (ThunarStandardView       *standard_view,
@@ -270,6 +268,7 @@ static void                 thunar_standard_view_scrolled                   (Gtk
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_size_allocate              (ThunarStandardView       *standard_view,
                                                                              GtkAllocation            *allocation);
+static void                 thunar_standard_view_connect_accelerators       (ThunarStandardView       *standard_view);
 
 
 
@@ -379,6 +378,14 @@ static const GtkActionEntry action_entries[] =
   { "rename", NULL, N_ ("_Rename..."), "F2", NULL, G_CALLBACK (NULL), },
   { "restore", NULL, N_ ("_Restore"), NULL, NULL, G_CALLBACK (NULL), },
 };
+static XfceGtkActionEntry thunar_standard_view_action_entries[] =
+{
+    { THUNAR_STANDARD_VIEW_ACTION_SELECT_ALL_FILES,  "<Actions>/ThunarStandardView/select-all-files",   "<Primary>a", XFCE_GTK_MENU_ITEM, N_ ("Select _all Files"),     N_ ("Select all files in this window"),                   NULL, G_CALLBACK (thunar_standard_view_select_all_files), },
+    { THUNAR_STANDARD_VIEW_ACTION_SELECT_BY_PATTERN, "<Actions>/ThunarStandardView/select-by-pattern",  "<Primary>s", XFCE_GTK_MENU_ITEM, N_ ("Select _by Pattern..."), N_ ("Select all files that match a certain pattern"),     NULL, G_CALLBACK (thunar_standard_view_select_by_pattern), },
+    { THUNAR_STANDARD_VIEW_ACTION_INVERT_SELECTION,  "<Actions>/ThunarStandardView/invert-selection",   "",           XFCE_GTK_MENU_ITEM, N_ ("_Invert Selection"),     N_ ("Select all files but not those currently selected"), NULL, G_CALLBACK (thunar_standard_view_selection_invert), },
+};
+
+#define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_standard_view_action_entries,G_N_ELEMENTS(thunar_standard_view_action_entries),id)
 
 /* Target types for dragging from the view */
 static const GtkTargetEntry drag_targets[] =
@@ -429,6 +436,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   gtkwidget_class->grab_focus = thunar_standard_view_grab_focus;
   gtkwidget_class->draw = thunar_standard_view_draw;
 
+  xfce_gtk_translate_action_entries (thunar_standard_view_action_entries, G_N_ELEMENTS (thunar_standard_view_action_entries));
   klass->connect_ui_manager = (gpointer) exo_noop;
   klass->disconnect_ui_manager = (gpointer) exo_noop;
 
@@ -516,6 +524,14 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   standard_view_props[PROP_ZOOM_LEVEL] =
       g_param_spec_override ("zoom-level",
                              g_object_interface_find_property (g_iface, "zoom-level"));
+
+  standard_view_props[PROP_ACCEL_GROUP] =
+                                   g_param_spec_object ("accel-group",
+                                                        "accel-group",
+                                                        "accel-group",
+                                                        GTK_TYPE_ACCEL_GROUP,
+                                                          G_PARAM_WRITABLE
+                                                        | G_PARAM_CONSTRUCT_ONLY);
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, standard_view_props);
@@ -833,6 +849,14 @@ thunar_standard_view_finalize (GObject *object)
   _thunar_assert (standard_view->icon_factory == NULL);
   _thunar_assert (standard_view->ui_manager == NULL);
 
+  /* Dont listen to the accel keys defined by the action entries any more */
+  xfce_gtk_accel_group_disconnect_action_entries (standard_view->accel_group,
+                                               thunar_standard_view_action_entries,
+                                               G_N_ELEMENTS (thunar_standard_view_action_entries));
+
+  /* as well disconnect accelerators of derived widgets */
+  //(*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->disconnect_accelerators) (standard_view, standard_view->accel_group);
+
   /* release the thumbnailer */
   g_signal_handlers_disconnect_by_func (standard_view->priv->thumbnailer, thunar_standard_view_finished_thumbnailing, standard_view);
   g_object_unref (standard_view->priv->thumbnailer);
@@ -998,6 +1022,12 @@ thunar_standard_view_set_property (GObject      *object,
     case PROP_THUMBNAIL_DRAW_FRAMES:
       g_object_set (G_OBJECT (standard_view->icon_factory), "thumbnail-draw-frames", g_value_get_boolean (value), NULL);
       thunar_standard_view_reload(THUNAR_VIEW (object), TRUE);
+      break;
+
+    case PROP_ACCEL_GROUP:
+      standard_view->accel_group = g_value_dup_object (value);
+      g_object_ref (standard_view->accel_group);
+      thunar_standard_view_connect_accelerators (standard_view);
       break;
 
     default:
@@ -2073,12 +2103,10 @@ thunar_standard_view_current_directory_changed (ThunarFile         *current_dire
 
 
 static void
-thunar_standard_view_action_select_all_files (GtkAction          *action,
-                                              ThunarStandardView *standard_view)
+thunar_standard_view_select_all_files (ThunarView *view)
 {
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  _thunar_return_if_fail (GTK_IS_ACTION (action));
-G_GNUC_END_IGNORE_DEPRECATIONS
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
+
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* grab the focus to the view */
@@ -2091,25 +2119,22 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
 
 static void
-thunar_standard_view_action_select_by_pattern (GtkAction          *action,
-                                               ThunarStandardView *standard_view)
+thunar_standard_view_select_by_pattern (ThunarView *view)
 {
-  GtkWidget   *window;
-  GtkWidget   *dialog;
-  GtkWidget   *vbox;
-  GtkWidget   *hbox;
-  GtkWidget   *label;
-  GtkWidget   *entry;
-  GList       *paths;
-  GList       *lp;
-  gint         response;
-  gchar       *example_pattern;
-  const gchar *pattern;
-  gchar       *pattern_extended = NULL;
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
+  GtkWidget          *window;
+  GtkWidget          *dialog;
+  GtkWidget          *vbox;
+  GtkWidget          *hbox;
+  GtkWidget          *label;
+  GtkWidget          *entry;
+  GList              *paths;
+  GList              *lp;
+  gint                response;
+  gchar              *example_pattern;
+  const gchar        *pattern;
+  gchar              *pattern_extended = NULL;
 
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  _thunar_return_if_fail (GTK_IS_ACTION (action));
-G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
@@ -2191,12 +2216,10 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
 
 static void
-thunar_standard_view_action_selection_invert (GtkAction          *action,
-                                              ThunarStandardView *standard_view)
+thunar_standard_view_selection_invert (ThunarView *view)
 {
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  _thunar_return_if_fail (GTK_IS_ACTION (action));
-G_GNUC_END_IGNORE_DEPRECATIONS
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
+
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* grab the focus to the view */
@@ -3798,4 +3821,50 @@ thunar_standard_view_copy_history (ThunarStandardView *standard_view)
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), NULL);
 
   return thunar_history_copy (standard_view->priv->history, NULL);
+}
+
+
+
+/**
+ * thunar_standard_view_append_menu_item:
+ * @standard_view  : Instance of a  #ThunarStandardView
+ * @menu           : #GtkMenuShell to which the item should be added
+ * @action         : #ThunarStandardViewAction to select which item should be added
+ *
+ * Adds the selected, widget specific #GtkMenuItem to the passed #GtkMenuShell
+ *
+ * Return value: (transfer none): The added #GtkMenuItem
+ **/
+void
+thunar_standard_view_append_menu_item (ThunarStandardView      *standard_view,
+                                       GtkMenu                 *menu,
+                                       ThunarStandardViewAction action)
+{
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (action), G_OBJECT (standard_view), GTK_MENU_SHELL (menu));
+}
+
+
+
+/**
+ * thunar_standard_view_connect_accelerators:
+ * @standard_view : a #ThunarStandardView.
+ *
+ * Connects all accelerators and corresponding default keys of this widget to the global accelerator list
+ * The concrete implementation depends on the concrete widget which is implementing this view
+ **/
+static void
+thunar_standard_view_connect_accelerators (ThunarStandardView *standard_view)
+{
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  xfce_gtk_accel_map_add_entries (thunar_standard_view_action_entries, G_N_ELEMENTS (thunar_standard_view_action_entries));
+  xfce_gtk_accel_group_connect_action_entries (standard_view->accel_group,
+                                               thunar_standard_view_action_entries,
+                                               G_N_ELEMENTS (thunar_standard_view_action_entries),
+                                               standard_view);
+
+  /* as well append accelerators of derived widgets */
+  //(*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->connect_accelerators) (standard_view, standard_view->accel_group);
 }
