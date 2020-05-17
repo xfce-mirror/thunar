@@ -116,9 +116,9 @@ static void                 thunar_standard_view_unrealize                  (Gtk
 static void                 thunar_standard_view_grab_focus                 (GtkWidget                *widget);
 static gboolean             thunar_standard_view_draw                       (GtkWidget                *widget,
                                                                              cairo_t                  *cr);
-static GList               *thunar_standard_view_get_selected_files         (ThunarComponent          *component);
-static void                 thunar_standard_view_set_selected_files         (ThunarComponent          *component,
-                                                                             GList                    *selected_files);
+static GList               *thunar_standard_view_get_selected_files_component         (ThunarComponent          *component);
+static void                 thunar_standard_view_set_selected_files_component         (ThunarComponent          *component,
+                                                                                       GList                    *selected_files);
 static GtkUIManager        *thunar_standard_view_get_ui_manager             (ThunarComponent          *component);
 static void                 thunar_standard_view_set_ui_manager             (ThunarComponent          *component,
                                                                              GtkUIManager             *ui_manager);
@@ -162,6 +162,9 @@ static void                 thunar_standard_view_current_directory_destroy  (Thu
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_current_directory_changed  (ThunarFile               *current_directory,
                                                                              ThunarStandardView       *standard_view);
+static GList               *thunar_standard_view_get_selected_files_view    (ThunarView               *view);
+static void                 thunar_standard_view_set_selected_files_view    (ThunarView               *view,
+                                                                             GList                    *selected_files);
 static void                 thunar_standard_view_action_select_all_files    (GtkAction                *action,
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_select_by_pattern   (GtkAction                *action,
@@ -544,8 +547,8 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
 static void
 thunar_standard_view_component_init (ThunarComponentIface *iface)
 {
-  iface->get_selected_files = thunar_standard_view_get_selected_files;
-  iface->set_selected_files = thunar_standard_view_set_selected_files;
+  iface->get_selected_files = thunar_standard_view_get_selected_files_component;
+  iface->set_selected_files = thunar_standard_view_set_selected_files_component;
   iface->get_ui_manager = thunar_standard_view_get_ui_manager;
   iface->set_ui_manager = thunar_standard_view_set_ui_manager;
 }
@@ -574,6 +577,8 @@ thunar_standard_view_view_init (ThunarViewIface *iface)
   iface->reload = thunar_standard_view_reload;
   iface->get_visible_range = thunar_standard_view_get_visible_range;
   iface->scroll_to_file = thunar_standard_view_scroll_to_file;
+  iface->get_selected_files = thunar_standard_view_get_selected_files_view;
+  iface->set_selected_files = thunar_standard_view_set_selected_files_view;
 }
 
 
@@ -1088,16 +1093,24 @@ thunar_standard_view_draw (GtkWidget      *widget,
 
 
 static GList*
-thunar_standard_view_get_selected_files (ThunarComponent *component)
+thunar_standard_view_get_selected_files_component (ThunarComponent *component)
 {
   return THUNAR_STANDARD_VIEW (component)->priv->selected_files;
 }
 
 
 
+static GList*
+thunar_standard_view_get_selected_files_view (ThunarView *view)
+{
+  return THUNAR_STANDARD_VIEW (view)->priv->selected_files;
+}
+
+
+
 static void
-thunar_standard_view_set_selected_files (ThunarComponent *component,
-                                         GList           *selected_files)
+thunar_standard_view_set_selected_files_component (ThunarComponent *component,
+                                                   GList           *selected_files)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (component);
   GtkTreePath        *first_path = NULL;
