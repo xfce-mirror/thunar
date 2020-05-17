@@ -59,6 +59,8 @@ void            thunar_window_update_directories    (ThunarWindow *window,
                                                      ThunarFile   *new_directory);
 void            thunar_window_notebook_insert       (ThunarWindow *window,
                                                      ThunarFile   *directory);
+gboolean        thunar_window_has_shortcut_sidepane (ThunarWindow *window);
+GtkWidget*      thunar_window_get_sidepane          (ThunarWindow *window);
 ThunarLauncher* thunar_window_get_launcher          (ThunarWindow *window);
 
 G_END_DECLS;
