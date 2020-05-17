@@ -33,16 +33,24 @@
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-browser.h>
 #include <thunar/thunar-chooser-dialog.h>
+#include <thunar/thunar-clipboard-manager.h>
+#include <thunar/thunar-create-dialog.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
+#include <thunar/thunar-icon-factory.h>
+#include <thunar/thunar-io-scan-directory.h>
 #include <thunar/thunar-launcher.h>
 #include <thunar/thunar-launcher-ui.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-properties-dialog.h>
+#include <thunar/thunar-renamer-dialog.h>
 #include <thunar/thunar-sendto-model.h>
+#include <thunar/thunar-shortcuts-pane.h>
+#include <thunar/thunar-simple-job.h>
 #include <thunar/thunar-device-monitor.h>
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-window.h>
@@ -121,9 +129,20 @@ static void                    thunar_launcher_action_open_in_new_tabs    (Thuna
 static void                    thunar_launcher_action_open_in_new_windows (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_open_with_other     (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_sendto_desktop      (ThunarLauncher                 *launcher);
+static void                    thunar_launcher_action_properties          (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_sendto_device       (ThunarLauncher                 *launcher,
                                                                            GObject                        *object);
+static void                    thunar_launcher_action_make_link           (ThunarLauncher                 *launcher);
+static void                    thunar_launcher_action_duplicate           (ThunarLauncher                 *launcher);
+static void                    thunar_launcher_action_rename              (ThunarLauncher                 *launcher);
+static void                    thunar_launcher_action_restore             (ThunarLauncher                 *launcher);
+static void                    thunar_launcher_action_move_to_trash       (ThunarLauncher                 *launcher);
+static void                    thunar_launcher_action_delete              (ThunarLauncher                 *launcher);
+static void                    thunar_launcher_action_trash_delete        (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_empty_trash         (ThunarLauncher                 *launcher);
+static void                    thunar_launcher_action_cut                 (ThunarLauncher                 *launcher);
+static void                    thunar_launcher_action_copy                (ThunarLauncher                 *launcher);
+static void                    thunar_launcher_action_paste_into_folder   (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_sendto_device              (ThunarLauncher                 *launcher,
                                                                            ThunarDevice                   *device);
 static void                    thunar_launcher_sendto_mount_finish        (ThunarDevice                   *device,
@@ -132,7 +151,10 @@ static void                    thunar_launcher_sendto_mount_finish        (Thuna
 static GtkWidget              *thunar_launcher_build_sendto_submenu       (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_menu_item_activated        (ThunarLauncher                 *launcher,
                                                                            GtkWidget                      *menu_item);
-
+static void                    thunar_launcher_action_create_folder       (ThunarLauncher                 *launcher);
+static GtkWidget              *thunar_launcher_append_paste_item          (ThunarLauncher                 *launcher,
+                                                                           GtkMenuShell                   *menu,
+                                                                           gboolean                        force);
 
 struct _ThunarLauncherClass
 {
@@ -214,7 +236,24 @@ static XfceGtkActionEntry thunar_launcher_action_entries[] =
     /* Waiting for https://gitlab.gnome.org/GNOME/gtk/issues/2375 to be able to fix that */
     { THUNAR_LAUNCHER_ACTION_SENDTO_MENU,      "<Actions>/ThunarWindow/sendto-menu",               "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Send To"),                        NULL,                                                                                            NULL,                   NULL,                                                    },
     { THUNAR_LAUNCHER_ACTION_SENDTO_DESKTOP,   "<Actions>/ThunarLauncher/sendto-desktop",          "",                  XFCE_GTK_MENU_ITEM,       NULL,                                   NULL,                                                                                            "user-desktop",         G_CALLBACK (thunar_launcher_action_sendto_desktop),      },
+    { THUNAR_LAUNCHER_ACTION_PROPERTIES,       "<Actions>/ThunarStandardView/properties",          "<Alt>Return",       XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Properties..."),                  N_ ("View the properties of the selected file"),                                                 "document-properties",  G_CALLBACK (thunar_launcher_action_properties),          },
+    { THUNAR_LAUNCHER_ACTION_MAKE_LINK,        "<Actions>/ThunarStandardView/make-link",           "",                  XFCE_GTK_MENU_ITEM,       N_ ("Ma_ke Link"),                      NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_make_link),           },
+    { THUNAR_LAUNCHER_ACTION_DUPLICATE,        "<Actions>/ThunarStandardView/duplicate",           "",                  XFCE_GTK_MENU_ITEM,       N_ ("Du_plicate"),                      NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_duplicate),           },
+    { THUNAR_LAUNCHER_ACTION_RENAME,           "<Actions>/ThunarStandardView/rename",              "F2",                XFCE_GTK_MENU_ITEM,       N_ ("_Rename..."),                      NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_rename),              },
     { THUNAR_LAUNCHER_ACTION_EMPTY_TRASH,      "<Actions>/ThunarWindow/empty-trash",               "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Empty Trash"),                    N_ ("Delete all files and folders in the Trash"),                                                NULL,                   G_CALLBACK (thunar_launcher_action_empty_trash),         },
+    { THUNAR_LAUNCHER_ACTION_CREATE_FOLDER,    "<Actions>/ThunarStandardView/create-folder",       "<Primary><shift>N", XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Create _Folder..."),               N_ ("Create an empty folder within the current folder"),                                         "folder-new",           G_CALLBACK (thunar_launcher_action_create_folder),       },
+
+    { THUNAR_LAUNCHER_ACTION_RESTORE,          "<Actions>/ThunarLauncher/restore",                 "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Restore"),                        NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_restore),             },
+    { THUNAR_LAUNCHER_ACTION_MOVE_TO_TRASH,    "<Actions>/ThunarLauncher/move-to-trash",           "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Mo_ve to Trash"),                  NULL,                                                                                            "user-trash",           G_CALLBACK (thunar_launcher_action_move_to_trash),       },
+    { THUNAR_LAUNCHER_ACTION_DELETE,           "<Actions>/ThunarLauncher/delete",                  "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Delete"),                         NULL,                                                                                            "edit-delete",          G_CALLBACK (thunar_launcher_action_delete),              },
+    { THUNAR_LAUNCHER_ACTION_DELETE,           "<Actions>/ThunarLauncher/delete-2",                "<Shift>Delete",     XFCE_GTK_IMAGE_MENU_ITEM, NULL,                                   NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_delete),              },
+    { THUNAR_LAUNCHER_ACTION_DELETE,           "<Actions>/ThunarLauncher/delete-3",                "<Shift>KP_Delete",  XFCE_GTK_IMAGE_MENU_ITEM, NULL,                                   NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_delete),              },
+    { THUNAR_LAUNCHER_ACTION_TRASH_DELETE,     "<Actions>/ThunarLauncher/trash-delete",            "Delete",            XFCE_GTK_IMAGE_MENU_ITEM, NULL,                                   NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_trash_delete),        },
+    { THUNAR_LAUNCHER_ACTION_TRASH_DELETE,     "<Actions>/ThunarLauncher/trash-delete-2",          "KP_Delete",         XFCE_GTK_IMAGE_MENU_ITEM, NULL,                                   NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_trash_delete),        },
+    { THUNAR_LAUNCHER_ACTION_PASTE,            "<Actions>/ThunarLauncher/paste",                   "<Primary>V",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Paste"),                          N_ ("Move or copy files previously selected by a Cut or Copy command"),                          "edit-paste",           G_CALLBACK (thunar_launcher_action_paste_into_folder),   },
+    { THUNAR_LAUNCHER_ACTION_PASTE_ALT,        NULL,                                                 "",                XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Paste Into Folder"),              N_ ("Move or copy files previously selected by a Cut or Copy command into the selected folder"), "edit-paste",           G_CALLBACK (thunar_launcher_action_paste_into_folder),   },
+    { THUNAR_LAUNCHER_ACTION_COPY,             "<Actions>/ThunarLauncher/copy",                    "<Primary>C",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Copy"),                           N_ ("Prepare the selected files to be copied with a Paste command"),                             "edit-copy",            G_CALLBACK (thunar_launcher_action_copy),                },
+    { THUNAR_LAUNCHER_ACTION_CUT,              "<Actions>/ThunarLauncher/cut",                     "<Primary>X",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Cu_t"),                            N_ ("Prepare the selected files to be moved with a Paste command"),                              "edit-cut",             G_CALLBACK (thunar_launcher_action_cut),                 },
 };
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_launcher_action_entries,G_N_ELEMENTS(thunar_launcher_action_entries),id)
@@ -1216,9 +1255,57 @@ thunar_launcher_action_open_with_other (ThunarLauncher *launcher)
 static gboolean
 thunar_launcher_show_trash (ThunarLauncher *launcher)
 {
+  if (launcher->parent_folder == NULL)
+    return FALSE;
+
   /* If the folder is read only, always show trash insensitive */
   /* If we are outside waste basket, the selection is trashable and we support trash, show trash */
   return !thunar_file_is_writable (launcher->parent_folder) || ( !thunar_file_is_trashed (launcher->parent_folder) && launcher->selection_trashable && thunar_g_vfs_is_uri_scheme_supported ("trash"));
+}
+
+
+
+/**
+ * thunar_launcher_append_paste_item:
+ * @launcher                 : a #ThunarLauncher instance
+ * @menu                     : #GtkMenuShell on which the paste item should be appended
+ * @force                    : Append a 'paste' #GtkMenuItem, even if multiple folders are selected
+ *
+ * Will append a 'paste' #GtkMenuItem to the provided #GtkMenuShell
+ *
+ * Return value: (transfer full): The new #GtkMenuItem, or NULL
+ **/
+static GtkWidget*
+thunar_launcher_append_paste_item (ThunarLauncher *launcher,
+                                   GtkMenuShell   *menu,
+                                   gboolean        force)
+{
+  GtkWidget                *item = NULL;
+  ThunarClipboardManager   *clipboard;
+  const XfceGtkActionEntry *action_entry = get_action_entry (THUNAR_LAUNCHER_ACTION_PASTE);
+
+  _thunar_return_val_if_fail (THUNAR_IS_LAUNCHER (launcher), NULL);
+  _thunar_return_val_if_fail (action_entry != NULL, NULL);
+
+  if (!force && !launcher->single_folder_selected)
+    return NULL;
+
+  /* grab a reference on the clipboard manager for this display */
+  clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (launcher->widget));
+
+  /* Some single folder is selected, but its not the current directory */
+  if (launcher->single_folder_selected && !launcher->current_directory_selected)
+    {
+      item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
+      gtk_widget_set_sensitive (item, thunar_clipboard_manager_get_can_paste (clipboard) && thunar_file_is_writable (launcher->single_folder));
+    }
+  else
+    {
+      item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
+      gtk_widget_set_sensitive (item, thunar_clipboard_manager_get_can_paste (clipboard) && thunar_file_is_writable (launcher->current_directory));
+    }
+  g_object_unref (clipboard);
+  return item;
 }
 
 
@@ -1296,6 +1383,91 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
         gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu);
         return item;
 
+      case THUNAR_LAUNCHER_ACTION_MAKE_LINK:
+        can_be_used = thunar_file_is_writable (launcher->current_directory) &&
+                      launcher->current_directory_selected == FALSE &&
+                      thunar_file_is_trashed (launcher->current_directory) == FALSE;;
+        if (!can_be_used && !force)
+          return NULL;
+
+        label_text = ngettext ("Ma_ke Link", "Ma_ke Links", launcher->n_selected_files);
+        tooltip_text = ngettext ("Create a symbolic link for the selected file",
+                                 "Create a symbolic link for each selected file", launcher->n_selected_files);
+        item = xfce_gtk_menu_item_new (label_text, tooltip_text, action_entry->accel_path, action_entry->callback,
+                                       G_OBJECT (launcher), menu);
+        gtk_widget_set_sensitive (item, can_be_used);
+        return item;
+
+      case THUNAR_LAUNCHER_ACTION_DUPLICATE:
+        can_be_used = thunar_file_is_writable (launcher->current_directory) &&
+                      launcher->current_directory_selected == FALSE &&
+                      thunar_file_is_trashed (launcher->current_directory) == FALSE;
+        if (!can_be_used && !force)
+          return NULL;
+        item = xfce_gtk_menu_item_new (action_entry->menu_item_label_text, action_entry->menu_item_tooltip_text,
+                                       action_entry->accel_path, action_entry->callback, G_OBJECT (launcher), menu);
+        gtk_widget_set_sensitive (item, can_be_used);
+        return item;
+
+      case THUNAR_LAUNCHER_ACTION_RENAME:
+        can_be_used = thunar_file_is_writable (launcher->current_directory) &&
+                      launcher->current_directory_selected == FALSE &&
+                      thunar_file_is_trashed (launcher->current_directory) == FALSE;
+        if (!can_be_used && !force)
+          return NULL;
+        tooltip_text = ngettext ("Rename the selected file",
+                                 "Rename the selected files", launcher->n_selected_files);
+        item = xfce_gtk_menu_item_new (action_entry->menu_item_label_text, tooltip_text, action_entry->accel_path,
+                                       action_entry->callback, G_OBJECT (launcher), menu);
+        gtk_widget_set_sensitive (item, can_be_used);
+        return item;
+
+      case THUNAR_LAUNCHER_ACTION_RESTORE:
+        if (launcher->current_directory_selected == FALSE && thunar_file_is_trashed (launcher->current_directory))
+          {
+            tooltip_text = ngettext ("Restore the selected file to its original location",
+                                     "Restore the selected files to its original location", launcher->n_selected_files);
+            item = xfce_gtk_menu_item_new (action_entry->menu_item_label_text, tooltip_text, action_entry->accel_path,
+                                           action_entry->callback, G_OBJECT (launcher), menu);
+            gtk_widget_set_sensitive (item, thunar_file_is_writable (launcher->current_directory));
+            return item;
+          }
+        return NULL;
+
+      case THUNAR_LAUNCHER_ACTION_MOVE_TO_TRASH:
+        if (!thunar_launcher_show_trash (launcher))
+          return NULL;
+
+        can_be_used = launcher->parent_folder != NULL &&
+                      !launcher->current_directory_selected;
+        if (!can_be_used && !force)
+          return NULL;
+
+        tooltip_text = ngettext ("Move the selected file to the Trash",
+                                 "Move the selected files to the Trash", launcher->n_selected_files);
+        item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, tooltip_text, action_entry->accel_path,
+                                                            action_entry->callback, G_OBJECT (launcher), action_entry->menu_item_icon_name, menu);
+        gtk_widget_set_sensitive (item, can_be_used);
+        return item;
+
+
+      case THUNAR_LAUNCHER_ACTION_DELETE:
+        g_object_get (G_OBJECT (launcher->preferences), "misc-show-delete-action", &show_delete_item, NULL);
+        if (thunar_launcher_show_trash (launcher) && !show_delete_item)
+          return NULL;
+
+        can_be_used = launcher->parent_folder != NULL &&
+                      !launcher->current_directory_selected;
+        if (!can_be_used && !force)
+          return NULL;
+
+        tooltip_text = ngettext ("Permanently delete the selected file",
+                                 "Permanently delete the selected files", launcher->n_selected_files);
+        item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, tooltip_text, action_entry->accel_path,
+                                                            action_entry->callback, G_OBJECT (launcher), action_entry->menu_item_icon_name, menu);
+        gtk_widget_set_sensitive (item, can_be_used);
+        return item;
+
       case THUNAR_LAUNCHER_ACTION_EMPTY_TRASH:
         if (launcher->single_folder_selected == TRUE)
           {
@@ -1307,6 +1479,38 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
               }
           }
         return NULL;
+
+      case THUNAR_LAUNCHER_ACTION_CREATE_FOLDER:
+        if (thunar_file_is_trashed (launcher->current_directory))
+          return NULL;
+        return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
+
+
+      case THUNAR_LAUNCHER_ACTION_CUT:
+        can_be_used = launcher->current_directory_selected == FALSE &&
+                      launcher->parent_folder != NULL;
+        if (!can_be_used && !force)
+          return NULL;
+        tooltip_text = ngettext ("Prepare the selected file to be moved with a Paste command",
+                                 "Prepare the selected files to be moved with a Paste command", launcher->n_selected_files);
+        item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, tooltip_text, action_entry->accel_path,
+                                                            action_entry->callback, G_OBJECT (launcher), action_entry->menu_item_icon_name, menu);
+        gtk_widget_set_sensitive (item, can_be_used);
+        return item;
+
+      case THUNAR_LAUNCHER_ACTION_COPY:
+        can_be_used = launcher->current_directory_selected == FALSE;
+        if (!can_be_used && !force)
+          return NULL;
+        tooltip_text = ngettext ("Prepare the selected file to be copied with a Paste command",
+                                 "Prepare the selected files to be copied with a Paste command", launcher->n_selected_files);
+        item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, tooltip_text, action_entry->accel_path,
+                                                            action_entry->callback, G_OBJECT (launcher), action_entry->menu_item_icon_name, menu);
+        gtk_widget_set_sensitive (item, can_be_used);
+        return item;
+
+      case THUNAR_LAUNCHER_ACTION_PASTE:
+        return thunar_launcher_append_paste_item (launcher, menu, FALSE);
 
       default:
         return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
@@ -1565,6 +1769,234 @@ thunar_launcher_build_sendto_submenu (ThunarLauncher *launcher)
 
 
 static void
+thunar_launcher_action_properties (ThunarLauncher *launcher)
+{
+  GtkWidget *toplevel;
+  GtkWidget *dialog;
+
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  /* popup the files dialog */
+  toplevel = gtk_widget_get_toplevel (launcher->widget);
+  if (G_LIKELY (toplevel != NULL))
+    {
+      dialog = thunar_properties_dialog_new (GTK_WINDOW (toplevel));
+
+      /* check if no files are currently selected */
+      if (launcher->selected_files == NULL)
+        {
+          /* if we don't have any files selected, we just popup the properties dialog for the current folder. */
+          thunar_properties_dialog_set_file (THUNAR_PROPERTIES_DIALOG (dialog), launcher->current_directory);
+        }
+      else
+        {
+          /* popup the properties dialog for all file(s) */
+          thunar_properties_dialog_set_files (THUNAR_PROPERTIES_DIALOG (dialog), launcher->selected_files);
+        }
+      gtk_widget_show (dialog);
+    }
+}
+
+
+
+static void
+thunar_launcher_action_make_link (ThunarLauncher *launcher)
+{
+  ThunarApplication *application;
+  GList             *g_files = NULL;
+  GList             *lp;
+
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  if (G_UNLIKELY (launcher->current_directory == NULL))
+    return;
+  if (launcher->current_directory_selected == TRUE || thunar_file_is_trashed (launcher->current_directory))
+    return;
+
+  for (lp = launcher->selected_files; lp != NULL; lp = lp->next)
+    {
+      g_files = g_list_append (g_files, thunar_file_get_file (lp->data));
+    }
+  /* link the selected files into the current directory, which effectively
+   * creates new unique links for the files.
+   */
+  application = thunar_application_get ();
+  thunar_application_link_into (application, launcher->widget, g_files,
+                                thunar_file_get_file (launcher->current_directory), NULL);
+  g_object_unref (G_OBJECT (application));
+  g_list_free (g_files);
+}
+
+
+
+static void
+thunar_launcher_action_duplicate (ThunarLauncher *launcher)
+{
+  ThunarApplication *application;
+  GList             *selected_files;
+
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  if (G_UNLIKELY (launcher->current_directory == NULL))
+    return;
+  if (launcher->current_directory_selected == TRUE || thunar_file_is_trashed (launcher->current_directory))
+    return;
+
+  /* determine the selected files for the view */
+  selected_files = thunar_file_list_to_thunar_g_file_list (launcher->selected_files);
+  if (G_LIKELY (selected_files != NULL))
+    {
+      /* copy the selected files into the current directory, which effectively
+       * creates duplicates of the files.
+       */
+      application = thunar_application_get ();
+      thunar_application_copy_into (application, launcher->widget, selected_files,
+                                    thunar_file_get_file (launcher->current_directory), NULL);
+      g_object_unref (G_OBJECT (application));
+
+      /* clean up */
+      thunar_g_file_list_free (selected_files);
+    }
+}
+
+
+
+static void
+thunar_launcher_rename_error (ExoJob    *job,
+                              GError    *error,
+                              GtkWidget *widget)
+{
+  GArray     *param_values;
+  ThunarFile *file;
+
+  _thunar_return_if_fail (EXO_IS_JOB (job));
+  _thunar_return_if_fail (error != NULL);
+
+  param_values = thunar_simple_job_get_param_values (THUNAR_SIMPLE_JOB (job));
+  file = g_value_get_object (&g_array_index (param_values, GValue, 0));
+
+  thunar_dialogs_show_error (GTK_WIDGET (widget), error,
+                             _("Failed to rename \"%s\""),
+                             thunar_file_get_display_name (file));
+  g_object_unref (file);
+}
+
+
+
+static void
+thunar_launcher_rename_finished (ExoJob    *job,
+                                 GtkWidget *widget)
+{
+  _thunar_return_if_fail (EXO_IS_JOB (job));
+
+  /* destroy the job */
+  g_signal_handlers_disconnect_matched (job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, widget);
+  g_object_unref (job);
+}
+
+
+
+static void
+thunar_launcher_action_rename (ThunarLauncher *launcher)
+{
+  ThunarJob *job;
+  GtkWidget *window;
+
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  if (launcher->selected_files == NULL || g_list_length (launcher->selected_files) == 0)
+    return;
+  if (launcher->current_directory_selected == TRUE || thunar_file_is_trashed (launcher->current_directory))
+    return;
+
+  /* get the window */
+  window = gtk_widget_get_toplevel (launcher->widget);
+
+  /* start renaming if we have exactly one selected file */
+  if (g_list_length (launcher->selected_files) == 1)
+    {
+      /* run the rename dialog */
+      job = thunar_dialogs_show_rename_file (GTK_WINDOW (window), THUNAR_FILE (launcher->selected_files->data));
+      if (G_LIKELY (job != NULL))
+        {
+          g_signal_connect (job, "error", G_CALLBACK (thunar_launcher_rename_error), launcher->widget);
+          g_signal_connect (job, "finished", G_CALLBACK (thunar_launcher_rename_finished), launcher->widget);
+        }
+    }
+  else
+    {
+      /* display the bulk rename dialog */
+      thunar_show_renamer_dialog (GTK_WIDGET (window), launcher->current_directory, launcher->selected_files, FALSE, NULL);
+    }
+}
+
+
+
+static void
+thunar_launcher_action_restore (ThunarLauncher *launcher)
+{
+  ThunarApplication *application;
+
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  if (launcher->current_directory_selected == TRUE || !thunar_file_is_trashed (launcher->current_directory))
+    return;
+
+  /* restore the selected files */
+  application = thunar_application_get ();
+  thunar_application_restore_files (application, launcher->widget, launcher->selected_files, NULL);
+  g_object_unref (G_OBJECT (application));
+}
+
+
+static void
+thunar_launcher_action_move_to_trash (ThunarLauncher *launcher)
+{
+  ThunarApplication *application;
+
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  if (launcher->parent_folder == NULL || launcher->current_directory_selected)
+    return;
+
+  application = thunar_application_get ();
+  thunar_application_unlink_files (application, launcher->widget, launcher->selected_files, FALSE);
+  g_object_unref (G_OBJECT (application));
+}
+
+
+
+static void
+thunar_launcher_action_delete (ThunarLauncher *launcher)
+{
+  ThunarApplication *application;
+
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  if (launcher->parent_folder == NULL || launcher->current_directory_selected)
+    return;
+
+  application = thunar_application_get ();
+  thunar_application_unlink_files (application, launcher->widget, launcher->selected_files, TRUE);
+  g_object_unref (G_OBJECT (application));
+}
+
+
+
+static void
+thunar_launcher_action_trash_delete (ThunarLauncher *launcher)
+{
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  if (thunar_g_vfs_is_uri_scheme_supported ("trash"))
+    thunar_launcher_action_move_to_trash (launcher);
+  else
+    thunar_launcher_action_delete (launcher);
+}
+
+
+
+static void
 thunar_launcher_action_empty_trash (ThunarLauncher *launcher)
 {
   ThunarApplication *application;
@@ -1579,6 +2011,103 @@ thunar_launcher_action_empty_trash (ThunarLauncher *launcher)
   application = thunar_application_get ();
   thunar_application_empty_trash (application, launcher->widget, NULL);
   g_object_unref (G_OBJECT (application));
+}
+
+
+
+static void
+thunar_launcher_action_create_folder (ThunarLauncher *launcher)
+{
+  ThunarApplication *application;
+  GList              path_list;
+  gchar             *name;
+
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+  _thunar_return_if_fail (launcher->single_folder_selected);
+  _thunar_return_if_fail (launcher->single_folder != NULL);
+
+  if (thunar_file_is_trashed (launcher->single_folder))
+    return;
+
+  /* ask the user to enter a name for the new folder */
+  name = thunar_show_create_dialog (launcher->widget,
+                                    "inode/directory",
+                                    _("New Folder"),
+                                    _("Create New Folder"));
+  if (G_LIKELY (name != NULL))
+    {
+      /* fake the path list */
+      path_list.data = g_file_resolve_relative_path (thunar_file_get_file (launcher->current_directory), name);
+      path_list.next = path_list.prev = NULL;
+
+      /* launch the operation */
+      application = thunar_application_get ();
+      thunar_application_mkdir (application, launcher->widget, &path_list, NULL);
+      g_object_unref (G_OBJECT (application));
+
+      /* release the path */
+      g_object_unref (path_list.data);
+
+      /* release the file name */
+      g_free (name);
+    }
+}
+
+
+
+static void
+thunar_launcher_action_cut (ThunarLauncher *launcher)
+{
+  ThunarClipboardManager *clipboard;
+
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  if (launcher->current_directory_selected || launcher->parent_folder == NULL)
+    return;
+
+  clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (launcher->widget));
+  thunar_clipboard_manager_cut_files (clipboard, launcher->selected_files);
+  g_object_unref (G_OBJECT (clipboard));
+}
+
+
+
+static void
+thunar_launcher_action_copy (ThunarLauncher *launcher)
+{
+  ThunarClipboardManager *clipboard;
+
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  if (launcher->current_directory_selected)
+    return;
+
+  clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (launcher->widget));
+  thunar_clipboard_manager_copy_files (clipboard, launcher->selected_files);
+  g_object_unref (G_OBJECT (clipboard));
+}
+
+
+
+static void
+thunar_launcher_action_paste_into_folder (ThunarLauncher *launcher)
+{
+  ThunarClipboardManager *clipboard;
+  ThunarFile             *folder_to_paste;
+
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  if (launcher->current_directory_selected)
+    folder_to_paste = launcher->current_directory;
+  else if (launcher->single_folder_selected)
+    folder_to_paste = launcher->single_folder;
+  else
+    folder_to_paste = launcher->current_directory; /* Fallback if e.g. non directory files, or many folders are selected */
+
+  /* paste files from the clipboard to the folder */
+  clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (launcher->widget));
+  thunar_clipboard_manager_paste_files (clipboard, thunar_file_get_file (folder_to_paste), launcher->widget, NULL);
+  g_object_unref (G_OBJECT (clipboard));
 }
 
 
