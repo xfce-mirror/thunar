@@ -305,7 +305,14 @@ thunar_menu_add_sections (ThunarMenu         *menu,
 
   if (menu_sections & THUNAR_MENU_SECTION_ZOOM)
     {
-       // TODO
+      window = thunar_launcher_get_widget (menu->launcher);
+      if (THUNAR_IS_WINDOW (window))
+        {
+          thunar_window_append_menu_item (THUNAR_WINDOW (window), GTK_MENU_SHELL (menu), THUNAR_WINDOW_ACTION_ZOOM_IN);
+          thunar_window_append_menu_item (THUNAR_WINDOW (window), GTK_MENU_SHELL (menu), THUNAR_WINDOW_ACTION_ZOOM_OUT);
+          thunar_window_append_menu_item (THUNAR_WINDOW (window), GTK_MENU_SHELL (menu), THUNAR_WINDOW_ACTION_ZOOM_RESET);
+          xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+        }
     }
 
   if (menu_sections & THUNAR_MENU_SECTION_PROPERTIES)
