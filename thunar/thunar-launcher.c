@@ -153,6 +153,9 @@ static GtkWidget              *thunar_launcher_build_sendto_submenu       (Thuna
 static void                    thunar_launcher_menu_item_activated        (ThunarLauncher                 *launcher,
                                                                            GtkWidget                      *menu_item);
 static void                    thunar_launcher_action_create_folder       (ThunarLauncher                 *launcher);
+static void                    thunar_launcher_action_create_document     (ThunarLauncher                 *launcher,
+                                                                           GtkWidget                      *menu_item);
+static GtkWidget              *thunar_launcher_create_document_submenu_new(ThunarLauncher                 *launcher);
 static GtkWidget              *thunar_launcher_append_paste_item          (ThunarLauncher                 *launcher,
                                                                            GtkMenuShell                   *menu,
                                                                            gboolean                        force);
@@ -244,6 +247,7 @@ static XfceGtkActionEntry thunar_launcher_action_entries[] =
     { THUNAR_LAUNCHER_ACTION_RENAME,           "<Actions>/ThunarStandardView/rename",              "F2",                XFCE_GTK_MENU_ITEM,       N_ ("_Rename..."),                      NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_rename),              },
     { THUNAR_LAUNCHER_ACTION_EMPTY_TRASH,      "<Actions>/ThunarWindow/empty-trash",               "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Empty Trash"),                    N_ ("Delete all files and folders in the Trash"),                                                NULL,                   G_CALLBACK (thunar_launcher_action_empty_trash),         },
     { THUNAR_LAUNCHER_ACTION_CREATE_FOLDER,    "<Actions>/ThunarStandardView/create-folder",       "<Primary><shift>N", XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Create _Folder..."),               N_ ("Create an empty folder within the current folder"),                                         "folder-new",           G_CALLBACK (thunar_launcher_action_create_folder),       },
+    { THUNAR_LAUNCHER_ACTION_CREATE_DOCUMENT,  "<Actions>/ThunarStandardView/create-document",     "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Create _Document"),                N_ ("Create a new document from a template"),                                                    "document-new",         G_CALLBACK (NULL),                                       },
 
     { THUNAR_LAUNCHER_ACTION_RESTORE,          "<Actions>/ThunarLauncher/restore",                 "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Restore"),                        NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_restore),             },
     { THUNAR_LAUNCHER_ACTION_MOVE_TO_TRASH,    "<Actions>/ThunarLauncher/move-to-trash",           "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Mo_ve to Trash"),                  NULL,                                                                                            "user-trash",           G_CALLBACK (thunar_launcher_action_move_to_trash),       },
@@ -1496,6 +1500,13 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
           return NULL;
         return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
 
+      case THUNAR_LAUNCHER_ACTION_CREATE_DOCUMENT:
+        if (thunar_file_is_trashed (launcher->current_directory))
+          return NULL;
+        item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
+        submenu = thunar_launcher_create_document_submenu_new (launcher);
+        gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu);
+        return item;
 
       case THUNAR_LAUNCHER_ACTION_CUT:
         can_be_used = launcher->current_directory_selected == FALSE &&
@@ -2109,6 +2120,266 @@ thunar_launcher_action_create_folder (ThunarLauncher *launcher)
       /* release the file name */
       g_free (name);
     }
+}
+
+
+
+static void
+thunar_launcher_action_create_document (ThunarLauncher *launcher,
+                                        GtkWidget      *menu_item)
+{
+  ThunarApplication *application;
+  GList              target_path_list;
+  gchar             *name;
+  gchar             *title;
+  ThunarFile        *template_file;
+
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+  _thunar_return_if_fail (launcher->single_folder_selected);
+  _thunar_return_if_fail (launcher->single_folder != NULL);
+
+  if (thunar_file_is_trashed (launcher->single_folder))
+    return;
+
+  template_file = g_object_get_qdata (G_OBJECT (menu_item), thunar_launcher_file_quark);
+
+  if (template_file != NULL)
+    {
+      /* generate a title for the create dialog */
+      title = g_strdup_printf (_("Create Document from template \"%s\""),
+                               thunar_file_get_display_name (template_file));
+
+      /* ask the user to enter a name for the new document */
+      name = thunar_show_create_dialog (launcher->widget,
+                                        thunar_file_get_content_type (THUNAR_FILE (template_file)),
+                                        thunar_file_get_display_name (template_file),
+                                        title);
+      /* cleanup */
+      g_free (title);
+    }
+  else
+    {
+      /* ask the user to enter a name for the new empty file */
+      name = thunar_show_create_dialog (launcher->widget,
+                                        "text/plain",
+                                        _("New Empty File"),
+                                        _("New Empty File..."));
+    }
+
+  if (G_LIKELY (name != NULL))
+    {
+      if (G_LIKELY (launcher->parent_folder != NULL))
+        {
+          /* fake the target path list */
+          target_path_list.data = g_file_get_child (thunar_file_get_file (launcher->current_directory), name);
+          target_path_list.next = NULL;
+          target_path_list.prev = NULL;
+
+          /* launch the operation */
+          application = thunar_application_get ();
+          thunar_application_creat (application, launcher->widget, &target_path_list,
+                                    template_file != NULL ? thunar_file_get_file (template_file) : NULL,
+                                    launcher->select_files_closure);
+          g_object_unref (G_OBJECT (application));
+
+          /* release the target path */
+          g_object_unref (target_path_list.data);
+        }
+
+      /* release the file name */
+      g_free (name);
+    }
+}
+
+
+
+/* helper method in order to find the parent menu for a menu item */
+static GtkWidget *
+thunar_launcher_create_document_submenu_templates_find_parent_menu (ThunarFile *file,
+                                                                    GList      *dirs,
+                                                                    GList      *items)
+{
+  GtkWidget *parent_menu = NULL;
+  GFile     *parent;
+  GList     *lp;
+  GList     *ip;
+
+  /* determine the parent of the file */
+  parent = g_file_get_parent (thunar_file_get_file (file));
+
+  /* check if the file has a parent at all */
+  if (parent == NULL)
+    return NULL;
+
+  /* iterate over all dirs and menu items */
+  for (lp = g_list_first (dirs), ip = g_list_first (items);
+       parent_menu == NULL && lp != NULL && ip != NULL;
+       lp = lp->next, ip = ip->next)
+    {
+      /* check if the current dir/item is the parent of our file */
+      if (g_file_equal (parent, thunar_file_get_file (lp->data)))
+        {
+          /* we want to insert an item for the file in this menu */
+          parent_menu = gtk_menu_item_get_submenu (ip->data);
+        }
+    }
+
+  /* destroy the parent GFile */
+  g_object_unref (parent);
+
+  return parent_menu;
+}
+
+
+
+/* recursive helper method in order to create menu items for all available templates */
+static gboolean
+thunar_launcher_create_document_submenu_templates (ThunarLauncher *launcher,
+                                                   GtkWidget      *create_file_submenu,
+                                                   GList          *files)
+{
+  ThunarIconFactory *icon_factory;
+  ThunarFile        *file;
+  GdkPixbuf         *icon;
+  GtkWidget         *parent_menu;
+  GtkWidget         *submenu;
+  GtkWidget         *image;
+  GtkWidget         *item;
+  GList             *lp;
+  GList             *dirs = NULL;
+  GList             *items = NULL;
+
+  _thunar_return_val_if_fail (THUNAR_IS_LAUNCHER (launcher), FALSE);
+
+  /* do nothing if there is no menu */
+  if (create_file_submenu == NULL)
+    return FALSE;
+
+  /* get the icon factory */
+  icon_factory = thunar_icon_factory_get_default ();
+
+  /* sort items so that directories come before files and ancestors come
+   * before descendants */
+  files = g_list_sort (files, (GCompareFunc) (void (*)(void)) thunar_file_compare);
+
+  for (lp = g_list_first (files); lp != NULL; lp = lp->next)
+    {
+      file = lp->data;
+
+      /* determine the parent menu for this file/directory */
+      parent_menu = thunar_launcher_create_document_submenu_templates_find_parent_menu (file, dirs, items);
+      if (parent_menu == NULL)
+        parent_menu = create_file_submenu;
+
+      /* determine the icon for this file/directory */
+      icon = thunar_icon_factory_load_file_icon (icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, 16);
+
+      /* allocate an image based on the icon */
+      image = gtk_image_new_from_pixbuf (icon);
+
+      item = xfce_gtk_image_menu_item_new (thunar_file_get_display_name (file), NULL, NULL, NULL, NULL, image, GTK_MENU_SHELL (parent_menu));
+      if (thunar_file_is_directory (file))
+        {
+          /* allocate a new submenu for the directory */
+          submenu = gtk_menu_new ();
+
+          /* allocate a new menu item for the directory */
+          gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu);
+
+          /* prepend the directory, its item and the parent menu it should
+           * later be added to to the respective lists */
+          dirs = g_list_prepend (dirs, file);
+          items = g_list_prepend (items, item);
+        }
+      else
+        {
+          g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_launcher_action_create_document), launcher);
+          g_object_set_qdata_full (G_OBJECT (item), thunar_launcher_file_quark, g_object_ref (file), g_object_unref);
+        }
+      /* release the icon reference */
+      g_object_unref (icon);
+    }
+
+  /* destroy lists */
+  g_list_free (dirs);
+  g_list_free (items);
+
+  /* release the icon factory */
+  g_object_unref (icon_factory);
+
+  /* let the job destroy the file list */
+  return FALSE;
+}
+
+
+
+/**
+ * thunar_launcher_create_document_submenu_new:
+ * @launcher : a #ThunarLauncher instance
+ *
+ * Will create a complete 'create_document* #GtkMenu and return it
+ *
+ * Return value: (transfer full): the created #GtkMenu
+ **/
+static GtkWidget*
+thunar_launcher_create_document_submenu_new (ThunarLauncher *launcher)
+{
+  GList           *files = NULL;
+  GFile           *home_dir;
+  GFile           *templates_dir = NULL;
+  const gchar     *path;
+  gchar           *template_path;
+  gchar           *label_text;
+  GtkWidget       *submenu;
+  GtkWidget       *item;
+
+  _thunar_return_val_if_fail (THUNAR_IS_LAUNCHER (launcher), NULL);
+
+  home_dir = thunar_g_file_new_for_home ();
+  path = g_get_user_special_dir (G_USER_DIRECTORY_TEMPLATES);
+
+  if (G_LIKELY (path != NULL))
+    templates_dir = g_file_new_for_path (path);
+
+  /* If G_USER_DIRECTORY_TEMPLATES not found, set "~/Templates" directory as default */
+  if (G_UNLIKELY (path == NULL) || G_UNLIKELY (g_file_equal (templates_dir, home_dir)))
+    {
+      if (templates_dir != NULL)
+        g_object_unref (templates_dir);
+      templates_dir = g_file_resolve_relative_path (home_dir, "Templates");
+    }
+
+  if (G_LIKELY (templates_dir != NULL))
+    {
+      /* load the ThunarFiles */
+      files = thunar_io_scan_directory (NULL, templates_dir, G_FILE_QUERY_INFO_NONE, TRUE, FALSE, TRUE, NULL);
+    }
+
+  submenu = gtk_menu_new();
+  if (files == NULL)
+    {
+      template_path = g_file_get_path (templates_dir);
+      label_text = g_strdup_printf (_("No templates installed in \"%s\""), template_path);
+      item = xfce_gtk_image_menu_item_new (label_text, NULL, NULL, NULL, NULL, NULL, GTK_MENU_SHELL (submenu));
+      gtk_widget_set_sensitive (item, FALSE);
+      g_free (template_path);
+      g_free (label_text);
+    }
+  else
+    {
+      thunar_launcher_create_document_submenu_templates (launcher, submenu, files);
+      thunar_g_file_list_free (files);
+    }
+
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
+  xfce_gtk_image_menu_item_new_from_icon_name (_("_Empty File"), NULL, NULL, G_CALLBACK (thunar_launcher_action_create_document),
+                                               G_OBJECT (launcher), "text-x-generic", GTK_MENU_SHELL (submenu));
+
+
+  g_object_unref (templates_dir);
+  g_object_unref (home_dir);
+
+  return submenu;
 }
 
 
