@@ -1298,6 +1298,41 @@ thunar_window_reload (ThunarWindow *window,
 
 
 
+/**
+ * thunar_window_has_shortcut_sidepane:
+ * @window : a #ThunarWindow instance.
+ *
+ * Return value: True, if this window is running a shortcut sidepane
+ **/
+gboolean
+thunar_window_has_shortcut_sidepane (ThunarWindow *window)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  /* check if a side pane is currently active */
+  if (G_LIKELY (window->sidepane != NULL))
+    {
+      return G_OBJECT_TYPE (window->sidepane) == THUNAR_TYPE_SHORTCUTS_PANE;
+    }
+  return FALSE;
+}
+
+
+
+/**
+ * thunar_window_get_sidepane:
+ * @window : a #ThunarWindow instance.
+ *
+ * Return value: (transfer none): The #ThunarSidePane of this window, or NULL if not available
+ **/
+GtkWidget* thunar_window_get_sidepane (ThunarWindow *window)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+  return GTK_WIDGET (window->sidepane);
+}
+
+
+
 static gboolean
 thunar_window_toggle_sidepane (ThunarWindow *window)
 {
