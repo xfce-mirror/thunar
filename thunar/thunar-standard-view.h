@@ -125,7 +125,6 @@ struct _ThunarStandardView
 
   ThunarPreferences         *preferences;
 
-  ThunarClipboardManager    *clipboard;
   ThunarListModel           *model;
 
   GtkActionGroup            *action_group;
