@@ -79,6 +79,8 @@ void            thunar_launcher_open_selected_folders                (ThunarLaun
 void            thunar_launcher_set_widget                           (ThunarLauncher                 *launcher,
                                                                       GtkWidget                      *widget);
 GtkWidget      *thunar_launcher_get_widget                           (ThunarLauncher                 *launcher);
+void            thunar_launcher_append_accelerators                  (ThunarLauncher                 *launcher,
+                                                                      GtkAccelGroup                  *accel_group);
 GtkWidget      *thunar_launcher_append_menu_item                     (ThunarLauncher                 *launcher,
                                                                       GtkMenuShell                   *menu,
                                                                       ThunarLauncherAction            action,
