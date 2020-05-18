@@ -1,10 +1,9 @@
-What is it?
-===========
+## What is it?
 
 Thunar is a modern file manager for the Unix/Linux desktop, aiming to be easy-to-use and fast.
 
-Required packages
-=================
+
+## Required packages
 
 Thunar depends on the following packages:
 
@@ -21,34 +20,25 @@ Thunar can optionally use the following packages:
  - xfce4-panel 4.10.0 or above (for the trash applet)
  - xfconf-query
 
-Installation
-============
 
-The file 'INSTALL' contains generic installation instructions. For more general information, check the [thunar documentation](https://docs.xfce.org/xfce/thunar/start).
+## Installation
 
-Debugging Support
-=================
+The file [`INSTALL`](INSTALL) contains generic installation instructions. For more general information, check the [Thunar documentation](https://docs.xfce.org/xfce/thunar/start).
+
+
+## Debugging Support
 
 Thunar currently supports four different levels of debugging support, which can be setup using the configure flag `--enable-debug` (check the output of `configure --help`):
 
-**full:**
+| Argument  | Description |
+| -------   | ----------- |
+| `full`    | Use this if you want to debug Thunar to locate a bug. The build will most probably be noticably slower. This is also recommended for people that want to develop Thunar stuff. |
+| `yes`     | Adds all kinds of checks to the code, and is therefore likely to run slower. Use this if you want to develop for Thunar (e.g. writing Thunar extensions and such). |
+| `minimum` | This is the default for release builds, and presents the recommended behaviour. |
+| `no`      | Disables all sanity checks. Don't use this unless you know exactly what you do. |
 
-Use this if you want to debug Thunar to locate a bug. The build will most probably be noticably slower. This is also recommended for people that want to develop Thunar stuff.
 
-**yes**
-
-Adds all kinds of checks to the code, and is therefore likely to run slower. Use this if you want to develop for Thunar (e.g. writing Thunar extensions and such).
-
-**minimum**
-
-This is the default for release builds, and presents the recommended behaviour.
-
-**no**
-
-Disables all sanity checks. Don't use this unless you know exactly what you do.
-
-Standards compliance
-====================
+## Standards compliance
 
 Thunar supports the following standards/specifications:
 
@@ -60,8 +50,8 @@ Thunar supports the following standards/specifications:
   * [File URI Specification](https://freedesktop.org/wiki/Specifications/file-uri-spec)
   * [Desktop Trash Can Specification](https://freedesktop.org/wiki/Specifications/trash-spec)
 
-How to report bugs?
-===================
+
+## How to report bugs?
 
 Bugs should be reported to [Xfce's Bugzilla](https://bugzilla.xfce.org), product Thunar. You will need to create an account for yourself.
 
