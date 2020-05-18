@@ -71,6 +71,7 @@ enum
   PROP_SELECTED_FILES,
   PROP_UI_MANAGER,
   PROP_WIDGET,
+  PROP_SELECT_FILES_CLOSURE,
   N_PROPERTIES
 };
 
@@ -194,6 +195,7 @@ struct _ThunarLauncher
   ThunarFile             *single_folder;
   ThunarFile             *parent_folder;
 
+  GClosure               *select_files_closure;
 
   ThunarPreferences      *preferences;
 
@@ -303,6 +305,18 @@ thunar_launcher_class_init (ThunarLauncherClass *klass)
                            GTK_TYPE_WIDGET,
                            EXO_PARAM_WRITABLE);
 
+  /**
+   * ThunarLauncher:select-files-closure:
+   *
+   * The #GClosure which will be called if the selected file should be updated after a launcher operation
+   **/
+  launcher_props[PROP_SELECT_FILES_CLOSURE] =
+     g_param_spec_pointer ("select-files-closure",
+                           "select-files-closure",
+                           "select-files-closure",
+                           G_PARAM_WRITABLE
+                           | G_PARAM_CONSTRUCT_ONLY);
+
   /* Override ThunarNavigator's properties */
   g_iface = g_type_default_interface_peek (THUNAR_TYPE_NAVIGATOR);
   launcher_props[PROP_CURRENT_DIRECTORY] =
@@ -363,6 +377,7 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 G_GNUC_END_IGNORE_DEPRECATIONS
 
   launcher->selected_files = NULL;
+  launcher->select_files_closure = NULL;
 
   /* grab a reference on the preferences */
   launcher->preferences = thunar_preferences_get ();
@@ -461,6 +476,10 @@ thunar_launcher_set_property (GObject      *object,
 
     case PROP_WIDGET:
       thunar_launcher_set_widget (launcher, g_value_get_object (value));
+      break;
+
+    case PROP_SELECT_FILES_CLOSURE:
+      launcher->select_files_closure = g_value_get_pointer (value);
       break;
 
     default:
@@ -1891,7 +1910,7 @@ thunar_launcher_action_make_link (ThunarLauncher *launcher)
    */
   application = thunar_application_get ();
   thunar_application_link_into (application, launcher->widget, g_files,
-                                thunar_file_get_file (launcher->current_directory), NULL);
+                                thunar_file_get_file (launcher->current_directory), launcher->select_files_closure);
   g_object_unref (G_OBJECT (application));
   g_list_free (g_files);
 }
@@ -1920,7 +1939,7 @@ thunar_launcher_action_duplicate (ThunarLauncher *launcher)
        */
       application = thunar_application_get ();
       thunar_application_copy_into (application, launcher->widget, selected_files,
-                                    thunar_file_get_file (launcher->current_directory), NULL);
+                                    thunar_file_get_file (launcher->current_directory), launcher->select_files_closure);
       g_object_unref (G_OBJECT (application));
 
       /* clean up */
@@ -2111,7 +2130,7 @@ thunar_launcher_action_create_folder (ThunarLauncher *launcher)
 
       /* launch the operation */
       application = thunar_application_get ();
-      thunar_application_mkdir (application, launcher->widget, &path_list, NULL);
+      thunar_application_mkdir (application, launcher->widget, &path_list, launcher->select_files_closure);
       g_object_unref (G_OBJECT (application));
 
       /* release the path */
@@ -2435,7 +2454,7 @@ thunar_launcher_action_paste_into_folder (ThunarLauncher *launcher)
 
   /* paste files from the clipboard to the folder */
   clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (launcher->widget));
-  thunar_clipboard_manager_paste_files (clipboard, thunar_file_get_file (folder_to_paste), launcher->widget, NULL);
+  thunar_clipboard_manager_paste_files (clipboard, thunar_file_get_file (folder_to_paste), launcher->widget, launcher->select_files_closure);
   g_object_unref (G_OBJECT (clipboard));
 }
 
