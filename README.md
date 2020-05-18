@@ -52,8 +52,8 @@ Standards compliance
 
 Thunar supports the following standards/specifications:
 
-  * [XDG Base Directory Specification](http://https://freedesktop.org/wiki/Specifications/basedir-spec)
-  * [Shared MIME Database Specification](http://https://freedesktop.org/wiki/Specifications/shared-mime-info-spec)
+  * [XDG Base Directory Specification](https://freedesktop.org/wiki/Specifications/basedir-spec)
+  * [Shared MIME Database Specification](https://freedesktop.org/wiki/Specifications/shared-mime-info-spec)
   * [X Direct Save (XDS) Protocol for the X Window System](https://freedesktop.org/wiki/Specifications/direct-save)
   * [Icon Theme Specification](https://freedesktop.org/wiki/Specifications/icon-theme-spec)
   * [Thumbnail Managing Standard](https://freedesktop.org/wiki/Specifications/thumbnails)
@@ -63,8 +63,6 @@ Thunar supports the following standards/specifications:
 How to report bugs?
 ===================
 
-Bugs should be reported to https://bugzilla.xfce.org, product Thunar. You will need to
-create an account for yourself.
+Bugs should be reported to [Xfce's Bugzilla](https://bugzilla.xfce.org), product Thunar. You will need to create an account for yourself.
 
-Please read [how to report bugs ](https://docs.xfce.org/contribute/start#bug_reporting_and_testing) for information on where to send
-changes or bugfixes.
+Please read [how to report bugs ](https://docs.xfce.org/contribute/start#bug_reporting_and_testing) for information on where to send changes or bugfixes.
