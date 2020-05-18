@@ -1286,6 +1286,27 @@ thunar_launcher_action_open_with_other (ThunarLauncher *launcher)
 
 
 
+/**
+ * thunar_launcher_append_accelerators:
+ * @launcher    : a #ThunarLauncher.
+ * @accel_group : a #GtkAccelGroup to be used used for new menu items
+ *
+ * Connects all accelerators and corresponding default keys of this widget to the global accelerator list
+ **/
+void thunar_launcher_append_accelerators (ThunarLauncher *launcher,
+                                          GtkAccelGroup  *accel_group)
+{
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  xfce_gtk_accel_map_add_entries (thunar_launcher_action_entries, G_N_ELEMENTS (thunar_launcher_action_entries));
+  xfce_gtk_accel_group_connect_action_entries (accel_group,
+                                               thunar_launcher_action_entries,
+                                               G_N_ELEMENTS (thunar_launcher_action_entries),
+                                               launcher);
+}
+
+
+
 static gboolean
 thunar_launcher_show_trash (ThunarLauncher *launcher)
 {
