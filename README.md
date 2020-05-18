@@ -8,16 +8,15 @@ Thunar is a modern file manager for the Unix/Linux desktop, aiming to be easy-to
 Thunar depends on the following packages:
 
  - perl 5.6 or above
- - GTK+ 3.20.0 or above
- - GLib 2.30.0 or above
- - exo 0.10.0 or above
+ - GTK+ 3.22.0 or above
+ - GLib 2.42.0 or above
+ - exo 0.12.0 or above
  - intltool 0.30 or above
 
 Thunar can optionally use the following packages:
 
  - D-Bus 0.34 or above (strongly suggested)
- - libstartup-notification 0.4 or above
- - xfce4-panel 4.10.0 or above (for the trash applet)
+ - xfce4-panel 4.14.0 or above (for the trash applet)
  - xfconf-query
 
 
