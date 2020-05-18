@@ -373,7 +373,6 @@ thunar_application_startup (GApplication *gapp)
   /* connect to the session manager */
   application->session_client = thunar_session_client_new (opt_sm_client_id);
 
-  /* TODO: how do accel maps integrate with GAction/GMenu? Using GtkAction for now */
   /* check if we have a saved accel map */
   path = xfce_resource_lookup (XFCE_RESOURCE_CONFIG, ACCEL_MAP_PATH);
   if (G_LIKELY (path != NULL))
