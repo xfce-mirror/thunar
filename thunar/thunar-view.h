@@ -64,6 +64,9 @@ struct _ThunarViewIface
                                          gboolean        use_align,
                                          gfloat          row_align,
                                          gfloat          col_align);
+  GList*          (*get_selected_files) (ThunarView     *view);
+  void            (*set_selected_files) (ThunarView     *view,
+                                         GList          *path_list);
 };
 
 GType           thunar_view_get_type            (void) G_GNUC_CONST;
@@ -93,6 +96,9 @@ void            thunar_view_scroll_to_file      (ThunarView     *view,
                                                  gboolean        use_align,
                                                  gfloat          row_align,
                                                  gfloat          col_align);
+GList*          thunar_view_get_selected_files  (ThunarView     *view);
+void            thunar_view_set_selected_files  (ThunarView     *view,
+                                                 GList          *path_list);
 
 G_END_DECLS;
 
