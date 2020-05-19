@@ -188,6 +188,41 @@ transform_thumbnail_index_to_mode (const GValue *src_value,
 
 
 
+static gboolean
+transform_parallel_copy_mode_to_index (const GValue *src_value,
+                                       GValue       *dst_value,
+                                       gpointer      user_data)
+{
+  GEnumClass *klass;
+  guint       n;
+
+  klass = g_type_class_ref (THUNAR_TYPE_PARALLEL_COPY_MODE);
+  for (n = 0; n < klass->n_values; ++n)
+    if (klass->values[n].value == g_value_get_enum (src_value))
+      g_value_set_int (dst_value, n);
+  g_type_class_unref (klass);
+
+  return TRUE;
+}
+
+
+
+static gboolean
+transform_parallel_copy_index_to_mode (const GValue *src_value,
+                                       GValue       *dst_value,
+                                       gpointer      user_data)
+{
+  GEnumClass *klass;
+
+  klass = g_type_class_ref (THUNAR_TYPE_PARALLEL_COPY_MODE);
+  g_value_set_enum (dst_value, klass->values[g_value_get_int (src_value)].value);
+  g_type_class_unref (klass);
+
+  return TRUE;
+}
+
+
+
 static void
 thunar_preferences_dialog_class_init (ThunarPreferencesDialogClass *klass)
 {
@@ -717,19 +752,23 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_container_add (GTK_CONTAINER (frame), grid);
   gtk_widget_show (grid);
 
-  button = gtk_check_button_new_with_mnemonic (_("One file transfer at a time per source device"));
-  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-freeze-transfer-on-same-source-device", G_OBJECT (button), "active");
-  gtk_widget_set_tooltip_text (button, _("Select this option to have only one copy active at a time per source device"));
-  gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 0, 1, 1);
-  gtk_widget_show (button);
+  label = gtk_label_new_with_mnemonic (_("Transfer files in parallel:"));
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
+  gtk_widget_show (label);
 
-  button = gtk_check_button_new_with_mnemonic (_("One file transfer at a time per target device"));
-  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-freeze-transfer-on-same-target-device", G_OBJECT (button), "active");
-  gtk_widget_set_tooltip_text (button, _("Select this option to have only one copy active at a time per target device"));
-  gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 1, 1, 1);
-  gtk_widget_show (button);
+  combo = gtk_combo_box_text_new ();
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Always"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Local Files Only"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Local Files On Same Devices Only"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Never"));
+  exo_mutual_binding_new_full (G_OBJECT (dialog->preferences), "misc-parallel-copy-mode", G_OBJECT (combo), "active",
+                               transform_parallel_copy_mode_to_index, transform_parallel_copy_index_to_mode, NULL, NULL);
+  gtk_widget_set_hexpand (combo, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), combo, 1, 0, 1, 1);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
+  gtk_widget_show (combo);
 
   if (thunar_g_vfs_is_uri_scheme_supported ("trash"))
     {
