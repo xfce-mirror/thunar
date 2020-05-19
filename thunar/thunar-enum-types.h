@@ -145,7 +145,7 @@ GType thunar_icon_size_get_type (void) G_GNUC_CONST;
 #define THUNAR_TYPE_THUMBNAIL_MODE (thunar_thumbnail_mode_get_type ())
 
 /**
- * ThunarThumbnailsShow:
+ * ThunarThumbnailMode:
  * @THUNAR_THUMBNAIL_MODE_NEVER      : never show thumbnails.
  * @THUNAR_THUMBNAIL_MODE_ONLY_LOCAL : only show thumbnails on local filesystems.
  * @THUNAR_THUMBNAIL_MODE_ALWAYS     : always show thumbnails (everywhere).
@@ -175,6 +175,26 @@ typedef enum
 
 GType       thunar_thumbnail_size_get_type (void)                               G_GNUC_CONST;
 const char* thunar_thumbnail_size_get_nick (ThunarThumbnailSize thumbnail_size) G_GNUC_CONST;
+
+
+#define THUNAR_TYPE_PARALLEL_COPY_MODE (thunar_parallel_copy_mode_get_type ())
+
+/**
+ * ThunarParallelCopyMode:
+ * @THUNAR_PARALLEL_COPY_MODE_NEVER                   : copies will be done consecutively, one after another.
+ * @THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL              : only do parallel copies when source and destination are local files.
+ * @THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_SAME_DEVICES : same as only local, but only if source and destination devices are the same.
+ * @THUNAR_PARALLEL_COPY_MODE_ALWAYS                  : all copies will be started immediately.
+ **/
+typedef enum
+{
+  THUNAR_PARALLEL_COPY_MODE_NEVER,
+  THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL,
+  THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_SAME_DEVICES,
+  THUNAR_PARALLEL_COPY_MODE_ALWAYS
+} ThunarParallelCopyMode;
+
+GType thunar_parallel_copy_mode_get_type (void) G_GNUC_CONST;
 
 
 #define THUNAR_TYPE_RECURSIVE_PERMISSIONS (thunar_recursive_permissions_get_type ())
