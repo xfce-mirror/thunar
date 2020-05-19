@@ -97,8 +97,7 @@ enum
   PROP_MISC_THUMBNAIL_DRAW_FRAMES,
   PROP_MISC_FILE_SIZE_BINARY,
   PROP_MISC_CONFIRM_CLOSE_MULTIPLE_TABS,
-  PROP_MISC_FREEZE_TRANSFER_ON_SAME_SOURCE_DEVICE,
-  PROP_MISC_FREEZE_TRANSFER_ON_SAME_TARGET_DEVICE,
+  PROP_MISC_PARALLEL_COPY_MODE,
   PROP_MISC_WINDOW_ICON,
   PROP_SHORTCUTS_ICON_EMBLEMS,
   PROP_SHORTCUTS_ICON_SIZE,
@@ -767,30 +766,17 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:misc-freeze-transfer-on-same-source-device:
+   * ThunarPreferences:misc-parallel-copy-mode:
    *
-   * Freeze any copy/move jobs when another job is transfering from
-   * the same source device.
+   * Do parallel copy (or not) on files copy.
    **/
-  preferences_props[PROP_MISC_FREEZE_TRANSFER_ON_SAME_SOURCE_DEVICE] =
-      g_param_spec_boolean ("misc-freeze-transfer-on-same-source-device",
-                            "MiscFreezeTransferOnSameSourceDevice",
-                            NULL,
-                            TRUE,
-                            EXO_PARAM_READWRITE);
-
-  /**
-   * ThunarPreferences:misc-freeze-transfer-on-same-target-device:
-   *
-   * Freeze any copy/move jobs when another job is transfering to
-   * the same target device.
-   **/
-  preferences_props[PROP_MISC_FREEZE_TRANSFER_ON_SAME_TARGET_DEVICE] =
-      g_param_spec_boolean ("misc-freeze-transfer-on-same-target-device",
-                            "MiscFreezeTransferOnSameTargetDevice",
-                            NULL,
-                            TRUE,
-                            EXO_PARAM_READWRITE);
+  preferences_props[PROP_MISC_PARALLEL_COPY_MODE] =
+      g_param_spec_enum ("misc-parallel-copy-mode",
+                         NULL,
+                         NULL,
+                         THUNAR_TYPE_PARALLEL_COPY_MODE,
+                         THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL,
+                         EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-change-window-icon:
