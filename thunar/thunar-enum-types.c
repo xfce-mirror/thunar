@@ -294,6 +294,30 @@ thunar_thumbnail_size_get_nick (ThunarThumbnailSize thumbnail_size)
 }
 
 
+
+GType
+thunar_parallel_copy_mode_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GEnumValue values[] =
+      {
+        { THUNAR_PARALLEL_COPY_MODE_ALWAYS,                  "THUNAR_PARALLEL_COPY_MODE_ALWAYS",                  "always",                  },
+        { THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL,              "THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL",              "only-local",              },
+        { THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_SAME_DEVICES, "THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_SAME_DEVICES", "only-local-same-devices", },
+        { THUNAR_PARALLEL_COPY_MODE_NEVER,                   "THUNAR_PARALLEL_COPY_MODE_NEVER",                   "never",                   },
+        { 0,                                                 NULL,                                                NULL,                      },
+      };
+
+      type = g_enum_register_static (I_("ThunarParallelCopyMode"), values);
+    }
+
+  return type;
+}
+
+
 /**
  * thunar_zoom_level_to_icon_size:
  * @zoom_level : a #ThunarZoomLevel.
