@@ -47,8 +47,7 @@ enum
 {
   PROP_0,
   PROP_FILE_SIZE_BINARY,
-  PROP_FREEZE_TRANSFER_ON_SAME_SOURCE_DEVICE,
-  PROP_FREEZE_TRANSFER_ON_SAME_TARGET_DEVICE,
+  PROP_PARALLEL_COPY_MODE,
 };
 
 
@@ -81,27 +80,26 @@ struct _ThunarTransferJobClass
 
 struct _ThunarTransferJob
 {
-  ThunarJob             __parent__;
+  ThunarJob               __parent__;
 
-  ThunarTransferJobType type;
-  GList                *source_node_list;
-  guint32               source_device_id;
-  GList                *target_file_list;
-  guint32               target_device_id;
+  ThunarTransferJobType   type;
+  GList                  *source_node_list;
+  gchar                  *source_device_fs_id;
+  GList                  *target_file_list;
+  gchar                  *target_device_fs_id;
 
-  gint64                start_time;
-  gint64                last_update_time;
-  guint64               last_total_progress;
+  gint64                  start_time;
+  gint64                  last_update_time;
+  guint64                 last_total_progress;
 
-  guint64               total_size;
-  guint64               total_progress;
-  guint64               file_progress;
-  guint64               transfer_rate;
+  guint64                 total_size;
+  guint64                 total_progress;
+  guint64                 file_progress;
+  guint64                 transfer_rate;
 
-  ThunarPreferences    *preferences;
-  gboolean              file_size_binary;
-  gboolean              freeze_on_same_source_device;
-  gboolean              freeze_on_same_target_device;
+  ThunarPreferences      *preferences;
+  gboolean                file_size_binary;
+  ThunarParallelCopyMode  parallel_copy_mode;
 };
 
 struct _ThunarTransferNode
@@ -147,32 +145,19 @@ thunar_transfer_job_class_init (ThunarTransferJobClass *klass)
                                                          EXO_PARAM_READWRITE));
 
   /**
-   * ThunarPropertiesDialog:freeze_on_same_source_device:
+   * ThunarPropertiesDialog:parallel_copy_mode:
    *
    * Whether to freeze this job if another job is transfering
-   * from the same source device.
+   * from the same device.
    **/
   g_object_class_install_property (gobject_class,
-                                   PROP_FREEZE_TRANSFER_ON_SAME_SOURCE_DEVICE,
-                                   g_param_spec_boolean ("freeze-transfer-on-same-source-device",
-                                                         "FreezeTransferOnSameSourceDevice",
-                                                         NULL,
-                                                         TRUE,
-                                                         EXO_PARAM_READWRITE));
-
-  /**
-   * ThunarPropertiesDialog:freeze_on_same_target_device:
-   *
-   * Whether to freeze this job if another job is transfering
-   * to the same target device.
-   **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_FREEZE_TRANSFER_ON_SAME_TARGET_DEVICE,
-                                   g_param_spec_boolean ("freeze-transfer-on-same-target-device",
-                                                         "FreezeTransferOnSameTargetDevice",
-                                                         NULL,
-                                                         TRUE,
-                                                         EXO_PARAM_READWRITE));
+                                   PROP_PARALLEL_COPY_MODE,
+                                   g_param_spec_enum ("parallel-copy-mode",
+                                                      NULL,
+                                                      NULL,
+                                                      THUNAR_TYPE_PARALLEL_COPY_MODE,
+                                                      THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL,
+                                                      EXO_PARAM_READWRITE));
 }
 
 
@@ -183,16 +168,14 @@ thunar_transfer_job_init (ThunarTransferJob *job)
   job->preferences = thunar_preferences_get ();
   exo_binding_new (G_OBJECT (job->preferences), "misc-file-size-binary",
                    G_OBJECT (job), "file-size-binary");
-  exo_binding_new (G_OBJECT (job->preferences), "misc-freeze-transfer-on-same-source-device",
-                   G_OBJECT (job), "freeze-transfer-on-same-source-device");
-  exo_binding_new (G_OBJECT (job->preferences), "misc-freeze-transfer-on-same-target-device",
-                   G_OBJECT (job), "freeze-transfer-on-same-target-device");
+  exo_binding_new (G_OBJECT (job->preferences), "misc-parallel-copy-mode",
+                   G_OBJECT (job), "parallel-copy-mode");
 
   job->type = 0;
   job->source_node_list = NULL;
-  job->source_device_id = 0;
+  job->source_device_fs_id = NULL;
   job->target_file_list = NULL;
-  job->target_device_id = 0;
+  job->target_device_fs_id = NULL;
   job->total_size = 0;
   job->total_progress = 0;
   job->file_progress = 0;
@@ -210,6 +193,11 @@ thunar_transfer_job_finalize (GObject *object)
   ThunarTransferJob *job = THUNAR_TRANSFER_JOB (object);
 
   g_list_free_full (job->source_node_list, thunar_transfer_node_free);
+
+  if (job->source_device_fs_id != NULL)
+    g_free (job->source_device_fs_id);
+  if (job->target_device_fs_id != NULL)
+    g_free (job->target_device_fs_id);
 
   thunar_g_file_list_free (job->target_file_list);
 
@@ -233,13 +221,9 @@ thunar_transfer_job_get_property (GObject     *object,
     case PROP_FILE_SIZE_BINARY:
       g_value_set_boolean (value, job->file_size_binary);
       break;
-    case PROP_FREEZE_TRANSFER_ON_SAME_SOURCE_DEVICE:
-      g_value_set_boolean (value, job->freeze_on_same_source_device);
+    case PROP_PARALLEL_COPY_MODE:
+      g_value_set_enum (value, job->parallel_copy_mode);
       break;
-    case PROP_FREEZE_TRANSFER_ON_SAME_TARGET_DEVICE:
-      g_value_set_boolean (value, job->freeze_on_same_target_device);
-      break;
-
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -261,13 +245,9 @@ thunar_transfer_job_set_property (GObject      *object,
     case PROP_FILE_SIZE_BINARY:
       job->file_size_binary = g_value_get_boolean (value);
       break;
-    case PROP_FREEZE_TRANSFER_ON_SAME_SOURCE_DEVICE:
-      job->freeze_on_same_source_device = g_value_get_boolean (value);
+    case PROP_PARALLEL_COPY_MODE:
+      job->parallel_copy_mode = g_value_get_enum (value);
       break;
-    case PROP_FREEZE_TRANSFER_ON_SAME_TARGET_DEVICE:
-      job->freeze_on_same_target_device = g_value_get_boolean (value);
-      break;
-
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -1207,41 +1187,46 @@ thunar_transfer_job_filter_running_jobs (GList *jobs, ThunarJob *own_job)
 
 
 static gboolean
-thunar_transfer_job_device_id_in_job_source_list (guint32 device_id, GList *jobs)
+thunar_transfer_job_device_id_in_job_list (const char *device_fs_id, GList *jobs)
 {
   ThunarTransferJob *job;
 
-  for (; jobs != NULL; jobs = jobs->next)
+  for (; device_fs_id != NULL && jobs != NULL; jobs = jobs->next)
     {
       if (THUNAR_IS_TRANSFER_JOB (jobs->data))
         {
           job = THUNAR_TRANSFER_JOB (jobs->data);
-          if (job->source_device_id != 0 && device_id == job->source_device_id)
+          if (g_strcmp0 (device_fs_id, job->source_device_fs_id) == 0)
+            return TRUE;
+          if (g_strcmp0 (device_fs_id, job->target_device_fs_id) == 0)
             return TRUE;
         }
     }
   return FALSE;
 }
-
 
 
 static gboolean
-thunar_transfer_job_device_id_in_job_target_list (guint32 device_id, GList *jobs)
+thunar_transfer_job_is_file_on_slow_device_xfer (GFile *file)
 {
-  ThunarTransferJob *job;
-
-  for (; device_id != 0 && jobs != NULL; jobs = jobs->next)
+  _thunar_return_val_if_fail (file != NULL, TRUE);
+  if (g_file_has_uri_scheme (file, "file"))
     {
-      if (THUNAR_IS_TRANSFER_JOB (jobs->data))
+      /* file_mount will be NULL for local files on local partitions/devices */
+      GMount *file_mount = g_file_find_enclosing_mount (file, NULL, NULL);
+      gboolean ret = FALSE; /* local files are not slow by default. */
+      if (file_mount != NULL)
         {
-          job = THUNAR_TRANSFER_JOB (jobs->data);
-          if (job->target_device_id != 0 && device_id == job->target_device_id)
-            return TRUE;
+          /* unmountable mountpoints are attached devices like USB key/disk,
+           * fuse mounts, Samba shares, PTP devices and can be slow to access. */
+          ret = g_mount_can_unmount (file_mount);
+          g_object_unref (file_mount);
         }
+      return ret;
     }
-  return FALSE;
+  else
+    return TRUE;
 }
-
 
 
 /**
@@ -1258,48 +1243,94 @@ thunar_transfer_job_verify_devices (ThunarTransferJob *transfer_job)
 {
   ThunarTransferNode *node;
   GFile              *file;
+  GFile              *target_parent;
   GFileInfo          *file_info;
-  guint32             src_device_id = 0;
-  guint32             tgt_device_id = 0;
+  gboolean            src_device_slow = FALSE;
+  gboolean            tgt_device_slow = FALSE;
+  gboolean            parallel_copy = FALSE;
+  gboolean            freeze_on_any_other_job = FALSE;
 
   _thunar_return_if_fail (THUNAR_IS_TRANSFER_JOB (transfer_job));
 
   /* no source node list nor target file list */
   if (transfer_job->source_node_list == NULL || transfer_job->target_file_list == NULL)
     return;
-
   /* first source file */
   node = transfer_job->source_node_list->data;
   file = node->source_file;
-  /* query device id */
+  /* query device filesystem id (unique string) */
   file_info = g_file_query_info (file,
-                                 G_FILE_ATTRIBUTE_UNIX_DEVICE,
+                                 G_FILE_ATTRIBUTE_ID_FILESYSTEM,
                                  G_FILE_QUERY_INFO_NONE,
                                  exo_job_get_cancellable (EXO_JOB (transfer_job)),
                                  NULL);
   if (file_info != NULL)
     {
-      src_device_id = g_file_info_get_attribute_uint32 (file_info, G_FILE_ATTRIBUTE_UNIX_DEVICE);
-      transfer_job->source_device_id = src_device_id;
+      transfer_job->source_device_fs_id = g_strdup (g_file_info_get_attribute_string (file_info, G_FILE_ATTRIBUTE_ID_FILESYSTEM));
       g_object_unref (file_info);
     }
-
+  src_device_slow = thunar_transfer_job_is_file_on_slow_device_xfer (file);
   /* first target file */
   file = G_FILE (transfer_job->target_file_list->data);
-  /* query device id */
-  file_info = g_file_query_info (file,
-                                 G_FILE_ATTRIBUTE_UNIX_DEVICE,
-                                 G_FILE_QUERY_INFO_NONE,
-                                 exo_job_get_cancellable (EXO_JOB (transfer_job)),
-                                 NULL);
-  if (file_info != NULL)
+  target_parent = file; /* start with target file */
+  while (target_parent != NULL)
     {
-      tgt_device_id = g_file_info_get_attribute_uint32 (file_info, G_FILE_ATTRIBUTE_UNIX_DEVICE);
-      transfer_job->target_device_id = tgt_device_id;
-      g_object_unref (file_info);
+      /* query device id */
+      file_info = g_file_query_info (target_parent,
+                                     G_FILE_ATTRIBUTE_ID_FILESYSTEM,
+                                     G_FILE_QUERY_INFO_NONE,
+                                     exo_job_get_cancellable (EXO_JOB (transfer_job)),
+                                     NULL);
+      if (file_info != NULL)
+        {
+          transfer_job->target_device_fs_id = g_strdup (g_file_info_get_attribute_string (file_info, G_FILE_ATTRIBUTE_ID_FILESYSTEM));
+          g_object_unref (file_info);
+          break;
+        }
+      else /* target file or parent directory does not exist (yet) */
+        {
+          /* query the parent directory */
+          target_parent = g_file_get_parent (target_parent);
+        }
+    }
+  if (target_parent != NULL && target_parent != file)
+    g_object_unref (target_parent);
+  tgt_device_slow = thunar_transfer_job_is_file_on_slow_device_xfer (file);
+
+  if (transfer_job->parallel_copy_mode == THUNAR_PARALLEL_COPY_MODE_ALWAYS)
+    /* never freeze */
+    parallel_copy = TRUE;
+  else if (transfer_job->parallel_copy_mode == THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL)
+    /* freeze copy if
+     * - src device is slow and src device appears in another job
+     * - tgt device is slow and tgt device appears in another job
+     */
+    parallel_copy = !src_device_slow && !tgt_device_slow;
+  else if (transfer_job->parallel_copy_mode == THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_SAME_DEVICES)
+    {
+      /* freeze copy if
+       * - src device fs ≠ tgt device fs and src or tgt appears in another job
+       * - src device is slow and src device appears in another job
+       * - tgt device is slow and tgt device appears in another job
+       */
+      if (g_strcmp0(transfer_job->source_device_fs_id, transfer_job->target_device_fs_id) != 0)
+        {
+          /* freeze when either src or tgt device appears on another job */
+          parallel_copy = FALSE;
+          src_device_slow = TRUE;
+          tgt_device_slow = TRUE;
+        }
+      else
+        parallel_copy = !src_device_slow && !tgt_device_slow;
+    }
+  else /* THUNAR_PARALLEL_COPY_MODE_NEVER */
+    {
+      /* freeze copy if another transfer job is running */
+      parallel_copy = FALSE;
+      freeze_on_any_other_job = TRUE;
     }
 
-  if (transfer_job->freeze_on_same_source_device || transfer_job->freeze_on_same_target_device)
+  if (!parallel_copy)
     {
       GList    *jobs = thunar_job_ask_jobs (THUNAR_JOB (transfer_job));
       GList    *other_jobs = thunar_transfer_job_filter_running_jobs (jobs, THUNAR_JOB (transfer_job));
@@ -1307,8 +1338,9 @@ thunar_transfer_job_verify_devices (ThunarTransferJob *transfer_job)
       while (
         !exo_job_is_cancelled (EXO_JOB (transfer_job)) &&
         (
-          (transfer_job->freeze_on_same_source_device && thunar_transfer_job_device_id_in_job_source_list (src_device_id, other_jobs)) ||
-          (transfer_job->freeze_on_same_target_device && thunar_transfer_job_device_id_in_job_target_list (tgt_device_id, other_jobs))
+          (freeze_on_any_other_job && other_jobs != NULL) ||
+          (src_device_slow && thunar_transfer_job_device_id_in_job_list (transfer_job->source_device_fs_id, other_jobs)) ||
+          (tgt_device_slow && thunar_transfer_job_device_id_in_job_list (transfer_job->target_device_fs_id, other_jobs))
         )
       )
         {
