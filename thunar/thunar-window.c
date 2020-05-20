@@ -567,83 +567,6 @@ thunar_window_class_init (ThunarWindowClass *klass)
 
 
 
-static gboolean
-thunar_window_check_uca_key_activation (ThunarWindow *window,
-                                        GdkEventKey  *key_event,
-                                        gpointer      user_data)
-{
-  if (thunar_launcher_check_uca_key_activation (window->launcher, key_event))
-    return GDK_EVENT_STOP;
-  return GDK_EVENT_PROPAGATE;
-}
-
-
-
-static gchar*
-thunar_window_bookmark_get_accel_path (GFile *bookmark_file)
-{
-  GChecksum    *checksum;
-  gchar        *uri;
-  gchar        *accel_path;
-  const gchar  *unique_name;
-
-  _thunar_return_val_if_fail (G_IS_FILE (bookmark_file), NULL);
-
-  /* create unique id based on the uri */
-  uri = g_file_get_uri (bookmark_file);
-  checksum = g_checksum_new (G_CHECKSUM_MD5);
-  g_checksum_update (checksum, (const guchar *) uri, strlen (uri));
-  unique_name = g_checksum_get_string (checksum);
-  accel_path = g_strconcat("<Actions>/ThunarBookmarks/", unique_name, NULL);
-
-  g_free (uri);
-  g_checksum_free (checksum);
-  return accel_path;
-}
-
-
-
-static void
-thunar_window_bookmark_check_key (GFile       *g_file,
-                                  const gchar *name,
-                                  gint         line_num,
-                                  gpointer     user_data)
-{
-  ThunarWindow *window = THUNAR_WINDOW (user_data);
-  gchar        *accel_path;
-  GtkAccelKey   key;
-
-  accel_path = thunar_window_bookmark_get_accel_path (g_file);
-  if (gtk_accel_map_lookup_entry (accel_path, &key) == TRUE)
-    {
-      if (window->latest_key_event->keyval == key.accel_key)
-        {
-          if ((window->latest_key_event->state & gtk_accelerator_get_default_mod_mask ()) == key.accel_mods)
-            thunar_window_set_current_directory_gfile (window, g_file);
-        }
-    }
-  g_free (accel_path);
-}
-
-
-
-static gboolean
-thunar_window_check_bookmark_key_activation (ThunarWindow *window,
-                                             GdkEventKey  *key_event,
-                                             gpointer      user_data)
-{
-  /* in order to access it inside the clalback */
-  window->latest_key_event = key_event;
-
-  /* load bookmark menu items from bookmark file */
-  thunar_util_load_bookmarks (window->bookmark_file,
-                              thunar_window_bookmark_check_key,
-                              window);
-  return GDK_EVENT_PROPAGATE;
-}
-
-
-
 static void
 thunar_window_init (ThunarWindow *window)
 {
@@ -2243,6 +2166,30 @@ thunar_window_menu_add_bookmarks (ThunarWindow *window,
 
 
 
+static gchar*
+thunar_window_bookmark_get_accel_path (GFile *bookmark_file)
+{
+  GChecksum    *checksum;
+  gchar        *uri;
+  gchar        *accel_path;
+  const gchar  *unique_name;
+
+  _thunar_return_val_if_fail (G_IS_FILE (bookmark_file), NULL);
+
+  /* create unique id based on the uri */
+  uri = g_file_get_uri (bookmark_file);
+  checksum = g_checksum_new (G_CHECKSUM_MD5);
+  g_checksum_update (checksum, (const guchar *) uri, strlen (uri));
+  unique_name = g_checksum_get_string (checksum);
+  accel_path = g_strconcat("<Actions>/ThunarBookmarks/", unique_name, NULL);
+
+  g_free (uri);
+  g_checksum_free (checksum);
+  return accel_path;
+}
+
+
+
 static void
 thunar_window_bookmark_add_menu_item (GFile       *g_file,
                                       const gchar *name,
@@ -3157,6 +3104,59 @@ thunar_window_action_open_network (ThunarWindow *window)
 
   /* release our reference on the location itself */
   g_object_unref (network);
+}
+
+
+
+static gboolean
+thunar_window_check_uca_key_activation (ThunarWindow *window,
+                                        GdkEventKey  *key_event,
+                                        gpointer      user_data)
+{
+  if (thunar_launcher_check_uca_key_activation (window->launcher, key_event))
+    return GDK_EVENT_STOP;
+  return GDK_EVENT_PROPAGATE;
+}
+
+
+
+static void
+thunar_window_bookmark_check_key (GFile       *g_file,
+                                  const gchar *name,
+                                  gint         line_num,
+                                  gpointer     user_data)
+{
+  ThunarWindow *window = THUNAR_WINDOW (user_data);
+  gchar        *accel_path;
+  GtkAccelKey   key;
+
+  accel_path = thunar_window_bookmark_get_accel_path (g_file);
+  if (gtk_accel_map_lookup_entry (accel_path, &key) == TRUE)
+    {
+      if (window->latest_key_event->keyval == key.accel_key)
+        {
+          if ((window->latest_key_event->state & gtk_accelerator_get_default_mod_mask ()) == key.accel_mods)
+            thunar_window_set_current_directory_gfile (window, g_file);
+        }
+    }
+  g_free (accel_path);
+}
+
+
+
+static gboolean
+thunar_window_check_bookmark_key_activation (ThunarWindow *window,
+                                             GdkEventKey  *key_event,
+                                             gpointer      user_data)
+{
+  /* in order to access it inside the clalback */
+  window->latest_key_event = key_event;
+
+  /* load bookmark menu items from bookmark file */
+  thunar_util_load_bookmarks (window->bookmark_file,
+                              thunar_window_bookmark_check_key,
+                              window);
+  return GDK_EVENT_PROPAGATE;
 }
 
 
