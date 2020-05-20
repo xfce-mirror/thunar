@@ -270,6 +270,7 @@ thunar_util_expand_filename (const gchar  *filename,
   const gchar   *slash;
   gchar         *username;
   gchar         *pwd;
+  gchar         *variable;
   gchar         *result = NULL;
 
   g_return_val_if_fail (filename != NULL, NULL);
@@ -323,20 +324,17 @@ thunar_util_expand_filename (const gchar  *filename,
       /* generate the filename */
       return g_build_filename (replacement, slash, NULL);
     }
-  else if (g_str_has_prefix (filename, "$HOME"))
+  else if (*filename == '$')
     {
-      /* examine the remainder of the filename */
-      remainder = filename + 5;
+      /* examine the remainder of the variable and filename */
+      remainder = filename + 1;
 
-      /* if we have only the slash, then we want the home dir */
-      if (G_UNLIKELY (*remainder == '\0'))
-        return g_strdup (g_getenv ("HOME"));
-
-      /* if there is more, then get the variable for replacement */
-      replacement = g_getenv ("HOME");
-
-      /* lookup the slash */
+      /* lookup the slash at the end of the variable */
       for (slash = remainder; *slash != '\0' && *slash != G_DIR_SEPARATOR; ++slash);
+
+      /* get the variable for replacement */
+      variable = g_strndup (remainder, slash - remainder);
+      replacement = g_getenv (variable);
 
       /* generate the filename */
       return g_build_filename (replacement, slash, NULL);
