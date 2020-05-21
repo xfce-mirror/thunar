@@ -335,6 +335,10 @@ thunar_util_expand_filename (const gchar  *filename,
       /* get the variable for replacement */
       variable = g_strndup (remainder, slash - remainder);
       replacement = g_getenv (variable);
+      g_free(variable);
+
+      if (replacement == NULL)
+        return NULL;
 
       /* generate the filename */
       return g_build_filename (replacement, slash, NULL);
