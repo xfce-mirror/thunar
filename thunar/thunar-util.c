@@ -270,6 +270,7 @@ thunar_util_expand_filename (const gchar  *filename,
   const gchar   *slash;
   gchar         *username;
   gchar         *pwd;
+  gchar         *variable;
   gchar         *result = NULL;
 
   g_return_val_if_fail (filename != NULL, NULL);
@@ -319,6 +320,25 @@ thunar_util_expand_filename (const gchar  *filename,
           /* use the homedir of the specified user */
           replacement = passwd->pw_dir;
         }
+
+      /* generate the filename */
+      return g_build_filename (replacement, slash, NULL);
+    }
+  else if (*filename == '$')
+    {
+      /* examine the remainder of the variable and filename */
+      remainder = filename + 1;
+
+      /* lookup the slash at the end of the variable */
+      for (slash = remainder; *slash != '\0' && *slash != G_DIR_SEPARATOR; ++slash);
+
+      /* get the variable for replacement */
+      variable = g_strndup (remainder, slash - remainder);
+      replacement = g_getenv (variable);
+      g_free (variable);
+
+      if (replacement == NULL)
+        return NULL;
 
       /* generate the filename */
       return g_build_filename (replacement, slash, NULL);
