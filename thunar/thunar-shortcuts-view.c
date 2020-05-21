@@ -426,6 +426,7 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
   GtkTreeIter          iter;
   gboolean             result;
   gboolean             can_eject;
+  gboolean             button_clicked;
   gint                 icon_width, column_width;
 
   /* reset the pressed button state */
@@ -462,7 +463,13 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
           /* check if we clicked the eject button area */
           column_width = gtk_tree_view_column_get_width (gtk_tree_view_get_column (GTK_TREE_VIEW (view), 0));
           gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &icon_width, NULL);
-          if (event->button == 1 && event->x >= column_width - icon_width - (view->padding_enabled ? 16 : 3))
+
+          if (gtk_get_locale_direction () == GTK_TEXT_DIR_LTR)
+            button_clicked = event->x >= column_width - icon_width - (view->padding_enabled ? 16 : 3);
+          else
+            button_clicked = event->x <= icon_width + (view->padding_enabled ? 16 : 3);
+
+          if (event->button == 1 && button_clicked)
             {
               /* check if that shortcut actually has an eject button */
               model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
