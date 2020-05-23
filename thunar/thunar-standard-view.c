@@ -33,7 +33,6 @@
 #include <gdk/gdkkeysyms.h>
 
 #include <thunar/thunar-application.h>
-#include <thunar/thunar-create-dialog.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-dnd.h>
 #include <thunar/thunar-enum-types.h>
@@ -2355,10 +2354,10 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* ask the user to enter a name for the new empty file */
-  name = thunar_show_create_dialog (GTK_WIDGET (standard_view),
-                                    "text/plain",
-                                    _("New Empty File"),
-                                    _("New Empty File..."));
+  name = thunar_dialogs_show_create (GTK_WIDGET (standard_view),
+                                     "text/plain",
+                                     _("New Empty File"),
+                                     _("New Empty File..."));
   if (G_LIKELY (name != NULL))
     {
       /* determine the ThunarFile for the current directory */
@@ -2401,10 +2400,10 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* ask the user to enter a name for the new folder */
-  name = thunar_show_create_dialog (GTK_WIDGET (standard_view),
-                                    "inode/directory",
-                                    _("New Folder"),
-                                    _("Create New Folder"));
+  name = thunar_dialogs_show_create (GTK_WIDGET (standard_view),
+                                     "inode/directory",
+                                     _("New Folder"),
+                                     _("Create New Folder"));
   if (G_LIKELY (name != NULL))
     {
       /* determine the ThunarFile for the current directory */
@@ -2454,10 +2453,10 @@ G_GNUC_END_IGNORE_DEPRECATIONS
                            thunar_file_get_display_name (file));
 
   /* ask the user to enter a name for the new document */
-  name = thunar_show_create_dialog (GTK_WIDGET (standard_view),
-                                    thunar_file_get_content_type (THUNAR_FILE (file)),
-                                    thunar_file_get_display_name (file),
-                                    title);
+  name = thunar_dialogs_show_create (GTK_WIDGET (standard_view),
+                                     thunar_file_get_content_type (THUNAR_FILE (file)),
+                                     thunar_file_get_display_name (file),
+                                     title);
   if (G_LIKELY (name != NULL))
     {
       /* determine the ThunarFile for the current directory */

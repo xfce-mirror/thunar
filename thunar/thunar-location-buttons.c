@@ -27,7 +27,7 @@
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-clipboard-manager.h>
-#include <thunar/thunar-create-dialog.h>
+#include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
@@ -1342,10 +1342,10 @@ G_GNUC_END_IGNORE_DEPRECATIONS
     return;
 
   /* ask the user to enter a name for the new folder */
-  name = thunar_show_create_dialog (GTK_WIDGET (buttons),
-                                    "inode/directory",
-                                    _("New Folder"),
-                                    _("Create New Folder"));
+  name = thunar_dialogs_show_create (GTK_WIDGET (buttons),
+                                     "inode/directory",
+                                     _("New Folder"),
+                                     _("Create New Folder"));
   if (G_LIKELY (name != NULL))
     {
       /* fake the path list */

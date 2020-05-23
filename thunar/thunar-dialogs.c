@@ -33,6 +33,7 @@
 #endif
 
 #include <thunar/thunar-dialogs.h>
+#include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-io-jobs.h>
 #include <thunar/thunar-job.h>
@@ -48,6 +49,174 @@ static void          thunar_dialogs_select_filename      (GtkWidget  *entry,
 static gboolean      thunar_dialogs_entry_undo           (GtkWidget  *widget,
                                                           GdkEvent   *event,
                                                           ThunarFile *file);
+
+
+
+static void
+thunar_create_dialog_text_changed (GtkWidget *entry,
+                                   GtkWidget *dialog)
+{
+  const gchar *text;
+  const gchar *p;
+
+  _thunar_return_if_fail (GTK_IS_ENTRY (entry));
+  _thunar_return_if_fail (GTK_IS_DIALOG (dialog));
+
+  /* verify the new text */
+  text = gtk_entry_get_text (GTK_ENTRY (entry));
+  for (p = text; *p != '\0'; ++p)
+    if (G_UNLIKELY (G_IS_DIR_SEPARATOR (*p)))
+      break;
+
+  /* enable/disable the "OK" button appropriately */
+  gtk_dialog_set_response_sensitive (GTK_DIALOG (dialog), GTK_RESPONSE_OK, (*text != '\0' && *p == '\0'));
+}
+
+
+
+/**
+ * thunar_dialogs_show_create:
+ * @parent       : a #GdkScreen, a #GtkWidget or %NULL.
+ * @content_type : the content type of the file or folder to create.
+ * @filename     : the suggested filename or %NULL.
+ * @title        : the dialog title.
+ *
+ * Displays a Thunar create dialog  with the specified
+ * parameters that asks the user to enter a name for a new file or
+ * folder.
+ *
+ * The caller is responsible to free the returned filename using
+ * g_free() when no longer needed.
+ *
+ * Return value: the filename entered by the user or %NULL if the user
+ *               cancelled the dialog.
+ **/
+gchar*
+thunar_dialogs_show_create (gpointer     parent,
+                            const gchar *content_type,
+                            const gchar *filename,
+                            const gchar *title)
+{
+  GtkWidget   *dialog;
+  GtkWindow   *window;
+  GdkScreen   *screen;
+  GError      *error = NULL;
+  gchar       *name = NULL;
+  GtkWidget   *label;
+  GtkWidget   *grid;
+  GtkWidget   *image;
+  GtkWidget   *entry;
+  const gchar *dot;
+  glong        offset;
+  GIcon       *icon = NULL;
+
+  _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), NULL);
+
+  /* parse the parent window and screen */
+  screen = thunar_util_parse_parent (parent, &window);
+
+  /* create a new dialog window */
+  dialog = gtk_dialog_new_with_buttons (title,
+                                        window,
+                                        GTK_DIALOG_MODAL
+                                        | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        _("_Cancel"), GTK_RESPONSE_CANCEL,
+                                        _("C_reate"), GTK_RESPONSE_OK,
+                                        NULL);
+
+  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
+  gtk_dialog_set_response_sensitive (GTK_DIALOG (dialog), GTK_RESPONSE_OK, FALSE);
+  gtk_window_set_default_size (GTK_WINDOW (dialog), 300, -1);
+
+  grid = gtk_grid_new ();
+  gtk_grid_set_column_spacing (GTK_GRID (grid), 6);
+  gtk_grid_set_row_spacing (GTK_GRID (grid), 3);
+  gtk_container_set_border_width (GTK_CONTAINER (grid), 6);
+  gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), grid, TRUE, TRUE, 0);
+  gtk_widget_show (grid);
+
+  /* try to load the icon */
+  if (G_LIKELY (content_type != NULL))
+    icon = g_content_type_get_icon (content_type);
+
+  /* setup the image */
+  if (G_LIKELY (icon != NULL))
+    {
+      image = g_object_new (GTK_TYPE_IMAGE, "xpad", 6, "ypad", 6, NULL);
+      gtk_image_set_from_gicon (GTK_IMAGE (image), icon, GTK_ICON_SIZE_DIALOG);
+      gtk_grid_attach (GTK_GRID (grid), image, 0, 0, 1, 2);
+      g_object_unref (icon);
+      gtk_widget_show (image);
+    }
+
+  label = g_object_new (GTK_TYPE_LABEL, "label", _("Enter the name:"), "xalign", 0.0f, "hexpand", TRUE, NULL);
+  gtk_grid_attach (GTK_GRID (grid), label, 1, 0, 1, 1);
+  gtk_widget_show (label);
+
+  entry = g_object_new (GTK_TYPE_ENTRY, "activates-default", TRUE, "hexpand", TRUE, NULL);
+  g_signal_connect (G_OBJECT (entry), "changed", G_CALLBACK (thunar_create_dialog_text_changed), dialog);
+  gtk_widget_set_valign (entry, GTK_ALIGN_CENTER);
+  gtk_grid_attach (GTK_GRID (grid), entry, 1, 1, 1, 1);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), entry);
+  gtk_widget_show (entry);
+
+  if (filename == NULL)
+    filename = "";
+
+  /* put the filename in the entry */
+  gtk_entry_set_text (GTK_ENTRY (entry), filename);
+
+  /* check if filename contains a dot */
+  dot = thunar_util_str_get_extension (filename);
+  if (G_LIKELY (dot != NULL))
+    {
+      /* grab focus to the entry first, else
+       * the selection will be altered later
+       * when the focus is transferred.
+       */
+      gtk_widget_grab_focus (entry);
+
+      /* determine the UTF-8 char offset */
+      offset = g_utf8_pointer_to_offset (filename, dot);
+
+      /* select the text prior to the dot */
+      if (G_LIKELY (offset > 0))
+        gtk_editable_select_region (GTK_EDITABLE (entry), 0, offset);
+    }
+  else
+    {
+      /* select the whole file name */
+      gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
+    }
+
+  if (screen != NULL)
+    gtk_window_set_screen (GTK_WINDOW (dialog), screen);
+
+  if (window != NULL)
+    gtk_window_set_transient_for (GTK_WINDOW (dialog), window);
+
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
+    {
+      /* determine the chosen filename */
+      filename = gtk_entry_get_text (GTK_ENTRY (entry));;
+
+      /* convert the UTF-8 filename to the local file system encoding */
+      name = g_filename_from_utf8 (filename, -1, NULL, NULL, &error);
+      if (G_UNLIKELY (name == NULL))
+        {
+          /* display an error message */
+          thunar_dialogs_show_error (dialog, error, _("Cannot convert filename \"%s\" to the local encoding"), filename);
+
+          /* release the error */
+          g_error_free (error);
+        }
+    }
+
+  /* destroy the dialog */
+  gtk_widget_destroy (dialog);
+
+  return name;
+}
 
 
 

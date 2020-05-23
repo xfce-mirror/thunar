@@ -72,8 +72,6 @@ thunar_SOURCES =							\
 	thunar-compact-view.h						\
 	thunar-component.c						\
 	thunar-component.h						\
-	thunar-create-dialog.c						\
-	thunar-create-dialog.h						\
 	thunar-dbus-service.c						\
 	thunar-dbus-service.h						\
 	thunar-deep-count-job.h						\
