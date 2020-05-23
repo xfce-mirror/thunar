@@ -32,6 +32,8 @@
 #include <string.h>
 #endif
 
+#include <libxfce4ui/libxfce4ui.h>
+
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-factory.h>
@@ -46,31 +48,6 @@
 
 static void          thunar_dialogs_select_filename      (GtkWidget  *entry,
                                                           ThunarFile *file);
-static gboolean      thunar_dialogs_entry_undo           (GtkWidget  *widget,
-                                                          GdkEvent   *event,
-                                                          ThunarFile *file);
-
-
-
-static void
-thunar_create_dialog_text_changed (GtkWidget *entry,
-                                   GtkWidget *dialog)
-{
-  const gchar *text;
-  const gchar *p;
-
-  _thunar_return_if_fail (GTK_IS_ENTRY (entry));
-  _thunar_return_if_fail (GTK_IS_DIALOG (dialog));
-
-  /* verify the new text */
-  text = gtk_entry_get_text (GTK_ENTRY (entry));
-  for (p = text; *p != '\0'; ++p)
-    if (G_UNLIKELY (G_IS_DIR_SEPARATOR (*p)))
-      break;
-
-  /* enable/disable the "OK" button appropriately */
-  gtk_dialog_set_response_sensitive (GTK_DIALOG (dialog), GTK_RESPONSE_OK, (*text != '\0' && *p == '\0'));
-}
 
 
 
@@ -97,18 +74,16 @@ thunar_dialogs_show_create (gpointer     parent,
                             const gchar *filename,
                             const gchar *title)
 {
-  GtkWidget   *dialog;
-  GtkWindow   *window;
-  GdkScreen   *screen;
-  GError      *error = NULL;
-  gchar       *name = NULL;
-  GtkWidget   *label;
-  GtkWidget   *grid;
-  GtkWidget   *image;
-  GtkWidget   *entry;
-  const gchar *dot;
-  glong        offset;
-  GIcon       *icon = NULL;
+  GtkWidget         *dialog;
+  GtkWindow         *window;
+  GdkScreen         *screen;
+  GError            *error = NULL;
+  gchar             *name = NULL;
+  GtkWidget         *label;
+  GtkWidget         *grid;
+  GtkWidget         *image;
+  XfceFilenameInput *filename_input;
+  GIcon             *icon = NULL;
 
   _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), NULL);
 
@@ -153,41 +128,25 @@ thunar_dialogs_show_create (gpointer     parent,
   gtk_grid_attach (GTK_GRID (grid), label, 1, 0, 1, 1);
   gtk_widget_show (label);
 
-  entry = g_object_new (GTK_TYPE_ENTRY, "activates-default", TRUE, "hexpand", TRUE, NULL);
-  g_signal_connect (G_OBJECT (entry), "changed", G_CALLBACK (thunar_create_dialog_text_changed), dialog);
-  gtk_widget_set_valign (entry, GTK_ALIGN_CENTER);
-  gtk_grid_attach (GTK_GRID (grid), entry, 1, 1, 1, 1);
-  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), entry);
-  gtk_widget_show (entry);
+  /* set up the widget for entering the filename */
+  filename_input = g_object_new (XFCE_TYPE_FILENAME_INPUT, "original-filename", filename, NULL);
+  gtk_widget_set_hexpand (GTK_WIDGET (filename_input), TRUE);
+  gtk_widget_set_valign (GTK_WIDGET (filename_input), GTK_ALIGN_CENTER);
 
-  if (filename == NULL)
-    filename = "";
+  /* connect to signals so that the sensitivity of the Create button is updated according to whether there
+   * is a valid file name entered */
+  g_signal_connect_swapped (filename_input, "text-invalid", G_CALLBACK (xfce_filename_input_desensitise_widget),
+                            gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK));
+  g_signal_connect_swapped (filename_input, "text-valid", G_CALLBACK (xfce_filename_input_sensitise_widget),
+                            gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK));
 
-  /* put the filename in the entry */
-  gtk_entry_set_text (GTK_ENTRY (entry), filename);
+  gtk_grid_attach (GTK_GRID (grid), GTK_WIDGET (filename_input), 1, 1, 1, 1);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label),
+                                      GTK_WIDGET (xfce_filename_input_get_entry (filename_input)));
+  gtk_widget_show_all ( GTK_WIDGET (filename_input));
 
-  /* check if filename contains a dot */
-  dot = thunar_util_str_get_extension (filename);
-  if (G_LIKELY (dot != NULL))
-    {
-      /* grab focus to the entry first, else
-       * the selection will be altered later
-       * when the focus is transferred.
-       */
-      gtk_widget_grab_focus (entry);
-
-      /* determine the UTF-8 char offset */
-      offset = g_utf8_pointer_to_offset (filename, dot);
-
-      /* select the text prior to the dot */
-      if (G_LIKELY (offset > 0))
-        gtk_editable_select_region (GTK_EDITABLE (entry), 0, offset);
-    }
-  else
-    {
-      /* select the whole file name */
-      gtk_editable_select_region (GTK_EDITABLE (entry), 0, -1);
-    }
+  /* ensure that the sensitivity of the Create button is set correctly */
+  xfce_filename_input_check (filename_input);
 
   if (screen != NULL)
     gtk_window_set_screen (GTK_WINDOW (dialog), screen);
@@ -198,7 +157,7 @@ thunar_dialogs_show_create (gpointer     parent,
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
     {
       /* determine the chosen filename */
-      filename = gtk_entry_get_text (GTK_ENTRY (entry));;
+      filename = xfce_filename_input_get_text (filename_input);
 
       /* convert the UTF-8 filename to the local file system encoding */
       name = g_filename_from_utf8 (filename, -1, NULL, NULL, &error);
@@ -242,7 +201,6 @@ thunar_dialogs_show_rename_file (gpointer    parent,
   const gchar       *text;
   ThunarJob         *job = NULL;
   GtkWidget         *dialog;
-  GtkWidget         *entry;
   GtkWidget         *label;
   GtkWidget         *image;
   GtkWidget         *grid;
@@ -255,6 +213,7 @@ thunar_dialogs_show_rename_file (gpointer    parent,
   gint               layout_width;
   gint               layout_offset;
   gint               parent_width = 500;
+  XfceFilenameInput *filename_input;
 
   _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WINDOW (parent), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
@@ -308,27 +267,33 @@ thunar_dialogs_show_rename_file (gpointer    parent,
   gtk_grid_attach (GTK_GRID (grid), label, 1, 0, 1, 1);
   gtk_widget_show (label);
 
-  entry = gtk_entry_new ();
-  gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
-  gtk_widget_set_hexpand (entry, TRUE);
-  gtk_widget_set_valign (entry, GTK_ALIGN_CENTER);
-  gtk_grid_attach (GTK_GRID (grid), entry, 1, 1, 1, 1);
-  gtk_widget_show (entry);
+  /* set up the widget for entering the filename */
+  filename_input = g_object_new (XFCE_TYPE_FILENAME_INPUT, "original-filename", filename, NULL);
+  gtk_widget_set_hexpand (GTK_WIDGET (filename_input), TRUE);
+  gtk_widget_set_valign (GTK_WIDGET (filename_input), GTK_ALIGN_CENTER);
 
-  /* setup the old filename */
-  gtk_entry_set_text (GTK_ENTRY (entry), filename);
+  /* connect to signals so that the sensitivity of the Create button is updated according to whether there
+   * is a valid file name entered */
+  g_signal_connect_swapped (filename_input, "text-invalid", G_CALLBACK (xfce_filename_input_desensitise_widget),
+                            gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK));
+  g_signal_connect_swapped (filename_input, "text-valid", G_CALLBACK (xfce_filename_input_sensitise_widget),
+                            gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK));
 
-  /* allow reverting the filename with ctrl + z */
-  g_signal_connect (entry, "key-press-event",
-                    G_CALLBACK (thunar_dialogs_entry_undo), file);
+  gtk_grid_attach (GTK_GRID (grid), GTK_WIDGET (filename_input), 1, 1, 1, 1);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label),
+                                      GTK_WIDGET (xfce_filename_input_get_entry (filename_input)));
+  gtk_widget_show_all ( GTK_WIDGET (filename_input));
+
+  /* ensure that the sensitivity of the Create button is set correctly */
+  xfce_filename_input_check (filename_input);
 
   /* select the filename without the extension */
-  thunar_dialogs_select_filename (entry, file);
+  thunar_dialogs_select_filename (GTK_WIDGET (xfce_filename_input_get_entry (filename_input)), file);
 
   /* get the size the entry requires to render the full text */
-  layout = gtk_entry_get_layout (GTK_ENTRY (entry));
+  layout = gtk_entry_get_layout (xfce_filename_input_get_entry (filename_input));
   pango_layout_get_pixel_size (layout, &layout_width, NULL);
-  gtk_entry_get_layout_offsets (GTK_ENTRY (entry), &layout_offset, NULL);
+  gtk_entry_get_layout_offsets (xfce_filename_input_get_entry (filename_input), &layout_offset, NULL);
   layout_width += (layout_offset * 2) + (12 * 4) + 48; /* 12px free space in entry */
 
   /* parent window width */
@@ -354,7 +319,7 @@ thunar_dialogs_show_rename_file (gpointer    parent,
       gtk_widget_hide (dialog);
 
       /* determine the new filename */
-      text = gtk_entry_get_text (GTK_ENTRY (entry));
+      text = xfce_filename_input_get_text (filename_input);
 
       /* check if we have a new name here */
       if (G_LIKELY (!exo_str_is_equal (filename, text)))
@@ -1155,29 +1120,4 @@ static void thunar_dialogs_select_filename (GtkWidget  *entry,
   /* select the text prior to the dot */
   if (G_LIKELY (offset > 0))
     gtk_editable_select_region (GTK_EDITABLE (entry), 0, offset);
-}
-
-
-
-static gboolean thunar_dialogs_entry_undo (GtkWidget  *widget,
-                                           GdkEvent   *event,
-                                           ThunarFile *file)
-{
-  guint           keyval;
-  GdkModifierType state;
-
-  if (G_UNLIKELY (!gdk_event_get_keyval (event, &keyval) ||
-                  !gdk_event_get_state (event, &state)))
-    return GDK_EVENT_PROPAGATE;
-
-  if ((state & GDK_CONTROL_MASK) != 0 && keyval == GDK_KEY_z)
-    {
-      gtk_entry_set_text (GTK_ENTRY (widget),
-                          thunar_file_get_display_name (file));
-      thunar_dialogs_select_filename (widget, file);
-
-      return GDK_EVENT_STOP;
-    }
-
-  return GDK_EVENT_PROPAGATE;
 }
