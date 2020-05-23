@@ -27,7 +27,6 @@
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-clipboard-manager.h>
-#include <thunar/thunar-create-dialog.h>
 #include <thunar/thunar-device.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-dnd.h>
@@ -1771,10 +1770,10 @@ thunar_tree_view_action_create_folder (ThunarTreeView *view)
     return;
 
   /* ask the user to enter a name for the new folder */
-  name = thunar_show_create_dialog (GTK_WIDGET (view),
-                                    "inode/directory",
-                                    _("New Folder"),
-                                    _("Create New Folder"));
+  name = thunar_dialogs_show_create (GTK_WIDGET (view),
+                                     "inode/directory",
+                                     _("New Folder"),
+                                     _("Create New Folder"));
   if (G_LIKELY (name != NULL))
     {
       /* fake the path list */
