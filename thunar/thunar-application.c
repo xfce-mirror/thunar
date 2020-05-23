@@ -47,7 +47,6 @@
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-browser.h>
-#include <thunar/thunar-create-dialog.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gdk-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
@@ -1810,7 +1809,7 @@ thunar_application_create_file (ThunarApplication *application,
   /* TODO pass the startup ID to the rename dialog */
 
   /* ask the user to enter a name for the new folder */
-  name = thunar_show_create_dialog (screen, content_type, dialog_title, title);
+  name = thunar_dialogs_show_create (screen, content_type, dialog_title, title);
   if (G_LIKELY (name != NULL))
     {
       path_list.data = g_file_get_child (thunar_file_get_file (parent_directory), name);
@@ -1867,10 +1866,10 @@ thunar_application_create_file_from_template (ThunarApplication *application,
   /* TODO pass the startup ID to the rename dialog */
 
   /* ask the user to enter a name for the new document */
-  name = thunar_show_create_dialog (screen,
-                                    thunar_file_get_content_type (template_file),
-                                    thunar_file_get_display_name (template_file),
-                                    title);
+  name = thunar_dialogs_show_create (screen,
+                                     thunar_file_get_content_type (template_file),
+                                     thunar_file_get_display_name (template_file),
+                                     title);
   if (G_LIKELY (name != NULL))
     {
       /* fake the target path list */
