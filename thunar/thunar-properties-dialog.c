@@ -125,10 +125,11 @@ struct _ThunarPropertiesDialog
   ThunarThumbnailer      *thumbnailer;
   guint                   thumbnail_request;
 
+  XfceFilenameInput      *name_entry;
+
   GtkWidget              *notebook;
   GtkWidget              *icon_button;
   GtkWidget              *icon_image;
-  GtkWidget              *name_entry;
   GtkWidget              *names_label;
   GtkWidget              *single_box;
   GtkWidget              *kind_ebox;
@@ -291,12 +292,19 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_box_pack_end (GTK_BOX (dialog->single_box), label, TRUE, TRUE, 0);
   gtk_widget_show (label);
 
-  dialog->name_entry = g_object_new (GTK_TYPE_ENTRY, "editable", FALSE, "valign", GTK_ALIGN_CENTER, NULL);
-  gtk_label_set_mnemonic_widget (GTK_LABEL (label), dialog->name_entry);
-  g_signal_connect (G_OBJECT (dialog->name_entry), "activate", G_CALLBACK (thunar_properties_dialog_name_activate), dialog);
-  g_signal_connect (G_OBJECT (dialog->name_entry), "focus-out-event", G_CALLBACK (thunar_properties_dialog_name_focus_out_event), dialog);
-  gtk_widget_set_hexpand (dialog->name_entry, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), dialog->name_entry, 1, row, 1, 1);
+  /* set up the widget for entering the filename */
+  dialog->name_entry = g_object_new (XFCE_TYPE_FILENAME_INPUT, NULL);
+  gtk_widget_set_hexpand (GTK_WIDGET (dialog->name_entry), TRUE);
+  gtk_widget_set_valign (GTK_WIDGET (dialog->name_entry), GTK_ALIGN_CENTER);
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), GTK_WIDGET (xfce_filename_input_get_entry (dialog->name_entry)));
+  gtk_widget_show_all (GTK_WIDGET (dialog->name_entry));
+
+  g_signal_connect (G_OBJECT (xfce_filename_input_get_entry (dialog->name_entry)),
+                    "activate", G_CALLBACK (thunar_properties_dialog_name_activate), dialog);
+  g_signal_connect (G_OBJECT (xfce_filename_input_get_entry (dialog->name_entry)),
+                    "focus-out-event", G_CALLBACK (thunar_properties_dialog_name_focus_out_event), dialog);
+
+  gtk_grid_attach (GTK_GRID (grid), GTK_WIDGET (dialog->name_entry), 1, row, 1, 1);
   exo_binding_new (G_OBJECT (dialog->single_box), "visible", G_OBJECT (dialog->name_entry), "visible");
 
   ++row;
@@ -724,7 +732,7 @@ thunar_properties_dialog_rename_error (ExoJob                 *job,
   /* reset the entry display name to the original name, so the focus
      out event does not trigger the rename again by calling
      thunar_properties_dialog_name_activate */
-  gtk_entry_set_text (GTK_ENTRY (dialog->name_entry),
+  gtk_entry_set_text (GTK_ENTRY (xfce_filename_input_get_entry (dialog->name_entry)),
                       thunar_file_get_display_name (THUNAR_FILE (dialog->files->data)));
 
   /* display an error message */
@@ -753,20 +761,20 @@ thunar_properties_dialog_name_activate (GtkWidget              *entry,
                                         ThunarPropertiesDialog *dialog)
 {
   const gchar *old_name;
+  const gchar *new_name;
   ThunarJob   *job;
-  gchar       *new_name;
   ThunarFile  *file;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
 
   /* check if we still have a valid file and if the user is allowed to rename */
-  if (G_UNLIKELY (!gtk_widget_get_sensitive (dialog->name_entry)
+  if (G_UNLIKELY (!gtk_widget_get_sensitive (GTK_WIDGET (xfce_filename_input_get_entry (dialog->name_entry)))
       || g_list_length (dialog->files) != 1))
     return;
 
   /* determine new and old name */
   file = THUNAR_FILE (dialog->files->data);
-  new_name = gtk_editable_get_chars (GTK_EDITABLE (dialog->name_entry), 0, -1);
+  new_name = xfce_filename_input_get_text (dialog->name_entry);
   old_name = thunar_file_get_display_name (file);
   if (g_utf8_collate (new_name, old_name) != 0)
     {
@@ -967,14 +975,15 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   g_object_unref (G_OBJECT (dialog->icon_image));
 
   /* update the name (if it differs) */
-  gtk_editable_set_editable (GTK_EDITABLE (dialog->name_entry), thunar_file_is_renameable (file));
+  gtk_editable_set_editable (GTK_EDITABLE (xfce_filename_input_get_entry (dialog->name_entry)),
+                             thunar_file_is_renameable (file));
   name = thunar_file_get_display_name (file);
-  if (G_LIKELY (strcmp (name, gtk_entry_get_text (GTK_ENTRY (dialog->name_entry))) != 0))
+  if (G_LIKELY (strcmp (name, xfce_filename_input_get_text (dialog->name_entry)) != 0))
     {
-      gtk_entry_set_text (GTK_ENTRY (dialog->name_entry), name);
+      gtk_entry_set_text (xfce_filename_input_get_entry (dialog->name_entry), name);
 
       /* grab the input focus to the name entry */
-      gtk_widget_grab_focus (dialog->name_entry);
+      gtk_widget_grab_focus (GTK_WIDGET (xfce_filename_input_get_entry (dialog->name_entry)));
 
       /* select the pre-dot part of the name */
       str = thunar_util_str_get_extension (name);
@@ -985,7 +994,7 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
 
           /* select the region */
           if (G_LIKELY (offset > 0))
-            gtk_editable_select_region (GTK_EDITABLE (dialog->name_entry), 0, offset);
+            gtk_editable_select_region (GTK_EDITABLE (xfce_filename_input_get_entry (dialog->name_entry)), 0, offset);
         }
     }
 
@@ -1488,6 +1497,3 @@ thunar_properties_dialog_set_file (ThunarPropertiesDialog *dialog,
       thunar_properties_dialog_set_files (dialog, &foo);
     }
 }
-
-
-
