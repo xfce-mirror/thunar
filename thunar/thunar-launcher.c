@@ -1719,27 +1719,25 @@ thunar_launcher_build_sendto_submenu (ThunarLauncher *launcher)
       for (lp = appinfo_list; lp != NULL; lp = lp->next)
         {
           /* generate a unique name and tooltip for the handler */
-          label_text = (gchar*)g_app_info_get_name (lp->data);
+          label_text = g_strdup (g_app_info_get_name (lp->data));
           tooltip_text = g_strdup_printf (ngettext ("Send the selected file to \"%s\"",
                                                     "Send the selected files to \"%s\"", launcher->n_selected_files), label_text);
 
           icon = g_app_info_get_icon (lp->data);
           image = NULL;
           if (G_LIKELY (icon != NULL))
-            {
               image = gtk_image_new_from_gicon (icon, GTK_ICON_SIZE_MENU);
-              g_object_unref (icon);
-            }
+
           item = xfce_gtk_image_menu_item_new (label_text, tooltip_text, NULL, G_CALLBACK (thunar_launcher_menu_item_activated),
                                                G_OBJECT (launcher), image, GTK_MENU_SHELL (submenu));
-          g_object_set_qdata_full (G_OBJECT (item), thunar_launcher_appinfo_quark, lp->data, g_object_unref);
+          g_object_set_qdata_full (G_OBJECT (item), thunar_launcher_appinfo_quark, g_object_ref (lp->data), g_object_unref);
 
           /* cleanup */
           g_free (tooltip_text);
         }
 
       /* release the appinfo list */
-      g_list_free (appinfo_list);
+      g_list_free_full (appinfo_list, g_object_unref);
     }
 
   return submenu;
