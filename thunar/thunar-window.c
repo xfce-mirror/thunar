@@ -250,6 +250,9 @@ static void      thunar_window_menu_add_bookmarks         (ThunarWindow         
 static gboolean  thunar_window_menu_item_hovered          (ThunarWindow           *window,
                                                            GdkEventCrossing       *event,
                                                            GtkWidget              *menu);
+static gboolean  thunar_window_menu_move_selected         (ThunarWindow           *window,
+                                                           gint                    distance,
+                                                           GtkMenuShell           *menu_shell);
 static gboolean  thunar_window_check_uca_key_activation   (ThunarWindow           *window,
                                                            GdkEventKey            *key_event,
                                                            gpointer                user_data);
@@ -663,6 +666,7 @@ thunar_window_init (ThunarWindow *window)
 
   /* build the menubar */
   window->menubar = gtk_menu_bar_new ();
+  g_signal_connect_swapped (G_OBJECT (window->menubar), "move-selected", G_CALLBACK (thunar_window_menu_move_selected), window);
   item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_FILE_MENU), G_OBJECT (window), GTK_MENU_SHELL (window->menubar));
   g_signal_connect_swapped (G_OBJECT (item), "button-press-event", G_CALLBACK (thunar_window_create_file_menu), window);
   g_signal_connect_swapped (G_OBJECT (item), "enter-notify-event", G_CALLBACK (thunar_window_menu_item_hovered), window);
@@ -861,36 +865,67 @@ thunar_window_select_files (ThunarWindow *window,
 
 
 static gboolean
-thunar_window_menu_is_open (ThunarWindow *window)
-{
-  GList     *lp;
-  GtkWidget *submenu;
-
-  g_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
-
-  for(lp = gtk_container_get_children (GTK_CONTAINER (window->menubar)); lp != NULL; lp = lp->next)
-    {
-      submenu = gtk_menu_item_get_submenu(lp->data);
-      if (submenu != NULL && gtk_widget_get_visible (submenu))
-        return TRUE;
-    }
-  return FALSE;
-}
-
-
-
-static gboolean
 thunar_window_menu_item_hovered (ThunarWindow     *window,
                                  GdkEventCrossing *event,
                                  GtkWidget        *menu)
 {
   gboolean ret;
+  gboolean menu_is_open = FALSE;
 
   g_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  if (thunar_window_menu_is_open(window))
-    g_signal_emit_by_name (menu, "button-press-event", NULL, &ret);
-  return FALSE;
+  for (GList *lp = gtk_container_get_children (GTK_CONTAINER (window->menubar)); lp != NULL; lp = lp->next)
+    {
+      GtkWidget *submenu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(lp->data));
+      if(submenu != NULL && gtk_widget_get_visible (submenu))
+        {
+          menu_is_open = TRUE;
+
+         /* The menu we want to open is already is open */
+         if (menu == lp->data)
+           return GDK_EVENT_PROPAGATE;
+        }
+    }
+
+  /* hover effect only apllies if some menu is already open */
+  if (!menu_is_open)
+    return GDK_EVENT_PROPAGATE;
+
+  g_signal_emit_by_name (menu, "button-press-event", NULL, &ret);
+
+  return GDK_EVENT_STOP;
+}
+
+
+
+gboolean
+thunar_window_menu_move_selected (ThunarWindow *window,
+                                  gint          distance,
+                                  GtkMenuShell *menu_shell)
+{
+  gboolean   ret = FALSE;
+  GtkWidget *selected;
+
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), GDK_EVENT_STOP);
+
+  selected = gtk_menu_shell_get_selected_item (menu_shell);
+  for (GList *lp = gtk_container_get_children (GTK_CONTAINER (window->menubar)); lp != NULL; lp = lp->next)
+    {
+      GtkWidget *submenu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (lp->data));
+      if (submenu != NULL && gtk_widget_get_visible (submenu))
+        gtk_menu_popdown (GTK_MENU (submenu));
+      if (lp->data == selected)
+        {
+          /* create next/previous menu, or first/last menu on the borders */
+          GList *new_item;
+          if (distance > 0)
+            new_item = lp->next != NULL ? lp->next : g_list_first (lp);
+          else
+            new_item = lp != g_list_first (lp) ? lp->prev : g_list_last (lp);
+          g_signal_emit_by_name (new_item->data, "button-press-event", NULL, &ret);
+        }
+    }
+  return GDK_EVENT_PROPAGATE;
 }
 
 
@@ -905,6 +940,11 @@ thunar_window_create_file_menu (ThunarWindow     *window,
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
   _thunar_return_val_if_fail (GTK_IS_MENU_ITEM (menu), FALSE);
+
+  /* close, if already open */
+  submenu = THUNAR_MENU (gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu)));
+  if (submenu != NULL)
+    gtk_menu_popdown (GTK_MENU (submenu));
 
   submenu = g_object_new (THUNAR_TYPE_MENU, "menu-type", THUNAR_MENU_TYPE_WINDOW,
                                             "launcher", window->launcher, NULL);
@@ -946,6 +986,11 @@ thunar_window_create_edit_menu (ThunarWindow     *window,
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
   _thunar_return_val_if_fail (GTK_IS_MENU_ITEM (menu), FALSE);
+
+  /* close, if already open */
+  submenu = THUNAR_MENU (gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu)));
+  if (submenu != NULL)
+    gtk_menu_popdown (GTK_MENU (submenu));
 
   submenu = g_object_new (THUNAR_TYPE_MENU, "launcher", window->launcher, NULL);
   gtk_menu_set_accel_group (GTK_MENU (submenu), window->accel_group);
@@ -1010,6 +1055,11 @@ thunar_window_create_view_menu (ThunarWindow     *window,
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
   _thunar_return_val_if_fail (GTK_IS_MENU_ITEM (menu), FALSE);
+
+  /* close, if already open */
+  submenu = THUNAR_MENU (gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu)));
+  if (submenu != NULL)
+    gtk_menu_popdown (GTK_MENU (submenu));
 
   submenu = g_object_new (THUNAR_TYPE_MENU, "launcher", window->launcher, NULL);
   gtk_menu_set_accel_group (GTK_MENU (submenu), window->accel_group);
@@ -1084,6 +1134,11 @@ thunar_window_create_go_menu (ThunarWindow     *window,
   if (window->view != NULL)
     history = thunar_standard_view_get_history (THUNAR_STANDARD_VIEW (window->view));
 
+  /* close, if already open */
+  submenu = THUNAR_MENU (gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu)));
+  if (submenu != NULL)
+    gtk_menu_popdown (GTK_MENU (submenu));
+
   submenu = g_object_new (THUNAR_TYPE_MENU, "launcher",              window->launcher, NULL);
   gtk_menu_set_accel_group (GTK_MENU (submenu), window->accel_group);
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (menu), GTK_WIDGET (submenu));
@@ -1152,6 +1207,11 @@ thunar_window_create_help_menu (ThunarWindow     *window,
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
   _thunar_return_val_if_fail (GTK_IS_MENU_ITEM (menu), FALSE);
+
+  /* close, if already open */
+  submenu = THUNAR_MENU (gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu)));
+  if (submenu != NULL)
+    gtk_menu_popdown (GTK_MENU (submenu));
 
   submenu = g_object_new (THUNAR_TYPE_MENU, "launcher", window->launcher, NULL);
   gtk_menu_set_accel_group (GTK_MENU (submenu), window->accel_group);
@@ -3275,7 +3335,6 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
   gboolean      show_full_path;
   gchar        *parse_name = NULL;
   const gchar  *name;
-  gboolean      ret;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_IS_FILE (current_directory));
@@ -3294,10 +3353,6 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
 
   /* set window icon */
   thunar_window_update_window_icon (window);
-
-  /* update the window menu. E.g. relevant for keyboard navigation in the window menu */
-  for (GList *lp = gtk_container_get_children (GTK_CONTAINER (window->menubar)); lp != NULL; lp = lp->next)
-      g_signal_emit_by_name (lp->data, "button-press-event", NULL, &ret);
 }
 
 
