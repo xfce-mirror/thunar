@@ -685,18 +685,9 @@ thunar_window_init (ThunarWindow *window)
   gtk_widget_set_hexpand (window->menubar, TRUE);
   gtk_grid_attach (GTK_GRID (window->grid), window->menubar, 0, 0, 1, 1);
 
-  /* append the menu item for the spinner */
-  item = gtk_menu_item_new ();
-  gtk_widget_set_sensitive (GTK_WIDGET (item), FALSE);
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  gtk_menu_item_set_right_justified (GTK_MENU_ITEM (item), TRUE);
-G_GNUC_END_IGNORE_DEPRECATIONS
-  gtk_menu_shell_append (GTK_MENU_SHELL (window->menubar), item);
-  gtk_widget_show (item);
-
-  /* place the spinner into the menu item */
+  /* Add a spinner besides the menubar */
   window->spinner = gtk_spinner_new ();
-  gtk_container_add (GTK_CONTAINER (item), window->spinner);
+  gtk_grid_attach (GTK_GRID (window->grid), window->spinner, 1, 0, 1, 1);
   exo_binding_new (G_OBJECT (window->spinner), "active",
                    G_OBJECT (window->spinner), "visible");
 
