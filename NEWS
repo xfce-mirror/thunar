@@ -1,27 +1,53 @@
+1.8.15
+======
+- Only open devices after successful mount attempt (Bug #16831)
+- Fix shortcut support for addressbar (Bug #4537 and Bug #13680)
+- Fix crash in bulk renamer on repeated rename (Bug #16824)
+- Add checks for thumbnailer 0 handles (Bug #14122)
+- Replace 'thunar_return_if_fail (THUNAR_IS_DEVICE (device))' with 
+standard 'if (..)' to prevent possible crashes. (Bug #13404)
+- Fix check if folder is fully loaded when expanding path in tree view. 
+Prevents 100% CPU load and loosing sync with main view in some cases.
+(Bug #15762)
+- Fixes 100%CPU on tree-view in some rare cases (Bug #16024)
+- Delete native files faster (Bug #16641)
+- Support libxfce4ui XfceTitledDialog new API (Bug #16616)
+- Translation Updates:
+  Albanian, Amharic, Arabic, Armenian, Armenian (Armenia), Basque, 
+  Belarusian, Bengali, Bulgarian, Catalan, Chinese (China), Chinese (Hong 
+  Kong), Chinese (Taiwan), Croatian, Czech, Danish, Dutch, English 
+  (Australia), English (United Kingdom), Esperanto, Estonian, Finnish, 
+  French, Galician, German, Greek, Hebrew, Hungarian, Icelandic, 
+  Indonesian, Interlingue, Italian, Japanese, Kazakh, Korean, Latvian, 
+  Lithuanian, Malay, Norwegian Bokmål, Norwegian Nynorsk, Occitan (post 
+  1500), Panjabi (Punjabi), Persian (Iran), Polish, Portuguese, 
+  Portuguese (Brazil), Romanian, Russian, Serbian, Slovak, Spanish, 
+  Swedish, Telugu, Thai, Turkish, Uighur, Ukrainian, Urdu, Urdu 
+  (Pakistan), Vietnamese
+
 1.8.14
 ======
-   - Revert "Allow opening of multiple file selections (bug #2487)", 
-   because it introduced a regression (Not possible any more to DnD 
-   multiple files in icon/compact view)
-- Translation Updates:
-  Portuguese, 
+- Revert "Allow opening of multiple file selections (bug #2487)", 
+because it introduced a regression (Not possible any more to DnD 
+multiple files in icon/compact view)
+- Translation Updates: Portuguese
 
 1.8.13
 ======
-   - Use tre-view toplevel path of the cursor, if available, in order to 
-   prevent jumping (Bug #16024)
-   - Increase vertical gap between icon and its label slightly (Bug #16041)
-   - Fix crash when inserting USB device in tree-view  mode. (Bug #15172)
-   - Fix jump to Home when ejecting a currently viewed device (Bug #16504)
-   - Allow context menu when editing location in pathbar (Bug #16483)
-   - Sort device entries in tree view (Bug #16471)
-   - Allow to open multiple files at once (Bug #2487)
-   - Fix incorrect pathbar autocomplete (Bug #16267)
-   - Avoid unreadable names in detailed view (Bug #16391)
-   - Prevent crash when renaming files (Bug #10805)
+- Use tre-view toplevel path of the cursor, if available, in order to 
+prevent jumping (Bug #16024)
+- Increase vertical gap between icon and its label slightly (Bug #16041)
+- Fix crash when inserting USB device in tree-view  mode. (Bug #15172)
+- Fix jump to Home when ejecting a currently viewed device (Bug #16504)
+- Allow context menu when editing location in pathbar (Bug #16483)
+- Sort device entries in tree view (Bug #16471)
+- Allow to open multiple files at once (Bug #2487)
+- Fix incorrect pathbar autocomplete (Bug #16267)
+- Avoid unreadable names in detailed view (Bug #16391)
+- Prevent crash when renaming files (Bug #10805)
 - Translation Updates:
   Belarusian, Croatian, Finnish, French, Hebrew, Indonesian, Kazakh, 
-  Malay, Portuguese, Portuguese (Brazil), 
+  Malay, Portuguese, Portuguese (Brazil)
 
 1.8.12
 ======
@@ -43,57 +69,54 @@ view) (Bug #15936)
 - Thunar 1.8.10 crashing on startup in FreeBSD and Fedora, caused by 
 nonfunctional pango version check (Bug #16136, Bug #16138)
 - Translation Updates:
-Interlingue, Spanish, 
+Interlingue, Spanish
 
 1.8.10
 ======
-   - Allow compilation with panel 4.15
-   - thunar-job: callee should keep track of the number of processed files 
-   (Bug #16117)
-   - Thunar does not show a context menu on right-click when started via 
-   trash-panel-plugin (Bug #16000)
-   - Make sure icon text is centered after unchecking "Text beside icons"
-   - Remove the vertical gap between icon and its label (Bug #16041)
-   - Fix icon view alignment (Bug #16107)
-   - Not possible to grab scrollbar on the very right pixels when Thunar 
-   is maximized (Bug #16050)
-   - Wrap text of error dialog
-   - Not possible to empty the trash via the pathbar context menu
-   - Crash on refresh if remote folder has been removed (Bug #15961)
-   - Center action buttons in conflict dialog window (Bug #15973) - 
-   Prevent usage of deprecated gtk_dialog_get_action_area
-   - Ensure user customizable action uses currently selected file path 
-   (Bug #15119)
-   - make filename label selectable in conflict dialog window
-   - Center action buttons in conflict dialog window (Bug #15973)
-   - Clear user customizable action shortcut when the action is deleted
-   - Prevent Gtk-CRITICAL when adding or modifying a user customizable 
-   action.
-   - Thunar SendTo Email: Add missing archive formats for archive 
-   detection (Bug #15917)
-   - sendto plugin: fix content type resolution. (Bug #15916)
-   - sendto plugin: extract function tse_file_is_archive (Bug #15916)
-   - sendto plugin: move g_file_info_get_content_type() call out of the 
-   cycle (Bug #15916)
-   - All glory to lowercase (Bug #15394)
-   - mismatched names between thunar.appdata.xml and thunar.desktop (Bug 
-   #15498)
-   - Replace text "Enter the new name:" by "Enter the name:" for file 
-   creation dialog (Bug #15423)
-   - Remove superfluous .desktop file "Thunar-folder-handler.desktop.in" 
-   (Bug #15467)
-   - Prevent unnecessary fallback copy-delete in file move when overwriting
-   - Fix possible memory leak
-   - Fix popup menus size (Bug #15832)
-   - Add Alt+D as alternative accelerator for Open Location (Bug #15828)
-   - Do not insert hyphens at intra-word line breaks (Bug #15856)
+- Allow compilation with panel 4.15
+- thunar-job: callee should keep track of the number of processed files 
+(Bug #16117)
+- Thunar does not show a context menu on right-click when started via 
+trash-panel-plugin (Bug #16000)
+- Make sure icon text is centered after unchecking "Text beside icons"
+- Remove the vertical gap between icon and its label (Bug #16041)
+- Fix icon view alignment (Bug #16107)
+- Not possible to grab scrollbar on the very right pixels when Thunar 
+is maximized (Bug #16050)
+- Wrap text of error dialog
+- Not possible to empty the trash via the pathbar context menu
+- Crash on refresh if remote folder has been removed (Bug #15961)
+- Center action buttons in conflict dialog window (Bug #15973) - 
+Prevent usage of deprecated gtk_dialog_get_action_area
+- Ensure user customizable action uses currently selected file path (Bug #15119)
+- make filename label selectable in conflict dialog window
+- Center action buttons in conflict dialog window (Bug #15973)
+- Clear user customizable action shortcut when the action is deleted
+- Prevent Gtk-CRITICAL when adding or modifying a user customizable action.
+- Thunar SendTo Email: Add missing archive formats for archive 
+detection (Bug #15917)
+- sendto plugin: fix content type resolution. (Bug #15916)
+- sendto plugin: extract function tse_file_is_archive (Bug #15916)
+- sendto plugin: move g_file_info_get_content_type() call out of the 
+cycle (Bug #15916)
+- All glory to lowercase (Bug #15394)
+- mismatched names between thunar.appdata.xml and thunar.desktop (Bug #15498)
+- Replace text "Enter the new name:" by "Enter the name:" for file 
+creation dialog (Bug #15423)
+- Remove superfluous .desktop file "Thunar-folder-handler.desktop.in" 
+(Bug #15467)
+- Prevent unnecessary fallback copy-delete in file move when overwriting
+- Fix possible memory leak
+- Fix popup menus size (Bug #15832)
+- Add Alt+D as alternative accelerator for Open Location (Bug #15828)
+- Do not insert hyphens at intra-word line breaks (Bug #15856)
 - Translation Updates:
   Albanian, Arabic, Belarusian, Bulgarian, Catalan, Chinese (Taiwan), 
   Croatian, Danish, Dutch, English (United Kingdom), French, Galician, 
   German, Hungarian, Italian, Japanese, Korean, Lithuanian, Malay, 
   Norwegian Bokmål, Persian (Iran), Polish, Portuguese, Portuguese 
   (Brazil), Russian, Serbian, Slovak, Slovenian, Spanish, Thai, Turkish, 
-  Ukrainian, 
+  Ukrainian
 
 1.8.9
 ======
