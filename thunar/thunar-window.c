@@ -2695,6 +2695,10 @@ thunar_window_action_view_changed (ThunarWindow *window,
   ThunarHistory  *history;
   GList          *selected_files = NULL;
 
+  /* no further action required */
+  if (window->view_type == view_type)
+    return;
+
   /* drop the previous view (if any) */
   old_view = window->view;
   if (G_LIKELY (window->view != NULL))
