@@ -890,7 +890,7 @@ thunar_renamer_dialog_context_menu (ThunarRenamerDialog *renamer_dialog)
       items = thunarx_renamer_get_menu_items (renamer, GTK_WINDOW (renamer_dialog), renamer_dialog->selected_files);
     }
 
-  menu = g_object_new (THUNAR_TYPE_MENU, "menu-type", THUNAR_MENU_TYPE_CONTEXT,
+  menu = g_object_new (THUNAR_TYPE_MENU, "menu-type", THUNAR_MENU_TYPE_CONTEXT_RENAMER,
                                          "launcher", renamer_dialog->launcher,
                                          "tab-support-disabled", TRUE,
                                          "change_directory-support-disabled", TRUE, NULL);
