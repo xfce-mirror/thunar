@@ -3429,7 +3429,7 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view)
 
   window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
 
-  context_menu = g_object_new (THUNAR_TYPE_MENU, "menu-type", THUNAR_MENU_TYPE_CONTEXT,
+  context_menu = g_object_new (THUNAR_TYPE_MENU, "menu-type", THUNAR_MENU_TYPE_CONTEXT_STANDARD_VIEW,
                                                  "launcher", thunar_window_get_launcher (THUNAR_WINDOW (window)), NULL);
   if (selected_items != NULL)
     {
