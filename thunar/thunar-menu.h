@@ -38,7 +38,10 @@ typedef struct _ThunarMenu      ThunarMenu;
 typedef enum
 {
   THUNAR_MENU_TYPE_WINDOW,
-  THUNAR_MENU_TYPE_CONTEXT,
+  THUNAR_MENU_TYPE_CONTEXT_STANDARD_VIEW,
+  THUNAR_MENU_TYPE_CONTEXT_LOCATION_BUTTONS,
+  THUNAR_MENU_TYPE_CONTEXT_RENAMER,
+  N_THUNAR_MENU_TYPE,
 } ThunarMenuType;
 
 /* Bundles of #GtkMenuItems, which can be created by this widget */
