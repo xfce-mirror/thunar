@@ -97,7 +97,7 @@ thunar_menu_class_init (ThunarMenuClass *klass)
                                    g_param_spec_int ("menu-type",
                                                      "menu-type",
                                                      "menu-type",
-                                                     0, 1, 0, // min, max, default
+                                                     0, N_THUNAR_MENU_TYPE - 1, 0, // min, max, default
                                                      G_PARAM_WRITABLE
                                                      | G_PARAM_CONSTRUCT_ONLY));
 
@@ -264,7 +264,10 @@ thunar_menu_add_sections (ThunarMenu         *menu,
   if (menu_sections & THUNAR_MENU_SECTION_COPY_PASTE)
     {
       item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_COPY, is_window_menu) != NULL);
-      item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_PASTE, is_window_menu) != NULL);
+      if (menu->type == THUNAR_MENU_TYPE_CONTEXT_LOCATION_BUTTONS)
+        item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_PASTE_INTO_FOLDER, is_window_menu) != NULL);
+      else
+        item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_PASTE, is_window_menu) != NULL);
     }
   if (item_added)
      xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
