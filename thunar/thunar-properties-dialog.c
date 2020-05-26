@@ -308,7 +308,6 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_grid_attach (GTK_GRID (grid), GTK_WIDGET (dialog->name_entry), 1, row, 1, 1);
   exo_binding_new (G_OBJECT (dialog->single_box), "visible", G_OBJECT (dialog->name_entry), "visible");
 
-
   ++row;
 
 
