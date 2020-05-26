@@ -704,11 +704,14 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   g_free (text);
 
   if (thunar_file_is_symlink (dst_file))
-    text = g_strdup_printf (Q_("ReplaceDialogPart1|Do you want to replace the link"));
+    /* TRANSLATORS: First part of replace dialog sentence */
+    text = g_strdup_printf (_("Do you want to replace the link"));
   else if (thunar_file_is_directory (dst_file))
-    text = g_strdup_printf (Q_("ReplaceDialogPart1|Do you want to replace the existing folder"));
+    /* TRANSLATORS: First part of replace dialog sentence */
+    text = g_strdup_printf (_("Do you want to replace the existing folder"));
   else
-    text = g_strdup_printf (Q_("ReplaceDialogPart1|Do you want to replace the existing file"));
+    /* TRANSLATORS: First part of replace dialog sentence */
+    text = g_strdup_printf (_("Do you want to replace the existing file"));
 
   label = gtk_label_new (text);
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
@@ -740,11 +743,14 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   g_free (text);
 
   if (thunar_file_is_symlink (src_file))
-    text = g_strdup_printf (Q_("ReplaceDialogPart2|with the following link?"));
+    /* TRANSLATORS: Second part of replace dialog sentence */
+    text = g_strdup_printf (_("with the following link?"));
   else if (thunar_file_is_directory (src_file))
-    text = g_strdup_printf (Q_("ReplaceDialogPart2|with the following folder?"));
+    /* TRANSLATORS: Second part of replace dialog sentence */
+    text = g_strdup_printf (_("with the following folder?"));
   else
-    text = g_strdup_printf (Q_("ReplaceDialogPart2|with the following file?"));
+    /* TRANSLATORS: Second part of replace dialog sentence */
+    text = g_strdup_printf (_("with the following file?"));
 
   label = gtk_label_new (text);
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
