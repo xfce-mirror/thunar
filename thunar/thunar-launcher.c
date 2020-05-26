@@ -1212,7 +1212,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
   gchar                    *tooltip_text;
   const XfceGtkActionEntry *action_entry = get_action_entry (action);
   gboolean                  show_delete_item;
-  gboolean                  can_be_used;
+  gboolean                  show_item;
   ThunarClipboardManager   *clipboard;
 
   _thunar_return_val_if_fail (THUNAR_IS_LAUNCHER (launcher), NULL);
@@ -1255,8 +1255,8 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
                                        action_entry->accel_path, action_entry->callback, G_OBJECT (launcher), menu);
 
       case THUNAR_LAUNCHER_ACTION_SENDTO_MENU:
-        can_be_used = launcher->current_directory_selected == FALSE;
-        if (!can_be_used && !force)
+        show_item = launcher->current_directory_selected == FALSE;
+        if (!show_item && !force)
           return NULL;
         item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
         submenu = thunar_launcher_build_sendto_submenu (launcher);
@@ -1264,10 +1264,10 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
         return item;
 
       case THUNAR_LAUNCHER_ACTION_MAKE_LINK:
-        can_be_used = thunar_file_is_writable (launcher->current_directory) &&
-                      launcher->current_directory_selected == FALSE &&
-                      thunar_file_is_trashed (launcher->current_directory) == FALSE;;
-        if (!can_be_used && !force)
+        show_item = thunar_file_is_writable (launcher->current_directory) &&
+                    launcher->current_directory_selected == FALSE &&
+                    thunar_file_is_trashed (launcher->current_directory) == FALSE;;
+        if (!show_item && !force)
           return NULL;
 
         label_text = ngettext ("Ma_ke Link", "Ma_ke Links", launcher->n_selected_files);
@@ -1275,31 +1275,31 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
                                  "Create a symbolic link for each selected file", launcher->n_selected_files);
         item = xfce_gtk_menu_item_new (label_text, tooltip_text, action_entry->accel_path, action_entry->callback,
                                        G_OBJECT (launcher), menu);
-        gtk_widget_set_sensitive (item, can_be_used);
+        gtk_widget_set_sensitive (item, show_item && thunar_file_is_writable (launcher->parent_folder));
         return item;
 
       case THUNAR_LAUNCHER_ACTION_DUPLICATE:
-        can_be_used = thunar_file_is_writable (launcher->current_directory) &&
-                      launcher->current_directory_selected == FALSE &&
-                      thunar_file_is_trashed (launcher->current_directory) == FALSE;
-        if (!can_be_used && !force)
+        show_item = thunar_file_is_writable (launcher->current_directory) &&
+                    launcher->current_directory_selected == FALSE &&
+                    thunar_file_is_trashed (launcher->current_directory) == FALSE;
+        if (!show_item && !force)
           return NULL;
         item = xfce_gtk_menu_item_new (action_entry->menu_item_label_text, action_entry->menu_item_tooltip_text,
                                        action_entry->accel_path, action_entry->callback, G_OBJECT (launcher), menu);
-        gtk_widget_set_sensitive (item, can_be_used);
+        gtk_widget_set_sensitive (item, show_item && thunar_file_is_writable (launcher->parent_folder));
         return item;
 
       case THUNAR_LAUNCHER_ACTION_RENAME:
-        can_be_used = thunar_file_is_writable (launcher->current_directory) &&
-                      launcher->current_directory_selected == FALSE &&
-                      thunar_file_is_trashed (launcher->current_directory) == FALSE;
-        if (!can_be_used && !force)
+        show_item = thunar_file_is_writable (launcher->current_directory) &&
+                    launcher->current_directory_selected == FALSE &&
+                    thunar_file_is_trashed (launcher->current_directory) == FALSE;
+        if (!show_item && !force)
           return NULL;
         tooltip_text = ngettext ("Rename the selected file",
                                  "Rename the selected files", launcher->n_selected_files);
         item = xfce_gtk_menu_item_new (action_entry->menu_item_label_text, tooltip_text, action_entry->accel_path,
                                        action_entry->callback, G_OBJECT (launcher), menu);
-        gtk_widget_set_sensitive (item, can_be_used);
+        gtk_widget_set_sensitive (item, show_item && thunar_file_is_writable (launcher->parent_folder));
         return item;
 
       case THUNAR_LAUNCHER_ACTION_RESTORE:
@@ -1318,16 +1318,16 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
         if (!thunar_launcher_show_trash (launcher))
           return NULL;
 
-        can_be_used = launcher->parent_folder != NULL &&
+        show_item = launcher->parent_folder != NULL &&
                       !launcher->current_directory_selected;
-        if (!can_be_used && !force)
+        if (!show_item && !force)
           return NULL;
 
         tooltip_text = ngettext ("Move the selected file to the Trash",
                                  "Move the selected files to the Trash", launcher->n_selected_files);
         item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, tooltip_text, action_entry->accel_path,
                                                             action_entry->callback, G_OBJECT (launcher), action_entry->menu_item_icon_name, menu);
-        gtk_widget_set_sensitive (item, can_be_used);
+        gtk_widget_set_sensitive (item, show_item && thunar_file_is_writable (launcher->parent_folder));
         return item;
 
 
@@ -1336,16 +1336,16 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
         if (thunar_launcher_show_trash (launcher) && !show_delete_item)
           return NULL;
 
-        can_be_used = launcher->parent_folder != NULL &&
+        show_item = launcher->parent_folder != NULL &&
                       !launcher->current_directory_selected;
-        if (!can_be_used && !force)
+        if (!show_item && !force)
           return NULL;
 
         tooltip_text = ngettext ("Permanently delete the selected file",
                                  "Permanently delete the selected files", launcher->n_selected_files);
         item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, tooltip_text, action_entry->accel_path,
                                                             action_entry->callback, G_OBJECT (launcher), action_entry->menu_item_icon_name, menu);
-        gtk_widget_set_sensitive (item, can_be_used);
+        gtk_widget_set_sensitive (item, show_item && thunar_file_is_writable (launcher->parent_folder));
         return item;
 
       case THUNAR_LAUNCHER_ACTION_EMPTY_TRASH:
@@ -1363,7 +1363,9 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
       case THUNAR_LAUNCHER_ACTION_CREATE_FOLDER:
         if (thunar_file_is_trashed (launcher->current_directory))
           return NULL;
-        return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
+        item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
+        gtk_widget_set_sensitive (item, thunar_file_is_writable (launcher->current_directory));
+        return item;
 
       case THUNAR_LAUNCHER_ACTION_CREATE_DOCUMENT:
         if (thunar_file_is_trashed (launcher->current_directory))
@@ -1371,29 +1373,30 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
         item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
         submenu = thunar_launcher_create_document_submenu_new (launcher);
         gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu);
+        gtk_widget_set_sensitive (item, thunar_file_is_writable (launcher->current_directory));
         return item;
 
       case THUNAR_LAUNCHER_ACTION_CUT:
-        can_be_used = launcher->current_directory_selected == FALSE &&
+        show_item = launcher->current_directory_selected == FALSE &&
                       launcher->parent_folder != NULL;
-        if (!can_be_used && !force)
+        if (!show_item && !force)
           return NULL;
         tooltip_text = ngettext ("Prepare the selected file to be moved with a Paste command",
                                  "Prepare the selected files to be moved with a Paste command", launcher->n_selected_files);
         item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, tooltip_text, action_entry->accel_path,
                                                             action_entry->callback, G_OBJECT (launcher), action_entry->menu_item_icon_name, menu);
-        gtk_widget_set_sensitive (item, can_be_used);
+        gtk_widget_set_sensitive (item, show_item && thunar_file_is_writable (launcher->parent_folder));
         return item;
 
       case THUNAR_LAUNCHER_ACTION_COPY:
-        can_be_used = launcher->current_directory_selected == FALSE;
-        if (!can_be_used && !force)
+        show_item = launcher->current_directory_selected == FALSE;
+        if (!show_item && !force)
           return NULL;
         tooltip_text = ngettext ("Prepare the selected file to be copied with a Paste command",
                                  "Prepare the selected files to be copied with a Paste command", launcher->n_selected_files);
         item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, tooltip_text, action_entry->accel_path,
                                                             action_entry->callback, G_OBJECT (launcher), action_entry->menu_item_icon_name, menu);
-        gtk_widget_set_sensitive (item, can_be_used);
+        gtk_widget_set_sensitive (item, show_item);
         return item;
 
       case THUNAR_LAUNCHER_ACTION_PASTE_INTO_FOLDER:
