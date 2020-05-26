@@ -1852,8 +1852,12 @@ thunar_launcher_append_custom_actions (ThunarLauncher *launcher,
   /* load the menu items offered by the menu providers */
   for (lp_provider = providers; lp_provider != NULL; lp_provider = lp_provider->next)
     {
+
       if (launcher->single_folder_selected)
-        thunarx_menu_items = thunarx_menu_provider_get_folder_menu_items (lp_provider->data, window, THUNARX_FILE_INFO (launcher->single_folder));
+        {
+          if (thunar_file_is_directory (launcher->single_folder))
+            thunarx_menu_items = thunarx_menu_provider_get_folder_menu_items (lp_provider->data, window, THUNARX_FILE_INFO (launcher->single_folder));
+        }
       else
         thunarx_menu_items = thunarx_menu_provider_get_file_menu_items (lp_provider->data, window, launcher->selected_files);
       for (lp_item = thunarx_menu_items; lp_item != NULL; lp_item = lp_item->next)
