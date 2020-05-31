@@ -3188,7 +3188,7 @@ thunar_window_bookmark_check_key (GFile       *g_file,
   accel_path = thunar_window_bookmark_get_accel_path (g_file);
   if (gtk_accel_map_lookup_entry (accel_path, &key) == TRUE)
     {
-      if (window->latest_key_event->keyval == key.accel_key)
+      if (g_ascii_tolower (window->latest_key_event->keyval) == g_ascii_tolower (key.accel_key))
         {
           if ((window->latest_key_event->state & gtk_accelerator_get_default_mod_mask ()) == key.accel_mods)
             thunar_window_set_current_directory_gfile (window, g_file);
