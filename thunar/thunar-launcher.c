@@ -1917,7 +1917,7 @@ thunar_launcher_check_uca_key_activation (ThunarLauncher *launcher,
           accel_path = g_strconcat ("<Actions>/ThunarActions/", name, NULL);
           if (gtk_accel_map_lookup_entry (accel_path, &uca_key) == TRUE)
             {
-              if (key_event->keyval == uca_key.accel_key)
+              if (g_ascii_tolower (key_event->keyval) == g_ascii_tolower (uca_key.accel_key))
                 {
                   if ((key_event->state & gtk_accelerator_get_default_mod_mask ()) == uca_key.accel_mods)
                     {
