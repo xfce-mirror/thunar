@@ -771,6 +771,9 @@ thunar_folder_monitor (GFileMonitor     *monitor,
               /* tell others about the new file */
               list.data = file; list.next = list.prev = NULL;
               g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, &list);
+
+              /* load the new file */
+              thunar_file_reload (file);
             }
         }
       else if (lp != NULL)
