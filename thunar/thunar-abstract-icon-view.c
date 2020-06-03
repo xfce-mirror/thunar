@@ -388,7 +388,7 @@ thunar_abstract_icon_view_connect_accelerators (ThunarStandardView *standard_vie
   _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
 
   xfce_gtk_accel_map_add_entries (thunar_abstract_icon_view_action_entries,
-                                 G_N_ELEMENTS (thunar_abstract_icon_view_action_entries));
+                                  G_N_ELEMENTS (thunar_abstract_icon_view_action_entries));
   xfce_gtk_accel_group_connect_action_entries (accel_group,
                                                thunar_abstract_icon_view_action_entries,
                                                G_N_ELEMENTS (thunar_abstract_icon_view_action_entries),
