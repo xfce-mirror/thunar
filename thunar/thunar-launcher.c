@@ -2258,7 +2258,7 @@ thunar_launcher_create_document_submenu_templates (ThunarLauncher *launcher,
 
   /* sort items so that directories come before files and ancestors come
    * before descendants */
-  files = g_list_sort (files, (GCompareFunc) (void (*)(void)) thunar_file_compare);
+  files = g_list_sort (files, (GCompareFunc) (void (*)(void)) thunar_file_compare_by_type);
 
   for (lp = g_list_first (files); lp != NULL; lp = lp->next)
     {

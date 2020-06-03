@@ -4141,7 +4141,7 @@ thunar_file_destroy (ThunarFile *file)
 
 
 /**
- * thunar_file_compare:
+ * thunar_file_compare_by_type:
  * @a : the first #ThunarFile.
  * @b : the second #ThunarFile.
  *
@@ -4152,8 +4152,8 @@ thunar_file_destroy (ThunarFile *file)
  *               @file_b should be sorted before @file_a, 0 if equal.
  **/
 gint
-thunar_file_compare (ThunarFile *a,
-                     ThunarFile *b)
+thunar_file_compare_by_type (ThunarFile *a,
+                             ThunarFile *b)
 {
   GFile *file_a;
   GFile *file_b;
@@ -4169,13 +4169,13 @@ thunar_file_compare (ThunarFile *a,
     return 0;
 
   /* directories always come first */
-  if (thunar_file_get_kind (a) == G_FILE_TYPE_DIRECTORY
-      && thunar_file_get_kind (b) != G_FILE_TYPE_DIRECTORY)
+  if (a->kind == G_FILE_TYPE_DIRECTORY
+      && b->kind != G_FILE_TYPE_DIRECTORY)
     {
       return -1;
     }
-  else if (thunar_file_get_kind (a) != G_FILE_TYPE_DIRECTORY
-           && thunar_file_get_kind (b) == G_FILE_TYPE_DIRECTORY)
+  if (a->kind != G_FILE_TYPE_DIRECTORY
+      && b->kind == G_FILE_TYPE_DIRECTORY)
     {
       return 1;
     }
@@ -4183,7 +4183,7 @@ thunar_file_compare (ThunarFile *a,
   /* ancestors come first */
   if (g_file_has_prefix (file_b, file_a))
     return -1;
-  else if (g_file_has_prefix (file_a, file_b))
+  if (g_file_has_prefix (file_a, file_b))
     return 1;
 
   parent_a = g_file_get_parent (file_a);
@@ -4192,8 +4192,8 @@ thunar_file_compare (ThunarFile *a,
   if (g_file_equal (parent_a, parent_b))
     {
       /* compare siblings by their display name */
-      ret = g_utf8_collate (thunar_file_get_display_name (a),
-                            thunar_file_get_display_name (b));
+      ret = g_utf8_collate (a->display_name,
+                            b->display_name);
     }
   /* again, ancestors come first */
   else if (g_file_has_prefix (file_b, parent_a))
