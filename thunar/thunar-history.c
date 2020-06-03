@@ -618,10 +618,7 @@ thunar_history_show_menu (ThunarHistory         *history,
   g_object_unref (G_OBJECT (icon_factory));
 
   /* run the menu (takes over the floating of menu) */
-  gtk_menu_popup_at_widget (GTK_MENU (menu), parent,
-                            GDK_GRAVITY_SOUTH_WEST,
-                            GDK_GRAVITY_NORTH_WEST,
-                            NULL);
+  thunar_gtk_menu_run (GTK_MENU (menu));
 }
 
 
