@@ -764,10 +764,7 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
 
                   window = gtk_widget_get_toplevel (GTK_WIDGET (details_view));
                   launcher = thunar_window_get_launcher (THUNAR_WINDOW (window));
-                  if (in_tab)
-                    thunar_launcher_open_selected_folders_in_new_tabs (launcher);
-                  else
-                    thunar_launcher_open_selected_folders_in_new_windows (launcher);
+                  thunar_launcher_open_selected_folders (launcher, in_tab);
                 }
               /* release the file reference */
               g_object_unref (G_OBJECT (file));

@@ -1051,20 +1051,6 @@ thunar_launcher_poke_data_free (ThunarLauncherPokeData *data)
 
 
 
-void thunar_launcher_open_selected_folders_in_new_tabs (ThunarLauncher *launcher)
-{
-  GList *lp;
-
-  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
-
-  for (lp = launcher->selected_files; lp != NULL; lp = lp->next)
-    _thunar_return_if_fail (thunar_file_is_directory (THUNAR_FILE (lp->data)));
-
-  thunar_launcher_poke_files (launcher, NULL, THUNAR_LAUNCHER_OPEN_AS_NEW_TAB);
-}
-
-
-
 static void
 thunar_launcher_widget_destroyed (ThunarLauncher *launcher,
                                   GtkWidget      *widget)
@@ -1080,12 +1066,14 @@ thunar_launcher_widget_destroyed (ThunarLauncher *launcher,
 
 
 /**
- * thunar_launcher_open_selected_folders_in_new_windows:
+ * thunar_launcher_open_selected_folders:
  * @launcher : a #ThunarLauncher instance
+ * @open_in_tabs : TRUE to open each folder in a new tab, FALSE to open each folder in a new window
  *
- * Will open each selected folder in a new window
+ * Will open each selected folder in a new tab/window
  **/
-void thunar_launcher_open_selected_folders_in_new_windows (ThunarLauncher *launcher)
+void thunar_launcher_open_selected_folders (ThunarLauncher *launcher,
+                                            gboolean        open_in_tabs)
 {
   GList *lp;
 
@@ -1094,7 +1082,10 @@ void thunar_launcher_open_selected_folders_in_new_windows (ThunarLauncher *launc
   for (lp = launcher->selected_files; lp != NULL; lp = lp->next)
     _thunar_return_if_fail (thunar_file_is_directory (THUNAR_FILE (lp->data)));
 
-  thunar_launcher_poke_files (launcher, NULL, THUNAR_LAUNCHER_OPEN_AS_NEW_WINDOW);
+  if (open_in_tabs)
+    thunar_launcher_poke_files (launcher, NULL, THUNAR_LAUNCHER_OPEN_AS_NEW_TAB);
+  else
+    thunar_launcher_poke_files (launcher, NULL, THUNAR_LAUNCHER_OPEN_AS_NEW_WINDOW);
 }
 
 
@@ -1126,7 +1117,7 @@ thunar_launcher_action_open_in_new_tabs (ThunarLauncher *launcher)
   if (G_UNLIKELY (launcher->selected_files == NULL))
     return;
 
-  thunar_launcher_open_selected_folders_in_new_tabs (launcher);
+  thunar_launcher_open_selected_folders (launcher, TRUE);
 }
 
 
@@ -1139,7 +1130,7 @@ thunar_launcher_action_open_in_new_windows (ThunarLauncher *launcher)
   if (G_UNLIKELY (launcher->selected_files == NULL))
     return;
 
-  thunar_launcher_open_selected_folders_in_new_windows (launcher);
+  thunar_launcher_open_selected_folders (launcher, FALSE);
 }
 
 
