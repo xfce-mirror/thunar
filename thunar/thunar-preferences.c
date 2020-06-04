@@ -772,7 +772,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    **/
   preferences_props[PROP_MISC_PARALLEL_COPY_MODE] =
       g_param_spec_enum ("misc-parallel-copy-mode",
-                         NULL,
+                         "MiscParallelCopyMode",
                          NULL,
                          THUNAR_TYPE_PARALLEL_COPY_MODE,
                          THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL,
