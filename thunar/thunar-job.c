@@ -72,8 +72,8 @@ struct _ThunarJobPrivate
   GList            *total_files;
   guint             n_total_files;
   gboolean          pausable;
-  gboolean          paused;
-  gboolean          frozen;
+  gboolean          paused; /* the job has been manually paused using the UI */
+  gboolean          frozen; /* the job has been automaticaly paused regarding some parallel copy behavior */
 };
 
 

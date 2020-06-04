@@ -153,7 +153,7 @@ thunar_transfer_job_class_init (ThunarTransferJobClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_PARALLEL_COPY_MODE,
                                    g_param_spec_enum ("parallel-copy-mode",
-                                                      NULL,
+                                                      "ParallelCopyMode",
                                                       NULL,
                                                       THUNAR_TYPE_PARALLEL_COPY_MODE,
                                                       THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL,
@@ -1246,16 +1246,16 @@ thunar_transfer_job_is_file_on_slow_device_xfer (GFile *file)
 
 
 /**
- * thunar_transfer_job_verify_devices:
+ * thunar_transfer_job_freeze_optional:
  * @job : a #ThunarTransferJob.
  *
  * Based on thunar setting, will block until all running jobs
  * doing IO on the source files or target files devices are completed.
- * The blocking could be forced by the user in the UI.
+ * The unblocking could be forced by the user in the UI.
  *
  **/
 static void
-thunar_transfer_job_verify_devices (ThunarTransferJob *transfer_job)
+thunar_transfer_job_freeze_optional (ThunarTransferJob *transfer_job)
 {
   ThunarTransferNode *node;
   GFile              *file;
@@ -1492,7 +1492,7 @@ thunar_transfer_job_execute (ExoJob  *job,
             }
         }
 
-      thunar_transfer_job_verify_devices (transfer_job);
+      thunar_transfer_job_freeze_optional (transfer_job);
 
       /* transfer starts now */
       transfer_job->start_time = g_get_real_time ();
