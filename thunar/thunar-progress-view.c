@@ -410,7 +410,7 @@ thunar_progress_view_unfreeze_job (ThunarProgressView *view)
   if (view->job != NULL)
     {
       /* unfreeze the job */
-      thunar_job_unfreeze(view->job);
+      thunar_job_unset_frozen(view->job);
       /* update the UI */
       gtk_widget_hide (view->unfreeze_button);
       gtk_widget_show (view->pause_button);
@@ -646,6 +646,9 @@ thunar_progress_view_new_with_job (ThunarJob *job)
  *
  * Returns the #ThunarJob associated with @view
  * or %NULL if no job is currently associated with @view.
+ *
+ * The #ThunarJob is owned by the @view and should
+ * not be freed by the caller.
  *
  * Return value: the job associated with @view or %NULL.
  **/

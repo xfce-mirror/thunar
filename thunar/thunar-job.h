@@ -73,9 +73,9 @@ void              thunar_job_set_pausable           (ThunarJob       *job,
 gboolean          thunar_job_is_pausable            (ThunarJob       *job);
 void              thunar_job_pause                  (ThunarJob       *job);
 void              thunar_job_resume                 (ThunarJob       *job);
-void              thunar_job_freeze                 (ThunarJob       *job);
+void              thunar_job_set_frozen             (ThunarJob       *job);
 void              thunar_job_emit_frozen_signal     (ThunarJob       *job);
-void              thunar_job_unfreeze               (ThunarJob       *job);
+void              thunar_job_unset_frozen           (ThunarJob       *job);
 void              thunar_job_emit_unfrozen_signal   (ThunarJob       *job);
 gboolean          thunar_job_is_paused              (ThunarJob       *job);
 gboolean          thunar_job_is_frozen              (ThunarJob       *job);

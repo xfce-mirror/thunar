@@ -72,8 +72,8 @@ struct _ThunarJobPrivate
   GList            *total_files;
   guint             n_total_files;
   gboolean          pausable;
-  gboolean          paused;
-  gboolean          frozen;
+  gboolean          paused; /* the job has been manually paused using the UI */
+  gboolean          frozen; /* the job has been automaticaly paused regarding some parallel copy behavior */
 };
 
 
@@ -769,7 +769,7 @@ thunar_job_resume (ThunarJob *job)
 
 
 void
-thunar_job_freeze (ThunarJob *job)
+thunar_job_set_frozen (ThunarJob *job)
 {
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
   job->priv->frozen = TRUE;
@@ -787,7 +787,7 @@ thunar_job_emit_frozen_signal (ThunarJob *job)
 
 
 void
-thunar_job_unfreeze (ThunarJob *job)
+thunar_job_unset_frozen (ThunarJob *job)
 {
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
   job->priv->frozen = FALSE;
