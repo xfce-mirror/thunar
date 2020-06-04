@@ -153,7 +153,7 @@ thunar_transfer_job_class_init (ThunarTransferJobClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_PARALLEL_COPY_MODE,
                                    g_param_spec_enum ("parallel-copy-mode",
-                                                      NULL,
+                                                      "ParallelCopyMode",
                                                       NULL,
                                                       THUNAR_TYPE_PARALLEL_COPY_MODE,
                                                       THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL,
