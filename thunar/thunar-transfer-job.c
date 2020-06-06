@@ -1303,6 +1303,49 @@ thunar_transfer_job_fill_target_device_fs_id (ThunarTransferJob *transfer_job, G
 
 
 
+static void
+thunar_transfer_job_determine_transfert_copy_behavior (ThunarTransferJob *transfer_job,
+                                                       gboolean *is_src_device_local_p,
+                                                       gboolean *is_tgt_device_local_p,
+                                                       gboolean *always_parallel_copy_p,
+                                                       gboolean *should_freeze_on_any_other_job_p)
+{
+  *should_freeze_on_any_other_job_p = FALSE;
+  if (transfer_job->parallel_copy_mode == THUNAR_PARALLEL_COPY_MODE_ALWAYS)
+    /* never freeze */
+    *always_parallel_copy_p = TRUE;
+  else if (transfer_job->parallel_copy_mode == THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL)
+    /* freeze copy if
+     * - src device is local and src device appears in another job
+     * - tgt device is local and tgt device appears in another job
+     */
+    *always_parallel_copy_p = !*is_src_device_local_p && !*is_tgt_device_local_p;
+  else if (transfer_job->parallel_copy_mode == THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_SAME_DEVICES)
+    {
+      /* freeze copy if
+       * - src device fs ≠ tgt device fs and src or tgt appears in another job
+       * - src device is local and src device appears in another job
+       * - tgt device is local and tgt device appears in another job
+       */
+      if (g_strcmp0(transfer_job->source_device_fs_id, transfer_job->target_device_fs_id) != 0)
+        {
+          /* freeze when either src or tgt device appears on another job */
+          *always_parallel_copy_p = FALSE;
+          *is_src_device_local_p = TRUE;
+          *is_tgt_device_local_p = TRUE;
+        }
+      else
+        *always_parallel_copy_p = !*is_src_device_local_p && !*is_tgt_device_local_p;
+    }
+  else /* THUNAR_PARALLEL_COPY_MODE_NEVER */
+    {
+      /* freeze copy if another transfer job is running */
+      *always_parallel_copy_p = FALSE;
+      *should_freeze_on_any_other_job_p = TRUE;
+    }
+}
+
+
 
 /**
  * thunar_transfer_job_freeze_optional:
@@ -1317,10 +1360,10 @@ static void
 thunar_transfer_job_freeze_optional (ThunarTransferJob *transfer_job)
 {
   ThunarTransferNode *node;
-  gboolean            src_device_local = FALSE;
-  gboolean            tgt_device_local = FALSE;
-  gboolean            parallel_copy = FALSE;
-  gboolean            freeze_on_any_other_job = FALSE;
+  gboolean            is_src_device_local;
+  gboolean            is_tgt_device_local;
+  gboolean            always_parallel_copy;
+  gboolean            should_freeze_on_any_other_job;
 
   _thunar_return_if_fail (THUNAR_IS_TRANSFER_JOB (transfer_job));
 
@@ -1330,84 +1373,53 @@ thunar_transfer_job_freeze_optional (ThunarTransferJob *transfer_job)
   /* first source file */
   node = transfer_job->source_node_list->data;
   thunar_transfer_job_fill_source_device_fs_id (transfer_job, node->source_file);
-  src_device_local = thunar_transfer_job_is_file_on_local_device_xfer (node->source_file);
+  is_src_device_local = thunar_transfer_job_is_file_on_local_device_xfer (node->source_file);
   /* first target file */
   thunar_transfer_job_fill_target_device_fs_id (transfer_job, G_FILE (transfer_job->target_file_list->data));
-  tgt_device_local = thunar_transfer_job_is_file_on_local_device_xfer (G_FILE (transfer_job->target_file_list->data));
-
-  if (transfer_job->parallel_copy_mode == THUNAR_PARALLEL_COPY_MODE_ALWAYS)
-    /* never freeze */
-    parallel_copy = TRUE;
-  else if (transfer_job->parallel_copy_mode == THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL)
-    /* freeze copy if
-     * - src device is local and src device appears in another job
-     * - tgt device is local and tgt device appears in another job
-     */
-    parallel_copy = !src_device_local && !tgt_device_local;
-  else if (transfer_job->parallel_copy_mode == THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_SAME_DEVICES)
+  is_tgt_device_local = thunar_transfer_job_is_file_on_local_device_xfer (G_FILE (transfer_job->target_file_list->data));
+  thunar_transfer_job_determine_transfert_copy_behavior (transfer_job,
+                                                         &is_src_device_local,
+                                                         &is_tgt_device_local,
+                                                         &always_parallel_copy,
+                                                         &should_freeze_on_any_other_job);
+  if (!always_parallel_copy)
     {
-      /* freeze copy if
-       * - src device fs ≠ tgt device fs and src or tgt appears in another job
-       * - src device is local and src device appears in another job
-       * - tgt device is local and tgt device appears in another job
-       */
-      if (g_strcmp0(transfer_job->source_device_fs_id, transfer_job->target_device_fs_id) != 0)
+      gboolean been_frozen = FALSE; /* this boolean can only take the TRUE value once. */
+      while (TRUE)
         {
-          /* freeze when either src or tgt device appears on another job */
-          parallel_copy = FALSE;
-          src_device_local = TRUE;
-          tgt_device_local = TRUE;
-        }
-      else
-        parallel_copy = !src_device_local && !tgt_device_local;
-    }
-  else /* THUNAR_PARALLEL_COPY_MODE_NEVER */
-    {
-      /* freeze copy if another transfer job is running */
-      parallel_copy = FALSE;
-      freeze_on_any_other_job = TRUE;
-    }
-
-  if (!parallel_copy)
-    {
-      GList    *jobs = thunar_job_ask_jobs (THUNAR_JOB (transfer_job));
-      GList    *other_jobs = thunar_transfer_job_filter_running_jobs (jobs, THUNAR_JOB (transfer_job));
-      gboolean  been_frozen = FALSE;
-      while (
-        !exo_job_is_cancelled (EXO_JOB (transfer_job)) &&
-        (
-          (freeze_on_any_other_job && other_jobs != NULL) ||
-          (src_device_local && thunar_transfer_job_device_id_in_job_list (transfer_job->source_device_fs_id, other_jobs)) ||
-          (tgt_device_local && thunar_transfer_job_device_id_in_job_list (transfer_job->target_device_fs_id, other_jobs))
-        )
-      )
-        {
+          GList *jobs = thunar_job_ask_jobs (THUNAR_JOB (transfer_job));
+          GList *other_jobs = thunar_transfer_job_filter_running_jobs (jobs, THUNAR_JOB (transfer_job));
+          g_list_free (g_steal_pointer (&jobs));
+          if (
+              /* should freeze because another job is running */
+              (should_freeze_on_any_other_job && other_jobs != NULL) ||
+              /* should freeze because source is local and source device id appears in another job */
+              (is_src_device_local && thunar_transfer_job_device_id_in_job_list (transfer_job->source_device_fs_id, other_jobs)) ||
+              /* should freeze because target is local and target device id appears in another job */
+              (is_tgt_device_local && thunar_transfer_job_device_id_in_job_list (transfer_job->target_device_fs_id, other_jobs))
+          )
+            g_list_free (g_steal_pointer (&other_jobs));
+          else
+            {
+              g_list_free (g_steal_pointer (&other_jobs));
+              break;
+            }
+          if (exo_job_is_cancelled (EXO_JOB (transfer_job)))
+            break;
           if (!thunar_job_is_frozen (THUNAR_JOB (transfer_job)))
             {
               if (been_frozen)
-                {
-                  /* cannot re-freeze. It means that the user force to unfreeze */
-                  break;
-                }
+                break; /* cannot re-freeze. It means that the user force to unfreeze */
               else
                 {
-                  /* first time here. The job needs to change to frozen state */
-                  been_frozen = TRUE;
+                  been_frozen = TRUE; /* first time here. The job needs to change to frozen state */
                   thunar_job_freeze (THUNAR_JOB (transfer_job));
                 }
             }
           g_usleep(500 * 1000);
-          g_list_free (g_steal_pointer (&jobs));
-          g_list_free (g_steal_pointer (&other_jobs));
-          jobs = thunar_job_ask_jobs (THUNAR_JOB (transfer_job));
-          other_jobs = thunar_transfer_job_filter_running_jobs (jobs, THUNAR_JOB (transfer_job));
         }
-      g_list_free (g_steal_pointer (&jobs));
-      g_list_free (g_steal_pointer (&other_jobs));
       if (thunar_job_is_frozen (THUNAR_JOB (transfer_job)))
-        {
-          thunar_job_unfreeze (THUNAR_JOB (transfer_job));
-        }
+        thunar_job_unfreeze (THUNAR_JOB (transfer_job));
     }
 }
 
