@@ -1204,7 +1204,7 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
   files = g_list_append (NULL, file);
   g_object_set (G_OBJECT (buttons->launcher), "current-directory", file, NULL);
   g_object_set (G_OBJECT (buttons->launcher), "selected-files", files, NULL);
-
+  g_list_free (files);
   is_current_directory = g_file_equal (thunar_file_get_file (file), thunar_file_get_file (buttons->current_directory));
   context_menu = g_object_new (THUNAR_TYPE_MENU, "menu-type", THUNAR_MENU_TYPE_CONTEXT_LOCATION_BUTTONS,
                                                  "launcher", buttons->launcher,
