@@ -1189,7 +1189,7 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
 {
   ThunarFile *file;
   GtkWidget  *window;
-  GList      *files = NULL;
+  GList      *files;
   ThunarMenu *context_menu;
   gboolean    is_current_directory;
 
