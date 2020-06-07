@@ -766,6 +766,10 @@ thunar_standard_view_finalize (GObject *object)
   /* as well disconnect accelerators of derived widgets */
   (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->disconnect_accelerators) (standard_view, standard_view->accel_group);
 
+  /* and release the accel group */
+  if (G_LIKELY (standard_view->accel_group != NULL))
+    g_object_unref (standard_view->accel_group);
+
   /* release the thumbnailer */
   g_signal_handlers_disconnect_by_func (standard_view->priv->thumbnailer, thunar_standard_view_finished_thumbnailing, standard_view);
   g_object_unref (standard_view->priv->thumbnailer);
@@ -924,7 +928,6 @@ thunar_standard_view_set_property (GObject      *object,
 
     case PROP_ACCEL_GROUP:
       standard_view->accel_group = g_value_dup_object (value);
-      g_object_ref (standard_view->accel_group);
       thunar_standard_view_connect_accelerators (standard_view);
       break;
 
