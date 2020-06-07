@@ -1201,7 +1201,7 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
   if (G_UNLIKELY (file == NULL))
     return FALSE;
 
-  files = g_list_append (files, file);
+  files = g_list_append (NULL, file);
   g_object_set (G_OBJECT (buttons->launcher), "current-directory", file, NULL);
   g_object_set (G_OBJECT (buttons->launcher), "selected-files", files, NULL);
 
