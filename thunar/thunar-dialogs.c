@@ -391,9 +391,6 @@ thunar_dialogs_show_about (GtkWindow   *parent,
   comments = g_strdup_vprintf (format, args);
   va_end (args);
 
-  /* try to load the about logo */
-  logo = gdk_pixbuf_new_from_file (DATADIR "/pixmaps/Thunar/Thunar-about-logo.png", NULL);
-
   /* open the about dialog */
   gtk_show_about_dialog (parent,
                          "artists", artists,
@@ -407,7 +404,7 @@ thunar_dialogs_show_about (GtkWindow   *parent,
                          "destroy-with-parent", TRUE,
                          "documenters", documenters,
                          "license", XFCE_LICENSE_GPL,
-                         "logo", logo,
+                         "logo-icon-name", "org.xfce.thunar",
                          "program-name", title,
                          "translator-credits", _("translator-credits"),
                          "version", PACKAGE_VERSION,
