@@ -164,7 +164,9 @@ void           thunar_standard_view_append_menu_items   (ThunarStandardView     
 void           thunar_standard_view_append_menu_item    (ThunarStandardView       *standard_view,
                                                          GtkMenu                  *menu,
                                                          ThunarStandardViewAction  action);
-
+void           thunar_standard_view_open_on_middle_click(ThunarStandardView       *standard_view,
+                                                         GtkTreePath              *tree_path,
+                                                         GdkEventButton           *event);
 G_END_DECLS;
 
 #endif /* !__THUNAR_STANDARD_VIEW_H__ */
