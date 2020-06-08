@@ -29,7 +29,6 @@
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-dnd.h>
 #include <thunar/thunar-gtk-extensions.h>
-#include <thunar/thunar-menu-util.h>
 #include <thunar/thunar-private.h>
 
 
@@ -154,7 +153,8 @@ G_GNUC_END_IGNORE_DEPRECATIONS
           if (G_UNLIKELY (items != NULL))
             {
               /* add menu items for all items */
-              thunar_menu_util_add_items_to_menu (menu, items);
+              for (lp = items; lp != NULL; lp = lp->next)
+                thunar_gtk_menu_thunarx_menu_item_new (lp->data, GTK_MENU_SHELL (menu));
               g_list_free (items);
 
               /* append another separator */

@@ -22,6 +22,9 @@
 
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-folder.h>
+#include <thunar/thunar-launcher.h>
+
+#include <libxfce4ui/libxfce4ui.h>
 
 G_BEGIN_DECLS;
 
@@ -35,30 +38,90 @@ typedef struct _ThunarWindow      ThunarWindow;
 #define THUNAR_IS_WINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_WINDOW))
 #define THUNAR_WINDOW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_WINDOW, ThunarWindowClass))
 
-GType           thunar_window_get_type              (void) G_GNUC_CONST;
+/* #XfceGtkActionEntrys provided by this widget */
+typedef enum
+{
+  THUNAR_WINDOW_ACTION_FILE_MENU,
+  THUNAR_WINDOW_ACTION_NEW_TAB,
+  THUNAR_WINDOW_ACTION_NEW_WINDOW,
+  THUNAR_WINDOW_ACTION_DETACH_TAB,
+  THUNAR_WINDOW_ACTION_CLOSE_TAB,
+  THUNAR_WINDOW_ACTION_CLOSE_WINDOW,
+  THUNAR_WINDOW_ACTION_CLOSE_ALL_WINDOWS,
+  THUNAR_WINDOW_ACTION_EDIT_MENU,
+  THUNAR_WINDOW_ACTION_PREFERENCES,
+  THUNAR_WINDOW_ACTION_VIEW_MENU,
+  THUNAR_WINDOW_ACTION_RELOAD,
+  THUNAR_WINDOW_ACTION_RELOAD_ALT,
+  THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_MENU,
+  THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_PATHBAR,
+  THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_TOOLBAR,
+  THUNAR_WINDOW_ACTION_VIEW_SIDE_PANE_MENU,
+  THUNAR_WINDOW_ACTION_VIEW_SIDE_PANE_SHORTCUTS,
+  THUNAR_WINDOW_ACTION_VIEW_SIDE_PANE_TREE,
+  THUNAR_WINDOW_ACTION_TOGGLE_SIDE_PANE,
+  THUNAR_WINDOW_ACTION_VIEW_STATUSBAR,
+  THUNAR_WINDOW_ACTION_VIEW_MENUBAR,
+  THUNAR_WINDOW_ACTION_SHOW_HIDDEN,
+  THUNAR_WINDOW_ACTION_ZOOM_IN,
+  THUNAR_WINDOW_ACTION_ZOOM_IN_ALT,
+  THUNAR_WINDOW_ACTION_ZOOM_OUT,
+  THUNAR_WINDOW_ACTION_ZOOM_RESET,
+  THUNAR_WINDOW_ACTION_VIEW_AS_ICONS,
+  THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST,
+  THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST,
+  THUNAR_WINDOW_ACTION_GO_MENU,
+  THUNAR_WINDOW_ACTION_OPEN_PARENT,
+  THUNAR_WINDOW_ACTION_BACK,
+  THUNAR_WINDOW_ACTION_BACK_ALT,
+  THUNAR_WINDOW_ACTION_FORWARD,
+  THUNAR_WINDOW_ACTION_OPEN_FILE_SYSTEM,
+  THUNAR_WINDOW_ACTION_OPEN_HOME,
+  THUNAR_WINDOW_ACTION_OPEN_DESKTOP,
+  THUNAR_WINDOW_ACTION_OPEN_COMPUTER,
+  THUNAR_WINDOW_ACTION_OPEN_TRASH,
+  THUNAR_WINDOW_ACTION_OPEN_LOCATION,
+  THUNAR_WINDOW_ACTION_OPEN_LOCATION_ALT,
+  THUNAR_WINDOW_ACTION_OPEN_TEMPLATES,
+  THUNAR_WINDOW_ACTION_OPEN_NETWORK,
+  THUNAR_WINDOW_ACTION_HELP_MENU,
+  THUNAR_WINDOW_ACTION_CONTENTS,
+  THUNAR_WINDOW_ACTION_ABOUT,
+  THUNAR_WINDOW_ACTION_SWITCH_PREV_TAB,
+  THUNAR_WINDOW_ACTION_SWITCH_NEXT_TAB,
 
-ThunarFile     *thunar_window_get_current_directory (ThunarWindow   *window);
-void            thunar_window_set_current_directory (ThunarWindow   *window,
-                                                     ThunarFile     *current_directory);
+} ThunarWindowAction;
 
-void            thunar_window_scroll_to_file        (ThunarWindow   *window,
-                                                     ThunarFile     *file,
-                                                     gboolean        select,
-                                                     gboolean        use_align,
-                                                     gfloat          row_align,
-                                                     gfloat          col_align);
-
-gchar         **thunar_window_get_directories       (ThunarWindow   *window,
-                                                     gint           *active_page);
-gboolean        thunar_window_set_directories       (ThunarWindow   *window,
-                                                     gchar         **uris,
-                                                     gint            active_page);
-void            thunar_window_update_directories    (ThunarWindow *window,
-                                                     ThunarFile   *old_directory,
-                                                     ThunarFile   *new_directory);
-void            thunar_window_notebook_insert       (ThunarWindow *window,
-                                                     ThunarFile   *directory);
-
+GType                     thunar_window_get_type                            (void) G_GNUC_CONST;
+ThunarFile               *thunar_window_get_current_directory               (ThunarWindow        *window);
+void                      thunar_window_set_current_directory               (ThunarWindow        *window,
+                                                                             ThunarFile          *current_directory);
+void                      thunar_window_scroll_to_file                      (ThunarWindow        *window,
+                                                                             ThunarFile          *file,
+                                                                             gboolean             select,
+                                                                             gboolean             use_align,
+                                                                             gfloat               row_align,
+                                                                             gfloat               col_align);
+gchar                   **thunar_window_get_directories                     (ThunarWindow        *window,
+                                                                             gint                *active_page);
+gboolean                  thunar_window_set_directories                     (ThunarWindow        *window,
+                                                                             gchar              **uris,
+                                                                             gint                 active_page);
+void                      thunar_window_update_directories                  (ThunarWindow        *window,
+                                                                             ThunarFile          *old_directory,
+                                                                             ThunarFile          *new_directory);
+void                      thunar_window_notebook_insert                     (ThunarWindow        *window,
+                                                                             ThunarFile          *directory);
+gboolean                  thunar_window_has_shortcut_sidepane               (ThunarWindow        *window);
+GtkWidget*                thunar_window_get_sidepane                        (ThunarWindow        *window);
+void                      thunar_window_append_menu_item                    (ThunarWindow        *window,
+                                                                             GtkMenuShell        *menu,
+                                                                             ThunarWindowAction   action);
+ThunarLauncher*           thunar_window_get_launcher                        (ThunarWindow        *window);
+void                      thunar_window_redirect_menu_tooltips_to_statusbar (ThunarWindow        *window,
+                                                                             GtkMenu             *menu);
+const XfceGtkActionEntry* thunar_window_get_action_entry                    (ThunarWindow        *window,
+                                                                             ThunarWindowAction   action);
 G_END_DECLS;
 
 #endif /* !__THUNAR_WINDOW_H__ */

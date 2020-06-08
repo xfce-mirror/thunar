@@ -25,10 +25,11 @@
 
 #include <thunar/thunar-column-editor.h>
 #include <thunar/thunar-details-view.h>
-#include <thunar/thunar-details-view-ui.h>
+#include <thunar/thunar-launcher.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-preferences.h>
+#include <thunar/thunar-window.h>
 
 
 
@@ -51,10 +52,6 @@ static void         thunar_details_view_set_property            (GObject        
                                                                  const GValue           *value,
                                                                  GParamSpec             *pspec);
 static AtkObject   *thunar_details_view_get_accessible          (GtkWidget              *widget);
-static void         thunar_details_view_connect_ui_manager      (ThunarStandardView     *standard_view,
-                                                                 GtkUIManager           *ui_manager);
-static void         thunar_details_view_disconnect_ui_manager   (ThunarStandardView     *standard_view,
-                                                                 GtkUIManager           *ui_manager);
 static GList       *thunar_details_view_get_selected_items      (ThunarStandardView     *standard_view);
 static void         thunar_details_view_select_all              (ThunarStandardView     *standard_view);
 static void         thunar_details_view_unselect_all            (ThunarStandardView     *standard_view);
@@ -103,11 +100,16 @@ static void         thunar_details_view_row_changed             (GtkTreeView    
 static void         thunar_details_view_columns_changed         (ThunarColumnModel      *column_model,
                                                                  ThunarDetailsView      *details_view);
 static void         thunar_details_view_zoom_level_changed      (ThunarDetailsView      *details_view);
-static void         thunar_details_view_action_setup_columns    (GtkAction              *action,
-                                                                 ThunarDetailsView      *details_view);
 static gboolean     thunar_details_view_get_fixed_columns       (ThunarDetailsView      *details_view);
 static void         thunar_details_view_set_fixed_columns       (ThunarDetailsView      *details_view,
                                                                  gboolean                fixed_columns);
+static void         thunar_details_view_connect_accelerators    (ThunarStandardView     *standard_view,
+                                                                 GtkAccelGroup          *accel_group);
+static void         thunar_details_view_disconnect_accelerators (ThunarStandardView     *standard_view,
+                                                                 GtkAccelGroup          *accel_group);
+static void         thunar_details_view_append_menu_items       (ThunarStandardView     *standard_view,
+                                                                 GtkMenu                *menu,
+                                                                 GtkAccelGroup          *accel_group);
 
 
 
@@ -129,19 +131,18 @@ struct _ThunarDetailsView
   /* whether to use fixed column widths */
   gboolean           fixed_columns;
 
-  /* the UI manager merge id for the details view */
-  guint              ui_merge_id;
-
   /* whether the most recent item activation used a mouse button press */
   gboolean           button_pressed;
 };
 
 
 
-static const GtkActionEntry action_entries[] =
+static XfceGtkActionEntry thunar_details_view_action_entries[] =
 {
-  { "setup-columns", NULL, N_ ("Configure _Columns..."), NULL, N_ ("Configure the columns in the detailed list view"), G_CALLBACK (thunar_details_view_action_setup_columns), },
+    { THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS, "<Actions>/ThunarStandardView/configure-columns", "", XFCE_GTK_MENU_ITEM , N_ ("Configure _Columns..."), N_("Configure the columns in the detailed list view"), NULL, G_CALLBACK (thunar_show_column_editor), },
 };
+
+#define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_details_view_action_entries,G_N_ELEMENTS(thunar_details_view_action_entries),id)
 
 
 
@@ -165,8 +166,6 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
   gtkwidget_class->get_accessible = thunar_details_view_get_accessible;
 
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
-  thunarstandard_view_class->connect_ui_manager = thunar_details_view_connect_ui_manager;
-  thunarstandard_view_class->disconnect_ui_manager = thunar_details_view_disconnect_ui_manager;
   thunarstandard_view_class->get_selected_items = thunar_details_view_get_selected_items;
   thunarstandard_view_class->select_all = thunar_details_view_select_all;
   thunarstandard_view_class->unselect_all = thunar_details_view_unselect_all;
@@ -177,7 +176,12 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
   thunarstandard_view_class->get_path_at_pos = thunar_details_view_get_path_at_pos;
   thunarstandard_view_class->get_visible_range = thunar_details_view_get_visible_range;
   thunarstandard_view_class->highlight_path = thunar_details_view_highlight_path;
+  thunarstandard_view_class->append_menu_items = thunar_details_view_append_menu_items;
+  thunarstandard_view_class->connect_accelerators = thunar_details_view_connect_accelerators;
+  thunarstandard_view_class->disconnect_accelerators = thunar_details_view_disconnect_accelerators;
   thunarstandard_view_class->zoom_level_property_name = "last-details-view-zoom-level";
+
+  xfce_gtk_translate_action_entries (thunar_details_view_action_entries, G_N_ELEMENTS (thunar_details_view_action_entries));
 
   /**
    * ThunarDetailsView:fixed-columns:
@@ -209,13 +213,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
    * whenever the zoom-level changes, so we connect a handler here.
    */
   g_signal_connect (G_OBJECT (details_view), "notify::zoom-level", G_CALLBACK (thunar_details_view_zoom_level_changed), NULL);
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* setup the details view actions */
-  gtk_action_group_add_actions (THUNAR_STANDARD_VIEW (details_view)->action_group,
-                                action_entries, G_N_ELEMENTS (action_entries),
-                                GTK_WIDGET (details_view));
-G_GNUC_END_IGNORE_DEPRECATIONS
 
   /* create the tree view to embed */
   tree_view = exo_tree_view_new ();
@@ -411,36 +408,6 @@ thunar_details_view_get_accessible (GtkWidget *widget)
     }
 
   return object;
-}
-
-
-static void
-thunar_details_view_connect_ui_manager (ThunarStandardView *standard_view,
-                                        GtkUIManager       *ui_manager)
-{
-  ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (standard_view);
-  GError            *error = NULL;
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  details_view->ui_merge_id = gtk_ui_manager_add_ui_from_string (ui_manager, thunar_details_view_ui,
-                                                                 thunar_details_view_ui_length, &error);
-G_GNUC_END_IGNORE_DEPRECATIONS
-  if (G_UNLIKELY (details_view->ui_merge_id == 0))
-    {
-      g_error ("Failed to merge ThunarDetailsView menus: %s", error->message);
-      g_error_free (error);
-    }
-}
-
-
-
-static void
-thunar_details_view_disconnect_ui_manager (ThunarStandardView *standard_view,
-                                           GtkUIManager       *ui_manager)
-{
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  gtk_ui_manager_remove_ui (ui_manager, THUNAR_DETAILS_VIEW (standard_view)->ui_merge_id);
-G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 
@@ -677,10 +644,10 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
   GtkTreeViewColumn *column;
   GtkTreeViewColumn *name_column;
   ThunarFile        *file;
-  GtkAction         *action;
   ThunarPreferences *preferences;
   gboolean           in_tab;
-  const gchar       *action_name;
+  ThunarLauncher    *launcher;
+  GtkWidget         *window;
 
   /* check if the event is for the bin window */
   if (G_UNLIKELY (event->window != gtk_tree_view_get_bin_window (tree_view)))
@@ -782,27 +749,23 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
           /* determine the file for the path */
           gtk_tree_model_get_iter (GTK_TREE_MODEL (THUNAR_STANDARD_VIEW (details_view)->model), &iter, path);
           file = thunar_list_model_get_file (THUNAR_STANDARD_VIEW (details_view)->model, &iter);
-          if (G_LIKELY (file != NULL) && thunar_file_is_directory (file))
+          if (G_LIKELY (file != NULL))
             {
-              /* lookup setting if we should open in a tab or a window */
-              preferences = thunar_preferences_get ();
-              g_object_get (preferences, "misc-middle-click-in-tab", &in_tab, NULL);
-              g_object_unref (preferences);
+              if (thunar_file_is_directory (file))
+                {
+                  /* lookup setting if we should open in a tab or a window */
+                  preferences = thunar_preferences_get ();
+                  g_object_get (preferences, "misc-middle-click-in-tab", &in_tab, NULL);
+                  g_object_unref (preferences);
 
-              /* holding ctrl inverts the action */
-              if ((event->state & GDK_CONTROL_MASK) != 0)
-                  in_tab = !in_tab;
+                  /* holding ctrl inverts the action */
+                  if ((event->state & GDK_CONTROL_MASK) != 0)
+                      in_tab = !in_tab;
 
-              action_name = in_tab ? "open-in-new-tab" : "open-in-new-window";
-
-              action = thunar_gtk_ui_manager_get_action_by_name (THUNAR_STANDARD_VIEW (details_view)->ui_manager, action_name);
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-              /* emit the action */
-              if (G_LIKELY (action != NULL))
-                  gtk_action_activate (action);
-G_GNUC_END_IGNORE_DEPRECATIONS
-
+                  window = gtk_widget_get_toplevel (GTK_WIDGET (details_view));
+                  launcher = thunar_window_get_launcher (THUNAR_WINDOW (window));
+                  thunar_launcher_open_selected_folders (launcher, in_tab);
+                }
               /* release the file reference */
               g_object_unref (G_OBJECT (file));
             }
@@ -845,7 +808,8 @@ thunar_details_view_row_activated (GtkTreeView       *tree_view,
                                    ThunarDetailsView *details_view)
 {
   GtkTreeSelection *selection;
-  GtkAction        *action;
+  ThunarLauncher   *launcher;
+  GtkWidget        *window;
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
@@ -857,12 +821,9 @@ thunar_details_view_row_activated (GtkTreeView       *tree_view,
       gtk_tree_selection_select_path (selection, path);
     }
 
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* emit the "open" action */
-  action = thunar_gtk_ui_manager_get_action_by_name (THUNAR_STANDARD_VIEW (details_view)->ui_manager, "open");
-  if (G_LIKELY (action != NULL))
-    gtk_action_activate (action);
-G_GNUC_END_IGNORE_DEPRECATIONS
+  window = gtk_widget_get_toplevel (GTK_WIDGET (details_view));
+  launcher = thunar_window_get_launcher (THUNAR_WINDOW (window));
+  thunar_launcher_activate_selected_files (launcher, THUNAR_LAUNCHER_CHANGE_DIRECTORY, NULL);
 }
 
 
@@ -880,18 +841,16 @@ thunar_details_view_select_cursor_row (GtkTreeView            *tree_view,
    * default gtk signal handler there.
    */
 
-  GtkAction        *action;
+  ThunarLauncher *launcher;
+  GtkWidget      *window;
 
   _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (details_view), FALSE);
 
   g_signal_stop_emission_by_name(tree_view,"select-cursor-row");
 
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /* emit the "open" action */
-  action = thunar_gtk_ui_manager_get_action_by_name (THUNAR_STANDARD_VIEW (details_view)->ui_manager, "open");
-  if (G_LIKELY (action != NULL))
-    gtk_action_activate (action);
-G_GNUC_END_IGNORE_DEPRECATIONS
+  window = gtk_widget_get_toplevel (GTK_WIDGET (details_view));
+  launcher = thunar_window_get_launcher (THUNAR_WINDOW (window));
+  thunar_launcher_activate_selected_files (launcher, THUNAR_LAUNCHER_CHANGE_DIRECTORY, NULL);
 
   return TRUE;
 }
@@ -986,17 +945,69 @@ thunar_details_view_zoom_level_changed (ThunarDetailsView *details_view)
 
 
 
+/**
+ * thunar_details_view_connect_accelerators:
+ * @standard_view : a #ThunarStandardView.
+ * @accel_group   : a #GtkAccelGroup to be used used for new menu items
+ *
+ * Connects all accelerators and corresponding default keys of this widget to the global accelerator list
+ * The concrete implementation depends on the concrete widget which is implementing this view
+ **/
 static void
-thunar_details_view_action_setup_columns (GtkAction         *action,
-                                          ThunarDetailsView *details_view)
+thunar_details_view_connect_accelerators (ThunarStandardView *standard_view,
+                                          GtkAccelGroup      *accel_group)
 {
-  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  _thunar_return_if_fail (GTK_IS_ACTION (action));
-G_GNUC_END_IGNORE_DEPRECATIONS
+  ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (standard_view);
 
-  /* popup the column editor dialog */
-  thunar_show_column_editor (details_view);
+  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+
+  xfce_gtk_accel_map_add_entries (thunar_details_view_action_entries, G_N_ELEMENTS (thunar_details_view_action_entries));
+  xfce_gtk_accel_group_connect_action_entries (accel_group,
+                                               thunar_details_view_action_entries,
+                                               G_N_ELEMENTS (thunar_details_view_action_entries),
+                                               standard_view);
+}
+
+
+
+/**
+ * thunar_details_view_disconnect_accelerators:
+ * @standard_view : a #ThunarStandardView.
+ * @accel_group   : a #GtkAccelGroup to be disconnected
+ *
+ * Dont listen to the accel keys defined by the action entries any more
+ **/
+static void
+thunar_details_view_disconnect_accelerators (ThunarStandardView *standard_view,
+                                             GtkAccelGroup      *accel_group)
+{
+  /* Dont listen to the accel keys defined by the action entries any more */
+  xfce_gtk_accel_group_disconnect_action_entries (accel_group,
+                                                  thunar_details_view_action_entries,
+                                                  G_N_ELEMENTS (thunar_details_view_action_entries));
+}
+
+
+
+/**
+ * thunar_details_view_append_menu_items:
+ * @standard_view : a #ThunarStandardView.
+ * @menu          : the #GtkMenu to add the menu items.
+ * @accel_group   : a #GtkAccelGroup to be used used for new menu items
+ *
+ * Appends widget-specific menu items to a #GtkMenu and connects them to the passed #GtkAccelGroup
+ * Implements method 'append_menu_items' of #ThunarStandardView
+ **/
+static void
+thunar_details_view_append_menu_items (ThunarStandardView *standard_view,
+                                       GtkMenu            *menu,
+                                       GtkAccelGroup      *accel_group)
+{
+  ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (standard_view);
+
+  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS), G_OBJECT (details_view), GTK_MENU_SHELL (menu));
 }
 
 

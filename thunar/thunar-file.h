@@ -252,7 +252,8 @@ void              thunar_file_reload_parent              (ThunarFile            
 
 void              thunar_file_destroy                    (ThunarFile              *file);
 
-
+gint              thunar_file_compare_by_type            (ThunarFile              *file_a,
+                                                          ThunarFile              *file_b);
 gint              thunar_file_compare_by_name            (const ThunarFile        *file_a,
                                                           const ThunarFile        *file_b,
                                                           gboolean                 case_sensitive) G_GNUC_PURE;

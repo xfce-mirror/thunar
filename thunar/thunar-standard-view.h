@@ -40,17 +40,18 @@ typedef struct _ThunarStandardView        ThunarStandardView;
 #define THUNAR_IS_STANDARD_VIEW_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_STANDARD_VIEW))
 #define THUNAR_STANDARD_VIEW_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_STANDARD_VIEW, ThunarStandardViewClass))
 
+/* #XfceGtkActionEntrys provided by this widget */
+typedef enum
+{
+  THUNAR_STANDARD_VIEW_ACTION_SELECT_ALL_FILES,
+  THUNAR_STANDARD_VIEW_ACTION_SELECT_BY_PATTERN,
+  THUNAR_STANDARD_VIEW_ACTION_INVERT_SELECTION,
+
+} ThunarStandardViewAction;
+
 struct _ThunarStandardViewClass
 {
   GtkScrolledWindowClass __parent__;
-
-  /* Called by the ThunarStandardView class to let derived classes
-   * connect to and disconnect from the UI manager.
-   */
-  void       (*connect_ui_manager)      (ThunarStandardView *standard_view,
-                                         GtkUIManager       *ui_manager);
-  void       (*disconnect_ui_manager)   (ThunarStandardView *standard_view,
-                                         GtkUIManager       *ui_manager);
 
   /* Returns the list of currently selected GtkTreePath's, where
    * both the list and the items are owned by the caller. */
@@ -109,6 +110,15 @@ struct _ThunarStandardViewClass
   void         (*start_open_location)   (ThunarStandardView *standard_view,
                                          const gchar        *initial_text);
 
+  /* Appends view-specific menu items to the given menu */
+  void        (*append_menu_items)      (ThunarStandardView *standard_view, GtkMenu *menu, GtkAccelGroup *accel_group);
+
+  /* Connects view-specific accelerators to the given accelGroup */
+  void        (*connect_accelerators)    (ThunarStandardView *standard_view, GtkAccelGroup *accel_group);
+
+  /* Disconnects view-specific accelerators to the given accelGroup */
+  void        (*disconnect_accelerators)    (ThunarStandardView *standard_view, GtkAccelGroup *accel_group);
+
   /* Internal action signals */
   gboolean     (*delete_selected_files) (ThunarStandardView *standard_view);
 
@@ -125,12 +135,7 @@ struct _ThunarStandardView
 
   ThunarPreferences         *preferences;
 
-  ThunarClipboardManager    *clipboard;
   ThunarListModel           *model;
-
-  GtkActionGroup            *action_group;
-  GtkUIManager              *ui_manager;
-  guint                      ui_merge_id;
 
   ThunarIconFactory         *icon_factory;
   GtkCellRenderer           *icon_renderer;
@@ -138,24 +143,27 @@ struct _ThunarStandardView
 
   ExoBinding                *loading_binding;
   gboolean                   loading;
+  GtkAccelGroup             *accel_group;
 
   ThunarStandardViewPrivate *priv;
 };
 
-GType thunar_standard_view_get_type           (void) G_GNUC_CONST;
+GType          thunar_standard_view_get_type            (void) G_GNUC_CONST;
 
-void  thunar_standard_view_context_menu       (ThunarStandardView *standard_view);
-
-void  thunar_standard_view_queue_popup        (ThunarStandardView *standard_view,
-                                               GdkEventButton     *event);
-
-void  thunar_standard_view_selection_changed  (ThunarStandardView *standard_view);
-
-
-void  thunar_standard_view_set_history            (ThunarStandardView *standard_view,
-                                                   ThunarHistory      *history);
-
-ThunarHistory *thunar_standard_view_copy_history  (ThunarStandardView *standard_view);
+void           thunar_standard_view_context_menu        (ThunarStandardView       *standard_view);
+void           thunar_standard_view_queue_popup         (ThunarStandardView       *standard_view,
+                                                         GdkEventButton           *event);
+void           thunar_standard_view_selection_changed   (ThunarStandardView       *standard_view);
+void           thunar_standard_view_set_history         (ThunarStandardView       *standard_view,
+                                                         ThunarHistory            *history);
+ThunarHistory *thunar_standard_view_get_history         (ThunarStandardView       *standard_view);
+ThunarHistory *thunar_standard_view_copy_history        (ThunarStandardView       *standard_view);
+void           thunar_standard_view_append_menu_items   (ThunarStandardView       *standard_view,
+                                                         GtkMenu                  *menu,
+                                                         GtkAccelGroup            *accel_group);
+void           thunar_standard_view_append_menu_item    (ThunarStandardView       *standard_view,
+                                                         GtkMenu                  *menu,
+                                                         ThunarStandardViewAction  action);
 
 G_END_DECLS;
 

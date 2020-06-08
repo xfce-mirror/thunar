@@ -31,70 +31,9 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
 
+#include <thunarx/thunarx.h>
 
-
-/**
- * thunar_gtk_action_set_tooltip:
- * @action : a #GtkAction.
- * @format : the format string for the tooltip.
- * @...    : the parameters for @format.
- *
- * Convenience function to set a tooltip for a #GtkAction.
- **/
-void
-thunar_gtk_action_set_tooltip (GtkAction   *action,
-                               const gchar *format,
-                               ...)
-{
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  va_list var_args;
-  gchar  *tooltip;
-
-  _thunar_return_if_fail (g_utf8_validate (format, -1, NULL));
-  _thunar_return_if_fail (GTK_IS_ACTION (action));
-
-  /* determine the tooltip */
-  va_start (var_args, format);
-  tooltip = g_strdup_vprintf (format, var_args);
-  va_end (var_args);
-
-  /* setup the tooltip for the action */
-  gtk_action_set_tooltip (action, tooltip);
-
-  /* release the tooltip */
-  g_free (tooltip);
-G_GNUC_END_IGNORE_DEPRECATIONS
-}
-
-
-
-/**
- * thunar_gtk_action_group_set_action_sensitive:
- * @action_group : a #GtkActionGroup.
- * @action_name  : the name of a #GtkAction in @action_group.
- * @sensitive    : the new sensitivity.
- *
- * Convenience function to change the sensitivity of an action
- * in @action_group (whose name is @action_name) to @sensitive.
- **/
-void
-thunar_gtk_action_group_set_action_sensitive (GtkActionGroup *action_group,
-                                              const gchar    *action_name,
-                                              gboolean        sensitive)
-{
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  GtkAction *action;
-
-  _thunar_return_if_fail (GTK_IS_ACTION_GROUP (action_group));
-  _thunar_return_if_fail (action_name != NULL && *action_name != '\0');
-
-  /* query the action from the group */
-  action = gtk_action_group_get_action (action_group, action_name);
-
-  /* apply the sensitivity to the action */
-  gtk_action_set_sensitive (action, sensitive);
-G_GNUC_END_IGNORE_DEPRECATIONS
-}
+#include <libxfce4ui/libxfce4ui.h>
 
 
 
@@ -123,6 +62,65 @@ thunar_gtk_label_set_a11y_relation (GtkLabel  *label,
   relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
+}
+
+
+
+/**
+ * thunar_gtk_menu_thunarx_menu_item_new:
+ * @thunarx_menu_item   : a #ThunarxMenuItem
+ * @menu_to_append_item : #GtkMenuShell on which the item should be appended, or NULL
+ *
+ * method to create a #GtkMenuItem from a #ThunarxMenuItem and append it to the passed #GtkMenuShell
+ * This method will as well add all sub-items in case the passed #ThunarxMenuItem is a submenu
+ *
+ * Return value: (transfer full): The new #GtkImageMenuItem.
+ **/
+GtkWidget*
+thunar_gtk_menu_thunarx_menu_item_new (GObject      *thunarx_menu_item,
+                                       GtkMenuShell *menu_to_append_item)
+{
+  gchar        *name, *label_text, *tooltip_text, *icon_name, *accel_path;
+  gboolean      sensitive;
+  GtkWidget    *gtk_menu_item;
+  ThunarxMenu  *thunarx_menu;
+  GList        *children;
+  GList        *lp;
+  GtkWidget    *submenu;
+
+  g_return_val_if_fail (THUNARX_IS_MENU_ITEM (thunarx_menu_item), NULL);
+
+  g_object_get (G_OBJECT (thunarx_menu_item),
+                "name", &name,
+                "label", &label_text,
+                "tooltip", &tooltip_text,
+                "icon", &icon_name,
+                "sensitive", &sensitive,
+                "menu", &thunarx_menu,
+                NULL);
+
+  accel_path = g_strconcat ("<Actions>/ThunarActions/", name, NULL);
+  gtk_menu_item = xfce_gtk_image_menu_item_new_from_icon_name (label_text, tooltip_text, accel_path,
+                                                               G_CALLBACK (thunarx_menu_item_activate),
+                                                               G_OBJECT (thunarx_menu_item), icon_name, menu_to_append_item);
+
+  /* recursively add submenu items if any */
+  if (gtk_menu_item != NULL && thunarx_menu != NULL)
+  {
+    children = thunarx_menu_get_items (thunarx_menu);
+    submenu = gtk_menu_new ();
+    for (lp = children; lp != NULL; lp = lp->next)
+      thunar_gtk_menu_thunarx_menu_item_new (lp->data, GTK_MENU_SHELL (submenu));
+    gtk_menu_item_set_submenu (GTK_MENU_ITEM (gtk_menu_item), submenu);
+    thunarx_menu_item_list_free (children);
+  }
+  g_free (name);
+  g_free (accel_path);
+  g_free (label_text);
+  g_free (tooltip_text);
+  g_free (icon_name);
+
+  return gtk_menu_item;
 }
 
 
@@ -216,43 +214,6 @@ thunar_gtk_menu_run_at_event (GtkMenu *menu,
 
   /* release the menu reference */
   g_object_unref (G_OBJECT (menu));
-}
-
-
-
-/**
- * thunar_gtk_ui_manager_get_action_by_name:
- * @ui_manager  : a #GtkUIManager.
- * @action_name : the name of a #GtkAction in @ui_manager.
- *
- * Looks up the #GtkAction with the given @action_name in all
- * #GtkActionGroup<!---->s associated with @ui_manager. Returns
- * %NULL if no such #GtkAction exists in @ui_manager.
- *
- * Return value: the #GtkAction of the given @action_name in
- *               @ui_manager or %NULL.
- **/
-GtkAction*
-thunar_gtk_ui_manager_get_action_by_name (GtkUIManager *ui_manager,
-                                          const gchar  *action_name)
-{
-  GtkAction *action;
-  GList     *lp;
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  _thunar_return_val_if_fail (GTK_IS_UI_MANAGER (ui_manager), NULL);
-  _thunar_return_val_if_fail (action_name != NULL, NULL);
-
-  /* check all action groups associated with the ui manager */
-  for (lp = gtk_ui_manager_get_action_groups (ui_manager); lp != NULL; lp = lp->next)
-    {
-      action = gtk_action_group_get_action (lp->data, action_name);
-      if (G_LIKELY (action != NULL))
-        return action;
-    }
-G_GNUC_END_IGNORE_DEPRECATIONS
-
-  return NULL;
 }
 
 

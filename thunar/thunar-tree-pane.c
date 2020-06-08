@@ -33,7 +33,6 @@ enum
   PROP_CURRENT_DIRECTORY,
   PROP_SELECTED_FILES,
   PROP_SHOW_HIDDEN,
-  PROP_UI_MANAGER,
 };
 
 
@@ -97,7 +96,6 @@ thunar_tree_pane_class_init (ThunarTreePaneClass *klass)
 
   /* override ThunarComponent's properties */
   g_object_class_override_property (gobject_class, PROP_SELECTED_FILES, "selected-files");
-  g_object_class_override_property (gobject_class, PROP_UI_MANAGER, "ui-manager");
 
   /* override ThunarSidePane's properties */
   g_object_class_override_property (gobject_class, PROP_SHOW_HIDDEN, "show-hidden");
@@ -110,8 +108,6 @@ thunar_tree_pane_component_init (ThunarComponentIface *iface)
 {
   iface->get_selected_files = (gpointer) exo_noop_null;
   iface->set_selected_files = (gpointer) exo_noop;
-  iface->get_ui_manager = (gpointer) exo_noop_null;
-  iface->set_ui_manager = (gpointer) exo_noop;
 }
 
 
@@ -162,7 +158,6 @@ thunar_tree_pane_dispose (GObject *object)
 
   thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (tree_pane), NULL);
   thunar_component_set_selected_files (THUNAR_COMPONENT (tree_pane), NULL);
-  thunar_component_set_ui_manager (THUNAR_COMPONENT (tree_pane), NULL);
 
   (*G_OBJECT_CLASS (thunar_tree_pane_parent_class)->dispose) (object);
 }
@@ -187,10 +182,6 @@ thunar_tree_pane_get_property (GObject    *object,
 
     case PROP_SHOW_HIDDEN:
       g_value_set_boolean (value, thunar_side_pane_get_show_hidden (THUNAR_SIDE_PANE (object)));
-      break;
-
-    case PROP_UI_MANAGER:
-      g_value_set_object (value, thunar_component_get_ui_manager (THUNAR_COMPONENT (object)));
       break;
 
     default:
@@ -219,10 +210,6 @@ thunar_tree_pane_set_property (GObject      *object,
 
     case PROP_SHOW_HIDDEN:
       thunar_side_pane_set_show_hidden (THUNAR_SIDE_PANE (object), g_value_get_boolean (value));
-      break;
-
-    case PROP_UI_MANAGER:
-      thunar_component_set_ui_manager (THUNAR_COMPONENT (object), g_value_get_object (value));
       break;
 
     default:

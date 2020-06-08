@@ -85,22 +85,6 @@ thunar_component_class_init (gpointer klass)
                                                            "selected-files",
                                                            THUNARX_TYPE_FILE_INFO_LIST,
                                                            EXO_PARAM_READWRITE));
-
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  /**
-   * ThunarComponent:ui-manager:
-   *
-   * The UI manager used by the surrounding #ThunarWindow. The
-   * #ThunarComponent implementations may connect additional actions
-   * to the UI manager.
-   **/
-  g_object_interface_install_property (klass,
-                                       g_param_spec_object ("ui-manager",
-                                                            "ui-manager",
-                                                            "ui-manager",
-                                                            GTK_TYPE_UI_MANAGER,
-                                                            EXO_PARAM_READWRITE));
-G_GNUC_END_IGNORE_DEPRECATIONS
 }
 
 
@@ -160,52 +144,3 @@ thunar_component_restore_selection (ThunarComponent *component)
   thunar_component_set_selected_files (component, selected_files);
   thunar_g_file_list_free (selected_files);
 }
-
-
-
-/**
- * thunar_component_get_ui_manager:
- * @component : a #ThunarComponent instance.
- *
- * Returns the #GtkUIManager associated with @component or
- * %NULL if @component has no #GtkUIManager associated with
- * it.
- *
- * Return value: the #GtkUIManager associated with @component
- *               or %NULL.
- **/
-GtkUIManager*
-thunar_component_get_ui_manager (ThunarComponent *component)
-{
-  _thunar_return_val_if_fail (THUNAR_IS_COMPONENT (component), NULL);
-  return (*THUNAR_COMPONENT_GET_IFACE (component)->get_ui_manager) (component);
-}
-
-
-
-/**
- * thunar_component_set_ui_manager:
- * @component  : a #ThunarComponent instance.
- * @ui_manager : a #GtkUIManager or %NULL.
- *
- * Installs a new #GtkUIManager for @component or resets the ::ui-manager
- * property.
- *
- * Implementations of the #ThunarComponent interface must first disconnect
- * from any previously set #GtkUIManager and then connect to the
- * @ui_manager if not %NULL.
- **/
-void
-thunar_component_set_ui_manager (ThunarComponent *component,
-                                 GtkUIManager    *ui_manager)
-{
-  _thunar_return_if_fail (THUNAR_IS_COMPONENT (component));
-G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-  _thunar_return_if_fail (ui_manager == NULL || GTK_IS_UI_MANAGER (ui_manager));
-G_GNUC_END_IGNORE_DEPRECATIONS
-  (*THUNAR_COMPONENT_GET_IFACE (component)->set_ui_manager) (component, ui_manager);
-}
-
-
-
-
