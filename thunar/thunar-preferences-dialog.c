@@ -245,7 +245,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   dialog->preferences = thunar_preferences_get ();
 
   /* configure the dialog properties */
-  gtk_window_set_icon_name (GTK_WINDOW (dialog), "system-file-manager");
+  gtk_window_set_icon_name (GTK_WINDOW (dialog), "org.xfce.thunar");
   gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
   gtk_window_set_title (GTK_WINDOW (dialog), _("File Manager Preferences"));
 
@@ -408,7 +408,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   button = gtk_check_button_new_with_mnemonic (_("Use current folder icon"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-change-window-icon", G_OBJECT (button), "active");
   gtk_widget_set_tooltip_text (button, _("Select this option to use the current folder icon as window icon"));
-  
+
   gtk_grid_attach (GTK_GRID (grid), button, 0, 0, 1, 1);
   gtk_widget_show (button);
 
@@ -958,4 +958,3 @@ thunar_preferences_dialog_new (GtkWindow *parent)
 
   return dialog;
 }
-
