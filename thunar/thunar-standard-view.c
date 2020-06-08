@@ -3714,3 +3714,51 @@ thunar_standard_view_connect_accelerators (ThunarStandardView *standard_view)
   /* as well append accelerators of derived widgets */
   (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->connect_accelerators) (standard_view, standard_view->accel_group);
 }
+
+
+
+/**
+ * _thunar_standard_view_open_on_middle_click:
+ * @standard_view : a #ThunarStandardView.
+ * @tree_path : the #GtkTreePath to open.
+ * @event_state : The event_state of the pressed #GdkEventButton
+ *
+ * Method only should be used by child widgets.
+ * The method will attempt to find a thunar file for the given #GtkTreePath and open it as window/tab, if it is a directory
+ * Note that this method only should be used after pressing the middle-mouse button
+ **/
+void
+_thunar_standard_view_open_on_middle_click (ThunarStandardView *standard_view,
+                                            GtkTreePath        *tree_path,
+                                            guint               event_state)
+{
+  GtkTreeIter     iter;
+  ThunarFile     *file;
+  gboolean        in_tab;
+  GtkWidget      *window;
+  ThunarLauncher *launcher;
+
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  /* determine the file for the path */
+  gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, tree_path);
+  file = thunar_list_model_get_file (standard_view->model, &iter);
+  if (G_LIKELY (file != NULL))
+    {
+      if (thunar_file_is_directory (file))
+        {
+          /* lookup setting if we should open in a tab or a window */
+          g_object_get (G_OBJECT (standard_view->preferences), "misc-middle-click-in-tab", &in_tab, NULL);
+
+          /* holding ctrl inverts the action */
+          if ((event_state & GDK_CONTROL_MASK) != 0)
+              in_tab = !in_tab;
+
+          window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
+          launcher = thunar_window_get_launcher (THUNAR_WINDOW (window));
+          thunar_launcher_open_selected_folders (launcher, in_tab);
+        }
+      /* release the file reference */
+      g_object_unref (G_OBJECT (file));
+    }
+}

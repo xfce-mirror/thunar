@@ -640,14 +640,8 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
 {
   GtkTreeSelection  *selection;
   GtkTreePath       *path = NULL;
-  GtkTreeIter        iter;
   GtkTreeViewColumn *column;
   GtkTreeViewColumn *name_column;
-  ThunarFile        *file;
-  ThunarPreferences *preferences;
-  gboolean           in_tab;
-  ThunarLauncher    *launcher;
-  GtkWidget         *window;
 
   /* check if the event is for the bin window */
   if (G_UNLIKELY (event->window != gtk_tree_view_get_bin_window (tree_view)))
@@ -746,29 +740,8 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
           gtk_tree_selection_unselect_all (selection);
           gtk_tree_selection_select_path (selection, path);
 
-          /* determine the file for the path */
-          gtk_tree_model_get_iter (GTK_TREE_MODEL (THUNAR_STANDARD_VIEW (details_view)->model), &iter, path);
-          file = thunar_list_model_get_file (THUNAR_STANDARD_VIEW (details_view)->model, &iter);
-          if (G_LIKELY (file != NULL))
-            {
-              if (thunar_file_is_directory (file))
-                {
-                  /* lookup setting if we should open in a tab or a window */
-                  preferences = thunar_preferences_get ();
-                  g_object_get (preferences, "misc-middle-click-in-tab", &in_tab, NULL);
-                  g_object_unref (preferences);
-
-                  /* holding ctrl inverts the action */
-                  if ((event->state & GDK_CONTROL_MASK) != 0)
-                      in_tab = !in_tab;
-
-                  window = gtk_widget_get_toplevel (GTK_WIDGET (details_view));
-                  launcher = thunar_window_get_launcher (THUNAR_WINDOW (window));
-                  thunar_launcher_open_selected_folders (launcher, in_tab);
-                }
-              /* release the file reference */
-              g_object_unref (G_OBJECT (file));
-            }
+          /* try to open the path as new window/tab, if possible */
+          _thunar_standard_view_open_on_middle_click (THUNAR_STANDARD_VIEW (details_view), path, event->state);
 
           /* cleanup */
           gtk_tree_path_free (path);

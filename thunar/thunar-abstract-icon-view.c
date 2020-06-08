@@ -580,12 +580,6 @@ thunar_abstract_icon_view_button_press_event (ExoIconView            *view,
                                               ThunarAbstractIconView *abstract_icon_view)
 {
   GtkTreePath       *path;
-  GtkTreeIter        iter;
-  ThunarFile        *file;
-  ThunarPreferences *preferences;
-  gboolean           in_tab;
-  ThunarLauncher    *launcher;
-  GtkWidget         *window;
 
   abstract_icon_view->priv->button_pressed = TRUE;
 
@@ -631,29 +625,8 @@ thunar_abstract_icon_view_button_press_event (ExoIconView            *view,
           /* select only the path to the item on which the user clicked */
           exo_icon_view_select_path (view, path);
 
-          /* determine the file for the path */
-          gtk_tree_model_get_iter (GTK_TREE_MODEL (THUNAR_STANDARD_VIEW (abstract_icon_view)->model), &iter, path);
-          file = thunar_list_model_get_file (THUNAR_STANDARD_VIEW (abstract_icon_view)->model, &iter);
-          if (G_LIKELY (file != NULL))
-            {
-              if (thunar_file_is_directory (file))
-                {
-                  /* lookup setting if we should open in a tab or a window */
-                  preferences = thunar_preferences_get ();
-                  g_object_get (preferences, "misc-middle-click-in-tab", &in_tab, NULL);
-                  g_object_unref (preferences);
-
-                  /* holding ctrl inverts the action */
-                  if ((event->state & GDK_CONTROL_MASK) != 0)
-                      in_tab = !in_tab;
-
-                  window = gtk_widget_get_toplevel (GTK_WIDGET (abstract_icon_view));
-                  launcher = thunar_window_get_launcher (THUNAR_WINDOW (window));
-                  thunar_launcher_open_selected_folders (launcher, in_tab);
-                }
-              /* release the file reference */
-              g_object_unref (G_OBJECT (file));
-            }
+          /* try to open the path as new window/tab, if possible */
+          _thunar_standard_view_open_on_middle_click (THUNAR_STANDARD_VIEW (abstract_icon_view), path, event->state);
 
           /* cleanup */
           gtk_tree_path_free (path);
