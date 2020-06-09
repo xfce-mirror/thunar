@@ -351,8 +351,12 @@ thunar_menu_get_launcher (ThunarMenu *menu)
 void
 thunar_menu_hide_accel_labels (ThunarMenu *menu)
 {
+  GList *children, *lp;
+
   _thunar_return_if_fail (THUNAR_IS_MENU (menu));
 
-  for (GList* lp = gtk_container_get_children (GTK_CONTAINER (menu)); lp != NULL; lp = lp->next)
+  children = gtk_container_get_children (GTK_CONTAINER (menu));
+  for (lp = children; lp != NULL; lp = lp->next)
     xfce_gtk_menu_item_set_accel_label (lp->data, NULL);
+  g_list_free (children);
 }
