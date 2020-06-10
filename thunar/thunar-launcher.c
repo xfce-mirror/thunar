@@ -1224,8 +1224,11 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
                                            action_entry->accel_path, action_entry->callback, G_OBJECT (launcher), action_entry->menu_item_icon_name, menu);
 
       case THUNAR_LAUNCHER_ACTION_OPEN_IN_TAB:
-        label_text = g_strdup_printf (ngettext ("Open in %d New _Tab", "Open in %d New _Tabs", launcher->n_selected_files), launcher->n_selected_files);
-        tooltip_text = g_strdup_printf (ngettext ("Open the selected directory in %d new tab",
+        if (launcher->n_selected_files == 1)
+          label_text = g_strdup(_("Open in New _Tab"));
+        else
+          label_text = g_strdup_printf (ngettext ("Open in %d New _Tab", "Open in %d New _Tabs", launcher->n_selected_files), launcher->n_selected_files);
+        tooltip_text = g_strdup_printf (ngettext ("Open the selected directory in new tab",
                                                   "Open the selected directories in %d new tabs", launcher->n_selected_files), launcher->n_selected_files);
         item = xfce_gtk_menu_item_new (label_text, tooltip_text, action_entry->accel_path, action_entry->callback, G_OBJECT (launcher), menu);
         g_free (tooltip_text);
@@ -1233,8 +1236,11 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
         return item;
 
       case THUNAR_LAUNCHER_ACTION_OPEN_IN_WINDOW:
-        label_text = g_strdup_printf (ngettext ("Open in %d New _Window", "Open in %d New _Windows", launcher->n_selected_files), launcher->n_selected_files);
-        tooltip_text = g_strdup_printf (ngettext ("Open the selected directory in %d new window",
+        if (launcher->n_selected_files == 1)
+          label_text = g_strdup(_("Open in New _Window"));
+        else
+          label_text = g_strdup_printf (ngettext ("Open in %d New _Window", "Open in %d New _Windows", launcher->n_selected_files), launcher->n_selected_files);
+        tooltip_text = g_strdup_printf (ngettext ("Open the selected directory in new window",
                                                   "Open the selected directories in %d new windows",launcher->n_selected_files), launcher->n_selected_files);
         item = xfce_gtk_menu_item_new (label_text, tooltip_text, action_entry->accel_path, action_entry->callback, G_OBJECT (launcher), menu);
         g_free (tooltip_text);
