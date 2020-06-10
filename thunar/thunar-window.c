@@ -869,12 +869,14 @@ thunar_window_menu_item_hovered (ThunarWindow     *window,
                                  GdkEventCrossing *event,
                                  GtkWidget        *menu)
 {
-  gboolean ret;
-  gboolean menu_is_open = FALSE;
+  gboolean  ret;
+  gboolean  menu_is_open = FALSE;
+  GList    *children, *lp;
 
   g_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
-  for (GList *lp = gtk_container_get_children (GTK_CONTAINER (window->menubar)); lp != NULL; lp = lp->next)
+  children = gtk_container_get_children (GTK_CONTAINER (window->menubar));
+  for (lp = children; lp != NULL; lp = lp->next)
     {
       GtkWidget *submenu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(lp->data));
       if(submenu != NULL && gtk_widget_get_visible (submenu))
@@ -886,6 +888,7 @@ thunar_window_menu_item_hovered (ThunarWindow     *window,
            return GDK_EVENT_PROPAGATE;
         }
     }
+  g_list_free (children);
 
   /* hover effect only apllies if some menu is already open */
   if (!menu_is_open)
@@ -905,11 +908,13 @@ thunar_window_menu_move_selected (ThunarWindow *window,
 {
   gboolean   ret = FALSE;
   GtkWidget *selected;
+  GList     *children, *lp;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), GDK_EVENT_STOP);
 
   selected = gtk_menu_shell_get_selected_item (menu_shell);
-  for (GList *lp = gtk_container_get_children (GTK_CONTAINER (window->menubar)); lp != NULL; lp = lp->next)
+  children = gtk_container_get_children (GTK_CONTAINER (window->menubar));
+  for (lp = children; lp != NULL; lp = lp->next)
     {
       GtkWidget *submenu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (lp->data));
       if (submenu != NULL && gtk_widget_get_visible (submenu))
@@ -925,6 +930,8 @@ thunar_window_menu_move_selected (ThunarWindow *window,
           g_signal_emit_by_name (new_item->data, "button-press-event", NULL, &ret);
         }
     }
+  g_list_free (children);
+
   return GDK_EVENT_PROPAGATE;
 }
 
@@ -1175,8 +1182,8 @@ thunar_window_create_go_menu (ThunarWindow     *window,
                     icon_name = "user-trash";
                   xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, action_entry->menu_item_tooltip_text,
                                                                action_entry->accel_path, action_entry->callback, G_OBJECT (window), icon_name, GTK_MENU_SHELL (submenu));
-                  g_object_unref (trash_folder);
                 }
+              g_object_unref (trash_folder);
             }
           g_object_unref (gfile);
         }
@@ -3316,13 +3323,14 @@ thunar_window_action_show_hidden (ThunarWindow *window)
 static void
 thunar_window_action_open_file_menu (ThunarWindow *window)
 {
-  GtkWidget *file_menu;
-  gboolean ret;
+  gboolean  ret;
+  GList    *children;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  file_menu = gtk_container_get_children (GTK_CONTAINER (window->menubar))->data;
-  g_signal_emit_by_name (file_menu, "button-press-event", NULL, &ret);
+  children = gtk_container_get_children (GTK_CONTAINER (window->menubar));
+  g_signal_emit_by_name (children->data, "button-press-event", NULL, &ret);
+  g_list_free (children);
   gtk_menu_shell_select_first (GTK_MENU_SHELL (window->menubar), TRUE);
 }
 
@@ -3839,8 +3847,6 @@ thunar_window_get_action_entry (ThunarWindow       *window,
  * @action  : #ThunarWindowAction to select which item should be added
  *
  * Adds the selected, widget specific #GtkMenuItem to the passed #GtkMenuShell
- *
- * Return value: (transfer none): The added #GtkMenuItem
  **/
 void
 thunar_window_append_menu_item (ThunarWindow       *window,

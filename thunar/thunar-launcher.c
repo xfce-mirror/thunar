@@ -1697,6 +1697,7 @@ thunar_launcher_build_sendto_submenu (ThunarLauncher *launcher)
           g_object_set_qdata_full (G_OBJECT (item), thunar_launcher_appinfo_quark, g_object_ref (lp->data), g_object_unref);
 
           /* cleanup */
+          g_free (label_text);
           g_free (tooltip_text);
         }
 
