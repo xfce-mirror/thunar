@@ -1163,16 +1163,17 @@ thunar_transfer_job_move_file (ExoJob                *job,
 
 
 static GList *
-thunar_transfer_job_filter_running_jobs (GList *jobs, ThunarJob *own_job)
+thunar_transfer_job_filter_running_jobs (GList *jobs,
+                                         ThunarJob *own_job)
 {
   ThunarJob *job;
   GList     *run_jobs = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (own_job), NULL);
 
-  for (; jobs != NULL; jobs = jobs->next)
+  for (GList *ljobs = jobs; ljobs != NULL; ljobs = ljobs->next)
     {
-      job = jobs->data;
+      job = ljobs->data;
       if (job == own_job)
         continue;
       if (!exo_job_is_cancelled (EXO_JOB (job)) && !thunar_job_is_paused (job) && !thunar_job_is_frozen (job))
@@ -1187,15 +1188,16 @@ thunar_transfer_job_filter_running_jobs (GList *jobs, ThunarJob *own_job)
 
 
 static gboolean
-thunar_transfer_job_device_id_in_job_list (const char *device_fs_id, GList *jobs)
+thunar_transfer_job_device_id_in_job_list (const char *device_fs_id,
+                                           GList *jobs)
 {
   ThunarTransferJob *job;
 
-  for (; device_fs_id != NULL && jobs != NULL; jobs = jobs->next)
+  for (GList *ljobs = jobs; device_fs_id != NULL && ljobs != NULL; ljobs = ljobs->next)
     {
-      if (THUNAR_IS_TRANSFER_JOB (jobs->data))
+      if (THUNAR_IS_TRANSFER_JOB (ljobs->data))
         {
-          job = THUNAR_TRANSFER_JOB (jobs->data);
+          job = THUNAR_TRANSFER_JOB (ljobs->data);
           if (g_strcmp0 (device_fs_id, job->source_device_fs_id) == 0)
             return TRUE;
           if (g_strcmp0 (device_fs_id, job->target_device_fs_id) == 0)
@@ -1206,26 +1208,47 @@ thunar_transfer_job_device_id_in_job_list (const char *device_fs_id, GList *jobs
 }
 
 
+/**
+ * thunar_transfer_job_is_file_on_local_device:
+ * @file : the source or target #GFile to test.
+ *
+ * Tries to find if the @file is on a local device or not.
+ * Local device if (all conditions should match):
+ * - the file has a 'file' uri scheme.
+ * - the file is located on devices not handled by the #GVolumeMonitor (GVFS).
+ * - the device is handled by #GVolumeMonitor (GVFS) and cannot be unmounted
+ *   (USB key/disk, fuse mounts, Samba shares, PTP devices).
+ *
+ * The target @file may not exist yet when this function is used, so recurse
+ * the parent directory, possibly reaching the root mountpoint.
+ *
+ * This should be enough to determine if a @file is on a local device or not.
+ *
+ * Return value: %TRUE if #GFile @file is on a so-called local device.
+ **/
 static gboolean
-thunar_transfer_job_is_file_on_local_device_xfer (GFile *file)
+thunar_transfer_job_is_file_on_local_device (GFile *file)
 {
   _thunar_return_val_if_fail (file != NULL, TRUE);
-  if (g_file_has_uri_scheme (file, "file"))
+  if (g_file_has_uri_scheme (file, "file") == FALSE)
+    return FALSE;
+  else
     {
-      GFile    *file_parent = file; /* start with target file */
-      gboolean  ret = FALSE;
-      while (file_parent != NULL)
+      GFile    *target_file = g_object_ref (file); /* start with file */
+      gboolean  is_local = FALSE;
+      while (target_file != NULL)
         {
-          if (g_file_query_exists (file_parent, NULL))
+          if (g_file_query_exists (target_file, NULL))
             {
               /* file_mount will be NULL for local files on local partitions/devices */
-              GMount *file_mount = g_file_find_enclosing_mount (file_parent, NULL, NULL);
-              ret = FALSE; /* local files are not slow by default. */
-              if (file_mount != NULL)
+              GMount *file_mount = g_file_find_enclosing_mount (target_file, NULL, NULL);
+              if (file_mount == NULL)
+                is_local = TRUE;
+              else
                 {
                   /* unmountable mountpoints are attached devices like USB key/disk,
                    * fuse mounts, Samba shares, PTP devices and can be slow to access. */
-                  ret = g_mount_can_unmount (file_mount);
+                  is_local = ! g_mount_can_unmount (file_mount);
                   g_object_unref (file_mount);
                 }
               break;
@@ -1233,15 +1256,14 @@ thunar_transfer_job_is_file_on_local_device_xfer (GFile *file)
           else /* file or parent directory does not exist (yet) */
             {
               /* query the parent directory */
-              file_parent = g_file_get_parent (file_parent);
+              GFile *target_parent = g_file_get_parent (target_file);
+              g_object_unref (target_file);
+              target_file = target_parent;
             }
         }
-      if (file_parent != NULL && file_parent != file)
-        g_object_unref (file_parent);
-      return ret;
+      g_object_unref (target_file);
+      return is_local;
     }
-  else
-    return TRUE;
 }
 
 
@@ -1272,7 +1294,7 @@ thunar_transfer_job_fill_target_device_fs_id (ThunarTransferJob *transfer_job, G
    * will be queried, and so on until reaching root directory if necessary.
    * Normally it will end in the worst case to the mounted filesystem root,
    * because that always exists. */
-  GFile     *target_file = file; /* start with target file */
+  GFile     *target_file = g_object_ref (file); /* start with target file */
   GFileInfo *file_info;
   while (target_file != NULL)
     {
@@ -1292,13 +1314,11 @@ thunar_transfer_job_fill_target_device_fs_id (ThunarTransferJob *transfer_job, G
         {
           /* query the parent directory */
           GFile *target_parent = g_file_get_parent (target_file);
-          if (target_file != file)
-            g_object_unref (target_file);
+          g_object_unref (target_file);
           target_file = target_parent;
         }
     }
-  if (target_file != file)
-    g_object_unref (target_file);
+  g_object_unref (target_file);
 }
 
 
@@ -1312,30 +1332,38 @@ thunar_transfer_job_determine_transfert_copy_behavior (ThunarTransferJob *transf
 {
   *should_freeze_on_any_other_job_p = FALSE;
   if (transfer_job->parallel_copy_mode == THUNAR_PARALLEL_COPY_MODE_ALWAYS)
-    /* never freeze */
+    /* never freeze, always parallel copies */
     *always_parallel_copy_p = TRUE;
   else if (transfer_job->parallel_copy_mode == THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL)
     /* freeze copy if
-     * - src device is local and src device appears in another job
-     * - tgt device is local and tgt device appears in another job
+     * - src device is not local and src device appears in another job
+     * OR
+     * - tgt device is not local and tgt device appears in another job
+     *
+     * always parallel copy is the negation of that condition:
+     * - src device is local
+     * AND
+     * - tgt device is local
      */
-    *always_parallel_copy_p = !*is_src_device_local_p && !*is_tgt_device_local_p;
+    *always_parallel_copy_p = *is_src_device_local_p && *is_tgt_device_local_p;
   else if (transfer_job->parallel_copy_mode == THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_SAME_DEVICES)
     {
       /* freeze copy if
        * - src device fs ≠ tgt device fs and src or tgt appears in another job
-       * - src device is local and src device appears in another job
-       * - tgt device is local and tgt device appears in another job
+       * OR
+       * - src device is not local and src device appears in another job
+       * OR
+       * - tgt device is not local and tgt device appears in another job
        */
       if (g_strcmp0(transfer_job->source_device_fs_id, transfer_job->target_device_fs_id) != 0)
         {
-          /* freeze when either src or tgt device appears on another job */
           *always_parallel_copy_p = FALSE;
-          *is_src_device_local_p = TRUE;
-          *is_tgt_device_local_p = TRUE;
+          /* freeze when either src or tgt device appears on another job */
+          *is_src_device_local_p = TRUE; /* pretend the source is local */
+          *is_tgt_device_local_p = TRUE; /* pretend the target is local */
         }
-      else
-        *always_parallel_copy_p = !*is_src_device_local_p && !*is_tgt_device_local_p;
+      else /* same as THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL */
+        *always_parallel_copy_p = *is_src_device_local_p && *is_tgt_device_local_p;
     }
   else /* THUNAR_PARALLEL_COPY_MODE_NEVER */
     {
@@ -1364,6 +1392,7 @@ thunar_transfer_job_freeze_optional (ThunarTransferJob *transfer_job)
   gboolean            is_tgt_device_local;
   gboolean            always_parallel_copy;
   gboolean            should_freeze_on_any_other_job;
+  gboolean            been_frozen;
 
   _thunar_return_if_fail (THUNAR_IS_TRANSFER_JOB (transfer_job));
 
@@ -1373,54 +1402,55 @@ thunar_transfer_job_freeze_optional (ThunarTransferJob *transfer_job)
   /* first source file */
   node = transfer_job->source_node_list->data;
   thunar_transfer_job_fill_source_device_fs_id (transfer_job, node->source_file);
-  is_src_device_local = thunar_transfer_job_is_file_on_local_device_xfer (node->source_file);
+  is_src_device_local = thunar_transfer_job_is_file_on_local_device (node->source_file);
   /* first target file */
   thunar_transfer_job_fill_target_device_fs_id (transfer_job, G_FILE (transfer_job->target_file_list->data));
-  is_tgt_device_local = thunar_transfer_job_is_file_on_local_device_xfer (G_FILE (transfer_job->target_file_list->data));
+  is_tgt_device_local = thunar_transfer_job_is_file_on_local_device (G_FILE (transfer_job->target_file_list->data));
   thunar_transfer_job_determine_transfert_copy_behavior (transfer_job,
                                                          &is_src_device_local,
                                                          &is_tgt_device_local,
                                                          &always_parallel_copy,
                                                          &should_freeze_on_any_other_job);
-  if (!always_parallel_copy)
+  if (always_parallel_copy)
+    return;
+
+  been_frozen = FALSE; /* this boolean can only take the TRUE value once. */
+  while (TRUE)
     {
-      gboolean been_frozen = FALSE; /* this boolean can only take the TRUE value once. */
-      while (TRUE)
+      GList *jobs = thunar_job_ask_jobs (THUNAR_JOB (transfer_job));
+      GList *other_jobs = thunar_transfer_job_filter_running_jobs (jobs, THUNAR_JOB (transfer_job));
+      g_list_free (g_steal_pointer (&jobs));
+      if
+        (
+          /* should freeze because another job is running */
+          (should_freeze_on_any_other_job && other_jobs != NULL) ||
+          /* should freeze because source is local and source device id appears in another job */
+          (is_src_device_local && thunar_transfer_job_device_id_in_job_list (transfer_job->source_device_fs_id, other_jobs)) ||
+          /* should freeze because target is local and target device id appears in another job */
+          (is_tgt_device_local && thunar_transfer_job_device_id_in_job_list (transfer_job->target_device_fs_id, other_jobs))
+        )
+        g_list_free (g_steal_pointer (&other_jobs));
+      else
         {
-          GList *jobs = thunar_job_ask_jobs (THUNAR_JOB (transfer_job));
-          GList *other_jobs = thunar_transfer_job_filter_running_jobs (jobs, THUNAR_JOB (transfer_job));
-          g_list_free (g_steal_pointer (&jobs));
-          if (
-              /* should freeze because another job is running */
-              (should_freeze_on_any_other_job && other_jobs != NULL) ||
-              /* should freeze because source is local and source device id appears in another job */
-              (is_src_device_local && thunar_transfer_job_device_id_in_job_list (transfer_job->source_device_fs_id, other_jobs)) ||
-              /* should freeze because target is local and target device id appears in another job */
-              (is_tgt_device_local && thunar_transfer_job_device_id_in_job_list (transfer_job->target_device_fs_id, other_jobs))
-          )
-            g_list_free (g_steal_pointer (&other_jobs));
+          g_list_free (g_steal_pointer (&other_jobs));
+          break;
+        }
+      if (exo_job_is_cancelled (EXO_JOB (transfer_job)))
+        break;
+      if (!thunar_job_is_frozen (THUNAR_JOB (transfer_job)))
+        {
+          if (been_frozen)
+            break; /* cannot re-freeze. It means that the user force to unfreeze */
           else
             {
-              g_list_free (g_steal_pointer (&other_jobs));
-              break;
+              been_frozen = TRUE; /* first time here. The job needs to change to frozen state */
+              thunar_job_freeze (THUNAR_JOB (transfer_job));
             }
-          if (exo_job_is_cancelled (EXO_JOB (transfer_job)))
-            break;
-          if (!thunar_job_is_frozen (THUNAR_JOB (transfer_job)))
-            {
-              if (been_frozen)
-                break; /* cannot re-freeze. It means that the user force to unfreeze */
-              else
-                {
-                  been_frozen = TRUE; /* first time here. The job needs to change to frozen state */
-                  thunar_job_freeze (THUNAR_JOB (transfer_job));
-                }
-            }
-          g_usleep(500 * 1000);
         }
-      if (thunar_job_is_frozen (THUNAR_JOB (transfer_job)))
-        thunar_job_unfreeze (THUNAR_JOB (transfer_job));
+      g_usleep(500 * 1000); /* pause for 500ms */
     }
+  if (thunar_job_is_frozen (THUNAR_JOB (transfer_job)))
+    thunar_job_unfreeze (THUNAR_JOB (transfer_job));
 }
 
 
