@@ -26,6 +26,21 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-window.h>
 
+
+
+/**
+ * SECTION:thunar-menu
+ * @Short_description: Wrapper of GtkMenu to simplify the creation commonly used menu-sections in thunar
+ * @Title: ThunarMenu
+ *
+ * #ThunarMenu is a #GtkMenu which provides a unified menu-creation service for different thunar widgets.
+ *
+ * Based on the passed flags and selected sections, it fills itself with the requested menu-items
+ * by creating them with #ThunarLauncher.
+ */
+
+
+
 /* property identifiers */
 enum
 {
