@@ -984,7 +984,7 @@ thunar_launcher_poke_files_finish (ThunarBrowser *browser,
       if (G_LIKELY (files != NULL))
         {
           /* if all files are executable, we just run them here */
-          if (G_UNLIKELY (executable))
+          if (G_UNLIKELY (executable) && poke_data->application_to_use == NULL)
             {
               /* try to execute all given files */
               thunar_launcher_execute_files (THUNAR_LAUNCHER (browser), files);
