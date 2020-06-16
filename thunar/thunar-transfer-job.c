@@ -1229,46 +1229,50 @@ thunar_transfer_job_device_id_in_job_list (const char *device_fs_id,
 static gboolean
 thunar_transfer_job_is_file_on_local_device (GFile *file)
 {
+  gboolean  is_local;
+  GFile    *target_file;
+  GFile    *target_parent;
+  GMount   *file_mount;
+
   _thunar_return_val_if_fail (file != NULL, TRUE);
   if (g_file_has_uri_scheme (file, "file") == FALSE)
     return FALSE;
-  else
+  target_file = g_object_ref (file); /* start with file */
+  is_local = FALSE;
+  while (target_file != NULL)
     {
-      GFile    *target_file = g_object_ref (file); /* start with file */
-      gboolean  is_local = FALSE;
-      while (target_file != NULL)
+      if (g_file_query_exists (target_file, NULL))
         {
-          if (g_file_query_exists (target_file, NULL))
+          /* file_mount will be NULL for local files on local partitions/devices */
+          file_mount = g_file_find_enclosing_mount (target_file, NULL, NULL);
+          if (file_mount == NULL)
+            is_local = TRUE;
+          else
             {
-              /* file_mount will be NULL for local files on local partitions/devices */
-              GMount *file_mount = g_file_find_enclosing_mount (target_file, NULL, NULL);
-              if (file_mount == NULL)
-                is_local = TRUE;
-              else
-                {
-                  /* unmountable mountpoints are attached devices like USB key/disk,
-                   * fuse mounts, Samba shares, PTP devices and can be slow to access. */
-                  is_local = ! g_mount_can_unmount (file_mount);
-                  g_object_unref (file_mount);
-                }
-              break;
+              /* mountpoints which cannot be unmounted are local devices.
+               * attached devices like USB key/disk, fuse mounts, Samba shares,
+               * PTP devices can always be unmounted and are considered remote/slow. */
+              is_local = ! g_mount_can_unmount (file_mount);
+              g_object_unref (file_mount);
             }
-          else /* file or parent directory does not exist (yet) */
-            {
-              /* query the parent directory */
-              GFile *target_parent = g_file_get_parent (target_file);
-              g_object_unref (target_file);
-              target_file = target_parent;
-            }
+          break;
         }
-      g_object_unref (target_file);
-      return is_local;
+      else /* file or parent directory does not exist (yet) */
+        {
+          /* query the parent directory */
+          target_parent = g_file_get_parent (target_file);
+          g_object_unref (target_file);
+          target_file = target_parent;
+        }
     }
+  g_object_unref (target_file);
+  return is_local;
 }
 
 
 static void
-thunar_transfer_job_fill_source_device_fs_id (ThunarTransferJob *transfer_job, GFile *file)
+thunar_transfer_job_fill_source_device_fs_id (ThunarTransferJob *transfer_job,
+                                              GFile             *file)
 {
   /* query device filesystem id (unique string)
    * The source exists and can be queried directly. */
@@ -1286,7 +1290,8 @@ thunar_transfer_job_fill_source_device_fs_id (ThunarTransferJob *transfer_job, G
 
 
 static void
-thunar_transfer_job_fill_target_device_fs_id (ThunarTransferJob *transfer_job, GFile *file)
+thunar_transfer_job_fill_target_device_fs_id (ThunarTransferJob *transfer_job,
+                                              GFile             *file)
 {
   /*
    * To query the device id it should be done on an existing file/directory.
@@ -1295,6 +1300,7 @@ thunar_transfer_job_fill_target_device_fs_id (ThunarTransferJob *transfer_job, G
    * Normally it will end in the worst case to the mounted filesystem root,
    * because that always exists. */
   GFile     *target_file = g_object_ref (file); /* start with target file */
+  GFile     *target_parent;
   GFileInfo *file_info;
   while (target_file != NULL)
     {
@@ -1313,7 +1319,7 @@ thunar_transfer_job_fill_target_device_fs_id (ThunarTransferJob *transfer_job, G
       else /* target file or parent directory does not exist (yet) */
         {
           /* query the parent directory */
-          GFile *target_parent = g_file_get_parent (target_file);
+          target_parent = g_file_get_parent (target_file);
           g_object_unref (target_file);
           target_file = target_parent;
         }
@@ -1324,11 +1330,11 @@ thunar_transfer_job_fill_target_device_fs_id (ThunarTransferJob *transfer_job, G
 
 
 static void
-thunar_transfer_job_determine_transfert_copy_behavior (ThunarTransferJob *transfer_job,
-                                                       gboolean *is_src_device_local_p,
-                                                       gboolean *is_tgt_device_local_p,
-                                                       gboolean *always_parallel_copy_p,
-                                                       gboolean *should_freeze_on_any_other_job_p)
+thunar_transfer_job_determine_copy_behavior (ThunarTransferJob *transfer_job,
+                                             gboolean          *is_src_device_local_p,
+                                             gboolean          *is_tgt_device_local_p,
+                                             gboolean          *always_parallel_copy_p,
+                                             gboolean          *should_freeze_on_any_other_job_p)
 {
   *should_freeze_on_any_other_job_p = FALSE;
   if (transfer_job->parallel_copy_mode == THUNAR_PARALLEL_COPY_MODE_ALWAYS)
@@ -1406,11 +1412,11 @@ thunar_transfer_job_freeze_optional (ThunarTransferJob *transfer_job)
   /* first target file */
   thunar_transfer_job_fill_target_device_fs_id (transfer_job, G_FILE (transfer_job->target_file_list->data));
   is_tgt_device_local = thunar_transfer_job_is_file_on_local_device (G_FILE (transfer_job->target_file_list->data));
-  thunar_transfer_job_determine_transfert_copy_behavior (transfer_job,
-                                                         &is_src_device_local,
-                                                         &is_tgt_device_local,
-                                                         &always_parallel_copy,
-                                                         &should_freeze_on_any_other_job);
+  thunar_transfer_job_determine_copy_behavior (transfer_job,
+                                               &is_src_device_local,
+                                               &is_tgt_device_local,
+                                               &always_parallel_copy,
+                                               &should_freeze_on_any_other_job);
   if (always_parallel_copy)
     return;
 
