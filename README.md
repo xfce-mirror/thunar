@@ -52,6 +52,6 @@ Thunar supports the following standards/specifications:
 
 ## How to report bugs?
 
-Bugs should be reported to [Xfce's Bugzilla](https://bugzilla.xfce.org), product Thunar. You will need to create an account for yourself.
+Bugs should be reported to [Xfce's GitLab](https://gitlab.xfce.org/xfce/thunar). You will need to create an account for yourself.
 
 Please read [how to report bugs ](https://docs.xfce.org/contribute/start#bug_reporting_and_testing) for information on where to send changes or bugfixes.
