@@ -1163,7 +1163,7 @@ thunar_transfer_job_move_file (ExoJob                *job,
 
 
 static GList *
-thunar_transfer_job_filter_running_jobs (GList *jobs,
+thunar_transfer_job_filter_running_jobs (GList     *jobs,
                                          ThunarJob *own_job)
 {
   ThunarJob *job;
