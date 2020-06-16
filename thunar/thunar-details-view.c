@@ -669,6 +669,9 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
       /* grab the tree view */
       gtk_widget_grab_focus (GTK_WIDGET (tree_view));
 
+      /* make sure that rubber banding is enabled */
+      gtk_tree_view_set_rubber_banding (tree_view, TRUE);
+
       gtk_tree_view_get_cursor (tree_view, &cursor_path, NULL);
       if (cursor_path != NULL)
         {
