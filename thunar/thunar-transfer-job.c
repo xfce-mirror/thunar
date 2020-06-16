@@ -1355,7 +1355,7 @@ thunar_transfer_job_determine_transfert_copy_behavior (ThunarTransferJob *transf
        * OR
        * - tgt device is not local and tgt device appears in another job
        */
-      if (g_strcmp0(transfer_job->source_device_fs_id, transfer_job->target_device_fs_id) != 0)
+      if (g_strcmp0 (transfer_job->source_device_fs_id, transfer_job->target_device_fs_id) != 0)
         {
           *always_parallel_copy_p = FALSE;
           /* freeze when either src or tgt device appears on another job */
