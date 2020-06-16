@@ -1189,7 +1189,7 @@ thunar_transfer_job_filter_running_jobs (GList     *jobs,
 
 static gboolean
 thunar_transfer_job_device_id_in_job_list (const char *device_fs_id,
-                                           GList *jobs)
+                                           GList      *jobs)
 {
   ThunarTransferJob *job;
 
