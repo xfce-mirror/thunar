@@ -1,3 +1,73 @@
+4.15.0
+======
+- Fix unavailable rubber banding in detailed view (Issue #326)
+- Context menu entries in Thunar flutter while downloading (Issue #276)
+- Improve cusor handling after file deletion in thunar (Issue #69)
+- Fix regression: Trying to open a .desktop file from the context menu
+  leads to the execution of the file (Issue #325)
+- Use numbering on label "open new window/tab" only for multiple windows/tabs
+  (MR #15)
+- Remove "Sort by" and "View as" from menu item labels (Issue #247)
+- Add new app icon and switch to rDNS icon name (MR #11)
+- Replace deprecated GtkActionEntry with XfceGtkActionEntry (Issue #293)
+- Menus are now updated when selection changes not only when opened (Issue #293)
+- Merge all file-context-menus into one (Issue #198)
+- Ghost file ocasionally remains when dropping file into directory (Fixes #312)
+- Use XfceFilenameInput to validate long filenames (Bug #13720)
+- Support for variables like $HOME in address bar (Bug #12165)
+- Fix eject button click detection when using RTL languages (Bug #11387)
+- Remove upper case from group names in shortcuts view
+- Option to rename a file when existing copy conflicts (Bug #16686)
+- Remove suffix "- FileManager" from window title
+- Move from exo-csource to xdt-csource (Bug #16717)
+- Pause button on copy/move (Bug #16685)
+- Allow drag-and-drop of multiple files in icon view (Bug #2487)
+- Add keywords to .desktop files to thunar (Bug #16618)
+- Reduce vertical space in Templates info popup
+- Hide android phone from network group (Bug #11584)
+- Reduce size of Templates info popup
+- Do not add "cant-write" emblem to files in the Trash
+- Hide Browse Network entry in shortcuts view if not supported
+- Move 'network' to the bottom of tree view (Bug #16516)
+- Add examples to "Select by Pattern" dialog (Bug #16587)
+- Improve tooltips in shortcuts view (Bug #16566)
+- Rename "Disconnect" context menu entry in side pane (Bug #16558)
+- Make path entry matching case-insensitive (Bug #12747)
+- Add new bookmarks to bottom of list in shortcuts view (Bug #16526)
+- Move places above devices in shortcuts view (Bug #11586)
+- Add desktop actions for home, computer and trash (Bug #16497)
+- Option to use static icon instead of folder icon (Bug #16501)
+- Remove top level desktop entry from tree view (Bug #16474)
+- Easy access to computer:/// (Bug #16472)
+- Use libxfce4ui close-multiple-tab dialog (Bug #16254)
+- Replace deprecated G_FILE_MONITOR_EVENT_MOVED (Bug #16328)
+- Use symbolic icon for eject (Bug #16281)
+- Prevent ghost files after "move" on remote locations (Bug #15704)
+- Add a confirmation dialog when closing a window with multiple open tabs.
+- Improve explanation string for "invert selection" action (Bug #15625)
+- Improve layout of Permissions tab (Bug #15557)
+- Remove superfluous shell script "ThunarBulkRename" (Bug #15373)
+- Make labels in permissions chooser wrap
+- Add a small delay when dismissing notifications (Bug #14552)
+- File / Folder size text in statusbar sometimes is ambiguous (Bug #14203)
+- Add missing parameter to ThunarBrowserPokeDeviceFunc function
+- Add property to enable/disable frames on thumbnails (Bug #14433)
+- Improved spacing between widgets in Properties and Preferences dialogs
+- Fixed numerous compiler warnings
+- Fixed numerous warning and critical messages
+- Translation Updates:
+  Albanian, Amharic, Arabic, Armenian, Armenian (Armenia), Asturian,
+  Basque, Belarusian, Bengali, Bulgarian, Catalan, Chinese (China),
+  Chinese (Hong Kong), Chinese (Taiwan), Croatian, Czech, Danish, Dutch,
+  Eastern Armenian, English (Australia), English (United Kingdom),
+  Esperanto, Estonian, Finnish, French, Galician, German, Greek, Hebrew,
+  Hungarian, Icelandic, Indonesian, Interlingue, Italian, Japanese,
+  Kazakh, Korean, Latvian, Lithuanian, Malay, Norwegian Bokmål,
+  Norwegian Nynorsk, Occitan (post 1500), Panjabi (Punjabi), Persian
+  (Iran), Polish, Portuguese, Portuguese (Brazil), Romanian, Russian,
+  Serbian, Slovak, Slovenian, Spanish, Swedish, Telugu, Thai, Turkish,
+  Uighur, Ukrainian, Urdu, Urdu (Pakistan), Vietnamese
+
 1.8.15
 ======
 - Only open devices after successful mount attempt (Bug #16831)
