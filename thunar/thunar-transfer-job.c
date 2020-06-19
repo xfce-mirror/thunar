@@ -1337,13 +1337,13 @@ thunar_transfer_job_fill_target_device_info (ThunarTransferJob *transfer_job,
 
 static void
 thunar_transfer_job_determine_copy_behavior (ThunarTransferJob *transfer_job,
-                                             gboolean          *freeze_src_if_busy_p,
-                                             gboolean          *freeze_tgt_if_busy_p,
+                                             gboolean          *freeze_if_src_busy_p,
+                                             gboolean          *freeze_if_tgt_busy_p,
                                              gboolean          *always_parallel_copy_p,
                                              gboolean          *should_freeze_on_any_other_job_p)
 {
-  *freeze_src_if_busy_p = FALSE;
-  *freeze_tgt_if_busy_p = FALSE;
+  *freeze_if_src_busy_p = FALSE;
+  *freeze_if_tgt_busy_p = FALSE;
   *should_freeze_on_any_other_job_p = FALSE;
   if (transfer_job->parallel_copy_mode == THUNAR_PARALLEL_COPY_MODE_ALWAYS)
     /* never freeze, always parallel copies */
@@ -1356,8 +1356,8 @@ thunar_transfer_job_determine_copy_behavior (ThunarTransferJob *transfer_job,
        * - target device is local
        */
       *always_parallel_copy_p = transfer_job->is_source_device_local && transfer_job->is_target_device_local;
-      *freeze_src_if_busy_p = ! transfer_job->is_source_device_local;
-      *freeze_tgt_if_busy_p = ! transfer_job->is_target_device_local;
+      *freeze_if_src_busy_p = ! transfer_job->is_source_device_local;
+      *freeze_if_tgt_busy_p = ! transfer_job->is_target_device_local;
     }
   else if (transfer_job->parallel_copy_mode == THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL_SAME_DEVICES)
     {
@@ -1379,14 +1379,14 @@ thunar_transfer_job_determine_copy_behavior (ThunarTransferJob *transfer_job,
         {
           *always_parallel_copy_p = FALSE;
           /* freeze when either src or tgt device appears on another job */
-          *freeze_src_if_busy_p = TRUE;
-          *freeze_tgt_if_busy_p = TRUE;
+          *freeze_if_src_busy_p = TRUE;
+          *freeze_if_tgt_busy_p = TRUE;
         }
       else /* same as THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL */
         {
           *always_parallel_copy_p = transfer_job->is_source_device_local && transfer_job->is_target_device_local;
-          *freeze_src_if_busy_p = ! transfer_job->is_source_device_local;
-          *freeze_tgt_if_busy_p = ! transfer_job->is_target_device_local;
+          *freeze_if_src_busy_p = ! transfer_job->is_source_device_local;
+          *freeze_if_tgt_busy_p = ! transfer_job->is_target_device_local;
         }
     }
   else /* THUNAR_PARALLEL_COPY_MODE_NEVER */
@@ -1411,8 +1411,8 @@ thunar_transfer_job_determine_copy_behavior (ThunarTransferJob *transfer_job,
 static void
 thunar_transfer_job_freeze_optional (ThunarTransferJob *transfer_job)
 {
-  gboolean            freeze_src_if_busy;
-  gboolean            freeze_tgt_if_busy;
+  gboolean            freeze_if_src_busy;
+  gboolean            freeze_if_tgt_busy;
   gboolean            always_parallel_copy;
   gboolean            should_freeze_on_any_other_job;
   gboolean            been_frozen;
@@ -1427,8 +1427,8 @@ thunar_transfer_job_freeze_optional (ThunarTransferJob *transfer_job)
   /* first target file */
   thunar_transfer_job_fill_target_device_info (transfer_job, G_FILE (transfer_job->target_file_list->data));
   thunar_transfer_job_determine_copy_behavior (transfer_job,
-                                               &freeze_src_if_busy,
-                                               &freeze_tgt_if_busy,
+                                               &freeze_if_src_busy,
+                                               &freeze_if_tgt_busy,
                                                &always_parallel_copy,
                                                &should_freeze_on_any_other_job);
   if (always_parallel_copy)
@@ -1445,9 +1445,9 @@ thunar_transfer_job_freeze_optional (ThunarTransferJob *transfer_job)
           /* should freeze because another job is running */
           (should_freeze_on_any_other_job && other_jobs != NULL) ||
           /* should freeze because source is busy and source device id appears in another job */
-          (freeze_src_if_busy && thunar_transfer_job_device_id_in_job_list (transfer_job->source_device_fs_id, other_jobs)) ||
+          (freeze_if_src_busy && thunar_transfer_job_device_id_in_job_list (transfer_job->source_device_fs_id, other_jobs)) ||
           /* should freeze because target is busy and target device id appears in another job */
-          (freeze_tgt_if_busy && thunar_transfer_job_device_id_in_job_list (transfer_job->target_device_fs_id, other_jobs))
+          (freeze_if_tgt_busy && thunar_transfer_job_device_id_in_job_list (transfer_job->target_device_fs_id, other_jobs))
         )
         g_list_free (g_steal_pointer (&other_jobs));
       else
