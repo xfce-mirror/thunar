@@ -97,6 +97,7 @@ enum
   PROP_MISC_THUMBNAIL_DRAW_FRAMES,
   PROP_MISC_FILE_SIZE_BINARY,
   PROP_MISC_CONFIRM_CLOSE_MULTIPLE_TABS,
+  PROP_MISC_PARALLEL_COPY_MODE,
   PROP_MISC_WINDOW_ICON,
   PROP_SHORTCUTS_ICON_EMBLEMS,
   PROP_SHORTCUTS_ICON_SIZE,
@@ -763,6 +764,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             NULL,
                             TRUE,
                             EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-parallel-copy-mode:
+   *
+   * Do parallel copy (or not) on files copy.
+   **/
+  preferences_props[PROP_MISC_PARALLEL_COPY_MODE] =
+      g_param_spec_enum ("misc-parallel-copy-mode",
+                         "MiscParallelCopyMode",
+                         NULL,
+                         THUNAR_TYPE_PARALLEL_COPY_MODE,
+                         THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL,
+                         EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-change-window-icon:

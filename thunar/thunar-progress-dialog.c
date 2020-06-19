@@ -334,6 +334,42 @@ thunar_progress_dialog_new (void)
 
 
 
+/**
+ * thunar_progress_dialog_list_jobs:
+ * @dialog       : a #ThunarProgressDialog instance
+ *
+ * Return a list of non-cancelled #ThunarJob
+ *
+ * The caller is responsible to free the returned list using
+ * g_list_free() when no longer needed.
+ *
+ * Return value: non-cancelled #ThunarJob list or %NULL if
+ *               the list is empty.
+ **/
+GList *
+thunar_progress_dialog_list_jobs (ThunarProgressDialog *dialog)
+{
+  GList              *jobs = NULL;
+  GList              *l;
+  ThunarProgressView *view;
+  ThunarJob          *job;
+
+  _thunar_return_val_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog), NULL);
+
+  for (l = dialog->views; l != NULL; l = l->next)
+    {
+      view = THUNAR_PROGRESS_VIEW (l->data);
+      job = thunar_progress_view_get_job (view);
+      if (job != NULL && !exo_job_is_cancelled (EXO_JOB (job)))
+        {
+          jobs = g_list_append (jobs, job);
+        }
+    }
+  return jobs;
+}
+
+
+
 void
 thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
                                 ThunarJob            *job,
@@ -392,6 +428,9 @@ thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
 
   g_signal_connect_swapped (view, "finished",
                             G_CALLBACK (thunar_progress_dialog_job_finished), dialog);
+
+  g_signal_connect_swapped (job, "ask-jobs",
+                            G_CALLBACK (thunar_progress_dialog_list_jobs), dialog);
 
   if (dialog->status_icon != NULL)
     thunar_progress_dialog_update_status_icon (dialog);
