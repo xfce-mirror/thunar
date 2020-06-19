@@ -73,7 +73,10 @@ void              thunar_job_set_pausable           (ThunarJob       *job,
 gboolean          thunar_job_is_pausable            (ThunarJob       *job);
 void              thunar_job_pause                  (ThunarJob       *job);
 void              thunar_job_resume                 (ThunarJob       *job);
+void              thunar_job_freeze                 (ThunarJob       *job);
+void              thunar_job_unfreeze               (ThunarJob       *job);
 gboolean          thunar_job_is_paused              (ThunarJob       *job);
+gboolean          thunar_job_is_frozen              (ThunarJob       *job);
 void              thunar_job_processing_file        (ThunarJob       *job,
                                                      GList           *current_file,
                                                      guint            n_processed);
@@ -101,6 +104,7 @@ gboolean          thunar_job_files_ready            (ThunarJob       *job,
                                                      GList           *file_list);
 void              thunar_job_new_files              (ThunarJob       *job,
                                                      const GList     *file_list);
+GList *           thunar_job_ask_jobs               (ThunarJob       *job);
 
 G_END_DECLS
 
