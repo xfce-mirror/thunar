@@ -152,7 +152,7 @@ static void                    thunar_launcher_action_create_folder       (Thuna
 static void                    thunar_launcher_action_create_document     (ThunarLauncher                 *launcher,
                                                                            GtkWidget                      *menu_item);
 static GtkWidget              *thunar_launcher_create_document_submenu_new(ThunarLauncher                 *launcher);
-
+static GtkWidget              *thunar_launcher_get_focused_widget         (void);
 
 
 struct _ThunarLauncherClass
@@ -1199,6 +1199,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
 {
   GtkWidget                *item = NULL;
   GtkWidget                *submenu;
+  GtkWidget                *focused_widget;
   gchar                    *label_text;
   gchar                    *tooltip_text;
   const XfceGtkActionEntry *action_entry = get_action_entry (action);
@@ -1368,26 +1369,52 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
         return item;
 
       case THUNAR_LAUNCHER_ACTION_CUT:
-        show_item = launcher->current_directory_selected == FALSE &&
-                      launcher->parent_folder != NULL;
-        if (!show_item && !force)
-          return NULL;
-        tooltip_text = ngettext ("Prepare the selected file to be moved with a Paste command",
-                                 "Prepare the selected files to be moved with a Paste command", launcher->n_selected_files);
-        item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, tooltip_text, action_entry->accel_path,
-                                                            action_entry->callback, G_OBJECT (launcher), action_entry->menu_item_icon_name, menu);
-        gtk_widget_set_sensitive (item, show_item && thunar_file_is_writable (launcher->parent_folder));
+        focused_widget = thunar_launcher_get_focused_widget();
+        if (focused_widget && GTK_IS_EDITABLE (focused_widget))
+          {
+            item = xfce_gtk_image_menu_item_new_from_icon_name (
+                          action_entry->menu_item_label_text,
+                          N_ ("Copy text and remove it from this position"), // TODO: wording and translation
+                          action_entry->accel_path, G_CALLBACK (gtk_editable_cut_clipboard),
+                          G_OBJECT (focused_widget), action_entry->menu_item_icon_name, menu);
+            gtk_widget_set_sensitive (item, thunar_gtk_editable_can_cut (GTK_EDITABLE (focused_widget)));
+          }
+        else
+          {
+            show_item = launcher->current_directory_selected == FALSE &&
+                          launcher->parent_folder != NULL;
+            if (!show_item && !force)
+              return NULL;
+            tooltip_text = ngettext ("Prepare the selected file to be moved with a Paste command",
+                                    "Prepare the selected files to be moved with a Paste command", launcher->n_selected_files);
+            item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, tooltip_text, action_entry->accel_path,
+                                                                action_entry->callback, G_OBJECT (launcher), action_entry->menu_item_icon_name, menu);
+            gtk_widget_set_sensitive (item, show_item && thunar_file_is_writable (launcher->parent_folder));
+          }
         return item;
 
       case THUNAR_LAUNCHER_ACTION_COPY:
-        show_item = launcher->current_directory_selected == FALSE;
-        if (!show_item && !force)
-          return NULL;
-        tooltip_text = ngettext ("Prepare the selected file to be copied with a Paste command",
-                                 "Prepare the selected files to be copied with a Paste command", launcher->n_selected_files);
-        item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, tooltip_text, action_entry->accel_path,
-                                                            action_entry->callback, G_OBJECT (launcher), action_entry->menu_item_icon_name, menu);
-        gtk_widget_set_sensitive (item, show_item);
+        focused_widget = thunar_launcher_get_focused_widget();
+        if (focused_widget && GTK_IS_EDITABLE (focused_widget))
+          {
+            item = xfce_gtk_image_menu_item_new_from_icon_name (
+                          action_entry->menu_item_label_text,
+                          N_ ("Prepare text to be duplicated with the paste command"),  // TODO: wording and translation
+                          action_entry->accel_path,G_CALLBACK (gtk_editable_copy_clipboard),
+                          G_OBJECT (focused_widget), action_entry->menu_item_icon_name, menu);
+            gtk_widget_set_sensitive (item, thunar_gtk_editable_can_copy (GTK_EDITABLE (focused_widget)));
+          }
+        else
+          {
+            show_item = launcher->current_directory_selected == FALSE;
+            if (!show_item && !force)
+              return NULL;
+            tooltip_text = ngettext ("Prepare the selected file to be copied with a Paste command",
+                                    "Prepare the selected files to be copied with a Paste command", launcher->n_selected_files);
+            item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, tooltip_text, action_entry->accel_path,
+                                                                action_entry->callback, G_OBJECT (launcher), action_entry->menu_item_icon_name, menu);
+            gtk_widget_set_sensitive (item, show_item);
+          }
         return item;
 
       case THUNAR_LAUNCHER_ACTION_PASTE_INTO_FOLDER:
@@ -1400,13 +1427,27 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
         return item;
 
       case THUNAR_LAUNCHER_ACTION_PASTE:
-        if (launcher->single_folder_selected && !launcher->current_directory_selected)
-            return thunar_launcher_append_menu_item (launcher, menu, THUNAR_LAUNCHER_ACTION_PASTE_INTO_FOLDER, force);
-        clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (launcher->widget));
-        item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
-        gtk_widget_set_sensitive (item, thunar_clipboard_manager_get_can_paste (clipboard) && thunar_file_is_writable (launcher->current_directory));
-        g_object_unref (clipboard);
+        focused_widget = thunar_launcher_get_focused_widget();
+        if (focused_widget && GTK_IS_EDITABLE (focused_widget))
+          {
+            item = xfce_gtk_image_menu_item_new_from_icon_name (
+                          action_entry->menu_item_label_text,
+                          N_ ("Move or copy text previously selected by a Cut or Copy command"),  // TODO: wording and translation
+                          action_entry->accel_path,G_CALLBACK (gtk_editable_paste_clipboard),
+                          G_OBJECT (focused_widget), action_entry->menu_item_icon_name, menu);
+            gtk_widget_set_sensitive (item, thunar_gtk_editable_can_paste (GTK_EDITABLE (focused_widget)));
+          }
+        else
+          {
+            if (launcher->single_folder_selected && !launcher->current_directory_selected)
+                return thunar_launcher_append_menu_item (launcher, menu, THUNAR_LAUNCHER_ACTION_PASTE_INTO_FOLDER, force);
+            clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (launcher->widget));
+            item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
+            gtk_widget_set_sensitive (item, thunar_clipboard_manager_get_can_paste (clipboard) && thunar_file_is_writable (launcher->current_directory));
+            g_object_unref (clipboard);
+          }
         return item;
+
 
       default:
         return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
@@ -1414,7 +1455,23 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
   return NULL;
 }
 
+/**
+ * @return: currently focused widget or NULL, if there is none
+ **/
+static GtkWidget*
+thunar_launcher_get_focused_widget (void)
+{
+  GtkApplication *app;
+  GtkWindow      *window;
+  app = GTK_APPLICATION (g_application_get_default());
+  if(NULL == app)
+    return NULL;
 
+  window = gtk_application_get_active_window(app);
+
+  return gtk_window_get_focus (window);
+
+}
 
 
 static void
