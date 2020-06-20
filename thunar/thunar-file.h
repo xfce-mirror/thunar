@@ -272,6 +272,8 @@ const gchar*      thunar_file_get_metadata_setting       (ThunarFile            
 void              thunar_file_set_metadata_setting       (ThunarFile             *file,
                                                           const gchar            *setting_name,
                                                           const gchar            *setting_value);
+void              thunar_file_clear_view_metadata        (ThunarFile             *file);
+gboolean          thunar_file_has_view_metadata          (ThunarFile             *file);
 
 /**
  * thunar_file_is_root:

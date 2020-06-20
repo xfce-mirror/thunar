@@ -4606,3 +4606,51 @@ thunar_file_set_metadata_setting (ThunarFile  *file,
   g_free (attr_name);
   g_object_unref (G_OBJECT (info));
 }
+
+
+
+/**
+ * thunar_file_clear_view_metadata:
+ * @file : a #ThunarFile instance.
+ *
+ * Clears all view settings stored in the metadata of the folder represented by @file
+ **/
+void
+thunar_file_clear_view_metadata (ThunarFile *file)
+{
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  if (file->info == NULL)
+    return;
+
+  g_file_info_remove_attribute (file->info, "metadata::thunar::view-type");
+
+  g_file_set_attribute (file->gfile, "metadata::thunar::view-type", G_FILE_ATTRIBUTE_TYPE_INVALID,
+                        NULL, G_FILE_QUERY_INFO_NONE, NULL, NULL);
+
+  thunar_file_changed (file);
+}
+
+
+
+/**
+ * thunar_file_has_view_metadata:
+ * @file : a #ThunarFile instance.
+ *
+ * Checks whether @file has any view settings stored in its metadata.
+ *
+ * Return value: %TRUE if @file has any view settings stored in its metadata, and %FALSE otherwise
+ **/
+gboolean
+thunar_file_has_view_metadata (ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+
+  if (file->info == NULL)
+    return FALSE;
+
+  if (g_file_info_has_attribute (file->info, "metadata::thunar::view-type"))
+    return TRUE;
+
+  return FALSE;
+}
