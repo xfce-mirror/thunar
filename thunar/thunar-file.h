@@ -267,6 +267,12 @@ GList            *thunar_file_list_to_thunar_g_file_list (GList                 
 
 gboolean          thunar_file_is_desktop                 (const ThunarFile *file);
 
+const gchar*      thunar_file_get_metadata_setting       (ThunarFile             *file,
+                                                          const gchar            *setting_name);
+void              thunar_file_set_metadata_setting       (ThunarFile             *file,
+                                                          const gchar            *setting_name,
+                                                          const gchar            *setting_value);
+
 /**
  * thunar_file_is_root:
  * @file : a #ThunarFile.
