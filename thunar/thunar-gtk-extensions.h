@@ -27,6 +27,7 @@ G_BEGIN_DECLS;
 
 void             thunar_gtk_label_set_a11y_relation           (GtkLabel           *label,
                                                                GtkWidget          *widget);
+void             thunar_gtk_menu_clean                        (GtkMenu            *menu);
 void             thunar_gtk_menu_run                          (GtkMenu            *menu);
 
 void             thunar_gtk_menu_run_at_event                 (GtkMenu            *menu,

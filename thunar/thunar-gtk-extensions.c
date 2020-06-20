@@ -126,6 +126,32 @@ thunar_gtk_menu_thunarx_menu_item_new (GObject      *thunarx_menu_item,
 
 
 /**
+ * thunar_gtk_menu_clean:
+ * @menu : a #GtkMenu.
+ *
+ * Walks through the menu and all submenus and removes them,
+ * so that the result will be a clean #GtkMenu without any items
+ **/
+void
+thunar_gtk_menu_clean (GtkMenu *menu)
+{
+  GList     *children, *lp;
+  GtkWidget *submenu;
+
+  children = gtk_container_get_children (GTK_CONTAINER (menu));
+  for (lp = children; lp != NULL; lp = lp->next)
+    {
+      submenu = gtk_menu_item_get_submenu (lp->data);
+      if (submenu != NULL)
+        gtk_widget_destroy (submenu);
+      gtk_container_remove (GTK_CONTAINER (menu), lp->data);
+    }
+  g_list_free (children);
+}
+
+
+
+/**
  * thunar_gtk_menu_run:
  * @menu : a #GtkMenu.
  *

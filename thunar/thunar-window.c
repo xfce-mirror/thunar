@@ -215,20 +215,18 @@ static void      thunar_window_save_geometry_timer_destroy(gpointer             
 static void      thunar_window_set_zoom_level             (ThunarWindow           *window,
                                                            ThunarZoomLevel         zoom_level);
 static void      thunar_window_update_window_icon         (ThunarWindow           *window);
-static gboolean  thunar_window_create_file_menu           (ThunarWindow           *window,
-                                                           GdkEventCrossing       *event,
+static void      thunar_window_create_menu                (ThunarWindow           *window,
+                                                           ThunarWindowAction      action,
+                                                           GCallback               cb_update_menu);
+static void      thunar_window_update_file_menu           (ThunarWindow           *window,
                                                            GtkWidget              *menu);
-static gboolean  thunar_window_create_edit_menu           (ThunarWindow           *window,
-                                                           GdkEventCrossing       *event,
+static void      thunar_window_update_edit_menu           (ThunarWindow           *window,
                                                            GtkWidget              *menu);
-static gboolean  thunar_window_create_view_menu           (ThunarWindow           *window,
-                                                           GdkEventCrossing        *event,
+static void      thunar_window_update_view_menu           (ThunarWindow           *window,
                                                            GtkWidget              *menu);
-static gboolean  thunar_window_create_go_menu             (ThunarWindow           *window,
-                                                           GdkEventCrossing        *event,
+static void      thunar_window_update_go_menu             (ThunarWindow           *window,
                                                            GtkWidget              *menu);
-static gboolean  thunar_window_create_help_menu           (ThunarWindow           *window,
-                                                           GdkEventCrossing        *event,
+static void      thunar_window_update_help_menu           (ThunarWindow           *window,
                                                            GtkWidget              *menu);
 static void      thunar_window_select_files               (ThunarWindow           *window,
                                                            GList                  *path_list);
@@ -247,12 +245,6 @@ static gboolean  thunar_window_button_press_event         (GtkWidget            
 static void      thunar_window_history_changed            (ThunarWindow           *window);
 static void      thunar_window_menu_add_bookmarks         (ThunarWindow           *window,
                                                            GtkMenuShell           *view_menu);
-static gboolean  thunar_window_menu_item_hovered          (ThunarWindow           *window,
-                                                           GdkEventCrossing       *event,
-                                                           GtkWidget              *menu);
-static gboolean  thunar_window_menu_move_selected         (ThunarWindow           *window,
-                                                           gint                    distance,
-                                                           GtkMenuShell           *menu_shell);
 static gboolean  thunar_window_check_uca_key_activation   (ThunarWindow           *window,
                                                            GdkEventKey            *key_event,
                                                            gpointer                user_data);
@@ -575,7 +567,6 @@ thunar_window_init (ThunarWindow *window)
 {
   GtkWidget       *label;
   GtkWidget       *infobar;
-  GtkWidget       *item;
   gboolean         last_menubar_visible;
   gchar           *last_location_bar;
   gchar           *last_side_pane;
@@ -666,22 +657,11 @@ thunar_window_init (ThunarWindow *window)
 
   /* build the menubar */
   window->menubar = gtk_menu_bar_new ();
-  g_signal_connect_swapped (G_OBJECT (window->menubar), "move-selected", G_CALLBACK (thunar_window_menu_move_selected), window);
-  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_FILE_MENU), G_OBJECT (window), GTK_MENU_SHELL (window->menubar));
-  g_signal_connect_swapped (G_OBJECT (item), "button-press-event", G_CALLBACK (thunar_window_create_file_menu), window);
-  g_signal_connect_swapped (G_OBJECT (item), "enter-notify-event", G_CALLBACK (thunar_window_menu_item_hovered), window);
-  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_EDIT_MENU), G_OBJECT (window), GTK_MENU_SHELL (window->menubar));
-  g_signal_connect_swapped (G_OBJECT (item), "button-press-event", G_CALLBACK (thunar_window_create_edit_menu), window);
-  g_signal_connect_swapped (G_OBJECT (item), "enter-notify-event", G_CALLBACK (thunar_window_menu_item_hovered), window);
-  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_MENU), G_OBJECT (window), GTK_MENU_SHELL (window->menubar));
-  g_signal_connect_swapped (G_OBJECT (item), "button-press-event", G_CALLBACK (thunar_window_create_view_menu), window);
-  g_signal_connect_swapped (G_OBJECT (item), "enter-notify-event", G_CALLBACK (thunar_window_menu_item_hovered), window);
-  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_GO_MENU), G_OBJECT (window), GTK_MENU_SHELL (window->menubar));
-  g_signal_connect_swapped (G_OBJECT (item), "button-press-event", G_CALLBACK (thunar_window_create_go_menu), window);
-  g_signal_connect_swapped (G_OBJECT (item), "enter-notify-event", G_CALLBACK (thunar_window_menu_item_hovered), window);
-  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_HELP_MENU), G_OBJECT (window), GTK_MENU_SHELL (window->menubar));
-  g_signal_connect_swapped (G_OBJECT (item), "button-press-event", G_CALLBACK (thunar_window_create_help_menu), window);
-  g_signal_connect_swapped (G_OBJECT (item), "enter-notify-event", G_CALLBACK (thunar_window_menu_item_hovered), window);
+  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_FILE_MENU, G_CALLBACK (thunar_window_update_file_menu));
+  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_EDIT_MENU, G_CALLBACK (thunar_window_update_edit_menu));
+  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_VIEW_MENU, G_CALLBACK (thunar_window_update_view_menu));
+  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_GO_MENU, G_CALLBACK (thunar_window_update_go_menu));
+  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_HELP_MENU, G_CALLBACK (thunar_window_update_help_menu));
   gtk_widget_show_all (window->menubar);
 
   if (last_menubar_visible == FALSE)
@@ -864,160 +844,85 @@ thunar_window_select_files (ThunarWindow *window,
 
 
 
-static gboolean
-thunar_window_menu_item_hovered (ThunarWindow     *window,
-                                 GdkEventCrossing *event,
-                                 GtkWidget        *menu)
+static void
+thunar_window_create_menu (ThunarWindow       *window,
+                           ThunarWindowAction  action,
+                           GCallback           cb_update_menu)
 {
-  gboolean  ret;
-  gboolean  menu_is_open = FALSE;
-  GList    *children, *lp;
+  GtkWidget *item;
+  GtkWidget *submenu;
 
-  g_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  children = gtk_container_get_children (GTK_CONTAINER (window->menubar));
-  for (lp = children; lp != NULL; lp = lp->next)
-    {
-      GtkWidget *submenu = gtk_menu_item_get_submenu(GTK_MENU_ITEM(lp->data));
-      if(submenu != NULL && gtk_widget_get_visible (submenu))
-        {
-          menu_is_open = TRUE;
+  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (action), G_OBJECT (window), GTK_MENU_SHELL (window->menubar));
 
-         /* The menu we want to open is already is open */
-         if (menu == lp->data)
-           return GDK_EVENT_PROPAGATE;
-        }
-    }
-  g_list_free (children);
-
-  /* hover effect only apllies if some menu is already open */
-  if (!menu_is_open)
-    return GDK_EVENT_PROPAGATE;
-
-  g_signal_emit_by_name (menu, "button-press-event", NULL, &ret);
-
-  return GDK_EVENT_STOP;
+  submenu = g_object_new (THUNAR_TYPE_MENU, "menu-type", THUNAR_MENU_TYPE_WINDOW, "launcher", window->launcher, NULL);
+  gtk_menu_set_accel_group (GTK_MENU (submenu), window->accel_group);
+  gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (submenu));
+  g_signal_connect_swapped (G_OBJECT (submenu), "show", G_CALLBACK (cb_update_menu), window);
 }
 
 
 
-gboolean
-thunar_window_menu_move_selected (ThunarWindow *window,
-                                  gint          distance,
-                                  GtkMenuShell *menu_shell)
+static void
+thunar_window_update_file_menu (ThunarWindow *window,
+                                GtkWidget    *menu)
 {
-  gboolean   ret = FALSE;
-  GtkWidget *selected;
-  GList     *children, *lp;
-
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), GDK_EVENT_STOP);
-
-  selected = gtk_menu_shell_get_selected_item (menu_shell);
-  children = gtk_container_get_children (GTK_CONTAINER (window->menubar));
-  for (lp = children; lp != NULL; lp = lp->next)
-    {
-      GtkWidget *submenu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (lp->data));
-      if (submenu != NULL && gtk_widget_get_visible (submenu))
-        gtk_menu_popdown (GTK_MENU (submenu));
-      if (lp->data == selected)
-        {
-          /* create next/previous menu, or first/last menu on the borders */
-          GList *new_item;
-          if (distance > 0)
-            new_item = lp->next != NULL ? lp->next : g_list_first (lp);
-          else
-            new_item = lp != g_list_first (lp) ? lp->prev : g_list_last (lp);
-          g_signal_emit_by_name (new_item->data, "button-press-event", NULL, &ret);
-        }
-    }
-  g_list_free (children);
-
-  return GDK_EVENT_PROPAGATE;
-}
-
-
-
-static gboolean
-thunar_window_create_file_menu (ThunarWindow     *window,
-                                GdkEventCrossing *event,
-                                GtkWidget        *menu)
-{
-  ThunarMenu *submenu;
   GtkWidget  *item;
 
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
-  _thunar_return_val_if_fail (GTK_IS_MENU_ITEM (menu), FALSE);
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  /* close, if already open */
-  submenu = THUNAR_MENU (gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu)));
-  if (submenu != NULL)
-    gtk_menu_popdown (GTK_MENU (submenu));
-
-  submenu = g_object_new (THUNAR_TYPE_MENU, "menu-type", THUNAR_MENU_TYPE_WINDOW,
-                                            "launcher", window->launcher, NULL);
-  gtk_menu_set_accel_group (GTK_MENU (submenu), window->accel_group);
-  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_NEW_TAB), G_OBJECT (window), GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_NEW_WINDOW), G_OBJECT (window), GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
-  thunar_menu_add_sections (submenu, THUNAR_MENU_SECTION_OPEN
-                                   | THUNAR_MENU_SECTION_SENDTO
-                                   | THUNAR_MENU_SECTION_CREATE_NEW_FILES
-                                   | THUNAR_MENU_SECTION_EMPTY_TRASH
-                                   | THUNAR_MENU_SECTION_CUSTOM_ACTIONS
-                                   | THUNAR_MENU_SECTION_PROPERTIES);
-  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
-  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_DETACH_TAB), G_OBJECT (window), GTK_MENU_SHELL (submenu));
+  thunar_gtk_menu_clean (GTK_MENU (menu));
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_NEW_TAB), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_NEW_WINDOW), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+  thunar_menu_add_sections (THUNAR_MENU (menu), THUNAR_MENU_SECTION_OPEN
+                                              | THUNAR_MENU_SECTION_SENDTO
+                                              | THUNAR_MENU_SECTION_CREATE_NEW_FILES
+                                              | THUNAR_MENU_SECTION_EMPTY_TRASH
+                                              | THUNAR_MENU_SECTION_CUSTOM_ACTIONS
+                                              | THUNAR_MENU_SECTION_PROPERTIES);
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_DETACH_TAB), G_OBJECT (window), GTK_MENU_SHELL (menu));
   gtk_widget_set_sensitive (item, gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook)) > 1);
-  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_CLOSE_ALL_WINDOWS), G_OBJECT (window), GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_CLOSE_TAB), G_OBJECT (window), GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_CLOSE_WINDOW), G_OBJECT (window), GTK_MENU_SHELL (submenu));
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_CLOSE_ALL_WINDOWS), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_CLOSE_TAB), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_CLOSE_WINDOW), G_OBJECT (window), GTK_MENU_SHELL (menu));
 
-  gtk_menu_item_set_submenu (GTK_MENU_ITEM (menu), GTK_WIDGET (submenu));
-  gtk_widget_show_all (GTK_WIDGET (submenu));
-
-  thunar_window_redirect_menu_tooltips_to_statusbar (window, GTK_MENU (submenu));
-  return FALSE;
+  gtk_widget_show_all (GTK_WIDGET (menu));
+  thunar_window_redirect_menu_tooltips_to_statusbar (window, GTK_MENU (menu));
 }
 
 
 
-static gboolean
-thunar_window_create_edit_menu (ThunarWindow     *window,
-                                GdkEventCrossing *event,
-                                GtkWidget        *menu)
+static void
+thunar_window_update_edit_menu (ThunarWindow *window,
+                                GtkWidget    *menu)
 {
-  ThunarMenu      *submenu;
   GtkWidget       *gtk_menu_item;
   GList           *thunarx_menu_items;
   GList           *pp, *lp;
 
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
-  _thunar_return_val_if_fail (GTK_IS_MENU_ITEM (menu), FALSE);
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  /* close, if already open */
-  submenu = THUNAR_MENU (gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu)));
-  if (submenu != NULL)
-    gtk_menu_popdown (GTK_MENU (submenu));
-
-  submenu = g_object_new (THUNAR_TYPE_MENU, "launcher", window->launcher, NULL);
-  gtk_menu_set_accel_group (GTK_MENU (submenu), window->accel_group);
-  thunar_menu_add_sections (submenu, THUNAR_MENU_SECTION_CUT
-                                   | THUNAR_MENU_SECTION_COPY_PASTE
-                                   | THUNAR_MENU_SECTION_TRASH_DELETE);
+  thunar_gtk_menu_clean (GTK_MENU (menu));
+  thunar_menu_add_sections (THUNAR_MENU (menu), THUNAR_MENU_SECTION_CUT
+                                              | THUNAR_MENU_SECTION_COPY_PASTE
+                                              | THUNAR_MENU_SECTION_TRASH_DELETE);
   if (window->view != NULL)
     {
       thunar_standard_view_append_menu_item (THUNAR_STANDARD_VIEW (window->view),
-                                             GTK_MENU (submenu), THUNAR_STANDARD_VIEW_ACTION_SELECT_ALL_FILES);
+                                             GTK_MENU (menu), THUNAR_STANDARD_VIEW_ACTION_SELECT_ALL_FILES);
       thunar_standard_view_append_menu_item (THUNAR_STANDARD_VIEW (window->view),
-                                             GTK_MENU (submenu), THUNAR_STANDARD_VIEW_ACTION_SELECT_BY_PATTERN);
+                                             GTK_MENU (menu), THUNAR_STANDARD_VIEW_ACTION_SELECT_BY_PATTERN);
       thunar_standard_view_append_menu_item (THUNAR_STANDARD_VIEW (window->view),
-                                             GTK_MENU (submenu), THUNAR_STANDARD_VIEW_ACTION_INVERT_SELECTION);
+                                             GTK_MENU (menu), THUNAR_STANDARD_VIEW_ACTION_INVERT_SELECTION);
     }
-  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
-  thunar_menu_add_sections (submenu, THUNAR_MENU_SECTION_DUPLICATE
-                                   | THUNAR_MENU_SECTION_MAKELINK
-                                   | THUNAR_MENU_SECTION_RENAME
-                                   | THUNAR_MENU_SECTION_RESTORE);
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+  thunar_menu_add_sections (THUNAR_MENU (menu), THUNAR_MENU_SECTION_DUPLICATE
+                                              | THUNAR_MENU_SECTION_MAKELINK
+                                              | THUNAR_MENU_SECTION_RENAME
+                                              | THUNAR_MENU_SECTION_RESTORE);
 
   /* determine the available preferences providers */
   if (G_LIKELY (window->thunarx_preferences_providers != NULL))
@@ -1029,7 +934,7 @@ thunar_window_create_edit_menu (ThunarWindow     *window,
           thunarx_menu_items = thunarx_preferences_provider_get_menu_items (THUNARX_PREFERENCES_PROVIDER (pp->data), GTK_WIDGET (window));
           for (lp = thunarx_menu_items; lp != NULL; lp = lp->next)
             {
-                gtk_menu_item = thunar_gtk_menu_thunarx_menu_item_new (lp->data, GTK_MENU_SHELL (submenu));
+                gtk_menu_item = thunar_gtk_menu_thunarx_menu_item_new (lp->data, GTK_MENU_SHELL (menu));
 
                 /* Each thunarx_menu_item will be destroyed together with its related gtk_menu_item */
                 g_signal_connect_swapped (G_OBJECT (gtk_menu_item), "destroy", G_CALLBACK (g_object_unref), lp->data);
@@ -1039,40 +944,29 @@ thunar_window_create_edit_menu (ThunarWindow     *window,
           g_list_free (thunarx_menu_items);
         }
     }
-  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_PREFERENCES), G_OBJECT (window), GTK_MENU_SHELL (submenu));
-  gtk_menu_item_set_submenu (GTK_MENU_ITEM (menu), GTK_WIDGET (submenu));
-  gtk_widget_show_all (GTK_WIDGET (submenu));
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_PREFERENCES), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  gtk_widget_show_all (GTK_WIDGET (menu));
 
-  thunar_window_redirect_menu_tooltips_to_statusbar (window, GTK_MENU (submenu));
-  return FALSE;
+  thunar_window_redirect_menu_tooltips_to_statusbar (window, GTK_MENU (menu));
 }
 
 
 
-static gboolean
-thunar_window_create_view_menu (ThunarWindow     *window,
-                                GdkEventCrossing *event,
-                                GtkWidget        *menu)
+static void
+thunar_window_update_view_menu (ThunarWindow *window,
+                                GtkWidget    *menu)
 {
-  ThunarMenu *submenu;
   GtkWidget  *item;
   GtkWidget  *sub_items;
   gchar      *last_location_bar;
   gchar      *last_side_pane;
 
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
-  _thunar_return_val_if_fail (GTK_IS_MENU_ITEM (menu), FALSE);
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  /* close, if already open */
-  submenu = THUNAR_MENU (gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu)));
-  if (submenu != NULL)
-    gtk_menu_popdown (GTK_MENU (submenu));
-
-  submenu = g_object_new (THUNAR_TYPE_MENU, "launcher", window->launcher, NULL);
-  gtk_menu_set_accel_group (GTK_MENU (submenu), window->accel_group);
-  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_RELOAD), G_OBJECT (window), GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
-  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_MENU), G_OBJECT (window), GTK_MENU_SHELL (submenu));
+  thunar_gtk_menu_clean (GTK_MENU (menu));
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_RELOAD), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_MENU), G_OBJECT (window), GTK_MENU_SHELL (menu));
   sub_items =  gtk_menu_new();
   gtk_menu_set_accel_group (GTK_MENU (sub_items), window->accel_group);
   g_object_get (window->preferences, "last-location-bar", &last_location_bar, NULL);
@@ -1082,7 +976,7 @@ thunar_window_create_view_menu (ThunarWindow     *window,
                                                    exo_str_is_equal (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS)), GTK_MENU_SHELL (sub_items));
   g_free (last_location_bar);
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (sub_items));
-  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_SIDE_PANE_MENU), G_OBJECT (window), GTK_MENU_SHELL (submenu));
+  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_SIDE_PANE_MENU), G_OBJECT (window), GTK_MENU_SHELL (menu));
   sub_items =  gtk_menu_new();
   gtk_menu_set_accel_group (GTK_MENU (sub_items), window->accel_group);
   g_object_get (window->preferences, "last-side-pane", &last_side_pane, NULL);
@@ -1093,74 +987,62 @@ thunar_window_create_view_menu (ThunarWindow     *window,
   g_free (last_side_pane);
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (sub_items));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_STATUSBAR), G_OBJECT (window),
-                                                   gtk_widget_get_visible (window->statusbar), GTK_MENU_SHELL (submenu));
+                                                   gtk_widget_get_visible (window->statusbar), GTK_MENU_SHELL (menu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_MENUBAR), G_OBJECT (window),
-                                                   gtk_widget_get_visible (window->menubar), GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
+                                                   gtk_widget_get_visible (window->menubar), GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_SHOW_HIDDEN), G_OBJECT (window),
-                                                   window->show_hidden, GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
+                                                   window->show_hidden, GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
   if (window->view != NULL)
-    thunar_standard_view_append_menu_items (THUNAR_STANDARD_VIEW (window->view), GTK_MENU (submenu), window->accel_group);
-  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
-  thunar_window_append_menu_item (window, GTK_MENU_SHELL (submenu), THUNAR_WINDOW_ACTION_ZOOM_IN);
-  thunar_window_append_menu_item (window, GTK_MENU_SHELL (submenu), THUNAR_WINDOW_ACTION_ZOOM_OUT);
-  thunar_window_append_menu_item (window, GTK_MENU_SHELL (submenu), THUNAR_WINDOW_ACTION_ZOOM_RESET);
-  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
+    thunar_standard_view_append_menu_items (THUNAR_STANDARD_VIEW (window->view), GTK_MENU (menu), window->accel_group);
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+  thunar_window_append_menu_item (window, GTK_MENU_SHELL (menu), THUNAR_WINDOW_ACTION_ZOOM_IN);
+  thunar_window_append_menu_item (window, GTK_MENU_SHELL (menu), THUNAR_WINDOW_ACTION_ZOOM_OUT);
+  thunar_window_append_menu_item (window, GTK_MENU_SHELL (menu), THUNAR_WINDOW_ACTION_ZOOM_RESET);
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
 
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_ICONS),
-                                                 G_OBJECT (window), window->view_type == THUNAR_TYPE_ICON_VIEW, GTK_MENU_SHELL (submenu));
+                                                 G_OBJECT (window), window->view_type == THUNAR_TYPE_ICON_VIEW, GTK_MENU_SHELL (menu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST),
-                                                 G_OBJECT (window), window->view_type == THUNAR_TYPE_DETAILS_VIEW, GTK_MENU_SHELL (submenu));
+                                                 G_OBJECT (window), window->view_type == THUNAR_TYPE_DETAILS_VIEW, GTK_MENU_SHELL (menu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST),
-                                                 G_OBJECT (window), window->view_type == THUNAR_TYPE_COMPACT_VIEW, GTK_MENU_SHELL (submenu));
+                                                 G_OBJECT (window), window->view_type == THUNAR_TYPE_COMPACT_VIEW, GTK_MENU_SHELL (menu));
 
-  gtk_menu_item_set_submenu (GTK_MENU_ITEM (menu), GTK_WIDGET (submenu));
-  gtk_widget_show_all (GTK_WIDGET (submenu));
+  gtk_widget_show_all (GTK_WIDGET (menu));
 
-  thunar_window_redirect_menu_tooltips_to_statusbar (window, GTK_MENU (submenu));
-  return FALSE;
+  thunar_window_redirect_menu_tooltips_to_statusbar (window, GTK_MENU (menu));
 }
 
 
 
-static gboolean
-thunar_window_create_go_menu (ThunarWindow     *window,
-                              GdkEventCrossing *event,
-                              GtkWidget        *menu)
+static void
+thunar_window_update_go_menu (ThunarWindow *window,
+                              GtkWidget    *menu)
 {
-  ThunarMenu               *submenu;
   gchar                    *icon_name;
   const XfceGtkActionEntry *action_entry;
   ThunarHistory            *history = NULL;
   GtkWidget                *item;
 
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
-  _thunar_return_val_if_fail (GTK_IS_MENU_ITEM (menu), FALSE);
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   if (window->view != NULL)
     history = thunar_standard_view_get_history (THUNAR_STANDARD_VIEW (window->view));
 
-  /* close, if already open */
-  submenu = THUNAR_MENU (gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu)));
-  if (submenu != NULL)
-    gtk_menu_popdown (GTK_MENU (submenu));
-
-  submenu = g_object_new (THUNAR_TYPE_MENU, "launcher",              window->launcher, NULL);
-  gtk_menu_set_accel_group (GTK_MENU (submenu), window->accel_group);
-  gtk_menu_item_set_submenu (GTK_MENU_ITEM (menu), GTK_WIDGET (submenu));
-  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_PARENT), G_OBJECT (window), GTK_MENU_SHELL (submenu));
+  thunar_gtk_menu_clean (GTK_MENU (menu));
+  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_PARENT), G_OBJECT (window), GTK_MENU_SHELL (menu));
   gtk_widget_set_sensitive (item, !thunar_g_file_is_root (thunar_file_get_file (window->current_directory)));
-  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_BACK), G_OBJECT (window), GTK_MENU_SHELL (submenu));
+  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_BACK), G_OBJECT (window), GTK_MENU_SHELL (menu));
   if (history != NULL)
     gtk_widget_set_sensitive (item, thunar_history_has_back (history));
-  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_FORWARD), G_OBJECT (window), GTK_MENU_SHELL (submenu));
+  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_FORWARD), G_OBJECT (window), GTK_MENU_SHELL (menu));
   if (history != NULL)
     gtk_widget_set_sensitive (item, thunar_history_has_forward (history));
-  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_COMPUTER), G_OBJECT (window), GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_HOME), G_OBJECT (window), GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_DESKTOP), G_OBJECT (window), GTK_MENU_SHELL (submenu));
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_COMPUTER), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_HOME), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_DESKTOP), G_OBJECT (window), GTK_MENU_SHELL (menu));
   if (thunar_g_vfs_is_uri_scheme_supported ("trash"))
     {
       GFile      *gfile;
@@ -1181,54 +1063,41 @@ thunar_window_create_go_menu (ThunarWindow     *window,
                   else
                     icon_name = "user-trash";
                   xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, action_entry->menu_item_tooltip_text,
-                                                               action_entry->accel_path, action_entry->callback, G_OBJECT (window), icon_name, GTK_MENU_SHELL (submenu));
+                                                               action_entry->accel_path, action_entry->callback, G_OBJECT (window), icon_name, GTK_MENU_SHELL (menu));
                 }
               g_object_unref (trash_folder);
             }
           g_object_unref (gfile);
         }
     }
-  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_TEMPLATES), G_OBJECT (window), GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
-  thunar_window_menu_add_bookmarks (window, GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_FILE_SYSTEM), G_OBJECT (window), GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_NETWORK), G_OBJECT (window), GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_LOCATION), G_OBJECT (window), GTK_MENU_SHELL (submenu));
-  gtk_widget_show_all (GTK_WIDGET (submenu));
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_TEMPLATES), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+  thunar_window_menu_add_bookmarks (window, GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_FILE_SYSTEM), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_NETWORK), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_LOCATION), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  gtk_widget_show_all (GTK_WIDGET (menu));
 
-  thunar_window_redirect_menu_tooltips_to_statusbar (window, GTK_MENU (submenu));
-  return FALSE;
+  thunar_window_redirect_menu_tooltips_to_statusbar (window, GTK_MENU (menu));
 }
 
 
 
-static gboolean
-thunar_window_create_help_menu (ThunarWindow     *window,
-                                GdkEventCrossing *event,
-                                GtkWidget        *menu)
+static void
+thunar_window_update_help_menu (ThunarWindow *window,
+                                GtkWidget    *menu)
 {
-  ThunarMenu *submenu;
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
-  _thunar_return_val_if_fail (GTK_IS_MENU_ITEM (menu), FALSE);
+  thunar_gtk_menu_clean (GTK_MENU (menu));
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_CONTENTS), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_ABOUT), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  gtk_widget_show_all (GTK_WIDGET (menu));
 
-  /* close, if already open */
-  submenu = THUNAR_MENU (gtk_menu_item_get_submenu (GTK_MENU_ITEM (menu)));
-  if (submenu != NULL)
-    gtk_menu_popdown (GTK_MENU (submenu));
-
-  submenu = g_object_new (THUNAR_TYPE_MENU, "launcher", window->launcher, NULL);
-  gtk_menu_set_accel_group (GTK_MENU (submenu), window->accel_group);
-  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_CONTENTS), G_OBJECT (window), GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_ABOUT), G_OBJECT (window), GTK_MENU_SHELL (submenu));
-  gtk_menu_item_set_submenu (GTK_MENU_ITEM (menu), GTK_WIDGET (submenu));
-  gtk_widget_show_all (GTK_WIDGET (submenu));
-
-  thunar_window_redirect_menu_tooltips_to_statusbar (window, GTK_MENU (submenu));
-  return FALSE;
+  thunar_window_redirect_menu_tooltips_to_statusbar (window, GTK_MENU (menu));
 }
 
 
