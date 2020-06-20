@@ -2673,12 +2673,16 @@ static void
 thunar_window_action_clear_directory_specific_settings (ThunarWindow *window)
 {
   GType       view_type;
+  gboolean    result;
 
   /* clear the settings */
   thunar_file_clear_directory_specific_settings (window->current_directory);
 
   /* get the correct view type for the current directory */
   view_type = thunar_window_view_type_for_directory (window, window->current_directory);
+
+  /* force the view to reload so that any changes to the settings are applied */
+  g_signal_emit (G_OBJECT (window), window_signals[RELOAD], 0, TRUE, &result);
 
   /* replace the active view with a new one of the correct type */
   thunar_window_replace_view (window, window->view, view_type);
@@ -2724,6 +2728,10 @@ thunar_window_replace_view (ThunarWindow *window,
   gboolean        is_current_view;
 
   _thunar_return_if_fail (view_type != G_TYPE_NONE);
+
+  /* if the view already has the correct type then just return */
+  if (view != NULL && G_TYPE_FROM_INSTANCE (view) == view_type)
+    return;
 
   /* is the view we are replacing the active view?
    * (note that this will be true if both view and window->view are NULL) */

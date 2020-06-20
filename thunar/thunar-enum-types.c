@@ -121,6 +121,46 @@ thunar_column_get_type (void)
 
 
 
+const gchar*
+thunar_column_string_from_value (ThunarColumn value)
+{
+  GEnumClass *enum_class;
+  GEnumValue *enum_value;
+
+  enum_class = g_type_class_ref (THUNAR_TYPE_COLUMN);
+  enum_value = g_enum_get_value (enum_class, value);
+
+  g_type_class_unref (enum_class);
+
+  if (enum_value == NULL)
+    return NULL;
+
+  return enum_value->value_name;
+}
+
+
+
+gboolean
+thunar_column_value_from_string (const gchar *value_string,
+                                 gint        *value)
+{
+  GEnumClass *enum_class;
+  GEnumValue *enum_value;
+
+  enum_class = g_type_class_ref (THUNAR_TYPE_COLUMN);
+  enum_value = g_enum_get_value_by_name (enum_class, value_string);
+
+  g_type_class_unref (enum_class);
+
+  if (enum_value == NULL)
+    return FALSE;
+
+  *value =  enum_value->value;
+  return TRUE;
+}
+
+
+
 GType
 thunar_icon_size_get_type (void)
 {
