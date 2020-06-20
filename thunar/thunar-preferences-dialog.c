@@ -38,10 +38,10 @@
 
 
 
-static void thunar_preferences_dialog_finalize   (GObject                      *object);
-static void thunar_preferences_dialog_response   (GtkDialog                    *dialog,
-                                                  gint                          response);
-static void thunar_preferences_dialog_configure  (ThunarPreferencesDialog     *dialog);
+static void     thunar_preferences_dialog_finalize           (GObject                      *object);
+static void     thunar_preferences_dialog_response           (GtkDialog                    *dialog,
+                                                              gint                          response);
+static void     thunar_preferences_dialog_configure          (ThunarPreferencesDialog     *dialog);
 
 
 
@@ -329,7 +329,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);
 
-  label = gtk_label_new (_("Default View"));
+  label = gtk_label_new (_("View Settings"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
@@ -377,25 +377,39 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
 
+  button = gtk_check_button_new_with_mnemonic (_("_Per folder viewing settings"));
+  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-per-directory", G_OBJECT (button), "active");
+  gtk_widget_set_tooltip_text (button,
+                               _("Select this option to set viewing settings individually for each folder"));
+  gtk_widget_set_hexpand (button, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 2, 1, 1);
+  gtk_widget_show (button);
+  if (!thunar_gvfs_metadata_is_supported ())
+    {
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), FALSE);
+      gtk_widget_set_sensitive (button, FALSE);
+      gtk_widget_set_tooltip_text (button, _("gvfs metadata support is required"));
+    }
+
   button = gtk_check_button_new_with_mnemonic (_("Draw frames around thumbnails"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-thumbnail-draw-frames", G_OBJECT (button), "active");
   gtk_widget_set_tooltip_text (button, _("Select this option to draw black frames around thumbnails."));
   gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 2, 2, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 3, 2, 1);
   gtk_widget_show (button);
 
   button = gtk_check_button_new_with_mnemonic (_("Sort _folders before files"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-folders-first", G_OBJECT (button), "active");
   gtk_widget_set_tooltip_text (button, _("Select this option to list folders before files when you sort a folder."));
   gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 3, 2, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 4, 2, 1);
   gtk_widget_show (button);
 
   button = gtk_check_button_new_with_mnemonic (_("Show file size in binary format"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-file-size-binary", G_OBJECT (button), "active");
   gtk_widget_set_tooltip_text (button, _("Select this option to show file size in binary format instead of decimal."));
   gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 4, 2, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 5, 2, 1);
   gtk_widget_show (button);
 
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);

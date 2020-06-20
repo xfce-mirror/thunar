@@ -72,6 +72,7 @@ enum
   PROP_LAST_WINDOW_HEIGHT,
   PROP_LAST_WINDOW_WIDTH,
   PROP_LAST_WINDOW_FULLSCREEN,
+  PROP_MISC_PER_DIRECTORY,
   PROP_MISC_ALWAYS_SHOW_TABS,
   PROP_MISC_VOLUME_MANAGEMENT,
   PROP_MISC_CASE_SENSITIVE,
@@ -343,6 +344,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   preferences_props[PROP_LAST_SHOW_HIDDEN] =
       g_param_spec_boolean ("last-show-hidden",
                             "LastShowHidden",
+                            NULL,
+                            FALSE,
+                            EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-per-directory:
+   *
+   * Whether to use per directory settings.
+   **/
+  preferences_props[PROP_MISC_PER_DIRECTORY] =
+      g_param_spec_boolean ("misc-per-directory",
+                            "MiscPerDirectory",
                             NULL,
                             FALSE,
                             EXO_PARAM_READWRITE);
