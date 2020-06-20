@@ -4628,8 +4628,14 @@ thunar_file_clear_directory_specific_settings (ThunarFile *file)
     return;
 
   g_file_info_remove_attribute (file->info, "metadata::thunar-view-type");
+  g_file_info_remove_attribute (file->info, "metadata::thunar-sort-column");
+  g_file_info_remove_attribute (file->info, "metadata::thunar-sort-order");
 
   g_file_set_attribute (file->gfile, "metadata::thunar-view-type", G_FILE_ATTRIBUTE_TYPE_INVALID,
+                        NULL, G_FILE_QUERY_INFO_NONE, NULL, NULL);
+  g_file_set_attribute (file->gfile, "metadata::thunar-sort-column", G_FILE_ATTRIBUTE_TYPE_INVALID,
+                        NULL, G_FILE_QUERY_INFO_NONE, NULL, NULL);
+  g_file_set_attribute (file->gfile, "metadata::thunar-sort-order", G_FILE_ATTRIBUTE_TYPE_INVALID,
                         NULL, G_FILE_QUERY_INFO_NONE, NULL, NULL);
 
   thunar_file_changed (file);
@@ -4654,6 +4660,10 @@ thunar_file_has_directory_specific_settings (ThunarFile *file)
     return FALSE;
 
   if (g_file_info_has_attribute (file->info, "metadata::thunar-view-type"))
+    return TRUE;
+  if (g_file_info_has_attribute (file->info, "metadata::thunar-sort-column"))
+    return TRUE;
+  if (g_file_info_has_attribute (file->info, "metadata::thunar-sort-order"))
     return TRUE;
 
   return FALSE;
