@@ -717,3 +717,76 @@ thunar_g_app_info_should_show (GAppInfo *info)
   return TRUE;
 #endif
 }
+
+
+
+gboolean
+thunar_gvfs_metadata_is_supported  (void)
+{
+  GDBusMessage     *send, *reply;
+  GDBusConnection  *conn;
+  GVariant         *v1, *v2;
+  GError           *error = NULL;
+  const gchar     **service_names;
+  gboolean          metadata_found;
+
+  /* connect to the session bus */
+  conn = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
+
+  /* check that the connection was opened sucessfully */
+  if (error != NULL)
+    {
+      g_error_free (error);
+      return FALSE;
+    }
+
+  /* create the message to send to list the available services */
+  send = g_dbus_message_new_method_call ("org.freedesktop.DBus",
+                                         "/org/freedesktop/DBus",
+                                         "org.freedesktop.DBus",
+                                         "ListNames");
+
+  /* send the message and wait for the reply */
+  reply = g_dbus_connection_send_message_with_reply_sync (conn, send, G_DBUS_SEND_MESSAGE_FLAGS_NONE,
+                                                          -1, NULL, NULL, &error);
+
+  /* release the connection and the sent message */
+  g_object_unref (send);
+  g_object_unref (conn);
+
+  /* check if we got a sucessful reply */
+  if (error != NULL)
+    {
+      g_error_free (error);
+      return FALSE;
+    }
+
+  /* extract the GVariant with the array of strings describing the available services */
+  v1 = g_dbus_message_get_body (reply); /* v1 belongs to reply and must not be freed */
+  if (v1 == NULL || !g_variant_is_container (v1) || g_variant_n_children (v1) < 1)
+    {
+      g_object_unref (reply);
+      return FALSE;
+    }
+  v2 = g_variant_get_child_value (v1, 0);
+  g_object_unref (reply);
+
+  /* check that the GVariant we have been given does contain an array of strings */
+  if (!g_variant_is_of_type (v2, G_VARIANT_TYPE_STRING_ARRAY))
+    {
+      g_variant_unref (v2);
+      return FALSE;
+    }
+
+  /* search through the list of service names to see if gvfs metadata is present */
+  metadata_found = FALSE;
+  service_names = g_variant_get_strv (v2, NULL);
+  for (int i=0; service_names[i] != NULL; i++)
+    if (g_strcmp0 (service_names[i], "org.gtk.vfs.Metadata") == 0)
+      metadata_found = TRUE;
+
+  g_free (service_names);
+  g_variant_unref (v2);
+
+  return metadata_found;
+}

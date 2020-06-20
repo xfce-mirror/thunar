@@ -4507,3 +4507,102 @@ thunar_file_list_to_thunar_g_file_list (GList *file_list)
 
   return list;
 }
+
+
+
+/**
+ * thunar_file_get_metadata_setting:
+ * @file         : a #ThunarFile instance.
+ * @setting_name : the name of the setting to get
+ *
+ * Gets the stored value of the metadata setting @setting_name for @file. Returns %NULL
+ * if there is no stored setting.
+ *
+ * Return value: (transfer none): the stored value of the setting for @file, or %NULL
+ **/
+const gchar*
+thunar_file_get_metadata_setting (ThunarFile  *file,
+                                  const gchar *setting_name)
+{
+  gchar       *attr_name;
+  const gchar *attr_value;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+
+  if (file->info == NULL)
+    return NULL;
+
+  /* convert the setting name to an attribute name */
+  attr_name = g_strdup_printf ("metadata::thunar::%s", setting_name);
+
+  if (!g_file_info_has_attribute (file->info, attr_name))
+    {
+      g_free (attr_name);
+      return NULL;
+    }
+
+  attr_value = g_file_info_get_attribute_string (file->info, attr_name);
+  g_free (attr_name);
+
+  return attr_value;
+}
+
+
+
+static void
+thunar_file_set_metadata_setting_finish (GObject      *source_object,
+                                         GAsyncResult *result,
+                                         gpointer      user_data)
+{
+  ThunarFile *file = THUNAR_FILE (user_data);
+  GError     *error = NULL;
+
+  if (!g_file_set_attributes_finish (G_FILE (source_object), result, NULL, &error))
+    {
+      g_warning ("Failed to set metadata: %s", error->message);
+      g_error_free (error);
+    }
+
+  thunar_file_changed (file);
+}
+
+
+
+/**
+ * thunar_file_set_metadata_setting:
+ * @file          : a #ThunarFile instance.
+ * @setting_name  : the name of the setting to set
+ * @setting_value : the value to set
+ *
+ * Sets the setting @setting_name of @file to @setting_value and stores it in
+ * the @file<!---->s metadata.
+ **/
+void
+thunar_file_set_metadata_setting (ThunarFile  *file,
+                                  const gchar *setting_name,
+                                  const gchar *setting_value)
+{
+  GFileInfo *info;
+  gchar     *attr_name;
+
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (G_IS_FILE_INFO (file->info));
+
+  /* convert the setting name to an attribute name */
+  attr_name = g_strdup_printf ("metadata::thunar::%s", setting_name);
+
+  /* set the value in the current info */
+  g_file_info_set_attribute_string (file->info, attr_name, setting_value);
+
+  /* set meta data to the daemon */
+  info = g_file_info_new ();
+  g_file_info_set_attribute_string (info, attr_name, setting_value);
+  g_file_set_attributes_async (file->gfile, info,
+                               G_FILE_QUERY_INFO_NONE,
+                               G_PRIORITY_DEFAULT,
+                               NULL,
+                               thunar_file_set_metadata_setting_finish,
+                               file);
+  g_free (attr_name);
+  g_object_unref (G_OBJECT (info));
+}
