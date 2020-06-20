@@ -380,7 +380,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   button = gtk_check_button_new_with_mnemonic (_("_Remember view settings for each folder"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-directory-specific-settings", G_OBJECT (button), "active");
   gtk_widget_set_tooltip_text (button,
-                               _("Select this option to remember viewing settings individually for each folder"));
+                               _("Select this option to remember view type individually for each folder"));
   gtk_widget_set_hexpand (button, TRUE);
   gtk_grid_attach (GTK_GRID (grid), button, 0, 2, 1, 1);
   gtk_widget_show (button);

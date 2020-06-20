@@ -47,7 +47,8 @@ G_BEGIN_DECLS
   "time::*," \
   "trash::*," \
   "unix::gid,unix::uid,unix::mode," \
-  "metadata::emblems"
+  "metadata::emblems," \
+  "metadata::thunar-view-type"
 
 
 
