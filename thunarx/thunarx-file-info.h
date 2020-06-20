@@ -48,7 +48,7 @@ G_BEGIN_DECLS
   "trash::*," \
   "unix::gid,unix::uid,unix::mode," \
   "metadata::emblems," \
-  "metadata::thunar::view-type,"
+  "metadata::thunar::view-type,metadata::thunar::sort-column,metadata::thunar::sort-order"
 
 
 
