@@ -393,6 +393,25 @@ thunar_device_get_identifier (const ThunarDevice *device)
 
 
 
+gchar *
+thunar_device_get_identifier_unix (const ThunarDevice *device)
+{
+  gchar *ident = NULL;
+
+  _thunar_return_val_if_fail (THUNAR_IS_DEVICE (device), NULL);
+
+  if (G_IS_VOLUME (device->device))
+    ident = g_volume_get_identifier (device->device, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+  else if (G_IS_MOUNT (device->device))
+    return NULL;
+  else
+    _thunar_assert_not_reached ();
+
+  return ident;
+}
+
+
+
 gboolean
 thunar_device_get_hidden (const ThunarDevice *device)
 {
