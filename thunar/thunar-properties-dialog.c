@@ -922,6 +922,8 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   gchar             *fs_string;
   gchar             *str;
   gchar             *volume_name;
+  gchar             *volume_id;
+  gchar             *volume_label;
   ThunarFile        *file;
   ThunarFile        *parent_file;
   gboolean           show_chooser;
@@ -1143,9 +1145,15 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
         g_object_unref (gicon);
 
       volume_name = g_volume_get_name (volume);
-      gtk_label_set_text (GTK_LABEL (dialog->volume_label), volume_name);
+      volume_id = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+      volume_label= g_strdup_printf ("%s (%s)", volume_name, volume_id);
+      gtk_label_set_text (GTK_LABEL (dialog->volume_label), volume_label);
       gtk_widget_show (dialog->volume_label);
       g_free (volume_name);
+      g_free (volume_id);
+      g_free (volume_label);
+
+      g_object_unref (G_OBJECT (volume));
     }
   else
     {
@@ -1172,6 +1180,8 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
   GVolume     *tmp_volume;
   GIcon       *gicon;
   gchar       *volume_name;
+  gchar       *volume_id;
+  gchar       *volume_label;
   gchar       *display_name;
   ThunarFile  *parent_file = NULL;
   ThunarFile  *tmp_parent;
@@ -1307,9 +1317,13 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
         g_object_unref (gicon);
 
       volume_name = g_volume_get_name (volume);
-      gtk_label_set_text (GTK_LABEL (dialog->volume_label), volume_name);
+      volume_id = g_volume_get_identifier (volume, G_VOLUME_IDENTIFIER_KIND_UNIX_DEVICE);
+      volume_label = g_strdup_printf ("%s (%s)", volume_name, volume_id);
+      gtk_label_set_text (GTK_LABEL (dialog->volume_label), volume_label);
       gtk_widget_show (dialog->volume_label);
       g_free (volume_name);
+      g_free (volume_id);
+      g_free (volume_label);
 
       g_object_unref (G_OBJECT (volume));
     }
