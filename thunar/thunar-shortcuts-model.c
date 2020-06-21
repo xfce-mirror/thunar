@@ -561,6 +561,8 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
   gboolean        can_eject;
   gboolean        file_size_binary;
   gchar          *disk_usage;
+  gchar          *device_name;
+  gchar          *device_id;
   gchar          *location;
   gchar          *tooltip;
   guint32         trash_items;
@@ -609,6 +611,13 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
       g_value_init (value, G_TYPE_STRING);
       if ((shortcut->group & THUNAR_SHORTCUT_GROUP_DEVICES) != 0)
         {
+          /* get Unix device path */
+          if (shortcut->device != NULL)
+            device_id = thunar_device_get_identifier_unix (shortcut->device);
+          else
+            device_id = NULL;
+
+          /* get device root directory */
           if (shortcut->device != NULL)
             file = thunar_device_get_root (shortcut->device);
           else if (shortcut->file != NULL)
@@ -625,6 +634,14 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
               else
                 location = thunar_g_file_get_location (file);
 
+              if (device_id)
+                {
+                  gchar *tmp = g_strdup_printf ("%s (%s)", location, device_id);
+                  g_free (location);
+                  g_free (device_id);
+                  location = tmp;
+                }
+
               file_size_binary = THUNAR_SHORTCUTS_MODEL (tree_model)->file_size_binary;
               disk_usage = thunar_g_file_get_free_space_string (file, file_size_binary);
 
@@ -639,6 +656,17 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
               g_free (disk_usage);
 
               g_object_unref (file);
+            }
+          else
+            {
+              if (device_id)
+                {
+                  device_name = thunar_device_get_name (shortcut->device);
+                  tooltip = g_strdup_printf (_("Mount and open %s (%s)"), device_name, device_id);
+                  g_value_take_string (value, tooltip);
+                  g_free (device_name);
+                  g_free (device_id);
+                }
             }
           break;
         }

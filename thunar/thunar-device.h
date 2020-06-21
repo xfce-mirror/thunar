@@ -56,6 +56,8 @@ ThunarDeviceKind     thunar_device_get_kind         (const ThunarDevice   *devic
 
 gchar               *thunar_device_get_identifier   (const ThunarDevice   *device) G_GNUC_MALLOC;
 
+gchar               *thunar_device_get_identifier_unix   (const ThunarDevice   *device) G_GNUC_MALLOC;
+
 gboolean             thunar_device_get_hidden       (const ThunarDevice   *device);
 
 gboolean             thunar_device_can_eject        (const ThunarDevice   *device);
