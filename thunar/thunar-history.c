@@ -50,7 +50,6 @@ enum
 
 
 static void            thunar_history_navigator_init         (ThunarNavigatorIface *iface);
-static void            thunar_history_dispose                (GObject              *object);
 static void            thunar_history_finalize               (GObject              *object);
 static void            thunar_history_get_property           (GObject              *object,
                                                               guint                 prop_id,
@@ -102,7 +101,6 @@ thunar_history_class_init (ThunarHistoryClass *klass)
   GObjectClass *gobject_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->dispose = thunar_history_dispose;
   gobject_class->finalize = thunar_history_finalize;
   gobject_class->get_property = thunar_history_get_property;
   gobject_class->set_property = thunar_history_set_property;
@@ -144,19 +142,6 @@ static void
 thunar_history_init (ThunarHistory *history)
 {
 
-}
-
-
-
-static void
-thunar_history_dispose (GObject *object)
-{
-  ThunarHistory *history = THUNAR_HISTORY (object);
-
-  /* disconnect from the current directory */
-  thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (history), NULL);
-
-  (*G_OBJECT_CLASS (thunar_history_parent_class)->dispose) (object);
 }
 
 
@@ -290,8 +275,11 @@ thunar_history_set_current_directory (ThunarNavigator *navigator,
     }
 
   /* notify listeners */
-  g_object_notify (G_OBJECT (history), "current-directory");
-  g_signal_emit (G_OBJECT (history), history_signals[HISTORY_CHANGED], 0, history);
+  if (current_directory != NULL)
+    {
+      g_object_notify (G_OBJECT (history), "current-directory");
+      g_signal_emit (G_OBJECT (history), history_signals[HISTORY_CHANGED], 0, history);
+    }
 }
 
 
