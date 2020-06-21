@@ -795,17 +795,6 @@ thunar_window_init (ThunarWindow *window)
   if (G_LIKELY (window->view != NULL))
     thunar_window_binding_create (window, window->view, "statusbar-text", window->statusbar, "text", G_BINDING_SYNC_CREATE);
 
-
-  /* setup a new statusbar */
-  window->statusbar = thunar_statusbar_new ();
-  gtk_widget_set_hexpand (window->statusbar, TRUE);
-  gtk_grid_attach (GTK_GRID (window->view_box), window->statusbar, 0, 2, 1, 1);
-  if (last_statusbar_visible)
-    gtk_widget_show (window->statusbar);
-
-  if (G_LIKELY (window->view != NULL))
-    thunar_window_binding_create (window, window->view, "statusbar-text", window->statusbar, "text", G_BINDING_SYNC_CREATE);
-
   /* ensure that all the view types are registered */
   g_type_ensure (THUNAR_TYPE_ICON_VIEW);
   g_type_ensure (THUNAR_TYPE_DETAILS_VIEW);
