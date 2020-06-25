@@ -803,9 +803,6 @@ thunar_window_init (ThunarWindow *window)
   /* load the bookmarks file and monitor */
   window->bookmark_file = thunar_g_file_new_for_bookmarks ();
   window->bookmark_monitor = g_file_monitor_file (window->bookmark_file, G_FILE_MONITOR_NONE, NULL, NULL);
-
-  /* same is done for view in thunar_window_action_view_changed */
-  thunar_side_pane_set_show_hidden (THUNAR_SIDE_PANE (window->sidepane), window->show_hidden);
 }
 
 
@@ -2055,6 +2052,10 @@ thunar_window_install_sidepane (ThunarWindow *window,
       /* connect the side pane widget to the view (if any) */
       if (G_LIKELY (window->view != NULL))
         thunar_window_binding_create (window, window->view, "selected-files", window->sidepane, "selected-files", G_BINDING_SYNC_CREATE);
+
+      /* apply show_hidden config to tree pane */
+      if (type == THUNAR_TYPE_TREE_PANE)
+        thunar_side_pane_set_show_hidden (THUNAR_SIDE_PANE (window->sidepane), window->show_hidden);
     }
 
   /* remember the setting */
@@ -3170,7 +3171,10 @@ thunar_window_action_show_hidden (ThunarWindow *window)
 
   window->show_hidden = !window->show_hidden;
   gtk_container_foreach (GTK_CONTAINER (window->notebook), (GtkCallback) (void (*)(void)) thunar_view_set_show_hidden, GINT_TO_POINTER (window->show_hidden));
-  thunar_side_pane_set_show_hidden (THUNAR_SIDE_PANE (window->sidepane), window->show_hidden);
+  if (G_LIKELY (window->sidepane != NULL))
+    {
+      thunar_side_pane_set_show_hidden (THUNAR_SIDE_PANE (window->sidepane), window->show_hidden);
+    }
 
   g_object_set (G_OBJECT (window->preferences), "last-show-hidden", window->show_hidden, NULL);
 
