@@ -1102,6 +1102,14 @@ thunar_window_dispose (GObject *object)
   window->location_toolbar_item_back = NULL;
   window->location_toolbar_item_forward = NULL;
 
+  if (window->accel_group != NULL)
+    {
+      gtk_accel_group_disconnect (window->accel_group, NULL);
+      gtk_window_remove_accel_group (GTK_WINDOW (window), window->accel_group);
+      g_object_unref (window->accel_group);
+      window->accel_group = NULL;
+    }
+
   /* destroy the save geometry timer source */
   if (G_UNLIKELY (window->save_geometry_timer_id != 0))
     g_source_remove (window->save_geometry_timer_id);
