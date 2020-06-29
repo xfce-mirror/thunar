@@ -2115,10 +2115,8 @@ thunar_launcher_action_create_folder (ThunarLauncher *launcher)
   gchar             *name;
 
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
-  _thunar_return_if_fail (launcher->single_folder_selected);
-  _thunar_return_if_fail (launcher->single_folder != NULL);
 
-  if (thunar_file_is_trashed (launcher->single_folder))
+  if (thunar_file_is_trashed (launcher->current_directory))
     return;
 
   /* ask the user to enter a name for the new folder */
@@ -2158,10 +2156,8 @@ thunar_launcher_action_create_document (ThunarLauncher *launcher,
   ThunarFile        *template_file;
 
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
-  _thunar_return_if_fail (launcher->single_folder_selected);
-  _thunar_return_if_fail (launcher->single_folder != NULL);
 
-  if (thunar_file_is_trashed (launcher->single_folder))
+  if (thunar_file_is_trashed (launcher->current_directory))
     return;
 
   template_file = g_object_get_qdata (G_OBJECT (menu_item), thunar_launcher_file_quark);
