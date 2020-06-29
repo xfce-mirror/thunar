@@ -380,7 +380,6 @@ thunar_dialogs_show_about (GtkWindow   *parent,
     NULL,
   };
 
-  GdkPixbuf *logo;
   va_list    args;
   gchar     *comments;
 
@@ -412,8 +411,6 @@ thunar_dialogs_show_about (GtkWindow   *parent,
                          NULL);
 
   /* cleanup */
-  if (G_LIKELY (logo != NULL))
-    g_object_unref (G_OBJECT (logo));
   g_free (comments);
 }
 
