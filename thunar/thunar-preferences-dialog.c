@@ -349,8 +349,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   combo = gtk_combo_box_text_new ();
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Icon View"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Detailed List View"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Compact List View"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("List View"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Compact View"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Last Active View"));
   exo_mutual_binding_new_full (G_OBJECT (dialog->preferences), "default-view", G_OBJECT (combo), "active",
                                transform_view_string_to_index, transform_view_index_to_string, NULL, NULL);
