@@ -3463,13 +3463,15 @@ thunar_file_set_emblem_names (ThunarFile *file,
       emblems[n++] = g_strdup (lp->data);
     }
 
-  /* set the value in the current info */
+  /* set the value in the current info. this call is needed to update the in-memory
+   * GFileInfo structure to ensure that the new attribute value is available immediately */
   if (n == 0)
     g_file_info_remove_attribute (file->info, "metadata::emblems");
   else
     g_file_info_set_attribute_stringv (file->info, "metadata::emblems", emblems);
 
-  /* set meta data to the daemon */
+  /* send meta data to the daemon. this call is needed to store the new value of
+   * the attribute in the file system */
   info = g_file_info_new ();
   g_file_info_set_attribute_stringv (info, "metadata::emblems", emblems);
   g_file_set_attributes_async (file->gfile, info,
