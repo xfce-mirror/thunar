@@ -1529,10 +1529,11 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
   const gchar        *p;
   GString            *command_line = g_string_new (NULL);
   GList              *lp;
+  GSList             *uri_list = NULL;
   gchar              *dirname;
-  gchar              *quoted;
   gchar              *path;
   gchar              *uri;
+  gchar              *expanded;
   GFile              *location;
 
   g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), FALSE);
@@ -1547,75 +1548,13 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
       goto error;
     }
 
-  /* generate the command line */
+  /* expand first the field codes that are deprecated in Freedesktop.org specification */
   for (p = item->command; *p != '\0'; ++p)
     {
-      if (p[0] == '%' && p[1] != '\0')
+      if (G_UNLIKELY (p[0] == '%' && p[1] != '\0'))
         {
           switch (*++p)
             {
-            case 'f':
-              if (G_LIKELY (file_infos != NULL))
-                {
-                  location = thunarx_file_info_get_location (file_infos->data);
-                  path = g_file_get_path (location);
-                  g_object_unref (location);
-
-                  if (G_UNLIKELY (path == NULL))
-                    goto error;
-
-                  quoted = g_shell_quote (path);
-                  g_string_append (command_line, quoted);
-                  g_free (quoted);
-                  g_free (path);
-                }
-              break;
-
-            case 'F':
-              for (lp = file_infos; lp != NULL; lp = lp->next)
-                {
-                  if (G_LIKELY (lp != file_infos))
-                    g_string_append_c (command_line, ' ');
-
-                  location = thunarx_file_info_get_location (lp->data);
-                  path = g_file_get_path (location);
-                  g_object_unref (location);
-
-                  if (G_UNLIKELY (path == NULL))
-                    goto error;
-
-                  quoted = g_shell_quote (path);
-                  g_string_append (command_line, quoted);
-                  g_free (quoted);
-                  g_free (path);
-                }
-              break;
-
-            case 'u':
-              if (G_LIKELY (file_infos != NULL))
-                {
-                  uri = thunarx_file_info_get_uri (file_infos->data);
-                  quoted = g_shell_quote (uri);
-                  g_string_append (command_line, quoted);
-                  g_free (quoted);
-                  g_free (uri);
-                }
-              break;
-
-            case 'U':
-              for (lp = file_infos; lp != NULL; lp = lp->next)
-                {
-                  if (G_LIKELY (lp != file_infos))
-                    g_string_append_c (command_line, ' ');
-
-                  uri = thunarx_file_info_get_uri (lp->data);
-                  quoted = g_shell_quote (uri);
-                  g_string_append (command_line, quoted);
-                  g_free (quoted);
-                  g_free (uri);
-                }
-              break;
-
             case 'd':
               if (G_LIKELY (file_infos != NULL))
                 {
@@ -1627,10 +1566,8 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
                     goto error;
 
                   dirname = g_path_get_dirname (path);
-                  quoted = g_shell_quote (dirname);
-                  g_string_append (command_line, quoted);
+                  xfce_append_quoted (command_line, dirname);
                   g_free (dirname);
-                  g_free (quoted);
                   g_free (path);
                 }
               break;
@@ -1649,10 +1586,8 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
                     goto error;
 
                   dirname = g_path_get_dirname (path);
-                  quoted = g_shell_quote (dirname);
-                  g_string_append (command_line, quoted);
+                  xfce_append_quoted (command_line, dirname);
                   g_free (dirname);
-                  g_free (quoted);
                   g_free (path);
                 }
               break;
@@ -1661,9 +1596,7 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
               if (G_LIKELY (file_infos != NULL))
                 {
                   path = thunarx_file_info_get_name (file_infos->data);
-                  quoted = g_shell_quote (path);
-                  g_string_append (command_line, quoted);
-                  g_free (quoted);
+                  xfce_append_quoted (command_line, path);
                   g_free (path);
                 }
               break;
@@ -1675,15 +1608,16 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
                     g_string_append_c (command_line, ' ');
 
                   path = thunarx_file_info_get_name (lp->data);
-                  quoted = g_shell_quote (path);
-                  g_string_append (command_line, quoted);
-                  g_free (quoted);
+                  xfce_append_quoted (command_line, path);
                   g_free (path);
                 }
               break;
 
-            case '%':
+            default:
+              /* just forward other field codes to the command line string,
+               * they will be expanded later */
               g_string_append_c (command_line, '%');
+              g_string_append_c (command_line, *p);
               break;
             }
         }
@@ -1693,6 +1627,16 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
         }
     }
 
+  /* expand the non deprecated field codes */
+  for (lp = file_infos; lp != NULL; lp = lp->next)
+    uri_list = g_slist_prepend (uri_list, thunarx_file_info_get_uri (lp->data));
+  uri_list = g_slist_reverse (uri_list);
+
+  expanded = xfce_expand_desktop_entry_field_codes (command_line->str, uri_list,
+                                                    NULL, NULL, NULL, FALSE);
+  g_string_free (command_line, TRUE);
+  g_slist_free_full (uri_list, g_free);
+
   /* we run the command using the bourne shell (or the systems
    * replacement for the bourne shell), so environment variables
    * and backticks can be used for the action commands.
@@ -1701,7 +1645,7 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
   (*argvp) = g_new (gchar *, 4);
   (*argvp)[0] = g_strdup (_PATH_BSHELL);
   (*argvp)[1] = g_strdup ("-c");
-  (*argvp)[2] = g_string_free (command_line, FALSE);
+  (*argvp)[2] = expanded;
   (*argvp)[3] = NULL;
 
   return TRUE;

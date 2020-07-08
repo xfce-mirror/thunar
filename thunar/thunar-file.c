@@ -57,7 +57,6 @@
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-chooser-dialog.h>
-#include <thunar/thunar-exec.h>
 #include <thunar/thunar-file.h>
 #include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-gio-extensions.h>
@@ -1591,6 +1590,8 @@ thunar_file_execute (ThunarFile  *file,
   GKeyFile   *key_file;
   GError     *err = NULL;
   GFile      *file_parent;
+  GList      *li;
+  GSList     *uri_list = NULL;
   gchar      *icon_name = NULL;
   gchar      *name;
   gchar      *type;
@@ -1599,6 +1600,7 @@ thunar_file_execute (ThunarFile  *file,
   gchar      *escaped_location;
   gchar     **argv = NULL;
   gchar      *exec;
+  gchar      *command;
   gchar      *directory = NULL;
   gboolean    is_secure = FALSE;
   guint32     stimestamp = 0;
@@ -1607,6 +1609,9 @@ thunar_file_execute (ThunarFile  *file,
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   location = thunar_g_file_get_location (file->gfile);
+  for (li = file_list; li != NULL; li = li->next)
+    uri_list = g_slist_prepend (uri_list, g_file_get_uri (li->data));
+  uri_list = g_slist_reverse (uri_list);
 
   if (thunar_file_is_desktop_file (file, &is_secure))
     {
@@ -1636,9 +1641,12 @@ thunar_file_execute (ThunarFile  *file,
                   terminal = g_key_file_get_boolean (key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_TERMINAL, NULL);
                   snotify = g_key_file_get_boolean (key_file, G_KEY_FILE_DESKTOP_GROUP, G_KEY_FILE_DESKTOP_KEY_STARTUP_NOTIFY, NULL);
 
-                  result = thunar_exec_parse (exec, file_list, icon_name, name, location, terminal, NULL, &argv, error);
-
+                  /* expand the field codes and parse the execute command */
+                  command = xfce_expand_desktop_entry_field_codes (exec, uri_list, icon_name,
+                                                                   name, location, terminal);
                   g_free (name);
+                  result = g_shell_parse_argv (command, NULL, &argv, error);
+                  g_free (command);
                 }
               else
                 {
@@ -1693,9 +1701,11 @@ thunar_file_execute (ThunarFile  *file,
       /* fake the Exec line */
       escaped_location = g_shell_quote (location);
       exec = g_strconcat (escaped_location, " %F", NULL);
-      result = thunar_exec_parse (exec, file_list, NULL, NULL, NULL, FALSE, NULL, &argv, error);
+      command = xfce_expand_desktop_entry_field_codes (exec, uri_list, NULL, NULL, NULL, FALSE);
+      result = g_shell_parse_argv (command, NULL, &argv, error);
       g_free (escaped_location);
       g_free (exec);
+      g_free (command);
     }
 
   if (G_LIKELY (result && argv != NULL))
@@ -1756,6 +1766,7 @@ thunar_file_execute (ThunarFile  *file,
     }
 
   /* clean up */
+  g_slist_free_full (uri_list, g_free);
   g_strfreev (argv);
   g_free (location);
   g_free (directory);
