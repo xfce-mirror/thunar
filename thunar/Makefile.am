@@ -83,8 +83,6 @@ thunar_SOURCES =							\
 	thunar-emblem-chooser.h						\
 	thunar-enum-types.c						\
 	thunar-enum-types.h						\
-	thunar-exec.c							\
-	thunar-exec.h							\
 	thunar-file.c							\
 	thunar-file.h							\
 	thunar-file-monitor.c						\
