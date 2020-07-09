@@ -205,7 +205,7 @@ popup_menu_realized (GtkWidget *menu,
  * This method automatically takes over the floating reference of @menu if any and
  * releases it on return. That means if you created the menu via gtk_menu_new() you'll
  * not need to take care of destroying the menu later.
- * 
+ *
  **/
 void
 thunar_gtk_menu_run_at_event (GtkMenu *menu,
@@ -277,6 +277,32 @@ thunar_gtk_widget_set_tooltip (GtkWidget   *widget,
 }
 
 
+
+// TODO: move to libxfce4util (?)
+gboolean
+thunar_gtk_editable_can_cut (GtkEditable *editable)
+{
+  return gtk_editable_get_editable (editable) &&
+         thunar_gtk_editable_can_copy (editable);
+}
+
+
+// TODO: move to libxfce4util (?)
+gboolean
+thunar_gtk_editable_can_copy (GtkEditable *editable)
+{
+  gint selection_bound;
+  return gtk_editable_get_selection_bounds (editable, selection_bound,selection_bound);
+}
+
+
+// TODO: move to libxfce4util (?)
+gboolean
+thunar_gtk_editable_can_paste (GtkEditable *editable)
+{
+  // shall we check up on the clipboard as well?
+  return gtk_editable_get_editable (editable);
+}
 
 /**
  * thunar_gtk_mount_operation_new:
