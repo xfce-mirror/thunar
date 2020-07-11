@@ -40,6 +40,12 @@ GtkWidget       *thunar_gtk_menu_thunarx_menu_item_new        (GObject          
 
 GMountOperation *thunar_gtk_mount_operation_new               (gpointer            parent);
 
+GtkWidget       *thunar_gtk_get_focused_widget                (void);
+
+gboolean         thunar_gtk_editable_can_cut                  (GtkEditable        *editable);
+gboolean         thunar_gtk_editable_can_copy                 (GtkEditable        *editable);
+gboolean         thunar_gtk_editable_can_paste                (GtkEditable        *editable);
+
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 
 static inline int
