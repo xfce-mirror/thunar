@@ -205,7 +205,7 @@ popup_menu_realized (GtkWidget *menu,
  * This method automatically takes over the floating reference of @menu if any and
  * releases it on return. That means if you created the menu via gtk_menu_new() you'll
  * not need to take care of destroying the menu later.
- * 
+ *
  **/
 void
 thunar_gtk_menu_run_at_event (GtkMenu *menu,
@@ -279,6 +279,26 @@ thunar_gtk_widget_set_tooltip (GtkWidget   *widget,
 
 
 /**
+ * thunar_gtk_get_focused_widget:
+ * Return value: (transfer none): currently focused widget or NULL, if there is none.
+ **/
+GtkWidget*
+thunar_gtk_get_focused_widget (void)
+{
+  GtkApplication *app;
+  GtkWindow      *window;
+  app = GTK_APPLICATION (g_application_get_default ());
+  if (NULL == app)
+    return NULL;
+
+  window = gtk_application_get_active_window (app);
+
+  return gtk_window_get_focus (window);
+}
+
+
+
+/**
  * thunar_gtk_mount_operation_new:
  * @parent : a #GtkWindow or non-toplevel widget.
  *
@@ -299,4 +319,47 @@ thunar_gtk_mount_operation_new (gpointer parent)
     gtk_mount_operation_set_screen (GTK_MOUNT_OPERATION (operation), screen);
 
   return operation;
+}
+
+
+
+/**
+ * thunar_gtk_editable_can_cut:
+ *
+ * Return value: TRUE if it's possible to cut text off of a GtkEditable.
+ *               FALSE, otherwise.
+ **/
+gboolean
+thunar_gtk_editable_can_cut (GtkEditable *editable)
+{
+  return gtk_editable_get_editable (editable) &&
+         thunar_gtk_editable_can_copy (editable);
+}
+
+
+
+/**
+ * thunar_gtk_editable_can_copy:
+ *
+ * Return value: TRUE if it's possible to copy text from a GtkEditable.
+ *               FALSE, otherwise.
+ **/
+gboolean
+thunar_gtk_editable_can_copy (GtkEditable *editable)
+{
+  return gtk_editable_get_selection_bounds (editable, NULL,NULL);
+}
+
+
+
+/**
+ * thunar_gtk_editable_can_paste:
+ *
+ * Return value: TRUE if it's possible to paste text to a GtkEditable.
+ *               FALSE, otherwise.
+ **/
+gboolean
+thunar_gtk_editable_can_paste (GtkEditable *editable)
+{
+  return gtk_editable_get_editable (editable);
 }
