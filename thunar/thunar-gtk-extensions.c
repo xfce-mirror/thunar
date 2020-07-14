@@ -280,7 +280,7 @@ thunar_gtk_widget_set_tooltip (GtkWidget   *widget,
 
 /**
  * thunar_gtk_get_focused_widget:
- * Return value: currently focused widget or NULL, if there is none.
+ * Return value: (transfer none): currently focused widget or NULL, if there is none.
  **/
 GtkWidget*
 thunar_gtk_get_focused_widget (void)
