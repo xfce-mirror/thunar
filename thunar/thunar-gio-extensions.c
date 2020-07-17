@@ -717,3 +717,34 @@ thunar_g_app_info_should_show (GAppInfo *info)
   return TRUE;
 #endif
 }
+
+
+
+gboolean
+thunar_g_vfs_metadata_is_supported (void)
+{
+  GFile                  *root;
+  GFileAttributeInfoList *attr_info_list;
+  gint                    n;
+  gboolean                metadata_is_supported = FALSE;
+
+  /* get a GFile for the root directory, and obtain the list of writable namespaces for it */
+  root = thunar_g_file_new_for_root ();
+  attr_info_list = g_file_query_writable_namespaces (root, NULL, NULL);
+  g_object_unref (root);
+
+  /* loop through the returned namespace names and check if "metadata" is included */
+  for (n = 0; n < attr_info_list->n_infos; n++)
+    {
+      if (g_strcmp0 (attr_info_list->infos[n].name, "metadata") == 0)
+        {
+          metadata_is_supported = TRUE;
+          break;
+        }
+    }
+
+  /* release the attribute info list */
+  g_file_attribute_info_list_unref (attr_info_list);
+
+  return metadata_is_supported;
+}
