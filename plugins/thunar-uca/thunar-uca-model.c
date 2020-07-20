@@ -1614,6 +1614,7 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
               break;
 
             default:
+              /* Just forward other commands to the command line string, they will be expanded later */
               g_string_append_c (command_line, '%');
               g_string_append_c (command_line, *p);
               break;
