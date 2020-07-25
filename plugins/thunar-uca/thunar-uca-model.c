@@ -1532,7 +1532,6 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
   GSList             *uri_list = NULL;
   gchar              *dirname;
   gchar              *path;
-  gchar              *uri;
   gchar              *expanded;
   GFile              *location;
 
