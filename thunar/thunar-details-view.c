@@ -133,6 +133,9 @@ struct _ThunarDetailsView
 
   /* whether the most recent item activation used a mouse button press */
   gboolean           button_pressed;
+
+  /* event source id for thunar_details_view_zoom_level_changed_reload_fixed_columns */
+  guint idle_id;
 };
 
 
@@ -385,6 +388,9 @@ thunar_details_view_finalize (GObject *object)
   /* disconnect from the default column model */
   g_signal_handlers_disconnect_by_func (G_OBJECT (details_view->column_model), thunar_details_view_columns_changed, details_view);
   g_object_unref (G_OBJECT (details_view->column_model));
+
+  if (details_view->idle_id)
+    g_source_remove (details_view->idle_id);
 
   (*G_OBJECT_CLASS (thunar_details_view_parent_class)->finalize) (object);
 }
@@ -885,6 +891,7 @@ thunar_details_view_zoom_level_changed_reload_fixed_columns (gpointer data)
   _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (details_view), FALSE);
 
   thunar_details_view_set_fixed_columns (details_view, TRUE);
+  details_view->idle_id = 0;
   return FALSE;
 }
 
@@ -915,7 +922,7 @@ thunar_details_view_zoom_level_changed (ThunarDetailsView *details_view)
   if (fixed_columns_used)
     {
       /* Call when idle to ensure that gtk_tree_view_column_queue_resize got finished */
-      gdk_threads_add_idle (thunar_details_view_zoom_level_changed_reload_fixed_columns, details_view);
+      details_view->idle_id = gdk_threads_add_idle (thunar_details_view_zoom_level_changed_reload_fixed_columns, details_view);
     }
 }
 
