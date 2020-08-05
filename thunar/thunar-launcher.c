@@ -198,7 +198,7 @@ struct _ThunarLauncher
   gint                    n_executables_to_process;
   gint                    n_regulars_to_process;
   gboolean                files_to_process_trashable;
-  gboolean                current_directory_selected;
+  gboolean                files_are_selected;
   gboolean                single_directory_to_process;
 
   ThunarFile             *single_folder;
@@ -505,9 +505,7 @@ thunar_launcher_set_selected_files (ThunarComponent *component,
 
   /* disconnect from the previous files to process */
   thunar_g_file_list_free (launcher->files_to_process);
-
-  /* connect to the new selected files list */
-  launcher->files_to_process = thunar_g_file_list_copy (selected_files);
+  launcher->files_to_process = NULL;
 
   /* notify listeners */
   g_object_notify_by_pspec (G_OBJECT (launcher), launcher_props[PROP_SELECTED_FILES]);
@@ -519,22 +517,26 @@ thunar_launcher_set_selected_files (ThunarComponent *component,
       launcher->parent_folder = NULL;
     }
 
-  /* if nothing is selected, the current directory is considered to be the selection */
-  if (selected_files == NULL || g_list_length (selected_files) == 0)
-    {
-      if (launcher->current_directory != NULL)
-        launcher->files_to_process = g_list_append (launcher->files_to_process, launcher->current_directory);
-    }
+  launcher->files_are_selected = TRUE;
+  if ((selected_files == NULL || g_list_length (selected_files) == 0))
+    launcher->files_are_selected = FALSE;
+
+  /* if nothing is selected, the current directory is the folder to use for all menus */
+  if (launcher->files_are_selected)
+    launcher->files_to_process = thunar_g_file_list_copy (selected_files);
   else
-    {
-      launcher->files_to_process = thunar_g_file_list_copy (selected_files);
-    }
+    launcher->files_to_process = g_list_append (launcher->files_to_process, launcher->current_directory);
+
 
   launcher->files_to_process_trashable    = TRUE;
   launcher->n_files_to_process       = 0;
   launcher->n_directories_to_process = 0;
   launcher->n_executables_to_process = 0;
   launcher->n_regulars_to_process    = 0;
+
+  /* That happens at startup for some reason */
+  if (launcher->current_directory == NULL)
+    return;
 
   /* determine the number of files/directories/executables */
   for (lp = launcher->files_to_process; lp != NULL; lp = lp->next, ++launcher->n_files_to_process)
@@ -560,27 +562,18 @@ thunar_launcher_set_selected_files (ThunarComponent *component,
     }
 
   launcher->single_directory_to_process = (launcher->n_directories_to_process == 1 && launcher->n_files_to_process == 1);
+  launcher->single_folder = NULL;
   if (launcher->single_directory_to_process)
     {
       /* grab the folder of the first selected item */
       launcher->single_folder = THUNAR_FILE (launcher->files_to_process->data);
-      if (launcher->current_directory != NULL)
-        launcher->current_directory_selected = g_file_equal (thunar_file_get_file (THUNAR_FILE (launcher->files_to_process->data)), thunar_file_get_file (launcher->current_directory));
-    }
-  else
-    {
-      launcher->single_folder = NULL;
-      launcher->current_directory_selected = FALSE;
     }
 
+  launcher->parent_folder = NULL;
   if (launcher->files_to_process != NULL)
     {
       /* just grab the folder of the first selected item */
       launcher->parent_folder = thunar_file_get_parent (THUNAR_FILE (launcher->files_to_process->data), NULL);
-    }
-  else
-    {
-      launcher->parent_folder = NULL;
     }
 }
 
@@ -1265,8 +1258,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
                                        action_entry->accel_path, action_entry->callback, G_OBJECT (launcher), menu);
 
       case THUNAR_LAUNCHER_ACTION_SENDTO_MENU:
-        show_item = launcher->current_directory_selected == FALSE;
-        if (!show_item && !force)
+        if (launcher->files_are_selected == FALSE)
           return NULL;
         item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
         submenu = thunar_launcher_build_sendto_submenu (launcher);
@@ -1275,8 +1267,8 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
 
       case THUNAR_LAUNCHER_ACTION_MAKE_LINK:
         show_item = thunar_file_is_writable (launcher->current_directory) &&
-                    launcher->current_directory_selected == FALSE &&
-                    thunar_file_is_trashed (launcher->current_directory) == FALSE;;
+                    launcher->files_are_selected &&
+                    thunar_file_is_trashed (launcher->current_directory) == FALSE;
         if (!show_item && !force)
           return NULL;
 
@@ -1290,7 +1282,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
 
       case THUNAR_LAUNCHER_ACTION_DUPLICATE:
         show_item = thunar_file_is_writable (launcher->current_directory) &&
-                    launcher->current_directory_selected == FALSE &&
+                    launcher->files_are_selected &&
                     thunar_file_is_trashed (launcher->current_directory) == FALSE;
         if (!show_item && !force)
           return NULL;
@@ -1301,7 +1293,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
 
       case THUNAR_LAUNCHER_ACTION_RENAME:
         show_item = thunar_file_is_writable (launcher->current_directory) &&
-                    launcher->current_directory_selected == FALSE &&
+                    launcher->files_are_selected &&
                     thunar_file_is_trashed (launcher->current_directory) == FALSE;
         if (!show_item && !force)
           return NULL;
@@ -1313,7 +1305,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
         return item;
 
       case THUNAR_LAUNCHER_ACTION_RESTORE:
-        if (launcher->current_directory_selected == FALSE && thunar_file_is_trashed (launcher->current_directory))
+        if (launcher->files_are_selected && thunar_file_is_trashed (launcher->current_directory))
           {
             tooltip_text = ngettext ("Restore the selected file to its original location",
                                      "Restore the selected files to its original location", launcher->n_files_to_process);
@@ -1329,7 +1321,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
           return NULL;
 
         show_item = launcher->parent_folder != NULL &&
-                      !launcher->current_directory_selected;
+                    launcher->files_are_selected;
         if (!show_item && !force)
           return NULL;
 
@@ -1347,7 +1339,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
           return NULL;
 
         show_item = launcher->parent_folder != NULL &&
-                      !launcher->current_directory_selected;
+                    launcher->files_are_selected;
         if (!show_item && !force)
           return NULL;
 
@@ -1399,7 +1391,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
           }
         else
           {
-            show_item = launcher->current_directory_selected == FALSE &&
+            show_item = launcher->files_are_selected &&
                           launcher->parent_folder != NULL;
             if (!show_item && !force)
               return NULL;
@@ -1424,7 +1416,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
           }
         else
           {
-            show_item = launcher->current_directory_selected == FALSE;
+            show_item = launcher->files_are_selected;
             if (!show_item && !force)
               return NULL;
             tooltip_text = ngettext ("Prepare the selected file to be copied with a Paste command",
@@ -1457,7 +1449,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
           }
         else
           {
-            if (launcher->single_directory_to_process && !launcher->current_directory_selected)
+            if (launcher->single_directory_to_process && launcher->files_are_selected)
                 return thunar_launcher_append_menu_item (launcher, menu, THUNAR_LAUNCHER_ACTION_PASTE_INTO_FOLDER, force);
             clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (launcher->widget));
             item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
@@ -1810,7 +1802,7 @@ thunar_launcher_action_make_link (ThunarLauncher *launcher)
 
   if (G_UNLIKELY (launcher->current_directory == NULL))
     return;
-  if (launcher->current_directory_selected == TRUE || thunar_file_is_trashed (launcher->current_directory))
+  if (launcher->files_are_selected == FALSE || thunar_file_is_trashed (launcher->current_directory))
     return;
 
   for (lp = launcher->files_to_process; lp != NULL; lp = lp->next)
@@ -1839,7 +1831,7 @@ thunar_launcher_action_duplicate (ThunarLauncher *launcher)
 
   if (G_UNLIKELY (launcher->current_directory == NULL))
     return;
-  if (launcher->current_directory_selected == TRUE || thunar_file_is_trashed (launcher->current_directory))
+  if (launcher->files_are_selected == FALSE || thunar_file_is_trashed (launcher->current_directory))
     return;
 
   /* determine the selected files for the view */
@@ -1904,7 +1896,7 @@ thunar_launcher_append_custom_actions (ThunarLauncher *launcher,
   /* load the menu items offered by the menu providers */
   for (lp_provider = providers; lp_provider != NULL; lp_provider = lp_provider->next)
     {
-      if (launcher->single_directory_to_process && launcher->current_directory_selected)
+      if (launcher->files_are_selected == FALSE)
         thunarx_menu_items = thunarx_menu_provider_get_folder_menu_items (lp_provider->data, window, THUNARX_FILE_INFO (launcher->current_directory));
       else
         thunarx_menu_items = thunarx_menu_provider_get_file_menu_items (lp_provider->data, window, launcher->files_to_process);
@@ -1953,8 +1945,8 @@ thunar_launcher_check_uca_key_activation (ThunarLauncher *launcher,
   /* load the menu items offered by the menu providers */
   for (lp_provider = providers; lp_provider != NULL; lp_provider = lp_provider->next)
     {
-      if (launcher->single_directory_to_process)
-        thunarx_menu_items = thunarx_menu_provider_get_folder_menu_items (lp_provider->data, window, THUNARX_FILE_INFO (launcher->single_folder));
+      if (launcher->files_are_selected == FALSE)
+        thunarx_menu_items = thunarx_menu_provider_get_folder_menu_items (lp_provider->data, window, THUNARX_FILE_INFO (launcher->current_directory));
       else
         thunarx_menu_items = thunarx_menu_provider_get_file_menu_items (lp_provider->data, window, launcher->files_to_process);
       for (lp_item = thunarx_menu_items; lp_item != NULL; lp_item = lp_item->next)
@@ -2029,7 +2021,7 @@ thunar_launcher_action_rename (ThunarLauncher *launcher)
 
   if (launcher->files_to_process == NULL || g_list_length (launcher->files_to_process) == 0)
     return;
-  if (launcher->current_directory_selected == TRUE || thunar_file_is_trashed (launcher->current_directory))
+  if (launcher->files_are_selected == FALSE || thunar_file_is_trashed (launcher->current_directory))
     return;
 
   /* get the window */
@@ -2062,7 +2054,7 @@ thunar_launcher_action_restore (ThunarLauncher *launcher)
 
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
-  if (launcher->current_directory_selected == TRUE || !thunar_file_is_trashed (launcher->current_directory))
+  if (launcher->files_are_selected == FALSE || !thunar_file_is_trashed (launcher->current_directory))
     return;
 
   /* restore the selected files */
@@ -2079,7 +2071,7 @@ thunar_launcher_action_move_to_trash (ThunarLauncher *launcher)
 
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
-  if (launcher->parent_folder == NULL || launcher->current_directory_selected)
+  if (launcher->parent_folder == NULL || launcher->files_are_selected == FALSE)
     return;
 
   application = thunar_application_get ();
@@ -2096,7 +2088,7 @@ thunar_launcher_action_delete (ThunarLauncher *launcher)
 
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
-  if (launcher->parent_folder == NULL || launcher->current_directory_selected)
+  if (launcher->parent_folder == NULL || launcher->files_are_selected == FALSE)
     return;
 
   application = thunar_application_get ();
@@ -2441,7 +2433,7 @@ thunar_launcher_action_cut (ThunarLauncher *launcher)
 
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
-  if (launcher->current_directory_selected || launcher->parent_folder == NULL)
+  if (launcher->files_are_selected == FALSE || launcher->parent_folder == NULL)
     return;
 
   clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (launcher->widget));
@@ -2458,7 +2450,7 @@ thunar_launcher_action_copy (ThunarLauncher *launcher)
 
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
-  if (launcher->current_directory_selected)
+  if (launcher->files_are_selected == FALSE)
     return;
 
   clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (launcher->widget));
@@ -2567,7 +2559,7 @@ thunar_launcher_append_open_section (ThunarLauncher *launcher,
   _thunar_return_val_if_fail (THUNAR_IS_LAUNCHER (launcher), FALSE);
 
   /* Usually it is not required to open the current directory */
-  if (launcher->current_directory_selected && !force)
+  if (launcher->files_are_selected == FALSE && !force)
     return FALSE;
 
   /* determine the set of applications that work for all selected files */
