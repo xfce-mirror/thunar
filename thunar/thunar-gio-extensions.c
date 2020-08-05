@@ -148,6 +148,40 @@ thunar_g_file_is_trash (GFile *file)
 
 
 
+gboolean
+thunar_g_file_is_computer (GFile *file)
+{
+  char *uri;
+  gboolean is_computer = FALSE;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+
+  uri = g_file_get_uri (file);
+  is_computer = g_strcmp0 (uri, "computer:///") == 0;
+  g_free (uri);
+
+  return is_computer;
+}
+
+
+
+gboolean
+thunar_g_file_is_network (GFile *file)
+{
+  char *uri;
+  gboolean is_network = FALSE;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+
+  uri = g_file_get_uri (file);
+  is_network = g_strcmp0 (uri, "network:///") == 0;
+  g_free (uri);
+
+  return is_network;
+}
+
+
+
 GKeyFile *
 thunar_g_file_query_key_file (GFile              *file,
                               GCancellable       *cancellable,
