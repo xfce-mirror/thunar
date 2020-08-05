@@ -156,10 +156,8 @@ static void                     thunar_tree_view_mount                        (T
                                                                                guint                    open_in);
 static void                     thunar_tree_view_action_open                  (ThunarTreeView          *view);
 static void                     thunar_tree_view_open_selection               (ThunarTreeView          *view);
-static GClosure                *thunar_tree_view_new_files_closure            (ThunarTreeView          *view);
-static void                     thunar_tree_view_new_files                    (ThunarJob               *job,
-                                                                               GList                   *path_list,
-                                                                               ThunarTreeView          *view);
+static void                     thunar_tree_view_select_files                 (ThunarTreeView          *view,
+                                                                               GList                   *files_to_selected);
 static gboolean                 thunar_tree_view_visible_func                 (ThunarTreeModel         *model,
                                                                                ThunarFile              *file,
                                                                                gpointer                 user_data);
@@ -442,7 +440,13 @@ thunar_tree_view_init (ThunarTreeView *view)
   gtk_drag_dest_set (GTK_WIDGET (view), 0, drop_targets, G_N_ELEMENTS (drop_targets),
                      GDK_ACTION_COPY | GDK_ACTION_LINK | GDK_ACTION_MOVE);
 
-  view->launcher =  g_object_new (THUNAR_TYPE_LAUNCHER, "widget", GTK_WIDGET (view), NULL);
+  view->new_files_closure = g_cclosure_new_swap (G_CALLBACK (thunar_tree_view_select_files), view, NULL);
+  g_closure_ref (view->new_files_closure);
+  g_closure_sink (view->new_files_closure);
+
+  view->launcher =  g_object_new (THUNAR_TYPE_LAUNCHER, "widget", GTK_WIDGET (view),
+                                                        "select-files-closure", view->new_files_closure, NULL);
+
   g_signal_connect_swapped (G_OBJECT (view->launcher), "change-directory", G_CALLBACK (thunar_tree_view_action_open), view);
   g_signal_connect_swapped (G_OBJECT (view->launcher), "open-new-tab", G_CALLBACK (thunar_navigator_open_new_tab), view);
   exo_binding_new (G_OBJECT (view), "current-directory", G_OBJECT (view->launcher), "current-directory");
@@ -643,14 +647,6 @@ thunar_tree_view_set_current_directory (ThunarNavigator *navigator,
       /* schedule an idle source to set the cursor to the current directory */
       if (G_LIKELY (view->cursor_idle_id == 0))
         view->cursor_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_tree_view_cursor_idle, view, thunar_tree_view_cursor_idle_destroy);
-
-      /* drop any existing "new-files" closure */
-      if (G_UNLIKELY (view->new_files_closure != NULL))
-        {
-          g_closure_invalidate (view->new_files_closure);
-          g_closure_unref (view->new_files_closure);
-          view->new_files_closure = NULL;
-        }
     }
 
   /* refilter the model if necessary */
@@ -1811,44 +1807,24 @@ thunar_tree_view_open_selection (ThunarTreeView *view)
 
 
 
-static GClosure*
-thunar_tree_view_new_files_closure (ThunarTreeView *view)
-{
-  /* drop any previous "new-files" closure */
-  if (G_UNLIKELY (view->new_files_closure != NULL))
-    {
-      g_closure_invalidate (view->new_files_closure);
-      g_closure_unref (view->new_files_closure);
-    }
-
-  /* allocate a new "new-files" closure */
-  view->new_files_closure = g_cclosure_new (G_CALLBACK (thunar_tree_view_new_files), view, NULL);
-  g_closure_ref (view->new_files_closure);
-  g_closure_sink (view->new_files_closure);
-
-  /* and return our new closure */
-  return view->new_files_closure;
-}
-
-
-
 static void
-thunar_tree_view_new_files (ThunarJob      *job,
-                            GList          *path_list,
-                            ThunarTreeView *view)
+thunar_tree_view_select_files (ThunarTreeView *view,
+                               GList          *files_to_selected)
 {
-  ThunarFile *file;
+  ThunarFile *file = NULL;
+
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
   /* check if we have exactly one new path */
-  if (G_UNLIKELY (path_list == NULL || path_list->next != NULL))
+  if (G_UNLIKELY (files_to_selected == NULL || files_to_selected->next != NULL))
     return;
 
   /* determine the file for the first path */
-  file = thunar_file_cache_lookup (path_list->data);
-  if (G_LIKELY (file != NULL && thunar_file_is_directory (file)))
+  file = thunar_file_get (G_FILE (files_to_selected->data), NULL);
+  if (G_LIKELY (file != NULL))
     {
-      /* change to the newly created folder */
-      thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), file);
+      if (G_LIKELY (thunar_file_is_directory (file)))
+        thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), file);
       g_object_unref (file);
     }
 }
