@@ -96,6 +96,7 @@ enum
   PROP_SELECTED_FILES,
   PROP_WIDGET,
   PROP_SELECT_FILES_CLOSURE,
+  PROP_SELECTED_DEVICE,
   N_PROPERTIES
 };
 
@@ -192,6 +193,7 @@ struct _ThunarLauncher
 
   ThunarFile             *current_directory;
   GList                  *files_to_process;
+  ThunarDevice           *device_to_process;
 
   gint                    n_files_to_process;
   gint                    n_directories_to_process;
@@ -313,6 +315,17 @@ thunar_launcher_class_init (ThunarLauncherClass *klass)
                            G_PARAM_WRITABLE
                            | G_PARAM_CONSTRUCT_ONLY);
 
+  /**
+   * ThunarLauncher:select-device:
+   *
+   * The #ThunarDevice which currently is selected (or NULL if no #ThunarDevice is selected)
+   **/
+  launcher_props[PROP_SELECTED_DEVICE] =
+     g_param_spec_pointer ("selected-device",
+                           "selected-device",
+                           "selected-device",
+                           G_PARAM_WRITABLE);
+
   /* Override ThunarNavigator's properties */
   g_iface = g_type_default_interface_peek (THUNAR_TYPE_NAVIGATOR);
   launcher_props[PROP_CURRENT_DIRECTORY] =
@@ -354,6 +367,7 @@ thunar_launcher_init (ThunarLauncher *launcher)
 {
   launcher->files_to_process = NULL;
   launcher->select_files_closure = NULL;
+  launcher->device_to_process = NULL;
 
   /* grab a reference on the preferences */
   launcher->preferences = thunar_preferences_get ();
@@ -446,6 +460,10 @@ thunar_launcher_set_property (GObject      *object,
       launcher->select_files_closure = g_value_get_pointer (value);
       break;
 
+    case PROP_SELECTED_DEVICE:
+      launcher->device_to_process = g_value_get_pointer (value);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -528,11 +546,14 @@ thunar_launcher_set_selected_files (ThunarComponent *component,
     launcher->files_to_process = g_list_append (launcher->files_to_process, launcher->current_directory);
 
 
-  launcher->files_to_process_trashable    = TRUE;
-  launcher->n_files_to_process       = 0;
-  launcher->n_directories_to_process = 0;
-  launcher->n_executables_to_process = 0;
-  launcher->n_regulars_to_process    = 0;
+  launcher->files_to_process_trashable = TRUE;
+  launcher->n_files_to_process         = 0;
+  launcher->n_directories_to_process   = 0;
+  launcher->n_executables_to_process   = 0;
+  launcher->n_regulars_to_process      = 0;
+  launcher->single_directory_to_process = FALSE;
+  launcher->single_folder = NULL;
+  launcher->parent_folder = NULL;
 
   /* That happens at startup for some reason */
   if (launcher->current_directory == NULL)
@@ -562,14 +583,12 @@ thunar_launcher_set_selected_files (ThunarComponent *component,
     }
 
   launcher->single_directory_to_process = (launcher->n_directories_to_process == 1 && launcher->n_files_to_process == 1);
-  launcher->single_folder = NULL;
   if (launcher->single_directory_to_process)
     {
       /* grab the folder of the first selected item */
       launcher->single_folder = THUNAR_FILE (launcher->files_to_process->data);
     }
 
-  launcher->parent_folder = NULL;
   if (launcher->files_to_process != NULL)
     {
       /* just grab the folder of the first selected item */
@@ -1218,12 +1237,13 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
   gboolean                  show_item;
   ThunarClipboardManager   *clipboard;
   ThunarFile               *parent;
+  gint                      n;
 
   _thunar_return_val_if_fail (THUNAR_IS_LAUNCHER (launcher), NULL);
   _thunar_return_val_if_fail (action_entry != NULL, NULL);
 
   /* This may occur when the thunar-window is build */
-  if (G_UNLIKELY (launcher->files_to_process == NULL))
+  if (G_UNLIKELY (launcher->files_to_process == NULL) && launcher->device_to_process == NULL)
     return NULL;
 
   switch (action)
@@ -1237,18 +1257,20 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
                                            action_entry->accel_path, action_entry->callback, G_OBJECT (launcher), action_entry->menu_item_icon_name, menu);
 
       case THUNAR_LAUNCHER_ACTION_OPEN_IN_TAB:
-        label_text = g_strdup_printf (ngettext ("Open in New _Tab", "Open in %d New _Tabs", launcher->n_files_to_process), launcher->n_files_to_process);
+        n = launcher->n_files_to_process > 0 ? launcher->n_files_to_process : 1;
+        label_text = g_strdup_printf (ngettext ("Open in New _Tab", "Open in %d New _Tabs", n), n);
         tooltip_text = g_strdup_printf (ngettext ("Open the selected directory in new tab",
-                                                  "Open the selected directories in %d new tabs", launcher->n_files_to_process), launcher->n_files_to_process);
+                                                  "Open the selected directories in %d new tabs", n), n);
         item = xfce_gtk_menu_item_new (label_text, tooltip_text, action_entry->accel_path, action_entry->callback, G_OBJECT (launcher), menu);
         g_free (tooltip_text);
         g_free (label_text);
         return item;
 
       case THUNAR_LAUNCHER_ACTION_OPEN_IN_WINDOW:
-        label_text = g_strdup_printf (ngettext ("Open in New _Window", "Open in %d New _Windows", launcher->n_files_to_process), launcher->n_files_to_process);
+        n = launcher->n_files_to_process > 0 ? launcher->n_files_to_process : 1;
+        label_text = g_strdup_printf (ngettext ("Open in New _Window", "Open in %d New _Windows", n), n);
         tooltip_text = g_strdup_printf (ngettext ("Open the selected directory in new window",
-                                                  "Open the selected directories in %d new windows",launcher->n_files_to_process), launcher->n_files_to_process);
+                                                  "Open the selected directories in %d new windows",n), n);
         item = xfce_gtk_menu_item_new (label_text, tooltip_text, action_entry->accel_path, action_entry->callback, G_OBJECT (launcher), menu);
         g_free (tooltip_text);
         g_free (label_text);
