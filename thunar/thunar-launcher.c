@@ -116,7 +116,6 @@ static void                    thunar_launcher_set_property               (GObje
 static ThunarFile             *thunar_launcher_get_current_directory      (ThunarNavigator                *navigator);
 static void                    thunar_launcher_set_current_directory      (ThunarNavigator                *navigator,
                                                                            ThunarFile                     *current_directory);
-static GList                  *thunar_launcher_get_selected_files         (ThunarComponent                *component);
 static void                    thunar_launcher_set_selected_files         (ThunarComponent                *component,
                                                                            GList                          *selected_files);
 static void                    thunar_launcher_execute_files              (ThunarLauncher                 *launcher,
@@ -335,7 +334,7 @@ thunar_launcher_class_init (ThunarLauncherClass *klass)
 static void
 thunar_launcher_component_init (ThunarComponentIface *iface)
 {
-  iface->get_selected_files = thunar_launcher_get_selected_files;
+  iface->get_selected_files = (gpointer) exo_noop_null;
   iface->set_selected_files = thunar_launcher_set_selected_files;
 }
 
@@ -493,14 +492,6 @@ thunar_launcher_set_current_directory (ThunarNavigator *navigator,
 
   /* notify listeners */
   g_object_notify_by_pspec (G_OBJECT (launcher), launcher_props[PROP_CURRENT_DIRECTORY]);
-}
-
-
-
-static GList*
-thunar_launcher_get_selected_files (ThunarComponent *component)
-{
-  return THUNAR_LAUNCHER (component)->files_to_process;
 }
 
 
