@@ -1217,6 +1217,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
   gboolean                  show_delete_item;
   gboolean                  show_item;
   ThunarClipboardManager   *clipboard;
+  ThunarFile               *parent;
 
   _thunar_return_val_if_fail (THUNAR_IS_LAUNCHER (launcher), NULL);
   _thunar_return_val_if_fail (action_entry != NULL, NULL);
@@ -1362,19 +1363,27 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
         return NULL;
 
       case THUNAR_LAUNCHER_ACTION_CREATE_FOLDER:
-        if (thunar_file_is_trashed (launcher->current_directory))
+        if (launcher->files_are_selected && launcher->single_directory_to_process)
+          parent = launcher->single_folder;
+        else
+          parent = launcher->current_directory;
+        if (thunar_file_is_trashed (parent))
           return NULL;
         item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
-        gtk_widget_set_sensitive (item, thunar_file_is_writable (launcher->current_directory));
+        gtk_widget_set_sensitive (item, thunar_file_is_writable (parent));
         return item;
 
       case THUNAR_LAUNCHER_ACTION_CREATE_DOCUMENT:
-        if (thunar_file_is_trashed (launcher->current_directory))
+        if (launcher->files_are_selected && launcher->single_directory_to_process)
+          parent = launcher->single_folder;
+        else
+          parent = launcher->current_directory;
+        if (thunar_file_is_trashed (parent))
           return NULL;
         item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
         submenu = thunar_launcher_create_document_submenu_new (launcher);
         gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu);
-        gtk_widget_set_sensitive (item, thunar_file_is_writable (launcher->current_directory));
+        gtk_widget_set_sensitive (item, thunar_file_is_writable (parent));
         return item;
 
       case THUNAR_LAUNCHER_ACTION_CUT:
@@ -2148,7 +2157,10 @@ thunar_launcher_action_create_folder (ThunarLauncher *launcher)
   if (G_LIKELY (name != NULL))
     {
       /* fake the path list */
-      path_list.data = g_file_resolve_relative_path (thunar_file_get_file (launcher->current_directory), name);
+      if (launcher->files_are_selected && launcher->single_directory_to_process)
+        path_list.data = g_file_resolve_relative_path (thunar_file_get_file (launcher->single_folder), name);
+      else
+        path_list.data = g_file_resolve_relative_path (thunar_file_get_file (launcher->current_directory), name);
       path_list.next = path_list.prev = NULL;
 
       /* launch the operation */
@@ -2211,7 +2223,10 @@ thunar_launcher_action_create_document (ThunarLauncher *launcher,
       if (G_LIKELY (launcher->parent_folder != NULL))
         {
           /* fake the target path list */
-          target_path_list.data = g_file_get_child (thunar_file_get_file (launcher->current_directory), name);
+          if (launcher->files_are_selected && launcher->single_directory_to_process)
+            target_path_list.data = g_file_get_child (thunar_file_get_file (launcher->single_folder), name);
+          else
+            target_path_list.data = g_file_get_child (thunar_file_get_file (launcher->current_directory), name);
           target_path_list.next = NULL;
           target_path_list.prev = NULL;
 
