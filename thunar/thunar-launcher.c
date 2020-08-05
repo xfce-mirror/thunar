@@ -1277,7 +1277,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
                                  "Create a symbolic link for each selected file", launcher->n_files_to_process);
         item = xfce_gtk_menu_item_new (label_text, tooltip_text, action_entry->accel_path, action_entry->callback,
                                        G_OBJECT (launcher), menu);
-        gtk_widget_set_sensitive (item, show_item && thunar_file_is_writable (launcher->parent_folder));
+        gtk_widget_set_sensitive (item, show_item && launcher->parent_folder != NULL && thunar_file_is_writable (launcher->parent_folder));
         return item;
 
       case THUNAR_LAUNCHER_ACTION_DUPLICATE:
@@ -1288,7 +1288,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
           return NULL;
         item = xfce_gtk_menu_item_new (action_entry->menu_item_label_text, action_entry->menu_item_tooltip_text,
                                        action_entry->accel_path, action_entry->callback, G_OBJECT (launcher), menu);
-        gtk_widget_set_sensitive (item, show_item && thunar_file_is_writable (launcher->parent_folder));
+        gtk_widget_set_sensitive (item, show_item && launcher->parent_folder != NULL && thunar_file_is_writable (launcher->parent_folder));
         return item;
 
       case THUNAR_LAUNCHER_ACTION_RENAME:
@@ -1301,7 +1301,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
                                  "Rename the selected files", launcher->n_files_to_process);
         item = xfce_gtk_menu_item_new (action_entry->menu_item_label_text, tooltip_text, action_entry->accel_path,
                                        action_entry->callback, G_OBJECT (launcher), menu);
-        gtk_widget_set_sensitive (item, show_item && thunar_file_is_writable (launcher->parent_folder));
+        gtk_widget_set_sensitive (item, show_item && launcher->parent_folder != NULL && thunar_file_is_writable (launcher->parent_folder));
         return item;
 
       case THUNAR_LAUNCHER_ACTION_RESTORE:
@@ -1320,8 +1320,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
         if (!thunar_launcher_show_trash (launcher))
           return NULL;
 
-        show_item = launcher->parent_folder != NULL &&
-                    launcher->files_are_selected;
+        show_item = launcher->files_are_selected;
         if (!show_item && !force)
           return NULL;
 
@@ -1329,7 +1328,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
                                  "Move the selected files to the Trash", launcher->n_files_to_process);
         item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, tooltip_text, action_entry->accel_path,
                                                             action_entry->callback, G_OBJECT (launcher), action_entry->menu_item_icon_name, menu);
-        gtk_widget_set_sensitive (item, show_item && thunar_file_is_writable (launcher->parent_folder));
+        gtk_widget_set_sensitive (item, show_item && launcher->parent_folder != NULL && thunar_file_is_writable (launcher->parent_folder));
         return item;
 
 
@@ -1338,8 +1337,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
         if (thunar_launcher_show_trash (launcher) && !show_delete_item)
           return NULL;
 
-        show_item = launcher->parent_folder != NULL &&
-                    launcher->files_are_selected;
+        show_item = launcher->files_are_selected;
         if (!show_item && !force)
           return NULL;
 
@@ -1347,7 +1345,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
                                  "Permanently delete the selected files", launcher->n_files_to_process);
         item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, tooltip_text, action_entry->accel_path,
                                                             action_entry->callback, G_OBJECT (launcher), action_entry->menu_item_icon_name, menu);
-        gtk_widget_set_sensitive (item, show_item && thunar_file_is_writable (launcher->parent_folder));
+        gtk_widget_set_sensitive (item, show_item && launcher->parent_folder != NULL && thunar_file_is_writable (launcher->parent_folder));
         return item;
 
       case THUNAR_LAUNCHER_ACTION_EMPTY_TRASH:
@@ -1358,6 +1356,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
                 item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, action_entry->menu_item_tooltip_text, action_entry->accel_path,
                                                                     action_entry->callback, G_OBJECT (launcher), action_entry->menu_item_icon_name, menu);
                 gtk_widget_set_sensitive (item, thunar_file_get_item_count (launcher->single_folder) > 0);
+                return item;
               }
           }
         return NULL;
@@ -1391,15 +1390,14 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
           }
         else
           {
-            show_item = launcher->files_are_selected &&
-                          launcher->parent_folder != NULL;
+            show_item = launcher->files_are_selected;
             if (!show_item && !force)
               return NULL;
             tooltip_text = ngettext ("Prepare the selected file to be moved with a Paste command",
                                      "Prepare the selected files to be moved with a Paste command", launcher->n_files_to_process);
             item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, tooltip_text, action_entry->accel_path,
                                                                 action_entry->callback, G_OBJECT (launcher), action_entry->menu_item_icon_name, menu);
-            gtk_widget_set_sensitive (item, show_item && thunar_file_is_writable (launcher->parent_folder));
+            gtk_widget_set_sensitive (item, show_item && launcher->parent_folder != NULL && thunar_file_is_writable (launcher->parent_folder));
           }
         return item;
 
