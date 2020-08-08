@@ -61,13 +61,17 @@ typedef enum
   THUNAR_LAUNCHER_ACTION_PASTE_INTO_FOLDER,
   THUNAR_LAUNCHER_ACTION_COPY,
   THUNAR_LAUNCHER_ACTION_CUT,
+  THUNAR_LAUNCHER_ACTION_MOUNT,
+  THUNAR_LAUNCHER_ACTION_UNMOUNT,
+  THUNAR_LAUNCHER_ACTION_EJECT,
 } ThunarLauncherAction;
 
 typedef enum
 {
   THUNAR_LAUNCHER_CHANGE_DIRECTORY,
   THUNAR_LAUNCHER_OPEN_AS_NEW_TAB,
-  THUNAR_LAUNCHER_OPEN_AS_NEW_WINDOW
+  THUNAR_LAUNCHER_OPEN_AS_NEW_WINDOW,
+  THUNAR_LAUNCHER_NO_ACTION,
 } ThunarLauncherFolderOpenAction;
 
 GType           thunar_launcher_get_type                             (void) G_GNUC_CONST;
@@ -94,6 +98,11 @@ gboolean        thunar_launcher_append_custom_actions                (ThunarLaun
                                                                       GtkMenuShell                   *menu);
 gboolean        thunar_launcher_check_uca_key_activation             (ThunarLauncher                 *launcher,
                                                                       GdkEventKey                    *key_event);
+void            thunar_launcher_action_mount                         (ThunarLauncher                 *launcher);
+void            thunar_launcher_action_unmount                       (ThunarLauncher                 *launcher);
+void            thunar_launcher_action_eject                         (ThunarLauncher                 *launcher);
+
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_LAUNCHER_H__ */

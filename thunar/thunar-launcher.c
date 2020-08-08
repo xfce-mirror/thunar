@@ -266,6 +266,10 @@ static XfceGtkActionEntry thunar_launcher_action_entries[] =
     { THUNAR_LAUNCHER_ACTION_PASTE_INTO_FOLDER,NULL,                                               "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Paste Into Folder"),              N_ ("Move or copy files previously selected by a Cut or Copy command into the selected folder"), "edit-paste",           G_CALLBACK (thunar_launcher_action_paste_into_folder),   },
     { THUNAR_LAUNCHER_ACTION_COPY,             "<Actions>/ThunarLauncher/copy",                    "<Primary>C",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Copy"),                           N_ ("Prepare the selected files to be copied with a Paste command"),                             "edit-copy",            G_CALLBACK (thunar_launcher_action_copy),                },
     { THUNAR_LAUNCHER_ACTION_CUT,              "<Actions>/ThunarLauncher/cut",                     "<Primary>X",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Cu_t"),                            N_ ("Prepare the selected files to be moved with a Paste command"),                              "edit-cut",             G_CALLBACK (thunar_launcher_action_cut),                 },
+
+    { THUNAR_LAUNCHER_ACTION_MOUNT,            NULL,                                               "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Mount"),                          N_ ("Mount the selected device"),                                                                NULL,                   G_CALLBACK (thunar_launcher_action_open),                },
+    { THUNAR_LAUNCHER_ACTION_UNMOUNT,          NULL,                                               "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Unmount"),                        N_ ("Unmount the selected device"),                                                              NULL,                   G_CALLBACK (thunar_launcher_action_unmount),             },
+    { THUNAR_LAUNCHER_ACTION_EJECT,            NULL,                                               "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Eject"),                          N_ ("Eject the selected device"),                                                                NULL,                   G_CALLBACK (thunar_launcher_action_eject),               },
 };
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_launcher_action_entries,G_N_ELEMENTS(thunar_launcher_action_entries),id)
@@ -936,9 +940,14 @@ static void thunar_launcher_poke_device_finish (ThunarBrowser *browser,
                                                 gboolean       cancelled)
 {
   ThunarLauncherPokeData *poke_data = user_data;
+  gchar                  *device_name;
 
   if (error != NULL)
-      g_debug ("Failed to mount device: %s", error->message);
+    {
+      device_name = thunar_device_get_name (volume);
+      thunar_dialogs_show_error (GTK_WIDGET (THUNAR_LAUNCHER (browser)->widget), error, _("Failed to mount \"%s\""), device_name);
+      g_free (device_name);
+    }
 
   if (cancelled == TRUE || error != NULL || mount_point == NULL)
     {
@@ -1532,6 +1541,23 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
             gtk_widget_set_sensitive (item, thunar_clipboard_manager_get_can_paste (clipboard) && thunar_file_is_writable (launcher->current_directory));
             g_object_unref (clipboard);
           }
+        return item;
+
+      case THUNAR_LAUNCHER_ACTION_MOUNT:
+        if (launcher->device_to_process == NULL || thunar_device_is_mounted (launcher->device_to_process) == TRUE)
+          return NULL;
+        return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
+
+      case THUNAR_LAUNCHER_ACTION_UNMOUNT:
+        if (launcher->device_to_process == NULL || thunar_device_is_mounted (launcher->device_to_process) == FALSE)
+          return NULL;
+        return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
+
+      case THUNAR_LAUNCHER_ACTION_EJECT:
+        if (launcher->device_to_process == NULL || thunar_device_get_kind (launcher->device_to_process) != THUNAR_DEVICE_KIND_VOLUME)
+          return NULL;
+        item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
+        gtk_widget_set_sensitive (item, thunar_device_can_eject (launcher->device_to_process));
         return item;
 
       default:
@@ -2569,6 +2595,132 @@ thunar_launcher_action_paste_into_folder (ThunarLauncher *launcher)
   clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (launcher->widget));
   thunar_clipboard_manager_paste_files (clipboard, thunar_file_get_file (launcher->single_folder), launcher->widget, launcher->select_files_closure);
   g_object_unref (G_OBJECT (clipboard));
+}
+
+
+/**
+ * thunar_launcher_action_mount:
+ * @launcher : a #ThunarLauncher instance
+*
+ * Will mount the selected device, if any. The related folder will not be opened.
+ **/
+void
+thunar_launcher_action_mount (ThunarLauncher *launcher)
+{
+  thunar_launcher_poke (launcher, NULL,THUNAR_LAUNCHER_NO_ACTION);
+}
+
+
+
+static void
+thunar_launcher_action_eject_finish (ThunarDevice  *device,
+                                      const GError *error,
+                                      gpointer      user_data)
+{
+  ThunarLauncher *launcher = THUNAR_LAUNCHER (user_data);
+  gchar          *device_name;
+
+  _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  /* check if there was an error */
+  if (error != NULL)
+    {
+      /* display an error dialog to inform the user */
+      device_name = thunar_device_get_name (device);
+      thunar_dialogs_show_error (GTK_WIDGET (launcher->widget), error, _("Failed to eject \"%s\""), device_name);
+      g_free (device_name);
+    }
+
+  g_object_unref (launcher);
+}
+
+
+
+/**
+ * thunar_launcher_action_eject:
+ * @launcher : a #ThunarLauncher instance
+*
+ * Will eject the selected device, if any
+ **/
+void
+thunar_launcher_action_eject (ThunarLauncher *launcher)
+{
+  GMountOperation *mount_operation;
+
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  if (G_LIKELY (launcher->device_to_process != NULL))
+    {
+      /* prepare a mount operation */
+      mount_operation = thunar_gtk_mount_operation_new (GTK_WIDGET (launcher->widget));
+
+      /* eject */
+      thunar_device_eject (launcher->device_to_process,
+                           mount_operation,
+                           NULL,
+                           thunar_launcher_action_eject_finish,
+                           g_object_ref (launcher));
+
+      g_object_unref (mount_operation);
+    }
+}
+
+
+
+static void
+thunar_launcher_action_unmount_finish (ThunarDevice *device,
+                                       const GError *error,
+                                       gpointer      user_data)
+{
+  ThunarLauncher *launcher = THUNAR_LAUNCHER (user_data);
+  gchar          *device_name;
+
+  _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  /* check if there was an error */
+  if (error != NULL)
+    {
+      /* display an error dialog to inform the user */
+      device_name = thunar_device_get_name (device);
+      thunar_dialogs_show_error (GTK_WIDGET (launcher->widget), error, _("Failed to unmount \"%s\""), device_name);
+      g_free (device_name);
+    }
+
+  g_object_unref (launcher);
+}
+
+
+
+/**
+ * thunar_launcher_action_eject:
+ * @launcher : a #ThunarLauncher instance
+*
+ * Will unmount the selected device, if any
+ **/
+void
+thunar_launcher_action_unmount (ThunarLauncher *launcher)
+{
+  GMountOperation *mount_operation;
+
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  if (G_LIKELY (launcher->device_to_process != NULL))
+    {
+      /* prepare a mount operation */
+      mount_operation = thunar_gtk_mount_operation_new (GTK_WIDGET (launcher->widget));
+
+      /* eject */
+      thunar_device_unmount (launcher->device_to_process,
+                             mount_operation,
+                             NULL,
+                             thunar_launcher_action_unmount_finish,
+                             g_object_ref (launcher));
+
+      /* release the device */
+      g_object_unref (mount_operation);
+    }
 }
 
 
