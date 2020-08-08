@@ -132,9 +132,15 @@ static void                    thunar_launcher_open_paths                 (GAppI
                                                                            ThunarLauncher                 *launcher);
 static void                    thunar_launcher_open_windows               (ThunarLauncher                 *launcher,
                                                                            GList                          *directories);
-static void                    thunar_launcher_poke_files                 (ThunarLauncher                 *launcher,
+static void                    thunar_launcher_poke                       (ThunarLauncher                 *launcher,
                                                                            GAppInfo                       *application_to_use,
                                                                            ThunarLauncherFolderOpenAction  folder_open_action);
+static void                    thunar_launcher_poke_device_finish         (ThunarBrowser                  *browser,
+                                                                           ThunarDevice                   *volume,
+                                                                           ThunarFile                     *mount_point,
+                                                                           GError                         *error,
+                                                                           gpointer                        user_data,
+                                                                           gboolean                        cancelled);
 static void                    thunar_launcher_poke_files_finish          (ThunarBrowser                  *browser,
                                                                            ThunarFile                     *file,
                                                                            ThunarFile                     *target_file,
@@ -660,7 +666,7 @@ thunar_launcher_activate_selected_files (ThunarLauncher                 *launche
 {
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
-  thunar_launcher_poke_files (launcher, app_info, action);
+  thunar_launcher_poke (launcher, app_info, action);
 }
 
 
@@ -894,9 +900,9 @@ thunar_launcher_open_windows (ThunarLauncher *launcher,
 
 
 static void
-thunar_launcher_poke_files (ThunarLauncher                 *launcher,
-                            GAppInfo                       *application_to_use,
-                            ThunarLauncherFolderOpenAction  folder_open_action)
+thunar_launcher_poke (ThunarLauncher                 *launcher,
+                      GAppInfo                       *application_to_use,
+                      ThunarLauncherFolderOpenAction  folder_open_action)
 {
   ThunarLauncherPokeData *poke_data;
 
@@ -904,11 +910,59 @@ thunar_launcher_poke_files (ThunarLauncher                 *launcher,
 
    poke_data = thunar_launcher_poke_data_new (launcher->files_to_process, application_to_use, folder_open_action);
 
-  // We will only poke one file at a time, in order to dont use all available CPU's
-  // TODO: Check if that could cause slowness
-  thunar_browser_poke_file (THUNAR_BROWSER (launcher), poke_data->files_to_poke->data,
-                            launcher->widget, thunar_launcher_poke_files_finish,
-                            poke_data);
+   if (launcher->device_to_process != NULL)
+     {
+       thunar_browser_poke_device (THUNAR_BROWSER (launcher), launcher->device_to_process,
+                                   launcher->widget, thunar_launcher_poke_device_finish,
+                                  poke_data);
+     }
+   else
+     {
+      // We will only poke one file at a time, in order to dont use all available CPU's
+      // TODO: Check if that could cause slowness
+      thunar_browser_poke_file (THUNAR_BROWSER (launcher), poke_data->files_to_poke->data,
+                                launcher->widget, thunar_launcher_poke_files_finish,
+                                poke_data);
+     }
+}
+
+
+
+static void thunar_launcher_poke_device_finish (ThunarBrowser *browser,
+                                                ThunarDevice  *volume,
+                                                ThunarFile    *mount_point,
+                                                GError        *error,
+                                                gpointer       user_data,
+                                                gboolean       cancelled)
+{
+  ThunarLauncherPokeData *poke_data = user_data;
+
+  if (error != NULL)
+      g_debug ("Failed to mount device: %s", error->message);
+
+  if (cancelled == TRUE || error != NULL || mount_point == NULL)
+    {
+      thunar_launcher_poke_data_free (poke_data);
+      return;
+    }
+
+  if (poke_data->folder_open_action == THUNAR_LAUNCHER_OPEN_AS_NEW_TAB)
+    {
+      thunar_navigator_open_new_tab (THUNAR_NAVIGATOR (browser), mount_point);
+    }
+  else if (poke_data->folder_open_action == THUNAR_LAUNCHER_OPEN_AS_NEW_WINDOW)
+    {
+      GList *directories = NULL;
+      directories = g_list_append (directories, mount_point);
+      thunar_launcher_open_windows (THUNAR_LAUNCHER (browser), directories);
+      g_list_free (directories);
+    }
+  else if (poke_data->folder_open_action == THUNAR_LAUNCHER_CHANGE_DIRECTORY)
+    {
+      thunar_navigator_change_directory (THUNAR_NAVIGATOR (browser), mount_point);
+    }
+
+  thunar_launcher_poke_data_free (poke_data);
 }
 
 
@@ -1106,9 +1160,9 @@ void thunar_launcher_open_selected_folders (ThunarLauncher *launcher,
     _thunar_return_if_fail (thunar_file_is_directory (THUNAR_FILE (lp->data)));
 
   if (open_in_tabs)
-    thunar_launcher_poke_files (launcher, NULL, THUNAR_LAUNCHER_OPEN_AS_NEW_TAB);
+    thunar_launcher_poke (launcher, NULL, THUNAR_LAUNCHER_OPEN_AS_NEW_TAB);
   else
-    thunar_launcher_poke_files (launcher, NULL, THUNAR_LAUNCHER_OPEN_AS_NEW_WINDOW);
+    thunar_launcher_poke (launcher, NULL, THUNAR_LAUNCHER_OPEN_AS_NEW_WINDOW);
 }
 
 
