@@ -152,15 +152,15 @@ gboolean
 thunar_g_file_is_computer (GFile *file)
 {
   char *uri;
-  gboolean is_trash = FALSE;
+  gboolean is_computer = FALSE;
 
   _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
 
   uri = g_file_get_uri (file);
-  is_trash = g_strcmp0 (uri, "computer:///") == 0;
+  is_computer = g_strcmp0 (uri, "computer:///") == 0;
   g_free (uri);
 
-  return is_trash;
+  return is_computer;
 }
 
 
@@ -169,15 +169,15 @@ gboolean
 thunar_g_file_is_network (GFile *file)
 {
   char *uri;
-  gboolean is_trash = FALSE;
+  gboolean is_network = FALSE;
 
   _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
 
   uri = g_file_get_uri (file);
-  is_trash = g_strcmp0 (uri, "network:///") == 0;
+  is_network = g_strcmp0 (uri, "network:///") == 0;
   g_free (uri);
 
-  return is_trash;
+  return is_network;
 }
 
 
