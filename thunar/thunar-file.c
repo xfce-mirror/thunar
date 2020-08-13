@@ -2016,11 +2016,11 @@ thunar_file_rename (ThunarFile   *file,
 /**
  * thunar_file_accepts_drop:
  * @file                    : a #ThunarFile instance.
- * @file_list               : the list of #GFile<!---->s that will be droppped.
+ * @file_list               : the list of #GFile<!---->s that will be dropped.
  * @context                 : the current #GdkDragContext, which is used for the drop.
  * @suggested_action_return : return location for the suggested #GdkDragAction or %NULL.
  *
- * Checks whether @file can accept @path_list for the given @context and
+ * Checks whether @file can accept @file_list for the given @context and
  * returns the #GdkDragAction<!---->s that can be used or 0 if no actions
  * apply.
  *
@@ -2042,7 +2042,6 @@ thunar_file_accepts_drop (ThunarFile     *file,
   ThunarFile   *ofile;
   GFile        *parent_file;
   GList        *lp;
-  guint         n;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), 0);
   _thunar_return_val_if_fail (GDK_IS_DRAG_CONTEXT (context), 0);
@@ -2071,10 +2070,7 @@ thunar_file_accepts_drop (ThunarFile     *file,
       if (thunar_file_is_trashed (file))
         actions &= ~(GDK_ACTION_COPY | GDK_ACTION_LINK);
 
-      /* check up to 100 of the paths (just in case somebody tries to
-       * drag around his music collection with 5000 files).
-       */
-      for (lp = file_list, n = 0; lp != NULL && n < 100; lp = lp->next, ++n)
+      for (lp = file_list; lp != NULL; lp = lp->next)
         {
           /* we cannot drop a file on itself */
           if (G_UNLIKELY (g_file_equal (file->gfile, lp->data)))
@@ -2107,8 +2103,7 @@ thunar_file_accepts_drop (ThunarFile     *file,
           /* default to move as suggested action */
           suggested_action = GDK_ACTION_MOVE;
 
-          /* check for up to 100 files, for the reason state above */
-          for (lp = file_list, n = 0; lp != NULL && n < 100; lp = lp->next, ++n)
+          for (lp = file_list; lp != NULL; lp = lp->next)
             {
               /* dropping from the trash always suggests move */
               if (G_UNLIKELY (thunar_g_file_is_trashed (lp->data)))
