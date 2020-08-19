@@ -531,6 +531,10 @@ thunar_launcher_set_selected_files (ThunarComponent *component,
   ThunarLauncher *launcher = THUNAR_LAUNCHER (component);
   GList          *lp;
 
+  /* That happens at startup for some reason */
+  if (launcher->current_directory == NULL)
+    return;
+
   /* disconnect from the previous files to process */
   if (launcher->files_to_process != NULL)
     thunar_g_file_list_free (launcher->files_to_process);
@@ -556,10 +560,6 @@ thunar_launcher_set_selected_files (ThunarComponent *component,
   launcher->single_directory_to_process = FALSE;
   launcher->single_folder = NULL;
   launcher->parent_folder = NULL;
-
-  /* That happens at startup for some reason */
-  if (launcher->current_directory == NULL)
-    return;
 
   /* if nothing is selected, the current directory is the folder to use for all menus */
   if (launcher->files_are_selected)
