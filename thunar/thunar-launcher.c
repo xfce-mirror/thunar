@@ -467,7 +467,6 @@ thunar_launcher_set_current_directory (ThunarNavigator *navigator,
                                        ThunarFile      *current_directory)
 {
   ThunarLauncher *launcher = THUNAR_LAUNCHER (navigator);
-  GList          *selected_files = NULL;
 
   /* disconnect from the previous directory */
   if (G_LIKELY (launcher->current_directory != NULL))
@@ -481,13 +480,9 @@ thunar_launcher_set_current_directory (ThunarNavigator *navigator,
     {
       g_object_ref (G_OBJECT (current_directory));
 
-      /* set selected files with current directory, if not initialized yet*/
+      /* update files_to_process if not initialized yet */
       if (launcher->files_to_process == NULL)
-        {
-          selected_files = g_list_append (selected_files, current_directory);
-          thunar_launcher_set_selected_files (THUNAR_COMPONENT (navigator), selected_files);
-          g_list_free (selected_files);
-        }
+        thunar_launcher_set_selected_files (THUNAR_COMPONENT (navigator), NULL);
     }
 
   /* notify listeners */
