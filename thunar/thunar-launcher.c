@@ -508,8 +508,9 @@ thunar_launcher_set_current_directory (ThunarNavigator *navigator,
     {
       g_object_ref (G_OBJECT (current_directory));
 
-      /* update files_to_process and other members */
-      thunar_launcher_set_selected_files (THUNAR_COMPONENT (navigator), NULL);
+      /* update files_to_process if not initialized yet */
+      if (launcher->files_to_process == NULL)
+        thunar_launcher_set_selected_files (THUNAR_COMPONENT (navigator), NULL);
     }
 
   /* notify listeners */
