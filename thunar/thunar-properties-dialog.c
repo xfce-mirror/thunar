@@ -138,6 +138,7 @@ struct _ThunarPropertiesDialog
   GtkWidget              *link_label;
   GtkWidget              *location_label;
   GtkWidget              *origin_label;
+  GtkWidget              *created_label;
   GtkWidget              *deleted_label;
   GtkWidget              *modified_label;
   GtkWidget              *accessed_label;
@@ -451,6 +452,21 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_set_hexpand (dialog->deleted_label, TRUE);
   gtk_grid_attach (GTK_GRID (grid), dialog->deleted_label, 1, row, 1, 1);
   gtk_widget_show (dialog->deleted_label);
+
+  ++row;
+
+  label = gtk_label_new (_("Created:"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
+  gtk_widget_show (label);
+
+  dialog->created_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  gtk_label_set_selectable (GTK_LABEL (dialog->created_label), TRUE);
+  exo_binding_new (G_OBJECT (dialog->created_label), "visible", G_OBJECT (label), "visible");
+  gtk_widget_set_hexpand (dialog->created_label, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), dialog->created_label, 1, row, 1, 1);
+  gtk_widget_show (dialog->created_label);
 
   ++row;
 
@@ -1068,6 +1084,21 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
       gtk_widget_hide (dialog->location_label);
     }
 
+#if GLIB_CHECK_VERSION (2, 65, 2)
+  /* update the created time */
+  date = thunar_file_get_date_string (file, THUNAR_FILE_DATE_CREATED, date_style, date_custom_style);
+  if (G_LIKELY (date != NULL))
+    {
+      gtk_label_set_text (GTK_LABEL (dialog->created_label), date);
+      gtk_widget_show (dialog->created_label);
+      g_free (date);
+    }
+  else
+#endif
+    {
+      gtk_widget_hide (dialog->created_label);
+    }
+
   /* update the deleted time */
   date = thunar_file_get_deletion_date (file, date_style, date_custom_style);
   if (G_LIKELY (date != NULL))
@@ -1194,6 +1225,7 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
   gtk_window_set_title (GTK_WINDOW (dialog), _("Properties"));
 
   /* widgets not used with > 1 file selected */
+  gtk_widget_hide (dialog->created_label);
   gtk_widget_hide (dialog->deleted_label);
   gtk_widget_hide (dialog->modified_label);
   gtk_widget_hide (dialog->accessed_label);

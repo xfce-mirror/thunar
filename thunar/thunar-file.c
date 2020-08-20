@@ -2107,6 +2107,9 @@ thunar_file_get_date (const ThunarFile  *file,
     case THUNAR_FILE_DATE_CHANGED:
       attribute = G_FILE_ATTRIBUTE_TIME_CHANGED;
       break;
+    case THUNAR_FILE_DATE_CREATED:
+      attribute = G_FILE_ATTRIBUTE_TIME_CREATED;
+      break;
     case THUNAR_FILE_DATE_MODIFIED:
       attribute = G_FILE_ATTRIBUTE_TIME_MODIFIED;
       break;
