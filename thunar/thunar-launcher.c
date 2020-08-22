@@ -1061,6 +1061,10 @@ thunar_launcher_poke_files_finish (ThunarBrowser *browser,
                     thunar_launcher_open_windows (THUNAR_LAUNCHER (browser), directories);
                 }
             }
+          else if (poke_data->folder_open_action == THUNAR_LAUNCHER_NO_ACTION)
+            {
+              // nothing to do
+            }
           else
               g_warning("'folder_open_action' was not defined");
           g_list_free (directories);
@@ -2631,6 +2635,8 @@ thunar_launcher_action_eject_finish (ThunarDevice  *device,
       thunar_dialogs_show_error (GTK_WIDGET (launcher->widget), error, _("Failed to eject \"%s\""), device_name);
       g_free (device_name);
     }
+  else
+    launcher->device_to_process = NULL;
 
   g_object_unref (launcher);
 }
@@ -2687,6 +2693,8 @@ thunar_launcher_action_unmount_finish (ThunarDevice *device,
       thunar_dialogs_show_error (GTK_WIDGET (launcher->widget), error, _("Failed to unmount \"%s\""), device_name);
       g_free (device_name);
     }
+  else
+    launcher->device_to_process = NULL;
 
   g_object_unref (launcher);
 }

@@ -1154,7 +1154,8 @@ thunar_tree_view_test_expand_row (GtkTreeView *tree_view,
         {
           /* we need to mount the device before we can expand the row */
           expandable = FALSE;
-
+          g_object_set (G_OBJECT (view->launcher), "selected-device", device, NULL);
+          g_object_set (G_OBJECT (view->launcher), "selected-files", NULL, "current-directory", NULL, NULL);
           /* The closure will expand the row after the mount operation finished */
           thunar_launcher_action_mount (view->launcher);
         }
