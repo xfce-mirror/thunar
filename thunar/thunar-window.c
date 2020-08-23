@@ -2288,6 +2288,7 @@ thunar_window_update_bookmark (GFile       *g_file,
   accel_path = thunar_window_bookmark_get_accel_path (g_file);
   entry[0].accel_path = accel_path;
   entry[0].callback = G_CALLBACK (thunar_window_action_open_bookmark);
+  entry[0].default_accelerator = "";
 
   /* Add entry, so that the bookmark can loaded/saved to acceels.scm (will be skipped if already available)*/
   xfce_gtk_accel_map_add_entries (entry, G_N_ELEMENTS (entry));
