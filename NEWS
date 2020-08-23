@@ -1,3 +1,30 @@
+4.15.2
+======
+- Regression: Dont crash when starting thunar with gvfs disabled
+- Move mount/unmount/eject actions into launcher (Issue #349)
+- Use thunar-menu and launcher in tree-view (Issue# 349)
+- Use the new icon when running with elevated privileges (root)
+- Remove limit on paths to check in thunar_file_accepts_drop (Issue #350)
+- AC_CONFIG_MACRO_DIR → AC_CONFIG_MACRO_DIRS (MR !27)
+- Avoid crashes when using details view (Issue #307)
+- Fix unavailable rubber banding in detailed view (Issue #326)
+- Remove obsolete dispose method to prevent warning (Issue #319)
+- Show device indentifier in side pane tooltip (Issue #207)
+- Make use of shared field codes expansion of libxfce4util (MR !23)
+- Implement directory specific sort-column and sort-order (Issue #8)
+- Add an option to delete saved directory specific settings (Issue #8)
+- Implements directory specific view type (Issue #8)
+- Add features to support directory specific view settings (Issue #8)
+- Regression: Add missing seperator to icon view submenu
+- Replace _thunar_assert() with _thunar_return_if_fail() in order to 
+  prevent crash when build with debug on FreeBSD (MR !22)
+- Menu items cut/copy/paste do not work for location entry (Issue #303)
+- Translation Updates:
+  Albanian, Bulgarian, Catalan, Chinese (China), Chinese (Taiwan), Czech, 
+  Danish, Dutch, French, Galician, German, Hebrew, Italian, Japanese, 
+  Kazakh, Korean, Norwegian Bokmål, Portuguese, Portuguese (Brazil), 
+  Spanish, Swedish, Turkish, 
+
 4.15.1
 ======
 - Shorten strings for different views (Issue #247)
