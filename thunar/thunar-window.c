@@ -1595,6 +1595,10 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   if (window->view == page)
     return;
 
+  /* Use accelerators only on the current active tab */
+  g_object_set (G_OBJECT (window->view), "accel-group", NULL, NULL);
+  g_object_set (G_OBJECT (page), "accel-group", window->accel_group, NULL);
+
   if (G_LIKELY (window->view != NULL))
     {
       /* disconnect from previous history */
@@ -1921,7 +1925,7 @@ thunar_window_notebook_insert (ThunarWindow  *window,
   _thunar_return_val_if_fail (history == NULL || THUNAR_IS_HISTORY (history), NULL);
 
   /* allocate and setup a new view */
-  view = g_object_new (view_type, "current-directory", directory, "accel-group", window->accel_group, NULL);
+  view = g_object_new (view_type, "current-directory", directory, NULL);
   thunar_view_set_show_hidden (THUNAR_VIEW (view), window->show_hidden);
   gtk_widget_show (view);
 

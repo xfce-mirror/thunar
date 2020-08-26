@@ -266,6 +266,7 @@ static void                 thunar_standard_view_scrolled                   (Gtk
 static void                 thunar_standard_view_size_allocate              (ThunarStandardView       *standard_view,
                                                                              GtkAllocation            *allocation);
 static void                 thunar_standard_view_connect_accelerators       (ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_disconnect_accelerators    (ThunarStandardView       *standard_view);
 
 
 
@@ -500,8 +501,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                                                         "accel-group",
                                                         "accel-group",
                                                         GTK_TYPE_ACCEL_GROUP,
-                                                          G_PARAM_WRITABLE
-                                                        | G_PARAM_CONSTRUCT_ONLY);
+                                                        G_PARAM_WRITABLE);
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, standard_view_props);
@@ -643,6 +643,8 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
 
   /* add widget to css class */
   gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (standard_view)), "standard-view");
+
+  standard_view->accel_group = NULL;
 }
 
 
@@ -782,17 +784,8 @@ thunar_standard_view_finalize (GObject *object)
   _thunar_assert (standard_view->loading_binding == NULL);
   _thunar_assert (standard_view->icon_factory == NULL);
 
-  /* Dont listen to the accel keys defined by the action entries any more */
-  xfce_gtk_accel_group_disconnect_action_entries (standard_view->accel_group,
-                                               thunar_standard_view_action_entries,
-                                               G_N_ELEMENTS (thunar_standard_view_action_entries));
-
-  /* as well disconnect accelerators of derived widgets */
-  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->disconnect_accelerators) (standard_view, standard_view->accel_group);
-
-  /* and release the accel group */
-  if (G_LIKELY (standard_view->accel_group != NULL))
-    g_object_unref (standard_view->accel_group);
+  /* disconnect accelerators */
+  thunar_standard_view_disconnect_accelerators (standard_view);
 
   /* release the thumbnailer */
   g_signal_handlers_disconnect_by_func (standard_view->priv->thumbnailer, thunar_standard_view_finished_thumbnailing, standard_view);
@@ -955,6 +948,7 @@ thunar_standard_view_set_property (GObject      *object,
       break;
 
     case PROP_ACCEL_GROUP:
+      thunar_standard_view_disconnect_accelerators (standard_view);
       standard_view->accel_group = g_value_dup_object (value);
       thunar_standard_view_connect_accelerators (standard_view);
       break;
@@ -3844,6 +3838,9 @@ thunar_standard_view_connect_accelerators (ThunarStandardView *standard_view)
 {
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
+  if (standard_view->accel_group == NULL)
+    return;
+
   xfce_gtk_accel_map_add_entries (thunar_standard_view_action_entries, G_N_ELEMENTS (thunar_standard_view_action_entries));
   xfce_gtk_accel_group_connect_action_entries (standard_view->accel_group,
                                                thunar_standard_view_action_entries,
@@ -3852,6 +3849,36 @@ thunar_standard_view_connect_accelerators (ThunarStandardView *standard_view)
 
   /* as well append accelerators of derived widgets */
   (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->connect_accelerators) (standard_view, standard_view->accel_group);
+}
+
+
+
+/**
+ * thunar_standard_view_disconnect_accelerators:
+ * @standard_view : a #ThunarStandardView.
+ *
+ * Disconnects all accelerators of this widget from the global accelerator list
+ * The concrete implementation depends on the concrete widget which is implementing this view
+ **/
+static void
+thunar_standard_view_disconnect_accelerators (ThunarStandardView *standard_view)
+{
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  if (standard_view->accel_group == NULL)
+    return;
+
+  /* Dont listen to the accel keys defined by the action entries any more */
+  xfce_gtk_accel_group_disconnect_action_entries (standard_view->accel_group,
+                                               thunar_standard_view_action_entries,
+                                               G_N_ELEMENTS (thunar_standard_view_action_entries));
+
+  /* as well disconnect accelerators of derived widgets */
+  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->disconnect_accelerators) (standard_view, standard_view->accel_group);
+
+  /* and release the accel group */
+  g_object_unref (standard_view->accel_group);
+  standard_view->accel_group = NULL;
 }
 
 
