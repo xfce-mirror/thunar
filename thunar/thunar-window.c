@@ -95,6 +95,9 @@ typedef struct _ThunarBookmark ThunarBookmark;
 
 
 
+static void      thunar_window_screen_changed             (GtkWidget              *widget,
+                                                           GdkScreen              *old_screen,
+                                                           gpointer                userdata);
 static void      thunar_window_dispose                    (GObject                *object);
 static void      thunar_window_finalize                   (GObject                *object);
 static gboolean  thunar_window_delete                     (GtkWidget              *widget,
@@ -643,6 +646,12 @@ thunar_window_init (ThunarWindow *window)
                 "misc-small-toolbar-icons", &small_icons,
                 NULL);
 
+  /* update the visual on screen_changed events */
+  g_signal_connect (window, "screen-changed", G_CALLBACK (thunar_window_screen_changed), NULL);
+
+  /* invoke the thunar_window_screen_changed function to initially set the best possible visual.*/
+  thunar_window_screen_changed (GTK_WIDGET (window), NULL, NULL);
+
   /* set up a handler to confirm exit when there are multiple tabs open  */
   g_signal_connect (window, "delete-event", G_CALLBACK (thunar_window_delete), NULL);
 
@@ -843,6 +852,20 @@ thunar_window_init (ThunarWindow *window)
   thunar_window_update_bookmarks (window);
 }
 
+
+static void
+thunar_window_screen_changed (GtkWidget *widget,
+                              GdkScreen *old_screen,
+                              gpointer   userdata)
+{
+  GdkScreen *screen = gdk_screen_get_default ();
+  GdkVisual *visual = gdk_screen_get_rgba_visual (screen);
+
+  if (visual == NULL || !gdk_screen_is_composited (screen))
+    visual = gdk_screen_get_system_visual (screen);
+
+  gtk_widget_set_visual (GTK_WIDGET (widget), visual);
+}
 
 
 /**
