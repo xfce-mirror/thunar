@@ -609,6 +609,8 @@ thunar_window_init (ThunarWindow *window)
   GtkToolItem     *tool_item;
   gboolean         small_icons;
   GtkStyleContext *context;
+  GdkScreen       *screen;
+  GdkVisual       *visual;
 
   /* unset the view type */
   window->view_type = G_TYPE_NONE;
@@ -626,6 +628,13 @@ thunar_window_init (ThunarWindow *window)
                                                thunar_window_action_entries,
                                                G_N_ELEMENTS (thunar_window_action_entries),
                                                window);
+
+
+  screen = gdk_screen_get_default();
+  visual = gdk_screen_get_rgba_visual(screen);
+  if (visual != NULL && gdk_screen_is_composited(screen)) {
+    gtk_widget_set_visual(GTK_WIDGET(window), visual);
+  }
 
   gtk_window_add_accel_group (GTK_WINDOW (window), window->accel_group);
 
