@@ -1596,7 +1596,8 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
     return;
 
   /* Use accelerators only on the current active tab */
-  g_object_set (G_OBJECT (window->view), "accel-group", NULL, NULL);
+  if (window->view != NULL)
+    g_object_set (G_OBJECT (window->view), "accel-group", NULL, NULL);
   g_object_set (G_OBJECT (page), "accel-group", window->accel_group, NULL);
 
   if (G_LIKELY (window->view != NULL))
