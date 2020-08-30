@@ -325,6 +325,7 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
 
   /* allocate the special icon renderer */
   view->icon_renderer = thunar_shortcuts_icon_renderer_new ();
+  g_object_set (G_OBJECT (view->icon_renderer), "symbolic", TRUE, NULL);
   gtk_tree_view_column_pack_start (column, view->icon_renderer, FALSE);
   gtk_tree_view_column_set_attributes (column, view->icon_renderer,
                                        "gicon", THUNAR_SHORTCUTS_MODEL_COLUMN_GICON,
