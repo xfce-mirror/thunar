@@ -2516,7 +2516,8 @@ thunar_file_get_content_type (ThunarFile *file)
         {
           /* async load the content-type */
           info = g_file_query_info (file->gfile,
-                                    G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
+                                    G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
+                                    G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
                                     G_FILE_QUERY_INFO_NONE,
                                     NULL, &err);
 
@@ -2524,7 +2525,10 @@ thunar_file_get_content_type (ThunarFile *file)
             {
               /* store the new content type */
               content_type = g_file_info_get_content_type (info);
-              if (G_UNLIKELY (content_type != NULL))
+              if (G_UNLIKELY (content_type == NULL))
+                content_type = g_file_info_get_attribute_string (info,
+                                                                 G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE);
+              if (G_LIKELY (content_type != NULL))
                 file->content_type = g_strdup (content_type);
               g_object_unref (G_OBJECT (info));
             }
