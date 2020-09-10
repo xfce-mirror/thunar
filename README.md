@@ -1,9 +1,9 @@
 [![License](https://img.shields.io/badge/License-GPL%20v2-blue.svg)](https://gitlab.xfce.org/xfce/thunar/COPYING)
 
-thunar
-====================
+# thunar
 
-Thunar is a modern file manager for the Xfce Desktop Environment. Thunar has been designed from the ground up to be fast and easy to use. Its user interface is clean and intuitive and does not include any confusing or useless options by default. Thunar starts up quickly and navigating through files and folders is fast and responsive
+
+Thunar is a modern file manager for the Xfce Desktop Environment. Thunar has been designed from the ground up to be fast and easy to use. Its user interface is clean and intuitive and does not include any confusing or useless options by default. Thunar starts up quickly and navigating through files and folders is fast and responsive.
 
 ----
 
@@ -24,6 +24,7 @@ See [NEWS](https://gitlab.xfce.org/xfce/thunar/-/blob/master/NEWS) for details o
 [thunar archive](https://archive.xfce.org/src/xfce/thunar)
     or
 [thunar tags](https://gitlab.xfce.org/xfce/thunar/-/tags)
+
 ### Installation
 
 From source: 
