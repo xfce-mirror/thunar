@@ -329,7 +329,8 @@ thunar_thumbnailer_queue_async_reply (GObject      *proxy,
 
   thumbnailer = THUNAR_THUMBNAILER (job->thumbnailer);
 
-  _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
+  if (THUNAR_IS_THUMBNAILER (thumbnailer) == FALSE)
+    return;
 
   _thumbnailer_lock (thumbnailer);
 
