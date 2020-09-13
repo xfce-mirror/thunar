@@ -23,7 +23,7 @@ See [NEWS](https://gitlab.xfce.org/xfce/thunar/-/blob/master/NEWS) for details o
 
 [Thunar archive](https://archive.xfce.org/src/xfce/thunar)
     or
-[thunar tags](https://gitlab.xfce.org/xfce/thunar/-/tags)
+[Thunar tags](https://gitlab.xfce.org/xfce/thunar/-/tags)
 
 ### Installation
 
