@@ -21,7 +21,7 @@ See [NEWS](https://gitlab.xfce.org/xfce/thunar/-/blob/master/NEWS) for details o
 
 ### Download A Release Tarball
 
-[thunar archive](https://archive.xfce.org/src/xfce/thunar)
+[Thunar archive](https://archive.xfce.org/src/xfce/thunar)
     or
 [thunar tags](https://gitlab.xfce.org/xfce/thunar/-/tags)
 
