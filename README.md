@@ -9,7 +9,7 @@ Thunar is a modern file manager for the Xfce Desktop Environment. Thunar has bee
 
 ### Homepage
 
-[thunar documentation](https://docs.xfce.org/xfce/thunar/start)
+[Thunar documentation](https://docs.xfce.org/xfce/thunar/start)
 
 ### Changelog
 
