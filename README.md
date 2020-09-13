@@ -19,7 +19,7 @@ See [NEWS](https://gitlab.xfce.org/xfce/thunar/-/blob/master/NEWS) for details o
 
 [Thunar source code](https://gitlab.xfce.org/xfce/thunar)
 
-### Download A Release Tarball
+### Download a Release Tarball
 
 [Thunar archive](https://archive.xfce.org/src/xfce/thunar)
     or
