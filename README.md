@@ -17,7 +17,7 @@ See [NEWS](https://gitlab.xfce.org/xfce/thunar/-/blob/master/NEWS) for details o
 
 ### Source Code Repository
 
-[thunar source code](https://gitlab.xfce.org/xfce/thunar)
+[Thunar source code](https://gitlab.xfce.org/xfce/thunar)
 
 ### Download A Release Tarball
 
