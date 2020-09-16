@@ -42,6 +42,10 @@ From release tarball:
     % make
     % make install
 
+ Both autogen.sh and configure will list missing dependencies. 
+ If your distribution provides development versions of the related packages, 
+ install them. Otherwise you will need to build and install the missing dependencies from source.
+
 ### Reporting Bugs
 
 Visit the [reporting bugs](https://docs.xfce.org/xfce/thunar/bugs) page to view currently open bug reports and instructions on reporting new bugs or submitting bugfixes.
