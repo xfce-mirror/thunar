@@ -394,6 +394,8 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
                                  ThunarSizeLabel    *size_label)
 {
   gchar             *size_string;
+  gchar             *folder_size_string;
+  gchar             *file_size_string;
   gchar             *text;
   guint              n;
   gchar             *unreable_text;
@@ -409,7 +411,10 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
     {
       /* update the label */
       size_string = g_format_size_full (total_size, G_FORMAT_SIZE_LONG_FORMAT | (size_label->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT));
-      text = g_strdup_printf (ngettext ("%u item, totalling %s", "%u items, totalling %s", n), n, size_string);
+      folder_size_string = g_strdup_printf (ngettext ("%d folder", "%d folders", directory_count -1), directory_count -1);
+      file_size_string = g_strdup_printf (ngettext ("%d file", "%d files", file_count), file_count);
+
+      text = g_strdup_printf (ngettext ("%u item (%s, %s) totalling %s", "%u items (%s, %s), totalling %s", n), n, file_size_string, folder_size_string, size_string);
       g_free (size_string);
 
       if (unreadable_directory_count > 0)
