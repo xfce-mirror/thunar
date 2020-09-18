@@ -137,6 +137,7 @@ struct _ThunarPropertiesDialog
   GtkWidget              *openwith_chooser;
   GtkWidget              *link_label;
   GtkWidget              *location_label;
+  GtkWidget              *content_label;
   GtkWidget              *origin_label;
   GtkWidget              *deleted_label;
   GtkWidget              *modified_label;
@@ -495,7 +496,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   /*
      Fourth box (size, volume, free space)
    */
-  label = gtk_label_new (_("Size:"));
+  label = gtk_label_new (_("Size:\nContent:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
@@ -506,6 +507,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_set_hexpand (label, TRUE);
   gtk_grid_attach (GTK_GRID (grid), label, 1, row, 1, 1);
   gtk_widget_show (label);
+
 
   ++row;
 
@@ -957,6 +959,8 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   gtk_window_set_title (GTK_WINDOW (dialog), str);
   g_free (str);
 
+  gtk_widget_show(dialog->content_label);
+
   /* update the preview image */
   thunar_image_set_file (THUNAR_IMAGE (dialog->icon_image), file);
 
@@ -1201,6 +1205,7 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
   gtk_widget_hide (dialog->origin_label);
   gtk_widget_hide (dialog->openwith_chooser);
   gtk_widget_hide (dialog->link_label);
+  gtk_widget_show (dialog->content_label);
 
   names_string = g_string_new (NULL);
 
