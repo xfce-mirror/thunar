@@ -137,7 +137,6 @@ struct _ThunarPropertiesDialog
   GtkWidget              *openwith_chooser;
   GtkWidget              *link_label;
   GtkWidget              *location_label;
-  GtkWidget              *content_label;
   GtkWidget              *origin_label;
   GtkWidget              *deleted_label;
   GtkWidget              *modified_label;
@@ -959,8 +958,6 @@ thunar_properties_dialog_update_single (ThunarPropertiesDialog *dialog)
   gtk_window_set_title (GTK_WINDOW (dialog), str);
   g_free (str);
 
-  gtk_widget_show(dialog->content_label);
-
   /* update the preview image */
   thunar_image_set_file (THUNAR_IMAGE (dialog->icon_image), file);
 
@@ -1205,7 +1202,6 @@ thunar_properties_dialog_update_multiple (ThunarPropertiesDialog *dialog)
   gtk_widget_hide (dialog->origin_label);
   gtk_widget_hide (dialog->openwith_chooser);
   gtk_widget_hide (dialog->link_label);
-  gtk_widget_show (dialog->content_label);
 
   names_string = g_string_new (NULL);
 
