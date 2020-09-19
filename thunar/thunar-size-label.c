@@ -409,9 +409,6 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
 
  
   content_label = (GtkWidget *)g_object_get_data(G_OBJECT(size_label),"content_label");
-  gtk_label_set_text (GTK_LABEL (content_label), "bob");
-  gtk_widget_show (content_label);
-
 
   /* determine the total number of items */
   n = file_count + directory_count + unreadable_directory_count;
