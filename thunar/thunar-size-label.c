@@ -146,7 +146,6 @@ static void
 thunar_size_label_init (ThunarSizeLabel *size_label)
 {
   GtkWidget *ebox;
-  GtkWidget *grid;
 
   gtk_orientable_set_orientation (GTK_ORIENTABLE (size_label), GTK_ORIENTATION_HORIZONTAL);
 
@@ -174,25 +173,13 @@ thunar_size_label_init (ThunarSizeLabel *size_label)
   gtk_widget_show (size_label->spinner);
 
   /* add the label widget */
-  grid = gtk_grid_new ();
-  gtk_container_add (GTK_CONTAINER (size_label), grid);
-
   size_label->label = gtk_label_new (_("Calculating..."));
   gtk_label_set_selectable (GTK_LABEL (size_label->label), TRUE);
-  gtk_label_set_xalign (size_label->label, 1.0f);
-  gtk_grid_attach (GTK_GRID (grid), size_label->label, 1, 0, 1, 1);
+  gtk_label_set_xalign (GTK_LABEL (size_label->label), 1.0f);
+  gtk_box_pack_start (GTK_BOX (size_label), size_label->label, TRUE, TRUE, 0);
   gtk_widget_show (size_label->label);
 
-  size_label->labelContent = gtk_label_new (_("Calculating..."));
-  gtk_label_set_selectable (GTK_LABEL (size_label->labelContent), TRUE);
-  gtk_label_set_xalign (size_label->labelContent, 1.0f);
-  gtk_grid_attach (GTK_GRID (grid), size_label->labelContent, 1, 1, 1, 1);
-  gtk_widget_show (size_label->labelContent);
-
-  gtk_widget_show(grid);
-  // gtk_box_pack_start (GTK_BOX (size_label), size_label->label, TRUE, TRUE, 0);
-  // gtk_box_pack_start (GTK_BOX (size_label), size_label->labelContent, TRUE, TRUE, 0);
-}
+  }
 
 
 
@@ -414,10 +401,17 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
   gchar             *textContent;
   guint              n;
   gchar             *unreable_text;
+  GtkWidget         *content_label;
 
   _thunar_return_if_fail (THUNAR_IS_DEEP_COUNT_JOB (job));
   _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
   _thunar_return_if_fail (size_label->job == job);
+
+ 
+  content_label = (GtkWidget *)g_object_get_data(G_OBJECT(size_label),"content_label");
+  gtk_label_set_text (GTK_LABEL (content_label), "bob");
+  gtk_widget_show (content_label);
+
 
   /* determine the total number of items */
   n = file_count + directory_count + unreadable_directory_count;
@@ -443,7 +437,7 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
         }
 
       gtk_label_set_text (GTK_LABEL (size_label->label), textSize);
-      gtk_label_set_text (GTK_LABEL (size_label->labelContent), textContent);
+      gtk_label_set_text (GTK_LABEL (content_label), textContent);
       g_free (textContent);
       g_free (textSize);
       g_free (folder_size_string);
@@ -529,6 +523,12 @@ thunar_size_label_set_files (ThunarSizeLabel *size_label,
 GtkWidget*
 thunar_size_label_new (void)
 {
-  return g_object_new (THUNAR_TYPE_SIZE_LABEL, NULL);
+  GtkWidget* main_label;
+  GtkWidget* content_label;
+
+  content_label = gtk_label_new ("zeub");
+  main_label = g_object_new (THUNAR_TYPE_SIZE_LABEL, NULL);
+  g_object_set_data(G_OBJECT(main_label),"content_label", (gpointer)(content_label));
+  return main_label;
 }
 
