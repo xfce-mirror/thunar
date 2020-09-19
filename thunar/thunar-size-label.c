@@ -523,7 +523,7 @@ thunar_size_label_new (void)
   GtkWidget* main_label;
   GtkWidget* content_label;
 
-  content_label = gtk_label_new ("zeub");
+  content_label = gtk_label_new ("...");
   main_label = g_object_new (THUNAR_TYPE_SIZE_LABEL, NULL);
   g_object_set_data(G_OBJECT(main_label),"content_label", (gpointer)(content_label));
   return main_label;
