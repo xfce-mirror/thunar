@@ -46,6 +46,8 @@ From release tarball:
  If your distribution provides development versions of the related packages, 
  install them. Otherwise you will need to build and install the missing dependencies from source.
 
+For some additional build & debug hints, as well check the [Thunar Wiki pages](https://wiki.xfce.org/thunar/dev).
+
 ### Reporting Bugs
 
 Visit the [reporting bugs](https://docs.xfce.org/xfce/thunar/bugs) page to view currently open bug reports and instructions on reporting new bugs or submitting bugfixes.
