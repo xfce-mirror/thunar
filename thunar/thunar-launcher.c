@@ -2845,6 +2845,13 @@ thunar_launcher_append_open_section (ThunarLauncher *launcher,
       g_free (label_text);
     }
 
+  if (launcher->n_files_to_process == launcher->n_directories_to_process && launcher->n_directories_to_process >= 1)
+    {
+      if (support_tabs)
+        thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_OPEN_IN_TAB, FALSE);
+      thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_OPEN_IN_WINDOW, FALSE);
+    }
+
   if (G_LIKELY (applications != NULL))
     {
       menu_item = xfce_gtk_menu_item_new (_("Open With"),
@@ -2852,13 +2859,6 @@ thunar_launcher_append_open_section (ThunarLauncher *launcher,
                                           NULL, NULL, NULL, menu);
       submenu = thunar_launcher_build_application_submenu (launcher, applications);
       gtk_menu_item_set_submenu (GTK_MENU_ITEM (menu_item), submenu);
-    }
-
-  if (launcher->n_files_to_process == launcher->n_directories_to_process && launcher->n_directories_to_process >= 1)
-    {
-      if (support_tabs)
-        thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_OPEN_IN_TAB, FALSE);
-      thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_OPEN_IN_WINDOW, FALSE);
     }
 
   g_list_free_full (applications, g_object_unref);
