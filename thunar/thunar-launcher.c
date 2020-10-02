@@ -35,7 +35,6 @@
 #include <thunar/thunar-chooser-dialog.h>
 #include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
