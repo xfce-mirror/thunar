@@ -1205,6 +1205,12 @@ thunar_file_load (ThunarFile   *file,
   _thunar_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), FALSE);
   _thunar_return_val_if_fail (G_IS_FILE (file->gfile), FALSE);
 
+  /* remove the file from cache */
+  G_LOCK (file_cache_mutex);
+  if (g_hash_table_lookup (file_cache, file->gfile) != NULL)
+    g_hash_table_remove (file_cache, file->gfile);
+  G_UNLOCK (file_cache_mutex);
+
   /* reset the file */
   thunar_file_info_clear (file);
 
@@ -1231,10 +1237,17 @@ thunar_file_load (ThunarFile   *file,
       g_propagate_error (error, err);
       return FALSE;
     }
-  else
+
+  /* (re)insert the file into the cache */
+  if (file != NULL && file->kind != G_FILE_TYPE_UNKNOWN)
     {
-      return TRUE;
+      G_LOCK (file_cache_mutex);
+      g_hash_table_insert (file_cache,
+                           g_object_ref (file->gfile),
+                           weak_ref_new (G_OBJECT (file)));
+      G_UNLOCK (file_cache_mutex);
     }
+  return TRUE;
 }
 
 
