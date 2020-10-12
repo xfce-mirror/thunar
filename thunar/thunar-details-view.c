@@ -160,7 +160,16 @@ struct _ThunarDetailsView
 
 static XfceGtkActionEntry thunar_details_view_action_entries[] =
 {
-    { THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS, "<Actions>/ThunarStandardView/configure-columns", "", XFCE_GTK_MENU_ITEM , N_ ("Configure _Columns..."), N_("Configure the columns in the detailed list view"), NULL, G_CALLBACK (thunar_show_column_editor), },
+    { THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS,  "<Actions>/ThunarStandardView/configure-columns", "", XFCE_GTK_MENU_ITEM , N_ ("Configure _Columns..."), N_("Configure the columns in the detailed list view"), NULL, G_CALLBACK (thunar_show_column_editor), },
+    { THUNAR_DETAILS_VIEW_ACTION_TOGGLE_SORT_ORDER,  "<Actions>/ThunarStandardView/toggle-sort-order", "", XFCE_GTK_MENU_ITEM , N_ ("Toggle sort direction"), N_("Toggle Ascending/Descending sort order"), NULL, G_CALLBACK (thunar_details_view_toggle_sort_order), },
+    { THUNAR_DETAILS_VIEW_ACTION_TOGGLE_SORT_COLUMN, "<Actions>/ThunarStandardView/toggle-sort-column", "", XFCE_GTK_MENU_ITEM , N_ ("Toggle sort column"), N_("Toggle By Name/Modification Date sort column"), NULL, G_CALLBACK (thunar_details_view_toggle_sort_column), },
+    { THUNAR_DETAILS_VIEW_ACTION_ARRANGE_ITEMS_MENU, "<Actions>/ThunarStandardView/arrange-items-menu",    "", XFCE_GTK_MENU_ITEM,       N_ ("Arran_ge Items"),        NULL,                                                NULL, G_CALLBACK (NULL),                                             },
+    { THUNAR_DETAILS_VIEW_ACTION_SORT_BY_NAME,       "<Actions>/ThunarStandardView/sort-by-name",          "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Name"),              N_ ("Keep items sorted by their name"),              NULL, G_CALLBACK (thunar_details_view_action_sort_by_name),    },
+    { THUNAR_DETAILS_VIEW_ACTION_SORT_BY_SIZE,       "<Actions>/ThunarStandardView/sort-by-size",          "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Size"),              N_ ("Keep items sorted by their size"),              NULL, G_CALLBACK (thunar_details_view_action_sort_by_size),    },
+    { THUNAR_DETAILS_VIEW_ACTION_SORT_BY_TYPE,       "<Actions>/ThunarStandardView/sort-by-type",          "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Type"),              N_ ("Keep items sorted by their type"),              NULL, G_CALLBACK (thunar_details_view_action_sort_by_type),    },
+    { THUNAR_DETAILS_VIEW_ACTION_SORT_BY_MTIME,      "<Actions>/ThunarStandardView/sort-by-mtime",         "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("By Modification _Date"), N_ ("Keep items sorted by their modification date"), NULL, G_CALLBACK (thunar_details_view_action_sort_by_date),    },
+    { THUNAR_DETAILS_VIEW_ACTION_SORT_ASCENDING,     "<Actions>/ThunarStandardView/sort-ascending",        "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Ascending"),            N_ ("Sort items in ascending order"),                NULL, G_CALLBACK (thunar_details_view_action_sort_ascending),  },
+    { THUNAR_DETAILS_VIEW_ACTION_SORT_DESCENDING,    "<Actions>/ThunarStandardView/sort-descending",       "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Descending"),           N_ ("Sort items in descending order"),               NULL, G_CALLBACK (thunar_details_view_action_sort_descending), },
 };
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_details_view_action_entries,G_N_ELEMENTS(thunar_details_view_action_entries),id)
