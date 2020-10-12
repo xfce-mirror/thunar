@@ -1193,11 +1193,10 @@ thunar_set_sort_column (ThunarDetailsView  *details_view, ThunarColumn column)
 static void
 thunar_details_view_toggle_sort_column   (ThunarDetailsView      *details_view)
 {
-  if (G_UNLIKELY (details_view->sort_column == THUNAR_COLUMN_NAME)) {
+  if (G_UNLIKELY (details_view->sort_column == THUNAR_COLUMN_NAME))
     thunar_details_view_action_sort_by_date(details_view);
-  } else {
+  else
     thunar_details_view_action_sort_by_name(details_view);
-  }
 }
 
 /* Toggle the current sort Ascending/Descending */
