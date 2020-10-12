@@ -918,12 +918,6 @@ thunar_details_view_columns_changed (ThunarColumnModel *column_model,
       /* apply the new visibility for the tree view column */
       gtk_tree_view_column_set_visible (details_view->columns[column], thunar_column_model_get_column_visible (column_model, column));
 
-      if (gtk_tree_view_column_get_sort_indicator (details_view->columns[column]))
-        {
-          details_view->sort_column = column;
-          details_view->sort_order  = gtk_tree_view_column_get_sort_order (details_view->columns[column]);
-        }
-
       /* change the order of the column relative to its predecessor */
       if (G_LIKELY (column > 0))
         {
