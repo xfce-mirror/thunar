@@ -46,7 +46,14 @@ typedef enum
   THUNAR_STANDARD_VIEW_ACTION_SELECT_ALL_FILES,
   THUNAR_STANDARD_VIEW_ACTION_SELECT_BY_PATTERN,
   THUNAR_STANDARD_VIEW_ACTION_INVERT_SELECTION,
-
+  THUNAR_STANDARD_VIEW_ACTION_ARRANGE_ITEMS_MENU,
+  THUNAR_STANDARD_VIEW_ACTION_SORT_BY_NAME,
+  THUNAR_STANDARD_VIEW_ACTION_SORT_BY_SIZE,
+  THUNAR_STANDARD_VIEW_ACTION_SORT_BY_TYPE,
+  THUNAR_STANDARD_VIEW_ACTION_SORT_BY_MTIME,
+  THUNAR_STANDARD_VIEW_ACTION_SORT_ASCENDING,
+  THUNAR_STANDARD_VIEW_ACTION_SORT_DESCENDING,
+  
 } ThunarStandardViewAction;
 
 struct _ThunarStandardViewClass
@@ -167,6 +174,7 @@ void           thunar_standard_view_append_menu_item      (ThunarStandardView   
 void           _thunar_standard_view_open_on_middle_click (ThunarStandardView       *standard_view,
                                                            GtkTreePath              *tree_path,
                                                            guint                     event_state);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_STANDARD_VIEW_H__ */
