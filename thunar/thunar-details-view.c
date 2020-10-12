@@ -329,7 +329,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
 
       /* append the tree view column to the tree view */
       gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), details_view->columns[column]);
-
     }
 
   /* configure the tree selection */
@@ -354,10 +353,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
       for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; ++column)
         gtk_tree_view_column_set_fixed_width (details_view->columns[column], thunar_column_model_get_column_width (details_view->column_model, column));
     }
-
-
-  
-
 
   /* release the shared text renderers */
   g_object_unref (G_OBJECT (right_aligned_renderer));
