@@ -112,11 +112,12 @@ static void         thunar_details_view_append_menu_items       (ThunarStandardV
                                                                  GtkAccelGroup          *accel_group);
 
 
-
 struct _ThunarDetailsViewClass
 {
   ThunarStandardViewClass __parent__;
 };
+
+
 
 struct _ThunarDetailsView
 {
@@ -136,13 +137,14 @@ struct _ThunarDetailsView
 
   /* event source id for thunar_details_view_zoom_level_changed_reload_fixed_columns */
   guint idle_id;
+
 };
 
 
 
 static XfceGtkActionEntry thunar_details_view_action_entries[] =
 {
-    { THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS, "<Actions>/ThunarStandardView/configure-columns", "", XFCE_GTK_MENU_ITEM , N_ ("Configure _Columns..."), N_("Configure the columns in the detailed list view"), NULL, G_CALLBACK (thunar_show_column_editor), },
+    { THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS,  "<Actions>/ThunarStandardView/configure-columns", "", XFCE_GTK_MENU_ITEM , N_ ("Configure _Columns..."), N_("Configure the columns in the detailed list view"), NULL, G_CALLBACK (thunar_show_column_editor), },
 };
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_details_view_action_entries,G_N_ELEMENTS(thunar_details_view_action_entries),id)

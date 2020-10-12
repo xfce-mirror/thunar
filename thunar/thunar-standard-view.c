@@ -268,7 +268,15 @@ static void                 thunar_standard_view_size_allocate              (Thu
 static void                 thunar_standard_view_connect_accelerators       (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_disconnect_accelerators    (ThunarStandardView       *standard_view);
 
-
+static void                 thunar_standard_view_action_sort_by_name               (ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_action_sort_by_type               (ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_action_sort_by_date               (ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_action_sort_by_size               (ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_action_sort_ascending             (ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_action_sort_descending            (ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_set_sort_column                   (ThunarStandardView       *standard_view, 
+                                                                                    ThunarColumn column);
+static void                 thunar_standard_view_store_sort_column                 (ThunarStandardView       *standard_view);
 
 struct _ThunarStandardViewPrivate
 {
@@ -341,6 +349,12 @@ struct _ThunarStandardViewPrivate
   /* Tree path for restoring the selection after selecting and
    * deleting an item */
   GtkTreePath            *selection_before_delete;
+
+  /* current sort column ID */
+  ThunarColumn            sort_column;
+
+  /* current sort_order (GTK_SORT_ASCENDING || GTK_SORT_DESCENDING) */
+  GtkSortType             sort_order;
 };
 
 static XfceGtkActionEntry thunar_standard_view_action_entries[] =
@@ -348,6 +362,13 @@ static XfceGtkActionEntry thunar_standard_view_action_entries[] =
     { THUNAR_STANDARD_VIEW_ACTION_SELECT_ALL_FILES,  "<Actions>/ThunarStandardView/select-all-files",   "<Primary>a", XFCE_GTK_MENU_ITEM, N_ ("Select _all Files"),     N_ ("Select all files in this window"),                   NULL, G_CALLBACK (thunar_standard_view_select_all_files), },
     { THUNAR_STANDARD_VIEW_ACTION_SELECT_BY_PATTERN, "<Actions>/ThunarStandardView/select-by-pattern",  "<Primary>s", XFCE_GTK_MENU_ITEM, N_ ("Select _by Pattern..."), N_ ("Select all files that match a certain pattern"),     NULL, G_CALLBACK (thunar_standard_view_select_by_pattern), },
     { THUNAR_STANDARD_VIEW_ACTION_INVERT_SELECTION,  "<Actions>/ThunarStandardView/invert-selection",   "",           XFCE_GTK_MENU_ITEM, N_ ("_Invert Selection"),     N_ ("Select all files but not those currently selected"), NULL, G_CALLBACK (thunar_standard_view_selection_invert), },
+    { THUNAR_STANDARD_VIEW_ACTION_ARRANGE_ITEMS_MENU,"<Actions>/ThunarStandardView/arrange-items-menu",    "", XFCE_GTK_MENU_ITEM,       N_ ("Arran_ge Items"),        NULL,                                                NULL, G_CALLBACK (NULL),                                             },
+    { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_NAME,      "<Actions>/ThunarStandardView/sort-by-name",          "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Name"),              N_ ("Keep items sorted by their name"),              NULL, G_CALLBACK (thunar_standard_view_action_sort_by_name),    },
+    { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_SIZE,      "<Actions>/ThunarStandardView/sort-by-size",          "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Size"),              N_ ("Keep items sorted by their size"),              NULL, G_CALLBACK (thunar_standard_view_action_sort_by_size),    },
+    { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_TYPE,      "<Actions>/ThunarStandardView/sort-by-type",          "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Type"),              N_ ("Keep items sorted by their type"),              NULL, G_CALLBACK (thunar_standard_view_action_sort_by_type),    },
+    { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_MTIME,     "<Actions>/ThunarStandardView/sort-by-mtime",         "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("By Modification _Date"), N_ ("Keep items sorted by their modification date"), NULL, G_CALLBACK (thunar_standard_view_action_sort_by_date),    },
+    { THUNAR_STANDARD_VIEW_ACTION_SORT_ASCENDING,    "<Actions>/ThunarStandardView/sort-ascending",        "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Ascending"),            N_ ("Sort items in ascending order"),                NULL, G_CALLBACK (thunar_standard_view_action_sort_ascending),  },
+    { THUNAR_STANDARD_VIEW_ACTION_SORT_DESCENDING,   "<Actions>/ThunarStandardView/sort-descending",       "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Descending"),           N_ ("Sort items in descending order"),               NULL, G_CALLBACK (thunar_standard_view_action_sort_descending), },
 };
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_standard_view_action_entries,G_N_ELEMENTS(thunar_standard_view_action_entries),id)
@@ -378,6 +399,58 @@ G_DEFINE_ABSTRACT_TYPE_WITH_CODE (ThunarStandardView, thunar_standard_view, GTK_
     G_IMPLEMENT_INTERFACE (THUNAR_TYPE_COMPONENT, thunar_standard_view_component_init)
     G_IMPLEMENT_INTERFACE (THUNAR_TYPE_VIEW, thunar_standard_view_view_init)
     G_ADD_PRIVATE (ThunarStandardView))
+
+
+static void
+thunar_standard_view_action_sort_ascending (ThunarStandardView *standard_view)
+{
+
+  if (standard_view->priv->sort_order == GTK_SORT_DESCENDING)
+    thunar_standard_view_set_sort_column (standard_view, standard_view->priv->sort_column);
+}
+
+static void
+thunar_standard_view_action_sort_descending (ThunarStandardView *standard_view)
+{
+  if (standard_view->priv->sort_order == GTK_SORT_ASCENDING)
+    thunar_standard_view_set_sort_column (standard_view, standard_view->priv->sort_column);
+}
+
+static void
+thunar_standard_view_set_sort_column (ThunarStandardView *standard_view, ThunarColumn column)
+{
+  GtkSortType order = standard_view->priv->sort_order;
+
+  if (standard_view->priv->sort_column == column)
+    order = (order == GTK_SORT_ASCENDING ? GTK_SORT_DESCENDING: GTK_SORT_ASCENDING);
+
+  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), column, order);
+}
+
+
+static void
+thunar_standard_view_action_sort_by_name (ThunarStandardView *standard_view)
+{
+  thunar_standard_view_set_sort_column (standard_view, THUNAR_COLUMN_NAME);
+}
+
+static void
+thunar_standard_view_action_sort_by_size (ThunarStandardView *standard_view)
+{
+  thunar_standard_view_set_sort_column (standard_view, THUNAR_COLUMN_SIZE);
+}
+
+static void
+thunar_standard_view_action_sort_by_type (ThunarStandardView *standard_view)
+{
+  thunar_standard_view_set_sort_column (standard_view, THUNAR_COLUMN_TYPE);
+}
+
+static void
+thunar_standard_view_action_sort_by_date (ThunarStandardView *standard_view)
+{
+  thunar_standard_view_set_sort_column (standard_view, THUNAR_COLUMN_DATE_MODIFIED);
+}
 
 
 
@@ -647,6 +720,17 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->accel_group = NULL;
 }
 
+static void thunar_standard_view_store_sort_column  (ThunarStandardView *standard_view)
+{
+  GtkSortType      sort_order;
+  gint             sort_column;
+
+  if (gtk_tree_sortable_get_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), &sort_column, &sort_order))
+    {
+      standard_view->priv->sort_column     = sort_column;
+      standard_view->priv->sort_order      = sort_order;
+    }
+}
 
 
 static GObject*
@@ -984,6 +1068,8 @@ thunar_standard_view_realize (GtkWidget *widget)
   /* apply the thumbnail frame preferences after icon_factory got initialized */
   exo_binding_new (G_OBJECT (standard_view->preferences), "misc-thumbnail-draw-frames", G_OBJECT (standard_view), "thumbnail-draw-frames");
 
+  /* store sort information to keep indicators in menu in sync */
+  thunar_standard_view_store_sort_column (standard_view);
 }
 
 
@@ -3124,6 +3210,8 @@ thunar_standard_view_sort_column_changed (GtkTreeSortable    *tree_sortable,
   /* determine the new sort column and sort order, and save them */
   if (gtk_tree_sortable_get_sort_column_id (tree_sortable, &sort_column, &sort_order))
     {
+      thunar_standard_view_store_sort_column (standard_view);
+
       if (standard_view->priv->directory_specific_settings)
         {
           const gchar *sort_column_name;
@@ -3797,9 +3885,32 @@ thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
                                         GtkMenu            *menu,
                                         GtkAccelGroup      *accel_group)
 {
+
+  GtkWidget  *item;
+  GtkWidget  *submenu;
+
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
-  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->append_menu_items) (standard_view, menu, accel_group);
+  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_ARRANGE_ITEMS_MENU), NULL, GTK_MENU_SHELL (menu));
+  submenu =  gtk_menu_new();
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_BY_NAME), G_OBJECT (standard_view),
+                                                   standard_view->priv->sort_column == THUNAR_COLUMN_NAME, GTK_MENU_SHELL (submenu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_BY_SIZE), G_OBJECT (standard_view),
+                                                   standard_view->priv->sort_column == THUNAR_COLUMN_SIZE, GTK_MENU_SHELL (submenu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_BY_TYPE), G_OBJECT (standard_view),
+                                                   standard_view->priv->sort_column == THUNAR_COLUMN_TYPE, GTK_MENU_SHELL (submenu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_BY_MTIME), G_OBJECT (standard_view),
+                                                   standard_view->priv->sort_column == THUNAR_COLUMN_DATE_MODIFIED, GTK_MENU_SHELL (submenu));
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_ASCENDING), G_OBJECT (standard_view),
+                                                   standard_view->priv->sort_order == GTK_SORT_ASCENDING, GTK_MENU_SHELL (submenu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_DESCENDING), G_OBJECT (standard_view),
+                                                   standard_view->priv->sort_order == GTK_SORT_DESCENDING, GTK_MENU_SHELL (submenu));
+  gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (submenu));
+  gtk_widget_show (item);
+
+  if (THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->append_menu_items != NULL)
+    (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->append_menu_items) (standard_view, menu, accel_group);
 }
 
 
@@ -3848,7 +3959,8 @@ thunar_standard_view_connect_accelerators (ThunarStandardView *standard_view)
                                                standard_view);
 
   /* as well append accelerators of derived widgets */
-  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->connect_accelerators) (standard_view, standard_view->accel_group);
+  if (THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->connect_accelerators != NULL)
+    (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->connect_accelerators) (standard_view, standard_view->accel_group);
 }
 
 
@@ -3874,7 +3986,8 @@ thunar_standard_view_disconnect_accelerators (ThunarStandardView *standard_view)
                                                G_N_ELEMENTS (thunar_standard_view_action_entries));
 
   /* as well disconnect accelerators of derived widgets */
-  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->disconnect_accelerators) (standard_view, standard_view->accel_group);
+  if (THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->disconnect_accelerators != NULL)
+    (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->disconnect_accelerators) (standard_view, standard_view->accel_group);
 
   /* and release the accel group */
   g_object_unref (standard_view->accel_group);

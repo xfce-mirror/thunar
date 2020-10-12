@@ -33,73 +33,57 @@
 
 
 
-static void         thunar_abstract_icon_view_style_set             (GtkWidget                    *widget,
-                                                                     GtkStyle                     *previous_style);
-static GList       *thunar_abstract_icon_view_get_selected_items    (ThunarStandardView           *standard_view);
-static void         thunar_abstract_icon_view_select_all            (ThunarStandardView           *standard_view);
-static void         thunar_abstract_icon_view_unselect_all          (ThunarStandardView           *standard_view);
-static void         thunar_abstract_icon_view_selection_invert      (ThunarStandardView           *standard_view);
-static void         thunar_abstract_icon_view_select_path           (ThunarStandardView           *standard_view,
-                                                                     GtkTreePath                  *path);
-static void         thunar_abstract_icon_view_set_cursor            (ThunarStandardView           *standard_view,
-                                                                     GtkTreePath                  *path,
-                                                                     gboolean                      start_editing);
-static void         thunar_abstract_icon_view_scroll_to_path        (ThunarStandardView           *standard_view,
-                                                                     GtkTreePath                  *path,
-                                                                     gboolean                      use_align,
-                                                                     gfloat                        row_align,
-                                                                     gfloat                        col_align);
-static GtkTreePath *thunar_abstract_icon_view_get_path_at_pos       (ThunarStandardView           *standard_view,
-                                                                     gint                          x,
-                                                                     gint                          y);
-static gboolean     thunar_abstract_icon_view_get_visible_range     (ThunarStandardView           *standard_view,
-                                                                     GtkTreePath                 **start_path,
-                                                                     GtkTreePath                 **end_path);
-static void         thunar_abstract_icon_view_highlight_path        (ThunarStandardView           *standard_view,
-                                                                     GtkTreePath                  *path);
-static void         thunar_abstract_icon_view_connect_accelerators  (ThunarStandardView           *standard_view,
-                                                                     GtkAccelGroup                *accel_group);
-static void         thunar_abstract_icon_view_disconnect_accelerators(ThunarStandardView          *standard_view,
-                                                                     GtkAccelGroup                *accel_group);
-static void         thunar_abstract_icon_view_append_menu_items     (ThunarStandardView           *standard_view,
-                                                                     GtkMenu                      *menu,
-                                                                     GtkAccelGroup                *accel_group);
-static void         thunar_abstract_icon_view_notify_model          (ExoIconView                  *view,
-                                                                     GParamSpec                   *pspec,
-                                                                     ThunarAbstractIconView       *abstract_icon_view);
-static gboolean     thunar_abstract_icon_view_button_press_event    (ExoIconView                  *view,
-                                                                     GdkEventButton               *event,
-                                                                     ThunarAbstractIconView       *abstract_icon_view);
-static gboolean     thunar_abstract_icon_view_button_release_event  (ExoIconView                  *view,
-                                                                     GdkEventButton               *event,
-                                                                     ThunarAbstractIconView       *abstract_icon_view);
-static gboolean     thunar_abstract_icon_view_draw                  (ExoIconView                  *view,
-                                                                     cairo_t                      *cr,
-                                                                     ThunarAbstractIconView       *abstract_icon_view);
-static gboolean     thunar_abstract_icon_view_key_press_event       (ExoIconView                  *view,
-                                                                     GdkEventKey                  *event,
-                                                                     ThunarAbstractIconView       *abstract_icon_view);
-static gboolean     thunar_abstract_icon_view_motion_notify_event   (ExoIconView                  *view,
-                                                                     GdkEventMotion               *event,
-                                                                     ThunarAbstractIconView       *abstract_icon_view);
-static void         thunar_abstract_icon_view_item_activated        (ExoIconView                  *view,
-                                                                     GtkTreePath                  *path,
-                                                                     ThunarAbstractIconView       *abstract_icon_view);
-static void         thunar_abstract_icon_view_sort_column_changed   (GtkTreeSortable              *sortable,
-                                                                     ThunarAbstractIconView       *abstract_icon_view);
-static void         thunar_abstract_icon_view_zoom_level_changed    (ThunarAbstractIconView       *abstract_icon_view);
-static void         thunar_abstract_icon_view_action_sort_by_name   (ThunarStandardView           *standard_view);
-static void         thunar_abstract_icon_view_action_sort_by_size   (ThunarStandardView           *standard_view);
-static void         thunar_abstract_icon_view_action_sort_by_type   (ThunarStandardView           *standard_view);
-static void         thunar_abstract_icon_view_action_sort_by_date   (ThunarStandardView           *standard_view);
-static void         thunar_abstract_icon_view_action_sort_ascending (ThunarStandardView           *standard_view);
-static void         thunar_abstract_icon_view_action_sort_descending(ThunarStandardView           *standard_view);
+static void         thunar_abstract_icon_view_style_set               (GtkWidget                    *widget,
+                                                                       GtkStyle                     *previous_style);
+static GList       *thunar_abstract_icon_view_get_selected_items      (ThunarStandardView           *standard_view);
+static void         thunar_abstract_icon_view_select_all              (ThunarStandardView           *standard_view);
+static void         thunar_abstract_icon_view_unselect_all            (ThunarStandardView           *standard_view);
+static void         thunar_abstract_icon_view_selection_invert        (ThunarStandardView           *standard_view);
+static void         thunar_abstract_icon_view_select_path             (ThunarStandardView           *standard_view,
+                                                                       GtkTreePath                  *path);
+static void         thunar_abstract_icon_view_set_cursor              (ThunarStandardView           *standard_view,
+                                                                       GtkTreePath                  *path,
+                                                                       gboolean                      start_editing);
+static void         thunar_abstract_icon_view_scroll_to_path          (ThunarStandardView           *standard_view,
+                                                                       GtkTreePath                  *path,
+                                                                       gboolean                      use_align,
+                                                                       gfloat                        row_align,
+                                                                       gfloat                        col_align);
+static GtkTreePath *thunar_abstract_icon_view_get_path_at_pos         (ThunarStandardView           *standard_view,
+                                                                       gint                          x,
+                                                                       gint                          y);
+static gboolean     thunar_abstract_icon_view_get_visible_range       (ThunarStandardView           *standard_view,
+                                                                       GtkTreePath                 **start_path,
+                                                                       GtkTreePath                 **end_path);
+static void         thunar_abstract_icon_view_highlight_path          (ThunarStandardView           *standard_view,
+                                                                       GtkTreePath                  *path);
+static void         thunar_abstract_icon_view_notify_model            (ExoIconView                  *view,
+                                                                       GParamSpec                   *pspec,
+                                                                       ThunarAbstractIconView       *abstract_icon_view);
+static gboolean     thunar_abstract_icon_view_button_press_event      (ExoIconView                  *view,
+                                                                       GdkEventButton               *event,
+                                                                       ThunarAbstractIconView       *abstract_icon_view);
+static gboolean     thunar_abstract_icon_view_button_release_event    (ExoIconView                  *view,
+                                                                       GdkEventButton               *event,
+                                                                       ThunarAbstractIconView       *abstract_icon_view);
+static gboolean     thunar_abstract_icon_view_draw                    (ExoIconView                  *view,
+                                                                       cairo_t                      *cr,
+                                                                       ThunarAbstractIconView       *abstract_icon_view);
+static gboolean     thunar_abstract_icon_view_key_press_event         (ExoIconView                  *view,
+                                                                       GdkEventKey                  *event,
+                                                                       ThunarAbstractIconView       *abstract_icon_view);
+static gboolean     thunar_abstract_icon_view_motion_notify_event     (ExoIconView                  *view,
+                                                                       GdkEventMotion               *event,
+                                                                       ThunarAbstractIconView       *abstract_icon_view);
+static void         thunar_abstract_icon_view_item_activated          (ExoIconView                  *view,
+                                                                       GtkTreePath                  *path,
+                                                                       ThunarAbstractIconView       *abstract_icon_view);
+static void         thunar_abstract_icon_view_zoom_level_changed      (ThunarAbstractIconView       *abstract_icon_view);
+
+
 
 struct _ThunarAbstractIconViewPrivate
 {
-  GtkSortType sort_order;
-  gint        sort_column;
-
   /* mouse gesture support */
   gint   gesture_start_x;
   gint   gesture_start_y;
@@ -111,21 +95,6 @@ struct _ThunarAbstractIconViewPrivate
 
   gboolean button_pressed;
 };
-
-
-static XfceGtkActionEntry thunar_abstract_icon_view_action_entries[] =
-{
-    { THUNAR_ABSTRACT_ICON_VIEW_ACTION_ARRANGE_ITEMS_MENU, "<Actions>/ThunarStandardView/arrange-items-menu",    "", XFCE_GTK_MENU_ITEM,       N_ ("Arran_ge Items"),        NULL,                                                NULL, G_CALLBACK (NULL),                                             },
-    { THUNAR_ABSTRACT_ICON_VIEW_ACTION_SORT_BY_NAME,       "<Actions>/ThunarStandardView/sort-by-name",          "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Name"),              N_ ("Keep items sorted by their name"),              NULL, G_CALLBACK (thunar_abstract_icon_view_action_sort_by_name),    },
-    { THUNAR_ABSTRACT_ICON_VIEW_ACTION_SORT_BY_SIZE,       "<Actions>/ThunarStandardView/sort-by-size",          "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Size"),              N_ ("Keep items sorted by their size"),              NULL, G_CALLBACK (thunar_abstract_icon_view_action_sort_by_size),    },
-    { THUNAR_ABSTRACT_ICON_VIEW_ACTION_SORT_BY_TYPE,       "<Actions>/ThunarStandardView/sort-by-type",          "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Type"),              N_ ("Keep items sorted by their type"),              NULL, G_CALLBACK (thunar_abstract_icon_view_action_sort_by_type),    },
-    { THUNAR_ABSTRACT_ICON_VIEW_ACTION_SORT_BY_MTIME,      "<Actions>/ThunarStandardView/sort-by-mtime",         "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("By Modification _Date"), N_ ("Keep items sorted by their modification date"), NULL, G_CALLBACK (thunar_abstract_icon_view_action_sort_by_date),    },
-    { THUNAR_ABSTRACT_ICON_VIEW_ACTION_SORT_ASCENDING,     "<Actions>/ThunarStandardView/sort-ascending",        "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Ascending"),            N_ ("Sort items in ascending order"),                NULL, G_CALLBACK (thunar_abstract_icon_view_action_sort_ascending),  },
-    { THUNAR_ABSTRACT_ICON_VIEW_ACTION_SORT_DESCENDING,    "<Actions>/ThunarStandardView/sort-descending",       "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Descending"),           N_ ("Sort items in descending order"),               NULL, G_CALLBACK (thunar_abstract_icon_view_action_sort_descending), },
-};
-
-#define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_abstract_icon_view_action_entries,G_N_ELEMENTS(thunar_abstract_icon_view_action_entries),id)
-
 
 
 G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (ThunarAbstractIconView, thunar_abstract_icon_view, THUNAR_TYPE_STANDARD_VIEW)
@@ -152,11 +121,6 @@ thunar_abstract_icon_view_class_init (ThunarAbstractIconViewClass *klass)
   thunarstandard_view_class->get_path_at_pos = thunar_abstract_icon_view_get_path_at_pos;
   thunarstandard_view_class->get_visible_range = thunar_abstract_icon_view_get_visible_range;
   thunarstandard_view_class->highlight_path = thunar_abstract_icon_view_highlight_path;
-  thunarstandard_view_class->append_menu_items = thunar_abstract_icon_view_append_menu_items;
-  thunarstandard_view_class->connect_accelerators = thunar_abstract_icon_view_connect_accelerators;
-  thunarstandard_view_class->disconnect_accelerators = thunar_abstract_icon_view_disconnect_accelerators;
-
-  xfce_gtk_translate_action_entries (thunar_abstract_icon_view_action_entries, G_N_ELEMENTS (thunar_abstract_icon_view_action_entries));
 
   /**
    * ThunarAbstractIconView:column-spacing:
@@ -224,11 +188,6 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer, TRUE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (abstract_icon_view)->name_renderer,
                                  "text", THUNAR_COLUMN_NAME);
-
-  /* we need to listen to sort column changes to sync the menu items */
-  g_signal_connect (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_icon_view)->model), "sort-column-changed",
-                    G_CALLBACK (thunar_abstract_icon_view_sort_column_changed), abstract_icon_view);
-  thunar_abstract_icon_view_sort_column_changed (GTK_TREE_SORTABLE (THUNAR_STANDARD_VIEW (abstract_icon_view)->model), abstract_icon_view);
 
   /* update the icon view on size-allocate events */
   /* TODO: issue not reproducible anymore as of gtk 3.24.18
@@ -371,94 +330,6 @@ thunar_abstract_icon_view_highlight_path (ThunarStandardView *standard_view,
 
 
 
-/**
- * thunar_abstract_icon_view_connect_accelerators:
- * @standard_view : a #ThunarStandardView
- * @accel_group : a #GtkAccelGroup to be used used for new menu items
- *
- * Connects all accelerators and corresponding default keys of this widget to the global accelerator list
- * The concrete implementation depends on the concrete widget which is implementing this view
- **/
-static void
-thunar_abstract_icon_view_connect_accelerators (ThunarStandardView *standard_view,
-                                                GtkAccelGroup      *accel_group)
-{
-  ThunarAbstractIconView *abstract_icon_view = THUNAR_ABSTRACT_ICON_VIEW (standard_view);
-
-  _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
-
-  xfce_gtk_accel_map_add_entries (thunar_abstract_icon_view_action_entries,
-                                  G_N_ELEMENTS (thunar_abstract_icon_view_action_entries));
-  xfce_gtk_accel_group_connect_action_entries (accel_group,
-                                               thunar_abstract_icon_view_action_entries,
-                                               G_N_ELEMENTS (thunar_abstract_icon_view_action_entries),
-                                               standard_view);
-}
-
-
-
-/**
- * thunar_abstract_icon_view_disconnect_accelerators:
- * @standard_view : a #ThunarStandardView
- * @accel_group : a #GtkAccelGroup to be used used for new menu items
- *
- * Disconnects all accelerators from the passed #GtkAccelGroup
- **/
-static void
-thunar_abstract_icon_view_disconnect_accelerators (ThunarStandardView *standard_view,
-                                                   GtkAccelGroup      *accel_group)
-{
-  /* Dont listen to the accel keys defined by the action entries any more */
-  xfce_gtk_accel_group_disconnect_action_entries (accel_group,
-                                                  thunar_abstract_icon_view_action_entries,
-                                                  G_N_ELEMENTS (thunar_abstract_icon_view_action_entries));
-}
-
-
-
-/**
- * thunar_abstract_icon_view_append_menu_items:
- * @standard_view : a #ThunarStandardView
- * @menu : the #GtkMenu to add the menu items
- * @accel_group : a #GtkAccelGroup to be used used for new menu items
- *
- * Appends widget-specific menu items to a #GtkMenu and connects them to the passed #GtkAccelGroup
- * Implements method 'append_menu_items' of #ThunarStandardView
- **/
-static void
-thunar_abstract_icon_view_append_menu_items (ThunarStandardView *standard_view,
-                                             GtkMenu            *menu,
-                                             GtkAccelGroup      *accel_group)
-{
-  ThunarAbstractIconView *abstract_icon_view = THUNAR_ABSTRACT_ICON_VIEW (standard_view);
-  GtkWidget              *submenu;
-  GtkWidget              *item;
-
-  _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
-
-  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_ABSTRACT_ICON_VIEW_ACTION_ARRANGE_ITEMS_MENU), NULL, GTK_MENU_SHELL (menu));
-  submenu =  gtk_menu_new();
-  if (accel_group != NULL)
-    gtk_menu_set_accel_group (GTK_MENU (submenu), accel_group);
-  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_ABSTRACT_ICON_VIEW_ACTION_SORT_BY_NAME), G_OBJECT (standard_view),
-                                                   abstract_icon_view->priv->sort_column == THUNAR_COLUMN_NAME, GTK_MENU_SHELL (submenu));
-  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_ABSTRACT_ICON_VIEW_ACTION_SORT_BY_SIZE), G_OBJECT (standard_view),
-                                                   abstract_icon_view->priv->sort_column == THUNAR_COLUMN_SIZE, GTK_MENU_SHELL (submenu));
-  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_ABSTRACT_ICON_VIEW_ACTION_SORT_BY_TYPE), G_OBJECT (standard_view),
-                                                   abstract_icon_view->priv->sort_column == THUNAR_COLUMN_TYPE, GTK_MENU_SHELL (submenu));
-  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_ABSTRACT_ICON_VIEW_ACTION_SORT_BY_MTIME), G_OBJECT (standard_view),
-                                                   abstract_icon_view->priv->sort_column == THUNAR_COLUMN_DATE_MODIFIED, GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
-  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_ABSTRACT_ICON_VIEW_ACTION_SORT_ASCENDING), G_OBJECT (standard_view),
-                                                   abstract_icon_view->priv->sort_order == GTK_SORT_ASCENDING, GTK_MENU_SHELL (submenu));
-  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_ABSTRACT_ICON_VIEW_ACTION_SORT_DESCENDING), G_OBJECT (standard_view),
-                                                   abstract_icon_view->priv->sort_order == GTK_SORT_DESCENDING, GTK_MENU_SHELL (submenu));
-  gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (submenu));
-  gtk_widget_show (item);
-}
-
-
-
 static const XfceGtkActionEntry*
 thunar_abstract_icon_view_gesture_action (ThunarAbstractIconView *abstract_icon_view, GtkTextDirection direction)
 {
@@ -492,78 +363,6 @@ thunar_abstract_icon_view_gesture_action (ThunarAbstractIconView *abstract_icon_
       return thunar_window_get_action_entry (THUNAR_WINDOW (window), THUNAR_WINDOW_ACTION_RELOAD);
     }
   return NULL;
-}
-
-
-
-static void
-thunar_abstract_icon_view_action_sort_by_name (ThunarStandardView *standard_view)
-{
-  ThunarAbstractIconView *abstract_icon_view = THUNAR_ABSTRACT_ICON_VIEW (standard_view);
-
-  _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
-
-  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), THUNAR_COLUMN_NAME, abstract_icon_view->priv->sort_order);
-}
-
-
-
-static void
-thunar_abstract_icon_view_action_sort_by_size (ThunarStandardView *standard_view)
-{
-  ThunarAbstractIconView *abstract_icon_view = THUNAR_ABSTRACT_ICON_VIEW (standard_view);
-
-  _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
-
-  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), THUNAR_COLUMN_SIZE, abstract_icon_view->priv->sort_order);
-}
-
-
-
-static void
-thunar_abstract_icon_view_action_sort_by_type (ThunarStandardView *standard_view)
-{
-  ThunarAbstractIconView *abstract_icon_view = THUNAR_ABSTRACT_ICON_VIEW (standard_view);
-
-  _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
-
-  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), THUNAR_COLUMN_TYPE, abstract_icon_view->priv->sort_order);
-}
-
-
-
-static void
-thunar_abstract_icon_view_action_sort_by_date (ThunarStandardView *standard_view)
-{
-  ThunarAbstractIconView *abstract_icon_view = THUNAR_ABSTRACT_ICON_VIEW (standard_view);
-
-  _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
-
-  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), THUNAR_COLUMN_DATE_MODIFIED, abstract_icon_view->priv->sort_order);
-}
-
-
-
-static void
-thunar_abstract_icon_view_action_sort_ascending (ThunarStandardView *standard_view)
-{
-  ThunarAbstractIconView *abstract_icon_view = THUNAR_ABSTRACT_ICON_VIEW (standard_view);
-
-  _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
-
-  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), abstract_icon_view->priv->sort_column, GTK_SORT_ASCENDING);
-}
-
-
-
-static void
-thunar_abstract_icon_view_action_sort_descending (ThunarStandardView *standard_view)
-{
-  ThunarAbstractIconView *abstract_icon_view = THUNAR_ABSTRACT_ICON_VIEW (standard_view);
-
-  _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
-
-  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), abstract_icon_view->priv->sort_column, GTK_SORT_DESCENDING);
 }
 
 
@@ -833,22 +632,6 @@ thunar_abstract_icon_view_item_activated (ExoIconView            *view,
 
   window = gtk_widget_get_toplevel (GTK_WIDGET (abstract_icon_view));
   thunar_launcher_activate_selected_files (thunar_window_get_launcher (THUNAR_WINDOW (window)), THUNAR_LAUNCHER_CHANGE_DIRECTORY, NULL);
-}
-
-
-
-static void
-thunar_abstract_icon_view_sort_column_changed (GtkTreeSortable        *sortable,
-                                               ThunarAbstractIconView *abstract_icon_view)
-{
-  GtkSortType order;
-  gint        column;
-
-  if (gtk_tree_sortable_get_sort_column_id (sortable, &column, &order))
-    {
-      abstract_icon_view->priv->sort_column = column;
-      abstract_icon_view->priv->sort_order = order;
-    }
 }
 
 
