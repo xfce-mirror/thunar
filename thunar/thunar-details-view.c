@@ -293,6 +293,9 @@ thunar_details_view_init (ThunarDetailsView *details_view)
       /* stay informed whenever the width of the column is changed */
       g_signal_connect (G_OBJECT (details_view->columns[column]), "notify::width", G_CALLBACK (thunar_details_view_notify_width), details_view);
 
+      /* update current sort info when column header is clicked */
+      g_signal_connect (G_OBJECT (details_view->columns[column]), "clicked", G_CALLBACK (thunar_details_view_column_clicked), details_view);
+
       /* name column gets special renderers */
       if (G_UNLIKELY (column == THUNAR_COLUMN_NAME))
         {
