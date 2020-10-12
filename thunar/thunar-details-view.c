@@ -116,8 +116,8 @@ static void         thunar_details_view_action_sort_by_name     (ThunarDetailsVi
 static void         thunar_details_view_action_sort_by_type     (ThunarDetailsView  *details_view);
 static void         thunar_details_view_action_sort_by_date     (ThunarDetailsView  *details_view);
 static void         thunar_details_view_action_sort_by_size     (ThunarDetailsView  *details_view);
-static void         thunar_details_view_action_sort_ascending     (ThunarDetailsView  *details_view);
-static void         thunar_details_view_action_sort_descending   (ThunarDetailsView  *details_view);
+static void         thunar_details_view_action_sort_ascending   (ThunarDetailsView  *details_view);
+static void         thunar_details_view_action_sort_descending  (ThunarDetailsView  *details_view);
 static void         thunar_set_sort_column                      (ThunarDetailsView  *details_view, 
                                                                  ThunarColumn column);
 static void         thunar_details_view_toggle_sort_order       (ThunarDetailsView  *details_view);
@@ -148,6 +148,12 @@ struct _ThunarDetailsView
 
   /* event source id for thunar_details_view_zoom_level_changed_reload_fixed_columns */
   guint idle_id;
+
+  /* current sort column ID */
+  ThunarColumn      sort_column;
+
+  /* current sort_order (GTK_SORT_ASCENDING || GTK_SORT_DESCENDING) */
+  GtkSortType       sort_order;
 };
 
 
