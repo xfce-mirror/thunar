@@ -639,8 +639,6 @@ thunar_details_view_notify_model (GtkTreeView       *tree_view,
                                   GParamSpec        *pspec,
                                   ThunarDetailsView *details_view)
 {
-  
-
   GtkSortType order;
   gint        col;
 
