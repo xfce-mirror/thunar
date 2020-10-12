@@ -1014,10 +1014,37 @@ thunar_details_view_append_menu_items (ThunarStandardView *standard_view,
                                        GtkAccelGroup      *accel_group)
 {
   ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (standard_view);
+  GtkWidget         *submenu;
+  GtkWidget         *item;
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS), G_OBJECT (details_view), GTK_MENU_SHELL (menu));
+
+  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_ARRANGE_ITEMS_MENU), NULL, GTK_MENU_SHELL (menu));
+  submenu =  gtk_menu_new();
+  if (accel_group != NULL)
+    gtk_menu_set_accel_group (GTK_MENU (submenu), accel_group);
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_SORT_BY_NAME), G_OBJECT (details_view),
+                                                   details_view->sort_column == THUNAR_COLUMN_NAME, GTK_MENU_SHELL (submenu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_SORT_BY_SIZE), G_OBJECT (details_view),
+                                                   details_view->sort_column == THUNAR_COLUMN_SIZE, GTK_MENU_SHELL (submenu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_SORT_BY_TYPE), G_OBJECT (details_view),
+                                                   details_view->sort_column == THUNAR_COLUMN_TYPE, GTK_MENU_SHELL (submenu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_SORT_BY_MTIME), G_OBJECT (details_view),
+                                                   details_view->sort_column == THUNAR_COLUMN_DATE_MODIFIED, GTK_MENU_SHELL (submenu));
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_SORT_ASCENDING), G_OBJECT (standard_view),
+                                                   details_view->sort_order == GTK_SORT_ASCENDING, GTK_MENU_SHELL (submenu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_SORT_DESCENDING), G_OBJECT (standard_view),
+                                                   details_view->sort_order == GTK_SORT_DESCENDING, GTK_MENU_SHELL (submenu));
+  gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (submenu));
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
+  xfce_gtk_menu_item_new_from_action_entry        (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_TOGGLE_SORT_ORDER), G_OBJECT (details_view),
+                                                   GTK_MENU_SHELL (submenu));
+  xfce_gtk_menu_item_new_from_action_entry        (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_TOGGLE_SORT_COLUMN), G_OBJECT (details_view),
+                                                   GTK_MENU_SHELL (submenu));
+  gtk_widget_show (item);
 }
 
 
