@@ -276,6 +276,7 @@ static void                 thunar_standard_view_action_sort_ascending          
 static void                 thunar_standard_view_action_sort_descending            (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_set_sort_column                   (ThunarStandardView       *standard_view, 
                                                                                     ThunarColumn column);
+static void                 thunar_standard_view_toggle_sort_order                 (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_store_sort_column                 (ThunarStandardView       *standard_view);
 
 struct _ThunarStandardViewPrivate
@@ -363,6 +364,7 @@ static XfceGtkActionEntry thunar_standard_view_action_entries[] =
     { THUNAR_STANDARD_VIEW_ACTION_SELECT_BY_PATTERN, "<Actions>/ThunarStandardView/select-by-pattern",  "<Primary>s", XFCE_GTK_MENU_ITEM, N_ ("Select _by Pattern..."), N_ ("Select all files that match a certain pattern"),     NULL, G_CALLBACK (thunar_standard_view_select_by_pattern), },
     { THUNAR_STANDARD_VIEW_ACTION_INVERT_SELECTION,  "<Actions>/ThunarStandardView/invert-selection",   "",           XFCE_GTK_MENU_ITEM, N_ ("_Invert Selection"),     N_ ("Select all files but not those currently selected"), NULL, G_CALLBACK (thunar_standard_view_selection_invert), },
     { THUNAR_STANDARD_VIEW_ACTION_ARRANGE_ITEMS_MENU,"<Actions>/ThunarStandardView/arrange-items-menu",    "", XFCE_GTK_MENU_ITEM,       N_ ("Arran_ge Items"),        NULL,                                                NULL, G_CALLBACK (NULL),                                             },
+    { THUNAR_STANDARD_VIEW_ACTION_SORT_ORDER_TOGGLE, "<Actions>/ThunarStandardView/toggle-sort-order", "", XFCE_GTK_MENU_ITEM , N_ ("Toggle sort direction"), N_("Toggle Ascending/Descending sort order"), NULL, G_CALLBACK (thunar_standard_view_toggle_sort_order), },
     { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_NAME,      "<Actions>/ThunarStandardView/sort-by-name",          "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Name"),              N_ ("Keep items sorted by their name"),              NULL, G_CALLBACK (thunar_standard_view_action_sort_by_name),    },
     { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_SIZE,      "<Actions>/ThunarStandardView/sort-by-size",          "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Size"),              N_ ("Keep items sorted by their size"),              NULL, G_CALLBACK (thunar_standard_view_action_sort_by_size),    },
     { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_TYPE,      "<Actions>/ThunarStandardView/sort-by-type",          "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Type"),              N_ ("Keep items sorted by their type"),              NULL, G_CALLBACK (thunar_standard_view_action_sort_by_type),    },
@@ -452,7 +454,11 @@ thunar_standard_view_action_sort_by_date (ThunarStandardView *standard_view)
   thunar_standard_view_set_sort_column (standard_view, THUNAR_COLUMN_DATE_MODIFIED);
 }
 
-
+static void
+thunar_standard_view_toggle_sort_order (ThunarStandardView *standard_view)
+{
+  thunar_standard_view_set_sort_column (standard_view, standard_view->priv->sort_column);
+}
 
 static void
 thunar_standard_view_class_init (ThunarStandardViewClass *klass)
@@ -3906,6 +3912,8 @@ thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
                                                    standard_view->priv->sort_order == GTK_SORT_ASCENDING, GTK_MENU_SHELL (submenu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_DESCENDING), G_OBJECT (standard_view),
                                                    standard_view->priv->sort_order == GTK_SORT_DESCENDING, GTK_MENU_SHELL (submenu));
+  xfce_gtk_menu_item_new_from_action_entry        (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_ORDER_TOGGLE), G_OBJECT (standard_view),
+                                                   GTK_MENU_SHELL (submenu));
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (submenu));
   gtk_widget_show (item);
 
