@@ -329,6 +329,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
 
       /* append the tree view column to the tree view */
       gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), details_view->columns[column]);
+
     }
 
   /* configure the tree selection */
@@ -353,6 +354,10 @@ thunar_details_view_init (ThunarDetailsView *details_view)
       for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; ++column)
         gtk_tree_view_column_set_fixed_width (details_view->columns[column], thunar_column_model_get_column_width (details_view->column_model, column));
     }
+
+
+  
+
 
   /* release the shared text renderers */
   g_object_unref (G_OBJECT (right_aligned_renderer));
@@ -639,10 +644,21 @@ thunar_details_view_notify_model (GtkTreeView       *tree_view,
                                   GParamSpec        *pspec,
                                   ThunarDetailsView *details_view)
 {
+  
+
+  GtkSortType order;
+  gint        col;
+
   /* We need to set the search column here, as GtkTreeView resets it
    * whenever a new model is set.
    */
   gtk_tree_view_set_search_column (tree_view, THUNAR_COLUMN_NAME);
+
+  if (gtk_tree_sortable_get_sort_column_id (GTK_TREE_SORTABLE (THUNAR_STANDARD_VIEW (details_view)->model), &col, &order))
+    {
+      details_view->sort_column = col;
+      details_view->sort_order  = order;
+    }
 }
 
 
@@ -901,6 +917,12 @@ thunar_details_view_columns_changed (ThunarColumnModel *column_model,
     {
       /* apply the new visibility for the tree view column */
       gtk_tree_view_column_set_visible (details_view->columns[column], thunar_column_model_get_column_visible (column_model, column));
+
+      if (gtk_tree_view_column_get_sort_indicator (details_view->columns[column]))
+        {
+          details_view->sort_column = column;
+          details_view->sort_order  = gtk_tree_view_column_get_sort_order (details_view->columns[column]);
+        }
 
       /* change the order of the column relative to its predecessor */
       if (G_LIKELY (column > 0))
