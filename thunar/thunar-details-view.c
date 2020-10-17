@@ -118,7 +118,7 @@ static void         thunar_details_view_action_sort_by_date     (ThunarDetailsVi
 static void         thunar_details_view_action_sort_by_size     (ThunarDetailsView  *details_view);
 static void         thunar_details_view_action_sort_ascending   (ThunarDetailsView  *details_view);
 static void         thunar_details_view_action_sort_descending  (ThunarDetailsView  *details_view);
-static void         thunar_set_sort_column                      (ThunarDetailsView  *details_view, 
+static void         thunar_details_view_set_sort_column         (ThunarDetailsView  *details_view, 
                                                                  ThunarColumn column);
 static void         thunar_details_view_toggle_sort_order       (ThunarDetailsView  *details_view);
 static void         thunar_details_view_toggle_sort_column      (ThunarDetailsView  *details_view);
@@ -1142,25 +1142,25 @@ thunar_details_view_set_fixed_columns (ThunarDetailsView *details_view,
 static void
 thunar_details_view_action_sort_by_name (ThunarDetailsView  *details_view)
 {
-  thunar_set_sort_column (details_view, THUNAR_COLUMN_NAME);
+  thunar_details_view_set_sort_columnw, THUNAR_COLUMN_NAME);
 }
 
 static void
 thunar_details_view_action_sort_by_size (ThunarDetailsView  *details_view)
 {
-  thunar_set_sort_column (details_view, THUNAR_COLUMN_SIZE);
+  thunar_details_view_set_sort_columnw, THUNAR_COLUMN_SIZE);
 }
 
 static void
 thunar_details_view_action_sort_by_type (ThunarDetailsView  *details_view)
 {
-  thunar_set_sort_column (details_view, THUNAR_COLUMN_TYPE);
+  thunar_details_view_set_sort_columnw, THUNAR_COLUMN_TYPE);
 }
 
 static void
 thunar_details_view_action_sort_by_date (ThunarDetailsView  *details_view)
 {
-  thunar_set_sort_column (details_view, THUNAR_COLUMN_DATE_MODIFIED);
+  thunar_details_view_set_sort_columnw, THUNAR_COLUMN_DATE_MODIFIED);
 }
 
 static void
@@ -1168,7 +1168,7 @@ thunar_details_view_action_sort_ascending (ThunarDetailsView  *details_view)
 {
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
   if (details_view->sort_order == GTK_SORT_DESCENDING)
-    thunar_set_sort_column (details_view, details_view->sort_column);
+    thunar_details_view_set_sort_columnw, details_view->sort_column);
 }
 
 static void
@@ -1176,12 +1176,12 @@ thunar_details_view_action_sort_descending (ThunarDetailsView  *details_view)
 {
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
   if (details_view->sort_order == GTK_SORT_ASCENDING)
-    thunar_set_sort_column (details_view, details_view->sort_column);
+    thunar_details_view_set_sort_columnw, details_view->sort_column);
 }
 
 /* send a click column to update the sort and trigger the "clicked" event */
 static void
-thunar_set_sort_column (ThunarDetailsView  *details_view, ThunarColumn column)
+thunar_details_view_set_sort_columnlsView  *details_view, ThunarColumn column)
 {
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
   _thunar_return_if_fail (gtk_tree_view_column_get_clickable (details_view->columns[column]));
@@ -1203,7 +1203,7 @@ thunar_details_view_toggle_sort_column   (ThunarDetailsView      *details_view)
 static void
 thunar_details_view_toggle_sort_order   (ThunarDetailsView      *details_view)
 {
-  thunar_set_sort_column(details_view, details_view->sort_column);
+  thunar_details_view_set_sort_column, details_view->sort_column);
 }
 
 static void
