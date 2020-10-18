@@ -503,8 +503,8 @@ thunar_abstract_icon_view_gesture_action (ThunarAbstractIconView *abstract_icon_
 
 
 static void
-thunar_abstract_icon_view_set_sort_column (ThunarStandardView *standard_view, 
-                                    ThunarColumn column)
+thunar_abstract_icon_view_set_sort_column (ThunarStandardView *standard_view,
+                                           ThunarColumn column)
 {
   ThunarAbstractIconView *abstract_icon_view = THUNAR_ABSTRACT_ICON_VIEW (standard_view);
   GtkSortType             neworder           = abstract_icon_view->priv->sort_order;
@@ -591,7 +591,6 @@ thunar_abstract_icon_view_action_sort_by_previous (ThunarStandardView *standard_
     prevsort = (prevsort == THUNAR_COLUMN_NAME) ? THUNAR_COLUMN_DATE_MODIFIED : THUNAR_COLUMN_NAME;
 
   thunar_abstract_icon_view_set_sort_column (standard_view, prevsort);
-  // gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), prevsort, abstract_icon_view->priv->sort_order);
 }
 
 static void
