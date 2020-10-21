@@ -110,24 +110,14 @@ static void         thunar_details_view_disconnect_accelerators (ThunarStandardV
 static void         thunar_details_view_append_menu_items       (ThunarStandardView     *standard_view,
                                                                  GtkMenu                *menu,
                                                                  GtkAccelGroup          *accel_group);
-static void         thunar_details_view_column_clicked          (GtkTreeViewColumn *tree_column,
-                                                                 ThunarDetailsView  *details_view);
-static void         thunar_details_view_action_sort_by_name     (ThunarDetailsView  *details_view);
-static void         thunar_details_view_action_sort_by_type     (ThunarDetailsView  *details_view);
-static void         thunar_details_view_action_sort_by_date     (ThunarDetailsView  *details_view);
-static void         thunar_details_view_action_sort_by_size     (ThunarDetailsView  *details_view);
-static void         thunar_details_view_action_sort_ascending   (ThunarDetailsView  *details_view);
-static void         thunar_details_view_action_sort_descending  (ThunarDetailsView  *details_view);
-static void         thunar_details_view_action_sort_by_previous (ThunarDetailsView  *details_view);
-static void         thunar_details_view_set_sort_column         (ThunarDetailsView  *details_view, 
-                                                                 ThunarColumn column);
-static void         thunar_details_view_toggle_sort_order       (ThunarDetailsView  *details_view);
 
 
 struct _ThunarDetailsViewClass
 {
   ThunarStandardViewClass __parent__;
 };
+
+
 
 struct _ThunarDetailsView
 {
@@ -148,14 +138,6 @@ struct _ThunarDetailsView
   /* event source id for thunar_details_view_zoom_level_changed_reload_fixed_columns */
   guint idle_id;
 
-  /* current sort column ID */
-  ThunarColumn      sort_column;
-
-  /* previous sort column ID */
-  ThunarColumn      previous_column;
-
-  /* current sort_order (GTK_SORT_ASCENDING || GTK_SORT_DESCENDING) */
-  GtkSortType       sort_order;
 };
 
 
@@ -163,15 +145,6 @@ struct _ThunarDetailsView
 static XfceGtkActionEntry thunar_details_view_action_entries[] =
 {
     { THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS,  "<Actions>/ThunarStandardView/configure-columns", "", XFCE_GTK_MENU_ITEM , N_ ("Configure _Columns..."), N_("Configure the columns in the detailed list view"), NULL, G_CALLBACK (thunar_show_column_editor), },
-    { THUNAR_DETAILS_VIEW_ACTION_SORT_BY_PREVIOUS,   "<Actions>/ThunarStandardView/sort-by-previous",  "", XFCE_GTK_MENU_ITEM , N_ ("By _Previous Attribute"),N_("Toggle to last used attribute"),                   NULL, G_CALLBACK (thunar_details_view_action_sort_by_previous),},
-    { THUNAR_DETAILS_VIEW_ACTION_TOGGLE_SORT_ORDER,  "<Actions>/ThunarStandardView/toggle-sort-order", "", XFCE_GTK_MENU_ITEM , N_ ("Toggle sort direction"), N_("Toggle Ascending/Descending sort order"), NULL, G_CALLBACK (thunar_details_view_toggle_sort_order), },
-    { THUNAR_DETAILS_VIEW_ACTION_ARRANGE_ITEMS_MENU, "<Actions>/ThunarStandardView/arrange-items-menu",    "", XFCE_GTK_MENU_ITEM,       N_ ("Arran_ge Items"),        NULL,                                                NULL, G_CALLBACK (NULL),                                             },
-    { THUNAR_DETAILS_VIEW_ACTION_SORT_BY_NAME,       "<Actions>/ThunarStandardView/sort-by-name",          "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Name"),              N_ ("Keep items sorted by their name"),              NULL, G_CALLBACK (thunar_details_view_action_sort_by_name),    },
-    { THUNAR_DETAILS_VIEW_ACTION_SORT_BY_SIZE,       "<Actions>/ThunarStandardView/sort-by-size",          "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Size"),              N_ ("Keep items sorted by their size"),              NULL, G_CALLBACK (thunar_details_view_action_sort_by_size),    },
-    { THUNAR_DETAILS_VIEW_ACTION_SORT_BY_TYPE,       "<Actions>/ThunarStandardView/sort-by-type",          "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Type"),              N_ ("Keep items sorted by their type"),              NULL, G_CALLBACK (thunar_details_view_action_sort_by_type),    },
-    { THUNAR_DETAILS_VIEW_ACTION_SORT_BY_MTIME,      "<Actions>/ThunarStandardView/sort-by-mtime",         "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("By Modification _Date"), N_ ("Keep items sorted by their modification date"), NULL, G_CALLBACK (thunar_details_view_action_sort_by_date),    },
-    { THUNAR_DETAILS_VIEW_ACTION_SORT_ASCENDING,     "<Actions>/ThunarStandardView/sort-ascending",        "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Ascending"),            N_ ("Sort items in ascending order"),                NULL, G_CALLBACK (thunar_details_view_action_sort_ascending),  },
-    { THUNAR_DETAILS_VIEW_ACTION_SORT_DESCENDING,    "<Actions>/ThunarStandardView/sort-descending",       "", XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Descending"),           N_ ("Sort items in descending order"),               NULL, G_CALLBACK (thunar_details_view_action_sort_descending), },
 };
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_details_view_action_entries,G_N_ELEMENTS(thunar_details_view_action_entries),id)
@@ -294,9 +267,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
 
       /* stay informed whenever the width of the column is changed */
       g_signal_connect (G_OBJECT (details_view->columns[column]), "notify::width", G_CALLBACK (thunar_details_view_notify_width), details_view);
-
-      /* update current sort info when column header is clicked */
-      g_signal_connect (G_OBJECT (details_view->columns[column]), "clicked", G_CALLBACK (thunar_details_view_column_clicked), details_view);
 
       /* name column gets special renderers */
       if (G_UNLIKELY (column == THUNAR_COLUMN_NAME))
@@ -641,19 +611,10 @@ thunar_details_view_notify_model (GtkTreeView       *tree_view,
                                   GParamSpec        *pspec,
                                   ThunarDetailsView *details_view)
 {
-  GtkSortType order;
-  gint        col;
-
   /* We need to set the search column here, as GtkTreeView resets it
    * whenever a new model is set.
    */
   gtk_tree_view_set_search_column (tree_view, THUNAR_COLUMN_NAME);
-  
-  if (gtk_tree_sortable_get_sort_column_id (GTK_TREE_SORTABLE (THUNAR_STANDARD_VIEW (details_view)->model), &col, &order))
-    {
-      details_view->sort_column = col;
-      details_view->sort_order  = order;
-    }
 }
 
 
@@ -1028,36 +989,10 @@ thunar_details_view_append_menu_items (ThunarStandardView *standard_view,
                                        GtkAccelGroup      *accel_group)
 {
   ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (standard_view);
-  GtkWidget         *submenu;
-  GtkWidget         *item;
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_CONFIGURE_COLUMNS), G_OBJECT (details_view), GTK_MENU_SHELL (menu));
-
-  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_ARRANGE_ITEMS_MENU), NULL, GTK_MENU_SHELL (menu));
-  submenu =  gtk_menu_new();
-  if (accel_group != NULL)
-    gtk_menu_set_accel_group (GTK_MENU (submenu), accel_group);
-  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_SORT_BY_NAME), G_OBJECT (details_view),
-                                                   details_view->sort_column == THUNAR_COLUMN_NAME, GTK_MENU_SHELL (submenu));
-  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_SORT_BY_SIZE), G_OBJECT (details_view),
-                                                   details_view->sort_column == THUNAR_COLUMN_SIZE, GTK_MENU_SHELL (submenu));
-  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_SORT_BY_TYPE), G_OBJECT (details_view),
-                                                   details_view->sort_column == THUNAR_COLUMN_TYPE, GTK_MENU_SHELL (submenu));
-  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_SORT_BY_MTIME), G_OBJECT (details_view),
-                                                   details_view->sort_column == THUNAR_COLUMN_DATE_MODIFIED, GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_item_new_from_action_entry        (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_SORT_BY_PREVIOUS), G_OBJECT (details_view),
-                                                   GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
-  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_SORT_ASCENDING), G_OBJECT (standard_view),
-                                                   details_view->sort_order == GTK_SORT_ASCENDING, GTK_MENU_SHELL (submenu));
-  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_SORT_DESCENDING), G_OBJECT (standard_view),
-                                                   details_view->sort_order == GTK_SORT_DESCENDING, GTK_MENU_SHELL (submenu));
-  xfce_gtk_menu_item_new_from_action_entry        (get_action_entry (THUNAR_DETAILS_VIEW_ACTION_TOGGLE_SORT_ORDER), G_OBJECT (details_view),
-                                                   GTK_MENU_SHELL (submenu));
-  gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (submenu));
-  gtk_widget_show (item);
 }
 
 
@@ -1138,95 +1073,4 @@ thunar_details_view_set_fixed_columns (ThunarDetailsView *details_view,
       /* notify listeners */
       g_object_notify (G_OBJECT (details_view), "fixed-columns");
     }
-}
-
-static void
-thunar_details_view_action_sort_by_name (ThunarDetailsView  *details_view)
-{
-  thunar_details_view_set_sort_column (details_view, THUNAR_COLUMN_NAME);
-}
-
-static void
-thunar_details_view_action_sort_by_size (ThunarDetailsView  *details_view)
-{
-  thunar_details_view_set_sort_column (details_view, THUNAR_COLUMN_SIZE);
-}
-
-static void
-thunar_details_view_action_sort_by_type (ThunarDetailsView  *details_view)
-{
-  thunar_details_view_set_sort_column (details_view, THUNAR_COLUMN_TYPE);
-}
-
-static void
-thunar_details_view_action_sort_by_date (ThunarDetailsView  *details_view)
-{
-  thunar_details_view_set_sort_column (details_view, THUNAR_COLUMN_DATE_MODIFIED);
-}
-
-static void
-thunar_details_view_action_sort_ascending (ThunarDetailsView  *details_view)
-{
-  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
-  if (details_view->sort_order == GTK_SORT_DESCENDING)
-    thunar_details_view_set_sort_column (details_view, details_view->sort_column);
-}
-
-static void
-thunar_details_view_action_sort_descending (ThunarDetailsView  *details_view)
-{
-  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
-  if (details_view->sort_order == GTK_SORT_ASCENDING)
-    thunar_details_view_set_sort_column (details_view, details_view->sort_column);
-}
-
-/* send a click column to update the sort and trigger the "clicked" event */
-static void
-thunar_details_view_set_sort_column (ThunarDetailsView  *details_view, ThunarColumn column)
-{
-  GtkSortType neworder = details_view->sort_order;
-
-  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
-
-  if (details_view->sort_column == column)
-    neworder = (neworder == GTK_SORT_ASCENDING ? GTK_SORT_DESCENDING: GTK_SORT_ASCENDING);
-
-  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (THUNAR_STANDARD_VIEW (details_view)->model), column, neworder);
-  thunar_details_view_column_clicked (details_view->columns[column], details_view);
-}
-
-/* Toggle the current sort Ascending/Descending */
-static void
-thunar_details_view_toggle_sort_order   (ThunarDetailsView      *details_view)
-{
-  thunar_details_view_set_sort_column(details_view, details_view->sort_column);
-}
-
-static void
-thunar_details_view_column_clicked (GtkTreeViewColumn *tree_column, ThunarDetailsView  *details_view)
-{
-  GtkSortType order;
-  gint        column;
-
-  if (gtk_tree_sortable_get_sort_column_id (GTK_TREE_SORTABLE (THUNAR_STANDARD_VIEW (details_view)->model), &column, &order))
-    {
-      details_view->previous_column = details_view->sort_column;
-      details_view->sort_column     = column;
-      details_view->sort_order      = order;
-    }
-}
-
-static void
-thunar_details_view_action_sort_by_previous (ThunarDetailsView  *details_view)
-{
-  ThunarColumn prevsort;
-
-  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
-
-  prevsort = details_view->previous_column;
-
-  if (prevsort == details_view->sort_column)
-    prevsort = (prevsort == THUNAR_COLUMN_NAME) ? THUNAR_COLUMN_DATE_MODIFIED : THUNAR_COLUMN_NAME;
-
-  thunar_details_view_set_sort_column (details_view, prevsort);
 }

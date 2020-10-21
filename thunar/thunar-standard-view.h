@@ -46,8 +46,6 @@ typedef enum
   THUNAR_STANDARD_VIEW_ACTION_SELECT_ALL_FILES,
   THUNAR_STANDARD_VIEW_ACTION_SELECT_BY_PATTERN,
   THUNAR_STANDARD_VIEW_ACTION_INVERT_SELECTION,
-  // THUNAR_DETAILS_VIEW_ACTION_TOGGLE_SORT_ORDER,
-  // THUNAR_DETAILS_VIEW_ACTION_TOGGLE_SORT_COLUMN,
   THUNAR_STANDARD_VIEW_ACTION_ARRANGE_ITEMS_MENU,
   THUNAR_STANDARD_VIEW_ACTION_SORT_BY_NAME,
   THUNAR_STANDARD_VIEW_ACTION_SORT_BY_SIZE,
@@ -55,7 +53,7 @@ typedef enum
   THUNAR_STANDARD_VIEW_ACTION_SORT_BY_MTIME,
   THUNAR_STANDARD_VIEW_ACTION_SORT_ASCENDING,
   THUNAR_STANDARD_VIEW_ACTION_SORT_DESCENDING,
-
+  THUNAR_STANDARD_VIEW_ACTION_SORT_ORDER_TOGGLE,
 } ThunarStandardViewAction;
 
 struct _ThunarStandardViewClass
@@ -136,13 +134,6 @@ struct _ThunarStandardViewClass
    * case of ThunarIconView, this is "last-icon-view-zoom-level").
    */
   const gchar *zoom_level_property_name;
-
-  void         (*action_sort_by_name)      (ThunarStandardView  *standard_view);
-  void         (*action_sort_by_size)      (ThunarStandardView  *standard_view);
-  void         (*action_sort_by_type)      (ThunarStandardView  *standard_view);
-  void         (*action_sort_by_date)      (ThunarStandardView  *standard_view);
-  void         (*action_sort_ascending)    (ThunarStandardView  *standard_view);
-  void         (*action_sort_descending)   (ThunarStandardView  *standard_view);
 };
 
 struct _ThunarStandardView
@@ -183,12 +174,7 @@ void           thunar_standard_view_append_menu_item      (ThunarStandardView   
 void           _thunar_standard_view_open_on_middle_click (ThunarStandardView       *standard_view,
                                                            GtkTreePath              *tree_path,
                                                            guint                     event_state);
-void           thunar_standard_view_action_sort_by_name   (ThunarStandardView           *standard_view);
-void           thunar_standard_view_action_sort_by_size   (ThunarStandardView           *standard_view);
-void           thunar_standard_view_action_sort_by_type   (ThunarStandardView           *standard_view);
-void           thunar_standard_view_action_sort_by_date   (ThunarStandardView           *standard_view);
-void           thunar_standard_view_action_sort_ascending (ThunarStandardView           *standard_view);
-void           thunar_standard_view_action_sort_descending(ThunarStandardView           *standard_view);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_STANDARD_VIEW_H__ */
