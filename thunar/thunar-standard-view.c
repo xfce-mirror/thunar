@@ -3921,8 +3921,8 @@ thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), GTK_WIDGET (submenu));
   gtk_widget_show (item);
 
-  _thunar_return_if_fail (THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->append_menu_items != NULL);
-  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->append_menu_items) (standard_view, menu, accel_group);
+  if (THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->append_menu_items != NULL)
+    (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->append_menu_items) (standard_view, menu, accel_group);
 }
 
 
@@ -3971,8 +3971,8 @@ thunar_standard_view_connect_accelerators (ThunarStandardView *standard_view)
                                                standard_view);
 
   /* as well append accelerators of derived widgets */
-  _thunar_return_if_fail (THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->connect_accelerators != NULL);
-  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->connect_accelerators) (standard_view, standard_view->accel_group);
+  if (THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->connect_accelerators != NULL)
+    (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->connect_accelerators) (standard_view, standard_view->accel_group);
 }
 
 
@@ -3998,8 +3998,8 @@ thunar_standard_view_disconnect_accelerators (ThunarStandardView *standard_view)
                                                G_N_ELEMENTS (thunar_standard_view_action_entries));
 
   /* as well disconnect accelerators of derived widgets */
-  _thunar_return_if_fail (THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->disconnect_accelerators != NULL);
-  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->disconnect_accelerators) (standard_view, standard_view->accel_group);
+  if (THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->disconnect_accelerators != NULL)
+    (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->disconnect_accelerators) (standard_view, standard_view->accel_group);
 
   /* and release the accel group */
   g_object_unref (standard_view->accel_group);
