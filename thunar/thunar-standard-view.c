@@ -3901,7 +3901,6 @@ thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
-
   item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_ARRANGE_ITEMS_MENU), NULL, GTK_MENU_SHELL (menu));
   submenu =  gtk_menu_new();
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_BY_NAME), G_OBJECT (standard_view),
@@ -3946,7 +3945,6 @@ thunar_standard_view_append_menu_item (ThunarStandardView      *standard_view,
 
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (action), G_OBJECT (standard_view), GTK_MENU_SHELL (menu));
 }
-
 
 
 

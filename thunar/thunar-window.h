@@ -90,7 +90,7 @@ typedef enum
   THUNAR_WINDOW_ACTION_ABOUT,
   THUNAR_WINDOW_ACTION_SWITCH_PREV_TAB,
   THUNAR_WINDOW_ACTION_SWITCH_NEXT_TAB,
-  
+
 } ThunarWindowAction;
 
 GType                     thunar_window_get_type                            (void) G_GNUC_CONST;
