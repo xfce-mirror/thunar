@@ -330,39 +330,6 @@ thunar_abstract_icon_view_highlight_path (ThunarStandardView *standard_view,
 
 
 
-/**
- * thunar_abstract_icon_view_connect_accelerators:
- * @standard_view : a #ThunarStandardView
- * @accel_group : a #GtkAccelGroup to be used used for new menu items
- *
- * Connects all accelerators and corresponding default keys of this widget to the global accelerator list
- * The concrete implementation depends on the concrete widget which is implementing this view
- **/
-
-
-
-/**
- * thunar_abstract_icon_view_disconnect_accelerators:
- * @standard_view : a #ThunarStandardView
- * @accel_group : a #GtkAccelGroup to be used used for new menu items
- *
- * Disconnects all accelerators from the passed #GtkAccelGroup
- **/
-
-
-
-/**
- * thunar_abstract_icon_view_append_menu_items:
- * @standard_view : a #ThunarStandardView
- * @menu : the #GtkMenu to add the menu items
- * @accel_group : a #GtkAccelGroup to be used used for new menu items
- *
- * Appends widget-specific menu items to a #GtkMenu and connects them to the passed #GtkAccelGroup
- * Implements method 'append_menu_items' of #ThunarStandardView
- **/
-
-
-
 static const XfceGtkActionEntry*
 thunar_abstract_icon_view_gesture_action (ThunarAbstractIconView *abstract_icon_view)
 {
