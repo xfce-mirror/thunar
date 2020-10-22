@@ -57,13 +57,6 @@ static gboolean     thunar_abstract_icon_view_get_visible_range       (ThunarSta
                                                                        GtkTreePath                 **end_path);
 static void         thunar_abstract_icon_view_highlight_path          (ThunarStandardView           *standard_view,
                                                                        GtkTreePath                  *path);
-static void         thunar_abstract_icon_view_connect_accelerators    (ThunarStandardView           *standard_view,
-                                                                       GtkAccelGroup                *accel_group);
-static void         thunar_abstract_icon_view_disconnect_accelerators (ThunarStandardView          *standard_view,
-                                                                       GtkAccelGroup                *accel_group);
-static void         thunar_abstract_icon_view_append_menu_items       (ThunarStandardView           *standard_view,
-                                                                       GtkMenu                      *menu,
-                                                                       GtkAccelGroup                *accel_group);
 static void         thunar_abstract_icon_view_notify_model            (ExoIconView                  *view,
                                                                        GParamSpec                   *pspec,
                                                                        ThunarAbstractIconView       *abstract_icon_view);
@@ -104,13 +97,6 @@ struct _ThunarAbstractIconViewPrivate
 };
 
 
-static XfceGtkActionEntry thunar_abstract_icon_view_action_entries[] =
-{
-};
-
-// #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_abstract_icon_view_action_entries,G_N_ELEMENTS(thunar_abstract_icon_view_action_entries),id)
-
-
 G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (ThunarAbstractIconView, thunar_abstract_icon_view, THUNAR_TYPE_STANDARD_VIEW)
 
 
@@ -135,11 +121,6 @@ thunar_abstract_icon_view_class_init (ThunarAbstractIconViewClass *klass)
   thunarstandard_view_class->get_path_at_pos = thunar_abstract_icon_view_get_path_at_pos;
   thunarstandard_view_class->get_visible_range = thunar_abstract_icon_view_get_visible_range;
   thunarstandard_view_class->highlight_path = thunar_abstract_icon_view_highlight_path;
-  thunarstandard_view_class->append_menu_items = thunar_abstract_icon_view_append_menu_items;
-  thunarstandard_view_class->connect_accelerators = thunar_abstract_icon_view_connect_accelerators;
-  thunarstandard_view_class->disconnect_accelerators = thunar_abstract_icon_view_disconnect_accelerators;
-
-  xfce_gtk_translate_action_entries (thunar_abstract_icon_view_action_entries, G_N_ELEMENTS (thunar_abstract_icon_view_action_entries));
 
   /**
    * ThunarAbstractIconView:column-spacing:
@@ -357,21 +338,6 @@ thunar_abstract_icon_view_highlight_path (ThunarStandardView *standard_view,
  * Connects all accelerators and corresponding default keys of this widget to the global accelerator list
  * The concrete implementation depends on the concrete widget which is implementing this view
  **/
-static void
-thunar_abstract_icon_view_connect_accelerators (ThunarStandardView *standard_view,
-                                                GtkAccelGroup      *accel_group)
-{
-  ThunarAbstractIconView *abstract_icon_view = THUNAR_ABSTRACT_ICON_VIEW (standard_view);
-
-  _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
-
-  xfce_gtk_accel_map_add_entries (thunar_abstract_icon_view_action_entries,
-                                  G_N_ELEMENTS (thunar_abstract_icon_view_action_entries));
-  xfce_gtk_accel_group_connect_action_entries (accel_group,
-                                               thunar_abstract_icon_view_action_entries,
-                                               G_N_ELEMENTS (thunar_abstract_icon_view_action_entries),
-                                               standard_view);
-}
 
 
 
@@ -382,15 +348,6 @@ thunar_abstract_icon_view_connect_accelerators (ThunarStandardView *standard_vie
  *
  * Disconnects all accelerators from the passed #GtkAccelGroup
  **/
-static void
-thunar_abstract_icon_view_disconnect_accelerators (ThunarStandardView *standard_view,
-                                                   GtkAccelGroup      *accel_group)
-{
-  /* Dont listen to the accel keys defined by the action entries any more */
-  xfce_gtk_accel_group_disconnect_action_entries (accel_group,
-                                                  thunar_abstract_icon_view_action_entries,
-                                                  G_N_ELEMENTS (thunar_abstract_icon_view_action_entries));
-}
 
 
 
@@ -403,15 +360,6 @@ thunar_abstract_icon_view_disconnect_accelerators (ThunarStandardView *standard_
  * Appends widget-specific menu items to a #GtkMenu and connects them to the passed #GtkAccelGroup
  * Implements method 'append_menu_items' of #ThunarStandardView
  **/
-static void
-thunar_abstract_icon_view_append_menu_items (ThunarStandardView *standard_view,
-                                             GtkMenu            *menu,
-                                             GtkAccelGroup      *accel_group)
-{
-  ThunarAbstractIconView *abstract_icon_view = THUNAR_ABSTRACT_ICON_VIEW (standard_view);
-
-  _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
-}
 
 
 
