@@ -352,13 +352,10 @@ struct _ThunarStandardViewPrivate
   GtkTreePath            *selection_before_delete;
 
   /* current sort column ID */
-  ThunarColumn      sort_column;
-
-  /* previous sort column ID */
-  ThunarColumn      previous_column;
+  ThunarColumn            sort_column;
 
   /* current sort_order (GTK_SORT_ASCENDING || GTK_SORT_DESCENDING) */
-  GtkSortType       sort_order;
+  GtkSortType             sort_order;
 };
 
 static XfceGtkActionEntry thunar_standard_view_action_entries[] =
@@ -736,7 +733,6 @@ static void thunar_standard_view_store_sort_column  (ThunarStandardView *standar
 
   if (gtk_tree_sortable_get_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), &sort_column, &sort_order))
     {
-      standard_view->priv->previous_column = standard_view->priv->sort_column;
       standard_view->priv->sort_column     = sort_column;
       standard_view->priv->sort_order      = sort_order;
     }
