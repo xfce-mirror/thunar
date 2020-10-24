@@ -1075,7 +1075,7 @@ thunar_standard_view_realize (GtkWidget *widget)
   exo_binding_new (G_OBJECT (standard_view->preferences), "misc-thumbnail-draw-frames", G_OBJECT (standard_view), "thumbnail-draw-frames");
 
   /* store sort information to keep indicators in menu in sync */
-  thunar_standard_view_store_sort_column(standard_view);
+  thunar_standard_view_store_sort_column (standard_view);
 }
 
 
