@@ -3216,7 +3216,7 @@ thunar_standard_view_sort_column_changed (GtkTreeSortable    *tree_sortable,
   /* determine the new sort column and sort order, and save them */
   if (gtk_tree_sortable_get_sort_column_id (tree_sortable, &sort_column, &sort_order))
     {
-      thunar_standard_view_store_sort_column(standard_view);
+      thunar_standard_view_store_sort_column (standard_view);
 
       if (standard_view->priv->directory_specific_settings)
         {
