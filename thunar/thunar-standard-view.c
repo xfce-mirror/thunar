@@ -276,7 +276,6 @@ static void                 thunar_standard_view_action_sort_ascending          
 static void                 thunar_standard_view_action_sort_descending            (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_set_sort_column                   (ThunarStandardView       *standard_view, 
                                                                                     ThunarColumn column);
-static void                 thunar_standard_view_toggle_sort_order                 (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_store_sort_column                 (ThunarStandardView       *standard_view);
 
 struct _ThunarStandardViewPrivate
@@ -453,11 +452,7 @@ thunar_standard_view_action_sort_by_date (ThunarStandardView *standard_view)
   thunar_standard_view_set_sort_column (standard_view, THUNAR_COLUMN_DATE_MODIFIED);
 }
 
-static void
-thunar_standard_view_toggle_sort_order (ThunarStandardView *standard_view)
-{
-  thunar_standard_view_set_sort_column (standard_view, standard_view->priv->sort_column);
-}
+
 
 static void
 thunar_standard_view_class_init (ThunarStandardViewClass *klass)
