@@ -1054,22 +1054,6 @@ thunar_file_info_reload (ThunarFile   *file,
                     *p = '\0';
                 }
             }
-
-          /* read the display name from the .desktop file (will be overwritten later
-           * if it's undefined here) */
-          file->display_name = g_key_file_get_locale_string (key_file,
-                                                             G_KEY_FILE_DESKTOP_GROUP,
-                                                             G_KEY_FILE_DESKTOP_KEY_NAME,
-                                                             NULL, NULL);
-
-          /* drop the name if it's empty or has invalid encoding */
-          if (exo_str_is_empty (file->display_name)
-              || !g_utf8_validate (file->display_name, -1, NULL))
-            {
-              g_free (file->display_name);
-              file->display_name = NULL;
-            }
-
           /* free the key file */
           g_key_file_free (key_file);
         }
@@ -1913,114 +1897,37 @@ thunar_file_rename (ThunarFile   *file,
                     gboolean      called_from_job,
                     GError      **error)
 {
-  GKeyFile             *key_file;
-  GError               *err = NULL;
   GFile                *renamed_file;
-  gboolean              is_secure;
-  const gchar * const  *languages;
-  guint                 i;
-  gboolean              name_set = FALSE;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (g_utf8_validate (name, -1, NULL), FALSE);
   _thunar_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  /* check if this file is a desktop entry */
-  if (thunar_file_is_desktop_file (file, &is_secure)
-      && is_secure)
+  G_LOCK (file_rename_mutex);
+  /* try to rename the file */
+  renamed_file = g_file_set_display_name (file->gfile, name, cancellable, error);
+
+  /* check if we succeeded */
+  if (renamed_file != NULL)
     {
-      /* try to load the desktop entry into a key file */
-      key_file = thunar_g_file_query_key_file (file->gfile, cancellable, &err);
-      if (key_file == NULL)
+      /* notify the file is renamed */
+      thunar_file_monitor_moved (file, renamed_file);
+
+      g_object_unref (G_OBJECT (renamed_file));
+
+      if (!called_from_job)
         {
-          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL,
-                       _("Failed to parse the desktop file: %s"), err->message);
-          g_error_free (err);
-          return FALSE;
+          /* emit the file changed signal */
+          thunar_file_changed (file);
         }
-
-      /* check if we can set the language name */
-      languages = g_get_language_names ();
-      if (languages != NULL)
-        {
-          for (i = 0; !name_set && languages[i] != NULL; i++)
-            {
-              /* skip C language */
-              if (g_ascii_strcasecmp (languages[i], "C") == 0)
-                continue;
-
-              /* change the translated Name field of the desktop entry */
-              g_key_file_set_locale_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
-                                            G_KEY_FILE_DESKTOP_KEY_NAME,
-                                            languages[i], name);
-
-              /* done */
-              name_set = TRUE;
-            }
-        }
-
-      if (!name_set)
-        {
-          /* change the Name field of the desktop entry */
-          g_key_file_set_string (key_file, G_KEY_FILE_DESKTOP_GROUP,
-                                 G_KEY_FILE_DESKTOP_KEY_NAME, name);
-        }
-
-      /* write the changes back to the file */
-      if (thunar_g_file_write_key_file (file->gfile, key_file, cancellable, &err))
-        {
-          /* reload file information */
-          thunar_file_load (file, NULL, NULL);
-
-          if (!called_from_job)
-            {
-              /* tell the associated folder that the file was renamed */
-              thunarx_file_info_renamed (THUNARX_FILE_INFO (file));
-
-              /* notify everybody that the file has changed */
-              thunar_file_changed (file);
-            }
-
-          /* release the key file and return with success */
-          g_key_file_free (key_file);
-          return TRUE;
-        }
-      else
-        {
-          /* propagate the error message and return with failure */
-          g_propagate_error (error, err);
-          g_key_file_free (key_file);
-          return FALSE;
-        }
+      G_UNLOCK (file_rename_mutex);
+      return TRUE;
     }
   else
     {
-      G_LOCK (file_rename_mutex);
-      /* try to rename the file */
-      renamed_file = g_file_set_display_name (file->gfile, name, cancellable, error);
-
-      /* check if we succeeded */
-      if (renamed_file != NULL)
-        {
-          /* notify the file is renamed */
-          thunar_file_monitor_moved (file, renamed_file);
-
-          g_object_unref (G_OBJECT (renamed_file));
-
-          if (!called_from_job)
-            {
-              /* emit the file changed signal */
-              thunar_file_changed (file);
-            }
-          G_UNLOCK (file_rename_mutex);
-          return TRUE;
-        }
-      else
-        {
-          G_UNLOCK (file_rename_mutex);
-          return FALSE;
-        }
+      G_UNLOCK (file_rename_mutex);
+      return FALSE;
     }
 }
 
