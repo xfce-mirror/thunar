@@ -1313,6 +1313,8 @@ G_GNUC_END_IGNORE_DEPRECATIONS
     g_object_unref (G_OBJECT (device));
   gtk_tree_path_free (path);
 
+  gtk_widget_show_all (GTK_WIDGET (menu));
+
   /* run the menu (taking over the floating reference on menu) */
   thunar_gtk_menu_run (GTK_MENU (menu));
 }
