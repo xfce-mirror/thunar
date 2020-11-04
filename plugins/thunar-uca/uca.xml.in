@@ -39,7 +39,7 @@
     <icon>utilities-terminal</icon>
     <patterns>*</patterns>
     <_name>Open Terminal Here</_name>
-    <command>exo-open --working-directory %f --launch TerminalEmulator</command>
+    <command>for f in %F; do if [ -d "$f" ]; then exo-open --working-directory "$f" --launch TerminalEmulator; elif [ -z "$default" ]; then default=1; exo-open --launch TerminalEmulator; fi done</command>
     <_description>Example for a custom action</_description>
     <startup-notify/>
     <directories/>
