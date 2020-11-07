@@ -586,13 +586,14 @@ thunar_folder_finished (ExoJob       *job,
   /* schedule a reload of the file information of all files if requested */
   if (folder->reload_info)
     {
+      folder->reload_info = FALSE;
       for (lp = folder->files; lp != NULL; lp = lp->next)
         thunar_file_reload (lp->data);
 
       /* reload folder information too */
-      thunar_file_reload (folder->corresponding_file);
+      if (thunar_file_reload (folder->corresponding_file))
+        return;
 
-      folder->reload_info = FALSE;
     }
 
   /* we did it, the folder is loaded */
@@ -818,19 +819,20 @@ thunar_folder_monitor (GFileMonitor     *monitor,
                   file = thunar_file_get(other_file, NULL);
                   if (file != NULL && THUNAR_IS_FILE (file))
                     {
-                      thunar_file_reload (file);
-
-                      /* if source and target folders are different, also tell
-                         the target folder to reload for the changes */
-                      if (thunar_file_has_parent (file))
+                      if (thunar_file_reload (file))
                         {
-                          other_parent = thunar_file_get_parent (file, NULL);
-                          if (other_parent &&
-                              !g_file_equal (thunar_file_get_file(folder->corresponding_file),
-                                             thunar_file_get_file(other_parent)))
+                          /* if source and target folders are different, also tell
+                             the target folder to reload for the changes */
+                          if (thunar_file_has_parent (file))
                             {
-                              thunar_file_reload (other_parent);
-                              g_object_unref (other_parent);
+                              other_parent = thunar_file_get_parent (file, NULL);
+                              if (other_parent &&
+                                  !g_file_equal (thunar_file_get_file(folder->corresponding_file),
+                                                 thunar_file_get_file(other_parent)))
+                                {
+                                  thunar_file_reload (other_parent);
+                                  g_object_unref (other_parent);
+                                }
                             }
                         }
 
