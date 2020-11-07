@@ -249,17 +249,18 @@ thunar_browser_poke_mountable_finish (GObject      *object,
 
   if (error == NULL)
     {
-      thunar_file_reload (poke_data->file);
+      if (thunar_file_reload (poke_data->file))
+        {
+          location = thunar_file_get_target_location (poke_data->file);
 
-      location = thunar_file_get_target_location (poke_data->file);
+          /* resolve the ThunarFile for the target location asynchronously
+           * and defer cleaning up the poke data until that has finished */
+          thunar_file_get_async (location, NULL,
+                                 thunar_browser_poke_mountable_file_finish,
+                                 poke_data);
 
-      /* resolve the ThunarFile for the target location asynchronously
-       * and defer cleaning up the poke data until that has finished */
-      thunar_file_get_async (location, NULL,
-                             thunar_browser_poke_mountable_file_finish,
-                             poke_data);
-
-      g_object_unref (location);
+          g_object_unref (location);
+        }
     }
   else
     {
@@ -311,7 +312,13 @@ thunar_browser_poke_file_finish (GObject      *object,
     }
 
   if (error == NULL)
-    thunar_file_reload (poke_data->file);
+    {
+      if (thunar_file_reload (poke_data->file) == FALSE)
+        {
+          thunar_browser_poke_file_data_free (poke_data);
+          return;
+        }
+    }
 
   if (poke_data->location_func != NULL)
     {
