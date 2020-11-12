@@ -117,3 +117,55 @@ thunar_g_initialize_transformations (void)
   /* register a transformation function string->enum unconditionally */
   g_value_register_transform_func (G_TYPE_STRING, G_TYPE_ENUM, transform_string_to_enum);
 }
+
+
+
+/**
+ * thunar_g_strescape
+ * @source  : The string to escape
+ *
+ * Similar to g_strescape, but as well escapes SPACE
+ *
+ * Escapes the special characters '\b', '\f', '\n', '\r', '\t', '\v', '\' ' ' and '"' in the string source by inserting a '\' before them.
+ * Additionally all characters in the range 0x01-0x1F (SPACE and everything below)
+ * and in the range 0x7F-0xFF (all non-ASCII chars) are replaced with a '\' followed by their octal representation.
+ *
+ * Return value: (transfer full): The new string. Has to be freed with g_free after usage.
+ **/
+gchar*
+thunar_g_strescape (const gchar *source)
+{
+  gchar*       g_escaped;
+  gchar*       result;
+  unsigned int j = 0;
+  unsigned int new_size = 0;
+
+  /* First apply the default escaping .. will escape everything, expect SPACE */
+  g_escaped = g_strescape (source, NULL);
+
+  /* calc required new size */
+  for (unsigned int i = 0; i < strlen (g_escaped); i++)
+    {
+      if (g_escaped[i] == ' ')
+        new_size++;
+      new_size++;
+    }
+
+  /* strlen() does not include the \0 character, add an extra slot for it */
+  new_size++;
+  result = malloc (new_size * sizeof (gchar));
+
+  for (unsigned int i = 0; i < strlen (g_escaped); i++)
+    {
+      if (g_escaped[i] == ' ')
+        {
+          result[j] = '\\';
+          j++;
+        }
+      result[j] = g_escaped[i];
+      j++;
+    }
+  result[j] = '\0';
+  g_free (g_escaped);
+  return result;
+}
