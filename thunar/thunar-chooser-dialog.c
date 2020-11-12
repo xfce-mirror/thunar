@@ -392,7 +392,7 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   GAppInfo            *app_info = NULL;
   gboolean             succeed = TRUE;
   GError              *error = NULL;
-  gchar               *path;
+  const gchar         *custom_command;
   gchar               *name;
   GList                list;
   GdkScreen           *screen;
@@ -413,27 +413,25 @@ thunar_chooser_dialog_response (GtkDialog *widget,
     }
   else
     {
-      /* Wrap the path into double quotes in order to support spaces in file/folder names */
-      path = g_strconcat ("\"", gtk_entry_get_text (GTK_ENTRY (dialog->custom_entry)), "\"", NULL);
+      custom_command = gtk_entry_get_text (GTK_ENTRY (dialog->custom_entry));
 
       /* determine the name of the custom command */
-      name = g_path_get_basename (path);
+      name = g_path_get_basename (custom_command);
 
       /* try to add an application for the custom command */
-      app_info = g_app_info_create_from_commandline (path, name, G_APP_INFO_CREATE_NONE, &error);
+      app_info = g_app_info_create_from_commandline (custom_command, name, G_APP_INFO_CREATE_NONE, &error);
 
       /* verify the application */
       if (G_UNLIKELY (app_info == NULL))
         {
           /* display an error to the user */
-          thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to add new application \"%s\""), path);
+          thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to add new application \"%s\""), custom_command);
 
           /* release the error */
           g_error_free (error);
         }
 
       /* cleanup */
-      g_free (path);
       g_free (name);
     }
 
