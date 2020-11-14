@@ -75,6 +75,7 @@ typedef enum
   PARSER_ACTION,
   PARSER_ICON,
   PARSER_NAME,
+  PARSER_SUB_FOLDER,
   PARSER_UNIQUE_ID,
   PARSER_COMMAND,
   PARSER_STARTUP_NOTIFY,
@@ -161,6 +162,7 @@ struct _ThunarUcaModel
 struct _ThunarUcaModelItem
 {
   gchar         *name;
+  gchar         *sub_menu;
   gchar         *description;
   gchar         *unique_id;
   gchar         *icon_name;
@@ -182,6 +184,7 @@ typedef struct
   ThunarUcaModel *model;
   gchar          *locale;
   GString        *name;
+  GString        *sub_menu;
   gboolean        name_use;
   guint           name_match;
   GString        *unique_id;
@@ -312,6 +315,9 @@ thunar_uca_model_get_column_type (GtkTreeModel *tree_model,
     case THUNAR_UCA_MODEL_COLUMN_NAME:
       return G_TYPE_STRING;
 
+    case THUNAR_UCA_MODEL_COLUMN_SUB_MENU:
+      return G_TYPE_STRING;
+
     case THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID:
       return G_TYPE_STRING;
 
@@ -405,6 +411,10 @@ thunar_uca_model_get_value (GtkTreeModel *tree_model,
     {
     case THUNAR_UCA_MODEL_COLUMN_NAME:
       g_value_set_static_string (value, item->name ? item->name : "");
+      break;
+
+    case THUNAR_UCA_MODEL_COLUMN_SUB_MENU:
+      g_value_set_static_string (value, item->sub_menu ? item->sub_menu : "");
       break;
 
     case THUNAR_UCA_MODEL_COLUMN_DESCRIPTION:
@@ -570,6 +580,7 @@ thunar_uca_model_load_from_file (ThunarUcaModel *uca_model,
   parser.model = uca_model;
   parser.locale = g_strdup (setlocale (LC_MESSAGES, NULL));
   parser.name = g_string_new (NULL);
+  parser.sub_menu = g_string_new (NULL);
   parser.unique_id = g_string_new (NULL);
   parser.icon_name = g_string_new (NULL);
   parser.command = g_string_new (NULL);
@@ -591,6 +602,7 @@ thunar_uca_model_load_from_file (ThunarUcaModel *uca_model,
   g_string_free (parser.command, TRUE);
   g_string_free (parser.icon_name, TRUE);
   g_string_free (parser.unique_id, TRUE);
+  g_string_free (parser.sub_menu, TRUE);
   g_string_free (parser.name, TRUE);
   g_free (parser.locale);
   xfce_stack_free (parser.stack);
@@ -614,6 +626,7 @@ thunar_uca_model_item_reset (ThunarUcaModelItem *item)
   g_free (item->description);
   g_free (item->command);
   g_free (item->name);
+  g_free (item->sub_menu);
   g_free (item->unique_id);
   g_free (item->icon_name);
 
@@ -665,6 +678,7 @@ start_element_handler (GMarkupParseContext *context,
           parser->startup_notify = FALSE;
           g_string_truncate (parser->icon_name, 0);
           g_string_truncate (parser->name, 0);
+          g_string_truncate (parser->sub_menu, 0);
           g_string_truncate (parser->unique_id, 0);
           g_string_truncate (parser->command, 0);
           g_string_truncate (parser->patterns, 0);
@@ -704,6 +718,11 @@ start_element_handler (GMarkupParseContext *context,
             g_string_truncate (parser->name, 0);
 
           xfce_stack_push (parser->stack, PARSER_NAME);
+        }
+      else if (strcmp (element_name, "sub-menu") == 0)
+        {
+          g_string_truncate (parser->sub_menu, 0);
+          xfce_stack_push (parser->stack, PARSER_SUB_FOLDER);
         }
       else if (strcmp (element_name, "unique-id") == 0)
         {
@@ -827,6 +846,7 @@ end_element_handler (GMarkupParseContext *context,
           thunar_uca_model_append (parser->model, &iter);
           thunar_uca_model_update (parser->model, &iter,
                                    parser->name->str,
+                                   parser->sub_menu->str,
                                    parser->unique_id->str,
                                    parser->description->str,
                                    parser->icon_name->str,
@@ -846,6 +866,11 @@ end_element_handler (GMarkupParseContext *context,
 
     case PARSER_NAME:
       if (strcmp (element_name, "name") != 0)
+        goto unknown_element;
+      break;
+
+    case PARSER_SUB_FOLDER:
+      if (strcmp (element_name, "sub-menu") != 0)
         goto unknown_element;
       break;
 
@@ -941,6 +966,10 @@ text_handler (GMarkupParseContext *context,
     case PARSER_NAME:
       if (parser->name_use)
         g_string_append_len (parser->name, text, text_len);
+      break;
+
+    case PARSER_SUB_FOLDER:
+      g_string_append_len (parser->sub_menu, text, text_len);
       break;
 
     case PARSER_UNIQUE_ID:
@@ -1302,6 +1331,7 @@ thunar_uca_model_remove (ThunarUcaModel *uca_model,
  * @uca_model          : a #ThunarUcaModel.
  * @iter               : the #GtkTreeIter of the item to update.
  * @name               : the name of the item.
+ * @sub_menu         : the submenu structure in which the item is placed.
  * @unique_id          : a unique ID for the item.
  * @description        : the description of the item.
  * @icon               : the icon for the item.
@@ -1315,6 +1345,7 @@ void
 thunar_uca_model_update (ThunarUcaModel *uca_model,
                          GtkTreeIter    *iter,
                          const gchar    *name,
+                         const gchar    *sub_menu,
                          const gchar    *unique_id,
                          const gchar    *description,
                          const gchar    *icon,
@@ -1340,6 +1371,8 @@ thunar_uca_model_update (ThunarUcaModel *uca_model,
   /* setup the new item values */
   if (G_LIKELY (name != NULL && *name != '\0'))
     item->name = g_strdup (name);
+  if (G_LIKELY (sub_menu != NULL && *sub_menu != '\0'))
+    item->sub_menu = g_strdup (sub_menu);
   if (G_LIKELY (icon != NULL && *icon != '\0'))
     item->icon_name = g_strdup (icon);
   if (G_LIKELY (command != NULL && *command != '\0'))
@@ -1449,12 +1482,14 @@ thunar_uca_model_save (ThunarUcaModel *uca_model,
       patterns = g_strjoinv (";", item->patterns);
       escaped = g_markup_printf_escaped ("\t<icon>%s</icon>\n"
                                          "\t<name>%s</name>\n"
+                                         "\t<sub-menu>%s</sub-menu>\n"
                                          "\t<unique-id>%s</unique-id>\n"
                                          "\t<command>%s</command>\n"
                                          "\t<description>%s</description>\n"
                                          "\t<patterns>%s</patterns>\n",
                                          (item->icon_name != NULL) ? item->icon_name : "",
                                          (item->name != NULL) ? item->name : "",
+                                         (item->sub_menu != NULL) ? item->sub_menu : "",
                                          (item->unique_id != NULL) ? item->unique_id : "",
                                          (item->command != NULL) ? item->command : "",
                                          (item->description != NULL) ? item->description : "",
