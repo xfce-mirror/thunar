@@ -187,28 +187,35 @@ thunar_uca_provider_get_menu_items (ThunarxPreferencesProvider *preferences_prov
 }
 
 
-
+/* returned menu needs to be freed with g_object_unref()*/
 static ThunarxMenu*
 find_submenu_by_name (gchar *name, GList* items)
 {
-  GList       *submenu_iter;
-  gchar       *menu_name = NULL;
-  ThunarxMenu *menu = NULL;
+  GList *lp;
 
-  for (submenu_iter = g_list_first (items); submenu_iter != NULL; submenu_iter = submenu_iter->next)
+  for (lp = g_list_first (items); lp != NULL; lp = lp->next)
     {
-      g_object_get (G_OBJECT (submenu_iter->data), "name", &menu_name, "menu", &menu, NULL);
+      gchar       *menu_name = NULL;
+      ThunarxMenu *menu = NULL;
+      g_object_get (G_OBJECT (lp->data), "name", &menu_name, "menu", &menu, NULL);
       if (menu != NULL)
         {
           /* This menu is the correct menu */
           if (g_strcmp0 (menu_name, name) == 0)
-            return menu;
+            {
+              g_free (menu_name);
+              return menu;
+            }
 
           /* Some other menu found .. lets check recursively if the menu we search for is inside */
           menu = find_submenu_by_name (name, thunarx_menu_get_items (menu));
           if (menu != NULL)
-            return menu;
+            {
+              g_free (menu_name);
+              return menu;
+            }
         }
+      g_free (menu_name);
     }
 
   /* not found */
@@ -267,7 +274,7 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
           /* Search or build the parent submenus, if required */
           parent_menu = NULL;
           sub_menus_as_array = g_strsplit (sub_menu_string, "/", -1);
-          for (int i = 0;  sub_menus_as_array[i] != NULL; i++)
+          for (int i = 0; sub_menus_as_array[i] != NULL; i++)
            {
               /* get the submenu path up to the iterator  */
               gchar *sub_menu_path = g_strdup (sub_menus_as_array[0]);
@@ -276,11 +283,12 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
 
               /* Check if the full path already exists */
               sub_menu = find_submenu_by_name (sub_menu_path, items);
-
               if (sub_menu != NULL)
                 {
                   /* This submenu already exists, we can just use it as new parent */
                   parent_menu = sub_menu;
+                  /* no need to keep the extra reference on it */
+                  g_object_unref (sub_menu);
                 }
               else
                 {
