@@ -187,7 +187,7 @@ thunar_uca_provider_get_menu_items (ThunarxPreferencesProvider *preferences_prov
 }
 
 
-/* returned menu needs to be freed with g_object_unref()*/
+/* returned menu must be freed with g_object_unref() */
 static ThunarxMenu*
 find_submenu_by_name (gchar *name, GList* items)
 {
