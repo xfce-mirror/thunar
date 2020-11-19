@@ -192,6 +192,7 @@ static ThunarxMenu*
 find_submenu_by_name (gchar *name, GList* items)
 {
   GList *lp;
+  GList *thunarx_menu_items;
 
   for (lp = g_list_first (items); lp != NULL; lp = lp->next)
     {
@@ -208,11 +209,16 @@ find_submenu_by_name (gchar *name, GList* items)
             }
 
           /* Some other menu found .. lets check recursively if the menu we search for is inside */
-          menu = find_submenu_by_name (name, thunarx_menu_get_items (menu));
-          if (menu != NULL)
+          thunarx_menu_items = thunarx_menu_get_items (menu);
+          if (thunarx_menu_items != NULL)
             {
-              g_free (menu_name);
-              return menu;
+              menu = find_submenu_by_name (name, thunarx_menu_items);
+              if (menu != NULL)
+                {
+                  g_free (menu_name);
+                  return menu;
+                }
+              thunarx_menu_item_list_free (thunarx_menu_items);
             }
         }
       g_free (menu_name);
