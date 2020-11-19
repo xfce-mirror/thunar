@@ -73,36 +73,6 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="sub_menu_label">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">_Submenu:</property>
-                    <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">sub_menu_entry</property>
-                    <property name="xalign">0</property>
-                    <accessibility>
-                      <relation type="label-for" target="sub_menu_entry"/>
-                    </accessibility>
-                  </object>
-                  <packing>
-                    <property name="left_attach">0</property>
-                    <property name="top_attach">1</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkEntry" id="sub_menu_entry">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="tooltip_text" translatable="yes">The submenu in which the action will be displayed. Leave empty for no menu. Use '/' for nested menus.</property>
-                    <property name="hexpand">True</property>
-                    <property name="activates_default">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="top_attach">1</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkLabel" id="description_label">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
@@ -116,7 +86,7 @@
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
-                    <property name="top_attach">2</property>
+                    <property name="top_attach">1</property>
                   </packing>
                 </child>
                 <child>
@@ -124,6 +94,36 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="tooltip_text" translatable="yes">The description of the action that will be displayed as tooltip in the statusbar when selecting the item from the context menu.</property>
+                    <property name="hexpand">True</property>
+                    <property name="activates_default">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="sub_menu_label">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">_Submenu:</property>
+                    <property name="use_underline">True</property>
+                    <property name="mnemonic_widget">sub_menu_entry</property>
+                    <property name="xalign">0</property>
+                    <accessibility>
+                      <relation type="label-for" target="sub_menu_entry"/>
+                    </accessibility>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="sub_menu_entry">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="tooltip_text" translatable="yes">The submenu in which the action will be displayed. Leave empty for no menu. Use '/' for nested menus.</property>
                     <property name="hexpand">True</property>
                     <property name="activates_default">True</property>
                   </object>
