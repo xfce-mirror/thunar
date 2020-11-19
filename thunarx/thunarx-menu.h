@@ -89,6 +89,9 @@ ThunarxMenu  *thunarx_menu_new            (void) G_GNUC_MALLOC;
 void          thunarx_menu_append_item    (ThunarxMenu     *menu,
                                            ThunarxMenuItem *item);
 
+void          thunarx_menu_prepend_item   (ThunarxMenu     *menu,
+                                           ThunarxMenuItem *item);
+
 GList*        thunarx_menu_get_items      (ThunarxMenu     *menu);
 
 /* ThunarxMenuItem methods */

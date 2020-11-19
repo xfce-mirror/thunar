@@ -306,7 +306,7 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
                   if (parent_menu == NULL)
                     items = g_list_prepend (items, menu_item);
                   else
-                    thunarx_menu_append_item (parent_menu, menu_item);
+                    thunarx_menu_prepend_item (parent_menu, menu_item);
 
                   /* This sublevel becomes the new parent */
                   parent_menu = thunarx_menu_new ();
@@ -345,7 +345,7 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
           if(parent_menu == NULL)
             items = g_list_prepend (items, item);
           else
-            thunarx_menu_append_item (parent_menu, item);
+            thunarx_menu_prepend_item (parent_menu, item);
 
           /* cleanup */
           g_free (tooltip);
