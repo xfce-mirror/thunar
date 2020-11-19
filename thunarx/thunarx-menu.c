@@ -124,6 +124,7 @@ thunarx_menu_append_item (ThunarxMenu *menu, ThunarxMenuItem *item)
  * @menu: a #ThunarxMenu
  *
  * Returns: (element-type ThunarxMenuItem) (transfer full): the provided #ThunarxMenuItem list
+ * Must be freed with thunarx_menu_item_list_free() after usage
  */
 GList *
 thunarx_menu_get_items (ThunarxMenu *menu)
