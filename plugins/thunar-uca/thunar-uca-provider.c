@@ -210,13 +210,14 @@ find_submenu_by_name (gchar *name, GList* items)
 
           /* Some other menu found .. lets check recursively if the menu we search for is inside */
           thunarx_menu_items = thunarx_menu_get_items (menu);
+          g_object_unref (menu);
           if (thunarx_menu_items != NULL)
             {
-              menu = find_submenu_by_name (name, thunarx_menu_items);
-              if (menu != NULL)
+              ThunarxMenu *submenu = find_submenu_by_name (name, thunarx_menu_items);
+              if (submenu != NULL)
                 {
                   g_free (menu_name);
-                  return menu;
+                  return submenu;
                 }
               thunarx_menu_item_list_free (thunarx_menu_items);
             }
