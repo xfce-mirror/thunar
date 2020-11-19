@@ -1331,7 +1331,7 @@ thunar_uca_model_remove (ThunarUcaModel *uca_model,
  * @uca_model          : a #ThunarUcaModel.
  * @iter               : the #GtkTreeIter of the item to update.
  * @name               : the name of the item.
- * @sub_menu         : the submenu structure in which the item is placed.
+ * @sub_menu           : the submenu structure in which the item is placed.
  * @unique_id          : a unique ID for the item.
  * @description        : the description of the item.
  * @icon               : the icon for the item.
