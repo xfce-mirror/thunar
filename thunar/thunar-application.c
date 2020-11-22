@@ -1118,7 +1118,7 @@ thunar_application_quit (ThunarApplication *application)
   /* Otherwise thunar will hangup on quit and thunar_application_shutdown will not be called */
   thunar_application_close_all_windows (application);
 
-  gtk_main_quit ();
+  g_application_quit (G_APPLICATION (application));
 }
 
 
