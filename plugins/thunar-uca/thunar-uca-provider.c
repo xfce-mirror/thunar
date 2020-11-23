@@ -196,33 +196,33 @@ find_submenu_by_name (gchar *name, GList* items)
 
   for (lp = g_list_first (items); lp != NULL; lp = lp->next)
     {
-      gchar       *menu_name = NULL;
-      ThunarxMenu *menu = NULL;
-      g_object_get (G_OBJECT (lp->data), "name", &menu_name, "menu", &menu, NULL);
-      if (menu != NULL)
+      gchar       *item_name = NULL;
+      ThunarxMenu *item_menu = NULL;
+      g_object_get (G_OBJECT (lp->data), "name", &item_name, "menu", &item_menu, NULL);
+      if (item_menu != NULL)
         {
           /* This menu is the correct menu */
-          if (g_strcmp0 (menu_name, name) == 0)
+          if (g_strcmp0 (item_name, name) == 0)
             {
-              g_free (menu_name);
-              return menu;
+              g_free (item_name);
+              return item_menu;
             }
 
           /* Some other menu found .. lets check recursively if the menu we search for is inside */
-          thunarx_menu_items = thunarx_menu_get_items (menu);
-          g_object_unref (menu);
+          thunarx_menu_items = thunarx_menu_get_items (item_menu);
+          g_object_unref (item_menu);
           if (thunarx_menu_items != NULL)
             {
               ThunarxMenu *submenu = find_submenu_by_name (name, thunarx_menu_items);
               if (submenu != NULL)
                 {
-                  g_free (menu_name);
+                  g_free (item_name);
                   return submenu;
                 }
               thunarx_menu_item_list_free (thunarx_menu_items);
             }
         }
-      g_free (menu_name);
+      g_free (item_name);
     }
 
   /* not found */
