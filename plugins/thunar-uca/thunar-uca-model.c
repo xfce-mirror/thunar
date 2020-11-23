@@ -718,7 +718,7 @@ start_element_handler (GMarkupParseContext *context,
 
           xfce_stack_push (parser->stack, PARSER_NAME);
         }
-      else if (strcmp (element_name, "sub-menu") == 0)
+      else if (strcmp (element_name, "submenu") == 0)
         {
           g_string_truncate (parser->submenu, 0);
           xfce_stack_push (parser->stack, PARSER_SUB_FOLDER);
@@ -875,7 +875,7 @@ end_element_handler (GMarkupParseContext *context,
       break;
 
     case PARSER_SUB_FOLDER:
-      if (strcmp (element_name, "sub-menu") != 0)
+      if (strcmp (element_name, "submenu") != 0)
         goto unknown_element;
       break;
 
@@ -1483,7 +1483,7 @@ thunar_uca_model_save (ThunarUcaModel *uca_model,
       patterns = g_strjoinv (";", item->patterns);
       escaped = g_markup_printf_escaped ("\t<icon>%s</icon>\n"
                                          "\t<name>%s</name>\n"
-                                         "\t<sub-menu>%s</sub-menu>\n"
+                                         "\t<submenu>%s</submenu>\n"
                                          "\t<unique-id>%s</unique-id>\n"
                                          "\t<command>%s</command>\n"
                                          "\t<description>%s</description>\n"
