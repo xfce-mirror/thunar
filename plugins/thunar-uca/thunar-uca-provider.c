@@ -245,7 +245,7 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
   GList               *items = NULL;
   GList               *paths;
   GList               *lp;
-  ThunarxMenu         *sub_menu;
+  ThunarxMenu         *submenu;
   ThunarxMenu         *parent_menu = NULL;
 
   paths = thunar_uca_model_match (uca_provider->model, files);
@@ -289,13 +289,13 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
                 sub_menu_path = g_strconcat (sub_menu_path, "/", sub_menus_as_array[j], NULL);
 
               /* Check if the full path already exists */
-              sub_menu = find_submenu_by_name (sub_menu_path, items);
-              if (sub_menu != NULL)
+              submenu = find_submenu_by_name (sub_menu_path, items);
+              if (submenu != NULL)
                 {
                   /* This submenu already exists, we can just use it as new parent */
-                  parent_menu = sub_menu;
+                  parent_menu = submenu;
                   /* no need to keep the extra reference on it */
-                  g_object_unref (sub_menu);
+                  g_object_unref (submenu);
                 }
               else
                 {

@@ -91,7 +91,7 @@ void            thunar_uca_model_remove         (ThunarUcaModel         *uca_mod
 void            thunar_uca_model_update         (ThunarUcaModel         *uca_model,
                                                  GtkTreeIter            *iter,
                                                  const gchar            *name,
-                                                 const gchar            *sub_menu,
+                                                 const gchar            *submenu,
                                                  const gchar            *unique_id,
                                                  const gchar            *description,
                                                  const gchar            *icon,
