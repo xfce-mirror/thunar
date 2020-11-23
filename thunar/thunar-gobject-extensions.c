@@ -117,3 +117,43 @@ thunar_g_initialize_transformations (void)
   /* register a transformation function string->enum unconditionally */
   g_value_register_transform_func (G_TYPE_STRING, G_TYPE_ENUM, transform_string_to_enum);
 }
+
+
+
+/**
+ * thunar_g_strescape_spaces
+ * @source   : The string to escape
+ *
+ * Escapes all spaces in the passed string.
+ *
+ * Return value: (transfer full): The new string. Has to be freed with g_free after usage.
+ **/
+gchar*
+thunar_g_strescape_spaces (const gchar *source)
+{
+  gchar*       result;
+  unsigned int j = 0;
+  unsigned int new_size = 0;
+
+  /* calc required new size*/
+  for (unsigned int i=0;i< strlen (source);i++)
+    {
+      if (source[i] == ' ')
+        new_size++;
+      new_size++;
+    }
+  result = (char *) malloc (new_size);
+
+  for (unsigned int i=0;i< strlen (source);i++)
+    {
+      if (source[i] == ' ')
+        {
+          result[j] = '\\';
+          j++;
+        }
+      result[j] = source[i];
+      j++;
+    }
+  result[j] = '\0';
+  return result;
+}
