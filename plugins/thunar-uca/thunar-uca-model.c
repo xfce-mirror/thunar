@@ -87,6 +87,7 @@ typedef enum
   PARSER_OTHER_FILES,
   PARSER_TEXT_FILES,
   PARSER_VIDEO_FILES,
+  PARSER_UNKNOWN_ELEMENT,
 } ParserState;
 
 
@@ -665,7 +666,7 @@ start_element_handler (GMarkupParseContext *context,
       if (strcmp (element_name, "actions") == 0)
         xfce_stack_push (parser->stack, PARSER_ACTIONS);
       else
-        goto unknown_element;
+        xfce_stack_push (parser->stack, PARSER_UNKNOWN_ELEMENT);
       break;
 
     case PARSER_ACTIONS:
@@ -685,7 +686,7 @@ start_element_handler (GMarkupParseContext *context,
           xfce_stack_push (parser->stack, PARSER_ACTION);
         }
       else
-        goto unknown_element;
+        xfce_stack_push (parser->stack, PARSER_UNKNOWN_ELEMENT);
       break;
 
     case PARSER_ACTION:
@@ -808,18 +809,12 @@ start_element_handler (GMarkupParseContext *context,
           xfce_stack_push (parser->stack, PARSER_VIDEO_FILES);
         }
       else
-        goto unknown_element;
+        xfce_stack_push (parser->stack, PARSER_UNKNOWN_ELEMENT);
       break;
 
     default:
-      goto unknown_element;
+      xfce_stack_push (parser->stack, PARSER_UNKNOWN_ELEMENT);
     }
-
-  return;
-
-unknown_element:
-  g_set_error (error, G_MARKUP_ERROR, G_MARKUP_ERROR_UNKNOWN_ELEMENT,
-               _("Unknown element <%s>"), element_name);
 }
 
 
@@ -937,6 +932,10 @@ end_element_handler (GMarkupParseContext *context,
     case PARSER_VIDEO_FILES:
       if (strcmp (element_name, "video-files") != 0)
         goto unknown_element;
+      break;
+
+    case PARSER_UNKNOWN_ELEMENT:
+      g_warning ("Unknown element ignored: <%s>", element_name);
       break;
 
     default:
