@@ -254,6 +254,7 @@ thunar_emblem_chooser_button_toggled (GtkToggleButton     *button,
   GList       *lp;
   GList       *delete_link;
   gboolean     is_modified;
+  GtkWidget   *box_child;
 
   _thunar_return_if_fail (GTK_IS_TOGGLE_BUTTON (button));
   _thunar_return_if_fail (THUNAR_IS_EMBLEM_CHOOSER (chooser));
@@ -302,6 +303,14 @@ thunar_emblem_chooser_button_toggled (GtkToggleButton     *button,
       }
 
       g_list_free (emblem_names);
+    }
+
+  /* select and give focus to the GtkFlowBox child containing the button */
+  box_child = gtk_widget_get_parent (GTK_WIDGET (button));
+  if (GTK_IS_FLOW_BOX_CHILD (box_child))
+    {
+      gtk_flow_box_select_child (GTK_FLOW_BOX (chooser->table), GTK_FLOW_BOX_CHILD (box_child));
+      gtk_widget_grab_focus (GTK_WIDGET (box_child));
     }
 }
 
