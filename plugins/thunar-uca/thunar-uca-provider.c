@@ -199,6 +199,7 @@ find_submenu_by_name (gchar *name, GList* items)
       gchar       *item_name = NULL;
       ThunarxMenu *item_menu = NULL;
       g_object_get (G_OBJECT (lp->data), "name", &item_name, "menu", &item_menu, NULL);
+
       if (item_menu != NULL)
         {
           /* This menu is the correct menu */
@@ -211,6 +212,7 @@ find_submenu_by_name (gchar *name, GList* items)
           /* Some other menu found .. lets check recursively if the menu we search for is inside */
           thunarx_menu_items = thunarx_menu_get_items (item_menu);
           g_object_unref (item_menu);
+
           if (thunarx_menu_items != NULL)
             {
               ThunarxMenu *submenu = find_submenu_by_name (name, thunarx_menu_items);
@@ -249,6 +251,7 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
   ThunarxMenu         *parent_menu = NULL;
 
   paths = thunar_uca_model_match (uca_provider->model, files);
+
   for (lp = g_list_last (paths); lp != NULL; lp = lp->prev)
     {
       gchar  *unique_id = NULL;
@@ -281,15 +284,18 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
           /* Search or build the parent submenus, if required */
           parent_menu = NULL;
           sub_menus_as_array = g_strsplit (sub_menu_string, "/", -1);
+
           for (int i = 0; sub_menus_as_array[i] != NULL; i++)
            {
               /* get the submenu path up to the iterator  */
               gchar *sub_menu_path = g_strdup (sub_menus_as_array[0]);
+
               for (int j= 1; j<=i; j++)
                 sub_menu_path = g_strconcat (sub_menu_path, "/", sub_menus_as_array[j], NULL);
 
               /* Check if the full path already exists */
               submenu = find_submenu_by_name (sub_menu_path, items);
+
               if (submenu != NULL)
                 {
                   /* This submenu already exists, we can just use it as new parent */
