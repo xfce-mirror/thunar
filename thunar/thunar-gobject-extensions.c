@@ -136,15 +136,18 @@ thunar_g_strescape_spaces (const gchar *source)
   unsigned int new_size = 0;
 
   /* calc required new size*/
-  for (unsigned int i=0;i< strlen (source);i++)
+  for (unsigned int i=0; i< strlen (source);i++)
     {
       if (source[i] == ' ')
         new_size++;
       new_size++;
     }
-  result = (char *) malloc (new_size);
 
-  for (unsigned int i=0;i< strlen (source);i++)
+  /* strlen() does not include the \0 character */
+  new_size++;
+  result = malloc (new_size * sizeof(gchar));
+
+  for (unsigned int i=0; i< strlen (source);i++)
     {
       if (source[i] == ' ')
         {
