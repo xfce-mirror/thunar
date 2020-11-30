@@ -367,6 +367,7 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   /* setup the launcher support for this dialog */
   renamer_dialog->launcher = g_object_new (THUNAR_TYPE_LAUNCHER, "widget", GTK_WIDGET (renamer_dialog), NULL);
   exo_binding_new (G_OBJECT (renamer_dialog), "selected-files", G_OBJECT (renamer_dialog->launcher), "selected-files");
+  exo_binding_new (G_OBJECT (renamer_dialog), "current-directory", G_OBJECT (renamer_dialog->launcher), "current-directory");
 
   /* add the toolbar to the dialog */
   toolbar = gtk_toolbar_new ();
