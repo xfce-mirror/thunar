@@ -911,6 +911,12 @@ thunar_launcher_poke (ThunarLauncher                 *launcher,
 
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
+   if (launcher->files_to_process == NULL)
+     {
+       g_warning("No files to process. thunar_launcher_poke aborted.");
+       return;
+     }
+
    poke_data = thunar_launcher_poke_data_new (launcher->files_to_process, application_to_use, folder_open_action);
 
    if (launcher->device_to_process != NULL)
