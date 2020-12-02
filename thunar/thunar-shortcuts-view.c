@@ -1263,7 +1263,10 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
           /* add the menu items to the menu */
           for (lp = items; lp != NULL; lp = lp->next)
-            thunar_gtk_menu_thunarx_menu_item_new (lp->data, GTK_MENU_SHELL (menu));
+            {
+              item = thunar_gtk_menu_thunarx_menu_item_new (lp->data, GTK_MENU_SHELL (menu));
+              gtk_widget_show (item);
+            }
 
           /* cleanup */
           g_list_free (items);
@@ -1312,8 +1315,6 @@ G_GNUC_END_IGNORE_DEPRECATIONS
   if (G_UNLIKELY (device != NULL))
     g_object_unref (G_OBJECT (device));
   gtk_tree_path_free (path);
-
-  gtk_widget_show_all (GTK_WIDGET (menu));
 
   /* run the menu (taking over the floating reference on menu) */
   thunar_gtk_menu_run (GTK_MENU (menu));
