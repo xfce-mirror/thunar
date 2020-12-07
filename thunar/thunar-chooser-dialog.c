@@ -395,6 +395,7 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   const gchar         *custom_command;
   gchar               *name;
   GList                list;
+  GList               *all_apps, *lp;
   GdkScreen           *screen;
 
   /* no special processing for non-accept responses */
@@ -421,6 +422,9 @@ thunar_chooser_dialog_response (GtkDialog *widget,
       /* try to add an application for the custom command */
       app_info = g_app_info_create_from_commandline (custom_command, name, G_APP_INFO_CREATE_NONE, &error);
 
+      /* cleanup */
+      g_free (name);
+
       /* verify the application */
       if (G_UNLIKELY (app_info == NULL))
         {
@@ -429,10 +433,23 @@ thunar_chooser_dialog_response (GtkDialog *widget,
 
           /* release the error */
           g_error_free (error);
+          return;
         }
 
-      /* cleanup */
-      g_free (name);
+      /* Check if that application already exists in our list */
+      all_apps = g_app_info_get_all ();
+      for (lp = all_apps; lp != NULL; lp = lp->next)
+        {
+          if( g_strcmp0 (g_app_info_get_name (lp->data), g_app_info_get_name (app_info)) == 0 &&
+              g_strcmp0 (g_app_info_get_commandline (lp->data), g_app_info_get_commandline (app_info)) == 0)
+            {
+              /* Re-use existing app-info instead of adding the same one again */
+              g_object_unref (app_info);
+              app_info = g_object_ref (lp->data);
+              break;
+            }
+        }
+      g_list_free_full (all_apps, g_object_unref);
     }
 
   /* verify that we have a valid application */
