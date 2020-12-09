@@ -383,7 +383,7 @@ thunar_device_monitor_volume_is_visible (GVolume *volume)
   if (drive != NULL)
     {
       /* check if the drive media can be removed */
-      is_removable = g_drive_is_media_removable (drive);
+      is_removable = g_drive_is_removable (drive);
 
       /* release the drive */
       g_object_unref (drive);
