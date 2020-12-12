@@ -600,6 +600,7 @@ thunar_window_init (ThunarWindow *window)
 {
   GtkWidget       *label;
   GtkWidget       *infobar;
+  GtkWidget       *spinner_box;
   gboolean         last_menubar_visible;
   gchar           *last_location_bar;
   gchar           *last_side_pane;
@@ -708,9 +709,16 @@ thunar_window_init (ThunarWindow *window)
   gtk_widget_set_hexpand (window->menubar, TRUE);
   gtk_grid_attach (GTK_GRID (window->grid), window->menubar, 0, 0, 1, 1);
 
-  /* Add a spinner besides the menubar */
+  /* Add a spinner besides the menubar
+   * Putting the spinner directly into the grid for unknown reason can lead to flickering
+   * That is why we wrap a box around the spinner.
+   * Check https://gitlab.xfce.org/xfce/thunar/-/issues/440 for details
+   */
   window->spinner = gtk_spinner_new ();
-  gtk_grid_attach (GTK_GRID (window->grid), window->spinner, 1, 0, 1, 1);
+  spinner_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
+  gtk_widget_show (spinner_box);
+  gtk_container_add (GTK_CONTAINER (spinner_box), window->spinner);
+  gtk_grid_attach (GTK_GRID (window->grid), spinner_box, 1, 0, 1, 1);
   exo_binding_new (G_OBJECT (window->menubar), "visible",
                    G_OBJECT (window->spinner), "visible");
 
