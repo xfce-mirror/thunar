@@ -6,6 +6,7 @@
 # Translators:
 # Nguyên Bình <crziter@gmail.com>, 2018
 # Xfce Bot <transifex@xfce.org>, 2018
+# Le Tri <Leminhtri10a1t@gmail.com>, 2020
 # 
 #, fuzzy
 msgid ""
@@ -14,7 +15,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-11 00:30+0200\n"
 "PO-Revision-Date: 2018-08-19 09:02+0000\n"
-"Last-Translator: Xfce Bot <transifex@xfce.org>, 2018\n"
+"Last-Translator: Le Tri <Leminhtri10a1t@gmail.com>, 2020\n"
 "Language-Team: Vietnamese (https://www.transifex.com/xfce/teams/16840/vi/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -31,6 +32,12 @@ msgid ""
 "\n"
 "Please restart thunar afterwards."
 msgstr ""
+"Thunar không thể khởi chạy bởi vì có một tiến trình cũ hơn của Thunar vẫn đang chạy\n"
+"Bạn có muốn kết thúc tiến trình đó ngay bây giờ không?\n"
+"\n"
+"Trước khi chọn đồng ý xin vui lòng chắc chắn rằng không có một hoạt động nào đang chờ xử lý (ví dụ sao chép tập tin) cũng như kết thúc chúng sẽ làm hỏng tập tin.\n"
+"\n"
+"Vui lòng khởi động lại thunar sau đó."
 
 #. setup application name
 #: ../thunar/main.c:125
@@ -108,17 +115,17 @@ msgstr "In thông tin phiên bản và thoát"
 #: ../thunar/thunar-application.c:292
 #, c-format
 msgid "Acquired the session message bus '%s'\n"
-msgstr ""
+msgstr "Lấy thông báo bus của phiên làm việc'%s'\n"
 
 #: ../thunar/thunar-application.c:302
 #, c-format
 msgid "Acquired the name '%s' on the session message bus\n"
-msgstr ""
+msgstr "Lấy tên '%s' của thông báo bus của phiên làm việc\n"
 
 #: ../thunar/thunar-application.c:312
 #, c-format
 msgid "Name '%s' lost on the message dbus."
-msgstr ""
+msgstr "Tên '%s' đã mất trong thông báo của dbus."
 
 #: ../thunar/thunar-application.c:473
 msgid "The Thunar development team. All rights reserved."
@@ -376,7 +383,7 @@ msgstr "Sử dụng như _mặc định cho kiểu file này"
 #: ../plugins/thunar-uca/thunar-uca-editor.c:142
 #: ../plugins/thunar-uca/thunar-uca-editor.c:435
 msgid "_OK"
-msgstr ""
+msgstr "_Đồng ý "
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:429
@@ -421,7 +428,7 @@ msgstr "Bạn có chắc muốn xoá  \"%s\"?"
 
 #: ../thunar/thunar-chooser-dialog.c:706
 msgid "_Remove"
-msgstr ""
+msgstr "_Xóa"
 
 #: ../thunar/thunar-chooser-dialog.c:709
 msgid ""
@@ -618,7 +625,7 @@ msgstr "_Tạo"
 
 #: ../thunar/thunar-create-dialog.c:159
 msgid "Enter the name:"
-msgstr ""
+msgstr "Nhập tên:"
 
 #. display an error message
 #: ../thunar/thunar-create-dialog.c:452
@@ -878,7 +885,7 @@ msgstr "Kích cỡ"
 
 #: ../thunar/thunar-enum-types.c:109
 msgid "Size in Bytes"
-msgstr ""
+msgstr "Kích thước tính bằng byte"
 
 #: ../thunar/thunar-enum-types.c:110
 msgid "Type"
@@ -895,7 +902,7 @@ msgstr "Tên file"
 #: ../thunar/thunar-file.c:1071 ../thunar/thunar-gio-extensions.c:255
 #: ../thunar/thunar-shortcuts-model.c:1047
 msgid "Trash"
-msgstr ""
+msgstr "Thùng rác"
 
 #: ../thunar/thunar-file.c:1078 ../thunar/thunar-gio-extensions.c:253
 #: ../thunar/thunar-shortcuts-model.c:936 ../thunar/thunar-window.c:376
@@ -946,7 +953,7 @@ msgstr "%s trên %s"
 #: ../thunar/thunar-gio-extensions.c:446
 #, c-format
 msgid "%s of %s free (%d%% used)"
-msgstr ""
+msgstr "%scủa %scòn trống (%d%%đã dùng)"
 
 #. extend history tooltip with function of the button
 #: ../thunar/thunar-history-action.c:351
@@ -991,7 +998,7 @@ msgstr "Khung nhìn biểu tượng"
 #: ../thunar/thunar-io-jobs.c:111
 #, c-format
 msgid "Error removing file: %s"
-msgstr ""
+msgstr "Lỗi khi xóa tập tin:%s"
 
 #: ../thunar/thunar-io-jobs.c:214 ../thunar/thunar-io-jobs.c:369
 #, c-format
@@ -1083,7 +1090,7 @@ msgstr "Bạn có muốn ghi đè?"
 
 #: ../thunar/thunar-job.c:388
 msgid "Do you want to permanently delete it?"
-msgstr ""
+msgstr "Bạn có muốn xóa nó vĩnh viễn không?"
 
 #: ../thunar/thunar-job.c:442
 msgid "Do you want to create it?"
@@ -1259,7 +1266,7 @@ msgstr[0] "Gửi các tập tin đã chọn đến \"%s\""
 #, c-format
 msgid "%d item: %s, Free space: %s"
 msgid_plural "%d items: %s, Free space: %s"
-msgstr[0] ""
+msgstr[0] "%dmục: %s, Không gian trống: %s"
 
 #. just the standard text
 #: ../thunar/thunar-list-model.c:2409
@@ -1277,35 +1284,35 @@ msgstr[0] "%d mục"
 #: ../thunar/thunar-list-model.c:2434
 #, c-format
 msgid "\"%s\": broken link"
-msgstr ""
+msgstr "\"%s\": liên kết đã hỏng"
 
 #: ../thunar/thunar-list-model.c:2439
 #, c-format
 msgid "\"%s\": %s link to %s"
-msgstr ""
+msgstr "\"%s\": %s liên kết tới %s"
 
 #: ../thunar/thunar-list-model.c:2445
 #, c-format
 msgid "\"%s\": shortcut"
-msgstr ""
+msgstr "\"%s\": lối tắt"
 
 #: ../thunar/thunar-list-model.c:2449
 #, c-format
 msgid "\"%s\": mountable"
-msgstr ""
+msgstr "\"%s\": có thể mount"
 
 #. I18N, first %s is the display name of the file, 2nd the file size, 3rd the
 #. content type
 #: ../thunar/thunar-list-model.c:2456
 #, c-format
 msgid "\"%s\": %s %s"
-msgstr ""
+msgstr "\"%s\": %s %s"
 
 #. I18N, first %s is the display name of the file, second the content type
 #: ../thunar/thunar-list-model.c:2465
 #, c-format
 msgid "\"%s\": %s"
-msgstr ""
+msgstr "\"%s\": %s"
 
 #. TRANSLATORS: Try to come up with a short translation of "Original Path"
 #. (which is the path
@@ -1327,14 +1334,14 @@ msgstr "Kích thước ảnh"
 #, c-format
 msgid "%d other item selected: %s"
 msgid_plural "%d other items selected: %s"
-msgstr[0] ""
+msgstr[0] "%d những mục khác đã được chọn: %s"
 
 #. only non-folders are selected
 #: ../thunar/thunar-list-model.c:2544
 #, c-format
 msgid "%d item selected: %s"
 msgid_plural "%d items selected: %s"
-msgstr[0] ""
+msgstr[0] "%dcác mục đã chọn: %s"
 
 #: ../thunar/thunar-list-model.c:2558
 #, c-format
@@ -1586,7 +1593,7 @@ msgstr "Đọc & ghi"
 
 #: ../thunar/thunar-permissions-chooser.c:1002
 msgid "Varying (no change)"
-msgstr ""
+msgstr "Thay đổi (giữ nguyên)"
 
 #: ../thunar/thunar-permissions-chooser.c:1129
 msgid "Correct folder permissions automatically?"
@@ -1666,12 +1673,14 @@ msgstr "Chọn mục này để sắp xếp các thư mục đằng trước t�
 
 #: ../thunar/thunar-preferences-dialog.c:352
 msgid "Show file size in binary format"
-msgstr ""
+msgstr "Hiển thị kích thước tập tin trong hệ nhị phân"
 
 #: ../thunar/thunar-preferences-dialog.c:354
 msgid ""
 "Select this option to show file size in binary format instead of decimal."
 msgstr ""
+"Chọn tùy chọn này để hiển thị kích thước của tập tin trong hệ nhị phân thay "
+"thế cho hệ thập phân."
 
 #: ../thunar/thunar-preferences-dialog.c:376
 msgid "_Text beside icons"
@@ -1697,7 +1706,7 @@ msgstr "Định dạng:"
 #. TRANSLATORS: custom date format
 #: ../thunar/thunar-preferences-dialog.c:414
 msgid "Custom"
-msgstr ""
+msgstr "Tùy chỉnh"
 
 #. TRANSLATORS: Please do not translate the first column (specifiers),
 #. 'strftime' and of course '\n'
@@ -1715,6 +1724,17 @@ msgid ""
 "\n"
 "For a complete list, check the man pages of 'strftime'"
 msgstr ""
+"Định dạng ngày tùy chỉnh được áp dụng.\n"
+"\n"
+"Những thông số kỹ thuật là:\n"
+"%d ngày của một tháng\n"
+"%m tháng\n"
+"%Y năm bao gồm thế kỉ \n"
+"%H giờ\n"
+"%M phút\n"
+"%S giây\n"
+"\n"
+"Cho một danh sách hoàn chỉnh, kiểm tra trang chủ của 'strftime'"
 
 #. Side Pane
 #: ../thunar/thunar-preferences-dialog.c:442
@@ -1732,52 +1752,52 @@ msgstr "Cỡ biểu tượng:"
 #: ../thunar/thunar-preferences-dialog.c:470
 #: ../thunar/thunar-preferences-dialog.c:518
 msgid "16px"
-msgstr ""
+msgstr "16px"
 
 #: ../thunar/thunar-preferences-dialog.c:471
 #: ../thunar/thunar-preferences-dialog.c:519
 msgid "24px"
-msgstr ""
+msgstr "24px"
 
 #: ../thunar/thunar-preferences-dialog.c:472
 #: ../thunar/thunar-preferences-dialog.c:520
 msgid "32px"
-msgstr ""
+msgstr "32px"
 
 #: ../thunar/thunar-preferences-dialog.c:473
 #: ../thunar/thunar-preferences-dialog.c:521
 msgid "48px"
-msgstr ""
+msgstr "48px"
 
 #: ../thunar/thunar-preferences-dialog.c:474
 #: ../thunar/thunar-preferences-dialog.c:522
 msgid "64px"
-msgstr ""
+msgstr "64px"
 
 #: ../thunar/thunar-preferences-dialog.c:475
 #: ../thunar/thunar-preferences-dialog.c:523
 msgid "96px"
-msgstr ""
+msgstr "96px"
 
 #: ../thunar/thunar-preferences-dialog.c:476
 #: ../thunar/thunar-preferences-dialog.c:524
 msgid "128px"
-msgstr ""
+msgstr "128px"
 
 #: ../thunar/thunar-preferences-dialog.c:477
 #: ../thunar/thunar-preferences-dialog.c:525
 msgid "160px"
-msgstr ""
+msgstr "160px"
 
 #: ../thunar/thunar-preferences-dialog.c:478
 #: ../thunar/thunar-preferences-dialog.c:526
 msgid "192px"
-msgstr ""
+msgstr "192px"
 
 #: ../thunar/thunar-preferences-dialog.c:479
 #: ../thunar/thunar-preferences-dialog.c:527
 msgid "256px"
-msgstr ""
+msgstr "256px"
 
 #: ../thunar/thunar-preferences-dialog.c:488
 msgid "Show Icon _Emblems"
@@ -1865,16 +1885,17 @@ msgstr "Double click để mở biểu tượng"
 
 #: ../thunar/thunar-preferences-dialog.c:647
 msgid "Tabs instead of new Windows"
-msgstr ""
+msgstr "Dùng tab thay vì mở cửa sổ mới"
 
 #: ../thunar/thunar-preferences-dialog.c:660
 msgid "Open folders in new tabs on middle click"
-msgstr ""
+msgstr "Mở thư mục trong tab mới khi nhấp chuột giữa"
 
 #: ../thunar/thunar-preferences-dialog.c:662
 msgid ""
 "Select this option to open a new tab on middle click instead of a new window"
 msgstr ""
+"Chọn tùy chọn này để mở tab mới khi nhấp chuột giữa thay vì mở cửa sổ mới"
 
 #: ../thunar/thunar-preferences-dialog.c:666
 msgid "Open new thunar instances as tabs"
