@@ -266,6 +266,15 @@ tse_child_watch (GPid     pid,
 
 
 static gboolean
+tse_progress_cb(gpointer user_data)
+{
+  GtkProgressBar *pulse = user_data;
+
+  gtk_progress_bar_pulse(pulse);
+  return TRUE;
+}
+
+static gboolean
 tse_progress (const gchar *working_directory,
               gchar      **argv,
               GError     **error)
@@ -328,7 +337,7 @@ tse_progress (const gchar *working_directory,
   watch_id = g_child_watch_add (pid, tse_child_watch, dialog);
 
   /* start the pulse timer */
-  pulse_timer_id = g_timeout_add (125, (GSourceFunc) (void (*)(void)) gtk_progress_bar_pulse, progress);
+  pulse_timer_id = g_timeout_add (125, tse_progress_cb, progress);
 
   /* run the dialog */
   response = gtk_dialog_run (GTK_DIALOG (dialog));
