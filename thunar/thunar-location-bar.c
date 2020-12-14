@@ -73,7 +73,7 @@ static void         thunar_location_bar_set_current_directory      (ThunarNaviga
 static GtkWidget   *thunar_location_bar_install_widget             (ThunarLocationBar    *bar,
                                                                     GType                 type);
 static void         thunar_location_bar_reload_requested           (ThunarLocationBar    *bar);
-static gboolean     thunar_location_bar_settings_changed           (ThunarLocationBar    *bar);
+static void         thunar_location_bar_settings_changed           (ThunarLocationBar    *bar);
 static void         thunar_location_bar_on_enry_edit_done          (ThunarLocationEntry  *entry,
                                                                     ThunarLocationBar    *bar);
 
@@ -307,6 +307,15 @@ thunar_location_bar_install_widget (ThunarLocationBar    *bar,
 }
 
 
+static gboolean
+thunar_location_bar_settings_changed_cb (gpointer user_data)
+{
+  ThunarLocationBar *bar = user_data;
+
+  thunar_location_bar_settings_changed (bar);
+  return FALSE;
+}
+
 
 static void
 thunar_location_bar_on_enry_edit_done (ThunarLocationEntry *entry,
@@ -315,7 +324,7 @@ thunar_location_bar_on_enry_edit_done (ThunarLocationEntry *entry,
   g_signal_handlers_disconnect_by_func (entry, thunar_location_bar_on_enry_edit_done, bar);
 
   g_object_ref (bar);
-  g_idle_add_full (G_PRIORITY_HIGH_IDLE, (GSourceFunc)thunar_location_bar_settings_changed, bar, g_object_unref);
+  g_idle_add_full (G_PRIORITY_HIGH_IDLE, thunar_location_bar_settings_changed_cb, bar, g_object_unref);
 
   g_signal_emit_by_name (bar, "entry-done");
 }
@@ -360,7 +369,7 @@ thunar_location_bar_request_entry (ThunarLocationBar *bar,
 
 
 
-static gboolean
+static void
 thunar_location_bar_settings_changed (ThunarLocationBar *bar)
 {
   gchar *last_location_bar;
@@ -379,8 +388,6 @@ thunar_location_bar_settings_changed (ThunarLocationBar *bar)
   g_free (last_location_bar);
 
   thunar_location_bar_install_widget (bar, type);
-
-  return FALSE;
 }
 
 

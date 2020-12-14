@@ -3970,14 +3970,11 @@ thunar_file_unwatch (ThunarFile *file)
  * You must be able to handle the case that @file is
  * destroyed during the reload call.
  *
- * Return value: As this function can be used as a callback function
- * for thunar_file_reload_idle, it will always return FALSE to prevent
- * being called repeatedly.
  **/
-gboolean
+void
 thunar_file_reload (ThunarFile *file)
 {
-  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   /* clear file pxmap cache */
   thunar_icon_factory_clear_pixmap_cache (file);
@@ -3986,16 +3983,21 @@ thunar_file_reload (ThunarFile *file)
     {
       /* destroy the file if we cannot query any file information */
       thunar_file_destroy (file);
-      return FALSE;
+      return;
     }
 
   /* ... and tell others */
   thunar_file_changed (file);
-
-  return FALSE;
 }
 
+static gboolean
+thunar_file_reload_cb (gpointer user_data)
+{
+  ThunarFile *file = user_data;
 
+  thunar_file_reload (file);
+  return FALSE;
+}
 
 /**
  * thunar_file_reload_idle:
@@ -4010,7 +4012,7 @@ thunar_file_reload_idle (ThunarFile *file)
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  g_idle_add ((GSourceFunc) thunar_file_reload, file);
+  g_idle_add (thunar_file_reload_cb, file);
 }
 
 
@@ -4030,7 +4032,7 @@ thunar_file_reload_idle_unref (ThunarFile *file)
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   g_idle_add_full (G_PRIORITY_DEFAULT_IDLE,
-                   (GSourceFunc) thunar_file_reload,
+                   thunar_file_reload_cb,
                    file,
                    (GDestroyNotify) g_object_unref);
 }
