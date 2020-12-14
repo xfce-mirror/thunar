@@ -712,7 +712,7 @@ static gboolean
 thunar_properties_dialog_reload (ThunarPropertiesDialog *dialog)
 {
   /* reload the active files */
-  g_list_foreach (dialog->files, (GFunc) (void (*)(void)) thunar_file_reload, NULL);
+  g_list_foreach (dialog->files, thunar_file_reload_cb, NULL);
 
   return dialog->files != NULL;
 }
