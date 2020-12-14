@@ -229,7 +229,6 @@ static void                 thunar_standard_view_row_deleted                (Thu
 static void                 thunar_standard_view_select_after_row_deleted   (ThunarListModel          *model,
                                                                              GtkTreePath              *path,
                                                                              ThunarStandardView       *standard_view);
-static gboolean             thunar_standard_view_restore_selection_idle     (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_row_changed                (ThunarListModel          *model,
                                                                              GtkTreePath              *path,
                                                                              GtkTreeIter              *iter,
@@ -2968,8 +2967,9 @@ thunar_standard_view_row_deleted (ThunarListModel    *model,
 
 
 static gboolean
-thunar_standard_view_restore_selection_idle (ThunarStandardView *standard_view)
+thunar_standard_view_restore_selection_idle (gpointer user_data)
 {
+  ThunarStandardView *standard_view = user_data;
   GtkAdjustment *hadjustment;
   GtkAdjustment *vadjustment;
   gdouble        h, v, hl, hu, vl, vu;
@@ -3015,9 +3015,7 @@ thunar_standard_view_rows_reordered (ThunarListModel    *model,
    * after letting row changes accumulate a bit */
   if (standard_view->priv->restore_selection_idle_id == 0)
     standard_view->priv->restore_selection_idle_id =
-      g_timeout_add (50,
-                     (GSourceFunc) thunar_standard_view_restore_selection_idle,
-                     standard_view);
+      g_timeout_add (50, thunar_standard_view_restore_selection_idle, standard_view);
 }
 
 
