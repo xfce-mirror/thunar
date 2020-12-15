@@ -799,13 +799,9 @@ thunar_file_monitor (GFileMonitor     *monitor,
   if (g_file_equal (event_path, file->gfile))
     {
       /* the event occurred for the monitored ThunarFile */
-#if GLIB_CHECK_VERSION (2, 46, 0)
       if (event_type == G_FILE_MONITOR_EVENT_RENAMED ||
           event_type == G_FILE_MONITOR_EVENT_MOVED_IN ||
           event_type == G_FILE_MONITOR_EVENT_MOVED_OUT)
-#else
-      if (event_type == G_FILE_MONITOR_EVENT_MOVED)
-#endif
         {
           G_LOCK (file_rename_mutex);
           thunar_file_monitor_moved (file, other_path);
@@ -821,13 +817,9 @@ thunar_file_monitor (GFileMonitor     *monitor,
       /* The event did not occur for the monitored ThunarFile, but for
          a file that is contained in ThunarFile which is actually a
          directory. */
-#if GLIB_CHECK_VERSION (2, 46, 0)
       if (event_type == G_FILE_MONITOR_EVENT_RENAMED ||
           event_type == G_FILE_MONITOR_EVENT_MOVED_IN ||
           event_type == G_FILE_MONITOR_EVENT_MOVED_OUT)
-#else
-      if (event_type == G_FILE_MONITOR_EVENT_MOVED)
-#endif
         {
           /* reload the target file if cached */
           if (other_path == NULL)
@@ -3895,11 +3887,7 @@ thunar_file_watch (ThunarFile *file)
 
       /* create a file or directory monitor */
       file_watch->monitor = g_file_monitor (file->gfile, G_FILE_MONITOR_WATCH_MOUNTS |
-#if GLIB_CHECK_VERSION (2, 46, 0)
                                             G_FILE_MONITOR_WATCH_MOVES, NULL, &error);
-#else
-                                            G_FILE_MONITOR_SEND_MOVED, NULL, &error);
-#endif
 
       if (G_UNLIKELY (file_watch->monitor == NULL))
         {

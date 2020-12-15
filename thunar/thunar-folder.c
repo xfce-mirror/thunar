@@ -139,11 +139,7 @@ thunar_folder_constructed (GObject *object)
   GError       *error  = NULL;
 
   folder->monitor = g_file_monitor_directory (thunar_file_get_file (folder->corresponding_file),
-#if GLIB_CHECK_VERSION (2, 46, 0)
                                               G_FILE_MONITOR_WATCH_MOVES, NULL, &error);
-#else
-                                              G_FILE_MONITOR_SEND_MOVED, NULL, &error);
-#endif
 
   if (G_LIKELY (folder->monitor != NULL))
       g_signal_connect (folder->monitor, "changed", G_CALLBACK (thunar_folder_monitor), folder);
@@ -803,13 +799,9 @@ thunar_folder_monitor (GFileMonitor     *monitor,
                   g_object_unref (destroyed);
                 }
             }
-#if GLIB_CHECK_VERSION (2, 46, 0)
           else if (event_type == G_FILE_MONITOR_EVENT_RENAMED ||
                    event_type == G_FILE_MONITOR_EVENT_MOVED_IN ||
                    event_type == G_FILE_MONITOR_EVENT_MOVED_OUT)
-#else
-          else if (event_type == G_FILE_MONITOR_EVENT_MOVED)
-#endif
             {
               /* destroy the old file and update the new one */
               thunar_file_destroy (lp->data);
