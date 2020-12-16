@@ -2537,7 +2537,9 @@ static void
 thunar_window_action_close_tab (ThunarWindow *window,
                                 GtkWidget    *menu_item)
 {
-  if (window->view != NULL)
+  if (gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook)) == 1)
+    gtk_widget_destroy (GTK_WIDGET (window));
+  else if (window->view != NULL)
     gtk_widget_destroy (window->view);
 }
 
