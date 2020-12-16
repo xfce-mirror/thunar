@@ -46,6 +46,7 @@ typedef enum
   THUNAR_STANDARD_VIEW_ACTION_SELECT_ALL_FILES,
   THUNAR_STANDARD_VIEW_ACTION_SELECT_BY_PATTERN,
   THUNAR_STANDARD_VIEW_ACTION_INVERT_SELECTION,
+  THUNAR_STANDARD_VIEW_ACTION_UNSELECT_ALL_FILES,
   THUNAR_STANDARD_VIEW_ACTION_ARRANGE_ITEMS_MENU,
   THUNAR_STANDARD_VIEW_ACTION_SORT_BY_NAME,
   THUNAR_STANDARD_VIEW_ACTION_SORT_BY_SIZE,
@@ -169,7 +170,7 @@ ThunarHistory *thunar_standard_view_copy_history          (ThunarStandardView   
 void           thunar_standard_view_append_menu_items     (ThunarStandardView       *standard_view,
                                                            GtkMenu                  *menu,
                                                            GtkAccelGroup            *accel_group);
-void           thunar_standard_view_append_menu_item      (ThunarStandardView       *standard_view,
+GtkWidget     *thunar_standard_view_append_menu_item      (ThunarStandardView       *standard_view,
                                                            GtkMenu                  *menu,
                                                            ThunarStandardViewAction  action);
 void           _thunar_standard_view_open_on_middle_click (ThunarStandardView       *standard_view,
