@@ -168,6 +168,7 @@ static void                 thunar_standard_view_set_selected_files_view    (Thu
 static void                 thunar_standard_view_select_all_files           (ThunarView               *view);
 static void                 thunar_standard_view_select_by_pattern          (ThunarView               *view);
 static void                 thunar_standard_view_selection_invert           (ThunarView               *view);
+static void                 thunar_standard_view_unselect_all_files         (ThunarView               *view);
 static GClosure            *thunar_standard_view_new_files_closure          (ThunarStandardView       *standard_view,
                                                                              GtkWidget                *source_view);
 static void                 thunar_standard_view_new_files                  (ThunarStandardView       *standard_view,
@@ -345,9 +346,10 @@ struct _ThunarStandardViewPrivate
 
 static XfceGtkActionEntry thunar_standard_view_action_entries[] =
 {
-    { THUNAR_STANDARD_VIEW_ACTION_SELECT_ALL_FILES,  "<Actions>/ThunarStandardView/select-all-files",   "<Primary>a", XFCE_GTK_MENU_ITEM, N_ ("Select _all Files"),     N_ ("Select all files in this window"),                   NULL, G_CALLBACK (thunar_standard_view_select_all_files), },
-    { THUNAR_STANDARD_VIEW_ACTION_SELECT_BY_PATTERN, "<Actions>/ThunarStandardView/select-by-pattern",  "<Primary>s", XFCE_GTK_MENU_ITEM, N_ ("Select _by Pattern..."), N_ ("Select all files that match a certain pattern"),     NULL, G_CALLBACK (thunar_standard_view_select_by_pattern), },
-    { THUNAR_STANDARD_VIEW_ACTION_INVERT_SELECTION,  "<Actions>/ThunarStandardView/invert-selection",   "",           XFCE_GTK_MENU_ITEM, N_ ("_Invert Selection"),     N_ ("Select all files but not those currently selected"), NULL, G_CALLBACK (thunar_standard_view_selection_invert), },
+    { THUNAR_STANDARD_VIEW_ACTION_SELECT_ALL_FILES,   "<Actions>/ThunarStandardView/select-all-files",   "<Primary>a", XFCE_GTK_MENU_ITEM, N_ ("Select _all Files"),     N_ ("Select all files in this window"),                   NULL, G_CALLBACK (thunar_standard_view_select_all_files), },
+    { THUNAR_STANDARD_VIEW_ACTION_SELECT_BY_PATTERN,  "<Actions>/ThunarStandardView/select-by-pattern",  "<Primary>s", XFCE_GTK_MENU_ITEM, N_ ("Select _by Pattern..."), N_ ("Select all files that match a certain pattern"),     NULL, G_CALLBACK (thunar_standard_view_select_by_pattern), },
+    { THUNAR_STANDARD_VIEW_ACTION_INVERT_SELECTION,   "<Actions>/ThunarStandardView/invert-selection",   "",           XFCE_GTK_MENU_ITEM, N_ ("_Invert Selection"),     N_ ("Select all files but not those currently selected"), NULL, G_CALLBACK (thunar_standard_view_selection_invert), },
+    { THUNAR_STANDARD_VIEW_ACTION_UNSELECT_ALL_FILES, "<Actions>/ThunarStandardView/unselect-all-files", "Escape",     XFCE_GTK_MENU_ITEM, N_ ("U_nselect all Files"),   N_ ("Unselect all files in this window"),                 NULL, G_CALLBACK (thunar_standard_view_unselect_all_files), },
 };
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_standard_view_action_entries,G_N_ELEMENTS(thunar_standard_view_action_entries),id)
@@ -2165,6 +2167,22 @@ thunar_standard_view_selection_invert (ThunarView *view)
 
   /* invert all files in the real view */
   (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->selection_invert) (standard_view);
+}
+
+
+
+static void
+thunar_standard_view_unselect_all_files (ThunarView *view)
+{
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
+
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  /* grab the focus to the view */
+  gtk_widget_grab_focus (GTK_WIDGET (standard_view));
+
+  /* unselect all files in the real view */
+  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->unselect_all) (standard_view);
 }
 
 

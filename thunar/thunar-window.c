@@ -972,6 +972,8 @@ thunar_window_update_edit_menu (ThunarWindow *window,
                                              GTK_MENU (menu), THUNAR_STANDARD_VIEW_ACTION_SELECT_BY_PATTERN);
       thunar_standard_view_append_menu_item (THUNAR_STANDARD_VIEW (window->view),
                                              GTK_MENU (menu), THUNAR_STANDARD_VIEW_ACTION_INVERT_SELECTION);
+      thunar_standard_view_append_menu_item (THUNAR_STANDARD_VIEW (window->view),
+                                             GTK_MENU (menu), THUNAR_STANDARD_VIEW_ACTION_UNSELECT_ALL_FILES);
     }
   xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
   thunar_menu_add_sections (THUNAR_MENU (menu), THUNAR_MENU_SECTION_DUPLICATE
