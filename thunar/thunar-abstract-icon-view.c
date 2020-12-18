@@ -460,7 +460,7 @@ thunar_abstract_icon_view_append_menu_items (ThunarStandardView *standard_view,
 
 
 static const XfceGtkActionEntry*
-thunar_abstract_icon_view_gesture_action (ThunarAbstractIconView *abstract_icon_view)
+thunar_abstract_icon_view_gesture_action (ThunarAbstractIconView *abstract_icon_view, GtkTextDirection direction)
 {
   GtkWidget *window;
 
@@ -473,12 +473,18 @@ thunar_abstract_icon_view_gesture_action (ThunarAbstractIconView *abstract_icon_
   else if (abstract_icon_view->priv->gesture_start_x - abstract_icon_view->priv->gesture_current_x > 40
       && ABS (abstract_icon_view->priv->gesture_start_y - abstract_icon_view->priv->gesture_current_y) < 40)
     {
-      return thunar_window_get_action_entry (THUNAR_WINDOW (window), THUNAR_WINDOW_ACTION_BACK);
+      if (direction == GTK_TEXT_DIR_LTR || direction == GTK_TEXT_DIR_NONE)
+        return thunar_window_get_action_entry (THUNAR_WINDOW (window), THUNAR_WINDOW_ACTION_BACK);
+      else
+        return thunar_window_get_action_entry (THUNAR_WINDOW (window), THUNAR_WINDOW_ACTION_FORWARD);
     }
   else if (abstract_icon_view->priv->gesture_current_x - abstract_icon_view->priv->gesture_start_x > 40
       && ABS (abstract_icon_view->priv->gesture_start_y - abstract_icon_view->priv->gesture_current_y) < 40)
     {
-      return thunar_window_get_action_entry (THUNAR_WINDOW (window), THUNAR_WINDOW_ACTION_FORWARD);
+      if (direction == GTK_TEXT_DIR_LTR || direction == GTK_TEXT_DIR_NONE)
+        return thunar_window_get_action_entry (THUNAR_WINDOW (window), THUNAR_WINDOW_ACTION_FORWARD);
+      else
+        return thunar_window_get_action_entry (THUNAR_WINDOW (window), THUNAR_WINDOW_ACTION_BACK);
     }
   else if (abstract_icon_view->priv->gesture_current_y - abstract_icon_view->priv->gesture_start_y > 40
       && ABS (abstract_icon_view->priv->gesture_start_x - abstract_icon_view->priv->gesture_current_x) < 40)
@@ -685,7 +691,7 @@ thunar_abstract_icon_view_button_release_event (ExoIconView            *view,
   abstract_icon_view->priv->gesture_release_id = 0;
 
   /* execute the related callback  (if any) */
-  action_entry = thunar_abstract_icon_view_gesture_action (abstract_icon_view);
+  action_entry = thunar_abstract_icon_view_gesture_action (abstract_icon_view, gtk_widget_get_direction (window));
   if (G_LIKELY (action_entry != NULL))
     ((void(*)(GtkWindow*))action_entry->callback)(GTK_WINDOW (window));
 
@@ -716,8 +722,11 @@ thunar_abstract_icon_view_draw (ExoIconView            *view,
   cairo_set_source_rgba (cr, 1, 1, 1, 0.7);
   cairo_paint (cr);
 
-  /* determine the gesture action */
-  action_entry = thunar_abstract_icon_view_gesture_action (abstract_icon_view);
+  /* determine the gesture action.
+   * GtkTextDirection needs to be fixed, so that e.g. the left arrow will always be shown on the left.
+   * Even if the window uses GTK_TEXT_DIR_RTL.
+   * */
+  action_entry = thunar_abstract_icon_view_gesture_action (abstract_icon_view, GTK_TEXT_DIR_NONE);
   if (G_LIKELY (action_entry != NULL))
     {
       gesture_icon = gtk_icon_theme_load_icon (gtk_icon_theme_get_default(),
