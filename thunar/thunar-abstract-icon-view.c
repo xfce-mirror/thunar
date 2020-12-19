@@ -672,11 +672,6 @@ thunar_abstract_icon_view_button_release_event (ExoIconView            *view,
 
   window = gtk_widget_get_toplevel (GTK_WIDGET (abstract_icon_view));
 
-  /* execute the related callback  (if any) */
-  action_entry = thunar_abstract_icon_view_gesture_action (abstract_icon_view);
-  if (G_LIKELY (action_entry != NULL))
-    ((void(*)(GtkWindow*))action_entry->callback)(GTK_WINDOW (window));
-
   /* unregister the "expose-event" handler */
   g_signal_handler_disconnect (G_OBJECT (view), abstract_icon_view->priv->gesture_expose_id);
   abstract_icon_view->priv->gesture_expose_id = 0;
@@ -688,6 +683,11 @@ thunar_abstract_icon_view_button_release_event (ExoIconView            *view,
   /* unregister the "button-release-event" handler */
   g_signal_handler_disconnect (G_OBJECT (view), abstract_icon_view->priv->gesture_release_id);
   abstract_icon_view->priv->gesture_release_id = 0;
+
+  /* execute the related callback  (if any) */
+  action_entry = thunar_abstract_icon_view_gesture_action (abstract_icon_view);
+  if (G_LIKELY (action_entry != NULL))
+    ((void(*)(GtkWindow*))action_entry->callback)(GTK_WINDOW (window));
 
   /* redraw the abstract_icon view */
   gtk_widget_queue_draw (GTK_WIDGET (view));
