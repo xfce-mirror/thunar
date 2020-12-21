@@ -3832,14 +3832,14 @@ thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
  *
  * Return value: (transfer none): The added #GtkMenuItem
  **/
-void
+GtkWidget *
 thunar_standard_view_append_menu_item (ThunarStandardView      *standard_view,
                                        GtkMenu                 *menu,
                                        ThunarStandardViewAction action)
 {
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), NULL);
 
-  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (action), G_OBJECT (standard_view), GTK_MENU_SHELL (menu));
+  return xfce_gtk_menu_item_new_from_action_entry (get_action_entry (action), G_OBJECT (standard_view), GTK_MENU_SHELL (menu));
 }
 
 
