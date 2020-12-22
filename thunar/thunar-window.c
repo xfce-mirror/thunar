@@ -972,11 +972,8 @@ thunar_window_update_edit_menu (ThunarWindow *window,
                                              GTK_MENU (menu), THUNAR_STANDARD_VIEW_ACTION_SELECT_BY_PATTERN);
       thunar_standard_view_append_menu_item (THUNAR_STANDARD_VIEW (window->view),
                                              GTK_MENU (menu), THUNAR_STANDARD_VIEW_ACTION_INVERT_SELECTION);
-
-      gtk_menu_item = thunar_standard_view_append_menu_item (THUNAR_STANDARD_VIEW (window->view),
-                                                             GTK_MENU (menu), THUNAR_STANDARD_VIEW_ACTION_UNSELECT_ALL_FILES);
-      /* FIXME: how to know whether there are selected files? ThunarLauncher->files_are_selected is not exposed via a function */
-      gtk_widget_set_sensitive (gtk_menu_item, TRUE);
+      thunar_standard_view_append_menu_item (THUNAR_STANDARD_VIEW (window->view),
+                                             GTK_MENU (menu), THUNAR_STANDARD_VIEW_ACTION_UNSELECT_ALL_FILES);
     }
   xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
   thunar_menu_add_sections (THUNAR_MENU (menu), THUNAR_MENU_SECTION_DUPLICATE

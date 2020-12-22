@@ -3837,9 +3837,16 @@ thunar_standard_view_append_menu_item (ThunarStandardView      *standard_view,
                                        GtkMenu                 *menu,
                                        ThunarStandardViewAction action)
 {
+  GtkWidget *item;
+
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), NULL);
 
-  return xfce_gtk_menu_item_new_from_action_entry (get_action_entry (action), G_OBJECT (standard_view), GTK_MENU_SHELL (menu));
+  item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (action), G_OBJECT (standard_view), GTK_MENU_SHELL (menu));
+
+  if (action == THUNAR_STANDARD_VIEW_ACTION_UNSELECT_ALL_FILES)
+    gtk_widget_set_sensitive (item, standard_view->priv->selected_files != NULL);
+
+  return item;
 }
 
 
