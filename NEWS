@@ -1,3 +1,32 @@
+4.16.0
+======
+- Fix action of Back/Forward mouse gesture when using RTL (Issue #90)
+- Prevent crash on mouse gesture action (Issue #443)
+- Avoid crashes when closing thunar with ctrl+w (#336)
+- Ignore double-click events from back/forward mouse button (Issue #371)
+- Remove GLIB_CHECK_VERSION IFDEFs which are obsolete after glib bump
+- bump minimum required exo version to 4.15.3
+- Wrap box around spinner to prevent flickering (Issue #440)
+- Use g_drive_is_removable over g_drive_is_media_removable
+- bump glib (and gio, gthread, etc) to 2.50.0
+- Do not duplicate app_info when added via custom command (Issue #309)
+- Escape all whitespace characters in custom command path
+- Remove hidden quotes for "Open with"->"custom command" (Issue #425)
+- Ignore unknown XML elements in UCA.xml
+- Regression: Fix broken bulk renamer context menu (Issue #436)
+- Revert of b12247c2 and proper fix for Issue #423
+- Remove duplicated code in renamer and prevent possible leak
+- Prevent possible crash of thunar_launcher_poke (Issue #436)
+- Fix combo box entry order (Issue #435)
+- Remove TODO file
+- Change focus when clicking an emblem entry (Issue #315)
+- Bump GLib minimum version to 2.44
+- Prevent Gtk-CRITICAL when terminating session (Issue #430)
+- Missing thunarx support on the shortcut view (Issue #423)
+- Translation Updates:
+  Basque, Chinese (China), Czech, Danish, Estonian, Korean, Norwegian
+  Nynorsk, Turkish, Vietnamese
+
 4.15.3
 ======
 - No special treatment on "rename" for .desktop files (Issue #56)
