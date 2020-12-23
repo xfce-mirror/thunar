@@ -865,6 +865,37 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);
 
+  label = gtk_label_new (_("Security"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_frame_set_label_widget (GTK_FRAME (frame), label);
+  gtk_widget_show (label);
+
+  grid = gtk_grid_new ();
+  gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
+  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
+  gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
+  gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
+  gtk_container_add (GTK_CONTAINER (frame), grid);
+  gtk_widget_show (grid);
+
+  hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
+  gtk_grid_attach (GTK_GRID (grid), hbox, 0, 0, 1, 1);
+  gtk_widget_show (hbox);
+
+  button = gtk_check_button_new_with_mnemonic (_("Execute shell scripts"));
+  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-exec-shell-scripts-by-default", G_OBJECT (button), "active");
+  gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
+  gtk_widget_show (button);
+
+  image = gtk_image_new_from_icon_name ("dialog-warning", GTK_ICON_SIZE_MENU);
+  gtk_widget_set_tooltip_text (image, _("Allowing untrusted programs to run presents a security risk to your system."));
+  gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
+  gtk_widget_show (image);
+
+  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
+  gtk_widget_show (frame);
+
   label = gtk_label_new (_("Volume Management"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
