@@ -38,6 +38,7 @@ typedef struct _ThunarUcaModel      ThunarUcaModel;
 typedef enum
 {
   THUNAR_UCA_MODEL_COLUMN_NAME,
+  THUNAR_UCA_MODEL_COLUMN_SUB_MENU,
   THUNAR_UCA_MODEL_COLUMN_DESCRIPTION,
   THUNAR_UCA_MODEL_COLUMN_GICON,
   THUNAR_UCA_MODEL_COLUMN_ICON_NAME,
@@ -90,6 +91,7 @@ void            thunar_uca_model_remove         (ThunarUcaModel         *uca_mod
 void            thunar_uca_model_update         (ThunarUcaModel         *uca_model,
                                                  GtkTreeIter            *iter,
                                                  const gchar            *name,
+                                                 const gchar            *submenu,
                                                  const gchar            *unique_id,
                                                  const gchar            *description,
                                                  const gchar            *icon,
