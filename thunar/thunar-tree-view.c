@@ -1642,19 +1642,24 @@ THUNAR_THREADS_ENTER
       gtk_tree_view_set_cursor (GTK_TREE_VIEW (view), view->select_path, NULL, FALSE);
       gtk_tree_path_free (view->select_path);
       view->select_path = NULL;
-      return TRUE;
+      return FALSE;
     }
 
   /* verify that we still have a current directory */
   if (G_UNLIKELY (view->current_directory == NULL))
-    return TRUE;
+    return FALSE;
 
   /* get the preferred toplevel path for the current directory */
   path = thunar_tree_view_get_preferred_toplevel_path (view, view->current_directory);
 
-  /* fallback to a newly created root node */
+  /* if no path could be determined, remove the current selection and return */
   if (path == NULL)
-    path = gtk_tree_path_new_first ();
+    {
+      GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+      if (GTK_IS_TREE_SELECTION (selection))
+        gtk_tree_selection_unselect_all (selection);
+      return FALSE;
+    }
 
   gtk_tree_model_get_iter (GTK_TREE_MODEL (view->model), &iter, path);
   gtk_tree_path_free (path);
