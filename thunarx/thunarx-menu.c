@@ -120,10 +120,27 @@ thunarx_menu_append_item (ThunarxMenu *menu, ThunarxMenuItem *item)
 
 
 /**
+ * thunarx_menu_prepend_item:
+ * @menu: a #ThunarxMenu
+ * @item: a #ThunarxMenuItem
+ */
+void
+thunarx_menu_prepend_item (ThunarxMenu *menu, ThunarxMenuItem *item)
+{
+  g_return_if_fail (menu != NULL);
+  g_return_if_fail (item != NULL);
+
+  menu->priv->items = g_list_prepend (menu->priv->items, g_object_ref (item));
+}
+
+
+
+/**
  * thunarx_menu_get_items:
  * @menu: a #ThunarxMenu
  *
  * Returns: (element-type ThunarxMenuItem) (transfer full): the provided #ThunarxMenuItem list
+ * Must be freed with thunarx_menu_item_list_free() after usage
  */
 GList *
 thunarx_menu_get_items (ThunarxMenu *menu)

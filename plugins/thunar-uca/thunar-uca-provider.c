@@ -187,6 +187,51 @@ thunar_uca_provider_get_menu_items (ThunarxPreferencesProvider *preferences_prov
 }
 
 
+/* returned menu must be freed with g_object_unref() */
+static ThunarxMenu*
+find_submenu_by_name (gchar *name, GList* items)
+{
+  GList *lp;
+  GList *thunarx_menu_items;
+
+  for (lp = g_list_first (items); lp != NULL; lp = lp->next)
+    {
+      gchar       *item_name = NULL;
+      ThunarxMenu *item_menu = NULL;
+      g_object_get (G_OBJECT (lp->data), "name", &item_name, "menu", &item_menu, NULL);
+
+      if (item_menu != NULL)
+        {
+          /* This menu is the correct menu */
+          if (g_strcmp0 (item_name, name) == 0)
+            {
+              g_free (item_name);
+              return item_menu;
+            }
+
+          /* Some other menu found .. lets check recursively if the menu we search for is inside */
+          thunarx_menu_items = thunarx_menu_get_items (item_menu);
+          g_object_unref (item_menu);
+
+          if (thunarx_menu_items != NULL)
+            {
+              ThunarxMenu *submenu = find_submenu_by_name (name, thunarx_menu_items);
+              if (submenu != NULL)
+                {
+                  g_free (item_name);
+                  return submenu;
+                }
+              thunarx_menu_item_list_free (thunarx_menu_items);
+            }
+        }
+      g_free (item_name);
+    }
+
+  /* not found */
+  return NULL;
+}
+
+
 
 static GList*
 thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
@@ -197,20 +242,26 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
   ThunarUcaProvider   *uca_provider = THUNAR_UCA_PROVIDER (menu_provider);
   ThunarUcaContext    *uca_context = NULL;
   GtkTreeIter          iter;
+  ThunarxMenuItem     *menu_item;
   ThunarxMenuItem     *item;
   GList               *items = NULL;
   GList               *paths;
   GList               *lp;
+  ThunarxMenu         *submenu;
+  ThunarxMenu         *parent_menu = NULL;
 
   paths = thunar_uca_model_match (uca_provider->model, files);
+
   for (lp = g_list_last (paths); lp != NULL; lp = lp->prev)
     {
-      gchar *unique_id = NULL;
-      gchar *name = NULL;
-      gchar *label = NULL;
-      gchar *tooltip = NULL;
-      gchar *icon_name = NULL;
-      GIcon *gicon = NULL;
+      gchar  *unique_id = NULL;
+      gchar  *name = NULL;
+      gchar  *sub_menu_string = NULL;
+      gchar **sub_menus_as_array = NULL;
+      gchar  *label = NULL;
+      gchar  *tooltip = NULL;
+      gchar  *icon_name = NULL;
+      GIcon  *gicon = NULL;
 
       /* try to lookup the tree iter for the specified tree path */
       if (gtk_tree_model_get_iter (GTK_TREE_MODEL (uca_provider->model), &iter, lp->data))
@@ -218,6 +269,7 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
           /* determine the label, tooltip and stock-id for the item */
           gtk_tree_model_get (GTK_TREE_MODEL (uca_provider->model), &iter,
                               THUNAR_UCA_MODEL_COLUMN_NAME, &label,
+                              THUNAR_UCA_MODEL_COLUMN_SUB_MENU, &sub_menu_string,
                               THUNAR_UCA_MODEL_COLUMN_GICON, &gicon,
                               THUNAR_UCA_MODEL_COLUMN_DESCRIPTION, &tooltip,
                               THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID, &unique_id,
@@ -228,6 +280,47 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
 
           if (gicon != NULL)
             icon_name = g_icon_to_string (gicon);
+
+          /* Search or build the parent submenus, if required */
+          parent_menu = NULL;
+          sub_menus_as_array = g_strsplit (sub_menu_string, "/", -1);
+
+          for (int i = 0; sub_menus_as_array[i] != NULL; i++)
+           {
+              /* get the submenu path up to the iterator  */
+              gchar *sub_menu_path = g_strdup (sub_menus_as_array[0]);
+
+              for (int j= 1; j<=i; j++)
+                sub_menu_path = g_strconcat (sub_menu_path, "/", sub_menus_as_array[j], NULL);
+
+              /* Check if the full path already exists */
+              submenu = find_submenu_by_name (sub_menu_path, items);
+
+              if (submenu != NULL)
+                {
+                  /* This submenu already exists, we can just use it as new parent */
+                  parent_menu = submenu;
+                  /* no need to keep the extra reference on it */
+                  g_object_unref (submenu);
+                }
+              else
+                {
+                  /* Not found, we create a new submenu */
+                  menu_item = thunarx_menu_item_new (sub_menu_path, sub_menus_as_array[i], "", "inode-directory");
+
+                  /* Only add base-submenus to the returned list */
+                  if (parent_menu == NULL)
+                    items = g_list_prepend (items, menu_item);
+                  else
+                    thunarx_menu_prepend_item (parent_menu, menu_item);
+
+                  /* This sublevel becomes the new parent */
+                  parent_menu = thunarx_menu_new ();
+                  thunarx_menu_item_set_menu (menu_item, parent_menu);
+                }
+              g_free (sub_menu_path);
+            }
+          g_strfreev (sub_menus_as_array);
 
           /* create the new menu item with the given parameters */
           item = thunarx_menu_item_new (name, label, tooltip, icon_name);
@@ -254,13 +347,17 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
           g_object_set_data (G_OBJECT (item), "action_path",
                              g_strconcat ("<Actions>/ThunarActions/", name, NULL));
 
-          /* add the menu item to the return list */
-          items = g_list_prepend (items, item);
+          /* add only base menu items to the return list */
+          if(parent_menu == NULL)
+            items = g_list_prepend (items, item);
+          else
+            thunarx_menu_prepend_item (parent_menu, item);
 
           /* cleanup */
           g_free (tooltip);
           g_free (label);
           g_free (name);
+          g_free (sub_menu_string);
           g_free (icon_name);
           g_free (unique_id);
 
