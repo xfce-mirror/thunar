@@ -3987,9 +3987,11 @@ thunar_file_reload (ThunarFile *file)
 
 
 
-gboolean
-thunar_file_reload_cb_once (ThunarFile *file)
+static gboolean
+thunar_file_reload_cb_once (gpointer user_data)
 {
+  ThunarFile *file = user_data;
+
   thunar_file_reload (file);
   return FALSE;
 }
@@ -4009,7 +4011,7 @@ thunar_file_reload_idle (ThunarFile *file)
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  g_idle_add ((GSourceFunc) thunar_file_reload_cb_once, file);
+  g_idle_add (thunar_file_reload_cb_once, file);
 }
 
 
@@ -4029,7 +4031,7 @@ thunar_file_reload_idle_unref (ThunarFile *file)
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   g_idle_add_full (G_PRIORITY_DEFAULT_IDLE,
-                   (GSourceFunc) thunar_file_reload,
+                   thunar_file_reload_cb_once,
                    file,
                    (GDestroyNotify) g_object_unref);
 }

@@ -1303,9 +1303,9 @@ thunar_io_jobs_list_directory (GFile *directory)
 
 
 static gboolean
-_thunar_io_jobs_rename_notify (ThunarFile *file)
+_thunar_io_jobs_rename_notify (gpointer user_data)
 {
-  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  ThunarFile *file = user_data;
 
   /* tell the associated folder that the file was renamed */
   thunarx_file_info_renamed (THUNARX_FILE_INFO (file));
@@ -1345,7 +1345,7 @@ _thunar_io_jobs_rename (ThunarJob  *job,
   if (thunar_file_rename (file, display_name, exo_job_get_cancellable (EXO_JOB (job)), TRUE, &err))
     {
       exo_job_send_to_mainloop (EXO_JOB (job),
-                                (GSourceFunc) _thunar_io_jobs_rename_notify,
+                                _thunar_io_jobs_rename_notify,
                                 g_object_ref (file), g_object_unref);
     }
 

@@ -403,8 +403,9 @@ thunar_thumbnail_cache_process_copy_queue_destroy (gpointer user_data)
 
 
 static gboolean
-thunar_thumbnail_cache_process_delete_queue (ThunarThumbnailCache *cache)
+thunar_thumbnail_cache_process_delete_queue (gpointer user_data)
 {
+  ThunarThumbnailCache *cache = user_data;
   GList  *lp;
   gchar **uris;
   guint   n_uris;
@@ -455,8 +456,9 @@ thunar_thumbnail_cache_process_delete_queue (ThunarThumbnailCache *cache)
 
 
 static gboolean
-thunar_thumbnail_cache_process_cleanup_queue (ThunarThumbnailCache *cache)
+thunar_thumbnail_cache_process_cleanup_queue (gpointer user_data)
 {
+  ThunarThumbnailCache *cache = user_data;
   GList  *lp;
   gchar **uris;
   guint   n_uris;
@@ -636,8 +638,7 @@ thunar_thumbnail_cache_delete_file (ThunarThumbnailCache *cache,
 
       /* process the delete queue in a 250ms timeout */
       cache->delete_queue_idle_id =
-        g_timeout_add (500, (GSourceFunc) thunar_thumbnail_cache_process_delete_queue,
-                       cache);
+        g_timeout_add (500, thunar_thumbnail_cache_process_delete_queue, cache);
     }
 
   /* release the cache lock */
@@ -674,8 +675,7 @@ thunar_thumbnail_cache_cleanup_file (ThunarThumbnailCache *cache,
 
       /* process the cleanup queue in a 250ms timeout */
       cache->cleanup_queue_idle_id =
-        g_timeout_add (1000, (GSourceFunc) thunar_thumbnail_cache_process_cleanup_queue,
-                       cache);
+        g_timeout_add (1000, thunar_thumbnail_cache_process_cleanup_queue, cache);
     }
 
   /* release the cache lock */
@@ -724,14 +724,12 @@ thunar_thumbnail_cache_proxy_created (GObject      *source,
   /* process the delete queue in a 250ms timeout */
   if (cache->delete_queue)
       cache->delete_queue_idle_id =
-        g_timeout_add (500, (GSourceFunc) thunar_thumbnail_cache_process_delete_queue,
-                       cache);
+        g_timeout_add (500, thunar_thumbnail_cache_process_delete_queue, cache);
 
   /* process the cleanup queue in a 250ms timeout */
   if (cache->cleanup_queue)
       cache->cleanup_queue_idle_id =
-        g_timeout_add (1000, (GSourceFunc) thunar_thumbnail_cache_process_cleanup_queue,
-                       cache);
+        g_timeout_add (1000, thunar_thumbnail_cache_process_cleanup_queue, cache);
 
   _thumbnail_cache_unlock (cache);
 
