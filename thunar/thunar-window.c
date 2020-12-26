@@ -600,7 +600,7 @@ thunar_window_init (ThunarWindow *window)
 {
   GtkWidget       *label;
   GtkWidget       *infobar;
-  GtkWidget       *spinner_box;
+  GtkWidget       *item;
   gboolean         last_menubar_visible;
   gchar           *last_location_bar;
   gchar           *last_side_pane;
@@ -709,17 +709,17 @@ thunar_window_init (ThunarWindow *window)
   gtk_widget_set_hexpand (window->menubar, TRUE);
   gtk_grid_attach (GTK_GRID (window->grid), window->menubar, 0, 0, 1, 1);
 
-  /* Add a spinner besides the menubar
-   * Putting the spinner directly into the grid for unknown reason can lead to flickering
-   * That is why we wrap a box around the spinner.
-   * Check https://gitlab.xfce.org/xfce/thunar/-/issues/440 for details
-   */
+  /* append the menu item for the spinner */
+  item = gtk_menu_item_new ();
+  gtk_widget_set_sensitive (GTK_WIDGET (item), FALSE);
+  g_object_set (G_OBJECT (item), "right-justified", TRUE, NULL);
+  gtk_menu_shell_append (GTK_MENU_SHELL (window->menubar), item);
+  gtk_widget_show (item);
+
+  /* place the spinner into the menu item */
   window->spinner = gtk_spinner_new ();
-  spinner_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
-  gtk_widget_show (spinner_box);
-  gtk_container_add (GTK_CONTAINER (spinner_box), window->spinner);
-  gtk_grid_attach (GTK_GRID (window->grid), spinner_box, 1, 0, 1, 1);
-  exo_binding_new (G_OBJECT (window->menubar), "visible",
+  gtk_container_add (GTK_CONTAINER (item), window->spinner);
+  exo_binding_new (G_OBJECT (window->spinner), "active",
                    G_OBJECT (window->spinner), "visible");
 
   /* check if we need to add the root warning */
@@ -729,7 +729,7 @@ thunar_window_init (ThunarWindow *window)
       infobar = gtk_info_bar_new ();
       gtk_info_bar_set_message_type (GTK_INFO_BAR (infobar), GTK_MESSAGE_WARNING);
       gtk_widget_set_hexpand (infobar, TRUE);
-      gtk_grid_attach (GTK_GRID (window->grid), infobar, 0, 2, 2, 1);
+      gtk_grid_attach (GTK_GRID (window->grid), infobar, 0, 2, 1, 1);
       gtk_widget_show (infobar);
 
       /* add the label with the root warning */
@@ -742,7 +742,7 @@ thunar_window_init (ThunarWindow *window)
   gtk_container_set_border_width (GTK_CONTAINER (window->paned), 0);
   gtk_widget_set_hexpand (window->paned, TRUE);
   gtk_widget_set_vexpand (window->paned, TRUE);
-  gtk_grid_attach (GTK_GRID (window->grid), window->paned, 0, 4, 2, 1);
+  gtk_grid_attach (GTK_GRID (window->grid), window->paned, 0, 4, 1, 1);
   gtk_widget_show (window->paned);
 
   /* determine the last separator position and apply it to the paned view */
@@ -758,7 +758,7 @@ thunar_window_init (ThunarWindow *window)
   window->notebook = gtk_notebook_new ();
   gtk_widget_set_hexpand (window->notebook, TRUE);
   gtk_widget_set_vexpand (window->notebook, TRUE);
-  gtk_grid_attach (GTK_GRID (window->view_box), window->notebook, 0, 1, 2, 1);
+  gtk_grid_attach (GTK_GRID (window->view_box), window->notebook, 0, 1, 1, 1);
   g_signal_connect (G_OBJECT (window->notebook), "switch-page", G_CALLBACK (thunar_window_notebook_switch_page), window);
   g_signal_connect (G_OBJECT (window->notebook), "page-added", G_CALLBACK (thunar_window_notebook_page_added), window);
   g_signal_connect (G_OBJECT (window->notebook), "page-removed", G_CALLBACK (thunar_window_notebook_page_removed), window);
@@ -785,7 +785,7 @@ thunar_window_init (ThunarWindow *window)
   gtk_toolbar_set_icon_size (GTK_TOOLBAR (window->location_toolbar),
                               small_icons ? GTK_ICON_SIZE_SMALL_TOOLBAR : GTK_ICON_SIZE_LARGE_TOOLBAR);
   gtk_widget_set_hexpand (window->location_toolbar, TRUE);
-  gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 1, 2, 1);
+  gtk_grid_attach (GTK_GRID (window->grid), window->location_toolbar, 0, 1, 1, 1);
 
   window->location_toolbar_item_back = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_BACK), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
   window->location_toolbar_item_forward = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_FORWARD), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
@@ -837,7 +837,7 @@ thunar_window_init (ThunarWindow *window)
   /* setup a new statusbar */
   window->statusbar = thunar_statusbar_new ();
   gtk_widget_set_hexpand (window->statusbar, TRUE);
-  gtk_grid_attach (GTK_GRID (window->view_box), window->statusbar, 0, 2, 2, 1);
+  gtk_grid_attach (GTK_GRID (window->view_box), window->statusbar, 0, 2, 1, 1);
   if (last_statusbar_visible)
     gtk_widget_show (window->statusbar);
 
