@@ -3380,10 +3380,11 @@ thunar_window_action_show_hidden (ThunarWindow *window)
 
   window->show_hidden = !window->show_hidden;
   gtk_container_foreach (GTK_CONTAINER (window->notebook), (GtkCallback) (void (*)(void)) thunar_view_set_show_hidden, GINT_TO_POINTER (window->show_hidden));
-  thunar_side_pane_set_show_hidden (THUNAR_SIDE_PANE (window->sidepane), window->show_hidden);
+
+  if (G_LIKELY (window->sidepane != NULL))
+    thunar_side_pane_set_show_hidden (THUNAR_SIDE_PANE (window->sidepane), window->show_hidden);
 
   g_object_set (G_OBJECT (window->preferences), "last-show-hidden", window->show_hidden, NULL);
-
 }
 
 
