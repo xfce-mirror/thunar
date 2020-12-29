@@ -217,6 +217,27 @@ thunar_progress_view_init (ThunarProgressView *view)
   gtk_box_pack_start (GTK_BOX (vbox2), view->message_label, TRUE, TRUE, 0);
   gtk_widget_show (view->message_label);
 
+  view->pause_button = gtk_button_new_from_icon_name ("media-playback-pause-symbolic", GTK_ICON_SIZE_BUTTON);
+  gtk_button_set_relief (GTK_BUTTON (view->pause_button), GTK_RELIEF_NONE);
+  g_signal_connect_swapped (view->pause_button, "clicked", G_CALLBACK (thunar_progress_view_pause_job), view);
+  gtk_box_pack_start (GTK_BOX (hbox), view->pause_button, FALSE, FALSE, 0);
+  gtk_widget_set_can_focus (view->pause_button, FALSE);
+  gtk_widget_hide (view->pause_button);
+
+  view->unpause_button = gtk_button_new_from_icon_name ("media-playback-start-symbolic", GTK_ICON_SIZE_BUTTON);
+  gtk_button_set_relief (GTK_BUTTON (view->unpause_button), GTK_RELIEF_NONE);
+  g_signal_connect_swapped (view->unpause_button, "clicked", G_CALLBACK (thunar_progress_view_unpause_job), view);
+  gtk_box_pack_start (GTK_BOX (hbox), view->unpause_button, FALSE, FALSE, 0);
+  gtk_widget_set_can_focus (view->unpause_button, FALSE);
+  gtk_widget_hide (view->unpause_button);
+
+  cancel_button = gtk_button_new_from_icon_name ("media-playback-stop-symbolic", GTK_ICON_SIZE_BUTTON);
+  gtk_button_set_relief (GTK_BUTTON (cancel_button), GTK_RELIEF_NONE);
+  g_signal_connect_swapped (cancel_button, "clicked", G_CALLBACK (thunar_progress_view_cancel_job), view);
+  gtk_box_pack_start (GTK_BOX (hbox), cancel_button, FALSE, FALSE, 0);
+  gtk_widget_set_can_focus (cancel_button, FALSE);
+  gtk_widget_show (cancel_button);
+
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
   gtk_widget_show (hbox);
@@ -234,27 +255,6 @@ thunar_progress_view_init (ThunarProgressView *view)
   gtk_label_set_attributes (GTK_LABEL (view->progress_label), thunar_pango_attr_list_small ());
   gtk_box_pack_start (GTK_BOX (vbox3), view->progress_label, FALSE, TRUE, 0);
   gtk_widget_show (view->progress_label);
-
-  view->pause_button = gtk_button_new_from_icon_name ("media-playback-pause", GTK_ICON_SIZE_BUTTON);
-  gtk_button_set_label (GTK_BUTTON (view->pause_button), _("Pause"));
-  g_signal_connect_swapped (view->pause_button, "clicked", G_CALLBACK (thunar_progress_view_pause_job), view);
-  gtk_box_pack_start (GTK_BOX (hbox), view->pause_button, FALSE, FALSE, 0);
-  gtk_widget_set_can_focus (view->pause_button, FALSE);
-  gtk_widget_hide (view->pause_button);
-
-  view->unpause_button = gtk_button_new_from_icon_name ("media-playback-start", GTK_ICON_SIZE_BUTTON);
-  gtk_button_set_label (GTK_BUTTON (view->unpause_button), _("Resume"));
-  g_signal_connect_swapped (view->unpause_button, "clicked", G_CALLBACK (thunar_progress_view_unpause_job), view);
-  gtk_box_pack_start (GTK_BOX (hbox), view->unpause_button, FALSE, FALSE, 0);
-  gtk_widget_set_can_focus (view->unpause_button, FALSE);
-  gtk_widget_hide (view->unpause_button);
-
-  cancel_button = gtk_button_new_from_icon_name ("process-stop", GTK_ICON_SIZE_BUTTON);
-  gtk_button_set_label (GTK_BUTTON (cancel_button), _("Cancel"));
-  g_signal_connect_swapped (cancel_button, "clicked", G_CALLBACK (thunar_progress_view_cancel_job), view);
-  gtk_box_pack_start (GTK_BOX (hbox), cancel_button, FALSE, FALSE, 0);
-  gtk_widget_set_can_focus (cancel_button, FALSE);
-  gtk_widget_show (cancel_button);
 
   /* connect the view title to the action label */
   exo_binding_new (G_OBJECT (view), "title", G_OBJECT (label), "label");
