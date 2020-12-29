@@ -329,7 +329,7 @@ struct _ThunarWindow
   GtkWidget              *sidepane;
   GtkWidget              *view_box;
   /* split view panes */
-  GtkWidget              *paned_notebook;
+  GtkWidget              *paned_notebooks;
   /* current / selected notebook */
   GtkWidget              *notebook;
   /* left and right notebook pane */
@@ -805,11 +805,11 @@ thunar_window_init (ThunarWindow *window)
   gtk_widget_show (window->view_box);
 
   /* split view: Create panes where the two notebooks */
-  window->paned_notebook = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
+  window->paned_notebooks = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
   gtk_paned_add2 (GTK_PANED (window->paned), window->view_box);
-  gtk_widget_add_events (window->paned_notebook, GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK | GDK_BUTTON_PRESS_MASK);
-  gtk_grid_attach (GTK_GRID (window->view_box), window->paned_notebook, 0, 1, 1, 2);
-  gtk_widget_show (window->paned_notebook);
+  gtk_widget_add_events (window->paned_notebooks, GDK_ENTER_NOTIFY_MASK | GDK_LEAVE_NOTIFY_MASK | GDK_BUTTON_PRESS_MASK);
+  gtk_grid_attach (GTK_GRID (window->view_box), window->paned_notebooks, 0, 1, 1, 2);
+  gtk_widget_show (window->paned_notebooks);
 
   /** close notebooks on window-remove signal because later on window property
    *  pointers are broken.  
@@ -2215,13 +2215,13 @@ thunar_window_paned_notebooks_add(ThunarWindow *window)
   /* left notebook */
   if (window->notebook1 == NULL)
   {
-    gtk_paned_pack1 (GTK_PANED (window->paned_notebook), notebook, TRUE, FALSE);
+    gtk_paned_pack1 (GTK_PANED (window->paned_notebooks), notebook, TRUE, FALSE);
     window->notebook1 = notebook;
   }
   /* right notebook */
   else if (window->notebook2 == NULL)
   {
-    gtk_paned_pack2 (GTK_PANED (window->paned_notebook), notebook, TRUE, FALSE);
+    gtk_paned_pack2 (GTK_PANED (window->paned_notebooks), notebook, TRUE, FALSE);
     window->notebook2 = notebook;
   }
   return notebook;
