@@ -3772,8 +3772,8 @@ thunar_standard_view_queue_popup (ThunarStandardView *standard_view,
       standard_view->priv->drag_timer_event = gtk_get_current_event ();
 
       /* register the motion notify and the button release events on the real view */
-      g_signal_connect (G_OBJECT (view), "button-release-event", G_CALLBACK (thunar_standard_view_button_release_event), standard_view);
-      g_signal_connect (G_OBJECT (view), "motion-notify-event", G_CALLBACK (thunar_standard_view_motion_notify_event), standard_view);
+      g_signal_connect_after (G_OBJECT (view), "button-release-event", G_CALLBACK (thunar_standard_view_button_release_event), standard_view);
+      g_signal_connect_after (G_OBJECT (view), "motion-notify-event", G_CALLBACK (thunar_standard_view_motion_notify_event), standard_view);
     }
 }
 
