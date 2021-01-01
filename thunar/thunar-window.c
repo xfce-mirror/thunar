@@ -1664,7 +1664,6 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (GTK_IS_NOTEBOOK (notebook));
   _thunar_return_if_fail (THUNAR_IS_VIEW (page));
-  _thunar_return_if_fail (window->notebook_selected == notebook);
 
   /* leave if nothing changed */
   if (window->view == page)
@@ -1856,10 +1855,10 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
     }
   else
     {
-      /* active page from the other notebook removed */
+      /* page from the other notebook was removed */
       if (notebook != window->notebook_selected)
         {
-          /* switch to the other */
+          /* switch to the other notebook */
           thunar_window_paned_notebooks_switch(window);
         }
       /* update tab visibility */
