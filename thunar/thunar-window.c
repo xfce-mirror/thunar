@@ -1666,13 +1666,6 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   _thunar_return_if_fail (THUNAR_IS_VIEW (page));
   _thunar_return_if_fail (window->notebook_left == notebook || window->notebook_right == notebook);
 
-  if (notebook != window->notebook_selected)
-    {
-      /* not on current notebook -> switch */
-      thunar_window_paned_notebooks_switch(window);
-      /* notebook switch also does page switch -> nothing to do*/
-      return;
-    }
   /* leave if nothing changed */
   if (window->view == page)
     return;
@@ -1863,6 +1856,12 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
     }
   else
     {
+      /* active page from the other notebook removed */
+      if (notebook != window->notebook_selected)
+        {
+          /* switch to the other */
+          thunar_window_paned_notebooks_switch(window);
+        }
       /* update tab visibility */
       thunar_window_notebook_show_tabs (window);
     }
