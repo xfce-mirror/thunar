@@ -614,8 +614,8 @@ thunar_window_class_init (ThunarWindowClass *klass)
 
 static void
 thunar_window_paned_notebooks_destroy (GtkWidget *paned_notebooks,
-                                      GtkWidget *widget,
-                                      ThunarWindow *window)
+                                       GtkWidget *widget,
+                                       ThunarWindow *window)
 {
   if (window->notebook_left)
     {
@@ -2077,7 +2077,8 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
 
   /* connect signal view */
   gtk_widget_add_events (GTK_WIDGET (view), GDK_BUTTON_PRESS_MASK);
-  /* click on notebook it self -> select it! */
+
+  /* only gets clicks on the notebook(page) it self */
   g_signal_connect (G_OBJECT (gtk_bin_get_child (GTK_BIN (view))), "button-press-event", G_CALLBACK (thunar_window_paned_notebooks_select), window);
 
   return view;
@@ -2099,7 +2100,7 @@ thunar_window_paned_notebooks_add(ThunarWindow *window)
   g_signal_connect (G_OBJECT (notebook), "page-added", G_CALLBACK (thunar_window_notebook_page_added), window);
   g_signal_connect (G_OBJECT (notebook), "page-removed", G_CALLBACK (thunar_window_notebook_page_removed), window);
 
-  /* click on (active) tab on other notebook */
+  /* only gets clicks on tabs */
   g_signal_connect (G_OBJECT (notebook), "button-press-event", G_CALLBACK (thunar_window_paned_notebooks_select), window);
 
   g_signal_connect_after (G_OBJECT (notebook), "button-press-event", G_CALLBACK (thunar_window_notebook_button_press_event), window);
@@ -2829,7 +2830,7 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
     }
   else
     {
-      window->notebook_selected = thunar_window_paned_notebooks_add(window);
+      window->notebook_selected = thunar_window_paned_notebooks_add (window);
       thunar_window_paned_notebooks_indicate_focus (window, window->notebook_selected);
       directory = thunar_window_get_current_directory (window);
       /* save the history of the current view */
