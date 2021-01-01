@@ -618,9 +618,15 @@ thunar_window_paned_notebooks_destroy (GtkWidget *paned_notebooks,
                                       ThunarWindow *window)
 {
   if (window->notebook_left)
-    gtk_widget_destroy(window->notebook_left);
+    {
+      gtk_widget_destroy(window->notebook_left);
+      window->notebook_left = NULL;
+    }
   if (window->notebook_right)
-    gtk_widget_destroy(window->notebook_right);
+    {
+      gtk_widget_destroy(window->notebook_right);
+      window->notebook_right = NULL;
+    }
 }
 
 
