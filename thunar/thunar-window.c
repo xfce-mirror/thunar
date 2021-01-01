@@ -2169,13 +2169,11 @@ thunar_window_paned_notebooks_select (GtkWidget     *view,
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
   _thunar_return_val_if_fail (window->notebook_left != NULL || window->notebook_right != NULL, FALSE);
 
-  /* one notebook only */
   if (!thunar_window_split_view_is_active (window))
     return FALSE;
 
   selected_notebook = gtk_widget_get_ancestor (view, GTK_TYPE_NOTEBOOK);
 
-  /* already selected */
   if (selected_notebook == window->notebook_selected)
     return FALSE;
 
@@ -2806,6 +2804,10 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
   gint           page_num;
   GType          view_type;
 
+  /* to calculate the separator position */
+  GtkAllocation *allocation = g_new(GtkAllocation, 1);
+  gint          width_full = 0;
+
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (window->view_type != G_TYPE_NONE);
 
@@ -2843,6 +2845,16 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
       /* insert the new view */
       page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
       thunar_window_notebook_insert_page (window, directory, view_type, page_num+1, history);
+
+      /** supress expanding notebook width on creating a tab:
+       *  some how the postion property is 0 at this point, so lets calculate it
+       *  and set it.
+       **/
+      gtk_widget_get_allocation (GTK_WIDGET (window->notebook_right), allocation);
+      width_full += allocation->width;
+      gtk_widget_get_allocation (GTK_WIDGET (window->notebook_left), allocation);
+      width_full += allocation->width;
+      gtk_paned_set_position (GTK_PANED (window->paned_notebooks), (gint)(width_full/2));
     }
 }
 
