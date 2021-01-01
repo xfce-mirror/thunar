@@ -1856,6 +1856,12 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
     }
   else
     {
+      /* active page from the other notebook removed */
+      if (notebook != window->notebook_selected)
+        {
+          /* switch to the other */
+          thunar_window_paned_notebooks_switch(window);
+        }
       /* update tab visibility */
       thunar_window_notebook_show_tabs (window);
     }
