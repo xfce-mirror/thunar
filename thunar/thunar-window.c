@@ -111,7 +111,6 @@ static void      thunar_window_set_property               (GObject              
                                                            guint                   prop_id,
                                                            const GValue           *value,
                                                            GParamSpec             *pspec);
-static gboolean  thunar_window_toggle_split_view          (ThunarWindow           *window);
 static gboolean  thunar_window_reload                     (ThunarWindow           *window,
                                                            gboolean                reload_info);
 static gboolean  thunar_window_toggle_sidepane            (ThunarWindow           *window);
@@ -1372,15 +1371,6 @@ thunar_window_set_property (GObject            *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
-}
-
-
-
-static gboolean
-thunar_window_toggle_split_view (ThunarWindow *window)
-{
-
-  return TRUE;
 }
 
 
