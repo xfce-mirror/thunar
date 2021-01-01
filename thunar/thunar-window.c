@@ -157,6 +157,7 @@ static gboolean  thunar_window_paned_notebooks_select     (GtkWidget            
                                                            GdkEvent               *event,
                                                            ThunarWindow           *window);
 static void      thunar_window_paned_notebooks_indicate_focus (ThunarWindow *window, GtkWidget *notebook);
+static gboolean  thunar_window_split_view_is_active       (ThunarWindow           *window);
 
 static void      thunar_window_update_location_bar_visible(ThunarWindow           *window);
 static void      thunar_window_handle_reload_request      (ThunarWindow           *window);
@@ -1050,8 +1051,7 @@ thunar_window_update_view_menu (ThunarWindow *window,
   thunar_gtk_menu_clean (GTK_MENU (menu));
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_RELOAD), G_OBJECT (window), GTK_MENU_SHELL (menu));
   xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
-  // !TODO: maybe is_active method
-  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_SPLIT), G_OBJECT (window),(window->notebook_left != NULL && window->notebook_right != NULL),  GTK_MENU_SHELL (menu));
+  xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_SPLIT), G_OBJECT (window), thunar_window_split_view_is_active (window),  GTK_MENU_SHELL (menu));
   xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
   item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_VIEW_LOCATION_SELECTOR_MENU), G_OBJECT (window), GTK_MENU_SHELL (menu));
   sub_items =  gtk_menu_new();
@@ -1277,7 +1277,7 @@ static gboolean thunar_window_delete (GtkWidget *widget,
   if (window->notebook_right)
     n_tabs2 = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_right));
 
-  if (window->notebook_left && window->notebook_right)
+  if (thunar_window_split_view_is_active (window))
   {
     if (n_tabs1 < 2 && n_tabs2 < 2)
       return FALSE;
@@ -1796,12 +1796,12 @@ thunar_window_notebook_show_tabs (ThunarWindow *window)
 
   /* check both notebooks, maybe not the selected one get clicked */
   if (window->notebook_left)
-    show_tabs1 = thunar_window_notebook_check_tabs_visibility(window, window->notebook_left);
+    show_tabs1 = thunar_window_notebook_check_tabs_visibility (window, window->notebook_left);
   if (window->notebook_right)
-    show_tabs2 = thunar_window_notebook_check_tabs_visibility(window, window->notebook_right);
+    show_tabs2 = thunar_window_notebook_check_tabs_visibility (window, window->notebook_right);
 
   /* split view: one of the notebooks has tabs -> show tabs in both notebooks */
-  if(window->notebook_left && window->notebook_right)
+  if(thunar_window_split_view_is_active (window))
   {
     gtk_notebook_set_show_tabs (GTK_NOTEBOOK (window->notebook_left), show_tabs1 || show_tabs2);
     gtk_notebook_set_show_tabs (GTK_NOTEBOOK (window->notebook_right), show_tabs1 || show_tabs2);
@@ -1883,13 +1883,13 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
 
   n_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook));
   /* no split view: close window on last tab closed */
-  if (n_pages == 0 && (window->notebook_left == NULL || window->notebook_right == NULL))
+  if (n_pages == 0 && (!thunar_window_split_view_is_active (window)))
   {
     /* destroy the window */
     gtk_widget_destroy (GTK_WIDGET (window));
   }
   /* split view: close split view if last tab removed from notebook */
-  else if (n_pages == 0 && window->notebook_left && window->notebook_right)
+  else if (n_pages == 0 && thunar_window_split_view_is_active (window))
   {
     /* select the other notebook if the current gets closed */
     if (notebook == window->notebook_selected)
@@ -2121,7 +2121,7 @@ thunar_window_paned_notebooks_add(ThunarWindow *window)
 {
   GtkWidget *notebook;
   _thunar_return_val_if_fail(THUNAR_IS_WINDOW (window), NULL);
-  _thunar_return_val_if_fail (window->notebook_left == NULL || window->notebook_right == NULL, NULL);
+  _thunar_return_val_if_fail (!thunar_window_split_view_is_active (window), NULL);
 
   notebook = gtk_notebook_new ();
   gtk_widget_set_hexpand (notebook, TRUE);
@@ -2164,7 +2164,7 @@ thunar_window_paned_notebooks_switch (ThunarWindow *window)
   GtkWidget *new_curr_notebook = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW(window));
-  _thunar_return_if_fail (window->notebook_left != NULL && window->notebook_right != NULL);
+  _thunar_return_if_fail (thunar_window_split_view_is_active (window));
 
   if (window->notebook_selected == window->notebook_left)
   {
@@ -2200,7 +2200,7 @@ thunar_window_paned_notebooks_select (GtkWidget     *view,
   _thunar_return_val_if_fail (window->notebook_left != NULL || window->notebook_right != NULL, FALSE);
 
   /* one notebook only */
-  if (window->notebook_left == NULL || window->notebook_right == NULL)
+  if (!thunar_window_split_view_is_active (window))
     return FALSE;
 
   selected_notebook = gtk_widget_get_ancestor (view, GTK_TYPE_NOTEBOOK);
@@ -2221,7 +2221,7 @@ thunar_window_paned_notebooks_indicate_focus (ThunarWindow *window,
 {
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail(GTK_IS_NOTEBOOK (notebook));
-  _thunar_return_if_fail(window->notebook_left != NULL && window->notebook_right !=NULL);
+  _thunar_return_if_fail(thunar_window_split_view_is_active (window));
 
   gtk_notebook_set_show_border (GTK_NOTEBOOK (notebook), TRUE);
   if (notebook == window->notebook_left)
@@ -2233,8 +2233,16 @@ thunar_window_paned_notebooks_indicate_focus (ThunarWindow *window,
 
 
 
-void
-thunar_window_notebook_open_new_tab (ThunarWindow *window,
+static gboolean
+thunar_window_split_view_is_active (ThunarWindow *window)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+  return (window->notebook_left && window->notebook_right);
+}
+
+
+
+void thunar_window_notebook_open_new_tab (ThunarWindow *window,
                                      ThunarFile   *directory)
 {
   ThunarHistory *history = NULL;
@@ -2831,7 +2839,7 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (window->view_type != G_TYPE_NONE);
 
-  if (window->notebook_left != NULL && window->notebook_right != NULL)
+  if (thunar_window_split_view_is_active (window))
   {
     /* notebook_left is the selected notebook so destroy notebook_right */
     if (window->notebook_selected == window->notebook_left)
