@@ -77,7 +77,6 @@ enum
 {
   BACK,
   RELOAD,
-  TOGGLE_SPLITVIEW,
   TOGGLE_SIDEPANE,
   TOGGLE_MENUBAR,
   ZOOM_IN,
@@ -182,8 +181,7 @@ static void      thunar_window_action_preferences         (ThunarWindow         
                                                            GtkWidget              *menu_item);
 static void      thunar_window_action_reload              (ThunarWindow           *window,
                                                            GtkWidget              *menu_item);
-static void      thunar_window_action_toggle_split_view   (ThunarWindow           *window,
-                                                           GtkWidget              *menu_item);
+static void      thunar_window_action_toggle_split_view   (ThunarWindow           *window);
 static void      thunar_window_action_switch_next_tab     (ThunarWindow           *window);
 static void      thunar_window_action_switch_previous_tab (ThunarWindow           *window);
 static void      thunar_window_action_pathbar_changed     (ThunarWindow           *window);
@@ -298,7 +296,6 @@ struct _ThunarWindowClass
   gboolean (*zoom_reset)        (ThunarWindow *window);
   gboolean (*tab_change)        (ThunarWindow *window,
                                  gint          idx);
-  gboolean (*toggle_split_view) (ThunarWindow *window);
 };
 
 struct _ThunarWindow
@@ -474,7 +471,6 @@ thunar_window_class_init (ThunarWindowClass *klass)
   klass->zoom_out = thunar_window_zoom_out;
   klass->zoom_reset = thunar_window_zoom_reset;
   klass->tab_change = thunar_window_tab_change;
-  klass->toggle_split_view = thunar_window_toggle_split_view;
 
   xfce_gtk_translate_action_entries (thunar_window_action_entries, G_N_ELEMENTS (thunar_window_action_entries));
 
@@ -519,22 +515,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
                                                          "directory-specific-settings",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
-  /**
-   * ThunarWindow::pane-window:
-   * @window : a #ThunarWindow instance.
-   *
-   * Emitted whenever the user requests to pane the window
-   * of the currently displayed folder. This is an internal
-   * signal used to bind the action to keys.
-   **/
-  window_signals[TOGGLE_SPLITVIEW] =
-    g_signal_new (I_("toggle-split-view"),
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-                  G_STRUCT_OFFSET (ThunarWindowClass, toggle_split_view),
-                  g_signal_accumulator_true_handled, NULL,
-                  _thunar_marshal_BOOLEAN__VOID,
-                  G_TYPE_BOOLEAN, 0);
+
   /**
    * ThunarWindow::reload:
    * @window : a #ThunarWindow instance.
@@ -1399,53 +1380,6 @@ static gboolean
 thunar_window_toggle_split_view (ThunarWindow *window)
 {
 
-  ThunarFile    *directory;
-  ThunarHistory *history = NULL;
-  gint           page_num;
-  GType          view_type;
-
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
-  _thunar_return_val_if_fail (window->view_type != G_TYPE_NONE, FALSE);
-
-  /* close */
-  if (window->notebook_left != NULL && window->notebook_right != NULL)
-  {
-    /* notebook1 is the selected notebook so it destroys notebook2 */
-    if (window->notebook_selected == window->notebook_left)
-    {
-      /** without split view, no visual selection indicator needed:
-       *  so missuse indicate_focus() to remove visual selection indicator of
-       *  the remaining notebook.
-       **/
-      thunar_window_paned_notebooks_indicate_focus(window, window->notebook_right);
-      gtk_widget_destroy (window->notebook_right);
-      window->notebook_right = NULL;
-    }
-    /* notebook_right is the selected notebook so it destroys notebook_left */
-    else if (window->notebook_selected == window->notebook_right)
-    {
-      thunar_window_paned_notebooks_indicate_focus(window, window->notebook_left);
-      gtk_widget_destroy (window->notebook_left);
-      window->notebook_left = NULL;
-    }
-  }
-  /* open */
-  else
-  {
-    window->notebook_selected = thunar_window_paned_notebooks_add(window);
-    thunar_window_paned_notebooks_indicate_focus(window, window->notebook_selected);
-    directory = thunar_window_get_current_directory (window);
-    /* save the history of the current view */
-    if (THUNAR_IS_STANDARD_VIEW (window->view))
-      history = thunar_standard_view_copy_history (THUNAR_STANDARD_VIEW (window->view));
-
-    /* find the correct view type */
-    view_type = thunar_window_view_type_for_directory (window, directory);
-
-    /* insert the new view */
-    page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
-    thunar_window_notebook_insert_page (window, directory, view_type, page_num+1, history);
-  }
   return TRUE;
 }
 
@@ -1971,7 +1905,7 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
     if (notebook == window->notebook_selected)
       thunar_window_paned_notebooks_switch(window);
 
-    thunar_window_toggle_split_view(window);
+    thunar_window_action_toggle_split_view(window);
   }
   /* maybe one tab is shown in both notebooks */
   else
@@ -2222,7 +2156,6 @@ thunar_window_paned_notebooks_add(ThunarWindow *window)
     gtk_paned_pack1 (GTK_PANED (window->paned_notebooks), notebook, TRUE, FALSE);
     window->notebook_left = notebook;
   }
-  /* right notebook */
   else if (window->notebook_right == NULL)
   {
     gtk_paned_pack2 (GTK_PANED (window->paned_notebooks), notebook, TRUE, FALSE);
@@ -2897,12 +2830,54 @@ thunar_window_action_reload (ThunarWindow *window,
 
 
 static void
-thunar_window_action_toggle_split_view (ThunarWindow *window,
-                                        GtkWidget    *menu_item)
+thunar_window_action_toggle_split_view (ThunarWindow *window)
 {
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  thunar_window_toggle_split_view(window);
+  ThunarFile    *directory;
+  ThunarHistory *history = NULL;
+  gint           page_num;
+  GType          view_type;
+
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (window->view_type != G_TYPE_NONE);
+
+  if (window->notebook_left != NULL && window->notebook_right != NULL)
+  {
+    /* notebook_left is the selected notebook so destroy notebook_right */
+    if (window->notebook_selected == window->notebook_left)
+    {
+      /** without split view, no visual selection indicator needed:
+       *  so missuse indicate_focus() to remove visual selection indicator of
+       *  the remaining notebook.
+       **/
+      thunar_window_paned_notebooks_indicate_focus(window, window->notebook_right);
+      gtk_widget_destroy (window->notebook_right);
+      window->notebook_right = NULL;
+    }
+    /* notebook_right is the selected notebook so it destroys notebook_left */
+    else if (window->notebook_selected == window->notebook_right)
+    {
+      thunar_window_paned_notebooks_indicate_focus(window, window->notebook_left);
+      gtk_widget_destroy (window->notebook_left);
+      window->notebook_left = NULL;
+    }
+  }
+  else
+  {
+    window->notebook_selected = thunar_window_paned_notebooks_add(window);
+    thunar_window_paned_notebooks_indicate_focus(window, window->notebook_selected);
+    directory = thunar_window_get_current_directory (window);
+    /* save the history of the current view */
+    if (THUNAR_IS_STANDARD_VIEW (window->view))
+      history = thunar_standard_view_copy_history (THUNAR_STANDARD_VIEW (window->view));
+
+    /* find the correct view type */
+    view_type = thunar_window_view_type_for_directory (window, directory);
+
+    /* insert the new view */
+    page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
+    thunar_window_notebook_insert_page (window, directory, view_type, page_num+1, history);
+  }
 }
 
 
