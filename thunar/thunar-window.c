@@ -1666,10 +1666,11 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   _thunar_return_if_fail (THUNAR_IS_VIEW (page));
   _thunar_return_if_fail (window->notebook_left == notebook || window->notebook_right == notebook);
 
-  /* not on current notebook -> switch */
   if (notebook != window->notebook_selected)
     {
+      /* not on current notebook -> switch */
       thunar_window_paned_notebooks_switch(window);
+      /* notebook switch also does page switch -> nothing to do*/
       return;
     }
   /* leave if nothing changed */
@@ -2073,6 +2074,7 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
 
   /* connect signal view */
   gtk_widget_add_events (GTK_WIDGET (view), GDK_BUTTON_PRESS_MASK);
+  /* click on notebook it self -> select it! */
   g_signal_connect (G_OBJECT (gtk_bin_get_child(GTK_BIN (view))), "button-press-event", G_CALLBACK (thunar_window_paned_notebooks_select), window);
 
   return view;
@@ -2808,8 +2810,8 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
     /* notebook_left is the selected notebook so destroy notebook_right */
     if (window->notebook_selected == window->notebook_left)
     {
-      /** without split view, no visual selection indicator needed:
-       *  so missuse indicate_focus() to remove visual selection indicator of
+      /** without split view, no VISUAL selection indicator needed:
+       *  so missuse indicate_focus() to remove VISUAL selection indicator of
        *  the remaining notebook.
        **/
       thunar_window_paned_notebooks_indicate_focus(window, window->notebook_right);
