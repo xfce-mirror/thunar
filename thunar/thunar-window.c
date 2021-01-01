@@ -1266,32 +1266,27 @@ static gboolean thunar_window_delete (GtkWidget *widget,
                                       gpointer   data )
 {
   gboolean confirm_close_multiple_tabs, do_not_ask_again;
-  gint response, n_tabs1 = 0, n_tabs2 = 0;
+  gint response, n_tabs = 0;
   ThunarWindow *window = THUNAR_WINDOW (widget);
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (widget),FALSE);
 
   /* if we don't have muliple tabs in one of the notebooks then just exit */
   if (window->notebook_left)
-    n_tabs1 = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_left));
+    n_tabs += gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_left));
   if (window->notebook_right)
-    n_tabs2 = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_right));
+    n_tabs += gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_right));
 
   if (thunar_window_split_view_is_active (window))
-  {
-    if (n_tabs1 < 2 && n_tabs2 < 2)
-      return FALSE;
-  }
-  else if (window->notebook_left)
-  {
-    if (n_tabs1 < 2)
-      return FALSE;
-  }
-  else if (window->notebook_right)
-  {
-    if (n_tabs2 < 2)
-      return FALSE;
-  }
+    {
+      if (n_tabs < 3)
+        return FALSE;
+    }
+  else
+    {
+      if (n_tabs < 2)
+        return FALSE;
+    }
 
   /* check if the user has disabled confirmation of closing multiple tabs, and just exit if so */
   g_object_get (G_OBJECT (window->preferences),
@@ -1302,7 +1297,7 @@ static gboolean thunar_window_delete (GtkWidget *widget,
 
   /* ask the user for confirmation */
   do_not_ask_again = FALSE;
-  response = xfce_dialog_confirm_close_tabs (GTK_WINDOW (widget), n_tabs1+n_tabs2, TRUE, &do_not_ask_again);
+  response = xfce_dialog_confirm_close_tabs (GTK_WINDOW (widget), n_tabs, TRUE, &do_not_ask_again);
 
   /* if the user requested not to be asked again, store this preference */
   if (response != GTK_RESPONSE_CANCEL && do_not_ask_again)
@@ -1755,63 +1750,30 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
 
 
 
-/**
- * thunar_window_notebook_check_tabs_visibility:
- * @window : a #ThunarWindow instance.
- * @notebook : a #GtkWidget instance, to check.
- *
- * Return value: True, if tabs should be shown in this notebook.
- **/
-static gboolean
-thunar_window_notebook_check_tabs_visibility(ThunarWindow *window, GtkWidget *notebook)
-{
-  gint       n_pages;
-  gboolean   show_tabs = TRUE;
-
-  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), TRUE);
-  _thunar_return_val_if_fail (GTK_IS_NOTEBOOK (notebook), TRUE);
-  _thunar_return_val_if_fail (notebook != NULL, TRUE);
-
-  if (notebook)
-  {
-    n_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook));
-    if (n_pages < 2)
-    {
-      g_object_get (G_OBJECT (window->preferences),
-                    "misc-always-show-tabs", &show_tabs, NULL);
-    }
-  }
-  return show_tabs;
-}
-
-
-
 static void
 thunar_window_notebook_show_tabs (ThunarWindow *window)
 {
-  gboolean   show_tabs1=TRUE, show_tabs2=TRUE;
+  gboolean   always_show_tabs;
+  int n_pages = 0;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (window->notebook_left || window->notebook_right);
 
+  g_object_get (G_OBJECT (window->preferences), "misc-always-show-tabs", &always_show_tabs, NULL);
+
   /* check both notebooks, maybe not the selected one get clicked */
   if (window->notebook_left)
-    show_tabs1 = thunar_window_notebook_check_tabs_visibility (window, window->notebook_left);
+    n_pages += gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_left));
   if (window->notebook_right)
-    show_tabs2 = thunar_window_notebook_check_tabs_visibility (window, window->notebook_right);
+    n_pages += gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_right));
 
-  /* split view: one of the notebooks has tabs -> show tabs in both notebooks */
   if(thunar_window_split_view_is_active (window))
-  {
-    gtk_notebook_set_show_tabs (GTK_NOTEBOOK (window->notebook_left), show_tabs1 || show_tabs2);
-    gtk_notebook_set_show_tabs (GTK_NOTEBOOK (window->notebook_right), show_tabs1 || show_tabs2);
-
-  /* no split view */
-  }else if(window->notebook_left)
-    gtk_notebook_set_show_tabs (GTK_NOTEBOOK (window->notebook_left), show_tabs1);
-  else if(window->notebook_right)
-    gtk_notebook_set_show_tabs (GTK_NOTEBOOK (window->notebook_right), show_tabs2);
-
+    {
+      gtk_notebook_set_show_tabs (GTK_NOTEBOOK (window->notebook_left), n_pages > 2 || always_show_tabs);
+      gtk_notebook_set_show_tabs (GTK_NOTEBOOK (window->notebook_right), n_pages > 2 || always_show_tabs);
+    }
+  else
+    gtk_notebook_set_show_tabs (GTK_NOTEBOOK (window->notebook_selected), n_pages > 1 || always_show_tabs);
 }
 
 
@@ -1882,24 +1844,26 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
   g_signal_handlers_disconnect_matched (page, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
 
   n_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook));
-  /* no split view: close window on last tab closed */
-  if (n_pages == 0 && (!thunar_window_split_view_is_active (window)))
-  {
-    /* destroy the window */
-    gtk_widget_destroy (GTK_WIDGET (window));
-  }
-  /* split view: close split view if last tab removed from notebook */
-  else if (n_pages == 0 && thunar_window_split_view_is_active (window))
-  {
-    /* select the other notebook if the current gets closed */
-    if (notebook == window->notebook_selected)
-      thunar_window_paned_notebooks_switch(window);
+  if (n_pages == 0)
+    {
+      if (thunar_window_split_view_is_active(window))
+        {
+          /* select the other notebook if the current gets closed */
+          if (notebook == window->notebook_selected)
+            thunar_window_paned_notebooks_switch(window);
 
-    thunar_window_action_toggle_split_view(window);
-  }
-  /* maybe one tab is shown in both notebooks */
+          thunar_window_action_toggle_split_view(window);
+
+        }
+      else
+        {
+          /* destroy the window */
+          gtk_widget_destroy (GTK_WIDGET (window));
+        }
+    }
   else
     {
+      /* update tab visibility */
       thunar_window_notebook_show_tabs (window);
     }
 }
