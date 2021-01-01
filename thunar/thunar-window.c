@@ -619,12 +619,12 @@ thunar_window_paned_notebooks_destroy (GtkWidget *paned_notebooks,
 {
   if (window->notebook_left)
     {
-      gtk_widget_destroy(window->notebook_left);
+      gtk_widget_destroy (window->notebook_left);
       window->notebook_left = NULL;
     }
   if (window->notebook_right)
     {
-      gtk_widget_destroy(window->notebook_right);
+      gtk_widget_destroy (window->notebook_right);
       window->notebook_right = NULL;
     }
 }
@@ -798,7 +798,7 @@ thunar_window_init (ThunarWindow *window)
   gtk_widget_show (window->paned_notebooks);
 
   /** close notebooks on window-remove signal because later on window property
-   *  pointers are broken.  
+   *  pointers are broken.
    **/
   g_signal_connect (G_OBJECT (window), "remove", G_CALLBACK (thunar_window_paned_notebooks_destroy), window);
 
@@ -1849,9 +1849,9 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
         {
           /* select the other notebook if the current gets closed */
           if (notebook == window->notebook_selected)
-            thunar_window_paned_notebooks_switch(window);
+            thunar_window_paned_notebooks_switch (window);
 
-          thunar_window_action_toggle_split_view(window);
+          thunar_window_action_toggle_split_view (window);
         }
       else
         {
@@ -1865,7 +1865,7 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
       if (notebook != window->notebook_selected)
         {
           /* switch to the other notebook */
-          thunar_window_paned_notebooks_switch(window);
+          thunar_window_paned_notebooks_switch (window);
         }
       /* update tab visibility */
       thunar_window_notebook_show_tabs (window);
@@ -2078,7 +2078,7 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   /* connect signal view */
   gtk_widget_add_events (GTK_WIDGET (view), GDK_BUTTON_PRESS_MASK);
   /* click on notebook it self -> select it! */
-  g_signal_connect (G_OBJECT (gtk_bin_get_child(GTK_BIN (view))), "button-press-event", G_CALLBACK (thunar_window_paned_notebooks_select), window);
+  g_signal_connect (G_OBJECT (gtk_bin_get_child (GTK_BIN (view))), "button-press-event", G_CALLBACK (thunar_window_paned_notebooks_select), window);
 
   return view;
 }
@@ -2189,8 +2189,8 @@ thunar_window_paned_notebooks_indicate_focus (ThunarWindow *window,
                                               GtkWidget *notebook)
 {
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
-  _thunar_return_if_fail(GTK_IS_NOTEBOOK (notebook));
-  _thunar_return_if_fail(thunar_window_split_view_is_active (window));
+  _thunar_return_if_fail (GTK_IS_NOTEBOOK (notebook));
+  _thunar_return_if_fail (thunar_window_split_view_is_active (window));
 
   gtk_notebook_set_show_border (GTK_NOTEBOOK (notebook), TRUE);
   if (notebook == window->notebook_left)
@@ -2816,13 +2816,13 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
            *  so missuse indicate_focus() to remove VISUAL selection indicator of
            *  the remaining notebook.
            **/
-          thunar_window_paned_notebooks_indicate_focus(window, window->notebook_right);
+          thunar_window_paned_notebooks_indicate_focus (window, window->notebook_right);
           gtk_widget_destroy (window->notebook_right);
           window->notebook_right = NULL;
         }
       else if (window->notebook_selected == window->notebook_right)
         {
-          thunar_window_paned_notebooks_indicate_focus(window, window->notebook_left);
+          thunar_window_paned_notebooks_indicate_focus (window, window->notebook_left);
           gtk_widget_destroy (window->notebook_left);
           window->notebook_left = NULL;
         }
@@ -2830,7 +2830,7 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
   else
     {
       window->notebook_selected = thunar_window_paned_notebooks_add(window);
-      thunar_window_paned_notebooks_indicate_focus(window, window->notebook_selected);
+      thunar_window_paned_notebooks_indicate_focus (window, window->notebook_selected);
       directory = thunar_window_get_current_directory (window);
       /* save the history of the current view */
       if (THUNAR_IS_STANDARD_VIEW (window->view))
