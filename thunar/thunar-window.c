@@ -1664,15 +1664,8 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (GTK_IS_NOTEBOOK (notebook));
   _thunar_return_if_fail (THUNAR_IS_VIEW (page));
-  _thunar_return_if_fail (window->notebook_left == notebook || window->notebook_right == notebook);
+  _thunar_return_if_fail (window->notebook_selected == notebook);
 
-  if (notebook != window->notebook_selected)
-    {
-      /* not on current notebook -> switch */
-      thunar_window_paned_notebooks_switch(window);
-      /* notebook switch also does page switch -> nothing to do*/
-      return;
-    }
   /* leave if nothing changed */
   if (window->view == page)
     return;
