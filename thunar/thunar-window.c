@@ -154,7 +154,7 @@ static GtkWidget*thunar_window_notebook_insert_page       (ThunarWindow         
 static GtkWidget*thunar_window_paned_notebooks_add        (ThunarWindow           *window);
 static void      thunar_window_paned_notebooks_switch     (ThunarWindow           *window);
 static gboolean  thunar_window_paned_notebooks_select     (GtkWidget              *notebook,
-                                                           GdkEvent               *event,
+                                                           GtkDirectionType       *direction,
                                                            ThunarWindow           *window);
 static void      thunar_window_paned_notebooks_indicate_focus (ThunarWindow *window, GtkWidget *notebook);
 static gboolean  thunar_window_split_view_is_active       (ThunarWindow           *window);
@@ -2075,11 +2075,8 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   gtk_notebook_set_tab_reorderable (GTK_NOTEBOOK (window->notebook_selected), view, TRUE);
   gtk_notebook_set_tab_detachable (GTK_NOTEBOOK (window->notebook_selected), view, TRUE);
 
-  /* connect signal view */
-  gtk_widget_add_events (GTK_WIDGET (view), GDK_BUTTON_PRESS_MASK);
-
   /* only gets clicks on the notebook(page) it self */
-  g_signal_connect (G_OBJECT (gtk_bin_get_child (GTK_BIN (view))), "button-press-event", G_CALLBACK (thunar_window_paned_notebooks_select), window);
+  g_signal_connect (G_OBJECT (gtk_bin_get_child (GTK_BIN (view))), "focus-in-event", G_CALLBACK (thunar_window_paned_notebooks_select), window);
 
   return view;
 }
@@ -2101,7 +2098,7 @@ thunar_window_paned_notebooks_add(ThunarWindow *window)
   g_signal_connect (G_OBJECT (notebook), "page-removed", G_CALLBACK (thunar_window_notebook_page_removed), window);
 
   /* only gets clicks on tabs */
-  g_signal_connect (G_OBJECT (notebook), "button-press-event", G_CALLBACK (thunar_window_paned_notebooks_select), window);
+  g_signal_connect (G_OBJECT (GTK_CONTAINER (notebook)), "focus-in-event", G_CALLBACK (thunar_window_paned_notebooks_select), window);
 
   g_signal_connect_after (G_OBJECT (notebook), "button-press-event", G_CALLBACK (thunar_window_notebook_button_press_event), window);
   g_signal_connect (G_OBJECT (notebook), "popup-menu", G_CALLBACK (thunar_window_notebook_popup_menu), window);
@@ -2160,9 +2157,9 @@ thunar_window_paned_notebooks_switch (ThunarWindow *window)
 
 
 static gboolean
-thunar_window_paned_notebooks_select (GtkWidget     *view,
-                                      GdkEvent      *event,
-                                      ThunarWindow  *window)
+thunar_window_paned_notebooks_select (GtkWidget         *view,
+                                      GtkDirectionType  *direction,
+                                      ThunarWindow      *window)
 {
   GtkWidget  *selected_notebook;
 
