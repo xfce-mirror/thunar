@@ -1766,7 +1766,7 @@ thunar_window_notebook_show_tabs (ThunarWindow *window)
   if (window->notebook_right)
     n_pages += gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_right));
 
-  if(thunar_window_split_view_is_active (window))
+  if (thunar_window_split_view_is_active (window))
     {
       gtk_notebook_set_show_tabs (GTK_NOTEBOOK (window->notebook_left), n_pages > 2 || always_show_tabs);
       gtk_notebook_set_show_tabs (GTK_NOTEBOOK (window->notebook_right), n_pages > 2 || always_show_tabs);
