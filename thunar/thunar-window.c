@@ -2084,7 +2084,7 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
 
 
 static GtkWidget*
-thunar_window_paned_notebooks_add(ThunarWindow *window)
+thunar_window_paned_notebooks_add (ThunarWindow *window)
 {
   GtkWidget *notebook;
   _thunar_return_val_if_fail(THUNAR_IS_WINDOW (window), NULL);
