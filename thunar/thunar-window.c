@@ -2126,7 +2126,7 @@ thunar_window_paned_notebooks_add (ThunarWindow *window)
 static void
 thunar_window_paned_notebooks_switch (ThunarWindow *window)
 {
-  gint      current_page_n;
+  gint       current_page_n;
   GtkWidget *current_page;
   GtkWidget *new_curr_notebook = NULL;
 
