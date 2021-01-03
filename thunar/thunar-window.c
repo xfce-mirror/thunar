@@ -1845,7 +1845,7 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
   n_pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (notebook));
   if (n_pages == 0)
     {
-      if (thunar_window_split_view_is_active(window))
+      if (thunar_window_split_view_is_active (window))
         {
           /* select the other notebook if the current gets closed */
           if (notebook == window->notebook_selected)
