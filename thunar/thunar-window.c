@@ -2174,7 +2174,7 @@ thunar_window_paned_notebooks_select (GtkWidget         *view,
   if (selected_notebook == window->notebook_selected)
     return FALSE;
 
-  thunar_window_paned_notebooks_switch(window);
+  thunar_window_paned_notebooks_switch (window);
   return FALSE;
 }
 
