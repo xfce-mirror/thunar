@@ -2821,7 +2821,7 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
   ThunarHistory *history = NULL;
   gint           page_num;
   GType          view_type;
-  GtkAllocation *allocation = g_new(GtkAllocation, 1);
+  GtkAllocation allocation; 
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (window->view_type != G_TYPE_NONE);
@@ -2863,8 +2863,8 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
       thunar_window_notebook_insert_page (window, directory, view_type, page_num+1, history);
 
       /* Prevent notebook expand on tab creation */
-      gtk_widget_get_allocation (GTK_WIDGET (window->paned_notebooks), allocation);
-      gtk_paned_set_position (GTK_PANED (window->paned_notebooks), (gint)(allocation->width/2));
+      gtk_widget_get_allocation (GTK_WIDGET (window->paned_notebooks), &allocation);
+      gtk_paned_set_position (GTK_PANED (window->paned_notebooks), (gint)(allocation.width/2));
     }
 }
 
