@@ -2146,7 +2146,7 @@ thunar_window_paned_notebooks_switch (ThunarWindow *window)
 {
   GtkWidget *new_curr_notebook = NULL;
 
-  _thunar_return_if_fail (THUNAR_IS_WINDOW(window));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (thunar_window_split_view_is_active (window));
 
   if (window->notebook_selected == window->notebook_left)
