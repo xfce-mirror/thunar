@@ -150,9 +150,9 @@ static GtkWidget*thunar_window_notebook_insert_page       (ThunarWindow         
                                                            GType                   view_type,
                                                            gint                    position,
                                                            ThunarHistory          *history);
+static void      thunar_window_notebook_select_current_page(ThunarWindow           *window);
 
 static GtkWidget*thunar_window_paned_notebooks_add        (ThunarWindow           *window);
-static void      thunar_window_paned_notebooks_select_page(ThunarWindow           *window);
 static void      thunar_window_paned_notebooks_switch     (ThunarWindow           *window);
 static gboolean  thunar_window_paned_notebooks_select     (GtkWidget              *notebook,
                                                            GtkDirectionType       *direction,
@@ -1868,7 +1868,8 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
       if (notebook != window->notebook_selected)
         thunar_window_paned_notebooks_switch (window);
       else
-        thunar_window_paned_notebooks_select_page (window);
+        /* this page removed -> select next page */
+        thunar_window_notebook_select_current_page (window);
 
       /* update tab visibility */
       thunar_window_notebook_show_tabs (window);
@@ -2086,6 +2087,21 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
 
 
 
+static void
+thunar_window_notebook_select_current_page (ThunarWindow *window)
+{
+  gint       current_page_n;
+  GtkWidget *current_page;
+
+  _thunar_return_if_fail (window->notebook_selected != NULL);
+
+  current_page_n = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
+  current_page = gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected), current_page_n);
+  thunar_window_notebook_switch_page (window->notebook_selected, current_page, current_page_n, window);
+}
+
+
+
 static GtkWidget*
 thunar_window_paned_notebooks_add (ThunarWindow *window)
 {
@@ -2127,21 +2143,6 @@ thunar_window_paned_notebooks_add (ThunarWindow *window)
 
 
 static void
-thunar_window_paned_notebooks_select_page (ThunarWindow *window)
-{
-  gint       current_page_n;
-  GtkWidget *current_page;
-
-  _thunar_return_if_fail (window->notebook_selected != NULL);
-
-  current_page_n = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
-  current_page = gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected), current_page_n);
-  thunar_window_notebook_switch_page (window->notebook_selected, current_page, current_page_n, window);
-}
-
-
-
-static void
 thunar_window_paned_notebooks_switch (ThunarWindow *window)
 {
   GtkWidget *new_curr_notebook = NULL;
@@ -2164,7 +2165,7 @@ thunar_window_paned_notebooks_switch (ThunarWindow *window)
 
       /* select and activate selected notebook */
       window->notebook_selected = new_curr_notebook;
-      thunar_window_paned_notebooks_select_page (window);
+      thunar_window_notebook_select_current_page (window);
     }
 }
 
