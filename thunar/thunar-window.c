@@ -615,8 +615,8 @@ thunar_window_class_init (ThunarWindowClass *klass)
 
 
 static void
-thunar_window_paned_notebooks_destroy (GtkWidget *paned_notebooks,
-                                       GtkWidget *widget,
+thunar_window_paned_notebooks_destroy (GtkWidget    *paned_notebooks,
+                                       GtkWidget    *widget,
                                        ThunarWindow *window)
 {
   if (window->notebook_left)
@@ -1273,8 +1273,8 @@ static gboolean thunar_window_delete (GtkWidget *widget,
                                       GdkEvent  *event,
                                       gpointer   data )
 {
-  gboolean confirm_close_multiple_tabs, do_not_ask_again;
-  gint response, n_tabs = 0;
+  gboolean      confirm_close_multiple_tabs, do_not_ask_again;
+  gint          response, n_tabs = 0;
   ThunarWindow *window = THUNAR_WINDOW (widget);
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (widget),FALSE);
@@ -1755,7 +1755,7 @@ static void
 thunar_window_notebook_show_tabs (ThunarWindow *window)
 {
   gboolean   always_show_tabs;
-  gint n_pages = 0;
+  gint       n_pages = 0;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (window->notebook_left || window->notebook_right);
@@ -2221,7 +2221,7 @@ thunar_window_split_view_is_active (ThunarWindow *window)
 
 
 void thunar_window_notebook_open_new_tab (ThunarWindow *window,
-                                     ThunarFile   *directory)
+                                          ThunarFile   *directory)
 {
   ThunarHistory *history = NULL;
   GtkWidget     *view;
@@ -2821,10 +2821,7 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
   ThunarHistory *history = NULL;
   gint           page_num;
   GType          view_type;
-
-  /* to calculate the separator position */
   GtkAllocation *allocation = g_new(GtkAllocation, 1);
-  gint          width_full = 0;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (window->view_type != G_TYPE_NONE);
@@ -2864,16 +2861,9 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
       page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
       thunar_window_notebook_insert_page (window, directory, view_type, page_num+1, history);
 
-      /* fix: notebook expands on tab creation. */
-      gtk_widget_get_allocation (GTK_WIDGET (window->notebook_right), allocation);
-      width_full += allocation->width;
-      gtk_widget_get_allocation (GTK_WIDGET (window->notebook_left), allocation);
-      width_full += allocation->width;
-
-      /**  some how the postion property is 0 at this point, so lets calculate it
-       *  and set it.
-       **/
-      gtk_paned_set_position (GTK_PANED (window->paned_notebooks), (gint)(width_full/2));
+      /* Prevent notebook expand on tab creation */
+      gtk_widget_get_allocation (GTK_WIDGET (window->paned_notebooks), allocation);
+      gtk_paned_set_position (GTK_PANED (window->paned_notebooks), (gint)(allocation->width/2));
     }
 }
 
