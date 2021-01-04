@@ -2160,7 +2160,7 @@ thunar_window_paned_notebooks_switch (ThunarWindow *window)
 
   if (new_curr_notebook)
     {
-      thunar_window_paned_notebooks_indicate_focus(window, new_curr_notebook);
+      thunar_window_paned_notebooks_indicate_focus (window, new_curr_notebook);
 
       /* select and activate selected notebook */
       window->notebook_selected = new_curr_notebook;
