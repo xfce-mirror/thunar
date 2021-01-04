@@ -49,6 +49,7 @@
 #include <thunar/thunar-shortcuts-pane.h>
 #include <thunar/thunar-simple-job.h>
 #include <thunar/thunar-device-monitor.h>
+#include <thunar/thunar-tree-view.h>
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-window.h>
 
@@ -1450,7 +1451,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
         return NULL;
 
       case THUNAR_LAUNCHER_ACTION_CREATE_FOLDER:
-        if (launcher->files_are_selected && launcher->single_directory_to_process)
+        if (THUNAR_IS_TREE_VIEW (launcher->widget) && launcher->files_are_selected && launcher->single_directory_to_process)
           parent = launcher->single_folder;
         else
           parent = launcher->current_directory;
@@ -1461,7 +1462,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
         return item;
 
       case THUNAR_LAUNCHER_ACTION_CREATE_DOCUMENT:
-        if (launcher->files_are_selected && launcher->single_directory_to_process)
+        if (THUNAR_IS_TREE_VIEW (launcher->widget) && launcher->files_are_selected && launcher->single_directory_to_process)
           parent = launcher->single_folder;
         else
           parent = launcher->current_directory;
@@ -2261,7 +2262,7 @@ thunar_launcher_action_create_folder (ThunarLauncher *launcher)
   if (G_LIKELY (name != NULL))
     {
       /* fake the path list */
-      if (launcher->files_are_selected && launcher->single_directory_to_process)
+      if (THUNAR_IS_TREE_VIEW (launcher->widget) && launcher->files_are_selected && launcher->single_directory_to_process)
         path_list.data = g_file_resolve_relative_path (thunar_file_get_file (launcher->single_folder), name);
       else
         path_list.data = g_file_resolve_relative_path (thunar_file_get_file (launcher->current_directory), name);
@@ -2327,7 +2328,7 @@ thunar_launcher_action_create_document (ThunarLauncher *launcher,
       if (G_LIKELY (launcher->parent_folder != NULL))
         {
           /* fake the target path list */
-          if (launcher->files_are_selected && launcher->single_directory_to_process)
+          if (THUNAR_IS_TREE_VIEW (launcher->widget) && launcher->files_are_selected && launcher->single_directory_to_process)
             target_path_list.data = g_file_get_child (thunar_file_get_file (launcher->single_folder), name);
           else
             target_path_list.data = g_file_get_child (thunar_file_get_file (launcher->current_directory), name);
