@@ -152,11 +152,13 @@ static GtkWidget*thunar_window_notebook_insert_page       (ThunarWindow         
                                                            ThunarHistory          *history);
 
 static GtkWidget*thunar_window_paned_notebooks_add        (ThunarWindow           *window);
+static void      thunar_window_paned_notebooks_select_page(ThunarWindow           *window);
 static void      thunar_window_paned_notebooks_switch     (ThunarWindow           *window);
 static gboolean  thunar_window_paned_notebooks_select     (GtkWidget              *notebook,
                                                            GtkDirectionType       *direction,
                                                            ThunarWindow           *window);
-static void      thunar_window_paned_notebooks_indicate_focus (ThunarWindow *window, GtkWidget *notebook);
+static void      thunar_window_paned_notebooks_indicate_focus (ThunarWindow       *window,
+                                                           GtkWidget              *notebook);
 static gboolean  thunar_window_split_view_is_active       (ThunarWindow           *window);
 
 static void      thunar_window_update_location_bar_visible(ThunarWindow           *window);
@@ -1833,7 +1835,7 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
                                      guint         page_num,
                                      ThunarWindow *window)
 {
-  gint n_pages;
+  gint       n_pages;
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (GTK_IS_NOTEBOOK (notebook));
   _thunar_return_if_fail (THUNAR_IS_VIEW (page));
@@ -1863,10 +1865,10 @@ thunar_window_notebook_page_removed (GtkWidget    *notebook,
     {
       /* page from the other notebook was removed */
       if (notebook != window->notebook_selected)
-        {
-          /* switch to the other notebook */
-          thunar_window_paned_notebooks_switch (window);
-        }
+        thunar_window_paned_notebooks_switch (window);
+      else
+        thunar_window_paned_notebooks_select_page (window);
+
       /* update tab visibility */
       thunar_window_notebook_show_tabs (window);
     }
@@ -2124,10 +2126,23 @@ thunar_window_paned_notebooks_add (ThunarWindow *window)
 
 
 static void
-thunar_window_paned_notebooks_switch (ThunarWindow *window)
+thunar_window_paned_notebooks_select_page (ThunarWindow *window)
 {
   gint       current_page_n;
   GtkWidget *current_page;
+
+  _thunar_return_if_fail (window->notebook_selected != NULL);
+
+  current_page_n = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
+  current_page = gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected), current_page_n);
+  thunar_window_notebook_switch_page (window->notebook_selected, current_page, current_page_n, window);
+}
+
+
+
+static void
+thunar_window_paned_notebooks_switch (ThunarWindow *window)
+{
   GtkWidget *new_curr_notebook = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW(window));
@@ -2148,9 +2163,7 @@ thunar_window_paned_notebooks_switch (ThunarWindow *window)
 
       /* select and activate selected notebook */
       window->notebook_selected = new_curr_notebook;
-      current_page_n = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
-      current_page = gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected), current_page_n);
-      thunar_window_notebook_switch_page (window->notebook_selected, current_page, current_page_n, window);
+      thunar_window_paned_notebooks_select_page (window);
     }
 }
 
@@ -2182,7 +2195,7 @@ thunar_window_paned_notebooks_select (GtkWidget         *view,
 
 static void
 thunar_window_paned_notebooks_indicate_focus (ThunarWindow *window,
-                                              GtkWidget *notebook)
+                                              GtkWidget    *notebook)
 {
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (GTK_IS_NOTEBOOK (notebook));
@@ -2736,10 +2749,18 @@ static void
 thunar_window_action_close_tab (ThunarWindow *window,
                                 GtkWidget    *menu_item)
 {
-  if (gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_selected)) == 1)
-    gtk_widget_destroy (GTK_WIDGET (window));
-  else if (window->view != NULL)
-    gtk_widget_destroy (window->view);
+  if (thunar_window_split_view_is_active (window))
+    {
+      if (window->view != NULL)
+         gtk_widget_destroy (window->view);
+    }
+  else
+    {
+      if (gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_selected)) == 1)
+        gtk_widget_destroy (GTK_WIDGET (window));
+      else if (window->view != NULL)
+        gtk_widget_destroy (window->view);
+    }
 }
 
 
