@@ -1314,6 +1314,7 @@ static gboolean thunar_window_delete (GtkWidget *widget,
 
   if(response == GTK_RESPONSE_YES)
     return FALSE;
+
   /* close active tab in active notebook */
   if(response == GTK_RESPONSE_CLOSE)
     gtk_notebook_remove_page (GTK_NOTEBOOK (window->notebook_selected), gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected)));
@@ -2098,13 +2099,13 @@ thunar_window_paned_notebooks_add (ThunarWindow *window)
   g_signal_connect (G_OBJECT (notebook), "switch-page", G_CALLBACK (thunar_window_notebook_switch_page), window);
   g_signal_connect (G_OBJECT (notebook), "page-added", G_CALLBACK (thunar_window_notebook_page_added), window);
   g_signal_connect (G_OBJECT (notebook), "page-removed", G_CALLBACK (thunar_window_notebook_page_removed), window);
+  g_signal_connect_after (G_OBJECT (notebook), "button-press-event", G_CALLBACK (thunar_window_notebook_button_press_event), window);
+  g_signal_connect (G_OBJECT (notebook), "popup-menu", G_CALLBACK (thunar_window_notebook_popup_menu), window);
+  g_signal_connect (G_OBJECT (notebook), "create-window", G_CALLBACK (thunar_window_notebook_create_window), window);
 
   /* only gets clicks on tabs */
   g_signal_connect (G_OBJECT (GTK_CONTAINER (notebook)), "focus-in-event", G_CALLBACK (thunar_window_paned_notebooks_select), window);
 
-  g_signal_connect_after (G_OBJECT (notebook), "button-press-event", G_CALLBACK (thunar_window_notebook_button_press_event), window);
-  g_signal_connect (G_OBJECT (notebook), "popup-menu", G_CALLBACK (thunar_window_notebook_popup_menu), window);
-  g_signal_connect (G_OBJECT (notebook), "create-window", G_CALLBACK (thunar_window_notebook_create_window), window);
   gtk_notebook_set_show_border (GTK_NOTEBOOK (notebook), FALSE);
   gtk_notebook_set_scrollable (GTK_NOTEBOOK (notebook), TRUE);
   gtk_container_set_border_width (GTK_CONTAINER (notebook), 0);
@@ -2183,7 +2184,6 @@ thunar_window_paned_notebooks_select (GtkWidget         *view,
     return FALSE;
 
   selected_notebook = gtk_widget_get_ancestor (view, GTK_TYPE_NOTEBOOK);
-
   if (selected_notebook == window->notebook_selected)
     return FALSE;
 
@@ -2850,6 +2850,7 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
       window->notebook_selected = thunar_window_paned_notebooks_add (window);
       thunar_window_paned_notebooks_indicate_focus (window, window->notebook_selected);
       directory = thunar_window_get_current_directory (window);
+
       /* save the history of the current view */
       if (THUNAR_IS_STANDARD_VIEW (window->view))
         history = thunar_standard_view_copy_history (THUNAR_STANDARD_VIEW (window->view));
