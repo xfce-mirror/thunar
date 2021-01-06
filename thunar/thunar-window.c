@@ -278,8 +278,6 @@ static gboolean  thunar_window_check_uca_key_activation   (ThunarWindow         
                                                            gpointer                user_data);
 static void      thunar_window_set_directory_specific_settings (ThunarWindow      *window,
                                                                 gboolean           directory_specific_settings);
-static void      thunar_window_set_current_directory_gfile     (ThunarWindow      *window,
-                                                                GFile             *current_directory);
 static GType     thunar_window_view_type_for_directory         (ThunarWindow      *window,
                                                                 ThunarFile        *directory);
 static void      thunar_window_action_clear_directory_specific_settings (ThunarWindow  *window);
@@ -2564,58 +2562,6 @@ thunar_window_update_bookmarks (ThunarWindow *window)
 
 
 static void
-thunar_window_open_or_launch (ThunarWindow *window,
-                              ThunarFile   *file)
-{
-  GError *error = NULL;
-
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
-  _thunar_return_if_fail (THUNAR_IS_FILE (file));
-
-  if (thunar_file_is_directory (file))
-    {
-      /* open the new directory */
-      thunar_window_set_current_directory (window, file);
-    }
-  else
-    {
-      /* try to launch the selected file */
-      if (!thunar_file_launch (file, window, NULL, &error))
-        {
-          thunar_dialogs_show_error (window, error, _("Failed to launch \"%s\""),
-                                     thunar_file_get_display_name (file));
-          g_error_free (error);
-        }
-    }
-}
-
-
-
-static void
-thunar_window_poke_file_finish (ThunarBrowser *browser,
-                                ThunarFile    *file,
-                                ThunarFile    *target_file,
-                                GError        *error,
-                                gpointer       ignored)
-{
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (browser));
-  _thunar_return_if_fail (THUNAR_IS_FILE (file));
-
-  if (error == NULL)
-    {
-      thunar_window_open_or_launch (THUNAR_WINDOW (browser), target_file);
-    }
-  else
-    {
-      thunar_dialogs_show_error (GTK_WIDGET (browser), error,
-                                 _("Failed to open \"%s\""),
-                                 thunar_file_get_display_name (file));
-    }
-}
-
-
-
-static void
 thunar_window_start_open_location (ThunarWindow *window,
                                    const gchar  *initial_text)
 {
@@ -3590,29 +3536,15 @@ thunar_window_propagate_key_event (GtkWindow* window,
 
 
 static void
-thunar_window_poke_location_finish (ThunarBrowser *browser,
-                                    GFile         *location,
-                                    ThunarFile    *file,
-                                    ThunarFile    *target_file,
-                                    GError        *error,
-                                    gpointer       ignored)
-{
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (browser));
-  _thunar_return_if_fail (THUNAR_IS_FILE (file));
-
-  thunar_window_poke_file_finish (browser, file, target_file, error, ignored);
-}
-
-
-
-static void
 thunar_window_action_open_bookmark (GFile *g_file)
 {
-  GtkWindow *window;
+  ThunarWindow *window;
 
   window = g_object_get_data (G_OBJECT (g_file), I_("thunar-window"));
- 
-  thunar_window_set_current_directory_gfile (THUNAR_WINDOW (window), g_file);
+
+  g_object_set (G_OBJECT (window->launcher), "selected-location", g_file,
+                                             "selected-files", NULL, NULL);
+  thunar_launcher_activate_selected_files (window->launcher, THUNAR_LAUNCHER_CHANGE_DIRECTORY, NULL);
 }
 
 
@@ -4096,28 +4028,6 @@ thunar_window_set_current_directory (ThunarWindow *window,
    * state already while the folder view is loading.
    */
   g_object_notify (G_OBJECT (window), "current-directory");
-}
-
-
-
-static void
-thunar_window_set_current_directory_gfile (ThunarWindow *window,
-                                           GFile        *current_directory)
-{
-  ThunarFile *thunar_file;
-
-  /* remote files possibly need to be poked first */
-  if (g_file_has_uri_scheme (current_directory, "file"))
-    {
-      thunar_file = thunar_file_get (current_directory, NULL);
-      thunar_window_set_current_directory (THUNAR_WINDOW (window), thunar_file);
-      g_object_unref (thunar_file);
-    }
-  else
-    {
-      thunar_browser_poke_location (THUNAR_BROWSER (window), current_directory, THUNAR_WINDOW (window),
-                                    thunar_window_poke_location_finish, NULL);
-    }
 }
 
 

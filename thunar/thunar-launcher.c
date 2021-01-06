@@ -97,6 +97,7 @@ enum
   PROP_WIDGET,
   PROP_SELECT_FILES_CLOSURE,
   PROP_SELECTED_DEVICE,
+  PROP_SELECTED_LOCATION,
   N_PROPERTIES
 };
 
@@ -141,6 +142,12 @@ static void                    thunar_launcher_poke_device_finish         (Thuna
                                                                            GError                         *error,
                                                                            gpointer                        user_data,
                                                                            gboolean                        cancelled);
+static void                    thunar_launcher_poke_location_finish       (ThunarBrowser                  *browser,
+                                                                           GFile                          *location,
+                                                                           ThunarFile                     *file,
+                                                                           ThunarFile                     *target_file,
+                                                                           GError                         *error,
+                                                                           gpointer                        user_data);
 static void                    thunar_launcher_poke_files_finish          (ThunarBrowser                  *browser,
                                                                            ThunarFile                     *file,
                                                                            ThunarFile                     *target_file,
@@ -148,7 +155,8 @@ static void                    thunar_launcher_poke_files_finish          (Thuna
                                                                            gpointer                        user_data);
 static ThunarLauncherPokeData *thunar_launcher_poke_data_new              (GList                          *files_to_poke,
                                                                            GAppInfo                       *application_to_use,
-                                                                           ThunarLauncherFolderOpenAction  folder_open_action);
+                                                                           ThunarLauncherFolderOpenAction  folder_open_action,
+                                                                           GFile                          *location_to_poke);
 static void                    thunar_launcher_poke_data_free             (ThunarLauncherPokeData         *data);
 static void                    thunar_launcher_widget_destroyed           (ThunarLauncher                 *launcher,
                                                                            GtkWidget                      *widget);
@@ -198,8 +206,15 @@ struct _ThunarLauncher
   GObject __parent__;
 
   ThunarFile             *current_directory;
+
+  /* List of thunar-files to work with */
   GList                  *files_to_process;
+
+  /* Device to work with */
   ThunarDevice           *device_to_process;
+
+  /* Location to work with (might be not reachable) */
+  GFile			 *location_to_process;
 
   gint                    n_files_to_process;
   gint                    n_directories_to_process;
@@ -226,8 +241,9 @@ static GQuark thunar_launcher_file_quark;
 
 struct _ThunarLauncherPokeData
 {
-  GList                          *files_to_poke;
-  GList                          *files_poked;
+  GList                          *files_to_poke; /* List of thunar-files */
+  GList                          *files_poked;   /* List of thunar-files */
+  GFile                          *location_to_poke;
   GAppInfo                       *application_to_use;
   ThunarLauncherFolderOpenAction  folder_open_action;
 };
@@ -336,6 +352,17 @@ thunar_launcher_class_init (ThunarLauncherClass *klass)
                            "selected-device",
                            G_PARAM_WRITABLE);
 
+  /**
+   * ThunarLauncher:select-device:
+   *
+   * The #GFile which currently is selected (or NULL if no #GFile is selected)
+   **/
+  launcher_props[PROP_SELECTED_LOCATION] =
+     g_param_spec_pointer ("selected-location",
+                           "selected-location",
+                           "selected-location",
+                           G_PARAM_WRITABLE);
+
   /* Override ThunarNavigator's properties */
   g_iface = g_type_default_interface_peek (THUNAR_TYPE_NAVIGATOR);
   launcher_props[PROP_CURRENT_DIRECTORY] =
@@ -378,6 +405,7 @@ thunar_launcher_init (ThunarLauncher *launcher)
   launcher->files_to_process = NULL;
   launcher->select_files_closure = NULL;
   launcher->device_to_process = NULL;
+  launcher->location_to_process = NULL;
 
   /* grab a reference on the preferences */
   launcher->preferences = thunar_preferences_get ();
@@ -472,6 +500,10 @@ thunar_launcher_set_property (GObject      *object,
 
     case PROP_SELECTED_DEVICE:
       launcher->device_to_process = g_value_get_pointer (value);
+      break;
+
+    case PROP_SELECTED_LOCATION:
+      launcher->location_to_process = g_value_get_pointer (value);
       break;
 
     default:
@@ -918,13 +950,19 @@ thunar_launcher_poke (ThunarLauncher                 *launcher,
        return;
      }
 
-   poke_data = thunar_launcher_poke_data_new (launcher->files_to_process, application_to_use, folder_open_action);
+   poke_data = thunar_launcher_poke_data_new (launcher->files_to_process, application_to_use, folder_open_action, launcher->location_to_process);
 
    if (launcher->device_to_process != NULL)
      {
        thunar_browser_poke_device (THUNAR_BROWSER (launcher), launcher->device_to_process,
                                    launcher->widget, thunar_launcher_poke_device_finish,
                                   poke_data);
+     }
+   else if (launcher->location_to_process != NULL)
+     {
+       thunar_browser_poke_location (THUNAR_BROWSER (launcher), poke_data->location_to_poke,
+                                     launcher->widget, thunar_launcher_poke_location_finish,
+                                     poke_data);
      }
    else
      {
@@ -978,6 +1016,32 @@ static void thunar_launcher_poke_device_finish (ThunarBrowser *browser,
     }
 
   thunar_launcher_poke_data_free (poke_data);
+}
+
+
+
+static void
+thunar_launcher_poke_location_finish (ThunarBrowser *browser,
+                                      GFile         *location,
+                                      ThunarFile    *file,
+                                      ThunarFile    *target_file,
+                                      GError        *error,
+                                      gpointer       user_data)
+{
+  ThunarLauncherPokeData *poke_data = user_data;
+  _thunar_return_if_fail (THUNAR_IS_BROWSER (browser));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  if (error != NULL)
+    {
+      thunar_dialogs_show_error (GTK_WIDGET (THUNAR_LAUNCHER (browser)->widget), error,
+                                 _("Failed to open \"%s\""),
+                                 thunar_file_get_display_name (file));
+      thunar_launcher_poke_data_free (poke_data);
+      return;
+    }
+
+  thunar_launcher_poke_files_finish (browser, file, target_file, error, user_data);
 }
 
 
@@ -1113,7 +1177,8 @@ thunar_launcher_poke_files_finish (ThunarBrowser *browser,
 static ThunarLauncherPokeData *
 thunar_launcher_poke_data_new (GList                          *files_to_poke,
                                GAppInfo                       *application_to_use,
-                               ThunarLauncherFolderOpenAction  folder_open_action)
+                               ThunarLauncherFolderOpenAction  folder_open_action,
+                               GFile                          *location_to_poke)
 {
   ThunarLauncherPokeData *data;
 
@@ -1121,6 +1186,9 @@ thunar_launcher_poke_data_new (GList                          *files_to_poke,
   data->files_to_poke = thunar_g_file_list_copy (files_to_poke);
   data->files_poked = NULL;
   data->application_to_use = application_to_use;
+
+  if (location_to_poke != NULL)
+    data->location_to_poke = g_object_ref (location_to_poke);
 
   /* keep a reference on the appdata */
   if (application_to_use != NULL)
@@ -1139,6 +1207,9 @@ thunar_launcher_poke_data_free (ThunarLauncherPokeData *data)
 
   thunar_g_file_list_free (data->files_to_poke);
   thunar_g_file_list_free (data->files_poked);
+
+  if (data->location_to_poke != NULL)
+    g_object_unref (data->location_to_poke);
 
   if (data->application_to_use != NULL)
     g_object_unref (data->application_to_use);
