@@ -2151,7 +2151,6 @@ thunar_window_paned_notebooks_switch (ThunarWindow *window)
   _thunar_return_if_fail (thunar_window_split_view_is_active (window));
 
   if (window->notebook_selected == window->notebook_left)
-    {
       new_curr_notebook = window->notebook_right;
     } 
   else if (window->notebook_selected == window->notebook_right)
