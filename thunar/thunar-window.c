@@ -2818,7 +2818,7 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
   ThunarHistory *history = NULL;
   gint           page_num;
   GType          view_type;
-  GtkAllocation allocation; 
+  GtkAllocation  allocation; 
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (window->view_type != G_TYPE_NONE);
