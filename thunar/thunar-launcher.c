@@ -2866,6 +2866,14 @@ thunar_launcher_append_open_section (ThunarLauncher *launcher,
       submenu = thunar_launcher_build_application_submenu (launcher, applications);
       gtk_menu_item_set_submenu (GTK_MENU_ITEM (menu_item), submenu);
     }
+  else
+    {
+      if (launcher->n_files_to_process == 1)
+        {
+          xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+          thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_OPEN_WITH_OTHER, FALSE);
+        }
+    }
 
   g_list_free_full (applications, g_object_unref);
   return TRUE;
