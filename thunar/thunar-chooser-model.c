@@ -362,19 +362,21 @@ thunar_chooser_model_get_content_type (ThunarChooserModel *model)
 
 /**
  * thunar_chooser_model_remove:
- * @model : a #ThunarChooserModel.
- * @iter  : the #GtkTreeIter for the application to remove.
- * @error : return location for errors or %NULL.
+ * @model  : a #ThunarChooserModel.
+ * @iter   : the #GtkTreeIter for the application to remove.
+ * @delete : whether delete or just dissociate the application.
+ * @error  : return location for errors or %NULL.
  *
- * Tries to remove the application at the specified @iter from
- * the systems application database. Returns %TRUE on success,
- * otherwise %FALSE is returned.
+ * Tries to remove or dissociatethe application at the specified
+ * @iter from the systems application database.
+ * Returns %TRUE on success, otherwise %FALSE is returned.
  *
  * Return value: %TRUE on success, %FALSE otherwise.
  **/
 gboolean
 thunar_chooser_model_remove (ThunarChooserModel *model,
                              GtkTreeIter        *iter,
+                             gboolean            delete,
                              GError            **error)
 {
   GAppInfo *app_info;
@@ -399,7 +401,7 @@ thunar_chooser_model_remove (ThunarChooserModel *model,
                                              error);
 
   /* try to delete the file */
-  if (succeed && g_app_info_delete (app_info))
+  if (delete && succeed && g_app_info_delete (app_info))
     {
       g_set_error (error, G_IO_ERROR,
                    G_IO_ERROR_FAILED,

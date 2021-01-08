@@ -61,6 +61,7 @@ ThunarChooserModel *thunar_chooser_model_new              (const gchar        *c
 const gchar        *thunar_chooser_model_get_content_type (ThunarChooserModel *model);
 gboolean            thunar_chooser_model_remove           (ThunarChooserModel *model,
                                                            GtkTreeIter        *iter,
+                                                           gboolean            delete,
                                                            GError            **error);
 
 G_END_DECLS;

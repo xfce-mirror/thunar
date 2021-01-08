@@ -72,6 +72,7 @@ static gboolean    thunar_chooser_dialog_context_menu        (ThunarChooserDialo
 static void        thunar_chooser_dialog_update_accept       (ThunarChooserDialog      *dialog);
 static void        thunar_chooser_dialog_update_header       (ThunarChooserDialog      *dialog);
 static void        thunar_chooser_dialog_action_remove       (ThunarChooserDialog      *dialog);
+static void        thunar_chooser_dialog_action_forget       (ThunarChooserDialog      *dialog);
 static void        thunar_chooser_dialog_browse_clicked      (GtkWidget                *button,
                                                               ThunarChooserDialog      *dialog);
 static gboolean    thunar_chooser_dialog_button_press_event  (GtkWidget                *tree_view,
@@ -581,6 +582,13 @@ thunar_chooser_dialog_context_menu (ThunarChooserDialog *dialog)
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show (item);
 
+  /* append the "Remove Launcher" item */
+  item = gtk_menu_item_new_with_mnemonic (_("_Forget Association"));
+  gtk_widget_set_sensitive (item, g_app_info_can_remove_supports_type (app_info));
+  g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_chooser_dialog_action_forget), dialog);
+  gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+  gtk_widget_show (item);
+
   /* run the menu (takes over the floating of menu) */
   thunar_gtk_menu_run (GTK_MENU (menu));
 
@@ -733,10 +741,80 @@ thunar_chooser_dialog_action_remove (ThunarChooserDialog *dialog)
       if (G_LIKELY (response == GTK_RESPONSE_YES))
         {
           /* try to delete the application from the model */
-          if (!thunar_chooser_model_remove (THUNAR_CHOOSER_MODEL (model), &iter, &error))
+          if (!thunar_chooser_model_remove (THUNAR_CHOOSER_MODEL (model), &iter, TRUE, &error))
             {
               /* display an error to the user */
               thunar_dialogs_show_error (dialog, error, _("Failed to remove \"%s\""), name);
+              g_error_free (error);
+            }
+          else if (G_LIKELY (dialog->file != NULL))
+            {
+              /* emit "changed" for the file, so the context menu is updated */
+              thunar_file_changed (dialog->file);
+            }
+        }
+    }
+
+  /* cleanup */
+  g_object_unref (app_info);
+}
+
+
+
+static void
+thunar_chooser_dialog_action_forget (ThunarChooserDialog *dialog)
+{
+  GtkTreeSelection *selection;
+  GtkTreeModel     *model;
+  GtkTreeIter       iter;
+  const gchar      *name;
+  GtkWidget        *message;
+  GAppInfo         *app_info;
+  GError           *error = NULL;
+  gint              response;
+
+  _thunar_return_if_fail (THUNAR_IS_CHOOSER_DIALOG (dialog));
+
+  /* determine the selected row */
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (dialog->tree_view));
+  if (!gtk_tree_selection_get_selected (selection, &model, &iter))
+    return;
+
+  /* determine the app info for the row */
+  gtk_tree_model_get (model, &iter, THUNAR_CHOOSER_MODEL_COLUMN_APPLICATION, &app_info, -1);
+  if (G_UNLIKELY (app_info == NULL))
+    return;
+
+  if (g_app_info_can_remove_supports_type (app_info))
+    {
+      /* determine the name of the app info */
+      name = g_app_info_get_name (app_info);
+
+      /* ask the user whether to forget the application launcher */
+      message = gtk_message_dialog_new (GTK_WINDOW (dialog),
+                                        GTK_DIALOG_DESTROY_WITH_PARENT
+                                        | GTK_DIALOG_MODAL,
+                                        GTK_MESSAGE_QUESTION,
+                                        GTK_BUTTONS_NONE,
+                                        _("Are you sure that you want to forget \"%s\"?"), name);
+      gtk_dialog_add_buttons (GTK_DIALOG (message),
+                              _("_Cancel"), GTK_RESPONSE_CANCEL,
+                              _("_Forget"), GTK_RESPONSE_YES,
+                              NULL);
+      gtk_dialog_set_default_response (GTK_DIALOG (message), GTK_RESPONSE_YES);
+      gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), _("This will dissociate the application launcher for this file type, "
+                                                                                "but will not uninstall or remove the application launcher itself."));
+      response = gtk_dialog_run (GTK_DIALOG (message));
+      gtk_widget_destroy (message);
+
+      /* check if the user confirmed */
+      if (G_LIKELY (response == GTK_RESPONSE_YES))
+        {
+          /* try to delete the application from the model */
+          if (!thunar_chooser_model_remove (THUNAR_CHOOSER_MODEL (model), &iter, FALSE, &error))
+            {
+              /* display an error to the user */
+              thunar_dialogs_show_error (dialog, error, _("Failed to forget \"%s\""), name);
               g_error_free (error);
             }
           else if (G_LIKELY (dialog->file != NULL))
