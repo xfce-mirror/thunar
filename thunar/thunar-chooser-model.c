@@ -369,7 +369,6 @@ thunar_chooser_model_get_content_type (ThunarChooserModel *model)
  *
  * Tries to remove or dissociate the application at the specified
  * @iter from the systems application database.
- * Returns %TRUE on success, otherwise %FALSE is returned.
  *
  * Return value: %TRUE on success, %FALSE otherwise.
  **/
