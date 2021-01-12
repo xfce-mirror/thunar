@@ -582,7 +582,7 @@ thunar_chooser_dialog_context_menu (ThunarChooserDialog *dialog)
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show (item);
 
-  /* append the "Remove Launcher" item */
+  /* append the "Forget Association" item */
   item = gtk_menu_item_new_with_mnemonic (_("_Forget Association"));
   gtk_widget_set_sensitive (item, g_app_info_can_remove_supports_type (app_info));
   g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_chooser_dialog_action_forget), dialog);
