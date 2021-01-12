@@ -367,7 +367,7 @@ thunar_chooser_model_get_content_type (ThunarChooserModel *model)
  * @delete : whether delete or just dissociate the application.
  * @error  : return location for errors or %NULL.
  *
- * Tries to remove or dissociatethe application at the specified
+ * Tries to remove or dissociate the application at the specified
  * @iter from the systems application database.
  * Returns %TRUE on success, otherwise %FALSE is returned.
  *
