@@ -248,7 +248,7 @@ thunar_sbr_number_renamer_init (ThunarSbrNumberRenamer *number_renamer)
   g_object_unref (G_OBJECT (relation));
 
   entry = gtk_entry_new ();
-  gtk_entry_set_width_chars (GTK_ENTRY (entry), 4);
+  gtk_entry_set_width_chars (GTK_ENTRY (entry), 12);
   gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
   exo_mutual_binding_new (G_OBJECT (entry), "text", G_OBJECT (number_renamer), "text");
   gtk_grid_attach (GTK_GRID (grid), entry, 3, 1, 1, 1);
