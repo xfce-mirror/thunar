@@ -4,14 +4,14 @@
 # 
 # Translators:
 # Nobuhiro Iwamatsu <iwamatsu@nigauri.org>, 2017-2021
-# UTUMI Hirosi <utuhiro78@yahoo.co.jp>, 2019-2020
+# UTUMI Hirosi <utuhiro78@yahoo.co.jp>, 2019-2021
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-10 00:45+0100\n"
-"PO-Revision-Date: 2021-01-10 14:29+0000\n"
-"Last-Translator: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>\n"
+"POT-Creation-Date: 2021-01-13 00:45+0100\n"
+"PO-Revision-Date: 2021-01-14 08:12+0000\n"
+"Last-Translator: UTUMI Hirosi <utuhiro78@yahoo.co.jp>\n"
 "Language-Team: Japanese (http://www.transifex.com/xfce/thunar/language/ja/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -157,12 +157,12 @@ msgstr[0] "選択した %u 個のファイルは完全に削除されます。\n
 #. add the Cancel/Close buttons
 #. configure the dialog properties
 #: ../thunar/thunar-application.c:2165 ../thunar/thunar-application.c:2344
-#: ../thunar/thunar-chooser-dialog.c:288 ../thunar/thunar-chooser-dialog.c:720
-#: ../thunar/thunar-chooser-dialog.c:769 ../thunar/thunar-dialogs.c:98
-#: ../thunar/thunar-dialogs.c:233 ../thunar/thunar-dialogs.c:649
-#: ../thunar/thunar-dialogs.c:762 ../thunar/thunar-dialogs.c:1034
-#: ../thunar/thunar-dnd.c:169 ../thunar/thunar-launcher.c:878
-#: ../thunar/thunar-permissions-chooser.c:535
+#: ../thunar/thunar-chooser-dialog.c:289 ../thunar/thunar-chooser-dialog.c:728
+#: ../thunar/thunar-chooser-dialog.c:801 ../thunar/thunar-chooser-dialog.c:847
+#: ../thunar/thunar-dialogs.c:98 ../thunar/thunar-dialogs.c:233
+#: ../thunar/thunar-dialogs.c:649 ../thunar/thunar-dialogs.c:762
+#: ../thunar/thunar-dialogs.c:1034 ../thunar/thunar-dnd.c:169
+#: ../thunar/thunar-launcher.c:878 ../thunar/thunar-permissions-chooser.c:535
 #: ../thunar/thunar-permissions-chooser.c:1143
 #: ../thunar/thunar-properties-dialog.c:850
 #: ../thunar/thunar-renamer-dialog.c:357
@@ -242,7 +242,7 @@ msgstr "\"%s\" を復元できませんでした。"
 msgid "Restoring files..."
 msgstr "ファイルを復元しています..."
 
-#: ../thunar/thunar-chooser-button.c:309 ../thunar/thunar-chooser-dialog.c:471
+#: ../thunar/thunar-chooser-button.c:309 ../thunar/thunar-chooser-dialog.c:472
 #, c-format
 msgid "Failed to set default application for \"%s\""
 msgstr "\"%s\" のデフォルトアプリケーションをセットできませんでした。"
@@ -262,34 +262,34 @@ msgstr "アプリケーションは選択されていません"
 msgid "Other Application..."
 msgstr "他のアプリケーション..."
 
-#: ../thunar/thunar-chooser-dialog.c:186 ../thunar/thunar-launcher.c:2863
+#: ../thunar/thunar-chooser-dialog.c:187 ../thunar/thunar-launcher.c:2863
 msgid "Open With"
 msgstr "アプリケーションで開く"
 
 #. create the "Custom command" expand
-#: ../thunar/thunar-chooser-dialog.c:255
+#: ../thunar/thunar-chooser-dialog.c:256
 msgid "Use a _custom command:"
 msgstr "指定コマンドを使用する(_C):"
 
-#: ../thunar/thunar-chooser-dialog.c:256
+#: ../thunar/thunar-chooser-dialog.c:257
 msgid ""
 "Use a custom command for an application that is not available from the above"
 " application list."
 msgstr "上のアプリケーション一覧にないアプリケーションのコマンドを指定して使用します。"
 
 #. create the "Custom command" button
-#: ../thunar/thunar-chooser-dialog.c:275
+#: ../thunar/thunar-chooser-dialog.c:276
 msgid "_Browse..."
 msgstr "参照(_B)..."
 
 #. create the "Use as default for this kind of file" button
-#: ../thunar/thunar-chooser-dialog.c:281
+#: ../thunar/thunar-chooser-dialog.c:282
 msgid "Use as _default for this kind of file"
 msgstr "この種類のファイルのデフォルトアプリケーションにする(_D)"
 
 #. add the "Ok"/"Open" button
-#: ../thunar/thunar-chooser-dialog.c:291
-#: ../thunar/thunar-chooser-dialog.c:1173
+#: ../thunar/thunar-chooser-dialog.c:292
+#: ../thunar/thunar-chooser-dialog.c:1251
 #: ../thunar/thunar-properties-dialog.c:851 ../thunar/thunar-window.c:3404
 #: ../plugins/thunar-uca/thunar-uca-editor.c:144
 #: ../plugins/thunar-uca/thunar-uca-editor.c:437
@@ -297,51 +297,56 @@ msgid "_OK"
 msgstr "OK(_O)"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:432
+#: ../thunar/thunar-chooser-dialog.c:433
 #, c-format
 msgid "Failed to add new application \"%s\""
 msgstr "新しいアプリケーション \"%s\" を追加できませんでした。"
 
-#: ../thunar/thunar-chooser-dialog.c:509
+#: ../thunar/thunar-chooser-dialog.c:510
 #, c-format
 msgid "Failed to execute application \"%s\""
 msgstr "アプリケーション \"%s\" の実行に失敗しました。"
 
 #. append the "Remove Launcher" item
-#: ../thunar/thunar-chooser-dialog.c:578
+#: ../thunar/thunar-chooser-dialog.c:579
 msgid "_Remove Launcher"
 msgstr "ランチャーを削除(_R)"
 
+#. append the "Forget Association" item
+#: ../thunar/thunar-chooser-dialog.c:586
+msgid "_Forget Association"
+msgstr "関連付けを解除する(_F)"
+
 #. update the header label
-#: ../thunar/thunar-chooser-dialog.c:658
+#: ../thunar/thunar-chooser-dialog.c:666
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
 msgstr "<i>%s</i> とタイプが \"%s\" の他のファイルを以下のアプリケーションで開きます:"
 
-#: ../thunar/thunar-chooser-dialog.c:666
+#: ../thunar/thunar-chooser-dialog.c:674
 #, c-format
 msgid ""
 "Browse the file system to select an application to open files of type "
 "\"%s\"."
 msgstr "種類が \"%s\" のファイルを開くアプリケーションを選択するためにファイルシステムを参照します。"
 
-#: ../thunar/thunar-chooser-dialog.c:672
+#: ../thunar/thunar-chooser-dialog.c:680
 #, c-format
 msgid ""
 "Change the default application for files of type \"%s\" to the selected "
 "application."
 msgstr "種類が \"%s\" のファイルを開くデフォルトアプリケーションを選択したものに変更します。"
 
-#: ../thunar/thunar-chooser-dialog.c:718
+#: ../thunar/thunar-chooser-dialog.c:726
 #, c-format
 msgid "Are you sure that you want to remove \"%s\"?"
 msgstr "\"%s\" を削除しますがよろしいですか?"
 
-#: ../thunar/thunar-chooser-dialog.c:721
+#: ../thunar/thunar-chooser-dialog.c:729
 msgid "_Remove"
 msgstr "削除(_R)"
 
-#: ../thunar/thunar-chooser-dialog.c:724
+#: ../thunar/thunar-chooser-dialog.c:732
 msgid ""
 "This will remove the application launcher that appears in the file context menu, but will not uninstall the application itself.\n"
 "\n"
@@ -349,53 +354,74 @@ msgid ""
 msgstr "ファイルのコンテキストメニューに表示されるアプリケーションランチャーを削除しますが、アプリケーション自体はアンインストールしません。\n\nこのファイルマネージャーの \"アプリケーションで開く\" ダイアログにあるカスタムコマンドボックスを利用して作成されたアプリケーションランチャーのみが削除されます。"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:739
+#: ../thunar/thunar-chooser-dialog.c:747
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "\"%s\" を削除できませんでした。"
 
-#: ../thunar/thunar-chooser-dialog.c:766
+#: ../thunar/thunar-chooser-dialog.c:799
+#, c-format
+msgid "Are you sure that you want to forget \"%s\"?"
+msgstr "本当に \"%s\" を解除しますか？"
+
+#: ../thunar/thunar-chooser-dialog.c:802
+msgid "_Forget"
+msgstr "解除する(_F)"
+
+#: ../thunar/thunar-chooser-dialog.c:805
+msgid ""
+"This will dissociate the application launcher for this file type, but will "
+"not uninstall or remove the application launcher itself."
+msgstr "これによってこのファイルタイプに対するアプリケーションの関連付けが解除されますが、アプリケーション自体がアンインストールまたは削除されることはありません。"
+
+#. display an error to the user
+#: ../thunar/thunar-chooser-dialog.c:817
+#, c-format
+msgid "Failed to forget \"%s\""
+msgstr "\"%s\" の解除に失敗しました"
+
+#: ../thunar/thunar-chooser-dialog.c:844
 #: ../plugins/thunar-uca/thunar-uca-editor.c:175
 msgid "Select an Application"
 msgstr "アプリケーションを選択してください"
 
 #. change the accept button label text
 #. aka "activate"
-#: ../thunar/thunar-chooser-dialog.c:770
-#: ../thunar/thunar-chooser-dialog.c:1173 ../thunar/thunar-launcher.c:1318
+#: ../thunar/thunar-chooser-dialog.c:848
+#: ../thunar/thunar-chooser-dialog.c:1251 ../thunar/thunar-launcher.c:1318
 #: ../thunar/thunar-renamer-dialog.c:1060
 #: ../thunar/thunar-shortcuts-view.c:1118
 #: ../plugins/thunar-uca/thunar-uca-editor.c:179
 msgid "_Open"
 msgstr "開く(_O)"
 
-#: ../thunar/thunar-chooser-dialog.c:776
+#: ../thunar/thunar-chooser-dialog.c:854
 #: ../thunar/thunar-renamer-dialog.c:1067
 #: ../plugins/thunar-uca/thunar-uca-editor.c:186
 msgid "All Files"
 msgstr "すべてのファイル"
 
-#: ../thunar/thunar-chooser-dialog.c:781
+#: ../thunar/thunar-chooser-dialog.c:859
 #: ../plugins/thunar-uca/thunar-uca-editor.c:191
 msgid "Executable Files"
 msgstr "実行可能ファイル"
 
-#: ../thunar/thunar-chooser-dialog.c:796
+#: ../thunar/thunar-chooser-dialog.c:874
 #: ../plugins/thunar-uca/thunar-uca-editor.c:206
 msgid "Perl Scripts"
 msgstr "Perl スクリプト"
 
-#: ../thunar/thunar-chooser-dialog.c:802
+#: ../thunar/thunar-chooser-dialog.c:880
 #: ../plugins/thunar-uca/thunar-uca-editor.c:212
 msgid "Python Scripts"
 msgstr "Python スクリプト"
 
-#: ../thunar/thunar-chooser-dialog.c:808
+#: ../thunar/thunar-chooser-dialog.c:886
 #: ../plugins/thunar-uca/thunar-uca-editor.c:218
 msgid "Ruby Scripts"
 msgstr "Ruby スクリプト"
 
-#: ../thunar/thunar-chooser-dialog.c:814
+#: ../thunar/thunar-chooser-dialog.c:892
 #: ../plugins/thunar-uca/thunar-uca-editor.c:224
 msgid "Shell Scripts"
 msgstr "シェルスクリプト"
@@ -412,7 +438,7 @@ msgstr "推奨アプリケーション"
 msgid "Other Applications"
 msgstr "他のアプリケーション"
 
-#: ../thunar/thunar-chooser-model.c:406
+#: ../thunar/thunar-chooser-model.c:407
 #, c-format
 msgid "Failed to remove \"%s\"."
 msgstr "\"%s\" を削除できませんでした。"
