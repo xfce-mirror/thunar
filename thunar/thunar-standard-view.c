@@ -224,9 +224,6 @@ static void                 thunar_standard_view_drag_data_delete           (Gtk
 static void                 thunar_standard_view_drag_end                   (GtkWidget                *view,
                                                                              GdkDragContext           *context,
                                                                              ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_row_deleted                (ThunarListModel          *model,
-                                                                             GtkTreePath              *path,
-                                                                             ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_select_after_row_deleted   (ThunarListModel          *model,
                                                                              GtkTreePath              *path,
                                                                              ThunarStandardView       *standard_view);
@@ -346,10 +343,6 @@ struct _ThunarStandardViewPrivate
 
   /* file insert signal */
   gulong                  row_changed_id;
-
-  /* Tree path for restoring the selection after selecting and
-   * deleting an item */
-  GtkTreePath            *selection_before_delete;
 
   /* current sort column ID */
   ThunarColumn            sort_column;
@@ -676,7 +669,6 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
 
   /* setup the list model */
   standard_view->model = thunar_list_model_new ();
-  g_signal_connect (G_OBJECT (standard_view->model), "row-deleted", G_CALLBACK (thunar_standard_view_row_deleted), standard_view);
   g_signal_connect_after (G_OBJECT (standard_view->model), "row-deleted", G_CALLBACK (thunar_standard_view_select_after_row_deleted), standard_view);
   standard_view->priv->row_changed_id = g_signal_connect (G_OBJECT (standard_view->model), "row-changed", G_CALLBACK (thunar_standard_view_row_changed), standard_view);
   g_signal_connect (G_OBJECT (standard_view->model), "rows-reordered", G_CALLBACK (thunar_standard_view_rows_reordered), standard_view);
@@ -3031,51 +3023,6 @@ thunar_standard_view_drag_end (GtkWidget          *view,
 
 
 
-static void
-thunar_standard_view_row_deleted (ThunarListModel    *model,
-                                  GtkTreePath        *path,
-                                  ThunarStandardView *standard_view)
-{
-  GtkTreePath *path_copy;
-  GList       *selected_items;
-
-  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
-  _thunar_return_if_fail (path != NULL);
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-  _thunar_return_if_fail (standard_view->model == model);
-
-  /* Get tree paths of selected files */
-  selected_items = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
-
-  /* Do nothing if the deleted row is not selected or there is more than one file selected */
-  if (G_UNLIKELY (g_list_find_custom (selected_items, path, (GCompareFunc) gtk_tree_path_compare) == NULL || g_list_length (selected_items) != 1))
-    {
-      g_list_free_full (selected_items, (GDestroyNotify) gtk_tree_path_free);
-      return;
-    }
-
-  /* Create a copy the path (we're not allowed to modify it in this handler) */
-  path_copy = gtk_tree_path_copy (path);
-
-  /* Remember the selected path so that it can be restored after the row has
-   * been removed. If the first row is removed, select the first row after the
-   * removal, if any other row is removed, select the row before that one */
-  if (G_LIKELY (gtk_tree_path_prev (path_copy)))
-    {
-      standard_view->priv->selection_before_delete = path_copy;
-    }
-  else
-    {
-      standard_view->priv->selection_before_delete = gtk_tree_path_new_first ();
-      gtk_tree_path_free (path_copy);
-    }
-
-  /* Free path list */
-  g_list_free_full (selected_items, (GDestroyNotify) gtk_tree_path_free);
-}
-
-
-
 static gboolean
 thunar_standard_view_restore_selection_idle (gpointer user_data)
 {
@@ -3169,25 +3116,10 @@ thunar_standard_view_select_after_row_deleted (ThunarListModel    *model,
                                                GtkTreePath        *path,
                                                ThunarStandardView *standard_view)
 {
-  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
   _thunar_return_if_fail (path != NULL);
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-  _thunar_return_if_fail (standard_view->model == model);
 
-  /* Check if there was only one file selected before the row was deleted. The
-   * path is set by thunar_standard_view_row_deleted() if this is the case */
-  if (G_LIKELY (standard_view->priv->selection_before_delete != NULL))
-    {
-      /* Restore the selection by selecting either the row before or the new first row */
-      (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->select_path) (standard_view, standard_view->priv->selection_before_delete);
-
-      /* place the cursor on the selected path */
-      (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->set_cursor) (standard_view, standard_view->priv->selection_before_delete, FALSE);
-
-      /* Free the tree path */
-      gtk_tree_path_free (standard_view->priv->selection_before_delete);
-      standard_view->priv->selection_before_delete = NULL;
-    }
+  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->set_cursor) (standard_view, path, FALSE);
 }
 
 
