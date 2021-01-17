@@ -3684,6 +3684,7 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
                                          ThunarWindow *window)
 {
   gboolean      show_full_path;
+  gchar        *title;
   gchar        *parse_name = NULL;
   const gchar  *name;
 
@@ -3698,9 +3699,12 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
   else
     name = thunar_file_get_display_name (current_directory);
 
-  /* set window title */
-  gtk_window_set_title (GTK_WINDOW (window), name);
   g_free (parse_name);
+
+  /* set window title */
+  title = g_strdup_printf ("%s - %s", name, "Thunar");
+  gtk_window_set_title (GTK_WINDOW (window), title);
+  g_free (title);
 
   /* set window icon */
   thunar_window_update_window_icon (window);
