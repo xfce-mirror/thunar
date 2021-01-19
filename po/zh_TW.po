@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-10 00:45+0100\n"
-"PO-Revision-Date: 2021-01-11 01:30+0000\n"
+"POT-Creation-Date: 2021-01-13 00:45+0100\n"
+"PO-Revision-Date: 2021-01-13 05:29+0000\n"
 "Last-Translator: 黃柏諺 <s8321414@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/xfce/thunar/language/zh_TW/)\n"
 "MIME-Version: 1.0\n"
@@ -163,12 +163,12 @@ msgstr[0] "確定要永久刪除\n所選的 %u 個檔案嗎？"
 #. add the Cancel/Close buttons
 #. configure the dialog properties
 #: ../thunar/thunar-application.c:2165 ../thunar/thunar-application.c:2344
-#: ../thunar/thunar-chooser-dialog.c:288 ../thunar/thunar-chooser-dialog.c:720
-#: ../thunar/thunar-chooser-dialog.c:769 ../thunar/thunar-dialogs.c:98
-#: ../thunar/thunar-dialogs.c:233 ../thunar/thunar-dialogs.c:649
-#: ../thunar/thunar-dialogs.c:762 ../thunar/thunar-dialogs.c:1034
-#: ../thunar/thunar-dnd.c:169 ../thunar/thunar-launcher.c:878
-#: ../thunar/thunar-permissions-chooser.c:535
+#: ../thunar/thunar-chooser-dialog.c:289 ../thunar/thunar-chooser-dialog.c:728
+#: ../thunar/thunar-chooser-dialog.c:801 ../thunar/thunar-chooser-dialog.c:847
+#: ../thunar/thunar-dialogs.c:98 ../thunar/thunar-dialogs.c:233
+#: ../thunar/thunar-dialogs.c:649 ../thunar/thunar-dialogs.c:762
+#: ../thunar/thunar-dialogs.c:1034 ../thunar/thunar-dnd.c:169
+#: ../thunar/thunar-launcher.c:878 ../thunar/thunar-permissions-chooser.c:535
 #: ../thunar/thunar-permissions-chooser.c:1143
 #: ../thunar/thunar-properties-dialog.c:850
 #: ../thunar/thunar-renamer-dialog.c:357
@@ -248,7 +248,7 @@ msgstr "無法還原「%s」"
 msgid "Restoring files..."
 msgstr "正在還原檔案..."
 
-#: ../thunar/thunar-chooser-button.c:309 ../thunar/thunar-chooser-dialog.c:471
+#: ../thunar/thunar-chooser-button.c:309 ../thunar/thunar-chooser-dialog.c:472
 #, c-format
 msgid "Failed to set default application for \"%s\""
 msgstr "無法為「%s」設定預設應用程式"
@@ -268,34 +268,34 @@ msgstr "未選取任何應用程式"
 msgid "Other Application..."
 msgstr "其它應用程式..."
 
-#: ../thunar/thunar-chooser-dialog.c:186 ../thunar/thunar-launcher.c:2863
+#: ../thunar/thunar-chooser-dialog.c:187 ../thunar/thunar-launcher.c:2863
 msgid "Open With"
 msgstr "以此開啟"
 
 #. create the "Custom command" expand
-#: ../thunar/thunar-chooser-dialog.c:255
+#: ../thunar/thunar-chooser-dialog.c:256
 msgid "Use a _custom command:"
 msgstr "使用自訂指令(_C)："
 
-#: ../thunar/thunar-chooser-dialog.c:256
+#: ../thunar/thunar-chooser-dialog.c:257
 msgid ""
 "Use a custom command for an application that is not available from the above"
 " application list."
 msgstr "使用自訂指令來執行上面應用程式清單中所沒有的應用程式。"
 
 #. create the "Custom command" button
-#: ../thunar/thunar-chooser-dialog.c:275
+#: ../thunar/thunar-chooser-dialog.c:276
 msgid "_Browse..."
 msgstr "瀏覽(_B)..."
 
 #. create the "Use as default for this kind of file" button
-#: ../thunar/thunar-chooser-dialog.c:281
+#: ../thunar/thunar-chooser-dialog.c:282
 msgid "Use as _default for this kind of file"
 msgstr "設為此類檔案的預設動作(_D)"
 
 #. add the "Ok"/"Open" button
-#: ../thunar/thunar-chooser-dialog.c:291
-#: ../thunar/thunar-chooser-dialog.c:1173
+#: ../thunar/thunar-chooser-dialog.c:292
+#: ../thunar/thunar-chooser-dialog.c:1251
 #: ../thunar/thunar-properties-dialog.c:851 ../thunar/thunar-window.c:3404
 #: ../plugins/thunar-uca/thunar-uca-editor.c:144
 #: ../plugins/thunar-uca/thunar-uca-editor.c:437
@@ -303,51 +303,56 @@ msgid "_OK"
 msgstr "確定(_O)"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:432
+#: ../thunar/thunar-chooser-dialog.c:433
 #, c-format
 msgid "Failed to add new application \"%s\""
 msgstr "無法新增新的應用程式「%s」"
 
-#: ../thunar/thunar-chooser-dialog.c:509
+#: ../thunar/thunar-chooser-dialog.c:510
 #, c-format
 msgid "Failed to execute application \"%s\""
 msgstr "無法執行應用程式「%s」"
 
 #. append the "Remove Launcher" item
-#: ../thunar/thunar-chooser-dialog.c:578
+#: ../thunar/thunar-chooser-dialog.c:579
 msgid "_Remove Launcher"
 msgstr "移除啟動器(_R)"
 
+#. append the "Forget Association" item
+#: ../thunar/thunar-chooser-dialog.c:586
+msgid "_Forget Association"
+msgstr "忘記關聯(_F)"
+
 #. update the header label
-#: ../thunar/thunar-chooser-dialog.c:658
+#: ../thunar/thunar-chooser-dialog.c:666
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
 msgstr "開啟 <i>%s</i> 和其他「%s」類型的檔案，使用： "
 
-#: ../thunar/thunar-chooser-dialog.c:666
+#: ../thunar/thunar-chooser-dialog.c:674
 #, c-format
 msgid ""
 "Browse the file system to select an application to open files of type "
 "\"%s\"."
 msgstr "瀏覽檔案系統，以選取應用程式來開啟「%s」類型的檔案"
 
-#: ../thunar/thunar-chooser-dialog.c:672
+#: ../thunar/thunar-chooser-dialog.c:680
 #, c-format
 msgid ""
 "Change the default application for files of type \"%s\" to the selected "
 "application."
 msgstr "將開啟「%s」類型檔案的預設應用程式改設為所選取者。"
 
-#: ../thunar/thunar-chooser-dialog.c:718
+#: ../thunar/thunar-chooser-dialog.c:726
 #, c-format
 msgid "Are you sure that you want to remove \"%s\"?"
 msgstr "確定要移除「%s」嗎？"
 
-#: ../thunar/thunar-chooser-dialog.c:721
+#: ../thunar/thunar-chooser-dialog.c:729
 msgid "_Remove"
 msgstr "移除(_R)"
 
-#: ../thunar/thunar-chooser-dialog.c:724
+#: ../thunar/thunar-chooser-dialog.c:732
 msgid ""
 "This will remove the application launcher that appears in the file context menu, but will not uninstall the application itself.\n"
 "\n"
@@ -355,53 +360,74 @@ msgid ""
 msgstr "將會移除右鍵選單中啟動器的選項， 不過並不會解除安裝它所關聯的應用程式。\n\n您只能移除透過使用檔案管理員中「以此開啟」對話窗內的自訂指令方塊所建立的應用程式啟動器。"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:739
+#: ../thunar/thunar-chooser-dialog.c:747
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "無法移除「%s」"
 
-#: ../thunar/thunar-chooser-dialog.c:766
+#: ../thunar/thunar-chooser-dialog.c:799
+#, c-format
+msgid "Are you sure that you want to forget \"%s\"?"
+msgstr "確定要忘記「%s」嗎？"
+
+#: ../thunar/thunar-chooser-dialog.c:802
+msgid "_Forget"
+msgstr "忘記(_F)"
+
+#: ../thunar/thunar-chooser-dialog.c:805
+msgid ""
+"This will dissociate the application launcher for this file type, but will "
+"not uninstall or remove the application launcher itself."
+msgstr "這將讓應用程式啟動器與此檔案類型取消關聯，但並不會解除安裝或移除應用程式啟動器自身。"
+
+#. display an error to the user
+#: ../thunar/thunar-chooser-dialog.c:817
+#, c-format
+msgid "Failed to forget \"%s\""
+msgstr "忘記「%s」失敗"
+
+#: ../thunar/thunar-chooser-dialog.c:844
 #: ../plugins/thunar-uca/thunar-uca-editor.c:175
 msgid "Select an Application"
 msgstr "選取應用程式"
 
 #. change the accept button label text
 #. aka "activate"
-#: ../thunar/thunar-chooser-dialog.c:770
-#: ../thunar/thunar-chooser-dialog.c:1173 ../thunar/thunar-launcher.c:1318
+#: ../thunar/thunar-chooser-dialog.c:848
+#: ../thunar/thunar-chooser-dialog.c:1251 ../thunar/thunar-launcher.c:1318
 #: ../thunar/thunar-renamer-dialog.c:1060
 #: ../thunar/thunar-shortcuts-view.c:1118
 #: ../plugins/thunar-uca/thunar-uca-editor.c:179
 msgid "_Open"
 msgstr "開啟(_O)"
 
-#: ../thunar/thunar-chooser-dialog.c:776
+#: ../thunar/thunar-chooser-dialog.c:854
 #: ../thunar/thunar-renamer-dialog.c:1067
 #: ../plugins/thunar-uca/thunar-uca-editor.c:186
 msgid "All Files"
 msgstr "所有檔案"
 
-#: ../thunar/thunar-chooser-dialog.c:781
+#: ../thunar/thunar-chooser-dialog.c:859
 #: ../plugins/thunar-uca/thunar-uca-editor.c:191
 msgid "Executable Files"
 msgstr "可執行檔"
 
-#: ../thunar/thunar-chooser-dialog.c:796
+#: ../thunar/thunar-chooser-dialog.c:874
 #: ../plugins/thunar-uca/thunar-uca-editor.c:206
 msgid "Perl Scripts"
 msgstr "Perl 指令稿"
 
-#: ../thunar/thunar-chooser-dialog.c:802
+#: ../thunar/thunar-chooser-dialog.c:880
 #: ../plugins/thunar-uca/thunar-uca-editor.c:212
 msgid "Python Scripts"
 msgstr "Python 指令稿"
 
-#: ../thunar/thunar-chooser-dialog.c:808
+#: ../thunar/thunar-chooser-dialog.c:886
 #: ../plugins/thunar-uca/thunar-uca-editor.c:218
 msgid "Ruby Scripts"
 msgstr "Ruby 指令稿"
 
-#: ../thunar/thunar-chooser-dialog.c:814
+#: ../thunar/thunar-chooser-dialog.c:892
 #: ../plugins/thunar-uca/thunar-uca-editor.c:224
 msgid "Shell Scripts"
 msgstr "Shell 指令稿"
@@ -418,7 +444,7 @@ msgstr "建議的應用程式"
 msgid "Other Applications"
 msgstr "其他應用程式"
 
-#: ../thunar/thunar-chooser-model.c:406
+#: ../thunar/thunar-chooser-model.c:407
 #, c-format
 msgid "Failed to remove \"%s\"."
 msgstr "無法移除「%s」。"
