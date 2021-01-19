@@ -15,9 +15,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-08 00:45+0100\n"
-"PO-Revision-Date: 2021-01-08 18:36+0000\n"
-"Last-Translator: Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>\n"
+"POT-Creation-Date: 2021-01-13 00:45+0100\n"
+"PO-Revision-Date: 2021-01-12 23:45+0000\n"
+"Last-Translator: Xfce Bot <transifex@xfce.org>\n"
 "Language-Team: Catalan (http://www.transifex.com/xfce/thunar/language/ca/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -164,12 +164,12 @@ msgstr[1] "Esteu segur que voleu suprimir permanentment\nels %u fitxers seleccio
 #. add the Cancel/Close buttons
 #. configure the dialog properties
 #: ../thunar/thunar-application.c:2165 ../thunar/thunar-application.c:2344
-#: ../thunar/thunar-chooser-dialog.c:288 ../thunar/thunar-chooser-dialog.c:720
-#: ../thunar/thunar-chooser-dialog.c:769 ../thunar/thunar-dialogs.c:98
-#: ../thunar/thunar-dialogs.c:233 ../thunar/thunar-dialogs.c:649
-#: ../thunar/thunar-dialogs.c:762 ../thunar/thunar-dialogs.c:1034
-#: ../thunar/thunar-dnd.c:169 ../thunar/thunar-launcher.c:878
-#: ../thunar/thunar-permissions-chooser.c:535
+#: ../thunar/thunar-chooser-dialog.c:289 ../thunar/thunar-chooser-dialog.c:728
+#: ../thunar/thunar-chooser-dialog.c:801 ../thunar/thunar-chooser-dialog.c:847
+#: ../thunar/thunar-dialogs.c:98 ../thunar/thunar-dialogs.c:233
+#: ../thunar/thunar-dialogs.c:649 ../thunar/thunar-dialogs.c:762
+#: ../thunar/thunar-dialogs.c:1034 ../thunar/thunar-dnd.c:169
+#: ../thunar/thunar-launcher.c:878 ../thunar/thunar-permissions-chooser.c:535
 #: ../thunar/thunar-permissions-chooser.c:1143
 #: ../thunar/thunar-properties-dialog.c:850
 #: ../thunar/thunar-renamer-dialog.c:357
@@ -249,7 +249,7 @@ msgstr "No s'ha pogut restaurar «%s»"
 msgid "Restoring files..."
 msgstr "S'estan restaurant els fitxers..."
 
-#: ../thunar/thunar-chooser-button.c:309 ../thunar/thunar-chooser-dialog.c:471
+#: ../thunar/thunar-chooser-button.c:309 ../thunar/thunar-chooser-dialog.c:472
 #, c-format
 msgid "Failed to set default application for \"%s\""
 msgstr "Ha fallat l'establiment de l'aplicació predeterminada per «%s»"
@@ -269,34 +269,34 @@ msgstr "No s'ha seleccionat cap aplicació"
 msgid "Other Application..."
 msgstr "Altres aplicacions..."
 
-#: ../thunar/thunar-chooser-dialog.c:186 ../thunar/thunar-launcher.c:2863
+#: ../thunar/thunar-chooser-dialog.c:187 ../thunar/thunar-launcher.c:2863
 msgid "Open With"
 msgstr "Obre amb"
 
 #. create the "Custom command" expand
-#: ../thunar/thunar-chooser-dialog.c:255
+#: ../thunar/thunar-chooser-dialog.c:256
 msgid "Use a _custom command:"
 msgstr "Utilitza una ordre _personalitzada:"
 
-#: ../thunar/thunar-chooser-dialog.c:256
+#: ../thunar/thunar-chooser-dialog.c:257
 msgid ""
 "Use a custom command for an application that is not available from the above"
 " application list."
 msgstr "Utilitzeu una ordre personalitzada per una aplicació que no està disponible en la llista d'aplicacions anterior."
 
 #. create the "Custom command" button
-#: ../thunar/thunar-chooser-dialog.c:275
+#: ../thunar/thunar-chooser-dialog.c:276
 msgid "_Browse..."
 msgstr "_Navega..."
 
 #. create the "Use as default for this kind of file" button
-#: ../thunar/thunar-chooser-dialog.c:281
+#: ../thunar/thunar-chooser-dialog.c:282
 msgid "Use as _default for this kind of file"
 msgstr "Utilitza per _defecte per a aquest tipus de fitxer"
 
 #. add the "Ok"/"Open" button
-#: ../thunar/thunar-chooser-dialog.c:291
-#: ../thunar/thunar-chooser-dialog.c:1173
+#: ../thunar/thunar-chooser-dialog.c:292
+#: ../thunar/thunar-chooser-dialog.c:1251
 #: ../thunar/thunar-properties-dialog.c:851 ../thunar/thunar-window.c:3404
 #: ../plugins/thunar-uca/thunar-uca-editor.c:144
 #: ../plugins/thunar-uca/thunar-uca-editor.c:437
@@ -304,51 +304,56 @@ msgid "_OK"
 msgstr "D'ac_ord"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:432
+#: ../thunar/thunar-chooser-dialog.c:433
 #, c-format
 msgid "Failed to add new application \"%s\""
 msgstr "Ha fallat l'afegiment de l'aplicació nova «%s»"
 
-#: ../thunar/thunar-chooser-dialog.c:509
+#: ../thunar/thunar-chooser-dialog.c:510
 #, c-format
 msgid "Failed to execute application \"%s\""
 msgstr "Ha fallat l'execució de l'aplicació «%s»"
 
 #. append the "Remove Launcher" item
-#: ../thunar/thunar-chooser-dialog.c:578
+#: ../thunar/thunar-chooser-dialog.c:579
 msgid "_Remove Launcher"
 msgstr "Sup_rimeix el llançador"
 
+#. append the "Forget Association" item
+#: ../thunar/thunar-chooser-dialog.c:586
+msgid "_Forget Association"
+msgstr ""
+
 #. update the header label
-#: ../thunar/thunar-chooser-dialog.c:658
+#: ../thunar/thunar-chooser-dialog.c:666
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
 msgstr "Obre <i>%s</i> i els altres fitxers del tipus «%s» amb:"
 
-#: ../thunar/thunar-chooser-dialog.c:666
+#: ../thunar/thunar-chooser-dialog.c:674
 #, c-format
 msgid ""
 "Browse the file system to select an application to open files of type "
 "\"%s\"."
 msgstr "Navegueu pel sistema de fitxer i seleccioneu l'aplicació per obrir els fitxers del tipus «%s»."
 
-#: ../thunar/thunar-chooser-dialog.c:672
+#: ../thunar/thunar-chooser-dialog.c:680
 #, c-format
 msgid ""
 "Change the default application for files of type \"%s\" to the selected "
 "application."
 msgstr "Canvia l'aplicació predeterminada per als fitxers de tipus «%s» a l'aplicació seleccionada."
 
-#: ../thunar/thunar-chooser-dialog.c:718
+#: ../thunar/thunar-chooser-dialog.c:726
 #, c-format
 msgid "Are you sure that you want to remove \"%s\"?"
 msgstr "Voleu suprimir permanentment «%s»?"
 
-#: ../thunar/thunar-chooser-dialog.c:721
+#: ../thunar/thunar-chooser-dialog.c:729
 msgid "_Remove"
 msgstr "Sup_rimeix"
 
-#: ../thunar/thunar-chooser-dialog.c:724
+#: ../thunar/thunar-chooser-dialog.c:732
 msgid ""
 "This will remove the application launcher that appears in the file context menu, but will not uninstall the application itself.\n"
 "\n"
@@ -356,53 +361,74 @@ msgid ""
 msgstr "Això suprimirà el llançador de l'aplicació que apareix al menú contextual, però no desinstal·larà l'aplicació.\n\nNomés podeu treure llançadors d'aplicacions que han estat creats amb la casella personalitzada del diàleg «Obre amb» del gestor de fitxers."
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:739
+#: ../thunar/thunar-chooser-dialog.c:747
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "Ha fallat la supressió de «%s»"
 
-#: ../thunar/thunar-chooser-dialog.c:766
+#: ../thunar/thunar-chooser-dialog.c:799
+#, c-format
+msgid "Are you sure that you want to forget \"%s\"?"
+msgstr ""
+
+#: ../thunar/thunar-chooser-dialog.c:802
+msgid "_Forget"
+msgstr ""
+
+#: ../thunar/thunar-chooser-dialog.c:805
+msgid ""
+"This will dissociate the application launcher for this file type, but will "
+"not uninstall or remove the application launcher itself."
+msgstr ""
+
+#. display an error to the user
+#: ../thunar/thunar-chooser-dialog.c:817
+#, c-format
+msgid "Failed to forget \"%s\""
+msgstr ""
+
+#: ../thunar/thunar-chooser-dialog.c:844
 #: ../plugins/thunar-uca/thunar-uca-editor.c:175
 msgid "Select an Application"
 msgstr "Seleccioneu una aplicació"
 
 #. change the accept button label text
 #. aka "activate"
-#: ../thunar/thunar-chooser-dialog.c:770
-#: ../thunar/thunar-chooser-dialog.c:1173 ../thunar/thunar-launcher.c:1318
+#: ../thunar/thunar-chooser-dialog.c:848
+#: ../thunar/thunar-chooser-dialog.c:1251 ../thunar/thunar-launcher.c:1318
 #: ../thunar/thunar-renamer-dialog.c:1060
 #: ../thunar/thunar-shortcuts-view.c:1118
 #: ../plugins/thunar-uca/thunar-uca-editor.c:179
 msgid "_Open"
 msgstr "_Obre"
 
-#: ../thunar/thunar-chooser-dialog.c:776
+#: ../thunar/thunar-chooser-dialog.c:854
 #: ../thunar/thunar-renamer-dialog.c:1067
 #: ../plugins/thunar-uca/thunar-uca-editor.c:186
 msgid "All Files"
 msgstr "Tots els fitxers"
 
-#: ../thunar/thunar-chooser-dialog.c:781
+#: ../thunar/thunar-chooser-dialog.c:859
 #: ../plugins/thunar-uca/thunar-uca-editor.c:191
 msgid "Executable Files"
 msgstr "Fitxers executables"
 
-#: ../thunar/thunar-chooser-dialog.c:796
+#: ../thunar/thunar-chooser-dialog.c:874
 #: ../plugins/thunar-uca/thunar-uca-editor.c:206
 msgid "Perl Scripts"
 msgstr "Scripts Perl"
 
-#: ../thunar/thunar-chooser-dialog.c:802
+#: ../thunar/thunar-chooser-dialog.c:880
 #: ../plugins/thunar-uca/thunar-uca-editor.c:212
 msgid "Python Scripts"
 msgstr "Scripts Python"
 
-#: ../thunar/thunar-chooser-dialog.c:808
+#: ../thunar/thunar-chooser-dialog.c:886
 #: ../plugins/thunar-uca/thunar-uca-editor.c:218
 msgid "Ruby Scripts"
 msgstr "Scripts Ruby"
 
-#: ../thunar/thunar-chooser-dialog.c:814
+#: ../thunar/thunar-chooser-dialog.c:892
 #: ../plugins/thunar-uca/thunar-uca-editor.c:224
 msgid "Shell Scripts"
 msgstr "Scripts Shell"
@@ -419,7 +445,7 @@ msgstr "Aplicacions recomanades"
 msgid "Other Applications"
 msgstr "Altres aplicacions"
 
-#: ../thunar/thunar-chooser-model.c:406
+#: ../thunar/thunar-chooser-model.c:407
 #, c-format
 msgid "Failed to remove \"%s\"."
 msgstr "Ha fallat la supressió de «%s»."
@@ -2736,8 +2762,8 @@ msgid "_Reload"
 msgstr "To_rna a carregar"
 
 #: ../thunar/thunar-window.c:396
-msgid " _Split View"
-msgstr "_Vista dividida"
+msgid "Spl_it View"
+msgstr "V_ista dividida"
 
 #: ../thunar/thunar-window.c:396
 msgid "Open/Close Split View"
