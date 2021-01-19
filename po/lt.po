@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-04-11 00:30+0200\n"
+"POT-Creation-Date: 2021-01-06 12:46+0100\n"
 "PO-Revision-Date: 2018-08-19 09:02+0000\n"
 "Last-Translator: Moo, 2020\n"
 "Language-Team: Lithuanian (https://www.transifex.com/xfce/teams/16840/lt/)\n"
@@ -148,7 +148,7 @@ msgstr "Nepavyko iškviesti operacijos"
 #: ../thunar/thunar-launcher.c:1227 ../thunar/thunar-location-entry.c:366
 #: ../thunar/thunar-location-entry.c:394
 #: ../thunar/thunar-shortcuts-view.c:1719
-#: ../thunar/thunar-shortcuts-view.c:1747 ../thunar/thunar-window.c:2364
+#: ../thunar/thunar-shortcuts-view.c:1747 ../thunar/thunar-window.c:2371
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "Nepavyko atverti „%s“"
@@ -303,7 +303,7 @@ msgstr "Ar pašalinti visus failus ir aplankus iš šiukšlinės?"
 #. prepare the menu item
 #: ../thunar/thunar-application.c:2337 ../thunar/thunar-location-buttons.c:188
 #: ../thunar/thunar-shortcuts-view.c:1239 ../thunar/thunar-tree-view.c:1370
-#: ../thunar/thunar-window.c:355 ../plugins/thunar-tpa/thunar-tpa.c:175
+#: ../thunar/thunar-window.c:358 ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "_Išvalyti šiukšlinę"
 
@@ -386,7 +386,7 @@ msgstr "Šios rūšies failams naudoti kaip _numatytąją"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:291
 #: ../thunar/thunar-chooser-dialog.c:1155
-#: ../thunar/thunar-properties-dialog.c:820 ../thunar/thunar-window.c:3082
+#: ../thunar/thunar-properties-dialog.c:820 ../thunar/thunar-window.c:3089
 #: ../plugins/thunar-uca/thunar-uca-editor.c:142
 #: ../plugins/thunar-uca/thunar-uca-editor.c:435
 msgid "_OK"
@@ -543,7 +543,7 @@ msgstr "Konfigūruoti stulpelius išsamaus sąrašo rodinyje"
 #. add the "Help" button
 #: ../thunar/thunar-column-editor.c:126
 #: ../thunar/thunar-preferences-dialog.c:268
-#: ../thunar/thunar-properties-dialog.c:253 ../thunar/thunar-window.c:381
+#: ../thunar/thunar-properties-dialog.c:253 ../thunar/thunar-window.c:384
 msgid "_Help"
 msgstr "_Žinynas"
 
@@ -924,7 +924,7 @@ msgid "Trash"
 msgstr "Šiukšlinė"
 
 #: ../thunar/thunar-file.c:1078 ../thunar/thunar-gio-extensions.c:253
-#: ../thunar/thunar-shortcuts-model.c:936 ../thunar/thunar-window.c:376
+#: ../thunar/thunar-shortcuts-model.c:936 ../thunar/thunar-window.c:379
 msgid "File System"
 msgstr "Failų sistema"
 
@@ -1295,7 +1295,7 @@ msgid "Open With \"%s\""
 msgstr "Atverti naudojant „%s“"
 
 #: ../thunar/thunar-launcher.c:1609 ../thunar/thunar-shortcuts-view.c:1783
-#: ../thunar/thunar-shortcuts-view.c:2020 ../thunar/thunar-tree-view.c:2098
+#: ../thunar/thunar-shortcuts-view.c:2025 ../thunar/thunar-tree-view.c:2098
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Nepavyko prijungti „%s“"
@@ -1454,7 +1454,7 @@ msgstr "Atverti naujame lange"
 msgid "Create _Folder..."
 msgstr "Sukurti _aplanką..."
 
-#: ../thunar/thunar-location-buttons.c:188 ../thunar/thunar-window.c:355
+#: ../thunar/thunar-location-buttons.c:188 ../thunar/thunar-window.c:358
 msgid "Delete all files and folders in the Trash"
 msgstr "Pašalinti visus failus ir aplankus iš šiukšlinės"
 
@@ -1501,7 +1501,7 @@ msgstr ""
 msgid "View the properties of the folder \"%s\""
 msgstr "Peržiūrėti aplanko „%s“ savybes"
 
-#: ../thunar/thunar-location-entry.c:200 ../thunar/thunar-window.c:365
+#: ../thunar/thunar-location-entry.c:200 ../thunar/thunar-window.c:368
 msgid "Reload the current folder"
 msgstr "Iš naujo įkelti šį aplanką"
 
@@ -2034,12 +2034,12 @@ msgid "Ask every time"
 msgstr "Kas kartą klausti"
 
 #: ../thunar/thunar-preferences-dialog.c:735
-msgid "Apply to Folder Only"
-msgstr "Pritaikyti tik aplankui"
-
-#: ../thunar/thunar-preferences-dialog.c:736
 msgid "Apply to Folder and Contents"
 msgstr "Pritaikyti aplankui ir turiniui"
+
+#: ../thunar/thunar-preferences-dialog.c:736
+msgid "Apply to Folder Only"
+msgstr "Pritaikyti tik aplankui"
 
 #: ../thunar/thunar-preferences-dialog.c:747
 msgid "Volume Management"
@@ -2191,11 +2191,11 @@ msgstr "Savybės"
 msgid "mixed"
 msgstr "maišyti"
 
-#: ../thunar/thunar-renamer-dialog.c:189 ../thunar/thunar-window.c:351
+#: ../thunar/thunar-renamer-dialog.c:189 ../thunar/thunar-window.c:354
 msgid "_File"
 msgstr "_Failas"
 
-#: ../thunar/thunar-renamer-dialog.c:190 ../thunar/thunar-window.c:354
+#: ../thunar/thunar-renamer-dialog.c:190 ../thunar/thunar-window.c:357
 msgid "_Send To"
 msgstr "Siųs_ti į"
 
@@ -2219,7 +2219,7 @@ msgstr "Išvalyti"
 msgid "Clear the file list below"
 msgstr "Išvalyti žemiau esantį failų sąrašą"
 
-#: ../thunar/thunar-renamer-dialog.c:195 ../thunar/thunar-window.c:383
+#: ../thunar/thunar-renamer-dialog.c:195 ../thunar/thunar-window.c:386
 msgid "_About"
 msgstr "_Apie"
 
@@ -2446,12 +2446,12 @@ msgstr "Kelias „%s“ nenurodo į katalogą"
 msgid "Failed to add new shortcut"
 msgstr "Nepavyko pridėti naujos nuorodos"
 
-#: ../thunar/thunar-shortcuts-view.c:1947 ../thunar/thunar-tree-view.c:1966
+#: ../thunar/thunar-shortcuts-view.c:1949 ../thunar/thunar-tree-view.c:1966
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Nepavyko išstumti „%s“"
 
-#: ../thunar/thunar-shortcuts-view.c:2089 ../thunar/thunar-tree-view.c:2021
+#: ../thunar/thunar-shortcuts-view.c:2094 ../thunar/thunar-tree-view.c:2021
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Nepavyko atjungti „%s“"
@@ -2586,7 +2586,7 @@ msgid "Loading folder contents..."
 msgstr "Įkeliamas aplanko turinys..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2278 ../thunar/thunar-window.c:2924
+#: ../thunar/thunar-standard-view.c:2278 ../thunar/thunar-window.c:2931
 msgid "Failed to open the home folder"
 msgstr "Nepavyko atverti pradžios aplanko"
 
@@ -2622,7 +2622,7 @@ msgstr "XDS pervilkimo srities pateiktas failo pavadinimas neteisingas"
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Nepavyko sukurti nuorodos į URL „%s“"
 
-#: ../thunar/thunar-standard-view.c:3937 ../thunar/thunar-window.c:3019
+#: ../thunar/thunar-standard-view.c:3937 ../thunar/thunar-window.c:3026
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Nepavyko atverti „%s“ katalogo"
@@ -2843,313 +2843,313 @@ msgstr "%A, %X"
 msgid "%x at %X"
 msgstr "%x, %X"
 
-#: ../thunar/thunar-window.c:352
+#: ../thunar/thunar-window.c:355
 msgid "New _Tab"
 msgstr "Nauja kor_telė"
 
-#: ../thunar/thunar-window.c:352
+#: ../thunar/thunar-window.c:355
 msgid "Open a new tab for the displayed location"
 msgstr "Atverti naują kortelę rodomai vietai"
 
-#: ../thunar/thunar-window.c:353
+#: ../thunar/thunar-window.c:356
 msgid "New _Window"
 msgstr "Naujas la_ngas"
 
-#: ../thunar/thunar-window.c:353
+#: ../thunar/thunar-window.c:356
 msgid "Open a new Thunar window for the displayed location"
 msgstr "Atverti naują Thunar langą rodomai vietai"
 
-#: ../thunar/thunar-window.c:356
+#: ../thunar/thunar-window.c:359
 msgid "Detac_h Tab"
 msgstr "Ats_kirti kortelę"
 
-#: ../thunar/thunar-window.c:356
+#: ../thunar/thunar-window.c:359
 msgid "Open current folder in a new window"
 msgstr "Atverti esamą aplanką naujame lange"
 
-#: ../thunar/thunar-window.c:357
+#: ../thunar/thunar-window.c:360
 msgid "_Previous Tab"
 msgstr "A_nkstesnė kortelė"
 
-#: ../thunar/thunar-window.c:357
+#: ../thunar/thunar-window.c:360
 msgid "Switch to Previous Tab"
 msgstr "Perjungti į ankstesnę kortelę"
 
-#: ../thunar/thunar-window.c:358
+#: ../thunar/thunar-window.c:361
 msgid "_Next Tab"
 msgstr "_Kita kortelė"
 
-#: ../thunar/thunar-window.c:358
+#: ../thunar/thunar-window.c:361
 msgid "Switch to Next Tab"
 msgstr "Perjungti į kitą kortelę"
 
-#: ../thunar/thunar-window.c:359
+#: ../thunar/thunar-window.c:362
 msgid "Close _All Windows"
 msgstr "Užverti _visus langus"
 
-#: ../thunar/thunar-window.c:359
+#: ../thunar/thunar-window.c:362
 msgid "Close all Thunar windows"
 msgstr "Užverti visus Thunar langus"
 
-#: ../thunar/thunar-window.c:360
+#: ../thunar/thunar-window.c:363
 msgid "C_lose Tab"
 msgstr "Užvert_i kortelę"
 
-#: ../thunar/thunar-window.c:360
+#: ../thunar/thunar-window.c:363
 msgid "Close this folder"
 msgstr "Užverti šį aplanką"
 
-#: ../thunar/thunar-window.c:361
+#: ../thunar/thunar-window.c:364
 msgid "_Close Window"
 msgstr "Užverti _langą"
 
-#: ../thunar/thunar-window.c:361
+#: ../thunar/thunar-window.c:364
 msgid "Close this window"
 msgstr "Užverti šį langą"
 
-#: ../thunar/thunar-window.c:362
+#: ../thunar/thunar-window.c:365
 msgid "_Edit"
 msgstr "_Taisa"
 
-#: ../thunar/thunar-window.c:363
+#: ../thunar/thunar-window.c:366
 msgid "Pr_eferences..."
 msgstr "_Nuostatos..."
 
-#: ../thunar/thunar-window.c:363
+#: ../thunar/thunar-window.c:366
 msgid "Edit Thunars Preferences"
 msgstr "Keisti Thunar nuostatas"
 
-#: ../thunar/thunar-window.c:364
+#: ../thunar/thunar-window.c:367
 msgid "_View"
 msgstr "_Rodymas"
 
-#: ../thunar/thunar-window.c:365
+#: ../thunar/thunar-window.c:368
 msgid "_Reload"
 msgstr "Įkelti iš _naujo"
 
-#: ../thunar/thunar-window.c:366
+#: ../thunar/thunar-window.c:369
 msgid "_Location Selector"
 msgstr "_Aplanko pasirinkimas"
 
-#: ../thunar/thunar-window.c:367
+#: ../thunar/thunar-window.c:370
 msgid "_Side Pane"
 msgstr "Šo_ninis polangis"
 
-#: ../thunar/thunar-window.c:368
+#: ../thunar/thunar-window.c:371
 msgid "Zoom I_n"
 msgstr "D_idinti"
 
-#: ../thunar/thunar-window.c:368
+#: ../thunar/thunar-window.c:371
 msgid "Show the contents in more detail"
 msgstr "Rodyti detalesnį turinį"
 
-#: ../thunar/thunar-window.c:370
+#: ../thunar/thunar-window.c:373
 msgid "Zoom _Out"
 msgstr "_Mažinti"
 
-#: ../thunar/thunar-window.c:370
+#: ../thunar/thunar-window.c:373
 msgid "Show the contents in less detail"
 msgstr "Rodyti mažiau detalų turinį"
 
-#: ../thunar/thunar-window.c:371
+#: ../thunar/thunar-window.c:374
 msgid "Normal Si_ze"
 msgstr "_Normalus dydis"
 
-#: ../thunar/thunar-window.c:371
+#: ../thunar/thunar-window.c:374
 msgid "Show the contents at the normal size"
 msgstr "Rodyti turinį normaliu dydžiu"
 
-#: ../thunar/thunar-window.c:372
+#: ../thunar/thunar-window.c:375
 msgid "_Go"
 msgstr "_Eiti"
 
-#: ../thunar/thunar-window.c:373
+#: ../thunar/thunar-window.c:376
 msgid "Open _Parent"
 msgstr "Atverti au_kštesnįjį"
 
-#: ../thunar/thunar-window.c:373
+#: ../thunar/thunar-window.c:376
 msgid "Open the parent folder"
 msgstr "Atverti aukštesnįjį aplanką"
 
-#: ../thunar/thunar-window.c:374
+#: ../thunar/thunar-window.c:377
 msgid "_Home"
 msgstr "_Namai"
 
-#: ../thunar/thunar-window.c:374
+#: ../thunar/thunar-window.c:377
 msgid "Go to the home folder"
 msgstr "Eiti į pradžios aplanką"
 
-#: ../thunar/thunar-window.c:375
+#: ../thunar/thunar-window.c:378
 msgid "Desktop"
 msgstr "Darbalaukis"
 
-#: ../thunar/thunar-window.c:375
+#: ../thunar/thunar-window.c:378
 msgid "Go to the desktop folder"
 msgstr "Eiti į darbalaukio aplanką"
 
-#: ../thunar/thunar-window.c:376
+#: ../thunar/thunar-window.c:379
 msgid "Browse the file system"
 msgstr "Naršyti failų sistemą"
 
-#: ../thunar/thunar-window.c:377
+#: ../thunar/thunar-window.c:380
 msgid "B_rowse Network"
 msgstr "Na_ršyti tinkle"
 
-#: ../thunar/thunar-window.c:377
+#: ../thunar/thunar-window.c:380
 msgid "Browse local network connections"
 msgstr "Naršyti vietinius tinklo ryšius"
 
-#: ../thunar/thunar-window.c:378
+#: ../thunar/thunar-window.c:381
 msgid "T_emplates"
 msgstr "Ša_blonai"
 
-#: ../thunar/thunar-window.c:378
+#: ../thunar/thunar-window.c:381
 msgid "Go to the templates folder"
 msgstr "Eiti į šablonų aplanką"
 
-#: ../thunar/thunar-window.c:379
+#: ../thunar/thunar-window.c:382
 msgid "_Open Location..."
 msgstr "_Atverti vietą..."
 
-#: ../thunar/thunar-window.c:379
+#: ../thunar/thunar-window.c:382
 msgid "Specify a location to open"
 msgstr "Nurodykite vietos adresą, kurį atverti"
 
-#: ../thunar/thunar-window.c:382
+#: ../thunar/thunar-window.c:385
 msgid "_Contents"
 msgstr "_Turinys"
 
-#: ../thunar/thunar-window.c:382
+#: ../thunar/thunar-window.c:385
 msgid "Display Thunar user manual"
 msgstr "Rodyti Thunar naudotojo žinyną"
 
-#: ../thunar/thunar-window.c:383
+#: ../thunar/thunar-window.c:386
 msgid "Display information about Thunar"
 msgstr "Rodyti informaciją apie Thunar"
 
-#: ../thunar/thunar-window.c:388
+#: ../thunar/thunar-window.c:391
 msgid "Show _Hidden Files"
 msgstr "Rodyti paslėptus _failus"
 
-#: ../thunar/thunar-window.c:388
+#: ../thunar/thunar-window.c:391
 msgid "Toggles the display of hidden files in the current window"
 msgstr "Perjungia paslėptų failų rodymą esamame lange"
 
-#: ../thunar/thunar-window.c:389
+#: ../thunar/thunar-window.c:392
 msgid "_Pathbar Style"
 msgstr "_Kelio juostos stilius"
 
-#: ../thunar/thunar-window.c:389
+#: ../thunar/thunar-window.c:392
 msgid "Modern approach with buttons that correspond to folders"
 msgstr "Modernus būdas vaizduoti aplankus kaip mygtukus"
 
-#: ../thunar/thunar-window.c:390
+#: ../thunar/thunar-window.c:393
 msgid "_Toolbar Style"
 msgstr "_Įrankių juostos stilius"
 
-#: ../thunar/thunar-window.c:390
+#: ../thunar/thunar-window.c:393
 msgid "Traditional approach with location bar and navigation buttons"
 msgstr ""
 "Tradicinis būdas vaizduoti kelią iki aplanko adreso laukelyje su naršymo "
 "mygtukais"
 
-#: ../thunar/thunar-window.c:391
+#: ../thunar/thunar-window.c:394
 msgid "_Shortcuts"
 msgstr "_Nuorodos"
 
-#: ../thunar/thunar-window.c:391
+#: ../thunar/thunar-window.c:394
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "Perjungia nuorodų polangio matomumą"
 
-#: ../thunar/thunar-window.c:392
+#: ../thunar/thunar-window.c:395
 msgid "_Tree"
 msgstr "_Medis"
 
-#: ../thunar/thunar-window.c:392
+#: ../thunar/thunar-window.c:395
 msgid "Toggles the visibility of the tree pane"
 msgstr "Perjungia medžio polangio matomumą"
 
-#: ../thunar/thunar-window.c:393
+#: ../thunar/thunar-window.c:396
 msgid "St_atusbar"
 msgstr "_Būsenos juosta"
 
-#: ../thunar/thunar-window.c:393
+#: ../thunar/thunar-window.c:396
 msgid "Change the visibility of this window's statusbar"
 msgstr "Pakeisti šio lango būsenos juostos matomumą"
 
-#: ../thunar/thunar-window.c:394
+#: ../thunar/thunar-window.c:397
 msgid "_Menubar"
 msgstr "M_eniu juosta"
 
-#: ../thunar/thunar-window.c:394
+#: ../thunar/thunar-window.c:397
 msgid "Change the visibility of this window's menubar"
 msgstr "Keisti šio lango meniu juostos matomumą"
 
 #. * add view options
-#: ../thunar/thunar-window.c:779
+#: ../thunar/thunar-window.c:786
 msgid "View as _Icons"
 msgstr "Rodyti kaip _piktogramas"
 
-#: ../thunar/thunar-window.c:779
+#: ../thunar/thunar-window.c:786
 msgid "Display folder content in an icon view"
 msgstr "Rodyti aplanko turinį kaip piktogramų sąrašą"
 
-#: ../thunar/thunar-window.c:786
+#: ../thunar/thunar-window.c:793
 msgid "View as _Detailed List"
 msgstr "Rodyti kaip _išsamų sąrašą"
 
-#: ../thunar/thunar-window.c:786
+#: ../thunar/thunar-window.c:793
 msgid "Display folder content in a detailed list view"
 msgstr "Rodyti aplankų turinį kaip išsamų sąrašą"
 
-#: ../thunar/thunar-window.c:793
+#: ../thunar/thunar-window.c:800
 msgid "View as _Compact List"
 msgstr "Rodyti kaip _talpų sąrašą"
 
-#: ../thunar/thunar-window.c:793
+#: ../thunar/thunar-window.c:800
 msgid "Display folder content in a compact list view"
 msgstr "Rodyti aplankų turinį kaip talpų sąrašą"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:872
+#: ../thunar/thunar-window.c:879
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr ""
 "Atsargiai, Jūs naudojatės administratoriaus paskyra, dėl to galite pakenkti "
 "sistemai."
 
-#: ../thunar/thunar-window.c:1873
+#: ../thunar/thunar-window.c:1880
 msgid "Close tab"
 msgstr "Užverti kortelę"
 
-#: ../thunar/thunar-window.c:2124
+#: ../thunar/thunar-window.c:2131
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Atverti vietą „%s“"
 
-#: ../thunar/thunar-window.c:2338
+#: ../thunar/thunar-window.c:2345
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Nepavyko paleisti „%s“"
 
-#: ../thunar/thunar-window.c:2899
+#: ../thunar/thunar-window.c:2906
 msgid "Failed to open parent folder"
 msgstr "Nepavyko atverti aukštesnio aplanko"
 
-#: ../thunar/thunar-window.c:2994
+#: ../thunar/thunar-window.c:3001
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Katalogo „%s“ nėra. Ar norite jį sukurti?"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:3080
+#: ../thunar/thunar-window.c:3087
 msgid "About Templates"
 msgstr "Apie šablonus"
 
-#: ../thunar/thunar-window.c:3102
+#: ../thunar/thunar-window.c:3109
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Visi failai šiame aplanke pasirodys meniu „Sukurti dokumentą“."
 
-#: ../thunar/thunar-window.c:3109
+#: ../thunar/thunar-window.c:3116
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
@@ -3159,26 +3159,26 @@ msgstr ""
 "\n"
 "Tuomet, pasirinkus atitinkamą nuorodą iš meniu „Sukurti dokumentą“, dokumento kopija atvertame kataloge bus sukurta automatiškai."
 
-#: ../thunar/thunar-window.c:3121
+#: ../thunar/thunar-window.c:3128
 msgid "Do _not display this message again"
 msgstr "Daugiau _neberodyti šio pranešimo"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3151
+#: ../thunar/thunar-window.c:3158
 msgid "Failed to open the file system root folder"
 msgstr "Nepavyko atverti šakninio aplanko"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3188
+#: ../thunar/thunar-window.c:3195
 msgid "Failed to display the contents of the trash can"
 msgstr "Nepavyko parodyti šiukšlinės turinio"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3225
+#: ../thunar/thunar-window.c:3232
 msgid "Failed to browse the network"
 msgstr "Nepavyko naršyti tinkle"
 
-#: ../thunar/thunar-window.c:3309
+#: ../thunar/thunar-window.c:3341
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -3187,7 +3187,7 @@ msgstr ""
 "tvarkytuvė Xfce darbalaukio aplinkai."
 
 #. set window title
-#: ../thunar/thunar-window.c:3367 ../thunar.desktop.in.in.h:3
+#: ../thunar/thunar-window.c:3399 ../thunar.desktop.in.in.h:3
 msgid "File Manager"
 msgstr "Failų tvarkytuvė"
 
