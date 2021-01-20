@@ -152,6 +152,9 @@ static void               thunar_list_model_files_added           (ThunarFolder 
 static void               thunar_list_model_files_removed         (ThunarFolder           *folder,
                                                                    GList                  *files,
                                                                    ThunarListModel        *store);
+static gint               sort_by_date_created                    (const ThunarFile       *a,
+                                                                   const ThunarFile       *b,
+                                                                   gboolean                case_sensitive);
 static gint               sort_by_date_accessed                   (const ThunarFile       *a,
                                                                    const ThunarFile       *b,
                                                                    gboolean                case_sensitive);
@@ -598,6 +601,9 @@ thunar_list_model_get_column_type (GtkTreeModel *model,
 {
   switch (idx)
     {
+    case THUNAR_COLUMN_DATE_CREATED:
+      return G_TYPE_STRING;
+
     case THUNAR_COLUMN_DATE_ACCESSED:
       return G_TYPE_STRING;
 
@@ -709,6 +715,12 @@ thunar_list_model_get_value (GtkTreeModel *model,
 
   switch (column)
     {
+    case THUNAR_COLUMN_DATE_CREATED:
+      g_value_init (value, G_TYPE_STRING);
+      str = thunar_file_get_date_string (file, THUNAR_FILE_DATE_CREATED, THUNAR_LIST_MODEL (model)->date_style, THUNAR_LIST_MODEL (model)->date_custom_style);
+      g_value_take_string (value, str);
+      break;
+
     case THUNAR_COLUMN_DATE_ACCESSED:
       g_value_init (value, G_TYPE_STRING);
       str = thunar_file_get_date_string (file, THUNAR_FILE_DATE_ACCESSED, THUNAR_LIST_MODEL (model)->date_style, THUNAR_LIST_MODEL (model)->date_custom_style);
@@ -947,6 +959,8 @@ thunar_list_model_get_sort_column_id (GtkTreeSortable *sortable,
     *sort_column_id = THUNAR_COLUMN_SIZE;
   else if (store->sort_func == sort_by_size_in_bytes)
     *sort_column_id = THUNAR_COLUMN_SIZE_IN_BYTES;
+  else if (store->sort_func == sort_by_date_created)
+    *sort_column_id = THUNAR_COLUMN_DATE_CREATED;
   else if (store->sort_func == sort_by_date_accessed)
     *sort_column_id = THUNAR_COLUMN_DATE_ACCESSED;
   else if (store->sort_func == sort_by_date_modified)
@@ -984,6 +998,10 @@ thunar_list_model_set_sort_column_id (GtkTreeSortable *sortable,
 
   switch (sort_column_id)
     {
+    case THUNAR_COLUMN_DATE_CREATED:
+      store->sort_func = sort_by_date_created;
+      break;
+
     case THUNAR_COLUMN_DATE_ACCESSED:
       store->sort_func = sort_by_date_accessed;
       break;
@@ -1388,6 +1406,27 @@ thunar_list_model_files_removed (ThunarFolder    *folder,
 
   /* this probably changed */
   g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_NUM_FILES]);
+}
+
+
+
+static gint
+sort_by_date_created (const ThunarFile *a,
+                      const ThunarFile *b,
+                      gboolean          case_sensitive)
+{
+  guint64 date_a;
+  guint64 date_b;
+
+  date_a = thunar_file_get_date (a, THUNAR_FILE_DATE_CREATED);
+  date_b = thunar_file_get_date (b, THUNAR_FILE_DATE_CREATED);
+
+  if (date_a < date_b)
+    return -1;
+  else if (date_a > date_b)
+    return 1;
+
+  return thunar_file_compare_by_name (a, b, case_sensitive);
 }
 
 
