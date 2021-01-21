@@ -352,51 +352,6 @@ thunar_device_monitor_update_hidden (gpointer key,
 
 
 
-static gboolean
-thunar_device_monitor_volume_is_visible (GVolume *volume)
-{
-  gboolean         can_eject = FALSE;
-  gboolean         can_mount = FALSE;
-  gboolean         can_unmount = FALSE;
-  gboolean         is_removable = FALSE;
-  GDrive          *drive;
-  GMount          *mount;
-
-  _thunar_return_val_if_fail (G_IS_VOLUME (volume), TRUE);
-
-  /* determine the mount for the volume (if it is mounted at all) */
-  mount = g_volume_get_mount (volume);
-  if (mount != NULL)
-    {
-      /* check if the volume can be unmounted */
-      can_unmount = g_mount_can_unmount (mount);
-
-      /* release the mount */
-      g_object_unref (mount);
-    }
-
-  /* check if the volume can be ejected */
-  can_eject = g_volume_can_eject (volume);
-
-  /* determine the drive for the volume */
-  drive = g_volume_get_drive (volume);
-  if (drive != NULL)
-    {
-      /* check if the drive media can be removed */
-      is_removable = g_drive_is_removable (drive);
-
-      /* release the drive */
-      g_object_unref (drive);
-    }
-
-  /* determine whether the device can be mounted */
-  can_mount = g_volume_can_mount (volume);
-
-  return (can_eject || can_unmount || is_removable || can_mount);
-}
-
-
-
 static void
 thunar_device_monitor_volume_added (GVolumeMonitor      *volume_monitor,
                                     GVolume             *volume,
@@ -484,31 +439,27 @@ thunar_device_monitor_volume_changed (GVolumeMonitor      *volume_monitor,
   lp = g_list_find (monitor->hidden_volumes, volume);
   if (lp != NULL)
     {
-      /* check if the volume should be visible again */
-      if (thunar_device_monitor_volume_is_visible (volume))
-        {
-          /* remove from the hidden list */
-          monitor->hidden_volumes = g_list_delete_link (monitor->hidden_volumes, lp);
+      /* remove from the hidden list */
+      monitor->hidden_volumes = g_list_delete_link (monitor->hidden_volumes, lp);
 
-          /* create a new device for this volume */
-          device = g_object_new (THUNAR_TYPE_DEVICE,
-                                 "device", volume,
-                                 "kind", THUNAR_DEVICE_KIND_VOLUME,
-                                 NULL);
+      /* create a new device for this volume */
+      device = g_object_new (THUNAR_TYPE_DEVICE,
+                             "device", volume,
+                             "kind", THUNAR_DEVICE_KIND_VOLUME,
+                             NULL);
 
-          /* set visibility */
-          id = thunar_device_get_identifier (device);
-          g_object_set (G_OBJECT (device),
-                        "hidden", thunar_device_monitor_id_is_hidden (monitor, id),
-                        NULL);
-          g_free (id);
+      /* set visibility */
+      id = thunar_device_get_identifier (device);
+      g_object_set (G_OBJECT (device),
+                    "hidden", thunar_device_monitor_id_is_hidden (monitor, id),
+                    NULL);
+      g_free (id);
 
-          /* insert to list (takes ref from hidden list) */
-          g_hash_table_insert (monitor->devices, volume, device);
+      /* insert to list (takes ref from hidden list) */
+      g_hash_table_insert (monitor->devices, volume, device);
 
-          /* notify */
-          g_signal_emit (G_OBJECT (monitor), device_monitor_signals[DEVICE_ADDED], 0, device);
-        }
+      /* notify */
+      g_signal_emit (G_OBJECT (monitor), device_monitor_signals[DEVICE_ADDED], 0, device);
     }
   else
     {
@@ -520,25 +471,8 @@ thunar_device_monitor_volume_changed (GVolumeMonitor      *volume_monitor,
       if (G_UNLIKELY (device == NULL))
         return;
 
-      if (!thunar_device_monitor_volume_is_visible (volume))
-        {
-          /* remove from table */
-          g_hash_table_steal (monitor->devices, volume);
-
-          /* insert volume in hidden table, take ref from table */
-          monitor->hidden_volumes = g_list_prepend (monitor->hidden_volumes, volume);
-
-          /* the device is not visble for the user */
-          g_signal_emit (G_OBJECT (monitor), device_monitor_signals[DEVICE_REMOVED], 0, device);
-
-          /* destroy device */
-          g_object_unref (G_OBJECT (device));
-        }
-      else
-        {
-          /* the device changed */
-          g_signal_emit (G_OBJECT (monitor), device_monitor_signals[DEVICE_CHANGED], 0, device);
-        }
+      /* the device changed */
+      g_signal_emit (G_OBJECT (monitor), device_monitor_signals[DEVICE_CHANGED], 0, device);
     }
 }
 
