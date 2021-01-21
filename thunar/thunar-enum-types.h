@@ -75,6 +75,7 @@ GType thunar_date_style_get_type (void) G_GNUC_CONST;
 
 /**
  * ThunarColumn:
+ * @THUNAR_COLUMN_DATE_CREATED  : created time.
  * @THUNAR_COLUMN_DATE_ACCESSED : last access time.
  * @THUNAR_COLUMN_DATE_MODIFIED : last modification time.
  * @THUNAR_COLUMN_GROUP         : group's name.
@@ -94,6 +95,7 @@ GType thunar_date_style_get_type (void) G_GNUC_CONST;
 typedef enum
 {
   /* visible columns */
+  THUNAR_COLUMN_DATE_CREATED,
   THUNAR_COLUMN_DATE_ACCESSED,
   THUNAR_COLUMN_DATE_MODIFIED,
   THUNAR_COLUMN_GROUP,
