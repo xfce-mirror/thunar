@@ -156,7 +156,8 @@ static void                    thunar_launcher_poke_files_finish          (Thuna
 static ThunarLauncherPokeData *thunar_launcher_poke_data_new              (GList                          *files_to_poke,
                                                                            GAppInfo                       *application_to_use,
                                                                            ThunarLauncherFolderOpenAction  folder_open_action,
-                                                                           GFile                          *location_to_poke);
+                                                                           GFile                          *location_to_poke,
+                                                                           ThunarDevice                   *device_to_poke);
 static void                    thunar_launcher_poke_data_free             (ThunarLauncherPokeData         *data);
 static void                    thunar_launcher_widget_destroyed           (ThunarLauncher                 *launcher,
                                                                            GtkWidget                      *widget);
@@ -248,6 +249,7 @@ struct _ThunarLauncherPokeData
   GList                          *files_to_poke; /* List of thunar-files */
   GList                          *files_poked;   /* List of thunar-files */
   GFile                          *location_to_poke;
+  ThunarDevice                   *device_to_poke;
   GAppInfo                       *application_to_use;
   ThunarLauncherFolderOpenAction  folder_open_action;
 };
@@ -954,7 +956,11 @@ thunar_launcher_poke (ThunarLauncher                 *launcher,
        return;
      }
 
-   poke_data = thunar_launcher_poke_data_new (launcher->files_to_process, application_to_use, folder_open_action, launcher->location_to_process);
+   poke_data = thunar_launcher_poke_data_new (launcher->files_to_process,
+                                              application_to_use,
+                                              folder_open_action,
+                                              launcher->location_to_process,
+                                              launcher->device_to_process);
 
    if (launcher->device_to_process != NULL)
      {
@@ -1182,7 +1188,8 @@ static ThunarLauncherPokeData *
 thunar_launcher_poke_data_new (GList                          *files_to_poke,
                                GAppInfo                       *application_to_use,
                                ThunarLauncherFolderOpenAction  folder_open_action,
-                               GFile                          *location_to_poke)
+                               GFile                          *location_to_poke,
+                               ThunarDevice                   *device_to_poke)
 {
   ThunarLauncherPokeData *data;
 
@@ -1193,6 +1200,9 @@ thunar_launcher_poke_data_new (GList                          *files_to_poke,
 
   if (location_to_poke != NULL)
     data->location_to_poke = g_object_ref (location_to_poke);
+
+  if (device_to_poke != NULL)
+    data->device_to_poke = g_object_ref (device_to_poke);
 
   /* keep a reference on the appdata */
   if (application_to_use != NULL)
@@ -1214,6 +1224,9 @@ thunar_launcher_poke_data_free (ThunarLauncherPokeData *data)
 
   if (data->location_to_poke != NULL)
     g_object_unref (data->location_to_poke);
+
+  if (data->device_to_poke != NULL)
+    g_object_unref (data->device_to_poke);
 
   if (data->application_to_use != NULL)
     g_object_unref (data->application_to_use);
