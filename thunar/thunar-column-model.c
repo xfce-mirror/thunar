@@ -265,10 +265,9 @@ thunar_column_model_get_iter (GtkTreeModel *tree_model,
                               GtkTreeIter  *iter,
                               GtkTreePath  *path)
 {
-  ThunarColumnModel *column_model = THUNAR_COLUMN_MODEL (tree_model);
-  ThunarColumn       column;
+  ThunarColumn column;
 
-  _thunar_return_val_if_fail (THUNAR_IS_COLUMN_MODEL (column_model), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_COLUMN_MODEL (tree_model), FALSE);
   _thunar_return_val_if_fail (gtk_tree_path_get_depth (path) > 0, FALSE);
 
   /* check if the path is valid */
@@ -277,7 +276,7 @@ thunar_column_model_get_iter (GtkTreeModel *tree_model,
     return FALSE;
 
   /* generate an iterator */
-  GTK_TREE_ITER_INIT (*iter, column_model->stamp, GINT_TO_POINTER (column));
+  GTK_TREE_ITER_INIT (*iter, THUNAR_COLUMN_MODEL (tree_model)->stamp, GINT_TO_POINTER (column));
   return TRUE;
 }
 
@@ -364,13 +363,11 @@ thunar_column_model_iter_children (GtkTreeModel *tree_model,
                                    GtkTreeIter  *iter,
                                    GtkTreeIter  *parent)
 {
-  ThunarColumnModel *column_model = THUNAR_COLUMN_MODEL (tree_model);
-
-  _thunar_return_val_if_fail (THUNAR_IS_COLUMN_MODEL (column_model), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_COLUMN_MODEL (tree_model), FALSE);
 
   if (G_LIKELY (parent == NULL))
     {
-      GTK_TREE_ITER_INIT (*iter, column_model->stamp, GINT_TO_POINTER (0));
+      GTK_TREE_ITER_INIT (*iter, THUNAR_COLUMN_MODEL (tree_model)->stamp, GINT_TO_POINTER (0));
       return TRUE;
     }
 
@@ -405,13 +402,11 @@ thunar_column_model_iter_nth_child (GtkTreeModel *tree_model,
                                     GtkTreeIter  *parent,
                                     gint          n)
 {
-  ThunarColumnModel *column_model = THUNAR_COLUMN_MODEL (tree_model);
-
-  _thunar_return_val_if_fail (THUNAR_IS_COLUMN_MODEL (column_model), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_COLUMN_MODEL (tree_model), FALSE);
 
   if (G_LIKELY (parent == NULL && n < THUNAR_N_VISIBLE_COLUMNS))
     {
-      GTK_TREE_ITER_INIT (*iter, column_model->stamp, GINT_TO_POINTER (n));
+      GTK_TREE_ITER_INIT (*iter, THUNAR_COLUMN_MODEL (tree_model)->stamp, GINT_TO_POINTER (n));
       return TRUE;
     }
 

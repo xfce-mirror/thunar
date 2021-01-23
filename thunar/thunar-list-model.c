@@ -678,11 +678,10 @@ static GtkTreePath*
 thunar_list_model_get_path (GtkTreeModel *model,
                             GtkTreeIter  *iter)
 {
-  ThunarListModel *store = THUNAR_LIST_MODEL (model);
-  gint             idx;
+  gint idx;
 
-  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
-  _thunar_return_val_if_fail (iter->stamp == store->stamp, NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (model), NULL);
+  _thunar_return_val_if_fail (iter->stamp == THUNAR_LIST_MODEL (model)->stamp, NULL);
 
   idx = g_sequence_iter_get_position (iter->user_data);
   if (G_LIKELY (idx >= 0))

@@ -930,9 +930,7 @@ static void
 thunar_details_view_connect_accelerators (ThunarStandardView *standard_view,
                                           GtkAccelGroup      *accel_group)
 {
-  ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (standard_view);
-
-  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view));
 
   xfce_gtk_accel_map_add_entries (thunar_details_view_action_entries, G_N_ELEMENTS (thunar_details_view_action_entries));
   xfce_gtk_accel_group_connect_action_entries (accel_group,
