@@ -115,11 +115,13 @@ INTROSPECTION_COMPILER_ARGS = \
 	--includedir=.
 
 if HAVE_INTROSPECTION
+introspection_sources = $(filter-out %private.h %private.c, $(libthunarx_3_la_SOURCES))
+
 Thunarx-3.0.gir: libthunarx-3.la
 Thunarx_3_0_gir_INCLUDES = GObject-2.0 Gtk-3.0
 Thunarx_3_0_gir_CFLAGS = $(INCLUDES)
 Thunarx_3_0_gir_LIBS = libthunarx-3.la
-Thunarx_3_0_gir_FILES = $(libthunarx_3_la_SOURCES)
+Thunarx_3_0_gir_FILES = $(introspection_sources)
 INTROSPECTION_GIRS += Thunarx-3.0.gir
 
 girdir = $(datadir)/gir-1.0/
