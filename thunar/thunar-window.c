@@ -3542,8 +3542,7 @@ thunar_window_action_open_bookmark (GFile *g_file)
 
   window = g_object_get_data (G_OBJECT (g_file), I_("thunar-window"));
 
-  g_object_set (G_OBJECT (window->launcher), "selected-location", g_file,
-                                             "selected-files", NULL, NULL);
+  g_object_set (G_OBJECT (window->launcher), "selected-location", g_file, NULL);
   thunar_launcher_activate_selected_files (window->launcher, THUNAR_LAUNCHER_CHANGE_DIRECTORY, NULL);
 }
 

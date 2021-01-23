@@ -193,6 +193,10 @@ static void                    thunar_launcher_action_create_folder       (Thuna
 static void                    thunar_launcher_action_create_document     (ThunarLauncher                 *launcher,
                                                                            GtkWidget                      *menu_item);
 static GtkWidget              *thunar_launcher_create_document_submenu_new(ThunarLauncher                 *launcher);
+void                           thunar_launcher_set_selection              (ThunarLauncher                 *launcher,
+                                                                           GList                          *selected_thunar_files,
+                                                                           ThunarDevice                   *selected_device,
+                                                                           GFile                          *selected_location);
 
 
 
@@ -487,7 +491,7 @@ thunar_launcher_set_property (GObject      *object,
       break;
 
     case PROP_SELECTED_FILES:
-      thunar_component_set_selected_files (THUNAR_COMPONENT (object), g_value_get_boxed (value));
+      thunar_launcher_set_selection (launcher, g_value_get_boxed (value), NULL, NULL);
       break;
 
     case PROP_WIDGET:
@@ -499,12 +503,12 @@ thunar_launcher_set_property (GObject      *object,
       break;
 
     case PROP_SELECTED_DEVICE:
-      launcher->device_to_process = g_value_get_pointer (value);
+      thunar_launcher_set_selection (launcher, NULL, g_value_get_boxed (value), NULL);
       break;
 
     case PROP_SELECTED_LOCATION:
-      launcher->location_to_process = g_value_get_pointer (value);
-      break;
+      thunar_launcher_set_selection (launcher, NULL, NULL, g_value_get_boxed (value));
+     break;
 
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -2717,8 +2721,6 @@ thunar_launcher_action_eject_finish (ThunarDevice  *device,
       thunar_dialogs_show_error (GTK_WIDGET (launcher->widget), error, _("Failed to eject \"%s\""), device_name);
       g_free (device_name);
     }
-  else
-    launcher->device_to_process = NULL;
 
   g_object_unref (launcher);
 }
@@ -2775,8 +2777,6 @@ thunar_launcher_action_unmount_finish (ThunarDevice *device,
       thunar_dialogs_show_error (GTK_WIDGET (launcher->widget), error, _("Failed to unmount \"%s\""), device_name);
       g_free (device_name);
     }
-  else
-    launcher->device_to_process = NULL;
 
   g_object_unref (launcher);
 }
@@ -2967,4 +2967,40 @@ thunar_launcher_get_widget (ThunarLauncher *launcher)
 {
   _thunar_return_val_if_fail (THUNAR_IS_LAUNCHER (launcher), NULL);
   return launcher->widget;
+}
+
+
+
+/**
+ * thunar_launcher_set_selection:
+ * @launcher : a #ThunarLauncher instance
+ * @selected_thunar_files: #GList of selected #ThunarFile instances, or NULL
+ * @selected_device: selected #ThunarDevice or NULL
+ * @selected_location: selected #GFile (possibly only holds an URI), or NULL
+ *
+ * Will set the related items as "selection" and clear any previous selection.
+ * Note that always only one of the 3 "selected" arguments should be set.
+ **/
+void
+thunar_launcher_set_selection (ThunarLauncher *launcher,
+                               GList          *selected_thunar_files,
+                               ThunarDevice   *selected_device,
+                               GFile          *selected_location)
+{
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  /* unref the current device/location */
+  if (launcher->device_to_process != NULL)
+    g_object_unref (launcher->device_to_process);
+  if (launcher->location_to_process != NULL)
+    g_object_unref (launcher->location_to_process);
+
+  /* ref the new device/location */
+  if (selected_device != NULL)
+    launcher->device_to_process = g_object_ref (selected_device);
+  if (selected_location != NULL)
+    launcher->location_to_process = g_object_ref (selected_location);
+
+  /* for selected files things are a bit more conmplicated */
+  thunar_launcher_set_selected_files (THUNAR_COMPONENT (launcher), selected_thunar_files);
 }

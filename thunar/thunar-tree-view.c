@@ -853,7 +853,6 @@ thunar_tree_view_key_press_event(GtkWidget   *widget,
                   /* mark this path for selection after unmounting */
                   view->select_path = gtk_tree_path_copy(path);
                   g_object_set (G_OBJECT (view->launcher), "selected-device", device, NULL);
-                  g_object_set (G_OBJECT (view->launcher), "selected-files", NULL, "current-directory", NULL, NULL);
                   thunar_launcher_action_unmount (view->launcher);
                   g_object_unref (G_OBJECT (device));
                 }
@@ -872,7 +871,6 @@ thunar_tree_view_key_press_event(GtkWidget   *widget,
      if (device != NULL && thunar_device_is_mounted (device) == FALSE)
        {
          g_object_set (G_OBJECT (view->launcher), "selected-device", device, NULL);
-         g_object_set (G_OBJECT (view->launcher), "selected-files", NULL, "current-directory", NULL, NULL);
          thunar_launcher_action_mount (view->launcher);
        }
      else
@@ -1155,7 +1153,6 @@ thunar_tree_view_test_expand_row (GtkTreeView *tree_view,
           /* we need to mount the device before we can expand the row */
           expandable = FALSE;
           g_object_set (G_OBJECT (view->launcher), "selected-device", device, NULL);
-          g_object_set (G_OBJECT (view->launcher), "selected-files", NULL, "current-directory", NULL, NULL);
           /* The closure will expand the row after the mount operation finished */
           thunar_launcher_action_mount (view->launcher);
         }
@@ -1238,8 +1235,6 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
                                                  "launcher", view->launcher,
                                                  "force-section-open", TRUE, NULL);
 
-  g_object_set (G_OBJECT (view->launcher), "selected-device", device, NULL);
-
   file_is_available = (device == NULL || thunar_device_is_mounted (device));
   if (file_is_available)
     {
@@ -1272,7 +1267,7 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
     }
   else
     {
-      g_object_set (G_OBJECT (view->launcher), "selected-files", NULL, "current-directory", NULL, NULL);
+      g_object_set (G_OBJECT (view->launcher), "selected-device", device, NULL);
       thunar_launcher_append_menu_item (view->launcher, GTK_MENU_SHELL (context_menu), THUNAR_LAUNCHER_ACTION_OPEN, TRUE);
       thunar_launcher_append_menu_item (view->launcher, GTK_MENU_SHELL (context_menu), THUNAR_LAUNCHER_ACTION_OPEN_IN_TAB, TRUE);
       thunar_launcher_append_menu_item (view->launcher, GTK_MENU_SHELL (context_menu), THUNAR_LAUNCHER_ACTION_OPEN_IN_WINDOW, TRUE);
@@ -1484,7 +1479,6 @@ thunar_tree_view_action_open (ThunarTreeView *view)
       else
       {
         g_object_set (G_OBJECT (view->launcher), "selected-device", device, NULL);
-        g_object_set (G_OBJECT (view->launcher), "selected-files", NULL, "current-directory", NULL, NULL);
         thunar_launcher_action_mount (view->launcher);
       }
     }
