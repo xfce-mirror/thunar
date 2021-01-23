@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-20 00:45+0100\n"
-"PO-Revision-Date: 2021-01-20 21:39+0000\n"
+"POT-Creation-Date: 2021-01-21 12:45+0100\n"
+"PO-Revision-Date: 2021-01-23 20:40+0000\n"
 "Last-Translator: Priit Jõerüüt <transifex@joeruut.com>\n"
 "Language-Team: Estonian (http://www.transifex.com/xfce/thunar/language/et/)\n"
 "MIME-Version: 1.0\n"
@@ -531,8 +531,8 @@ msgstr "Automaats_elt laiendatakse tulpasid, kui vaja"
 #. the file_time is invalid
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:877 ../thunar/thunar-list-model.c:734
-#: ../thunar/thunar-list-model.c:770
+#: ../thunar/thunar-column-model.c:877 ../thunar/thunar-list-model.c:746
+#: ../thunar/thunar-list-model.c:782
 #: ../thunar/thunar-permissions-chooser.c:232 ../thunar/thunar-util.c:491
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:513
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:293
@@ -790,54 +790,58 @@ msgid "Name and Suffix"
 msgstr "Nimi ja faililaiend"
 
 #: ../thunar/thunar-enum-types.c:101
+msgid "Date Created"
+msgstr "Loomise kuupäev"
+
+#: ../thunar/thunar-enum-types.c:102
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:137
 msgid "Date Accessed"
 msgstr "Viimase kasutuse kuupäev"
 
-#: ../thunar/thunar-enum-types.c:102
+#: ../thunar/thunar-enum-types.c:103
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:138
 msgid "Date Modified"
 msgstr "Muutmise kuupäev"
 
-#: ../thunar/thunar-enum-types.c:103
+#: ../thunar/thunar-enum-types.c:104
 msgid "Group"
 msgstr "Grupp"
 
-#: ../thunar/thunar-enum-types.c:104
+#: ../thunar/thunar-enum-types.c:105
 msgid "MIME Type"
 msgstr "MIME-tüüp"
 
-#: ../thunar/thunar-enum-types.c:105 ../thunar/thunar-renamer-dialog.c:417
+#: ../thunar/thunar-enum-types.c:106 ../thunar/thunar-renamer-dialog.c:417
 #: ../thunarx/thunarx-renamer.c:164
 msgid "Name"
 msgstr "Nimi"
 
-#: ../thunar/thunar-enum-types.c:106
+#: ../thunar/thunar-enum-types.c:107
 msgid "Owner"
 msgstr "Omanik"
 
 #. Permissions chooser
-#: ../thunar/thunar-enum-types.c:107 ../thunar/thunar-properties-dialog.c:598
+#: ../thunar/thunar-enum-types.c:108 ../thunar/thunar-properties-dialog.c:598
 msgid "Permissions"
 msgstr "Õigused"
 
-#: ../thunar/thunar-enum-types.c:108
+#: ../thunar/thunar-enum-types.c:109
 msgid "Size"
 msgstr "Suurus"
 
-#: ../thunar/thunar-enum-types.c:109
+#: ../thunar/thunar-enum-types.c:110
 msgid "Size in Bytes"
 msgstr "Suurus baitides"
 
-#: ../thunar/thunar-enum-types.c:110
+#: ../thunar/thunar-enum-types.c:111
 msgid "Type"
 msgstr "Tüüp"
 
-#: ../thunar/thunar-enum-types.c:111
+#: ../thunar/thunar-enum-types.c:112
 msgid "File"
 msgstr "Fail"
 
-#: ../thunar/thunar-enum-types.c:112
+#: ../thunar/thunar-enum-types.c:113
 msgid "File Name"
 msgstr "Faili nimi"
 
@@ -978,8 +982,8 @@ msgid "%s (copy %u)"
 msgstr "%s (koopia %u)"
 
 #. I18N: name for first link to basename
-#: ../thunar/thunar-io-jobs-util.c:121 ../thunar/thunar-list-model.c:792
-#: ../thunar/thunar-list-model.c:1633 ../thunar/thunar-list-model.c:1644
+#: ../thunar/thunar-io-jobs-util.c:121 ../thunar/thunar-list-model.c:804
+#: ../thunar/thunar-list-model.c:1672 ../thunar/thunar-list-model.c:1683
 #: ../thunar/thunar-properties-dialog.c:1033
 #, c-format
 msgid "link to %s"
@@ -1373,21 +1377,21 @@ msgid_plural "Open the selected files with the default applications"
 msgstr[0] "Ava valitud fail vaikimisi rakendusega"
 msgstr[1] "Ava valitud failid vaikimisi rakendusega"
 
-#: ../thunar/thunar-list-model.c:2360
+#: ../thunar/thunar-list-model.c:2399
 #, c-format
 msgid "%d file: %s"
 msgid_plural "%d files: %s"
 msgstr[0] "%d fail: %s"
 msgstr[1] "%d faili: %s"
 
-#: ../thunar/thunar-list-model.c:2368
+#: ../thunar/thunar-list-model.c:2407
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
 msgstr[0] "%d kaust"
 msgstr[1] "%d kausta"
 
-#: ../thunar/thunar-list-model.c:2374
+#: ../thunar/thunar-list-model.c:2413
 #, c-format
 msgid "0 items"
 msgstr "0 kirjet"
@@ -1397,45 +1401,45 @@ msgstr "0 kirjet"
 #. * is between the message about the number of folders
 #. * and the number of items in the selection
 #. TRANSLATORS: string moved from line 2573 to here
-#: ../thunar/thunar-list-model.c:2386
+#: ../thunar/thunar-list-model.c:2425
 #, c-format
 msgid "%s, %s"
 msgstr "%s, %s"
 
-#: ../thunar/thunar-list-model.c:2465
+#: ../thunar/thunar-list-model.c:2504
 #, c-format
 msgid "%s, Free space: %s"
 msgstr "%s, vaba ruum: %s"
 
-#: ../thunar/thunar-list-model.c:2490
+#: ../thunar/thunar-list-model.c:2529
 #, c-format
 msgid "\"%s\": broken link"
 msgstr "\"%s\": vigane viide"
 
-#: ../thunar/thunar-list-model.c:2495
+#: ../thunar/thunar-list-model.c:2534
 #, c-format
 msgid "\"%s\": %s link to %s"
 msgstr "\"%s\": %s viide asukohta %s"
 
-#: ../thunar/thunar-list-model.c:2501
+#: ../thunar/thunar-list-model.c:2540
 #, c-format
 msgid "\"%s\": shortcut"
 msgstr "\"%s\": otsetee"
 
-#: ../thunar/thunar-list-model.c:2505
+#: ../thunar/thunar-list-model.c:2544
 #, c-format
 msgid "\"%s\": mountable"
 msgstr "\"%s\" on haagitav"
 
 #. I18N, first %s is the display name of the file, 2nd the file size, 3rd the
 #. content type
-#: ../thunar/thunar-list-model.c:2512
+#: ../thunar/thunar-list-model.c:2551
 #, c-format
 msgid "\"%s\": %s %s"
 msgstr "\"%s\": %s %s"
 
 #. I18N, first %s is the display name of the file, second the content type
-#: ../thunar/thunar-list-model.c:2521
+#: ../thunar/thunar-list-model.c:2560
 #, c-format
 msgid "\"%s\": %s"
 msgstr "\"%s\": %s"
@@ -1445,17 +1449,17 @@ msgstr "\"%s\": %s"
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: ../thunar/thunar-list-model.c:2531 ../thunar/thunar-properties-dialog.c:402
+#: ../thunar/thunar-list-model.c:2570 ../thunar/thunar-properties-dialog.c:402
 msgid "Original Path:"
 msgstr "Algne asukoht:"
 
 #. append the image dimensions to the statusbar text
-#: ../thunar/thunar-list-model.c:2554
+#: ../thunar/thunar-list-model.c:2593
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:153
 msgid "Image Size:"
 msgstr "Pildi suurus:"
 
-#: ../thunar/thunar-list-model.c:2572
+#: ../thunar/thunar-list-model.c:2611
 #, c-format
 msgid "Selection: %s"
 msgstr "Valik: %s"
