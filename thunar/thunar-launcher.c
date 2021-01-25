@@ -212,14 +212,11 @@ struct _ThunarLauncher
 
   ThunarFile             *current_directory;
 
-  /* List of thunar-files to work with */
-  GList                  *files_to_process;
-
-  /* Device to work with */
-  ThunarDevice           *device_to_process;
-
-  /* Location to work with (might be not reachable) */
-  GFile			 *location_to_process;
+  /* Note always only one of the three 'to_process' variables will be set ! */
+  /* The other two will be NULL. */
+  GList                  *files_to_process;    /* List of thunar-files to work with */
+  ThunarDevice           *device_to_process;   /* Device to work with */
+  GFile			 *location_to_process; /* Location to work with (might be not reachable) */
 
   gint                    n_files_to_process;
   gint                    n_directories_to_process;
@@ -3004,9 +3001,15 @@ thunar_launcher_set_selection (ThunarLauncher *launcher,
 
   /* unref the current device/location */
   if (launcher->device_to_process != NULL)
-    g_object_unref (launcher->device_to_process);
+    {
+      g_object_unref (launcher->device_to_process);
+      launcher->device_to_process = NULL;
+    }
   if (launcher->location_to_process != NULL)
-    g_object_unref (launcher->location_to_process);
+    {
+      g_object_unref (launcher->location_to_process);
+      launcher->location_to_process = NULL;
+    }
 
   /* ref the new device/location */
   if (selected_device != NULL)
