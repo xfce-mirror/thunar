@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
-               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
-
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+                      "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd"
+[
 <!ENTITY ThunarxFileInfo SYSTEM "xml/thunarx-file-info.xml">
 <!ENTITY ThunarxMenu SYSTEM "xml/thunarx-menu.xml">
 <!ENTITY ThunarxMenuItem SYSTEM "xml/thunarx-menu-item.xml">
@@ -13,58 +13,24 @@
 <!ENTITY ThunarxProviderPlugin SYSTEM "xml/thunarx-provider-plugin.xml">
 <!ENTITY ThunarxRenamer SYSTEM "xml/thunarx-renamer.xml">
 <!ENTITY ThunarxRenamerProvider SYSTEM "xml/thunarx-renamer-provider.xml">
-<!ENTITY thunarx-version-information SYSTEM "xml/thunarx-version-information.xml">
 
-<!ENTITY version SYSTEM "version.xml">
-<!ENTITY date "2017">
+  <!ENTITY % local.common.attrib "xmlns:xi  CDATA  #FIXED 'http://www.w3.org/2003/XInclude'">
+  <!ENTITY % gtkdocentities SYSTEM "xml/gtkdocentities.ent">
+  %gtkdocentities;
 ]>
 
-<book id="index">
+<book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
   <bookinfo>
-    <title>Thunar Extensions Reference Manual</title>
-    <releaseinfo>Version &version;</releaseinfo>
-    <pubdate>&date;</pubdate>
-
+    <title>&package_name; Reference Manual</title>
+    <releaseinfo>
+      For &package_string;.
+      The latest version of this documentation can be found on-line at
+      <ulink role="online-location" url="https://developer.xfce.org/&package_name;/index.html">https://developer.xfce.org/&package_name;/</ulink>.
+    </releaseinfo>
     <copyright>
-      <year>2005</year>
-      <holder>Benedikt Meurer</holder>
+      <year>2021</year>
+      <holder>The Xfce Development Team</holder>
     </copyright>
-
-    <copyright>
-      <year>2010</year>
-      <holder>Jannis Pohlmann</holder>
-    </copyright>
-
-    <legalnotice id="legalnotice">
-      <para>
-        Permission is granted to copy, distribute and/or modify this document
-        under the terms of the GNU Free Documentation License, Version 1.1 or
-        any later version published by the Free Software Foundation; with no
-        Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
-        Texts. The complete license text is available from the <ulink
-        type="http" url="https://www.gnu.org/">Free Software Foundation</ulink>.
-      </para>
-    </legalnotice>
-
-    <authorgroup>
-      <author>
-        <firstname>Benedikt</firstname>
-        <surname>Meurer</surname>
-        <affiliation>
-          <address><email>benny@xfce.org</email></address>
-          <orgname>os-cillation</orgname>
-          <orgdiv>System development</orgdiv>
-          <jobtitle>Software developer</jobtitle>
-        </affiliation>
-      </author>
-      <author>
-        <firstname>Jannis</firstname>
-        <surname>Pohlmann</surname>
-        <affiliation>
-          <address><email>jannis@xfce.org</email></address>
-        </affiliation>
-      </author>
-    </authorgroup>
   </bookinfo>
 
   <part id="thunarx-overview">
@@ -420,7 +386,7 @@ thunar_extension_initialize (ThunarxProviderPlugin *plugin)
   <part id="thunarx-fundamentals">
     <title>Fundamentals</title>
 
-    &thunarx-version-information;
+    <xi:include href="xml/thunarx-version-information.xml"/>
   </part>
 
   <part id="thunarx-abstraction-layer">
@@ -451,12 +417,12 @@ thunar_extension_initialize (ThunarxProviderPlugin *plugin)
       dialog provided by Thunar to rename multiple files at once.
     </para>
 
-    &ThunarxFileInfo;
-    &ThunarxMenu;
-    &ThunarxMenuItem;
-    &ThunarxPropertyPage;
-    &ThunarxProviderPlugin;
-    &ThunarxRenamer;
+    <xi:include href="xml/thunarx-file-info.xml"/>
+    <xi:include href="xml/thunarx-menu.xml"/>
+    <xi:include href="xml/thunarx-menu-item.xml"/>
+    <xi:include href="xml/thunarx-property-page.xml"/>
+    <xi:include href="xml/thunarx-provider-plugin.xml"/>
+    <xi:include href="xml/thunarx-renamer.xml"/>
   </part>
 
   <part id="thunarx-providers">
@@ -480,21 +446,23 @@ thunar_extension_initialize (ThunarxProviderPlugin *plugin)
       <inlinegraphic fileref="menu-provider.png" format="PNG" />
     </para>
 
-    &ThunarxMenuProvider;
-    &ThunarxPropertyPageProvider;
-    &ThunarxPreferencesProvider;
-    &ThunarxRenamerProvider;
+    <xi:include href="xml/thunarx-menu-provider.xml"/>
+    <xi:include href="xml/thunarx-property-page-provider.xml"/>
+    <xi:include href="xml/thunarx-preferences-provider.xml"/>
+    <xi:include href="xml/thunarx-renamer-provider.xml"/>
   </part>
 
   <part id="thunarx-using-extensions">
     <title>Using Thunar extensions in applications</title>
 
-    &ThunarxProviderFactory;
+    <xi:include href="xml/thunarx-provider-factory.xml"/>
   </part>
 
   <index>
     <title>Index</title>
   </index>
+    <xi:include href="xml/annotation-glossary.xml"><xi:fallback /></xi:include>
+
 </book>
 
 <!--

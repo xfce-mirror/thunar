@@ -1,5 +1,3 @@
-AUTOMAKE_OPTIONS = 1.8
-
 # The name of the module.
 DOC_MODULE=thunarx
 
@@ -9,21 +7,18 @@ DOC_MAIN_SGML_FILE=$(DOC_MODULE)-docs.xml
 # Extra options to supply to gtkdoc-scan
 SCAN_OPTIONS=--deprecated-guards="EXO_DISABLE_DEPRECATED"
 
-# Extra options to pass to gtkdoc-scangobj
-SCANGOBJ_OPTIONS=
-
 # The directory containing the source code. Relative to $(srcdir)
-DOC_SOURCE_DIR=../../../thunarx
+DOC_SOURCE_DIR=$(top_srcdir)/thunarx
 
 # Extra options to supply to gtkdoc-mkdb
-MKDB_OPTIONS=--sgml-mode --output-format=xml
+MKDB_OPTIONS=--xml-mode --output-format=xml
 
 # Extra options to supply to gtkdoc-fixref
 FIXXREF_OPTIONS=
 
 # Used for dependencies
-HFILE_GLOB=$(top_srcdir)/thunarx/*.h
-CFILE_GLOB=$(top_srcdir)/thunarx/*.c
+HFILE_GLOB=
+CFILE_GLOB=
 
 # Header files to ignore when scanning
 IGNORE_HFILES=thunarx-alias.h
@@ -39,12 +34,11 @@ HTML_IMAGES =								\
 	$(srcdir)/images/say-hello.png
 
 # Extra SGML files that are included by DOC_MAIN_SGML_FILE
-content_files = 							\
-	version.xml
+content_files =
 
 # CFLAGS and LDFLAGS for compiling scan program. Only needed
 # if $(DOC_MODULE).types is non-empty.
-AM_CPPFLAGS =	 							\
+GTKDOC_CFLAGS =	 							\
 	-I$(top_srcdir) 						\
 	-I$(top_builddir) 						\
 	$(GTK_CFLAGS)							\
@@ -55,12 +49,5 @@ GTKDOC_LIBS =  								\
 	$(GTK_LIBS)
 
 include $(top_srcdir)/gtk-doc.make
-
-# Other files to distribute
-EXTRA_DIST +=								\
-	version.xml.in
-
-# required for gtk-doc
-dist-hook: all
 
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:
