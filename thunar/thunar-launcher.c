@@ -502,11 +502,11 @@ thunar_launcher_set_property (GObject      *object,
       break;
 
     case PROP_SELECTED_DEVICE:
-      thunar_launcher_set_selection (launcher, NULL, g_value_get_boxed (value), NULL);
+      thunar_launcher_set_selection (launcher, NULL, g_value_get_pointer (value), NULL);
       break;
 
     case PROP_SELECTED_LOCATION:
-      thunar_launcher_set_selection (launcher, NULL, NULL, g_value_get_boxed (value));
+      thunar_launcher_set_selection (launcher, NULL, NULL, g_value_get_pointer (value));
      break;
 
     default:
