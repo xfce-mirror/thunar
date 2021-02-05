@@ -191,6 +191,7 @@ static void      thunar_window_action_toolbar_changed     (ThunarWindow         
 static void      thunar_window_action_shortcuts_changed   (ThunarWindow           *window);
 static void      thunar_window_action_tree_changed        (ThunarWindow           *window);
 static void      thunar_window_action_statusbar_changed   (ThunarWindow           *window);
+static void      thunar_window_action_menubar_update      (ThunarWindow           *window);
 static void      thunar_window_action_menubar_changed     (ThunarWindow           *window);
 static void      thunar_window_action_detailed_view       (ThunarWindow           *window);
 static void      thunar_window_action_icon_view           (ThunarWindow           *window);
@@ -750,6 +751,9 @@ thunar_window_init (ThunarWindow *window)
   g_object_set (G_OBJECT (item), "right-justified", TRUE, NULL);
   gtk_menu_shell_append (GTK_MENU_SHELL (window->menubar), item);
   gtk_widget_show (item);
+
+  /* Required if F10 is pushed while the menu is hidden */
+  g_signal_connect_swapped (G_OBJECT (window->menubar), "deactivate", G_CALLBACK (thunar_window_action_menubar_update), window);
 
   /* place the spinner into the menu item */
   window->spinner = gtk_spinner_new ();
@@ -2915,6 +2919,20 @@ thunar_window_action_statusbar_changed (ThunarWindow *window)
 
 
 static void
+thunar_window_action_menubar_update (ThunarWindow *window)
+{
+  gboolean last_menubar_visible;
+
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  g_object_get (window->preferences, "last-menubar-visible", &last_menubar_visible, NULL);
+
+  gtk_widget_set_visible (window->menubar, last_menubar_visible);
+}
+
+
+
+static void
 thunar_window_action_menubar_changed (ThunarWindow *window)
 {
   gboolean last_menubar_visible;
@@ -3600,6 +3618,9 @@ thunar_window_action_open_file_menu (ThunarWindow *window)
   GList    *children;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* In case the menubar is hidden, we make it visible (e.g. when F10 is pressed) */
+  gtk_widget_set_visible (window->menubar, TRUE);
 
   children = gtk_container_get_children (GTK_CONTAINER (window->menubar));
   g_signal_emit_by_name (children->data, "button-press-event", NULL, &ret);
