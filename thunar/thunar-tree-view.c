@@ -1239,7 +1239,8 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
   if (file_is_available)
     {
       files = g_list_append (NULL, file);
-      g_object_set (G_OBJECT (view->launcher), "selected-files", files, "current-directory", view->current_directory, NULL);
+      g_object_set (G_OBJECT (view->launcher), "current-directory", view->current_directory, NULL);
+      thunar_launcher_set_selection (view->launcher, files, device, NULL);
       g_list_free (files);
 
       if(thunar_g_file_is_trash    (thunar_file_get_file (file)) ||

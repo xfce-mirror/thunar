@@ -194,10 +194,6 @@ static void                    thunar_launcher_action_create_folder       (Thuna
 static void                    thunar_launcher_action_create_document     (ThunarLauncher                 *launcher,
                                                                            GtkWidget                      *menu_item);
 static GtkWidget              *thunar_launcher_create_document_submenu_new(ThunarLauncher                 *launcher);
-void                           thunar_launcher_set_selection              (ThunarLauncher                 *launcher,
-                                                                           GList                          *selected_thunar_files,
-                                                                           ThunarDevice                   *selected_device,
-                                                                           GFile                          *selected_location);
 
 
 
@@ -212,8 +208,6 @@ struct _ThunarLauncher
 
   ThunarFile             *current_directory;
 
-  /* Note always only one of the three 'to_process' variables will be set ! */
-  /* The other two will be NULL. */
   GList                  *files_to_process;    /* List of thunar-files to work with */
   ThunarDevice           *device_to_process;   /* Device to work with */
   GFile			 *location_to_process; /* Location to work with (might be not reachable) */

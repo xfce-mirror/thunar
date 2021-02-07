@@ -22,6 +22,7 @@
 #define __THUNAR_LAUNCHER_H__
 
 #include <thunar/thunar-component.h>
+#include <thunar/thunar-device.h>
 
 G_BEGIN_DECLS;
 
@@ -101,6 +102,10 @@ gboolean        thunar_launcher_check_uca_key_activation             (ThunarLaun
 void            thunar_launcher_action_mount                         (ThunarLauncher                 *launcher);
 void            thunar_launcher_action_unmount                       (ThunarLauncher                 *launcher);
 void            thunar_launcher_action_eject                         (ThunarLauncher                 *launcher);
+void            thunar_launcher_set_selection                        (ThunarLauncher                 *launcher,
+                                                                      GList                          *selected_thunar_files,
+                                                                      ThunarDevice                   *selected_device,
+                                                                      GFile                          *selected_location);
 
 
 G_END_DECLS;
