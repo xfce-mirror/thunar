@@ -783,6 +783,10 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
       if (application_to_use)
         {
           app_info = g_app_info_dup (application_to_use);
+
+          /* Foreign data needs to be set explicitly to the new app_info */
+          if (g_object_get_data (G_OBJECT (application_to_use), "skip-app-info-update") != NULL)
+            g_object_set_data (G_OBJECT (app_info), "skip-app-info-update", GUINT_TO_POINTER (1));
         }
       else
         {
@@ -1942,6 +1946,7 @@ thunar_launcher_build_sendto_submenu (ThunarLauncher *launcher)
           item = xfce_gtk_image_menu_item_new (label_text, tooltip_text, NULL, G_CALLBACK (thunar_launcher_menu_item_activated),
                                                G_OBJECT (launcher), image, GTK_MENU_SHELL (submenu));
           g_object_set_qdata_full (G_OBJECT (item), thunar_launcher_appinfo_quark, g_object_ref (lp->data), g_object_unref);
+          g_object_set_data (G_OBJECT (lp->data), "skip-app-info-update", GUINT_TO_POINTER (1));
 
           /* cleanup */
           g_free (label_text);
