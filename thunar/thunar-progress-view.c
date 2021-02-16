@@ -571,7 +571,7 @@ thunar_progress_view_frozen (ThunarProgressView *view,
       /* update the UI */
       gtk_widget_hide (view->pause_button);
       gtk_widget_show (view->unpause_button);
-      gtk_label_set_text (GTK_LABEL (view->progress_label), _("Frozen by another job on same device"));
+      gtk_label_set_text (GTK_LABEL (view->progress_label), _("Job queued"));
     }
 }
 
@@ -590,7 +590,7 @@ thunar_progress_view_unfrozen (ThunarProgressView *view,
       /* update the UI */
       gtk_widget_hide (view->unpause_button);
       gtk_widget_show (view->pause_button);
-      gtk_label_set_text (GTK_LABEL (view->progress_label), _("Unfreezing..."));
+      gtk_label_set_text (GTK_LABEL (view->progress_label), _("Resuming job ..."));
     }
 }
 
