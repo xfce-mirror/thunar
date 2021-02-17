@@ -590,7 +590,7 @@ thunar_progress_view_unfrozen (ThunarProgressView *view,
       /* update the UI */
       gtk_widget_hide (view->unpause_button);
       gtk_widget_show (view->pause_button);
-      gtk_label_set_text (GTK_LABEL (view->progress_label), _("Resuming job ..."));
+      gtk_label_set_text (GTK_LABEL (view->progress_label), _("Resuming job..."));
     }
 }
 
