@@ -2337,7 +2337,7 @@ thunar_standard_view_scroll_event (GtkWidget          *view,
   else
     {
       g_debug ("GDK_SCROLL_SMOOTH scrolling event with no delta happened");
-      return TRUE;
+      return FALSE;
     }
 
   if (G_UNLIKELY (scrolling_direction == GDK_SCROLL_LEFT || scrolling_direction == GDK_SCROLL_RIGHT))
