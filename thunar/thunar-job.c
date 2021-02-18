@@ -711,7 +711,7 @@ thunar_job_ask_jobs (ThunarJob *job)
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), NULL);
 
-  exo_job_emit (EXO_JOB (job), job_signals[ASK_JOBS], 0, &jobs);
+  g_signal_emit (EXO_JOB (job), job_signals[ASK_JOBS], 0, &jobs);
   return jobs;
 }
 
@@ -773,7 +773,7 @@ thunar_job_freeze (ThunarJob *job)
 {
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
   job->priv->frozen = TRUE;
-  exo_job_emit (EXO_JOB (job), job_signals[FROZEN], 0);
+  g_signal_emit (EXO_JOB (job), job_signals[FROZEN], 0);
 }
 
 
@@ -783,7 +783,7 @@ thunar_job_unfreeze (ThunarJob *job)
 {
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
   job->priv->frozen = FALSE;
-  exo_job_emit (EXO_JOB (job), job_signals[UNFROZEN], 0);
+  g_signal_emit (EXO_JOB (job), job_signals[UNFROZEN], 0);
 }
 
 
