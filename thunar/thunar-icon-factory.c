@@ -415,6 +415,7 @@ thumbnail_needs_frame (const GdkPixbuf *thumbnail,
   const guchar *pixels;
   gint          rowstride;
   gint          n;
+  guchar        alpha_threshold = 255u;   /* An alpha value of 255 means full opacity, 0 is fully transparent. */
 
   /* don't add frames to small thumbnails */
   if (size < THUNAR_ICON_SIZE_64 )
@@ -427,9 +428,11 @@ thumbnail_needs_frame (const GdkPixbuf *thumbnail,
   /* get a pointer to the thumbnail data */
   pixels = gdk_pixbuf_get_pixels (thumbnail);
 
+  /* Data is stored in 4 channels (red, green, blue, alpha). We are only interested in channel 4 (alpha) */
+
   /* check if we have a transparent pixel on the first row */
   for (n = width * 4; n > 0; n -= 4)
-    if (pixels[n - 1] < 255u)
+    if (pixels[n - 1] < alpha_threshold)
       return FALSE;
 
   /* determine the rowstride */
@@ -440,12 +443,12 @@ thumbnail_needs_frame (const GdkPixbuf *thumbnail,
 
   /* check if we have a transparent pixel in the first or last column */
   for (n = height - 2; n > 0; --n, pixels += rowstride)
-    if (pixels[3] < 255u || pixels[width * 4 - 1] < 255u)
+    if (pixels[3] < alpha_threshold || pixels[width * 4 - 1] < alpha_threshold)
       return FALSE;
 
   /* check if we have a transparent pixel on the last row */
   for (n = width * 4; n > 0; n -= 4)
-    if (pixels[n - 1] < 255u)
+    if (pixels[n - 1] < alpha_threshold)
       return FALSE;
 
   return TRUE;
