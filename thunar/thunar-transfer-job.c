@@ -600,7 +600,7 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
               if (err == NULL)
                 {
                   /* try to copy the file from source file to the duplicate file */
-                  if (ttj_copy_file (job, source_file, duplicate_file, copy_flags, TRUE, &err))
+                  if (ttj_copy_file (job, source_file, duplicate_file, copy_flags, FALSE, &err))
                     {
                       /* return the real target file */
                       return duplicate_file;
