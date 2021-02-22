@@ -1330,47 +1330,37 @@ thunar_shortcuts_model_load_line (GFile       *file_path,
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
   _thunar_return_if_fail (name == NULL || g_utf8_validate (name, -1, NULL));
 
+  shortcut = g_slice_new0 (ThunarShortcut);
+  shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS;
   /* handle local and remove files differently */
   if (thunar_shortcuts_model_local_file (file_path))
     {
       /* try to open the file corresponding to the uri */
       file = thunar_file_get (file_path, NULL);
-      if (G_UNLIKELY (file == NULL))
-        return;
-
-      /* make sure the file refers to a directory */
-      if (G_UNLIKELY (thunar_file_is_directory (file)))
+      if (G_UNLIKELY (file != NULL))
         {
-          /* create the shortcut entry */
-          shortcut = g_slice_new0 (ThunarShortcut);
-          shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS;
-          shortcut->file = file;
-          shortcut->sort_id = row_num;
-          shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
-          shortcut->name = g_strdup (name);
-
-          /* append the shortcut to the list */
-          thunar_shortcuts_model_add_shortcut (model, shortcut);
+          /* make sure the file refers to a directory */
+          if (G_UNLIKELY (thunar_file_is_directory (file)))
+            shortcut->file = file;
+          else
+            g_object_unref (file);
         }
       else
         {
-          g_object_unref (file);
+          shortcut->gicon = g_themed_icon_new ("folder");
+          shortcut->location = g_object_ref (file_path);
         }
     }
   else
     {
-      /* create the shortcut entry */
-      shortcut = g_slice_new0 (ThunarShortcut);
-      shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS;
       shortcut->gicon = g_themed_icon_new ("folder-remote");
       shortcut->location = g_object_ref (file_path);
-      shortcut->sort_id = row_num;
-      shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
-      shortcut->name = g_strdup (name);
-
-      /* append the shortcut to the list */
-      thunar_shortcuts_model_add_shortcut (model, shortcut);
     }
+  shortcut->sort_id = row_num;
+  shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
+  shortcut->name = g_strdup (name);
+  /* append the shortcut to the list */
+  thunar_shortcuts_model_add_shortcut (model, shortcut);
 }
 
 
@@ -1602,9 +1592,22 @@ thunar_shortcuts_model_file_destroy (ThunarFile           *file,
   /* verify that we actually found a shortcut */
   _thunar_assert (lp != NULL);
   _thunar_assert (THUNAR_IS_FILE (shortcut->file));
-
-  /* drop the shortcut from the model */
-  thunar_shortcuts_model_remove_shortcut (model, shortcut);
+  if (shortcut->group != THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
+    {
+      /* drop the shortcut from the model */
+      thunar_shortcuts_model_remove_shortcut (model, shortcut);
+    }
+  else
+    {
+      shortcut->gicon = g_themed_icon_new ("folder");
+      shortcut->location = g_object_ref (thunar_file_get_file (shortcut->file));
+      thunar_file_unwatch (shortcut->file);
+      g_signal_handlers_disconnect_matched (shortcut->file,
+                                            G_SIGNAL_MATCH_DATA, 0,
+                                            0, NULL, NULL, model);
+      g_object_unref (shortcut->file);
+      shortcut->file = NULL;
+    }
 }
 
 
