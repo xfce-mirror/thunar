@@ -62,12 +62,9 @@ thunar_notify_init (void)
 
 
 
-static void
-thunar_notify_show (ThunarDevice *device,
-                    const gchar  *summary,
-                    const gchar  *message)
+static gchar*
+thunar_get_device_icon (ThunarDevice *device)
 {
-  NotifyNotification *notification;
   GIcon              *icon;
   gchar              *icon_name = NULL;
   GFile              *icon_file;
@@ -94,6 +91,21 @@ thunar_notify_show (ThunarDevice *device,
 
   if (icon_name == NULL)
     icon_name = g_strdup ("drive-removable-media");
+
+  return icon_name;
+}
+
+
+
+static void
+thunar_notify_show (ThunarDevice *device,
+                    const gchar  *summary,
+                    const gchar  *message)
+{
+  NotifyNotification *notification;
+  gchar              *icon_name;
+
+  icon_name = thunar_get_device_icon (device);
 
   /* create notification */
 #ifdef NOTIFY_CHECK_VERSION
@@ -145,6 +157,44 @@ thunar_notify_device_readonly (ThunarDevice *device)
   return readonly;
 }
 #endif
+
+
+
+void
+thunar_notify_progress (ThunarDevice *device, const gchar *message)
+{
+#ifdef HAVE_LIBNOTIFY
+  NotifyNotification *notification;
+
+  _thunar_return_if_fail (THUNAR_IS_DEVICE (device));
+
+  notification = g_object_get_data (G_OBJECT (device), I_("thunar-notification"));
+  if (notification != NULL)
+    {
+      gchar *icon_name;
+      gchar *summary;
+      gchar *body;
+      gchar *endln;
+
+      icon_name = thunar_get_device_icon (device);
+      body = NULL;
+      endln = strchr(message, '\n');
+      if (endln == NULL)
+        summary = g_strdup (message);
+      else
+        {
+          summary = g_strndup (message, endln - message);
+          body = endln + 1;
+        }
+      notify_notification_update (notification, summary, body, icon_name);
+
+      notify_notification_show (notification, NULL);
+
+      g_free (summary);
+      g_free (icon_name);
+    }
+#endif
+}
 
 
 
@@ -239,7 +289,7 @@ thunar_notify_finish (ThunarDevice *device)
   if (notification != NULL)
     {
       notify_notification_set_urgency (notification, NOTIFY_URGENCY_NORMAL);
-      notify_notification_set_timeout (notification, 2000);
+      notify_notification_set_timeout (notification, 5000);
       notify_notification_show (notification, NULL);
 
       g_object_set_data (G_OBJECT (device), I_("thunar-notification"), NULL);
