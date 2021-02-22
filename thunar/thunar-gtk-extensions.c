@@ -87,6 +87,8 @@ thunar_gtk_menu_thunarx_menu_item_new (GObject      *thunarx_menu_item,
   GList        *children;
   GList        *lp;
   GtkWidget    *submenu;
+  GtkWidget    *image;
+  GIcon        *icon; 
 
   g_return_val_if_fail (THUNARX_IS_MENU_ITEM (thunarx_menu_item), NULL);
 
@@ -100,9 +102,11 @@ thunar_gtk_menu_thunarx_menu_item_new (GObject      *thunarx_menu_item,
                 NULL);
 
   accel_path = g_strconcat ("<Actions>/ThunarActions/", name, NULL);
-  gtk_menu_item = xfce_gtk_image_menu_item_new_from_icon_name (label_text, tooltip_text, accel_path,
-                                                               G_CALLBACK (thunarx_menu_item_activate),
-                                                               G_OBJECT (thunarx_menu_item), icon_name, menu_to_append_item);
+  icon = g_icon_new_for_string (icon_name, NULL);
+  image = gtk_image_new_from_gicon (icon,GTK_ICON_SIZE_MENU);
+  gtk_menu_item = xfce_gtk_image_menu_item_new (label_text, tooltip_text, accel_path,
+                                                G_CALLBACK (thunarx_menu_item_activate),
+                                                G_OBJECT (thunarx_menu_item), image, menu_to_append_item);
 
   /* recursively add submenu items if any */
   if (gtk_menu_item != NULL && thunarx_menu != NULL)
@@ -119,6 +123,7 @@ thunar_gtk_menu_thunarx_menu_item_new (GObject      *thunarx_menu_item,
   g_free (label_text);
   g_free (tooltip_text);
   g_free (icon_name);
+  g_object_unref (icon);
 
   return gtk_menu_item;
 }
