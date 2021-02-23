@@ -30,6 +30,8 @@ void thunar_notify_unmount        (ThunarDevice *device);
 
 void thunar_notify_eject          (ThunarDevice *device);
 
+void thunar_notify_progress       (ThunarDevice *device, const gchar *message_to_show);
+
 void thunar_notify_finish         (ThunarDevice *device);
 
 void thunar_notify_uninit         (void);

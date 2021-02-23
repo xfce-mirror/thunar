@@ -83,6 +83,12 @@ typedef struct
   /* the device the operation is working on */
   ThunarDevice         *device;
 
+  /* for user interaction during the [un]mount operation */
+  GMountOperation *mount_operation;
+
+  /* the handler ID for the show-umount-progress signal */
+  gulong unmount_progress_signal_id;
+
   /* finish function for the async callback */
   AsyncCallbackFinish   callback_finish;
 
@@ -222,8 +228,22 @@ thunar_device_set_property (GObject      *object,
 
 
 
+static void
+show_unmount_progress_cb (GMountOperation *mount_operation,
+                          const gchar     *message_to_show,
+                          gint64           time_left,
+                          gint64           bytes_left,
+                          ThunarDevice    *device)
+{
+  if (message_to_show != NULL)
+    thunar_notify_progress (device, message_to_show);
+}
+
+
+
 static ThunarDeviceOperation *
 thunar_device_operation_new (ThunarDevice         *device,
+                             GMountOperation      *mount_operation,
                              ThunarDeviceCallback  callback,
                              gpointer              user_data,
                              gpointer              callback_finish)
@@ -232,6 +252,9 @@ thunar_device_operation_new (ThunarDevice         *device,
 
   op = g_slice_new0 (ThunarDeviceOperation);
   op->device = g_object_ref (device);
+  op->mount_operation = g_object_ref (mount_operation);
+  op->unmount_progress_signal_id = g_signal_connect (mount_operation,
+      "show-unmount-progress", G_CALLBACK (show_unmount_progress_cb), device);
   op->callback = callback;
   op->callback_finish = callback_finish;
   op->user_data = user_data;
@@ -276,6 +299,8 @@ thunar_device_operation_finish (GObject      *object,
 
   /* cleanup */
   g_clear_error (&error);
+  g_signal_handler_disconnect (op->mount_operation, op->unmount_progress_signal_id);
+  g_object_unref (G_OBJECT (op->mount_operation));
   g_object_unref (G_OBJECT (op->device));
   g_slice_free (ThunarDeviceOperation, op);
 }
@@ -629,7 +654,7 @@ thunar_device_mount (ThunarDevice         *device,
 
   if (G_IS_VOLUME (device->device))
     {
-      op = thunar_device_operation_new (device, callback, user_data,
+      op = thunar_device_operation_new (device, mount_operation, callback, user_data,
                                         g_volume_mount_finish);
       g_volume_mount (G_VOLUME (device->device),
                       G_MOUNT_MOUNT_NONE,
@@ -680,7 +705,7 @@ thunar_device_unmount (ThunarDevice         *device,
 
           /* try unmounting the mount */
           thunar_device_emit_pre_unmount (device, FALSE);
-          op = thunar_device_operation_new (device, callback, user_data,
+          op = thunar_device_operation_new (device, mount_operation, callback, user_data,
                                             g_mount_unmount_with_operation_finish);
           g_mount_unmount_with_operation (mount,
                                           G_MOUNT_UNMOUNT_NONE,
@@ -732,7 +757,7 @@ thunar_device_eject (ThunarDevice         *device,
 
               /* try to stop the drive */
               thunar_device_emit_pre_unmount (device, TRUE);
-              op = thunar_device_operation_new (device, callback, user_data,
+              op = thunar_device_operation_new (device, mount_operation, callback, user_data,
                                                 g_drive_stop_finish);
               g_drive_stop (drive,
                             G_MOUNT_UNMOUNT_NONE,
@@ -753,7 +778,7 @@ thunar_device_eject (ThunarDevice         *device,
 
               /* try to stop the drive */
               thunar_device_emit_pre_unmount (device, TRUE);
-              op = thunar_device_operation_new (device, callback, user_data,
+              op = thunar_device_operation_new (device, mount_operation, callback, user_data,
                                                 g_drive_eject_with_operation_finish);
               g_drive_eject_with_operation (drive,
                                             G_MOUNT_UNMOUNT_NONE,
@@ -778,7 +803,7 @@ thunar_device_eject (ThunarDevice         *device,
 
           /* try ejecting the volume */
           thunar_device_emit_pre_unmount (device, TRUE);
-          op = thunar_device_operation_new (device, callback, user_data,
+          op = thunar_device_operation_new (device, mount_operation, callback, user_data,
                                             g_volume_eject_with_operation_finish);
           g_volume_eject_with_operation (volume,
                                          G_MOUNT_UNMOUNT_NONE,
@@ -813,7 +838,7 @@ thunar_device_eject (ThunarDevice         *device,
 
           /* try ejecting the mount */
           thunar_device_emit_pre_unmount (device, FALSE);
-          op = thunar_device_operation_new (device, callback, user_data,
+          op = thunar_device_operation_new (device, mount_operation, callback, user_data,
                                             g_mount_eject_with_operation_finish);
           g_mount_eject_with_operation (mount,
                                         G_MOUNT_UNMOUNT_NONE,
@@ -829,7 +854,7 @@ thunar_device_eject (ThunarDevice         *device,
 
           /* try unmounting the mount */
           thunar_device_emit_pre_unmount (device, FALSE);
-          op = thunar_device_operation_new (device, callback, user_data,
+          op = thunar_device_operation_new (device, mount_operation, callback, user_data,
                                             g_mount_unmount_with_operation_finish);
           g_mount_unmount_with_operation (mount,
                                           G_MOUNT_UNMOUNT_NONE,
