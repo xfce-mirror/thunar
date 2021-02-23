@@ -83,7 +83,7 @@ typedef struct
   /* the device the operation is working on */
   ThunarDevice         *device;
 
-  /* the mount operation */
+  /* for user interaction during the [un]mount operation */
   GMountOperation *mount_operation;
 
   /* the handler ID for the show-umount-progress signal */
@@ -230,13 +230,13 @@ thunar_device_set_property (GObject      *object,
 
 static void
 show_unmount_progress_cb (GMountOperation *mount_operation,
-                          const gchar *message_to_show,
-                          gint64 time_left,
-                          gint64 bytes_left,
-                          ThunarDevice *device)
+                          const gchar     *message_to_show,
+                          gint64           time_left,
+                          gint64           bytes_left,
+                          ThunarDevice    *device)
 {
   if (message_to_show != NULL)
-    thunar_notify_progress(device, message_to_show);
+    thunar_notify_progress (device, message_to_show);
 }
 
 
@@ -253,8 +253,8 @@ thunar_device_operation_new (ThunarDevice         *device,
   op = g_slice_new0 (ThunarDeviceOperation);
   op->device = g_object_ref (device);
   op->mount_operation = g_object_ref (mount_operation);
-  op->unmount_progress_signal_id = g_signal_connect(mount_operation,
-      "show-unmount-progress", G_CALLBACK(show_unmount_progress_cb), device);
+  op->unmount_progress_signal_id = g_signal_connect (mount_operation,
+      "show-unmount-progress", G_CALLBACK (show_unmount_progress_cb), device);
   op->callback = callback;
   op->callback_finish = callback_finish;
   op->user_data = user_data;

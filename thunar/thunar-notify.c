@@ -161,7 +161,8 @@ thunar_notify_device_readonly (ThunarDevice *device)
 
 
 void
-thunar_notify_progress (ThunarDevice *device, const gchar *message)
+thunar_notify_progress (ThunarDevice *device,
+                         const gchar *message)
 {
 #ifdef HAVE_LIBNOTIFY
   NotifyNotification *notification;
@@ -178,7 +179,7 @@ thunar_notify_progress (ThunarDevice *device, const gchar *message)
 
       icon_name = thunar_get_device_icon (device);
       body = NULL;
-      endln = strchr(message, '\n');
+      endln = g_strchr_len (message, -1, '\n');
       if (endln == NULL)
         summary = g_strdup (message);
       else
