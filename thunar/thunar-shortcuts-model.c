@@ -1332,6 +1332,7 @@ thunar_shortcuts_model_load_line (GFile       *file_path,
 
   shortcut = g_slice_new0 (ThunarShortcut);
   shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS;
+
   /* handle local and remote files differently */
   if (thunar_shortcuts_model_local_file (file_path))
     {
