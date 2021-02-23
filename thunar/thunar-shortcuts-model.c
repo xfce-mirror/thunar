@@ -1360,6 +1360,7 @@ thunar_shortcuts_model_load_line (GFile       *file_path,
   shortcut->sort_id = row_num;
   shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
   shortcut->name = g_strdup (name);
+
   /* append the shortcut to the list */
   thunar_shortcuts_model_add_shortcut (model, shortcut);
 }
