@@ -179,7 +179,7 @@ thunar_notify_progress (ThunarDevice *device,
 
       icon_name = thunar_get_device_icon (device);
       body = NULL;
-      endln = g_strchr_len (message, -1, '\n');
+      endln = g_strstr_len (message, -1, "\n");
       if (endln == NULL)
         summary = g_strdup (message);
       else
