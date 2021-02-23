@@ -1356,6 +1356,7 @@ thunar_shortcuts_model_load_line (GFile       *file_path,
       shortcut->gicon = g_themed_icon_new ("folder-remote");
       shortcut->location = g_object_ref (file_path);
     }
+
   shortcut->sort_id = row_num;
   shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
   shortcut->name = g_strdup (name);
