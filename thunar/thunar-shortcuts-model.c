@@ -1338,18 +1338,18 @@ thunar_shortcuts_model_load_line (GFile       *file_path,
     {
       /* try to open the file corresponding to the uri */
       file = thunar_file_get (file_path, NULL);
-      if (G_UNLIKELY (file != NULL))
+      if (G_UNLIKELY (file == NULL))
+        {
+          shortcut->gicon = g_themed_icon_new ("folder");
+          shortcut->location = g_object_ref (file_path);
+        }
+      else
         {
           /* make sure the file refers to a directory */
           if (G_UNLIKELY (thunar_file_is_directory (file)))
             shortcut->file = file;
           else
             g_object_unref (file);
-        }
-      else
-        {
-          shortcut->gicon = g_themed_icon_new ("folder");
-          shortcut->location = g_object_ref (file_path);
         }
     }
   else
@@ -1570,6 +1570,10 @@ thunar_shortcuts_model_file_changed (ThunarFile           *file,
           break;
         }
     }
+
+  /* the shortcuts list was changed, so write the gtk bookmarks file */
+  if (shortcut->group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
+    thunar_shortcuts_model_save (model);
 }
 
 
@@ -1595,12 +1599,7 @@ thunar_shortcuts_model_file_destroy (ThunarFile           *file,
   /* verify that we actually found a shortcut */
   _thunar_assert (lp != NULL);
   _thunar_assert (THUNAR_IS_FILE (shortcut->file));
-  if (shortcut->group != THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
-    {
-      /* drop the shortcut from the model */
-      thunar_shortcuts_model_remove_shortcut (model, shortcut);
-    }
-  else
+  if (shortcut->group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
     {
       shortcut->gicon = g_themed_icon_new ("folder");
       shortcut->location = g_object_ref (thunar_file_get_file (shortcut->file));
@@ -1610,6 +1609,11 @@ thunar_shortcuts_model_file_destroy (ThunarFile           *file,
                                             0, NULL, NULL, model);
       g_object_unref (shortcut->file);
       shortcut->file = NULL;
+    }
+  else
+    {
+      /* drop the shortcut from the model */
+      thunar_shortcuts_model_remove_shortcut (model, shortcut);
     }
 }
 
