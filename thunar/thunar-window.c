@@ -900,7 +900,7 @@ thunar_window_select_files (ThunarWindow *window,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   for (GList *lp = files_to_selected; lp != NULL; lp = lp->next)
-      thunarFiles = g_list_append (thunarFiles, thunar_file_get (G_FILE (files_to_selected->data), NULL));
+      thunarFiles = g_list_append (thunarFiles, thunar_file_get (G_FILE (lp->data), NULL));
   thunar_view_set_selected_files (THUNAR_VIEW (window->view), thunarFiles);
   g_list_free_full (thunarFiles, g_object_unref);
 }
