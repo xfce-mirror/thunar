@@ -1567,13 +1567,14 @@ thunar_shortcuts_model_file_changed (ThunarFile           *file,
           path = gtk_tree_path_new_from_indices (idx, -1);
           gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &iter);
           gtk_tree_path_free (path);
+
+          /* the shortcuts list was changed, so write the gtk bookmarks file */
+          if (shortcut->group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
+            thunar_shortcuts_model_save (model);
+
           break;
         }
     }
-
-  /* the shortcuts list was changed, so write the gtk bookmarks file */
-  if (shortcut->group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
-    thunar_shortcuts_model_save (model);
 }
 
 
@@ -1601,8 +1602,15 @@ thunar_shortcuts_model_file_destroy (ThunarFile           *file,
   _thunar_assert (THUNAR_IS_FILE (shortcut->file));
   if (shortcut->group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
     {
+      if (G_LIKELY (shortcut->gicon != NULL))
+        g_object_unref (shortcut->gicon);
+
+      if (G_LIKELY (shortcut->location != NULL))
+        g_object_unref (shortcut->location);
+
       shortcut->gicon = g_themed_icon_new ("folder");
       shortcut->location = g_object_ref (thunar_file_get_file (shortcut->file));
+
       thunar_file_unwatch (shortcut->file);
       g_signal_handlers_disconnect_matched (shortcut->file,
                                             G_SIGNAL_MATCH_DATA, 0,
