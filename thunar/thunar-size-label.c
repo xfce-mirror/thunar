@@ -94,6 +94,7 @@ struct _ThunarSizeLabel
   gboolean            file_size_binary;
 
   GtkWidget          *label;
+  GtkWidget          *labelContent;
   GtkWidget          *spinner;
 };
 
@@ -173,12 +174,12 @@ thunar_size_label_init (ThunarSizeLabel *size_label)
 
   /* add the label widget */
   size_label->label = gtk_label_new (_("Calculating..."));
-  gtk_label_set_xalign (GTK_LABEL (size_label->label), 0.0f);
   gtk_label_set_selectable (GTK_LABEL (size_label->label), TRUE);
-  gtk_label_set_line_wrap (GTK_LABEL (size_label->label), TRUE);
+  gtk_label_set_xalign (GTK_LABEL (size_label->label), 1.0f);
   gtk_box_pack_start (GTK_BOX (size_label), size_label->label, TRUE, TRUE, 0);
   gtk_widget_show (size_label->label);
-}
+
+  }
 
 
 
@@ -394,13 +395,20 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
                                  ThunarSizeLabel    *size_label)
 {
   gchar             *size_string;
-  gchar             *text;
+  gchar             *folder_size_string;
+  gchar             *file_size_string;
+  gchar             *textSize;
+  gchar             *textContent;
   guint              n;
   gchar             *unreable_text;
+  GtkWidget         *content_label;
 
   _thunar_return_if_fail (THUNAR_IS_DEEP_COUNT_JOB (job));
   _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
   _thunar_return_if_fail (size_label->job == job);
+
+ 
+  content_label = (GtkWidget *)g_object_get_data(G_OBJECT(size_label),"content_label");
 
   /* determine the total number of items */
   n = file_count + directory_count + unreadable_directory_count;
@@ -409,20 +417,28 @@ thunar_size_label_status_update (ThunarDeepCountJob *job,
     {
       /* update the label */
       size_string = g_format_size_full (total_size, G_FORMAT_SIZE_LONG_FORMAT | (size_label->file_size_binary ? G_FORMAT_SIZE_IEC_UNITS : G_FORMAT_SIZE_DEFAULT));
-      text = g_strdup_printf (ngettext ("%u item, totalling %s", "%u items, totalling %s", n), n, size_string);
+      folder_size_string = g_strdup_printf (ngettext ("%d folder", "%d folders", directory_count -1), directory_count -1);
+      file_size_string = g_strdup_printf (ngettext ("%d file", "%d files", file_count), file_count);
+
+      textContent = g_strdup_printf (ngettext ("%u item (%s, %s)", "%u items (%s, %s)", n), n, file_size_string, folder_size_string);
+      textSize = g_strdup_printf ("%s", size_string);
       g_free (size_string);
 
       if (unreadable_directory_count > 0)
         {
           /* TRANSLATORS: this is shows if during the deep count size
            * directories were not accessible */
-          unreable_text = g_strconcat (text, "\n", _("(some contents unreadable)"), NULL);
-          g_free (text);
-          text = unreable_text;
+          unreable_text = g_strconcat (textSize, "\n", _("(some contents unreadable)"), NULL);
+          g_free (textSize);
+          textSize = unreable_text;
         }
 
-      gtk_label_set_text (GTK_LABEL (size_label->label), text);
-      g_free (text);
+      gtk_label_set_text (GTK_LABEL (size_label->label), textSize);
+      gtk_label_set_text (GTK_LABEL (content_label), textContent);
+      g_free (textContent);
+      g_free (textSize);
+      g_free (folder_size_string);
+      g_free (file_size_string);
     }
   else
     {
@@ -504,6 +520,12 @@ thunar_size_label_set_files (ThunarSizeLabel *size_label,
 GtkWidget*
 thunar_size_label_new (void)
 {
-  return g_object_new (THUNAR_TYPE_SIZE_LABEL, NULL);
+  GtkWidget* main_label;
+  GtkWidget* content_label;
+
+  content_label = gtk_label_new ("...");
+  main_label = g_object_new (THUNAR_TYPE_SIZE_LABEL, NULL);
+  g_object_set_data(G_OBJECT(main_label),"content_label", (gpointer)(content_label));
+  return main_label;
 }
 
