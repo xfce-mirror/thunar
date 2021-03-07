@@ -88,6 +88,14 @@ typedef struct _ThunarLauncherPokeData ThunarLauncherPokeData;
 
 
 
+/* Signal identifiers */
+enum
+{
+  DEVICE_OPERATION_STARTED,
+  DEVICE_OPERATION_FINISHED,
+  LAST_SIGNAL,
+};
+
 /* Property identifiers */
 enum
 {
@@ -235,6 +243,8 @@ static GQuark thunar_launcher_appinfo_quark;
 static GQuark thunar_launcher_device_quark;
 static GQuark thunar_launcher_file_quark;
 
+static guint launcher_signals[LAST_SIGNAL];
+
 struct _ThunarLauncherPokeData
 {
   GList                          *files_to_poke; /* List of thunar-files */
@@ -313,6 +323,36 @@ thunar_launcher_class_init (ThunarLauncherClass *klass)
   gobject_class->finalize = thunar_launcher_finalize;
   gobject_class->get_property = thunar_launcher_get_property;
   gobject_class->set_property = thunar_launcher_set_property;
+
+  /**
+   * ThunarLauncher::device-operation-started:
+   * @launcher : a #ThunarLauncher
+   * @device   : the #ThunarDevice on which the operation was finished
+   *
+   * This signal is emitted by the @launcher right after the device operation (mount/unmount/eject) is started
+   **/
+  launcher_signals[DEVICE_OPERATION_STARTED] =
+    g_signal_new (I_("device-operation-started"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS, 0,
+                  NULL, NULL,
+                  g_cclosure_marshal_generic,
+                  G_TYPE_NONE, 1, THUNAR_TYPE_DEVICE);
+
+  /**
+   * ThunarLauncher::device-operation-finished:
+   * @launcher : a #ThunarLauncher
+   * @device   : the #ThunarDevice on which the operation was finished
+   *
+   * This signal is emitted by the @launcher right after the device operation (mount/unmount/eject) is finished
+   **/
+  launcher_signals[DEVICE_OPERATION_FINISHED] =
+    g_signal_new (I_("device-operation-finished"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS, 0,
+                  NULL, NULL,
+                  g_cclosure_marshal_generic,
+                  G_TYPE_NONE, 1, THUNAR_TYPE_DEVICE);
 
   /**
    * ThunarLauncher:widget:
@@ -959,6 +999,7 @@ thunar_launcher_poke (ThunarLauncher                 *launcher,
 
    if (launcher->device_to_process != NULL)
      {
+       g_signal_emit (launcher, launcher_signals[DEVICE_OPERATION_STARTED], 0, launcher->device_to_process);
        thunar_browser_poke_device (THUNAR_BROWSER (launcher), launcher->device_to_process,
                                    launcher->widget, thunar_launcher_poke_device_finish,
                                   poke_data);
@@ -1000,6 +1041,7 @@ static void thunar_launcher_poke_device_finish (ThunarBrowser *browser,
 
   if (cancelled == TRUE || error != NULL || mount_point == NULL)
     {
+      g_signal_emit (browser, launcher_signals[DEVICE_OPERATION_FINISHED], 0, volume);
       thunar_launcher_poke_data_free (poke_data);
       return;
     }
@@ -1020,6 +1062,7 @@ static void thunar_launcher_poke_device_finish (ThunarBrowser *browser,
       thunar_navigator_change_directory (THUNAR_NAVIGATOR (browser), mount_point);
     }
 
+  g_signal_emit (browser, launcher_signals[DEVICE_OPERATION_FINISHED], 0, volume);
   thunar_launcher_poke_data_free (poke_data);
 }
 
@@ -2732,6 +2775,7 @@ thunar_launcher_action_eject_finish (ThunarDevice  *device,
     }
 
   g_object_unref (launcher);
+  g_signal_emit (launcher, launcher_signals[DEVICE_OPERATION_FINISHED], 0, device);
 }
 
 
@@ -2753,6 +2797,8 @@ thunar_launcher_action_eject (ThunarLauncher *launcher)
     {
       /* prepare a mount operation */
       mount_operation = thunar_gtk_mount_operation_new (GTK_WIDGET (launcher->widget));
+
+      g_signal_emit (launcher, launcher_signals[DEVICE_OPERATION_STARTED], 0, launcher->device_to_process);
 
       /* eject */
       thunar_device_eject (launcher->device_to_process,
@@ -2788,6 +2834,7 @@ thunar_launcher_action_unmount_finish (ThunarDevice *device,
     }
 
   g_object_unref (launcher);
+  g_signal_emit (launcher, launcher_signals[DEVICE_OPERATION_FINISHED], 0, device);
 }
 
 
@@ -2809,6 +2856,8 @@ thunar_launcher_action_unmount (ThunarLauncher *launcher)
     {
       /* prepare a mount operation */
       mount_operation = thunar_gtk_mount_operation_new (GTK_WIDGET (launcher->widget));
+
+      g_signal_emit (launcher, launcher_signals[DEVICE_OPERATION_STARTED], 0, launcher->device_to_process);
 
       /* eject */
       thunar_device_unmount (launcher->device_to_process,
