@@ -38,6 +38,7 @@ enum
   PROP_EMBLEMS,
   PROP_FOLLOW_STATE,
   PROP_SIZE,
+  PROP_SYMBOLIC,
 };
 
 
@@ -154,6 +155,20 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
                                                       THUNAR_TYPE_ICON_SIZE,
                                                       THUNAR_ICON_SIZE_32,
                                                       G_PARAM_CONSTRUCT | EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarIconRenderer:symbolic:
+   *
+   * Specifies whether the icon renderer should attempt to
+   * load a symbolic variant of a standard icon if available.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_SYMBOLIC,
+                                   g_param_spec_boolean ("symbolic",
+                                                         "symbolic",
+                                                         "symbolic",
+                                                         FALSE,
+                                                         G_PARAM_CONSTRUCT | EXO_PARAM_READWRITE));
 }
 
 
@@ -213,6 +228,10 @@ thunar_icon_renderer_get_property (GObject    *object,
       g_value_set_enum (value, icon_renderer->size);
       break;
 
+    case PROP_SYMBOLIC:
+      g_value_set_boolean (value, icon_renderer->symbolic);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -253,6 +272,10 @@ thunar_icon_renderer_set_property (GObject      *object,
 
     case PROP_SIZE:
       icon_renderer->size = g_value_get_enum (value);
+      break;
+
+    case PROP_SYMBOLIC:
+      icon_renderer->symbolic = g_value_get_boolean (value);
       break;
 
     default:
@@ -415,7 +438,12 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   /* load the main icon */
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
   icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
-  icon = thunar_icon_factory_load_file_icon (icon_factory, icon_renderer->file, icon_state, icon_renderer->size);
+
+  if (icon_renderer->symbolic)
+    icon = thunar_icon_factory_load_file_symbolic_icon (icon_factory, icon_renderer->file, icon_state, icon_renderer->size);
+  else
+    icon = thunar_icon_factory_load_file_icon (icon_factory, icon_renderer->file, icon_state, icon_renderer->size);
+
   if (G_UNLIKELY (icon == NULL))
     {
       g_object_unref (G_OBJECT (icon_factory));
@@ -508,7 +536,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
               emblem_size = MIN ((2 * icon_renderer->size) / 3, 32);
 
               /* check if we have the emblem in the icon theme */
-              emblem = thunar_icon_factory_load_icon (icon_factory, lp->data, emblem_size, FALSE);
+              emblem = thunar_icon_factory_load_icon (icon_factory, lp->data, emblem_size, FALSE, FALSE);
               if (G_UNLIKELY (emblem == NULL))
                 continue;
 

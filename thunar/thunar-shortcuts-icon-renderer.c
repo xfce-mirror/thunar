@@ -244,7 +244,11 @@ thunar_shortcuts_icon_renderer_render (GtkCellRenderer     *renderer,
       /* try to load the icon */
       if (G_LIKELY (icon_info != NULL))
         {
-          icon = gtk_icon_info_load_icon (icon_info, NULL);
+          gboolean was_symbolic;
+          icon = gtk_icon_info_load_symbolic_for_context (icon_info,
+                                                          gtk_widget_get_style_context (widget),
+                                                          &was_symbolic,
+                                                          NULL);
           g_object_unref (icon_info);
         }
 
