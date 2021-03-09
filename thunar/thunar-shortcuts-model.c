@@ -132,10 +132,6 @@ static void               thunar_shortcuts_model_monitor            (GFileMonito
                                                                      GFile                     *other_file,
                                                                      GFileMonitorEvent          event_type,
                                                                      gpointer                   user_data);
-static void               thunar_shortcuts_model_file_changed       (ThunarFile                *file,
-                                                                     ThunarShortcutsModel      *model);
-static void               thunar_shortcuts_model_file_destroy       (ThunarFile                *file,
-                                                                     ThunarShortcutsModel      *model);
 static void               thunar_shortcuts_model_device_added       (ThunarDeviceMonitor       *device_monitor,
                                                                      ThunarDevice              *device,
                                                                      ThunarShortcutsModel      *model);
@@ -1216,19 +1212,6 @@ thunar_shortcuts_model_add_shortcut_with_path (ThunarShortcutsModel *model,
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
   _thunar_return_if_fail (shortcut->file == NULL || THUNAR_IS_FILE (shortcut->file));
 
-  /* we want to stay informed about changes to the file */
-  if (G_LIKELY (shortcut->file != NULL))
-    {
-      /* watch the file for changes */
-      thunar_file_watch (shortcut->file);
-
-      /* connect appropriate signals */
-      g_signal_connect (G_OBJECT (shortcut->file), "changed",
-                        G_CALLBACK (thunar_shortcuts_model_file_changed), model);
-      g_signal_connect (G_OBJECT (shortcut->file), "destroy",
-                        G_CALLBACK (thunar_shortcuts_model_file_destroy), model);
-    }
-
   if (path == NULL)
     {
       /* insert the new shortcut to the shortcuts list */
@@ -1535,99 +1518,6 @@ thunar_shortcuts_model_save (ThunarShortcutsModel *model)
 
 
 static void
-thunar_shortcuts_model_file_changed (ThunarFile           *file,
-                                     ThunarShortcutsModel *model)
-{
-  ThunarShortcut *shortcut;
-  GtkTreePath    *path;
-  GtkTreeIter     iter;
-  GList          *lp;
-  gint            idx;
-
-  _thunar_return_if_fail (THUNAR_IS_FILE (file));
-  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
-
-  /* check if the file still refers to a directory or a not mounted URI,
-   * otherwise we cannot keep it on the shortcuts list, and so we'll treat
-   * it like the file was destroyed (and thereby removed) */
-
-  if (G_UNLIKELY (!thunar_file_is_directory (file)))
-    {
-      thunar_shortcuts_model_file_destroy (file, model);
-      return;
-    }
-
-  for (idx = 0, lp = model->shortcuts; lp != NULL; ++idx, lp = lp->next)
-    {
-      shortcut = THUNAR_SHORTCUT (lp->data);
-      if (shortcut->file == file)
-        {
-          GTK_TREE_ITER_INIT (iter, model->stamp, lp);
-
-          path = gtk_tree_path_new_from_indices (idx, -1);
-          gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &iter);
-          gtk_tree_path_free (path);
-
-          /* the shortcuts list was changed, so write the gtk bookmarks file */
-          if (shortcut->group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
-            thunar_shortcuts_model_save (model);
-
-          break;
-        }
-    }
-}
-
-
-
-static void
-thunar_shortcuts_model_file_destroy (ThunarFile           *file,
-                                     ThunarShortcutsModel *model)
-{
-  ThunarShortcut *shortcut = NULL;
-  GList          *lp;
-
-  _thunar_return_if_fail (THUNAR_IS_FILE (file));
-  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
-
-  /* lookup the shortcut matching the file */
-  for (lp = model->shortcuts; lp != NULL; lp = lp->next)
-    {
-      shortcut = THUNAR_SHORTCUT (lp->data);
-      if (shortcut->file == file)
-        break;
-    }
-
-  /* verify that we actually found a shortcut */
-  _thunar_assert (lp != NULL);
-  _thunar_assert (THUNAR_IS_FILE (shortcut->file));
-  if (shortcut->group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
-    {
-      if (G_LIKELY (shortcut->gicon != NULL))
-        g_object_unref (shortcut->gicon);
-
-      if (G_LIKELY (shortcut->location != NULL))
-        g_object_unref (shortcut->location);
-
-      shortcut->gicon = g_themed_icon_new ("folder");
-      shortcut->location = g_object_ref (thunar_file_get_file (shortcut->file));
-
-      thunar_file_unwatch (shortcut->file);
-      g_signal_handlers_disconnect_matched (shortcut->file,
-                                            G_SIGNAL_MATCH_DATA, 0,
-                                            0, NULL, NULL, model);
-      g_object_unref (shortcut->file);
-      shortcut->file = NULL;
-    }
-  else
-    {
-      /* drop the shortcut from the model */
-      thunar_shortcuts_model_remove_shortcut (model, shortcut);
-    }
-}
-
-
-
-static void
 thunar_shortcuts_model_device_added (ThunarDeviceMonitor  *device_monitor,
                                      ThunarDevice         *device,
                                      ThunarShortcutsModel *model)
@@ -1761,13 +1651,6 @@ thunar_shortcut_free (ThunarShortcut       *shortcut,
 {
   if (G_LIKELY (shortcut->file != NULL))
     {
-      /* drop the file watch */
-      thunar_file_unwatch (shortcut->file);
-
-      /* unregister from the file */
-      g_signal_handlers_disconnect_matched (shortcut->file,
-                                            G_SIGNAL_MATCH_DATA, 0,
-                                            0, NULL, NULL, model);
       g_object_unref (shortcut->file);
     }
 
