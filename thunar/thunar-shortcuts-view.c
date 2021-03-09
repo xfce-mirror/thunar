@@ -163,6 +163,8 @@ static void           thunar_shortcuts_view_stop_spinner                 (Thunar
 static void           thunar_shortcuts_view_start_spinner                (ThunarShortcutsView      *view,
                                                                           ThunarDevice             *device,
                                                                           gpointer                  user_data);
+static void           thunar_shortcuts_view_new_files_created            (ThunarShortcutsView      *view,
+                                                                          GList                    *files_to_selected);
 
 
 
@@ -411,6 +413,7 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   g_signal_connect_swapped (G_OBJECT (view->launcher), "open-new-tab", G_CALLBACK (thunar_navigator_open_new_tab), view);
   g_signal_connect_swapped (G_OBJECT (view->launcher), "device-operation-started", G_CALLBACK (thunar_shortcuts_view_start_spinner), view);
   g_signal_connect_swapped (G_OBJECT (view->launcher), "device-operation-finished", G_CALLBACK (thunar_shortcuts_view_stop_spinner), view);
+  g_signal_connect_swapped (G_OBJECT (view->launcher), "new-files-created", G_CALLBACK (thunar_shortcuts_view_new_files_created), view);
   exo_binding_new (G_OBJECT (view), "current-directory", G_OBJECT (view->launcher), "current-directory");
 }
 
@@ -1854,4 +1857,29 @@ thunar_shortcuts_view_toggle_padding (ThunarShortcutsView *view,
                                        NULL);
 
   view->padding_enabled = enable;
+}
+
+
+
+static void
+thunar_shortcuts_view_new_files_created (ThunarShortcutsView *view,
+                                         GList               *files_to_selected)
+{
+  ThunarFile *file;
+
+  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
+
+  if (files_to_selected == NULL)
+    return;
+
+  /* Just pick the first file */
+  file = thunar_file_get (files_to_selected->data, NULL);
+
+  /* And open it, if it is a directory (It always should be a directory for shortcuts-view) */
+  if (G_LIKELY (file != NULL))
+    {
+      if (G_LIKELY (thunar_file_is_directory (file)))
+        thunar_navigator_change_directory (THUNAR_NAVIGATOR (view), file);
+      g_object_unref (file);
+    }
 }
