@@ -49,6 +49,7 @@ struct _ThunarIconRenderer
   gboolean       emblems;
   gboolean       follow_state;
   ThunarIconSize size;
+  gboolean       symbolic;
 };
 
 GType            thunar_icon_renderer_get_type (void) G_GNUC_CONST;

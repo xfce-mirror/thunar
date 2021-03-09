@@ -994,7 +994,7 @@ thunar_shortcuts_model_shortcut_devices (ThunarShortcutsModel *model)
   shortcut->name = g_strdup (_("File System"));
   shortcut->tooltip = g_strdup (_("Browse the file system"));
   shortcut->file = thunar_file_get_for_uri ("file:///", NULL);
-  shortcut->gicon = g_themed_icon_new ("drive-harddisk");
+  shortcut->gicon = g_themed_icon_new ("drive-harddisk-symbolic");
   shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
   thunar_shortcuts_model_add_shortcut (model, shortcut);
 
@@ -1039,7 +1039,7 @@ thunar_shortcuts_model_shortcut_network (ThunarShortcutsModel *model)
       shortcut->name = g_strdup (_("Browse Network"));
       shortcut->tooltip = g_strdup (_("Browse local network connections"));
       shortcut->location = g_file_new_for_uri ("network://");
-      shortcut->gicon = g_themed_icon_new ("network-workgroup");
+      shortcut->gicon = g_themed_icon_new ("network-workgroup-symbolic");
       shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
       thunar_shortcuts_model_add_shortcut (model, shortcut);
     }
@@ -1073,7 +1073,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
       shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_DEFAULT;
       shortcut->tooltip = g_strdup (_("Open the home folder"));
       shortcut->file = file;
-      shortcut->gicon = g_themed_icon_new ("go-home");
+      shortcut->gicon = g_themed_icon_new ("go-home-symbolic");
       shortcut->sort_id = 0;
       shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
       thunar_shortcuts_model_add_shortcut (model, shortcut);
@@ -1138,7 +1138,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
       shortcut->name = g_strdup (_("Computer"));
       shortcut->tooltip = g_strdup (_("Browse the computer"));
       shortcut->location = g_file_new_for_uri ("computer://");
-      shortcut->gicon = g_themed_icon_new ("computer");
+      shortcut->gicon = g_themed_icon_new ("computer-symbolic");
       shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
       thunar_shortcuts_model_add_shortcut (model, shortcut);
     }
@@ -1362,7 +1362,7 @@ thunar_shortcuts_model_load_line (GFile       *file_path,
       /* create the shortcut entry */
       shortcut = g_slice_new0 (ThunarShortcut);
       shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS;
-      shortcut->gicon = g_themed_icon_new ("folder-remote");
+      shortcut->gicon = g_themed_icon_new ("folder-remote-symbolic");
       shortcut->location = g_object_ref (file_path);
       shortcut->sort_id = row_num;
       shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
@@ -2044,7 +2044,7 @@ thunar_shortcuts_model_add (ThunarShortcutsModel *model,
   else
     {
       shortcut->location = G_FILE (g_object_ref (G_OBJECT (location)));
-      shortcut->gicon = g_themed_icon_new ("folder-remote");
+      shortcut->gicon = g_themed_icon_new ("folder-remote-symbolic");
     }
 
   /* if no position was given, place the shortcut at the bottom */

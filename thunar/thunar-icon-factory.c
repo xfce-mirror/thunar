@@ -81,7 +81,8 @@ static GdkPixbuf *thunar_icon_factory_load_from_file        (ThunarIconFactory  
 static GdkPixbuf *thunar_icon_factory_lookup_icon           (ThunarIconFactory        *factory,
                                                              const gchar              *name,
                                                              gint                      size,
-                                                             gboolean                  wants_default);
+                                                             gboolean                  wants_default,
+                                                             gboolean                  wants_symbolic);
 static guint      thunar_icon_key_hash                      (gconstpointer             data);
 static gboolean   thunar_icon_key_equal                     (gconstpointer             a,
                                                              gconstpointer             b);
@@ -104,6 +105,8 @@ struct _ThunarIconFactory
 
   GHashTable          *icon_cache;
 
+  GtkStyleContext     *style_context;
+
   GtkIconTheme        *icon_theme;
 
   ThunarThumbnailMode  thumbnail_mode;
@@ -122,8 +125,9 @@ struct _ThunarIconFactory
 
 struct _ThunarIconKey
 {
-  gchar *name;
-  gint   size;
+  gchar   *name;
+  gint     size;
+  gboolean symbolic;
 };
 
 typedef struct
@@ -133,6 +137,7 @@ typedef struct
   gint                  icon_size;
   guint                 stamp;
   GdkPixbuf            *icon;
+  gboolean              symbolic;
 }
 ThunarIconStore;
 
@@ -237,6 +242,12 @@ thunar_icon_factory_init (ThunarIconFactory *factory)
   /* allocate the hash table for the icon cache */
   factory->icon_cache = g_hash_table_new_full (thunar_icon_key_hash, thunar_icon_key_equal,
                                                thunar_icon_key_free, g_object_unref);
+
+  /* standalone style context, used to load symbolic icons with correct fg color */
+  /* FIXME: this is not good enough, in light themes white is used as fg color.
+   * Also try unfocusing thunar and notice how some icons have different shade
+   */
+  factory->style_context = gtk_style_context_new ();
 }
 
 
@@ -278,6 +289,9 @@ thunar_icon_factory_finalize (GObject *object)
 
   /* disconnect from the preferences */
   g_object_unref (G_OBJECT (factory->preferences));
+
+  /* clear standalone style context */
+  g_object_unref (G_OBJECT (factory->style_context));
 
   (*G_OBJECT_CLASS (thunar_icon_factory_parent_class)->finalize) (object);
 }
@@ -551,12 +565,14 @@ static GdkPixbuf*
 thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
                                  const gchar       *name,
                                  gint               size,
-                                 gboolean           wants_default)
+                                 gboolean           wants_default,
+                                 gboolean           wants_symbolic)
 {
   ThunarIconKey  lookup_key;
   ThunarIconKey *key;
   GtkIconInfo   *icon_info;
   GdkPixbuf     *pixbuf = NULL;
+  GtkIconLookupFlags flags;
 
   _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
   _thunar_return_val_if_fail (name != NULL && *name != '\0', NULL);
@@ -565,6 +581,7 @@ thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
   /* prepare the lookup key */
   lookup_key.name = (gchar *) name;
   lookup_key.size = size;
+  lookup_key.symbolic = wants_symbolic;
 
   /* check if we already have a cached version of the icon */
   if (!g_hash_table_lookup_extended (factory->icon_cache, &lookup_key, NULL, (gpointer) &pixbuf))
@@ -582,11 +599,19 @@ thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
             name = "folder";
 
           /* check if the icon theme contains an icon of that name */
-          icon_info = gtk_icon_theme_lookup_icon (factory->icon_theme, name, size, GTK_ICON_LOOKUP_FORCE_SIZE);
+          flags = GTK_ICON_LOOKUP_FORCE_SIZE;
+          if (wants_symbolic)
+            flags |= GTK_ICON_LOOKUP_FORCE_SYMBOLIC;
+
+          icon_info = gtk_icon_theme_lookup_icon (factory->icon_theme, name, size, flags);
           if (G_LIKELY (icon_info != NULL))
             {
+              gboolean was_symbolic;
               /* try to load the pixbuf from the icon info */
-              pixbuf = gtk_icon_info_load_icon (icon_info, NULL);
+              if (wants_symbolic)
+                pixbuf = gtk_icon_info_load_symbolic_for_context (icon_info, factory->style_context, &was_symbolic, NULL);
+              else
+                pixbuf = gtk_icon_info_load_icon (icon_info, NULL);
 
               /* cleanup */
               g_object_unref (icon_info);
@@ -607,6 +632,7 @@ thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
       key = g_slice_new (ThunarIconKey);
       key->size = size;
       key->name = g_strdup (name);
+      key->symbolic = wants_symbolic;
 
       /* insert the new icon into the cache */
       g_hash_table_insert (factory->icon_cache, key, pixbuf);
@@ -636,6 +662,9 @@ thunar_icon_key_hash (gconstpointer data)
 
   for (p = key->name; *p != '\0'; ++p)
     h = (h << 5) - h + *p;
+
+  if (key->symbolic)
+    h ^= 1;
 
   return h;
 }
@@ -686,7 +715,139 @@ static GdkPixbuf*
 thunar_icon_factory_load_fallback (ThunarIconFactory *factory,
                                    gint               size)
 {
-  return thunar_icon_factory_lookup_icon (factory, "text-x-generic", size, FALSE);
+  return thunar_icon_factory_lookup_icon (factory, "text-x-generic", size, FALSE, FALSE);
+}
+
+
+
+static GdkPixbuf*
+_thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
+                                     ThunarFile         *file,
+                                     ThunarFileIconState icon_state,
+                                     gint                icon_size,
+                                     gboolean            wants_symbolic)
+{
+  GInputStream    *stream;
+  GtkIconInfo     *icon_info;
+  const gchar     *thumbnail_path;
+  GdkPixbuf       *icon = NULL;
+  GIcon           *gicon;
+  const gchar     *icon_name;
+  const gchar     *custom_icon;
+  ThunarIconStore *store;
+
+  _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  _thunar_return_val_if_fail (icon_size > 0, NULL);
+
+  /* check if we have a stored icon on the file and it is still valid */
+  store = g_object_get_qdata (G_OBJECT (file), thunar_icon_factory_store_quark);
+  if (store != NULL
+      && store->icon_state == icon_state
+      && store->icon_size == icon_size
+      && store->stamp == factory->theme_stamp
+      && store->thumb_state == thunar_file_get_thumb_state (file)
+      && store->symbolic == wants_symbolic)
+    {
+      return g_object_ref (store->icon);
+    }
+
+  /* check if we have a custom icon for this file */
+  custom_icon = thunar_file_get_custom_icon (file);
+  if (custom_icon != NULL)
+    {
+      /* try to load the icon */
+      icon = thunar_icon_factory_lookup_icon (factory, custom_icon, icon_size, FALSE, FALSE);
+      if (G_LIKELY (icon != NULL))
+        return icon;
+    }
+
+  /* check if thumbnails are enabled and we can display a thumbnail for the item */
+  if (thunar_icon_factory_get_show_thumbnail (factory, file)
+      && (thunar_file_is_regular (file) || thunar_file_is_directory (file)) )
+    {
+      /* determine the preview icon first */
+      gicon = thunar_file_get_preview_icon (file);
+
+      /* check if we have a preview icon */
+      if (gicon != NULL)
+        {
+          if (G_IS_THEMED_ICON (gicon))
+            {
+              /* we have a themed preview icon, look it up using the icon theme */
+              icon_info =
+                gtk_icon_theme_lookup_by_gicon (factory->icon_theme,
+                                                gicon, icon_size,
+                                                GTK_ICON_LOOKUP_USE_BUILTIN
+                                                | GTK_ICON_LOOKUP_FORCE_SIZE);
+
+              /* check if the lookup succeeded */
+              if (icon_info != NULL)
+                {
+                  /* try to load the pixbuf from the icon info */
+                  icon = gtk_icon_info_load_icon (icon_info, NULL);
+                  g_object_unref (icon_info);
+                }
+            }
+          else if (G_IS_LOADABLE_ICON (gicon))
+            {
+              /* we have a loadable icon, try to open it for reading */
+              stream = g_loadable_icon_load (G_LOADABLE_ICON (gicon), icon_size,
+                                             NULL, NULL, NULL);
+
+              /* check if we have a valid input stream */
+              if (stream != NULL)
+                {
+                  /* load the pixbuf from the stream */
+                  icon = gdk_pixbuf_new_from_stream_at_scale (stream, icon_size,
+                                                              icon_size, TRUE,
+                                                              NULL, NULL);
+
+                  /* destroy the stream */
+                  g_object_unref (stream);
+                }
+            }
+
+          /* return the icon if we have one */
+          if (icon != NULL)
+            return icon;
+        }
+      else
+        {
+          /* we have no preview icon but the thumbnail should be ready. determine
+           * the filename of the thumbnail */
+          thumbnail_path = thunar_file_get_thumbnail_path (file, factory->thumbnail_size);
+
+          /* check if we have a valid path */
+          if (thumbnail_path != NULL)
+            {
+              /* try to load the thumbnail */
+              icon = thunar_icon_factory_load_from_file (factory, thumbnail_path, icon_size);
+            }
+        }
+    }
+
+  /* lookup the icon name for the icon in the given state and load the icon */
+  if (G_LIKELY (icon == NULL))
+    {
+      icon_name = thunar_file_get_icon_name (file, icon_state, factory->icon_theme);
+      icon = thunar_icon_factory_load_icon (factory, icon_name, icon_size, TRUE, wants_symbolic);
+    }
+
+  if (G_LIKELY (icon != NULL))
+    {
+      store = g_slice_new (ThunarIconStore);
+      store->icon_size = icon_size;
+      store->icon_state = icon_state;
+      store->stamp = factory->theme_stamp;
+      store->thumb_state = thunar_file_get_thumb_state (file);
+      store->icon = g_object_ref (icon);
+
+      g_object_set_qdata_full (G_OBJECT (file), thunar_icon_factory_store_quark,
+                               store, thunar_icon_store_free);
+    }
+
+  return icon;
 }
 
 
@@ -812,11 +973,13 @@ thunar_icon_factory_get_show_thumbnail (const ThunarIconFactory *factory,
 
 /**
  * thunar_icon_factory_load_icon:
- * @factory       : a #ThunarIconFactory instance.
- * @name          : name of the icon to load.
- * @size          : desired icon size.
- * @wants_default : %TRUE to return the fallback icon if no icon of @name
- *                  is found in the @factory.
+ * @factory        : a #ThunarIconFactory instance.
+ * @name           : name of the icon to load.
+ * @size           : desired icon size.
+ * @wants_default  : %TRUE to return the fallback icon if no icon of @name
+ *                   is found in the @factory.
+ * @wants_symbolic : %TRUE to load a symbolic variant of a standard icon if
+ *                   available.
  *
  * Looks up the icon named @name in the icon theme associated with @factory
  * and returns a pixbuf for the icon at the given @size. This function will
@@ -832,7 +995,8 @@ GdkPixbuf*
 thunar_icon_factory_load_icon (ThunarIconFactory        *factory,
                                const gchar              *name,
                                gint                      size,
-                               gboolean                  wants_default)
+                               gboolean                  wants_default,
+                               gboolean                  wants_symbolic)
 {
   _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
   _thunar_return_val_if_fail (size > 0, NULL);
@@ -850,7 +1014,7 @@ thunar_icon_factory_load_icon (ThunarIconFactory        *factory,
     }
 
   /* lookup the icon */
-  return thunar_icon_factory_lookup_icon (factory, name, size, wants_default);
+  return thunar_icon_factory_lookup_icon (factory, name, size, wants_default, wants_symbolic);
 }
 
 
@@ -873,126 +1037,30 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
                                     ThunarFileIconState icon_state,
                                     gint                icon_size)
 {
-  GInputStream    *stream;
-  GtkIconInfo     *icon_info;
-  const gchar     *thumbnail_path;
-  GdkPixbuf       *icon = NULL;
-  GIcon           *gicon;
-  const gchar     *icon_name;
-  const gchar     *custom_icon;
-  ThunarIconStore *store;
+  return _thunar_icon_factory_load_file_icon (factory, file, icon_state, icon_size, FALSE);
+}
 
-  _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
-  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  _thunar_return_val_if_fail (icon_size > 0, NULL);
 
-  /* check if we have a stored icon on the file and it is still valid */
-  store = g_object_get_qdata (G_OBJECT (file), thunar_icon_factory_store_quark);
-  if (store != NULL
-      && store->icon_state == icon_state
-      && store->icon_size == icon_size
-      && store->stamp == factory->theme_stamp
-      && store->thumb_state == thunar_file_get_thumb_state (file))
-    {
-      return g_object_ref (store->icon);
-    }
 
-  /* check if we have a custom icon for this file */
-  custom_icon = thunar_file_get_custom_icon (file);
-  if (custom_icon != NULL)
-    {
-      /* try to load the icon */
-      icon = thunar_icon_factory_lookup_icon (factory, custom_icon, icon_size, FALSE);
-      if (G_LIKELY (icon != NULL))
-        return icon;
-    }
-
-  /* check if thumbnails are enabled and we can display a thumbnail for the item */
-  if (thunar_icon_factory_get_show_thumbnail (factory, file)
-      && (thunar_file_is_regular (file) || thunar_file_is_directory (file)) )
-    {
-      /* determine the preview icon first */
-      gicon = thunar_file_get_preview_icon (file);
-
-      /* check if we have a preview icon */
-      if (gicon != NULL)
-        {
-          if (G_IS_THEMED_ICON (gicon))
-            {
-              /* we have a themed preview icon, look it up using the icon theme */
-              icon_info =
-                gtk_icon_theme_lookup_by_gicon (factory->icon_theme,
-                                                gicon, icon_size,
-                                                GTK_ICON_LOOKUP_USE_BUILTIN
-                                                | GTK_ICON_LOOKUP_FORCE_SIZE);
-
-              /* check if the lookup succeeded */
-              if (icon_info != NULL)
-                {
-                  /* try to load the pixbuf from the icon info */
-                  icon = gtk_icon_info_load_icon (icon_info, NULL);
-                  g_object_unref (icon_info);
-                }
-            }
-          else if (G_IS_LOADABLE_ICON (gicon))
-            {
-              /* we have a loadable icon, try to open it for reading */
-              stream = g_loadable_icon_load (G_LOADABLE_ICON (gicon), icon_size,
-                                             NULL, NULL, NULL);
-
-              /* check if we have a valid input stream */
-              if (stream != NULL)
-                {
-                  /* load the pixbuf from the stream */
-                  icon = gdk_pixbuf_new_from_stream_at_scale (stream, icon_size,
-                                                              icon_size, TRUE,
-                                                              NULL, NULL);
-
-                  /* destroy the stream */
-                  g_object_unref (stream);
-                }
-            }
-
-          /* return the icon if we have one */
-          if (icon != NULL)
-            return icon;
-        }
-      else
-        {
-          /* we have no preview icon but the thumbnail should be ready. determine
-           * the filename of the thumbnail */
-          thumbnail_path = thunar_file_get_thumbnail_path (file, factory->thumbnail_size);
-
-          /* check if we have a valid path */
-          if (thumbnail_path != NULL)
-            {
-              /* try to load the thumbnail */
-              icon = thunar_icon_factory_load_from_file (factory, thumbnail_path, icon_size);
-            }
-        }
-    }
-
-  /* lookup the icon name for the icon in the given state and load the icon */
-  if (G_LIKELY (icon == NULL))
-    {
-      icon_name = thunar_file_get_icon_name (file, icon_state, factory->icon_theme);
-      icon = thunar_icon_factory_load_icon (factory, icon_name, icon_size, TRUE);
-    }
-
-  if (G_LIKELY (icon != NULL))
-    {
-      store = g_slice_new (ThunarIconStore);
-      store->icon_size = icon_size;
-      store->icon_state = icon_state;
-      store->stamp = factory->theme_stamp;
-      store->thumb_state = thunar_file_get_thumb_state (file);
-      store->icon = g_object_ref (icon);
-
-      g_object_set_qdata_full (G_OBJECT (file), thunar_icon_factory_store_quark,
-                               store, thunar_icon_store_free);
-    }
-
-  return icon;
+/**
+ * thunar_icon_factory_load_file_symbolic_icon:
+ * @factory    : a #ThunarIconFactory instance.
+ * @file       : a #ThunarFile.
+ * @icon_state : the desired icon state.
+ * @icon_size  : the desired icon size.
+ *
+ * The caller is responsible to free the returned object using
+ * g_object_unref() when no longer needed.
+ *
+ * Return value: the #GdkPixbuf icon.
+ **/
+GdkPixbuf*
+thunar_icon_factory_load_file_symbolic_icon (ThunarIconFactory  *factory,
+                                             ThunarFile         *file,
+                                             ThunarFileIconState icon_state,
+                                             gint                icon_size)
+{
+  return _thunar_icon_factory_load_file_icon (factory, file, icon_state, icon_size, TRUE);
 }
 
 
