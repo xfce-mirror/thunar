@@ -369,9 +369,6 @@ struct _ThunarWindow
    * see the toggle_sidepane() function.
    */
   GType                   toggle_sidepane_type;
-
-  /* Takes care to select a file after e.g. rename/create */
-  GClosure               *select_files_closure;
 };
 
 
@@ -708,16 +705,12 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect (window, "key-press-event", G_CALLBACK (thunar_window_propagate_key_event), NULL);
   g_signal_connect (window, "key-release-event", G_CALLBACK (thunar_window_propagate_key_event), NULL);
 
-
-  window->select_files_closure = g_cclosure_new_swap (G_CALLBACK (thunar_window_select_files), window, NULL);
-  g_closure_ref (window->select_files_closure);
-  g_closure_sink (window->select_files_closure);
-  window->launcher = g_object_new (THUNAR_TYPE_LAUNCHER, "widget", GTK_WIDGET (window),
-                                  "select-files-closure",  window->select_files_closure, NULL);
+  window->launcher = g_object_new (THUNAR_TYPE_LAUNCHER, "widget", GTK_WIDGET (window), NULL);
 
   exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->launcher), "current-directory");
   g_signal_connect_swapped (G_OBJECT (window->launcher), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
   g_signal_connect_swapped (G_OBJECT (window->launcher), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
+  g_signal_connect_swapped (G_OBJECT (window->launcher), "new-files-created", G_CALLBACK (thunar_window_select_files), window);
   thunar_launcher_append_accelerators (window->launcher, window->accel_group);
 
   /* determine the default window size from the preferences */
@@ -1265,9 +1258,6 @@ thunar_window_finalize (GObject *object)
 
   /* release the preferences reference */
   g_object_unref (window->preferences);
-
-  g_closure_invalidate (window->select_files_closure);
-  g_closure_unref (window->select_files_closure);
 
   (*G_OBJECT_CLASS (thunar_window_parent_class)->finalize) (object);
 }
