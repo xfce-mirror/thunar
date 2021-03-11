@@ -249,7 +249,7 @@ thunar_menu_add_sections (ThunarMenu         *menu,
 {
   GtkWidget *window;
   gboolean   item_added;
-  gboolean   force = menu->type == THUNAR_MENU_TYPE_WINDOW || menu->type == THUNAR_MENU_TYPE_CONTEXT_TREE_VIEW;
+  gboolean   force = menu->type == THUNAR_MENU_TYPE_WINDOW || menu->type == THUNAR_MENU_TYPE_CONTEXT_TREE_VIEW || menu->type == THUNAR_MENU_TYPE_CONTEXT_SHORTCUTS_VIEW;
 
   _thunar_return_val_if_fail (THUNAR_IS_MENU (menu), FALSE);
 
@@ -258,8 +258,8 @@ thunar_menu_add_sections (ThunarMenu         *menu,
       item_added = FALSE;
       item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_CREATE_FOLDER, force) != NULL);
 
-      /* No document creation for tree-view */
-      if (menu->type != THUNAR_MENU_TYPE_CONTEXT_TREE_VIEW)
+      /* No document creation for side pane views */
+      if (menu->type != THUNAR_MENU_TYPE_CONTEXT_TREE_VIEW && menu->type != THUNAR_MENU_TYPE_CONTEXT_SHORTCUTS_VIEW)
         item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_CREATE_DOCUMENT, force) != NULL);
       if (item_added)
          xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
