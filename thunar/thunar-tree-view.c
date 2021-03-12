@@ -194,11 +194,6 @@ struct _ThunarTreeView
   guint                   drop_occurred : 1;
   GList                  *drop_file_list;      /* the list of URIs that are contained in the drop data */
 
-  /* the "new-files" closure, which is used to
-   * open newly created directories once done.
-   */
-  GClosure               *new_files_closure;
-
   /* sometimes we want to keep the cursor on a certain item to allow
    * more intuitive navigation, even though the main view shows another path
    */
@@ -407,15 +402,11 @@ thunar_tree_view_init (ThunarTreeView *view)
   gtk_drag_dest_set (GTK_WIDGET (view), 0, drop_targets, G_N_ELEMENTS (drop_targets),
                      GDK_ACTION_COPY | GDK_ACTION_LINK | GDK_ACTION_MOVE);
 
-  view->new_files_closure = g_cclosure_new_swap (G_CALLBACK (thunar_tree_view_select_files), view, NULL);
-  g_closure_ref (view->new_files_closure);
-  g_closure_sink (view->new_files_closure);
-
-  view->launcher =  g_object_new (THUNAR_TYPE_LAUNCHER, "widget", GTK_WIDGET (view),
-                                                        "select-files-closure", view->new_files_closure, NULL);
+  view->launcher =  g_object_new (THUNAR_TYPE_LAUNCHER, "widget", GTK_WIDGET (view), NULL);
 
   g_signal_connect_swapped (G_OBJECT (view->launcher), "change-directory", G_CALLBACK (thunar_tree_view_action_open), view);
   g_signal_connect_swapped (G_OBJECT (view->launcher), "open-new-tab", G_CALLBACK (thunar_navigator_open_new_tab), view);
+  g_signal_connect_swapped (G_OBJECT (view->launcher), "new-files-created", G_CALLBACK (thunar_tree_view_select_files), view);
   exo_binding_new (G_OBJECT (view), "current-directory", G_OBJECT (view->launcher), "current-directory");
 }
 
@@ -459,13 +450,6 @@ thunar_tree_view_finalize (GObject *object)
 
   /* free the tree model */
   g_object_unref (G_OBJECT (view->model));
-
-  /* drop any existing "new-files" closure */
-  if (G_UNLIKELY (view->new_files_closure != NULL))
-    {
-      g_closure_invalidate (view->new_files_closure);
-      g_closure_unref (view->new_files_closure);
-    }
 
   (*G_OBJECT_CLASS (thunar_tree_view_parent_class)->finalize) (object);
 }
