@@ -1249,9 +1249,9 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
       g_object_set (G_OBJECT (view->launcher), "current-directory", file, NULL);
       thunar_launcher_set_selection (view->launcher, files, device, NULL);
       g_list_free (files);
-      if(thunar_g_file_is_trash    (thunar_file_get_file (file)) ||
-         thunar_g_file_is_computer (thunar_file_get_file (file)) ||
-         thunar_g_file_is_network  (thunar_file_get_file (file)))
+      if (thunar_g_file_is_trash    (thunar_file_get_file (file)) ||
+          thunar_g_file_is_computer (thunar_file_get_file (file)) ||
+          thunar_g_file_is_network  (thunar_file_get_file (file)))
         {
           thunar_launcher_append_menu_item (view->launcher, GTK_MENU_SHELL (context_menu), THUNAR_LAUNCHER_ACTION_OPEN, TRUE);
           thunar_launcher_append_menu_item (view->launcher, GTK_MENU_SHELL (context_menu), THUNAR_LAUNCHER_ACTION_OPEN_IN_TAB, TRUE);
