@@ -233,7 +233,7 @@ struct _ThunarLauncher
   ThunarFile             *single_folder;
   ThunarFile             *parent_folder;
 
-  /* closure which is invoked whenever launcher created new files (create, paste,reanme, ..) */
+  /* closure invoked whenever launcher creates new files (create, paste, rename, etc) */
   GClosure               *new_files_created_closure;
 
   ThunarPreferences      *preferences;
