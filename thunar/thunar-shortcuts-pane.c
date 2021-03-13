@@ -167,9 +167,9 @@ thunar_shortcuts_pane_init (ThunarShortcutsPane *shortcuts_pane)
   /* add widget to css class */
   gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (shortcuts_pane)), "shortcuts-pane");
 
-  /* connect the "shortcut-activated" signal */
-  g_signal_connect_swapped (G_OBJECT (shortcuts_pane->view), "shortcut-activated", G_CALLBACK (thunar_navigator_change_directory), shortcuts_pane);
-  g_signal_connect_swapped (G_OBJECT (shortcuts_pane->view), "shortcut-activated-tab", G_CALLBACK (thunar_navigator_open_new_tab), shortcuts_pane);
+  exo_binding_new (G_OBJECT (shortcuts_pane), "current-directory", G_OBJECT (shortcuts_pane->view), "current-directory");
+  g_signal_connect_swapped (G_OBJECT (shortcuts_pane->view), "change-directory", G_CALLBACK (thunar_navigator_change_directory), shortcuts_pane);
+  g_signal_connect_swapped (G_OBJECT (shortcuts_pane->view), "open_new_tab", G_CALLBACK (thunar_navigator_open_new_tab), shortcuts_pane);
 }
 
 
