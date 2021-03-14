@@ -2921,7 +2921,11 @@ thunar_window_action_go_up (ThunarWindow *window)
     }
   else
     {
-      thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to open parent folder"));
+      /* the root folder '/' has no parent. In this special case we do not need a dialog */
+      if (error->code != G_FILE_ERROR_NOENT)
+        {
+          thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to open parent folder"));
+        }
       g_error_free (error);
     }
 }
