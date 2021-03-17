@@ -1088,6 +1088,7 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   gboolean             can_mount;
   gboolean             can_unmount;
   gboolean             can_eject;
+  const gchar         *eject_label;
 
   /* check if this is an item menu or a header menu */
   gtk_tree_model_get (model, iter, THUNAR_SHORTCUTS_MODEL_COLUMN_IS_HEADER, &is_header, -1);
@@ -1145,6 +1146,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
         can_mount = thunar_device_can_mount (device);
         can_unmount = thunar_device_can_unmount (device);
         can_eject = thunar_device_can_eject (device);
+        eject_label = thunar_device_get_eject_label (device);
 
         if (!can_mount && !can_unmount && !can_eject)
           break;
@@ -1167,7 +1169,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
 
         /* append the "Eject" (safely remove drive) item */
-        item = gtk_menu_item_new_with_mnemonic (_("_Eject"));
+        item = gtk_menu_item_new_with_mnemonic (eject_label);
         gtk_widget_set_visible (item, can_eject);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
         g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_eject), view);
