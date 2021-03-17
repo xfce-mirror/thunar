@@ -48,6 +48,8 @@ enum _ThunarDeviceKind
 
 GType                thunar_device_get_type         (void) G_GNUC_CONST;
 
+const gchar         *thunar_device_get_eject_label  (const ThunarDevice   *device);
+
 gchar               *thunar_device_get_name         (const ThunarDevice   *device) G_GNUC_MALLOC;
 
 GIcon               *thunar_device_get_icon         (const ThunarDevice   *device);
