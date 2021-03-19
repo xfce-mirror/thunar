@@ -1294,6 +1294,7 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
 
   if (group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
   {
+      xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (context_menu));
       item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_SHORTCUTS_VIEW_ACTION_REMOVE_BOOKMARK), G_OBJECT (model), GTK_MENU_SHELL (context_menu));
       g_object_set_data_full (G_OBJECT (item), I_("thunar-shortcuts-row"),
                               gtk_tree_row_reference_new (model, path),
