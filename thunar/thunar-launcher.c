@@ -1439,6 +1439,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
   ThunarClipboardManager   *clipboard;
   ThunarFile               *parent;
   gint                      n;
+  const gchar              *eject_label;
 
   _thunar_return_val_if_fail (THUNAR_IS_LAUNCHER (launcher), NULL);
   _thunar_return_val_if_fail (action_entry != NULL, NULL);
@@ -1703,6 +1704,8 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
           return NULL;
         item = xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
         gtk_widget_set_sensitive (item, thunar_device_can_eject (launcher->device_to_process));
+        eject_label = thunar_device_get_eject_label (launcher->device_to_process);
+        gtk_menu_item_set_label (GTK_MENU_ITEM (item), eject_label);
         return item;
 
       default:
