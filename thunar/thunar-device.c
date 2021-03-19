@@ -488,6 +488,48 @@ thunar_device_can_eject (const ThunarDevice *device)
 
 
 /**
+ * thunar_device_get_eject_label:
+ * @device: a #ThunarDevice
+ *
+ * Obtains the recommended name for the eject action,
+ * specific to GIO's drive type.
+ *
+ * Return value: The recommended name of the eject action. The returned string must not be freed.
+ **/
+const gchar *
+thunar_device_get_eject_label (const ThunarDevice *device)
+{
+    GDrive              *drive = NULL;
+    GDriveStartStopType  start_stop_type = G_DRIVE_START_STOP_TYPE_UNKNOWN;
+
+    if (G_IS_VOLUME (device->device))
+      drive = g_volume_get_drive (device->device);
+
+    if (drive != NULL)
+      {
+        start_stop_type = g_drive_get_start_stop_type (drive);
+        g_object_unref (drive);
+      }
+
+    switch (start_stop_type)
+      {
+      case G_DRIVE_START_STOP_TYPE_SHUTDOWN:
+        return _("_Safely Remove");
+      case G_DRIVE_START_STOP_TYPE_NETWORK:
+        return _("_Disconnect");
+      case G_DRIVE_START_STOP_TYPE_MULTIDISK:
+        return _("_Stop the Multi-Disk Drive");
+      case G_DRIVE_START_STOP_TYPE_PASSWORD:
+        return _("_Lock");
+      case G_DRIVE_START_STOP_TYPE_UNKNOWN:
+      default:
+        return _("_Eject");
+      }
+}
+
+
+
+/**
  * thunar_device_can_mount:
  *
  * If the user should see the option to mount this device.
