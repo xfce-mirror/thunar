@@ -494,7 +494,7 @@ thunar_device_can_eject (const ThunarDevice *device)
  * Obtains the recommended name for the eject action,
  * specific to GIO's drive type.
  *
- * Return value: the recommended name of the eject action
+ * Return value: The recommended name of the eject action. The returned string must not be freed.
  **/
 const gchar *
 thunar_device_get_eject_label (const ThunarDevice *device)
