@@ -3961,6 +3961,44 @@ thunar_window_get_current_directory (ThunarWindow *window)
 
 
 /**
+ * thunar_window_show_date_deleted_column:
+ * @window : a #ThunarWindow instance.
+ * @current_directory : the new directory or %NULL.
+ *
+ * Checks if the current directory is the trash directory.
+ * If yes then the the date_deleted column is made visible, otherwise it is hidden.
+ *
+ * Return value: the directory currently displayed within @window or %NULL.
+ **/
+void
+thunar_window_show_date_deleted_column (ThunarWindow *window,
+                                        ThunarFile   *current_directory)
+{
+  ThunarStandardView* v = THUNAR_STANDARD_VIEW (window->view);
+  gboolean b = THUNAR_IS_DETAILS_VIEW(v);
+  if (!b)
+    return;
+
+  ThunarDetailsView* dv = THUNAR_DETAILS_VIEW (v);
+  if (current_directory)
+    {
+      GFile      *trash_bin;
+      ThunarFile *trash_bin_file;
+      GError     *error = NULL;
+
+      trash_bin = thunar_g_file_new_for_trash ();
+      trash_bin_file = thunar_file_get (trash_bin, &error);
+
+      if (trash_bin_file != current_directory)
+        thunar_details_view_set_date_deleted_column_visible(dv, FALSE);
+      else
+        thunar_details_view_set_date_deleted_column_visible(dv, TRUE);
+    }
+}
+
+
+
+/**
  * thunar_window_set_current_directory:
  * @window            : a #ThunarWindow instance.
  * @current_directory : the new directory or %NULL.
@@ -4040,6 +4078,9 @@ thunar_window_set_current_directory (ThunarWindow *window,
       thunar_window_history_changed (window);
       gtk_widget_set_sensitive (window->location_toolbar_item_parent, !thunar_g_file_is_root (thunar_file_get_file (current_directory)));
     }
+
+  /* show/hide date_deleted column in the trash directory */
+  thunar_window_show_date_deleted_column(window, current_directory);
 
   /* tell everybody that we have a new "current-directory",
    * we do this first so other widgets display the new

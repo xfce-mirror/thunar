@@ -2114,6 +2114,9 @@ thunar_file_get_date (const ThunarFile  *file,
     case THUNAR_FILE_DATE_MODIFIED:
       attribute = G_FILE_ATTRIBUTE_TIME_MODIFIED;
       break;
+    case THUNAR_FILE_DATE_DELETED:
+      return g_file_info_get_deletion_date(file->info) != NULL ? g_date_time_to_unix( g_file_info_get_deletion_date(file->info) ) : 0;
+
     default:
       _thunar_assert_not_reached ();
     }
