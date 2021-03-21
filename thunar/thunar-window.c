@@ -211,6 +211,7 @@ static void      thunar_window_action_open_templates      (ThunarWindow         
 static void      thunar_window_action_open_file_system    (ThunarWindow           *window);
 static void      thunar_window_action_open_trash          (ThunarWindow           *window);
 static void      thunar_window_action_open_network        (ThunarWindow           *window);
+static void      thunar_window_action_create_shortcut     (ThunarWindow           *window);
 static void      thunar_window_action_open_bookmark       (GFile                  *g_file);
 static void      thunar_window_action_open_location       (ThunarWindow           *window);
 static void      thunar_window_action_contents            (ThunarWindow           *window);
@@ -420,9 +421,10 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     { THUNAR_WINDOW_ACTION_OPEN_TRASH,                     "<Actions>/ThunarWindow/open-trash",                      "",                     XFCE_GTK_IMAGE_MENU_ITEM, N_ ("T_rash"),                 N_ ("Display the contents of the trash can"),                                        NULL,                      G_CALLBACK (thunar_window_action_open_trash),         },
     { THUNAR_WINDOW_ACTION_OPEN_PARENT,                    "<Actions>/ThunarWindow/open-parent",                     "<Alt>Up",              XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Open _Parent"),           N_ ("Open the parent folder"),                                                       "go-up-symbolic",          G_CALLBACK (thunar_window_action_go_up),              },
     { THUNAR_WINDOW_ACTION_OPEN_LOCATION,                  "<Actions>/ThunarWindow/open-location",                   "<Primary>l",           XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Open Location..."),      N_ ("Specify a location to open"),                                                   NULL,                      G_CALLBACK (thunar_window_action_open_location),      },
-    { THUNAR_WINDOW_ACTION_OPEN_LOCATION_ALT,              "<Actions>/ThunarWindow/open-location-alt",               "<Alt>d",               XFCE_GTK_MENU_ITEM,       "open-location-alt",           NULL,                                                                                NULL,                      G_CALLBACK (thunar_window_action_open_location),      },
+    { THUNAR_WINDOW_ACTION_OPEN_LOCATION_ALT,              "<Actions>/ThunarWindow/open-location-alt",               "<Alt>d",               XFCE_GTK_MENU_ITEM,       "open-location-alt",           NULL,                                                        NULL,                      G_CALLBACK (thunar_window_action_open_location),      },
     { THUNAR_WINDOW_ACTION_OPEN_TEMPLATES,                 "<Actions>/ThunarWindow/open-templates",                  "",                     XFCE_GTK_IMAGE_MENU_ITEM, N_("T_emplates"),              N_ ("Go to the templates folder"),                                                   "text-x-generic-template", G_CALLBACK (thunar_window_action_open_templates),     },
     { THUNAR_WINDOW_ACTION_OPEN_NETWORK,                   "<Actions>/ThunarWindow/open-network",                    "",                     XFCE_GTK_IMAGE_MENU_ITEM, N_("B_rowse Network"),         N_ ("Browse local network connections"),                                             "network-workgroup",       G_CALLBACK (thunar_window_action_open_network),       },
+    { THUNAR_WINDOW_ACTION_CREATE_SHORTCUT,                "<Actions>/ThunarWindow/create-shortcut",                 "",                     XFCE_GTK_IMAGE_MENU_ITEM, N_("Create Shortcut"),         N_ ("Create a shortcut to the current folder"),                                      NULL,                      G_CALLBACK (thunar_window_action_create_shortcut),     },
 
     { THUNAR_WINDOW_ACTION_HELP_MENU,                      "<Actions>/ThunarWindow/contents/help-menu",              "",                     XFCE_GTK_MENU_ITEM      , N_ ("_Help"),                  NULL, NULL, NULL},
     { THUNAR_WINDOW_ACTION_CONTENTS,                       "<Actions>/ThunarWindow/contents",                        "F1",                   XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Contents"),              N_ ("Display Thunar user manual"),                                                   "help-browser",            G_CALLBACK (thunar_window_action_contents),            },
@@ -1187,6 +1189,8 @@ thunar_window_update_go_menu (ThunarWindow *window,
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_FILE_SYSTEM), G_OBJECT (window), GTK_MENU_SHELL (menu));
   xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_NETWORK), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_CREATE_SHORTCUT), G_OBJECT (window), GTK_MENU_SHELL (menu));
   xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_LOCATION), G_OBJECT (window), GTK_MENU_SHELL (menu));
   gtk_widget_show_all (GTK_WIDGET (menu));
@@ -3519,6 +3523,20 @@ thunar_window_action_open_network (ThunarWindow *window)
 
   /* release our reference on the location itself */
   g_object_unref (network);
+}
+
+
+
+static void
+thunar_window_action_create_shortcut (ThunarWindow *window)
+{
+  const GtkWidget *sidepane;
+
+  sidepane = thunar_window_get_sidepane (THUNAR_WINDOW (window));
+  if (sidepane != NULL  && THUNAR_IS_SHORTCUTS_PANE (sidepane))
+    {
+      thunar_shortcuts_pane_add_shortcut (THUNAR_SHORTCUTS_PANE (sidepane), thunar_window_get_current_directory(window));
+    }
 }
 
 
