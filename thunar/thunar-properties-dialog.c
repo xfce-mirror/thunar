@@ -230,6 +230,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   GtkWidget *chooser;
   GtkWidget *grid;
   GtkWidget *label;
+  GtkWidget *label_content;
   GtkWidget *box;
   GtkWidget *spacer;
   guint      row = 0;
@@ -518,12 +519,28 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_show (label);
 
   label = thunar_size_label_new ();
+  label_content = (GtkWidget *)g_object_get_data(G_OBJECT(label),"content_label");
   exo_binding_new (G_OBJECT (dialog), "files", G_OBJECT (label), "files");
   gtk_widget_set_hexpand (label, TRUE);
   gtk_grid_attach (GTK_GRID (grid), label, 1, row, 1, 1);
   gtk_widget_show (label);
 
+
   ++row;
+
+  label = gtk_label_new (_("Content:"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
+  gtk_widget_show (label);
+
+
+  gtk_label_set_xalign (GTK_LABEL (label_content), 1.0f);
+  gtk_grid_attach (GTK_GRID (grid), label_content, 1, row, 1, 1);
+  gtk_widget_show (label_content);
+
+  ++row;
+
 
   label = gtk_label_new (_("Volume:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
