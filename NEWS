@@ -1,3 +1,44 @@
+4.17.1
+======
+- Use a more specific device eject label (Issue #153)
+- Reload current directory before selecting new files (Issue #524)
+- Shortcuts view: Open new folder after creation
+- ThunarLauncher: Dont expose "select files" closure
+- Use thunar-menu and launcher in shortcuts view (Issue #198)
+- thunar-launcher: Send signal when device operation is started/finished
+- Removed 'the root folder has no parent' dialog box
+- tree-view: Hide menu-item "properties" for unmounted devices
+- Regression: Missing "mount"/"unmount" on tree-view devices
+- thunar-launcher: unpack g_value with correct call
+- Remove watches on shortcuts (Issue #513) (Issue #47)
+- Regression: Select copied files after copy operation (Issue #520)
+- Reintroduce alternative zoom shortcuts (Issue #514)
+- Prevent hangup if a copy task that is blocked is resumed (Issue #467)
+- Improve comments in "thumbnail_needs_frame"
+- Improve device unmount messages (Issue #516)
+- Regression: Allow custom image files for UCA icons (Issue #517)
+- Dont merge folders when creating copy with same name (Issue 491)
+- Fix incorrect return value in scroll event handler (Issue #512)
+- Use wording "queued" instead of "frozen" for jobs (Issue #511)
+- Use wording "queued" instead of "frozen" for jobs (Issue #511)
+- Revamp documentation to modernize/uniformize accross components
+- Remove tray icon and related methods (Issue #495)
+- Regression: Skip app info updates on sendto actions (Issue #502)
+- Regression: Toggle menu visibility on F10 if menu hidden (Issue #498)
+- thunar-launcher: Unify way to set selected device/location/files
+- thunar-launcher: Keep ref on ThunarDevice while poking
+- thunar-launcher: Unify way to set selected device/location/files
+- thunar-launcher: Provide service to open locations (bookmarks)
+- Regression: "Shift" + "Select Trash in menu" has to trigger delete
+- Fix compilation warnings
+- Fix XSLT processor warnings
+- Fix GObject introspection warnings
+- Translation Updates:
+  Basque, Bulgarian, Chinese (China), Czech, Dutch, Estonian, Finnish,
+  French, Galician, German, Greek, Hebrew, Italian, Japanese, Korean,
+  Norwegian Bokmål, Occitan (post 1500), Persian (Iran), Portuguese,
+  Portuguese (Brazil), Serbian, Spanish, Swedish, Turkish, Uyghur
+
 4.17.0
 ======
 - By default show all available volumes (#384)
