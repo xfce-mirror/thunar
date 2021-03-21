@@ -1060,3 +1060,19 @@ thunar_details_view_set_fixed_columns (ThunarDetailsView *details_view,
       g_object_notify (G_OBJECT (details_view), "fixed-columns");
     }
 }
+
+
+
+/**
+ * thunar_details_view_set_date_deleted_column_visible:
+ * @details_view  : a #ThunarDetailsView.
+ * @visible : %TRUE to show the Date Deleted column.
+ *
+ * Shows/hides the Date Deleted column.
+ **/
+void
+thunar_details_view_set_date_deleted_column_visible (ThunarDetailsView *details_view,
+                                                     gboolean           visible)
+{
+  thunar_column_model_set_column_visible (details_view->column_model, THUNAR_COLUMN_DATE_DELETED, visible);
+}
