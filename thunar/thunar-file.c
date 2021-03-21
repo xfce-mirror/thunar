@@ -2094,6 +2094,8 @@ thunar_file_get_date (const ThunarFile  *file,
                       ThunarFileDateType date_type)
 {
   const gchar *attribute;
+  GDateTime   *datetime;
+  gint64       date;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), 0);
 
@@ -2114,6 +2116,14 @@ thunar_file_get_date (const ThunarFile  *file,
     case THUNAR_FILE_DATE_MODIFIED:
       attribute = G_FILE_ATTRIBUTE_TIME_MODIFIED;
       break;
+    case THUNAR_FILE_DATE_DELETED:
+      datetime = g_file_info_get_deletion_date (file->info);
+      if (datetime == NULL)
+        return 0;
+      date = g_date_time_to_unix (datetime);
+      g_date_time_unref (datetime);
+      return date;
+
     default:
       _thunar_assert_not_reached ();
     }
