@@ -3978,6 +3978,10 @@ void
 thunar_window_set_current_directory (ThunarWindow *window,
                                      ThunarFile   *current_directory)
 {
+  ThunarStandardView *v         = NULL;
+  ThunarDetailsView  *dv        = NULL;
+  GFile              *folder    = NULL;
+
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
 
@@ -4055,6 +4059,16 @@ thunar_window_set_current_directory (ThunarWindow *window,
    * state already while the folder view is loading.
    */
   g_object_notify (G_OBJECT (window), "current-directory");
+
+  /* show/hide date_deleted column in the trash directory */
+  v = THUNAR_STANDARD_VIEW (window->view);
+  if (!THUNAR_IS_DETAILS_VIEW(v))
+    return;
+  dv = THUNAR_DETAILS_VIEW (v);
+
+  folder = thunar_file_get_file (current_directory);
+  thunar_details_view_set_date_deleted_column_visible (dv, thunar_g_file_is_trash(folder));
+  g_object_unref ( G_OBJECT (folder));
 }
 
 
