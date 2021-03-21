@@ -573,6 +573,14 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_grid_attach (GTK_GRID (grid), button, 0, 1, 2, 1);
   gtk_widget_show (button);
 
+  button = gtk_check_button_new_with_mnemonic (_("Show Devices above Places"));
+  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "devices-over-places", G_OBJECT (button), "active");
+  gtk_widget_set_tooltip_text (button, _("Select this option to display the Devices section over the Places section on"
+                                         "the side-pane. Applied after restarting."));
+  gtk_widget_set_hexpand (button, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 2, 2, 1);
+  gtk_widget_show (button);
+
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);
