@@ -47,6 +47,7 @@ typedef struct _ThunarFile      ThunarFile;
  * @THUNAR_FILE_DATE_CHANGED  : date of last change to the file meta data or the content.
  * @THUNAR_FILE_DATE_CREATED  : date of file creation.
  * @THUNAR_FILE_DATE_MODIFIED : date of last modification of the file's content.
+ * @THUNAR_FILE_DATE_DELETED  : date of file deletion.
  *
  * The various dates that can be queried about a #ThunarFile. Note, that not all
  * #ThunarFile implementations support all types listed above. See the documentation
@@ -58,6 +59,7 @@ typedef enum
   THUNAR_FILE_DATE_CHANGED,
   THUNAR_FILE_DATE_CREATED,
   THUNAR_FILE_DATE_MODIFIED,
+  THUNAR_FILE_DATE_DELETED,
 } ThunarFileDateType;
 
 /**
