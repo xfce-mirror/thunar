@@ -53,6 +53,7 @@ enum
   PROP_DEFAULT_VIEW,
   PROP_HIDDEN_DEVICES,
   PROP_HIDDEN_BOOKMARKS,
+  PROP_DEVICES_OVER_PLACES,
   PROP_LAST_COMPACT_VIEW_ZOOM_LEVEL,
   PROP_LAST_DETAILS_VIEW_COLUMN_ORDER,
   PROP_LAST_DETAILS_VIEW_COLUMN_WIDTHS,
@@ -205,6 +206,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                           NULL,
                           G_TYPE_STRV,
                           EXO_PARAM_READWRITE);
+
+  /**
+ * ThunarPreferences:devices-over-places:
+ *
+ * Whether to display devices over places in the sidepane.
+ **/
+  preferences_props[PROP_DEVICES_OVER_PLACES] =
+      g_param_spec_boolean ("devices-over-places",
+                            "DevicesOverPlaces",
+                            NULL,
+                            FALSE,
+                            EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-compact-view-zoom-level:

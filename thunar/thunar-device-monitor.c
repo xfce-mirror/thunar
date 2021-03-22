@@ -149,6 +149,7 @@ thunar_device_monitor_class_init (ThunarDeviceMonitorClass *klass)
                                                        G_TYPE_STRV,
                                                        EXO_PARAM_READWRITE));
 
+
   device_monitor_signals[DEVICE_ADDED] =
       g_signal_new (I_("device-added"),
                     G_TYPE_FROM_CLASS (klass),
