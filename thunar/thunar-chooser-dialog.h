@@ -40,6 +40,10 @@ void        thunar_show_chooser_dialog      (gpointer             parent,
                                              ThunarFile          *file,
                                              gboolean             open);
 
+void        thunar_show_set_default_program_chooser_dialog      (gpointer             parent,
+                                                                 ThunarFile          *file,
+                                                                 gboolean             open);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_CHOOSER_DIALOG_H__ */
