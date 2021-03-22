@@ -22,6 +22,7 @@
 
 #include <thunar/thunar-file.h>
 #include <thunar/thunar-device.h>
+#include <thunar/thunar-preferences.h>
 
 G_BEGIN_DECLS;
 
@@ -56,21 +57,24 @@ typedef enum
   THUNAR_SHORTCUTS_MODEL_N_COLUMNS,
 } ThunarShortcutsModelColumn;
 
-#define THUNAR_SHORTCUT_GROUP_DEVICES (THUNAR_SHORTCUT_GROUP_DEVICES_HEADER \
-                                       | THUNAR_SHORTCUT_GROUP_DEVICES_FILESYSTEM \
-                                       | THUNAR_SHORTCUT_GROUP_DEVICES_VOLUMES \
-                                       | THUNAR_SHORTCUT_GROUP_DEVICES_MOUNTS)
-#define THUNAR_SHORTCUT_GROUP_PLACES  (THUNAR_SHORTCUT_GROUP_PLACES_HEADER \
-                                       | THUNAR_SHORTCUT_GROUP_PLACES_DEFAULT \
-                                       | THUNAR_SHORTCUT_GROUP_PLACES_TRASH \
-                                       | THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS \
-                                       | THUNAR_SHORTCUT_GROUP_PLACES_COMPUTER )
+#define THUNAR_SHORTCUT_GROUP_DEVICES (THUNAR_SHORTCUT_GROUP_DEVICES_HEADER_VALUE \
+                                       | THUNAR_SHORTCUT_GROUP_DEVICES_FILESYSTEM_VALUE \
+                                       | THUNAR_SHORTCUT_GROUP_DEVICES_VOLUMES_VALUE \
+                                       | THUNAR_SHORTCUT_GROUP_DEVICES_MOUNTS_VALUE)
+#define THUNAR_SHORTCUT_GROUP_PLACES  (THUNAR_SHORTCUT_GROUP_PLACES_HEADER_VALUE \
+                                       | THUNAR_SHORTCUT_GROUP_PLACES_DEFAULT_VALUE \
+                                       | THUNAR_SHORTCUT_GROUP_PLACES_TRASH_VALUE \
+                                       | THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS_VALUE \
+                                       | THUNAR_SHORTCUT_GROUP_PLACES_COMPUTER_VALUE )
 #define THUNAR_SHORTCUT_GROUP_NETWORK (THUNAR_SHORTCUT_GROUP_NETWORK_HEADER \
                                        | THUNAR_SHORTCUT_GROUP_NETWORK_DEFAULT \
                                        | THUNAR_SHORTCUT_GROUP_NETWORK_MOUNTS)
-#define THUNAR_SHORTCUT_GROUP_HEADER  (THUNAR_SHORTCUT_GROUP_DEVICES_HEADER \
-                                       | THUNAR_SHORTCUT_GROUP_PLACES_HEADER \
+#define THUNAR_SHORTCUT_GROUP_HEADER  (THUNAR_SHORTCUT_GROUP_DEVICES_HEADER_VALUE \
+                                       | THUNAR_SHORTCUT_GROUP_PLACES_HEADER_VALUE \
                                        | THUNAR_SHORTCUT_GROUP_NETWORK_HEADER)
+
+#define DEVICES_COUNT 4
+#define PLACES_COUNT 5
 
 enum _ThunarShortcutGroup
 {
