@@ -1331,6 +1331,81 @@ thunar_show_chooser_dialog (gpointer    parent,
   gtk_widget_show (dialog);
 }
 
+void
+thunar_show_set_default_program_chooser_dialog (gpointer    parent,
+                                                ThunarFile *file,
+                                                gboolean    open)
+{
+  ThunarApplication *application;
+  GdkScreen         *screen;
+  GtkWidget         *dialog;
+  GtkWidget         *window = NULL;
+
+  GList             *children;
+
+  _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  /* determine the screen for the dialog */
+  if (G_UNLIKELY (parent == NULL))
+    {
+      /* just use the default screen, no toplevel window */
+      screen = gdk_screen_get_default ();
+    }
+  else if (GTK_IS_WIDGET (parent))
+    {
+      /* use the screen for the widget and the toplevel window */
+      screen = gtk_widget_get_screen (parent);
+      window = gtk_widget_get_toplevel (parent);
+    }
+  else
+    {
+      /* parent is a screen, no toplevel window */
+      screen = GDK_SCREEN (parent);
+    }
+
+  /* display the chooser dialog */
+  dialog = g_object_new (THUNAR_TYPE_CHOOSER_DIALOG,
+                         "file", file,
+                         "open", open,
+                         "screen", screen,
+                         NULL);
+
+  gtk_window_set_title (GTK_WINDOW (dialog), _("Set Default Program"));
+  
+  /* this code manually iterate over dialog box and checkmark the check box*/
+  children = gtk_container_get_children(GTK_CONTAINER(dialog));
+  children = gtk_container_get_children(GTK_CONTAINER(children->data));
+  children = gtk_container_get_children(GTK_CONTAINER(children->data));
+  children = children->next;
+  children = gtk_container_get_children(GTK_CONTAINER(children->data));
+  children = children->next;
+  children = children->next;
+
+  if(GTK_IS_CHECK_BUTTON (children->data))
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (children->data), TRUE);
+  
+  /* check if we have a toplevel window */
+  if (G_LIKELY (window != NULL && gtk_widget_get_toplevel (window)))
+    {
+      /* dialog is transient for toplevel window and modal */
+      gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
+      gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
+      gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
+    }
+
+  /* destroy the dialog after a user interaction */
+  g_signal_connect_after (G_OBJECT (dialog), "response", G_CALLBACK (gtk_widget_destroy), NULL);
+
+  /* let the application handle the dialog */
+  application = thunar_application_get ();
+  thunar_application_take_window (application, GTK_WINDOW (dialog));
+  g_object_unref (G_OBJECT (application));
+
+  /* display the dialog */
+  gtk_widget_show (dialog);
+}
+
 
 
 
