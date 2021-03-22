@@ -1185,7 +1185,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
         /* append the "Create Shortcut" item */
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-        item = gtk_image_menu_item_new_with_mnemonic (_("Create _Shortcut"));
+        item = gtk_image_menu_item_new_with_mnemonic (_("Create _Bookmark"));
 G_GNUC_END_IGNORE_DEPRECATIONS
         gtk_widget_set_sensitive (item, mount_point != NULL && !thunar_shortcuts_model_has_bookmark (THUNAR_SHORTCUTS_MODEL (shortcuts_model), mount_point));
         g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_create_shortcut), view);
@@ -1279,7 +1279,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
       gtk_widget_show (item);
 
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
-      item = gtk_image_menu_item_new_with_mnemonic (_("_Remove Shortcut"));
+      item = gtk_image_menu_item_new_with_mnemonic (_("_Remove Bookmark"));
 G_GNUC_END_IGNORE_DEPRECATIONS
       g_object_set_data_full (G_OBJECT (item), I_("thunar-shortcuts-row"),
                               gtk_tree_row_reference_new (model, path),
@@ -1296,7 +1296,7 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 G_GNUC_END_IGNORE_DEPRECATIONS
 
       /* append the rename menu item */
-      item = gtk_menu_item_new_with_mnemonic (_("Re_name Shortcut"));
+      item = gtk_menu_item_new_with_mnemonic (_("Re_name Bookmark"));
       g_object_set_data_full (G_OBJECT (item), I_("thunar-shortcuts-row"),
                               gtk_tree_row_reference_new (model, path),
                               (GDestroyNotify) gtk_tree_row_reference_free);
@@ -1646,7 +1646,7 @@ thunar_shortcuts_view_drop_uri_list (ThunarShortcutsView *view,
   if (G_UNLIKELY (error != NULL))
     {
       /* display an error message to the user */
-      thunar_dialogs_show_error (GTK_WIDGET (view), error, _("Failed to add new shortcut"));
+      thunar_dialogs_show_error (GTK_WIDGET (view), error, _("Failed to add new bookmark"));
 
       /* release the error */
       g_error_free (error);
