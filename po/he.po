@@ -17,8 +17,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-19 12:45+0100\n"
-"PO-Revision-Date: 2021-03-20 18:26+0000\n"
+"POT-Creation-Date: 2021-03-23 00:45+0100\n"
+"PO-Revision-Date: 2021-03-23 12:40+0000\n"
 "Last-Translator: Elishai Eliyahu <elishai@mailfence.com>\n"
 "Language-Team: Hebrew (http://www.transifex.com/xfce/thunar/language/he/)\n"
 "MIME-Version: 1.0\n"
@@ -535,8 +535,8 @@ msgstr "ה_רחב את גדלי העמודות אוטומטית לפי הצור�
 #. the file_time is invalid
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:872 ../thunar/thunar-list-model.c:745
-#: ../thunar/thunar-list-model.c:781
+#: ../thunar/thunar-column-model.c:872 ../thunar/thunar-list-model.c:757
+#: ../thunar/thunar-list-model.c:793
 #: ../thunar/thunar-permissions-chooser.c:232 ../thunar/thunar-util.c:491
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:513
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:293
@@ -828,44 +828,48 @@ msgid "Date Modified"
 msgstr "תאריך שינוי"
 
 #: ../thunar/thunar-enum-types.c:104
+msgid "Date Deleted"
+msgstr "תאריך מחיקה"
+
+#: ../thunar/thunar-enum-types.c:105
 msgid "Group"
 msgstr "קבוצה"
 
-#: ../thunar/thunar-enum-types.c:105
+#: ../thunar/thunar-enum-types.c:106
 msgid "MIME Type"
 msgstr "סוג MIME"
 
-#: ../thunar/thunar-enum-types.c:106 ../thunar/thunar-renamer-dialog.c:417
+#: ../thunar/thunar-enum-types.c:107 ../thunar/thunar-renamer-dialog.c:417
 #: ../thunarx/thunarx-renamer.c:164
 msgid "Name"
 msgstr "שם"
 
-#: ../thunar/thunar-enum-types.c:107
+#: ../thunar/thunar-enum-types.c:108
 msgid "Owner"
 msgstr "בעלים"
 
 #. Permissions chooser
-#: ../thunar/thunar-enum-types.c:108 ../thunar/thunar-properties-dialog.c:598
+#: ../thunar/thunar-enum-types.c:109 ../thunar/thunar-properties-dialog.c:598
 msgid "Permissions"
 msgstr "הרשאות"
 
-#: ../thunar/thunar-enum-types.c:109
+#: ../thunar/thunar-enum-types.c:110
 msgid "Size"
 msgstr "גודל"
 
-#: ../thunar/thunar-enum-types.c:110
+#: ../thunar/thunar-enum-types.c:111
 msgid "Size in Bytes"
 msgstr "גודל בבייטים"
 
-#: ../thunar/thunar-enum-types.c:111
+#: ../thunar/thunar-enum-types.c:112
 msgid "Type"
 msgstr "סוג"
 
-#: ../thunar/thunar-enum-types.c:112
+#: ../thunar/thunar-enum-types.c:113
 msgid "File"
 msgstr "קובץ"
 
-#: ../thunar/thunar-enum-types.c:113
+#: ../thunar/thunar-enum-types.c:114
 msgid "File Name"
 msgstr "שם קובץ"
 
@@ -1006,8 +1010,8 @@ msgid "%s (copy %u)"
 msgstr "%s (עותק %u)"
 
 #. I18N: name for first link to basename
-#: ../thunar/thunar-io-jobs-util.c:121 ../thunar/thunar-list-model.c:803
-#: ../thunar/thunar-list-model.c:1671 ../thunar/thunar-list-model.c:1682
+#: ../thunar/thunar-io-jobs-util.c:121 ../thunar/thunar-list-model.c:815
+#: ../thunar/thunar-list-model.c:1710 ../thunar/thunar-list-model.c:1721
 #: ../thunar/thunar-properties-dialog.c:1033
 #, c-format
 msgid "link to %s"
@@ -1439,7 +1443,7 @@ msgstr[1] "פתח את הקבצים הנבחרים בעזרת יישומי בר�
 msgstr[2] "פתח את הקבצים הנבחרים בעזרת יישומי ברירת מחדל"
 msgstr[3] "פתח את הקבצים הנבחרים בעזרת יישומי ברירת מחדל"
 
-#: ../thunar/thunar-list-model.c:2398
+#: ../thunar/thunar-list-model.c:2437
 #, c-format
 msgid "%d file: %s"
 msgid_plural "%d files: %s"
@@ -1448,7 +1452,7 @@ msgstr[1] "%d קובץ: %s"
 msgstr[2] "%d קובץ: %s"
 msgstr[3] "%d קבצים: %s"
 
-#: ../thunar/thunar-list-model.c:2406
+#: ../thunar/thunar-list-model.c:2445
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
@@ -1457,7 +1461,7 @@ msgstr[1] "%d תיקייה"
 msgstr[2] "%d תיקייה"
 msgstr[3] "%d תיקיות"
 
-#: ../thunar/thunar-list-model.c:2412
+#: ../thunar/thunar-list-model.c:2451
 #, c-format
 msgid "0 items"
 msgstr "0 פריטים"
@@ -1467,45 +1471,45 @@ msgstr "0 פריטים"
 #. * is between the message about the number of folders
 #. * and the number of items in the selection
 #. TRANSLATORS: string moved from line 2573 to here
-#: ../thunar/thunar-list-model.c:2424
+#: ../thunar/thunar-list-model.c:2463
 #, c-format
 msgid "%s, %s"
 msgstr "%s, %s"
 
-#: ../thunar/thunar-list-model.c:2503
+#: ../thunar/thunar-list-model.c:2542
 #, c-format
 msgid "%s, Free space: %s"
 msgstr "%s, מקום פנוי: %s"
 
-#: ../thunar/thunar-list-model.c:2528
+#: ../thunar/thunar-list-model.c:2567
 #, c-format
 msgid "\"%s\": broken link"
 msgstr "\"%s\": קישור מקולקל"
 
-#: ../thunar/thunar-list-model.c:2533
+#: ../thunar/thunar-list-model.c:2572
 #, c-format
 msgid "\"%s\": %s link to %s"
 msgstr "\"%s\": %s קישור אל %s"
 
-#: ../thunar/thunar-list-model.c:2539
+#: ../thunar/thunar-list-model.c:2578
 #, c-format
 msgid "\"%s\": shortcut"
 msgstr "\"%s\": קיצור דרך"
 
-#: ../thunar/thunar-list-model.c:2543
+#: ../thunar/thunar-list-model.c:2582
 #, c-format
 msgid "\"%s\": mountable"
 msgstr "\"%s\": ניתן לעגינה"
 
 #. I18N, first %s is the display name of the file, 2nd the file size, 3rd the
 #. content type
-#: ../thunar/thunar-list-model.c:2550
+#: ../thunar/thunar-list-model.c:2589
 #, c-format
 msgid "\"%s\": %s %s"
 msgstr "\"%s\": %s %s"
 
 #. I18N, first %s is the display name of the file, second the content type
-#: ../thunar/thunar-list-model.c:2559
+#: ../thunar/thunar-list-model.c:2598
 #, c-format
 msgid "\"%s\": %s"
 msgstr "\"%s\": %s"
@@ -1515,17 +1519,17 @@ msgstr "\"%s\": %s"
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: ../thunar/thunar-list-model.c:2569 ../thunar/thunar-properties-dialog.c:402
+#: ../thunar/thunar-list-model.c:2608 ../thunar/thunar-properties-dialog.c:402
 msgid "Original Path:"
 msgstr "נתיב מקורי:"
 
 #. append the image dimensions to the statusbar text
-#: ../thunar/thunar-list-model.c:2592
+#: ../thunar/thunar-list-model.c:2631
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:153
 msgid "Image Size:"
 msgstr "גודל תמונה:"
 
-#: ../thunar/thunar-list-model.c:2610
+#: ../thunar/thunar-list-model.c:2649
 #, c-format
 msgid "Selection: %s"
 msgstr "בחירה: %s"
@@ -2446,13 +2450,13 @@ msgstr "_שנה שם קיצור"
 msgid "_Remove Shortcut"
 msgstr "_הסר קיצור"
 
-#: ../thunar/thunar-shortcuts-view.c:1630
+#: ../thunar/thunar-shortcuts-view.c:1631
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "הנתיב \"%s\" לא מתייחס לספריה"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1650
+#: ../thunar/thunar-shortcuts-view.c:1651
 msgid "Failed to add new shortcut"
 msgstr "נכשל להוסיף קיצור חדש"
 
