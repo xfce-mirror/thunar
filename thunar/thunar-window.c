@@ -2976,6 +2976,8 @@ static void
 thunar_window_action_detailed_view (ThunarWindow *window)
 {
   thunar_window_action_view_changed (window, THUNAR_TYPE_DETAILS_VIEW);
+  thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view),
+                                                       thunar_g_file_is_trash (thunar_file_get_file (window->current_directory)));
 }
 
 
