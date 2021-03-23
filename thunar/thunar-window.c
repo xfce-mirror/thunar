@@ -3657,12 +3657,11 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
   else
     name = thunar_file_get_display_name (current_directory);
 
-  g_free (parse_name);
-
   /* set window title */
   title = g_strdup_printf ("%s - %s", name, "Thunar");
   gtk_window_set_title (GTK_WINDOW (window), title);
   g_free (title);
+  g_free (parse_name);
 
   /* set window icon */
   thunar_window_update_window_icon (window);
