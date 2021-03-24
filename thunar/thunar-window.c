@@ -4060,14 +4060,18 @@ thunar_window_set_current_directory (ThunarWindow *window,
    */
   g_object_notify (G_OBJECT (window), "current-directory");
 
-  /* show/hide date_deleted column in the trash directory */
+  /* show/hide date_deleted column/sortBy in the trash directory */
   if (current_directory == NULL)
-    return;
-  if (THUNAR_IS_DETAILS_VIEW (window->view) == FALSE)
     return;
 
   folder = thunar_file_get_file (current_directory);
-  thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), thunar_g_file_is_trash (folder));
+  gboolean isTrashFolder = thunar_g_file_is_trash (folder);
+  THUNAR_STANDARD_VIEW (window->view)->showSortByDateDeleted = isTrashFolder;
+
+  if (THUNAR_IS_DETAILS_VIEW (window->view) == FALSE)
+    return;
+
+  thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), isTrashFolder);
 }
 
 
