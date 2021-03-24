@@ -268,6 +268,7 @@ static void                 thunar_standard_view_disconnect_accelerators    (Thu
 static void                 thunar_standard_view_action_sort_by_name               (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_sort_by_type               (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_sort_by_date               (ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_action_sort_by_date_deleted       (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_sort_by_size               (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_sort_ascending             (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_sort_descending            (ThunarStandardView       *standard_view);
@@ -363,6 +364,7 @@ static XfceGtkActionEntry thunar_standard_view_action_entries[] =
     { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_SIZE,       "<Actions>/ThunarStandardView/sort-by-size",       "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Size"),              N_ ("Keep items sorted by their size"),                   NULL, G_CALLBACK (thunar_standard_view_action_sort_by_size),    },
     { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_TYPE,       "<Actions>/ThunarStandardView/sort-by-type",       "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Type"),              N_ ("Keep items sorted by their type"),                   NULL, G_CALLBACK (thunar_standard_view_action_sort_by_type),    },
     { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_MTIME,      "<Actions>/ThunarStandardView/sort-by-mtime",      "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("By Modification _Date"), N_ ("Keep items sorted by their modification date"),      NULL, G_CALLBACK (thunar_standard_view_action_sort_by_date),    },
+    { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_DTIME,      "<Actions>/ThunarStandardView/sort-by-dtime",      "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("By D_eletion Date"),     N_ ("Keep items sorted by their deletion date"),          NULL, G_CALLBACK (thunar_standard_view_action_sort_by_date_deleted), },
     { THUNAR_STANDARD_VIEW_ACTION_SORT_ASCENDING,     "<Actions>/ThunarStandardView/sort-ascending",     "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Ascending"),            N_ ("Sort items in ascending order"),                     NULL, G_CALLBACK (thunar_standard_view_action_sort_ascending),  },
     { THUNAR_STANDARD_VIEW_ACTION_SORT_DESCENDING,    "<Actions>/ThunarStandardView/sort-descending",    "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Descending"),           N_ ("Sort items in descending order"),                    NULL, G_CALLBACK (thunar_standard_view_action_sort_descending), },
 };
@@ -446,6 +448,12 @@ static void
 thunar_standard_view_action_sort_by_date (ThunarStandardView *standard_view)
 {
   thunar_standard_view_set_sort_column (standard_view, THUNAR_COLUMN_DATE_MODIFIED);
+}
+
+static void
+thunar_standard_view_action_sort_by_date_deleted (ThunarStandardView *standard_view)
+{
+  thunar_standard_view_set_sort_column (standard_view, THUNAR_COLUMN_DATE_DELETED);
 }
 
 static void
@@ -3855,6 +3863,9 @@ thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
                                                    standard_view->priv->sort_column == THUNAR_COLUMN_TYPE, GTK_MENU_SHELL (submenu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_BY_MTIME), G_OBJECT (standard_view),
                                                    standard_view->priv->sort_column == THUNAR_COLUMN_DATE_MODIFIED, GTK_MENU_SHELL (submenu));
+  if (thunar_g_file_is_trash (thunar_file_get_file (standard_view->priv->current_directory)))
+    xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_BY_DTIME), G_OBJECT (standard_view),
+                                                     standard_view->priv->sort_column == THUNAR_COLUMN_DATE_DELETED, GTK_MENU_SHELL (submenu));
   xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_ASCENDING), G_OBJECT (standard_view),
                                                    standard_view->priv->sort_order == GTK_SORT_ASCENDING, GTK_MENU_SHELL (submenu));
