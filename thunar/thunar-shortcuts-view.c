@@ -49,6 +49,16 @@
 #include <thunar/thunar-shortcuts-view.h>
 
 
+extern unsigned int THUNAR_SHORTCUT_GROUP_PLACES_HEADER_VALUE;
+extern unsigned int THUNAR_SHORTCUT_GROUP_PLACES_COMPUTER_VALUE;
+extern unsigned int THUNAR_SHORTCUT_GROUP_PLACES_DEFAULT_VALUE;
+extern unsigned int THUNAR_SHORTCUT_GROUP_PLACES_TRASH_VALUE;
+extern unsigned int THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS_VALUE;
+
+extern unsigned int THUNAR_SHORTCUT_GROUP_DEVICES_HEADER_VALUE;
+extern unsigned int THUNAR_SHORTCUT_GROUP_DEVICES_FILESYSTEM_VALUE;
+extern unsigned int THUNAR_SHORTCUT_GROUP_DEVICES_VOLUMES_VALUE;
+extern unsigned int THUNAR_SHORTCUT_GROUP_DEVICES_MOUNTS_VALUE;
 
 /* Property identifiers */
 enum
@@ -1292,7 +1302,7 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   else
       g_error("Unknown type");
 
-  if (group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS)
+  if (group == THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS_VALUE)
   {
       xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (context_menu));
       item = xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_SHORTCUTS_VIEW_ACTION_REMOVE_BOOKMARK), G_OBJECT (model), GTK_MENU_SHELL (context_menu));
