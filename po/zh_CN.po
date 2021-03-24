@@ -22,8 +22,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-19 12:45+0100\n"
-"PO-Revision-Date: 2021-03-20 15:13+0000\n"
+"POT-Creation-Date: 2021-03-23 00:45+0100\n"
+"PO-Revision-Date: 2021-03-23 23:54+0000\n"
 "Last-Translator: 玉堂白鹤 <yjwork@qq.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/xfce/thunar/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
@@ -537,8 +537,8 @@ msgstr "按需求自动扩展栏(_E)"
 #. the file_time is invalid
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:872 ../thunar/thunar-list-model.c:745
-#: ../thunar/thunar-list-model.c:781
+#: ../thunar/thunar-column-model.c:872 ../thunar/thunar-list-model.c:757
+#: ../thunar/thunar-list-model.c:793
 #: ../thunar/thunar-permissions-chooser.c:232 ../thunar/thunar-util.c:491
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:513
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:293
@@ -830,44 +830,48 @@ msgid "Date Modified"
 msgstr "修改时间"
 
 #: ../thunar/thunar-enum-types.c:104
+msgid "Date Deleted"
+msgstr "删除日期"
+
+#: ../thunar/thunar-enum-types.c:105
 msgid "Group"
 msgstr "群组"
 
-#: ../thunar/thunar-enum-types.c:105
+#: ../thunar/thunar-enum-types.c:106
 msgid "MIME Type"
 msgstr "MIME 类型"
 
-#: ../thunar/thunar-enum-types.c:106 ../thunar/thunar-renamer-dialog.c:417
+#: ../thunar/thunar-enum-types.c:107 ../thunar/thunar-renamer-dialog.c:417
 #: ../thunarx/thunarx-renamer.c:164
 msgid "Name"
 msgstr "名称"
 
-#: ../thunar/thunar-enum-types.c:107
+#: ../thunar/thunar-enum-types.c:108
 msgid "Owner"
 msgstr "所有者"
 
 #. Permissions chooser
-#: ../thunar/thunar-enum-types.c:108 ../thunar/thunar-properties-dialog.c:598
+#: ../thunar/thunar-enum-types.c:109 ../thunar/thunar-properties-dialog.c:598
 msgid "Permissions"
 msgstr "权限"
 
-#: ../thunar/thunar-enum-types.c:109
+#: ../thunar/thunar-enum-types.c:110
 msgid "Size"
 msgstr "大小"
 
-#: ../thunar/thunar-enum-types.c:110
+#: ../thunar/thunar-enum-types.c:111
 msgid "Size in Bytes"
 msgstr "按字节计算的大小"
 
-#: ../thunar/thunar-enum-types.c:111
+#: ../thunar/thunar-enum-types.c:112
 msgid "Type"
 msgstr "类型"
 
-#: ../thunar/thunar-enum-types.c:112
+#: ../thunar/thunar-enum-types.c:113
 msgid "File"
 msgstr "文件"
 
-#: ../thunar/thunar-enum-types.c:113
+#: ../thunar/thunar-enum-types.c:114
 msgid "File Name"
 msgstr "文件名"
 
@@ -1008,8 +1012,8 @@ msgid "%s (copy %u)"
 msgstr "%s (复制 %u)"
 
 #. I18N: name for first link to basename
-#: ../thunar/thunar-io-jobs-util.c:121 ../thunar/thunar-list-model.c:803
-#: ../thunar/thunar-list-model.c:1671 ../thunar/thunar-list-model.c:1682
+#: ../thunar/thunar-io-jobs-util.c:121 ../thunar/thunar-list-model.c:815
+#: ../thunar/thunar-list-model.c:1710 ../thunar/thunar-list-model.c:1721
 #: ../thunar/thunar-properties-dialog.c:1033
 #, c-format
 msgid "link to %s"
@@ -1369,19 +1373,19 @@ msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
 msgstr[0] "用默认的应用程序打开选中的文件"
 
-#: ../thunar/thunar-list-model.c:2398
+#: ../thunar/thunar-list-model.c:2437
 #, c-format
 msgid "%d file: %s"
 msgid_plural "%d files: %s"
 msgstr[0] "%d 个文件: %s"
 
-#: ../thunar/thunar-list-model.c:2406
+#: ../thunar/thunar-list-model.c:2445
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
 msgstr[0] "%d 个文件夹"
 
-#: ../thunar/thunar-list-model.c:2412
+#: ../thunar/thunar-list-model.c:2451
 #, c-format
 msgid "0 items"
 msgstr "0个项目"
@@ -1391,45 +1395,45 @@ msgstr "0个项目"
 #. * is between the message about the number of folders
 #. * and the number of items in the selection
 #. TRANSLATORS: string moved from line 2573 to here
-#: ../thunar/thunar-list-model.c:2424
+#: ../thunar/thunar-list-model.c:2463
 #, c-format
 msgid "%s, %s"
 msgstr "%s，%s"
 
-#: ../thunar/thunar-list-model.c:2503
+#: ../thunar/thunar-list-model.c:2542
 #, c-format
 msgid "%s, Free space: %s"
 msgstr "%s, 可用空间: %s"
 
-#: ../thunar/thunar-list-model.c:2528
+#: ../thunar/thunar-list-model.c:2567
 #, c-format
 msgid "\"%s\": broken link"
 msgstr "\"%s\": 无效链接"
 
-#: ../thunar/thunar-list-model.c:2533
+#: ../thunar/thunar-list-model.c:2572
 #, c-format
 msgid "\"%s\": %s link to %s"
 msgstr "\"%s\": %s 链接至 %s"
 
-#: ../thunar/thunar-list-model.c:2539
+#: ../thunar/thunar-list-model.c:2578
 #, c-format
 msgid "\"%s\": shortcut"
 msgstr "\"%s\": 快捷方式"
 
-#: ../thunar/thunar-list-model.c:2543
+#: ../thunar/thunar-list-model.c:2582
 #, c-format
 msgid "\"%s\": mountable"
 msgstr "\"%s\": 可挂载"
 
 #. I18N, first %s is the display name of the file, 2nd the file size, 3rd the
 #. content type
-#: ../thunar/thunar-list-model.c:2550
+#: ../thunar/thunar-list-model.c:2589
 #, c-format
 msgid "\"%s\": %s %s"
 msgstr "\"%s\": %s %s"
 
 #. I18N, first %s is the display name of the file, second the content type
-#: ../thunar/thunar-list-model.c:2559
+#: ../thunar/thunar-list-model.c:2598
 #, c-format
 msgid "\"%s\": %s"
 msgstr "\"%s\": %s"
@@ -1439,17 +1443,17 @@ msgstr "\"%s\": %s"
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: ../thunar/thunar-list-model.c:2569 ../thunar/thunar-properties-dialog.c:402
+#: ../thunar/thunar-list-model.c:2608 ../thunar/thunar-properties-dialog.c:402
 msgid "Original Path:"
 msgstr "原路径:"
 
 #. append the image dimensions to the statusbar text
-#: ../thunar/thunar-list-model.c:2592
+#: ../thunar/thunar-list-model.c:2631
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:153
 msgid "Image Size:"
 msgstr "图片大小:"
 
-#: ../thunar/thunar-list-model.c:2610
+#: ../thunar/thunar-list-model.c:2649
 #, c-format
 msgid "Selection: %s"
 msgstr "选择: %s"
@@ -2361,13 +2365,13 @@ msgstr "重命名快捷方式(_N)"
 msgid "_Remove Shortcut"
 msgstr "移除快捷方式(_R)"
 
-#: ../thunar/thunar-shortcuts-view.c:1630
+#: ../thunar/thunar-shortcuts-view.c:1631
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "路径 “%s” 没有指向某个目录"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1650
+#: ../thunar/thunar-shortcuts-view.c:1651
 msgid "Failed to add new shortcut"
 msgstr "无法添加新的快捷方式"
 
