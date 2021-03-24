@@ -52,6 +52,7 @@ typedef enum
   THUNAR_STANDARD_VIEW_ACTION_SORT_BY_SIZE,
   THUNAR_STANDARD_VIEW_ACTION_SORT_BY_TYPE,
   THUNAR_STANDARD_VIEW_ACTION_SORT_BY_MTIME,
+  THUNAR_STANDARD_VIEW_ACTION_SORT_BY_DTIME,
   THUNAR_STANDARD_VIEW_ACTION_SORT_ASCENDING,
   THUNAR_STANDARD_VIEW_ACTION_SORT_DESCENDING,
   THUNAR_STANDARD_VIEW_ACTION_SORT_ORDER_TOGGLE,
@@ -153,6 +154,8 @@ struct _ThunarStandardView
   ExoBinding                *loading_binding;
   gboolean                   loading;
   GtkAccelGroup             *accel_group;
+
+  gboolean                   showSortByDateDeleted;
 
   ThunarStandardViewPrivate *priv;
 };
