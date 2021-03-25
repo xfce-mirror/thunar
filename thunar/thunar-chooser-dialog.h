@@ -38,11 +38,8 @@ GType       thunar_chooser_dialog_get_type  (void) G_GNUC_CONST;
 
 void        thunar_show_chooser_dialog      (gpointer             parent,
                                              ThunarFile          *file,
-                                             gboolean             open);
-
-void        thunar_show_set_default_program_chooser_dialog      (gpointer             parent,
-                                                                 ThunarFile          *file,
-                                                                 gboolean             open);
+                                             gboolean             open,
+                                             gboolean             preselect_default_checkbox);
 
 G_END_DECLS;
 
