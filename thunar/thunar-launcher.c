@@ -3042,7 +3042,7 @@ thunar_launcher_append_open_section (ThunarLauncher *launcher,
     {
       if (launcher->n_files_to_process == 1) {
         thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_OPEN_WITH_OTHER, FALSE);
-        xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
+        xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
         thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_SET_DEFAULT_APP, FALSE);
       }
     }
