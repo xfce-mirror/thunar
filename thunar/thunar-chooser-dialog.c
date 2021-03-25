@@ -98,6 +98,7 @@ static void        thunar_chooser_dialog_set_open            (ThunarChooserDialo
                                                               gboolean             open);
 
 
+
 struct _ThunarChooserDialogClass
 {
   ThunarAbstractDialogClass __parent__;
@@ -331,7 +332,7 @@ thunar_chooser_dialog_get_property (GObject    *object,
     case PROP_OPEN:
       g_value_set_boolean (value, thunar_chooser_dialog_get_open (dialog));
       break;
-
+    
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -1258,11 +1259,13 @@ thunar_chooser_dialog_set_open (ThunarChooserDialog *dialog,
 
 /**
  * thunar_show_chooser_dialog:
- * @parent : the #GtkWidget or the #GdkScreen on which to open the
- *           dialog. May also be %NULL in which case the default
- *           #GdkScreen will be used.
- * @file   : the #ThunarFile for which an application should be chosen.
- * @open   : whether to also open the @file.
+ * @parent                      : the #GtkWidget or the #GdkScreen on which to open the
+ *                                dialog. May also be %NULL in which case the default
+ *                                #GdkScreen will be used.
+ * @file                        : the #ThunarFile for which an application should be chosen.
+ * @open                        : whether to also open the @file.
+ * @preselect_default_checkbox  : Check the checkbox by default and
+ *                                set the title "Set Default Application" of chooser dialog box.
  *
  * Convenience function to display a #ThunarChooserDialog with the
  * given parameters.
@@ -1275,7 +1278,8 @@ thunar_chooser_dialog_set_open (ThunarChooserDialog *dialog,
 void
 thunar_show_chooser_dialog (gpointer    parent,
                             ThunarFile *file,
-                            gboolean    open)
+                            gboolean    open,
+                            gboolean    preselect_default_checkbox)
 {
   ThunarApplication *application;
   GdkScreen         *screen;
@@ -1309,6 +1313,13 @@ thunar_show_chooser_dialog (gpointer    parent,
                          "open", open,
                          "screen", screen,
                          NULL);
+
+  /* change title of chooser dialog box and checked the checkbox when it is used for select default application */
+  if (preselect_default_checkbox)
+  {
+    gtk_window_set_title (GTK_WINDOW (dialog), _("Set Default Application"));
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (THUNAR_CHOOSER_DIALOG (dialog)->default_button), preselect_default_checkbox);
+  }
 
   /* check if we have a toplevel window */
   if (G_LIKELY (window != NULL && gtk_widget_get_toplevel (window)))
