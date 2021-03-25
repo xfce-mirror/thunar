@@ -171,7 +171,7 @@ static void                    thunar_launcher_action_open_in_new_tabs    (Thuna
 static void                    thunar_launcher_action_open_in_new_windows (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_open_location       (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_open_with_other     (ThunarLauncher                 *launcher);
-static void                    thunar_launcher_action_set_default_program (ThunarLauncher                 *launcher);
+static void                    thunar_launcher_action_set_default_app     (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_sendto_desktop      (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_properties          (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_sendto_device       (ThunarLauncher                 *launcher,
@@ -269,7 +269,7 @@ static XfceGtkActionEntry thunar_launcher_action_entries[] =
     { THUNAR_LAUNCHER_ACTION_OPEN_IN_WINDOW,   "<Actions>/ThunarLauncher/open-in-new-window",      "<Primary><shift>O", XFCE_GTK_MENU_ITEM,       NULL,                                   NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_open_in_new_windows), },
     { THUNAR_LAUNCHER_ACTION_OPEN_LOCATION,    "<Actions>/ThunarLauncher/open-location",           "",                  XFCE_GTK_MENU_ITEM,       N_ ("Open Item Location"),              NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_open_location),       },
     { THUNAR_LAUNCHER_ACTION_OPEN_WITH_OTHER,  "<Actions>/ThunarLauncher/open-with-other",         "",                  XFCE_GTK_MENU_ITEM,       N_ ("Open With Other _Application..."), N_ ("Choose another application with which to open the selected file"),                          NULL,                   G_CALLBACK (thunar_launcher_action_open_with_other),     },
-    { THUNAR_LAUNCHER_ACTION_SET_DEFAULT_PROGRAM, "<Actions>/ThunarStandardView/set-default-program", "",               XFCE_GTK_MENU_ITEM,       N_ ("Set Default _Program"),            N_ ("Select defult program"),                                                                    NULL,                   G_CALLBACK (thunar_launcher_action_set_default_program), },
+    { THUNAR_LAUNCHER_ACTION_SET_DEFAULT_APP,  "<Actions>/ThunarStandardView/set-default-app",     "",                  XFCE_GTK_MENU_ITEM,       N_ ("Set _Default Application"),        N_ ("Choose an application which should be used by default to open the selected file"),          NULL,                   G_CALLBACK (thunar_launcher_action_set_default_app), },
 
     /* For backward compatibility the old accel paths are re-used. Currently not possible to automatically migrate to new accel paths. */
     /* Waiting for https://gitlab.gnome.org/GNOME/gtk/issues/2375 to be able to fix that */
@@ -1440,14 +1440,6 @@ thunar_launcher_action_set_default_app (ThunarLauncher *launcher)
     thunar_show_chooser_dialog (launcher->widget, launcher->files_to_process->data, TRUE, TRUE);
 }
 
-static void
-thunar_launcher_action_set_default_program (ThunarLauncher *launcher)
-{
-  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
-
-  if (launcher->n_files_to_process == 1)
-    thunar_show_set_default_program_chooser_dialog (launcher->widget, launcher->files_to_process->data, TRUE);
-}
 
 
 /**
@@ -1555,11 +1547,10 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
         return xfce_gtk_menu_item_new (action_entry->menu_item_label_text, action_entry->menu_item_tooltip_text,
                                        action_entry->accel_path, action_entry->callback, G_OBJECT (launcher), menu);
 
-      case THUNAR_LAUNCHER_ACTION_SET_DEFAULT_PROGRAM:
+      case THUNAR_LAUNCHER_ACTION_SET_DEFAULT_APP:
         if (launcher->n_files_to_process != 1)
           return NULL;
-        return xfce_gtk_menu_item_new (action_entry->menu_item_label_text, action_entry->menu_item_tooltip_text,
-                                      action_entry->accel_path, action_entry->callback, G_OBJECT (launcher), menu);
+        return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
 
       case THUNAR_LAUNCHER_ACTION_SENDTO_MENU:
         if (launcher->files_are_selected == FALSE)
@@ -3069,7 +3060,8 @@ thunar_launcher_build_application_submenu (ThunarLauncher *launcher,
     {
       xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
       thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (submenu), THUNAR_LAUNCHER_ACTION_OPEN_WITH_OTHER, FALSE);
-      thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (submenu), THUNAR_LAUNCHER_ACTION_SET_DEFAULT_PROGRAM, FALSE);
+      xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
+      thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (submenu), THUNAR_LAUNCHER_ACTION_SET_DEFAULT_APP, FALSE);
     }
 
   return submenu;
@@ -3173,7 +3165,8 @@ thunar_launcher_append_open_section (ThunarLauncher *launcher,
     {
       if (launcher->n_files_to_process == 1) {
         thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_OPEN_WITH_OTHER, FALSE);
-        thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_SET_DEFAULT_PROGRAM, FALSE);
+        xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
+        thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_SET_DEFAULT_APP, FALSE);
       }
     }
 
