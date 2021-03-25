@@ -451,7 +451,7 @@ thunar_dbus_service_display_chooser_dialog (ThunarDBusFileManager  *object,
 
   /* popup the chooser dialog */
   /* TODO use the startup id! */
-  thunar_show_chooser_dialog (screen, file, open);
+  thunar_show_chooser_dialog (screen, file, open, FALSE);
 
   /* cleanup */
   g_object_unref (G_OBJECT (screen));
