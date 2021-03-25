@@ -326,6 +326,8 @@ struct _ThunarWindow
   GtkWidget              *paned;
   GtkWidget              *sidepane;
   GtkWidget              *view_box;
+  GtkWidget              *trash_box;
+  GtkWidget              *empty_trash_button;
 
   /* split view panes */
   GtkWidget              *paned_notebooks;
@@ -789,6 +791,14 @@ thunar_window_init (ThunarWindow *window)
   window->view_box = gtk_grid_new ();
   gtk_paned_pack2 (GTK_PANED (window->paned), window->view_box, TRUE, FALSE);
   gtk_widget_show (window->view_box);
+
+  window->trash_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 20);
+  gtk_grid_attach(GTK_GRID (window->view_box), window->trash_box, 0, 0, 1, 1);
+
+  window->empty_trash_button = gtk_button_new_with_label("Empty Trash");
+  gtk_box_pack_end(GTK_BOX (window->trash_box), window->empty_trash_button, FALSE, TRUE, 0);
+  gtk_widget_show (window->empty_trash_button);
+  g_signal_connect_swapped (G_OBJECT (window->empty_trash_button), "button-press-event", G_CALLBACK (thunar_launcher_action_empty_trash), G_OBJECT (window->launcher));
 
   /* split view: Create panes where the two notebooks */
   window->paned_notebooks = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
@@ -3980,6 +3990,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
                                      ThunarFile   *current_directory)
 {
   GFile *folder = NULL;
+  gboolean isTrash;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
@@ -4062,11 +4073,12 @@ thunar_window_set_current_directory (ThunarWindow *window,
   /* show/hide date_deleted column/sortBy in the trash directory */
   if (current_directory == NULL)
     return;
+  folder = thunar_file_get_file (current_directory);
+  isTrash = thunar_g_file_is_trash (folder);
+  isTrash ? gtk_widget_show(window->trash_box) : gtk_widget_hide(window->trash_box);
   if (THUNAR_IS_DETAILS_VIEW (window->view) == FALSE)
     return;
-
-  folder = thunar_file_get_file (current_directory);
-  thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), thunar_g_file_is_trash (folder));
+  thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), isTrash);
 }
 
 
