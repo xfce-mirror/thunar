@@ -1828,7 +1828,7 @@ thunar_file_launch (ThunarFile  *file,
    * type yet */
   if (G_UNLIKELY (app_info == NULL))
     {
-      thunar_show_chooser_dialog (parent, file, TRUE);
+      thunar_show_chooser_dialog (parent, file, TRUE, FALSE);
       return TRUE;
     }
 
@@ -1839,7 +1839,7 @@ thunar_file_launch (ThunarFile  *file,
       || g_strcmp0 (g_app_info_get_name (app_info), "exo-file-manager") == 0)
     {
       g_object_unref (G_OBJECT (app_info));
-      thunar_show_chooser_dialog (parent, file, TRUE);
+      thunar_show_chooser_dialog (parent, file, TRUE, FALSE);
       return TRUE;
     }
 
