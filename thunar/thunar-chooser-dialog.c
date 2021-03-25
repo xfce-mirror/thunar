@@ -47,7 +47,6 @@ enum
   PROP_0,
   PROP_FILE,
   PROP_OPEN,
-  PROP_PRESELECT_DEFAULT_CHECKBOX
 };
 
 
@@ -98,9 +97,6 @@ static gboolean    thunar_chooser_dialog_get_open            (ThunarChooserDialo
 static void        thunar_chooser_dialog_set_open            (ThunarChooserDialog *dialog,
                                                               gboolean             open);
 
-static gboolean    thunar_chooser_dialog_get_preselect_default_checkbox (ThunarChooserDialog *dialog);
-static void        thunar_chooser_dialog_set_preselect_default_checkbox (ThunarChooserDialog *dialog,
-                                                                         gboolean             preselect_default_checkbox);
 
 
 struct _ThunarChooserDialogClass
@@ -114,7 +110,6 @@ struct _ThunarChooserDialog
 
   ThunarFile  *file;
   gboolean     open;
-  gboolean     preselect_default_checkbox;
 
   GtkWidget   *header_image;
   GtkWidget   *header_label;
@@ -170,17 +165,6 @@ thunar_chooser_dialog_class_init (ThunarChooserDialogClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_OPEN,
                                    g_param_spec_boolean ("open", "open", "open",
-                                                         FALSE,
-                                                         G_PARAM_CONSTRUCT | EXO_PARAM_READWRITE));
-
-  /**
-   * ThunarChooserDialog::preselect-default-checkbox:
-   *
-   * Whether the chooser should preselect the checkbox.
-   **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_PRESELECT_DEFAULT_CHECKBOX,
-                                   g_param_spec_boolean ("preselect-default-checkbox", "preselect-default-checkbox", "preselect-default-checkbox",
                                                          FALSE,
                                                          G_PARAM_CONSTRUCT | EXO_PARAM_READWRITE));
 }
@@ -349,10 +333,6 @@ thunar_chooser_dialog_get_property (GObject    *object,
       g_value_set_boolean (value, thunar_chooser_dialog_get_open (dialog));
       break;
     
-    case PROP_PRESELECT_DEFAULT_CHECKBOX:
-      g_value_set_boolean (value, thunar_chooser_dialog_get_preselect_default_checkbox (dialog));
-      break;
-
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -377,10 +357,6 @@ thunar_chooser_dialog_set_property (GObject      *object,
 
     case PROP_OPEN:
       thunar_chooser_dialog_set_open (dialog, g_value_get_boolean (value));
-      break;
-
-    case PROP_PRESELECT_DEFAULT_CHECKBOX:
-      thunar_chooser_dialog_set_preselect_default_checkbox (dialog, g_value_get_boolean (value));
       break;
 
     default:
@@ -1282,54 +1258,13 @@ thunar_chooser_dialog_set_open (ThunarChooserDialog *dialog,
 
 
 /**
- * thunar_chooser_dialog_get_preselect_default_checkbox:
- * @dialog : a #ThunarChooserDialog.
- *
- * Tells whether the chooser @dialog use selected application as default application.
- *
- * Return value: %TRUE if default app selection checkbox is checked by default.
- **/
-static gboolean
-thunar_chooser_dialog_get_preselect_default_checkbox (ThunarChooserDialog *dialog)
-{
-  _thunar_return_val_if_fail (THUNAR_IS_CHOOSER_DIALOG (dialog), FALSE);
-  return dialog->preselect_default_checkbox;
-}
-
-
-
-/**
- * thunar_chooser_dialog_set_preselect_default_checkbox:
- * @dialog                       : a #ThunarChooserDialog.
- * @preselect_default_checkbox   : %TRUE if the chooser @dialog used for set default application.
- *
- * Sets whether the chooser @dialog used to set default application
- **/
-static void
-thunar_chooser_dialog_set_preselect_default_checkbox (ThunarChooserDialog *dialog,
-                                                      gboolean             preselect_default_checkbox)
-{
-  _thunar_return_if_fail (THUNAR_IS_CHOOSER_DIALOG (dialog));
-
-  /* apply the new state */
-  dialog->preselect_default_checkbox = preselect_default_checkbox;
-
-  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->default_button), preselect_default_checkbox);
-  
-  /* notify listeners */
-  g_object_notify (G_OBJECT (dialog), "preselect_default_checkbox");
-}
-
-
-
-/**
  * thunar_show_chooser_dialog:
  * @parent                      : the #GtkWidget or the #GdkScreen on which to open the
  *                                dialog. May also be %NULL in which case the default
  *                                #GdkScreen will be used.
  * @file                        : the #ThunarFile for which an application should be chosen.
  * @open                        : whether to also open the @file.
- * @preselect_default_checkbox  : Check the checkbox by default and 
+ * @preselect_default_checkbox  : Check the checkbox by default and
  *                                set the title "Set Default Application" of chooser dialog box.
  *
  * Convenience function to display a #ThunarChooserDialog with the
@@ -1377,12 +1312,14 @@ thunar_show_chooser_dialog (gpointer    parent,
                          "file", file,
                          "open", open,
                          "screen", screen,
-                         "preselect_default_checkbox", preselect_default_checkbox,
                          NULL);
 
-  /* change title of dialog box when it is used for select default application */
+  /* change title of chooser dialog box and checked the checkbox when it is used for select default application */
   if (preselect_default_checkbox)
+  {
     gtk_window_set_title (GTK_WINDOW (dialog), _("Set Default Application"));
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (THUNAR_CHOOSER_DIALOG (dialog)->default_button), preselect_default_checkbox);
+  }
 
   /* check if we have a toplevel window */
   if (G_LIKELY (window != NULL && gtk_widget_get_toplevel (window)))
