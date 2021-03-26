@@ -177,7 +177,6 @@ static void                    thunar_launcher_action_sendto_desktop      (Thuna
 static void                    thunar_launcher_action_properties          (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_sendto_device       (ThunarLauncher                 *launcher,
                                                                            GObject                        *object);
-static void                    thunar_launcher_action_add_shortcuts       (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_make_link           (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_duplicate           (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_rename              (ThunarLauncher                 *launcher);
@@ -1297,6 +1296,29 @@ thunar_launcher_widget_destroyed (ThunarLauncher *launcher,
 
 
 /**
+ * thunar_launcher_has_directory_selected:
+ * @launcher : a #ThunarLauncher instance
+ *
+ * Returns whether the current file selection includes a directory file.
+ **/
+gboolean thunar_launcher_has_directory_selected (ThunarLauncher *launcher)
+{
+  GList *lp;
+
+  if (THUNAR_IS_LAUNCHER (launcher) == FALSE)
+    return FALSE;
+
+  for (lp = launcher->files_to_process; lp != NULL; lp = lp->next)
+    if (thunar_file_is_directory (THUNAR_FILE (lp->data)))
+      if (launcher->current_directory != THUNAR_FILE (lp->data)) // if no file is selected, the current directory is in lp
+        return TRUE;
+
+  return FALSE;
+}
+
+
+
+/**
  * thunar_launcher_open_selected_folders:
  * @launcher : a #ThunarLauncher instance
  * @open_in_tabs : TRUE to open each folder in a new tab, FALSE to open each folder in a new window
@@ -1845,7 +1867,7 @@ thunar_launcher_action_sendto_device (ThunarLauncher *launcher,
 }
 
 
-static void
+void
 thunar_launcher_action_add_shortcuts (ThunarLauncher *launcher)
 {
   GList           *lp;
