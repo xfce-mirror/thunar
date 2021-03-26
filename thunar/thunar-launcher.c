@@ -185,7 +185,6 @@ static void                    thunar_launcher_action_restore             (Thuna
 static void                    thunar_launcher_action_move_to_trash       (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_delete              (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_trash_delete        (ThunarLauncher                 *launcher);
-static void                    thunar_launcher_action_empty_trash         (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_cut                 (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_copy                (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_paste               (ThunarLauncher                 *launcher);
@@ -2367,7 +2366,7 @@ thunar_launcher_action_trash_delete (ThunarLauncher *launcher)
 
 
 
-static void
+void
 thunar_launcher_action_empty_trash (ThunarLauncher *launcher)
 {
   ThunarApplication *application;
