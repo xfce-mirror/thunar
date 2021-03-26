@@ -211,6 +211,7 @@ gboolean          thunar_file_is_writable                (const ThunarFile      
 gboolean          thunar_file_is_hidden                  (const ThunarFile       *file);
 gboolean          thunar_file_is_home                    (const ThunarFile       *file);
 gboolean          thunar_file_is_regular                 (const ThunarFile       *file) G_GNUC_PURE;
+gboolean          thunar_file_is_trash                   (const ThunarFile       *file);
 gboolean          thunar_file_is_trashed                 (const ThunarFile       *file);
 gboolean          thunar_file_is_desktop_file            (const ThunarFile       *file,
                                                           gboolean               *is_secure);

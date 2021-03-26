@@ -1600,7 +1600,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
       case THUNAR_LAUNCHER_ACTION_EMPTY_TRASH:
         if (launcher->single_directory_to_process == TRUE)
           {
-            if (thunar_file_is_root (launcher->single_folder) && thunar_file_is_trashed (launcher->single_folder))
+            if (thunar_file_is_trash (launcher->single_folder))
               {
                 item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, action_entry->menu_item_tooltip_text, action_entry->accel_path,
                                                                     action_entry->callback, G_OBJECT (launcher), action_entry->menu_item_icon_name, menu);

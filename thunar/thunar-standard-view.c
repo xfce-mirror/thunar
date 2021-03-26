@@ -3863,7 +3863,7 @@ thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
                                                    standard_view->priv->sort_column == THUNAR_COLUMN_TYPE, GTK_MENU_SHELL (submenu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_BY_MTIME), G_OBJECT (standard_view),
                                                    standard_view->priv->sort_column == THUNAR_COLUMN_DATE_MODIFIED, GTK_MENU_SHELL (submenu));
-  if (thunar_g_file_is_trash (thunar_file_get_file (standard_view->priv->current_directory)))
+  if (thunar_file_is_trash (standard_view->priv->current_directory))
     xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_BY_DTIME), G_OBJECT (standard_view),
                                                      standard_view->priv->sort_column == THUNAR_COLUMN_DATE_DELETED, GTK_MENU_SHELL (submenu));
   xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
