@@ -98,7 +98,6 @@ static void        thunar_chooser_dialog_set_open            (ThunarChooserDialo
                                                               gboolean             open);
 
 
-
 struct _ThunarChooserDialogClass
 {
   ThunarAbstractDialogClass __parent__;
@@ -332,7 +331,7 @@ thunar_chooser_dialog_get_property (GObject    *object,
     case PROP_OPEN:
       g_value_set_boolean (value, thunar_chooser_dialog_get_open (dialog));
       break;
-    
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
