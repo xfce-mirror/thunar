@@ -1880,6 +1880,20 @@ thunar_show_renamer_dialog (gpointer     parent,
   for (lp = files; lp != NULL; lp = lp->next)
     thunar_renamer_model_append (THUNAR_RENAMER_DIALOG (dialog)->model, lp->data);
 
+  /* if there are only directories selected change the mode to both */
+  gboolean directoriesOnly = TRUE;
+  for (lp = files; lp != NULL; lp = lp->next)
+    if (thunar_file_is_directory (THUNAR_FILE (lp->data)) == FALSE)
+      directoriesOnly = FALSE;
+
+  if (directoriesOnly)
+    {
+      GValue value = G_VALUE_INIT;
+      g_value_init (&value, G_TYPE_ENUM);
+      g_value_set_enum (&value, THUNAR_RENAMER_MODE_BOTH);
+      g_object_set_property (G_OBJECT ( THUNAR_RENAMER_DIALOG (dialog)->model), "mode", &value);
+    }
+
   /* let the application handle the dialog */
   application = thunar_application_get ();
   thunar_application_take_window (application, GTK_WINDOW (dialog));
