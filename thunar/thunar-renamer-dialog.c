@@ -358,11 +358,17 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   renamer_dialog->close_button = gtk_dialog_add_button (GTK_DIALOG (renamer_dialog), _("_Close"), GTK_RESPONSE_DELETE_EVENT);
   gtk_widget_hide (renamer_dialog->close_button);
 
-  /* add the "Rename Files" button */
-  button = gtk_dialog_add_button (GTK_DIALOG (renamer_dialog), _("_Rename Files"), GTK_RESPONSE_ACCEPT);
+  /* add the "Done" button */
+  button = gtk_dialog_add_button (GTK_DIALOG (renamer_dialog), _("_Done"), GTK_RESPONSE_ACCEPT);
   exo_binding_new (G_OBJECT (renamer_dialog->model), "can-rename", G_OBJECT (button), "sensitive");
   gtk_dialog_set_default_response (GTK_DIALOG (renamer_dialog), GTK_RESPONSE_ACCEPT);
-  gtk_widget_set_tooltip_text (button, _("Click here to actually rename the files listed above to their new names."));
+  gtk_widget_set_tooltip_text (button, _("Click here to actually rename the files listed above to their new names and close the window."));
+
+  /* add the "Apply" button */
+  button = gtk_dialog_add_button (GTK_DIALOG (renamer_dialog), _("_Apply"), GTK_RESPONSE_APPLY);
+  exo_binding_new (G_OBJECT (renamer_dialog->model), "can-rename", G_OBJECT (button), "sensitive");
+  gtk_dialog_set_default_response (GTK_DIALOG (renamer_dialog), GTK_RESPONSE_APPLY);
+  gtk_widget_set_tooltip_text (button, _("Click here to actually rename the files listed above to their new names and keep the window open)."));
 
   /* setup the launcher support for this dialog */
   renamer_dialog->launcher = g_object_new (THUNAR_TYPE_LAUNCHER, "widget", GTK_WIDGET (renamer_dialog), NULL);
@@ -753,7 +759,7 @@ thunar_renamer_dialog_response (GtkDialog *dialog,
   g_object_ref (G_OBJECT (dialog));
 
   /* check if we should rename */
-  if (G_LIKELY (response == GTK_RESPONSE_ACCEPT))
+  if (G_LIKELY (response == GTK_RESPONSE_ACCEPT  || response == GTK_RESPONSE_APPLY))
     {
       /* hide the close button and show the cancel button */
       gtk_widget_show (renamer_dialog->cancel_button);
@@ -798,7 +804,7 @@ thunar_renamer_dialog_response (GtkDialog *dialog,
       thunar_renamer_pair_list_free (pair_list);
 
       /* check if we're in standalone mode */
-      if (thunar_renamer_dialog_get_standalone (renamer_dialog))
+      if (thunar_renamer_dialog_get_standalone (renamer_dialog) || response == GTK_RESPONSE_APPLY)
         {
           /* hide the cancel button again and display the close button */
           gtk_widget_hide (renamer_dialog->cancel_button);
