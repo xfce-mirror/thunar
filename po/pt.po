@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-26 00:45+0100\n"
-"PO-Revision-Date: 2021-03-26 13:32+0000\n"
+"POT-Creation-Date: 2021-03-27 00:45+0100\n"
+"PO-Revision-Date: 2021-03-27 19:02+0000\n"
 "Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/xfce/thunar/language/pt/)\n"
 "MIME-Version: 1.0\n"
@@ -78,7 +78,7 @@ msgstr "Ocorreu um erro ao iniciar a operação"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1505 ../thunar/thunar-application.c:1637
-#: ../thunar/thunar-launcher.c:1095 ../thunar/thunar-location-entry.c:366
+#: ../thunar/thunar-launcher.c:1097 ../thunar/thunar-location-entry.c:366
 #: ../thunar/thunar-location-entry.c:394
 #, c-format
 msgid "Failed to open \"%s\""
@@ -90,17 +90,17 @@ msgid "Failed to open \"%s\": %s"
 msgstr "Ocorreu um erro ao abrir \"%s\": %s"
 
 #. display an error message
-#: ../thunar/thunar-application.c:1696 ../thunar/thunar-launcher.c:2245
+#: ../thunar/thunar-application.c:1696 ../thunar/thunar-launcher.c:2269
 #: ../thunar/thunar-properties-dialog.c:762
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Ocorreu um erro ao renomear \"%s\""
 
-#: ../thunar/thunar-application.c:1798 ../thunar/thunar-launcher.c:2404
+#: ../thunar/thunar-application.c:1798 ../thunar/thunar-launcher.c:2428
 msgid "New Folder"
 msgstr "Nova pasta"
 
-#: ../thunar/thunar-application.c:1799 ../thunar/thunar-launcher.c:2405
+#: ../thunar/thunar-application.c:1799 ../thunar/thunar-launcher.c:2429
 msgid "Create New Folder"
 msgstr "Criar nova pasta"
 
@@ -113,7 +113,7 @@ msgid "Create New File"
 msgstr "Criar novo ficheiro"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-application.c:1861 ../thunar/thunar-launcher.c:2450
+#: ../thunar/thunar-application.c:1861 ../thunar/thunar-launcher.c:2474
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Criar documento a partir do modelo \"%s\""
@@ -165,7 +165,7 @@ msgstr[1] "Tem a certeza de que quer apagar permanentemente\nos %u ficheiros sel
 #: ../thunar/thunar-dialogs.c:98 ../thunar/thunar-dialogs.c:233
 #: ../thunar/thunar-dialogs.c:649 ../thunar/thunar-dialogs.c:762
 #: ../thunar/thunar-dialogs.c:1034 ../thunar/thunar-dnd.c:169
-#: ../thunar/thunar-launcher.c:960 ../thunar/thunar-permissions-chooser.c:535
+#: ../thunar/thunar-launcher.c:962 ../thunar/thunar-permissions-chooser.c:535
 #: ../thunar/thunar-permissions-chooser.c:1143
 #: ../thunar/thunar-properties-dialog.c:850
 #: ../thunar/thunar-renamer-dialog.c:357
@@ -183,7 +183,7 @@ msgstr[1] "Tem a certeza de que quer apagar permanentemente\nos %u ficheiros sel
 msgid "_Cancel"
 msgstr "_Cancelar"
 
-#: ../thunar/thunar-application.c:2166 ../thunar/thunar-launcher.c:286
+#: ../thunar/thunar-application.c:2166 ../thunar/thunar-launcher.c:288
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:372
 msgid "_Delete"
 msgstr "_Apagar"
@@ -213,7 +213,7 @@ msgid "Remove all files and folders from the Trash?"
 msgstr "Remover todos os ficheiros e pastas do Lixo?"
 
 #. prepare the menu item
-#: ../thunar/thunar-application.c:2345 ../thunar/thunar-launcher.c:280
+#: ../thunar/thunar-application.c:2345 ../thunar/thunar-launcher.c:282
 #: ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "_Esvaziar Lixo"
@@ -263,7 +263,7 @@ msgstr "Nenhuma aplicação selecionada"
 msgid "Other Application..."
 msgstr "Outra aplicação..."
 
-#: ../thunar/thunar-chooser-dialog.c:187 ../thunar/thunar-launcher.c:3009
+#: ../thunar/thunar-chooser-dialog.c:187 ../thunar/thunar-launcher.c:3035
 msgid "Open With"
 msgstr "Abrir com"
 
@@ -389,7 +389,7 @@ msgstr "Selecione uma aplicação"
 #. change the accept button label text
 #. aka "activate"
 #: ../thunar/thunar-chooser-dialog.c:848
-#: ../thunar/thunar-chooser-dialog.c:1251 ../thunar/thunar-launcher.c:1454
+#: ../thunar/thunar-chooser-dialog.c:1251 ../thunar/thunar-launcher.c:1473
 #: ../thunar/thunar-renamer-dialog.c:1060
 #: ../plugins/thunar-uca/thunar-uca-editor.c:179
 msgid "_Open"
@@ -425,6 +425,10 @@ msgstr "\"Scripts\" Ruby"
 #: ../plugins/thunar-uca/thunar-uca-editor.c:224
 msgid "Shell Scripts"
 msgstr "\"Scripts\" de consola"
+
+#: ../thunar/thunar-chooser-dialog.c:1319
+msgid "Set Default Application"
+msgstr "Definir aplicação predefinida"
 
 #: ../thunar/thunar-chooser-model.c:251
 msgid "None available"
@@ -610,7 +614,7 @@ msgstr "Parar a unidade multi-disco"
 msgid "_Lock"
 msgstr "B_loquear"
 
-#: ../thunar/thunar-device.c:526 ../thunar/thunar-launcher.c:298
+#: ../thunar/thunar-device.c:526 ../thunar/thunar-launcher.c:300
 msgid "_Eject"
 msgstr "_Ejetar"
 
@@ -789,7 +793,7 @@ msgstr "_Ligação para aqui"
 
 #. display an error to the user
 #. display an error message to the user
-#: ../thunar/thunar-dnd.c:250 ../thunar/thunar-launcher.c:772
+#: ../thunar/thunar-dnd.c:250 ../thunar/thunar-launcher.c:774
 #, c-format
 msgid "Failed to execute file \"%s\""
 msgstr "Ocorreu um erro ao executar o ficheiro \"%s\""
@@ -1046,342 +1050,352 @@ msgid ""
 "space."
 msgstr "Não existe espaço livre suficiente no destino. Tente remover alguns ficheiros para criar espaço."
 
-#: ../thunar/thunar-launcher.c:269
+#: ../thunar/thunar-launcher.c:270
 msgid "Open With Other _Application..."
 msgstr "Abrir com outra _aplicação..."
 
-#: ../thunar/thunar-launcher.c:269 ../thunar/thunar-launcher.c:3010
+#: ../thunar/thunar-launcher.c:270 ../thunar/thunar-launcher.c:3036
 msgid "Choose another application with which to open the selected file"
 msgstr "Escolha outra aplicação para abrir o ficheiro selecionado"
+
+#: ../thunar/thunar-launcher.c:271
+msgid "Set _Default Application..."
+msgstr "_Definir aplicação predefinida..."
+
+#: ../thunar/thunar-launcher.c:271
+msgid ""
+"Choose an application which should be used by default to open the selected "
+"file"
+msgstr "Escolha uma aplicação que deve ser utilizada por predefinição para abrir o ficheiro selecionado"
 
 #. For backward compatibility the old accel paths are re-used. Currently not
 #. possible to automatically migrate to new accel paths.
 #. Waiting for https://gitlab.gnome.org/GNOME/gtk/issues/2375 to be able to
 #. fix that
-#: ../thunar/thunar-launcher.c:273
+#: ../thunar/thunar-launcher.c:275
 msgid "_Send To"
 msgstr "_Enviar para"
 
-#: ../thunar/thunar-launcher.c:276
+#: ../thunar/thunar-launcher.c:278
 msgid "_Properties..."
 msgstr "_Propriedades..."
 
-#: ../thunar/thunar-launcher.c:276
+#: ../thunar/thunar-launcher.c:278
 msgid "View the properties of the selected file"
 msgstr "Ver propriedades do ficheiro selecionado"
 
-#: ../thunar/thunar-launcher.c:277 ../thunar/thunar-launcher.c:1500
+#: ../thunar/thunar-launcher.c:279 ../thunar/thunar-launcher.c:1524
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "C_riar ligação"
 msgstr[1] "C_riar ligações"
 
-#: ../thunar/thunar-launcher.c:278
+#: ../thunar/thunar-launcher.c:280
 msgid "Du_plicate"
 msgstr "Du_plicar"
 
-#: ../thunar/thunar-launcher.c:279
+#: ../thunar/thunar-launcher.c:281
 msgid "_Rename..."
 msgstr "_Renomear..."
 
-#: ../thunar/thunar-launcher.c:280
+#: ../thunar/thunar-launcher.c:282
 msgid "Delete all files and folders in the Trash"
 msgstr "Apagar todos os ficheiros e pastas no Lixo"
 
-#: ../thunar/thunar-launcher.c:281
+#: ../thunar/thunar-launcher.c:283
 msgid "Create _Folder..."
 msgstr "_Criar pasta..."
 
-#: ../thunar/thunar-launcher.c:281
+#: ../thunar/thunar-launcher.c:283
 msgid "Create an empty folder within the current folder"
 msgstr "Criar uma pasta vazia dentro da pasta atual"
 
-#: ../thunar/thunar-launcher.c:282
+#: ../thunar/thunar-launcher.c:284
 msgid "Create _Document"
 msgstr "Criar _documento"
 
-#: ../thunar/thunar-launcher.c:282
+#: ../thunar/thunar-launcher.c:284
 msgid "Create a new document from a template"
 msgstr "Criar um novo documento a partir de um modelo"
 
-#: ../thunar/thunar-launcher.c:284
+#: ../thunar/thunar-launcher.c:286
 msgid "_Restore"
 msgstr "_Restaurar"
 
-#: ../thunar/thunar-launcher.c:285
+#: ../thunar/thunar-launcher.c:287
 msgid "Mo_ve to Trash"
 msgstr "Mo_ver para o Lixo"
 
-#: ../thunar/thunar-launcher.c:291
+#: ../thunar/thunar-launcher.c:293
 msgid "_Paste"
 msgstr "Co_lar"
 
-#: ../thunar/thunar-launcher.c:291
+#: ../thunar/thunar-launcher.c:293
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr "Mover/copiar ficheiros previamente selecionados pelos comandos cortar ou copiar"
 
-#: ../thunar/thunar-launcher.c:292
+#: ../thunar/thunar-launcher.c:294
 msgid "_Paste Into Folder"
 msgstr "C_olar dentro da pasta"
 
-#: ../thunar/thunar-launcher.c:292
+#: ../thunar/thunar-launcher.c:294
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
 msgstr "Mover ou copiar para a pasta selecionada os ficheiros previamente selecionados pelos comandos Cortar ou Copiar"
 
-#: ../thunar/thunar-launcher.c:293
+#: ../thunar/thunar-launcher.c:295
 msgid "_Copy"
 msgstr "_Copiar"
 
-#: ../thunar/thunar-launcher.c:293
+#: ../thunar/thunar-launcher.c:295
 msgid "Prepare the selected files to be copied with a Paste command"
 msgstr "Preparar os ficheiros selecionados para serem copiados com o comando colar"
 
-#: ../thunar/thunar-launcher.c:294
+#: ../thunar/thunar-launcher.c:296
 msgid "Cu_t"
 msgstr "Cor_tar"
 
-#: ../thunar/thunar-launcher.c:294
+#: ../thunar/thunar-launcher.c:296
 msgid "Prepare the selected files to be moved with a Paste command"
 msgstr "Preparar os ficheiros selecionados para serem movidos com o comando colar."
 
-#: ../thunar/thunar-launcher.c:296
+#: ../thunar/thunar-launcher.c:298
 msgid "_Mount"
 msgstr "_Montar"
 
-#: ../thunar/thunar-launcher.c:296
+#: ../thunar/thunar-launcher.c:298
 msgid "Mount the selected device"
 msgstr "Montar o dispositivo selecionado"
 
-#: ../thunar/thunar-launcher.c:297
+#: ../thunar/thunar-launcher.c:299
 msgid "_Unmount"
 msgstr "_Desmontar"
 
-#: ../thunar/thunar-launcher.c:297
+#: ../thunar/thunar-launcher.c:299
 msgid "Unmount the selected device"
 msgstr "Desmontar o dispositivo selecionado"
 
-#: ../thunar/thunar-launcher.c:298
+#: ../thunar/thunar-launcher.c:300
 msgid "Eject the selected device"
 msgstr "Ejetar o dispositivo selecionado"
 
-#: ../thunar/thunar-launcher.c:909
+#: ../thunar/thunar-launcher.c:911
 #, c-format
 msgid "Failed to open file \"%s\""
 msgstr "Ocorreu um erro ao abrir o ficheiro \"%s\""
 
 #. we can just tell that n files failed to open
-#: ../thunar/thunar-launcher.c:915
+#: ../thunar/thunar-launcher.c:917
 #, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
 msgstr[0] "Ocorreu um erro ao abrir %d ficheiro"
 msgstr[1] "Ocorreu um erro ao abrir %d ficheiros"
 
-#: ../thunar/thunar-launcher.c:954
+#: ../thunar/thunar-launcher.c:956
 msgid "Are you sure you want to open all folders?"
 msgstr "Tem a certeza que deseja abrir todas as pastas?"
 
-#: ../thunar/thunar-launcher.c:956
+#: ../thunar/thunar-launcher.c:958
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
 msgstr[0] "Isto vai abrir %d nova janela."
 msgstr[1] "Isto vai abrir %d janelas separada do gestor de ficheiros."
 
-#: ../thunar/thunar-launcher.c:959
+#: ../thunar/thunar-launcher.c:961
 #, c-format
 msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
 msgstr[0] "Abrir %d nova janela"
 msgstr[1] "Abrir %d novas janelas"
 
-#: ../thunar/thunar-launcher.c:1047 ../thunar/thunar-launcher.c:1801
+#: ../thunar/thunar-launcher.c:1049 ../thunar/thunar-launcher.c:1825
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Ocorreu um erro ao montar \"%s\""
 
-#: ../thunar/thunar-launcher.c:1454
+#: ../thunar/thunar-launcher.c:1473
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
 msgstr[0] "Abrir item selecionado"
 msgstr[1] "Abrir itens selecionados"
 
-#: ../thunar/thunar-launcher.c:1458
+#: ../thunar/thunar-launcher.c:1477
 msgid "_Execute"
 msgstr "_Executar"
 
-#: ../thunar/thunar-launcher.c:1458
+#: ../thunar/thunar-launcher.c:1477
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
 msgstr[0] "Executar o ficheiro selecionado"
 msgstr[1] "Executar os ficheiros selecionados"
 
-#: ../thunar/thunar-launcher.c:1463
+#: ../thunar/thunar-launcher.c:1482
 #, c-format
 msgid "Open in New _Tab"
 msgid_plural "Open in %d New _Tabs"
 msgstr[0] "Abrir em novo _separador"
 msgstr[1] "Abrir em %d novos _separadores"
 
-#: ../thunar/thunar-launcher.c:1464
+#: ../thunar/thunar-launcher.c:1483
 #, c-format
 msgid "Open the selected directory in new tab"
 msgid_plural "Open the selected directories in %d new tabs"
 msgstr[0] "Abrir pasta selecionada em novo separador"
 msgstr[1] "Abrir pastas selecionadas em %d novos separadores"
 
-#: ../thunar/thunar-launcher.c:1473
+#: ../thunar/thunar-launcher.c:1492
 #, c-format
 msgid "Open in New _Window"
 msgid_plural "Open in %d New _Windows"
 msgstr[0] "Abrir em nova j_anela"
 msgstr[1] "Abrir em %d novas j_anelas"
 
-#: ../thunar/thunar-launcher.c:1474
+#: ../thunar/thunar-launcher.c:1493
 #, c-format
 msgid "Open the selected directory in new window"
 msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] "Abrir pasta selecionada em nova janela"
 msgstr[1] "Abrir pastas selecionadas em %d novas janelas"
 
-#: ../thunar/thunar-launcher.c:1501
+#: ../thunar/thunar-launcher.c:1525
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Criar ligação simbólica para o ficheiro selecionado"
 msgstr[1] "Criar ligação simbólica para os ficheiros selecionados"
 
-#: ../thunar/thunar-launcher.c:1525
+#: ../thunar/thunar-launcher.c:1549
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Renomear ficheiro selecionado"
 msgstr[1] "Renomear ficheiros selecionados"
 
-#: ../thunar/thunar-launcher.c:1535
+#: ../thunar/thunar-launcher.c:1559
 msgid "Restore the selected file to its original location"
 msgid_plural "Restore the selected files to its original location"
 msgstr[0] "Restaurar o ficheiro seleccionado para a sua localização original"
 msgstr[1] "Restaurar os ficheiros selecionados para a sua localização original"
 
-#: ../thunar/thunar-launcher.c:1552
+#: ../thunar/thunar-launcher.c:1576
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "Mover ficheiro selecionado para o lixo"
 msgstr[1] "Mover ficheiros selecionados para o Lixo"
 
-#: ../thunar/thunar-launcher.c:1569
+#: ../thunar/thunar-launcher.c:1593
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "Apagar permanentemente o ficheiro selecionado"
 msgstr[1] "Apagar permanentemente os ficheiros selecionados"
 
-#: ../thunar/thunar-launcher.c:1619
+#: ../thunar/thunar-launcher.c:1643
 msgid "Cut the selection"
 msgstr "Cortar a seleção"
 
-#: ../thunar/thunar-launcher.c:1629
+#: ../thunar/thunar-launcher.c:1653
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Preparar o ficheiro selecionado para ser movido com o comando Colar."
 msgstr[1] "Preparar os ficheiros selecionados para serem movidos com o comando colar."
 
-#: ../thunar/thunar-launcher.c:1643
+#: ../thunar/thunar-launcher.c:1667
 msgid "Copy the selection"
 msgstr "Copiar a seleção"
 
-#: ../thunar/thunar-launcher.c:1653
+#: ../thunar/thunar-launcher.c:1677
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Preparar o ficheiro selecionado para ser copiado com o comando Colar"
 msgstr[1] "Preparar os ficheiros selecionados para serem copiados com o comando colar"
 
-#: ../thunar/thunar-launcher.c:1676
+#: ../thunar/thunar-launcher.c:1700
 msgid "Paste the clipboard"
 msgstr "Colar a área de transferência"
 
-#: ../thunar/thunar-launcher.c:1907
+#: ../thunar/thunar-launcher.c:1931
 msgid "Side Pane (Create Shortcut)"
 msgid_plural "Side Pane (Create Shortcuts)"
 msgstr[0] "Painel lateral (criar atalho)"
 msgstr[1] "Painel lateral (criar atalhos)"
 
-#: ../thunar/thunar-launcher.c:1908
+#: ../thunar/thunar-launcher.c:1932
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "Adicionar a pasta selecionada ao painel lateral de atalhos"
 msgstr[1] "Adicionar as pastas selecionadas ao painel lateral de atalhos"
 
-#: ../thunar/thunar-launcher.c:1927
+#: ../thunar/thunar-launcher.c:1951
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "Ambiente de trabalho (criar ligação)"
 msgstr[1] "Ambiente de trabalho (criar hiperligações)"
 
-#: ../thunar/thunar-launcher.c:1928
+#: ../thunar/thunar-launcher.c:1952
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "Criar no ambiente de trabalho uma ligação ao ficheiro selecionado"
 msgstr[1] "Criar no ambiente de trabalho ligações aos ficheiros selecionados"
 
-#: ../thunar/thunar-launcher.c:1949 ../thunar/thunar-launcher.c:1987
+#: ../thunar/thunar-launcher.c:1973 ../thunar/thunar-launcher.c:2011
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
 msgstr[0] "Enviar o ficheiro selecionado para \"%s\""
 msgstr[1] "Enviar os ficheiros selecionados para \"%s\""
 
-#: ../thunar/thunar-launcher.c:2466
+#: ../thunar/thunar-launcher.c:2490
 msgid "New Empty File"
 msgstr "Novo ficheiro vazio"
 
-#: ../thunar/thunar-launcher.c:2467
+#: ../thunar/thunar-launcher.c:2491
 msgid "New Empty File..."
 msgstr "Novo ficheiro vazio..."
 
-#: ../thunar/thunar-launcher.c:2666
+#: ../thunar/thunar-launcher.c:2690
 #, c-format
 msgid "No templates installed in \"%s\""
 msgstr "Nenhum modelo instalado em \"%s\""
 
-#: ../thunar/thunar-launcher.c:2679
+#: ../thunar/thunar-launcher.c:2703
 msgid "_Empty File"
 msgstr "Ficheiro _vazio"
 
-#: ../thunar/thunar-launcher.c:2785
+#: ../thunar/thunar-launcher.c:2809
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Ocorreu um erro ao ejetar \"%s\""
 
-#: ../thunar/thunar-launcher.c:2844
+#: ../thunar/thunar-launcher.c:2868
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Ocorreu um erro ao desmontar \"%s\""
 
-#: ../thunar/thunar-launcher.c:2905
+#: ../thunar/thunar-launcher.c:2929
 #, c-format
 msgid "Open With \"%s\""
 msgstr "Abrir com \"%s\""
 
-#: ../thunar/thunar-launcher.c:2906 ../thunar/thunar-launcher.c:2973
+#: ../thunar/thunar-launcher.c:2930 ../thunar/thunar-launcher.c:2999
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "Utilizar \"%s\" para abrir o ficheiro selecionado"
 msgstr[1] "Utilizar \"%s\" para abrir os ficheiros selecionados"
 
-#: ../thunar/thunar-launcher.c:2972
+#: ../thunar/thunar-launcher.c:2998
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "_Abrir com \"%s\""
 
 #. we can only show a generic "Open" action
-#: ../thunar/thunar-launcher.c:2992
+#: ../thunar/thunar-launcher.c:3018
 #, c-format
 msgid "_Open With Default Applications"
 msgstr "_Abrir com as aplicações predefinidas"
 
-#: ../thunar/thunar-launcher.c:2993
+#: ../thunar/thunar-launcher.c:3019
 #, c-format
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
