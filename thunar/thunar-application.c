@@ -2051,7 +2051,7 @@ thunar_application_move_into (ThunarApplication *application,
   _thunar_return_if_fail (target_file != NULL);
 
   /* launch the appropriate operation depending on the target file */
-  if (thunar_g_file_is_trashed (target_file))
+  if (thunar_g_file_is_trash (target_file))
     {
       thunar_application_trash (application, parent, source_file_list);
     }

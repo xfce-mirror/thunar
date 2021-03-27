@@ -268,7 +268,7 @@ static XfceGtkActionEntry thunar_launcher_action_entries[] =
     { THUNAR_LAUNCHER_ACTION_OPEN_IN_TAB,      "<Actions>/ThunarLauncher/open-in-new-tab",         "<Primary><shift>P", XFCE_GTK_MENU_ITEM,       NULL,                                   NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_open_in_new_tabs),    },
     { THUNAR_LAUNCHER_ACTION_OPEN_IN_WINDOW,   "<Actions>/ThunarLauncher/open-in-new-window",      "<Primary><shift>O", XFCE_GTK_MENU_ITEM,       NULL,                                   NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_open_in_new_windows), },
     { THUNAR_LAUNCHER_ACTION_OPEN_WITH_OTHER,  "<Actions>/ThunarLauncher/open-with-other",         "",                  XFCE_GTK_MENU_ITEM,       N_ ("Open With Other _Application..."), N_ ("Choose another application with which to open the selected file"),                          NULL,                   G_CALLBACK (thunar_launcher_action_open_with_other),     },
-    { THUNAR_LAUNCHER_ACTION_SET_DEFAULT_APP,  "<Actions>/ThunarStandardView/set-default-app",     "",                  XFCE_GTK_MENU_ITEM,       N_ ("Set _Default Application"),        N_ ("Choose an application which should be used by default to open the selected file"),          NULL,                   G_CALLBACK (thunar_launcher_action_set_default_app),     },
+    { THUNAR_LAUNCHER_ACTION_SET_DEFAULT_APP,  "<Actions>/ThunarStandardView/set-default-app",     "",                  XFCE_GTK_MENU_ITEM,       N_ ("Set _Default Application..."),     N_ ("Choose an application which should be used by default to open the selected file"),          NULL,                   G_CALLBACK (thunar_launcher_action_set_default_app),     },
 
     /* For backward compatibility the old accel paths are re-used. Currently not possible to automatically migrate to new accel paths. */
     /* Waiting for https://gitlab.gnome.org/GNOME/gtk/issues/2375 to be able to fix that */
@@ -1600,7 +1600,7 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
       case THUNAR_LAUNCHER_ACTION_EMPTY_TRASH:
         if (launcher->single_directory_to_process == TRUE)
           {
-            if (thunar_file_is_root (launcher->single_folder) && thunar_file_is_trashed (launcher->single_folder))
+            if (thunar_file_is_trash (launcher->single_folder))
               {
                 item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, action_entry->menu_item_tooltip_text, action_entry->accel_path,
                                                                     action_entry->callback, G_OBJECT (launcher), action_entry->menu_item_icon_name, menu);

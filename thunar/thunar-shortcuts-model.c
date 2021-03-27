@@ -1212,6 +1212,13 @@ thunar_shortcuts_model_add_shortcut_with_path (ThunarShortcutsModel *model,
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
   _thunar_return_if_fail (shortcut->file == NULL || THUNAR_IS_FILE (shortcut->file));
 
+  if (G_LIKELY (shortcut->file != NULL))
+    {
+      /* watch the trash for changes */
+      if (thunar_file_is_trash (shortcut->file))
+        thunar_file_watch (shortcut->file);
+    }
+
   if (path == NULL)
     {
       /* insert the new shortcut to the shortcuts list */
@@ -1651,6 +1658,10 @@ thunar_shortcut_free (ThunarShortcut       *shortcut,
 {
   if (G_LIKELY (shortcut->file != NULL))
     {
+      /* drop the file watch on trash */
+      if (thunar_file_is_trash (shortcut->file))
+        thunar_file_unwatch (shortcut->file);
+
       g_object_unref (shortcut->file);
     }
 

@@ -2976,6 +2976,8 @@ static void
 thunar_window_action_detailed_view (ThunarWindow *window)
 {
   thunar_window_action_view_changed (window, THUNAR_TYPE_DETAILS_VIEW);
+  thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view),
+                                                       thunar_file_is_trash (window->current_directory));
 }
 
 
@@ -3657,12 +3659,11 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
   else
     name = thunar_file_get_display_name (current_directory);
 
-  g_free (parse_name);
-
   /* set window title */
   title = g_strdup_printf ("%s - %s", name, "Thunar");
   gtk_window_set_title (GTK_WINDOW (window), title);
   g_free (title);
+  g_free (parse_name);
 
   /* set window icon */
   thunar_window_update_window_icon (window);
@@ -3978,8 +3979,6 @@ void
 thunar_window_set_current_directory (ThunarWindow *window,
                                      ThunarFile   *current_directory)
 {
-  GFile *folder = NULL;
-
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
 
@@ -4058,14 +4057,13 @@ thunar_window_set_current_directory (ThunarWindow *window,
    */
   g_object_notify (G_OBJECT (window), "current-directory");
 
-  /* show/hide date_deleted column in the trash directory */
+  /* show/hide date_deleted column/sortBy in the trash directory */
   if (current_directory == NULL)
     return;
   if (THUNAR_IS_DETAILS_VIEW (window->view) == FALSE)
     return;
 
-  folder = thunar_file_get_file (current_directory);
-  thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), thunar_g_file_is_trash (folder));
+  thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), thunar_file_is_trash (current_directory));
 }
 
 

@@ -345,7 +345,7 @@ thunar_tree_model_init (ThunarTreeModel *model)
       if (G_LIKELY (file != NULL))
         {
           /* watch the trash for changes */
-          if (thunar_file_is_trashed (file) && thunar_file_is_root (file))
+          if (thunar_file_is_trash (file))
             thunar_file_watch (file);
 
           /* create and append the new node */
@@ -1240,7 +1240,7 @@ thunar_tree_model_item_reset (ThunarTreeModelItem *item)
   if (G_LIKELY (item->file != NULL))
     {
       /* unwatch the trash */
-      if (thunar_file_is_trashed (item->file) && thunar_file_is_root (item->file))
+      if (thunar_file_is_trash (item->file))
         thunar_file_unwatch (item->file);
 
       /* release and reset the file */

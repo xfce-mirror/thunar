@@ -1055,7 +1055,7 @@ thunar_file_info_reload (ThunarFile   *file,
   /* determine the display name */
   if (file->display_name == NULL)
     {
-      if (G_UNLIKELY (thunar_g_file_is_trash (file->gfile)))
+      if (G_UNLIKELY (thunar_file_is_trash (file)))
         file->display_name = g_strdup (_("Trash"));
       else if (G_LIKELY (file->info != NULL))
         {
@@ -1980,7 +1980,7 @@ thunar_file_accepts_drop (ThunarFile     *file,
       actions &= (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_ASK);
 
       /* cannot create symbolic links in the trash or copy to the trash */
-      if (thunar_file_is_trashed (file))
+      if (thunar_file_is_trash (file))
         actions &= ~(GDK_ACTION_COPY | GDK_ACTION_LINK);
 
       for (lp = file_list; lp != NULL; lp = lp->next)
@@ -3018,6 +3018,23 @@ thunar_file_is_regular (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   return file->kind == G_FILE_TYPE_REGULAR;
+}
+
+
+
+/**
+ * thunar_file_is_trash:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns %TRUE if @file is the trash bin.
+ *
+ * Return value: %TRUE if @file is in the trash bin
+ **/
+gboolean
+thunar_file_is_trash (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  return thunar_g_file_is_trash (file->gfile);
 }
 
 

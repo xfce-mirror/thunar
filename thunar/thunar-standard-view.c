@@ -268,6 +268,7 @@ static void                 thunar_standard_view_disconnect_accelerators    (Thu
 static void                 thunar_standard_view_action_sort_by_name               (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_sort_by_type               (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_sort_by_date               (ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_action_sort_by_date_deleted       (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_sort_by_size               (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_sort_ascending             (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_sort_descending            (ThunarStandardView       *standard_view);
@@ -353,18 +354,19 @@ struct _ThunarStandardViewPrivate
 
 static XfceGtkActionEntry thunar_standard_view_action_entries[] =
 {
-    { THUNAR_STANDARD_VIEW_ACTION_SELECT_ALL_FILES,   "<Actions>/ThunarStandardView/select-all-files",   "<Primary>a", XFCE_GTK_MENU_ITEM,       N_ ("Select _all Files"),     N_ ("Select all files in this window"),                   NULL, G_CALLBACK (thunar_standard_view_select_all_files),       },
-    { THUNAR_STANDARD_VIEW_ACTION_SELECT_BY_PATTERN,  "<Actions>/ThunarStandardView/select-by-pattern",  "<Primary>s", XFCE_GTK_MENU_ITEM,       N_ ("Select _by Pattern..."), N_ ("Select all files that match a certain pattern"),     NULL, G_CALLBACK (thunar_standard_view_select_by_pattern),      },
-    { THUNAR_STANDARD_VIEW_ACTION_INVERT_SELECTION,   "<Actions>/ThunarStandardView/invert-selection",   "",           XFCE_GTK_MENU_ITEM,       N_ ("_Invert Selection"),     N_ ("Select all files but not those currently selected"), NULL, G_CALLBACK (thunar_standard_view_selection_invert),       },
-    { THUNAR_STANDARD_VIEW_ACTION_UNSELECT_ALL_FILES, "<Actions>/ThunarStandardView/unselect-all-files", "Escape",     XFCE_GTK_MENU_ITEM,       N_ ("U_nselect all Files"),   N_ ("Unselect all files in this window"),                 NULL, G_CALLBACK (thunar_standard_view_unselect_all_files),     },
-    { THUNAR_STANDARD_VIEW_ACTION_ARRANGE_ITEMS_MENU, "<Actions>/ThunarStandardView/arrange-items-menu", "",           XFCE_GTK_MENU_ITEM,       N_ ("Arran_ge Items"),        NULL,                                                     NULL, G_CALLBACK (NULL),                                        },
-    { THUNAR_STANDARD_VIEW_ACTION_SORT_ORDER_TOGGLE,  "<Actions>/ThunarStandardView/toggle-sort-order",  "",           XFCE_GTK_MENU_ITEM ,      N_ ("Toggle sort direction"), N_("Toggle Ascending/Descending sort order"),             NULL, G_CALLBACK (thunar_standard_view_toggle_sort_order),      },
-    { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_NAME,       "<Actions>/ThunarStandardView/sort-by-name",       "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Name"),              N_ ("Keep items sorted by their name"),                   NULL, G_CALLBACK (thunar_standard_view_action_sort_by_name),    },
-    { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_SIZE,       "<Actions>/ThunarStandardView/sort-by-size",       "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Size"),              N_ ("Keep items sorted by their size"),                   NULL, G_CALLBACK (thunar_standard_view_action_sort_by_size),    },
-    { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_TYPE,       "<Actions>/ThunarStandardView/sort-by-type",       "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Type"),              N_ ("Keep items sorted by their type"),                   NULL, G_CALLBACK (thunar_standard_view_action_sort_by_type),    },
-    { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_MTIME,      "<Actions>/ThunarStandardView/sort-by-mtime",      "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("By Modification _Date"), N_ ("Keep items sorted by their modification date"),      NULL, G_CALLBACK (thunar_standard_view_action_sort_by_date),    },
-    { THUNAR_STANDARD_VIEW_ACTION_SORT_ASCENDING,     "<Actions>/ThunarStandardView/sort-ascending",     "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Ascending"),            N_ ("Sort items in ascending order"),                     NULL, G_CALLBACK (thunar_standard_view_action_sort_ascending),  },
-    { THUNAR_STANDARD_VIEW_ACTION_SORT_DESCENDING,    "<Actions>/ThunarStandardView/sort-descending",    "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Descending"),           N_ ("Sort items in descending order"),                    NULL, G_CALLBACK (thunar_standard_view_action_sort_descending), },
+    { THUNAR_STANDARD_VIEW_ACTION_SELECT_ALL_FILES,   "<Actions>/ThunarStandardView/select-all-files",   "<Primary>a", XFCE_GTK_MENU_ITEM,       N_ ("Select _all Files"),     N_ ("Select all files in this window"),                   NULL, G_CALLBACK (thunar_standard_view_select_all_files),            },
+    { THUNAR_STANDARD_VIEW_ACTION_SELECT_BY_PATTERN,  "<Actions>/ThunarStandardView/select-by-pattern",  "<Primary>s", XFCE_GTK_MENU_ITEM,       N_ ("Select _by Pattern..."), N_ ("Select all files that match a certain pattern"),     NULL, G_CALLBACK (thunar_standard_view_select_by_pattern),           },
+    { THUNAR_STANDARD_VIEW_ACTION_INVERT_SELECTION,   "<Actions>/ThunarStandardView/invert-selection",   "",           XFCE_GTK_MENU_ITEM,       N_ ("_Invert Selection"),     N_ ("Select all files but not those currently selected"), NULL, G_CALLBACK (thunar_standard_view_selection_invert),            },
+    { THUNAR_STANDARD_VIEW_ACTION_UNSELECT_ALL_FILES, "<Actions>/ThunarStandardView/unselect-all-files", "Escape",     XFCE_GTK_MENU_ITEM,       N_ ("U_nselect all Files"),   N_ ("Unselect all files in this window"),                 NULL, G_CALLBACK (thunar_standard_view_unselect_all_files),          },
+    { THUNAR_STANDARD_VIEW_ACTION_ARRANGE_ITEMS_MENU, "<Actions>/ThunarStandardView/arrange-items-menu", "",           XFCE_GTK_MENU_ITEM,       N_ ("Arran_ge Items"),        NULL,                                                     NULL, G_CALLBACK (NULL),                                             },
+    { THUNAR_STANDARD_VIEW_ACTION_SORT_ORDER_TOGGLE,  "<Actions>/ThunarStandardView/toggle-sort-order",  "",           XFCE_GTK_MENU_ITEM ,      N_ ("Toggle sort direction"), N_("Toggle Ascending/Descending sort order"),             NULL, G_CALLBACK (thunar_standard_view_toggle_sort_order),           },
+    { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_NAME,       "<Actions>/ThunarStandardView/sort-by-name",       "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Name"),              N_ ("Keep items sorted by their name"),                   NULL, G_CALLBACK (thunar_standard_view_action_sort_by_name),         },
+    { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_SIZE,       "<Actions>/ThunarStandardView/sort-by-size",       "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Size"),              N_ ("Keep items sorted by their size"),                   NULL, G_CALLBACK (thunar_standard_view_action_sort_by_size),         },
+    { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_TYPE,       "<Actions>/ThunarStandardView/sort-by-type",       "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("By _Type"),              N_ ("Keep items sorted by their type"),                   NULL, G_CALLBACK (thunar_standard_view_action_sort_by_type),         },
+    { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_MTIME,      "<Actions>/ThunarStandardView/sort-by-mtime",      "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("By Modification _Date"), N_ ("Keep items sorted by their modification date"),      NULL, G_CALLBACK (thunar_standard_view_action_sort_by_date),         },
+    { THUNAR_STANDARD_VIEW_ACTION_SORT_BY_DTIME,      "<Actions>/ThunarStandardView/sort-by-dtime",      "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("By D_eletion Date"),     N_ ("Keep items sorted by their deletion date"),          NULL, G_CALLBACK (thunar_standard_view_action_sort_by_date_deleted), },
+    { THUNAR_STANDARD_VIEW_ACTION_SORT_ASCENDING,     "<Actions>/ThunarStandardView/sort-ascending",     "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Ascending"),            N_ ("Sort items in ascending order"),                     NULL, G_CALLBACK (thunar_standard_view_action_sort_ascending),       },
+    { THUNAR_STANDARD_VIEW_ACTION_SORT_DESCENDING,    "<Actions>/ThunarStandardView/sort-descending",    "",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Descending"),           N_ ("Sort items in descending order"),                    NULL, G_CALLBACK (thunar_standard_view_action_sort_descending),      },
 };
 
 #define get_action_entry(id) xfce_gtk_get_action_entry_by_id(thunar_standard_view_action_entries,G_N_ELEMENTS(thunar_standard_view_action_entries),id)
@@ -446,6 +448,12 @@ static void
 thunar_standard_view_action_sort_by_date (ThunarStandardView *standard_view)
 {
   thunar_standard_view_set_sort_column (standard_view, THUNAR_COLUMN_DATE_MODIFIED);
+}
+
+static void
+thunar_standard_view_action_sort_by_date_deleted (ThunarStandardView *standard_view)
+{
+  thunar_standard_view_set_sort_column (standard_view, THUNAR_COLUMN_DATE_DELETED);
 }
 
 static void
@@ -3855,6 +3863,9 @@ thunar_standard_view_append_menu_items (ThunarStandardView *standard_view,
                                                    standard_view->priv->sort_column == THUNAR_COLUMN_TYPE, GTK_MENU_SHELL (submenu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_BY_MTIME), G_OBJECT (standard_view),
                                                    standard_view->priv->sort_column == THUNAR_COLUMN_DATE_MODIFIED, GTK_MENU_SHELL (submenu));
+  if (thunar_file_is_trash (standard_view->priv->current_directory))
+    xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_BY_DTIME), G_OBJECT (standard_view),
+                                                     standard_view->priv->sort_column == THUNAR_COLUMN_DATE_DELETED, GTK_MENU_SHELL (submenu));
   xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));
   xfce_gtk_toggle_menu_item_new_from_action_entry (get_action_entry (THUNAR_STANDARD_VIEW_ACTION_SORT_ASCENDING), G_OBJECT (standard_view),
                                                    standard_view->priv->sort_order == GTK_SORT_ASCENDING, GTK_MENU_SHELL (submenu));
