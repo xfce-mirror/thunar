@@ -457,8 +457,10 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   if (G_UNLIKELY (app_info == NULL))
     return;
 
-  /* check if we should also set the application as default */
-  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->default_button)))
+  /* check if we should also set the application as default or
+     if application is opened first time, set it as default application */
+  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->default_button))
+   || g_app_info_get_default_for_type(content_type, FALSE) == NULL)
     {
       /* remember the application as default for these kind of file */
       succeed = g_app_info_set_as_default_for_type (app_info, content_type, &error);
