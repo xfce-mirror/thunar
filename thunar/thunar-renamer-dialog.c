@@ -368,7 +368,7 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   button = gtk_dialog_add_button (GTK_DIALOG (renamer_dialog), _("_Apply"), GTK_RESPONSE_APPLY);
   exo_binding_new (G_OBJECT (renamer_dialog->model), "can-rename", G_OBJECT (button), "sensitive");
   gtk_dialog_set_default_response (GTK_DIALOG (renamer_dialog), GTK_RESPONSE_APPLY);
-  gtk_widget_set_tooltip_text (button, _("Click here to actually rename the files listed above to their new names and keep the window open)."));
+  gtk_widget_set_tooltip_text (button, _("Click here to actually rename the files listed above to their new names and keep the window open."));
 
   /* setup the launcher support for this dialog */
   renamer_dialog->launcher = g_object_new (THUNAR_TYPE_LAUNCHER, "widget", GTK_WIDGET (renamer_dialog), NULL);
