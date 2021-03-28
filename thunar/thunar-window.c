@@ -2228,6 +2228,7 @@ void thunar_window_notebook_open_new_tab (ThunarWindow *window,
   GtkWidget     *view;
   gint           page_num;
   GType          view_type;
+  gboolean       switch_to_new_tab;
 
   /* save the history of the current view */
   if (THUNAR_IS_STANDARD_VIEW (window->view))
@@ -2241,8 +2242,12 @@ void thunar_window_notebook_open_new_tab (ThunarWindow *window,
   view = thunar_window_notebook_insert_page (window, directory, view_type, page_num + 1, history);
 
   /* switch to the new view */
-  page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), view);
-  gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected), page_num);
+  g_object_get (G_OBJECT (window->preferences), "switch-to-new-tab", &switch_to_new_tab, NULL);
+  if (switch_to_new_tab == TRUE)
+    {
+      page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), view);
+      gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected), page_num);
+    }
 
   /* take focus on the new view */
   gtk_widget_grab_focus (view);
