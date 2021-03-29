@@ -106,6 +106,8 @@ void            thunar_launcher_set_selection                        (ThunarLaun
                                                                       GList                          *selected_thunar_files,
                                                                       ThunarDevice                   *selected_device,
                                                                       GFile                          *selected_location);
+void            thunar_launcher_action_empty_trash                   (ThunarLauncher *launcher);
+void            thunar_launcher_action_restore                       (ThunarLauncher                 *launcher);
 
 
 G_END_DECLS;
