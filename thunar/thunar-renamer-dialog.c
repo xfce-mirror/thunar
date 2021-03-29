@@ -170,6 +170,8 @@ struct _ThunarRenamerDialog
   GtkWidget           *tree_view;
   GtkWidget           *progress;
 
+  GtkWidget           *mode_combo;
+
   GtkTreeViewColumn   *name_column;
 
   /* the current directory used for the "Add Files" dialog */
@@ -525,6 +527,7 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
       gtk_combo_box_set_active (GTK_COMBO_BOX (mcombo), active);
       g_type_class_unref (klass);
       gtk_widget_show (mcombo);
+      renamer_dialog->mode_combo = mcombo;
 
       /* allocate the notebook with the renamers */
       notebook = gtk_notebook_new ();
@@ -1836,6 +1839,7 @@ thunar_show_renamer_dialog (gpointer     parent,
   GtkWidget         *dialog;
   GtkWidget         *window = NULL;
   GList             *lp;
+  gboolean           directories_only;
 
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
 
@@ -1879,6 +1883,15 @@ thunar_show_renamer_dialog (gpointer     parent,
   /* append all specified files to the dialog's model */
   for (lp = files; lp != NULL; lp = lp->next)
     thunar_renamer_model_append (THUNAR_RENAMER_DIALOG (dialog)->model, lp->data);
+
+  /* if there are only directories selected change the mode to both */
+  directories_only = TRUE;
+  for (lp = files; lp != NULL; lp = lp->next)
+    if (thunar_file_is_directory (THUNAR_FILE (lp->data)) == FALSE)
+      directories_only = FALSE;
+
+  if (directories_only)
+      gtk_combo_box_set_active (GTK_COMBO_BOX (THUNAR_RENAMER_DIALOG (dialog)->mode_combo), THUNAR_RENAMER_MODE_BOTH);
 
   /* let the application handle the dialog */
   application = thunar_application_get ();
