@@ -802,7 +802,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
     case THUNAR_COLUMN_SIZE:
       g_value_init (value, G_TYPE_STRING);
       if (!thunar_file_is_directory (file))
-	g_value_take_string (value, thunar_file_get_size_string_formatted (file, THUNAR_LIST_MODEL (model)->file_size_binary));
+        g_value_take_string (value, thunar_file_get_size_string_formatted (file, THUNAR_LIST_MODEL (model)->file_size_binary));
       break;
 
     case THUNAR_COLUMN_SIZE_IN_BYTES:
