@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-27 00:45+0100\n"
-"PO-Revision-Date: 2021-03-27 15:09+0000\n"
+"POT-Creation-Date: 2021-03-29 00:45+0200\n"
+"PO-Revision-Date: 2021-03-29 11:34+0000\n"
 "Last-Translator: Kiril Kirilov <cybercop_montana@abv.bg>\n"
 "Language-Team: Bulgarian (http://www.transifex.com/xfce/thunar/language/bg/)\n"
 "MIME-Version: 1.0\n"
@@ -171,7 +171,7 @@ msgstr[1] "Наистина ли искате да изтриете завина
 #: ../thunar/thunar-permissions-chooser.c:1143
 #: ../thunar/thunar-properties-dialog.c:850
 #: ../thunar/thunar-renamer-dialog.c:357
-#: ../thunar/thunar-renamer-dialog.c:1059
+#: ../thunar/thunar-renamer-dialog.c:1065
 #: ../thunar/thunar-renamer-progress.c:198
 #: ../thunar/thunar-renamer-progress.c:208
 #: ../thunar/thunar-standard-view.c:2176
@@ -392,13 +392,13 @@ msgstr "Изберете програма"
 #. aka "activate"
 #: ../thunar/thunar-chooser-dialog.c:848
 #: ../thunar/thunar-chooser-dialog.c:1251 ../thunar/thunar-launcher.c:1473
-#: ../thunar/thunar-renamer-dialog.c:1060
+#: ../thunar/thunar-renamer-dialog.c:1066
 #: ../plugins/thunar-uca/thunar-uca-editor.c:179
 msgid "_Open"
 msgstr "_Отваряне"
 
 #: ../thunar/thunar-chooser-dialog.c:854
-#: ../thunar/thunar-renamer-dialog.c:1067
+#: ../thunar/thunar-renamer-dialog.c:1073
 #: ../plugins/thunar-uca/thunar-uca-editor.c:186
 msgid "All Files"
 msgstr "Всички файлове"
@@ -838,7 +838,7 @@ msgstr "Група"
 msgid "MIME Type"
 msgstr "Тип MIME"
 
-#: ../thunar/thunar-enum-types.c:107 ../thunar/thunar-renamer-dialog.c:417
+#: ../thunar/thunar-enum-types.c:107 ../thunar/thunar-renamer-dialog.c:423
 #: ../thunarx/thunarx-renamer.c:164
 msgid "Name"
 msgstr "Име"
@@ -2222,26 +2222,38 @@ msgid "Display information about Thunar Bulk Rename"
 msgstr "Показване на сведения за „Преименуване наведнъж“ в Thunar"
 
 #: ../thunar/thunar-renamer-dialog.c:354
-#: ../thunar/thunar-renamer-dialog.c:1781
+#: ../thunar/thunar-renamer-dialog.c:1787
 #: ../thunar-bulk-rename.desktop.in.in.h:2
 msgid "Rename Multiple Files"
 msgstr "Преименуване на няколко файла"
 
-#. add the "Rename Files" button
+#. add the "Done" button
 #: ../thunar/thunar-renamer-dialog.c:362
-msgid "_Rename Files"
-msgstr "Преименуване на файлове"
+msgid "_Done"
+msgstr "_Свършено"
 
 #: ../thunar/thunar-renamer-dialog.c:365
 msgid ""
-"Click here to actually rename the files listed above to their new names."
-msgstr "Кликнете тук, за да бъдат преименувани файловете от този списък."
+"Click here to actually rename the files listed above to their new names and "
+"close the window."
+msgstr "Кликнете тук, за да преименувате изброените по-горе файлове до новите им имена и да затворите прозореца."
 
-#: ../thunar/thunar-renamer-dialog.c:435
+#. add the "Apply" button
+#: ../thunar/thunar-renamer-dialog.c:368
+msgid "_Apply"
+msgstr "_Приложи"
+
+#: ../thunar/thunar-renamer-dialog.c:371
+msgid ""
+"Click here to actually rename the files listed above to their new names and "
+"keep the window open."
+msgstr "Кликнете тук, за да преименувате изброените по-горе файлове с новите им имена и да оставите прозореца отворен."
+
+#: ../thunar/thunar-renamer-dialog.c:441
 msgid "New Name"
 msgstr "Ново име"
 
-#: ../thunar/thunar-renamer-dialog.c:498
+#: ../thunar/thunar-renamer-dialog.c:504
 msgid ""
 "Click here to view the documentation for the selected rename operation."
 msgstr "Кликнете тук, за да видите документацията на избраната операция преименуване."
@@ -2250,61 +2262,61 @@ msgstr "Кликнете тук, за да видите документация
 #. from $libdir/thunarx-2/,
 #. *              and opening the multi rename dialog by selecting multiple
 #. files and pressing F2.
-#: ../thunar/thunar-renamer-dialog.c:608
+#: ../thunar/thunar-renamer-dialog.c:614
 msgid ""
 "No renamer modules were found on your system. Please check your\n"
 "installation or contact your system administrator. If you install Thunar\n"
 "from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
 msgstr "Модули за преименуване не са намерени на вашата система.\nПроверете настройките или се свържете с вашият системен администратор\nАко сте инсталирали Thunar от архив (сорс пакет),\nпроверете, дали разширението „Simple Builtin Renamers“ е включено."
 
-#: ../thunar/thunar-renamer-dialog.c:858
+#: ../thunar/thunar-renamer-dialog.c:864
 msgid "Remove File"
 msgid_plural "Remove Files"
 msgstr[0] "Премахване на файл"
 msgstr[1] "Премахване на файлове"
 
-#: ../thunar/thunar-renamer-dialog.c:859
+#: ../thunar/thunar-renamer-dialog.c:865
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] "Премахване на избраният файл от списъка с файловете за преименуване"
 msgstr[1] "Премахване на избраните файлове от списъка с файловете за преименуване"
 
 #. tell the user that we failed
-#: ../thunar/thunar-renamer-dialog.c:955
+#: ../thunar/thunar-renamer-dialog.c:961
 msgid "Failed to open the documentation browser"
 msgstr "Не може да бъде открита програма за преглед на документацията"
 
 #. allocate the file chooser
-#: ../thunar/thunar-renamer-dialog.c:1056
+#: ../thunar/thunar-renamer-dialog.c:1062
 msgid "Select files to rename"
 msgstr "Избиране на файлове за преименуване"
 
-#: ../thunar/thunar-renamer-dialog.c:1072
+#: ../thunar/thunar-renamer-dialog.c:1078
 msgid "Audio Files"
 msgstr "Аудио файлове"
 
-#: ../thunar/thunar-renamer-dialog.c:1077
+#: ../thunar/thunar-renamer-dialog.c:1083
 msgid "Image Files"
 msgstr "Файлове с изображения"
 
-#: ../thunar/thunar-renamer-dialog.c:1082
+#: ../thunar/thunar-renamer-dialog.c:1088
 msgid "Video Files"
 msgstr "Видео файлове"
 
 #. just popup the about dialog
-#: ../thunar/thunar-renamer-dialog.c:1209
+#: ../thunar/thunar-renamer-dialog.c:1215
 #: ../thunar-bulk-rename.desktop.in.in.h:1
 msgid "Bulk Rename"
 msgstr "Масово преименуване"
 
-#: ../thunar/thunar-renamer-dialog.c:1210
+#: ../thunar/thunar-renamer-dialog.c:1216
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
 msgstr "Thunar Bulk Rename е мощен инструмент за едновременно преименуване на няколко файла."
 
 #. change title to reflect the standalone status
-#: ../thunar/thunar-renamer-dialog.c:1781
+#: ../thunar/thunar-renamer-dialog.c:1787
 msgid "Bulk Rename - Rename Multiple Files"
 msgstr "Bulk Rename - Преименуване на множество файлове"
 

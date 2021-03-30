@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-26 00:45+0100\n"
-"PO-Revision-Date: 2021-03-26 20:07+0000\n"
+"POT-Creation-Date: 2021-03-29 00:45+0200\n"
+"PO-Revision-Date: 2021-03-29 12:09+0000\n"
 "Last-Translator: UTUMI Hirosi <utuhiro78@yahoo.co.jp>\n"
 "Language-Team: Japanese (http://www.transifex.com/xfce/thunar/language/ja/)\n"
 "MIME-Version: 1.0\n"
@@ -75,7 +75,7 @@ msgstr "操作の実行に失敗しました"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1505 ../thunar/thunar-application.c:1637
-#: ../thunar/thunar-launcher.c:1095 ../thunar/thunar-location-entry.c:366
+#: ../thunar/thunar-launcher.c:1097 ../thunar/thunar-location-entry.c:366
 #: ../thunar/thunar-location-entry.c:394
 #, c-format
 msgid "Failed to open \"%s\""
@@ -87,17 +87,17 @@ msgid "Failed to open \"%s\": %s"
 msgstr "\"%s\" を開けませんでした: %s"
 
 #. display an error message
-#: ../thunar/thunar-application.c:1696 ../thunar/thunar-launcher.c:2245
+#: ../thunar/thunar-application.c:1696 ../thunar/thunar-launcher.c:2269
 #: ../thunar/thunar-properties-dialog.c:762
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "\"%s\" の名前の変更に失敗しました。"
 
-#: ../thunar/thunar-application.c:1798 ../thunar/thunar-launcher.c:2404
+#: ../thunar/thunar-application.c:1798 ../thunar/thunar-launcher.c:2428
 msgid "New Folder"
 msgstr "新しいフォルダー"
 
-#: ../thunar/thunar-application.c:1799 ../thunar/thunar-launcher.c:2405
+#: ../thunar/thunar-application.c:1799 ../thunar/thunar-launcher.c:2429
 msgid "Create New Folder"
 msgstr "新しいフォルダーを作成します。"
 
@@ -110,7 +110,7 @@ msgid "Create New File"
 msgstr "新しいファイルを作成します。"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-application.c:1861 ../thunar/thunar-launcher.c:2450
+#: ../thunar/thunar-application.c:1861 ../thunar/thunar-launcher.c:2474
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "テンプレート \"%s\" からドキュメントを作成"
@@ -161,11 +161,11 @@ msgstr[0] "選択した %u 個のファイルを\n完全に削除してもよろ
 #: ../thunar/thunar-dialogs.c:98 ../thunar/thunar-dialogs.c:233
 #: ../thunar/thunar-dialogs.c:649 ../thunar/thunar-dialogs.c:762
 #: ../thunar/thunar-dialogs.c:1034 ../thunar/thunar-dnd.c:169
-#: ../thunar/thunar-launcher.c:960 ../thunar/thunar-permissions-chooser.c:535
+#: ../thunar/thunar-launcher.c:962 ../thunar/thunar-permissions-chooser.c:535
 #: ../thunar/thunar-permissions-chooser.c:1143
 #: ../thunar/thunar-properties-dialog.c:850
 #: ../thunar/thunar-renamer-dialog.c:357
-#: ../thunar/thunar-renamer-dialog.c:1059
+#: ../thunar/thunar-renamer-dialog.c:1065
 #: ../thunar/thunar-renamer-progress.c:198
 #: ../thunar/thunar-renamer-progress.c:208
 #: ../thunar/thunar-standard-view.c:2176
@@ -179,7 +179,7 @@ msgstr[0] "選択した %u 個のファイルを\n完全に削除してもよろ
 msgid "_Cancel"
 msgstr "キャンセル(_C)"
 
-#: ../thunar/thunar-application.c:2166 ../thunar/thunar-launcher.c:286
+#: ../thunar/thunar-application.c:2166 ../thunar/thunar-launcher.c:288
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:372
 msgid "_Delete"
 msgstr "削除(_D)"
@@ -209,7 +209,7 @@ msgid "Remove all files and folders from the Trash?"
 msgstr "ゴミ箱にあるファイルとフォルダーをすべて削除しますか?"
 
 #. prepare the menu item
-#: ../thunar/thunar-application.c:2345 ../thunar/thunar-launcher.c:280
+#: ../thunar/thunar-application.c:2345 ../thunar/thunar-launcher.c:282
 #: ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "ゴミ箱を空にする(_E)"
@@ -259,7 +259,7 @@ msgstr "アプリケーションは選択されていません"
 msgid "Other Application..."
 msgstr "他のアプリケーション..."
 
-#: ../thunar/thunar-chooser-dialog.c:187 ../thunar/thunar-launcher.c:3009
+#: ../thunar/thunar-chooser-dialog.c:187 ../thunar/thunar-launcher.c:3035
 msgid "Open With"
 msgstr "アプリケーションで開く"
 
@@ -385,14 +385,14 @@ msgstr "アプリケーションを選択してください"
 #. change the accept button label text
 #. aka "activate"
 #: ../thunar/thunar-chooser-dialog.c:848
-#: ../thunar/thunar-chooser-dialog.c:1251 ../thunar/thunar-launcher.c:1454
-#: ../thunar/thunar-renamer-dialog.c:1060
+#: ../thunar/thunar-chooser-dialog.c:1251 ../thunar/thunar-launcher.c:1473
+#: ../thunar/thunar-renamer-dialog.c:1066
 #: ../plugins/thunar-uca/thunar-uca-editor.c:179
 msgid "_Open"
 msgstr "開く(_O)"
 
 #: ../thunar/thunar-chooser-dialog.c:854
-#: ../thunar/thunar-renamer-dialog.c:1067
+#: ../thunar/thunar-renamer-dialog.c:1073
 #: ../plugins/thunar-uca/thunar-uca-editor.c:186
 msgid "All Files"
 msgstr "すべてのファイル"
@@ -421,6 +421,10 @@ msgstr "Ruby スクリプト"
 #: ../plugins/thunar-uca/thunar-uca-editor.c:224
 msgid "Shell Scripts"
 msgstr "シェルスクリプト"
+
+#: ../thunar/thunar-chooser-dialog.c:1319
+msgid "Set Default Application"
+msgstr "デフォルトのアプリケーションを設定する"
 
 #: ../thunar/thunar-chooser-model.c:251
 msgid "None available"
@@ -606,7 +610,7 @@ msgstr "マルチディスクドライブを停止(_S)"
 msgid "_Lock"
 msgstr "ロック(_L)"
 
-#: ../thunar/thunar-device.c:526 ../thunar/thunar-launcher.c:298
+#: ../thunar/thunar-device.c:526 ../thunar/thunar-launcher.c:300
 msgid "_Eject"
 msgstr "取り出し(_E)"
 
@@ -785,7 +789,7 @@ msgstr "ここにリンク(_L)"
 
 #. display an error to the user
 #. display an error message to the user
-#: ../thunar/thunar-dnd.c:250 ../thunar/thunar-launcher.c:772
+#: ../thunar/thunar-dnd.c:250 ../thunar/thunar-launcher.c:774
 #, c-format
 msgid "Failed to execute file \"%s\""
 msgstr "ファイル \"%s\" を実行できませんでした。"
@@ -828,7 +832,7 @@ msgstr "所属グループ"
 msgid "MIME Type"
 msgstr "MIME タイプ"
 
-#: ../thunar/thunar-enum-types.c:107 ../thunar/thunar-renamer-dialog.c:417
+#: ../thunar/thunar-enum-types.c:107 ../thunar/thunar-renamer-dialog.c:423
 #: ../thunarx/thunarx-renamer.c:164
 msgid "Name"
 msgstr "名前"
@@ -1042,319 +1046,329 @@ msgid ""
 "space."
 msgstr "移動/コピー先に十分な空き容量がありません。ファイルを削除するなどして容量を確保してください。"
 
-#: ../thunar/thunar-launcher.c:269
+#: ../thunar/thunar-launcher.c:270
 msgid "Open With Other _Application..."
 msgstr "他のアプリケーションで開く(_A)..."
 
-#: ../thunar/thunar-launcher.c:269 ../thunar/thunar-launcher.c:3010
+#: ../thunar/thunar-launcher.c:270 ../thunar/thunar-launcher.c:3036
 msgid "Choose another application with which to open the selected file"
 msgstr "選択したファイルを開く別のアプリケーションを選びます。"
+
+#: ../thunar/thunar-launcher.c:271
+msgid "Set _Default Application..."
+msgstr "デフォルトのアプリケーションを設定する(_D)..."
+
+#: ../thunar/thunar-launcher.c:271
+msgid ""
+"Choose an application which should be used by default to open the selected "
+"file"
+msgstr "選択したファイルを開くときにデフォルトで使用するアプリケーションを選択します"
 
 #. For backward compatibility the old accel paths are re-used. Currently not
 #. possible to automatically migrate to new accel paths.
 #. Waiting for https://gitlab.gnome.org/GNOME/gtk/issues/2375 to be able to
 #. fix that
-#: ../thunar/thunar-launcher.c:273
+#: ../thunar/thunar-launcher.c:275
 msgid "_Send To"
 msgstr "送る(_S)"
 
-#: ../thunar/thunar-launcher.c:276
+#: ../thunar/thunar-launcher.c:278
 msgid "_Properties..."
 msgstr "プロパティ(_P)..."
 
-#: ../thunar/thunar-launcher.c:276
+#: ../thunar/thunar-launcher.c:278
 msgid "View the properties of the selected file"
 msgstr "選択したファイルのプロパティを表示します。"
 
-#: ../thunar/thunar-launcher.c:277 ../thunar/thunar-launcher.c:1500
+#: ../thunar/thunar-launcher.c:279 ../thunar/thunar-launcher.c:1524
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "リンクの作成(_K)"
 
-#: ../thunar/thunar-launcher.c:278
+#: ../thunar/thunar-launcher.c:280
 msgid "Du_plicate"
 msgstr "複製の作成(_P)"
 
-#: ../thunar/thunar-launcher.c:279
+#: ../thunar/thunar-launcher.c:281
 msgid "_Rename..."
 msgstr "名前を変更(_R)..."
 
-#: ../thunar/thunar-launcher.c:280
+#: ../thunar/thunar-launcher.c:282
 msgid "Delete all files and folders in the Trash"
 msgstr "ゴミ箱にあるすべてのファイルとフォルダーを削除します。"
 
-#: ../thunar/thunar-launcher.c:281
+#: ../thunar/thunar-launcher.c:283
 msgid "Create _Folder..."
 msgstr "フォルダーの作成(_F)..."
 
-#: ../thunar/thunar-launcher.c:281
+#: ../thunar/thunar-launcher.c:283
 msgid "Create an empty folder within the current folder"
 msgstr "現在のフォルダーに空のフォルダーを作成します。"
 
-#: ../thunar/thunar-launcher.c:282
+#: ../thunar/thunar-launcher.c:284
 msgid "Create _Document"
 msgstr "ドキュメントの作成(_D)"
 
-#: ../thunar/thunar-launcher.c:282
+#: ../thunar/thunar-launcher.c:284
 msgid "Create a new document from a template"
 msgstr "テンプレートから新しいドキュメントを作成"
 
-#: ../thunar/thunar-launcher.c:284
+#: ../thunar/thunar-launcher.c:286
 msgid "_Restore"
 msgstr "復元(_R)"
 
-#: ../thunar/thunar-launcher.c:285
+#: ../thunar/thunar-launcher.c:287
 msgid "Mo_ve to Trash"
 msgstr "ゴミ箱に移動(_V)"
 
-#: ../thunar/thunar-launcher.c:291
+#: ../thunar/thunar-launcher.c:293
 msgid "_Paste"
 msgstr "貼り付け(_P)"
 
-#: ../thunar/thunar-launcher.c:291
+#: ../thunar/thunar-launcher.c:293
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr "先に \"切り取り\" または \"コピー\" で選択されたファイルを \"移動\" または \"コピー\" します。"
 
-#: ../thunar/thunar-launcher.c:292
+#: ../thunar/thunar-launcher.c:294
 msgid "_Paste Into Folder"
 msgstr "フォルダーに貼り付け(_P)"
 
-#: ../thunar/thunar-launcher.c:292
+#: ../thunar/thunar-launcher.c:294
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
 msgstr "先に \"切り取り\" または \"コピー\" で選択されたファイルを選択したフォルダーに \"移動\" または \"コピー\" します。"
 
-#: ../thunar/thunar-launcher.c:293
+#: ../thunar/thunar-launcher.c:295
 msgid "_Copy"
 msgstr "コピー(_C)"
 
-#: ../thunar/thunar-launcher.c:293
+#: ../thunar/thunar-launcher.c:295
 msgid "Prepare the selected files to be copied with a Paste command"
 msgstr "選択したファイルを \"貼り付け\" コマンドでコピーできるようにします。"
 
-#: ../thunar/thunar-launcher.c:294
+#: ../thunar/thunar-launcher.c:296
 msgid "Cu_t"
 msgstr "切り取り(_T)"
 
-#: ../thunar/thunar-launcher.c:294
+#: ../thunar/thunar-launcher.c:296
 msgid "Prepare the selected files to be moved with a Paste command"
 msgstr "選択したファイルを \"貼り付け\" コマンドで移動できるようにします。"
 
-#: ../thunar/thunar-launcher.c:296
+#: ../thunar/thunar-launcher.c:298
 msgid "_Mount"
 msgstr "マウント(_M)"
 
-#: ../thunar/thunar-launcher.c:296
+#: ../thunar/thunar-launcher.c:298
 msgid "Mount the selected device"
 msgstr "現在選択されているデバイスをマウントする"
 
-#: ../thunar/thunar-launcher.c:297
+#: ../thunar/thunar-launcher.c:299
 msgid "_Unmount"
 msgstr "マウント解除(_U)"
 
-#: ../thunar/thunar-launcher.c:297
+#: ../thunar/thunar-launcher.c:299
 msgid "Unmount the selected device"
 msgstr "現在選択されているデバイスをアンマウントする"
 
-#: ../thunar/thunar-launcher.c:298
+#: ../thunar/thunar-launcher.c:300
 msgid "Eject the selected device"
 msgstr "現在選択されているデバイスを取り出す"
 
-#: ../thunar/thunar-launcher.c:909
+#: ../thunar/thunar-launcher.c:911
 #, c-format
 msgid "Failed to open file \"%s\""
 msgstr "ファイル \"%s\" を開けませんでした。"
 
 #. we can just tell that n files failed to open
-#: ../thunar/thunar-launcher.c:915
+#: ../thunar/thunar-launcher.c:917
 #, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
 msgstr[0] "%d 個のファイルを開けませんでした。"
 
-#: ../thunar/thunar-launcher.c:954
+#: ../thunar/thunar-launcher.c:956
 msgid "Are you sure you want to open all folders?"
 msgstr "すべてのフォルダーを開いてもよろしいですか?"
 
-#: ../thunar/thunar-launcher.c:956
+#: ../thunar/thunar-launcher.c:958
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
 msgstr[0] "%d 個のウィンドウを別々に開きます。"
 
-#: ../thunar/thunar-launcher.c:959
+#: ../thunar/thunar-launcher.c:961
 #, c-format
 msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
 msgstr[0] "%d 個の新しいウィンドウを開く"
 
-#: ../thunar/thunar-launcher.c:1047 ../thunar/thunar-launcher.c:1801
+#: ../thunar/thunar-launcher.c:1049 ../thunar/thunar-launcher.c:1825
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "\"%s\" のマウントに失敗しました"
 
-#: ../thunar/thunar-launcher.c:1454
+#: ../thunar/thunar-launcher.c:1473
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
 msgstr[0] "選択したファイルを開きます。"
 
-#: ../thunar/thunar-launcher.c:1458
+#: ../thunar/thunar-launcher.c:1477
 msgid "_Execute"
 msgstr "実行(_E)"
 
-#: ../thunar/thunar-launcher.c:1458
+#: ../thunar/thunar-launcher.c:1477
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
 msgstr[0] "選択したファイルを実行する"
 
-#: ../thunar/thunar-launcher.c:1463
+#: ../thunar/thunar-launcher.c:1482
 #, c-format
 msgid "Open in New _Tab"
 msgid_plural "Open in %d New _Tabs"
 msgstr[0] "%d個の新しいタブで開く(_T)"
 
-#: ../thunar/thunar-launcher.c:1464
+#: ../thunar/thunar-launcher.c:1483
 #, c-format
 msgid "Open the selected directory in new tab"
 msgid_plural "Open the selected directories in %d new tabs"
 msgstr[0] "選択したディレクトリを%d個の新しいタブで開く"
 
-#: ../thunar/thunar-launcher.c:1473
+#: ../thunar/thunar-launcher.c:1492
 #, c-format
 msgid "Open in New _Window"
 msgid_plural "Open in %d New _Windows"
 msgstr[0] "%d個の新しいウィンドウで開く(_W)"
 
-#: ../thunar/thunar-launcher.c:1474
+#: ../thunar/thunar-launcher.c:1493
 #, c-format
 msgid "Open the selected directory in new window"
 msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] "選択したディレクトリを%d個の新しいウィンドウで開く"
 
-#: ../thunar/thunar-launcher.c:1501
+#: ../thunar/thunar-launcher.c:1525
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "選択したファイルごとにシンボリックリンクを作成する"
 
-#: ../thunar/thunar-launcher.c:1525
+#: ../thunar/thunar-launcher.c:1549
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "選択したファイルの名前を変更する"
 
-#: ../thunar/thunar-launcher.c:1535
+#: ../thunar/thunar-launcher.c:1559
 msgid "Restore the selected file to its original location"
 msgid_plural "Restore the selected files to its original location"
 msgstr[0] "選択したファイルを元の場所に復元する"
 
-#: ../thunar/thunar-launcher.c:1552
+#: ../thunar/thunar-launcher.c:1576
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "選択したファイルをゴミ箱に移動する"
 
-#: ../thunar/thunar-launcher.c:1569
+#: ../thunar/thunar-launcher.c:1593
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "選択したファイルを完全に削除する"
 
-#: ../thunar/thunar-launcher.c:1619
+#: ../thunar/thunar-launcher.c:1643
 msgid "Cut the selection"
 msgstr "選択部分を切り取る"
 
-#: ../thunar/thunar-launcher.c:1629
+#: ../thunar/thunar-launcher.c:1653
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "選択したファイルを \"貼り付け\" コマンドで移動できるようにする"
 
-#: ../thunar/thunar-launcher.c:1643
+#: ../thunar/thunar-launcher.c:1667
 msgid "Copy the selection"
 msgstr "選択部分をコピー"
 
-#: ../thunar/thunar-launcher.c:1653
+#: ../thunar/thunar-launcher.c:1677
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "選択したファイルを \"貼り付け\" コマンドでコピーできるようにする"
 
-#: ../thunar/thunar-launcher.c:1676
+#: ../thunar/thunar-launcher.c:1700
 msgid "Paste the clipboard"
 msgstr "クリップボードを貼り付ける"
 
-#: ../thunar/thunar-launcher.c:1907
+#: ../thunar/thunar-launcher.c:1931
 msgid "Side Pane (Create Shortcut)"
 msgid_plural "Side Pane (Create Shortcuts)"
 msgstr[0] "サイドペイン (ショートカットの作成)"
 
-#: ../thunar/thunar-launcher.c:1908
+#: ../thunar/thunar-launcher.c:1932
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "選択したフォルダーを左のショートカットペインに追加します。"
 
-#: ../thunar/thunar-launcher.c:1927
+#: ../thunar/thunar-launcher.c:1951
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "デスクトップ (リンクを作成)"
 
-#: ../thunar/thunar-launcher.c:1928
+#: ../thunar/thunar-launcher.c:1952
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "選択したファイルのリンクをデスクトップに作成します。"
 
-#: ../thunar/thunar-launcher.c:1949 ../thunar/thunar-launcher.c:1987
+#: ../thunar/thunar-launcher.c:1973 ../thunar/thunar-launcher.c:2011
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
 msgstr[0] "選択したファイルを \"%s\" に送信します。"
 
-#: ../thunar/thunar-launcher.c:2466
+#: ../thunar/thunar-launcher.c:2490
 msgid "New Empty File"
 msgstr "新規ファイル"
 
-#: ../thunar/thunar-launcher.c:2467
+#: ../thunar/thunar-launcher.c:2491
 msgid "New Empty File..."
 msgstr "新規ファイル..."
 
-#: ../thunar/thunar-launcher.c:2666
+#: ../thunar/thunar-launcher.c:2690
 #, c-format
 msgid "No templates installed in \"%s\""
 msgstr "\"%s\" にテンプレートはインストールされていません"
 
-#: ../thunar/thunar-launcher.c:2679
+#: ../thunar/thunar-launcher.c:2703
 msgid "_Empty File"
 msgstr "空のファイル(_E)"
 
-#: ../thunar/thunar-launcher.c:2785
+#: ../thunar/thunar-launcher.c:2809
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "\"%s\" の取り出しに失敗しました"
 
-#: ../thunar/thunar-launcher.c:2844
+#: ../thunar/thunar-launcher.c:2868
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "\"%s\" のマウント解除に失敗しました"
 
-#: ../thunar/thunar-launcher.c:2905
+#: ../thunar/thunar-launcher.c:2929
 #, c-format
 msgid "Open With \"%s\""
 msgstr "%s で開く"
 
-#: ../thunar/thunar-launcher.c:2906 ../thunar/thunar-launcher.c:2973
+#: ../thunar/thunar-launcher.c:2930 ../thunar/thunar-launcher.c:2999
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "%s を使用して選択したファイルを開きます。"
 
-#: ../thunar/thunar-launcher.c:2972
+#: ../thunar/thunar-launcher.c:2998
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "%s で開く(_O)"
 
 #. we can only show a generic "Open" action
-#: ../thunar/thunar-launcher.c:2992
+#: ../thunar/thunar-launcher.c:3018
 #, c-format
 msgid "_Open With Default Applications"
 msgstr "デフォルトのアプリケーションで開く(_O)"
 
-#: ../thunar/thunar-launcher.c:2993
+#: ../thunar/thunar-launcher.c:3019
 #, c-format
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
@@ -2176,26 +2190,38 @@ msgid "Display information about Thunar Bulk Rename"
 msgstr "Thunar バルクリネームについての情報を表示します。"
 
 #: ../thunar/thunar-renamer-dialog.c:354
-#: ../thunar/thunar-renamer-dialog.c:1781
+#: ../thunar/thunar-renamer-dialog.c:1787
 #: ../thunar-bulk-rename.desktop.in.in.h:2
 msgid "Rename Multiple Files"
 msgstr "複数のファイル名を変更します"
 
-#. add the "Rename Files" button
+#. add the "Done" button
 #: ../thunar/thunar-renamer-dialog.c:362
-msgid "_Rename Files"
-msgstr "ファイル名を変更する(_R)"
+msgid "_Done"
+msgstr "完了(_D)"
 
 #: ../thunar/thunar-renamer-dialog.c:365
 msgid ""
-"Click here to actually rename the files listed above to their new names."
-msgstr "ここをクリックすると、上にリストされているファイル名の変更を適用します。"
+"Click here to actually rename the files listed above to their new names and "
+"close the window."
+msgstr "上記のファイル名を実際に新しい名前に変更してウィンドウを閉じる場合は、ここをクリックしてください。"
 
-#: ../thunar/thunar-renamer-dialog.c:435
+#. add the "Apply" button
+#: ../thunar/thunar-renamer-dialog.c:368
+msgid "_Apply"
+msgstr "適用(_A)"
+
+#: ../thunar/thunar-renamer-dialog.c:371
+msgid ""
+"Click here to actually rename the files listed above to their new names and "
+"keep the window open."
+msgstr "上記のファイル名を実際に新しい名前に変更し、ウィンドウを開いたままにする場合は、ここをクリックしてください。"
+
+#: ../thunar/thunar-renamer-dialog.c:441
 msgid "New Name"
 msgstr "新しい名前"
 
-#: ../thunar/thunar-renamer-dialog.c:498
+#: ../thunar/thunar-renamer-dialog.c:504
 msgid ""
 "Click here to view the documentation for the selected rename operation."
 msgstr "ここをクリックすると、選択したリネーム操作についてのドキュメントが表示されます。"
@@ -2204,59 +2230,59 @@ msgstr "ここをクリックすると、選択したリネーム操作につい
 #. from $libdir/thunarx-2/,
 #. *              and opening the multi rename dialog by selecting multiple
 #. files and pressing F2.
-#: ../thunar/thunar-renamer-dialog.c:608
+#: ../thunar/thunar-renamer-dialog.c:614
 msgid ""
 "No renamer modules were found on your system. Please check your\n"
 "installation or contact your system administrator. If you install Thunar\n"
 "from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
 msgstr "リネームモジュールが見つかりませんでした。インストールが正しく行われたか確認\nしてください。またはシステム管理者に連絡してください。\nThunar をソースからインストールしている場合は \"Simple Builtin Renamers\"\nプラグインが有効になっていることを確認してください。"
 
-#: ../thunar/thunar-renamer-dialog.c:858
+#: ../thunar/thunar-renamer-dialog.c:864
 msgid "Remove File"
 msgid_plural "Remove Files"
 msgstr[0] "リストから削除"
 
-#: ../thunar/thunar-renamer-dialog.c:859
+#: ../thunar/thunar-renamer-dialog.c:865
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] "名前を変更するファイルのリストから選択したファイルを削除します。"
 
 #. tell the user that we failed
-#: ../thunar/thunar-renamer-dialog.c:955
+#: ../thunar/thunar-renamer-dialog.c:961
 msgid "Failed to open the documentation browser"
 msgstr "ドキュメントを表示するブラウザーを起動できませんでした。"
 
 #. allocate the file chooser
-#: ../thunar/thunar-renamer-dialog.c:1056
+#: ../thunar/thunar-renamer-dialog.c:1062
 msgid "Select files to rename"
 msgstr "名前を変更するファイルを選択してください"
 
-#: ../thunar/thunar-renamer-dialog.c:1072
+#: ../thunar/thunar-renamer-dialog.c:1078
 msgid "Audio Files"
 msgstr "音楽ファイル"
 
-#: ../thunar/thunar-renamer-dialog.c:1077
+#: ../thunar/thunar-renamer-dialog.c:1083
 msgid "Image Files"
 msgstr "画像ファイル"
 
-#: ../thunar/thunar-renamer-dialog.c:1082
+#: ../thunar/thunar-renamer-dialog.c:1088
 msgid "Video Files"
 msgstr "動画ファイル"
 
 #. just popup the about dialog
-#: ../thunar/thunar-renamer-dialog.c:1209
+#: ../thunar/thunar-renamer-dialog.c:1215
 #: ../thunar-bulk-rename.desktop.in.in.h:1
 msgid "Bulk Rename"
 msgstr "バルクリネーム"
 
-#: ../thunar/thunar-renamer-dialog.c:1210
+#: ../thunar/thunar-renamer-dialog.c:1216
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
 msgstr "Thunar バルクリネームは一度に複数のファイル名を\n変更する強力で柔軟性のあるツールです。"
 
 #. change title to reflect the standalone status
-#: ../thunar/thunar-renamer-dialog.c:1781
+#: ../thunar/thunar-renamer-dialog.c:1787
 msgid "Bulk Rename - Rename Multiple Files"
 msgstr "バルクリネーム - ファイルをまとめてリネームします"
 
