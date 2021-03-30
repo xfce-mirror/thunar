@@ -398,6 +398,7 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   GList                list;
   GList               *all_apps, *lp;
   GdkScreen           *screen;
+  GAppInfo            *default_app = NULL;
 
   /* no special processing for non-accept responses */
   if (G_UNLIKELY (response != GTK_RESPONSE_ACCEPT))
@@ -457,10 +458,12 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   if (G_UNLIKELY (app_info == NULL))
     return;
 
+  default_app = g_app_info_get_default_for_type(content_type, FALSE);
+  
   /* check if we should also set the application as default or
      if application is opened first time, set it as default application */
-  if (g_app_info_get_default_for_type(content_type, FALSE) == NULL
-   || gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->default_button)) )
+  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->default_button))
+   || default_app == NULL)
     {
       /* remember the application as default for these kind of file */
       succeed = g_app_info_set_as_default_for_type (app_info, content_type, &error);
@@ -492,8 +495,8 @@ thunar_chooser_dialog_response (GtkDialog *widget,
         }
     }
 
-  /* free memory of @content_type because it used in @g_app_info_get_default_for_type in previous if statement */
-  g_object_unref (content_type);
+  if (default_app != NULL)
+    g_object_unref (default_app);
 
   /* check if we should also execute the application */
   if (G_LIKELY (succeed && dialog->open))

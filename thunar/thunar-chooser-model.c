@@ -330,7 +330,9 @@ thunar_chooser_model_reload (ThunarChooserModel *model)
                                "gnome-applications",
                                other);
 
-  g_list_free_full (default_app, g_object_unref);
+  if (default_app->data != NULL)
+    g_object_unref (default_app->data);
+  g_list_free (default_app);
 
   g_list_free_full (recommended, g_object_unref);
   g_list_free_full (all, g_object_unref);
