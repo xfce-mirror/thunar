@@ -94,6 +94,7 @@ enum
   DEVICE_OPERATION_STARTED,
   DEVICE_OPERATION_FINISHED,
   NEW_FILES_CREATED,
+  SELECTION_CHANGED_IN_TRASH,
   LAST_SIGNAL,
 };
 
@@ -182,11 +183,9 @@ static void                    thunar_launcher_action_add_shortcuts       (Thuna
 static void                    thunar_launcher_action_make_link           (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_duplicate           (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_rename              (ThunarLauncher                 *launcher);
-static void                    thunar_launcher_action_restore             (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_move_to_trash       (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_delete              (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_trash_delete        (ThunarLauncher                 *launcher);
-static void                    thunar_launcher_action_empty_trash         (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_cut                 (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_copy                (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_paste               (ThunarLauncher                 *launcher);
@@ -373,6 +372,20 @@ thunar_launcher_class_init (ThunarLauncherClass *klass)
                   NULL, NULL,
                   g_cclosure_marshal_generic,
                   G_TYPE_NONE, 1, G_TYPE_POINTER);
+
+  /**
+   * ThunarLauncher::selected-files-in-trash:
+   * @launcher : a #ThunarLauncher
+   *
+   * This signal is emitted by the @launcher whenever the file selection changes while in the trash folder
+   **/
+  launcher_signals[SELECTION_CHANGED_IN_TRASH] =
+    g_signal_new (I_("selection-changed-in-trash"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS, 0,
+                  NULL, NULL,
+                  g_cclosure_marshal_generic,
+                  G_TYPE_NONE, 1, G_TYPE_BOOLEAN);
 
   /**
    * ThunarLauncher:widget:
@@ -626,6 +639,8 @@ thunar_launcher_set_selected_files (ThunarComponent *component,
   launcher->files_are_selected = TRUE;
   if (selected_files == NULL || g_list_length (selected_files) == 0)
     launcher->files_are_selected = FALSE;
+  g_signal_emit (launcher, launcher_signals[SELECTION_CHANGED_IN_TRASH], 0,
+                 (thunar_file_is_trash (launcher->current_directory) && launcher->files_are_selected == TRUE));
 
   launcher->files_to_process_trashable = TRUE;
   launcher->n_files_to_process         = 0;
@@ -2322,7 +2337,7 @@ thunar_launcher_action_rename (ThunarLauncher *launcher)
 
 
 
-static void
+void
 thunar_launcher_action_restore (ThunarLauncher *launcher)
 {
   ThunarApplication *application;
@@ -2391,7 +2406,7 @@ thunar_launcher_action_trash_delete (ThunarLauncher *launcher)
 
 
 
-static void
+void
 thunar_launcher_action_empty_trash (ThunarLauncher *launcher)
 {
   ThunarApplication *application;
