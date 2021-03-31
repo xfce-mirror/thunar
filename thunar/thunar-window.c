@@ -282,6 +282,9 @@ static void      thunar_window_set_directory_specific_settings (ThunarWindow    
 static GType     thunar_window_view_type_for_directory         (ThunarWindow      *window,
                                                                 ThunarFile        *directory);
 static void      thunar_window_action_clear_directory_specific_settings (ThunarWindow  *window);
+static void      thunar_window_trash_infobar_clicked           (GtkInfoBar             *info_bar,
+                                                                gint                    response_id,
+                                                                ThunarWindow           *window);
 
 
 
@@ -326,6 +329,7 @@ struct _ThunarWindow
   GtkWidget              *paned;
   GtkWidget              *sidepane;
   GtkWidget              *view_box;
+  GtkWidget              *trash_infobar;
 
   /* split view panes */
   GtkWidget              *paned_notebooks;
@@ -789,6 +793,16 @@ thunar_window_init (ThunarWindow *window)
   window->view_box = gtk_grid_new ();
   gtk_paned_pack2 (GTK_PANED (window->paned), window->view_box, TRUE, FALSE);
   gtk_widget_show (window->view_box);
+
+  window->trash_infobar = gtk_info_bar_new();
+  gtk_container_set_border_width (GTK_CONTAINER (window->trash_infobar), 0);
+  gtk_grid_attach (GTK_GRID (window->view_box), window->trash_infobar, 0, 0, 1, 1);
+  gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Restore", 1);
+  gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Empty", 0);
+  g_signal_connect (window->trash_infobar,
+                    "response",
+                    G_CALLBACK (thunar_window_trash_infobar_clicked),
+                    G_OBJECT (window));
 
   /* split view: Create panes where the two notebooks */
   window->paned_notebooks = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
@@ -3979,6 +3993,8 @@ void
 thunar_window_set_current_directory (ThunarWindow *window,
                                      ThunarFile   *current_directory)
 {
+  gboolean is_trash;
+
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
 
@@ -4060,10 +4076,11 @@ thunar_window_set_current_directory (ThunarWindow *window,
   /* show/hide date_deleted column/sortBy in the trash directory */
   if (current_directory == NULL)
     return;
+  is_trash = thunar_file_is_trash (current_directory);
+  is_trash ? gtk_widget_show(window->trash_infobar) : gtk_widget_hide(window->trash_infobar);
   if (THUNAR_IS_DETAILS_VIEW (window->view) == FALSE)
     return;
-
-  thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), thunar_file_is_trash (current_directory));
+  thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), is_trash);
 }
 
 
@@ -4388,3 +4405,20 @@ thunar_window_view_type_for_directory (ThunarWindow *window,
 
   return type;
 }
+
+static void
+thunar_window_trash_infobar_clicked (GtkInfoBar *info_bar, gint response_id, ThunarWindow *window)
+{
+  switch (response_id)
+    {
+      case 0:
+        thunar_launcher_action_empty_trash (window->launcher);
+        break;
+      case 1:
+        thunar_launcher_action_restore (window->launcher);
+        break;
+      default:
+        g_return_if_reached();
+    }
+}
+
