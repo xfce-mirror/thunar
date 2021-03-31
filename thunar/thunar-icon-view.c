@@ -23,7 +23,7 @@
 
 #include <thunar/thunar-icon-view.h>
 #include <thunar/thunar-private.h>
-
+#include <thunar/thunar-preferences.h>
 
 
 /* Property identifiers */
@@ -31,6 +31,7 @@ enum
 {
   PROP_0,
   PROP_TEXT_BESIDE_ICONS,
+  PROP_FIXED_ITEM_WIDTH
 };
 
 
@@ -52,6 +53,8 @@ struct _ThunarIconViewClass
 struct _ThunarIconView
 {
   ThunarAbstractIconView __parent__;
+  gboolean fixed_width;
+  gboolean text_beside_icons;
 };
 
 
@@ -89,6 +92,22 @@ thunar_icon_view_class_init (ThunarIconViewClass *klass)
                                                          "text-beside-icons",
                                                          FALSE,
                                                          EXO_PARAM_WRITABLE));
+
+  /**
+   * ThunarIconView:fixed-item-width:
+   *
+   * Whether the icon a view should always use the maximum width
+   * (= wrap width) for items displayed so that the grid layout
+   * stays the same between folders with either long or short file
+   * names
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_FIXED_ITEM_WIDTH,
+                                   g_param_spec_boolean ("fixed-item-width",
+                                                         "fixed-item-width",
+                                                         "fixed-item-width",
+                                                         TRUE,
+                                                         EXO_PARAM_WRITABLE));
 }
 
 
@@ -108,7 +127,10 @@ thunar_icon_view_init (ThunarIconView *icon_view)
 
   /* synchronize the "text-beside-icons" property with the global preference */
   exo_binding_new (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->preferences), "misc-text-beside-icons", G_OBJECT (icon_view), "text-beside-icons");
-}
+  
+  /* synchronize the "fixed-item-width" property with the global preference */
+  exo_binding_new (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->preferences), "misc-fixed-item-width", G_OBJECT (icon_view), "fixed-item-width");
+ }
 
 
 
@@ -119,12 +141,17 @@ thunar_icon_view_set_property (GObject      *object,
                                GParamSpec   *pspec)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (object);
+  ThunarIconView *icon_view = THUNAR_ICON_VIEW(standard_view);
 
   switch (prop_id)
     {
     case PROP_TEXT_BESIDE_ICONS:
       if (G_UNLIKELY (g_value_get_boolean (value)))
         {
+          icon_view->text_beside_icons = TRUE;
+          /* reset item width to automatic in case it has been modified via the fixed-width property */
+          exo_icon_view_set_item_width (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), -1);
+
           exo_icon_view_set_orientation (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), GTK_ORIENTATION_HORIZONTAL);
           g_object_set (G_OBJECT (standard_view->name_renderer), "wrap-width", 128, "yalign", 0.5f, "xalign", 0.0f, "alignment", PANGO_ALIGN_LEFT, NULL);
 
@@ -133,6 +160,8 @@ thunar_icon_view_set_property (GObject      *object,
         }
       else
         {
+          icon_view->text_beside_icons = FALSE;
+
           exo_icon_view_set_orientation (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), GTK_ORIENTATION_VERTICAL);
           g_object_set (G_OBJECT (standard_view->name_renderer), "yalign", 0.0f, "xalign", 0.5f, "alignment", PANGO_ALIGN_CENTER, NULL);
 
@@ -140,6 +169,16 @@ thunar_icon_view_set_property (GObject      *object,
           g_signal_connect (object, "notify::zoom-level", G_CALLBACK (thunar_icon_view_zoom_level_changed), NULL);
           thunar_icon_view_zoom_level_changed (standard_view);
         }
+      break;
+
+    case PROP_FIXED_ITEM_WIDTH:
+      icon_view->fixed_width = g_value_get_boolean (value);
+
+      /* only refresh item display and manipulate wrap-width when text is below icons (default) */
+      if (G_LIKELY (!icon_view->text_beside_icons))
+      {
+        thunar_icon_view_zoom_level_changed (standard_view);
+      }
       break;
 
     default:
@@ -176,6 +215,8 @@ thunar_icon_view_zoom_level_changed (ThunarStandardView *standard_view)
 {
   gint wrap_width;
 
+  ThunarIconView *icon_view = THUNAR_ICON_VIEW(standard_view);
+
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* determine the "wrap-width" depending on the "zoom-level" */
@@ -202,10 +243,15 @@ thunar_icon_view_zoom_level_changed (ThunarStandardView *standard_view)
       break;
     }
 
+  if (icon_view->fixed_width && !icon_view->text_beside_icons)
+  {
+    exo_icon_view_set_item_width (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), wrap_width);
+  }
+  else
+  {
+    exo_icon_view_set_item_width (EXO_ICON_VIEW (gtk_bin_get_child (GTK_BIN (standard_view))), -1);
+  }
+  
   /* set the new "wrap-width" for the text renderer */
   g_object_set (G_OBJECT (standard_view->name_renderer), "wrap-width", wrap_width, NULL);
 }
-
-
-
-
