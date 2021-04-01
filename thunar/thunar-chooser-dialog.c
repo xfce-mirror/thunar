@@ -1025,7 +1025,7 @@ thunar_chooser_dialog_expand (ThunarChooserDialog *dialog)
 
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (dialog->tree_view));
 
-  /* expand the first tree view row (the recommended applications) */
+  /* expand the first tree view row (the default application) */
   if (G_LIKELY (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (model), &iter)))
     {
       path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
@@ -1033,7 +1033,15 @@ thunar_chooser_dialog_expand (ThunarChooserDialog *dialog)
       gtk_tree_path_free (path);
     }
 
-  /* expand the second tree view row (the other applications) */
+  /* expand the second tree view row (the recommended applications) */
+  if (G_LIKELY (gtk_tree_model_iter_next (GTK_TREE_MODEL (model), &iter)))
+    {
+      path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
+      gtk_tree_view_expand_to_path (GTK_TREE_VIEW (dialog->tree_view), path);
+      gtk_tree_path_free (path);
+    }
+
+  /* expand the third tree view row (the other applications) */
   if (G_LIKELY (gtk_tree_model_iter_next (GTK_TREE_MODEL (model), &iter)))
     {
       path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
