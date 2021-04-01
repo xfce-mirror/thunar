@@ -86,6 +86,13 @@ enum
   LAST_SIGNAL,
 };
 
+/* Trash infobar response ids */
+enum
+{
+    EMPTY,
+    RESTORE
+};
+
 struct _ThunarBookmark
 {
   GFile *g_file;
@@ -282,6 +289,10 @@ static void      thunar_window_set_directory_specific_settings (ThunarWindow    
 static GType     thunar_window_view_type_for_directory         (ThunarWindow      *window,
                                                                 ThunarFile        *directory);
 static void      thunar_window_action_clear_directory_specific_settings (ThunarWindow  *window);
+static void      thunar_window_trash_infobar_clicked           (GtkInfoBar             *info_bar,
+                                                                gint                    response_id,
+                                                                ThunarWindow           *window);
+static void      thunar_window_trash_selection_updated         (ThunarWindow           *window);
 
 
 
@@ -326,6 +337,8 @@ struct _ThunarWindow
   GtkWidget              *paned;
   GtkWidget              *sidepane;
   GtkWidget              *view_box;
+  GtkWidget              *trash_infobar;
+  GtkWidget              *trash_infobar_restore_button;
 
   /* split view panes */
   GtkWidget              *paned_notebooks;
@@ -789,6 +802,15 @@ thunar_window_init (ThunarWindow *window)
   window->view_box = gtk_grid_new ();
   gtk_paned_pack2 (GTK_PANED (window->paned), window->view_box, TRUE, FALSE);
   gtk_widget_show (window->view_box);
+
+  window->trash_infobar = gtk_info_bar_new();
+  gtk_grid_attach (GTK_GRID (window->view_box), window->trash_infobar, 0, 0, 1, 1);
+  window->trash_infobar_restore_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Restore", RESTORE);
+  gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Empty", EMPTY);
+  g_signal_connect (window->trash_infobar,
+                    "response",
+                    G_CALLBACK (thunar_window_trash_infobar_clicked),
+                    G_OBJECT (window));
 
   /* split view: Create panes where the two notebooks */
   window->paned_notebooks = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
@@ -1732,9 +1754,14 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
                                     G_BINDING_SYNC_CREATE);
     }
 
+  g_signal_handlers_disconnect_matched (window->view, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, thunar_window_trash_selection_updated, NULL); // is this necessary?
+
   /* activate new view */
   window->view = page;
   window->view_type = G_TYPE_FROM_INSTANCE (page);
+
+  g_signal_connect_swapped(G_OBJECT (window->view), "notify::selected-files",
+                           G_CALLBACK (thunar_window_trash_selection_updated), window);
 
   /* remember the last view type if directory specific settings are not enabled */
   if (!window->directory_specific_settings && window->view_type != G_TYPE_NONE)
@@ -3979,6 +4006,8 @@ void
 thunar_window_set_current_directory (ThunarWindow *window,
                                      ThunarFile   *current_directory)
 {
+  gboolean is_trash;
+
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
 
@@ -4060,10 +4089,15 @@ thunar_window_set_current_directory (ThunarWindow *window,
   /* show/hide date_deleted column/sortBy in the trash directory */
   if (current_directory == NULL)
     return;
+  is_trash = thunar_file_is_trash (current_directory);
+  if (is_trash)
+    gtk_widget_show(window->trash_infobar);
+  else
+    gtk_widget_hide(window->trash_infobar);
+
   if (THUNAR_IS_DETAILS_VIEW (window->view) == FALSE)
     return;
-
-  thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), thunar_file_is_trash (current_directory));
+  thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), is_trash);
 }
 
 
@@ -4387,4 +4421,44 @@ thunar_window_view_type_for_directory (ThunarWindow *window,
     type = THUNAR_TYPE_ICON_VIEW;
 
   return type;
+}
+
+
+
+static void
+thunar_window_trash_infobar_clicked (GtkInfoBar *info_bar,
+                                     gint response_id,
+                                     ThunarWindow *window)
+{
+  switch (response_id)
+    {
+      case EMPTY:
+        thunar_launcher_action_empty_trash (window->launcher);
+        break;
+      case RESTORE:
+        thunar_launcher_action_restore (window->launcher);
+        break;
+      default:
+        g_return_if_reached();
+    }
+}
+
+
+
+/**
+ * thunar_window_trash_selection_updated:
+ * @window      : a #ThunarWindow instance.
+ * @sensitive   : a #gboolean that controls whether the Restore button is sensitive
+ *
+ * Used to set the `sensitive` value of the `Restore` button in the trash infobar.
+ **/
+static void
+thunar_window_trash_selection_updated (ThunarWindow *window)
+{
+  GList* selected_files = thunar_view_get_selected_files (THUNAR_VIEW (window->view));
+
+  if (g_list_length (selected_files) > 0)
+    gtk_widget_set_sensitive (window->trash_infobar_restore_button, TRUE);
+  else
+    gtk_widget_set_sensitive (window->trash_infobar_restore_button, FALSE);
 }
