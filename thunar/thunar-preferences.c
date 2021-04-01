@@ -104,6 +104,7 @@ enum
   PROP_SHORTCUTS_ICON_SIZE,
   PROP_TREE_ICON_EMBLEMS,
   PROP_TREE_ICON_SIZE,
+  PROP_SWITCH_TO_NEW_TAB,
   N_PROPERTIES,
 };
 
@@ -869,6 +870,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          THUNAR_TYPE_ICON_SIZE,
                          THUNAR_ICON_SIZE_16,
                          EXO_PARAM_READWRITE);
+
+  /**
+ * ThunarPreferences:switch-to-new-tab:
+ *
+ * Whether to switch to the new tab after opening a folder in a new tab.
+ **/
+  preferences_props[PROP_SWITCH_TO_NEW_TAB] =
+      g_param_spec_boolean ("switch-to-new-tab",
+                            "SwitchToNewTab",
+                            NULL,
+                            FALSE,
+                            EXO_PARAM_READWRITE);
 
   /* install all properties */
   g_object_class_install_properties (gobject_class, N_PROPERTIES, preferences_props);
