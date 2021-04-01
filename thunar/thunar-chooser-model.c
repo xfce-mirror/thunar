@@ -283,11 +283,24 @@ thunar_chooser_model_reload (ThunarChooserModel *model)
   GList *lp;
   GList *other = NULL;
   GList *recommended;
+  GList *default_app = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_CHOOSER_MODEL (model));
   _thunar_return_if_fail (model->content_type != NULL);
 
   gtk_tree_store_clear (GTK_TREE_STORE (model));
+
+  /* get default application for this type and append it in @default_app */
+  default_app = g_list_prepend (default_app, g_app_info_get_default_for_type (model->content_type, FALSE));
+
+  /* If default application was already selected, then display it in Treeview */
+  if (default_app->data)
+  {
+    thunar_chooser_model_append (model,
+                               _("Default Application"),
+                               "preferences-desktop-default-applications",
+                               default_app);
+  }
 
   /* check if we have any applications for this type */
   recommended = g_app_info_get_all_for_type (model->content_type);
@@ -316,6 +329,10 @@ thunar_chooser_model_reload (ThunarChooserModel *model)
                                _("Other Applications"),
                                "gnome-applications",
                                other);
+
+  if (default_app->data != NULL)
+    g_object_unref (default_app->data);
+  g_list_free (default_app);
 
   g_list_free_full (recommended, g_object_unref);
   g_list_free_full (all, g_object_unref);
