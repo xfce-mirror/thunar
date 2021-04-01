@@ -484,6 +484,8 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   gtk_box_pack_start (GTK_BOX (vbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
+  renamer_dialog->mode_combo = NULL;
+
   /* check if we have any renamers */
   if (G_LIKELY (renamers != NULL))
     {
@@ -1890,8 +1892,9 @@ thunar_show_renamer_dialog (gpointer     parent,
     if (thunar_file_is_directory (THUNAR_FILE (lp->data)) == FALSE)
       directories_only = FALSE;
 
-  if (directories_only)
-      gtk_combo_box_set_active (GTK_COMBO_BOX (THUNAR_RENAMER_DIALOG (dialog)->mode_combo), THUNAR_RENAMER_MODE_BOTH);
+  GtkComboBox* mode_combo = GTK_COMBO_BOX (THUNAR_RENAMER_DIALOG (dialog)->mode_combo);
+  if (directories_only && mode_combo != NULL)
+    gtk_combo_box_set_active (mode_combo, THUNAR_RENAMER_MODE_BOTH);
 
   /* let the application handle the dialog */
   application = thunar_application_get ();
