@@ -398,6 +398,7 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   GList                list;
   GList               *all_apps, *lp;
   GdkScreen           *screen;
+  GAppInfo            *default_app = NULL;
 
   /* no special processing for non-accept responses */
   if (G_UNLIKELY (response != GTK_RESPONSE_ACCEPT))
@@ -457,8 +458,12 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   if (G_UNLIKELY (app_info == NULL))
     return;
 
-  /* check if we should also set the application as default */
-  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->default_button)))
+  default_app = g_app_info_get_default_for_type (content_type, FALSE);
+
+  /* check if we should also set the application as default or
+     if application is opened first time, set it as default application */
+  if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (dialog->default_button))
+   || default_app == NULL)
     {
       /* remember the application as default for these kind of file */
       succeed = g_app_info_set_as_default_for_type (app_info, content_type, &error);
@@ -489,6 +494,9 @@ thunar_chooser_dialog_response (GtkDialog *widget,
           thunar_file_changed (dialog->file);
         }
     }
+
+  if (default_app != NULL)
+    g_object_unref (default_app);
 
   /* check if we should also execute the application */
   if (G_LIKELY (succeed && dialog->open))
@@ -1017,7 +1025,7 @@ thunar_chooser_dialog_expand (ThunarChooserDialog *dialog)
 
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (dialog->tree_view));
 
-  /* expand the first tree view row (the recommended applications) */
+  /* expand the first tree view row (the default application) */
   if (G_LIKELY (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (model), &iter)))
     {
       path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
@@ -1025,7 +1033,15 @@ thunar_chooser_dialog_expand (ThunarChooserDialog *dialog)
       gtk_tree_path_free (path);
     }
 
-  /* expand the second tree view row (the other applications) */
+  /* expand the second tree view row (the recommended applications) */
+  if (G_LIKELY (gtk_tree_model_iter_next (GTK_TREE_MODEL (model), &iter)))
+    {
+      path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
+      gtk_tree_view_expand_to_path (GTK_TREE_VIEW (dialog->tree_view), path);
+      gtk_tree_path_free (path);
+    }
+
+  /* expand the third tree view row (the other applications) */
   if (G_LIKELY (gtk_tree_model_iter_next (GTK_TREE_MODEL (model), &iter)))
     {
       path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
