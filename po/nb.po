@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-27 00:45+0100\n"
-"PO-Revision-Date: 2021-03-27 19:54+0000\n"
+"POT-Creation-Date: 2021-03-29 00:45+0200\n"
+"PO-Revision-Date: 2021-04-01 05:46+0000\n"
 "Last-Translator: Kjell Cato Heskjestad <cato@heskjestad.xyz>\n"
 "Language-Team: Norwegian Bokmål (http://www.transifex.com/xfce/thunar/language/nb/)\n"
 "MIME-Version: 1.0\n"
@@ -171,7 +171,7 @@ msgstr[1] "Er du sikker på at du vil slette \n %u filer permanent?"
 #: ../thunar/thunar-permissions-chooser.c:1143
 #: ../thunar/thunar-properties-dialog.c:850
 #: ../thunar/thunar-renamer-dialog.c:357
-#: ../thunar/thunar-renamer-dialog.c:1059
+#: ../thunar/thunar-renamer-dialog.c:1065
 #: ../thunar/thunar-renamer-progress.c:198
 #: ../thunar/thunar-renamer-progress.c:208
 #: ../thunar/thunar-standard-view.c:2176
@@ -392,13 +392,13 @@ msgstr "Velg et program"
 #. aka "activate"
 #: ../thunar/thunar-chooser-dialog.c:848
 #: ../thunar/thunar-chooser-dialog.c:1251 ../thunar/thunar-launcher.c:1473
-#: ../thunar/thunar-renamer-dialog.c:1060
+#: ../thunar/thunar-renamer-dialog.c:1066
 #: ../plugins/thunar-uca/thunar-uca-editor.c:179
 msgid "_Open"
 msgstr "_Åpne"
 
 #: ../thunar/thunar-chooser-dialog.c:854
-#: ../thunar/thunar-renamer-dialog.c:1067
+#: ../thunar/thunar-renamer-dialog.c:1073
 #: ../plugins/thunar-uca/thunar-uca-editor.c:186
 msgid "All Files"
 msgstr "Alle filer"
@@ -838,7 +838,7 @@ msgstr "Gruppe"
 msgid "MIME Type"
 msgstr "MIME-type"
 
-#: ../thunar/thunar-enum-types.c:107 ../thunar/thunar-renamer-dialog.c:417
+#: ../thunar/thunar-enum-types.c:107 ../thunar/thunar-renamer-dialog.c:423
 #: ../thunarx/thunarx-renamer.c:164
 msgid "Name"
 msgstr "Navn"
@@ -2222,26 +2222,38 @@ msgid "Display information about Thunar Bulk Rename"
 msgstr "Vis informasjon om Thunar Bulk Rename"
 
 #: ../thunar/thunar-renamer-dialog.c:354
-#: ../thunar/thunar-renamer-dialog.c:1781
+#: ../thunar/thunar-renamer-dialog.c:1787
 #: ../thunar-bulk-rename.desktop.in.in.h:2
 msgid "Rename Multiple Files"
 msgstr "Gi nytt navn til _mange filer"
 
-#. add the "Rename Files" button
+#. add the "Done" button
 #: ../thunar/thunar-renamer-dialog.c:362
-msgid "_Rename Files"
-msgstr "Gi nytt _navn"
+msgid "_Done"
+msgstr "Fer_dig"
 
 #: ../thunar/thunar-renamer-dialog.c:365
 msgid ""
-"Click here to actually rename the files listed above to their new names."
-msgstr "Klikk her for å faktisk starte navneendring av filene overnfor."
+"Click here to actually rename the files listed above to their new names and "
+"close the window."
+msgstr "Klikk her for å faktisk starte endring av filnavn og lukke vinduet."
 
-#: ../thunar/thunar-renamer-dialog.c:435
+#. add the "Apply" button
+#: ../thunar/thunar-renamer-dialog.c:368
+msgid "_Apply"
+msgstr "_Bruk"
+
+#: ../thunar/thunar-renamer-dialog.c:371
+msgid ""
+"Click here to actually rename the files listed above to their new names and "
+"keep the window open."
+msgstr "Klikk her for å faktisk starte endring av filnavn og holde vinduet åpent."
+
+#: ../thunar/thunar-renamer-dialog.c:441
 msgid "New Name"
 msgstr "Nytt navn"
 
-#: ../thunar/thunar-renamer-dialog.c:498
+#: ../thunar/thunar-renamer-dialog.c:504
 msgid ""
 "Click here to view the documentation for the selected rename operation."
 msgstr "Klikk her for å se dokumentasjon for valgte operasjon."
@@ -2250,61 +2262,61 @@ msgstr "Klikk her for å se dokumentasjon for valgte operasjon."
 #. from $libdir/thunarx-2/,
 #. *              and opening the multi rename dialog by selecting multiple
 #. files and pressing F2.
-#: ../thunar/thunar-renamer-dialog.c:608
+#: ../thunar/thunar-renamer-dialog.c:614
 msgid ""
 "No renamer modules were found on your system. Please check your\n"
 "installation or contact your system administrator. If you install Thunar\n"
 "from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
 msgstr "Ingen navneendrings-moduler er funnet i systemet. Kontroller\ninstallasjonen eller kontakt systemadministratoren. Hvis du installerer\nThunar fra kildekode, pass på å aktive programtillegget «Simple Builtin Renamers»."
 
-#: ../thunar/thunar-renamer-dialog.c:858
+#: ../thunar/thunar-renamer-dialog.c:864
 msgid "Remove File"
 msgid_plural "Remove Files"
 msgstr[0] "Fjern fil"
 msgstr[1] "Fjern filer"
 
-#: ../thunar/thunar-renamer-dialog.c:859
+#: ../thunar/thunar-renamer-dialog.c:865
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] "Ta bort valgte fil fra listen over filer som skal ha nytt navn"
 msgstr[1] "Ta bort valgte filer fra listen over filer som skal ha nytt navn"
 
 #. tell the user that we failed
-#: ../thunar/thunar-renamer-dialog.c:955
+#: ../thunar/thunar-renamer-dialog.c:961
 msgid "Failed to open the documentation browser"
 msgstr "Klarte ikke å åpne hjelpesystemet"
 
 #. allocate the file chooser
-#: ../thunar/thunar-renamer-dialog.c:1056
+#: ../thunar/thunar-renamer-dialog.c:1062
 msgid "Select files to rename"
 msgstr "Velg filer som skal ha nytt navn"
 
-#: ../thunar/thunar-renamer-dialog.c:1072
+#: ../thunar/thunar-renamer-dialog.c:1078
 msgid "Audio Files"
 msgstr "Lydfiler"
 
-#: ../thunar/thunar-renamer-dialog.c:1077
+#: ../thunar/thunar-renamer-dialog.c:1083
 msgid "Image Files"
 msgstr "Bildefiler"
 
-#: ../thunar/thunar-renamer-dialog.c:1082
+#: ../thunar/thunar-renamer-dialog.c:1088
 msgid "Video Files"
 msgstr "Videofiler"
 
 #. just popup the about dialog
-#: ../thunar/thunar-renamer-dialog.c:1209
+#: ../thunar/thunar-renamer-dialog.c:1215
 #: ../thunar-bulk-rename.desktop.in.in.h:1
 msgid "Bulk Rename"
 msgstr "Gi nytt navn (Bulk)"
 
-#: ../thunar/thunar-renamer-dialog.c:1210
+#: ../thunar/thunar-renamer-dialog.c:1216
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
 msgstr "Thunar Bulk Rename er et kraftig og utvidbart\nverktøy for å gi nytt navn til mange filer på en gang."
 
 #. change title to reflect the standalone status
-#: ../thunar/thunar-renamer-dialog.c:1781
+#: ../thunar/thunar-renamer-dialog.c:1787
 msgid "Bulk Rename - Rename Multiple Files"
 msgstr "Gi nye navn til mange filer"
 
