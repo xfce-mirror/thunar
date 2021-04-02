@@ -182,11 +182,9 @@ static void                    thunar_launcher_action_add_shortcuts       (Thuna
 static void                    thunar_launcher_action_make_link           (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_duplicate           (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_rename              (ThunarLauncher                 *launcher);
-static void                    thunar_launcher_action_restore             (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_move_to_trash       (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_delete              (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_trash_delete        (ThunarLauncher                 *launcher);
-static void                    thunar_launcher_action_empty_trash         (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_cut                 (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_copy                (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_paste               (ThunarLauncher                 *launcher);
@@ -2322,7 +2320,7 @@ thunar_launcher_action_rename (ThunarLauncher *launcher)
 
 
 
-static void
+void
 thunar_launcher_action_restore (ThunarLauncher *launcher)
 {
   ThunarApplication *application;
@@ -2391,17 +2389,12 @@ thunar_launcher_action_trash_delete (ThunarLauncher *launcher)
 
 
 
-static void
+void
 thunar_launcher_action_empty_trash (ThunarLauncher *launcher)
 {
   ThunarApplication *application;
 
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
-
-  if (launcher->single_directory_to_process == FALSE)
-    return;
-  if (!thunar_file_is_root (launcher->single_folder) || !thunar_file_is_trashed (launcher->single_folder))
-    return;
 
   application = thunar_application_get ();
   thunar_application_empty_trash (application, launcher->widget, NULL);
