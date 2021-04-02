@@ -4090,6 +4090,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
   /* show/hide date_deleted column/sortBy in the trash directory */
   if (current_directory == NULL)
     return;
+
   is_trash = thunar_file_is_trash (current_directory);
   if (is_trash)
     gtk_widget_show (window->trash_infobar);
