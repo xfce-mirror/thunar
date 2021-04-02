@@ -297,9 +297,9 @@ thunar_chooser_model_reload (ThunarChooserModel *model)
   if (default_app->data)
   {
     thunar_chooser_model_append (model,
-                               _("Default Application"),
-                               "preferences-desktop-default-applications",
-                               default_app);
+                                 _("Default Application"),
+                                 "preferences-desktop-default-applications",
+                                 default_app);
   }
 
   /* check if we have any applications for this type */
