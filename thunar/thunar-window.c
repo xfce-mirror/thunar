@@ -1761,7 +1761,7 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   window->view = page;
   window->view_type = G_TYPE_FROM_INSTANCE (page);
 
-  g_signal_connect_swapped(G_OBJECT (window->view), "notify::selected-files",
+  g_signal_connect_swapped (G_OBJECT (window->view), "notify::selected-files",
                            G_CALLBACK (thunar_window_trash_selection_updated), window);
 
   /* remember the last view type if directory specific settings are not enabled */
