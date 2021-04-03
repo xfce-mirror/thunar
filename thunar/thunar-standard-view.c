@@ -2159,12 +2159,14 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   GtkWidget          *hbox;
   GtkWidget          *label;
   GtkWidget          *entry;
+  GtkWidget          *checkbutton;
   GList              *paths;
   GList              *lp;
   gint                response;
   gchar              *example_pattern;
   const gchar        *pattern;
   gchar              *pattern_extended = NULL;
+  gboolean            case_sensitive;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
@@ -2197,6 +2199,19 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), entry);
   gtk_widget_show (entry);
 
+  /* start YH */
+
+  hbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_HORIZONTAL, "border-width", 6, "spacing", 10, NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
+  gtk_widget_show (hbox);
+
+  checkbutton = gtk_check_button_new_with_label (_("Check for case sensitive search"));
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (checkbutton), TRUE);
+  gtk_box_pack_start (GTK_BOX (hbox), checkbutton, TRUE, TRUE, 0);
+  gtk_widget_show (checkbutton);
+  
+  /* end   YH */
+
   hbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_HORIZONTAL, "margin-right", 6, "margin-bottom", 6, "spacing", 0, NULL);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
   gtk_widget_show (hbox);
@@ -2224,8 +2239,11 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
           pattern = pattern_extended;
         }
 
+      /* get case sensitivity option */
+      case_sensitive = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbutton));
+
       /* select all files that match pattern */
-      paths = thunar_list_model_get_paths_for_pattern (standard_view->model, pattern);
+      paths = thunar_list_model_get_paths_for_pattern (standard_view->model, pattern, case_sensitive);
       THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->unselect_all (standard_view);
 
       /* set the cursor and scroll to the first selected item */
