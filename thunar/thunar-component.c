@@ -93,10 +93,10 @@ thunar_component_class_init (gpointer klass)
  * thunar_component_get_selected_files:
  * @component : a #ThunarComponent instance.
  *
- * Returns the set of selected files. Check the description
+ * Returns the set of selected #ThunarFile<!---->s. Check the description
  * of the :selected-files property for details.
  *
- * Return value: the set of selected files.
+ * Return value: the set of selected #ThunarFile<!---->s.
  **/
 GList*
 thunar_component_get_selected_files (ThunarComponent *component)

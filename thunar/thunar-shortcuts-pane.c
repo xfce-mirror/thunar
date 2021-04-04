@@ -74,6 +74,8 @@ struct _ThunarShortcutsPane
   GtkScrolledWindow __parent__;
 
   ThunarFile       *current_directory;
+
+  /* #GList of currently selected #ThunarFile<!---->s */
   GList            *selected_files;
 
   GtkWidget        *view;
@@ -331,10 +333,10 @@ thunar_shortcuts_pane_set_selected_files (ThunarComponent *component,
 {
   ThunarShortcutsPane *shortcuts_pane = THUNAR_SHORTCUTS_PANE (component);
 
-  /* disconnect from the previously selected files... */
+  /* disconnect from the previously selected thunar files... */
   thunar_g_file_list_free (shortcuts_pane->selected_files);
 
-  /* ...and take a copy of the newly selected files */
+  /* ...and take a copy of the newly selected thunar files */
   shortcuts_pane->selected_files = thunar_g_file_list_copy (selected_files);
 
   /* notify listeners */

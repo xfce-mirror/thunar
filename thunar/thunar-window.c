@@ -3035,7 +3035,7 @@ thunar_window_replace_view (ThunarWindow *window,
   ThunarFile     *current_directory = NULL;
   GtkWidget      *new_view;
   ThunarHistory  *history = NULL;
-  GList          *selected_files = NULL;
+  GList          *selected_thunar_files = NULL;
   gint            page_num;
   gboolean        is_current_view;
 
@@ -3070,7 +3070,7 @@ thunar_window_replace_view (ThunarWindow *window,
         g_object_ref (current_directory);
 
       /* remember the file selection from the old view */
-      selected_files = thunar_g_file_list_copy (thunar_component_get_selected_files (THUNAR_COMPONENT (view)));
+      selected_thunar_files = thunar_g_file_list_copy (thunar_component_get_selected_files (THUNAR_COMPONENT (view)));
 
       /* save the history of the current view */
       history = NULL;
@@ -3116,8 +3116,8 @@ thunar_window_replace_view (ThunarWindow *window,
     gtk_widget_destroy (view);
 
   /* restore the file selection */
-  thunar_component_set_selected_files (THUNAR_COMPONENT (new_view), selected_files);
-  thunar_g_file_list_free (selected_files);
+  thunar_component_set_selected_files (THUNAR_COMPONENT (new_view), selected_thunar_files);
+  thunar_g_file_list_free (selected_thunar_files);
 
   /* remember the last view type if this is the active view and directory specific settings are not enabled */
   if (is_current_view && !window->directory_specific_settings && gtk_widget_get_visible (GTK_WIDGET (window)) && view_type != G_TYPE_NONE)

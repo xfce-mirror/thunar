@@ -332,7 +332,7 @@ struct _ThunarStandardViewPrivate
   gfloat                  scroll_to_row_align;
   gfloat                  scroll_to_col_align;
 
-  /* selected_files support */
+  /* #GList of currently selected #ThunarFile<!---->s */
   GList                  *selected_files;
   guint                   restore_selection_idle_id;
 
@@ -3733,7 +3733,7 @@ void
 thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 {
   GtkTreeIter iter;
-  GList      *lp, *selected_files;
+  GList      *lp, *selected_thunar_files;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
@@ -3749,8 +3749,8 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   thunar_g_file_list_free (standard_view->priv->selected_files);
 
   /* determine the new list of selected files (replacing GtkTreePath's with ThunarFile's) */
-  selected_files = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
-  for (lp = selected_files; lp != NULL; lp = lp->next)
+  selected_thunar_files = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
+  for (lp = selected_thunar_files; lp != NULL; lp = lp->next)
     {
       /* determine the iterator for the path */
       gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, lp->data);
@@ -3763,7 +3763,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
     }
 
   /* and setup the new selected files list */
-  standard_view->priv->selected_files = selected_files;
+  standard_view->priv->selected_files = selected_thunar_files;
 
   /* update the statusbar text */
   thunar_standard_view_update_statusbar_text (standard_view);
