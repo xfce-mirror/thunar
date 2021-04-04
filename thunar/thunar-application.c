@@ -2417,8 +2417,8 @@ thunar_application_restore_files (ThunarApplication *application,
       /* TODO we might have to distinguish between URIs and paths here */
       target_path = g_file_new_for_commandline_arg (original_uri);
 
-      source_path_list = thunar_g_file_list_append (source_path_list, thunar_file_get_file (lp->data));
-      target_path_list = thunar_g_file_list_append (target_path_list, target_path);
+      source_path_list = thunar_g_list_append_deep (source_path_list, thunar_file_get_file (lp->data));
+      target_path_list = thunar_g_list_append_deep (target_path_list, target_path);
 
       g_object_unref (target_path);
     }

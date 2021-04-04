@@ -1670,7 +1670,7 @@ thunar_transfer_job_new (GList                *source_node_list,
           job->source_node_list = g_list_append (job->source_node_list, node);
 
           /* append target file */
-          job->target_file_list = thunar_g_file_list_append (job->target_file_list, tp->data);
+          job->target_file_list = thunar_g_list_append_deep (job->target_file_list, tp->data);
         }
     }
 

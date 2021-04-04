@@ -852,7 +852,7 @@ thunar_dbus_service_move_to_trash (ThunarDBusTrash        *object,
               /* determine the path for the filename */
               /* TODO Not sure this will work as expected */
               file = g_file_new_for_commandline_arg (filename);
-              file_list = thunar_g_file_list_append (file_list, file);
+              file_list = thunar_g_list_append_deep (file_list, file);
               g_object_unref (file);
             }
 
@@ -1195,7 +1195,7 @@ thunar_dbus_service_transfer_files (ThunarDBusTransferMode transfer_mode,
           if (filename != NULL)
             {
               file = g_file_new_for_commandline_arg (filename);
-              source_file_list = thunar_g_file_list_append (source_file_list, file);
+              source_file_list = thunar_g_list_append_deep (source_file_list, file);
               g_object_unref (file);
               g_free (filename);
             }
@@ -1208,7 +1208,7 @@ thunar_dbus_service_transfer_files (ThunarDBusTransferMode transfer_mode,
           if (filename != NULL)
             {
               file = g_file_new_for_commandline_arg (filename);
-              target_file_list = thunar_g_file_list_append (target_file_list, file);
+              target_file_list = thunar_g_list_append_deep (target_file_list, file);
               g_object_unref (file);
               g_free (filename);
             }
