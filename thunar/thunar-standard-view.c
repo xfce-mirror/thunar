@@ -887,13 +887,13 @@ thunar_standard_view_finalize (GObject *object)
     g_object_unref (G_OBJECT (standard_view->priv->scroll_to_file));
 
   /* release the selected_files list (if any) */
-  thunar_g_file_list_free (standard_view->priv->selected_files);
+  thunar_g_list_free_full (standard_view->priv->selected_files);
 
   /* release the drag path list (just in case the drag-end wasn't fired before) */
-  thunar_g_file_list_free (standard_view->priv->drag_g_file_list);
+  thunar_g_list_free_full (standard_view->priv->drag_g_file_list);
 
   /* release the drop path list (just in case the drag-leave wasn't fired before) */
-  thunar_g_file_list_free (standard_view->priv->drop_file_list);
+  thunar_g_list_free_full (standard_view->priv->drop_file_list);
 
   /* release the history */
   g_object_unref (standard_view->priv->history);
@@ -913,7 +913,7 @@ thunar_standard_view_finalize (GObject *object)
     }
 
   /* drop any remaining "new-files" paths */
-  thunar_g_file_list_free (standard_view->priv->new_files_path_list);
+  thunar_g_list_free_full (standard_view->priv->new_files_path_list);
 
   /* release our reference on the preferences */
   g_object_unref (G_OBJECT (standard_view->preferences));
@@ -1165,7 +1165,7 @@ thunar_standard_view_set_selected_files_component (ThunarComponent *component,
   /* release the previous selected files list (if any) */
   if (G_UNLIKELY (standard_view->priv->selected_files != NULL))
     {
-      thunar_g_file_list_free (standard_view->priv->selected_files);
+      thunar_g_list_free_full (standard_view->priv->selected_files);
       standard_view->priv->selected_files = NULL;
     }
 
@@ -1516,7 +1516,7 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
       thunar_standard_view_new_files (standard_view, new_files_path_list);
 
       /* cleanup */
-      thunar_g_file_list_free (new_files_path_list);
+      thunar_g_list_free_full (new_files_path_list);
     }
 
   /* check if we're done loading */
@@ -1530,7 +1530,7 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
       thunar_component_set_selected_files (THUNAR_COMPONENT (standard_view), selected_files);
 
       /* cleanup */
-      thunar_g_file_list_free (selected_files);
+      thunar_g_list_free_full (selected_files);
     }
 
   /* check if we're done loading and a thumbnail timeout or idle was requested */
@@ -2321,7 +2321,7 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
   /* release the previous "new-files" paths (if any) */
   if (G_UNLIKELY (standard_view->priv->new_files_path_list != NULL))
     {
-      thunar_g_file_list_free (standard_view->priv->new_files_path_list);
+      thunar_g_list_free_full (standard_view->priv->new_files_path_list);
       standard_view->priv->new_files_path_list = NULL;
     }
 
@@ -2850,7 +2850,7 @@ thunar_standard_view_drag_leave (GtkWidget          *widget,
   /* reset the "drop data ready" status and free the URI list */
   if (G_LIKELY (standard_view->priv->drop_data_ready))
     {
-      thunar_g_file_list_free (standard_view->priv->drop_file_list);
+      thunar_g_list_free_full (standard_view->priv->drop_file_list);
       standard_view->priv->drop_file_list = NULL;
       standard_view->priv->drop_data_ready = FALSE;
     }
@@ -2959,7 +2959,7 @@ thunar_standard_view_drag_begin (GtkWidget          *view,
   gint        size;
 
   /* release the drag path list (just in case the drag-end wasn't fired before) */
-  thunar_g_file_list_free (standard_view->priv->drag_g_file_list);
+  thunar_g_list_free_full (standard_view->priv->drag_g_file_list);
 
   /* query the list of selected URIs */
   standard_view->priv->drag_g_file_list = thunar_file_list_to_thunar_g_file_list (standard_view->priv->selected_files);
@@ -3025,7 +3025,7 @@ thunar_standard_view_drag_end (GtkWidget          *view,
     g_source_remove (standard_view->priv->drag_scroll_timer_id);
 
   /* release the list of dragged URIs */
-  thunar_g_file_list_free (standard_view->priv->drag_g_file_list);
+  thunar_g_list_free_full (standard_view->priv->drag_g_file_list);
   standard_view->priv->drag_g_file_list = NULL;
 }
 
@@ -3746,7 +3746,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
     }
 
   /* release the previously selected files */
-  thunar_g_file_list_free (standard_view->priv->selected_files);
+  thunar_g_list_free_full (standard_view->priv->selected_files);
 
   /* determine the new list of selected files (replacing GtkTreePath's with ThunarFile's) */
   selected_thunar_files = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);

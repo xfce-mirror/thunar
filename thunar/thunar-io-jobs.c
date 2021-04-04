@@ -78,7 +78,7 @@ _tij_collect_nofollow (ThunarJob *job,
         g_propagate_error (error, err);
 
       /* release the collected files */
-      thunar_g_file_list_free (file_list);
+      thunar_g_list_free_full (file_list);
 
       return NULL;
     }
@@ -469,7 +469,7 @@ _thunar_io_jobs_unlink (ThunarJob  *job,
       else
         g_propagate_error (error, err);
 
-      thunar_g_file_list_free (file_list);
+      thunar_g_list_free_full (file_list);
       return FALSE;
     }
 
@@ -551,7 +551,7 @@ again:
   g_object_unref (thumbnail_cache);
 
   /* release the file list */
-  thunar_g_file_list_free (file_list);
+  thunar_g_list_free_full (file_list);
 
   if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
     return FALSE;
@@ -804,14 +804,14 @@ _thunar_io_jobs_link (ThunarJob  *job,
 
   if (err != NULL)
     {
-      thunar_g_file_list_free (new_files_list);
+      thunar_g_list_free_full (new_files_list);
       g_propagate_error (error, err);
       return FALSE;
     }
   else
     {
       thunar_job_new_files (THUNAR_JOB (job), new_files_list);
-      thunar_g_file_list_free (new_files_list);
+      thunar_g_list_free_full (new_files_list);
       return TRUE;
     }
 }
@@ -1033,7 +1033,7 @@ retry_chown:
     }
 
   /* release the file list */
-  thunar_g_file_list_free (file_list);
+  thunar_g_list_free_full (file_list);
 
   if (err != NULL)
     {
@@ -1185,7 +1185,7 @@ retry_chown:
     }
 
   /* release the file list */
-  thunar_g_file_list_free (file_list);
+  thunar_g_list_free_full (file_list);
 
   if (err != NULL)
     {
@@ -1273,7 +1273,7 @@ _thunar_io_jobs_ls (ThunarJob  *job,
         {
           /* none of the handlers took over the file list, so it's up to us
            * to destroy it */
-          thunar_g_file_list_free (file_list);
+          thunar_g_list_free_full (file_list);
         }
     }
 

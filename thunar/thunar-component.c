@@ -142,5 +142,5 @@ thunar_component_restore_selection (ThunarComponent *component)
 
   selected_files = thunar_g_list_copy_deep (thunar_component_get_selected_files (component));
   thunar_component_set_selected_files (component, selected_files);
-  thunar_g_file_list_free (selected_files);
+  thunar_g_list_free_full (selected_files);
 }

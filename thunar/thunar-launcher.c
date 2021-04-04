@@ -470,7 +470,7 @@ thunar_launcher_dispose (GObject *object)
   thunar_launcher_set_widget (THUNAR_LAUNCHER (launcher), NULL);
 
   /* disconnect from the currently selected files */
-  thunar_g_file_list_free (launcher->files_to_process);
+  thunar_g_list_free_full (launcher->files_to_process);
   launcher->files_to_process = NULL;
 
   /* unref parent, if any */
@@ -610,7 +610,7 @@ thunar_launcher_set_selected_files (ThunarComponent *component,
 
   /* disconnect from the previous files to process */
   if (launcher->files_to_process != NULL)
-    thunar_g_file_list_free (launcher->files_to_process);
+    thunar_g_list_free_full (launcher->files_to_process);
   launcher->files_to_process = NULL;
 
   /* notify listeners */
@@ -817,7 +817,7 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
   applications = g_hash_table_new_full (thunar_launcher_g_app_info_hash,
                                         (GEqualFunc) g_app_info_equal,
                                         (GDestroyNotify) g_object_unref,
-                                        (GDestroyNotify) thunar_g_file_list_free);
+                                        (GDestroyNotify) thunar_g_list_free_full);
 
   for (lp = files; lp != NULL; lp = lp->next)
     {
@@ -1266,8 +1266,8 @@ thunar_launcher_poke_data_free (ThunarLauncherPokeData *data)
 {
   _thunar_return_if_fail (data != NULL);
 
-  thunar_g_file_list_free (data->files_to_poke);
-  thunar_g_file_list_free (data->files_poked);
+  thunar_g_list_free_full (data->files_to_poke);
+  thunar_g_list_free_full (data->files_poked);
 
   if (data->location_to_poke != NULL)
     g_object_unref (data->location_to_poke);
@@ -1763,7 +1763,7 @@ thunar_launcher_action_sendto_desktop (ThunarLauncher *launcher)
 
   /* cleanup */
   g_object_unref (desktop_file);
-  thunar_g_file_list_free (files);
+  thunar_g_list_free_full (files);
 }
 
 
@@ -1798,7 +1798,7 @@ thunar_launcher_sendto_device (ThunarLauncher *launcher,
     }
 
   /* cleanup */
-  thunar_g_file_list_free (files);
+  thunar_g_list_free_full (files);
 }
 
 
@@ -2120,7 +2120,7 @@ thunar_launcher_action_duplicate (ThunarLauncher *launcher)
       g_object_unref (G_OBJECT (application));
 
       /* clean up */
-      thunar_g_file_list_free (files_to_process);
+      thunar_g_list_free_full (files_to_process);
     }
 }
 
@@ -2689,7 +2689,7 @@ thunar_launcher_create_document_submenu_new (ThunarLauncher *launcher)
   else
     {
       thunar_launcher_create_document_submenu_templates (launcher, submenu, files);
-      thunar_g_file_list_free (files);
+      thunar_g_list_free_full (files);
     }
 
   xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));

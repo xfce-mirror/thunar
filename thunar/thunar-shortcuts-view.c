@@ -425,7 +425,7 @@ thunar_shortcuts_view_finalize (GObject *object)
   ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (object);
 
   /* release drop path list (if drag_leave wasn't called) */
-  thunar_g_file_list_free (view->drop_file_list);
+  thunar_g_list_free_full (view->drop_file_list);
 
   /* release the provider factory */
   g_object_unref (G_OBJECT (view->provider_factory));
@@ -990,7 +990,7 @@ thunar_shortcuts_view_drag_leave (GtkWidget      *widget,
   /* reset the "drop data ready" status and free the URI list */
   if (G_LIKELY (view->drop_data_ready))
     {
-      thunar_g_file_list_free (view->drop_file_list);
+      thunar_g_list_free_full (view->drop_file_list);
       view->drop_data_ready = FALSE;
       view->drop_file_list = NULL;
     }

@@ -3117,7 +3117,7 @@ thunar_window_replace_view (ThunarWindow *window,
 
   /* restore the file selection */
   thunar_component_set_selected_files (THUNAR_COMPONENT (new_view), selected_thunar_files);
-  thunar_g_file_list_free (selected_thunar_files);
+  thunar_g_list_free_full (selected_thunar_files);
 
   /* remember the last view type if this is the active view and directory specific settings are not enabled */
   if (is_current_view && !window->directory_specific_settings && gtk_widget_get_visible (GTK_WIDGET (window)) && view_type != G_TYPE_NONE)
