@@ -136,6 +136,7 @@ thunar_io_scan_directory (ThunarJob          *job,
             child_file = g_file_new_for_uri(g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI)); 
           
             /* create new file info using Gfile*/
+            g_object_unref(info);
             info = g_file_query_info (child_file, namespace, flags, cancellable, &err);
         }
       else
