@@ -129,8 +129,22 @@ thunar_io_scan_directory (ThunarJob          *job,
             }
         }
 
-      /* create GFile for the child */
-      child_file = g_file_get_child (file, g_file_info_get_name (info));
+      /* check if file has 'recent' URI scheme */      
+      if (g_file_has_uri_scheme (file, "recent"))
+        {
+            /* create Gfile using the target URI */
+            child_file = g_file_new_for_uri(g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI)); 
+          
+            /* create new file info using Gfile*/
+            g_object_unref(info);
+            info = g_file_query_info (child_file, namespace, flags, cancellable, &err);
+        }
+      else
+        {
+            /* create GFile for the child */
+            child_file = g_file_get_child (file, g_file_info_get_name (info)); 
+        } 
+     
 
       if (return_thunar_files)
         {
