@@ -94,6 +94,7 @@ enum
   PROP_MISC_SMALL_TOOLBAR_ICONS,
   PROP_MISC_TAB_CLOSE_MIDDLE_CLICK,
   PROP_MISC_TEXT_BESIDE_ICONS,
+  PROP_MISC_FIXED_ITEM_WIDTH,
   PROP_MISC_THUMBNAIL_MODE,
   PROP_MISC_THUMBNAIL_DRAW_FRAMES,
   PROP_MISC_FILE_SIZE_BINARY,
@@ -737,6 +738,21 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             "MiscTextBesideIcons",
                             NULL,
                             FALSE,
+                            EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-fixed-item-width:
+   *
+   * Whether the icon view should always use the maximum width
+   * (= wrap width) for items displayed so that the grid layout
+   * stays the same between folders with either long or short file
+   * names
+   **/
+  preferences_props[PROP_MISC_FIXED_ITEM_WIDTH] =
+      g_param_spec_boolean ("misc-fixed-item-width",
+                            "MiscFixedItemWidth",
+                            NULL,
+                            TRUE,
                             EXO_PARAM_READWRITE);
 
   /**
