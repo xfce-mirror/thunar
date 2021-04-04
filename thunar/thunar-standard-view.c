@@ -2203,7 +2203,7 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
   gtk_widget_show (hbox);
 
-  checkbutton = gtk_check_button_new_with_label (_("Check to use case sensitive search"));
+  checkbutton = gtk_check_button_new_with_label (_("Case sensitive"));
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (checkbutton), TRUE);
   gtk_box_pack_start (GTK_BOX (hbox), checkbutton, TRUE, TRUE, 0);
   gtk_widget_show (checkbutton);
