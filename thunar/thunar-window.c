@@ -288,12 +288,12 @@ static void      thunar_window_set_directory_specific_settings (ThunarWindow    
                                                                 gboolean           directory_specific_settings);
 static GType     thunar_window_view_type_for_directory         (ThunarWindow      *window,
                                                                 ThunarFile        *directory);
-static void      thunar_window_action_clear_directory_specific_settings (ThunarWindow  *window);
-static void      thunar_window_trash_infobar_clicked           (GtkInfoBar             *info_bar,
-                                                                gint                    response_id,
-                                                                ThunarWindow           *window);
-static void      thunar_window_trash_selection_updated         (ThunarWindow           *window);
-static void      thunar_window_current_directory_contents_updated       (ThunarWindow           *window);
+static void      thunar_window_action_clear_directory_specific_settings (ThunarWindow          *window);
+static void      thunar_window_trash_infobar_clicked                    (GtkInfoBar            *info_bar,
+                                                                        gint                    response_id,
+                                                                        ThunarWindow           *window);
+static void      thunar_window_trash_selection_updated                  (ThunarWindow           window);
+static void      thunar_window_current_directory_contents_updated       (ThunarWindow          *window);
 
 
 
