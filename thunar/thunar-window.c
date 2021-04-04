@@ -293,6 +293,7 @@ static void      thunar_window_trash_infobar_clicked           (GtkInfoBar      
                                                                 gint                    response_id,
                                                                 ThunarWindow           *window);
 static void      thunar_window_trash_selection_updated         (ThunarWindow           *window);
+static void      thunar_window_current_directory_contents_updated       (ThunarWindow           *window);
 
 
 
@@ -339,6 +340,7 @@ struct _ThunarWindow
   GtkWidget              *view_box;
   GtkWidget              *trash_infobar;
   GtkWidget              *trash_infobar_restore_button;
+  GtkWidget              *trash_infobar_empty_button;
 
   /* split view panes */
   GtkWidget              *paned_notebooks;
@@ -806,7 +808,7 @@ thunar_window_init (ThunarWindow *window)
   window->trash_infobar = gtk_info_bar_new();
   gtk_grid_attach (GTK_GRID (window->view_box), window->trash_infobar, 0, 0, 1, 1);
   window->trash_infobar_restore_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Restore Selected Items", RESTORE);
-  gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Empty Trash", EMPTY);
+  window->trash_infobar_empty_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Empty Trash", EMPTY);
   g_signal_connect (window->trash_infobar,
                     "response",
                     G_CALLBACK (thunar_window_trash_infobar_clicked),
@@ -4007,7 +4009,8 @@ void
 thunar_window_set_current_directory (ThunarWindow *window,
                                      ThunarFile   *current_directory)
 {
-  gboolean is_trash;
+  ThunarFolder *current_folder;
+  gboolean      is_trash;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
@@ -4020,6 +4023,9 @@ thunar_window_set_current_directory (ThunarWindow *window,
   if (G_LIKELY (window->current_directory != NULL))
     {
       /* disconnect signals and release reference */
+      current_folder = thunar_folder_get_for_file (window->current_directory);
+      g_signal_handlers_disconnect_by_func (current_folder, thunar_window_current_directory_contents_updated, window);
+      g_object_unref (current_folder);
       g_signal_handlers_disconnect_by_func (G_OBJECT (window->current_directory), thunar_window_current_directory_changed, window);
       g_object_unref (G_OBJECT (window->current_directory));
     }
@@ -4086,6 +4092,11 @@ thunar_window_set_current_directory (ThunarWindow *window,
    * state already while the folder view is loading.
    */
   g_object_notify (G_OBJECT (window), "current-directory");
+
+  current_folder = thunar_folder_get_for_file (window->current_directory);
+  g_signal_connect_swapped (G_OBJECT (current_folder), "notify::loading",
+                            G_CALLBACK (thunar_window_current_directory_contents_updated), window);
+  g_object_unref (current_folder);
 
   /* show/hide date_deleted column/sortBy in the trash directory */
   if (current_directory == NULL)
@@ -4462,4 +4473,18 @@ thunar_window_trash_selection_updated (ThunarWindow *window)
     gtk_widget_set_sensitive (window->trash_infobar_restore_button, TRUE);
   else
     gtk_widget_set_sensitive (window->trash_infobar_restore_button, FALSE);
+}
+
+
+
+/**
+ * thunar_window_current_directory_contents_updated:
+ * @window      : a #ThunarWindow instance.
+ *
+ * Called everytime that the current directory is updated/refreshed. Used for updating the infobar in the Trash.
+ **/
+static void
+thunar_window_current_directory_contents_updated (ThunarWindow *window)
+{
+  gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_item_count (window->current_directory) > 0);
 }
