@@ -739,7 +739,7 @@ thunar_application_collect_and_launch (ThunarApplication *application,
           g_free (base_name);
 
           /* add to the target file list */
-          target_file_list = thunar_g_file_list_prepend (target_file_list, file);
+          target_file_list = thunar_g_list_prepend_deep (target_file_list, file);
           g_object_unref (file);
         }
     }
@@ -2121,7 +2121,7 @@ thunar_application_unlink_files (ThunarApplication *application,
   for (lp = g_list_last (file_list); lp != NULL; lp = lp->prev, ++n_path_list)
     {
       /* prepend the path to the path list */
-      path_list = thunar_g_file_list_prepend (path_list, thunar_file_get_file (lp->data));
+      path_list = thunar_g_list_prepend_deep (path_list, thunar_file_get_file (lp->data));
 
       /* permanently delete if at least one of the file is not a local
        * file (e.g. resides in the trash) or cannot be trashed */

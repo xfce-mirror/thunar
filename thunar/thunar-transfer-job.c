@@ -779,7 +779,7 @@ retry_copy:
               if (G_LIKELY (target_file_list_return != NULL))
                 {
                   *target_file_list_return =
-                    thunar_g_file_list_prepend (*target_file_list_return,
+                    thunar_g_list_prepend_deep (*target_file_list_return,
                                                 real_target_file);
                 }
 
@@ -1133,7 +1133,7 @@ thunar_transfer_job_move_file (ExoJob                *job,
                                             tp->data);
 
           /* add the target file to the new files list */
-          *new_files_list_p = thunar_g_file_list_prepend (*new_files_list_p, tp->data);
+          *new_files_list_p = thunar_g_list_prepend_deep (*new_files_list_p, tp->data);
         }
 
       /* release source and target files */
