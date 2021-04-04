@@ -337,7 +337,7 @@ thunar_shortcuts_pane_set_selected_files (ThunarComponent *component,
   thunar_g_file_list_free (shortcuts_pane->selected_files);
 
   /* ...and take a copy of the newly selected thunar files */
-  shortcuts_pane->selected_files = thunar_g_file_list_copy (selected_files);
+  shortcuts_pane->selected_files = thunar_g_list_copy_deep (selected_files);
 
   /* notify listeners */
   g_object_notify (G_OBJECT (shortcuts_pane), "selected-files");

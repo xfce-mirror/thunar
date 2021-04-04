@@ -961,7 +961,7 @@ _thunar_io_jobs_chown (ThunarJob  *job,
   if (recursive)
     file_list = _tij_collect_nofollow (job, file_list, FALSE, &err);
   else
-    file_list = thunar_g_file_list_copy (file_list);
+    file_list = thunar_g_list_copy_deep (file_list);
 
   if (err != NULL)
     {
@@ -1104,7 +1104,7 @@ _thunar_io_jobs_chmod (ThunarJob  *job,
   if (recursive)
     file_list = _tij_collect_nofollow (job, file_list, FALSE, &err);
   else
-    file_list = thunar_g_file_list_copy (file_list);
+    file_list = thunar_g_list_copy_deep (file_list);
 
   if (err != NULL)
     {

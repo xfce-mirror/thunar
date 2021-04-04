@@ -636,7 +636,7 @@ thunar_launcher_set_selected_files (ThunarComponent *component,
 
   /* if nothing is selected, the current directory is the folder to use for all menus */
   if (launcher->files_are_selected)
-    launcher->files_to_process = thunar_g_file_list_copy (selected_files);
+    launcher->files_to_process = thunar_g_list_copy_deep (selected_files);
   else
     launcher->files_to_process = g_list_append (launcher->files_to_process, launcher->current_directory);
 
@@ -845,7 +845,7 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
           if (G_LIKELY (file_list != NULL))
             {
               /* take a copy of the list as the old one will be dropped by the insert */
-              file_list = thunar_g_file_list_copy (file_list);
+              file_list = thunar_g_list_copy_deep (file_list);
             }
 
           /* append our new URI to the list */
@@ -1241,7 +1241,7 @@ thunar_launcher_poke_data_new (GList                          *files_to_poke,
   ThunarLauncherPokeData *data;
 
   data = g_slice_new0 (ThunarLauncherPokeData);
-  data->files_to_poke = thunar_g_file_list_copy (files_to_poke);
+  data->files_to_poke = thunar_g_list_copy_deep (files_to_poke);
   data->files_poked = NULL;
   data->application_to_use = application_to_use;
 

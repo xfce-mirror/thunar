@@ -3070,7 +3070,7 @@ thunar_window_replace_view (ThunarWindow *window,
         g_object_ref (current_directory);
 
       /* remember the file selection from the old view */
-      selected_thunar_files = thunar_g_file_list_copy (thunar_component_get_selected_files (THUNAR_COMPONENT (view)));
+      selected_thunar_files = thunar_g_list_copy_deep (thunar_component_get_selected_files (THUNAR_COMPONENT (view)));
 
       /* save the history of the current view */
       history = NULL;

@@ -1173,7 +1173,7 @@ thunar_standard_view_set_selected_files_component (ThunarComponent *component,
   if (thunar_view_get_loading (THUNAR_VIEW (standard_view)))
     {
       /* remember a copy of the list for later */
-      standard_view->priv->selected_files = thunar_g_file_list_copy (selected_files);
+      standard_view->priv->selected_files = thunar_g_list_copy_deep (selected_files);
     }
   else
     {
@@ -2329,7 +2329,7 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
   if (G_UNLIKELY (standard_view->loading))
     {
       /* schedule the "new-files" paths for later processing */
-      standard_view->priv->new_files_path_list = thunar_g_file_list_copy (path_list);
+      standard_view->priv->new_files_path_list = thunar_g_list_copy_deep (path_list);
     }
   else if (G_LIKELY (path_list != NULL))
     {
@@ -2364,7 +2364,7 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
           /* thunar files are not created yet, try again later because we know
            * some of them belong in this directory, so eventually they
            * will get a ThunarFile */
-          standard_view->priv->new_files_path_list = thunar_g_file_list_copy (path_list);
+          standard_view->priv->new_files_path_list = thunar_g_list_copy_deep (path_list);
         }
     }
 
