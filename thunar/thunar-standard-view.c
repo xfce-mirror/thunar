@@ -2208,7 +2208,7 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   gtk_box_pack_start (GTK_BOX (hbox), case_sensitive_button, TRUE, TRUE, 0);
   gtk_widget_show (case_sensitive_button);
 
-  hbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_HORIZONTAL, "margin-right", 6, "margin-bottom", 6, "spacing", 0, NULL);
+  hbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_HORIZONTAL, "margin-left", 6, "margin-bottom", 6, "spacing", 0, NULL);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
   gtk_widget_show (hbox);
 
@@ -2218,7 +2218,7 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
                                      "*.png, file\?\?.txt, pict*.\?\?\?");
   gtk_label_set_markup (GTK_LABEL (label), example_pattern);
   g_free (example_pattern);
-  gtk_box_pack_end (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
   response = gtk_dialog_run (GTK_DIALOG (dialog));
