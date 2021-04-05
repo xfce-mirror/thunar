@@ -3768,7 +3768,8 @@ thunar_window_notify_loading (ThunarView   *view,
         {
           gdk_window_set_cursor (gtk_widget_get_window (GTK_WIDGET (window)), NULL);
         }
-      /* check trash infobar's `empty trash` button sensitivity */
+
+      /* Set trash infobar's `empty trash` button sensitivity */
       gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_item_count (window->current_directory) > 0);
     }
 }
