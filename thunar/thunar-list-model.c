@@ -2379,7 +2379,7 @@ thunar_list_model_get_paths_for_pattern (ThunarListModel *store,
       pspec = g_pattern_spec_new (case_folded_pattern);
       g_free (case_folded_pattern);
     }
-    
+
   row = g_sequence_get_begin_iter (store->rows);
   end = g_sequence_get_end_iter (store->rows);
 
@@ -2388,16 +2388,16 @@ thunar_list_model_get_paths_for_pattern (ThunarListModel *store,
     {
       file = g_sequence_get (row);
       display_name = thunar_file_get_display_name (file);
-      
+
       if (case_sensitive)
-	name_matched = g_pattern_match_string (pspec, display_name);
+        name_matched = g_pattern_match_string (pspec, display_name);
       else
-	{
+        {
           case_folded_display_name = g_utf8_casefold (display_name, strlen (display_name));
-	  name_matched = g_pattern_match_string (pspec, case_folded_display_name);
-	  g_free (case_folded_display_name);
-	}
-      
+          name_matched = g_pattern_match_string (pspec, case_folded_display_name);
+          g_free (case_folded_display_name);
+        }
+
       if (name_matched)
         {
           _thunar_assert (i == g_sequence_iter_get_position (row));
@@ -2669,7 +2669,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
           gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, lp->data);
           relevant_files = g_list_append (relevant_files, g_sequence_get (iter.user_data));
         }
-        
+
       size_string = thunar_list_model_get_statusbar_text_for_files (relevant_files, show_file_size_binary_format);
       text = g_strdup_printf (_("Selection: %s"), size_string);
       g_free (size_string);
