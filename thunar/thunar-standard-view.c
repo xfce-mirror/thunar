@@ -272,7 +272,7 @@ static void                 thunar_standard_view_action_sort_by_date_deleted    
 static void                 thunar_standard_view_action_sort_by_size               (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_sort_ascending             (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_sort_descending            (ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_set_sort_column                   (ThunarStandardView       *standard_view, 
+static void                 thunar_standard_view_set_sort_column                   (ThunarStandardView       *standard_view,
                                                                                     ThunarColumn column);
 static void                 thunar_standard_view_toggle_sort_order                 (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_store_sort_column                 (ThunarStandardView       *standard_view);
@@ -2159,7 +2159,7 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   GtkWidget          *hbox;
   GtkWidget          *label;
   GtkWidget          *entry;
-  GtkWidget          *checkbutton;
+  GtkWidget          *case_sensitive_button;
   GList              *paths;
   GList              *lp;
   gint                response;
@@ -2203,10 +2203,10 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
   gtk_widget_show (hbox);
 
-  checkbutton = gtk_check_button_new_with_label (_("Check to use case sensitive search"));
-  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (checkbutton), TRUE);
-  gtk_box_pack_start (GTK_BOX (hbox), checkbutton, TRUE, TRUE, 0);
-  gtk_widget_show (checkbutton);
+  case_sensitive_button = gtk_check_button_new_with_label (_("Case sensitive"));
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (case_sensitive_button), TRUE);
+  gtk_box_pack_start (GTK_BOX (hbox), case_sensitive_button, TRUE, TRUE, 0);
+  gtk_widget_show (case_sensitive_button);
 
   hbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_HORIZONTAL, "margin-right", 6, "margin-bottom", 6, "spacing", 0, NULL);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
@@ -2236,7 +2236,7 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
         }
 
       /* get case sensitivity option */
-      case_sensitive = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (checkbutton));
+      case_sensitive = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (case_sensitive_button));
 
       /* select all files that match pattern */
       paths = thunar_list_model_get_paths_for_pattern (standard_view->model, pattern, case_sensitive);
@@ -2784,7 +2784,7 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
                               /* reload the directory when the command terminates */
                               g_child_watch_add_full (G_PRIORITY_LOW, pid, tsv_reload_directory, working_directory, g_free);
                             }
-                          
+
                           /* cleanup */
                           g_free (display);
                         }
