@@ -706,6 +706,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
 {
   ThunarGroup *group;
   const gchar *content_type;
+  const gchar *device_type;
   const gchar *name;
   const gchar *real_name;
   ThunarUser  *user;
@@ -813,12 +814,21 @@ thunar_list_model_get_value (GtkTreeModel *model,
     case THUNAR_COLUMN_TYPE:
       g_value_init (value, G_TYPE_STRING);
       if (G_UNLIKELY (thunar_file_is_symlink (file)))
-        g_value_take_string (value, g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (file)));
-      else
         {
-          content_type = thunar_file_get_content_type (file);
-          if (content_type != NULL)
-            g_value_take_string (value, g_content_type_get_description (content_type));
+          g_value_take_string (value, g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (file)));
+          break;
+        }
+      device_type = thunar_file_get_device_type (file);
+      if (device_type != NULL)
+        {
+          g_value_take_string (value, g_strdup (device_type));
+          break;
+        }
+      content_type = thunar_file_get_content_type (file);
+      if (content_type != NULL)
+        {
+          g_value_take_string (value, g_content_type_get_description (content_type));
+          break;
         }
       break;
 
