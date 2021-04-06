@@ -61,7 +61,7 @@ GList           *thunar_list_model_get_paths_for_files    (ThunarListModel  *sto
                                                            GList            *files);
 GList           *thunar_list_model_get_paths_for_pattern  (ThunarListModel  *store,
                                                            const gchar      *pattern,
-							   gboolean          case_sensitive);
+                                                           gboolean          case_sensitive);
 
 gchar           *thunar_list_model_get_statusbar_text     (ThunarListModel  *store,
                                                            GList            *selected_items);
