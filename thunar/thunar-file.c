@@ -3934,6 +3934,12 @@ thunar_file_get_device_hash_table ()
 
 
 
+/**
+ * thunar_file_get_device_type:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns : (transfer none) (nullable): the string of the device type.
+ */
 const gchar *
 thunar_file_get_device_type (ThunarFile *file)
 {
