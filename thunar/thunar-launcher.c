@@ -203,10 +203,10 @@ struct _ThunarLauncher
 
   gint                    n_files_to_process;
   gint                    n_directories_to_process;
-  gint                    n_executables_to_process;
   gint                    n_regulars_to_process;
   gboolean                files_to_process_trashable;
   gboolean                files_are_selected;
+  gboolean                files_are_all_executable;
   gboolean                single_directory_to_process;
 
   ThunarFile             *single_folder;
@@ -550,8 +550,8 @@ thunar_launcher_set_selected_files (ThunarComponent *component,
   launcher->files_to_process_trashable = TRUE;
   launcher->n_files_to_process         = 0;
   launcher->n_directories_to_process   = 0;
-  launcher->n_executables_to_process   = 0;
   launcher->n_regulars_to_process      = 0;
+  launcher->files_are_all_executable   = TRUE;
   launcher->single_directory_to_process = FALSE;
   launcher->single_folder = NULL;
   launcher->parent_folder = NULL;
@@ -576,8 +576,8 @@ thunar_launcher_set_selected_files (ThunarComponent *component,
         }
       else
         {
-          if (thunar_file_is_executable (lp->data))
-            ++launcher->n_executables_to_process;
+          if (launcher->files_are_all_executable && !thunar_file_is_executable (lp->data))
+            launcher->files_are_all_executable = FALSE;
           ++launcher->n_regulars_to_process;
         }
 
@@ -2824,7 +2824,7 @@ thunar_launcher_append_open_section (ThunarLauncher *launcher,
   applications = thunar_file_list_get_applications (launcher->files_to_process);
 
   /* Execute OR Open OR OpenWith */
-  if (G_UNLIKELY (launcher->n_executables_to_process == launcher->n_files_to_process))
+  if (G_UNLIKELY (launcher->files_are_all_executable))
     thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_EXECUTE, FALSE);
   else if (G_LIKELY (launcher->n_directories_to_process >= 1))
     {
