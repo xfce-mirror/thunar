@@ -272,7 +272,7 @@ static void                 thunar_standard_view_action_sort_by_date_deleted    
 static void                 thunar_standard_view_action_sort_by_size               (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_sort_ascending             (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_sort_descending            (ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_set_sort_column                   (ThunarStandardView       *standard_view, 
+static void                 thunar_standard_view_set_sort_column                   (ThunarStandardView       *standard_view,
                                                                                     ThunarColumn column);
 static void                 thunar_standard_view_toggle_sort_order                 (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_store_sort_column                 (ThunarStandardView       *standard_view);
@@ -332,7 +332,7 @@ struct _ThunarStandardViewPrivate
   gfloat                  scroll_to_row_align;
   gfloat                  scroll_to_col_align;
 
-  /* selected_files support */
+  /* #GList of currently selected #ThunarFile<!---->s */
   GList                  *selected_files;
   guint                   restore_selection_idle_id;
 
@@ -887,13 +887,13 @@ thunar_standard_view_finalize (GObject *object)
     g_object_unref (G_OBJECT (standard_view->priv->scroll_to_file));
 
   /* release the selected_files list (if any) */
-  thunar_g_file_list_free (standard_view->priv->selected_files);
+  thunar_g_list_free_full (standard_view->priv->selected_files);
 
   /* release the drag path list (just in case the drag-end wasn't fired before) */
-  thunar_g_file_list_free (standard_view->priv->drag_g_file_list);
+  thunar_g_list_free_full (standard_view->priv->drag_g_file_list);
 
   /* release the drop path list (just in case the drag-leave wasn't fired before) */
-  thunar_g_file_list_free (standard_view->priv->drop_file_list);
+  thunar_g_list_free_full (standard_view->priv->drop_file_list);
 
   /* release the history */
   g_object_unref (standard_view->priv->history);
@@ -913,7 +913,7 @@ thunar_standard_view_finalize (GObject *object)
     }
 
   /* drop any remaining "new-files" paths */
-  thunar_g_file_list_free (standard_view->priv->new_files_path_list);
+  thunar_g_list_free_full (standard_view->priv->new_files_path_list);
 
   /* release our reference on the preferences */
   g_object_unref (G_OBJECT (standard_view->preferences));
@@ -1165,7 +1165,7 @@ thunar_standard_view_set_selected_files_component (ThunarComponent *component,
   /* release the previous selected files list (if any) */
   if (G_UNLIKELY (standard_view->priv->selected_files != NULL))
     {
-      thunar_g_file_list_free (standard_view->priv->selected_files);
+      thunar_g_list_free_full (standard_view->priv->selected_files);
       standard_view->priv->selected_files = NULL;
     }
 
@@ -1173,7 +1173,7 @@ thunar_standard_view_set_selected_files_component (ThunarComponent *component,
   if (thunar_view_get_loading (THUNAR_VIEW (standard_view)))
     {
       /* remember a copy of the list for later */
-      standard_view->priv->selected_files = thunar_g_file_list_copy (selected_files);
+      standard_view->priv->selected_files = thunar_g_list_copy_deep (selected_files);
     }
   else
     {
@@ -1516,7 +1516,7 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
       thunar_standard_view_new_files (standard_view, new_files_path_list);
 
       /* cleanup */
-      thunar_g_file_list_free (new_files_path_list);
+      thunar_g_list_free_full (new_files_path_list);
     }
 
   /* check if we're done loading */
@@ -1530,7 +1530,7 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
       thunar_component_set_selected_files (THUNAR_COMPONENT (standard_view), selected_files);
 
       /* cleanup */
-      thunar_g_file_list_free (selected_files);
+      thunar_g_list_free_full (selected_files);
     }
 
   /* check if we're done loading and a thumbnail timeout or idle was requested */
@@ -2159,12 +2159,14 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   GtkWidget          *hbox;
   GtkWidget          *label;
   GtkWidget          *entry;
+  GtkWidget          *case_sensitive_button;
   GList              *paths;
   GList              *lp;
   gint                response;
   gchar              *example_pattern;
   const gchar        *pattern;
   gchar              *pattern_extended = NULL;
+  gboolean            case_sensitive;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
@@ -2197,7 +2199,12 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), entry);
   gtk_widget_show (entry);
 
-  hbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_HORIZONTAL, "margin-right", 6, "margin-bottom", 6, "spacing", 0, NULL);
+  case_sensitive_button = gtk_check_button_new_with_label (_("Case sensitive"));
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (case_sensitive_button), TRUE);
+  gtk_box_pack_start (GTK_BOX (vbox), case_sensitive_button, TRUE, TRUE, 0);
+  gtk_widget_show (case_sensitive_button);
+
+  hbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_HORIZONTAL, "border-width", 6, "spacing", 0, NULL);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
   gtk_widget_show (hbox);
 
@@ -2207,7 +2214,7 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
                                      "*.png, file\?\?.txt, pict*.\?\?\?");
   gtk_label_set_markup (GTK_LABEL (label), example_pattern);
   g_free (example_pattern);
-  gtk_box_pack_end (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
   response = gtk_dialog_run (GTK_DIALOG (dialog));
@@ -2224,8 +2231,11 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
           pattern = pattern_extended;
         }
 
+      /* get case sensitivity option */
+      case_sensitive = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (case_sensitive_button));
+
       /* select all files that match pattern */
-      paths = thunar_list_model_get_paths_for_pattern (standard_view->model, pattern);
+      paths = thunar_list_model_get_paths_for_pattern (standard_view->model, pattern, case_sensitive);
       THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->unselect_all (standard_view);
 
       /* set the cursor and scroll to the first selected item */
@@ -2321,7 +2331,7 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
   /* release the previous "new-files" paths (if any) */
   if (G_UNLIKELY (standard_view->priv->new_files_path_list != NULL))
     {
-      thunar_g_file_list_free (standard_view->priv->new_files_path_list);
+      thunar_g_list_free_full (standard_view->priv->new_files_path_list);
       standard_view->priv->new_files_path_list = NULL;
     }
 
@@ -2329,7 +2339,7 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
   if (G_UNLIKELY (standard_view->loading))
     {
       /* schedule the "new-files" paths for later processing */
-      standard_view->priv->new_files_path_list = thunar_g_file_list_copy (path_list);
+      standard_view->priv->new_files_path_list = thunar_g_list_copy_deep (path_list);
     }
   else if (G_LIKELY (path_list != NULL))
     {
@@ -2364,7 +2374,7 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
           /* thunar files are not created yet, try again later because we know
            * some of them belong in this directory, so eventually they
            * will get a ThunarFile */
-          standard_view->priv->new_files_path_list = thunar_g_file_list_copy (path_list);
+          standard_view->priv->new_files_path_list = thunar_g_list_copy_deep (path_list);
         }
     }
 
@@ -2770,7 +2780,7 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
                               /* reload the directory when the command terminates */
                               g_child_watch_add_full (G_PRIORITY_LOW, pid, tsv_reload_directory, working_directory, g_free);
                             }
-                          
+
                           /* cleanup */
                           g_free (display);
                         }
@@ -2850,7 +2860,7 @@ thunar_standard_view_drag_leave (GtkWidget          *widget,
   /* reset the "drop data ready" status and free the URI list */
   if (G_LIKELY (standard_view->priv->drop_data_ready))
     {
-      thunar_g_file_list_free (standard_view->priv->drop_file_list);
+      thunar_g_list_free_full (standard_view->priv->drop_file_list);
       standard_view->priv->drop_file_list = NULL;
       standard_view->priv->drop_data_ready = FALSE;
     }
@@ -2959,7 +2969,7 @@ thunar_standard_view_drag_begin (GtkWidget          *view,
   gint        size;
 
   /* release the drag path list (just in case the drag-end wasn't fired before) */
-  thunar_g_file_list_free (standard_view->priv->drag_g_file_list);
+  thunar_g_list_free_full (standard_view->priv->drag_g_file_list);
 
   /* query the list of selected URIs */
   standard_view->priv->drag_g_file_list = thunar_file_list_to_thunar_g_file_list (standard_view->priv->selected_files);
@@ -3025,7 +3035,7 @@ thunar_standard_view_drag_end (GtkWidget          *view,
     g_source_remove (standard_view->priv->drag_scroll_timer_id);
 
   /* release the list of dragged URIs */
-  thunar_g_file_list_free (standard_view->priv->drag_g_file_list);
+  thunar_g_list_free_full (standard_view->priv->drag_g_file_list);
   standard_view->priv->drag_g_file_list = NULL;
 }
 
@@ -3733,7 +3743,7 @@ void
 thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 {
   GtkTreeIter iter;
-  GList      *lp, *selected_files;
+  GList      *lp, *selected_thunar_files;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
@@ -3746,11 +3756,11 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
     }
 
   /* release the previously selected files */
-  thunar_g_file_list_free (standard_view->priv->selected_files);
+  thunar_g_list_free_full (standard_view->priv->selected_files);
 
   /* determine the new list of selected files (replacing GtkTreePath's with ThunarFile's) */
-  selected_files = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
-  for (lp = selected_files; lp != NULL; lp = lp->next)
+  selected_thunar_files = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
+  for (lp = selected_thunar_files; lp != NULL; lp = lp->next)
     {
       /* determine the iterator for the path */
       gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, lp->data);
@@ -3763,7 +3773,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
     }
 
   /* and setup the new selected files list */
-  standard_view->priv->selected_files = selected_files;
+  standard_view->priv->selected_files = selected_thunar_files;
 
   /* update the statusbar text */
   thunar_standard_view_update_statusbar_text (standard_view);

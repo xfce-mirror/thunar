@@ -332,7 +332,7 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
       else
         thunar_application_move_into (application, request->widget, file_list, request->target_file, request->new_files_closure);
       g_object_unref (G_OBJECT (application));
-      thunar_g_file_list_free (file_list);
+      thunar_g_list_free_full (file_list);
 
       /* clear the clipboard if it contained "cutted data"
        * (gtk_clipboard_clear takes care of not clearing
@@ -487,7 +487,7 @@ thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
     }
 
   /* cleanup */
-  thunar_g_file_list_free (file_list);
+  thunar_g_list_free_full (file_list);
 }
 
 

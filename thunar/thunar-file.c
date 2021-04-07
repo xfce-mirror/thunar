@@ -4452,7 +4452,7 @@ thunar_file_list_get_applications (GList *file_list)
  * the #ThunarFile<!---->s contained within @file_list.
  *
  * The caller is responsible to free the returned list using
- * thunar_g_file_list_free() when no longer needed.
+ * thunar_g_list_free_full() when no longer needed.
  *
  * Return value: the list of #GFile<!---->s for @file_list.
  **/

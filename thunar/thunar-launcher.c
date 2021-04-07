@@ -182,11 +182,9 @@ static void                    thunar_launcher_action_add_shortcuts       (Thuna
 static void                    thunar_launcher_action_make_link           (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_duplicate           (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_rename              (ThunarLauncher                 *launcher);
-static void                    thunar_launcher_action_restore             (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_move_to_trash       (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_delete              (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_trash_delete        (ThunarLauncher                 *launcher);
-static void                    thunar_launcher_action_empty_trash         (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_cut                 (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_copy                (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_paste               (ThunarLauncher                 *launcher);
@@ -273,7 +271,7 @@ static XfceGtkActionEntry thunar_launcher_action_entries[] =
     /* For backward compatibility the old accel paths are re-used. Currently not possible to automatically migrate to new accel paths. */
     /* Waiting for https://gitlab.gnome.org/GNOME/gtk/issues/2375 to be able to fix that */
     { THUNAR_LAUNCHER_ACTION_SENDTO_MENU,      "<Actions>/ThunarWindow/sendto-menu",               "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Send To"),                        NULL,                                                                                            NULL,                   NULL,                                                    },
-    { THUNAR_LAUNCHER_ACTION_SENDTO_SHORTCUTS, "<Actions>/ThunarShortcutsPane/sendto-shortcuts",   "",                  XFCE_GTK_MENU_ITEM,       NULL,                                   NULL,                                                                                            "bookmark-new",         G_CALLBACK (thunar_launcher_action_add_shortcuts),       },
+    { THUNAR_LAUNCHER_ACTION_SENDTO_SHORTCUTS, "<Actions>/ThunarShortcutsPane/sendto-shortcuts",   "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Create _Bookmark"),                N_ ("Create bookmarks for all selected folders in the sidepane. If nothing is selected, the current directory is bookmarked."), "bookmark-new", G_CALLBACK (thunar_launcher_action_add_shortcuts), },
     { THUNAR_LAUNCHER_ACTION_SENDTO_DESKTOP,   "<Actions>/ThunarLauncher/sendto-desktop",          "",                  XFCE_GTK_MENU_ITEM,       NULL,                                   NULL,                                                                                            "user-desktop",         G_CALLBACK (thunar_launcher_action_sendto_desktop),      },
     { THUNAR_LAUNCHER_ACTION_PROPERTIES,       "<Actions>/ThunarStandardView/properties",          "<Alt>Return",       XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Properties..."),                  N_ ("View the properties of the selected file"),                                                 "document-properties",  G_CALLBACK (thunar_launcher_action_properties),          },
     { THUNAR_LAUNCHER_ACTION_MAKE_LINK,        "<Actions>/ThunarStandardView/make-link",           "",                  XFCE_GTK_MENU_ITEM,       N_ ("Ma_ke Link"),                      NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_make_link),           },
@@ -472,7 +470,7 @@ thunar_launcher_dispose (GObject *object)
   thunar_launcher_set_widget (THUNAR_LAUNCHER (launcher), NULL);
 
   /* disconnect from the currently selected files */
-  thunar_g_file_list_free (launcher->files_to_process);
+  thunar_g_list_free_full (launcher->files_to_process);
   launcher->files_to_process = NULL;
 
   /* unref parent, if any */
@@ -612,7 +610,7 @@ thunar_launcher_set_selected_files (ThunarComponent *component,
 
   /* disconnect from the previous files to process */
   if (launcher->files_to_process != NULL)
-    thunar_g_file_list_free (launcher->files_to_process);
+    thunar_g_list_free_full (launcher->files_to_process);
   launcher->files_to_process = NULL;
 
   /* notify listeners */
@@ -638,7 +636,7 @@ thunar_launcher_set_selected_files (ThunarComponent *component,
 
   /* if nothing is selected, the current directory is the folder to use for all menus */
   if (launcher->files_are_selected)
-    launcher->files_to_process = thunar_g_file_list_copy (selected_files);
+    launcher->files_to_process = thunar_g_list_copy_deep (selected_files);
   else
     launcher->files_to_process = g_list_append (launcher->files_to_process, launcher->current_directory);
 
@@ -819,7 +817,7 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
   applications = g_hash_table_new_full (thunar_launcher_g_app_info_hash,
                                         (GEqualFunc) g_app_info_equal,
                                         (GDestroyNotify) g_object_unref,
-                                        (GDestroyNotify) thunar_g_file_list_free);
+                                        (GDestroyNotify) thunar_g_list_free_full);
 
   for (lp = files; lp != NULL; lp = lp->next)
     {
@@ -847,11 +845,11 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
           if (G_LIKELY (file_list != NULL))
             {
               /* take a copy of the list as the old one will be dropped by the insert */
-              file_list = thunar_g_file_list_copy (file_list);
+              file_list = thunar_g_list_copy_deep (file_list);
             }
 
           /* append our new URI to the list */
-          file_list = thunar_g_file_list_append (file_list, thunar_file_get_file (lp->data));
+          file_list = thunar_g_list_append_deep (file_list, thunar_file_get_file (lp->data));
 
           /* (re)insert the URI list for the application */
           g_hash_table_insert (applications, app_info, file_list);
@@ -1243,7 +1241,7 @@ thunar_launcher_poke_data_new (GList                          *files_to_poke,
   ThunarLauncherPokeData *data;
 
   data = g_slice_new0 (ThunarLauncherPokeData);
-  data->files_to_poke = thunar_g_file_list_copy (files_to_poke);
+  data->files_to_poke = thunar_g_list_copy_deep (files_to_poke);
   data->files_poked = NULL;
   data->application_to_use = application_to_use;
 
@@ -1268,8 +1266,8 @@ thunar_launcher_poke_data_free (ThunarLauncherPokeData *data)
 {
   _thunar_return_if_fail (data != NULL);
 
-  thunar_g_file_list_free (data->files_to_poke);
-  thunar_g_file_list_free (data->files_poked);
+  thunar_g_list_free_full (data->files_to_poke);
+  thunar_g_list_free_full (data->files_poked);
 
   if (data->location_to_poke != NULL)
     g_object_unref (data->location_to_poke);
@@ -1513,6 +1511,13 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
         submenu = thunar_launcher_build_sendto_submenu (launcher);
         gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu);
         return item;
+
+      case THUNAR_LAUNCHER_ACTION_SENDTO_SHORTCUTS:
+        {
+          if (launcher->n_directories_to_process > 0)
+            return xfce_gtk_menu_item_new_from_action_entry (action_entry, G_OBJECT (launcher), GTK_MENU_SHELL (menu));
+          return NULL;
+        }
 
       case THUNAR_LAUNCHER_ACTION_MAKE_LINK:
         show_item = thunar_file_is_writable (launcher->current_directory) &&
@@ -1765,7 +1770,7 @@ thunar_launcher_action_sendto_desktop (ThunarLauncher *launcher)
 
   /* cleanup */
   g_object_unref (desktop_file);
-  thunar_g_file_list_free (files);
+  thunar_g_list_free_full (files);
 }
 
 
@@ -1800,7 +1805,7 @@ thunar_launcher_sendto_device (ThunarLauncher *launcher,
     }
 
   /* cleanup */
-  thunar_g_file_list_free (files);
+  thunar_g_list_free_full (files);
 }
 
 
@@ -2122,7 +2127,7 @@ thunar_launcher_action_duplicate (ThunarLauncher *launcher)
       g_object_unref (G_OBJECT (application));
 
       /* clean up */
-      thunar_g_file_list_free (files_to_process);
+      thunar_g_list_free_full (files_to_process);
     }
 }
 
@@ -2322,7 +2327,7 @@ thunar_launcher_action_rename (ThunarLauncher *launcher)
 
 
 
-static void
+void
 thunar_launcher_action_restore (ThunarLauncher *launcher)
 {
   ThunarApplication *application;
@@ -2391,17 +2396,12 @@ thunar_launcher_action_trash_delete (ThunarLauncher *launcher)
 
 
 
-static void
+void
 thunar_launcher_action_empty_trash (ThunarLauncher *launcher)
 {
   ThunarApplication *application;
 
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
-
-  if (launcher->single_directory_to_process == FALSE)
-    return;
-  if (!thunar_file_is_root (launcher->single_folder) || !thunar_file_is_trashed (launcher->single_folder))
-    return;
 
   application = thunar_application_get ();
   thunar_application_empty_trash (application, launcher->widget, NULL);
@@ -2696,7 +2696,7 @@ thunar_launcher_create_document_submenu_new (ThunarLauncher *launcher)
   else
     {
       thunar_launcher_create_document_submenu_templates (launcher, submenu, files);
-      thunar_g_file_list_free (files);
+      thunar_g_list_free_full (files);
     }
 
   xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (submenu));

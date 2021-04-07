@@ -136,13 +136,13 @@ thunar_io_scan_directory (ThunarJob          *job,
         {
           /* Prepend the ThunarFile */
           thunar_file = thunar_file_get_with_info (child_file, info, !is_mounted);
-          files = thunar_g_file_list_prepend (files, thunar_file);
+          files = thunar_g_list_prepend_deep (files, thunar_file);
           g_object_unref (G_OBJECT (thunar_file));
         }
       else
         {
           /* Prepend the GFile */
-          files = thunar_g_file_list_prepend (files, child_file);
+          files = thunar_g_list_prepend_deep (files, child_file);
         }
 
       /* if the child is a directory and we need to recurse ... just do so */
@@ -168,13 +168,13 @@ thunar_io_scan_directory (ThunarJob          *job,
   if (G_UNLIKELY (err != NULL))
     {
       g_propagate_error (error, err);
-      thunar_g_file_list_free (files);
+      thunar_g_list_free_full (files);
       return NULL;
     }
   else if (job != NULL && exo_job_set_error_if_cancelled (EXO_JOB (job), &err))
     {
       g_propagate_error (error, err);
-      thunar_g_file_list_free (files);
+      thunar_g_list_free_full (files);
       return NULL;
     }
 

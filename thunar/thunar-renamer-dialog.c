@@ -177,7 +177,7 @@ struct _ThunarRenamerDialog
   /* the current directory used for the "Add Files" dialog */
   ThunarFile          *current_directory;
 
-  /* the list of currently selected files */
+  /* #GList of currently selected #ThunarFile<!---->s */
   GList               *selected_files;
 
   /* whether the dialog should act like a standalone application */

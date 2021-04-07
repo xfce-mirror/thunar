@@ -497,8 +497,8 @@ thunar_g_file_list_get_type (void)
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
       type = g_boxed_type_register_static (I_("ThunarGFileList"),
-                                           (GBoxedCopyFunc) thunar_g_file_list_copy,
-                                           (GBoxedFreeFunc) thunar_g_file_list_free);
+                                           (GBoxedCopyFunc) thunar_g_list_copy_deep,
+                                           (GBoxedFreeFunc) thunar_g_list_free_full);
     }
 
   return type;

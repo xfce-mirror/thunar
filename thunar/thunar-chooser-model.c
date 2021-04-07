@@ -295,12 +295,12 @@ thunar_chooser_model_reload (ThunarChooserModel *model)
 
   /* If default application was already selected, then display it in Treeview */
   if (default_app->data)
-  {
-    thunar_chooser_model_append (model,
-                               _("Default Application"),
-                               "preferences-desktop-default-applications",
-                               default_app);
-  }
+    {
+      thunar_chooser_model_append (model,
+                                   _("Default Application"),
+                                   "preferences-desktop-default-applications",
+                                   default_app);
+    }
 
   /* check if we have any applications for this type */
   recommended = g_app_info_get_all_for_type (model->content_type);

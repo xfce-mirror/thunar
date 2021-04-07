@@ -398,7 +398,7 @@ thunar_application_shutdown (GApplication *gapp)
   ThunarApplication *application = THUNAR_APPLICATION (gapp);
 
   /* unqueue all files waiting to be processed */
-  thunar_g_file_list_free (application->files_to_launch);
+  thunar_g_list_free_full (application->files_to_launch);
 
   /* save the current accel map */
   if (G_UNLIKELY (application->accel_map_save_id != 0))
@@ -739,7 +739,7 @@ thunar_application_collect_and_launch (ThunarApplication *application,
           g_free (base_name);
 
           /* add to the target file list */
-          target_file_list = thunar_g_file_list_prepend (target_file_list, file);
+          target_file_list = thunar_g_list_prepend_deep (target_file_list, file);
           g_object_unref (file);
         }
     }
@@ -761,7 +761,7 @@ thunar_application_collect_and_launch (ThunarApplication *application,
     }
 
   /* release the target path list */
-  thunar_g_file_list_free (target_file_list);
+  thunar_g_list_free_full (target_file_list);
 }
 
 
@@ -1445,7 +1445,7 @@ thunar_application_bulk_rename (ThunarApplication *application,
 
   /* cleanup */
   g_object_unref (G_OBJECT (current_directory));
-  thunar_g_file_list_free (file_list);
+  thunar_g_list_free_full (file_list);
 
   return result;
 }
@@ -1507,7 +1507,7 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
         }
 
       /* stop processing files */
-      thunar_g_file_list_free (application->files_to_launch);
+      thunar_g_list_free_full (application->files_to_launch);
       application->files_to_launch = NULL;
     }
   else
@@ -1641,7 +1641,7 @@ thunar_application_process_filenames (ThunarApplication *application,
                        _("Failed to open \"%s\": %s"), filenames[n], derror->message);
           g_error_free (derror);
 
-          thunar_g_file_list_free (file_list);
+          thunar_g_list_free_full (file_list);
 
           return FALSE;
         }
@@ -2121,7 +2121,7 @@ thunar_application_unlink_files (ThunarApplication *application,
   for (lp = g_list_last (file_list); lp != NULL; lp = lp->prev, ++n_path_list)
     {
       /* prepend the path to the path list */
-      path_list = thunar_g_file_list_prepend (path_list, thunar_file_get_file (lp->data));
+      path_list = thunar_g_list_prepend_deep (path_list, thunar_file_get_file (lp->data));
 
       /* permanently delete if at least one of the file is not a local
        * file (e.g. resides in the trash) or cannot be trashed */
@@ -2188,7 +2188,7 @@ thunar_application_unlink_files (ThunarApplication *application,
     }
 
   /* release the path list */
-  thunar_g_file_list_free (path_list);
+  thunar_g_list_free_full (path_list);
 }
 
 
@@ -2417,8 +2417,8 @@ thunar_application_restore_files (ThunarApplication *application,
       /* TODO we might have to distinguish between URIs and paths here */
       target_path = g_file_new_for_commandline_arg (original_uri);
 
-      source_path_list = thunar_g_file_list_append (source_path_list, thunar_file_get_file (lp->data));
-      target_path_list = thunar_g_file_list_append (target_path_list, target_path);
+      source_path_list = thunar_g_list_append_deep (source_path_list, thunar_file_get_file (lp->data));
+      target_path_list = thunar_g_list_append_deep (target_path_list, target_path);
 
       g_object_unref (target_path);
     }
@@ -2439,8 +2439,8 @@ thunar_application_restore_files (ThunarApplication *application,
     }
 
   /* free path lists */
-  thunar_g_file_list_free (source_path_list);
-  thunar_g_file_list_free (target_path_list);
+  thunar_g_list_free_full (source_path_list);
+  thunar_g_list_free_full (target_path_list);
 }
 
 
