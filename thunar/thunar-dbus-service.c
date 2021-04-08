@@ -83,6 +83,7 @@ static gboolean thunar_dbus_service_display_chooser_dialog      (ThunarDBusFileM
                                                                  GDBusMethodInvocation  *invocation,
                                                                  const gchar            *uri,
                                                                  gboolean                open,
+                                                                 gboolean                preselect_default_checkbox,
                                                                  const gchar            *display,
                                                                  const gchar            *startup_id,
                                                                  ThunarDBusService      *dbus_service);
@@ -437,6 +438,7 @@ thunar_dbus_service_display_chooser_dialog (ThunarDBusFileManager  *object,
                                             GDBusMethodInvocation  *invocation,
                                             const gchar            *uri,
                                             gboolean                open,
+                                            gboolean                preselect_default_checkbox,
                                             const gchar            *display,
                                             const gchar            *startup_id,
                                             ThunarDBusService      *dbus_service)
@@ -451,7 +453,7 @@ thunar_dbus_service_display_chooser_dialog (ThunarDBusFileManager  *object,
 
   /* popup the chooser dialog */
   /* TODO use the startup id! */
-  thunar_show_chooser_dialog (screen, file, open, FALSE);
+  thunar_show_chooser_dialog (screen, file, open, preselect_default_checkbox);
 
   /* cleanup */
   g_object_unref (G_OBJECT (screen));
