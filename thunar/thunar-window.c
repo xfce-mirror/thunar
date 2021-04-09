@@ -804,7 +804,7 @@ thunar_window_init (ThunarWindow *window)
   gtk_paned_pack2 (GTK_PANED (window->paned), window->view_box, TRUE, FALSE);
   gtk_widget_show (window->view_box);
 
-  window->trash_infobar = gtk_info_bar_new();
+  window->trash_infobar = gtk_info_bar_new ();
   gtk_grid_attach (GTK_GRID (window->view_box), window->trash_infobar, 0, 0, 1, 1);
   window->trash_infobar_restore_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Restore Selected Items", RESTORE);
   window->trash_infobar_empty_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Empty Trash", EMPTY);
@@ -812,6 +812,9 @@ thunar_window_init (ThunarWindow *window)
                     "response",
                     G_CALLBACK (thunar_window_trash_infobar_clicked),
                     G_OBJECT (window));
+
+  /* remove border */
+  gtk_container_set_border_width (GTK_CONTAINER (gtk_info_bar_get_action_area (GTK_INFO_BAR (window->trash_infobar))), 0);
 
   /* split view: Create panes where the two notebooks */
   window->paned_notebooks = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
