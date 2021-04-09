@@ -564,7 +564,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
       g_param_spec_boolean ("misc-full-path-in-title",
                             "MiscFullPathInTitle",
                             NULL,
-                            TRUE,
+                            FALSE,
                             EXO_PARAM_READWRITE);
 
   /**
