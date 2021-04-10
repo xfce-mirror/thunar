@@ -122,7 +122,6 @@ static gboolean           thunar_file_same_filesystem          (const ThunarFile
 G_LOCK_DEFINE_STATIC (file_cache_mutex);
 G_LOCK_DEFINE_STATIC (file_content_type_mutex);
 G_LOCK_DEFINE_STATIC (file_rename_mutex);
-G_LOCK_DEFINE_STATIC (device_type_mutex);
 
 
 
@@ -218,6 +217,28 @@ thunar_file_dirs[] =
   { G_USER_DIRECTORY_PUBLIC_SHARE, "folder-publicshare" },
   { G_USER_DIRECTORY_TEMPLATES,    "folder-templates" },
   { G_USER_DIRECTORY_VIDEOS,       "folder-videos" }
+};
+
+/* See : https://freedesktop.org/wiki/Specifications/icon-naming-spec/ */
+static struct
+{
+  const gchar *icon_name;
+  const gchar *type;
+}
+device_icon_name [] =
+{
+  { "camera-photo"          , "Camera" },
+  { "drive-harddisk"        , "Internal Drive" },
+  { "drive-optical"         , "Optical Drive" },
+  { "drive-removable-media" , "Removable Drive" },
+  { "media-flash"           , "Flash Drive" },
+  { "media-floppy"          , "Floppy" },
+  { "media-optical"         , "Optical Media" },
+  { "media-tape"            , "Tape" },
+  { "multimedia-player"     , "Multimedia Player" },
+  { "pda"                   , "PDA" },
+  { "phone"                 , "Phone" },
+  { NULL                    , NULL }
 };
 
 
@@ -3892,40 +3913,15 @@ thunar_file_get_icon_name (ThunarFile          *file,
 
 
 
-GHashTable *
-thunar_file_get_device_hash_table ()
+static const gchar *
+thunar_file_guess_device_type (const gchar * icon_name)
 {
-  GHashTable *device_hash_table = g_hash_table_new (g_str_hash, g_str_equal);
-
-  g_hash_table_insert (device_hash_table,
-                       g_strdup ("drive-removable-media"),
-                       g_strdup ("Removable Disk"));
-  g_hash_table_insert (device_hash_table,
-                       g_strdup ("drive-harddisk"),
-                       g_strdup ("Internal Disk"));
-  g_hash_table_insert (device_hash_table,
-                       g_strdup ("media-floppy"),
-                       g_strdup ("Floppy Drive"));
-  g_hash_table_insert (device_hash_table,
-                       g_strdup ("drive-optical"),
-                       g_strdup ("CD Drive"));
-  g_hash_table_insert (device_hash_table,
-                       g_strdup ("media-optical"),
-                       g_strdup ("Removable CD Drive"));
-  g_hash_table_insert (device_hash_table,
-                       g_strdup ("folder-remote"),
-                       g_strdup ("Remote Folder"));
-  g_hash_table_insert (device_hash_table,
-                       g_strdup ("media-flash"),
-                       g_strdup ("Flash Drive"));
-  g_hash_table_insert (device_hash_table,
-                       g_strdup ("camera-photo"),
-                       g_strdup ("Camera"));
-  g_hash_table_insert (device_hash_table,
-                       g_strdup ("multimedia-player"),
-                       g_strdup ("Multimedia Device"));
-
-  return device_hash_table;
+  for (int n = 0; device_icon_name[n].type != NULL ; n++)
+    {
+      if (strcmp (icon_name, device_icon_name[n].icon_name) == 0)
+        return device_icon_name[n].type;
+    }
+  return NULL;
 }
 
 
@@ -3939,7 +3935,6 @@ thunar_file_get_device_hash_table ()
 const gchar *
 thunar_file_get_device_type (ThunarFile *file)
 {
-  static GHashTable *device_hash_table = NULL;
   gchar             *device_type = NULL;
   gchar             *icon_name = NULL;
   GFileInfo         *fileinfo = NULL;
@@ -3947,22 +3942,14 @@ thunar_file_get_device_type (ThunarFile *file)
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
-  if (G_LIKELY (file->device_type != NULL))
-    return file->device_type;
-
   if (file->kind != G_FILE_TYPE_MOUNTABLE)
     return NULL;
 
-  if (G_UNLIKELY (device_hash_table == NULL))
-    {
-      G_LOCK (device_type_mutex);
-      if (device_hash_table == NULL)
-        device_hash_table = thunar_file_get_device_hash_table ();
-      G_UNLOCK (device_type_mutex);
-    }
+  if (G_LIKELY (file->device_type != NULL))
+    return file->device_type;
 
   if (G_LIKELY (file->icon_name != NULL))
-    device_type = g_hash_table_lookup (device_hash_table, file->icon_name);
+    device_type = thunar_file_guess_device_type (file->icon_name);
   else
     {
       _thunar_return_val_if_fail (file->gfile != NULL, NULL);
@@ -3978,13 +3965,10 @@ thunar_file_get_device_type (ThunarFile *file)
 
       icon_name = g_icon_to_string (icon);
       if (icon_name != NULL)
-        device_type = g_hash_table_lookup (device_hash_table, icon_name);
+        device_type = thunar_file_guess_device_type (icon_name);
       g_object_unref (icon);
       g_object_unref (fileinfo);
     }
-
-  if (G_UNLIKELY (device_type == NULL))
-    return NULL;
 
   file->device_type = device_type;
   return device_type;
