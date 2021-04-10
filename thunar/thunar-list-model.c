@@ -818,13 +818,16 @@ thunar_list_model_get_value (GtkTreeModel *model,
           g_value_take_string (value, g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (file)));
           break;
         }
-      device_type = thunar_file_get_device_type (file);
-      if (device_type != NULL)
-        {
-          g_value_take_string (value, g_strdup (device_type));
-          break;
-        }
       content_type = thunar_file_get_content_type (file);
+      if (G_UNLIKELY (strcmp (content_type, "application/octet-stream") == 0))
+        {
+          device_type = thunar_file_get_device_type (file);
+          if (device_type != NULL)
+            {
+              g_value_take_string (value, g_strdup (device_type));
+              break;
+            }
+        }
       if (content_type != NULL)
         {
           g_value_take_string (value, g_content_type_get_description (content_type));

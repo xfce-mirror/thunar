@@ -1080,10 +1080,6 @@ thunar_file_info_reload (ThunarFile   *file,
         file->display_name = thunar_g_file_get_display_name (file->gfile);
     }
 
-  /* reset device type */
-  file->device_type = NULL;
-  thunar_file_get_device_type (file);
-
   /* create case sensitive collation key */
   file->collate_key = g_utf8_collate_key_for_filename (file->display_name, -1);
 
@@ -3897,7 +3893,7 @@ thunar_file_get_icon_name (ThunarFile          *file,
 
 
 GHashTable *
-thunar_file_get_device_hash_table ()
+thunar_file_get_device_hash_table (void)
 {
   GHashTable *device_hash_table = g_hash_table_new (g_str_hash, g_str_equal);
 
@@ -3943,6 +3939,8 @@ thunar_file_get_device_hash_table ()
 const gchar *
 thunar_file_get_device_type (ThunarFile *file)
 {
+  static gchar       NOT_A_DEVICE = '\0';
+
   static GHashTable *device_hash_table = NULL;
   gchar             *device_type = NULL;
   gchar             *icon_name = NULL;
@@ -3951,8 +3949,10 @@ thunar_file_get_device_type (ThunarFile *file)
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
-  /*if (G_LIKELY (file->device_type != NULL))
-    return file->device_type;*/
+  if (G_UNLIKELY (file-> device_type == &NOT_A_DEVICE))
+    return NULL;
+  if (G_LIKELY (file->device_type != NULL))
+    return file->device_type;
 
   if (G_UNLIKELY (device_hash_table == NULL))
     {
@@ -3985,7 +3985,10 @@ thunar_file_get_device_type (ThunarFile *file)
     }
 
   if (G_UNLIKELY (device_type == NULL))
-    return NULL;
+    {
+      file->device_type = &NOT_A_DEVICE;
+      return NULL;
+    }
 
   file->device_type = device_type;
   return device_type;
