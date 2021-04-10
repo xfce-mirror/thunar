@@ -339,6 +339,7 @@ struct _ThunarWindow
   GtkWidget              *view_box;
   GtkWidget              *trash_infobar;
   GtkWidget              *trash_infobar_restore_button;
+  GtkWidget              *trash_infobar_empty_button;
 
   /* split view panes */
   GtkWidget              *paned_notebooks;
@@ -420,10 +421,10 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     { THUNAR_WINDOW_ACTION_ZOOM_OUT_ALT,                   "<Actions>/ThunarWindow/zoom-out-alt",                    "<Primary>minus",       XFCE_GTK_IMAGE_MENU_ITEM, NULL,                          NULL,                                                                                NULL,                      G_CALLBACK (thunar_window_zoom_out),                  },
     { THUNAR_WINDOW_ACTION_ZOOM_RESET,                     "<Actions>/ThunarWindow/zoom-reset",                      "<Primary>KP_0",        XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Normal Si_ze"),           N_ ("Show the contents at the normal size"),                                         "zoom-original-symbolic",  G_CALLBACK (thunar_window_zoom_reset),                },
     { THUNAR_WINDOW_ACTION_ZOOM_RESET_ALT,                 "<Actions>/ThunarWindow/zoom-reset-alt",                  "<Primary>0",           XFCE_GTK_IMAGE_MENU_ITEM, NULL,                          NULL,                                                                                NULL,                      G_CALLBACK (thunar_window_zoom_reset),                },
-    { THUNAR_WINDOW_ACTION_CLEAR_DIRECTORY_SPECIFIC_SETTINGS,"<Actions>/ThunarWindow/clear-directory-specific-settings","",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Clear Saved _Folder View Settings"), N_ ("Delete saved view settings for this folder"),                         NULL,                     G_CALLBACK (thunar_window_action_clear_directory_specific_settings), },
-    { THUNAR_WINDOW_ACTION_VIEW_AS_ICONS,                  "<Actions>/ThunarWindow/view-as-icons",                   "<Primary>1",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Icon View"),             N_ ("Display folder content in an icon view"),                                        NULL,                      G_CALLBACK (thunar_window_action_icon_view),          },
-    { THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST,          "<Actions>/ThunarWindow/view-as-detailed-list",           "<Primary>2",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_List View"),             N_ ("Display folder content in a detailed list view"),                                NULL,                      G_CALLBACK (thunar_window_action_detailed_view),      },
-    { THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST,           "<Actions>/ThunarWindow/view-as-compact-list",            "<Primary>3",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Compact View"),          N_ ("Display folder content in a compact list view"),                                 NULL,                      G_CALLBACK (thunar_window_action_compact_view),       },
+    { THUNAR_WINDOW_ACTION_CLEAR_DIRECTORY_SPECIFIC_SETTINGS,"<Actions>/ThunarWindow/clear-directory-specific-settings","",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Clear Saved _Folder View Settings"), N_ ("Delete saved view settings for this folder"),                        NULL,                      G_CALLBACK (thunar_window_action_clear_directory_specific_settings), },
+    { THUNAR_WINDOW_ACTION_VIEW_AS_ICONS,                  "<Actions>/ThunarWindow/view-as-icons",                   "<Primary>1",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Icon View"),             N_ ("Display folder content in an icon view"),                                       NULL,                      G_CALLBACK (thunar_window_action_icon_view),          },
+    { THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST,          "<Actions>/ThunarWindow/view-as-detailed-list",           "<Primary>2",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_List View"),             N_ ("Display folder content in a detailed list view"),                               NULL,                      G_CALLBACK (thunar_window_action_detailed_view),      },
+    { THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST,           "<Actions>/ThunarWindow/view-as-compact-list",            "<Primary>3",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Compact View"),          N_ ("Display folder content in a compact list view"),                                NULL,                      G_CALLBACK (thunar_window_action_compact_view),       },
 
     { THUNAR_WINDOW_ACTION_GO_MENU,                        "<Actions>/ThunarWindow/go-menu",                         "",                     XFCE_GTK_MENU_ITEM,       N_ ("_Go"),                    NULL,                                                                                NULL,                      NULL                                                  },
     { THUNAR_WINDOW_ACTION_OPEN_FILE_SYSTEM,               "<Actions>/ThunarWindow/open-file-system",                "",                     XFCE_GTK_IMAGE_MENU_ITEM, N_ ("File System"),            N_ ("Browse the file system"),                                                       "drive-harddisk",          G_CALLBACK (thunar_window_action_open_file_system),   },
@@ -806,7 +807,7 @@ thunar_window_init (ThunarWindow *window)
   window->trash_infobar = gtk_info_bar_new();
   gtk_grid_attach (GTK_GRID (window->view_box), window->trash_infobar, 0, 0, 1, 1);
   window->trash_infobar_restore_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Restore Selected Items", RESTORE);
-  gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Empty Trash", EMPTY);
+  window->trash_infobar_empty_button = gtk_info_bar_add_button (GTK_INFO_BAR (window->trash_infobar), "Empty Trash", EMPTY);
   g_signal_connect (window->trash_infobar,
                     "response",
                     G_CALLBACK (thunar_window_trash_infobar_clicked),
@@ -1209,6 +1210,8 @@ thunar_window_update_go_menu (ThunarWindow *window,
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_FILE_SYSTEM), G_OBJECT (window), GTK_MENU_SHELL (menu));
   xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_NETWORK), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+  thunar_launcher_append_menu_item (window->launcher, GTK_MENU_SHELL (menu),THUNAR_LAUNCHER_ACTION_SENDTO_SHORTCUTS, FALSE);
   xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_LOCATION), G_OBJECT (window), GTK_MENU_SHELL (menu));
   gtk_widget_show_all (GTK_WIDGET (menu));
@@ -2256,6 +2259,7 @@ void thunar_window_notebook_open_new_tab (ThunarWindow *window,
   GtkWidget     *view;
   gint           page_num;
   GType          view_type;
+  gboolean       switch_to_new_tab;
 
   /* save the history of the current view */
   if (THUNAR_IS_STANDARD_VIEW (window->view))
@@ -2269,8 +2273,12 @@ void thunar_window_notebook_open_new_tab (ThunarWindow *window,
   view = thunar_window_notebook_insert_page (window, directory, view_type, page_num + 1, history);
 
   /* switch to the new view */
-  page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), view);
-  gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected), page_num);
+  g_object_get (G_OBJECT (window->preferences), "misc-switch-to-new-tab", &switch_to_new_tab, NULL);
+  if (switch_to_new_tab == TRUE)
+    {
+      page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), view);
+      gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected), page_num);
+    }
 
   /* take focus on the new view */
   gtk_widget_grab_focus (view);
@@ -3767,6 +3775,9 @@ thunar_window_notify_loading (ThunarView   *view,
         {
           gdk_window_set_cursor (gtk_widget_get_window (GTK_WIDGET (window)), NULL);
         }
+
+      /* Set trash infobar's `empty trash` button sensitivity */
+      gtk_widget_set_sensitive (window->trash_infobar_empty_button, thunar_file_get_item_count (window->current_directory) > 0);
     }
 }
 

@@ -1080,6 +1080,10 @@ thunar_file_info_reload (ThunarFile   *file,
         file->display_name = thunar_g_file_get_display_name (file->gfile);
     }
 
+  /* reset device type */
+  file->device_type = NULL;
+  thunar_file_get_device_type (file);
+
   /* create case sensitive collation key */
   file->collate_key = g_utf8_collate_key_for_filename (file->display_name, -1);
 
