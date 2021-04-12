@@ -3935,7 +3935,7 @@ thunar_file_guess_device_type (const gchar * icon_name)
 const gchar *
 thunar_file_get_device_type (ThunarFile *file)
 {
-  gchar             *device_type = NULL;
+  const gchar       *device_type = NULL;
   gchar             *icon_name = NULL;
   GFileInfo         *fileinfo = NULL;
   GIcon             *icon = NULL;
@@ -3961,12 +3961,9 @@ thunar_file_get_device_type (ThunarFile *file)
       icon = g_file_info_get_icon (fileinfo);
       _thunar_return_val_if_fail (icon != NULL, NULL);
 
-      g_object_ref (icon);
-
       icon_name = g_icon_to_string (icon);
-      if (icon_name != NULL)
-        device_type = thunar_file_guess_device_type (icon_name);
-      g_object_unref (icon);
+      device_type = thunar_file_guess_device_type (icon_name);
+      g_free (icon_name);
       g_object_unref (fileinfo);
     }
 
