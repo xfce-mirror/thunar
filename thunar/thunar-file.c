@@ -173,7 +173,7 @@ struct _ThunarFile
   gchar                *custom_icon_name;
   gchar                *display_name;
   gchar                *basename;
-  gchar                *device_type;
+  const gchar          *device_type;
   gchar                *thumbnail_path;
 
   /* sorting */
@@ -227,18 +227,24 @@ static struct
 }
 device_icon_name [] =
 {
-  { "camera-photo"          , "Camera" },
-  { "drive-harddisk"        , "Internal Drive" },
-  { "drive-optical"         , "Optical Drive" },
-  { "drive-removable-media" , "Removable Drive" },
-  { "media-flash"           , "Flash Drive" },
-  { "media-floppy"          , "Floppy" },
-  { "media-optical"         , "Optical Media" },
-  { "media-tape"            , "Tape" },
-  { "multimedia-player"     , "Multimedia Player" },
-  { "pda"                   , "PDA" },
-  { "phone"                 , "Phone" },
-  { NULL                    , NULL }
+  /* GVfs implementation specific */
+  { "multimedia-player-apple-ipod-touch" , "iPod touch" },
+  { "computer-apple-ipad"                , "iPad" },
+  { "phone-apple-iphone"                 , "iPhone" },
+
+  /* Freedesktop icon-naming-spec */
+  { "camera*"                , "Camera" },
+  { "drive-harddisk*"        , "Internal Drive" },
+  { "drive-optical*"         , "Optical Drive" },
+  { "drive-removable-media*" , "Removable Drive" },
+  { "media-flash*"           , "Flash Drive" },
+  { "media-floppy*"          , "Floppy" },
+  { "media-optical*"         , "Optical Media" },
+  { "media-tape*"            , "Tape" },
+  { "multimedia-player*"     , "Multimedia Player" },
+  { "pda*"                   , "PDA" },
+  { "phone*"                 , "Phone" },
+  { NULL                     , NULL }
 };
 
 
@@ -3918,7 +3924,7 @@ thunar_file_guess_device_type (const gchar * icon_name)
 {
   for (int n = 0; device_icon_name[n].type != NULL ; n++)
     {
-      if (strcmp (icon_name, device_icon_name[n].icon_name) == 0)
+      if (g_pattern_match_simple (device_icon_name[n].icon_name, icon_name))
         return device_icon_name[n].type;
     }
   return NULL;
