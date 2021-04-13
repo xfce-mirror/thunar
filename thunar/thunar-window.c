@@ -293,6 +293,9 @@ static void      thunar_window_trash_infobar_clicked           (GtkInfoBar      
                                                                 gint                    response_id,
                                                                 ThunarWindow           *window);
 static void      thunar_window_trash_selection_updated         (ThunarWindow           *window);
+static void      thunar_window_notebook_open_new_tab_override  (ThunarWindow           *window,
+                                                                ThunarFile             *directory,
+                                                                gboolean                override_switch_tab_preference);
 
 
 
@@ -2255,8 +2258,10 @@ thunar_window_split_view_is_active (ThunarWindow *window)
 
 
 
-void thunar_window_notebook_open_new_tab (ThunarWindow *window,
-                                          ThunarFile   *directory)
+static void
+thunar_window_notebook_open_new_tab_override (ThunarWindow *window,
+                                              ThunarFile   *directory,
+                                              gboolean      override_switch_tab_preference) /* TRUE to always switch to the new tab */
 {
   ThunarHistory *history = NULL;
   GtkWidget     *view;
@@ -2277,7 +2282,7 @@ void thunar_window_notebook_open_new_tab (ThunarWindow *window,
 
   /* switch to the new view */
   g_object_get (G_OBJECT (window->preferences), "misc-switch-to-new-tab", &switch_to_new_tab, NULL);
-  if (switch_to_new_tab == TRUE)
+  if (switch_to_new_tab == TRUE || override_switch_tab_preference == TRUE)
     {
       page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), view);
       gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected), page_num);
@@ -2285,6 +2290,14 @@ void thunar_window_notebook_open_new_tab (ThunarWindow *window,
 
   /* take focus on the new view */
   gtk_widget_grab_focus (view);
+}
+
+
+
+void thunar_window_notebook_open_new_tab (ThunarWindow *window,
+                                          ThunarFile   *directory)
+{
+  thunar_window_notebook_open_new_tab_override (window, directory, FALSE);
 }
 
 
@@ -2624,8 +2637,8 @@ static void
 thunar_window_action_open_new_tab (ThunarWindow *window,
                                    GtkWidget    *menu_item)
 {
-  /* open new tab with current directory as default */
-  thunar_window_notebook_open_new_tab (window, thunar_window_get_current_directory (window));
+  /* open new tab with current directory as default and switch to it */
+  thunar_window_notebook_open_new_tab_override (window, thunar_window_get_current_directory (window), TRUE);
 }
 
 
