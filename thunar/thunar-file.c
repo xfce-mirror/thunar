@@ -113,6 +113,7 @@ static gboolean           thunar_file_load                     (ThunarFile      
                                                                 GCancellable           *cancellable,
                                                                 GError                **error);
 static gboolean           thunar_file_is_readable              (const ThunarFile       *file);
+GHashTable               *thunar_file_get_device_hash_table    (void);
 static gboolean           thunar_file_same_filesystem          (const ThunarFile       *file_a,
                                                                 const ThunarFile       *file_b);
 
@@ -172,6 +173,7 @@ struct _ThunarFile
   gchar                *custom_icon_name;
   gchar                *display_name;
   gchar                *basename;
+  const gchar          *device_type;
   gchar                *thumbnail_path;
 
   /* sorting */
@@ -215,6 +217,34 @@ thunar_file_dirs[] =
   { G_USER_DIRECTORY_PUBLIC_SHARE, "folder-publicshare" },
   { G_USER_DIRECTORY_TEMPLATES,    "folder-templates" },
   { G_USER_DIRECTORY_VIDEOS,       "folder-videos" }
+};
+
+/* See : https://freedesktop.org/wiki/Specifications/icon-naming-spec/ */
+static struct
+{
+  const gchar *icon_name;
+  const gchar *type;
+}
+device_icon_name [] =
+{
+  /* GVfs implementation specific */
+  { "multimedia-player-apple-ipod-touch" , "iPod touch" },
+  { "computer-apple-ipad"                , "iPad" },
+  { "phone-apple-iphone"                 , "iPhone" },
+
+  /* Freedesktop icon-naming-spec */
+  { "camera*"                , "Camera" },
+  { "drive-harddisk*"        , "Internal Drive" },
+  { "drive-optical*"         , "Optical Drive" },
+  { "drive-removable-media*" , "Removable Drive" },
+  { "media-flash*"           , "Flash Drive" },
+  { "media-floppy*"          , "Floppy" },
+  { "media-optical*"         , "Optical Media" },
+  { "media-tape*"            , "Tape" },
+  { "multimedia-player*"     , "Multimedia Player" },
+  { "pda*"                   , "PDA" },
+  { "phone*"                 , "Phone" },
+  { NULL                     , NULL }
 };
 
 
@@ -948,6 +978,9 @@ thunar_file_info_clear (ThunarFile *file)
   file->content_type = NULL;
   g_free (file->icon_name);
   file->icon_name = NULL;
+
+  /* device type */
+  file->device_type = NULL;
 
   /* free collate keys */
   if (file->collate_key_nocase != file->collate_key)
@@ -3882,6 +3915,66 @@ thunar_file_get_icon_name (ThunarFile          *file,
     file->icon_name = g_strdup ("");
 
   return thunar_file_get_icon_name_for_state (file->icon_name, icon_state);
+}
+
+
+
+static const gchar *
+thunar_file_guess_device_type (const gchar * icon_name)
+{
+  for (int n = 0; device_icon_name[n].type != NULL ; n++)
+    {
+      if (g_pattern_match_simple (device_icon_name[n].icon_name, icon_name))
+        return device_icon_name[n].type;
+    }
+  return NULL;
+}
+
+
+
+/**
+ * thunar_file_get_device_type:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns : (transfer none) (nullable): the string of the device type.
+ */
+const gchar *
+thunar_file_get_device_type (ThunarFile *file)
+{
+  const gchar       *device_type = NULL;
+  gchar             *icon_name = NULL;
+  GFileInfo         *fileinfo = NULL;
+  GIcon             *icon = NULL;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+
+  if (file->kind != G_FILE_TYPE_MOUNTABLE)
+    return NULL;
+
+  if (G_LIKELY (file->device_type != NULL))
+    return file->device_type;
+
+  if (G_LIKELY (file->icon_name != NULL))
+    device_type = thunar_file_guess_device_type (file->icon_name);
+  else
+    {
+      _thunar_return_val_if_fail (file->gfile != NULL, NULL);
+      fileinfo = g_file_query_info (file->gfile,
+                                    G_FILE_ATTRIBUTE_STANDARD_ICON,
+                                    G_FILE_QUERY_INFO_NONE, NULL, NULL);
+      _thunar_return_val_if_fail (fileinfo != NULL, NULL);
+
+      icon = g_file_info_get_icon (fileinfo);
+      _thunar_return_val_if_fail (icon != NULL, NULL);
+
+      icon_name = g_icon_to_string (icon);
+      device_type = thunar_file_guess_device_type (icon_name);
+      g_free (icon_name);
+      g_object_unref (fileinfo);
+    }
+
+  file->device_type = device_type;
+  return device_type;
 }
 
 
