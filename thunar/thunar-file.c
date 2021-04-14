@@ -172,6 +172,7 @@ struct _ThunarFile
   gchar                *custom_icon_name;
   gchar                *display_name;
   gchar                *basename;
+  const gchar          *device_type;
   gchar                *thumbnail_path;
 
   /* sorting */
@@ -948,6 +949,9 @@ thunar_file_info_clear (ThunarFile *file)
   file->content_type = NULL;
   g_free (file->icon_name);
   file->icon_name = NULL;
+
+  /* device type */
+  file->device_type = NULL;
 
   /* free collate keys */
   if (file->collate_key_nocase != file->collate_key)
@@ -3882,6 +3886,30 @@ thunar_file_get_icon_name (ThunarFile          *file,
     file->icon_name = g_strdup ("");
 
   return thunar_file_get_icon_name_for_state (file->icon_name, icon_state);
+}
+
+
+
+/**
+ * thunar_file_get_device_type:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns : (transfer none) (nullable): the string of the device type.
+ */
+const gchar *
+thunar_file_get_device_type (ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+
+  if (file->kind != G_FILE_TYPE_MOUNTABLE)
+    return NULL;
+
+  if (G_LIKELY (file->device_type != NULL))
+    return file->device_type;
+
+  g_warning ("OK here");
+  file->device_type = thunar_g_file_guess_device_type (file->gfile);
+  return file->device_type;
 }
 
 
