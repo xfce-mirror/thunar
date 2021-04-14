@@ -298,7 +298,7 @@ thunar_chooser_model_reload (ThunarChooserModel *model)
     {
       thunar_chooser_model_append (model,
                                    _("Default Application"),
-                                   "preferences-desktop-default-applications",
+                                   "org.xfce.settings.default-applications",
                                    default_app);
     }
 
@@ -309,7 +309,7 @@ thunar_chooser_model_reload (ThunarChooserModel *model)
   recommended = g_list_sort (recommended, sort_app_infos);
   thunar_chooser_model_append (model,
                                _("Recommended Applications"),
-                               "preferences-desktop-default-applications",
+                               "org.xfce.settings.default-applications",
                                recommended);
 
   all = g_app_info_get_all ();
