@@ -711,6 +711,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
   const gchar *real_name;
   ThunarUser  *user;
   ThunarFile  *file;
+  GFile       *g_file;
   gchar       *str;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
@@ -802,6 +803,15 @@ thunar_list_model_get_value (GtkTreeModel *model,
 
     case THUNAR_COLUMN_SIZE:
       g_value_init (value, G_TYPE_STRING);
+      if (thunar_file_is_mountable (file))
+        {
+          g_file = thunar_file_get_target_location (file);
+          if (g_file == NULL)
+            break;
+          g_value_take_string (value, thunar_g_file_get_free_space_string (g_file, THUNAR_LIST_MODEL (model)->file_size_binary));
+          g_object_unref (g_file);
+          break;
+        }
       if (!thunar_file_is_directory (file))
         g_value_take_string (value, thunar_file_get_size_string_formatted (file, THUNAR_LIST_MODEL (model)->file_size_binary));
       break;
