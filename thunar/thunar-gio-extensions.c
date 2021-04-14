@@ -326,7 +326,7 @@ thunar_g_file_guess_device_type (GFile *file)
 {
   GFileInfo         *fileinfo    = NULL;
   GIcon             *icon        = NULL;
-  gchar             *icon_name   = NULL;
+  const gchar       *icon_name   = NULL;
   const gchar       *device_type = NULL;
 
   _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
@@ -340,7 +340,6 @@ thunar_g_file_guess_device_type (GFile *file)
   _thunar_return_val_if_fail (G_IS_THEMED_ICON (icon), NULL);
 
   icon_name = g_themed_icon_get_names (G_THEMED_ICON (icon))[0];
-  g_warning ("icon name : %s",icon_name);
   device_type = guess_device_type_from_icon_name (icon_name);
   g_object_unref (fileinfo);
 

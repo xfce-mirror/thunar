@@ -3907,7 +3907,6 @@ thunar_file_get_device_type (ThunarFile *file)
   if (G_LIKELY (file->device_type != NULL))
     return file->device_type;
 
-  g_warning ("OK here");
   file->device_type = thunar_g_file_guess_device_type (file->gfile);
   return file->device_type;
 }
