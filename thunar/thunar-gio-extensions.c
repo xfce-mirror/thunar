@@ -49,26 +49,26 @@ static struct
 device_icon_name [] =
 {
   /* Implementation specific */
-  { "multimedia-player-apple-ipod-touch" , "iPod touch" },
-  { "computer-apple-ipad"                , "iPad" },
-  { "phone-apple-iphone"                 , "iPhone" },
-  { "drive-harddisk-solidstate"          , "Solid State Drive" },
-  { "drive-harddisk-system"              , "System Drive" },
-  { "drive-harddisk-usb"                 , "USB Drive" },
-  { "drive-removable-media-usb"          , "USB Drive" },
+  { "multimedia-player-apple-ipod-touch" , N_("iPod touch") },
+  { "computer-apple-ipad"                , N_("iPad") },
+  { "phone-apple-iphone"                 , N_("iPhone") },
+  { "drive-harddisk-solidstate"          , N_("Solid State Drive") },
+  { "drive-harddisk-system"              , N_("System Drive") },
+  { "drive-harddisk-usb"                 , N_("USB Drive") },
+  { "drive-removable-media-usb"          , N_("USB Drive") },
 
   /* Freedesktop icon-naming-spec */
-  { "camera*"                , "Camera" },
-  { "drive-harddisk*"        , "Internal Drive" },
-  { "drive-optical*"         , "Optical Drive" },
-  { "drive-removable-media*" , "Removable Drive" },
-  { "media-flash*"           , "Flash Drive" },
-  { "media-floppy*"          , "Floppy" },
-  { "media-optical*"         , "Optical Media" },
-  { "media-tape*"            , "Tape" },
-  { "multimedia-player*"     , "Multimedia Player" },
-  { "pda*"                   , "PDA" },
-  { "phone*"                 , "Phone" },
+  { "camera*"                , N_("Camera") },
+  { "drive-harddisk*"        , N_("Internal Drive") },
+  { "drive-optical*"         , N_("Optical Drive") },
+  { "drive-removable-media*" , N_("Removable Drive") },
+  { "media-flash*"           , N_("Flash Drive") },
+  { "media-floppy*"          , N_("Floppy") },
+  { "media-optical*"         , N_("Optical Media") },
+  { "media-tape*"            , N_("Tape") },
+  { "multimedia-player*"     , N_("Multimedia Player") },
+  { "pda*"                   , N_("PDA") },
+  { "phone*"                 , N_("Phone") },
   { NULL                     , NULL }
 };
 
@@ -316,7 +316,7 @@ guess_device_type_from_icon_name (const gchar * icon_name)
   for (int n = 0; device_icon_name[n].type != NULL ; n++)
     {
       if (g_pattern_match_simple (device_icon_name[n].icon_name, icon_name))
-        return device_icon_name[n].type;
+        return gettext (device_icon_name[n].type);
     }
   return NULL;
 }
