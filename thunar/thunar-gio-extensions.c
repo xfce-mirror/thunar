@@ -40,6 +40,44 @@
 
 
 
+/* See : https://freedesktop.org/wiki/Specifications/icon-naming-spec/ */
+static struct
+{
+  const gchar *icon_name;
+  const gchar *type;
+}
+device_icon_name [] =
+{
+  /* Implementation specific */
+  { "multimedia-player-apple-ipod-touch" , N_("iPod touch") },
+  { "computer-apple-ipad"                , N_("iPad") },
+  { "phone-apple-iphone"                 , N_("iPhone") },
+  { "drive-harddisk-solidstate"          , N_("Solid State Drive") },
+  { "drive-harddisk-system"              , N_("System Drive") },
+  { "drive-harddisk-usb"                 , N_("USB Drive") },
+  { "drive-removable-media-usb"          , N_("USB Drive") },
+
+  /* Freedesktop icon-naming-spec */
+  { "camera*"                , N_("Camera") },
+  { "drive-harddisk*"        , N_("Harddisk") },
+  { "drive-optical*"         , N_("Optical Drive") },
+  { "drive-removable-media*" , N_("Removable Drive") },
+  { "media-flash*"           , N_("Flash Drive") },
+  { "media-floppy*"          , N_("Floppy") },
+  { "media-optical*"         , N_("Optical Media") },
+  { "media-tape*"            , N_("Tape") },
+  { "multimedia-player*"     , N_("Multimedia Player") },
+  { "pda*"                   , N_("PDA") },
+  { "phone*"                 , N_("Phone") },
+  { NULL                     , NULL }
+};
+
+
+
+static const gchar *guess_device_type_from_icon_name (const gchar * icon_name);
+
+
+
 GFile *
 thunar_g_file_new_for_home (void)
 {
@@ -268,6 +306,57 @@ thunar_g_file_get_location (GFile *file)
     location = g_file_get_uri (file);
 
   return location;
+}
+
+
+
+static const gchar *
+guess_device_type_from_icon_name (const gchar * icon_name)
+{
+  for (int i = 0; device_icon_name[i].type != NULL ; i++)
+    {
+      if (g_pattern_match_simple (device_icon_name[i].icon_name, icon_name))
+        return g_dgettext (NULL, device_icon_name[i].type);
+    }
+  return NULL;
+}
+
+
+
+/**
+ * thunar_g_file_guess_device_type:
+ * @file : a #GFile instance.
+ *
+ * Returns : (transfer none) (nullable): the string of the device type.
+ */
+const gchar *
+thunar_g_file_guess_device_type (GFile *file)
+{
+  GFileInfo         *fileinfo    = NULL;
+  GIcon             *icon        = NULL;
+  const gchar       *icon_name   = NULL;
+  const gchar       *device_type = NULL;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
+
+  fileinfo = g_file_query_info (file,
+                                G_FILE_ATTRIBUTE_STANDARD_ICON,
+                                G_FILE_QUERY_INFO_NONE, NULL, NULL);
+  if (fileinfo == NULL)
+    return NULL;
+
+  icon = g_file_info_get_icon (fileinfo);
+  if (!G_IS_THEMED_ICON (icon))
+    {
+      g_object_unref (fileinfo);
+      return NULL;
+    }
+
+  icon_name = g_themed_icon_get_names (G_THEMED_ICON (icon))[0];
+  device_type = guess_device_type_from_icon_name (icon_name);
+  g_object_unref (fileinfo);
+
+  return device_type;
 }
 
 
