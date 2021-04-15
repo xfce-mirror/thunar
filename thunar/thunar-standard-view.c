@@ -2195,27 +2195,23 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
 
   entry = gtk_entry_new ();
   gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
+  example_pattern = g_strdup_printf ("%s %s",
+                                     _("Examples:"),
+                                     "*.png, file\?\?.txt, pict*.\?\?\?");
+  gtk_widget_set_tooltip_text(entry, example_pattern);
+  g_free (example_pattern);
   gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 0);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), entry);
   gtk_widget_show (entry);
 
   case_sensitive_button = gtk_check_button_new_with_label (_("Case sensitive"));
-  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (case_sensitive_button), TRUE);
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (case_sensitive_button), FALSE);
   gtk_box_pack_start (GTK_BOX (vbox), case_sensitive_button, TRUE, TRUE, 0);
   gtk_widget_show (case_sensitive_button);
 
   hbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_HORIZONTAL, "border-width", 6, "spacing", 0, NULL);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
   gtk_widget_show (hbox);
-
-  label = gtk_label_new (NULL);
-  example_pattern = g_strdup_printf ("<b>%s</b> %s ",
-                                     _("Examples:"),
-                                     "*.png, file\?\?.txt, pict*.\?\?\?");
-  gtk_label_set_markup (GTK_LABEL (label), example_pattern);
-  g_free (example_pattern);
-  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
-  gtk_widget_show (label);
 
   response = gtk_dialog_run (GTK_DIALOG (dialog));
   if (response == GTK_RESPONSE_OK)
