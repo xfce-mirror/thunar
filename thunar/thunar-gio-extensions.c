@@ -59,7 +59,7 @@ device_icon_name [] =
 
   /* Freedesktop icon-naming-spec */
   { "camera*"                , N_("Camera") },
-  { "drive-harddisk*"        , N_("Internal Drive") },
+  { "drive-harddisk*"        , N_("Harddisk") },
   { "drive-optical*"         , N_("Optical Drive") },
   { "drive-removable-media*" , N_("Removable Drive") },
   { "media-flash*"           , N_("Flash Drive") },
@@ -313,10 +313,10 @@ thunar_g_file_get_location (GFile *file)
 static const gchar *
 guess_device_type_from_icon_name (const gchar * icon_name)
 {
-  for (int n = 0; device_icon_name[n].type != NULL ; n++)
+  for (int i = 0; device_icon_name[i].type != NULL ; i++)
     {
-      if (g_pattern_match_simple (device_icon_name[n].icon_name, icon_name))
-        return gettext (device_icon_name[n].type);
+      if (g_pattern_match_simple (device_icon_name[i].icon_name, icon_name))
+        return g_dgettext (NULL, device_icon_name[i].type);
     }
   return NULL;
 }
@@ -342,10 +342,15 @@ thunar_g_file_guess_device_type (GFile *file)
   fileinfo = g_file_query_info (file,
                                 G_FILE_ATTRIBUTE_STANDARD_ICON,
                                 G_FILE_QUERY_INFO_NONE, NULL, NULL);
-  _thunar_return_val_if_fail (fileinfo != NULL, NULL);
+  if (fileinfo == NULL)
+    return NULL;
 
   icon = g_file_info_get_icon (fileinfo);
-  _thunar_return_val_if_fail (G_IS_THEMED_ICON (icon), NULL);
+  if (!G_IS_THEMED_ICON (icon))
+    {
+      g_object_unref (fileinfo);
+      return NULL;
+    }
 
   icon_name = g_themed_icon_get_names (G_THEMED_ICON (icon))[0];
   device_type = guess_device_type_from_icon_name (icon_name);
