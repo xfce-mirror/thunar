@@ -2198,7 +2198,7 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   example_pattern = g_strdup_printf ("%s %s",
                                      _("Examples:"),
                                      "*.png, file\?\?.txt, pict*.\?\?\?");
-  gtk_widget_set_tooltip_text(entry, example_pattern);
+  gtk_widget_set_tooltip_text (entry, example_pattern);
   g_free (example_pattern);
   gtk_grid_attach_next_to (grid, entry, label, GTK_POS_RIGHT, 1, 1);
   gtk_widget_set_hexpand (entry, TRUE);
