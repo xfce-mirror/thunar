@@ -2261,7 +2261,7 @@ thunar_window_split_view_is_active (ThunarWindow *window)
 static void
 thunar_window_notebook_add_new_tab (ThunarWindow *window,
                                     ThunarFile   *directory,
-                                    gboolean      force_switch_to_new_tab) /* TRUE to always switch to the new tab */
+                                    gboolean      force_switch_to_new_tab)
 {
   ThunarHistory *history = NULL;
   GtkWidget     *view;
