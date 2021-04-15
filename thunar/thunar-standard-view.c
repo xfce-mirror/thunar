@@ -2205,7 +2205,7 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), entry);
   gtk_widget_show (entry);
 
-  case_sensitive_button = gtk_check_button_new_with_label (_("Case sensitive"));
+  case_sensitive_button = gtk_check_button_new_with_mnemonic (_("_Case sensitive"));
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (case_sensitive_button), FALSE);
   gtk_grid_attach_next_to (grid, case_sensitive_button, entry, GTK_POS_BOTTOM, 1, 1);
   gtk_widget_show (case_sensitive_button);
