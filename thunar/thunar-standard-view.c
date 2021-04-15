@@ -2155,8 +2155,8 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
   GtkWidget          *window;
   GtkWidget          *dialog;
-  GtkWidget          *vbox;
-  GtkWidget          *hbox;
+  GtkBox             *content_area;
+  GtkGrid            *grid;
   GtkWidget          *label;
   GtkWidget          *entry;
   GtkWidget          *case_sensitive_button;
@@ -2181,41 +2181,34 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
   gtk_window_set_default_size (GTK_WINDOW (dialog), 290, -1);
 
-  vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
-  gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), vbox, TRUE, TRUE, 0);
-  gtk_widget_show (vbox);
+  content_area = GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog)));
+  gtk_container_set_border_width (GTK_CONTAINER (content_area), 6);
 
-  hbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_HORIZONTAL, "border-width", 6, "spacing", 10, NULL);
-  gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
-  gtk_widget_show (hbox);
+  grid = GTK_GRID (gtk_grid_new ());
+  g_object_set (G_OBJECT (grid), "column-spacing", 10, "row-spacing", 10, NULL);
+  gtk_box_pack_start (content_area, GTK_WIDGET (grid), TRUE, TRUE, 10);
+  gtk_widget_show (GTK_WIDGET (grid));
 
   label = gtk_label_new_with_mnemonic (_("_Pattern:"));
-  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+  gtk_grid_attach (grid, label, 0, 0, 1, 1);
   gtk_widget_show (label);
 
   entry = gtk_entry_new ();
   gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
-  gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 0);
+  example_pattern = g_strdup_printf ("%s %s",
+                                     _("Examples:"),
+                                     "*.png, file\?\?.txt, pict*.\?\?\?");
+  gtk_widget_set_tooltip_text(entry, example_pattern);
+  g_free (example_pattern);
+  gtk_grid_attach_next_to (grid, entry, label, GTK_POS_RIGHT, 1, 1);
+  gtk_widget_set_hexpand (entry, TRUE);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), entry);
   gtk_widget_show (entry);
 
   case_sensitive_button = gtk_check_button_new_with_label (_("Case sensitive"));
-  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (case_sensitive_button), TRUE);
-  gtk_box_pack_start (GTK_BOX (vbox), case_sensitive_button, TRUE, TRUE, 0);
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (case_sensitive_button), FALSE);
+  gtk_grid_attach_next_to (grid, case_sensitive_button, entry, GTK_POS_BOTTOM, 1, 1);
   gtk_widget_show (case_sensitive_button);
-
-  hbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_HORIZONTAL, "border-width", 6, "spacing", 0, NULL);
-  gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
-  gtk_widget_show (hbox);
-
-  label = gtk_label_new (NULL);
-  example_pattern = g_strdup_printf ("<b>%s</b> %s ",
-                                     _("Examples:"),
-                                     "*.png, file\?\?.txt, pict*.\?\?\?");
-  gtk_label_set_markup (GTK_LABEL (label), example_pattern);
-  g_free (example_pattern);
-  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
-  gtk_widget_show (label);
 
   response = gtk_dialog_run (GTK_DIALOG (dialog));
   if (response == GTK_RESPONSE_OK)
