@@ -93,9 +93,9 @@ static void         thunar_details_view_row_activated           (GtkTreeView    
 static gboolean     thunar_details_view_select_cursor_row       (GtkTreeView            *tree_view,
                                                                  gboolean                editing,
                                                                  ThunarDetailsView      *details_view);
-static gboolean     thunar_details_view_name_resizer            (GtkWidget              *details_view,
-                                                                 GdkEvent               *event,
-                                                                 GtkCellRenderer        *name_renderer);
+static void         thunar_details_view_name_resizer            (GtkWidget              *details_view,
+                                                                 GdkRectangle           *allocation,
+                                                                 gpointer                unused);
 static void         thunar_details_view_row_changed             (GtkTreeView            *tree_view,
                                                                  GtkTreePath            *path,
                                                                  GtkTreeViewColumn      *column,
@@ -210,6 +210,7 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
 static void
 thunar_details_view_init (ThunarDetailsView *details_view)
 {
+  GdkWindow        *window;
   GtkTreeSelection *selection;
   GtkCellRenderer  *right_aligned_renderer;
   GtkCellRenderer  *left_aligned_renderer;
@@ -234,9 +235,8 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                     G_CALLBACK (thunar_details_view_row_activated), details_view);
   g_signal_connect (G_OBJECT (tree_view), "select-cursor-row",
                     G_CALLBACK (thunar_details_view_select_cursor_row), details_view);
-  g_signal_connect (G_OBJECT (details_view), "scroll-event",//"GtkWidget::configure-event",
-                    G_CALLBACK (thunar_details_view_name_resizer),
-                    THUNAR_STANDARD_VIEW (details_view)->name_renderer);
+  g_signal_connect (G_OBJECT (details_view), "size-allocate",
+                    G_CALLBACK (thunar_details_view_name_resizer), NULL);
   gtk_container_add (GTK_CONTAINER (details_view), tree_view);
   gtk_widget_show (tree_view);
 
@@ -835,25 +835,24 @@ thunar_details_view_select_cursor_row (GtkTreeView            *tree_view,
 
 
 
-static gboolean
-thunar_details_view_name_resizer (GtkWidget *details_view,
-                                  GdkEvent  *event,
-                                  GtkCellRenderer *name_renderer)
+static void
+thunar_details_view_name_resizer (GtkWidget    *details_view,
+                                  GdkRectangle *allocation,
+                                  gpointer      unused)
 {
-  gint h_size, width_chars;
-  gfloat char_width;
+  GtkCellRenderer *name_renderer;
+  gint             h_size, width_chars;
+  gfloat           char_width;
 
   g_warning ("Resizer called");
-  _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (details_view), FALSE);
-  _thunar_return_val_if_fail (GTK_IS_CELL_RENDERER (name_renderer), FALSE);
+  _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
-  if (event->type == GDK_DRAG_MOTION)
-    return FALSE;
+  name_renderer = THUNAR_STANDARD_VIEW (details_view)->name_renderer;
 
   h_size = gtk_widget_get_allocated_width (details_view);
   char_width = thunar_gtk_widget_get_approximate_char_width (details_view);
   if (char_width < 0.0)
-    return FALSE;
+    return;
 
   width_chars = (gint) (h_size / char_width) - 60;
   g_warning ("h_size : %d", h_size);
@@ -861,8 +860,7 @@ thunar_details_view_name_resizer (GtkWidget *details_view,
   g_warning ("width_chars : %d", width_chars);
   g_object_set (G_OBJECT (name_renderer), "width-chars", width_chars, NULL);
 
-  /* Let other hooks do their jobs as well */
-  return FALSE;
+  return;
 }
 
 
