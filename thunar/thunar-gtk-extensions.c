@@ -254,6 +254,46 @@ thunar_gtk_widget_set_tooltip (GtkWidget   *widget,
 
 
 /**
+ * thunar_gtk_widget_get_approximate_char_width:
+ * @widget: a #GtkWidget instance.
+ *
+ * Shorthand to get #PangoFontMetrics and convert
+ * pango_font_metrics_get_approximate_char_width() into pixel unit.
+ *
+ * Returns: The approximate width of current font. Negative value on error.
+ **/
+gfloat
+thunar_gtk_widget_get_approximate_char_width (GtkWidget *widget)
+{
+  PangoContext     *pango_context = NULL;
+  PangoFontMetrics *pango_metrics = NULL;
+  gint              char_width    = -1;
+
+  _thunar_return_val_if_fail (GTK_IS_WIDGET (widget), -1);
+
+  pango_context = gtk_widget_get_pango_context (widget);
+  if (pango_context == NULL)
+    {
+      g_warning ("No valid pango context");
+      return -1;
+    }
+
+  pango_metrics = pango_context_get_metrics (pango_context, NULL, NULL);
+  if (pango_metrics == NULL)
+    {
+      g_warning ("No valid pango metrics");
+      return -1;
+    }
+
+  char_width = pango_font_metrics_get_approximate_char_width (pango_metrics);
+  g_warning ("%f", ((gfloat) char_width)/PANGO_SCALE);
+  pango_font_metrics_unref (pango_metrics);
+  return ((gfloat) char_width)/PANGO_SCALE;
+}
+
+
+
+/**
  * thunar_gtk_get_focused_widget:
  * Return value: (transfer none): currently focused widget or NULL, if there is none.
  **/

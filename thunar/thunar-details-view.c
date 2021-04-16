@@ -93,6 +93,9 @@ static void         thunar_details_view_row_activated           (GtkTreeView    
 static gboolean     thunar_details_view_select_cursor_row       (GtkTreeView            *tree_view,
                                                                  gboolean                editing,
                                                                  ThunarDetailsView      *details_view);
+static gboolean     thunar_details_view_name_resizer            (GtkWidget              *details_view,
+                                                                 GdkEvent               *event,
+                                                                 GtkCellRenderer        *name_renderer);
 static void         thunar_details_view_row_changed             (GtkTreeView            *tree_view,
                                                                  GtkTreePath            *path,
                                                                  GtkTreeViewColumn      *column,
@@ -231,6 +234,9 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                     G_CALLBACK (thunar_details_view_row_activated), details_view);
   g_signal_connect (G_OBJECT (tree_view), "select-cursor-row",
                     G_CALLBACK (thunar_details_view_select_cursor_row), details_view);
+  g_signal_connect (G_OBJECT (details_view), "scroll-event",//"GtkWidget::configure-event",
+                    G_CALLBACK (thunar_details_view_name_resizer),
+                    THUNAR_STANDARD_VIEW (details_view)->name_renderer);
   gtk_container_add (GTK_CONTAINER (details_view), tree_view);
   gtk_widget_show (tree_view);
 
@@ -279,7 +285,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
 
           /* add the name renderer */
           g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->name_renderer),
-                        "xalign", 0.0, "ellipsize", PANGO_ELLIPSIZE_END, "width-chars", 30, NULL);
+                        "xalign", 0.0, "ellipsize", PANGO_ELLIPSIZE_END, "width-chars", 100, NULL);
           gtk_tree_view_column_pack_start (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->name_renderer, TRUE);
           gtk_tree_view_column_set_attributes (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->name_renderer,
                                                "text", THUNAR_COLUMN_NAME,
@@ -825,6 +831,38 @@ thunar_details_view_select_cursor_row (GtkTreeView            *tree_view,
   thunar_launcher_activate_selected_files (launcher, THUNAR_LAUNCHER_CHANGE_DIRECTORY, NULL);
 
   return TRUE;
+}
+
+
+
+static gboolean
+thunar_details_view_name_resizer (GtkWidget *details_view,
+                                  GdkEvent  *event,
+                                  GtkCellRenderer *name_renderer)
+{
+  gint h_size, width_chars;
+  gfloat char_width;
+
+  g_warning ("Resizer called");
+  _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (details_view), FALSE);
+  _thunar_return_val_if_fail (GTK_IS_CELL_RENDERER (name_renderer), FALSE);
+
+  if (event->type == GDK_DRAG_MOTION)
+    return FALSE;
+
+  h_size = gtk_widget_get_allocated_width (details_view);
+  char_width = thunar_gtk_widget_get_approximate_char_width (details_view);
+  if (char_width < 0.0)
+    return FALSE;
+
+  width_chars = (gint) (h_size / char_width) - 60;
+  g_warning ("h_size : %d", h_size);
+  g_warning ("char_width : %f", char_width);
+  g_warning ("width_chars : %d", width_chars);
+  g_object_set (G_OBJECT (name_renderer), "width-chars", width_chars, NULL);
+
+  /* Let other hooks do their jobs as well */
+  return FALSE;
 }
 
 
