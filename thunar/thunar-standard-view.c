@@ -1240,8 +1240,6 @@ static void
 thunar_standard_view_scroll_position_save (ThunarStandardView *standard_view)
 {
   ThunarFile    *first_file;
-  GtkAdjustment *vadjustment;
-  GtkAdjustment *hadjustment;
   GFile         *gfile;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
@@ -1249,18 +1247,9 @@ thunar_standard_view_scroll_position_save (ThunarStandardView *standard_view)
   /* store the previous directory in the scroll hash table */
   if (standard_view->priv->current_directory != NULL)
     {
-      /* only stop the first file is the scroll bar is actually moved */
-      vadjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (standard_view));
-      hadjustment = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (standard_view));
       gfile = thunar_file_get_file (standard_view->priv->current_directory);
 
-      if (gtk_adjustment_get_value (vadjustment) == 0.0
-          && gtk_adjustment_get_value (hadjustment) == 0.0)
-        {
-          /* remove from the hash table, we already scroll to 0,0 */
-          g_hash_table_remove (standard_view->priv->scroll_to_files, gfile);
-        }
-      else if (thunar_view_get_visible_range (THUNAR_VIEW (standard_view), &first_file, NULL))
+      if (thunar_view_get_visible_range (THUNAR_VIEW (standard_view), &first_file, NULL))
         {
           /* add the file to our internal mapping of directories to scroll files */
           g_hash_table_replace (standard_view->priv->scroll_to_files,
@@ -1466,7 +1455,36 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
   else
     g_signal_handler_unblock (standard_view->model, standard_view->priv->row_changed_id);
 
-  /* check if we're done loading and have a scheduled scroll_to_file */
+  /* check if we have a path list from new_files pending */
+  if (G_UNLIKELY (!loading && standard_view->priv->new_files_path_list != NULL))
+    {
+      /* remember and reset the new_files_path_list */
+      new_files_path_list = standard_view->priv->new_files_path_list;
+      standard_view->priv->new_files_path_list = NULL;
+
+      /* and try again */
+      thunar_standard_view_new_files (standard_view, new_files_path_list);
+
+      /* cleanup */
+      thunar_g_list_free_full (new_files_path_list);
+    }
+
+  /* check if we're done loading */
+  if (!loading)
+    {
+      /* remember and reset the file list */
+      selected_files = standard_view->priv->selected_files;
+      standard_view->priv->selected_files = NULL;
+
+      /* and try setting the selected files again */
+      thunar_component_set_selected_files (THUNAR_COMPONENT (standard_view), selected_files);
+
+      /* cleanup */
+      thunar_g_list_free_full (selected_files);
+    }
+
+  /* check if we're done loading and have a scheduled scroll_to_file
+   * scrolling after loading circumvents the scroll caused by gtk_tree_view_set_cell */
   if (G_UNLIKELY (!loading))
     {
       if (standard_view->priv->scroll_to_file != NULL)
@@ -1503,34 +1521,6 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
                 }
             }
         }
-    }
-
-  /* check if we have a path list from new_files pending */
-  if (G_UNLIKELY (!loading && standard_view->priv->new_files_path_list != NULL))
-    {
-      /* remember and reset the new_files_path_list */
-      new_files_path_list = standard_view->priv->new_files_path_list;
-      standard_view->priv->new_files_path_list = NULL;
-
-      /* and try again */
-      thunar_standard_view_new_files (standard_view, new_files_path_list);
-
-      /* cleanup */
-      thunar_g_list_free_full (new_files_path_list);
-    }
-
-  /* check if we're done loading */
-  if (!loading)
-    {
-      /* remember and reset the file list */
-      selected_files = standard_view->priv->selected_files;
-      standard_view->priv->selected_files = NULL;
-
-      /* and try setting the selected files again */
-      thunar_component_set_selected_files (THUNAR_COMPONENT (standard_view), selected_files);
-
-      /* cleanup */
-      thunar_g_list_free_full (selected_files);
     }
 
   /* check if we're done loading and a thumbnail timeout or idle was requested */
