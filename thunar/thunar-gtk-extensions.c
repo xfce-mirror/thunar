@@ -273,20 +273,13 @@ thunar_gtk_widget_get_approximate_char_width (GtkWidget *widget)
 
   pango_context = gtk_widget_get_pango_context (widget);
   if (pango_context == NULL)
-    {
-      g_warning ("No valid pango context");
       return -1;
-    }
 
   pango_metrics = pango_context_get_metrics (pango_context, NULL, NULL);
   if (pango_metrics == NULL)
-    {
-      g_warning ("No valid pango metrics");
       return -1;
-    }
 
   char_width = pango_font_metrics_get_approximate_char_width (pango_metrics);
-  g_warning ("%f", ((gfloat) char_width)/PANGO_SCALE);
   pango_font_metrics_unref (pango_metrics);
   return ((gfloat) char_width)/PANGO_SCALE;
 }
