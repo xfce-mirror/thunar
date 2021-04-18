@@ -246,6 +246,7 @@ GFilesystemPreviewType thunar_file_get_preview_type      (const ThunarFile *file
 const gchar      *thunar_file_get_icon_name              (ThunarFile              *file,
                                                           ThunarFileIconState      icon_state,
                                                           GtkIconTheme            *icon_theme);
+const gchar      *thunar_file_get_device_type            (ThunarFile              *file);
 
 void              thunar_file_watch                      (ThunarFile              *file);
 void              thunar_file_unwatch                    (ThunarFile              *file);
