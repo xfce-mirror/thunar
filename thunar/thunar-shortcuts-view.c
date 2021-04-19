@@ -146,17 +146,17 @@ static GtkTreePath   *thunar_shortcuts_view_compute_drop_position        (Thunar
 static void           thunar_shortcuts_view_drop_uri_list                (ThunarShortcutsView      *view,
                                                                           GList                    *path_list,
                                                                           GtkTreePath              *dst_path);
-static void           thunar_shortcuts_view_open                         (ThunarShortcutsView      *view,
-                                                                          OpenTarget                open_in);
-static void           thunar_shortcuts_view_eject                        (ThunarShortcutsView      *view);
-static void           thunar_shortcuts_view_stop_spinner                 (ThunarShortcutsView      *view,
-                                                                          ThunarDevice             *device,
-                                                                          gpointer                  user_data);
-static void           thunar_shortcuts_view_start_spinner                (ThunarShortcutsView      *view,
-                                                                          ThunarDevice             *device,
-                                                                          gpointer                  user_data);
-static void           thunar_shortcuts_view_new_files_created            (ThunarShortcutsView      *view,
-                                                                          GList                    *files_to_selected);
+static void           thunar_shortcuts_view_open                         (ThunarShortcutsView           *view,
+                                                                          ThunarLauncherFolderOpenAction open_in);
+static void           thunar_shortcuts_view_eject                        (ThunarShortcutsView           *view);
+static void           thunar_shortcuts_view_stop_spinner                 (ThunarShortcutsView           *view,
+                                                                          ThunarDevice                  *device,
+                                                                          gpointer                       user_data);
+static void           thunar_shortcuts_view_start_spinner                (ThunarShortcutsView           *view,
+                                                                          ThunarDevice                  *device,
+                                                                          gpointer                       user_data);
+static void           thunar_shortcuts_view_new_files_created            (ThunarShortcutsView           *view,
+                                                                          GList                         *files_to_selected);
 
 
 
@@ -1657,7 +1657,7 @@ thunar_shortcuts_view_open (ThunarShortcutsView            *view,
   GtkTreeModel     *model;
   GtkTreeIter       iter;
   ThunarFile       *file;
-  GList *files;
+  GList            *files;
   ThunarDevice     *device;
   GFile            *location;
 
