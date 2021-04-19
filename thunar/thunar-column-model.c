@@ -323,7 +323,8 @@ thunar_column_model_get_value (GtkTreeModel *tree_model,
 
     case THUNAR_COLUMN_MODEL_COLUMN_MUTABLE:
       g_value_init (value, G_TYPE_BOOLEAN);
-      g_value_set_boolean (value, (column != THUNAR_COLUMN_NAME));
+      g_value_set_boolean (value, ((column != THUNAR_COLUMN_NAME)
+                                   && (column != THUNAR_COLUMN_MARGIN)));
       break;
 
     case THUNAR_COLUMN_MODEL_COLUMN_VISIBLE:
@@ -441,7 +442,7 @@ thunar_column_model_load_column_order (ThunarColumnModel *column_model)
   g_free (tmp);
 
   /* reset the column order to its default */
-  for (j = 0; j < THUNAR_N_VISIBLE_COLUMNS; ++j)
+  for (j = 0; j < THUNAR_COLUMN_MARGIN; ++j)
     column_model->order[j] = j;
 
   /* now rearrange the columns according to the preferences */
@@ -454,12 +455,12 @@ thunar_column_model_load_column_order (ThunarColumnModel *column_model)
         continue;
 
       /* find the current position of the value */
-      for (j = 0; j < THUNAR_N_VISIBLE_COLUMNS; ++j)
+      for (j = 0; j < THUNAR_COLUMN_MARGIN; ++j)
         if (column_model->order[j] == (guint) value->value)
           break;
 
       /* check if valid */
-      if (G_LIKELY (j < THUNAR_N_VISIBLE_COLUMNS))
+      if (G_LIKELY (j < THUNAR_COLUMN_MARGIN))
         {
           /* exchange the positions of i and j */
           column = column_model->order[i];
@@ -488,7 +489,7 @@ thunar_column_model_save_column_order (ThunarColumnModel *column_model)
 
   /* transform the internal visible column list */
   klass = g_type_class_ref (THUNAR_TYPE_COLUMN);
-  for (n = 0; n < THUNAR_N_VISIBLE_COLUMNS; ++n)
+  for (n = 0; n < THUNAR_COLUMN_MARGIN; ++n)
     {
       /* append a comma if not empty */
       if (*column_order->str != '\0')
@@ -555,8 +556,9 @@ thunar_column_model_load_column_widths (ThunarColumnModel *column_model)
   g_free (tmp);
 
   /* reset the column widths for the model */
-  for (n = 0; n < THUNAR_N_VISIBLE_COLUMNS; ++n)
+  for (n = 0; n < THUNAR_COLUMN_MARGIN; ++n)
     column_model->width[n] = 50;
+  column_model->width[THUNAR_COLUMN_MARGIN] = 0;
   column_model->width[THUNAR_COLUMN_NAME] = 200;
 
   /* parse the widths from the preferences */
@@ -583,7 +585,7 @@ thunar_column_model_save_column_widths (ThunarColumnModel *column_model)
   column_widths = g_string_sized_new (96);
 
   /* transform the column widths to a string */
-  for (n = 0; n < THUNAR_N_VISIBLE_COLUMNS; ++n)
+  for (n = 0; n < THUNAR_COLUMN_MARGIN; ++n)
     {
       /* append a comma if not empty */
       if (*column_widths->str != '\0')
@@ -633,7 +635,7 @@ thunar_column_model_load_visible_columns (ThunarColumnModel *column_model)
   g_free (tmp);
 
   /* reset the visible columns for the model */
-  for (n = 0; n < THUNAR_N_VISIBLE_COLUMNS; ++n)
+  for (n = 0; n < THUNAR_COLUMN_MARGIN; ++n)
     column_model->visible[n] = FALSE;
 
   /* mark all columns included in the list as visible */
@@ -642,13 +644,14 @@ thunar_column_model_load_visible_columns (ThunarColumnModel *column_model)
     {
       /* determine the enum value from the string */
       value = g_enum_get_value_by_name (klass, visible_columns[n]);
-      if (G_LIKELY (value != NULL && value->value < THUNAR_N_VISIBLE_COLUMNS))
+      if (G_LIKELY (value != NULL && value->value < THUNAR_COLUMN_MARGIN))
         column_model->visible[value->value] = TRUE;
     }
   g_type_class_unref (klass);
 
   /* the name column is always visible */
   column_model->visible[THUNAR_COLUMN_NAME] = TRUE;
+  column_model->visible[THUNAR_COLUMN_MARGIN] = TRUE;
 
   /* release the list of visible columns */
   g_strfreev (visible_columns);
@@ -668,7 +671,7 @@ thunar_column_model_save_visible_columns (ThunarColumnModel *column_model)
 
   /* transform the internal visible column list */
   klass = g_type_class_ref (THUNAR_TYPE_COLUMN);
-  for (n = 0; n < THUNAR_N_VISIBLE_COLUMNS; ++n)
+  for (n = 0; n < THUNAR_COLUMN_MARGIN; ++n)
     if (column_model->visible[klass->values[n].value])
       {
         /* append a comma if not empty */
@@ -931,7 +934,8 @@ thunar_column_model_set_column_visible (ThunarColumnModel *column_model,
   _thunar_return_if_fail (column < THUNAR_N_VISIBLE_COLUMNS);
 
   /* cannot change the visibility of the name column */
-  if (G_UNLIKELY (column == THUNAR_COLUMN_NAME))
+  if (G_UNLIKELY (column == THUNAR_COLUMN_NAME
+                  || column == THUNAR_COLUMN_MARGIN))
     return;
 
   /* normalize the value */
@@ -944,7 +948,7 @@ thunar_column_model_set_column_visible (ThunarColumnModel *column_model,
       column_model->visible[column] = visible;
 
       /* reverse lookup the real column */
-      for (n = 0; n < THUNAR_N_VISIBLE_COLUMNS; ++n)
+      for (n = 0; n < THUNAR_COLUMN_MARGIN; ++n)
         if (column_model->order[n] == column)
           {
             column = n;
@@ -1022,5 +1026,3 @@ thunar_column_model_set_column_width (ThunarColumnModel *column_model,
                                                          column_model);
     }
 }
-
-
