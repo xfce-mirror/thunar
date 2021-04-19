@@ -315,7 +315,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   gtk_tree_view_column_set_sort_indicator (details_view->columns[THUNAR_COLUMN_MARGIN], FALSE);
   gtk_tree_view_column_set_spacing (details_view->columns[THUNAR_COLUMN_MARGIN], 0);
   gtk_tree_view_column_set_min_width (details_view->columns[THUNAR_COLUMN_MARGIN], 0);
-  gtk_tree_view_column_set_resizable (details_view->columns[column], TRUE);
+  gtk_tree_view_column_set_resizable (details_view->columns[column], FALSE);
   gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), details_view->columns[THUNAR_COLUMN_MARGIN]);
 
   /* configure the tree selection */
