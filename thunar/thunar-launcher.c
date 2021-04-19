@@ -219,7 +219,7 @@ struct _ThunarLauncher
 
   GList                  *files_to_process;    /* List of thunar-files to work with */
   ThunarDevice           *device_to_process;   /* Device to work with */
-  GFile       *location_to_process; /* Location to work with (might be not reachable) */
+  GFile                  *location_to_process; /* Location to work with (might be not reachable) */
 
   gint                    n_files_to_process;
   gint                    n_directories_to_process;
