@@ -64,14 +64,6 @@ enum
   TEXT_URI_LIST,
 };
 
-/* Target for open action */
-typedef enum
-{
-  OPEN_IN_VIEW,
-  OPEN_IN_WINDOW,
-  OPEN_IN_TAB
-}
-OpenTarget;
 
 
 static void           thunar_shortcuts_view_navigator_init               (ThunarNavigatorIface     *iface);
@@ -630,7 +622,7 @@ thunar_shortcuts_view_button_release_event (GtkWidget      *widget,
       else if (G_LIKELY (event->button == 1))
         {
           /* button 1 opens in the same window */
-          thunar_shortcuts_view_open (view, OPEN_IN_VIEW);
+          thunar_shortcuts_view_open (view, THUNAR_LAUNCHER_CHANGE_DIRECTORY);
         }
       else if (G_UNLIKELY (event->button == 2))
         {
@@ -641,7 +633,7 @@ thunar_shortcuts_view_button_release_event (GtkWidget      *widget,
           if ((event->state & GDK_CONTROL_MASK) != 0)
             in_tab = !in_tab;
 
-          thunar_shortcuts_view_open (view, in_tab ? OPEN_IN_TAB : OPEN_IN_WINDOW);
+          thunar_shortcuts_view_open (view, in_tab ? THUNAR_LAUNCHER_OPEN_AS_NEW_TAB : THUNAR_LAUNCHER_OPEN_AS_NEW_WINDOW);
         }
     }
 
@@ -668,7 +660,7 @@ thunar_shortcuts_view_key_release_event (GtkWidget   *widget,
     case GDK_KEY_Down:
     case GDK_KEY_KP_Up:
     case GDK_KEY_KP_Down:
-      thunar_shortcuts_view_open (view, OPEN_IN_VIEW);
+      thunar_shortcuts_view_open (view, THUNAR_LAUNCHER_CHANGE_DIRECTORY);
 
       /* keep focus on us */
       gtk_widget_grab_focus (widget);
@@ -1047,7 +1039,7 @@ thunar_shortcuts_view_row_activated (GtkTreeView       *tree_view,
     (*GTK_TREE_VIEW_CLASS (thunar_shortcuts_view_parent_class)->row_activated) (tree_view, path, column);
 
   /* open the selected shortcut */
-  thunar_shortcuts_view_open (view, OPEN_IN_VIEW);
+  thunar_shortcuts_view_open (view, THUNAR_LAUNCHER_CHANGE_DIRECTORY);
 }
 
 
@@ -1658,8 +1650,8 @@ thunar_shortcuts_view_drop_uri_list (ThunarShortcutsView *view,
 
 
 static void
-thunar_shortcuts_view_open (ThunarShortcutsView *view,
-                            OpenTarget           open_in)
+thunar_shortcuts_view_open (ThunarShortcutsView            *view,
+                            ThunarLauncherFolderOpenAction  open_in)
 {
   GtkTreeSelection *selection;
   GtkTreeModel     *model;
@@ -1702,7 +1694,7 @@ thunar_shortcuts_view_open (ThunarShortcutsView *view,
            g_object_set (G_OBJECT (view->launcher), "selected-location", location, NULL);
          }
 
-      thunar_launcher_activate_selected_files (view->launcher, THUNAR_LAUNCHER_CHANGE_DIRECTORY, NULL);
+      thunar_launcher_activate_selected_files (view->launcher, (ThunarLauncherFolderOpenAction) open_in, NULL);
 
       if (file != NULL)
         g_object_unref (file);
