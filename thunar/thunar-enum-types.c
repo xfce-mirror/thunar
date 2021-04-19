@@ -421,32 +421,32 @@ thunar_thumbnail_size_from_icon_size (const GValue *src_value,
 GType
 thunar_job_response_get_type (void)
 {
-	static GType type = G_TYPE_INVALID;
+  static GType type = G_TYPE_INVALID;
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-	    static const GFlagsValue values[] =
+      static const GFlagsValue values[] =
       {
-	      { THUNAR_JOB_RESPONSE_YES,         "THUNAR_JOB_RESPONSE_YES",         "yes"         },
-	      { THUNAR_JOB_RESPONSE_YES_ALL,     "THUNAR_JOB_RESPONSE_YES_ALL",     "yes-all"     },
-	      { THUNAR_JOB_RESPONSE_NO,          "THUNAR_JOB_RESPONSE_NO",          "no"          },
-	      { THUNAR_JOB_RESPONSE_CANCEL,      "THUNAR_JOB_RESPONSE_CANCEL",      "cancel"      },
-	      { THUNAR_JOB_RESPONSE_NO_ALL,      "THUNAR_JOB_RESPONSE_NO_ALL",      "no-all"      },
-	      { THUNAR_JOB_RESPONSE_RETRY,       "THUNAR_JOB_RESPONSE_RETRY",       "retry"       },
-	      { THUNAR_JOB_RESPONSE_FORCE,       "THUNAR_JOB_RESPONSE_FORCE",       "force"       },
-	      { THUNAR_JOB_RESPONSE_REPLACE,     "THUNAR_JOB_RESPONSE_REPLACE",     "replace"     },
-	      { THUNAR_JOB_RESPONSE_REPLACE_ALL, "THUNAR_JOB_RESPONSE_REPLACE_ALL", "replace-all" },
-	      { THUNAR_JOB_RESPONSE_SKIP,        "THUNAR_JOB_RESPONSE_SKIP",        "skip"        },
-	      { THUNAR_JOB_RESPONSE_SKIP_ALL,    "THUNAR_JOB_RESPONSE_SKIP_ALL",    "skip-all"    },
-	      { THUNAR_JOB_RESPONSE_RENAME,      "THUNAR_JOB_RESPONSE_RENAME",      "rename"      },
-	      { THUNAR_JOB_RESPONSE_RENAME_ALL,  "THUNAR_JOB_RESPONSE_RENAME_ALL",  "rename-all " },
-	      { 0,                               NULL,                              NULL          }
-	    };
+        { THUNAR_JOB_RESPONSE_YES,         "THUNAR_JOB_RESPONSE_YES",         "yes"         },
+        { THUNAR_JOB_RESPONSE_YES_ALL,     "THUNAR_JOB_RESPONSE_YES_ALL",     "yes-all"     },
+        { THUNAR_JOB_RESPONSE_NO,          "THUNAR_JOB_RESPONSE_NO",          "no"          },
+        { THUNAR_JOB_RESPONSE_CANCEL,      "THUNAR_JOB_RESPONSE_CANCEL",      "cancel"      },
+        { THUNAR_JOB_RESPONSE_NO_ALL,      "THUNAR_JOB_RESPONSE_NO_ALL",      "no-all"      },
+        { THUNAR_JOB_RESPONSE_RETRY,       "THUNAR_JOB_RESPONSE_RETRY",       "retry"       },
+        { THUNAR_JOB_RESPONSE_FORCE,       "THUNAR_JOB_RESPONSE_FORCE",       "force"       },
+        { THUNAR_JOB_RESPONSE_REPLACE,     "THUNAR_JOB_RESPONSE_REPLACE",     "replace"     },
+        { THUNAR_JOB_RESPONSE_REPLACE_ALL, "THUNAR_JOB_RESPONSE_REPLACE_ALL", "replace-all" },
+        { THUNAR_JOB_RESPONSE_SKIP,        "THUNAR_JOB_RESPONSE_SKIP",        "skip"        },
+        { THUNAR_JOB_RESPONSE_SKIP_ALL,    "THUNAR_JOB_RESPONSE_SKIP_ALL",    "skip-all"    },
+        { THUNAR_JOB_RESPONSE_RENAME,      "THUNAR_JOB_RESPONSE_RENAME",      "rename"      },
+        { THUNAR_JOB_RESPONSE_RENAME_ALL,  "THUNAR_JOB_RESPONSE_RENAME_ALL",  "rename-all " },
+        { 0,                               NULL,                              NULL          }
+      };
 
-	    type = g_flags_register_static (I_("ThunarJobResponse"), values);
+      type = g_flags_register_static (I_("ThunarJobResponse"), values);
     }
 
-	return type;
+  return type;
 }
 
 
@@ -454,31 +454,31 @@ thunar_job_response_get_type (void)
 GType
 thunar_file_mode_get_type (void)
 {
-	static GType type = G_TYPE_INVALID;
+  static GType type = G_TYPE_INVALID;
 
-	if (type == G_TYPE_INVALID)
+  if (type == G_TYPE_INVALID)
     {
-	    static const GFlagsValue values[] =
+      static const GFlagsValue values[] =
       {
-	      { THUNAR_FILE_MODE_SUID,      "THUNAR_FILE_MODE_SUID",      "suid"      },
-	      { THUNAR_FILE_MODE_SGID,      "THUNAR_FILE_MODE_SGID",      "sgid"      },
-	      { THUNAR_FILE_MODE_STICKY,    "THUNAR_FILE_MODE_STICKY",    "sticky"    },
-	      { THUNAR_FILE_MODE_USR_ALL,   "THUNAR_FILE_MODE_USR_ALL",   "usr-all"   },
-	      { THUNAR_FILE_MODE_USR_READ,  "THUNAR_FILE_MODE_USR_READ",  "usr-read"  },
-	      { THUNAR_FILE_MODE_USR_WRITE, "THUNAR_FILE_MODE_USR_WRITE", "usr-write" },
-	      { THUNAR_FILE_MODE_USR_EXEC,  "THUNAR_FILE_MODE_USR_EXEC",  "usr-exec"  },
-	      { THUNAR_FILE_MODE_GRP_ALL,   "THUNAR_FILE_MODE_GRP_ALL",   "grp-all"   },
-	      { THUNAR_FILE_MODE_GRP_READ,  "THUNAR_FILE_MODE_GRP_READ",  "grp-read"  },
-	      { THUNAR_FILE_MODE_GRP_WRITE, "THUNAR_FILE_MODE_GRP_WRITE", "grp-write" },
-	      { THUNAR_FILE_MODE_GRP_EXEC,  "THUNAR_FILE_MODE_GRP_EXEC",  "grp-exec"  },
-	      { THUNAR_FILE_MODE_OTH_ALL,   "THUNAR_FILE_MODE_OTH_ALL",   "oth-all"   },
-	      { THUNAR_FILE_MODE_OTH_READ,  "THUNAR_FILE_MODE_OTH_READ",  "oth-read"  },
-	      { THUNAR_FILE_MODE_OTH_WRITE, "THUNAR_FILE_MODE_OTH_WRITE", "oth-write" },
-	      { THUNAR_FILE_MODE_OTH_EXEC,  "THUNAR_FILE_MODE_OTH_EXEC",  "oth-exec"  },
-	      { 0,                          NULL,                         NULL        }
-	    };
+        { THUNAR_FILE_MODE_SUID,      "THUNAR_FILE_MODE_SUID",      "suid"      },
+        { THUNAR_FILE_MODE_SGID,      "THUNAR_FILE_MODE_SGID",      "sgid"      },
+        { THUNAR_FILE_MODE_STICKY,    "THUNAR_FILE_MODE_STICKY",    "sticky"    },
+        { THUNAR_FILE_MODE_USR_ALL,   "THUNAR_FILE_MODE_USR_ALL",   "usr-all"   },
+        { THUNAR_FILE_MODE_USR_READ,  "THUNAR_FILE_MODE_USR_READ",  "usr-read"  },
+        { THUNAR_FILE_MODE_USR_WRITE, "THUNAR_FILE_MODE_USR_WRITE", "usr-write" },
+        { THUNAR_FILE_MODE_USR_EXEC,  "THUNAR_FILE_MODE_USR_EXEC",  "usr-exec"  },
+        { THUNAR_FILE_MODE_GRP_ALL,   "THUNAR_FILE_MODE_GRP_ALL",   "grp-all"   },
+        { THUNAR_FILE_MODE_GRP_READ,  "THUNAR_FILE_MODE_GRP_READ",  "grp-read"  },
+        { THUNAR_FILE_MODE_GRP_WRITE, "THUNAR_FILE_MODE_GRP_WRITE", "grp-write" },
+        { THUNAR_FILE_MODE_GRP_EXEC,  "THUNAR_FILE_MODE_GRP_EXEC",  "grp-exec"  },
+        { THUNAR_FILE_MODE_OTH_ALL,   "THUNAR_FILE_MODE_OTH_ALL",   "oth-all"   },
+        { THUNAR_FILE_MODE_OTH_READ,  "THUNAR_FILE_MODE_OTH_READ",  "oth-read"  },
+        { THUNAR_FILE_MODE_OTH_WRITE, "THUNAR_FILE_MODE_OTH_WRITE", "oth-write" },
+        { THUNAR_FILE_MODE_OTH_EXEC,  "THUNAR_FILE_MODE_OTH_EXEC",  "oth-exec"  },
+        { 0,                          NULL,                         NULL        }
+      };
 
       type = g_flags_register_static ("ThunarFileMode", values);
     }
-	return type;
+  return type;
 }
