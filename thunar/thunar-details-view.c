@@ -931,8 +931,11 @@ static void
 thunar_details_view_name_resizer (ThunarDetailsView      *details_view)
 {
   GtkTreeViewColumn *name_column;
-  
+
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+
+  if (details_view->fixed_columns == TRUE)
+    return;
 
   name_column = details_view->columns[THUNAR_COLUMN_NAME];
   gtk_tree_view_column_set_fixed_width (name_column, -1);
