@@ -90,14 +90,14 @@ thunar_statusbar_class_init (ThunarStatusbarClass *klass)
 
   if (!style_initialized)
     {
-    	  gtk_widget_class_install_style_property (GTK_WIDGET_CLASS (gobject_class),
+        gtk_widget_class_install_style_property (GTK_WIDGET_CLASS (gobject_class),
           g_param_spec_enum (
-	          "shadow-type",                //name
-	          "shadow-type",                //nick
-	          "type of shadow",             //blurb
-	          gtk_shadow_type_get_type(),   //type
-	          GTK_SHADOW_NONE,              //default
-	          G_PARAM_READWRITE ));         //flags
+            "shadow-type",                //name
+            "shadow-type",                //nick
+            "type of shadow",             //blurb
+            gtk_shadow_type_get_type(),   //type
+            GTK_SHADOW_NONE,              //default
+            G_PARAM_READWRITE ));         //flags
     }
 }
 
