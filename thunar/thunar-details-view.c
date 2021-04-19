@@ -285,7 +285,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
 
           /* add the name renderer */
           g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->name_renderer),
-                        "xalign", 0.0, "ellipsize", PANGO_ELLIPSIZE_END, "width-chars", 100, NULL);
+                        "xalign", 0.0, "ellipsize", PANGO_ELLIPSIZE_END, "width-chars", 30, NULL);
           gtk_tree_view_column_pack_start (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->name_renderer, TRUE);
           gtk_tree_view_column_set_attributes (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->name_renderer,
                                                "text", THUNAR_COLUMN_NAME,
@@ -313,8 +313,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   details_view->columns[THUNAR_COLUMN_MARGIN] = gtk_tree_view_column_new ();
   g_object_ref_sink (G_OBJECT (details_view->columns[THUNAR_COLUMN_MARGIN]));
   gtk_tree_view_column_set_sort_indicator (details_view->columns[THUNAR_COLUMN_MARGIN], FALSE);
-  gtk_tree_view_column_set_spacing (details_view->columns[THUNAR_COLUMN_MARGIN], 0);
-  gtk_tree_view_column_set_min_width (details_view->columns[THUNAR_COLUMN_MARGIN], 0);
+  gtk_tree_view_column_set_min_width (details_view->columns[THUNAR_COLUMN_MARGIN], 20);
   gtk_tree_view_column_set_resizable (details_view->columns[column], FALSE);
   gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), details_view->columns[THUNAR_COLUMN_MARGIN]);
 
@@ -940,12 +939,10 @@ thunar_details_view_name_resizer (ThunarDetailsView      *details_view)
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
-  if (details_view->fixed_columns == TRUE)
-    return;
-
   name_column = details_view->columns[THUNAR_COLUMN_NAME];
-  gtk_tree_view_column_set_fixed_width (name_column, -1);
-  gtk_tree_view_column_set_expand (name_column, TRUE);
+  if (!details_view->fixed_columns)
+    gtk_tree_view_column_set_fixed_width (name_column, -1);
+  gtk_tree_view_column_set_expand (name_column, !details_view->fixed_columns);
   gtk_tree_view_column_queue_resize (name_column);
 
   return;
