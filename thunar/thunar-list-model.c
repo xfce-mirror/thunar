@@ -185,6 +185,9 @@ static gint               sort_by_size_in_bytes                   (const ThunarF
 static gint               sort_by_type                            (const ThunarFile       *a,
                                                                    const ThunarFile       *b,
                                                                    gboolean                case_sensitive);
+static gint               no_sort                                 (const ThunarFile       *unused_a,
+                                                                   const ThunarFile       *unused_b,
+                                                                   gboolean                unused_case_sensitive);
 
 static gboolean           thunar_list_model_get_case_sensitive    (ThunarListModel        *store);
 static void               thunar_list_model_set_case_sensitive    (ThunarListModel        *store,
@@ -645,6 +648,9 @@ thunar_list_model_get_column_type (GtkTreeModel *model,
 
     case THUNAR_COLUMN_FILE_NAME:
       return G_TYPE_STRING;
+
+    case THUNAR_COLUMN_MARGIN:
+      return G_TYPE_STRING;
     }
 
   _thunar_assert_not_reached ();
@@ -832,6 +838,10 @@ thunar_list_model_get_value (GtkTreeModel *model,
       g_value_set_static_string (value, thunar_file_get_display_name (file));
       break;
 
+    case THUNAR_COLUMN_MARGIN:
+      g_value_init (value, G_TYPE_STRING);
+      break;
+
     default:
       _thunar_assert_not_reached ();
       break;
@@ -985,6 +995,8 @@ thunar_list_model_get_sort_column_id (GtkTreeSortable *sortable,
     *sort_column_id = THUNAR_COLUMN_OWNER;
   else if (store->sort_func == sort_by_group)
     *sort_column_id = THUNAR_COLUMN_GROUP;
+  else if (store->sort_func == no_sort)
+    *sort_column_id = THUNAR_COLUMN_MARGIN;
   else
     _thunar_assert_not_reached ();
 
@@ -1059,6 +1071,10 @@ thunar_list_model_set_sort_column_id (GtkTreeSortable *sortable,
 
     case THUNAR_COLUMN_TYPE:
       store->sort_func = sort_by_type;
+      break;
+
+    case THUNAR_COLUMN_MARGIN:
+      store->sort_func = no_sort;
       break;
 
     default:
@@ -1749,6 +1765,16 @@ sort_by_type (const ThunarFile *a,
     return thunar_file_compare_by_name (a, b, case_sensitive);
   else
     return result;
+}
+
+
+
+static gint
+no_sort (const ThunarFile *unused_a,
+         const ThunarFile *unused_b,
+         gboolean          unused_case_sensitive)
+{
+  return 0;
 }
 
 
