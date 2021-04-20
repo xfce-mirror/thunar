@@ -316,6 +316,9 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   gtk_tree_view_column_set_resizable (details_view->columns[column], FALSE);
   gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), details_view->columns[THUNAR_COLUMN_MARGIN]);
 
+  /* Re-render name column */
+  gtk_tree_view_column_queue_resize (details_view->columns[THUNAR_COLUMN_NAME]);
+
   /* configure the tree selection */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_view));
   gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
@@ -985,12 +988,12 @@ thunar_details_view_name_size_calc (GtkWidget    *details_view,
 
   width_chars = allowed_h_size / char_width;
   g_object_get (G_OBJECT (name_renderer), "width-chars", &width_chars_prev, NULL);
+
   if (width_chars != width_chars_prev)
-    {
       g_object_set (G_OBJECT (name_renderer), "width-chars", width_chars, NULL);
+  if (width_chars_prev > (h_size / char_width))
       gtk_tree_view_column_queue_resize (THUNAR_DETAILS_VIEW (details_view)
                                          ->columns[THUNAR_COLUMN_NAME]);
-    }
 
   return;
 }
@@ -1118,7 +1121,8 @@ thunar_details_view_set_fixed_columns (ThunarDetailsView *details_view,
               width = gtk_tree_view_column_get_width (details_view->columns[column]);
               if (G_UNLIKELY (width <= 0))
                 width = thunar_column_model_get_column_width (details_view->column_model, column);
-              gtk_tree_view_column_set_fixed_width (details_view->columns[column], MAX (width, 1));
+              if (gtk_tree_view_column_get_fixed_width (details_view->columns[column]) == -1)
+                gtk_tree_view_column_set_fixed_width (details_view->columns[column], MAX (width, 1));
 
               /* set column to fixed width */
               gtk_tree_view_column_set_sizing (details_view->columns[column], GTK_TREE_VIEW_COLUMN_FIXED);
