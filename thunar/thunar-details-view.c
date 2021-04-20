@@ -101,8 +101,7 @@ static void         thunar_details_view_columns_changed         (ThunarColumnMod
                                                                  ThunarDetailsView      *details_view);
 static void         thunar_details_view_zoom_level_changed      (ThunarDetailsView      *details_view);
 static void         thunar_details_view_name_size_calc          (GtkWidget              *details_view,
-                                                                 GdkRectangle           *allocation,
-                                                                 gpointer                unused);
+                                                                 GdkRectangle           *allocation);
 static void         thunar_details_view_name_resizer            (ThunarDetailsView      *details_view);
 static gboolean     thunar_details_view_get_fixed_columns       (ThunarDetailsView      *details_view);
 static void         thunar_details_view_set_fixed_columns       (ThunarDetailsView      *details_view,
@@ -285,7 +284,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
 
           /* add the name renderer */
           g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->name_renderer),
-                        "xalign", 0.0, "ellipsize", PANGO_ELLIPSIZE_END, "width-chars", 30, NULL);
+                        "xalign", 0.0, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
           gtk_tree_view_column_pack_start (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->name_renderer, TRUE);
           gtk_tree_view_column_set_attributes (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->name_renderer,
                                                "text", THUNAR_COLUMN_NAME,
@@ -949,20 +948,19 @@ thunar_details_view_name_resizer (ThunarDetailsView      *details_view)
 }
 
 
-
 static void
 thunar_details_view_name_size_calc (GtkWidget    *details_view,
-                                    GdkRectangle *allocation,
-                                    gpointer      unused)
+                                    GdkRectangle *allocation)
 {
-  GtkCellRenderer   *name_renderer;
-  gint               h_size, allowed_h_size, width_chars;
+  GtkCellRenderer   *name_renderer, *icon_renderer;
+  gint               h_size, allowed_h_size, icon_size, width_chars, width_chars_prev;
   gfloat             char_width;
   GtkTreeViewColumn *column;
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
   name_renderer = THUNAR_STANDARD_VIEW (details_view)->name_renderer;
+  icon_renderer = THUNAR_STANDARD_VIEW (details_view)->icon_renderer;
 
   h_size = gtk_widget_get_allocated_width (details_view);
   char_width = thunar_gtk_widget_get_approximate_char_width (details_view);
@@ -970,6 +968,10 @@ thunar_details_view_name_size_calc (GtkWidget    *details_view,
     return;
 
   allowed_h_size = h_size;
+
+  g_object_get (G_OBJECT (icon_renderer), "size", &icon_size, NULL);
+  allowed_h_size -= icon_size;
+
   for (gint i = 0; i < THUNAR_COLUMN_MARGIN; ++i)
     {
       column = THUNAR_DETAILS_VIEW (details_view)->columns[i];
@@ -981,8 +983,14 @@ thunar_details_view_name_size_calc (GtkWidget    *details_view,
   /* Do not use CLAMP () here because h_size can be smaller than 20 chars */
   allowed_h_size = MIN (h_size, MAX (20 * char_width, allowed_h_size));
 
-  width_chars = (gint) (allowed_h_size / char_width);
-  g_object_set (G_OBJECT (name_renderer), "width-chars", width_chars, NULL);
+  width_chars = allowed_h_size / char_width;
+  g_object_get (G_OBJECT (name_renderer), "width-chars", &width_chars_prev, NULL);
+  if (width_chars != width_chars_prev)
+    {
+      g_object_set (G_OBJECT (name_renderer), "width-chars", width_chars, NULL);
+      gtk_tree_view_column_queue_resize (THUNAR_DETAILS_VIEW (details_view)
+                                         ->columns[THUNAR_COLUMN_NAME]);
+    }
 
   return;
 }
