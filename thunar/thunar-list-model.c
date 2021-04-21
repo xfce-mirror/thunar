@@ -706,10 +706,12 @@ thunar_list_model_get_value (GtkTreeModel *model,
 {
   ThunarGroup *group;
   const gchar *content_type;
+  const gchar *device_type;
   const gchar *name;
   const gchar *real_name;
   ThunarUser  *user;
   ThunarFile  *file;
+  GFile       *g_file;
   gchar       *str;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
@@ -801,6 +803,15 @@ thunar_list_model_get_value (GtkTreeModel *model,
 
     case THUNAR_COLUMN_SIZE:
       g_value_init (value, G_TYPE_STRING);
+      if (thunar_file_is_mountable (file))
+        {
+          g_file = thunar_file_get_target_location (file);
+          if (g_file == NULL)
+            break;
+          g_value_take_string (value, thunar_g_file_get_free_space_string (g_file, THUNAR_LIST_MODEL (model)->file_size_binary));
+          g_object_unref (g_file);
+          break;
+        }
       if (!thunar_file_is_directory (file))
         g_value_take_string (value, thunar_file_get_size_string_formatted (file, THUNAR_LIST_MODEL (model)->file_size_binary));
       break;
@@ -813,12 +824,21 @@ thunar_list_model_get_value (GtkTreeModel *model,
     case THUNAR_COLUMN_TYPE:
       g_value_init (value, G_TYPE_STRING);
       if (G_UNLIKELY (thunar_file_is_symlink (file)))
-        g_value_take_string (value, g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (file)));
-      else
         {
-          content_type = thunar_file_get_content_type (file);
-          if (content_type != NULL)
-            g_value_take_string (value, g_content_type_get_description (content_type));
+          g_value_take_string (value, g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (file)));
+          break;
+        }
+      device_type = thunar_file_get_device_type (file);
+      if (device_type != NULL)
+        {
+          g_value_take_string (value, g_strdup (device_type));
+          break;
+        }
+      content_type = thunar_file_get_content_type (file);
+      if (content_type != NULL)
+        {
+          g_value_take_string (value, g_content_type_get_description (content_type));
+          break;
         }
       break;
 
