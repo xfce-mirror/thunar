@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-13 00:45+0100\n"
-"PO-Revision-Date: 2021-01-12 23:45+0000\n"
+"POT-Creation-Date: 2021-04-22 00:45+0200\n"
+"PO-Revision-Date: 2021-04-21 22:45+0000\n"
 "Last-Translator: Xfce Bot <transifex@xfce.org>\n"
 "Language-Team: Urdu (Pakistan) (http://www.transifex.com/xfce/thunar/language/ur_PK/)\n"
 "MIME-Version: 1.0\n"
@@ -74,9 +74,8 @@ msgstr "عمل چلانے میں ناکامی"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1505 ../thunar/thunar-application.c:1637
-#: ../thunar/thunar-location-entry.c:366 ../thunar/thunar-location-entry.c:394
-#: ../thunar/thunar-shortcuts-view.c:1706
-#: ../thunar/thunar-shortcuts-view.c:1734 ../thunar/thunar-window.c:2612
+#: ../thunar/thunar-launcher.c:1095 ../thunar/thunar-location-entry.c:366
+#: ../thunar/thunar-location-entry.c:394
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "کھولنے میں ناکامی \"%s\""
@@ -87,17 +86,17 @@ msgid "Failed to open \"%s\": %s"
 msgstr "\"%s\": %s کو کھولنے میں ناکامی"
 
 #. display an error message
-#: ../thunar/thunar-application.c:1696 ../thunar/thunar-launcher.c:2106
+#: ../thunar/thunar-application.c:1696 ../thunar/thunar-launcher.c:2274
 #: ../thunar/thunar-properties-dialog.c:762
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "\"%s\" کا نام بدلنے میں ناکامی"
 
-#: ../thunar/thunar-application.c:1798 ../thunar/thunar-launcher.c:2260
+#: ../thunar/thunar-application.c:1798 ../thunar/thunar-launcher.c:2428
 msgid "New Folder"
 msgstr "نیا فولڈر"
 
-#: ../thunar/thunar-application.c:1799 ../thunar/thunar-launcher.c:2261
+#: ../thunar/thunar-application.c:1799 ../thunar/thunar-launcher.c:2429
 msgid "Create New Folder"
 msgstr "نیا فولڈر بنائیں"
 
@@ -110,7 +109,7 @@ msgid "Create New File"
 msgstr ""
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-application.c:1861 ../thunar/thunar-launcher.c:2306
+#: ../thunar/thunar-application.c:1861 ../thunar/thunar-launcher.c:2474
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "ٹیمپلیٹ سے دستاویز بنائیں \"%s\""
@@ -157,19 +156,19 @@ msgstr[1] "کیا آپ واقعی منتخب کردہ %u فائلوں کو ہم�
 #. add the Cancel/Close buttons
 #. configure the dialog properties
 #: ../thunar/thunar-application.c:2165 ../thunar/thunar-application.c:2344
-#: ../thunar/thunar-chooser-dialog.c:289 ../thunar/thunar-chooser-dialog.c:728
-#: ../thunar/thunar-chooser-dialog.c:801 ../thunar/thunar-chooser-dialog.c:847
+#: ../thunar/thunar-chooser-dialog.c:289 ../thunar/thunar-chooser-dialog.c:736
+#: ../thunar/thunar-chooser-dialog.c:809 ../thunar/thunar-chooser-dialog.c:855
 #: ../thunar/thunar-dialogs.c:98 ../thunar/thunar-dialogs.c:233
 #: ../thunar/thunar-dialogs.c:649 ../thunar/thunar-dialogs.c:762
 #: ../thunar/thunar-dialogs.c:1034 ../thunar/thunar-dnd.c:169
-#: ../thunar/thunar-launcher.c:878 ../thunar/thunar-permissions-chooser.c:535
+#: ../thunar/thunar-launcher.c:960 ../thunar/thunar-permissions-chooser.c:535
 #: ../thunar/thunar-permissions-chooser.c:1143
 #: ../thunar/thunar-properties-dialog.c:850
-#: ../thunar/thunar-renamer-dialog.c:357
-#: ../thunar/thunar-renamer-dialog.c:1059
+#: ../thunar/thunar-renamer-dialog.c:359
+#: ../thunar/thunar-renamer-dialog.c:1070
 #: ../thunar/thunar-renamer-progress.c:198
 #: ../thunar/thunar-renamer-progress.c:208
-#: ../thunar/thunar-standard-view.c:2176
+#: ../thunar/thunar-standard-view.c:2168
 #: ../plugins/thunar-sendto-email/main.c:219
 #: ../plugins/thunar-sendto-email/main.c:238
 #: ../plugins/thunar-sendto-email/main.c:302
@@ -180,7 +179,7 @@ msgstr[1] "کیا آپ واقعی منتخب کردہ %u فائلوں کو ہم�
 msgid "_Cancel"
 msgstr "_مسترد"
 
-#: ../thunar/thunar-application.c:2166 ../thunar/thunar-launcher.c:260
+#: ../thunar/thunar-application.c:2166 ../thunar/thunar-launcher.c:286
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:372
 msgid "_Delete"
 msgstr "_حذف"
@@ -209,10 +208,8 @@ msgstr "ڈائریکٹریاں بنائی جارہی ہیں..."
 msgid "Remove all files and folders from the Trash?"
 msgstr "ردی سے تمام فائلیں اور فولڈر حذف کریں؟"
 
-#. append the "Empty Trash" menu action
 #. prepare the menu item
-#: ../thunar/thunar-application.c:2345 ../thunar/thunar-launcher.c:254
-#: ../thunar/thunar-shortcuts-view.c:1226
+#: ../thunar/thunar-application.c:2345 ../thunar/thunar-launcher.c:280
 #: ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "_ردی خالی کریں"
@@ -242,7 +239,7 @@ msgstr ""
 msgid "Restoring files..."
 msgstr "فائلیں بحال کی جارہی ہیں..."
 
-#: ../thunar/thunar-chooser-button.c:309 ../thunar/thunar-chooser-dialog.c:472
+#: ../thunar/thunar-chooser-button.c:309 ../thunar/thunar-chooser-dialog.c:477
 #, c-format
 msgid "Failed to set default application for \"%s\""
 msgstr "\"%s\" کے لیے طے شدہ اطلاقیہ سیٹ کرنے میں ناکامی"
@@ -262,7 +259,7 @@ msgstr "کوئی اطلاقیہ منتخب نہیں"
 msgid "Other Application..."
 msgstr ""
 
-#: ../thunar/thunar-chooser-dialog.c:187 ../thunar/thunar-launcher.c:2863
+#: ../thunar/thunar-chooser-dialog.c:187 ../thunar/thunar-launcher.c:3035
 msgid "Open With"
 msgstr "کھولیں بذریعہ"
 
@@ -289,64 +286,64 @@ msgstr "اس قسم ک_ی فائلوں کے لیے طے شدہ"
 
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:292
-#: ../thunar/thunar-chooser-dialog.c:1251
-#: ../thunar/thunar-properties-dialog.c:851 ../thunar/thunar-window.c:3404
+#: ../thunar/thunar-chooser-dialog.c:1267
+#: ../thunar/thunar-properties-dialog.c:851 ../thunar/thunar-window.c:3428
 #: ../plugins/thunar-uca/thunar-uca-editor.c:144
 #: ../plugins/thunar-uca/thunar-uca-editor.c:437
 msgid "_OK"
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:433
+#: ../thunar/thunar-chooser-dialog.c:434
 #, c-format
 msgid "Failed to add new application \"%s\""
 msgstr "نیا اطلاقیہ شامل کرنے میں ناکامی \"%s\""
 
-#: ../thunar/thunar-chooser-dialog.c:510
+#: ../thunar/thunar-chooser-dialog.c:518
 #, c-format
 msgid "Failed to execute application \"%s\""
 msgstr ""
 
 #. append the "Remove Launcher" item
-#: ../thunar/thunar-chooser-dialog.c:579
+#: ../thunar/thunar-chooser-dialog.c:587
 msgid "_Remove Launcher"
 msgstr "_لاؤنچر حذف کریں"
 
 #. append the "Forget Association" item
-#: ../thunar/thunar-chooser-dialog.c:586
+#: ../thunar/thunar-chooser-dialog.c:594
 msgid "_Forget Association"
 msgstr ""
 
 #. update the header label
-#: ../thunar/thunar-chooser-dialog.c:666
+#: ../thunar/thunar-chooser-dialog.c:674
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
 msgstr "<i>%s</i> کو اور \"%s\" قسم کی دوسری فائلوں کو کھولیں بذریعہ:"
 
-#: ../thunar/thunar-chooser-dialog.c:674
+#: ../thunar/thunar-chooser-dialog.c:682
 #, c-format
 msgid ""
 "Browse the file system to select an application to open files of type "
 "\"%s\"."
 msgstr "\"%s\" قسم کی فائلوں کو کھولنے کے لیے فائل سسٹم میں اطلاقیہ تلاش کریں."
 
-#: ../thunar/thunar-chooser-dialog.c:680
+#: ../thunar/thunar-chooser-dialog.c:688
 #, c-format
 msgid ""
 "Change the default application for files of type \"%s\" to the selected "
 "application."
 msgstr "\"%s\" قسم کی فائلوں کا طے شدہ اطلاقیہ منتخب کردہ اطلاقیہ سے تبدیل کریں."
 
-#: ../thunar/thunar-chooser-dialog.c:726
+#: ../thunar/thunar-chooser-dialog.c:734
 #, c-format
 msgid "Are you sure that you want to remove \"%s\"?"
 msgstr "کیا آپ واقعی \"%s\" کو حذف کرنا چاہتے ہیں؟"
 
-#: ../thunar/thunar-chooser-dialog.c:729
+#: ../thunar/thunar-chooser-dialog.c:737
 msgid "_Remove"
 msgstr ""
 
-#: ../thunar/thunar-chooser-dialog.c:732
+#: ../thunar/thunar-chooser-dialog.c:740
 msgid ""
 "This will remove the application launcher that appears in the file context menu, but will not uninstall the application itself.\n"
 "\n"
@@ -354,91 +351,98 @@ msgid ""
 msgstr "یہ فائل کے کونٹیکسٹ مینیو میں ظاہر ہونے والے اطلاقیہ لاؤنچر کو حذف کرے گا، مگر اطلاقیہ کو ان انسٹال نہیں کرے گا\n\nآپ صرف اطلاقیہ لاؤنچر کو جو صوابدیدی کمانڈ بکس کے ذریعے بنائے گئے تھے فائل منیجر کے \"کھولیں بذریعہ\" ڈائیلاگ سے حذف کرسکتے ہیں."
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:747
+#: ../thunar/thunar-chooser-dialog.c:755
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "\"%s\" کو حذف کرنے میں ناکامی"
 
-#: ../thunar/thunar-chooser-dialog.c:799
+#: ../thunar/thunar-chooser-dialog.c:807
 #, c-format
 msgid "Are you sure that you want to forget \"%s\"?"
 msgstr ""
 
-#: ../thunar/thunar-chooser-dialog.c:802
+#: ../thunar/thunar-chooser-dialog.c:810
 msgid "_Forget"
 msgstr ""
 
-#: ../thunar/thunar-chooser-dialog.c:805
+#: ../thunar/thunar-chooser-dialog.c:813
 msgid ""
 "This will dissociate the application launcher for this file type, but will "
 "not uninstall or remove the application launcher itself."
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:817
+#: ../thunar/thunar-chooser-dialog.c:825
 #, c-format
 msgid "Failed to forget \"%s\""
 msgstr ""
 
-#: ../thunar/thunar-chooser-dialog.c:844
+#: ../thunar/thunar-chooser-dialog.c:852
 #: ../plugins/thunar-uca/thunar-uca-editor.c:175
 msgid "Select an Application"
 msgstr "اطلاقیہ منتخب کریں"
 
 #. change the accept button label text
 #. aka "activate"
-#: ../thunar/thunar-chooser-dialog.c:848
-#: ../thunar/thunar-chooser-dialog.c:1251 ../thunar/thunar-launcher.c:1318
-#: ../thunar/thunar-renamer-dialog.c:1060
-#: ../thunar/thunar-shortcuts-view.c:1118
+#: ../thunar/thunar-chooser-dialog.c:856
+#: ../thunar/thunar-chooser-dialog.c:1267 ../thunar/thunar-launcher.c:1471
+#: ../thunar/thunar-renamer-dialog.c:1071
 #: ../plugins/thunar-uca/thunar-uca-editor.c:179
 msgid "_Open"
 msgstr "ک_ھولیں"
 
-#: ../thunar/thunar-chooser-dialog.c:854
-#: ../thunar/thunar-renamer-dialog.c:1067
+#: ../thunar/thunar-chooser-dialog.c:862
+#: ../thunar/thunar-renamer-dialog.c:1078
 #: ../plugins/thunar-uca/thunar-uca-editor.c:186
 msgid "All Files"
 msgstr "تمام فائلیں"
 
-#: ../thunar/thunar-chooser-dialog.c:859
+#: ../thunar/thunar-chooser-dialog.c:867
 #: ../plugins/thunar-uca/thunar-uca-editor.c:191
 msgid "Executable Files"
 msgstr "اطلاقی فائلیں"
 
-#: ../thunar/thunar-chooser-dialog.c:874
+#: ../thunar/thunar-chooser-dialog.c:882
 #: ../plugins/thunar-uca/thunar-uca-editor.c:206
 msgid "Perl Scripts"
 msgstr "پرل سکرپٹ"
 
-#: ../thunar/thunar-chooser-dialog.c:880
+#: ../thunar/thunar-chooser-dialog.c:888
 #: ../plugins/thunar-uca/thunar-uca-editor.c:212
 msgid "Python Scripts"
 msgstr "پائتھن سکرپٹ"
 
-#: ../thunar/thunar-chooser-dialog.c:886
+#: ../thunar/thunar-chooser-dialog.c:894
 #: ../plugins/thunar-uca/thunar-uca-editor.c:218
 msgid "Ruby Scripts"
 msgstr "روبی سکرپٹ"
 
-#: ../thunar/thunar-chooser-dialog.c:892
+#: ../thunar/thunar-chooser-dialog.c:900
 #: ../plugins/thunar-uca/thunar-uca-editor.c:224
 msgid "Shell Scripts"
 msgstr "شیل سکرپٹ"
+
+#: ../thunar/thunar-chooser-dialog.c:1335
+msgid "Set Default Application"
+msgstr ""
 
 #: ../thunar/thunar-chooser-model.c:251
 msgid "None available"
 msgstr "دستیاب نہیں"
 
-#: ../thunar/thunar-chooser-model.c:298
+#: ../thunar/thunar-chooser-model.c:300
+msgid "Default Application"
+msgstr ""
+
+#: ../thunar/thunar-chooser-model.c:311
 msgid "Recommended Applications"
 msgstr "مجوزہ اطلاقیے"
 
-#: ../thunar/thunar-chooser-model.c:316
+#: ../thunar/thunar-chooser-model.c:329
 msgid "Other Applications"
 msgstr "دوسرے اطلاقیے"
 
-#: ../thunar/thunar-chooser-model.c:407
+#: ../thunar/thunar-chooser-model.c:424
 #, c-format
 msgid "Failed to remove \"%s\"."
 msgstr ""
@@ -454,7 +458,7 @@ msgstr "پیسٹ کرنے کے لیے کلپ بورڈ میں کچھ نہیں ہ�
 #: ../thunar/thunar-column-editor.c:120 ../thunar/thunar-dialogs.c:979
 #: ../thunar/thunar-preferences-dialog.c:292
 #: ../thunar/thunar-properties-dialog.c:256
-#: ../thunar/thunar-renamer-dialog.c:358
+#: ../thunar/thunar-renamer-dialog.c:360
 #: ../thunar/thunar-renamer-progress.c:215
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:131
 msgid "_Close"
@@ -467,7 +471,7 @@ msgstr "تفصیلی فہرست منظر میں کالم مرتب کریں"
 #. add the "Help" button
 #: ../thunar/thunar-column-editor.c:126
 #: ../thunar/thunar-preferences-dialog.c:303
-#: ../thunar/thunar-properties-dialog.c:255 ../thunar/thunar-window.c:428
+#: ../thunar/thunar-properties-dialog.c:255 ../thunar/thunar-window.c:444
 msgid "_Help"
 msgstr "_ہدایات"
 
@@ -528,8 +532,8 @@ msgstr "کالم خود کار پ_ھیلائیں"
 #. the file_time is invalid
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:877 ../thunar/thunar-list-model.c:734
-#: ../thunar/thunar-list-model.c:770
+#: ../thunar/thunar-column-model.c:872 ../thunar/thunar-list-model.c:759
+#: ../thunar/thunar-list-model.c:795
 #: ../thunar/thunar-permissions-chooser.c:232 ../thunar/thunar-util.c:491
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:513
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:293
@@ -593,6 +597,26 @@ msgstr "تفصیلی ڈائریکٹری فہرست کاری"
 #: ../thunar/thunar-details-view.c:414
 msgid "Details view"
 msgstr "تفصیلی منظر"
+
+#: ../thunar/thunar-device.c:517
+msgid "_Safely Remove"
+msgstr ""
+
+#: ../thunar/thunar-device.c:519
+msgid "_Disconnect"
+msgstr ""
+
+#: ../thunar/thunar-device.c:521
+msgid "_Stop the Multi-Disk Drive"
+msgstr ""
+
+#: ../thunar/thunar-device.c:523
+msgid "_Lock"
+msgstr ""
+
+#: ../thunar/thunar-device.c:526 ../thunar/thunar-launcher.c:298
+msgid "_Eject"
+msgstr ""
 
 #: ../thunar/thunar-dialogs.c:99
 msgid "C_reate"
@@ -769,7 +793,7 @@ msgstr "-یہاں ربط بنائیں"
 
 #. display an error to the user
 #. display an error message to the user
-#: ../thunar/thunar-dnd.c:250 ../thunar/thunar-launcher.c:694
+#: ../thunar/thunar-dnd.c:250 ../thunar/thunar-launcher.c:772
 #, c-format
 msgid "Failed to execute file \"%s\""
 msgstr "فائل \"%s\" کو چلانے میں ناکامی"
@@ -787,109 +811,187 @@ msgid "Name and Suffix"
 msgstr "نام اور سفیکس"
 
 #: ../thunar/thunar-enum-types.c:101
+msgid "Date Created"
+msgstr ""
+
+#: ../thunar/thunar-enum-types.c:102
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:137
 msgid "Date Accessed"
 msgstr "تاریخ رسائی"
 
-#: ../thunar/thunar-enum-types.c:102
+#: ../thunar/thunar-enum-types.c:103
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:138
 msgid "Date Modified"
 msgstr "تاریخ تبدیلی"
 
-#: ../thunar/thunar-enum-types.c:103
+#: ../thunar/thunar-enum-types.c:104
+msgid "Date Deleted"
+msgstr ""
+
+#: ../thunar/thunar-enum-types.c:105
 msgid "Group"
 msgstr "گروپ"
 
-#: ../thunar/thunar-enum-types.c:104
+#: ../thunar/thunar-enum-types.c:106
 msgid "MIME Type"
 msgstr "MIME قسم"
 
-#: ../thunar/thunar-enum-types.c:105 ../thunar/thunar-renamer-dialog.c:417
+#: ../thunar/thunar-enum-types.c:107 ../thunar/thunar-renamer-dialog.c:425
 #: ../thunarx/thunarx-renamer.c:164
 msgid "Name"
 msgstr "نام"
 
-#: ../thunar/thunar-enum-types.c:106
+#: ../thunar/thunar-enum-types.c:108
 msgid "Owner"
 msgstr "مالک"
 
 #. Permissions chooser
-#: ../thunar/thunar-enum-types.c:107 ../thunar/thunar-properties-dialog.c:598
+#: ../thunar/thunar-enum-types.c:109 ../thunar/thunar-properties-dialog.c:598
 msgid "Permissions"
 msgstr "اجازتیں"
 
-#: ../thunar/thunar-enum-types.c:108
+#: ../thunar/thunar-enum-types.c:110
 msgid "Size"
 msgstr "حجم"
 
-#: ../thunar/thunar-enum-types.c:109
+#: ../thunar/thunar-enum-types.c:111
 msgid "Size in Bytes"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:110
+#: ../thunar/thunar-enum-types.c:112
 msgid "Type"
 msgstr "نوعیت"
 
-#: ../thunar/thunar-enum-types.c:111
+#: ../thunar/thunar-enum-types.c:113
 msgid "File"
 msgstr "فائل"
 
-#: ../thunar/thunar-enum-types.c:112
+#: ../thunar/thunar-enum-types.c:114
 msgid "File Name"
 msgstr "فائل کا نام"
 
-#: ../thunar/thunar-file.c:1059 ../thunar/thunar-gio-extensions.c:289
-#: ../thunar/thunar-shortcuts-model.c:1112 ../thunar.desktop.in.in.h:7
+#: ../thunar/thunar-file.c:1063 ../thunar/thunar-gio-extensions.c:378
+#: ../thunar/thunar-shortcuts-model.c:1108 ../thunar.desktop.in.in.h:7
 msgid "Trash"
 msgstr "ردی"
 
-#: ../thunar/thunar-file.c:1066 ../thunar/thunar-gio-extensions.c:287
-#: ../thunar/thunar-shortcuts-model.c:994 ../thunar/thunar-window.c:416
+#: ../thunar/thunar-file.c:1070 ../thunar/thunar-gio-extensions.c:376
+#: ../thunar/thunar-shortcuts-model.c:990 ../thunar/thunar-window.c:433
 msgid "File System"
 msgstr "فائل سسٹم"
 
-#: ../thunar/thunar-file.c:1519
+#: ../thunar/thunar-file.c:1523
 #, c-format
 msgid "The root folder has no parent"
 msgstr "روٹ فولڈر کا کوئی ذیل نہیں ہے"
 
-#: ../thunar/thunar-file.c:1613
+#: ../thunar/thunar-file.c:1617
 #, c-format
 msgid "Failed to parse the desktop file: %s"
 msgstr ""
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1625
+#: ../thunar/thunar-file.c:1629
 msgid "Untrusted application launcher"
 msgstr ""
 
-#: ../thunar/thunar-file.c:1653
+#: ../thunar/thunar-file.c:1657
 #, c-format
 msgid "No Exec field specified"
 msgstr "کوئی Exec فیلڈ متعین نہیں کی گئی"
 
 #. if the .desktop file is not secure, ask user what to do
-#: ../thunar/thunar-file.c:1662
+#: ../thunar/thunar-file.c:1666
 msgid "Untrusted link launcher"
 msgstr ""
 
-#: ../thunar/thunar-file.c:1678
+#: ../thunar/thunar-file.c:1682
 #, c-format
 msgid "No URL field specified"
 msgstr "کوئی URL فیلڈ متعین نہیں کی گئی"
 
-#: ../thunar/thunar-file.c:1683
+#: ../thunar/thunar-file.c:1687
 msgid "Invalid desktop file"
 msgstr "ناموزوں ڈیسک ٹاپ فائل"
 
+#. Implementation specific
+#: ../thunar/thunar-gio-extensions.c:52
+msgid "iPod touch"
+msgstr ""
+
+#: ../thunar/thunar-gio-extensions.c:53
+msgid "iPad"
+msgstr ""
+
+#: ../thunar/thunar-gio-extensions.c:54
+msgid "iPhone"
+msgstr ""
+
+#: ../thunar/thunar-gio-extensions.c:55
+msgid "Solid State Drive"
+msgstr ""
+
+#: ../thunar/thunar-gio-extensions.c:56
+msgid "System Drive"
+msgstr ""
+
+#: ../thunar/thunar-gio-extensions.c:57 ../thunar/thunar-gio-extensions.c:58
+msgid "USB Drive"
+msgstr ""
+
+#. Freedesktop icon-naming-spec
+#: ../thunar/thunar-gio-extensions.c:61
+msgid "Camera"
+msgstr ""
+
+#: ../thunar/thunar-gio-extensions.c:62
+msgid "Harddisk"
+msgstr ""
+
+#: ../thunar/thunar-gio-extensions.c:63
+msgid "Optical Drive"
+msgstr ""
+
+#: ../thunar/thunar-gio-extensions.c:64
+msgid "Removable Drive"
+msgstr ""
+
+#: ../thunar/thunar-gio-extensions.c:65
+msgid "Flash Drive"
+msgstr ""
+
+#: ../thunar/thunar-gio-extensions.c:66
+msgid "Floppy"
+msgstr ""
+
+#: ../thunar/thunar-gio-extensions.c:67
+msgid "Optical Media"
+msgstr ""
+
+#: ../thunar/thunar-gio-extensions.c:68
+msgid "Tape"
+msgstr ""
+
+#: ../thunar/thunar-gio-extensions.c:69
+msgid "Multimedia Player"
+msgstr ""
+
+#: ../thunar/thunar-gio-extensions.c:70
+msgid "PDA"
+msgstr ""
+
+#: ../thunar/thunar-gio-extensions.c:71
+msgid "Phone"
+msgstr ""
+
 #. TRANSLATORS: this will result in "<path> on <hostname>"
-#: ../thunar/thunar-gio-extensions.c:369
+#: ../thunar/thunar-gio-extensions.c:458
 #, c-format
 msgid "%s on %s"
 msgstr ""
 
 #. free disk space string
-#: ../thunar/thunar-gio-extensions.c:480
+#: ../thunar/thunar-gio-extensions.c:569
 #, c-format
 msgid "%s of %s free (%d%% used)"
 msgstr ""
@@ -975,8 +1077,8 @@ msgid "%s (copy %u)"
 msgstr ""
 
 #. I18N: name for first link to basename
-#: ../thunar/thunar-io-jobs-util.c:121 ../thunar/thunar-list-model.c:792
-#: ../thunar/thunar-list-model.c:1633 ../thunar/thunar-list-model.c:1644
+#: ../thunar/thunar-io-jobs-util.c:121 ../thunar/thunar-list-model.c:828
+#: ../thunar/thunar-list-model.c:1731 ../thunar/thunar-list-model.c:1742
 #: ../thunar/thunar-properties-dialog.c:1033
 #, c-format
 msgid "link to %s"
@@ -1018,373 +1120,383 @@ msgid ""
 "space."
 msgstr ""
 
-#: ../thunar/thunar-launcher.c:243
+#: ../thunar/thunar-launcher.c:268
 msgid "Open With Other _Application..."
 msgstr "دو_سرے اطلاقیے سے کھولیں..."
 
-#: ../thunar/thunar-launcher.c:243 ../thunar/thunar-launcher.c:2864
+#: ../thunar/thunar-launcher.c:268 ../thunar/thunar-launcher.c:3036
 msgid "Choose another application with which to open the selected file"
 msgstr "منتخب فائل کو کھولنے کے لیے دوسرا اطلاقیہ منتخب کریں"
+
+#: ../thunar/thunar-launcher.c:269
+msgid "Set _Default Application..."
+msgstr ""
+
+#: ../thunar/thunar-launcher.c:269
+msgid ""
+"Choose an application which should be used by default to open the selected "
+"file"
+msgstr ""
 
 #. For backward compatibility the old accel paths are re-used. Currently not
 #. possible to automatically migrate to new accel paths.
 #. Waiting for https://gitlab.gnome.org/GNOME/gtk/issues/2375 to be able to
 #. fix that
-#: ../thunar/thunar-launcher.c:247
+#: ../thunar/thunar-launcher.c:273
 msgid "_Send To"
 msgstr "ار_سال تا"
 
-#: ../thunar/thunar-launcher.c:250
+#: ../thunar/thunar-launcher.c:274
+msgid "Add _Bookmark"
+msgstr ""
+
+#: ../thunar/thunar-launcher.c:274
+msgid ""
+"Create bookmarks for all selected folders in the sidepane. If nothing is "
+"selected, the current directory is bookmarked."
+msgstr ""
+
+#: ../thunar/thunar-launcher.c:276
 msgid "_Properties..."
 msgstr "_خصوصیات"
 
-#: ../thunar/thunar-launcher.c:250
+#: ../thunar/thunar-launcher.c:276
 msgid "View the properties of the selected file"
 msgstr "منتخب فائل کی خصوصیات دیکھیں"
 
-#: ../thunar/thunar-launcher.c:251 ../thunar/thunar-launcher.c:1364
+#: ../thunar/thunar-launcher.c:277 ../thunar/thunar-launcher.c:1529
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "رب_ط بنائیں"
 msgstr[1] "ر_وابط بنائیں"
 
-#: ../thunar/thunar-launcher.c:252
+#: ../thunar/thunar-launcher.c:278
 msgid "Du_plicate"
 msgstr "ن_قل"
 
-#: ../thunar/thunar-launcher.c:253
+#: ../thunar/thunar-launcher.c:279
 msgid "_Rename..."
 msgstr "_نام بدلیں..."
 
-#: ../thunar/thunar-launcher.c:254
+#: ../thunar/thunar-launcher.c:280
 msgid "Delete all files and folders in the Trash"
 msgstr "ردی میں موجود تمام فائلیں اور فولڈر حذف کریں"
 
-#: ../thunar/thunar-launcher.c:255
+#: ../thunar/thunar-launcher.c:281
 msgid "Create _Folder..."
 msgstr "_فولڈر بنائیں..."
 
-#: ../thunar/thunar-launcher.c:255
+#: ../thunar/thunar-launcher.c:281
 msgid "Create an empty folder within the current folder"
 msgstr "حالیہ فولڈر کے اندر خالی فولڈر بنائیں"
 
-#: ../thunar/thunar-launcher.c:256
+#: ../thunar/thunar-launcher.c:282
 msgid "Create _Document"
 msgstr "_دستاویز بنائیں"
 
-#: ../thunar/thunar-launcher.c:256
+#: ../thunar/thunar-launcher.c:282
 msgid "Create a new document from a template"
 msgstr ""
 
-#: ../thunar/thunar-launcher.c:258
+#: ../thunar/thunar-launcher.c:284
 msgid "_Restore"
 msgstr "ری _سٹور"
 
-#: ../thunar/thunar-launcher.c:259
+#: ../thunar/thunar-launcher.c:285
 msgid "Mo_ve to Trash"
 msgstr ""
 
-#: ../thunar/thunar-launcher.c:265
+#: ../thunar/thunar-launcher.c:291
 msgid "_Paste"
 msgstr "_پیسٹ"
 
-#: ../thunar/thunar-launcher.c:265
+#: ../thunar/thunar-launcher.c:291
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr "سابقہ کٹ یا کاپی کمانڈ سے منتخب کردہ فائلوں کو منتقل یا کاپی کریں"
 
-#: ../thunar/thunar-launcher.c:266
+#: ../thunar/thunar-launcher.c:292
 msgid "_Paste Into Folder"
 msgstr "فولڈر کے اندر _پیسٹ کریں"
 
-#: ../thunar/thunar-launcher.c:266
+#: ../thunar/thunar-launcher.c:292
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
 msgstr "سابقہ کٹ یا کاپی کمانڈ سے منتخب کردہ فائلوں کو منتخب کردہ فولڈر میں منتقل یا کاپی کریں"
 
-#: ../thunar/thunar-launcher.c:267
+#: ../thunar/thunar-launcher.c:293
 msgid "_Copy"
 msgstr "ک_اپی"
 
-#: ../thunar/thunar-launcher.c:267
+#: ../thunar/thunar-launcher.c:293
 msgid "Prepare the selected files to be copied with a Paste command"
 msgstr "پیسٹ کمانڈ سے منتخب فائلوں کی کاپی تیار کریں"
 
-#: ../thunar/thunar-launcher.c:268
+#: ../thunar/thunar-launcher.c:294
 msgid "Cu_t"
 msgstr "_کٹ"
 
-#: ../thunar/thunar-launcher.c:268
+#: ../thunar/thunar-launcher.c:294
 msgid "Prepare the selected files to be moved with a Paste command"
 msgstr "پیسٹ کمانڈ سے منتخب فائلوں کی منتقلی تیار کریں"
 
-#. append the "Mount" item
-#: ../thunar/thunar-launcher.c:270 ../thunar/thunar-shortcuts-view.c:1158
+#: ../thunar/thunar-launcher.c:296
 msgid "_Mount"
 msgstr ""
 
-#: ../thunar/thunar-launcher.c:270
+#: ../thunar/thunar-launcher.c:296
 msgid "Mount the selected device"
 msgstr ""
 
-#. append the "Unmount" item
-#: ../thunar/thunar-launcher.c:271 ../thunar/thunar-shortcuts-view.c:1164
-#: ../thunar/thunar-shortcuts-view.c:1212
+#: ../thunar/thunar-launcher.c:297
 msgid "_Unmount"
 msgstr ""
 
-#: ../thunar/thunar-launcher.c:271
+#: ../thunar/thunar-launcher.c:297
 msgid "Unmount the selected device"
 msgstr ""
 
-#. append the "Eject" (safely remove drive) item
-#: ../thunar/thunar-launcher.c:272 ../thunar/thunar-shortcuts-view.c:1170
-msgid "_Eject"
-msgstr ""
-
-#: ../thunar/thunar-launcher.c:272
+#: ../thunar/thunar-launcher.c:298
 msgid "Eject the selected device"
 msgstr ""
 
-#: ../thunar/thunar-launcher.c:827
+#: ../thunar/thunar-launcher.c:909
 #, c-format
 msgid "Failed to open file \"%s\""
 msgstr "فائل \"%s\" کھولنے میں ناکامی"
 
 #. we can just tell that n files failed to open
-#: ../thunar/thunar-launcher.c:833
+#: ../thunar/thunar-launcher.c:915
 #, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
 msgstr[0] "%d فائل کھولنے میں ناکامی"
 msgstr[1] "%d فائلیں کھولنے میں ناکامی"
 
-#: ../thunar/thunar-launcher.c:872
+#: ../thunar/thunar-launcher.c:954
 msgid "Are you sure you want to open all folders?"
 msgstr "کیا آپ واقعی تمام فولڈر کھولنا چاہتے ہیں؟"
 
-#: ../thunar/thunar-launcher.c:874
+#: ../thunar/thunar-launcher.c:956
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
 msgstr[0] "یہ %d کی الگ فائل منیجر ونڈو کھولے گا."
 msgstr[1] "یہ %d کی الگ فائل منیجر ونڈو کھولے گا."
 
-#: ../thunar/thunar-launcher.c:877
+#: ../thunar/thunar-launcher.c:959
 #, c-format
 msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
 msgstr[0] "%d کو نئی ونڈو میں کھولیں"
 msgstr[1] "%d کو نئی ونڈوز میں کھولیں"
 
-#: ../thunar/thunar-launcher.c:954 ../thunar/thunar-launcher.c:1663
-#: ../thunar/thunar-shortcuts-view.c:1770
-#: ../thunar/thunar-shortcuts-view.c:2012
+#: ../thunar/thunar-launcher.c:1047 ../thunar/thunar-launcher.c:1830
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "\"%s\" کو ماؤنٹ کرنے میں ناکامی"
 
-#: ../thunar/thunar-launcher.c:1318
+#: ../thunar/thunar-launcher.c:1471
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
 msgstr[0] "منتخب کردہ فائل کھولیں"
 msgstr[1] "منتخب کردہ فائلیں کھولیں"
 
-#: ../thunar/thunar-launcher.c:1322
+#: ../thunar/thunar-launcher.c:1475
 msgid "_Execute"
 msgstr "ا_طلاق"
 
-#: ../thunar/thunar-launcher.c:1322
+#: ../thunar/thunar-launcher.c:1475
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
 msgstr[0] "منتخب فائل جو چلائیں"
 msgstr[1] "منتخب فائلوں کو چلائیں"
 
-#: ../thunar/thunar-launcher.c:1327
+#: ../thunar/thunar-launcher.c:1480
 #, c-format
 msgid "Open in New _Tab"
 msgid_plural "Open in %d New _Tabs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-launcher.c:1328
+#: ../thunar/thunar-launcher.c:1481
 #, c-format
 msgid "Open the selected directory in new tab"
 msgid_plural "Open the selected directories in %d new tabs"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-launcher.c:1337
+#: ../thunar/thunar-launcher.c:1490
 #, c-format
 msgid "Open in New _Window"
 msgid_plural "Open in %d New _Windows"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-launcher.c:1338
+#: ../thunar/thunar-launcher.c:1491
 #, c-format
 msgid "Open the selected directory in new window"
 msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-launcher.c:1365
+#: ../thunar/thunar-launcher.c:1530
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "منتخب فائل کا رمزی ربط بنائیں"
 msgstr[1] "ہر منتخب فائل کا رمزی ربط بنائیں"
 
-#: ../thunar/thunar-launcher.c:1389
+#: ../thunar/thunar-launcher.c:1554
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "منتخب فائل کا نام بدلیں"
 msgstr[1] "منتخب فائلوں کا نام بدلیں"
 
-#: ../thunar/thunar-launcher.c:1399
+#: ../thunar/thunar-launcher.c:1564
 msgid "Restore the selected file to its original location"
 msgid_plural "Restore the selected files to its original location"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-launcher.c:1416
+#: ../thunar/thunar-launcher.c:1581
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-launcher.c:1433
+#: ../thunar/thunar-launcher.c:1598
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-launcher.c:1483
+#: ../thunar/thunar-launcher.c:1648
 msgid "Cut the selection"
 msgstr ""
 
-#: ../thunar/thunar-launcher.c:1493
+#: ../thunar/thunar-launcher.c:1658
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "پیسٹ کمانڈ سے منتخب فائل کی منتقلی تیار کریں"
 msgstr[1] "پیسٹ کمانڈ سے منتخب فائلوں کی منتقلی تیار کریں"
 
-#: ../thunar/thunar-launcher.c:1507
+#: ../thunar/thunar-launcher.c:1672
 msgid "Copy the selection"
 msgstr ""
 
-#: ../thunar/thunar-launcher.c:1517
+#: ../thunar/thunar-launcher.c:1682
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "پیسٹ کمانڈ سے منتخب فائل کی کاپی تیار کریں"
 msgstr[1] "پیسٹ کمانڈ سے منتخب فائلوں کی کاپی تیار کریں"
 
-#: ../thunar/thunar-launcher.c:1540
+#: ../thunar/thunar-launcher.c:1705
 msgid "Paste the clipboard"
 msgstr ""
 
-#: ../thunar/thunar-launcher.c:1769
+#: ../thunar/thunar-launcher.c:1936
 msgid "Side Pane (Create Shortcut)"
 msgid_plural "Side Pane (Create Shortcuts)"
 msgstr[0] "بغلی پٹی (شارٹ کٹ بنائیں)"
 msgstr[1] "بغلی پٹی (شارٹ کٹ بنائیں)"
 
-#: ../thunar/thunar-launcher.c:1770
+#: ../thunar/thunar-launcher.c:1937
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "منتخب کردہ فولڈر کو بغلی پٹی کے شارٹ کٹس میں شامل کریں"
 msgstr[1] "منتخب کردہ فولڈروں کو بغلی پٹی کے شارٹ کٹس میں شامل کریں"
 
-#: ../thunar/thunar-launcher.c:1789
+#: ../thunar/thunar-launcher.c:1956
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "ڈیسک ٹاپ (ربط بنائیں)"
 msgstr[1] "ڈیسک ٹاپ (روابط بنائیں)"
 
-#: ../thunar/thunar-launcher.c:1790
+#: ../thunar/thunar-launcher.c:1957
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "منتخب فائل کا ڈیسک ٹاپ پر ربط بنائیں"
 msgstr[1] "منتخب فائلوں کا ڈیسک ٹاپ پر ربط بنائیں"
 
-#: ../thunar/thunar-launcher.c:1811 ../thunar/thunar-launcher.c:1849
+#: ../thunar/thunar-launcher.c:1978 ../thunar/thunar-launcher.c:2016
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
 msgstr[0] "منتخب فائل کو \"%s\" کی طرف ارسال کریں"
 msgstr[1] "منتخب فائلوں کو \"%s\" کی طرف ارسال کریں"
 
-#: ../thunar/thunar-launcher.c:2322
+#: ../thunar/thunar-launcher.c:2490
 msgid "New Empty File"
 msgstr "نئی خالی فائل"
 
-#: ../thunar/thunar-launcher.c:2323
+#: ../thunar/thunar-launcher.c:2491
 msgid "New Empty File..."
 msgstr "نئی خالی فائل..."
 
-#: ../thunar/thunar-launcher.c:2522
+#: ../thunar/thunar-launcher.c:2690
 #, c-format
 msgid "No templates installed in \"%s\""
 msgstr ""
 
-#: ../thunar/thunar-launcher.c:2535
+#: ../thunar/thunar-launcher.c:2703
 msgid "_Empty File"
 msgstr "_خالی فائل"
 
-#: ../thunar/thunar-launcher.c:2641 ../thunar/thunar-shortcuts-view.c:1936
+#: ../thunar/thunar-launcher.c:2809
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "\"%s\" کو نکالنے میں ناکامی"
 
-#: ../thunar/thunar-launcher.c:2699 ../thunar/thunar-shortcuts-view.c:2081
+#: ../thunar/thunar-launcher.c:2868
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "\"%s\" کو ان ماؤنٹ کرنے میں ناکامی"
 
-#: ../thunar/thunar-launcher.c:2759
+#: ../thunar/thunar-launcher.c:2929
 #, c-format
 msgid "Open With \"%s\""
 msgstr "کھولیں بذریعہ \"%s\""
 
-#: ../thunar/thunar-launcher.c:2760 ../thunar/thunar-launcher.c:2827
+#: ../thunar/thunar-launcher.c:2930 ../thunar/thunar-launcher.c:2999
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "منتخب فائل کو چلانے کے لیے \"%s\" کا استعمال کریں"
 msgstr[1] "منتخب فائلوں کو چلانے کے لیے \"%s\" کا استعمال کریں"
 
-#: ../thunar/thunar-launcher.c:2826
+#: ../thunar/thunar-launcher.c:2998
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "ک_ھولیں بذریعہ \"%s\""
 
 #. we can only show a generic "Open" action
-#: ../thunar/thunar-launcher.c:2846
+#: ../thunar/thunar-launcher.c:3018
 #, c-format
 msgid "_Open With Default Applications"
 msgstr "_طے شدہ اطلاقیہ سے کھولیں"
 
-#: ../thunar/thunar-launcher.c:2847
+#: ../thunar/thunar-launcher.c:3019
 #, c-format
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
 msgstr[0] "منتخب فائل کو طے شدہ اطلاقیہ میں کھولیں"
 msgstr[1] "منتخب فائلوں کو طے شدہ اطلاقیوں میں کھولیں"
 
-#: ../thunar/thunar-list-model.c:2360
+#: ../thunar/thunar-list-model.c:2482
 #, c-format
 msgid "%d file: %s"
 msgid_plural "%d files: %s"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-list-model.c:2368
+#: ../thunar/thunar-list-model.c:2490
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-list-model.c:2374
+#: ../thunar/thunar-list-model.c:2496
 #, c-format
 msgid "0 items"
 msgstr ""
@@ -1394,45 +1506,45 @@ msgstr ""
 #. * is between the message about the number of folders
 #. * and the number of items in the selection
 #. TRANSLATORS: string moved from line 2573 to here
-#: ../thunar/thunar-list-model.c:2386
+#: ../thunar/thunar-list-model.c:2508
 #, c-format
 msgid "%s, %s"
 msgstr ""
 
-#: ../thunar/thunar-list-model.c:2465
+#: ../thunar/thunar-list-model.c:2587
 #, c-format
 msgid "%s, Free space: %s"
 msgstr ""
 
-#: ../thunar/thunar-list-model.c:2490
+#: ../thunar/thunar-list-model.c:2612
 #, c-format
 msgid "\"%s\": broken link"
 msgstr ""
 
-#: ../thunar/thunar-list-model.c:2495
+#: ../thunar/thunar-list-model.c:2617
 #, c-format
 msgid "\"%s\": %s link to %s"
 msgstr ""
 
-#: ../thunar/thunar-list-model.c:2501
+#: ../thunar/thunar-list-model.c:2623
 #, c-format
 msgid "\"%s\": shortcut"
 msgstr ""
 
-#: ../thunar/thunar-list-model.c:2505
+#: ../thunar/thunar-list-model.c:2627
 #, c-format
 msgid "\"%s\": mountable"
 msgstr ""
 
 #. I18N, first %s is the display name of the file, 2nd the file size, 3rd the
 #. content type
-#: ../thunar/thunar-list-model.c:2512
+#: ../thunar/thunar-list-model.c:2634
 #, c-format
 msgid "\"%s\": %s %s"
 msgstr ""
 
 #. I18N, first %s is the display name of the file, second the content type
-#: ../thunar/thunar-list-model.c:2521
+#: ../thunar/thunar-list-model.c:2643
 #, c-format
 msgid "\"%s\": %s"
 msgstr ""
@@ -1442,22 +1554,22 @@ msgstr ""
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: ../thunar/thunar-list-model.c:2531 ../thunar/thunar-properties-dialog.c:402
+#: ../thunar/thunar-list-model.c:2653 ../thunar/thunar-properties-dialog.c:402
 msgid "Original Path:"
 msgstr "اصل پاتھ:"
 
 #. append the image dimensions to the statusbar text
-#: ../thunar/thunar-list-model.c:2554
+#: ../thunar/thunar-list-model.c:2676
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:153
 msgid "Image Size:"
 msgstr "تصویر کا حجم:"
 
-#: ../thunar/thunar-list-model.c:2572
+#: ../thunar/thunar-list-model.c:2694
 #, c-format
 msgid "Selection: %s"
 msgstr ""
 
-#: ../thunar/thunar-location-entry.c:200 ../thunar/thunar-window.c:394
+#: ../thunar/thunar-location-entry.c:200 ../thunar/thunar-window.c:407
 msgid "Reload the current folder"
 msgstr "حالیہ فولڈر تازہ کریں"
 
@@ -1466,33 +1578,33 @@ msgstr "حالیہ فولڈر تازہ کریں"
 msgid "File does not exist"
 msgstr ""
 
-#: ../thunar/thunar-notify.c:168
+#: ../thunar/thunar-notify.c:219
 msgid "Unmounting device"
 msgstr ""
 
-#: ../thunar/thunar-notify.c:169
+#: ../thunar/thunar-notify.c:220
 #, c-format
 msgid ""
 "The device \"%s\" is being unmounted by the system. Please do not remove the"
 " media or disconnect the drive"
 msgstr ""
 
-#: ../thunar/thunar-notify.c:175 ../thunar/thunar-notify.c:214
+#: ../thunar/thunar-notify.c:226 ../thunar/thunar-notify.c:265
 msgid "Writing data to device"
 msgstr ""
 
-#: ../thunar/thunar-notify.c:176 ../thunar/thunar-notify.c:215
+#: ../thunar/thunar-notify.c:227 ../thunar/thunar-notify.c:266
 #, c-format
 msgid ""
 "There is data that needs to be written to the device \"%s\" before it can be"
 " removed. Please do not remove the media or disconnect the drive"
 msgstr ""
 
-#: ../thunar/thunar-notify.c:208
+#: ../thunar/thunar-notify.c:259
 msgid "Ejecting device"
 msgstr ""
 
-#: ../thunar/thunar-notify.c:209
+#: ../thunar/thunar-notify.c:260
 #, c-format
 msgid "The device \"%s\" is being ejected. This may take some time"
 msgstr ""
@@ -2046,17 +2158,9 @@ msgstr ""
 msgid "Failed to display the volume management settings"
 msgstr "والیم ادارت کی ترتیبات دکھانے میں ناکامی"
 
-#: ../thunar/thunar-progress-dialog.c:96
+#: ../thunar/thunar-progress-dialog.c:90
 msgid "File Operation Progress"
 msgstr ""
-
-#. build the tooltip text
-#: ../thunar/thunar-progress-dialog.c:310
-#, c-format
-msgid "%d file operation running"
-msgid_plural "%d file operations running"
-msgstr[0] ""
-msgstr[1] ""
 
 #: ../thunar/thunar-progress-view.c:369
 msgid "Paused"
@@ -2072,11 +2176,11 @@ msgid "Cancelling..."
 msgstr ""
 
 #: ../thunar/thunar-progress-view.c:574
-msgid "Frozen by another job on same device"
+msgid "Job queued"
 msgstr ""
 
 #: ../thunar/thunar-progress-view.c:593
-msgid "Unfreezing..."
+msgid "Resuming job..."
 msgstr ""
 
 #: ../thunar/thunar-properties-dialog.c:266
@@ -2171,51 +2275,63 @@ msgstr ""
 msgid "mixed"
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:192
+#: ../thunar/thunar-renamer-dialog.c:194
 msgid "_Add Files..."
 msgstr "_فائلیں شامل کریں..."
 
-#: ../thunar/thunar-renamer-dialog.c:192
+#: ../thunar/thunar-renamer-dialog.c:194
 msgid "Include additional files in the list of files to be renamed"
 msgstr "نام بدلنے کے لیے اس فہرست میں مزید فائلیں شامل کریں"
 
-#: ../thunar/thunar-renamer-dialog.c:194
+#: ../thunar/thunar-renamer-dialog.c:196
 msgid "Clear"
 msgstr "صاف"
 
-#: ../thunar/thunar-renamer-dialog.c:194
+#: ../thunar/thunar-renamer-dialog.c:196
 msgid "Clear the file list below"
 msgstr "ذیل کی فائل لسٹ صاف کریں"
 
-#: ../thunar/thunar-renamer-dialog.c:195 ../thunar/thunar-window.c:430
+#: ../thunar/thunar-renamer-dialog.c:197 ../thunar/thunar-window.c:446
 msgid "_About"
 msgstr "_بابت"
 
-#: ../thunar/thunar-renamer-dialog.c:195
+#: ../thunar/thunar-renamer-dialog.c:197
 msgid "Display information about Thunar Bulk Rename"
 msgstr "تھنر بلک رینیم کی بابت معلومات ظاہر کریں"
 
-#: ../thunar/thunar-renamer-dialog.c:354
-#: ../thunar/thunar-renamer-dialog.c:1781
+#: ../thunar/thunar-renamer-dialog.c:356
+#: ../thunar/thunar-renamer-dialog.c:1792
 #: ../thunar-bulk-rename.desktop.in.in.h:2
 msgid "Rename Multiple Files"
 msgstr "متعدد فائلوں کا نام بدلیں"
 
-#. add the "Rename Files" button
-#: ../thunar/thunar-renamer-dialog.c:362
-msgid "_Rename Files"
-msgstr "فائ_لوں کا نام بدلیں"
+#. add the "Done" button
+#: ../thunar/thunar-renamer-dialog.c:364
+msgid "_Done"
+msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:365
+#: ../thunar/thunar-renamer-dialog.c:367
 msgid ""
-"Click here to actually rename the files listed above to their new names."
-msgstr "اوپر دی گئی فائلوں کا نام ان کے نئے نام سے بدلنے کے لیے یہاں کلک کریں."
+"Click here to actually rename the files listed above to their new names and "
+"close the window."
+msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:435
+#. add the "Apply" button
+#: ../thunar/thunar-renamer-dialog.c:370
+msgid "_Apply"
+msgstr ""
+
+#: ../thunar/thunar-renamer-dialog.c:373
+msgid ""
+"Click here to actually rename the files listed above to their new names and "
+"keep the window open."
+msgstr ""
+
+#: ../thunar/thunar-renamer-dialog.c:443
 msgid "New Name"
 msgstr "نیا نام"
 
-#: ../thunar/thunar-renamer-dialog.c:498
+#: ../thunar/thunar-renamer-dialog.c:508
 msgid ""
 "Click here to view the documentation for the selected rename operation."
 msgstr "نام بدلنے کے منتخب عمل کی دستاویزات دیکھنے کے لیے یہاں کلک کریں."
@@ -2224,61 +2340,61 @@ msgstr "نام بدلنے کے منتخب عمل کی دستاویزات دیک�
 #. from $libdir/thunarx-2/,
 #. *              and opening the multi rename dialog by selecting multiple
 #. files and pressing F2.
-#: ../thunar/thunar-renamer-dialog.c:608
+#: ../thunar/thunar-renamer-dialog.c:619
 msgid ""
 "No renamer modules were found on your system. Please check your\n"
 "installation or contact your system administrator. If you install Thunar\n"
 "from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
 msgstr "نام بدلنے کے کوئی ماڈیول آپ کے سسٹم میں نہیں پایا گیا، اپنی تنصیب\nچیک کریں یا مدیرِ نظام سے رابطہ کریں، اگر آپ نے تھنر کو مصدر سے نصب\nکیا ہے تو یقین کر لیں کہ \"Simple Builtin Renamers\" پلگ ان فعال ہے."
 
-#: ../thunar/thunar-renamer-dialog.c:858
+#: ../thunar/thunar-renamer-dialog.c:869
 msgid "Remove File"
 msgid_plural "Remove Files"
 msgstr[0] "فائل حذف کریں"
 msgstr[1] "فائلیں حذف کریں"
 
-#: ../thunar/thunar-renamer-dialog.c:859
+#: ../thunar/thunar-renamer-dialog.c:870
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] "منتخب فائل کو تبدیلیء نام کی فہرست سے خارج کریں"
 msgstr[1] "منتخب فائلوں کو تبدیلیء نام کی فہرست سے خارج کریں"
 
 #. tell the user that we failed
-#: ../thunar/thunar-renamer-dialog.c:955
+#: ../thunar/thunar-renamer-dialog.c:966
 msgid "Failed to open the documentation browser"
 msgstr "دستاویزات براؤزر کھولنے میں ناکامی"
 
 #. allocate the file chooser
-#: ../thunar/thunar-renamer-dialog.c:1056
+#: ../thunar/thunar-renamer-dialog.c:1067
 msgid "Select files to rename"
 msgstr "نام بدلنے کے لیے فائلیں منتخب کریں"
 
-#: ../thunar/thunar-renamer-dialog.c:1072
+#: ../thunar/thunar-renamer-dialog.c:1083
 msgid "Audio Files"
 msgstr "آڈیو فائلیں"
 
-#: ../thunar/thunar-renamer-dialog.c:1077
+#: ../thunar/thunar-renamer-dialog.c:1088
 msgid "Image Files"
 msgstr "تصویر فائلیں"
 
-#: ../thunar/thunar-renamer-dialog.c:1082
+#: ../thunar/thunar-renamer-dialog.c:1093
 msgid "Video Files"
 msgstr "ویڈیو فائلیں"
 
 #. just popup the about dialog
-#: ../thunar/thunar-renamer-dialog.c:1209
+#: ../thunar/thunar-renamer-dialog.c:1220
 #: ../thunar-bulk-rename.desktop.in.in.h:1
 msgid "Bulk Rename"
 msgstr "بلک رینیم"
 
-#: ../thunar/thunar-renamer-dialog.c:1210
+#: ../thunar/thunar-renamer-dialog.c:1221
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
 msgstr "متعدد فائلوں کا نام بدلنے کے لیے تھنر\nبلک ری نیم ایک بہترین اوزار ہے."
 
 #. change title to reflect the standalone status
-#: ../thunar/thunar-renamer-dialog.c:1781
+#: ../thunar/thunar-renamer-dialog.c:1792
 msgid "Bulk Rename - Rename Multiple Files"
 msgstr "بلک رینیم - اجتماعی مبدل نام"
 
@@ -2308,95 +2424,80 @@ msgid ""
 "Do you want to skip this file and continue to rename the remaining files?"
 msgstr "کیا آپ اس فائل کو نظر انداز کر کے باقی فائلوں کا نام بدلنے کے عمل کو جاری رکھنا چاہتے ہیں؟"
 
-#: ../thunar/thunar-shortcuts-model.c:631
-#: ../thunar/thunar-shortcuts-model.c:995 ../thunar/thunar-window.c:416
+#: ../thunar/thunar-shortcuts-model.c:627
+#: ../thunar/thunar-shortcuts-model.c:991 ../thunar/thunar-window.c:433
 msgid "Browse the file system"
 msgstr ""
 
-#: ../thunar/thunar-shortcuts-model.c:665
+#: ../thunar/thunar-shortcuts-model.c:661
 #, c-format
 msgid "Mount and open %s (%s)"
 msgstr ""
 
-#: ../thunar/thunar-shortcuts-model.c:678
+#: ../thunar/thunar-shortcuts-model.c:674
 #: ../plugins/thunar-tpa/thunar-tpa.c:284
 msgid "Trash is empty"
 msgstr "ردی خالی ہے"
 
-#: ../thunar/thunar-shortcuts-model.c:682
+#: ../thunar/thunar-shortcuts-model.c:678
 #, c-format
 msgid "Trash contains %d file"
 msgid_plural "Trash contains %d files"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-shortcuts-model.c:988
+#: ../thunar/thunar-shortcuts-model.c:984
 msgid "Devices"
 msgstr ""
 
-#: ../thunar/thunar-shortcuts-model.c:1031
+#: ../thunar/thunar-shortcuts-model.c:1027
 msgid "Network"
 msgstr ""
 
-#: ../thunar/thunar-shortcuts-model.c:1039
+#: ../thunar/thunar-shortcuts-model.c:1035
 msgid "Browse Network"
 msgstr ""
 
-#: ../thunar/thunar-shortcuts-model.c:1040 ../thunar/thunar-window.c:426
+#: ../thunar/thunar-shortcuts-model.c:1036 ../thunar/thunar-window.c:442
 msgid "Browse local network connections"
 msgstr ""
 
-#: ../thunar/thunar-shortcuts-model.c:1062
+#: ../thunar/thunar-shortcuts-model.c:1058
 msgid "Places"
 msgstr ""
 
-#: ../thunar/thunar-shortcuts-model.c:1074
+#: ../thunar/thunar-shortcuts-model.c:1070
 msgid "Open the home folder"
 msgstr ""
 
-#: ../thunar/thunar-shortcuts-model.c:1091
+#: ../thunar/thunar-shortcuts-model.c:1087
 msgid "Open the desktop folder"
 msgstr ""
 
-#: ../thunar/thunar-shortcuts-model.c:1138 ../thunar/thunar-window.c:417
-#: ../thunar/thunar-window.c:420 ../thunar.desktop.in.in.h:6
+#: ../thunar/thunar-shortcuts-model.c:1134 ../thunar/thunar-window.c:436
+#: ../thunar.desktop.in.in.h:6
 msgid "Computer"
 msgstr ""
 
-#: ../thunar/thunar-shortcuts-model.c:1139
+#: ../thunar/thunar-shortcuts-model.c:1135
 msgid "Browse the computer"
 msgstr ""
 
-#. append the "Open in New Tab" menu action
-#: ../thunar/thunar-shortcuts-view.c:1131
-msgid "Open in New Tab"
-msgstr ""
-
-#. append the "Open in New Window" menu action
-#: ../thunar/thunar-shortcuts-view.c:1137
-msgid "Open in New Window"
-msgstr "نئی ونڈو میں کھولیں"
-
-#: ../thunar/thunar-shortcuts-view.c:1188
-msgid "Create _Shortcut"
-msgstr ""
-
-#: ../thunar/thunar-shortcuts-view.c:1285
-msgid "_Remove Shortcut"
-msgstr "_شارٹ کٹ حذف کریں"
-
-#. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:1302
+#: ../thunar/thunar-shortcuts-view.c:225
 msgid "Re_name Shortcut"
 msgstr "شار_ٹ کٹ کا نام بدلیں"
 
-#: ../thunar/thunar-shortcuts-view.c:1632
+#: ../thunar/thunar-shortcuts-view.c:226
+msgid "_Remove Shortcut"
+msgstr "_شارٹ کٹ حذف کریں"
+
+#: ../thunar/thunar-shortcuts-view.c:1623
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "پاتھ \"%s\" ڈائریکٹری نہیں ہے"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1652
+#: ../thunar/thunar-shortcuts-view.c:1643
 msgid "Failed to add new shortcut"
 msgstr "نیا شارٹ کٹ شامل کرنے میں ناکامی"
 
@@ -2433,136 +2534,148 @@ msgstr ""
 msgid "Permission denied"
 msgstr "رسائی کی اجازت نہیں"
 
-#: ../thunar/thunar-standard-view.c:363
+#: ../thunar/thunar-standard-view.c:357
 msgid "Select _all Files"
 msgstr "_سب فائلیں منتخب کریں"
 
-#: ../thunar/thunar-standard-view.c:363
+#: ../thunar/thunar-standard-view.c:357
 msgid "Select all files in this window"
 msgstr "اس ونڈو میں موجود تمام فائلیں منتخب کریں"
 
-#: ../thunar/thunar-standard-view.c:364
+#: ../thunar/thunar-standard-view.c:358
 msgid "Select _by Pattern..."
 msgstr "ن_قش سے منتخب کریں"
 
-#: ../thunar/thunar-standard-view.c:364
+#: ../thunar/thunar-standard-view.c:358
 msgid "Select all files that match a certain pattern"
 msgstr "مخصوص پیٹرن کی حامل تمام فائلیں منتخب کریں"
 
-#: ../thunar/thunar-standard-view.c:365
+#: ../thunar/thunar-standard-view.c:359
 msgid "_Invert Selection"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:365
+#: ../thunar/thunar-standard-view.c:359
 msgid "Select all files but not those currently selected"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:366
+#: ../thunar/thunar-standard-view.c:360
 msgid "U_nselect all Files"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:366
+#: ../thunar/thunar-standard-view.c:360
 msgid "Unselect all files in this window"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:367
+#: ../thunar/thunar-standard-view.c:361
 msgid "Arran_ge Items"
 msgstr "عناصر کو ترتیب دیں"
 
-#: ../thunar/thunar-standard-view.c:368
+#: ../thunar/thunar-standard-view.c:362
 msgid "Toggle sort direction"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:368
+#: ../thunar/thunar-standard-view.c:362
 msgid "Toggle Ascending/Descending sort order"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:369
+#: ../thunar/thunar-standard-view.c:363
 msgid "By _Name"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:369
+#: ../thunar/thunar-standard-view.c:363
 msgid "Keep items sorted by their name"
 msgstr "عناصر کو نام کے لحاظ سے ترتیب دیں"
 
-#: ../thunar/thunar-standard-view.c:370
+#: ../thunar/thunar-standard-view.c:364
 msgid "By _Size"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:370
+#: ../thunar/thunar-standard-view.c:364
 msgid "Keep items sorted by their size"
 msgstr "عناصر کو ان کے حجم کے لحاظ سے ترتیب دیں"
 
-#: ../thunar/thunar-standard-view.c:371
+#: ../thunar/thunar-standard-view.c:365
 msgid "By _Type"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:371
+#: ../thunar/thunar-standard-view.c:365
 msgid "Keep items sorted by their type"
 msgstr "عناصر کو ان کی قسم کے لحاظ سے ترتیب دیں"
 
-#: ../thunar/thunar-standard-view.c:372
+#: ../thunar/thunar-standard-view.c:366
 msgid "By Modification _Date"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:372
+#: ../thunar/thunar-standard-view.c:366
 msgid "Keep items sorted by their modification date"
 msgstr "عناصر کو تاریخِ تبدیلی کے لحاظ سے ترتیب دیں"
 
-#: ../thunar/thunar-standard-view.c:373
+#: ../thunar/thunar-standard-view.c:367
+msgid "By D_eletion Date"
+msgstr ""
+
+#: ../thunar/thunar-standard-view.c:367
+msgid "Keep items sorted by their deletion date"
+msgstr ""
+
+#: ../thunar/thunar-standard-view.c:368
 msgid "_Ascending"
 msgstr "ترتیبِ صعودی"
 
-#: ../thunar/thunar-standard-view.c:373
+#: ../thunar/thunar-standard-view.c:368
 msgid "Sort items in ascending order"
 msgstr "عناصر کو صعودی ترتیب دیں"
 
-#: ../thunar/thunar-standard-view.c:374
+#: ../thunar/thunar-standard-view.c:369
 msgid "_Descending"
 msgstr "ترتیبِ نزولی"
 
-#: ../thunar/thunar-standard-view.c:374
+#: ../thunar/thunar-standard-view.c:369
 msgid "Sort items in descending order"
 msgstr "عناصر کو نزولی ترتیب دیں"
 
-#: ../thunar/thunar-standard-view.c:1574
+#: ../thunar/thunar-standard-view.c:1564
 msgid "Loading folder contents..."
 msgstr "فولڈر کا مواد لوڈ کیا جارہا ہے..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2101 ../thunar/thunar-window.c:3226
+#: ../thunar/thunar-standard-view.c:2091 ../thunar/thunar-window.c:3250
 msgid "Failed to open the home folder"
 msgstr "ہوم فولڈر کھولنے میں ناکامی"
 
-#: ../thunar/thunar-standard-view.c:2172
+#: ../thunar/thunar-standard-view.c:2164
 msgid "Select by Pattern"
 msgstr "پیٹرن سے منتخب کریں"
 
-#: ../thunar/thunar-standard-view.c:2177
+#: ../thunar/thunar-standard-view.c:2169
 msgid "_Select"
 msgstr "م_نتخب کریں"
 
-#: ../thunar/thunar-standard-view.c:2190
+#: ../thunar/thunar-standard-view.c:2182
 msgid "_Pattern:"
 msgstr "ن_قش:"
 
-#: ../thunar/thunar-standard-view.c:2206
+#: ../thunar/thunar-standard-view.c:2189
 msgid "Examples:"
+msgstr ""
+
+#: ../thunar/thunar-standard-view.c:2198
+msgid "C_ase sensitive"
 msgstr ""
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: ../thunar/thunar-standard-view.c:2574
+#: ../thunar/thunar-standard-view.c:2567
 msgid "Invalid filename provided by XDS drag site"
 msgstr "غلط فائل نام فراہم کردہ از  XDS ڈریگ سائٹ"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:2764
+#: ../thunar/thunar-standard-view.c:2757
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "یو آر ایل \"%s\" کے لیے ربط بنانے میں ناکامی"
 
-#: ../thunar/thunar-standard-view.c:3213 ../thunar/thunar-window.c:3320
+#: ../thunar/thunar-standard-view.c:3146 ../thunar/thunar-window.c:3344
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "ڈائریکٹری \"%s\" کھولنے میں ناکامی"
@@ -2682,384 +2795,375 @@ msgstr "%A بوقت %X"
 msgid "%x at %X"
 msgstr "%x بوقت %X"
 
-#: ../thunar/thunar-window.c:382
+#: ../thunar/thunar-window.c:395
 msgid "_File"
 msgstr "_فائل"
 
-#: ../thunar/thunar-window.c:383
+#: ../thunar/thunar-window.c:396
 msgid "New _Tab"
 msgstr ""
 
-#: ../thunar/thunar-window.c:383
+#: ../thunar/thunar-window.c:396
 msgid "Open a new tab for the displayed location"
 msgstr ""
 
-#: ../thunar/thunar-window.c:384
+#: ../thunar/thunar-window.c:397
 msgid "New _Window"
 msgstr ""
 
-#: ../thunar/thunar-window.c:384
+#: ../thunar/thunar-window.c:397
 msgid "Open a new Thunar window for the displayed location"
 msgstr "تھنر کی نئی ونڈو کھولیں"
 
-#: ../thunar/thunar-window.c:385
+#: ../thunar/thunar-window.c:398
 msgid "Detac_h Tab"
 msgstr ""
 
-#: ../thunar/thunar-window.c:385
+#: ../thunar/thunar-window.c:398
 msgid "Open current folder in a new window"
 msgstr ""
 
-#: ../thunar/thunar-window.c:386
+#: ../thunar/thunar-window.c:399
 msgid "C_lose Tab"
 msgstr ""
 
-#: ../thunar/thunar-window.c:386
+#: ../thunar/thunar-window.c:399
 msgid "Close this folder"
 msgstr ""
 
-#: ../thunar/thunar-window.c:387
+#: ../thunar/thunar-window.c:400
 msgid "_Close Window"
 msgstr ""
 
-#: ../thunar/thunar-window.c:387
+#: ../thunar/thunar-window.c:400
 msgid "Close this window"
 msgstr "اس ونڈو کو بند کریں"
 
-#: ../thunar/thunar-window.c:388
+#: ../thunar/thunar-window.c:401
 msgid "Close _All Windows"
 msgstr "ت_مام ونڈوز بند کریں"
 
-#: ../thunar/thunar-window.c:388
+#: ../thunar/thunar-window.c:401
 msgid "Close all Thunar windows"
 msgstr "تھنر کی کھلی ہوئی تمام ونڈوز بند کریں"
 
-#: ../thunar/thunar-window.c:390
+#: ../thunar/thunar-window.c:403
 msgid "_Edit"
 msgstr "_تدوین"
 
-#: ../thunar/thunar-window.c:391
+#: ../thunar/thunar-window.c:404
 msgid "Pr_eferences..."
 msgstr "تر_جیحات"
 
-#: ../thunar/thunar-window.c:391
+#: ../thunar/thunar-window.c:404
 msgid "Edit Thunars Preferences"
 msgstr "تھنر کی ترجیحات متعین کریں"
 
-#: ../thunar/thunar-window.c:393
+#: ../thunar/thunar-window.c:406
 msgid "_View"
 msgstr "_منظر"
 
-#: ../thunar/thunar-window.c:394
+#: ../thunar/thunar-window.c:407
 msgid "_Reload"
 msgstr "_پھر تازہ"
 
-#: ../thunar/thunar-window.c:396
+#: ../thunar/thunar-window.c:409
 msgid "Spl_it View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:396
+#: ../thunar/thunar-window.c:409
 msgid "Open/Close Split View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:397
+#: ../thunar/thunar-window.c:410
 msgid "_Location Selector"
 msgstr "م_قام منتخب کار"
 
-#: ../thunar/thunar-window.c:398
+#: ../thunar/thunar-window.c:411
 msgid "_Pathbar Style"
 msgstr "_پاتھ پٹی انداز"
 
-#: ../thunar/thunar-window.c:398
+#: ../thunar/thunar-window.c:411
 msgid "Modern approach with buttons that correspond to folders"
 msgstr "فولڈروں سے متصل بٹنوں کی ماڈرن اپروج"
 
-#: ../thunar/thunar-window.c:399
+#: ../thunar/thunar-window.c:412
 msgid "_Toolbar Style"
 msgstr "او_زار پٹی انداز"
 
-#: ../thunar/thunar-window.c:399
+#: ../thunar/thunar-window.c:412
 msgid "Traditional approach with location bar and navigation buttons"
 msgstr "مقام پٹی اور نیویگیشن بٹنوں کے ساتھ روایتی اپروج"
 
-#: ../thunar/thunar-window.c:400
+#: ../thunar/thunar-window.c:413
 msgid "_Side Pane"
 msgstr "_بغلی پٹی"
 
-#: ../thunar/thunar-window.c:401
+#: ../thunar/thunar-window.c:414
 msgid "_Shortcuts"
 msgstr "شار_ٹ کٹس"
 
-#: ../thunar/thunar-window.c:401
+#: ../thunar/thunar-window.c:414
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "شارٹ کٹس پینل کا منظر منعکس کریں"
 
-#: ../thunar/thunar-window.c:402
+#: ../thunar/thunar-window.c:415
 msgid "_Tree"
 msgstr "_شجری"
 
-#: ../thunar/thunar-window.c:402
+#: ../thunar/thunar-window.c:415
 msgid "Toggles the visibility of the tree pane"
 msgstr "شجری پینل کا منظر منعکس کریں"
 
-#: ../thunar/thunar-window.c:404
+#: ../thunar/thunar-window.c:417
 msgid "St_atusbar"
 msgstr "حال_ت پٹی"
 
-#: ../thunar/thunar-window.c:404
+#: ../thunar/thunar-window.c:417
 msgid "Change the visibility of this window's statusbar"
 msgstr "اس ونڈو کی حالت پٹی کے منظر کو تبدیل کریں"
 
-#: ../thunar/thunar-window.c:405
+#: ../thunar/thunar-window.c:418
 msgid "_Menubar"
 msgstr ""
 
-#: ../thunar/thunar-window.c:405
+#: ../thunar/thunar-window.c:418
 msgid "Change the visibility of this window's menubar"
 msgstr ""
 
-#: ../thunar/thunar-window.c:406
+#: ../thunar/thunar-window.c:419
 msgid "Show _Hidden Files"
 msgstr "_پوشیدہ فائلیں ظاہر کریں"
 
-#: ../thunar/thunar-window.c:406
+#: ../thunar/thunar-window.c:419
 msgid "Toggles the display of hidden files in the current window"
 msgstr "مخفی فائلوں کے منظر کو اس فولڈر میں منعکس کریں"
 
-#: ../thunar/thunar-window.c:407
+#: ../thunar/thunar-window.c:420
 msgid "Zoom I_n"
 msgstr "ن_زدیک"
 
-#: ../thunar/thunar-window.c:407
+#: ../thunar/thunar-window.c:420
 msgid "Show the contents in more detail"
 msgstr "فولڈر کا مواد مزید تفصیل سے دیکھیں"
 
-#: ../thunar/thunar-window.c:408
+#: ../thunar/thunar-window.c:423
 msgid "Zoom _Out"
 msgstr "د_ور"
 
-#: ../thunar/thunar-window.c:408
+#: ../thunar/thunar-window.c:423
 msgid "Show the contents in less detail"
 msgstr "فولڈر کا مواد کم تفصیل میں دیکھیں"
 
-#: ../thunar/thunar-window.c:409
+#: ../thunar/thunar-window.c:425
 msgid "Normal Si_ze"
 msgstr "_سادہ حجم"
 
-#: ../thunar/thunar-window.c:409
+#: ../thunar/thunar-window.c:425
 msgid "Show the contents at the normal size"
 msgstr "فولڈر کا مواد سادہ حجم میں دیکھیں"
 
-#: ../thunar/thunar-window.c:410
+#: ../thunar/thunar-window.c:427
 msgid "Clear Saved _Folder View Settings"
 msgstr ""
 
-#: ../thunar/thunar-window.c:410
+#: ../thunar/thunar-window.c:427
 msgid "Delete saved view settings for this folder"
 msgstr ""
 
-#: ../thunar/thunar-window.c:411
+#: ../thunar/thunar-window.c:428
 msgid "_Icon View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:411
+#: ../thunar/thunar-window.c:428
 msgid "Display folder content in an icon view"
 msgstr "فولڈر کا مواد آئکن منظر میں دکھائیں"
 
-#: ../thunar/thunar-window.c:412
+#: ../thunar/thunar-window.c:429
 msgid "_List View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:412
+#: ../thunar/thunar-window.c:429
 msgid "Display folder content in a detailed list view"
 msgstr "فولڈر کا مواد تفصیلی فہرست میں دکھائیں"
 
-#: ../thunar/thunar-window.c:413
+#: ../thunar/thunar-window.c:430
 msgid "_Compact View"
 msgstr ""
 
-#: ../thunar/thunar-window.c:413
+#: ../thunar/thunar-window.c:430
 msgid "Display folder content in a compact list view"
 msgstr "فولڈر کا مواد مختصر فہرست میں دکھائیں"
 
-#: ../thunar/thunar-window.c:415
+#: ../thunar/thunar-window.c:432
 msgid "_Go"
 msgstr "منتق_ل"
 
-#: ../thunar/thunar-window.c:417
-msgid "Go to the computer folder"
-msgstr ""
-
-#: ../thunar/thunar-window.c:418
+#: ../thunar/thunar-window.c:434
 msgid "_Home"
 msgstr "_گھر"
 
-#: ../thunar/thunar-window.c:418
+#: ../thunar/thunar-window.c:434
 msgid "Go to the home folder"
 msgstr "مرکزی فولڈر میں جائیں"
 
-#: ../thunar/thunar-window.c:419
+#: ../thunar/thunar-window.c:435
 msgid "Desktop"
 msgstr "ڈیسک ٹاپ"
 
-#: ../thunar/thunar-window.c:419
+#: ../thunar/thunar-window.c:435
 msgid "Go to the desktop folder"
 msgstr "ڈیسک ٹاپ فولڈر میں جائیں"
 
-#: ../thunar/thunar-window.c:420
+#: ../thunar/thunar-window.c:436
 msgid ""
 "Browse all local and remote disks and folders accessible from this computer"
 msgstr ""
 
-#: ../thunar/thunar-window.c:421
+#: ../thunar/thunar-window.c:437
 msgid "T_rash"
 msgstr "_ردی"
 
-#: ../thunar/thunar-window.c:421
+#: ../thunar/thunar-window.c:437
 msgid "Display the contents of the trash can"
 msgstr "ردی کا مواد دکھائیں"
 
-#: ../thunar/thunar-window.c:422
+#: ../thunar/thunar-window.c:438
 msgid "Open _Parent"
 msgstr "_آبائی کھولیں"
 
-#: ../thunar/thunar-window.c:422
+#: ../thunar/thunar-window.c:438
 msgid "Open the parent folder"
 msgstr "آبائی فولڈر کھولیں"
 
-#: ../thunar/thunar-window.c:423
+#: ../thunar/thunar-window.c:439
 msgid "_Open Location..."
 msgstr "م_قام کھولیں..."
 
-#: ../thunar/thunar-window.c:423
+#: ../thunar/thunar-window.c:439
 msgid "Specify a location to open"
 msgstr "کھولنے کے لیے مقام متعین کریں"
 
-#: ../thunar/thunar-window.c:425
+#: ../thunar/thunar-window.c:441
 msgid "T_emplates"
 msgstr "_ٹیمپلیٹس"
 
-#: ../thunar/thunar-window.c:425
+#: ../thunar/thunar-window.c:441
 msgid "Go to the templates folder"
 msgstr "ٹیمپلیٹس کے فولڈر میں جائیں"
 
-#: ../thunar/thunar-window.c:426
+#: ../thunar/thunar-window.c:442
 msgid "B_rowse Network"
 msgstr ""
 
-#: ../thunar/thunar-window.c:429
+#: ../thunar/thunar-window.c:445
 msgid "_Contents"
 msgstr "م_واد"
 
-#: ../thunar/thunar-window.c:429
+#: ../thunar/thunar-window.c:445
 msgid "Display Thunar user manual"
 msgstr "تھنر صارف مینول کھولیں"
 
-#: ../thunar/thunar-window.c:430
+#: ../thunar/thunar-window.c:446
 msgid "Display information about Thunar"
 msgstr "تھنر کے بارے میں معلومات"
 
-#: ../thunar/thunar-window.c:431
+#: ../thunar/thunar-window.c:447
 msgid "Back"
 msgstr "پیچھے"
 
-#: ../thunar/thunar-window.c:431
+#: ../thunar/thunar-window.c:447
 msgid "Go to the previous visited folder"
 msgstr "سابقہ دیکھے گئے فولڈ میں جائیں"
 
-#: ../thunar/thunar-window.c:433
+#: ../thunar/thunar-window.c:449
 msgid "Forward"
 msgstr "آگے"
 
-#: ../thunar/thunar-window.c:433
+#: ../thunar/thunar-window.c:449
 msgid "Go to the next visited folder"
 msgstr "اگلے دیکھے گئے فولڈر میں جائیں"
 
-#: ../thunar/thunar-window.c:434
+#: ../thunar/thunar-window.c:450
 msgid "_Previous Tab"
 msgstr ""
 
-#: ../thunar/thunar-window.c:434
+#: ../thunar/thunar-window.c:450
 msgid "Switch to Previous Tab"
 msgstr ""
 
-#: ../thunar/thunar-window.c:435
+#: ../thunar/thunar-window.c:451
 msgid "_Next Tab"
 msgstr ""
 
-#: ../thunar/thunar-window.c:435
+#: ../thunar/thunar-window.c:451
 msgid "Switch to Next Tab"
 msgstr ""
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:774
+#: ../thunar/thunar-window.c:789
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr ""
 
-#: ../thunar/thunar-window.c:2066
+#: ../thunar/thunar-window.c:2107
 msgid "Close tab"
 msgstr ""
 
-#: ../thunar/thunar-window.c:2440
+#: ../thunar/thunar-window.c:2496
 #, c-format
 msgid "Open the location \"%s\""
 msgstr ""
 
-#: ../thunar/thunar-window.c:2586
-#, c-format
-msgid "Failed to launch \"%s\""
-msgstr "\"%s\" کو چلانے میں ناکامی"
-
-#: ../thunar/thunar-window.c:3176
+#: ../thunar/thunar-window.c:3199
 msgid "Failed to open parent folder"
 msgstr "آبائی فولڈر کھولنے میں ناکامی"
 
-#: ../thunar/thunar-window.c:3295
+#: ../thunar/thunar-window.c:3319
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3362
+#: ../thunar/thunar-window.c:3386
 msgid "Failed to browse the computer"
 msgstr ""
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:3402
+#: ../thunar/thunar-window.c:3426
 msgid "About Templates"
 msgstr "ٹیمپلیٹس کی بابت"
 
-#: ../thunar/thunar-window.c:3424
+#: ../thunar/thunar-window.c:3448
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "اس فولڈر کی تمام فائلیں \"دستاویز بنائیں\" کے مینیو میں ظاہر ہوں گی."
 
-#: ../thunar/thunar-window.c:3431
+#: ../thunar/thunar-window.c:3455
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "اگر آپ مستقل طور پر کسی قسم کی دستاویزات بناتے ہیں تو اس کی ایک کاپی اس فولڈر میں ڈال دیں. تھنر اس دستاویز کی انٹری \"دستاویز بنائیں\" کے مینیو میں شامل کردے گا.\n\nپھر آپ یہ انٹری \"دستاویز بنائیں\" کے مینیو سے منتخب کرسکتے ہیں جس پر فوری طور پر یہ دستاویز آپ کے لیے وہیں بنا دی جائے گی."
 
-#: ../thunar/thunar-window.c:3443
+#: ../thunar/thunar-window.c:3467
 msgid "Do _not display this message again"
 msgstr "یہ پیغام _دوبارہ ظاہر مت کریں"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3474
+#: ../thunar/thunar-window.c:3498
 msgid "Failed to open the file system root folder"
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3507
+#: ../thunar/thunar-window.c:3531
 msgid "Failed to display the contents of the trash can"
 msgstr "ردی کا مواد دکھانے میں ناکامی"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3540
+#: ../thunar/thunar-window.c:3564
 msgid "Failed to browse the network"
 msgstr ""
 
-#: ../thunar/thunar-window.c:3644
+#: ../thunar/thunar-window.c:3653
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
