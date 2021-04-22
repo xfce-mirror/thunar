@@ -116,10 +116,6 @@ static void         thunar_details_view_append_menu_items       (ThunarStandardV
 
 
 
-G_LOCK_DEFINE_STATIC (fixed_width_mutex);
-
-
-
 struct _ThunarDetailsViewClass
 {
   ThunarStandardViewClass __parent__;
@@ -1121,8 +1117,6 @@ thunar_details_view_set_fixed_columns (ThunarDetailsView *details_view,
   if (G_UNLIKELY (details_view->fixed_columns == fixed_columns))
     return;
 
-  G_LOCK (fixed_width_mutex);
-
   /* apply the new value */
   details_view->fixed_columns = fixed_columns;
 
@@ -1158,8 +1152,6 @@ thunar_details_view_set_fixed_columns (ThunarDetailsView *details_view,
 
   /* notify listeners */
   g_object_notify (G_OBJECT (details_view), "fixed-columns");
-
-  G_UNLOCK (fixed_width_mutex);
 }
 
 
