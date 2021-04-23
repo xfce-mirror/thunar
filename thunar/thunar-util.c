@@ -399,9 +399,11 @@ thunar_util_humanize_file_time (guint64          file_time,
   GDate        dfile;
   GDate        dnow;
   gint         diff;
+  gboolean     isSimple;
+  gboolean     isShort;
 
   /* check if the file_time is valid */
-  if (G_UNLIKELY (file_time != 0))
+  if (G_UNLIKELY (file_time == 0))
       return g_strdup (_("Unknown"));
 
   ftime = (time_t) file_time;
@@ -409,8 +411,10 @@ thunar_util_humanize_file_time (guint64          file_time,
   /* take a copy of the local file time */
   tfile = *localtime (&ftime);
 
-  /* check which style to use to format the time */
-  if (date_style == THUNAR_DATE_STYLE_SIMPLE || date_style == THUNAR_DATE_STYLE_SHORT)
+  isSimple = thunar_date_style_is_simple (date_style);
+  isShort = thunar_date_style_is_short (date_style);
+
+  if (isSimple || isShort)
     {
       /* setup the dates for the time values */
       g_date_set_time_t (&dfile, (time_t) ftime);
@@ -420,7 +424,7 @@ thunar_util_humanize_file_time (guint64          file_time,
       diff = g_date_get_julian (&dnow) - g_date_get_julian (&dfile);
       if (diff == 0)
         {
-          if (date_style == THUNAR_DATE_STYLE_SIMPLE)
+          if (isSimple)
             {
               /* TRANSLATORS: file was modified less than one day ago */
               return g_strdup (_("Today"));
@@ -433,7 +437,7 @@ thunar_util_humanize_file_time (guint64          file_time,
         }
       else if (diff == 1)
         {
-          if (date_style == THUNAR_DATE_STYLE_SIMPLE)
+          if (isSimple)
             {
               /* TRANSLATORS: file was modified less than two days ago */
               return g_strdup (_("Yesterday"));
@@ -446,22 +450,32 @@ thunar_util_humanize_file_time (guint64          file_time,
         }
       else
         {
-          if (diff > 1 && diff < 7)
+          if (date_style == THUNAR_DATE_STYLE_SIMPLE || date_style == THUNAR_DATE_STYLE_SHORT)
             {
-              /* Days from last week */
-              date_format = (date_style == THUNAR_DATE_STYLE_SIMPLE) ? "%A" : _("%A at %X");
+              if (diff > 1 && diff < 7)
+                {
+                  /* Days from last week */
+                  date_format = (date_style == THUNAR_DATE_STYLE_SIMPLE) ? "%A" : _("%A at %X");
+                }
+              else
+                {
+                  /* Any other date */
+                  date_format = (date_style == THUNAR_DATE_STYLE_SIMPLE) ? "%x" : _("%x at %X");
+                }
+
+              /* format the date string accordingly */
+              return exo_strdup_strftime (date_format, &tfile);
             }
           else
             {
-              /* Any other date */
-              date_format = (date_style == THUNAR_DATE_STYLE_SIMPLE) ? "%x" : _("%x at %X");
+              if (isSimple)
+                date_style -= 1;
+              else
+                date_style -= 2;
             }
-
-          /* format the date string accordingly */
-          return exo_strdup_strftime (date_format, &tfile);
         }
     }
-  else if (date_style == THUNAR_DATE_STYLE_LONG)
+  if (date_style == THUNAR_DATE_STYLE_LONG)
     {
       /* use long, date(1)-like format string */
       return exo_strdup_strftime ("%c", &tfile);
