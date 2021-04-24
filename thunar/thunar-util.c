@@ -399,51 +399,58 @@ thunar_util_humanize_file_time (guint64          file_time,
   GDate        dfile;
   GDate        dnow;
   gint         diff;
+  gboolean     isSimple;
+  gboolean     isShort;
 
   /* check if the file_time is valid */
-  if (G_LIKELY (file_time != 0))
+  if (G_UNLIKELY (file_time == 0))
+      return g_strdup (_("Unknown"));
+
+  ftime = (time_t) file_time;
+
+  /* take a copy of the local file time */
+  tfile = *localtime (&ftime);
+
+  isSimple = thunar_date_style_is_simple (date_style);
+  isShort = thunar_date_style_is_short (date_style);
+
+  if (isSimple || isShort)
     {
-      ftime = (time_t) file_time;
+      /* setup the dates for the time values */
+      g_date_set_time_t (&dfile, (time_t) ftime);
+      g_date_set_time_t (&dnow, time (NULL));
 
-      /* take a copy of the local file time */
-      tfile = *localtime (&ftime);
-
-      /* check which style to use to format the time */
-      if (date_style == THUNAR_DATE_STYLE_SIMPLE || date_style == THUNAR_DATE_STYLE_SHORT)
+      /* determine the difference in days */
+      diff = g_date_get_julian (&dnow) - g_date_get_julian (&dfile);
+      if (diff == 0)
         {
-          /* setup the dates for the time values */
-          g_date_set_time_t (&dfile, (time_t) ftime);
-          g_date_set_time_t (&dnow, time (NULL));
-
-          /* determine the difference in days */
-          diff = g_date_get_julian (&dnow) - g_date_get_julian (&dfile);
-          if (diff == 0)
+          if (isSimple)
             {
-              if (date_style == THUNAR_DATE_STYLE_SIMPLE)
-                {
-                  /* TRANSLATORS: file was modified less than one day ago */
-                  return g_strdup (_("Today"));
-                }
-              else /* if (date_style == THUNAR_DATE_STYLE_SHORT) */
-                {
-                  /* TRANSLATORS: file was modified less than one day ago */
-                  return exo_strdup_strftime (_("Today at %X"), &tfile);
-                }
+              /* TRANSLATORS: file was modified less than one day ago */
+              return g_strdup (_("Today"));
             }
-          else if (diff == 1)
+          else /* if (date_style == THUNAR_DATE_STYLE_SHORT) */
             {
-              if (date_style == THUNAR_DATE_STYLE_SIMPLE)
-                {
-                  /* TRANSLATORS: file was modified less than two days ago */
-                  return g_strdup (_("Yesterday"));
-                }
-              else /* if (date_style == THUNAR_DATE_STYLE_SHORT) */
-                {
-                  /* TRANSLATORS: file was modified less than two days ago */
-                  return exo_strdup_strftime (_("Yesterday at %X"), &tfile);
-                }
+              /* TRANSLATORS: file was modified less than one day ago */
+              return exo_strdup_strftime (_("Today at %X"), &tfile);
             }
-          else
+        }
+      else if (diff == 1)
+        {
+          if (isSimple)
+            {
+              /* TRANSLATORS: file was modified less than two days ago */
+              return g_strdup (_("Yesterday"));
+            }
+          else /* if (date_style == THUNAR_DATE_STYLE_SHORT) */
+            {
+              /* TRANSLATORS: file was modified less than two days ago */
+              return exo_strdup_strftime (_("Yesterday at %X"), &tfile);
+            }
+        }
+      else
+        {
+          if (date_style == THUNAR_DATE_STYLE_SIMPLE || date_style == THUNAR_DATE_STYLE_SHORT)
             {
               if (diff > 1 && diff < 7)
                 {
@@ -459,36 +466,40 @@ thunar_util_humanize_file_time (guint64          file_time,
               /* format the date string accordingly */
               return exo_strdup_strftime (date_format, &tfile);
             }
-        }
-      else if (date_style == THUNAR_DATE_STYLE_LONG)
-        {
-          /* use long, date(1)-like format string */
-          return exo_strdup_strftime ("%c", &tfile);
-        }
-      else if (date_style == THUNAR_DATE_STYLE_YYYYMMDD)
-        {
-          return exo_strdup_strftime ("%Y-%m-%d %H:%M:%S", &tfile);
-        }
-      else if (date_style == THUNAR_DATE_STYLE_MMDDYYYY)
-        {
-          return exo_strdup_strftime ("%m-%d-%Y %H:%M:%S", &tfile);
-        }
-      else if (date_style == THUNAR_DATE_STYLE_DDMMYYYY)
-        {
-          return exo_strdup_strftime ("%d-%m-%Y %H:%M:%S", &tfile);
-        }
-      else /* if (date_style == THUNAR_DATE_STYLE_CUSTOM) */
-        {
-          if (date_custom_style == NULL)
-            return g_strdup ("");
-
-          /* use custom date formatting */
-          return exo_strdup_strftime (date_custom_style, &tfile);
+          else
+            {
+              if (isSimple)
+                date_style -= 1;
+              else
+                date_style -= 2;
+            }
         }
     }
+  if (date_style == THUNAR_DATE_STYLE_LONG)
+    {
+      /* use long, date(1)-like format string */
+      return exo_strdup_strftime ("%c", &tfile);
+    }
+  else if (date_style == THUNAR_DATE_STYLE_YYYYMMDD)
+    {
+      return exo_strdup_strftime ("%Y-%m-%d %H:%M:%S", &tfile);
+    }
+  else if (date_style == THUNAR_DATE_STYLE_MMDDYYYY)
+    {
+      return exo_strdup_strftime ("%m-%d-%Y %H:%M:%S", &tfile);
+    }
+  else if (date_style == THUNAR_DATE_STYLE_DDMMYYYY)
+    {
+      return exo_strdup_strftime ("%d-%m-%Y %H:%M:%S", &tfile);
+    }
+  else /* if (date_style == THUNAR_DATE_STYLE_CUSTOM) */
+    {
+      if (date_custom_style == NULL)
+        return g_strdup ("");
 
-  /* the file_time is invalid */
-  return g_strdup (_("Unknown"));
+      /* use custom date formatting */
+      return exo_strdup_strftime (date_custom_style, &tfile);
+    }
 }
 
 
