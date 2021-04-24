@@ -951,9 +951,6 @@ thunar_details_view_name_resizer (ThunarDetailsView      *details_view)
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
   name_column = details_view->columns[THUNAR_COLUMN_NAME];
-  if (details_view->fixed_columns)
-    return;
-  gtk_tree_view_column_set_fixed_width (name_column, -1);
   gtk_tree_view_column_set_expand (name_column, TRUE);
   gtk_tree_view_column_queue_resize (name_column);
 
@@ -1002,8 +999,7 @@ thunar_details_view_name_size_calc (ThunarDetailsView    *details_view,
   if (width_chars != width_chars_prev)
     {
       g_object_set (G_OBJECT (name_renderer), "width-chars", width_chars, NULL);
-      if (!details_view->fixed_columns
-          && width_chars_prev > (h_size / char_width))
+      if (width_chars_prev > (h_size / char_width))
         gtk_tree_view_column_queue_resize (details_view->columns[THUNAR_COLUMN_NAME]);
     }
 
