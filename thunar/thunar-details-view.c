@@ -999,8 +999,7 @@ thunar_details_view_name_size_calc (ThunarDetailsView    *details_view,
   if (width_chars != width_chars_prev)
     {
       g_object_set (G_OBJECT (name_renderer), "width-chars", width_chars, NULL);
-      if (width_chars_prev > (h_size / char_width))
-        gtk_tree_view_column_queue_resize (details_view->columns[THUNAR_COLUMN_NAME]);
+      gtk_tree_view_column_queue_resize (details_view->columns[THUNAR_COLUMN_NAME]);
     }
 
   return;
