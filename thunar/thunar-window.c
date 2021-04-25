@@ -293,9 +293,6 @@ static void      thunar_window_trash_infobar_clicked           (GtkInfoBar      
                                                                 gint                    response_id,
                                                                 ThunarWindow           *window);
 static void      thunar_window_trash_selection_updated         (ThunarWindow           *window);
-static void      thunar_window_notebook_add_new_tab            (ThunarWindow           *window,
-                                                                ThunarFile             *directory,
-                                                                gboolean                force_switch_to_new_tab);
 
 
 
@@ -2258,7 +2255,7 @@ thunar_window_split_view_is_active (ThunarWindow *window)
 
 
 
-static void
+void
 thunar_window_notebook_add_new_tab (ThunarWindow *window,
                                     ThunarFile   *directory,
                                     gboolean      force_switch_to_new_tab)
