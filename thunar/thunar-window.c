@@ -161,7 +161,7 @@ static void      thunar_window_notebook_select_current_page(ThunarWindow        
 
 static GtkWidget*thunar_window_paned_notebooks_add        (ThunarWindow           *window);
 static void      thunar_window_paned_notebooks_switch     (ThunarWindow           *window);
-static gboolean  thunar_window_paned_notebooks_select     (GtkWidget              *notebook,
+static gboolean  thunar_window_paned_notebooks_select     (GtkWidget              *view,
                                                            GtkDirectionType       *direction,
                                                            ThunarWindow           *window);
 static void      thunar_window_paned_notebooks_indicate_focus (ThunarWindow       *window,
@@ -951,13 +951,13 @@ thunar_window_screen_changed (GtkWidget *widget,
 /**
  * thunar_window_select_files:
  * @window            : a #ThunarWindow instance.
- * @files_to_selected : a list of #GFile<!---->s
+ * @path_list         : a list of #GFile<!---->s
  *
  * Visually selects the files, given by the list
  **/
 static void
 thunar_window_select_files (ThunarWindow *window,
-                            GList        *files_to_selected)
+                            GList        *path_list)
 {
   GList        *thunar_files = NULL;
   ThunarFolder *thunar_folder;
@@ -972,7 +972,7 @@ thunar_window_select_files (ThunarWindow *window,
       g_object_unref (thunar_folder);
     }
 
-  for (GList *lp = files_to_selected; lp != NULL; lp = lp->next)
+  for (GList *lp = path_list; lp != NULL; lp = lp->next)
     thunar_files = g_list_append (thunar_files, thunar_file_get (G_FILE (lp->data), NULL));
   thunar_view_set_selected_files (THUNAR_VIEW (window->view), thunar_files);
   g_list_free_full (thunar_files, g_object_unref);
@@ -4475,7 +4475,6 @@ thunar_window_open_home_clicked   (GtkWidget      *button,
                                    GtkWidget      *data)
 {
   ThunarWindow  *window;
-  ThunarFile    *directory;
   gint           page_num;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (data), FALSE);
