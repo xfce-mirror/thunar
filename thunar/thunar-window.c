@@ -361,6 +361,7 @@ struct _ThunarWindow
   GtkWidget              *location_toolbar_item_back;
   GtkWidget              *location_toolbar_item_forward;
   GtkWidget              *location_toolbar_item_parent;
+  GtkWidget              *location_toolbar_reload;
 
   ThunarLauncher         *launcher;
 
@@ -869,8 +870,13 @@ thunar_window_init (ThunarWindow *window)
   /* add the location bar itself */
   gtk_container_add (GTK_CONTAINER (tool_item), window->location_bar);
 
+  window->location_toolbar_reload = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_RELOAD), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
+
   /* display the toolbar */
   gtk_widget_show_all (window->location_toolbar);
+
+  /* show/hide the reload button for the location-style toolbar */
+  gtk_widget_set_visible (window->location_toolbar_reload, exo_str_is_equal (last_location_bar, g_type_name (THUNAR_TYPE_LOCATION_BUTTONS)));
 
   g_free (last_location_bar);
 
@@ -2884,6 +2890,7 @@ thunar_window_action_pathbar_changed (ThunarWindow *window)
     g_object_set (window->preferences, "last-location-bar", g_type_name (G_TYPE_NONE), NULL);
   else
     g_object_set (window->preferences, "last-location-bar", g_type_name (THUNAR_TYPE_LOCATION_ENTRY), NULL);
+  gtk_widget_set_visible (window->location_toolbar_reload, pathbar_checked);
 }
 
 
@@ -2904,6 +2911,7 @@ thunar_window_action_toolbar_changed (ThunarWindow *window)
     g_object_set (window->preferences, "last-location-bar", g_type_name (G_TYPE_NONE), NULL);
   else
     g_object_set (window->preferences, "last-location-bar", g_type_name (THUNAR_TYPE_LOCATION_BUTTONS), NULL);
+  gtk_widget_set_visible (window->location_toolbar_reload, !toolbar_checked);
 }
 
 
