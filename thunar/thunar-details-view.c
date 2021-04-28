@@ -266,7 +266,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
       /* allocate the tree view column */
       details_view->columns[column] = gtk_tree_view_column_new ();
       g_object_ref_sink (G_OBJECT (details_view->columns[column]));
-      gtk_tree_view_column_set_min_width (details_view->columns[column], 50);
+      gtk_tree_view_column_set_min_width (details_view->columns[column], 20);
       gtk_tree_view_column_set_sort_column_id (details_view->columns[column], column);
       gtk_tree_view_column_set_resizable (details_view->columns[column], TRUE);
       gtk_tree_view_column_set_title (details_view->columns[column], thunar_column_model_get_column_name (details_view->column_model, column));
