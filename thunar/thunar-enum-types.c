@@ -110,6 +110,7 @@ thunar_column_get_type (void)
         { THUNAR_COLUMN_SIZE,          "THUNAR_COLUMN_SIZE",          N_ ("Size"),          },
         { THUNAR_COLUMN_SIZE_IN_BYTES, "THUNAR_COLUMN_SIZE_IN_BYTES", N_ ("Size in Bytes"), },
         { THUNAR_COLUMN_TYPE,          "THUNAR_COLUMN_TYPE",          N_ ("Type"),          },
+        { THUNAR_COLUMN_MARGIN,        "THUNAR_COLUMN_MARGIN",        NULL                  },
         { THUNAR_COLUMN_FILE,          "THUNAR_COLUMN_FILE",          N_ ("File"),          },
         { THUNAR_COLUMN_FILE_NAME,     "THUNAR_COLUMN_FILE_NAME",     N_ ("File Name"),     },
         { 0,                           NULL,                          NULL,                 },
