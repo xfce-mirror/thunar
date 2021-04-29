@@ -72,7 +72,6 @@ static void         thunar_location_bar_set_current_directory      (ThunarNaviga
                                                                     ThunarFile           *current_directory);
 static GtkWidget   *thunar_location_bar_install_widget             (ThunarLocationBar    *bar,
                                                                     GType                 type);
-static void         thunar_location_bar_reload_requested           (ThunarLocationBar    *bar);
 static void         thunar_location_bar_settings_changed           (ThunarLocationBar    *bar);
 static void         thunar_location_bar_on_enry_edit_done          (ThunarLocationEntry  *entry,
                                                                     ThunarLocationBar    *bar);
@@ -107,20 +106,6 @@ thunar_location_bar_class_init (ThunarLocationBarClass *klass)
   g_object_class_override_property (gobject_class, PROP_CURRENT_DIRECTORY, "current-directory");
 
   /* install signals */
-
-  /**
-   * ThunarLocationBar::reload-requested:
-   * @location_bar : a #ThunarLocationBar.
-   *
-   * Emitted by @location_bar whenever the user clicked a "reload" button
-   **/
-  g_signal_new ("reload-requested",
-                G_TYPE_FROM_CLASS (klass),
-                G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-                G_STRUCT_OFFSET (ThunarLocationBarClass, reload_requested),
-                NULL, NULL,
-                NULL,
-                G_TYPE_NONE, 0);
 
   /**
    * ThunarLocationBar::entry-done:
@@ -252,14 +237,6 @@ thunar_location_bar_set_current_directory (ThunarNavigator      *navigator,
 
 
 
-static void
-thunar_location_bar_reload_requested (ThunarLocationBar *bar)
-{
-  g_signal_emit_by_name (bar, "reload-requested");
-}
-
-
-
 static GtkWidget *
 thunar_location_bar_install_widget (ThunarLocationBar    *bar,
                                     GType                 type)
@@ -276,7 +253,6 @@ thunar_location_bar_install_widget (ThunarLocationBar    *bar,
         {
           bar->locationEntry = gtk_widget_new (THUNAR_TYPE_LOCATION_ENTRY, "current-directory", NULL, NULL);
           g_object_ref (bar->locationEntry);
-          g_signal_connect_swapped (bar->locationEntry, "reload-requested", G_CALLBACK (thunar_location_bar_reload_requested), bar);
           g_signal_connect_swapped (bar->locationEntry, "change-directory", G_CALLBACK (thunar_navigator_change_directory), THUNAR_NAVIGATOR (bar));
           g_signal_connect_swapped (bar->locationEntry, "open-new-tab", G_CALLBACK (thunar_navigator_open_new_tab), THUNAR_NAVIGATOR (bar));
         }
