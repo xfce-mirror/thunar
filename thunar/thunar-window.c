@@ -169,7 +169,6 @@ static void      thunar_window_paned_notebooks_indicate_focus (ThunarWindow     
 static gboolean  thunar_window_split_view_is_active       (ThunarWindow           *window);
 
 static void      thunar_window_update_location_bar_visible(ThunarWindow           *window);
-static void      thunar_window_handle_reload_request      (ThunarWindow           *window);
 static void      thunar_window_install_sidepane           (ThunarWindow           *window,
                                                            GType                   type);
 static void      thunar_window_start_open_location        (ThunarWindow           *window,
@@ -361,6 +360,7 @@ struct _ThunarWindow
   GtkWidget              *location_toolbar_item_back;
   GtkWidget              *location_toolbar_item_forward;
   GtkWidget              *location_toolbar_item_parent;
+  GtkWidget              *location_toolbar_reload;
 
   ThunarLauncher         *launcher;
 
@@ -836,7 +836,6 @@ thunar_window_init (ThunarWindow *window)
   g_object_bind_property (G_OBJECT (window), "current-directory", G_OBJECT (window->location_bar), "current-directory", G_BINDING_SYNC_CREATE);
   g_signal_connect_swapped (G_OBJECT (window->location_bar), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
   g_signal_connect_swapped (G_OBJECT (window->location_bar), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
-  g_signal_connect_swapped (G_OBJECT (window->location_bar), "reload-requested", G_CALLBACK (thunar_window_handle_reload_request), window);
   g_signal_connect_swapped (G_OBJECT (window->location_bar), "entry-done", G_CALLBACK (thunar_window_update_location_bar_visible), window);
 
   /* setup the toolbar for the location bar */
@@ -868,6 +867,8 @@ thunar_window_init (ThunarWindow *window)
 
   /* add the location bar itself */
   gtk_container_add (GTK_CONTAINER (tool_item), window->location_bar);
+
+  window->location_toolbar_reload = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_RELOAD), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
 
   /* display the toolbar */
   gtk_widget_show_all (window->location_toolbar);
@@ -2383,17 +2384,6 @@ thunar_window_update_window_icon (ThunarWindow *window)
     }
 
   gtk_window_set_icon_name (GTK_WINDOW (window), icon_name);
-}
-
-
-
-static void
-thunar_window_handle_reload_request (ThunarWindow *window)
-{
-  gboolean result;
-
-  /* force the view to reload */
-  g_signal_emit (G_OBJECT (window), window_signals[RELOAD], 0, TRUE, &result);
 }
 
 
