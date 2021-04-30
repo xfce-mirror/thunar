@@ -38,11 +38,20 @@
 
 
 
-static void thunar_preferences_dialog_finalize   (GObject                      *object);
-static void thunar_preferences_dialog_response   (GtkDialog                    *dialog,
-                                                  gint                          response);
-static void thunar_preferences_dialog_configure  (ThunarPreferencesDialog     *dialog);
-
+static void thunar_preferences_dialog_finalize        (GObject                 *object);
+static void thunar_preferences_dialog_response        (GtkDialog               *dialog,
+                                                       gint                     response);
+static void thunar_preferences_dialog_configure       (ThunarPreferencesDialog *dialog);
+static void thunar_preferences_dialog_date_style      (GtkWidget               *widget,
+                                                       gpointer                 user_data);
+static void thunar_preferences_dialog_get_property    (GObject                 *object,
+                                                       guint                    prop_id,
+                                                       GValue                  *value,
+                                                       GParamSpec              *pspec);
+static void thunar_preferences_dialog_set_property    (GObject                 *object,
+                                                       guint                    prop_id,
+                                                       const GValue            *value,
+                                                       GParamSpec              *pspec);
 
 
 struct _ThunarPreferencesDialogClass
@@ -54,6 +63,11 @@ struct _ThunarPreferencesDialog
 {
   XfceTitledDialog   __parent__;
   ThunarPreferences *preferences;
+
+  GtkWidget         *combo;
+  GtkWidget         *simple_button;
+  GtkWidget         *short_button;
+  ThunarDateStyle    date_style;
 };
 
 
@@ -223,6 +237,18 @@ transform_parallel_copy_index_to_mode (const GValue *src_value,
 
 
 
+/* Property identifiers */
+enum
+{
+    PROP_0,
+    PROP_DATE_STYLE,
+    N_PROPERTIES,
+} ThunarPreferenceDialogProperty;
+
+static GParamSpec *obj_properties[N_PROPERTIES] = { NULL, };
+
+
+
 static void
 thunar_preferences_dialog_class_init (ThunarPreferencesDialogClass *klass)
 {
@@ -234,6 +260,65 @@ thunar_preferences_dialog_class_init (ThunarPreferencesDialogClass *klass)
 
   gtkdialog_class = GTK_DIALOG_CLASS (klass);
   gtkdialog_class->response = thunar_preferences_dialog_response;
+
+  gobject_class->get_property = thunar_preferences_dialog_get_property;
+  gobject_class->set_property = thunar_preferences_dialog_set_property;
+
+  obj_properties[PROP_DATE_STYLE] =
+      g_param_spec_enum ("date-style",
+                         "Date-Style",
+                         "The displayed date style.",
+                         THUNAR_TYPE_DATE_STYLE,
+                         THUNAR_DATE_STYLE_SIMPLE,
+                         EXO_PARAM_READWRITE);
+
+  g_object_class_install_properties (gobject_class, N_PROPERTIES, obj_properties);
+}
+
+
+
+static void
+thunar_preferences_dialog_set_property (GObject       *object,
+                                        guint          prop_id,
+                                        const GValue  *value,
+                                        GParamSpec    *pspec)
+{
+  ThunarPreferencesDialog *dialog = THUNAR_PREFERENCES_DIALOG (object);
+  GType t = G_VALUE_TYPE(value);
+
+  switch (prop_id)
+    {
+      case PROP_DATE_STYLE:
+        dialog->date_style = g_value_get_enum (value);
+        break;
+
+      default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+        break;
+    }
+}
+
+
+
+static void
+thunar_preferences_dialog_get_property (GObject    *object,
+                                        guint       prop_id,
+                                        GValue     *value,
+                                        GParamSpec *pspec)
+{
+  ThunarPreferencesDialog *dialog = THUNAR_PREFERENCES_DIALOG (object);
+  GType t = G_VALUE_TYPE(value);
+
+  switch (prop_id)
+    {
+    case PROP_DATE_STYLE:
+      g_value_set_enum (value, dialog->date_style);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
 }
 
 
@@ -251,6 +336,45 @@ on_date_format_changed (GtkWidget *combo,
     gtk_widget_set_visible (customFormat, TRUE);
   else
     gtk_widget_set_visible (customFormat, FALSE);
+}
+
+
+
+static void thunar_preferences_dialog_date_style (GtkWidget       *widget,
+                                                  gpointer         user_data)
+{
+  GValue val = G_VALUE_INIT;
+  g_value_init (&val, G_TYPE_ENUM);
+
+  ThunarPreferencesDialog *dialog = user_data;
+  int new_value = gtk_combo_box_get_active (GTK_COMBO_BOX (dialog->combo));
+  if (new_value >= 2)
+    {
+      new_value = 3 * (new_value - 1);
+      if (dialog->simple_button == widget)
+        {
+          if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
+            {
+              gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->short_button), FALSE);
+              new_value += 1;
+            }
+        }
+      else if (dialog->short_button == widget)
+        {
+          if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))
+            {
+              gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->simple_button), FALSE);
+              new_value += 2;
+            }
+        }
+    }
+  else
+    {
+      new_value += 1;
+    }
+
+  g_value_set_enum (&val, new_value);
+  g_object_set_property (G_OBJECT (dialog), "date-style", &val);
 }
 
 
@@ -483,16 +607,19 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_show (label);
 
   combo = gtk_combo_box_text_new ();
-  for (date_style = THUNAR_DATE_STYLE_SIMPLE; date_style <= THUNAR_DATE_STYLE_DDMMYYYY; ++date_style)
+  dialog->combo = combo;
+  for (date_style = THUNAR_DATE_STYLE_SIMPLE; date_style <= THUNAR_DATE_STYLE_DDMMYYYY_SHORT; date_style += (date_style < 3 ? 1 : 3))
     {
       date = thunar_util_humanize_file_time (time (NULL), date_style, NULL);
       gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), date);
       g_free (date);
     }
+//  thunar_preferences_dialog_date_style (dialog->combo, dialog);
+  g_signal_connect (G_OBJECT (dialog->combo), "changed", G_CALLBACK (thunar_preferences_dialog_date_style), dialog);
 
   /* TRANSLATORS: custom date format */
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Custom"));
-  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-date-style", G_OBJECT (combo), "active");
+  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-date-style", G_OBJECT (dialog), "date-style");
   gtk_widget_set_hexpand (combo, TRUE);
   gtk_grid_attach (GTK_GRID (grid), combo, 1, 0, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
@@ -515,6 +642,23 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_grid_attach (GTK_GRID (grid), entry, 1, 1, 1, 1);
   if (gtk_combo_box_get_active (GTK_COMBO_BOX (combo)) == THUNAR_DATE_STYLE_CUSTOM)
     gtk_widget_set_visible (entry, TRUE);
+
+  hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
+  gtk_box_set_homogeneous (GTK_BOX (hbox), TRUE);
+  gtk_grid_attach (GTK_GRID (grid), hbox, 1, 2, 1, 1);
+  gtk_widget_show (hbox);
+
+  button = gtk_check_button_new_with_label ("Simple");
+  gtk_widget_show (button);
+  gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
+  dialog->simple_button = button;
+  g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (thunar_preferences_dialog_date_style), dialog);
+
+  button = gtk_check_button_new_with_label ("Short");
+  gtk_widget_show (button);
+  gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
+  dialog->short_button = button;
+  g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (thunar_preferences_dialog_date_style), dialog);
 
   /*
      Side Pane
