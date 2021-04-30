@@ -1512,8 +1512,29 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
     }
   else
     {
-      /* try to open the file or directory */
-      thunar_file_launch (target_file, screen, startup_id, &error);
+      if (thunar_file_is_directory (file))
+        {
+          thunar_application_open_window (application, file, screen, startup_id, FALSE);
+        }
+      else
+        {
+          /* Note that for security reasons we do not execute files passed via command line */
+          /* Lets rather open the containing directory and select the file */
+          ThunarFile *parent = thunar_file_get_parent (file, NULL);
+
+          if (G_LIKELY (parent != NULL))
+            {
+              GList* files = NULL;
+              GtkWidget *window;
+
+              window = thunar_application_open_window (application, parent, screen, startup_id, FALSE);
+              g_object_unref (parent);
+
+              files = g_list_append (files, thunar_file_get_file (file));
+              thunar_window_select_files (THUNAR_WINDOW (window), files);
+              g_list_free (files);
+            }
+        }
 
       /* remove the file from the list */
       application->files_to_launch = g_list_delete_link (application->files_to_launch,
