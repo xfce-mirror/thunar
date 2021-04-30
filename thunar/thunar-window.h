@@ -130,6 +130,8 @@ void                      thunar_window_redirect_menu_tooltips_to_statusbar (Thu
                                                                              GtkMenu             *menu);
 const XfceGtkActionEntry* thunar_window_get_action_entry                    (ThunarWindow        *window,
                                                                              ThunarWindowAction   action);
+ void                     thunar_window_select_files                        (ThunarWindow         *window,
+                                                                             GList                *path_list);
 G_END_DECLS;
 
 #endif /* !__THUNAR_WINDOW_H__ */

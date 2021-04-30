@@ -261,8 +261,6 @@ static void      thunar_window_update_go_menu             (ThunarWindow         
                                                            GtkWidget              *menu);
 static void      thunar_window_update_help_menu           (ThunarWindow           *window,
                                                            GtkWidget              *menu);
-static void      thunar_window_select_files               (ThunarWindow           *window,
-                                                           GList                  *path_list);
 static void      thunar_window_binding_create             (ThunarWindow           *window,
                                                            gpointer                src_object,
                                                            const gchar            *src_prop,
@@ -944,7 +942,7 @@ thunar_window_screen_changed (GtkWidget *widget,
  *
  * Visually selects the files, given by the list
  **/
-static void
+void
 thunar_window_select_files (ThunarWindow *window,
                             GList        *files_to_selected)
 {
