@@ -3948,13 +3948,6 @@ get_icon_name_task (GTask              *task,
                     ThunarFileIconArgs *state,
                     GCancellable       *cancellable)
 {
-  GError *error = NULL;
-
-  if (THUNAR_IS_FILE (file) == FALSE)
-    {
-      //g_error_new;
-      return;
-    }
   g_task_return_pointer (task, (gpointer) thunar_file_get_icon_name (file, state->state, state->theme), NULL);
 }
 
@@ -3982,7 +3975,7 @@ thunar_file_get_icon_name_async (ThunarFile          *file,
   g_task_set_task_data (task, state, g_free);
   g_task_set_priority (task, io_priority);
 
-  g_task_run_in_thread (task, get_icon_name_task);
+  g_task_run_in_thread (task, (GTaskThreadFunc) get_icon_name_task);
   g_object_unref (task);
 }
 
@@ -3994,7 +3987,7 @@ thunar_file_get_icon_name_finish (ThunarFile   *file,
                                   GAsyncResult *res,
                                   GError      **error)
 {
-  _thunar_return_val_if_fail (g_task_is_valid (res, file), error);
+  _thunar_return_val_if_fail (g_task_is_valid (res, file), NULL);
 
   return g_task_propagate_pointer (G_TASK (res), error);
 }

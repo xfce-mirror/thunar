@@ -1064,29 +1064,14 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
 
 
 
-/* todo : add this to thunar-gio-ext.c */
-void
-return_to_callback (GObject            *source_object,
-                    gpointer            return_pointer,
-                    GAsyncReadyCallback callback,
-                    gpointer            callback_data,
-                    GDestroyNotify      result_destroy)
-{
-  GTask *task;
-  task = g_task_new (source_object, NULL, callback, callback_data);
-  g_task_return_pointer (task, return_pointer, result_destroy);
-}
-
-
-
 /**
  * thunar_icon_factory_load_file_icon_async
- * @factory    : a #ThunarIconFactory instance.
- * @file       : a #ThunarFile.
- * @icon_state : the desired icon state.
- * @icon_size  : the desired icon size.
+ * @factory     : a #ThunarIconFactory instance.
+ * @file        : a #ThunarFile.
+ * @icon_state  : the desired icon state.
+ * @icon_size   : the desired icon size.
  * cancellable  : (nullable)
- * callback    :
+ * callback     : a #GAsyncReadyCallback.
  *
  * An asynchronous wrapper for the non-async version.
  * Unlike other async operations, it has an early return:
@@ -1310,7 +1295,7 @@ load_file_icon_success (GdkPixbuf    *icon,
 
   set_icon_store (icon, args);
   g_object_unref (args->file);
-  return_to_callback (G_OBJECT (args->factory), icon, args->callback, args->user_data, g_object_unref);
+  thunar_g_task_return_pointer_to_callback (G_OBJECT (args->factory), icon, args->callback, args->user_data, g_object_unref);
 }
 
 static void
