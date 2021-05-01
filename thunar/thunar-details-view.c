@@ -969,6 +969,10 @@ thunar_details_view_name_size_calc (ThunarDetailsView    *details_view,
 
   _thunar_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
+  /* ignore size changes when the view is still loading */
+  if (G_UNLIKELY (thunar_view_get_loading (THUNAR_VIEW (details_view))))
+    return;
+
   name_renderer = THUNAR_STANDARD_VIEW (details_view)->name_renderer;
   icon_renderer = THUNAR_STANDARD_VIEW (details_view)->icon_renderer;
 
@@ -999,7 +1003,8 @@ thunar_details_view_name_size_calc (ThunarDetailsView    *details_view,
   if (width_chars != width_chars_prev)
     {
       g_object_set (G_OBJECT (name_renderer), "width-chars", width_chars, NULL);
-      gtk_tree_view_column_queue_resize (details_view->columns[THUNAR_COLUMN_NAME]);
+      if (width_chars_prev > (h_size / char_width))
+        gtk_tree_view_column_queue_resize (details_view->columns[THUNAR_COLUMN_NAME]);
     }
 
   return;
