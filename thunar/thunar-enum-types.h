@@ -87,6 +87,7 @@ GType thunar_date_style_get_type (void) G_GNUC_CONST;
  * @THUNAR_COLUMN_SIZE          : file size.
  * @THUNAR_COLUMN_SIZE_IN_BYTES : file size in bytes.
  * @THUNAR_COLUMN_TYPE          : file type (e.g. 'plain text document').
+ * @THUNAR_COLUMN_MARGIN        : prevent last valid column from resizing.
  * @THUNAR_COLUMN_FILE          : #ThunarFile object.
  * @THUNAR_COLUMN_FILE_NAME     : real file name.
  *
@@ -109,6 +110,9 @@ typedef enum
   THUNAR_COLUMN_SIZE_IN_BYTES,
   THUNAR_COLUMN_TYPE,
 
+  /* special visible column */
+  THUNAR_COLUMN_MARGIN,
+
   /* special internal columns */
   THUNAR_COLUMN_FILE,
   THUNAR_COLUMN_FILE_NAME,
@@ -117,7 +121,7 @@ typedef enum
   THUNAR_N_COLUMNS,
 
   /* number of visible columns */
-  THUNAR_N_VISIBLE_COLUMNS = THUNAR_COLUMN_FILE,
+  THUNAR_N_VISIBLE_COLUMNS = THUNAR_COLUMN_FILE
 } ThunarColumn;
 
 GType        thunar_column_get_type          (void)                      G_GNUC_CONST;
