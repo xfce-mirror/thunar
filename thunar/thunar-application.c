@@ -1316,7 +1316,7 @@ thunar_application_open_window (ThunarApplication *application,
           list = g_list_last (list);
 
           if (directory != NULL)
-              thunar_window_notebook_open_new_tab (THUNAR_WINDOW (list->data), directory);
+              thunar_window_notebook_add_new_tab (THUNAR_WINDOW (list->data), directory, TRUE);
           
           /* bring the window to front */
           gtk_window_present (list->data);
