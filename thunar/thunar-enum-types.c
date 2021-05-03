@@ -76,6 +76,7 @@ thunar_date_style_get_type (void)
         { THUNAR_DATE_STYLE_MMDDYYYY, "THUNAR_DATE_STYLE_MMDDYYYY", "mmddyyyy", },
         { THUNAR_DATE_STYLE_DDMMYYYY, "THUNAR_DATE_STYLE_DDMMYYYY", "ddmmyyyy", },
         { THUNAR_DATE_STYLE_CUSTOM,   "THUNAR_DATE_STYLE_CUSTOM",   "custom",   },
+        { THUNAR_DATE_STYLE_CUSTOM_SIMPLE, "THUNAR_DATE_STYLE_CUSTOM_SIMPLE", "custom_simple",   },
         /* to stay backward compartible*/
         { THUNAR_DATE_STYLE_YYYYMMDD, "THUNAR_DATE_STYLE_ISO",      "iso",      },
         { 0,                          NULL,                         NULL,       },
