@@ -247,7 +247,7 @@ on_date_format_changed (GtkWidget *combo,
   _thunar_return_if_fail (GTK_IS_COMBO_BOX (combobox));
   _thunar_return_if_fail (GTK_IS_WIDGET (customFormat));
 
-  if (gtk_combo_box_get_active (combobox) == THUNAR_DATE_STYLE_CUSTOM)
+  if (gtk_combo_box_get_active (combobox) == THUNAR_DATE_STYLE_CUSTOM || gtk_combo_box_get_active (combobox) == THUNAR_DATE_STYLE_CUSTOM_SIMPLE)
     gtk_widget_set_visible (customFormat, TRUE);
   else
     gtk_widget_set_visible (customFormat, FALSE);
@@ -492,6 +492,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   /* TRANSLATORS: custom date format */
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Custom"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Custom Simple"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-date-style", G_OBJECT (combo), "active");
   gtk_widget_set_hexpand (combo, TRUE);
   gtk_grid_attach (GTK_GRID (grid), combo, 1, 0, 1, 1);
@@ -513,7 +514,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-date-custom-style", G_OBJECT (entry), "text");
   g_signal_connect (G_OBJECT (combo), "changed", G_CALLBACK (on_date_format_changed), entry);
   gtk_grid_attach (GTK_GRID (grid), entry, 1, 1, 1, 1);
-  if (gtk_combo_box_get_active (GTK_COMBO_BOX (combo)) == THUNAR_DATE_STYLE_CUSTOM)
+  if (gtk_combo_box_get_active (GTK_COMBO_BOX (combo)) == THUNAR_DATE_STYLE_CUSTOM || gtk_combo_box_get_active (GTK_COMBO_BOX (combo)) == THUNAR_DATE_STYLE_CUSTOM_SIMPLE)
     gtk_widget_set_visible (entry, TRUE);
 
   /*
