@@ -52,6 +52,7 @@
 #include <thunar/thunar-standard-view.h>
 #include <thunar/thunar-thumbnailer.h>
 #include <thunar/thunar-util.h>
+#include <thunar/thunar-details-view.h>
 
 #if defined(GDK_WINDOWING_X11)
 #include <gdk/gdkx.h>
@@ -1485,38 +1486,41 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
 
   /* check if we're done loading and have a scheduled scroll_to_file
    * scrolling after loading circumvents the scroll caused by gtk_tree_view_set_cell */
-  if (G_UNLIKELY (!loading))
+  if (THUNAR_IS_DETAILS_VIEW (standard_view))
     {
-      if (standard_view->priv->scroll_to_file != NULL)
+      if (G_UNLIKELY (!loading))
         {
-          /* remember and reset the scroll_to_file reference */
-          file = standard_view->priv->scroll_to_file;
-          standard_view->priv->scroll_to_file = NULL;
-
-          /* and try again */
-          thunar_view_scroll_to_file (THUNAR_VIEW (standard_view), file,
-                                      standard_view->priv->scroll_to_select,
-                                      standard_view->priv->scroll_to_use_align,
-                                      standard_view->priv->scroll_to_row_align,
-                                      standard_view->priv->scroll_to_col_align);
-
-          /* cleanup */
-          g_object_unref (G_OBJECT (file));
-        }
-      else
-        {
-          /* look for a first visible file in the hash table */
-          current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
-          if (G_LIKELY (current_directory != NULL))
+          if (standard_view->priv->scroll_to_file != NULL)
             {
-              first_file = g_hash_table_lookup (standard_view->priv->scroll_to_files, thunar_file_get_file (current_directory));
-              if (G_LIKELY (first_file != NULL))
+              /* remember and reset the scroll_to_file reference */
+              file = standard_view->priv->scroll_to_file;
+              standard_view->priv->scroll_to_file = NULL;
+
+              /* and try again */
+              thunar_view_scroll_to_file (THUNAR_VIEW (standard_view), file,
+                                          standard_view->priv->scroll_to_select,
+                                          standard_view->priv->scroll_to_use_align,
+                                          standard_view->priv->scroll_to_row_align,
+                                          standard_view->priv->scroll_to_col_align);
+
+              /* cleanup */
+              g_object_unref (G_OBJECT (file));
+            }
+          else
+            {
+              /* look for a first visible file in the hash table */
+              current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
+              if (G_LIKELY (current_directory != NULL))
                 {
-                  file = thunar_file_cache_lookup (first_file);
-                  if (G_LIKELY (file != NULL))
+                  first_file = g_hash_table_lookup (standard_view->priv->scroll_to_files, thunar_file_get_file (current_directory));
+                  if (G_LIKELY (first_file != NULL))
                     {
-                      thunar_view_scroll_to_file (THUNAR_VIEW (standard_view), file, FALSE, TRUE, 0.0f, 0.0f);
-                      g_object_unref (file);
+                      file = thunar_file_cache_lookup (first_file);
+                      if (G_LIKELY (file != NULL))
+                        {
+                          thunar_view_scroll_to_file (THUNAR_VIEW (standard_view), file, FALSE, TRUE, 0.0f, 0.0f);
+                          g_object_unref (file);
+                        }
                     }
                 }
             }
