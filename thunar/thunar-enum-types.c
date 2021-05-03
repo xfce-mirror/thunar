@@ -68,23 +68,49 @@ thunar_date_style_get_type (void)
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
       static const GEnumValue values[] =
-      {
-        { THUNAR_DATE_STYLE_SIMPLE,   "THUNAR_DATE_STYLE_SIMPLE",   "simple",   },
-        { THUNAR_DATE_STYLE_SHORT,    "THUNAR_DATE_STYLE_SHORT",    "short",    },
-        { THUNAR_DATE_STYLE_LONG,     "THUNAR_DATE_STYLE_LONG",     "long",     },
-        { THUNAR_DATE_STYLE_YYYYMMDD, "THUNAR_DATE_STYLE_YYYYMMDD", "yyyymmdd", },
-        { THUNAR_DATE_STYLE_MMDDYYYY, "THUNAR_DATE_STYLE_MMDDYYYY", "mmddyyyy", },
-        { THUNAR_DATE_STYLE_DDMMYYYY, "THUNAR_DATE_STYLE_DDMMYYYY", "ddmmyyyy", },
-        { THUNAR_DATE_STYLE_CUSTOM,   "THUNAR_DATE_STYLE_CUSTOM",   "custom",   },
+      { { THUNAR_DATE_STYLE_SIMPLE,           "THUNAR_DATE_STYLE_SIMPLE",           "simple",   },
+        { THUNAR_DATE_STYLE_SIMPLE,           "THUNAR_DATE_STYLE_SIMPLE",           "simple",   },
+        { THUNAR_DATE_STYLE_SHORT,            "THUNAR_DATE_STYLE_SHORT",            "short",    },
+        { THUNAR_DATE_STYLE_LONG_SIMPLE,      "THUNAR_DATE_STYLE_LONG_SIMPLE",      "long",     },
+        { THUNAR_DATE_STYLE_LONG_SHORT,       "THUNAR_DATE_STYLE_LONG_SHORT",       "long",     },
+        { THUNAR_DATE_STYLE_LONG,             "THUNAR_DATE_STYLE_LONG",             "long",     },
+        { THUNAR_DATE_STYLE_YYYYMMDD,         "THUNAR_DATE_STYLE_YYYYMMDD",         "yyyymmdd", },
+        { THUNAR_DATE_STYLE_YYYYMMDD_SIMPLE,  "THUNAR_DATE_STYLE_YYYYMMDD_SIMPLE",  "yyyymmdd", },
+        { THUNAR_DATE_STYLE_YYYYMMDD_SHORT,   "THUNAR_DATE_STYLE_YYYYMMDD_SHORT",   "yyyymmdd", },
+        { THUNAR_DATE_STYLE_MMDDYYYY,         "THUNAR_DATE_STYLE_MMDDYYYY",         "mmddyyyy", },
+        { THUNAR_DATE_STYLE_MMDDYYYY_SIMPLE,  "THUNAR_DATE_STYLE_MMDDYYYY_SIMPLE",  "mmddyyyy", },
+        { THUNAR_DATE_STYLE_MMDDYYYY_SHORT,   "THUNAR_DATE_STYLE_MMDDYYYY_SHORT",   "mmddyyyy", },
+        { THUNAR_DATE_STYLE_DDMMYYYY,         "THUNAR_DATE_STYLE_DDMMYYYY",         "ddmmyyyy", },
+        { THUNAR_DATE_STYLE_DDMMYYYY_SIMPLE,  "THUNAR_DATE_STYLE_DDMMYYYY_SIMPLE",  "ddmmyyyy", },
+        { THUNAR_DATE_STYLE_DDMMYYYY_SHORT,   "THUNAR_DATE_STYLE_DDMMYYYY_SHORT",   "ddmmyyyy", },
+        { THUNAR_DATE_STYLE_CUSTOM,           "THUNAR_DATE_STYLE_CUSTOM",           "custom",   },
+        { THUNAR_DATE_STYLE_CUSTOM_SIMPLE,    "THUNAR_DATE_STYLE_CUSTOM_SIMPLE",    "custom",   },
+        { THUNAR_DATE_STYLE_CUSTOM_SHORT,     "THUNAR_DATE_STYLE_CUSTOM_SHORT",     "custom",   },
         /* to stay backward compartible*/
-        { THUNAR_DATE_STYLE_YYYYMMDD, "THUNAR_DATE_STYLE_ISO",      "iso",      },
-        { 0,                          NULL,                         NULL,       },
+        { THUNAR_DATE_STYLE_YYYYMMDD,         "THUNAR_DATE_STYLE_ISO",              "iso",      },
+        { 0,                                  NULL,                                 NULL,       },
       };
 
       type = g_enum_register_static (I_("ThunarDateStyle"), values);
     }
 
   return type;
+}
+
+
+
+gboolean
+thunar_date_style_is_simple (ThunarDateStyle date_style)
+{
+  return (date_style % 3) == 1;
+}
+
+
+
+gboolean
+thunar_date_style_is_short (ThunarDateStyle date_style)
+{
+  return (date_style % 3) == 2;
 }
 
 
