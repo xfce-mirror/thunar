@@ -66,6 +66,7 @@ typedef enum
   THUNAR_DATE_STYLE_MMDDYYYY,
   THUNAR_DATE_STYLE_DDMMYYYY,
   THUNAR_DATE_STYLE_CUSTOM,
+  THUNAR_DATE_STYLE_CUSTOM_SIMPLE,
 } ThunarDateStyle;
 
 GType thunar_date_style_get_type (void) G_GNUC_CONST;
