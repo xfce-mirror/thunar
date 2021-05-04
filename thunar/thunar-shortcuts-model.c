@@ -1322,30 +1322,22 @@ thunar_shortcuts_model_load_line (GFile       *file_path,
 
   shortcut = g_slice_new0 (ThunarShortcut);
   shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS;
+  shortcut->location = g_object_ref (file_path);
 
   /* handle local and remote files differently */
+  /* If we dont have a thunar-file, we need to set the gicon manually */
   if (thunar_shortcuts_model_local_file (file_path))
     {
       /* try to open the file corresponding to the uri */
       file = thunar_file_get (file_path, NULL);
       if (G_UNLIKELY (file == NULL))
-        {
           shortcut->gicon = g_themed_icon_new ("folder");
-          shortcut->location = g_object_ref (file_path);
-        }
       else
-        {
-          /* make sure the file refers to a directory */
-          if (G_UNLIKELY (thunar_file_is_directory (file)))
-            shortcut->file = file;
-          else
-            g_object_unref (file);
-        }
+          shortcut->file = file;
     }
   else
     {
       shortcut->gicon = g_themed_icon_new ("folder-remote");
-      shortcut->location = g_object_ref (file_path);
     }
 
   shortcut->sort_id = row_num;
