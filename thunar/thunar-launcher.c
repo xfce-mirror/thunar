@@ -1087,13 +1087,12 @@ thunar_launcher_poke_location_finish (ThunarBrowser *browser,
 {
   ThunarLauncherPokeData *poke_data = user_data;
   _thunar_return_if_fail (THUNAR_IS_BROWSER (browser));
-  _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   if (error != NULL)
     {
       thunar_dialogs_show_error (GTK_WIDGET (THUNAR_LAUNCHER (browser)->widget), error,
                                  _("Failed to open \"%s\""),
-                                 thunar_file_get_display_name (file));
+                                 g_file_get_path (location));
       thunar_launcher_poke_data_free (poke_data);
       return;
     }
