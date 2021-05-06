@@ -1235,7 +1235,7 @@ G_GNUC_END_IGNORE_DEPRECATIONS
     }
 
   /* create provider menu items if there is a non-trashed file */
-  if (G_LIKELY (file != NULL && !thunar_file_is_trashed (file)))
+  if (G_LIKELY (file != NULL && !thunar_file_is_trashed (file) && thunar_file_is_directory (file)))
     {
       /* load the menu providers from the provider factory */
       providers = thunarx_provider_factory_list_providers (view->provider_factory, THUNARX_TYPE_MENU_PROVIDER);
@@ -1680,7 +1680,7 @@ thunar_shortcuts_view_poke_file_finish (ThunarBrowser *browser,
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (browser));
   _thunar_return_if_fail (THUNAR_IS_FILE (target_file));
 
-  if (error == NULL)
+  if (G_LIKELY (error == NULL && thunar_file_is_directory (target_file) == TRUE))
     {
       if (open_in == OPEN_IN_WINDOW)
         {
