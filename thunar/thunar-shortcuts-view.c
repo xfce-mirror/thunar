@@ -1217,7 +1217,7 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   if (location != NULL && file == NULL)
     {
       file = thunar_file_get (location, NULL);
-      if (thunar_file_exists (file) == FALSE)
+      if (file != NULL && thunar_file_exists (file) == FALSE)
         {
           g_object_unref (G_OBJECT (file));
           file = NULL;
