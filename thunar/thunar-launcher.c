@@ -1933,7 +1933,7 @@ thunar_launcher_build_sendto_submenu (ThunarLauncher *launcher)
           action_entry = get_action_entry (THUNAR_LAUNCHER_ACTION_SENDTO_SHORTCUTS);
           if (action_entry != NULL)
             {
-              label_text   = ngettext ("Side Pane (Create Shortcut)", "Side Pane (Create Shortcuts)", launcher->n_files_to_process);
+              label_text   = ngettext ("Side Pane (Add Bookmark)", "Side Pane (Add Bookmarks)", launcher->n_files_to_process);
               tooltip_text = ngettext ("Add the selected folder to the shortcuts side pane",
                                        "Add the selected folders to the shortcuts side pane", launcher->n_files_to_process);
               item = xfce_gtk_image_menu_item_new_from_icon_name (label_text, tooltip_text, action_entry->accel_path, action_entry->callback,
