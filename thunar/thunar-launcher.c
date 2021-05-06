@@ -197,6 +197,8 @@ static void                    thunar_launcher_sendto_mount_finish        (Thuna
 static GtkWidget              *thunar_launcher_build_sendto_submenu       (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_menu_item_activated        (ThunarLauncher                 *launcher,
                                                                            GtkWidget                      *menu_item);
+static gchar*                  thunar_next_new_file_name                  (ThunarFile                     *dir,
+                                                                           const gchar                    *file_name);
 static void                    thunar_launcher_action_create_folder       (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_create_document     (ThunarLauncher                 *launcher,
                                                                            GtkWidget                      *menu_item);
@@ -2410,12 +2412,41 @@ thunar_launcher_action_empty_trash (ThunarLauncher *launcher)
 
 
 
+static gchar*
+thunar_next_new_file_name (ThunarFile   *dir,
+                           const gchar  *file_name)
+{
+  ThunarFolder   *folder          = thunar_folder_get_for_file (dir);
+  unsigned long   file_name_size  = strlen (file_name);
+  unsigned        count           = 0;
+  gboolean        found           = FALSE;
+  
+  for (GList *files = thunar_folder_get_files (folder); files != NULL; files = files->next)
+    {
+      ThunarFile *file = files->data;
+      if (strncmp (thunar_file_get_display_name (file), file_name, file_name_size) == 0)
+        {
+          count++;
+          if (!found && strcmp (thunar_file_get_display_name (file), file_name) == 0)
+              found = TRUE;
+        }
+    }
+
+  if (!found)
+    return g_strdup (file_name);
+  else
+    return g_strdup_printf (_("%s %u"), file_name, count);
+}
+
+
+
 static void
 thunar_launcher_action_create_folder (ThunarLauncher *launcher)
 {
   ThunarApplication *application;
   GList              path_list;
   gchar             *name;
+  gchar             *generated_name;
 
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
@@ -2423,10 +2454,13 @@ thunar_launcher_action_create_folder (ThunarLauncher *launcher)
     return;
 
   /* ask the user to enter a name for the new folder */
+  generated_name = thunar_next_new_file_name (launcher->current_directory, _("New Folder")); // does the translation work?
   name = thunar_dialogs_show_create (launcher->widget,
                                      "inode/directory",
-                                     _("New Folder"),
+                                     generated_name,
                                      _("Create New Folder"));
+  g_free (generated_name);
+
   if (G_LIKELY (name != NULL))
     {
       /* fake the path list */
@@ -2458,6 +2492,7 @@ thunar_launcher_action_create_document (ThunarLauncher *launcher,
   ThunarApplication *application;
   GList              target_path_list;
   gchar             *name;
+  gchar             *generated_name;
   gchar             *title;
   ThunarFile        *template_file;
 
@@ -2475,9 +2510,10 @@ thunar_launcher_action_create_document (ThunarLauncher *launcher,
                                thunar_file_get_display_name (template_file));
 
       /* ask the user to enter a name for the new document */
+      generated_name = thunar_next_new_file_name (launcher->current_directory, thunar_file_get_display_name (template_file));
       name = thunar_dialogs_show_create (launcher->widget,
                                          thunar_file_get_content_type (THUNAR_FILE (template_file)),
-                                         thunar_file_get_display_name (template_file),
+                                         generated_name,
                                          title);
       /* cleanup */
       g_free (title);
@@ -2485,11 +2521,13 @@ thunar_launcher_action_create_document (ThunarLauncher *launcher,
   else
     {
       /* ask the user to enter a name for the new empty file */
+      generated_name = thunar_next_new_file_name (launcher->current_directory, _("New Empty File"));
       name = thunar_dialogs_show_create (launcher->widget,
                                          "text/plain",
-                                         _("New Empty File"),
+                                         generated_name,
                                          _("New Empty File..."));
     }
+  g_free (generated_name);
 
   if (G_LIKELY (name != NULL))
     {
