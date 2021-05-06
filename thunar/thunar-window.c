@@ -259,6 +259,8 @@ static void      thunar_window_update_view_menu           (ThunarWindow         
                                                            GtkWidget              *menu);
 static void      thunar_window_update_go_menu             (ThunarWindow           *window,
                                                            GtkWidget              *menu);
+static void      thunar_window_update_bookmarks_menu      (ThunarWindow           *window,
+                                                           GtkWidget              *menu);
 static void      thunar_window_update_help_menu           (ThunarWindow           *window,
                                                            GtkWidget              *menu);
 static void      thunar_window_binding_create             (ThunarWindow           *window,
@@ -425,6 +427,7 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     { THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST,           "<Actions>/ThunarWindow/view-as-compact-list",            "<Primary>3",           XFCE_GTK_RADIO_MENU_ITEM, N_ ("_Compact View"),          N_ ("Display folder content in a compact list view"),                                NULL,                      G_CALLBACK (thunar_window_action_compact_view),       },
 
     { THUNAR_WINDOW_ACTION_GO_MENU,                        "<Actions>/ThunarWindow/go-menu",                         "",                     XFCE_GTK_MENU_ITEM,       N_ ("_Go"),                    NULL,                                                                                NULL,                      NULL                                                  },
+    { THUNAR_WINDOW_ACTION_BOOKMARKS_MENU,                 "<Actions>/ThunarWindow/bookmarks-menu",                  "",                     XFCE_GTK_MENU_ITEM,       N_ ("_Bookmarks"),             NULL,                                                                                NULL,                      NULL                                                  },
     { THUNAR_WINDOW_ACTION_OPEN_FILE_SYSTEM,               "<Actions>/ThunarWindow/open-file-system",                "",                     XFCE_GTK_IMAGE_MENU_ITEM, N_ ("File System"),            N_ ("Browse the file system"),                                                       "drive-harddisk",          G_CALLBACK (thunar_window_action_open_file_system),   },
     { THUNAR_WINDOW_ACTION_OPEN_HOME,                      "<Actions>/ThunarWindow/open-home",                       "<Alt>Home",            XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Home"),                  N_ ("Go to the home folder"),                                                        "go-home-symbolic",        G_CALLBACK (thunar_window_action_open_home),          },
     { THUNAR_WINDOW_ACTION_OPEN_DESKTOP,                   "<Actions>/ThunarWindow/open-desktop",                    "",                     XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Desktop"),                N_ ("Go to the desktop folder"),                                                     "user-desktop",            G_CALLBACK (thunar_window_action_open_desktop),       },
@@ -746,6 +749,7 @@ thunar_window_init (ThunarWindow *window)
   thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_EDIT_MENU, G_CALLBACK (thunar_window_update_edit_menu));
   thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_VIEW_MENU, G_CALLBACK (thunar_window_update_view_menu));
   thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_GO_MENU, G_CALLBACK (thunar_window_update_go_menu));
+  thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_BOOKMARKS_MENU, G_CALLBACK (thunar_window_update_bookmarks_menu));
   thunar_window_create_menu (window, THUNAR_WINDOW_ACTION_HELP_MENU, G_CALLBACK (thunar_window_update_help_menu));
   gtk_widget_show_all (window->menubar);
 
@@ -1155,8 +1159,6 @@ static void
 thunar_window_update_go_menu (ThunarWindow *window,
                               GtkWidget    *menu)
 {
-  gchar                    *icon_name;
-  const XfceGtkActionEntry *action_entry;
   ThunarHistory            *history = NULL;
   GtkWidget                *item;
 
@@ -1175,6 +1177,24 @@ thunar_window_update_go_menu (ThunarWindow *window,
   if (history != NULL)
     gtk_widget_set_sensitive (item, thunar_history_has_forward (history));
   xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_LOCATION), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  gtk_widget_show_all (GTK_WIDGET (menu));
+
+  thunar_window_redirect_menu_tooltips_to_statusbar (window, GTK_MENU (menu));
+}
+
+
+
+static void
+thunar_window_update_bookmarks_menu (ThunarWindow *window,
+                                     GtkWidget    *menu)
+{
+  gchar                    *icon_name;
+  const XfceGtkActionEntry *action_entry;
+
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  thunar_gtk_menu_clean (GTK_MENU (menu));
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_COMPUTER), G_OBJECT (window), GTK_MENU_SHELL (menu));
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_HOME), G_OBJECT (window), GTK_MENU_SHELL (menu));
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_DESKTOP), G_OBJECT (window), GTK_MENU_SHELL (menu));
@@ -1214,8 +1234,6 @@ thunar_window_update_go_menu (ThunarWindow *window,
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_NETWORK), G_OBJECT (window), GTK_MENU_SHELL (menu));
   xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
   thunar_launcher_append_menu_item (window->launcher, GTK_MENU_SHELL (menu),THUNAR_LAUNCHER_ACTION_SENDTO_SHORTCUTS, FALSE);
-  xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
-  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_LOCATION), G_OBJECT (window), GTK_MENU_SHELL (menu));
   gtk_widget_show_all (GTK_WIDGET (menu));
 
   thunar_window_redirect_menu_tooltips_to_statusbar (window, GTK_MENU (menu));
