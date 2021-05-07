@@ -991,7 +991,7 @@ thunar_dbus_service_launch_files (ThunarDBusFileManager  *object,
     {
       /* let the application process the filenames */
       application = thunar_application_get ();
-      thunar_application_process_filenames (application, working_directory, filenames, screen, startup_id, &error);
+      thunar_application_process_filenames (application, working_directory, filenames, screen, startup_id, &error, THUNAR_APPLICATION_LAUNCH_FILES);
       g_object_unref (G_OBJECT (application));
 
       /* release the screen */
