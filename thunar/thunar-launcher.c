@@ -651,6 +651,7 @@ thunar_launcher_set_selected_files (ThunarComponent *component,
           || thunar_file_is_mountable (lp->data))
         {
           ++launcher->n_directories_to_process;
+          launcher->files_are_all_executable = FALSE;
         }
       else
         {
