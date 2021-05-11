@@ -179,37 +179,38 @@ struct _ThunarApplicationClass
 
 struct _ThunarApplication
 {
-  GtkApplication         __parent__;
+  GtkApplication                 __parent__;
 
-  ThunarSessionClient   *session_client;
+  ThunarSessionClient            *session_client;
 
-  ThunarPreferences     *preferences;
-  GtkWidget             *progress_dialog;
+  ThunarPreferences              *preferences;
+  GtkWidget                      *progress_dialog;
 
-  ThunarThumbnailCache  *thumbnail_cache;
-  ThunarThumbnailer     *thumbnailer;
+  ThunarThumbnailCache           *thumbnail_cache;
+  ThunarThumbnailer              *thumbnailer;
 
-  ThunarDBusService     *dbus_service;
+  ThunarDBusService              *dbus_service;
 
-  gboolean               daemon;
+  gboolean                        daemon;
 
-  guint                  accel_map_save_id;
-  GtkAccelMap           *accel_map;
+  guint                           accel_map_save_id;
+  GtkAccelMap                    *accel_map;
 
-  guint                  show_dialogs_timer_id;
+  guint                           show_dialogs_timer_id;
 
 #ifdef HAVE_GUDEV
-  GUdevClient           *udev_client;
+  GUdevClient                    *udev_client;
 
-  GSList                *volman_udis;
-  guint                  volman_idle_id;
-  guint                  volman_watch_id;
+  GSList                         *volman_udis;
+  guint                           volman_idle_id;
+  guint                           volman_watch_id;
 #endif
 
-  GList                 *files_to_launch;
+  GList                          *files_to_launch;
+  ThunarApplicationProcessAction  process_file_action;
 
-  guint                  dbus_owner_id_xfce;
-  guint                  dbus_owner_id_fdo;
+  guint                           dbus_owner_id_xfce;
+  guint                           dbus_owner_id_fdo;
 };
 
 
@@ -276,6 +277,7 @@ thunar_application_init (ThunarApplication *application)
    * in the primary instance anyways */
 
   application->files_to_launch = NULL;
+  application->process_file_action = THUNAR_APPLICATION_SELECT_FILES;
   application->progress_dialog = NULL;
   application->preferences     = NULL;
 
@@ -529,7 +531,7 @@ thunar_application_command_line (GApplication            *gapp,
     }
   else if (filenames != NULL)
     {
-      if (!thunar_application_process_filenames (application, cwd, filenames, NULL, NULL, &error))
+      if (!thunar_application_process_filenames (application, cwd, filenames, NULL, NULL, &error, THUNAR_APPLICATION_SELECT_FILES))
         {
           /* we failed to process the filenames or the bulk rename failed */
           g_application_command_line_printerr (command_line, "Thunar: %s\n", error->message);
@@ -537,7 +539,7 @@ thunar_application_command_line (GApplication            *gapp,
     }
   else if (!daemon)
     {
-      if (!thunar_application_process_filenames (application, cwd, cwd_list, NULL, NULL, &error))
+      if (!thunar_application_process_filenames (application, cwd, cwd_list, NULL, NULL, &error, THUNAR_APPLICATION_SELECT_FILES))
         {
           /* we failed to process the filenames or the bulk rename failed */
           g_application_command_line_printerr (command_line, "Thunar: %s\n", error->message);
@@ -1507,8 +1509,27 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
     }
   else
     {
-      /* try to open the file or directory */
-      thunar_file_launch (target_file, screen, startup_id, &error);
+      if (application->process_file_action == THUNAR_APPLICATION_LAUNCH_FILES)
+        {
+          /* try to launch the file / open the directory */
+          thunar_file_launch (target_file, screen, startup_id, &error);
+        }
+      else if (thunar_file_is_directory (file))
+        {
+          thunar_application_open_window (application, file, screen, startup_id, FALSE);
+        }
+      else
+        {
+          /* Note that for security reasons we do not execute files passed via command line */
+          /* Lets rather open the containing directory */
+          ThunarFile *parent = thunar_file_get_parent (file, NULL);
+
+          if (G_LIKELY (parent != NULL))
+            {
+              thunar_application_open_window (application, parent, screen, startup_id, FALSE);
+              g_object_unref (parent);
+            }
+        }
 
       /* remove the file from the list */
       application->files_to_launch = g_list_delete_link (application->files_to_launch,
@@ -1577,18 +1598,20 @@ thunar_application_process_files (ThunarApplication *application)
  * @startup_id        : startup id to finish startup notification and properly focus the
  *                      window when focus stealing is enabled or %NULL.
  * @error             : return location for errors or %NULL.
+ * @action            : action to invoke on the files
  *
  * Tells @application to process the given @filenames and launch them appropriately.
  *
  * Return value: %TRUE on success, %FALSE if @error is set.
  **/
 gboolean
-thunar_application_process_filenames (ThunarApplication *application,
-                                      const gchar       *working_directory,
-                                      gchar            **filenames,
-                                      GdkScreen         *screen,
-                                      const gchar       *startup_id,
-                                      GError           **error)
+thunar_application_process_filenames (ThunarApplication               *application,
+                                      const gchar                     *working_directory,
+                                      gchar                          **filenames,
+                                      GdkScreen                       *screen,
+                                      const gchar                     *startup_id,
+                                      GError                         **error,
+                                      ThunarApplicationProcessAction   action)
 {
   ThunarFile *file;
   GError     *derror = NULL;
@@ -1660,7 +1683,10 @@ thunar_application_process_filenames (ThunarApplication *application,
 
   /* start processing files if we have any to launch */
   if (application->files_to_launch != NULL)
-    thunar_application_process_files (application);
+    {
+      application->process_file_action = action;
+      thunar_application_process_files (application);
+    }
 
   /* free the file list */
   g_list_free (file_list);

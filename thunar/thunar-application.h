@@ -31,6 +31,12 @@ G_BEGIN_DECLS;
 typedef struct _ThunarApplicationClass ThunarApplicationClass;
 typedef struct _ThunarApplication      ThunarApplication;
 
+typedef enum
+{
+  THUNAR_APPLICATION_LAUNCH_FILES,
+  THUNAR_APPLICATION_SELECT_FILES
+} ThunarApplicationProcessAction;
+
 #define THUNAR_TYPE_APPLICATION             (thunar_application_get_type ())
 #define THUNAR_APPLICATION(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_APPLICATION, ThunarApplication))
 #define THUNAR_APPLICATION_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_APPLICATION, ThunarApplicationClass))
@@ -74,7 +80,8 @@ gboolean              thunar_application_process_filenames          (ThunarAppli
                                                                      gchar            **filenames,
                                                                      GdkScreen         *screen,
                                                                      const gchar       *startup_id,
-                                                                     GError           **error);
+                                                                     GError           **error,
+                                                                     ThunarApplicationProcessAction action);
 
 void                  thunar_application_rename_file                (ThunarApplication *application,
                                                                      ThunarFile        *file,
