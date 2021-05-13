@@ -38,6 +38,14 @@
 
 
 
+/* Property identifiers */
+enum
+{
+  PROP_0,
+  PROP_CONTENT_MODIFIED
+};
+
+
 static const gchar   *thunar_uca_editor_get_icon_name          (const ThunarUcaEditor  *uca_editor);
 static void           thunar_uca_editor_set_icon_name          (ThunarUcaEditor        *uca_editor,
                                                                 const gchar            *icon_name);
@@ -49,6 +57,12 @@ static void           thunar_uca_editor_shortcut_clicked       (ThunarUcaEditor 
 static void           thunar_uca_editor_shortcut_clear_clicked (ThunarUcaEditor        *uca_editor);
 static void           thunar_uca_editor_icon_clicked           (ThunarUcaEditor        *uca_editor);
 static void           thunar_uca_editor_constructed            (GObject                *object);
+
+static void				thunar_uca_editor_set_content_modified	(ThunarUcaEditor		*uca_editor);
+static void				thunar_uca_editor_get_property			(GObject      		 	*object,
+												 				 guint         			 prop_id,
+												 				 GValue 				*value,
+												 				 GParamSpec   			*param_spec);
 
 
 
@@ -80,6 +94,9 @@ struct _ThunarUcaEditor
   gchar           *accel_path;
   GdkModifierType  accel_mods;
   guint            accel_key;
+
+  /* property modifiers */
+  gboolean	 content_modified;
 };
 
 typedef struct {
@@ -100,10 +117,11 @@ static void
 thunar_uca_editor_class_init (ThunarUcaEditorClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
-  GObjectClass   *object_class = G_OBJECT_CLASS (klass);
+  GObjectClass   *gobject_class = G_OBJECT_CLASS (klass);
 
   /* vfuncs */
-  object_class->constructed = thunar_uca_editor_constructed;
+  gobject_class->constructed = thunar_uca_editor_constructed;
+  gobject_class->get_property = thunar_uca_editor_get_property;
 
   /* Setup the template xml */
   gtk_widget_class_set_template_from_resource (widget_class, "/org/xfce/thunar/uca/editor.ui");
@@ -129,6 +147,16 @@ thunar_uca_editor_class_init (ThunarUcaEditorClass *klass)
   gtk_widget_class_bind_template_callback(widget_class, thunar_uca_editor_command_clicked);
   gtk_widget_class_bind_template_callback(widget_class, thunar_uca_editor_shortcut_clicked);
   gtk_widget_class_bind_template_callback(widget_class, thunar_uca_editor_shortcut_clear_clicked);
+
+  gtk_widget_class_bind_template_callback(widget_class, thunar_uca_editor_set_content_modified);
+
+  g_object_class_install_property(gobject_class,
+								  PROP_CONTENT_MODIFIED,
+								  g_param_spec_boolean("content-modified",
+													   _("Content Modified"),
+													   _("Used to indicate if the underlying model has been modified"),
+													   FALSE,
+													   G_PARAM_READABLE));
 }
 
 
@@ -136,6 +164,7 @@ thunar_uca_editor_class_init (ThunarUcaEditorClass *klass)
 static void
 thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
 {
+  uca_editor->content_modified = FALSE;
   /* Initialize the template for this instance */
   gtk_widget_init_template (GTK_WIDGET (uca_editor));
 
@@ -156,6 +185,30 @@ thunar_uca_editor_constructed (GObject *object)
 
   /* Visual tweaks for header-bar mode only */
   g_object_set (gtk_dialog_get_content_area (GTK_DIALOG (editor)), "border-width", 0, NULL);
+}
+
+
+
+static void
+thunar_uca_editor_set_content_modified (ThunarUcaEditor	*uca_editor)
+{
+  if (G_UNLIKELY (!uca_editor->content_modified))
+    uca_editor->content_modified = TRUE;
+}
+
+
+
+static void
+thunar_uca_editor_get_property(GObject *object,
+							   guint prop_id,
+							   GValue *value,
+							   GParamSpec *param_spec)
+{
+  const ThunarUcaEditor *uca_editor = THUNAR_UCA_EDITOR(object);
+  if (G_LIKELY (prop_id == PROP_CONTENT_MODIFIED))
+	g_value_set_boolean (value, uca_editor->content_modified);
+  else
+	G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, param_spec);
 }
 
 
@@ -267,6 +320,7 @@ thunar_uca_editor_command_clicked (ThunarUcaEditor *uca_editor)
   /* run the chooser dialog */
   if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
     {
+	  thunar_uca_editor_set_content_modified(uca_editor);
       /* determine the path to the selected file */
       filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
 
@@ -388,6 +442,7 @@ thunar_uca_editor_shortcut_clicked (ThunarUcaEditor *uca_editor)
 
   if (G_LIKELY (response == GTK_RESPONSE_OK))
     {
+	  thunar_uca_editor_set_content_modified(uca_editor);
       shortcut = xfce_shortcut_dialog_get_shortcut (XFCE_SHORTCUT_DIALOG (dialog));
       gtk_accelerator_parse (shortcut, &accel_key, &accel_mods);
 
@@ -408,6 +463,7 @@ thunar_uca_editor_shortcut_clicked (ThunarUcaEditor *uca_editor)
 static void
 thunar_uca_editor_shortcut_clear_clicked (ThunarUcaEditor *uca_editor)
 {
+  thunar_uca_editor_set_content_modified(uca_editor);
   uca_editor->accel_key = 0;
   uca_editor->accel_mods = 0;
   gtk_button_set_label (GTK_BUTTON (uca_editor->shortcut_button), _("None"));
@@ -447,6 +503,7 @@ thunar_uca_editor_icon_clicked (ThunarUcaEditor *uca_editor)
   /* run the icon chooser dialog */
   if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
     {
+	  thunar_uca_editor_set_content_modified(uca_editor);
       /* remember the selected icon from the chooser */
       icon = exo_icon_chooser_dialog_get_icon (EXO_ICON_CHOOSER_DIALOG (chooser));
       thunar_uca_editor_set_icon_name (uca_editor, icon);
@@ -622,6 +679,8 @@ thunar_uca_editor_load (ThunarUcaEditor *uca_editor,
   gtk_button_set_label (GTK_BUTTON (uca_editor->shortcut_button), (accel_label != NULL) ? accel_label : _("None"));
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (uca_editor->sn_button), startup_notify);
 
+  /* TODO #179: Should these be freed? They are not duplicated from the treemodel,
+   * so we may be freeing something that's still in use */
   /* cleanup */
   g_free (description);
   g_free (patterns);
@@ -664,7 +723,7 @@ thunar_uca_editor_save (ThunarUcaEditor *uca_editor,
   if (uca_editor->accel_path != NULL && gtk_accel_map_lookup_entry (uca_editor->accel_path, &key) && key.accel_key != 0)
     gtk_accel_map_change_entry (uca_editor->accel_path, 0, 0, TRUE);
 
-  thunar_uca_model_update (uca_model, iter,
+  thunar_uca_model_update (uca_model, iter, NULL,
                            gtk_entry_get_text (GTK_ENTRY (uca_editor->name_entry)),
                            gtk_entry_get_text (GTK_ENTRY (uca_editor->sub_menu_entry)),
                            unique_id,
@@ -679,5 +738,3 @@ thunar_uca_editor_save (ThunarUcaEditor *uca_editor,
 
   g_free (unique_id);
 }
-
-
