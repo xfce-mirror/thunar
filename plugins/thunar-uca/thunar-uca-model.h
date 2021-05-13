@@ -22,6 +22,7 @@
 #define __THUNAR_UCA_MODEL_H__
 
 #include <thunarx/thunarx.h>
+#include <thunar-uca/thunar-uca-model-item.h>
 
 G_BEGIN_DECLS;
 
@@ -51,24 +52,7 @@ typedef enum
   THUNAR_UCA_MODEL_N_COLUMNS,
 } ThunarUcaModelColumn;
 
-/**
- * ThunarUcaTypes:
- * @THUNAR_UCA_TYPE_DIRECTORIES : directories.
- * @THUNAR_UCA_TYPE_AUDIO_FILES : audio files.
- * @THUNAR_UCA_TYPE_IMAGE_FILES : image files.
- * @THUNAR_UCA_TYPE_OTHER_FILES : other files.
- * @THUNAR_UCA_TYPE_TEXT_FILES  : text files.
- * @THUNAR_UCA_TYPE_VIDEO_FILES : video files.
- **/
-typedef enum /*< flags >*/
-{
-  THUNAR_UCA_TYPE_DIRECTORIES = 1 << 0,
-  THUNAR_UCA_TYPE_AUDIO_FILES = 1 << 1,
-  THUNAR_UCA_TYPE_IMAGE_FILES = 1 << 2,
-  THUNAR_UCA_TYPE_OTHER_FILES = 1 << 3,
-  THUNAR_UCA_TYPE_TEXT_FILES  = 1 << 4,
-  THUNAR_UCA_TYPE_VIDEO_FILES = 1 << 5,
-} ThunarUcaTypes;
+
 
 GType           thunar_uca_model_get_type       (void) G_GNUC_CONST;
 void            thunar_uca_model_register_type  (ThunarxProviderPlugin  *plugin);
@@ -90,6 +74,7 @@ void            thunar_uca_model_remove         (ThunarUcaModel         *uca_mod
 
 void            thunar_uca_model_update         (ThunarUcaModel         *uca_model,
                                                  GtkTreeIter            *iter,
+                                                 const gchar 			*filename,
                                                  const gchar            *name,
                                                  const gchar            *submenu,
                                                  const gchar            *unique_id,
