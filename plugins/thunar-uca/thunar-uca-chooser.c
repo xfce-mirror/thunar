@@ -255,9 +255,10 @@ thunar_uca_chooser_open_editor (ThunarUcaChooser *uca_chooser,
 {
   GtkTreeSelection *selection;
   GtkTreeModel     *model;
-  GtkTreeIter       iter;
+  GtkTreeIter       iter = {0};
   GtkWidget        *editor;
   gboolean          use_header_bar = FALSE;
+  gboolean 			content_modified = FALSE;
 
   g_return_if_fail (THUNAR_UCA_IS_CHOOSER (uca_chooser));
 
@@ -277,18 +278,22 @@ thunar_uca_chooser_open_editor (ThunarUcaChooser *uca_chooser,
   /* run the editor */
   if (gtk_dialog_run (GTK_DIALOG (editor)) == GTK_RESPONSE_OK)
     {
-      /* append a new iter (when not editing) */
-      if (G_UNLIKELY (!edit))
-        thunar_uca_model_append (THUNAR_UCA_MODEL (model), &iter);
+	  /* hide the editor window */
+	  gtk_widget_hide (editor);
 
-      /* save the editor values to the model */
-      thunar_uca_editor_save (THUNAR_UCA_EDITOR (editor), THUNAR_UCA_MODEL (model), &iter);
+	  g_object_get(editor, "content-modified", &content_modified, NULL);
+	  if (G_LIKELY (content_modified))
+	  {
+		/* append a new iter (when not editing) */
+		if (G_UNLIKELY (!edit))
+		  thunar_uca_model_append (THUNAR_UCA_MODEL (model), &iter);
 
-      /* hide the editor window */
-      gtk_widget_hide (editor);
+		/* save the editor values to the model */
+		thunar_uca_editor_save (THUNAR_UCA_EDITOR (editor), THUNAR_UCA_MODEL (model), &iter);
 
-      /* sync the model to persistent storage */
-      thunar_uca_chooser_save (uca_chooser, THUNAR_UCA_MODEL (model));
+		/* sync the model to persistent storage */
+		thunar_uca_chooser_save (uca_chooser, THUNAR_UCA_MODEL (model));
+	  }
     }
 
   /* destroy the editor */
@@ -441,7 +446,3 @@ thunar_uca_chooser_down_clicked (ThunarUcaChooser *uca_chooser)
         thunar_uca_chooser_exchange (uca_chooser, selection, model, &iter_a, &iter_b);
     }
 }
-
-
-
-
