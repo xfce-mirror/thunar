@@ -56,6 +56,7 @@
 
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
+#include <thunar/thunar-folder.h>
 
 #include <glib.h>
 #include <glib/gstdio.h>
@@ -641,8 +642,99 @@ thunar_util_change_working_directory (const gchar *new_directory)
   return old_directory;
 }
 
+
+
 void
 thunar_setup_display_cb (gpointer data)
 {
   g_setenv ("DISPLAY", (char *) data, TRUE);
+}
+
+
+
+static gboolean
+thunar_string_is_number (const gchar* s)
+{
+  if (s == NULL)
+      return FALSE;
+  while (s != NULL && *s != '\0')
+    {
+      if (g_ascii_isdigit(*s) == FALSE)
+        return FALSE;
+      s++;
+    }
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_similar_file_names (const gchar *file1,
+                           const gchar *file2)
+{
+  size_t len1 = strlen (file1);
+  size_t len2 = strlen (file2);
+  if (len1 == len2)
+    {
+      return (strncmp (file1, file2, len1) == 0);
+    }
+  if (strncmp (file1, file2, len1) == 0)
+    {
+      if (file2[len1] == ' ')
+        return thunar_string_is_number (&file2[len1 + 1]);
+      else
+        return FALSE;
+    }
+  printf("quits \n");
+  return FALSE;
+}
+
+
+
+gchar*
+thunar_next_new_file_name (ThunarFile   *dir,
+                           const gchar  *file_name)
+{
+  ThunarFolder   *folder          = thunar_folder_get_for_file (dir);
+  unsigned long   file_name_size  = strlen (file_name);
+  unsigned        count           = 0;
+  gboolean        found_duplicate = FALSE;
+  gchar          *extension       = NULL;
+
+  /* get file extension if file is not a directory */
+  extension = thunar_util_str_get_extension (file_name);
+
+  /* if the file has an extension don't include it in the search */
+  if (extension != NULL)
+    file_name_size -= strlen (extension);
+
+  /* go through every file in the directory and count the similarly named files */
+  for (GList *files = thunar_folder_get_files (folder); files != NULL; files = files->next)
+    {
+      ThunarFile  *file = files->data;
+      const gchar *name = thunar_file_get_display_name (file);
+
+      if (thunar_similar_file_names (file_name, name) == TRUE)
+        {
+          count++;
+          if (!found_duplicate && strcmp (name, file_name) == 0) /* found an exact duplicate */
+            found_duplicate = TRUE;
+        }
+    }
+  g_object_unref (G_OBJECT (folder));
+
+  if (!found_duplicate) /* don't change the file name */
+    return g_strdup (file_name);
+  else
+    {
+      if (extension)    /* handle file extension */
+        {
+          gchar name[file_name_size + 1];
+          strncpy (name, file_name, file_name_size);
+          name[file_name_size] = '\0';
+          return g_strdup_printf (_("%s %u%s"), name, count, extension);
+        }
+      else              /* no file extension */
+        return g_strdup_printf (_("%s %u"), file_name, count);
+    }
 }
