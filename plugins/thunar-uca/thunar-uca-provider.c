@@ -241,7 +241,7 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
   GtkTreeRowReference *row;
   ThunarUcaProvider   *uca_provider = THUNAR_UCA_PROVIDER (menu_provider);
   ThunarUcaContext    *uca_context = NULL;
-  GtkTreeIter          iter;
+  GtkTreeIter          iter = {0};
   ThunarxMenuItem     *menu_item;
   ThunarxMenuItem     *item;
   GList               *items = NULL;
@@ -408,7 +408,7 @@ thunar_uca_provider_activated (ThunarUcaProvider *uca_provider,
   GtkTreeRowReference *row;
   ThunarUcaContext    *uca_context;
   GtkTreePath         *path;
-  GtkTreeIter          iter;
+  GtkTreeIter          iter = {0};
   GtkWidget           *dialog;
   GtkWidget           *window;
   gboolean             succeed;
