@@ -56,7 +56,7 @@ typedef enum
   THUNAR_STANDARD_VIEW_ACTION_SORT_ASCENDING,
   THUNAR_STANDARD_VIEW_ACTION_SORT_DESCENDING,
   THUNAR_STANDARD_VIEW_ACTION_SORT_ORDER_TOGGLE,
-  
+
 } ThunarStandardViewAction;
 
 struct _ThunarStandardViewClass
@@ -174,6 +174,8 @@ void           thunar_standard_view_append_menu_items     (ThunarStandardView   
 GtkWidget     *thunar_standard_view_append_menu_item      (ThunarStandardView       *standard_view,
                                                            GtkMenu                  *menu,
                                                            ThunarStandardViewAction  action);
+void           thunar_standard_view_search_status_changed (ThunarStandardView       *standard_view,
+                                                           gboolean                 searching);
 void           _thunar_standard_view_open_on_middle_click (ThunarStandardView       *standard_view,
                                                            GtkTreePath              *tree_path,
                                                            guint                     event_state);
