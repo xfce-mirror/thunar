@@ -22,6 +22,10 @@ thunar_uca_la_SOURCES =							\
 	thunar-uca-editor.h						\
 	thunar-uca-model.c						\
 	thunar-uca-model.h						\
+	thunar-uca-model-item.c						\
+	thunar-uca-model-item.h						\
+	thunar-uca-parser.c						\
+	thunar-uca-parser.h						\
 	thunar-uca-plugin.c						\
 	thunar-uca-private.c						\
 	thunar-uca-private.h						\
