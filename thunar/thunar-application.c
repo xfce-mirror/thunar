@@ -1982,17 +1982,29 @@ thunar_application_copy_into (ThunarApplication *application,
                               GFile             *target_file,
                               GClosure          *new_files_closure)
 {
-  gchar *display_name;
-  gchar *title;
+  GVolume *volume;
+  gchar   *display_name;
+  gchar   *title;
+  gchar   *volume_name;
+  gchar   *volume_uuid;
+  gboolean use_display_name;
 
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
   _thunar_return_if_fail (G_IS_FILE (target_file));
 
-   /* generate a title for the progress dialog */
-   display_name = thunar_file_cached_display_name (target_file);
-   title = g_strdup_printf (_("Copying files to \"%s\"..."), display_name);
-   g_free (display_name);
+  volume= thunar_file_get_volume (thunar_file_get_for_uri (g_file_get_uri (target_file), NULL));
+  volume_name = g_volume_get_name (volume);
+  volume_uuid = g_volume_get_uuid (volume);
+
+  /* generate a title for the progress dialog */
+  display_name = thunar_file_cached_display_name (target_file);
+
+  /* if the display_name is equal to the volume_uuid display the volume_name */
+  use_display_name = strcmp (display_name, volume_uuid) != 0;
+
+  title = g_strdup_printf (_("Copying files to \"%s\"..."), use_display_name ? display_name : volume_name);
+  g_free (display_name);
 
   /* collect the target files and launch the job */
   thunar_application_collect_and_launch (application, parent, "edit-copy",
@@ -2001,8 +2013,11 @@ thunar_application_copy_into (ThunarApplication *application,
                                          FALSE, TRUE,
                                          new_files_closure);
 
-  /* free the title */
+  /* free */
   g_free (title);
+  g_free (volume_name);
+  g_free (volume_uuid);
+  g_object_unref (G_OBJECT (volume));
 }
 
 
