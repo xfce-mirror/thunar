@@ -448,6 +448,7 @@ thunar_launcher_init (ThunarLauncher *launcher)
   launcher->files_to_process = NULL;
   launcher->device_to_process = NULL;
   launcher->location_to_process = NULL;
+  launcher->parent_folder = NULL;
 
   /* grab a reference on the preferences */
   launcher->preferences = thunar_preferences_get ();
@@ -469,13 +470,22 @@ thunar_launcher_dispose (GObject *object)
   thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (launcher), NULL);
   thunar_launcher_set_widget (THUNAR_LAUNCHER (launcher), NULL);
 
-  /* disconnect from the currently selected files */
-  thunar_g_list_free_full (launcher->files_to_process);
+  /* unref all members */
+  if (launcher->files_to_process != NULL)
+    thunar_g_list_free_full (launcher->files_to_process);
   launcher->files_to_process = NULL;
 
-  /* unref parent, if any */
+  if (launcher->device_to_process != NULL)
+    g_object_unref (launcher->device_to_process);
+  launcher->device_to_process = NULL;
+
+  if (launcher->location_to_process != NULL)
+    g_object_unref (launcher->location_to_process);
+  launcher->location_to_process = NULL;
+
   if (launcher->parent_folder != NULL)
       g_object_unref (launcher->parent_folder);
+  launcher->parent_folder = NULL;
 
   (*G_OBJECT_CLASS (thunar_launcher_parent_class)->dispose) (object);
 }
