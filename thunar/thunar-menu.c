@@ -210,7 +210,6 @@ thunar_menu_set_property (GObject      *object,
 
     case PROP_LAUNCHER:
       menu->launcher = g_value_dup_object (value);
-      g_object_ref (G_OBJECT (menu->launcher));
      break;
 
     case PROP_FORCE_SECTION_OPEN:

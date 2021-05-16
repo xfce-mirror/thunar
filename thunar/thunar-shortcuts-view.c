@@ -428,6 +428,9 @@ thunar_shortcuts_view_finalize (GObject *object)
   /* reset the current-directory property */
   thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (view), NULL);
 
+  /* release reference on the launcher */
+  g_object_unref (view->launcher);
+
   /* disconnect from the preferences object */
   g_signal_handlers_disconnect_matched (G_OBJECT (view->preferences), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, view);
   g_object_unref (G_OBJECT (view->preferences));

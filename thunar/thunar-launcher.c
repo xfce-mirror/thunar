@@ -632,20 +632,16 @@ thunar_launcher_set_selected_files (ThunarComponent *component,
   launcher->files_are_all_executable   = TRUE;
   launcher->single_directory_to_process = FALSE;
   launcher->single_folder = NULL;
-  launcher->parent_folder = NULL;
 
   /* if nothing is selected, the current directory is the folder to use for all menus */
   if (launcher->files_are_selected)
     launcher->files_to_process = thunar_g_list_copy_deep (selected_files);
   else
-    launcher->files_to_process = g_list_append (launcher->files_to_process, launcher->current_directory);
+    launcher->files_to_process = g_list_append (launcher->files_to_process, g_object_ref (launcher->current_directory));
 
   /* determine the number of files/directories/executables */
   for (lp = launcher->files_to_process; lp != NULL; lp = lp->next, ++launcher->n_files_to_process)
     {
-      /* Keep a reference on all selected files */
-      g_object_ref (lp->data);
-
       if (thunar_file_is_directory (lp->data)
           || thunar_file_is_shortcut (lp->data)
           || thunar_file_is_mountable (lp->data))

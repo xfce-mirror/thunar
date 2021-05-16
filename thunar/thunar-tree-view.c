@@ -445,6 +445,9 @@ thunar_tree_view_finalize (GObject *object)
   /* reset the current-directory property */
   thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (view), NULL);
 
+  /* release reference on the launcher */
+  g_object_unref (view->launcher);
+
   /* release our reference on the preferences */
   g_object_unref (G_OBJECT (view->preferences));
 
