@@ -56,9 +56,16 @@
 
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
+#include <thunar/thunar-folder.h>
 
 #include <glib.h>
 #include <glib/gstdio.h>
+
+
+
+static gboolean thunar_string_is_number   (const gchar *s);
+static gboolean thunar_similar_file_names (const gchar *file1,
+                                           const gchar *file2);
 
 
 
@@ -646,8 +653,56 @@ thunar_util_change_working_directory (const gchar *new_directory)
   return old_directory;
 }
 
+
+
 void
 thunar_setup_display_cb (gpointer data)
 {
   g_setenv ("DISPLAY", (char *) data, TRUE);
+}
+
+
+
+gchar*
+thunar_next_new_file_name (ThunarFile   *dir,
+                           const gchar  *file_name)
+{
+  ThunarFolder   *folder          = thunar_folder_get_for_file (dir);
+  unsigned long   file_name_size  = strlen (file_name);
+  unsigned        count           = 0;
+  gboolean        found_duplicate = FALSE;
+  gchar          *extension       = NULL;
+  gchar          *new_name        = g_strdup (file_name);
+
+  /* get file extension if file is not a directory */
+  extension = thunar_util_str_get_extension (file_name);
+
+  /* if the file has an extension don't include it in the search */
+  if (extension != NULL)
+    file_name_size -= strlen (extension);
+
+  /* loop through the directory until new_name is unique */
+  while (TRUE)
+    {
+      found_duplicate = FALSE;
+      for (GList *files = thunar_folder_get_files (folder); files != NULL; files = files->next)
+        {
+          ThunarFile  *file = files->data;
+          const gchar *name = thunar_file_get_display_name (file);
+
+          if (strcmp (new_name, name) == 0)
+            {
+              found_duplicate = TRUE;
+              break;
+            }
+        }
+
+      if (!found_duplicate)
+        break;
+      g_free (new_name);
+      new_name = g_strdup_printf (_("%s %u%s"), file_name, ++count, extension ? extension : "");
+    }
+  g_object_unref (G_OBJECT (folder));
+
+  return new_name;
 }
