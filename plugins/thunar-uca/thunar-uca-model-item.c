@@ -21,8 +21,9 @@
 #include <libxfce4util/libxfce4util.h>
 
 
-struct _ThunarUcaModelItemPrivate {
-  gchar 		*filename;
+struct _ThunarUcaModelItemPrivate
+{
+  gchar *filename;
 };
 
 
@@ -47,13 +48,14 @@ thunar_uca_model_item_get_unique_id (void)
 
 
 void
-thunar_uca_model_item_free (ThunarUcaModelItem *item) {
-  thunar_uca_model_item_reset(item);
+thunar_uca_model_item_free (ThunarUcaModelItem *item)
+{
+  thunar_uca_model_item_reset (item);
   if (item->priv != NULL)
-	g_free (item->priv->filename);
+    g_free (item->priv->filename);
   g_free (item->priv);
   item->priv = NULL;
-  g_free(item);
+  g_free (item);
 }
 
 
@@ -61,7 +63,7 @@ thunar_uca_model_item_free (ThunarUcaModelItem *item) {
 void
 thunar_uca_model_item_reset (ThunarUcaModelItem *item)
 {
-  ThunarUcaModelItemPrivate *private;
+  ThunarUcaModelItemPrivate* private;
 
   /* release the previous values... */
   g_strfreev (item->patterns);
@@ -73,7 +75,7 @@ thunar_uca_model_item_reset (ThunarUcaModelItem *item)
   g_free (item->icon_name);
 
   if (item->gicon != NULL)
-	g_object_unref (item->gicon);
+    g_object_unref (item->gicon);
 
   private = item->priv;
 
@@ -86,68 +88,68 @@ thunar_uca_model_item_reset (ThunarUcaModelItem *item)
 
 void
 thunar_uca_model_item_update (ThunarUcaModelItem *data,
-							  const gchar *name,
-							  const gchar *submenu,
-							  const gchar *unique_id,
-							  const gchar *description,
-							  const gchar *icon,
-							  const gchar *command,
-							  gboolean startup_notify,
-							  const gchar *patterns,
-							  const gchar *filename,
-							  ThunarUcaTypes types)
+                              const gchar        *name,
+                              const gchar        *submenu,
+                              const gchar        *unique_id,
+                              const gchar        *description,
+                              const gchar        *icon,
+                              const gchar        *command,
+                              gboolean            startup_notify,
+                              const gchar        *patterns,
+                              const gchar        *filename,
+                              ThunarUcaTypes      types)
 {
   guint m, n;
 
   if (G_LIKELY (name != NULL && *name != '\0'))
-	data->name = g_strdup (name);
+    data->name = g_strdup (name);
   if (G_LIKELY (submenu != NULL && *submenu != '\0'))
-	data->submenu = g_strdup (submenu);
+    data->submenu = g_strdup (submenu);
   if (G_LIKELY (icon != NULL && *icon != '\0'))
-	data->icon_name = g_strdup (icon);
+    data->icon_name = g_strdup (icon);
   if (G_LIKELY (command != NULL && *command != '\0'))
-	data->command = g_strdup (command);
+    data->command = g_strdup (command);
   if (G_LIKELY (description != NULL && *description != '\0'))
-	data->description = g_strdup (description);
+    data->description = g_strdup (description);
 
   data->types = types;
   data->startup_notify = startup_notify;
 
   /* set the unique id once */
   if (data->unique_id == NULL)
-  {
-	if (G_LIKELY (!xfce_str_is_empty (unique_id)))
-	  data->unique_id = g_strdup (unique_id);
-	else
-	  data->unique_id = thunar_uca_model_item_get_unique_id ();
-  }
+    {
+      if (G_LIKELY (!xfce_str_is_empty (unique_id)))
+        data->unique_id = g_strdup (unique_id);
+      else
+        data->unique_id = thunar_uca_model_item_get_unique_id ();
+    }
 
   /* setup the patterns */
-  data->patterns = g_strsplit (!xfce_str_is_empty(patterns) ? patterns : "*", ";", -1);
+  data->patterns = g_strsplit (!xfce_str_is_empty (patterns) ? patterns : "*", ";", -1);
   for (m = n = 0; data->patterns[m] != NULL; ++m)
-  {
-	if (G_UNLIKELY (xfce_str_is_empty(data->patterns[m])))
-	  g_free (data->patterns[m]);
-	else
-	  data->patterns[n++] = g_strstrip (data->patterns[m]);
-  }
+    {
+      if (G_UNLIKELY (xfce_str_is_empty (data->patterns[m])))
+        g_free (data->patterns[m]);
+      else
+        data->patterns[n++] = g_strstrip (data->patterns[m]);
+    }
   data->patterns[n] = NULL;
 
   /* check if this data will work for multiple files */
   /* TODO #179: Some of these command codes are deprecated
    * See: https://specifications.freedesktop.org/desktop-entry-spec/latest/ar01s07.html*/
   data->multiple_selection = (command != NULL && (strstr (command, "%F") != NULL
-	  || strstr (command, "%D") != NULL
-	  || strstr (command, "%N") != NULL
-	  || strstr (command, "%U") != NULL));
+                                                  || strstr (command, "%D") != NULL
+                                                  || strstr (command, "%N") != NULL
+                                                  || strstr (command, "%U") != NULL));
 
   /* We only update the filename once */
-  if (!xfce_str_is_empty(filename))
-  {
-    if (data->priv == NULL)
-      data->priv = g_new0(ThunarUcaModelItemPrivate, 1);
-	data->priv->filename = g_strdup (filename);
-  }
+  if (!xfce_str_is_empty (filename))
+    {
+      if (data->priv == NULL)
+        data->priv = g_new0 (ThunarUcaModelItemPrivate, 1);
+      data->priv->filename = g_strdup (filename);
+    }
 }
 
 
@@ -163,81 +165,44 @@ thunar_uca_model_item_get_filename (ThunarUcaModelItem *data)
 
 
 void
-thunar_uca_model_item_write_file (ThunarUcaModelItem	*item,
-								  FILE 					*fp)
+thunar_uca_model_item_write_file (ThunarUcaModelItem *item,
+                                  FILE               *fp)
 {
-  gchar			*patterns;
-  gchar			*escaped;
+  gchar *patterns;
+  gchar *escaped;
 
   fputs ("<action>\n", fp);
   patterns = g_strjoinv (";", item->patterns);
   escaped = g_markup_printf_escaped ("\t<icon>%s</icon>\n"
-									 "\t<name>%s</name>\n"
-									 "\t<submenu>%s</submenu>\n"
-									 "\t<unique-id>%s</unique-id>\n"
-									 "\t<command>%s</command>\n"
-									 "\t<description>%s</description>\n"
-									 "\t<patterns>%s</patterns>\n",
-									 (item->icon_name != NULL) ? item->icon_name : "",
-									 (item->name != NULL) ? item->name : "",
-									 (item->submenu != NULL) ? item->submenu : "",
-									 (item->unique_id != NULL) ? item->unique_id : "",
-									 (item->command != NULL) ? item->command : "",
-									 (item->description != NULL) ? item->description : "",
-									 patterns);
-  fputs(escaped, fp);
+                                     "\t<name>%s</name>\n"
+                                     "\t<submenu>%s</submenu>\n"
+                                     "\t<unique-id>%s</unique-id>\n"
+                                     "\t<command>%s</command>\n"
+                                     "\t<description>%s</description>\n"
+                                     "\t<patterns>%s</patterns>\n",
+                                     (item->icon_name != NULL) ? item->icon_name : "",
+                                     (item->name != NULL) ? item->name : "",
+                                     (item->submenu != NULL) ? item->submenu : "",
+                                     (item->unique_id != NULL) ? item->unique_id : "",
+                                     (item->command != NULL) ? item->command : "",
+                                     (item->description != NULL) ? item->description : "",
+                                     patterns);
+  fputs (escaped, fp);
   g_free (patterns);
   g_free (escaped);
   if (item->startup_notify)
-	fputs ("\t<startup-notify/>\n", fp);
+    fputs ("\t<startup-notify/>\n", fp);
   if ((item->types & THUNAR_UCA_TYPE_DIRECTORIES) != 0)
-	fputs ("\t<directories/>\n", fp);
+    fputs ("\t<directories/>\n", fp);
   if ((item->types & THUNAR_UCA_TYPE_AUDIO_FILES) != 0)
-	fputs ("\t<audio-files/>\n", fp);
+    fputs ("\t<audio-files/>\n", fp);
   if ((item->types & THUNAR_UCA_TYPE_IMAGE_FILES) != 0)
-	fputs ("\t<image-files/>\n", fp);
+    fputs ("\t<image-files/>\n", fp);
   if ((item->types & THUNAR_UCA_TYPE_OTHER_FILES) != 0)
-	fputs ("\t<other-files/>\n", fp);
+    fputs ("\t<other-files/>\n", fp);
   if ((item->types & THUNAR_UCA_TYPE_TEXT_FILES) != 0)
-	fputs ("\t<text-files/>\n", fp);
+    fputs ("\t<text-files/>\n", fp);
   if ((item->types & THUNAR_UCA_TYPE_VIDEO_FILES) != 0)
-	fputs ("\t<video-files/>\n", fp);
+    fputs ("\t<video-files/>\n", fp);
   fputs ("</action>\n", fp);
 }
-
-
-
-//gint
-//thunar_uca_model_item_compareTo (ThunarUcaModelItem *item1,
-//									  ThunarUcaModelItem *item2)
-//{
-//  gint ret;
-//
-//  g_return_val_if_fail (item1 != NULL || item2 != NULL, 0);
-//  g_return_val_if_fail(item1 != NULL, -1);
-//  g_return_val_if_fail(item2 != NULL, 1);
-//
-//  if ((ret = g_strcmp0 (item1->unique_id, item2->unique_id) != 0))
-//    return ret;
-//  if ((ret = g_strcmp0 (item1->command, item2->command) != 0))
-//	return ret;
-//  if ((ret = g_strcmp0 (item1->name, item2->name) != 0))
-//	return ret;
-//  if ((ret = g_strcmp0 (item1->description, item2->description) != 0))
-//	return ret;
-//  if (item1->types != item2->types)
-//	return -1;
-//  if ((ret = g_strcmp0 (item1->submenu, item2->submenu) != 0))
-//	return ret;
-//  /* TODO #179: Is this the right way to compare bit-fields?*/
-//  if ((guint)item1->multiple_selection != (guint)item2->multiple_selection)
-//	return -1;
-//  if ((ret = g_strcmp0 (item1->icon_name, item2->icon_name) != 0))
-//    return ret;
-//  /* No need to compare icon objects
-//   * if (!g_icon_equal (item1->gicon, item2->gicon))
-//   * 	return -1;
-//   * */
-//
-//  return g_strv_equal((const gchar *const *)item1->patterns, (const gchar *const *)item2->patterns) ? 0: -1;
-//}
