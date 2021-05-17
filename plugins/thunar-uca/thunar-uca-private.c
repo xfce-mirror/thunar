@@ -60,96 +60,96 @@ thunar_uca_i18n_init (void)
  * @return The command with expansions
  */
 gchar*
-thunar_uca_expand_deprecated_desktop_entry_field_codes (const gchar	*command,
-														GList		*file_infos)
+thunar_uca_expand_deprecated_desktop_entry_field_codes (const gchar *command,
+                                                        GList       *file_infos)
 {
-  const gchar        *p;
-  gchar              *dirname;
-  gchar              *path;
-  GList              *lp;
-  GFile              *location;
-  GString            *command_line = g_string_new (NULL);
+  const gchar *p;
+  gchar       *dirname;
+  gchar       *path;
+  GList       *lp;
+  GFile       *location;
+  GString     *command_line = g_string_new (NULL);
 
   /* expand first the field codes that are deprecated in Freedesktop.org specification */
   for (p = command; *p != '\0'; ++p)
-  {
-	if (G_UNLIKELY (p[0] == '%' && p[1] != '\0'))
-	{
-	  switch (*++p)
-	  {
-	  case 'd':
-		if (G_LIKELY (file_infos != NULL))
-		{
-		  location = thunarx_file_info_get_location (file_infos->data);
-		  path = g_file_get_path (location);
-		  g_object_unref (location);
+    {
+      if (G_UNLIKELY (p[0] == '%' && p[1] != '\0'))
+        {
+          switch (*++p)
+            {
+              case 'd':
+                if (G_LIKELY (file_infos != NULL))
+                  {
+                    location = thunarx_file_info_get_location (file_infos->data);
+                    path = g_file_get_path (location);
+                    g_object_unref (location);
 
-		  if (G_UNLIKELY (path == NULL))
-			goto error;
+                    if (G_UNLIKELY (path == NULL))
+                      goto error;
 
-		  dirname = g_path_get_dirname (path);
-		  xfce_append_quoted (command_line, dirname);
-		  g_free (dirname);
-		  g_free (path);
-		}
-		break;
+                    dirname = g_path_get_dirname (path);
+                    xfce_append_quoted (command_line, dirname);
+                    g_free (dirname);
+                    g_free (path);
+                  }
+                break;
 
-	  case 'D':
-		for (lp = file_infos; lp != NULL; lp = lp->next)
-		{
-		  if (G_LIKELY (lp != file_infos))
-			g_string_append_c (command_line, ' ');
+              case 'D':
+                for (lp = file_infos; lp != NULL; lp = lp->next)
+                  {
+                    if (G_LIKELY (lp != file_infos))
+                      g_string_append_c (command_line, ' ');
 
-		  location = thunarx_file_info_get_location (lp->data);
-		  path = g_file_get_path (location);
-		  g_object_unref (location);
+                    location = thunarx_file_info_get_location (lp->data);
+                    path = g_file_get_path (location);
+                    g_object_unref (location);
 
-		  if (G_UNLIKELY (path == NULL))
-			goto error;
+                    if (G_UNLIKELY (path == NULL))
+                      goto error;
 
-		  dirname = g_path_get_dirname (path);
-		  xfce_append_quoted (command_line, dirname);
-		  g_free (dirname);
-		  g_free (path);
-		}
-		break;
+                    dirname = g_path_get_dirname (path);
+                    xfce_append_quoted (command_line, dirname);
+                    g_free (dirname);
+                    g_free (path);
+                  }
+                break;
 
-	  case 'n':
-		if (G_LIKELY (file_infos != NULL))
-		{
-		  path = thunarx_file_info_get_name (file_infos->data);
-		  xfce_append_quoted (command_line, path);
-		  g_free (path);
-		}
-		break;
+              case 'n':
+                if (G_LIKELY (file_infos != NULL))
+                  {
+                    path = thunarx_file_info_get_name (file_infos->data);
+                    xfce_append_quoted (command_line, path);
+                    g_free (path);
+                  }
+                break;
 
-	  case 'N':
-		for (lp = file_infos; lp != NULL; lp = lp->next)
-		{
-		  if (G_LIKELY (lp != file_infos))
-			g_string_append_c (command_line, ' ');
+              case 'N':
+                for (lp = file_infos; lp != NULL; lp = lp->next)
+                  {
+                    if (G_LIKELY (lp != file_infos))
+                      g_string_append_c (command_line, ' ');
 
-		  path = thunarx_file_info_get_name (lp->data);
-		  xfce_append_quoted (command_line, path);
-		  g_free (path);
-		}
-		break;
+                    path = thunarx_file_info_get_name (lp->data);
+                    xfce_append_quoted (command_line, path);
+                    g_free (path);
+                  }
+                break;
 
-	  default:
-		g_string_append_c (command_line, '%');
-		g_string_append_c (command_line, *p);
-		break;
-	  }
-	}
-	else
-	{
-	  g_string_append_c (command_line, *p);
-	}
-  }
+              default:
+                g_string_append_c (command_line, '%');
+                g_string_append_c (command_line, *p);
+                break;
+            }
+        }
+      else
+        {
+          g_string_append_c (command_line, *p);
+        }
+    }
 
   path = command_line->str;
 
-  error:
+error:
   g_string_free (command_line, path == NULL);
   return path;
 }
