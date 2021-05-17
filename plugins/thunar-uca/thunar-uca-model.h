@@ -54,48 +54,55 @@ typedef enum
 
 
 
-GType           thunar_uca_model_get_type       (void) G_GNUC_CONST;
-void            thunar_uca_model_register_type  (ThunarxProviderPlugin   *plugin);
+GType           thunar_uca_model_get_type              (void) G_GNUC_CONST;
+void            thunar_uca_model_register_type         (ThunarxProviderPlugin   *plugin);
 
-ThunarUcaModel *thunar_uca_model_get_default    (void);
+ThunarUcaModel *thunar_uca_model_get_default           (void);
 
-GList          *thunar_uca_model_match          (ThunarUcaModel          *uca_model,
-                                                 GList                   *file_infos);
+GList          *thunar_uca_model_match                 (ThunarUcaModel          *uca_model,
+                                                        GList                   *file_infos);
 
-void            thunar_uca_model_append         (ThunarUcaModel          *uca_model,
-                                                 GtkTreeIter             *iter);
+void            thunar_uca_model_append                (ThunarUcaModel          *uca_model,
+                                                        GtkTreeIter             *iter);
 
-void            thunar_uca_model_exchange       (ThunarUcaModel          *uca_model,
-                                                 GtkTreeIter             *iter_a,
-                                                 GtkTreeIter             *iter_b);
+void            thunar_uca_model_exchange              (ThunarUcaModel          *uca_model,
+                                                        GtkTreeIter             *iter_a,
+                                                        GtkTreeIter             *iter_b);
 
-void            thunar_uca_model_remove         (ThunarUcaModel          *uca_model,
-                                                 GtkTreeIter             *iter);
+gboolean        thunar_uca_model_action_exists         (ThunarUcaModel          *uca_model,
+                                                        GtkTreeIter             *iter,
+                                                        const gchar             *action_name);
 
-void            thunar_uca_model_update         (ThunarUcaModel          *uca_model,
-                                                 GtkTreeIter             *iter,
-                                                 const gchar             *filename,
-                                                 const gchar             *name,
-                                                 const gchar             *submenu,
-                                                 const gchar             *unique_id,
-                                                 const gchar             *description,
-                                                 const gchar             *icon,
-                                                 const gchar             *command,
-                                                 gboolean                 startup_notify,
-                                                 const gchar             *patterns,
-                                                 ThunarUcaTypes           types,
-                                                 guint                    accel_key,
-                                                 GdkModifierType          accel_mods);
+gboolean        thunar_uca_model_action_exists_no_iter (ThunarUcaModel          *uca_model,
+                                                        const gchar             *action_name);
 
-gboolean        thunar_uca_model_save           (ThunarUcaModel          *uca_model,
-                                                 GError                 **error);
+void            thunar_uca_model_remove                (ThunarUcaModel          *uca_model,
+                                                        GtkTreeIter             *iter);
 
-gboolean        thunar_uca_model_parse_argv     (ThunarUcaModel          *uca_model,
-                                                 GtkTreeIter             *iter,
-                                                 GList                   *file_infos,
-                                                 gint                    *argcp,
-                                                 gchar                 ***argvp,
-                                                 GError                 **error);
+void            thunar_uca_model_update                (ThunarUcaModel          *uca_model,
+                                                        GtkTreeIter             *iter,
+                                                        const gchar             *filename,
+                                                        const gchar             *name,
+                                                        const gchar             *submenu,
+                                                        const gchar             *unique_id,
+                                                        const gchar             *description,
+                                                        const gchar             *icon,
+                                                        const gchar             *command,
+                                                        gboolean                 startup_notify,
+                                                        const gchar             *patterns,
+                                                        ThunarUcaTypes           types,
+                                                        guint                    accel_key,
+                                                        GdkModifierType          accel_mods);
+
+gboolean        thunar_uca_model_save                  (ThunarUcaModel          *uca_model,
+                                                        GError                 **error);
+
+gboolean        thunar_uca_model_parse_argv            (ThunarUcaModel          *uca_model,
+                                                        GtkTreeIter             *iter,
+                                                        GList                   *file_infos,
+                                                        gint                    *argcp,
+                                                        gchar                 ***argvp,
+                                                        GError                 **error);
 
 
 

@@ -14,6 +14,8 @@ extensions_LTLIBRARIES =						\
 	thunar-uca.la
 
 thunar_uca_la_SOURCES =							\
+    thunar-uca-marshal.c						\
+	thunar-uca-marshal.h                        \
 	thunar-uca-chooser.c						\
 	thunar-uca-chooser.h						\
 	thunar-uca-context.c						\
@@ -37,7 +39,7 @@ thunar_uca_la_CFLAGS =							\
 	$(EXO_CFLAGS)							\
 	$(LIBXFCE4UTIL_CFLAGS)						\
 	$(LIBXFCE4UI_CFLAGS)						\
-	$(LIBXFCE4KBD_PRIVATE_CFLAGS) 			    \
+	$(LIBXFCE4KBD_PRIVATE_CFLAGS) 				\
 	$(PLATFORM_CFLAGS)
 
 thunar_uca_la_LDFLAGS =							\
@@ -74,14 +76,52 @@ defaults_in_files = uca.xml.in
 defaults_DATA = $(defaults_in_files:.xml.in=.xml)
 @INTLTOOL_XML_RULE@
 
+if MAINTAINER_MODE
+BUILT_SOURCES =								\
+	thunar-uca-marshal.c					\
+	thunar-uca-marshal.h
+
+DISTCLEANFILES =							\
+	thunar-uca-marshal.c					\
+	thunar-uca-marshal.h
+
+thunar-uca-marshal.h: stamp-thunar-uca-marshal.h
+	@true
+
+stamp-thunar-uca-marshal.h: thunar-uca-marshal.list Makefile
+	$(AM_V_GEN) ( \
+		cd $(srcdir) \
+		&& echo "#ifndef __THUNAR_UCA_MARSHAL_H__" > xgen-tmh \
+		&& echo "#define __THUNAR_UCA_MARSHAL_H__" >> xgen-tmh \
+		&& ( glib-genmarshal \
+			--prefix=_thunar_uca_marshal \
+			--header thunar-uca-marshal.list ) >> xgen-tmh \
+		&& echo "#endif /* !__THUNAR_UCA_MARSHAL_H__ */" >> xgen-tmh \
+		&& ( cmp -s xgen-tmh thunar-uca-marshal.h || cp xgen-tmh thunar-uca-marshal.h ) \
+		&& rm -f xgen-tmh \
+		&& echo timestamp > $(@F) \
+	)
+
+thunar-uca-marshal.c: thunar-uca-marshal.list Makefile
+	$(AM_V_GEN) ( \
+		cd $(srcdir) \
+		&& echo "#include <thunar-uca/thunar-uca-marshal.h>" > xgen-tmc \
+		&& ( glib-genmarshal \
+			--prefix=_thunar_uca_marshal \
+			--body thunar-uca-marshal.list ) >> xgen-tmc \
+		&& cp xgen-tmc thunar-uca-marshal.c \
+		&& rm -f xgen-tmc \
+	)
+endif
+
 EXTRA_DIST =								\
 	README.md								\
 	thunar-uca.gresource.xml					\
 	thunar-uca-editor.ui						\
 	thunar-uca-chooser.ui						\
+	thunar-uca-marshal.list                     \
 	$(defaults_in_files)
 
 CLEANFILES =								\
 	$(defaults_DATA)
-
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:

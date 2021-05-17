@@ -492,6 +492,7 @@ thunar_uca_model_resolve_paths (GPtrArray       *normalized_uca_paths,
                                 XfceResourceType resource_type)
 {
   gchar      *pattern;
+  gchar      *resource;
   gchararray *resource_folders;
   gchararray *resolve_paths;
   guint       n, s, o;
@@ -501,13 +502,9 @@ thunar_uca_model_resolve_paths (GPtrArray       *normalized_uca_paths,
   for (s = 0; s < THUNAR_UCA_FILE_PATTERNS_SIZE; s++)
     {
       if (g_str_has_prefix (THUNAR_UCA_FILE_PATTERNS[s], "~"))
-        {
           pattern = exo_str_replace (THUNAR_UCA_FILE_PATTERNS[s], "~", xfce_get_homedir ());
-        }
       else
-        {
           pattern = g_strdup (THUNAR_UCA_FILE_PATTERNS[s]);
-        }
 
       for (n = 0; resource_folders[n] != NULL; n++)
         {
@@ -515,8 +512,13 @@ thunar_uca_model_resolve_paths (GPtrArray       *normalized_uca_paths,
             {
               resolve_paths = xfce_resource_match (resource_type, &pattern[strlen (resource_folders[n]) + 1], TRUE);
               for (o = 0; resolve_paths[o] != NULL; o++)
-                g_ptr_array_add (normalized_uca_paths,
-                                 g_strjoin (G_DIR_SEPARATOR_S, resource_folders[n], resolve_paths[o], NULL));
+                {
+                  resource = g_strjoin (G_DIR_SEPARATOR_S, resource_folders[n], resolve_paths[o], NULL);
+                  if (g_file_test (resource, G_FILE_TEST_IS_REGULAR))
+                    g_ptr_array_add (normalized_uca_paths, resource);
+                  else
+                    g_free (resource);
+                }
               g_strfreev (resolve_paths);
               break;
             }
@@ -857,6 +859,56 @@ thunar_uca_model_exchange (ThunarUcaModel *uca_model,
   path = gtk_tree_path_new ();
   gtk_tree_model_rows_reordered (GTK_TREE_MODEL (uca_model), path, NULL, new_order);
   gtk_tree_path_free (path);
+}
+
+
+
+gboolean
+thunar_uca_model_action_exists (ThunarUcaModel *uca_model,
+                                GtkTreeIter    *iter,
+                                const gchar    *action_name)
+{
+  GtkTreeModel *tree_model;
+  gboolean      iter_valid;
+  gchar        *existing_name;
+
+  g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), FALSE);
+  tree_model = GTK_TREE_MODEL (uca_model);
+
+  if (iter == NULL)
+    {
+      GtkTreeIter foo;
+      iter = &foo;
+    }
+
+  /* remove the existing item (if any)
+   * TODO #179: This is kinda slow O(N). Can we make it faster?
+   */
+  if ((iter_valid = gtk_tree_model_iter_nth_child (tree_model, iter, NULL, 0)))
+    {
+      for (gtk_tree_model_get (tree_model, iter,
+                               THUNAR_UCA_MODEL_COLUMN_NAME, &existing_name, -1);
+           g_strcmp0(action_name, existing_name) != 0;
+           gtk_tree_model_get (tree_model, iter,
+                               THUNAR_UCA_MODEL_COLUMN_NAME, &action_name, -1))
+        {
+          g_free (existing_name);
+          if (!gtk_tree_model_iter_next (tree_model, iter))
+              return FALSE;
+        }
+      g_free (existing_name);
+    }
+  return iter_valid;
+}
+
+
+
+gboolean
+thunar_uca_model_action_exists_no_iter (ThunarUcaModel *uca_model,
+                                        const gchar    *action_name)
+{
+  static GtkTreeIter iter;
+  return thunar_uca_model_action_exists (uca_model, &iter, action_name);
 }
 
 
