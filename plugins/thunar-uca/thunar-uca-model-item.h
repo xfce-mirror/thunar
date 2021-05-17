@@ -86,9 +86,9 @@ void                thunar_uca_model_item_update        (ThunarUcaModelItem *dat
                                                          const gchar        *patterns,
                                                          const gchar        *filename,
                                                          ThunarUcaTypes      types);
-const gchar        *thunar_uca_model_item_get_filename (ThunarUcaModelItem *data);
-void                thunar_uca_model_item_write_file   (ThunarUcaModelItem *item,
-                                                        FILE               *fp);
+const gchar        *thunar_uca_model_item_get_filename (ThunarUcaModelItem  *data);
+void                thunar_uca_model_item_write_file   (ThunarUcaModelItem  *item,
+                                                        FILE                *fp);
 
 
 

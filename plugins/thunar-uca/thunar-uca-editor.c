@@ -38,14 +38,6 @@
 
 
 
-/* Property identifiers */
-enum
-{
-  PROP_0,
-  PROP_CONTENT_MODIFIED
-};
-
-
 static const gchar   *thunar_uca_editor_get_icon_name          (const ThunarUcaEditor *uca_editor);
 static void           thunar_uca_editor_set_icon_name          (ThunarUcaEditor       *uca_editor,
                                                                 const gchar           *icon_name);
@@ -57,11 +49,10 @@ static void           thunar_uca_editor_shortcut_clicked       (ThunarUcaEditor 
 static void           thunar_uca_editor_shortcut_clear_clicked (ThunarUcaEditor       *uca_editor);
 static void           thunar_uca_editor_icon_clicked           (ThunarUcaEditor       *uca_editor);
 static void           thunar_uca_editor_constructed            (GObject               *object);
-static void           thunar_uca_editor_set_content_modified  (ThunarUcaEditor        *uca_editor);
-static void           thunar_uca_editor_get_property          (GObject                *object,
-                                                               guint                   prop_id,
-                                                               GValue                 *value,
-                                                               GParamSpec             *param_spec);
+static void           thunar_uca_editor_finalized              (GObject               *object);
+static void           thunar_uca_editor_set_content_modified   (ThunarUcaEditor        *uca_editor);
+static void           thunar_uca_editor_name_updated           (ThunarUcaEditor        *uca_editor);
+static gboolean       thunar_uca_editor_check_existing_name    (ThunarUcaEditor        *uca_editor);
 
 
 
@@ -94,8 +85,11 @@ struct _ThunarUcaEditor
   GdkModifierType  accel_mods;
   guint            accel_key;
 
-  /* property modifiers */
+  /* property to check if editor was modified */
   gboolean         content_modified;
+  /* properties used to check for duplicate */
+  guint            name_entry_changed_id;
+  GClosure        *name_search_callback;
 };
 
 typedef struct
@@ -121,7 +115,7 @@ thunar_uca_editor_class_init (ThunarUcaEditorClass *klass)
 
   /* vfuncs */
   gobject_class->constructed = thunar_uca_editor_constructed;
-  gobject_class->get_property = thunar_uca_editor_get_property;
+  gobject_class->finalize = thunar_uca_editor_finalized;
 
   /* Setup the template xml */
   gtk_widget_class_set_template_from_resource (widget_class, "/org/xfce/thunar/uca/editor.ui");
@@ -149,14 +143,7 @@ thunar_uca_editor_class_init (ThunarUcaEditorClass *klass)
   gtk_widget_class_bind_template_callback (widget_class, thunar_uca_editor_shortcut_clear_clicked);
 
   gtk_widget_class_bind_template_callback (widget_class, thunar_uca_editor_set_content_modified);
-
-  g_object_class_install_property (gobject_class,
-                                   PROP_CONTENT_MODIFIED,
-                                   g_param_spec_boolean ("content-modified",
-                                                         _("Content Modified"),
-                                                         _("Used to indicate if the underlying model has been modified"),
-                                                         FALSE,
-                                                         G_PARAM_READABLE));
+  gtk_widget_class_bind_template_callback (widget_class, thunar_uca_editor_name_updated);
 }
 
 
@@ -165,6 +152,7 @@ static void
 thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
 {
   uca_editor->content_modified = FALSE;
+  uca_editor->name_entry_changed_id = 0;
   /* Initialize the template for this instance */
   gtk_widget_init_template (GTK_WIDGET (uca_editor));
 
@@ -190,6 +178,19 @@ thunar_uca_editor_constructed (GObject *object)
 
 
 static void
+thunar_uca_editor_finalized (GObject *object)
+{
+  ThunarUcaEditor *editor = THUNAR_UCA_EDITOR (object);
+
+  if (editor->name_search_callback != NULL)
+    g_closure_unref (editor->name_search_callback);
+
+  G_OBJECT_CLASS (thunar_uca_editor_parent_class)->finalize (object);
+}
+
+
+
+static void
 thunar_uca_editor_set_content_modified (ThunarUcaEditor *uca_editor)
 {
   if (G_UNLIKELY (!uca_editor->content_modified))
@@ -198,17 +199,71 @@ thunar_uca_editor_set_content_modified (ThunarUcaEditor *uca_editor)
 
 
 
+/**
+ * Called when the name of the action changes
+ * @param uca_editor the uca editor
+ */
 static void
-thunar_uca_editor_get_property (GObject    *object,
-                                guint       prop_id,
-                                GValue     *value,
-                                GParamSpec *param_spec)
+thunar_uca_editor_name_updated (ThunarUcaEditor *uca_editor)
 {
-  const ThunarUcaEditor *uca_editor = THUNAR_UCA_EDITOR (object);
-  if (G_LIKELY (prop_id == PROP_CONTENT_MODIFIED))
-    g_value_set_boolean (value, uca_editor->content_modified);
-  else
-    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, param_spec);
+  GtkWidget *ok_button;
+
+  /*
+   * Modus Operandi:
+   * When the user types the name of an action
+   * we disable the "accept" button
+   * start a countdown of 150ms
+   * after the count down, check if the name entered exists
+   * see #thunar_uca_editor_check_existing_name for the rest
+   * */
+
+  if (uca_editor->name_search_callback != NULL)
+    {
+      ok_button = gtk_dialog_get_widget_for_response (GTK_DIALOG (uca_editor), GTK_RESPONSE_OK);
+      if (ok_button != NULL && gtk_widget_is_sensitive (ok_button))
+        gtk_widget_set_sensitive (ok_button, FALSE);
+
+      if (uca_editor->name_entry_changed_id != 0)
+        g_source_remove (uca_editor->name_entry_changed_id);
+      uca_editor->name_entry_changed_id =
+          gdk_threads_add_timeout (150, (GSourceFunc) thunar_uca_editor_check_existing_name, uca_editor);
+    }
+}
+
+
+
+/**
+ * Called when the timer runs out and the user has not changed the
+ * name entry
+ * @param uca_editor
+ * @return G_SOURCE_REMOVE to remove the timeout
+ */
+static gboolean
+thunar_uca_editor_check_existing_name (ThunarUcaEditor *uca_editor)
+{
+  GtkWidget   *ok_button;
+  GValue       name_exists_ret = G_VALUE_INIT;
+  GValue       params[] = { G_VALUE_INIT, G_VALUE_INIT };
+
+  g_value_init (&params[0], G_TYPE_POINTER);
+  g_value_set_pointer (&params[0], NULL);
+  g_value_init (&params[1], G_TYPE_STRING);
+  g_value_set_string (&params[1], gtk_entry_get_text (GTK_ENTRY (uca_editor->name_entry)));
+  g_value_init (&name_exists_ret, G_TYPE_BOOLEAN);
+  g_closure_invoke (uca_editor->name_search_callback, &name_exists_ret, 2, params, NULL);
+
+  if (!g_value_get_boolean (&name_exists_ret))
+    {
+      ok_button = gtk_dialog_get_widget_for_response (GTK_DIALOG (uca_editor), GTK_RESPONSE_OK);
+      if (ok_button != NULL && !gtk_widget_is_sensitive (ok_button))
+        gtk_widget_set_sensitive (ok_button, TRUE);
+    }
+
+  g_value_unset (&name_exists_ret);
+  g_value_unset (&params[0]);
+  g_value_unset (&params[1]);
+  uca_editor->name_entry_changed_id = 0;
+  return G_SOURCE_REMOVE;
 }
 
 
@@ -679,8 +734,6 @@ thunar_uca_editor_load (ThunarUcaEditor *uca_editor,
   gtk_button_set_label (GTK_BUTTON (uca_editor->shortcut_button), (accel_label != NULL) ? accel_label : _("None"));
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (uca_editor->sn_button), startup_notify);
 
-  /* TODO #179: Should these be freed? They are not duplicated from the treemodel,
-   * so we may be freeing something that's still in use */
   /* cleanup */
   g_free (description);
   g_free (patterns);
@@ -737,4 +790,22 @@ thunar_uca_editor_save (ThunarUcaEditor *uca_editor,
                            uca_editor->accel_mods);
 
   g_free (unique_id);
+}
+
+
+
+gboolean
+thunar_uca_editor_was_modified (ThunarUcaEditor *uca_editor)
+{
+  return uca_editor->content_modified;
+}
+
+
+
+void
+thunar_uca_editor_set_name_search_callback (ThunarUcaEditor                        *uca_editor,
+                                            GClosure /* gboolean (const gchar*) */ *callback)
+{
+  uca_editor->name_search_callback = callback;
+  g_closure_ref (callback);
 }
