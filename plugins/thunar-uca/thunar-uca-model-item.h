@@ -26,7 +26,7 @@
 G_BEGIN_DECLS
 
 typedef struct _ThunarUcaModelItemPrivate ThunarUcaModelItemPrivate;
-typedef struct _ThunarUcaModelItem ThunarUcaModelItem;
+typedef struct _ThunarUcaModelItem        ThunarUcaModelItem;
 
 
 
@@ -53,43 +53,45 @@ typedef enum /*< flags >*/
 
 struct _ThunarUcaModelItem
 {
-  gchar						 *name;
-  gchar						 *submenu;
-  gchar						 *description;
-  gchar						 *unique_id;
-  gchar						 *icon_name;
-  GIcon						 *gicon;
-  gchar						 *command;
-  guint          			  startup_notify : 1;
-  gchar        				**patterns;
-  ThunarUcaTypes 			  types;
+  gchar                      *name;
+  gchar                      *submenu;
+  gchar                      *description;
+  gchar                      *unique_id;
+  gchar                      *icon_name;
+  GIcon                      *gicon;
+  gchar                      *command;
+  gboolean                    startup_notify;
+  gchar                     **patterns;
+  ThunarUcaTypes              types;
 
   /* derived attributes */
-  guint          			  multiple_selection : 1;
-  ThunarUcaModelItemPrivate	 *priv;
+  gboolean                    multiple_selection;
+  ThunarUcaModelItemPrivate  *priv;
 };
 
 
-ThunarUcaModelItem  *thunar_uca_model_item_new 				(void) G_GNUC_MALLOC;
+ThunarUcaModelItem *thunar_uca_model_item_new           (void) G_GNUC_MALLOC;
 
-gchar				*thunar_uca_model_item_get_unique_id	(void);
-void				 thunar_uca_model_item_free 			(ThunarUcaModelItem *data);
-void				 thunar_uca_model_item_reset 			(ThunarUcaModelItem *data);
-void				 thunar_uca_model_item_update 			(ThunarUcaModelItem *data,
-										  					 const gchar		*name,
-															 const gchar		*submenu,
-															 const gchar		*unique_id,
-															 const gchar		*description,
-															 const gchar		*icon,
-															 const gchar		*command,
-															 gboolean			 startup_notify,
-															 const gchar		*patterns,
-															 const gchar 		*filename,
-															 ThunarUcaTypes		 types);
-const gchar 		*thunar_uca_model_item_get_filename		(ThunarUcaModelItem *data);
-void	 			 thunar_uca_model_item_write_file		(ThunarUcaModelItem *item,
-															 FILE 				*fp);
+gchar              *thunar_uca_model_item_get_unique_id (void);
+void                thunar_uca_model_item_free          (ThunarUcaModelItem *data);
+void                thunar_uca_model_item_reset         (ThunarUcaModelItem *data);
+void                thunar_uca_model_item_update        (ThunarUcaModelItem *data,
+                                                         const gchar        *name,
+                                                         const gchar        *submenu,
+                                                         const gchar        *unique_id,
+                                                         const gchar        *description,
+                                                         const gchar        *icon,
+                                                         const gchar        *command,
+                                                         gboolean            startup_notify,
+                                                         const gchar        *patterns,
+                                                         const gchar        *filename,
+                                                         ThunarUcaTypes      types);
+const gchar        *thunar_uca_model_item_get_filename (ThunarUcaModelItem *data);
+void                thunar_uca_model_item_write_file   (ThunarUcaModelItem *item,
+                                                        FILE               *fp);
+
+
 
 G_END_DECLS
 
-#endif // __THUNAR_UCA_MODEL_ITEM_H__
+#endif /* __THUNAR_UCA_MODEL_ITEM_H__ */

@@ -25,9 +25,11 @@
 
 G_BEGIN_DECLS;
 
-void	 thunar_uca_i18n_init 									(void);
-gchar	*thunar_uca_expand_deprecated_desktop_entry_field_codes	(const gchar	*command,
-															   	 GList			*file_infos);
+void   thunar_uca_i18n_init                                   (void);
+gchar *thunar_uca_expand_deprecated_desktop_entry_field_codes (const gchar *command,
+                                                               GList       *file_infos);
+
+
 
 G_END_DECLS;
 
