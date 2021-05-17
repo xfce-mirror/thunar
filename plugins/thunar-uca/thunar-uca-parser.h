@@ -27,10 +27,12 @@ G_BEGIN_DECLS
 
 typedef struct _ThunarUcaParser ThunarUcaParser;
 
-gboolean thunar_uca_parser_read_uca_from_file(ThunarUcaModel	*model,
-											  const gchar		*filename,
-											  GError		   **error);
+gboolean thunar_uca_parser_read_uca_from_file (ThunarUcaModel   *model,
+                                               const gchar      *filename,
+                                               GError          **error);
+
+
 
 G_END_DECLS
 
-#endif //__THUNAR_UCA_PARSER_H__
+#endif /*__THUNAR_UCA_PARSER_H__ */
