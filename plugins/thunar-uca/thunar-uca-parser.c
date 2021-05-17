@@ -341,9 +341,6 @@ end_element_handler (GMarkupParseContext  *context,
     0
   };
   ThunarUcaParser *parser = user_data;
-  gchar           *action_name = NULL;
-  gboolean         iter_valid;
-  GtkTreeModel    *tree_model = GTK_TREE_MODEL (parser->model);
 
   switch (xfce_stack_top (parser->stack))
     {
@@ -360,27 +357,9 @@ end_element_handler (GMarkupParseContext  *context,
       case PARSER_ACTION:
         if (strcmp (element_name, "action") == 0)
           {
-            /* remove the existing item (if any)
-             * TODO #179: This is kinda slow O(N). Can we make it faster?
-             */
-            if ((iter_valid = gtk_tree_model_iter_nth_child (tree_model, &iter, NULL, 0)))
-              {
-                for (gtk_tree_model_get (tree_model, &iter,
-                                         THUNAR_UCA_MODEL_COLUMN_NAME, &action_name, -1);
-                     g_strcmp0 (action_name, parser->name->str) != 0;
-                     gtk_tree_model_get (tree_model, &iter,
-                                         THUNAR_UCA_MODEL_COLUMN_NAME, &action_name, -1))
-                  if (!gtk_tree_model_iter_next (tree_model, &iter))
-                    {
-                      iter_valid = FALSE;
-                      break;
-                    }
-              }
-            if (!iter_valid)
-              {
+            if (!thunar_uca_model_action_exists (parser->model, &iter, parser->name->str))
                 thunar_uca_model_append (parser->model,
                                          &iter);
-              }
 
             thunar_uca_model_update (parser->model,
                                      &iter,
