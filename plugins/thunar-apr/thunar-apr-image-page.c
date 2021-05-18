@@ -194,7 +194,7 @@ thunar_apr_image_page_init (ThunarAprImagePage *image_page)
       gtk_grid_attach (GTK_GRID (grid), image_page->exif_labels[n], 1, n + 3, 1, 1);
       gtk_widget_show (image_page->exif_labels[n]);
 
-      exo_binding_new (G_OBJECT (image_page->exif_labels[n]), "visible", G_OBJECT (label), "visible");
+      g_object_bind_property (G_OBJECT (image_page->exif_labels[n]), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
 
       /* set Atk label relation for the label */
       object = gtk_widget_get_accessible (image_page->exif_labels[n]);
