@@ -315,9 +315,7 @@ thunar_uca_model_get_path (GtkTreeModel *tree_model,
   /* determine the index of the iter */
   idx = g_list_position (uca_model->items, iter->user_data);
   if (G_UNLIKELY (idx < 0))
-    {
-      return NULL;
-    }
+    return NULL;
 
   return gtk_tree_path_new_from_indices (idx, -1);
 }
@@ -389,7 +387,8 @@ thunar_uca_model_get_value (GtkTreeModel *tree_model,
         g_value_take_string (value, str);
         break;
 
-      default: g_assert_not_reached ();
+      default:
+        g_assert_not_reached ();
     }
 }
 
@@ -515,9 +514,19 @@ thunar_uca_model_resolve_paths (GPtrArray       *normalized_uca_paths,
                 {
                   resource = g_strjoin (G_DIR_SEPARATOR_S, resource_folders[n], resolve_paths[o], NULL);
                   if (g_file_test (resource, G_FILE_TEST_IS_REGULAR))
-                    g_ptr_array_add (normalized_uca_paths, resource);
+                    {
+#ifdef DEBUG
+                    g_debug ("Found resource file `%s'");
+#endif
+                      g_ptr_array_add (normalized_uca_paths, resource);
+                    }
                   else
-                    g_free (resource);
+                    {
+#ifdef DEBUG
+                      g_debug ("Resource file `%s' does not exist: Skipped");
+#endif
+                      g_free (resource);
+                    }
                 }
               g_strfreev (resolve_paths);
               break;
@@ -589,7 +598,7 @@ thunar_uca_model_get_default (void)
   if (model == NULL)
     {
       model = g_object_new (THUNAR_UCA_TYPE_MODEL, NULL);
-      g_object_add_weak_pointer (G_OBJECT (model), ( gpointer* ) &model);
+      g_object_add_weak_pointer (G_OBJECT (model), (gpointer*) &model);
     }
   else
     {
@@ -605,29 +614,17 @@ static inline ThunarUcaTypes
 types_from_mime_type (const gchar *mime_type)
 {
   if (mime_type == NULL)
-    {
       return 0;
-    }
   if (strcmp (mime_type, "inode/directory") == 0)
-    {
       return THUNAR_UCA_TYPE_DIRECTORIES;
-    }
   else if (strncmp (mime_type, "audio/", 6) == 0)
-    {
       return THUNAR_UCA_TYPE_AUDIO_FILES;
-    }
   else if (strncmp (mime_type, "image/", 6) == 0)
-    {
       return THUNAR_UCA_TYPE_IMAGE_FILES;
-    }
   else if (strncmp (mime_type, "text/", 5) == 0)
-    {
       return THUNAR_UCA_TYPE_TEXT_FILES;
-    }
   else if (strncmp (mime_type, "video/", 6) == 0)
-    {
       return THUNAR_UCA_TYPE_VIDEO_FILES;
-    }
   else if (strncmp (mime_type, "application/", 12) == 0)
     {
       /* quite cumbersome, certain mime types do not
@@ -639,13 +636,9 @@ types_from_mime_type (const gchar *mime_type)
           || strcmp (mime_type, "x-csh") == 0
           || strcmp (mime_type, "xhtml+xml") == 0
           || strcmp (mime_type, "xml") == 0)
-        {
           return THUNAR_UCA_TYPE_TEXT_FILES;
-        }
       else if (strcmp (mime_type, "ogg") == 0)
-        {
           return THUNAR_UCA_TYPE_AUDIO_FILES;
-        }
     }
 
   return 0;
@@ -676,8 +669,8 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
 {
   typedef struct
   {
-    gchar         *name;
-    ThunarUcaTypes types;
+    gchar          *name;
+    ThunarUcaTypes  types;
   } ThunarUcaFile;
 
   ThunarUcaModelItem *item;
@@ -696,9 +689,7 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
 
   /* special case to avoid overhead */
   if (G_UNLIKELY (uca_model->items == NULL))
-    {
       return NULL;
-    }
 
   /* determine the ThunarUcaFile's for the given file_infos */
   n_files = g_list_length (file_infos);
@@ -726,9 +717,7 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
       files[n].types = types_from_mime_type (mime_type);
 
       if (G_UNLIKELY (files[n].types == 0))
-        {
           files[n].types = THUNAR_UCA_TYPE_OTHER_FILES;
-        }
 
       g_free (mime_type);
     }
@@ -739,18 +728,14 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
       /* check if we can just ignore this item */
       item = ( ThunarUcaModelItem* ) lp->data;
       if (!item->multiple_selection && n_files > 1)
-        {
           continue;
-        }
 
       /* match the specified files */
       for (n = 0; n < n_files; ++n)
         {
           /* verify that we support this type of file */
           if ((files[n].types & item->types) == 0)
-            {
               break;
-            }
 
           /* at least on pattern must match the file name */
           for (m = 0, matches = FALSE; item->patterns[m] != NULL && !matches; ++m)
@@ -758,9 +743,7 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
 
           /* no need to continue if none of the patterns match */
           if (!matches)
-            {
               break;
-            }
         }
 
       /* add the path if all files match one of the patterns */
@@ -941,16 +924,14 @@ thunar_uca_model_remove (ThunarUcaModel *uca_model,
   accel_path = g_strdup_printf ("<Actions>/ThunarActions/uca-action-%s", unique_id);
 
   if (gtk_accel_map_lookup_entry (accel_path, &key) && key.accel_key != 0)
-    {
       gtk_accel_map_change_entry (accel_path, 0, 0, TRUE);
-    }
   g_free (accel_path);
 
   /* determine the path for the item to remove */
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (uca_model), iter);
 
   /* remove the node from the list */
-  item = (( GList* ) iter->user_data)->data;
+  item = ((GList*) iter->user_data)->data;
   uca_model->items = g_list_delete_link (uca_model->items, iter->user_data);
   thunar_uca_model_item_free (item);
 
@@ -967,7 +948,7 @@ thunar_uca_model_remove (ThunarUcaModel *uca_model,
  * thunar_uca_model_update:
  * @uca_model          : a #ThunarUcaModel.
  * @iter               : the #GtkTreeIter of the item to update.
- * @filename                    : (Optional) name of the where the action was read
+ * @filename           : (Optional) name of the where the action was read
  * @name               : the name of the item.
  * @submenu           : the submenu structure in which the item is placed.
  * @unique_id          : a unique ID for the item before any edits.
@@ -1003,7 +984,7 @@ thunar_uca_model_update (ThunarUcaModel *uca_model,
   g_return_if_fail (iter->stamp == uca_model->stamp);
 
   /* reset the previous item values */
-  item = (( GList* ) iter->user_data)->data;
+  item = ((GList*) iter->user_data)->data;
   thunar_uca_model_item_reset (item);
 
   /* setup the new item values */
