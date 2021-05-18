@@ -38,18 +38,18 @@
 
 
 
-static const gchar   *thunar_uca_editor_get_icon_name          (const ThunarUcaEditor *uca_editor);
-static void           thunar_uca_editor_set_icon_name          (ThunarUcaEditor       *uca_editor,
-                                                                const gchar           *icon_name);
-static ThunarUcaTypes thunar_uca_editor_get_types              (const ThunarUcaEditor *uca_editor);
-static void           thunar_uca_editor_set_types              (ThunarUcaEditor       *uca_editor,
-                                                                ThunarUcaTypes         types);
-static void           thunar_uca_editor_command_clicked        (ThunarUcaEditor       *uca_editor);
-static void           thunar_uca_editor_shortcut_clicked       (ThunarUcaEditor       *uca_editor);
-static void           thunar_uca_editor_shortcut_clear_clicked (ThunarUcaEditor       *uca_editor);
-static void           thunar_uca_editor_icon_clicked           (ThunarUcaEditor       *uca_editor);
-static void           thunar_uca_editor_constructed            (GObject               *object);
-static void           thunar_uca_editor_finalized              (GObject               *object);
+static const gchar   *thunar_uca_editor_get_icon_name          (const ThunarUcaEditor  *uca_editor);
+static void           thunar_uca_editor_set_icon_name          (ThunarUcaEditor        *uca_editor,
+                                                                const gchar            *icon_name);
+static ThunarUcaTypes thunar_uca_editor_get_types              (const ThunarUcaEditor  *uca_editor);
+static void           thunar_uca_editor_set_types              (ThunarUcaEditor        *uca_editor,
+                                                                ThunarUcaTypes          types);
+static void           thunar_uca_editor_command_clicked        (ThunarUcaEditor        *uca_editor);
+static void           thunar_uca_editor_shortcut_clicked       (ThunarUcaEditor        *uca_editor);
+static void           thunar_uca_editor_shortcut_clear_clicked (ThunarUcaEditor        *uca_editor);
+static void           thunar_uca_editor_icon_clicked           (ThunarUcaEditor        *uca_editor);
+static void           thunar_uca_editor_constructed            (GObject                *object);
+static void           thunar_uca_editor_finalized              (GObject                *object);
 static void           thunar_uca_editor_set_content_modified   (ThunarUcaEditor        *uca_editor);
 static void           thunar_uca_editor_name_updated           (ThunarUcaEditor        *uca_editor);
 static gboolean       thunar_uca_editor_check_existing_name    (ThunarUcaEditor        *uca_editor);
@@ -63,42 +63,42 @@ struct _ThunarUcaEditorClass
 
 struct _ThunarUcaEditor
 {
-  GtkDialog       __parent__;
+  GtkDialog __parent__;
 
-  GtkWidget       *notebook;
-  GtkWidget       *name_entry;
-  GtkWidget       *sub_menu_entry;
-  GtkWidget       *description_entry;
-  GtkWidget       *icon_button;
-  GtkWidget       *command_entry;
-  GtkWidget       *shortcut_button;
-  GtkWidget       *sn_button;
-  GtkWidget       *patterns_entry;
-  GtkWidget       *directories_button;
-  GtkWidget       *audio_files_button;
-  GtkWidget       *image_files_button;
-  GtkWidget       *text_files_button;
-  GtkWidget       *video_files_button;
-  GtkWidget       *other_files_button;
+  GtkWidget   *notebook;
+  GtkWidget   *name_entry;
+  GtkWidget   *sub_menu_entry;
+  GtkWidget   *description_entry;
+  GtkWidget   *icon_button;
+  GtkWidget   *command_entry;
+  GtkWidget   *shortcut_button;
+  GtkWidget   *sn_button;
+  GtkWidget   *patterns_entry;
+  GtkWidget   *directories_button;
+  GtkWidget   *audio_files_button;
+  GtkWidget   *image_files_button;
+  GtkWidget   *text_files_button;
+  GtkWidget   *video_files_button;
+  GtkWidget   *other_files_button;
 
   gchar           *accel_path;
   GdkModifierType  accel_mods;
   guint            accel_key;
 
   /* property to check if editor was modified */
-  gboolean         content_modified;
+  gboolean  content_modified;
   /* properties used to check for duplicate */
-  guint            name_entry_changed_id;
-  GClosure        *name_search_callback;
+  guint     name_entry_changed_id;
+  GClosure *name_search_callback;
 };
 
 typedef struct
 {
-  gboolean         in_use;
-  GdkModifierType  mods;
-  guint            key;
-  gchar           *current_path;
-  gchar           *other_path;
+  gboolean        in_use;
+  GdkModifierType mods;
+  guint           key;
+  gchar          *current_path;
+  gchar          *other_path;
 } ShortcutInfo;
 
 
@@ -111,11 +111,11 @@ static void
 thunar_uca_editor_class_init (ThunarUcaEditorClass *klass)
 {
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
-  GObjectClass   *gobject_class = G_OBJECT_CLASS (klass);
+  GObjectClass   *object_class = G_OBJECT_CLASS (klass);
 
   /* vfuncs */
-  gobject_class->constructed = thunar_uca_editor_constructed;
-  gobject_class->finalize = thunar_uca_editor_finalized;
+  object_class->constructed = thunar_uca_editor_constructed;
+  object_class->finalize = thunar_uca_editor_finalized;
 
   /* Setup the template xml */
   gtk_widget_class_set_template_from_resource (widget_class, "/org/xfce/thunar/uca/editor.ui");
@@ -137,10 +137,10 @@ thunar_uca_editor_class_init (ThunarUcaEditorClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ThunarUcaEditor, video_files_button);
   gtk_widget_class_bind_template_child (widget_class, ThunarUcaEditor, other_files_button);
 
-  gtk_widget_class_bind_template_callback (widget_class, thunar_uca_editor_icon_clicked);
-  gtk_widget_class_bind_template_callback (widget_class, thunar_uca_editor_command_clicked);
-  gtk_widget_class_bind_template_callback (widget_class, thunar_uca_editor_shortcut_clicked);
-  gtk_widget_class_bind_template_callback (widget_class, thunar_uca_editor_shortcut_clear_clicked);
+  gtk_widget_class_bind_template_callback(widget_class, thunar_uca_editor_icon_clicked);
+  gtk_widget_class_bind_template_callback(widget_class, thunar_uca_editor_command_clicked);
+  gtk_widget_class_bind_template_callback(widget_class, thunar_uca_editor_shortcut_clicked);
+  gtk_widget_class_bind_template_callback(widget_class, thunar_uca_editor_shortcut_clear_clicked);
 
   gtk_widget_class_bind_template_callback (widget_class, thunar_uca_editor_set_content_modified);
   gtk_widget_class_bind_template_callback (widget_class, thunar_uca_editor_name_updated);
@@ -423,9 +423,9 @@ thunar_uca_editor_shortcut_check (gpointer        data,
 
 
 static gboolean
-thunar_uca_editor_validate_shortcut (XfceShortcutDialog *dialog,
-                                     const gchar        *shortcut,
-                                     ThunarUcaEditor    *uca_editor)
+thunar_uca_editor_validate_shortcut (XfceShortcutDialog  *dialog,
+                                     const gchar         *shortcut,
+                                     ThunarUcaEditor     *uca_editor)
 {
   GdkModifierType accel_mods;
   guint           accel_key;
@@ -660,7 +660,7 @@ thunar_uca_editor_set_types (ThunarUcaEditor *uca_editor,
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (uca_editor->directories_button), (types & THUNAR_UCA_TYPE_DIRECTORIES));
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (uca_editor->audio_files_button), (types & THUNAR_UCA_TYPE_AUDIO_FILES));
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (uca_editor->image_files_button), (types & THUNAR_UCA_TYPE_IMAGE_FILES));
-  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (uca_editor->text_files_button), (types & THUNAR_UCA_TYPE_TEXT_FILES));
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (uca_editor->text_files_button),  (types & THUNAR_UCA_TYPE_TEXT_FILES));
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (uca_editor->video_files_button), (types & THUNAR_UCA_TYPE_VIDEO_FILES));
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (uca_editor->other_files_button), (types & THUNAR_UCA_TYPE_OTHER_FILES));
 }
@@ -761,8 +761,8 @@ thunar_uca_editor_save (ThunarUcaEditor *uca_editor,
                         ThunarUcaModel  *uca_model,
                         GtkTreeIter     *iter)
 {
-  gchar       *unique_id;
-  GtkAccelKey  key;
+  gchar         *unique_id;
+  GtkAccelKey    key;
 
   g_return_if_fail (THUNAR_UCA_IS_EDITOR (uca_editor));
   g_return_if_fail (THUNAR_UCA_IS_MODEL (uca_model));
@@ -803,8 +803,8 @@ thunar_uca_editor_was_modified (ThunarUcaEditor *uca_editor)
 
 
 void
-thunar_uca_editor_set_name_search_callback (ThunarUcaEditor                        *uca_editor,
-                                            GClosure /* gboolean (const gchar*) */ *callback)
+thunar_uca_editor_set_name_search_callback (ThunarUcaEditor *uca_editor,
+                                            GClosure        *callback)
 {
   uca_editor->name_search_callback = callback;
   g_closure_ref (callback);

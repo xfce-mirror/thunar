@@ -35,6 +35,8 @@
 #include <thunar-uca/thunar-uca-private.h>
 
 #include <exo/exo.h>
+
+
 #include <thunarx/thunarx.h>
 
 /**
