@@ -206,7 +206,7 @@ thunar_sbr_replace_renamer_init (ThunarSbrReplaceRenamer *replace_renamer)
 
   replace_renamer->pattern_entry = gtk_entry_new ();
   gtk_entry_set_activates_default (GTK_ENTRY (replace_renamer->pattern_entry), TRUE);
-  exo_mutual_binding_new (G_OBJECT (replace_renamer->pattern_entry), "text", G_OBJECT (replace_renamer), "pattern");
+  g_object_bind_property (G_OBJECT (replace_renamer->pattern_entry), "text", G_OBJECT (replace_renamer), "pattern", G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (replace_renamer->pattern_entry, _("Enter the text to search for in the file names."));
   gtk_widget_set_hexpand (replace_renamer->pattern_entry, TRUE);
   gtk_grid_attach (GTK_GRID (grid), replace_renamer->pattern_entry, 1, 0, 1, 1);
@@ -221,7 +221,7 @@ thunar_sbr_replace_renamer_init (ThunarSbrReplaceRenamer *replace_renamer)
   g_object_unref (G_OBJECT (relation));
 
   button = gtk_check_button_new_with_mnemonic (_("Regular _Expression"));
-  exo_mutual_binding_new (G_OBJECT (button), "active", G_OBJECT (replace_renamer), "regexp");
+  g_object_bind_property (G_OBJECT (button), "active", G_OBJECT (replace_renamer), "regexp", G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button, _("If you enable this option, the pattern will be treated as a regular expression and "
                                          "matched using the Perl-compatible regular expressions (PCRE). Check the documentation "
                                          "for details about the regular expression syntax."));
@@ -236,7 +236,7 @@ thunar_sbr_replace_renamer_init (ThunarSbrReplaceRenamer *replace_renamer)
 
   entry = gtk_entry_new ();
   gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
-  exo_mutual_binding_new (G_OBJECT (entry), "text", G_OBJECT (replace_renamer), "replacement");
+  g_object_bind_property (G_OBJECT (entry), "text", G_OBJECT (replace_renamer), "replacement", G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (entry, _("Enter the text that should be used as replacement for the pattern above."));
   gtk_widget_set_hexpand (entry, TRUE);
   gtk_grid_attach (GTK_GRID (grid), entry, 1, 1, 1, 1);
@@ -251,7 +251,7 @@ thunar_sbr_replace_renamer_init (ThunarSbrReplaceRenamer *replace_renamer)
   g_object_unref (G_OBJECT (relation));
 
   button = gtk_check_button_new_with_mnemonic (_("C_ase Sensitive Search"));
-  exo_mutual_binding_new (G_OBJECT (button), "active", G_OBJECT (replace_renamer), "case-sensitive");
+  g_object_bind_property (G_OBJECT (button), "active", G_OBJECT (replace_renamer), "case-sensitive", G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button, _("If you enable this option, the pattern will be searched in a case-sensitive manner. "
                                          "The default is to use a case-insensitive search."));
   gtk_grid_attach (GTK_GRID (grid), button, 2, 1, 1, 1);

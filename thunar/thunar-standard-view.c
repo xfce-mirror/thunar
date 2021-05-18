@@ -817,8 +817,9 @@ thunar_standard_view_constructor (GType                  type,
                     G_CALLBACK (thunar_standard_view_scrolled), object);
 
   /* synchronise the "directory-specific-settings" property with the global "misc-directory-specific-settings" property */
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-directory-specific-settings",
-                   G_OBJECT (standard_view), "directory-specific-settings");
+  g_signal_connect_object (standard_view->preferences, "misc-directory-specific-settings",
+                           standard_view, "directory-specific-settings",
+                           G_BINDING_SYNC_CREATE);
 
   /* done, we have a working object */
   return object;

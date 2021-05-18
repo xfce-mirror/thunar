@@ -778,8 +778,9 @@ thunar_window_init (ThunarWindow *window)
   /* place the spinner into the menu item */
   window->spinner = gtk_spinner_new ();
   gtk_container_add (GTK_CONTAINER (item), window->spinner);
-  exo_binding_new (G_OBJECT (window->spinner), "active",
-                   G_OBJECT (window->spinner), "visible");
+  g_object_bind_property (G_OBJECT (window->spinner), "active",
+                          G_OBJECT (window->spinner), "visible",
+                          G_BINDING_SYNC_CREATE);
 
   /* check if we need to add the root warning */
   if (G_UNLIKELY (geteuid () == 0))
