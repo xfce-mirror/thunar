@@ -346,7 +346,7 @@ thunar_tree_view_init (ThunarTreeView *view)
 
   /* synchronize the the global "misc-case-sensitive" preference */
   g_object_set_data_full (G_OBJECT (view->model), I_("thunar-preferences"), view->preferences, g_object_unref);
-  exo_binding_new (G_OBJECT (view->preferences), "misc-case-sensitive", G_OBJECT (view->model), "case-sensitive");
+  g_object_bind_property (G_OBJECT (view->preferences), "misc-case-sensitive", G_OBJECT (view->model), "case-sensitive", G_BINDING_SYNC_CREATE);
 
   thunar_tree_model_set_visible_func (view->model, thunar_tree_view_visible_func, view);
   gtk_tree_view_set_model (GTK_TREE_VIEW (view), GTK_TREE_MODEL (view->model));
@@ -379,8 +379,8 @@ thunar_tree_view_init (ThunarTreeView *view)
   /* sync the "emblems" property of the icon renderer with the "tree-icon-emblems" preference
    * and the "size" property of the renderer with the "tree-icon-size" preference.
    */
-  exo_binding_new (G_OBJECT (view->preferences), "tree-icon-size", G_OBJECT (view->icon_renderer), "size");
-  exo_binding_new (G_OBJECT (view->preferences), "tree-icon-emblems", G_OBJECT (view->icon_renderer), "emblems");
+  g_object_bind_property (G_OBJECT (view->preferences), "tree-icon-size", G_OBJECT (view->icon_renderer), "size", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (view->preferences), "tree-icon-emblems", G_OBJECT (view->icon_renderer), "emblems", G_BINDING_SYNC_CREATE);
 
   /* allocate the text renderer */
   renderer = gtk_cell_renderer_text_new ();
@@ -407,7 +407,7 @@ thunar_tree_view_init (ThunarTreeView *view)
   g_signal_connect_swapped (G_OBJECT (view->launcher), "change-directory", G_CALLBACK (thunar_tree_view_action_open), view);
   g_signal_connect_swapped (G_OBJECT (view->launcher), "open-new-tab", G_CALLBACK (thunar_navigator_open_new_tab), view);
   g_signal_connect_swapped (G_OBJECT (view->launcher), "new-files-created", G_CALLBACK (thunar_tree_view_select_files), view);
-  exo_binding_new (G_OBJECT (view), "current-directory", G_OBJECT (view->launcher), "current-directory");
+  g_object_bind_property (G_OBJECT (view), "current-directory", G_OBJECT (view->launcher), "current-directory", G_BINDING_SYNC_CREATE);
 }
 
 
