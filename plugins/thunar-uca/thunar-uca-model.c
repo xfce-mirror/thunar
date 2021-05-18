@@ -29,6 +29,9 @@
 #ifdef HAVE_LOCALE_H
 #include <locale.h>
 #endif
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
 #ifdef HAVE_PATHS_H
 #include <paths.h>
 #endif
@@ -67,41 +70,41 @@ typedef struct _ThunarUcaModelItem ThunarUcaModelItem;
 
 
 
-static void              thunar_uca_model_tree_model_init (GtkTreeModelIface *iface);
-static void              thunar_uca_model_finalize        (GObject           *object);
-static GtkTreeModelFlags thunar_uca_model_get_flags       (GtkTreeModel      *tree_model);
-static gint              thunar_uca_model_get_n_columns   (GtkTreeModel      *tree_model);
-static GType             thunar_uca_model_get_column_type (GtkTreeModel      *tree_model,
-                                                           gint               column);
-static gboolean          thunar_uca_model_get_iter        (GtkTreeModel      *tree_model,
-                                                           GtkTreeIter       *iter,
-                                                           GtkTreePath       *path);
-static GtkTreePath      *thunar_uca_model_get_path        (GtkTreeModel      *tree_model,
-                                                           GtkTreeIter       *iter);
-static void              thunar_uca_model_get_value       (GtkTreeModel      *tree_model,
-                                                           GtkTreeIter       *iter,
-                                                           gint               column,
-                                                           GValue            *value);
-static gboolean          thunar_uca_model_iter_next       (GtkTreeModel      *tree_model,
-                                                           GtkTreeIter       *iter);
-static gboolean          thunar_uca_model_iter_children   (GtkTreeModel      *tree_model,
-                                                           GtkTreeIter       *iter,
-                                                           GtkTreeIter       *parent);
-static gboolean          thunar_uca_model_iter_has_child  (GtkTreeModel      *tree_model,
-                                                           GtkTreeIter       *iter);
-static gint              thunar_uca_model_iter_n_children (GtkTreeModel      *tree_model,
-                                                           GtkTreeIter       *iter);
-static gboolean          thunar_uca_model_iter_nth_child  (GtkTreeModel      *tree_model,
-                                                           GtkTreeIter       *iter,
-                                                           GtkTreeIter       *parent,
-                                                           gint               n);
-static gboolean          thunar_uca_model_iter_parent     (GtkTreeModel      *tree_model,
-                                                           GtkTreeIter       *iter,
-                                                           GtkTreeIter       *child);
-static void              thunar_uca_model_resolve_paths   (GPtrArray         *normalized_uca_paths,
-                                                           XfceResourceType   resource_type);
-static gint              thunar_uca_model_sort_paths      (gconstpointer      path1,
-                                                           gconstpointer      path2);
+static void               thunar_uca_model_tree_model_init  (GtkTreeModelIface *iface);
+static void               thunar_uca_model_finalize         (GObject           *object);
+static GtkTreeModelFlags  thunar_uca_model_get_flags        (GtkTreeModel      *tree_model);
+static gint               thunar_uca_model_get_n_columns    (GtkTreeModel      *tree_model);
+static GType              thunar_uca_model_get_column_type  (GtkTreeModel      *tree_model,
+                                                             gint               column);
+static gboolean           thunar_uca_model_get_iter         (GtkTreeModel      *tree_model,
+                                                             GtkTreeIter       *iter,
+                                                             GtkTreePath       *path);
+static GtkTreePath       *thunar_uca_model_get_path         (GtkTreeModel      *tree_model,
+                                                             GtkTreeIter       *iter);
+static void               thunar_uca_model_get_value        (GtkTreeModel      *tree_model,
+                                                             GtkTreeIter       *iter,
+                                                             gint               column,
+                                                             GValue            *value);
+static gboolean           thunar_uca_model_iter_next        (GtkTreeModel      *tree_model,
+                                                             GtkTreeIter       *iter);
+static gboolean           thunar_uca_model_iter_children    (GtkTreeModel      *tree_model,
+                                                             GtkTreeIter       *iter,
+                                                             GtkTreeIter       *parent);
+static gboolean           thunar_uca_model_iter_has_child   (GtkTreeModel      *tree_model,
+                                                             GtkTreeIter       *iter);
+static gint               thunar_uca_model_iter_n_children  (GtkTreeModel      *tree_model,
+                                                             GtkTreeIter       *iter);
+static gboolean           thunar_uca_model_iter_nth_child   (GtkTreeModel      *tree_model,
+                                                             GtkTreeIter       *iter,
+                                                             GtkTreeIter       *parent,
+                                                             gint               n);
+static gboolean           thunar_uca_model_iter_parent      (GtkTreeModel      *tree_model,
+                                                             GtkTreeIter       *iter,
+                                                             GtkTreeIter       *child);
+static void               thunar_uca_model_resolve_paths    (GPtrArray         *normalized_uca_paths,
+                                                             XfceResourceType   resource_type);
+static gint               thunar_uca_model_sort_paths       (gconstpointer      path1,
+                                                             gconstpointer      path2);
 
 
 
@@ -112,7 +115,7 @@ struct _ThunarUcaModelClass
 
 struct _ThunarUcaModel
 {
-  GObject                            __parent__;
+  GObject __parent__;
 
   GList /* <ThunarUcaModelItem*> */ *items;
   gint                               stamp;
@@ -145,11 +148,15 @@ enum
   THUNAR_UCA_FILE_PATTERNS_SIZE = G_N_ELEMENTS (THUNAR_UCA_FILE_PATTERNS)
 };
 
+
+
 THUNARX_DEFINE_TYPE_WITH_CODE (ThunarUcaModel,
                                thunar_uca_model,
                                G_TYPE_OBJECT,
                                THUNARX_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL,
                                                             thunar_uca_model_tree_model_init));
+
+
 
 static void
 thunar_uca_model_class_init (ThunarUcaModelClass *klass)
@@ -227,9 +234,9 @@ thunar_uca_model_finalize (GObject *object)
   ThunarUcaModel *uca_model = THUNAR_UCA_MODEL (object);
 
   /* release all items */
-  g_list_free_full (uca_model->items, ( GDestroyNotify ) thunar_uca_model_item_free);
+  g_list_free_full (uca_model->items, (GDestroyNotify) thunar_uca_model_item_free);
 
-  (*G_OBJECT_CLASS (thunar_uca_model_parent_class)->finalize)(object);
+  (*G_OBJECT_CLASS (thunar_uca_model_parent_class)->finalize) (object);
 }
 
 
@@ -256,29 +263,41 @@ thunar_uca_model_get_column_type (GtkTreeModel *tree_model,
 {
   switch (column)
     {
-      case THUNAR_UCA_MODEL_COLUMN_NAME: return G_TYPE_STRING;
+    case THUNAR_UCA_MODEL_COLUMN_NAME:
+      return G_TYPE_STRING;
 
-      case THUNAR_UCA_MODEL_COLUMN_SUB_MENU: return G_TYPE_STRING;
+    case THUNAR_UCA_MODEL_COLUMN_SUB_MENU:
+      return G_TYPE_STRING;
 
-      case THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID: return G_TYPE_STRING;
+    case THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID:
+      return G_TYPE_STRING;
 
-      case THUNAR_UCA_MODEL_COLUMN_DESCRIPTION: return G_TYPE_STRING;
+    case THUNAR_UCA_MODEL_COLUMN_DESCRIPTION:
+      return G_TYPE_STRING;
 
-      case THUNAR_UCA_MODEL_COLUMN_GICON: return G_TYPE_ICON;
+    case THUNAR_UCA_MODEL_COLUMN_GICON:
+      return G_TYPE_ICON;
 
-      case THUNAR_UCA_MODEL_COLUMN_ICON_NAME: return G_TYPE_STRING;
+    case THUNAR_UCA_MODEL_COLUMN_ICON_NAME:
+      return G_TYPE_STRING;
 
-      case THUNAR_UCA_MODEL_COLUMN_COMMAND: return G_TYPE_STRING;
+    case THUNAR_UCA_MODEL_COLUMN_COMMAND:
+      return G_TYPE_STRING;
 
-      case THUNAR_UCA_MODEL_COLUMN_STARTUP_NOTIFY: return G_TYPE_BOOLEAN;
+    case THUNAR_UCA_MODEL_COLUMN_STARTUP_NOTIFY:
+      return G_TYPE_BOOLEAN;
 
-      case THUNAR_UCA_MODEL_COLUMN_PATTERNS: return G_TYPE_STRING;
+    case THUNAR_UCA_MODEL_COLUMN_PATTERNS:
+      return G_TYPE_STRING;
 
-      case THUNAR_UCA_MODEL_COLUMN_TYPES: return G_TYPE_UINT;
+    case THUNAR_UCA_MODEL_COLUMN_TYPES:
+      return G_TYPE_UINT;
 
-      case THUNAR_UCA_MODEL_COLUMN_STOCK_LABEL: return G_TYPE_STRING;
+    case THUNAR_UCA_MODEL_COLUMN_STOCK_LABEL:
+      return G_TYPE_STRING;
 
-      default: g_assert_not_reached ();
+    default:
+        g_assert_not_reached ();
     }
 }
 
@@ -294,7 +313,7 @@ thunar_uca_model_get_iter (GtkTreeModel *tree_model,
   g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), FALSE);
   g_return_val_if_fail (gtk_tree_path_get_depth (path) > 0, FALSE);
 
-  iter->stamp = ( gint ) uca_model->stamp;
+  iter->stamp = uca_model->stamp;
   iter->user_data = g_list_nth (uca_model->items, gtk_tree_path_get_indices (path)[0]);
 
   return (iter->user_data != NULL);
@@ -315,9 +334,7 @@ thunar_uca_model_get_path (GtkTreeModel *tree_model,
   /* determine the index of the iter */
   idx = g_list_position (uca_model->items, iter->user_data);
   if (G_UNLIKELY (idx < 0))
-    {
-      return NULL;
-    }
+    return NULL;
 
   return gtk_tree_path_new_from_indices (idx, -1);
 }
@@ -338,58 +355,68 @@ thunar_uca_model_get_value (GtkTreeModel *tree_model,
   g_return_if_fail (iter->user_data != NULL);
   g_return_if_fail (iter->stamp == uca_model->stamp);
 
-  item = (( GList* ) iter->user_data)->data;
+  item = ((GList *) iter->user_data)->data;
 
   /* initialize the value with the proper type */
   g_value_init (value, gtk_tree_model_get_column_type (tree_model, column));
 
   switch (column)
     {
-      case THUNAR_UCA_MODEL_COLUMN_NAME: g_value_set_static_string (value, item->name ? item->name : "");
-        break;
+    case THUNAR_UCA_MODEL_COLUMN_NAME:
+      g_value_set_static_string (value, item->name ? item->name : "");
+      break;
 
-      case THUNAR_UCA_MODEL_COLUMN_SUB_MENU: g_value_set_static_string (value, item->submenu ? item->submenu : "");
-        break;
+    case THUNAR_UCA_MODEL_COLUMN_SUB_MENU:
+      g_value_set_static_string (value, item->submenu ? item->submenu : "");
+      break;
 
-      case THUNAR_UCA_MODEL_COLUMN_DESCRIPTION: g_value_set_static_string (value, item->description);
-        break;
+    case THUNAR_UCA_MODEL_COLUMN_DESCRIPTION:
+      g_value_set_static_string (value, item->description);
+      break;
 
-      case THUNAR_UCA_MODEL_COLUMN_GICON:
-        if (item->gicon == NULL && item->icon_name != NULL)
-          {
-            /* cache gicon from the name */
-            item->gicon = g_icon_new_for_string (item->icon_name, NULL);
-          }
-        g_value_set_object (value, item->gicon);
-        break;
+    case THUNAR_UCA_MODEL_COLUMN_GICON:
+      if (item->gicon == NULL && item->icon_name != NULL)
+        {
+          /* cache gicon from the name */
+          item->gicon = g_icon_new_for_string (item->icon_name, NULL);
+        }
+      g_value_set_object (value, item->gicon);
+      break;
 
-      case THUNAR_UCA_MODEL_COLUMN_ICON_NAME: g_value_set_static_string (value, item->icon_name);
-        break;
+    case THUNAR_UCA_MODEL_COLUMN_ICON_NAME:
+      g_value_set_static_string (value, item->icon_name);
+      break;
 
-      case THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID: g_value_set_static_string (value, item->unique_id);
-        break;
+    case THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID:
+      g_value_set_static_string (value, item->unique_id);
+      break;
 
-      case THUNAR_UCA_MODEL_COLUMN_COMMAND: g_value_set_static_string (value, item->command);
-        break;
+    case THUNAR_UCA_MODEL_COLUMN_COMMAND:
+      g_value_set_static_string (value, item->command);
+      break;
 
-      case THUNAR_UCA_MODEL_COLUMN_STARTUP_NOTIFY: g_value_set_boolean (value, item->startup_notify);
-        break;
+    case THUNAR_UCA_MODEL_COLUMN_STARTUP_NOTIFY:
+      g_value_set_boolean (value, item->startup_notify);
+      break;
 
-      case THUNAR_UCA_MODEL_COLUMN_PATTERNS: str = g_strjoinv (";", item->patterns);
-        g_value_take_string (value, str);
-        break;
+    case THUNAR_UCA_MODEL_COLUMN_PATTERNS:
+      str = g_strjoinv (";", item->patterns);
+      g_value_take_string (value, str);
+      break;
 
-      case THUNAR_UCA_MODEL_COLUMN_TYPES: g_value_set_uint (value, item->types);
-        break;
+    case THUNAR_UCA_MODEL_COLUMN_TYPES:
+      g_value_set_uint (value, item->types);
+      break;
 
-      case THUNAR_UCA_MODEL_COLUMN_STOCK_LABEL:
-        str = g_markup_printf_escaped ("<b>%s</b>\n%s",
-                                       (item->name != NULL) ? item->name : "",
-                                       (item->description != NULL) ? item->description : "");
-        g_value_take_string (value, str);
-        break;
+    case THUNAR_UCA_MODEL_COLUMN_STOCK_LABEL:
+      str = g_markup_printf_escaped ("<b>%s</b>\n%s",
+                                     (item->name != NULL) ? item->name : "",
+                                     (item->description != NULL) ? item->description : "");
+      g_value_take_string (value, str);
+      break;
 
-      default: g_assert_not_reached ();
+    default:
+      g_assert_not_reached ();
     }
 }
 
@@ -515,9 +542,19 @@ thunar_uca_model_resolve_paths (GPtrArray       *normalized_uca_paths,
                 {
                   resource = g_strjoin (G_DIR_SEPARATOR_S, resource_folders[n], resolve_paths[o], NULL);
                   if (g_file_test (resource, G_FILE_TEST_IS_REGULAR))
-                    g_ptr_array_add (normalized_uca_paths, resource);
+                    {
+#ifdef DEBUG
+                    g_debug ("Found resource file `%s'");
+#endif
+                      g_ptr_array_add (normalized_uca_paths, resource);
+                    }
                   else
-                    g_free (resource);
+                    {
+#ifdef DEBUG
+                      g_debug ("Resource file `%s' does not exist: Skipped");
+#endif
+                      g_free (resource);
+                    }
                 }
               g_strfreev (resolve_paths);
               break;
@@ -589,7 +626,7 @@ thunar_uca_model_get_default (void)
   if (model == NULL)
     {
       model = g_object_new (THUNAR_UCA_TYPE_MODEL, NULL);
-      g_object_add_weak_pointer (G_OBJECT (model), ( gpointer* ) &model);
+      g_object_add_weak_pointer (G_OBJECT (model), (gpointer*) &model);
     }
   else
     {
@@ -605,29 +642,17 @@ static inline ThunarUcaTypes
 types_from_mime_type (const gchar *mime_type)
 {
   if (mime_type == NULL)
-    {
-      return 0;
-    }
+    return 0;
   if (strcmp (mime_type, "inode/directory") == 0)
-    {
-      return THUNAR_UCA_TYPE_DIRECTORIES;
-    }
+    return THUNAR_UCA_TYPE_DIRECTORIES;
   else if (strncmp (mime_type, "audio/", 6) == 0)
-    {
-      return THUNAR_UCA_TYPE_AUDIO_FILES;
-    }
+    return THUNAR_UCA_TYPE_AUDIO_FILES;
   else if (strncmp (mime_type, "image/", 6) == 0)
-    {
-      return THUNAR_UCA_TYPE_IMAGE_FILES;
-    }
+    return THUNAR_UCA_TYPE_IMAGE_FILES;
   else if (strncmp (mime_type, "text/", 5) == 0)
-    {
-      return THUNAR_UCA_TYPE_TEXT_FILES;
-    }
+    return THUNAR_UCA_TYPE_TEXT_FILES;
   else if (strncmp (mime_type, "video/", 6) == 0)
-    {
-      return THUNAR_UCA_TYPE_VIDEO_FILES;
-    }
+    return THUNAR_UCA_TYPE_VIDEO_FILES;
   else if (strncmp (mime_type, "application/", 12) == 0)
     {
       /* quite cumbersome, certain mime types do not
@@ -639,13 +664,9 @@ types_from_mime_type (const gchar *mime_type)
           || strcmp (mime_type, "x-csh") == 0
           || strcmp (mime_type, "xhtml+xml") == 0
           || strcmp (mime_type, "xml") == 0)
-        {
-          return THUNAR_UCA_TYPE_TEXT_FILES;
-        }
+        return THUNAR_UCA_TYPE_TEXT_FILES;
       else if (strcmp (mime_type, "ogg") == 0)
-        {
-          return THUNAR_UCA_TYPE_AUDIO_FILES;
-        }
+        return THUNAR_UCA_TYPE_AUDIO_FILES;
     }
 
   return 0;
@@ -676,8 +697,8 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
 {
   typedef struct
   {
-    gchar         *name;
-    ThunarUcaTypes types;
+    gchar          *name;
+    ThunarUcaTypes  types;
   } ThunarUcaFile;
 
   ThunarUcaModelItem *item;
@@ -696,9 +717,7 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
 
   /* special case to avoid overhead */
   if (G_UNLIKELY (uca_model->items == NULL))
-    {
-      return NULL;
-    }
+    return NULL;
 
   /* determine the ThunarUcaFile's for the given file_infos */
   n_files = g_list_length (file_infos);
@@ -726,9 +745,7 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
       files[n].types = types_from_mime_type (mime_type);
 
       if (G_UNLIKELY (files[n].types == 0))
-        {
-          files[n].types = THUNAR_UCA_TYPE_OTHER_FILES;
-        }
+        files[n].types = THUNAR_UCA_TYPE_OTHER_FILES;
 
       g_free (mime_type);
     }
@@ -737,20 +754,16 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
   for (i = 0, lp = uca_model->items; lp != NULL; ++i, lp = lp->next)
     {
       /* check if we can just ignore this item */
-      item = ( ThunarUcaModelItem* ) lp->data;
+      item = (ThunarUcaModelItem *) lp->data;
       if (!item->multiple_selection && n_files > 1)
-        {
-          continue;
-        }
+        continue;
 
       /* match the specified files */
       for (n = 0; n < n_files; ++n)
         {
           /* verify that we support this type of file */
           if ((files[n].types & item->types) == 0)
-            {
-              break;
-            }
+            break;
 
           /* at least on pattern must match the file name */
           for (m = 0, matches = FALSE; item->patterns[m] != NULL && !matches; ++m)
@@ -758,16 +771,12 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
 
           /* no need to continue if none of the patterns match */
           if (!matches)
-            {
-              break;
-            }
+            break;
         }
 
       /* add the path if all files match one of the patterns */
       if (G_UNLIKELY (n == n_files))
-        {
-          paths = g_list_append (paths, gtk_tree_path_new_from_indices (i, -1));
-        }
+        paths = g_list_append (paths, gtk_tree_path_new_from_indices (i, -1));
     }
 
   /* cleanup */
@@ -894,7 +903,7 @@ thunar_uca_model_action_exists (ThunarUcaModel *uca_model,
         {
           g_free (existing_name);
           if (!gtk_tree_model_iter_next (tree_model, iter))
-              return FALSE;
+            return FALSE;
         }
       g_free (existing_name);
     }
@@ -941,16 +950,14 @@ thunar_uca_model_remove (ThunarUcaModel *uca_model,
   accel_path = g_strdup_printf ("<Actions>/ThunarActions/uca-action-%s", unique_id);
 
   if (gtk_accel_map_lookup_entry (accel_path, &key) && key.accel_key != 0)
-    {
-      gtk_accel_map_change_entry (accel_path, 0, 0, TRUE);
-    }
+    gtk_accel_map_change_entry (accel_path, 0, 0, TRUE);
   g_free (accel_path);
 
   /* determine the path for the item to remove */
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (uca_model), iter);
 
   /* remove the node from the list */
-  item = (( GList* ) iter->user_data)->data;
+  item = ((GList *) iter->user_data)->data;
   uca_model->items = g_list_delete_link (uca_model->items, iter->user_data);
   thunar_uca_model_item_free (item);
 
@@ -967,7 +974,7 @@ thunar_uca_model_remove (ThunarUcaModel *uca_model,
  * thunar_uca_model_update:
  * @uca_model          : a #ThunarUcaModel.
  * @iter               : the #GtkTreeIter of the item to update.
- * @filename                    : (Optional) name of the where the action was read
+ * @filename           : (Optional) name of the where the action was read
  * @name               : the name of the item.
  * @submenu           : the submenu structure in which the item is placed.
  * @unique_id          : a unique ID for the item before any edits.
@@ -1003,7 +1010,7 @@ thunar_uca_model_update (ThunarUcaModel *uca_model,
   g_return_if_fail (iter->stamp == uca_model->stamp);
 
   /* reset the previous item values */
-  item = (( GList* ) iter->user_data)->data;
+  item = ((GList *) iter->user_data)->data;
   thunar_uca_model_item_reset (item);
 
   /* setup the new item values */
@@ -1201,7 +1208,7 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   /* verify that a command is set for the item */
-  item = ( ThunarUcaModelItem* ) (( GList* ) iter->user_data)->data;
+  item = (ThunarUcaModelItem *) ((GList *) iter->user_data)->data;
   if (item->command == NULL || *item->command == '\0')
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Command not configured"));
@@ -1225,7 +1232,7 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
    * and backticks can be used for the action commands.
    */
   (*argcp) = 3;
-  (*argvp) = g_new (gchar*, 4);
+  (*argvp) = g_new (gchar *, 4);
   (*argvp)[0] = g_strdup (_PATH_BSHELL);
   (*argvp)[1] = g_strdup ("-c");
   (*argvp)[2] = expanded;
