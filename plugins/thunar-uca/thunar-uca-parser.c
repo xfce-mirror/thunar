@@ -169,162 +169,162 @@ start_element_handler (GMarkupParseContext *context,
 
   switch (xfce_stack_top (parser->stack))
     {
-      case PARSER_START:
-        if (strcmp (element_name, "actions") == 0)
-          xfce_stack_push (parser->stack, PARSER_ACTIONS);
-        else
-          xfce_stack_push (parser->stack, PARSER_UNKNOWN_ELEMENT);
-        break;
-
-      case PARSER_ACTIONS:
-        if (strcmp (element_name, "action") == 0)
-          {
-            parser->name_match = XFCE_LOCALE_NO_MATCH;
-            parser->description_match = XFCE_LOCALE_NO_MATCH;
-            parser->types = 0;
-            parser->startup_notify = FALSE;
-            g_string_truncate (parser->icon_name, 0);
-            g_string_truncate (parser->name, 0);
-            g_string_truncate (parser->submenu, 0);
-            g_string_truncate (parser->unique_id, 0);
-            g_string_truncate (parser->command, 0);
-            g_string_truncate (parser->patterns, 0);
-            g_string_truncate (parser->description, 0);
-            xfce_stack_push (parser->stack, PARSER_ACTION);
-          }
-        else
-          {
-            xfce_stack_push (parser->stack, PARSER_UNKNOWN_ELEMENT);
-          }
-        break;
-
-      case PARSER_ACTION:
-        if (strcmp (element_name, "name") == 0)
-          {
-            for (n = 0; attribute_names[n] != NULL; ++n)
-              if (strcmp (attribute_names[n], "xml:lang") == 0)
-                break;
-
-            if (G_LIKELY (attribute_names[n] == NULL))
-              {
-                parser->name_use = (parser->name_match <= XFCE_LOCALE_NO_MATCH);
-              }
-            else
-              {
-                match = xfce_locale_match (parser->locale, attribute_values[n]);
-                if (parser->name_match < match)
-                  {
-                    parser->name_match = match;
-                    parser->name_use = TRUE;
-                  }
-                else
-                  {
-                    parser->name_use = FALSE;
-                  }
-              }
-
-            if (parser->name_use)
-              g_string_truncate (parser->name, 0);
-
-            xfce_stack_push (parser->stack, PARSER_NAME);
-          }
-        else if (strcmp (element_name, "submenu") == 0)
-          {
-            g_string_truncate (parser->submenu, 0);
-            xfce_stack_push (parser->stack, PARSER_SUB_FOLDER);
-          }
-        else if (strcmp (element_name, "unique-id") == 0)
-          {
-            g_string_truncate (parser->unique_id, 0);
-            xfce_stack_push (parser->stack, PARSER_UNIQUE_ID);
-          }
-        else if (strcmp (element_name, "icon") == 0)
-          {
-            g_string_truncate (parser->icon_name, 0);
-            xfce_stack_push (parser->stack, PARSER_ICON);
-          }
-        else if (strcmp (element_name, "command") == 0)
-          {
-            g_string_truncate (parser->command, 0);
-            xfce_stack_push (parser->stack, PARSER_COMMAND);
-          }
-        else if (strcmp (element_name, "patterns") == 0)
-          {
-            g_string_truncate (parser->patterns, 0);
-            xfce_stack_push (parser->stack, PARSER_PATTERNS);
-          }
-        else if (strcmp (element_name, "description") == 0)
-          {
-            for (n = 0; attribute_names[n] != NULL; ++n)
-              if (strcmp (attribute_names[n], "xml:lang") == 0)
-                break;
-
-            if (G_LIKELY (attribute_names[n] == NULL))
-              {
-                parser->description_use = (parser->description_match <= XFCE_LOCALE_NO_MATCH);
-              }
-            else
-              {
-                match = xfce_locale_match (parser->locale, attribute_values[n]);
-                if (parser->description_match < match)
-                  {
-                    parser->description_match = match;
-                    parser->description_use = TRUE;
-                  }
-                else
-                  {
-                    parser->description_use = FALSE;
-                  }
-              }
-
-            if (parser->description_use)
-              g_string_truncate (parser->description, 0);
-
-            xfce_stack_push (parser->stack, PARSER_DESCRIPTION);
-          }
-        else if (strcmp (element_name, "startup-notify") == 0)
-          {
-            parser->startup_notify = TRUE;
-            xfce_stack_push (parser->stack, PARSER_STARTUP_NOTIFY);
-          }
-        else if (strcmp (element_name, "directories") == 0)
-          {
-            parser->types |= THUNAR_UCA_TYPE_DIRECTORIES;
-            xfce_stack_push (parser->stack, PARSER_DIRECTORIES);
-          }
-        else if (strcmp (element_name, "audio-files") == 0)
-          {
-            parser->types |= THUNAR_UCA_TYPE_AUDIO_FILES;
-            xfce_stack_push (parser->stack, PARSER_AUDIO_FILES);
-          }
-        else if (strcmp (element_name, "image-files") == 0)
-          {
-            parser->types |= THUNAR_UCA_TYPE_IMAGE_FILES;
-            xfce_stack_push (parser->stack, PARSER_IMAGE_FILES);
-          }
-        else if (strcmp (element_name, "other-files") == 0)
-          {
-            parser->types |= THUNAR_UCA_TYPE_OTHER_FILES;
-            xfce_stack_push (parser->stack, PARSER_OTHER_FILES);
-          }
-        else if (strcmp (element_name, "text-files") == 0)
-          {
-            parser->types |= THUNAR_UCA_TYPE_TEXT_FILES;
-            xfce_stack_push (parser->stack, PARSER_TEXT_FILES);
-          }
-        else if (strcmp (element_name, "video-files") == 0)
-          {
-            parser->types |= THUNAR_UCA_TYPE_VIDEO_FILES;
-            xfce_stack_push (parser->stack, PARSER_VIDEO_FILES);
-          }
-        else
-          {
-            xfce_stack_push (parser->stack, PARSER_UNKNOWN_ELEMENT);
-          }
-        break;
-
-      default:
+    case PARSER_START:
+      if (strcmp (element_name, "actions") == 0)
+        xfce_stack_push (parser->stack, PARSER_ACTIONS);
+      else
         xfce_stack_push (parser->stack, PARSER_UNKNOWN_ELEMENT);
+      break;
+
+    case PARSER_ACTIONS:
+      if (strcmp (element_name, "action") == 0)
+        {
+          parser->name_match = XFCE_LOCALE_NO_MATCH;
+          parser->description_match = XFCE_LOCALE_NO_MATCH;
+          parser->types = 0;
+          parser->startup_notify = FALSE;
+          g_string_truncate (parser->icon_name, 0);
+          g_string_truncate (parser->name, 0);
+          g_string_truncate (parser->submenu, 0);
+          g_string_truncate (parser->unique_id, 0);
+          g_string_truncate (parser->command, 0);
+          g_string_truncate (parser->patterns, 0);
+          g_string_truncate (parser->description, 0);
+          xfce_stack_push (parser->stack, PARSER_ACTION);
+        }
+      else
+        {
+          xfce_stack_push (parser->stack, PARSER_UNKNOWN_ELEMENT);
+        }
+      break;
+
+    case PARSER_ACTION:
+      if (strcmp (element_name, "name") == 0)
+        {
+          for (n = 0; attribute_names[n] != NULL; ++n)
+            if (strcmp (attribute_names[n], "xml:lang") == 0)
+              break;
+
+          if (G_LIKELY (attribute_names[n] == NULL))
+            {
+              parser->name_use = (parser->name_match <= XFCE_LOCALE_NO_MATCH);
+            }
+          else
+            {
+              match = xfce_locale_match (parser->locale, attribute_values[n]);
+              if (parser->name_match < match)
+                {
+                  parser->name_match = match;
+                  parser->name_use = TRUE;
+                }
+              else
+                {
+                  parser->name_use = FALSE;
+                }
+            }
+
+          if (parser->name_use)
+            g_string_truncate (parser->name, 0);
+
+          xfce_stack_push (parser->stack, PARSER_NAME);
+        }
+      else if (strcmp (element_name, "submenu") == 0)
+        {
+          g_string_truncate (parser->submenu, 0);
+          xfce_stack_push (parser->stack, PARSER_SUB_FOLDER);
+        }
+      else if (strcmp (element_name, "unique-id") == 0)
+        {
+          g_string_truncate (parser->unique_id, 0);
+          xfce_stack_push (parser->stack, PARSER_UNIQUE_ID);
+        }
+      else if (strcmp (element_name, "icon") == 0)
+        {
+          g_string_truncate (parser->icon_name, 0);
+          xfce_stack_push (parser->stack, PARSER_ICON);
+        }
+      else if (strcmp (element_name, "command") == 0)
+        {
+          g_string_truncate (parser->command, 0);
+          xfce_stack_push (parser->stack, PARSER_COMMAND);
+        }
+      else if (strcmp (element_name, "patterns") == 0)
+        {
+          g_string_truncate (parser->patterns, 0);
+          xfce_stack_push (parser->stack, PARSER_PATTERNS);
+        }
+      else if (strcmp (element_name, "description") == 0)
+        {
+          for (n = 0; attribute_names[n] != NULL; ++n)
+            if (strcmp (attribute_names[n], "xml:lang") == 0)
+              break;
+
+          if (G_LIKELY (attribute_names[n] == NULL))
+            {
+              parser->description_use = (parser->description_match <= XFCE_LOCALE_NO_MATCH);
+            }
+          else
+            {
+              match = xfce_locale_match (parser->locale, attribute_values[n]);
+              if (parser->description_match < match)
+                {
+                  parser->description_match = match;
+                  parser->description_use = TRUE;
+                }
+              else
+                {
+                  parser->description_use = FALSE;
+                }
+            }
+
+          if (parser->description_use)
+            g_string_truncate (parser->description, 0);
+
+          xfce_stack_push (parser->stack, PARSER_DESCRIPTION);
+        }
+      else if (strcmp (element_name, "startup-notify") == 0)
+        {
+          parser->startup_notify = TRUE;
+          xfce_stack_push (parser->stack, PARSER_STARTUP_NOTIFY);
+        }
+      else if (strcmp (element_name, "directories") == 0)
+        {
+          parser->types |= THUNAR_UCA_TYPE_DIRECTORIES;
+          xfce_stack_push (parser->stack, PARSER_DIRECTORIES);
+        }
+      else if (strcmp (element_name, "audio-files") == 0)
+        {
+          parser->types |= THUNAR_UCA_TYPE_AUDIO_FILES;
+          xfce_stack_push (parser->stack, PARSER_AUDIO_FILES);
+        }
+      else if (strcmp (element_name, "image-files") == 0)
+        {
+          parser->types |= THUNAR_UCA_TYPE_IMAGE_FILES;
+          xfce_stack_push (parser->stack, PARSER_IMAGE_FILES);
+        }
+      else if (strcmp (element_name, "other-files") == 0)
+        {
+          parser->types |= THUNAR_UCA_TYPE_OTHER_FILES;
+          xfce_stack_push (parser->stack, PARSER_OTHER_FILES);
+        }
+      else if (strcmp (element_name, "text-files") == 0)
+        {
+          parser->types |= THUNAR_UCA_TYPE_TEXT_FILES;
+          xfce_stack_push (parser->stack, PARSER_TEXT_FILES);
+        }
+      else if (strcmp (element_name, "video-files") == 0)
+        {
+          parser->types |= THUNAR_UCA_TYPE_VIDEO_FILES;
+          xfce_stack_push (parser->stack, PARSER_VIDEO_FILES);
+        }
+      else
+        {
+          xfce_stack_push (parser->stack, PARSER_UNKNOWN_ELEMENT);
+        }
+      break;
+
+    default:
+      xfce_stack_push (parser->stack, PARSER_UNKNOWN_ELEMENT);
     }
 }
 
@@ -344,117 +344,117 @@ end_element_handler (GMarkupParseContext  *context,
 
   switch (xfce_stack_top (parser->stack))
     {
-      case PARSER_START:
-        g_set_error (error, G_MARKUP_ERROR, G_MARKUP_ERROR_INVALID_CONTENT,
-                     _("End element handler called while in root context"));
-        return;
+    case PARSER_START:
+      g_set_error (error, G_MARKUP_ERROR, G_MARKUP_ERROR_INVALID_CONTENT,
+                   _("End element handler called while in root context"));
+      return;
 
-      case PARSER_ACTIONS:
-        if (strcmp (element_name, "actions") != 0)
+    case PARSER_ACTIONS:
+      if (strcmp (element_name, "actions") != 0)
+        goto unknown_element;
+      break;
+
+    case PARSER_ACTION:
+      if (strcmp (element_name, "action") == 0)
+        {
+          if (!thunar_uca_model_action_exists (parser->model, &iter, parser->name->str))
+              thunar_uca_model_append (parser->model,
+                                       &iter);
+
+          thunar_uca_model_update (parser->model,
+                                   &iter,
+                                   parser->filename,
+                                   parser->name->str,
+                                   parser->submenu->str,
+                                   parser->unique_id->str,
+                                   parser->description->str,
+                                   parser->icon_name->str,
+                                   parser->command->str,
+                                   parser->startup_notify,
+                                   parser->patterns->str,
+                                   parser->types,
+                                   0, 0);
+        }
+      else
+        {
           goto unknown_element;
-        break;
+        }
+      break;
 
-      case PARSER_ACTION:
-        if (strcmp (element_name, "action") == 0)
-          {
-            if (!thunar_uca_model_action_exists (parser->model, &iter, parser->name->str))
-                thunar_uca_model_append (parser->model,
-                                         &iter);
+    case PARSER_NAME:
+      if (strcmp (element_name, "name") != 0)
+        goto unknown_element;
+      break;
 
-            thunar_uca_model_update (parser->model,
-                                     &iter,
-                                     parser->filename,
-                                     parser->name->str,
-                                     parser->submenu->str,
-                                     parser->unique_id->str,
-                                     parser->description->str,
-                                     parser->icon_name->str,
-                                     parser->command->str,
-                                     parser->startup_notify,
-                                     parser->patterns->str,
-                                     parser->types,
-                                     0, 0);
-          }
-        else
-          {
-            goto unknown_element;
-          }
-        break;
+    case PARSER_SUB_FOLDER:
+      if (strcmp (element_name, "submenu") != 0)
+        goto unknown_element;
+      break;
 
-      case PARSER_NAME:
-        if (strcmp (element_name, "name") != 0)
-          goto unknown_element;
-        break;
+    case PARSER_UNIQUE_ID:
+      if (strcmp (element_name, "unique-id") != 0)
+        goto unknown_element;
+      break;
 
-      case PARSER_SUB_FOLDER:
-        if (strcmp (element_name, "submenu") != 0)
-          goto unknown_element;
-        break;
+    case PARSER_ICON:
+      if (strcmp (element_name, "icon") != 0)
+        goto unknown_element;
+      break;
 
-      case PARSER_UNIQUE_ID:
-        if (strcmp (element_name, "unique-id") != 0)
-          goto unknown_element;
-        break;
+    case PARSER_COMMAND:
+      if (strcmp (element_name, "command") != 0)
+        goto unknown_element;
+      break;
 
-      case PARSER_ICON:
-        if (strcmp (element_name, "icon") != 0)
-          goto unknown_element;
-        break;
+    case PARSER_PATTERNS:
+      if (strcmp (element_name, "patterns") != 0)
+        goto unknown_element;
+      break;
 
-      case PARSER_COMMAND:
-        if (strcmp (element_name, "command") != 0)
-          goto unknown_element;
-        break;
+    case PARSER_DESCRIPTION:
+      if (strcmp (element_name, "description") != 0)
+        goto unknown_element;
+      break;
 
-      case PARSER_PATTERNS:
-        if (strcmp (element_name, "patterns") != 0)
-          goto unknown_element;
-        break;
+    case PARSER_STARTUP_NOTIFY:
+      if (strcmp (element_name, "startup-notify") != 0)
+        goto unknown_element;
+      break;
 
-      case PARSER_DESCRIPTION:
-        if (strcmp (element_name, "description") != 0)
-          goto unknown_element;
-        break;
+    case PARSER_DIRECTORIES:
+      if (strcmp (element_name, "directories") != 0)
+        goto unknown_element;
+      break;
 
-      case PARSER_STARTUP_NOTIFY:
-        if (strcmp (element_name, "startup-notify") != 0)
-          goto unknown_element;
-        break;
+    case PARSER_AUDIO_FILES:
+      if (strcmp (element_name, "audio-files") != 0)
+        goto unknown_element;
+      break;
 
-      case PARSER_DIRECTORIES:
-        if (strcmp (element_name, "directories") != 0)
-          goto unknown_element;
-        break;
+    case PARSER_IMAGE_FILES:
+      if (strcmp (element_name, "image-files") != 0)
+        goto unknown_element;
+      break;
 
-      case PARSER_AUDIO_FILES:
-        if (strcmp (element_name, "audio-files") != 0)
-          goto unknown_element;
-        break;
+    case PARSER_OTHER_FILES:
+      if (strcmp (element_name, "other-files") != 0)
+        goto unknown_element;
+      break;
 
-      case PARSER_IMAGE_FILES:
-        if (strcmp (element_name, "image-files") != 0)
-          goto unknown_element;
-        break;
+    case PARSER_TEXT_FILES:
+      if (strcmp (element_name, "text-files") != 0)
+        goto unknown_element;
+      break;
 
-      case PARSER_OTHER_FILES:
-        if (strcmp (element_name, "other-files") != 0)
-          goto unknown_element;
-        break;
+    case PARSER_VIDEO_FILES:
+      if (strcmp (element_name, "video-files") != 0)
+        goto unknown_element;
+      break;
 
-      case PARSER_TEXT_FILES:
-        if (strcmp (element_name, "text-files") != 0)
-          goto unknown_element;
-        break;
+    case PARSER_UNKNOWN_ELEMENT: g_warning ("Unknown element ignored: <%s>", element_name);
+      break;
 
-      case PARSER_VIDEO_FILES:
-        if (strcmp (element_name, "video-files") != 0)
-          goto unknown_element;
-        break;
-
-      case PARSER_UNKNOWN_ELEMENT: g_warning ("Unknown element ignored: <%s>", element_name);
-        break;
-
-      default: goto unknown_element;
+    default: goto unknown_element;
     }
 
   xfce_stack_pop (parser->stack);
@@ -478,38 +478,38 @@ text_handler (GMarkupParseContext   *context,
 
   switch (xfce_stack_top (parser->stack))
     {
-      case PARSER_NAME:
-        if (parser->name_use)
-          g_string_append_len (parser->name, text, text_len);
-        break;
+    case PARSER_NAME:
+      if (parser->name_use)
+        g_string_append_len (parser->name, text, text_len);
+      break;
 
-      case PARSER_SUB_FOLDER:
-        g_string_append_len (parser->submenu, text, text_len);
-        break;
+    case PARSER_SUB_FOLDER:
+      g_string_append_len (parser->submenu, text, text_len);
+      break;
 
-      case PARSER_UNIQUE_ID:
-        g_string_append_len (parser->unique_id, text, text_len);
-        break;
+    case PARSER_UNIQUE_ID:
+      g_string_append_len (parser->unique_id, text, text_len);
+      break;
 
-      case PARSER_ICON:
-        g_string_append_len (parser->icon_name, text, text_len);
-        break;
+    case PARSER_ICON:
+      g_string_append_len (parser->icon_name, text, text_len);
+      break;
 
-      case PARSER_COMMAND:
-        g_string_append_len (parser->command, text, text_len);
-        break;
+    case PARSER_COMMAND:
+      g_string_append_len (parser->command, text, text_len);
+      break;
 
-      case PARSER_PATTERNS:
-        g_string_append_len (parser->patterns, text, text_len);
-        break;
+    case PARSER_PATTERNS:
+      g_string_append_len (parser->patterns, text, text_len);
+      break;
 
-      case PARSER_DESCRIPTION:
-        if (parser->description_use)
-          g_string_append_len (parser->description, text, text_len);
-        break;
+    case PARSER_DESCRIPTION:
+      if (parser->description_use)
+        g_string_append_len (parser->description, text, text_len);
+      break;
 
-      default:
-        break;
+    default:
+      break;
     }
 }
 
