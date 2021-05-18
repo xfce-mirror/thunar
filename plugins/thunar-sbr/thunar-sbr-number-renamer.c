@@ -191,7 +191,7 @@ thunar_sbr_number_renamer_init (ThunarSbrNumberRenamer *number_renamer)
   klass = g_type_class_ref (THUNAR_SBR_TYPE_NUMBER_MODE);
   for (n = 0; n < klass->n_values; ++n)
     gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(klass->values[n].value_nick));
-  exo_mutual_binding_new (G_OBJECT (number_renamer), "mode", G_OBJECT (combo), "active");
+  g_object_bind_property (G_OBJECT (number_renamer), "mode", G_OBJECT (combo), "active", G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_grid_attach (GTK_GRID (grid), combo, 1, 0, 1, 1);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   g_type_class_unref (klass);
@@ -210,7 +210,7 @@ thunar_sbr_number_renamer_init (ThunarSbrNumberRenamer *number_renamer)
   gtk_entry_set_alignment (GTK_ENTRY (number_renamer->start_entry), 1.0f);
   gtk_entry_set_activates_default (GTK_ENTRY (number_renamer->start_entry), TRUE);
   gtk_widget_set_hexpand (GTK_WIDGET (number_renamer->start_entry), TRUE);
-  exo_mutual_binding_new (G_OBJECT (number_renamer->start_entry), "text", G_OBJECT (number_renamer), "start");
+  g_object_bind_property (G_OBJECT (number_renamer->start_entry), "text", G_OBJECT (number_renamer), "start", G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_grid_attach (GTK_GRID (grid), number_renamer->start_entry, 3, 0, 1, 1);
   gtk_widget_show (number_renamer->start_entry);
 
@@ -234,7 +234,7 @@ thunar_sbr_number_renamer_init (ThunarSbrNumberRenamer *number_renamer)
   klass = g_type_class_ref (THUNAR_SBR_TYPE_TEXT_MODE);
   for (n = 0; n < klass->n_values; ++n)
     gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(klass->values[n].value_nick));
-  exo_mutual_binding_new (G_OBJECT (number_renamer), "text-mode", G_OBJECT (combo), "active");
+  g_object_bind_property (G_OBJECT (number_renamer), "text-mode", G_OBJECT (combo), "active", G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_grid_attach (GTK_GRID (grid), combo, 1, 1, 1, 1);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   g_type_class_unref (klass);
@@ -250,7 +250,7 @@ thunar_sbr_number_renamer_init (ThunarSbrNumberRenamer *number_renamer)
   entry = gtk_entry_new ();
   gtk_entry_set_width_chars (GTK_ENTRY (entry), 12);
   gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
-  exo_mutual_binding_new (G_OBJECT (entry), "text", G_OBJECT (number_renamer), "text");
+  g_object_bind_property (G_OBJECT (entry), "text", G_OBJECT (number_renamer), "text", G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_grid_attach (GTK_GRID (grid), entry, 3, 1, 1, 1);
   gtk_widget_show (entry);
 

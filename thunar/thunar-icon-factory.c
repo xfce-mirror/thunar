@@ -757,8 +757,9 @@ thunar_icon_factory_get_for_icon_theme (GtkIconTheme *icon_theme)
 
       /* connect the "show-thumbnails" property to the global preference */
       factory->preferences = thunar_preferences_get ();
-      exo_binding_new (G_OBJECT (factory->preferences), "misc-thumbnail-mode",
-                       G_OBJECT (factory), "thumbnail-mode");
+      g_object_bind_property (G_OBJECT (factory->preferences), "misc-thumbnail-mode",
+                              G_OBJECT (factory),              "thumbnail-mode",
+                              G_BINDING_SYNC_CREATE);
     }
   else
     {

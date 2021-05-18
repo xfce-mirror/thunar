@@ -729,7 +729,7 @@ thunar_window_init (ThunarWindow *window)
 
   window->launcher = g_object_new (THUNAR_TYPE_LAUNCHER, "widget", GTK_WIDGET (window), NULL);
 
-  exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->launcher), "current-directory");
+  g_object_bind_property (G_OBJECT (window), "current-directory", G_OBJECT (window->launcher), "current-directory", G_BINDING_SYNC_CREATE);
   g_signal_connect_swapped (G_OBJECT (window->launcher), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
   g_signal_connect_swapped (G_OBJECT (window->launcher), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
   g_signal_connect_swapped (G_OBJECT (window->launcher), "new-files-created", G_CALLBACK (thunar_window_select_files), window);
@@ -778,8 +778,9 @@ thunar_window_init (ThunarWindow *window)
   /* place the spinner into the menu item */
   window->spinner = gtk_spinner_new ();
   gtk_container_add (GTK_CONTAINER (item), window->spinner);
-  exo_binding_new (G_OBJECT (window->spinner), "active",
-                   G_OBJECT (window->spinner), "visible");
+  g_object_bind_property (G_OBJECT (window->spinner), "active",
+                          G_OBJECT (window->spinner), "visible",
+                          G_BINDING_SYNC_CREATE);
 
   /* check if we need to add the root warning */
   if (G_UNLIKELY (geteuid () == 0))
@@ -904,7 +905,7 @@ thunar_window_init (ThunarWindow *window)
   g_free (last_side_pane);
 
   /* synchronise the "directory-specific-settings" property with the global "misc-directory-specific-settings" property */
-  exo_binding_new (G_OBJECT (window->preferences), "misc-directory-specific-settings", G_OBJECT (window), "directory-specific-settings");
+  g_object_bind_property (G_OBJECT (window->preferences), "misc-directory-specific-settings", G_OBJECT (window), "directory-specific-settings", G_BINDING_SYNC_CREATE);
 
   /* setup a new statusbar */
   window->statusbar = thunar_statusbar_new ();
@@ -2110,8 +2111,8 @@ thunar_window_notebook_insert_page (ThunarWindow  *window,
   label_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 
   label = gtk_label_new (NULL);
-  exo_binding_new (G_OBJECT (view), "display-name", G_OBJECT (label), "label");
-  exo_binding_new (G_OBJECT (view), "tooltip-text", G_OBJECT (label), "tooltip-text");
+  g_object_bind_property (G_OBJECT (view), "display-name", G_OBJECT (label), "label", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (view), "tooltip-text", G_OBJECT (label), "tooltip-text", G_BINDING_SYNC_CREATE);
   gtk_widget_set_has_tooltip (label, TRUE);
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_widget_set_margin_start (GTK_WIDGET(label), 3);
@@ -2436,7 +2437,7 @@ thunar_window_install_sidepane (ThunarWindow *window,
       /* allocate the new side pane widget */
       window->sidepane = g_object_new (type, NULL);
       gtk_widget_set_size_request (window->sidepane, 0, -1);
-      exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->sidepane), "current-directory");
+      g_object_bind_property (G_OBJECT (window), "current-directory", G_OBJECT (window->sidepane), "current-directory", G_BINDING_SYNC_CREATE);
       g_signal_connect_swapped (G_OBJECT (window->sidepane), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
       g_signal_connect_swapped (G_OBJECT (window->sidepane), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
       context = gtk_widget_get_style_context (window->sidepane);
@@ -3478,7 +3479,7 @@ thunar_window_action_open_templates (ThunarWindow *window)
       gtk_widget_show (label);
 
       button = gtk_check_button_new_with_mnemonic (_("Do _not display this message again"));
-      exo_mutual_binding_new_with_negation (G_OBJECT (window->preferences), "misc-show-about-templates", G_OBJECT (button), "active");
+      g_object_bind_property (G_OBJECT (window->preferences), "misc-show-about-templates", G_OBJECT (button), "active", G_BINDING_INVERT_BOOLEAN | G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
       gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
       gtk_widget_show (button);
 
