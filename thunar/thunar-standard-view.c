@@ -817,9 +817,9 @@ thunar_standard_view_constructor (GType                  type,
                     G_CALLBACK (thunar_standard_view_scrolled), object);
 
   /* synchronise the "directory-specific-settings" property with the global "misc-directory-specific-settings" property */
-  g_signal_connect_object (standard_view->preferences, "misc-directory-specific-settings",
-                           standard_view, "directory-specific-settings",
-                           G_BINDING_SYNC_CREATE);
+  g_object_bind_property (standard_view->preferences, "misc-directory-specific-settings",
+                          standard_view, "directory-specific-settings",
+                          G_BINDING_SYNC_CREATE);
 
   /* done, we have a working object */
   return object;
@@ -837,7 +837,10 @@ thunar_standard_view_dispose (GObject *object)
 
   /* unregister the "loading" binding */
   if (G_UNLIKELY (standard_view->loading_binding != NULL))
-    g_binding_unbind (standard_view->loading_binding);
+    {
+      g_object_unref (standard_view->loading_binding);
+      standard_view->loading_binding = NULL;
+    }
 
   /* be sure to cancel any pending drag autoscroll timer */
   if (G_UNLIKELY (standard_view->priv->drag_scroll_timer_id != 0))
@@ -1335,7 +1338,10 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 
   /* disconnect any previous "loading" binding */
   if (G_LIKELY (standard_view->loading_binding != NULL))
-    g_binding_unbind (standard_view->loading_binding);
+    {
+      g_object_unref (standard_view->loading_binding);
+      standard_view->loading_binding = NULL;
+    }
 
   /* store the current scroll position */
   if (current_directory != NULL)

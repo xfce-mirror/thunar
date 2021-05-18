@@ -168,12 +168,12 @@ static void
 thunar_transfer_job_init (ThunarTransferJob *job)
 {
   job->preferences = thunar_preferences_get ();
-  g_signal_connect_object (job->preferences, "misc-file-size-binary",
-                           job,              "file-size-binary",
-                           G_BINDING_SYNC_CREATE);
-  g_signal_connect_object (job->preferences, "misc-parallel-copy-mode",
-                           job,              "parallel-copy-mode",
-                           G_BINDING_SYNC_CREATE);
+  g_object_bind_property (job->preferences, "misc-file-size-binary",
+                          job,              "file-size-binary",
+                          G_BINDING_SYNC_CREATE);
+  g_object_bind_property (job->preferences, "misc-parallel-copy-mode",
+                          job,              "parallel-copy-mode",
+                          G_BINDING_SYNC_CREATE);
 
   job->type = 0;
   job->source_node_list = NULL;
