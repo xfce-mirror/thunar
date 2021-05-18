@@ -167,7 +167,7 @@ thunar_size_label_init (ThunarSizeLabel *size_label)
 
   /* add the spinner widget */
   size_label->spinner = gtk_spinner_new ();
-  exo_binding_new (G_OBJECT (size_label->spinner), "visible", G_OBJECT (ebox), "visible");
+  g_object_bind_property (G_OBJECT (size_label->spinner), "visible", G_OBJECT (ebox), "visible", G_BINDING_SYNC_CREATE);
   gtk_container_add (GTK_CONTAINER (ebox), size_label->spinner);
   gtk_widget_show (size_label->spinner);
 
