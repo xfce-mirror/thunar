@@ -682,17 +682,17 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->row_changed_id = g_signal_connect (G_OBJECT (standard_view->model), "row-changed", G_CALLBACK (thunar_standard_view_row_changed), standard_view);
   g_signal_connect (G_OBJECT (standard_view->model), "rows-reordered", G_CALLBACK (thunar_standard_view_rows_reordered), standard_view);
   g_signal_connect (G_OBJECT (standard_view->model), "error", G_CALLBACK (thunar_standard_view_error), standard_view);
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-case-sensitive", G_OBJECT (standard_view->model), "case-sensitive");
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-date-style", G_OBJECT (standard_view->model), "date-style");
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-date-custom-style", G_OBJECT (standard_view->model), "date-custom-style");
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-folders-first", G_OBJECT (standard_view->model), "folders-first");
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-file-size-binary", G_OBJECT (standard_view->model), "file-size-binary");
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-case-sensitive", G_OBJECT (standard_view->model), "case-sensitive", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-date-style", G_OBJECT (standard_view->model), "date-style", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-date-custom-style", G_OBJECT (standard_view->model), "date-custom-style", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-folders-first", G_OBJECT (standard_view->model), "folders-first", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-file-size-binary", G_OBJECT (standard_view->model), "file-size-binary", G_BINDING_SYNC_CREATE);
 
   /* setup the icon renderer */
   standard_view->icon_renderer = thunar_icon_renderer_new ();
   g_object_ref_sink (G_OBJECT (standard_view->icon_renderer));
-  exo_binding_new (G_OBJECT (standard_view), "zoom-level", G_OBJECT (standard_view->icon_renderer), "size");
-  exo_binding_new (G_OBJECT (standard_view->icon_renderer), "size", G_OBJECT (standard_view->priv->thumbnailer), "thumbnail-size");
+  g_object_bind_property (G_OBJECT (standard_view), "zoom-level", G_OBJECT (standard_view->icon_renderer), "size", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->icon_renderer), "size", G_OBJECT (standard_view->priv->thumbnailer), "thumbnail-size", G_BINDING_SYNC_CREATE);
 
   /* setup the name renderer */
   standard_view->name_renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
@@ -705,7 +705,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   g_object_ref_sink (G_OBJECT (standard_view->name_renderer));
 
   /* TODO: prelit underline
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (standard_view->name_renderer), "follow-prelit");*/
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (standard_view->name_renderer), "follow-prelit", G_BINDING_SYNC_CREATE);*/
 
   /* be sure to update the selection whenever the folder changes */
   g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::folder", G_CALLBACK (thunar_standard_view_selection_changed), standard_view);
@@ -778,8 +778,8 @@ thunar_standard_view_constructor (GType                  type,
   g_object_set (G_OBJECT (view), "model", standard_view->model, NULL);
 
   /* apply the single-click settings to the view */
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (view), "single-click");
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-single-click-timeout", G_OBJECT (view), "single-click-timeout");
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (view), "single-click", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-single-click-timeout", G_OBJECT (view), "single-click-timeout", G_BINDING_SYNC_CREATE);
 
   /* apply the default sort column and sort order */
   g_object_get (G_OBJECT (standard_view->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
@@ -817,8 +817,9 @@ thunar_standard_view_constructor (GType                  type,
                     G_CALLBACK (thunar_standard_view_scrolled), object);
 
   /* synchronise the "directory-specific-settings" property with the global "misc-directory-specific-settings" property */
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-directory-specific-settings",
-                   G_OBJECT (standard_view), "directory-specific-settings");
+  g_object_bind_property (standard_view->preferences, "misc-directory-specific-settings",
+                          standard_view, "directory-specific-settings",
+                          G_BINDING_SYNC_CREATE);
 
   /* done, we have a working object */
   return object;
@@ -836,7 +837,10 @@ thunar_standard_view_dispose (GObject *object)
 
   /* unregister the "loading" binding */
   if (G_UNLIKELY (standard_view->loading_binding != NULL))
-    exo_binding_unbind (standard_view->loading_binding);
+    {
+      g_object_unref (standard_view->loading_binding);
+      standard_view->loading_binding = NULL;
+    }
 
   /* be sure to cancel any pending drag autoscroll timer */
   if (G_UNLIKELY (standard_view->priv->drag_scroll_timer_id != 0))
@@ -1065,7 +1069,7 @@ thunar_standard_view_realize (GtkWidget *widget)
   /* determine the icon factory for the screen on which we are realized */
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
   standard_view->icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
-  exo_binding_new (G_OBJECT (standard_view->icon_renderer), "size", G_OBJECT (standard_view->icon_factory), "thumbnail-size");
+  g_object_bind_property (G_OBJECT (standard_view->icon_renderer), "size", G_OBJECT (standard_view->icon_factory), "thumbnail-size", G_BINDING_SYNC_CREATE);
 
   /* we need to redraw whenever the "thumbnail_mode" property is toggled */
   g_signal_connect_swapped (standard_view->icon_factory,
@@ -1074,7 +1078,7 @@ thunar_standard_view_realize (GtkWidget *widget)
                             standard_view);
 
   /* apply the thumbnail frame preferences after icon_factory got initialized */
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-thumbnail-draw-frames", G_OBJECT (standard_view), "thumbnail-draw-frames");
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-thumbnail-draw-frames", G_OBJECT (standard_view), "thumbnail-draw-frames", G_BINDING_SYNC_CREATE);
 
   /* store sort information to keep indicators in menu in sync */
   thunar_standard_view_store_sort_column (standard_view);
@@ -1334,7 +1338,10 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 
   /* disconnect any previous "loading" binding */
   if (G_LIKELY (standard_view->loading_binding != NULL))
-    exo_binding_unbind (standard_view->loading_binding);
+    {
+      g_object_unref (standard_view->loading_binding);
+      standard_view->loading_binding = NULL;
+    }
 
   /* store the current scroll position */
   if (current_directory != NULL)
@@ -1395,10 +1402,13 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
   folder = thunar_folder_get_for_file (current_directory);
 
   /* connect the "loading" binding */
-  standard_view->loading_binding = exo_binding_new_full (G_OBJECT (folder), "loading",
-                                                         G_OBJECT (standard_view), "loading",
-                                                         NULL, thunar_standard_view_loading_unbound,
-                                                         standard_view);
+  standard_view->loading_binding =
+    g_object_bind_property_full (folder,        "loading",
+                                 standard_view, "loading",
+                                 G_BINDING_SYNC_CREATE,
+                                 NULL, NULL,
+                                 standard_view,
+                                 thunar_standard_view_loading_unbound);
 
   /* apply the new folder */
   thunar_list_model_set_folder (standard_view->model, folder);

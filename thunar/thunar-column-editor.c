@@ -266,7 +266,11 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
 
   /* create the "Automatically expand columns as needed" button */
   button = gtk_check_button_new_with_mnemonic (_("Automatically _expand columns as needed"));
-  exo_mutual_binding_new_with_negation (G_OBJECT (column_editor->preferences), "last-details-view-fixed-columns", G_OBJECT (button), "active");
+  g_object_bind_property (G_OBJECT (column_editor->preferences),
+                          "last-details-view-fixed-columns",
+                          G_OBJECT (button),
+                          "active",
+                          G_BINDING_INVERT_BOOLEAN | G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_grid_attach (GTK_GRID (grid), button, 0, 1, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), button);
   gtk_widget_show (button);

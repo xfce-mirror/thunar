@@ -151,7 +151,7 @@ struct _ThunarStandardView
   GtkCellRenderer           *icon_renderer;
   GtkCellRenderer           *name_renderer;
 
-  ExoBinding                *loading_binding;
+  GBinding                  *loading_binding;
   gboolean                   loading;
   GtkAccelGroup             *accel_group;
 
