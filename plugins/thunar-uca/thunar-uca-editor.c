@@ -63,42 +63,42 @@ struct _ThunarUcaEditorClass
 
 struct _ThunarUcaEditor
 {
-  GtkDialog       __parent__;
+  GtkDialog __parent__;
 
-  GtkWidget       *notebook;
-  GtkWidget       *name_entry;
-  GtkWidget       *sub_menu_entry;
-  GtkWidget       *description_entry;
-  GtkWidget       *icon_button;
-  GtkWidget       *command_entry;
-  GtkWidget       *shortcut_button;
-  GtkWidget       *sn_button;
-  GtkWidget       *patterns_entry;
-  GtkWidget       *directories_button;
-  GtkWidget       *audio_files_button;
-  GtkWidget       *image_files_button;
-  GtkWidget       *text_files_button;
-  GtkWidget       *video_files_button;
-  GtkWidget       *other_files_button;
+  GtkWidget   *notebook;
+  GtkWidget   *name_entry;
+  GtkWidget   *sub_menu_entry;
+  GtkWidget   *description_entry;
+  GtkWidget   *icon_button;
+  GtkWidget   *command_entry;
+  GtkWidget   *shortcut_button;
+  GtkWidget   *sn_button;
+  GtkWidget   *patterns_entry;
+  GtkWidget   *directories_button;
+  GtkWidget   *audio_files_button;
+  GtkWidget   *image_files_button;
+  GtkWidget   *text_files_button;
+  GtkWidget   *video_files_button;
+  GtkWidget   *other_files_button;
 
   gchar           *accel_path;
   GdkModifierType  accel_mods;
   guint            accel_key;
 
   /* property to check if editor was modified */
-  gboolean         content_modified;
+  gboolean  content_modified;
   /* properties used to check for duplicate */
-  guint            name_entry_changed_id;
-  GClosure        *name_search_callback;
+  guint     name_entry_changed_id;
+  GClosure *name_search_callback;
 };
 
 typedef struct
 {
-  gboolean         in_use;
-  GdkModifierType  mods;
-  guint            key;
-  gchar           *current_path;
-  gchar           *other_path;
+  gboolean        in_use;
+  GdkModifierType mods;
+  guint           key;
+  gchar          *current_path;
+  gchar          *other_path;
 } ShortcutInfo;
 
 
@@ -423,9 +423,9 @@ thunar_uca_editor_shortcut_check (gpointer        data,
 
 
 static gboolean
-thunar_uca_editor_validate_shortcut (XfceShortcutDialog *dialog,
-                                     const gchar        *shortcut,
-                                     ThunarUcaEditor    *uca_editor)
+thunar_uca_editor_validate_shortcut (XfceShortcutDialog  *dialog,
+                                     const gchar         *shortcut,
+                                     ThunarUcaEditor     *uca_editor)
 {
   GdkModifierType accel_mods;
   guint           accel_key;
@@ -761,8 +761,8 @@ thunar_uca_editor_save (ThunarUcaEditor *uca_editor,
                         ThunarUcaModel  *uca_model,
                         GtkTreeIter     *iter)
 {
-  gchar       *unique_id;
-  GtkAccelKey  key;
+  gchar         *unique_id;
+  GtkAccelKey    key;
 
   g_return_if_fail (THUNAR_UCA_IS_EDITOR (uca_editor));
   g_return_if_fail (THUNAR_UCA_IS_MODEL (uca_model));
