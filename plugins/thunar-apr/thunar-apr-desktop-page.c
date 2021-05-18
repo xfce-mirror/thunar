@@ -165,7 +165,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_grid_attach (GTK_GRID (grid), desktop_page->description_entry, 1, 0, 1, 1);
   gtk_widget_show (desktop_page->description_entry);
 
-  exo_binding_new (G_OBJECT (desktop_page->description_entry), "visible", G_OBJECT (label), "visible");
+  g_object_bind_property (G_OBJECT (desktop_page->description_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
 
   /* set Atk label relation for the entry */
   object = gtk_widget_get_accessible (desktop_page->description_entry);
@@ -188,7 +188,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_grid_attach (GTK_GRID (grid), desktop_page->command_entry, 1, 1, 1, 1);
   gtk_widget_show (desktop_page->command_entry);
 
-  exo_binding_new (G_OBJECT (desktop_page->command_entry), "visible", G_OBJECT (label), "visible");
+  g_object_bind_property (G_OBJECT (desktop_page->command_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
 
   /* set Atk label relation for the entry */
   object = gtk_widget_get_accessible (desktop_page->command_entry);
@@ -211,7 +211,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_grid_attach (GTK_GRID (grid), desktop_page->path_entry, 1, 2, 1, 1);
   gtk_widget_show (desktop_page->path_entry);
 
-  exo_binding_new (G_OBJECT (desktop_page->path_entry), "visible", G_OBJECT (label), "visible");
+  g_object_bind_property (G_OBJECT (desktop_page->path_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
 
   /* set Atk label relation for the entry */
   object = gtk_widget_get_accessible (desktop_page->path_entry);
@@ -234,7 +234,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_grid_attach (GTK_GRID (grid), desktop_page->url_entry, 1, 3, 1, 1);
   gtk_widget_show (desktop_page->url_entry);
 
-  exo_binding_new (G_OBJECT (desktop_page->url_entry), "visible", G_OBJECT (label), "visible");
+  g_object_bind_property (G_OBJECT (desktop_page->url_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
 
   /* set Atk label relation for the entry */
   object = gtk_widget_get_accessible (desktop_page->url_entry);
@@ -259,7 +259,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_grid_attach (GTK_GRID (grid), desktop_page->comment_entry, 1, 4, 1, 1);
   gtk_widget_show (desktop_page->comment_entry);
 
-  exo_binding_new (G_OBJECT (desktop_page->comment_entry), "visible", G_OBJECT (label), "visible");
+  g_object_bind_property (G_OBJECT (desktop_page->comment_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
 
   /* set Atk label relation for the entry */
   object = gtk_widget_get_accessible (desktop_page->comment_entry);
@@ -306,7 +306,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
 
-  exo_binding_new (G_OBJECT (desktop_page->snotify_button), "visible", G_OBJECT (label), "visible");
+  g_object_bind_property (G_OBJECT (desktop_page->snotify_button), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
 
   /* release shared bold Pango attributes */
   pango_attr_list_unref (attr_list);

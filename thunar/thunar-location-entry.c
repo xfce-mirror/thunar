@@ -172,7 +172,9 @@ thunar_location_entry_init (ThunarLocationEntry *location_entry)
   gtk_orientable_set_orientation (GTK_ORIENTABLE (location_entry), GTK_ORIENTATION_HORIZONTAL);
 
   location_entry->path_entry = thunar_path_entry_new ();
-  exo_binding_new (G_OBJECT (location_entry), "current-directory", G_OBJECT (location_entry->path_entry), "current-file");
+  g_object_bind_property (G_OBJECT (location_entry), "current-directory",
+                          G_OBJECT (location_entry->path_entry), "current-file",
+                          G_BINDING_SYNC_CREATE);
   g_signal_connect_after (G_OBJECT (location_entry->path_entry), "activate", G_CALLBACK (thunar_location_entry_activate), location_entry);
   gtk_box_pack_start (GTK_BOX (location_entry), location_entry->path_entry, TRUE, TRUE, 0);
   gtk_widget_show (location_entry->path_entry);
