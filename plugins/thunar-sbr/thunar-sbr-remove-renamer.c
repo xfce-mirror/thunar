@@ -189,7 +189,7 @@ thunar_sbr_remove_renamer_init (ThunarSbrRemoveRenamer *remove_renamer)
   gtk_widget_show (remove_renamer->start_spinner);
 
   adjustment = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (remove_renamer->start_spinner));
-  exo_mutual_binding_new (G_OBJECT (remove_renamer), "start-offset", G_OBJECT (adjustment), "value");
+  g_object_bind_property (G_OBJECT (remove_renamer), "start-offset", G_OBJECT (adjustment), "value", G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
 
   /* set Atk label relation for the entry */
   object = gtk_widget_get_accessible (remove_renamer->start_spinner);
@@ -202,7 +202,7 @@ thunar_sbr_remove_renamer_init (ThunarSbrRemoveRenamer *remove_renamer)
   klass = g_type_class_ref (THUNAR_SBR_TYPE_OFFSET_MODE);
   for (n = 0; n < klass->n_values; ++n)
     gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(klass->values[n].value_nick));
-  exo_mutual_binding_new (G_OBJECT (remove_renamer), "start-offset-mode", G_OBJECT (combo), "active");
+  g_object_bind_property (G_OBJECT (remove_renamer), "start-offset-mode", G_OBJECT (combo), "active", G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_grid_attach (GTK_GRID (grid), combo, 2, 0, 1, 1);
   g_type_class_unref (klass);
   gtk_widget_show (combo);
@@ -224,7 +224,7 @@ thunar_sbr_remove_renamer_init (ThunarSbrRemoveRenamer *remove_renamer)
   gtk_widget_show (remove_renamer->end_spinner);
 
   adjustment = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (remove_renamer->end_spinner));
-  exo_mutual_binding_new (G_OBJECT (remove_renamer), "end-offset", G_OBJECT (adjustment), "value");
+  g_object_bind_property (G_OBJECT (remove_renamer), "end-offset", G_OBJECT (adjustment), "value", G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
 
   /* set Atk label relation for the entry */
   object = gtk_widget_get_accessible (remove_renamer->end_spinner);
@@ -237,7 +237,7 @@ thunar_sbr_remove_renamer_init (ThunarSbrRemoveRenamer *remove_renamer)
   klass = g_type_class_ref (THUNAR_SBR_TYPE_OFFSET_MODE);
   for (n = 0; n < klass->n_values; ++n)
     gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(klass->values[n].value_nick));
-  exo_mutual_binding_new (G_OBJECT (remove_renamer), "end-offset-mode", G_OBJECT (combo), "active");
+  g_object_bind_property (G_OBJECT (remove_renamer), "end-offset-mode", G_OBJECT (combo), "active", G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_grid_attach (GTK_GRID (grid), combo, 2, 1, 1, 1);
   g_type_class_unref (klass);
   gtk_widget_show (combo);

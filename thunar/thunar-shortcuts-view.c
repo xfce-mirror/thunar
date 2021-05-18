@@ -346,8 +346,8 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   /* sync the "emblems" property of the icon renderer with the "shortcuts-icon-emblems" preference
    * and the "size" property of the renderer with the "shortcuts-icon-size" preference.
    */
-  exo_binding_new (G_OBJECT (view->preferences), "shortcuts-icon-size", G_OBJECT (view->icon_renderer), "size");
-  exo_binding_new (G_OBJECT (view->preferences), "shortcuts-icon-emblems", G_OBJECT (view->icon_renderer), "emblems");
+  g_object_bind_property (G_OBJECT (view->preferences), "shortcuts-icon-size", G_OBJECT (view->icon_renderer), "size", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (view->preferences), "shortcuts-icon-emblems", G_OBJECT (view->icon_renderer), "emblems", G_BINDING_SYNC_CREATE);
 
   /* allocate the text renderer (ellipsizing as required, but "File System" must fit) */
   renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
@@ -406,7 +406,7 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   g_signal_connect_swapped (G_OBJECT (view->launcher), "device-operation-started", G_CALLBACK (thunar_shortcuts_view_start_spinner), view);
   g_signal_connect_swapped (G_OBJECT (view->launcher), "device-operation-finished", G_CALLBACK (thunar_shortcuts_view_stop_spinner), view);
   g_signal_connect_swapped (G_OBJECT (view->launcher), "new-files-created", G_CALLBACK (thunar_shortcuts_view_new_files_created), view);
-  exo_binding_new (G_OBJECT (view), "current-directory", G_OBJECT (view->launcher), "current-directory");
+  g_object_bind_property (G_OBJECT (view), "current-directory", G_OBJECT (view->launcher), "current-directory", G_BINDING_SYNC_CREATE);
 }
 
 

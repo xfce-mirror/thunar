@@ -150,8 +150,11 @@ thunar_size_label_init (ThunarSizeLabel *size_label)
 
   /* binary file size */
   size_label->preferences = thunar_preferences_get ();
-  exo_binding_new (G_OBJECT (size_label->preferences), "misc-file-size-binary",
-                   G_OBJECT (size_label), "file-size-binary");
+  g_signal_connect_object (G_OBJECT (size_label->preferences),
+                           "misc-file-size-binary",
+                           G_OBJECT (size_label),
+                           "file-size-binary",
+                           G_BINDING_SYNC_CREATE);
   g_signal_connect_swapped (G_OBJECT (size_label->preferences), "notify::misc-file-size-binary",
                             G_CALLBACK (thunar_size_label_files_changed), size_label);
 
@@ -167,7 +170,7 @@ thunar_size_label_init (ThunarSizeLabel *size_label)
 
   /* add the spinner widget */
   size_label->spinner = gtk_spinner_new ();
-  exo_binding_new (G_OBJECT (size_label->spinner), "visible", G_OBJECT (ebox), "visible");
+  g_object_bind_property (G_OBJECT (size_label->spinner), "visible", G_OBJECT (ebox), "visible", G_BINDING_SYNC_CREATE);
   gtk_container_add (GTK_CONTAINER (ebox), size_label->spinner);
   gtk_widget_show (size_label->spinner);
 

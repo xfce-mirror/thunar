@@ -393,7 +393,9 @@ thunar_chooser_button_chooser_dialog (ThunarChooserButton *chooser_button)
 
   /* popup the application chooser dialog */
   dialog = g_object_new (THUNAR_TYPE_CHOOSER_DIALOG, "open", FALSE, NULL);
-  exo_binding_new (G_OBJECT (chooser_button), "file", G_OBJECT (dialog), "file");
+  g_object_bind_property (G_OBJECT (chooser_button), "file",
+                          G_OBJECT (dialog),         "file",
+                          G_BINDING_SYNC_CREATE);
   gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (toplevel));
   gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
   if (gtk_dialog_run (GTK_DIALOG (dialog)) != GTK_RESPONSE_ACCEPT)
