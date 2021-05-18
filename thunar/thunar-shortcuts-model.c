@@ -279,12 +279,14 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
 
   /* hidden bookmarks */
   model->preferences = thunar_preferences_get ();
-  exo_binding_new (G_OBJECT (model->preferences), "hidden-bookmarks",
-                   G_OBJECT (model), "hidden-bookmarks");
+  g_object_bind_property (model->preferences, "hidden-bookmarks",
+                          model,              "hidden-bookmarks",
+                          G_BINDING_SYNC_CREATE);
 
   /* binary file size */
-  exo_binding_new (G_OBJECT (model->preferences), "misc-file-size-binary",
-                   G_OBJECT (model), "file-size-binary");
+  g_object_bind_property (model->preferences, "misc-file-size-binary",
+                          model,              "file-size-binary",
+                          G_BINDING_SYNC_CREATE);
 
   /* load volumes */
   thunar_shortcuts_model_shortcut_devices (model);
