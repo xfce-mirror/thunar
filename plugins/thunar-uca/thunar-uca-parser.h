@@ -1,6 +1,5 @@
-/* vi:set et ai sw=2 sts=2 ts=2: */
-/*-
- * Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>
+/*
+ * Copyright (c) 2021 Chigozirim Chukwu <noblechuk5[at]web[dot]de>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,19 +17,22 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __THUNAR_UCA_PRIVATE_H__
-#define __THUNAR_UCA_PRIVATE_H__
+#ifndef __THUNAR_UCA_PARSER_H__
+#define __THUNAR_UCA_PARSER_H__
 
+#include <thunar-uca/thunar-uca-model.h>
 #include <glib.h>
 
-G_BEGIN_DECLS;
+G_BEGIN_DECLS
 
-void   thunar_uca_i18n_init                                   (void);
-gchar *thunar_uca_expand_deprecated_desktop_entry_field_codes (const gchar *command,
-                                                               GList       *file_infos);
+typedef struct _ThunarUcaParser ThunarUcaParser;
+
+gboolean thunar_uca_parser_read_uca_from_file (ThunarUcaModel   *model,
+                                               const gchar      *filename,
+                                               GError          **error);
 
 
 
-G_END_DECLS;
+G_END_DECLS
 
-#endif /* !__THUNAR_UCA_PRIVATE_H__ */
+#endif /*__THUNAR_UCA_PARSER_H__ */
