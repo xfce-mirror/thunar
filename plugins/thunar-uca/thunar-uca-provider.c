@@ -36,23 +36,23 @@
 
 
 
-static void   thunar_uca_provider_menu_provider_init        (ThunarxMenuProviderIface *iface);
-static void   thunar_uca_provider_preferences_provider_init (ThunarxPreferencesProviderIface *iface);
-static void   thunar_uca_provider_finalize                  (GObject *object);
-static GList *thunar_uca_provider_get_menu_items            (ThunarxPreferencesProvider *preferences_provider,
-                                                             GtkWidget                  *window);
-static GList *thunar_uca_provider_get_file_menu_items       (ThunarxMenuProvider *menu_provider,
-                                                             GtkWidget           *window,
-                                                             GList               *files);
-static GList *thunar_uca_provider_get_folder_menu_items     (ThunarxMenuProvider *menu_provider,
-                                                             GtkWidget           *window,
-                                                             ThunarxFileInfo     *folder);
-static void   thunar_uca_provider_activated                 (ThunarUcaProvider *uca_provider,
-                                                             ThunarxMenuItem   *item);
-static void   thunar_uca_provider_child_watch               (ThunarUcaProvider *uca_provider,
-                                                             gint               exit_status);
-static void   thunar_uca_provider_child_watch_destroy       (gpointer  user_data,
-                                                             GClosure *closure);
+static void   thunar_uca_provider_menu_provider_init        (ThunarxMenuProviderIface         *iface);
+static void   thunar_uca_provider_preferences_provider_init (ThunarxPreferencesProviderIface  *iface);
+static void   thunar_uca_provider_finalize                  (GObject                          *object);
+static GList *thunar_uca_provider_get_menu_items            (ThunarxPreferencesProvider       *preferences_provider,
+                                                             GtkWidget                        *window);
+static GList *thunar_uca_provider_get_file_menu_items       (ThunarxMenuProvider              *menu_provider,
+                                                             GtkWidget                        *window,
+                                                             GList                            *files);
+static GList *thunar_uca_provider_get_folder_menu_items     (ThunarxMenuProvider              *menu_provider,
+                                                             GtkWidget                        *window,
+                                                             ThunarxFileInfo                  *folder);
+static void   thunar_uca_provider_activated                 (ThunarUcaProvider                *uca_provider,
+                                                             ThunarxMenuItem                  *item);
+static void   thunar_uca_provider_child_watch               (ThunarUcaProvider                *uca_provider,
+                                                             gint                              exit_status);
+static void   thunar_uca_provider_child_watch_destroy       (gpointer                          user_data,
+                                                             GClosure                         *closure);
 
 
 
@@ -63,7 +63,7 @@ struct _ThunarUcaProviderClass
 
 struct _ThunarUcaProvider
 {
-  GObject         __parent__;
+  GObject __parent__;
 
   ThunarUcaModel *model;
   gint            last_action_id; /* used to generate unique action names */
@@ -150,7 +150,7 @@ thunar_uca_provider_finalize (GObject *object)
   /* drop our reference on the model */
   g_object_unref (G_OBJECT (uca_provider->model));
 
-  G_OBJECT_CLASS (thunar_uca_provider_parent_class)->finalize (object);
+  (*G_OBJECT_CLASS (thunar_uca_provider_parent_class)->finalize) (object);
 }
 
 
@@ -190,8 +190,7 @@ thunar_uca_provider_get_menu_items (ThunarxPreferencesProvider *preferences_prov
 
 /* returned menu must be freed with g_object_unref() */
 static ThunarxMenu*
-find_submenu_by_name (gchar *name,
-                      GList *items)
+find_submenu_by_name (gchar *name, GList *items)
 {
   GList *lp;
   GList *thunarx_menu_items;
@@ -288,11 +287,11 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
           sub_menus_as_array = g_strsplit (sub_menu_string, "/", -1);
 
           for (int i = 0; sub_menus_as_array[i] != NULL; i++)
-            {
+           {
               /* get the submenu path up to the iterator  */
               gchar *sub_menu_path = g_strdup (sub_menus_as_array[0]);
 
-              for (int j = 1; j <= i; j++)
+              for (int j= 1; j<=i; j++)
                 sub_menu_path = g_strconcat (sub_menu_path, "/", sub_menus_as_array[j], NULL);
 
               /* Check if the full path already exists */
@@ -311,7 +310,7 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
                   menu_item = thunarx_menu_item_new (sub_menu_path, sub_menus_as_array[i], "", "inode-directory");
 
                   /* Only add base-submenus to the returned list */
-                  if (parent_menu == NULL)
+                  if(parent_menu == NULL)
                     items = g_list_prepend (items, menu_item);
                   else
                     thunarx_menu_prepend_item (parent_menu, menu_item);
@@ -407,24 +406,24 @@ static void
 thunar_uca_provider_activated (ThunarUcaProvider *uca_provider,
                                ThunarxMenuItem   *item)
 {
-  GtkTreeRowReference   *row;
-  ThunarUcaContext      *uca_context;
-  GtkTreePath           *path;
-  GtkTreeIter           iter;
-  GtkWidget             *dialog;
-  GtkWidget             *window;
-  gboolean               succeed;
-  GError                *error = NULL;
-  GList                 *files;
-  gchar                **argv;
-  gchar                 *working_directory = NULL;
-  gchar                 *filename;
-  gchar                 *label;
-  GFile                 *location;
-  gint                   argc;
-  gchar                 *icon_name = NULL;
-  gboolean               startup_notify;
-  GClosure              *child_watch;
+  GtkTreeRowReference *row;
+  ThunarUcaContext    *uca_context;
+  GtkTreePath         *path;
+  GtkTreeIter         iter;
+  GtkWidget           *dialog;
+  GtkWidget           *window;
+  gboolean             succeed;
+  GError              *error = NULL;
+  GList               *files;
+  gchar               *argv;
+  gchar               *working_directory = NULL;
+  gchar               *filename;
+  gchar               *label;
+  GFile               *location;
+  gint                 argc;
+  gchar               *icon_name = NULL;
+  gboolean             startup_notify;
+  GClosure            *child_watch;
 
   g_return_if_fail (THUNAR_UCA_IS_PROVIDER (uca_provider));
   g_return_if_fail (THUNARX_IS_MENU_ITEM (item));
@@ -522,7 +521,7 @@ thunar_uca_provider_activated (ThunarUcaProvider *uca_provider,
   if (G_UNLIKELY (!succeed))
     {
       g_object_get (G_OBJECT (item), "label", &label, NULL);
-      dialog = gtk_message_dialog_new ((GtkWindow*) window,
+      dialog = gtk_message_dialog_new ((GtkWindow *) window,
                                        GTK_DIALOG_DESTROY_WITH_PARENT
                                        | GTK_DIALOG_MODAL,
                                        GTK_MESSAGE_ERROR,
@@ -541,6 +540,7 @@ thunar_uca_provider_activated (ThunarUcaProvider *uca_provider,
 static void
 thunar_uca_provider_child_watch (ThunarUcaProvider *uca_provider,
                                  gint               exit_status)
+
 {
   GFileMonitor *monitor;
   GFile        *file;

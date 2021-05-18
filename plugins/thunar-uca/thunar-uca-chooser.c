@@ -65,12 +65,12 @@ struct _ThunarUcaChooser
 {
   GtkDialog __parent__;
 
-  GtkWidget *treeview;
-  GtkWidget *add_button;
-  GtkWidget *edit_button;
-  GtkWidget *delete_button;
-  GtkWidget *up_button;
-  GtkWidget *down_button;
+  GtkWidget   *treeview;
+  GtkWidget   *add_button;
+  GtkWidget   *edit_button;
+  GtkWidget   *delete_button;
+  GtkWidget   *up_button;
+  GtkWidget   *down_button;
 };
 
 
@@ -169,7 +169,7 @@ thunar_uca_chooser_key_press_event (GtkWidget   *widget,
       return TRUE;
     }
 
-  return GTK_WIDGET_CLASS (thunar_uca_chooser_parent_class)->key_press_event (widget, event);
+  return (*GTK_WIDGET_CLASS (thunar_uca_chooser_parent_class)->key_press_event) (widget, event);
 }
 
 
@@ -184,7 +184,7 @@ thunar_uca_chooser_response (GtkDialog *dialog,
     }
   else if (GTK_DIALOG_CLASS (thunar_uca_chooser_parent_class)->response != NULL)
     {
-      GTK_DIALOG_CLASS (thunar_uca_chooser_parent_class)->response (dialog, response);
+      (*GTK_DIALOG_CLASS (thunar_uca_chooser_parent_class)->response) (dialog, response);
     }
 }
 
