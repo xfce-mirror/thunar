@@ -196,8 +196,9 @@ thunar_device_monitor_init (ThunarDeviceMonitor *monitor)
   GList *lp;
 
   monitor->preferences = thunar_preferences_get ();
-  exo_binding_new (G_OBJECT (monitor->preferences), "hidden-devices",
-                   G_OBJECT (monitor), "hidden-devices");
+  g_object_bind_property (G_OBJECT (monitor->preferences), "hidden-devices",
+                          G_OBJECT (monitor),              "hidden-devices",
+                          G_BINDING_SYNC_CREATE);
 
   /* table for GVolume/GMount (key) -> ThunarDevice (value) */
   monitor->devices = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, g_object_unref);
