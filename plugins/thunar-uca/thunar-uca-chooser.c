@@ -29,29 +29,30 @@
 #include <thunar-uca/thunar-uca-chooser.h>
 #include <thunar-uca/thunar-uca-editor.h>
 #include <thunar-uca/thunar-uca-model.h>
+#include <thunar-uca/thunar-uca-marshal.h>
 
 
 
-static gboolean thunar_uca_chooser_key_press_event    (GtkWidget              *widget,
-                                                       GdkEventKey            *event);
-static void     thunar_uca_chooser_response           (GtkDialog              *dialog,
-                                                       gint                    response);
-static void     thunar_uca_chooser_exchange           (ThunarUcaChooser       *uca_chooser,
-                                                       GtkTreeSelection       *selection,
-                                                       GtkTreeModel           *model,
-                                                       GtkTreeIter            *iter_a,
-                                                       GtkTreeIter            *iter_b);
-static void     thunar_uca_chooser_open_editor        (ThunarUcaChooser       *uca_chooser,
-                                                       gboolean                edit);
-static void     thunar_uca_chooser_save               (ThunarUcaChooser       *uca_chooser,
-                                                       ThunarUcaModel         *uca_model);
-static void     thunar_uca_chooser_selection_changed  (ThunarUcaChooser       *uca_chooser,
-                                                       GtkTreeSelection       *selection);
-static void     thunar_uca_chooser_add_clicked        (ThunarUcaChooser       *uca_chooser);
-static void     thunar_uca_chooser_edit_clicked       (ThunarUcaChooser       *uca_chooser);
-static void     thunar_uca_chooser_delete_clicked     (ThunarUcaChooser       *uca_chooser);
-static void     thunar_uca_chooser_up_clicked         (ThunarUcaChooser       *uca_chooser);
-static void     thunar_uca_chooser_down_clicked       (ThunarUcaChooser       *uca_chooser);
+static gboolean thunar_uca_chooser_key_press_event    (GtkWidget        *widget,
+                                                       GdkEventKey      *event);
+static void     thunar_uca_chooser_response           (GtkDialog        *dialog,
+                                                       gint              response);
+static void     thunar_uca_chooser_exchange           (ThunarUcaChooser *uca_chooser,
+                                                       GtkTreeSelection *selection,
+                                                       GtkTreeModel     *model,
+                                                       GtkTreeIter      *iter_a,
+                                                       GtkTreeIter      *iter_b);
+static void     thunar_uca_chooser_open_editor        (ThunarUcaChooser *uca_chooser,
+                                                       gboolean          edit);
+static void     thunar_uca_chooser_save               (ThunarUcaChooser *uca_chooser,
+                                                       ThunarUcaModel   *uca_model);
+static void     thunar_uca_chooser_selection_changed  (ThunarUcaChooser *uca_chooser,
+                                                       GtkTreeSelection *selection);
+static void     thunar_uca_chooser_add_clicked        (ThunarUcaChooser *uca_chooser);
+static void     thunar_uca_chooser_edit_clicked       (ThunarUcaChooser *uca_chooser);
+static void     thunar_uca_chooser_delete_clicked     (ThunarUcaChooser *uca_chooser);
+static void     thunar_uca_chooser_up_clicked         (ThunarUcaChooser *uca_chooser);
+static void     thunar_uca_chooser_down_clicked       (ThunarUcaChooser *uca_chooser);
 
 
 
@@ -101,12 +102,12 @@ thunar_uca_chooser_class_init (ThunarUcaChooserClass *klass)
   gtk_widget_class_bind_template_child (widget_class, ThunarUcaChooser, up_button);
   gtk_widget_class_bind_template_child (widget_class, ThunarUcaChooser, down_button);
 
-  gtk_widget_class_bind_template_callback(widget_class, thunar_uca_chooser_add_clicked);
-  gtk_widget_class_bind_template_callback(widget_class, thunar_uca_chooser_edit_clicked);
-  gtk_widget_class_bind_template_callback(widget_class, thunar_uca_chooser_delete_clicked);
-  gtk_widget_class_bind_template_callback(widget_class, thunar_uca_chooser_up_clicked);
-  gtk_widget_class_bind_template_callback(widget_class, thunar_uca_chooser_down_clicked);
-  gtk_widget_class_bind_template_callback(widget_class, thunar_uca_chooser_selection_changed);
+  gtk_widget_class_bind_template_callback (widget_class, thunar_uca_chooser_add_clicked);
+  gtk_widget_class_bind_template_callback (widget_class, thunar_uca_chooser_edit_clicked);
+  gtk_widget_class_bind_template_callback (widget_class, thunar_uca_chooser_delete_clicked);
+  gtk_widget_class_bind_template_callback (widget_class, thunar_uca_chooser_up_clicked);
+  gtk_widget_class_bind_template_callback (widget_class, thunar_uca_chooser_down_clicked);
+  gtk_widget_class_bind_template_callback (widget_class, thunar_uca_chooser_selection_changed);
 }
 
 
@@ -258,6 +259,7 @@ thunar_uca_chooser_open_editor (ThunarUcaChooser *uca_chooser,
   GtkTreeIter       iter;
   GtkWidget        *editor;
   gboolean          use_header_bar = FALSE;
+  GClosure         *name_search_callback = NULL;
 
   g_return_if_fail (THUNAR_UCA_IS_CHOOSER (uca_chooser));
 
@@ -274,25 +276,38 @@ thunar_uca_chooser_open_editor (ThunarUcaChooser *uca_chooser,
   if (gtk_tree_selection_get_selected (selection, &model, &iter) && edit)
     thunar_uca_editor_load (THUNAR_UCA_EDITOR (editor), THUNAR_UCA_MODEL (model), &iter);
 
+  if (!edit)
+    {
+      name_search_callback = g_cclosure_new_swap (G_CALLBACK (thunar_uca_model_action_exists_no_iter),
+                                                  THUNAR_UCA_MODEL (model), NULL);
+      g_closure_set_marshal (name_search_callback, _thunar_uca_marshal_BOOLEAN__STRING);
+      thunar_uca_editor_set_name_search_callback (THUNAR_UCA_EDITOR (editor), name_search_callback);
+    }
+
   /* run the editor */
   if (gtk_dialog_run (GTK_DIALOG (editor)) == GTK_RESPONSE_OK)
     {
-      /* append a new iter (when not editing) */
-      if (G_UNLIKELY (!edit))
-        thunar_uca_model_append (THUNAR_UCA_MODEL (model), &iter);
-
-      /* save the editor values to the model */
-      thunar_uca_editor_save (THUNAR_UCA_EDITOR (editor), THUNAR_UCA_MODEL (model), &iter);
-
       /* hide the editor window */
       gtk_widget_hide (editor);
 
-      /* sync the model to persistent storage */
-      thunar_uca_chooser_save (uca_chooser, THUNAR_UCA_MODEL (model));
+      if (G_LIKELY ( thunar_uca_editor_was_modified (THUNAR_UCA_EDITOR (editor))))
+        {
+          /* append a new iter (when not editing) */
+          if (G_UNLIKELY (!edit))
+            thunar_uca_model_append (THUNAR_UCA_MODEL (model), &iter);
+
+          /* save the editor values to the model */
+          thunar_uca_editor_save (THUNAR_UCA_EDITOR (editor), THUNAR_UCA_MODEL (model), &iter);
+
+          /* sync the model to persistent storage */
+          thunar_uca_chooser_save (uca_chooser, THUNAR_UCA_MODEL (model));
+        }
     }
 
   /* destroy the editor */
   gtk_widget_destroy (editor);
+  if (name_search_callback != NULL)
+    g_closure_unref (name_search_callback);
 }
 
 
@@ -441,7 +456,3 @@ thunar_uca_chooser_down_clicked (ThunarUcaChooser *uca_chooser)
         thunar_uca_chooser_exchange (uca_chooser, selection, model, &iter_a, &iter_b);
     }
 }
-
-
-
-
