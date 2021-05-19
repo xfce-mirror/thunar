@@ -544,7 +544,7 @@ thunar_uca_model_resolve_paths (GPtrArray       *normalized_uca_paths,
                   if (g_file_test (resource, G_FILE_TEST_IS_REGULAR))
                     {
 #ifdef DEBUG
-                    g_debug ("Found resource file `%s'");
+                    g_debug ("Found resource file `%s'", resource);
 #endif
                       g_ptr_array_add (normalized_uca_paths, resource);
                     }
