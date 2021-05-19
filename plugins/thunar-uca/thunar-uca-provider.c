@@ -187,9 +187,10 @@ thunar_uca_provider_get_menu_items (ThunarxPreferencesProvider *preferences_prov
 }
 
 
+
 /* returned menu must be freed with g_object_unref() */
 static ThunarxMenu*
-find_submenu_by_name (gchar *name, GList* items)
+find_submenu_by_name (gchar *name, GList *items)
 {
   GList *lp;
   GList *thunarx_menu_items;
@@ -309,7 +310,7 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
                   menu_item = thunarx_menu_item_new (sub_menu_path, sub_menus_as_array[i], "", "inode-directory");
 
                   /* Only add base-submenus to the returned list */
-                  if (parent_menu == NULL)
+                  if(parent_menu == NULL)
                     items = g_list_prepend (items, menu_item);
                   else
                     thunarx_menu_prepend_item (parent_menu, menu_item);
@@ -348,7 +349,7 @@ thunar_uca_provider_get_file_menu_items (ThunarxMenuProvider *menu_provider,
                              g_strconcat ("<Actions>/ThunarActions/", name, NULL));
 
           /* add only base menu items to the return list */
-          if(parent_menu == NULL)
+          if (parent_menu == NULL)
             items = g_list_prepend (items, item);
           else
             thunarx_menu_prepend_item (parent_menu, item);
@@ -408,13 +409,13 @@ thunar_uca_provider_activated (ThunarUcaProvider *uca_provider,
   GtkTreeRowReference *row;
   ThunarUcaContext    *uca_context;
   GtkTreePath         *path;
-  GtkTreeIter          iter;
+  GtkTreeIter         iter;
   GtkWidget           *dialog;
   GtkWidget           *window;
   gboolean             succeed;
   GError              *error = NULL;
   GList               *files;
-  gchar              **argv;
+  gchar               *argv;
   gchar               *working_directory = NULL;
   gchar               *filename;
   gchar               *label;
