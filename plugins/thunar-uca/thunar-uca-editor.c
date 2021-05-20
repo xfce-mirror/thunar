@@ -49,6 +49,10 @@ static void           thunar_uca_editor_shortcut_clicked       (ThunarUcaEditor 
 static void           thunar_uca_editor_shortcut_clear_clicked (ThunarUcaEditor        *uca_editor);
 static void           thunar_uca_editor_icon_clicked           (ThunarUcaEditor        *uca_editor);
 static void           thunar_uca_editor_constructed            (GObject                *object);
+static void           thunar_uca_editor_finalized              (GObject                *object);
+static void           thunar_uca_editor_set_content_modified   (ThunarUcaEditor        *uca_editor);
+static void           thunar_uca_editor_name_updated           (ThunarUcaEditor        *uca_editor);
+static gboolean       thunar_uca_editor_check_existing_name    (ThunarUcaEditor        *uca_editor);
 
 
 
@@ -80,9 +84,16 @@ struct _ThunarUcaEditor
   gchar           *accel_path;
   GdkModifierType  accel_mods;
   guint            accel_key;
+
+  /* property to check if editor was modified */
+  gboolean  content_modified;
+  /* properties used to check for duplicate */
+  guint     name_entry_changed_id;
+  GClosure *name_search_callback;
 };
 
-typedef struct {
+typedef struct
+{
   gboolean        in_use;
   GdkModifierType mods;
   guint           key;
@@ -104,6 +115,7 @@ thunar_uca_editor_class_init (ThunarUcaEditorClass *klass)
 
   /* vfuncs */
   object_class->constructed = thunar_uca_editor_constructed;
+  object_class->finalize = thunar_uca_editor_finalized;
 
   /* Setup the template xml */
   gtk_widget_class_set_template_from_resource (widget_class, "/org/xfce/thunar/uca/editor.ui");
@@ -129,6 +141,9 @@ thunar_uca_editor_class_init (ThunarUcaEditorClass *klass)
   gtk_widget_class_bind_template_callback(widget_class, thunar_uca_editor_command_clicked);
   gtk_widget_class_bind_template_callback(widget_class, thunar_uca_editor_shortcut_clicked);
   gtk_widget_class_bind_template_callback(widget_class, thunar_uca_editor_shortcut_clear_clicked);
+
+  gtk_widget_class_bind_template_callback (widget_class, thunar_uca_editor_set_content_modified);
+  gtk_widget_class_bind_template_callback (widget_class, thunar_uca_editor_name_updated);
 }
 
 
@@ -136,6 +151,8 @@ thunar_uca_editor_class_init (ThunarUcaEditorClass *klass)
 static void
 thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
 {
+  uca_editor->content_modified = FALSE;
+  uca_editor->name_entry_changed_id = 0;
   /* Initialize the template for this instance */
   gtk_widget_init_template (GTK_WIDGET (uca_editor));
 
@@ -156,6 +173,122 @@ thunar_uca_editor_constructed (GObject *object)
 
   /* Visual tweaks for header-bar mode only */
   g_object_set (gtk_dialog_get_content_area (GTK_DIALOG (editor)), "border-width", 0, NULL);
+}
+
+
+
+static void
+thunar_uca_editor_finalized (GObject *object)
+{
+  ThunarUcaEditor *editor = THUNAR_UCA_EDITOR (object);
+
+  if (editor->name_search_callback != NULL)
+    g_closure_unref (editor->name_search_callback);
+
+  G_OBJECT_CLASS (thunar_uca_editor_parent_class)->finalize (object);
+}
+
+
+
+static void
+thunar_uca_editor_set_content_modified (ThunarUcaEditor *uca_editor)
+{
+  if (G_UNLIKELY (!uca_editor->content_modified))
+    uca_editor->content_modified = TRUE;
+}
+
+
+
+/**
+ * Called when the name of the action changes
+ * @param uca_editor the uca editor
+ */
+static void
+thunar_uca_editor_name_updated (ThunarUcaEditor *uca_editor)
+{
+  GtkWidget *ok_button;
+
+  /*
+   * Modus Operandi:
+   * When the user types the name of an action
+   * we disable the "accept" button
+   * start a countdown of 150ms
+   * after the count down, check if the name entered exists
+   * see #thunar_uca_editor_check_existing_name for the rest
+   * */
+
+  if (uca_editor->name_search_callback != NULL)
+    {
+      ok_button = gtk_dialog_get_widget_for_response (GTK_DIALOG (uca_editor), GTK_RESPONSE_OK);
+      if (ok_button != NULL && gtk_widget_is_sensitive (ok_button))
+        gtk_widget_set_sensitive (ok_button, FALSE);
+
+      if (uca_editor->name_entry_changed_id != 0)
+        g_source_remove (uca_editor->name_entry_changed_id);
+      uca_editor->name_entry_changed_id =
+          gdk_threads_add_timeout (150, (GSourceFunc) thunar_uca_editor_check_existing_name, uca_editor);
+    }
+}
+
+
+
+/**
+ * Called when the timer runs out and the user has not changed the
+ * name entry
+ * @param uca_editor
+ * @return G_SOURCE_REMOVE to remove the timeout
+ */
+static gboolean
+thunar_uca_editor_check_existing_name (ThunarUcaEditor *uca_editor)
+{
+  static const gchar *const invalid_name_style = "error";
+
+  GtkWidget       *ok_button;
+  GValue           name_exists_ret = G_VALUE_INIT;
+  GValue           params[] = { G_VALUE_INIT, G_VALUE_INIT };
+  GtkStyleContext *name_entry_style_ctx;
+  gchar           *tooltip = NULL;
+
+  g_value_init (&params[0], G_TYPE_POINTER);
+  g_value_set_pointer (&params[0], NULL);
+  g_value_init (&params[1], G_TYPE_STRING);
+  g_value_set_string (&params[1], gtk_entry_get_text (GTK_ENTRY (uca_editor->name_entry)));
+  g_value_init (&name_exists_ret, G_TYPE_BOOLEAN);
+  g_closure_invoke (uca_editor->name_search_callback, &name_exists_ret, 2, params, NULL);
+
+  name_entry_style_ctx = gtk_widget_get_style_context (uca_editor->name_entry);
+
+  if (!g_value_get_boolean (&name_exists_ret))
+    {
+      ok_button = gtk_dialog_get_widget_for_response (GTK_DIALOG (uca_editor), GTK_RESPONSE_OK);
+      if (ok_button != NULL && !gtk_widget_is_sensitive (ok_button))
+        gtk_widget_set_sensitive (ok_button, TRUE);
+      if (gtk_style_context_has_class (name_entry_style_ctx, invalid_name_style))
+        {
+          gtk_style_context_remove_class (name_entry_style_ctx, invalid_name_style);
+          gtk_entry_set_icon_from_icon_name (GTK_ENTRY (uca_editor->name_entry),
+                                             GTK_ENTRY_ICON_SECONDARY, NULL);
+          gtk_entry_set_icon_tooltip_text (GTK_ENTRY (uca_editor->name_entry),
+                                           GTK_ENTRY_ICON_SECONDARY, NULL);
+        }
+    }
+  else if (!gtk_style_context_has_class (name_entry_style_ctx, invalid_name_style))
+    {
+      tooltip = g_strdup_printf (_("The action \"%s\" already exists"),
+                                 gtk_entry_get_text (GTK_ENTRY (uca_editor->name_entry)));
+      gtk_style_context_add_class (name_entry_style_ctx, invalid_name_style);
+      gtk_entry_set_icon_from_icon_name (GTK_ENTRY (uca_editor->name_entry),
+                                         GTK_ENTRY_ICON_SECONDARY, "dialog-error");
+      gtk_entry_set_icon_tooltip_text (GTK_ENTRY (uca_editor->name_entry),
+                                       GTK_ENTRY_ICON_SECONDARY, tooltip);
+      g_free (tooltip);
+    }
+
+  g_value_unset (&name_exists_ret);
+  g_value_unset (&params[0]);
+  g_value_unset (&params[1]);
+  uca_editor->name_entry_changed_id = 0;
+  return G_SOURCE_REMOVE;
 }
 
 
@@ -267,6 +400,7 @@ thunar_uca_editor_command_clicked (ThunarUcaEditor *uca_editor)
   /* run the chooser dialog */
   if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
     {
+      thunar_uca_editor_set_content_modified (uca_editor);
       /* determine the path to the selected file */
       filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
 
@@ -333,7 +467,7 @@ thunar_uca_editor_validate_shortcut (XfceShortcutDialog  *dialog,
   /* Ignore raw 'Return' and 'space' since that may have been used to activate the shortcut row */
   if (G_UNLIKELY (g_utf8_collate (shortcut, "Return") == 0 ||
                   g_utf8_collate (shortcut, "space") == 0))
-      return FALSE;
+    return FALSE;
 
   gtk_accelerator_parse (shortcut, &accel_key, &accel_mods);
 
@@ -388,6 +522,7 @@ thunar_uca_editor_shortcut_clicked (ThunarUcaEditor *uca_editor)
 
   if (G_LIKELY (response == GTK_RESPONSE_OK))
     {
+      thunar_uca_editor_set_content_modified (uca_editor);
       shortcut = xfce_shortcut_dialog_get_shortcut (XFCE_SHORTCUT_DIALOG (dialog));
       gtk_accelerator_parse (shortcut, &accel_key, &accel_mods);
 
@@ -408,6 +543,7 @@ thunar_uca_editor_shortcut_clicked (ThunarUcaEditor *uca_editor)
 static void
 thunar_uca_editor_shortcut_clear_clicked (ThunarUcaEditor *uca_editor)
 {
+  thunar_uca_editor_set_content_modified (uca_editor);
   uca_editor->accel_key = 0;
   uca_editor->accel_mods = 0;
   gtk_button_set_label (GTK_BUTTON (uca_editor->shortcut_button), _("None"));
@@ -447,6 +583,7 @@ thunar_uca_editor_icon_clicked (ThunarUcaEditor *uca_editor)
   /* run the icon chooser dialog */
   if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
     {
+      thunar_uca_editor_set_content_modified (uca_editor);
       /* remember the selected icon from the chooser */
       icon = exo_icon_chooser_dialog_get_icon (EXO_ICON_CHOOSER_DIALOG (chooser));
       thunar_uca_editor_set_icon_name (uca_editor, icon);
@@ -664,7 +801,7 @@ thunar_uca_editor_save (ThunarUcaEditor *uca_editor,
   if (uca_editor->accel_path != NULL && gtk_accel_map_lookup_entry (uca_editor->accel_path, &key) && key.accel_key != 0)
     gtk_accel_map_change_entry (uca_editor->accel_path, 0, 0, TRUE);
 
-  thunar_uca_model_update (uca_model, iter,
+  thunar_uca_model_update (uca_model, iter, NULL,
                            gtk_entry_get_text (GTK_ENTRY (uca_editor->name_entry)),
                            gtk_entry_get_text (GTK_ENTRY (uca_editor->sub_menu_entry)),
                            unique_id,
@@ -681,3 +818,19 @@ thunar_uca_editor_save (ThunarUcaEditor *uca_editor,
 }
 
 
+
+gboolean
+thunar_uca_editor_was_modified (ThunarUcaEditor *uca_editor)
+{
+  return uca_editor->content_modified;
+}
+
+
+
+void
+thunar_uca_editor_set_name_search_callback (ThunarUcaEditor *uca_editor,
+                                            GClosure        *callback)
+{
+  uca_editor->name_search_callback = callback;
+  g_closure_ref (callback);
+}
