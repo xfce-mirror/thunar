@@ -889,7 +889,7 @@ thunar_uca_model_action_exists (ThunarUcaModel *uca_model,
   g_debug ("Checking if `%s' exists", action_name);
 #endif
   /* remove the existing item (if any)
-   * TODO #179: This is kinda slow O(N). Can we make it faster?
+   * TODO #179: This is kinda slow O(N).
    * Using GTree instead of GList will offer O(log N) lookups.
    *
    * GHashTable would have been best, but it will require more work to
@@ -960,6 +960,9 @@ thunar_uca_model_remove (ThunarUcaModel *uca_model,
 
   /* remove the node from the list */
   item = ((GList *) iter->user_data)->data;
+#ifdef DEBUG
+  g_debug ("Removing `%s'", item->name);
+#endif
   uca_model->items = g_list_delete_link (uca_model->items, iter->user_data);
   thunar_uca_model_item_free (item);
 
