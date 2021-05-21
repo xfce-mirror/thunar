@@ -73,9 +73,9 @@ struct _ThunarUcaModelItem
 ThunarUcaModelItem *thunar_uca_model_item_new           (void) G_GNUC_MALLOC;
 
 gchar              *thunar_uca_model_item_get_unique_id (void);
-void                thunar_uca_model_item_free          (ThunarUcaModelItem *data);
-void                thunar_uca_model_item_reset         (ThunarUcaModelItem *data);
-void                thunar_uca_model_item_update        (ThunarUcaModelItem *data,
+void                thunar_uca_model_item_free          (ThunarUcaModelItem *item);
+void                thunar_uca_model_item_reset         (ThunarUcaModelItem *item);
+void                thunar_uca_model_item_update        (ThunarUcaModelItem *item,
                                                          const gchar        *name,
                                                          const gchar        *submenu,
                                                          const gchar        *unique_id,
@@ -86,7 +86,8 @@ void                thunar_uca_model_item_update        (ThunarUcaModelItem *dat
                                                          const gchar        *patterns,
                                                          const gchar        *filename,
                                                          ThunarUcaTypes      types);
-const gchar        *thunar_uca_model_item_get_filename (ThunarUcaModelItem  *data);
+const gchar        *thunar_uca_model_item_get_filename (ThunarUcaModelItem  *item);
+gboolean            thunar_uca_model_item_is_modified  (ThunarUcaModelItem  *item);
 void                thunar_uca_model_item_write_file   (ThunarUcaModelItem  *item,
                                                         FILE                *fp);
 
