@@ -89,6 +89,7 @@ struct _ThunarUcaEditor
 
   /* property to check if editor was modified */
   gboolean  content_modified;
+
   /* properties used to check for duplicate */
   guint     name_entry_changed_id;
   GClosure *name_search_callback;
@@ -283,23 +284,25 @@ thunar_uca_editor_check_existing_name (ThunarUcaEditor *uca_editor)
   GtkWidget       *ok_button;
   GValue           name_exists_ret = G_VALUE_INIT;
   GValue           params[] = { G_VALUE_INIT, G_VALUE_INIT };
+  const gchar     *original_name = g_object_get_data (G_OBJECT (uca_editor->name_entry), "original-name");
+  const gchar     *new_name = gtk_entry_get_text (GTK_ENTRY (uca_editor->name_entry));
 
   g_value_init (&params[0], G_TYPE_POINTER);
   g_value_set_pointer (&params[0], NULL);
   g_value_init (&params[1], G_TYPE_STRING);
-  g_value_set_string (&params[1], gtk_entry_get_text (GTK_ENTRY (uca_editor->name_entry)));
+  g_value_set_string (&params[1], new_name);
   g_value_init (&name_exists_ret, G_TYPE_BOOLEAN);
+  g_value_set_boolean (&name_exists_ret, FALSE);
 
-  g_closure_invoke (uca_editor->name_search_callback, &name_exists_ret, 2, params, NULL);
+  if (g_strcmp0 (original_name, new_name) != 0)
+    g_closure_invoke (uca_editor->name_search_callback, &name_exists_ret, 2, params, NULL);
 
   if (g_value_get_boolean (&name_exists_ret))
     {
-      g_debug ("Name exists");
       thunar_uca_editor_toggle_name_error (uca_editor, TRUE);
     }
   else
     {
-      g_debug ("Name does not exist");
       ok_button = gtk_dialog_get_widget_for_response (GTK_DIALOG (uca_editor), GTK_RESPONSE_OK);
       if (ok_button != NULL && !gtk_widget_is_sensitive (ok_button))
         gtk_widget_set_sensitive (ok_button, TRUE);
@@ -780,6 +783,10 @@ thunar_uca_editor_load (ThunarUcaEditor *uca_editor,
   gtk_entry_set_text (GTK_ENTRY (uca_editor->sub_menu_entry), (submenu != NULL) ? submenu : "");
   gtk_button_set_label (GTK_BUTTON (uca_editor->shortcut_button), (accel_label != NULL) ? accel_label : _("None"));
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (uca_editor->sn_button), startup_notify);
+
+  /* Remember the original name. This is used for checking if name entry has been changed */
+  if (!xfce_str_is_empty (name))
+    g_object_set_data_full (G_OBJECT (uca_editor->name_entry), "original-name", g_strdup (name), g_free);
 
   /* cleanup */
   g_free (description);

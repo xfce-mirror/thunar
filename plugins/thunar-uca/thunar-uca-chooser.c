@@ -276,13 +276,10 @@ thunar_uca_chooser_open_editor (ThunarUcaChooser *uca_chooser,
   if (gtk_tree_selection_get_selected (selection, &model, &iter) && edit)
     thunar_uca_editor_load (THUNAR_UCA_EDITOR (editor), THUNAR_UCA_MODEL (model), &iter);
 
-  if (!edit)
-    {
-      name_search_callback = g_cclosure_new_swap (G_CALLBACK (thunar_uca_model_action_exists_no_iter),
-                                                  THUNAR_UCA_MODEL (model), NULL);
-      g_closure_set_marshal (name_search_callback, _thunar_uca_marshal_BOOLEAN__STRING);
-      thunar_uca_editor_set_name_search_callback (THUNAR_UCA_EDITOR (editor), name_search_callback);
-    }
+  name_search_callback = g_cclosure_new_swap (G_CALLBACK (thunar_uca_model_action_exists_no_iter),
+                                              THUNAR_UCA_MODEL (model), NULL);
+  g_closure_set_marshal (name_search_callback, _thunar_uca_marshal_BOOLEAN__STRING);
+  thunar_uca_editor_set_name_search_callback (THUNAR_UCA_EDITOR (editor), name_search_callback);
 
   /* run the editor */
   if (gtk_dialog_run (GTK_DIALOG (editor)) == GTK_RESPONSE_OK)
