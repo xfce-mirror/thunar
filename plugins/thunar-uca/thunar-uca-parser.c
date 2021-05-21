@@ -357,10 +357,10 @@ end_element_handler (GMarkupParseContext  *context,
     case PARSER_ACTION:
       if (strcmp (element_name, "action") == 0)
         {
-          if (!thunar_uca_model_action_exists (parser->model, &iter, parser->name->str))
-              thunar_uca_model_append (parser->model,
-                                       &iter);
+          if (thunar_uca_model_action_exists (parser->model, &iter, parser->name->str))
+            thunar_uca_model_remove (parser->model, &iter);
 
+          thunar_uca_model_append (parser->model, &iter);
           thunar_uca_model_update (parser->model,
                                    &iter,
                                    parser->filename,
