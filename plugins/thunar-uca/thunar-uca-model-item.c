@@ -23,7 +23,8 @@
 
 struct _ThunarUcaModelItemPrivate
 {
-  gchar *filename;
+  gchar    *filename;
+  gboolean  is_modified;
 };
 
 
@@ -52,9 +53,11 @@ thunar_uca_model_item_free (ThunarUcaModelItem *item)
 {
   thunar_uca_model_item_reset (item);
   if (item->priv != NULL)
-    g_free (item->priv->filename);
-  g_free (item->priv);
-  item->priv = NULL;
+    {
+      g_free (item->priv->filename);
+      g_free(item->priv);
+      item->priv = NULL;
+    }
   g_free (item);
 }
 
@@ -87,7 +90,7 @@ thunar_uca_model_item_reset (ThunarUcaModelItem *item)
 
 
 void
-thunar_uca_model_item_update (ThunarUcaModelItem *data,
+thunar_uca_model_item_update (ThunarUcaModelItem *item,
                               const gchar        *name,
                               const gchar        *submenu,
                               const gchar        *unique_id,
@@ -102,64 +105,77 @@ thunar_uca_model_item_update (ThunarUcaModelItem *data,
   guint m, n;
 
   if (G_LIKELY (name != NULL && *name != '\0'))
-    data->name = g_strdup (name);
+    item->name = g_strdup (name);
   if (G_LIKELY (submenu != NULL && *submenu != '\0'))
-    data->submenu = g_strdup (submenu);
+    item->submenu = g_strdup (submenu);
   if (G_LIKELY (icon != NULL && *icon != '\0'))
-    data->icon_name = g_strdup (icon);
+    item->icon_name = g_strdup (icon);
   if (G_LIKELY (command != NULL && *command != '\0'))
-    data->command = g_strdup (command);
+    item->command = g_strdup (command);
   if (G_LIKELY (description != NULL && *description != '\0'))
-    data->description = g_strdup (description);
+    item->description = g_strdup (description);
 
-  data->types = types;
-  data->startup_notify = startup_notify;
+  item->types = types;
+  item->startup_notify = startup_notify;
 
   /* set the unique id once */
-  if (data->unique_id == NULL)
+  if (item->unique_id == NULL)
     {
       if (G_LIKELY (!xfce_str_is_empty (unique_id)))
-        data->unique_id = g_strdup (unique_id);
+        item->unique_id = g_strdup (unique_id);
       else
-        data->unique_id = thunar_uca_model_item_get_unique_id ();
+        item->unique_id = thunar_uca_model_item_get_unique_id ();
     }
 
   /* setup the patterns */
-  data->patterns = g_strsplit (!xfce_str_is_empty (patterns) ? patterns : "*", ";", -1);
-  for (m = n = 0; data->patterns[m] != NULL; ++m)
+  item->patterns = g_strsplit (!xfce_str_is_empty (patterns) ? patterns : "*", ";", -1);
+  for (m = n = 0; item->patterns[m] != NULL; ++m)
     {
-      if (G_UNLIKELY (xfce_str_is_empty (data->patterns[m])))
-        g_free (data->patterns[m]);
+      if (G_UNLIKELY (xfce_str_is_empty (item->patterns[m])))
+        g_free (item->patterns[m]);
       else
-        data->patterns[n++] = g_strstrip (data->patterns[m]);
+        item->patterns[n++] = g_strstrip (item->patterns[m]);
     }
-  data->patterns[n] = NULL;
+  item->patterns[n] = NULL;
 
-  /* check if this data will work for multiple files */
+  /* check if this item will work for multiple files */
   /* TODO #179: Some of these command codes are deprecated
    * See: https://specifications.freedesktop.org/desktop-entry-spec/latest/ar01s07.html*/
-  data->multiple_selection = (command != NULL && (strstr (command, "%F") != NULL
+  item->multiple_selection = (command != NULL && (strstr (command, "%F") != NULL
                                                   || strstr (command, "%D") != NULL
                                                   || strstr (command, "%N") != NULL
                                                   || strstr (command, "%U") != NULL));
 
-  /* We only update the filename once */
+  if (item->priv == NULL)
+    item->priv = g_new0 (ThunarUcaModelItemPrivate, 1);
+  else
+    item->priv->is_modified = TRUE;
   if (!xfce_str_is_empty (filename))
     {
-      if (data->priv == NULL)
-        data->priv = g_new0 (ThunarUcaModelItemPrivate, 1);
-      data->priv->filename = g_strdup (filename);
+      if (item->priv->filename != NULL)
+        g_free (item->priv->filename);
+      item->priv->filename = g_strdup (filename);
     }
 }
 
 
 
 const gchar*
-thunar_uca_model_item_get_filename (ThunarUcaModelItem *data)
+thunar_uca_model_item_get_filename (ThunarUcaModelItem *item)
 {
-  if (data->priv != NULL)
-    return data->priv->filename;
+  if (item->priv != NULL)
+    return item->priv->filename;
   return NULL;
+}
+
+
+
+gboolean
+thunar_uca_model_item_is_modified (ThunarUcaModelItem  *item)
+{
+  if (item->priv != NULL)
+    return item->priv->is_modified;
+  return FALSE;
 }
 
 

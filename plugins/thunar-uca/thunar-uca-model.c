@@ -544,7 +544,7 @@ thunar_uca_model_resolve_paths (GPtrArray       *normalized_uca_paths,
                   if (g_file_test (resource, G_FILE_TEST_IS_REGULAR))
                     {
 #ifdef DEBUG
-                    g_debug ("Found resource file `%s'", resource);
+                      g_debug ("Found resource file `%s'", resource);
 #endif
                       g_ptr_array_add (normalized_uca_paths, resource);
                     }
@@ -892,6 +892,10 @@ thunar_uca_model_action_exists (ThunarUcaModel *uca_model,
 
   /* remove the existing item (if any)
    * TODO #179: This is kinda slow O(N). Can we make it faster?
+   * Using GTree instead of GList will offer O(log N) lookups.
+   *
+   * GHashTable would have been best, but it will require more work to
+   * make iteration idempotent
    */
   if ((iter_valid = gtk_tree_model_iter_nth_child (tree_model, iter, NULL, 0)))
     {
@@ -1085,8 +1089,8 @@ thunar_uca_model_save (ThunarUcaModel *uca_model,
 
       return FALSE;
     }
-  item_files = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, ( GDestroyNotify ) g_ptr_array_unref);
-  g_hash_table_replace (item_files, ( gpointer ) default_path, g_ptr_array_new ());
+  item_files = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, (GDestroyNotify) g_ptr_array_unref);
+  g_hash_table_replace (item_files, (gpointer) default_path, g_ptr_array_new ());
 
   for (lp = uca_model->items; lp != NULL; lp = lp->next)
     {
@@ -1094,13 +1098,16 @@ thunar_uca_model_save (ThunarUcaModel *uca_model,
       path = thunar_uca_model_item_get_filename (item);
       if (path == NULL)
         {
-          g_hash_table_lookup_extended (item_files, default_path, NULL, ( gpointer* ) &item_files_list);
+          g_hash_table_lookup_extended (item_files, default_path, NULL, (gpointer *) &item_files_list);
         }
-      else if (!g_hash_table_lookup_extended (item_files, path, NULL, ( gpointer* ) &item_files_list))
+      else if (!g_hash_table_lookup_extended (item_files, path, NULL, (gpointer *) &item_files_list))
         {
           /* can we write to the file? */
           if (g_access (path, W_OK) < 0)
             {
+              /* should we write the item to a file? */
+              if (!thunar_uca_model_item_is_modified (item))
+                continue;
 #ifdef DEBUG
               g_debug ("Action called: `%s', cannot be written to: %s", item->name, path);
 #endif
@@ -1113,7 +1120,7 @@ thunar_uca_model_save (ThunarUcaModel *uca_model,
               g_debug ("Action called: `%s', will be written to: %s", item->name, path);
 #endif
               item_files_list = g_ptr_array_new ();
-              g_hash_table_replace (item_files, ( gpointer ) path, item_files_list);
+              g_hash_table_replace (item_files, (gpointer) path, item_files_list);
             }
         }
       g_ptr_array_add (item_files_list, item);
@@ -1122,7 +1129,7 @@ thunar_uca_model_save (ThunarUcaModel *uca_model,
 
   /* start writing out the actions */
   for (g_hash_table_iter_init (&item_files_iter, item_files);
-       g_hash_table_iter_next (&item_files_iter, ( gpointer* ) &path, ( gpointer* ) &item_files_list);)
+       g_hash_table_iter_next (&item_files_iter, (gpointer *) &path, (gpointer *) &item_files_list);)
     {
       /* try to open a temporary file */
       tmp_path = g_strconcat (path, ".XXXXXX", NULL);
@@ -1143,7 +1150,7 @@ thunar_uca_model_save (ThunarUcaModel *uca_model,
       fputs ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<actions>\n", fp);
 
       /* write the model items */
-      g_ptr_array_foreach (item_files_list, ( GFunc ) thunar_uca_model_item_write_file, fp);
+      g_ptr_array_foreach (item_files_list, (GFunc) thunar_uca_model_item_write_file, fp);
 
       /* write the footer and close the tmp file */
       fputs ("</actions>\n", fp);
