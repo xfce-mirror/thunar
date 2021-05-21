@@ -54,6 +54,8 @@
 #include <libxfce4util/libxfce4util.h>
 
 #include <thunar-uca/thunar-uca-model.h>
+#include <thunar-uca/thunar-uca-parser.h>
+#include <thunar-uca/thunar-uca-private.h>
 
 
 
@@ -68,81 +70,41 @@ typedef struct _ThunarUcaModelItem ThunarUcaModelItem;
 
 
 
-typedef enum
-{
-  PARSER_START,
-  PARSER_ACTIONS,
-  PARSER_ACTION,
-  PARSER_ICON,
-  PARSER_NAME,
-  PARSER_SUB_FOLDER,
-  PARSER_UNIQUE_ID,
-  PARSER_COMMAND,
-  PARSER_STARTUP_NOTIFY,
-  PARSER_PATTERNS,
-  PARSER_DESCRIPTION,
-  PARSER_DIRECTORIES,
-  PARSER_AUDIO_FILES,
-  PARSER_IMAGE_FILES,
-  PARSER_OTHER_FILES,
-  PARSER_TEXT_FILES,
-  PARSER_VIDEO_FILES,
-  PARSER_UNKNOWN_ELEMENT,
-} ParserState;
-
-
-
-static void               thunar_uca_model_tree_model_init  (GtkTreeModelIface    *iface);
-static void               thunar_uca_model_finalize         (GObject              *object);
-static GtkTreeModelFlags  thunar_uca_model_get_flags        (GtkTreeModel         *tree_model);
-static gint               thunar_uca_model_get_n_columns    (GtkTreeModel         *tree_model);
-static GType              thunar_uca_model_get_column_type  (GtkTreeModel         *tree_model,
-                                                             gint                  column);
-static gboolean           thunar_uca_model_get_iter         (GtkTreeModel         *tree_model,
-                                                             GtkTreeIter          *iter,
-                                                             GtkTreePath          *path);
-static GtkTreePath       *thunar_uca_model_get_path         (GtkTreeModel         *tree_model,
-                                                             GtkTreeIter          *iter);
-static void               thunar_uca_model_get_value        (GtkTreeModel         *tree_model,
-                                                             GtkTreeIter          *iter,
-                                                             gint                  column,
-                                                             GValue               *value);
-static gboolean           thunar_uca_model_iter_next        (GtkTreeModel         *tree_model,
-                                                             GtkTreeIter          *iter);
-static gboolean           thunar_uca_model_iter_children    (GtkTreeModel         *tree_model,
-                                                             GtkTreeIter          *iter,
-                                                             GtkTreeIter          *parent);
-static gboolean           thunar_uca_model_iter_has_child   (GtkTreeModel         *tree_model,
-                                                             GtkTreeIter          *iter);
-static gint               thunar_uca_model_iter_n_children  (GtkTreeModel         *tree_model,
-                                                             GtkTreeIter          *iter);
-static gboolean           thunar_uca_model_iter_nth_child   (GtkTreeModel         *tree_model,
-                                                             GtkTreeIter          *iter,
-                                                             GtkTreeIter          *parent,
-                                                             gint                  n);
-static gboolean           thunar_uca_model_iter_parent      (GtkTreeModel         *tree_model,
-                                                             GtkTreeIter          *iter,
-                                                             GtkTreeIter          *child);
-static gboolean           thunar_uca_model_load_from_file   (ThunarUcaModel       *uca_model,
-                                                             const gchar          *filename,
-                                                             GError              **error);
-static void               thunar_uca_model_item_reset       (ThunarUcaModelItem   *item);
-static void               thunar_uca_model_item_free        (gpointer              data);
-static void               start_element_handler             (GMarkupParseContext  *context,
-                                                             const gchar          *element_name,
-                                                             const gchar         **attribute_names,
-                                                             const gchar         **attribute_values,
-                                                             gpointer              user_data,
-                                                             GError              **error);
-static void               end_element_handler               (GMarkupParseContext  *context,
-                                                             const gchar          *element_name,
-                                                             gpointer              user_data,
-                                                             GError              **error);
-static void               text_handler                      (GMarkupParseContext  *context,
-                                                             const gchar          *text,
-                                                             gsize                 text_len,
-                                                             gpointer              user_data,
-                                                             GError              **error);
+static void               thunar_uca_model_tree_model_init  (GtkTreeModelIface *iface);
+static void               thunar_uca_model_finalize         (GObject           *object);
+static GtkTreeModelFlags  thunar_uca_model_get_flags        (GtkTreeModel      *tree_model);
+static gint               thunar_uca_model_get_n_columns    (GtkTreeModel      *tree_model);
+static GType              thunar_uca_model_get_column_type  (GtkTreeModel      *tree_model,
+                                                             gint               column);
+static gboolean           thunar_uca_model_get_iter         (GtkTreeModel      *tree_model,
+                                                             GtkTreeIter       *iter,
+                                                             GtkTreePath       *path);
+static GtkTreePath       *thunar_uca_model_get_path         (GtkTreeModel      *tree_model,
+                                                             GtkTreeIter       *iter);
+static void               thunar_uca_model_get_value        (GtkTreeModel      *tree_model,
+                                                             GtkTreeIter       *iter,
+                                                             gint               column,
+                                                             GValue            *value);
+static gboolean           thunar_uca_model_iter_next        (GtkTreeModel      *tree_model,
+                                                             GtkTreeIter       *iter);
+static gboolean           thunar_uca_model_iter_children    (GtkTreeModel      *tree_model,
+                                                             GtkTreeIter       *iter,
+                                                             GtkTreeIter       *parent);
+static gboolean           thunar_uca_model_iter_has_child   (GtkTreeModel      *tree_model,
+                                                             GtkTreeIter       *iter);
+static gint               thunar_uca_model_iter_n_children  (GtkTreeModel      *tree_model,
+                                                             GtkTreeIter       *iter);
+static gboolean           thunar_uca_model_iter_nth_child   (GtkTreeModel      *tree_model,
+                                                             GtkTreeIter       *iter,
+                                                             GtkTreeIter       *parent,
+                                                             gint               n);
+static gboolean           thunar_uca_model_iter_parent      (GtkTreeModel      *tree_model,
+                                                             GtkTreeIter       *iter,
+                                                             GtkTreeIter       *child);
+static void               thunar_uca_model_resolve_paths    (GPtrArray         *normalized_uca_paths,
+                                                             XfceResourceType   resource_type);
+static gint               thunar_uca_model_sort_paths       (gconstpointer      path1,
+                                                             gconstpointer      path2);
 
 
 
@@ -155,59 +117,35 @@ struct _ThunarUcaModel
 {
   GObject __parent__;
 
-  GList          *items;
-  gint            stamp;
+  GList /* <ThunarUcaModelItem*> */ *items;
+  gint                               stamp;
 };
 
-struct _ThunarUcaModelItem
+/**
+ * THUNAR_UCA_FILE_PATTERNS:
+ * These are paths within the user's folders
+ * where UCA custom actions are searched for
+ *
+ * These patterns are specified in order of precedence
+ * i.e. paths that are lower in the list take precedence over
+ * ones that are higher up
+ */
+static const gchar* const THUNAR_UCA_FILE_PATTERNS[] =
 {
-  gchar         *name;
-  gchar         *submenu;
-  gchar         *description;
-  gchar         *unique_id;
-  gchar         *icon_name;
-  GIcon         *gicon;
-  gchar         *command;
-  guint          startup_notify : 1;
-  gchar        **patterns;
-  ThunarUcaTypes types;
-
-  /* derived attributes */
-  guint          multiple_selection : 1;
+  /* reserved for package managers distributing UCA's */
+  "/usr/share/Thunar/uca.d/*.xml",
+  /* deprecated, but kept for backwards compatibility */
+  "/etc/xdg/Thunar/uca.xml",
+  /* for admins */
+  "/etc/xdg/Thunar/uca.d/*.xml",
+  /* for users */
+  "~/.config/Thunar/uca.xml",
+  "~/.config/Thunar/uca.d/*.xml"
 };
 
-typedef XFCE_GENERIC_STACK(ParserState) ParserStack;
-
-typedef struct
+enum
 {
-  ParserStack    *stack;
-  ThunarUcaModel *model;
-  gchar          *locale;
-  GString        *name;
-  GString        *submenu;
-  gboolean        name_use;
-  guint           name_match;
-  GString        *unique_id;
-  GString        *icon_name;
-  GString        *command;
-  GString        *patterns;
-  GString        *description;
-  gboolean        startup_notify;
-  gboolean        description_use;
-  guint           description_match;
-  gboolean        unique_id_generated;
-  ThunarUcaTypes  types;
-} Parser;
-
-
-
-static const GMarkupParser markup_parser =
-{
-  start_element_handler,
-  end_element_handler,
-  text_handler,
-  NULL,
-  NULL,
+  THUNAR_UCA_FILE_PATTERNS_SIZE = G_N_ELEMENTS (THUNAR_UCA_FILE_PATTERNS)
 };
 
 
@@ -253,26 +191,39 @@ thunar_uca_model_tree_model_init (GtkTreeModelIface *iface)
 static void
 thunar_uca_model_init (ThunarUcaModel *uca_model)
 {
-  GError *error = NULL;
-  gchar  *filename;
+  GError                   *error = NULL;
+  gchar                    *filename;
+  GPtrArray /* <gchar*> */ *normalized_uca_paths;
+  guint                     n;
 
   /* generate a unique stamp */
-  uca_model->stamp = g_random_int ();
+  uca_model->stamp = g_random_int_range (G_MININT32, G_MAXINT32);
+  normalized_uca_paths = g_ptr_array_new_with_free_func (g_free);
 
-  /* determine the path to the uca.xml config */
-  filename = xfce_resource_lookup (XFCE_RESOURCE_CONFIG, "Thunar/uca.xml");
-  if (G_LIKELY (filename != NULL))
+  /* determine the path to the (uca|*).xml config files */
+  thunar_uca_model_resolve_paths (normalized_uca_paths, XFCE_RESOURCE_DATA);
+  thunar_uca_model_resolve_paths (normalized_uca_paths, XFCE_RESOURCE_CONFIG);
+  g_ptr_array_sort (normalized_uca_paths, thunar_uca_model_sort_paths);
+
+  for (n = 0; n < normalized_uca_paths->len; n++)
     {
-      /* try to load the file */
-      if (!thunar_uca_model_load_from_file (uca_model, filename, &error))
+      filename = g_ptr_array_index (normalized_uca_paths, n);
+      if (G_LIKELY (filename != NULL))
         {
-          g_warning ("Failed to load `%s': %s", filename, error->message);
-          g_error_free (error);
+#ifdef DEBUG
+          g_debug ("Found uca file: %s", ( gchar* ) filename);
+#endif
+          if (!thunar_uca_parser_read_uca_from_file (uca_model, filename, &error))
+            {
+              /* TODO #179: This error does no good for the user.
+               * can we hoist this to the gui */
+              g_warning ("Failed to read `%s': %s", filename, error->message);
+              g_error_free (error);
+              error = NULL;
+            }
         }
-
-      /* release the filename */
-      g_free (filename);
     }
+  g_ptr_array_free (normalized_uca_paths, TRUE);
 }
 
 
@@ -283,7 +234,7 @@ thunar_uca_model_finalize (GObject *object)
   ThunarUcaModel *uca_model = THUNAR_UCA_MODEL (object);
 
   /* release all items */
-  g_list_free_full (uca_model->items, thunar_uca_model_item_free);
+  g_list_free_full (uca_model->items, (GDestroyNotify) thunar_uca_model_item_free);
 
   (*G_OBJECT_CLASS (thunar_uca_model_parent_class)->finalize) (object);
 }
@@ -346,8 +297,7 @@ thunar_uca_model_get_column_type (GtkTreeModel *tree_model,
       return G_TYPE_STRING;
 
     default:
-      g_assert_not_reached ();
-      return G_TYPE_INVALID;
+        g_assert_not_reached ();
     }
 }
 
@@ -397,12 +347,15 @@ thunar_uca_model_get_value (GtkTreeModel *tree_model,
                             gint          column,
                             GValue       *value)
 {
-  ThunarUcaModelItem *item = ((GList *) iter->user_data)->data;
+  ThunarUcaModelItem *item;
   ThunarUcaModel     *uca_model = THUNAR_UCA_MODEL (tree_model);
   gchar              *str;
 
-  g_return_if_fail (THUNAR_UCA_IS_MODEL (uca_model));
+  g_return_if_fail (THUNAR_UCA_IS_MODEL (tree_model));
+  g_return_if_fail (iter->user_data != NULL);
   g_return_if_fail (iter->stamp == uca_model->stamp);
+
+  item = ((GList *) iter->user_data)->data;
 
   /* initialize the value with the proper type */
   g_value_init (value, gtk_tree_model_get_column_type (tree_model, column));
@@ -427,7 +380,6 @@ thunar_uca_model_get_value (GtkTreeModel *tree_model,
           /* cache gicon from the name */
           item->gicon = g_icon_new_for_string (item->icon_name, NULL);
         }
-
       g_value_set_object (value, item->gicon);
       break;
 
@@ -457,7 +409,9 @@ thunar_uca_model_get_value (GtkTreeModel *tree_model,
       break;
 
     case THUNAR_UCA_MODEL_COLUMN_STOCK_LABEL:
-      str = g_markup_printf_escaped ("<b>%s</b>\n%s", (item->name != NULL) ? item->name : "", (item->description != NULL) ? item->description : "");
+      str = g_markup_printf_escaped ("<b>%s</b>\n%s",
+                                     (item->name != NULL) ? item->name : "",
+                                     (item->description != NULL) ? item->description : "");
       g_value_take_string (value, str);
       break;
 
@@ -476,6 +430,7 @@ thunar_uca_model_iter_next (GtkTreeModel *tree_model,
   g_return_val_if_fail (iter->stamp == THUNAR_UCA_MODEL (tree_model)->stamp, FALSE);
 
   iter->user_data = g_list_next (iter->user_data);
+
   return (iter->user_data != NULL);
 }
 
@@ -494,6 +449,7 @@ thunar_uca_model_iter_children (GtkTreeModel *tree_model,
     {
       iter->stamp = uca_model->stamp;
       iter->user_data = uca_model->items;
+
       return TRUE;
     }
 
@@ -518,8 +474,9 @@ thunar_uca_model_iter_n_children (GtkTreeModel *tree_model,
   ThunarUcaModel *uca_model = THUNAR_UCA_MODEL (tree_model);
 
   g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), 0);
+  g_return_val_if_fail (iter == NULL, 0);
 
-  return (iter == NULL) ? g_list_length (uca_model->items) : 0;
+  return g_list_length (uca_model->items);
 }
 
 
@@ -534,10 +491,11 @@ thunar_uca_model_iter_nth_child (GtkTreeModel *tree_model,
 
   g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), FALSE);
 
-  if (G_LIKELY (parent != NULL))
+  if (G_LIKELY (parent == NULL))
     {
       iter->stamp = uca_model->stamp;
       iter->user_data = g_list_nth (uca_model->items, n);
+
       return (iter->user_data != NULL);
     }
 
@@ -556,459 +514,94 @@ thunar_uca_model_iter_parent (GtkTreeModel *tree_model,
 
 
 
-static gboolean
-thunar_uca_model_load_from_file (ThunarUcaModel *uca_model,
-                                 const gchar    *filename,
-                                 GError        **error)
-{
-  GMarkupParseContext *context;
-  gboolean             succeed;
-  Parser               parser;
-  gchar               *content;
-  gsize                content_len;
-
-  g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), FALSE);
-  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-  g_return_val_if_fail (g_path_is_absolute (filename), FALSE);
-
-  /* read the file info memory */
-  if (!g_file_get_contents (filename, &content, &content_len, error))
-    return FALSE;
-
-  /* initialize the parser */
-  parser.stack = xfce_stack_new (ParserStack);
-  parser.model = uca_model;
-  parser.locale = g_strdup (setlocale (LC_MESSAGES, NULL));
-  parser.name = g_string_new (NULL);
-  parser.submenu = g_string_new (NULL);
-  parser.unique_id = g_string_new (NULL);
-  parser.icon_name = g_string_new (NULL);
-  parser.command = g_string_new (NULL);
-  parser.patterns = g_string_new (NULL);
-  parser.description = g_string_new (NULL);
-  parser.startup_notify = FALSE;
-  parser.unique_id_generated = FALSE;
-  xfce_stack_push (parser.stack, PARSER_START);
-
-  /* parse the file */
-  context = g_markup_parse_context_new (&markup_parser, 0, &parser, NULL);
-  succeed = g_markup_parse_context_parse (context, content, content_len, error)
-         && g_markup_parse_context_end_parse (context, error);
-
-  /* cleanup */
-  g_markup_parse_context_free (context);
-  g_string_free (parser.description, TRUE);
-  g_string_free (parser.patterns, TRUE);
-  g_string_free (parser.command, TRUE);
-  g_string_free (parser.icon_name, TRUE);
-  g_string_free (parser.unique_id, TRUE);
-  g_string_free (parser.submenu, TRUE);
-  g_string_free (parser.name, TRUE);
-  g_free (parser.locale);
-  xfce_stack_free (parser.stack);
-  g_free (content);
-
-  /* save model to store new ids */
-  if (succeed
-      && parser.unique_id_generated)
-    succeed = thunar_uca_model_save (uca_model, error);
-
-  return succeed;
-}
-
-
-
 static void
-thunar_uca_model_item_reset (ThunarUcaModelItem *item)
+thunar_uca_model_resolve_paths (GPtrArray       *normalized_uca_paths,
+                                XfceResourceType resource_type)
 {
-  /* release the previous values... */
-  g_strfreev (item->patterns);
-  g_free (item->description);
-  g_free (item->command);
-  g_free (item->name);
-  g_free (item->submenu);
-  g_free (item->unique_id);
-  g_free (item->icon_name);
+  gchar      *pattern;
+  gchar      *resource;
+  gchararray *resource_folders;
+  gchararray *resolve_paths;
+  guint       n, s, o;
 
-  if (item->gicon != NULL)
-    g_object_unref (item->gicon);
+  resource_folders = xfce_resource_dirs (resource_type);
 
-  /* ...and reset the item memory */
-  memset (item, 0, sizeof (*item));
-}
-
-
-
-static void
-thunar_uca_model_item_free (gpointer data)
-{
-  ThunarUcaModelItem *item = data;
-  thunar_uca_model_item_reset (item);
-  g_free (item);
-}
-
-
-
-static void
-start_element_handler (GMarkupParseContext *context,
-                       const gchar         *element_name,
-                       const gchar        **attribute_names,
-                       const gchar        **attribute_values,
-                       gpointer             user_data,
-                       GError             **error)
-{
-  Parser *parser = user_data;
-  guint   match, n;
-
-  switch (xfce_stack_top (parser->stack))
+  for (s = 0; s < THUNAR_UCA_FILE_PATTERNS_SIZE; s++)
     {
-    case PARSER_START:
-      if (strcmp (element_name, "actions") == 0)
-        xfce_stack_push (parser->stack, PARSER_ACTIONS);
+      if (g_str_has_prefix (THUNAR_UCA_FILE_PATTERNS[s], "~"))
+          pattern = exo_str_replace (THUNAR_UCA_FILE_PATTERNS[s], "~", xfce_get_homedir ());
       else
-        xfce_stack_push (parser->stack, PARSER_UNKNOWN_ELEMENT);
-      break;
+          pattern = g_strdup (THUNAR_UCA_FILE_PATTERNS[s]);
 
-    case PARSER_ACTIONS:
-      if (strcmp (element_name, "action") == 0)
+      for (n = 0; resource_folders[n] != NULL; n++)
         {
-          parser->name_match = XFCE_LOCALE_NO_MATCH;
-          parser->description_match = XFCE_LOCALE_NO_MATCH;
-          parser->types = 0;
-          parser->startup_notify = FALSE;
-          g_string_truncate (parser->icon_name, 0);
-          g_string_truncate (parser->name, 0);
-          g_string_truncate (parser->submenu, 0);
-          g_string_truncate (parser->unique_id, 0);
-          g_string_truncate (parser->command, 0);
-          g_string_truncate (parser->patterns, 0);
-          g_string_truncate (parser->description, 0);
-          xfce_stack_push (parser->stack, PARSER_ACTION);
-        }
-      else
-        xfce_stack_push (parser->stack, PARSER_UNKNOWN_ELEMENT);
-      break;
-
-    case PARSER_ACTION:
-      if (strcmp (element_name, "name") == 0)
-        {
-          for (n = 0; attribute_names[n] != NULL; ++n)
-            if (strcmp (attribute_names[n], "xml:lang") == 0)
+          if (g_str_has_prefix (pattern, resource_folders[n]))
+            {
+              resolve_paths = xfce_resource_match (resource_type, &pattern[strlen (resource_folders[n]) + 1], TRUE);
+              for (o = 0; resolve_paths[o] != NULL; o++)
+                {
+                  resource = g_strjoin (G_DIR_SEPARATOR_S, resource_folders[n], resolve_paths[o], NULL);
+                  if (g_file_test (resource, G_FILE_TEST_IS_REGULAR))
+                    {
+#ifdef DEBUG
+                      g_debug ("Found resource file `%s'", resource);
+#endif
+                      g_ptr_array_add (normalized_uca_paths, resource);
+                    }
+                  else
+                    {
+#ifdef DEBUG
+                      g_debug ("Resource file `%s' does not exist: Skipped");
+#endif
+                      g_free (resource);
+                    }
+                }
+              g_strfreev (resolve_paths);
               break;
-
-          if (G_LIKELY (attribute_names[n] == NULL))
-            {
-              parser->name_use = (parser->name_match <= XFCE_LOCALE_NO_MATCH);
             }
-          else
-            {
-              match = xfce_locale_match (parser->locale, attribute_values[n]);
-              if (parser->name_match < match)
-                {
-                  parser->name_match = match;
-                  parser->name_use = TRUE;
-                }
-              else
-                {
-                  parser->name_use = FALSE;
-                }
-            }
-
-          if (parser->name_use)
-            g_string_truncate (parser->name, 0);
-
-          xfce_stack_push (parser->stack, PARSER_NAME);
         }
-      else if (strcmp (element_name, "submenu") == 0)
-        {
-          g_string_truncate (parser->submenu, 0);
-          xfce_stack_push (parser->stack, PARSER_SUB_FOLDER);
-        }
-      else if (strcmp (element_name, "unique-id") == 0)
-        {
-          g_string_truncate (parser->unique_id, 0);
-          xfce_stack_push (parser->stack, PARSER_UNIQUE_ID);
-        }
-      else if (strcmp (element_name, "icon") == 0)
-        {
-          g_string_truncate (parser->icon_name, 0);
-          xfce_stack_push (parser->stack, PARSER_ICON);
-        }
-      else if (strcmp (element_name, "command") == 0)
-        {
-          g_string_truncate (parser->command, 0);
-          xfce_stack_push (parser->stack, PARSER_COMMAND);
-        }
-      else if (strcmp (element_name, "patterns") == 0)
-        {
-          g_string_truncate (parser->patterns, 0);
-          xfce_stack_push (parser->stack, PARSER_PATTERNS);
-        }
-      else if (strcmp (element_name, "description") == 0)
-        {
-          for (n = 0; attribute_names[n] != NULL; ++n)
-            if (strcmp (attribute_names[n], "xml:lang") == 0)
-              break;
-
-          if (G_LIKELY (attribute_names[n] == NULL))
-            {
-              parser->description_use = (parser->description_match <= XFCE_LOCALE_NO_MATCH);
-            }
-          else
-            {
-              match = xfce_locale_match (parser->locale, attribute_values[n]);
-              if (parser->description_match < match)
-                {
-                  parser->description_match = match;
-                  parser->description_use = TRUE;
-                }
-              else
-                {
-                  parser->description_use = FALSE;
-                }
-            }
-
-          if (parser->description_use)
-            g_string_truncate (parser->description, 0);
-
-          xfce_stack_push (parser->stack, PARSER_DESCRIPTION);
-        }
-      else if (strcmp (element_name, "startup-notify") == 0)
-        {
-          parser->startup_notify = TRUE;
-          xfce_stack_push (parser->stack, PARSER_STARTUP_NOTIFY);
-        }
-      else if (strcmp (element_name, "directories") == 0)
-        {
-          parser->types |= THUNAR_UCA_TYPE_DIRECTORIES;
-          xfce_stack_push (parser->stack, PARSER_DIRECTORIES);
-        }
-      else if (strcmp (element_name, "audio-files") == 0)
-        {
-          parser->types |= THUNAR_UCA_TYPE_AUDIO_FILES;
-          xfce_stack_push (parser->stack, PARSER_AUDIO_FILES);
-        }
-      else if (strcmp (element_name, "image-files") == 0)
-        {
-          parser->types |= THUNAR_UCA_TYPE_IMAGE_FILES;
-          xfce_stack_push (parser->stack, PARSER_IMAGE_FILES);
-        }
-      else if (strcmp (element_name, "other-files") == 0)
-        {
-          parser->types |= THUNAR_UCA_TYPE_OTHER_FILES;
-          xfce_stack_push (parser->stack, PARSER_OTHER_FILES);
-        }
-      else if (strcmp (element_name, "text-files") == 0)
-        {
-          parser->types |= THUNAR_UCA_TYPE_TEXT_FILES;
-          xfce_stack_push (parser->stack, PARSER_TEXT_FILES);
-        }
-      else if (strcmp (element_name, "video-files") == 0)
-        {
-          parser->types |= THUNAR_UCA_TYPE_VIDEO_FILES;
-          xfce_stack_push (parser->stack, PARSER_VIDEO_FILES);
-        }
-      else
-        xfce_stack_push (parser->stack, PARSER_UNKNOWN_ELEMENT);
-      break;
-
-    default:
-      xfce_stack_push (parser->stack, PARSER_UNKNOWN_ELEMENT);
+      g_free (pattern);
     }
+  g_strfreev (resource_folders);
 }
 
 
 
-static void
-end_element_handler (GMarkupParseContext *context,
-                     const gchar         *element_name,
-                     gpointer             user_data,
-                     GError             **error)
+/**
+ * This function is used to sort the uca files found in the file system
+ * by the order found in the THUNAR_UCA_FILE_PATTERNS array.
+ * @param path1 A pointer to an element in the GPtrArray
+ * @param path2 A pointer to an element in the GPtrArray
+ * @return 0 if both have the same rank
+ * -num or +num if path1 goes before or after path2
+ */
+static gint
+thunar_uca_model_sort_paths (gconstpointer path1,
+                             gconstpointer path2)
 {
-  GtkTreeIter iter;
-  Parser     *parser = user_data;
+  guint  n;
+  gint   path1_pos = 0, path2_pos = 0;
+  gchar *norm_pattern;
 
-  switch (xfce_stack_top (parser->stack))
+  for (n = 0; n < THUNAR_UCA_FILE_PATTERNS_SIZE; n++)
     {
-    case PARSER_START:
-      g_set_error (error, G_MARKUP_ERROR, G_MARKUP_ERROR_INVALID_CONTENT,
-                   _("End element handler called while in root context"));
-      return;
-
-    case PARSER_ACTIONS:
-      if (strcmp (element_name, "actions") != 0)
-        goto unknown_element;
-      break;
-
-    case PARSER_ACTION:
-      if (strcmp (element_name, "action") == 0)
+      norm_pattern = exo_str_replace (THUNAR_UCA_FILE_PATTERNS[n], "~", xfce_get_homedir ());
+      if (path1_pos == 0 && g_pattern_match_simple (norm_pattern, *( gpointer* ) path1))
         {
-          thunar_uca_model_append (parser->model, &iter);
-          thunar_uca_model_update (parser->model, &iter,
-                                   parser->name->str,
-                                   parser->submenu->str,
-                                   parser->unique_id->str,
-                                   parser->description->str,
-                                   parser->icon_name->str,
-                                   parser->command->str,
-                                   parser->startup_notify,
-                                   parser->patterns->str,
-                                   parser->types,
-                                   0, 0);
-
-          /* check if a new id should've been generated */
-          if (exo_str_is_empty (parser->unique_id->str))
-            parser->unique_id_generated = TRUE;
+          path1_pos = ( gint ) n + 1;
         }
-      else
-        goto unknown_element;
-      break;
-
-    case PARSER_NAME:
-      if (strcmp (element_name, "name") != 0)
-        goto unknown_element;
-      break;
-
-    case PARSER_SUB_FOLDER:
-      if (strcmp (element_name, "submenu") != 0)
-        goto unknown_element;
-      break;
-
-    case PARSER_UNIQUE_ID:
-      if (strcmp (element_name, "unique-id") != 0)
-        goto unknown_element;
-      break;
-
-    case PARSER_ICON:
-      if (strcmp (element_name, "icon") != 0)
-        goto unknown_element;
-      break;
-
-    case PARSER_COMMAND:
-      if (strcmp (element_name, "command") != 0)
-        goto unknown_element;
-      break;
-
-    case PARSER_PATTERNS:
-      if (strcmp (element_name, "patterns") != 0)
-        goto unknown_element;
-      break;
-
-    case PARSER_DESCRIPTION:
-      if (strcmp (element_name, "description") != 0)
-        goto unknown_element;
-      break;
-
-    case PARSER_STARTUP_NOTIFY:
-      if (strcmp (element_name, "startup-notify") != 0)
-        goto unknown_element;
-      break;
-
-    case PARSER_DIRECTORIES:
-      if (strcmp (element_name, "directories") != 0)
-        goto unknown_element;
-      break;
-
-    case PARSER_AUDIO_FILES:
-      if (strcmp (element_name, "audio-files") != 0)
-        goto unknown_element;
-      break;
-
-    case PARSER_IMAGE_FILES:
-      if (strcmp (element_name, "image-files") != 0)
-        goto unknown_element;
-      break;
-
-    case PARSER_OTHER_FILES:
-      if (strcmp (element_name, "other-files") != 0)
-        goto unknown_element;
-      break;
-
-    case PARSER_TEXT_FILES:
-      if (strcmp (element_name, "text-files") != 0)
-        goto unknown_element;
-      break;
-
-    case PARSER_VIDEO_FILES:
-      if (strcmp (element_name, "video-files") != 0)
-        goto unknown_element;
-      break;
-
-    case PARSER_UNKNOWN_ELEMENT:
-      g_warning ("Unknown element ignored: <%s>", element_name);
-      break;
-
-    default:
-      goto unknown_element;
+      if (path2_pos == 0 && g_pattern_match_simple (norm_pattern, *( gpointer* ) path2))
+        {
+          path2_pos = ( gint ) n + 1;
+        }
+      g_clear_pointer (&norm_pattern, g_free);
+      if (path1_pos != 0 && path2_pos != 0)
+        {
+          break;
+        }
     }
 
-  xfce_stack_pop (parser->stack);
-  return;
-
-unknown_element:
-  g_set_error (error, G_MARKUP_ERROR, G_MARKUP_ERROR_UNKNOWN_ELEMENT,
-               _("Unknown closing element <%s>"), element_name);
-}
-
-
-
-static void
-text_handler (GMarkupParseContext *context,
-              const gchar         *text,
-              gsize                text_len,
-              gpointer             user_data,
-              GError             **error)
-{
-  Parser *parser = user_data;
-
-  switch (xfce_stack_top (parser->stack))
-    {
-    case PARSER_NAME:
-      if (parser->name_use)
-        g_string_append_len (parser->name, text, text_len);
-      break;
-
-    case PARSER_SUB_FOLDER:
-      g_string_append_len (parser->submenu, text, text_len);
-      break;
-
-    case PARSER_UNIQUE_ID:
-      g_string_append_len (parser->unique_id, text, text_len);
-      break;
-
-    case PARSER_ICON:
-      g_string_append_len (parser->icon_name, text, text_len);
-      break;
-
-    case PARSER_COMMAND:
-      g_string_append_len (parser->command, text, text_len);
-      break;
-
-    case PARSER_PATTERNS:
-      g_string_append_len (parser->patterns, text, text_len);
-      break;
-
-    case PARSER_DESCRIPTION:
-      if (parser->description_use)
-        g_string_append_len (parser->description, text, text_len);
-      break;
-
-    default:
-      break;
-    }
-}
-
-
-
-static gchar *
-thunar_uca_model_get_unique_id (void)
-{
-  static guint counter = 0;
-
-  /* produce a "<timestamp>-<counter>" string */
-  return g_strdup_printf ("%" G_GINT64_FORMAT "-%d",
-                          g_get_real_time (),
-                          ++counter);
+  return path1_pos - path2_pos;
 }
 
 
@@ -1033,7 +626,7 @@ thunar_uca_model_get_default (void)
   if (model == NULL)
     {
       model = g_object_new (THUNAR_UCA_TYPE_MODEL, NULL);
-      g_object_add_weak_pointer (G_OBJECT (model), (gpointer) &model);
+      g_object_add_weak_pointer (G_OBJECT (model), (gpointer*) &model);
     }
   else
     {
@@ -1075,6 +668,7 @@ types_from_mime_type (const gchar *mime_type)
       else if (strcmp (mime_type, "ogg") == 0)
         return THUNAR_UCA_TYPE_AUDIO_FILES;
     }
+
   return 0;
 }
 
@@ -1114,8 +708,8 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
   gboolean            matches;
   GList              *paths = NULL;
   GList              *lp;
-  gint                n_files;
-  gint                i, m, n;
+  guint               n_files;
+  guint               i, m, n;
   gchar              *path_test;
 
   g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), NULL);
@@ -1138,6 +732,7 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
           /* cannot handle non-local files */
           g_object_unref (location);
           g_free (files);
+
           return NULL;
         }
       g_free (path_test);
@@ -1170,7 +765,7 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
           if ((files[n].types & item->types) == 0)
             break;
 
-          /* atleast on pattern must match the file name */
+          /* at least on pattern must match the file name */
           for (m = 0, matches = FALSE; item->patterns[m] != NULL && !matches; ++m)
             matches = g_pattern_match_simple (item->patterns[m], files[n].name);
 
@@ -1213,7 +808,7 @@ thunar_uca_model_append (ThunarUcaModel *uca_model,
   g_return_if_fail (iter != NULL);
 
   /* append the new item */
-  item = g_new0 (ThunarUcaModelItem, 1);
+  item = thunar_uca_model_item_new ();
   uca_model->items = g_list_append (uca_model->items, item);
 
   /* determine the tree iter of the new item */
@@ -1247,8 +842,8 @@ thunar_uca_model_exchange (ThunarUcaModel *uca_model,
   GList              *list_a = iter_a->user_data;
   GList              *list_b = iter_b->user_data;
   gint               *new_order;
-  gint                n_items;
-  gint                n;
+  guint               n_items;
+  guint               n;
 
   g_return_if_fail (THUNAR_UCA_IS_MODEL (uca_model));
   g_return_if_fail (iter_a->stamp == uca_model->stamp);
@@ -1277,6 +872,60 @@ thunar_uca_model_exchange (ThunarUcaModel *uca_model,
 
 
 
+gboolean
+thunar_uca_model_action_exists (ThunarUcaModel *uca_model,
+                                GtkTreeIter    *iter,
+                                const gchar    *action_name)
+{
+  GtkTreeModel *tree_model;
+  gboolean      iter_valid;
+  gchar        *existing_name;
+
+  g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), FALSE);
+  tree_model = GTK_TREE_MODEL (uca_model);
+
+  if (iter == NULL)
+    {
+      GtkTreeIter foo;
+      iter = &foo;
+    }
+
+  /* remove the existing item (if any)
+   * TODO #179: This is kinda slow O(N). Can we make it faster?
+   * Using GTree instead of GList will offer O(log N) lookups.
+   *
+   * GHashTable would have been best, but it will require more work to
+   * make iteration idempotent
+   */
+  if ((iter_valid = gtk_tree_model_iter_nth_child (tree_model, iter, NULL, 0)))
+    {
+      for (gtk_tree_model_get (tree_model, iter,
+                               THUNAR_UCA_MODEL_COLUMN_NAME, &existing_name, -1);
+           g_strcmp0(action_name, existing_name) != 0;
+           gtk_tree_model_get (tree_model, iter,
+                               THUNAR_UCA_MODEL_COLUMN_NAME, &action_name, -1))
+        {
+          g_free (existing_name);
+          if (!gtk_tree_model_iter_next (tree_model, iter))
+            return FALSE;
+        }
+      g_free (existing_name);
+    }
+  return iter_valid;
+}
+
+
+
+gboolean
+thunar_uca_model_action_exists_no_iter (ThunarUcaModel *uca_model,
+                                        const gchar    *action_name)
+{
+  static GtkTreeIter iter;
+  return thunar_uca_model_action_exists (uca_model, &iter, action_name);
+}
+
+
+
 /**
  * thunar_uca_model_remove:
  * @uca_model : a #ThunarUcaModel.
@@ -1300,13 +949,12 @@ thunar_uca_model_remove (ThunarUcaModel *uca_model,
 
   /* clear any accelerator associated to the item */
   gtk_tree_model_get (GTK_TREE_MODEL (uca_model), iter,
-                      THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID, &unique_id, 
+                      THUNAR_UCA_MODEL_COLUMN_UNIQUE_ID, &unique_id,
                       -1);
   accel_path = g_strdup_printf ("<Actions>/ThunarActions/uca-action-%s", unique_id);
 
   if (gtk_accel_map_lookup_entry (accel_path, &key) && key.accel_key != 0)
     gtk_accel_map_change_entry (accel_path, 0, 0, TRUE);
-
   g_free (accel_path);
 
   /* determine the path for the item to remove */
@@ -1330,9 +978,10 @@ thunar_uca_model_remove (ThunarUcaModel *uca_model,
  * thunar_uca_model_update:
  * @uca_model          : a #ThunarUcaModel.
  * @iter               : the #GtkTreeIter of the item to update.
+ * @filename           : (Optional) name of the where the action was read
  * @name               : the name of the item.
  * @submenu           : the submenu structure in which the item is placed.
- * @unique_id          : a unique ID for the item.
+ * @unique_id          : a unique ID for the item before any edits.
  * @description        : the description of the item.
  * @icon               : the icon for the item.
  * @command            : the command of the item.
@@ -1344,6 +993,7 @@ thunar_uca_model_remove (ThunarUcaModel *uca_model,
 void
 thunar_uca_model_update (ThunarUcaModel *uca_model,
                          GtkTreeIter    *iter,
+                         const gchar    *filename,
                          const gchar    *name,
                          const gchar    *submenu,
                          const gchar    *unique_id,
@@ -1358,7 +1008,6 @@ thunar_uca_model_update (ThunarUcaModel *uca_model,
 {
   ThunarUcaModelItem *item;
   GtkTreePath        *path;
-  guint               n, m;
   gchar              *accel_path;
 
   g_return_if_fail (THUNAR_UCA_IS_MODEL (uca_model));
@@ -1369,44 +1018,22 @@ thunar_uca_model_update (ThunarUcaModel *uca_model,
   thunar_uca_model_item_reset (item);
 
   /* setup the new item values */
-  if (G_LIKELY (name != NULL && *name != '\0'))
-    item->name = g_strdup (name);
-  if (G_LIKELY (submenu != NULL && *submenu != '\0'))
-    item->submenu = g_strdup (submenu);
-  if (G_LIKELY (icon != NULL && *icon != '\0'))
-    item->icon_name = g_strdup (icon);
-  if (G_LIKELY (command != NULL && *command != '\0'))
-    item->command = g_strdup (command);
-  if (G_LIKELY (description != NULL && *description != '\0'))
-    item->description = g_strdup (description);
-  item->types = types;
-  item->startup_notify = startup_notify;
+  thunar_uca_model_item_update (item,
+                                name,
+                                submenu,
+                                unique_id,
+                                description,
+                                icon,
+                                command,
+                                startup_notify,
+                                patterns,
+                                filename,
+                                types);
 
-  /* set the unique id once */
-  if (item->unique_id == NULL)
-    {
-      if (G_LIKELY (unique_id != NULL && *unique_id != '\0'))
-        item->unique_id = g_strdup (unique_id);
-      else
-        item->unique_id = thunar_uca_model_get_unique_id ();
-    }
-
-  /* setup the patterns */
-  item->patterns = g_strsplit ((patterns != NULL && *patterns != '\0') ? patterns : "*", ";", -1);
-  for (m = n = 0; item->patterns[m] != NULL; ++m)
-    {
-      if (G_UNLIKELY (item->patterns[m][0] == '\0'))
-        g_free (item->patterns[m]);
-      else
-        item->patterns[n++] = g_strstrip (item->patterns[m]);
-    }
-  item->patterns[n] = NULL;
-
-  /* check if this item will work for multiple files */
-  item->multiple_selection = (command != NULL && (strstr (command, "%F") != NULL
-                                               || strstr (command, "%D") != NULL
-                                               || strstr (command, "%N") != NULL
-                                               || strstr (command, "%U") != NULL));
+#ifdef DEBUG
+  if (!xfce_str_is_empty (filename))
+    g_debug ("Updated item: `%s', found in file: %s", name, filename);
+#endif
 
   /* notify listeners about the changed item */
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (uca_model), iter);
@@ -1438,102 +1065,120 @@ gboolean
 thunar_uca_model_save (ThunarUcaModel *uca_model,
                        GError        **error)
 {
-  ThunarUcaModelItem *item;
-  gboolean            result = FALSE;
-  gchar              *tmp_path;
-  gchar              *patterns;
-  gchar              *escaped;
-  gchar              *path;
-  GList              *lp;
-  FILE               *fp;
-  gint                fd;
+  ThunarUcaModelItem                       *item;
+  gboolean                                  result = FALSE;
+  gchar                                    *tmp_path = NULL;
+  const gchar                              *path;
+  gchar                                    *default_path = NULL;
+  GList /* <ThunarUcaModelItem*> */        *lp;
+  FILE                                     *fp;
+  gint                                      fd;
+  GHashTable /* <gchar*, GPtrArray*> */    *item_files;
+  GHashTableIter /* <gchar*, GPtrArray*> */ item_files_iter;
+  GPtrArray /* <ThunarUcaModelItem*> */    *item_files_list = NULL;
 
   g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   /* determine the save location */
-  path = xfce_resource_save_location (XFCE_RESOURCE_CONFIG, "Thunar/uca.xml", TRUE);
-  if (G_UNLIKELY (path == NULL))
+  default_path = xfce_resource_save_location (XFCE_RESOURCE_CONFIG, "Thunar/uca.xml", TRUE);
+  if (G_UNLIKELY (default_path == NULL))
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_IO, _("Failed to determine save location for uca.xml"));
+      g_free (default_path);
+
       return FALSE;
     }
+  item_files = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, (GDestroyNotify) g_ptr_array_unref);
+  g_hash_table_replace (item_files, (gpointer) default_path, g_ptr_array_new ());
 
-  /* try to open a temporary file */
-  tmp_path = g_strconcat (path, ".XXXXXX", NULL);
-  fd = g_mkstemp (tmp_path);
-  if (G_UNLIKELY (fd < 0))
-    {
-      g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), "%s", g_strerror (errno));
-      goto done;
-    }
-
-  /* wrap the file descriptor into a file pointer */
-  fp = fdopen (fd, "w");
-
-  /* write the header */
-  fprintf (fp, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<actions>\n");
-
-  /* write the model items */
   for (lp = uca_model->items; lp != NULL; lp = lp->next)
     {
-      item = (ThunarUcaModelItem *) lp->data;
-      fprintf (fp, "<action>\n");
-      patterns = g_strjoinv (";", item->patterns);
-      escaped = g_markup_printf_escaped ("\t<icon>%s</icon>\n"
-                                         "\t<name>%s</name>\n"
-                                         "\t<submenu>%s</submenu>\n"
-                                         "\t<unique-id>%s</unique-id>\n"
-                                         "\t<command>%s</command>\n"
-                                         "\t<description>%s</description>\n"
-                                         "\t<patterns>%s</patterns>\n",
-                                         (item->icon_name != NULL) ? item->icon_name : "",
-                                         (item->name != NULL) ? item->name : "",
-                                         (item->submenu != NULL) ? item->submenu : "",
-                                         (item->unique_id != NULL) ? item->unique_id : "",
-                                         (item->command != NULL) ? item->command : "",
-                                         (item->description != NULL) ? item->description : "",
-                                         patterns);
-      fprintf (fp, "%s", escaped);
-      g_free (patterns);
-      g_free (escaped);
-      if (item->startup_notify)
-        fprintf (fp, "\t<startup-notify/>\n");
-      if ((item->types & THUNAR_UCA_TYPE_DIRECTORIES) != 0)
-        fprintf (fp, "\t<directories/>\n");
-      if ((item->types & THUNAR_UCA_TYPE_AUDIO_FILES) != 0)
-        fprintf (fp, "\t<audio-files/>\n");
-      if ((item->types & THUNAR_UCA_TYPE_IMAGE_FILES) != 0)
-        fprintf (fp, "\t<image-files/>\n");
-      if ((item->types & THUNAR_UCA_TYPE_OTHER_FILES) != 0)
-        fprintf (fp, "\t<other-files/>\n");
-      if ((item->types & THUNAR_UCA_TYPE_TEXT_FILES) != 0)
-        fprintf (fp, "\t<text-files/>\n");
-      if ((item->types & THUNAR_UCA_TYPE_VIDEO_FILES) != 0)
-        fprintf (fp, "\t<video-files/>\n");
-      fprintf (fp, "</action>\n");
+      item = lp->data;
+      path = thunar_uca_model_item_get_filename (item);
+      if (path == NULL)
+        {
+          g_hash_table_lookup_extended (item_files, default_path, NULL, (gpointer *) &item_files_list);
+        }
+      else if (!g_hash_table_lookup_extended (item_files, path, NULL, (gpointer *) &item_files_list))
+        {
+          /* can we write to the file? */
+          if (g_access (path, W_OK) < 0)
+            {
+              /* should we write the item to a file? */
+              if (!thunar_uca_model_item_is_modified (item))
+                continue;
+#ifdef DEBUG
+              g_debug ("Action called: `%s', cannot be written to: %s", item->name, path);
+#endif
+              /* I guess not so just use the default path ... */
+              item_files_list = g_hash_table_lookup (item_files, default_path);
+            }
+          else
+            {
+#ifdef DEBUG
+              g_debug ("Action called: `%s', will be written to: %s", item->name, path);
+#endif
+              item_files_list = g_ptr_array_new ();
+              g_hash_table_replace (item_files, (gpointer) path, item_files_list);
+            }
+        }
+      g_ptr_array_add (item_files_list, item);
+      item_files_list = NULL;
     }
 
-  /* write the footer and close the tmp file */
-  fprintf (fp, "</actions>\n");
-  fclose (fp);
-
-  /* rename the file (atomic) */
-  if (g_rename (tmp_path, path) < 0)
+  /* start writing out the actions */
+  for (g_hash_table_iter_init (&item_files_iter, item_files);
+       g_hash_table_iter_next (&item_files_iter, (gpointer *) &path, (gpointer *) &item_files_list);)
     {
-      g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), "%s", g_strerror (errno));
-      g_unlink (tmp_path);
-    }
-  else
-    {
-      /* yeppa, successful */
-      result = TRUE;
+      /* try to open a temporary file */
+      tmp_path = g_strconcat (path, ".XXXXXX", NULL);
+      fd = g_mkstemp (tmp_path);
+      if (G_UNLIKELY (fd < 0))
+        {
+          g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), "%s", g_strerror (errno));
+          goto cleanup;
+        }
+#ifdef DEBUG
+      g_debug ("Created temp path: `%s'", tmp_path);
+#endif
+
+      /* wrap the file descriptor into a file pointer */
+      fp = fdopen (fd, "w");
+
+      /* write the header */
+      fputs ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<actions>\n", fp);
+
+      /* write the model items */
+      g_ptr_array_foreach (item_files_list, (GFunc) thunar_uca_model_item_write_file, fp);
+
+      /* write the footer and close the tmp file */
+      fputs ("</actions>\n", fp);
+      fclose (fp);
+
+      /* rename the file (atomic) */
+      if (g_rename (tmp_path, path) < 0)
+        {
+          g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
+                       "%s", g_strerror (errno));
+          g_unlink (tmp_path);
+          goto cleanup;
+        }
+#ifdef DEBUG
+      g_debug ("Finished writing to temp path: `%s'", tmp_path);
+#endif
+      g_clear_pointer (&tmp_path, g_free);
     }
 
-done:
+  /* yeppa, successful */
+  result = TRUE;
+
+cleanup:
   /* cleanup */
   g_free (tmp_path);
-  g_free (path);
+  g_hash_table_remove_all (item_files);
+  g_hash_table_unref (item_files);
+  g_free (default_path);
 
   return result;
 }
@@ -1560,14 +1205,10 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
                              GError        **error)
 {
   ThunarUcaModelItem *item;
-  const gchar        *p;
   GString            *command_line = g_string_new (NULL);
   GList              *lp;
   GSList             *uri_list = NULL;
-  gchar              *dirname;
-  gchar              *path;
   gchar              *expanded;
-  GFile              *location;
 
   g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), FALSE);
   g_return_val_if_fail (iter->stamp == uca_model->stamp, FALSE);
@@ -1581,82 +1222,7 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
       goto error;
     }
 
-  /* expand first the field codes that are deprecated in Freedesktop.org specification */
-  for (p = item->command; *p != '\0'; ++p)
-    {
-      if (G_UNLIKELY (p[0] == '%' && p[1] != '\0'))
-        {
-          switch (*++p)
-            {
-            case 'd':
-              if (G_LIKELY (file_infos != NULL))
-                {
-                  location = thunarx_file_info_get_location (file_infos->data);
-                  path = g_file_get_path (location);
-                  g_object_unref (location);
-
-                  if (G_UNLIKELY (path == NULL))
-                    goto error;
-
-                  dirname = g_path_get_dirname (path);
-                  xfce_append_quoted (command_line, dirname);
-                  g_free (dirname);
-                  g_free (path);
-                }
-              break;
-
-            case 'D':
-              for (lp = file_infos; lp != NULL; lp = lp->next)
-                {
-                  if (G_LIKELY (lp != file_infos))
-                    g_string_append_c (command_line, ' ');
-
-                  location = thunarx_file_info_get_location (lp->data);
-                  path = g_file_get_path (location);
-                  g_object_unref (location);
-
-                  if (G_UNLIKELY (path == NULL))
-                    goto error;
-
-                  dirname = g_path_get_dirname (path);
-                  xfce_append_quoted (command_line, dirname);
-                  g_free (dirname);
-                  g_free (path);
-                }
-              break;
-
-            case 'n':
-              if (G_LIKELY (file_infos != NULL))
-                {
-                  path = thunarx_file_info_get_name (file_infos->data);
-                  xfce_append_quoted (command_line, path);
-                  g_free (path);
-                }
-              break;
-
-            case 'N':
-              for (lp = file_infos; lp != NULL; lp = lp->next)
-                {
-                  if (G_LIKELY (lp != file_infos))
-                    g_string_append_c (command_line, ' ');
-
-                  path = thunarx_file_info_get_name (lp->data);
-                  xfce_append_quoted (command_line, path);
-                  g_free (path);
-                }
-              break;
-
-            default:
-              g_string_append_c (command_line, '%');
-              g_string_append_c (command_line, *p);
-              break;
-            }
-        }
-      else
-        {
-          g_string_append_c (command_line, *p);
-        }
-    }
+  command_line->str = thunar_uca_expand_deprecated_desktop_entry_field_codes (item->command, file_infos);
 
   /* expand the non deprecated field codes */
   for (lp = file_infos; lp != NULL; lp = lp->next)
@@ -1683,7 +1249,6 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
 
 error:
   g_string_free (command_line, TRUE);
+
   return FALSE;
 }
-
-
