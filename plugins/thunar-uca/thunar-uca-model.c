@@ -551,7 +551,7 @@ thunar_uca_model_resolve_paths (GPtrArray       *normalized_uca_paths,
                   else
                     {
 #ifdef DEBUG
-                      g_debug ("Resource file `%s' does not exist: Skipped");
+                      g_debug ("Resource file `%s' does not exist: Skipped", resource);
 #endif
                       g_free (resource);
                     }
@@ -882,14 +882,12 @@ thunar_uca_model_action_exists (ThunarUcaModel *uca_model,
   gchar        *existing_name;
 
   g_return_val_if_fail (THUNAR_UCA_IS_MODEL (uca_model), FALSE);
+  g_return_val_if_fail (action_name != NULL, FALSE);
   tree_model = GTK_TREE_MODEL (uca_model);
 
-  if (iter == NULL)
-    {
-      GtkTreeIter foo;
-      iter = &foo;
-    }
-
+#ifdef DEBUG
+  g_debug ("Checking if `%s' exists", action_name);
+#endif
   /* remove the existing item (if any)
    * TODO #179: This is kinda slow O(N). Can we make it faster?
    * Using GTree instead of GList will offer O(log N) lookups.
@@ -903,7 +901,7 @@ thunar_uca_model_action_exists (ThunarUcaModel *uca_model,
                                THUNAR_UCA_MODEL_COLUMN_NAME, &existing_name, -1);
            g_strcmp0(action_name, existing_name) != 0;
            gtk_tree_model_get (tree_model, iter,
-                               THUNAR_UCA_MODEL_COLUMN_NAME, &action_name, -1))
+                               THUNAR_UCA_MODEL_COLUMN_NAME, &existing_name, -1))
         {
           g_free (existing_name);
           if (!gtk_tree_model_iter_next (tree_model, iter))

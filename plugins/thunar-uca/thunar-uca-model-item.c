@@ -55,7 +55,7 @@ thunar_uca_model_item_free (ThunarUcaModelItem *item)
   if (item->priv != NULL)
     {
       g_free (item->priv->filename);
-      g_free(item->priv);
+      g_free (item->priv);
       item->priv = NULL;
     }
   g_free (item);
@@ -69,13 +69,13 @@ thunar_uca_model_item_reset (ThunarUcaModelItem *item)
   ThunarUcaModelItemPrivate* private;
 
   /* release the previous values... */
-  g_strfreev (item->patterns);
-  g_free (item->description);
-  g_free (item->command);
-  g_free (item->name);
-  g_free (item->submenu);
-  g_free (item->unique_id);
-  g_free (item->icon_name);
+  g_clear_pointer (&item->patterns, g_strfreev);
+  g_clear_pointer (&item->description, g_free);
+  g_clear_pointer (&item->command, g_free);
+  g_clear_pointer (&item->name, g_free);
+  g_clear_pointer (&item->submenu, g_free);
+  g_clear_pointer (&item->unique_id, g_free);
+  g_clear_pointer (&item->icon_name, g_free);
 
   if (item->gicon != NULL)
     g_object_unref (item->gicon);

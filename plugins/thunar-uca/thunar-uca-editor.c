@@ -52,6 +52,8 @@ static void           thunar_uca_editor_constructed            (GObject         
 static void           thunar_uca_editor_finalized              (GObject                *object);
 static void           thunar_uca_editor_set_content_modified   (ThunarUcaEditor        *uca_editor);
 static void           thunar_uca_editor_name_updated           (ThunarUcaEditor        *uca_editor);
+static void           thunar_uca_editor_toggle_name_error      (ThunarUcaEditor        *uca_editor,
+                                                                gboolean                has_error);
 static gboolean       thunar_uca_editor_check_existing_name    (ThunarUcaEditor        *uca_editor);
 
 
@@ -232,6 +234,43 @@ thunar_uca_editor_name_updated (ThunarUcaEditor *uca_editor)
 
 
 
+static void
+thunar_uca_editor_toggle_name_error (ThunarUcaEditor *uca_editor,
+                                     gboolean         has_error)
+{
+  static const gchar *const invalid_name_style = "error";
+  static const gchar *const invalid_name_icon = "dialog-error";
+
+  GtkStyleContext *name_entry_style_ctx;
+  gchar           *tooltip = NULL;
+
+  name_entry_style_ctx = gtk_widget_get_style_context (uca_editor->name_entry);
+  if (has_error)
+    {
+      if (!gtk_style_context_has_class (name_entry_style_ctx, invalid_name_style))
+        {
+          gtk_style_context_add_class (name_entry_style_ctx, invalid_name_style);
+          gtk_entry_set_icon_from_icon_name (GTK_ENTRY (uca_editor->name_entry),
+                                             GTK_ENTRY_ICON_SECONDARY, invalid_name_icon);
+          tooltip = g_strdup_printf (_("The action \"%s\" already exists"),
+                                     gtk_entry_get_text (GTK_ENTRY (uca_editor->name_entry)));
+          gtk_entry_set_icon_tooltip_text (GTK_ENTRY (uca_editor->name_entry),
+                                           GTK_ENTRY_ICON_SECONDARY, tooltip);
+          g_free (tooltip);
+        }
+    }
+  else if (gtk_style_context_has_class (name_entry_style_ctx, invalid_name_style))
+    {
+      gtk_style_context_remove_class (name_entry_style_ctx, invalid_name_style);
+      gtk_entry_set_icon_from_icon_name (GTK_ENTRY (uca_editor->name_entry),
+                                         GTK_ENTRY_ICON_SECONDARY, NULL);
+      gtk_entry_set_icon_tooltip_text (GTK_ENTRY (uca_editor->name_entry),
+                                       GTK_ENTRY_ICON_SECONDARY, NULL);
+    }
+}
+
+
+
 /**
  * Called when the timer runs out and the user has not changed the
  * name entry
@@ -241,47 +280,30 @@ thunar_uca_editor_name_updated (ThunarUcaEditor *uca_editor)
 static gboolean
 thunar_uca_editor_check_existing_name (ThunarUcaEditor *uca_editor)
 {
-  static const gchar *const invalid_name_style = "error";
-
   GtkWidget       *ok_button;
   GValue           name_exists_ret = G_VALUE_INIT;
   GValue           params[] = { G_VALUE_INIT, G_VALUE_INIT };
-  GtkStyleContext *name_entry_style_ctx;
-  gchar           *tooltip = NULL;
 
   g_value_init (&params[0], G_TYPE_POINTER);
   g_value_set_pointer (&params[0], NULL);
   g_value_init (&params[1], G_TYPE_STRING);
   g_value_set_string (&params[1], gtk_entry_get_text (GTK_ENTRY (uca_editor->name_entry)));
   g_value_init (&name_exists_ret, G_TYPE_BOOLEAN);
+
   g_closure_invoke (uca_editor->name_search_callback, &name_exists_ret, 2, params, NULL);
 
-  name_entry_style_ctx = gtk_widget_get_style_context (uca_editor->name_entry);
-
-  if (!g_value_get_boolean (&name_exists_ret))
+  if (g_value_get_boolean (&name_exists_ret))
     {
+      g_debug ("Name exists");
+      thunar_uca_editor_toggle_name_error (uca_editor, TRUE);
+    }
+  else
+    {
+      g_debug ("Name does not exist");
       ok_button = gtk_dialog_get_widget_for_response (GTK_DIALOG (uca_editor), GTK_RESPONSE_OK);
       if (ok_button != NULL && !gtk_widget_is_sensitive (ok_button))
         gtk_widget_set_sensitive (ok_button, TRUE);
-      if (gtk_style_context_has_class (name_entry_style_ctx, invalid_name_style))
-        {
-          gtk_style_context_remove_class (name_entry_style_ctx, invalid_name_style);
-          gtk_entry_set_icon_from_icon_name (GTK_ENTRY (uca_editor->name_entry),
-                                             GTK_ENTRY_ICON_SECONDARY, NULL);
-          gtk_entry_set_icon_tooltip_text (GTK_ENTRY (uca_editor->name_entry),
-                                           GTK_ENTRY_ICON_SECONDARY, NULL);
-        }
-    }
-  else if (!gtk_style_context_has_class (name_entry_style_ctx, invalid_name_style))
-    {
-      tooltip = g_strdup_printf (_("The action \"%s\" already exists"),
-                                 gtk_entry_get_text (GTK_ENTRY (uca_editor->name_entry)));
-      gtk_style_context_add_class (name_entry_style_ctx, invalid_name_style);
-      gtk_entry_set_icon_from_icon_name (GTK_ENTRY (uca_editor->name_entry),
-                                         GTK_ENTRY_ICON_SECONDARY, "dialog-error");
-      gtk_entry_set_icon_tooltip_text (GTK_ENTRY (uca_editor->name_entry),
-                                       GTK_ENTRY_ICON_SECONDARY, tooltip);
-      g_free (tooltip);
+      thunar_uca_editor_toggle_name_error (uca_editor, FALSE);
     }
 
   g_value_unset (&name_exists_ret);
