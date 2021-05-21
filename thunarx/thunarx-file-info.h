@@ -49,8 +49,8 @@ G_BEGIN_DECLS
   "unix::gid,unix::uid,unix::mode," \
   "metadata::emblems," \
   "metadata::thunar-view-type," \
-  "metadata::thunar-sort-column,metadata::thunar-sort-order"
-
+  "metadata::thunar-sort-column,metadata::thunar-sort-order," \
+  "metadata::thunar-zoom-level"
 
 
 /*

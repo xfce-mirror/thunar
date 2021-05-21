@@ -251,6 +251,9 @@ typedef enum
 
 GType               thunar_zoom_level_get_type            (void)                       G_GNUC_CONST;
 ThunarThumbnailSize thunar_zoom_level_to_thumbnail_size   (ThunarZoomLevel zoom_level) G_GNUC_CONST;
+const gchar*        thunar_zoom_level_string_from_value   (ThunarZoomLevel zoom_level);
+gboolean            thunar_zoom_level_value_from_string   (const gchar    *value_string,
+                                                           gint           *value);
 
 
 #define THUNAR_TYPE_JOB_RESPONSE (thunar_job_response_get_type ())
