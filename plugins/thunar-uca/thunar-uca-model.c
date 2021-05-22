@@ -101,6 +101,7 @@ static gboolean           thunar_uca_model_iter_nth_child   (GtkTreeModel      *
 static gboolean           thunar_uca_model_iter_parent      (GtkTreeModel      *tree_model,
                                                              GtkTreeIter       *iter,
                                                              GtkTreeIter       *child);
+static gboolean           thunar_uca_model_path_is_save_loc (const gchar       *file_path);
 static void               thunar_uca_model_resolve_paths    (GPtrArray         *normalized_uca_paths,
                                                              XfceResourceType   resource_type);
 static gint               thunar_uca_model_sort_paths       (gconstpointer      path1,
@@ -510,6 +511,17 @@ thunar_uca_model_iter_parent (GtkTreeModel *tree_model,
                               GtkTreeIter  *child)
 {
   return FALSE;
+}
+
+
+
+static gboolean
+thunar_uca_model_path_is_save_loc (const gchar  *file_path)
+{
+  gchar *save_prefix = xfce_resource_save_location (XFCE_RESOURCE_CONFIG, NULL, FALSE);
+  gboolean ret = g_str_has_prefix (file_path, save_prefix);
+  g_free (save_prefix);
+  return ret;
 }
 
 
@@ -1082,12 +1094,10 @@ thunar_uca_model_save (ThunarUcaModel *uca_model,
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   /* determine the save location */
-  default_path = xfce_resource_save_location (XFCE_RESOURCE_CONFIG, "Thunar/uca.xml", TRUE);
+  default_path = xfce_resource_save_location (XFCE_RESOURCE_CONFIG, "Thunar/uca.xml", FALSE);
   if (G_UNLIKELY (default_path == NULL))
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_IO, _("Failed to determine save location for uca.xml"));
-      g_free (default_path);
-
       return FALSE;
     }
   item_files = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, (GDestroyNotify) g_ptr_array_unref);
@@ -1104,7 +1114,7 @@ thunar_uca_model_save (ThunarUcaModel *uca_model,
       else if (!g_hash_table_lookup_extended (item_files, path, NULL, (gpointer *) &item_files_list))
         {
           /* can we write to the file? */
-          if (g_access (path, W_OK) < 0)
+          if (!thunar_uca_model_path_is_save_loc (path))
             {
               /* should we write the item to a file? */
               if (!thunar_uca_model_item_is_modified (item))

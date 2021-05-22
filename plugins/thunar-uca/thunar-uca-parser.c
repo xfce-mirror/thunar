@@ -336,10 +336,7 @@ end_element_handler (GMarkupParseContext  *context,
                      gpointer              user_data,
                      GError              **error)
 {
-  GtkTreeIter iter =
-  {
-    0
-  };
+  GtkTreeIter      iter;
   ThunarUcaParser *parser = user_data;
 
   switch (xfce_stack_top (parser->stack))
