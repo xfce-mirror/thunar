@@ -212,7 +212,7 @@ thunar_uca_model_init (ThunarUcaModel *uca_model)
       if (G_LIKELY (filename != NULL))
         {
 #ifdef DEBUG
-          g_debug ("Found uca file: %s", ( gchar* ) filename);
+          g_debug ("Parsing: %s", ( gchar* ) filename);
 #endif
           if (!thunar_uca_parser_read_uca_from_file (uca_model, filename, &error))
             {
