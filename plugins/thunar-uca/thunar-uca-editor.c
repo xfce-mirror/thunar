@@ -196,7 +196,7 @@ thunar_uca_editor_finalized (GObject *object)
 static void
 thunar_uca_editor_set_content_modified (ThunarUcaEditor *uca_editor)
 {
-  if (G_UNLIKELY (!uca_editor->content_modified))
+  if (gtk_widget_is_visible (GTK_WIDGET (uca_editor)) && G_UNLIKELY (!uca_editor->content_modified))
     uca_editor->content_modified = TRUE;
 }
 
