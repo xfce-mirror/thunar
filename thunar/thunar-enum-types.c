@@ -284,6 +284,46 @@ thunar_zoom_level_to_thumbnail_size (ThunarZoomLevel zoom_level)
 
 
 
+const gchar*
+thunar_zoom_level_string_from_value (ThunarZoomLevel zoom_level)
+{
+  GEnumClass *enum_class;
+  GEnumValue *enum_value;
+
+  enum_class = g_type_class_ref (THUNAR_TYPE_ZOOM_LEVEL);
+  enum_value = g_enum_get_value (enum_class, zoom_level);
+
+  g_type_class_unref (enum_class);
+
+  if (enum_value == NULL)
+    return NULL;
+
+  return enum_value->value_name;
+}
+
+
+
+gboolean
+thunar_zoom_level_value_from_string (const gchar    *value_string,
+                                     gint           *value)
+{
+  GEnumClass *enum_class;
+  GEnumValue *enum_value;
+
+  enum_class = g_type_class_ref (THUNAR_TYPE_ZOOM_LEVEL);
+  enum_value = g_enum_get_value_by_name (enum_class, value_string);
+
+  g_type_class_unref (enum_class);
+
+  if (enum_value == NULL)
+    return FALSE;
+
+  *value =  enum_value->value;
+  return TRUE;
+}
+
+
+
 GType
 thunar_thumbnail_mode_get_type (void)
 {
