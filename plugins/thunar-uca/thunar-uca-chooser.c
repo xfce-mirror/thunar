@@ -287,7 +287,7 @@ thunar_uca_chooser_open_editor (ThunarUcaChooser *uca_chooser,
       /* hide the editor window */
       gtk_widget_hide (editor);
 
-      if (G_LIKELY ( thunar_uca_editor_was_modified (THUNAR_UCA_EDITOR (editor))))
+      if (G_LIKELY (thunar_uca_editor_was_modified (THUNAR_UCA_EDITOR (editor))))
         {
           /* append a new iter (when not editing) */
           if (G_UNLIKELY (!edit))
