@@ -156,6 +156,7 @@ thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
 {
   uca_editor->content_modified = FALSE;
   uca_editor->name_entry_changed_id = 0;
+
   /* Initialize the template for this instance */
   gtk_widget_init_template (GTK_WIDGET (uca_editor));
 
