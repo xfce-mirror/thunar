@@ -187,6 +187,23 @@ thunar_g_file_is_trash (GFile *file)
 
 
 gboolean
+thunar_g_file_is_recent (GFile *file)
+{
+  char *uri;
+  gboolean is_recent = FALSE;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+
+  uri = g_file_get_uri (file);
+  is_recent = g_strcmp0 (uri, "recent:///") == 0;
+  g_free (uri);
+
+  return is_recent;
+}
+
+
+
+gboolean
 thunar_g_file_is_computer (GFile *file)
 {
   char *uri;
