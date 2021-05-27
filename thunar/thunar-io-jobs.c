@@ -167,7 +167,7 @@ _thunar_io_jobs_create (ThunarJob  *job,
       /* update progress information */
       thunar_job_processing_file (THUNAR_JOB (job), lp, n_processed);
 
-again:
+    again:
       /* try to create the file */
       stream = g_file_create (lp->data,
                               G_FILE_CREATE_NONE,
@@ -287,9 +287,9 @@ ThunarJob *
 thunar_io_jobs_create_files (GList *file_list,
                              GFile *template_file)
 {
-  return thunar_simple_job_launch (_thunar_io_jobs_create, 2,
-                                   THUNAR_TYPE_G_FILE_LIST, file_list,
-                                   G_TYPE_FILE, template_file);
+  return thunar_simple_job_new (_thunar_io_jobs_create, 2,
+                                THUNAR_TYPE_G_FILE_LIST, file_list,
+                                G_TYPE_FILE, template_file);
 }
 
 
@@ -327,7 +327,7 @@ _thunar_io_jobs_mkdir (ThunarJob  *job,
       /* update progress information */
       thunar_job_processing_file (THUNAR_JOB (job), lp, n_processed);
 
-again:
+    again:
       /* try to create the directory */
       if (!g_file_make_directory (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err))
         {
@@ -425,8 +425,8 @@ again:
 ThunarJob *
 thunar_io_jobs_make_directories (GList *file_list)
 {
-  return thunar_simple_job_launch (_thunar_io_jobs_mkdir, 1,
-                                   THUNAR_TYPE_G_FILE_LIST, file_list);
+  return thunar_simple_job_new (_thunar_io_jobs_mkdir, 1,
+                                THUNAR_TYPE_G_FILE_LIST, file_list);
 }
 
 
@@ -495,7 +495,7 @@ _thunar_io_jobs_unlink (ThunarJob  *job,
       /* update progress information */
       thunar_job_processing_file (THUNAR_JOB (job), lp, n_processed);
 
-again:
+    again:
       /* try to delete the file */
       if (_tij_delete_file (lp->data, exo_job_get_cancellable (EXO_JOB (job)), &err))
         {
@@ -564,8 +564,8 @@ again:
 ThunarJob *
 thunar_io_jobs_unlink_files (GList *file_list)
 {
-  return thunar_simple_job_launch (_thunar_io_jobs_unlink, 1,
-                                   THUNAR_TYPE_G_FILE_LIST, file_list);
+  return thunar_simple_job_new (_thunar_io_jobs_unlink, 1,
+                                THUNAR_TYPE_G_FILE_LIST, file_list);
 }
 
 
@@ -584,7 +584,7 @@ thunar_io_jobs_move_files (GList *source_file_list,
                                  THUNAR_TRANSFER_JOB_MOVE);
   thunar_job_set_pausable (job, TRUE);
 
-  return THUNAR_JOB (exo_job_launch (EXO_JOB (job)));
+  return job;
 }
 
 
@@ -603,7 +603,7 @@ thunar_io_jobs_copy_files (GList *source_file_list,
                                  THUNAR_TRANSFER_JOB_COPY);
   thunar_job_set_pausable (job, TRUE);
 
-  return THUNAR_JOB (exo_job_launch (EXO_JOB (job)));
+  return job;
 }
 
 
@@ -826,9 +826,9 @@ thunar_io_jobs_link_files (GList *source_file_list,
   _thunar_return_val_if_fail (target_file_list != NULL, NULL);
   _thunar_return_val_if_fail (g_list_length (source_file_list) == g_list_length (target_file_list), NULL);
 
-  return thunar_simple_job_launch (_thunar_io_jobs_link, 2,
-                                   THUNAR_TYPE_G_FILE_LIST, source_file_list,
-                                   THUNAR_TYPE_G_FILE_LIST, target_file_list);
+  return thunar_simple_job_new (_thunar_io_jobs_link, 2,
+                                THUNAR_TYPE_G_FILE_LIST, source_file_list,
+                                THUNAR_TYPE_G_FILE_LIST, target_file_list);
 }
 
 
@@ -905,8 +905,8 @@ thunar_io_jobs_trash_files (GList *file_list)
 {
   _thunar_return_val_if_fail (file_list != NULL, NULL);
 
-  return thunar_simple_job_launch (_thunar_io_jobs_trash, 1,
-                                   THUNAR_TYPE_G_FILE_LIST, file_list);
+  return thunar_simple_job_new (_thunar_io_jobs_trash, 1,
+                                THUNAR_TYPE_G_FILE_LIST, file_list);
 }
 
 
@@ -924,7 +924,7 @@ thunar_io_jobs_restore_files (GList *source_file_list,
   job = thunar_transfer_job_new (source_file_list, target_file_list,
                                  THUNAR_TRANSFER_JOB_MOVE);
 
-  return THUNAR_JOB (exo_job_launch (EXO_JOB (job)));
+  return job;
 }
 
 
@@ -988,7 +988,7 @@ _thunar_io_jobs_chown (ThunarJob  *job,
       if (err != NULL)
         break;
 
-retry_chown:
+    retry_chown:
       if (uid >= 0)
         {
           /* try to change the owner UID */
@@ -1013,7 +1013,7 @@ retry_chown:
         {
           /* generate a useful error message */
           message = G_LIKELY (uid >= 0) ? _("Failed to change the owner of \"%s\": %s")
-                                        : _("Failed to change the group of \"%s\": %s");
+            : _("Failed to change the group of \"%s\": %s");
 
           /* ask the user whether to skip/retry this file */
           response = thunar_job_ask_skip (THUNAR_JOB (job), message,
@@ -1058,11 +1058,11 @@ thunar_io_jobs_change_group (GList    *files,
   /* files are released when the list if destroyed */
   g_list_foreach (files, (GFunc) (void (*)(void)) g_object_ref, NULL);
 
-  return thunar_simple_job_launch (_thunar_io_jobs_chown, 4,
-                                   THUNAR_TYPE_G_FILE_LIST, files,
-                                   G_TYPE_INT, -1,
-                                   G_TYPE_INT, (gint) gid,
-                                   G_TYPE_BOOLEAN, recursive);
+  return thunar_simple_job_new (_thunar_io_jobs_chown, 4,
+                                THUNAR_TYPE_G_FILE_LIST, files,
+                                G_TYPE_INT, -1,
+                                G_TYPE_INT, (gint) gid,
+                                G_TYPE_BOOLEAN, recursive);
 }
 
 
@@ -1133,7 +1133,7 @@ _thunar_io_jobs_chmod (ThunarJob  *job,
       if (err != NULL)
         break;
 
-retry_chown:
+    retry_chown:
       /* different actions depending on the type of the file */
       if (g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
         {
@@ -1214,13 +1214,13 @@ thunar_io_jobs_change_mode (GList         *files,
   /* files are released when the list if destroyed */
   g_list_foreach (files, (GFunc) (void (*)(void)) g_object_ref, NULL);
 
-  return thunar_simple_job_launch (_thunar_io_jobs_chmod, 6,
-                                   THUNAR_TYPE_G_FILE_LIST, files,
-                                   THUNAR_TYPE_FILE_MODE, dir_mask,
-                                   THUNAR_TYPE_FILE_MODE, dir_mode,
-                                   THUNAR_TYPE_FILE_MODE, file_mask,
-                                   THUNAR_TYPE_FILE_MODE, file_mode,
-                                   G_TYPE_BOOLEAN, recursive);
+  return thunar_simple_job_new (_thunar_io_jobs_chmod, 6,
+                                THUNAR_TYPE_G_FILE_LIST, files,
+                                THUNAR_TYPE_FILE_MODE, dir_mask,
+                                THUNAR_TYPE_FILE_MODE, dir_mode,
+                                THUNAR_TYPE_FILE_MODE, file_mask,
+                                THUNAR_TYPE_FILE_MODE, file_mode,
+                                G_TYPE_BOOLEAN, recursive);
 }
 
 
@@ -1297,7 +1297,7 @@ thunar_io_jobs_list_directory (GFile *directory)
 {
   _thunar_return_val_if_fail (G_IS_FILE (directory), NULL);
 
-  return thunar_simple_job_launch (_thunar_io_jobs_ls, 1, G_TYPE_FILE, directory);
+  return thunar_simple_job_new (_thunar_io_jobs_ls, 1, G_TYPE_FILE, directory);
 }
 
 
@@ -1368,7 +1368,7 @@ thunar_io_jobs_rename_file (ThunarFile  *file,
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (g_utf8_validate (display_name, -1, NULL), NULL);
 
-  return thunar_simple_job_launch (_thunar_io_jobs_rename, 2,
-                                   THUNAR_TYPE_FILE, file,
-                                   G_TYPE_STRING, display_name);
+  return thunar_simple_job_new (_thunar_io_jobs_rename, 2,
+                                THUNAR_TYPE_FILE, file,
+                                G_TYPE_STRING, display_name);
 }
