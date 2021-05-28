@@ -3063,6 +3063,23 @@ thunar_file_is_trashed (const ThunarFile *file)
 
 
 /**
+ * thunar_file_is_recent:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns %TRUE if @file is the recent folder.
+ *
+ * Return value: %TRUE if @file is the recent folder bin
+ **/
+gboolean
+thunar_file_is_recent (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  return thunar_g_file_is_recent (file->gfile);
+}
+
+
+
+/**
  * thunar_file_is_desktop_file:
  * @file      : a #ThunarFile.
  * @is_secure : if %NULL do a simple check, else it will set this boolean
