@@ -299,6 +299,11 @@ static void      thunar_window_trash_infobar_clicked           (GtkInfoBar      
                                                                 ThunarWindow           *window);
 static void      thunar_window_trash_selection_updated         (ThunarWindow           *window);
 
+static void thunar_window_recent_reload (GtkRecentManager *recent_manager, ThunarWindow *window)
+{
+  thunar_window_action_reload (window, NULL);
+}
+
 
 
 struct _ThunarWindowClass
@@ -931,6 +936,9 @@ thunar_window_init (ThunarWindow *window)
 
   /* initial load of the bookmarks */
   thunar_window_update_bookmarks (window);
+
+  /* update recent */
+  g_signal_connect (G_OBJECT (gtk_recent_manager_get_default()), "changed", G_CALLBACK (thunar_window_recent_reload), window);
 }
 
 
