@@ -44,6 +44,7 @@ thunar_io_scan_directory (ThunarJob          *job,
 {
   GFileEnumerator *enumerator;
   GFileInfo       *info;
+  GFileInfo       *recent_info;
   GFileType        type;
   GError          *err = NULL;
   GFile           *child_file;
@@ -135,32 +136,21 @@ thunar_io_scan_directory (ThunarJob          *job,
           /* create Gfile using the target URI */
           child_file = g_file_new_for_uri (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI));
 
-          char **list = g_file_info_list_attributes(info, NULL);
-          printf("FILE: %s\n", g_file_info_get_name (info));
-          while (*list)
-            {
-              printf("%s\n", *list);
-              list++;
-            }
-
           /* create new file info using Gfile*/
-          g_object_unref(info); // TODO: this removes recent::modified!!!
+          recent_info = info;
           info = g_file_query_info (child_file, namespace, flags, cancellable, &err);
-          // πρέπει να κρατάει και αυτό το αρχείο και να φτιάχνει το καινούργιο ώστε και αν μπορεί να το χρησιμοποιεί αλλά και
-          // να έχει πρόσβαση στα recent
-
-          // now all recent attributes are lost
         }
       else
         {
           /* create GFile for the child */
           child_file = g_file_get_child (file, g_file_info_get_name (info));
+          recent_info = NULL;
         }
 
       if (return_thunar_files)
         {
           /* Prepend the ThunarFile */
-          thunar_file = thunar_file_get_with_info (child_file, info, !is_mounted);
+          thunar_file = recent_info ? thunar_file_get_with_recent_info (child_file, info, recent_info, !is_mounted) : thunar_file_get_with_info (child_file, info, !is_mounted);
           files = thunar_g_list_prepend_deep (files, thunar_file);
           g_object_unref (G_OBJECT (thunar_file));
         }
