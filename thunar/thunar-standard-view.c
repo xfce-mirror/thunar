@@ -1699,8 +1699,8 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
   /* convert the sort column name to a value */
   if (zoom_level_name != NULL)
     {
-      thunar_zoom_level_value_from_string (zoom_level_name, &zoom_level);
-      thunar_standard_view_set_zoom_level (THUNAR_VIEW (standard_view), zoom_level);
+      if (thunar_zoom_level_value_from_string (zoom_level_name, &zoom_level) == TRUE)
+        thunar_standard_view_set_zoom_level (THUNAR_VIEW (standard_view), zoom_level);
     }
   else
     {
