@@ -92,7 +92,7 @@ thunar_io_scan_directory (ThunarJob          *job,
     namespace = THUNARX_FILE_INFO_NAMESPACE;
   else
     namespace = G_FILE_ATTRIBUTE_STANDARD_TYPE ","
-                G_FILE_ATTRIBUTE_STANDARD_NAME;
+                G_FILE_ATTRIBUTE_STANDARD_NAME ", recent::*";
 
   /* try to read from the direectory */
   enumerator = g_file_enumerate_children (file, namespace,
@@ -129,8 +129,33 @@ thunar_io_scan_directory (ThunarJob          *job,
             }
         }
 
-      /* create GFile for the child */
-      child_file = g_file_get_child (file, g_file_info_get_name (info));
+      /* check if file has 'recent' URI scheme */
+      if (g_file_has_uri_scheme (file, "recent"))
+        {
+          /* create Gfile using the target URI */
+          child_file = g_file_new_for_uri (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI));
+
+          char **list = g_file_info_list_attributes(info, NULL);
+          printf("FILE: %s\n", g_file_info_get_name (info));
+          while (*list)
+            {
+              printf("%s\n", *list);
+              list++;
+            }
+
+          /* create new file info using Gfile*/
+          g_object_unref(info); // TODO: this removes recent::modified!!!
+          info = g_file_query_info (child_file, namespace, flags, cancellable, &err);
+          // πρέπει να κρατάει και αυτό το αρχείο και να φτιάχνει το καινούργιο ώστε και αν μπορεί να το χρησιμοποιεί αλλά και
+          // να έχει πρόσβαση στα recent
+
+          // now all recent attributes are lost
+        }
+      else
+        {
+          /* create GFile for the child */
+          child_file = g_file_get_child (file, g_file_info_get_name (info));
+        }
 
       if (return_thunar_files)
         {

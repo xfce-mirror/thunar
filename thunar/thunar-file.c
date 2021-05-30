@@ -2097,11 +2097,23 @@ guint64
 thunar_file_get_date (const ThunarFile  *file,
                       ThunarFileDateType date_type)
 {
+  GFileInfo   *info;
   const gchar *attribute;
   GDateTime   *datetime;
   gint64       date;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), 0);
+
+//  info = g_file_query_info (file->gfile,
+//                            "standard::*,access::*,mountable::*,time::*,unix::*,owner::*,selinux::*,thumbnail::*,id::filesystem,trash::orig-path,trash::deletion-date,metadata::*,recent::*",
+//                            0,
+//                            NULL, NULL);
+//  char **list = g_file_info_list_attributes(info, NULL);
+//  printf("FILE: %s\n", file->display_name);
+//  while (*list) {
+//      printf("%s\n", *list);
+//      list++;
+//    }
 
   if (file->info == NULL)
     return 0;
@@ -2127,6 +2139,8 @@ thunar_file_get_date (const ThunarFile  *file,
       date = g_date_time_to_unix (datetime);
       g_date_time_unref (datetime);
       return date;
+    case THUNAR_FILE_RECENCY:
+      return g_file_info_get_attribute_int64 (file->info, G_FILE_ATTRIBUTE_RECENT_MODIFIED);
 
     default:
       _thunar_assert_not_reached ();
@@ -2447,7 +2461,7 @@ thunar_file_get_content_type (ThunarFile *file)
           /* async load the content-type */
           info = g_file_query_info (file->gfile,
                                     G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
-                                    G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
+                                    G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE ", recent::*",
                                     G_FILE_QUERY_INFO_NONE,
                                     NULL, &err);
 
@@ -3063,6 +3077,32 @@ thunar_file_is_trashed (const ThunarFile *file)
 
 
 /**
+ * thunar_file_is_recent:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns %TRUE if @file is the recent folder.
+ *
+ * Return value: %TRUE if @file is the recent folder bin
+ **/
+gboolean
+thunar_file_is_recent (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  return thunar_g_file_is_recent (file->gfile);
+}
+
+
+
+gboolean
+thunar_file_is_in_recent (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  return thunar_g_file_is_in_recent (file->gfile);
+}
+
+
+
+/**
  * thunar_file_is_desktop_file:
  * @file      : a #ThunarFile.
  * @is_secure : if %NULL do a simple check, else it will set this boolean
@@ -3187,6 +3227,30 @@ thunar_file_get_deletion_date (const ThunarFile *file,
 
   /* humanize the time value */
   return thunar_util_humanize_file_time (deletion_time, date_style, date_custom_style);
+}
+
+
+
+gchar*
+thunar_file_get_recency       (const ThunarFile *file,
+                               ThunarDateStyle   date_style,
+                               const gchar      *date_custom_style)
+{
+  const gchar *date;
+  time_t       recency_time;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->info), NULL);
+
+  date = g_file_info_get_attribute_string (file->info, G_FILE_ATTRIBUTE_RECENT_MODIFIED);
+  if (G_UNLIKELY (date == NULL))
+    return NULL;
+
+  /* try to parse the DeletionDate (RFC 3339 string) */
+  recency_time = thunar_util_time_from_rfc3339 (date);
+
+  /* humanize the time value */
+  return thunar_util_humanize_file_time (recency_time, date_style, date_custom_style);
 }
 
 
@@ -3370,7 +3434,7 @@ thunar_file_get_emblem_names (ThunarFile *file)
     {
       emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_CANT_READ);
     }
-  else if (G_UNLIKELY (uid == effective_user_id && !thunar_file_is_writable (file) && !thunar_file_is_trashed (file)))
+  else if (G_UNLIKELY (uid == effective_user_id && !thunar_file_is_writable (file) && !thunar_file_is_trashed (file) && !thunar_file_is_in_recent (file)))
     {
       /* we own the file, but we cannot write to it, that's why we mark it as "cant-write", so
        * users won't be surprised when opening the file in a text editor, but are unable to save.
