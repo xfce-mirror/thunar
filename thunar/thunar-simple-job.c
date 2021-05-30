@@ -143,6 +143,61 @@ thunar_simple_job_execute (ExoJob  *job,
 
 
 /**
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ **/
+ThunarJob *
+thunar_simple_job_new (ThunarSimpleJobFunc func,
+                       guint               n_param_values,
+                       ...)
+{
+  ThunarSimpleJob *simple_job;
+  va_list          var_args;
+  GValue           value = { 0, };
+  gchar           *error_message;
+  guint            n;
+
+  /* allocate and initialize the simple job */
+  simple_job = g_object_new (THUNAR_TYPE_SIMPLE_JOB, NULL);
+  simple_job->func = func;
+  simple_job->param_values = g_array_sized_new (FALSE, TRUE, sizeof (GValue), n_param_values);
+
+  /* collect the parameters */
+  va_start (var_args, n_param_values);
+  for (n = 0; n < n_param_values; ++n)
+    {
+      /* initialize the value to hold the next parameter */
+      g_value_init (&value, va_arg (var_args, GType));
+
+      /* collect the value from the stack */
+      G_VALUE_COLLECT (&value, var_args, 0, &error_message);
+
+      /* check if an error occurred */
+      if (G_UNLIKELY (error_message != NULL))
+        {
+          g_error ("%s: %s", G_STRLOC, error_message);
+          g_free (error_message);
+        }
+
+      g_array_insert_val (simple_job->param_values, n, value);
+
+      /* manually unset the value, g_value_unset doesn't work
+       * because we don't want to free the data */
+      memset (&value, 0, sizeof (GValue));
+    }
+  va_end (var_args);
+
+  return THUNAR_JOB (simple_job);
+}
+
+
+
+/**
  * thunar_simple_job_launch:
  * @func           : the #ThunarSimpleJobFunc to execute the job.
  * @n_param_values : the number of parameters to pass to the @func.

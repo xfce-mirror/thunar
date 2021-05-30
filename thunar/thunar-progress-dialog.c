@@ -29,6 +29,7 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-progress-dialog.h>
 #include <thunar/thunar-progress-view.h>
+#include <thunar/thunar-transfer-job.h>
 
 
 
@@ -39,6 +40,7 @@
 static void     thunar_progress_dialog_dispose            (GObject              *object);
 static void     thunar_progress_dialog_finalize           (GObject              *object);
 static gboolean thunar_progress_dialog_closed             (ThunarProgressDialog *dialog);
+static gint     thunar_progress_dialog_n_views            (ThunarProgressDialog *dialog);
 
 
 
@@ -55,7 +57,9 @@ struct _ThunarProgressDialog
   GtkWidget     *vbox;
   GtkWidget     *content_box;
 
+  GMutex         views_mutex;
   GList         *views;
+  GList         *views_waiting;
 
   gint           x;
   gint           y;
@@ -86,6 +90,8 @@ static void
 thunar_progress_dialog_init (ThunarProgressDialog *dialog)
 {
   dialog->views = NULL;
+  dialog->views_waiting = NULL;
+  g_mutex_init (&dialog->views_mutex);
 
   gtk_window_set_title (GTK_WINDOW (dialog), _("File Operation Progress"));
   gtk_window_set_default_size (GTK_WINDOW (dialog), 450, 10);
@@ -124,6 +130,7 @@ thunar_progress_dialog_finalize (GObject *object)
 
   /* free the view list */
   g_list_free (dialog->views);
+  g_list_free (dialog->views_waiting);
 
   (*G_OBJECT_CLASS (thunar_progress_dialog_parent_class)->finalize) (object);
 }
@@ -147,6 +154,21 @@ thunar_progress_dialog_closed (ThunarProgressDialog *dialog)
 
 
 
+static gint
+thunar_progress_dialog_n_views (ThunarProgressDialog *dialog)
+{
+  gint n_views;
+
+  g_mutex_lock (&dialog->views_mutex);
+  n_views  = g_list_length (dialog->views);
+  n_views += g_list_length (dialog->views_waiting);
+  g_mutex_unlock (&dialog->views_mutex);
+
+  return n_views;
+}
+
+
+
 static void
 thunar_progress_dialog_view_needs_attention (ThunarProgressDialog *dialog,
                                              ThunarProgressView   *view)
@@ -163,6 +185,46 @@ thunar_progress_dialog_view_needs_attention (ThunarProgressDialog *dialog,
 
 
 static void
+launch_waiting_jobs (ThunarProgressDialog *dialog)
+{
+  gboolean           launched     = FALSE;
+  GList             *list         = dialog->views_waiting;
+  GList             *next         = NULL;
+  GList             *job_list;
+  ThunarTransferJob *transfer_job;
+
+  if (list == NULL)
+    return;
+
+  g_mutex_lock (&dialog->views_mutex);
+  job_list = thunar_progress_dialog_list_jobs (dialog);
+  while (list != NULL)
+    {
+      next         = list->next;
+      transfer_job = THUNAR_TRANSFER_JOB (thunar_progress_view_get_job (THUNAR_PROGRESS_VIEW (list->data)));
+      if (thunar_transfer_job_can_start (transfer_job, job_list))
+        {
+          launched = TRUE;
+
+          /* Move the view to the running list, and then launch a job */
+          dialog->views_waiting = g_list_remove_link (dialog->views_waiting, list);
+          dialog->views         = g_list_concat (list, dialog->views);
+          exo_job_launch (EXO_JOB (transfer_job));
+
+          job_list = g_list_prepend (job_list, list->data);
+        }
+      list = next;
+    }
+  g_list_free (job_list);
+  g_mutex_unlock (&dialog->views_mutex);
+
+  if (launched == FALSE)
+    g_warning ("Waiting jobs cannot be launched");
+}
+
+
+
+static void
 thunar_progress_dialog_job_finished (ThunarProgressDialog *dialog,
                                      ThunarProgressView   *view)
 {
@@ -172,13 +234,15 @@ thunar_progress_dialog_job_finished (ThunarProgressDialog *dialog,
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_VIEW (view));
 
   /* remove the view from the list */
+  g_mutex_lock (&dialog->views_mutex);
   dialog->views = g_list_remove (dialog->views, view);
+  g_mutex_unlock (&dialog->views_mutex);
 
   /* destroy the widget */
   gtk_widget_destroy (GTK_WIDGET (view));
 
   /* determine the number of views left */
-  n_views = g_list_length (dialog->views);
+  n_views = thunar_progress_dialog_n_views (dialog);
 
   /* check if we've just removed the 4th view and are now left with
    * SCROLLVIEW_THRESHOLD-1 of them, in which case we drop the scroll window */
@@ -203,7 +267,9 @@ thunar_progress_dialog_job_finished (ThunarProgressDialog *dialog,
       gtk_window_resize (GTK_WINDOW (dialog), 450, 10);
     }
 
-  if (dialog->views == NULL)
+  launch_waiting_jobs (dialog);
+
+  if (!thunar_progress_dialog_has_jobs (dialog))
     {
       /* destroy the dialog as there are no views left */
       gtk_widget_destroy (GTK_WIDGET (dialog));
@@ -264,6 +330,7 @@ thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
 {
   GtkWidget *viewport;
   GtkWidget *view;
+  GList     *job_list;
 
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog));
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
@@ -279,12 +346,27 @@ thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
   if (dialog->views == NULL)
     gtk_window_set_icon_name (GTK_WINDOW (dialog), icon_name);
 
-  /* add the view to the list of known views */
-  dialog->views = g_list_prepend (dialog->views, view);
+  /* Check if the job can start */
+  job_list = thunar_progress_dialog_list_jobs (dialog);
+  if (!THUNAR_IS_TRANSFER_JOB (job)
+      || thunar_transfer_job_can_start (THUNAR_TRANSFER_JOB (job), job_list))
+    {
+      g_mutex_lock (&dialog->views_mutex);
+      dialog->views = g_list_prepend (dialog->views, view);
+      g_mutex_unlock (&dialog->views_mutex);
+      exo_job_launch (EXO_JOB (job));
+    }
+  else
+    {
+      g_mutex_lock (&dialog->views_mutex);
+      dialog->views_waiting = g_list_prepend (dialog->views_waiting, view);
+      g_mutex_unlock (&dialog->views_mutex);
+    }
+  g_list_free (job_list);
 
   /* check if we need to wrap the views in a scroll window (starting
    * at SCROLLVIEW_THRESHOLD parallel operations */
-  if (g_list_length (dialog->views) == SCROLLVIEW_THRESHOLD)
+  if (thunar_progress_dialog_n_views (dialog) == SCROLLVIEW_THRESHOLD)
     {
       /* create a scrolled window and add it to the dialog */
       dialog->scrollwin = gtk_scrolled_window_new (NULL, NULL);
@@ -325,5 +407,5 @@ gboolean
 thunar_progress_dialog_has_jobs (ThunarProgressDialog *dialog)
 {
   _thunar_return_val_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog), FALSE);
-  return dialog->views != NULL;
+  return thunar_progress_dialog_n_views (dialog) != 0;
 }

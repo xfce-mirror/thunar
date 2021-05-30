@@ -1168,6 +1168,8 @@ thunar_transfer_job_move_file (ExoJob                *job,
 }
 
 
+
+/*
 static GList *
 thunar_transfer_job_filter_running_jobs (GList     *jobs,
                                          ThunarJob *own_job)
@@ -1190,6 +1192,7 @@ thunar_transfer_job_filter_running_jobs (GList     *jobs,
 
   return run_jobs;
 }
+*/
 
 
 
@@ -1402,28 +1405,25 @@ thunar_transfer_job_determine_copy_behavior (ThunarTransferJob *transfer_job,
 
 
 /**
- * thunar_transfer_job_freeze_optional:
- * @job : a #ThunarTransferJob.
+ * thunar_transfer_job_can_start:
  *
- * Based on thunar setting, will block until all running jobs
- * doing IO on the source files or target files devices are completed.
- * The unblocking could be forced by the user in the UI.
  *
  **/
-static void
-thunar_transfer_job_freeze_optional (ThunarTransferJob *transfer_job)
+gboolean
+thunar_transfer_job_can_start (ThunarTransferJob *transfer_job,
+                               GList             *running_job_list)
 {
-  gboolean            freeze_if_src_busy;
-  gboolean            freeze_if_tgt_busy;
-  gboolean            always_parallel_copy;
-  gboolean            should_freeze_on_any_other_job;
-  gboolean            been_frozen;
+  gboolean freeze_if_src_busy;
+  gboolean freeze_if_tgt_busy;
+  gboolean always_parallel_copy;
+  gboolean should_freeze_on_any_other_job;
 
-  _thunar_return_if_fail (THUNAR_IS_TRANSFER_JOB (transfer_job));
+  _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (transfer_job), FALSE);
+  _thunar_return_val_if_fail (!exo_job_is_cancelled (EXO_JOB (transfer_job)), TRUE);
 
   /* no source node list nor target file list */
   if (transfer_job->source_node_list == NULL || transfer_job->target_file_list == NULL)
-    return;
+    return TRUE;
   /* first source file */
   thunar_transfer_job_fill_source_device_info (transfer_job, ((ThunarTransferNode*) transfer_job->source_node_list->data)->source_file);
   /* first target file */
@@ -1433,46 +1433,16 @@ thunar_transfer_job_freeze_optional (ThunarTransferJob *transfer_job)
                                                &freeze_if_tgt_busy,
                                                &always_parallel_copy,
                                                &should_freeze_on_any_other_job);
-  if (always_parallel_copy)
-    return;
 
-  been_frozen = FALSE; /* this boolean can only take the TRUE value once. */
-  while (TRUE)
-    {
-      GList *jobs = thunar_job_ask_jobs (THUNAR_JOB (transfer_job));
-      GList *other_jobs = thunar_transfer_job_filter_running_jobs (jobs, THUNAR_JOB (transfer_job));
-      g_list_free (g_steal_pointer (&jobs));
-      if
-        (
-          /* should freeze because another job is running */
-          (should_freeze_on_any_other_job && other_jobs != NULL) ||
-          /* should freeze because source is busy and source device id appears in another job */
-          (freeze_if_src_busy && thunar_transfer_job_device_id_in_job_list (transfer_job->source_device_fs_id, other_jobs)) ||
-          /* should freeze because target is busy and target device id appears in another job */
-          (freeze_if_tgt_busy && thunar_transfer_job_device_id_in_job_list (transfer_job->target_device_fs_id, other_jobs))
-        )
-        g_list_free (g_steal_pointer (&other_jobs));
-      else
-        {
-          g_list_free (g_steal_pointer (&other_jobs));
-          break;
-        }
-      if (exo_job_is_cancelled (EXO_JOB (transfer_job)))
-        break;
-      if (!thunar_job_is_frozen (THUNAR_JOB (transfer_job)))
-        {
-          if (been_frozen)
-            break; /* cannot re-freeze. It means that the user force to unfreeze */
-          else
-            {
-              been_frozen = TRUE; /* first time here. The job needs to change to frozen state */
-              thunar_job_freeze (THUNAR_JOB (transfer_job));
-            }
-        }
-      g_usleep(500 * 1000); /* pause for 500ms */
-    }
-  if (thunar_job_is_frozen (THUNAR_JOB (transfer_job)))
-    thunar_job_unfreeze (THUNAR_JOB (transfer_job));
+  if (should_freeze_on_any_other_job && running_job_list != NULL)
+    return FALSE;
+  if (freeze_if_src_busy && thunar_transfer_job_device_id_in_job_list (transfer_job->source_device_fs_id, running_job_list))
+    return FALSE;
+  if (freeze_if_tgt_busy && thunar_transfer_job_device_id_in_job_list (transfer_job->target_device_fs_id, running_job_list))
+    return FALSE;
+
+  /* TODO: Handle manual unfreeze */
+  return TRUE;
 }
 
 
@@ -1575,8 +1545,6 @@ thunar_transfer_job_execute (ExoJob  *job,
               return TRUE;
             }
         }
-
-      thunar_transfer_job_freeze_optional (transfer_job);
 
       /* transfer starts now */
       transfer_job->start_time = g_get_real_time ();
