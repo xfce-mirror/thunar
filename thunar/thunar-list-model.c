@@ -1012,6 +1012,8 @@ thunar_list_model_get_sort_column_id (GtkTreeSortable *sortable,
     *sort_column_id = THUNAR_COLUMN_DATE_MODIFIED;
   else if (store->sort_func == sort_by_date_deleted)
     *sort_column_id = THUNAR_COLUMN_DATE_DELETED;
+  else if (store->sort_func == sort_by_recency)
+    *sort_column_id = THUNAR_COLUMN_RECENCY;
   else if (store->sort_func == sort_by_type)
     *sort_column_id = THUNAR_COLUMN_TYPE;
   else if (store->sort_func == sort_by_owner)

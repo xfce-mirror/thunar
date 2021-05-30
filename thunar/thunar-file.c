@@ -164,6 +164,7 @@ struct _ThunarFile
 
   /* storage for the file information */
   GFileInfo            *info;
+  GFileInfo            *recent_info;
   GFileType             kind;
   GFile                *gfile;
   gchar                *content_type;
@@ -1366,6 +1367,19 @@ thunar_file_get_with_info (GFile     *gfile,
 
 
 
+ThunarFile *
+thunar_file_get_with_recent_info (GFile     *gfile,
+                                  GFileInfo *info,
+                                  GFileInfo *recent_info,
+                                  gboolean   not_mounted)
+{
+  ThunarFile *file = thunar_file_get_with_info (gfile, info, not_mounted);
+  file->recent_info = g_object_ref (recent_info);
+  return file;
+}
+
+
+
 
 
 /**
@@ -2097,23 +2111,11 @@ guint64
 thunar_file_get_date (const ThunarFile  *file,
                       ThunarFileDateType date_type)
 {
-  GFileInfo   *info;
   const gchar *attribute;
   GDateTime   *datetime;
   gint64       date;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), 0);
-
-//  info = g_file_query_info (file->gfile,
-//                            "standard::*,access::*,mountable::*,time::*,unix::*,owner::*,selinux::*,thumbnail::*,id::filesystem,trash::orig-path,trash::deletion-date,metadata::*,recent::*",
-//                            0,
-//                            NULL, NULL);
-//  char **list = g_file_info_list_attributes(info, NULL);
-//  printf("FILE: %s\n", file->display_name);
-//  while (*list) {
-//      printf("%s\n", *list);
-//      list++;
-//    }
 
   if (file->info == NULL)
     return 0;
@@ -2140,7 +2142,7 @@ thunar_file_get_date (const ThunarFile  *file,
       g_date_time_unref (datetime);
       return date;
     case THUNAR_FILE_RECENCY:
-      return g_file_info_get_attribute_int64 (file->info, G_FILE_ATTRIBUTE_RECENT_MODIFIED);
+      return g_file_info_get_attribute_int64 (file->recent_info ? file->recent_info : file->info, G_FILE_ATTRIBUTE_RECENT_MODIFIED);
 
     default:
       _thunar_assert_not_reached ();
@@ -3240,9 +3242,9 @@ thunar_file_get_recency       (const ThunarFile *file,
   time_t       recency_time;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->info), NULL);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->recent_info), NULL);
 
-  date = g_file_info_get_attribute_string (file->info, G_FILE_ATTRIBUTE_RECENT_MODIFIED);
+  date = g_file_info_get_attribute_string (file->recent_info, G_FILE_ATTRIBUTE_RECENT_MODIFIED);
   if (G_UNLIKELY (date == NULL))
     return NULL;
 
