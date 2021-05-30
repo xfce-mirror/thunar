@@ -1061,6 +1061,10 @@ thunar_list_model_set_sort_column_id (GtkTreeSortable *sortable,
       store->sort_func = sort_by_date_deleted;
       break;
 
+    case THUNAR_COLUMN_RECENCY:
+      store->sort_func = sort_by_recency;
+      break;
+
     case THUNAR_COLUMN_GROUP:
       store->sort_func = sort_by_group;
       break;
