@@ -60,6 +60,7 @@ typedef enum
   THUNAR_FILE_DATE_CREATED,
   THUNAR_FILE_DATE_MODIFIED,
   THUNAR_FILE_DATE_DELETED,
+  THUNAR_FILE_RECENCY,
 } ThunarFileDateType;
 
 /**
@@ -219,6 +220,9 @@ gboolean          thunar_file_is_desktop_file            (const ThunarFile      
 const gchar      *thunar_file_get_display_name           (const ThunarFile       *file) G_GNUC_CONST;
 
 gchar            *thunar_file_get_deletion_date          (const ThunarFile       *file,
+                                                          ThunarDateStyle         date_style,
+                                                          const gchar            *date_custom_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+gchar            *thunar_file_get_recency                (const ThunarFile       *file,
                                                           ThunarDateStyle         date_style,
                                                           const gchar            *date_custom_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 const gchar      *thunar_file_get_original_path          (const ThunarFile       *file);
