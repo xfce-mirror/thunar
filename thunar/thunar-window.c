@@ -4057,6 +4057,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
                                      ThunarFile   *current_directory)
 {
   gboolean is_trash;
+  gboolean is_recent;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
@@ -4141,6 +4142,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
     return;
 
   is_trash = thunar_file_is_trash (current_directory);
+  is_recent = thunar_file_is_recent (current_directory);
   if (is_trash)
     gtk_widget_show (window->trash_infobar);
   else
@@ -4149,6 +4151,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
   if (THUNAR_IS_DETAILS_VIEW (window->view) == FALSE)
     return;
   thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), is_trash);
+  thunar_details_view_set_recency_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
 }
 
 
