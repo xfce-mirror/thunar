@@ -4549,7 +4549,6 @@ thunar_file_set_metadata_setting_finish (GObject      *source_object,
       g_warning ("Failed to set metadata: %s", error->message);
       g_error_free (error);
     }
-    
   thunar_file_changed (file);
 }
 

@@ -1702,6 +1702,16 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
       thunar_zoom_level_value_from_string (zoom_level_name, &zoom_level);
       thunar_standard_view_set_zoom_level (THUNAR_VIEW (standard_view), zoom_level);
     }
+  else
+    {
+      g_object_get (G_OBJECT (standard_view->preferences), THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->zoom_level_property_name, &zoom_level, NULL);
+      if (g_strcmp0 (THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->zoom_level_property_name, "last-compact-view-zoom-level") == 0)
+        thunar_view_set_zoom_level (THUNAR_VIEW (standard_view), DEFAULT_COMPACT_VIEW_ZOOM);
+      else if (g_strcmp0 (THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->zoom_level_property_name, "last-details-view-zoom-level") == 0)
+        thunar_view_set_zoom_level (THUNAR_VIEW (standard_view), DEFAULT_DETAILS_VIEW_ZOOM);
+      else
+        thunar_view_set_zoom_level (THUNAR_VIEW (standard_view), DEFAULT_ICON_VIEW_ZOOM);
+    }
 
   /* thunar_standard_view_sort_column_changed saves the directory specific settings to the directory, but we do not
    * want that behaviour here so we disconnect the signal before calling gtk_tree_sortable_set_sort_column_id */
