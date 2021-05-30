@@ -215,6 +215,7 @@ gboolean          thunar_file_is_regular                 (const ThunarFile      
 gboolean          thunar_file_is_trash                   (const ThunarFile       *file);
 gboolean          thunar_file_is_trashed                 (const ThunarFile       *file);
 gboolean          thunar_file_is_recent                  (const ThunarFile       *file);
+gboolean          thunar_file_is_in_recent               (const ThunarFile       *file);
 gboolean          thunar_file_is_desktop_file            (const ThunarFile       *file,
                                                           gboolean               *is_secure);
 const gchar      *thunar_file_get_display_name           (const ThunarFile       *file) G_GNUC_CONST;

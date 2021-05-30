@@ -3093,6 +3093,15 @@ thunar_file_is_recent (const ThunarFile *file)
 
 
 
+gboolean
+thunar_file_is_in_recent (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  return thunar_g_file_is_in_recent (file->gfile);
+}
+
+
+
 /**
  * thunar_file_is_desktop_file:
  * @file      : a #ThunarFile.
@@ -3425,7 +3434,7 @@ thunar_file_get_emblem_names (ThunarFile *file)
     {
       emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_CANT_READ);
     }
-  else if (G_UNLIKELY (uid == effective_user_id && !thunar_file_is_writable (file) && !thunar_file_is_trashed (file)))
+  else if (G_UNLIKELY (uid == effective_user_id && !thunar_file_is_writable (file) && !thunar_file_is_trashed (file) && !thunar_file_is_in_recent (file)))
     {
       /* we own the file, but we cannot write to it, that's why we mark it as "cant-write", so
        * users won't be surprised when opening the file in a text editor, but are unable to save.
