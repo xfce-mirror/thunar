@@ -57,6 +57,9 @@ GType      thunar_simple_job_get_type           (void) G_GNUC_CONST;
 ThunarJob *thunar_simple_job_launch             (ThunarSimpleJobFunc func,
                                                  guint               n_param_values,
                                                  ...) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarJob *thunar_simple_job_new                (ThunarSimpleJobFunc func,
+                                                 guint               n_param_values,
+                                                 ...) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 GArray    *thunar_simple_job_get_param_values   (ThunarSimpleJob    *job);
 
 G_END_DECLS
