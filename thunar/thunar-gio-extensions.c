@@ -153,6 +153,15 @@ thunar_g_file_is_trashed (GFile *file)
 
 
 gboolean
+thunar_g_file_is_in_recent (GFile *file)
+{
+  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+  return g_file_has_uri_scheme (file, "recent");
+}
+
+
+
+gboolean
 thunar_g_file_is_home (GFile *file)
 {
   GFile   *home;
