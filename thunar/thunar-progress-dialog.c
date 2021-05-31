@@ -223,7 +223,7 @@ static void
 launch_waiting_jobs (ThunarProgressDialog *dialog)
 {
   gboolean           launched     = FALSE;
-  GList             *lp           = dialog->views_waiting;
+  GList             *lp           = NULL;
   GList             *next         = NULL;
   GList             *job_list;
   ThunarTransferJob *transfer_job;
@@ -232,6 +232,7 @@ launch_waiting_jobs (ThunarProgressDialog *dialog)
     return;
 
   g_mutex_lock (&dialog->views_mutex);
+  lp = dialog->views_waiting;
   job_list = thunar_progress_dialog_list_jobs (dialog);
   while (lp != NULL)
     {
@@ -442,6 +443,11 @@ thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
 gboolean
 thunar_progress_dialog_has_jobs (ThunarProgressDialog *dialog)
 {
+  gboolean has_jobs;
   _thunar_return_val_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog), FALSE);
-  return thunar_progress_dialog_n_views (dialog) != 0;
+
+  g_mutex_lock (&dialog->views_mutex);
+  has_jobs = (dialog->views != NULL) || (dialog->views_waiting != NULL)
+  g_mutex_unlock (&dialog->views_mutex);
+  return has_jobs;
 }
