@@ -1414,7 +1414,6 @@ thunar_transfer_job_can_start (ThunarTransferJob *transfer_job,
   if (freeze_if_tgt_busy && thunar_transfer_job_device_id_in_job_list (transfer_job->target_device_fs_id, running_job_list))
     return FALSE;
 
-  /* TODO: Handle manual unfreeze */
   return TRUE;
 }
 
