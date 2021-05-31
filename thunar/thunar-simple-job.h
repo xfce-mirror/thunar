@@ -29,10 +29,10 @@ G_BEGIN_DECLS
  * ThunarSimpleJobFunc:
  * @job            : a #ThunarJob.
  * @param_values   : a #GArray of the #GValue<!---->s passed to
- *                   thunar_simple_job_launch().
+ *                   thunar_simple_job_new().
  * @error          : return location for errors.
  *
- * Used by the #ThunarSimpleJob to process the @job. See thunar_simple_job_launch()
+ * Used by the #ThunarSimpleJob to process the @job. See thunar_simple_job_new()
  * for further details.
  *
  * Return value: %TRUE on success, %FALSE in case of an error.
@@ -54,7 +54,7 @@ typedef struct _ThunarSimpleJob      ThunarSimpleJob;
 
 GType      thunar_simple_job_get_type           (void) G_GNUC_CONST;
 
-ThunarJob *thunar_simple_job_launch             (ThunarSimpleJobFunc func,
+ThunarJob *thunar_simple_job_new                (ThunarSimpleJobFunc func,
                                                  guint               n_param_values,
                                                  ...) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 GArray    *thunar_simple_job_get_param_values   (ThunarSimpleJob    *job);
