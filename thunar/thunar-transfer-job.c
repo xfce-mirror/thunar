@@ -1169,33 +1169,6 @@ thunar_transfer_job_move_file (ExoJob                *job,
 
 
 
-/*
-static GList *
-thunar_transfer_job_filter_running_jobs (GList     *jobs,
-                                         ThunarJob *own_job)
-{
-  ThunarJob *job;
-  GList     *run_jobs = NULL;
-
-  _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (own_job), NULL);
-
-  for (GList *ljobs = jobs; ljobs != NULL; ljobs = ljobs->next)
-    {
-      job = ljobs->data;
-      if (job == own_job)
-        continue;
-      if (!exo_job_is_cancelled (EXO_JOB (job)) && !thunar_job_is_paused (job) && !thunar_job_is_frozen (job))
-        {
-          run_jobs = g_list_append (run_jobs, job);
-        }
-    }
-
-  return run_jobs;
-}
-*/
-
-
-
 static gboolean
 thunar_transfer_job_device_id_in_job_list (const char *device_fs_id,
                                            GList      *jobs)
