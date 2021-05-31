@@ -43,7 +43,6 @@ enum
 {
   ASK,
   ASK_REPLACE,
-  ASK_JOBS,
   FILES_READY,
   NEW_FILES,
   FROZEN,
@@ -203,22 +202,6 @@ thunar_job_class_init (ThunarJobClass *klass)
                   G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
                   g_cclosure_marshal_VOID__POINTER,
                   G_TYPE_NONE, 1, G_TYPE_POINTER);
-
-  /**
-   * ThunarJob::ask-jobs:
-   * @job      : a #ThunarJob.
-   *
-   * Emitted to ask the running job list.
-   *
-   * Return value: GList* of running jobs.
-   **/
-  job_signals[ASK_JOBS] =
-    g_signal_new (I_("ask-jobs"),
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_NO_HOOKS, 0,
-                  NULL, NULL,
-                  g_cclosure_marshal_generic,
-                  G_TYPE_POINTER, 0);
 
   /**
    * ThunarJob::frozen:
@@ -700,19 +683,6 @@ thunar_job_new_files (ThunarJob   *job,
       /* emit the "new-files" signal */
       exo_job_emit (EXO_JOB (job), job_signals[NEW_FILES], 0, file_list);
     }
-}
-
-
-
-GList *
-thunar_job_ask_jobs (ThunarJob *job)
-{
-  GList* jobs = NULL;
-
-  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), NULL);
-
-  g_signal_emit (EXO_JOB (job), job_signals[ASK_JOBS], 0, &jobs);
-  return jobs;
 }
 
 
