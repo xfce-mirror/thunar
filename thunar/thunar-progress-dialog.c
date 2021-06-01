@@ -57,8 +57,6 @@ struct _ThunarProgressDialog
   GtkWidget     *vbox;
   GtkWidget     *content_box;
 
-  /* A mutex locked whenever views or views_waiting is modified */
-  GMutex         views_mutex;
   /* List of running views, type ThunarProgressView */
   GList         *views;
   /* List of waiting views, type ThunarProgressView */
@@ -94,7 +92,6 @@ thunar_progress_dialog_init (ThunarProgressDialog *dialog)
 {
   dialog->views = NULL;
   dialog->views_waiting = NULL;
-  g_mutex_init (&dialog->views_mutex);
 
   gtk_window_set_title (GTK_WINDOW (dialog), _("File Operation Progress"));
   gtk_window_set_default_size (GTK_WINDOW (dialog), 450, 10);
@@ -162,10 +159,8 @@ thunar_progress_dialog_n_views (ThunarProgressDialog *dialog)
 {
   gint n_views;
 
-  g_mutex_lock (&dialog->views_mutex);
   n_views  = g_list_length (dialog->views);
   n_views += g_list_length (dialog->views_waiting);
-  g_mutex_unlock (&dialog->views_mutex);
 
   return n_views;
 }
@@ -197,8 +192,6 @@ thunar_progress_dialog_launch_view (ThunarProgressDialog *dialog,
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog));
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_VIEW (view));
 
-  g_mutex_lock (&dialog->views_mutex);
-
   view_lp = g_list_find (dialog->views_waiting, view);
   if (view_lp != NULL)
     {
@@ -213,8 +206,6 @@ thunar_progress_dialog_launch_view (ThunarProgressDialog *dialog,
       g_info ("Job \"%s\" does not exist in waiting list",
               g_value_get_string (&title));
     }
-
-  g_mutex_unlock (&dialog->views_mutex);
 }
 
 
@@ -228,14 +219,9 @@ launch_waiting_jobs (ThunarProgressDialog *dialog)
   GList             *job_list;
   ThunarTransferJob *transfer_job;
 
-
-  g_mutex_lock (&dialog->views_mutex);
   lp = dialog->views_waiting;
   if (lp == NULL)
-    {
-      g_mutex_unlock (&dialog->views_mutex);
-      return;
-    }
+    return;
   job_list = thunar_progress_dialog_list_jobs (dialog);
   while (lp != NULL)
     {
@@ -255,7 +241,6 @@ launch_waiting_jobs (ThunarProgressDialog *dialog)
       lp = next;
     }
   g_list_free (job_list);
-  g_mutex_unlock (&dialog->views_mutex);
 
   if (launched == FALSE)
     g_warning ("Waiting jobs cannot be launched");
@@ -273,10 +258,8 @@ thunar_progress_dialog_job_finished (ThunarProgressDialog *dialog,
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_VIEW (view));
 
   /* remove the view from the list */
-  g_mutex_lock (&dialog->views_mutex);
   dialog->views         = g_list_remove (dialog->views,         view);
   dialog->views_waiting = g_list_remove (dialog->views_waiting, view);
-  g_mutex_unlock (&dialog->views_mutex);
 
   /* destroy the widget */
   gtk_widget_destroy (GTK_WIDGET (view));
@@ -391,16 +374,12 @@ thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
   if (!THUNAR_IS_TRANSFER_JOB (job)
       || thunar_transfer_job_can_start (THUNAR_TRANSFER_JOB (job), job_list))
     {
-      g_mutex_lock (&dialog->views_mutex);
       dialog->views = g_list_append (dialog->views, view);
-      g_mutex_unlock (&dialog->views_mutex);
       thunar_progress_view_launch_job (THUNAR_PROGRESS_VIEW (view));
     }
   else
     {
-      g_mutex_lock (&dialog->views_mutex);
       dialog->views_waiting = g_list_append (dialog->views_waiting, view);
-      g_mutex_unlock (&dialog->views_mutex);
     }
   g_list_free (job_list);
 
@@ -449,9 +428,7 @@ thunar_progress_dialog_has_jobs (ThunarProgressDialog *dialog)
   gboolean has_jobs;
   _thunar_return_val_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog), FALSE);
 
-  g_mutex_lock (&dialog->views_mutex);
   has_jobs = (dialog->views != NULL) || (dialog->views_waiting != NULL);
-  g_mutex_unlock (&dialog->views_mutex);
 
   return has_jobs;
 }
