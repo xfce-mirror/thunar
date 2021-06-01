@@ -143,7 +143,7 @@ thunar_simple_job_execute (ExoJob  *job,
 
 
 /**
- * thunar_simple_job_launch:
+ * thunar_simple_job_new:
  * @func           : the #ThunarSimpleJobFunc to execute the job.
  * @n_param_values : the number of parameters to pass to the @func.
  * @...            : a list of #GType and parameter pairs (exactly
@@ -152,24 +152,27 @@ thunar_simple_job_execute (ExoJob  *job,
  * Allocates a new #ThunarSimpleJob, which executes the specified
  * @func with the specified parameters.
  *
+ * Use exo_job_launch() to launch the returned job..
+ *
  * For example the listdir @func expects a #ThunarPath for the
- * folder to list, so the call to thunar_simple_job_launch()
+ * folder to list, so the call to thunar_simple_job_new()
  * would look like this:
  *
  * <informalexample><programlisting>
- * thunar_simple_job_launch (_thunar_io_jobs_listdir, 1,
- *                               THUNAR_TYPE_PATH, path);
+ * job = thunar_simple_job_new (_thunar_io_jobs_listdir, 1,
+ *                              THUNAR_TYPE_PATH, path);
+ * exo_job_launch (EXO_JOB (job));
  * </programlisting></informalexample>
  *
  * The caller is responsible to release the returned object using
  * thunar_job_unref() when no longer needed.
  *
- * Return value: the launched #ThunarJob.
+ * Return value: a #ThunarJob.
  **/
 ThunarJob *
-thunar_simple_job_launch (ThunarSimpleJobFunc func,
-                          guint               n_param_values,
-                          ...)
+thunar_simple_job_new (ThunarSimpleJobFunc func,
+                       guint               n_param_values,
+                       ...)
 {
   ThunarSimpleJob *simple_job;
   va_list          var_args;
@@ -207,8 +210,7 @@ thunar_simple_job_launch (ThunarSimpleJobFunc func,
     }
   va_end (var_args);
 
-  /* launch the job */
-  return THUNAR_JOB (exo_job_launch (EXO_JOB (simple_job)));
+  return THUNAR_JOB (simple_job);
 }
 
 

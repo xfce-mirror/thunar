@@ -733,6 +733,7 @@ thunar_permissions_chooser_change_group (ThunarPermissionsChooser *chooser,
   /* try to allocate the new job */
   file_list = thunar_permissions_chooser_get_file_list (chooser);
   job = thunar_io_jobs_change_group (file_list, gid, recursive);
+  exo_job_launch (EXO_JOB (job));
   thunar_permissions_chooser_job_start (chooser, job, recursive);
   g_list_free_full (file_list, g_object_unref);
   g_object_unref (job);
@@ -778,6 +779,7 @@ thunar_permissions_chooser_change_mode (ThunarPermissionsChooser *chooser,
   /* try to allocate the new job */
   file_list = thunar_permissions_chooser_get_file_list (chooser);
   job = thunar_io_jobs_change_mode (file_list, dir_mask, dir_mode, file_mask, file_mode, recursive);
+  exo_job_launch (EXO_JOB (job));
   thunar_permissions_chooser_job_start (chooser, job, recursive);
   g_list_free_full (file_list, g_object_unref);
   g_object_unref (job);
@@ -1197,6 +1199,7 @@ thunar_permissions_chooser_fixperm_clicked (ThunarPermissionsChooser *chooser,
           /* try to allocate the new job */
           job = thunar_io_jobs_change_mode (&file_list,
                                             0511, mode, 0000, 0000, FALSE);
+          exo_job_launch (EXO_JOB (job));
 
           /* handle the job */
           thunar_permissions_chooser_job_start (chooser, job, FALSE);
