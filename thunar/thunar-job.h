@@ -104,8 +104,6 @@ gboolean          thunar_job_files_ready            (ThunarJob       *job,
                                                      GList           *file_list);
 void              thunar_job_new_files              (ThunarJob       *job,
                                                      const GList     *file_list);
-GList *           thunar_job_ask_jobs               (ThunarJob       *job);
-
 G_END_DECLS
 
 #endif /* !__THUNAR_JOB_H__ */

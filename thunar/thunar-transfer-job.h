@@ -57,6 +57,9 @@ ThunarJob *thunar_transfer_job_new        (GList                *source_file_lis
 
 gchar     *thunar_transfer_job_get_status (ThunarTransferJob    *job);
 
+gboolean   thunar_transfer_job_can_start  (ThunarTransferJob *transfer_job,
+                                           GList             *running_job_list);
+
 G_END_DECLS
 
 #endif /* !__THUNAR_TRANSFER_JOB_H__ */
