@@ -1978,7 +1978,13 @@ thunar_window_notebook_insert (ThunarWindow  *window,
 
   /* set the history of the view if a history is provided */
   if (history != NULL)
-    thunar_standard_view_set_history (THUNAR_STANDARD_VIEW (view), history);
+    {
+      /* history only is updated on 'change-directory' signal. */
+      /* For inserting a new tab, we need to update it manually */
+      thunar_history_add (history, directory);
+
+      thunar_standard_view_set_history (THUNAR_STANDARD_VIEW (view), history);
+    }
 
   label_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 
@@ -2033,7 +2039,9 @@ thunar_window_notebook_open_new_tab (ThunarWindow *window,
 
   /* save the history of the current view */
   if (THUNAR_IS_STANDARD_VIEW (window->view))
-    history = thunar_standard_view_copy_history (THUNAR_STANDARD_VIEW (window->view));
+    {
+      history = thunar_standard_view_copy_history (THUNAR_STANDARD_VIEW (window->view));
+    }
 
   /* find the correct view type */
   view_type = thunar_window_view_type_for_directory (window, directory);
