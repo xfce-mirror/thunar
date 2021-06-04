@@ -63,6 +63,8 @@ void            thunar_history_action_forward   (ThunarHistory         *history)
 void            thunar_history_show_menu        (ThunarHistory         *history,
                                                  ThunarHistoryMenuType  type,
                                                  GtkWidget             *parent);
+void            thunar_history_add              (ThunarHistory         *history,
+                                                 ThunarFile            *directory);
 
 G_END_DECLS;
 
