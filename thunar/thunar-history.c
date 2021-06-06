@@ -729,7 +729,7 @@ thunar_history_peek_forward (ThunarHistory *history)
 /**
  * thunar_history_add:
  * @history : a #ThunarHistory
- * @history : a #ThunarFile
+ * @directory : a #ThunarFile
  *
  * Manually adds the passed directory to the history
  **/
