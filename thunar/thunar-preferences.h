@@ -24,6 +24,10 @@
 
 G_BEGIN_DECLS;
 
+#define DEFAULT_COMPACT_VIEW_ZOOM THUNAR_ZOOM_LEVEL_25_PERCENT
+#define DEFAULT_DETAILS_VIEW_ZOOM THUNAR_ZOOM_LEVEL_38_PERCENT
+#define DEFAULT_ICON_VIEW_ZOOM THUNAR_ZOOM_LEVEL_100_PERCENT
+
 typedef struct _ThunarPreferencesClass ThunarPreferencesClass;
 typedef struct _ThunarPreferences      ThunarPreferences;
 
