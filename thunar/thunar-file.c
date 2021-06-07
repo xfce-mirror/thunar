@@ -2905,7 +2905,7 @@ thunar_file_is_executable (const ThunarFile *file)
         return FALSE;
 
       /* do never execute plain text files which are not shell scripts but marked executable */
-      if (g_strcmp0 (content_type, "text/plain") == 0)
+      if (g_content_type_equals (content_type, "text/plain"))
         return FALSE;
 
       /* check if the shell scripts should be executed or opened by default */
