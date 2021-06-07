@@ -200,6 +200,8 @@ thunar_column_model_init (ThunarColumnModel *column_model)
 
   /* load the list of visible columns */
   thunar_column_model_load_visible_columns (column_model);
+
+  column_model->save_width_timer_id = 0;
 }
 
 
@@ -1014,7 +1016,10 @@ thunar_column_model_set_column_width (ThunarColumnModel *column_model,
 
       /* store the settings... */
       if (column_model->save_width_timer_id != 0)
-        g_source_remove (column_model->save_width_timer_id);
+        {
+          g_source_remove (column_model->save_width_timer_id);
+          column_model->save_width_timer_id = 0;
+        }
 
       /* ... asynchronously and only once to not overload xfconf */
       column_model->save_width_timer_id = g_timeout_add (1000,
