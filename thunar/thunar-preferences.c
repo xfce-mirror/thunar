@@ -217,7 +217,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          "LastCompactViewZoomLevel",
                          NULL,
                          THUNAR_TYPE_ZOOM_LEVEL,
-                         THUNAR_ZOOM_LEVEL_25_PERCENT,
+                         DEFAULT_COMPACT_VIEW_ZOOM,
                          EXO_PARAM_READWRITE);
 
 
@@ -282,7 +282,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          "LastDetailsViewZoomLevel",
                          NULL,
                          THUNAR_TYPE_ZOOM_LEVEL,
-                         THUNAR_ZOOM_LEVEL_38_PERCENT,
+                         DEFAULT_DETAILS_VIEW_ZOOM,
                          EXO_PARAM_READWRITE);
 
   /**
@@ -295,7 +295,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                          "LastIconViewZoomLevel",
                          NULL,
                          THUNAR_TYPE_ZOOM_LEVEL,
-                         THUNAR_ZOOM_LEVEL_100_PERCENT,
+                         DEFAULT_ICON_VIEW_ZOOM,
                          EXO_PARAM_READWRITE);
 
   /**
