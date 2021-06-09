@@ -4553,7 +4553,6 @@ thunar_file_set_metadata_setting_finish (GObject      *source_object,
       g_warning ("Failed to set metadata: %s", error->message);
       g_error_free (error);
     }
-
   thunar_file_changed (file);
 }
 
@@ -4619,12 +4618,15 @@ thunar_file_clear_directory_specific_settings (ThunarFile *file)
   g_file_info_remove_attribute (file->info, "metadata::thunar-view-type");
   g_file_info_remove_attribute (file->info, "metadata::thunar-sort-column");
   g_file_info_remove_attribute (file->info, "metadata::thunar-sort-order");
+  g_file_info_remove_attribute (file->info, "metadata::thunar-zoom-level");
 
   g_file_set_attribute (file->gfile, "metadata::thunar-view-type", G_FILE_ATTRIBUTE_TYPE_INVALID,
                         NULL, G_FILE_QUERY_INFO_NONE, NULL, NULL);
   g_file_set_attribute (file->gfile, "metadata::thunar-sort-column", G_FILE_ATTRIBUTE_TYPE_INVALID,
                         NULL, G_FILE_QUERY_INFO_NONE, NULL, NULL);
   g_file_set_attribute (file->gfile, "metadata::thunar-sort-order", G_FILE_ATTRIBUTE_TYPE_INVALID,
+                        NULL, G_FILE_QUERY_INFO_NONE, NULL, NULL);
+  g_file_set_attribute (file->gfile, "metadata::thunar-zoom-level", G_FILE_ATTRIBUTE_TYPE_INVALID,
                         NULL, G_FILE_QUERY_INFO_NONE, NULL, NULL);
 
   thunar_file_changed (file);
@@ -4653,6 +4655,8 @@ thunar_file_has_directory_specific_settings (ThunarFile *file)
   if (g_file_info_has_attribute (file->info, "metadata::thunar-sort-column"))
     return TRUE;
   if (g_file_info_has_attribute (file->info, "metadata::thunar-sort-order"))
+    return TRUE;
+  if (g_file_info_has_attribute (file->info, "metadata::thunar-zoom-level"))
     return TRUE;
 
   return FALSE;
