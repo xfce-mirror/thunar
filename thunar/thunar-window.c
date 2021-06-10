@@ -298,11 +298,8 @@ static void      thunar_window_trash_infobar_clicked           (GtkInfoBar      
                                                                 gint                    response_id,
                                                                 ThunarWindow           *window);
 static void      thunar_window_trash_selection_updated         (ThunarWindow           *window);
-
-static void thunar_window_recent_reload (GtkRecentManager *recent_manager, ThunarWindow *window)
-{
-  thunar_window_action_reload (window, NULL);
-}
+static void      thunar_window_recent_reload                   (GtkRecentManager       *recent_manager,
+                                                                ThunarWindow           *window);
 
 
 
@@ -4612,4 +4609,14 @@ thunar_window_trash_selection_updated (ThunarWindow *window)
     gtk_widget_set_sensitive (window->trash_infobar_restore_button, TRUE);
   else
     gtk_widget_set_sensitive (window->trash_infobar_restore_button, FALSE);
+}
+
+
+
+static void
+thunar_window_recent_reload (GtkRecentManager *recent_manager,
+                             ThunarWindow     *window)
+{
+  if (thunar_file_is_in_recent (window->current_directory)) // TODO: or should I disable the signal?
+    thunar_window_action_reload (window, NULL);
 }
