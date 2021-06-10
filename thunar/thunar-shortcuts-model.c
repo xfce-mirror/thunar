@@ -1141,7 +1141,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
       thunar_shortcuts_model_add_shortcut (model, shortcut);
     }
 
-  /* append the computer icon if browsing the computer is supported */
+  /* append the recent icon if browsing recent is supported */
   if (thunar_g_vfs_is_uri_scheme_supported ("recent"))
     {
       shortcut = g_slice_new0 (ThunarShortcut);

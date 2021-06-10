@@ -2418,9 +2418,8 @@ thunar_launcher_action_trash_delete (ThunarLauncher *launcher)
 static void
 thunar_launcher_action_recent_remove (ThunarLauncher *launcher)
 {
-  GtkRecentManager *recent_manager = gtk_recent_manager_get_default();
-  GdkModifierType event_state;
-  GList* lp;
+  GtkRecentManager  *recent_manager = gtk_recent_manager_get_default();
+  GList             *lp;
 
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
