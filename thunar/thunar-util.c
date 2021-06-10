@@ -653,8 +653,8 @@ thunar_setup_display_cb (gpointer data)
 
 /**
  * thunar_util_next_new_file_name
- * @dir : a directory file
- * @file_name : the filename which we will be used as the basis/default
+ * @dir : the directory to search for a free filename
+ * @file_name : the filename which will be used as the basis/default
  *
  * Returns a filename that is like @file_name with the possible addition of
  * a number to differentiate it from other similarly named files. In other words
@@ -668,6 +668,8 @@ thunar_setup_display_cb (gpointer data)
  *
  * Calling this functions with the above folder and @file_name equal to 'file' the returned
  * filename will be 'file 1'.
+ *
+ * The caller is responsible to free the returned string using g_free() when no longer needed.
  *
  * Return value: pointer to the new filename.
 **/
