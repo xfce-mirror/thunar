@@ -152,6 +152,10 @@ static void               thunar_list_model_files_added           (ThunarFolder 
 static void               thunar_list_model_files_removed         (ThunarFolder           *folder,
                                                                    GList                  *files,
                                                                    ThunarListModel        *store);
+static gint               sort_by_date                            (const ThunarFile       *a,
+                                                                   const ThunarFile       *b,
+                                                                   gboolean                case_sensitive,
+                                                                   gint                    type);
 static gint               sort_by_date_created                    (const ThunarFile       *a,
                                                                    const ThunarFile       *b,
                                                                    gboolean                case_sensitive);
@@ -162,6 +166,9 @@ static gint               sort_by_date_modified                   (const ThunarF
                                                                    const ThunarFile       *b,
                                                                    gboolean                case_sensitive);
 static gint               sort_by_date_deleted                    (const ThunarFile       *a,
+                                                                   const ThunarFile       *b,
+                                                                   gboolean                case_sensitive);
+static gint               sort_by_recency                         (const ThunarFile       *a,
                                                                    const ThunarFile       *b,
                                                                    gboolean                case_sensitive);
 static gint               sort_by_group                           (const ThunarFile       *a,
@@ -746,6 +753,12 @@ thunar_list_model_get_value (GtkTreeModel *model,
       g_value_take_string (value, str);
       break;
 
+    case THUNAR_COLUMN_RECENCY:
+      g_value_init (value, G_TYPE_STRING);
+      str = thunar_file_get_date_string (file, THUNAR_FILE_RECENCY, THUNAR_LIST_MODEL (model)->date_style, THUNAR_LIST_MODEL (model)->date_custom_style);
+      g_value_take_string (value, str);
+      break;
+
     case THUNAR_COLUMN_GROUP:
       g_value_init (value, G_TYPE_STRING);
       group = thunar_file_get_group (file);
@@ -999,6 +1012,8 @@ thunar_list_model_get_sort_column_id (GtkTreeSortable *sortable,
     *sort_column_id = THUNAR_COLUMN_DATE_MODIFIED;
   else if (store->sort_func == sort_by_date_deleted)
     *sort_column_id = THUNAR_COLUMN_DATE_DELETED;
+  else if (store->sort_func == sort_by_recency)
+    *sort_column_id = THUNAR_COLUMN_RECENCY;
   else if (store->sort_func == sort_by_type)
     *sort_column_id = THUNAR_COLUMN_TYPE;
   else if (store->sort_func == sort_by_owner)
@@ -1046,6 +1061,10 @@ thunar_list_model_set_sort_column_id (GtkTreeSortable *sortable,
 
     case THUNAR_COLUMN_DATE_DELETED:
       store->sort_func = sort_by_date_deleted;
+      break;
+
+    case THUNAR_COLUMN_RECENCY:
+      store->sort_func = sort_by_recency;
       break;
 
     case THUNAR_COLUMN_GROUP:
@@ -1449,15 +1468,16 @@ thunar_list_model_files_removed (ThunarFolder    *folder,
 
 
 static gint
-sort_by_date_created (const ThunarFile *a,
+sort_by_date         (const ThunarFile *a,
                       const ThunarFile *b,
-                      gboolean          case_sensitive)
+                      gboolean          case_sensitive,
+                      gint              type)
 {
   guint64 date_a;
   guint64 date_b;
 
-  date_a = thunar_file_get_date (a, THUNAR_FILE_DATE_CREATED);
-  date_b = thunar_file_get_date (b, THUNAR_FILE_DATE_CREATED);
+  date_a = thunar_file_get_date (a, type);
+  date_b = thunar_file_get_date (b, type);
 
   if (date_a < date_b)
     return -1;
@@ -1465,6 +1485,16 @@ sort_by_date_created (const ThunarFile *a,
     return 1;
 
   return thunar_file_compare_by_name (a, b, case_sensitive);
+}
+
+
+
+static gint
+sort_by_date_created (const ThunarFile *a,
+                      const ThunarFile *b,
+                      gboolean          case_sensitive)
+{
+  return sort_by_date (a, b, case_sensitive, THUNAR_FILE_DATE_CREATED);
 }
 
 
@@ -1474,18 +1504,7 @@ sort_by_date_accessed (const ThunarFile *a,
                        const ThunarFile *b,
                        gboolean          case_sensitive)
 {
-  guint64 date_a;
-  guint64 date_b;
-
-  date_a = thunar_file_get_date (a, THUNAR_FILE_DATE_ACCESSED);
-  date_b = thunar_file_get_date (b, THUNAR_FILE_DATE_ACCESSED);
-
-  if (date_a < date_b)
-    return -1;
-  else if (date_a > date_b)
-    return 1;
-
-  return thunar_file_compare_by_name (a, b, case_sensitive);
+  return sort_by_date (a, b, case_sensitive, THUNAR_FILE_DATE_ACCESSED);
 }
 
 
@@ -1495,18 +1514,7 @@ sort_by_date_modified (const ThunarFile *a,
                        const ThunarFile *b,
                        gboolean          case_sensitive)
 {
-  guint64 date_a;
-  guint64 date_b;
-
-  date_a = thunar_file_get_date (a, THUNAR_FILE_DATE_MODIFIED);
-  date_b = thunar_file_get_date (b, THUNAR_FILE_DATE_MODIFIED);
-
-  if (date_a < date_b)
-    return -1;
-  else if (date_a > date_b)
-    return 1;
-
-  return thunar_file_compare_by_name (a, b, case_sensitive);
+  return sort_by_date (a, b, case_sensitive, THUNAR_FILE_DATE_MODIFIED);
 }
 
 
@@ -1516,19 +1524,19 @@ sort_by_date_deleted (const ThunarFile *a,
                       const ThunarFile *b,
                       gboolean          case_sensitive)
 {
-  guint64 date_a;
-  guint64 date_b;
-
-  date_a = thunar_file_get_date (a, THUNAR_FILE_DATE_DELETED);
-  date_b = thunar_file_get_date (b, THUNAR_FILE_DATE_DELETED);
-
-  if (date_a < date_b)
-    return -1;
-  else if (date_a > date_b)
-    return 1;
-
-  return thunar_file_compare_by_name (a, b, case_sensitive);
+  return sort_by_date (a, b, case_sensitive, THUNAR_FILE_DATE_DELETED);
 }
+
+
+
+static gint
+sort_by_recency      (const ThunarFile *a,
+                      const ThunarFile *b,
+                      gboolean          case_sensitive)
+{
+  return sort_by_date (a, b, case_sensitive, THUNAR_FILE_RECENCY);
+}
+
 
 
 
