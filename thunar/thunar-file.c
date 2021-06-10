@@ -1362,6 +1362,8 @@ thunar_file_get_with_info (GFile     *gfile,
       G_UNLOCK (file_cache_mutex);
     }
 
+//  printf("info has recent modified: %d\n", g_file_info_has_attribute (file->info, "recent::modified"));
+
   return file;
 }
 
@@ -1375,6 +1377,7 @@ thunar_file_get_with_recent_info (GFile     *gfile,
 {
   ThunarFile *file = thunar_file_get_with_info (gfile, info, not_mounted);
   file->recent_info = g_object_ref (recent_info);
+//  printf("recent_info has recent modified: %d\n", g_file_info_has_attribute (file->recent_info, "recent::modified"));
   return file;
 }
 
@@ -2463,7 +2466,7 @@ thunar_file_get_content_type (ThunarFile *file)
           /* async load the content-type */
           info = g_file_query_info (file->gfile,
                                     G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
-                                    G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE ", recent::*",
+                                    G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
                                     G_FILE_QUERY_INFO_NONE,
                                     NULL, &err);
 

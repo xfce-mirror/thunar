@@ -1539,7 +1539,6 @@ sort_by_recency      (const ThunarFile *a,
 
 
 
-
 static gint
 sort_by_group (const ThunarFile *a,
                const ThunarFile *b,
