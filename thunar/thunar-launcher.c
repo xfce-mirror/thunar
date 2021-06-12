@@ -185,6 +185,7 @@ static void                    thunar_launcher_action_rename              (Thuna
 static void                    thunar_launcher_action_move_to_trash       (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_delete              (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_trash_delete        (ThunarLauncher                 *launcher);
+static void                    thunar_launcher_action_recent_remove       (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_cut                 (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_copy                (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_paste               (ThunarLauncher                 *launcher);
@@ -278,11 +279,12 @@ static XfceGtkActionEntry thunar_launcher_action_entries[] =
     { THUNAR_LAUNCHER_ACTION_DUPLICATE,        "<Actions>/ThunarStandardView/duplicate",           "",                  XFCE_GTK_MENU_ITEM,       N_ ("Du_plicate"),                      NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_duplicate),           },
     { THUNAR_LAUNCHER_ACTION_RENAME,           "<Actions>/ThunarStandardView/rename",              "F2",                XFCE_GTK_MENU_ITEM,       N_ ("_Rename..."),                      NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_rename),              },
     { THUNAR_LAUNCHER_ACTION_EMPTY_TRASH,      "<Actions>/ThunarWindow/empty-trash",               "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Empty Trash"),                    N_ ("Delete all files and folders in the Trash"),                                                NULL,                   G_CALLBACK (thunar_launcher_action_empty_trash),         },
+    { THUNAR_LAUNCHER_ACTION_REMOVE_RECENT,    "<Actions>/ThunarWindow/remove-recent",             "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Remove from recent"),             N_ ("Remove the selected files from Recent"),                                                    NULL,                   G_CALLBACK (thunar_launcher_action_recent_remove),       },
     { THUNAR_LAUNCHER_ACTION_CREATE_FOLDER,    "<Actions>/ThunarStandardView/create-folder",       "<Primary><shift>N", XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Create _Folder..."),               N_ ("Create an empty folder within the current folder"),                                         "folder-new",           G_CALLBACK (thunar_launcher_action_create_folder),       },
     { THUNAR_LAUNCHER_ACTION_CREATE_DOCUMENT,  "<Actions>/ThunarStandardView/create-document",     "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Create _Document"),                N_ ("Create a new document from a template"),                                                    "document-new",         G_CALLBACK (NULL),                                       },
 
     { THUNAR_LAUNCHER_ACTION_RESTORE,          "<Actions>/ThunarLauncher/restore",                 "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Restore"),                        NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_restore),             },
-    { THUNAR_LAUNCHER_ACTION_MOVE_TO_TRASH,    "<Actions>/ThunarLauncher/move-to-trash",           "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Mo_ve to Trash"),                  NULL,                                                                                            "user-trash",           G_CALLBACK (thunar_launcher_action_trash_delete),       },
+    { THUNAR_LAUNCHER_ACTION_MOVE_TO_TRASH,    "<Actions>/ThunarLauncher/move-to-trash",           "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Mo_ve to Trash"),                  NULL,                                                                                            "user-trash",           G_CALLBACK (thunar_launcher_action_trash_delete),        },
     { THUNAR_LAUNCHER_ACTION_DELETE,           "<Actions>/ThunarLauncher/delete",                  "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Delete"),                         NULL,                                                                                            "edit-delete",          G_CALLBACK (thunar_launcher_action_delete),              },
     { THUNAR_LAUNCHER_ACTION_DELETE,           "<Actions>/ThunarLauncher/delete-2",                "<Shift>Delete",     XFCE_GTK_IMAGE_MENU_ITEM, NULL,                                   NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_delete),              },
     { THUNAR_LAUNCHER_ACTION_DELETE,           "<Actions>/ThunarLauncher/delete-3",                "<Shift>KP_Delete",  XFCE_GTK_IMAGE_MENU_ITEM, NULL,                                   NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_delete),              },
@@ -1622,6 +1624,16 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
           }
         return NULL;
 
+      case THUNAR_LAUNCHER_ACTION_REMOVE_RECENT:
+        if (launcher->files_are_selected && thunar_file_is_recent (launcher->current_directory))
+          {
+            item = xfce_gtk_image_menu_item_new_from_icon_name (action_entry->menu_item_label_text, action_entry->menu_item_tooltip_text, action_entry->accel_path,
+                                                                action_entry->callback, G_OBJECT (launcher), action_entry->menu_item_icon_name, menu);
+            gtk_widget_set_sensitive (item, TRUE);
+            return item;
+          }
+        return NULL;
+
       case THUNAR_LAUNCHER_ACTION_CREATE_FOLDER:
         if (THUNAR_IS_TREE_VIEW (launcher->widget) && launcher->files_are_selected && launcher->single_directory_to_process)
           parent = launcher->single_folder;
@@ -2399,6 +2411,27 @@ thunar_launcher_action_trash_delete (ThunarLauncher *launcher)
     thunar_launcher_action_move_to_trash (launcher);
   else
     thunar_launcher_action_delete (launcher);
+}
+
+
+
+static void
+thunar_launcher_action_recent_remove (ThunarLauncher *launcher)
+{
+  GtkRecentManager  *recent_manager = gtk_recent_manager_get_default();
+  GList             *lp;
+
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  if (launcher->parent_folder == NULL || launcher->files_are_selected == FALSE)
+    return;
+
+  for (lp = launcher->files_to_process; lp != NULL; lp = lp->next)
+    {
+      ThunarFile *file  = lp->data;
+      GFile *gfile = thunar_file_get_file (file);
+      gtk_recent_manager_remove_item (recent_manager, g_file_get_uri (gfile), NULL);
+    }
 }
 
 
