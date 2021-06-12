@@ -773,7 +773,11 @@ thunar_launcher_execute_files (ThunarLauncher *launcher,
   /* execute all selected files */
   for (lp = files; lp != NULL; lp = lp->next)
     {
+      ThunarFile  *file   = lp->data;
+      GFile       *gfile  = thunar_file_get_file (file);
+
       working_directory = thunar_file_get_file (launcher->current_directory);
+      gtk_recent_manager_add_item (gtk_recent_manager_get_default(), g_file_get_uri (gfile));
 
       if (!thunar_file_execute (lp->data, working_directory, launcher->widget, NULL, NULL, &error))
         {
@@ -1030,8 +1034,12 @@ thunar_launcher_poke (ThunarLauncher                 *launcher,
      }
    else
      {
-      // We will only poke one file at a time, in order to dont use all available CPU's
-      // TODO: Check if that could cause slowness
+       ThunarFile *file = poke_data->files_to_poke->data;
+       GFile *gfile = thunar_file_get_file (file);
+       gtk_recent_manager_add_item (gtk_recent_manager_get_default(), g_file_get_uri (gfile));
+
+       // We will only poke one file at a time, in order to dont use all available CPU's
+       // TODO: Check if that could cause slowness
       thunar_browser_poke_file (THUNAR_BROWSER (launcher), poke_data->files_to_poke->data,
                                 launcher->widget, thunar_launcher_poke_files_finish,
                                 poke_data);
