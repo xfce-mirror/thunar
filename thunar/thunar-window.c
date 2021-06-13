@@ -298,6 +298,8 @@ static void      thunar_window_trash_infobar_clicked           (GtkInfoBar      
                                                                 gint                    response_id,
                                                                 ThunarWindow           *window);
 static void      thunar_window_trash_selection_updated         (ThunarWindow           *window);
+static void      thunar_window_recent_reload                   (GtkRecentManager       *recent_manager,
+                                                                ThunarWindow           *window);
 
 
 
@@ -931,6 +933,9 @@ thunar_window_init (ThunarWindow *window)
 
   /* initial load of the bookmarks */
   thunar_window_update_bookmarks (window);
+
+  /* update recent */
+  g_signal_connect (G_OBJECT (gtk_recent_manager_get_default()), "changed", G_CALLBACK (thunar_window_recent_reload), window);
 }
 
 
@@ -4057,6 +4062,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
                                      ThunarFile   *current_directory)
 {
   gboolean is_trash;
+  gboolean is_recent;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
@@ -4141,6 +4147,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
     return;
 
   is_trash = thunar_file_is_trash (current_directory);
+  is_recent = thunar_file_is_recent (current_directory);
   if (is_trash)
     gtk_widget_show (window->trash_infobar);
   else
@@ -4149,6 +4156,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
   if (THUNAR_IS_DETAILS_VIEW (window->view) == FALSE)
     return;
   thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), is_trash);
+  thunar_details_view_set_recency_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
 }
 
 
@@ -4609,4 +4617,14 @@ thunar_window_trash_selection_updated (ThunarWindow *window)
     gtk_widget_set_sensitive (window->trash_infobar_restore_button, TRUE);
   else
     gtk_widget_set_sensitive (window->trash_infobar_restore_button, FALSE);
+}
+
+
+
+static void
+thunar_window_recent_reload (GtkRecentManager *recent_manager,
+                             ThunarWindow     *window)
+{
+  if (thunar_file_is_in_recent (window->current_directory)) // TODO: or should I disable the signal?
+    thunar_window_action_reload (window, NULL);
 }
