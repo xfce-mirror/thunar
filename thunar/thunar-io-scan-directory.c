@@ -44,6 +44,7 @@ thunar_io_scan_directory (ThunarJob          *job,
 {
   GFileEnumerator *enumerator;
   GFileInfo       *info;
+  GFileInfo       *recent_info;
   GFileType        type;
   GError          *err = NULL;
   GFile           *child_file;
@@ -92,7 +93,7 @@ thunar_io_scan_directory (ThunarJob          *job,
     namespace = THUNARX_FILE_INFO_NAMESPACE;
   else
     namespace = G_FILE_ATTRIBUTE_STANDARD_TYPE ","
-                G_FILE_ATTRIBUTE_STANDARD_NAME;
+                G_FILE_ATTRIBUTE_STANDARD_NAME ", recent::*";
 
   /* try to read from the direectory */
   enumerator = g_file_enumerate_children (file, namespace,
@@ -129,13 +130,30 @@ thunar_io_scan_directory (ThunarJob          *job,
             }
         }
 
-      /* create GFile for the child */
-      child_file = g_file_get_child (file, g_file_info_get_name (info));
+      /* check if file has 'recent' URI scheme */
+      if (g_file_has_uri_scheme (file, "recent"))
+        {
+          /* create Gfile using the target URI */
+          child_file = g_file_new_for_uri (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_TARGET_URI));
+
+          /* create new file info using Gfile*/
+          recent_info = info;
+          info = g_file_query_info (child_file, namespace, flags, cancellable, &err);
+        }
+      else
+        {
+          /* create GFile for the child */
+          child_file = g_file_get_child (file, g_file_info_get_name (info));
+          recent_info = NULL;
+        }
 
       if (return_thunar_files)
         {
           /* Prepend the ThunarFile */
-          thunar_file = thunar_file_get_with_info (child_file, info, !is_mounted);
+          if (recent_info)
+            thunar_file = thunar_file_get_with_recent_info (child_file, info, recent_info, !is_mounted);
+          else
+            thunar_file = thunar_file_get_with_info (child_file, info, !is_mounted);
           files = thunar_g_list_prepend_deep (files, thunar_file);
           g_object_unref (G_OBJECT (thunar_file));
         }
