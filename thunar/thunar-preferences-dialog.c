@@ -767,13 +767,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_show (grid);
 
   label = gtk_label_new_with_mnemonic (_("Transfer files in parallel:"));
-  gtk_widget_set_tooltip_text (label, _(
-                                        "Indicates the behavior during multiple copies:\n"
-                                        "- Always: all copies are done simultaneously\n"
-                                        "- Local Files Only: simultaneous copies for local (not remote, not attached) files\n"
-                                        "- Local Files On Same Devices Only: if all files are locals but on different devices (disks, mount points), copies will be sequential\n"
-                                        "- Never: all copies are done sequentially"
-                                      ));
+  gtk_widget_set_tooltip_text (label, ("Feature disabled for this thunar version due to possible crashes. Will be re-enabled in thunar 4.17.4 and above."));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
   gtk_widget_show (label);
@@ -790,6 +784,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
+  gtk_widget_set_sensitive (combo, FALSE);
 
   if (thunar_g_vfs_is_uri_scheme_supported ("trash"))
     {

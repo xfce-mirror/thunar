@@ -250,7 +250,7 @@ thunar_transfer_job_set_property (GObject      *object,
       job->file_size_binary = g_value_get_boolean (value);
       break;
     case PROP_PARALLEL_COPY_MODE:
-      job->parallel_copy_mode = g_value_get_enum (value);
+      job->parallel_copy_mode = THUNAR_PARALLEL_COPY_MODE_ALWAYS;
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
