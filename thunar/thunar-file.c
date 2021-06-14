@@ -4560,6 +4560,7 @@ thunar_file_set_metadata_setting_finish (GObject      *source_object,
  * @file          : a #ThunarFile instance.
  * @setting_name  : the name of the setting to set
  * @setting_value : the value to set
+ * @async         : whether g_file_set_attributes_async or g_file_set_attributes_from_info should be used
  *
  * Sets the setting @setting_name of @file to @setting_value and stores it in
  * the @file<!---->s metadata.
@@ -4567,7 +4568,8 @@ thunar_file_set_metadata_setting_finish (GObject      *source_object,
 void
 thunar_file_set_metadata_setting (ThunarFile  *file,
                                   const gchar *setting_name,
-                                  const gchar *setting_value)
+                                  const gchar *setting_value,
+                                  gboolean     async)
 {
   GFileInfo *info;
   gchar     *attr_name;
@@ -4586,12 +4588,22 @@ thunar_file_set_metadata_setting (ThunarFile  *file,
    * the attribute in the file system */
   info = g_file_info_new ();
   g_file_info_set_attribute_string (info, attr_name, setting_value);
-  g_file_set_attributes_async (file->gfile, info,
-                               G_FILE_QUERY_INFO_NONE,
-                               G_PRIORITY_DEFAULT,
-                               NULL,
-                               thunar_file_set_metadata_setting_finish,
-                               file);
+  if (async)
+    {
+      g_file_set_attributes_async (file->gfile, info,
+                                   G_FILE_QUERY_INFO_NONE,
+                                   G_PRIORITY_DEFAULT,
+                                   NULL,
+                                   thunar_file_set_metadata_setting_finish,
+                                   file);
+    }
+  else
+    {
+      g_file_set_attributes_from_info (file->gfile, info,
+                                       G_FILE_QUERY_INFO_NONE,
+                                       NULL,
+                                       NULL);
+    }
   g_free (attr_name);
   g_object_unref (G_OBJECT (info));
 }

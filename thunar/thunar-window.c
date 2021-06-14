@@ -3188,7 +3188,7 @@ thunar_window_action_view_changed (ThunarWindow *window,
 
   /* if directory specific settings are enabled, save the view type for this directory */
   if (window->directory_specific_settings)
-    thunar_file_set_metadata_setting (window->current_directory, "view-type", g_type_name (view_type));
+    thunar_file_set_metadata_setting (window->current_directory, "view-type", g_type_name (view_type), TRUE);
 }
 
 
