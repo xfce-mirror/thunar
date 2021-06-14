@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-03 00:45+0200\n"
-"PO-Revision-Date: 2021-06-05 14:18+0000\n"
+"POT-Creation-Date: 2021-06-13 00:45+0200\n"
+"PO-Revision-Date: 2021-06-14 14:14+0000\n"
 "Last-Translator: heskjestad <cato@heskjestad.xyz>\n"
 "Language-Team: Norwegian Bokmål (http://www.transifex.com/xfce/thunar/language/nb/)\n"
 "MIME-Version: 1.0\n"
@@ -99,11 +99,12 @@ msgstr "Klarte ikke åpne «%s»: %s"
 msgid "Failed to rename \"%s\""
 msgstr "Klarte ikke gi nytt navn «%s»"
 
-#: ../thunar/thunar-application.c:1831 ../thunar/thunar-launcher.c:2435
+#. ask the user to enter a name for the new folder
+#: ../thunar/thunar-application.c:1831 ../thunar/thunar-launcher.c:2434
 msgid "New Folder"
 msgstr "Ny mappe"
 
-#: ../thunar/thunar-application.c:1832 ../thunar/thunar-launcher.c:2436
+#: ../thunar/thunar-application.c:1832 ../thunar/thunar-launcher.c:2438
 msgid "Create New Folder"
 msgstr "Lag ny mappe"
 
@@ -116,7 +117,7 @@ msgid "Create New File"
 msgstr "Lag ny fil"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-application.c:1894 ../thunar/thunar-launcher.c:2481
+#: ../thunar/thunar-application.c:1894 ../thunar/thunar-launcher.c:2486
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Lag dokument fra mal «%s»"
@@ -266,7 +267,7 @@ msgstr "Program er ikke valgt"
 msgid "Other Application..."
 msgstr "Annet program …"
 
-#: ../thunar/thunar-chooser-dialog.c:187 ../thunar/thunar-launcher.c:3042
+#: ../thunar/thunar-chooser-dialog.c:187 ../thunar/thunar-launcher.c:3050
 msgid "Open With"
 msgstr "Åpne med"
 
@@ -294,7 +295,7 @@ msgstr "Bruk som _standard for denne typen filer"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1271
-#: ../thunar/thunar-properties-dialog.c:893 ../thunar/thunar-window.c:3442
+#: ../thunar/thunar-properties-dialog.c:893 ../thunar/thunar-window.c:3450
 #: ../plugins/thunar-uca/thunar-uca-editor.c:144
 #: ../plugins/thunar-uca/thunar-uca-editor.c:437
 msgid "_OK"
@@ -538,9 +539,9 @@ msgstr "Automatisk _utvid kolonner ved behov"
 
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:872 ../thunar/thunar-list-model.c:759
+#: ../thunar/thunar-column-model.c:874 ../thunar/thunar-list-model.c:759
 #: ../thunar/thunar-list-model.c:795
-#: ../thunar/thunar-permissions-chooser.c:232 ../thunar/thunar-util.c:405
+#: ../thunar/thunar-permissions-chooser.c:232 ../thunar/thunar-util.c:406
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:513
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:293
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:294
@@ -1130,7 +1131,7 @@ msgstr "Målet har ikke nok ledig plass. Prøv å fjerne filer for å gjøre pla
 msgid "Open With Other _Application..."
 msgstr "Åpne med _annet program …"
 
-#: ../thunar/thunar-launcher.c:268 ../thunar/thunar-launcher.c:3043
+#: ../thunar/thunar-launcher.c:268 ../thunar/thunar-launcher.c:3051
 msgid "Choose another application with which to open the selected file"
 msgstr "Velg et annet program å starte valgte fil med"
 
@@ -1431,57 +1432,58 @@ msgid_plural "Send the selected files to \"%s\""
 msgstr[0] "Send valgt fil til «%s»"
 msgstr[1] "Send de valgte filene til «%s»"
 
-#: ../thunar/thunar-launcher.c:2497
+#. ask the user to enter a name for the new empty file
+#: ../thunar/thunar-launcher.c:2501
 msgid "New Empty File"
 msgstr "Ny tom fil"
 
-#: ../thunar/thunar-launcher.c:2498
+#: ../thunar/thunar-launcher.c:2505
 msgid "New Empty File..."
 msgstr "Ny tom fil …"
 
-#: ../thunar/thunar-launcher.c:2697
+#: ../thunar/thunar-launcher.c:2705
 #, c-format
 msgid "No templates installed in \"%s\""
 msgstr "Ingen maler er installert i «%s»"
 
-#: ../thunar/thunar-launcher.c:2710
+#: ../thunar/thunar-launcher.c:2718
 msgid "_Empty File"
 msgstr "_Tom fil"
 
-#: ../thunar/thunar-launcher.c:2816
+#: ../thunar/thunar-launcher.c:2824
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Klarte ikke løse ut «%s»"
 
-#: ../thunar/thunar-launcher.c:2875
+#: ../thunar/thunar-launcher.c:2883
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Klarte ikke demontere «%s»"
 
-#: ../thunar/thunar-launcher.c:2936
+#: ../thunar/thunar-launcher.c:2944
 #, c-format
 msgid "Open With \"%s\""
 msgstr "Åpne med «%s»"
 
-#: ../thunar/thunar-launcher.c:2937 ../thunar/thunar-launcher.c:3006
+#: ../thunar/thunar-launcher.c:2945 ../thunar/thunar-launcher.c:3014
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "Bruk «%s» til å åpne valgt fil"
 msgstr[1] "Bruk «%s» til å åpne valgte filer"
 
-#: ../thunar/thunar-launcher.c:3005
+#: ../thunar/thunar-launcher.c:3013
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "_Åpne med «%s»"
 
 #. we can only show a generic "Open" action
-#: ../thunar/thunar-launcher.c:3025
+#: ../thunar/thunar-launcher.c:3033
 #, c-format
 msgid "_Open With Default Applications"
 msgstr "_Åpne med standard program"
 
-#: ../thunar/thunar-launcher.c:3026
+#: ../thunar/thunar-launcher.c:3034
 #, c-format
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
@@ -2653,7 +2655,7 @@ msgid "Loading folder contents..."
 msgstr "Laster mappeinnhold …"
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2105 ../thunar/thunar-window.c:3264
+#: ../thunar/thunar-standard-view.c:2105 ../thunar/thunar-window.c:3272
 msgid "Failed to open the home folder"
 msgstr "Klarte ikke åpne hjemmemappen"
 
@@ -2689,7 +2691,7 @@ msgstr "Ugyldig filnavn levert av XDS."
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Klarte ikke lage lenke for URL «%s»"
 
-#: ../thunar/thunar-standard-view.c:3160 ../thunar/thunar-window.c:3358
+#: ../thunar/thunar-standard-view.c:3160 ../thunar/thunar-window.c:3366
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Klarte ikke åpne mappen «%s»"
@@ -2765,49 +2767,54 @@ msgstr[1] "%lu sekunder gjenstår (%s/sek)"
 msgid "Loading..."
 msgstr "Laster …"
 
-#: ../thunar/thunar-util.c:281
+#: ../thunar/thunar-util.c:282
 #, c-format
 msgid "Invalid path"
 msgstr "Ugyldig sti"
 
-#: ../thunar/thunar-util.c:315
+#: ../thunar/thunar-util.c:316
 #, c-format
 msgid "Unknown user \"%s\""
 msgstr "Ukjent bruker «%s»"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:426
+#: ../thunar/thunar-util.c:427
 msgid "Today"
 msgstr "Idag"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:431
+#: ../thunar/thunar-util.c:432
 #, c-format
 msgid "Today at %X"
 msgstr "Idag %X"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:439
+#: ../thunar/thunar-util.c:440
 msgid "Yesterday"
 msgstr "Igår"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:444
+#: ../thunar/thunar-util.c:445
 #, c-format
 msgid "Yesterday at %X"
 msgstr "Igår %X"
 
 #. Days from last week
-#: ../thunar/thunar-util.c:460
+#: ../thunar/thunar-util.c:461
 #, c-format
 msgid "%A at %X"
 msgstr "%A %X"
 
 #. Any other date
-#: ../thunar/thunar-util.c:465
+#: ../thunar/thunar-util.c:466
 #, c-format
 msgid "%x at %X"
 msgstr "%x %X"
+
+#: ../thunar/thunar-util.c:718
+#, c-format
+msgid "%s %u%s"
+msgstr "%s %u%s"
 
 #: ../thunar/thunar-window.c:398
 msgid "_File"
@@ -3127,65 +3134,65 @@ msgstr "Bytt til neste fane"
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr "Advarsel: Du benytter rotbrukeren. Dette er en risiko for systemet ditt."
 
-#: ../thunar/thunar-window.c:2132
+#: ../thunar/thunar-window.c:2138
 msgid "Close tab"
 msgstr "Lukk fane"
 
-#: ../thunar/thunar-window.c:2510
+#: ../thunar/thunar-window.c:2518
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Åpne plasseringen «%s»"
 
-#: ../thunar/thunar-window.c:3213
+#: ../thunar/thunar-window.c:3221
 msgid "Failed to open parent folder"
 msgstr "Klarte ikke åpne overordnet mappe"
 
-#: ../thunar/thunar-window.c:3333
+#: ../thunar/thunar-window.c:3341
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Mappen «%s» finnes ikke. Ønsker du å opprette den?"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3400
+#: ../thunar/thunar-window.c:3408
 msgid "Failed to browse the computer"
 msgstr "Klarte ikke utforske datamaskinen"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:3440
+#: ../thunar/thunar-window.c:3448
 msgid "About Templates"
 msgstr "Om maler"
 
-#: ../thunar/thunar-window.c:3462
+#: ../thunar/thunar-window.c:3470
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Alle filer i denne mappen vil vises i «Lag dokument» menyen."
 
-#: ../thunar/thunar-window.c:3469
+#: ../thunar/thunar-window.c:3477
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Om du ofte oppretter visse typer dokumenter, lag en kopi av disse og lagre de i denne mappen. Thunar vil da legge de til som elementer i «Lag dokument» menyen.\n\nDu kan deretter velge elementer fra «Lag dokument» menyen og en kopi av dokumentet vil bli opprettet i mappen du jobber i."
 
-#: ../thunar/thunar-window.c:3481
+#: ../thunar/thunar-window.c:3489
 msgid "Do _not display this message again"
 msgstr "_Ikke vis denne meldingen igjen"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3512
+#: ../thunar/thunar-window.c:3520
 msgid "Failed to open the file system root folder"
 msgstr "Klarte ikke åpne filsystemets rotmappe"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3545
+#: ../thunar/thunar-window.c:3553
 msgid "Failed to display the contents of the trash can"
 msgstr "Klarte ikke å vise innholdet i papirkurven"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3578
+#: ../thunar/thunar-window.c:3586
 msgid "Failed to browse the network"
 msgstr "Klarte ikke utforske nettverket"
 
-#: ../thunar/thunar-window.c:3667
+#: ../thunar/thunar-window.c:3675
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
