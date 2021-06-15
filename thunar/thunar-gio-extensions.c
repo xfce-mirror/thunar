@@ -963,15 +963,14 @@ xfce_g_file_digest (GFile *file)
  *
  **/
 void
-xfce_g_file_set_saftey_flag (GFile    *file,
+xfce_g_file_set_safety_flag (GFile    *file,
                              gboolean  is_executable)
 {
-  const gchar *digest_string;
+  gchar *digest_string;
 
   g_return_if_fail (G_IS_FILE (file));
 
-  /* check if GVFs metadata is supported */
-  if (!xfce_g_file_metadata_is_supported (file))
+  if (!xfce_g_file_metadata_is_supported(file))
     return;
 
   if (is_executable)
@@ -1003,7 +1002,7 @@ xfce_g_file_is_safety_flag_on (GFile *file)
   GFileInfo   *file_info;
   gboolean     is_executable;
   const gchar *attribute_string;
-  const gchar *digest_string;
+  gchar *digest_string;
 
   g_return_if_fail (G_IS_FILE (file));
 
