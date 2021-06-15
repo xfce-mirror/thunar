@@ -1082,6 +1082,9 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
           g_error_free (err);
         }
 
+      if (thunar_g_vfs_metadata_is_supported ())
+        xfce_g_file_set_safety_flag (thunar_file_get_file (file), TRUE);
+
       /* just launch */
       response = GTK_RESPONSE_OK;
     }

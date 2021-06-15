@@ -45,6 +45,8 @@
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-user.h>
+/*TEST*/
+#include <thunar/thunar-gio-extensions.h>
 
 
 
@@ -97,6 +99,8 @@ static void                 thunar_permissions_chooser_group_changed    (ThunarP
                                                                          GtkWidget                      *combo);
 static void                 thunar_permissions_chooser_program_toggled  (ThunarPermissionsChooser       *chooser,
                                                                          GtkWidget                      *button);
+static void                 thunar_permissions_chooser_launcher_toggled (ThunarPermissionsChooser       *chooser,
+                                                                         GtkWidget                      *button);
 static void                 thunar_permissions_chooser_fixperm_clicked  (ThunarPermissionsChooser       *chooser,
                                                                          GtkWidget                      *button);
 static ThunarJobResponse    thunar_permissions_chooser_job_ask          (ThunarPermissionsChooser       *chooser,
@@ -141,6 +145,7 @@ struct _ThunarPermissionsChooser
   GtkWidget  *group_combo;
   GtkWidget  *access_combos[3];
   GtkWidget  *program_button;
+  GtkWidget  *launcher_button;
   GtkWidget  *fixperm_label;
   GtkWidget  *fixperm_button;
 
@@ -370,6 +375,29 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_widget_show (chooser->program_button);
 
   row += 1;
+
+  /* TEST AREA BEGIN */
+
+  label = gtk_label_new (_("Launcher:"));
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_grid_attach (GTK_GRID (chooser->grid), label, 0, row, 1, 1);
+  gtk_widget_show (label);
+
+  chooser->launcher_button = gtk_check_button_new_with_mnemonic (_("Allow this file to be _launched from Thunar"));
+  g_object_bind_property (G_OBJECT (chooser->launcher_button), "visible",
+                          G_OBJECT (label),                    "visible",
+                          G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (chooser),                  "mutable",
+                          G_OBJECT (chooser->launcher_button), "sensitive",
+                          G_BINDING_SYNC_CREATE);
+  gtk_grid_attach (GTK_GRID (chooser->grid), chooser->launcher_button, 1, row, 1, 1);
+  g_signal_connect_swapped (G_OBJECT (chooser->launcher_button), "toggled", G_CALLBACK (thunar_permissions_chooser_launcher_toggled), chooser);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), chooser->launcher_button);
+  gtk_widget_show (chooser->launcher_button);
+
+  row += 1;
+  /* TEST AREA END */
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
   g_object_bind_property (G_OBJECT (chooser), "mutable",
@@ -893,6 +921,8 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser)
   gint               file_modes[3];
   GtkListStore      *access_store;
 
+  gboolean           is_file_regular, is_metadata_supported;
+
   _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
 
   /* compare multiple files */
@@ -1048,11 +1078,21 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser)
       g_object_unref (G_OBJECT (access_store));
     }
 
+  is_file_regular = thunar_file_is_regular (file);
   /* update the program setting based on the mode (only visible for regular files) */
   g_signal_handlers_block_by_func (G_OBJECT (chooser->program_button), thunar_permissions_chooser_program_toggled, chooser);
-  g_object_set (G_OBJECT (chooser->program_button), "visible", thunar_file_is_regular (file), NULL);
+  g_object_set (G_OBJECT (chooser->program_button), "visible", is_file_regular, NULL);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (chooser->program_button), (mode & 0111) != 0);
   g_signal_handlers_unblock_by_func (G_OBJECT (chooser->program_button), thunar_permissions_chooser_program_toggled, chooser);
+
+  /* TEST AREA BEGIN */
+  is_metadata_supported = xfce_g_file_metadata_is_supported (thunar_file_get_file (file));
+  /* update the launcher setting based on safety flag (only visible for regular files) */
+  g_signal_handlers_block_by_func (G_OBJECT (chooser->launcher_button), thunar_permissions_chooser_launcher_toggled, chooser);
+  g_object_set (G_OBJECT (chooser->launcher_button), "visible", is_file_regular && is_metadata_supported, NULL);
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (chooser->launcher_button), xfce_g_file_is_safety_flag_on (thunar_file_get_file (file)));
+  g_signal_handlers_unblock_by_func (G_OBJECT (chooser->launcher_button), thunar_permissions_chooser_launcher_toggled, chooser);
+  /* TEST AREA END */
 
   /* update the "inconsistent folder permissions" warning and the "fix permissions" button based on the mode */
   if (thunar_permissions_chooser_has_fixable_directory (chooser))
@@ -1129,6 +1169,33 @@ thunar_permissions_chooser_program_toggled (ThunarPermissionsChooser *chooser,
 
   /* apply the new mode (only the executable bits for files) */
   thunar_permissions_chooser_change_mode (chooser, 0000, 0000, 0111, mode);
+}
+
+
+
+static void
+thunar_permissions_chooser_launcher_toggled (ThunarPermissionsChooser *chooser,
+                                             GtkWidget                *button)
+{
+  gboolean safety_flag;
+  GFile   *gfile;
+
+  /* TODO: Multiple flags*/
+  _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
+  _thunar_return_if_fail (chooser->launcher_button == button);
+  _thunar_return_if_fail (GTK_IS_TOGGLE_BUTTON (button));
+
+  /* verify that we have a valid file */
+  if (G_UNLIKELY (chooser->files == NULL))
+    return;
+
+  safety_flag = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button));
+
+  gfile = thunar_file_get_file (THUNAR_FILE (chooser->files->data));
+  g_info ("%s", thunar_g_file_get_location (gfile));
+  xfce_g_file_set_safety_flag (gfile, safety_flag);
+
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (chooser->program_button), safety_flag);
 }
 
 
