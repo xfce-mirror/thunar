@@ -1108,6 +1108,8 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
   /* release the lock */
   _thumbnailer_unlock (thumbnailer);
 
+//  printf("DONE\n");
+
   return success;
 }
 
