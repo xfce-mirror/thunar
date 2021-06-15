@@ -2444,7 +2444,8 @@ void
 thunar_application_restore_files (ThunarApplication *application,
                                   gpointer           parent,
                                   GList             *trash_file_list,
-                                  GClosure          *new_files_closure)
+                                  GClosure          *new_files_closure,
+                                  gboolean           open_original_folder)
 {
   const gchar *original_uri;
   GError      *err = NULL;
@@ -2458,6 +2459,9 @@ thunar_application_restore_files (ThunarApplication *application,
 
   for (lp = trash_file_list; lp != NULL; lp = lp->next)
     {
+      ThunarFile *original_dir;
+      gchar      *original_dir_path;
+
       original_uri = thunar_file_get_original_path (lp->data);
       if (G_UNLIKELY (original_uri == NULL))
         {
@@ -2473,6 +2477,16 @@ thunar_application_restore_files (ThunarApplication *application,
 
       source_path_list = thunar_g_list_append_deep (source_path_list, thunar_file_get_file (lp->data));
       target_path_list = thunar_g_list_append_deep (target_path_list, target_path);
+
+      if (open_original_folder)
+        {
+          original_dir_path = g_strndup (original_uri, strlen (original_uri) - strlen (thunar_file_get_display_name (lp->data)));
+          original_dir = thunar_file_get_for_uri (original_dir_path, NULL);
+          thunar_application_open_window (application, original_dir, NULL, NULL, FALSE);
+
+          g_free (original_dir_path);
+          g_object_unref (original_dir);
+        }
 
       g_object_unref (target_path);
     }
