@@ -148,7 +148,8 @@ void                  thunar_application_empty_trash               (ThunarApplic
 void                  thunar_application_restore_files             (ThunarApplication *application,
                                                                     gpointer           parent,
                                                                     GList             *trash_file_list,
-                                                                    GClosure          *new_files_closure);
+                                                                    GClosure          *new_files_closure,
+                                                                    gboolean           open_original_folder);
 
 ThunarThumbnailCache *thunar_application_get_thumbnail_cache       (ThunarApplication *application);
 
