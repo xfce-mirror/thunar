@@ -93,6 +93,11 @@ gboolean     thunar_g_app_info_should_show             (GAppInfo          *info)
 
 gboolean     thunar_g_vfs_metadata_is_supported        (void);
 
+gboolean      xfce_g_file_metadata_is_supported   (GFile    *file);
+gchar        *xfce_g_file_digest                  (GFile    *file);
+void          xfce_g_file_set_safety_flag         (GFile    *file,
+                                                   gboolean  is_executable);
+gboolean      xfce_g_file_is_safety_flag_on       (GFile    *file);
 
 G_END_DECLS
 
