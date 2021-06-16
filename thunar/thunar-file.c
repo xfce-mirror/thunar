@@ -1578,7 +1578,6 @@ thunar_file_execute (ThunarFile  *file,
                      const gchar *startup_id,
                      GError     **error)
 {
-  gboolean    metadata_supported;
   gboolean    safety_flag = TRUE;
   gboolean    snotify = FALSE;
   gboolean    terminal;
