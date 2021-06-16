@@ -1628,7 +1628,10 @@ thunar_standard_view_set_zoom_level (ThunarView     *view,
           /* save the zoom level name */
           zoom_level_name = thunar_zoom_level_string_from_value (zoom_level);
           if (zoom_level_name != NULL)
-            thunar_file_set_metadata_setting (standard_view->priv->current_directory, "zoom-level", zoom_level_name);
+            {
+              /* do not set it asynchronously to ensure the correct operation of thumbnails (check the commit message for more) */
+              thunar_file_set_metadata_setting (standard_view->priv->current_directory, "zoom-level", zoom_level_name, FALSE);
+            }
         }
 
       if (thunar_zoom_level_to_thumbnail_size (zoom_level) != thunar_zoom_level_to_thumbnail_size (standard_view->priv->zoom_level))
@@ -3211,7 +3214,7 @@ thunar_standard_view_sort_column_changed (GtkTreeSortable    *tree_sortable,
           /* save the sort column name */
           sort_column_name = thunar_column_string_from_value (sort_column);
           if (sort_column_name != NULL)
-            thunar_file_set_metadata_setting (standard_view->priv->current_directory, "sort-column", sort_column_name);
+            thunar_file_set_metadata_setting (standard_view->priv->current_directory, "sort-column", sort_column_name, TRUE);
 
           /* convert the sort order to a string */
           if (sort_order == GTK_SORT_ASCENDING)
@@ -3220,7 +3223,7 @@ thunar_standard_view_sort_column_changed (GtkTreeSortable    *tree_sortable,
             sort_order_name = "GTK_SORT_DESCENDING";
 
           /* save the sort order */
-          thunar_file_set_metadata_setting (standard_view->priv->current_directory, "sort-order", sort_order_name);
+          thunar_file_set_metadata_setting (standard_view->priv->current_directory, "sort-order", sort_order_name, TRUE);
         }
       else
         {
