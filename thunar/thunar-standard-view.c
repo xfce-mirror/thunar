@@ -1621,6 +1621,19 @@ thunar_standard_view_set_zoom_level (ThunarView     *view,
   /* check if we have a new zoom-level here */
   if (G_LIKELY (standard_view->priv->zoom_level != zoom_level))
     {
+      if (standard_view->priv->directory_specific_settings)
+        {
+          const gchar *zoom_level_name;
+
+          /* save the zoom level name */
+          zoom_level_name = thunar_zoom_level_string_from_value (zoom_level);
+          if (zoom_level_name != NULL)
+            {
+              /* do not set it asynchronously to ensure the correct operation of thumbnails (check the commit message for more) */
+              thunar_file_set_metadata_setting (standard_view->priv->current_directory, "zoom-level", zoom_level_name, FALSE);
+            }
+        }
+
       if (thunar_zoom_level_to_thumbnail_size (zoom_level) != thunar_zoom_level_to_thumbnail_size (standard_view->priv->zoom_level))
         newThumbnailSize = TRUE;
 
@@ -1660,8 +1673,10 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
 {
   const gchar *sort_column_name;
   const gchar *sort_order_name;
+  const gchar *zoom_level_name;
   gint         sort_column;
   GtkSortType  sort_order;
+  gint         zoom_level;
 
   /* get the default sort column and sort order */
   g_object_get (G_OBJECT (standard_view->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
@@ -1669,6 +1684,7 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
   /* get the stored directory specific settings (if any) */
   sort_column_name = thunar_file_get_metadata_setting (directory, "sort-column");
   sort_order_name = thunar_file_get_metadata_setting (directory, "sort-order");
+  zoom_level_name = thunar_file_get_metadata_setting (directory, "zoom-level");
 
   /* convert the sort column name to a value */
   if (sort_column_name != NULL)
@@ -1682,6 +1698,15 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
       if (g_strcmp0 (sort_order_name, "GTK_SORT_DESCENDING") == 0)
         sort_order = GTK_SORT_DESCENDING;
     }
+
+  /* convert the sort column name to a value */
+  if (zoom_level_name != NULL)
+    {
+      if (thunar_zoom_level_value_from_string (zoom_level_name, &zoom_level) == TRUE)
+        thunar_standard_view_set_zoom_level (THUNAR_VIEW (standard_view), zoom_level);
+    }
+  else
+    thunar_standard_view_reset_zoom_level (THUNAR_VIEW (standard_view));
 
   /* thunar_standard_view_sort_column_changed saves the directory specific settings to the directory, but we do not
    * want that behaviour here so we disconnect the signal before calling gtk_tree_sortable_set_sort_column_id */
@@ -3189,7 +3214,7 @@ thunar_standard_view_sort_column_changed (GtkTreeSortable    *tree_sortable,
           /* save the sort column name */
           sort_column_name = thunar_column_string_from_value (sort_column);
           if (sort_column_name != NULL)
-            thunar_file_set_metadata_setting (standard_view->priv->current_directory, "sort-column", sort_column_name);
+            thunar_file_set_metadata_setting (standard_view->priv->current_directory, "sort-column", sort_column_name, TRUE);
 
           /* convert the sort order to a string */
           if (sort_order == GTK_SORT_ASCENDING)
@@ -3198,7 +3223,7 @@ thunar_standard_view_sort_column_changed (GtkTreeSortable    *tree_sortable,
             sort_order_name = "GTK_SORT_DESCENDING";
 
           /* save the sort order */
-          thunar_file_set_metadata_setting (standard_view->priv->current_directory, "sort-order", sort_order_name);
+          thunar_file_set_metadata_setting (standard_view->priv->current_directory, "sort-order", sort_order_name, TRUE);
         }
       else
         {
