@@ -282,6 +282,7 @@ static XfceGtkActionEntry thunar_launcher_action_entries[] =
     { THUNAR_LAUNCHER_ACTION_CREATE_DOCUMENT,  "<Actions>/ThunarStandardView/create-document",     "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Create _Document"),                N_ ("Create a new document from a template"),                                                    "document-new",         G_CALLBACK (NULL),                                       },
 
     { THUNAR_LAUNCHER_ACTION_RESTORE,          "<Actions>/ThunarLauncher/restore",                 "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Restore"),                        NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_restore),             },
+    { THUNAR_LAUNCHER_ACTION_RESTORE_OPEN,     "<Actions>/ThunarLauncher/restore-open",            "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Restore and Open"),               NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_restore_and_open),    },
     { THUNAR_LAUNCHER_ACTION_MOVE_TO_TRASH,    "<Actions>/ThunarLauncher/move-to-trash",           "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Mo_ve to Trash"),                  NULL,                                                                                            "user-trash",           G_CALLBACK (thunar_launcher_action_trash_delete),       },
     { THUNAR_LAUNCHER_ACTION_DELETE,           "<Actions>/ThunarLauncher/delete",                  "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Delete"),                         NULL,                                                                                            "edit-delete",          G_CALLBACK (thunar_launcher_action_delete),              },
     { THUNAR_LAUNCHER_ACTION_DELETE,           "<Actions>/ThunarLauncher/delete-2",                "<Shift>Delete",     XFCE_GTK_IMAGE_MENU_ITEM, NULL,                                   NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_delete),              },
@@ -1577,6 +1578,18 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
           }
         return NULL;
 
+      case THUNAR_LAUNCHER_ACTION_RESTORE_OPEN:
+        if (launcher->files_are_selected && thunar_file_is_trashed (launcher->current_directory))
+          {
+            tooltip_text = ngettext ("Restore the selected file to its original location and open the location in a new window/tab",
+                                     "Restore the selected files to its original location and open the location in a new window/tab", launcher->n_files_to_process);
+            item = xfce_gtk_menu_item_new (action_entry->menu_item_label_text, tooltip_text, action_entry->accel_path,
+                                           action_entry->callback, G_OBJECT (launcher), menu);
+            gtk_widget_set_sensitive (item, thunar_file_is_writable (launcher->current_directory));
+            return item;
+          }
+      return NULL;
+
       case THUNAR_LAUNCHER_ACTION_MOVE_TO_TRASH:
         if (!thunar_launcher_show_trash (launcher))
           return NULL;
@@ -2346,9 +2359,28 @@ thunar_launcher_action_restore (ThunarLauncher *launcher)
 
   /* restore the selected files */
   application = thunar_application_get ();
-  thunar_application_restore_files (application, launcher->widget, launcher->files_to_process, NULL);
+  thunar_application_restore_files (application, launcher->widget, launcher->files_to_process, NULL, FALSE);
   g_object_unref (G_OBJECT (application));
 }
+
+
+
+void
+thunar_launcher_action_restore_and_open (ThunarLauncher *launcher)
+{
+  ThunarApplication *application;
+
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  if (launcher->files_are_selected == FALSE || !thunar_file_is_trashed (launcher->current_directory))
+    return;
+
+  /* restore the selected files */
+  application = thunar_application_get ();
+  thunar_application_restore_files (application, launcher->widget, launcher->files_to_process, NULL, TRUE);
+  g_object_unref (G_OBJECT (application));
+}
+
 
 
 static void
