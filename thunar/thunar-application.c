@@ -1318,7 +1318,7 @@ thunar_application_open_window (ThunarApplication *application,
           list = g_list_last (list);
 
           if (directory != NULL)
-              thunar_window_notebook_add_new_tab (THUNAR_WINDOW (list->data), directory, TRUE);
+              thunar_window_notebook_add_new_tab (THUNAR_WINDOW (list->data), directory, TRUE, FALSE);
           
           /* bring the window to front */
           gtk_window_present (list->data);
@@ -2427,6 +2427,39 @@ thunar_application_empty_trash (ThunarApplication *application,
 
 
 
+static void
+hash_table_open_folder_and_select_files (gpointer key, gpointer list, gpointer application)
+{
+  _thunar_return_if_fail (key != NULL);
+  _thunar_return_if_fail (list != NULL);
+  _thunar_return_if_fail (application != NULL);
+
+  ThunarFile *original_dir  = NULL;
+  GList      *window_list   = NULL;
+
+  /* open directory */
+  original_dir = thunar_file_get_for_uri (key, NULL);
+  thunar_application_open_window (application, original_dir, NULL, NULL, FALSE);
+
+  /* select files */
+//  window_list = thunar_application_get_windows (application);
+//  window_list = g_list_last (window_list); /* this will be the topmost Window */
+//  thunar_window_select_files (THUNAR_WINDOW (window_list->data), list);
+
+  /* free memory */
+  g_object_unref (original_dir);
+}
+
+
+
+static void
+list_free_all_g_files (void *list)
+{
+  g_list_free_full (list, g_object_unref);
+}
+
+
+
 /**
  * thunar_application_restore_files:
  * @application       : a #ThunarApplication.
@@ -2444,20 +2477,27 @@ void
 thunar_application_restore_files (ThunarApplication *application,
                                   gpointer           parent,
                                   GList             *trash_file_list,
-                                  GClosure          *new_files_closure)
+                                  GClosure          *new_files_closure,
+                                  gboolean           open_original_folder)
 {
   const gchar *original_uri;
-  GError      *err = NULL;
-  GFile       *target_path;
-  GList       *source_path_list = NULL;
-  GList       *target_path_list = NULL;
-  GList       *lp;
+  GError      *err                = NULL;
+  GFile       *target_path        = NULL;
+  GList       *source_path_list   = NULL;
+  GList       *target_path_list   = NULL;
+  GList       *lp                 = NULL;
+  GHashTable  *restore_open_table = NULL; /* string<directory_path>:GList<GFile*> */
 
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
+  if (open_original_folder)
+    restore_open_table = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, list_free_all_g_files);
+
   for (lp = trash_file_list; lp != NULL; lp = lp->next)
     {
+      gchar      *original_dir_path;
+
       original_uri = thunar_file_get_original_path (lp->data);
       if (G_UNLIKELY (original_uri == NULL))
         {
@@ -2473,6 +2513,22 @@ thunar_application_restore_files (ThunarApplication *application,
 
       source_path_list = thunar_g_list_append_deep (source_path_list, thunar_file_get_file (lp->data));
       target_path_list = thunar_g_list_append_deep (target_path_list, target_path);
+
+      if (open_original_folder)
+        {
+          original_dir_path = g_strndup (original_uri, strlen (original_uri) - strlen (thunar_file_get_display_name (lp->data)));
+
+          if (g_hash_table_contains (restore_open_table, original_dir_path) == FALSE)
+            {
+              GList *list = g_list_prepend (NULL, g_file_new_for_commandline_arg (original_uri));
+              g_hash_table_insert (restore_open_table, original_dir_path, list);
+            }
+          else
+            {
+              GList *list = g_hash_table_lookup (restore_open_table, original_dir_path);
+              list = g_list_append (list, g_file_new_for_commandline_arg (original_uri));
+            }
+        }
 
       g_object_unref (target_path);
     }
@@ -2490,6 +2546,12 @@ thunar_application_restore_files (ThunarApplication *application,
       thunar_application_launch (application, parent, "stock_folder-move",
                                  _("Restoring files..."), thunar_io_jobs_restore_files,
                                  source_path_list, target_path_list, TRUE, TRUE, new_files_closure);
+    }
+
+  if (open_original_folder)
+    {
+      g_hash_table_foreach (restore_open_table, hash_table_open_folder_and_select_files, application);
+      g_hash_table_destroy (restore_open_table);
     }
 
   /* free path lists */
