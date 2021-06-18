@@ -1318,7 +1318,7 @@ thunar_application_open_window (ThunarApplication *application,
           list = g_list_last (list);
 
           if (directory != NULL)
-              thunar_window_notebook_add_new_tab (THUNAR_WINDOW (list->data), directory, TRUE);
+              thunar_window_notebook_add_new_tab (THUNAR_WINDOW (list->data), directory, TRUE, FALSE);
           
           /* bring the window to front */
           gtk_window_present (list->data);
@@ -2444,7 +2444,8 @@ void
 thunar_application_restore_files (ThunarApplication *application,
                                   gpointer           parent,
                                   GList             *trash_file_list,
-                                  GClosure          *new_files_closure)
+                                  GClosure          *new_files_closure,
+                                  gboolean           open_original_folder)
 {
   const gchar *original_uri;
   GError      *err = NULL;
@@ -2452,12 +2453,25 @@ thunar_application_restore_files (ThunarApplication *application,
   GList       *source_path_list = NULL;
   GList       *target_path_list = NULL;
   GList       *lp;
+  GList       *window_list = NULL;
+  ThunarFile  *current_dir = NULL;
 
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
+  if (open_original_folder)
+    {
+      window_list = thunar_application_get_windows (application);
+      _thunar_return_if_fail (window_list != NULL);
+      window_list = g_list_last (window_list); /* this will be the topmost Window */
+      current_dir = thunar_window_get_current_directory (THUNAR_WINDOW (window_list->data));
+    }
+
   for (lp = trash_file_list; lp != NULL; lp = lp->next)
     {
+      ThunarFile *original_dir;
+      gchar      *original_dir_path;
+
       original_uri = thunar_file_get_original_path (lp->data);
       if (G_UNLIKELY (original_uri == NULL))
         {
@@ -2473,6 +2487,17 @@ thunar_application_restore_files (ThunarApplication *application,
 
       source_path_list = thunar_g_list_append_deep (source_path_list, thunar_file_get_file (lp->data));
       target_path_list = thunar_g_list_append_deep (target_path_list, target_path);
+
+      if (open_original_folder)
+        {
+          original_dir_path = g_strndup (original_uri, strlen (original_uri) - strlen (thunar_file_get_display_name (lp->data)));
+          original_dir = thunar_file_get_for_uri (original_dir_path, NULL);
+
+          thunar_window_notebook_add_new_tab (THUNAR_WINDOW (window_list->data), original_dir, FALSE, TRUE);
+
+          g_free (original_dir_path);
+          g_object_unref (original_dir);
+        }
 
       g_object_unref (target_path);
     }
