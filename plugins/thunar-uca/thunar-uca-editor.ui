@@ -66,6 +66,8 @@
                     <property name="tooltip_text" translatable="yes">The name of the action that will be displayed in the context menu.</property>
                     <property name="hexpand">True</property>
                     <property name="activates_default">True</property>
+                    <signal name="changed" handler="thunar_uca_editor_set_content_modified" swapped="yes"/>
+                    <signal name="changed" handler="thunar_uca_editor_name_updated" swapped="yes"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -96,6 +98,7 @@
                     <property name="tooltip_text" translatable="yes">The description of the action that will be displayed as tooltip in the statusbar when selecting the item from the context menu.</property>
                     <property name="hexpand">True</property>
                     <property name="activates_default">True</property>
+                    <signal name="changed" handler="thunar_uca_editor_set_content_modified" swapped="yes"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -126,6 +129,7 @@
                     <property name="tooltip_text" translatable="yes">The submenu in which the action will be displayed. Leave empty for no menu. Use '/' for nested menus.</property>
                     <property name="hexpand">True</property>
                     <property name="activates_default">True</property>
+                    <signal name="changed" handler="thunar_uca_editor_set_content_modified" swapped="yes"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -160,6 +164,7 @@
                         <property name="tooltip_text" translatable="yes">The command (including the necessary parameters) to perform the action. See the command parameter legend below for a list of supported parameter variables, which will be substituted when launching the command. When upper-case letters (e.g. %F, %D, %N) are used, the action will be applicable even if more than one item is selected. Else the action will only be applicable if exactly one item is selected.</property>
                         <property name="hexpand">True</property>
                         <property name="activates_default">True</property>
+                        <signal name="changed" handler="thunar_uca_editor_set_content_modified" swapped="yes"/>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -267,6 +272,7 @@
                     <property name="receives_default">False</property>
                     <property name="tooltip_text" translatable="yes">Enable this option if you want a waiting cursor to be shown while the action is launched. This is also highly recommended if you have focus stealing prevention enabled in your window manager.</property>
                     <property name="draw_indicator">True</property>
+                    <signal name="toggled" handler="thunar_uca_editor_set_content_modified" swapped="yes"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -616,6 +622,7 @@
                     <property name="hexpand">True</property>
                     <property name="activates_default">True</property>
                     <property name="text" translatable="yes">*</property>
+                    <signal name="changed" handler="thunar_uca_editor_set_content_modified" swapped="yes"/>
                   </object>
                   <packing>
                     <property name="left_attach">1</property>
@@ -652,6 +659,7 @@
                         <property name="hexpand">False</property>
                         <property name="use_underline">True</property>
                         <property name="draw_indicator">True</property>
+                        <signal name="toggled" handler="thunar_uca_editor_set_content_modified" swapped="yes"/>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -666,6 +674,7 @@
                         <property name="receives_default">False</property>
                         <property name="use_underline">True</property>
                         <property name="draw_indicator">True</property>
+                        <signal name="toggled" handler="thunar_uca_editor_set_content_modified" swapped="yes"/>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -681,6 +690,7 @@
                         <property name="use_underline">True</property>
                         <property name="image_position">top</property>
                         <property name="draw_indicator">True</property>
+                        <signal name="toggled" handler="thunar_uca_editor_set_content_modified" swapped="yes"/>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -695,6 +705,7 @@
                         <property name="receives_default">False</property>
                         <property name="use_underline">True</property>
                         <property name="draw_indicator">True</property>
+                        <signal name="toggled" handler="thunar_uca_editor_set_content_modified" swapped="yes"/>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -709,6 +720,7 @@
                         <property name="receives_default">False</property>
                         <property name="use_underline">True</property>
                         <property name="draw_indicator">True</property>
+                        <signal name="toggled" handler="thunar_uca_editor_set_content_modified" swapped="yes"/>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -723,6 +735,7 @@
                         <property name="receives_default">False</property>
                         <property name="use_underline">True</property>
                         <property name="draw_indicator">True</property>
+                        <signal name="toggled" handler="thunar_uca_editor_set_content_modified" swapped="yes"/>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
