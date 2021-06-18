@@ -1609,7 +1609,7 @@ thunar_file_execute (ThunarFile  *file,
   uri_list = g_slist_reverse (uri_list);
 
   if (thunar_g_vfs_metadata_is_supported ())
-    safety_flag = xfce_g_file_is_safety_flag_on (file->gfile);
+    safety_flag = xfce_g_file_is_trusted (file->gfile, NULL, NULL);
 
   if (thunar_file_is_desktop_file (file, &is_secure))
     {

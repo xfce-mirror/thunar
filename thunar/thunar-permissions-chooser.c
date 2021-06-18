@@ -1086,11 +1086,12 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser)
   g_signal_handlers_unblock_by_func (G_OBJECT (chooser->program_button), thunar_permissions_chooser_program_toggled, chooser);
 
   /* TEST AREA BEGIN */
-  is_metadata_supported = xfce_g_file_metadata_is_supported (thunar_file_get_file (file));
+  is_metadata_supported = thunar_g_vfs_metadata_is_supported ();
   /* update the launcher setting based on safety flag (only visible for regular files) */
   g_signal_handlers_block_by_func (G_OBJECT (chooser->launcher_button), thunar_permissions_chooser_launcher_toggled, chooser);
   g_object_set (G_OBJECT (chooser->launcher_button), "visible", is_file_regular && is_metadata_supported, NULL);
-  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (chooser->launcher_button), xfce_g_file_is_safety_flag_on (thunar_file_get_file (file)));
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (chooser->launcher_button),
+                                xfce_g_file_is_trusted (thunar_file_get_file (file), NULL, NULL));
   g_signal_handlers_unblock_by_func (G_OBJECT (chooser->launcher_button), thunar_permissions_chooser_launcher_toggled, chooser);
   /* TEST AREA END */
 
@@ -1177,6 +1178,7 @@ static void
 thunar_permissions_chooser_launcher_toggled (ThunarPermissionsChooser *chooser,
                                              GtkWidget                *button)
 {
+  gboolean execution_flag;
   gboolean safety_flag;
   GFile   *gfile;
 
@@ -1193,9 +1195,10 @@ thunar_permissions_chooser_launcher_toggled (ThunarPermissionsChooser *chooser,
 
   gfile = thunar_file_get_file (THUNAR_FILE (chooser->files->data));
   g_info ("%s", thunar_g_file_get_location (gfile));
-  xfce_g_file_set_safety_flag (gfile, safety_flag);
+  xfce_g_file_set_trusted (gfile, safety_flag, NULL, NULL);
 
-  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (chooser->program_button), safety_flag);
+  execution_flag = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (chooser->program_button));
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (chooser->program_button), safety_flag || execution_flag);
 }
 
 
