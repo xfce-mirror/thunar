@@ -1083,7 +1083,8 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
         }
 
       if (thunar_g_vfs_metadata_is_supported ())
-        xfce_g_file_set_safety_flag (thunar_file_get_file (file), TRUE);
+        if (!xfce_g_file_set_trusted (thunar_file_get_file (file), TRUE, NULL, NULL))
+          g_warning ("Safety flag set failed");
 
       /* just launch */
       response = GTK_RESPONSE_OK;
