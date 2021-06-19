@@ -3236,6 +3236,19 @@ thunar_file_get_deletion_date (const ThunarFile *file,
 
 
 
+/**
+ * thunar_file_get_recency:
+ * @file       : a #ThunarFile instance.
+ * @date_style : the style used to format the date.
+ * @date_custom_style : custom style to apply, if @date_style is set to custom
+ *
+ * Returns the recency date of the @file if the @file
+ * is in the `recent:///` location. Recency differs from date accessed and date
+ * modified. It refers to the time of the last metadata change of a file in `recent:///`.
+ *
+ * Return value: the recency date of @file if @file is
+ *               in `recent:///`, %NULL otherwise.
+ **/
 gchar*
 thunar_file_get_recency       (const ThunarFile *file,
                                ThunarDateStyle   date_style,
