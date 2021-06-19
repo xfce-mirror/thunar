@@ -130,7 +130,7 @@ thunar_io_scan_directory (ThunarJob          *job,
             }
         }
 
-      /* check if file has 'recent' URI scheme */
+      /* check if we are scanning `recent:///` */
       if (g_file_has_uri_scheme (file, "recent"))
         {
           /* create Gfile using the target URI */
