@@ -322,12 +322,12 @@ thunar_tree_model_init (ThunarTreeModel *model)
   if (thunar_g_vfs_is_uri_scheme_supported ("computer"))
     system_paths = g_list_append (system_paths, g_file_new_for_uri ("computer://"));
 
-  if (thunar_g_vfs_is_uri_scheme_supported ("recent"))
-    system_paths = g_list_append (system_paths, g_file_new_for_uri ("recent://"));
-
   /* add the home folder to the system paths */
   home = thunar_g_file_new_for_home ();
   system_paths = g_list_append (system_paths, g_object_ref (home));
+
+  if (thunar_g_vfs_is_uri_scheme_supported ("recent"))
+    system_paths = g_list_append (system_paths, g_file_new_for_uri ("recent://"));
 
   /* append the trash icon if the trash is supported */
   if (thunar_g_vfs_is_uri_scheme_supported ("trash"))

@@ -78,8 +78,8 @@ enum _ThunarShortcutGroup
   /* THUNAR_SHORTCUT_GROUP_PLACES */
   THUNAR_SHORTCUT_GROUP_PLACES_HEADER      = (1 << 0),  /* places header */
   THUNAR_SHORTCUT_GROUP_PLACES_COMPUTER    = (1 << 1),  /* computer */
-  THUNAR_SHORTCUT_GROUP_PLACES_RECENT      = (1 << 2),  /* recent */
-  THUNAR_SHORTCUT_GROUP_PLACES_DEFAULT     = (1 << 3),  /* home and desktop */
+  THUNAR_SHORTCUT_GROUP_PLACES_DEFAULT     = (1 << 2),  /* home and desktop */
+  THUNAR_SHORTCUT_GROUP_PLACES_RECENT      = (1 << 3),  /* recent */
   THUNAR_SHORTCUT_GROUP_PLACES_TRASH       = (1 << 4),  /* trash */
   THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS   = (1 << 5),  /* gtk-bookmarks */
 
