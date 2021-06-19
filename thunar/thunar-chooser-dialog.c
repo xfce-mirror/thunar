@@ -1460,7 +1460,7 @@ thunar_chooser_dialog_install_handlers_ready_cb (GObject      *source_object,
 	proxy = G_DBUS_PROXY (source_object);
 	variant = g_dbus_proxy_call_finish (proxy, res, &error);
 
-  if (error == NULL) {
+  if (error != NULL) {
     /* display an error to the user */
     thunar_dialogs_show_error (GTK_WIDGET(dialog), error, _("There was an error searching for new applications"));
 
@@ -1496,7 +1496,7 @@ thunar_chooser_dialog_install_handlers (ThunarChooserDialog *dialog,
 
   connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
 
-  if (connection == NULL) {
+  if (error != NULL) {
     g_warning ("Could not get session bus: %s", error->message);
     g_error_free (error);
     return;
@@ -1510,7 +1510,8 @@ thunar_chooser_dialog_install_handlers (ThunarChooserDialog *dialog,
                                  "org.freedesktop.PackageKit.Modify",
                                  NULL,
                                  &error);
-  if (proxy == NULL) {
+
+  if (error != NULL) {
     /* display an error to the user */
     thunar_dialogs_show_error (GTK_WIDGET(dialog), error, _("There was an error searching for new applications"));
 
