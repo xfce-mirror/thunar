@@ -95,6 +95,14 @@ thunar_g_file_new_for_root (void)
 
 
 GFile *
+thunar_g_file_new_for_recent (void)
+{
+  return g_file_new_for_uri ("recent:///");
+}
+
+
+
+GFile *
 thunar_g_file_new_for_trash (void)
 {
   return g_file_new_for_uri ("trash:///");
