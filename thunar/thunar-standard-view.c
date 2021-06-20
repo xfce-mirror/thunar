@@ -351,6 +351,9 @@ struct _ThunarStandardViewPrivate
 
   /* current sort_order (GTK_SORT_ASCENDING || GTK_SORT_DESCENDING) */
   GtkSortType             sort_order;
+
+  /* This is an indicator that tells us when search is going on in thunar */
+  gboolean                search_in_progress;
 };
 
 static XfceGtkActionEntry thunar_standard_view_action_entries[] =
@@ -675,6 +678,9 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   /* setup the history support */
   standard_view->priv->history = g_object_new (THUNAR_TYPE_HISTORY, NULL);
   g_signal_connect_swapped (G_OBJECT (standard_view->priv->history), "change-directory", G_CALLBACK (thunar_navigator_change_directory), standard_view);
+
+  /* Assume no search is going on during initialization */
+  standard_view->priv->search_in_progress = FALSE;
 
   /* setup the list model */
   standard_view->model = thunar_list_model_new ();
@@ -1451,7 +1457,7 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
   GFile      *first_file;
   ThunarFile *current_directory;
 
-  loading = !!loading;
+  loading = loading != 0;
 
   /* check if we're already in that state */
   if (G_UNLIKELY (standard_view->loading == loading))
@@ -3940,6 +3946,25 @@ thunar_standard_view_append_menu_item (ThunarStandardView      *standard_view,
     gtk_widget_set_sensitive (item, standard_view->priv->selected_files != NULL);
 
   return item;
+}
+
+
+/* TODO: #32 Create callback here */
+/**
+ * thunar_standard_view_search_status_changed
+ * @param standard_view : a #ThunarStandardView
+ * @param searching The search status: in-progress or concluded
+ */
+void
+thunar_standard_view_search_status_changed (ThunarStandardView *standard_view,
+                                            gboolean searching)
+{
+  standard_view->priv->search_in_progress = searching;
+  if (searching) {
+    g_debug("Search is in progress");
+  } else {
+    g_debug("Search has stopped");
+  }
 }
 
 

@@ -231,6 +231,16 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                     G_CALLBACK (thunar_details_view_row_activated), details_view);
   g_signal_connect (G_OBJECT (tree_view), "select-cursor-row",
                     G_CALLBACK (thunar_details_view_select_cursor_row), details_view);
+
+  g_debug("Connecting the search progress callbacks");
+  /* TODO: #32 Register tree-view callbacks here */
+  g_signal_connect_swapped (G_OBJECT (tree_view), "search-in-progress",
+                           G_CALLBACK (thunar_standard_view_search_status_changed),
+                           THUNAR_STANDARD_VIEW (details_view));
+  g_signal_connect_swapped (G_OBJECT (tree_view), "search-concluded",
+                            G_CALLBACK (thunar_standard_view_search_status_changed),
+                            THUNAR_STANDARD_VIEW (details_view));
+
   gtk_container_add (GTK_CONTAINER (details_view), tree_view);
   gtk_widget_show (tree_view);
 
