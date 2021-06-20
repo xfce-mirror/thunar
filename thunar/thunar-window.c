@@ -1334,17 +1334,42 @@ static gboolean thunar_window_delete (GtkWidget *widget,
                                       gpointer   data )
 {
   gboolean      confirm_close_multiple_tabs, do_not_ask_again;
-  gint          response, n_tabs = 0;
+  gint          response, n_tabs = 0, n_tabsl = 0, n_tabsr = 0;
   ThunarWindow *window = THUNAR_WINDOW (widget);
+  gchar       **tab_uris;
+  int           pos;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (widget),FALSE);
 
-  /* if we don't have muliple tabs in one of the notebooks then just exit */
   if (window->notebook_left)
-    n_tabs += gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_left));
+    n_tabsl += gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_left));
   if (window->notebook_right)
-    n_tabs += gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_right));
+    n_tabsr += gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_right));
+  n_tabs = n_tabsl + n_tabsr;
 
+  tab_uris = g_new0 (gchar *, n_tabs + 2);
+  pos = 0;
+  for (int i = 0; i < n_tabsl; i++)
+    {
+      ThunarNavigator *view = THUNAR_NAVIGATOR (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_left), i));
+      gchar *uri = g_file_get_uri (thunar_file_get_file (thunar_navigator_get_current_directory (view)));
+      tab_uris[pos++] = g_strdup (uri);
+      printf("%s\n", uri);
+    }
+
+  for (int i = 0; i < n_tabsr; i++)
+    {
+      ThunarNavigator *view = THUNAR_NAVIGATOR (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_right), i));
+      gchar *uri = g_file_get_uri (thunar_file_get_file (thunar_navigator_get_current_directory (view)));
+      tab_uris[pos++] = g_strdup (uri);
+      printf("%s\n", uri);
+    }
+
+  g_object_set (G_OBJECT (window->preferences), "last-tabs", tab_uris, NULL);
+
+  g_strfreev (tab_uris);
+
+  /* if we don't have muliple tabs in one of the notebooks then just exit */
   if (thunar_window_split_view_is_active (window))
     {
       if (n_tabs < 3)
