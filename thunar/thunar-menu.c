@@ -308,6 +308,11 @@ thunar_menu_add_sections (ThunarMenu         *menu,
       if (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_RESTORE, FALSE) != NULL)
          xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
     }
+  if (menu_sections & THUNAR_MENU_SECTION_REMOVE_RECENT)
+    {
+      if (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_REMOVE_RECENT, FALSE) != NULL)
+        xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+    }
 
   item_added = FALSE;
   if (menu_sections & THUNAR_MENU_SECTION_DUPLICATE)
