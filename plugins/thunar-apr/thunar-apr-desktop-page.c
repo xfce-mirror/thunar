@@ -38,6 +38,7 @@
 
 #include <exo/exo.h>
 
+#include <thunar/thunar-gio-extensions.h>
 #include <thunar-apr/thunar-apr-desktop-page.h>
 
 /* use g_access() on win32 */
@@ -134,6 +135,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   GtkWidget      *grid;
   GtkWidget      *label;
   GtkWidget      *spacer;
+  guint           row = 0;
 
   gtk_container_set_border_width (GTK_CONTAINER (desktop_page), 12);
 
@@ -153,7 +155,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   label = gtk_label_new (_("Description:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), attr_list);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   desktop_page->description_entry = gtk_entry_new ();
@@ -162,10 +164,12 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   g_signal_connect (G_OBJECT (desktop_page->description_entry), "activate", G_CALLBACK (thunar_apr_desktop_page_activated), desktop_page);
   g_signal_connect (G_OBJECT (desktop_page->description_entry), "focus-out-event", G_CALLBACK (thunar_apr_desktop_page_focus_out_event), desktop_page);
   gtk_widget_set_hexpand (desktop_page->description_entry, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), desktop_page->description_entry, 1, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), desktop_page->description_entry, 1, row, 1, 1);
   gtk_widget_show (desktop_page->description_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->description_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
+
+  row++;
 
   /* set Atk label relation for the entry */
   object = gtk_widget_get_accessible (desktop_page->description_entry);
@@ -177,7 +181,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   label = gtk_label_new (_("Command:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), attr_list);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 1, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   desktop_page->command_entry = gtk_entry_new ();
@@ -185,10 +189,12 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   g_signal_connect (G_OBJECT (desktop_page->command_entry), "activate", G_CALLBACK (thunar_apr_desktop_page_activated), desktop_page);
   g_signal_connect (G_OBJECT (desktop_page->command_entry), "focus-out-event", G_CALLBACK (thunar_apr_desktop_page_focus_out_event), desktop_page);
   gtk_widget_set_hexpand (desktop_page->command_entry, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), desktop_page->command_entry, 1, 1, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), desktop_page->command_entry, 1, row, 1, 1);
   gtk_widget_show (desktop_page->command_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->command_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
+
+  row++;
 
   /* set Atk label relation for the entry */
   object = gtk_widget_get_accessible (desktop_page->command_entry);
@@ -200,7 +206,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   label = gtk_label_new (_("Working Directory:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), attr_list);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 2, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   desktop_page->path_entry = gtk_entry_new ();
@@ -208,10 +214,12 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   g_signal_connect (G_OBJECT (desktop_page->path_entry), "activate", G_CALLBACK (thunar_apr_desktop_page_activated), desktop_page);
   g_signal_connect (G_OBJECT (desktop_page->path_entry), "focus-out-event", G_CALLBACK (thunar_apr_desktop_page_focus_out_event), desktop_page);
   gtk_widget_set_hexpand (desktop_page->path_entry, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), desktop_page->path_entry, 1, 2, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), desktop_page->path_entry, 1, row, 1, 1);
   gtk_widget_show (desktop_page->path_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->path_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
+
+  row++;
 
   /* set Atk label relation for the entry */
   object = gtk_widget_get_accessible (desktop_page->path_entry);
@@ -223,7 +231,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   label = gtk_label_new (_("URL:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), attr_list);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 3, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   desktop_page->url_entry = gtk_entry_new ();
@@ -231,10 +239,12 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   g_signal_connect (G_OBJECT (desktop_page->url_entry), "activate", G_CALLBACK (thunar_apr_desktop_page_activated), desktop_page);
   g_signal_connect (G_OBJECT (desktop_page->url_entry), "focus-out-event", G_CALLBACK (thunar_apr_desktop_page_focus_out_event), desktop_page);
   gtk_widget_set_hexpand (desktop_page->url_entry, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), desktop_page->url_entry, 1, 3, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), desktop_page->url_entry, 1, row, 1, 1);
   gtk_widget_show (desktop_page->url_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->url_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
+
+  row++;
 
   /* set Atk label relation for the entry */
   object = gtk_widget_get_accessible (desktop_page->url_entry);
@@ -246,7 +256,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   label = gtk_label_new (_("Comment:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), attr_list);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 4, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   desktop_page->comment_entry = gtk_entry_new ();
@@ -256,10 +266,16 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   g_signal_connect (G_OBJECT (desktop_page->comment_entry), "activate", G_CALLBACK (thunar_apr_desktop_page_activated), desktop_page);
   g_signal_connect (G_OBJECT (desktop_page->comment_entry), "focus-out-event", G_CALLBACK (thunar_apr_desktop_page_focus_out_event), desktop_page);
   gtk_widget_set_hexpand (desktop_page->comment_entry, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), desktop_page->comment_entry, 1, 4, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), desktop_page->comment_entry, 1, row, 1, 1);
   gtk_widget_show (desktop_page->comment_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->comment_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
+
+  row++;
+
+  /* Nothing here on purpose */
+
+  row++;
 
   /* set Atk label relation for the entry */
   object = gtk_widget_get_accessible (desktop_page->comment_entry);
@@ -270,13 +286,15 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
 
   /* add spacing between the entries and the options */
   spacer = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "height-request", 12, NULL);
-  gtk_grid_attach (GTK_GRID (grid), spacer, 0, 6, 2, 1);
+  gtk_grid_attach (GTK_GRID (grid), spacer, 0, row, 2, 1);
   gtk_widget_show (spacer);
+
+  row++;
 
   label = gtk_label_new (_("Options:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), attr_list);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 7, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   desktop_page->snotify_button = gtk_check_button_new_with_mnemonic (_("Use _startup notification"));
@@ -285,14 +303,16 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
                                                                "startup notification."));
   g_signal_connect (G_OBJECT (desktop_page->snotify_button), "toggled", G_CALLBACK (thunar_apr_desktop_page_toggled), desktop_page);
   gtk_widget_set_hexpand (desktop_page->snotify_button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), desktop_page->snotify_button, 1, 7, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), desktop_page->snotify_button, 1, row, 1, 1);
   gtk_widget_show (desktop_page->snotify_button);
+
+  row++;
 
   desktop_page->terminal_button = gtk_check_button_new_with_mnemonic (_("Run in _terminal"));
   gtk_widget_set_tooltip_text (desktop_page->terminal_button, _("Select this option to run the command in a terminal window."));
   g_signal_connect (G_OBJECT (desktop_page->terminal_button), "toggled", G_CALLBACK (thunar_apr_desktop_page_toggled), desktop_page);
   gtk_widget_set_hexpand (desktop_page->terminal_button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), desktop_page->terminal_button, 1, 8, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), desktop_page->terminal_button, 1, row, 1, 1);
   gtk_widget_show (desktop_page->terminal_button);
 
   /* set Atk label relation for the buttons */
