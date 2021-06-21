@@ -1300,6 +1300,7 @@ thunar_file_get (GFile   *gfile,
  * thunar_file_get_with_info:
  * @uri         : an URI or an absolute filename.
  * @info        : #GFileInfo to use when loading the info.
+ * @recent_info : additional #GFileInfo to use when loading the info, only for files in `recent:///`.
  * @not_mounted : if the file is mounted.
  *
  * Looks up the #ThunarFile referred to by @file. This function may return a
@@ -1317,6 +1318,7 @@ thunar_file_get (GFile   *gfile,
 ThunarFile *
 thunar_file_get_with_info (GFile     *gfile,
                            GFileInfo *info,
+                           GFileInfo *recent_info,
                            gboolean   not_mounted)
 {
   ThunarFile *file;
@@ -1361,26 +1363,12 @@ thunar_file_get_with_info (GFile     *gfile,
       /* done inserting in the cache */
       G_UNLOCK (file_cache_mutex);
     }
-
-//  printf("info has recent modified: %d\n", g_file_info_has_attribute (file->info, "recent::modified"));
+    
+  if (recent_info != NULL)
+    file->recent_info = g_object_ref (recent_info);
 
   return file;
 }
-
-
-
-ThunarFile *
-thunar_file_get_with_recent_info (GFile     *gfile,
-                                  GFileInfo *info,
-                                  GFileInfo *recent_info,
-                                  gboolean   not_mounted)
-{
-  ThunarFile *file = thunar_file_get_with_info (gfile, info, not_mounted);
-  file->recent_info = g_object_ref (recent_info);
-//  printf("recent_info has recent modified: %d\n", g_file_info_has_attribute (file->recent_info, "recent::modified"));
-  return file;
-}
-
 
 
 

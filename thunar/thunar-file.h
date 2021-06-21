@@ -125,9 +125,6 @@ ThunarFile       *thunar_file_get                        (GFile                 
                                                           GError                **error);
 ThunarFile       *thunar_file_get_with_info              (GFile                  *file,
                                                           GFileInfo              *info,
-                                                          gboolean                not_mounted);
-ThunarFile       *thunar_file_get_with_recent_info       (GFile                  *file,
-                                                          GFileInfo              *info,
                                                           GFileInfo              *recent_info,
                                                           gboolean                not_mounted);
 ThunarFile       *thunar_file_get_for_uri                (const gchar            *uri,
