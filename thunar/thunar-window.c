@@ -1200,23 +1200,7 @@ thunar_window_update_go_menu (ThunarWindow *window,
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_HOME), G_OBJECT (window), GTK_MENU_SHELL (menu));
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_DESKTOP), G_OBJECT (window), GTK_MENU_SHELL (menu));
   if (thunar_g_vfs_is_uri_scheme_supported ("recent"))
-    {
-      GFile      *gfile;
-      ThunarFile *recent_folder;
-
-      /* try to connect to the trash bin */
-      gfile = thunar_g_file_new_for_recent ();
-      if (gfile != NULL)
-        {
-          recent_folder = thunar_file_get (gfile, NULL);
-          if (recent_folder != NULL)
-            {
-              xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_RECENT), G_OBJECT (window), GTK_MENU_SHELL (menu));
-              g_object_unref (recent_folder);
-            }
-          g_object_unref (gfile);
-        }
-    }
+    xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_MENU_SECTION_REMOVE_FROM_RECENT), G_OBJECT (window), GTK_MENU_SHELL (menu));
   if (thunar_g_vfs_is_uri_scheme_supported ("trash"))
     {
       GFile      *gfile;
@@ -3559,10 +3543,10 @@ thunar_window_action_open_recent (ThunarWindow *window)
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  /* determine the path to the trash bin */
+  /* determine the path to `Recent` */
   recent = thunar_g_file_new_for_recent ();
 
-  /* determine the file for the trash bin */
+  /* determine the file for `Recent` */
   recent_file = thunar_file_get (recent, &error);
   if (G_UNLIKELY (recent_file == NULL))
     {
@@ -3572,12 +3556,12 @@ thunar_window_action_open_recent (ThunarWindow *window)
     }
   else
     {
-      /* open the trash folder */
+      /* open the `Recent` folder */
       thunar_window_set_current_directory (window, recent_file);
       g_object_unref (G_OBJECT (recent_file));
     }
 
-  /* release our reference on the trash bin path */
+  /* release our reference on the `Recent` path */
   g_object_unref (recent);
 }
 
@@ -4670,6 +4654,6 @@ static void
 thunar_window_recent_reload (GtkRecentManager *recent_manager,
                              ThunarWindow     *window)
 {
-  if (thunar_file_is_in_recent (window->current_directory)) // TODO: or should I disable the signal?
+  if (thunar_file_is_in_recent (window->current_directory))
     thunar_window_action_reload (window, NULL);
 }
