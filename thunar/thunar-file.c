@@ -1578,6 +1578,7 @@ thunar_file_execute (ThunarFile  *file,
                      const gchar *startup_id,
                      GError     **error)
 {
+  gboolean    safety_flag = TRUE;
   gboolean    snotify = FALSE;
   gboolean    terminal;
   gboolean    result = FALSE;
@@ -1607,8 +1608,12 @@ thunar_file_execute (ThunarFile  *file,
     uri_list = g_slist_prepend (uri_list, g_file_get_uri (li->data));
   uri_list = g_slist_reverse (uri_list);
 
+  if (thunar_g_vfs_metadata_is_supported ())
+    safety_flag = xfce_g_file_is_trusted (file->gfile, NULL, NULL);
+
   if (thunar_file_is_desktop_file (file, &is_secure))
     {
+      is_secure = is_secure && safety_flag;
       /* parse file first, even if it is insecure */
       key_file = thunar_g_file_query_key_file (file->gfile, NULL, &err);
       if (key_file == NULL)
@@ -1695,11 +1700,14 @@ thunar_file_execute (ThunarFile  *file,
       /* fake the Exec line */
       escaped_location = g_shell_quote (location);
       exec = g_strconcat (escaped_location, " %F", NULL);
-      command = xfce_expand_desktop_entry_field_codes (exec, uri_list, NULL, NULL, NULL, FALSE);
-      result = g_shell_parse_argv (command, NULL, &argv, error);
+      if (safety_flag || thunar_dialogs_show_insecure_program (parent, _("Untrusted executable"), file, exec))
+        {
+          command = xfce_expand_desktop_entry_field_codes (exec, uri_list, NULL, NULL, NULL, FALSE);
+          result = g_shell_parse_argv (command, NULL, &argv, error);
+          g_free (command);
+        }
       g_free (escaped_location);
       g_free (exec);
-      g_free (command);
     }
 
   if (G_LIKELY (result && argv != NULL))
