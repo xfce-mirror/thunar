@@ -3399,7 +3399,7 @@ thunar_window_action_open_computer (ThunarWindow *window)
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* determine the computer location */
-  computer = g_file_new_for_uri ("computer://");
+  computer = thunar_g_file_new_for_computer();
 
   /* determine the file for this location */
   computer_file = thunar_file_get (computer, &error);
@@ -3610,7 +3610,7 @@ thunar_window_action_open_network (ThunarWindow *window)
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* determine the network root location */
-  network = g_file_new_for_uri ("network://");
+  network = thunar_g_file_new_for_network();
 
   /* determine the file for this location */
   network_file = thunar_file_get (network, &error);
