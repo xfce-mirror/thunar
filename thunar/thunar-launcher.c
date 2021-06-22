@@ -1034,8 +1034,8 @@ thunar_launcher_poke (ThunarLauncher                 *launcher,
      }
    else
      {
-       // We will only poke one file at a time, in order to dont use all available CPU's
-       // TODO: Check if that could cause slowness
+      // We will only poke one file at a time, in order to dont use all available CPU's
+      // TODO: Check if that could cause slowness
       thunar_browser_poke_file (THUNAR_BROWSER (launcher), poke_data->files_to_poke->data,
                                 launcher->widget, thunar_launcher_poke_files_finish,
                                 poke_data);
@@ -2435,9 +2435,11 @@ thunar_launcher_action_remove_from_recent (ThunarLauncher *launcher)
 
   for (lp = launcher->files_to_process; lp != NULL; lp = lp->next)
     {
-      ThunarFile *file  = lp->data;
-      GFile *gfile = thunar_file_get_file (file);
-      gtk_recent_manager_remove_item (recent_manager, g_file_get_uri (gfile), NULL);
+      ThunarFile  *file  = lp->data;
+      GFile       *gfile = thunar_file_get_file (file);
+      gchar       *uri   = g_file_get_uri (gfile);
+      gtk_recent_manager_remove_item (recent_manager, uri, NULL);
+      g_free(uri);
     }
 }
 

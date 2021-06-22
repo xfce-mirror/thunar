@@ -506,6 +506,7 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   if (G_LIKELY (succeed && dialog->open))
     {
       GFile *gfile = thunar_file_get_file (dialog->file); list.next = list.prev = NULL;
+      gchar *uri = g_file_get_uri (gfile);
 
       /* create launch context */
       screen = gtk_widget_get_screen (GTK_WIDGET (dialog));
@@ -516,7 +517,8 @@ thunar_chooser_dialog_response (GtkDialog *widget,
       /* create fake file list */
       list.data = gfile;
 
-      gtk_recent_manager_add_item (gtk_recent_manager_get_default(), g_file_get_uri (gfile));
+      gtk_recent_manager_add_item (gtk_recent_manager_get_default(), uri);
+      g_free (uri);
 
       if (!g_app_info_launch (app_info, &list, G_APP_LAUNCH_CONTEXT (context), &error))
         {

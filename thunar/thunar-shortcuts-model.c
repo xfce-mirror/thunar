@@ -1148,7 +1148,7 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
       shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_RECENT;
       shortcut->name = g_strdup (_("Recent"));
       shortcut->tooltip = g_strdup (_("Browse recently used files"));
-      shortcut->location = g_file_new_for_uri ("recent://");
+      shortcut->location = thunar_g_file_new_for_recent();
       shortcut->gicon = g_themed_icon_new ("document-open-recent");
       shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
       thunar_shortcuts_model_add_shortcut (model, shortcut);

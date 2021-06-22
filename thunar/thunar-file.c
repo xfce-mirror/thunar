@@ -446,6 +446,10 @@ thunar_file_finalize (GObject *object)
   if (file->info != NULL)
     g_object_unref (file->info);
 
+  /* release file info */
+  if (file->recent_info != NULL)
+    g_object_unref (file->recent_info);
+
   /* free the custom icon name */
   g_free (file->custom_icon_name);
 
@@ -1369,7 +1373,6 @@ thunar_file_get_with_info (GFile     *gfile,
 
   return file;
 }
-
 
 
 
