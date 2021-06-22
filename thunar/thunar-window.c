@@ -215,6 +215,7 @@ static void      thunar_window_action_open_desktop        (ThunarWindow         
 static void      thunar_window_action_open_computer       (ThunarWindow           *window);
 static void      thunar_window_action_open_templates      (ThunarWindow           *window);
 static void      thunar_window_action_open_file_system    (ThunarWindow           *window);
+static void      thunar_window_action_open_recent         (ThunarWindow           *window);
 static void      thunar_window_action_open_trash          (ThunarWindow           *window);
 static void      thunar_window_action_open_network        (ThunarWindow           *window);
 static void      thunar_window_action_open_bookmark       (GFile                  *g_file);
@@ -298,6 +299,8 @@ static void      thunar_window_trash_infobar_clicked           (GtkInfoBar      
                                                                 gint                    response_id,
                                                                 ThunarWindow           *window);
 static void      thunar_window_trash_selection_updated         (ThunarWindow           *window);
+static void      thunar_window_recent_reload                   (GtkRecentManager       *recent_manager,
+                                                                ThunarWindow           *window);
 
 
 
@@ -438,6 +441,7 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     { THUNAR_WINDOW_ACTION_OPEN_HOME,                      "<Actions>/ThunarWindow/open-home",                       "<Alt>Home",            XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Home"),                  N_ ("Go to the home folder"),                                                        "go-home-symbolic",        G_CALLBACK (thunar_window_action_open_home),          },
     { THUNAR_WINDOW_ACTION_OPEN_DESKTOP,                   "<Actions>/ThunarWindow/open-desktop",                    "",                     XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Desktop"),                N_ ("Go to the desktop folder"),                                                     "user-desktop",            G_CALLBACK (thunar_window_action_open_desktop),       },
     { THUNAR_WINDOW_ACTION_OPEN_COMPUTER,                  "<Actions>/ThunarWindow/open-computer",                   "",                     XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Computer"),               N_ ("Browse all local and remote disks and folders accessible from this computer"),  "computer",                G_CALLBACK (thunar_window_action_open_computer),      },
+    { THUNAR_WINDOW_ACTION_OPEN_RECENT,                    "<Actions>/ThunarWindow/open-recent",                     "",                     XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Recent"),                 N_ ("Display recently used files"),                                                  "document-open-recent",    G_CALLBACK (thunar_window_action_open_recent),        },
     { THUNAR_WINDOW_ACTION_OPEN_TRASH,                     "<Actions>/ThunarWindow/open-trash",                      "",                     XFCE_GTK_IMAGE_MENU_ITEM, N_ ("T_rash"),                 N_ ("Display the contents of the trash can"),                                        NULL,                      G_CALLBACK (thunar_window_action_open_trash),         },
     { THUNAR_WINDOW_ACTION_OPEN_PARENT,                    "<Actions>/ThunarWindow/open-parent",                     "<Alt>Up",              XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Open _Parent"),           N_ ("Open the parent folder"),                                                       "go-up-symbolic",          G_CALLBACK (thunar_window_action_go_up),              },
     { THUNAR_WINDOW_ACTION_OPEN_LOCATION,                  "<Actions>/ThunarWindow/open-location",                   "<Primary>l",           XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Open Location..."),      N_ ("Specify a location to open"),                                                   NULL,                      G_CALLBACK (thunar_window_action_open_location),      },
@@ -931,6 +935,9 @@ thunar_window_init (ThunarWindow *window)
 
   /* initial load of the bookmarks */
   thunar_window_update_bookmarks (window);
+
+  /* update recent */
+  g_signal_connect (G_OBJECT (gtk_recent_manager_get_default()), "changed", G_CALLBACK (thunar_window_recent_reload), window);
 }
 
 
@@ -1192,6 +1199,8 @@ thunar_window_update_go_menu (ThunarWindow *window,
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_COMPUTER), G_OBJECT (window), GTK_MENU_SHELL (menu));
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_HOME), G_OBJECT (window), GTK_MENU_SHELL (menu));
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_DESKTOP), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  if (thunar_g_vfs_is_uri_scheme_supported ("recent"))
+    xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_MENU_SECTION_REMOVE_FROM_RECENT), G_OBJECT (window), GTK_MENU_SHELL (menu));
   if (thunar_g_vfs_is_uri_scheme_supported ("trash"))
     {
       GFile      *gfile;
@@ -3534,6 +3543,39 @@ thunar_window_action_open_file_system (ThunarWindow *window)
 
 
 static void
+thunar_window_action_open_recent (ThunarWindow *window)
+{
+  GFile      *recent;
+  ThunarFile *recent_file;
+  GError     *error = NULL;
+
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* determine the path to `Recent` */
+  recent = thunar_g_file_new_for_recent ();
+
+  /* determine the file for `Recent` */
+  recent_file = thunar_file_get (recent, &error);
+  if (G_UNLIKELY (recent_file == NULL))
+    {
+      /* display an error to the user */
+      thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to display `Recent`"));
+      g_error_free (error);
+    }
+  else
+    {
+      /* open the `Recent` folder */
+      thunar_window_set_current_directory (window, recent_file);
+      g_object_unref (G_OBJECT (recent_file));
+    }
+
+  /* release our reference on the `Recent` path */
+  g_object_unref (recent);
+}
+
+
+
+static void
 thunar_window_action_open_trash (ThunarWindow *window)
 {
   GFile      *trash_bin;
@@ -4057,6 +4099,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
                                      ThunarFile   *current_directory)
 {
   gboolean is_trash;
+  gboolean is_recent;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
@@ -4141,6 +4184,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
     return;
 
   is_trash = thunar_file_is_trash (current_directory);
+  is_recent = thunar_file_is_recent (current_directory);
   if (is_trash)
     gtk_widget_show (window->trash_infobar);
   else
@@ -4149,6 +4193,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
   if (THUNAR_IS_DETAILS_VIEW (window->view) == FALSE)
     return;
   thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view), is_trash);
+  thunar_details_view_set_recency_column_visible (THUNAR_DETAILS_VIEW (window->view), is_recent);
 }
 
 
@@ -4609,4 +4654,14 @@ thunar_window_trash_selection_updated (ThunarWindow *window)
     gtk_widget_set_sensitive (window->trash_infobar_restore_button, TRUE);
   else
     gtk_widget_set_sensitive (window->trash_infobar_restore_button, FALSE);
+}
+
+
+
+static void
+thunar_window_recent_reload (GtkRecentManager *recent_manager,
+                             ThunarWindow     *window)
+{
+  if (thunar_file_is_in_recent (window->current_directory))
+    thunar_window_action_reload (window, NULL);
 }
