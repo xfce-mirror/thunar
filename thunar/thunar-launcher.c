@@ -282,7 +282,7 @@ static XfceGtkActionEntry thunar_launcher_action_entries[] =
     { THUNAR_LAUNCHER_ACTION_CREATE_DOCUMENT,  "<Actions>/ThunarStandardView/create-document",     "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Create _Document"),                N_ ("Create a new document from a template"),                                                    "document-new",         G_CALLBACK (NULL),                                       },
 
     { THUNAR_LAUNCHER_ACTION_RESTORE,          "<Actions>/ThunarLauncher/restore",                 "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Restore"),                        NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_restore),             },
-    { THUNAR_LAUNCHER_ACTION_RESTORE_OPEN,     "<Actions>/ThunarLauncher/restore-show",            "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Restore and Show"),               N_ ("_Restore and show the file(s)"),                                                            NULL,                   G_CALLBACK (thunar_launcher_action_restore_and_open),    },
+    { THUNAR_LAUNCHER_ACTION_RESTORE_SHOW,     "<Actions>/ThunarLauncher/restore-show",            "",                  XFCE_GTK_MENU_ITEM,       N_ ("_Restore and Show"),               N_ ("_Restore and show the file(s)"),                                                            NULL,                   G_CALLBACK (thunar_launcher_action_restore_and_show),    },
     { THUNAR_LAUNCHER_ACTION_MOVE_TO_TRASH,    "<Actions>/ThunarLauncher/move-to-trash",           "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Mo_ve to Trash"),                  NULL,                                                                                            "user-trash",           G_CALLBACK (thunar_launcher_action_trash_delete),       },
     { THUNAR_LAUNCHER_ACTION_DELETE,           "<Actions>/ThunarLauncher/delete",                  "",                  XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Delete"),                         NULL,                                                                                            "edit-delete",          G_CALLBACK (thunar_launcher_action_delete),              },
     { THUNAR_LAUNCHER_ACTION_DELETE,           "<Actions>/ThunarLauncher/delete-2",                "<Shift>Delete",     XFCE_GTK_IMAGE_MENU_ITEM, NULL,                                   NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_delete),              },
@@ -1578,11 +1578,11 @@ thunar_launcher_append_menu_item (ThunarLauncher       *launcher,
           }
         return NULL;
 
-      case THUNAR_LAUNCHER_ACTION_RESTORE_OPEN:
+      case THUNAR_LAUNCHER_ACTION_RESTORE_SHOW:
         if (launcher->files_are_selected && thunar_file_is_trashed (launcher->current_directory))
           {
             tooltip_text = ngettext ("Restore the selected file to its original location and open the location in a new window/tab",
-                                     "Restore the selected files to its original location and open the location in a new window/tab", launcher->n_files_to_process);
+                                     "Restore the selected files to their original locations and open the locations in a new window/tab", launcher->n_files_to_process);
             item = xfce_gtk_menu_item_new (action_entry->menu_item_label_text, tooltip_text, action_entry->accel_path,
                                            action_entry->callback, G_OBJECT (launcher), menu);
             gtk_widget_set_sensitive (item, thunar_file_is_writable (launcher->current_directory));
@@ -2366,7 +2366,7 @@ thunar_launcher_action_restore (ThunarLauncher *launcher)
 
 
 void
-thunar_launcher_action_restore_and_open (ThunarLauncher *launcher)
+thunar_launcher_action_restore_and_show (ThunarLauncher *launcher)
 {
   ThunarApplication *application;
 
