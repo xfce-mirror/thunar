@@ -1318,7 +1318,7 @@ thunar_application_open_window (ThunarApplication *application,
           list = g_list_last (list);
 
           if (directory != NULL)
-              thunar_window_notebook_add_new_tab (THUNAR_WINDOW (list->data), directory, TRUE, FALSE);
+              thunar_window_notebook_add_new_tab (THUNAR_WINDOW (list->data), directory, THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
           
           /* bring the window to front */
           gtk_window_present (list->data);
@@ -2430,7 +2430,7 @@ thunar_application_empty_trash (ThunarApplication *application,
 typedef struct
 {
     GHashTable *restore_open_table; /* string<directory_path>:GList<GFile*> */
-    GClosure   *restore_show_closure;
+    GClosure   *restore_open_closure;
 } ShowAndSelectStruct;
 
 
@@ -2466,7 +2466,7 @@ hash_table_show_and_select (ShowAndSelectStruct *show_select)
   g_hash_table_foreach (show_select->restore_open_table, hash_table_entry_show_and_select_files, application);
   g_hash_table_destroy (show_select->restore_open_table);
   g_object_unref (application);
-  g_closure_unref (show_select->restore_show_closure);
+  g_closure_unref (show_select->restore_open_closure);
   g_free (show_select);
 }
 
@@ -2516,10 +2516,10 @@ thunar_application_restore_files (ThunarApplication *application,
       _thunar_return_if_fail (new_files_closure == NULL);
       show_select = g_malloc (sizeof (ShowAndSelectStruct));
       show_select->restore_open_table = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, list_free_all_g_files);
-      show_select->restore_show_closure = g_cclosure_new_swap (G_CALLBACK (hash_table_show_and_select), show_select, NULL);
-      new_files_closure = show_select->restore_show_closure;
-      g_closure_ref (show_select->restore_show_closure);
-      g_closure_sink (show_select->restore_show_closure);
+      show_select->restore_open_closure = g_cclosure_new_swap (G_CALLBACK (hash_table_show_and_select), show_select, NULL);
+      new_files_closure = show_select->restore_open_closure;
+      g_closure_ref (show_select->restore_open_closure);
+      g_closure_sink (show_select->restore_open_closure);
     }
 
   for (lp = trash_file_list; lp != NULL; lp = lp->next)
