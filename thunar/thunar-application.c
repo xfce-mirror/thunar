@@ -2454,6 +2454,7 @@ hash_table_entry_show_and_select_files (gpointer key, gpointer list, gpointer ap
   thunar_window_select_files (THUNAR_WINDOW (window_list->data), list);
 
   /* free memory */
+  g_list_free (window_list);
   g_object_unref (original_dir);
 }
 
@@ -2489,6 +2490,8 @@ list_free_all_g_files (void *list)
  *                      which will be emitted when the job finishes with the
  *                      list of #GFile<!---->s created by the job, or
  *                      %NULL if you're not interested in the signal.
+ * @open_original_folder : a #gboolean that controls whether the locations
+ *                         of the restored should be opened as new tabs
  *
  * Restores all #ThunarFile<!---->s in the @trash_file_list to their original
  * location.
