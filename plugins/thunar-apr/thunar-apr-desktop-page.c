@@ -161,7 +161,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   GtkWidget      *label;
   GtkWidget      *spacer;
   guint           row = 0;
-  GFile          *g_file;
+  GFile          *gfile;
 
   gtk_container_set_border_width (GTK_CONTAINER (desktop_page), 12);
 
@@ -339,8 +339,8 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
 
   row++;
 
-  g_file = g_file_new_for_uri ("file:///");
-  if (xfce_g_file_metadata_is_supported (g_file))
+  gfile = g_file_new_for_uri ("file:///");
+  if (xfce_g_file_metadata_is_supported (gfile))
     {
       /* same function as in thunar-permission-chooser.c */
       desktop_page->trusted_button = gtk_check_button_new_with_mnemonic (_("Set this file as trusted"));
@@ -359,7 +359,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   else
     desktop_page->trusted_button = NULL;
 
-  g_object_unref (g_file);
+  g_object_unref (gfile);
 
   /* release shared bold Pango attributes */
   pango_attr_list_unref (attr_list);
@@ -851,18 +851,22 @@ thunar_apr_desktop_page_toggled (GtkWidget            *button,
   thunar_apr_desktop_page_save (desktop_page, button);
 }
 
+
+
 static void
 thunar_apr_desktop_page_security_toggled (GtkWidget            *button,
                                           ThunarAprDesktopPage *desktop_page)
 {
-  GFile *g_file;
+  GFile *gfile;
+  gboolean execution_flag;
+  gboolean safety_flag;
 
   g_return_if_fail (GTK_IS_TOGGLE_BUTTON (button));
   g_return_if_fail (button == desktop_page->program_button || button == desktop_page->trusted_button);
   g_return_if_fail (THUNAR_APR_IS_DESKTOP_PAGE (desktop_page));
   g_return_if_fail (THUNARX_IS_FILE_INFO (THUNAR_APR_ABSTRACT_PAGE (desktop_page)->file));
 
-  g_file = thunarx_file_info_get_location (THUNAR_APR_ABSTRACT_PAGE (desktop_page)->file);
+  gfile = thunarx_file_info_get_location (THUNAR_APR_ABSTRACT_PAGE (desktop_page)->file);
 
-  g_object_unref (g_file);
+  g_object_unref (gfile);
 }
