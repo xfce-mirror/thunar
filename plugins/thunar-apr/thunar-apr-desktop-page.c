@@ -50,7 +50,8 @@
 #endif
 
 
-
+static void    _xfce_gtk_label_set_a11y_relation         (GtkLabel                   *label,
+                                                          GtkWidget                  *widget);
 static void     thunar_apr_desktop_page_finalize         (GObject                    *object);
 static void     thunar_apr_desktop_page_file_changed     (ThunarAprAbstractPage      *abstract_page,
                                                           ThunarxFileInfo            *file);
@@ -119,6 +120,27 @@ struct _ThunarAprDesktopPage
 THUNARX_DEFINE_TYPE (ThunarAprDesktopPage,
                      thunar_apr_desktop_page,
                      THUNAR_APR_TYPE_ABSTRACT_PAGE);
+
+
+
+/* identical with non-underlined function */
+static void
+_xfce_gtk_label_set_a11y_relation (GtkLabel  *label,
+                                   GtkWidget *widget)
+{
+  AtkRelationSet *relations;
+  AtkRelation    *relation;
+  AtkObject      *object;
+
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+  g_return_if_fail (GTK_IS_LABEL (label));
+
+  object = gtk_widget_get_accessible (widget);
+  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (GTK_WIDGET (label)));
+  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
+  atk_relation_set_add (relations, relation);
+  g_object_unref (G_OBJECT (relation));
+}
 
 
 
@@ -260,7 +282,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->description_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->description_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->description_entry);
+  _xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->description_entry);
 
   row++;
 
@@ -279,7 +301,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->command_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->command_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->command_entry);
+  _xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->command_entry);
 
   row++;
 
@@ -298,7 +320,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->path_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->path_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->path_entry);
+  _xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->path_entry);
 
   row++;
 
@@ -317,7 +339,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->url_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->url_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->url_entry);
+  _xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->url_entry);
 
   row++;
 
@@ -338,7 +360,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->comment_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->comment_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->comment_entry);
+  _xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->comment_entry);
 
   row++;
 
@@ -369,7 +391,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->snotify_button);
 
   g_object_bind_property (G_OBJECT (desktop_page->snotify_button), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->snotify_button);
+  _xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->snotify_button);
 
   row++;
 
@@ -381,7 +403,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->terminal_button);
 
   /* don't bind visibility with label */
-  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->terminal_button);
+  _xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->terminal_button);
 
   row++;
 
@@ -401,7 +423,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->program_button);
 
   g_object_bind_property (G_OBJECT (desktop_page->program_button), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->program_button);
+  _xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->program_button);
 
   row++;
 
@@ -419,7 +441,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
       gtk_widget_show (desktop_page->trusted_button);
 
       g_object_bind_property (G_OBJECT (desktop_page->trusted_button), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-      xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->trusted_button);
+      _xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->trusted_button);
 
       row++;
     }
@@ -631,6 +653,7 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
         }
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (desktop_page->program_button), executable);
 
+      trusted = TRUE;
       #ifdef __XFCE_GIO_EXTENSIONS_H__
       if (desktop_page->trusted_button != NULL)
         {
