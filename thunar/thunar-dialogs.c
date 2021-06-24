@@ -1079,12 +1079,17 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
       if (err != NULL)
         {
           thunar_dialogs_show_error (parent, err, ("Unable to mark launcher executable"));
-          g_error_free (err);
+          g_clear_error (&err);
         }
 
+      #ifdef __XFCE_GIO_EXTENSIONS_H__
       if (thunar_g_vfs_metadata_is_supported ())
-        if (!xfce_g_file_set_trusted (thunar_file_get_file (file), TRUE, NULL, NULL))
-          g_warning ("Safety flag set failed");
+        if (!xfce_g_file_set_trusted (thunar_file_get_file (file), TRUE, NULL, &err))
+          {
+            g_warning ("Safety flag set failed: %s", err->message);
+            g_clear_error (&err);
+          }
+      #endif /* __XFCE_GIO_EXTENSIONS_H__ */
 
       /* just launch */
       response = GTK_RESPONSE_OK;
