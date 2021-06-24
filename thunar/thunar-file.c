@@ -1702,9 +1702,9 @@ thunar_file_execute (ThunarFile  *file,
       exec = g_strconcat (escaped_location, " %F", NULL);
       command = xfce_expand_desktop_entry_field_codes (exec, uri_list, NULL, NULL, NULL, FALSE);
       result = g_shell_parse_argv (command, NULL, &argv, error);
-      g_free (command);
       g_free (escaped_location);
       g_free (exec);
+      g_free (command);
     }
 
   if (G_LIKELY (result && argv != NULL))
