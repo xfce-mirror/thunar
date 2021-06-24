@@ -41,7 +41,7 @@
 #include <libxfce4ui/libxfce4ui.h>
 #if LIBXFCE4UI_CHECK_VERSION(4,16,1)
 #else
-#define xfce_gtk_label_set_ally_relation(label,widget) _xfce_gtk_label_set_a11y_relation (label, widget)
+#define xfce_gtk_label_set_a11y_relation(label,widget) _xfce_gtk_label_set_a11y_relation (label, widget)
 #endif /* LIBXFCE4UI_CHECK_VERSION(4,16,1) */
 #include <libxfce4util/libxfce4util.h>
 #include <thunar-apr/thunar-apr-desktop-page.h>
@@ -664,6 +664,7 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
         }
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (desktop_page->program_button), executable);
 
+      trusted = TRUE;
       #ifdef __XFCE_GIO_EXTENSIONS_H__
       if (desktop_page->trusted_button != NULL)
         {
