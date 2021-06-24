@@ -1609,6 +1609,11 @@ thunar_file_execute (ThunarFile  *file,
 
   if (thunar_file_is_desktop_file (file, &is_secure))
     {
+      #ifdef __XFCE_GIO_EXTENSIONS_H__
+      if (thunar_g_vfs_metadata_is_supported ())
+        is_secure = is_secure && xfce_g_file_is_trusted (file->gfile, NULL, NULL);
+      #endif /* __XFCE_GIO_EXTENSIONS_H__ */
+
       /* parse file first, even if it is insecure */
       key_file = thunar_g_file_query_key_file (file->gfile, NULL, &err);
       if (key_file == NULL)
@@ -1697,9 +1702,9 @@ thunar_file_execute (ThunarFile  *file,
       exec = g_strconcat (escaped_location, " %F", NULL);
       command = xfce_expand_desktop_entry_field_codes (exec, uri_list, NULL, NULL, NULL, FALSE);
       result = g_shell_parse_argv (command, NULL, &argv, error);
+      g_free (command);
       g_free (escaped_location);
       g_free (exec);
-      g_free (command);
     }
 
   if (G_LIKELY (result && argv != NULL))
