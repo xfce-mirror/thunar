@@ -227,7 +227,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   GtkWidget      *label;
   GtkWidget      *spacer;
   guint           row = 0;
-  GFile          *gfile;
+  GFile          *gfile = NULL;
 
   gtk_container_set_border_width (GTK_CONTAINER (desktop_page), 12);
 
