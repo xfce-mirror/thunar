@@ -39,6 +39,10 @@
 #include <exo/exo.h>
 
 #include <libxfce4ui/libxfce4ui.h>
+#if LIBXFCE4UI_CHECK_VERSION(4,16,1)
+#else
+#define xfce_gtk_label_set_ally_relation(label,widget) _xfce_gtk_label_set_a11y_relation (label, widget)
+#endif /* LIBXFCE4UI_CHECK_VERSION(4,16,1) */
 #include <libxfce4util/libxfce4util.h>
 #include <thunar-apr/thunar-apr-desktop-page.h>
 
@@ -50,7 +54,11 @@
 #endif
 
 
-
+#if LIBXFCE4UI_CHECK_VERSION(4,16,1)
+#else
+static void    _xfce_gtk_label_set_a11y_relation         (GtkLabel                   *label,
+                                                          GtkWidget                  *widget);
+#endif /* LIBXFCE4UI_CHECK_VERSION(4,16,1) */
 static void     thunar_apr_desktop_page_finalize         (GObject                    *object);
 static void     thunar_apr_desktop_page_file_changed     (ThunarAprAbstractPage      *abstract_page,
                                                           ThunarxFileInfo            *file);
@@ -124,14 +132,15 @@ THUNARX_DEFINE_TYPE (ThunarAprDesktopPage,
 
 #if LIBXFCE4UI_CHECK_VERSION(4,16,1)
 #else
-#define xfce_gtk_label_set_ally_relation(label,widget) _xfce_gtk_label_set_a11y_relation (label, widget)
-void
+static void
 _xfce_gtk_label_set_a11y_relation (GtkLabel  *label,
                                    GtkWidget *widget)
 {
   AtkRelationSet *relations;
   AtkRelation    *relation;
   AtkObject      *object;
+
+  g_info ("Oui");
 
   g_return_if_fail (GTK_IS_WIDGET (widget));
   g_return_if_fail (GTK_IS_LABEL (label));
