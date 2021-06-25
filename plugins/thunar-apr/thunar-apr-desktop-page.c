@@ -739,6 +739,10 @@ thunar_apr_desktop_page_save (ThunarAprDesktopPage *desktop_page,
   gchar     *uri;
   gsize      data_length;
   FILE      *fp;
+#ifdef __XFCE_GIO_EXTENSIONS_H__
+  GFile     *gfile;
+  gboolean   trusted;
+#endif /* __XFCE_GIO_EXTENSIONS_H__ */
 
   /* verify that we still have a valid file */
   if (THUNAR_APR_ABSTRACT_PAGE (desktop_page)->file == NULL)
@@ -776,6 +780,12 @@ thunar_apr_desktop_page_save (ThunarAprDesktopPage *desktop_page,
       data = g_key_file_to_data (key_file, &data_length, &error);
       if (G_LIKELY (data_length > 0))
         {
+          #ifdef __XFCE_GIO_EXTENSIONS_H__
+          trusted = FALSE;
+          if (desktop_page->trusted_button != NULL)
+            trusted  = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button));
+          #endif /* __XFCE_GIO_EXTENSIONS_H__ */
+
           /* try to save the key file content to disk */
           fp = fopen (filename, "w");
           if (G_LIKELY (fp != NULL))
@@ -788,6 +798,16 @@ thunar_apr_desktop_page_save (ThunarAprDesktopPage *desktop_page,
             {
               error = g_error_new_literal (G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
             }
+
+          #ifdef __XFCE_GIO_EXTENSIONS_H__
+          /* Update safety flag checksum */
+          if (trusted && error == NULL)
+            {
+              gfile = thunarx_file_info_get_location (THUNAR_APR_ABSTRACT_PAGE (desktop_page)->file);
+              xfce_g_file_set_trusted (gfile, trusted, NULL, &error);
+              g_object_unref (gfile);
+            }
+          #endif /* __XFCE_GIO_EXTENSIONS_H__ */
         }
 
       /* cleanup */
