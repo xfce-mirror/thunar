@@ -2033,16 +2033,12 @@ thunar_file_accepts_drop (ThunarFile     *file,
               if (ofile == NULL)
                 ofile = thunar_file_get (lp->data, NULL);
 
-              /* we have only move if we know the source and both the source and the target
-               * are on the same disk, and the source file is owned by the current user.
+              /* we have only move if we know the source, it is writable (i.e. can be deleted)
+               * and both the source and the target are on the same disk.
                */
-              if (ofile == NULL
-                  || !thunar_file_same_filesystem (file, ofile)
-                  || (ofile->info != NULL
-                      && g_file_info_get_attribute_uint32 (ofile->info,
-                                                           G_FILE_ATTRIBUTE_UNIX_UID) != effective_user_id))
+              if (ofile == NULL || !thunar_file_is_writable (ofile) || !thunar_file_same_filesystem (file, ofile))
                 {
-                  /* default to copy and get outa here */
+                  /* default to copy and get outta here */
                   suggested_action = GDK_ACTION_COPY;
                   break;
                 }
