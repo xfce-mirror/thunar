@@ -123,7 +123,14 @@ THUNARX_DEFINE_TYPE (ThunarAprDesktopPage,
 
 
 
-/* identical with non-underlined function */
+#if LIBXFCE4UI_CHECK_VERSION(4,16,1)
+static inline void
+_xfce_gtk_label_set_a11y_relation (GtkLabel  *label,
+                                   GtkWidget *widget)
+{
+  xfce_gtk_label_set_a11y_relation (label, widget);
+}
+#else
 static void
 _xfce_gtk_label_set_a11y_relation (GtkLabel  *label,
                                    GtkWidget *widget)
@@ -141,6 +148,7 @@ _xfce_gtk_label_set_a11y_relation (GtkLabel  *label,
   atk_relation_set_add (relations, relation);
   g_object_unref (G_OBJECT (relation));
 }
+#endif /* __XFCE_GIO_EXTENSIONS_H__ */
 
 
 
