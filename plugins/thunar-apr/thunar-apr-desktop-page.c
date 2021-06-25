@@ -249,7 +249,8 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   GtkWidget      *label;
   GtkWidget      *spacer;
   guint           row = 0;
-  GFile          *gfile = NULL;
+  GFile          *gfile G_GNUC_UNUSED;
+  gboolean        metadata_supported G_GNUC_UNUSED;
 
   gtk_container_set_border_width (GTK_CONTAINER (desktop_page), 12);
 
@@ -429,7 +430,9 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
 
   #ifdef __XFCE_GIO_EXTENSIONS_H__
   gfile = g_file_new_for_uri ("file:///");
-  if (xfce_g_file_metadata_is_supported (gfile))
+  metadata_supported = xfce_g_file_metadata_is_supported (gfile);
+  g_object_unref (gfile);
+  if (metadata_supported)
     {
       /* same function as in thunar-permission-chooser.c */
       desktop_page->trusted_button = gtk_check_button_new_with_mnemonic (_("Set this file as trusted"));
@@ -451,8 +454,6 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
       g_info ("metadata not supported");
       desktop_page->trusted_button = NULL;
     }
-
-  g_object_unref (gfile);
 
   /* release shared bold Pango attributes */
   pango_attr_list_unref (attr_list);
@@ -487,7 +488,7 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
   gboolean              writable;
   gboolean              enabled;
   gboolean              executable;
-  gboolean              trusted;
+  gboolean              trusted G_GNUC_UNUSED;
   GError               *error = NULL;
   gchar                *filename;
   gchar                *value;
@@ -642,7 +643,7 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
         }
 
       /* update flags */
-      gfile = thunarx_file_info_get_location (abstract_page->file);;
+      gfile = thunarx_file_info_get_location (abstract_page->file);
 
       g_signal_handlers_block_by_func (G_OBJECT (desktop_page->program_button), thunar_apr_desktop_page_program_toggled, desktop_page);
       executable = is_executable (gfile, &error);
@@ -653,7 +654,6 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
         }
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (desktop_page->program_button), executable);
 
-      trusted = TRUE;
       #ifdef __XFCE_GIO_EXTENSIONS_H__
       if (desktop_page->trusted_button != NULL)
         {
@@ -667,6 +667,7 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
           gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button), trusted);
           g_signal_handlers_unblock_by_func (G_OBJECT (desktop_page->trusted_button), thunar_apr_desktop_page_trusted_toggled, desktop_page);
         }
+      #else
       #endif /* __XFCE_GIO_EXTENSIONS_H__ */
       g_signal_handlers_unblock_by_func (G_OBJECT (desktop_page->program_button), thunar_apr_desktop_page_program_toggled, desktop_page);
 
@@ -1026,19 +1027,18 @@ thunar_apr_desktop_page_program_toggled (GtkWidget            *button,
 
   set_executable (gfile, executable, &error);
 
+  g_object_unref (gfile);
+
   if (error != NULL)
     {
       g_warning ("Error while setting execution flag : %s", error->message);
       g_free (error);
-      g_object_unref (gfile);
       return;
     }
 
   if (!executable && trusted)
     if (desktop_page->trusted_button != NULL)
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button), FALSE);
-
-  g_object_unref (gfile);
 }
 
 #ifdef __XFCE_GIO_EXTENSIONS_H__
@@ -1059,19 +1059,16 @@ thunar_apr_desktop_page_trusted_toggled (GtkWidget            *button,
   gfile = thunarx_file_info_get_location (THUNAR_APR_ABSTRACT_PAGE (desktop_page)->file);
 
   executable = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->program_button));
-
-  if (desktop_page->trusted_button != NULL)
-    trusted  = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button));
-  else
-    trusted = FALSE;
+  trusted  = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button));
 
   xfce_g_file_set_trusted (gfile, trusted, NULL, &error);
+
+  g_object_unref (gfile);
 
   if (error != NULL)
     {
       g_warning ("Error while setting safety flag : %s", error->message);
       g_free (error);
-      g_object_unref (gfile);
       return;
     }
 
