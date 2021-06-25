@@ -433,7 +433,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
     {
       /* same function as in thunar-permission-chooser.c */
       desktop_page->trusted_button = gtk_check_button_new_with_mnemonic (_("Set this file as trusted"));
-      gtk_widget_set_tooltip_text (desktop_page->trusted_button, _("Select this option to trust this .desktop file."));
+      gtk_widget_set_tooltip_text (desktop_page->trusted_button, _("Select this option to trust this .desktop file. This \"safety flag\" can assure that .desktop file is approved by a user and not by a program."));
       g_signal_connect (G_OBJECT (desktop_page->trusted_button), "toggled",
                         G_CALLBACK (thunar_apr_desktop_page_trusted_toggled), desktop_page);
       gtk_widget_set_hexpand (desktop_page->trusted_button, TRUE);
