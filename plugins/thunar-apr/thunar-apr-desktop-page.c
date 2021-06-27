@@ -999,12 +999,6 @@ thunar_apr_desktop_page_program_toggled (GtkWidget            *button,
   gfile = thunarx_file_info_get_location (THUNAR_APR_ABSTRACT_PAGE (desktop_page)->file);
 
   executable = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->program_button));
-
-  if (desktop_page->trusted_button != NULL)
-    trusted  = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button));
-  else
-    trusted = FALSE;
-
   set_executable (gfile, executable, &error);
 
   g_object_unref (gfile);
@@ -1016,6 +1010,8 @@ thunar_apr_desktop_page_program_toggled (GtkWidget            *button,
       return;
     }
 
+  trusted  = (desktop_page->trusted_button != NULL) ? gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button)) : FALSE;
+  /* if the executable flag is unset, that will as well unset the trusted flag */
   if (!executable && trusted)
     if (desktop_page->trusted_button != NULL)
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button), FALSE);
@@ -1037,9 +1033,7 @@ thunar_apr_desktop_page_trusted_toggled (GtkWidget            *button,
 
   gfile = thunarx_file_info_get_location (THUNAR_APR_ABSTRACT_PAGE (desktop_page)->file);
 
-  executable = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->program_button));
   trusted  = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button));
-
   xfce_g_file_set_trusted (gfile, trusted, NULL, &error);
 
   g_object_unref (gfile);
@@ -1051,6 +1045,8 @@ thunar_apr_desktop_page_trusted_toggled (GtkWidget            *button,
       return;
     }
 
+  executable = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->program_button));
+  /* setting the trusted flag automatically sets the execute flag */
   if (!executable && trusted)
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (desktop_page->program_button), TRUE);
 }
