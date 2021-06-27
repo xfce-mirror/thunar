@@ -390,7 +390,6 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
-  /* same function as in thunar-permission-chooser.c */
   desktop_page->program_button = gtk_check_button_new_with_mnemonic (_("Allow this file to _run as a .desktop file"));
   gtk_widget_set_tooltip_text (desktop_page->program_button, _("If not selected, .desktop file will be considered as a normal text file."));
   g_signal_connect (G_OBJECT (desktop_page->program_button), "toggled",
