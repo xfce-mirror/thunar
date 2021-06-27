@@ -618,7 +618,6 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
       /* update flags */
       gfile = thunarx_file_info_get_location (abstract_page->file);
 
-      g_signal_handlers_block_by_func (G_OBJECT (desktop_page->program_button), thunar_apr_desktop_page_program_toggled, desktop_page);
       executable = is_executable (gfile, &error);
       if (error != NULL)
         {
@@ -629,7 +628,6 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
 
       if (desktop_page->trusted_button != NULL)
         {
-          g_signal_handlers_block_by_func (G_OBJECT (desktop_page->trusted_button), thunar_apr_desktop_page_trusted_toggled, desktop_page);
           trusted = xfce_g_file_is_trusted (gfile, NULL, &error);
           if (error != NULL)
             {
@@ -637,9 +635,7 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
               g_clear_error (&error);
             }
           gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button), trusted);
-          g_signal_handlers_unblock_by_func (G_OBJECT (desktop_page->trusted_button), thunar_apr_desktop_page_trusted_toggled, desktop_page);
         }
-      g_signal_handlers_unblock_by_func (G_OBJECT (desktop_page->program_button), thunar_apr_desktop_page_program_toggled, desktop_page);
 
       g_object_unref (gfile);
 
