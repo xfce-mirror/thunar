@@ -38,6 +38,8 @@
 
 #include <exo/exo.h>
 
+#include <libxfce4ui/libxfce4ui.h>
+#include <libxfce4util/libxfce4util.h>
 #include <thunar-apr/thunar-apr-desktop-page.h>
 
 /* use g_access() on win32 */
@@ -49,21 +51,30 @@
 
 
 
-static void     thunar_apr_desktop_page_finalize        (GObject                    *object);
-static void     thunar_apr_desktop_page_file_changed    (ThunarAprAbstractPage      *abstract_page,
-                                                         ThunarxFileInfo            *file);
-static void     thunar_apr_desktop_page_save            (ThunarAprDesktopPage       *desktop_page,
-                                                         GtkWidget                  *widget);
-static void     thunar_apr_desktop_page_save_widget     (ThunarAprDesktopPage       *desktop_page,
-                                                         GtkWidget                  *widget,
-                                                         GKeyFile                   *key_file);
-static void     thunar_apr_desktop_page_activated       (GtkWidget                  *entry,
-                                                         ThunarAprDesktopPage       *desktop_page);
-static gboolean thunar_apr_desktop_page_focus_out_event (GtkWidget                  *entry,
-                                                         GdkEventFocus              *event,
-                                                         ThunarAprDesktopPage       *desktop_page);
-static void     thunar_apr_desktop_page_toggled         (GtkWidget                  *button,
-                                                         ThunarAprDesktopPage       *desktop_page);
+static void     thunar_apr_desktop_page_finalize         (GObject                    *object);
+static void     thunar_apr_desktop_page_file_changed     (ThunarAprAbstractPage      *abstract_page,
+                                                          ThunarxFileInfo            *file);
+static void     thunar_apr_desktop_page_save             (ThunarAprDesktopPage       *desktop_page,
+                                                          GtkWidget                  *widget);
+static void     thunar_apr_desktop_page_save_widget      (ThunarAprDesktopPage       *desktop_page,
+                                                          GtkWidget                  *widget,
+                                                          GKeyFile                   *key_file);
+static void     thunar_apr_desktop_page_activated        (GtkWidget                  *entry,
+                                                          ThunarAprDesktopPage       *desktop_page);
+static gboolean thunar_apr_desktop_page_focus_out_event  (GtkWidget                  *entry,
+                                                          GdkEventFocus              *event,
+                                                          ThunarAprDesktopPage       *desktop_page);
+static void     thunar_apr_desktop_page_toggled          (GtkWidget                  *button,
+                                                          ThunarAprDesktopPage       *desktop_page);
+static void     thunar_apr_desktop_page_program_toggled  (GtkWidget                  *button,
+                                                          ThunarAprDesktopPage       *desktop_page);
+static void     thunar_apr_desktop_page_trusted_toggled  (GtkWidget                  *button,
+                                                          ThunarAprDesktopPage       *desktop_page);
+static gboolean is_executable                            (GFile    *gfile,
+                                                          GError  **error);
+static gboolean set_executable                           (GFile    *gfile,
+                                                          gboolean  executable,
+                                                          GError  **error);
 
 
 
@@ -83,6 +94,8 @@ struct _ThunarAprDesktopPage
   GtkWidget            *comment_entry;
   GtkWidget            *snotify_button;
   GtkWidget            *terminal_button;
+  GtkWidget            *program_button;
+  GtkWidget            *trusted_button;
 
   /* the values of the entries remember when
    * the file was saved last time to avoid a
@@ -107,6 +120,86 @@ THUNARX_DEFINE_TYPE (ThunarAprDesktopPage,
 
 
 
+static gboolean
+is_executable (GFile   *gfile,
+               GError **error)
+{
+  GError    *error_local = NULL;
+  GFileInfo *info;
+  gboolean   executable;
+
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  g_return_val_if_fail (G_IS_FILE (gfile),               FALSE);
+
+  info = g_file_query_info (gfile,
+                            G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE,
+                            G_FILE_QUERY_INFO_NONE,
+                            NULL,
+                            &error_local);
+  if (error_local != NULL)
+    {
+      g_propagate_error (error, error_local);
+      return FALSE;
+    }
+
+  executable = g_file_info_get_attribute_boolean (info, G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE);
+  g_object_unref (info);
+
+  return executable;
+}
+
+
+
+/* copied from exo-die-utils.c */
+static gboolean
+set_executable (GFile    *gfile,
+                gboolean  executable,
+                GError  **error)
+{
+  GError *error_local = NULL;
+  guint32 mode = 0111, mask = 0111;
+  guint32 old_mode, new_mode;
+  GFileInfo *info;
+
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  g_return_val_if_fail (G_IS_FILE (gfile),               FALSE);
+
+
+  info = g_file_query_info (gfile,
+                            G_FILE_ATTRIBUTE_UNIX_MODE,
+                            G_FILE_QUERY_INFO_NONE,
+                            NULL,
+                            &error_local);
+
+  if (error_local != NULL)
+    {
+      g_propagate_error (error, error_local);
+      return FALSE;
+    }
+
+  old_mode = g_file_info_get_attribute_uint32 (info, G_FILE_ATTRIBUTE_UNIX_MODE);
+  new_mode = executable ? ((old_mode & ~mask) | mode) : (old_mode & ~mask);
+
+  if (old_mode != new_mode) {
+    g_file_set_attribute_uint32 (gfile,
+                                 G_FILE_ATTRIBUTE_UNIX_MODE, new_mode,
+                                 G_FILE_QUERY_INFO_NONE,
+                                 NULL,
+                                 &error_local);
+  }
+  g_object_unref (info);
+
+  if (error_local != NULL)
+    {
+      g_propagate_error (error, error_local);
+      return FALSE;
+    }
+
+  return TRUE;
+}
+
+
+
 static void
 thunar_apr_desktop_page_class_init (ThunarAprDesktopPageClass *klass)
 {
@@ -126,14 +219,14 @@ thunar_apr_desktop_page_class_init (ThunarAprDesktopPageClass *klass)
 static void
 thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
 {
-  AtkRelationSet *relations;
   PangoAttribute *attribute;
   PangoAttrList  *attr_list;
-  AtkRelation    *relation;
-  AtkObject      *object;
   GtkWidget      *grid;
   GtkWidget      *label;
   GtkWidget      *spacer;
+  guint           row = 0;
+  GFile          *gfile;
+  gboolean        metadata_supported;
 
   gtk_container_set_border_width (GTK_CONTAINER (desktop_page), 12);
 
@@ -153,7 +246,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   label = gtk_label_new (_("Description:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), attr_list);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   desktop_page->description_entry = gtk_entry_new ();
@@ -162,22 +255,18 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   g_signal_connect (G_OBJECT (desktop_page->description_entry), "activate", G_CALLBACK (thunar_apr_desktop_page_activated), desktop_page);
   g_signal_connect (G_OBJECT (desktop_page->description_entry), "focus-out-event", G_CALLBACK (thunar_apr_desktop_page_focus_out_event), desktop_page);
   gtk_widget_set_hexpand (desktop_page->description_entry, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), desktop_page->description_entry, 1, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), desktop_page->description_entry, 1, row, 1, 1);
   gtk_widget_show (desktop_page->description_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->description_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
+  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->description_entry);
 
-  /* set Atk label relation for the entry */
-  object = gtk_widget_get_accessible (desktop_page->description_entry);
-  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
+  row++;
 
   label = gtk_label_new (_("Command:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), attr_list);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 1, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   desktop_page->command_entry = gtk_entry_new ();
@@ -185,22 +274,18 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   g_signal_connect (G_OBJECT (desktop_page->command_entry), "activate", G_CALLBACK (thunar_apr_desktop_page_activated), desktop_page);
   g_signal_connect (G_OBJECT (desktop_page->command_entry), "focus-out-event", G_CALLBACK (thunar_apr_desktop_page_focus_out_event), desktop_page);
   gtk_widget_set_hexpand (desktop_page->command_entry, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), desktop_page->command_entry, 1, 1, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), desktop_page->command_entry, 1, row, 1, 1);
   gtk_widget_show (desktop_page->command_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->command_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
+  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->command_entry);
 
-  /* set Atk label relation for the entry */
-  object = gtk_widget_get_accessible (desktop_page->command_entry);
-  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
+  row++;
 
   label = gtk_label_new (_("Working Directory:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), attr_list);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 2, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   desktop_page->path_entry = gtk_entry_new ();
@@ -208,22 +293,18 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   g_signal_connect (G_OBJECT (desktop_page->path_entry), "activate", G_CALLBACK (thunar_apr_desktop_page_activated), desktop_page);
   g_signal_connect (G_OBJECT (desktop_page->path_entry), "focus-out-event", G_CALLBACK (thunar_apr_desktop_page_focus_out_event), desktop_page);
   gtk_widget_set_hexpand (desktop_page->path_entry, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), desktop_page->path_entry, 1, 2, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), desktop_page->path_entry, 1, row, 1, 1);
   gtk_widget_show (desktop_page->path_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->path_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
+  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->path_entry);
 
-  /* set Atk label relation for the entry */
-  object = gtk_widget_get_accessible (desktop_page->path_entry);
-  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
+  row++;
 
   label = gtk_label_new (_("URL:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), attr_list);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 3, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   desktop_page->url_entry = gtk_entry_new ();
@@ -231,22 +312,18 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   g_signal_connect (G_OBJECT (desktop_page->url_entry), "activate", G_CALLBACK (thunar_apr_desktop_page_activated), desktop_page);
   g_signal_connect (G_OBJECT (desktop_page->url_entry), "focus-out-event", G_CALLBACK (thunar_apr_desktop_page_focus_out_event), desktop_page);
   gtk_widget_set_hexpand (desktop_page->url_entry, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), desktop_page->url_entry, 1, 3, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), desktop_page->url_entry, 1, row, 1, 1);
   gtk_widget_show (desktop_page->url_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->url_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
+  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->url_entry);
 
-  /* set Atk label relation for the entry */
-  object = gtk_widget_get_accessible (desktop_page->url_entry);
-  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
+  row++;
 
   label = gtk_label_new (_("Comment:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), attr_list);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 4, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   desktop_page->comment_entry = gtk_entry_new ();
@@ -256,27 +333,29 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   g_signal_connect (G_OBJECT (desktop_page->comment_entry), "activate", G_CALLBACK (thunar_apr_desktop_page_activated), desktop_page);
   g_signal_connect (G_OBJECT (desktop_page->comment_entry), "focus-out-event", G_CALLBACK (thunar_apr_desktop_page_focus_out_event), desktop_page);
   gtk_widget_set_hexpand (desktop_page->comment_entry, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), desktop_page->comment_entry, 1, 4, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), desktop_page->comment_entry, 1, row, 1, 1);
   gtk_widget_show (desktop_page->comment_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->comment_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
+  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->comment_entry);
 
-  /* set Atk label relation for the entry */
-  object = gtk_widget_get_accessible (desktop_page->comment_entry);
-  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
+  row++;
+
+  /* Nothing here on purpose */
+
+  row++;
 
   /* add spacing between the entries and the options */
   spacer = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "height-request", 12, NULL);
-  gtk_grid_attach (GTK_GRID (grid), spacer, 0, 6, 2, 1);
+  gtk_grid_attach (GTK_GRID (grid), spacer, 0, row, 2, 1);
   gtk_widget_show (spacer);
+
+  row++;
 
   label = gtk_label_new (_("Options:"));
   gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
   gtk_label_set_attributes (GTK_LABEL (label), attr_list);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 7, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   desktop_page->snotify_button = gtk_check_button_new_with_mnemonic (_("Use _startup notification"));
@@ -285,28 +364,69 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
                                                                "startup notification."));
   g_signal_connect (G_OBJECT (desktop_page->snotify_button), "toggled", G_CALLBACK (thunar_apr_desktop_page_toggled), desktop_page);
   gtk_widget_set_hexpand (desktop_page->snotify_button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), desktop_page->snotify_button, 1, 7, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), desktop_page->snotify_button, 1, row, 1, 1);
   gtk_widget_show (desktop_page->snotify_button);
+
+  g_object_bind_property (G_OBJECT (desktop_page->snotify_button), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
+  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->snotify_button);
+
+  row++;
 
   desktop_page->terminal_button = gtk_check_button_new_with_mnemonic (_("Run in _terminal"));
   gtk_widget_set_tooltip_text (desktop_page->terminal_button, _("Select this option to run the command in a terminal window."));
   g_signal_connect (G_OBJECT (desktop_page->terminal_button), "toggled", G_CALLBACK (thunar_apr_desktop_page_toggled), desktop_page);
   gtk_widget_set_hexpand (desktop_page->terminal_button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), desktop_page->terminal_button, 1, 8, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), desktop_page->terminal_button, 1, row, 1, 1);
   gtk_widget_show (desktop_page->terminal_button);
 
-  /* set Atk label relation for the buttons */
-  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
-  object = gtk_widget_get_accessible (desktop_page->snotify_button);
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
-  object = gtk_widget_get_accessible (desktop_page->terminal_button);
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
+  /* don't bind visibility with label */
+  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->terminal_button);
 
-  g_object_bind_property (G_OBJECT (desktop_page->snotify_button), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
+  row++;
+
+  label = gtk_label_new (_("Security:"));
+  gtk_label_set_xalign (GTK_LABEL (label), 1.0f);
+  gtk_label_set_attributes (GTK_LABEL (label), attr_list);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
+  gtk_widget_show (label);
+
+  desktop_page->program_button = gtk_check_button_new_with_mnemonic (_("Allow this file to _run as a .desktop file"));
+  gtk_widget_set_tooltip_text (desktop_page->program_button, _("Select this option to trust this .desktop file. This will generate a checksum of the file and store it via gvfs. The additional check will protect from malicious launchers which e.g. pretend to be a picture, having the executable flag pre-set"));
+  g_signal_connect (G_OBJECT (desktop_page->program_button), "toggled",
+                    G_CALLBACK (thunar_apr_desktop_page_program_toggled), desktop_page);
+  gtk_widget_set_hexpand (desktop_page->program_button, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), desktop_page->program_button, 1, row, 1, 1);
+  gtk_widget_show (desktop_page->program_button);
+
+  g_object_bind_property (G_OBJECT (desktop_page->program_button), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
+  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->program_button);
+
+  row++;
+
+  gfile = g_file_new_for_uri ("file:///");
+  metadata_supported = xfce_g_file_metadata_is_supported (gfile);
+  g_object_unref (gfile);
+  if (metadata_supported)
+    {
+      /* same function as in thunar-permission-chooser.c */
+      desktop_page->trusted_button = gtk_check_button_new_with_mnemonic (_("Set this file as trusted"));
+      gtk_widget_set_tooltip_text (desktop_page->trusted_button, _("Select this option to trust this .desktop file. This \"safety flag\" can assure that .desktop file is approved by a user and not by a program."));
+      g_signal_connect (G_OBJECT (desktop_page->trusted_button), "toggled",
+                        G_CALLBACK (thunar_apr_desktop_page_trusted_toggled), desktop_page);
+      gtk_widget_set_hexpand (desktop_page->trusted_button, TRUE);
+      gtk_grid_attach (GTK_GRID (grid), desktop_page->trusted_button, 1, row, 1, 1);
+      gtk_widget_show (desktop_page->trusted_button);
+
+      g_object_bind_property (G_OBJECT (desktop_page->trusted_button), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
+      xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->trusted_button);
+
+      row++;
+    }
+  else
+    {
+      g_info ("metadata not supported");
+      desktop_page->trusted_button = NULL;
+    }
 
   /* release shared bold Pango attributes */
   pango_attr_list_unref (attr_list);
@@ -337,8 +457,11 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
 {
   ThunarAprDesktopPage *desktop_page = THUNAR_APR_DESKTOP_PAGE (abstract_page);
   GKeyFile             *key_file;
+  GFile                *gfile;
   gboolean              writable;
   gboolean              enabled;
+  gboolean              executable;
+  gboolean              trusted;
   GError               *error = NULL;
   gchar                *filename;
   gchar                *value;
@@ -492,6 +615,35 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
           gtk_widget_hide (desktop_page->terminal_button);
         }
 
+      /* update flags */
+      gfile = thunarx_file_info_get_location (abstract_page->file);
+
+      executable = is_executable (gfile, &error);
+      if (error != NULL)
+        {
+          g_warning ("Failed to initialize program_button : %s", error->message);
+          g_clear_error (&error);
+        }
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (desktop_page->program_button), executable);
+
+      if (desktop_page->trusted_button != NULL)
+        {
+          trusted = xfce_g_file_is_trusted (gfile, NULL, &error);
+          if (error != NULL)
+            {
+              g_warning ("Failed to initialize trusted_button : %s", error->message);
+              g_clear_error (&error);
+            }
+          gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button), trusted);
+        }
+
+      g_object_unref (gfile);
+
+      /* show security */
+      gtk_widget_show (desktop_page->program_button);
+      if (desktop_page->trusted_button != NULL)
+        gtk_widget_show (desktop_page->trusted_button);
+
       /* check if the file is writable... */
       writable = (g_access (filename, W_OK) == 0);
 
@@ -520,6 +672,9 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
       gtk_widget_hide (desktop_page->comment_entry);
       gtk_widget_hide (desktop_page->snotify_button);
       gtk_widget_hide (desktop_page->terminal_button);
+      gtk_widget_hide (desktop_page->program_button);
+      if (desktop_page->trusted_button != NULL)
+        gtk_widget_hide (desktop_page->trusted_button);
     }
 
   /* cleanup */
@@ -542,6 +697,8 @@ thunar_apr_desktop_page_save (ThunarAprDesktopPage *desktop_page,
   gchar     *uri;
   gsize      data_length;
   FILE      *fp;
+  GFile     *gfile;
+  gboolean   trusted;
 
   /* verify that we still have a valid file */
   if (THUNAR_APR_ABSTRACT_PAGE (desktop_page)->file == NULL)
@@ -579,6 +736,10 @@ thunar_apr_desktop_page_save (ThunarAprDesktopPage *desktop_page,
       data = g_key_file_to_data (key_file, &data_length, &error);
       if (G_LIKELY (data_length > 0))
         {
+          trusted = FALSE;
+          if (desktop_page->trusted_button != NULL)
+            trusted  = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button));
+
           /* try to save the key file content to disk */
           fp = fopen (filename, "w");
           if (G_LIKELY (fp != NULL))
@@ -590,6 +751,14 @@ thunar_apr_desktop_page_save (ThunarAprDesktopPage *desktop_page,
           else
             {
               error = g_error_new_literal (G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
+            }
+
+          /* Update safety flag checksum */
+          if (trusted && error == NULL)
+            {
+              gfile = thunarx_file_info_get_location (THUNAR_APR_ABSTRACT_PAGE (desktop_page)->file);
+              xfce_g_file_set_trusted (gfile, trusted, NULL, &error);
+              g_object_unref (gfile);
             }
         }
 
@@ -798,3 +967,86 @@ thunar_apr_desktop_page_toggled (GtkWidget            *button,
   thunar_apr_desktop_page_save (desktop_page, button);
 }
 
+
+
+/**
+ * Allowed state:
+ *
+ * +-----+-----+
+ * |EXE  |SAFE |
+ * +=====+=====+
+ * |TRUE |TRUE | Allowed to launch
+ * +-----+-----+
+ * |TRUE |FALSE| Ask before launch
+ * +-----+-----+
+ * |FALSE|FALSE| Not recognized as .desktop
+ * +-----+-----+
+ **/
+static void
+thunar_apr_desktop_page_program_toggled (GtkWidget            *button,
+                                         ThunarAprDesktopPage *desktop_page)
+{
+  GError  *error = NULL;
+  GFile   *gfile;
+  gboolean executable;
+  gboolean trusted;
+
+  g_return_if_fail (button == desktop_page->program_button);
+  g_return_if_fail (GTK_IS_TOGGLE_BUTTON (button));
+  g_return_if_fail (THUNAR_APR_IS_DESKTOP_PAGE (desktop_page));
+  g_return_if_fail (THUNARX_IS_FILE_INFO (THUNAR_APR_ABSTRACT_PAGE (desktop_page)->file));
+
+  gfile = thunarx_file_info_get_location (THUNAR_APR_ABSTRACT_PAGE (desktop_page)->file);
+
+  executable = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->program_button));
+  set_executable (gfile, executable, &error);
+
+  g_object_unref (gfile);
+
+  if (error != NULL)
+    {
+      g_warning ("Error while setting execution flag : %s", error->message);
+      g_free (error);
+      return;
+    }
+
+  trusted  = (desktop_page->trusted_button != NULL) ? gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button)) : FALSE;
+  /* if the executable flag is unset, that will as well unset the trusted flag */
+  if (!executable && trusted)
+    if (desktop_page->trusted_button != NULL)
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button), FALSE);
+}
+
+static void
+thunar_apr_desktop_page_trusted_toggled (GtkWidget            *button,
+                                         ThunarAprDesktopPage *desktop_page)
+{
+  GError  *error = NULL;
+  GFile   *gfile;
+  gboolean executable;
+  gboolean trusted;
+
+  g_return_if_fail (button == desktop_page->trusted_button);
+  g_return_if_fail (GTK_IS_TOGGLE_BUTTON (button));
+  g_return_if_fail (THUNAR_APR_IS_DESKTOP_PAGE (desktop_page));
+  g_return_if_fail (THUNARX_IS_FILE_INFO (THUNAR_APR_ABSTRACT_PAGE (desktop_page)->file));
+
+  gfile = thunarx_file_info_get_location (THUNAR_APR_ABSTRACT_PAGE (desktop_page)->file);
+
+  trusted  = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button));
+  xfce_g_file_set_trusted (gfile, trusted, NULL, &error);
+
+  g_object_unref (gfile);
+
+  if (error != NULL)
+    {
+      g_warning ("Error while setting safety flag : %s", error->message);
+      g_free (error);
+      return;
+    }
+
+  executable = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->program_button));
+  /* setting the trusted flag automatically sets the execute flag */
+  if (!executable && trusted)
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (desktop_page->program_button), TRUE);
+}
