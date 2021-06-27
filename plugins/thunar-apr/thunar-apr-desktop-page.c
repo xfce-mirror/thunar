@@ -50,8 +50,7 @@
 #endif
 
 
-static void    _xfce_gtk_label_set_a11y_relation         (GtkLabel                   *label,
-                                                          GtkWidget                  *widget);
+
 static void     thunar_apr_desktop_page_finalize         (GObject                    *object);
 static void     thunar_apr_desktop_page_file_changed     (ThunarAprAbstractPage      *abstract_page,
                                                           ThunarxFileInfo            *file);
@@ -69,10 +68,8 @@ static void     thunar_apr_desktop_page_toggled          (GtkWidget             
                                                           ThunarAprDesktopPage       *desktop_page);
 static void     thunar_apr_desktop_page_program_toggled  (GtkWidget                  *button,
                                                           ThunarAprDesktopPage       *desktop_page);
-#ifdef __XFCE_GIO_EXTENSIONS_H__
 static void     thunar_apr_desktop_page_trusted_toggled  (GtkWidget                  *button,
                                                           ThunarAprDesktopPage       *desktop_page);
-#endif /* __XFCE_GIO_EXTENSIONS_H__ */
 static gboolean is_executable                            (GFile    *gfile,
                                                           GError  **error);
 static gboolean set_executable                           (GFile    *gfile,
@@ -120,35 +117,6 @@ struct _ThunarAprDesktopPage
 THUNARX_DEFINE_TYPE (ThunarAprDesktopPage,
                      thunar_apr_desktop_page,
                      THUNAR_APR_TYPE_ABSTRACT_PAGE);
-
-
-
-#if LIBXFCE4UI_CHECK_VERSION(4,16,1)
-static inline void
-_xfce_gtk_label_set_a11y_relation (GtkLabel  *label,
-                                   GtkWidget *widget)
-{
-  xfce_gtk_label_set_a11y_relation (label, widget);
-}
-#else
-static void
-_xfce_gtk_label_set_a11y_relation (GtkLabel  *label,
-                                   GtkWidget *widget)
-{
-  AtkRelationSet *relations;
-  AtkRelation    *relation;
-  AtkObject      *object;
-
-  g_return_if_fail (GTK_IS_WIDGET (widget));
-  g_return_if_fail (GTK_IS_LABEL (label));
-
-  object = gtk_widget_get_accessible (widget);
-  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (GTK_WIDGET (label)));
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
-}
-#endif /* __XFCE_GIO_EXTENSIONS_H__ */
 
 
 
@@ -257,8 +225,8 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   GtkWidget      *label;
   GtkWidget      *spacer;
   guint           row = 0;
-  GFile          *gfile G_GNUC_UNUSED;
-  gboolean        metadata_supported G_GNUC_UNUSED;
+  GFile          *gfile;
+  gboolean        metadata_supported;
 
   gtk_container_set_border_width (GTK_CONTAINER (desktop_page), 12);
 
@@ -291,7 +259,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->description_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->description_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-  _xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->description_entry);
+  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->description_entry);
 
   row++;
 
@@ -310,7 +278,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->command_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->command_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-  _xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->command_entry);
+  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->command_entry);
 
   row++;
 
@@ -329,7 +297,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->path_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->path_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-  _xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->path_entry);
+  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->path_entry);
 
   row++;
 
@@ -348,7 +316,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->url_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->url_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-  _xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->url_entry);
+  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->url_entry);
 
   row++;
 
@@ -369,7 +337,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->comment_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->comment_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-  _xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->comment_entry);
+  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->comment_entry);
 
   row++;
 
@@ -400,7 +368,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->snotify_button);
 
   g_object_bind_property (G_OBJECT (desktop_page->snotify_button), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-  _xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->snotify_button);
+  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->snotify_button);
 
   row++;
 
@@ -412,7 +380,7 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->terminal_button);
 
   /* don't bind visibility with label */
-  _xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->terminal_button);
+  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->terminal_button);
 
   row++;
 
@@ -432,11 +400,10 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->program_button);
 
   g_object_bind_property (G_OBJECT (desktop_page->program_button), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-  _xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->program_button);
+  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->program_button);
 
   row++;
 
-  #ifdef __XFCE_GIO_EXTENSIONS_H__
   gfile = g_file_new_for_uri ("file:///");
   metadata_supported = xfce_g_file_metadata_is_supported (gfile);
   g_object_unref (gfile);
@@ -452,12 +419,11 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
       gtk_widget_show (desktop_page->trusted_button);
 
       g_object_bind_property (G_OBJECT (desktop_page->trusted_button), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-      _xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->trusted_button);
+      xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->trusted_button);
 
       row++;
     }
   else
-  #endif /* __XFCE_GIO_EXTENSIONS_H__ */
     {
       g_info ("metadata not supported");
       desktop_page->trusted_button = NULL;
@@ -496,7 +462,7 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
   gboolean              writable;
   gboolean              enabled;
   gboolean              executable;
-  gboolean              trusted G_GNUC_UNUSED;
+  gboolean              trusted;
   GError               *error = NULL;
   gchar                *filename;
   gchar                *value;
@@ -662,7 +628,6 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
         }
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (desktop_page->program_button), executable);
 
-      #ifdef __XFCE_GIO_EXTENSIONS_H__
       if (desktop_page->trusted_button != NULL)
         {
           g_signal_handlers_block_by_func (G_OBJECT (desktop_page->trusted_button), thunar_apr_desktop_page_trusted_toggled, desktop_page);
@@ -675,8 +640,6 @@ thunar_apr_desktop_page_file_changed (ThunarAprAbstractPage *abstract_page,
           gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button), trusted);
           g_signal_handlers_unblock_by_func (G_OBJECT (desktop_page->trusted_button), thunar_apr_desktop_page_trusted_toggled, desktop_page);
         }
-      #else
-      #endif /* __XFCE_GIO_EXTENSIONS_H__ */
       g_signal_handlers_unblock_by_func (G_OBJECT (desktop_page->program_button), thunar_apr_desktop_page_program_toggled, desktop_page);
 
       g_object_unref (gfile);
@@ -739,10 +702,8 @@ thunar_apr_desktop_page_save (ThunarAprDesktopPage *desktop_page,
   gchar     *uri;
   gsize      data_length;
   FILE      *fp;
-#ifdef __XFCE_GIO_EXTENSIONS_H__
   GFile     *gfile;
   gboolean   trusted;
-#endif /* __XFCE_GIO_EXTENSIONS_H__ */
 
   /* verify that we still have a valid file */
   if (THUNAR_APR_ABSTRACT_PAGE (desktop_page)->file == NULL)
@@ -780,11 +741,9 @@ thunar_apr_desktop_page_save (ThunarAprDesktopPage *desktop_page,
       data = g_key_file_to_data (key_file, &data_length, &error);
       if (G_LIKELY (data_length > 0))
         {
-          #ifdef __XFCE_GIO_EXTENSIONS_H__
           trusted = FALSE;
           if (desktop_page->trusted_button != NULL)
             trusted  = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button));
-          #endif /* __XFCE_GIO_EXTENSIONS_H__ */
 
           /* try to save the key file content to disk */
           fp = fopen (filename, "w");
@@ -799,7 +758,6 @@ thunar_apr_desktop_page_save (ThunarAprDesktopPage *desktop_page,
               error = g_error_new_literal (G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
             }
 
-          #ifdef __XFCE_GIO_EXTENSIONS_H__
           /* Update safety flag checksum */
           if (trusted && error == NULL)
             {
@@ -807,7 +765,6 @@ thunar_apr_desktop_page_save (ThunarAprDesktopPage *desktop_page,
               xfce_g_file_set_trusted (gfile, trusted, NULL, &error);
               g_object_unref (gfile);
             }
-          #endif /* __XFCE_GIO_EXTENSIONS_H__ */
         }
 
       /* cleanup */
@@ -1069,7 +1026,6 @@ thunar_apr_desktop_page_program_toggled (GtkWidget            *button,
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (desktop_page->trusted_button), FALSE);
 }
 
-#ifdef __XFCE_GIO_EXTENSIONS_H__
 static void
 thunar_apr_desktop_page_trusted_toggled (GtkWidget            *button,
                                          ThunarAprDesktopPage *desktop_page)
@@ -1103,4 +1059,3 @@ thunar_apr_desktop_page_trusted_toggled (GtkWidget            *button,
   if (!executable && trusted)
     gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (desktop_page->program_button), TRUE);
 }
-#endif /* __XFCE_GIO_EXTENSIONS_H__ */
