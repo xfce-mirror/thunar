@@ -422,19 +422,19 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
 
-  label = gtk_label_new_with_mnemonic (_("Maximum file size for thumbnails:"));
+  label = gtk_label_new_with_mnemonic (_("Only create thumbnails for files smaller than:"));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, 2, 1, 1);
   gtk_widget_show (label);
 
   combo = gtk_combo_box_text_new ();
-  gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (combo), "0", _("Unlimited"));
   gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (combo), "524288", _("512KiB"));
   gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (combo), "1048576", _("1MiB"));
   gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (combo), "10485760", _("10MiB"));
   gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (combo), "104857600", _("100MiB"));
   gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (combo), "1073741824", _("1GiB"));
   gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (combo), "10737418240", _("10GiB"));
+  gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (combo), "0", _("Unlimited"));
   g_object_bind_property_full (G_OBJECT (dialog->preferences),
                                "misc-thumbnail-max-file-size",
                                G_OBJECT (combo),
