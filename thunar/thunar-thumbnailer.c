@@ -25,6 +25,7 @@
 
 #include <thunar/thunar-thumbnailer-proxy.h>
 #include <thunar/thunar-marshal.h>
+#include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-thumbnailer.h>
 
@@ -106,6 +107,7 @@ enum
 {
   PROP_0,
   PROP_THUMBNAIL_SIZE,
+  PROP_THUMBNAIL_MAX_FILE_SIZE,
 };
 
 
@@ -174,6 +176,9 @@ struct _ThunarThumbnailer
   /* size to use to store thumbnails */
   ThunarThumbnailSize thumbnail_size;
 
+  /* maximum file size (in bytes) allowed to be thumbnailed */
+  guint64     thumbnail_max_file_size;
+  
   /* IDs of idle functions */
   GSList     *idles;
 };
@@ -242,7 +247,7 @@ thunar_thumbnailer_class_init (ThunarThumbnailerClass *klass)
                   G_TYPE_NONE, 1, G_TYPE_UINT);
 
   /**
-   * ThunarIconFactory:thumbnail-size:
+   * ThunarThumbnailer:thumbnail-size:
    *
    * Size of the thumbnails to load
    **/
@@ -254,6 +259,19 @@ thunar_thumbnailer_class_init (ThunarThumbnailerClass *klass)
                                                       THUNAR_TYPE_THUMBNAIL_SIZE,
                                                       THUNAR_THUMBNAIL_SIZE_NORMAL,
                                                       EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarThumbnailer:thumbnail-max-file-size:
+   *
+   * Maximum file size (in bytes) allowed to be thumbnailed
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_THUMBNAIL_MAX_FILE_SIZE,
+                                   g_param_spec_uint64 ("thumbnail-max-file-size",
+                                                        "thumbnail-max-file-size",
+                                                        "thumbnail-max-file-size",
+                                                        0, G_MAXUINT64, 0,
+                                                        EXO_PARAM_READWRITE));
 }
 
 
@@ -270,6 +288,10 @@ thunar_thumbnailer_get_property (GObject    *object,
     {
     case PROP_THUMBNAIL_SIZE:
       g_value_set_enum (value, thumbnailer->thumbnail_size);
+      break;
+
+    case PROP_THUMBNAIL_MAX_FILE_SIZE:
+      g_value_set_uint64 (value, thumbnailer->thumbnail_max_file_size);
       break;
 
     default:
@@ -292,6 +314,10 @@ thunar_thumbnailer_set_property (GObject      *object,
     {
     case PROP_THUMBNAIL_SIZE:
       thumbnailer->thumbnail_size = g_value_get_enum (value);
+      break;
+
+    case PROP_THUMBNAIL_MAX_FILE_SIZE:
+      thumbnailer->thumbnail_max_file_size = g_value_get_uint64 (value);
       break;
 
     default:
@@ -409,6 +435,14 @@ thunar_thumbnailer_begin_job (ThunarThumbnailer *thumbnailer,
           continue;
         }
 
+      /* skip large files */
+      if (thumbnailer->thumbnail_max_file_size > 0
+          && thunar_file_get_size (lp->data) > thumbnailer->thumbnail_max_file_size)
+        {
+          thunar_file_set_thumb_state (lp->data, THUNAR_FILE_THUMB_STATE_NONE);
+          continue;
+        }
+
       /* get the current thumb state */
       thumb_state = thunar_file_get_thumb_state (lp->data);
 
@@ -515,6 +549,12 @@ thunar_thumbnailer_init (ThunarThumbnailer *thumbnailer)
 
   /* initialize the proxies */
   thunar_thumbnailer_init_thumbnailer_proxy (thumbnailer);
+
+  g_object_bind_property (G_OBJECT (thunar_preferences_get ()),
+                          "misc-thumbnail-max-file-size",
+                          G_OBJECT (thumbnailer),
+                          "thumbnail-max-file-size",
+                          G_BINDING_SYNC_CREATE);
 }
 
 

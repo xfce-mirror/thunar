@@ -231,6 +231,33 @@ transform_parallel_copy_index_to_mode (GBinding     *binding,
 
 
 
+static gboolean
+transform_string_to_uint64 (GBinding     *binding,
+                            const GValue *src_value,
+                            GValue       *dst_value,
+                            gpointer      user_data)
+{
+  const gchar *string = g_value_get_string (src_value);
+  g_value_set_uint64 (dst_value, g_ascii_strtoull (string, NULL, 10));
+  return TRUE;
+}
+
+
+
+static gboolean
+transform_uint64_to_string (GBinding     *binding,
+                            const GValue *src_value,
+                            GValue       *dst_value,
+                            gpointer      user_data)
+{
+  gchar *string = g_strdup_printf ("%ld", g_value_get_uint64 (src_value));
+  g_value_set_string (dst_value, string);
+  g_free (string);
+  return TRUE;
+}
+
+
+
 static void
 thunar_preferences_dialog_class_init (ThunarPreferencesDialogClass *klass)
 {
@@ -395,6 +422,33 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
 
+  label = gtk_label_new_with_mnemonic (_("Only create thumbnails for files smaller than:"));
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, 2, 1, 1);
+  gtk_widget_show (label);
+
+  combo = gtk_combo_box_text_new ();
+  gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (combo), "524288", _("512KiB"));
+  gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (combo), "1048576", _("1MiB"));
+  gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (combo), "10485760", _("10MiB"));
+  gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (combo), "104857600", _("100MiB"));
+  gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (combo), "1073741824", _("1GiB"));
+  gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (combo), "10737418240", _("10GiB"));
+  gtk_combo_box_text_append (GTK_COMBO_BOX_TEXT (combo), "0", _("Unlimited"));
+  g_object_bind_property_full (G_OBJECT (dialog->preferences),
+                               "misc-thumbnail-max-file-size",
+                               G_OBJECT (combo),
+                               "active-id",
+                               G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE,
+                               transform_uint64_to_string,
+                               transform_string_to_uint64,
+                               NULL, NULL);
+  gtk_widget_set_hexpand (combo, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), combo, 1, 2, 1, 1);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
+  gtk_widget_show (combo);
+
   button = gtk_check_button_new_with_mnemonic (_("_Remember view settings for each folder"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
                           "misc-directory-specific-settings",
@@ -404,7 +458,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_set_tooltip_text (button,
                                _("Select this option to remember view type, zoom level, sort column, and sort order individually for each folder"));
   gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 2, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 3, 1, 1);
   gtk_widget_show (button);
   if (!thunar_g_vfs_metadata_is_supported ())
     {
@@ -421,7 +475,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button, _("Select this option to draw black frames around thumbnails."));
   gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 3, 2, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 4, 2, 1);
   gtk_widget_show (button);
 
   button = gtk_check_button_new_with_mnemonic (_("Sort _folders before files"));
@@ -432,7 +486,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button, _("Select this option to list folders before files when you sort a folder."));
   gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 4, 2, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 5, 2, 1);
   gtk_widget_show (button);
 
   button = gtk_check_button_new_with_mnemonic (_("Show file size in binary format"));
@@ -443,7 +497,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button, _("Select this option to show file size in binary format instead of decimal."));
   gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 5, 2, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 6, 2, 1);
   gtk_widget_show (button);
 
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
