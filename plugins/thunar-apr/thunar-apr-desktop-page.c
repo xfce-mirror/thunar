@@ -219,8 +219,11 @@ thunar_apr_desktop_page_class_init (ThunarAprDesktopPageClass *klass)
 static void
 thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
 {
+  AtkRelationSet *relations;
   PangoAttribute *attribute;
   PangoAttrList  *attr_list;
+  AtkRelation    *relation;
+  AtkObject      *object;
   GtkWidget      *grid;
   GtkWidget      *label;
   GtkWidget      *spacer;
@@ -259,7 +262,13 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->description_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->description_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->description_entry);
+
+  /* set Atk label relation for the entry */
+  object = gtk_widget_get_accessible (desktop_page->description_entry);
+  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
+  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
+  atk_relation_set_add (relations, relation);
+  g_object_unref (G_OBJECT (relation));
 
   row++;
 
@@ -278,7 +287,13 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->command_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->command_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->command_entry);
+
+  /* set Atk label relation for the entry */
+  object = gtk_widget_get_accessible (desktop_page->command_entry);
+  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
+  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
+  atk_relation_set_add (relations, relation);
+  g_object_unref (G_OBJECT (relation));
 
   row++;
 
@@ -297,7 +312,13 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->path_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->path_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->path_entry);
+
+  /* set Atk label relation for the entry */
+  object = gtk_widget_get_accessible (desktop_page->path_entry);
+  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
+  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
+  atk_relation_set_add (relations, relation);
+  g_object_unref (G_OBJECT (relation));
 
   row++;
 
@@ -316,7 +337,13 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->url_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->url_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->url_entry);
+
+  /* set Atk label relation for the entry */
+  object = gtk_widget_get_accessible (desktop_page->url_entry);
+  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
+  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
+  atk_relation_set_add (relations, relation);
+  g_object_unref (G_OBJECT (relation));
 
   row++;
 
@@ -337,7 +364,13 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->comment_entry);
 
   g_object_bind_property (G_OBJECT (desktop_page->comment_entry), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->comment_entry);
+
+  /* set Atk label relation for the entry */
+  object = gtk_widget_get_accessible (desktop_page->comment_entry);
+  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
+  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
+  atk_relation_set_add (relations, relation);
+  g_object_unref (G_OBJECT (relation));
 
   row++;
 
@@ -368,7 +401,13 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->snotify_button);
 
   g_object_bind_property (G_OBJECT (desktop_page->snotify_button), "visible", G_OBJECT (label), "visible", G_BINDING_SYNC_CREATE);
-  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->snotify_button);
+
+  /* set Atk label relation for the buttons */
+  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
+  object = gtk_widget_get_accessible (desktop_page->snotify_button);
+  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
+  atk_relation_set_add (relations, relation);
+  g_object_unref (G_OBJECT (relation));
 
   row++;
 
@@ -380,7 +419,13 @@ thunar_apr_desktop_page_init (ThunarAprDesktopPage *desktop_page)
   gtk_widget_show (desktop_page->terminal_button);
 
   /* don't bind visibility with label */
-  xfce_gtk_label_set_a11y_relation (GTK_LABEL (label), desktop_page->terminal_button);
+
+  /* set Atk label relation for the buttons */
+  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
+  object = gtk_widget_get_accessible (desktop_page->terminal_button);
+  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
+  atk_relation_set_add (relations, relation);
+  g_object_unref (G_OBJECT (relation));
 
   row++;
 
