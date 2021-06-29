@@ -150,10 +150,7 @@ thunar_io_scan_directory (ThunarJob          *job,
       if (return_thunar_files)
         {
           /* Prepend the ThunarFile */
-          if (recent_info)
-            thunar_file = thunar_file_get_with_info (child_file, info, recent_info, !is_mounted);
-          else
-            thunar_file = thunar_file_get_with_info (child_file, info, NULL, !is_mounted);
+          thunar_file = thunar_file_get_with_info (child_file, info, recent_info, !is_mounted);
           files = thunar_g_list_prepend_deep (files, thunar_file);
           g_object_unref (G_OBJECT (thunar_file));
         }

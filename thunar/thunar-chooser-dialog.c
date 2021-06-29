@@ -505,8 +505,11 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   /* check if we should also execute the application */
   if (G_LIKELY (succeed && dialog->open))
     {
-      GFile *gfile = thunar_file_get_file (dialog->file); list.next = list.prev = NULL;
-      gchar *uri = g_file_get_uri (gfile);
+      GFile *gfile;
+      gchar *uri;
+
+      gfile = thunar_file_get_file (dialog->file); list.next = list.prev = NULL;
+      uri = g_file_get_uri (gfile);
 
       /* create launch context */
       screen = gtk_widget_get_screen (GTK_WIDGET (dialog));
