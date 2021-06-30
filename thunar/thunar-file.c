@@ -1617,6 +1617,9 @@ thunar_file_execute (ThunarFile  *file,
 
   if (thunar_file_is_desktop_file (file, &is_secure))
     {
+      if (thunar_g_vfs_metadata_is_supported ())
+        is_secure = is_secure && xfce_g_file_is_trusted (file->gfile, NULL, NULL);
+
       /* parse file first, even if it is insecure */
       key_file = thunar_g_file_query_key_file (file->gfile, NULL, &err);
       if (key_file == NULL)
