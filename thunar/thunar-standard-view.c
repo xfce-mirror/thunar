@@ -3657,6 +3657,7 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view)
                                             | THUNAR_MENU_SECTION_COPY_PASTE
                                             | THUNAR_MENU_SECTION_TRASH_DELETE
                                             | THUNAR_MENU_SECTION_EMPTY_TRASH
+                                            | THUNAR_MENU_SECTION_REMOVE_FROM_RECENT
                                             | THUNAR_MENU_SECTION_RESTORE
                                             | THUNAR_MENU_SECTION_RENAME
                                             | THUNAR_MENU_SECTION_CUSTOM_ACTIONS

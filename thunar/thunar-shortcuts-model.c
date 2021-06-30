@@ -1036,7 +1036,7 @@ thunar_shortcuts_model_shortcut_network (ThunarShortcutsModel *model)
       shortcut->group = THUNAR_SHORTCUT_GROUP_NETWORK_DEFAULT;
       shortcut->name = g_strdup (_("Browse Network"));
       shortcut->tooltip = g_strdup (_("Browse local network connections"));
-      shortcut->location = g_file_new_for_uri ("network://");
+      shortcut->location = thunar_g_file_new_for_network();
       shortcut->gicon = g_themed_icon_new ("network-workgroup");
       shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
       thunar_shortcuts_model_add_shortcut (model, shortcut);
@@ -1135,8 +1135,21 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
       shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_COMPUTER;
       shortcut->name = g_strdup (_("Computer"));
       shortcut->tooltip = g_strdup (_("Browse the computer"));
-      shortcut->location = g_file_new_for_uri ("computer://");
+      shortcut->location = thunar_g_file_new_for_computer();
       shortcut->gicon = g_themed_icon_new ("computer");
+      shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
+      thunar_shortcuts_model_add_shortcut (model, shortcut);
+    }
+
+  /* append the recent icon if browsing recent is supported */
+  if (thunar_g_vfs_is_uri_scheme_supported ("recent"))
+    {
+      shortcut = g_slice_new0 (ThunarShortcut);
+      shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_RECENT;
+      shortcut->name = g_strdup (_("Recent"));
+      shortcut->tooltip = g_strdup (_("Browse recently used files"));
+      shortcut->location = thunar_g_file_new_for_recent();
+      shortcut->gicon = g_themed_icon_new ("document-open-recent");
       shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
       thunar_shortcuts_model_add_shortcut (model, shortcut);
     }
