@@ -27,6 +27,7 @@ G_BEGIN_DECLS
 
 GFile       *thunar_g_file_new_for_home             (void);
 GFile       *thunar_g_file_new_for_root             (void);
+GFile       *thunar_g_file_new_for_recent           (void);
 GFile       *thunar_g_file_new_for_trash            (void);
 GFile       *thunar_g_file_new_for_desktop          (void);
 GFile       *thunar_g_file_new_for_computer         (void);
@@ -34,8 +35,10 @@ GFile       *thunar_g_file_new_for_bookmarks        (void);
 
 gboolean     thunar_g_file_is_root                  (GFile                *file);
 gboolean     thunar_g_file_is_trashed               (GFile                *file);
+gboolean     thunar_g_file_is_in_recent             (GFile                *file);
 gboolean     thunar_g_file_is_home                  (GFile                *file);
 gboolean     thunar_g_file_is_trash                 (GFile                *file);
+gboolean     thunar_g_file_is_recent                (GFile                *file);
 gboolean     thunar_g_file_is_computer              (GFile                *file);
 gboolean     thunar_g_file_is_network               (GFile                *file);
 
