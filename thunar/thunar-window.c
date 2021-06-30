@@ -1354,7 +1354,7 @@ static gboolean thunar_window_delete (GtkWidget *widget,
       ThunarNavigator *view = THUNAR_NAVIGATOR (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_left), i));
       gchar *uri = g_file_get_uri (thunar_file_get_file (thunar_navigator_get_current_directory (view)));
       tab_uris[pos++] = g_strdup (uri);
-      printf("%s\n", uri);
+      g_free (uri);
     }
 
   for (int i = 0; i < n_tabsr; i++)
@@ -1362,7 +1362,7 @@ static gboolean thunar_window_delete (GtkWidget *widget,
       ThunarNavigator *view = THUNAR_NAVIGATOR (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_right), i));
       gchar *uri = g_file_get_uri (thunar_file_get_file (thunar_navigator_get_current_directory (view)));
       tab_uris[pos++] = g_strdup (uri);
-      printf("%s\n", uri);
+      g_free (uri);
     }
 
   g_object_set (G_OBJECT (window->preferences), "last-tabs", tab_uris, NULL);

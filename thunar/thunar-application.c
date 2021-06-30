@@ -560,11 +560,11 @@ thunar_application_command_line (GApplication            *gapp,
           g_object_get (G_OBJECT (application->preferences), "last-tabs", &tabs, NULL);
           for (guint i = 0; i < g_strv_length (tabs); i++)
             {
-              printf ("%s\n", tabs[i]);
               ThunarFile *directory = thunar_file_get_for_uri (tabs[i], NULL);
               thunar_window_notebook_add_new_tab (THUNAR_WINDOW (window_list->data), directory, FALSE);
             }
           g_list_free (window_list);
+          g_strfreev (tabs);
         }
     }
 
