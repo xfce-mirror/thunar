@@ -49,21 +49,22 @@ typedef enum
 /* Bundles of #GtkMenuItems, which can be created by this widget */
 typedef enum
 {
-  THUNAR_MENU_SECTION_OPEN             = 1 << 0,
-  THUNAR_MENU_SECTION_SENDTO           = 1 << 1,
-  THUNAR_MENU_SECTION_CREATE_NEW_FILES = 1 << 2,
-  THUNAR_MENU_SECTION_CUT              = 1 << 3,
-  THUNAR_MENU_SECTION_COPY_PASTE       = 1 << 4,
-  THUNAR_MENU_SECTION_TRASH_DELETE     = 1 << 5,
-  THUNAR_MENU_SECTION_EMPTY_TRASH      = 1 << 6,
-  THUNAR_MENU_SECTION_RESTORE          = 1 << 7,
-  THUNAR_MENU_SECTION_DUPLICATE        = 1 << 8,
-  THUNAR_MENU_SECTION_MAKELINK         = 1 << 9,
-  THUNAR_MENU_SECTION_RENAME           = 1 << 10,
-  THUNAR_MENU_SECTION_CUSTOM_ACTIONS   = 1 << 11,
-  THUNAR_MENU_SECTION_ZOOM             = 1 << 12,
-  THUNAR_MENU_SECTION_PROPERTIES       = 1 << 13,
-  THUNAR_MENU_SECTION_MOUNTABLE        = 1 << 14,
+  THUNAR_MENU_SECTION_OPEN                = 1 << 0,
+  THUNAR_MENU_SECTION_SENDTO              = 1 << 1,
+  THUNAR_MENU_SECTION_CREATE_NEW_FILES    = 1 << 2,
+  THUNAR_MENU_SECTION_CUT                 = 1 << 3,
+  THUNAR_MENU_SECTION_COPY_PASTE          = 1 << 4,
+  THUNAR_MENU_SECTION_TRASH_DELETE        = 1 << 5,
+  THUNAR_MENU_SECTION_EMPTY_TRASH         = 1 << 6,
+  THUNAR_MENU_SECTION_RESTORE             = 1 << 7,
+  THUNAR_MENU_SECTION_DUPLICATE           = 1 << 8,
+  THUNAR_MENU_SECTION_MAKELINK            = 1 << 9,
+  THUNAR_MENU_SECTION_RENAME              = 1 << 10,
+  THUNAR_MENU_SECTION_CUSTOM_ACTIONS      = 1 << 11,
+  THUNAR_MENU_SECTION_ZOOM                = 1 << 12,
+  THUNAR_MENU_SECTION_PROPERTIES          = 1 << 13,
+  THUNAR_MENU_SECTION_MOUNTABLE           = 1 << 14,
+  THUNAR_MENU_SECTION_REMOVE_FROM_RECENT  = 1 << 15,
 
 } ThunarMenuSections;
 
