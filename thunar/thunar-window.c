@@ -1336,8 +1336,8 @@ static gboolean thunar_window_delete (GtkWidget *widget,
   gboolean      confirm_close_multiple_tabs, do_not_ask_again;
   gint          response, n_tabs = 0, n_tabsl = 0, n_tabsr = 0;
   ThunarWindow *window = THUNAR_WINDOW (widget);
-  gchar       **tab_uris;
-  int           pos;
+  gchar       **tab_uris_left;
+  gchar       **tab_uris_right;
 
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (widget),FALSE);
 
@@ -1347,27 +1347,29 @@ static gboolean thunar_window_delete (GtkWidget *widget,
     n_tabsr += gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_right));
   n_tabs = n_tabsl + n_tabsr;
 
-  tab_uris = g_new0 (gchar *, n_tabs + 2);
-  pos = 0;
+  tab_uris_left = g_new0 (gchar *, n_tabsl + 1);
   for (int i = 0; i < n_tabsl; i++)
     {
       ThunarNavigator *view = THUNAR_NAVIGATOR (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_left), i));
       gchar *uri = g_file_get_uri (thunar_file_get_file (thunar_navigator_get_current_directory (view)));
-      tab_uris[pos++] = g_strdup (uri);
+      tab_uris_left[i] = g_strdup (uri);
       g_free (uri);
     }
 
+  tab_uris_right = g_new0 (gchar *, n_tabsr + 1);
   for (int i = 0; i < n_tabsr; i++)
     {
       ThunarNavigator *view = THUNAR_NAVIGATOR (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_right), i));
       gchar *uri = g_file_get_uri (thunar_file_get_file (thunar_navigator_get_current_directory (view)));
-      tab_uris[pos++] = g_strdup (uri);
+      tab_uris_right[i] = g_strdup (uri);
       g_free (uri);
     }
 
-  g_object_set (G_OBJECT (window->preferences), "last-tabs", tab_uris, NULL);
+  g_object_set (G_OBJECT (window->preferences), "last-tabs-left", tab_uris_left, NULL);
+  g_object_set (G_OBJECT (window->preferences), "last-tabs-right", tab_uris_right, NULL);
 
-  g_strfreev (tab_uris);
+  g_strfreev (tab_uris_left);
+  g_strfreev (tab_uris_right);
 
   /* if we don't have muliple tabs in one of the notebooks then just exit */
   if (thunar_window_split_view_is_active (window))
@@ -2352,10 +2354,41 @@ thunar_window_notebook_add_new_tab (ThunarWindow *window,
 
 
 
-void thunar_window_notebook_open_new_tab (ThunarWindow *window,
-                                          ThunarFile   *directory)
+void
+thunar_window_notebook_open_new_tab (ThunarWindow *window,
+                                      ThunarFile  *directory)
 {
   thunar_window_notebook_add_new_tab (window, directory, FALSE /* don't override `misc-switch-to-new-tab` preference */);
+}
+
+
+
+/**
+ * thunar_window_notebook_toggle_split_view:
+ * @window      : a #ThunarWindow instance.
+ *
+ * Toggles the split-view functionality for @window.
+ **/
+void
+thunar_window_notebook_toggle_split_view (ThunarWindow *window)
+{
+  thunar_window_action_toggle_split_view (window);
+}
+
+
+
+/**
+ * thunar_window_notebook_remove_tab:
+ * @window      : a #ThunarWindow instance.
+ * @tab         : the page index as a #gint.
+ *
+ * Removes @tab page from the currently selected notebook.
+ **/
+void
+thunar_window_notebook_remove_tab (ThunarWindow *window,
+                                   gint          tab)
+{
+  gtk_notebook_remove_page (GTK_NOTEBOOK (window->notebook_selected), tab);
 }
 
 

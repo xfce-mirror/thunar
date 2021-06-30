@@ -53,7 +53,8 @@ enum
   PROP_DEFAULT_VIEW,
   PROP_HIDDEN_DEVICES,
   PROP_HIDDEN_BOOKMARKS,
-  PROP_LAST_TABS,
+  PROP_LAST_TABS_LEFT,
+  PROP_LAST_TABS_RIGHT,
   PROP_LAST_RESTORE_TABS,
   PROP_LAST_COMPACT_VIEW_ZOOM_LEVEL,
   PROP_LAST_DETAILS_VIEW_COLUMN_ORDER,
@@ -210,17 +211,30 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                           EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:last-tabs:
+   * ThunarPreferences:last-tabs-left:
    *
    * List of URI's that are hidden in the bookmarks (obtained from ~/.gtk-bookmarks).
    * If an URI is not in the bookmarks file it will be removed from this list.
    **/
-  preferences_props[PROP_LAST_TABS] =
-      g_param_spec_boxed ("last-tabs",
+  preferences_props[PROP_LAST_TABS_LEFT] =
+      g_param_spec_boxed ("last-tabs-left",
                           NULL,
                           NULL,
                           G_TYPE_STRV,
                           EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-tabs-right:
+   *
+   * List of URI's that are hidden in the bookmarks (obtained from ~/.gtk-bookmarks).
+   * If an URI is not in the bookmarks file it will be removed from this list.
+   **/
+    preferences_props[PROP_LAST_TABS_RIGHT] =
+        g_param_spec_boxed ("last-tabs-right",
+                            NULL,
+                            NULL,
+                            G_TYPE_STRV,
+                            EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-details-view-fixed-columns:
