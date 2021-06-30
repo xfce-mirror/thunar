@@ -95,9 +95,33 @@ thunar_g_file_new_for_root (void)
 
 
 GFile *
+thunar_g_file_new_for_recent (void)
+{
+  return g_file_new_for_uri ("recent:///");
+}
+
+
+
+GFile *
 thunar_g_file_new_for_trash (void)
 {
   return g_file_new_for_uri ("trash:///");
+}
+
+
+
+GFile *
+thunar_g_file_new_for_computer (void)
+{
+  return g_file_new_for_uri ("computer://");
+}
+
+
+
+GFile *
+thunar_g_file_new_for_network (void)
+{
+  return g_file_new_for_uri ("network://");
 }
 
 
@@ -153,6 +177,15 @@ thunar_g_file_is_trashed (GFile *file)
 
 
 gboolean
+thunar_g_file_is_in_recent (GFile *file)
+{
+  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+  return g_file_has_uri_scheme (file, "recent");
+}
+
+
+
+gboolean
 thunar_g_file_is_home (GFile *file)
 {
   GFile   *home;
@@ -182,6 +215,23 @@ thunar_g_file_is_trash (GFile *file)
   g_free (uri);
 
   return is_trash;
+}
+
+
+
+gboolean
+thunar_g_file_is_recent (GFile *file)
+{
+  char *uri;
+  gboolean is_recent = FALSE;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+
+  uri = g_file_get_uri (file);
+  is_recent = g_strcmp0 (uri, "recent:///") == 0;
+  g_free (uri);
+
+  return is_recent;
 }
 
 

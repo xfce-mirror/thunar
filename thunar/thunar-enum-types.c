@@ -103,6 +103,7 @@ thunar_column_get_type (void)
         { THUNAR_COLUMN_DATE_ACCESSED, "THUNAR_COLUMN_DATE_ACCESSED", N_ ("Date Accessed"), },
         { THUNAR_COLUMN_DATE_MODIFIED, "THUNAR_COLUMN_DATE_MODIFIED", N_ ("Date Modified"), },
         { THUNAR_COLUMN_DATE_DELETED,  "THUNAR_COLUMN_DATE_DELETED",  N_ ("Date Deleted"),  },
+        { THUNAR_COLUMN_RECENCY,       "THUNAR_COLUMN_RECENCY",       N_ ("Recency"),       },
         { THUNAR_COLUMN_GROUP,         "THUNAR_COLUMN_GROUP",         N_ ("Group"),         },
         { THUNAR_COLUMN_MIME_TYPE,     "THUNAR_COLUMN_MIME_TYPE",     N_ ("MIME Type"),     },
         { THUNAR_COLUMN_NAME,          "THUNAR_COLUMN_NAME",          N_ ("Name"),          },
