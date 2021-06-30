@@ -320,7 +320,7 @@ thunar_tree_model_init (ThunarTreeModel *model)
 
   /* append the computer icon if browsing the computer is supported */
   if (thunar_g_vfs_is_uri_scheme_supported ("computer"))
-    system_paths = g_list_append (system_paths, g_file_new_for_uri ("computer://"));
+    system_paths = g_list_append (system_paths, thunar_g_file_new_for_computer());
 
   /* add the home folder to the system paths */
   home = thunar_g_file_new_for_home ();
@@ -338,7 +338,7 @@ thunar_tree_model_init (ThunarTreeModel *model)
 
   /* append the network icon if browsing the network is supported */
   if (thunar_g_vfs_is_uri_scheme_supported ("network"))
-    system_paths = g_list_append (system_paths, g_file_new_for_uri ("network://"));
+    system_paths = g_list_append (system_paths, thunar_g_file_new_for_network());
 
   /* append the system defined nodes ('Computer', 'Home', 'Trash', 'File System', 'Network') */
   for (lp = system_paths; lp != NULL; lp = lp->next)
