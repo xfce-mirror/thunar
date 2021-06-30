@@ -562,12 +562,15 @@ thunar_application_command_line (GApplication            *gapp,
           window = THUNAR_WINDOW (window_list->data);
           /* restore left tabs */
           g_object_get (G_OBJECT (application->preferences), "last-tabs-left", &tabs_left, NULL);
-          for (guint i = 0; i < g_strv_length (tabs_left); i++)
+          if (tabs_left != NULL && g_strv_length (tabs_left) > 0)
             {
-              ThunarFile *directory = thunar_file_get_for_uri (tabs_left[i], NULL);
-              thunar_window_notebook_add_new_tab (window, directory, FALSE);
+              for (guint i = 0; i < g_strv_length (tabs_left); i++)
+                {
+                  ThunarFile *directory = thunar_file_get_for_uri (tabs_left[i], NULL);
+                  thunar_window_notebook_add_new_tab (window, directory, FALSE);
+                }
+              thunar_window_notebook_remove_tab (window, 0); /* remove automatically opened tab */
             }
-          thunar_window_notebook_remove_tab (window, 0); /* remove automatically opened tab */
           /* restore right tabs */
           g_object_get (G_OBJECT (application->preferences), "last-tabs-right", &tabs_right, NULL);
           if (tabs_right != NULL && g_strv_length (tabs_right) > 0)

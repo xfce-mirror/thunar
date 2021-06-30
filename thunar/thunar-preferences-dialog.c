@@ -809,7 +809,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);
 
-  label = gtk_label_new (_("Tabs instead of new Windows"));
+  label = gtk_label_new (_("Tabs instead and Windows"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
@@ -841,6 +841,17 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_set_tooltip_text (button, _("Select this option to open new thunar instances as tabs in an existing thunar window"));
   gtk_widget_set_hexpand (button, TRUE);
   gtk_grid_attach (GTK_GRID (grid), button, 0, 1, 1, 1);
+  gtk_widget_show (button);
+
+  button = gtk_check_button_new_with_mnemonic (_("Restore tabs on startup"));
+  g_object_bind_property (G_OBJECT (dialog->preferences),
+                          "last-restore-tabs",
+                          G_OBJECT (button),
+                          "active",
+                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
+  gtk_widget_set_tooltip_text (button, _("Select this option to restore your tabs as they were last time you used Thunar"));
+  gtk_widget_set_hexpand (button, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, 2, 1, 1);
   gtk_widget_show (button);
 
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
@@ -919,17 +930,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
       gtk_grid_attach (GTK_GRID (grid), button, 0, 0, 1, 1);
       gtk_widget_show (button);
     }
-
-  button = gtk_check_button_new_with_mnemonic (_("Restore tabs on startup"));
-  g_object_bind_property (G_OBJECT (dialog->preferences),
-                          "last-restore-tabs",
-                          G_OBJECT (button),
-                          "active",
-                          G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
-  gtk_widget_set_tooltip_text (button, _("Select this option to restore your tabs as they were last time you used Thunar"));
-  gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 2, 1, 1);
-  gtk_widget_show (button);
 
   /*
      Advanced
