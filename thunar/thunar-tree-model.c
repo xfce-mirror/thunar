@@ -326,6 +326,9 @@ thunar_tree_model_init (ThunarTreeModel *model)
   home = thunar_g_file_new_for_home ();
   system_paths = g_list_append (system_paths, g_object_ref (home));
 
+  if (thunar_g_vfs_is_uri_scheme_supported ("recent"))
+    system_paths = g_list_append (system_paths, thunar_g_file_new_for_recent());
+
   /* append the trash icon if the trash is supported */
   if (thunar_g_vfs_is_uri_scheme_supported ("trash"))
     system_paths = g_list_append (system_paths, thunar_g_file_new_for_trash ());
