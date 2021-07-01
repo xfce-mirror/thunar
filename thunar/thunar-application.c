@@ -541,10 +541,58 @@ thunar_application_command_line (GApplication            *gapp,
     }
   else if (!daemon)
     {
+      GList        *window_list;
+      ThunarWindow *window;
+      gchar       **tabs_left;
+      gchar       **tabs_right;
+      gboolean      restore_tabs;
+      gboolean      has_left_tabs; /* used to check whether the split-view should be enabled */
+
       if (!thunar_application_process_filenames (application, cwd, cwd_list, NULL, NULL, &error, THUNAR_APPLICATION_SELECT_FILES))
         {
           /* we failed to process the filenames or the bulk rename failed */
           g_application_command_line_printerr (command_line, "Thunar: %s\n", error->message);
+        }
+
+      /* reopen tabs */
+      g_object_get (G_OBJECT (application->preferences), "last-restore-tabs", &restore_tabs, NULL);
+      if (restore_tabs)
+        {
+          /* get ThunarWindow */
+          window_list = thunar_application_get_windows (application);
+          window_list = g_list_last (window_list); /* this will be the topmost Window */
+          window = THUNAR_WINDOW (window_list->data);
+          /* restore left tabs */
+          has_left_tabs = FALSE;
+          g_object_get (G_OBJECT (application->preferences), "last-tabs-left", &tabs_left, NULL);
+          if (tabs_left != NULL && g_strv_length (tabs_left) > 0)
+            {
+              for (guint i = 0; i < g_strv_length (tabs_left); i++)
+                {
+                  ThunarFile *directory = thunar_file_get_for_uri (tabs_left[i], NULL);
+                  thunar_window_notebook_add_new_tab (window, directory, FALSE);
+                }
+              thunar_window_notebook_remove_tab (window, 0); /* remove automatically opened tab */
+              has_left_tabs = TRUE;
+            }
+          /* restore right tabs */
+          /* (will be restored on the left if no left tabs are found) */
+          g_object_get (G_OBJECT (application->preferences), "last-tabs-right", &tabs_right, NULL);
+          if (tabs_right != NULL && g_strv_length (tabs_right) > 0)
+            {
+              if (has_left_tabs)
+                thunar_window_notebook_toggle_split_view (window); /* enabling the split view selects the new notebook */
+              for (guint i = 0; i < g_strv_length (tabs_right); i++)
+                {
+                  ThunarFile *directory = thunar_file_get_for_uri (tabs_right[i], NULL);
+                  thunar_window_notebook_add_new_tab (window, directory, FALSE);
+                }
+              thunar_window_notebook_remove_tab (window, 0); /* remove automatically opened tab */
+            }
+          /* free memory */
+          g_list_free (window_list);
+          g_strfreev (tabs_left);
+          g_strfreev (tabs_right);
         }
     }
 
