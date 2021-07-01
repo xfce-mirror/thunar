@@ -326,6 +326,20 @@ typedef enum /*< flags >*/
 
 GType thunar_file_mode_get_type (void) G_GNUC_CONST;
 
+
+
+/**
+ * ThunarFileMode:
+ *
+ * Special flags and permissions of a filesystem entity.
+ **/
+typedef enum /*< flags >*/
+{
+    THUNAR_NEW_TAB_BEHAVIOR_FOLLOW_PREFERENCE,
+    THUNAR_NEW_TAB_BEHAVIOR_SWITCH,
+    THUNAR_NEW_TAB_BEHAVIOR_STAY
+} ThunarNewTabBehavior;
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_ENUM_TYPES_H__ */
