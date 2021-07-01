@@ -53,6 +53,9 @@ enum
   PROP_DEFAULT_VIEW,
   PROP_HIDDEN_DEVICES,
   PROP_HIDDEN_BOOKMARKS,
+  PROP_LAST_TABS_LEFT,
+  PROP_LAST_TABS_RIGHT,
+  PROP_LAST_RESTORE_TABS,
   PROP_LAST_COMPACT_VIEW_ZOOM_LEVEL,
   PROP_LAST_DETAILS_VIEW_COLUMN_ORDER,
   PROP_LAST_DETAILS_VIEW_COLUMN_WIDTHS,
@@ -206,6 +209,45 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                           NULL,
                           G_TYPE_STRV,
                           EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-tabs-left:
+   *
+   * List of URI's that are used to reopen tabs on restart. There is one URI for each tab/folder that was open at the time
+   * of the last program exit. This preference holds the tabs of the default view (or the left split-view).
+   **/
+  preferences_props[PROP_LAST_TABS_LEFT] =
+      g_param_spec_boxed ("last-tabs-left",
+                          NULL,
+                          NULL,
+                          G_TYPE_STRV,
+                          EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-tabs-right:
+   *
+   * List of URI's that are used to reopen tabs on restart. There is one URI for each tab/folder that was open at the time
+   * of the last program exit. This preference holds the tabs of the right split-view.
+   **/
+    preferences_props[PROP_LAST_TABS_RIGHT] =
+        g_param_spec_boxed ("last-tabs-right",
+                            NULL,
+                            NULL,
+                            G_TYPE_STRV,
+                            EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-details-view-fixed-columns:
+   *
+   * %TRUE to use fixed column widths in the #ThunarDetailsView. Else the
+   * column widths will be automatically determined from the model contents.
+   **/
+  preferences_props[PROP_LAST_RESTORE_TABS] =
+      g_param_spec_boolean ("last-restore-tabs",
+                            "LastRestoreTabs",
+                            NULL,
+                            FALSE,
+                            EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-compact-view-zoom-level:
