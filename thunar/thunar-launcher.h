@@ -56,6 +56,7 @@ typedef enum
   THUNAR_LAUNCHER_ACTION_CREATE_FOLDER,
   THUNAR_LAUNCHER_ACTION_CREATE_DOCUMENT,
   THUNAR_LAUNCHER_ACTION_RESTORE,
+  THUNAR_LAUNCHER_ACTION_RESTORE_SHOW,
   THUNAR_LAUNCHER_ACTION_MOVE_TO_TRASH,
   THUNAR_LAUNCHER_ACTION_DELETE,
   THUNAR_LAUNCHER_ACTION_TRASH_DELETE,
@@ -109,6 +110,7 @@ void            thunar_launcher_set_selection                        (ThunarLaun
                                                                       GFile                          *selected_location);
 void            thunar_launcher_action_empty_trash                   (ThunarLauncher                 *launcher);
 void            thunar_launcher_action_restore                       (ThunarLauncher                 *launcher);
+void            thunar_launcher_action_restore_and_show              (ThunarLauncher                 *launcher);
 
 
 G_END_DECLS;
