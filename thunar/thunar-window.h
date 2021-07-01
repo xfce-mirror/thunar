@@ -121,7 +121,7 @@ void                      thunar_window_notebook_open_new_tab               (Thu
                                                                              ThunarFile          *directory);
 void                      thunar_window_notebook_add_new_tab                (ThunarWindow        *window,
                                                                              ThunarFile          *directory,
-                                                                             gboolean             force_switch_to_new_tab);
+                                                                             ThunarNewTabBehavior behavior);
 gboolean                  thunar_window_has_shortcut_sidepane               (ThunarWindow        *window);
 GtkWidget*                thunar_window_get_sidepane                        (ThunarWindow        *window);
 void                      thunar_window_append_menu_item                    (ThunarWindow        *window,
@@ -132,7 +132,7 @@ void                      thunar_window_redirect_menu_tooltips_to_statusbar (Thu
                                                                              GtkMenu             *menu);
 const XfceGtkActionEntry* thunar_window_get_action_entry                    (ThunarWindow        *window,
                                                                              ThunarWindowAction   action);
- void                     thunar_window_select_files                        (ThunarWindow        *window,
+ void                     thunar_window_show_and_select_files               (ThunarWindow        *window,
                                                                              GList               *files_to_select);
 G_END_DECLS;
 

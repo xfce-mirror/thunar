@@ -326,6 +326,21 @@ typedef enum /*< flags >*/
 
 GType thunar_file_mode_get_type (void) G_GNUC_CONST;
 
+
+
+/**
+ * ThunarNewTabBehavior:
+ * @THUNAR_NEW_TAB_BEHAVIOR_FOLLOW_PREFERENCE   : switching to the new tab or not is controlled by a preference.
+ * @THUNAR_NEW_TAB_BEHAVIOR_SWITCH              : switch to the new tab.
+ * @THUNAR_NEW_TAB_BEHAVIOR_STAY                : stay at the current tab.
+ **/
+typedef enum
+{
+    THUNAR_NEW_TAB_BEHAVIOR_FOLLOW_PREFERENCE,
+    THUNAR_NEW_TAB_BEHAVIOR_SWITCH,
+    THUNAR_NEW_TAB_BEHAVIOR_STAY
+} ThunarNewTabBehavior;
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_ENUM_TYPES_H__ */
