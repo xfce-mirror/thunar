@@ -2359,7 +2359,7 @@ thunar_launcher_action_restore (ThunarLauncher *launcher)
 
   /* restore the selected files */
   application = thunar_application_get ();
-  thunar_application_restore_files (application, launcher->widget, launcher->files_to_process, NULL, FALSE);
+  thunar_application_restore_files (application, launcher->widget, launcher->files_to_process, NULL);
   g_object_unref (G_OBJECT (application));
 }
 
@@ -2377,7 +2377,7 @@ thunar_launcher_action_restore_and_show (ThunarLauncher *launcher)
 
   /* restore the selected files */
   application = thunar_application_get ();
-  thunar_application_restore_files (application, launcher->widget, launcher->files_to_process, NULL, TRUE);
+  thunar_application_restore_files (application, launcher->widget, launcher->files_to_process, launcher->new_files_created_closure);
   g_object_unref (G_OBJECT (application));
 }
 
