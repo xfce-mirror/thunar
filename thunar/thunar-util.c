@@ -721,3 +721,17 @@ thunar_util_next_new_file_name (ThunarFile   *dir,
 
   return new_name;
 }
+
+
+
+/**
+ * list_free_all_g_files
+ * @list : list of #GFile<!---->s or other objects freed by g_object_unref
+ *
+ * Frees the list and its contents.
+**/
+void
+list_free_all_g_files (void *list)
+{
+  g_list_free_full (list, g_object_unref);
+}

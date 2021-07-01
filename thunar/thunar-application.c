@@ -1318,7 +1318,7 @@ thunar_application_open_window (ThunarApplication *application,
           list = g_list_last (list);
 
           if (directory != NULL)
-              thunar_window_notebook_add_new_tab (THUNAR_WINDOW (list->data), directory, TRUE);
+              thunar_window_notebook_add_new_tab (THUNAR_WINDOW (list->data), directory, THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
           
           /* bring the window to front */
           gtk_window_present (list->data);
@@ -1538,7 +1538,7 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
               g_object_unref (parent);
 
               files = g_list_append (files, thunar_file_get_file (file));
-              thunar_window_select_files (THUNAR_WINDOW (window), files);
+              thunar_window_show_and_select_files (THUNAR_WINDOW (window), files);
               g_list_free (files);
             }
         }
