@@ -1347,6 +1347,7 @@ static gboolean thunar_window_delete (GtkWidget *widget,
     n_tabsr += gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_right));
   n_tabs = n_tabsl + n_tabsr;
 
+  /* save open tabs */
   tab_uris_left = g_new0 (gchar *, n_tabsl + 1);
   for (int i = 0; i < n_tabsl; i++)
     {
