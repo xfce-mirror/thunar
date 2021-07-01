@@ -1538,7 +1538,7 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
               g_object_unref (parent);
 
               files = g_list_append (files, thunar_file_get_file (file));
-              thunar_window_select_files (THUNAR_WINDOW (window), files);
+              thunar_window_show_and_select_files (THUNAR_WINDOW (window), files);
               g_list_free (files);
             }
         }
@@ -2427,60 +2427,6 @@ thunar_application_empty_trash (ThunarApplication *application,
 
 
 
-typedef struct
-{
-    GHashTable *restore_show_table; /* string<directory_path>:GList<GFile*> */
-    GClosure   *restore_show_closure;
-} ShowAndSelectStruct;
-
-
-static void
-hash_table_entry_show_and_select_files (gpointer key, gpointer list, gpointer application)
-{
-  _thunar_return_if_fail (key != NULL);
-  _thunar_return_if_fail (list != NULL);
-  _thunar_return_if_fail (application != NULL);
-
-  ThunarFile *original_dir  = NULL;
-  GList      *window_list   = NULL;
-
-  /* open directory */
-  original_dir = thunar_file_get_for_uri (key, NULL);
-  thunar_application_open_window (application, original_dir, NULL, NULL, FALSE);
-
-  /* select files */
-  window_list = thunar_application_get_windows (application);
-  window_list = g_list_last (window_list); /* this will be the topmost Window */
-  thunar_window_select_files (THUNAR_WINDOW (window_list->data), list);
-
-  /* free memory */
-  g_list_free (window_list);
-  g_object_unref (original_dir);
-}
-
-
-
-static void
-hash_table_show_and_select (ShowAndSelectStruct *show_select)
-{
-  ThunarApplication *application = thunar_application_get();
-  g_hash_table_foreach (show_select->restore_show_table, hash_table_entry_show_and_select_files, application);
-  g_hash_table_destroy (show_select->restore_show_table);
-  g_object_unref (application);
-  g_closure_unref (show_select->restore_show_closure);
-  g_free (show_select);
-}
-
-
-
-static void
-list_free_all_g_files (void *list)
-{
-  g_list_free_full (list, g_object_unref);
-}
-
-
-
 /**
  * thunar_application_restore_files:
  * @application       : a #ThunarApplication.
@@ -2500,8 +2446,7 @@ void
 thunar_application_restore_files (ThunarApplication *application,
                                   gpointer           parent,
                                   GList             *trash_file_list,
-                                  GClosure          *new_files_closure,
-                                  gboolean           open_original_folder)
+                                  GClosure          *new_files_closure)
 {
   const gchar *original_uri;
   GError      *err                = NULL;
@@ -2509,21 +2454,9 @@ thunar_application_restore_files (ThunarApplication *application,
   GList       *source_path_list   = NULL;
   GList       *target_path_list   = NULL;
   GList       *lp                 = NULL;
-  ShowAndSelectStruct *show_select = NULL;
 
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
-
-  if (open_original_folder)
-    {
-      _thunar_return_if_fail (new_files_closure == NULL);
-      show_select = g_malloc (sizeof (ShowAndSelectStruct));
-      show_select->restore_show_table = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, list_free_all_g_files);
-      show_select->restore_show_closure = g_cclosure_new_swap (G_CALLBACK (hash_table_show_and_select), show_select, NULL);
-      new_files_closure = show_select->restore_show_closure;
-      g_closure_ref (show_select->restore_show_closure);
-      g_closure_sink (show_select->restore_show_closure);
-    }
 
   for (lp = trash_file_list; lp != NULL; lp = lp->next)
     {
@@ -2544,22 +2477,6 @@ thunar_application_restore_files (ThunarApplication *application,
 
       source_path_list = thunar_g_list_append_deep (source_path_list, thunar_file_get_file (lp->data));
       target_path_list = thunar_g_list_append_deep (target_path_list, target_path);
-
-      if (open_original_folder)
-        {
-          original_dir_path = g_strndup (original_uri, strlen (original_uri) - strlen (thunar_file_get_display_name (lp->data)));
-
-          if (g_hash_table_contains (show_select->restore_show_table, original_dir_path) == FALSE)
-            {
-              GList *list = g_list_prepend (NULL, g_file_new_for_commandline_arg (original_uri));
-              g_hash_table_insert (show_select->restore_show_table, original_dir_path, list);
-            }
-          else
-            {
-              GList *list = g_hash_table_lookup (show_select->restore_show_table, original_dir_path);
-              list = g_list_append (list, g_file_new_for_commandline_arg (original_uri));
-            }
-        }
 
       g_object_unref (target_path);
     }

@@ -68,6 +68,7 @@ gchar     *thunar_util_change_working_directory (const gchar    *new_directory) 
 void       thunar_setup_display_cb              (gpointer        data);
 gchar*     thunar_util_next_new_file_name       (ThunarFile     *dir,
                                                  const gchar    *file_name);
+void       list_free_all_g_files                (void           *list)
 
 G_END_DECLS;
 
