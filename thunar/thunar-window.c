@@ -369,7 +369,6 @@ struct _ThunarWindow
   GtkWidget              *location_toolbar_item_back;
   GtkWidget              *location_toolbar_item_forward;
   GtkWidget              *location_toolbar_item_parent;
-  GtkWidget              *location_toolbar_reload;
 
   ThunarLauncher         *launcher;
 
@@ -883,8 +882,6 @@ thunar_window_init (ThunarWindow *window)
 
   /* add the location bar itself */
   gtk_container_add (GTK_CONTAINER (tool_item), window->location_bar);
-
-  window->location_toolbar_reload = xfce_gtk_tool_button_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_RELOAD), G_OBJECT (window), GTK_TOOLBAR (window->location_toolbar));
 
   /* display the toolbar */
   gtk_widget_show_all (window->location_toolbar);
