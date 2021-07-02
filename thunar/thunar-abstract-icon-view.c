@@ -169,6 +169,15 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   g_signal_connect (G_OBJECT (view), "key-press-event", G_CALLBACK (thunar_abstract_icon_view_key_press_event), abstract_icon_view);
   g_signal_connect (G_OBJECT (view), "item-activated", G_CALLBACK (thunar_abstract_icon_view_item_activated), abstract_icon_view);
   g_signal_connect_swapped (G_OBJECT (view), "selection-changed", G_CALLBACK (thunar_standard_view_selection_changed), abstract_icon_view);
+
+  /* TODO: #32 Register icon-view callbacks here */
+  g_signal_connect_swapped(G_OBJECT (view), "search-in-progress",
+                           G_CALLBACK (thunar_standard_view_search_status_changed),
+                           THUNAR_STANDARD_VIEW (abstract_icon_view));
+  g_signal_connect_swapped(G_OBJECT (view), "search-concluded",
+                           G_CALLBACK (thunar_standard_view_search_status_changed),
+                           THUNAR_STANDARD_VIEW (abstract_icon_view));
+
   gtk_container_add (GTK_CONTAINER (abstract_icon_view), view);
   gtk_widget_show (view);
 
