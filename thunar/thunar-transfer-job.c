@@ -455,9 +455,9 @@ ttj_copy_file (ThunarTransferJob *job,
     }
 
   /* try to copy the file */
-  g_file_copy (source_file, target_file, copy_flags,
-               exo_job_get_cancellable (EXO_JOB (job)),
-               thunar_transfer_job_progress, job, &err);
+  thunar_g_file_copy (source_file, target_file, copy_flags, FALSE,
+                      exo_job_get_cancellable (EXO_JOB (job)),
+                      thunar_transfer_job_progress, job, &err);
 
   /**
    * MR !127 notes:
@@ -1118,6 +1118,8 @@ thunar_transfer_job_move_file (ExoJob                *job,
   /* update progress information */
   exo_job_info_message (job, _("Trying to move \"%s\""),
                         g_file_info_get_display_name (info));
+
+  g_info ("%s", g_file_info_get_display_name (info));
 
   move_successful = g_file_move (node->source_file,
                                  tp->data,
