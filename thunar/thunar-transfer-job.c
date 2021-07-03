@@ -691,7 +691,6 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
   GFileInfo            *info;
   GError               *err = NULL;
   GFile                *real_target_file = NULL;
-  gchar                *uri;
   gchar                *base_name;
   gboolean              should_use_display_name;
 
@@ -724,9 +723,7 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
       return;
     }
 
-  uri = g_file_get_uri (node->source_file);
-  should_use_display_name = G_UNLIKELY (g_pattern_match_simple ("google-drive:*", uri));
-  g_free (uri);
+  should_use_display_name = G_UNLIKELY (g_file_has_uri_scheme (node->source_file, "google-drive"));
 
   for (; err == NULL && node != NULL; node = node->next)
     {
