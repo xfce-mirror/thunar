@@ -482,6 +482,7 @@ ttj_copy_file (ThunarTransferJob *job,
   /* check if there were errors */
   if (G_UNLIKELY (err != NULL && err->domain == G_IO_ERROR))
     {
+      g_info ("%s", err->message);
       if (err->code == G_IO_ERROR_WOULD_MERGE
           || (err->code == G_IO_ERROR_EXISTS
               && source_type == G_FILE_TYPE_DIRECTORY

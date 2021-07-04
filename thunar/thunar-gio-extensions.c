@@ -685,11 +685,16 @@ thunar_g_file_copy (GFile                *source,
     return g_file_copy (source, destination, flags, cancellable, progress_callback, progress_callback_data, error);
 
   /* check destination */
-  g_info ("Destination: %s", g_file_peek_path (destination));
+  if (g_file_query_exists (destination, NULL))
+    {
+      *error = g_error_new (G_IO_ERROR, G_IO_ERROR_EXISTS,
+                            "Error opening file \"%s\": File exists", g_file_peek_path (destination));
+      return FALSE;
+    }
 
+  /* generate partial file name */
   base_name    = g_file_get_basename (source);
   partial_name = g_strdup_printf ("%.100s.partial~", base_name);
-  g_free (base_name);
   parent       = g_file_get_parent (destination);
   partial      = g_file_new_build_filename (g_file_peek_path (parent), partial_name, NULL);
   g_clear_object (&parent);
@@ -702,16 +707,12 @@ thunar_g_file_copy (GFile                *source,
 
   success = g_file_copy (source, partial, flags, cancellable, progress_callback, progress_callback_data, error);
 
-  if (!success)
-    {
-      g_clear_object (&partial);
-      return FALSE;
-    }
-
   /* rename .partial if done without problem */
-  success = g_file_move (partial, destination, flags | G_FILE_COPY_NO_FALLBACK_FOR_MOVE, cancellable, NULL, NULL, error);
+  if (success)
+    success = g_file_set_display_name (partial, base_name, NULL, error);
 
   g_clear_object (&partial);
+  g_free (base_name);
   return success;
 }
 
