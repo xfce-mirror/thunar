@@ -694,6 +694,7 @@ thunar_g_file_copy (GFile                *source,
 
   /* generate partial file name */
   base_name    = g_file_get_basename (source);
+  /* limit filename length */
   partial_name = g_strdup_printf ("%.100s.partial~", base_name);
   parent       = g_file_get_parent (destination);
   partial      = g_file_new_build_filename (g_file_peek_path (parent), partial_name, NULL);
@@ -705,6 +706,7 @@ thunar_g_file_copy (GFile                *source,
     /* delete if not */
     g_file_delete (partial, NULL, error);
 
+  /* copy file to .partial */
   success = g_file_copy (source, partial, flags, cancellable, progress_callback, progress_callback_data, error);
 
   /* rename .partial if done without problem */
