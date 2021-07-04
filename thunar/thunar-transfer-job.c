@@ -692,6 +692,7 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
   GError               *err = NULL;
   GFile                *real_target_file = NULL;
   gchar                *base_name;
+  gboolean              should_use_display_name;
 
   _thunar_return_if_fail (THUNAR_IS_TRANSFER_JOB (job));
   _thunar_return_if_fail (node != NULL && G_IS_FILE (node->source_file));
@@ -709,18 +710,23 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
   thumbnail_cache = thunar_application_get_thumbnail_cache (application);
   g_object_unref (application);
 
+  /* query file info */
+  info = g_file_query_info (node->source_file,
+                            G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
+                            G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                            exo_job_get_cancellable (EXO_JOB (job)),
+                            &err);
+
+  if (err != NULL)
+    {
+      g_propagate_error (error, err);
+      return;
+    }
+
+  should_use_display_name = G_UNLIKELY (g_file_has_uri_scheme (node->source_file, "google-drive"));
+
   for (; err == NULL && node != NULL; node = node->next)
     {
-      /* guess the target file for this node (unless already provided) */
-      if (G_LIKELY (target_file == NULL))
-        {
-          base_name = g_file_get_basename (node->source_file);
-          target_file = g_file_get_child (target_parent_file, base_name);
-          g_free (base_name);
-        }
-      else
-        target_file = g_object_ref (target_file);
-
       /* query file info */
       info = g_file_query_info (node->source_file,
                                 G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
@@ -730,10 +736,28 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
 
       /* abort on error or cancellation */
       if (info == NULL)
+        break;
+
+      /* guess the target file for this node (unless already provided) */
+      if (should_use_display_name)
         {
-          g_object_unref (target_file);
-          break;
+          if (target_parent_file == NULL)
+            target_parent_file = g_file_get_parent (target_file);
+          else
+            g_object_ref (target_parent_file);
+          base_name = g_strdup (g_file_info_get_display_name (info));
+          target_file = g_file_get_child (target_parent_file, base_name);
+          g_free (base_name);
+          g_object_unref (target_parent_file);
         }
+      else if (G_LIKELY (target_file == NULL))
+        {
+          base_name = g_file_get_basename (node->source_file);
+          target_file = g_file_get_child (target_parent_file, base_name);
+          g_free (base_name);
+        }
+      else
+        target_file = g_object_ref (target_file);
 
       /* update progress information */
       exo_job_info_message (EXO_JOB (job), "%s", g_file_info_get_display_name (info));
