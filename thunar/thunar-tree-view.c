@@ -649,8 +649,8 @@ thunar_tree_view_button_press_event (GtkWidget      *widget,
                                      GdkEventButton *event)
 {
   ThunarTreeView    *view = THUNAR_TREE_VIEW (widget);
-  ThunarDevice      *device;
-  ThunarFile        *file;
+  ThunarDevice      *device = NULL;
+  ThunarFile        *file = NULL;
   GtkTreeViewColumn *column;
   GtkTreePath       *path;
   GtkTreeIter        iter;
