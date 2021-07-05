@@ -459,6 +459,16 @@ ttj_copy_file (ThunarTransferJob *job,
                exo_job_get_cancellable (EXO_JOB (job)),
                thunar_transfer_job_progress, job, &err);
 
+  /**
+   * MR !127 notes:
+   * (Discusssion: https://gitlab.xfce.org/xfce/thunar/-/merge_requests/127)
+   *
+   * Proper solution for copying lost metadata requires
+   * `g_file_build_attribute_list_for_copy`, which is
+   * added in Glib 2.68 (which is too recent a version
+   * to add for now) so we leave a comment here. Patch
+   * this when 2.68 is ready.
+   **/
   if (G_UNLIKELY (err == NULL && !g_file_is_native (source_file)))
     {
       info = g_file_query_info (source_file, G_FILE_ATTRIBUTE_TIME_MODIFIED, G_FILE_QUERY_INFO_NONE,
