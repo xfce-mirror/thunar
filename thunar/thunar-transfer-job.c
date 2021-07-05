@@ -692,6 +692,7 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
   GError               *err = NULL;
   GFile                *real_target_file = NULL;
   gchar                *base_name;
+  gboolean              should_use_copy_name;
 
   _thunar_return_if_fail (THUNAR_IS_TRANSFER_JOB (job));
   _thunar_return_if_fail (node != NULL && G_IS_FILE (node->source_file));
@@ -709,10 +710,37 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
   thumbnail_cache = thunar_application_get_thumbnail_cache (application);
   g_object_unref (application);
 
+  should_use_copy_name = G_UNLIKELY (!g_file_is_native (node->source_file));
+
   for (; err == NULL && node != NULL; node = node->next)
     {
+      /* query file info */
+      info = g_file_query_info (node->source_file,
+                                G_FILE_ATTRIBUTE_STANDARD_COPY_NAME "," G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
+                                G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                exo_job_get_cancellable (EXO_JOB (job)),
+                                &err);
+
+      /* abort on error or cancellation */
+      if (info == NULL)
+        break;
+
       /* guess the target file for this node (unless already provided) */
-      if (G_LIKELY (target_file == NULL))
+      if (should_use_copy_name)
+        {
+          if (target_parent_file == NULL)
+            target_parent_file = g_file_get_parent (target_file);
+          else
+            g_object_ref (target_parent_file);
+          base_name = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_COPY_NAME));
+          /* copy name is NULLable, so use display name for fallback */
+          if (base_name == NULL)
+            base_name = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME));
+          target_file = g_file_get_child (target_parent_file, base_name);
+          g_free (base_name);
+          g_object_unref (target_parent_file);
+        }
+      else if (G_LIKELY (target_file == NULL))
         {
           base_name = g_file_get_basename (node->source_file);
           target_file = g_file_get_child (target_parent_file, base_name);
@@ -720,20 +748,6 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
         }
       else
         target_file = g_object_ref (target_file);
-
-      /* query file info */
-      info = g_file_query_info (node->source_file,
-                                G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
-                                G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                                exo_job_get_cancellable (EXO_JOB (job)),
-                                &err);
-
-      /* abort on error or cancellation */
-      if (info == NULL)
-        {
-          g_object_unref (target_file);
-          break;
-        }
 
       /* update progress information */
       exo_job_info_message (EXO_JOB (job), "%s", g_file_info_get_display_name (info));
