@@ -733,6 +733,9 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
           else
             g_object_ref (target_parent_file);
           base_name = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_COPY_NAME));
+          /* copy name is NULLable, so use display name for fallback */
+          if (base_name == NULL)
+            base_name = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME));
           target_file = g_file_get_child (target_parent_file, base_name);
           g_free (base_name);
           g_object_unref (target_parent_file);
