@@ -1911,7 +1911,7 @@ thunar_list_model_set_date_style (ThunarListModel *store,
 static const char*
 thunar_list_model_get_date_custom_style (ThunarListModel *store)
 {
-  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), THUNAR_DATE_STYLE_SIMPLE);
+  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
   return store->date_custom_style;
 }
 
