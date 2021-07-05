@@ -82,6 +82,13 @@ enum
   LAST_SIGNAL,
 };
 
+typedef struct
+{
+  ThunarFileIconState  state;
+  GtkIconTheme         *theme;
+}
+ThunarFileIconArgs;
+
 
 
 static void               thunar_file_info_init                (ThunarxFileInfoIface   *iface);
@@ -115,6 +122,10 @@ static gboolean           thunar_file_load                     (ThunarFile      
 static gboolean           thunar_file_is_readable              (const ThunarFile       *file);
 static gboolean           thunar_file_same_filesystem          (const ThunarFile       *file_a,
                                                                 const ThunarFile       *file_b);
+static void               get_icon_name_task                   (GTask                   *task,
+                                                                ThunarFile              *file,
+                                                                ThunarFileIconArgs      *state,
+                                                                GCancellable            *cancellable);
 
 
 
@@ -2424,7 +2435,7 @@ thunar_file_get_user (const ThunarFile *file)
  *
  * Returns the content type of @file.
  *
- * Return value: content type of @file.
+ * Return value: (transfer none): content type of @file.
  **/
 const gchar *
 thunar_file_get_content_type (ThunarFile *file)
@@ -3781,6 +3792,46 @@ thunar_file_get_preview_type (const ThunarFile *file)
 
 
 
+void
+thunar_file_get_preview_type_async (const ThunarFile   *file,
+                                    GAsyncReadyCallback callback,
+                                    gpointer            user_data)
+{
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (G_IS_FILE (file->gfile));
+
+  g_file_query_filesystem_info_async (file->gfile, G_FILE_ATTRIBUTE_FILESYSTEM_USE_PREVIEW,
+                                      G_PRIORITY_DEFAULT, NULL, callback, user_data);
+}
+
+
+
+GFilesystemPreviewType
+thunar_file_get_preview_type_finish (GFile        *g_file,
+                                     GAsyncResult *result,
+                                     GError      **error)
+{
+  GFilesystemPreviewType  preview;
+  GFileInfo              *info;
+
+  info = g_file_query_filesystem_info_finish (g_file, result, NULL);
+
+  if (G_LIKELY (info != NULL))
+    {
+      preview = g_file_info_get_attribute_uint32 (info, G_FILE_ATTRIBUTE_FILESYSTEM_USE_PREVIEW);
+      g_object_unref (G_OBJECT (info));
+    }
+  else
+    {
+      /* assume we don't know */
+      preview = G_FILESYSTEM_PREVIEW_TYPE_NEVER;
+    }
+
+  return preview;
+}
+
+
+
 static const gchar *
 thunar_file_get_icon_name_for_state (const gchar         *icon_name,
                                      ThunarFileIconState  icon_state)
@@ -3967,6 +4018,59 @@ thunar_file_get_icon_name (ThunarFile          *file,
 
 
 
+/* get_icon_name_task */
+static void
+get_icon_name_task (GTask              *task,
+                    ThunarFile         *file,
+                    ThunarFileIconArgs *state,
+                    GCancellable       *cancellable)
+{
+  g_task_return_pointer (task, (gpointer) thunar_file_get_icon_name (file, state->state, state->theme), NULL);
+}
+
+
+
+/* thunar_file_get_icon_name_async */
+void
+thunar_file_get_icon_name_async (ThunarFile          *file,
+                                 ThunarFileIconState  icon_state,
+                                 GtkIconTheme        *icon_theme,
+                                 gint                 io_priority,
+                                 GCancellable        *cancellable,
+                                 GAsyncReadyCallback  callback,
+                                 gpointer             user_data)
+{
+  GTask              *task;
+  ThunarFileIconArgs *state;
+
+  state = g_new (ThunarFileIconArgs, 1);
+  state->state = icon_state;
+  state->theme = icon_theme;
+
+  task = g_task_new (file, cancellable, callback, user_data);
+  g_task_set_source_tag (task, thunar_file_get_icon_name_async);
+  g_task_set_task_data (task, state, g_free);
+  g_task_set_priority (task, io_priority);
+
+  g_task_run_in_thread (task, (GTaskThreadFunc) get_icon_name_task);
+  g_object_unref (task);
+}
+
+
+
+/* thunar_file_get_icon_name_finish */
+const gchar *
+thunar_file_get_icon_name_finish (ThunarFile   *file,
+                                  GAsyncResult *res,
+                                  GError      **error)
+{
+  _thunar_return_val_if_fail (g_task_is_valid (res, file), NULL);
+
+  return g_task_propagate_pointer (G_TASK (res), error);
+}
+
+
+
 /**
  * thunar_file_get_device_type:
  * @file : a #ThunarFile instance.
@@ -3987,6 +4091,10 @@ thunar_file_get_device_type (ThunarFile *file)
   file->device_type = thunar_g_file_guess_device_type (file->gfile);
   return file->device_type;
 }
+
+
+
+/* thunar_file_get_icon_name_async */
 
 
 
