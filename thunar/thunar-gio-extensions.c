@@ -645,6 +645,81 @@ thunar_g_file_list_get_type (void)
 
 
 
+gboolean
+thunar_g_file_copy (GFile                *source,
+                    GFile                *destination,
+                    GFileCopyFlags        flags,
+                    gboolean              safe_copy,
+                    GCancellable         *cancellable,
+                    GFileProgressCallback progress_callback,
+                    gpointer              progress_callback_data,
+                    GError              **error)
+{
+  gboolean            success;
+  gboolean            skip;
+  GFileQueryInfoFlags query_flags;
+  GFileInfo          *info;
+  GFile              *parent;
+  GFile              *partial;
+  gchar              *partial_name;
+  gchar              *base_name;
+  query_flags = (flags & G_FILE_COPY_NOFOLLOW_SYMLINKS) ? G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS : G_FILE_QUERY_INFO_NONE;
+
+  info = g_file_query_info (source,
+                            G_FILE_ATTRIBUTE_STANDARD_SIZE "," G_FILE_ATTRIBUTE_STANDARD_TYPE,
+                            query_flags,
+                            cancellable,
+                            NULL);
+  /* directory does not need .partial */
+  /* small files also does not */
+  if (info == NULL)
+    skip = TRUE;
+  else
+    {
+      skip = g_file_info_get_file_type (info) != G_FILE_TYPE_REGULAR
+          || g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_STANDARD_SIZE) < (1000 * 10);
+      g_clear_object (&info);
+    }
+
+  if (skip)
+    return g_file_copy (source, destination, flags, cancellable, progress_callback, progress_callback_data, error);
+
+  /* check destination */
+  if (g_file_query_exists (destination, NULL))
+    {
+      *error = g_error_new (G_IO_ERROR, G_IO_ERROR_EXISTS,
+                            "Error opening file \"%s\": File exists", g_file_peek_path (destination));
+      return FALSE;
+    }
+
+  /* generate partial file name */
+  base_name    = g_file_get_basename (source);
+  /* limit filename length */
+  partial_name = g_strdup_printf ("%.100s.partial~", base_name);
+  parent       = g_file_get_parent (destination);
+  partial      = g_file_new_build_filename (g_file_peek_path (parent), partial_name, NULL);
+  g_clear_object (&parent);
+  g_free (partial_name);
+  /* check if partial file exists */
+  if (g_file_query_exists (partial, NULL))
+    /* continue copy if supported */
+    /* delete if not */
+    g_file_delete (partial, NULL, error);
+
+  /* copy file to .partial */
+  success = g_file_copy (source, partial, flags, cancellable, progress_callback, progress_callback_data, error);
+
+  /* rename .partial if done without problem */
+  if (success)
+    success = g_file_set_display_name (partial, base_name, NULL, error);
+
+  g_clear_object (&partial);
+  g_free (base_name);
+  return success;
+}
+
+
+
 /**
  * thunar_g_file_list_new_from_string:
  * @string : a string representation of an URI list.
