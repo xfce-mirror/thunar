@@ -2857,7 +2857,11 @@ static void
 thunar_window_action_close_window (ThunarWindow *window,
                                    GtkWidget    *menu_item)
 {
-  gtk_widget_destroy (GTK_WIDGET (window));
+  gboolean response;
+
+  response = thunar_window_delete (GTK_WIDGET (window), NULL, NULL);
+  if (response == FALSE)
+    gtk_widget_destroy (GTK_WIDGET (window));
 }
 
 
