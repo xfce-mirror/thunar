@@ -454,7 +454,7 @@ ttj_copy_file (ThunarTransferJob *job,
     }
 
   /* try to copy the file */
-  thunar_g_file_copy (source_file, target_file, copy_flags, FALSE,
+  thunar_g_file_copy (source_file, target_file, copy_flags, TRUE,
                       exo_job_get_cancellable (EXO_JOB (job)),
                       thunar_transfer_job_progress, job, &err);
 
