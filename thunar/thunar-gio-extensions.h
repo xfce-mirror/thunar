@@ -70,7 +70,7 @@ gchar       *thunar_g_file_get_free_space_string    (GFile                *file,
 gboolean     thunar_g_file_copy                     (GFile                *source,
                                                      GFile                *destination,
                                                      GFileCopyFlags        flags,
-                                                     gboolean              safe_copy,
+                                                     gboolean              verify_copy,
                                                      GCancellable         *cancellable,
                                                      GFileProgressCallback progress_callback,
                                                      gpointer              progress_callback_data,
@@ -105,6 +105,12 @@ gboolean     thunar_g_app_info_launch                  (GAppInfo          *info,
 gboolean     thunar_g_app_info_should_show             (GAppInfo          *info);
 
 gboolean     thunar_g_vfs_metadata_is_supported        (void);
+
+gboolean     thunar_g_file_compare_content             (GFile        *file_a,
+                                                        GFile        *file_b,
+                                                        GCancellable *cancellable,
+                                                        GError      **error);
+
 
 
 G_END_DECLS
