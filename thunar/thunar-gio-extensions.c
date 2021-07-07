@@ -645,6 +645,93 @@ thunar_g_file_list_get_type (void)
 
 
 
+gboolean
+thunar_g_file_copy (GFile                *source,
+                    GFile                *destination,
+                    GFileCopyFlags        flags,
+                    gboolean              verify_copy,
+                    GCancellable         *cancellable,
+                    GFileProgressCallback progress_callback,
+                    gpointer              progress_callback_data,
+                    GError              **error)
+{
+  gboolean            success;
+  gboolean            skip;
+  GFileQueryInfoFlags query_flags;
+  GFileInfo          *info;
+  GFile              *parent;
+  GFile              *partial;
+  gchar              *partial_name;
+  gchar              *base_name;
+  query_flags = (flags & G_FILE_COPY_NOFOLLOW_SYMLINKS) ? G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS : G_FILE_QUERY_INFO_NONE;
+
+  info = g_file_query_info (source,
+                            G_FILE_ATTRIBUTE_STANDARD_SIZE "," G_FILE_ATTRIBUTE_STANDARD_TYPE,
+                            query_flags,
+                            cancellable,
+                            NULL);
+  /* directory does not need .partial */
+  /* small files also does not */
+  if (info == NULL)
+    skip = TRUE;
+  else
+    {
+      skip = g_file_info_get_file_type (info) != G_FILE_TYPE_REGULAR
+          || g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_STANDARD_SIZE) < (1000 * 10);
+      g_clear_object (&info);
+    }
+
+  if (skip)
+    return g_file_copy (source, destination, flags, cancellable, progress_callback, progress_callback_data, error);
+
+  /* check destination */
+  if (g_file_query_exists (destination, NULL))
+    {
+      if (error != NULL)
+        *error = g_error_new (G_IO_ERROR, G_IO_ERROR_EXISTS,
+                              "Error opening file \"%s\": File exists", g_file_peek_path (destination));
+      return FALSE;
+    }
+
+  /* generate partial file name */
+  base_name    = g_file_get_basename (source);
+  /* limit filename length */
+  partial_name = g_strdup_printf ("%.100s.partial~", base_name);
+  parent       = g_file_get_parent (destination);
+  partial      = g_file_new_build_filename (g_file_peek_path (parent), partial_name, NULL);
+  g_clear_object (&parent);
+  g_free (partial_name);
+  /* check if partial file exists */
+  if (g_file_query_exists (partial, NULL))
+    /* continue copy if supported */
+    /* delete if not */
+    g_file_delete (partial, NULL, error);
+
+  /* copy file to .partial */
+  success = g_file_copy (source, partial, flags, cancellable, progress_callback, progress_callback_data, error);
+
+  if (G_UNLIKELY (verify_copy && success))
+    {
+      if (!thunar_g_file_compare_content (source, partial, cancellable, error))
+        {
+          success = FALSE;
+          if (error != NULL)
+            *error = g_error_new (G_IO_ERROR, G_IO_ERROR_FAILED,
+                                  "Error opening file \"%s\": Copy corrupted", g_file_peek_path (destination));
+        }
+    }
+
+  /* rename .partial if done without problem */
+  if (success)
+    success = g_file_set_display_name (partial, base_name, NULL, error);
+
+  g_clear_object (&partial);
+  g_free (base_name);
+  return success;
+}
+
+
+
 /**
  * thunar_g_file_list_new_from_string:
  * @string : a string representation of an URI list.
@@ -920,4 +1007,62 @@ thunar_g_vfs_metadata_is_supported (void)
   g_file_attribute_info_list_unref (attr_info_list);
 
   return metadata_is_supported;
+}
+
+
+
+gboolean
+thunar_g_file_compare_content (GFile        *file_a,
+                               GFile        *file_b,
+                               GCancellable *cancellable,
+                               GError      **error)
+{
+  GFileInfo *info;
+  gsize      size_a;
+  gsize      size_b;
+  gchar     *hash_a;
+  gchar     *hash_b;
+  gboolean   hash_eq;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file_a) && G_IS_FILE (file_b), FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  /* get size of file_a */
+  {
+    info = g_file_query_info (file_a, G_FILE_ATTRIBUTE_STANDARD_SIZE, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, cancellable, error);
+    if (info == NULL)
+      return FALSE;
+
+    size_a = g_file_info_get_size (info);
+    g_clear_object (&info);
+  }
+
+  /* get size of file_b */
+  {
+    info = g_file_query_info (file_b, G_FILE_ATTRIBUTE_STANDARD_SIZE, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, cancellable, error);
+
+    if (info == NULL)
+      return FALSE;
+
+    size_b = g_file_info_get_size (info);
+    g_clear_object (&info);
+  }
+
+  /* compare size */
+  if (size_a != size_b)
+    return FALSE;
+
+  hash_a = xfce_g_file_create_checksum (file_a, cancellable, error);
+  if (hash_a == NULL)
+    return FALSE;
+  hash_b = xfce_g_file_create_checksum (file_b, cancellable, error);
+  if (hash_b == NULL)
+    return FALSE;
+
+  hash_eq = (strcmp (hash_a, hash_b) == 0);
+
+  g_free (hash_a);
+  g_free (hash_b);
+
+  return hash_eq;
 }
