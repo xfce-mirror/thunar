@@ -567,7 +567,7 @@ thunar_application_command_line (GApplication            *gapp,
           g_object_get (G_OBJECT (application->preferences), "last-tabs-left", &tabs_left, NULL);
           if (tabs_left != NULL && g_strv_length (tabs_left) > 0)
             {
-              for (guint i = 0; i < g_strv_length (tabs_left); i++)
+              for (gint i = g_strv_length (tabs_left) - 1; i >= 0; i--)
                 {
                   ThunarFile *directory = thunar_file_get_for_uri (tabs_left[i], NULL);
                   thunar_window_notebook_add_new_tab (window, directory, FALSE);
@@ -582,7 +582,7 @@ thunar_application_command_line (GApplication            *gapp,
             {
               if (has_left_tabs)
                 thunar_window_notebook_toggle_split_view (window); /* enabling the split view selects the new notebook */
-              for (guint i = 0; i < g_strv_length (tabs_right); i++)
+              for (gint i = g_strv_length (tabs_right) - 1; i >= 0; i--)
                 {
                   ThunarFile *directory = thunar_file_get_for_uri (tabs_right[i], NULL);
                   thunar_window_notebook_add_new_tab (window, directory, FALSE);
