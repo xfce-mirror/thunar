@@ -56,6 +56,8 @@ enum
   PROP_LAST_TABS_LEFT,
   PROP_LAST_TABS_RIGHT,
   PROP_LAST_RESTORE_TABS,
+  PROP_LAST_FOCUSED_TAB_LEFT,
+  PROP_LAST_FOCUSED_TAB_RIGHT,
   PROP_LAST_COMPACT_VIEW_ZOOM_LEVEL,
   PROP_LAST_DETAILS_VIEW_COLUMN_ORDER,
   PROP_LAST_DETAILS_VIEW_COLUMN_WIDTHS,
@@ -211,6 +213,18 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                           EXO_PARAM_READWRITE);
 
   /**
+   * ThunarPreferences:last-restore-tabs:
+   *
+   * %TRUE to restore the tabs as they were before closing Thunar.
+   **/
+  preferences_props[PROP_LAST_RESTORE_TABS] =
+      g_param_spec_boolean ("last-restore-tabs",
+                            "LastRestoreTabs",
+                            NULL,
+                            FALSE,
+                            EXO_PARAM_READWRITE);
+
+  /**
    * ThunarPreferences:last-tabs-left:
    *
    * List of URI's that are used to reopen tabs on restart. There is one URI for each tab/folder that was open at the time
@@ -229,7 +243,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    * List of URI's that are used to reopen tabs on restart. There is one URI for each tab/folder that was open at the time
    * of the last program exit. This preference holds the tabs of the right split-view.
    **/
-    preferences_props[PROP_LAST_TABS_RIGHT] =
+  preferences_props[PROP_LAST_TABS_RIGHT] =
         g_param_spec_boxed ("last-tabs-right",
                             NULL,
                             NULL,
@@ -237,16 +251,28 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             EXO_PARAM_READWRITE);
 
   /**
-   * ThunarPreferences:last-restore-tabs:
+   * ThunarPreferences:last-focused-tab-left:
    *
-   * %TRUE to restore the tabs as they where before closing Thunar.
+   * The index (starting from 0) of the last focused tab in left split-view
    **/
-  preferences_props[PROP_LAST_RESTORE_TABS] =
-      g_param_spec_boolean ("last-restore-tabs",
-                            "LastRestoreTabs",
-                            NULL,
-                            FALSE,
-                            EXO_PARAM_READWRITE);
+  preferences_props[PROP_LAST_FOCUSED_TAB_LEFT] =
+      g_param_spec_int ("last-focused-tab-left",
+                         "LastFocusedTabLeft",
+                         NULL,
+                         0, G_MAXINT, 0,
+                         EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-focused-tab-right:
+   *
+   * The index (starting from 0) of the last focused tab in right split-view
+   **/
+  preferences_props[PROP_LAST_FOCUSED_TAB_RIGHT] =
+      g_param_spec_int ("last-focused-tab-right",
+                         "LastFocusedTabRight",
+                         NULL,
+                         0, G_MAXINT, 0,
+                         EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-compact-view-zoom-level:
