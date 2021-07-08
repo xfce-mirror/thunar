@@ -853,7 +853,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    *
    **/
   preferences_props[PROP_MISC_TRANSFER_USE_PARTIAL] =
-    g_param_spec_boolean ("misc-transfer-use-partial",
+    g_param_spec_int ("misc-transfer-use-partial",
                           "MiscTransferUsePartial",
                           NULL,
                           -1,
