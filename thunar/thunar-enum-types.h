@@ -326,6 +326,25 @@ typedef enum /*< flags >*/
 
 GType thunar_file_mode_get_type (void) G_GNUC_CONST;
 
+/**
+ *
+ **/
+#define THUNAR_TYPE_VERIFY_COPY_MODE (thunar_verify_copy_mode_get_type ())
+
+/**
+ * ThunarVerifyCopyMode:
+ *
+ *
+ **/
+typedef enum
+{
+  THUNAR_VERIFY_COPY_MODE_DISABLED,
+  THUNAR_VERIFY_COPY_MODE_ALWAYS,
+  THUNAR_VERIFY_COPY_MODE_REMOTE,
+} ThunarVerifyCopyMode;
+
+GType thunar_verify_copy_mode_get_type (void) G_GNUC_CONST;
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_ENUM_TYPES_H__ */
