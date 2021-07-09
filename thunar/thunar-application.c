@@ -570,7 +570,7 @@ thunar_application_command_line (GApplication            *gapp,
               for (guint i = 0; i < g_strv_length (tabs_left); i++)
                 {
                   ThunarFile *directory = thunar_file_get_for_uri (tabs_left[i], NULL);
-                  thunar_window_notebook_add_new_tab (window, directory, FALSE);
+                  thunar_window_notebook_add_new_tab (window, directory, TRUE);
                 }
               thunar_window_notebook_remove_tab (window, 0); /* remove automatically opened tab */
               has_left_tabs = TRUE;
@@ -585,7 +585,7 @@ thunar_application_command_line (GApplication            *gapp,
               for (guint i = 0; i < g_strv_length (tabs_right); i++)
                 {
                   ThunarFile *directory = thunar_file_get_for_uri (tabs_right[i], NULL);
-                  thunar_window_notebook_add_new_tab (window, directory, FALSE);
+                  thunar_window_notebook_add_new_tab (window, directory, TRUE);
                 }
               thunar_window_notebook_remove_tab (window, 0); /* remove automatically opened tab */
             }
