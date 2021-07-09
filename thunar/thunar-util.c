@@ -715,7 +715,7 @@ thunar_util_next_new_file_name (ThunarFile   *dir,
       if (!found_duplicate)
         break;
       g_free (new_name);
-      new_name = g_strdup_printf (_("%s %u%s"), file_name, ++count, extension ? extension : "");
+      new_name = g_strdup_printf (_("%.*s %u%s"), file_name_size, file_name, ++count, extension ? extension : "");
     }
   g_object_unref (G_OBJECT (folder));
 
