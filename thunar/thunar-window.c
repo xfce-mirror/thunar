@@ -1768,8 +1768,9 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   _thunar_return_if_fail (GTK_IS_NOTEBOOK (notebook));
   _thunar_return_if_fail (THUNAR_IS_VIEW (page));
 
-  /* leave if nothing changed */
-  if (window->view == page)
+  /* leave if nothing changed or tab from other split-view is selected as
+   * thunar_window_notebook_select_current_page() is going to take care of that */
+  if ((window->view == page) || (window->notebook_selected != notebook))
     return;
 
   /* Use accelerators only on the current active tab */
