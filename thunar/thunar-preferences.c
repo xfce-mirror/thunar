@@ -66,6 +66,7 @@ enum
   PROP_LAST_LOCATION_BAR,
   PROP_LAST_MENUBAR_VISIBLE,
   PROP_LAST_SEPARATOR_POSITION,
+  PROP_LAST_SPLITVIEW_SEPARATOR_POSITION,
   PROP_LAST_SHOW_HIDDEN,
   PROP_LAST_SIDE_PANE,
   PROP_LAST_SORT_COLUMN,
@@ -376,6 +377,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "LastSeparatorPosition",
                         NULL,
                         0, G_MAXINT, 170,
+                        EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-splitview-separator-position:
+   *
+   * The last position of the gutter in the main window,
+   * which separates the notebooks in split-view.
+   **/
+  preferences_props[PROP_LAST_SPLITVIEW_SEPARATOR_POSITION] =
+      g_param_spec_int ("last-splitview-separator-position",
+                        "LastSplitviewSeparatorPosition",
+                        NULL,
+                        0, G_MAXINT, 0,
                         EXO_PARAM_READWRITE);
 
   /**
