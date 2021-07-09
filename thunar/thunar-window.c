@@ -244,6 +244,7 @@ static void      thunar_window_device_changed             (ThunarDeviceMonitor  
                                                            ThunarDevice           *device,
                                                            ThunarWindow           *window);
 static gboolean  thunar_window_save_paned                 (ThunarWindow           *window);
+static gboolean  thunar_window_save_paned_notebooks       (ThunarWindow           *window);
 static gboolean  thunar_window_save_geometry_timer        (gpointer                user_data);
 static void      thunar_window_save_geometry_timer_destroy(gpointer                user_data);
 static void      thunar_window_set_zoom_level             (ThunarWindow           *window,
@@ -3032,9 +3033,9 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
 
   ThunarFile    *directory;
   ThunarHistory *history = NULL;
-  gint           page_num;
+  gint           page_num, last_splitview_separator_position;
   GType          view_type;
-  GtkAllocation  allocation; 
+  GtkAllocation  allocation;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (window->view_type != G_TYPE_NONE);
@@ -3076,8 +3077,16 @@ thunar_window_action_toggle_split_view (ThunarWindow *window)
       thunar_window_notebook_insert_page (window, directory, view_type, page_num+1, history);
 
       /* Prevent notebook expand on tab creation */
-      gtk_widget_get_allocation (GTK_WIDGET (window->paned_notebooks), &allocation);
-      gtk_paned_set_position (GTK_PANED (window->paned_notebooks), (gint)(allocation.width/2));
+      g_object_get (G_OBJECT (window->preferences), "last-splitview-separator-position", &last_splitview_separator_position, NULL);
+      if (last_splitview_separator_position == 0)
+        {
+          gtk_widget_get_allocation (GTK_WIDGET (window->paned_notebooks), &allocation);
+          last_splitview_separator_position = (gint)(allocation.width/2);
+        }
+
+      gtk_paned_set_position (GTK_PANED (window->paned_notebooks), last_splitview_separator_position);
+      g_signal_connect_swapped (window->paned, "accept-position", G_CALLBACK (thunar_window_save_paned_notebooks), window);
+      g_signal_connect_swapped (window->paned, "button-release-event", G_CALLBACK (thunar_window_save_paned_notebooks), window);
     }
 }
 
@@ -4102,6 +4111,20 @@ thunar_window_save_paned (ThunarWindow *window)
 
   g_object_set (G_OBJECT (window->preferences), "last-separator-position",
                 gtk_paned_get_position (GTK_PANED (window->paned)), NULL);
+
+  /* for button release event */
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_window_save_paned_notebooks (ThunarWindow *window)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  g_object_set (G_OBJECT (window->preferences), "last-splitview-separator-position",
+                gtk_paned_get_position (GTK_PANED (window->paned_notebooks)), NULL);
 
   /* for button release event */
   return FALSE;
