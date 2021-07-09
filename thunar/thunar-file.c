@@ -3648,23 +3648,9 @@ thunar_file_get_thumbnail_path (ThunarFile *file, ThunarThumbnailSize thumbnail_
                   if (thunar_file_is_directory (file) == FALSE)
                     {
                       /* Thumbnail doesn't exist in either spot, look for shared repository */
-                      GFile       *original_dir_file;
-                      gchar       *original_dir_path;
-                      const gchar *name;
-
-                      g_free (filename);
-                      g_checksum_reset (checksum);
-
-                      name = thunar_file_get_basename (file);
-                      g_checksum_update (checksum, (const guchar *) name, strlen (name));
-
-                      filename = g_strconcat (g_checksum_get_string (checksum), ".png", NULL);
-
-                      original_dir_file = g_file_get_parent (file->gfile);
-                      original_dir_path = g_file_get_path (original_dir_file);
-
-                      file->thumbnail_path = g_build_filename ("/", original_dir_path, ".sh_thumbnails", thunar_thumbnail_size_get_nick (thumbnail_size),
-                                                               filename, NULL);
+                      uri = thunar_file_dup_uri (file);
+                      file->thumbnail_path = xfce_create_shared_thumbnail_path (uri, thunar_thumbnail_size_get_nick (thumbnail_size));
+                      g_free (uri);
 
                       if (!g_file_test (file->thumbnail_path, G_FILE_TEST_EXISTS))
                         {
@@ -3672,9 +3658,6 @@ thunar_file_get_thumbnail_path (ThunarFile *file, ThunarThumbnailSize thumbnail_
                           g_free (file->thumbnail_path);
                           file->thumbnail_path = NULL;
                         }
-
-                      g_object_unref (original_dir_file);
-                      g_free (original_dir_path);
                     }
                 }
             }
