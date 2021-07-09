@@ -125,6 +125,8 @@ void                      thunar_window_notebook_add_new_tab                (Thu
                                                                              gboolean             force_switch_to_new_tab);
 void                      thunar_window_notebook_remove_tab                 (ThunarWindow        *window,
                                                                              gint                 tab);
+void                      thunar_window_notebook_set_current_tab            (ThunarWindow        *window,
+                                                                             gint                 tab);
 gboolean                  thunar_window_has_shortcut_sidepane               (ThunarWindow        *window);
 GtkWidget*                thunar_window_get_sidepane                        (ThunarWindow        *window);
 void                      thunar_window_append_menu_item                    (ThunarWindow        *window,
