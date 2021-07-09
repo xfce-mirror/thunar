@@ -3373,7 +3373,6 @@ thunar_window_open_user_folder (ThunarWindow   *window,
   home_dir = thunar_g_file_new_for_home ();
 
   /* check if there is an entry in user-dirs.dirs */
-  path = g_get_user_special_dir (thunar_user_dir);
   if (G_LIKELY (path != NULL))
     {
       user_dir = g_file_new_for_path (path);
