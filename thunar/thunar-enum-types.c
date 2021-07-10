@@ -524,3 +524,26 @@ thunar_file_mode_get_type (void)
     }
   return type;
 }
+
+
+
+GType
+thunar_verify_copy_mode_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GEnumValue values[] =
+      {
+        { THUNAR_VERIFY_COPY_MODE_DISABLED, "THUNAR_VERIFY_COPY_MODE_DISABLED", N_("Disable copy verification"),},
+        { THUNAR_VERIFY_COPY_MODE_ALWAYS,   "THUNAR_VERIFY_COPY_MODE_ALWAYS",   N_("Always verify copied files"),},
+        { THUNAR_VERIFY_COPY_MODE_REMOTE,   "THUNAR_VERIFY_COPY_MODE_REMOTE",   N_("Verify copied files from remote source"),},
+        { 0,                                NULL,                               NULL,},
+      };
+
+      type = g_enum_register_static (I_("ThunarVerifyCopyMode"), values);
+    }
+
+  return type;
+}
