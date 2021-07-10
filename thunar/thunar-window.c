@@ -252,6 +252,8 @@ static void      thunar_window_update_window_icon         (ThunarWindow         
 static void      thunar_window_create_menu                (ThunarWindow           *window,
                                                            ThunarWindowAction      action,
                                                            GCallback               cb_update_menu);
+static void      thunar_window_select_files               (ThunarWindow           *window,
+                                                           GList                  *files_to_select);
 static void      thunar_window_update_file_menu           (ThunarWindow           *window,
                                                            GtkWidget              *menu);
 static void      thunar_window_update_edit_menu           (ThunarWindow           *window,
@@ -735,7 +737,7 @@ thunar_window_init (ThunarWindow *window)
   g_object_bind_property (G_OBJECT (window), "current-directory", G_OBJECT (window->launcher), "current-directory", G_BINDING_SYNC_CREATE);
   g_signal_connect_swapped (G_OBJECT (window->launcher), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
   g_signal_connect_swapped (G_OBJECT (window->launcher), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
-  g_signal_connect_swapped (G_OBJECT (window->launcher), "new-files-created", G_CALLBACK (thunar_window_select_files), window);
+  g_signal_connect_swapped (G_OBJECT (window->launcher), "new-files-created", G_CALLBACK (thunar_window_show_and_select_files), window);
   thunar_launcher_append_accelerators (window->launcher, window->accel_group);
 
   /* determine the default window size from the preferences */
@@ -953,6 +955,94 @@ thunar_window_screen_changed (GtkWidget *widget,
 }
 
 
+
+static void
+hash_table_entry_show_and_select_files (gpointer key, gpointer list, gpointer application)
+{
+  ThunarFile *original_dir  = NULL;
+  GList      *window_list   = NULL;
+
+  _thunar_return_if_fail (key != NULL);
+  _thunar_return_if_fail (list != NULL);
+  _thunar_return_if_fail (application != NULL);
+
+  /* open directory */
+  original_dir = thunar_file_get_for_uri (key, NULL);
+  thunar_application_open_window (application, original_dir, NULL, NULL, FALSE);
+
+  /* select files */
+  window_list = thunar_application_get_windows (application);
+  window_list = g_list_last (window_list); /* this will be the topmost Window */
+  thunar_window_select_files (THUNAR_WINDOW (window_list->data), list);
+
+  /* free memory */
+  g_list_free (window_list);
+  g_object_unref (original_dir);
+}
+
+
+
+/**
+ * thunar_window_show_and_select_files:
+ * @window            : a #ThunarWindow instance.
+ * @files_to_select   : a list of #GFile<!---->s
+ *
+ * Visually selects the files, given by the list. If the files are being restored from the trash folder
+ * new tabs are opened and then the files are selected.
+ **/
+void
+thunar_window_show_and_select_files (ThunarWindow *window,
+                                     GList        *files_to_select)
+{
+  gboolean      restore_and_show_in_progress;
+
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  restore_and_show_in_progress = thunar_file_is_trash (window->current_directory) && thunar_g_file_is_trashed (files_to_select->data) == FALSE;
+  if (restore_and_show_in_progress)
+    {
+      ThunarApplication *application;
+      GHashTable        *restore_show_table; /* <string, GList<GFile*>> */
+      const gchar       *original_uri;
+      GFile             *original_dir_file;
+      gchar             *original_dir_path;
+
+      /* prepare hashtable */
+      restore_show_table = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (void(*) (void*))thunar_g_list_free_full);
+      for (GList *lp = files_to_select; lp != NULL; lp = lp->next)
+        {
+          original_dir_file = g_file_get_parent (lp->data);
+          original_uri =  g_file_get_uri (lp->data);
+          original_dir_path = g_file_get_uri (original_dir_file);
+
+          if (g_hash_table_contains (restore_show_table, original_dir_path) == FALSE)
+            {
+              GList *list = g_list_prepend (NULL, g_file_new_for_commandline_arg (original_uri));
+              g_hash_table_insert (restore_show_table, original_dir_path, list);
+            }
+          else
+            {
+              GList *list = g_hash_table_lookup (restore_show_table, original_dir_path);
+              list = g_list_append (list, g_file_new_for_commandline_arg (original_uri));
+            }
+
+          g_object_unref (original_dir_file);
+        }
+      /* open tabs and show files */
+      application = thunar_application_get();
+      g_hash_table_foreach (restore_show_table, hash_table_entry_show_and_select_files, application);
+      /* free memory */
+      g_hash_table_destroy (restore_show_table);
+      g_object_unref (application);
+    }
+  else
+    {
+      thunar_window_select_files (window, files_to_select);
+    }
+}
+
+
+
 /**
  * thunar_window_select_files:
  * @window            : a #ThunarWindow instance.
@@ -960,14 +1050,12 @@ thunar_window_screen_changed (GtkWidget *widget,
  *
  * Visually selects the files, given by the list
  **/
-void
+static void
 thunar_window_select_files (ThunarWindow *window,
                             GList        *files_to_select)
 {
   GList        *thunar_files = NULL;
   ThunarFolder *thunar_folder;
-
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* If possible, reload the current directory to make sure new files got added to the view */
   thunar_folder = thunar_folder_get_for_file (window->current_directory);
@@ -2339,9 +2427,9 @@ thunar_window_split_view_is_active (ThunarWindow *window)
 
 
 void
-thunar_window_notebook_add_new_tab (ThunarWindow *window,
-                                    ThunarFile   *directory,
-                                    gboolean      force_switch_to_new_tab)
+thunar_window_notebook_add_new_tab (ThunarWindow        *window,
+                                    ThunarFile          *directory,
+                                    ThunarNewTabBehavior behavior)
 {
   ThunarHistory *history = NULL;
   GtkWidget     *view;
@@ -2364,7 +2452,8 @@ thunar_window_notebook_add_new_tab (ThunarWindow *window,
 
   /* switch to the new view */
   g_object_get (G_OBJECT (window->preferences), "misc-switch-to-new-tab", &switch_to_new_tab, NULL);
-  if (switch_to_new_tab == TRUE || force_switch_to_new_tab == TRUE)
+  if ((behavior == THUNAR_NEW_TAB_BEHAVIOR_FOLLOW_PREFERENCE && switch_to_new_tab == TRUE)
+    || behavior == THUNAR_NEW_TAB_BEHAVIOR_SWITCH)
     {
       page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), view);
       gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected), page_num);
@@ -2380,7 +2469,7 @@ void
 thunar_window_notebook_open_new_tab (ThunarWindow *window,
                                       ThunarFile  *directory)
 {
-  thunar_window_notebook_add_new_tab (window, directory, FALSE /* don't override `misc-switch-to-new-tab` preference */);
+  thunar_window_notebook_add_new_tab (window, directory, THUNAR_NEW_TAB_BEHAVIOR_FOLLOW_PREFERENCE);
 }
 
 
@@ -2756,7 +2845,7 @@ thunar_window_action_open_new_tab (ThunarWindow *window,
                                    GtkWidget    *menu_item)
 {
   /* open new tab with current directory as default */
-  thunar_window_notebook_add_new_tab (window, thunar_window_get_current_directory (window), TRUE /* force tab switch */);
+  thunar_window_notebook_add_new_tab (window, thunar_window_get_current_directory (window), THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
 }
 
 
@@ -4644,7 +4733,7 @@ thunar_window_open_home_clicked   (GtkWidget      *button,
       if (open_in_tab)
         {
           page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
-          thunar_window_notebook_add_new_tab (window, window->current_directory, TRUE);
+          thunar_window_notebook_add_new_tab (window, window->current_directory, THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
           thunar_window_action_open_home (window);
           gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected), page_num);
         }
