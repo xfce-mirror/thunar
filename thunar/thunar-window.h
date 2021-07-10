@@ -122,7 +122,7 @@ void                      thunar_window_notebook_open_new_tab               (Thu
                                                                              ThunarFile          *directory);
 void                      thunar_window_notebook_add_new_tab                (ThunarWindow        *window,
                                                                              ThunarFile          *directory,
-                                                                             gboolean             force_switch_to_new_tab);
+                                                                             ThunarNewTabBehavior behavior);
 void                      thunar_window_notebook_remove_tab                 (ThunarWindow        *window,
                                                                              gint                 tab);
 void                      thunar_window_notebook_set_current_tab            (ThunarWindow        *window,
@@ -137,7 +137,7 @@ void                      thunar_window_redirect_menu_tooltips_to_statusbar (Thu
                                                                              GtkMenu             *menu);
 const XfceGtkActionEntry* thunar_window_get_action_entry                    (ThunarWindow        *window,
                                                                              ThunarWindowAction   action);
- void                     thunar_window_select_files                        (ThunarWindow        *window,
+ void                     thunar_window_show_and_select_files               (ThunarWindow        *window,
                                                                              GList               *files_to_select);
 G_END_DECLS;
 
