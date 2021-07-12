@@ -48,6 +48,7 @@ enum
   PROP_0,
   PROP_FILE_SIZE_BINARY,
   PROP_PARALLEL_COPY_MODE,
+  PROP_TRANSFER_USE_PARTIAL,
 };
 
 
@@ -102,6 +103,7 @@ struct _ThunarTransferJob
   ThunarPreferences      *preferences;
   gboolean                file_size_binary;
   ThunarParallelCopyMode  parallel_copy_mode;
+  ThunarUsePartialMode    transfer_use_partial;
 };
 
 struct _ThunarTransferNode
@@ -160,6 +162,20 @@ thunar_transfer_job_class_init (ThunarTransferJobClass *klass)
                                                       THUNAR_TYPE_PARALLEL_COPY_MODE,
                                                       THUNAR_PARALLEL_COPY_MODE_ONLY_LOCAL,
                                                       EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPropertiesdialog:transfer_use_partial:
+   *
+   * Whether to use intermediate file to copy
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_TRANSFER_USE_PARTIAL,
+                                   g_param_spec_enum ("transfer-use-partial",
+                                                      "TransferUsePartial",
+                                                      NULL,
+                                                      THUNAR_TYPE_USE_PARTIAL_MODE,
+                                                      THUNAR_USE_PARTIAL_MODE_DISABLED,
+                                                      EXO_PARAM_READWRITE));
 }
 
 
@@ -173,6 +189,9 @@ thunar_transfer_job_init (ThunarTransferJob *job)
                           G_BINDING_SYNC_CREATE);
   g_object_bind_property (job->preferences, "misc-parallel-copy-mode",
                           job,              "parallel-copy-mode",
+                          G_BINDING_SYNC_CREATE);
+  g_object_bind_property (job->preferences, "misc-transfer-use-partial",
+                          job,              "transfer-use-partial",
                           G_BINDING_SYNC_CREATE);
 
   job->type = 0;
@@ -230,6 +249,9 @@ thunar_transfer_job_get_property (GObject     *object,
     case PROP_PARALLEL_COPY_MODE:
       g_value_set_enum (value, job->parallel_copy_mode);
       break;
+    case PROP_TRANSFER_USE_PARTIAL:
+      g_value_set_enum (value, job->transfer_use_partial);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -253,6 +275,9 @@ thunar_transfer_job_set_property (GObject      *object,
       break;
     case PROP_PARALLEL_COPY_MODE:
       job->parallel_copy_mode = g_value_get_enum (value);
+      break;
+    case PROP_TRANSFER_USE_PARTIAL:
+      job->transfer_use_partial = g_value_get_enum (value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -455,7 +480,7 @@ ttj_copy_file (ThunarTransferJob *job,
     }
 
   /* try to copy the file */
-  thunar_g_file_copy (source_file, target_file, copy_flags, TRUE,
+  thunar_g_file_copy (source_file, target_file, copy_flags, job->transfer_use_partial,
                       exo_job_get_cancellable (EXO_JOB (job)),
                       thunar_transfer_job_progress, job, &err);
 

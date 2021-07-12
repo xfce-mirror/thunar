@@ -658,18 +658,19 @@ thunar_g_file_copy (GFile                *source,
   gboolean            success;
   gboolean            skip;
   GFileQueryInfoFlags query_flags;
-  GFileInfo          *info;
+  GFileInfo          *info = NULL;
   GFile              *parent;
   GFile              *partial;
   gchar              *partial_name;
   gchar              *base_name;
   query_flags = (flags & G_FILE_COPY_NOFOLLOW_SYMLINKS) ? G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS : G_FILE_QUERY_INFO_NONE;
 
-  info = g_file_query_info (source,
-                            G_FILE_ATTRIBUTE_STANDARD_TYPE,
-                            query_flags,
-                            cancellable,
-                            NULL);
+  if (use_partial)
+    info = g_file_query_info (source,
+                              G_FILE_ATTRIBUTE_STANDARD_TYPE,
+                              query_flags,
+                              cancellable,
+                              NULL);
   /* directory does not need .partial */
   /* small files also does not */
   if (info == NULL)
@@ -693,7 +694,7 @@ thunar_g_file_copy (GFile                *source,
     }
 
   /* generate partial file name */
-  base_name    = g_file_get_basename (source);
+  base_name    = g_file_get_basename (destination);
   /* limit filename length */
   partial_name = g_strdup_printf ("%.100s.partial~", base_name);
   parent       = g_file_get_parent (destination);

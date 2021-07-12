@@ -161,12 +161,13 @@ static gboolean
 transform_mode_to_index (GBinding     *binding,
                          const GValue *src_value,
                          GValue       *dst_value,
-                         GType        (*user_data)())
+                         gpointer      user_data)
 {
   GEnumClass *klass;
+  GType     (*type_func)() = user_data;
   guint       n;
 
-  klass = g_type_class_ref (user_data ());
+  klass = g_type_class_ref (type_func ());
   for (n = 0; n < klass->n_values; ++n)
     if (klass->values[n].value == g_value_get_enum (src_value))
       g_value_set_int (dst_value, n);
@@ -181,11 +182,12 @@ static gboolean
 transform_index_to_mode (GBinding     *binding,
                          const GValue *src_value,
                          GValue       *dst_value,
-                         GType        (*user_data)())
+                         gpointer      user_data)
 {
   GEnumClass *klass;
+  GType     (*type_func)() = user_data;
 
-  klass = g_type_class_ref (user_data ());
+  klass = g_type_class_ref (type_func ());
   g_value_set_enum (dst_value, klass->values[g_value_get_int (src_value)].value);
   g_type_class_unref (klass);
 
@@ -244,6 +246,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   GtkWidget      *ibox;
   GtkWidget      *vbox;
   GtkWidget      *infobar;
+  GEnumClass     *type;
   gchar          *path;
   gchar          *date;
 
@@ -920,20 +923,17 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_set_tooltip_text (label, _("lorem ipsum"));
 
   combo = gtk_combo_box_text_new ();
-  g_type_class_ref (THUNAR_TYPE_USE_PARTIAL_MODE);
+  type = g_type_class_ref (THUNAR_TYPE_USE_PARTIAL_MODE);
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
-                                  g_enum_get_value (g_type_class_peek (THUNAR_TYPE_USE_PARTIAL_MODE),
-                                                    THUNAR_USE_PARTIAL_MODE_DISABLED)
+                                  g_enum_get_value (type, THUNAR_USE_PARTIAL_MODE_DISABLED)
                                   ->value_nick);
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
-                                  g_enum_get_value (g_type_class_peek (THUNAR_TYPE_USE_PARTIAL_MODE),
-                                                    THUNAR_USE_PARTIAL_MODE_REMOTE)
+                                  g_enum_get_value (type, THUNAR_USE_PARTIAL_MODE_REMOTE)
                                   ->value_nick);
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
-                                  g_enum_get_value (g_type_class_peek (THUNAR_TYPE_USE_PARTIAL_MODE),
-                                                    THUNAR_USE_PARTIAL_MODE_ALWAYS)
+                                  g_enum_get_value (type, THUNAR_USE_PARTIAL_MODE_ALWAYS)
                                   ->value_nick);
-  g_type_class_unref (THUNAR_TYPE_USE_PARTIAL_MODE);
+  g_type_class_unref (type);
   g_object_bind_property_full (G_OBJECT (dialog->preferences),
                                "misc-transfer-use-partial",
                                G_OBJECT (combo),
