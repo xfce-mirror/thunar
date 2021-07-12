@@ -649,7 +649,7 @@ gboolean
 thunar_g_file_copy (GFile                *source,
                     GFile                *destination,
                     GFileCopyFlags        flags,
-                    gboolean              verify_copy,
+                    gboolean              use_partial,
                     GCancellable         *cancellable,
                     GFileProgressCallback progress_callback,
                     gpointer              progress_callback_data,
@@ -666,7 +666,7 @@ thunar_g_file_copy (GFile                *source,
   query_flags = (flags & G_FILE_COPY_NOFOLLOW_SYMLINKS) ? G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS : G_FILE_QUERY_INFO_NONE;
 
   info = g_file_query_info (source,
-                            G_FILE_ATTRIBUTE_STANDARD_SIZE "," G_FILE_ATTRIBUTE_STANDARD_TYPE,
+                            G_FILE_ATTRIBUTE_STANDARD_TYPE,
                             query_flags,
                             cancellable,
                             NULL);
@@ -676,8 +676,7 @@ thunar_g_file_copy (GFile                *source,
     skip = TRUE;
   else
     {
-      skip = g_file_info_get_file_type (info) != G_FILE_TYPE_REGULAR
-          || g_file_info_get_attribute_uint64 (info, G_FILE_ATTRIBUTE_STANDARD_SIZE) < (1000 * 10);
+      skip = g_file_info_get_file_type (info) != G_FILE_TYPE_REGULAR || !use_partial;
       g_clear_object (&info);
     }
 
@@ -709,17 +708,6 @@ thunar_g_file_copy (GFile                *source,
 
   /* copy file to .partial */
   success = g_file_copy (source, partial, flags, cancellable, progress_callback, progress_callback_data, error);
-
-  if (G_UNLIKELY (verify_copy && success))
-    {
-      if (!thunar_g_file_compare_content (source, partial, cancellable, error))
-        {
-          success = FALSE;
-          if (error != NULL)
-            *error = g_error_new (G_IO_ERROR, G_IO_ERROR_FAILED,
-                                  "Error opening file \"%s\": Copy corrupted", g_file_peek_path (destination));
-        }
-    }
 
   /* rename .partial if done without problem */
   if (success)

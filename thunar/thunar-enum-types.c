@@ -528,7 +528,7 @@ thunar_file_mode_get_type (void)
 
 
 GType
-thunar_verify_copy_mode_get_type (void)
+thunar_use_partial_get_type (void)
 {
   static GType type = G_TYPE_INVALID;
 
@@ -536,13 +536,13 @@ thunar_verify_copy_mode_get_type (void)
     {
       static const GEnumValue values[] =
       {
-        { THUNAR_VERIFY_COPY_MODE_DISABLED, "THUNAR_VERIFY_COPY_MODE_DISABLED", N_("Disable copy verification"),},
-        { THUNAR_VERIFY_COPY_MODE_ALWAYS,   "THUNAR_VERIFY_COPY_MODE_ALWAYS",   N_("Always verify copied files"),},
-        { THUNAR_VERIFY_COPY_MODE_REMOTE,   "THUNAR_VERIFY_COPY_MODE_REMOTE",   N_("Verify copied files from remote source"),},
+        { THUNAR_USE_PARTIAL_MODE_DISABLED, "THUNAR_USE_PARTIAL_MODE_NEVER",    N_("Never"),},
+        { THUNAR_USE_PARTIAL_MODE_REMOTE,   "THUNAR_USE_PARTIAL_MODE_REMOTE",   N_("Only for remote location"),},
+        { THUNAR_USE_PARTIAL_MODE_ALWAYS,   "THUNAR_USE_PARTIAL_MODE_ALWAYS",   N_("Always"),},
         { 0,                                NULL,                               NULL,},
       };
 
-      type = g_enum_register_static (I_("ThunarVerifyCopyMode"), values);
+      type = g_enum_register_static (I_("ThunarUsePartialMode"), values);
     }
 
   return type;

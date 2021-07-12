@@ -329,7 +329,7 @@ GType thunar_file_mode_get_type (void) G_GNUC_CONST;
 /**
  *
  **/
-#define THUNAR_TYPE_VERIFY_COPY_MODE (thunar_verify_copy_mode_get_type ())
+#define THUNAR_TYPE_USE_PARTIAL_MODE (thunar_use_partial_get_type ())
 
 /**
  * ThunarVerifyCopyMode:
@@ -338,12 +338,12 @@ GType thunar_file_mode_get_type (void) G_GNUC_CONST;
  **/
 typedef enum
 {
-  THUNAR_VERIFY_COPY_MODE_DISABLED,
-  THUNAR_VERIFY_COPY_MODE_ALWAYS,
-  THUNAR_VERIFY_COPY_MODE_REMOTE,
-} ThunarVerifyCopyMode;
+  THUNAR_USE_PARTIAL_MODE_DISABLED,
+  THUNAR_USE_PARTIAL_MODE_REMOTE,
+  THUNAR_USE_PARTIAL_MODE_ALWAYS,
+} ThunarUsePartialMode;
 
-GType thunar_verify_copy_mode_get_type (void) G_GNUC_CONST;
+GType thunar_use_partial_get_type (void) G_GNUC_CONST;
 
 G_END_DECLS;
 

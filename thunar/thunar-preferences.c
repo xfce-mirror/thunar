@@ -104,7 +104,6 @@ enum
   PROP_MISC_PARALLEL_COPY_MODE,
   PROP_MISC_WINDOW_ICON,
   PROP_MISC_TRANSFER_USE_PARTIAL,
-  PROP_MISC_TRANSFER_VERIFY_COPY,
   PROP_SHORTCUTS_ICON_EMBLEMS,
   PROP_SHORTCUTS_ICON_SIZE,
   PROP_TREE_ICON_EMBLEMS,
@@ -853,25 +852,11 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
    *
    **/
   preferences_props[PROP_MISC_TRANSFER_USE_PARTIAL] =
-    g_param_spec_int ("misc-transfer-use-partial",
-                          "MiscTransferUsePartial",
-                          NULL,
-                          -1,
-                          G_MAXINT,
-                          -1,
-                          EXO_PARAM_READWRITE);
-
-  /**
-   * ThunarPreferences:misc-transfer-verify-copy:
-   *
-   *
-   **/
-  preferences_props[PROP_MISC_TRANSFER_VERIFY_COPY] =
-    g_param_spec_enum ("misc-transfer-verify-copy",
-                       "MiscTransferVerifyCopy",
+    g_param_spec_enum ("misc-transfer-use-partial",
+                       "MiscTransferUsePartial",
                        NULL,
-                       THUNAR_TYPE_VERIFY_COPY_MODE,
-                       THUNAR_VERIFY_COPY_MODE_DISABLED,
+                       THUNAR_TYPE_USE_PARTIAL_MODE,
+                       THUNAR_USE_PARTIAL_MODE_DISABLED,
                        EXO_PARAM_READWRITE);
 
   /**
