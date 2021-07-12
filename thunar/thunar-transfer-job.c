@@ -440,6 +440,7 @@ ttj_copy_file (ThunarTransferJob *job,
   GFileType  source_type;
   GFileType  target_type;
   gboolean   target_exists;
+  gboolean   use_partial;
   GError    *err = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), FALSE);
@@ -479,8 +480,19 @@ ttj_copy_file (ThunarTransferJob *job,
         }
     }
 
+  switch (job->transfer_use_partial)
+    {
+    case THUNAR_USE_PARTIAL_MODE_REMOTE:
+      use_partial = !g_file_is_native (source_file) || !g_file_is_native (target_file);
+      break;
+    case THUNAR_USE_PARTIAL_MODE_ALWAYS:
+      use_partial = TRUE;
+      break;
+    default:
+      use_partial = FALSE;
+    }
   /* try to copy the file */
-  thunar_g_file_copy (source_file, target_file, copy_flags, job->transfer_use_partial,
+  thunar_g_file_copy (source_file, target_file, copy_flags, use_partial,
                       exo_job_get_cancellable (EXO_JOB (job)),
                       thunar_transfer_job_progress, job, &err);
 
