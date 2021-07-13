@@ -547,6 +547,7 @@ thunar_application_command_line (GApplication            *gapp,
       gchar       **tabs_right;
       gboolean      restore_tabs;
       gboolean      has_left_tabs; /* used to check whether the split-view should be enabled */
+      gint          last_focused_tab;
 
       if (!thunar_application_process_filenames (application, cwd, cwd_list, NULL, NULL, &error, THUNAR_APPLICATION_SELECT_FILES))
         {
@@ -562,22 +563,25 @@ thunar_application_command_line (GApplication            *gapp,
           window_list = thunar_application_get_windows (application);
           window_list = g_list_last (window_list); /* this will be the topmost Window */
           window = THUNAR_WINDOW (window_list->data);
+
           /* restore left tabs */
           has_left_tabs = FALSE;
-          g_object_get (G_OBJECT (application->preferences), "last-tabs-left", &tabs_left, NULL);
+          g_object_get (G_OBJECT (application->preferences), "last-tabs-left", &tabs_left, "last-focused-tab-left", &last_focused_tab, NULL);
           if (tabs_left != NULL && g_strv_length (tabs_left) > 0)
             {
               for (guint i = 0; i < g_strv_length (tabs_left); i++)
                 {
                   ThunarFile *directory = thunar_file_get_for_uri (tabs_left[i], NULL);
-                  thunar_window_notebook_add_new_tab (window, directory, FALSE);
+                  thunar_window_notebook_add_new_tab (window, directory, TRUE);
                 }
               thunar_window_notebook_remove_tab (window, 0); /* remove automatically opened tab */
+              thunar_window_notebook_set_current_tab (window, last_focused_tab);
               has_left_tabs = TRUE;
             }
+
           /* restore right tabs */
           /* (will be restored on the left if no left tabs are found) */
-          g_object_get (G_OBJECT (application->preferences), "last-tabs-right", &tabs_right, NULL);
+          g_object_get (G_OBJECT (application->preferences), "last-tabs-right", &tabs_right, "last-focused-tab-right", &last_focused_tab, NULL);
           if (tabs_right != NULL && g_strv_length (tabs_right) > 0)
             {
               if (has_left_tabs)
@@ -585,10 +589,12 @@ thunar_application_command_line (GApplication            *gapp,
               for (guint i = 0; i < g_strv_length (tabs_right); i++)
                 {
                   ThunarFile *directory = thunar_file_get_for_uri (tabs_right[i], NULL);
-                  thunar_window_notebook_add_new_tab (window, directory, FALSE);
+                  thunar_window_notebook_add_new_tab (window, directory, TRUE);
                 }
               thunar_window_notebook_remove_tab (window, 0); /* remove automatically opened tab */
+              thunar_window_notebook_set_current_tab (window, last_focused_tab);
             }
+
           /* free memory */
           g_list_free (window_list);
           g_strfreev (tabs_left);
@@ -1366,7 +1372,7 @@ thunar_application_open_window (ThunarApplication *application,
           list = g_list_last (list);
 
           if (directory != NULL)
-              thunar_window_notebook_add_new_tab (THUNAR_WINDOW (list->data), directory, TRUE);
+              thunar_window_notebook_add_new_tab (THUNAR_WINDOW (list->data), directory, THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
           
           /* bring the window to front */
           gtk_window_present (list->data);
@@ -1586,7 +1592,7 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
               g_object_unref (parent);
 
               files = g_list_append (files, thunar_file_get_file (file));
-              thunar_window_select_files (THUNAR_WINDOW (window), files);
+              thunar_window_show_and_select_files (THUNAR_WINDOW (window), files);
               g_list_free (files);
             }
         }
