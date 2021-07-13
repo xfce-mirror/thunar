@@ -328,6 +328,25 @@ GType thunar_file_mode_get_type (void) G_GNUC_CONST;
 
 
 
+#define THUNAR_TYPE_USE_PARTIAL_MODE (thunar_use_partial_get_type ())
+
+/**
+ * ThunarVerifyCopyMode:
+ * @THUNAR_USE_PARTIAL_MODE_DISABLED : Disable *.partial~
+ * @THUNAR_USE_PARTIAL_MODE_REMOTE   : Only when src/dst is remote
+ * @THUNAR_USE_PARTIAL_MODE_ALWAYS   : Always copy to *.partial~
+ **/
+typedef enum
+{
+  THUNAR_USE_PARTIAL_MODE_DISABLED,
+  THUNAR_USE_PARTIAL_MODE_REMOTE,
+  THUNAR_USE_PARTIAL_MODE_ALWAYS,
+} ThunarUsePartialMode;
+
+GType thunar_use_partial_get_type (void) G_GNUC_CONST;
+
+
+
 /**
  * ThunarNewTabBehavior:
  * @THUNAR_NEW_TAB_BEHAVIOR_FOLLOW_PREFERENCE   : switching to the new tab or not is controlled by a preference.
