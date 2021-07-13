@@ -326,6 +326,25 @@ typedef enum /*< flags >*/
 
 GType thunar_file_mode_get_type (void) G_GNUC_CONST;
 
+/**
+ *
+ **/
+#define THUNAR_TYPE_USE_PARTIAL_MODE (thunar_use_partial_get_type ())
+
+/**
+ * ThunarVerifyCopyMode:
+ *
+ *
+ **/
+typedef enum
+{
+  THUNAR_USE_PARTIAL_MODE_DISABLED,
+  THUNAR_USE_PARTIAL_MODE_REMOTE,
+  THUNAR_USE_PARTIAL_MODE_ALWAYS,
+} ThunarUsePartialMode;
+
+GType thunar_use_partial_get_type (void) G_GNUC_CONST;
+
 
 
 /**
