@@ -102,6 +102,7 @@ enum
   PROP_MISC_TEXT_BESIDE_ICONS,
   PROP_MISC_THUMBNAIL_MODE,
   PROP_MISC_THUMBNAIL_DRAW_FRAMES,
+  PROP_MISC_THUMBNAIL_MAX_FILE_SIZE,
   PROP_MISC_FILE_SIZE_BINARY,
   PROP_MISC_CONFIRM_CLOSE_MULTIPLE_TABS,
   PROP_MISC_PARALLEL_COPY_MODE,
@@ -847,6 +848,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             NULL,
                             FALSE,
                             EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-thumbnail-max-file-size:
+   *
+   * Maximum file size (in bytes) allowed to be thumbnailed.
+   * 0 means no limit is in place.
+   **/
+  preferences_props[PROP_MISC_THUMBNAIL_MAX_FILE_SIZE] =
+      g_param_spec_uint64 ("misc-thumbnail-max-file-size",
+                           NULL,
+                           NULL,
+                           0, G_MAXUINT64, 0,
+                           EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-file-size-binary:
