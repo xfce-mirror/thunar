@@ -889,7 +889,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   /**
    * ThunarPreferences:misc-transfer-use-partial:
    *
-   *
+   * Whether to use intermediate file(*.partial~) to copy.
    **/
   preferences_props[PROP_MISC_TRANSFER_USE_PARTIAL] =
     g_param_spec_enum ("misc-transfer-use-partial",

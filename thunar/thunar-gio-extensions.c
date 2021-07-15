@@ -645,6 +645,23 @@ thunar_g_file_list_get_type (void)
 
 
 
+/**
+ * thunar_g_file_copy:
+ * @source                 : input #GFile
+ * @destination            : destination #GFile
+ * @flags                  : set of #GFileCopyFlags
+ * @use_partial            : option to use *.partial~
+ * @cancellable            : (nullable): optional GCancellable object
+ * @progress_callback      : (nullable) (scope call): function to callback with progress information
+ * @progress_callback_data : (clousure): user data to pass to @progress_callback
+ * @error                  : (nullable): #GError to set on error
+ *
+ * Calls g_file_copy() if @use_partial is not enabled.
+ * If enabled, copies files to *.partial~ first and then
+ * renames *.partial~ into its original name.
+ *
+ * Return value: %TRUE on success, %FALSE otherwise.
+ **/
 gboolean
 thunar_g_file_copy (GFile                *source,
                     GFile                *destination,
