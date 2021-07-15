@@ -855,10 +855,10 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
     }
 
   /*
-     File transfer
+     Advanced
    */
 
-  label = gtk_label_new (_("File Transfer"));
+  label = gtk_label_new (_("Advanced"));
   vbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "border-width", 12, "spacing", 18, NULL);
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox, label);
   gtk_widget_show (label);
@@ -868,7 +868,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);
 
-  label = gtk_label_new (_("Parallel transfer"));
+  label = gtk_label_new (_("File transfer"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
@@ -911,16 +911,15 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
 
-  label = gtk_label_new (_("File Transfer"));
-  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
-  gtk_frame_set_label_widget (GTK_FRAME (frame), label);
-  gtk_widget_show (label);
-
   label = gtk_label_new_with_mnemonic (_("Use *.partial~:"));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, 1, 1, 1);
   gtk_widget_show (label);
-  gtk_widget_set_tooltip_text (label, _("lorem ipsum"));
+  gtk_widget_set_tooltip_text (label, _("Use intermediate file to copy files. "
+                                        "This can guarantee that resuming copy "
+                                        "by retrying same operation and skipping "
+                                        "files that already exists on destination "
+                                        "can be done without a fragmented file."));
 
   combo = gtk_combo_box_text_new ();
   type = g_type_class_ref (THUNAR_TYPE_USE_PARTIAL_MODE);
@@ -947,15 +946,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
-
-  /*
-     Advanced
-   */
-  label = gtk_label_new (_("Advanced"));
-  vbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "border-width", 12, "spacing", 18, NULL);
-  gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox, label);
-  gtk_widget_show (label);
-  gtk_widget_show (vbox);
 
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
