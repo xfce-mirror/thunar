@@ -400,7 +400,7 @@ thunar_location_entry_activate (GtkWidget           *path_entry,
   else
     {
       printf("No file, launch search! I'm searching for: %s\n", gtk_entry_get_text (GTK_ENTRY (path_entry)));
-      thunar_location_entry_dialog_configure (path_entry, gtk_entry_get_text (GTK_ENTRY (path_entry)));
+      thunar_location_entry_dialog_configure (path_entry, &gtk_entry_get_text (GTK_ENTRY (path_entry))[8]);
     }
 }
 
