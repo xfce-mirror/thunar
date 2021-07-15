@@ -35,6 +35,7 @@
 #include <thunar/thunar-path-entry.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-shortcuts-model.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -67,6 +68,8 @@ static gboolean    thunar_location_entry_button_press_event       (GtkWidget    
                                                                    ThunarLocationEntry      *location_entry);
 static gboolean    thunar_location_entry_reset                    (ThunarLocationEntry      *location_entry);
 static void        thunar_location_entry_emit_edit_done           (ThunarLocationEntry      *entry);
+static void        thunar_location_entry_dialog_configure         (GtkWidget                *entry,
+                                                                   const gchar              *search_string);
 
 
 
@@ -394,6 +397,11 @@ thunar_location_entry_activate (GtkWidget           *path_entry,
 
       thunar_location_entry_emit_edit_done (location_entry);
     }
+  else
+    {
+      printf("No file, launch search! I'm searching for: %s\n", gtk_entry_get_text (GTK_ENTRY (path_entry)));
+      thunar_location_entry_dialog_configure (path_entry, &gtk_entry_get_text (GTK_ENTRY (path_entry))[8]);
+    }
 }
 
 
@@ -442,6 +450,38 @@ thunar_location_entry_emit_edit_done (ThunarLocationEntry *entry)
     }
 
   entry->right_click_occurred = FALSE;
+}
+
+
+
+static void
+thunar_location_entry_dialog_configure (GtkWidget           *entry,
+                                        const gchar         *search_string)
+{
+  GError    *err = NULL;
+  gchar     *argv[4];
+  GdkScreen *screen;
+  char      *display = NULL;
+
+  /* prepare the argument vector */
+  argv[0] = (gchar *) "catfish";
+  argv[1] = (gchar *) search_string;
+  argv[2] = (gchar *) "--start";
+  argv[3] = NULL;
+
+  screen = gtk_widget_get_screen (entry);
+
+  if (screen != NULL)
+    display = g_strdup (gdk_display_get_name (gdk_screen_get_display (screen)));
+
+  /* invoke the configuration interface of Catfish */
+  if (!g_spawn_async (NULL, argv, NULL, G_SPAWN_SEARCH_PATH, thunar_setup_display_cb, display, NULL, &err))
+    {
+      thunar_dialogs_show_error (entry, err, _("Failed to launch search with Catfish"));
+      g_error_free (err);
+    }
+
+  g_free (display);
 }
 
 
