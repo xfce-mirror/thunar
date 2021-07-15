@@ -142,6 +142,8 @@ struct _ThunarPathEntry
   guint              in_change : 1;
   guint              has_completion : 1;
   guint              check_completion_idle_id;
+
+  gboolean           search_mode;
 };
 
 
@@ -272,6 +274,8 @@ thunar_path_entry_init (ThunarPathEntry *path_entry)
   /* connect the icon signals */
   g_signal_connect (G_OBJECT (path_entry), "icon-press", G_CALLBACK (thunar_path_entry_icon_press_event), NULL);
   g_signal_connect (G_OBJECT (path_entry), "icon-release", G_CALLBACK (thunar_path_entry_icon_release_event), NULL);
+
+  path_entry->search_mode = FALSE;
 }
 
 
@@ -560,8 +564,15 @@ thunar_path_entry_changed (GtkEditable *editable)
 
   /* parse the entered string (handling URIs properly) */
   text = gtk_entry_get_text (GTK_ENTRY (path_entry));
-  if (G_UNLIKELY (exo_str_looks_like_an_uri (text)))
+
+  if (G_UNLIKELY (strncmp ("Search: ", text, 8) == 0 && (path_entry->search_mode == FALSE)))
     {
+      path_entry->search_mode = TRUE;
+      update_icon = TRUE;
+    }
+  else if (G_UNLIKELY (exo_str_looks_like_an_uri (text)))
+    {
+      path_entry->search_mode = FALSE;
       /* try to parse the URI text */
       escaped_text = g_uri_escape_string (text, G_URI_RESERVED_CHARS_ALLOWED_IN_PATH, TRUE);
       file_path = g_file_new_for_uri (escaped_text);
@@ -575,6 +586,7 @@ thunar_path_entry_changed (GtkEditable *editable)
     }
   else if (thunar_path_entry_parse (path_entry, &folder_part, &file_part, NULL))
     {
+      path_entry->search_mode = FALSE;
       /* determine the folder path */
       folder_path = g_file_new_for_path (folder_part);
 
@@ -672,6 +684,14 @@ thunar_path_entry_update_icon (ThunarPathEntry *path_entry)
   GdkPixbuf          *icon = NULL;
   GtkIconTheme       *icon_theme;
   gint                icon_size;
+
+  if (path_entry->search_mode == TRUE)
+    {
+      gtk_entry_set_icon_from_icon_name (GTK_ENTRY (path_entry),
+                                         GTK_ENTRY_ICON_PRIMARY,
+                                         "system-search");
+      return;
+    }
 
   if (path_entry->icon_factory == NULL)
     {
