@@ -912,15 +912,13 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
 
-  label = gtk_label_new_with_mnemonic (_("Use *.partial~:"));
+  label = gtk_label_new_with_mnemonic (_("Use intermediate file on copy"));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, 1, 1, 1);
   gtk_widget_show (label);
-  gtk_widget_set_tooltip_text (label, _("Use intermediate file to copy files. "
-                                        "This can guarantee that resuming copy "
-                                        "by retrying same operation and skipping "
-                                        "files that already exists on destination "
-                                        "can be done without a fragmented file."));
+  gtk_widget_set_tooltip_text (label, _("Use intermediate file '*.partial~' to copy files. "
+                                        "This will prevent fragmented files."
+                                        "The new file will only be shown after the copy was successfully finished."));
 
   combo = gtk_combo_box_text_new ();
   type = g_type_class_ref (THUNAR_TYPE_USE_PARTIAL_MODE);
