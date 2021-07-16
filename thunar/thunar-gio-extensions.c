@@ -691,8 +691,8 @@ thunar_g_file_copy (GFile                *source,
                                 cancellable,
                                 NULL);
     }
+
   /* directory does not need .partial */
-  /* small files also does not */
   if (info == NULL)
     {
       use_partial = FALSE;
@@ -724,13 +724,16 @@ thunar_g_file_copy (GFile                *source,
     {
       base_name = g_strdup ("UNNAMED");
     }
+
   /* limit filename length */
   partial_name = g_strdup_printf ("%.100s.partial~", base_name);
   parent       = g_file_get_parent (destination);
+
   /* parent can't be NULL since destination must be a file */
   partial      = g_file_new_build_filename (g_file_peek_path (parent), partial_name, NULL);
   g_clear_object (&parent);
   g_free (partial_name);
+
   /* check if partial file exists */
   if (g_file_query_exists (partial, NULL))
     g_file_delete (partial, NULL, error);
