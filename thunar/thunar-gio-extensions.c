@@ -673,7 +673,6 @@ thunar_g_file_copy (GFile                *source,
                     GError              **error)
 {
   gboolean            success;
-  gboolean            skip;
   GFileQueryInfoFlags query_flags;
   GFileInfo          *info = NULL;
   GFile              *parent;
@@ -682,24 +681,32 @@ thunar_g_file_copy (GFile                *source,
   gchar              *base_name;
   query_flags = (flags & G_FILE_COPY_NOFOLLOW_SYMLINKS) ? G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS : G_FILE_QUERY_INFO_NONE;
 
+  _thunar_return_val_if_fail (g_file_has_parent (destination, NULL), FALSE);
+
   if (use_partial)
-    info = g_file_query_info (source,
-                              G_FILE_ATTRIBUTE_STANDARD_TYPE,
-                              query_flags,
-                              cancellable,
-                              NULL);
+    {
+      info = g_file_query_info (source,
+                                G_FILE_ATTRIBUTE_STANDARD_TYPE,
+                                query_flags,
+                                cancellable,
+                                NULL);
+    }
   /* directory does not need .partial */
   /* small files also does not */
   if (info == NULL)
-    skip = TRUE;
+    {
+      use_partial = FALSE;
+    }
   else
     {
-      skip = g_file_info_get_file_type (info) != G_FILE_TYPE_REGULAR || !use_partial;
+      use_partial = g_file_info_get_file_type (info) == G_FILE_TYPE_REGULAR;
       g_clear_object (&info);
     }
 
-  if (skip)
-    return g_file_copy (source, destination, flags, cancellable, progress_callback, progress_callback_data, error);
+  if (!use_partial)
+    {
+      return g_file_copy (source, destination, flags, cancellable, progress_callback, progress_callback_data, error);
+    }
 
   /* check destination */
   if (g_file_query_exists (destination, NULL))
@@ -712,16 +719,19 @@ thunar_g_file_copy (GFile                *source,
 
   /* generate partial file name */
   base_name    = g_file_get_basename (destination);
+  if (base_name == NULL)
+    {
+      base_name = g_strdup ("UNNAMED");
+    }
   /* limit filename length */
   partial_name = g_strdup_printf ("%.100s.partial~", base_name);
   parent       = g_file_get_parent (destination);
+  /* parent can't be NULL since destination must be a file */
   partial      = g_file_new_build_filename (g_file_peek_path (parent), partial_name, NULL);
   g_clear_object (&parent);
   g_free (partial_name);
   /* check if partial file exists */
   if (g_file_query_exists (partial, NULL))
-    /* continue copy if supported */
-    /* delete if not */
     g_file_delete (partial, NULL, error);
 
   /* copy file to .partial */
@@ -729,7 +739,9 @@ thunar_g_file_copy (GFile                *source,
 
   /* rename .partial if done without problem */
   if (success)
-    success = (NULL != g_file_set_display_name (partial, base_name, NULL, error));
+    {
+      success = (g_file_set_display_name (partial, base_name, NULL, error) != NULL);
+    }
 
   g_clear_object (&partial);
   g_free (base_name);
