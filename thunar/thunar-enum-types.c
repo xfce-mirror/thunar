@@ -536,9 +536,9 @@ thunar_use_partial_get_type (void)
     {
       static const GEnumValue values[] =
       {
-        { THUNAR_USE_PARTIAL_MODE_DISABLED, "THUNAR_USE_PARTIAL_MODE_NEVER",    N_("Never"),},
-        { THUNAR_USE_PARTIAL_MODE_REMOTE,   "THUNAR_USE_PARTIAL_MODE_REMOTE",   N_("Only for remote location"),},
-        { THUNAR_USE_PARTIAL_MODE_ALWAYS,   "THUNAR_USE_PARTIAL_MODE_ALWAYS",   N_("Always"),},
+        { THUNAR_USE_PARTIAL_MODE_DISABLED,    "THUNAR_USE_PARTIAL_MODE_NEVER",    N_("Never"),},
+        { THUNAR_USE_PARTIAL_MODE_REMOTE_ONLY, "THUNAR_USE_PARTIAL_MODE_REMOTE",   N_("Only for remote location"),},
+        { THUNAR_USE_PARTIAL_MODE_ALWAYS,      "THUNAR_USE_PARTIAL_MODE_ALWAYS",   N_("Always"),},
         { 0,                                NULL,                               NULL,},
       };
 

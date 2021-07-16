@@ -927,7 +927,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
                                   g_enum_get_value (type, THUNAR_USE_PARTIAL_MODE_DISABLED)->value_nick);
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
-                                  g_enum_get_value (type, THUNAR_USE_PARTIAL_MODE_REMOTE)->value_nick);
+                                  g_enum_get_value (type, THUNAR_USE_PARTIAL_MODE_REMOTE_ONLY)->value_nick);
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
                                   g_enum_get_value (type, THUNAR_USE_PARTIAL_MODE_ALWAYS)->value_nick);
   g_type_class_unref (type);

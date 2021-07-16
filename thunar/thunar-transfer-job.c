@@ -482,7 +482,7 @@ ttj_copy_file (ThunarTransferJob *job,
 
   switch (job->transfer_use_partial)
     {
-    case THUNAR_USE_PARTIAL_MODE_REMOTE:
+    case THUNAR_USE_PARTIAL_MODE_REMOTE_ONLY:
       use_partial = !g_file_is_native (source_file) || !g_file_is_native (target_file);
       break;
     case THUNAR_USE_PARTIAL_MODE_ALWAYS:

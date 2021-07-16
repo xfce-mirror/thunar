@@ -332,14 +332,14 @@ GType thunar_file_mode_get_type (void) G_GNUC_CONST;
 
 /**
  * ThunarVerifyCopyMode:
- * @THUNAR_USE_PARTIAL_MODE_DISABLED : Disable *.partial~
- * @THUNAR_USE_PARTIAL_MODE_REMOTE   : Only when src/dst is remote
- * @THUNAR_USE_PARTIAL_MODE_ALWAYS   : Always copy to *.partial~
+ * @THUNAR_USE_PARTIAL_MODE_DISABLED    : Disable *.partial~
+ * @THUNAR_USE_PARTIAL_MODE_REMOTE_ONLY : Only when src/dst is remote
+ * @THUNAR_USE_PARTIAL_MODE_ALWAYS      : Always copy to *.partial~
  **/
 typedef enum
 {
   THUNAR_USE_PARTIAL_MODE_DISABLED,
-  THUNAR_USE_PARTIAL_MODE_REMOTE,
+  THUNAR_USE_PARTIAL_MODE_REMOTE_ONLY,
   THUNAR_USE_PARTIAL_MODE_ALWAYS,
 } ThunarUsePartialMode;
 
