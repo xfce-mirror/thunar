@@ -158,15 +158,16 @@ transform_view_index_to_string (GBinding     *binding,
 
 
 static gboolean
-transform_thumbnail_mode_to_index (GBinding     *binding,
-                                   const GValue *src_value,
-                                   GValue       *dst_value,
-                                   gpointer      user_data)
+transform_mode_to_index (GBinding     *binding,
+                         const GValue *src_value,
+                         GValue       *dst_value,
+                         gpointer      user_data)
 {
   GEnumClass *klass;
+  GType     (*type_func)() = user_data;
   guint       n;
 
-  klass = g_type_class_ref (THUNAR_TYPE_THUMBNAIL_MODE);
+  klass = g_type_class_ref (type_func ());
   for (n = 0; n < klass->n_values; ++n)
     if (klass->values[n].value == g_value_get_enum (src_value))
       g_value_set_int (dst_value, n);
@@ -178,51 +179,15 @@ transform_thumbnail_mode_to_index (GBinding     *binding,
 
 
 static gboolean
-transform_thumbnail_index_to_mode (GBinding     *binding,
-                                   const GValue *src_value,
-                                   GValue       *dst_value,
-                                   gpointer      user_data)
+transform_index_to_mode (GBinding     *binding,
+                         const GValue *src_value,
+                         GValue       *dst_value,
+                         gpointer      user_data)
 {
   GEnumClass *klass;
+  GType     (*type_func)() = user_data;
 
-  klass = g_type_class_ref (THUNAR_TYPE_THUMBNAIL_MODE);
-  g_value_set_enum (dst_value, klass->values[g_value_get_int (src_value)].value);
-  g_type_class_unref (klass);
-
-  return TRUE;
-}
-
-
-
-static gboolean
-transform_parallel_copy_mode_to_index (GBinding     *binding,
-                                       const GValue *src_value,
-                                       GValue       *dst_value,
-                                       gpointer      user_data)
-{
-  GEnumClass *klass;
-  guint       n;
-
-  klass = g_type_class_ref (THUNAR_TYPE_PARALLEL_COPY_MODE);
-  for (n = 0; n < klass->n_values; ++n)
-    if (klass->values[n].value == g_value_get_enum (src_value))
-      g_value_set_int (dst_value, n);
-  g_type_class_unref (klass);
-
-  return TRUE;
-}
-
-
-
-static gboolean
-transform_parallel_copy_index_to_mode (GBinding     *binding,
-                                       const GValue *src_value,
-                                       GValue       *dst_value,
-                                       gpointer      user_data)
-{
-  GEnumClass *klass;
-
-  klass = g_type_class_ref (THUNAR_TYPE_PARALLEL_COPY_MODE);
+  klass = g_type_class_ref (type_func ());
   g_value_set_enum (dst_value, klass->values[g_value_get_int (src_value)].value);
   g_type_class_unref (klass);
 
@@ -281,6 +246,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   GtkWidget      *ibox;
   GtkWidget      *vbox;
   GtkWidget      *infobar;
+  GEnumClass     *type;
   gchar          *path;
   gchar          *date;
 
@@ -386,9 +352,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                G_OBJECT (combo),
                                "active",
                                G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE,
-                               transform_thumbnail_mode_to_index,
-                               transform_thumbnail_index_to_mode,
-                               NULL, NULL);
+                               transform_mode_to_index,
+                               transform_index_to_mode,
+                               (gpointer) thunar_thumbnail_mode_get_type, NULL);
   gtk_widget_set_hexpand (combo, TRUE);
   gtk_grid_attach (GTK_GRID (grid), combo, 1, 1, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
@@ -858,49 +824,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);
 
-  label = gtk_label_new (_("File transfer"));
-  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
-  gtk_frame_set_label_widget (GTK_FRAME (frame), label);
-  gtk_widget_show (label);
-
-  grid = gtk_grid_new ();
-  gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
-  gtk_grid_set_row_spacing (GTK_GRID (grid), 2);
-  gtk_container_set_border_width (GTK_CONTAINER (grid), 12);
-  gtk_container_add (GTK_CONTAINER (frame), grid);
-  gtk_widget_show (grid);
-
-  label = gtk_label_new_with_mnemonic (_("Transfer files in parallel:"));
-  gtk_widget_set_tooltip_text (label, _(
-                                        "Indicates the behavior during multiple copies:\n"
-                                        "- Always: all copies are done simultaneously\n"
-                                        "- Local Files Only: simultaneous copies for local (not remote, not attached) files\n"
-                                        "- Local Files On Same Devices Only: if all files are locals but on different devices (disks, mount points), copies will be sequential\n"
-                                        "- Never: all copies are done sequentially"
-                                      ));
-  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
-  gtk_widget_show (label);
-
-  combo = gtk_combo_box_text_new ();
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Always"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Local Files Only"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Local Files On Same Devices Only"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Never"));
-  g_object_bind_property_full (G_OBJECT (dialog->preferences),
-                               "misc-parallel-copy-mode",
-                               G_OBJECT (combo),
-                               "active",
-                               G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE,
-                               transform_parallel_copy_mode_to_index,
-                               transform_parallel_copy_index_to_mode,
-                               NULL, NULL);
-  gtk_widget_set_hexpand (combo, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), combo, 1, 0, 1, 1);
-  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
-  gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
-  gtk_widget_show (combo);
-
   if (thunar_g_vfs_is_uri_scheme_supported ("trash"))
     {
       frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
@@ -934,11 +857,91 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   /*
      Advanced
    */
+
   label = gtk_label_new (_("Advanced"));
   vbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "border-width", 12, "spacing", 18, NULL);
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox, label);
   gtk_widget_show (label);
   gtk_widget_show (vbox);
+
+  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
+  gtk_widget_show (frame);
+
+  label = gtk_label_new (_("File transfer"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_frame_set_label_widget (GTK_FRAME (frame), label);
+  gtk_widget_show (label);
+
+  grid = gtk_grid_new ();
+  gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
+  gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
+  gtk_widget_set_margin_top (GTK_WIDGET (grid), 6);
+  gtk_widget_set_margin_start (GTK_WIDGET (grid), 12);
+  gtk_container_add (GTK_CONTAINER (frame), grid);
+  gtk_widget_show (grid);
+
+  label = gtk_label_new_with_mnemonic (_("Transfer files in parallel:"));
+  gtk_widget_set_tooltip_text (label, _(
+                                        "Indicates the behavior during multiple copies:\n"
+                                        "- Always: all copies are done simultaneously\n"
+                                        "- Local Files Only: simultaneous copies for local (not remote, not attached) files\n"
+                                        "- Local Files On Same Devices Only: if all files are locals but on different devices (disks, mount points), copies will be sequential\n"
+                                        "- Never: all copies are done sequentially"
+                                      ));
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
+  gtk_widget_show (label);
+
+  combo = gtk_combo_box_text_new ();
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Always"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Local Files Only"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Local Files On Same Devices Only"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Never"));
+  g_object_bind_property_full (G_OBJECT (dialog->preferences),
+                               "misc-parallel-copy-mode",
+                               G_OBJECT (combo),
+                               "active",
+                               G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE,
+                               transform_mode_to_index,
+                               transform_index_to_mode,
+                               (gpointer) thunar_parallel_copy_mode_get_type, NULL);
+  gtk_widget_set_hexpand (combo, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), combo, 1, 0, 1, 1);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
+  gtk_widget_show (combo);
+
+  label = gtk_label_new_with_mnemonic (_("Use intermediate file on copy"));
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, 1, 1, 1);
+  gtk_widget_show (label);
+  gtk_widget_set_tooltip_text (label, _("Use intermediate file '*.partial~' to copy files. "
+                                        "This will prevent fragmented files."
+                                        "The new file will only be shown after the copy was successfully finished."));
+
+  combo = gtk_combo_box_text_new ();
+  type = g_type_class_ref (THUNAR_TYPE_USE_PARTIAL_MODE);
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
+                                  g_enum_get_value (type, THUNAR_USE_PARTIAL_MODE_DISABLED)->value_nick);
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
+                                  g_enum_get_value (type, THUNAR_USE_PARTIAL_MODE_REMOTE_ONLY)->value_nick);
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
+                                  g_enum_get_value (type, THUNAR_USE_PARTIAL_MODE_ALWAYS)->value_nick);
+  g_type_class_unref (type);
+  g_object_bind_property_full (G_OBJECT (dialog->preferences),
+                               "misc-transfer-use-partial",
+                               G_OBJECT (combo),
+                               "active",
+                               G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE,
+                               transform_mode_to_index,
+                               transform_index_to_mode,
+                               (gpointer) thunar_use_partial_get_type, NULL);
+  gtk_widget_set_hexpand (combo, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), combo, 1, 1, 1, 1);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
+  gtk_widget_show (combo);
 
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
