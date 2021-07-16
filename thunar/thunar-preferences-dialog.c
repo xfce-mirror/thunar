@@ -158,7 +158,7 @@ transform_view_index_to_string (GBinding     *binding,
 
 
 static gboolean
-transform_mode_to_index (GBinding     *binding,
+transform_enum_value_to_index (GBinding     *binding,
                          const GValue *src_value,
                          GValue       *dst_value,
                          gpointer      user_data)
@@ -179,7 +179,7 @@ transform_mode_to_index (GBinding     *binding,
 
 
 static gboolean
-transform_index_to_mode (GBinding     *binding,
+transform_index_to_enum_value (GBinding     *binding,
                          const GValue *src_value,
                          GValue       *dst_value,
                          gpointer      user_data)
@@ -352,8 +352,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                G_OBJECT (combo),
                                "active",
                                G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE,
-                               transform_mode_to_index,
-                               transform_index_to_mode,
+                               transform_enum_value_to_index,
+                               transform_index_to_enum_value,
                                (gpointer) thunar_thumbnail_mode_get_type, NULL);
   gtk_widget_set_hexpand (combo, TRUE);
   gtk_grid_attach (GTK_GRID (grid), combo, 1, 1, 1, 1);
@@ -903,8 +903,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                G_OBJECT (combo),
                                "active",
                                G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE,
-                               transform_mode_to_index,
-                               transform_index_to_mode,
+                               transform_enum_value_to_index,
+                               transform_index_to_enum_value,
                                (gpointer) thunar_parallel_copy_mode_get_type, NULL);
   gtk_widget_set_hexpand (combo, TRUE);
   gtk_grid_attach (GTK_GRID (grid), combo, 1, 0, 1, 1);
@@ -934,8 +934,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                G_OBJECT (combo),
                                "active",
                                G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE,
-                               transform_mode_to_index,
-                               transform_index_to_mode,
+                               transform_enum_value_to_index,
+                               transform_index_to_enum_value,
                                (gpointer) thunar_use_partial_get_type, NULL);
   gtk_widget_set_hexpand (combo, TRUE);
   gtk_grid_attach (GTK_GRID (grid), combo, 1, 1, 1, 1);
