@@ -679,12 +679,12 @@ thunar_g_file_copy (GFile                *source,
   GFile              *partial;
   gchar              *partial_name;
   gchar              *base_name;
-  query_flags = (flags & G_FILE_COPY_NOFOLLOW_SYMLINKS) ? G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS : G_FILE_QUERY_INFO_NONE;
 
   _thunar_return_val_if_fail (g_file_has_parent (destination, NULL), FALSE);
 
   if (use_partial)
     {
+      query_flags = (flags & G_FILE_COPY_NOFOLLOW_SYMLINKS) ? G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS : G_FILE_QUERY_INFO_NONE;
       info = g_file_query_info (source,
                                 G_FILE_ATTRIBUTE_STANDARD_TYPE,
                                 query_flags,
@@ -711,6 +711,7 @@ thunar_g_file_copy (GFile                *source,
   /* check destination */
   if (g_file_query_exists (destination, NULL))
     {
+      /* Try to mimic g_file_copy() error */
       if (error != NULL)
         *error = g_error_new (G_IO_ERROR, G_IO_ERROR_EXISTS,
                               "Error opening file \"%s\": File exists", g_file_peek_path (destination));
