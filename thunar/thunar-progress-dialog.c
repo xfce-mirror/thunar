@@ -272,11 +272,7 @@ thunar_progress_dialog_job_finished (ThunarProgressDialog *dialog,
   if (n_views == SCROLLVIEW_THRESHOLD-1)
     {
       /* reparent the content box */
-#if LIBXFCE4UI_CHECK_VERSION (4, 13, 2)
       xfce_widget_reparent (dialog->content_box, dialog->vbox);
-#else
-      gtk_widget_reparent (dialog->content_box, dialog->vbox);
-#endif
 
       /* destroy the scroll win */
       gtk_widget_destroy (dialog->scrollwin);
@@ -403,11 +399,8 @@ thunar_progress_dialog_add_job (ThunarProgressDialog *dialog,
       gtk_widget_show (viewport);
 
       /* move the content box into the viewport */
-#if LIBXFCE4UI_CHECK_VERSION (4, 13, 2)
       xfce_widget_reparent (dialog->content_box, viewport);
-#else
-      gtk_widget_reparent (dialog->content_box, viewport);
-#endif
+
     }
 
   g_signal_connect_swapped (view, "need-attention",
