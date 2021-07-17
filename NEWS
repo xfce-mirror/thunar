@@ -1,3 +1,51 @@
+4.17.4
+======
+- Restore split-view separator position (Issue #616)
+- Skip `switch-page` handler when switching to other split-view tab 
+(Issue #615)
+- Change thunar_file_is_trashed to thunar_file_is_trash in 
+thunar-launcher.c
+- Provide additional menu item for trashed files: "restore and open 
+folder" (Issue #382)
+- Open restored tabs in correct order (Issue #613)
+- After restoring tabs set focus on the last focused tab
+- For "foo.txt" next available file should be of the form "foo N.txt"
+- Remove redundant code
+- Ask "close window with tabs?" as well for STRG+Q (Issue #611)
+- Keep modified time of files copied from foreign locations (Issue #218)
+- Use more general method to pick file names on copy (Issue #244)
+- Add possibility to 'trust' launchers (Issue #156)
+- Remove reload button from toolbar (!125)
+- Fix build warnings
+- Add a preference to restore tabs on startup (Issue #338)
+- Fix Recent entry in the Go menu
+- Use thunar_g_file_new_for_computer and thunar_g_file_new_for_network
+- Add support for the `recent:///` location in Thunar.
+- Add basic support for gtk-recent (Issue #257)
+- Fix: Incorrect thumbnail size being displayed sometimes when zooming 
+quickly
+- Add zoom-level as a per-directory setting (Issue #418)
+- Rename variable `dot` to `extension`
+- Generate incremental file name when a name collision is detected 
+(Issue #210)
+- Fix GLib-CRITICAL in list-view (Issue #487)
+- thunar_file_is_executable() now checks if .desktop file is safe
+- Fix missing folder in history when opened in new tab (Issue #594)
+- Fix missing folder in history when opened in new tab (Issue #594)
+- Manage parallel job outside ThunarTransferJob (Issue #569)
+- Replace ExoBinding with GBinding equivalent
+- Move bookmarks into a separate Bookmarks menu (Issue #572)
+- Proper destruction of member variables for thunar-launcher
+- Fixing various memory leaks (Issue #573)
+- Fix showing volume uuid in transfer dialog (Issue #579)
+- Update manpage (Issue #121)
+- Dont show "execute" on context menu for folders
+- Translation Updates:
+  Albanian, Basque, Bulgarian, Catalan, Chinese (China), Czech, Danish,
+  Dutch, Estonian, French, Galician, German, Hebrew, Italian, Japanese,
+  Malay, Norwegian Bokmål, Polish, Portuguese, Portuguese (Brazil),
+  Serbian, Spanish, Swedish, Thai, Turkish
+
 4.17.3
 ======
 - Regression: Activating Desktop Icon does not Use Default Application 
@@ -1544,7 +1592,7 @@ Ukrainian, Urdu, Urdu (Pakistan), Uyghur, Vietnamese
                         Moldovan (ro), Eren Turkay (tr), Dmitry Nikitin (uk)
 - New translations: Mohamed Magdy (ar), Jeff Bailes (en_GB), Rihards Prieditis
                     (lv), Terje Uriansrud (nb_NO), Amanpreet SIngh Alam (pa),
-                    Nuno Miguel (pt_PT), Besnik Bleta (sq), ﻢﺤﻣﺩ ﻊﻠﻳ ﺎﻠﻤﻜﻳ (ur)
+                    Nuno Miguel (pt_PT), Besnik Bleta (sq), ﻢﺤﻣﺩ ﻊﻠﻳ ﺰ�ﻠﻤﻜﻳ (ur)
 
 
 0.8.0
