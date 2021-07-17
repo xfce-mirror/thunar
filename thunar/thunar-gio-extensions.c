@@ -727,7 +727,7 @@ thunar_g_file_copy (GFile                *source,
 
   /* limit filename length */
   partial_name = g_strdup_printf ("%.100s.partial~", base_name);
-  parent       = g_file_get_parent (destination);
+  parent = g_file_get_parent (destination);
 
   /* parent can't be NULL since destination must be a file */
   partial      = g_file_get_child (parent, partial_name);
