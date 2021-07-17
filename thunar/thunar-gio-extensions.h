@@ -67,6 +67,15 @@ gboolean     thunar_g_file_get_free_space           (GFile                *file,
 gchar       *thunar_g_file_get_free_space_string    (GFile                *file,
                                                      gboolean              file_size_binary);
 
+gboolean     thunar_g_file_copy                     (GFile                *source,
+                                                     GFile                *destination,
+                                                     GFileCopyFlags        flags,
+                                                     gboolean              use_partial,
+                                                     GCancellable         *cancellable,
+                                                     GFileProgressCallback progress_callback,
+                                                     gpointer              progress_callback_data,
+                                                     GError              **error);
+
 /**
  * THUNAR_TYPE_G_FILE_LIST:
  *
@@ -96,7 +105,6 @@ gboolean     thunar_g_app_info_launch                  (GAppInfo          *info,
 gboolean     thunar_g_app_info_should_show             (GAppInfo          *info);
 
 gboolean     thunar_g_vfs_metadata_is_supported        (void);
-
 
 G_END_DECLS
 
