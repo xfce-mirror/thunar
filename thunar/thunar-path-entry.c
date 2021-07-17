@@ -565,10 +565,52 @@ thunar_path_entry_changed (GtkEditable *editable)
   /* parse the entered string (handling URIs properly) */
   text = gtk_entry_get_text (GTK_ENTRY (path_entry));
 
-  if (G_UNLIKELY (strncmp ("Search: ", text, 8) == 0 && (path_entry->search_mode == FALSE)))
+  if (G_UNLIKELY (strncmp ("Search: ", text, 8) == 0))
     {
+      GList         *recent_infos             = NULL;
+      gchar         *search_query             = &text[8];
+      gchar         *case_folded_search_query = NULL;
+      GPatternSpec  *pspec                    = NULL;
+      gboolean       case_sensitive           = FALSE;
+
+      gchar         *display_name;
+      gchar         *case_folded_display_name;
+      gboolean       name_matched;
+
       path_entry->search_mode = TRUE;
       update_icon = TRUE;
+
+      if (strlen (search_query) != 0)
+        {
+          printf("~~~~~~~~~~~~~~~~~RESULTS~~~~~~~~~~~~~~~~~\n");
+          /* prepare search query */
+          if (case_sensitive == FALSE)
+            search_query = g_utf8_casefold (search_query, strlen (search_query));
+          else
+            search_query = g_strdup (search_query);
+
+          /* match search query */
+          recent_infos = gtk_recent_manager_get_items (gtk_recent_manager_get_default ());
+          for (; recent_infos != NULL; recent_infos = recent_infos->next)
+            {
+              /* prepare entry display name */
+              display_name = gtk_recent_info_get_display_name (recent_infos->data);
+              if (case_sensitive == FALSE)
+                display_name = g_utf8_casefold (display_name, strlen (display_name));
+              else
+                display_name = g_strdup (display_name);
+
+              /* search substring */
+              if (g_strrstr (display_name, search_query) != NULL)
+                printf ("%s\n", display_name);
+
+              /* free memory */
+              g_free (display_name);
+            }
+
+          /* free memory */
+          g_free (search_query);
+        }
     }
   else if (G_UNLIKELY (exo_str_looks_like_an_uri (text)))
     {
