@@ -719,7 +719,7 @@ thunar_g_file_copy (GFile                *source,
     }
 
   /* generate partial file name */
-  base_name    = g_file_get_basename (destination);
+  base_name = g_file_get_basename (destination);
   if (base_name == NULL)
     {
       base_name = g_strdup ("UNNAMED");
