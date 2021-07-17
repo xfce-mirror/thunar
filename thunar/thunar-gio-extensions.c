@@ -646,6 +646,115 @@ thunar_g_file_list_get_type (void)
 
 
 /**
+ * thunar_g_file_copy:
+ * @source                 : input #GFile
+ * @destination            : destination #GFile
+ * @flags                  : set of #GFileCopyFlags
+ * @use_partial            : option to use *.partial~
+ * @cancellable            : (nullable): optional GCancellable object
+ * @progress_callback      : (nullable) (scope call): function to callback with progress information
+ * @progress_callback_data : (clousure): user data to pass to @progress_callback
+ * @error                  : (nullable): #GError to set on error
+ *
+ * Calls g_file_copy() if @use_partial is not enabled.
+ * If enabled, copies files to *.partial~ first and then
+ * renames *.partial~ into its original name.
+ *
+ * Return value: %TRUE on success, %FALSE otherwise.
+ **/
+gboolean
+thunar_g_file_copy (GFile                *source,
+                    GFile                *destination,
+                    GFileCopyFlags        flags,
+                    gboolean              use_partial,
+                    GCancellable         *cancellable,
+                    GFileProgressCallback progress_callback,
+                    gpointer              progress_callback_data,
+                    GError              **error)
+{
+  gboolean            success;
+  GFileQueryInfoFlags query_flags;
+  GFileInfo          *info = NULL;
+  GFile              *parent;
+  GFile              *partial;
+  gchar              *partial_name;
+  gchar              *base_name;
+
+  _thunar_return_val_if_fail (g_file_has_parent (destination, NULL), FALSE);
+
+  if (use_partial)
+    {
+      query_flags = (flags & G_FILE_COPY_NOFOLLOW_SYMLINKS) ? G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS : G_FILE_QUERY_INFO_NONE;
+      info = g_file_query_info (source,
+                                G_FILE_ATTRIBUTE_STANDARD_TYPE,
+                                query_flags,
+                                cancellable,
+                                NULL);
+    }
+
+  /* directory does not need .partial */
+  if (info == NULL)
+    {
+      use_partial = FALSE;
+    }
+  else
+    {
+      use_partial = g_file_info_get_file_type (info) == G_FILE_TYPE_REGULAR;
+      g_clear_object (&info);
+    }
+
+  if (!use_partial)
+    {
+      return g_file_copy (source, destination, flags, cancellable, progress_callback, progress_callback_data, error);
+    }
+
+  /* check destination */
+  if (g_file_query_exists (destination, NULL))
+    {
+      /* Try to mimic g_file_copy() error */
+      if (error != NULL)
+        *error = g_error_new (G_IO_ERROR, G_IO_ERROR_EXISTS,
+                              "Error opening file \"%s\": File exists", g_file_peek_path (destination));
+      return FALSE;
+    }
+
+  /* generate partial file name */
+  base_name = g_file_get_basename (destination);
+  if (base_name == NULL)
+    {
+      base_name = g_strdup ("UNNAMED");
+    }
+
+  /* limit filename length */
+  partial_name = g_strdup_printf ("%.100s.partial~", base_name);
+  parent = g_file_get_parent (destination);
+
+  /* parent can't be NULL since destination must be a file */
+  partial      = g_file_get_child (parent, partial_name);
+  g_clear_object (&parent);
+  g_free (partial_name);
+
+  /* check if partial file exists */
+  if (g_file_query_exists (partial, NULL))
+    g_file_delete (partial, NULL, error);
+
+  /* copy file to .partial */
+  success = g_file_copy (source, partial, flags, cancellable, progress_callback, progress_callback_data, error);
+
+  /* rename .partial if done without problem */
+  if (success)
+    {
+      success = (g_file_set_display_name (partial, base_name, NULL, error) != NULL);
+    }
+
+  g_clear_object (&partial);
+  g_free (base_name);
+  return success;
+}
+
+
+
+/**
  * thunar_g_file_list_new_from_string:
  * @string : a string representation of an URI list.
  *
