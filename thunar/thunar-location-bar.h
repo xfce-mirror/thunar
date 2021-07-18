@@ -39,6 +39,8 @@ GtkWidget *thunar_location_bar_new           (void);
 
 void       thunar_location_bar_request_entry (ThunarLocationBar *bar, const gchar *initial_text);
 
+void       thunar_location_bar_cancel_search (ThunarLocationBar *bar);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_LOCATION_BAR_H__ */

@@ -46,6 +46,9 @@ gboolean      thunar_folder_has_folder_monitor     (const ThunarFolder *folder);
 void          thunar_folder_reload                 (ThunarFolder       *folder,
                                                     gboolean            reload_info);
 
+void          thunar_folder_set_search_files       (ThunarFolder       *folder,
+                                                    GList              *search_files);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_FOLDER_H__ */

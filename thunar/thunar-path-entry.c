@@ -133,6 +133,7 @@ struct _ThunarPathEntry
   ThunarFile        *current_folder;
   ThunarFile        *current_file;
   GFile             *working_directory;
+  GList             *search_list;
 
   guint              drag_button;
   gint               drag_x;
@@ -142,6 +143,8 @@ struct _ThunarPathEntry
   guint              in_change : 1;
   guint              has_completion : 1;
   guint              check_completion_idle_id;
+
+  gboolean           search_mode;
 };
 
 
@@ -272,6 +275,8 @@ thunar_path_entry_init (ThunarPathEntry *path_entry)
   /* connect the icon signals */
   g_signal_connect (G_OBJECT (path_entry), "icon-press", G_CALLBACK (thunar_path_entry_icon_press_event), NULL);
   g_signal_connect (G_OBJECT (path_entry), "icon-release", G_CALLBACK (thunar_path_entry_icon_release_event), NULL);
+
+  path_entry->search_mode = FALSE;
 }
 
 
@@ -560,8 +565,63 @@ thunar_path_entry_changed (GtkEditable *editable)
 
   /* parse the entered string (handling URIs properly) */
   text = gtk_entry_get_text (GTK_ENTRY (path_entry));
-  if (G_UNLIKELY (exo_str_looks_like_an_uri (text)))
+
+  if (G_UNLIKELY (strncmp ("Search: ", text, 8) == 0))
     {
+      GList         *recent_infos             = NULL;
+      gchar         *search_query             = &text[8];
+      gchar         *case_folded_search_query = NULL;
+      GPatternSpec  *pspec                    = NULL;
+      gboolean       case_sensitive           = FALSE;
+
+      gchar         *display_name;
+      gchar         *case_folded_display_name;
+      gboolean       name_matched;
+
+      path_entry->search_mode = TRUE;
+      update_icon = TRUE;
+
+      if (strlen (search_query) != 0)
+        {
+          printf("~~~~~~~~~~~~~~~~~RESULTS~~~~~~~~~~~~~~~~~\n");
+          path_entry->search_list = NULL;
+          /* prepare search query */
+          if (case_sensitive == FALSE)
+            search_query = g_utf8_casefold (search_query, strlen (search_query));
+          else
+            search_query = g_strdup (search_query);
+
+          /* match search query */
+          recent_infos = gtk_recent_manager_get_items (gtk_recent_manager_get_default ());
+          for (; recent_infos != NULL; recent_infos = recent_infos->next)
+            {
+              /* prepare entry display name */
+              display_name = gtk_recent_info_get_display_name (recent_infos->data);
+              if (case_sensitive == FALSE)
+                display_name = g_utf8_casefold (display_name, strlen (display_name));
+              else
+                display_name = g_strdup (display_name);
+
+              /* search substring */
+              if (g_strrstr (display_name, search_query) != NULL)
+                {
+                  printf ("%s\n", display_name);
+                  const gchar *uri = gtk_recent_info_get_uri (recent_infos->data);
+                  GFile *child_file = g_file_new_for_uri (uri);
+                  path_entry->search_list = g_list_prepend (path_entry->search_list, thunar_file_get (child_file, NULL));
+                }
+
+              /* free memory */
+              g_free (display_name);
+            }
+
+          /* free memory */
+          g_free (search_query);
+        }
+    }
+  else if (G_UNLIKELY (exo_str_looks_like_an_uri (text)))
+    {
+      path_entry->search_mode = FALSE;
       /* try to parse the URI text */
       escaped_text = g_uri_escape_string (text, G_URI_RESERVED_CHARS_ALLOWED_IN_PATH, TRUE);
       file_path = g_file_new_for_uri (escaped_text);
@@ -575,6 +635,7 @@ thunar_path_entry_changed (GtkEditable *editable)
     }
   else if (thunar_path_entry_parse (path_entry, &folder_part, &file_part, NULL))
     {
+      path_entry->search_mode = FALSE;
       /* determine the folder path */
       folder_path = g_file_new_for_path (folder_part);
 
@@ -672,6 +733,14 @@ thunar_path_entry_update_icon (ThunarPathEntry *path_entry)
   GdkPixbuf          *icon = NULL;
   GtkIconTheme       *icon_theme;
   gint                icon_size;
+
+  if (path_entry->search_mode == TRUE)
+    {
+      gtk_entry_set_icon_from_icon_name (GTK_ENTRY (path_entry),
+                                         GTK_ENTRY_ICON_PRIMARY,
+                                         "system-search");
+      return;
+    }
 
   if (path_entry->icon_factory == NULL)
     {
@@ -1293,4 +1362,12 @@ thunar_path_entry_set_working_directory (ThunarPathEntry *path_entry,
 
   if (THUNAR_IS_FILE (working_directory))
     path_entry->working_directory = g_object_ref (thunar_file_get_file (working_directory));
+}
+
+
+
+GList*
+thunar_path_entry_get_search_list (ThunarPathEntry *path_entry)
+{
+  return path_entry->search_list;
 }
