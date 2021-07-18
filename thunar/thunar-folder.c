@@ -109,6 +109,7 @@ struct _ThunarFolder
   ThunarFile        *corresponding_file;
   GList             *new_files;
   GList             *files;
+  GList             *search_files;
   gboolean           reload_info;
 
   GList             *content_type_ptr;
@@ -431,6 +432,7 @@ thunar_folder_files_ready (ThunarJob    *job,
 
   /* merge the list with the existing list of new files */
   folder->new_files = g_list_concat (folder->new_files, files);
+//  folder->new_files = g_list_prepend (folder->new_files, thunar_file_get (thunar_g_file_new_for_home (), NULL));
 
   /* indicate that we took over ownership of the file list */
   return TRUE;
@@ -1029,13 +1031,34 @@ thunar_folder_reload (ThunarFolder *folder,
   thunar_g_list_free_full (folder->new_files);
   folder->new_files = NULL;
 
-  /* start a new job */
   folder->job = thunar_io_jobs_list_directory (thunar_file_get_file (folder->corresponding_file));
-  exo_job_launch (EXO_JOB (folder->job));
-  g_signal_connect (folder->job, "error", G_CALLBACK (thunar_folder_error), folder);
-  g_signal_connect (folder->job, "finished", G_CALLBACK (thunar_folder_finished), folder);
-  g_signal_connect (folder->job, "files-ready", G_CALLBACK (thunar_folder_files_ready), folder);
+
+  if (folder->search_files != NULL)
+    {
+      printf("Search files exists\n");
+      folder->new_files = folder->search_files;
+      thunar_folder_finished (EXO_JOB (folder->job), folder);
+//      thunar_folder_files_ready (folder->job, folder->search_files, folder);
+    }
+  else
+    {
+      printf("Search files NULL\n");
+      /* start a new job */
+      exo_job_launch (EXO_JOB (folder->job));
+      g_signal_connect (folder->job, "error", G_CALLBACK (thunar_folder_error), folder);
+      g_signal_connect (folder->job, "finished", G_CALLBACK (thunar_folder_finished), folder);
+      g_signal_connect (folder->job, "files-ready", G_CALLBACK (thunar_folder_files_ready), folder);
+    }
 
   /* tell all consumers that we're loading */
   g_object_notify (G_OBJECT (folder), "loading");
+}
+
+
+
+void
+thunar_folder_set_search_files (ThunarFolder       *folder,
+                                GList              *search_files)
+{
+  folder->search_files = search_files;
 }
