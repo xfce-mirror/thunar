@@ -133,6 +133,7 @@ struct _ThunarPathEntry
   ThunarFile        *current_folder;
   ThunarFile        *current_file;
   GFile             *working_directory;
+  GList             *search_list;
 
   guint              drag_button;
   gint               drag_x;
@@ -583,6 +584,7 @@ thunar_path_entry_changed (GtkEditable *editable)
       if (strlen (search_query) != 0)
         {
           printf("~~~~~~~~~~~~~~~~~RESULTS~~~~~~~~~~~~~~~~~\n");
+          path_entry->search_list = NULL;
           /* prepare search query */
           if (case_sensitive == FALSE)
             search_query = g_utf8_casefold (search_query, strlen (search_query));
@@ -602,7 +604,12 @@ thunar_path_entry_changed (GtkEditable *editable)
 
               /* search substring */
               if (g_strrstr (display_name, search_query) != NULL)
-                printf ("%s\n", display_name);
+                {
+                  printf ("%s\n", display_name);
+                  const gchar *uri = gtk_recent_info_get_uri (recent_infos->data);
+                  GFile *child_file = g_file_new_for_uri (uri);
+                  path_entry->search_list = g_list_prepend (path_entry->search_list, thunar_file_get (child_file, NULL));
+                }
 
               /* free memory */
               g_free (display_name);
@@ -1355,4 +1362,12 @@ thunar_path_entry_set_working_directory (ThunarPathEntry *path_entry,
 
   if (THUNAR_IS_FILE (working_directory))
     path_entry->working_directory = g_object_ref (thunar_file_get_file (working_directory));
+}
+
+
+
+GList*
+thunar_path_entry_get_search_list (ThunarPathEntry *path_entry)
+{
+  return path_entry->search_list;
 }

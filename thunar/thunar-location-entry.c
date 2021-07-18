@@ -36,6 +36,7 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-shortcuts-model.h>
 #include <thunar/thunar-util.h>
+#include <thunar/thunar-folder.h>
 
 
 
@@ -74,6 +75,7 @@ static void        thunar_location_entry_search                   (GtkEntry     
                                                                    GtkEntryIconPosition      icon_pos,
                                                                    GdkEvent                 *event,
                                                                    ThunarLocationEntry      *location_entry);
+static void        thunar_location_catfish_search                 (ThunarPathEntry          *path_entry);
 
 
 
@@ -96,8 +98,10 @@ struct _ThunarLocationEntry
 
   ThunarFile   *current_directory;
   GtkWidget    *path_entry;
+  GtkWidget    *search_more;
 
   gboolean      right_click_occurred;
+  gboolean      is_searching;
 };
 
 
@@ -201,6 +205,11 @@ thunar_location_entry_init (ThunarLocationEntry *location_entry)
   g_signal_connect_after (G_OBJECT (location_entry->path_entry), "activate", G_CALLBACK (thunar_location_entry_activate), location_entry);
   gtk_box_pack_start (GTK_BOX (location_entry), location_entry->path_entry, TRUE, TRUE, 0);
   gtk_widget_show (location_entry->path_entry);
+
+  location_entry->search_more = gtk_button_new_with_label ("Show More...");
+  gtk_box_pack_start (GTK_BOX (location_entry), location_entry->search_more, TRUE, TRUE, 0);
+  g_signal_connect_swapped (location_entry->search_more, "clicked", G_CALLBACK (thunar_location_catfish_search), location_entry->path_entry);
+  gtk_widget_hide (location_entry->search_more);
 
   /* put search button in entry */
   gtk_entry_set_icon_from_icon_name (GTK_ENTRY (location_entry->path_entry),
@@ -315,6 +324,8 @@ thunar_location_entry_accept_focus (ThunarLocationEntry *location_entry,
   /* give the keyboard focus to the path entry */
   gtk_widget_grab_focus (location_entry->path_entry);
 
+  location_entry->is_searching = g_strcmp0 (initial_text, "Search: ") == 0;
+
   /* check if we have an initial text for the location bar */
   if (G_LIKELY (initial_text != NULL))
     {
@@ -428,9 +439,21 @@ thunar_location_entry_activate (GtkWidget           *path_entry,
     }
   else
     {
-      printf("No file, launch search! I'm searching for: %s\n", gtk_entry_get_text (GTK_ENTRY (path_entry)));
-      thunar_location_entry_dialog_configure (path_entry, &gtk_entry_get_text (GTK_ENTRY (path_entry))[8]);
+      ThunarFolder *folder = thunar_folder_get_for_file (thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (location_entry)));
+      thunar_folder_set_search_files (folder, thunar_path_entry_get_search_list (THUNAR_PATH_ENTRY (path_entry)));
+      thunar_folder_reload (folder, FALSE);
+
+      gtk_widget_show (location_entry->search_more);
     }
+}
+
+
+
+static void
+thunar_location_catfish_search (ThunarPathEntry *path_entry)
+{
+  printf("No file, launch search! I'm searching for: %s\n", gtk_entry_get_text (GTK_ENTRY (path_entry)));
+  thunar_location_entry_dialog_configure (GTK_WIDGET (path_entry), &gtk_entry_get_text (GTK_ENTRY (path_entry))[8]);
 }
 
 
@@ -473,12 +496,26 @@ static void
 thunar_location_entry_emit_edit_done (ThunarLocationEntry *entry)
 {
   /* do not emit signal if the context menu was opened */
-  if (entry->right_click_occurred == FALSE)
+  if (entry->right_click_occurred == FALSE && entry->is_searching == FALSE)
     {
       g_signal_emit_by_name (entry, "edit-done");
     }
 
   entry->right_click_occurred = FALSE;
+}
+
+void
+thunar_location_entry_cancel_search (ThunarLocationEntry *entry)
+{
+  ThunarFolder *folder = thunar_folder_get_for_file (thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (entry)));
+  thunar_folder_set_search_files (folder, NULL);
+  thunar_folder_reload (folder, TRUE);
+
+  entry->is_searching = FALSE;
+  entry->right_click_occurred = FALSE;
+  thunar_location_entry_emit_edit_done (entry);
+
+  gtk_widget_hide (entry->search_more);
 }
 
 

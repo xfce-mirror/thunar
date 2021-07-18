@@ -47,6 +47,8 @@ struct _ThunarLocationBar
 
   GtkWidget  *locationEntry;
   GtkWidget  *locationButtons;
+
+  gboolean    is_searching;
 };
 
 
@@ -347,6 +349,15 @@ thunar_location_bar_request_entry (ThunarLocationBar *bar,
 
   _thunar_return_if_fail (child != NULL && GTK_IS_WIDGET (child));
 
+  if (g_strcmp0 (initial_text, "Search: ") == 0)
+    {
+      bar->is_searching = TRUE;
+    }
+  else
+    {
+      bar->is_searching = FALSE;
+    }
+
   if (THUNAR_IS_LOCATION_ENTRY (child))
     {
       /* already have an entry */
@@ -392,6 +403,23 @@ thunar_location_bar_search (ThunarLocationBar *bar)
 {
   thunar_location_bar_request_entry (bar, "Search: ");
 }
+
+
+
+void
+thunar_location_bar_cancel_search (ThunarLocationBar *bar)
+{
+  GtkWidget *child;
+
+  printf("Location bar cancel search\n");
+
+  bar->is_searching = FALSE;
+
+//  thunar_location_bar_on_enry_edit_done (THUNAR_LOCATION_ENTRY (bar->locationEntry), bar);
+  thunar_location_entry_cancel_search (THUNAR_LOCATION_ENTRY (bar->locationEntry));
+}
+
+
 
 
 
