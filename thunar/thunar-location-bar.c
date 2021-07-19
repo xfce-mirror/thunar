@@ -35,6 +35,7 @@ struct _ThunarLocationBarClass
 
   /* signals */
   void (*search) (void);
+    void (*search_update) (void);
   void (*entry_done) (void);
   void (*reload_requested) (void);
 };
@@ -47,6 +48,9 @@ struct _ThunarLocationBar
 
   GtkWidget  *locationEntry;
   GtkWidget  *locationButtons;
+
+  gboolean    is_searching;
+  gchar *search_query;
 };
 
 
@@ -137,6 +141,20 @@ thunar_location_bar_class_init (ThunarLocationBarClass *klass)
                 NULL, NULL,
                 NULL,
                 G_TYPE_NONE, 0);
+
+    /**
+  * ThunarLocationBar::search:
+  * @location_bar : a #ThunarLocationBar.
+  *
+  * Emitted by @location_bar whenever the user clicked a "reload" button
+  **/
+    g_signal_new ("search-update",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                  G_STRUCT_OFFSET (ThunarLocationBarClass, search_update),
+                  NULL, NULL,
+                  NULL,
+                  G_TYPE_NONE, 0);
 
 }
 
@@ -347,15 +365,26 @@ thunar_location_bar_request_entry (ThunarLocationBar *bar,
 
   _thunar_return_if_fail (child != NULL && GTK_IS_WIDGET (child));
 
+  if (g_strcmp0 (initial_text, "Search: ") == 0)
+    {
+      bar->is_searching = TRUE;
+    }
+  else
+    {
+      bar->is_searching = FALSE;
+    }
+
   if (THUNAR_IS_LOCATION_ENTRY (child))
     {
       /* already have an entry */
       thunar_location_entry_accept_focus (THUNAR_LOCATION_ENTRY (child), initial_text);
+      g_signal_connect_swapped (THUNAR_LOCATION_ENTRY (child), "search-update", G_CALLBACK (thunar_location_bar_update_search), bar);
     }
   else
     {
       /* not an entry => temporarily replace it */
       child = thunar_location_bar_install_widget (bar, THUNAR_TYPE_LOCATION_ENTRY);
+      g_signal_connect_swapped (THUNAR_LOCATION_ENTRY (child), "search-update", G_CALLBACK (thunar_location_bar_update_search), bar);
       thunar_location_entry_accept_focus (THUNAR_LOCATION_ENTRY (child), initial_text);
     }
 
@@ -392,6 +421,35 @@ thunar_location_bar_search (ThunarLocationBar *bar)
 {
   thunar_location_bar_request_entry (bar, "Search: ");
 }
+
+
+
+void
+thunar_location_bar_cancel_search (ThunarLocationBar *bar)
+{
+  GtkWidget *child;
+
+  printf("Location bar cancel search\n");
+
+  bar->is_searching = FALSE;
+
+//  thunar_location_bar_on_enry_edit_done (THUNAR_LOCATION_ENTRY (bar->locationEntry), bar);
+  thunar_location_entry_cancel_search (THUNAR_LOCATION_ENTRY (bar->locationEntry));
+}
+
+void
+thunar_location_bar_update_search (ThunarLocationBar *bar)
+{
+  bar->search_query = thunar_location_entry_get_search_query (THUNAR_LOCATION_ENTRY (bar->locationEntry));
+  g_signal_emit_by_name (bar, "search-update");
+}
+
+gchar*
+thunar_location_bar_get_search_query (ThunarLocationBar *entry)
+{
+  return entry->search_query;
+}
+
 
 
 

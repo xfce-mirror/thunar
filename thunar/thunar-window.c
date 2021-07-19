@@ -224,6 +224,7 @@ static void      thunar_window_action_contents            (ThunarWindow         
 static void      thunar_window_action_about               (ThunarWindow           *window);
 static void      thunar_window_action_show_hidden         (ThunarWindow           *window);
 static void      thunar_window_action_search              (ThunarWindow           *window);
+static void      thunar_window_action_cancel_search       (ThunarWindow           *window);
 static gboolean  thunar_window_propagate_key_event        (GtkWindow              *window,
                                                            GdkEvent               *key_event,
                                                            gpointer                user_data);
@@ -460,7 +461,8 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     { THUNAR_WINDOW_ACTION_FORWARD,                        "<Actions>/ThunarStandardView/forward",                   "<Alt>Right",           XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Forward"),                N_ ("Go to the next visited folder"),                                                "go-next-symbolic",        G_CALLBACK (thunar_window_action_forward),             },
     { THUNAR_WINDOW_ACTION_SWITCH_PREV_TAB,                "<Actions>/ThunarWindow/switch-previous-tab",             "<Primary>Page_Up",     XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Previous Tab"),          N_ ("Switch to Previous Tab"),                                                       "go-previous",             G_CALLBACK (thunar_window_action_switch_previous_tab), },
     { THUNAR_WINDOW_ACTION_SWITCH_NEXT_TAB,                "<Actions>/ThunarWindow/switch-next-tab",                 "<Primary>Page_Down",   XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Next Tab"),              N_ ("Switch to Next Tab"),                                                           "go-next",                 G_CALLBACK (thunar_window_action_switch_next_tab),     },
-    { THUNAR_WINDOW_ACTION_SEARCH,                         "<Actions>/ThunarWindow/search",                          "<Primary>f",           XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Search for files"),       N_ ("Open a new tab for the displayed location"),                                    "",                        G_CALLBACK (thunar_window_action_search),       },
+    { THUNAR_WINDOW_ACTION_SEARCH,                         "<Actions>/ThunarWindow/search",                          "<Primary>f",           XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Search for files"),       N_ ("Open a new tab for the displayed location"),                                    "",                        G_CALLBACK (thunar_window_action_search),              },
+    { THUNAR_WINDOW_ACTION_CANCEL_SEARCH,                  "<Actions>/ThunarWindow/cancel-search",                   "Escape",               XFCE_GTK_MENU_ITEM,       N_ ("Cancel search for files"),N_ ("Open a new tab for the displayed location"),                                    "",                        G_CALLBACK (thunar_window_action_cancel_search),       },
     { 0,                                                   "<Actions>/ThunarWindow/open-file-menu",                  "F10",                  0,                        NULL,                          NULL,                                                                                NULL,                      G_CALLBACK (thunar_window_action_open_file_menu),      },
 };
 
@@ -2839,8 +2841,21 @@ thunar_window_start_open_location (ThunarWindow *window,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* temporary show the location toolbar, even if it is normally hidden */
+  // Εδω χρειαζομαι ενα σημα που να το συνδεσω και οταν παταω Escape αν ειμαι σε search mode να ακυρωνεται το search
   gtk_widget_show (window->location_toolbar);
   thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text);
+  g_signal_connect_swapped (THUNAR_LOCATION_BAR (window->location_bar), "search-update", G_CALLBACK (thunar_window_update_search), window);
+  // standard view search pattern
+  // standard view reload
+}
+
+
+void thunar_window_update_search (ThunarWindow *window)
+{
+  printf("Search query: %s\n", thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar)));
+  thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected),
+                                                                                       gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected)))),
+                                      thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar)));
 }
 
 
@@ -3932,6 +3947,18 @@ static void
 thunar_window_action_search (ThunarWindow *window)
 {
   thunar_window_start_open_location (window, "Search: ");
+}
+
+
+
+static void
+thunar_window_action_cancel_search (ThunarWindow *window)
+{
+  g_assert (THUNAR_IS_LOCATION_BAR (window->location_bar));
+  thunar_location_bar_cancel_search (THUNAR_LOCATION_BAR (window->location_bar));
+  thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected),
+                                                                                       gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected)))),
+                                      NULL);
 }
 
 
