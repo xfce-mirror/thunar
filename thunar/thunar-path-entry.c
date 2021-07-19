@@ -123,6 +123,7 @@ static void     thunar_path_entry_check_completion_idle_destroy (gpointer       
 struct _ThunarPathEntryClass
 {
   GtkEntryClass __parent__;
+    void (*search) (void);
 };
 
 struct _ThunarPathEntry
@@ -133,6 +134,7 @@ struct _ThunarPathEntry
   ThunarFile        *current_folder;
   ThunarFile        *current_file;
   GFile             *working_directory;
+  GList             *search_list;
 
   guint              drag_button;
   gint               drag_x;
@@ -207,6 +209,20 @@ thunar_path_entry_class_init (ThunarPathEntryClass *klass)
                                                              _("Icon size"),
                                                              _("The icon size for the path entry"),
                                                              1, G_MAXINT, 16, EXO_PARAM_READABLE));
+
+    /**
+  * ThunarLocationEntry::search:
+  * @location_entry : a #ThunarLocationEntry.
+  *
+  * Emitted by @location_entry whenever the user clicked a "reload" button
+  **/
+    g_signal_new ("search",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                  G_STRUCT_OFFSET (ThunarPathEntryClass , search),
+                  NULL, NULL,
+                  NULL,
+                  G_TYPE_NONE, 0);
 }
 
 
@@ -582,34 +598,42 @@ thunar_path_entry_changed (GtkEditable *editable)
 
       if (strlen (search_query) != 0)
         {
-          printf("~~~~~~~~~~~~~~~~~RESULTS~~~~~~~~~~~~~~~~~\n");
-          /* prepare search query */
-          if (case_sensitive == FALSE)
-            search_query = g_utf8_casefold (search_query, strlen (search_query));
-          else
-            search_query = g_strdup (search_query);
+//          printf("~~~~~~~~~~~~~~~~~RESULTS~~~~~~~~~~~~~~~~~\n");
+//          path_entry->search_list = NULL;
+//          /* prepare search query */
+//          if (case_sensitive == FALSE)
+//            search_query = g_utf8_casefold (search_query, strlen (search_query));
+//          else
+//            search_query = g_strdup (search_query);
+//
+//          /* match search query */
+//          recent_infos = gtk_recent_manager_get_items (gtk_recent_manager_get_default ());
+//          for (; recent_infos != NULL; recent_infos = recent_infos->next)
+//            {
+//              /* prepare entry display name */
+//              display_name = gtk_recent_info_get_display_name (recent_infos->data);
+//              if (case_sensitive == FALSE)
+//                display_name = g_utf8_casefold (display_name, strlen (display_name));
+//              else
+//                display_name = g_strdup (display_name);
+//
+//              /* search substring */
+//              if (g_strrstr (display_name, search_query) != NULL)
+//                {
+////                  printf ("%s\n", display_name);
+//                  const gchar *uri = gtk_recent_info_get_uri (recent_infos->data);
+//                  GFile *child_file = g_file_new_for_uri (uri);
+//                  path_entry->search_list = g_list_prepend (path_entry->search_list, thunar_file_get (child_file, NULL));
+//                }
+//
+//              /* free memory */
+//              g_free (display_name);
+//            }
+//
+//          /* free memory */
+//          g_free (search_query);
 
-          /* match search query */
-          recent_infos = gtk_recent_manager_get_items (gtk_recent_manager_get_default ());
-          for (; recent_infos != NULL; recent_infos = recent_infos->next)
-            {
-              /* prepare entry display name */
-              display_name = gtk_recent_info_get_display_name (recent_infos->data);
-              if (case_sensitive == FALSE)
-                display_name = g_utf8_casefold (display_name, strlen (display_name));
-              else
-                display_name = g_strdup (display_name);
-
-              /* search substring */
-              if (g_strrstr (display_name, search_query) != NULL)
-                printf ("%s\n", display_name);
-
-              /* free memory */
-              g_free (display_name);
-            }
-
-          /* free memory */
-          g_free (search_query);
+          g_signal_emit_by_name (path_entry, "search");
         }
     }
   else if (G_UNLIKELY (exo_str_looks_like_an_uri (text)))
@@ -673,7 +697,7 @@ thunar_path_entry_changed (GtkEditable *editable)
       model = gtk_entry_completion_get_model (completion);
       g_object_ref (G_OBJECT (model));
       gtk_entry_completion_set_model (completion, NULL);
-      thunar_list_model_set_folder (THUNAR_LIST_MODEL (model), folder);
+      thunar_list_model_set_folder (THUNAR_LIST_MODEL (model), folder, NULL, FALSE);
       gtk_entry_completion_set_model (completion, model);
       g_object_unref (G_OBJECT (model));
 
@@ -1355,4 +1379,19 @@ thunar_path_entry_set_working_directory (ThunarPathEntry *path_entry,
 
   if (THUNAR_IS_FILE (working_directory))
     path_entry->working_directory = g_object_ref (thunar_file_get_file (working_directory));
+}
+
+
+
+GList*
+thunar_path_entry_get_search_list (ThunarPathEntry *path_entry)
+{
+  return path_entry->search_list;
+}
+
+
+gchar*
+thunar_path_entry_get_search_query (ThunarPathEntry *path_entry)
+{
+  return g_strdup (&gtk_entry_get_text (GTK_ENTRY (path_entry))[8]);
 }
