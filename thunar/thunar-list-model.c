@@ -470,7 +470,7 @@ static void
 thunar_list_model_dispose (GObject *object)
 {
   /* unlink from the folder (if any) */
-  thunar_list_model_set_folder (THUNAR_LIST_MODEL (object), NULL);
+  thunar_list_model_set_folder (THUNAR_LIST_MODEL (object), NULL, NULL, FALSE);
 
   (*G_OBJECT_CLASS (thunar_list_model_parent_class)->dispose) (object);
 }
@@ -566,7 +566,7 @@ thunar_list_model_set_property (GObject      *object,
       break;
 
     case PROP_FOLDER:
-      thunar_list_model_set_folder (store, g_value_get_object (value));
+      thunar_list_model_set_folder (store, g_value_get_object (value), NULL, FALSE);
       break;
 
     case PROP_FOLDERS_FIRST:
@@ -1319,7 +1319,7 @@ thunar_list_model_folder_destroy (ThunarFolder    *folder,
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
 
-  thunar_list_model_set_folder (store, NULL);
+  thunar_list_model_set_folder (store, NULL, NULL, FALSE);
 
   /* TODO: What to do when the folder is deleted? */
 }
@@ -1339,7 +1339,7 @@ thunar_list_model_folder_error (ThunarFolder    *folder,
   g_signal_emit (G_OBJECT (store), list_model_signals[ERROR], 0, error);
 
   /* reset the current folder */
-  thunar_list_model_set_folder (store, NULL);
+  thunar_list_model_set_folder (store, NULL, NULL, FALSE);
 }
 
 
@@ -1972,7 +1972,9 @@ thunar_list_model_get_folder (ThunarListModel *store)
  **/
 void
 thunar_list_model_set_folder (ThunarListModel *store,
-                              ThunarFolder    *folder)
+                              ThunarFolder    *folder,
+                              gchar           *search_query,
+                              gboolean         ignore)
 {
   GtkTreePath   *path;
   gboolean       has_handler;
@@ -1985,7 +1987,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
   _thunar_return_if_fail (folder == NULL || THUNAR_IS_FOLDER (folder));
 
   /* check if we're not already using that folder */
-  if (G_UNLIKELY (store->folder == folder))
+  if (G_UNLIKELY (store->folder == folder && ignore == FALSE))
     return;
 
   /* unlink from the previously active folder (if any) */
@@ -2043,12 +2045,43 @@ thunar_list_model_set_folder (ThunarListModel *store,
       g_object_ref (G_OBJECT (folder));
 
       /* get the already loaded files */
-      files = thunar_folder_get_files (folder);
+      if (search_query == NULL)
+        {
+          files = thunar_folder_get_files (folder);
+        }
+      else
+        {
+          gboolean case_sensitive = FALSE;
+          GList *recent_infos = gtk_recent_manager_get_items (gtk_recent_manager_get_default ());
+          files = NULL;
+
+          for (; recent_infos != NULL; recent_infos = recent_infos->next)
+            {
+              if (!gtk_recent_info_exists(recent_infos->data))
+                continue;
+              /* prepare entry display name */
+              gchar *display_name = gtk_recent_info_get_display_name (recent_infos->data);
+              if (case_sensitive == FALSE)
+                display_name = g_utf8_casefold (display_name, strlen (display_name));
+              else
+                display_name = g_strdup (display_name);
+
+              /* search substring */
+              if (g_strrstr (display_name, search_query) != NULL)
+                {
+                  const gchar *uri = gtk_recent_info_get_uri (recent_infos->data);
+                  GFile *child_file = g_file_new_for_uri (uri);
+                  files = g_list_prepend (files, thunar_file_get (child_file, NULL));
+                }
+
+              /* free memory */
+              g_free (display_name);
+            }
+        }
 
       /* insert the files */
       if (files != NULL)
         thunar_list_model_files_added (folder, files, store);
-
       /* connect signals to the new folder */
       g_signal_connect (G_OBJECT (store->folder), "destroy", G_CALLBACK (thunar_list_model_folder_destroy), store);
       g_signal_connect (G_OBJECT (store->folder), "error", G_CALLBACK (thunar_list_model_folder_error), store);
