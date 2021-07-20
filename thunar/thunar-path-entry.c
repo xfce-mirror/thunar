@@ -45,6 +45,7 @@
 #include <thunar/thunar-path-entry.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
+#include <thunar/thunar-window.h>
 
 
 
@@ -505,6 +506,14 @@ thunar_path_entry_key_press_event (GtkWidget   *widget,
       g_signal_emit_by_name (G_OBJECT (path_entry), "changed", 0);
 
       /* we handled the event */
+      return TRUE;
+    }
+
+  if (G_UNLIKELY (event->keyval == GDK_KEY_Escape && (event->state & GDK_CONTROL_MASK) == 0))
+    {
+      printf("hello world\n");
+      GtkWidget *window = gtk_widget_get_toplevel (widget);
+      thunar_window_action_cancel_search (THUNAR_WINDOW (window)); // cancel search
       return TRUE;
     }
 
