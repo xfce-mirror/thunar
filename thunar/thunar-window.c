@@ -224,7 +224,6 @@ static void      thunar_window_action_contents            (ThunarWindow         
 static void      thunar_window_action_about               (ThunarWindow           *window);
 static void      thunar_window_action_show_hidden         (ThunarWindow           *window);
 static void      thunar_window_action_search              (ThunarWindow           *window);
-static void      thunar_window_action_cancel_search       (ThunarWindow           *window);
 static gboolean  thunar_window_propagate_key_event        (GtkWindow              *window,
                                                            GdkEvent               *key_event,
                                                            gpointer                user_data);
@@ -3952,7 +3951,7 @@ thunar_window_action_search (ThunarWindow *window)
 
 
 
-static void
+void
 thunar_window_action_cancel_search (ThunarWindow *window)
 {
   g_assert (THUNAR_IS_LOCATION_BAR (window->location_bar));
