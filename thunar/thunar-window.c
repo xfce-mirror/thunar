@@ -857,6 +857,7 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect_swapped (G_OBJECT (window->location_bar), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
   g_signal_connect_swapped (G_OBJECT (window->location_bar), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
   g_signal_connect_swapped (G_OBJECT (window->location_bar), "entry-done", G_CALLBACK (thunar_window_update_location_bar_visible), window);
+  g_signal_connect_swapped (G_OBJECT (window->location_bar), "search", G_CALLBACK (thunar_window_action_search), window);
 
   /* setup the toolbar for the location bar */
   window->location_toolbar = gtk_toolbar_new ();
@@ -2852,7 +2853,7 @@ thunar_window_start_open_location (ThunarWindow *window,
 
 void thunar_window_update_search (ThunarWindow *window)
 {
-  printf("Search query: %s\n", thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar)));
+//  printf("Search query: %s\n", thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar)));
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected),
                                                                                        gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected)))),
                                       thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar)));
