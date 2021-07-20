@@ -4056,7 +4056,7 @@ void
 thunar_standard_view_set_searching (ThunarStandardView *standard_view,
                                     gchar *search_query)
 {
-  printf("Thunar standard view searching\n");
+//  printf("Thunar standard view searching\n");
   standard_view->search_query = g_strdup (search_query);
   g_object_ref (G_OBJECT (thunar_list_model_get_folder (standard_view->model)));
   thunar_list_model_set_folder (standard_view->model, thunar_list_model_get_folder (standard_view->model), search_query, TRUE);

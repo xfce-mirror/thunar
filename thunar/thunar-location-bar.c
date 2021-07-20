@@ -419,7 +419,8 @@ thunar_location_bar_settings_changed (ThunarLocationBar *bar)
 static void
 thunar_location_bar_search (ThunarLocationBar *bar)
 {
-  thunar_location_bar_request_entry (bar, "Search: ");
+//  thunar_location_bar_request_entry (bar, "Search: ");
+  g_signal_emit_by_name (bar, "search");
 }
 
 
