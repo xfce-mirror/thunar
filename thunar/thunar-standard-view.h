@@ -154,6 +154,7 @@ struct _ThunarStandardView
   GBinding                  *loading_binding;
   gboolean                   loading;
   GtkAccelGroup             *accel_group;
+  gchar                     *search_query;
 
   ThunarStandardViewPrivate *priv;
 };
@@ -177,6 +178,9 @@ GtkWidget     *thunar_standard_view_append_menu_item      (ThunarStandardView   
 void           _thunar_standard_view_open_on_middle_click (ThunarStandardView       *standard_view,
                                                            GtkTreePath              *tree_path,
                                                            guint                     event_state);
+
+void           thunar_standard_view_set_searching         (ThunarStandardView       *standard_view,
+                                                           gchar                    *search_query);
 
 G_END_DECLS;
 
