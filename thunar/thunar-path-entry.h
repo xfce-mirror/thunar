@@ -46,6 +46,7 @@ void        thunar_path_entry_set_current_file      (ThunarPathEntry *path_entry
 void        thunar_path_entry_set_working_directory (ThunarPathEntry *path_entry,
                                                      ThunarFile      *directory);
 gchar      *thunar_path_entry_get_search_query      (ThunarPathEntry *path_entry);
+void        thunar_path_entry_cancel_search         (ThunarPathEntry *path_entry);
 
 G_END_DECLS;
 

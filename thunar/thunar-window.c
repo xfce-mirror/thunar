@@ -305,6 +305,7 @@ static void      thunar_window_trash_infobar_clicked           (GtkInfoBar      
 static void      thunar_window_trash_selection_updated         (ThunarWindow           *window);
 static void      thunar_window_recent_reload                   (GtkRecentManager       *recent_manager,
                                                                 ThunarWindow           *window);
+static void      thunar_window_catfish_dialog_configure        (GtkWidget              *entry);
 
 
 
@@ -361,6 +362,10 @@ struct _ThunarWindow
 
   GtkWidget              *view;
   GtkWidget              *statusbar;
+
+  /* search with catfish */
+  GtkWidget              *catfish_search_button;
+  gchar                  *search_query;
 
   GType                   view_type;
   GSList                 *view_bindings;
@@ -916,9 +921,14 @@ thunar_window_init (ThunarWindow *window)
   g_object_bind_property (G_OBJECT (window->preferences), "misc-directory-specific-settings", G_OBJECT (window), "directory-specific-settings", G_BINDING_SYNC_CREATE);
 
   /* setup a new statusbar */
+  window->catfish_search_button = gtk_button_new_with_label ("Show More...");
+  gtk_grid_attach (GTK_GRID (window->view_box), window->catfish_search_button, 0, 3, 1, 1);
+  g_signal_connect_swapped (window->catfish_search_button, "clicked", G_CALLBACK (thunar_window_catfish_dialog_configure), window);
+  gtk_widget_hide (window->catfish_search_button);
+
   window->statusbar = thunar_statusbar_new ();
   gtk_widget_set_hexpand (window->statusbar, TRUE);
-  gtk_grid_attach (GTK_GRID (window->view_box), window->statusbar, 0, 3, 1, 1);
+  gtk_grid_attach (GTK_GRID (window->view_box), window->statusbar, 0, 4, 1, 1);
   if (last_statusbar_visible)
     gtk_widget_show (window->statusbar);
 
@@ -2841,21 +2851,24 @@ thunar_window_start_open_location (ThunarWindow *window,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* temporary show the location toolbar, even if it is normally hidden */
-  // Εδω χρειαζομαι ενα σημα που να το συνδεσω και οταν παταω Escape αν ειμαι σε search mode να ακυρωνεται το search
   gtk_widget_show (window->location_toolbar);
   thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text);
-  g_signal_connect_swapped (THUNAR_LOCATION_BAR (window->location_bar), "search-update", G_CALLBACK (thunar_window_update_search), window);
-  // standard view search pattern
-  // standard view reload
+
+  if (g_strcmp0 (initial_text, "Search: ") == 0)
+      g_signal_connect_swapped (THUNAR_LOCATION_BAR (window->location_bar), "search-update", G_CALLBACK (thunar_window_update_search), window);
 }
 
 
 void thunar_window_update_search (ThunarWindow *window)
 {
-//  printf("Search query: %s\n", thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar)));
+  window->search_query = thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar));
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected),
                                                                                        gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected)))),
                                       thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar)));
+  if (window->search_query != NULL)
+    gtk_widget_show (window->catfish_search_button);
+  else
+    gtk_widget_hide (window->catfish_search_button);
 }
 
 
@@ -3959,6 +3972,7 @@ thunar_window_action_cancel_search (ThunarWindow *window)
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected),
                                                                                        gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected)))),
                                       NULL);
+  gtk_widget_hide (window->catfish_search_button);
 }
 
 
@@ -4905,4 +4919,35 @@ thunar_window_recent_reload (GtkRecentManager *recent_manager,
 {
   if (thunar_file_is_in_recent (window->current_directory))
     thunar_window_action_reload (window, NULL);
+}
+
+
+
+static void
+thunar_window_catfish_dialog_configure (GtkWidget *entry)
+{
+  GError    *err = NULL;
+  gchar     *argv[4];
+  GdkScreen *screen;
+  char      *display = NULL;
+
+  /* prepare the argument vector */
+  argv[0] = (gchar *) "catfish";
+  argv[1] = THUNAR_WINDOW (entry)->search_query;
+  argv[2] = (gchar *) "--start";
+  argv[3] = NULL;
+
+  screen = gtk_widget_get_screen (entry);
+
+  if (screen != NULL)
+    display = g_strdup (gdk_display_get_name (gdk_screen_get_display (screen)));
+
+  /* invoke the configuration interface of Catfish */
+  if (!g_spawn_async (NULL, argv, NULL, G_SPAWN_SEARCH_PATH, thunar_setup_display_cb, display, NULL, &err))
+    {
+      thunar_dialogs_show_error (entry, err, _("Failed to launch search with Catfish"));
+      g_error_free (err);
+    }
+
+  g_free (display);
 }
