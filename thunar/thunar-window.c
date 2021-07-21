@@ -1727,8 +1727,7 @@ thunar_window_tab_change (ThunarWindow *window,
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   /* Alt+0 is 10th tab */
-  gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected),
-                                 nth == -1 ? 9 : nth);
+  thunar_window_notebook_set_current_tab (window, nth == -1 ? 9 : nth);
 
   return TRUE;
 }
@@ -1748,7 +1747,7 @@ thunar_window_action_switch_next_tab (ThunarWindow *window)
   pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_selected));
   new_page = (current_page + 1) % pages;
 
-  gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected), new_page);
+  thunar_window_notebook_set_current_tab (window, new_page);
 }
 
 
@@ -1766,7 +1765,7 @@ thunar_window_action_switch_previous_tab (ThunarWindow *window)
   pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_selected));
   new_page = (current_page - 1) % pages;
 
-  gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected), new_page);
+  thunar_window_notebook_set_current_tab (window, new_page);
 }
 
 
@@ -2473,7 +2472,7 @@ thunar_window_notebook_add_new_tab (ThunarWindow        *window,
     || behavior == THUNAR_NEW_TAB_BEHAVIOR_SWITCH)
     {
       page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), view);
-      gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected), page_num);
+      thunar_window_notebook_set_current_tab (window, page_num);
     }
 
   /* take focus on the new view */
@@ -3392,7 +3391,7 @@ thunar_window_replace_view (ThunarWindow *window,
     {
       /* switch to the new view */
       page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), new_view);
-      gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected), page_num);
+      thunar_window_notebook_set_current_tab (window, page_num);
 
       /* take focus on the new view */
       gtk_widget_grab_focus (new_view);
@@ -4561,7 +4560,7 @@ thunar_window_set_directories (ThunarWindow   *window,
     }
 
   /* select the page */
-  gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected), active_page);
+  thunar_window_notebook_set_current_tab (window, active_page);
 
   /* we succeeded if new pages have been opened */
   return gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_selected)) > 0;
@@ -4813,7 +4812,7 @@ thunar_window_open_home_clicked   (GtkWidget      *button,
           page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
           thunar_window_notebook_add_new_tab (window, window->current_directory, THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
           thunar_window_action_open_home (window);
-          gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected), page_num);
+          thunar_window_notebook_set_current_tab (window, page_num);
         }
       else
         {
