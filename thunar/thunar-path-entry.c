@@ -124,6 +124,8 @@ static void     thunar_path_entry_check_completion_idle_destroy (gpointer       
 struct _ThunarPathEntryClass
 {
   GtkEntryClass __parent__;
+
+  /* externally visible signals */
   void (*search_update) (void);
 };
 
