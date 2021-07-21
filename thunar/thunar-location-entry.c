@@ -69,13 +69,10 @@ static gboolean    thunar_location_entry_button_press_event       (GtkWidget    
                                                                    ThunarLocationEntry      *location_entry);
 static gboolean    thunar_location_entry_reset                    (ThunarLocationEntry      *location_entry);
 static void        thunar_location_entry_emit_edit_done           (ThunarLocationEntry      *entry);
-static void        thunar_location_entry_dialog_configure         (GtkWidget                *entry,
-                                                                   const gchar              *search_string);
 static void        thunar_location_entry_search                   (GtkEntry                 *entry,
                                                                    GtkEntryIconPosition      icon_pos,
                                                                    GdkEvent                 *event,
                                                                    ThunarLocationEntry      *location_entry);
-static void        thunar_location_catfish_search                 (ThunarPathEntry          *path_entry);
 
 
 
@@ -99,7 +96,6 @@ struct _ThunarLocationEntry
 
   ThunarFile   *current_directory;
   GtkWidget    *path_entry;
-  GtkWidget    *search_more;
 
   gboolean      right_click_occurred;
   gboolean      is_searching;
@@ -165,11 +161,11 @@ thunar_location_entry_class_init (ThunarLocationEntryClass *klass)
                 G_TYPE_NONE, 0);
 
   /**
- * ThunarLocationEntry::search:
- * @location_entry : a #ThunarLocationEntry.
- *
- * Emitted by @location_entry whenever the user clicked a "reload" button
- **/
+   * ThunarLocationEntry::search:
+   * @location_entry : a #ThunarLocationEntry.
+   *
+   * Emitted by @location_entry whenever the user clicked the "search" button
+   **/
   g_signal_new ("search",
                 G_TYPE_FROM_CLASS (klass),
                 G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
@@ -179,11 +175,12 @@ thunar_location_entry_class_init (ThunarLocationEntryClass *klass)
                 G_TYPE_NONE, 0);
 
   /**
-* ThunarLocationEntry::search:
-* @location_entry : a #ThunarLocationEntry.
-*
-* Emitted by @location_entry whenever the user clicked a "reload" button
-**/
+   * ThunarLocationEntry::search:
+   * @location_entry : a #ThunarLocationEntry.
+   *
+   * Emitted by @location_entry whenever the path_entry (which is a child of the @location_entry) emits
+   * a "search-update" signal. In other words when the search query has changed.
+   **/
   g_signal_new ("search-update",
                 G_TYPE_FROM_CLASS (klass),
                 G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
@@ -221,11 +218,6 @@ thunar_location_entry_init (ThunarLocationEntry *location_entry)
   g_signal_connect_after (G_OBJECT (location_entry->path_entry), "activate", G_CALLBACK (thunar_location_entry_activate), location_entry);
   gtk_box_pack_start (GTK_BOX (location_entry), location_entry->path_entry, TRUE, TRUE, 0);
   gtk_widget_show (location_entry->path_entry);
-
-  location_entry->search_more = gtk_button_new_with_label ("Show More...");
-  gtk_box_pack_start (GTK_BOX (location_entry), location_entry->search_more, TRUE, TRUE, 0);
-  g_signal_connect_swapped (location_entry->search_more, "clicked", G_CALLBACK (thunar_location_catfish_search), location_entry->path_entry);
-  gtk_widget_hide (location_entry->search_more);
 
   /* put search button in entry */
   gtk_entry_set_icon_from_icon_name (GTK_ENTRY (location_entry->path_entry),
@@ -340,9 +332,10 @@ thunar_location_entry_accept_focus (ThunarLocationEntry *location_entry,
   /* give the keyboard focus to the path entry */
   gtk_widget_grab_focus (location_entry->path_entry);
 
+  /* setup search if the initial_text signifies a search operation */
   location_entry->is_searching = g_strcmp0 (initial_text, "Search: ") == 0;
-
-  g_signal_connect_swapped (location_entry->path_entry, "search-update", G_CALLBACK (thunar_location_entry_update_search), location_entry);
+  if (location_entry->is_searching)
+    g_signal_connect_swapped (location_entry->path_entry, "search-update", G_CALLBACK (thunar_location_entry_update_search), location_entry);
 
   /* check if we have an initial text for the location bar */
   if (G_LIKELY (initial_text != NULL))
@@ -455,23 +448,6 @@ thunar_location_entry_activate (GtkWidget           *path_entry,
 
       thunar_location_entry_emit_edit_done (location_entry);
     }
-  else
-    {
-//      ThunarFolder *folder = thunar_folder_get_for_file (thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (location_entry)));
-//      thunar_folder_set_search_files (folder, thunar_path_entry_get_search_list (THUNAR_PATH_ENTRY (path_entry)));
-//      thunar_folder_reload (folder, FALSE);
-
-      gtk_widget_show (location_entry->search_more);
-    }
-}
-
-
-
-static void
-thunar_location_catfish_search (ThunarPathEntry *path_entry)
-{
-  printf("No file, launch search! I'm searching for: %s\n", gtk_entry_get_text (GTK_ENTRY (path_entry)));
-  thunar_location_entry_dialog_configure (GTK_WIDGET (path_entry), &gtk_entry_get_text (GTK_ENTRY (path_entry))[8]);
 }
 
 
@@ -522,6 +498,8 @@ thunar_location_entry_emit_edit_done (ThunarLocationEntry *entry)
   entry->right_click_occurred = FALSE;
 }
 
+
+
 void
 thunar_location_entry_cancel_search (ThunarLocationEntry *entry)
 {
@@ -532,8 +510,10 @@ thunar_location_entry_cancel_search (ThunarLocationEntry *entry)
   entry->right_click_occurred = FALSE;
   thunar_location_entry_emit_edit_done (entry);
 
-  gtk_widget_hide (entry->search_more);
+  thunar_path_entry_cancel_search (THUNAR_PATH_ENTRY (entry->path_entry));
 }
+
+
 
 void
 thunar_location_entry_update_search (ThunarLocationEntry *entry)
@@ -542,41 +522,12 @@ thunar_location_entry_update_search (ThunarLocationEntry *entry)
   g_signal_emit_by_name (entry, "search-update");
 }
 
+
+
 gchar*
 thunar_location_entry_get_search_query (ThunarLocationEntry *entry)
 {
   return entry->search_query;
-}
-
-
-static void
-thunar_location_entry_dialog_configure (GtkWidget           *entry,
-                                        const gchar         *search_string)
-{
-  GError    *err = NULL;
-  gchar     *argv[4];
-  GdkScreen *screen;
-  char      *display = NULL;
-
-  /* prepare the argument vector */
-  argv[0] = (gchar *) "catfish";
-  argv[1] = (gchar *) search_string;
-  argv[2] = (gchar *) "--start";
-  argv[3] = NULL;
-
-  screen = gtk_widget_get_screen (entry);
-
-  if (screen != NULL)
-    display = g_strdup (gdk_display_get_name (gdk_screen_get_display (screen)));
-
-  /* invoke the configuration interface of Catfish */
-  if (!g_spawn_async (NULL, argv, NULL, G_SPAWN_SEARCH_PATH, thunar_setup_display_cb, display, NULL, &err))
-    {
-      thunar_dialogs_show_error (entry, err, _("Failed to launch search with Catfish"));
-      g_error_free (err);
-    }
-
-  g_free (display);
 }
 
 

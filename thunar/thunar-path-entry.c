@@ -1372,3 +1372,12 @@ thunar_path_entry_get_search_query (ThunarPathEntry *path_entry)
 
   return strlen(text) > 8 ? g_strdup (&text[8]) : NULL;
 }
+
+
+
+void
+thunar_path_entry_cancel_search (ThunarPathEntry *path_entry)
+{
+  _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
+  path_entry->search_mode = FALSE;;
+}
