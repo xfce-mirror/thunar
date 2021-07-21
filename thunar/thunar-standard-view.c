@@ -1368,7 +1368,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
       g_object_set (G_OBJECT (gtk_bin_get_child (GTK_BIN (standard_view))), "model", NULL, NULL);
 
       /* reset the folder for the model */
-      thunar_list_model_set_folder (standard_view->model, NULL);
+      thunar_list_model_set_folder (standard_view->model, NULL, NULL, FALSE);
 
       /* reconnect the model to the view */
       g_object_set (G_OBJECT (gtk_bin_get_child (GTK_BIN (standard_view))), "model", standard_view->model, NULL);
@@ -1411,7 +1411,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
                                  thunar_standard_view_loading_unbound);
 
   /* apply the new folder */
-  thunar_list_model_set_folder (standard_view->model, folder);
+  thunar_list_model_set_folder (standard_view->model, folder, NULL, FALSE);
   g_object_unref (G_OBJECT (folder));
 
   /* reconnect our model to the view */
@@ -4048,4 +4048,19 @@ _thunar_standard_view_open_on_middle_click (ThunarStandardView *standard_view,
       /* release the file reference */
       g_object_unref (G_OBJECT (file));
     }
+}
+
+
+
+void
+thunar_standard_view_set_searching (ThunarStandardView *standard_view,
+                                    gchar              *search_query)
+{
+  standard_view->search_query = g_strdup (search_query);
+
+  g_object_ref (G_OBJECT (thunar_list_model_get_folder (standard_view->model)));
+  thunar_list_model_set_folder (standard_view->model, thunar_list_model_get_folder (standard_view->model), search_query, TRUE);
+  g_object_unref (G_OBJECT (thunar_list_model_get_folder (standard_view->model)));
+
+  thunar_standard_view_reload (THUNAR_VIEW (standard_view), FALSE);
 }
