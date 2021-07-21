@@ -141,8 +141,11 @@ const XfceGtkActionEntry* thunar_window_get_action_entry                    (Thu
                                                                              ThunarWindowAction   action);
 void                      thunar_window_show_and_select_files               (ThunarWindow        *window,
                                                                              GList               *files_to_select);
+void                      thunar_window_show_and_select_files_2             (ThunarWindow        *window,
+                                                                             GList               *files_to_select);
 void                      thunar_window_update_search                       (ThunarWindow        *window);
 void                      thunar_window_action_cancel_search                (ThunarWindow        *window);
+gboolean                  thunar_window_action_is_searching                 (ThunarWindow        *window);
 G_END_DECLS;
 
 #endif /* !__THUNAR_WINDOW_H__ */
