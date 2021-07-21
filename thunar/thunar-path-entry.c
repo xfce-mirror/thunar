@@ -604,7 +604,6 @@ thunar_path_entry_changed (GtkEditable *editable)
         {
           GtkWidget *window = gtk_widget_get_toplevel (GTK_WIDGET (editable));
           thunar_window_action_cancel_search (THUNAR_WINDOW (window));
-          path_entry->search_mode = FALSE;
         }
       /* location/folder-path code */
       if (G_UNLIKELY (exo_str_looks_like_an_uri (text)))

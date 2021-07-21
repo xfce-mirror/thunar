@@ -2859,6 +2859,7 @@ thunar_window_start_open_location (ThunarWindow *window,
 }
 
 
+
 void thunar_window_update_search (ThunarWindow *window)
 {
   window->search_query = thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar));
@@ -2869,6 +2870,20 @@ void thunar_window_update_search (ThunarWindow *window)
     gtk_widget_show (window->catfish_search_button);
   else
     gtk_widget_hide (window->catfish_search_button);
+}
+
+
+
+void
+thunar_window_action_cancel_search (ThunarWindow *window)
+{
+  g_assert (THUNAR_IS_LOCATION_BAR (window->location_bar));
+
+  thunar_location_bar_cancel_search (THUNAR_LOCATION_BAR (window->location_bar));
+  thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected),
+                                                                                       gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected)))),
+                                      NULL);
+  gtk_widget_hide (window->catfish_search_button);
 }
 
 
@@ -3960,19 +3975,6 @@ static void
 thunar_window_action_search (ThunarWindow *window)
 {
   thunar_window_start_open_location (window, "Search: ");
-}
-
-
-
-void
-thunar_window_action_cancel_search (ThunarWindow *window)
-{
-  g_assert (THUNAR_IS_LOCATION_BAR (window->location_bar));
-  thunar_location_bar_cancel_search (THUNAR_LOCATION_BAR (window->location_bar));
-  thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected),
-                                                                                       gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected)))),
-                                      NULL);
-  gtk_widget_hide (window->catfish_search_button);
 }
 
 
