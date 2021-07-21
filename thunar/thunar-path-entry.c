@@ -605,8 +605,8 @@ thunar_path_entry_changed (GtkEditable *editable)
       path_entry->search_mode = TRUE;
       update_icon = TRUE;
 
-      if (strlen (search_query) != 0)
-        {
+//      if (strlen (search_query) != 0)
+//        {
 //          printf("~~~~~~~~~~~~~~~~~RESULTS~~~~~~~~~~~~~~~~~\n");
 //          path_entry->search_list = NULL;
 //          /* prepare search query */
@@ -642,8 +642,8 @@ thunar_path_entry_changed (GtkEditable *editable)
 //          /* free memory */
 //          g_free (search_query);
 
-          g_signal_emit_by_name (path_entry, "search");
-        }
+        g_signal_emit_by_name (path_entry, "search");
+//        }
     }
   else if (G_UNLIKELY (exo_str_looks_like_an_uri (text)))
     {
@@ -1402,5 +1402,5 @@ thunar_path_entry_get_search_list (ThunarPathEntry *path_entry)
 gchar*
 thunar_path_entry_get_search_query (ThunarPathEntry *path_entry)
 {
-  return g_strdup (&gtk_entry_get_text (GTK_ENTRY (path_entry))[8]);
+  return strlen(gtk_entry_get_text (GTK_ENTRY (path_entry))) > 8 ? g_strdup (&gtk_entry_get_text (GTK_ENTRY (path_entry))[8]) : NULL;
 }
