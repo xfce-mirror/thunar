@@ -124,7 +124,7 @@ static void     thunar_path_entry_check_completion_idle_destroy (gpointer       
 struct _ThunarPathEntryClass
 {
   GtkEntryClass __parent__;
-    void (*search) (void);
+  void (*search_update) (void);
 };
 
 struct _ThunarPathEntry
@@ -135,7 +135,6 @@ struct _ThunarPathEntry
   ThunarFile        *current_folder;
   ThunarFile        *current_file;
   GFile             *working_directory;
-  GList             *search_list;
 
   guint              drag_button;
   gint               drag_x;
@@ -211,19 +210,19 @@ thunar_path_entry_class_init (ThunarPathEntryClass *klass)
                                                              _("The icon size for the path entry"),
                                                              1, G_MAXINT, 16, EXO_PARAM_READABLE));
 
-    /**
-  * ThunarLocationEntry::search:
-  * @location_entry : a #ThunarLocationEntry.
+  /**
+  * ThunarLocationEntry::search-update:
+  * @path_entry : a #ThunarPathEntry.
   *
-  * Emitted by @location_entry whenever the user clicked a "reload" button
+  * Emitted by @path_entry whenever the search query in the path entry is updated.
   **/
-    g_signal_new ("search",
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-                  G_STRUCT_OFFSET (ThunarPathEntryClass , search),
-                  NULL, NULL,
-                  NULL,
-                  G_TYPE_NONE, 0);
+  g_signal_new ("search-update",
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                G_STRUCT_OFFSET (ThunarPathEntryClass , search_update),
+                NULL, NULL,
+                NULL,
+                G_TYPE_NONE, 0);
 }
 
 
@@ -292,6 +291,7 @@ thunar_path_entry_init (ThunarPathEntry *path_entry)
   g_signal_connect (G_OBJECT (path_entry), "icon-press", G_CALLBACK (thunar_path_entry_icon_press_event), NULL);
   g_signal_connect (G_OBJECT (path_entry), "icon-release", G_CALLBACK (thunar_path_entry_icon_release_event), NULL);
 
+  /* disabled initially */
   path_entry->search_mode = FALSE;
 }
 
@@ -508,12 +508,11 @@ thunar_path_entry_key_press_event (GtkWidget   *widget,
       /* we handled the event */
       return TRUE;
     }
-
-  if (G_UNLIKELY (event->keyval == GDK_KEY_Escape && (event->state & GDK_CONTROL_MASK) == 0))
+  /* cancel search with `Escape` */
+  if (G_UNLIKELY (path_entry->search_mode == TRUE && event->keyval == GDK_KEY_Escape && (event->state & GDK_CONTROL_MASK) == 0))
     {
-      printf("hello world\n");
       GtkWidget *window = gtk_widget_get_toplevel (widget);
-      thunar_window_action_cancel_search (THUNAR_WINDOW (window)); // cancel search
+      thunar_window_action_cancel_search (THUNAR_WINDOW (window));
       return TRUE;
     }
 
@@ -592,88 +591,48 @@ thunar_path_entry_changed (GtkEditable *editable)
 
   if (G_UNLIKELY (strncmp ("Search: ", text, 8) == 0))
     {
-      GList         *recent_infos             = NULL;
-      gchar         *search_query             = &text[8];
-      gchar         *case_folded_search_query = NULL;
-      GPatternSpec  *pspec                    = NULL;
-      gboolean       case_sensitive           = FALSE;
-
-      gchar         *display_name;
-      gchar         *case_folded_display_name;
-      gboolean       name_matched;
-
       path_entry->search_mode = TRUE;
       update_icon = TRUE;
-
-//      if (strlen (search_query) != 0)
-//        {
-//          printf("~~~~~~~~~~~~~~~~~RESULTS~~~~~~~~~~~~~~~~~\n");
-//          path_entry->search_list = NULL;
-//          /* prepare search query */
-//          if (case_sensitive == FALSE)
-//            search_query = g_utf8_casefold (search_query, strlen (search_query));
-//          else
-//            search_query = g_strdup (search_query);
-//
-//          /* match search query */
-//          recent_infos = gtk_recent_manager_get_items (gtk_recent_manager_get_default ());
-//          for (; recent_infos != NULL; recent_infos = recent_infos->next)
-//            {
-//              /* prepare entry display name */
-//              display_name = gtk_recent_info_get_display_name (recent_infos->data);
-//              if (case_sensitive == FALSE)
-//                display_name = g_utf8_casefold (display_name, strlen (display_name));
-//              else
-//                display_name = g_strdup (display_name);
-//
-//              /* search substring */
-//              if (g_strrstr (display_name, search_query) != NULL)
-//                {
-////                  printf ("%s\n", display_name);
-//                  const gchar *uri = gtk_recent_info_get_uri (recent_infos->data);
-//                  GFile *child_file = g_file_new_for_uri (uri);
-//                  path_entry->search_list = g_list_prepend (path_entry->search_list, thunar_file_get (child_file, NULL));
-//                }
-//
-//              /* free memory */
-//              g_free (display_name);
-//            }
-//
-//          /* free memory */
-//          g_free (search_query);
-
-        g_signal_emit_by_name (path_entry, "search");
-//        }
+      g_signal_emit_by_name (path_entry, "search-update");
     }
-  else if (G_UNLIKELY (exo_str_looks_like_an_uri (text)))
+  else
     {
-      path_entry->search_mode = FALSE;
-      /* try to parse the URI text */
-      escaped_text = g_uri_escape_string (text, G_URI_RESERVED_CHARS_ALLOWED_IN_PATH, TRUE);
-      file_path = g_file_new_for_uri (escaped_text);
-      g_free (escaped_text);
+      /* cancel search when part of 'Search: ' is deleted */
+      if (path_entry->search_mode == TRUE)
+        {
+          GtkWidget *window = gtk_widget_get_toplevel (GTK_WIDGET (editable));
+          thunar_window_action_cancel_search (THUNAR_WINDOW (window));
+          path_entry->search_mode = FALSE;
+        }
+      /* location/folder-path code */
+      if (G_UNLIKELY (exo_str_looks_like_an_uri (text)))
+        {
+          /* try to parse the URI text */
+          escaped_text = g_uri_escape_string (text, G_URI_RESERVED_CHARS_ALLOWED_IN_PATH, TRUE);
+          file_path = g_file_new_for_uri (escaped_text);
+          g_free (escaped_text);
 
-      /* use the same file if the text assumes we're in a directory */
-      if (g_str_has_suffix (text, "/"))
-        folder_path = G_FILE (g_object_ref (G_OBJECT (file_path)));
-      else
-        folder_path = g_file_get_parent (file_path);
-    }
-  else if (thunar_path_entry_parse (path_entry, &folder_part, &file_part, NULL))
-    {
-      path_entry->search_mode = FALSE;
-      /* determine the folder path */
-      folder_path = g_file_new_for_path (folder_part);
+          /* use the same file if the text assumes we're in a directory */
+          if (g_str_has_suffix (text, "/"))
+            folder_path = G_FILE (g_object_ref (G_OBJECT (file_path)));
+          else
+            folder_path = g_file_get_parent (file_path);
+        }
+      else if (thunar_path_entry_parse (path_entry, &folder_part, &file_part, NULL))
+        {
+          /* determine the folder path */
+          folder_path = g_file_new_for_path (folder_part);
 
-      /* determine the relative file path */
-      if (G_LIKELY (*file_part != '\0'))
-        file_path = g_file_resolve_relative_path (folder_path, file_part);
-      else
-        file_path = g_object_ref (folder_path);
+          /* determine the relative file path */
+          if (G_LIKELY (*file_part != '\0'))
+            file_path = g_file_resolve_relative_path (folder_path, file_part);
+          else
+            file_path = g_object_ref (folder_path);
 
-      /* cleanup the part strings */
-      g_free (folder_part);
-      g_free (file_part);
+          /* cleanup the part strings */
+          g_free (folder_part);
+          g_free (file_part);
+        }
     }
 
   /* determine new current file/folder from the paths */
@@ -1392,15 +1351,22 @@ thunar_path_entry_set_working_directory (ThunarPathEntry *path_entry,
 
 
 
-GList*
-thunar_path_entry_get_search_list (ThunarPathEntry *path_entry)
-{
-  return path_entry->search_list;
-}
-
-
+/**
+ * thunar_path_entry_set_working_directory:
+ * @path_entry        : a #ThunarPathEntry.
+ *
+ * Returns a copy of the search query in the text field of the @path_entry or NULL if the path_entry doesn't contain
+ * a search query.
+ *
+ * It's the responsibility of the caller to free the returned string using `g_free`.
+ **/
 gchar*
 thunar_path_entry_get_search_query (ThunarPathEntry *path_entry)
 {
-  return strlen(gtk_entry_get_text (GTK_ENTRY (path_entry))) > 8 ? g_strdup (&gtk_entry_get_text (GTK_ENTRY (path_entry))[8]) : NULL;
+  const gchar *text = gtk_entry_get_text (GTK_ENTRY (path_entry));
+
+  _thunar_return_val_if_fail (THUNAR_IS_PATH_ENTRY (path_entry), NULL);
+  _thunar_return_val_if_fail (strncmp (text, "Search: ", 8) == 0, NULL);
+
+  return strlen(text) > 8 ? g_strdup (&text[8]) : NULL;
 }

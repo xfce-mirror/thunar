@@ -342,7 +342,7 @@ thunar_location_entry_accept_focus (ThunarLocationEntry *location_entry,
 
   location_entry->is_searching = g_strcmp0 (initial_text, "Search: ") == 0;
 
-  g_signal_connect_swapped (location_entry->path_entry, "search", G_CALLBACK (thunar_location_entry_update_search), location_entry);
+  g_signal_connect_swapped (location_entry->path_entry, "search-update", G_CALLBACK (thunar_location_entry_update_search), location_entry);
 
   /* check if we have an initial text for the location bar */
   if (G_LIKELY (initial_text != NULL))
@@ -526,7 +526,6 @@ void
 thunar_location_entry_cancel_search (ThunarLocationEntry *entry)
 {
   ThunarFolder *folder = thunar_folder_get_for_file (thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (entry)));
-//  thunar_folder_set_search_files (folder, NULL);
   thunar_folder_reload (folder, TRUE);
 
   entry->is_searching = FALSE;
