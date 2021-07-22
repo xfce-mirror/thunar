@@ -379,7 +379,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
 
-  label = gtk_label_new_with_mnemonic (_("Only create thumbnails for files smaller than:"));
+  label = gtk_label_new_with_mnemonic (_("Only show thumbnails for files smaller than:"));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_grid_attach (GTK_GRID (grid), label, 0, 2, 1, 1);
   gtk_widget_show (label);

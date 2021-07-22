@@ -51,6 +51,7 @@ enum
   PROP_THUMBNAIL_MODE,
   PROP_THUMBNAIL_DRAW_FRAMES,
   PROP_THUMBNAIL_SIZE,
+  PROP_THUMBNAIL_MAX_FILE_SIZE,
 };
 
 
@@ -111,6 +112,9 @@ struct _ThunarIconFactory
   gboolean             thumbnail_draw_frames;
 
   ThunarThumbnailSize  thumbnail_size;
+
+  /* maximum file size (in bytes) allowed to be thumbnailed */
+  guint64              thumbnail_max_file_size;
 
   guint                sweep_timer_id;
 
@@ -217,6 +221,19 @@ thunar_icon_factory_class_init (ThunarIconFactoryClass *klass)
                                                       THUNAR_TYPE_THUMBNAIL_SIZE,
                                                       THUNAR_THUMBNAIL_SIZE_NORMAL,
                                                       EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarIconFactory:thumbnail-max-file-size:
+   *
+   * Maximum file size (in bytes) allowed to be thumbnailed
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_THUMBNAIL_MAX_FILE_SIZE,
+                                   g_param_spec_uint64 ("thumbnail-max-file-size",
+                                                        "thumbnail-max-file-size",
+                                                        "thumbnail-max-file-size",
+                                                        0, G_MAXUINT64, 0,
+                                                        EXO_PARAM_READWRITE));
 }
 
 
@@ -310,6 +327,10 @@ thunar_icon_factory_get_property (GObject    *object,
       g_value_set_enum (value, factory->thumbnail_size);
       break;
 
+    case PROP_THUMBNAIL_MAX_FILE_SIZE:
+      g_value_set_uint64 (value, factory->thumbnail_max_file_size);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -338,6 +359,10 @@ thunar_icon_factory_set_property (GObject      *object,
 
     case PROP_THUMBNAIL_SIZE:
       factory->thumbnail_size = g_value_get_enum (value);
+      break;
+
+    case PROP_THUMBNAIL_MAX_FILE_SIZE:
+      factory->thumbnail_max_file_size = g_value_get_uint64 (value);
       break;
 
     default:
@@ -755,10 +780,13 @@ thunar_icon_factory_get_for_icon_theme (GtkIconTheme *icon_theme)
       factory->icon_theme = GTK_ICON_THEME (g_object_ref (G_OBJECT (icon_theme)));
       g_object_set_qdata (G_OBJECT (factory->icon_theme), thunar_icon_factory_quark, factory);
 
-      /* connect the "show-thumbnails" property to the global preference */
+      /* connect the properties of the global preference */
       factory->preferences = thunar_preferences_get ();
       g_object_bind_property (G_OBJECT (factory->preferences), "misc-thumbnail-mode",
                               G_OBJECT (factory),              "thumbnail-mode",
+                              G_BINDING_SYNC_CREATE);
+      g_object_bind_property (G_OBJECT (factory->preferences), "misc-thumbnail-max-file-size",
+                              G_OBJECT (factory),              "thumbnail-max-file-size",
                               G_BINDING_SYNC_CREATE);
     }
   else
@@ -960,15 +988,18 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
         }
       else
         {
-          /* we have no preview icon but the thumbnail should be ready. determine
-           * the filename of the thumbnail */
-          thumbnail_path = thunar_file_get_thumbnail_path (file, factory->thumbnail_size);
-
-          /* check if we have a valid path */
-          if (thumbnail_path != NULL)
+          if (thunar_file_get_size (file) < factory->thumbnail_max_file_size)
             {
-              /* try to load the thumbnail */
-              icon = thunar_icon_factory_load_from_file (factory, thumbnail_path, icon_size);
+              /* we have no preview icon but the thumbnail should be ready. determine
+               * the filename of the thumbnail */
+              thumbnail_path = thunar_file_get_thumbnail_path (file, factory->thumbnail_size);
+
+              /* check if we have a valid path */
+              if (thumbnail_path != NULL)
+                {
+                  /* try to load the thumbnail */
+                  icon = thunar_icon_factory_load_from_file (factory, thumbnail_path, icon_size);
+                }
             }
         }
     }
