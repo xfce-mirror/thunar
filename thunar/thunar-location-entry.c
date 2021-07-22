@@ -229,7 +229,7 @@ thunar_location_entry_init (ThunarLocationEntry *location_entry)
 
 
   /* make sure the edit-done signal is emitted upon moving the focus somewhere else */
-  g_signal_connect_swapped (location_entry->path_entry, "focus-out-event", G_CALLBACK (thunar_location_entry_emit_edit_done), location_entry);
+//  g_signal_connect_swapped (location_entry->path_entry, "focus-out-event", G_CALLBACK (thunar_location_entry_emit_edit_done), location_entry);
 
   /* ...except if it is grabbed by the context menu */
   location_entry->right_click_occurred = FALSE;
@@ -333,9 +333,16 @@ thunar_location_entry_accept_focus (ThunarLocationEntry *location_entry,
   gtk_widget_grab_focus (location_entry->path_entry);
 
   /* setup search if the initial_text signifies a search operation */
-  location_entry->is_searching = g_strcmp0 (initial_text, "Search: ") == 0;
+  location_entry->is_searching = (initial_text != NULL && strncmp (initial_text, "Search: ", 8) == 0);
   if (location_entry->is_searching)
-    g_signal_connect_swapped (location_entry->path_entry, "search-update", G_CALLBACK (thunar_location_entry_update_search), location_entry);
+    {
+      g_signal_connect_swapped (location_entry->path_entry, "search-update", G_CALLBACK (thunar_location_entry_update_search), location_entry);
+      g_signal_handlers_disconnect_by_func (location_entry->path_entry, G_CALLBACK (thunar_location_entry_emit_edit_done), location_entry);
+    }
+  else
+    {
+      g_signal_connect_swapped (location_entry->path_entry, "focus-out-event", G_CALLBACK (thunar_location_entry_emit_edit_done), location_entry);
+    }
 
   /* check if we have an initial text for the location bar */
   if (G_LIKELY (initial_text != NULL))

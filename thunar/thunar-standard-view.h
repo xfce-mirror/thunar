@@ -181,6 +181,7 @@ void           _thunar_standard_view_open_on_middle_click (ThunarStandardView   
 
 void           thunar_standard_view_set_searching         (ThunarStandardView       *standard_view,
                                                            gchar                    *search_query);
+gchar         *thunar_standard_view_get_search_query      (ThunarStandardView       *standard_view);
 
 G_END_DECLS;
 
