@@ -1978,6 +1978,17 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   thunar_standard_view_selection_changed (THUNAR_STANDARD_VIEW (page));
 
   gtk_widget_grab_focus (page);
+
+  if (thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (page)) != NULL)
+    {
+      gchar *str = g_strjoin (NULL, "Search: ", thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (page)), NULL);
+      thunar_window_start_open_location (window, str);
+    }
+  else
+    {
+      printf ("No search query\n");
+      thunar_window_action_cancel_search (window);
+    }
 }
 
 
@@ -2543,6 +2554,10 @@ thunar_window_notebook_set_current_tab (ThunarWindow *window,
                                         gint          tab)
 {
   gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected), tab);
+  if (window->notebook_selected != NULL && gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected), tab) != NULL
+  && thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected), tab))))
+    printf ("%s\n", thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected), tab))));
+//  thunar_window_action_search (window);
 }
 
 
@@ -2864,10 +2879,10 @@ thunar_window_start_open_location (ThunarWindow *window,
   gtk_widget_show (window->location_toolbar);
   thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text);
 
-  if (g_strcmp0 (initial_text, "Search: ") == 0)
+  if (initial_text != NULL && strncmp (initial_text, "Search: ", 8) == 0)
     {
       g_signal_connect_swapped (THUNAR_LOCATION_BAR (window->location_bar), "search-update", G_CALLBACK (thunar_window_update_search), window);
-      thunar_launcher_set_searching (window->launcher, TRUE);
+      thunar_window_update_search (window);
     }
 }
 
@@ -2876,9 +2891,7 @@ thunar_window_start_open_location (ThunarWindow *window,
 void thunar_window_update_search (ThunarWindow *window)
 {
   window->search_query = thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar));
-  thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected),
-                                                                                       gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected)))),
-                                      thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar)));
+  thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar)));
   if (window->search_query != NULL)
     gtk_widget_show (window->catfish_search_button);
   else
@@ -2893,9 +2906,7 @@ thunar_window_action_cancel_search (ThunarWindow *window)
   g_assert (THUNAR_IS_LOCATION_BAR (window->location_bar));
 
   thunar_location_bar_cancel_search (THUNAR_LOCATION_BAR (window->location_bar));
-  thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected),
-                                                                                       gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected)))),
-                                      NULL);
+  thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), NULL);
   gtk_widget_hide (window->catfish_search_button);
   thunar_launcher_set_searching (window->launcher, FALSE);
 }

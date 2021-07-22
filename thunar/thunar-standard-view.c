@@ -726,6 +726,8 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (standard_view)), "standard-view");
 
   standard_view->accel_group = NULL;
+
+  standard_view->search_query = NULL;
 }
 
 static void thunar_standard_view_store_sort_column  (ThunarStandardView *standard_view)
@@ -4063,4 +4065,12 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
   g_object_unref (G_OBJECT (thunar_list_model_get_folder (standard_view->model)));
 
   thunar_standard_view_reload (THUNAR_VIEW (standard_view), FALSE);
+}
+
+
+
+gchar*
+thunar_standard_view_get_search_query (ThunarStandardView *standard_view)
+{
+  return standard_view->search_query;
 }
