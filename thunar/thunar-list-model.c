@@ -1972,32 +1972,39 @@ recursive_search (GList       *files,
 {
   ThunarFolder *folder;
   GList        *temp_files;
+  const gchar  *display_name;
+  gchar        *display_name_c;
+  gchar        *uri;
 
   folder     = thunar_folder_get_for_file (directory);
   temp_files = thunar_folder_get_files (folder);
 
-//  printf("Directory: %s\n", thunar_file_get_display_name (directory));
   for (; temp_files != NULL; temp_files = temp_files->next)
     {
+      /* handle directories */
       if (thunar_file_is_directory (temp_files->data) && depth > 0)
         {
           files = recursive_search (files, temp_files->data, search_query_c, depth - 1);
+//          continue; /* don't add directory in the results */
+        }
+      /* don't allow duplicates for files that exist in `recent:///` */
+      uri = thunar_file_dup_uri (temp_files->data);
+      if (gtk_recent_manager_has_item (gtk_recent_manager_get_default(), uri) == TRUE)
+        {
+          g_free (uri);
           continue;
         }
-
       /* prepare entry display name */
-      gchar *display_name = thunar_file_get_display_name (temp_files->data);
-//      printf("File: %s\n", display_name);
-      display_name = g_utf8_casefold (display_name, strlen (display_name));
-
+      display_name = thunar_file_get_display_name (temp_files->data);
+      display_name_c = g_utf8_casefold (display_name, strlen (display_name));
       /* search substring */
-      if (g_strrstr (display_name, search_query_c) != NULL)
+      if (g_strrstr (display_name_c, search_query_c) != NULL)
         {
           files = g_list_prepend (files, temp_files->data);
         }
-
       /* free memory */
-      g_free (display_name);
+      g_free (uri);
+      g_free (display_name_c);
     }
 
   return files;
@@ -2019,7 +2026,6 @@ thunar_list_model_set_folder (ThunarListModel *store,
   GtkTreePath   *path;
   gboolean       has_handler;
   GList         *files;
-  GList         *temp_files;
   GSequenceIter *row;
   GSequenceIter *end;
   GSequenceIter *next;
@@ -2092,35 +2098,33 @@ thunar_list_model_set_folder (ThunarListModel *store,
         }
       else
         {
-          GList   *recent_infos   = gtk_recent_manager_get_items (gtk_recent_manager_get_default ());
-          gchar   *search_query_c = search_query;
+          GList       *recent_infos;
+          gchar       *search_query_c;
+          const gchar *display_name;
+          gchar       *display_name_c;
 
+          recent_infos   = gtk_recent_manager_get_items (gtk_recent_manager_get_default ());
+          search_query_c = g_utf8_casefold (search_query, strlen (search_query));;
           files = NULL;
-          temp_files = thunar_folder_get_files (folder);
 
-          search_query_c = g_utf8_casefold (search_query_c, strlen (search_query_c));
           /* depth limited recursive search in the current folder */
           files = recursive_search (files, thunar_folder_get_corresponding_file (folder), search_query_c, 2);
           /* search GtkRecent */
           for (; recent_infos != NULL; recent_infos = recent_infos->next)
             {
-              gchar *display_name = gtk_recent_info_get_display_name (recent_infos->data);
-
               if (!gtk_recent_info_exists(recent_infos->data))
                 continue;
               /* prepare entry display name */
-              display_name = g_utf8_casefold (display_name, strlen (display_name));
-
+              display_name = gtk_recent_info_get_display_name (recent_infos->data);
+              display_name_c = g_utf8_casefold (display_name, strlen (display_name));
               /* search substring */
-              if (g_strrstr (display_name, search_query_c) != NULL)
+              if (g_strrstr (display_name_c, search_query_c) != NULL)
                 {
-                  const gchar *uri = gtk_recent_info_get_uri (recent_infos->data);
-                  GFile       *child_file = g_file_new_for_uri (uri);
+                  GFile *child_file = g_file_new_for_uri (gtk_recent_info_get_uri (recent_infos->data));
                   files = g_list_prepend (files, thunar_file_get (child_file, NULL));
                 }
-
               /* free memory */
-              g_free (display_name);
+              g_free (display_name_c);
             }
         }
 
