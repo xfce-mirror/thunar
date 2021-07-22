@@ -966,9 +966,14 @@ thunar_standard_view_get_property (GObject    *object,
       break;
 
     case PROP_DISPLAY_NAME:
-      current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (object));
-      if (current_directory != NULL)
-        g_value_set_static_string (value, thunar_file_get_display_name (current_directory));
+      if (THUNAR_STANDARD_VIEW (object)->search_query != NULL)
+        g_value_take_string (value, g_strjoin (NULL, "Searching for: ", THUNAR_STANDARD_VIEW (object)->search_query, NULL));
+      else
+        {
+          current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (object));
+          if (current_directory != NULL)
+            g_value_set_static_string (value, thunar_file_get_display_name (current_directory));
+        }
       break;
 
     case PROP_TOOLTIP_TEXT:
@@ -4065,6 +4070,7 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
   g_object_unref (G_OBJECT (thunar_list_model_get_folder (standard_view->model)));
 
   thunar_standard_view_reload (THUNAR_VIEW (standard_view), FALSE);
+  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_DISPLAY_NAME]);
 }
 
 
