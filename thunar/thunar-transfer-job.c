@@ -761,7 +761,6 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
   _thunar_return_if_fail (node != NULL && G_IS_FILE (node->source_file));
   _thunar_return_if_fail (target_file == NULL || node->next == NULL);
   _thunar_return_if_fail ((target_file == NULL && target_parent_file != NULL) || (target_file != NULL && target_parent_file == NULL));
-  _thunar_return_if_fail (target_file == NULL || g_file_query_file_type (target_file, 0, NULL) != G_FILE_TYPE_DIRECTORY);
   _thunar_return_if_fail (error == NULL || *error == NULL);
 
   /* The caller can either provide a target_file or a target_parent_file, but not both. The toplevel
@@ -788,6 +787,7 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
     target_parent_file = g_file_get_parent (target_file);
   else
     g_object_ref (target_parent_file);
+  g_assert (target_parent_file != NULL);
 
   fs_info = g_file_query_filesystem_info (target_parent_file,
                                           G_FILE_ATTRIBUTE_FILESYSTEM_TYPE,
