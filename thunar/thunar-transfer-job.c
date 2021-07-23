@@ -744,14 +744,18 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
                                GList             **target_file_list_return,
                                GError            **error)
 {
+  static const GRegex  *windows_reserved_name = NULL;
   ThunarThumbnailCache *thumbnail_cache;
   ThunarApplication    *application;
   ThunarJobResponse     response;
   GFileInfo            *info;
+  GFileInfo            *fs_info;
   GError               *err = NULL;
   GFile                *real_target_file = NULL;
   gchar                *base_name;
+  const gchar          *fs_type;
   gboolean              should_use_copy_name;
+  gboolean              use_fat_name_scheme;
 
   _thunar_return_if_fail (THUNAR_IS_TRANSFER_JOB (job));
   _thunar_return_if_fail (node != NULL && G_IS_FILE (node->source_file));
@@ -764,12 +768,46 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
    * wrt restoring files from the trash. Other transfer_nodes will be called with target_parent_file.
    */
 
+  /* if regex pattern is not initialized, do it */
+  if (G_UNLIKELY (windows_reserved_name == NULL))
+    {
+      /* COM#, LPT#, CON, PRN, AUX, and NUL are not allowed */
+      /* FAT is case-insensitive by default */
+      windows_reserved_name = g_regex_new ("^((COM\\d)|(LPT\\d)|(CON)|(PRN)|(AUX)|(NUL))(\\..*)?$", G_REGEX_CASELESS, 0, NULL);
+    }
+
   /* take a reference on the thumbnail cache */
   application = thunar_application_get ();
   thumbnail_cache = thunar_application_get_thumbnail_cache (application);
   g_object_unref (application);
 
   should_use_copy_name = G_UNLIKELY (!g_file_is_native (node->source_file));
+
+  if (target_parent_file == NULL)
+    target_parent_file = g_file_get_parent (target_file);
+  else
+    g_object_ref (target_parent_file);
+  g_assert (target_parent_file != NULL);
+
+  fs_info = g_file_query_filesystem_info (target_parent_file,
+                                          G_FILE_ATTRIBUTE_FILESYSTEM_TYPE,
+                                          NULL, NULL);
+  if (fs_info != NULL)
+    {
+      fs_type = g_file_info_get_attribute_string (fs_info, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE);
+      use_fat_name_scheme =
+        !strcmp (fs_type, "fat")   ||
+        !strcmp (fs_type, "vfat")  ||
+        !strcmp (fs_type, "fuse")  ||
+        !strcmp (fs_type, "ntfs")  ||
+        !strcmp (fs_type, "msdos") ||
+        !strcmp (fs_type, "msdosfs");
+    }
+  else
+    {
+      /* default to native */
+      use_fat_name_scheme = FALSE;
+    }
 
   for (; err == NULL && node != NULL; node = node->next)
     {
@@ -787,17 +825,12 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
       /* guess the target file for this node (unless already provided) */
       if (should_use_copy_name)
         {
-          if (target_parent_file == NULL)
-            target_parent_file = g_file_get_parent (target_file);
-          else
-            g_object_ref (target_parent_file);
           base_name = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_COPY_NAME));
           /* copy name is NULLable, so use display name for fallback */
           if (base_name == NULL)
             base_name = g_strdup (g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME));
           target_file = g_file_get_child (target_parent_file, base_name);
           g_free (base_name);
-          g_object_unref (target_parent_file);
         }
       else if (G_LIKELY (target_file == NULL))
         {
@@ -807,6 +840,44 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
         }
       else
         target_file = g_object_ref (target_file);
+
+      if (use_fat_name_scheme)
+        {
+          base_name = g_file_get_basename (target_file);
+          g_clear_object (&target_file);
+
+          /* replace invalid chars */
+          g_strdelimit (g_strchomp (base_name),
+                        "/:*?\"<>\\|",
+                        '_');
+
+          /* character 0~31 is invalid */
+          for (int i = 0; base_name[i] != '\0'; i++)
+            {
+              if (base_name[i] < 32)
+                base_name[i] = '_';
+            }
+
+          /* avoid reserved names */
+          if (g_regex_match (windows_reserved_name, base_name, 0, NULL))
+            {
+              gchar *tmp = base_name;
+              base_name = g_strconcat ("__", tmp, NULL);
+              g_free (tmp);
+            }
+
+          /* avoid filename that ends with '.' */
+          if (g_str_has_suffix (base_name, "."))
+            {
+              gchar *tmp = base_name;
+              base_name = g_strconcat (tmp, "___", NULL);
+              g_free (tmp);
+            }
+
+          target_file = g_file_get_child (target_parent_file, base_name);
+          g_free (base_name);
+        }
+
 
       /* update progress information */
       exo_job_info_message (EXO_JOB (job), "%s", g_file_info_get_display_name (info));
@@ -908,12 +979,17 @@ retry_remove:
         }
 
       /* release the guessed target file */
-      g_object_unref (target_file);
-      target_file = NULL;
+      g_clear_object (&target_file);
 
       /* release file info */
       g_object_unref (info);
     }
+
+  /* release parent file */
+  g_object_unref (target_parent_file);
+
+  /* release filesystem info */
+  g_clear_object (&fs_info);
 
   /* release the thumbnail cache */
   g_object_unref (thumbnail_cache);
