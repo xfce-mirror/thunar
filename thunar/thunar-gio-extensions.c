@@ -1002,6 +1002,30 @@ thunar_g_app_info_should_show (GAppInfo *info)
 
 
 
+/**
+ * thunar_g_task_return_pointer_to_callback
+ * @source_object : the source object which callback recieves.
+ * @return_pointer: a pointer to return.
+ * @callback      : a #GAsyncReadyCallback.
+ * @callback_data : a callback data.
+ * @result_destroy: a #GDestroyNotify called when @return_pointer is not recieved.
+ *
+ * A shorthand to use when an asynchronous operation needs to return early.
+ **/
+void
+thunar_g_task_return_pointer_to_callback (GObject            *source_object,
+                                          gpointer            return_pointer,
+                                          GAsyncReadyCallback callback,
+                                          gpointer            callback_data,
+                                          GDestroyNotify      result_destroy)
+{
+  GTask *task;
+  task = g_task_new (source_object, NULL, callback, callback_data);
+  g_task_return_pointer (task, return_pointer, result_destroy);
+}
+
+
+
 gboolean
 thunar_g_vfs_metadata_is_supported (void)
 {
