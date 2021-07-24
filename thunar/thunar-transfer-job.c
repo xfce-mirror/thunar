@@ -878,7 +878,6 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
           g_free (base_name);
         }
 
-
       /* update progress information */
       exo_job_info_message (EXO_JOB (job), "%s", g_file_info_get_display_name (info));
 
