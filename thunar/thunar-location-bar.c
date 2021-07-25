@@ -35,7 +35,7 @@ struct _ThunarLocationBarClass
 
   /* signals */
   void (*search) (void);
-    void (*search_update) (void);
+  void (*search_update) (void);
   void (*entry_done) (void);
   void (*reload_requested) (void);
 };
@@ -50,7 +50,7 @@ struct _ThunarLocationBar
   GtkWidget  *locationButtons;
 
   gboolean    is_searching;
-  gchar *search_query;
+  gchar      *search_query;
 };
 
 
@@ -437,6 +437,7 @@ thunar_location_bar_cancel_search (ThunarLocationBar *bar)
 void
 thunar_location_bar_update_search (ThunarLocationBar *bar)
 {
+  printf ("Emit update\n");
   bar->search_query = thunar_location_entry_get_search_query (THUNAR_LOCATION_ENTRY (bar->locationEntry));
   g_signal_emit_by_name (bar, "search-update");
 }
