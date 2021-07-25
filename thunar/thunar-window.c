@@ -1983,12 +1983,10 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
     {
       gchar *str = g_strjoin (NULL, "Search: ", thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (page)), NULL);
       thunar_window_start_open_location (window, str);
+      g_free (str);
     }
   else
-    {
-      printf ("No search query\n");
-      thunar_window_action_cancel_search (window);
-    }
+    thunar_window_action_cancel_search (window);
 }
 
 
@@ -2882,7 +2880,7 @@ thunar_window_start_open_location (ThunarWindow *window,
   if (initial_text != NULL && strncmp (initial_text, "Search: ", 8) == 0)
     {
       g_signal_connect_swapped (THUNAR_LOCATION_BAR (window->location_bar), "search-update", G_CALLBACK (thunar_window_update_search), window);
-      thunar_window_update_search (window);
+//      thunar_window_update_search (window);
     }
 }
 
@@ -2890,6 +2888,7 @@ thunar_window_start_open_location (ThunarWindow *window,
 
 void thunar_window_update_search (ThunarWindow *window)
 {
+  printf("UPDATE SEARCH\n");
   window->search_query = thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar));
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar)));
   if (window->search_query != NULL)
@@ -2905,7 +2904,7 @@ thunar_window_action_cancel_search (ThunarWindow *window)
 {
   g_assert (THUNAR_IS_LOCATION_BAR (window->location_bar));
 
-  thunar_location_bar_cancel_search (THUNAR_LOCATION_BAR (window->location_bar));
+  thunar_location_bar_cancel_search (THUNAR_LOCATION_BAR (window->location_bar)); /* FIXME: Looks like these causes the issue, in pathbar style it's ok */
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), NULL);
   gtk_widget_hide (window->catfish_search_button);
   thunar_launcher_set_searching (window->launcher, FALSE);
