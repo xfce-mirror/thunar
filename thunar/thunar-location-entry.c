@@ -336,6 +336,7 @@ thunar_location_entry_accept_focus (ThunarLocationEntry *location_entry,
   location_entry->is_searching = (initial_text != NULL && strncmp (initial_text, "Search: ", 8) == 0);
   if (location_entry->is_searching)
     {
+      g_signal_handlers_disconnect_matched (location_entry->path_entry, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, thunar_location_entry_update_search, NULL);
       g_signal_connect_swapped (location_entry->path_entry, "search-update", G_CALLBACK (thunar_location_entry_update_search), location_entry);
       g_signal_handlers_disconnect_by_func (location_entry->path_entry, G_CALLBACK (thunar_location_entry_emit_edit_done), location_entry);
     }

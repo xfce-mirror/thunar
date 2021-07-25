@@ -2873,6 +2873,8 @@ thunar_window_start_open_location (ThunarWindow *window,
 {
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
+  g_signal_handlers_disconnect_matched (THUNAR_LOCATION_BAR (window->location_bar), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, thunar_window_update_search, NULL);
+
   /* temporary show the location toolbar, even if it is normally hidden */
   gtk_widget_show (window->location_toolbar);
   thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text);
@@ -2880,7 +2882,7 @@ thunar_window_start_open_location (ThunarWindow *window,
   if (initial_text != NULL && strncmp (initial_text, "Search: ", 8) == 0)
     {
       g_signal_connect_swapped (THUNAR_LOCATION_BAR (window->location_bar), "search-update", G_CALLBACK (thunar_window_update_search), window);
-//      thunar_window_update_search (window);
+      thunar_window_update_search (window);
     }
 }
 
