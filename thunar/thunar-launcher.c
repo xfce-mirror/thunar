@@ -172,6 +172,7 @@ static void                    thunar_launcher_widget_destroyed           (Thuna
 static void                    thunar_launcher_action_open                (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_open_in_new_tabs    (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_open_in_new_windows (ThunarLauncher                 *launcher);
+static void                    thunar_launcher_action_open_location       (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_open_with_other     (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_set_default_app     (ThunarLauncher                 *launcher);
 static void                    thunar_launcher_action_sendto_desktop      (ThunarLauncher                 *launcher);
@@ -240,6 +241,8 @@ struct _ThunarLauncher
 
   /* Parent widget which holds the instance of the launcher */
   GtkWidget              *widget;
+
+  gboolean                searching;
 };
 
 static GQuark thunar_launcher_appinfo_quark;
@@ -266,6 +269,7 @@ static XfceGtkActionEntry thunar_launcher_action_entries[] =
     { THUNAR_LAUNCHER_ACTION_EXECUTE,          "<Actions>/ThunarLauncher/execute",                 "",                  XFCE_GTK_IMAGE_MENU_ITEM, NULL,                                   NULL,                                                                                            "system-run",           G_CALLBACK (thunar_launcher_action_open),                },
     { THUNAR_LAUNCHER_ACTION_OPEN_IN_TAB,      "<Actions>/ThunarLauncher/open-in-new-tab",         "<Primary><shift>P", XFCE_GTK_MENU_ITEM,       NULL,                                   NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_open_in_new_tabs),    },
     { THUNAR_LAUNCHER_ACTION_OPEN_IN_WINDOW,   "<Actions>/ThunarLauncher/open-in-new-window",      "<Primary><shift>O", XFCE_GTK_MENU_ITEM,       NULL,                                   NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_open_in_new_windows), },
+    { THUNAR_LAUNCHER_ACTION_OPEN_LOCATION,    "<Actions>/ThunarLauncher/open-location",           "",                  XFCE_GTK_MENU_ITEM,       N_ ("Open Item Location"),              NULL,                                                                                            NULL,                   G_CALLBACK (thunar_launcher_action_open_location),       },
     { THUNAR_LAUNCHER_ACTION_OPEN_WITH_OTHER,  "<Actions>/ThunarLauncher/open-with-other",         "",                  XFCE_GTK_MENU_ITEM,       N_ ("Open With Other _Application..."), N_ ("Choose another application with which to open the selected file"),                          NULL,                   G_CALLBACK (thunar_launcher_action_open_with_other),     },
     { THUNAR_LAUNCHER_ACTION_SET_DEFAULT_APP,  "<Actions>/ThunarStandardView/set-default-app",     "",                  XFCE_GTK_MENU_ITEM,       N_ ("Set _Default Application..."),     N_ ("Choose an application which should be used by default to open the selected file"),          NULL,                   G_CALLBACK (thunar_launcher_action_set_default_app),     },
 
@@ -460,6 +464,8 @@ thunar_launcher_init (ThunarLauncher *launcher)
   launcher->new_files_created_closure = g_cclosure_new_swap (G_CALLBACK (thunar_launcher_new_files_created), launcher, NULL);
   g_closure_ref (launcher->new_files_created_closure);
   g_closure_sink (launcher->new_files_created_closure);
+
+  launcher->searching = FALSE;
 }
 
 
@@ -1380,6 +1386,34 @@ thunar_launcher_action_open_in_new_windows (ThunarLauncher *launcher)
     return;
 
   thunar_launcher_open_selected_folders (launcher, FALSE);
+}
+
+
+void
+thunar_launcher_set_searching (ThunarLauncher *launcher,
+                               gboolean        b)
+{
+  launcher->searching = b;
+}
+
+
+
+static void
+thunar_launcher_action_open_location (ThunarLauncher *launcher)
+{
+  GList *lp;
+  GList *gfiles;
+
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  if (G_UNLIKELY (launcher->files_to_process == NULL))
+    return;
+
+  gfiles = NULL;
+  for (lp = launcher->files_to_process; lp != NULL; lp = lp->next)
+    gfiles = g_list_prepend (gfiles, thunar_file_get_file (THUNAR_FILE (lp->data)));
+
+  thunar_window_show_and_select_files_2 (THUNAR_WINDOW (launcher->widget), gfiles);
 }
 
 
@@ -3118,6 +3152,9 @@ thunar_launcher_append_open_section (ThunarLauncher *launcher,
         thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_OPEN_IN_TAB, FALSE);
       thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_OPEN_IN_WINDOW, FALSE);
     }
+
+  if (launcher->searching && launcher->n_files_to_process > 0)
+    thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_OPEN_LOCATION, FALSE);
 
   if (G_LIKELY (applications != NULL))
     {
