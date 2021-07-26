@@ -1981,6 +1981,9 @@ recursive_search (GList       *files,
   gchar        *uri;
 
   folder     = thunar_folder_get_for_file (directory);
+//  while (thunar_folder_get_loading (folder))
+//    ;
+//  printf("DONE\n");
   temp_files = thunar_folder_get_files (folder);
 
   for (; temp_files != NULL; temp_files = temp_files->next)
@@ -2012,7 +2015,7 @@ recursive_search (GList       *files,
       g_free (display_name_c);
     }
 
-  g_object_unref (folder);
+//  g_object_unref (folder);
 
   return files;
 }
