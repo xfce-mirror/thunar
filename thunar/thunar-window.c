@@ -2881,6 +2881,7 @@ thunar_window_start_open_location (ThunarWindow *window,
 
   if (initial_text != NULL && strncmp (initial_text, "Search: ", 8) == 0)
     {
+      thunar_launcher_set_searching (window->launcher, TRUE);
       g_signal_connect_swapped (THUNAR_LOCATION_BAR (window->location_bar), "search-update", G_CALLBACK (thunar_window_update_search), window);
       thunar_window_update_search (window);
     }
@@ -2906,7 +2907,7 @@ thunar_window_action_cancel_search (ThunarWindow *window)
 {
   g_assert (THUNAR_IS_LOCATION_BAR (window->location_bar));
 
-  thunar_location_bar_cancel_search (THUNAR_LOCATION_BAR (window->location_bar)); /* FIXME: Looks like these causes the issue, in pathbar style it's ok */
+  thunar_location_bar_cancel_search (THUNAR_LOCATION_BAR (window->location_bar));
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), NULL);
   gtk_widget_hide (window->catfish_search_button);
   thunar_launcher_set_searching (window->launcher, FALSE);
