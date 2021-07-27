@@ -1968,11 +1968,11 @@ thunar_list_model_get_folder (ThunarListModel *store)
 }
 
 
-GList*
-recursive_search (GList       *files,
+
+static GList*
+search_directory (GList       *files,
                   ThunarFile  *directory,
-                  gchar       *search_query_c,
-                  int          depth)
+                  gchar       *search_query_c)
 {
   ThunarFolder *folder;
   GList        *temp_files;
@@ -1985,12 +1985,6 @@ recursive_search (GList       *files,
 
   for (; temp_files != NULL; temp_files = temp_files->next)
     {
-      /* handle directories */
-      if (thunar_file_is_directory (temp_files->data) && depth > 0)
-        {
-          files = recursive_search (files, temp_files->data, search_query_c, depth - 1);
-//          continue; /* don't add directory in the results */
-        }
       /* don't allow duplicates for files that exist in `recent:///` */
       uri = thunar_file_dup_uri (temp_files->data);
       if (gtk_recent_manager_has_item (gtk_recent_manager_get_default(), uri) == TRUE)
@@ -2121,8 +2115,8 @@ thunar_list_model_set_folder (ThunarListModel *store,
           search_query_c = g_utf8_casefold (search_query, strlen (search_query));;
           files = NULL;
 
-          /* depth limited recursive search in the current folder */
-          files = recursive_search (files, thunar_folder_get_corresponding_file (folder), search_query_c, 2);
+          /* search the current folder */
+          files = search_directory (files, thunar_folder_get_corresponding_file (folder), search_query_c);
           /* search GtkRecent */
           for (lp = recent_infos; lp != NULL; lp = lp->next)
             {
