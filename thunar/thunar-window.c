@@ -173,6 +173,7 @@ static void      thunar_window_install_sidepane           (ThunarWindow         
                                                            GType                   type);
 static void      thunar_window_start_open_location        (ThunarWindow           *window,
                                                            const gchar            *initial_text);
+static void      thunar_window_update_search              (ThunarWindow           *window);
 static void      thunar_window_action_open_new_tab        (ThunarWindow           *window,
                                                            GtkWidget              *menu_item);
 static void      thunar_window_action_open_new_window     (ThunarWindow           *window,
@@ -363,7 +364,7 @@ struct _ThunarWindow
   GtkWidget              *view;
   GtkWidget              *statusbar;
 
-  /* search with catfish */
+  /* search */
   GtkWidget              *catfish_search_button;
   gchar                  *search_query;
 
@@ -466,7 +467,7 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     { THUNAR_WINDOW_ACTION_SWITCH_PREV_TAB,                "<Actions>/ThunarWindow/switch-previous-tab",             "<Primary>Page_Up",     XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Previous Tab"),          N_ ("Switch to Previous Tab"),                                                       "go-previous",             G_CALLBACK (thunar_window_action_switch_previous_tab), },
     { THUNAR_WINDOW_ACTION_SWITCH_NEXT_TAB,                "<Actions>/ThunarWindow/switch-next-tab",                 "<Primary>Page_Down",   XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Next Tab"),              N_ ("Switch to Next Tab"),                                                           "go-next",                 G_CALLBACK (thunar_window_action_switch_next_tab),     },
     { THUNAR_WINDOW_ACTION_SEARCH,                         "<Actions>/ThunarWindow/search",                          "<Primary>f",           XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Search for files"),       N_ ("Open a new tab for the displayed location"),                                    "",                        G_CALLBACK (thunar_window_action_search),              },
-    { THUNAR_WINDOW_ACTION_CANCEL_SEARCH,                  "<Actions>/ThunarWindow/cancel-search",                   "Escape",               XFCE_GTK_MENU_ITEM,       N_ ("Cancel search for files"),N_ ("Open a new tab for the displayed location"),                                    "",                        G_CALLBACK (thunar_window_action_cancel_search),       },
+    { THUNAR_WINDOW_ACTION_CANCEL_SEARCH,                  "<Actions>/ThunarWindow/cancel-search",                   "Escape",               XFCE_GTK_MENU_ITEM,       N_ ("Cancel search for files"),NULL,                                                                                "",                        G_CALLBACK (thunar_window_action_cancel_search),       },
     { 0,                                                   "<Actions>/ThunarWindow/open-file-menu",                  "F10",                  0,                        NULL,                          NULL,                                                                                NULL,                      G_CALLBACK (thunar_window_action_open_file_menu),      },
 };
 
@@ -920,12 +921,13 @@ thunar_window_init (ThunarWindow *window)
   /* synchronise the "directory-specific-settings" property with the global "misc-directory-specific-settings" property */
   g_object_bind_property (G_OBJECT (window->preferences), "misc-directory-specific-settings", G_OBJECT (window), "directory-specific-settings", G_BINDING_SYNC_CREATE);
 
-  /* setup a new statusbar */
+  /* setup the `Show More...` button that appears at the bottom of the view after a search is completed */
   window->catfish_search_button = gtk_button_new_with_label ("Show More...");
   gtk_grid_attach (GTK_GRID (window->view_box), window->catfish_search_button, 0, 3, 1, 1);
   g_signal_connect_swapped (window->catfish_search_button, "clicked", G_CALLBACK (thunar_window_catfish_dialog_configure), window);
   gtk_widget_hide (window->catfish_search_button);
 
+  /* setup a new statusbar */
   window->statusbar = thunar_statusbar_new ();
   gtk_widget_set_hexpand (window->statusbar, TRUE);
   gtk_grid_attach (GTK_GRID (window->view_box), window->statusbar, 0, 4, 1, 1);
@@ -952,6 +954,8 @@ thunar_window_init (ThunarWindow *window)
 
   /* update recent */
   g_signal_connect (G_OBJECT (gtk_recent_manager_get_default()), "changed", G_CALLBACK (thunar_window_recent_reload), window);
+
+  window->search_query = NULL;
 }
 
 
@@ -1016,7 +1020,7 @@ thunar_window_show_and_select_files (ThunarWindow *window,
   restore_and_show_in_progress = thunar_file_is_trash (window->current_directory) && thunar_g_file_is_trashed (files_to_select->data) == FALSE;
   if (restore_and_show_in_progress)
     {
-      thunar_window_show_and_select_files_2 (window, files_to_select);
+      thunar_window_open_files_in_location (window, files_to_select);
     }
   else
     {
@@ -1027,8 +1031,8 @@ thunar_window_show_and_select_files (ThunarWindow *window,
 
 
 void
-thunar_window_show_and_select_files_2 (ThunarWindow *window,
-                                       GList        *files_to_select)
+thunar_window_open_files_in_location (ThunarWindow *window,
+                                      GList        *files_to_select)
 {
   ThunarApplication *application;
   GHashTable        *restore_show_table; /* <string, GList<GFile*>> */
@@ -1979,13 +1983,14 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
 
   gtk_widget_grab_focus (page);
 
+  /* if the view has an ongoing search operation take that into account, otherwise cancel the current search (if there is one) */
   if (thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (page)) != NULL)
     {
       gchar *str = g_strjoin (NULL, "Search: ", thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (page)), NULL);
       thunar_window_start_open_location (window, str);
       g_free (str);
     }
-  else
+  else if (window->search_query != NULL)
     thunar_window_action_cancel_search (window);
 }
 
@@ -2552,10 +2557,6 @@ thunar_window_notebook_set_current_tab (ThunarWindow *window,
                                         gint          tab)
 {
   gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected), tab);
-  if (window->notebook_selected != NULL && gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected), tab) != NULL
-  && thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected), tab))))
-    printf ("%s\n", thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (gtk_notebook_get_nth_page (GTK_NOTEBOOK (window->notebook_selected), tab))));
-//  thunar_window_action_search (window);
 }
 
 
@@ -2873,12 +2874,14 @@ thunar_window_start_open_location (ThunarWindow *window,
 {
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
+  /* disconnect signal handler before the signal is emitted */
   g_signal_handlers_disconnect_matched (THUNAR_LOCATION_BAR (window->location_bar), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, thunar_window_update_search, NULL);
 
   /* temporary show the location toolbar, even if it is normally hidden */
   gtk_widget_show (window->location_toolbar);
   thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text);
 
+  /* setup a search if required */
   if (initial_text != NULL && strncmp (initial_text, "Search: ", 8) == 0)
     {
       thunar_launcher_set_searching (window->launcher, TRUE);
@@ -2889,7 +2892,8 @@ thunar_window_start_open_location (ThunarWindow *window,
 
 
 
-void thunar_window_update_search (ThunarWindow *window)
+static void
+thunar_window_update_search (ThunarWindow *window)
 {
   window->search_query = thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar));
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar)));
@@ -2910,14 +2914,7 @@ thunar_window_action_cancel_search (ThunarWindow *window)
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), NULL);
   gtk_widget_hide (window->catfish_search_button);
   thunar_launcher_set_searching (window->launcher, FALSE);
-}
-
-
-
-gboolean
-thunar_window_action_is_searching (ThunarWindow *window)
-{
-  return window->search_query != NULL;
+  window->search_query = NULL;
 }
 
 

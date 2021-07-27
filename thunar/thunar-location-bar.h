@@ -41,8 +41,6 @@ void       thunar_location_bar_request_entry (ThunarLocationBar *bar, const gcha
 
 void       thunar_location_bar_cancel_search (ThunarLocationBar *bar);
 
-void       thunar_location_bar_update_search (ThunarLocationBar *bar);
-
 gchar*     thunar_location_bar_get_search_query (ThunarLocationBar *entry);
 
 G_END_DECLS;

@@ -39,7 +39,6 @@ GType      thunar_location_entry_get_type         (void) G_GNUC_CONST;
 void       thunar_location_entry_accept_focus     (ThunarLocationEntry *entry, const gchar *initial_text);
 
 void       thunar_location_entry_cancel_search    (ThunarLocationEntry *entry);
-void       thunar_location_entry_update_search    (ThunarLocationEntry *entry);
 gchar     *thunar_location_entry_get_search_query (ThunarLocationEntry *entry);
 
 G_END_DECLS;

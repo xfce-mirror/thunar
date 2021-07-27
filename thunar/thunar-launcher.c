@@ -1413,7 +1413,7 @@ thunar_launcher_action_open_location (ThunarLauncher *launcher)
   for (lp = launcher->files_to_process; lp != NULL; lp = lp->next)
     gfiles = g_list_prepend (gfiles, thunar_file_get_file (THUNAR_FILE (lp->data)));
 
-  thunar_window_show_and_select_files_2 (THUNAR_WINDOW (launcher->widget), gfiles);
+  thunar_window_open_files_in_location (THUNAR_WINDOW (launcher->widget), gfiles);
 }
 
 
