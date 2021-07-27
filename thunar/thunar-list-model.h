@@ -42,7 +42,7 @@ ThunarFolder    *thunar_list_model_get_folder             (ThunarListModel  *sto
 void             thunar_list_model_set_folder             (ThunarListModel  *store,
                                                            ThunarFolder     *folder,
                                                            gchar            *search_query,
-                                                           gboolean          ignore);
+                                                           gboolean          bypass_same_folder_check);
 
 void             thunar_list_model_set_folders_first      (ThunarListModel  *store,
                                                            gboolean          folders_first);
