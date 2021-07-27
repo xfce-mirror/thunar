@@ -132,7 +132,7 @@ struct _ThunarLocationButtonsClass
   GtkContainerClass __parent__;
 
   void (*entry_requested) (const gchar *initial_text);
-  void (*search) (void);
+  void (*search)          (void);
 };
 
 struct _ThunarLocationButtons
@@ -210,12 +210,12 @@ thunar_location_buttons_class_init (ThunarLocationButtonsClass *klass)
                 1,
                 G_TYPE_STRING);
 
-  /**
-  * ThunarLocationEntry::search:
-  * @location_entry : a #ThunarLocationEntry.
-  *
-  * Emitted by @location_entry whenever the user clicked a "reload" button
-  **/
+    /**
+     * ThunarLocationButtons::search:
+     * @location_buttons : a #ThunarLocationButtons.
+     *
+     * Emitted by @location_buttons whenever the user clicked the "search" button
+     **/
     g_signal_new ("search",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,

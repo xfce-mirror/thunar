@@ -213,11 +213,11 @@ thunar_path_entry_class_init (ThunarPathEntryClass *klass)
                                                              1, G_MAXINT, 16, EXO_PARAM_READABLE));
 
   /**
-  * ThunarLocationEntry::search-update:
-  * @path_entry : a #ThunarPathEntry.
-  *
-  * Emitted by @path_entry whenever the search query in the path entry is updated.
-  **/
+   * ThunarLocationEntry::search-update:
+   * @path_entry : a #ThunarPathEntry.
+   *
+   * Emitted by @path_entry whenever the search query in the path entry is updated.
+   **/
   g_signal_new ("search-update",
                 G_TYPE_FROM_CLASS (klass),
                 G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,

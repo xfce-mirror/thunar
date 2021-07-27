@@ -81,6 +81,7 @@ static void         thunar_location_bar_settings_changed           (ThunarLocati
 static void         thunar_location_bar_on_enry_edit_done          (ThunarLocationEntry  *entry,
                                                                     ThunarLocationBar    *bar);
 static void         thunar_location_bar_search                     (ThunarLocationBar    *bar);
+static void         thunar_location_bar_update_search              (ThunarLocationBar    *bar);
 
 
 
@@ -129,11 +130,11 @@ thunar_location_bar_class_init (ThunarLocationBarClass *klass)
                 G_TYPE_NONE, 0);
 
   /**
- * ThunarLocationBar::search:
- * @location_bar : a #ThunarLocationBar.
- *
- * Emitted by @location_bar whenever the user clicked a "reload" button
- **/
+   * ThunarLocationBar::search:
+   * @location_bar : a #ThunarLocationBar.
+   *
+   * Emitted by @location_bar after being emitted by its location entry.
+   **/
   g_signal_new ("search",
                 G_TYPE_FROM_CLASS (klass),
                 G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
@@ -143,11 +144,11 @@ thunar_location_bar_class_init (ThunarLocationBarClass *klass)
                 G_TYPE_NONE, 0);
 
     /**
-  * ThunarLocationBar::search:
-  * @location_bar : a #ThunarLocationBar.
-  *
-  * Emitted by @location_bar whenever the user clicked a "reload" button
-  **/
+    * ThunarLocationBar::search-update:
+    * @location_bar : a #ThunarLocationBar.
+    *
+    * Emitted by @location_bar after being emitted by its location entry/buttons.
+    **/
     g_signal_new ("search-update",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
@@ -366,13 +367,9 @@ thunar_location_bar_request_entry (ThunarLocationBar *bar,
   _thunar_return_if_fail (child != NULL && GTK_IS_WIDGET (child));
 
   if (initial_text != NULL && strncmp (initial_text, "Search: ", 8) == 0)
-    {
-      bar->is_searching = TRUE;
-    }
+    bar->is_searching = TRUE;
   else
-    {
-      bar->is_searching = FALSE;
-    }
+    bar->is_searching = FALSE;
 
   if (THUNAR_IS_LOCATION_ENTRY (child))
     {
@@ -421,12 +418,26 @@ thunar_location_bar_settings_changed (ThunarLocationBar *bar)
 static void
 thunar_location_bar_search (ThunarLocationBar *bar)
 {
-//  thunar_location_bar_request_entry (bar, "Search: ");
   g_signal_emit_by_name (bar, "search");
 }
 
 
 
+static void
+thunar_location_bar_update_search (ThunarLocationBar *bar)
+{
+  bar->search_query = thunar_location_entry_get_search_query (THUNAR_LOCATION_ENTRY (bar->locationEntry));
+  g_signal_emit_by_name (bar, "search-update");
+}
+
+
+
+/**
+ * thunar_location_bar_cancel_search
+ * @bar          : The #ThunarLocationBar
+ *
+ * Cancels the search for the location bar and its children.
+ */
 void
 thunar_location_bar_cancel_search (ThunarLocationBar *bar)
 {
@@ -436,12 +447,7 @@ thunar_location_bar_cancel_search (ThunarLocationBar *bar)
     thunar_location_entry_cancel_search (THUNAR_LOCATION_ENTRY (bar->locationEntry));
 }
 
-void
-thunar_location_bar_update_search (ThunarLocationBar *bar)
-{
-  bar->search_query = thunar_location_entry_get_search_query (THUNAR_LOCATION_ENTRY (bar->locationEntry));
-  g_signal_emit_by_name (bar, "search-update");
-}
+
 
 gchar*
 thunar_location_bar_get_search_query (ThunarLocationBar *entry)

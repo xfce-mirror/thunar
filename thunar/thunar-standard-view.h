@@ -154,7 +154,6 @@ struct _ThunarStandardView
   GBinding                  *loading_binding;
   gboolean                   loading;
   GtkAccelGroup             *accel_group;
-  gchar                     *search_query;
 
   ThunarStandardViewPrivate *priv;
 };

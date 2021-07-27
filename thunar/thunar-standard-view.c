@@ -351,6 +351,9 @@ struct _ThunarStandardViewPrivate
 
   /* current sort_order (GTK_SORT_ASCENDING || GTK_SORT_DESCENDING) */
   GtkSortType             sort_order;
+
+  /* current search query, used to allow switching between views with different (or NULL) search queries */
+  gchar                  *search_query;
 };
 
 static XfceGtkActionEntry thunar_standard_view_action_entries[] =
@@ -727,7 +730,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
 
   standard_view->accel_group = NULL;
 
-  standard_view->search_query = NULL;
+  standard_view->priv->search_query = NULL;
 }
 
 static void thunar_standard_view_store_sort_column  (ThunarStandardView *standard_view)
@@ -966,9 +969,9 @@ thunar_standard_view_get_property (GObject    *object,
       break;
 
     case PROP_DISPLAY_NAME:
-      if (THUNAR_STANDARD_VIEW (object)->search_query != NULL)
+      if (THUNAR_STANDARD_VIEW (object)->priv->search_query != NULL)
         {
-          gchar *label = g_strjoin (NULL, "Searching for: ", THUNAR_STANDARD_VIEW (object)->search_query, NULL);
+          gchar *label = g_strjoin (NULL, "Searching for: ", THUNAR_STANDARD_VIEW (object)->priv->search_query, NULL);
           g_value_take_string (value, label);
         }
       else
@@ -4062,18 +4065,33 @@ _thunar_standard_view_open_on_middle_click (ThunarStandardView *standard_view,
 
 
 
+/**
+ * thunar_standard_view_set_searching:
+ * @standard_view : a #ThunarStandardView.
+ * @search_query : the search string.
+ *
+ * If @search_query is not NULL a search is initialized for this view. If it is NULL and the view is displaying
+ * the results of a previous search it reverts to its normal contents.
+ **/
 void
 thunar_standard_view_set_searching (ThunarStandardView *standard_view,
                                     gchar              *search_query)
 {
-  g_free (standard_view->search_query);
-  standard_view->search_query = g_strdup (search_query);
+  /* can be called from a change in the path entry when the tab switches and a new directory is set
+   * which in turn sets a new location */
+  if (standard_view == NULL)
+    return;
 
+  /* save the new query (used for switching between views) */
+  g_free (standard_view->priv->search_query);
+  standard_view->priv->search_query = g_strdup (search_query);
+
+  /* initiate the search */
   g_object_ref (G_OBJECT (thunar_list_model_get_folder (standard_view->model)));
   thunar_list_model_set_folder (standard_view->model, thunar_list_model_get_folder (standard_view->model), search_query, TRUE);
   g_object_unref (G_OBJECT (thunar_list_model_get_folder (standard_view->model)));
 
-//  thunar_standard_view_reload (THUNAR_VIEW (standard_view), FALSE);
+  /* change the display name in the tab */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_DISPLAY_NAME]);
 }
 
@@ -4082,5 +4100,5 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
 gchar*
 thunar_standard_view_get_search_query (ThunarStandardView *standard_view)
 {
-  return standard_view->search_query;
+  return standard_view->priv->search_query;
 }
