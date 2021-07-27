@@ -2891,7 +2891,6 @@ thunar_window_start_open_location (ThunarWindow *window,
 
 void thunar_window_update_search (ThunarWindow *window)
 {
-  printf("UPDATE SEARCH\n");
   window->search_query = thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar));
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar)));
   if (window->search_query != NULL)
