@@ -1977,7 +1977,7 @@ search_directory (GList       *files,
   ThunarFolder *folder;
   GList        *temp_files;
   const gchar  *display_name;
-  gchar        *display_name_c;
+  gchar        *display_name_c; /* converted to ignore case */
   gchar        *uri;
 
   folder     = thunar_folder_get_for_file (directory);
@@ -2015,14 +2015,16 @@ search_directory (GList       *files,
 
 /**
  * thunar_list_model_set_folder:
- * @store  : a valid #ThunarListModel.
- * @folder : a #ThunarFolder or %NULL.
+ * @store                       : a valid #ThunarListModel.
+ * @folder                      : a #ThunarFolder or %NULL.
+ * @search_query                : a #string or %NULL.
+ * @bypass_same_folder_check    : a #gboolean that controls whether to return if @folder is the same with the current folder
  **/
 void
 thunar_list_model_set_folder (ThunarListModel *store,
                               ThunarFolder    *folder,
                               gchar           *search_query,
-                              gboolean         ignore)
+                              gboolean         bypass_same_folder_check)
 {
   GtkTreePath   *path;
   gboolean       has_handler;
@@ -2035,7 +2037,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
   _thunar_return_if_fail (folder == NULL || THUNAR_IS_FOLDER (folder));
 
   /* check if we're not already using that folder */
-  if (G_UNLIKELY (store->folder == folder && ignore == FALSE))
+  if (G_UNLIKELY (store->folder == folder && bypass_same_folder_check == FALSE))
     return;
 
   /* unlink from the previously active folder (if any) */
@@ -2092,13 +2094,14 @@ thunar_list_model_set_folder (ThunarListModel *store,
     {
       g_object_ref (G_OBJECT (folder));
 
+      /* free search files */
       if (store->search_files != NULL)
         {
           thunar_g_list_free_full (store->search_files);
           store->search_files = NULL;
         }
 
-      /* get the already loaded files */
+      /* get the already loaded files or search for files matching the search_query */
       if (search_query == NULL)
         {
           files = thunar_folder_get_files (folder);
@@ -2107,9 +2110,9 @@ thunar_list_model_set_folder (ThunarListModel *store,
         {
           GList       *recent_infos;
           GList       *lp;
-          gchar       *search_query_c;
+          gchar       *search_query_c; /* converted to ignore case */
           const gchar *display_name;
-          gchar       *display_name_c;
+          gchar       *display_name_c; /* converted to ignore case */
 
           recent_infos   = gtk_recent_manager_get_items (gtk_recent_manager_get_default ());
           search_query_c = g_utf8_casefold (search_query, strlen (search_query));;
