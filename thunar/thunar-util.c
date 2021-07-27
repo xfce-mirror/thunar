@@ -656,6 +656,7 @@ thunar_setup_display_cb (gpointer data)
 }
 
 
+
 /**
  * thunar_util_next_new_file_name
  * @dir : the directory to search for a free filename

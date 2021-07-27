@@ -34,8 +34,10 @@ struct _ThunarLocationBarClass
   GtkBinClass __parent__;
 
   /* signals */
-  void (*reload_requested) (void);
+  void (*search) (void);
+  void (*search_update) (void);
   void (*entry_done) (void);
+  void (*reload_requested) (void);
 };
 
 struct _ThunarLocationBar
@@ -46,6 +48,9 @@ struct _ThunarLocationBar
 
   GtkWidget  *locationEntry;
   GtkWidget  *locationButtons;
+
+  gboolean    is_searching;
+  gchar      *search_query;
 };
 
 
@@ -75,6 +80,7 @@ static GtkWidget   *thunar_location_bar_install_widget             (ThunarLocati
 static void         thunar_location_bar_settings_changed           (ThunarLocationBar    *bar);
 static void         thunar_location_bar_on_enry_edit_done          (ThunarLocationEntry  *entry,
                                                                     ThunarLocationBar    *bar);
+static void         thunar_location_bar_search                     (ThunarLocationBar    *bar);
 
 
 
@@ -121,6 +127,35 @@ thunar_location_bar_class_init (ThunarLocationBarClass *klass)
                 NULL, NULL,
                 NULL,
                 G_TYPE_NONE, 0);
+
+  /**
+ * ThunarLocationBar::search:
+ * @location_bar : a #ThunarLocationBar.
+ *
+ * Emitted by @location_bar whenever the user clicked a "reload" button
+ **/
+  g_signal_new ("search",
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                G_STRUCT_OFFSET (ThunarLocationBarClass, search),
+                NULL, NULL,
+                NULL,
+                G_TYPE_NONE, 0);
+
+    /**
+  * ThunarLocationBar::search:
+  * @location_bar : a #ThunarLocationBar.
+  *
+  * Emitted by @location_bar whenever the user clicked a "reload" button
+  **/
+    g_signal_new ("search-update",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                  G_STRUCT_OFFSET (ThunarLocationBarClass, search_update),
+                  NULL, NULL,
+                  NULL,
+                  G_TYPE_NONE, 0);
+
 }
 
 
@@ -253,6 +288,7 @@ thunar_location_bar_install_widget (ThunarLocationBar    *bar,
         {
           bar->locationEntry = gtk_widget_new (THUNAR_TYPE_LOCATION_ENTRY, "current-directory", NULL, NULL);
           g_object_ref (bar->locationEntry);
+          g_signal_connect_swapped (bar->locationEntry, "search", G_CALLBACK (thunar_location_bar_search), bar);
           g_signal_connect_swapped (bar->locationEntry, "change-directory", G_CALLBACK (thunar_navigator_change_directory), THUNAR_NAVIGATOR (bar));
           g_signal_connect_swapped (bar->locationEntry, "open-new-tab", G_CALLBACK (thunar_navigator_open_new_tab), THUNAR_NAVIGATOR (bar));
         }
@@ -264,6 +300,7 @@ thunar_location_bar_install_widget (ThunarLocationBar    *bar,
         {
           bar->locationButtons = gtk_widget_new (THUNAR_TYPE_LOCATION_BUTTONS, "current-directory", NULL, NULL);
           g_object_ref (bar->locationButtons);
+          g_signal_connect_swapped (bar->locationButtons, "search", G_CALLBACK (thunar_location_bar_search), bar);
           g_signal_connect_swapped (bar->locationButtons, "entry-requested", G_CALLBACK (thunar_location_bar_request_entry), bar);
           g_signal_connect_swapped (bar->locationButtons, "change-directory", G_CALLBACK (thunar_navigator_change_directory), THUNAR_NAVIGATOR (bar));
           g_signal_connect_swapped (bar->locationButtons, "open-new-tab", G_CALLBACK (thunar_navigator_open_new_tab), THUNAR_NAVIGATOR (bar));
@@ -328,15 +365,28 @@ thunar_location_bar_request_entry (ThunarLocationBar *bar,
 
   _thunar_return_if_fail (child != NULL && GTK_IS_WIDGET (child));
 
+  if (initial_text != NULL && strncmp (initial_text, "Search: ", 8) == 0)
+    {
+      bar->is_searching = TRUE;
+    }
+  else
+    {
+      bar->is_searching = FALSE;
+    }
+
   if (THUNAR_IS_LOCATION_ENTRY (child))
     {
       /* already have an entry */
+      g_signal_handlers_disconnect_matched (THUNAR_LOCATION_ENTRY (child), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, thunar_location_bar_update_search, NULL);
       thunar_location_entry_accept_focus (THUNAR_LOCATION_ENTRY (child), initial_text);
+      g_signal_connect_swapped (THUNAR_LOCATION_ENTRY (child), "search-update", G_CALLBACK (thunar_location_bar_update_search), bar);
     }
   else
     {
       /* not an entry => temporarily replace it */
       child = thunar_location_bar_install_widget (bar, THUNAR_TYPE_LOCATION_ENTRY);
+      g_signal_handlers_disconnect_matched (THUNAR_LOCATION_ENTRY (child), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, thunar_location_bar_update_search, NULL);
+      g_signal_connect_swapped (THUNAR_LOCATION_ENTRY (child), "search-update", G_CALLBACK (thunar_location_bar_update_search), bar);
       thunar_location_entry_accept_focus (THUNAR_LOCATION_ENTRY (child), initial_text);
     }
 
@@ -365,5 +415,40 @@ thunar_location_bar_settings_changed (ThunarLocationBar *bar)
 
   thunar_location_bar_install_widget (bar, type);
 }
+
+
+
+static void
+thunar_location_bar_search (ThunarLocationBar *bar)
+{
+//  thunar_location_bar_request_entry (bar, "Search: ");
+  g_signal_emit_by_name (bar, "search");
+}
+
+
+
+void
+thunar_location_bar_cancel_search (ThunarLocationBar *bar)
+{
+  bar->is_searching = FALSE;
+
+  if (bar->locationEntry != NULL)
+    thunar_location_entry_cancel_search (THUNAR_LOCATION_ENTRY (bar->locationEntry));
+}
+
+void
+thunar_location_bar_update_search (ThunarLocationBar *bar)
+{
+  bar->search_query = thunar_location_entry_get_search_query (THUNAR_LOCATION_ENTRY (bar->locationEntry));
+  g_signal_emit_by_name (bar, "search-update");
+}
+
+gchar*
+thunar_location_bar_get_search_query (ThunarLocationBar *entry)
+{
+  return entry->search_query;
+}
+
+
 
 
