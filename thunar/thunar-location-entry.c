@@ -35,6 +35,8 @@
 #include <thunar/thunar-path-entry.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-shortcuts-model.h>
+#include <thunar/thunar-util.h>
+#include <thunar/thunar-folder.h>
 
 
 
@@ -67,6 +69,12 @@ static gboolean    thunar_location_entry_button_press_event       (GtkWidget    
                                                                    ThunarLocationEntry      *location_entry);
 static gboolean    thunar_location_entry_reset                    (ThunarLocationEntry      *location_entry);
 static void        thunar_location_entry_emit_edit_done           (ThunarLocationEntry      *entry);
+static void        thunar_location_entry_search                   (GtkEntry                 *entry,
+                                                                   GtkEntryIconPosition      icon_pos,
+                                                                   GdkEvent                 *event,
+                                                                   ThunarLocationEntry      *location_entry);
+static void        thunar_location_entry_update_search            (ThunarLocationEntry      *entry);
+
 
 
 
@@ -78,8 +86,9 @@ struct _ThunarLocationEntryClass
   gboolean (*reset) (ThunarLocationEntry *location_entry);
 
   /* externally visible signals */
-  void (*reload_requested) (void);
-  void (*edit_done) (void);
+  void (*search)        (void);
+  void (*search_update) (void);
+  void (*edit_done)     (void);
 };
 
 struct _ThunarLocationEntry
@@ -90,6 +99,8 @@ struct _ThunarLocationEntry
   GtkWidget    *path_entry;
 
   gboolean      right_click_occurred;
+  gboolean      is_searching;
+  gchar        *search_query;
 };
 
 
@@ -150,6 +161,36 @@ thunar_location_entry_class_init (ThunarLocationEntryClass *klass)
                 NULL,
                 G_TYPE_NONE, 0);
 
+  /**
+   * ThunarLocationEntry::search:
+   * @location_entry : a #ThunarLocationEntry.
+   *
+   * Emitted by @location_entry whenever the user clicked the "search" button.
+   **/
+  g_signal_new ("search",
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                G_STRUCT_OFFSET (ThunarLocationEntryClass, search),
+                NULL, NULL,
+                NULL,
+                G_TYPE_NONE, 0);
+
+  /**
+   * ThunarLocationEntry::search:
+   * @location_entry : a #ThunarLocationEntry.
+   *
+   * Emitted by @location_entry whenever the path_entry (which is a child of the @location_entry) emits
+   * a "search-update" signal. In other words when the search query has changed.
+   **/
+  g_signal_new ("search-update",
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                G_STRUCT_OFFSET (ThunarLocationEntryClass, search_update),
+                NULL, NULL,
+                NULL,
+                G_TYPE_NONE, 0);
+
+
   /* setup the key bindings for the location entry */
   binding_set = gtk_binding_set_by_class (klass);
   gtk_binding_entry_add_signal (binding_set, GDK_KEY_Escape, 0, "reset", 0);
@@ -179,8 +220,13 @@ thunar_location_entry_init (ThunarLocationEntry *location_entry)
   gtk_box_pack_start (GTK_BOX (location_entry), location_entry->path_entry, TRUE, TRUE, 0);
   gtk_widget_show (location_entry->path_entry);
 
-  /* make sure the edit-done signal is emitted upon moving the focus somewhere else */
-  g_signal_connect_swapped (location_entry->path_entry, "focus-out-event", G_CALLBACK (thunar_location_entry_emit_edit_done), location_entry);
+  /* put search button in entry */
+  gtk_entry_set_icon_from_icon_name (GTK_ENTRY (location_entry->path_entry),
+                                     GTK_ENTRY_ICON_SECONDARY, "system-search-symbolic");
+  gtk_entry_set_icon_tooltip_text (GTK_ENTRY (location_entry->path_entry),
+                                   GTK_ENTRY_ICON_SECONDARY, _("Reload the current folder"));
+  g_signal_connect (G_OBJECT (location_entry->path_entry), "icon-release",
+                    G_CALLBACK (thunar_location_entry_search), location_entry);
 
   /* ...except if it is grabbed by the context menu */
   location_entry->right_click_occurred = FALSE;
@@ -282,6 +328,20 @@ thunar_location_entry_accept_focus (ThunarLocationEntry *location_entry,
 {
   /* give the keyboard focus to the path entry */
   gtk_widget_grab_focus (location_entry->path_entry);
+
+  /* setup search if the initial_text signifies a search operation, otherwise setup location editing */
+  location_entry->is_searching = (initial_text != NULL && strncmp (initial_text, "Search: ", 8) == 0);
+  if (location_entry->is_searching)
+    {
+      g_signal_handlers_disconnect_matched (location_entry->path_entry, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, thunar_location_entry_update_search, NULL);
+      g_signal_connect_swapped (location_entry->path_entry, "search-update", G_CALLBACK (thunar_location_entry_update_search), location_entry);
+      g_signal_handlers_disconnect_by_func (location_entry->path_entry, G_CALLBACK (thunar_location_entry_emit_edit_done), location_entry);
+    }
+  else
+    {
+      /* make sure the edit-done signal is emitted upon moving the focus somewhere else */
+      g_signal_connect_swapped (location_entry->path_entry, "focus-out-event", G_CALLBACK (thunar_location_entry_emit_edit_done), location_entry);
+    }
 
   /* check if we have an initial text for the location bar */
   if (G_LIKELY (initial_text != NULL))
@@ -436,12 +496,69 @@ static void
 thunar_location_entry_emit_edit_done (ThunarLocationEntry *entry)
 {
   /* do not emit signal if the context menu was opened */
-  if (entry->right_click_occurred == FALSE)
+  if (entry->right_click_occurred == FALSE && entry->is_searching == FALSE)
     {
       g_signal_emit_by_name (entry, "edit-done");
     }
 
   entry->right_click_occurred = FALSE;
 }
+
+
+
+/**
+ * thunar_location_entry_cancel_search
+ * @entry          : The #ThunarLocationEntry
+ *
+ * Cancels the search for the location entry and its path entry.
+ */
+void
+thunar_location_entry_cancel_search (ThunarLocationEntry *entry)
+{
+  ThunarFolder *folder = thunar_folder_get_for_file (thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (entry)));
+  thunar_folder_reload (folder, TRUE);
+  g_object_unref (folder);
+
+  entry->is_searching = FALSE;
+  entry->right_click_occurred = FALSE;
+  thunar_location_entry_emit_edit_done (entry);
+
+  thunar_path_entry_cancel_search (THUNAR_PATH_ENTRY (entry->path_entry));
+}
+
+
+
+static void
+thunar_location_entry_update_search (ThunarLocationEntry *entry)
+{
+  g_free (entry->search_query);
+  entry->search_query = thunar_path_entry_get_search_query (THUNAR_PATH_ENTRY (entry->path_entry));
+  g_signal_emit_by_name (entry, "search-update");
+}
+
+
+
+gchar*
+thunar_location_entry_get_search_query (ThunarLocationEntry *entry)
+{
+  return entry->search_query;
+}
+
+
+
+static void
+thunar_location_entry_search (GtkEntry            *entry,
+                              GtkEntryIconPosition icon_pos,
+                              GdkEvent            *event,
+                              ThunarLocationEntry *location_entry)
+{
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_ENTRY (location_entry));
+
+  if (icon_pos == GTK_ENTRY_ICON_SECONDARY)
+    {
+      g_signal_emit_by_name (location_entry, "search");
+    }
+}
+
 
 
