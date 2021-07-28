@@ -705,7 +705,16 @@ thunar_g_file_copy (GFile                *source,
 
   if (!use_partial)
     {
-      return g_file_copy (source, destination, flags, cancellable, progress_callback, progress_callback_data, error);
+      success = g_file_copy (source, destination, flags, cancellable, progress_callback, progress_callback_data, error);
+
+      /* try to remove incomplete file. */
+      /* failure is expected so error is ignored */
+      /* it must be triggered if cancelled */
+      /* thus cancellable is also ignored */
+      if (!success)
+        g_file_delete (destination, NULL, NULL);
+
+      return success;
     }
 
   /* check destination */
@@ -741,10 +750,19 @@ thunar_g_file_copy (GFile                *source,
   /* copy file to .partial */
   success = g_file_copy (source, partial, flags, cancellable, progress_callback, progress_callback_data, error);
 
-  /* rename .partial if done without problem */
   if (success)
     {
+      /* rename .partial if done without problem */
       success = (g_file_set_display_name (partial, base_name, NULL, error) != NULL);
+    }
+
+  if (!success)
+    {
+      /* try to remove incomplete file. */
+      /* failure is expected so error is ignored */
+      /* it must be triggered if cancelled */
+      /* thus cancellable is also ignored */
+      g_file_delete (partial, NULL, NULL);
     }
 
   g_clear_object (&partial);
