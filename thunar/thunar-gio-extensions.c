@@ -891,6 +891,39 @@ thunar_g_file_list_get_parents (GList *file_list)
 
 
 
+/**
+ * thunar_g_file_is_descendant:
+ * @descendant : a #GFile that is a potential descendant of @ancestor
+ * @ancestor   : a #GFile
+ *
+ * Check if @descendant is a subdirectory of @ancestor.
+ * @descendant == @ancestor also counts.
+ *
+ * Returns: %TRUE if @descendant is a subdirectory of @ancestor.
+ **/
+gboolean
+thunar_g_file_is_descendant (GFile *descendant,
+                             GFile *ancestor)
+{
+  _thunar_return_val_if_fail (descendant != NULL && G_IS_FILE (descendant), FALSE);
+  _thunar_return_val_if_fail (ancestor   != NULL && G_IS_FILE (ancestor),   FALSE);
+
+  for (GFile *parent = g_object_ref (descendant), *temp;
+       parent != NULL;
+       temp = g_file_get_parent (parent), g_object_unref (parent), parent = temp)
+    {
+      if (g_file_equal (parent, ancestor))
+        {
+          g_object_unref (parent);
+          return TRUE;
+        }
+    }
+
+  return FALSE;
+}
+
+
+
 gboolean
 thunar_g_app_info_launch (GAppInfo          *info,
                           GFile             *working_directory,
