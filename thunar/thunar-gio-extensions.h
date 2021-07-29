@@ -104,6 +104,13 @@ gboolean     thunar_g_app_info_launch                  (GAppInfo          *info,
 
 gboolean     thunar_g_app_info_should_show             (GAppInfo          *info);
 
+void         thunar_g_task_return_pointer_to_callback  (GObject            *source_object,
+                                                        gpointer            return_pointer,
+                                                        GAsyncReadyCallback callback,
+                                                        gpointer            callback_data,
+                                                        GDestroyNotify      result_destroy);
+
+
 gboolean     thunar_g_vfs_metadata_is_supported        (void);
 
 G_END_DECLS
