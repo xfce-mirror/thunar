@@ -2158,6 +2158,19 @@ thunar_application_move_into (ThunarApplication *application,
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
   _thunar_return_if_fail (target_file != NULL);
 
+  /* Source folder cannot be moved into its subdirectory */
+  for (GList* lp = source_file_list; lp != NULL; lp = lp->next)
+    {
+      g_info ("g_file_is_descendant (\'%s\',\' %s\')", g_file_peek_path (target_file), g_file_peek_path (G_FILE (lp->data)));
+      if (thunar_g_file_is_descendant (target_file, G_FILE (lp->data)))
+        {
+          gchar *file_name = g_file_get_basename (G_FILE (lp->data));
+          thunar_dialogs_show_error (NULL, NULL, "Source folder (%s) cannot be moved into its subdirectory.", file_name);
+          g_free (file_name);
+          return;
+        }
+    }
+
   /* launch the appropriate operation depending on the target file */
   if (thunar_g_file_is_trash (target_file))
     {
