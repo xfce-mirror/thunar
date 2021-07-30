@@ -2164,7 +2164,7 @@ thunar_application_move_into (ThunarApplication *application,
       if (thunar_g_file_is_descendant (target_file, G_FILE (lp->data)))
         {
           gchar *file_name = g_file_get_basename (G_FILE (lp->data));
-          thunar_dialogs_show_error (NULL, NULL, "Source folder (%s) cannot be moved into its subdirectory.", file_name);
+          thunar_dialogs_show_error (NULL, NULL, "The folder (%s) cannot be moved into its own subdirectory", file_name);
           g_free (file_name);
           return;
         }
