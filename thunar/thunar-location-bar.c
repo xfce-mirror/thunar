@@ -27,6 +27,7 @@
 #include <thunar/thunar-location-entry.h>
 #include <thunar/thunar-location-buttons.h>
 #include <thunar/thunar-preferences.h>
+#include <thunar/thunar-util.h>
 
 
 struct _ThunarLocationBarClass
@@ -366,7 +367,7 @@ thunar_location_bar_request_entry (ThunarLocationBar *bar,
 
   _thunar_return_if_fail (child != NULL && GTK_IS_WIDGET (child));
 
-  if (initial_text != NULL && strncmp (initial_text, "Search: ", 8) == 0)
+  if (initial_text != NULL && thunar_util_is_a_search_query (initial_text) == TRUE)
     bar->is_searching = TRUE;
   else
     bar->is_searching = FALSE;

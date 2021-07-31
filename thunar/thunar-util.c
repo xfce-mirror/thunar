@@ -722,3 +722,17 @@ thunar_util_next_new_file_name (ThunarFile   *dir,
 
   return new_name;
 }
+
+
+
+/**
+ * thunar_util_is_a_search_query
+ * @string : the string to check
+ *
+ * Return value: a boolean that is TRUE if @string starts with 'Search: '.
+**/
+gboolean
+thunar_util_is_a_search_query (const gchar *string)
+{
+  return strncmp (string, "Search: ", 8) == 0;
+}
