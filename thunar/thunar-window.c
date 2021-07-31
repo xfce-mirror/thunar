@@ -2908,7 +2908,7 @@ thunar_window_update_search (ThunarWindow *window)
 void
 thunar_window_action_cancel_search (ThunarWindow *window)
 {
-  g_assert (THUNAR_IS_LOCATION_BAR (window->location_bar));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BAR (window->location_bar));
 
   thunar_location_bar_cancel_search (THUNAR_LOCATION_BAR (window->location_bar));
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), NULL);
