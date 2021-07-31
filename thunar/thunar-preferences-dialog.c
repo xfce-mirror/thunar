@@ -962,7 +962,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_grid_attach (GTK_GRID (grid), label, 0, 1, 1, 1);
   gtk_widget_show (label);
   gtk_widget_set_tooltip_text (label, _("Use intermediate file '*.partial~' to copy files. "
-                                        "This will prevent fragmented files."
+                                        "This will prevent fragmented files. "
                                         "The new file will only be shown after the copy was successfully finished."));
 
   combo = gtk_combo_box_text_new ();
