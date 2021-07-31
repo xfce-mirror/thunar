@@ -591,7 +591,7 @@ thunar_path_entry_changed (GtkEditable *editable)
   /* parse the entered string (handling URIs properly) */
   text = gtk_entry_get_text (GTK_ENTRY (path_entry));
 
-  if (G_UNLIKELY (text != NULL && strncmp ("Search: ", text, 8) == 0))
+  if (G_UNLIKELY (text != NULL && thunar_util_is_a_search_query (text)) == TRUE)
     {
       path_entry->search_mode = TRUE;
       update_icon = TRUE;

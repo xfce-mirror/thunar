@@ -4078,7 +4078,7 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
                                     gchar              *search_query)
 {
   /* can be called from a change in the path entry when the tab switches and a new directory is set
-   * which in turn sets a new location */
+   * which in turn sets a new location (see thunar_window_notebook_switch_page) */
   if (standard_view == NULL)
     return;
 

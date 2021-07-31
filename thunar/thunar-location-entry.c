@@ -330,7 +330,7 @@ thunar_location_entry_accept_focus (ThunarLocationEntry *location_entry,
   gtk_widget_grab_focus (location_entry->path_entry);
 
   /* setup search if the initial_text signifies a search operation, otherwise setup location editing */
-  location_entry->is_searching = (initial_text != NULL && strncmp (initial_text, "Search: ", 8) == 0);
+  location_entry->is_searching = (initial_text != NULL && thunar_util_is_a_search_query (initial_text) == TRUE);
   if (location_entry->is_searching)
     {
       g_signal_handlers_disconnect_matched (location_entry->path_entry, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, thunar_location_entry_update_search, NULL);
