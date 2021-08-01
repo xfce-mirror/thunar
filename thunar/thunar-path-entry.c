@@ -124,9 +124,6 @@ static void     thunar_path_entry_check_completion_idle_destroy (gpointer       
 struct _ThunarPathEntryClass
 {
   GtkEntryClass __parent__;
-
-  /* externally visible signals */
-  void (*search_update) (void);
 };
 
 struct _ThunarPathEntry
@@ -211,20 +208,6 @@ thunar_path_entry_class_init (ThunarPathEntryClass *klass)
                                                              _("Icon size"),
                                                              _("The icon size for the path entry"),
                                                              1, G_MAXINT, 16, EXO_PARAM_READABLE));
-
-  /**
-   * ThunarLocationEntry::search-update:
-   * @path_entry : a #ThunarPathEntry.
-   *
-   * Emitted by @path_entry whenever the search query in the path entry is updated.
-   **/
-  g_signal_new ("search-update",
-                G_TYPE_FROM_CLASS (klass),
-                G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-                G_STRUCT_OFFSET (ThunarPathEntryClass , search_update),
-                NULL, NULL,
-                NULL,
-                G_TYPE_NONE, 0);
 }
 
 
@@ -593,9 +576,10 @@ thunar_path_entry_changed (GtkEditable *editable)
 
   if (G_UNLIKELY (text != NULL && thunar_util_is_a_search_query (text)) == TRUE)
     {
+      GtkWidget *window = gtk_widget_get_toplevel (GTK_WIDGET (editable));
       path_entry->search_mode = TRUE;
       update_icon = TRUE;
-      g_signal_emit_by_name (path_entry, "search-update");
+      thunar_window_update_search (THUNAR_WINDOW (window));
     }
   else
     {
