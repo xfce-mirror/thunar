@@ -1986,7 +1986,7 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   /* if the view has an ongoing search operation take that into account, otherwise cancel the current search (if there is one) */
   if (thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (page)) != NULL)
     {
-      gchar *str = g_strjoin (NULL, "Search: ", thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (page)), NULL);
+      gchar *str = g_strjoin (NULL, SEARCH_PREFIX, thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (page)), NULL);
       thunar_window_start_open_location (window, str);
       g_free (str);
     }
@@ -4006,7 +4006,7 @@ thunar_window_action_show_hidden (ThunarWindow *window)
 static void
 thunar_window_action_search (ThunarWindow *window)
 {
-  thunar_window_start_open_location (window, "Search: ");
+  thunar_window_start_open_location (window, SEARCH_PREFIX);
 }
 
 
