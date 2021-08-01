@@ -145,6 +145,8 @@ void                      thunar_window_open_files_in_location              (Thu
                                                                              GList               *files_to_select);
 void                      thunar_window_update_search                       (ThunarWindow        *window);
 void                      thunar_window_action_cancel_search                (ThunarWindow        *window);
+void                      thunar_window_action_search                       (ThunarWindow        *window);
+
 
 G_END_DECLS;
 
