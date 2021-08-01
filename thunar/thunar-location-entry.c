@@ -37,6 +37,7 @@
 #include <thunar/thunar-shortcuts-model.h>
 #include <thunar/thunar-util.h>
 #include <thunar/thunar-folder.h>
+#include <thunar/thunar-window.h>
 
 
 
@@ -84,7 +85,6 @@ struct _ThunarLocationEntryClass
   gboolean (*reset) (ThunarLocationEntry *location_entry);
 
   /* externally visible signals */
-  void (*search)        (void);
   void (*edit_done)     (void);
 };
 
@@ -157,22 +157,6 @@ thunar_location_entry_class_init (ThunarLocationEntryClass *klass)
                 NULL, NULL,
                 NULL,
                 G_TYPE_NONE, 0);
-
-  /**
-   * ThunarLocationEntry::search:
-   * @location_entry : a #ThunarLocationEntry.
-   *
-   * Emitted by @location_entry whenever the user clicked the "search" button.
-   **/
-  g_signal_new ("search",
-                G_TYPE_FROM_CLASS (klass),
-                G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-                G_STRUCT_OFFSET (ThunarLocationEntryClass, search),
-                NULL, NULL,
-                NULL,
-                G_TYPE_NONE, 0);
-
-
 
   /* setup the key bindings for the location entry */
   binding_set = gtk_binding_set_by_class (klass);
@@ -535,7 +519,8 @@ thunar_location_entry_search (GtkEntry            *entry,
 
   if (icon_pos == GTK_ENTRY_ICON_SECONDARY)
     {
-      g_signal_emit_by_name (location_entry, "search");
+      GtkWidget *window = gtk_widget_get_toplevel (GTK_WIDGET (location_entry));
+      thunar_window_action_search (THUNAR_WINDOW (window));
     }
 }
 
