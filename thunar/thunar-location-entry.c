@@ -489,6 +489,7 @@ thunar_location_entry_cancel_search (ThunarLocationEntry *entry)
   thunar_location_entry_emit_edit_done (entry);
 
   thunar_path_entry_cancel_search (THUNAR_PATH_ENTRY (entry->path_entry));
+  thunar_path_entry_set_current_file (THUNAR_PATH_ENTRY (entry->path_entry), entry->current_directory);
 }
 
 
