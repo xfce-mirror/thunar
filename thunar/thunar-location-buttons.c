@@ -132,7 +132,6 @@ struct _ThunarLocationButtonsClass
   GtkContainerClass __parent__;
 
   void (*entry_requested) (const gchar *initial_text);
-  void (*search)          (void);
 };
 
 struct _ThunarLocationButtons
@@ -210,21 +209,6 @@ thunar_location_buttons_class_init (ThunarLocationButtonsClass *klass)
                 1,
                 G_TYPE_STRING);
 
-    /**
-     * ThunarLocationButtons::search:
-     * @location_buttons : a #ThunarLocationButtons.
-     *
-     * Emitted by @location_buttons whenever the user clicked the "search" button
-     **/
-    g_signal_new ("search",
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-                  G_STRUCT_OFFSET (ThunarLocationButtonsClass, search),
-                  NULL, NULL,
-                  NULL,
-                  G_TYPE_NONE, 0);
-
-
   thunar_file_quark = g_quark_from_static_string ("button-thunar-file");
 }
 
@@ -249,7 +233,8 @@ thunar_location_buttons_on_filler_clicked (ThunarLocationButtons *buttons)
 static void
 thunar_location_buttons_on_search_clicked (ThunarLocationButtons *buttons)
 {
-  g_signal_emit_by_name (buttons, "search", NULL);
+  GtkWidget *window = gtk_widget_get_toplevel (GTK_WIDGET (buttons));
+  thunar_window_action_search (THUNAR_WINDOW (window));
 }
 
 

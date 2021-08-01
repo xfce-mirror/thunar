@@ -223,7 +223,6 @@ static void      thunar_window_action_open_location       (ThunarWindow         
 static void      thunar_window_action_contents            (ThunarWindow           *window);
 static void      thunar_window_action_about               (ThunarWindow           *window);
 static void      thunar_window_action_show_hidden         (ThunarWindow           *window);
-static void      thunar_window_action_search              (ThunarWindow           *window);
 static gboolean  thunar_window_propagate_key_event        (GtkWindow              *window,
                                                            GdkEvent               *key_event,
                                                            gpointer                user_data);
@@ -861,7 +860,6 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect_swapped (G_OBJECT (window->location_bar), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
   g_signal_connect_swapped (G_OBJECT (window->location_bar), "open-new-tab", G_CALLBACK (thunar_window_notebook_open_new_tab), window);
   g_signal_connect_swapped (G_OBJECT (window->location_bar), "entry-done", G_CALLBACK (thunar_window_update_location_bar_visible), window);
-  g_signal_connect_swapped (G_OBJECT (window->location_bar), "search", G_CALLBACK (thunar_window_action_search), window);
 
   /* setup the toolbar for the location bar */
   window->location_toolbar = gtk_toolbar_new ();
@@ -2873,9 +2871,6 @@ thunar_window_start_open_location (ThunarWindow *window,
 {
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  /* disconnect signal handler before the signal is emitted */
-  g_signal_handlers_disconnect_matched (THUNAR_LOCATION_BAR (window->location_bar), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, thunar_window_update_search, NULL);
-
   /* temporary show the location toolbar, even if it is normally hidden */
   gtk_widget_show (window->location_toolbar);
   thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text);
@@ -4001,7 +3996,7 @@ thunar_window_action_show_hidden (ThunarWindow *window)
 
 
 
-static void
+void
 thunar_window_action_search (ThunarWindow *window)
 {
   thunar_window_start_open_location (window, SEARCH_PREFIX);
