@@ -1381,7 +1381,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
       g_object_set (G_OBJECT (gtk_bin_get_child (GTK_BIN (standard_view))), "model", NULL, NULL);
 
       /* reset the folder for the model */
-      thunar_list_model_set_folder (standard_view->model, NULL, NULL, FALSE);
+      thunar_list_model_set_folder (standard_view->model, NULL, NULL);
 
       /* reconnect the model to the view */
       g_object_set (G_OBJECT (gtk_bin_get_child (GTK_BIN (standard_view))), "model", standard_view->model, NULL);
@@ -1424,7 +1424,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
                                  thunar_standard_view_loading_unbound);
 
   /* apply the new folder */
-  thunar_list_model_set_folder (standard_view->model, folder, NULL, FALSE);
+  thunar_list_model_set_folder (standard_view->model, folder, NULL);
   g_object_unref (G_OBJECT (folder));
 
   /* reconnect our model to the view */
@@ -4088,7 +4088,7 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
 
   /* initiate the search */
   g_object_ref (G_OBJECT (thunar_list_model_get_folder (standard_view->model)));
-  thunar_list_model_set_folder (standard_view->model, thunar_list_model_get_folder (standard_view->model), search_query, TRUE);
+  thunar_list_model_set_folder (standard_view->model, thunar_list_model_get_folder (standard_view->model), search_query);
   g_object_unref (G_OBJECT (thunar_list_model_get_folder (standard_view->model)));
 
   /* change the display name in the tab */
