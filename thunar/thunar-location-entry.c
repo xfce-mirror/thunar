@@ -224,7 +224,7 @@ thunar_location_entry_init (ThunarLocationEntry *location_entry)
   gtk_entry_set_icon_from_icon_name (GTK_ENTRY (location_entry->path_entry),
                                      GTK_ENTRY_ICON_SECONDARY, "system-search-symbolic");
   gtk_entry_set_icon_tooltip_text (GTK_ENTRY (location_entry->path_entry),
-                                   GTK_ENTRY_ICON_SECONDARY, _("Reload the current folder"));
+                                   GTK_ENTRY_ICON_SECONDARY, _("Search for files"));
   g_signal_connect (G_OBJECT (location_entry->path_entry), "icon-release",
                     G_CALLBACK (thunar_location_entry_search), location_entry);
 
