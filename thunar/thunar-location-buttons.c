@@ -67,6 +67,7 @@ static void           thunar_location_buttons_set_current_directory       (Thuna
                                                                            ThunarFile                 *current_directory);
 static void           thunar_location_buttons_unmap                       (GtkWidget                  *widget);
 static void           thunar_location_buttons_on_filler_clicked           (ThunarLocationButtons      *buttons);
+static void           thunar_location_buttons_on_search_clicked           (ThunarLocationButtons      *buttons);
 static void           thunar_location_buttons_get_preferred_width         (GtkWidget                  *widget,
                                                                            gint                       *minimum,
                                                                            gint                       *natural);
@@ -130,7 +131,8 @@ struct _ThunarLocationButtonsClass
 {
   GtkContainerClass __parent__;
 
-  void (*entry_requested)(const gchar *initial_text);
+  void (*entry_requested) (const gchar *initial_text);
+  void (*search)          (void);
 };
 
 struct _ThunarLocationButtons
@@ -140,6 +142,7 @@ struct _ThunarLocationButtons
   GtkWidget         *left_slider;
   GtkWidget         *right_slider;
   GtkWidget         *filler_widget;
+  GtkWidget         *search_widget;
 
   ThunarFile        *current_directory;
 
@@ -207,6 +210,20 @@ thunar_location_buttons_class_init (ThunarLocationButtonsClass *klass)
                 1,
                 G_TYPE_STRING);
 
+    /**
+     * ThunarLocationButtons::search:
+     * @location_buttons : a #ThunarLocationButtons.
+     *
+     * Emitted by @location_buttons whenever the user clicked the "search" button
+     **/
+    g_signal_new ("search",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                  G_STRUCT_OFFSET (ThunarLocationButtonsClass, search),
+                  NULL, NULL,
+                  NULL,
+                  G_TYPE_NONE, 0);
+
 
   thunar_file_quark = g_quark_from_static_string ("button-thunar-file");
 }
@@ -225,6 +242,14 @@ static void
 thunar_location_buttons_on_filler_clicked (ThunarLocationButtons *buttons)
 {
   g_signal_emit_by_name (buttons, "entry-requested", NULL);
+}
+
+
+
+static void
+thunar_location_buttons_on_search_clicked (ThunarLocationButtons *buttons)
+{
+  g_signal_emit_by_name (buttons, "search", NULL);
 }
 
 
@@ -270,6 +295,17 @@ thunar_location_buttons_init (ThunarLocationButtons *buttons)
   gtk_container_add (GTK_CONTAINER (buttons), buttons->filler_widget);
   gtk_widget_show (buttons->filler_widget);
 
+  buttons->search_widget = gtk_button_new ();
+  g_signal_connect_swapped (buttons->search_widget, "clicked", G_CALLBACK (thunar_location_buttons_on_search_clicked), buttons);
+
+  icon = gtk_image_new_from_icon_name ("system-search-symbolic", GTK_ICON_SIZE_BUTTON);
+  gtk_widget_set_halign (icon, GTK_ALIGN_END);
+  gtk_container_add (GTK_CONTAINER (buttons->search_widget), icon);
+  gtk_widget_show (icon);
+
+  gtk_container_add (GTK_CONTAINER (buttons), buttons->search_widget);
+  gtk_widget_show (buttons->search_widget);
+
   g_object_set (buttons, "valign", GTK_ALIGN_CENTER, NULL);
 
   /* setup style classes */
@@ -284,6 +320,8 @@ thunar_location_buttons_init (ThunarLocationButtons *buttons)
   gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (buttons->right_slider)),
                                "path-bar-button");
   gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (buttons->filler_widget)),
+                               "path-bar-button");
+  gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (buttons->search_widget)),
                                "path-bar-button");
 
   buttons->launcher =  g_object_new (THUNAR_TYPE_LAUNCHER, "widget", GTK_WIDGET (buttons), NULL);
@@ -530,6 +568,7 @@ thunar_location_buttons_get_path_for_child (GtkContainer *container,
         */
       visible_children = NULL;
       visible_children = g_list_prepend (visible_children, path_bar->right_slider);
+      visible_children = g_list_prepend (visible_children, path_bar->search_widget);
       visible_children = g_list_prepend (visible_children, path_bar->filler_widget);
 
       for (l = path_bar->list; l; l = l->next)
@@ -652,6 +691,7 @@ thunar_location_buttons_size_allocate (GtkWidget     *widget,
   GtkAllocation          folder_button_allocation;
   GtkAllocation          first_slider_allocation;  /* left slider if direction is LTR */
   GtkAllocation          second_slider_allocation; /* right slider if direction is LTR */
+  GtkAllocation          search_allocation;
   GtkAllocation          filler_allocation;
   GList                 *lp;
   gint                   required_width_total = 0;
@@ -679,19 +719,25 @@ thunar_location_buttons_size_allocate (GtkWidget     *widget,
   second_slider_allocation.height = available_space.height;
   second_slider_allocation.y = available_space.y;
 
+  search_allocation.width = buttons->slider_width;
+  search_allocation.height = available_space.height;
+  search_allocation.y = available_space.y;
+
   if (G_LIKELY (direction == GTK_TEXT_DIR_LTR))
     {
       first_slider_allocation.x = available_space.x;
       second_slider_allocation.x = available_space.x + available_space.width - buttons->slider_width;
+      search_allocation.x = available_space.x + available_space.width - buttons->slider_width - search_allocation.width;
     }
   else
     {
       first_slider_allocation.x = available_space.x + available_space.width - buttons->slider_width;
       second_slider_allocation.x = available_space.x;
+      search_allocation.x = available_space.x + buttons->slider_width;
     }
 
   gtk_widget_get_preferred_width (buttons->filler_widget, &filler_allocation.width, NULL);
-  required_width_total += buttons->slider_width * 2 + filler_allocation.width;
+  required_width_total += buttons->slider_width * 2 + filler_allocation.width + search_allocation.width;
   filler_allocation.height = available_space.height;
   filler_allocation.y = available_space.y;
 
@@ -715,7 +761,7 @@ thunar_location_buttons_size_allocate (GtkWidget     *widget,
   else
     {
       /* reset calculation for required_width_total .. we need to cut off some folders */
-      required_width_total = first_slider_allocation.width + second_slider_allocation.width + filler_allocation.width;
+      required_width_total = first_slider_allocation.width + second_slider_allocation.width + search_allocation.width + filler_allocation.width;
 
       /* No scrolling defined ? Use last button as fixed start! */
       if(buttons->last_visible_button == NULL && buttons->first_visible_button == NULL)
@@ -783,8 +829,10 @@ thunar_location_buttons_size_allocate (GtkWidget     *widget,
   /* allocate the sliders */
   gtk_widget_get_preferred_width (GTK_WIDGET (buttons->left_slider), &temp_width, NULL); //to dont get gtk warnings
   gtk_widget_get_preferred_width (GTK_WIDGET (buttons->right_slider), &temp_width, NULL);
+  gtk_widget_get_preferred_width (GTK_WIDGET (buttons->search_widget), &temp_width, NULL);
   gtk_widget_size_allocate (buttons->left_slider, &first_slider_allocation);
   gtk_widget_size_allocate (buttons->right_slider, &second_slider_allocation);
+  gtk_widget_size_allocate (buttons->search_widget, &search_allocation);
   thunar_location_buttons_update_sliders (buttons);
 
   if (need_reorder)
@@ -908,6 +956,9 @@ thunar_location_buttons_forall (GtkContainer *container,
 
   if (buttons->filler_widget != NULL && include_internals)
     (*callback) (buttons->filler_widget, callback_data);
+
+  if (buttons->filler_widget != NULL && include_internals)
+    (*callback) (buttons->search_widget, callback_data);
 }
 
 
