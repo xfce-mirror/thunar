@@ -495,7 +495,7 @@ thunar_location_entry_reset (ThunarLocationEntry *location_entry)
 static void
 thunar_location_entry_emit_edit_done (ThunarLocationEntry *entry)
 {
-  /* do not emit signal if the context menu was opened */
+  /* do not emit the signal if the context menu was opened or a search is active */
   if (entry->right_click_occurred == FALSE && entry->is_searching == FALSE)
     {
       g_signal_emit_by_name (entry, "edit-done");
