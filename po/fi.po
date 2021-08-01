@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-23 00:45+0200\n"
-"PO-Revision-Date: 2021-07-22 22:45+0000\n"
+"POT-Creation-Date: 2021-08-01 00:46+0200\n"
+"PO-Revision-Date: 2021-07-31 22:46+0000\n"
 "Last-Translator: Xfce Bot <transifex@xfce.org>\n"
 "Language-Team: Finnish (http://www.transifex.com/xfce/thunar/language/fi/)\n"
 "MIME-Version: 1.0\n"
@@ -133,19 +133,19 @@ msgstr "Kopioidaan kohteeseen \"%s\"..."
 msgid "Creating symbolic links in \"%s\"..."
 msgstr "Luodaan linkkejä kohteeseen \"%s\"..."
 
-#: ../thunar/thunar-application.c:2170
+#: ../thunar/thunar-application.c:2182
 #, c-format
 msgid "Moving files into \"%s\"..."
 msgstr "Siirretään kohteeseen \"%s\"..."
 
-#: ../thunar/thunar-application.c:2253
+#: ../thunar/thunar-application.c:2265
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
 msgstr "Haluatko todella poistaa kohteen\n\"%s\" pysyvästi?"
 
-#: ../thunar/thunar-application.c:2258
+#: ../thunar/thunar-application.c:2270
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -160,7 +160,7 @@ msgstr[1] "Haluatko todella poistaa valitut\n%u tiedostoa pysyvästi?"
 #. append the cancel item
 #. add the Cancel/Close buttons
 #. configure the dialog properties
-#: ../thunar/thunar-application.c:2273 ../thunar/thunar-application.c:2452
+#: ../thunar/thunar-application.c:2285 ../thunar/thunar-application.c:2464
 #: ../thunar/thunar-chooser-dialog.c:293 ../thunar/thunar-chooser-dialog.c:749
 #: ../thunar/thunar-chooser-dialog.c:822 ../thunar/thunar-chooser-dialog.c:868
 #: ../thunar/thunar-dialogs.c:98 ../thunar/thunar-dialogs.c:233
@@ -184,63 +184,63 @@ msgstr[1] "Haluatko todella poistaa valitut\n%u tiedostoa pysyvästi?"
 msgid "_Cancel"
 msgstr "_Peruuta"
 
-#: ../thunar/thunar-application.c:2274 ../thunar/thunar-launcher.c:289
+#: ../thunar/thunar-application.c:2286 ../thunar/thunar-launcher.c:289
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:372
 msgid "_Delete"
 msgstr "_Poista"
 
-#: ../thunar/thunar-application.c:2278
+#: ../thunar/thunar-application.c:2290
 msgid "If you delete a file, it is permanently lost."
 msgstr "Tiedoston poistoa ei voi peruuttaa."
 
-#: ../thunar/thunar-application.c:2288
+#: ../thunar/thunar-application.c:2300
 msgid "Deleting files..."
 msgstr "Poistetaan tiedostoja..."
 
-#: ../thunar/thunar-application.c:2323
+#: ../thunar/thunar-application.c:2335
 msgid "Moving files into the trash..."
 msgstr "Siirretään tiedostoja roskakoriin..."
 
-#: ../thunar/thunar-application.c:2369
+#: ../thunar/thunar-application.c:2381
 msgid "Creating files..."
 msgstr "Luodaan tiedostoja..."
 
-#: ../thunar/thunar-application.c:2408
+#: ../thunar/thunar-application.c:2420
 msgid "Creating directories..."
 msgstr "Luodaan kansioita..."
 
-#: ../thunar/thunar-application.c:2447
+#: ../thunar/thunar-application.c:2459
 msgid "Remove all files and folders from the Trash?"
 msgstr "Poistetaanko kaikki tiedostot\nja kansiot roskakorista?"
 
 #. prepare the menu item
-#: ../thunar/thunar-application.c:2453 ../thunar/thunar-launcher.c:281
+#: ../thunar/thunar-application.c:2465 ../thunar/thunar-launcher.c:281
 #: ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "_Tyhjennä roskakori"
 
-#: ../thunar/thunar-application.c:2457
+#: ../thunar/thunar-application.c:2469
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr "Jos roskakori tyhjennetään, sen sisältö häviää lopullisesti. Huomaa, että voit poistaa roskakorista tiedostoja myös yksitellen."
 
-#: ../thunar/thunar-application.c:2474
+#: ../thunar/thunar-application.c:2486
 msgid "Emptying the Trash..."
 msgstr "Tyhjennetään roskakoria..."
 
-#: ../thunar/thunar-application.c:2520
+#: ../thunar/thunar-application.c:2532
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "Kohteen \"%s\" alkuperäisen polun määritys epäonnistui."
 
 #. display an error dialog
-#: ../thunar/thunar-application.c:2537
+#: ../thunar/thunar-application.c:2549
 #, c-format
 msgid "Could not restore \"%s\""
 msgstr "Kohteen \"%s\" palautus epäonnistui"
 
-#: ../thunar/thunar-application.c:2545
+#: ../thunar/thunar-application.c:2557
 msgid "Restoring files..."
 msgstr "Palautetaan tiedostoja..."
 
@@ -2182,7 +2182,7 @@ msgstr ""
 #: ../thunar/thunar-preferences-dialog.c:964
 msgid ""
 "Use intermediate file '*.partial~' to copy files. This will prevent "
-"fragmented files.The new file will only be shown after the copy was "
+"fragmented files. The new file will only be shown after the copy was "
 "successfully finished."
 msgstr ""
 
@@ -2788,7 +2788,7 @@ msgstr "Linkin luominen URL:iin \"%s\" epäonnistui."
 msgid "Failed to open directory \"%s\""
 msgstr "Kansion \"%s\" avaaminen epäonnistui."
 
-#: ../thunar/thunar-transfer-job.c:992
+#: ../thunar/thunar-transfer-job.c:1067
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
@@ -2796,59 +2796,59 @@ msgid ""
 msgstr "Virhe kopioidessa kohteeseen \"%s\": kohteessa tarvitaan %s lisää tilaa jotta kopiointi voidaan suorittaa"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1026
+#: ../thunar/thunar-transfer-job.c:1101
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "Yritetään palauttaa \"%s\""
 
-#: ../thunar/thunar-transfer-job.c:1055
+#: ../thunar/thunar-transfer-job.c:1130
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "Kansiota \"%s\" ei ole enää olemassa, mutta se tarvitaan tiedoston \"%s\" palauttamiseksi roskakorista."
 
-#: ../thunar/thunar-transfer-job.c:1082
+#: ../thunar/thunar-transfer-job.c:1157
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Kansion \"%s\" palautus epäonnistui."
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1157
+#: ../thunar/thunar-transfer-job.c:1232
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Yritetään siirtää \"%s\"."
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1235
+#: ../thunar/thunar-transfer-job.c:1310
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "Kohdetta \"%s\" ei voi siirtää suoraan. Kerätään kopioitavaksi..."
 
-#: ../thunar/thunar-transfer-job.c:1519
+#: ../thunar/thunar-transfer-job.c:1594
 msgid "Collecting files..."
 msgstr "Kerätään tiedostoja..."
 
-#: ../thunar/thunar-transfer-job.c:1718
+#: ../thunar/thunar-transfer-job.c:1793
 #, c-format
 msgid "%s of %s"
 msgstr "%s/%s"
 
-#: ../thunar/thunar-transfer-job.c:1738
+#: ../thunar/thunar-transfer-job.c:1813
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "%lu tunti jäljellä (%s/s)"
 msgstr[1] "%lu tuntia jäljellä (%s/s)"
 
-#: ../thunar/thunar-transfer-job.c:1746
+#: ../thunar/thunar-transfer-job.c:1821
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "%lu minuutti jäljellä (%s/s)"
 msgstr[1] "%lu minuuttia jäljellä (%s/s)"
 
-#: ../thunar/thunar-transfer-job.c:1753
+#: ../thunar/thunar-transfer-job.c:1828
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
