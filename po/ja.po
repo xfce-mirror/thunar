@@ -10,9 +10,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-23 00:45+0200\n"
-"PO-Revision-Date: 2021-07-23 16:04+0000\n"
-"Last-Translator: UTUMI Hirosi <utuhiro78@yahoo.co.jp>\n"
+"POT-Creation-Date: 2021-08-01 00:46+0200\n"
+"PO-Revision-Date: 2021-07-31 22:46+0000\n"
+"Last-Translator: Xfce Bot <transifex@xfce.org>\n"
 "Language-Team: Japanese (http://www.transifex.com/xfce/thunar/language/ja/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -131,19 +131,19 @@ msgstr "ファイルを \"%s\" へコピーしています..."
 msgid "Creating symbolic links in \"%s\"..."
 msgstr "リンクを \"%s\" に作成しています..."
 
-#: ../thunar/thunar-application.c:2170
+#: ../thunar/thunar-application.c:2182
 #, c-format
 msgid "Moving files into \"%s\"..."
 msgstr "ファイルを \"%s\" 内へ移動しています..."
 
-#: ../thunar/thunar-application.c:2253
+#: ../thunar/thunar-application.c:2265
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
 msgstr "\"%s\" を\n完全に削除してもよろしいですか？"
 
-#: ../thunar/thunar-application.c:2258
+#: ../thunar/thunar-application.c:2270
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -157,7 +157,7 @@ msgstr[0] "選択した %u 個のファイルを\n完全に削除してもよろ
 #. append the cancel item
 #. add the Cancel/Close buttons
 #. configure the dialog properties
-#: ../thunar/thunar-application.c:2273 ../thunar/thunar-application.c:2452
+#: ../thunar/thunar-application.c:2285 ../thunar/thunar-application.c:2464
 #: ../thunar/thunar-chooser-dialog.c:293 ../thunar/thunar-chooser-dialog.c:749
 #: ../thunar/thunar-chooser-dialog.c:822 ../thunar/thunar-chooser-dialog.c:868
 #: ../thunar/thunar-dialogs.c:98 ../thunar/thunar-dialogs.c:233
@@ -181,63 +181,63 @@ msgstr[0] "選択した %u 個のファイルを\n完全に削除してもよろ
 msgid "_Cancel"
 msgstr "キャンセル(_C)"
 
-#: ../thunar/thunar-application.c:2274 ../thunar/thunar-launcher.c:289
+#: ../thunar/thunar-application.c:2286 ../thunar/thunar-launcher.c:289
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:372
 msgid "_Delete"
 msgstr "削除(_D)"
 
-#: ../thunar/thunar-application.c:2278
+#: ../thunar/thunar-application.c:2290
 msgid "If you delete a file, it is permanently lost."
 msgstr "削除されたファイルは復元できません。"
 
-#: ../thunar/thunar-application.c:2288
+#: ../thunar/thunar-application.c:2300
 msgid "Deleting files..."
 msgstr "ファイルを削除しています..."
 
-#: ../thunar/thunar-application.c:2323
+#: ../thunar/thunar-application.c:2335
 msgid "Moving files into the trash..."
 msgstr "ファイルをゴミ箱に移動しています..."
 
-#: ../thunar/thunar-application.c:2369
+#: ../thunar/thunar-application.c:2381
 msgid "Creating files..."
 msgstr "ファイルを作成しています..."
 
-#: ../thunar/thunar-application.c:2408
+#: ../thunar/thunar-application.c:2420
 msgid "Creating directories..."
 msgstr "フォルダーを作成しています..."
 
-#: ../thunar/thunar-application.c:2447
+#: ../thunar/thunar-application.c:2459
 msgid "Remove all files and folders from the Trash?"
 msgstr "ゴミ箱にあるファイルとフォルダーをすべて削除しますか?"
 
 #. prepare the menu item
-#: ../thunar/thunar-application.c:2453 ../thunar/thunar-launcher.c:281
+#: ../thunar/thunar-application.c:2465 ../thunar/thunar-launcher.c:281
 #: ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "ゴミ箱を空にする(_E)"
 
-#: ../thunar/thunar-application.c:2457
+#: ../thunar/thunar-application.c:2469
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr "これを選択するとゴミ箱にあるすべてのアイテムが削除され、二度と復元できません。これらのアイテムは個別に削除することもできます。"
 
-#: ../thunar/thunar-application.c:2474
+#: ../thunar/thunar-application.c:2486
 msgid "Emptying the Trash..."
 msgstr "ゴミ箱を空にしています..."
 
-#: ../thunar/thunar-application.c:2520
+#: ../thunar/thunar-application.c:2532
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "\"%s\" の元のパスを取得できませんでした。"
 
 #. display an error dialog
-#: ../thunar/thunar-application.c:2537
+#: ../thunar/thunar-application.c:2549
 #, c-format
 msgid "Could not restore \"%s\""
 msgstr "\"%s\" を復元できませんでした。"
 
-#: ../thunar/thunar-application.c:2545
+#: ../thunar/thunar-application.c:2557
 msgid "Restoring files..."
 msgstr "ファイルを復元しています..."
 
@@ -2152,9 +2152,9 @@ msgstr "コピー時に一時ファイルを使用する"
 #: ../thunar/thunar-preferences-dialog.c:964
 msgid ""
 "Use intermediate file '*.partial~' to copy files. This will prevent "
-"fragmented files.The new file will only be shown after the copy was "
+"fragmented files. The new file will only be shown after the copy was "
 "successfully finished."
-msgstr "一時ファイル '*.partial~' を使用してファイルをコピーする。これによってファイルの断片化が防止されます。新しいファイルはコピーが正常に終了した後にのみ表示されます。"
+msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:995
 msgid "Folder Permissions"
@@ -2754,7 +2754,7 @@ msgstr "URL \"%s\" のリンク作成に失敗しました"
 msgid "Failed to open directory \"%s\""
 msgstr "フォルダー \"%s\" を開けませんでした"
 
-#: ../thunar/thunar-transfer-job.c:992
+#: ../thunar/thunar-transfer-job.c:1067
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
@@ -2762,57 +2762,57 @@ msgid ""
 msgstr "\"%s\" へのコピー中にエラーが発生しました: コピー先には %s 以上の空き容量が必要です。"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1026
+#: ../thunar/thunar-transfer-job.c:1101
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "\"%s\" を復元しようとしています"
 
-#: ../thunar/thunar-transfer-job.c:1055
+#: ../thunar/thunar-transfer-job.c:1130
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "フォルダー \"%s\" はもう存在していませんが、ゴミ箱からファイル \"%s\" を復元するために必要です。"
 
-#: ../thunar/thunar-transfer-job.c:1082
+#: ../thunar/thunar-transfer-job.c:1157
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "フォルダー \"%s\" の復元に失敗しました。"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1157
+#: ../thunar/thunar-transfer-job.c:1232
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "\"%s\" を移動しようとしています"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1235
+#: ../thunar/thunar-transfer-job.c:1310
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "\"%s\" を直接移動できませんでした。コピーするファイルを収集しています..."
 
-#: ../thunar/thunar-transfer-job.c:1519
+#: ../thunar/thunar-transfer-job.c:1594
 msgid "Collecting files..."
 msgstr "ファイルを集めています..."
 
-#: ../thunar/thunar-transfer-job.c:1718
+#: ../thunar/thunar-transfer-job.c:1793
 #, c-format
 msgid "%s of %s"
 msgstr "%s / %s"
 
-#: ../thunar/thunar-transfer-job.c:1738
+#: ../thunar/thunar-transfer-job.c:1813
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "残り %lu 時間 (%s/秒)"
 
-#: ../thunar/thunar-transfer-job.c:1746
+#: ../thunar/thunar-transfer-job.c:1821
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "残り %lu 分 (%s/秒)"
 
-#: ../thunar/thunar-transfer-job.c:1753
+#: ../thunar/thunar-transfer-job.c:1828
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
