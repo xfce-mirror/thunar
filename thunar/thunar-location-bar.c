@@ -36,7 +36,6 @@ struct _ThunarLocationBarClass
 
   /* signals */
   void (*search) (void);
-  void (*search_update) (void);
   void (*entry_done) (void);
   void (*reload_requested) (void);
 };
@@ -81,7 +80,6 @@ static void         thunar_location_bar_settings_changed           (ThunarLocati
 static void         thunar_location_bar_on_enry_edit_done          (ThunarLocationEntry  *entry,
                                                                     ThunarLocationBar    *bar);
 static void         thunar_location_bar_search                     (ThunarLocationBar    *bar);
-static void         thunar_location_bar_update_search              (ThunarLocationBar    *bar);
 
 
 
@@ -142,21 +140,6 @@ thunar_location_bar_class_init (ThunarLocationBarClass *klass)
                 NULL, NULL,
                 NULL,
                 G_TYPE_NONE, 0);
-
-    /**
-    * ThunarLocationBar::search-update:
-    * @location_bar : a #ThunarLocationBar.
-    *
-    * Emitted by @location_bar after being emitted by its location entry/buttons.
-    **/
-    g_signal_new ("search-update",
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-                  G_STRUCT_OFFSET (ThunarLocationBarClass, search_update),
-                  NULL, NULL,
-                  NULL,
-                  G_TYPE_NONE, 0);
-
 }
 
 
@@ -369,19 +352,14 @@ thunar_location_bar_request_entry (ThunarLocationBar *bar,
   if (THUNAR_IS_LOCATION_ENTRY (child))
     {
       /* already have an entry */
-      /* disconnect before calling thunar_location_entry_accept_focus to avoid updating the view unnecessarily */
-      g_signal_handlers_disconnect_matched (THUNAR_LOCATION_ENTRY (child), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, thunar_location_bar_update_search, NULL);
       thunar_location_entry_accept_focus (THUNAR_LOCATION_ENTRY (child), initial_text);
     }
   else
     {
       /* not an entry => temporarily replace it */
       child = thunar_location_bar_install_widget (bar, THUNAR_TYPE_LOCATION_ENTRY);
-      /* disconnect before calling thunar_location_entry_accept_focus to avoid updating the view unnecessarily */
-      g_signal_handlers_disconnect_matched (THUNAR_LOCATION_ENTRY (child), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, thunar_location_bar_update_search, NULL);
       thunar_location_entry_accept_focus (THUNAR_LOCATION_ENTRY (child), initial_text);
     }
-  g_signal_connect_swapped (THUNAR_LOCATION_ENTRY (child), "search-update", G_CALLBACK (thunar_location_bar_update_search), bar);
 
   g_signal_connect (child, "edit-done", G_CALLBACK (thunar_location_bar_on_enry_edit_done), bar);
 }
@@ -415,14 +393,6 @@ static void
 thunar_location_bar_search (ThunarLocationBar *bar)
 {
   g_signal_emit_by_name (bar, "search");
-}
-
-
-
-static void
-thunar_location_bar_update_search (ThunarLocationBar *bar)
-{
-  g_signal_emit_by_name (bar, "search-update");
 }
 
 

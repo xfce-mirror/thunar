@@ -73,8 +73,6 @@ static void        thunar_location_entry_search                   (GtkEntry     
                                                                    GtkEntryIconPosition      icon_pos,
                                                                    GdkEvent                 *event,
                                                                    ThunarLocationEntry      *location_entry);
-static void        thunar_location_entry_update_search            (ThunarLocationEntry      *entry);
-
 
 
 
@@ -87,7 +85,6 @@ struct _ThunarLocationEntryClass
 
   /* externally visible signals */
   void (*search)        (void);
-  void (*search_update) (void);
   void (*edit_done)     (void);
 };
 
@@ -175,20 +172,6 @@ thunar_location_entry_class_init (ThunarLocationEntryClass *klass)
                 NULL,
                 G_TYPE_NONE, 0);
 
-  /**
-   * ThunarLocationEntry::search:
-   * @location_entry : a #ThunarLocationEntry.
-   *
-   * Emitted by @location_entry whenever the path_entry (which is a child of the @location_entry) emits
-   * a "search-update" signal. In other words when the search query has changed.
-   **/
-  g_signal_new ("search-update",
-                G_TYPE_FROM_CLASS (klass),
-                G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-                G_STRUCT_OFFSET (ThunarLocationEntryClass, search_update),
-                NULL, NULL,
-                NULL,
-                G_TYPE_NONE, 0);
 
 
   /* setup the key bindings for the location entry */
@@ -333,8 +316,6 @@ thunar_location_entry_accept_focus (ThunarLocationEntry *location_entry,
   location_entry->is_searching = (initial_text != NULL && thunar_util_is_a_search_query (initial_text) == TRUE);
   if (location_entry->is_searching)
     {
-      g_signal_handlers_disconnect_matched (location_entry->path_entry, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, thunar_location_entry_update_search, NULL);
-      g_signal_connect_swapped (location_entry->path_entry, "search-update", G_CALLBACK (thunar_location_entry_update_search), location_entry);
       g_signal_handlers_disconnect_by_func (location_entry->path_entry, G_CALLBACK (thunar_location_entry_emit_edit_done), location_entry);
     }
   else
@@ -524,14 +505,6 @@ thunar_location_entry_cancel_search (ThunarLocationEntry *entry)
   thunar_location_entry_emit_edit_done (entry);
 
   thunar_path_entry_cancel_search (THUNAR_PATH_ENTRY (entry->path_entry));
-}
-
-
-
-static void
-thunar_location_entry_update_search (ThunarLocationEntry *entry)
-{
-  g_signal_emit_by_name (entry, "search-update");
 }
 
 

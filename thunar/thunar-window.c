@@ -173,7 +173,6 @@ static void      thunar_window_install_sidepane           (ThunarWindow         
                                                            GType                   type);
 static void      thunar_window_start_open_location        (ThunarWindow           *window,
                                                            const gchar            *initial_text);
-static void      thunar_window_update_search              (ThunarWindow           *window);
 static void      thunar_window_action_open_new_tab        (ThunarWindow           *window,
                                                            GtkWidget              *menu_item);
 static void      thunar_window_action_open_new_window     (ThunarWindow           *window,
@@ -2885,14 +2884,13 @@ thunar_window_start_open_location (ThunarWindow *window,
   if (initial_text != NULL && thunar_util_is_a_search_query (initial_text) == TRUE)
     {
       thunar_launcher_set_searching (window->launcher, TRUE);
-      g_signal_connect_swapped (THUNAR_LOCATION_BAR (window->location_bar), "search-update", G_CALLBACK (thunar_window_update_search), window);
       thunar_window_update_search (window);
     }
 }
 
 
 
-static void
+void
 thunar_window_update_search (ThunarWindow *window)
 {
   g_free (window->search_query);
