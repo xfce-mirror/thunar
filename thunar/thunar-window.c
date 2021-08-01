@@ -2895,8 +2895,9 @@ thunar_window_start_open_location (ThunarWindow *window,
 static void
 thunar_window_update_search (ThunarWindow *window)
 {
+  g_free (window->search_query);
   window->search_query = thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar));
-  thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar)));
+  thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), window->search_query);
   if (window->search_query != NULL)
     gtk_widget_show (window->catfish_search_button);
   else

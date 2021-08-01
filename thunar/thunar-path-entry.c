@@ -1353,7 +1353,7 @@ thunar_path_entry_set_working_directory (ThunarPathEntry *path_entry,
 
 
 /**
- * thunar_path_entry_set_working_directory:
+ * thunar_path_entry_get_search_query:
  * @path_entry        : a #ThunarPathEntry.
  *
  * Returns a copy of the search query in the text field of the @path_entry or NULL if the path_entry doesn't contain
@@ -1378,5 +1378,8 @@ void
 thunar_path_entry_cancel_search (ThunarPathEntry *path_entry)
 {
   _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
-  path_entry->search_mode = FALSE;;
+
+  path_entry->search_mode = FALSE;
+
+  gtk_widget_grab_focus (gtk_widget_get_parent (GTK_WIDGET (path_entry)));
 }
