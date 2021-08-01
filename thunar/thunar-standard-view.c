@@ -4087,9 +4087,9 @@ thunar_standard_view_set_searching (ThunarStandardView *standard_view,
   standard_view->priv->search_query = g_strdup (search_query);
 
   /* initiate the search */
-  g_object_ref (G_OBJECT (thunar_list_model_get_folder (standard_view->model)));
+  g_object_ref (G_OBJECT (thunar_list_model_get_folder (standard_view->model))); /* temporarily hold a reference so the folder doesn't get deleted */
   thunar_list_model_set_folder (standard_view->model, thunar_list_model_get_folder (standard_view->model), search_query);
-  g_object_unref (G_OBJECT (thunar_list_model_get_folder (standard_view->model)));
+  g_object_unref (G_OBJECT (thunar_list_model_get_folder (standard_view->model))); /* reference no longer needed */
 
   /* change the display name in the tab */
   g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_DISPLAY_NAME]);
