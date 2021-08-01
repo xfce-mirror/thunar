@@ -220,7 +220,7 @@ thunar_location_entry_init (ThunarLocationEntry *location_entry)
   gtk_box_pack_start (GTK_BOX (location_entry), location_entry->path_entry, TRUE, TRUE, 0);
   gtk_widget_show (location_entry->path_entry);
 
-  /* put search button in entry */
+  /* put the search button at the end of the entry */
   gtk_entry_set_icon_from_icon_name (GTK_ENTRY (location_entry->path_entry),
                                      GTK_ENTRY_ICON_SECONDARY, "system-search-symbolic");
   gtk_entry_set_icon_tooltip_text (GTK_ENTRY (location_entry->path_entry),
@@ -531,17 +531,23 @@ thunar_location_entry_cancel_search (ThunarLocationEntry *entry)
 static void
 thunar_location_entry_update_search (ThunarLocationEntry *entry)
 {
-  g_free (entry->search_query);
-  entry->search_query = thunar_path_entry_get_search_query (THUNAR_PATH_ENTRY (entry->path_entry));
   g_signal_emit_by_name (entry, "search-update");
 }
 
 
 
+/**
+ * thunar_location_entry_get_search_query:
+ * @entry        : a #ThunarLocationEntry.
+ *
+ * Returns a copy of the search query in the text field of the path_entry of @entry or NULL if there is no search query.
+ *
+ * It's the responsibility of the caller to free the returned string using `g_free`.
+ **/
 gchar*
 thunar_location_entry_get_search_query (ThunarLocationEntry *entry)
 {
-  return entry->search_query;
+  return thunar_path_entry_get_search_query (THUNAR_PATH_ENTRY (entry->path_entry));
 }
 
 

@@ -51,7 +51,6 @@ struct _ThunarLocationBar
   GtkWidget  *locationButtons;
 
   gboolean    is_searching;
-  gchar      *search_query;
 };
 
 
@@ -422,7 +421,6 @@ thunar_location_bar_search (ThunarLocationBar *bar)
 static void
 thunar_location_bar_update_search (ThunarLocationBar *bar)
 {
-  bar->search_query = thunar_location_entry_get_search_query (THUNAR_LOCATION_ENTRY (bar->locationEntry));
   g_signal_emit_by_name (bar, "search-update");
 }
 
@@ -443,10 +441,18 @@ thunar_location_bar_cancel_search (ThunarLocationBar *bar)
 
 
 
+/**
+ * thunar_location_bar_get_search_query:
+ * @entry        : a #ThunarLocationBar.
+ *
+ * Returns a copy of the search query in the text field of @entry or NULL if there is no search query.
+ *
+ * It's the responsibility of the caller to free the returned string using `g_free`.
+ **/
 gchar*
 thunar_location_bar_get_search_query (ThunarLocationBar *entry)
 {
-  return entry->search_query;
+  return thunar_location_entry_get_search_query (THUNAR_LOCATION_ENTRY (entry->locationEntry));
 }
 
 
