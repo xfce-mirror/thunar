@@ -969,14 +969,14 @@ thunar_standard_view_get_property (GObject    *object,
       break;
 
     case PROP_DISPLAY_NAME:
+      current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (object));
       if (THUNAR_STANDARD_VIEW (object)->priv->search_query != NULL)
         {
-          gchar *label = g_strjoin (NULL, "Searching for: ", THUNAR_STANDARD_VIEW (object)->priv->search_query, NULL);
+          gchar *label = g_strjoin (" ", "Search for \"", THUNAR_STANDARD_VIEW (object)->priv->search_query, "\" in", thunar_file_get_display_name (current_directory), NULL);
           g_value_take_string (value, label);
         }
       else
         {
-          current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (object));
           if (current_directory != NULL)
             g_value_set_static_string (value, thunar_file_get_display_name (current_directory));
         }
