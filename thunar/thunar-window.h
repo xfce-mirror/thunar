@@ -96,6 +96,8 @@ typedef enum
   THUNAR_WINDOW_ACTION_ABOUT,
   THUNAR_WINDOW_ACTION_SWITCH_PREV_TAB,
   THUNAR_WINDOW_ACTION_SWITCH_NEXT_TAB,
+  THUNAR_WINDOW_ACTION_SEARCH,
+  THUNAR_WINDOW_ACTION_CANCEL_SEARCH,
 
 } ThunarWindowAction;
 
@@ -137,8 +139,13 @@ void                      thunar_window_redirect_menu_tooltips_to_statusbar (Thu
                                                                              GtkMenu             *menu);
 const XfceGtkActionEntry* thunar_window_get_action_entry                    (ThunarWindow        *window,
                                                                              ThunarWindowAction   action);
- void                     thunar_window_show_and_select_files               (ThunarWindow        *window,
+void                      thunar_window_show_and_select_files               (ThunarWindow        *window,
                                                                              GList               *files_to_select);
+void                      thunar_window_open_files_in_location              (ThunarWindow        *window,
+                                                                             GList               *files_to_select);
+void                      thunar_window_update_search                       (ThunarWindow        *window);
+void                      thunar_window_action_cancel_search                (ThunarWindow        *window);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_WINDOW_H__ */
