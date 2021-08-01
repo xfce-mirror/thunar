@@ -656,6 +656,7 @@ thunar_setup_display_cb (gpointer data)
 }
 
 
+
 /**
  * thunar_util_next_new_file_name
  * @dir : the directory to search for a free filename
@@ -720,4 +721,18 @@ thunar_util_next_new_file_name (ThunarFile   *dir,
   g_object_unref (G_OBJECT (folder));
 
   return new_name;
+}
+
+
+
+/**
+ * thunar_util_is_a_search_query
+ * @string : the string to check
+ *
+ * Return value: a boolean that is TRUE if @string starts with 'Search: '.
+**/
+gboolean
+thunar_util_is_a_search_query (const gchar *string)
+{
+  return strncmp (string, "Search: ", 8) == 0;
 }
