@@ -369,18 +369,19 @@ thunar_location_bar_request_entry (ThunarLocationBar *bar,
   if (THUNAR_IS_LOCATION_ENTRY (child))
     {
       /* already have an entry */
+      /* disconnect before calling thunar_location_entry_accept_focus to avoid updating the view unnecessarily */
       g_signal_handlers_disconnect_matched (THUNAR_LOCATION_ENTRY (child), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, thunar_location_bar_update_search, NULL);
       thunar_location_entry_accept_focus (THUNAR_LOCATION_ENTRY (child), initial_text);
-      g_signal_connect_swapped (THUNAR_LOCATION_ENTRY (child), "search-update", G_CALLBACK (thunar_location_bar_update_search), bar);
     }
   else
     {
       /* not an entry => temporarily replace it */
       child = thunar_location_bar_install_widget (bar, THUNAR_TYPE_LOCATION_ENTRY);
+      /* disconnect before calling thunar_location_entry_accept_focus to avoid updating the view unnecessarily */
       g_signal_handlers_disconnect_matched (THUNAR_LOCATION_ENTRY (child), G_SIGNAL_MATCH_FUNC, 0, 0, NULL, thunar_location_bar_update_search, NULL);
-      g_signal_connect_swapped (THUNAR_LOCATION_ENTRY (child), "search-update", G_CALLBACK (thunar_location_bar_update_search), bar);
       thunar_location_entry_accept_focus (THUNAR_LOCATION_ENTRY (child), initial_text);
     }
+  g_signal_connect_swapped (THUNAR_LOCATION_ENTRY (child), "search-update", G_CALLBACK (thunar_location_bar_update_search), bar);
 
   g_signal_connect (child, "edit-done", G_CALLBACK (thunar_location_bar_on_enry_edit_done), bar);
 }
