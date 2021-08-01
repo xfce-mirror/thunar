@@ -70,6 +70,8 @@ gchar*     thunar_util_next_new_file_name       (ThunarFile     *dir,
                                                  const gchar    *file_name);
 gboolean   thunar_util_is_a_search_query        (const gchar    *string);
 
+extern const char *SEARCH_PREFIX;
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_UTIL_H__ */
