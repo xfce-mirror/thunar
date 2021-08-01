@@ -63,6 +63,8 @@
 
 
 
+const char *SEARCH_PREFIX = "Search: ";
+
 /**
  * thunar_util_strrchr_offset:
  * @str:    haystack
@@ -734,5 +736,5 @@ thunar_util_next_new_file_name (ThunarFile   *dir,
 gboolean
 thunar_util_is_a_search_query (const gchar *string)
 {
-  return strncmp (string, "Search: ", 8) == 0;
+  return strncmp (string, SEARCH_PREFIX, strlen (SEARCH_PREFIX)) == 0;
 }

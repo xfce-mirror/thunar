@@ -1367,7 +1367,7 @@ thunar_path_entry_get_search_query (ThunarPathEntry *path_entry)
   const gchar *text = gtk_entry_get_text (GTK_ENTRY (path_entry));
 
   _thunar_return_val_if_fail (THUNAR_IS_PATH_ENTRY (path_entry), NULL);
-  _thunar_return_val_if_fail (strncmp (text, "Search: ", 8) == 0, NULL);
+  _thunar_return_val_if_fail (strncmp (text, SEARCH_PREFIX, strlen (SEARCH_PREFIX)) == 0, NULL);
 
   return strlen(text) > 8 ? g_strdup (&text[8]) : NULL;
 }
