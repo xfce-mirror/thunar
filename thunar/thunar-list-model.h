@@ -41,8 +41,7 @@ ThunarListModel *thunar_list_model_new                    (void);
 ThunarFolder    *thunar_list_model_get_folder             (ThunarListModel  *store);
 void             thunar_list_model_set_folder             (ThunarListModel  *store,
                                                            ThunarFolder     *folder,
-                                                           gchar            *search_query,
-                                                           gboolean          bypass_same_folder_check);
+                                                           gchar            *search_query);
 
 void             thunar_list_model_set_folders_first      (ThunarListModel  *store,
                                                            gboolean          folders_first);

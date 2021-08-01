@@ -242,7 +242,8 @@ struct _ThunarLauncher
   /* Parent widget which holds the instance of the launcher */
   GtkWidget              *widget;
 
-  gboolean                searching;
+  /* TRUE if the active view is displaying search results or actively searching for files */
+  gboolean                is_searching;
 };
 
 static GQuark thunar_launcher_appinfo_quark;
@@ -465,7 +466,7 @@ thunar_launcher_init (ThunarLauncher *launcher)
   g_closure_ref (launcher->new_files_created_closure);
   g_closure_sink (launcher->new_files_created_closure);
 
-  launcher->searching = FALSE;
+  launcher->is_searching = FALSE;
 }
 
 
@@ -1389,11 +1390,12 @@ thunar_launcher_action_open_in_new_windows (ThunarLauncher *launcher)
 }
 
 
+
 void
 thunar_launcher_set_searching (ThunarLauncher *launcher,
                                gboolean        b)
 {
-  launcher->searching = b;
+  launcher->is_searching = b;
 }
 
 
@@ -1402,18 +1404,19 @@ static void
 thunar_launcher_action_open_location (ThunarLauncher *launcher)
 {
   GList *lp;
-  GList *gfiles;
+  GList *gfiles = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
   if (G_UNLIKELY (launcher->files_to_process == NULL))
     return;
 
-  gfiles = NULL;
   for (lp = launcher->files_to_process; lp != NULL; lp = lp->next)
     gfiles = g_list_prepend (gfiles, thunar_file_get_file (THUNAR_FILE (lp->data)));
 
   thunar_window_open_files_in_location (THUNAR_WINDOW (launcher->widget), gfiles);
+
+  g_list_free (gfiles);
 }
 
 
@@ -3153,7 +3156,7 @@ thunar_launcher_append_open_section (ThunarLauncher *launcher,
       thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_OPEN_IN_WINDOW, FALSE);
     }
 
-  if (launcher->searching && launcher->n_files_to_process > 0)
+  if (launcher->is_searching && launcher->n_files_to_process > 0)
     thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_OPEN_LOCATION, FALSE);
 
   if (G_LIKELY (applications != NULL))

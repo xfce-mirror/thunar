@@ -367,11 +367,6 @@ thunar_location_bar_request_entry (ThunarLocationBar *bar,
 
   _thunar_return_if_fail (child != NULL && GTK_IS_WIDGET (child));
 
-  if (initial_text != NULL && thunar_util_is_a_search_query (initial_text) == TRUE)
-    bar->is_searching = TRUE;
-  else
-    bar->is_searching = FALSE;
-
   if (THUNAR_IS_LOCATION_ENTRY (child))
     {
       /* already have an entry */
@@ -442,8 +437,6 @@ thunar_location_bar_update_search (ThunarLocationBar *bar)
 void
 thunar_location_bar_cancel_search (ThunarLocationBar *bar)
 {
-  bar->is_searching = FALSE;
-
   if (bar->locationEntry != NULL)
     thunar_location_entry_cancel_search (THUNAR_LOCATION_ENTRY (bar->locationEntry));
 }
