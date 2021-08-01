@@ -727,7 +727,7 @@ thunar_location_buttons_size_allocate (GtkWidget     *widget,
     {
       first_slider_allocation.x = available_space.x;
       second_slider_allocation.x = available_space.x + available_space.width - buttons->slider_width;
-      search_allocation.x = available_space.x + available_space.width - buttons->slider_width * 2;
+      search_allocation.x = available_space.x + available_space.width - buttons->slider_width - search_allocation.width;
     }
   else
     {
@@ -737,7 +737,7 @@ thunar_location_buttons_size_allocate (GtkWidget     *widget,
     }
 
   gtk_widget_get_preferred_width (buttons->filler_widget, &filler_allocation.width, NULL);
-  required_width_total += buttons->slider_width * 3 + filler_allocation.width;
+  required_width_total += buttons->slider_width * 2 + filler_allocation.width + search_allocation.width;
   filler_allocation.height = available_space.height;
   filler_allocation.y = available_space.y;
 
