@@ -2092,13 +2092,6 @@ thunar_list_model_set_folder (ThunarListModel *store,
     {
       g_object_ref (G_OBJECT (folder));
 
-      /* free search files */
-      if (store->search_files != NULL)
-        {
-          thunar_g_list_free_full (store->search_files);
-          store->search_files = NULL;
-        }
-
       /* get the already loaded files or search for files matching the search_query */
       if (search_query == NULL)
         {
@@ -2144,6 +2137,13 @@ thunar_list_model_set_folder (ThunarListModel *store,
       /* insert the files */
       if (files != NULL)
         thunar_list_model_files_added (folder, files, store);
+
+      /* free search files, thunar_list_model_files_added has added its own references */
+      if (store->search_files != NULL)
+        {
+          thunar_g_list_free_full (store->search_files);
+          store->search_files = NULL;
+        }
 
       /* connect signals to the new folder */
       g_signal_connect (G_OBJECT (store->folder), "destroy", G_CALLBACK (thunar_list_model_folder_destroy), store);
