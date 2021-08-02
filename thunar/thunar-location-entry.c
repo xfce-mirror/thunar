@@ -97,7 +97,6 @@ struct _ThunarLocationEntry
 
   gboolean      right_click_occurred;
   gboolean      is_searching;
-  gchar        *search_query;
 };
 
 
