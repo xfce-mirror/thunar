@@ -1348,12 +1348,14 @@ thunar_path_entry_set_working_directory (ThunarPathEntry *path_entry,
 gchar*
 thunar_path_entry_get_search_query (ThunarPathEntry *path_entry)
 {
+  unsigned long search_prefix_length;
   const gchar *text = gtk_entry_get_text (GTK_ENTRY (path_entry));
+  search_prefix_length = strlen (SEARCH_PREFIX);
 
   _thunar_return_val_if_fail (THUNAR_IS_PATH_ENTRY (path_entry), NULL);
-  _thunar_return_val_if_fail (strncmp (text, SEARCH_PREFIX, strlen (SEARCH_PREFIX)) == 0, NULL);
+  _thunar_return_val_if_fail (strncmp (text, SEARCH_PREFIX, search_prefix_length) == 0, NULL);
 
-  return strlen(text) > 8 ? g_strdup (&text[8]) : NULL;
+  return strlen(text) > search_prefix_length ? g_strdup (&text[search_prefix_length]) : NULL;
 }
 
 
