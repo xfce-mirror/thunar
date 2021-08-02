@@ -988,7 +988,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
         }
       else
         {
-          if (thunar_file_get_size (file) < factory->thumbnail_max_file_size)
+          if (thunar_file_get_size (file) < factory->thumbnail_max_file_size || factory->thumbnail_max_file_size == 0) /* 0 = unlimited */
             {
               /* we have no preview icon but the thumbnail should be ready. determine
                * the filename of the thumbnail */
