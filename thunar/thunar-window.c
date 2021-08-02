@@ -1017,44 +1017,55 @@ thunar_window_show_and_select_files (ThunarWindow *window,
   restore_and_show_in_progress = thunar_file_is_trash (window->current_directory) && thunar_g_file_is_trashed (files_to_select->data) == FALSE;
   if (restore_and_show_in_progress)
     {
-      ThunarApplication *application;
-      GHashTable        *restore_show_table; /* <string, GList<GFile*>> */
-      const gchar       *original_uri;
-      GFile             *original_dir_file;
-      gchar             *original_dir_path;
-
-      /* prepare hashtable */
-      restore_show_table = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (void(*) (void*))thunar_g_list_free_full);
-      for (GList *lp = files_to_select; lp != NULL; lp = lp->next)
-        {
-          original_dir_file = g_file_get_parent (lp->data);
-          original_uri =  g_file_get_uri (lp->data);
-          original_dir_path = g_file_get_uri (original_dir_file);
-
-          if (g_hash_table_contains (restore_show_table, original_dir_path) == FALSE)
-            {
-              GList *list = g_list_prepend (NULL, g_file_new_for_commandline_arg (original_uri));
-              g_hash_table_insert (restore_show_table, original_dir_path, list);
-            }
-          else
-            {
-              GList *list = g_hash_table_lookup (restore_show_table, original_dir_path);
-              list = g_list_append (list, g_file_new_for_commandline_arg (original_uri));
-            }
-
-          g_object_unref (original_dir_file);
-        }
-      /* open tabs and show files */
-      application = thunar_application_get();
-      g_hash_table_foreach (restore_show_table, hash_table_entry_show_and_select_files, application);
-      /* free memory */
-      g_hash_table_destroy (restore_show_table);
-      g_object_unref (application);
+      thunar_window_open_files_in_location (window, files_to_select);
     }
   else
     {
       thunar_window_select_files (window, files_to_select);
     }
+}
+
+
+
+void
+thunar_window_open_files_in_location (ThunarWindow *window,
+                                      GList        *files_to_select)
+{
+  ThunarApplication *application;
+  GHashTable        *restore_show_table; /* <string, GList<GFile*>> */
+  const gchar       *original_uri;
+  GFile             *original_dir_file;
+  gchar             *original_dir_path;
+
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* prepare hashtable */
+  restore_show_table = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (void(*) (void*))thunar_g_list_free_full);
+  for (GList *lp = files_to_select; lp != NULL; lp = lp->next)
+    {
+      original_dir_file = g_file_get_parent (lp->data);
+      original_uri =  g_file_get_uri (lp->data);
+      original_dir_path = g_file_get_uri (original_dir_file);
+
+      if (g_hash_table_contains (restore_show_table, original_dir_path) == FALSE)
+        {
+          GList *list = g_list_prepend (NULL, g_file_new_for_commandline_arg (original_uri));
+          g_hash_table_insert (restore_show_table, original_dir_path, list);
+        }
+      else
+        {
+          GList *list = g_hash_table_lookup (restore_show_table, original_dir_path);
+          list = g_list_append (list, g_file_new_for_commandline_arg (original_uri));
+        }
+
+      g_object_unref (original_dir_file);
+    }
+  /* open tabs and show files */
+  application = thunar_application_get();
+  g_hash_table_foreach (restore_show_table, hash_table_entry_show_and_select_files, application);
+  /* free memory */
+  g_hash_table_destroy (restore_show_table);
+  g_object_unref (application);
 }
 
 
@@ -2868,6 +2879,7 @@ thunar_window_start_open_location (ThunarWindow *window,
   if (initial_text != NULL && thunar_util_is_a_search_query (initial_text) == TRUE)
     {
       thunar_window_update_search (window);
+      thunar_launcher_set_searching (window->launcher, TRUE);
     }
 }
 
@@ -2894,6 +2906,7 @@ thunar_window_action_cancel_search (ThunarWindow *window)
 
   thunar_location_bar_cancel_search (THUNAR_LOCATION_BAR (window->location_bar));
   thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), NULL);
+  thunar_launcher_set_searching (window->launcher, FALSE);
   gtk_widget_hide (window->catfish_search_button);
   window->search_query = NULL;
 }
