@@ -304,6 +304,7 @@ static void      thunar_window_trash_infobar_clicked           (GtkInfoBar      
 static void      thunar_window_trash_selection_updated         (ThunarWindow           *window);
 static void      thunar_window_recent_reload                   (GtkRecentManager       *recent_manager,
                                                                 ThunarWindow           *window);
+static void      thunar_window_catfish_dialog_configure        (GtkWidget              *entry);
 
 
 
@@ -360,6 +361,10 @@ struct _ThunarWindow
 
   GtkWidget              *view;
   GtkWidget              *statusbar;
+
+  /* search */
+  GtkWidget              *catfish_search_button;
+  gchar                  *search_query;
 
   GType                   view_type;
   GSList                 *view_bindings;
@@ -459,6 +464,8 @@ static XfceGtkActionEntry thunar_window_action_entries[] =
     { THUNAR_WINDOW_ACTION_FORWARD,                        "<Actions>/ThunarStandardView/forward",                   "<Alt>Right",           XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Forward"),                N_ ("Go to the next visited folder"),                                                "go-next-symbolic",        G_CALLBACK (thunar_window_action_forward),             },
     { THUNAR_WINDOW_ACTION_SWITCH_PREV_TAB,                "<Actions>/ThunarWindow/switch-previous-tab",             "<Primary>Page_Up",     XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Previous Tab"),          N_ ("Switch to Previous Tab"),                                                       "go-previous",             G_CALLBACK (thunar_window_action_switch_previous_tab), },
     { THUNAR_WINDOW_ACTION_SWITCH_NEXT_TAB,                "<Actions>/ThunarWindow/switch-next-tab",                 "<Primary>Page_Down",   XFCE_GTK_IMAGE_MENU_ITEM, N_ ("_Next Tab"),              N_ ("Switch to Next Tab"),                                                           "go-next",                 G_CALLBACK (thunar_window_action_switch_next_tab),     },
+    { THUNAR_WINDOW_ACTION_SEARCH,                         "<Actions>/ThunarWindow/search",                          "<Primary>f",           XFCE_GTK_IMAGE_MENU_ITEM, N_ ("Search for files"),       N_ ("Search for a specific file in the current folder and recent:///"),              "",                        G_CALLBACK (thunar_window_action_search),              },
+    { THUNAR_WINDOW_ACTION_CANCEL_SEARCH,                  "<Actions>/ThunarWindow/cancel-search",                   "Escape",               XFCE_GTK_MENU_ITEM,       N_ ("Cancel search for files"),NULL,                                                                                "",                        G_CALLBACK (thunar_window_action_cancel_search),       },
     { 0,                                                   "<Actions>/ThunarWindow/open-file-menu",                  "F10",                  0,                        NULL,                          NULL,                                                                                NULL,                      G_CALLBACK (thunar_window_action_open_file_menu),      },
 };
 
@@ -911,10 +918,16 @@ thunar_window_init (ThunarWindow *window)
   /* synchronise the "directory-specific-settings" property with the global "misc-directory-specific-settings" property */
   g_object_bind_property (G_OBJECT (window->preferences), "misc-directory-specific-settings", G_OBJECT (window), "directory-specific-settings", G_BINDING_SYNC_CREATE);
 
+  /* setup the `Show More...` button that appears at the bottom of the view after a search is completed */
+  window->catfish_search_button = gtk_button_new_with_label ("Show More...");
+  gtk_grid_attach (GTK_GRID (window->view_box), window->catfish_search_button, 0, 3, 1, 1);
+  g_signal_connect_swapped (window->catfish_search_button, "clicked", G_CALLBACK (thunar_window_catfish_dialog_configure), window);
+  gtk_widget_hide (window->catfish_search_button);
+
   /* setup a new statusbar */
   window->statusbar = thunar_statusbar_new ();
   gtk_widget_set_hexpand (window->statusbar, TRUE);
-  gtk_grid_attach (GTK_GRID (window->view_box), window->statusbar, 0, 3, 1, 1);
+  gtk_grid_attach (GTK_GRID (window->view_box), window->statusbar, 0, 4, 1, 1);
   if (last_statusbar_visible)
     gtk_widget_show (window->statusbar);
 
@@ -938,6 +951,8 @@ thunar_window_init (ThunarWindow *window)
 
   /* update recent */
   g_signal_connect (G_OBJECT (gtk_recent_manager_get_default()), "changed", G_CALLBACK (thunar_window_recent_reload), window);
+
+  window->search_query = NULL;
 }
 
 
@@ -1321,6 +1336,7 @@ thunar_window_update_go_menu (ThunarWindow *window,
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_NETWORK), G_OBJECT (window), GTK_MENU_SHELL (menu));
   xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
   xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_OPEN_LOCATION), G_OBJECT (window), GTK_MENU_SHELL (menu));
+  xfce_gtk_menu_item_new_from_action_entry (get_action_entry (THUNAR_WINDOW_ACTION_SEARCH), G_OBJECT (window), GTK_MENU_SHELL (menu));
   gtk_widget_show_all (GTK_WIDGET (menu));
 
   thunar_window_redirect_menu_tooltips_to_statusbar (window, GTK_MENU (menu));
@@ -1712,8 +1728,7 @@ thunar_window_tab_change (ThunarWindow *window,
   _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   /* Alt+0 is 10th tab */
-  gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected),
-                                 nth == -1 ? 9 : nth);
+  thunar_window_notebook_set_current_tab (window, nth == -1 ? 9 : nth);
 
   return TRUE;
 }
@@ -1733,7 +1748,7 @@ thunar_window_action_switch_next_tab (ThunarWindow *window)
   pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_selected));
   new_page = (current_page + 1) % pages;
 
-  gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected), new_page);
+  thunar_window_notebook_set_current_tab (window, new_page);
 }
 
 
@@ -1751,7 +1766,7 @@ thunar_window_action_switch_previous_tab (ThunarWindow *window)
   pages = gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_selected));
   new_page = (current_page - 1) % pages;
 
-  gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected), new_page);
+  thunar_window_notebook_set_current_tab (window, new_page);
 }
 
 
@@ -1953,6 +1968,16 @@ thunar_window_notebook_switch_page (GtkWidget    *notebook,
   thunar_standard_view_selection_changed (THUNAR_STANDARD_VIEW (page));
 
   gtk_widget_grab_focus (page);
+
+  /* if the view has an ongoing search operation take that into account, otherwise cancel the current search (if there is one) */
+  if (thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (page)) != NULL)
+    {
+      gchar *str = g_strjoin (NULL, SEARCH_PREFIX, thunar_standard_view_get_search_query (THUNAR_STANDARD_VIEW (page)), NULL);
+      thunar_window_start_open_location (window, str);
+      g_free (str);
+    }
+  else if (window->search_query != NULL)
+    thunar_window_action_cancel_search (window);
 }
 
 
@@ -2458,7 +2483,7 @@ thunar_window_notebook_add_new_tab (ThunarWindow        *window,
     || behavior == THUNAR_NEW_TAB_BEHAVIOR_SWITCH)
     {
       page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), view);
-      gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected), page_num);
+      thunar_window_notebook_set_current_tab (window, page_num);
     }
 
   /* take focus on the new view */
@@ -2838,6 +2863,39 @@ thunar_window_start_open_location (ThunarWindow *window,
   /* temporary show the location toolbar, even if it is normally hidden */
   gtk_widget_show (window->location_toolbar);
   thunar_location_bar_request_entry (THUNAR_LOCATION_BAR (window->location_bar), initial_text);
+
+  /* setup a search if required */
+  if (initial_text != NULL && thunar_util_is_a_search_query (initial_text) == TRUE)
+    {
+      thunar_window_update_search (window);
+    }
+}
+
+
+
+void
+thunar_window_update_search (ThunarWindow *window)
+{
+  g_free (window->search_query);
+  window->search_query = thunar_location_bar_get_search_query (THUNAR_LOCATION_BAR (window->location_bar));
+  thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), window->search_query);
+  if (window->search_query != NULL)
+    gtk_widget_show (window->catfish_search_button);
+  else
+    gtk_widget_hide (window->catfish_search_button);
+}
+
+
+
+void
+thunar_window_action_cancel_search (ThunarWindow *window)
+{
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BAR (window->location_bar));
+
+  thunar_location_bar_cancel_search (THUNAR_LOCATION_BAR (window->location_bar));
+  thunar_standard_view_set_searching (THUNAR_STANDARD_VIEW (window->view), NULL);
+  gtk_widget_hide (window->catfish_search_button);
+  window->search_query = NULL;
 }
 
 
@@ -3346,7 +3404,7 @@ thunar_window_replace_view (ThunarWindow *window,
     {
       /* switch to the new view */
       page_num = gtk_notebook_page_num (GTK_NOTEBOOK (window->notebook_selected), new_view);
-      gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected), page_num);
+      thunar_window_notebook_set_current_tab (window, page_num);
 
       /* take focus on the new view */
       gtk_widget_grab_focus (new_view);
@@ -3921,6 +3979,14 @@ thunar_window_action_show_hidden (ThunarWindow *window)
     thunar_side_pane_set_show_hidden (THUNAR_SIDE_PANE (window->sidepane), window->show_hidden);
 
   g_object_set (G_OBJECT (window->preferences), "last-show-hidden", window->show_hidden, NULL);
+}
+
+
+
+void
+thunar_window_action_search (ThunarWindow *window)
+{
+  thunar_window_start_open_location (window, SEARCH_PREFIX);
 }
 
 
@@ -4507,7 +4573,7 @@ thunar_window_set_directories (ThunarWindow   *window,
     }
 
   /* select the page */
-  gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected), active_page);
+  thunar_window_notebook_set_current_tab (window, active_page);
 
   /* we succeeded if new pages have been opened */
   return gtk_notebook_get_n_pages (GTK_NOTEBOOK (window->notebook_selected)) > 0;
@@ -4759,7 +4825,7 @@ thunar_window_open_home_clicked   (GtkWidget      *button,
           page_num = gtk_notebook_get_current_page (GTK_NOTEBOOK (window->notebook_selected));
           thunar_window_notebook_add_new_tab (window, window->current_directory, THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
           thunar_window_action_open_home (window);
-          gtk_notebook_set_current_page (GTK_NOTEBOOK (window->notebook_selected), page_num);
+          thunar_window_notebook_set_current_tab (window, page_num);
         }
       else
         {
@@ -4867,4 +4933,35 @@ thunar_window_recent_reload (GtkRecentManager *recent_manager,
 {
   if (thunar_file_is_in_recent (window->current_directory))
     thunar_window_action_reload (window, NULL);
+}
+
+
+
+static void
+thunar_window_catfish_dialog_configure (GtkWidget *entry)
+{
+  GError    *err = NULL;
+  gchar     *argv[4];
+  GdkScreen *screen;
+  char      *display = NULL;
+
+  /* prepare the argument vector */
+  argv[0] = (gchar *) "catfish";
+  argv[1] = THUNAR_WINDOW (entry)->search_query;
+  argv[2] = (gchar *) "--start";
+  argv[3] = NULL;
+
+  screen = gtk_widget_get_screen (entry);
+
+  if (screen != NULL)
+    display = g_strdup (gdk_display_get_name (gdk_screen_get_display (screen)));
+
+  /* invoke the configuration interface of Catfish */
+  if (!g_spawn_async (NULL, argv, NULL, G_SPAWN_SEARCH_PATH, thunar_setup_display_cb, display, NULL, &err))
+    {
+      thunar_dialogs_show_error (entry, err, _("Failed to launch search with Catfish"));
+      g_error_free (err);
+    }
+
+  g_free (display);
 }
