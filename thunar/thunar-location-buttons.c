@@ -209,6 +209,7 @@ thunar_location_buttons_class_init (ThunarLocationButtonsClass *klass)
                 1,
                 G_TYPE_STRING);
 
+  
   thunar_file_quark = g_quark_from_static_string ("button-thunar-file");
 }
 
