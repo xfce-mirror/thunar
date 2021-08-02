@@ -43,6 +43,7 @@ typedef enum
   THUNAR_LAUNCHER_ACTION_EXECUTE,
   THUNAR_LAUNCHER_ACTION_OPEN_IN_TAB,
   THUNAR_LAUNCHER_ACTION_OPEN_IN_WINDOW,
+  THUNAR_LAUNCHER_ACTION_OPEN_LOCATION,
   THUNAR_LAUNCHER_ACTION_OPEN_WITH_OTHER,
   THUNAR_LAUNCHER_ACTION_SET_DEFAULT_APP,
   THUNAR_LAUNCHER_ACTION_SENDTO_MENU,
@@ -112,6 +113,8 @@ void            thunar_launcher_set_selection                        (ThunarLaun
 void            thunar_launcher_action_empty_trash                   (ThunarLauncher                 *launcher);
 void            thunar_launcher_action_restore                       (ThunarLauncher                 *launcher);
 void            thunar_launcher_action_restore_and_show              (ThunarLauncher                 *launcher);
+void            thunar_launcher_set_searching                        (ThunarLauncher                 *launcher,
+                                                                      gboolean                        b);
 
 
 G_END_DECLS;
