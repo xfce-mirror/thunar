@@ -27,6 +27,9 @@
 #include <thunar/thunar-location-entry.h>
 #include <thunar/thunar-location-buttons.h>
 #include <thunar/thunar-preferences.h>
+#include <thunar/thunar-util.h>
+#include <thunar/thunar-window.h>
+
 
 
 struct _ThunarLocationBarClass
@@ -34,8 +37,8 @@ struct _ThunarLocationBarClass
   GtkBinClass __parent__;
 
   /* signals */
-  void (*reload_requested) (void);
   void (*entry_done) (void);
+  void (*reload_requested) (void);
 };
 
 struct _ThunarLocationBar
@@ -46,6 +49,8 @@ struct _ThunarLocationBar
 
   GtkWidget  *locationEntry;
   GtkWidget  *locationButtons;
+
+  gboolean    is_searching;
 };
 
 
@@ -365,5 +370,38 @@ thunar_location_bar_settings_changed (ThunarLocationBar *bar)
 
   thunar_location_bar_install_widget (bar, type);
 }
+
+
+
+/**
+ * thunar_location_bar_cancel_search
+ * @bar          : The #ThunarLocationBar
+ *
+ * Cancels the search for the location bar and its children.
+ */
+void
+thunar_location_bar_cancel_search (ThunarLocationBar *bar)
+{
+  if (bar->locationEntry != NULL)
+    thunar_location_entry_cancel_search (THUNAR_LOCATION_ENTRY (bar->locationEntry));
+}
+
+
+
+/**
+ * thunar_location_bar_get_search_query:
+ * @entry        : a #ThunarLocationBar.
+ *
+ * Returns a copy of the search query in the text field of @entry or NULL if there is no search query.
+ *
+ * It's the responsibility of the caller to free the returned string using `g_free`.
+ **/
+gchar*
+thunar_location_bar_get_search_query (ThunarLocationBar *entry)
+{
+  return thunar_location_entry_get_search_query (THUNAR_LOCATION_ENTRY (entry->locationEntry));
+}
+
+
 
 
