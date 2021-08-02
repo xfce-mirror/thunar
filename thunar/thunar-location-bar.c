@@ -399,7 +399,7 @@ thunar_location_bar_cancel_search (ThunarLocationBar *bar)
 gchar*
 thunar_location_bar_get_search_query (ThunarLocationBar *entry)
 {
-  return thunar_location_entry_get_search_query (THUNAR_LOCATION_ENTRY (entry->locationEntry));
+  return (entry->locationEntry != NULL) ? thunar_location_entry_get_search_query (THUNAR_LOCATION_ENTRY (entry->locationEntry)) : "";
 }
 
 
