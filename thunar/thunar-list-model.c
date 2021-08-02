@@ -252,9 +252,6 @@ struct _ThunarListModel
   gboolean       sort_folders_first : 1;
   gint           sort_sign;   /* 1 = ascending, -1 descending */
   ThunarSortFunc sort_func;
-
-  /* used to free results of a search */
-  GList         *search_files;
 };
 
 
@@ -458,8 +455,6 @@ thunar_list_model_init (ThunarListModel *store)
   store->sort_sign = 1;
   store->sort_func = thunar_file_compare_by_name;
   store->rows = g_sequence_new (g_object_unref);
-
-  store->search_files = NULL;
 
   /* connect to the shared ThunarFileMonitor, so we don't need to
    * connect "changed" to every single ThunarFile we own.
@@ -2031,12 +2026,15 @@ thunar_list_model_set_folder (ThunarListModel *store,
   GtkTreePath   *path;
   gboolean       has_handler;
   GList         *files;
+  GList         *search_files; /* used to free results of a search */
   GSequenceIter *row;
   GSequenceIter *end;
   GSequenceIter *next;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
   _thunar_return_if_fail (folder == NULL || THUNAR_IS_FOLDER (folder));
+
+  search_files = NULL;
 
   /* unlink from the previously active folder (if any) */
   if (G_LIKELY (store->folder != NULL))
@@ -2130,7 +2128,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
               g_free (display_name_c);
             }
 
-          store->search_files = files;
+          search_files = files;
           g_list_free_full (recent_infos, (void (*) (void*)) gtk_recent_info_unref);
         }
 
@@ -2139,10 +2137,10 @@ thunar_list_model_set_folder (ThunarListModel *store,
         thunar_list_model_files_added (folder, files, store);
 
       /* free search files, thunar_list_model_files_added has added its own references */
-      if (store->search_files != NULL)
+      if (search_files != NULL)
         {
-          thunar_g_list_free_full (store->search_files);
-          store->search_files = NULL;
+          thunar_g_list_free_full (search_files);
+          search_files = NULL;
         }
 
       /* connect signals to the new folder */
