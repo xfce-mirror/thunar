@@ -82,6 +82,7 @@ static void         thunar_location_bar_on_enry_edit_done          (ThunarLocati
                                                                     ThunarLocationBar    *bar);
 
 
+
 G_DEFINE_TYPE_WITH_CODE (ThunarLocationBar, thunar_location_bar, GTK_TYPE_BIN,
                          G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR, thunar_location_bar_navigator_init));
 
