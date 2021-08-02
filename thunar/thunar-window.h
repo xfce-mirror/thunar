@@ -139,7 +139,9 @@ void                      thunar_window_redirect_menu_tooltips_to_statusbar (Thu
                                                                              GtkMenu             *menu);
 const XfceGtkActionEntry* thunar_window_get_action_entry                    (ThunarWindow        *window,
                                                                              ThunarWindowAction   action);
- void                     thunar_window_show_and_select_files               (ThunarWindow        *window,
+void                      thunar_window_open_files_in_location              (ThunarWindow        *window,
+                                                                             GList               *files_to_select);
+void                      thunar_window_show_and_select_files               (ThunarWindow        *window,
                                                                              GList               *files_to_select);
 void                      thunar_window_update_search                       (ThunarWindow        *window);
 void                      thunar_window_action_cancel_search                (ThunarWindow        *window);
