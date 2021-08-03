@@ -43,6 +43,7 @@ typedef enum
 GType      thunar_details_view_get_type                         (void) G_GNUC_CONST;
 void       thunar_details_view_set_date_deleted_column_visible  (ThunarDetailsView*, gboolean);
 void       thunar_details_view_set_recency_column_visible       (ThunarDetailsView*, gboolean);
+void       thunar_details_view_set_location_column_visible      (ThunarDetailsView*, gboolean);
 
 G_END_DECLS;
 
