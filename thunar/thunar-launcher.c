@@ -3156,7 +3156,8 @@ thunar_launcher_append_open_section (ThunarLauncher *launcher,
       thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_OPEN_IN_WINDOW, FALSE);
     }
 
-  if (launcher->is_searching && launcher->n_files_to_process > 0)
+  /* active while searching and while in 'recent:///' */
+  if (launcher->n_files_to_process > 0 && (launcher->is_searching || thunar_file_is_recent (launcher->current_directory)))
     thunar_launcher_append_menu_item (launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_OPEN_LOCATION, FALSE);
 
   if (G_LIKELY (applications != NULL))
