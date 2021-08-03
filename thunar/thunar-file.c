@@ -3652,7 +3652,7 @@ thunar_file_get_thumbnail_path (ThunarFile *file, ThunarThumbnailSize thumbnail_
                       file->thumbnail_path = xfce_create_shared_thumbnail_path (uri, thunar_thumbnail_size_get_nick (thumbnail_size));
                       g_free (uri);
 
-                      if (!g_file_test (file->thumbnail_path, G_FILE_TEST_EXISTS))
+                      if (file->thumbnail_path != NULL && !g_file_test (file->thumbnail_path, G_FILE_TEST_EXISTS))
                         {
                           /* Thumbnail doesn't exist */
                           g_free (file->thumbnail_path);
