@@ -626,6 +626,9 @@ thunar_list_model_get_column_type (GtkTreeModel *model,
     case THUNAR_COLUMN_DATE_DELETED:
       return G_TYPE_STRING;
 
+    case THUNAR_COLUMN_RECENCY:
+      return G_TYPE_STRING;
+
     case THUNAR_COLUMN_LOCATION:
       return G_TYPE_STRING;
 
