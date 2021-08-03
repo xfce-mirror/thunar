@@ -623,6 +623,11 @@ thunar_list_model_get_column_type (GtkTreeModel *model,
     case THUNAR_COLUMN_DATE_DELETED:
       return G_TYPE_STRING;
 
+    // missing recency
+
+    case THUNAR_COLUMN_LOCATION:
+      return G_TYPE_STRING;
+
     case THUNAR_COLUMN_GROUP:
       return G_TYPE_STRING;
 
@@ -720,6 +725,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
   ThunarFile  *file;
   GFile       *g_file;
   gchar       *str;
+  gchar       *uri;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
   _thunar_return_if_fail (iter->stamp == (THUNAR_LIST_MODEL (model))->stamp);
@@ -757,6 +763,14 @@ thunar_list_model_get_value (GtkTreeModel *model,
       g_value_init (value, G_TYPE_STRING);
       str = thunar_file_get_date_string (file, THUNAR_FILE_RECENCY, THUNAR_LIST_MODEL (model)->date_style, THUNAR_LIST_MODEL (model)->date_custom_style);
       g_value_take_string (value, str);
+      break;
+
+    case THUNAR_COLUMN_LOCATION:
+      g_value_init (value, G_TYPE_STRING);
+      uri = thunar_file_dup_uri (file);
+      str = g_path_get_dirname (uri);
+      g_value_take_string (value, str);
+      g_free (uri);
       break;
 
     case THUNAR_COLUMN_GROUP:
