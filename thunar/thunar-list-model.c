@@ -171,6 +171,9 @@ static gint               sort_by_date_deleted                    (const ThunarF
 static gint               sort_by_recency                         (const ThunarFile       *a,
                                                                    const ThunarFile       *b,
                                                                    gboolean                case_sensitive);
+static gint               sort_by_location                        (const ThunarFile       *a,
+                                                                   const ThunarFile       *b,
+                                                                   gboolean                case_sensitive);
 static gint               sort_by_group                           (const ThunarFile       *a,
                                                                    const ThunarFile       *b,
                                                                    gboolean                case_sensitive);
@@ -623,6 +626,9 @@ thunar_list_model_get_column_type (GtkTreeModel *model,
     case THUNAR_COLUMN_DATE_DELETED:
       return G_TYPE_STRING;
 
+    case THUNAR_COLUMN_LOCATION:
+      return G_TYPE_STRING;
+
     case THUNAR_COLUMN_GROUP:
       return G_TYPE_STRING;
 
@@ -720,6 +726,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
   ThunarFile  *file;
   GFile       *g_file;
   gchar       *str;
+  gchar       *uri;
 
   _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
   _thunar_return_if_fail (iter->stamp == (THUNAR_LIST_MODEL (model))->stamp);
@@ -757,6 +764,14 @@ thunar_list_model_get_value (GtkTreeModel *model,
       g_value_init (value, G_TYPE_STRING);
       str = thunar_file_get_date_string (file, THUNAR_FILE_RECENCY, THUNAR_LIST_MODEL (model)->date_style, THUNAR_LIST_MODEL (model)->date_custom_style);
       g_value_take_string (value, str);
+      break;
+
+    case THUNAR_COLUMN_LOCATION:
+      g_value_init (value, G_TYPE_STRING);
+      uri = thunar_file_dup_uri (file);
+      str = g_path_get_dirname (uri);
+      g_value_take_string (value, str);
+      g_free (uri);
       break;
 
     case THUNAR_COLUMN_GROUP:
@@ -1014,6 +1029,8 @@ thunar_list_model_get_sort_column_id (GtkTreeSortable *sortable,
     *sort_column_id = THUNAR_COLUMN_DATE_DELETED;
   else if (store->sort_func == sort_by_recency)
     *sort_column_id = THUNAR_COLUMN_RECENCY;
+  else if (store->sort_func == sort_by_location)
+    *sort_column_id = THUNAR_COLUMN_LOCATION;
   else if (store->sort_func == sort_by_type)
     *sort_column_id = THUNAR_COLUMN_TYPE;
   else if (store->sort_func == sort_by_owner)
@@ -1065,6 +1082,10 @@ thunar_list_model_set_sort_column_id (GtkTreeSortable *sortable,
 
     case THUNAR_COLUMN_RECENCY:
       store->sort_func = sort_by_recency;
+      break;
+
+    case THUNAR_COLUMN_LOCATION:
+      store->sort_func = sort_by_location;
       break;
 
     case THUNAR_COLUMN_GROUP:
@@ -1535,6 +1556,35 @@ sort_by_recency      (const ThunarFile *a,
                       gboolean          case_sensitive)
 {
   return sort_by_date (a, b, case_sensitive, THUNAR_FILE_RECENCY);
+}
+
+
+
+static gint
+sort_by_location (const ThunarFile *a,
+                  const ThunarFile *b,
+                  gboolean          case_sensitive)
+{
+  gchar *uri_a;
+  gchar *uri_b;
+  gchar *location_a;
+  gchar *location_b;
+  gint   result;
+
+  uri_a = thunar_file_dup_uri (a);
+  uri_b = thunar_file_dup_uri (b);
+
+  location_a = g_path_get_dirname (uri_a);
+  location_b = g_path_get_dirname (uri_b);
+
+  result = strcasecmp (location_a, location_b);
+
+  g_free (uri_a);
+  g_free (uri_b);
+  g_free (location_a);
+  g_free (location_b);
+
+  return result;
 }
 
 
