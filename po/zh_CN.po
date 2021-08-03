@@ -23,8 +23,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-01 00:46+0200\n"
-"PO-Revision-Date: 2021-07-31 22:46+0000\n"
+"POT-Creation-Date: 2021-08-03 00:45+0200\n"
+"PO-Revision-Date: 2021-08-02 22:45+0000\n"
 "Last-Translator: Xfce Bot <transifex@xfce.org>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/xfce/thunar/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
@@ -89,8 +89,8 @@ msgstr "无法启动操作"
 
 #. tell the user that we were unable to launch the file specified
 #: ../thunar/thunar-application.c:1561 ../thunar/thunar-application.c:1721
-#: ../thunar/thunar-launcher.c:1109 ../thunar/thunar-location-entry.c:344
-#: ../thunar/thunar-location-entry.c:372
+#: ../thunar/thunar-launcher.c:1116 ../thunar/thunar-location-entry.c:368
+#: ../thunar/thunar-location-entry.c:396
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "无法打开 \"%s\""
@@ -101,18 +101,18 @@ msgid "Failed to open \"%s\": %s"
 msgstr "无法打开 \"%s\": %s"
 
 #. display an error message
-#: ../thunar/thunar-application.c:1783 ../thunar/thunar-launcher.c:2313
+#: ../thunar/thunar-application.c:1783 ../thunar/thunar-launcher.c:2350
 #: ../thunar/thunar-properties-dialog.c:803
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "无法重命名 “%s”"
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-application.c:1885 ../thunar/thunar-launcher.c:2508
+#: ../thunar/thunar-application.c:1885 ../thunar/thunar-launcher.c:2545
 msgid "New Folder"
 msgstr "新建文件夹"
 
-#: ../thunar/thunar-application.c:1886 ../thunar/thunar-launcher.c:2512
+#: ../thunar/thunar-application.c:1886 ../thunar/thunar-launcher.c:2549
 msgid "Create New Folder"
 msgstr "创建新文件夹"
 
@@ -125,7 +125,7 @@ msgid "Create New File"
 msgstr "创建新文件"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-application.c:1948 ../thunar/thunar-launcher.c:2560
+#: ../thunar/thunar-application.c:1948 ../thunar/thunar-launcher.c:2597
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "从模板 “%s” 创建文档"
@@ -176,14 +176,14 @@ msgstr[0] "您确定要永远删除选中的 %u 个文件吗？"
 #: ../thunar/thunar-dialogs.c:98 ../thunar/thunar-dialogs.c:233
 #: ../thunar/thunar-dialogs.c:650 ../thunar/thunar-dialogs.c:763
 #: ../thunar/thunar-dialogs.c:1035 ../thunar/thunar-dnd.c:169
-#: ../thunar/thunar-launcher.c:974 ../thunar/thunar-permissions-chooser.c:559
+#: ../thunar/thunar-launcher.c:981 ../thunar/thunar-permissions-chooser.c:559
 #: ../thunar/thunar-permissions-chooser.c:1169
 #: ../thunar/thunar-properties-dialog.c:892
 #: ../thunar/thunar-renamer-dialog.c:359
 #: ../thunar/thunar-renamer-dialog.c:1074
 #: ../thunar/thunar-renamer-progress.c:198
 #: ../thunar/thunar-renamer-progress.c:208
-#: ../thunar/thunar-standard-view.c:2207
+#: ../thunar/thunar-standard-view.c:2220
 #: ../plugins/thunar-sendto-email/main.c:219
 #: ../plugins/thunar-sendto-email/main.c:238
 #: ../plugins/thunar-sendto-email/main.c:302
@@ -194,7 +194,7 @@ msgstr[0] "您确定要永远删除选中的 %u 个文件吗？"
 msgid "_Cancel"
 msgstr "取消(_C)"
 
-#: ../thunar/thunar-application.c:2286 ../thunar/thunar-launcher.c:289
+#: ../thunar/thunar-application.c:2286 ../thunar/thunar-launcher.c:294
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:372
 msgid "_Delete"
 msgstr "删除(_D)"
@@ -224,7 +224,7 @@ msgid "Remove all files and folders from the Trash?"
 msgstr "移除回收站中的所有文件和文件夹吗？"
 
 #. prepare the menu item
-#: ../thunar/thunar-application.c:2465 ../thunar/thunar-launcher.c:281
+#: ../thunar/thunar-application.c:2465 ../thunar/thunar-launcher.c:286
 #: ../plugins/thunar-tpa/thunar-tpa.c:175
 msgid "_Empty Trash"
 msgstr "清空回收站(_E)"
@@ -274,7 +274,7 @@ msgstr "未选中任何应用程序"
 msgid "Other Application..."
 msgstr "其它应用程序..."
 
-#: ../thunar/thunar-chooser-dialog.c:187 ../thunar/thunar-launcher.c:3124
+#: ../thunar/thunar-chooser-dialog.c:187 ../thunar/thunar-launcher.c:3164
 msgid "Open With"
 msgstr "打开方式"
 
@@ -302,7 +302,7 @@ msgstr "设为此种类文件的默认(_D)"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1280
-#: ../thunar/thunar-properties-dialog.c:893 ../thunar/thunar-window.c:3648
+#: ../thunar/thunar-properties-dialog.c:893 ../thunar/thunar-window.c:3719
 #: ../plugins/thunar-uca/thunar-uca-editor.c:144
 #: ../plugins/thunar-uca/thunar-uca-editor.c:437
 msgid "_OK"
@@ -400,7 +400,7 @@ msgstr "选择应用程序"
 #. change the accept button label text
 #. aka "activate"
 #: ../thunar/thunar-chooser-dialog.c:869
-#: ../thunar/thunar-chooser-dialog.c:1280 ../thunar/thunar-launcher.c:1489
+#: ../thunar/thunar-chooser-dialog.c:1280 ../thunar/thunar-launcher.c:1526
 #: ../thunar/thunar-renamer-dialog.c:1075
 #: ../plugins/thunar-uca/thunar-uca-editor.c:179
 msgid "_Open"
@@ -486,7 +486,7 @@ msgstr "配置详细列表视图中的栏"
 #. add the "Help" button
 #: ../thunar/thunar-column-editor.c:126
 #: ../thunar/thunar-preferences-dialog.c:299
-#: ../thunar/thunar-properties-dialog.c:256 ../thunar/thunar-window.c:454
+#: ../thunar/thunar-properties-dialog.c:256 ../thunar/thunar-window.c:459
 msgid "_Help"
 msgstr "帮助(_H)"
 
@@ -548,7 +548,7 @@ msgstr "按需求自动扩展栏(_E)"
 #. tell the user that we're unable to determine the file info
 #: ../thunar/thunar-column-model.c:874 ../thunar/thunar-list-model.c:772
 #: ../thunar/thunar-list-model.c:808
-#: ../thunar/thunar-permissions-chooser.c:232 ../thunar/thunar-util.c:406
+#: ../thunar/thunar-permissions-chooser.c:232 ../thunar/thunar-util.c:408
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:710
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:293
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:294
@@ -628,7 +628,7 @@ msgstr "停止多磁盘驱动器(_S)"
 msgid "_Lock"
 msgstr "锁定(_L)"
 
-#: ../thunar/thunar-device.c:526 ../thunar/thunar-launcher.c:301
+#: ../thunar/thunar-device.c:526 ../thunar/thunar-launcher.c:306
 msgid "_Eject"
 msgstr "弹出(_E)"
 
@@ -807,7 +807,7 @@ msgstr "链接至这里(_L)"
 
 #. display an error to the user
 #. display an error message to the user
-#: ../thunar/thunar-dnd.c:250 ../thunar/thunar-launcher.c:786
+#: ../thunar/thunar-dnd.c:250 ../thunar/thunar-launcher.c:793
 #, c-format
 msgid "Failed to execute file \"%s\""
 msgstr "无法执行文件 “%s”"
@@ -908,7 +908,7 @@ msgid "Trash"
 msgstr "回收站"
 
 #: ../thunar/thunar-file.c:1075 ../thunar/thunar-gio-extensions.c:426
-#: ../thunar/thunar-shortcuts-model.c:992 ../thunar/thunar-window.c:442
+#: ../thunar/thunar-shortcuts-model.c:992 ../thunar/thunar-window.c:447
 msgid "File System"
 msgstr "文件系统"
 
@@ -1152,19 +1152,23 @@ msgid ""
 "space."
 msgstr "目标位置上空间不足。请尝试删除一些文件以保证空间足够。"
 
-#: ../thunar/thunar-launcher.c:269
+#: ../thunar/thunar-launcher.c:273
+msgid "Open Item Location"
+msgstr ""
+
+#: ../thunar/thunar-launcher.c:274
 msgid "Open With Other _Application..."
 msgstr "使用用其它应用程序打开(_A)..."
 
-#: ../thunar/thunar-launcher.c:269 ../thunar/thunar-launcher.c:3125
+#: ../thunar/thunar-launcher.c:274 ../thunar/thunar-launcher.c:3165
 msgid "Choose another application with which to open the selected file"
 msgstr "选择另一个应用程序来打开选中的文件"
 
-#: ../thunar/thunar-launcher.c:270
+#: ../thunar/thunar-launcher.c:275
 msgid "Set _Default Application..."
 msgstr "设置默认应用程序(_D)"
 
-#: ../thunar/thunar-launcher.c:270
+#: ../thunar/thunar-launcher.c:275
 msgid ""
 "Choose an application which should be used by default to open the selected "
 "file"
@@ -1174,226 +1178,226 @@ msgstr "选择一个用于打开所选文件的默认应用程序"
 #. possible to automatically migrate to new accel paths.
 #. Waiting for https://gitlab.gnome.org/GNOME/gtk/issues/2375 to be able to
 #. fix that
-#: ../thunar/thunar-launcher.c:274
+#: ../thunar/thunar-launcher.c:279
 msgid "_Send To"
 msgstr "发送至(_S)"
 
-#: ../thunar/thunar-launcher.c:275
+#: ../thunar/thunar-launcher.c:280
 msgid "_Add Bookmark"
 msgstr "书签(_A)"
 
-#: ../thunar/thunar-launcher.c:275
+#: ../thunar/thunar-launcher.c:280
 msgid ""
 "Create bookmarks for all selected folders in the sidepane. If nothing is "
 "selected, the current directory is bookmarked."
 msgstr "在侧栏窗格中为所有选定文件夹创建书签。如果未选择任何内容，则将当前目录添加为书签。 "
 
-#: ../thunar/thunar-launcher.c:277
+#: ../thunar/thunar-launcher.c:282
 msgid "_Properties..."
 msgstr "属性(_P)..."
 
-#: ../thunar/thunar-launcher.c:277
+#: ../thunar/thunar-launcher.c:282
 msgid "View the properties of the selected file"
 msgstr "查看选中文件的属性"
 
-#: ../thunar/thunar-launcher.c:278 ../thunar/thunar-launcher.c:1547
+#: ../thunar/thunar-launcher.c:283 ../thunar/thunar-launcher.c:1584
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "建立链接(_K)"
 
-#: ../thunar/thunar-launcher.c:279
+#: ../thunar/thunar-launcher.c:284
 msgid "Du_plicate"
 msgstr "复制(_P)"
 
-#: ../thunar/thunar-launcher.c:280
+#: ../thunar/thunar-launcher.c:285
 msgid "_Rename..."
 msgstr "重命名(_R)..."
 
-#: ../thunar/thunar-launcher.c:281
+#: ../thunar/thunar-launcher.c:286
 msgid "Delete all files and folders in the Trash"
 msgstr "删除回收站中的所有文件和文件夹"
 
-#: ../thunar/thunar-launcher.c:282
+#: ../thunar/thunar-launcher.c:287
 msgid "_Remove from recent"
 msgstr "从最近里删除(_R)"
 
-#: ../thunar/thunar-launcher.c:282
+#: ../thunar/thunar-launcher.c:287
 msgid "Remove the selected files from Recent"
 msgstr "从最近里删除所选文件"
 
-#: ../thunar/thunar-launcher.c:283
+#: ../thunar/thunar-launcher.c:288
 msgid "Create _Folder..."
 msgstr "创建文件夹(_F)..."
 
-#: ../thunar/thunar-launcher.c:283
+#: ../thunar/thunar-launcher.c:288
 msgid "Create an empty folder within the current folder"
 msgstr "在当前文件夹内创建一个空文件夹"
 
-#: ../thunar/thunar-launcher.c:284
+#: ../thunar/thunar-launcher.c:289
 msgid "Create _Document"
 msgstr "创建文档(_D)"
 
-#: ../thunar/thunar-launcher.c:284
+#: ../thunar/thunar-launcher.c:289
 msgid "Create a new document from a template"
 msgstr "未能从模板创建新文档"
 
-#: ../thunar/thunar-launcher.c:286
+#: ../thunar/thunar-launcher.c:291
 msgid "_Restore"
 msgstr "恢复(_R)"
 
-#: ../thunar/thunar-launcher.c:287
+#: ../thunar/thunar-launcher.c:292
 msgid "_Restore and Show"
 msgstr "恢复并显示 (_R)"
 
-#: ../thunar/thunar-launcher.c:287
+#: ../thunar/thunar-launcher.c:292
 msgid "_Restore and show the file(s)"
 msgstr "恢复并显示文件 (_R)"
 
-#: ../thunar/thunar-launcher.c:288
+#: ../thunar/thunar-launcher.c:293
 msgid "Mo_ve to Trash"
 msgstr "移至回收站(_V)"
 
-#: ../thunar/thunar-launcher.c:294
+#: ../thunar/thunar-launcher.c:299
 msgid "_Paste"
 msgstr "粘贴(_P)"
 
-#: ../thunar/thunar-launcher.c:294
+#: ../thunar/thunar-launcher.c:299
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr "使用剪切或复制命令来移动或复制先前选中的文件"
 
-#: ../thunar/thunar-launcher.c:295
+#: ../thunar/thunar-launcher.c:300
 msgid "_Paste Into Folder"
 msgstr "粘贴至文件夹(_P)"
 
-#: ../thunar/thunar-launcher.c:295
+#: ../thunar/thunar-launcher.c:300
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
 msgstr "使用剪切或复制命令将先前选中的文件移动或复制至选中的文件夹"
 
-#: ../thunar/thunar-launcher.c:296
+#: ../thunar/thunar-launcher.c:301
 msgid "_Copy"
 msgstr "复制(_C)"
 
-#: ../thunar/thunar-launcher.c:296
+#: ../thunar/thunar-launcher.c:301
 msgid "Prepare the selected files to be copied with a Paste command"
 msgstr "准备好选中的文件以便用剪切命令复制"
 
-#: ../thunar/thunar-launcher.c:297
+#: ../thunar/thunar-launcher.c:302
 msgid "Cu_t"
 msgstr "剪切(_T)"
 
-#: ../thunar/thunar-launcher.c:297
+#: ../thunar/thunar-launcher.c:302
 msgid "Prepare the selected files to be moved with a Paste command"
 msgstr "准备好选中的文件以便用剪切命令移动"
 
-#: ../thunar/thunar-launcher.c:299
+#: ../thunar/thunar-launcher.c:304
 msgid "_Mount"
 msgstr "挂载(_M)"
 
-#: ../thunar/thunar-launcher.c:299
+#: ../thunar/thunar-launcher.c:304
 msgid "Mount the selected device"
 msgstr "挂载所选设备"
 
-#: ../thunar/thunar-launcher.c:300
+#: ../thunar/thunar-launcher.c:305
 msgid "_Unmount"
 msgstr "卸载(_U)"
 
-#: ../thunar/thunar-launcher.c:300
+#: ../thunar/thunar-launcher.c:305
 msgid "Unmount the selected device"
 msgstr "卸载所选设备"
 
-#: ../thunar/thunar-launcher.c:301
+#: ../thunar/thunar-launcher.c:306
 msgid "Eject the selected device"
 msgstr "弹出所选设备"
 
-#: ../thunar/thunar-launcher.c:923
+#: ../thunar/thunar-launcher.c:930
 #, c-format
 msgid "Failed to open file \"%s\""
 msgstr "无法打开文件 “%s”"
 
 #. we can just tell that n files failed to open
-#: ../thunar/thunar-launcher.c:929
+#: ../thunar/thunar-launcher.c:936
 #, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
 msgstr[0] "无法打开 %d 个文件"
 
-#: ../thunar/thunar-launcher.c:968
+#: ../thunar/thunar-launcher.c:975
 msgid "Are you sure you want to open all folders?"
 msgstr "您确定要打开所有的文件夹吗？"
 
-#: ../thunar/thunar-launcher.c:970
+#: ../thunar/thunar-launcher.c:977
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
 msgstr[0] "这会打开 %d 个单独的文件管理器窗口。"
 
-#: ../thunar/thunar-launcher.c:973
+#: ../thunar/thunar-launcher.c:980
 #, c-format
 msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
 msgstr[0] "打开 %d 个新窗口"
 
-#: ../thunar/thunar-launcher.c:1061 ../thunar/thunar-launcher.c:1869
+#: ../thunar/thunar-launcher.c:1068 ../thunar/thunar-launcher.c:1906
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "无法挂载 “%s”"
 
-#: ../thunar/thunar-launcher.c:1489
+#: ../thunar/thunar-launcher.c:1526
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
 msgstr[0] "打开选中的文件"
 
-#: ../thunar/thunar-launcher.c:1493
+#: ../thunar/thunar-launcher.c:1530
 msgid "_Execute"
 msgstr "执行(_E)"
 
-#: ../thunar/thunar-launcher.c:1493
+#: ../thunar/thunar-launcher.c:1530
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
 msgstr[0] "执行选中的文件"
 
-#: ../thunar/thunar-launcher.c:1498
+#: ../thunar/thunar-launcher.c:1535
 #, c-format
 msgid "Open in New _Tab"
 msgid_plural "Open in %d New _Tabs"
 msgstr[0] "在 %d 个新标签中打开"
 
-#: ../thunar/thunar-launcher.c:1499
+#: ../thunar/thunar-launcher.c:1536
 #, c-format
 msgid "Open the selected directory in new tab"
 msgid_plural "Open the selected directories in %d new tabs"
 msgstr[0] "在 %d 个新窗口中打开选中的目录"
 
-#: ../thunar/thunar-launcher.c:1508
+#: ../thunar/thunar-launcher.c:1545
 #, c-format
 msgid "Open in New _Window"
 msgid_plural "Open in %d New _Windows"
 msgstr[0] "在 %d 个新窗口中打开"
 
-#: ../thunar/thunar-launcher.c:1509
+#: ../thunar/thunar-launcher.c:1546
 #, c-format
 msgid "Open the selected directory in new window"
 msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] "在 %d 个新窗口中打开选中的目录"
 
-#: ../thunar/thunar-launcher.c:1548
+#: ../thunar/thunar-launcher.c:1585
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "为每个选中的文件创建符号链接"
 
-#: ../thunar/thunar-launcher.c:1572
+#: ../thunar/thunar-launcher.c:1609
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "重命名选中的文件"
 
-#: ../thunar/thunar-launcher.c:1582
+#: ../thunar/thunar-launcher.c:1619
 msgid "Restore the selected file to its original location"
 msgid_plural "Restore the selected files to its original location"
 msgstr[0] "将所选文件恢复到其原始位置"
 
-#: ../thunar/thunar-launcher.c:1594
+#: ../thunar/thunar-launcher.c:1631
 msgid ""
 "Restore the selected file to its original location and open the location in "
 "a new window/tab"
@@ -1402,133 +1406,133 @@ msgid_plural ""
 "locations in a new window/tab"
 msgstr[0] "将选择的文件进行恢复至原先的位置，并在新的窗口/标签页中打开该路径"
 
-#: ../thunar/thunar-launcher.c:1611
+#: ../thunar/thunar-launcher.c:1648
 msgid "Move the selected file to the Trash"
 msgid_plural "Move the selected files to the Trash"
 msgstr[0] "将选中的文件移至回收站"
 
-#: ../thunar/thunar-launcher.c:1628
+#: ../thunar/thunar-launcher.c:1665
 msgid "Permanently delete the selected file"
 msgid_plural "Permanently delete the selected files"
 msgstr[0] "永久删除选中的文件"
 
-#: ../thunar/thunar-launcher.c:1687
+#: ../thunar/thunar-launcher.c:1724
 msgid "Cut the selection"
 msgstr "剪切所选"
 
-#: ../thunar/thunar-launcher.c:1697
+#: ../thunar/thunar-launcher.c:1734
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "准备好选中的文件以便用粘贴命令移动"
 
-#: ../thunar/thunar-launcher.c:1711
+#: ../thunar/thunar-launcher.c:1748
 msgid "Copy the selection"
 msgstr "复制所选"
 
-#: ../thunar/thunar-launcher.c:1721
+#: ../thunar/thunar-launcher.c:1758
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "准备好选中的文件以便用粘贴命令复制"
 
-#: ../thunar/thunar-launcher.c:1744
+#: ../thunar/thunar-launcher.c:1781
 msgid "Paste the clipboard"
 msgstr "粘贴剪贴板"
 
-#: ../thunar/thunar-launcher.c:1975
+#: ../thunar/thunar-launcher.c:2012
 msgid "Side Pane (Add Bookmark)"
 msgid_plural "Side Pane (Add Bookmarks)"
 msgstr[0] "侧边栏(添加书签)"
 
-#: ../thunar/thunar-launcher.c:1976
+#: ../thunar/thunar-launcher.c:2013
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "将选中的文件夹添加到快捷方式侧边栏"
 
-#: ../thunar/thunar-launcher.c:1995
+#: ../thunar/thunar-launcher.c:2032
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
 msgstr[0] "桌面(创建链接)"
 
-#: ../thunar/thunar-launcher.c:1996
+#: ../thunar/thunar-launcher.c:2033
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] "在桌面上为选中的文件创建链接"
 
-#: ../thunar/thunar-launcher.c:2017 ../thunar/thunar-launcher.c:2055
+#: ../thunar/thunar-launcher.c:2054 ../thunar/thunar-launcher.c:2092
 #, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
 msgstr[0] "将选中的文件发送至 “%s”"
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-launcher.c:2575
+#: ../thunar/thunar-launcher.c:2612
 msgid "New Empty File"
 msgstr "新建空文件"
 
-#: ../thunar/thunar-launcher.c:2579
+#: ../thunar/thunar-launcher.c:2616
 msgid "New Empty File..."
 msgstr "新建空文件..."
 
-#: ../thunar/thunar-launcher.c:2779
+#: ../thunar/thunar-launcher.c:2816
 #, c-format
 msgid "No templates installed in \"%s\""
 msgstr "\"%s\"中未安装模板"
 
-#: ../thunar/thunar-launcher.c:2792
+#: ../thunar/thunar-launcher.c:2829
 msgid "_Empty File"
 msgstr "空文件(_E)"
 
-#: ../thunar/thunar-launcher.c:2898
+#: ../thunar/thunar-launcher.c:2935
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "无法弹出 “%s”"
 
-#: ../thunar/thunar-launcher.c:2957
+#: ../thunar/thunar-launcher.c:2994
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "无法卸载 \"%s\""
 
-#: ../thunar/thunar-launcher.c:3018
+#: ../thunar/thunar-launcher.c:3055
 #, c-format
 msgid "Open With \"%s\""
 msgstr "用 “%s” 打开"
 
-#: ../thunar/thunar-launcher.c:3019 ../thunar/thunar-launcher.c:3088
+#: ../thunar/thunar-launcher.c:3056 ../thunar/thunar-launcher.c:3125
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "使用 “%s” 打开选中的文件"
 
-#: ../thunar/thunar-launcher.c:3087
+#: ../thunar/thunar-launcher.c:3124
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "用 “%s” 打开(_O)"
 
 #. we can only show a generic "Open" action
-#: ../thunar/thunar-launcher.c:3107
+#: ../thunar/thunar-launcher.c:3144
 #, c-format
 msgid "_Open With Default Applications"
 msgstr "用默认应用程序打开(_O)"
 
-#: ../thunar/thunar-launcher.c:3108
+#: ../thunar/thunar-launcher.c:3145
 #, c-format
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
 msgstr[0] "用默认的应用程序打开选中的文件"
 
-#: ../thunar/thunar-list-model.c:2489
+#: ../thunar/thunar-list-model.c:2583
 #, c-format
 msgid "%d file: %s"
 msgid_plural "%d files: %s"
 msgstr[0] "%d 个文件: %s"
 
-#: ../thunar/thunar-list-model.c:2497
+#: ../thunar/thunar-list-model.c:2591
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
 msgstr[0] "%d 个文件夹"
 
-#: ../thunar/thunar-list-model.c:2503
+#: ../thunar/thunar-list-model.c:2597
 #, c-format
 msgid "0 items"
 msgstr "0个项目"
@@ -1538,45 +1542,45 @@ msgstr "0个项目"
 #. * is between the message about the number of folders
 #. * and the number of items in the selection
 #. TRANSLATORS: string moved from line 2573 to here
-#: ../thunar/thunar-list-model.c:2515
+#: ../thunar/thunar-list-model.c:2609
 #, c-format
 msgid "%s, %s"
 msgstr "%s，%s"
 
-#: ../thunar/thunar-list-model.c:2594
+#: ../thunar/thunar-list-model.c:2688
 #, c-format
 msgid "%s, Free space: %s"
 msgstr "%s, 可用空间: %s"
 
-#: ../thunar/thunar-list-model.c:2619
+#: ../thunar/thunar-list-model.c:2713
 #, c-format
 msgid "\"%s\": broken link"
 msgstr "\"%s\": 无效链接"
 
-#: ../thunar/thunar-list-model.c:2624
+#: ../thunar/thunar-list-model.c:2718
 #, c-format
 msgid "\"%s\": %s link to %s"
 msgstr "\"%s\": %s 链接至 %s"
 
-#: ../thunar/thunar-list-model.c:2630
+#: ../thunar/thunar-list-model.c:2724
 #, c-format
 msgid "\"%s\": shortcut"
 msgstr "\"%s\": 快捷方式"
 
-#: ../thunar/thunar-list-model.c:2634
+#: ../thunar/thunar-list-model.c:2728
 #, c-format
 msgid "\"%s\": mountable"
 msgstr "\"%s\": 可挂载"
 
 #. I18N, first %s is the display name of the file, 2nd the file size, 3rd the
 #. content type
-#: ../thunar/thunar-list-model.c:2641
+#: ../thunar/thunar-list-model.c:2735
 #, c-format
 msgid "\"%s\": %s %s"
 msgstr "\"%s\": %s %s"
 
 #. I18N, first %s is the display name of the file, second the content type
-#: ../thunar/thunar-list-model.c:2650
+#: ../thunar/thunar-list-model.c:2744
 #, c-format
 msgid "\"%s\": %s"
 msgstr "\"%s\": %s"
@@ -1586,22 +1590,26 @@ msgstr "\"%s\": %s"
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: ../thunar/thunar-list-model.c:2660 ../thunar/thunar-properties-dialog.c:415
+#: ../thunar/thunar-list-model.c:2754 ../thunar/thunar-properties-dialog.c:415
 msgid "Original Path:"
 msgstr "原路径:"
 
 #. append the image dimensions to the statusbar text
-#: ../thunar/thunar-list-model.c:2683
+#: ../thunar/thunar-list-model.c:2777
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:153
 msgid "Image Size:"
 msgstr "图片大小:"
 
-#: ../thunar/thunar-list-model.c:2701
+#: ../thunar/thunar-list-model.c:2795
 #, c-format
 msgid "Selection: %s"
 msgstr "选择: %s"
 
-#: ../thunar/thunar-location-entry.c:337
+#: ../thunar/thunar-location-entry.c:193 ../thunar/thunar-window.c:467
+msgid "Search for files"
+msgstr ""
+
+#: ../thunar/thunar-location-entry.c:361
 #, c-format
 msgid "File does not exist"
 msgstr "文件不存在"
@@ -1637,11 +1645,11 @@ msgstr "正在弹出设备"
 msgid "The device \"%s\" is being ejected. This may take some time"
 msgstr "正在弹出设备 “%s”。这可能需要一些时间"
 
-#: ../thunar/thunar-path-entry.c:205
+#: ../thunar/thunar-path-entry.c:208
 msgid "Icon size"
 msgstr "图标大小"
 
-#: ../thunar/thunar-path-entry.c:206
+#: ../thunar/thunar-path-entry.c:209
 msgid "The icon size for the path entry"
 msgstr "路径条目的图标大小"
 
@@ -2374,7 +2382,7 @@ msgstr "清除"
 msgid "Clear the file list below"
 msgstr "清除下面的文件列表"
 
-#: ../thunar/thunar-renamer-dialog.c:197 ../thunar/thunar-window.c:456
+#: ../thunar/thunar-renamer-dialog.c:197 ../thunar/thunar-window.c:461
 msgid "_About"
 msgstr "关于(_A)"
 
@@ -2506,7 +2514,7 @@ msgid ""
 msgstr "您要跳过此文件并继续重命名剩下的文件吗？"
 
 #: ../thunar/thunar-shortcuts-model.c:629
-#: ../thunar/thunar-shortcuts-model.c:993 ../thunar/thunar-window.c:442
+#: ../thunar/thunar-shortcuts-model.c:993 ../thunar/thunar-window.c:447
 msgid "Browse the file system"
 msgstr "浏览文件系统"
 
@@ -2538,7 +2546,7 @@ msgstr "网络"
 msgid "Browse Network"
 msgstr "浏览网络"
 
-#: ../thunar/thunar-shortcuts-model.c:1038 ../thunar/thunar-window.c:452
+#: ../thunar/thunar-shortcuts-model.c:1038 ../thunar/thunar-window.c:457
 msgid "Browse local network connections"
 msgstr "浏览本地网络连接"
 
@@ -2554,7 +2562,7 @@ msgstr "打开主文件夹"
 msgid "Open the desktop folder"
 msgstr "打开桌面文件夹"
 
-#: ../thunar/thunar-shortcuts-model.c:1136 ../thunar/thunar-window.c:445
+#: ../thunar/thunar-shortcuts-model.c:1136 ../thunar/thunar-window.c:450
 #: ../thunar.desktop.in.in.h:6
 msgid "Computer"
 msgstr "计算机"
@@ -2563,7 +2571,7 @@ msgstr "计算机"
 msgid "Browse the computer"
 msgstr "浏览此计算机"
 
-#: ../thunar/thunar-shortcuts-model.c:1149 ../thunar/thunar-window.c:446
+#: ../thunar/thunar-shortcuts-model.c:1149 ../thunar/thunar-window.c:451
 msgid "Recent"
 msgstr "最近"
 
@@ -2621,148 +2629,148 @@ msgstr "(部分内容无法读取)"
 msgid "Permission denied"
 msgstr "权限不足"
 
-#: ../thunar/thunar-standard-view.c:358
+#: ../thunar/thunar-standard-view.c:361
 msgid "Select _all Files"
 msgstr "选中所有文件(_A)"
 
-#: ../thunar/thunar-standard-view.c:358
+#: ../thunar/thunar-standard-view.c:361
 msgid "Select all files in this window"
 msgstr "选中此窗口中的所有文件"
 
-#: ../thunar/thunar-standard-view.c:359
+#: ../thunar/thunar-standard-view.c:362
 msgid "Select _by Pattern..."
 msgstr "按文件类型选择(_B)..."
 
-#: ../thunar/thunar-standard-view.c:359
+#: ../thunar/thunar-standard-view.c:362
 msgid "Select all files that match a certain pattern"
 msgstr "选中所有匹配特定类型的文件"
 
-#: ../thunar/thunar-standard-view.c:360
+#: ../thunar/thunar-standard-view.c:363
 msgid "_Invert Selection"
 msgstr "反选(_I)"
 
-#: ../thunar/thunar-standard-view.c:360
+#: ../thunar/thunar-standard-view.c:363
 msgid "Select all files but not those currently selected"
 msgstr "选择所有文件，但不包括当前已选"
 
-#: ../thunar/thunar-standard-view.c:361
+#: ../thunar/thunar-standard-view.c:364
 msgid "U_nselect all Files"
 msgstr "取消文件全选(_N)"
 
-#: ../thunar/thunar-standard-view.c:361
+#: ../thunar/thunar-standard-view.c:364
 msgid "Unselect all files in this window"
 msgstr "取消选中此窗口中的所有文件"
 
-#: ../thunar/thunar-standard-view.c:362
+#: ../thunar/thunar-standard-view.c:365
 msgid "Arran_ge Items"
 msgstr "排列项目(_G)"
 
-#: ../thunar/thunar-standard-view.c:363
+#: ../thunar/thunar-standard-view.c:366
 msgid "Toggle sort direction"
 msgstr "切换排序方向"
 
-#: ../thunar/thunar-standard-view.c:363
+#: ../thunar/thunar-standard-view.c:366
 msgid "Toggle Ascending/Descending sort order"
 msgstr "切换升序/降序排序"
 
-#: ../thunar/thunar-standard-view.c:364
+#: ../thunar/thunar-standard-view.c:367
 msgid "By _Name"
 msgstr "按名称(_N)"
 
-#: ../thunar/thunar-standard-view.c:364
+#: ../thunar/thunar-standard-view.c:367
 msgid "Keep items sorted by their name"
 msgstr "按项目名称排列"
 
-#: ../thunar/thunar-standard-view.c:365
+#: ../thunar/thunar-standard-view.c:368
 msgid "By _Size"
 msgstr "按大小(_S)"
 
-#: ../thunar/thunar-standard-view.c:365
+#: ../thunar/thunar-standard-view.c:368
 msgid "Keep items sorted by their size"
 msgstr "按项目大小排列"
 
-#: ../thunar/thunar-standard-view.c:366
+#: ../thunar/thunar-standard-view.c:369
 msgid "By _Type"
 msgstr "按文件类型(_T)"
 
-#: ../thunar/thunar-standard-view.c:366
+#: ../thunar/thunar-standard-view.c:369
 msgid "Keep items sorted by their type"
 msgstr "按项目文件类型排列"
 
-#: ../thunar/thunar-standard-view.c:367
+#: ../thunar/thunar-standard-view.c:370
 msgid "By Modification _Date"
 msgstr "按修改时间(_D)"
 
-#: ../thunar/thunar-standard-view.c:367
+#: ../thunar/thunar-standard-view.c:370
 msgid "Keep items sorted by their modification date"
 msgstr "按项目修改时间排列"
 
-#: ../thunar/thunar-standard-view.c:368
+#: ../thunar/thunar-standard-view.c:371
 msgid "By D_eletion Date"
 msgstr "按删除日期(_E)"
 
-#: ../thunar/thunar-standard-view.c:368
+#: ../thunar/thunar-standard-view.c:371
 msgid "Keep items sorted by their deletion date"
 msgstr "按项目删除时间排列"
 
-#: ../thunar/thunar-standard-view.c:369
+#: ../thunar/thunar-standard-view.c:372
 msgid "_Ascending"
 msgstr "升序(_A)"
 
-#: ../thunar/thunar-standard-view.c:369
+#: ../thunar/thunar-standard-view.c:372
 msgid "Sort items in ascending order"
 msgstr "按升序对项目进行排序"
 
-#: ../thunar/thunar-standard-view.c:370
+#: ../thunar/thunar-standard-view.c:373
 msgid "_Descending"
 msgstr "降序(_D)"
 
-#: ../thunar/thunar-standard-view.c:370
+#: ../thunar/thunar-standard-view.c:373
 msgid "Sort items in descending order"
 msgstr "按降序对项目进行排序"
 
-#: ../thunar/thunar-standard-view.c:1578
+#: ../thunar/thunar-standard-view.c:1591
 msgid "Loading folder contents..."
 msgstr "正在载入文件夹内容..."
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2130 ../thunar/thunar-window.c:3471
+#: ../thunar/thunar-standard-view.c:2143 ../thunar/thunar-window.c:3542
 msgid "Failed to open the home folder"
 msgstr "无法打开主文件夹"
 
-#: ../thunar/thunar-standard-view.c:2203
+#: ../thunar/thunar-standard-view.c:2216
 msgid "Select by Pattern"
 msgstr "按类型选择"
 
-#: ../thunar/thunar-standard-view.c:2208
+#: ../thunar/thunar-standard-view.c:2221
 msgid "_Select"
 msgstr "选择(_S)"
 
-#: ../thunar/thunar-standard-view.c:2221
+#: ../thunar/thunar-standard-view.c:2234
 msgid "_Pattern:"
 msgstr "类型(_P):"
 
-#: ../thunar/thunar-standard-view.c:2228
+#: ../thunar/thunar-standard-view.c:2241
 msgid "Examples:"
 msgstr "示例："
 
-#: ../thunar/thunar-standard-view.c:2237
+#: ../thunar/thunar-standard-view.c:2250
 msgid "C_ase sensitive"
 msgstr "区分大小写(_A)"
 
 #. tell the user that the file name provided by the X Direct Save source is
 #. invalid
-#: ../thunar/thunar-standard-view.c:2606
+#: ../thunar/thunar-standard-view.c:2619
 msgid "Invalid filename provided by XDS drag site"
 msgstr "XDS 拖拽提供的无效文件名"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:2796
+#: ../thunar/thunar-standard-view.c:2809
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "无法为 URL “%s” 创建链接"
 
-#: ../thunar/thunar-standard-view.c:3185 ../thunar/thunar-window.c:3564
+#: ../thunar/thunar-standard-view.c:3198 ../thunar/thunar-window.c:3635
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "无法打开目录 “%s”"
@@ -2835,445 +2843,457 @@ msgstr[0] "剩余 %lu 秒 (每秒 %s)"
 msgid "Loading..."
 msgstr "正在载入..."
 
-#: ../thunar/thunar-util.c:282
+#: ../thunar/thunar-util.c:284
 #, c-format
 msgid "Invalid path"
 msgstr "无效路径"
 
-#: ../thunar/thunar-util.c:316
+#: ../thunar/thunar-util.c:318
 #, c-format
 msgid "Unknown user \"%s\""
 msgstr "未知用户 “%s”"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:427
+#: ../thunar/thunar-util.c:429
 msgid "Today"
 msgstr "今天"
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:432
+#: ../thunar/thunar-util.c:434
 #, c-format
 msgid "Today at %X"
 msgstr "今天 %X"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:440
+#: ../thunar/thunar-util.c:442
 msgid "Yesterday"
 msgstr "昨天"
 
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:445
+#: ../thunar/thunar-util.c:447
 #, c-format
 msgid "Yesterday at %X"
 msgstr "昨天 %X"
 
 #. Days from last week
-#: ../thunar/thunar-util.c:461
+#: ../thunar/thunar-util.c:463
 #, c-format
 msgid "%A at %X"
 msgstr "%A %X"
 
 #. Any other date
-#: ../thunar/thunar-util.c:466
+#: ../thunar/thunar-util.c:468
 #, c-format
 msgid "%x at %X"
 msgstr "%x %X"
 
-#: ../thunar/thunar-util.c:718
+#: ../thunar/thunar-util.c:721
 #, c-format
 msgid "%.*s %u%s"
 msgstr "%.*s %u%s"
 
-#: ../thunar/thunar-window.c:403
+#: ../thunar/thunar-window.c:408
 msgid "_File"
 msgstr "文件(_F)"
 
-#: ../thunar/thunar-window.c:404
+#: ../thunar/thunar-window.c:409
 msgid "New _Tab"
 msgstr "新标签(_T)"
 
-#: ../thunar/thunar-window.c:404
+#: ../thunar/thunar-window.c:409
 msgid "Open a new tab for the displayed location"
 msgstr "为当前显示的位置打开一个新的标签"
 
-#: ../thunar/thunar-window.c:405
+#: ../thunar/thunar-window.c:410
 msgid "New _Window"
 msgstr "新建窗口(_W)"
 
-#: ../thunar/thunar-window.c:405
+#: ../thunar/thunar-window.c:410
 msgid "Open a new Thunar window for the displayed location"
 msgstr "在当前显示的位置打开新的 Thunar 窗口"
 
-#: ../thunar/thunar-window.c:406
+#: ../thunar/thunar-window.c:411
 msgid "Detac_h Tab"
 msgstr "分离标签(_H)"
 
-#: ../thunar/thunar-window.c:406
+#: ../thunar/thunar-window.c:411
 msgid "Open current folder in a new window"
 msgstr "在新窗口中打开当前文件夹"
 
-#: ../thunar/thunar-window.c:407
+#: ../thunar/thunar-window.c:412
 msgid "C_lose Tab"
 msgstr "关闭标签(_L)"
 
-#: ../thunar/thunar-window.c:407
+#: ../thunar/thunar-window.c:412
 msgid "Close this folder"
 msgstr "关闭此文件夹"
 
-#: ../thunar/thunar-window.c:408
+#: ../thunar/thunar-window.c:413
 msgid "_Close Window"
 msgstr "关闭窗口(_C)"
 
-#: ../thunar/thunar-window.c:408
+#: ../thunar/thunar-window.c:413
 msgid "Close this window"
 msgstr "关闭此窗口"
 
-#: ../thunar/thunar-window.c:409
+#: ../thunar/thunar-window.c:414
 msgid "Close _All Windows"
 msgstr "关闭所有窗口(_A)"
 
-#: ../thunar/thunar-window.c:409
+#: ../thunar/thunar-window.c:414
 msgid "Close all Thunar windows"
 msgstr "关闭所有 Thunar 窗口"
 
-#: ../thunar/thunar-window.c:411
+#: ../thunar/thunar-window.c:416
 msgid "_Edit"
 msgstr "编辑(_E)"
 
-#: ../thunar/thunar-window.c:412
+#: ../thunar/thunar-window.c:417
 msgid "Pr_eferences..."
 msgstr "首选项(_E)..."
 
-#: ../thunar/thunar-window.c:412
+#: ../thunar/thunar-window.c:417
 msgid "Edit Thunars Preferences"
 msgstr "编辑 Thunar 首选项"
 
-#: ../thunar/thunar-window.c:414
+#: ../thunar/thunar-window.c:419
 msgid "_View"
 msgstr "视图(_V)"
 
-#: ../thunar/thunar-window.c:415
+#: ../thunar/thunar-window.c:420
 msgid "_Reload"
 msgstr "刷新(_R)"
 
-#: ../thunar/thunar-window.c:415
+#: ../thunar/thunar-window.c:420
 msgid "Reload the current folder"
 msgstr "重载当前文件夹"
 
-#: ../thunar/thunar-window.c:417
+#: ../thunar/thunar-window.c:422
 msgid "Spl_it View"
 msgstr "拆分视图( _I)"
 
-#: ../thunar/thunar-window.c:417
+#: ../thunar/thunar-window.c:422
 msgid "Open/Close Split View"
 msgstr "打开/关闭拆分视图"
 
-#: ../thunar/thunar-window.c:418
+#: ../thunar/thunar-window.c:423
 msgid "_Location Selector"
 msgstr "位置选择器(_L)"
 
-#: ../thunar/thunar-window.c:419
+#: ../thunar/thunar-window.c:424
 msgid "_Pathbar Style"
 msgstr "路径栏样式(_P)"
 
-#: ../thunar/thunar-window.c:419
+#: ../thunar/thunar-window.c:424
 msgid "Modern approach with buttons that correspond to folders"
 msgstr "文件夹有其对应按钮的现代方式"
 
-#: ../thunar/thunar-window.c:420
+#: ../thunar/thunar-window.c:425
 msgid "_Toolbar Style"
 msgstr "工具栏样式(_T)"
 
-#: ../thunar/thunar-window.c:420
+#: ../thunar/thunar-window.c:425
 msgid "Traditional approach with location bar and navigation buttons"
 msgstr "带位置栏和导航栏的传统方式"
 
-#: ../thunar/thunar-window.c:421
+#: ../thunar/thunar-window.c:426
 msgid "_Side Pane"
 msgstr "侧边栏(_S)"
 
-#: ../thunar/thunar-window.c:422
+#: ../thunar/thunar-window.c:427
 msgid "_Shortcuts"
 msgstr "快捷方式(_S)"
 
-#: ../thunar/thunar-window.c:422
+#: ../thunar/thunar-window.c:427
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "切换是否显示快捷方式栏"
 
-#: ../thunar/thunar-window.c:423
+#: ../thunar/thunar-window.c:428
 msgid "_Tree"
 msgstr "树形(_T)"
 
-#: ../thunar/thunar-window.c:423
+#: ../thunar/thunar-window.c:428
 msgid "Toggles the visibility of the tree pane"
 msgstr "切换是否显示树形栏"
 
-#: ../thunar/thunar-window.c:425
+#: ../thunar/thunar-window.c:430
 msgid "St_atusbar"
 msgstr "状态栏(_A)"
 
-#: ../thunar/thunar-window.c:425
+#: ../thunar/thunar-window.c:430
 msgid "Change the visibility of this window's statusbar"
 msgstr "更改此窗口状态栏的显示"
 
-#: ../thunar/thunar-window.c:426
+#: ../thunar/thunar-window.c:431
 msgid "_Menubar"
 msgstr "菜单栏(_M)"
 
-#: ../thunar/thunar-window.c:426
+#: ../thunar/thunar-window.c:431
 msgid "Change the visibility of this window's menubar"
 msgstr "更改此窗口菜单栏的显示状态"
 
-#: ../thunar/thunar-window.c:427
+#: ../thunar/thunar-window.c:432
 msgid "Show _Hidden Files"
 msgstr "显示隐藏文件(_H)"
 
-#: ../thunar/thunar-window.c:427
+#: ../thunar/thunar-window.c:432
 msgid "Toggles the display of hidden files in the current window"
 msgstr "在当前窗口中切换是否显示隐藏文件"
 
-#: ../thunar/thunar-window.c:428
+#: ../thunar/thunar-window.c:433
 msgid "Zoom I_n"
 msgstr "放大(_N)"
 
-#: ../thunar/thunar-window.c:428
+#: ../thunar/thunar-window.c:433
 msgid "Show the contents in more detail"
 msgstr "显示详细内容"
 
-#: ../thunar/thunar-window.c:431
+#: ../thunar/thunar-window.c:436
 msgid "Zoom _Out"
 msgstr "缩小(_O)"
 
-#: ../thunar/thunar-window.c:431
+#: ../thunar/thunar-window.c:436
 msgid "Show the contents in less detail"
 msgstr "显示大概内容"
 
-#: ../thunar/thunar-window.c:433
+#: ../thunar/thunar-window.c:438
 msgid "Normal Si_ze"
 msgstr "正常大小(_Z)"
 
-#: ../thunar/thunar-window.c:433
+#: ../thunar/thunar-window.c:438
 msgid "Show the contents at the normal size"
 msgstr "用正常大小显示内容"
 
-#: ../thunar/thunar-window.c:435
+#: ../thunar/thunar-window.c:440
 msgid "Clear Saved _Folder View Settings"
 msgstr "清除已保存的文件夹视图设置(_F)"
 
-#: ../thunar/thunar-window.c:435
+#: ../thunar/thunar-window.c:440
 msgid "Delete saved view settings for this folder"
 msgstr "删除此文件夹已保存的视图设置"
 
-#: ../thunar/thunar-window.c:436
+#: ../thunar/thunar-window.c:441
 msgid "_Icon View"
 msgstr "图标视图(_I)"
 
-#: ../thunar/thunar-window.c:436
+#: ../thunar/thunar-window.c:441
 msgid "Display folder content in an icon view"
 msgstr "以图标视图形式显示文件夹内容"
 
-#: ../thunar/thunar-window.c:437
+#: ../thunar/thunar-window.c:442
 msgid "_List View"
 msgstr "列表视图(_L)"
 
-#: ../thunar/thunar-window.c:437
+#: ../thunar/thunar-window.c:442
 msgid "Display folder content in a detailed list view"
 msgstr "以详细列表视图形式显示文件夹内容"
 
-#: ../thunar/thunar-window.c:438
+#: ../thunar/thunar-window.c:443
 msgid "_Compact View"
 msgstr "紧凑视图(_C)"
 
-#: ../thunar/thunar-window.c:438
+#: ../thunar/thunar-window.c:443
 msgid "Display folder content in a compact list view"
 msgstr "以紧凑列表视图形式显示文件夹内容"
 
-#: ../thunar/thunar-window.c:440
+#: ../thunar/thunar-window.c:445
 msgid "_Go"
 msgstr "转到(_G)"
 
-#: ../thunar/thunar-window.c:441
+#: ../thunar/thunar-window.c:446
 msgid "_Bookmarks"
 msgstr "书签(_B)"
 
-#: ../thunar/thunar-window.c:443
+#: ../thunar/thunar-window.c:448
 msgid "_Home"
 msgstr "主文件夹(_H)"
 
-#: ../thunar/thunar-window.c:443
+#: ../thunar/thunar-window.c:448
 msgid "Go to the home folder"
 msgstr "转到主文件夹"
 
-#: ../thunar/thunar-window.c:444
+#: ../thunar/thunar-window.c:449
 msgid "Desktop"
 msgstr "桌面"
 
-#: ../thunar/thunar-window.c:444
+#: ../thunar/thunar-window.c:449
 msgid "Go to the desktop folder"
 msgstr "转到桌面文件夹"
 
-#: ../thunar/thunar-window.c:445
+#: ../thunar/thunar-window.c:450
 msgid ""
 "Browse all local and remote disks and folders accessible from this computer"
 msgstr "浏览此计算机可访问的所有本地和远程磁盘和文件夹"
 
-#: ../thunar/thunar-window.c:446
+#: ../thunar/thunar-window.c:451
 msgid "Display recently used files"
 msgstr "显示最近使用的文件"
 
-#: ../thunar/thunar-window.c:447
+#: ../thunar/thunar-window.c:452
 msgid "T_rash"
 msgstr "回收站(_R)"
 
-#: ../thunar/thunar-window.c:447
+#: ../thunar/thunar-window.c:452
 msgid "Display the contents of the trash can"
 msgstr "显示回收站内容"
 
-#: ../thunar/thunar-window.c:448
+#: ../thunar/thunar-window.c:453
 msgid "Open _Parent"
 msgstr "向上一级(_P)"
 
-#: ../thunar/thunar-window.c:448
+#: ../thunar/thunar-window.c:453
 msgid "Open the parent folder"
 msgstr "打开父文件夹"
 
-#: ../thunar/thunar-window.c:449
+#: ../thunar/thunar-window.c:454
 msgid "_Open Location..."
 msgstr "打开位置(_O)..."
 
-#: ../thunar/thunar-window.c:449
+#: ../thunar/thunar-window.c:454
 msgid "Specify a location to open"
 msgstr "指定要打开的位置"
 
-#: ../thunar/thunar-window.c:451
+#: ../thunar/thunar-window.c:456
 msgid "T_emplates"
 msgstr "模板(_E)"
 
-#: ../thunar/thunar-window.c:451
+#: ../thunar/thunar-window.c:456
 msgid "Go to the templates folder"
 msgstr "转到模板文件夹"
 
-#: ../thunar/thunar-window.c:452
+#: ../thunar/thunar-window.c:457
 msgid "B_rowse Network"
 msgstr "浏览网络(_R)"
 
-#: ../thunar/thunar-window.c:455
+#: ../thunar/thunar-window.c:460
 msgid "_Contents"
 msgstr "内容(_C)"
 
-#: ../thunar/thunar-window.c:455
+#: ../thunar/thunar-window.c:460
 msgid "Display Thunar user manual"
 msgstr "显示 Thunar 用户手册"
 
-#: ../thunar/thunar-window.c:456
+#: ../thunar/thunar-window.c:461
 msgid "Display information about Thunar"
 msgstr "显示 Thunar 的相关信息"
 
-#: ../thunar/thunar-window.c:457
+#: ../thunar/thunar-window.c:462
 msgid "Back"
 msgstr "后退"
 
-#: ../thunar/thunar-window.c:457
+#: ../thunar/thunar-window.c:462
 msgid "Go to the previous visited folder"
 msgstr "转到上一个访问过的文件夹"
 
-#: ../thunar/thunar-window.c:459
+#: ../thunar/thunar-window.c:464
 msgid "Forward"
 msgstr "前进"
 
-#: ../thunar/thunar-window.c:459
+#: ../thunar/thunar-window.c:464
 msgid "Go to the next visited folder"
 msgstr "转到下一个访问过的文件夹"
 
-#: ../thunar/thunar-window.c:460
+#: ../thunar/thunar-window.c:465
 msgid "_Previous Tab"
 msgstr "上一个标签(_P)"
 
-#: ../thunar/thunar-window.c:460
+#: ../thunar/thunar-window.c:465
 msgid "Switch to Previous Tab"
 msgstr "切换到上一个标签"
 
-#: ../thunar/thunar-window.c:461
+#: ../thunar/thunar-window.c:466
 msgid "_Next Tab"
 msgstr "下一个标签(_N)"
 
-#: ../thunar/thunar-window.c:461
+#: ../thunar/thunar-window.c:466
 msgid "Switch to Next Tab"
 msgstr "切换到下一个标签"
 
+#: ../thunar/thunar-window.c:467
+msgid "Search for a specific file in the current folder and recent:///"
+msgstr ""
+
+#: ../thunar/thunar-window.c:468
+msgid "Cancel search for files"
+msgstr ""
+
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:802
+#: ../thunar/thunar-window.c:809
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr "警告: 您正在使用超级帐户。可能会损害您的系统。"
 
-#: ../thunar/thunar-window.c:2277
+#: ../thunar/thunar-window.c:2313
 msgid "Close tab"
 msgstr "关闭标签"
 
-#: ../thunar/thunar-window.c:2705
+#: ../thunar/thunar-window.c:2741
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "打开位置 \"%s\""
 
-#: ../thunar/thunar-window.c:3420
+#: ../thunar/thunar-window.c:3491
 msgid "Failed to open parent folder"
 msgstr "无法打开父文件夹"
 
-#: ../thunar/thunar-window.c:3539
+#: ../thunar/thunar-window.c:3610
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "目录 \"%s\" 不存在。您是否希望创建它？"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3606
+#: ../thunar/thunar-window.c:3677
 msgid "Failed to browse the computer"
 msgstr "无法浏览此计算机"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:3646
+#: ../thunar/thunar-window.c:3717
 msgid "About Templates"
 msgstr "关于模板"
 
-#: ../thunar/thunar-window.c:3668
+#: ../thunar/thunar-window.c:3739
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "此文件夹下的所有文件都会在 “创建文档” 菜单中出现。"
 
-#: ../thunar/thunar-window.c:3675
+#: ../thunar/thunar-window.c:3746
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "如果您经常创建特定种类的文档，复制一份并放入此文件夹中。Thunar 会在 “创建文档” 菜单中为此文档添加一个条目。\n\n然后您从 “创建文档” 菜单中选择此条目，就会在您正在浏览的目录中创建此文档的一个副本。"
 
-#: ../thunar/thunar-window.c:3687
+#: ../thunar/thunar-window.c:3758
 msgid "Do _not display this message again"
 msgstr "不再显示此信息(_N)"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3718
+#: ../thunar/thunar-window.c:3789
 msgid "Failed to open the file system root folder"
 msgstr "无法打开文件系统根目录"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3751
+#: ../thunar/thunar-window.c:3822
 msgid "Failed to display `Recent`"
 msgstr "无法显示“最近” "
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3784
+#: ../thunar/thunar-window.c:3855
 msgid "Failed to display the contents of the trash can"
 msgstr "无法显示回收站的内容"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3817
+#: ../thunar/thunar-window.c:3888
 msgid "Failed to browse the network"
 msgstr "无法浏览网络"
 
-#: ../thunar/thunar-window.c:3906
+#: ../thunar/thunar-window.c:3977
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar 是 Xfce 桌面环境下的快速易用的\n文件管理器。"
+
+#: ../thunar/thunar-window.c:4975
+msgid "Failed to launch search with Catfish"
+msgstr ""
 
 #: ../thunarx/thunarx-property-page.c:111
 msgid "Label"
