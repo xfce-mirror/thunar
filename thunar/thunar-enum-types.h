@@ -347,6 +347,25 @@ GType thunar_use_partial_get_type (void) G_GNUC_CONST;
 
 
 
+#define THUNAR_TYPE_VERIFY_FILE_MODE (thunar_verify_file_get_type ())
+
+/**
+ * ThunarUsePartialMode:
+ * @THUNAR_VERIFY_FILE_MODE_DISABLED    : Disable file checksum
+ * @THUNAR_VERIFY_FILE_MODE_REMOTE_ONLY : Only when src/dst is remote
+ * @THUNAR_VERIFY_FILE_MODE_ALWAYS      : Always verify file checksum
+ **/
+typedef enum
+{
+  THUNAR_VERIFY_FILE_MODE_DISABLED,
+  THUNAR_VERIFY_FILE_MODE_REMOTE_ONLY,
+  THUNAR_VERIFY_FILE_MODE_ALWAYS,
+} ThunarVerifyFileMode;
+
+GType thunar_verify_file_get_type (void) G_GNUC_CONST;
+
+
+
 /**
  * ThunarNewTabBehavior:
  * @THUNAR_NEW_TAB_BEHAVIOR_FOLLOW_PREFERENCE   : switching to the new tab or not is controlled by a preference.
