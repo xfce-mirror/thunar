@@ -651,7 +651,7 @@ thunar_g_file_list_get_type (void)
  * @destination            : destination #GFile
  * @flags                  : set of #GFileCopyFlags
  * @use_partial            : option to use *.partial~
- * @cancellable            : (nullable): optional GCancellable object
+ * @cancellable            : (nullable): optional #GCancellable object
  * @progress_callback      : (nullable) (scope call): function to callback with progress information
  * @progress_callback_data : (clousure): user data to pass to @progress_callback
  * @error                  : (nullable): #GError to set on error
@@ -768,6 +768,42 @@ thunar_g_file_copy (GFile                *source,
   g_clear_object (&partial);
   g_free (base_name);
   return success;
+}
+
+
+
+/**
+ * thunar_g_file_compare_checksum:
+ * @file_a      : a #GFile
+ * @file_b      : a #GFile
+ * @cancellable : (nullalble): optional #GCancellable object
+ * @error       : (nullalble): optional #GError
+ *
+ * Compare @file_a and @file_b with checksum.
+ *
+ * Return value: %TRUE if a checksum matches, %FALSE if not.
+ **/
+gboolean
+thunar_g_file_compare_checksum (GFile        *file_a,
+                                GFile        *file_b,
+                                GCancellable *cancellable,
+                                GError      **error)
+{
+  gchar   *str_a;
+  gchar   *str_b;
+  gboolean is_equal;
+
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  str_a = xfce_g_file_create_checksum (file_a, cancellable, error);
+  str_b = xfce_g_file_create_checksum (file_b, cancellable, error);
+
+  is_equal = g_strcmp0 (str_a, str_b) == 0;
+
+  g_free (str_a);
+  g_free (str_b);
+
+  return is_equal;
 }
 
 
