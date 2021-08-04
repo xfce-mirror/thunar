@@ -1087,3 +1087,12 @@ thunar_details_view_set_recency_column_visible      (ThunarDetailsView *details_
   thunar_column_model_set_column_visible (details_view->column_model, THUNAR_COLUMN_RECENCY, visible);
 }
 
+
+
+void
+thunar_details_view_set_location_column_visible     (ThunarDetailsView *details_view,
+                                                     gboolean           visible)
+{
+  thunar_column_model_set_column_visible (details_view->column_model, THUNAR_COLUMN_LOCATION, visible);
+}
+
