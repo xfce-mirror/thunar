@@ -108,6 +108,7 @@ enum
   PROP_MISC_PARALLEL_COPY_MODE,
   PROP_MISC_WINDOW_ICON,
   PROP_MISC_TRANSFER_USE_PARTIAL,
+  PROP_MISC_TRANSFER_VERIFY_FILE,
   PROP_SHORTCUTS_ICON_EMBLEMS,
   PROP_SHORTCUTS_ICON_SIZE,
   PROP_TREE_ICON_EMBLEMS,
@@ -911,6 +912,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                        NULL,
                        THUNAR_TYPE_USE_PARTIAL_MODE,
                        THUNAR_USE_PARTIAL_MODE_DISABLED,
+                       EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-transfer-verify-file:
+   *
+   * Whether to verify copied file with checksum.
+   **/
+  preferences_props[PROP_MISC_TRANSFER_VERIFY_FILE] =
+    g_param_spec_enum ("misc-transfer-verify-file",
+                       "MiscTransferVerifyFile",
+                       NULL,
+                       THUNAR_TYPE_VERIFY_FILE_MODE,
+                       THUNAR_VERIFY_FILE_MODE_DISABLED,
                        EXO_PARAM_READWRITE);
 
   /**
