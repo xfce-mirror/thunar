@@ -773,6 +773,32 @@ thunar_g_file_copy (GFile                *source,
 
 
 /**
+ **/
+gboolean     thunar_g_file_compare_checksum         (GFile                *file_a,
+                                                     GFile                *file_b,
+                                                     GCancellable         *cancellable,
+                                                     GError              **error)
+{
+  gchar   *str_a;
+  gchar   *str_b;
+  gboolean is_equal;
+
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  str_a = xfce_g_file_create_checksum (file_a, cancellable, error);
+  str_b = xfce_g_file_create_checksum (file_b, cancellable, error);
+
+  is_equal = g_strcmp0 (str_a, str_b) == 0;
+
+  g_free (str_a);
+  g_free (str_b);
+
+  return is_equal;
+}
+
+
+
+/**
  * thunar_g_file_list_new_from_string:
  * @string : a string representation of an URI list.
  *
