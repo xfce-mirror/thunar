@@ -1446,6 +1446,9 @@ thunar_window_finalize (GObject *object)
   /* release the preferences reference */
   g_object_unref (window->preferences);
 
+  /* disconnect signal from GtkRecentManager */
+  g_signal_handlers_disconnect_by_data (G_OBJECT (gtk_recent_manager_get_default()), window);
+
   (*G_OBJECT_CLASS (thunar_window_parent_class)->finalize) (object);
 }
 
@@ -4944,6 +4947,9 @@ static void
 thunar_window_recent_reload (GtkRecentManager *recent_manager,
                              ThunarWindow     *window)
 {
+  _thunar_return_if_fail (window != NULL);
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
   if (thunar_file_is_in_recent (window->current_directory))
     thunar_window_action_reload (window, NULL);
 }
