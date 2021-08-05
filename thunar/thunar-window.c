@@ -3330,6 +3330,8 @@ thunar_window_action_detailed_view (ThunarWindow *window)
   thunar_window_action_view_changed (window, THUNAR_TYPE_DETAILS_VIEW);
   thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view),
                                                        thunar_file_is_trash (window->current_directory));
+  thunar_details_view_set_recency_column_visible (THUNAR_DETAILS_VIEW (window->view),
+                                                  thunar_file_is_recent (window->current_directory));
 }
 
 

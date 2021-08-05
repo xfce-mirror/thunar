@@ -80,6 +80,7 @@ GType thunar_date_style_get_type (void) G_GNUC_CONST;
  * @THUNAR_COLUMN_DATE_ACCESSED : last access time.
  * @THUNAR_COLUMN_DATE_MODIFIED : last modification time.
  * @THUNAR_COLUMN_DATE_DELETED  : deletion time.
+ * @THUNAR_COLUMN_RECENCY       : time of modification of recent info.
  * @THUNAR_COLUMN_LOCATION      : file location.
  * @THUNAR_COLUMN_GROUP         : group's name.
  * @THUNAR_COLUMN_MIME_TYPE     : mime type (e.g. "text/plain").
