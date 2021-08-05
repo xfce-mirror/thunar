@@ -2883,6 +2883,8 @@ thunar_window_start_open_location (ThunarWindow *window,
     {
       thunar_window_update_search (window);
       thunar_launcher_set_searching (window->launcher, TRUE);
+      if (THUNAR_IS_DETAILS_VIEW (window->view))
+        thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), TRUE);
     }
 }
 
@@ -2912,6 +2914,9 @@ thunar_window_action_cancel_search (ThunarWindow *window)
   thunar_launcher_set_searching (window->launcher, FALSE);
   gtk_widget_hide (window->catfish_search_button);
   window->search_query = NULL;
+
+  if (THUNAR_IS_DETAILS_VIEW (window->view))
+    thunar_details_view_set_location_column_visible (THUNAR_DETAILS_VIEW (window->view), FALSE);
 }
 
 
@@ -3325,6 +3330,8 @@ thunar_window_action_detailed_view (ThunarWindow *window)
   thunar_window_action_view_changed (window, THUNAR_TYPE_DETAILS_VIEW);
   thunar_details_view_set_date_deleted_column_visible (THUNAR_DETAILS_VIEW (window->view),
                                                        thunar_file_is_trash (window->current_directory));
+  thunar_details_view_set_recency_column_visible (THUNAR_DETAILS_VIEW (window->view),
+                                                  thunar_file_is_recent (window->current_directory));
 }
 
 
