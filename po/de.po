@@ -19,8 +19,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-03 00:45+0200\n"
-"PO-Revision-Date: 2021-08-03 07:25+0000\n"
+"POT-Creation-Date: 2021-08-06 00:45+0200\n"
+"PO-Revision-Date: 2021-08-06 08:52+0000\n"
 "Last-Translator: Andreas Eitel <github-aneitel@online.de>\n"
 "Language-Team: German (http://www.transifex.com/xfce/thunar/language/de/)\n"
 "MIME-Version: 1.0\n"
@@ -271,7 +271,7 @@ msgstr "Keine Anwendung ausgewählt"
 msgid "Other Application..."
 msgstr "Andere Anwendung …"
 
-#: ../thunar/thunar-chooser-dialog.c:187 ../thunar/thunar-launcher.c:3164
+#: ../thunar/thunar-chooser-dialog.c:187 ../thunar/thunar-launcher.c:3165
 msgid "Open With"
 msgstr "Öffnen mit"
 
@@ -299,7 +299,7 @@ msgstr "Stan_dardmäßig für Dateien dieses Typs benutzen"
 #. add the "Ok"/"Open" button
 #: ../thunar/thunar-chooser-dialog.c:296
 #: ../thunar/thunar-chooser-dialog.c:1280
-#: ../thunar/thunar-properties-dialog.c:893 ../thunar/thunar-window.c:3719
+#: ../thunar/thunar-properties-dialog.c:893 ../thunar/thunar-window.c:3729
 #: ../plugins/thunar-uca/thunar-uca-editor.c:144
 #: ../plugins/thunar-uca/thunar-uca-editor.c:437
 msgid "_OK"
@@ -543,8 +543,8 @@ msgstr "Listenspalten automatisch ver_größern"
 
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:874 ../thunar/thunar-list-model.c:772
-#: ../thunar/thunar-list-model.c:808
+#: ../thunar/thunar-column-model.c:874 ../thunar/thunar-list-model.c:790
+#: ../thunar/thunar-list-model.c:826
 #: ../thunar/thunar-permissions-chooser.c:232 ../thunar/thunar-util.c:408
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:710
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:293
@@ -844,57 +844,61 @@ msgid "Recency"
 msgstr "Aktualität"
 
 #: ../thunar/thunar-enum-types.c:107
+msgid "Location"
+msgstr "Ort"
+
+#: ../thunar/thunar-enum-types.c:108
 msgid "Group"
 msgstr "Gruppe"
 
-#: ../thunar/thunar-enum-types.c:108
+#: ../thunar/thunar-enum-types.c:109
 msgid "MIME Type"
 msgstr "MIME-Typ"
 
-#: ../thunar/thunar-enum-types.c:109 ../thunar/thunar-renamer-dialog.c:429
+#: ../thunar/thunar-enum-types.c:110 ../thunar/thunar-renamer-dialog.c:429
 #: ../thunarx/thunarx-renamer.c:164
 msgid "Name"
 msgstr "Name"
 
-#: ../thunar/thunar-enum-types.c:110
+#: ../thunar/thunar-enum-types.c:111
 msgid "Owner"
 msgstr "Besitzer"
 
 #. Permissions chooser
-#: ../thunar/thunar-enum-types.c:111 ../thunar/thunar-properties-dialog.c:637
+#: ../thunar/thunar-enum-types.c:112 ../thunar/thunar-properties-dialog.c:637
 msgid "Permissions"
 msgstr "Zugriffsrechte"
 
-#: ../thunar/thunar-enum-types.c:112
+#: ../thunar/thunar-enum-types.c:113
 msgid "Size"
 msgstr "Größe"
 
-#: ../thunar/thunar-enum-types.c:113
+#: ../thunar/thunar-enum-types.c:114
 msgid "Size in Bytes"
 msgstr "Größe in Bytes"
 
-#: ../thunar/thunar-enum-types.c:114
+#: ../thunar/thunar-enum-types.c:115
 msgid "Type"
 msgstr "Typ"
 
-#: ../thunar/thunar-enum-types.c:115
+#: ../thunar/thunar-enum-types.c:116
 msgid "File"
 msgstr "Datei"
 
-#: ../thunar/thunar-enum-types.c:116
+#: ../thunar/thunar-enum-types.c:117
 msgid "File Name"
 msgstr "Dateiname"
 
-#: ../thunar/thunar-enum-types.c:539 ../thunar/thunar-preferences-dialog.c:365
+#: ../thunar/thunar-enum-types.c:540 ../thunar/thunar-preferences-dialog.c:365
 #: ../thunar/thunar-preferences-dialog.c:945
 msgid "Never"
 msgstr "Nie"
 
-#: ../thunar/thunar-enum-types.c:540
+#: ../thunar/thunar-enum-types.c:541
 msgid "Only for remote location"
 msgstr "Nur für entfernte Standorte"
 
-#: ../thunar/thunar-enum-types.c:541 ../thunar/thunar-preferences-dialog.c:367
+#: ../thunar/thunar-enum-types.c:542 ../thunar/thunar-preferences-dialog.c:367
 #: ../thunar/thunar-preferences-dialog.c:942
 msgid "Always"
 msgstr "Immer"
@@ -1106,8 +1110,8 @@ msgid "%s (copy %u)"
 msgstr "%s (Kopie %u)"
 
 #. I18N: name for first link to basename
-#: ../thunar/thunar-io-jobs-util.c:121 ../thunar/thunar-list-model.c:841
-#: ../thunar/thunar-list-model.c:1738 ../thunar/thunar-list-model.c:1749
+#: ../thunar/thunar-io-jobs-util.c:121 ../thunar/thunar-list-model.c:859
+#: ../thunar/thunar-list-model.c:1791 ../thunar/thunar-list-model.c:1802
 #: ../thunar/thunar-properties-dialog.c:1075
 #, c-format
 msgid "link to %s"
@@ -1157,7 +1161,7 @@ msgstr "Öffne Objektort"
 msgid "Open With Other _Application..."
 msgstr "Mit anderer A_nwendung öffnen …"
 
-#: ../thunar/thunar-launcher.c:274 ../thunar/thunar-launcher.c:3165
+#: ../thunar/thunar-launcher.c:274 ../thunar/thunar-launcher.c:3166
 msgid "Choose another application with which to open the selected file"
 msgstr "Eine andere Anwendung wählen, mit der die ausgewählte Datei geöffnet werden soll"
 
@@ -1542,21 +1546,21 @@ msgid_plural "Open the selected files with the default applications"
 msgstr[0] "Die ausgewählte Datei mit der Standardanwendung öffnen"
 msgstr[1] "Die ausgewählten Dateien mit den Standardanwendungen öffnen"
 
-#: ../thunar/thunar-list-model.c:2583
+#: ../thunar/thunar-list-model.c:2636
 #, c-format
 msgid "%d file: %s"
 msgid_plural "%d files: %s"
 msgstr[0] "%d Datei: %s"
 msgstr[1] "%d Dateien. %s"
 
-#: ../thunar/thunar-list-model.c:2591
+#: ../thunar/thunar-list-model.c:2644
 #, c-format
 msgid "%d folder"
 msgid_plural "%d folders"
 msgstr[0] "%d Ordner"
 msgstr[1] "%d Ordner"
 
-#: ../thunar/thunar-list-model.c:2597
+#: ../thunar/thunar-list-model.c:2650
 #, c-format
 msgid "0 items"
 msgstr "0 Objekte"
@@ -1566,45 +1570,45 @@ msgstr "0 Objekte"
 #. * is between the message about the number of folders
 #. * and the number of items in the selection
 #. TRANSLATORS: string moved from line 2573 to here
-#: ../thunar/thunar-list-model.c:2609
+#: ../thunar/thunar-list-model.c:2662
 #, c-format
 msgid "%s, %s"
 msgstr "%s, %s"
 
-#: ../thunar/thunar-list-model.c:2688
+#: ../thunar/thunar-list-model.c:2741
 #, c-format
 msgid "%s, Free space: %s"
 msgstr "%s, Freier Speicher: %s"
 
-#: ../thunar/thunar-list-model.c:2713
+#: ../thunar/thunar-list-model.c:2766
 #, c-format
 msgid "\"%s\": broken link"
 msgstr "\"%s\": beschädigter Verweis"
 
-#: ../thunar/thunar-list-model.c:2718
+#: ../thunar/thunar-list-model.c:2771
 #, c-format
 msgid "\"%s\": %s link to %s"
 msgstr "\"%s\": %s Verweis auf %s"
 
-#: ../thunar/thunar-list-model.c:2724
+#: ../thunar/thunar-list-model.c:2777
 #, c-format
 msgid "\"%s\": shortcut"
 msgstr "\"%s\": Kürzel"
 
-#: ../thunar/thunar-list-model.c:2728
+#: ../thunar/thunar-list-model.c:2781
 #, c-format
 msgid "\"%s\": mountable"
 msgstr "\"%s\": einhängbar"
 
 #. I18N, first %s is the display name of the file, 2nd the file size, 3rd the
 #. content type
-#: ../thunar/thunar-list-model.c:2735
+#: ../thunar/thunar-list-model.c:2788
 #, c-format
 msgid "\"%s\": %s %s"
 msgstr "\"%s\": %s %s"
 
 #. I18N, first %s is the display name of the file, second the content type
-#: ../thunar/thunar-list-model.c:2744
+#: ../thunar/thunar-list-model.c:2797
 #, c-format
 msgid "\"%s\": %s"
 msgstr "\"%s\": %s"
@@ -1614,17 +1618,17 @@ msgstr "\"%s\": %s"
 #. * where the trashed file/folder was located before it was moved to the
 #. trash), otherwise the
 #. * properties dialog width will be messed up.
-#: ../thunar/thunar-list-model.c:2754 ../thunar/thunar-properties-dialog.c:415
+#: ../thunar/thunar-list-model.c:2807 ../thunar/thunar-properties-dialog.c:415
 msgid "Original Path:"
 msgstr "Herkunftsort:"
 
 #. append the image dimensions to the statusbar text
-#: ../thunar/thunar-list-model.c:2777
+#: ../thunar/thunar-list-model.c:2830
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:153
 msgid "Image Size:"
 msgstr "Bildgröße:"
 
-#: ../thunar/thunar-list-model.c:2795
+#: ../thunar/thunar-list-model.c:2848
 #, c-format
 msgid "Selection: %s"
 msgstr "Auswahl. %s"
@@ -2762,7 +2766,7 @@ msgid "Loading folder contents..."
 msgstr "Ordnerinhalt wird geladen …"
 
 #. display an error to the user
-#: ../thunar/thunar-standard-view.c:2143 ../thunar/thunar-window.c:3542
+#: ../thunar/thunar-standard-view.c:2143 ../thunar/thunar-window.c:3552
 msgid "Failed to open the home folder"
 msgstr "Der persönliche Ordner konnte nicht geöffnet werden"
 
@@ -2798,7 +2802,7 @@ msgstr "Ungültiger Dateiname seitens der Quelle"
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Eine Verknüpfung für die Adresse »%s« konnte nicht erzeugt werden"
 
-#: ../thunar/thunar-standard-view.c:3198 ../thunar/thunar-window.c:3635
+#: ../thunar/thunar-standard-view.c:3198 ../thunar/thunar-window.c:3645
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Der Ordner »%s« konnte nicht geöffnet werden"
@@ -3253,76 +3257,76 @@ msgstr "Dateisuche abbrechen"
 msgid "Warning: you are using the root account. You may harm your system."
 msgstr "Achtung: Sie benutzen das Systemverwalterkonto und könnten Ihr System beschädigen."
 
-#: ../thunar/thunar-window.c:2313
+#: ../thunar/thunar-window.c:2316
 msgid "Close tab"
 msgstr "Reiter schließen"
 
-#: ../thunar/thunar-window.c:2741
+#: ../thunar/thunar-window.c:2744
 #, c-format
 msgid "Open the location \"%s\""
 msgstr "Ort »%s« öffnen"
 
-#: ../thunar/thunar-window.c:3491
+#: ../thunar/thunar-window.c:3501
 msgid "Failed to open parent folder"
 msgstr "Der Elternordner konnte nicht geöffnet werden"
 
-#: ../thunar/thunar-window.c:3610
+#: ../thunar/thunar-window.c:3620
 #, c-format
 msgid "The directory \"%s\" does not exist. Do you want to create it?"
 msgstr "Das Verzeichnis »%s« ist nicht vorhanden. Soll es erstellt werden?"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3677
+#: ../thunar/thunar-window.c:3687
 msgid "Failed to browse the computer"
 msgstr "Der Computer konnte nicht durchsucht werden"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:3717
+#: ../thunar/thunar-window.c:3727
 msgid "About Templates"
 msgstr "Über Vorlagen"
 
-#: ../thunar/thunar-window.c:3739
+#: ../thunar/thunar-window.c:3749
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Alle Dateien in diesem Ordner erscheinen im Menü »Neues Dokument erstellen«."
 
-#: ../thunar/thunar-window.c:3746
+#: ../thunar/thunar-window.c:3756
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and put it in this folder. Thunar will add an entry for this document in the \"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy of the document will be created in the directory you are viewing."
 msgstr "Falls Sie häufig eine bestimmte Art von Dokument erstellen, legen Sie eine Kopie davon in diesem Ordner ab. Thunar erstellt einen Eintrag für dieses Dokument in dem Menü »Neues Dokument erstellen«.\n\nSie können diesen Eintrag in dem Menü »Neues Dokument erstellen« wählen, und eine Kopie dieses Dokuments wird im gerade angezeigten Ordner angelegt."
 
-#: ../thunar/thunar-window.c:3758
+#: ../thunar/thunar-window.c:3768
 msgid "Do _not display this message again"
 msgstr "Diese Meldung in Zukunft _nicht mehr anzeigen"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3789
+#: ../thunar/thunar-window.c:3799
 msgid "Failed to open the file system root folder"
 msgstr "Das Basisverzeichnis konnte nicht geöffnet werden"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3822
+#: ../thunar/thunar-window.c:3832
 msgid "Failed to display `Recent`"
 msgstr "Fehler bei der Anzeige von `Zuletzt verwendet`"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3855
+#: ../thunar/thunar-window.c:3865
 msgid "Failed to display the contents of the trash can"
 msgstr "Inhalt des Papierkorbs konnte nicht angezeigt werden"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:3888
+#: ../thunar/thunar-window.c:3898
 msgid "Failed to browse the network"
 msgstr "Das Netzwerk konnte nicht durchsucht werden"
 
-#: ../thunar/thunar-window.c:3977
+#: ../thunar/thunar-window.c:3987
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr "Thunar ist eine schnelle und einfach zu bedienende\nDateiverwaltung, für die Xfce-Arbeitsumgebung."
 
-#: ../thunar/thunar-window.c:4975
+#: ../thunar/thunar-window.c:4988
 msgid "Failed to launch search with Catfish"
 msgstr "Suche mit Catfish konnte nicht gestartet werden"
 
