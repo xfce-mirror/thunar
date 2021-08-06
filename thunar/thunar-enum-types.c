@@ -548,3 +548,26 @@ thunar_use_partial_get_type (void)
 
   return type;
 }
+
+
+
+GType
+thunar_verify_file_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GEnumValue values[] =
+      {
+        { THUNAR_VERIFY_FILE_MODE_DISABLED,    "THUNAR_VERIFY_FILE_MODE_NEVER",    N_("Never"),},
+        { THUNAR_VERIFY_FILE_MODE_REMOTE_ONLY, "THUNAR_VERIFY_FILE_MODE_REMOTE",   N_("Only for remote location"),},
+        { THUNAR_VERIFY_FILE_MODE_ALWAYS,      "THUNAR_VERIFY_FILE_MODE_ALWAYS",   N_("Always"),},
+        { 0,                                   NULL,                               NULL,},
+      };
+
+      type = g_enum_register_static (I_("ThunarVerifyFileMode"), values);
+    }
+
+  return type;
+}
