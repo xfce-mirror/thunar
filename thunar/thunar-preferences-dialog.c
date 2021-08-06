@@ -988,6 +988,37 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
 
+  label = gtk_label_new_with_mnemonic (_("Verify file checksum on copy"));
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, 2, 1, 1);
+  gtk_widget_show (label);
+  gtk_widget_set_tooltip_text (label, _("Compare original file and copy with checksum. "
+                                        "This will prevent corrupted files. "
+                                        "Enabling this option will largely increase copy time."));
+
+  combo = gtk_combo_box_text_new ();
+  type = g_type_class_ref (THUNAR_TYPE_VERIFY_FILE_MODE);
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
+                                  g_enum_get_value (type, THUNAR_VERIFY_FILE_MODE_DISABLED)->value_nick);
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
+                                  g_enum_get_value (type, THUNAR_VERIFY_FILE_MODE_REMOTE_ONLY)->value_nick);
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
+                                  g_enum_get_value (type, THUNAR_VERIFY_FILE_MODE_ALWAYS)->value_nick);
+  g_type_class_unref (type);
+  g_object_bind_property_full (G_OBJECT (dialog->preferences),
+                               "misc-transfer-verify-file",
+                               G_OBJECT (combo),
+                               "active",
+                               G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE,
+                               transform_enum_value_to_index,
+                               transform_index_to_enum_value,
+                               (gpointer) thunar_verify_file_get_type, NULL);
+  gtk_widget_set_hexpand (combo, TRUE);
+  gtk_grid_attach (GTK_GRID (grid), combo, 1, 2, 1, 1);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
+  gtk_widget_show (combo);
+
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);
