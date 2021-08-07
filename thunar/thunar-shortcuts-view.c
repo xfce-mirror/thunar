@@ -1306,6 +1306,9 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   thunar_window_redirect_menu_tooltips_to_statusbar (THUNAR_WINDOW (window), GTK_MENU (context_menu));
   thunar_gtk_menu_run (GTK_MENU (context_menu));
 
+  /* return the focus to the current folder */
+  thunar_shortcuts_view_select_by_file (view, view->current_directory);
+
   /* clean up */
   if (G_LIKELY (file != NULL))
     g_object_unref (G_OBJECT (file));
@@ -1659,8 +1662,6 @@ thunar_shortcuts_view_open (ThunarShortcutsView            *view,
   GtkTreeSelection *selection;
   GtkTreeModel     *model;
   GtkTreeIter       iter;
-  GtkTreeIter       iterator;
-  gboolean          hasShortcut;
   ThunarFile       *file;
   GList            *files;
   ThunarDevice     *device;
@@ -1701,23 +1702,8 @@ thunar_shortcuts_view_open (ThunarShortcutsView            *view,
 
       thunar_launcher_activate_selected_files (view->launcher, (ThunarLauncherFolderOpenAction) open_in, NULL);
 
-      /* select the correct bookmark/shortcut when opening in a new window */
-      model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model)); /* model is no longer a GtkTreeModelFilter */
-      hasShortcut = thunar_shortcuts_model_iter_for_file (THUNAR_SHORTCUTS_MODEL (model), view->current_directory, &iterator);
-      if (hasShortcut == FALSE) /* no bookmark selected */
-        gtk_tree_selection_unselect_all (gtk_tree_view_get_selection (GTK_TREE_VIEW (view)));
-      else                      /* select the correct bookmark */
-        {
-          GtkTreeViewColumn *column = NULL;
-          GtkTreePath       *l_path = NULL;
-
-          l_path = gtk_tree_model_get_path (model, &iterator);
-          column = gtk_tree_view_get_column (GTK_TREE_VIEW (view), 0);
-
-          gtk_tree_view_set_cursor (GTK_TREE_VIEW (view), l_path, column, FALSE);
-
-          gtk_tree_path_free (l_path);
-        }
+      /* return the focus to the current folder */
+      thunar_shortcuts_view_select_by_file (view, view->current_directory);
 
       if (file != NULL)
         g_object_unref (file);
@@ -1764,6 +1750,9 @@ thunar_shortcuts_view_stop_spinner (ThunarShortcutsView *view,
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
   child_model = gtk_tree_model_filter_get_model (GTK_TREE_MODEL_FILTER (model));
   thunar_shortcuts_model_set_busy (THUNAR_SHORTCUTS_MODEL (child_model), device, FALSE);
+
+  /* return the focus to the current folder */
+  thunar_shortcuts_view_select_by_file (view, view->current_directory);
 }
 
 
@@ -1792,6 +1781,9 @@ thunar_shortcuts_view_eject (ThunarShortcutsView *view)
           g_object_unref (G_OBJECT (device));
         }
     }
+
+  /* return the focus to the current folder */
+  thunar_shortcuts_view_select_by_file (view, view->current_directory);
 }
 
 
