@@ -773,13 +773,19 @@ thunar_tree_view_button_release_event (GtkWidget      *widget,
         }
       else if (G_UNLIKELY (event->button == 2))
         {
+          ThunarFile *file  = thunar_tree_view_get_selected_file (view);
+          GList      *files = NULL;
+
           g_object_get (view->preferences, "misc-middle-click-in-tab", &in_tab, NULL);
 
           /* holding ctrl inverts the action */
           if ((event->state & GDK_CONTROL_MASK) != 0)
             in_tab = !in_tab;
 
+          files = g_list_append (files, file);
+          g_object_set (G_OBJECT (view->launcher), "selected-files", files, "current-directory", view->current_directory, NULL);
           thunar_launcher_open_selected_folders (view->launcher, in_tab);
+          g_list_free (files);
 
           /* set the cursor back to the previously selected item */
           if (view->select_path != NULL)
