@@ -355,7 +355,8 @@ thunar_transfer_job_progress (goffset  current_num_bytes,
       expired_time = current_time - job->last_update_time;
 
       /* notify callers not more then every 500ms */
-      if (expired_time > (500 * 1000))
+      if (expired_time > (500 * 1000)
+          || (current_num_bytes == total_num_bytes && total_num_bytes > job->transfer_rate / 2))
         {
           /* calculate the transfer rate in the last expired time */
           transfer_rate = (job->total_progress - job->last_total_progress) / ((gfloat) expired_time / G_USEC_PER_SEC);
