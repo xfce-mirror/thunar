@@ -2056,6 +2056,7 @@ search_directory (GList      *folder_files,
   gchar        *display_name_c; /* converted to ignore case */
   gchar        *uri;
 
+  /* go through every file in the folder and check if it is  matching the search query (part of the SearchInfo) */
   for (; folder_files != NULL; folder_files = folder_files->next)
     {
       /* handle directories */
@@ -2125,7 +2126,11 @@ search_notify_loading (ThunarFolder *folder,
  * @files       : a #GList of ThunarFiles, contains the files that have been found (or NULL if no file has been found yet)
  * @directory   : a #ThunarFile, the directory to search
  *
+ * If the given folder is loaded this function immediately initiates a recursive search and returns the matching files in
+ * a GList (which is an extension of the @files list).
  *
+ * If the given folder hasn't bee loaded yet a connection is setup to initiate the search when the folder has finished loading.
+ * In this case the @files list is returned.
  **/
 static GList*
 thunar_list_model_recursive_search (SearchInfo *info,
@@ -2138,7 +2143,7 @@ thunar_list_model_recursive_search (SearchInfo *info,
   folder     = thunar_folder_get_for_file (directory);
   temp_files = thunar_folder_get_files (folder);
 
-  /* setup a callback to info the folder when it has finished loading */
+  /* setup a callback to search the folder when it has finished loading */
   if (thunar_folder_get_loading (folder) == 1)
     {
       g_signal_connect (G_OBJECT (folder), "notify::loading", G_CALLBACK (search_notify_loading), info);
