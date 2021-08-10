@@ -2091,8 +2091,6 @@ search_directory (GList      *folder_files,
       g_free (display_name_c);
     }
 
-  search_info_destroy (info);
-
   return files_found;
 }
 
@@ -2116,6 +2114,7 @@ search_notify_loading (ThunarFolder *folder,
 
   /* the folder has been searched and any subdirectories have had their connections setup, therefore this is no longer needed */
   g_object_unref (folder);
+  search_info_destroy (info);
 }
 
 
@@ -2154,6 +2153,7 @@ thunar_list_model_recursive_search (SearchInfo *info,
   files = search_directory (temp_files, files, info);
 
   g_object_unref (folder);
+  search_info_destroy (info);
 
   return files;
 }
