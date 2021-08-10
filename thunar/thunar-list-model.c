@@ -2031,7 +2031,7 @@ search_info_create (ThunarListModel *store, gchar *search_query_c, int depth)
 {
   SearchInfo  *info = g_malloc (sizeof (SearchInfo));
   info->model = store;
-  info->search_query_c = g_strdup (search_query_c);
+  info->search_query_c = search_query_c;
   info->depth = depth;
   return info;
 }
@@ -2111,6 +2111,13 @@ search_notify_loading (ThunarFolder *folder,
   folder_files = thunar_folder_get_files (folder);
   files_found = search_directory (folder_files, files_found, info); /* recursively search the directory */
   thunar_list_model_files_added (folder, files_found, info->model); /* add the matching files to the search results */
+
+  /* free search files, thunar_list_model_files_added has added its own references */
+  if (files_found != NULL)
+    {
+      thunar_g_list_free_full (files_found);
+      files_found = NULL;
+    }
 
   /* the folder has been searched and any subdirectories have had their connections setup, therefore this is no longer needed */
   g_object_unref (folder);
