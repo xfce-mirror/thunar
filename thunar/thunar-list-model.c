@@ -2084,12 +2084,17 @@ search_directory (GList *folder_files,
 
 
 static void
-search_signal                 (ThunarFolder    *folder,
-                               GList           *folder_files,
-                               SearchStruct    *search)
+search_signal                 (ThunarFolder        *folder,
+                               GParamSpec          *pspec,
+                               SearchStruct        *search)
 {
-  GList        *files_found = NULL;
+  GList *files_found = NULL;
+  GList *folder_files;
 
+  if (thunar_folder_get_loading (folder) == 1)
+    return;
+
+  folder_files = thunar_folder_get_files (folder);
   files_found = search_directory (folder_files, files_found, search);
 
   thunar_list_model_files_added (folder, files_found, search->model);
@@ -2124,7 +2129,7 @@ recursive_search (ThunarListModel *store,
 
   if (temp_files == NULL)
     {
-      g_signal_connect (G_OBJECT (folder), "files-added", G_CALLBACK (search_signal), s);
+      g_signal_connect (G_OBJECT (folder), "notify::loading", G_CALLBACK (search_signal), s);
       return files;
     }
 
