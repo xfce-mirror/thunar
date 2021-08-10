@@ -38,6 +38,8 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-user.h>
 
+
+
 /* Property identifiers */
 enum
 {
@@ -220,6 +222,7 @@ static SearchInfo*        search_info_create                      (ThunarListMod
                                                                    gchar                  *search_query_c,
                                                                    int                     depth);
 static void               search_info_destroy                     (SearchInfo             *info);
+
 
 
 struct _ThunarListModelClass
@@ -2255,7 +2258,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
         {
           GList       *recent_infos;
           GList       *lp;
-          gchar       *search_query_c; /* converted to ignore case MUST FREE!!! */
+          gchar       *search_query_c; /* converted to ignore case */
           const gchar *display_name;
           gchar       *display_name_c; /* converted to ignore case */
           SearchInfo  *info = search_info_create (store, g_strdup (search_query_c), 2);
@@ -2287,6 +2290,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
 //
 //          search_files = files;
 //          g_list_free_full (recent_infos, (void (*) (void*)) gtk_recent_info_unref);
+          g_free (search_query_c);
         }
 
       /* insert the files */
