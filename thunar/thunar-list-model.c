@@ -2054,7 +2054,7 @@ search_directory (GList      *folder_files,
         {
           SearchInfo *new_info = search_info_create (info->model, g_strdup (info->search_query_c), info->depth - 1);
           files_found = thunar_list_model_recursive_search (new_info, files_found, folder_files->data);
-          /* continue; /* don't add non-leaf directories in the results */
+          /* continue; don't add non-leaf directories in the results */
         }
 
       /* don't allow duplicates for files that exist in `recent:///` */
@@ -2093,8 +2093,8 @@ search_notify_loading (ThunarFolder *folder,
                        GParamSpec   *pspec,
                        SearchInfo   *info)
 {
-  GList *files_found;
-  GList *folder_files;
+  GList *files_found  = NULL;
+  GList *folder_files = NULL;
 
   /* return if the folder hasn't finished loading */
   if (thunar_folder_get_loading (folder) == 1)
@@ -2252,35 +2252,36 @@ thunar_list_model_set_folder (ThunarListModel *store,
           gchar       *search_query_c; /* converted to ignore case */
           const gchar *display_name;
           gchar       *display_name_c; /* converted to ignore case */
-          SearchInfo  *info = search_info_create (store, g_strdup (search_query_c), 2);
+          SearchInfo  *info;
 
           recent_infos   = gtk_recent_manager_get_items (gtk_recent_manager_get_default ());
           search_query_c = g_utf8_casefold (search_query, strlen (search_query));
           files = NULL;
+          info = search_info_create (store, g_strdup (search_query_c), 2);
 
           /* search the current folder */
           files = thunar_list_model_recursive_search (info, files, thunar_folder_get_corresponding_file (folder));
 
           /* search GtkRecent */
-//          for (lp = recent_infos; lp != NULL; lp = lp->next)
-//            {
-//              if (!gtk_recent_info_exists (lp->data))
-//                continue;
-//
-//              /* prepare entry display name */
-//              display_name = gtk_recent_info_get_display_name (lp->data);
-//              display_name_c = g_utf8_casefold (display_name, strlen (display_name));
-//
-//              /* search substring */
-//              if (g_strrstr (display_name_c, search_query_c) != NULL)
-//                files = g_list_prepend (files, thunar_file_get_for_uri (gtk_recent_info_get_uri (lp->data), NULL));
-//
-//              /* free memory */
-//              g_free (display_name_c);
-//            }
-//
-//          search_files = files;
-//          g_list_free_full (recent_infos, (void (*) (void*)) gtk_recent_info_unref);
+          for (lp = recent_infos; lp != NULL; lp = lp->next)
+            {
+              if (!gtk_recent_info_exists (lp->data))
+                continue;
+
+              /* prepare entry display name */
+              display_name = gtk_recent_info_get_display_name (lp->data);
+              display_name_c = g_utf8_casefold (display_name, strlen (display_name));
+
+              /* search substring */
+              if (g_strrstr (display_name_c, search_query_c) != NULL)
+                files = g_list_prepend (files, thunar_file_get_for_uri (gtk_recent_info_get_uri (lp->data), NULL));
+
+              /* free memory */
+              g_free (display_name_c);
+            }
+
+          search_files = files;
+          g_list_free_full (recent_infos, (void (*) (void*)) gtk_recent_info_unref);
           g_free (search_query_c);
         }
 
