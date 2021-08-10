@@ -64,6 +64,14 @@ enum
 
 
 
+typedef struct {
+    ThunarListModel *model;
+    gchar           *search_query_c;
+    int              depth;
+} SearchInfo;
+
+
+
 typedef gint (*ThunarSortFunc) (const ThunarFile *a,
                                 const ThunarFile *b,
                                 gboolean          case_sensitive);
@@ -207,6 +215,13 @@ static void               thunar_list_model_set_date_custom_style (ThunarListMod
                                                                    const char             *date_custom_style);
 static gint               thunar_list_model_get_num_files         (ThunarListModel        *store);
 static gboolean           thunar_list_model_get_folders_first     (ThunarListModel        *store);
+static GList*             thunar_list_model_recursive_search      (SearchInfo             *info,
+                                                                   GList                  *files,
+                                                                   ThunarFile             *directory);
+static SearchInfo*        search_info_create                      (ThunarListModel        *store,
+                                                                   gchar                  *search_query_c,
+                                                                   int                     depth);
+static void               search_info_destroy                     (SearchInfo             *info);
 
 
 
@@ -2002,6 +2017,135 @@ thunar_list_model_set_date_custom_style (ThunarListModel *store,
 
 
 
+static SearchInfo*
+search_info_create (ThunarListModel *store, gchar *search_query_c, int depth)
+{
+  SearchInfo  *info = g_malloc (sizeof (SearchInfo));
+  info->model = store;
+  info->search_query_c = g_strdup (search_query_c);
+  info->depth = depth;
+  return info;
+}
+
+
+
+static void
+search_info_destroy (SearchInfo *info)
+{
+  g_free (info->search_query_c);
+  g_free (info);
+}
+
+
+
+static GList*
+search_directory (GList      *folder_files,
+                  GList      *files_found,
+                  SearchInfo *info)
+{
+  const gchar  *display_name;
+  gchar        *display_name_c; /* converted to ignore case */
+  gchar        *uri;
+
+  for (; folder_files != NULL; folder_files = folder_files->next)
+    {
+      /* handle directories */
+      if (thunar_file_is_directory (folder_files->data) && info->depth > 0)
+        {
+          SearchInfo *new_info = search_info_create (info->model, g_strdup (info->search_query_c), info->depth - 1);
+          files_found = thunar_list_model_recursive_search (new_info, files_found, folder_files->data);
+          /* continue; don't add non-leaf directories in the results */
+        }
+
+      /* don't allow duplicates for files that exist in `recent:///` */
+      uri = thunar_file_dup_uri (folder_files->data);
+      if (gtk_recent_manager_has_item (gtk_recent_manager_get_default(), uri) == TRUE)
+        {
+          g_free (uri);
+          continue;
+        }
+
+      /* prepare entry display name */
+      display_name = thunar_file_get_display_name (folder_files->data);
+      display_name_c = g_utf8_casefold (display_name, strlen (display_name));
+
+      /* info substring */
+      if (g_strrstr (display_name_c, info->search_query_c) != NULL)
+        {
+          files_found = g_list_prepend (files_found, folder_files->data);
+          g_object_ref (folder_files->data);
+        }
+
+      /* free memory */
+      g_free (uri);
+      g_free (display_name_c);
+    }
+
+  search_info_destroy (info);
+
+  return files_found;
+}
+
+
+
+static void
+search_notify_loading (ThunarFolder *folder,
+                       GParamSpec   *pspec,
+                       SearchInfo   *info)
+{
+  GList *files_found  = NULL;
+  GList *folder_files = NULL;
+
+  /* return if the folder hasn't finished loading */
+  if (thunar_folder_get_loading (folder) == 1)
+    return;
+
+  folder_files = thunar_folder_get_files (folder);
+  files_found = search_directory (folder_files, files_found, info); /* recursively info the directory */
+  thunar_list_model_files_added (folder, files_found, info->model); /* add the matching files to the info results */
+
+  /* the folder has been searched and any subdirectories have had their connections setup, therefore this is no longer needed */
+  g_object_unref (folder);
+}
+
+
+
+/**
+ * thunar_list_model_recursive_search:
+ * @info        : a #SearchInfo struct
+ * @files       : a #GList of ThunarFiles, contains the files that have been found (or NULL if no file has been found yet)
+ * @directory   : a #ThunarFile, the directory to search
+ *
+ *
+ **/
+static GList*
+thunar_list_model_recursive_search (SearchInfo *info,
+                                    GList      *files,
+                                    ThunarFile *directory)
+{
+  ThunarFolder *folder;
+  GList        *temp_files;
+
+  folder     = thunar_folder_get_for_file (directory);
+  temp_files = thunar_folder_get_files (folder);
+
+  /* setup a callback to info the folder when it has finished loading */
+  if (thunar_folder_get_loading (folder) == 1)
+    {
+      g_signal_connect (G_OBJECT (folder), "notify::loading", G_CALLBACK (search_notify_loading), info);
+      return files;
+    }
+
+  /* otherwise, if loading has finished, info the folder */
+  files = search_directory (temp_files, files, info);
+
+  g_object_unref (folder);
+
+  return files;
+}
+
+
+
 /**
  * thunar_list_model_get_folder:
  * @store : a valid #ThunarListModel object.
@@ -2014,53 +2158,6 @@ thunar_list_model_get_folder (ThunarListModel *store)
 {
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
   return store->folder;
-}
-
-
-
-static GList*
-search_directory (GList       *files,
-                  ThunarFile  *directory,
-                  gchar       *search_query_c)
-{
-  ThunarFolder *folder;
-  GList        *temp_files;
-  const gchar  *display_name;
-  gchar        *display_name_c; /* converted to ignore case */
-  gchar        *uri;
-
-  folder     = thunar_folder_get_for_file (directory);
-  temp_files = thunar_folder_get_files (folder);
-
-  for (; temp_files != NULL; temp_files = temp_files->next)
-    {
-      /* don't allow duplicates for files that exist in `recent:///` */
-      uri = thunar_file_dup_uri (temp_files->data);
-      if (gtk_recent_manager_has_item (gtk_recent_manager_get_default(), uri) == TRUE)
-        {
-          g_free (uri);
-          continue;
-        }
-
-      /* prepare entry display name */
-      display_name = thunar_file_get_display_name (temp_files->data);
-      display_name_c = g_utf8_casefold (display_name, strlen (display_name));
-
-      /* search substring */
-      if (g_strrstr (display_name_c, search_query_c) != NULL)
-        {
-          files = g_list_prepend (files, temp_files->data);
-          g_object_ref (temp_files->data);
-        }
-
-      /* free memory */
-      g_free (uri);
-      g_free (display_name_c);
-    }
-
-  g_object_unref (folder);
-
-  return files;
 }
 
 
@@ -2155,13 +2252,15 @@ thunar_list_model_set_folder (ThunarListModel *store,
           gchar       *search_query_c; /* converted to ignore case */
           const gchar *display_name;
           gchar       *display_name_c; /* converted to ignore case */
+          SearchInfo  *info;
 
           recent_infos   = gtk_recent_manager_get_items (gtk_recent_manager_get_default ());
           search_query_c = g_utf8_casefold (search_query, strlen (search_query));
           files = NULL;
+          info = search_info_create (store, g_strdup (search_query_c), 2);
 
           /* search the current folder */
-          files = search_directory (files, thunar_folder_get_corresponding_file (folder), search_query_c);
+          files = thunar_list_model_recursive_search (info, files, thunar_folder_get_corresponding_file (folder));
 
           /* search GtkRecent */
           for (lp = recent_infos; lp != NULL; lp = lp->next)
@@ -2183,6 +2282,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
 
           search_files = files;
           g_list_free_full (recent_infos, (void (*) (void*)) gtk_recent_info_unref);
+          g_free (search_query_c);
         }
 
       /* insert the files */
