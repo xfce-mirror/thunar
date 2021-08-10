@@ -2078,7 +2078,7 @@ search_directory (GList      *folder_files,
       display_name = thunar_file_get_display_name (folder_files->data);
       display_name_c = g_utf8_casefold (display_name, strlen (display_name));
 
-      /* info substring */
+      /* search substring */
       if (g_strrstr (display_name_c, info->search_query_c) != NULL)
         {
           files_found = g_list_prepend (files_found, folder_files->data);
@@ -2110,8 +2110,8 @@ search_notify_loading (ThunarFolder *folder,
     return;
 
   folder_files = thunar_folder_get_files (folder);
-  files_found = search_directory (folder_files, files_found, info); /* recursively info the directory */
-  thunar_list_model_files_added (folder, files_found, info->model); /* add the matching files to the info results */
+  files_found = search_directory (folder_files, files_found, info); /* recursively search the directory */
+  thunar_list_model_files_added (folder, files_found, info->model); /* add the matching files to the search results */
 
   /* the folder has been searched and any subdirectories have had their connections setup, therefore this is no longer needed */
   g_object_unref (folder);
@@ -2145,7 +2145,7 @@ thunar_list_model_recursive_search (SearchInfo *info,
       return files;
     }
 
-  /* otherwise, if loading has finished, info the folder */
+  /* otherwise, if loading has finished, search the folder */
   files = search_directory (temp_files, files, info);
 
   g_object_unref (folder);
