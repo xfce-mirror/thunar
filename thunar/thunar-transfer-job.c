@@ -359,7 +359,7 @@ thunar_transfer_job_progress (goffset  current_num_bytes,
       /* the actual code checks if (file size [byte]) > (transfer rate [byte/s]) * (0.5 [s]) */
       /* which means that the file is bigger than what is transferred in 500ms on average */
       if (expired_time > (500 * 1000)
-          || (current_num_bytes == total_num_bytes && total_num_bytes > job->transfer_rate / 2))
+          || (current_num_bytes == total_num_bytes && total_num_bytes > (goffset) (job->transfer_rate / 2)))
         {
           /* calculate the transfer rate in the last expired time */
           transfer_rate = (job->total_progress - job->last_total_progress) / ((gfloat) expired_time / G_USEC_PER_SEC);
@@ -545,7 +545,7 @@ ttj_copy_file (ThunarTransferJob *job,
   if (verify_file && err == NULL)
     {
       gboolean is_equal;
-      exo_job_info_message (job, _("Comparing checksums..."));
+      exo_job_info_message (EXO_JOB (job), _("Comparing checksums..."));
       is_equal = thunar_g_file_compare_checksum (source_file, target_file,
                                                  exo_job_get_cancellable (EXO_JOB (job)), &err);
 
