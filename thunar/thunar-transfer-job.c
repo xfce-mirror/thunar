@@ -92,14 +92,14 @@ struct _ThunarTransferJob
   gchar                  *target_device_fs_id;
   gboolean                is_target_device_local;
 
-  gint64                  start_time;
-  gint64                  last_update_time;
-  guint64                 last_total_progress;
+  gint64                  start_time;              /* us(microseconds) */
+  gint64                  last_update_time;        /* us */
+  guint64                 last_total_progress;     /* byte */
 
-  guint64                 total_size;
-  guint64                 total_progress;
-  guint64                 file_progress;
-  guint64                 transfer_rate;
+  guint64                 total_size;              /* byte */
+  guint64                 total_progress;          /* byte */
+  guint64                 file_progress;           /* byte */
+  guint64                 transfer_rate;           /* byte/s */
 
   ThunarPreferences      *preferences;
   gboolean                file_size_binary;
@@ -356,6 +356,7 @@ thunar_transfer_job_progress (goffset  current_num_bytes,
 
       /* notify callers not more then every 500ms */
       /* force update after transfer when it took more than (approx.) 500ms */
+      /* the actual code checks if (file size [byte]) > (transfer rate [byte/s]) * (0.5 [s]) */
       if (expired_time > (500 * 1000)
           || (current_num_bytes == total_num_bytes && total_num_bytes > job->transfer_rate / 2))
         {
