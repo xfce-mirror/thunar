@@ -357,6 +357,7 @@ thunar_transfer_job_progress (goffset  current_num_bytes,
       /* notify callers not more then every 500ms */
       /* force update after transfer when it took more than (approx.) 500ms */
       /* the actual code checks if (file size [byte]) > (transfer rate [byte/s]) * (0.5 [s]) */
+      /* which means that the file is bigger than what is transferred in 500ms on average */
       if (expired_time > (500 * 1000)
           || (current_num_bytes == total_num_bytes && total_num_bytes > job->transfer_rate / 2))
         {
