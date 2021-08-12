@@ -49,6 +49,7 @@ enum
   PROP_FILE_SIZE_BINARY,
   PROP_PARALLEL_COPY_MODE,
   PROP_TRANSFER_USE_PARTIAL,
+  PROP_TRANSFER_VERIFY_FILE,
 };
 
 
@@ -91,19 +92,20 @@ struct _ThunarTransferJob
   gchar                  *target_device_fs_id;
   gboolean                is_target_device_local;
 
-  gint64                  start_time;
-  gint64                  last_update_time;
-  guint64                 last_total_progress;
+  gint64                  start_time;              /* us(microseconds) */
+  gint64                  last_update_time;        /* us */
+  guint64                 last_total_progress;     /* byte */
 
-  guint64                 total_size;
-  guint64                 total_progress;
-  guint64                 file_progress;
-  guint64                 transfer_rate;
+  guint64                 total_size;              /* byte */
+  guint64                 total_progress;          /* byte */
+  guint64                 file_progress;           /* byte */
+  guint64                 transfer_rate;           /* byte/s */
 
   ThunarPreferences      *preferences;
   gboolean                file_size_binary;
   ThunarParallelCopyMode  parallel_copy_mode;
   ThunarUsePartialMode    transfer_use_partial;
+  ThunarVerifyFileMode    transfer_verify_file;
 };
 
 struct _ThunarTransferNode
@@ -176,6 +178,20 @@ thunar_transfer_job_class_init (ThunarTransferJobClass *klass)
                                                       THUNAR_TYPE_USE_PARTIAL_MODE,
                                                       THUNAR_USE_PARTIAL_MODE_DISABLED,
                                                       EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPropertiesdialog:transfer_verify_file:
+   *
+   * Whether to verify copied file with checksum
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_TRANSFER_VERIFY_FILE,
+                                   g_param_spec_enum ("transfer-verify-file",
+                                                      "TransferVerifyFile",
+                                                      NULL,
+                                                      THUNAR_TYPE_VERIFY_FILE_MODE,
+                                                      THUNAR_VERIFY_FILE_MODE_DISABLED,
+                                                      EXO_PARAM_READWRITE));
 }
 
 
@@ -192,6 +208,9 @@ thunar_transfer_job_init (ThunarTransferJob *job)
                           G_BINDING_SYNC_CREATE);
   g_object_bind_property (job->preferences, "misc-transfer-use-partial",
                           job,              "transfer-use-partial",
+                          G_BINDING_SYNC_CREATE);
+  g_object_bind_property (job->preferences, "misc-transfer-verify-file",
+                          job,              "transfer-verify-file",
                           G_BINDING_SYNC_CREATE);
 
   job->type = 0;
@@ -252,6 +271,9 @@ thunar_transfer_job_get_property (GObject     *object,
     case PROP_TRANSFER_USE_PARTIAL:
       g_value_set_enum (value, job->transfer_use_partial);
       break;
+    case PROP_TRANSFER_VERIFY_FILE:
+      g_value_set_enum (value, job->transfer_verify_file);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -278,6 +300,9 @@ thunar_transfer_job_set_property (GObject      *object,
       break;
     case PROP_TRANSFER_USE_PARTIAL:
       job->transfer_use_partial = g_value_get_enum (value);
+      break;
+    case PROP_TRANSFER_VERIFY_FILE:
+      job->transfer_verify_file = g_value_get_enum (value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -330,7 +355,11 @@ thunar_transfer_job_progress (goffset  current_num_bytes,
       expired_time = current_time - job->last_update_time;
 
       /* notify callers not more then every 500ms */
-      if (expired_time > (500 * 1000))
+      /* force update after transfer when it took more than (approx.) 500ms */
+      /* the actual code checks if (file size [byte]) > (transfer rate [byte/s]) * (0.5 [s]) */
+      /* which means that the file is bigger than what is transferred in 500ms on average */
+      if (expired_time > (500 * 1000)
+          || (current_num_bytes == total_num_bytes && total_num_bytes > (goffset) (job->transfer_rate / 2)))
         {
           /* calculate the transfer rate in the last expired time */
           transfer_rate = (job->total_progress - job->last_total_progress) / ((gfloat) expired_time / G_USEC_PER_SEC);
@@ -441,6 +470,7 @@ ttj_copy_file (ThunarTransferJob *job,
   GFileType  target_type;
   gboolean   target_exists;
   gboolean   use_partial;
+  gboolean   verify_file;
   GError    *err = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), FALSE);
@@ -491,10 +521,42 @@ ttj_copy_file (ThunarTransferJob *job,
     default:
       use_partial = FALSE;
     }
+
   /* try to copy the file */
   thunar_g_file_copy (source_file, target_file, copy_flags, use_partial,
                       exo_job_get_cancellable (EXO_JOB (job)),
                       thunar_transfer_job_progress, job, &err);
+
+  switch (job->transfer_verify_file)
+    {
+    case THUNAR_VERIFY_FILE_MODE_REMOTE_ONLY:
+      verify_file = !g_file_is_native (source_file) || !g_file_is_native (target_file);
+      break;
+    case THUNAR_VERIFY_FILE_MODE_ALWAYS:
+      verify_file = TRUE;
+      break;
+    default:
+      verify_file = FALSE;
+    }
+
+  /* Only verify when the file is a regular file */
+  verify_file = verify_file && (g_file_query_file_type (source_file, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, exo_job_get_cancellable (EXO_JOB (job))) == G_FILE_TYPE_REGULAR);
+
+  if (verify_file && err == NULL)
+    {
+      gboolean is_equal;
+      exo_job_info_message (EXO_JOB (job), _("Comparing checksums..."));
+      is_equal = thunar_g_file_compare_checksum (source_file, target_file,
+                                                 exo_job_get_cancellable (EXO_JOB (job)), &err);
+
+      /* if the copied file is corrupted and yet no error*/
+      if (!is_equal && err == NULL)
+        {
+          err = g_error_new (G_FILE_ERROR,
+                             G_FILE_ERROR_AGAIN,
+                             "Copied file does not match with the original");
+        }
+    }
 
   /**
    * MR !127 notes:
@@ -519,7 +581,6 @@ ttj_copy_file (ThunarTransferJob *job,
   /* check if there were errors */
   if (G_UNLIKELY (err != NULL && err->domain == G_IO_ERROR))
     {
-      g_info ("%s", err->message);
       if (err->code == G_IO_ERROR_WOULD_MERGE
           || (err->code == G_IO_ERROR_EXISTS
               && source_type == G_FILE_TYPE_DIRECTORY
@@ -1231,8 +1292,6 @@ thunar_transfer_job_move_file (ExoJob                *job,
   /* update progress information */
   exo_job_info_message (job, _("Trying to move \"%s\""),
                         g_file_info_get_display_name (info));
-
-  g_info ("%s", g_file_info_get_display_name (info));
 
   move_successful = g_file_move (node->source_file,
                                  tp->data,
