@@ -2212,11 +2212,9 @@ thunar_list_model_set_folder (ThunarListModel *store,
       end = g_sequence_get_end_iter (store->rows);
 
       /* remove existing entries */
-      int count = 0;
       path = gtk_tree_path_new_first ();
       while (row != end)
         {
-          count++;
           /* remove the row from the list */
           next = g_sequence_iter_next (row);
           g_sequence_remove (row);
@@ -2229,7 +2227,6 @@ thunar_list_model_set_folder (ThunarListModel *store,
             gtk_tree_model_row_deleted (GTK_TREE_MODEL (store), path);
         }
       gtk_tree_path_free (path);
-      printf ("Removed %d entries\n", count);
 
       /* remove hidden entries */
       g_slist_free_full (store->hidden, g_object_unref);
