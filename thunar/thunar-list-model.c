@@ -1448,6 +1448,8 @@ thunar_list_model_files_added (ThunarFolder    *folder,
   /* release the path */
   gtk_tree_path_free (path);
 
+  printf ("File count: %d\n", g_sequence_get_length (store->rows));
+
   /* number of visible files may have changed */
   g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_NUM_FILES]);
 }
@@ -2110,7 +2112,8 @@ search_notify_loading (ThunarFolder *folder,
 
   folder_files = thunar_folder_get_files (folder);
   files_found = search_directory (folder_files, files_found, info); /* recursively search the directory */
-  thunar_list_model_files_added (folder, files_found, info->model); /* add the matching files to the search results */
+  if (files_found != NULL)
+    thunar_list_model_files_added (folder, files_found, info->model); /* add the matching files to the search results */
 
   /* free search files, thunar_list_model_files_added has added its own references */
   if (files_found != NULL)
@@ -2212,14 +2215,17 @@ thunar_list_model_set_folder (ThunarListModel *store,
     {
       /* check if we have any handlers connected for "row-deleted" */
       has_handler = g_signal_has_handler_pending (G_OBJECT (store), store->row_deleted_id, 0, FALSE);
+      printf ("%d\n", has_handler);
 
       row = g_sequence_get_begin_iter (store->rows);
       end = g_sequence_get_end_iter (store->rows);
 
       /* remove existing entries */
+      int count = 0;
       path = gtk_tree_path_new_first ();
       while (row != end)
         {
+          count++;
           /* remove the row from the list */
           next = g_sequence_iter_next (row);
           g_sequence_remove (row);
@@ -2232,6 +2238,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
             gtk_tree_model_row_deleted (GTK_TREE_MODEL (store), path);
         }
       gtk_tree_path_free (path);
+      printf ("Removed %d entries\n", count);
 
       /* remove hidden entries */
       g_slist_free_full (store->hidden, g_object_unref);
