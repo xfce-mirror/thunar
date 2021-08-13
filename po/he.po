@@ -18,8 +18,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-06 00:45+0200\n"
-"PO-Revision-Date: 2021-08-05 22:45+0000\n"
+"POT-Creation-Date: 2021-08-13 00:45+0200\n"
+"PO-Revision-Date: 2021-08-12 22:45+0000\n"
 "Last-Translator: Xfce Bot <transifex@xfce.org>\n"
 "Language-Team: Hebrew (http://www.transifex.com/xfce/thunar/language/he/)\n"
 "MIME-Version: 1.0\n"
@@ -890,16 +890,18 @@ msgstr "קובץ"
 msgid "File Name"
 msgstr "שם קובץ"
 
-#: ../thunar/thunar-enum-types.c:540 ../thunar/thunar-preferences-dialog.c:365
+#: ../thunar/thunar-enum-types.c:540 ../thunar/thunar-enum-types.c:563
+#: ../thunar/thunar-preferences-dialog.c:365
 #: ../thunar/thunar-preferences-dialog.c:945
 msgid "Never"
 msgstr "אף פעם"
 
-#: ../thunar/thunar-enum-types.c:541
+#: ../thunar/thunar-enum-types.c:541 ../thunar/thunar-enum-types.c:564
 msgid "Only for remote location"
 msgstr "רק עבור מיקום מרוחק"
 
-#: ../thunar/thunar-enum-types.c:542 ../thunar/thunar-preferences-dialog.c:367
+#: ../thunar/thunar-enum-types.c:542 ../thunar/thunar-enum-types.c:565
+#: ../thunar/thunar-preferences-dialog.c:367
 #: ../thunar/thunar-preferences-dialog.c:942
 msgid "Always"
 msgstr "תמיד"
@@ -1769,7 +1771,7 @@ msgid "Allow this file to _run as a program"
 msgstr "התר לקובץ זה לפעול כ_תוכנית"
 
 #: ../thunar/thunar-permissions-chooser.c:388
-#: ../thunar/thunar-preferences-dialog.c:1061
+#: ../thunar/thunar-preferences-dialog.c:1092
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr "להרשות לתוכניות לא בטוחות לפעול מהווה סיכון בטחוני למערכת שלך."
@@ -2260,57 +2262,67 @@ msgid ""
 "successfully finished."
 msgstr ""
 
+#: ../thunar/thunar-preferences-dialog.c:991
+msgid "Verify file checksum on copy"
+msgstr ""
+
 #: ../thunar/thunar-preferences-dialog.c:995
+msgid ""
+"Compare original file and copy with checksum. This will prevent corrupted "
+"files. Enabling this option will largely increase copy time."
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:1026
 msgid "Folder Permissions"
 msgstr "הרשאות תיקייה"
 
-#: ../thunar/thunar-preferences-dialog.c:1008
+#: ../thunar/thunar-preferences-dialog.c:1039
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "כאשר משנים הרשאות של תיקייה, יש באפשרותך\nלהחיל את השינויים גם על התוכן שלה. בחר את\nהתנהגות ברירת המחדל למטה:"
 
-#: ../thunar/thunar-preferences-dialog.c:1017
+#: ../thunar/thunar-preferences-dialog.c:1048
 msgid "Ask every time"
 msgstr "שאל כל פעם"
 
-#: ../thunar/thunar-preferences-dialog.c:1018
+#: ../thunar/thunar-preferences-dialog.c:1049
 msgid "Apply to Folder and Contents"
 msgstr "החל על תיקייה ותוכן"
 
-#: ../thunar/thunar-preferences-dialog.c:1019
+#: ../thunar/thunar-preferences-dialog.c:1050
 msgid "Apply to Folder Only"
 msgstr "החל רק על תיקייה"
 
-#: ../thunar/thunar-preferences-dialog.c:1034
+#: ../thunar/thunar-preferences-dialog.c:1065
 msgid "Security"
 msgstr "אבטחה"
 
-#: ../thunar/thunar-preferences-dialog.c:1051
+#: ../thunar/thunar-preferences-dialog.c:1082
 msgid "Execute shell scripts"
 msgstr "בצע את הקודים של המעטפת"
 
-#: ../thunar/thunar-preferences-dialog.c:1069
+#: ../thunar/thunar-preferences-dialog.c:1100
 msgid "Volume Management"
 msgstr "ניהול כרכים"
 
 #. add check button to enable/disable auto mounting
-#: ../thunar/thunar-preferences-dialog.c:1086
+#: ../thunar/thunar-preferences-dialog.c:1117
 msgid "Enable _Volume Management"
 msgstr "אפשר _ניהול כרכים"
 
-#: ../thunar/thunar-preferences-dialog.c:1102
+#: ../thunar/thunar-preferences-dialog.c:1133
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "<a href=\"volman-config:\">הגדר</a> את הניהול של כוננים נשלפים,\nהתקנים ומדיה."
 
-#: ../thunar/thunar-preferences-dialog.c:1117
+#: ../thunar/thunar-preferences-dialog.c:1148
 msgid "Missing dependencies"
 msgstr "קבצי תלות חסרים"
 
-#: ../thunar/thunar-preferences-dialog.c:1125
+#: ../thunar/thunar-preferences-dialog.c:1156
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -2320,7 +2332,7 @@ msgstr "נראה ש <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> ל
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: ../thunar/thunar-preferences-dialog.c:1199
+#: ../thunar/thunar-preferences-dialog.c:1230
 msgid "Failed to display the volume management settings"
 msgstr "נכשל להציג הגדרות ניהול כרך"
 
@@ -2679,13 +2691,13 @@ msgstr "_שנה שם קיצור"
 msgid "_Remove Shortcut"
 msgstr "_הסר קיצור"
 
-#: ../thunar/thunar-shortcuts-view.c:1626
+#: ../thunar/thunar-shortcuts-view.c:1629
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "הנתיב \"%s\" לא מתייחס לספריה"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1646
+#: ../thunar/thunar-shortcuts-view.c:1649
 msgid "Failed to add new shortcut"
 msgstr "נכשל להוסיף קיצור חדש"
 
@@ -2870,7 +2882,11 @@ msgstr "נכשל ליצור קישור עבור ה-URL ‏\"%s\""
 msgid "Failed to open directory \"%s\""
 msgstr "נכשל לפתוח את הספריה \"%s\""
 
-#: ../thunar/thunar-transfer-job.c:1067
+#: ../thunar/thunar-transfer-job.c:548
+msgid "Comparing checksums..."
+msgstr ""
+
+#: ../thunar/thunar-transfer-job.c:1128
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
@@ -2878,45 +2894,45 @@ msgid ""
 msgstr "אירעה שגיאה בעת ההעתקה אל %s: נדרשים עוד %s על מנת להעתיק אל היעד"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1101
+#: ../thunar/thunar-transfer-job.c:1162
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "כעת מנסה לשחזר את \"%s\""
 
-#: ../thunar/thunar-transfer-job.c:1130
+#: ../thunar/thunar-transfer-job.c:1191
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "התיקייה \"%s\" אינה קיימת עוד אך היא נדרשת לצורך שחזור הקובץ \"%s\" מהאשפה"
 
-#: ../thunar/thunar-transfer-job.c:1157
+#: ../thunar/thunar-transfer-job.c:1218
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "נכשל לשחזר את התיקייה \"%s\""
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1232
+#: ../thunar/thunar-transfer-job.c:1293
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "כעת מנסה להעביר את \"%s\""
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1310
+#: ../thunar/thunar-transfer-job.c:1369
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "לא ניתן להעביר את \"%s\" ישירות. הקבצים להעתקה נאספים..."
 
-#: ../thunar/thunar-transfer-job.c:1594
+#: ../thunar/thunar-transfer-job.c:1653
 msgid "Collecting files..."
 msgstr "כעת אוסף קבצים..."
 
-#: ../thunar/thunar-transfer-job.c:1793
+#: ../thunar/thunar-transfer-job.c:1852
 #, c-format
 msgid "%s of %s"
 msgstr "%s מתוך %s"
 
-#: ../thunar/thunar-transfer-job.c:1813
+#: ../thunar/thunar-transfer-job.c:1872
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
@@ -2925,7 +2941,7 @@ msgstr[1] "נותרו %lu שעות (%s/שנייה)"
 msgstr[2] "נותרו %lu שעות (%s/שנייה)"
 msgstr[3] "נותרו %lu שעות (%s/שנייה)"
 
-#: ../thunar/thunar-transfer-job.c:1821
+#: ../thunar/thunar-transfer-job.c:1880
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
@@ -2934,7 +2950,7 @@ msgstr[1] "נותרו %lu דקות (%s/שנייה)"
 msgstr[2] "נותרו %lu דקות (%s/שנייה)"
 msgstr[3] "נותרו %lu דקות (%s/שנייה)"
 
-#: ../thunar/thunar-transfer-job.c:1828
+#: ../thunar/thunar-transfer-job.c:1887
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
