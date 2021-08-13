@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-06 00:45+0200\n"
-"PO-Revision-Date: 2021-08-06 02:11+0000\n"
+"POT-Creation-Date: 2021-08-13 00:45+0200\n"
+"PO-Revision-Date: 2021-08-13 01:52+0000\n"
 "Last-Translator: 黃柏諺 <s8321414@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/xfce/thunar/language/zh_TW/)\n"
 "MIME-Version: 1.0\n"
@@ -884,16 +884,18 @@ msgstr "檔案"
 msgid "File Name"
 msgstr "檔案名稱"
 
-#: ../thunar/thunar-enum-types.c:540 ../thunar/thunar-preferences-dialog.c:365
+#: ../thunar/thunar-enum-types.c:540 ../thunar/thunar-enum-types.c:563
+#: ../thunar/thunar-preferences-dialog.c:365
 #: ../thunar/thunar-preferences-dialog.c:945
 msgid "Never"
 msgstr "永不"
 
-#: ../thunar/thunar-enum-types.c:541
+#: ../thunar/thunar-enum-types.c:541 ../thunar/thunar-enum-types.c:564
 msgid "Only for remote location"
 msgstr "僅適用於遠端位置"
 
-#: ../thunar/thunar-enum-types.c:542 ../thunar/thunar-preferences-dialog.c:367
+#: ../thunar/thunar-enum-types.c:542 ../thunar/thunar-enum-types.c:565
+#: ../thunar/thunar-preferences-dialog.c:367
 #: ../thunar/thunar-preferences-dialog.c:942
 msgid "Always"
 msgstr "總是"
@@ -1682,7 +1684,7 @@ msgid "Allow this file to _run as a program"
 msgstr "允許此檔案作為程式來執行(_R)"
 
 #: ../thunar/thunar-permissions-chooser.c:388
-#: ../thunar/thunar-preferences-dialog.c:1061
+#: ../thunar/thunar-preferences-dialog.c:1092
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr "允許執行不受信任的程式，可能會對您的系統造成危害。"
@@ -2173,57 +2175,67 @@ msgid ""
 "successfully finished."
 msgstr "使用中繼檔案「*.partial~」複製檔案。這可以防止檔案碎片化。新檔案只會在成功複製後顯示。"
 
+#: ../thunar/thunar-preferences-dialog.c:991
+msgid "Verify file checksum on copy"
+msgstr "複製時驗證檔案校驗碼"
+
 #: ../thunar/thunar-preferences-dialog.c:995
+msgid ""
+"Compare original file and copy with checksum. This will prevent corrupted "
+"files. Enabling this option will largely increase copy time."
+msgstr "將原始檔案與副本比較校驗碼。這可以避免損毀檔案。啟用此選項會大大地增加複製時間。"
+
+#: ../thunar/thunar-preferences-dialog.c:1026
 msgid "Folder Permissions"
 msgstr "資料夾權限"
 
-#: ../thunar/thunar-preferences-dialog.c:1008
+#: ../thunar/thunar-preferences-dialog.c:1039
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "當您變更資料夾權限時，您也可以一併\n套用到資料夾中的內容權限。請在底下\n選擇預設的行為："
 
-#: ../thunar/thunar-preferences-dialog.c:1017
+#: ../thunar/thunar-preferences-dialog.c:1048
 msgid "Ask every time"
 msgstr "每次都詢問"
 
-#: ../thunar/thunar-preferences-dialog.c:1018
+#: ../thunar/thunar-preferences-dialog.c:1049
 msgid "Apply to Folder and Contents"
 msgstr "套用到資料夾及其所含內容"
 
-#: ../thunar/thunar-preferences-dialog.c:1019
+#: ../thunar/thunar-preferences-dialog.c:1050
 msgid "Apply to Folder Only"
 msgstr "只套用到資料夾本身"
 
-#: ../thunar/thunar-preferences-dialog.c:1034
+#: ../thunar/thunar-preferences-dialog.c:1065
 msgid "Security"
 msgstr "安全性"
 
-#: ../thunar/thunar-preferences-dialog.c:1051
+#: ../thunar/thunar-preferences-dialog.c:1082
 msgid "Execute shell scripts"
 msgstr "執行 Shell 指令稿"
 
-#: ../thunar/thunar-preferences-dialog.c:1069
+#: ../thunar/thunar-preferences-dialog.c:1100
 msgid "Volume Management"
 msgstr "儲存裝置管理"
 
 #. add check button to enable/disable auto mounting
-#: ../thunar/thunar-preferences-dialog.c:1086
+#: ../thunar/thunar-preferences-dialog.c:1117
 msgid "Enable _Volume Management"
 msgstr "啟用儲存裝置管理(_V)"
 
-#: ../thunar/thunar-preferences-dialog.c:1102
+#: ../thunar/thunar-preferences-dialog.c:1133
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "<a href=\"volman-config:\">設定</a>可移除式磁碟、\n裝置與媒體的管理方式。"
 
-#: ../thunar/thunar-preferences-dialog.c:1117
+#: ../thunar/thunar-preferences-dialog.c:1148
 msgid "Missing dependencies"
 msgstr "遺失相依性"
 
-#: ../thunar/thunar-preferences-dialog.c:1125
+#: ../thunar/thunar-preferences-dialog.c:1156
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -2233,7 +2245,7 @@ msgstr "似乎無法提供<a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs<
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: ../thunar/thunar-preferences-dialog.c:1199
+#: ../thunar/thunar-preferences-dialog.c:1230
 msgid "Failed to display the volume management settings"
 msgstr "無法顯示儲存裝置管理設定值"
 
@@ -2583,13 +2595,13 @@ msgstr "重新命名捷徑(_N)"
 msgid "_Remove Shortcut"
 msgstr "移除捷徑(_R)"
 
-#: ../thunar/thunar-shortcuts-view.c:1626
+#: ../thunar/thunar-shortcuts-view.c:1629
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "此路徑設定「%s」並未指向正確的資料夾"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1646
+#: ../thunar/thunar-shortcuts-view.c:1649
 msgid "Failed to add new shortcut"
 msgstr "無法建立新捷徑"
 
@@ -2771,7 +2783,11 @@ msgstr "無法為 URL「%s」建立連結"
 msgid "Failed to open directory \"%s\""
 msgstr "無法開啟目錄「%s」"
 
-#: ../thunar/thunar-transfer-job.c:1067
+#: ../thunar/thunar-transfer-job.c:548
+msgid "Comparing checksums..."
+msgstr "正在比較校驗碼……"
+
+#: ../thunar/thunar-transfer-job.c:1128
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
@@ -2779,57 +2795,57 @@ msgid ""
 msgstr "當複製至「%s」時發生錯誤：還需要 %s 的空間才能複製至目的地"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1101
+#: ../thunar/thunar-transfer-job.c:1162
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "正在嘗試還原「%s」"
 
-#: ../thunar/thunar-transfer-job.c:1130
+#: ../thunar/thunar-transfer-job.c:1191
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "「%s」資料夾不復存在，但若要從垃圾桶還原檔案「%s」便需要它。要再建立該資料夾嗎？"
 
-#: ../thunar/thunar-transfer-job.c:1157
+#: ../thunar/thunar-transfer-job.c:1218
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "無法還原資料夾「%s」"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1232
+#: ../thunar/thunar-transfer-job.c:1293
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "正在嘗試移動「%s」"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1310
+#: ../thunar/thunar-transfer-job.c:1369
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "無法直接移動「%s」。正在收集複製用的檔案..."
 
-#: ../thunar/thunar-transfer-job.c:1594
+#: ../thunar/thunar-transfer-job.c:1653
 msgid "Collecting files..."
 msgstr "收集檔案中..."
 
-#: ../thunar/thunar-transfer-job.c:1793
+#: ../thunar/thunar-transfer-job.c:1852
 #, c-format
 msgid "%s of %s"
 msgstr "%s / %s"
 
-#: ../thunar/thunar-transfer-job.c:1813
+#: ../thunar/thunar-transfer-job.c:1872
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "剩餘 %lu 小時 (%s/秒)"
 
-#: ../thunar/thunar-transfer-job.c:1821
+#: ../thunar/thunar-transfer-job.c:1880
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "剩餘 %lu 分鐘 (%s/秒)"
 
-#: ../thunar/thunar-transfer-job.c:1828
+#: ../thunar/thunar-transfer-job.c:1887
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
