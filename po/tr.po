@@ -27,8 +27,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-06 00:45+0200\n"
-"PO-Revision-Date: 2021-08-05 22:45+0000\n"
+"POT-Creation-Date: 2021-08-13 00:45+0200\n"
+"PO-Revision-Date: 2021-08-12 22:45+0000\n"
 "Last-Translator: Xfce Bot <transifex@xfce.org>\n"
 "Language-Team: Turkish (http://www.transifex.com/xfce/thunar/language/tr/)\n"
 "MIME-Version: 1.0\n"
@@ -897,16 +897,18 @@ msgstr "Dosya"
 msgid "File Name"
 msgstr "Dosya Adı"
 
-#: ../thunar/thunar-enum-types.c:540 ../thunar/thunar-preferences-dialog.c:365
+#: ../thunar/thunar-enum-types.c:540 ../thunar/thunar-enum-types.c:563
+#: ../thunar/thunar-preferences-dialog.c:365
 #: ../thunar/thunar-preferences-dialog.c:945
 msgid "Never"
 msgstr "Asla"
 
-#: ../thunar/thunar-enum-types.c:541
+#: ../thunar/thunar-enum-types.c:541 ../thunar/thunar-enum-types.c:564
 msgid "Only for remote location"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:542 ../thunar/thunar-preferences-dialog.c:367
+#: ../thunar/thunar-enum-types.c:542 ../thunar/thunar-enum-types.c:565
+#: ../thunar/thunar-preferences-dialog.c:367
 #: ../thunar/thunar-preferences-dialog.c:942
 msgid "Always"
 msgstr "Her zaman"
@@ -1722,7 +1724,7 @@ msgid "Allow this file to _run as a program"
 msgstr "Bu dosyanın p_rogram olarak çalışmasına izin ver"
 
 #: ../thunar/thunar-permissions-chooser.c:388
-#: ../thunar/thunar-preferences-dialog.c:1061
+#: ../thunar/thunar-preferences-dialog.c:1092
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr "Güvenilmeyen programların çalıştırılmasına izin vermek, sisteminize zarar verebilir."
@@ -2213,57 +2215,67 @@ msgid ""
 "successfully finished."
 msgstr ""
 
+#: ../thunar/thunar-preferences-dialog.c:991
+msgid "Verify file checksum on copy"
+msgstr ""
+
 #: ../thunar/thunar-preferences-dialog.c:995
+msgid ""
+"Compare original file and copy with checksum. This will prevent corrupted "
+"files. Enabling this option will largely increase copy time."
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:1026
 msgid "Folder Permissions"
 msgstr "Dizin İzinleri"
 
-#: ../thunar/thunar-preferences-dialog.c:1008
+#: ../thunar/thunar-preferences-dialog.c:1039
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "Dizinin izinlerini değiştirdiğinizde alt dizinlerin\nizinlerini de değiştirmek isteyebilirsiniz.\nHangi seçeneğin ön tanımlı olacağını seçiniz:"
 
-#: ../thunar/thunar-preferences-dialog.c:1017
+#: ../thunar/thunar-preferences-dialog.c:1048
 msgid "Ask every time"
 msgstr "Her zaman sor"
 
-#: ../thunar/thunar-preferences-dialog.c:1018
+#: ../thunar/thunar-preferences-dialog.c:1049
 msgid "Apply to Folder and Contents"
 msgstr "Dizin ve İçindekilere Uygula"
 
-#: ../thunar/thunar-preferences-dialog.c:1019
+#: ../thunar/thunar-preferences-dialog.c:1050
 msgid "Apply to Folder Only"
 msgstr "Yalnızca Dizine Uygula"
 
-#: ../thunar/thunar-preferences-dialog.c:1034
+#: ../thunar/thunar-preferences-dialog.c:1065
 msgid "Security"
 msgstr "Güvenlik"
 
-#: ../thunar/thunar-preferences-dialog.c:1051
+#: ../thunar/thunar-preferences-dialog.c:1082
 msgid "Execute shell scripts"
 msgstr "Kabuk betiklerini çalıştır"
 
-#: ../thunar/thunar-preferences-dialog.c:1069
+#: ../thunar/thunar-preferences-dialog.c:1100
 msgid "Volume Management"
 msgstr "Bölüm Yönetimi"
 
 #. add check button to enable/disable auto mounting
-#: ../thunar/thunar-preferences-dialog.c:1086
+#: ../thunar/thunar-preferences-dialog.c:1117
 msgid "Enable _Volume Management"
 msgstr "Bölüm Yönetimini _Etkinleştir"
 
-#: ../thunar/thunar-preferences-dialog.c:1102
+#: ../thunar/thunar-preferences-dialog.c:1133
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "Çıkarılabilir aygıt ve ortam sürücülerinin \nyönetimini<a href=\"volman-config:\">Yapılandır</a>."
 
-#: ../thunar/thunar-preferences-dialog.c:1117
+#: ../thunar/thunar-preferences-dialog.c:1148
 msgid "Missing dependencies"
 msgstr "Eksik bağımlılıklar"
 
-#: ../thunar/thunar-preferences-dialog.c:1125
+#: ../thunar/thunar-preferences-dialog.c:1156
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -2273,7 +2285,7 @@ msgstr "<a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a>kullanılamaz g
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: ../thunar/thunar-preferences-dialog.c:1199
+#: ../thunar/thunar-preferences-dialog.c:1230
 msgid "Failed to display the volume management settings"
 msgstr "Bölüm yönetim ayarları gösterilemedi"
 
@@ -2626,13 +2638,13 @@ msgstr "Kısayolu Yeniden A_dlandır"
 msgid "_Remove Shortcut"
 msgstr "Kısayolu _Kaldır"
 
-#: ../thunar/thunar-shortcuts-view.c:1626
+#: ../thunar/thunar-shortcuts-view.c:1629
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "\"%s\" yolu dizin değil"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1646
+#: ../thunar/thunar-shortcuts-view.c:1649
 msgid "Failed to add new shortcut"
 msgstr "Kısayol eklenemedi"
 
@@ -2815,7 +2827,11 @@ msgstr "\"%s\" URL'sine bağ yaratılamadı"
 msgid "Failed to open directory \"%s\""
 msgstr "\"%s\" dizini açılamadı"
 
-#: ../thunar/thunar-transfer-job.c:1067
+#: ../thunar/thunar-transfer-job.c:548
+msgid "Comparing checksums..."
+msgstr ""
+
+#: ../thunar/thunar-transfer-job.c:1128
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
@@ -2823,59 +2839,59 @@ msgid ""
 msgstr "\"%s\" kopyalanırken hata oluştu: hedefe kopyalanabilmesi için %s daha alana gereksiniliyor"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1101
+#: ../thunar/thunar-transfer-job.c:1162
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "\"%s\" kurtarılmaya çalışılıyor"
 
-#: ../thunar/thunar-transfer-job.c:1130
+#: ../thunar/thunar-transfer-job.c:1191
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "\"%s\" dizini artık yok, ancak \"%s\" dosyasının kurtarılması için bu dizin gerekli."
 
-#: ../thunar/thunar-transfer-job.c:1157
+#: ../thunar/thunar-transfer-job.c:1218
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "\"%s\" dizinini kurtarma başarısız"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1232
+#: ../thunar/thunar-transfer-job.c:1293
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "\"%s\" taşınmaya çalışılıyor"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1310
+#: ../thunar/thunar-transfer-job.c:1369
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "\"%s\" doğrudan taşınamadı. Kopyalamak için dosyalar toplanıyor..."
 
-#: ../thunar/thunar-transfer-job.c:1594
+#: ../thunar/thunar-transfer-job.c:1653
 msgid "Collecting files..."
 msgstr "Dosyalar toplanıyor..."
 
-#: ../thunar/thunar-transfer-job.c:1793
+#: ../thunar/thunar-transfer-job.c:1852
 #, c-format
 msgid "%s of %s"
 msgstr "%s / %s"
 
-#: ../thunar/thunar-transfer-job.c:1813
+#: ../thunar/thunar-transfer-job.c:1872
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "%lu saat kaldı (%s/sec)"
 msgstr[1] "%lu saat kaldı (%s/sn)"
 
-#: ../thunar/thunar-transfer-job.c:1821
+#: ../thunar/thunar-transfer-job.c:1880
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "%lu dakika kaldı (%s/sec)"
 msgstr[1] "%lu dakika kaldı (%s/sn)"
 
-#: ../thunar/thunar-transfer-job.c:1828
+#: ../thunar/thunar-transfer-job.c:1887
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
