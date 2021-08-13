@@ -27,9 +27,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-06 00:45+0200\n"
-"PO-Revision-Date: 2021-08-09 21:20+0000\n"
-"Last-Translator: Michael Martins <michaelfm21@gmail.com>\n"
+"POT-Creation-Date: 2021-08-13 00:45+0200\n"
+"PO-Revision-Date: 2021-08-12 22:45+0000\n"
+"Last-Translator: Xfce Bot <transifex@xfce.org>\n"
 "Language-Team: Portuguese (Brazil) (http://www.transifex.com/xfce/thunar/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -897,16 +897,18 @@ msgstr "Arquivo"
 msgid "File Name"
 msgstr "Nome do arquivo"
 
-#: ../thunar/thunar-enum-types.c:540 ../thunar/thunar-preferences-dialog.c:365
+#: ../thunar/thunar-enum-types.c:540 ../thunar/thunar-enum-types.c:563
+#: ../thunar/thunar-preferences-dialog.c:365
 #: ../thunar/thunar-preferences-dialog.c:945
 msgid "Never"
 msgstr "Nunca"
 
-#: ../thunar/thunar-enum-types.c:541
+#: ../thunar/thunar-enum-types.c:541 ../thunar/thunar-enum-types.c:564
 msgid "Only for remote location"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:542 ../thunar/thunar-preferences-dialog.c:367
+#: ../thunar/thunar-enum-types.c:542 ../thunar/thunar-enum-types.c:565
+#: ../thunar/thunar-preferences-dialog.c:367
 #: ../thunar/thunar-preferences-dialog.c:942
 msgid "Always"
 msgstr "Sempre"
@@ -1722,7 +1724,7 @@ msgid "Allow this file to _run as a program"
 msgstr "Permitir que este arquivo execute como um p_rograma"
 
 #: ../thunar/thunar-permissions-chooser.c:388
-#: ../thunar/thunar-preferences-dialog.c:1061
+#: ../thunar/thunar-preferences-dialog.c:1092
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr "Permitir a execução de programas não-confiáveis é um risco de segurança ao seu sistema."
@@ -2213,57 +2215,67 @@ msgid ""
 "successfully finished."
 msgstr ""
 
+#: ../thunar/thunar-preferences-dialog.c:991
+msgid "Verify file checksum on copy"
+msgstr ""
+
 #: ../thunar/thunar-preferences-dialog.c:995
+msgid ""
+"Compare original file and copy with checksum. This will prevent corrupted "
+"files. Enabling this option will largely increase copy time."
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:1026
 msgid "Folder Permissions"
 msgstr "Permissões da pasta"
 
-#: ../thunar/thunar-preferences-dialog.c:1008
+#: ../thunar/thunar-preferences-dialog.c:1039
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "Ao alterar as permissões de uma pasta, você também\npode aplicar as mudanças ao conteúdo da pasta.\nSelecione o comportamento padrão abaixo:"
 
-#: ../thunar/thunar-preferences-dialog.c:1017
+#: ../thunar/thunar-preferences-dialog.c:1048
 msgid "Ask every time"
 msgstr "Pergunte sempre"
 
-#: ../thunar/thunar-preferences-dialog.c:1018
+#: ../thunar/thunar-preferences-dialog.c:1049
 msgid "Apply to Folder and Contents"
 msgstr "Aplicar à pasta e ao conteúdo"
 
-#: ../thunar/thunar-preferences-dialog.c:1019
+#: ../thunar/thunar-preferences-dialog.c:1050
 msgid "Apply to Folder Only"
 msgstr "Aplicar apenas à pasta"
 
-#: ../thunar/thunar-preferences-dialog.c:1034
+#: ../thunar/thunar-preferences-dialog.c:1065
 msgid "Security"
 msgstr "Segurança"
 
-#: ../thunar/thunar-preferences-dialog.c:1051
+#: ../thunar/thunar-preferences-dialog.c:1082
 msgid "Execute shell scripts"
 msgstr "Executar scripts de shell"
 
-#: ../thunar/thunar-preferences-dialog.c:1069
+#: ../thunar/thunar-preferences-dialog.c:1100
 msgid "Volume Management"
 msgstr "Gerenciador de volumes"
 
 #. add check button to enable/disable auto mounting
-#: ../thunar/thunar-preferences-dialog.c:1086
+#: ../thunar/thunar-preferences-dialog.c:1117
 msgid "Enable _Volume Management"
 msgstr "Habilitar gerenciamento de _volumes"
 
-#: ../thunar/thunar-preferences-dialog.c:1102
+#: ../thunar/thunar-preferences-dialog.c:1133
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "<a href=\"volman-config:\">Configurar</a> o gerenciamento de unidades removíveis,\ndispositivos e mídia."
 
-#: ../thunar/thunar-preferences-dialog.c:1117
+#: ../thunar/thunar-preferences-dialog.c:1148
 msgid "Missing dependencies"
 msgstr "Dependências ausentes"
 
-#: ../thunar/thunar-preferences-dialog.c:1125
+#: ../thunar/thunar-preferences-dialog.c:1156
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -2273,7 +2285,7 @@ msgstr "Parece que o <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> n
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: ../thunar/thunar-preferences-dialog.c:1199
+#: ../thunar/thunar-preferences-dialog.c:1230
 msgid "Failed to display the volume management settings"
 msgstr "Falha ao exibir as configurações do gerenciador de volumes"
 
@@ -2626,13 +2638,13 @@ msgstr "Re_nomear atalho"
 msgid "_Remove Shortcut"
 msgstr "_Remover atalho"
 
-#: ../thunar/thunar-shortcuts-view.c:1626
+#: ../thunar/thunar-shortcuts-view.c:1629
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "O caminho \"%s\" não se refere a um diretório"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1646
+#: ../thunar/thunar-shortcuts-view.c:1649
 msgid "Failed to add new shortcut"
 msgstr "Falha ao adicionar novo atalho"
 
@@ -2815,7 +2827,11 @@ msgstr "Falha ao criar um link para a URL \"%s\""
 msgid "Failed to open directory \"%s\""
 msgstr "Falha ao abrir diretório \"%s\""
 
-#: ../thunar/thunar-transfer-job.c:1067
+#: ../thunar/thunar-transfer-job.c:548
+msgid "Comparing checksums..."
+msgstr ""
+
+#: ../thunar/thunar-transfer-job.c:1128
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
@@ -2823,59 +2839,59 @@ msgid ""
 msgstr "Erro ao copiar para \"%s\": mais %s de espaço é necessário para copiar para o destino"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1101
+#: ../thunar/thunar-transfer-job.c:1162
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "Tentando restaurar \"%s\""
 
-#: ../thunar/thunar-transfer-job.c:1130
+#: ../thunar/thunar-transfer-job.c:1191
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "A pasta \"%s\" não existe mais, mas é necessária para restaurar o arquivo \"%s\" da lixeira"
 
-#: ../thunar/thunar-transfer-job.c:1157
+#: ../thunar/thunar-transfer-job.c:1218
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Falha ao restaurar a pasta \"%s\""
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1232
+#: ../thunar/thunar-transfer-job.c:1293
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Tentando mover \"%s\""
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1310
+#: ../thunar/thunar-transfer-job.c:1369
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "Não foi possível mover \"%s\" diretamente. Coletando arquivos para cópia..."
 
-#: ../thunar/thunar-transfer-job.c:1594
+#: ../thunar/thunar-transfer-job.c:1653
 msgid "Collecting files..."
 msgstr "Coletando arquivos..."
 
-#: ../thunar/thunar-transfer-job.c:1793
+#: ../thunar/thunar-transfer-job.c:1852
 #, c-format
 msgid "%s of %s"
 msgstr "%s de %s"
 
-#: ../thunar/thunar-transfer-job.c:1813
+#: ../thunar/thunar-transfer-job.c:1872
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "%lu hora restante (%s/seg)"
 msgstr[1] "%lu horas restantes (%s/seg)"
 
-#: ../thunar/thunar-transfer-job.c:1821
+#: ../thunar/thunar-transfer-job.c:1880
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "%lu minuto restante (%s/seg)"
 msgstr[1] "%lu minutos restantes (%s/seg)"
 
-#: ../thunar/thunar-transfer-job.c:1828
+#: ../thunar/thunar-transfer-job.c:1887
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
