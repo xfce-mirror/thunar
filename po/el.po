@@ -17,8 +17,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-06 00:45+0200\n"
-"PO-Revision-Date: 2021-08-05 22:45+0000\n"
+"POT-Creation-Date: 2021-08-13 00:45+0200\n"
+"PO-Revision-Date: 2021-08-12 22:45+0000\n"
 "Last-Translator: Xfce Bot <transifex@xfce.org>\n"
 "Language-Team: Greek (http://www.transifex.com/xfce/thunar/language/el/)\n"
 "MIME-Version: 1.0\n"
@@ -887,16 +887,18 @@ msgstr "Αρχείο"
 msgid "File Name"
 msgstr "Όνομα αρχείου"
 
-#: ../thunar/thunar-enum-types.c:540 ../thunar/thunar-preferences-dialog.c:365
+#: ../thunar/thunar-enum-types.c:540 ../thunar/thunar-enum-types.c:563
+#: ../thunar/thunar-preferences-dialog.c:365
 #: ../thunar/thunar-preferences-dialog.c:945
 msgid "Never"
 msgstr "Ποτέ"
 
-#: ../thunar/thunar-enum-types.c:541
+#: ../thunar/thunar-enum-types.c:541 ../thunar/thunar-enum-types.c:564
 msgid "Only for remote location"
 msgstr ""
 
-#: ../thunar/thunar-enum-types.c:542 ../thunar/thunar-preferences-dialog.c:367
+#: ../thunar/thunar-enum-types.c:542 ../thunar/thunar-enum-types.c:565
+#: ../thunar/thunar-preferences-dialog.c:367
 #: ../thunar/thunar-preferences-dialog.c:942
 msgid "Always"
 msgstr "Πάντα"
@@ -1712,7 +1714,7 @@ msgid "Allow this file to _run as a program"
 msgstr "Να επιτραπεί σε αυτό το αρχείο να _εκτελείται ως πρόγραμμα"
 
 #: ../thunar/thunar-permissions-chooser.c:388
-#: ../thunar/thunar-preferences-dialog.c:1061
+#: ../thunar/thunar-preferences-dialog.c:1092
 msgid ""
 "Allowing untrusted programs to run presents a security risk to your system."
 msgstr "Επιτρέποντας αναξιόπιστα προγράμματα να εκτελούνται εισάγεται ένας κίνδυνος ασφαλείας στο σύστημα σας."
@@ -2203,57 +2205,67 @@ msgid ""
 "successfully finished."
 msgstr ""
 
+#: ../thunar/thunar-preferences-dialog.c:991
+msgid "Verify file checksum on copy"
+msgstr ""
+
 #: ../thunar/thunar-preferences-dialog.c:995
+msgid ""
+"Compare original file and copy with checksum. This will prevent corrupted "
+"files. Enabling this option will largely increase copy time."
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:1026
 msgid "Folder Permissions"
 msgstr "Δικαιώματα φακέλου"
 
-#: ../thunar/thunar-preferences-dialog.c:1008
+#: ../thunar/thunar-preferences-dialog.c:1039
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr "Όταν αλλάζετε τα δικαιώματα ενός φακέλου, μπορείτε\nνα εφαρμόσετε τις αλλαγές και στα περιεχόμενά του.\nΕπιλέξτε την εξ ορισμού συμπεριφορά παρακάτω:"
 
-#: ../thunar/thunar-preferences-dialog.c:1017
+#: ../thunar/thunar-preferences-dialog.c:1048
 msgid "Ask every time"
 msgstr "Να γίνεται πάντα ερώτηση"
 
-#: ../thunar/thunar-preferences-dialog.c:1018
+#: ../thunar/thunar-preferences-dialog.c:1049
 msgid "Apply to Folder and Contents"
 msgstr "Εφαρμογή στο φάκελο και τα περιεχόμενα"
 
-#: ../thunar/thunar-preferences-dialog.c:1019
+#: ../thunar/thunar-preferences-dialog.c:1050
 msgid "Apply to Folder Only"
 msgstr "Εφαρμογή μόνο στο φάκελο"
 
-#: ../thunar/thunar-preferences-dialog.c:1034
+#: ../thunar/thunar-preferences-dialog.c:1065
 msgid "Security"
 msgstr "Ασφάλεια"
 
-#: ../thunar/thunar-preferences-dialog.c:1051
+#: ../thunar/thunar-preferences-dialog.c:1082
 msgid "Execute shell scripts"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:1069
+#: ../thunar/thunar-preferences-dialog.c:1100
 msgid "Volume Management"
 msgstr "Διαχείριση τόμων"
 
 #. add check button to enable/disable auto mounting
-#: ../thunar/thunar-preferences-dialog.c:1086
+#: ../thunar/thunar-preferences-dialog.c:1117
 msgid "Enable _Volume Management"
 msgstr "Ενεργοποίηση διαχείρισης _τόμων"
 
-#: ../thunar/thunar-preferences-dialog.c:1102
+#: ../thunar/thunar-preferences-dialog.c:1133
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
 "devices and media."
 msgstr "<a href=\"volman-config:\">Ρύθμιση</a> της διαχείρισης των αφαιρούμενων οδηγών, συσκευών και μέσων."
 
-#: ../thunar/thunar-preferences-dialog.c:1117
+#: ../thunar/thunar-preferences-dialog.c:1148
 msgid "Missing dependencies"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:1125
+#: ../thunar/thunar-preferences-dialog.c:1156
 msgid ""
 "It looks like <a href=\"https://wiki.gnome.org/Projects/gvfs\">gvfs</a> is not available.\n"
 "Important features including trash support,\n"
@@ -2263,7 +2275,7 @@ msgstr ""
 
 #. tell the user that we failed to come up with the thunar-volman
 #. configuration dialog
-#: ../thunar/thunar-preferences-dialog.c:1199
+#: ../thunar/thunar-preferences-dialog.c:1230
 msgid "Failed to display the volume management settings"
 msgstr "Το άνοιγμα των ρυθμίσεων της διαχείρισης τόμων απέτυχε"
 
@@ -2616,13 +2628,13 @@ msgstr "Μετο_νομασία συντόμευσης"
 msgid "_Remove Shortcut"
 msgstr "_Απομάκρυνση συντόμευσης"
 
-#: ../thunar/thunar-shortcuts-view.c:1626
+#: ../thunar/thunar-shortcuts-view.c:1629
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "Η διαδρομή \"%s\" δεν αντιστοιχεί σε κατάλογο"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1646
+#: ../thunar/thunar-shortcuts-view.c:1649
 msgid "Failed to add new shortcut"
 msgstr "Η προσθήκη νέας συντόμευσης απέτυχε"
 
@@ -2805,7 +2817,11 @@ msgstr "Η δημιουργία δεσμού για τη διεύθυνση \"%s
 msgid "Failed to open directory \"%s\""
 msgstr "Το άνοιγμα του καταλόγου \"%s\" απέτυχε"
 
-#: ../thunar/thunar-transfer-job.c:1067
+#: ../thunar/thunar-transfer-job.c:548
+msgid "Comparing checksums..."
+msgstr ""
+
+#: ../thunar/thunar-transfer-job.c:1128
 #, c-format
 msgid ""
 "Error while copying to \"%s\": %s more space is required to copy to the "
@@ -2813,59 +2829,59 @@ msgid ""
 msgstr "Σφάλμα κατά την διάρκεια της αντιγραφής στο \"%s\": χρειάζεται %s περισσότερος χώρος για να πραγματοποιηθεί η αντιγραφή στον προορισμό που επιλέξατε"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1101
+#: ../thunar/thunar-transfer-job.c:1162
 #, c-format
 msgid "Trying to restore \"%s\""
 msgstr "Προσπάθεια επαναφοράς του \"%s\""
 
-#: ../thunar/thunar-transfer-job.c:1130
+#: ../thunar/thunar-transfer-job.c:1191
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore but is required to restore the file"
 " \"%s\" from the trash"
 msgstr "Ο φάκελος \"%s\" δεν υπάρχει πια, αλλά απαιτείται για την επαναφορά του αρχείου \"%s\" από τα απορρίμματα."
 
-#: ../thunar/thunar-transfer-job.c:1157
+#: ../thunar/thunar-transfer-job.c:1218
 #, c-format
 msgid "Failed to restore the folder \"%s\""
 msgstr "Η επαναφορά του φακέλου \"%s\" απέτυχε"
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1232
+#: ../thunar/thunar-transfer-job.c:1293
 #, c-format
 msgid "Trying to move \"%s\""
 msgstr "Προσπάθεια μετακίνησης του \"%s\""
 
 #. update progress information
-#: ../thunar/thunar-transfer-job.c:1310
+#: ../thunar/thunar-transfer-job.c:1369
 #, c-format
 msgid "Could not move \"%s\" directly. Collecting files for copying..."
 msgstr "Αδυναμία μετακίνησης του καταλόγου \"%s\". Συλλογή αρχείων για αντιγραφή..."
 
-#: ../thunar/thunar-transfer-job.c:1594
+#: ../thunar/thunar-transfer-job.c:1653
 msgid "Collecting files..."
 msgstr "Συλλογή αρχείων..."
 
-#: ../thunar/thunar-transfer-job.c:1793
+#: ../thunar/thunar-transfer-job.c:1852
 #, c-format
 msgid "%s of %s"
 msgstr "%s από %s"
 
-#: ../thunar/thunar-transfer-job.c:1813
+#: ../thunar/thunar-transfer-job.c:1872
 #, c-format
 msgid "%lu hour remaining (%s/sec)"
 msgid_plural "%lu hours remaining (%s/sec)"
 msgstr[0] "απομένει %lu ώρα (%s/sec)"
 msgstr[1] "απομένουν %lu ώρες (%s/sec)"
 
-#: ../thunar/thunar-transfer-job.c:1821
+#: ../thunar/thunar-transfer-job.c:1880
 #, c-format
 msgid "%lu minute remaining (%s/sec)"
 msgid_plural "%lu minutes remaining (%s/sec)"
 msgstr[0] "Απομένει %lu λεπτό (%s/sec)"
 msgstr[1] "Απομένουν %lu λεπτά  (%s/sec)"
 
-#: ../thunar/thunar-transfer-job.c:1828
+#: ../thunar/thunar-transfer-job.c:1887
 #, c-format
 msgid "%lu second remaining (%s/sec)"
 msgid_plural "%lu seconds remaining (%s/sec)"
