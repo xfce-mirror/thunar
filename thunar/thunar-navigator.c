@@ -47,10 +47,10 @@ static guint navigator_signals[LAST_SIGNAL];
 GType
 thunar_navigator_get_type (void)
 {
-  static volatile gsize type__volatile = 0;
-  GType                 type;
+  static gsize type__static = 0;
+  GType        type;
 
-  if (g_once_init_enter (&type__volatile))
+  if (g_once_init_enter (&type__static))
     {
       static const GTypeInfo info =
       {
@@ -68,10 +68,10 @@ thunar_navigator_get_type (void)
       type = g_type_register_static (G_TYPE_INTERFACE, I_("ThunarNavigator"), &info, 0);
       g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
 
-      g_once_init_leave (&type__volatile, type);
+      g_once_init_leave (&type__static, type);
     }
 
-  return type__volatile;
+  return type__static;
 }
 
 

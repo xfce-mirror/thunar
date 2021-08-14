@@ -45,10 +45,10 @@ static void thunarx_provider_plugin_class_init (gpointer klass);
 GType
 thunarx_provider_plugin_get_type (void)
 {
-  static volatile gsize type__volatile = 0;
-  GType                 type;
+  static gsize type__static = 0;
+  GType        type;
 
-  if (g_once_init_enter (&type__volatile))
+  if (g_once_init_enter (&type__static))
     {
       type = g_type_register_static_simple (G_TYPE_INTERFACE,
                                             I_("ThunarxProviderPlugin"),
@@ -58,10 +58,10 @@ thunarx_provider_plugin_get_type (void)
                                             NULL,
                                             0);
 
-      g_once_init_leave (&type__volatile, type);
+      g_once_init_leave (&type__static, type);
     }
 
-  return type__volatile;
+  return type__static;
 }
 
 
