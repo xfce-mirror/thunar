@@ -2142,7 +2142,8 @@ thunar_file_get_date (const ThunarFile  *file,
       return g_file_info_get_attribute_int64 (file->recent_info ? file->recent_info : file->info, G_FILE_ATTRIBUTE_RECENT_MODIFIED);
 
     default:
-      _thunar_assert_not_reached ();
+      g_warn_if_reached ();
+      return 0;
     }
 
   return g_file_info_get_attribute_uint64 (file->info, attribute);

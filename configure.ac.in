@@ -58,9 +58,8 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 dnl *******************************
 dnl *** Check for UNIX variants ***
 dnl *******************************
-AC_AIX()
-AC_ISC_POSIX()
-AC_MINIX()
+AC_USE_SYSTEM_EXTENSIONS
+AC_SEARCH_LIBS([strerror],[cposix])
 
 if test "x$target_os" = "xlinux-gnu"; then
   AC_DEFINE([HAVE_LINUX], [], [Whether we are building on Linux or not])
@@ -70,7 +69,7 @@ dnl ********************************
 dnl *** Check for basic programs ***
 dnl ********************************
 AC_PROG_CC()
-AC_PROG_LD()
+LT_PATH_LD()
 AM_PROG_CC_C_O()
 AC_PROG_INSTALL()
 IT_PROG_INTLTOOL()
@@ -101,7 +100,7 @@ dnl ******************************
 dnl *** Set helper path prefix ***
 dnl ******************************
 AC_ARG_WITH([helper-path-prefix],
-            [AC_HELP_STRING([--with-helper-path-prefix=PATH],
+            [AS_HELP_STRING([--with-helper-path-prefix=PATH],
                             [Path prefix under which helper executables will be installed (default: $libdir)])],
             [HELPER_PATH_PREFIX="$withval"],
             [HELPER_PATH_PREFIX="$libdir"])
@@ -226,7 +225,7 @@ BM_THUNAR_PLUGIN_TPA()
 BM_THUNAR_PLUGIN_UCA()
 BM_THUNAR_PLUGIN_WALLPAPER()
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
 docs/Makefile
 docs/design/Makefile
@@ -255,6 +254,7 @@ thunarx/Makefile
 thunarx/thunarx-3.pc
 thunarx/thunarx-config.h
 ])
+AC_OUTPUT
 
 dnl ***************************
 dnl *** Print configuration ***
