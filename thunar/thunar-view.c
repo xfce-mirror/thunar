@@ -33,10 +33,10 @@ static void thunar_view_class_init (gpointer klass);
 GType
 thunar_view_get_type (void)
 {
-  static volatile gsize type__volatile = 0;
-  GType                 type;
+  static gsize type__static = 0;
+  GType        type;
 
-  if (g_once_init_enter (&type__volatile))
+  if (g_once_init_enter (&type__static))
     {
       type = g_type_register_static_simple (G_TYPE_INTERFACE,
                                             I_("ThunarView"),
@@ -49,10 +49,10 @@ thunar_view_get_type (void)
       g_type_interface_add_prerequisite (type, GTK_TYPE_WIDGET);
       g_type_interface_add_prerequisite (type, THUNAR_TYPE_COMPONENT);
 
-      g_once_init_leave (&type__volatile, type);
+      g_once_init_leave (&type__static, type);
     }
 
-  return type__volatile;
+  return type__static;
 }
 
 

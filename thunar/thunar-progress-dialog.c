@@ -204,7 +204,7 @@ thunar_progress_dialog_launch_view (ThunarProgressDialog *dialog,
       g_value_init (&title, G_TYPE_STRING);
       g_object_get_property (G_OBJECT (view), "title", &title);
       g_info ("Job \"%s\" does not exist in waiting list",
-              g_value_get_string (&title));
+              (gchar *) g_value_get_string (&title));
     }
 }
 

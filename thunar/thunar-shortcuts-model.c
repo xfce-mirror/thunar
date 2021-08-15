@@ -1177,7 +1177,10 @@ thunar_shortcuts_model_get_hidden (ThunarShortcutsModel *model,
   else if (shortcut->location != NULL)
     uri = g_file_get_uri (shortcut->location);
   else
-    _thunar_assert_not_reached ();
+    {
+      g_warn_if_reached ();
+      return FALSE;
+    }
 
   if (uri == NULL)
     return FALSE;
@@ -2251,7 +2254,10 @@ thunar_shortcuts_model_set_hidden (ThunarShortcutsModel *model,
   else if (shortcut->location != NULL)
     uri = g_file_get_uri (shortcut->location);
   else
-    _thunar_assert_not_reached ();
+    {
+      g_warn_if_reached ();
+      return;
+    }
 
   /* prepare array */
   length = model->hidden_bookmarks != NULL ? g_strv_length (model->hidden_bookmarks) : 0;
