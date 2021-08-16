@@ -270,6 +270,8 @@ struct _ThunarListModel
   gboolean       sort_folders_first : 1;
   gint           sort_sign;   /* 1 = ascending, -1 descending */
   ThunarSortFunc sort_func;
+
+  GList         *folders;
 };
 
 
@@ -473,6 +475,8 @@ thunar_list_model_init (ThunarListModel *store)
   store->sort_sign = 1;
   store->sort_func = thunar_file_compare_by_name;
   store->rows = g_sequence_new (g_object_unref);
+
+  store->folders = NULL;
 
   /* connect to the shared ThunarFileMonitor, so we don't need to
    * connect "changed" to every single ThunarFile we own.
@@ -1448,8 +1452,6 @@ thunar_list_model_files_added (ThunarFolder    *folder,
   /* release the path */
   gtk_tree_path_free (path);
 
-  printf ("File count: %d\n", g_sequence_get_length (store->rows));
-
   /* number of visible files may have changed */
   g_object_notify_by_pspec (G_OBJECT (store), list_model_props[PROP_NUM_FILES]);
 }
@@ -2110,6 +2112,8 @@ search_notify_loading (ThunarFolder *folder,
   if (thunar_folder_get_loading (folder) == 1)
     return;
 
+//  printf("%s\n", thunar_file_get_display_name (thunar_folder_get_corresponding_file (folder)));
+
   folder_files = thunar_folder_get_files (folder);
   files_found = search_directory (folder_files, files_found, info); /* recursively search the directory */
   if (files_found != NULL)
@@ -2117,13 +2121,10 @@ search_notify_loading (ThunarFolder *folder,
 
   /* free search files, thunar_list_model_files_added has added its own references */
   if (files_found != NULL)
-    {
-      thunar_g_list_free_full (files_found);
-      files_found = NULL;
-    }
+    thunar_g_list_free_full (files_found);
 
   /* the folder has been searched and any subdirectories have had their connections setup, therefore this is no longer needed */
-  g_object_unref (folder);
+  g_signal_handlers_disconnect_by_func (G_OBJECT (folder), search_notify_loading, info);
   search_info_destroy (info);
 }
 
@@ -2150,6 +2151,7 @@ thunar_list_model_recursive_search (SearchInfo *info,
   GList        *temp_files;
 
   folder     = thunar_folder_get_for_file (directory);
+  info->model->folders = g_list_prepend (info->model->folders, folder);
   temp_files = thunar_folder_get_files (folder);
 
   /* setup a callback to search the folder when it has finished loading */
@@ -2162,7 +2164,6 @@ thunar_list_model_recursive_search (SearchInfo *info,
   /* otherwise, if loading has finished, search the folder */
   files = search_directory (temp_files, files, info);
 
-  g_object_unref (folder);
   search_info_destroy (info);
 
   return files;
@@ -2215,7 +2216,6 @@ thunar_list_model_set_folder (ThunarListModel *store,
     {
       /* check if we have any handlers connected for "row-deleted" */
       has_handler = g_signal_has_handler_pending (G_OBJECT (store), store->row_deleted_id, 0, FALSE);
-      printf ("%d\n", has_handler);
 
       row = g_sequence_get_begin_iter (store->rows);
       end = g_sequence_get_end_iter (store->rows);
@@ -2269,6 +2269,11 @@ thunar_list_model_set_folder (ThunarListModel *store,
       if (search_query == NULL)
         {
           files = thunar_folder_get_files (folder);
+          if (store->folders != NULL)
+            {
+              thunar_g_list_free_full (store->folders);
+              store->folders = NULL;
+            }
         }
       else
         {
@@ -2288,22 +2293,22 @@ thunar_list_model_set_folder (ThunarListModel *store,
           files = thunar_list_model_recursive_search (info, files, thunar_folder_get_corresponding_file (folder));
 
           /* search GtkRecent */
-          for (lp = recent_infos; lp != NULL; lp = lp->next)
-            {
-              if (!gtk_recent_info_exists (lp->data))
-                continue;
-
-              /* prepare entry display name */
-              display_name = gtk_recent_info_get_display_name (lp->data);
-              display_name_c = g_utf8_casefold (display_name, strlen (display_name));
-
-              /* search substring */
-              if (g_strrstr (display_name_c, search_query_c) != NULL)
-                files = g_list_prepend (files, thunar_file_get_for_uri (gtk_recent_info_get_uri (lp->data), NULL));
-
-              /* free memory */
-              g_free (display_name_c);
-            }
+//          for (lp = recent_infos; lp != NULL; lp = lp->next)
+//            {
+//              if (!gtk_recent_info_exists (lp->data))
+//                continue;
+//
+//              /* prepare entry display name */
+//              display_name = gtk_recent_info_get_display_name (lp->data);
+//              display_name_c = g_utf8_casefold (display_name, strlen (display_name));
+//
+//              /* search substring */
+//              if (g_strrstr (display_name_c, search_query_c) != NULL)
+//                files = g_list_prepend (files, thunar_file_get_for_uri (gtk_recent_info_get_uri (lp->data), NULL));
+//
+//              /* free memory */
+//              g_free (display_name_c);
+//            }
 
           search_files = files;
           g_list_free_full (recent_infos, (void (*) (void*)) gtk_recent_info_unref);
