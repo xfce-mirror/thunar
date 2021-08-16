@@ -2150,7 +2150,7 @@ thunar_list_model_recursive_search (SearchInfo *info,
   info->model->folders = g_list_prepend (info->model->folders, folder);
 
   /* setup a callback to search the folder when it has finished loading */
-  if (thunar_folder_get_loading (folder) == 1)
+  if (thunar_folder_get_loading (folder) == TRUE)
     {
       g_signal_connect (G_OBJECT (folder), "notify::loading", G_CALLBACK (search_notify_loading), info);
       return files;
@@ -2282,7 +2282,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
           recent_infos   = gtk_recent_manager_get_items (gtk_recent_manager_get_default ());
           search_query_c = g_utf8_casefold (search_query, strlen (search_query));
           files = NULL;
-          info = search_info_create (store, search_query_c, 2);
+          info = search_info_create (store, search_query_c, 4);
 
           /* search the current folder */
           files = thunar_list_model_recursive_search (info, files, thunar_folder_get_corresponding_file (folder));
