@@ -130,9 +130,6 @@ static void                    thunar_launcher_set_selected_files         (Thuna
                                                                            GList                          *selected_files);
 static void                    thunar_launcher_execute_files              (ThunarLauncher                 *launcher,
                                                                            GList                          *files);
-static void                    thunar_launcher_open_file                  (ThunarLauncher                 *launcher,
-                                                                           ThunarFile                     *file,
-                                                                           GAppInfo                       *application_to_use);
 static void                    thunar_launcher_open_files                 (ThunarLauncher                 *launcher,
                                                                            GList                          *files,
                                                                            GAppInfo                       *application_to_use);
@@ -808,20 +805,6 @@ thunar_launcher_g_app_info_hash (gconstpointer app_info)
 
 
 static void
-thunar_launcher_open_file (ThunarLauncher *launcher,
-                           ThunarFile     *file,
-                           GAppInfo       *application_to_use)
-{
-  GList *files = NULL;
-
-  files = g_list_append (files, file);
-  thunar_launcher_open_files (launcher, files, application_to_use);
-  g_list_free (files);
-}
-
-
-
-static void
 thunar_launcher_open_files (ThunarLauncher *launcher,
                             GList          *files,
                             GAppInfo       *application_to_use)
@@ -1195,9 +1178,7 @@ thunar_launcher_poke_files_finish (ThunarBrowser *browser,
         {
           if (poke_data->application_to_use != NULL)
             {
-              /* open them separately, using some specific application */
-              for (lp = directories; lp != NULL; lp = lp->next)
-                thunar_launcher_open_file (THUNAR_LAUNCHER (browser), lp->data, poke_data->application_to_use);
+              thunar_launcher_open_files (THUNAR_LAUNCHER (browser), directories, poke_data->application_to_use);
             }
           else if (poke_data->folder_open_action == THUNAR_LAUNCHER_OPEN_AS_NEW_TAB)
             {
