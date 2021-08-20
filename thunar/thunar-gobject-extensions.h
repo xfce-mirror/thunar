@@ -37,9 +37,10 @@ G_BEGIN_DECLS;
 #define G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec) G_STMT_START{ (void)0; }G_STMT_END
 #endif
 
-void   thunar_g_initialize_transformations (void);
-gchar* thunar_g_strescape                  (const gchar *source);
-
+void     thunar_g_initialize_transformations (void);
+gchar*   thunar_g_strescape                  (const gchar *source);
+gboolean thunar_g_app_info_equal             (gpointer appinfo1,
+                                              gpointer appinfo2);
 G_END_DECLS;
 
 #endif /* !__THUNAR_GOBJECT_EXTENSIONS_H__ */

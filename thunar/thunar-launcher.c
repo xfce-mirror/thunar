@@ -828,7 +828,7 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
 {
   GHashTable *applications;
   GAppInfo   *app_info;
-  GList      *file_list;
+  GList      *file_list = NULL;
   GList      *lp;
 
   /* allocate a hash table to associate applications to URIs. since GIO allocates
@@ -862,12 +862,24 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
       if (G_LIKELY (app_info != NULL))
         {
           /* check if we have that application already */
-          file_list = g_hash_table_lookup (applications, app_info);
-          if (G_LIKELY (file_list != NULL))
+          /* Not possibly to check via g_hash_table_lookup directly, since that will only compare pointers */
+          GList *keys = g_hash_table_get_keys (applications);
+          for (GList *lp_keys = keys;  lp_keys != NULL; lp_keys = lp_keys->next)
             {
-              /* take a copy of the list as the old one will be dropped by the insert */
-              file_list = thunar_g_list_copy_deep (file_list);
+              if (thunar_g_app_info_equal (lp_keys->data, app_info))
+                {
+                  /* Reuse the existing appinfo instead of adding the new one to the list*/
+                  g_object_unref (app_info);
+                  app_info = g_object_ref (lp_keys->data);
+
+                  file_list = g_hash_table_lookup (applications, app_info);
+
+                  /* take a copy of the list as the old one will be dropped by the insert */
+                  file_list = thunar_g_list_copy_deep (file_list);
+                }
             }
+
+          g_list_free (keys);
 
           /* append our new URI to the list */
           file_list = thunar_g_list_append_deep (file_list, thunar_file_get_file (lp->data));
