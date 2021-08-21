@@ -84,6 +84,7 @@ thunar_dialogs_show_create (gpointer     parent,
   GtkWidget         *image;
   XfceFilenameInput *filename_input;
   GIcon             *icon = NULL;
+  gint               row = 0;
 
   _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), NULL);
 
@@ -119,13 +120,13 @@ thunar_dialogs_show_create (gpointer     parent,
     {
       image = g_object_new (GTK_TYPE_IMAGE, "xpad", 6, "ypad", 6, NULL);
       gtk_image_set_from_gicon (GTK_IMAGE (image), icon, GTK_ICON_SIZE_DIALOG);
-      gtk_grid_attach (GTK_GRID (grid), image, 0, 0, 1, 2);
+      gtk_grid_attach (GTK_GRID (grid), image, 0, row, 1, 2);
       g_object_unref (icon);
       gtk_widget_show (image);
     }
 
   label = g_object_new (GTK_TYPE_LABEL, "label", _("Enter the name:"), "xalign", 0.0f, "hexpand", TRUE, NULL);
-  gtk_grid_attach (GTK_GRID (grid), label, 1, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 1, row, 1, 1);
   gtk_widget_show (label);
 
   /* set up the widget for entering the filename */
@@ -140,7 +141,10 @@ thunar_dialogs_show_create (gpointer     parent,
   g_signal_connect_swapped (filename_input, "text-valid", G_CALLBACK (xfce_filename_input_sensitise_widget),
                             gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK));
 
-  gtk_grid_attach (GTK_GRID (grid), GTK_WIDGET (filename_input), 1, 1, 1, 1);
+  /* next row */
+  row++;
+
+  gtk_grid_attach (GTK_GRID (grid), GTK_WIDGET (filename_input), 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label),
                                       GTK_WIDGET (xfce_filename_input_get_entry (filename_input)));
   gtk_widget_show_all ( GTK_WIDGET (filename_input));
@@ -214,6 +218,7 @@ thunar_dialogs_show_rename_file (gpointer    parent,
   gint               layout_offset;
   gint               parent_width = 500;
   XfceFilenameInput *filename_input;
+  gint               row = 0;
 
   _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WINDOW (parent), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
@@ -257,14 +262,14 @@ thunar_dialogs_show_rename_file (gpointer    parent,
   gtk_widget_set_margin_end (GTK_WIDGET(image), 6);
   gtk_widget_set_margin_top (GTK_WIDGET(image), 6);
   gtk_widget_set_margin_bottom (GTK_WIDGET(image), 6);
-  gtk_grid_attach (GTK_GRID (grid), image, 0, 0, 1, 2);
+  gtk_grid_attach (GTK_GRID (grid), image, 0, row, 1, 2);
   g_object_unref (G_OBJECT (icon));
   gtk_widget_show (image);
 
   label = gtk_label_new (_("Enter the new name:"));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_widget_set_hexpand (label, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), label, 1, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 1, row, 1, 1);
   gtk_widget_show (label);
 
   /* set up the widget for entering the filename */
@@ -279,7 +284,10 @@ thunar_dialogs_show_rename_file (gpointer    parent,
   g_signal_connect_swapped (filename_input, "text-valid", G_CALLBACK (xfce_filename_input_sensitise_widget),
                             gtk_dialog_get_widget_for_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK));
 
-  gtk_grid_attach (GTK_GRID (grid), GTK_WIDGET (filename_input), 1, 1, 1, 1);
+  /* next row */
+  row++;
+
+  gtk_grid_attach (GTK_GRID (grid), GTK_WIDGET (filename_input), 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label),
                                       GTK_WIDGET (xfce_filename_input_get_entry (filename_input)));
   gtk_widget_show_all ( GTK_WIDGET (filename_input));
@@ -725,6 +733,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gchar             *text;
   gint               response;
   gboolean           file_size_binary;
+  gint               row = 0;
 
   _thunar_return_val_if_fail (parent == NULL || GTK_IS_WINDOW (parent), THUNAR_JOB_RESPONSE_CANCEL);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (src_file), THUNAR_JOB_RESPONSE_CANCEL);
@@ -804,7 +813,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gtk_widget_set_margin_top (GTK_WIDGET(image), 6);
   gtk_widget_set_margin_bottom (GTK_WIDGET(image), 6);
   gtk_widget_set_vexpand (image, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), image, 0, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), image, 0, row, 1, 1);
   gtk_widget_show (image);
 
   if (thunar_file_is_symlink (dst_file))
@@ -828,7 +837,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_big ());
   gtk_widget_set_hexpand (label, TRUE);
   gtk_label_set_selectable(GTK_LABEL (label), TRUE);
-  gtk_grid_attach (GTK_GRID (grid), label, 1, 0, 2, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 1, row, 2, 1);
   gtk_widget_show (label);
   g_free (text);
 
@@ -842,12 +851,18 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
     /* TRANSLATORS: First part of replace dialog sentence */
     text = g_strdup_printf (_("Do you want to replace the existing file"));
 
+  /* next row */
+  row++;
+
   label = gtk_label_new (text);
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_widget_set_hexpand (label, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), label, 1, 1, 2, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 1, row, 2, 1);
   gtk_widget_show (label);
   g_free (text);
+
+  /* next row */
+  row++;
 
   icon = thunar_icon_factory_load_file_icon (icon_factory, dst_file, THUNAR_FILE_ICON_STATE_DEFAULT, 48);
   image = gtk_image_new_from_pixbuf (icon);
@@ -855,7 +870,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gtk_widget_set_margin_end (GTK_WIDGET(image), 6);
   gtk_widget_set_margin_top (GTK_WIDGET(image), 6);
   gtk_widget_set_margin_bottom (GTK_WIDGET(image), 6);
-  gtk_grid_attach (GTK_GRID (grid), image, 1, 2, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), image, 1, row, 1, 1);
   g_object_unref (G_OBJECT (icon));
   gtk_widget_show (image);
 
@@ -865,7 +880,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   label = gtk_label_new (text);
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_widget_set_hexpand (label, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), label, 2, 2, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 2, row, 1, 1);
   gtk_widget_show (label);
   g_free (size_string);
   g_free (date_string);
@@ -881,12 +896,18 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
     /* TRANSLATORS: Second part of replace dialog sentence */
     text = g_strdup_printf (_("with the following file?"));
 
+  /* next row */
+  row++;
+
   label = gtk_label_new (text);
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_widget_set_hexpand (label, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), label, 1, 3, 2, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 1, row, 2, 1);
   gtk_widget_show (label);
   g_free (text);
+
+  /* next row */
+  row++;
 
   icon = thunar_icon_factory_load_file_icon (icon_factory, src_file, THUNAR_FILE_ICON_STATE_DEFAULT, 48);
   image = gtk_image_new_from_pixbuf (icon);
@@ -894,7 +915,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gtk_widget_set_margin_end (GTK_WIDGET(image), 6);
   gtk_widget_set_margin_top (GTK_WIDGET(image), 6);
   gtk_widget_set_margin_bottom (GTK_WIDGET(image), 6);
-  gtk_grid_attach (GTK_GRID (grid), image, 1, 4, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), image, 1, row, 1, 1);
   g_object_unref (G_OBJECT (icon));
   gtk_widget_show (image);
 
@@ -904,7 +925,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   label = gtk_label_new (text);
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_widget_set_hexpand (label, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), label, 2, 4, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 2, row, 1, 1);
   gtk_widget_show (label);
   g_free (size_string);
   g_free (date_string);
