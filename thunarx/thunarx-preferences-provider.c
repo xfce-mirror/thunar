@@ -52,10 +52,10 @@
 GType
 thunarx_preferences_provider_get_type (void)
 {
-  static volatile gsize type__volatile = 0;
-  GType                 type;
+  static gsize type__static = 0;
+  GType        type;
 
-  if (g_once_init_enter (&type__volatile))
+  if (g_once_init_enter (&type__static))
     {
       type = g_type_register_static_simple (G_TYPE_INTERFACE,
                                             I_("ThunarxPreferencesProvider"),
@@ -67,10 +67,10 @@ thunarx_preferences_provider_get_type (void)
 
       g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
 
-      g_once_init_leave (&type__volatile, type);
+      g_once_init_leave (&type__static, type);
     }
 
-  return type__volatile;
+  return type__static;
 }
 
 

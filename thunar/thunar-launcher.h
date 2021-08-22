@@ -43,6 +43,7 @@ typedef enum
   THUNAR_LAUNCHER_ACTION_EXECUTE,
   THUNAR_LAUNCHER_ACTION_OPEN_IN_TAB,
   THUNAR_LAUNCHER_ACTION_OPEN_IN_WINDOW,
+  THUNAR_LAUNCHER_ACTION_OPEN_LOCATION,
   THUNAR_LAUNCHER_ACTION_OPEN_WITH_OTHER,
   THUNAR_LAUNCHER_ACTION_SET_DEFAULT_APP,
   THUNAR_LAUNCHER_ACTION_SENDTO_MENU,
@@ -53,9 +54,11 @@ typedef enum
   THUNAR_LAUNCHER_ACTION_DUPLICATE,
   THUNAR_LAUNCHER_ACTION_RENAME,
   THUNAR_LAUNCHER_ACTION_EMPTY_TRASH,
+  THUNAR_LAUNCHER_ACTION_REMOVE_FROM_RECENT,
   THUNAR_LAUNCHER_ACTION_CREATE_FOLDER,
   THUNAR_LAUNCHER_ACTION_CREATE_DOCUMENT,
   THUNAR_LAUNCHER_ACTION_RESTORE,
+  THUNAR_LAUNCHER_ACTION_RESTORE_SHOW,
   THUNAR_LAUNCHER_ACTION_MOVE_TO_TRASH,
   THUNAR_LAUNCHER_ACTION_DELETE,
   THUNAR_LAUNCHER_ACTION_TRASH_DELETE,
@@ -109,6 +112,9 @@ void            thunar_launcher_set_selection                        (ThunarLaun
                                                                       GFile                          *selected_location);
 void            thunar_launcher_action_empty_trash                   (ThunarLauncher                 *launcher);
 void            thunar_launcher_action_restore                       (ThunarLauncher                 *launcher);
+void            thunar_launcher_action_restore_and_show              (ThunarLauncher                 *launcher);
+void            thunar_launcher_set_searching                        (ThunarLauncher                 *launcher,
+                                                                      gboolean                        b);
 
 
 G_END_DECLS;

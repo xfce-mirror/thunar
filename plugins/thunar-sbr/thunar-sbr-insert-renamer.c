@@ -171,7 +171,7 @@ thunar_sbr_insert_renamer_init (ThunarSbrInsertRenamer *insert_renamer)
   klass = g_type_class_ref (THUNAR_SBR_TYPE_INSERT_MODE);
   for (n = 0; n < klass->n_values; ++n)
     gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(klass->values[n].value_nick));
-  exo_mutual_binding_new (G_OBJECT (insert_renamer), "mode", G_OBJECT (combo), "active");
+  g_object_bind_property (G_OBJECT (insert_renamer), "mode", G_OBJECT (combo), "active", G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_grid_attach (GTK_GRID (grid), combo, 0, 0, 1, 1);
   g_type_class_unref (klass);
   gtk_widget_show (combo);
@@ -182,7 +182,7 @@ thunar_sbr_insert_renamer_init (ThunarSbrInsertRenamer *insert_renamer)
 
   entry = gtk_entry_new ();
   gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
-  exo_mutual_binding_new (G_OBJECT (entry), "text", G_OBJECT (insert_renamer), "text");
+  g_object_bind_property (G_OBJECT (entry), "text", G_OBJECT (insert_renamer), "text", G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_hexpand (entry, TRUE);
   gtk_grid_attach (GTK_GRID (grid), entry, 2, 0, 1, 1);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), entry);
@@ -216,7 +216,7 @@ thunar_sbr_insert_renamer_init (ThunarSbrInsertRenamer *insert_renamer)
   gtk_widget_show (spinner);
 
   adjustment = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (spinner));
-  exo_mutual_binding_new (G_OBJECT (insert_renamer), "offset", G_OBJECT (adjustment), "value");
+  g_object_bind_property (G_OBJECT (insert_renamer), "offset", G_OBJECT (adjustment), "value", G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
 
   /* set Atk label relation for the entry */
   object = gtk_widget_get_accessible (spinner);
@@ -229,7 +229,7 @@ thunar_sbr_insert_renamer_init (ThunarSbrInsertRenamer *insert_renamer)
   klass = g_type_class_ref (THUNAR_SBR_TYPE_OFFSET_MODE);
   for (n = 0; n < klass->n_values; ++n)
     gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _(klass->values[n].value_nick));
-  exo_mutual_binding_new (G_OBJECT (insert_renamer), "offset-mode", G_OBJECT (combo), "active");
+  g_object_bind_property (G_OBJECT (insert_renamer), "offset-mode", G_OBJECT (combo), "active", G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_box_pack_start (GTK_BOX (hbox), combo, FALSE, FALSE, 0);
   g_type_class_unref (klass);
   gtk_widget_show (combo);

@@ -151,7 +151,7 @@ struct _ThunarStandardView
   GtkCellRenderer           *icon_renderer;
   GtkCellRenderer           *name_renderer;
 
-  ExoBinding                *loading_binding;
+  GBinding                  *loading_binding;
   gboolean                   loading;
   GtkAccelGroup             *accel_group;
 
@@ -177,6 +177,10 @@ GtkWidget     *thunar_standard_view_append_menu_item      (ThunarStandardView   
 void           _thunar_standard_view_open_on_middle_click (ThunarStandardView       *standard_view,
                                                            GtkTreePath              *tree_path,
                                                            guint                     event_state);
+
+void           thunar_standard_view_set_searching         (ThunarStandardView       *standard_view,
+                                                           gchar                    *search_query);
+gchar         *thunar_standard_view_get_search_query      (ThunarStandardView       *standard_view);
 
 G_END_DECLS;
 

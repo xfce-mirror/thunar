@@ -313,10 +313,11 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   thunar_details_view_columns_changed (details_view->column_model, details_view);
 
   /* synchronize the "fixed-columns" property */
-  exo_binding_new (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences),
-                   "last-details-view-fixed-columns",
-                   G_OBJECT (details_view),
-                   "fixed-columns");
+  g_object_bind_property (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences),
+                          "last-details-view-fixed-columns",
+                          G_OBJECT (details_view),
+                          "fixed-columns",
+                          G_BINDING_SYNC_CREATE);
 
   /* apply fixed column widths if we start in fixed column mode */
   if (G_UNLIKELY (details_view->fixed_columns))
@@ -1076,3 +1077,22 @@ thunar_details_view_set_date_deleted_column_visible (ThunarDetailsView *details_
 {
   thunar_column_model_set_column_visible (details_view->column_model, THUNAR_COLUMN_DATE_DELETED, visible);
 }
+
+
+
+void
+thunar_details_view_set_recency_column_visible      (ThunarDetailsView *details_view,
+                                                     gboolean           visible)
+{
+  thunar_column_model_set_column_visible (details_view->column_model, THUNAR_COLUMN_RECENCY, visible);
+}
+
+
+
+void
+thunar_details_view_set_location_column_visible     (ThunarDetailsView *details_view,
+                                                     gboolean           visible)
+{
+  thunar_column_model_set_column_visible (details_view->column_model, THUNAR_COLUMN_LOCATION, visible);
+}
+

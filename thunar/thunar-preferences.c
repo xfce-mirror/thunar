@@ -53,6 +53,11 @@ enum
   PROP_DEFAULT_VIEW,
   PROP_HIDDEN_DEVICES,
   PROP_HIDDEN_BOOKMARKS,
+  PROP_LAST_RESTORE_TABS,
+  PROP_LAST_TABS_LEFT,
+  PROP_LAST_TABS_RIGHT,
+  PROP_LAST_FOCUSED_TAB_LEFT,
+  PROP_LAST_FOCUSED_TAB_RIGHT,
   PROP_LAST_COMPACT_VIEW_ZOOM_LEVEL,
   PROP_LAST_DETAILS_VIEW_COLUMN_ORDER,
   PROP_LAST_DETAILS_VIEW_COLUMN_WIDTHS,
@@ -63,6 +68,7 @@ enum
   PROP_LAST_LOCATION_BAR,
   PROP_LAST_MENUBAR_VISIBLE,
   PROP_LAST_SEPARATOR_POSITION,
+  PROP_LAST_SPLITVIEW_SEPARATOR_POSITION,
   PROP_LAST_SHOW_HIDDEN,
   PROP_LAST_SIDE_PANE,
   PROP_LAST_SORT_COLUMN,
@@ -96,10 +102,13 @@ enum
   PROP_MISC_TEXT_BESIDE_ICONS,
   PROP_MISC_THUMBNAIL_MODE,
   PROP_MISC_THUMBNAIL_DRAW_FRAMES,
+  PROP_MISC_THUMBNAIL_MAX_FILE_SIZE,
   PROP_MISC_FILE_SIZE_BINARY,
   PROP_MISC_CONFIRM_CLOSE_MULTIPLE_TABS,
   PROP_MISC_PARALLEL_COPY_MODE,
   PROP_MISC_WINDOW_ICON,
+  PROP_MISC_TRANSFER_USE_PARTIAL,
+  PROP_MISC_TRANSFER_VERIFY_FILE,
   PROP_SHORTCUTS_ICON_EMBLEMS,
   PROP_SHORTCUTS_ICON_SIZE,
   PROP_TREE_ICON_EMBLEMS,
@@ -206,6 +215,68 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                           NULL,
                           G_TYPE_STRV,
                           EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-restore-tabs:
+   *
+   * %TRUE to restore the tabs as they were before closing Thunar.
+   **/
+  preferences_props[PROP_LAST_RESTORE_TABS] =
+      g_param_spec_boolean ("last-restore-tabs",
+                            "LastRestoreTabs",
+                            NULL,
+                            FALSE,
+                            EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-tabs-left:
+   *
+   * List of URI's that are used to reopen tabs on restart. There is one URI for each tab/folder that was open at the time
+   * of the last program exit. This preference holds the tabs of the default view (or the left split-view).
+   **/
+  preferences_props[PROP_LAST_TABS_LEFT] =
+      g_param_spec_boxed ("last-tabs-left",
+                          NULL,
+                          NULL,
+                          G_TYPE_STRV,
+                          EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-tabs-right:
+   *
+   * List of URI's that are used to reopen tabs on restart. There is one URI for each tab/folder that was open at the time
+   * of the last program exit. This preference holds the tabs of the right split-view.
+   **/
+  preferences_props[PROP_LAST_TABS_RIGHT] =
+        g_param_spec_boxed ("last-tabs-right",
+                            NULL,
+                            NULL,
+                            G_TYPE_STRV,
+                            EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-focused-tab-left:
+   *
+   * The index (starting from 0) of the last focused tab in left split-view
+   **/
+  preferences_props[PROP_LAST_FOCUSED_TAB_LEFT] =
+      g_param_spec_int ("last-focused-tab-left",
+                         "LastFocusedTabLeft",
+                         NULL,
+                         0, G_MAXINT, 0,
+                         EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-focused-tab-right:
+   *
+   * The index (starting from 0) of the last focused tab in right split-view
+   **/
+  preferences_props[PROP_LAST_FOCUSED_TAB_RIGHT] =
+      g_param_spec_int ("last-focused-tab-right",
+                         "LastFocusedTabRight",
+                         NULL,
+                         0, G_MAXINT, 0,
+                         EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:last-compact-view-zoom-level:
@@ -335,6 +406,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                         "LastSeparatorPosition",
                         NULL,
                         0, G_MAXINT, 170,
+                        EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:last-splitview-separator-position:
+   *
+   * The last position of the gutter in the main window,
+   * which separates the notebooks in split-view.
+   **/
+  preferences_props[PROP_LAST_SPLITVIEW_SEPARATOR_POSITION] =
+      g_param_spec_int ("last-splitview-separator-position",
+                        "LastSplitviewSeparatorPosition",
+                        NULL,
+                        0, G_MAXINT, 0,
                         EXO_PARAM_READWRITE);
 
   /**
@@ -564,7 +648,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
       g_param_spec_boolean ("misc-full-path-in-title",
                             "MiscFullPathInTitle",
                             NULL,
-                            TRUE,
+                            FALSE,
                             EXO_PARAM_READWRITE);
 
   /**
@@ -768,6 +852,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             EXO_PARAM_READWRITE);
 
   /**
+   * ThunarPreferences:misc-thumbnail-max-file-size:
+   *
+   * Maximum file size (in bytes) allowed to be thumbnailed.
+   * 0 means no limit is in place.
+   **/
+  preferences_props[PROP_MISC_THUMBNAIL_MAX_FILE_SIZE] =
+      g_param_spec_uint64 ("misc-thumbnail-max-file-size",
+                           NULL,
+                           NULL,
+                           0, G_MAXUINT64, 0,
+                           EXO_PARAM_READWRITE);
+
+  /**
    * ThunarPreferences:misc-file-size-binary:
    *
    * Show file size in binary format instead of decimal.
@@ -803,6 +900,32 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                             NULL,
                             TRUE,
                             EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-transfer-use-partial:
+   *
+   * Whether to use intermediate file(*.partial~) to copy.
+   **/
+  preferences_props[PROP_MISC_TRANSFER_USE_PARTIAL] =
+    g_param_spec_enum ("misc-transfer-use-partial",
+                       "MiscTransferUsePartial",
+                       NULL,
+                       THUNAR_TYPE_USE_PARTIAL_MODE,
+                       THUNAR_USE_PARTIAL_MODE_DISABLED,
+                       EXO_PARAM_READWRITE);
+
+  /**
+   * ThunarPreferences:misc-transfer-verify-file:
+   *
+   * Whether to verify copied file with checksum.
+   **/
+  preferences_props[PROP_MISC_TRANSFER_VERIFY_FILE] =
+    g_param_spec_enum ("misc-transfer-verify-file",
+                       "MiscTransferVerifyFile",
+                       NULL,
+                       THUNAR_TYPE_VERIFY_FILE_MODE,
+                       THUNAR_VERIFY_FILE_MODE_DISABLED,
+                       EXO_PARAM_READWRITE);
 
   /**
    * ThunarPreferences:misc-confirm-close-multiple-tabs:

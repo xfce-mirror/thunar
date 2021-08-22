@@ -52,6 +52,7 @@
 #include <thunar/thunar-standard-view.h>
 #include <thunar/thunar-thumbnailer.h>
 #include <thunar/thunar-util.h>
+#include <thunar/thunar-details-view.h>
 
 #if defined(GDK_WINDOWING_X11)
 #include <gdk/gdkx.h>
@@ -350,6 +351,9 @@ struct _ThunarStandardViewPrivate
 
   /* current sort_order (GTK_SORT_ASCENDING || GTK_SORT_DESCENDING) */
   GtkSortType             sort_order;
+
+  /* current search query, used to allow switching between views with different (or NULL) search queries */
+  gchar                  *search_query;
 };
 
 static XfceGtkActionEntry thunar_standard_view_action_entries[] =
@@ -681,17 +685,17 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->row_changed_id = g_signal_connect (G_OBJECT (standard_view->model), "row-changed", G_CALLBACK (thunar_standard_view_row_changed), standard_view);
   g_signal_connect (G_OBJECT (standard_view->model), "rows-reordered", G_CALLBACK (thunar_standard_view_rows_reordered), standard_view);
   g_signal_connect (G_OBJECT (standard_view->model), "error", G_CALLBACK (thunar_standard_view_error), standard_view);
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-case-sensitive", G_OBJECT (standard_view->model), "case-sensitive");
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-date-style", G_OBJECT (standard_view->model), "date-style");
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-date-custom-style", G_OBJECT (standard_view->model), "date-custom-style");
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-folders-first", G_OBJECT (standard_view->model), "folders-first");
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-file-size-binary", G_OBJECT (standard_view->model), "file-size-binary");
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-case-sensitive", G_OBJECT (standard_view->model), "case-sensitive", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-date-style", G_OBJECT (standard_view->model), "date-style", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-date-custom-style", G_OBJECT (standard_view->model), "date-custom-style", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-folders-first", G_OBJECT (standard_view->model), "folders-first", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-file-size-binary", G_OBJECT (standard_view->model), "file-size-binary", G_BINDING_SYNC_CREATE);
 
   /* setup the icon renderer */
   standard_view->icon_renderer = thunar_icon_renderer_new ();
   g_object_ref_sink (G_OBJECT (standard_view->icon_renderer));
-  exo_binding_new (G_OBJECT (standard_view), "zoom-level", G_OBJECT (standard_view->icon_renderer), "size");
-  exo_binding_new (G_OBJECT (standard_view->icon_renderer), "size", G_OBJECT (standard_view->priv->thumbnailer), "thumbnail-size");
+  g_object_bind_property (G_OBJECT (standard_view), "zoom-level", G_OBJECT (standard_view->icon_renderer), "size", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->icon_renderer), "size", G_OBJECT (standard_view->priv->thumbnailer), "thumbnail-size", G_BINDING_SYNC_CREATE);
 
   /* setup the name renderer */
   standard_view->name_renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
@@ -704,7 +708,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   g_object_ref_sink (G_OBJECT (standard_view->name_renderer));
 
   /* TODO: prelit underline
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (standard_view->name_renderer), "follow-prelit");*/
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (standard_view->name_renderer), "follow-prelit", G_BINDING_SYNC_CREATE);*/
 
   /* be sure to update the selection whenever the folder changes */
   g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::folder", G_CALLBACK (thunar_standard_view_selection_changed), standard_view);
@@ -725,6 +729,8 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   gtk_style_context_add_class (gtk_widget_get_style_context (GTK_WIDGET (standard_view)), "standard-view");
 
   standard_view->accel_group = NULL;
+
+  standard_view->priv->search_query = NULL;
 }
 
 static void thunar_standard_view_store_sort_column  (ThunarStandardView *standard_view)
@@ -777,8 +783,8 @@ thunar_standard_view_constructor (GType                  type,
   g_object_set (G_OBJECT (view), "model", standard_view->model, NULL);
 
   /* apply the single-click settings to the view */
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (view), "single-click");
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-single-click-timeout", G_OBJECT (view), "single-click-timeout");
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (view), "single-click", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-single-click-timeout", G_OBJECT (view), "single-click-timeout", G_BINDING_SYNC_CREATE);
 
   /* apply the default sort column and sort order */
   g_object_get (G_OBJECT (standard_view->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
@@ -816,8 +822,9 @@ thunar_standard_view_constructor (GType                  type,
                     G_CALLBACK (thunar_standard_view_scrolled), object);
 
   /* synchronise the "directory-specific-settings" property with the global "misc-directory-specific-settings" property */
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-directory-specific-settings",
-                   G_OBJECT (standard_view), "directory-specific-settings");
+  g_object_bind_property (standard_view->preferences, "misc-directory-specific-settings",
+                          standard_view, "directory-specific-settings",
+                          G_BINDING_SYNC_CREATE);
 
   /* done, we have a working object */
   return object;
@@ -835,7 +842,10 @@ thunar_standard_view_dispose (GObject *object)
 
   /* unregister the "loading" binding */
   if (G_UNLIKELY (standard_view->loading_binding != NULL))
-    exo_binding_unbind (standard_view->loading_binding);
+    {
+      g_object_unref (standard_view->loading_binding);
+      standard_view->loading_binding = NULL;
+    }
 
   /* be sure to cancel any pending drag autoscroll timer */
   if (G_UNLIKELY (standard_view->priv->drag_scroll_timer_id != 0))
@@ -960,8 +970,16 @@ thunar_standard_view_get_property (GObject    *object,
 
     case PROP_DISPLAY_NAME:
       current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (object));
-      if (current_directory != NULL)
-        g_value_set_static_string (value, thunar_file_get_display_name (current_directory));
+      if (THUNAR_STANDARD_VIEW (object)->priv->search_query != NULL)
+        {
+          gchar *label = g_strjoin (NULL, "Search for '", THUNAR_STANDARD_VIEW (object)->priv->search_query, "' in ", thunar_file_get_display_name (current_directory), NULL);
+          g_value_take_string (value, label);
+        }
+      else
+        {
+          if (current_directory != NULL)
+            g_value_set_static_string (value, thunar_file_get_display_name (current_directory));
+        }
       break;
 
     case PROP_TOOLTIP_TEXT:
@@ -1064,7 +1082,7 @@ thunar_standard_view_realize (GtkWidget *widget)
   /* determine the icon factory for the screen on which we are realized */
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
   standard_view->icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
-  exo_binding_new (G_OBJECT (standard_view->icon_renderer), "size", G_OBJECT (standard_view->icon_factory), "thumbnail-size");
+  g_object_bind_property (G_OBJECT (standard_view->icon_renderer), "size", G_OBJECT (standard_view->icon_factory), "thumbnail-size", G_BINDING_SYNC_CREATE);
 
   /* we need to redraw whenever the "thumbnail_mode" property is toggled */
   g_signal_connect_swapped (standard_view->icon_factory,
@@ -1073,7 +1091,7 @@ thunar_standard_view_realize (GtkWidget *widget)
                             standard_view);
 
   /* apply the thumbnail frame preferences after icon_factory got initialized */
-  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-thumbnail-draw-frames", G_OBJECT (standard_view), "thumbnail-draw-frames");
+  g_object_bind_property (G_OBJECT (standard_view->preferences), "misc-thumbnail-draw-frames", G_OBJECT (standard_view), "thumbnail-draw-frames", G_BINDING_SYNC_CREATE);
 
   /* store sort information to keep indicators in menu in sync */
   thunar_standard_view_store_sort_column (standard_view);
@@ -1240,8 +1258,6 @@ static void
 thunar_standard_view_scroll_position_save (ThunarStandardView *standard_view)
 {
   ThunarFile    *first_file;
-  GtkAdjustment *vadjustment;
-  GtkAdjustment *hadjustment;
   GFile         *gfile;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
@@ -1249,18 +1265,9 @@ thunar_standard_view_scroll_position_save (ThunarStandardView *standard_view)
   /* store the previous directory in the scroll hash table */
   if (standard_view->priv->current_directory != NULL)
     {
-      /* only stop the first file is the scroll bar is actually moved */
-      vadjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (standard_view));
-      hadjustment = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (standard_view));
       gfile = thunar_file_get_file (standard_view->priv->current_directory);
 
-      if (gtk_adjustment_get_value (vadjustment) == 0.0
-          && gtk_adjustment_get_value (hadjustment) == 0.0)
-        {
-          /* remove from the hash table, we already scroll to 0,0 */
-          g_hash_table_remove (standard_view->priv->scroll_to_files, gfile);
-        }
-      else if (thunar_view_get_visible_range (THUNAR_VIEW (standard_view), &first_file, NULL))
+      if (thunar_view_get_visible_range (THUNAR_VIEW (standard_view), &first_file, NULL))
         {
           /* add the file to our internal mapping of directories to scroll files */
           g_hash_table_replace (standard_view->priv->scroll_to_files,
@@ -1344,7 +1351,10 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 
   /* disconnect any previous "loading" binding */
   if (G_LIKELY (standard_view->loading_binding != NULL))
-    exo_binding_unbind (standard_view->loading_binding);
+    {
+      g_object_unref (standard_view->loading_binding);
+      standard_view->loading_binding = NULL;
+    }
 
   /* store the current scroll position */
   if (current_directory != NULL)
@@ -1371,7 +1381,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
       g_object_set (G_OBJECT (gtk_bin_get_child (GTK_BIN (standard_view))), "model", NULL, NULL);
 
       /* reset the folder for the model */
-      thunar_list_model_set_folder (standard_view->model, NULL);
+      thunar_list_model_set_folder (standard_view->model, NULL, NULL);
 
       /* reconnect the model to the view */
       g_object_set (G_OBJECT (gtk_bin_get_child (GTK_BIN (standard_view))), "model", standard_view->model, NULL);
@@ -1405,13 +1415,16 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
   folder = thunar_folder_get_for_file (current_directory);
 
   /* connect the "loading" binding */
-  standard_view->loading_binding = exo_binding_new_full (G_OBJECT (folder), "loading",
-                                                         G_OBJECT (standard_view), "loading",
-                                                         NULL, thunar_standard_view_loading_unbound,
-                                                         standard_view);
+  standard_view->loading_binding =
+    g_object_bind_property_full (folder,        "loading",
+                                 standard_view, "loading",
+                                 G_BINDING_SYNC_CREATE,
+                                 NULL, NULL,
+                                 standard_view,
+                                 thunar_standard_view_loading_unbound);
 
   /* apply the new folder */
-  thunar_list_model_set_folder (standard_view->model, folder);
+  thunar_list_model_set_folder (standard_view->model, folder, NULL);
   g_object_unref (G_OBJECT (folder));
 
   /* reconnect our model to the view */
@@ -1466,45 +1479,6 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
   else
     g_signal_handler_unblock (standard_view->model, standard_view->priv->row_changed_id);
 
-  /* check if we're done loading and have a scheduled scroll_to_file */
-  if (G_UNLIKELY (!loading))
-    {
-      if (standard_view->priv->scroll_to_file != NULL)
-        {
-          /* remember and reset the scroll_to_file reference */
-          file = standard_view->priv->scroll_to_file;
-          standard_view->priv->scroll_to_file = NULL;
-
-          /* and try again */
-          thunar_view_scroll_to_file (THUNAR_VIEW (standard_view), file,
-                                      standard_view->priv->scroll_to_select,
-                                      standard_view->priv->scroll_to_use_align,
-                                      standard_view->priv->scroll_to_row_align,
-                                      standard_view->priv->scroll_to_col_align);
-
-          /* cleanup */
-          g_object_unref (G_OBJECT (file));
-        }
-      else
-        {
-          /* look for a first visible file in the hash table */
-          current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
-          if (G_LIKELY (current_directory != NULL))
-            {
-              first_file = g_hash_table_lookup (standard_view->priv->scroll_to_files, thunar_file_get_file (current_directory));
-              if (G_LIKELY (first_file != NULL))
-                {
-                  file = thunar_file_cache_lookup (first_file);
-                  if (G_LIKELY (file != NULL))
-                    {
-                      thunar_view_scroll_to_file (THUNAR_VIEW (standard_view), file, FALSE, TRUE, 0.0f, 0.0f);
-                      g_object_unref (file);
-                    }
-                }
-            }
-        }
-    }
-
   /* check if we have a path list from new_files pending */
   if (G_UNLIKELY (!loading && standard_view->priv->new_files_path_list != NULL))
     {
@@ -1531,6 +1505,49 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
 
       /* cleanup */
       thunar_g_list_free_full (selected_files);
+    }
+
+  /* check if we're done loading and have a scheduled scroll_to_file
+   * scrolling after loading circumvents the scroll caused by gtk_tree_view_set_cell */
+  if (THUNAR_IS_DETAILS_VIEW (standard_view))
+    {
+      if (G_UNLIKELY (!loading))
+        {
+          if (standard_view->priv->scroll_to_file != NULL)
+            {
+              /* remember and reset the scroll_to_file reference */
+              file = standard_view->priv->scroll_to_file;
+              standard_view->priv->scroll_to_file = NULL;
+
+              /* and try again */
+              thunar_view_scroll_to_file (THUNAR_VIEW (standard_view), file,
+                                          standard_view->priv->scroll_to_select,
+                                          standard_view->priv->scroll_to_use_align,
+                                          standard_view->priv->scroll_to_row_align,
+                                          standard_view->priv->scroll_to_col_align);
+
+              /* cleanup */
+              g_object_unref (G_OBJECT (file));
+            }
+          else
+            {
+              /* look for a first visible file in the hash table */
+              current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
+              if (G_LIKELY (current_directory != NULL))
+                {
+                  first_file = g_hash_table_lookup (standard_view->priv->scroll_to_files, thunar_file_get_file (current_directory));
+                  if (G_LIKELY (first_file != NULL))
+                    {
+                      file = thunar_file_cache_lookup (first_file);
+                      if (G_LIKELY (file != NULL))
+                        {
+                          thunar_view_scroll_to_file (THUNAR_VIEW (standard_view), file, FALSE, TRUE, 0.0f, 0.0f);
+                          g_object_unref (file);
+                        }
+                    }
+                }
+            }
+        }
     }
 
   /* check if we're done loading and a thumbnail timeout or idle was requested */
@@ -1617,6 +1634,19 @@ thunar_standard_view_set_zoom_level (ThunarView     *view,
   /* check if we have a new zoom-level here */
   if (G_LIKELY (standard_view->priv->zoom_level != zoom_level))
     {
+      if (standard_view->priv->directory_specific_settings)
+        {
+          const gchar *zoom_level_name;
+
+          /* save the zoom level name */
+          zoom_level_name = thunar_zoom_level_string_from_value (zoom_level);
+          if (zoom_level_name != NULL)
+            {
+              /* do not set it asynchronously to ensure the correct operation of thumbnails (check the commit message for more) */
+              thunar_file_set_metadata_setting (standard_view->priv->current_directory, "zoom-level", zoom_level_name, FALSE);
+            }
+        }
+
       if (thunar_zoom_level_to_thumbnail_size (zoom_level) != thunar_zoom_level_to_thumbnail_size (standard_view->priv->zoom_level))
         newThumbnailSize = TRUE;
 
@@ -1656,8 +1686,10 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
 {
   const gchar *sort_column_name;
   const gchar *sort_order_name;
+  const gchar *zoom_level_name;
   gint         sort_column;
   GtkSortType  sort_order;
+  gint         zoom_level;
 
   /* get the default sort column and sort order */
   g_object_get (G_OBJECT (standard_view->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
@@ -1665,6 +1697,7 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
   /* get the stored directory specific settings (if any) */
   sort_column_name = thunar_file_get_metadata_setting (directory, "sort-column");
   sort_order_name = thunar_file_get_metadata_setting (directory, "sort-order");
+  zoom_level_name = thunar_file_get_metadata_setting (directory, "zoom-level");
 
   /* convert the sort column name to a value */
   if (sort_column_name != NULL)
@@ -1678,6 +1711,15 @@ thunar_standard_view_apply_directory_specific_settings (ThunarStandardView *stan
       if (g_strcmp0 (sort_order_name, "GTK_SORT_DESCENDING") == 0)
         sort_order = GTK_SORT_DESCENDING;
     }
+
+  /* convert the sort column name to a value */
+  if (zoom_level_name != NULL)
+    {
+      if (thunar_zoom_level_value_from_string (zoom_level_name, &zoom_level) == TRUE)
+        thunar_standard_view_set_zoom_level (THUNAR_VIEW (standard_view), zoom_level);
+    }
+  else
+    thunar_standard_view_reset_zoom_level (THUNAR_VIEW (standard_view));
 
   /* thunar_standard_view_sort_column_changed saves the directory specific settings to the directory, but we do not
    * want that behaviour here so we disconnect the signal before calling gtk_tree_sortable_set_sort_column_id */
@@ -2155,8 +2197,8 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
   GtkWidget          *window;
   GtkWidget          *dialog;
-  GtkWidget          *vbox;
-  GtkWidget          *hbox;
+  GtkBox             *content_area;
+  GtkGrid            *grid;
   GtkWidget          *label;
   GtkWidget          *entry;
   GtkWidget          *case_sensitive_button;
@@ -2181,41 +2223,34 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
   gtk_window_set_default_size (GTK_WINDOW (dialog), 290, -1);
 
-  vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
-  gtk_box_pack_start (GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog))), vbox, TRUE, TRUE, 0);
-  gtk_widget_show (vbox);
+  content_area = GTK_BOX (gtk_dialog_get_content_area (GTK_DIALOG (dialog)));
+  gtk_container_set_border_width (GTK_CONTAINER (content_area), 6);
 
-  hbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_HORIZONTAL, "border-width", 6, "spacing", 10, NULL);
-  gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
-  gtk_widget_show (hbox);
+  grid = GTK_GRID (gtk_grid_new ());
+  g_object_set (G_OBJECT (grid), "column-spacing", 10, "row-spacing", 10, NULL);
+  gtk_box_pack_start (content_area, GTK_WIDGET (grid), TRUE, TRUE, 10);
+  gtk_widget_show (GTK_WIDGET (grid));
 
   label = gtk_label_new_with_mnemonic (_("_Pattern:"));
-  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+  gtk_grid_attach (grid, label, 0, 0, 1, 1);
   gtk_widget_show (label);
 
   entry = gtk_entry_new ();
   gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
-  gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 0);
+  example_pattern = g_strdup_printf ("%s %s",
+                                     _("Examples:"),
+                                     "*.png, file\?\?.txt, pict*.\?\?\?");
+  gtk_widget_set_tooltip_text (entry, example_pattern);
+  g_free (example_pattern);
+  gtk_grid_attach_next_to (grid, entry, label, GTK_POS_RIGHT, 1, 1);
+  gtk_widget_set_hexpand (entry, TRUE);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), entry);
   gtk_widget_show (entry);
 
-  case_sensitive_button = gtk_check_button_new_with_label (_("Case sensitive"));
-  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (case_sensitive_button), TRUE);
-  gtk_box_pack_start (GTK_BOX (vbox), case_sensitive_button, TRUE, TRUE, 0);
+  case_sensitive_button = gtk_check_button_new_with_mnemonic (_("C_ase sensitive"));
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (case_sensitive_button), FALSE);
+  gtk_grid_attach_next_to (grid, case_sensitive_button, entry, GTK_POS_BOTTOM, 1, 1);
   gtk_widget_show (case_sensitive_button);
-
-  hbox = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_HORIZONTAL, "border-width", 6, "spacing", 0, NULL);
-  gtk_box_pack_start (GTK_BOX (vbox), hbox, TRUE, TRUE, 0);
-  gtk_widget_show (hbox);
-
-  label = gtk_label_new (NULL);
-  example_pattern = g_strdup_printf ("<b>%s</b> %s ",
-                                     _("Examples:"),
-                                     "*.png, file\?\?.txt, pict*.\?\?\?");
-  gtk_label_set_markup (GTK_LABEL (label), example_pattern);
-  g_free (example_pattern);
-  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
-  gtk_widget_show (label);
 
   response = gtk_dialog_run (GTK_DIALOG (dialog));
   if (response == GTK_RESPONSE_OK)
@@ -3192,7 +3227,7 @@ thunar_standard_view_sort_column_changed (GtkTreeSortable    *tree_sortable,
           /* save the sort column name */
           sort_column_name = thunar_column_string_from_value (sort_column);
           if (sort_column_name != NULL)
-            thunar_file_set_metadata_setting (standard_view->priv->current_directory, "sort-column", sort_column_name);
+            thunar_file_set_metadata_setting (standard_view->priv->current_directory, "sort-column", sort_column_name, TRUE);
 
           /* convert the sort order to a string */
           if (sort_order == GTK_SORT_ASCENDING)
@@ -3201,7 +3236,7 @@ thunar_standard_view_sort_column_changed (GtkTreeSortable    *tree_sortable,
             sort_order_name = "GTK_SORT_DESCENDING";
 
           /* save the sort order */
-          thunar_file_set_metadata_setting (standard_view->priv->current_directory, "sort-order", sort_order_name);
+          thunar_file_set_metadata_setting (standard_view->priv->current_directory, "sort-order", sort_order_name, TRUE);
         }
       else
         {
@@ -3635,6 +3670,7 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view)
                                             | THUNAR_MENU_SECTION_COPY_PASTE
                                             | THUNAR_MENU_SECTION_TRASH_DELETE
                                             | THUNAR_MENU_SECTION_EMPTY_TRASH
+                                            | THUNAR_MENU_SECTION_REMOVE_FROM_RECENT
                                             | THUNAR_MENU_SECTION_RESTORE
                                             | THUNAR_MENU_SECTION_RENAME
                                             | THUNAR_MENU_SECTION_CUSTOM_ACTIONS
@@ -4025,4 +4061,44 @@ _thunar_standard_view_open_on_middle_click (ThunarStandardView *standard_view,
       /* release the file reference */
       g_object_unref (G_OBJECT (file));
     }
+}
+
+
+
+/**
+ * thunar_standard_view_set_searching:
+ * @standard_view : a #ThunarStandardView.
+ * @search_query : the search string.
+ *
+ * If @search_query is not NULL a search is initialized for this view. If it is NULL and the view is displaying
+ * the results of a previous search it reverts to its normal contents.
+ **/
+void
+thunar_standard_view_set_searching (ThunarStandardView *standard_view,
+                                    gchar              *search_query)
+{
+  /* can be called from a change in the path entry when the tab switches and a new directory is set
+   * which in turn sets a new location (see thunar_window_notebook_switch_page) */
+  if (standard_view == NULL)
+    return;
+
+  /* save the new query (used for switching between views) */
+  g_free (standard_view->priv->search_query);
+  standard_view->priv->search_query = g_strdup (search_query);
+
+  /* initiate the search */
+  g_object_ref (G_OBJECT (thunar_list_model_get_folder (standard_view->model))); /* temporarily hold a reference so the folder doesn't get deleted */
+  thunar_list_model_set_folder (standard_view->model, thunar_list_model_get_folder (standard_view->model), search_query);
+  g_object_unref (G_OBJECT (thunar_list_model_get_folder (standard_view->model))); /* reference no longer needed */
+
+  /* change the display name in the tab */
+  g_object_notify_by_pspec (G_OBJECT (standard_view), standard_view_props[PROP_DISPLAY_NAME]);
+}
+
+
+
+gchar*
+thunar_standard_view_get_search_query (ThunarStandardView *standard_view)
+{
+  return standard_view->priv->search_query;
 }

@@ -107,7 +107,11 @@ thunar_icon_view_init (ThunarIconView *icon_view)
                 NULL);
 
   /* synchronize the "text-beside-icons" property with the global preference */
-  exo_binding_new (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->preferences), "misc-text-beside-icons", G_OBJECT (icon_view), "text-beside-icons");
+  g_object_bind_property (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->preferences),
+                          "misc-text-beside-icons",
+                          G_OBJECT (icon_view),
+                          "text-beside-icons",
+                          G_BINDING_SYNC_CREATE);
 }
 
 

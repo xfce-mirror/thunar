@@ -23,6 +23,7 @@
 #define __THUNAR_UTIL_H__
 
 #include <thunar/thunar-enum-types.h>
+#include <thunar/thunar-file.h>
 
 #define THUNAR_THREADS_ENTER \
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS \
@@ -64,7 +65,12 @@ time_t     thunar_util_time_from_rfc3339        (const gchar    *date_string) G_
 
 gchar     *thunar_util_change_working_directory (const gchar    *new_directory) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
-void       thunar_setup_display_cb              (gpointer data);
+void       thunar_setup_display_cb              (gpointer        data);
+gchar*     thunar_util_next_new_file_name       (ThunarFile     *dir,
+                                                 const gchar    *file_name);
+gboolean   thunar_util_is_a_search_query        (const gchar    *string);
+
+extern const char *SEARCH_PREFIX;
 
 G_END_DECLS;
 

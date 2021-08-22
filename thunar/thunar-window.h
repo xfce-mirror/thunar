@@ -76,6 +76,7 @@ typedef enum
   THUNAR_WINDOW_ACTION_VIEW_AS_DETAILED_LIST,
   THUNAR_WINDOW_ACTION_VIEW_AS_COMPACT_LIST,
   THUNAR_WINDOW_ACTION_GO_MENU,
+  THUNAR_WINDOW_ACTION_BOOKMARKS_MENU,
   THUNAR_WINDOW_ACTION_OPEN_PARENT,
   THUNAR_WINDOW_ACTION_BACK,
   THUNAR_WINDOW_ACTION_BACK_ALT,
@@ -84,6 +85,7 @@ typedef enum
   THUNAR_WINDOW_ACTION_OPEN_HOME,
   THUNAR_WINDOW_ACTION_OPEN_DESKTOP,
   THUNAR_WINDOW_ACTION_OPEN_COMPUTER,
+  THUNAR_WINDOW_ACTION_OPEN_RECENT,
   THUNAR_WINDOW_ACTION_OPEN_TRASH,
   THUNAR_WINDOW_ACTION_OPEN_LOCATION,
   THUNAR_WINDOW_ACTION_OPEN_LOCATION_ALT,
@@ -94,6 +96,8 @@ typedef enum
   THUNAR_WINDOW_ACTION_ABOUT,
   THUNAR_WINDOW_ACTION_SWITCH_PREV_TAB,
   THUNAR_WINDOW_ACTION_SWITCH_NEXT_TAB,
+  THUNAR_WINDOW_ACTION_SEARCH,
+  THUNAR_WINDOW_ACTION_CANCEL_SEARCH,
 
 } ThunarWindowAction;
 
@@ -115,8 +119,16 @@ gboolean                  thunar_window_set_directories                     (Thu
 void                      thunar_window_update_directories                  (ThunarWindow        *window,
                                                                              ThunarFile          *old_directory,
                                                                              ThunarFile          *new_directory);
+void                      thunar_window_notebook_toggle_split_view          (ThunarWindow        *window);
 void                      thunar_window_notebook_open_new_tab               (ThunarWindow        *window,
                                                                              ThunarFile          *directory);
+void                      thunar_window_notebook_add_new_tab                (ThunarWindow        *window,
+                                                                             ThunarFile          *directory,
+                                                                             ThunarNewTabBehavior behavior);
+void                      thunar_window_notebook_remove_tab                 (ThunarWindow        *window,
+                                                                             gint                 tab);
+void                      thunar_window_notebook_set_current_tab            (ThunarWindow        *window,
+                                                                             gint                 tab);
 gboolean                  thunar_window_has_shortcut_sidepane               (ThunarWindow        *window);
 GtkWidget*                thunar_window_get_sidepane                        (ThunarWindow        *window);
 void                      thunar_window_append_menu_item                    (ThunarWindow        *window,
@@ -127,6 +139,15 @@ void                      thunar_window_redirect_menu_tooltips_to_statusbar (Thu
                                                                              GtkMenu             *menu);
 const XfceGtkActionEntry* thunar_window_get_action_entry                    (ThunarWindow        *window,
                                                                              ThunarWindowAction   action);
+void                      thunar_window_open_files_in_location              (ThunarWindow        *window,
+                                                                             GList               *files_to_select);
+void                      thunar_window_show_and_select_files               (ThunarWindow        *window,
+                                                                             GList               *files_to_select);
+void                      thunar_window_update_search                       (ThunarWindow        *window);
+void                      thunar_window_action_cancel_search                (ThunarWindow        *window);
+void                      thunar_window_action_search                       (ThunarWindow        *window);
+
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_WINDOW_H__ */

@@ -1,3 +1,100 @@
+4.17.4
+======
+- Restore split-view separator position (Issue #616)
+- Skip `switch-page` handler when switching to other split-view tab 
+(Issue #615)
+- Change thunar_file_is_trashed to thunar_file_is_trash in 
+thunar-launcher.c
+- Provide additional menu item for trashed files: "restore and open 
+folder" (Issue #382)
+- Open restored tabs in correct order (Issue #613)
+- After restoring tabs set focus on the last focused tab
+- For "foo.txt" next available file should be of the form "foo N.txt"
+- Remove redundant code
+- Ask "close window with tabs?" as well for STRG+Q (Issue #611)
+- Keep modified time of files copied from foreign locations (Issue #218)
+- Use more general method to pick file names on copy (Issue #244)
+- Add possibility to 'trust' launchers (Issue #156)
+- Remove reload button from toolbar (!125)
+- Fix build warnings
+- Add a preference to restore tabs on startup (Issue #338)
+- Fix Recent entry in the Go menu
+- Use thunar_g_file_new_for_computer and thunar_g_file_new_for_network
+- Add support for the `recent:///` location in Thunar.
+- Add basic support for gtk-recent (Issue #257)
+- Fix: Incorrect thumbnail size being displayed sometimes when zooming 
+quickly
+- Add zoom-level as a per-directory setting (Issue #418)
+- Rename variable `dot` to `extension`
+- Generate incremental file name when a name collision is detected 
+(Issue #210)
+- Fix GLib-CRITICAL in list-view (Issue #487)
+- thunar_file_is_executable() now checks if .desktop file is safe
+- Fix missing folder in history when opened in new tab (Issue #594)
+- Fix missing folder in history when opened in new tab (Issue #594)
+- Manage parallel job outside ThunarTransferJob (Issue #569)
+- Replace ExoBinding with GBinding equivalent
+- Move bookmarks into a separate Bookmarks menu (Issue #572)
+- Proper destruction of member variables for thunar-launcher
+- Fixing various memory leaks (Issue #573)
+- Fix showing volume uuid in transfer dialog (Issue #579)
+- Update manpage (Issue #121)
+- Dont show "execute" on context menu for folders
+- Translation Updates:
+  Albanian, Basque, Bulgarian, Catalan, Chinese (China), Czech, Danish,
+  Dutch, Estonian, French, Galician, German, Hebrew, Italian, Japanese,
+  Malay, Norwegian Bokmål, Polish, Portuguese, Portuguese (Brazil),
+  Serbian, Spanish, Swedish, Thai, Turkish
+
+4.17.3
+======
+- Regression: Activating Desktop Icon does not Use Default Application 
+(Issue #575)
+
+
+4.17.2
+======
+- Prevent crash if non-existing bookmark is right-clicked (Issue #552)
+- Sendto-menu: Renamed "Create Shortcut" to "Add Bookmark"
+- Allow middle-clicking navigation buttons (Issue #98)
+- Support `Today`/`Yesterday` option for custom date styles (Issue #292)
+- Prevent crash if invalid-symlink is used as bookmark (Issue #552)
+- Scroll to correct height after changing to a parent dir (Issue #531)
+- Dont execute files, passed via command line due to security risks
+- Move 'reload' button out of pathbar (Issue #559)
+- Improve usability of Computer:// in list view (Issue #297)
+- Select the correct bookmark after opening a new window (Issue #106)
+- Shortcut-view regression: Middle mouse click on folder did not work
+- Scroll to the correct height after changing to parent dir (Issue #531)
+- Make use of xfce icon "org.xfce.settings.default-applications"
+- Avoid excessively checking whether files are executables (Issue #180)
+- Add Option to keep focus while opening folder in new tab (Issue #364)
+- Add `Add Bookmark` menu item to the Go menu (Issue #283)
+- On "Select by Pattern" add option for case sensitivity (Issue #173)
+- CDDA appears twice in side pane (Issue #486)
+- Add `Empty Trash` infobar while in the trash folder (Issue #11)
+- Add section 'Default Application' for app. selection (Issue #342)
+- BulkRenamer: Preselect `Name and Suffix` if only dirs are selected
+- List view: Leave size column blank for directories (Issue #543)
+- BulkRenamer: Split 'Rename' button into 'Apply' and 'Done' (Issue #22)
+- Critical error when opening Edit menu (Issue #542)
+- Add menu entry 'Set Default App' to 'Open with' submenu (Issue #342)
+- Shortcuts view regression : Watch trash for changes (Issue #538)
+- Fix `misc-full-path-in-title` memory fault (Issue #484)
+- Add 'sort by Date Deleted' option to 'arrange items' menu (Issue #123)
+- Add 'date deleted' column for the trash directory (Issue #123)
+- Translation Updates:
+  Albanian, Arabic, Armenian, Armenian (Armenia), Asturian, Basque,
+  Bengali, Bulgarian, Catalan, Chinese (China), Chinese (Hong Kong),
+  Chinese (Taiwan), Czech, Danish, Dutch, Eastern Armenian, English
+  (Australia), English (United Kingdom), Esperanto, Estonian, Finnish,
+  French, Galician, German, Greek, Hebrew, Hungarian, Icelandic,
+  Indonesian, Interlingue, Italian, Japanese, Kazakh, Korean, Latvian,
+  Malay, Norwegian Bokmål, Norwegian Nynorsk, Occitan (post 1500),
+  Panjabi (Punjabi), Persian (Iran), Polish, Portuguese, Portuguese
+  (Brazil), Romanian, Serbian, Slovak, Spanish, Swedish, Telugu, Thai,
+  Turkish, Urdu, Urdu (Pakistan), Uyghur, Vietnamese
+
 4.17.1
 ======
 - Use a more specific device eject label (Issue #153)
@@ -1495,7 +1592,7 @@ Ukrainian, Urdu, Urdu (Pakistan), Uyghur, Vietnamese
                         Moldovan (ro), Eren Turkay (tr), Dmitry Nikitin (uk)
 - New translations: Mohamed Magdy (ar), Jeff Bailes (en_GB), Rihards Prieditis
                     (lv), Terje Uriansrud (nb_NO), Amanpreet SIngh Alam (pa),
-                    Nuno Miguel (pt_PT), Besnik Bleta (sq), ﻢﺤﻣﺩ ﻊﻠﻳ ﺎﻠﻤﻜﻳ (ur)
+                    Nuno Miguel (pt_PT), Besnik Bleta (sq), ﻢﺤﻣﺩ ﻊﻠﻳ ﺰ�ﻠﻤﻜﻳ (ur)
 
 
 0.8.0

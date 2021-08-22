@@ -723,3 +723,20 @@ thunar_history_peek_forward (ThunarHistory *history)
 
   return result;
 }
+
+
+
+/**
+ * thunar_history_add:
+ * @history : a #ThunarHistory
+ * @directory : a #ThunarFile
+ *
+ * Manually adds the passed directory to the history
+ **/
+void
+thunar_history_add (ThunarHistory *history,
+                    ThunarFile    *directory)
+{
+  thunar_history_set_current_directory (THUNAR_NAVIGATOR (history), directory);
+}
+

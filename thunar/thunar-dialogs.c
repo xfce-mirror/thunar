@@ -326,6 +326,7 @@ thunar_dialogs_show_rename_file (gpointer    parent,
         {
           /* try to rename the file */
           job = thunar_io_jobs_rename_file (file, text);
+          exo_job_launch (EXO_JOB (job));
         }
     }
 
@@ -1078,8 +1079,15 @@ thunar_dialogs_show_insecure_program (gpointer     parent,
       if (err != NULL)
         {
           thunar_dialogs_show_error (parent, err, ("Unable to mark launcher executable"));
-          g_error_free (err);
+          g_clear_error (&err);
         }
+
+      if (thunar_g_vfs_metadata_is_supported ())
+        if (!xfce_g_file_set_trusted (thunar_file_get_file (file), TRUE, NULL, &err))
+          {
+            thunar_dialogs_show_error (parent, err, ("Unable to mark launcher as trusted"));
+            g_clear_error (&err);
+          }
 
       /* just launch */
       response = GTK_RESPONSE_OK;

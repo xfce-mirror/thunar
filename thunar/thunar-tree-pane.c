@@ -141,8 +141,8 @@ thunar_tree_pane_init (ThunarTreePane *tree_pane)
 
   /* allocate the tree view */
   tree_pane->view = thunar_tree_view_new ();
-  exo_binding_new (G_OBJECT (tree_pane), "show-hidden", G_OBJECT (tree_pane->view), "show-hidden");
-  exo_binding_new (G_OBJECT (tree_pane), "current-directory", G_OBJECT (tree_pane->view), "current-directory");
+  g_object_bind_property (G_OBJECT (tree_pane), "show-hidden", G_OBJECT (tree_pane->view), "show-hidden", G_BINDING_SYNC_CREATE);
+  g_object_bind_property (G_OBJECT (tree_pane), "current-directory", G_OBJECT (tree_pane->view), "current-directory", G_BINDING_SYNC_CREATE);
   g_signal_connect_swapped (G_OBJECT (tree_pane->view), "change-directory", G_CALLBACK (thunar_navigator_change_directory), tree_pane);
   g_signal_connect_swapped (G_OBJECT (tree_pane->view), "open-new-tab", G_CALLBACK (thunar_navigator_open_new_tab), tree_pane);
   gtk_container_add (GTK_CONTAINER (tree_pane), tree_pane->view);

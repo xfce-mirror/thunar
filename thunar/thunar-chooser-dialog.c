@@ -256,7 +256,9 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
   dialog->custom_expander = gtk_expander_new_with_mnemonic (_("Use a _custom command:"));
   gtk_widget_set_tooltip_text (dialog->custom_expander, _("Use a custom command for an application that is not "
                                                           "available from the above application list."));
-  exo_binding_new_with_negation (G_OBJECT (dialog->custom_expander), "expanded", G_OBJECT (dialog->tree_view), "sensitive");
+  g_object_bind_property (G_OBJECT (dialog->custom_expander), "expanded",
+                          G_OBJECT (dialog->tree_view),       "sensitive",
+                          G_BINDING_INVERT_BOOLEAN | G_BINDING_SYNC_CREATE);
   g_signal_connect (G_OBJECT (dialog->custom_expander), "notify::expanded", G_CALLBACK (thunar_chooser_dialog_notify_expanded), dialog);
   gtk_box_pack_start (GTK_BOX (box), dialog->custom_expander, FALSE, FALSE, 0);
   gtk_widget_show (dialog->custom_expander);
@@ -281,7 +283,9 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
   /* create the "Use as default for this kind of file" button */
   dialog->default_button = gtk_check_button_new_with_mnemonic (_("Use as _default for this kind of file"));
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (dialog->default_button), FALSE);
-  exo_binding_new (G_OBJECT (dialog), "open", G_OBJECT (dialog->default_button), "visible");
+  g_object_bind_property (G_OBJECT (dialog),                 "open",
+                          G_OBJECT (dialog->default_button), "visible",
+                          G_BINDING_SYNC_CREATE);
   gtk_box_pack_start (GTK_BOX (box), dialog->default_button, FALSE, FALSE, 0);
   gtk_widget_show (dialog->default_button);
 
@@ -501,6 +505,12 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   /* check if we should also execute the application */
   if (G_LIKELY (succeed && dialog->open))
     {
+      GFile *gfile;
+      gchar *uri;
+
+      gfile = thunar_file_get_file (dialog->file); list.next = list.prev = NULL;
+      uri = g_file_get_uri (gfile);
+
       /* create launch context */
       screen = gtk_widget_get_screen (GTK_WIDGET (dialog));
       context = gdk_display_get_app_launch_context (gdk_screen_get_display (screen));
@@ -508,7 +518,10 @@ thunar_chooser_dialog_response (GtkDialog *widget,
       gdk_app_launch_context_set_timestamp (context, gtk_get_current_event_time ());
 
       /* create fake file list */
-      list.data = thunar_file_get_file (dialog->file); list.next = list.prev = NULL;
+      list.data = gfile;
+
+      gtk_recent_manager_add_item (gtk_recent_manager_get_default(), uri);
+      g_free (uri);
 
       if (!g_app_info_launch (app_info, &list, G_APP_LAUNCH_CONTEXT (context), &error))
         {

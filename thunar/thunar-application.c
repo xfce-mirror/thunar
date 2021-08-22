@@ -182,37 +182,38 @@ struct _ThunarApplicationClass
 
 struct _ThunarApplication
 {
-  GtkApplication         __parent__;
+  GtkApplication                 __parent__;
 
-  ThunarSessionClient   *session_client;
+  ThunarSessionClient            *session_client;
 
-  ThunarPreferences     *preferences;
-  GtkWidget             *progress_dialog;
+  ThunarPreferences              *preferences;
+  GtkWidget                      *progress_dialog;
 
-  ThunarThumbnailCache  *thumbnail_cache;
-  ThunarThumbnailer     *thumbnailer;
+  ThunarThumbnailCache           *thumbnail_cache;
+  ThunarThumbnailer              *thumbnailer;
 
-  ThunarDBusService     *dbus_service;
+  ThunarDBusService              *dbus_service;
 
-  gboolean               daemon;
+  gboolean                        daemon;
 
-  guint                  accel_map_save_id;
-  GtkAccelMap           *accel_map;
+  guint                           accel_map_save_id;
+  GtkAccelMap                    *accel_map;
 
-  guint                  show_dialogs_timer_id;
+  guint                           show_dialogs_timer_id;
 
 #ifdef HAVE_GUDEV
-  GUdevClient           *udev_client;
+  GUdevClient                    *udev_client;
 
-  GSList                *volman_udis;
-  guint                  volman_idle_id;
-  guint                  volman_watch_id;
+  GSList                         *volman_udis;
+  guint                           volman_idle_id;
+  guint                           volman_watch_id;
 #endif
 
-  GList                 *files_to_launch;
+  GList                          *files_to_launch;
+  ThunarApplicationProcessAction  process_file_action;
 
-  guint                  dbus_owner_id_xfce;
-  guint                  dbus_owner_id_fdo;
+  guint                           dbus_owner_id_xfce;
+  guint                           dbus_owner_id_fdo;
 };
 
 
@@ -279,6 +280,7 @@ thunar_application_init (ThunarApplication *application)
    * in the primary instance anyways */
 
   application->files_to_launch = NULL;
+  application->process_file_action = THUNAR_APPLICATION_SELECT_FILES;
   application->progress_dialog = NULL;
   application->preferences     = NULL;
 
@@ -531,7 +533,7 @@ thunar_application_command_line (GApplication            *gapp,
     }
   else if (filenames != NULL)
     {
-      if (!thunar_application_process_filenames (application, cwd, filenames, NULL, NULL, &error))
+      if (!thunar_application_process_filenames (application, cwd, filenames, NULL, NULL, &error, THUNAR_APPLICATION_SELECT_FILES))
         {
           /* we failed to process the filenames or the bulk rename failed */
           g_application_command_line_printerr (command_line, "Thunar: %s\n", error->message);
@@ -539,10 +541,64 @@ thunar_application_command_line (GApplication            *gapp,
     }
   else if (!daemon)
     {
-      if (!thunar_application_process_filenames (application, cwd, cwd_list, NULL, NULL, &error))
+      GList        *window_list;
+      ThunarWindow *window;
+      gchar       **tabs_left;
+      gchar       **tabs_right;
+      gboolean      restore_tabs;
+      gboolean      has_left_tabs; /* used to check whether the split-view should be enabled */
+      gint          last_focused_tab;
+
+      if (!thunar_application_process_filenames (application, cwd, cwd_list, NULL, NULL, &error, THUNAR_APPLICATION_SELECT_FILES))
         {
           /* we failed to process the filenames or the bulk rename failed */
           g_application_command_line_printerr (command_line, "Thunar: %s\n", error->message);
+        }
+
+      /* reopen tabs */
+      g_object_get (G_OBJECT (application->preferences), "last-restore-tabs", &restore_tabs, NULL);
+      if (restore_tabs)
+        {
+          /* get ThunarWindow */
+          window_list = thunar_application_get_windows (application);
+          window_list = g_list_last (window_list); /* this will be the topmost Window */
+          window = THUNAR_WINDOW (window_list->data);
+
+          /* restore left tabs */
+          has_left_tabs = FALSE;
+          g_object_get (G_OBJECT (application->preferences), "last-tabs-left", &tabs_left, "last-focused-tab-left", &last_focused_tab, NULL);
+          if (tabs_left != NULL && g_strv_length (tabs_left) > 0)
+            {
+              for (guint i = 0; i < g_strv_length (tabs_left); i++)
+                {
+                  ThunarFile *directory = thunar_file_get_for_uri (tabs_left[i], NULL);
+                  thunar_window_notebook_add_new_tab (window, directory, TRUE);
+                }
+              thunar_window_notebook_remove_tab (window, 0); /* remove automatically opened tab */
+              thunar_window_notebook_set_current_tab (window, last_focused_tab);
+              has_left_tabs = TRUE;
+            }
+
+          /* restore right tabs */
+          /* (will be restored on the left if no left tabs are found) */
+          g_object_get (G_OBJECT (application->preferences), "last-tabs-right", &tabs_right, "last-focused-tab-right", &last_focused_tab, NULL);
+          if (tabs_right != NULL && g_strv_length (tabs_right) > 0)
+            {
+              if (has_left_tabs)
+                thunar_window_notebook_toggle_split_view (window); /* enabling the split view selects the new notebook */
+              for (guint i = 0; i < g_strv_length (tabs_right); i++)
+                {
+                  ThunarFile *directory = thunar_file_get_for_uri (tabs_right[i], NULL);
+                  thunar_window_notebook_add_new_tab (window, directory, TRUE);
+                }
+              thunar_window_notebook_remove_tab (window, 0); /* remove automatically opened tab */
+              thunar_window_notebook_set_current_tab (window, last_focused_tab);
+            }
+
+          /* free memory */
+          g_list_free (window_list);
+          g_strfreev (tabs_left);
+          g_strfreev (tabs_right);
         }
     }
 
@@ -1316,7 +1372,7 @@ thunar_application_open_window (ThunarApplication *application,
           list = g_list_last (list);
 
           if (directory != NULL)
-              thunar_window_notebook_open_new_tab (THUNAR_WINDOW (list->data), directory);
+              thunar_window_notebook_add_new_tab (THUNAR_WINDOW (list->data), directory, THUNAR_NEW_TAB_BEHAVIOR_SWITCH);
           
           /* bring the window to front */
           gtk_window_present (list->data);
@@ -1512,8 +1568,34 @@ thunar_application_process_files_finish (ThunarBrowser *browser,
     }
   else
     {
-      /* try to open the file or directory */
-      thunar_file_launch (target_file, screen, startup_id, &error);
+      if (application->process_file_action == THUNAR_APPLICATION_LAUNCH_FILES)
+        {
+          /* try to launch the file / open the directory */
+          thunar_file_launch (target_file, screen, startup_id, &error);
+        }
+      else if (thunar_file_is_directory (file))
+        {
+          thunar_application_open_window (application, file, screen, startup_id, FALSE);
+        }
+      else
+        {
+          /* Note that for security reasons we do not execute files passed via command line */
+          /* Lets rather open the containing directory and select the file */
+          ThunarFile *parent = thunar_file_get_parent (file, NULL);
+
+          if (G_LIKELY (parent != NULL))
+            {
+              GList* files = NULL;
+              GtkWidget *window;
+
+              window = thunar_application_open_window (application, parent, screen, startup_id, FALSE);
+              g_object_unref (parent);
+
+              files = g_list_append (files, thunar_file_get_file (file));
+              thunar_window_show_and_select_files (THUNAR_WINDOW (window), files);
+              g_list_free (files);
+            }
+        }
 
       /* remove the file from the list */
       application->files_to_launch = g_list_delete_link (application->files_to_launch,
@@ -1582,18 +1664,20 @@ thunar_application_process_files (ThunarApplication *application)
  * @startup_id        : startup id to finish startup notification and properly focus the
  *                      window when focus stealing is enabled or %NULL.
  * @error             : return location for errors or %NULL.
+ * @action            : action to invoke on the files
  *
  * Tells @application to process the given @filenames and launch them appropriately.
  *
  * Return value: %TRUE on success, %FALSE if @error is set.
  **/
 gboolean
-thunar_application_process_filenames (ThunarApplication *application,
-                                      const gchar       *working_directory,
-                                      gchar            **filenames,
-                                      GdkScreen         *screen,
-                                      const gchar       *startup_id,
-                                      GError           **error)
+thunar_application_process_filenames (ThunarApplication               *application,
+                                      const gchar                     *working_directory,
+                                      gchar                          **filenames,
+                                      GdkScreen                       *screen,
+                                      const gchar                     *startup_id,
+                                      GError                         **error,
+                                      ThunarApplicationProcessAction   action)
 {
   ThunarFile *file;
   GError     *derror = NULL;
@@ -1665,7 +1749,10 @@ thunar_application_process_filenames (ThunarApplication *application,
 
   /* start processing files if we have any to launch */
   if (application->files_to_launch != NULL)
-    thunar_application_process_files (application);
+    {
+      application->process_file_action = action;
+      thunar_application_process_files (application);
+    }
 
   /* free the file list */
   g_list_free (file_list);
@@ -1949,17 +2036,32 @@ thunar_application_copy_into (ThunarApplication *application,
                               GFile             *target_file,
                               GClosure          *new_files_closure)
 {
-  gchar *display_name;
-  gchar *title;
+  GVolume *volume         = NULL;
+  gchar   *display_name   = NULL;
+  gchar   *title          = NULL;
+  gchar   *volume_name    = NULL;
+  gchar   *volume_uuid    = NULL;
+  gboolean use_display_name;
 
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
   _thunar_return_if_fail (G_IS_FILE (target_file));
 
-   /* generate a title for the progress dialog */
-   display_name = thunar_file_cached_display_name (target_file);
-   title = g_strdup_printf (_("Copying files to \"%s\"..."), display_name);
-   g_free (display_name);
+  volume = thunar_file_get_volume (thunar_file_get_for_uri (g_file_get_uri (target_file), NULL));
+  if (volume != NULL)
+    {
+      volume_name = g_volume_get_name (volume);
+      volume_uuid = g_volume_get_uuid (volume);
+    }
+
+  /* generate a title for the progress dialog */
+  display_name = thunar_file_cached_display_name (target_file);
+
+  /* if the display_name is equal to the volume_uuid display the volume_name */
+  use_display_name = g_strcmp0 (display_name, volume_uuid) != 0;
+
+  title = g_strdup_printf (_("Copying files to \"%s\"..."), use_display_name ? display_name : volume_name);
+  g_free (display_name);
 
   /* collect the target files and launch the job */
   thunar_application_collect_and_launch (application, parent, "edit-copy",
@@ -1968,8 +2070,14 @@ thunar_application_copy_into (ThunarApplication *application,
                                          FALSE, TRUE,
                                          new_files_closure);
 
-  /* free the title */
+  /* free */
   g_free (title);
+  if (volume != NULL)
+    {
+      g_free (volume_name);
+      g_free (volume_uuid);
+      g_object_unref (G_OBJECT (volume));
+    }
 }
 
 
@@ -2049,6 +2157,18 @@ thunar_application_move_into (ThunarApplication *application,
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
   _thunar_return_if_fail (target_file != NULL);
+
+  /* Source folder cannot be moved into its subdirectory */
+  for (GList* lp = source_file_list; lp != NULL; lp = lp->next)
+    {
+      if (thunar_g_file_is_descendant (target_file, G_FILE (lp->data)))
+        {
+          gchar *file_name = g_file_get_basename (G_FILE (lp->data));
+          thunar_dialogs_show_error (NULL, NULL, "The folder (%s) cannot be moved into its own subdirectory", file_name);
+          g_free (file_name);
+          return;
+        }
+    }
 
   /* launch the appropriate operation depending on the target file */
   if (thunar_g_file_is_trash (target_file))

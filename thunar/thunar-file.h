@@ -60,6 +60,7 @@ typedef enum
   THUNAR_FILE_DATE_CREATED,
   THUNAR_FILE_DATE_MODIFIED,
   THUNAR_FILE_DATE_DELETED,
+  THUNAR_FILE_RECENCY,
 } ThunarFileDateType;
 
 /**
@@ -124,6 +125,7 @@ ThunarFile       *thunar_file_get                        (GFile                 
                                                           GError                **error);
 ThunarFile       *thunar_file_get_with_info              (GFile                  *file,
                                                           GFileInfo              *info,
+                                                          GFileInfo              *recent_info,
                                                           gboolean                not_mounted);
 ThunarFile       *thunar_file_get_for_uri                (const gchar            *uri,
                                                           GError                **error);
@@ -213,11 +215,16 @@ gboolean          thunar_file_is_home                    (const ThunarFile      
 gboolean          thunar_file_is_regular                 (const ThunarFile       *file) G_GNUC_PURE;
 gboolean          thunar_file_is_trash                   (const ThunarFile       *file);
 gboolean          thunar_file_is_trashed                 (const ThunarFile       *file);
+gboolean          thunar_file_is_recent                  (const ThunarFile       *file);
+gboolean          thunar_file_is_in_recent               (const ThunarFile       *file);
 gboolean          thunar_file_is_desktop_file            (const ThunarFile       *file,
                                                           gboolean               *is_secure);
 const gchar      *thunar_file_get_display_name           (const ThunarFile       *file) G_GNUC_CONST;
 
 gchar            *thunar_file_get_deletion_date          (const ThunarFile       *file,
+                                                          ThunarDateStyle         date_style,
+                                                          const gchar            *date_custom_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+gchar            *thunar_file_get_recency                (const ThunarFile       *file,
                                                           ThunarDateStyle         date_style,
                                                           const gchar            *date_custom_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 const gchar      *thunar_file_get_original_path          (const ThunarFile       *file);
@@ -246,6 +253,7 @@ GFilesystemPreviewType thunar_file_get_preview_type      (const ThunarFile *file
 const gchar      *thunar_file_get_icon_name              (ThunarFile              *file,
                                                           ThunarFileIconState      icon_state,
                                                           GtkIconTheme            *icon_theme);
+const gchar      *thunar_file_get_device_type            (ThunarFile              *file);
 
 void              thunar_file_watch                      (ThunarFile              *file);
 void              thunar_file_unwatch                    (ThunarFile              *file);
@@ -276,7 +284,8 @@ const gchar*      thunar_file_get_metadata_setting       (ThunarFile            
                                                           const gchar            *setting_name);
 void              thunar_file_set_metadata_setting       (ThunarFile             *file,
                                                           const gchar            *setting_name,
-                                                          const gchar            *setting_value);
+                                                          const gchar            *setting_value,
+                                                          gboolean                async);
 void              thunar_file_clear_directory_specific_settings (ThunarFile      *file);
 gboolean          thunar_file_has_directory_specific_settings   (ThunarFile      *file);
 

@@ -240,8 +240,9 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   dialog->preferences = thunar_preferences_get ();
   g_signal_connect_swapped (G_OBJECT (dialog->preferences), "notify::misc-date-style",
                             G_CALLBACK (thunar_properties_dialog_reload), dialog);
-  exo_binding_new (G_OBJECT (dialog->preferences), "misc-file-size-binary",
-                   G_OBJECT (dialog), "file-size-binary");
+  g_object_bind_property (G_OBJECT (dialog->preferences), "misc-file-size-binary",
+                          G_OBJECT (dialog), "file-size-binary",
+                          G_BINDING_SYNC_CREATE);
   g_signal_connect_swapped (G_OBJECT (dialog->preferences), "notify::misc-file-size-binary",
                             G_CALLBACK (thunar_properties_dialog_reload), dialog);
 
@@ -306,7 +307,9 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
                     "focus-out-event", G_CALLBACK (thunar_properties_dialog_name_focus_out_event), dialog);
 
   gtk_grid_attach (GTK_GRID (grid), GTK_WIDGET (dialog->name_entry), 1, row, 1, 1);
-  exo_binding_new (G_OBJECT (dialog->single_box), "visible", G_OBJECT (dialog->name_entry), "visible");
+  g_object_bind_property (G_OBJECT (dialog->single_box), "visible",
+                          G_OBJECT (dialog->name_entry), "visible",
+                          G_BINDING_SYNC_CREATE);
 
   ++row;
 
@@ -316,7 +319,9 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
    */
   box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
   gtk_grid_attach (GTK_GRID (grid), box, 0, row, 1, 1);
-  exo_binding_new_with_negation (G_OBJECT (dialog->single_box), "visible", G_OBJECT (box), "visible");
+  g_object_bind_property (G_OBJECT (dialog->single_box), "visible",
+                          G_OBJECT (box),                "visible",
+                          G_BINDING_INVERT_BOOLEAN | G_BINDING_SYNC_CREATE);
 
   image = gtk_image_new_from_icon_name ("text-x-generic", GTK_ICON_SIZE_DIALOG);
   gtk_box_pack_start (GTK_BOX (box), image, FALSE, TRUE, 0);
@@ -334,7 +339,9 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_grid_attach (GTK_GRID (grid), dialog->names_label, 1, row, 1, 1);
   gtk_label_set_ellipsize (GTK_LABEL (dialog->names_label), PANGO_ELLIPSIZE_END);
   gtk_label_set_selectable (GTK_LABEL (dialog->names_label), TRUE);
-  exo_binding_new (G_OBJECT (box), "visible", G_OBJECT (dialog->names_label), "visible");
+  g_object_bind_property (G_OBJECT (box),                 "visible",
+                          G_OBJECT (dialog->names_label), "visible",
+                          G_BINDING_SYNC_CREATE);
 
 
   ++row;
@@ -352,7 +359,9 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   dialog->kind_ebox = gtk_event_box_new ();
   gtk_event_box_set_above_child (GTK_EVENT_BOX (dialog->kind_ebox), TRUE);
   gtk_event_box_set_visible_window (GTK_EVENT_BOX (dialog->kind_ebox), FALSE);
-  exo_binding_new (G_OBJECT (dialog->kind_ebox), "visible", G_OBJECT (label), "visible");
+  g_object_bind_property (G_OBJECT (dialog->kind_ebox), "visible",
+                          G_OBJECT (label),             "visible",
+                          G_BINDING_SYNC_CREATE);
   gtk_widget_set_hexpand (dialog->kind_ebox, TRUE);
   gtk_grid_attach (GTK_GRID (grid), dialog->kind_ebox, 1, row, 1, 1);
   gtk_widget_show (dialog->kind_ebox);
@@ -373,7 +382,9 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   dialog->openwith_chooser = thunar_chooser_button_new ();
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), dialog->openwith_chooser);
-  exo_binding_new (G_OBJECT (dialog->openwith_chooser), "visible", G_OBJECT (label), "visible");
+  g_object_bind_property (G_OBJECT (dialog->openwith_chooser), "visible",
+                          G_OBJECT (label),                    "visible",
+                          G_BINDING_SYNC_CREATE);
   gtk_widget_set_hexpand (dialog->openwith_chooser, TRUE);
   gtk_grid_attach (GTK_GRID (grid), dialog->openwith_chooser, 1, row, 1, 1);
   gtk_widget_show (dialog->openwith_chooser);
@@ -388,7 +399,9 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   dialog->link_label = g_object_new (GTK_TYPE_LABEL, "ellipsize", PANGO_ELLIPSIZE_START, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->link_label), TRUE);
-  exo_binding_new (G_OBJECT (dialog->link_label), "visible", G_OBJECT (label), "visible");
+  g_object_bind_property (G_OBJECT (dialog->link_label), "visible",
+                          G_OBJECT (label),              "visible",
+                          G_BINDING_SYNC_CREATE);
   gtk_widget_set_hexpand (dialog->link_label, TRUE);
   gtk_grid_attach (GTK_GRID (grid), dialog->link_label, 1, row, 1, 1);
   gtk_widget_show (dialog->link_label);
@@ -407,7 +420,9 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   dialog->origin_label = g_object_new (GTK_TYPE_LABEL, "ellipsize", PANGO_ELLIPSIZE_START, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->origin_label), TRUE);
-  exo_binding_new (G_OBJECT (dialog->origin_label), "visible", G_OBJECT (label), "visible");
+  g_object_bind_property (G_OBJECT (dialog->origin_label), "visible",
+                          G_OBJECT (label), "visible",
+                          G_BINDING_SYNC_CREATE);
   gtk_widget_set_hexpand (dialog->origin_label, TRUE);
   gtk_grid_attach (GTK_GRID (grid), dialog->origin_label, 1, row, 1, 1);
   gtk_widget_show (dialog->origin_label);
@@ -422,7 +437,9 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   dialog->location_label = g_object_new (GTK_TYPE_LABEL, "ellipsize", PANGO_ELLIPSIZE_START, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->location_label), TRUE);
-  exo_binding_new (G_OBJECT (dialog->location_label), "visible", G_OBJECT (label), "visible");
+  g_object_bind_property (G_OBJECT (dialog->location_label), "visible",
+                          G_OBJECT (label), "visible",
+                          G_BINDING_SYNC_CREATE);
   gtk_widget_set_hexpand (dialog->location_label, TRUE);
   gtk_grid_attach (GTK_GRID (grid), dialog->location_label, 1, row, 1, 1);
   gtk_widget_show (dialog->location_label);
@@ -448,7 +465,9 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   dialog->deleted_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->deleted_label), TRUE);
-  exo_binding_new (G_OBJECT (dialog->deleted_label), "visible", G_OBJECT (label), "visible");
+  g_object_bind_property (G_OBJECT (dialog->deleted_label), "visible",
+                          G_OBJECT (label), "visible",
+                          G_BINDING_SYNC_CREATE);
   gtk_widget_set_hexpand (dialog->deleted_label, TRUE);
   gtk_grid_attach (GTK_GRID (grid), dialog->deleted_label, 1, row, 1, 1);
   gtk_widget_show (dialog->deleted_label);
@@ -463,7 +482,9 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   dialog->created_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->created_label), TRUE);
-  exo_binding_new (G_OBJECT (dialog->created_label), "visible", G_OBJECT (label), "visible");
+  g_object_bind_property (G_OBJECT (dialog->created_label), "visible",
+                          G_OBJECT (label), "visible",
+                          G_BINDING_SYNC_CREATE);
   gtk_widget_set_hexpand (dialog->created_label, TRUE);
   gtk_grid_attach (GTK_GRID (grid), dialog->created_label, 1, row, 1, 1);
   gtk_widget_show (dialog->created_label);
@@ -478,7 +499,9 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   dialog->modified_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->modified_label), TRUE);
-  exo_binding_new (G_OBJECT (dialog->modified_label), "visible", G_OBJECT (label), "visible");
+  g_object_bind_property (G_OBJECT (dialog->modified_label), "visible",
+                          G_OBJECT (label),                  "visible",
+                          G_BINDING_SYNC_CREATE);
   gtk_widget_set_hexpand (dialog->modified_label, TRUE);
   gtk_grid_attach (GTK_GRID (grid), dialog->modified_label, 1, row, 1, 1);
   gtk_widget_show (dialog->modified_label);
@@ -493,7 +516,9 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   dialog->accessed_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->accessed_label), TRUE);
-  exo_binding_new (G_OBJECT (dialog->accessed_label), "visible", G_OBJECT (label), "visible");
+  g_object_bind_property (G_OBJECT (dialog->accessed_label), "visible",
+                          G_OBJECT (label),                  "visible",
+                          G_BINDING_SYNC_CREATE);
   gtk_widget_set_hexpand (dialog->accessed_label, TRUE);
   gtk_grid_attach (GTK_GRID (grid), dialog->accessed_label, 1, row, 1, 1);
   gtk_widget_show (dialog->accessed_label);
@@ -503,7 +528,9 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   spacer = g_object_new (GTK_TYPE_BOX, "orientation", GTK_ORIENTATION_VERTICAL, "height-request", 12, NULL);
   gtk_grid_attach (GTK_GRID (grid), spacer, 0, row, 2, 1);
-  exo_binding_new (G_OBJECT (dialog->accessed_label), "visible", G_OBJECT (spacer), "visible");
+  g_object_bind_property (G_OBJECT (dialog->accessed_label), "visible",
+                          G_OBJECT (spacer),                 "visible",
+                          G_BINDING_SYNC_CREATE);
 
   ++row;
 
@@ -518,7 +545,9 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_show (label);
 
   label = thunar_size_label_new ();
-  exo_binding_new (G_OBJECT (dialog), "files", G_OBJECT (label), "files");
+  g_object_bind_property (G_OBJECT (dialog), "files",
+                          G_OBJECT (label),  "files",
+                          G_BINDING_SYNC_CREATE);
   gtk_widget_set_hexpand (label, TRUE);
   gtk_grid_attach (GTK_GRID (grid), label, 1, row, 1, 1);
   gtk_widget_show (label);
@@ -532,19 +561,25 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_show (label);
 
   box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
-  exo_binding_new (G_OBJECT (box), "visible", G_OBJECT (label), "visible");
+  g_object_bind_property (G_OBJECT (box),   "visible",
+                          G_OBJECT (label), "visible",
+                          G_BINDING_SYNC_CREATE);
   gtk_widget_set_hexpand (box, TRUE);
   gtk_grid_attach (GTK_GRID (grid), box, 1, row, 1, 1);
   gtk_widget_show (box);
 
   dialog->volume_image = gtk_image_new ();
-  exo_binding_new (G_OBJECT (dialog->volume_image), "visible", G_OBJECT (box), "visible");
+  g_object_bind_property (G_OBJECT (dialog->volume_image), "visible",
+                          G_OBJECT (box),                  "visible",
+                          G_BINDING_SYNC_CREATE);
   gtk_box_pack_start (GTK_BOX (box), dialog->volume_image, FALSE, TRUE, 0);
   gtk_widget_show (dialog->volume_image);
 
   dialog->volume_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->volume_label), TRUE);
-  exo_binding_new (G_OBJECT (dialog->volume_label), "visible", G_OBJECT (dialog->volume_image), "visible");
+  g_object_bind_property (G_OBJECT (dialog->volume_label), "visible",
+                          G_OBJECT (dialog->volume_image), "visible",
+                          G_BINDING_SYNC_CREATE);
   gtk_box_pack_start (GTK_BOX (box), dialog->volume_label, TRUE, TRUE, 0);
   gtk_widget_show (dialog->volume_label);
 
@@ -560,7 +595,9 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   dialog->freespace_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
   gtk_widget_set_hexpand (dialog->freespace_vbox, TRUE);
   gtk_grid_attach (GTK_GRID (grid), dialog->freespace_vbox, 1, row, 1, 1);
-  exo_binding_new (G_OBJECT (dialog->freespace_vbox), "visible", G_OBJECT (label), "visible");
+  g_object_bind_property (G_OBJECT (dialog->freespace_vbox), "visible",
+                          G_OBJECT (label),                  "visible",
+                          G_BINDING_SYNC_CREATE);
   gtk_widget_show (dialog->freespace_vbox);
 
   dialog->freespace_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
@@ -587,7 +624,9 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
    */
   label = gtk_label_new (_("Emblems"));
   chooser = thunar_emblem_chooser_new ();
-  exo_binding_new (G_OBJECT (dialog), "files", G_OBJECT (chooser), "files");
+  g_object_bind_property (G_OBJECT (dialog),  "files",
+                          G_OBJECT (chooser), "files",
+                          G_BINDING_SYNC_CREATE);
   gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), chooser, label);
   gtk_widget_show (chooser);
   gtk_widget_show (label);
@@ -597,7 +636,9 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
    */
   label = gtk_label_new (_("Permissions"));
   dialog->permissions_chooser = thunar_permissions_chooser_new ();
-  exo_binding_new (G_OBJECT (dialog), "files", G_OBJECT (dialog->permissions_chooser), "files");
+  g_object_bind_property (G_OBJECT (dialog),                      "files",
+                          G_OBJECT (dialog->permissions_chooser), "files",
+                          G_BINDING_SYNC_CREATE);
   gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), dialog->permissions_chooser, label);
   gtk_widget_show (dialog->permissions_chooser);
   gtk_widget_show (label);
@@ -802,6 +843,7 @@ thunar_properties_dialog_name_activate (GtkWidget              *entry,
   if (g_utf8_collate (new_name, old_name) != 0)
     {
       job = thunar_io_jobs_rename_file (file, new_name);
+      exo_job_launch (EXO_JOB (job));
       if (job != NULL)
         {
           g_signal_connect (job, "error", G_CALLBACK (thunar_properties_dialog_rename_error), dialog);

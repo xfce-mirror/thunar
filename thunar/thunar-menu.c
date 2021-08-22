@@ -210,7 +210,6 @@ thunar_menu_set_property (GObject      *object,
 
     case PROP_LAUNCHER:
       menu->launcher = g_value_dup_object (value);
-      g_object_ref (G_OBJECT (menu->launcher));
      break;
 
     case PROP_FORCE_SECTION_OPEN:
@@ -306,8 +305,16 @@ thunar_menu_add_sections (ThunarMenu         *menu,
     }
   if (menu_sections & THUNAR_MENU_SECTION_RESTORE)
     {
-      if (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_RESTORE, FALSE) != NULL)
-         xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+      item_added = FALSE;
+      item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_RESTORE, FALSE) != NULL);
+      item_added |= (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_RESTORE_SHOW, FALSE) != NULL);
+      if (item_added)
+        xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
+    }
+  if (menu_sections & THUNAR_MENU_SECTION_REMOVE_FROM_RECENT)
+    {
+      if (thunar_launcher_append_menu_item (menu->launcher, GTK_MENU_SHELL (menu), THUNAR_LAUNCHER_ACTION_REMOVE_FROM_RECENT, FALSE) != NULL)
+        xfce_gtk_menu_append_seperator (GTK_MENU_SHELL (menu));
     }
 
   item_added = FALSE;

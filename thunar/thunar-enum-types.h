@@ -66,6 +66,7 @@ typedef enum
   THUNAR_DATE_STYLE_MMDDYYYY,
   THUNAR_DATE_STYLE_DDMMYYYY,
   THUNAR_DATE_STYLE_CUSTOM,
+  THUNAR_DATE_STYLE_CUSTOM_SIMPLE,
 } ThunarDateStyle;
 
 GType thunar_date_style_get_type (void) G_GNUC_CONST;
@@ -79,6 +80,8 @@ GType thunar_date_style_get_type (void) G_GNUC_CONST;
  * @THUNAR_COLUMN_DATE_ACCESSED : last access time.
  * @THUNAR_COLUMN_DATE_MODIFIED : last modification time.
  * @THUNAR_COLUMN_DATE_DELETED  : deletion time.
+ * @THUNAR_COLUMN_RECENCY       : time of modification of recent info.
+ * @THUNAR_COLUMN_LOCATION      : file location.
  * @THUNAR_COLUMN_GROUP         : group's name.
  * @THUNAR_COLUMN_MIME_TYPE     : mime type (e.g. "text/plain").
  * @THUNAR_COLUMN_NAME          : display name.
@@ -100,6 +103,8 @@ typedef enum
   THUNAR_COLUMN_DATE_ACCESSED,
   THUNAR_COLUMN_DATE_MODIFIED,
   THUNAR_COLUMN_DATE_DELETED,
+  THUNAR_COLUMN_RECENCY,
+  THUNAR_COLUMN_LOCATION,
   THUNAR_COLUMN_GROUP,
   THUNAR_COLUMN_MIME_TYPE,
   THUNAR_COLUMN_NAME,
@@ -250,6 +255,9 @@ typedef enum
 
 GType               thunar_zoom_level_get_type            (void)                       G_GNUC_CONST;
 ThunarThumbnailSize thunar_zoom_level_to_thumbnail_size   (ThunarZoomLevel zoom_level) G_GNUC_CONST;
+const gchar*        thunar_zoom_level_string_from_value   (ThunarZoomLevel zoom_level);
+gboolean            thunar_zoom_level_value_from_string   (const gchar    *value_string,
+                                                           gint           *value);
 
 
 #define THUNAR_TYPE_JOB_RESPONSE (thunar_job_response_get_type ())
@@ -320,6 +328,59 @@ typedef enum /*< flags >*/
 } ThunarFileMode;
 
 GType thunar_file_mode_get_type (void) G_GNUC_CONST;
+
+
+
+#define THUNAR_TYPE_USE_PARTIAL_MODE (thunar_use_partial_get_type ())
+
+/**
+ * ThunarUsePartialMode:
+ * @THUNAR_USE_PARTIAL_MODE_DISABLED    : Disable *.partial~
+ * @THUNAR_USE_PARTIAL_MODE_REMOTE_ONLY : Only when src/dst is remote
+ * @THUNAR_USE_PARTIAL_MODE_ALWAYS      : Always copy to *.partial~
+ **/
+typedef enum
+{
+  THUNAR_USE_PARTIAL_MODE_DISABLED,
+  THUNAR_USE_PARTIAL_MODE_REMOTE_ONLY,
+  THUNAR_USE_PARTIAL_MODE_ALWAYS,
+} ThunarUsePartialMode;
+
+GType thunar_use_partial_get_type (void) G_GNUC_CONST;
+
+
+
+#define THUNAR_TYPE_VERIFY_FILE_MODE (thunar_verify_file_get_type ())
+
+/**
+ * ThunarUsePartialMode:
+ * @THUNAR_VERIFY_FILE_MODE_DISABLED    : Disable file checksum
+ * @THUNAR_VERIFY_FILE_MODE_REMOTE_ONLY : Only when src/dst is remote
+ * @THUNAR_VERIFY_FILE_MODE_ALWAYS      : Always verify file checksum
+ **/
+typedef enum
+{
+  THUNAR_VERIFY_FILE_MODE_DISABLED,
+  THUNAR_VERIFY_FILE_MODE_REMOTE_ONLY,
+  THUNAR_VERIFY_FILE_MODE_ALWAYS,
+} ThunarVerifyFileMode;
+
+GType thunar_verify_file_get_type (void) G_GNUC_CONST;
+
+
+
+/**
+ * ThunarNewTabBehavior:
+ * @THUNAR_NEW_TAB_BEHAVIOR_FOLLOW_PREFERENCE   : switching to the new tab or not is controlled by a preference.
+ * @THUNAR_NEW_TAB_BEHAVIOR_SWITCH              : switch to the new tab.
+ * @THUNAR_NEW_TAB_BEHAVIOR_STAY                : stay at the current tab.
+ **/
+typedef enum
+{
+    THUNAR_NEW_TAB_BEHAVIOR_FOLLOW_PREFERENCE,
+    THUNAR_NEW_TAB_BEHAVIOR_SWITCH,
+    THUNAR_NEW_TAB_BEHAVIOR_STAY
+} ThunarNewTabBehavior;
 
 G_END_DECLS;
 

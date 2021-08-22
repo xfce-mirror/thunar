@@ -279,12 +279,14 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
 
   /* hidden bookmarks */
   model->preferences = thunar_preferences_get ();
-  exo_binding_new (G_OBJECT (model->preferences), "hidden-bookmarks",
-                   G_OBJECT (model), "hidden-bookmarks");
+  g_object_bind_property (model->preferences, "hidden-bookmarks",
+                          model,              "hidden-bookmarks",
+                          G_BINDING_SYNC_CREATE);
 
   /* binary file size */
-  exo_binding_new (G_OBJECT (model->preferences), "misc-file-size-binary",
-                   G_OBJECT (model), "file-size-binary");
+  g_object_bind_property (model->preferences, "misc-file-size-binary",
+                          model,              "file-size-binary",
+                          G_BINDING_SYNC_CREATE);
 
   /* load volumes */
   thunar_shortcuts_model_shortcut_devices (model);
@@ -1034,7 +1036,7 @@ thunar_shortcuts_model_shortcut_network (ThunarShortcutsModel *model)
       shortcut->group = THUNAR_SHORTCUT_GROUP_NETWORK_DEFAULT;
       shortcut->name = g_strdup (_("Browse Network"));
       shortcut->tooltip = g_strdup (_("Browse local network connections"));
-      shortcut->location = g_file_new_for_uri ("network://");
+      shortcut->location = thunar_g_file_new_for_network();
       shortcut->gicon = g_themed_icon_new ("network-workgroup");
       shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
       thunar_shortcuts_model_add_shortcut (model, shortcut);
@@ -1133,8 +1135,21 @@ thunar_shortcuts_model_shortcut_places (ThunarShortcutsModel *model)
       shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_COMPUTER;
       shortcut->name = g_strdup (_("Computer"));
       shortcut->tooltip = g_strdup (_("Browse the computer"));
-      shortcut->location = g_file_new_for_uri ("computer://");
+      shortcut->location = thunar_g_file_new_for_computer();
       shortcut->gicon = g_themed_icon_new ("computer");
+      shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
+      thunar_shortcuts_model_add_shortcut (model, shortcut);
+    }
+
+  /* append the recent icon if browsing recent is supported */
+  if (thunar_g_vfs_is_uri_scheme_supported ("recent"))
+    {
+      shortcut = g_slice_new0 (ThunarShortcut);
+      shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_RECENT;
+      shortcut->name = g_strdup (_("Recent"));
+      shortcut->tooltip = g_strdup (_("Browse recently used files"));
+      shortcut->location = thunar_g_file_new_for_recent();
+      shortcut->gicon = g_themed_icon_new ("document-open-recent");
       shortcut->hidden = thunar_shortcuts_model_get_hidden (model, shortcut);
       thunar_shortcuts_model_add_shortcut (model, shortcut);
     }
@@ -1162,7 +1177,10 @@ thunar_shortcuts_model_get_hidden (ThunarShortcutsModel *model,
   else if (shortcut->location != NULL)
     uri = g_file_get_uri (shortcut->location);
   else
-    _thunar_assert_not_reached ();
+    {
+      g_warn_if_reached ();
+      return FALSE;
+    }
 
   if (uri == NULL)
     return FALSE;
@@ -1322,30 +1340,22 @@ thunar_shortcuts_model_load_line (GFile       *file_path,
 
   shortcut = g_slice_new0 (ThunarShortcut);
   shortcut->group = THUNAR_SHORTCUT_GROUP_PLACES_BOOKMARKS;
+  shortcut->location = g_object_ref (file_path);
 
   /* handle local and remote files differently */
+  /* If we dont have a thunar-file, we need to set the gicon manually */
   if (thunar_shortcuts_model_local_file (file_path))
     {
       /* try to open the file corresponding to the uri */
       file = thunar_file_get (file_path, NULL);
       if (G_UNLIKELY (file == NULL))
-        {
           shortcut->gicon = g_themed_icon_new ("folder");
-          shortcut->location = g_object_ref (file_path);
-        }
       else
-        {
-          /* make sure the file refers to a directory */
-          if (G_UNLIKELY (thunar_file_is_directory (file)))
-            shortcut->file = file;
-          else
-            g_object_unref (file);
-        }
+          shortcut->file = file;
     }
   else
     {
       shortcut->gicon = g_themed_icon_new ("folder-remote");
-      shortcut->location = g_object_ref (file_path);
     }
 
   shortcut->sort_id = row_num;
@@ -2244,7 +2254,10 @@ thunar_shortcuts_model_set_hidden (ThunarShortcutsModel *model,
   else if (shortcut->location != NULL)
     uri = g_file_get_uri (shortcut->location);
   else
-    _thunar_assert_not_reached ();
+    {
+      g_warn_if_reached ();
+      return;
+    }
 
   /* prepare array */
   length = model->hidden_bookmarks != NULL ? g_strv_length (model->hidden_bookmarks) : 0;

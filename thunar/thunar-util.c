@@ -56,11 +56,14 @@
 
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
+#include <thunar/thunar-folder.h>
 
 #include <glib.h>
 #include <glib/gstdio.h>
 
 
+
+const char *SEARCH_PREFIX = "Search: ";
 
 /**
  * thunar_util_strrchr_offset:
@@ -401,94 +404,99 @@ thunar_util_humanize_file_time (guint64          file_time,
   gint         diff;
 
   /* check if the file_time is valid */
-  if (G_LIKELY (file_time != 0))
+  if (G_UNLIKELY (file_time == 0))
+      return g_strdup (_("Unknown"));
+
+  ftime = (time_t) file_time;
+
+  /* take a copy of the local file time */
+  tfile = *localtime (&ftime);
+
+  /* check which style to use to format the time */
+  if (date_style == THUNAR_DATE_STYLE_SIMPLE || date_style == THUNAR_DATE_STYLE_SHORT || date_style == THUNAR_DATE_STYLE_CUSTOM_SIMPLE)
     {
-      ftime = (time_t) file_time;
+      /* setup the dates for the time values */
+      g_date_set_time_t (&dfile, (time_t) ftime);
+      g_date_set_time_t (&dnow, time (NULL));
 
-      /* take a copy of the local file time */
-      tfile = *localtime (&ftime);
-
-      /* check which style to use to format the time */
-      if (date_style == THUNAR_DATE_STYLE_SIMPLE || date_style == THUNAR_DATE_STYLE_SHORT)
+      /* determine the difference in days */
+      diff = g_date_get_julian (&dnow) - g_date_get_julian (&dfile);
+      if (diff == 0)
         {
-          /* setup the dates for the time values */
-          g_date_set_time_t (&dfile, (time_t) ftime);
-          g_date_set_time_t (&dnow, time (NULL));
-
-          /* determine the difference in days */
-          diff = g_date_get_julian (&dnow) - g_date_get_julian (&dfile);
-          if (diff == 0)
+          if (date_style == THUNAR_DATE_STYLE_SIMPLE || date_style == THUNAR_DATE_STYLE_CUSTOM_SIMPLE)
             {
-              if (date_style == THUNAR_DATE_STYLE_SIMPLE)
-                {
-                  /* TRANSLATORS: file was modified less than one day ago */
-                  return g_strdup (_("Today"));
-                }
-              else /* if (date_style == THUNAR_DATE_STYLE_SHORT) */
-                {
-                  /* TRANSLATORS: file was modified less than one day ago */
-                  return exo_strdup_strftime (_("Today at %X"), &tfile);
-                }
+              /* TRANSLATORS: file was modified less than one day ago */
+              return g_strdup (_("Today"));
             }
-          else if (diff == 1)
+          else /* if (date_style == THUNAR_DATE_STYLE_SHORT) */
             {
-              if (date_style == THUNAR_DATE_STYLE_SIMPLE)
-                {
-                  /* TRANSLATORS: file was modified less than two days ago */
-                  return g_strdup (_("Yesterday"));
-                }
-              else /* if (date_style == THUNAR_DATE_STYLE_SHORT) */
-                {
-                  /* TRANSLATORS: file was modified less than two days ago */
-                  return exo_strdup_strftime (_("Yesterday at %X"), &tfile);
-                }
+              /* TRANSLATORS: file was modified less than one day ago */
+              return exo_strdup_strftime (_("Today at %X"), &tfile);
+            }
+        }
+      else if (diff == 1)
+        {
+          if (date_style == THUNAR_DATE_STYLE_SIMPLE || date_style == THUNAR_DATE_STYLE_CUSTOM_SIMPLE)
+            {
+              /* TRANSLATORS: file was modified less than two days ago */
+              return g_strdup (_("Yesterday"));
+            }
+          else /* if (date_style == THUNAR_DATE_STYLE_SHORT) */
+            {
+              /* TRANSLATORS: file was modified less than two days ago */
+              return exo_strdup_strftime (_("Yesterday at %X"), &tfile);
+            }
+        }
+      else
+        {
+          if (date_style == THUNAR_DATE_STYLE_CUSTOM_SIMPLE)
+            {
+              if (date_custom_style == NULL)
+                return g_strdup ("");
+
+              /* use custom date formatting */
+              return exo_strdup_strftime (date_custom_style, &tfile);
+            }
+          else if (diff > 1 && diff < 7)
+            {
+              /* Days from last week */
+              date_format = (date_style == THUNAR_DATE_STYLE_SIMPLE) ? "%A" : _("%A at %X");
             }
           else
             {
-              if (diff > 1 && diff < 7)
-                {
-                  /* Days from last week */
-                  date_format = (date_style == THUNAR_DATE_STYLE_SIMPLE) ? "%A" : _("%A at %X");
-                }
-              else
-                {
-                  /* Any other date */
-                  date_format = (date_style == THUNAR_DATE_STYLE_SIMPLE) ? "%x" : _("%x at %X");
-                }
-
-              /* format the date string accordingly */
-              return exo_strdup_strftime (date_format, &tfile);
+              /* Any other date */
+              date_format = (date_style == THUNAR_DATE_STYLE_SIMPLE) ? "%x" : _("%x at %X");
             }
-        }
-      else if (date_style == THUNAR_DATE_STYLE_LONG)
-        {
-          /* use long, date(1)-like format string */
-          return exo_strdup_strftime ("%c", &tfile);
-        }
-      else if (date_style == THUNAR_DATE_STYLE_YYYYMMDD)
-        {
-          return exo_strdup_strftime ("%Y-%m-%d %H:%M:%S", &tfile);
-        }
-      else if (date_style == THUNAR_DATE_STYLE_MMDDYYYY)
-        {
-          return exo_strdup_strftime ("%m-%d-%Y %H:%M:%S", &tfile);
-        }
-      else if (date_style == THUNAR_DATE_STYLE_DDMMYYYY)
-        {
-          return exo_strdup_strftime ("%d-%m-%Y %H:%M:%S", &tfile);
-        }
-      else /* if (date_style == THUNAR_DATE_STYLE_CUSTOM) */
-        {
-          if (date_custom_style == NULL)
-            return g_strdup ("");
 
-          /* use custom date formatting */
-          return exo_strdup_strftime (date_custom_style, &tfile);
+          /* format the date string accordingly */
+          return exo_strdup_strftime (date_format, &tfile);
         }
     }
+  else if (date_style == THUNAR_DATE_STYLE_LONG)
+    {
+      /* use long, date(1)-like format string */
+      return exo_strdup_strftime ("%c", &tfile);
+    }
+  else if (date_style == THUNAR_DATE_STYLE_YYYYMMDD)
+    {
+      return exo_strdup_strftime ("%Y-%m-%d %H:%M:%S", &tfile);
+    }
+  else if (date_style == THUNAR_DATE_STYLE_MMDDYYYY)
+    {
+      return exo_strdup_strftime ("%m-%d-%Y %H:%M:%S", &tfile);
+    }
+  else if (date_style == THUNAR_DATE_STYLE_DDMMYYYY)
+    {
+      return exo_strdup_strftime ("%d-%m-%Y %H:%M:%S", &tfile);
+    }
+  else /* if (date_style == THUNAR_DATE_STYLE_CUSTOM) */
+    {
+      if (date_custom_style == NULL)
+        return g_strdup ("");
 
-  /* the file_time is invalid */
-  return g_strdup (_("Unknown"));
+      /* use custom date formatting */
+      return exo_strdup_strftime (date_custom_style, &tfile);
+    }
 }
 
 
@@ -641,8 +649,92 @@ thunar_util_change_working_directory (const gchar *new_directory)
   return old_directory;
 }
 
+
+
 void
 thunar_setup_display_cb (gpointer data)
 {
   g_setenv ("DISPLAY", (char *) data, TRUE);
+}
+
+
+
+/**
+ * thunar_util_next_new_file_name
+ * @dir : the directory to search for a free filename
+ * @file_name : the filename which will be used as the basis/default
+ *
+ * Returns a filename that is like @file_name with the possible addition of
+ * a number to differentiate it from other similarly named files. In other words
+ * it searches @dir for incrementally named files starting from @file_name
+ * and returns the first available increment.
+ *
+ * e.g. in a folder with the following files:
+ * - file
+ * - empty
+ * - file_copy
+ *
+ * Calling this functions with the above folder and @file_name equal to 'file' the returned
+ * filename will be 'file 1'.
+ *
+ * The caller is responsible to free the returned string using g_free() when no longer needed.
+ *
+ * Return value: pointer to the new filename.
+**/
+gchar*
+thunar_util_next_new_file_name (ThunarFile   *dir,
+                                const gchar  *file_name)
+{
+  ThunarFolder   *folder          = thunar_folder_get_for_file (dir);
+  unsigned long   file_name_size  = strlen (file_name);
+  unsigned        count           = 0;
+  gboolean        found_duplicate = FALSE;
+  gchar          *extension       = NULL;
+  gchar          *new_name        = g_strdup (file_name);
+
+  /* get file extension if file is not a directory */
+  extension = thunar_util_str_get_extension (file_name);
+
+  /* if the file has an extension don't include it in the search */
+  if (extension != NULL)
+    file_name_size -= strlen (extension);
+
+  /* loop through the directory until new_name is unique */
+  while (TRUE)
+    {
+      found_duplicate = FALSE;
+      for (GList *files = thunar_folder_get_files (folder); files != NULL; files = files->next)
+        {
+          ThunarFile  *file = files->data;
+          const gchar *name = thunar_file_get_display_name (file);
+
+          if (strcmp (new_name, name) == 0)
+            {
+              found_duplicate = TRUE;
+              break;
+            }
+        }
+
+      if (!found_duplicate)
+        break;
+      g_free (new_name);
+      new_name = g_strdup_printf (_("%.*s %u%s"), (int) file_name_size, file_name, ++count, extension ? extension : "");
+    }
+  g_object_unref (G_OBJECT (folder));
+
+  return new_name;
+}
+
+
+
+/**
+ * thunar_util_is_a_search_query
+ * @string : the string to check
+ *
+ * Return value: a boolean that is TRUE if @string starts with 'Search: '.
+**/
+gboolean
+thunar_util_is_a_search_query (const gchar *string)
+{
+  return strncmp (string, SEARCH_PREFIX, strlen (SEARCH_PREFIX)) == 0;
 }

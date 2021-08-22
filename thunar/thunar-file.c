@@ -164,6 +164,7 @@ struct _ThunarFile
 
   /* storage for the file information */
   GFileInfo            *info;
+  GFileInfo            *recent_info;
   GFileType             kind;
   GFile                *gfile;
   gchar                *content_type;
@@ -172,6 +173,7 @@ struct _ThunarFile
   gchar                *custom_icon_name;
   gchar                *display_name;
   gchar                *basename;
+  const gchar          *device_type;
   gchar                *thumbnail_path;
 
   /* sorting */
@@ -443,6 +445,10 @@ thunar_file_finalize (GObject *object)
   /* release file info */
   if (file->info != NULL)
     g_object_unref (file->info);
+
+  /* release file info */
+  if (file->recent_info != NULL)
+    g_object_unref (file->recent_info);
 
   /* free the custom icon name */
   g_free (file->custom_icon_name);
@@ -949,6 +955,9 @@ thunar_file_info_clear (ThunarFile *file)
   g_free (file->icon_name);
   file->icon_name = NULL;
 
+  /* device type */
+  file->device_type = NULL;
+
   /* free collate keys */
   if (file->collate_key_nocase != file->collate_key)
     g_free (file->collate_key_nocase);
@@ -1295,6 +1304,7 @@ thunar_file_get (GFile   *gfile,
  * thunar_file_get_with_info:
  * @uri         : an URI or an absolute filename.
  * @info        : #GFileInfo to use when loading the info.
+ * @recent_info : additional #GFileInfo to use when loading the info, only for files in `recent:///`.
  * @not_mounted : if the file is mounted.
  *
  * Looks up the #ThunarFile referred to by @file. This function may return a
@@ -1312,6 +1322,7 @@ thunar_file_get (GFile   *gfile,
 ThunarFile *
 thunar_file_get_with_info (GFile     *gfile,
                            GFileInfo *info,
+                           GFileInfo *recent_info,
                            gboolean   not_mounted)
 {
   ThunarFile *file;
@@ -1356,11 +1367,12 @@ thunar_file_get_with_info (GFile     *gfile,
       /* done inserting in the cache */
       G_UNLOCK (file_cache_mutex);
     }
+    
+  if (recent_info != NULL)
+    file->recent_info = g_object_ref (recent_info);
 
   return file;
 }
-
-
 
 
 
@@ -1605,6 +1617,9 @@ thunar_file_execute (ThunarFile  *file,
 
   if (thunar_file_is_desktop_file (file, &is_secure))
     {
+      if (thunar_g_vfs_metadata_is_supported ())
+        is_secure = is_secure && xfce_g_file_is_trusted (file->gfile, NULL, NULL);
+
       /* parse file first, even if it is insecure */
       key_file = thunar_g_file_query_key_file (file->gfile, NULL, &err);
       if (key_file == NULL)
@@ -2123,9 +2138,12 @@ thunar_file_get_date (const ThunarFile  *file,
       date = g_date_time_to_unix (datetime);
       g_date_time_unref (datetime);
       return date;
+    case THUNAR_FILE_RECENCY:
+      return g_file_info_get_attribute_int64 (file->recent_info ? file->recent_info : file->info, G_FILE_ATTRIBUTE_RECENT_MODIFIED);
 
     default:
-      _thunar_assert_not_reached ();
+      g_warn_if_reached ();
+      return 0;
     }
 
   return g_file_info_get_attribute_uint64 (file->info, attribute);
@@ -2876,7 +2894,7 @@ gboolean
 thunar_file_is_executable (const ThunarFile *file)
 {
   ThunarPreferences *preferences;
-  gboolean           can_execute = FALSE;
+  gboolean           desktop_can_execute;
   gboolean           exec_shell_scripts = FALSE;
   const gchar       *content_type;
 
@@ -2885,31 +2903,35 @@ thunar_file_is_executable (const ThunarFile *file)
   if (file->info == NULL)
     return FALSE;
 
-  if (g_file_info_get_attribute_boolean (file->info, G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE))
+  if (thunar_file_is_desktop_file (file, &desktop_can_execute))
+    return desktop_can_execute;
+  else
     {
+      if (!g_file_info_get_attribute_boolean (file->info, G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE))
+        return FALSE;
+
       /* get the content type of the file */
       content_type = thunar_file_get_content_type (THUNAR_FILE (file));
-      if (G_LIKELY (content_type != NULL))
-        {
-          can_execute = g_content_type_can_be_executable (content_type);
+      if (G_UNLIKELY (content_type == NULL))
+        return FALSE;
 
-          if (can_execute)
-            {
-              /* check if the shell scripts should be executed or opened by default */
-              preferences = thunar_preferences_get ();
-              g_object_get (preferences, "misc-exec-shell-scripts-by-default", &exec_shell_scripts, NULL);
-              g_object_unref (preferences);
+      if (!g_content_type_can_be_executable (content_type))
+        return FALSE;
 
-              /* do never execute plain text files which are not shell scripts but marked executable */
-              if (g_strcmp0 (content_type, "text/plain") == 0)
-                  can_execute = FALSE;
-              else if (g_content_type_is_a (content_type, "text/plain") && ! exec_shell_scripts)
-                  can_execute = FALSE;
-            }
-        }
+      /* do never execute plain text files which are not shell scripts but marked executable */
+      if (g_content_type_equals (content_type, "text/plain"))
+        return FALSE;
+
+      /* check if the shell scripts should be executed or opened by default */
+      preferences = thunar_preferences_get ();
+      g_object_get (preferences, "misc-exec-shell-scripts-by-default", &exec_shell_scripts, NULL);
+      g_object_unref (preferences);
+
+      if (g_content_type_is_a (content_type, "text/plain") && ! exec_shell_scripts)
+        return FALSE;
+
+      return TRUE;
     }
-
-  return can_execute || thunar_file_is_desktop_file (file, NULL);
 }
 
 
@@ -3059,6 +3081,32 @@ thunar_file_is_trashed (const ThunarFile *file)
 
 
 /**
+ * thunar_file_is_recent:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns %TRUE if @file is the recent folder.
+ *
+ * Return value: %TRUE if @file is the recent folder bin
+ **/
+gboolean
+thunar_file_is_recent (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  return thunar_g_file_is_recent (file->gfile);
+}
+
+
+
+gboolean
+thunar_file_is_in_recent (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  return thunar_g_file_is_in_recent (file->gfile);
+}
+
+
+
+/**
  * thunar_file_is_desktop_file:
  * @file      : a #ThunarFile.
  * @is_secure : if %NULL do a simple check, else it will set this boolean
@@ -3183,6 +3231,43 @@ thunar_file_get_deletion_date (const ThunarFile *file,
 
   /* humanize the time value */
   return thunar_util_humanize_file_time (deletion_time, date_style, date_custom_style);
+}
+
+
+
+/**
+ * thunar_file_get_recency:
+ * @file       : a #ThunarFile instance.
+ * @date_style : the style used to format the date.
+ * @date_custom_style : custom style to apply, if @date_style is set to custom
+ *
+ * Returns the recency date of the @file if the @file
+ * is in the `recent:///` location. Recency differs from date accessed and date
+ * modified. It refers to the time of the last metadata change of a file in `recent:///`.
+ *
+ * Return value: the recency date of @file if @file is
+ *               in `recent:///`, %NULL otherwise.
+ **/
+gchar*
+thunar_file_get_recency       (const ThunarFile *file,
+                               ThunarDateStyle   date_style,
+                               const gchar      *date_custom_style)
+{
+  const gchar *date;
+  time_t       recency_time;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->recent_info), NULL);
+
+  date = g_file_info_get_attribute_string (file->recent_info, G_FILE_ATTRIBUTE_RECENT_MODIFIED);
+  if (G_UNLIKELY (date == NULL))
+    return NULL;
+
+  /* try to parse the DeletionDate (RFC 3339 string) */
+  recency_time = thunar_util_time_from_rfc3339 (date);
+
+  /* humanize the time value */
+  return thunar_util_humanize_file_time (recency_time, date_style, date_custom_style);
 }
 
 
@@ -3366,7 +3451,7 @@ thunar_file_get_emblem_names (ThunarFile *file)
     {
       emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_CANT_READ);
     }
-  else if (G_UNLIKELY (uid == effective_user_id && !thunar_file_is_writable (file) && !thunar_file_is_trashed (file)))
+  else if (G_UNLIKELY (uid == effective_user_id && !thunar_file_is_writable (file) && !thunar_file_is_trashed (file) && !thunar_file_is_in_recent (file)))
     {
       /* we own the file, but we cannot write to it, that's why we mark it as "cant-write", so
        * users won't be surprised when opening the file in a text editor, but are unable to save.
@@ -3533,7 +3618,6 @@ thunar_file_get_thumbnail_path (ThunarFile *file, ThunarThumbnailSize thumbnail_
           g_free (uri);
 
           filename = g_strconcat (g_checksum_get_string (checksum), ".png", NULL);
-          g_checksum_free (checksum);
 
           /* The thumbnail is in the format/location
            * $XDG_CACHE_HOME/thumbnails/(nromal|large)/MD5_Hash_Of_URI.png
@@ -3558,14 +3642,29 @@ thunar_file_get_thumbnail_path (ThunarFile *file, ThunarThumbnailSize thumbnail_
                                                        filename, NULL);
 
               if(!g_file_test(file->thumbnail_path, G_FILE_TEST_EXISTS))
-              {
-                /* Thumbnail doesn't exist in either spot */
-                g_free(file->thumbnail_path);
-                file->thumbnail_path = NULL;
-              }
+                {
+                  g_free(file->thumbnail_path);
+                  file->thumbnail_path = NULL;
+
+                  if (thunar_file_is_directory (file) == FALSE)
+                    {
+                      /* Thumbnail doesn't exist in either spot, look for shared repository */
+                      uri = thunar_file_dup_uri (file);
+                      file->thumbnail_path = xfce_create_shared_thumbnail_path (uri, thunar_thumbnail_size_get_nick (thumbnail_size));
+                      g_free (uri);
+
+                      if (file->thumbnail_path != NULL && !g_file_test (file->thumbnail_path, G_FILE_TEST_EXISTS))
+                        {
+                          /* Thumbnail doesn't exist */
+                          g_free (file->thumbnail_path);
+                          file->thumbnail_path = NULL;
+                        }
+                    }
+                }
             }
 
           g_free (filename);
+          g_checksum_free (checksum);
         }
     }
 
@@ -3882,6 +3981,29 @@ thunar_file_get_icon_name (ThunarFile          *file,
     file->icon_name = g_strdup ("");
 
   return thunar_file_get_icon_name_for_state (file->icon_name, icon_state);
+}
+
+
+
+/**
+ * thunar_file_get_device_type:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns : (transfer none) (nullable): the string of the device type.
+ */
+const gchar *
+thunar_file_get_device_type (ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+
+  if (file->kind != G_FILE_TYPE_MOUNTABLE)
+    return NULL;
+
+  if (G_LIKELY (file->device_type != NULL))
+    return file->device_type;
+
+  file->device_type = thunar_g_file_guess_device_type (file->gfile);
+  return file->device_type;
 }
 
 
@@ -4522,7 +4644,7 @@ thunar_file_set_metadata_setting_finish (GObject      *source_object,
       g_warning ("Failed to set metadata: %s", error->message);
       g_error_free (error);
     }
-
+    
   thunar_file_changed (file);
 }
 
@@ -4533,6 +4655,7 @@ thunar_file_set_metadata_setting_finish (GObject      *source_object,
  * @file          : a #ThunarFile instance.
  * @setting_name  : the name of the setting to set
  * @setting_value : the value to set
+ * @async         : whether g_file_set_attributes_async or g_file_set_attributes_from_info should be used
  *
  * Sets the setting @setting_name of @file to @setting_value and stores it in
  * the @file<!---->s metadata.
@@ -4540,7 +4663,8 @@ thunar_file_set_metadata_setting_finish (GObject      *source_object,
 void
 thunar_file_set_metadata_setting (ThunarFile  *file,
                                   const gchar *setting_name,
-                                  const gchar *setting_value)
+                                  const gchar *setting_value,
+                                  gboolean     async)
 {
   GFileInfo *info;
   gchar     *attr_name;
@@ -4559,12 +4683,22 @@ thunar_file_set_metadata_setting (ThunarFile  *file,
    * the attribute in the file system */
   info = g_file_info_new ();
   g_file_info_set_attribute_string (info, attr_name, setting_value);
-  g_file_set_attributes_async (file->gfile, info,
-                               G_FILE_QUERY_INFO_NONE,
-                               G_PRIORITY_DEFAULT,
-                               NULL,
-                               thunar_file_set_metadata_setting_finish,
-                               file);
+  if (async)
+    {
+      g_file_set_attributes_async (file->gfile, info,
+                                   G_FILE_QUERY_INFO_NONE,
+                                   G_PRIORITY_DEFAULT,
+                                   NULL,
+                                   thunar_file_set_metadata_setting_finish,
+                                   file);
+    }
+  else
+    {
+      g_file_set_attributes_from_info (file->gfile, info,
+                                       G_FILE_QUERY_INFO_NONE,
+                                       NULL,
+                                       NULL);
+    }
   g_free (attr_name);
   g_object_unref (G_OBJECT (info));
 }
@@ -4588,12 +4722,15 @@ thunar_file_clear_directory_specific_settings (ThunarFile *file)
   g_file_info_remove_attribute (file->info, "metadata::thunar-view-type");
   g_file_info_remove_attribute (file->info, "metadata::thunar-sort-column");
   g_file_info_remove_attribute (file->info, "metadata::thunar-sort-order");
+  g_file_info_remove_attribute (file->info, "metadata::thunar-zoom-level");
 
   g_file_set_attribute (file->gfile, "metadata::thunar-view-type", G_FILE_ATTRIBUTE_TYPE_INVALID,
                         NULL, G_FILE_QUERY_INFO_NONE, NULL, NULL);
   g_file_set_attribute (file->gfile, "metadata::thunar-sort-column", G_FILE_ATTRIBUTE_TYPE_INVALID,
                         NULL, G_FILE_QUERY_INFO_NONE, NULL, NULL);
   g_file_set_attribute (file->gfile, "metadata::thunar-sort-order", G_FILE_ATTRIBUTE_TYPE_INVALID,
+                        NULL, G_FILE_QUERY_INFO_NONE, NULL, NULL);
+  g_file_set_attribute (file->gfile, "metadata::thunar-zoom-level", G_FILE_ATTRIBUTE_TYPE_INVALID,
                         NULL, G_FILE_QUERY_INFO_NONE, NULL, NULL);
 
   thunar_file_changed (file);
@@ -4622,6 +4759,8 @@ thunar_file_has_directory_specific_settings (ThunarFile *file)
   if (g_file_info_has_attribute (file->info, "metadata::thunar-sort-column"))
     return TRUE;
   if (g_file_info_has_attribute (file->info, "metadata::thunar-sort-order"))
+    return TRUE;
+  if (g_file_info_has_attribute (file->info, "metadata::thunar-zoom-level"))
     return TRUE;
 
   return FALSE;

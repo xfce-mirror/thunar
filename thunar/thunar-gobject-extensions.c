@@ -169,3 +169,24 @@ thunar_g_strescape (const gchar *source)
   g_free (g_escaped);
   return result;
 }
+
+
+
+/**
+ * thunar_g_app_info_equal
+ * @appinfo1  : The first g_app_info object
+ * @appinfo2  : The second g_app_info object
+ *
+ * For unknown reason "g_app_info_equal" does weird stuff / crashes thunar in some cases.
+ * (select two files of the same type + Sent to --> mail recipient )
+ * So we use this trivial method to compare applications for now.
+ *
+ * Return value: : TRUE if appinfo1 is equal to appinfo2. FALSE otherwise.
+ **/
+gboolean
+thunar_g_app_info_equal (gpointer appinfo1,
+                         gpointer appinfo2)
+{
+  return g_utf8_collate (g_app_info_get_name (appinfo1),
+                         g_app_info_get_name (appinfo2)) == 0;
+}
