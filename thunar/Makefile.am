@@ -21,6 +21,12 @@ bin_SCRIPTS =								\
 bin_PROGRAMS =								\
 	thunar
 
+noinst_LIBRARIES = thunar.a
+thunar_a_SOURCES =
+thunar_a_LIBADD = 							\
+	$(wildcard $(top_builddir)/thunar/*.o)				\
+	$(wildcard $(top_builddir)/thunarx/.libs/*.o)
+
 thunar_built_sources =							\
 	thunar-marshal.c							\
 	thunar-marshal.h							\
@@ -257,7 +263,7 @@ uninstall-local:
 	-( cd $(DESTDIR)$(bindir) ; test -h Thunar && rm -f Thunar )
 
 clean-local:
-	rm -f *.core core core.* *.o
+	rm -f *.core core core.* *.o *.a
 
 DISTCLEANFILES =							\
 	thunar-settings.desktop
