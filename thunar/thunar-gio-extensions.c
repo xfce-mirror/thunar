@@ -651,6 +651,8 @@ thunar_g_file_list_get_type (void)
  * @destination            : destination #GFile
  * @flags                  : set of #GFileCopyFlags
  * @use_partial            : option to use *.partial~
+ * @delete_file_on_failure : option to delete the destination file if copying fails (this will delete the file if it already exists)
+ *                           used only when @use_partial is FALSE
  * @cancellable            : (nullable): optional #GCancellable object
  * @progress_callback      : (nullable) (scope call): function to callback with progress information
  * @progress_callback_data : (clousure): user data to pass to @progress_callback
@@ -667,6 +669,7 @@ thunar_g_file_copy (GFile                *source,
                     GFile                *destination,
                     GFileCopyFlags        flags,
                     gboolean              use_partial,
+                    gboolean              delete_file_on_failure,
                     GCancellable         *cancellable,
                     GFileProgressCallback progress_callback,
                     gpointer              progress_callback_data,
@@ -711,7 +714,7 @@ thunar_g_file_copy (GFile                *source,
       /* failure is expected so error is ignored */
       /* it must be triggered if cancelled */
       /* thus cancellable is also ignored */
-      if (!success)
+      if (delete_file_on_failure && !success)
         g_file_delete (destination, NULL, NULL);
 
       return success;

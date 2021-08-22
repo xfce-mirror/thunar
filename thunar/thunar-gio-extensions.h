@@ -71,6 +71,7 @@ gboolean     thunar_g_file_copy                     (GFile                *sourc
                                                      GFile                *destination,
                                                      GFileCopyFlags        flags,
                                                      gboolean              use_partial,
+                                                     gboolean              delete_file_on_failure,
                                                      GCancellable         *cancellable,
                                                      GFileProgressCallback progress_callback,
                                                      gpointer              progress_callback_data,
