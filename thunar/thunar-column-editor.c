@@ -105,6 +105,7 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   GtkWidget         *grid;
   GtkWidget         *vbox;
   GtkWidget         *swin;
+  gint               row = 0;
 
   /* grab a reference on the preferences */
   column_editor->preferences = thunar_preferences_get ();
@@ -154,8 +155,11 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   label = gtk_label_new (_("Choose the order of information to appear in the\ndetailed list view."));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_widget_set_hexpand (label, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 2, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 2, 1);
   gtk_widget_show (label);
+
+  /* next row */
+  row++;
 
   /* create the scrolled window for the tree view */
   swin = gtk_scrolled_window_new (NULL, NULL);
@@ -163,7 +167,7 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (swin), GTK_SHADOW_IN);
   gtk_widget_set_hexpand (swin, TRUE);
   gtk_widget_set_vexpand (swin, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), swin, 0, 1, 1, 6);
+  gtk_grid_attach (GTK_GRID (grid), swin, 0, row, 1, 6);
   gtk_widget_show (swin);
 
   /* create the tree view */
@@ -197,7 +201,7 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   /* create the "Move Up" button */
   column_editor->up_button = gtk_button_new_with_mnemonic (_("Move _Up"));
   g_signal_connect (G_OBJECT (column_editor->up_button), "clicked", G_CALLBACK (thunar_column_editor_move_up), column_editor);
-  gtk_grid_attach (GTK_GRID (grid), column_editor->up_button, 1, 1, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), column_editor->up_button, 1, row, 1, 1);
   gtk_widget_show (column_editor->up_button);
 
   image = gtk_image_new_from_icon_name ("go-up-symbolic", GTK_ICON_SIZE_BUTTON);
@@ -205,10 +209,13 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   gtk_button_set_image (GTK_BUTTON (column_editor->up_button), image);
   gtk_widget_show (image);
 
+  /* next row */
+  row++;
+
   /* create the "Move Down" button */
   column_editor->down_button = gtk_button_new_with_mnemonic (_("Move Dow_n"));
   g_signal_connect (G_OBJECT (column_editor->down_button), "clicked", G_CALLBACK (thunar_column_editor_move_down), column_editor);
-  gtk_grid_attach (GTK_GRID (grid), column_editor->down_button, 1, 2, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), column_editor->down_button, 1, row, 1, 1);
   gtk_widget_show (column_editor->down_button);
 
   image = gtk_image_new_from_icon_name ("go-down-symbolic", GTK_ICON_SIZE_BUTTON);
@@ -216,27 +223,39 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   gtk_button_set_image (GTK_BUTTON (column_editor->down_button), image);
   gtk_widget_show (image);
 
+  /* next row */
+  row++;
+
   /* create the "Show" button */
   column_editor->show_button = gtk_button_new_with_mnemonic (_("_Show"));
   g_signal_connect (G_OBJECT (column_editor->show_button), "clicked", G_CALLBACK (thunar_column_editor_toggle_visibility), column_editor);
-  gtk_grid_attach (GTK_GRID (grid), column_editor->show_button, 1, 3, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), column_editor->show_button, 1, row, 1, 1);
   gtk_widget_show (column_editor->show_button);
+
+  /* next row */
+  row++;
 
   /* create the "Hide" button */
   column_editor->hide_button = gtk_button_new_with_mnemonic (_("Hi_de"));
   g_signal_connect (G_OBJECT (column_editor->hide_button), "clicked", G_CALLBACK (thunar_column_editor_toggle_visibility), column_editor);
-  gtk_grid_attach (GTK_GRID (grid), column_editor->hide_button, 1, 4, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), column_editor->hide_button, 1, row, 1, 1);
   gtk_widget_show (column_editor->hide_button);
+
+  /* next row */
+  row++;
 
   /* create the horiz separator */
   separator = gtk_separator_new (GTK_ORIENTATION_HORIZONTAL);
-  gtk_grid_attach (GTK_GRID (grid), separator, 1, 5, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), separator, 1, row, 1, 1);
   gtk_widget_show (separator);
+
+  /* next row */
+  row++;
 
   /* create the "Use Default" button */
   button = gtk_button_new_with_mnemonic (_("Use De_fault"));
   g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (thunar_column_editor_use_defaults), column_editor);
-  gtk_grid_attach (GTK_GRID (grid), button, 1, 6, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 1, row, 1, 1);
   gtk_widget_show (button);
 
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
@@ -247,6 +266,9 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
+
+  /* new grid */
+  row = 0;
 
   grid = gtk_grid_new ();
   gtk_grid_set_column_spacing (GTK_GRID (grid), 6);
@@ -261,8 +283,11 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
                            "able this behavior below the file manager will always\n"
                            "use the user defined column widths."));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
+
+  /* next row */
+  row++;
 
   /* create the "Automatically expand columns as needed" button */
   button = gtk_check_button_new_with_mnemonic (_("Automatically _expand columns as needed"));
@@ -271,7 +296,7 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
                           G_OBJECT (button),
                           "active",
                           G_BINDING_INVERT_BOOLEAN | G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 1, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), button);
   gtk_widget_show (button);
 
