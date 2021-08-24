@@ -685,7 +685,6 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
   GFile            *dest_file = target_file;
   GFileCopyFlags    copy_flags = G_FILE_COPY_NOFOLLOW_SYMLINKS;
   GError           *err = NULL;
-  gint              n;
   gint              n_rename = 0;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), NULL);
@@ -700,43 +699,22 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
   /* various attempts to copy the file */
   while (err == NULL)
     {
+      GFile *target;
+
       thunar_transfer_job_check_pause (job);
+
       if (G_LIKELY (!g_file_equal (source_file, dest_file)))
-        {
-          /* try to copy the file from source_file to the dest_file */
-          if (ttj_copy_file (job, source_file, dest_file, copy_flags, TRUE, &err))
-            {
-              /* return the real target file */
-              return g_object_ref (dest_file);
-            }
-        }
+        target = g_object_ref (dest_file);
       else
+        target = thunar_io_jobs_util_next_duplicate_file (THUNAR_JOB (job), source_file, TRUE, &err);
+
+      if (err == NULL)
         {
-          for (n = 1; err == NULL; ++n)
-            {
-              GFile *duplicate_file = thunar_io_jobs_util_next_duplicate_file (THUNAR_JOB (job),
-                                                                               source_file,
-                                                                               TRUE, n,
-                                                                               &err);
-
-              if (err == NULL)
-                {
-                  /* try to copy the file from source file to the duplicate file */
-                  if (ttj_copy_file (job, source_file, duplicate_file, copy_flags, FALSE, &err))
-                    {
-                      /* return the real target file */
-                      return duplicate_file;
-                    }
-
-                  g_object_unref (duplicate_file);
-                }
-
-              if (err != NULL && err->domain == G_IO_ERROR && err->code == G_IO_ERROR_EXISTS)
-                {
-                  /* this duplicate already exists => clear the error to try the next alternative */
-                  g_clear_error (&err);
-                }
-            }
+          /* try to copy the file from source file to the duplicate file */
+          if (ttj_copy_file (job, source_file, target, copy_flags, FALSE, &err))
+            return target;
+          else /* go to error case */
+            g_object_unref (target);
         }
 
       /* check if we can recover from this error */
