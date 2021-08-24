@@ -662,36 +662,27 @@ _thunar_io_jobs_link_file (ThunarJob *job,
         }
       else
         {
-          for (n = 1; err == NULL; ++n)
+          GFile *duplicate_file = thunar_io_jobs_util_next_duplicate_file (job,
+                                                                           source_file,
+                                                                           FALSE, n,
+                                                                           &err);
+
+          if (err == NULL)
             {
-              GFile *duplicate_file = thunar_io_jobs_util_next_duplicate_file (job,
-                                                                               source_file,
-                                                                               FALSE, n,
-                                                                               &err);
-
-              if (err == NULL)
+              /* try to create the symlink */
+              if (g_file_make_symbolic_link (duplicate_file, source_path,
+                                             exo_job_get_cancellable (EXO_JOB (job)),
+                                             &err))
                 {
-                  /* try to create the symlink */
-                  if (g_file_make_symbolic_link (duplicate_file, source_path,
-                                                 exo_job_get_cancellable (EXO_JOB (job)),
-                                                 &err))
-                    {
-                      /* release the source path */
-                      g_free (source_path);
+                  /* release the source path */
+                  g_free (source_path);
 
-                      /* return the real target file */
-                      return duplicate_file;
-                    }
-
-                  /* release the duplicate file, we no longer need it */
-                  g_object_unref (duplicate_file);
+                  /* return the real target file */
+                  return duplicate_file;
                 }
 
-              if (err != NULL && err->domain == G_IO_ERROR && err->code == G_IO_ERROR_EXISTS)
-                {
-                  /* this duplicate already exists => clear the error and try the next alternative */
-                  g_clear_error (&err);
-                }
+              /* release the duplicate file, we no longer need it */
+              g_object_unref (duplicate_file);
             }
         }
 
