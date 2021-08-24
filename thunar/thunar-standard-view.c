@@ -2209,6 +2209,7 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   const gchar        *pattern;
   gchar              *pattern_extended = NULL;
   gboolean            case_sensitive;
+  gint                row = 0;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
@@ -2232,7 +2233,7 @@ thunar_standard_view_select_by_pattern (ThunarView *view)
   gtk_widget_show (GTK_WIDGET (grid));
 
   label = gtk_label_new_with_mnemonic (_("_Pattern:"));
-  gtk_grid_attach (grid, label, 0, 0, 1, 1);
+  gtk_grid_attach (grid, label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   entry = gtk_entry_new ();
