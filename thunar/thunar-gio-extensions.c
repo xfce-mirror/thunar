@@ -706,14 +706,6 @@ thunar_g_file_copy (GFile                *source,
   if (!use_partial)
     {
       success = g_file_copy (source, destination, flags, cancellable, progress_callback, progress_callback_data, error);
-
-      /* try to remove incomplete file. */
-      /* failure is expected so error is ignored */
-      /* it must be triggered if cancelled */
-      /* thus cancellable is also ignored */
-      if (!success)
-        g_file_delete (destination, NULL, NULL);
-
       return success;
     }
 
