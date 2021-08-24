@@ -276,6 +276,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   GEnumClass     *type;
   gchar          *path;
   gchar          *date;
+  gint            row = 0;
 
   /* grab a reference on the preferences */
   dialog->preferences = thunar_preferences_get ();
@@ -336,7 +337,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   label = gtk_label_new_with_mnemonic (_("View _new folders using:"));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   combo = gtk_combo_box_text_new ();
@@ -351,14 +352,17 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                transform_view_index_to_string,
                                NULL, NULL);
   gtk_widget_set_hexpand (combo, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), combo, 1, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), combo, 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
 
+  /* next row */
+  row++;
+
   label = gtk_label_new_with_mnemonic (_("Show thumbnails:"));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 1, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   combo = gtk_combo_box_text_new ();
@@ -374,14 +378,17 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                transform_index_to_enum_value,
                                (gpointer) thunar_thumbnail_mode_get_type, NULL);
   gtk_widget_set_hexpand (combo, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), combo, 1, 1, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), combo, 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
 
+  /* next row */
+  row++;
+
   label = gtk_label_new_with_mnemonic (_("Only show thumbnails for files smaller than:"));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 2, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   combo = gtk_combo_box_text_new ();
@@ -401,10 +408,13 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                transform_string_to_uint64,
                                NULL, NULL);
   gtk_widget_set_hexpand (combo, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), combo, 1, 2, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), combo, 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
+
+  /* next row */
+  row++;
 
   button = gtk_check_button_new_with_mnemonic (_("_Remember view settings for each folder"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
@@ -415,7 +425,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_set_tooltip_text (button,
                                _("Select this option to remember view type, zoom level, sort column, and sort order individually for each folder"));
   gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 3, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
   if (!thunar_g_vfs_metadata_is_supported ())
     {
@@ -423,6 +433,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
       gtk_widget_set_sensitive (button, FALSE);
       gtk_widget_set_tooltip_text (button, _("gvfs metadata support is required"));
     }
+
+  /* next row */
+  row++;
 
   button = gtk_check_button_new_with_mnemonic (_("Draw frames around thumbnails"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
@@ -432,8 +445,11 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button, _("Select this option to draw black frames around thumbnails."));
   gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 4, 2, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 2, 1);
   gtk_widget_show (button);
+
+  /* next row */
+  row++;
 
   button = gtk_check_button_new_with_mnemonic (_("Sort _folders before files"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
@@ -443,8 +459,11 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button, _("Select this option to list folders before files when you sort a folder."));
   gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 5, 2, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 2, 1);
   gtk_widget_show (button);
+
+  /* next row */
+  row++;
 
   button = gtk_check_button_new_with_mnemonic (_("Show file size in binary format"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
@@ -454,7 +473,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button, _("Select this option to show file size in binary format instead of decimal."));
   gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 6, 2, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 2, 1);
   gtk_widget_show (button);
 
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
@@ -465,6 +484,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
+
+  /* new grid */
+  row = 0;
 
   grid = gtk_grid_new ();
   gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
@@ -483,7 +505,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_set_tooltip_text (button, _("Select this option to place the icon captions for items "
                                          "beside the icon rather than below the icon."));
   gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
 
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
@@ -511,7 +533,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button, _("Select this option to use the current folder icon as window icon"));
 
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
 
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
@@ -532,7 +554,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_show (grid);
 
   label = gtk_label_new_with_mnemonic (_("_Format:"));
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   combo = gtk_combo_box_text_new ();
@@ -552,10 +574,13 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_hexpand (combo, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), combo, 1, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), combo, 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
+
+  /* next row */
+  row++;
 
   entry = gtk_entry_new ();
   /* TRANSLATORS: Please do not translate the first column (specifiers), 'strftime' and of course '\n' */
@@ -574,7 +599,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           "text",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   g_signal_connect (G_OBJECT (combo), "changed", G_CALLBACK (on_date_format_changed), entry);
-  gtk_grid_attach (GTK_GRID (grid), entry, 1, 1, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), entry, 1, row, 1, 1);
   if (gtk_combo_box_get_active (GTK_COMBO_BOX (combo)) == THUNAR_DATE_STYLE_CUSTOM || gtk_combo_box_get_active (GTK_COMBO_BOX (combo)) == THUNAR_DATE_STYLE_CUSTOM_SIMPLE)
     gtk_widget_set_visible (entry, TRUE);
 
@@ -596,6 +621,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
 
+  /* new grid */
+  row = 0;
+
   grid = gtk_grid_new ();
   gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
   gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
@@ -605,7 +633,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_show (grid);
 
   label = gtk_label_new_with_mnemonic (_("_Icon Size:"));
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   combo = gtk_combo_box_text_new ();
@@ -628,10 +656,13 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                transform_index_to_icon_size,
                                NULL, NULL);
   gtk_widget_set_hexpand (combo, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), combo, 1, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), combo, 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
+
+  /* next row */
+  row++;
 
   button = gtk_check_button_new_with_mnemonic (_("Show Icon _Emblems"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
@@ -642,7 +673,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_set_tooltip_text (button, _("Select this option to display icon emblems in the shortcuts pane for all folders "
                                          "for which emblems have been defined in the folders properties dialog."));
   gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 1, 2, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 2, 1);
   gtk_widget_show (button);
 
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
@@ -654,6 +685,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
 
+  /* new grid */
+  row = 0;
+
   grid = gtk_grid_new ();
   gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
   gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
@@ -663,7 +697,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_show (grid);
 
   label = gtk_label_new_with_mnemonic (_("Icon _Size:"));
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   combo = gtk_combo_box_text_new ();
@@ -686,10 +720,13 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                transform_index_to_icon_size,
                                NULL, NULL);
   gtk_widget_set_hexpand (combo, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), combo, 1, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), combo, 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
+
+  /* next row */
+  row++;
 
   button = gtk_check_button_new_with_mnemonic (_("Show Icon E_mblems"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
@@ -700,7 +737,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_set_tooltip_text (button, _("Select this option to display icon emblems in the tree pane for all folders "
                                          "for which emblems have been defined in the folders properties dialog."));
   gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 1, 2, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 2, 1);
   gtk_widget_show (button);
 
 
@@ -722,6 +759,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
 
+  /* new grid */
+  row = 0;
+
   grid = gtk_grid_new ();
   gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
   gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
@@ -738,8 +778,11 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   g_signal_connect (G_OBJECT (button), "toggled", G_CALLBACK (g_object_notify), "active");
   gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
+
+  /* next row */
+  row++;
 
   ibox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
   gtk_widget_set_hexpand (ibox, TRUE);
@@ -749,7 +792,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           G_OBJECT (ibox),   "sensitive",
                           G_BINDING_SYNC_CREATE);
   gtk_widget_set_hexpand (ibox, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), ibox, 0, 1, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), ibox, 0, row, 1, 1);
   gtk_widget_show (ibox);
 
   label = gtk_label_new_with_mnemonic (_("Specify the d_elay before an item gets selected\n"
@@ -805,6 +848,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
   gtk_widget_show (label);
 
+  /* next row */
+  row++;
+
   button = gtk_radio_button_new_with_mnemonic_from_widget (GTK_RADIO_BUTTON (button), _("_Double click to activate items"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
                           "misc-single-click",
@@ -813,7 +859,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           G_BINDING_INVERT_BOOLEAN  | G_BINDING_SYNC_CREATE);
   g_signal_connect (G_OBJECT (button), "toggled", G_CALLBACK (g_object_notify), "active");
   gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 2, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
 
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
@@ -824,6 +870,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
+
+  /* new grid */
+  row = 0;
 
   grid = gtk_grid_new ();
   gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
@@ -840,8 +889,11 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button, _("Select this option to open a new tab on middle click instead of a new window"));
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
+
+  /* next row */
+  row++;
 
   button = gtk_check_button_new_with_mnemonic (_("Open new thunar instances as tabs"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
@@ -851,8 +903,11 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button, _("Select this option to open new thunar instances as tabs in an existing thunar window"));
   gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 1, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
+
+  /* next row */
+  row++;
 
   button = gtk_check_button_new_with_mnemonic (_("Restore tabs on startup"));
   g_object_bind_property (G_OBJECT (dialog->preferences),
@@ -862,7 +917,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_tooltip_text (button, _("Select this option to restore your tabs as they were last time you used Thunar"));
   gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 2, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
 
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
@@ -871,6 +926,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   if (thunar_g_vfs_is_uri_scheme_supported ("trash"))
     {
+      /* new grid */
+      row = 0;
+
       frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
       gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
       gtk_widget_show (frame);
@@ -895,7 +953,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                               G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
       gtk_widget_set_tooltip_text (button, _("Select this option to show the 'Delete' action in the context menu"));
       gtk_widget_set_hexpand (button, TRUE);
-      gtk_grid_attach (GTK_GRID (grid), button, 0, 0, 1, 1);
+      gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
       gtk_widget_show (button);
     }
 
@@ -918,6 +976,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
 
+  /* new grid */
+  row = 0;
+
   grid = gtk_grid_new ();
   gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
   gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
@@ -935,7 +996,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                         "- Never: all copies are done sequentially"
                                       ));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   combo = gtk_combo_box_text_new ();
@@ -952,14 +1013,17 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                transform_index_to_enum_value,
                                (gpointer) thunar_parallel_copy_mode_get_type, NULL);
   gtk_widget_set_hexpand (combo, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), combo, 1, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), combo, 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
 
+  /* next row */
+  row++;
+
   label = gtk_label_new_with_mnemonic (_("Use intermediate file on copy"));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 1, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
   gtk_widget_set_tooltip_text (label, _("Use intermediate file '*.partial~' to copy files. "
                                         "This will prevent fragmented files. "
@@ -983,14 +1047,17 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                transform_index_to_enum_value,
                                (gpointer) thunar_use_partial_get_type, NULL);
   gtk_widget_set_hexpand (combo, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), combo, 1, 1, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), combo, 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
 
+  /* next row */
+  row++;
+
   label = gtk_label_new_with_mnemonic (_("Verify file checksum on copy"));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 2, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
   gtk_widget_set_tooltip_text (label, _("Compare original file and copy with checksum. "
                                         "This will prevent corrupted files. "
@@ -1014,7 +1081,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                transform_index_to_enum_value,
                                (gpointer) thunar_verify_file_get_type, NULL);
   gtk_widget_set_hexpand (combo, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), combo, 1, 2, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), combo, 1, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
@@ -1027,6 +1094,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
+
+  /* new grid */
+  row = 0;
 
   grid = gtk_grid_new ();
   gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
@@ -1041,8 +1111,11 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                          "folder. Select the default behavior below:"));
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
   gtk_label_set_yalign (GTK_LABEL (label), 0.0f);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
+
+  /* next row */
+  row++;
 
   combo = gtk_combo_box_text_new ();
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo), _("Ask every time"));
@@ -1054,7 +1127,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_hexpand (combo, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), combo, 0, 1, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), combo, 0, row, 1, 1);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
 
@@ -1067,6 +1140,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
 
+  /* new grid */
+  row = 0;
+
   grid = gtk_grid_new ();
   gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
   gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
@@ -1076,7 +1152,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_show (grid);
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
-  gtk_grid_attach (GTK_GRID (grid), hbox, 0, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), hbox, 0, row, 1, 1);
   gtk_widget_show (hbox);
 
   button = gtk_check_button_new_with_mnemonic (_("Execute shell scripts"));
@@ -1102,6 +1178,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
 
+  /* new grid */
+  row = 0;
+
   grid = gtk_grid_new ();
   gtk_grid_set_column_spacing (GTK_GRID (grid), 12);
   gtk_grid_set_row_spacing (GTK_GRID (grid), 6);
@@ -1121,8 +1200,11 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           "active",
                           G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE);
   gtk_widget_set_hexpand (button, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), button, 0, 0, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), button, 0, row, 1, 1);
   gtk_widget_show (button);
+
+  /* next row */
+  row++;
 
   label = gtk_label_new (NULL);
   gtk_label_set_xalign (GTK_LABEL (label), 0.0f);
@@ -1133,7 +1215,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_label_set_markup (GTK_LABEL (label), _("<a href=\"volman-config:\">Configure</a> the management of removable drives,\n"
                                              "devices and media."));
   gtk_widget_set_hexpand (label, TRUE);
-  gtk_grid_attach (GTK_GRID (grid), label, 0, 1, 1, 1);
+  gtk_grid_attach (GTK_GRID (grid), label, 0, row, 1, 1);
   gtk_widget_show (label);
 
   /* check the most important gvfs-backends, and inform if they are missing */
