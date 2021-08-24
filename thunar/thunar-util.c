@@ -663,6 +663,7 @@ thunar_setup_display_cb (gpointer data)
  * thunar_util_next_new_file_name
  * @dir : the directory to search for a free filename
  * @file_name : the filename which will be used as the basis/default
+ * @ThunarNextFileNameMode: To decide if the naming should follow "file copy","file link" or "new file" syntax
  *
  * Returns a filename that is like @file_name with the possible addition of
  * a number to differentiate it from other similarly named files. In other words
@@ -675,15 +676,16 @@ thunar_setup_display_cb (gpointer data)
  * - file_copy
  *
  * Calling this functions with the above folder and @file_name equal to 'file' the returned
- * filename will be 'file 1'.
+ * filename will be 'file 1' for the mode "new file".
  *
  * The caller is responsible to free the returned string using g_free() when no longer needed.
  *
  * Return value: pointer to the new filename.
 **/
 gchar*
-thunar_util_next_new_file_name (ThunarFile   *dir,
-                                const gchar  *file_name)
+thunar_util_next_new_file_name (ThunarFile            *dir,
+                                const gchar           *file_name,
+                                ThunarNextFileNameMode name_mode)
 {
   ThunarFolder   *folder          = thunar_folder_get_for_file (dir);
   unsigned long   file_name_size  = strlen (file_name);
@@ -718,7 +720,24 @@ thunar_util_next_new_file_name (ThunarFile   *dir,
       if (!found_duplicate)
         break;
       g_free (new_name);
-      new_name = g_strdup_printf (_("%.*s %u%s"), (int) file_name_size, file_name, ++count, extension ? extension : "");
+      if (name_mode == THUNAR_NEXT_FILE_NAME_MODE_NEW)
+        new_name = g_strdup_printf (_("%.*s %u%s"), (int) file_name_size, file_name, ++count, extension ? extension : "");
+      else if (name_mode == THUNAR_NEXT_FILE_NAME_MODE_COPY)
+        new_name = g_strdup_printf (_("%.*s (copy %u)%s"), (int) file_name_size, file_name, ++count, extension ? extension : "");
+      else if (name_mode == THUNAR_NEXT_FILE_NAME_MODE_LINK)
+        {
+          if (count == 0)
+            {
+              new_name = g_strdup_printf (_("link to %.*s.%s"), (int) file_name_size, file_name, extension ? extension : "");
+              ++count;
+            }
+          else
+            {
+              new_name = g_strdup_printf (_("link %u to %.*s.%s"), ++count, (int) file_name_size, file_name, extension ? extension : "");
+            }
+        }
+      else
+        g_assert("should not be reached");
     }
   g_object_unref (G_OBJECT (folder));
 
