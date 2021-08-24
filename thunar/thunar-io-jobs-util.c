@@ -53,7 +53,7 @@
  * Return value: the #GFile referencing the @n<!---->th copy or link
  *               of @file or %NULL on error/cancellation.
  **/
-GFile *
+GFile*
 thunar_io_jobs_util_next_duplicate_file (ThunarJob *job,
                                          GFile     *file,
                                          gboolean   copy,
