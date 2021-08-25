@@ -93,10 +93,12 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob *job,
   thunar_parent_file = thunar_file_get (parent_file, &err);
   if (thunar_parent_file == NULL)
     {
+      g_object_unref (info);
       g_object_unref (parent_file);
       g_propagate_error (error, err);
       return NULL;
     }
+
   display_name = thunar_util_next_new_file_name (thunar_parent_file,
                                                  old_display_name,
                                                  copy ? THUNAR_NEXT_FILE_NAME_MODE_COPY : THUNAR_NEXT_FILE_NAME_MODE_LINK);
