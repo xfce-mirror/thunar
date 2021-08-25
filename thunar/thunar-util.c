@@ -685,7 +685,7 @@ thunar_setup_display_cb (gpointer data)
 gchar*
 thunar_util_next_new_file_name (ThunarFile            *dir,
                                 const gchar           *file_name,
-                                ThunarNextFileNameMode name_mode )
+                                ThunarNextFileNameMode name_mode)
 {
   ThunarFolder   *folder          = thunar_folder_get_for_file (dir);
   unsigned long   file_name_size  = strlen (file_name);
