@@ -3608,6 +3608,8 @@ thunar_file_get_thumbnail_path (ThunarFile *file, ThunarThumbnailSize thumbnail_
   if (thunar_file_get_thumb_state (file) == THUNAR_FILE_THUMB_STATE_NONE)
     return NULL;
 
+  xfce_get_local_thumbnail_path (uri, "medium");
+
   if (G_UNLIKELY (file->thumbnail_path == NULL))
     {
       checksum = g_checksum_new (G_CHECKSUM_MD5);
