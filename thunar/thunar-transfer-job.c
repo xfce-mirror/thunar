@@ -700,33 +700,20 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
   while (err == NULL)
     {
       thunar_transfer_job_check_pause (job);
+
+      GFile *target;
       if (G_LIKELY (!g_file_equal (source_file, dest_file)))
-        {
-          /* try to copy the file from source_file to the dest_file */
-          if (ttj_copy_file (job, source_file, dest_file, copy_flags, TRUE, &err))
-            {
-              /* return the real target file */
-              return g_object_ref (dest_file);
-            }
-        }
+        target = g_object_ref (dest_file);
       else
+        target = thunar_io_jobs_util_next_duplicate_file (THUNAR_JOB (job), source_file, TRUE, &err);
+
+      if (err == NULL)
         {
-          GFile *duplicate_file = thunar_io_jobs_util_next_duplicate_file (THUNAR_JOB (job),
-                                                                           source_file,
-                                                                           TRUE,
-                                                                           &err);
-
-          if (err == NULL)
-            {
-              /* try to copy the file from source file to the duplicate file */
-              if (ttj_copy_file (job, source_file, duplicate_file, copy_flags, FALSE, &err))
-                {
-                  /* return the real target file */
-                  return duplicate_file;
-                }
-
-              g_object_unref (duplicate_file);
-            }
+          /* try to copy the file from source file to the duplicate file */
+          if (ttj_copy_file (job, source_file, target, copy_flags, FALSE, &err))
+            return target;
+          else /* go to error case */
+            g_object_unref (target);
         }
 
       /* check if we can recover from this error */
