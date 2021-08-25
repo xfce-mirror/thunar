@@ -37,6 +37,14 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 
 G_BEGIN_DECLS;
 
+typedef enum
+{
+  THUNAR_NEXT_FILE_NAME_MODE_NEW,
+  THUNAR_NEXT_FILE_NAME_MODE_COPY,
+  THUNAR_NEXT_FILE_NAME_MODE_LINK,
+} ThunarNextFileNameMode;
+
+
 typedef void (*ThunarBookmarksFunc) (GFile       *file,
                                      const gchar *name,
                                      gint         row_num,
@@ -66,8 +74,9 @@ time_t     thunar_util_time_from_rfc3339        (const gchar    *date_string) G_
 gchar     *thunar_util_change_working_directory (const gchar    *new_directory) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 void       thunar_setup_display_cb              (gpointer        data);
-gchar*     thunar_util_next_new_file_name       (ThunarFile     *dir,
-                                                 const gchar    *file_name);
+gchar*     thunar_util_next_new_file_name       (ThunarFile            *dir,
+                                                 const gchar           *file_name,
+                                                 ThunarNextFileNameMode name_mode);
 gboolean   thunar_util_is_a_search_query        (const gchar    *string);
 
 extern const char *SEARCH_PREFIX;

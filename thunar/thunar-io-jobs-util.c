@@ -37,7 +37,6 @@
  * @job   : a #ThunarJob.
  * @file  : the source #GFile.
  * @type  : the operation type (copy or link).
- * @n     : the @n<!---->th copy/link to create the #GFile for.
  * @error : return location for errors or %NULL.
  *
  * Determines the #GFile for the next copy/link of/to @file.
@@ -57,21 +56,18 @@ GFile*
 thunar_io_jobs_util_next_duplicate_file (ThunarJob *job,
                                          GFile     *file,
                                          gboolean   copy,
-                                         guint      n,
                                          GError   **error)
 {
   GFileInfo   *info;
   GError      *err = NULL;
   GFile       *duplicate_file = NULL;
   GFile       *parent_file = NULL;
+  ThunarFile  *thunar_parent_file;
   const gchar *old_display_name;
   gchar       *display_name;
-  gchar       *file_basename;
-  gchar       *extension = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), NULL);
   _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
-  _thunar_return_val_if_fail (0 < n, NULL);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, NULL);
   _thunar_return_val_if_fail (!thunar_g_file_is_root (file), NULL);
 
@@ -92,43 +88,23 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob *job,
       return NULL;
     }
 
+  parent_file = g_file_get_parent (file);
   old_display_name = g_file_info_get_display_name (info);
-  if (copy)
+  thunar_parent_file = thunar_file_get (parent_file, &err);
+  if (thunar_parent_file == NULL)
     {
-      /* get file extension if file is not a directory */
-      if (g_file_info_get_file_type (info) != G_FILE_TYPE_DIRECTORY)
-        extension = thunar_util_str_get_extension (old_display_name);
+      g_object_unref (info);
+      g_object_unref (parent_file);
+      g_propagate_error (error, err);
+      return NULL;
+    }
 
-      if (extension != NULL)
-        {
-          file_basename = g_strndup (old_display_name, extension - old_display_name);
-          /* I18N: put " (copy #)" between basename and extension */
-          display_name = g_strdup_printf (_("%s (copy %u)%s"), file_basename, n, extension);
-          g_free(file_basename);
-        }
-      else
-        {
-          /* I18N: put " (copy #)" after filename (for files without extension) */
-          display_name = g_strdup_printf (_("%s (copy %u)"), old_display_name, n);
-        }
-    }
-  else
-    {
-      /* create name for link */
-      if (n == 1)
-        {
-          /* I18N: name for first link to basename */
-          display_name = g_strdup_printf (_("link to %s"), old_display_name);
-        }
-      else
-        {
-          /* I18N: name for nth link to basename */
-          display_name = g_strdup_printf (_("link %u to %s"), n, old_display_name);
-        }
-    }
+  display_name = thunar_util_next_new_file_name (thunar_parent_file,
+                                                 old_display_name,
+                                                 copy ? THUNAR_NEXT_FILE_NAME_MODE_COPY : THUNAR_NEXT_FILE_NAME_MODE_LINK);
+  g_object_unref (thunar_parent_file);
 
   /* create the GFile for the copy/link */
-  parent_file = g_file_get_parent (file);
   duplicate_file = g_file_get_child (parent_file, display_name);
   g_object_unref (parent_file);
 
