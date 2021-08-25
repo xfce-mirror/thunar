@@ -706,7 +706,7 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
       if (G_LIKELY (!g_file_equal (source_file, dest_file)))
         target = g_object_ref (dest_file);
       else
-        target = thunar_io_jobs_util_next_duplicate_file (THUNAR_JOB (job), source_file, TRUE, &err);
+        target = thunar_io_jobs_util_next_duplicate_file (THUNAR_JOB (job), source_file, THUNAR_NEXT_FILE_NAME_MODE_COPY, &err);
 
       if (err == NULL)
         {

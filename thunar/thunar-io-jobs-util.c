@@ -34,10 +34,10 @@
 
 /**
  * thunar_io_jobs_util_next_duplicate_file:
- * @job   : a #ThunarJob.
- * @file  : the source #GFile.
- * @type  : the operation type (copy or link).
- * @error : return location for errors or %NULL.
+ * @job        : a #ThunarJob.
+ * @file       : the source #GFile.
+ * @name_mode  : the naming mode to use (copy/link).
+ * @error      : return location for errors or %NULL.
  *
  * Determines the #GFile for the next copy/link of/to @file.
  *
@@ -53,10 +53,10 @@
  *               of @file or %NULL on error/cancellation.
  **/
 GFile*
-thunar_io_jobs_util_next_duplicate_file (ThunarJob *job,
-                                         GFile     *file,
-                                         gboolean   copy,
-                                         GError   **error)
+thunar_io_jobs_util_next_duplicate_file (ThunarJob               *job,
+                                         GFile                   *file,
+                                         ThunarNextFileNameMode   name_mode,
+                                         GError                 **error)
 {
   GFileInfo   *info;
   GError      *err = NULL;
@@ -101,7 +101,7 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob *job,
 
   display_name = thunar_util_next_new_file_name (thunar_parent_file,
                                                  old_display_name,
-                                                 copy ? THUNAR_NEXT_FILE_NAME_MODE_COPY : THUNAR_NEXT_FILE_NAME_MODE_LINK);
+                                                 name_mode);
   g_object_unref (thunar_parent_file);
 
   /* create the GFile for the copy/link */
