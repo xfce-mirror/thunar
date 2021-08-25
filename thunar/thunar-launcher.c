@@ -2535,7 +2535,7 @@ thunar_launcher_action_create_folder (ThunarLauncher *launcher)
     return;
 
   /* ask the user to enter a name for the new folder */
-  generated_name = thunar_util_next_new_file_name (launcher->current_directory, _("New Folder"));
+  generated_name = thunar_util_next_new_file_name (launcher->current_directory, _("New Folder"), THUNAR_NEXT_FILE_NAME_MODE_NEW);
   name = thunar_dialogs_show_create (launcher->widget,
                                      "inode/directory",
                                      generated_name,
@@ -2591,7 +2591,7 @@ thunar_launcher_action_create_document (ThunarLauncher *launcher,
                                thunar_file_get_display_name (template_file));
 
       /* ask the user to enter a name for the new document */
-      generated_name = thunar_util_next_new_file_name (launcher->current_directory, thunar_file_get_display_name (template_file));
+      generated_name = thunar_util_next_new_file_name (launcher->current_directory, thunar_file_get_display_name (template_file), THUNAR_NEXT_FILE_NAME_MODE_NEW);
       name = thunar_dialogs_show_create (launcher->widget,
                                          thunar_file_get_content_type (THUNAR_FILE (template_file)),
                                          generated_name,
@@ -2602,7 +2602,7 @@ thunar_launcher_action_create_document (ThunarLauncher *launcher,
   else
     {
       /* ask the user to enter a name for the new empty file */
-      generated_name = thunar_util_next_new_file_name (launcher->current_directory, _("New Empty File"));
+      generated_name = thunar_util_next_new_file_name (launcher->current_directory, _("New Empty File"), THUNAR_NEXT_FILE_NAME_MODE_NEW);
       name = thunar_dialogs_show_create (launcher->widget,
                                          "text/plain",
                                          generated_name,
