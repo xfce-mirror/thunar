@@ -709,6 +709,7 @@ thunar_util_next_new_file_name (ThunarFile            *dir,
         {
           ThunarFile  *file = files->data;
           const gchar *name = thunar_file_get_display_name (file);
+
           if (strcmp (new_name, name) == 0)
             {
               found_duplicate = TRUE;
