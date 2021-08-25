@@ -685,7 +685,6 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
   GFile            *dest_file = target_file;
   GFileCopyFlags    copy_flags = G_FILE_COPY_NOFOLLOW_SYMLINKS;
   GError           *err = NULL;
-  gint              n;
   gint              n_rename = 0;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), NULL);
@@ -714,7 +713,7 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
         {
           GFile *duplicate_file = thunar_io_jobs_util_next_duplicate_file (THUNAR_JOB (job),
                                                                            source_file,
-                                                                           TRUE, n,
+                                                                           TRUE,
                                                                            &err);
 
           if (err == NULL)

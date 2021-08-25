@@ -37,7 +37,6 @@
  * @job   : a #ThunarJob.
  * @file  : the source #GFile.
  * @type  : the operation type (copy or link).
- * @n     : the @n<!---->th copy/link to create the #GFile for.
  * @error : return location for errors or %NULL.
  *
  * Determines the #GFile for the next copy/link of/to @file.
@@ -57,7 +56,6 @@ GFile*
 thunar_io_jobs_util_next_duplicate_file (ThunarJob *job,
                                          GFile     *file,
                                          gboolean   copy,
-                                         guint      n,
                                          GError   **error)
 {
   GFileInfo   *info;
@@ -70,7 +68,6 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob *job,
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), NULL);
   _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
-  _thunar_return_val_if_fail (0 < n, NULL);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, NULL);
   _thunar_return_val_if_fail (!thunar_g_file_is_root (file), NULL);
 

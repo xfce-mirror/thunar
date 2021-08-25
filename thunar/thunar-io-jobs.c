@@ -619,7 +619,6 @@ _thunar_io_jobs_link_file (ThunarJob *job,
   gchar            *base_name;
   gchar            *display_name;
   gchar            *source_path;
-  gint              n;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), NULL);
   _thunar_return_val_if_fail (G_IS_FILE (source_file), NULL);
@@ -664,7 +663,7 @@ _thunar_io_jobs_link_file (ThunarJob *job,
         {
           GFile *duplicate_file = thunar_io_jobs_util_next_duplicate_file (job,
                                                                            source_file,
-                                                                           FALSE, n,
+                                                                           FALSE,
                                                                            &err);
 
           if (err == NULL)
