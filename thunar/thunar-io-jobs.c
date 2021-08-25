@@ -649,7 +649,7 @@ _thunar_io_jobs_link_file (ThunarJob *job,
       if (!g_file_equal (source_file, target_file))
         target = g_object_ref (target_file);
       else
-        target = thunar_io_jobs_util_next_duplicate_file (job, source_file, FALSE, &err);
+        target = thunar_io_jobs_util_next_duplicate_file (job, source_file, THUNAR_NEXT_FILE_NAME_MODE_LINK, &err);
 
       if (err == NULL)
         {
