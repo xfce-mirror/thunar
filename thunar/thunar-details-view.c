@@ -717,15 +717,27 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
         }
       else
         {
-          /* select the clicked path if necessary */
-          if (!gtk_tree_selection_path_is_selected (selection, path))
+          if (column != name_column)
             {
-              gtk_tree_selection_unselect_all (selection);
-              gtk_tree_selection_select_path (selection, path);
-            }
+              /* if the clicked path is not selected, unselect all other paths */
+              if (!gtk_tree_selection_path_is_selected (selection, path))
+                gtk_tree_selection_unselect_all (selection);
 
-          /* show the context menu */
-          thunar_standard_view_queue_popup (THUNAR_STANDARD_VIEW (details_view), event);
+              /* queue the menu popup */
+              thunar_standard_view_queue_popup (THUNAR_STANDARD_VIEW (details_view), event);
+            }
+          else
+            {
+              /* select the clicked path if necessary */
+              if (!gtk_tree_selection_path_is_selected (selection, path))
+                {
+                  gtk_tree_selection_unselect_all (selection);
+                  gtk_tree_selection_select_path (selection, path);
+                }
+
+              /* show the context menu */
+              thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (details_view));
+            }
           gtk_tree_path_free (path);
         }
 
