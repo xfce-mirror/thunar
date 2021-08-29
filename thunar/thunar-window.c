@@ -1521,6 +1521,16 @@ thunar_window_action_switch_previous_tab (ThunarWindow *window)
 
 
 static void
+thunar_window_clipboard_manager_changed (GtkWidget *widget)
+{
+  ThunarWindow *window = THUNAR_WINDOW (widget);
+
+  thunar_window_reload (window, FALSE);
+}
+
+
+
+static void
 thunar_window_realize (GtkWidget *widget)
 {
   ThunarWindow *window = THUNAR_WINDOW (widget);
@@ -1533,7 +1543,7 @@ thunar_window_realize (GtkWidget *widget)
    */
   window->clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (widget));
   g_signal_connect_swapped (G_OBJECT (window->clipboard), "changed",
-                            G_CALLBACK (gtk_widget_queue_draw), widget);
+                            G_CALLBACK (thunar_window_clipboard_manager_changed), widget);
 }
 
 
