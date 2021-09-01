@@ -304,7 +304,7 @@ thunar_location_entry_accept_focus (ThunarLocationEntry *location_entry,
   else
     {
       /* make sure the edit-done signal is emitted upon moving the focus somewhere else */
-      g_signal_connect_swapped (location_entry->path_entry, "focus-out-event", G_CALLBACK (thunar_location_entry_emit_edit_done), location_entry);
+//      g_signal_connect_swapped (location_entry->path_entry, "focus-out-event", G_CALLBACK (thunar_location_entry_emit_edit_done), location_entry);
     }
 
   /* check if we have an initial text for the location bar */
@@ -461,9 +461,7 @@ thunar_location_entry_emit_edit_done (ThunarLocationEntry *entry)
 {
   /* do not emit the signal if the context menu was opened or a search is active */
   if (entry->right_click_occurred == FALSE && entry->is_searching == FALSE)
-    {
-      g_signal_emit_by_name (entry, "edit-done");
-    }
+    g_signal_emit_by_name (entry, "edit-done");
 
   entry->right_click_occurred = FALSE;
 }
@@ -485,7 +483,6 @@ thunar_location_entry_cancel_search (ThunarLocationEntry *entry)
 
   entry->is_searching = FALSE;
   entry->right_click_occurred = FALSE;
-  thunar_location_entry_emit_edit_done (entry);
 
   thunar_path_entry_cancel_search (THUNAR_PATH_ENTRY (entry->path_entry));
   thunar_path_entry_set_current_file (THUNAR_PATH_ENTRY (entry->path_entry), entry->current_directory);
