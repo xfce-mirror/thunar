@@ -1702,8 +1702,9 @@ thunar_shortcuts_view_open (ThunarShortcutsView            *view,
 
       thunar_launcher_activate_selected_files (view->launcher, (ThunarLauncherFolderOpenAction) open_in, NULL);
 
-      /* return the focus to the current folder */
-      thunar_shortcuts_view_select_by_file (view, view->current_directory);
+      /* return the focus to the current folder, unless the folder changed */
+      if (open_in != THUNAR_LAUNCHER_CHANGE_DIRECTORY)
+        thunar_shortcuts_view_select_by_file (view, view->current_directory);
 
       if (file != NULL)
         g_object_unref (file);
