@@ -115,6 +115,7 @@ void            thunar_launcher_action_restore                       (ThunarLaun
 void            thunar_launcher_action_restore_and_show              (ThunarLauncher                 *launcher);
 void            thunar_launcher_set_searching                        (ThunarLauncher                 *launcher,
                                                                       gboolean                        b);
+gboolean        thunar_launcher_get_searching                        (ThunarLauncher                 *launcher);
 
 
 G_END_DECLS;
