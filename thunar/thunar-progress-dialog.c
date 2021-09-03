@@ -97,7 +97,6 @@ thunar_progress_dialog_init (ThunarProgressDialog *dialog)
   gtk_window_set_default_size (GTK_WINDOW (dialog), 450, 10);
   gtk_window_set_modal (GTK_WINDOW (dialog), FALSE);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), FALSE);
-  gtk_window_set_type_hint (GTK_WINDOW (dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
 
   g_signal_connect (dialog, "delete-event",
                     G_CALLBACK (thunar_progress_dialog_closed), dialog);
