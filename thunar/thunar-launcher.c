@@ -1393,6 +1393,14 @@ thunar_launcher_set_searching (ThunarLauncher *launcher,
 
 
 
+gboolean
+thunar_launcher_get_searching (ThunarLauncher *launcher)
+{
+  return launcher->is_searching;
+}
+
+
+
 static void
 thunar_launcher_action_open_location (ThunarLauncher *launcher)
 {
